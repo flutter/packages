@@ -6,4 +6,5 @@ export 'change_subscription_param.dart';
 export 'google_play_product_details.dart';
 export 'google_play_purchase_details.dart';
 export 'google_play_purchase_param.dart';
+export 'google_play_user_choice_details.dart';
 export 'query_purchase_details_response.dart';

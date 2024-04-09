@@ -38,7 +38,6 @@ class MockTestNSObjectHostApi extends _i1.Mock
         ),
         returnValueForMissingStub: null,
       );
-
   @override
   void addObserver(
     int? identifier,
@@ -58,7 +57,6 @@ class MockTestNSObjectHostApi extends _i1.Mock
         ),
         returnValueForMissingStub: null,
       );
-
   @override
   void removeObserver(
     int? identifier,

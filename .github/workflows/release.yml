@@ -36,12 +36,19 @@ jobs:
         cd $GITHUB_WORKSPACE
     # Checks out a copy of the repo.
     - name: Check out code
-      uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
+      uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633
       with:
         fetch-depth: 0 # Fetch all history so the tool can get all the tags to determine version.
     - name: Set up tools
       run: dart pub get
       working-directory: ${{ github.workspace }}/script/tool
+
+    # Give some time for LUCI checks to start becoming populated.
+    # Because of latency in Github Webhooks, we need to wait for a while
+    # before being able to look at checks scheduled by LUCI.
+    - name: Give webhooks a minute
+      run: sleep 60s
+      shell: bash
 
     # The next step waits for all tests, but when there are issues with the
     # hooks it can take a long time for the tests to even be registered. If
@@ -49,7 +56,7 @@ jobs:
     # because there doesn't appear to be anything to wait for. To avoid that,
     # explicitly wait for one LUCI test by name first.
     - name: Wait for test check-in
-      uses: lewagon/wait-on-check-action@595dabb3acf442d47e29c9ec9ba44db0c6bdd18f
+      uses: lewagon/wait-on-check-action@ccfb013c15c8afb7bf2b7c028fb74dc5a068cccc
       with:
         ref: ${{ github.sha }}
         check-name: 'Linux ci_yaml packages roller'
@@ -61,7 +68,7 @@ jobs:
 
     # This workflow should be the last to run. So wait for all the other tests to succeed.
     - name: Wait on all tests
-      uses: lewagon/wait-on-check-action@595dabb3acf442d47e29c9ec9ba44db0c6bdd18f
+      uses: lewagon/wait-on-check-action@ccfb013c15c8afb7bf2b7c028fb74dc5a068cccc
       with:
         ref: ${{ github.sha }}
         running-workflow-name: 'release'

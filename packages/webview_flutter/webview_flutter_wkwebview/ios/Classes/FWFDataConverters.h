@@ -84,11 +84,32 @@ extern FWFWKNavigationActionData *FWFWKNavigationActionDataFromNativeWKNavigatio
 /// @return A FWFNSUrlRequestData.
 extern FWFNSUrlRequestData *FWFNSUrlRequestDataFromNativeNSURLRequest(NSURLRequest *request);
 
-/// Converts a WKFrameInfo to an FWFWKFrameInfoData.
-///
-/// @param info The object containing information to create a FWFWKFrameInfoData.
-///
-/// @return A FWFWKFrameInfoData.
+/**
+ * Converts a WKNavigationResponse to an FWFWKNavigationResponseData.
+ *
+ * @param response The object containing information to create a WKNavigationResponseData.
+ *
+ * @return A FWFWKNavigationResponseData.
+ */
+extern FWFWKNavigationResponseData *FWFWKNavigationResponseDataFromNativeNavigationResponse(
+    WKNavigationResponse *response);
+/**
+ * Converts a NSURLResponse to an FWFNSHttpUrlResponseData.
+ *
+ * @param response The object containing information to create a WKNavigationActionData.
+ *
+ * @return A FWFNSHttpUrlResponseData.
+ */
+extern FWFNSHttpUrlResponseData *FWFNSHttpUrlResponseDataFromNativeNSURLResponse(
+    NSURLResponse *response);
+
+/**
+ * Converts a WKFrameInfo to an FWFWKFrameInfoData.
+ *
+ * @param info The object containing information to create a FWFWKFrameInfoData.
+ *
+ * @return A FWFWKFrameInfoData.
+ */
 extern FWFWKFrameInfoData *FWFWKFrameInfoDataFromNativeWKFrameInfo(WKFrameInfo *info);
 
 /// Converts an FWFWKNavigationActionPolicyEnumData to a WKNavigationActionPolicy.
@@ -99,11 +120,23 @@ extern FWFWKFrameInfoData *FWFWKFrameInfoDataFromNativeWKFrameInfo(WKFrameInfo *
 extern WKNavigationActionPolicy FWFNativeWKNavigationActionPolicyFromEnumData(
     FWFWKNavigationActionPolicyEnumData *data);
 
-/// Converts a NSError to an FWFNSErrorData.
-///
-/// @param error The object containing information to create a FWFNSErrorData.
-///
-/// @return A FWFNSErrorData.
+/**
+ * Converts an FWFWKNavigationResponsePolicyEnumData to a WKNavigationResponsePolicy.
+ *
+ * @param policy The data object containing information to create a WKNavigationResponsePolicy.
+ *
+ * @return A WKNavigationResponsePolicy or -1 if data could not be converted.
+ */
+extern WKNavigationResponsePolicy FWFNativeWKNavigationResponsePolicyFromEnum(
+    FWFWKNavigationResponsePolicyEnum policy);
+
+/**
+ * Converts a NSError to an FWFNSErrorData.
+ *
+ * @param error The object containing information to create a FWFNSErrorData.
+ *
+ * @return A FWFNSErrorData.
+ */
 extern FWFNSErrorData *FWFNSErrorDataFromNativeNSError(NSError *error);
 
 /// Converts an NSKeyValueChangeKey to a FWFNSKeyValueChangeKeyEnumData.

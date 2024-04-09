@@ -65,7 +65,7 @@ buildFeatures {
 }
 
 dependencies {
-    implementation 'androidx.annotation:annotation:1.7.0'
+    implementation 'androidx.annotation:annotation:1.7.1'
     testImplementation 'junit:junit:4.13.2'
     testImplementation 'org.mockito:mockito-inline:5.0.0'
     testImplementation 'androidx.test:core:1.4.0'

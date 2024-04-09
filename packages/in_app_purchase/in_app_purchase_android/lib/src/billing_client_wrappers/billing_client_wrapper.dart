@@ -5,21 +5,14 @@
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
-import 'package:flutter/services.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 import '../../billing_client_wrappers.dart';
-import '../channel.dart';
+import '../messages.g.dart';
+import '../pigeon_converters.dart';
 import 'billing_config_wrapper.dart';
 
 part 'billing_client_wrapper.g.dart';
-
-/// Method identifier for the OnPurchaseUpdated method channel method.
-@visibleForTesting
-const String kOnPurchasesUpdated =
-    'PurchasesUpdatedListener#onPurchasesUpdated(BillingResult, List<Purchase>)';
-const String _kOnBillingServiceDisconnected =
-    'BillingClientStateListener#onBillingServiceDisconnected()';
 
 /// Callback triggered by Play in response to purchase activity.
 ///
@@ -39,6 +32,10 @@ const String _kOnBillingServiceDisconnected =
 /// [`PurchasesUpdatedListener`](https://developer.android.com/reference/com/android/billingclient/api/PurchasesUpdatedListener.html).
 typedef PurchasesUpdatedListener = void Function(
     PurchasesResultWrapper purchasesResult);
+
+/// Wraps a [UserChoiceBillingListener](https://developer.android.com/reference/com/android/billingclient/api/UserChoiceBillingListener)
+typedef UserSelectedAlternativeBillingListener = void Function(
+    UserChoiceDetailsWrapper userChoiceDetailsWrapper);
 
 /// This class can be used directly instead of [InAppPurchaseConnection] to call
 /// Play-specific billing APIs.
@@ -60,30 +57,28 @@ typedef PurchasesUpdatedListener = void Function(
 /// transparently.
 class BillingClient {
   /// Creates a billing client.
-  BillingClient(PurchasesUpdatedListener onPurchasesUpdated) {
-    channel.setMethodCallHandler(callHandler);
-    _callbacks[kOnPurchasesUpdated] = <PurchasesUpdatedListener>[
-      onPurchasesUpdated
-    ];
+  BillingClient(
+    PurchasesUpdatedListener onPurchasesUpdated,
+    UserSelectedAlternativeBillingListener? alternativeBillingListener, {
+    @visibleForTesting InAppPurchaseApi? api,
+  })  : _hostApi = api ?? InAppPurchaseApi(),
+        hostCallbackHandler = HostBillingClientCallbackHandler(
+            onPurchasesUpdated, alternativeBillingListener) {
+    InAppPurchaseCallbackApi.setup(hostCallbackHandler);
   }
 
-  // Occasionally methods in the native layer require a Dart callback to be
-  // triggered in response to a Java callback. For example,
-  // [startConnection] registers an [OnBillingServiceDisconnected] callback.
-  // This list of names to callbacks is used to trigger Dart callbacks in
-  // response to those Java callbacks. Dart sends the Java layer a handle to the
-  // matching callback here to remember, and then once its twin is triggered it
-  // sends the handle back over the platform channel. We then access that handle
-  // in this array and call it in Dart code. See also [_callHandler].
-  final Map<String, List<Function>> _callbacks = <String, List<Function>>{};
+  /// Interface for calling host-side code.
+  final InAppPurchaseApi _hostApi;
+
+  /// Handlers for calls from the host-side code.
+  @visibleForTesting
+  final HostBillingClientCallbackHandler hostCallbackHandler;
 
   /// Calls
   /// [`BillingClient#isReady()`](https://developer.android.com/reference/com/android/billingclient/api/BillingClient.html#isReady())
   /// to get the ready status of the BillingClient instance.
   Future<bool> isReady() async {
-    final bool? ready =
-        await channel.invokeMethod<bool>('BillingClient#isReady()');
-    return ready ?? false;
+    return _hostApi.isReady();
   }
 
   /// Enable the [BillingClientWrapper] to handle pending purchases.
@@ -112,18 +107,10 @@ class BillingClient {
       {required OnBillingServiceDisconnected onBillingServiceDisconnected,
       BillingChoiceMode billingChoiceMode =
           BillingChoiceMode.playBillingOnly}) async {
-    final List<Function> disconnectCallbacks =
-        _callbacks[_kOnBillingServiceDisconnected] ??= <Function>[];
-    disconnectCallbacks.add(onBillingServiceDisconnected);
-    return BillingResultWrapper.fromJson((await channel
-            .invokeMapMethod<String, dynamic>(
-                'BillingClient#startConnection(BillingClientStateListener)',
-                <String, dynamic>{
-              'handle': disconnectCallbacks.length - 1,
-              'billingChoiceMode':
-                  const BillingChoiceModeConverter().toJson(billingChoiceMode),
-            })) ??
-        <String, dynamic>{});
+    hostCallbackHandler.disconnectCallbacks.add(onBillingServiceDisconnected);
+    return resultWrapperFromPlatform(await _hostApi.startConnection(
+        hostCallbackHandler.disconnectCallbacks.length - 1,
+        platformBillingChoiceMode(billingChoiceMode)));
   }
 
   /// Calls
@@ -134,7 +121,7 @@ class BillingClient {
   ///
   /// This triggers the destruction of the `BillingClient` instance in Java.
   Future<void> endConnection() async {
-    return channel.invokeMethod<void>('BillingClient#endConnection()');
+    return _hostApi.endConnection();
   }
 
   /// Returns a list of [ProductDetailsResponseWrapper]s that have
@@ -150,16 +137,11 @@ class BillingClient {
   Future<ProductDetailsResponseWrapper> queryProductDetails({
     required List<ProductWrapper> productList,
   }) async {
-    final Map<String, dynamic> arguments = <String, dynamic>{
-      'productList':
-          productList.map((ProductWrapper product) => product.toJson()).toList()
-    };
-    return ProductDetailsResponseWrapper.fromJson(
-        (await channel.invokeMapMethod<String, dynamic>(
-              'BillingClient#queryProductDetailsAsync(QueryProductDetailsParams, ProductDetailsResponseListener)',
-              arguments,
-            )) ??
-            <String, dynamic>{});
+    return productDetailsResponseWrapperFromPlatform(
+        await _hostApi.queryProductDetailsAsync(productList
+            .map((ProductWrapper product) =>
+                platformQueryProductFromWrapper(product))
+            .toList()));
   }
 
   /// Attempt to launch the Play Billing Flow for a given [productDetails].
@@ -211,21 +193,17 @@ class BillingClient {
       ProrationMode? prorationMode}) async {
     assert((oldProduct == null) == (purchaseToken == null),
         'oldProduct and purchaseToken must both be set, or both be null.');
-    final Map<String, dynamic> arguments = <String, dynamic>{
-      'product': product,
-      'offerToken': offerToken,
-      'accountId': accountId,
-      'obfuscatedProfileId': obfuscatedProfileId,
-      'oldProduct': oldProduct,
-      'purchaseToken': purchaseToken,
-      'prorationMode': const ProrationModeConverter().toJson(prorationMode ??
-          ProrationMode.unknownSubscriptionUpgradeDowngradePolicy)
-    };
-    return BillingResultWrapper.fromJson(
-        (await channel.invokeMapMethod<String, dynamic>(
-                'BillingClient#launchBillingFlow(Activity, BillingFlowParams)',
-                arguments)) ??
-            <String, dynamic>{});
+    return resultWrapperFromPlatform(
+        await _hostApi.launchBillingFlow(PlatformBillingFlowParams(
+      product: product,
+      prorationMode: const ProrationModeConverter().toJson(prorationMode ??
+          ProrationMode.unknownSubscriptionUpgradeDowngradePolicy),
+      offerToken: offerToken,
+      accountId: accountId,
+      obfuscatedProfileId: obfuscatedProfileId,
+      oldProduct: oldProduct,
+      purchaseToken: purchaseToken,
+    )));
   }
 
   /// Fetches recent purchases for the given [ProductType].
@@ -240,14 +218,24 @@ class BillingClient {
   /// This wraps
   /// [`BillingClient#queryPurchasesAsync(QueryPurchaseParams, PurchaseResponseListener)`](https://developer.android.com/reference/com/android/billingclient/api/BillingClient#queryPurchasesAsync(com.android.billingclient.api.QueryPurchasesParams,%20com.android.billingclient.api.PurchasesResponseListener)).
   Future<PurchasesResultWrapper> queryPurchases(ProductType productType) async {
-    return PurchasesResultWrapper.fromJson(
-        (await channel.invokeMapMethod<String, dynamic>(
-              'BillingClient#queryPurchasesAsync(QueryPurchaseParams, PurchaseResponseListener)',
-              <String, dynamic>{
-                'productType': const ProductTypeConverter().toJson(productType)
-              },
-            )) ??
-            <String, dynamic>{});
+    // TODO(stuartmorgan): Investigate whether forceOkResponseCode is actually
+    // correct. This code preserves the behavior of the pre-Pigeon-conversion
+    // Java code, but the way this field is treated in PurchasesResultWrapper is
+    // inconsistent with ProductDetailsResponseWrapper and
+    // PurchasesHistoryResult, which have a getter for
+    // billingResult.responseCode instead of having a separate field, and the
+    // other use of PurchasesResultWrapper (onPurchasesUpdated) was using
+    // billingResult.getResponseCode() for responseCode instead of hard-coding
+    // OK. Several Dart unit tests had to be removed when the hard-coding logic
+    // was moved from Java to here because they were testing a case that the
+    // plugin could never actually generate, and it may well be that those tests
+    // were correct and the functionality they were intended to test had been
+    // broken by the original change to hard-code this on the Java side (instead
+    // of making it a forwarding getter on the Dart side).
+    return purchasesResultWrapperFromPlatform(
+        await _hostApi
+            .queryPurchasesAsync(platformProductTypeFromWrapper(productType)),
+        forceOkResponseCode: true);
   }
 
   /// Fetches purchase history for the given [ProductType].
@@ -264,13 +252,9 @@ class BillingClient {
   /// [`BillingClient#queryPurchaseHistoryAsync(QueryPurchaseHistoryParams, PurchaseHistoryResponseListener)`](https://developer.android.com/reference/com/android/billingclient/api/BillingClient#queryPurchaseHistoryAsync(com.android.billingclient.api.QueryPurchaseHistoryParams,%20com.android.billingclient.api.PurchaseHistoryResponseListener)).
   Future<PurchasesHistoryResult> queryPurchaseHistory(
       ProductType productType) async {
-    return PurchasesHistoryResult.fromJson((await channel.invokeMapMethod<
-                String, dynamic>(
-            'BillingClient#queryPurchaseHistoryAsync(QueryPurchaseHistoryParams, PurchaseHistoryResponseListener)',
-            <String, dynamic>{
-              'productType': const ProductTypeConverter().toJson(productType)
-            })) ??
-        <String, dynamic>{});
+    return purchaseHistoryResultFromPlatform(
+        await _hostApi.queryPurchaseHistoryAsync(
+            platformProductTypeFromWrapper(productType)));
   }
 
   /// Consumes a given in-app product.
@@ -281,13 +265,8 @@ class BillingClient {
   /// This wraps
   /// [`BillingClient#consumeAsync(ConsumeParams, ConsumeResponseListener)`](https://developer.android.com/reference/com/android/billingclient/api/BillingClient.html#consumeAsync(java.lang.String,%20com.android.billingclient.api.ConsumeResponseListener))
   Future<BillingResultWrapper> consumeAsync(String purchaseToken) async {
-    return BillingResultWrapper.fromJson((await channel.invokeMapMethod<String,
-                dynamic>(
-            'BillingClient#consumeAsync(ConsumeParams, ConsumeResponseListener)',
-            <String, dynamic>{
-              'purchaseToken': purchaseToken,
-            })) ??
-        <String, dynamic>{});
+    return resultWrapperFromPlatform(
+        await _hostApi.consumeAsync(purchaseToken));
   }
 
   /// Acknowledge an in-app purchase.
@@ -309,110 +288,81 @@ class BillingClient {
   /// This wraps
   /// [`BillingClient#acknowledgePurchase(AcknowledgePurchaseParams, AcknowledgePurchaseResponseListener)`](https://developer.android.com/reference/com/android/billingclient/api/BillingClient.html#acknowledgePurchase(com.android.billingclient.api.AcknowledgePurchaseParams,%20com.android.billingclient.api.AcknowledgePurchaseResponseListener))
   Future<BillingResultWrapper> acknowledgePurchase(String purchaseToken) async {
-    return BillingResultWrapper.fromJson((await channel.invokeMapMethod<String,
-                dynamic>(
-            'BillingClient#acknowledgePurchase(AcknowledgePurchaseParams, AcknowledgePurchaseResponseListener)',
-            <String, dynamic>{
-              'purchaseToken': purchaseToken,
-            })) ??
-        <String, dynamic>{});
+    return resultWrapperFromPlatform(
+        await _hostApi.acknowledgePurchase(purchaseToken));
   }
 
   /// Checks if the specified feature or capability is supported by the Play Store.
   /// Call this to check if a [BillingClientFeature] is supported by the device.
   Future<bool> isFeatureSupported(BillingClientFeature feature) async {
-    final bool? result = await channel.invokeMethod<bool>(
-        'BillingClient#isFeatureSupported(String)', <String, dynamic>{
-      'feature': const BillingClientFeatureConverter().toJson(feature),
-    });
-    return result ?? false;
+    return _hostApi.isFeatureSupported(
+        const BillingClientFeatureConverter().toJson(feature));
   }
-
-  /// BillingConfig method channel string identifier.
-  //
-  // Must match the value of GET_BILLING_CONFIG in
-  // ../../../android/src/main/java/io/flutter/plugins/inapppurchase/MethodCallHandlerImpl.java
-  @visibleForTesting
-  static const String getBillingConfigMethodString =
-      'BillingClient#getBillingConfig()';
 
   /// Fetches billing config info into a [BillingConfigWrapper] object.
   Future<BillingConfigWrapper> getBillingConfig() async {
-    return BillingConfigWrapper.fromJson((await channel
-            .invokeMapMethod<String, dynamic>(getBillingConfigMethodString)) ??
-        <String, dynamic>{});
+    return billingConfigWrapperFromPlatform(
+        await _hostApi.getBillingConfigAsync());
   }
-
-  /// isAlternativeBillingOnlyAvailable method channel string identifier.
-  //
-  // Must match the value of IS_ALTERNATIVE_BILLING_ONLY_AVAILABLE in
-  // ../../../android/src/main/java/io/flutter/plugins/inapppurchase/MethodCallHandlerImpl.java
-  @visibleForTesting
-  static const String isAlternativeBillingOnlyAvailableMethodString =
-      'BillingClient#isAlternativeBillingOnlyAvailable()';
 
   /// Checks if "AlterntitiveBillingOnly" feature is available.
   Future<BillingResultWrapper> isAlternativeBillingOnlyAvailable() async {
-    return BillingResultWrapper.fromJson(
-        (await channel.invokeMapMethod<String, dynamic>(
-                isAlternativeBillingOnlyAvailableMethodString)) ??
-            <String, dynamic>{});
+    return resultWrapperFromPlatform(
+        await _hostApi.isAlternativeBillingOnlyAvailableAsync());
   }
-
-  /// showAlternativeBillingOnlyInformationDialog method channel string identifier.
-  //
-  // Must match the value of SHOW_ALTERNATIVE_BILLING_ONLY_INFORMATION_DIALOG in
-  // ../../../android/src/main/java/io/flutter/plugins/inapppurchase/MethodCallHandlerImpl.java
-  @visibleForTesting
-  static const String showAlternativeBillingOnlyInformationDialogMethodString =
-      'BillingClient#showAlternativeBillingOnlyInformationDialog()';
 
   /// Shows the alternative billing only information dialog on top of the calling app.
   Future<BillingResultWrapper>
       showAlternativeBillingOnlyInformationDialog() async {
-    return BillingResultWrapper.fromJson(
-        (await channel.invokeMapMethod<String, dynamic>(
-                showAlternativeBillingOnlyInformationDialogMethodString)) ??
-            <String, dynamic>{});
+    return resultWrapperFromPlatform(
+        await _hostApi.showAlternativeBillingOnlyInformationDialog());
   }
-
-  /// createAlternativeBillingOnlyReportingDetails method channel string identifier.
-  //
-  // Must match the value of CREATE_ALTERNATIVE_BILLING_ONLY_REPORTING_DETAILS in
-  // ../../../android/src/main/java/io/flutter/plugins/inapppurchase/MethodCallHandlerImpl.java
-  @visibleForTesting
-  static const String createAlternativeBillingOnlyReportingDetailsMethodString =
-      'BillingClient#createAlternativeBillingOnlyReportingDetails()';
 
   /// The details used to report transactions made via alternative billing
   /// without user choice to use Google Play billing.
   Future<AlternativeBillingOnlyReportingDetailsWrapper>
       createAlternativeBillingOnlyReportingDetails() async {
-    return AlternativeBillingOnlyReportingDetailsWrapper.fromJson(
-        (await channel.invokeMapMethod<String, dynamic>(
-                createAlternativeBillingOnlyReportingDetailsMethodString)) ??
-            <String, dynamic>{});
+    return alternativeBillingOnlyReportingDetailsWrapperFromPlatform(
+        await _hostApi.createAlternativeBillingOnlyReportingDetailsAsync());
+  }
+}
+
+/// Implementation of InAppPurchaseCallbackApi, for use by [BillingClient].
+///
+/// Actual Dart callback functions are stored here, indexed by the handle
+/// provided to the host side when setting up the connection in non-singleton
+/// cases. When a callback is triggered from the host side, the corresponding
+/// Dart function is invoked.
+@visibleForTesting
+class HostBillingClientCallbackHandler implements InAppPurchaseCallbackApi {
+  /// Creates a new handler with the given singleton handlers, and no
+  /// per-connection handlers.
+  HostBillingClientCallbackHandler(
+      this.purchasesUpdatedCallback, this.alternativeBillingListener);
+
+  /// The handler for PurchasesUpdatedListener#onPurchasesUpdated.
+  final PurchasesUpdatedListener purchasesUpdatedCallback;
+
+  /// The handler for UserChoiceBillingListener#userSelectedAlternativeBilling.
+  UserSelectedAlternativeBillingListener? alternativeBillingListener;
+
+  /// Handlers for onBillingServiceDisconnected, indexed by handle identifier.
+  final List<OnBillingServiceDisconnected> disconnectCallbacks =
+      <OnBillingServiceDisconnected>[];
+
+  @override
+  void onBillingServiceDisconnected(int callbackHandle) {
+    disconnectCallbacks[callbackHandle]();
   }
 
-  /// The method call handler for [channel].
-  @visibleForTesting
-  Future<void> callHandler(MethodCall call) async {
-    switch (call.method) {
-      case kOnPurchasesUpdated:
-        // The purchases updated listener is a singleton.
-        assert(_callbacks[kOnPurchasesUpdated]!.length == 1);
-        final PurchasesUpdatedListener listener =
-            _callbacks[kOnPurchasesUpdated]!.first as PurchasesUpdatedListener;
-        listener(PurchasesResultWrapper.fromJson(
-            (call.arguments as Map<dynamic, dynamic>).cast<String, dynamic>()));
-      case _kOnBillingServiceDisconnected:
-        final int handle =
-            (call.arguments as Map<Object?, Object?>)['handle']! as int;
-        final List<OnBillingServiceDisconnected> onDisconnected =
-            _callbacks[_kOnBillingServiceDisconnected]!
-                .cast<OnBillingServiceDisconnected>();
-        onDisconnected[handle]();
-    }
+  @override
+  void onPurchasesUpdated(PlatformPurchasesResponse update) {
+    purchasesUpdatedCallback(purchasesResultWrapperFromPlatform(update));
+  }
+
+  @override
+  void userSelectedalternativeBilling(PlatformUserChoiceDetails details) {
+    alternativeBillingListener!(userChoiceDetailsFromPlatform(details));
   }
 }
 
@@ -443,7 +393,7 @@ enum BillingResponse {
   @JsonValue(-2)
   featureNotSupported,
 
-  /// The play Store service is not connected now - potentially transient state.
+  /// The Play Store service is not connected now - potentially transient state.
   @JsonValue(-1)
   serviceDisconnected,
 
@@ -490,8 +440,8 @@ enum BillingResponse {
 
 /// Plugin concept to cover billing modes.
 ///
-/// [playBillingOnly] (google play billing only).
-/// [alternativeBillingOnly] (app provided billing with reporting to play).
+/// [playBillingOnly] (google Play billing only).
+/// [alternativeBillingOnly] (app provided billing with reporting to Play).
 @JsonEnum(alwaysCreate: true)
 enum BillingChoiceMode {
   // WARNING: Changes to this class need to be reflected in our generated code.
@@ -500,13 +450,17 @@ enum BillingChoiceMode {
   // Values must match what is used in
   // in_app_purchase_android/android/src/main/java/io/flutter/plugins/inapppurchase/MethodCallHandlerImpl.java
 
-  /// Billing through google play. Default state.
+  /// Billing through google Play. Default state.
   @JsonValue(0)
   playBillingOnly,
 
   /// Billing through app provided flow.
   @JsonValue(1)
   alternativeBillingOnly,
+
+  /// Users can choose Play billing or alternative billing.
+  @JsonValue(2)
+  userChoiceBilling,
 }
 
 /// Serializer for [BillingChoiceMode].
@@ -519,6 +473,8 @@ class BillingChoiceModeConverter
   const BillingChoiceModeConverter();
 
   @override
+  @Deprecated('JSON serialization is not intended for public use, and will '
+      'be removed in a future version.')
   BillingChoiceMode fromJson(int? json) {
     if (json == null) {
       return BillingChoiceMode.playBillingOnly;
@@ -539,6 +495,8 @@ class BillingResponseConverter implements JsonConverter<BillingResponse, int?> {
   const BillingResponseConverter();
 
   @override
+  @Deprecated('JSON serialization is not intended for public use, and will '
+      'be removed in a future version.')
   BillingResponse fromJson(int? json) {
     if (json == null) {
       return BillingResponse.error;
@@ -579,6 +537,8 @@ class ProductTypeConverter implements JsonConverter<ProductType, String?> {
   const ProductTypeConverter();
 
   @override
+  @Deprecated('JSON serialization is not intended for public use, and will '
+      'be removed in a future version.')
   ProductType fromJson(String? json) {
     if (json == null) {
       return ProductType.inapp;
@@ -649,6 +609,8 @@ class ProrationModeConverter implements JsonConverter<ProrationMode, int?> {
   const ProrationModeConverter();
 
   @override
+  @Deprecated('JSON serialization is not intended for public use, and will '
+      'be removed in a future version.')
   ProrationMode fromJson(int? json) {
     if (json == null) {
       return ProrationMode.unknownSubscriptionUpgradeDowngradePolicy;
@@ -704,6 +666,8 @@ class BillingClientFeatureConverter
   const BillingClientFeatureConverter();
 
   @override
+  @Deprecated('JSON serialization is not intended for public use, and will '
+      'be removed in a future version.')
   BillingClientFeature fromJson(String json) {
     return $enumDecode<BillingClientFeature, dynamic>(
         _$BillingClientFeatureEnumMap.cast<BillingClientFeature, dynamic>(),

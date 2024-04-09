@@ -77,6 +77,7 @@ class MockTestFocusMeteringActionHostApi extends _i1.Mock
   void create(
     int? identifier,
     List<_i5.MeteringPointInfo?>? meteringPointInfos,
+    bool? disableAutoCancel,
   ) =>
       super.noSuchMethod(
         Invocation.method(
@@ -84,6 +85,7 @@ class MockTestFocusMeteringActionHostApi extends _i1.Mock
           [
             identifier,
             meteringPointInfos,
+            disableAutoCancel,
           ],
         ),
         returnValueForMissingStub: null,

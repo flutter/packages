@@ -1,7 +1,20 @@
-## NEXT
+## 0.10.9+1
+
+* Changes the visibility of a number of fields to `@VisibleForTesting` in order simplify testing.
+
+## 0.10.9
+
+* Adds support to control video FPS and bitrate. See `CameraController.withSettings`.
+
+## 0.10.8+18
+
+* Updates annotations lib to 1.7.1.
+
+## 0.10.8+17
 
 * Updates minimum supported SDK version to Flutter 3.13/Dart 3.1.
 * Updates compileSdk version to 34.
+* Updates `README.md` to encourage developers to opt into `camera_android_camerax`.
 
 ## 0.10.8+16
 

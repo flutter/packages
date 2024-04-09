@@ -139,6 +139,115 @@ class AllNullableTypes {
     this.aNullableEnum,
     this.aNullableString,
     this.aNullableObject,
+    this.allNullableTypes,
+  });
+
+  bool? aNullableBool;
+
+  int? aNullableInt;
+
+  int? aNullableInt64;
+
+  double? aNullableDouble;
+
+  Uint8List? aNullableByteArray;
+
+  Int32List? aNullable4ByteArray;
+
+  Int64List? aNullable8ByteArray;
+
+  Float64List? aNullableFloatArray;
+
+  List<Object?>? aNullableList;
+
+  Map<Object?, Object?>? aNullableMap;
+
+  List<List<bool?>?>? nullableNestedList;
+
+  Map<String?, String?>? nullableMapWithAnnotations;
+
+  Map<String?, Object?>? nullableMapWithObject;
+
+  AnEnum? aNullableEnum;
+
+  String? aNullableString;
+
+  Object? aNullableObject;
+
+  AllNullableTypes? allNullableTypes;
+
+  Object encode() {
+    return <Object?>[
+      aNullableBool,
+      aNullableInt,
+      aNullableInt64,
+      aNullableDouble,
+      aNullableByteArray,
+      aNullable4ByteArray,
+      aNullable8ByteArray,
+      aNullableFloatArray,
+      aNullableList,
+      aNullableMap,
+      nullableNestedList,
+      nullableMapWithAnnotations,
+      nullableMapWithObject,
+      aNullableEnum?.index,
+      aNullableString,
+      aNullableObject,
+      allNullableTypes?.encode(),
+    ];
+  }
+
+  static AllNullableTypes decode(Object result) {
+    result as List<Object?>;
+    return AllNullableTypes(
+      aNullableBool: result[0] as bool?,
+      aNullableInt: result[1] as int?,
+      aNullableInt64: result[2] as int?,
+      aNullableDouble: result[3] as double?,
+      aNullableByteArray: result[4] as Uint8List?,
+      aNullable4ByteArray: result[5] as Int32List?,
+      aNullable8ByteArray: result[6] as Int64List?,
+      aNullableFloatArray: result[7] as Float64List?,
+      aNullableList: result[8] as List<Object?>?,
+      aNullableMap: result[9] as Map<Object?, Object?>?,
+      nullableNestedList: (result[10] as List<Object?>?)?.cast<List<bool?>?>(),
+      nullableMapWithAnnotations:
+          (result[11] as Map<Object?, Object?>?)?.cast<String?, String?>(),
+      nullableMapWithObject:
+          (result[12] as Map<Object?, Object?>?)?.cast<String?, Object?>(),
+      aNullableEnum:
+          result[13] != null ? AnEnum.values[result[13]! as int] : null,
+      aNullableString: result[14] as String?,
+      aNullableObject: result[15],
+      allNullableTypes: result[16] != null
+          ? AllNullableTypes.decode(result[16]! as List<Object?>)
+          : null,
+    );
+  }
+}
+
+/// The primary purpose for this class is to ensure coverage of Swift structs
+/// with nullable items, as the primary [AllNullableTypes] class is being used to
+/// test Swift classes.
+class AllNullableTypesWithoutRecursion {
+  AllNullableTypesWithoutRecursion({
+    this.aNullableBool,
+    this.aNullableInt,
+    this.aNullableInt64,
+    this.aNullableDouble,
+    this.aNullableByteArray,
+    this.aNullable4ByteArray,
+    this.aNullable8ByteArray,
+    this.aNullableFloatArray,
+    this.aNullableList,
+    this.aNullableMap,
+    this.nullableNestedList,
+    this.nullableMapWithAnnotations,
+    this.nullableMapWithObject,
+    this.aNullableEnum,
+    this.aNullableString,
+    this.aNullableObject,
   });
 
   bool? aNullableBool;
@@ -194,9 +303,9 @@ class AllNullableTypes {
     ];
   }
 
-  static AllNullableTypes decode(Object result) {
+  static AllNullableTypesWithoutRecursion decode(Object result) {
     result as List<Object?>;
-    return AllNullableTypes(
+    return AllNullableTypesWithoutRecursion(
       aNullableBool: result[0] as bool?,
       aNullableInt: result[1] as int?,
       aNullableInt64: result[2] as int?,
@@ -228,16 +337,20 @@ class AllNullableTypes {
 class AllClassesWrapper {
   AllClassesWrapper({
     required this.allNullableTypes,
+    this.allNullableTypesWithoutRecursion,
     this.allTypes,
   });
 
   AllNullableTypes allNullableTypes;
+
+  AllNullableTypesWithoutRecursion? allNullableTypesWithoutRecursion;
 
   AllTypes? allTypes;
 
   Object encode() {
     return <Object?>[
       allNullableTypes.encode(),
+      allNullableTypesWithoutRecursion?.encode(),
       allTypes?.encode(),
     ];
   }
@@ -246,8 +359,11 @@ class AllClassesWrapper {
     result as List<Object?>;
     return AllClassesWrapper(
       allNullableTypes: AllNullableTypes.decode(result[0]! as List<Object?>),
-      allTypes: result[1] != null
-          ? AllTypes.decode(result[1]! as List<Object?>)
+      allNullableTypesWithoutRecursion: result[1] != null
+          ? AllNullableTypesWithoutRecursion.decode(result[1]! as List<Object?>)
+          : null,
+      allTypes: result[2] != null
+          ? AllTypes.decode(result[2]! as List<Object?>)
           : null,
     );
   }
@@ -285,11 +401,14 @@ class _HostIntegrationCoreApiCodec extends StandardMessageCodec {
     } else if (value is AllNullableTypes) {
       buffer.putUint8(129);
       writeValue(buffer, value.encode());
-    } else if (value is AllTypes) {
+    } else if (value is AllNullableTypesWithoutRecursion) {
       buffer.putUint8(130);
       writeValue(buffer, value.encode());
-    } else if (value is TestMessage) {
+    } else if (value is AllTypes) {
       buffer.putUint8(131);
+      writeValue(buffer, value.encode());
+    } else if (value is TestMessage) {
+      buffer.putUint8(132);
       writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
@@ -304,8 +423,10 @@ class _HostIntegrationCoreApiCodec extends StandardMessageCodec {
       case 129:
         return AllNullableTypes.decode(readValue(buffer)!);
       case 130:
-        return AllTypes.decode(readValue(buffer)!);
+        return AllNullableTypesWithoutRecursion.decode(readValue(buffer)!);
       case 131:
+        return AllTypes.decode(readValue(buffer)!);
+      case 132:
         return TestMessage.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
@@ -319,18 +440,23 @@ class HostIntegrationCoreApi {
   /// Constructor for [HostIntegrationCoreApi].  The [binaryMessenger] named argument is
   /// available for dependency injection.  If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
-  HostIntegrationCoreApi({BinaryMessenger? binaryMessenger})
-      : __pigeon_binaryMessenger = binaryMessenger;
+  HostIntegrationCoreApi(
+      {BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
+      : __pigeon_binaryMessenger = binaryMessenger,
+        __pigeon_messageChannelSuffix =
+            messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
   final BinaryMessenger? __pigeon_binaryMessenger;
 
   static const MessageCodec<Object?> pigeonChannelCodec =
       _HostIntegrationCoreApiCodec();
 
+  final String __pigeon_messageChannelSuffix;
+
   /// A no-op function taking no arguments and returning no value, to sanity
   /// test basic calling.
   Future<void> noop() async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.noop';
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.noop$__pigeon_messageChannelSuffix';
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
@@ -354,8 +480,8 @@ class HostIntegrationCoreApi {
 
   /// Returns the passed object, to test serialization and deserialization.
   Future<AllTypes> echoAllTypes(AllTypes everything) async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAllTypes';
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAllTypes$__pigeon_messageChannelSuffix';
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
@@ -384,8 +510,8 @@ class HostIntegrationCoreApi {
 
   /// Returns an error, to test error handling.
   Future<Object?> throwError() async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.throwError';
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.throwError$__pigeon_messageChannelSuffix';
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
@@ -409,8 +535,8 @@ class HostIntegrationCoreApi {
 
   /// Returns an error from a void function, to test error handling.
   Future<void> throwErrorFromVoid() async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.throwErrorFromVoid';
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.throwErrorFromVoid$__pigeon_messageChannelSuffix';
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
@@ -434,8 +560,8 @@ class HostIntegrationCoreApi {
 
   /// Returns a Flutter error, to test error handling.
   Future<Object?> throwFlutterError() async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.throwFlutterError';
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.throwFlutterError$__pigeon_messageChannelSuffix';
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
@@ -459,8 +585,8 @@ class HostIntegrationCoreApi {
 
   /// Returns passed in int.
   Future<int> echoInt(int anInt) async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoInt';
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoInt$__pigeon_messageChannelSuffix';
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
@@ -489,8 +615,8 @@ class HostIntegrationCoreApi {
 
   /// Returns passed in double.
   Future<double> echoDouble(double aDouble) async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoDouble';
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoDouble$__pigeon_messageChannelSuffix';
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
@@ -519,8 +645,8 @@ class HostIntegrationCoreApi {
 
   /// Returns the passed in boolean.
   Future<bool> echoBool(bool aBool) async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoBool';
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoBool$__pigeon_messageChannelSuffix';
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
@@ -549,8 +675,8 @@ class HostIntegrationCoreApi {
 
   /// Returns the passed in string.
   Future<String> echoString(String aString) async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoString';
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoString$__pigeon_messageChannelSuffix';
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
@@ -579,8 +705,8 @@ class HostIntegrationCoreApi {
 
   /// Returns the passed in Uint8List.
   Future<Uint8List> echoUint8List(Uint8List aUint8List) async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoUint8List';
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoUint8List$__pigeon_messageChannelSuffix';
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
@@ -609,8 +735,8 @@ class HostIntegrationCoreApi {
 
   /// Returns the passed in generic Object.
   Future<Object> echoObject(Object anObject) async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoObject';
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoObject$__pigeon_messageChannelSuffix';
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
@@ -639,8 +765,8 @@ class HostIntegrationCoreApi {
 
   /// Returns the passed list, to test serialization and deserialization.
   Future<List<Object?>> echoList(List<Object?> aList) async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoList';
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoList$__pigeon_messageChannelSuffix';
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
@@ -669,8 +795,8 @@ class HostIntegrationCoreApi {
 
   /// Returns the passed map, to test serialization and deserialization.
   Future<Map<String?, Object?>> echoMap(Map<String?, Object?> aMap) async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoMap';
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoMap$__pigeon_messageChannelSuffix';
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
@@ -700,8 +826,8 @@ class HostIntegrationCoreApi {
 
   /// Returns the passed map to test nested class serialization and deserialization.
   Future<AllClassesWrapper> echoClassWrapper(AllClassesWrapper wrapper) async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoClassWrapper';
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoClassWrapper$__pigeon_messageChannelSuffix';
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
@@ -730,8 +856,8 @@ class HostIntegrationCoreApi {
 
   /// Returns the passed enum to test serialization and deserialization.
   Future<AnEnum> echoEnum(AnEnum anEnum) async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoEnum';
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoEnum$__pigeon_messageChannelSuffix';
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
@@ -760,8 +886,8 @@ class HostIntegrationCoreApi {
 
   /// Returns the default string.
   Future<String> echoNamedDefaultString({String aString = 'default'}) async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNamedDefaultString';
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNamedDefaultString$__pigeon_messageChannelSuffix';
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
@@ -790,8 +916,8 @@ class HostIntegrationCoreApi {
 
   /// Returns passed in double.
   Future<double> echoOptionalDefaultDouble([double aDouble = 3.14]) async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoOptionalDefaultDouble';
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoOptionalDefaultDouble$__pigeon_messageChannelSuffix';
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
@@ -820,8 +946,8 @@ class HostIntegrationCoreApi {
 
   /// Returns passed in int.
   Future<int> echoRequiredInt({required int anInt}) async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoRequiredInt';
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoRequiredInt$__pigeon_messageChannelSuffix';
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
@@ -851,8 +977,8 @@ class HostIntegrationCoreApi {
   /// Returns the passed object, to test serialization and deserialization.
   Future<AllNullableTypes?> echoAllNullableTypes(
       AllNullableTypes? everything) async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAllNullableTypes';
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAllNullableTypes$__pigeon_messageChannelSuffix';
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
@@ -874,11 +1000,38 @@ class HostIntegrationCoreApi {
     }
   }
 
+  /// Returns the passed object, to test serialization and deserialization.
+  Future<AllNullableTypesWithoutRecursion?>
+      echoAllNullableTypesWithoutRecursion(
+          AllNullableTypesWithoutRecursion? everything) async {
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAllNullableTypesWithoutRecursion$__pigeon_messageChannelSuffix';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: __pigeon_binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        await __pigeon_channel.send(<Object?>[everything]) as List<Object?>?;
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: __pigeon_replyList[0]! as String,
+        message: __pigeon_replyList[1] as String?,
+        details: __pigeon_replyList[2],
+      );
+    } else {
+      return (__pigeon_replyList[0] as AllNullableTypesWithoutRecursion?);
+    }
+  }
+
   /// Returns the inner `aString` value from the wrapped object, to test
   /// sending of nested objects.
   Future<String?> extractNestedNullableString(AllClassesWrapper wrapper) async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.extractNestedNullableString';
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.extractNestedNullableString$__pigeon_messageChannelSuffix';
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
@@ -904,8 +1057,8 @@ class HostIntegrationCoreApi {
   /// sending of nested objects.
   Future<AllClassesWrapper> createNestedNullableString(
       String? nullableString) async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.createNestedNullableString';
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.createNestedNullableString$__pigeon_messageChannelSuffix';
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
@@ -935,8 +1088,8 @@ class HostIntegrationCoreApi {
   /// Returns passed in arguments of multiple types.
   Future<AllNullableTypes> sendMultipleNullableTypes(
       bool? aNullableBool, int? aNullableInt, String? aNullableString) async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.sendMultipleNullableTypes';
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.sendMultipleNullableTypes$__pigeon_messageChannelSuffix';
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
@@ -964,10 +1117,43 @@ class HostIntegrationCoreApi {
     }
   }
 
+  /// Returns passed in arguments of multiple types.
+  Future<AllNullableTypesWithoutRecursion>
+      sendMultipleNullableTypesWithoutRecursion(bool? aNullableBool,
+          int? aNullableInt, String? aNullableString) async {
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.sendMultipleNullableTypesWithoutRecursion$__pigeon_messageChannelSuffix';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: __pigeon_binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList = await __pigeon_channel
+            .send(<Object?>[aNullableBool, aNullableInt, aNullableString])
+        as List<Object?>?;
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: __pigeon_replyList[0]! as String,
+        message: __pigeon_replyList[1] as String?,
+        details: __pigeon_replyList[2],
+      );
+    } else if (__pigeon_replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (__pigeon_replyList[0] as AllNullableTypesWithoutRecursion?)!;
+    }
+  }
+
   /// Returns passed in int.
   Future<int?> echoNullableInt(int? aNullableInt) async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableInt';
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableInt$__pigeon_messageChannelSuffix';
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
@@ -991,8 +1177,8 @@ class HostIntegrationCoreApi {
 
   /// Returns passed in double.
   Future<double?> echoNullableDouble(double? aNullableDouble) async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableDouble';
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableDouble$__pigeon_messageChannelSuffix';
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
@@ -1016,8 +1202,8 @@ class HostIntegrationCoreApi {
 
   /// Returns the passed in boolean.
   Future<bool?> echoNullableBool(bool? aNullableBool) async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableBool';
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableBool$__pigeon_messageChannelSuffix';
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
@@ -1041,8 +1227,8 @@ class HostIntegrationCoreApi {
 
   /// Returns the passed in string.
   Future<String?> echoNullableString(String? aNullableString) async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableString';
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableString$__pigeon_messageChannelSuffix';
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
@@ -1067,8 +1253,8 @@ class HostIntegrationCoreApi {
   /// Returns the passed in Uint8List.
   Future<Uint8List?> echoNullableUint8List(
       Uint8List? aNullableUint8List) async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableUint8List';
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableUint8List$__pigeon_messageChannelSuffix';
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
@@ -1092,8 +1278,8 @@ class HostIntegrationCoreApi {
 
   /// Returns the passed in generic Object.
   Future<Object?> echoNullableObject(Object? aNullableObject) async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableObject';
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableObject$__pigeon_messageChannelSuffix';
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
@@ -1117,8 +1303,8 @@ class HostIntegrationCoreApi {
 
   /// Returns the passed list, to test serialization and deserialization.
   Future<List<Object?>?> echoNullableList(List<Object?>? aNullableList) async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableList';
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableList$__pigeon_messageChannelSuffix';
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
@@ -1143,8 +1329,8 @@ class HostIntegrationCoreApi {
   /// Returns the passed map, to test serialization and deserialization.
   Future<Map<String?, Object?>?> echoNullableMap(
       Map<String?, Object?>? aNullableMap) async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableMap';
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableMap$__pigeon_messageChannelSuffix';
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
@@ -1168,8 +1354,8 @@ class HostIntegrationCoreApi {
   }
 
   Future<AnEnum?> echoNullableEnum(AnEnum? anEnum) async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableEnum';
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableEnum$__pigeon_messageChannelSuffix';
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
@@ -1195,8 +1381,8 @@ class HostIntegrationCoreApi {
 
   /// Returns passed in int.
   Future<int?> echoOptionalNullableInt([int? aNullableInt]) async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoOptionalNullableInt';
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoOptionalNullableInt$__pigeon_messageChannelSuffix';
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
@@ -1220,8 +1406,8 @@ class HostIntegrationCoreApi {
 
   /// Returns the passed in string.
   Future<String?> echoNamedNullableString({String? aNullableString}) async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNamedNullableString';
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNamedNullableString$__pigeon_messageChannelSuffix';
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
@@ -1246,8 +1432,8 @@ class HostIntegrationCoreApi {
   /// A no-op function taking no arguments and returning no value, to sanity
   /// test basic asynchronous calling.
   Future<void> noopAsync() async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.noopAsync';
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.noopAsync$__pigeon_messageChannelSuffix';
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
@@ -1271,8 +1457,8 @@ class HostIntegrationCoreApi {
 
   /// Returns passed in int asynchronously.
   Future<int> echoAsyncInt(int anInt) async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncInt';
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncInt$__pigeon_messageChannelSuffix';
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
@@ -1301,8 +1487,8 @@ class HostIntegrationCoreApi {
 
   /// Returns passed in double asynchronously.
   Future<double> echoAsyncDouble(double aDouble) async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncDouble';
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncDouble$__pigeon_messageChannelSuffix';
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
@@ -1331,8 +1517,8 @@ class HostIntegrationCoreApi {
 
   /// Returns the passed in boolean asynchronously.
   Future<bool> echoAsyncBool(bool aBool) async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncBool';
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncBool$__pigeon_messageChannelSuffix';
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
@@ -1361,8 +1547,8 @@ class HostIntegrationCoreApi {
 
   /// Returns the passed string asynchronously.
   Future<String> echoAsyncString(String aString) async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncString';
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncString$__pigeon_messageChannelSuffix';
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
@@ -1391,8 +1577,8 @@ class HostIntegrationCoreApi {
 
   /// Returns the passed in Uint8List asynchronously.
   Future<Uint8List> echoAsyncUint8List(Uint8List aUint8List) async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncUint8List';
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncUint8List$__pigeon_messageChannelSuffix';
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
@@ -1421,8 +1607,8 @@ class HostIntegrationCoreApi {
 
   /// Returns the passed in generic Object asynchronously.
   Future<Object> echoAsyncObject(Object anObject) async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncObject';
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncObject$__pigeon_messageChannelSuffix';
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
@@ -1451,8 +1637,8 @@ class HostIntegrationCoreApi {
 
   /// Returns the passed list, to test asynchronous serialization and deserialization.
   Future<List<Object?>> echoAsyncList(List<Object?> aList) async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncList';
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncList$__pigeon_messageChannelSuffix';
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
@@ -1481,8 +1667,8 @@ class HostIntegrationCoreApi {
 
   /// Returns the passed map, to test asynchronous serialization and deserialization.
   Future<Map<String?, Object?>> echoAsyncMap(Map<String?, Object?> aMap) async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncMap';
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncMap$__pigeon_messageChannelSuffix';
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
@@ -1512,8 +1698,8 @@ class HostIntegrationCoreApi {
 
   /// Returns the passed enum, to test asynchronous serialization and deserialization.
   Future<AnEnum> echoAsyncEnum(AnEnum anEnum) async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncEnum';
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncEnum$__pigeon_messageChannelSuffix';
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
@@ -1542,8 +1728,8 @@ class HostIntegrationCoreApi {
 
   /// Responds with an error from an async function returning a value.
   Future<Object?> throwAsyncError() async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.throwAsyncError';
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.throwAsyncError$__pigeon_messageChannelSuffix';
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
@@ -1567,8 +1753,8 @@ class HostIntegrationCoreApi {
 
   /// Responds with an error from an async void function.
   Future<void> throwAsyncErrorFromVoid() async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.throwAsyncErrorFromVoid';
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.throwAsyncErrorFromVoid$__pigeon_messageChannelSuffix';
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
@@ -1592,8 +1778,8 @@ class HostIntegrationCoreApi {
 
   /// Responds with a Flutter error from an async function returning a value.
   Future<Object?> throwAsyncFlutterError() async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.throwAsyncFlutterError';
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.throwAsyncFlutterError$__pigeon_messageChannelSuffix';
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
@@ -1617,8 +1803,8 @@ class HostIntegrationCoreApi {
 
   /// Returns the passed object, to test async serialization and deserialization.
   Future<AllTypes> echoAsyncAllTypes(AllTypes everything) async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncAllTypes';
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncAllTypes$__pigeon_messageChannelSuffix';
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
@@ -1648,8 +1834,8 @@ class HostIntegrationCoreApi {
   /// Returns the passed object, to test serialization and deserialization.
   Future<AllNullableTypes?> echoAsyncNullableAllNullableTypes(
       AllNullableTypes? everything) async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableAllNullableTypes';
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableAllNullableTypes$__pigeon_messageChannelSuffix';
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
@@ -1671,10 +1857,37 @@ class HostIntegrationCoreApi {
     }
   }
 
+  /// Returns the passed object, to test serialization and deserialization.
+  Future<AllNullableTypesWithoutRecursion?>
+      echoAsyncNullableAllNullableTypesWithoutRecursion(
+          AllNullableTypesWithoutRecursion? everything) async {
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableAllNullableTypesWithoutRecursion$__pigeon_messageChannelSuffix';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: __pigeon_binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        await __pigeon_channel.send(<Object?>[everything]) as List<Object?>?;
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: __pigeon_replyList[0]! as String,
+        message: __pigeon_replyList[1] as String?,
+        details: __pigeon_replyList[2],
+      );
+    } else {
+      return (__pigeon_replyList[0] as AllNullableTypesWithoutRecursion?);
+    }
+  }
+
   /// Returns passed in int asynchronously.
   Future<int?> echoAsyncNullableInt(int? anInt) async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableInt';
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableInt$__pigeon_messageChannelSuffix';
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
@@ -1698,8 +1911,8 @@ class HostIntegrationCoreApi {
 
   /// Returns passed in double asynchronously.
   Future<double?> echoAsyncNullableDouble(double? aDouble) async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableDouble';
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableDouble$__pigeon_messageChannelSuffix';
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
@@ -1723,8 +1936,8 @@ class HostIntegrationCoreApi {
 
   /// Returns the passed in boolean asynchronously.
   Future<bool?> echoAsyncNullableBool(bool? aBool) async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableBool';
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableBool$__pigeon_messageChannelSuffix';
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
@@ -1748,8 +1961,8 @@ class HostIntegrationCoreApi {
 
   /// Returns the passed string asynchronously.
   Future<String?> echoAsyncNullableString(String? aString) async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableString';
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableString$__pigeon_messageChannelSuffix';
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
@@ -1773,8 +1986,8 @@ class HostIntegrationCoreApi {
 
   /// Returns the passed in Uint8List asynchronously.
   Future<Uint8List?> echoAsyncNullableUint8List(Uint8List? aUint8List) async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableUint8List';
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableUint8List$__pigeon_messageChannelSuffix';
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
@@ -1798,8 +2011,8 @@ class HostIntegrationCoreApi {
 
   /// Returns the passed in generic Object asynchronously.
   Future<Object?> echoAsyncNullableObject(Object? anObject) async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableObject';
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableObject$__pigeon_messageChannelSuffix';
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
@@ -1823,8 +2036,8 @@ class HostIntegrationCoreApi {
 
   /// Returns the passed list, to test asynchronous serialization and deserialization.
   Future<List<Object?>?> echoAsyncNullableList(List<Object?>? aList) async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableList';
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableList$__pigeon_messageChannelSuffix';
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
@@ -1849,8 +2062,8 @@ class HostIntegrationCoreApi {
   /// Returns the passed map, to test asynchronous serialization and deserialization.
   Future<Map<String?, Object?>?> echoAsyncNullableMap(
       Map<String?, Object?>? aMap) async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableMap';
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableMap$__pigeon_messageChannelSuffix';
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
@@ -1875,8 +2088,8 @@ class HostIntegrationCoreApi {
 
   /// Returns the passed enum, to test asynchronous serialization and deserialization.
   Future<AnEnum?> echoAsyncNullableEnum(AnEnum? anEnum) async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableEnum';
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableEnum$__pigeon_messageChannelSuffix';
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
@@ -1901,8 +2114,8 @@ class HostIntegrationCoreApi {
   }
 
   Future<void> callFlutterNoop() async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterNoop';
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterNoop$__pigeon_messageChannelSuffix';
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
@@ -1925,8 +2138,8 @@ class HostIntegrationCoreApi {
   }
 
   Future<Object?> callFlutterThrowError() async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterThrowError';
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterThrowError$__pigeon_messageChannelSuffix';
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
@@ -1949,8 +2162,8 @@ class HostIntegrationCoreApi {
   }
 
   Future<void> callFlutterThrowErrorFromVoid() async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterThrowErrorFromVoid';
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterThrowErrorFromVoid$__pigeon_messageChannelSuffix';
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
@@ -1973,8 +2186,8 @@ class HostIntegrationCoreApi {
   }
 
   Future<AllTypes> callFlutterEchoAllTypes(AllTypes everything) async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoAllTypes';
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoAllTypes$__pigeon_messageChannelSuffix';
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
@@ -2003,8 +2216,8 @@ class HostIntegrationCoreApi {
 
   Future<AllNullableTypes?> callFlutterEchoAllNullableTypes(
       AllNullableTypes? everything) async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoAllNullableTypes';
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoAllNullableTypes$__pigeon_messageChannelSuffix';
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
@@ -2028,8 +2241,8 @@ class HostIntegrationCoreApi {
 
   Future<AllNullableTypes> callFlutterSendMultipleNullableTypes(
       bool? aNullableBool, int? aNullableInt, String? aNullableString) async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterSendMultipleNullableTypes';
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterSendMultipleNullableTypes$__pigeon_messageChannelSuffix';
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
@@ -2057,9 +2270,67 @@ class HostIntegrationCoreApi {
     }
   }
 
+  Future<AllNullableTypesWithoutRecursion?>
+      callFlutterEchoAllNullableTypesWithoutRecursion(
+          AllNullableTypesWithoutRecursion? everything) async {
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoAllNullableTypesWithoutRecursion$__pigeon_messageChannelSuffix';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: __pigeon_binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        await __pigeon_channel.send(<Object?>[everything]) as List<Object?>?;
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: __pigeon_replyList[0]! as String,
+        message: __pigeon_replyList[1] as String?,
+        details: __pigeon_replyList[2],
+      );
+    } else {
+      return (__pigeon_replyList[0] as AllNullableTypesWithoutRecursion?);
+    }
+  }
+
+  Future<AllNullableTypesWithoutRecursion>
+      callFlutterSendMultipleNullableTypesWithoutRecursion(bool? aNullableBool,
+          int? aNullableInt, String? aNullableString) async {
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterSendMultipleNullableTypesWithoutRecursion$__pigeon_messageChannelSuffix';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: __pigeon_binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList = await __pigeon_channel
+            .send(<Object?>[aNullableBool, aNullableInt, aNullableString])
+        as List<Object?>?;
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: __pigeon_replyList[0]! as String,
+        message: __pigeon_replyList[1] as String?,
+        details: __pigeon_replyList[2],
+      );
+    } else if (__pigeon_replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (__pigeon_replyList[0] as AllNullableTypesWithoutRecursion?)!;
+    }
+  }
+
   Future<bool> callFlutterEchoBool(bool aBool) async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoBool';
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoBool$__pigeon_messageChannelSuffix';
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
@@ -2087,8 +2358,8 @@ class HostIntegrationCoreApi {
   }
 
   Future<int> callFlutterEchoInt(int anInt) async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoInt';
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoInt$__pigeon_messageChannelSuffix';
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
@@ -2116,8 +2387,8 @@ class HostIntegrationCoreApi {
   }
 
   Future<double> callFlutterEchoDouble(double aDouble) async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoDouble';
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoDouble$__pigeon_messageChannelSuffix';
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
@@ -2145,8 +2416,8 @@ class HostIntegrationCoreApi {
   }
 
   Future<String> callFlutterEchoString(String aString) async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoString';
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoString$__pigeon_messageChannelSuffix';
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
@@ -2174,8 +2445,8 @@ class HostIntegrationCoreApi {
   }
 
   Future<Uint8List> callFlutterEchoUint8List(Uint8List aList) async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoUint8List';
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoUint8List$__pigeon_messageChannelSuffix';
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
@@ -2203,8 +2474,8 @@ class HostIntegrationCoreApi {
   }
 
   Future<List<Object?>> callFlutterEchoList(List<Object?> aList) async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoList';
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoList$__pigeon_messageChannelSuffix';
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
@@ -2233,8 +2504,8 @@ class HostIntegrationCoreApi {
 
   Future<Map<String?, Object?>> callFlutterEchoMap(
       Map<String?, Object?> aMap) async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoMap';
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoMap$__pigeon_messageChannelSuffix';
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
@@ -2263,8 +2534,8 @@ class HostIntegrationCoreApi {
   }
 
   Future<AnEnum> callFlutterEchoEnum(AnEnum anEnum) async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoEnum';
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoEnum$__pigeon_messageChannelSuffix';
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
@@ -2292,8 +2563,8 @@ class HostIntegrationCoreApi {
   }
 
   Future<bool?> callFlutterEchoNullableBool(bool? aBool) async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableBool';
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableBool$__pigeon_messageChannelSuffix';
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
@@ -2316,8 +2587,8 @@ class HostIntegrationCoreApi {
   }
 
   Future<int?> callFlutterEchoNullableInt(int? anInt) async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableInt';
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableInt$__pigeon_messageChannelSuffix';
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
@@ -2340,8 +2611,8 @@ class HostIntegrationCoreApi {
   }
 
   Future<double?> callFlutterEchoNullableDouble(double? aDouble) async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableDouble';
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableDouble$__pigeon_messageChannelSuffix';
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
@@ -2364,8 +2635,8 @@ class HostIntegrationCoreApi {
   }
 
   Future<String?> callFlutterEchoNullableString(String? aString) async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableString';
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableString$__pigeon_messageChannelSuffix';
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
@@ -2388,8 +2659,8 @@ class HostIntegrationCoreApi {
   }
 
   Future<Uint8List?> callFlutterEchoNullableUint8List(Uint8List? aList) async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableUint8List';
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableUint8List$__pigeon_messageChannelSuffix';
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
@@ -2413,8 +2684,8 @@ class HostIntegrationCoreApi {
 
   Future<List<Object?>?> callFlutterEchoNullableList(
       List<Object?>? aList) async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableList';
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableList$__pigeon_messageChannelSuffix';
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
@@ -2438,8 +2709,8 @@ class HostIntegrationCoreApi {
 
   Future<Map<String?, Object?>?> callFlutterEchoNullableMap(
       Map<String?, Object?>? aMap) async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableMap';
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableMap$__pigeon_messageChannelSuffix';
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
@@ -2463,8 +2734,8 @@ class HostIntegrationCoreApi {
   }
 
   Future<AnEnum?> callFlutterEchoNullableEnum(AnEnum? anEnum) async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableEnum';
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableEnum$__pigeon_messageChannelSuffix';
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
@@ -2487,6 +2758,35 @@ class HostIntegrationCoreApi {
           : AnEnum.values[__pigeon_replyList[0]! as int];
     }
   }
+
+  Future<String> callFlutterSmallApiEchoString(String aString) async {
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterSmallApiEchoString$__pigeon_messageChannelSuffix';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: __pigeon_binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        await __pigeon_channel.send(<Object?>[aString]) as List<Object?>?;
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: __pigeon_replyList[0]! as String,
+        message: __pigeon_replyList[1] as String?,
+        details: __pigeon_replyList[2],
+      );
+    } else if (__pigeon_replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (__pigeon_replyList[0] as String?)!;
+    }
+  }
 }
 
 class _FlutterIntegrationCoreApiCodec extends StandardMessageCodec {
@@ -2499,11 +2799,14 @@ class _FlutterIntegrationCoreApiCodec extends StandardMessageCodec {
     } else if (value is AllNullableTypes) {
       buffer.putUint8(129);
       writeValue(buffer, value.encode());
-    } else if (value is AllTypes) {
+    } else if (value is AllNullableTypesWithoutRecursion) {
       buffer.putUint8(130);
       writeValue(buffer, value.encode());
-    } else if (value is TestMessage) {
+    } else if (value is AllTypes) {
       buffer.putUint8(131);
+      writeValue(buffer, value.encode());
+    } else if (value is TestMessage) {
+      buffer.putUint8(132);
       writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
@@ -2518,8 +2821,10 @@ class _FlutterIntegrationCoreApiCodec extends StandardMessageCodec {
       case 129:
         return AllNullableTypes.decode(readValue(buffer)!);
       case 130:
-        return AllTypes.decode(readValue(buffer)!);
+        return AllNullableTypesWithoutRecursion.decode(readValue(buffer)!);
       case 131:
+        return AllTypes.decode(readValue(buffer)!);
+      case 132:
         return TestMessage.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
@@ -2553,6 +2858,16 @@ abstract class FlutterIntegrationCoreApi {
   ///
   /// Tests multiple-arity FlutterApi handling.
   AllNullableTypes sendMultipleNullableTypes(
+      bool? aNullableBool, int? aNullableInt, String? aNullableString);
+
+  /// Returns the passed object, to test serialization and deserialization.
+  AllNullableTypesWithoutRecursion? echoAllNullableTypesWithoutRecursion(
+      AllNullableTypesWithoutRecursion? everything);
+
+  /// Returns passed in arguments of multiple types.
+  ///
+  /// Tests multiple-arity FlutterApi handling.
+  AllNullableTypesWithoutRecursion sendMultipleNullableTypesWithoutRecursion(
       bool? aNullableBool, int? aNullableInt, String? aNullableString);
 
   /// Returns the passed boolean, to test serialization and deserialization.
@@ -2610,12 +2925,17 @@ abstract class FlutterIntegrationCoreApi {
   /// Returns the passed in generic Object asynchronously.
   Future<String> echoAsyncString(String aString);
 
-  static void setup(FlutterIntegrationCoreApi? api,
-      {BinaryMessenger? binaryMessenger}) {
+  static void setUp(
+    FlutterIntegrationCoreApi? api, {
+    BinaryMessenger? binaryMessenger,
+    String messageChannelSuffix = '',
+  }) {
+    messageChannelSuffix =
+        messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
     {
       final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
               Object?>(
-          'dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.noop',
+          'dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.noop$messageChannelSuffix',
           pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
@@ -2637,7 +2957,7 @@ abstract class FlutterIntegrationCoreApi {
     {
       final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
               Object?>(
-          'dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.throwError',
+          'dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.throwError$messageChannelSuffix',
           pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
@@ -2659,7 +2979,7 @@ abstract class FlutterIntegrationCoreApi {
     {
       final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
               Object?>(
-          'dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.throwErrorFromVoid',
+          'dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.throwErrorFromVoid$messageChannelSuffix',
           pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
@@ -2681,7 +3001,7 @@ abstract class FlutterIntegrationCoreApi {
     {
       final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
               Object?>(
-          'dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoAllTypes',
+          'dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoAllTypes$messageChannelSuffix',
           pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
@@ -2709,7 +3029,7 @@ abstract class FlutterIntegrationCoreApi {
     {
       final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
               Object?>(
-          'dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoAllNullableTypes',
+          'dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoAllNullableTypes$messageChannelSuffix',
           pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
@@ -2737,7 +3057,7 @@ abstract class FlutterIntegrationCoreApi {
     {
       final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
               Object?>(
-          'dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.sendMultipleNullableTypes',
+          'dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.sendMultipleNullableTypes$messageChannelSuffix',
           pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
@@ -2766,7 +3086,65 @@ abstract class FlutterIntegrationCoreApi {
     {
       final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
               Object?>(
-          'dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoBool',
+          'dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoAllNullableTypesWithoutRecursion$messageChannelSuffix',
+          pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        __pigeon_channel.setMessageHandler(null);
+      } else {
+        __pigeon_channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoAllNullableTypesWithoutRecursion was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final AllNullableTypesWithoutRecursion? arg_everything =
+              (args[0] as AllNullableTypesWithoutRecursion?);
+          try {
+            final AllNullableTypesWithoutRecursion? output =
+                api.echoAllNullableTypesWithoutRecursion(arg_everything);
+            return wrapResponse(result: output);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
+              Object?>(
+          'dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.sendMultipleNullableTypesWithoutRecursion$messageChannelSuffix',
+          pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        __pigeon_channel.setMessageHandler(null);
+      } else {
+        __pigeon_channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.sendMultipleNullableTypesWithoutRecursion was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final bool? arg_aNullableBool = (args[0] as bool?);
+          final int? arg_aNullableInt = (args[1] as int?);
+          final String? arg_aNullableString = (args[2] as String?);
+          try {
+            final AllNullableTypesWithoutRecursion output =
+                api.sendMultipleNullableTypesWithoutRecursion(
+                    arg_aNullableBool, arg_aNullableInt, arg_aNullableString);
+            return wrapResponse(result: output);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
+              Object?>(
+          'dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoBool$messageChannelSuffix',
           pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
@@ -2794,7 +3172,7 @@ abstract class FlutterIntegrationCoreApi {
     {
       final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
               Object?>(
-          'dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoInt',
+          'dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoInt$messageChannelSuffix',
           pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
@@ -2822,7 +3200,7 @@ abstract class FlutterIntegrationCoreApi {
     {
       final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
               Object?>(
-          'dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoDouble',
+          'dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoDouble$messageChannelSuffix',
           pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
@@ -2850,7 +3228,7 @@ abstract class FlutterIntegrationCoreApi {
     {
       final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
               Object?>(
-          'dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoString',
+          'dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoString$messageChannelSuffix',
           pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
@@ -2878,7 +3256,7 @@ abstract class FlutterIntegrationCoreApi {
     {
       final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
               Object?>(
-          'dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoUint8List',
+          'dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoUint8List$messageChannelSuffix',
           pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
@@ -2906,7 +3284,7 @@ abstract class FlutterIntegrationCoreApi {
     {
       final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
               Object?>(
-          'dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoList',
+          'dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoList$messageChannelSuffix',
           pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
@@ -2935,7 +3313,7 @@ abstract class FlutterIntegrationCoreApi {
     {
       final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
               Object?>(
-          'dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoMap',
+          'dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoMap$messageChannelSuffix',
           pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
@@ -2964,7 +3342,7 @@ abstract class FlutterIntegrationCoreApi {
     {
       final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
               Object?>(
-          'dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoEnum',
+          'dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoEnum$messageChannelSuffix',
           pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
@@ -2993,7 +3371,7 @@ abstract class FlutterIntegrationCoreApi {
     {
       final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
               Object?>(
-          'dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableBool',
+          'dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableBool$messageChannelSuffix',
           pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
@@ -3019,7 +3397,7 @@ abstract class FlutterIntegrationCoreApi {
     {
       final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
               Object?>(
-          'dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableInt',
+          'dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableInt$messageChannelSuffix',
           pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
@@ -3045,7 +3423,7 @@ abstract class FlutterIntegrationCoreApi {
     {
       final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
               Object?>(
-          'dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableDouble',
+          'dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableDouble$messageChannelSuffix',
           pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
@@ -3071,7 +3449,7 @@ abstract class FlutterIntegrationCoreApi {
     {
       final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
               Object?>(
-          'dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableString',
+          'dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableString$messageChannelSuffix',
           pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
@@ -3097,7 +3475,7 @@ abstract class FlutterIntegrationCoreApi {
     {
       final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
               Object?>(
-          'dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableUint8List',
+          'dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableUint8List$messageChannelSuffix',
           pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
@@ -3123,7 +3501,7 @@ abstract class FlutterIntegrationCoreApi {
     {
       final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
               Object?>(
-          'dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableList',
+          'dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableList$messageChannelSuffix',
           pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
@@ -3150,7 +3528,7 @@ abstract class FlutterIntegrationCoreApi {
     {
       final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
               Object?>(
-          'dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableMap',
+          'dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableMap$messageChannelSuffix',
           pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
@@ -3177,7 +3555,7 @@ abstract class FlutterIntegrationCoreApi {
     {
       final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
               Object?>(
-          'dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableEnum',
+          'dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableEnum$messageChannelSuffix',
           pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
@@ -3204,7 +3582,7 @@ abstract class FlutterIntegrationCoreApi {
     {
       final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
               Object?>(
-          'dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.noopAsync',
+          'dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.noopAsync$messageChannelSuffix',
           pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
@@ -3226,7 +3604,7 @@ abstract class FlutterIntegrationCoreApi {
     {
       final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
               Object?>(
-          'dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoAsyncString',
+          'dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoAsyncString$messageChannelSuffix',
           pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
@@ -3259,16 +3637,21 @@ class HostTrivialApi {
   /// Constructor for [HostTrivialApi].  The [binaryMessenger] named argument is
   /// available for dependency injection.  If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
-  HostTrivialApi({BinaryMessenger? binaryMessenger})
-      : __pigeon_binaryMessenger = binaryMessenger;
+  HostTrivialApi(
+      {BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
+      : __pigeon_binaryMessenger = binaryMessenger,
+        __pigeon_messageChannelSuffix =
+            messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
   final BinaryMessenger? __pigeon_binaryMessenger;
 
   static const MessageCodec<Object?> pigeonChannelCodec =
       StandardMessageCodec();
 
+  final String __pigeon_messageChannelSuffix;
+
   Future<void> noop() async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.pigeon_integration_tests.HostTrivialApi.noop';
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostTrivialApi.noop$__pigeon_messageChannelSuffix';
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
@@ -3296,16 +3679,21 @@ class HostSmallApi {
   /// Constructor for [HostSmallApi].  The [binaryMessenger] named argument is
   /// available for dependency injection.  If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
-  HostSmallApi({BinaryMessenger? binaryMessenger})
-      : __pigeon_binaryMessenger = binaryMessenger;
+  HostSmallApi(
+      {BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
+      : __pigeon_binaryMessenger = binaryMessenger,
+        __pigeon_messageChannelSuffix =
+            messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
   final BinaryMessenger? __pigeon_binaryMessenger;
 
   static const MessageCodec<Object?> pigeonChannelCodec =
       StandardMessageCodec();
 
+  final String __pigeon_messageChannelSuffix;
+
   Future<String> echo(String aString) async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.pigeon_integration_tests.HostSmallApi.echo';
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostSmallApi.echo$__pigeon_messageChannelSuffix';
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
@@ -3333,8 +3721,8 @@ class HostSmallApi {
   }
 
   Future<void> voidVoid() async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.pigeon_integration_tests.HostSmallApi.voidVoid';
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostSmallApi.voidVoid$__pigeon_messageChannelSuffix';
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
@@ -3389,11 +3777,17 @@ abstract class FlutterSmallApi {
 
   String echoString(String aString);
 
-  static void setup(FlutterSmallApi? api, {BinaryMessenger? binaryMessenger}) {
+  static void setUp(
+    FlutterSmallApi? api, {
+    BinaryMessenger? binaryMessenger,
+    String messageChannelSuffix = '',
+  }) {
+    messageChannelSuffix =
+        messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
     {
       final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
               Object?>(
-          'dev.flutter.pigeon.pigeon_integration_tests.FlutterSmallApi.echoWrappedList',
+          'dev.flutter.pigeon.pigeon_integration_tests.FlutterSmallApi.echoWrappedList$messageChannelSuffix',
           pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
@@ -3421,7 +3815,7 @@ abstract class FlutterSmallApi {
     {
       final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
               Object?>(
-          'dev.flutter.pigeon.pigeon_integration_tests.FlutterSmallApi.echoString',
+          'dev.flutter.pigeon.pigeon_integration_tests.FlutterSmallApi.echoString$messageChannelSuffix',
           pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
       if (api == null) {

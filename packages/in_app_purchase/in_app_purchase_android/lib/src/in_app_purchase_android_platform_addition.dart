@@ -2,19 +2,34 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:async';
+
 import 'package:flutter/services.dart';
 import 'package:in_app_purchase_platform_interface/in_app_purchase_platform_interface.dart';
 
 import '../billing_client_wrappers.dart';
 import '../in_app_purchase_android.dart';
 import 'billing_client_wrappers/billing_config_wrapper.dart';
+import 'types/translator.dart';
 
 /// Contains InApp Purchase features that are only available on PlayStore.
 class InAppPurchaseAndroidPlatformAddition
     extends InAppPurchasePlatformAddition {
   /// Creates a [InAppPurchaseAndroidPlatformAddition] which uses the supplied
   /// `BillingClientManager` to provide Android specific features.
-  InAppPurchaseAndroidPlatformAddition(this._billingClientManager);
+  InAppPurchaseAndroidPlatformAddition(this._billingClientManager) {
+    _billingClientManager.userChoiceDetailsStream
+        .map(Translator.convertToUserChoiceDetails)
+        .listen(_userChoiceDetailsStreamController.add);
+  }
+
+  final StreamController<GooglePlayUserChoiceDetails>
+      _userChoiceDetailsStreamController =
+      StreamController<GooglePlayUserChoiceDetails>.broadcast();
+
+  /// [GooglePlayUserChoiceDetails] emits each time user selects alternative billing.
+  late final Stream<GooglePlayUserChoiceDetails> userChoiceDetailsStream =
+      _userChoiceDetailsStreamController.stream;
 
   /// Whether pending purchase is enabled.
   ///
