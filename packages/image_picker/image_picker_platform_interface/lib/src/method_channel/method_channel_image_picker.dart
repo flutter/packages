@@ -73,10 +73,6 @@ class MethodChannelImagePicker extends ImagePickerPlatform {
       throw ArgumentError.value(maxHeight, 'maxHeight', 'cannot be negative');
     }
 
-    if (limit != null && limit < 2) {
-      throw ArgumentError.value(limit, 'limit', 'cannot be lower than 2');
-    }
-
     return _channel.invokeMethod<List<dynamic>?>(
       'pickMultiImage',
       <String, dynamic>{
