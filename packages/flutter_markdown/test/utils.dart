@@ -204,7 +204,7 @@ void expectTableSize(int rows, int columns) {
 
   expect(table.children.length, rows);
   for (int index = 0; index < rows; index++) {
-    expect(_ambiguate(table.children[index].children)!.length, columns);
+    expect(table.children[index].children.length, columns);
   }
 }
 
@@ -263,9 +263,3 @@ class TestAssetBundle extends CachingAssetBundle {
     }
   }
 }
-
-/// This allows a value of type T or T? to be treated as a value of type T?.
-///
-/// We use this so that APIs that have become non-nullable can still be used
-/// with `!` and `?` on the stable branch.
-T? _ambiguate<T>(T? value) => value;
