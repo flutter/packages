@@ -270,6 +270,20 @@ class AndroidCameraCameraX extends CameraPlatform {
     return cameraDescriptions;
   }
 
+  /// Creates an uninitialized camera instance with default settings and returns the camera ID.
+  ///
+  /// See [createCameraWithSettings]
+  @override
+  Future<int> createCamera(
+    CameraDescription description,
+    ResolutionPreset? resolutionPreset, {
+    bool enableAudio = false,
+  }) =>
+      createCameraWithSettings(
+          description,
+          MediaSettings(
+              resolutionPreset: resolutionPreset, enableAudio: enableAudio));
+
   /// Creates an uninitialized camera instance and returns the camera ID.
   ///
   /// In the CameraX library, cameras are accessed by combining [UseCase]s
@@ -287,13 +301,12 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// that a camera preview can be drawn to, a [Preview] instance is configured
   /// and bound to the [ProcessCameraProvider] instance.
   @override
-  Future<int> createCamera(
+  Future<int> createCameraWithSettings(
     CameraDescription cameraDescription,
-    ResolutionPreset? resolutionPreset, {
-    bool enableAudio = false,
-  }) async {
+    MediaSettings? mediaSettings,
+  ) async {
     // Must obtain proper permissions before attempting to access a camera.
-    await proxy.requestCameraPermissions(enableAudio);
+    await proxy.requestCameraPermissions(mediaSettings?.enableAudio ?? false);
 
     // Save CameraSelector that matches cameraDescription.
     final int cameraSelectorLensDirection =
@@ -307,9 +320,9 @@ class AndroidCameraCameraX extends CameraPlatform {
     // Determine ResolutionSelector and QualitySelector based on
     // resolutionPreset for camera UseCases.
     final ResolutionSelector? presetResolutionSelector =
-        _getResolutionSelectorFromPreset(resolutionPreset);
+        _getResolutionSelectorFromPreset(mediaSettings?.resolutionPreset);
     final QualitySelector? presetQualitySelector =
-        _getQualitySelectorFromPreset(resolutionPreset);
+        _getQualitySelectorFromPreset(mediaSettings?.resolutionPreset);
 
     // Retrieve a fresh ProcessCameraProvider instance.
     processCameraProvider ??= await proxy.getProcessCameraProvider();
