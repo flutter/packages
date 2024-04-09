@@ -5,6 +5,7 @@
 package io.flutter.plugins.inapppurchase;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
@@ -15,6 +16,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import android.content.Context;
+import androidx.test.core.app.ApplicationProvider;
 import com.android.billingclient.api.BillingClient;
 import com.android.billingclient.api.UserChoiceBillingListener;
 import com.android.billingclient.api.UserChoiceDetails;
@@ -25,26 +27,49 @@ import java.util.Collections;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.mockito.Spy;
+import org.robolectric.RobolectricTestRunner;
 
+@RunWith(RobolectricTestRunner.class)
 public class BillingClientFactoryImplTest {
 
   private AutoCloseable openMocks;
   BillingClientFactoryImpl factory;
   @Mock InAppPurchaseCallbackApi mockCallbackApi;
-  @Mock Context context;
+  Context context;
 
   @Before
   public void setUp() {
     openMocks = MockitoAnnotations.openMocks(this);
+    // Context must be a "real/robolectric" context since the implementation of billing client
+    // calls methods on context.
+    context = ApplicationProvider.getApplicationContext();
     factory = spy(new BillingClientFactoryImpl());
   }
 
   @Test
-  public void userSelectedAlternativeBilling() {
+  public void playBillingOnly() {
+    // No logic to verify just ensure creation works.
+    BillingClient client =
+        factory.createBillingClient(
+            context, mockCallbackApi, PlatformBillingChoiceMode.PLAY_BILLING_ONLY);
+    assertNotNull(client);
+  }
+
+  @Test
+  public void alternativeBillingOnly() {
+    // No logic to verify just ensure creation works.
+    BillingClient client =
+        factory.createBillingClient(
+            context, mockCallbackApi, PlatformBillingChoiceMode.ALTERNATIVE_BILLING_ONLY);
+    assertNotNull(client);
+  }
+
+  @Test
+  public void userChoiceBilling() {
     final UserChoiceBillingListener listener =
         factory.createUserChoiceBillingListener(mockCallbackApi);
     doReturn(listener)
