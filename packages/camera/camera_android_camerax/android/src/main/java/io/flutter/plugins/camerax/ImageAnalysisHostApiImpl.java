@@ -71,7 +71,8 @@ public class ImageAnalysisHostApiImpl implements ImageAnalysisHostApi {
 
     // Shorten time interval used to define how often the instanceManager removes garbage
     // collected weak references to native Android objects that it manages in order to
-    // account for image streaming's increased memory usage.
+    // account for the increased memory usage that comes from analyzing images with an
+    // ImageAnalysis.Analyzer.
     instanceManager.setClearFinalizedWeakReferencesInterval(1000);
     instanceManager.releaseAllFinalizedInstances();
 
@@ -90,7 +91,8 @@ public class ImageAnalysisHostApiImpl implements ImageAnalysisHostApi {
 
     // Restore the default time interval used to define how often the instanceManager
     // removes garbage collected weak references to native Android objects that it
-    // manages since image streaming, which involves increased memory usage, is finished.
+    // manages since analyzing images with an ImageAnalysis.Analyzer, which involves
+    // increased memory usage, is finished.
     instanceManager.setClearFinalizedWeakReferencesInterval(
         InstanceManager.DEFAULT_CLEAR_FINALIZED_WEAK_REFERENCES_INTERVAL);
   }
