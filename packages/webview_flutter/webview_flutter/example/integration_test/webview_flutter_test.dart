@@ -256,44 +256,63 @@ Future<void> main() async {
 
       WebViewController controller =
           WebViewController.fromPlatformCreationParams(params);
+      print('camille: controller set up');
       unawaited(controller.setJavaScriptMode(JavaScriptMode.unrestricted));
+      print('camille: set javascript mode');
+
       unawaited(controller.setNavigationDelegate(
         NavigationDelegate(onPageFinished: (_) => pageLoaded.complete()),
       ));
+      print('camille: set navigation delegate');
 
       if (controller.platform is AndroidWebViewController) {
         unawaited((controller.platform as AndroidWebViewController)
             .setMediaPlaybackRequiresUserGesture(false));
+        print('camille: set requires user gesture');
       }
 
       await controller.loadRequest(
         Uri.parse('data:text/html;charset=utf-8;base64,$videoTestBase64'),
       );
+      print('camille: load request');
 
       await tester.pumpWidget(WebViewWidget(controller: controller));
+      print('camille: pump widget');
 
       await pageLoaded.future;
+      print('camille: pageLoaded.future');
 
       bool isPaused =
           await controller.runJavaScriptReturningResult('isPaused();') as bool;
+      print('camille: isPaused');
+
       expect(isPaused, false);
 
       pageLoaded = Completer<void>();
       controller = WebViewController();
       unawaited(controller.setJavaScriptMode(JavaScriptMode.unrestricted));
+      print('camille: set js mode 2');
+
       unawaited(controller.setNavigationDelegate(
         NavigationDelegate(onPageFinished: (_) => pageLoaded.complete()),
       ));
+      print('camille: set navigation delegate 2');
+
       unawaited(controller.loadRequest(
         Uri.parse('data:text/html;charset=utf-8;base64,$videoTestBase64'),
       ));
+      print('camille: load request 2');
 
       await tester.pumpWidget(WebViewWidget(controller: controller));
+      print('camille: pump widget 2');
 
       await pageLoaded.future;
+      print('camille: pageLoaded.future 2');
 
       isPaused =
           await controller.runJavaScriptReturningResult('isPaused();') as bool;
+      print('camille: is Paused 2');
+
       expect(isPaused, true);
     });
 
