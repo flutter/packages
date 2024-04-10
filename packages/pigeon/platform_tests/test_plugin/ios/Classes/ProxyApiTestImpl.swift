@@ -440,6 +440,7 @@ public class PigeonProxyApiRegistrar {
   }
   
   func tearDown() {
+    instanceManager.removeAllObjects()
     PigeonInstanceManagerApi.setUpMessageHandlers(binaryMessenger: binaryMessenger, instanceManager: nil)
     PigeonApiProxyApiTestClass.setUpMessageHandlers(
       binaryMessenger: binaryMessenger, api: nil)
@@ -450,10 +451,10 @@ class ProxyApiTestClass {}
 class ProxyApiSuperClass {}
 
 protocol PigeonDelegateProxyApiTestClass: AnyObject {
-  func pigeonDefaultConstructor() throws -> ProxyApiTestClass
-  func someField(pigeonInstance: ProxyApiTestClass) throws -> Int
-  func attachedField(pigeonInstance: ProxyApiTestClass) throws -> ProxyApiSuperClass
-  func echo(pigeonInstance: ProxyApiTestClass, aBool: Bool) throws -> Bool
+  func pigeonDefaultConstructor(_ pigeonApi: PigeonApiProxyApiTestClass) throws -> ProxyApiTestClass
+  func someField(_ pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass) throws -> Int
+  func attachedField(_ pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass) throws -> ProxyApiSuperClass
+  func echo(_ pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, aBool: Bool) throws -> Bool
 }
 
 public class PigeonApiProxyApiTestClass {
@@ -483,7 +484,7 @@ public class PigeonApiProxyApiTestClass {
         let pigeonIdentifierArg = args[0] is Int64 ? args[0] as! Int64 : Int64(args[0] as! Int32)
         do {
           api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
-            try api.pigeonDelegate.pigeonDefaultConstructor(), withIdentifier: pigeonIdentifierArg)
+            try api.pigeonDelegate.pigeonDefaultConstructor(api), withIdentifier: pigeonIdentifierArg)
           reply(wrapResult(nil))
         } catch {
           reply(wrapError(error))
@@ -502,7 +503,7 @@ public class PigeonApiProxyApiTestClass {
         let pigeonIdentifierArg = args[1] is Int64 ? args[1] as! Int64 : Int64(args[1] as! Int32)
         do {
           api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
-            try api.pigeonDelegate.attachedField(pigeonInstance: pigeonInstanceArg),
+            try api.pigeonDelegate.attachedField(api, pigeonInstance: pigeonInstanceArg),
             withIdentifier: pigeonIdentifierArg)
           reply(wrapResult(nil))
         } catch {
@@ -521,7 +522,7 @@ public class PigeonApiProxyApiTestClass {
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         let aBoolArg = args[1] as! Bool
         do {
-          let result = try api.pigeonDelegate.echo(pigeonInstance: pigeonInstanceArg, aBool: aBoolArg)
+          let result = try api.pigeonDelegate.echo(api, pigeonInstance: pigeonInstanceArg, aBool: aBoolArg)
           reply(wrapResult(result))
         } catch {
           reply(wrapError(error))

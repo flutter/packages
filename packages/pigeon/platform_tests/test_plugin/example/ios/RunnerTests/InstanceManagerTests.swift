@@ -105,19 +105,19 @@ final class InstanceManagerTests: XCTestCase {
     class PigeonApiDelegateImpl: PigeonApiDelegate {
       func pigeonApiProxyApiTestClass(_ pigeonRegistrar: test_plugin.PigeonProxyApiRegistrar) -> test_plugin.PigeonApiProxyApiTestClass {
         class ProxyApiDel: PigeonDelegateProxyApiTestClass {
-          func pigeonDefaultConstructor() throws -> test_plugin.ProxyApiTestClass {
+          func pigeonDefaultConstructor(_ pigeonApi: PigeonApiProxyApiTestClass) throws -> test_plugin.ProxyApiTestClass {
             return ProxyApiTestClass()
           }
           
-          func someField(pigeonInstance: test_plugin.ProxyApiTestClass) throws -> Int {
+          func someField(_ pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: test_plugin.ProxyApiTestClass) throws -> Int {
             return 3
           }
           
-          func attachedField(pigeonInstance: test_plugin.ProxyApiTestClass) throws -> test_plugin.ProxyApiSuperClass {
+          func attachedField(_ pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: test_plugin.ProxyApiTestClass) throws -> test_plugin.ProxyApiSuperClass {
             return ProxyApiSuperClass()
           }
           
-          func echo(pigeonInstance: test_plugin.ProxyApiTestClass, aBool: Bool) throws -> Bool {
+          func echo(_ pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: test_plugin.ProxyApiTestClass, aBool: Bool) throws -> Bool {
             return true
           }
         }
@@ -127,6 +127,7 @@ final class InstanceManagerTests: XCTestCase {
     }
     var registrar: PigeonProxyApiRegistrar? = PigeonProxyApiRegistrar(binaryMessenger: binaryMessenger, apiDelegate: PigeonApiDelegateImpl())
     
+    // Add the scenario where the InstanceManager contains an instance that contains a ProxyApi implementation
     class TestClass {
       let api: PigeonApiProxyApiTestClass
       
@@ -134,7 +135,6 @@ final class InstanceManagerTests: XCTestCase {
         self.api = api
       }
     }
-    // Add the scenario where the InstanceManager contains an instance that cotains a ProxyApi implementation
     _ = registrar!.instanceManager.addHostCreatedInstance(TestClass(registrar!.apiDelegate.pigeonApiProxyApiTestClass(registrar!)))
     
     registrar!.setUp()
