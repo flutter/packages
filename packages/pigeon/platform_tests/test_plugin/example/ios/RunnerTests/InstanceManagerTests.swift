@@ -8,7 +8,8 @@ import XCTest
 
 final class InstanceManagerTests: XCTestCase {
   func testAddDartCreatedInstance() {
-    let instanceManager = PigeonInstanceManager(finalizerDelegate: EmptyFinalizerDelegate())
+    let finalizerDelegate = EmptyFinalizerDelegate()
+    let instanceManager = PigeonInstanceManager(finalizerDelegate: finalizerDelegate)
     let object = NSObject()
 
     instanceManager.addDartCreatedInstance(object, withIdentifier: 0)
@@ -17,7 +18,8 @@ final class InstanceManagerTests: XCTestCase {
   }
 
   func testAddHostCreatedInstance() {
-    let instanceManager = PigeonInstanceManager(finalizerDelegate: EmptyFinalizerDelegate())
+    let finalizerDelegate = EmptyFinalizerDelegate()
+    let instanceManager = PigeonInstanceManager(finalizerDelegate: finalizerDelegate)
     let object = NSObject()
     _ = instanceManager.addHostCreatedInstance(object)
 
@@ -27,7 +29,8 @@ final class InstanceManagerTests: XCTestCase {
   }
 
   func testRemoveInstance() {
-    let instanceManager = PigeonInstanceManager(finalizerDelegate: EmptyFinalizerDelegate())
+    let finalizerDelegate = EmptyFinalizerDelegate()
+    let instanceManager = PigeonInstanceManager(finalizerDelegate: finalizerDelegate)
     let object = NSObject()
 
     instanceManager.addDartCreatedInstance(object, withIdentifier: 0)
@@ -47,7 +50,8 @@ final class InstanceManagerTests: XCTestCase {
   }
 
   func testRemoveAllObjects() {
-    let instanceManager = PigeonInstanceManager(finalizerDelegate: EmptyFinalizerDelegate())
+    let finalizerDelegate = EmptyFinalizerDelegate()
+    let instanceManager = PigeonInstanceManager(finalizerDelegate: finalizerDelegate)
     let object = NSObject()
 
     instanceManager.addDartCreatedInstance(object, withIdentifier: 0)
@@ -58,7 +62,8 @@ final class InstanceManagerTests: XCTestCase {
   }
 
   func testCanAddSameObjectWithAddDartCreatedInstance() {
-    let instanceManager = PigeonInstanceManager(finalizerDelegate: EmptyFinalizerDelegate())
+    let finalizerDelegate = EmptyFinalizerDelegate()
+    let instanceManager = PigeonInstanceManager(finalizerDelegate: finalizerDelegate)
     let object = NSObject()
 
     instanceManager.addDartCreatedInstance(object, withIdentifier: 0)
@@ -71,7 +76,8 @@ final class InstanceManagerTests: XCTestCase {
   }
 
   func testObjectsAreStoredWithPointerHashcode() {
-    let instanceManager = PigeonInstanceManager(finalizerDelegate: EmptyFinalizerDelegate())
+    let finalizerDelegate = EmptyFinalizerDelegate()
+    let instanceManager = PigeonInstanceManager(finalizerDelegate: finalizerDelegate)
 
     class EquatableClass: Equatable {
       static func == (lhs: EquatableClass, rhs: EquatableClass) -> Bool {
@@ -96,28 +102,51 @@ final class InstanceManagerTests: XCTestCase {
   func testInstanceManagerCanBeDeallocated() {
     let binaryMessenger = MockBinaryMessenger<String>(codec: FlutterStandardMessageCodec.sharedInstance())
     
-    let instanceManager = PigeonInstanceManager(api: PigeonInstanceManagerApi(binaryMessenger: binaryMessenger))
-    
-    class ApiDel: PigeonApiDelegate {
-      func getPiegonApiProxyApiTestClass() -> test_plugin.PigeonApiProxyApiTestClass {
-        class ABC: PigeonDelegateProxyApiTestClass {
+    class PigeonApiDelegateImpl: PigeonApiDelegate {
+      func pigeonApiProxyApiTestClass(_ pigeonRegistrar: test_plugin.PigeonProxyApiRegistrar) -> test_plugin.PigeonApiProxyApiTestClass {
+        class ProxyApiDel: PigeonDelegateProxyApiTestClass {
           func pigeonDefaultConstructor() throws -> test_plugin.ProxyApiTestClass {
-            return nil
+            return ProxyApiTestClass()
+          }
+          
+          func someField(pigeonInstance: test_plugin.ProxyApiTestClass) throws -> Int {
+            return 3
           }
           
           func attachedField(pigeonInstance: test_plugin.ProxyApiTestClass) throws -> test_plugin.ProxyApiSuperClass {
-            return nil
+            return ProxyApiSuperClass()
           }
           
           func echo(pigeonInstance: test_plugin.ProxyApiTestClass, aBool: Bool) throws -> Bool {
-            return nil
+            return true
           }
         }
-        return PigeonApiProxyApiTestClass(codec: nil, delegate: ABC())
+        
+        return PigeonApiProxyApiTestClass(pigeonRegistrar: pigeonRegistrar, delegate: ProxyApiDel())
       }
     }
     
-    let codec = PigeonProxyApiBaseCodec(binaryMessenger: binaryMessenger, instanceManager: instanceManager, apiDelegate: nil)
+    var registrar: PigeonProxyApiRegistrar? = PigeonProxyApiRegistrar(binaryMessenger: binaryMessenger, apiDelegate: PigeonApiDelegateImpl())
+    
+    class TestClass {
+      let api: PigeonApiProxyApiTestClass
+      
+      init(api: PigeonApiProxyApiTestClass) {
+        self.api = api
+      }
+    }
+    
+    // Add the scenario where the InstanceManager contains an in
+    //registrar!.instanceManager.addHostCreatedInstance(TestClass())
+    
+    registrar!.setUp()
+    registrar!.tearDown()
+    
+    let finalizerDelegate = TestFinalizerDelegate()
+    
+    PigeonFinalizer.attach(to: registrar!.instanceManager, identifier: 0, delegate: finalizerDelegate)
+    registrar = nil
+    XCTAssertEqual(finalizerDelegate.lastHandledIdentifier, 0)
   }
 }
 
