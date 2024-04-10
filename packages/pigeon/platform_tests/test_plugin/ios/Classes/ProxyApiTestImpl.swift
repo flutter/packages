@@ -265,7 +265,7 @@ public class PigeonInstanceManager {
   }
 }
 
-public class PigeonInstanceManagerApi {
+private class PigeonInstanceManagerApi {
   /// The codec used for serializing messages.
   static let codec = FlutterStandardMessageCodec.sharedInstance()
 
@@ -393,20 +393,6 @@ private class PigeonProxyApiBaseCodecReaderWriter: FlutterStandardReaderWriter {
   }
 }
 
-fileprivate class ApiPigeonFinalizerDelegate: PigeonFinalizerDelegate {
-  let api: PigeonInstanceManagerApi
-  
-  init(_ api: PigeonInstanceManagerApi) {
-    self.api = api
-  }
-  
-  public func onDeinit(identifier: Int64) {
-    api.removeStrongReference(withIdentifier: identifier) {
-      _ in
-    }
-  }
-}
-
 protocol PigeonApiDelegate: AnyObject {
   /// An implementation of [PigeonApiProxyApiTestClass] used to add a new Dart instance of
   /// `ProxyApiTestClass` to the Dart `InstanceManager`.
@@ -427,11 +413,25 @@ public class PigeonProxyApiRegistrar {
       return _codec!
     }
   }
+  
+  private class InstanceManagerApiFinalizerDelegate: PigeonFinalizerDelegate {
+    let api: PigeonInstanceManagerApi
+    
+    init(_ api: PigeonInstanceManagerApi) {
+      self.api = api
+    }
+    
+    public func onDeinit(identifier: Int64) {
+      api.removeStrongReference(withIdentifier: identifier) {
+        _ in
+      }
+    }
+  }
 
   init(binaryMessenger: FlutterBinaryMessenger, apiDelegate: PigeonApiDelegate) {
     self.binaryMessenger = binaryMessenger
     self.apiDelegate = apiDelegate
-    self.instanceManager = PigeonInstanceManager(finalizerDelegate: ApiPigeonFinalizerDelegate(PigeonInstanceManagerApi(binaryMessenger: binaryMessenger)))
+    self.instanceManager = PigeonInstanceManager(finalizerDelegate: InstanceManagerApiFinalizerDelegate(PigeonInstanceManagerApi(binaryMessenger: binaryMessenger)))
   }
   
   func setUp() {
@@ -456,7 +456,7 @@ protocol PigeonDelegateProxyApiTestClass: AnyObject {
   func echo(pigeonInstance: ProxyApiTestClass, aBool: Bool) throws -> Bool
 }
 
-class PigeonApiProxyApiTestClass {
+public class PigeonApiProxyApiTestClass {
   unowned let pigeonRegistrar: PigeonProxyApiRegistrar
   let pigeonDelegate: PigeonDelegateProxyApiTestClass
   

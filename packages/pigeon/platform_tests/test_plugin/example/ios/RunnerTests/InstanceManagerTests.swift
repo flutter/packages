@@ -125,19 +125,17 @@ final class InstanceManagerTests: XCTestCase {
         return PigeonApiProxyApiTestClass(pigeonRegistrar: pigeonRegistrar, delegate: ProxyApiDel())
       }
     }
-    
     var registrar: PigeonProxyApiRegistrar? = PigeonProxyApiRegistrar(binaryMessenger: binaryMessenger, apiDelegate: PigeonApiDelegateImpl())
     
     class TestClass {
       let api: PigeonApiProxyApiTestClass
       
-      init(api: PigeonApiProxyApiTestClass) {
+      init(_ api: PigeonApiProxyApiTestClass) {
         self.api = api
       }
     }
-    
-    // Add the scenario where the InstanceManager contains an in
-    //registrar!.instanceManager.addHostCreatedInstance(TestClass())
+    // Add the scenario where the InstanceManager contains an instance that cotains a ProxyApi implementation
+    _ = registrar!.instanceManager.addHostCreatedInstance(TestClass(registrar!.apiDelegate.pigeonApiProxyApiTestClass(registrar!)))
     
     registrar!.setUp()
     registrar!.tearDown()
