@@ -394,9 +394,6 @@ targets:
           "CHANNEL": "stable"
         }
 
-  # All of the Linux_android android_platform_tests shards have the same
-  # dependency list, despite some running on Android 33 AVDs versus 34.
-  # See https://github.com/flutter/flutter/issues/137082 for context.
   - name: Linux_android android_platform_tests_shard_1 master
     recipe: packages/packages
     timeout: 60
@@ -404,7 +401,6 @@ targets:
       target_file: android_platform_tests.yaml
       channel: master
       version_file: flutter_master.version
-      # set up for 34
       package_sharding: "--shardIndex 0 --shardCount 6"
       dependencies: >-
         [
@@ -423,7 +419,6 @@ targets:
       target_file: android_platform_tests.yaml
       channel: master
       version_file: flutter_master.version
-      # set up for 34
       package_sharding: "--shardIndex 1 --shardCount 6"
       dependencies: >-
         [
@@ -442,7 +437,6 @@ targets:
       target_file: android_platform_tests.yaml
       channel: master
       version_file: flutter_master.version
-      # set up for 34
       package_sharding: "--shardIndex 2 --shardCount 6"
       dependencies: >-
         [
@@ -461,7 +455,6 @@ targets:
       target_file: android_platform_tests.yaml
       channel: master
       version_file: flutter_master.version
-      # set up for 34
       package_sharding: "--shardIndex 3 --shardCount 6"
       dependencies: >-
         [
@@ -480,7 +473,6 @@ targets:
       target_file: android_platform_tests.yaml
       channel: master
       version_file: flutter_master.version
-      # set up for 34
       package_sharding: "--shardIndex 4 --shardCount 6"
       dependencies: >-
         [
@@ -499,7 +491,6 @@ targets:
       target_file: android_platform_tests.yaml
       channel: master
       version_file: flutter_master.version
-      # set up for 34
       package_sharding: "--shardIndex 5 --shardCount 6"
       dependencies: >-
         [
@@ -509,44 +500,6 @@ targets:
         {
           "CHANNEL": "master",
           "PACKAGE_SHARDING": "--shardIndex 5 --shardCount 6"
-        }
-
-  - name: Linux_android android_platform_tests_api_33_shard_1 master
-    recipe: packages/packages
-    timeout: 60
-    properties:
-      target_file: android_platform_tests_api_33_avd.yaml
-      channel: master
-      version_file: flutter_master.version
-      # set up for 33
-      package_sharding: "--shardIndex 0 --shardCount 2"
-      dependencies: >-
-        [
-          {"dependency": "android_virtual_device", "version": "android_33_google_apis_x64.textpb"}
-        ]
-      env_variables: >-
-        {
-          "CHANNEL": "master",
-          "PACKAGE_SHARDING": "--shardIndex 0 --shardCount 2"
-        }
-
-  - name: Linux_android android_platform_tests_api_33_shard_2 master
-    recipe: packages/packages
-    timeout: 60
-    properties:
-      target_file: android_platform_tests_api_33_avd.yaml
-      channel: master
-      version_file: flutter_master.version
-      # set up for 33
-      package_sharding: "--shardIndex 1 --shardCount 2"
-      dependencies: >-
-        [
-          {"dependency": "android_virtual_device", "version": "android_33_google_apis_x64.textpb"}
-        ]
-      env_variables: >-
-        {
-          "CHANNEL": "master",
-          "PACKAGE_SHARDING": "--shardIndex 1 --shardCount 2"
         }
 
   - name: Linux_android android_platform_tests_shard_1 stable
@@ -661,42 +614,6 @@ targets:
         {
           "CHANNEL": "stable",
           "PACKAGE_SHARDING": "--shardIndex 5 --shardCount 6"
-        }
-
-  - name: Linux_android android_platform_tests_api_33_shard_1 stable
-    recipe: packages/packages
-    timeout: 60
-    properties:
-      target_file: android_platform_tests_api_33_avd.yaml
-      channel: stable
-      version_file: flutter_stable.version
-      package_sharding: "--shardIndex 0 --shardCount 2"
-      dependencies: >-
-        [
-          {"dependency": "android_virtual_device", "version": "android_33_google_apis_x64.textpb"}
-        ]
-      env_variables: >-
-        {
-          "CHANNEL": "stable",
-          "PACKAGE_SHARDING": "--shardIndex 0 --shardCount 2"
-        }
-
-  - name: Linux_android android_platform_tests_api_33_shard_2 stable
-    recipe: packages/packages
-    timeout: 60
-    properties:
-      target_file: android_platform_tests_api_33_avd.yaml
-      channel: stable
-      version_file: flutter_stable.version
-      package_sharding: "--shardIndex 1 --shardCount 2"
-      dependencies: >-
-        [
-          {"dependency": "android_virtual_device", "version": "android_33_google_apis_x64.textpb"}
-        ]
-      env_variables: >-
-        {
-          "CHANNEL": "stable",
-          "PACKAGE_SHARDING": "--shardIndex 1 --shardCount 2"
         }
 
   - name: Linux_android_legacy android_platform_tests_legacy_api_shard_1 master

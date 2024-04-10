@@ -378,7 +378,6 @@ class DriveExamplesCommand extends PackageLoopingCommand {
             getRelativePosixPath(driver, from: example.directory),
             '--target',
             getRelativePosixPath(target, from: example.directory),
-            '--verbose',
           ],
           workingDir: example.directory);
       if (exitCode != 0) {
@@ -425,7 +424,6 @@ class DriveExamplesCommand extends PackageLoopingCommand {
             if (enableExperiment.isNotEmpty)
               '--enable-experiment=$enableExperiment',
             target,
-            '--verbose' // testing change only
           ],
           workingDir: example.directory);
       passed = passed && (exitCode == 0);
