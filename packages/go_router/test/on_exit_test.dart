@@ -25,7 +25,7 @@ void main() {
             path: '1',
             builder: (BuildContext context, GoRouterState state) =>
                 DummyScreen(key: page1),
-            onExit: (BuildContext context) {
+            onExit: (BuildContext context, GoRouterState state) {
               return allow;
             },
           )
@@ -61,7 +61,7 @@ void main() {
         path: '/1',
         builder: (BuildContext context, GoRouterState state) =>
             DummyScreen(key: page1),
-        onExit: (BuildContext context) {
+        onExit: (BuildContext context, GoRouterState state) {
           return allow;
         },
       )
@@ -95,7 +95,7 @@ void main() {
             path: '1',
             builder: (BuildContext context, GoRouterState state) =>
                 DummyScreen(key: page1),
-            onExit: (BuildContext context) async {
+            onExit: (BuildContext context, GoRouterState state) async {
               return allow.future;
             },
           )
@@ -139,7 +139,7 @@ void main() {
         path: '/1',
         builder: (BuildContext context, GoRouterState state) =>
             DummyScreen(key: page1),
-        onExit: (BuildContext context) async {
+        onExit: (BuildContext context, GoRouterState state) async {
           return allow.future;
         },
       )
@@ -176,7 +176,7 @@ void main() {
         path: '/',
         builder: (BuildContext context, GoRouterState state) =>
             DummyScreen(key: home),
-        onExit: (BuildContext context) {
+        onExit: (BuildContext context, GoRouterState state) {
           return allow;
         },
       ),
@@ -201,7 +201,7 @@ void main() {
         path: '/',
         builder: (BuildContext context, GoRouterState state) =>
             DummyScreen(key: home),
-        onExit: (BuildContext context) async {
+        onExit: (BuildContext context, GoRouterState state) async {
           return allow;
         },
       ),
@@ -227,7 +227,7 @@ void main() {
           path: '/',
           builder: (BuildContext context, GoRouterState state) =>
               DummyScreen(key: home),
-          onExit: (BuildContext context) {
+          onExit: (BuildContext context, GoRouterState state) {
             return allow;
           },
         ),
