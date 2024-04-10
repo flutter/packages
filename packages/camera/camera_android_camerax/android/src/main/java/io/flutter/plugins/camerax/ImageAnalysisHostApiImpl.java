@@ -73,7 +73,8 @@ public class ImageAnalysisHostApiImpl implements ImageAnalysisHostApi {
     // collected weak references to native Android objects that it manages in order to
     // account for the increased memory usage that comes from analyzing images with an
     // ImageAnalysis.Analyzer.
-    instanceManager.setClearFinalizedWeakReferencesInterval(1000);
+    instanceManager.setClearFinalizedWeakReferencesInterval(
+        InstanceManager.CLEAR_FINALIZED_WEAK_REFERENCES_INTERVAL_FOR_IMAGE_ANALYSIS);
     instanceManager.releaseAllFinalizedInstances();
 
     getImageAnalysisInstance(identifier)

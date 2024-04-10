@@ -39,10 +39,21 @@ public class InstanceManager {
   private static final String TAG = "InstanceManager";
 
   /**
-   * The time interval used to define how often this instance removes garbage collected weak
+   * The default time interval used to define how often this instance removes garbage collected weak
    * references to native Android objects that this instance manages.
    */
   public static final long DEFAULT_CLEAR_FINALIZED_WEAK_REFERENCES_INTERVAL = 3000;
+
+  /**
+   * The time interval used to define how often this instance removes garbage collected weak
+   * references to native Android objects that this instance manages, specifically when an {@code
+   * ImageAnalysis.Analyzer} is set on an {@code ImageAnalysis} instance to support image streaming.
+   *
+   * <p>Streaming images with an {@code ImageAnalysis.Analyzer} involves increased memory usage, so
+   * this interval, which is lower than the default {@link
+   * DEFAULT_CLEAR_FINALIZED_WEAK_REFERENCES_INTERVAL} interval, accommodates this fact.
+   */
+  public static final long CLEAR_FINALIZED_WEAK_REFERENCES_INTERVAL_FOR_IMAGE_ANALYSIS = 1000;
 
   /** Interface for listening when a weak reference of an instance is removed from the manager. */
   public interface FinalizationListener {
