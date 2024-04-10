@@ -1,6 +1,6 @@
 ## 18.1.0
 
-* Adds Linux support
+* Adds GObject (Linux) support
 
 ## 18.0.0
 

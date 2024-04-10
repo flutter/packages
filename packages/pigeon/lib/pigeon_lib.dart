@@ -30,9 +30,9 @@ import 'cpp_generator.dart';
 import 'dart_generator.dart';
 import 'generator_tools.dart';
 import 'generator_tools.dart' as generator_tools;
+import 'gobject_generator.dart';
 import 'java_generator.dart';
 import 'kotlin_generator.dart';
-import 'linux_generator.dart';
 import 'objc_generator.dart';
 import 'swift_generator.dart';
 
@@ -254,9 +254,9 @@ class PigeonOptions {
     this.cppHeaderOut,
     this.cppSourceOut,
     this.cppOptions,
-    this.linuxHeaderOut,
-    this.linuxSourceOut,
-    this.linuxOptions,
+    this.gobjectHeaderOut,
+    this.gobjectSourceOut,
+    this.gobjectOptions,
     this.dartOptions,
     this.copyrightHeader,
     this.oneLanguage,
@@ -311,14 +311,14 @@ class PigeonOptions {
   /// Options that control how C++ will be generated.
   final CppOptions? cppOptions;
 
-  /// Path to the ".h" Linux file that will be generated.
-  final String? linuxHeaderOut;
+  /// Path to the ".h" GObject file that will be generated.
+  final String? gobjectHeaderOut;
 
-  /// Path to the ".cc" Linux file that will be generated.
-  final String? linuxSourceOut;
+  /// Path to the ".cc" GObject file that will be generated.
+  final String? gobjectSourceOut;
 
-  /// Options that control how Linux source will be generated.
-  final LinuxOptions? linuxOptions;
+  /// Options that control how GObject source will be generated.
+  final GObjectOptions? gobjectOptions;
 
   /// Options that control how Dart will be generated.
   final DartOptions? dartOptions;
@@ -370,10 +370,10 @@ class PigeonOptions {
       cppOptions: map.containsKey('cppOptions')
           ? CppOptions.fromMap(map['cppOptions']! as Map<String, Object>)
           : null,
-      linuxHeaderOut: map['linuxHeaderOut'] as String?,
-      linuxSourceOut: map['linuxSourceOut'] as String?,
-      linuxOptions: map.containsKey('linuxOptions')
-          ? LinuxOptions.fromMap(map['linuxOptions']! as Map<String, Object>)
+      gobjectHeaderOut: map['gobjectHeaderOut'] as String?,
+      gobjectSourceOut: map['gobjectSourceOut'] as String?,
+      gobjectOptions: map.containsKey('gobjectOptions')
+          ? GObjectOptions.fromMap(map['gobjectOptions']! as Map<String, Object>)
           : null,
       dartOptions: map.containsKey('dartOptions')
           ? DartOptions.fromMap(map['dartOptions']! as Map<String, Object>)
@@ -406,9 +406,9 @@ class PigeonOptions {
       if (cppHeaderOut != null) 'cppHeaderOut': cppHeaderOut!,
       if (cppSourceOut != null) 'cppSourceOut': cppSourceOut!,
       if (cppOptions != null) 'cppOptions': cppOptions!.toMap(),
-      if (linuxHeaderOut != null) 'linuxHeaderOut': linuxHeaderOut!,
-      if (linuxSourceOut != null) 'linuxSourceOut': linuxSourceOut!,
-      if (linuxOptions != null) 'linuxOptions': linuxOptions!.toMap(),
+      if (gobjectHeaderOut != null) 'gobjectHeaderOut': gobjectHeaderOut!,
+      if (gobjectSourceOut != null) 'gobjectSourceOut': gobjectSourceOut!,
+      if (gobjectOptions != null) 'gobjectOptions': gobjectOptions!.toMap(),
       if (dartOptions != null) 'dartOptions': dartOptions!.toMap(),
       if (copyrightHeader != null) 'copyrightHeader': copyrightHeader!,
       if (astOut != null) 'astOut': astOut!,
@@ -788,10 +788,10 @@ class CppGeneratorAdapter implements GeneratorAdapter {
   List<Error> validate(PigeonOptions options, Root root) => <Error>[];
 }
 
-/// A [GeneratorAdapter] that generates Linux source code.
-class LinuxGeneratorAdapter implements GeneratorAdapter {
-  /// Constructor for [LinuxGeneratorAdapter].
-  LinuxGeneratorAdapter(
+/// A [GeneratorAdapter] that generates GObject source code.
+class GObjectGeneratorAdapter implements GeneratorAdapter {
+  /// Constructor for [GObjectGeneratorAdapter].
+  GObjectGeneratorAdapter(
       {this.fileTypeList = const <FileType>[FileType.header, FileType.source]});
 
   @override
@@ -800,18 +800,18 @@ class LinuxGeneratorAdapter implements GeneratorAdapter {
   @override
   void generate(
       StringSink sink, PigeonOptions options, Root root, FileType fileType) {
-    final LinuxOptions linuxOptions =
-        options.linuxOptions ?? const LinuxOptions();
-    final LinuxOptions linuxOptionsWithHeader = linuxOptions.merge(LinuxOptions(
+    final GObjectOptions gobjectOptions =
+        options.gobjectOptions ?? const GObjectOptions();
+    final GObjectOptions gobjectOptionsWithHeader = gobjectOptions.merge(GObjectOptions(
       copyrightHeader: options.copyrightHeader != null
           ? _lineReader(
               path.posix.join(options.basePath ?? '', options.copyrightHeader))
           : null,
     ));
-    final OutputFileOptions<LinuxOptions> outputFileOptions =
-        OutputFileOptions<LinuxOptions>(
-            fileType: fileType, languageOptions: linuxOptionsWithHeader);
-    const LinuxGenerator generator = LinuxGenerator();
+    final OutputFileOptions<GObjectOptions> outputFileOptions =
+        OutputFileOptions<GObjectOptions>(
+            fileType: fileType, languageOptions: gobjectOptionsWithHeader);
+    const GObjectGenerator generator = GObjectGenerator();
     generator.generate(
       outputFileOptions,
       root,
@@ -823,10 +823,10 @@ class LinuxGeneratorAdapter implements GeneratorAdapter {
   @override
   IOSink? shouldGenerate(PigeonOptions options, FileType fileType) {
     if (fileType == FileType.source) {
-      return _openSink(options.linuxSourceOut,
+      return _openSink(options.gobjectSourceOut,
           basePath: options.basePath ?? '');
     } else {
-      return _openSink(options.linuxHeaderOut,
+      return _openSink(options.gobjectHeaderOut,
           basePath: options.basePath ?? '');
     }
   }
@@ -2149,17 +2149,17 @@ ${_argParser.usage}''';
     ..addOption('cpp_namespace',
         help: 'The namespace that generated C++ code will be in.')
     ..addOption(
-      'linux_header_out',
-      help: 'Path to generated Linux header file (.h).',
-      aliases: const <String>['experimental_linux_header_out'],
+      'gobject_header_out',
+      help: 'Path to generated GObject header file (.h).',
+      aliases: const <String>['experimental_gobject_header_out'],
     )
     ..addOption(
-      'linux_source_out',
-      help: 'Path to generated Linux classes file (.cc).',
-      aliases: const <String>['experimental_linux_source_out'],
+      'gobject_source_out',
+      help: 'Path to generated GObject classes file (.cc).',
+      aliases: const <String>['experimental_gobject_source_out'],
     )
-    ..addOption('linux_module',
-        help: 'The module that generated Linux code will be in.')
+    ..addOption('gobject_module',
+        help: 'The module that generated GObject code will be in.')
     ..addOption('objc_header_out',
         help: 'Path to generated Objective-C header file (.h).')
     ..addOption('objc_prefix',
@@ -2214,10 +2214,10 @@ ${_argParser.usage}''';
       cppOptions: CppOptions(
         namespace: results['cpp_namespace'] as String?,
       ),
-      linuxHeaderOut: results['linux_header_out'] as String?,
-      linuxSourceOut: results['linux_source_out'] as String?,
-      linuxOptions: LinuxOptions(
-        module: results['linux_module'] as String?,
+      gobjectHeaderOut: results['gobject_header_out'] as String?,
+      gobjectSourceOut: results['gobject_source_out'] as String?,
+      gobjectOptions: GObjectOptions(
+        module: results['gobject_module'] as String?,
       ),
       copyrightHeader: results['copyright_header'] as String?,
       oneLanguage: results['one_language'] as bool?,
@@ -2275,7 +2275,7 @@ ${_argParser.usage}''';
           SwiftGeneratorAdapter(),
           KotlinGeneratorAdapter(),
           CppGeneratorAdapter(),
-          LinuxGeneratorAdapter(),
+          GObjectGeneratorAdapter(),
           DartTestGeneratorAdapter(),
           ObjcGeneratorAdapter(),
           AstGeneratorAdapter(),
@@ -2344,11 +2344,11 @@ ${_argParser.usage}''';
                   headerIncludePath: path.basename(options.cppHeaderOut!)))));
     }
 
-    if (options.linuxHeaderOut != null) {
+    if (options.gobjectHeaderOut != null) {
       options = options.merge(PigeonOptions(
-          linuxOptions: (options.linuxOptions ?? const LinuxOptions()).merge(
-              LinuxOptions(
-                  headerIncludePath: path.basename(options.linuxHeaderOut!)))));
+          gobjectOptions: (options.gobjectOptions ?? const GObjectOptions()).merge(
+              GObjectOptions(
+                  headerIncludePath: path.basename(options.gobjectHeaderOut!)))));
     }
 
     for (final GeneratorAdapter adapter in safeGeneratorAdapters) {

@@ -4,7 +4,7 @@
 
 import 'package:pigeon/ast.dart';
 import 'package:pigeon/generator_tools.dart';
-import 'package:pigeon/linux_generator.dart';
+import 'package:pigeon/gobject_generator.dart';
 import 'package:test/test.dart';
 
 const String DEFAULT_PACKAGE_NAME = 'test_package';
@@ -59,11 +59,11 @@ void main() {
     ], enums: <Enum>[]);
     {
       final StringBuffer sink = StringBuffer();
-      const LinuxGenerator generator = LinuxGenerator();
-      final OutputFileOptions<LinuxOptions> generatorOptions =
-          OutputFileOptions<LinuxOptions>(
+      const GObjectGenerator generator = GObjectGenerator();
+      final OutputFileOptions<GObjectOptions> generatorOptions =
+          OutputFileOptions<GObjectOptions>(
         fileType: FileType.header,
-        languageOptions: const LinuxOptions(),
+        languageOptions: const GObjectOptions(),
       );
       generator.generate(generatorOptions, root, sink,
           dartPackageName: DEFAULT_PACKAGE_NAME);
@@ -83,11 +83,11 @@ void main() {
     }
     {
       final StringBuffer sink = StringBuffer();
-      const LinuxGenerator generator = LinuxGenerator();
-      final OutputFileOptions<LinuxOptions> generatorOptions =
-          OutputFileOptions<LinuxOptions>(
+      const GObjectGenerator generator = GObjectGenerator();
+      final OutputFileOptions<GObjectOptions> generatorOptions =
+          OutputFileOptions<GObjectOptions>(
         fileType: FileType.source,
-        languageOptions: const LinuxOptions(),
+        languageOptions: const GObjectOptions(),
       );
       generator.generate(generatorOptions, root, sink,
           dartPackageName: DEFAULT_PACKAGE_NAME);
@@ -149,11 +149,11 @@ void main() {
     ], enums: <Enum>[]);
     {
       final StringBuffer sink = StringBuffer();
-      const LinuxGenerator generator = LinuxGenerator();
-      final OutputFileOptions<LinuxOptions> generatorOptions =
-          OutputFileOptions<LinuxOptions>(
+      const GObjectGenerator generator = GObjectGenerator();
+      final OutputFileOptions<GObjectOptions> generatorOptions =
+          OutputFileOptions<GObjectOptions>(
         fileType: FileType.header,
-        languageOptions: const LinuxOptions(),
+        languageOptions: const GObjectOptions(),
       );
       generator.generate(generatorOptions, root, sink,
           dartPackageName: DEFAULT_PACKAGE_NAME);
@@ -173,11 +173,11 @@ void main() {
     }
     {
       final StringBuffer sink = StringBuffer();
-      const LinuxGenerator generator = LinuxGenerator();
-      final OutputFileOptions<LinuxOptions> generatorOptions =
-          OutputFileOptions<LinuxOptions>(
+      const GObjectGenerator generator = GObjectGenerator();
+      final OutputFileOptions<GObjectOptions> generatorOptions =
+          OutputFileOptions<GObjectOptions>(
         fileType: FileType.source,
-        languageOptions: const LinuxOptions(),
+        languageOptions: const GObjectOptions(),
       );
       generator.generate(generatorOptions, root, sink,
           dartPackageName: DEFAULT_PACKAGE_NAME);
@@ -235,11 +235,11 @@ void main() {
     ], enums: <Enum>[]);
     {
       final StringBuffer sink = StringBuffer();
-      const LinuxGenerator generator = LinuxGenerator();
-      final OutputFileOptions<LinuxOptions> generatorOptions =
-          OutputFileOptions<LinuxOptions>(
+      const GObjectGenerator generator = GObjectGenerator();
+      final OutputFileOptions<GObjectOptions> generatorOptions =
+          OutputFileOptions<GObjectOptions>(
         fileType: FileType.header,
-        languageOptions: const LinuxOptions(),
+        languageOptions: const GObjectOptions(),
       );
       generator.generate(
         generatorOptions,
@@ -253,11 +253,11 @@ void main() {
     }
     {
       final StringBuffer sink = StringBuffer();
-      const LinuxGenerator generator = LinuxGenerator();
-      final OutputFileOptions<LinuxOptions> generatorOptions =
-          OutputFileOptions<LinuxOptions>(
+      const GObjectGenerator generator = GObjectGenerator();
+      final OutputFileOptions<GObjectOptions> generatorOptions =
+          OutputFileOptions<GObjectOptions>(
         fileType: FileType.source,
-        languageOptions: const LinuxOptions(),
+        languageOptions: const GObjectOptions(),
       );
       generator.generate(
         generatorOptions,
@@ -291,11 +291,11 @@ void main() {
     ], classes: <Class>[], enums: <Enum>[]);
     {
       final StringBuffer sink = StringBuffer();
-      const LinuxGenerator generator = LinuxGenerator();
-      final OutputFileOptions<LinuxOptions> generatorOptions =
-          OutputFileOptions<LinuxOptions>(
+      const GObjectGenerator generator = GObjectGenerator();
+      final OutputFileOptions<GObjectOptions> generatorOptions =
+          OutputFileOptions<GObjectOptions>(
         fileType: FileType.header,
-        languageOptions: const LinuxOptions(),
+        languageOptions: const GObjectOptions(),
       );
       generator.generate(
         generatorOptions,
@@ -310,11 +310,11 @@ void main() {
     }
     {
       final StringBuffer sink = StringBuffer();
-      const LinuxGenerator generator = LinuxGenerator();
-      final OutputFileOptions<LinuxOptions> generatorOptions =
-          OutputFileOptions<LinuxOptions>(
+      const GObjectGenerator generator = GObjectGenerator();
+      final OutputFileOptions<GObjectOptions> generatorOptions =
+          OutputFileOptions<GObjectOptions>(
         fileType: FileType.source,
-        languageOptions: const LinuxOptions(headerIncludePath: 'a_header.h'),
+        languageOptions: const GObjectOptions(headerIncludePath: 'a_header.h'),
       );
       generator.generate(
         generatorOptions,
@@ -386,11 +386,11 @@ void main() {
     ], enums: <Enum>[]);
     {
       final StringBuffer sink = StringBuffer();
-      const LinuxGenerator generator = LinuxGenerator();
-      final OutputFileOptions<LinuxOptions> generatorOptions =
-          OutputFileOptions<LinuxOptions>(
+      const GObjectGenerator generator = GObjectGenerator();
+      final OutputFileOptions<GObjectOptions> generatorOptions =
+          OutputFileOptions<GObjectOptions>(
         fileType: FileType.header,
-        languageOptions: const LinuxOptions(),
+        languageOptions: const GObjectOptions(),
       );
       generator.generate(
         generatorOptions,
@@ -407,11 +407,11 @@ void main() {
     }
     {
       final StringBuffer sink = StringBuffer();
-      const LinuxGenerator generator = LinuxGenerator();
-      final OutputFileOptions<LinuxOptions> generatorOptions =
-          OutputFileOptions<LinuxOptions>(
+      const GObjectGenerator generator = GObjectGenerator();
+      final OutputFileOptions<GObjectOptions> generatorOptions =
+          OutputFileOptions<GObjectOptions>(
         fileType: FileType.source,
-        languageOptions: const LinuxOptions(),
+        languageOptions: const GObjectOptions(),
       );
       generator.generate(
         generatorOptions,
@@ -515,11 +515,11 @@ void main() {
     ], enums: <Enum>[]);
     {
       final StringBuffer sink = StringBuffer();
-      const LinuxGenerator generator = LinuxGenerator();
-      final OutputFileOptions<LinuxOptions> generatorOptions =
-          OutputFileOptions<LinuxOptions>(
+      const GObjectGenerator generator = GObjectGenerator();
+      final OutputFileOptions<GObjectOptions> generatorOptions =
+          OutputFileOptions<GObjectOptions>(
         fileType: FileType.header,
-        languageOptions: const LinuxOptions(),
+        languageOptions: const GObjectOptions(),
       );
       generator.generate(
         generatorOptions,
@@ -637,11 +637,11 @@ void main() {
     ], enums: <Enum>[]);
     {
       final StringBuffer sink = StringBuffer();
-      const LinuxGenerator generator = LinuxGenerator();
-      final OutputFileOptions<LinuxOptions> generatorOptions =
-          OutputFileOptions<LinuxOptions>(
+      const GObjectGenerator generator = GObjectGenerator();
+      final OutputFileOptions<GObjectOptions> generatorOptions =
+          OutputFileOptions<GObjectOptions>(
         fileType: FileType.header,
-        languageOptions: const LinuxOptions(),
+        languageOptions: const GObjectOptions(),
       );
       generator.generate(
         generatorOptions,
@@ -657,11 +657,11 @@ void main() {
     }
     {
       final StringBuffer sink = StringBuffer();
-      const LinuxGenerator generator = LinuxGenerator();
-      final OutputFileOptions<LinuxOptions> generatorOptions =
-          OutputFileOptions<LinuxOptions>(
+      const GObjectGenerator generator = GObjectGenerator();
+      final OutputFileOptions<GObjectOptions> generatorOptions =
+          OutputFileOptions<GObjectOptions>(
         fileType: FileType.source,
-        languageOptions: const LinuxOptions(),
+        languageOptions: const GObjectOptions(),
       );
       generator.generate(
         generatorOptions,
@@ -751,11 +751,11 @@ void main() {
       ],
     );
     final StringBuffer sink = StringBuffer();
-    const LinuxGenerator generator = LinuxGenerator();
-    final OutputFileOptions<LinuxOptions> generatorOptions =
-        OutputFileOptions<LinuxOptions>(
+    const GObjectGenerator generator = GObjectGenerator();
+    final OutputFileOptions<GObjectOptions> generatorOptions =
+        OutputFileOptions<GObjectOptions>(
       fileType: FileType.header,
-      languageOptions: const LinuxOptions(headerIncludePath: 'foo'),
+      languageOptions: const GObjectOptions(headerIncludePath: 'foo'),
     );
     generator.generate(
       generatorOptions,

@@ -67,9 +67,9 @@ Future<void> _validateGeneratedFiles(
     languagesToValidate = <GeneratorLanguage>{
       GeneratorLanguage.cpp,
       GeneratorLanguage.dart,
+      GeneratorLanguage.gobject,
       GeneratorLanguage.java,
       GeneratorLanguage.kotlin,
-      GeneratorLanguage.linux,
       GeneratorLanguage.objc,
     };
   } else if (Platform.isMacOS) {
@@ -141,9 +141,9 @@ Set<String> _extensionsForLanguage(GeneratorLanguage language) {
   return switch (language) {
     GeneratorLanguage.cpp => <String>{'cc', 'cpp', 'h'},
     GeneratorLanguage.dart => <String>{'dart'},
+    GeneratorLanguage.gobject => <String>{'gobject'},
     GeneratorLanguage.java => <String>{'java'},
     GeneratorLanguage.kotlin => <String>{'kt'},
-    GeneratorLanguage.linux => <String>{'linux'},
     GeneratorLanguage.swift => <String>{'swift'},
     GeneratorLanguage.objc => <String>{'h', 'm', 'mm'},
   };

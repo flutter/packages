@@ -13,10 +13,10 @@ const String _commentPrefix = '//';
 const DocumentCommentSpecification _docCommentSpec =
     DocumentCommentSpecification(_commentPrefix);
 
-/// Options that control how Linux code will be generated.
-class LinuxOptions {
-  /// Creates a [LinuxOptions] object
-  const LinuxOptions({
+/// Options that control how GObject code will be generated.
+class GObjectOptions {
+  /// Creates a [GObjectOptions] object
+  const GObjectOptions({
     this.headerIncludePath,
     this.module,
     this.copyrightHeader,
@@ -36,19 +36,19 @@ class LinuxOptions {
   /// The path to the output header file location.
   final String? headerOutPath;
 
-  /// Creates a [LinuxOptions] from a Map representation where:
-  /// `x = LinuxOptions.fromMap(x.toMap())`.
-  static LinuxOptions fromMap(Map<String, Object> map) {
-    return LinuxOptions(
+  /// Creates a [GObjectOptions] from a Map representation where:
+  /// `x = GObjectOptions.fromMap(x.toMap())`.
+  static GObjectOptions fromMap(Map<String, Object> map) {
+    return GObjectOptions(
       headerIncludePath: map['header'] as String?,
       module: map['module'] as String?,
       copyrightHeader: map['copyrightHeader'] as Iterable<String>?,
-      headerOutPath: map['linuxHeaderOut'] as String?,
+      headerOutPath: map['gobjectHeaderOut'] as String?,
     );
   }
 
-  /// Converts a [LinuxOptions] to a Map representation where:
-  /// `x = LinuxOptions.fromMap(x.toMap())`.
+  /// Converts a [GObjectOptions] to a Map representation where:
+  /// `x = GObjectOptions.fromMap(x.toMap())`.
   Map<String, Object> toMap() {
     final Map<String, Object> result = <String, Object>{
       if (headerIncludePath != null) 'header': headerIncludePath!,
@@ -59,21 +59,21 @@ class LinuxOptions {
   }
 
   /// Overrides any non-null parameters from [options] into this to make a new
-  /// [LinuxOptions].
-  LinuxOptions merge(LinuxOptions options) {
-    return LinuxOptions.fromMap(mergeMaps(toMap(), options.toMap()));
+  /// [GObjectOptions].
+  GObjectOptions merge(GObjectOptions options) {
+    return GObjectOptions.fromMap(mergeMaps(toMap(), options.toMap()));
   }
 }
 
-/// Class that manages all Linux code generation.
-class LinuxGenerator extends Generator<OutputFileOptions<LinuxOptions>> {
+/// Class that manages all GObject code generation.
+class GObjectGenerator extends Generator<OutputFileOptions<GObjectOptions>> {
   /// Constructor.
-  const LinuxGenerator();
+  const GObjectGenerator();
 
-  /// Generates Linux file of type specified in [generatorOptions]
+  /// Generates GObject file of type specified in [generatorOptions]
   @override
   void generate(
-    OutputFileOptions<LinuxOptions> generatorOptions,
+    OutputFileOptions<GObjectOptions> generatorOptions,
     Root root,
     StringSink sink, {
     required String dartPackageName,
@@ -81,14 +81,14 @@ class LinuxGenerator extends Generator<OutputFileOptions<LinuxOptions>> {
     assert(generatorOptions.fileType == FileType.header ||
         generatorOptions.fileType == FileType.source);
     if (generatorOptions.fileType == FileType.header) {
-      const LinuxHeaderGenerator().generate(
+      const GObjectHeaderGenerator().generate(
         generatorOptions.languageOptions,
         root,
         sink,
         dartPackageName: dartPackageName,
       );
     } else if (generatorOptions.fileType == FileType.source) {
-      const LinuxSourceGenerator().generate(
+      const GObjectSourceGenerator().generate(
         generatorOptions.languageOptions,
         root,
         sink,
@@ -98,14 +98,14 @@ class LinuxGenerator extends Generator<OutputFileOptions<LinuxOptions>> {
   }
 }
 
-/// Writes Linux header (.h) file to sink.
-class LinuxHeaderGenerator extends StructuredGenerator<LinuxOptions> {
+/// Writes GObject header (.h) file to sink.
+class GObjectHeaderGenerator extends StructuredGenerator<GObjectOptions> {
   /// Constructor.
-  const LinuxHeaderGenerator();
+  const GObjectHeaderGenerator();
 
   @override
   void writeFilePrologue(
-    LinuxOptions generatorOptions,
+    GObjectOptions generatorOptions,
     Root root,
     Indent indent, {
     required String dartPackageName,
@@ -119,7 +119,7 @@ class LinuxHeaderGenerator extends StructuredGenerator<LinuxOptions> {
 
   @override
   void writeFileImports(
-    LinuxOptions generatorOptions,
+    GObjectOptions generatorOptions,
     Root root,
     Indent indent, {
     required String dartPackageName,
@@ -135,7 +135,7 @@ class LinuxHeaderGenerator extends StructuredGenerator<LinuxOptions> {
 
   @override
   void writeOpenNamespace(
-    LinuxOptions generatorOptions,
+    GObjectOptions generatorOptions,
     Root root,
     Indent indent, {
     required String dartPackageName,
@@ -146,7 +146,7 @@ class LinuxHeaderGenerator extends StructuredGenerator<LinuxOptions> {
 
   @override
   void writeEnum(
-    LinuxOptions generatorOptions,
+    GObjectOptions generatorOptions,
     Root root,
     Indent indent,
     Enum anEnum, {
@@ -173,7 +173,7 @@ class LinuxHeaderGenerator extends StructuredGenerator<LinuxOptions> {
 
   @override
   void writeDataClass(
-    LinuxOptions generatorOptions,
+    GObjectOptions generatorOptions,
     Root root,
     Indent indent,
     Class classDefinition, {
@@ -213,7 +213,7 @@ class LinuxHeaderGenerator extends StructuredGenerator<LinuxOptions> {
 
   @override
   void writeFlutterApi(
-    LinuxOptions generatorOptions,
+    GObjectOptions generatorOptions,
     Root root,
     Indent indent,
     Api api, {
@@ -266,7 +266,7 @@ class LinuxHeaderGenerator extends StructuredGenerator<LinuxOptions> {
 
   @override
   void writeHostApi(
-    LinuxOptions generatorOptions,
+    GObjectOptions generatorOptions,
     Root root,
     Indent indent,
     Api api, {
@@ -375,7 +375,7 @@ class LinuxHeaderGenerator extends StructuredGenerator<LinuxOptions> {
 
   @override
   void writeCloseNamespace(
-    LinuxOptions generatorOptions,
+    GObjectOptions generatorOptions,
     Root root,
     Indent indent, {
     required String dartPackageName,
@@ -389,14 +389,14 @@ class LinuxHeaderGenerator extends StructuredGenerator<LinuxOptions> {
   }
 }
 
-/// Writes Linux source (.cc) file to sink.
-class LinuxSourceGenerator extends StructuredGenerator<LinuxOptions> {
+/// Writes GObject source (.cc) file to sink.
+class GObjectSourceGenerator extends StructuredGenerator<GObjectOptions> {
   /// Constructor.
-  const LinuxSourceGenerator();
+  const GObjectSourceGenerator();
 
   @override
   void writeFilePrologue(
-    LinuxOptions generatorOptions,
+    GObjectOptions generatorOptions,
     Root root,
     Indent indent, {
     required String dartPackageName,
@@ -410,7 +410,7 @@ class LinuxSourceGenerator extends StructuredGenerator<LinuxOptions> {
 
   @override
   void writeFileImports(
-    LinuxOptions generatorOptions,
+    GObjectOptions generatorOptions,
     Root root,
     Indent indent, {
     required String dartPackageName,
@@ -421,7 +421,7 @@ class LinuxSourceGenerator extends StructuredGenerator<LinuxOptions> {
 
   @override
   void writeDataClass(
-    LinuxOptions generatorOptions,
+    GObjectOptions generatorOptions,
     Root root,
     Indent indent,
     Class classDefinition, {
@@ -530,7 +530,7 @@ class LinuxSourceGenerator extends StructuredGenerator<LinuxOptions> {
 
   @override
   void writeFlutterApi(
-    LinuxOptions generatorOptions,
+    GObjectOptions generatorOptions,
     Root root,
     Indent indent,
     Api api, {
@@ -651,7 +651,7 @@ class LinuxSourceGenerator extends StructuredGenerator<LinuxOptions> {
 
   @override
   void writeHostApi(
-    LinuxOptions generatorOptions,
+    GObjectOptions generatorOptions,
     Root root,
     Indent indent,
     Api api, {
@@ -908,7 +908,7 @@ class LinuxSourceGenerator extends StructuredGenerator<LinuxOptions> {
   }
 }
 
-void _writeCodec(LinuxOptions generatorOptions, Root root, Indent indent,
+void _writeCodec(GObjectOptions generatorOptions, Root root, Indent indent,
     Api api, String dartPackageName) {
   final String module = _getModule(generatorOptions, dartPackageName);
   final String codecName = '${api.name}Codec';
@@ -1044,7 +1044,7 @@ void _writeCodec(LinuxOptions generatorOptions, Root root, Indent indent,
 }
 
 // Returns the module name to use.
-String _getModule(LinuxOptions generatorOptions, String dartPackageName) {
+String _getModule(GObjectOptions generatorOptions, String dartPackageName) {
   return generatorOptions.module ?? _camelCaseFromSnakeCase(dartPackageName);
 }
 

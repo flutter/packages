@@ -19,9 +19,9 @@ needed for your project.
   cppOptions: CppOptions(namespace: 'pigeon_example'),
   cppHeaderOut: 'windows/runner/messages.g.h',
   cppSourceOut: 'windows/runner/messages.g.cpp',
-  linuxHeaderOut: 'linux/messages.g.h',
-  linuxSourceOut: 'linux/messages.g.cc',
-  linuxOptions: LinuxOptions(),
+  gobjectHeaderOut: 'gobject/messages.g.h',
+  gobjectSourceOut: 'gobject/messages.g.cc',
+  gobjectOptions: GObjectOptions(),
   kotlinOut:
       'android/app/src/main/kotlin/dev/flutter/pigeon_example_app/Messages.g.kt',
   kotlinOptions: KotlinOptions(),
@@ -197,7 +197,7 @@ class PigeonApiImplementation : public ExampleHostApi {
 };
 ```
 
-### Linux
+### GObject
 <?code-excerpt "linux/my_application.cc (vtable)"?>
 ```c++
 static PigeonExamplePackageExampleHostApiGetHostLanguageResponse*
@@ -320,7 +320,7 @@ void TestPlugin::CallFlutterMethod(
 }
 ```
 
-### Linux
+### GObject
 
 <?code-excerpt "linux/my_application.cc (flutter-method-callback)"?>
 ```c++

@@ -8,7 +8,7 @@ export 'cpp_generator.dart' show CppOptions;
 export 'dart_generator.dart' show DartOptions;
 export 'java_generator.dart' show JavaOptions;
 export 'kotlin_generator.dart' show KotlinOptions;
-export 'linux_generator.dart' show LinuxOptions;
+export 'gobject_generator.dart' show GObjectOptions;
 export 'objc_generator.dart' show ObjcOptions;
 export 'pigeon_lib.dart';
 export 'swift_generator.dart' show SwiftOptions;
