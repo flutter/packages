@@ -98,51 +98,66 @@ final class InstanceManagerTests: XCTestCase {
       instanceManager.identifierWithStrongReference(forInstance: instance1),
       instanceManager.identifierWithStrongReference(forInstance: instance2))
   }
-  
+
   func testInstanceManagerCanBeDeallocated() {
-    let binaryMessenger = MockBinaryMessenger<String>(codec: FlutterStandardMessageCodec.sharedInstance())
-    
+    let binaryMessenger = MockBinaryMessenger<String>(
+      codec: FlutterStandardMessageCodec.sharedInstance())
+
     class PigeonApiDelegateImpl: PigeonApiDelegate {
-      func pigeonApiProxyApiTestClass(_ pigeonRegistrar: test_plugin.PigeonProxyApiRegistrar) -> test_plugin.PigeonApiProxyApiTestClass {
+      func pigeonApiProxyApiTestClass(_ pigeonRegistrar: test_plugin.PigeonProxyApiRegistrar)
+        -> test_plugin.PigeonApiProxyApiTestClass
+      {
         class ProxyApiDel: PigeonDelegateProxyApiTestClass {
-          func pigeonDefaultConstructor(_ pigeonApi: PigeonApiProxyApiTestClass) throws -> test_plugin.ProxyApiTestClass {
+          func pigeonDefaultConstructor(_ pigeonApi: PigeonApiProxyApiTestClass) throws
+            -> test_plugin.ProxyApiTestClass
+          {
             return ProxyApiTestClass()
           }
-          
-          func someField(_ pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: test_plugin.ProxyApiTestClass) throws -> Int {
+
+          func someField(
+            _ pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: test_plugin.ProxyApiTestClass
+          ) throws -> Int {
             return 3
           }
-          
-          func attachedField(_ pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: test_plugin.ProxyApiTestClass) throws -> test_plugin.ProxyApiSuperClass {
+
+          func attachedField(
+            _ pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: test_plugin.ProxyApiTestClass
+          ) throws -> test_plugin.ProxyApiSuperClass {
             return ProxyApiSuperClass()
           }
-          
-          func echo(_ pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: test_plugin.ProxyApiTestClass, aBool: Bool) throws -> Bool {
+
+          func echo(
+            _ pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: test_plugin.ProxyApiTestClass,
+            aBool: Bool
+          ) throws -> Bool {
             return true
           }
         }
-        
+
         return PigeonApiProxyApiTestClass(pigeonRegistrar: pigeonRegistrar, delegate: ProxyApiDel())
       }
     }
-    var registrar: PigeonProxyApiRegistrar? = PigeonProxyApiRegistrar(binaryMessenger: binaryMessenger, apiDelegate: PigeonApiDelegateImpl())
-    
+    var registrar: PigeonProxyApiRegistrar? = PigeonProxyApiRegistrar(
+      binaryMessenger: binaryMessenger, apiDelegate: PigeonApiDelegateImpl())
+
     // Add the scenario where the InstanceManager contains an instance that contains a ProxyApi implementation
     class TestClass {
       let api: PigeonApiProxyApiTestClass
-      
+
       init(_ api: PigeonApiProxyApiTestClass) {
         self.api = api
       }
     }
-    _ = registrar!.instanceManager.addHostCreatedInstance(TestClass(registrar!.apiDelegate.pigeonApiProxyApiTestClass(registrar!)))
-    
+    _ = registrar!.instanceManager.addHostCreatedInstance(
+      TestClass(registrar!.apiDelegate.pigeonApiProxyApiTestClass(registrar!)))
+
     registrar!.setUp()
     registrar!.tearDown()
-    
+
     let finalizerDelegate = TestFinalizerDelegate()
-    
-    PigeonFinalizer.attach(to: registrar!.instanceManager, identifier: 0, delegate: finalizerDelegate)
+
+    PigeonFinalizer.attach(
+      to: registrar!.instanceManager, identifier: 0, delegate: finalizerDelegate)
     registrar = nil
     XCTAssertEqual(finalizerDelegate.lastHandledIdentifier, 0)
   }
