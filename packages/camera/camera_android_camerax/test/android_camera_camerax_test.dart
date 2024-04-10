@@ -8,6 +8,7 @@ import 'dart:math' show Point;
 import 'package:async/async.dart';
 import 'package:camera_android_camerax/camera_android_camerax.dart';
 import 'package:camera_android_camerax/src/analyzer.dart';
+import 'package:camera_android_camerax/src/aspect_ratio_strategy.dart';
 import 'package:camera_android_camerax/src/camera.dart';
 import 'package:camera_android_camerax/src/camera2_camera_control.dart';
 import 'package:camera_android_camerax/src/camera_control.dart';
@@ -36,6 +37,7 @@ import 'package:camera_android_camerax/src/process_camera_provider.dart';
 import 'package:camera_android_camerax/src/quality_selector.dart';
 import 'package:camera_android_camerax/src/recorder.dart';
 import 'package:camera_android_camerax/src/recording.dart';
+import 'package:camera_android_camerax/src/resolution_filter.dart';
 import 'package:camera_android_camerax/src/resolution_selector.dart';
 import 'package:camera_android_camerax/src/resolution_strategy.dart';
 import 'package:camera_android_camerax/src/surface.dart';
@@ -46,7 +48,7 @@ import 'package:camera_android_camerax/src/zoom_state.dart';
 import 'package:camera_platform_interface/camera_platform_interface.dart';
 import 'package:flutter/services.dart'
     show DeviceOrientation, PlatformException, Uint8List;
-import 'package:flutter/widgets.dart';
+import 'package:flutter/widgets.dart' show BuildContext, Size, Texture, Widget;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
@@ -56,6 +58,7 @@ import 'test_camerax_library.g.dart';
 
 @GenerateNiceMocks(<MockSpec<Object>>[
   MockSpec<Analyzer>(),
+  MockSpec<AspectRatioStrategy>(),
   MockSpec<Camera>(),
   MockSpec<CameraInfo>(),
   MockSpec<CameraControl>(),
@@ -75,6 +78,7 @@ import 'test_camerax_library.g.dart';
   MockSpec<ProcessCameraProvider>(),
   MockSpec<QualitySelector>(),
   MockSpec<Recorder>(),
+  MockSpec<ResolutionFilter>(),
   MockSpec<ResolutionSelector>(),
   MockSpec<ResolutionStrategy>(),
   MockSpec<Recording>(),
@@ -121,6 +125,76 @@ void main() {
 
     return cameraClosingEventSent && cameraErrorSent;
   }
+
+  /// CameraXProxy for testing functionality related to the camera resolution
+  /// preset (setting expected ResolutionSelectors, QualitySelectors, etc.).
+  CameraXProxy getProxyForTestingResolutionPreset(
+          MockProcessCameraProvider mockProcessCameraProvider) =>
+      CameraXProxy(
+        getProcessCameraProvider: () =>
+            Future<ProcessCameraProvider>.value(mockProcessCameraProvider),
+        createCameraSelector: (int cameraSelectorLensDirection) =>
+            MockCameraSelector(),
+        createPreview:
+            (ResolutionSelector? resolutionSelector, int? targetRotation) =>
+                Preview.detached(
+                    initialTargetRotation: targetRotation,
+                    resolutionSelector: resolutionSelector),
+        createImageCapture:
+            (ResolutionSelector? resolutionSelector, int? targetRotation) =>
+                ImageCapture.detached(
+                    resolutionSelector: resolutionSelector,
+                    initialTargetRotation: targetRotation),
+        createRecorder: (QualitySelector? qualitySelector) =>
+            Recorder.detached(qualitySelector: qualitySelector),
+        createVideoCapture: (_) =>
+            Future<VideoCapture>.value(MockVideoCapture()),
+        createImageAnalysis:
+            (ResolutionSelector? resolutionSelector, int? targetRotation) =>
+                ImageAnalysis.detached(
+                    resolutionSelector: resolutionSelector,
+                    initialTargetRotation: targetRotation),
+        createResolutionStrategy: (
+            {bool highestAvailable = false,
+            Size? boundSize,
+            int? fallbackRule}) {
+          if (highestAvailable) {
+            return ResolutionStrategy.detachedHighestAvailableStrategy();
+          }
+          return ResolutionStrategy.detached(
+              boundSize: boundSize, fallbackRule: fallbackRule);
+        },
+        createResolutionSelector: (ResolutionStrategy resolutionStrategy,
+                ResolutionFilter? resolutionFilter,
+                AspectRatioStrategy? aspectRatioStrategy) =>
+            ResolutionSelector.detached(
+                resolutionStrategy: resolutionStrategy,
+                resolutionFilter: resolutionFilter,
+                aspectRatioStrategy: aspectRatioStrategy),
+        createFallbackStrategy: (
+                {required VideoQuality quality,
+                required VideoResolutionFallbackRule fallbackRule}) =>
+            FallbackStrategy.detached(
+                quality: quality, fallbackRule: fallbackRule),
+        createQualitySelector: (
+                {required VideoQuality videoQuality,
+                required FallbackStrategy fallbackStrategy}) =>
+            QualitySelector.detached(qualityList: <VideoQualityData>[
+          VideoQualityData(quality: videoQuality)
+        ], fallbackStrategy: fallbackStrategy),
+        createCameraStateObserver: (_) => MockObserver(),
+        requestCameraPermissions: (_) => Future<void>.value(),
+        startListeningForDeviceOrientationChange: (_, __) {},
+        setPreviewSurfaceProvider: (_) => Future<int>.value(
+            3), // 3 is a random Flutter SurfaceTexture ID for testing,
+        createAspectRatioStrategy: (int aspectRatio, int fallbackRule) =>
+            AspectRatioStrategy.detached(
+                preferredAspectRatio: aspectRatio, fallbackRule: fallbackRule),
+        createResolutionFilterWithOnePreferredSize:
+            (Size preferredResolution) =>
+                ResolutionFilter.onePreferredSizeDetached(
+                    preferredResolution: preferredResolution),
+      );
 
   /// CameraXProxy for testing exposure and focus related controls.
   ///
@@ -245,8 +319,7 @@ void main() {
         name: 'cameraName',
         lensDirection: testLensDirection,
         sensorOrientation: testSensorOrientation);
-    const ResolutionPreset testResolutionPreset = ResolutionPreset.veryHigh;
-    const bool enableAudio = true;
+
     const int testSurfaceTextureId = 6;
 
     // Mock/Detached objects for (typically attached) objects created by
@@ -289,7 +362,7 @@ void main() {
               Size? boundSize,
               int? fallbackRule}) =>
           MockResolutionStrategy(),
-      createResolutionSelector: (_) => MockResolutionSelector(),
+      createResolutionSelector: (_, __, ___) => MockResolutionSelector(),
       createFallbackStrategy: (
               {required VideoQuality quality,
               required VideoResolutionFallbackRule fallbackRule}) =>
@@ -307,6 +380,8 @@ void main() {
       startListeningForDeviceOrientationChange: (_, __) {
         startedListeningForDeviceOrientationChanges = true;
       },
+      createAspectRatioStrategy: (_, __) => MockAspectRatioStrategy(),
+      createResolutionFilterWithOnePreferredSize: (_) => MockResolutionFilter(),
     );
 
     when(mockPreview.setSurfaceProvider())
@@ -320,8 +395,16 @@ void main() {
     camera.processCameraProvider = mockProcessCameraProvider;
 
     expect(
-        await camera.createCamera(testCameraDescription, testResolutionPreset,
-            enableAudio: enableAudio),
+        await camera.createCameraWithSettings(
+          testCameraDescription,
+          const MediaSettings(
+            resolutionPreset: ResolutionPreset.low,
+            fps: 15,
+            videoBitrate: 200000,
+            audioBitrate: 32000,
+            enableAudio: true,
+          ),
+        ),
         equals(testSurfaceTextureId));
 
     // Verify permissions are requested and the camera starts listening for device orientation changes.
@@ -405,7 +488,7 @@ void main() {
               Size? boundSize,
               int? fallbackRule}) =>
           MockResolutionStrategy(),
-      createResolutionSelector: (_) => MockResolutionSelector(),
+      createResolutionSelector: (_, __, ___) => MockResolutionSelector(),
       createFallbackStrategy: (
               {required VideoQuality quality,
               required VideoResolutionFallbackRule fallbackRule}) =>
@@ -418,6 +501,8 @@ void main() {
           Observer<CameraState>.detached(onChanged: onChanged),
       requestCameraPermissions: (_) => Future<void>.value(),
       startListeningForDeviceOrientationChange: (_, __) {},
+      createAspectRatioStrategy: (_, __) => MockAspectRatioStrategy(),
+      createResolutionFilterWithOnePreferredSize: (_) => MockResolutionFilter(),
     );
 
     when(mockProcessCameraProvider.bindToLifecycle(mockBackCameraSelector,
@@ -430,8 +515,15 @@ void main() {
         .thenAnswer((_) async => mockCameraControl);
     camera.processCameraProvider = mockProcessCameraProvider;
 
-    await camera.createCamera(testCameraDescription, testResolutionPreset,
-        enableAudio: enableAudio);
+    await camera.createCameraWithSettings(
+        testCameraDescription,
+        const MediaSettings(
+          resolutionPreset: testResolutionPreset,
+          fps: 15,
+          videoBitrate: 2000000,
+          audioBitrate: 64000,
+          enableAudio: enableAudio,
+        ));
 
     // Verify expected UseCases were bound.
     verify(camera.processCameraProvider!.bindToLifecycle(camera.cameraSelector!,
@@ -449,7 +541,7 @@ void main() {
   });
 
   test(
-      'createCamera properly sets preset resolution for non-video capture use cases',
+      'createCamera properly sets preset resolution selection strategy for non-video capture use cases',
       () async {
     final AndroidCameraCameraX camera = AndroidCameraCameraX();
     const CameraLensDirection testLensDirection = CameraLensDirection.back;
@@ -466,69 +558,13 @@ void main() {
     final MockProcessCameraProvider mockProcessCameraProvider =
         MockProcessCameraProvider();
     final MockCameraInfo mockCameraInfo = MockCameraInfo();
-    final MockCameraSelector mockBackCameraSelector = MockCameraSelector();
-    final MockCameraSelector mockFrontCameraSelector = MockCameraSelector();
-    final MockVideoCapture mockVideoCapture = MockVideoCapture();
-    final MockRecorder mockRecorder = MockRecorder();
 
     // Tell plugin to create mock/detached objects for testing createCamera
     // as needed.
-    camera.proxy = CameraXProxy(
-      getProcessCameraProvider: () =>
-          Future<ProcessCameraProvider>.value(mockProcessCameraProvider),
-      createCameraSelector: (int cameraSelectorLensDirection) {
-        switch (cameraSelectorLensDirection) {
-          case CameraSelector.lensFacingFront:
-            return mockFrontCameraSelector;
-          case CameraSelector.lensFacingBack:
-          default:
-            return mockBackCameraSelector;
-        }
-      },
-      createPreview:
-          (ResolutionSelector? resolutionSelector, int? targetRotation) =>
-              Preview.detached(
-                  initialTargetRotation: targetRotation,
-                  resolutionSelector: resolutionSelector),
-      createImageCapture:
-          (ResolutionSelector? resolutionSelector, int? targetRotation) =>
-              ImageCapture.detached(
-                  resolutionSelector: resolutionSelector,
-                  initialTargetRotation: targetRotation),
-      createRecorder: (_) => mockRecorder,
-      createVideoCapture: (_) => Future<VideoCapture>.value(mockVideoCapture),
-      createImageAnalysis:
-          (ResolutionSelector? resolutionSelector, int? targetRotation) =>
-              ImageAnalysis.detached(
-                  resolutionSelector: resolutionSelector,
-                  initialTargetRotation: targetRotation),
-      createResolutionStrategy: (
-          {bool highestAvailable = false, Size? boundSize, int? fallbackRule}) {
-        if (highestAvailable) {
-          return ResolutionStrategy.detachedHighestAvailableStrategy();
-        }
+    camera.proxy =
+        getProxyForTestingResolutionPreset(mockProcessCameraProvider);
 
-        return ResolutionStrategy.detached(
-            boundSize: boundSize, fallbackRule: fallbackRule);
-      },
-      createResolutionSelector: (ResolutionStrategy resolutionStrategy) =>
-          ResolutionSelector.detached(resolutionStrategy: resolutionStrategy),
-      createFallbackStrategy: (
-              {required VideoQuality quality,
-              required VideoResolutionFallbackRule fallbackRule}) =>
-          MockFallbackStrategy(),
-      createQualitySelector: (
-              {required VideoQuality videoQuality,
-              required FallbackStrategy fallbackStrategy}) =>
-          MockQualitySelector(),
-      createCameraStateObserver: (_) => MockObserver(),
-      requestCameraPermissions: (_) => Future<void>.value(),
-      startListeningForDeviceOrientationChange: (_, __) {},
-      setPreviewSurfaceProvider: (_) => Future<int>.value(
-          3), // 3 is a random Flutter SurfaceTexture ID for testing},
-    );
-
-    when(mockProcessCameraProvider.bindToLifecycle(mockBackCameraSelector, any))
+    when(mockProcessCameraProvider.bindToLifecycle(any, any))
         .thenAnswer((_) async => mockCamera);
     when(mockCamera.getCameraInfo()).thenAnswer((_) async => mockCameraInfo);
     when(mockCameraInfo.getCameraState())
@@ -537,8 +573,11 @@ void main() {
 
     // Test non-null resolution presets.
     for (final ResolutionPreset resolutionPreset in ResolutionPreset.values) {
-      await camera.createCamera(testCameraDescription, resolutionPreset,
-          enableAudio: enableAudio);
+      await camera.createCamera(
+        testCameraDescription,
+        resolutionPreset,
+        enableAudio: enableAudio,
+      );
 
       Size? expectedBoundSize;
       ResolutionStrategy? expectedResolutionStrategy;
@@ -596,6 +635,189 @@ void main() {
   });
 
   test(
+      'createCamera properly sets filter for resolution preset for non-video capture use cases',
+      () async {
+    final AndroidCameraCameraX camera = AndroidCameraCameraX();
+    const CameraLensDirection testLensDirection = CameraLensDirection.front;
+    const int testSensorOrientation = 180;
+    const CameraDescription testCameraDescription = CameraDescription(
+        name: 'cameraName',
+        lensDirection: testLensDirection,
+        sensorOrientation: testSensorOrientation);
+    const bool enableAudio = true;
+    final MockCamera mockCamera = MockCamera();
+
+    // Mock/Detached objects for (typically attached) objects created by
+    // createCamera.
+    final MockProcessCameraProvider mockProcessCameraProvider =
+        MockProcessCameraProvider();
+    final MockCameraInfo mockCameraInfo = MockCameraInfo();
+
+    // Tell plugin to create mock/detached objects for testing createCamera
+    // as needed.
+    camera.proxy =
+        getProxyForTestingResolutionPreset(mockProcessCameraProvider);
+
+    when(mockProcessCameraProvider.bindToLifecycle(any, any))
+        .thenAnswer((_) async => mockCamera);
+    when(mockCamera.getCameraInfo()).thenAnswer((_) async => mockCameraInfo);
+    when(mockCameraInfo.getCameraState())
+        .thenAnswer((_) async => MockLiveCameraState());
+    camera.processCameraProvider = mockProcessCameraProvider;
+
+    // Test non-null resolution presets.
+    for (final ResolutionPreset resolutionPreset in ResolutionPreset.values) {
+      await camera.createCamera(testCameraDescription, resolutionPreset,
+          enableAudio: enableAudio);
+
+      Size? expectedPreferredResolution;
+      switch (resolutionPreset) {
+        case ResolutionPreset.low:
+          expectedPreferredResolution = const Size(320, 240);
+        case ResolutionPreset.medium:
+          expectedPreferredResolution = const Size(720, 480);
+        case ResolutionPreset.high:
+          expectedPreferredResolution = const Size(1280, 720);
+        case ResolutionPreset.veryHigh:
+          expectedPreferredResolution = const Size(1920, 1080);
+        case ResolutionPreset.ultraHigh:
+          expectedPreferredResolution = const Size(3840, 2160);
+        case ResolutionPreset.max:
+          expectedPreferredResolution = null;
+      }
+
+      if (expectedPreferredResolution == null) {
+        expect(camera.preview!.resolutionSelector!.resolutionFilter, isNull);
+        expect(
+            camera.imageCapture!.resolutionSelector!.resolutionFilter, isNull);
+        expect(
+            camera.imageAnalysis!.resolutionSelector!.resolutionFilter, isNull);
+        continue;
+      }
+
+      expect(
+          camera.preview!.resolutionSelector!.resolutionFilter!
+              .preferredResolution,
+          equals(expectedPreferredResolution));
+      expect(
+          camera
+              .imageCapture!.resolutionSelector!.resolutionStrategy!.boundSize,
+          equals(expectedPreferredResolution));
+      expect(
+          camera
+              .imageAnalysis!.resolutionSelector!.resolutionStrategy!.boundSize,
+          equals(expectedPreferredResolution));
+    }
+
+    // Test null case.
+    await camera.createCamera(testCameraDescription, null);
+    expect(camera.preview!.resolutionSelector, isNull);
+    expect(camera.imageCapture!.resolutionSelector, isNull);
+    expect(camera.imageAnalysis!.resolutionSelector, isNull);
+  });
+
+  test(
+      'createCamera properly sets aspect ratio based on preset resolution for non-video capture use cases',
+      () async {
+    final AndroidCameraCameraX camera = AndroidCameraCameraX();
+    const CameraLensDirection testLensDirection = CameraLensDirection.back;
+    const int testSensorOrientation = 90;
+    const CameraDescription testCameraDescription = CameraDescription(
+        name: 'cameraName',
+        lensDirection: testLensDirection,
+        sensorOrientation: testSensorOrientation);
+    const bool enableAudio = true;
+    final MockCamera mockCamera = MockCamera();
+
+    // Mock/Detached objects for (typically attached) objects created by
+    // createCamera.
+    final MockProcessCameraProvider mockProcessCameraProvider =
+        MockProcessCameraProvider();
+    final MockCameraInfo mockCameraInfo = MockCameraInfo();
+
+    // Tell plugin to create mock/detached objects for testing createCamera
+    // as needed.
+    camera.proxy =
+        getProxyForTestingResolutionPreset(mockProcessCameraProvider);
+    when(mockProcessCameraProvider.bindToLifecycle(any, any))
+        .thenAnswer((_) async => mockCamera);
+    when(mockCamera.getCameraInfo()).thenAnswer((_) async => mockCameraInfo);
+    when(mockCameraInfo.getCameraState())
+        .thenAnswer((_) async => MockLiveCameraState());
+    camera.processCameraProvider = mockProcessCameraProvider;
+
+    // Test non-null resolution presets.
+    for (final ResolutionPreset resolutionPreset in ResolutionPreset.values) {
+      await camera.createCamera(testCameraDescription, resolutionPreset,
+          enableAudio: enableAudio);
+
+      int? expectedAspectRatio;
+      AspectRatioStrategy? expectedAspectRatioStrategy;
+      switch (resolutionPreset) {
+        case ResolutionPreset.low:
+          expectedAspectRatio = AspectRatio.ratio4To3;
+        case ResolutionPreset.high:
+        case ResolutionPreset.veryHigh:
+        case ResolutionPreset.ultraHigh:
+          expectedAspectRatio = AspectRatio.ratio16To9;
+        case ResolutionPreset.medium:
+        // Medium resolution preset uses aspect ratio 3:2 which is unsupported
+        // by CameraX.
+        case ResolutionPreset.max:
+          expectedAspectRatioStrategy = null;
+      }
+
+      expectedAspectRatioStrategy = expectedAspectRatio == null
+          ? null
+          : AspectRatioStrategy.detached(
+              preferredAspectRatio: expectedAspectRatio,
+              fallbackRule: AspectRatioStrategy.fallbackRuleAuto);
+
+      if (expectedAspectRatio == null) {
+        expect(camera.preview!.resolutionSelector!.aspectRatioStrategy, isNull);
+        expect(camera.imageCapture!.resolutionSelector!.aspectRatioStrategy,
+            isNull);
+        expect(camera.imageAnalysis!.resolutionSelector!.aspectRatioStrategy,
+            isNull);
+        continue;
+      }
+
+      // Check aspect ratio.
+      expect(
+          camera.preview!.resolutionSelector!.aspectRatioStrategy!
+              .preferredAspectRatio,
+          equals(expectedAspectRatioStrategy!.preferredAspectRatio));
+      expect(
+          camera.imageCapture!.resolutionSelector!.aspectRatioStrategy!
+              .preferredAspectRatio,
+          equals(expectedAspectRatioStrategy.preferredAspectRatio));
+      expect(
+          camera.imageAnalysis!.resolutionSelector!.aspectRatioStrategy!
+              .preferredAspectRatio,
+          equals(expectedAspectRatioStrategy.preferredAspectRatio));
+
+      // Check fallback rule.
+      expect(
+          camera.preview!.resolutionSelector!.aspectRatioStrategy!.fallbackRule,
+          equals(expectedAspectRatioStrategy.fallbackRule));
+      expect(
+          camera.imageCapture!.resolutionSelector!.aspectRatioStrategy!
+              .fallbackRule,
+          equals(expectedAspectRatioStrategy.fallbackRule));
+      expect(
+          camera.imageAnalysis!.resolutionSelector!.aspectRatioStrategy!
+              .fallbackRule,
+          equals(expectedAspectRatioStrategy.fallbackRule));
+    }
+
+    // Test null case.
+    await camera.createCamera(testCameraDescription, null);
+    expect(camera.preview!.resolutionSelector, isNull);
+    expect(camera.imageCapture!.resolutionSelector, isNull);
+    expect(camera.imageAnalysis!.resolutionSelector, isNull);
+  });
+
+  test(
       'createCamera properly sets preset resolution for video capture use case',
       () async {
     final AndroidCameraCameraX camera = AndroidCameraCameraX();
@@ -613,58 +835,13 @@ void main() {
     final MockProcessCameraProvider mockProcessCameraProvider =
         MockProcessCameraProvider();
     final MockCameraInfo mockCameraInfo = MockCameraInfo();
-    final MockCameraSelector mockBackCameraSelector = MockCameraSelector();
-    final MockCameraSelector mockFrontCameraSelector = MockCameraSelector();
-    final MockPreview mockPreview = MockPreview();
-    final MockImageCapture mockImageCapture = MockImageCapture();
-    final MockVideoCapture mockVideoCapture = MockVideoCapture();
-    final MockImageAnalysis mockImageAnalysis = MockImageAnalysis();
 
     // Tell plugin to create mock/detached objects for testing createCamera
     // as needed.
-    camera.proxy = CameraXProxy(
-      getProcessCameraProvider: () =>
-          Future<ProcessCameraProvider>.value(mockProcessCameraProvider),
-      createCameraSelector: (int cameraSelectorLensDirection) {
-        switch (cameraSelectorLensDirection) {
-          case CameraSelector.lensFacingFront:
-            return mockFrontCameraSelector;
-          case CameraSelector.lensFacingBack:
-          default:
-            return mockBackCameraSelector;
-        }
-      },
-      createPreview: (_, __) => mockPreview,
-      createImageCapture: (_, __) => mockImageCapture,
-      createRecorder: (QualitySelector? qualitySelector) =>
-          Recorder.detached(qualitySelector: qualitySelector),
-      createVideoCapture: (_) => Future<VideoCapture>.value(mockVideoCapture),
-      createImageAnalysis: (_, __) => mockImageAnalysis,
-      createResolutionStrategy: (
-              {bool highestAvailable = false,
-              Size? boundSize,
-              int? fallbackRule}) =>
-          MockResolutionStrategy(),
-      createResolutionSelector: (_) => MockResolutionSelector(),
-      createFallbackStrategy: (
-              {required VideoQuality quality,
-              required VideoResolutionFallbackRule fallbackRule}) =>
-          FallbackStrategy.detached(
-              quality: quality, fallbackRule: fallbackRule),
-      createQualitySelector: (
-              {required VideoQuality videoQuality,
-              required FallbackStrategy fallbackStrategy}) =>
-          QualitySelector.detached(qualityList: <VideoQualityData>[
-        VideoQualityData(quality: videoQuality)
-      ], fallbackStrategy: fallbackStrategy),
-      createCameraStateObserver: (void Function(Object) onChanged) =>
-          Observer<CameraState>.detached(onChanged: onChanged),
-      requestCameraPermissions: (_) => Future<void>.value(),
-      startListeningForDeviceOrientationChange: (_, __) {},
-    );
+    camera.proxy =
+        getProxyForTestingResolutionPreset(mockProcessCameraProvider);
 
-    when(mockProcessCameraProvider.bindToLifecycle(mockBackCameraSelector,
-            <UseCase>[mockPreview, mockImageCapture, mockImageAnalysis]))
+    when(mockProcessCameraProvider.bindToLifecycle(any, any))
         .thenAnswer((_) async => mockCamera);
     when(mockCamera.getCameraInfo()).thenAnswer((_) async => mockCameraInfo);
     when(mockCameraInfo.getCameraState())
@@ -731,8 +908,6 @@ void main() {
         name: 'cameraName',
         lensDirection: testLensDirection,
         sensorOrientation: testSensorOrientation);
-    const ResolutionPreset testResolutionPreset = ResolutionPreset.veryHigh;
-    const bool enableAudio = true;
     const int resolutionWidth = 350;
     const int resolutionHeight = 750;
     final Camera mockCamera = MockCamera();
@@ -773,7 +948,7 @@ void main() {
               Size? boundSize,
               int? fallbackRule}) =>
           MockResolutionStrategy(),
-      createResolutionSelector: (_) => MockResolutionSelector(),
+      createResolutionSelector: (_, __, ___) => MockResolutionSelector(),
       createFallbackStrategy: (
               {required VideoQuality quality,
               required VideoResolutionFallbackRule fallbackRule}) =>
@@ -786,6 +961,8 @@ void main() {
           Observer<CameraState>.detached(onChanged: onChanged),
       requestCameraPermissions: (_) => Future<void>.value(),
       startListeningForDeviceOrientationChange: (_, __) {},
+      createAspectRatioStrategy: (_, __) => MockAspectRatioStrategy(),
+      createResolutionFilterWithOnePreferredSize: (_) => MockResolutionFilter(),
     );
 
     final CameraInitializedEvent testCameraInitializedEvent =
@@ -810,8 +987,16 @@ void main() {
     when(mockPreview.getResolutionInfo())
         .thenAnswer((_) async => testResolutionInfo);
 
-    await camera.createCamera(testCameraDescription, testResolutionPreset,
-        enableAudio: enableAudio);
+    await camera.createCameraWithSettings(
+      testCameraDescription,
+      const MediaSettings(
+        resolutionPreset: ResolutionPreset.medium,
+        fps: 15,
+        videoBitrate: 200000,
+        audioBitrate: 32000,
+        enableAudio: true,
+      ),
+    );
 
     // Start listening to camera events stream to verify the proper CameraInitializedEvent is sent.
     camera.cameraEventStreamController.stream.listen((CameraEvent event) {
@@ -900,7 +1085,7 @@ void main() {
   });
 
   test(
-      'onDeviceOrientationChanged stream emits changes in device oreintation detected by system services',
+      'onDeviceOrientationChanged stream emits changes in device orientation detected by system services',
       () async {
     final AndroidCameraCameraX camera = AndroidCameraCameraX();
     final Stream<DeviceOrientationChangedEvent> eventStream =
@@ -1891,6 +2076,7 @@ void main() {
             as Analyzer;
 
     await capturedAnalyzer.analyze(mockImageProxy);
+
     final CameraImageData imageData = await imageDataCompleter.future;
 
     // Test Analyzer correctly process ImageProxy instances.

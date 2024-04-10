@@ -266,7 +266,7 @@ class _ExampleFlutterApi implements MessageFlutterApi {
   }
 }
 // ···
-  MessageFlutterApi.setup(_ExampleFlutterApi());
+  MessageFlutterApi.setUp(_ExampleFlutterApi());
 ```
 
 ### Swift

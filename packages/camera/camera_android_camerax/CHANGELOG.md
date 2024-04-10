@@ -1,3 +1,17 @@
+## 0.6.2
+
+* Adds support to control video FPS and bitrate. See `CameraController.withSettings`.
+
+## 0.6.1+1
+
+* Moves integration_test dependency to dev_dependencies.
+
+## 0.6.1
+
+* Modifies resolution selection logic to use an `AspectRatioStrategy` for all aspect ratios supported by CameraX.
+* Adds `ResolutionFilter` to resolution selection logic to prioritize resolutions that match
+  the defined `ResolutionPreset`s.
+
 ## 0.6.0+1
 
 * Updates `README.md` to encourage developers to opt into this implementation of the camera plugin.
