@@ -331,55 +331,55 @@ private class PigeonInstanceManagerApi {
   }
 }
 
-private class PigeonProxyApiBaseCodecReader: FlutterStandardReader {
-  unowned let pigeonRegistrar: PigeonProxyApiRegistrar
-
-  init(data: Data, pigeonRegistrar: PigeonProxyApiRegistrar) {
-    self.pigeonRegistrar = pigeonRegistrar
-    super.init(data: data)
-  }
-
-  override func readValue(ofType type: UInt8) -> Any? {
-    switch type {
-    case 128:
-      let identifier = self.readValue()
-      let instance: AnyObject? = pigeonRegistrar.instanceManager.instance(
-        forIdentifier: identifier is Int64 ? identifier as! Int64 : Int64(identifier as! Int32))
-      return instance
-    default:
-      return super.readValue(ofType: type)
-    }
-  }
-}
-
-private class PigeonProxyApiBaseCodecWriter: FlutterStandardWriter {
-  unowned let pigeonRegistrar: PigeonProxyApiRegistrar
-
-  init(data: NSMutableData, pigeonRegistrar: PigeonProxyApiRegistrar) {
-    self.pigeonRegistrar = pigeonRegistrar
-    super.init(data: data)
-  }
-
-  override func writeValue(_ value: Any) {
-    if value is ProxyApiTestClass {
-      pigeonRegistrar.apiDelegate.pigeonApiProxyApiTestClass(pigeonRegistrar).pigeonNewInstance(
-        pigeonInstanceArg: value as! ProxyApiTestClass
-      ) { _ in }
-    }
-
-    if let instance = value as? AnyClass, pigeonRegistrar.instanceManager.containsInstance(instance)
-    {
-      super.writeByte(128)
-      super.writeValue(
-        pigeonRegistrar.instanceManager.identifierWithStrongReference(forInstance: instance)!)
-    } else {
-      super.writeValue(value)
-    }
-  }
-}
-
 private class PigeonProxyApiBaseCodecReaderWriter: FlutterStandardReaderWriter {
   unowned let pigeonRegistrar: PigeonProxyApiRegistrar
+  
+  private class PigeonProxyApiBaseCodecReader: FlutterStandardReader {
+    unowned let pigeonRegistrar: PigeonProxyApiRegistrar
+
+    init(data: Data, pigeonRegistrar: PigeonProxyApiRegistrar) {
+      self.pigeonRegistrar = pigeonRegistrar
+      super.init(data: data)
+    }
+
+    override func readValue(ofType type: UInt8) -> Any? {
+      switch type {
+      case 128:
+        let identifier = self.readValue()
+        let instance: AnyObject? = pigeonRegistrar.instanceManager.instance(
+          forIdentifier: identifier is Int64 ? identifier as! Int64 : Int64(identifier as! Int32))
+        return instance
+      default:
+        return super.readValue(ofType: type)
+      }
+    }
+  }
+  
+  private class PigeonProxyApiBaseCodecWriter: FlutterStandardWriter {
+    unowned let pigeonRegistrar: PigeonProxyApiRegistrar
+
+    init(data: NSMutableData, pigeonRegistrar: PigeonProxyApiRegistrar) {
+      self.pigeonRegistrar = pigeonRegistrar
+      super.init(data: data)
+    }
+
+    override func writeValue(_ value: Any) {
+      if value is ProxyApiTestClass {
+        pigeonRegistrar.apiDelegate.pigeonApiProxyApiTestClass(pigeonRegistrar).pigeonNewInstance(
+          pigeonInstanceArg: value as! ProxyApiTestClass
+        ) { _ in }
+      }
+
+      if let instance = value as? AnyClass, pigeonRegistrar.instanceManager.containsInstance(instance)
+      {
+        super.writeByte(128)
+        super.writeValue(
+          pigeonRegistrar.instanceManager.identifierWithStrongReference(forInstance: instance)!)
+      } else {
+        super.writeValue(value)
+      }
+    }
+  }
 
   init(pigeonRegistrar: PigeonProxyApiRegistrar) {
     self.pigeonRegistrar = pigeonRegistrar
