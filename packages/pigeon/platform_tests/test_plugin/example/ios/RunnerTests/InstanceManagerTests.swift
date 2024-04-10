@@ -107,7 +107,7 @@ final class InstanceManagerTests: XCTestCase {
       func pigeonApiProxyApiTestClass(_ pigeonRegistrar: test_plugin.PigeonProxyApiRegistrar)
         -> test_plugin.PigeonApiProxyApiTestClass
       {
-        class ProxyApiDel: PigeonApiProxyApiTestClassProtocol {
+        class ProxyApiDel: PigeonApiDelegateProxyApiTestClass {
           func pigeonDefaultConstructor(_ pigeonApi: PigeonApiProxyApiTestClass) throws
             -> test_plugin.ProxyApiTestClass
           {
