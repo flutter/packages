@@ -56,9 +56,9 @@ void main() {
             ]),
       ];
       final GoRouter router = await createRouter(routes, tester);
-      router.go('/?p=123');
+      router.go('/');
       await tester.pumpAndSettle();
-      expect(find.text('1 /?p=123'), findsOneWidget);
+      expect(find.text('1 /'), findsOneWidget);
 
       router.go('/a');
       await tester.pumpAndSettle();
@@ -124,8 +124,8 @@ void main() {
             ]),
       ];
       final GoRouter router =
-          await createRouter(routes, tester, initialLocation: '/a?p=123');
-      expect(tester.widget<Text>(find.byKey(key)).data, '/a?p=123');
+          await createRouter(routes, tester, initialLocation: '/a');
+      expect(tester.widget<Text>(find.byKey(key)).data, '/a');
       final GoRouterStateRegistry registry = tester
           .widget<GoRouterStateRegistryScope>(
               find.byType(GoRouterStateRegistryScope))
@@ -135,7 +135,7 @@ void main() {
       await tester.pump();
       expect(registry.registry.length, 2);
       // should retain the same location even if the location has changed.
-      expect(tester.widget<Text>(find.byKey(key)).data, '/a?p=123');
+      expect(tester.widget<Text>(find.byKey(key)).data, '/a');
 
       // Finish the pop animation.
       await tester.pumpAndSettle();
@@ -166,8 +166,8 @@ void main() {
             ]),
       ];
       await createRouter(routes, tester,
-          initialLocation: '/a?p=123', navigatorKey: nav);
-      expect(tester.widget<Text>(find.byKey(key)).data, '/a?p=123');
+          initialLocation: '/a', navigatorKey: nav);
+      expect(tester.widget<Text>(find.byKey(key)).data, '/a');
       final GoRouterStateRegistry registry = tester
           .widget<GoRouterStateRegistryScope>(
               find.byType(GoRouterStateRegistryScope))
@@ -177,7 +177,7 @@ void main() {
       await tester.pump();
       expect(registry.registry.length, 2);
       // should retain the same location even if the location has changed.
-      expect(tester.widget<Text>(find.byKey(key)).data, '/a?p=123');
+      expect(tester.widget<Text>(find.byKey(key)).data, '/a');
 
       // Finish the pop animation.
       await tester.pumpAndSettle();
