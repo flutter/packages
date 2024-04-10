@@ -72,6 +72,54 @@ void main() {
           arguments: <String, Object?>{
             'cameraName': 'Test',
             'resolutionPreset': 'high',
+            'fps': null,
+            'videoBitrate': null,
+            'audioBitrate': null,
+            'enableAudio': false
+          },
+        ),
+      ]);
+      expect(cameraId, 1);
+    });
+
+    test(
+        'Should send creation data and receive back a camera id using createCameraWithSettings',
+        () async {
+      // Arrange
+      final MethodChannelMock cameraMockChannel = MethodChannelMock(
+          channelName: _channelName,
+          methods: <String, dynamic>{
+            'create': <String, dynamic>{
+              'cameraId': 1,
+              'imageFormatGroup': 'unknown',
+            }
+          });
+      final AVFoundationCamera camera = AVFoundationCamera();
+
+      // Act
+      final int cameraId = await camera.createCameraWithSettings(
+        const CameraDescription(
+            name: 'Test',
+            lensDirection: CameraLensDirection.back,
+            sensorOrientation: 0),
+        const MediaSettings(
+          resolutionPreset: ResolutionPreset.low,
+          fps: 15,
+          videoBitrate: 200000,
+          audioBitrate: 32000,
+        ),
+      );
+
+      // Assert
+      expect(cameraMockChannel.log, <Matcher>[
+        isMethodCall(
+          'create',
+          arguments: <String, Object?>{
+            'cameraName': 'Test',
+            'resolutionPreset': 'low',
+            'fps': 15,
+            'videoBitrate': 200000,
+            'audioBitrate': 32000,
             'enableAudio': false
           },
         ),

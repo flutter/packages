@@ -8,3 +8,8 @@
 
 @interface AlternateLanguageTestPlugin : NSObject <FlutterPlugin, HostIntegrationCoreApi>
 @end
+
+@interface AlternateLanguageTestAPIWithSuffix : NSObject <HostSmallApi>
++ (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar
+                       suffix:(NSString *)suffix;
+@end
