@@ -4,6 +4,10 @@
   * Replaces parameters at `bulletBuilder` with `MarkdownBulletParameters`.
     * Introduces a new parameter `nestLevel` that exposes the bullet item's nesting level.
 
+## 0.6.22+1
+
+* Removes `_ambiguate` methods from code.
+
 ## 0.6.22
 
 * Introduces a new `MarkdownElementBuilder.isBlockElement()` method to specify if custom element
