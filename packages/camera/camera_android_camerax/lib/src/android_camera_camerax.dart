@@ -9,10 +9,12 @@ import 'package:async/async.dart';
 import 'package:camera_platform_interface/camera_platform_interface.dart';
 import 'package:flutter/services.dart'
     show DeviceOrientation, PlatformException;
-import 'package:flutter/widgets.dart';
+import 'package:flutter/widgets.dart'
+    show Size, Texture, Widget, visibleForTesting;
 import 'package:stream_transform/stream_transform.dart';
 
 import 'analyzer.dart';
+import 'aspect_ratio_strategy.dart';
 import 'camera.dart';
 import 'camera2_camera_control.dart';
 import 'camera_control.dart';
@@ -40,6 +42,7 @@ import 'process_camera_provider.dart';
 import 'quality_selector.dart';
 import 'recorder.dart';
 import 'recording.dart';
+import 'resolution_filter.dart';
 import 'resolution_selector.dart';
 import 'resolution_strategy.dart';
 import 'surface.dart';
@@ -267,6 +270,20 @@ class AndroidCameraCameraX extends CameraPlatform {
     return cameraDescriptions;
   }
 
+  /// Creates an uninitialized camera instance with default settings and returns the camera ID.
+  ///
+  /// See [createCameraWithSettings]
+  @override
+  Future<int> createCamera(
+    CameraDescription description,
+    ResolutionPreset? resolutionPreset, {
+    bool enableAudio = false,
+  }) =>
+      createCameraWithSettings(
+          description,
+          MediaSettings(
+              resolutionPreset: resolutionPreset, enableAudio: enableAudio));
+
   /// Creates an uninitialized camera instance and returns the camera ID.
   ///
   /// In the CameraX library, cameras are accessed by combining [UseCase]s
@@ -284,13 +301,12 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// that a camera preview can be drawn to, a [Preview] instance is configured
   /// and bound to the [ProcessCameraProvider] instance.
   @override
-  Future<int> createCamera(
+  Future<int> createCameraWithSettings(
     CameraDescription cameraDescription,
-    ResolutionPreset? resolutionPreset, {
-    bool enableAudio = false,
-  }) async {
+    MediaSettings? mediaSettings,
+  ) async {
     // Must obtain proper permissions before attempting to access a camera.
-    await proxy.requestCameraPermissions(enableAudio);
+    await proxy.requestCameraPermissions(mediaSettings?.enableAudio ?? false);
 
     // Save CameraSelector that matches cameraDescription.
     final int cameraSelectorLensDirection =
@@ -304,9 +320,9 @@ class AndroidCameraCameraX extends CameraPlatform {
     // Determine ResolutionSelector and QualitySelector based on
     // resolutionPreset for camera UseCases.
     final ResolutionSelector? presetResolutionSelector =
-        _getResolutionSelectorFromPreset(resolutionPreset);
+        _getResolutionSelectorFromPreset(mediaSettings?.resolutionPreset);
     final QualitySelector? presetQualitySelector =
-        _getQualitySelectorFromPreset(resolutionPreset);
+        _getQualitySelectorFromPreset(mediaSettings?.resolutionPreset);
 
     // Retrieve a fresh ProcessCameraProvider instance.
     processCameraProvider ??= await proxy.getProcessCameraProvider();
@@ -1150,23 +1166,29 @@ class AndroidCameraCameraX extends CameraPlatform {
         ResolutionStrategy.fallbackRuleClosestLowerThenHigher;
 
     Size? boundSize;
+    int? aspectRatio;
     ResolutionStrategy? resolutionStrategy;
     switch (preset) {
       case ResolutionPreset.low:
         boundSize = const Size(320, 240);
+        aspectRatio = AspectRatio.ratio4To3;
       case ResolutionPreset.medium:
         boundSize = const Size(720, 480);
       case ResolutionPreset.high:
         boundSize = const Size(1280, 720);
+        aspectRatio = AspectRatio.ratio16To9;
       case ResolutionPreset.veryHigh:
         boundSize = const Size(1920, 1080);
+        aspectRatio = AspectRatio.ratio16To9;
       case ResolutionPreset.ultraHigh:
         boundSize = const Size(3840, 2160);
+        aspectRatio = AspectRatio.ratio16To9;
       case ResolutionPreset.max:
         // Automatically set strategy to choose highest available.
         resolutionStrategy =
             proxy.createResolutionStrategy(highestAvailable: true);
-        return proxy.createResolutionSelector(resolutionStrategy);
+        return proxy.createResolutionSelector(resolutionStrategy,
+            /* ResolutionFilter */ null, /* AspectRatioStrategy */ null);
       case null:
         // If no preset is specified, default to CameraX's default behavior
         // for each UseCase.
@@ -1175,7 +1197,14 @@ class AndroidCameraCameraX extends CameraPlatform {
 
     resolutionStrategy = proxy.createResolutionStrategy(
         boundSize: boundSize, fallbackRule: fallbackRule);
-    return proxy.createResolutionSelector(resolutionStrategy);
+    final ResolutionFilter resolutionFilter =
+        proxy.createResolutionFilterWithOnePreferredSize(boundSize);
+    final AspectRatioStrategy? aspectRatioStrategy = aspectRatio == null
+        ? null
+        : proxy.createAspectRatioStrategy(
+            aspectRatio, AspectRatioStrategy.fallbackRuleAuto);
+    return proxy.createResolutionSelector(
+        resolutionStrategy, resolutionFilter, aspectRatioStrategy);
   }
 
   /// Returns the [QualitySelector] that maps to the specified resolution
