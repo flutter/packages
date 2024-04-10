@@ -1,3 +1,8 @@
+## 14.0.0
+
+- **BREAKING CHANGE**
+  - `GoRouteData`'s `onExit` now takes 2 parameters `BuildContext context, GoRouterState state`.
+
 ## 13.2.3
 
 - Fixes an issue where deep links without path caused an exception
