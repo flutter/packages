@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'dart:html'; // ignore: avoid_web_libraries_in_flutter
+import 'dart:js_interop';
 
 import 'package:flutter/cupertino.dart' show CupertinoTheme;
 import 'package:flutter/material.dart' show Theme;
@@ -50,24 +50,17 @@ final MarkdownStyleSheet Function(BuildContext, MarkdownStyleSheetBaseTheme?)
   BuildContext context,
   MarkdownStyleSheetBaseTheme? baseTheme,
 ) {
-  MarkdownStyleSheet result;
-  switch (baseTheme) {
-    case MarkdownStyleSheetBaseTheme.platform:
-      final String userAgent = window.navigator.userAgent;
-      result = userAgent.contains('Mac OS X')
-          ? MarkdownStyleSheet.fromCupertinoTheme(CupertinoTheme.of(context))
-          : MarkdownStyleSheet.fromTheme(Theme.of(context));
-    case MarkdownStyleSheetBaseTheme.cupertino:
-      result =
-          MarkdownStyleSheet.fromCupertinoTheme(CupertinoTheme.of(context));
-    case MarkdownStyleSheetBaseTheme.material:
-    default: // ignore: no_default_cases
-      result = MarkdownStyleSheet.fromTheme(Theme.of(context));
-  }
+  final MarkdownStyleSheet result = switch (baseTheme) {
+    MarkdownStyleSheetBaseTheme.platform
+        when _userAgent.toDart.contains('Mac OS X') =>
+      MarkdownStyleSheet.fromCupertinoTheme(CupertinoTheme.of(context)),
+    MarkdownStyleSheetBaseTheme.cupertino =>
+      MarkdownStyleSheet.fromCupertinoTheme(CupertinoTheme.of(context)),
+    _ => MarkdownStyleSheet.fromTheme(Theme.of(context)),
+  };
 
   return result.copyWith(
-    textScaleFactor:
-        MediaQuery.textScaleFactorOf(context), // ignore: deprecated_member_use
+    textScaler: MediaQuery.textScalerOf(context),
   );
 };
 
@@ -85,3 +78,6 @@ Widget _handleDataSchemeUri(
   }
   return const SizedBox();
 }
+
+@JS('window.navigator.userAgent')
+external JSString get _userAgent;

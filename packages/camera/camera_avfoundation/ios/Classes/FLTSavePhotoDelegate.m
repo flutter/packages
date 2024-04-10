@@ -55,4 +55,7 @@
                         }];
 }
 
+- (NSString *)filePath {
+  return self.path;
+}
 @end

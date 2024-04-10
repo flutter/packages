@@ -1,3 +1,73 @@
+## 0.6.2
+
+* Adds support to control video FPS and bitrate. See `CameraController.withSettings`.
+
+## 0.6.1+1
+
+* Moves integration_test dependency to dev_dependencies.
+
+## 0.6.1
+
+* Modifies resolution selection logic to use an `AspectRatioStrategy` for all aspect ratios supported by CameraX.
+* Adds `ResolutionFilter` to resolution selection logic to prioritize resolutions that match
+  the defined `ResolutionPreset`s.
+
+## 0.6.0+1
+
+* Updates `README.md` to encourage developers to opt into this implementation of the camera plugin.
+
+## 0.6.0
+
+* Implements `setFocusMode`, which makes this plugin reach feature parity with camera_android.
+* Fixes `setExposureCompensationIndex` return value to use index returned by CameraX.
+
+## 0.5.0+36
+
+* Implements `setExposureMode`.
+
+## 0.5.0+35
+
+* Modifies `CameraInitializedEvent` that is sent when the camera is initialized to indicate that the initial focus
+  and exposure modes are auto and that developers may set focus and exposure points.
+
+## 0.5.0+34
+
+* Implements `setFocusPoint`, `setExposurePoint`, and `setExposureOffset`.
+
+## 0.5.0+33
+
+* Fixes typo in `README.md`.
+* Updates minimum supported SDK version to Flutter 3.13/Dart 3.1.
+
+## 0.5.0+32
+
+* Removes all remaining `unawaited` calls to fix potential race conditions and updates the
+  camera state when video capture starts.
+
+## 0.5.0+31
+
+* Wraps CameraX classes needed to set capture request options, which is needed to implement setting the exposure mode.
+
+## 0.5.0+30
+
+* Adds documentation to clarify how the plugin uses resolution presets as target resolutions for CameraX.
+
+## 0.5.0+29
+
+* Modifies `buildPreview` to return `Texture` that maps to camera preview, building in the assumption
+  that `createCamera` should have been called before building the preview. Fixes
+  https://github.com/flutter/flutter/issues/140567.
+
+## 0.5.0+28
+
+* Wraps CameraX classes needed to implement setting focus and exposure points and exposure offset.
+* Updates compileSdk version to 34.
+
+## 0.5.0+27
+
+* Removes or updates any references to an `ActivityPluginBinding` when the plugin is detached
+  or attached/re-attached, respectively, to an `Activity.`
+
 ## 0.5.0+26
 
 * Fixes new lint warnings.

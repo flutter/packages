@@ -400,7 +400,7 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
     JavaOptions generatorOptions,
     Root root,
     Indent indent,
-    Api api, {
+    AstFlutterApi api, {
     required String dartPackageName,
   }) {
     /// Returns an argument name that can be used in a context where it is possible to collide
@@ -414,7 +414,6 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
       return '${_getArgumentName(count, argument)}Arg';
     }
 
-    assert(api.location == ApiLocation.flutter);
     if (getCodecClasses(api, root).isNotEmpty) {
       _writeCodec(indent, api, root);
     }
@@ -427,11 +426,19 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
     indent.write('public static class ${api.name} ');
     indent.addScoped('{', '}', () {
       indent.writeln('private final @NonNull BinaryMessenger binaryMessenger;');
+      indent.writeln('private final String messageChannelSuffix;');
       indent.newln();
       indent.write(
           'public ${api.name}(@NonNull BinaryMessenger argBinaryMessenger) ');
       indent.addScoped('{', '}', () {
+        indent.writeln('this(argBinaryMessenger, "");');
+      });
+      indent.write(
+          'public ${api.name}(@NonNull BinaryMessenger argBinaryMessenger, @NonNull String messageChannelSuffix) ');
+      indent.addScoped('{', '}', () {
         indent.writeln('this.binaryMessenger = argBinaryMessenger;');
+        indent.writeln(
+            'this.messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;');
       });
       indent.newln();
       indent.writeln('/** Public interface for sending reply. */ ');
@@ -482,7 +489,7 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
         indent.addScoped('{', '}', () {
           const String channel = 'channel';
           indent.writeln(
-              'final String channelName = "${makeChannelName(api, func, dartPackageName)}";');
+              'final String channelName = "${makeChannelName(api, func, dartPackageName)}" + messageChannelSuffix;');
           indent.writeln('BasicMessageChannel<Object> $channel =');
           indent.nest(2, () {
             indent.writeln('new BasicMessageChannel<>(');
@@ -556,9 +563,9 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
     required String dartPackageName,
   }) {
     if (root.apis.any((Api api) =>
-        api.location == ApiLocation.host &&
+        api is AstHostApi &&
             api.methods.any((Method it) => it.isAsynchronous) ||
-        api.location == ApiLocation.flutter)) {
+        api is AstFlutterApi)) {
       indent.newln();
       _writeResultInterfaces(indent);
     }
@@ -577,10 +584,9 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
     JavaOptions generatorOptions,
     Root root,
     Indent indent,
-    Api api, {
+    AstHostApi api, {
     required String dartPackageName,
   }) {
-    assert(api.location == ApiLocation.host);
     if (getCodecClasses(api, root).isNotEmpty) {
       _writeCodec(indent, api, root);
     }
@@ -610,9 +616,16 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
 
       indent.writeln(
           '${_docCommentPrefix}Sets up an instance of `${api.name}` to handle messages through the `binaryMessenger`.$_docCommentSuffix');
+      indent.writeScoped(
+          'static void setUp(@NonNull BinaryMessenger binaryMessenger, @Nullable ${api.name} api) {',
+          '}', () {
+        indent.writeln('setUp(binaryMessenger, "", api);');
+      });
       indent.write(
-          'static void setUp(@NonNull BinaryMessenger binaryMessenger, @Nullable ${api.name} api) ');
+          'static void setUp(@NonNull BinaryMessenger binaryMessenger, @NonNull String messageChannelSuffix, @Nullable ${api.name} api) ');
       indent.addScoped('{', '}', () {
+        indent.writeln(
+            'messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;');
         for (final Method method in api.methods) {
           _writeMethodSetUp(
             generatorOptions,
@@ -689,7 +702,8 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
       indent.nest(2, () {
         indent.writeln('new BasicMessageChannel<>(');
         indent.nest(2, () {
-          indent.write('binaryMessenger, "$channelName", getCodec()');
+          indent.write(
+              'binaryMessenger, "$channelName" + messageChannelSuffix, getCodec()');
           if (taskQueue != null) {
             indent.addln(', $taskQueue);');
           } else {
@@ -979,10 +993,12 @@ protected static ArrayList<Object> wrapError(@NonNull Throwable exception) {
     Indent indent, {
     required String dartPackageName,
   }) {
-    final bool hasHostApi = root.apis.any((Api api) =>
-        api.methods.isNotEmpty && api.location == ApiLocation.host);
-    final bool hasFlutterApi = root.apis.any((Api api) =>
-        api.methods.isNotEmpty && api.location == ApiLocation.flutter);
+    final bool hasHostApi = root.apis
+        .whereType<AstHostApi>()
+        .any((Api api) => api.methods.isNotEmpty);
+    final bool hasFlutterApi = root.apis
+        .whereType<AstFlutterApi>()
+        .any((Api api) => api.methods.isNotEmpty);
 
     indent.newln();
     _writeErrorClass(indent);

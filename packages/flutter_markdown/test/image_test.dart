@@ -33,14 +33,13 @@ void defineTests() {
           ),
         );
 
-        final Iterable<RichText> texts =
-            tester.widgetList(find.byType(RichText));
-        final RichText firstTextWidget = texts.first;
-        final TextSpan firstTextSpan = firstTextWidget.text as TextSpan;
+        final Iterable<Text> texts = tester.widgetList(find.byType(Text));
+        final Text firstTextWidget = texts.first;
+        final TextSpan firstTextSpan = firstTextWidget.textSpan! as TextSpan;
         final Image image = tester.widget(find.byType(Image));
         final NetworkImage networkImage = image.image as NetworkImage;
-        final RichText secondTextWidget = texts.last;
-        final TextSpan secondTextSpan = secondTextWidget.text as TextSpan;
+        final Text secondTextWidget = texts.last;
+        final TextSpan secondTextSpan = secondTextWidget.textSpan! as TextSpan;
 
         expect(firstTextSpan.text, 'textbefore ');
         expect(firstTextSpan.style!.fontStyle, FontStyle.italic);
@@ -203,8 +202,8 @@ void defineTests() {
           ),
         );
 
-        final RichText richText = tester.widget(find.byType(RichText));
-        final TextSpan textSpan = richText.text as TextSpan;
+        final Text text = tester.widget(find.byType(Text));
+        final TextSpan textSpan = text.textSpan! as TextSpan;
         expect(textSpan.text, 'Hello ');
         expect(textSpan.style, isNotNull);
       },
@@ -262,14 +261,13 @@ void defineTests() {
             tester.widget(find.byType(GestureDetector));
         detector.onTap!();
 
-        final Iterable<RichText> texts =
-            tester.widgetList(find.byType(RichText));
-        final RichText firstTextWidget = texts.first;
-        final TextSpan firstSpan = firstTextWidget.text as TextSpan;
+        final Iterable<Text> texts = tester.widgetList(find.byType(Text));
+        final Text firstTextWidget = texts.first;
+        final TextSpan firstSpan = firstTextWidget.textSpan! as TextSpan;
         (firstSpan.recognizer as TapGestureRecognizer?)!.onTap!();
 
-        final RichText lastTextWidget = texts.last;
-        final TextSpan lastSpan = lastTextWidget.text as TextSpan;
+        final Text lastTextWidget = texts.last;
+        final TextSpan lastSpan = lastTextWidget.textSpan! as TextSpan;
         (lastSpan.recognizer as TapGestureRecognizer?)!.onTap!();
 
         expect(firstSpan.children, null);
@@ -307,18 +305,17 @@ void defineTests() {
           ),
         );
 
-        final Iterable<RichText> texts =
-            tester.widgetList(find.byType(RichText));
-        final RichText firstTextWidget = texts.first;
-        final TextSpan firstSpan = firstTextWidget.text as TextSpan;
+        final Iterable<Text> texts = tester.widgetList(find.byType(Text));
+        final Text firstTextWidget = texts.first;
+        final TextSpan firstSpan = firstTextWidget.textSpan! as TextSpan;
         (firstSpan.recognizer as TapGestureRecognizer?)!.onTap!();
 
         final GestureDetector detector =
             tester.widget(find.byType(GestureDetector));
         detector.onTap!();
 
-        final RichText lastTextWidget = texts.last;
-        final TextSpan lastSpan = lastTextWidget.text as TextSpan;
+        final Text lastTextWidget = texts.last;
+        final TextSpan lastSpan = lastTextWidget.textSpan! as TextSpan;
         (lastSpan.recognizer as TapGestureRecognizer?)!.onTap!();
 
         expect(firstSpan.children, null);

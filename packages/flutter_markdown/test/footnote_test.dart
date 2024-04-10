@@ -170,10 +170,10 @@ void defineTests() {
           );
 
           final Iterable<Widget> widgets = tester.allWidgets;
-          final RichText richText = widgets
-              .firstWhere((Widget widget) => widget is RichText) as RichText;
+          final Text text =
+              widgets.firstWhere((Widget widget) => widget is Text) as Text;
 
-          final TextSpan span = richText.text as TextSpan;
+          final TextSpan span = text.textSpan! as TextSpan;
           final List<InlineSpan>? children = span.children;
 
           expect(children, isNotNull);
@@ -226,10 +226,10 @@ void defineTests() {
           );
 
           final Iterable<Widget> widgets = tester.allWidgets;
-          final RichText richText = widgets
-              .firstWhere((Widget widget) => widget is RichText) as RichText;
+          final Text text =
+              widgets.firstWhere((Widget widget) => widget is Text) as Text;
 
-          final TextSpan span = richText.text as TextSpan;
+          final TextSpan span = text.textSpan! as TextSpan;
           final List<InlineSpan>? children = span.children;
 
           expect(children![0].style, isNotNull);
@@ -256,10 +256,10 @@ void defineTests() {
           );
 
           final Iterable<Widget> widgets = tester.allWidgets;
-          final RichText richText = widgets
-              .firstWhere((Widget widget) => widget is RichText) as RichText;
+          final Text text =
+              widgets.firstWhere((Widget widget) => widget is Text) as Text;
 
-          final TextSpan span = richText.text as TextSpan;
+          final TextSpan span = text.textSpan! as TextSpan;
 
           final List<Type> gestureRecognizerTypes = <Type>[];
           span.visitChildren((InlineSpan inlineSpan) {

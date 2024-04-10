@@ -1,3 +1,12 @@
+## 0.12.4
+
+* Updates dependencies to `web: ^0.5.0` and `google_identity_services_web: ^0.3.1`.
+
+## 0.12.3+3
+
+* Updates SDK version to Dart `^3.3.0`. Flutter `^3.19.0`.
+* Prepares update to package `web: ^0.5.0`.
+
 ## 0.12.3+2
 
 * Fixes new lint warnings.

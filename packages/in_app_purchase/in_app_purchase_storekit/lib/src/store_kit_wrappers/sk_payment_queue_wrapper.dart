@@ -12,8 +12,17 @@ import 'package:json_annotation/json_annotation.dart';
 import '../../store_kit_wrappers.dart';
 import '../channel.dart';
 import '../in_app_purchase_storekit_platform.dart';
+import '../messages.g.dart';
 
 part 'sk_payment_queue_wrapper.g.dart';
+
+InAppPurchaseAPI _hostApi = InAppPurchaseAPI();
+
+/// Set up pigeon API.
+@visibleForTesting
+void setInAppPurchaseHostApi(InAppPurchaseAPI api) {
+  _hostApi = api;
+}
 
 /// A wrapper around
 /// [`SKPaymentQueue`](https://developer.apple.com/documentation/storekit/skpaymentqueue?language=objc).
@@ -24,7 +33,7 @@ part 'sk_payment_queue_wrapper.g.dart';
 ///
 /// Full information on using `SKPaymentQueue` and processing purchases is
 /// available at the [In-App Purchase Programming
-/// Guide](https://developer.apple.com/library/archive/documentation/NetworkingInternet/Conceptual/StoreKitGuide/Introduction.html#//apple_ref/doc/uid/TP40008267).
+/// Guide](https://developer.apple.com/library/archive/documentation/NetworkingInternet/Conceptual/StoreKitGuide/Introduction.html#//apple_ref/doc/uid/TP40008267)
 class SKPaymentQueueWrapper {
   /// Returns the default payment queue.
   ///
@@ -45,25 +54,21 @@ class SKPaymentQueueWrapper {
   ///
   /// Returns `null` if the user's device is below iOS 13.0 or macOS 10.15.
   Future<SKStorefrontWrapper?> storefront() async {
-    final Map<String, dynamic>? storefrontMap = await channel
-        .invokeMapMethod<String, dynamic>('-[SKPaymentQueue storefront]');
-    if (storefrontMap == null) {
-      return null;
-    }
-    return SKStorefrontWrapper.fromJson(storefrontMap);
+    return SKStorefrontWrapper.convertFromPigeon(await _hostApi.storefront());
   }
 
   /// Calls [`-[SKPaymentQueue transactions]`](https://developer.apple.com/documentation/storekit/skpaymentqueue/1506026-transactions?language=objc).
   Future<List<SKPaymentTransactionWrapper>> transactions() async {
-    return _getTransactionList((await channel
-        .invokeListMethod<dynamic>('-[SKPaymentQueue transactions]'))!);
+    final List<SKPaymentTransactionMessage?> pigeonMsgs =
+        await _hostApi.transactions();
+    return pigeonMsgs
+        .map((SKPaymentTransactionMessage? msg) =>
+            SKPaymentTransactionWrapper.convertFromPigeon(msg!))
+        .toList();
   }
 
   /// Calls [`-[SKPaymentQueue canMakePayments:]`](https://developer.apple.com/documentation/storekit/skpaymentqueue/1506139-canmakepayments?language=objc).
-  static Future<bool> canMakePayments() async =>
-      (await channel
-          .invokeMethod<bool>('-[SKPaymentQueue canMakePayments:]')) ??
-      false;
+  static Future<bool> canMakePayments() async => _hostApi.canMakePayments();
 
   /// Sets an observer to listen to all incoming transaction events.
   ///
@@ -81,16 +86,16 @@ class SKPaymentQueueWrapper {
   ///
   /// Call this method when the first listener is subscribed to the
   /// [InAppPurchaseStoreKitPlatform.purchaseStream].
-  Future<void> startObservingTransactionQueue() => channel
-      .invokeMethod<void>('-[SKPaymentQueue startObservingTransactionQueue]');
+  Future<void> startObservingTransactionQueue() =>
+      _hostApi.startObservingPaymentQueue();
 
   /// Instructs the iOS implementation to remove the transaction observer and
   /// stop listening to it.
   ///
   /// Call this when there are no longer any listeners subscribed to the
   /// [InAppPurchaseStoreKitPlatform.purchaseStream].
-  Future<void> stopObservingTransactionQueue() => channel
-      .invokeMethod<void>('-[SKPaymentQueue stopObservingTransactionQueue]');
+  Future<void> stopObservingTransactionQueue() =>
+      _hostApi.stopObservingPaymentQueue();
 
   /// Sets an implementation of the [SKPaymentQueueDelegateWrapper].
   ///
@@ -104,10 +109,10 @@ class SKPaymentQueueWrapper {
   /// default behaviour will apply (see [documentation](https://developer.apple.com/documentation/storekit/skpaymentqueue/3182429-delegate?language=objc)).
   Future<void> setDelegate(SKPaymentQueueDelegateWrapper? delegate) async {
     if (delegate == null) {
-      await channel.invokeMethod<void>('-[SKPaymentQueue removeDelegate]');
+      await _hostApi.removePaymentQueueDelegate();
       paymentQueueDelegateChannel.setMethodCallHandler(null);
     } else {
-      await channel.invokeMethod<void>('-[SKPaymentQueue registerDelegate]');
+      await _hostApi.registerPaymentQueueDelegate();
       paymentQueueDelegateChannel
           .setMethodCallHandler(handlePaymentQueueDelegateCallbacks);
     }
@@ -138,11 +143,8 @@ class SKPaymentQueueWrapper {
   Future<void> addPayment(SKPaymentWrapper payment) async {
     assert(_observer != null,
         '[in_app_purchase]: Trying to add a payment without an observer. One must be set using `SkPaymentQueueWrapper.setTransactionObserver` before the app launches.');
-    final Map<String, dynamic> requestMap = payment.toMap();
-    await channel.invokeMethod<void>(
-      '-[InAppPurchasePlugin addPayment:result:]',
-      requestMap,
-    );
+
+    await _hostApi.addPayment(payment.toMap());
   }
 
   /// Finishes a transaction and removes it from the queue.
@@ -159,10 +161,7 @@ class SKPaymentQueueWrapper {
   Future<void> finishTransaction(
       SKPaymentTransactionWrapper transaction) async {
     final Map<String, String?> requestMap = transaction.toFinishMap();
-    await channel.invokeMethod<void>(
-      '-[InAppPurchasePlugin finishTransaction:result:]',
-      requestMap,
-    );
+    await _hostApi.finishTransaction(requestMap);
   }
 
   /// Restore previously purchased transactions.
@@ -186,9 +185,7 @@ class SKPaymentQueueWrapper {
   /// or [`-[SKPayment restoreCompletedTransactionsWithApplicationUsername:]`](https://developer.apple.com/documentation/storekit/skpaymentqueue/1505992-restorecompletedtransactionswith?language=objc)
   /// depending on whether the `applicationUserName` is set.
   Future<void> restoreTransactions({String? applicationUserName}) async {
-    await channel.invokeMethod<void>(
-        '-[InAppPurchasePlugin restoreTransactions:result:]',
-        applicationUserName);
+    await _hostApi.restoreTransactions(applicationUserName);
   }
 
   /// Present Code Redemption Sheet
@@ -198,8 +195,7 @@ class SKPaymentQueueWrapper {
   /// This method triggers [`-[SKPayment
   /// presentCodeRedemptionSheet]`](https://developer.apple.com/documentation/storekit/skpaymentqueue/3566726-presentcoderedemptionsheet?language=objc)
   Future<void> presentCodeRedemptionSheet() async {
-    await channel.invokeMethod<void>(
-        '-[InAppPurchasePlugin presentCodeRedemptionSheet:result:]');
+    await _hostApi.presentCodeRedemptionSheet();
   }
 
   /// Shows the price consent sheet if the user has not yet responded to a
@@ -211,8 +207,7 @@ class SKPaymentQueueWrapper {
   ///
   /// See documentation of StoreKit's [`-[SKPaymentQueue showPriceConsentIfNeeded]`](https://developer.apple.com/documentation/storekit/skpaymentqueue/3521327-showpriceconsentifneeded?language=objc).
   Future<void> showPriceConsentIfNeeded() async {
-    await channel
-        .invokeMethod<void>('-[SKPaymentQueue showPriceConsentIfNeeded]');
+    await _hostApi.showPriceConsentIfNeeded();
   }
 
   /// Triage a method channel call from the platform and triggers the correct observer method.
@@ -358,7 +353,7 @@ class SKError {
   ///
   /// Any key of the map must be a valid [NSErrorUserInfoKey](https://developer.apple.com/documentation/foundation/nserroruserinfokey?language=objc).
   @JsonKey(defaultValue: <String, dynamic>{})
-  final Map<String, dynamic> userInfo;
+  final Map<String?, Object?>? userInfo;
 
   @override
   bool operator ==(Object other) {
@@ -381,6 +376,14 @@ class SKError {
         domain,
         userInfo,
       );
+
+  /// Converts [SKErrorMessage] into the dart equivalent
+  static SKError convertFromPigeon(SKErrorMessage msg) {
+    return SKError(
+        code: msg.code,
+        domain: msg.domain,
+        userInfo: msg.userInfo ?? <String, Object>{});
+  }
 }
 
 /// Dart wrapper around StoreKit's
@@ -498,6 +501,18 @@ class SKPaymentWrapper {
 
   @override
   String toString() => _$SKPaymentWrapperToJson(this).toString();
+
+  /// Converts [SKPaymentMessage] into the dart equivalent
+  static SKPaymentWrapper convertFromPigeon(SKPaymentMessage msg) {
+    return SKPaymentWrapper(
+        productIdentifier: msg.productIdentifier,
+        applicationUsername: msg.applicationUsername,
+        quantity: msg.quantity,
+        simulatesAskToBuyInSandbox: msg.simulatesAskToBuyInSandbox,
+        requestData: msg.requestData,
+        paymentDiscount:
+            SKPaymentDiscountWrapper.convertFromPigeon(msg.paymentDiscount));
+  }
 }
 
 /// Dart wrapper around StoreKit's
@@ -596,4 +611,18 @@ class SKPaymentDiscountWrapper {
   @override
   int get hashCode =>
       Object.hash(identifier, keyIdentifier, nonce, signature, timestamp);
+
+  /// Converts [SKPaymentDiscountMessage] into the dart equivalent
+  static SKPaymentDiscountWrapper? convertFromPigeon(
+      SKPaymentDiscountMessage? msg) {
+    if (msg == null) {
+      return null;
+    }
+    return SKPaymentDiscountWrapper(
+        identifier: msg.identifier,
+        keyIdentifier: msg.keyIdentifier,
+        nonce: msg.nonce,
+        signature: msg.signature,
+        timestamp: msg.timestamp);
+  }
 }

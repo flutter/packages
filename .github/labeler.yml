@@ -212,9 +212,13 @@
 'platform-ios':
   - changed-files:
     - any-glob-to-any-file:
+      - packages/*/*_avfoundation/**/*
+      - packages/*/*_darwin/**/*
+      - packages/*/*_foundation/**/*
       - packages/*/*_ios/**/*
       - packages/*/*_storekit/**/*
       - packages/*/*_wkwebview/**/*
+      - packages/**/darwin/**/*
       - packages/**/ios/**/*
 
 'platform-linux':
@@ -226,7 +230,12 @@
 'platform-macos':
   - changed-files:
     - any-glob-to-any-file:
+      - packages/*/*_avfoundation/**/*
+      - packages/*/*_darwin/**/*
+      - packages/*/*_foundation/**/*
       - packages/*/*_macos/**/*
+      - packages/*/*_storekit/**/*
+      - packages/**/darwin/**/*
       - packages/**/macos/**/*
 
 'platform-web':

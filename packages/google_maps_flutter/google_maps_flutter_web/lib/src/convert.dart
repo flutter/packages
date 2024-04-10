@@ -9,6 +9,9 @@ final gmaps.LatLng _nullGmapsLatLng = gmaps.LatLng(0, 0);
 final gmaps.LatLngBounds _nullGmapsLatLngBounds =
     gmaps.LatLngBounds(_nullGmapsLatLng, _nullGmapsLatLng);
 
+// The TrustedType Policy used by this plugin. Used to sanitize InfoWindow contents.
+TrustedTypePolicy? _gmapsTrustedTypePolicy;
+
 // Converts a [Color] into a valid CSS value #RRGGBB.
 String _getCssColor(Color color) {
   return '#${color.value.toRadixString(16).padLeft(8, '0').substring(2)}';
@@ -28,7 +31,7 @@ double _getCssOpacity(Color color) {
 // mapToolbarEnabled is unused in web, there's no "map toolbar"
 // myLocationButtonEnabled Widget not available in web yet, it needs to be built on top of the maps widget
 //   See: https://developers.google.com/maps/documentation/javascript/examples/control-custom
-// myLocationEnabled needs to be built through dart:html navigator.geolocation
+// myLocationEnabled needs to be built through `navigator.geolocation` from package:web.
 //   See: https://api.dart.dev/stable/2.8.4/dart-html/Geolocation-class.html
 // trafficEnabled is handled when creating the GMap object, since it needs to be added as a layer.
 // trackCameraPosition is just a boolean value that indicates if the map has an onCameraMove handler.
@@ -80,6 +83,7 @@ gmaps.MapOptions _configurationAndStyleToGmapsOptions(
   options.fullscreenControl = false;
   options.streetViewControl = false;
 
+  // See updateMapConfiguration for why this is not using configuration.style.
   options.styles = styles;
 
   options.mapId = configuration.cloudMapId;
@@ -139,10 +143,11 @@ List<gmaps.MapTypeStyle> _mapStyles(String? mapStyleJson) {
       styles =
           (json.decode(mapStyleJson, reviver: (Object? key, Object? value) {
         if (value is Map && _isJsonMapStyle(value as Map<String, Object?>)) {
-          List<Object?> stylers = <Object?>[];
+          List<MapStyler> stylers = <MapStyler>[];
           if (value['stylers'] != null) {
             stylers = (value['stylers']! as List<Object?>)
-                .map<Object?>((Object? e) => e != null ? jsify(e) : null)
+                .whereType<Map<String, Object?>>()
+                .map(MapStyler.fromJson)
                 .toList();
           }
           return gmaps.MapTypeStyle()
@@ -203,30 +208,44 @@ gmaps.InfoWindowOptions? _infoWindowOptionsFromMarker(Marker marker) {
 
   // Add an outer wrapper to the contents of the infowindow, we need it to listen
   // to click events...
-  final HtmlElement container = DivElement()
+  final HTMLElement container = createDivElement()
     ..id = 'gmaps-marker-${marker.markerId.value}-infowindow';
 
   if (markerTitle.isNotEmpty) {
-    final HtmlElement title = HeadingElement.h3()
-      ..className = 'infowindow-title'
-      ..innerText = markerTitle;
-    container.children.add(title);
+    final HTMLHeadingElement title =
+        (document.createElement('h3') as HTMLHeadingElement)
+          ..className = 'infowindow-title'
+          ..innerText = markerTitle;
+    container.appendChild(title);
   }
   if (markerSnippet.isNotEmpty) {
-    final HtmlElement snippet = DivElement()
-      ..className = 'infowindow-snippet'
+    final HTMLElement snippet = createDivElement()
+      ..className = 'infowindow-snippet';
+
+    // Firefox and Safari don't support Trusted Types yet.
+    // See https://developer.mozilla.org/en-US/docs/Web/API/TrustedTypePolicyFactory#browser_compatibility
+    if (window.nullableTrustedTypes != null) {
+      _gmapsTrustedTypePolicy ??= window.trustedTypes.createPolicy(
+        'google_maps_flutter_sanitize',
+        TrustedTypePolicyOptions(
+          createHTML: (String html) {
+            return sanitizeHtml(html).toJS;
+          }.toJS,
+        ),
+      );
+
+      snippet.trustedInnerHTML =
+          _gmapsTrustedTypePolicy!.createHTMLNoArgs(markerSnippet);
+    } else {
       // `sanitizeHtml` is used to clean the (potential) user input from (potential)
       // XSS attacks through the contents of the marker InfoWindow.
       // See: https://pub.dev/documentation/sanitize_html/latest/sanitize_html/sanitizeHtml.html
       // See: b/159137885, b/159598165
-      // The NodeTreeSanitizer.trusted just tells setInnerHtml to leave the output
-      // of `sanitizeHtml` untouched.
       // ignore: unsafe_html
-      ..setInnerHtml(
-        sanitizeHtml(markerSnippet),
-        treeSanitizer: NodeTreeSanitizer.trusted,
-      );
-    container.children.add(snippet);
+      snippet.innerHTML = sanitizeHtml(markerSnippet);
+    }
+
+    container.appendChild(snippet);
   }
 
   return gmaps.InfoWindowOptions()
@@ -274,8 +293,18 @@ gmaps.Icon? _gmIconFromBitmapDescriptor(BitmapDescriptor bitmapDescriptor) {
     // Grab the bytes, and put them into a blob
     final List<int> bytes = iconConfig[1]! as List<int>;
     // Create a Blob from bytes, but let the browser figure out the encoding
-    final Blob blob = Blob(<dynamic>[bytes]);
-    icon = gmaps.Icon()..url = Url.createObjectUrlFromBlob(blob);
+    final Blob blob;
+
+    assert(
+      bytes is Uint8List,
+      'The bytes for a BitmapDescriptor icon must be a Uint8List',
+    );
+
+    // TODO(ditman): Improve this conversion
+    // See https://github.com/dart-lang/web/issues/180
+    blob = Blob(<JSUint8Array>[(bytes as Uint8List).toJS].toJS);
+
+    icon = gmaps.Icon()..url = URL.createObjectURL(blob as JSObject);
 
     final gmaps.Size? size = _gmSizeFromIconConfig(iconConfig, 2);
     if (size != null) {

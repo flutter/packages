@@ -8,9 +8,11 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.example.alternate_language_test_plugin.CoreTests.AllClassesWrapper;
 import com.example.alternate_language_test_plugin.CoreTests.AllNullableTypes;
+import com.example.alternate_language_test_plugin.CoreTests.AllNullableTypesWithoutRecursion;
 import com.example.alternate_language_test_plugin.CoreTests.AllTypes;
 import com.example.alternate_language_test_plugin.CoreTests.AnEnum;
 import com.example.alternate_language_test_plugin.CoreTests.FlutterIntegrationCoreApi;
+import com.example.alternate_language_test_plugin.CoreTests.FlutterSmallApi;
 import com.example.alternate_language_test_plugin.CoreTests.HostIntegrationCoreApi;
 import com.example.alternate_language_test_plugin.CoreTests.NullableResult;
 import com.example.alternate_language_test_plugin.CoreTests.Result;
@@ -22,11 +24,19 @@ import java.util.Map;
 /** This plugin handles the native side of the integration tests in example/integration_test/. */
 public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrationCoreApi {
   @Nullable FlutterIntegrationCoreApi flutterApi = null;
+  @Nullable FlutterSmallApi flutterSmallApiOne = null;
+  @Nullable FlutterSmallApi flutterSmallApiTwo = null;
 
   @Override
   public void onAttachedToEngine(@NonNull FlutterPluginBinding binding) {
     HostIntegrationCoreApi.setUp(binding.getBinaryMessenger(), this);
     flutterApi = new FlutterIntegrationCoreApi(binding.getBinaryMessenger());
+    flutterSmallApiOne = new FlutterSmallApi(binding.getBinaryMessenger(), "suffixOne");
+    flutterSmallApiTwo = new FlutterSmallApi(binding.getBinaryMessenger(), "suffixTwo");
+    TestPluginWithSuffix testSuffixApiOne = new TestPluginWithSuffix();
+    testSuffixApiOne.setUp(binding, "suffixOne");
+    TestPluginWithSuffix testSuffixApiTwo = new TestPluginWithSuffix();
+    testSuffixApiTwo.setUp(binding, "suffixTwo");
   }
 
   @Override
@@ -44,6 +54,12 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
 
   @Override
   public @Nullable AllNullableTypes echoAllNullableTypes(@Nullable AllNullableTypes everything) {
+    return everything;
+  }
+
+  @Override
+  public @Nullable AllNullableTypesWithoutRecursion echoAllNullableTypesWithoutRecursion(
+      @Nullable AllNullableTypesWithoutRecursion everything) {
     return everything;
   }
 
@@ -154,6 +170,20 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
   }
 
   @Override
+  public @NonNull AllNullableTypesWithoutRecursion sendMultipleNullableTypesWithoutRecursion(
+      @Nullable Boolean aNullableBool,
+      @Nullable Long aNullableInt,
+      @Nullable String aNullableString) {
+    AllNullableTypesWithoutRecursion someThings =
+        new AllNullableTypesWithoutRecursion.Builder()
+            .setANullableBool(aNullableBool)
+            .setANullableInt(aNullableInt)
+            .setANullableString(aNullableString)
+            .build();
+    return someThings;
+  }
+
+  @Override
   public @Nullable Long echoNullableInt(@Nullable Long aNullableInt) {
     return aNullableInt;
   }
@@ -236,6 +266,13 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
   @Override
   public void echoAsyncNullableAllNullableTypes(
       @Nullable AllNullableTypes everything, @NonNull NullableResult<AllNullableTypes> result) {
+    result.success(everything);
+  }
+
+  @Override
+  public void echoAsyncNullableAllNullableTypesWithoutRecursion(
+      @Nullable AllNullableTypesWithoutRecursion everything,
+      @NonNull NullableResult<AllNullableTypesWithoutRecursion> result) {
     result.success(everything);
   }
 
@@ -375,6 +412,23 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
   }
 
   @Override
+  public void callFlutterEchoAllNullableTypesWithoutRecursion(
+      @Nullable AllNullableTypesWithoutRecursion everything,
+      @NonNull NullableResult<AllNullableTypesWithoutRecursion> result) {
+    flutterApi.echoAllNullableTypesWithoutRecursion(everything, result);
+  }
+
+  @Override
+  public void callFlutterSendMultipleNullableTypesWithoutRecursion(
+      @Nullable Boolean aNullableBool,
+      @Nullable Long aNullableInt,
+      @Nullable String aNullableString,
+      @NonNull Result<AllNullableTypesWithoutRecursion> result) {
+    flutterApi.sendMultipleNullableTypesWithoutRecursion(
+        aNullableBool, aNullableInt, aNullableString, result);
+  }
+
+  @Override
   public void callFlutterEchoBool(@NonNull Boolean aBool, @NonNull Result<Boolean> result) {
     flutterApi.echoBool(aBool, result);
   }
@@ -462,5 +516,61 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
   public void callFlutterEchoNullableEnum(
       @Nullable AnEnum anEnum, @NonNull NullableResult<AnEnum> result) {
     flutterApi.echoNullableEnum(anEnum, result);
+  }
+
+  @Override
+  public void callFlutterSmallApiEchoString(
+      @NonNull String aString, @NonNull Result<String> result) {
+    final String[] resultOne = {""};
+
+    Result<String> resultCallbackTwo =
+        new Result<String>() {
+          public void success(String res) {
+            String resOne = resultOne[0];
+            if (res.equals(resOne)) {
+              result.success(res);
+            } else {
+              result.error(
+                  new CoreTests.FlutterError(
+                      "Responses do not match",
+                      "Multi-instance responses were not matching: " + resultOne[0] + ", " + res,
+                      ""));
+            }
+          }
+
+          public void error(Throwable error) {
+            result.error(error);
+          }
+        };
+
+    Result<String> resultCallbackOne =
+        new Result<String>() {
+          public void success(String res) {
+            resultOne[0] = res;
+            flutterSmallApiTwo.echoString(aString, resultCallbackTwo);
+          }
+
+          public void error(Throwable error) {
+            result.error(error);
+          }
+        };
+    flutterSmallApiOne.echoString(aString, resultCallbackOne);
+  }
+}
+
+class TestPluginWithSuffix implements CoreTests.HostSmallApi {
+
+  public void setUp(FlutterPlugin.FlutterPluginBinding binding, String suffix) {
+    CoreTests.HostSmallApi.setUp(binding.getBinaryMessenger(), suffix, this);
+  }
+
+  @Override
+  public void echo(@NonNull String aString, @NonNull Result<String> result) {
+    result.success(aString);
+  }
+
+  @Override
+  public void voidVoid(@NonNull VoidResult result) {
+    result.success();
   }
 }

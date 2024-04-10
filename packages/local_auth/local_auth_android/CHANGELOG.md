@@ -1,3 +1,12 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.13/Dart 3.1.
+
+## 1.0.37
+
+* Adds compatibility with `intl` 0.19.0.
+* Updates compileSdk version to 34.
+
 ## 1.0.36
 
 * Updates androidx.fragment version to 1.6.2.

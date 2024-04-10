@@ -26,13 +26,18 @@ Future<void> main() async {
     );
   }, timeout: Timeout.none);
 
-  test('Can run a web benchmark with wasm', () async {
-    await _runBenchmarks(
-      benchmarkNames: <String>['simple'],
-      entryPoint: 'lib/benchmarks/runner_simple.dart',
-      compilationOptions: const CompilationOptions(useWasm: true),
-    );
-  }, timeout: Timeout.none);
+  test(
+    'Can run a web benchmark with wasm',
+    () async {
+      await _runBenchmarks(
+        benchmarkNames: <String>['simple'],
+        entryPoint: 'lib/benchmarks/runner_simple.dart',
+        compilationOptions: const CompilationOptions(useWasm: true),
+      );
+    },
+    skip: true, // https://github.com/flutter/flutter/issues/142809
+    timeout: Timeout.none,
+  );
 }
 
 Future<void> _runBenchmarks({

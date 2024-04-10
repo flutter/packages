@@ -66,7 +66,7 @@ class AnalyzeCommand extends PackageLoopingCommand {
   /// Checks that there are no unexpected analysis_options.yaml files.
   bool _hasUnexpecetdAnalysisOptions(RepositoryPackage package) {
     final List<FileSystemEntity> files =
-        package.directory.listSync(recursive: true);
+        package.directory.listSync(recursive: true, followLinks: false);
     for (final FileSystemEntity file in files) {
       if (file.basename != 'analysis_options.yaml' &&
           file.basename != '.analysis_options') {

@@ -10,11 +10,9 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-/**
- * Host api implementation for WKWebsiteDataStore.
- *
- * Handles creating WKWebsiteDataStore that intercommunicate with a paired Dart object.
- */
+/// Host api implementation for WKWebsiteDataStore.
+///
+/// Handles creating WKWebsiteDataStore that intercommunicate with a paired Dart object.
 @interface FWFWebsiteDataStoreHostApiImpl : NSObject <FWFWKWebsiteDataStoreHostApi>
 - (instancetype)initWithInstanceManager:(FWFInstanceManager *)instanceManager;
 @end

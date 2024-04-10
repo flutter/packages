@@ -29,7 +29,7 @@ android {
     if (project.android.hasProperty("namespace")) {
         namespace 'com.example.test_plugin'
     }
-    compileSdkVersion 33
+    compileSdk 34
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8

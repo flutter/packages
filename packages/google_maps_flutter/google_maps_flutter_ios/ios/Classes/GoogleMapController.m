@@ -67,6 +67,11 @@
 @property(nonatomic, strong) FLTPolylinesController *polylinesController;
 @property(nonatomic, strong) FLTCirclesController *circlesController;
 @property(nonatomic, strong) FLTTileOverlaysController *tileOverlaysController;
+// The resulting error message, if any, from the last attempt to set the map style.
+// This is used to provide access to errors after the fact, since the map style is generally set at
+// creation time and there's no mechanism to return non-fatal error details during platform view
+// initialization.
+@property(nonatomic, copy) NSString *styleError;
 
 @end
 
@@ -250,13 +255,12 @@
     result(nil);
   } else if ([call.method isEqualToString:@"map#takeSnapshot"]) {
     if (self.mapView != nil) {
-      UIGraphicsImageRendererFormat *format = [UIGraphicsImageRendererFormat defaultFormat];
-      format.scale = [[UIScreen mainScreen] scale];
       UIGraphicsImageRenderer *renderer =
-          [[UIGraphicsImageRenderer alloc] initWithSize:self.mapView.frame.size format:format];
-
+          [[UIGraphicsImageRenderer alloc] initWithSize:self.mapView.bounds.size];
+      // For some unknown reason mapView.layer::renderInContext API returns a blank image on iOS 17.
+      // So we have to use drawViewHierarchyInRect API.
       UIImage *image = [renderer imageWithActions:^(UIGraphicsImageRendererContext *context) {
-        [self.mapView.layer renderInContext:context.CGContext];
+        [self.mapView drawViewHierarchyInRect:self.mapView.bounds afterScreenUpdates:YES];
       }];
       result([FlutterStandardTypedData typedDataWithBytes:UIImagePNGRepresentation(image)]);
     } else {
@@ -401,13 +405,15 @@
     NSNumber *isBuildingsEnabled = @(self.mapView.buildingsEnabled);
     result(isBuildingsEnabled);
   } else if ([call.method isEqualToString:@"map#setStyle"]) {
-    NSString *mapStyle = [call arguments];
-    NSString *error = [self setMapStyle:mapStyle];
-    if (error == nil) {
+    id mapStyle = [call arguments];
+    self.styleError = [self setMapStyle:(mapStyle == [NSNull null] ? nil : mapStyle)];
+    if (self.styleError == nil) {
       result(@[ @(YES) ]);
     } else {
-      result(@[ @(NO), error ]);
+      result(@[ @(NO), self.styleError ]);
     }
+  } else if ([call.method isEqualToString:@"map#getStyleError"]) {
+    result(self.styleError);
   } else if ([call.method isEqualToString:@"map#getTileOverlayInfo"]) {
     NSString *rawTileOverlayId = call.arguments[@"tileOverlayId"];
     result([self.tileOverlaysController tileOverlayInfoWithIdentifier:rawTileOverlayId]);
@@ -507,7 +513,7 @@
 }
 
 - (NSString *)setMapStyle:(NSString *)mapStyle {
-  if (mapStyle == (id)[NSNull null] || mapStyle.length == 0) {
+  if (mapStyle.length == 0) {
     self.mapView.mapStyle = nil;
     return nil;
   }
@@ -658,6 +664,10 @@
   NSNumber *myLocationButtonEnabled = data[@"myLocationButtonEnabled"];
   if (myLocationButtonEnabled && myLocationButtonEnabled != (id)[NSNull null]) {
     [self setMyLocationButtonEnabled:[myLocationButtonEnabled boolValue]];
+  }
+  NSString *style = data[@"style"];
+  if (style) {
+    self.styleError = [self setMapStyle:style];
   }
 }
 

@@ -79,19 +79,26 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
     }
 
     late final RouteMatchList initialMatches;
-    initialMatches =
-        // TODO(chunhtai): remove this ignore and migrate the code
-        // https://github.com/flutter/flutter/issues/124045.
-        // TODO(chunhtai): After the migration from routeInformation's location
-        // to uri, empty path check might be required here; see
-        // https://github.com/flutter/packages/pull/5113#discussion_r1374861070
-        // ignore: deprecated_member_use, unnecessary_non_null_assertion
-        configuration.findMatch(routeInformation.location!, extra: state.extra);
+    if (routeInformation.uri.hasEmptyPath) {
+      String newUri = '${routeInformation.uri.origin}/';
+      if (routeInformation.uri.hasQuery) {
+        newUri += '?${routeInformation.uri.query}';
+      }
+      if (routeInformation.uri.hasFragment) {
+        newUri += '#${routeInformation.uri.fragment}';
+      }
+      initialMatches = configuration.findMatch(
+        newUri,
+        extra: state.extra,
+      );
+    } else {
+      initialMatches = configuration.findMatch(
+        routeInformation.uri.toString(),
+        extra: state.extra,
+      );
+    }
     if (initialMatches.isError) {
-      // TODO(chunhtai): remove this ignore and migrate the code
-      // https://github.com/flutter/flutter/issues/124045.
-      // ignore: deprecated_member_use
-      log('No initial matches: ${routeInformation.location}');
+      log('No initial matches: ${routeInformation.uri.path}');
     }
 
     return debugParserFuture = _redirect(
@@ -131,21 +138,27 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
     if (configuration.isEmpty) {
       return null;
     }
-    final String location;
+    String? location;
     if (GoRouter.optionURLReflectsImperativeAPIs &&
-        configuration.matches.last is ImperativeRouteMatch) {
-      location = (configuration.matches.last as ImperativeRouteMatch)
-          .matches
-          .uri
-          .toString();
-    } else {
-      location = configuration.uri.toString();
+        (configuration.matches.last is ImperativeRouteMatch ||
+            configuration.matches.last is ShellRouteMatch)) {
+      RouteMatchBase route = configuration.matches.last;
+
+      while (route is! ImperativeRouteMatch) {
+        if (route is ShellRouteMatch && route.matches.isNotEmpty) {
+          route = route.matches.last;
+        } else {
+          break;
+        }
+      }
+
+      if (route case final ImperativeRouteMatch safeRoute) {
+        location = safeRoute.matches.uri.toString();
+      }
     }
+
     return RouteInformation(
-      // TODO(chunhtai): remove this ignore and migrate the code
-      // https://github.com/flutter/flutter/issues/124045.
-      // ignore: deprecated_member_use
-      location: location,
+      uri: Uri.parse(location ?? configuration.uri.toString()),
       state: _routeMatchListCodec.encode(configuration),
     );
   }

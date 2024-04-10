@@ -32,15 +32,14 @@ void main() {
     // registerWith is called very early in initialization the bindings won't
     // have been initialized. While registerWith could initialize them, that
     // could slow down startup, so instead the handler should be set up lazily.
-    final ByteData? response =
-        await _ambiguate(TestDefaultBinaryMessengerBinding.instance)!
-            .defaultBinaryMessenger
-            .handlePlatformMessage(
-                AVFoundationCamera.deviceEventChannelName,
-                const StandardMethodCodec().encodeMethodCall(const MethodCall(
-                    'orientation_changed',
-                    <String, Object>{'orientation': 'portraitDown'})),
-                (ByteData? data) {});
+    final ByteData? response = await TestDefaultBinaryMessengerBinding
+        .instance.defaultBinaryMessenger
+        .handlePlatformMessage(
+            AVFoundationCamera.deviceEventChannelName,
+            const StandardMethodCodec().encodeMethodCall(const MethodCall(
+                'orientation_changed',
+                <String, Object>{'orientation': 'portraitDown'})),
+            (ByteData? data) {});
     expect(response, null);
   });
 
@@ -73,6 +72,54 @@ void main() {
           arguments: <String, Object?>{
             'cameraName': 'Test',
             'resolutionPreset': 'high',
+            'fps': null,
+            'videoBitrate': null,
+            'audioBitrate': null,
+            'enableAudio': false
+          },
+        ),
+      ]);
+      expect(cameraId, 1);
+    });
+
+    test(
+        'Should send creation data and receive back a camera id using createCameraWithSettings',
+        () async {
+      // Arrange
+      final MethodChannelMock cameraMockChannel = MethodChannelMock(
+          channelName: _channelName,
+          methods: <String, dynamic>{
+            'create': <String, dynamic>{
+              'cameraId': 1,
+              'imageFormatGroup': 'unknown',
+            }
+          });
+      final AVFoundationCamera camera = AVFoundationCamera();
+
+      // Act
+      final int cameraId = await camera.createCameraWithSettings(
+        const CameraDescription(
+            name: 'Test',
+            lensDirection: CameraLensDirection.back,
+            sensorOrientation: 0),
+        const MediaSettings(
+          resolutionPreset: ResolutionPreset.low,
+          fps: 15,
+          videoBitrate: 200000,
+          audioBitrate: 32000,
+        ),
+      );
+
+      // Assert
+      expect(cameraMockChannel.log, <Matcher>[
+        isMethodCall(
+          'create',
+          arguments: <String, Object?>{
+            'cameraName': 'Test',
+            'resolutionPreset': 'low',
+            'fps': 15,
+            'videoBitrate': 200000,
+            'audioBitrate': 32000,
             'enableAudio': false
           },
         ),
@@ -422,8 +469,7 @@ void main() {
       const DeviceOrientationChangedEvent event =
           DeviceOrientationChangedEvent(DeviceOrientation.portraitUp);
       for (int i = 0; i < 3; i++) {
-        await _ambiguate(TestDefaultBinaryMessengerBinding.instance)!
-            .defaultBinaryMessenger
+        await TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
             .handlePlatformMessage(
                 AVFoundationCamera.deviceEventChannelName,
                 const StandardMethodCodec().encodeMethodCall(
@@ -1145,11 +1191,45 @@ void main() {
         isMethodCall('stopImageStream', arguments: null),
       ]);
     });
+
+    test('Should set the ImageFileFormat to heif', () async {
+      // Arrange
+      final MethodChannelMock channel = MethodChannelMock(
+        channelName: _channelName,
+        methods: <String, dynamic>{'setImageFileFormat': 'heif'},
+      );
+
+      // Act
+      await camera.setImageFileFormat(cameraId, ImageFileFormat.heif);
+
+      // Assert
+      expect(channel.log, <Matcher>[
+        isMethodCall('setImageFileFormat', arguments: <String, Object?>{
+          'cameraId': cameraId,
+          'fileFormat': 'heif',
+        }),
+      ]);
+    });
+
+    test('Should set the ImageFileFormat to jpeg', () async {
+      // Arrange
+      final MethodChannelMock channel = MethodChannelMock(
+        channelName: _channelName,
+        methods: <String, dynamic>{
+          'setImageFileFormat': 'jpeg',
+        },
+      );
+
+      // Act
+      await camera.setImageFileFormat(cameraId, ImageFileFormat.jpeg);
+
+      // Assert
+      expect(channel.log, <Matcher>[
+        isMethodCall('setImageFileFormat', arguments: <String, Object?>{
+          'cameraId': cameraId,
+          'fileFormat': 'jpeg',
+        }),
+      ]);
+    });
   });
 }
-
-/// This allows a value of type T or T? to be treated as a value of type T?.
-///
-/// We use this so that APIs that have become non-nullable can still be used
-/// with `!` and `?` on the stable branch.
-T? _ambiguate<T>(T? value) => value;

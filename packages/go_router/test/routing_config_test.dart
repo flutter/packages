@@ -18,6 +18,7 @@ void main() {
         redirect: (_, __) => '/',
       ),
     );
+    addTearDown(config.dispose);
     final GoRouter router = await createRouterWithRoutingConfig(config, tester);
     expect(find.text('home'), findsOneWidget);
 
@@ -35,6 +36,7 @@ void main() {
         ],
       ),
     );
+    addTearDown(config.dispose);
     await createRouterWithRoutingConfig(config, tester);
     expect(find.text('home'), findsOneWidget);
 
@@ -56,6 +58,7 @@ void main() {
         ],
       ),
     );
+    addTearDown(config.dispose);
     final GoRouter router = await createRouterWithRoutingConfig(
       config,
       tester,
@@ -87,6 +90,7 @@ void main() {
         ],
       ),
     );
+    addTearDown(config.dispose);
     final GoRouter router = await createRouterWithRoutingConfig(
       config,
       tester,
@@ -120,11 +124,13 @@ void main() {
         ],
       ),
     );
+    addTearDown(config.dispose);
     final GoRouter router = await createRouterWithRoutingConfig(
       config,
       tester,
       errorBuilder: (_, __) => const Text('error'),
     );
+
     expect(find.text('home'), findsOneWidget);
     // Sanity check.
     router.goNamed('abc');
