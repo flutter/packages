@@ -394,7 +394,7 @@ private class PigeonProxyApiBaseCodecReaderWriter: FlutterStandardReaderWriter {
   }
 }
 
-protocol PigeonApiDelegate: AnyObject {
+protocol PigeonProxyApiRegistrarDelegate {
   /// An implementation of [PigeonApiProxyApiTestClass] used to add a new Dart instance of
   /// `ProxyApiTestClass` to the Dart `InstanceManager`.
   func pigeonApiProxyApiTestClass(_ pigeonRegistrar: PigeonProxyApiRegistrar)
@@ -403,7 +403,7 @@ protocol PigeonApiDelegate: AnyObject {
 
 public class PigeonProxyApiRegistrar {
   let binaryMessenger: FlutterBinaryMessenger
-  let apiDelegate: PigeonApiDelegate
+  let apiDelegate: PigeonProxyApiRegistrarDelegate
   let instanceManager: PigeonInstanceManager
 
   private var _codec: FlutterStandardMessageCodec?
@@ -429,7 +429,7 @@ public class PigeonProxyApiRegistrar {
     }
   }
 
-  init(binaryMessenger: FlutterBinaryMessenger, apiDelegate: PigeonApiDelegate) {
+  init(binaryMessenger: FlutterBinaryMessenger, apiDelegate: PigeonProxyApiRegistrarDelegate) {
     self.binaryMessenger = binaryMessenger
     self.apiDelegate = apiDelegate
     self.instanceManager = PigeonInstanceManager(
@@ -456,7 +456,7 @@ public class PigeonProxyApiRegistrar {
 class ProxyApiTestClass {}
 class ProxyApiSuperClass {}
 
-protocol PigeonDelegateProxyApiTestClass: AnyObject {
+protocol PigeonApiProxyApiTestClassProtocol {
   func pigeonDefaultConstructor(_ pigeonApi: PigeonApiProxyApiTestClass) throws -> ProxyApiTestClass
   func someField(_ pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass) throws
     -> Int
@@ -468,13 +468,13 @@ protocol PigeonDelegateProxyApiTestClass: AnyObject {
 
 public class PigeonApiProxyApiTestClass {
   unowned let pigeonRegistrar: PigeonProxyApiRegistrar
-  let pigeonDelegate: PigeonDelegateProxyApiTestClass
+  let pigeonDelegate: PigeonApiProxyApiTestClassProtocol
 
   var pigeonApiProxyApiSuperClass: PigeonApiProxyApiTestClass {
     return pigeonRegistrar.apiDelegate.pigeonApiProxyApiTestClass(pigeonRegistrar)
   }
 
-  init(pigeonRegistrar: PigeonProxyApiRegistrar, delegate: PigeonDelegateProxyApiTestClass) {
+  init(pigeonRegistrar: PigeonProxyApiRegistrar, delegate: PigeonApiProxyApiTestClassProtocol) {
     self.pigeonRegistrar = pigeonRegistrar
     self.pigeonDelegate = delegate
   }
