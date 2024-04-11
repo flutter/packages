@@ -188,7 +188,8 @@ void main() {
       UrlLauncherPlatform.instance = originalPlugin;
     });
 
-    testWidgets('click to navigate to internal link', (WidgetTester tester) async {
+    testWidgets('click to navigate to internal link',
+        (WidgetTester tester) async {
       final TestNavigatorObserver observer = TestNavigatorObserver();
       final Uri uri = Uri.parse('/foobar');
       FollowLink? followLinkCallback;
@@ -232,7 +233,8 @@ void main() {
       await tester.pumpAndSettle();
     });
 
-    testWidgets('keydown to navigate to internal link', (WidgetTester tester) async {
+    testWidgets('keydown to navigate to internal link',
+        (WidgetTester tester) async {
       final TestNavigatorObserver observer = TestNavigatorObserver();
       final Uri uri = Uri.parse('/foobar');
       FollowLink? followLinkCallback;
@@ -276,7 +278,8 @@ void main() {
       await tester.pumpAndSettle();
     });
 
-    testWidgets('click to navigate to external link', (WidgetTester tester) async {
+    testWidgets('click to navigate to external link',
+        (WidgetTester tester) async {
       final TestNavigatorObserver observer = TestNavigatorObserver();
       final Uri uri = Uri.parse('https://google.com');
       FollowLink? followLinkCallback;
@@ -318,7 +321,8 @@ void main() {
       await tester.pumpAndSettle();
     });
 
-    testWidgets('keydown to navigate to external link', (WidgetTester tester) async {
+    testWidgets('keydown to navigate to external link',
+        (WidgetTester tester) async {
       final TestNavigatorObserver observer = TestNavigatorObserver();
       final Uri uri = Uri.parse('https://google.com');
       FollowLink? followLinkCallback;

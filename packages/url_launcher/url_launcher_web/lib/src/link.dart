@@ -111,7 +111,8 @@ class LinkViewController extends PlatformViewController {
 
       // We listen to `keydown` events in the capture phase to ensure that we
       // receive the event even if the engine calls `stopPropagation`.
-      html.window.addEventListener('keydown', _jsGlobalKeydownListener, _useCapture);
+      html.window
+          .addEventListener('keydown', _jsGlobalKeydownListener, _useCapture);
       html.window.addEventListener('click', _jsGlobalClickListener);
     }
     _instances[viewId] = this;
@@ -216,7 +217,8 @@ class LinkViewController extends PlatformViewController {
     if (_isExternalLink) {
       // External links are not handled by the browser when triggered via a
       // keydown, so we have to launch the url manually.
-      UrlLauncherPlatform.instance.launchUrl(_uri.toString(), const LaunchOptions());
+      UrlLauncherPlatform.instance
+          .launchUrl(_uri.toString(), const LaunchOptions());
       return;
     }
 
@@ -311,7 +313,8 @@ class LinkViewController extends PlatformViewController {
     _instances.remove(viewId);
     if (_instances.isEmpty) {
       html.window.removeEventListener('click', _jsGlobalClickListener);
-      html.window.removeEventListener('keydown', _jsGlobalKeydownListener, _useCapture);
+      html.window.removeEventListener(
+          'keydown', _jsGlobalKeydownListener, _useCapture);
     }
     await SystemChannels.platform_views.invokeMethod<void>('dispose', viewId);
   }
