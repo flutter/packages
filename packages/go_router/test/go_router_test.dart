@@ -4816,8 +4816,7 @@ void main() {
           expect(find.text('Home'), findsNothing);
 
           router.popUntil(
-            (RouteMatchBase routeMatch, Route<dynamic> route) =>
-                routeMatch is RouteMatch && routeMatch.route.path == 'a',
+            (GoRouterState state, Route<dynamic> route) => state.path == 'a',
           );
           await tester.pumpAndSettle();
           expect(find.text('C Screen'), findsNothing);

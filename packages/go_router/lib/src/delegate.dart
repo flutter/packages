@@ -13,11 +13,12 @@ import 'configuration.dart';
 import 'match.dart';
 import 'misc/errors.dart';
 import 'route.dart';
+import 'state.dart';
 
 /// Signature for a predicate function that determines whether a route should be
 /// popped or not.
 typedef PopUntilPredicate = bool Function(
-  RouteMatchBase,
+  GoRouterState,
   Route<dynamic>,
 );
 
@@ -122,8 +123,8 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
   /// Pop the Navigator's page stack until the predicate returns `true`.
   void popUntil(PopUntilPredicate predicate) {
     bool hasStoppedPopping = false;
-    bool popUntilPredicate(RouteMatchBase routeMatch, Route<dynamic> route) {
-      if (predicate(routeMatch, route)) {
+    bool popUntilPredicate(GoRouterState state, Route<dynamic> route) {
+      if (predicate(state, route)) {
         hasStoppedPopping = true;
         return true;
       }
@@ -155,7 +156,11 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
     }
     int count = 0; // Only pop 1 page at the time.
     state?.popUntil((Route<dynamic> route) {
-      if (count == 1 || predicate(walker, route)) {
+      if (count == 1 ||
+          predicate(
+            walker.buildState(_configuration, currentConfiguration),
+            route,
+          )) {
         return true;
       }
       count++;
