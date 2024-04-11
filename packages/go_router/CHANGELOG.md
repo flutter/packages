@@ -1,6 +1,6 @@
 ## 13.3.0
 
-- Feat add route redirect to ShellRoutes
+- Adds route redirect to ShellRoutes
 
 ## 13.2.3
 
