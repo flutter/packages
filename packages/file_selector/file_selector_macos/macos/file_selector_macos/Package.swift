@@ -6,7 +6,7 @@ import PackageDescription
 let package = Package(
     name: "file_selector_macos",
     platforms: [
-        .macoOS("10.14")
+        .macOS("10.14")
     ],
     products: [
         // If the plugin name contains "_", replace with "-" for the library name
@@ -16,7 +16,7 @@ let package = Package(
     targets: [
         .target(
             name: "file_selector_macos",
-            dependencies: [],
+            dependencies: []
         )
     ]
 )

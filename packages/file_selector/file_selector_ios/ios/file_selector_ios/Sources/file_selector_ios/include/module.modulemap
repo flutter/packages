@@ -1,5 +1,5 @@
 module file_selector_ios {
-  umbrella header "file_selector_ios-umbrella.h"
+  umbrella header "file_selector_ios/file_selector_ios-umbrella.h"
 
   export *
   module * { export * }
