@@ -40,7 +40,7 @@
                           }];
 
   XCTAssertEqualObjects(picker.delegate, plugin);
-  XCTAssertEqual(presenter.presentedController, picker);
+  XCTAssertEqualObjects(presenter.presentedController, picker);
 }
 
 - (void)testReturnsPickedFiles {
