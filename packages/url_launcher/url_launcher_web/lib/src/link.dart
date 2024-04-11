@@ -13,6 +13,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:url_launcher_platform_interface/link.dart';
+import 'package:url_launcher_platform_interface/url_launcher_platform_interface.dart';
 import 'package:web/web.dart' as html;
 
 /// The unique identifier for the view type to be used for link platform views.
@@ -98,6 +99,8 @@ class WebLinkDelegateState extends State<WebLinkDelegate> {
   }
 }
 
+final JSAny _useCapture = <String, Object>{'capture': true}.jsify()!;
+
 /// Controls link views.
 class LinkViewController extends PlatformViewController {
   /// Creates a [LinkViewController] instance with the unique [viewId].
@@ -106,10 +109,10 @@ class LinkViewController extends PlatformViewController {
       // This is the first controller being created, attach the global click
       // listener.
 
-      _clickSubscription =
-          const html.EventStreamProvider<html.MouseEvent>('click')
-              .forTarget(html.window)
-              .listen(_onGlobalClick);
+      // We listen to `keydown` events in the capture phase to ensure that we
+      // receive the event even if the engine calls `stopPropagation`.
+      html.window.addEventListener('keydown', _jsGlobalKeydownListener, _useCapture);
+      html.window.addEventListener('click', _jsGlobalClickListener);
     }
     _instances[viewId] = this;
   }
@@ -142,13 +145,25 @@ class LinkViewController extends PlatformViewController {
 
   static int? _hitTestedViewId;
 
-  static late StreamSubscription<html.MouseEvent> _clickSubscription;
+  static final JSFunction _jsGlobalKeydownListener = _onGlobalKeydown.toJS;
+  static final JSFunction _jsGlobalClickListener = _onGlobalClick.toJS;
+
+  static void _onGlobalKeydown(html.KeyboardEvent event) {
+    // The keydown event is not directly associated with the target Link, so
+    // we need to look for the recently hit tested Link to handle the event.
+    if (_hitTestedViewId != null) {
+      _instances[_hitTestedViewId]?._onDomKeydown();
+    }
+    // After the keyboard event has been received, clean up the hit test state
+    // so we can start fresh on the next event.
+    unregisterHitTest();
+  }
 
   static void _onGlobalClick(html.MouseEvent event) {
     final int? viewId = getViewIdFromTarget(event);
     _instances[viewId]?._onDomClick(event);
     // After the DOM click event has been received, clean up the hit test state
-    // so we can start fresh on the next click.
+    // so we can start fresh on the next event.
     unregisterHitTest();
   }
 
@@ -192,6 +207,26 @@ class LinkViewController extends PlatformViewController {
     await SystemChannels.platform_views.invokeMethod<void>('create', args);
   }
 
+  void _onDomKeydown() {
+    assert(
+      _hitTestedViewId == viewId,
+      'Keydown event should only be handled by the hit tested Link',
+    );
+
+    if (_isExternalLink) {
+      // External links are not handled by the browser when triggered via a
+      // keydown, so we have to launch the url manually.
+      UrlLauncherPlatform.instance.launchUrl(_uri.toString(), const LaunchOptions());
+      return;
+    }
+
+    // A uri that doesn't have a scheme is an internal route name. In this
+    // case, we push it via Flutter's navigation system instead of using
+    // `launchUrl`.
+    final String routeName = _uri.toString();
+    pushRouteNameToFramework(null, routeName);
+  }
+
   void _onDomClick(html.MouseEvent event) {
     final bool isHitTested = _hitTestedViewId == viewId;
     if (!isHitTested) {
@@ -202,7 +237,7 @@ class LinkViewController extends PlatformViewController {
       return;
     }
 
-    if (_uri != null && _uri!.hasScheme) {
+    if (_isExternalLink) {
       // External links will be handled by the browser, so we don't have to do
       // anything.
       return;
@@ -217,6 +252,7 @@ class LinkViewController extends PlatformViewController {
   }
 
   Uri? _uri;
+  bool get _isExternalLink => _uri != null && _uri!.hasScheme;
 
   /// Set the [Uri] value for this link.
   ///
@@ -274,7 +310,8 @@ class LinkViewController extends PlatformViewController {
     assert(_instances[viewId] == this);
     _instances.remove(viewId);
     if (_instances.isEmpty) {
-      await _clickSubscription.cancel();
+      html.window.removeEventListener('click', _jsGlobalClickListener);
+      html.window.removeEventListener('keydown', _jsGlobalKeydownListener, _useCapture);
     }
     await SystemChannels.platform_views.invokeMethod<void>('dispose', viewId);
   }
