@@ -105,7 +105,7 @@ String _stateValueAccess(ParameterElement element, Set<String> pathParameters) {
   }
   if (pathParameters.contains(element.name) ||
       (!element.type.isNullableType && !element.hasDefaultValue)) {
-    access += '!';
+    access += "?? ''";
   }
 
   return access;
