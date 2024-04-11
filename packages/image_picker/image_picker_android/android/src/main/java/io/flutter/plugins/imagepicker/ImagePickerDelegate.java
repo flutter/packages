@@ -295,7 +295,7 @@ public class ImagePickerDelegate
 
   private void launchPickMediaFromGalleryIntent(Messages.GeneralOptions generalOptions) {
     Intent pickMediaIntent;
-    if (generalOptions.getUsePhotoPicker() && Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+    if (generalOptions.getUsePhotoPicker()) {
       if (generalOptions.getAllowMultiple()) {
         pickMediaIntent =
             new ActivityResultContracts.PickMultipleVisualMedia()
