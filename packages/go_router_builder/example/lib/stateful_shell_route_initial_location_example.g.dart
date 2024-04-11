@@ -69,7 +69,7 @@ extension $NotificationsRouteDataExtension on NotificationsRouteData {
   static NotificationsRouteData _fromState(GoRouterState state) =>
       NotificationsRouteData(
         section: _$NotificationsPageSectionEnumMap
-            ._$fromName(state.pathParameters['section']!),
+            ._$fromName(state.pathParameters['section'] ?? ''),
       );
 
   String get location => GoRouteData.$location(

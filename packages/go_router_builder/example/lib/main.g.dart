@@ -59,7 +59,7 @@ extension $HomeRouteExtension on HomeRoute {
 
 extension $FamilyRouteExtension on FamilyRoute {
   static FamilyRoute _fromState(GoRouterState state) => FamilyRoute(
-        state.pathParameters['fid']!,
+        state.pathParameters['fid'] ?? '',
       );
 
   String get location => GoRouteData.$location(
@@ -78,8 +78,8 @@ extension $FamilyRouteExtension on FamilyRoute {
 
 extension $PersonRouteExtension on PersonRoute {
   static PersonRoute _fromState(GoRouterState state) => PersonRoute(
-        state.pathParameters['fid']!,
-        int.parse(state.pathParameters['pid']!),
+        state.pathParameters['fid'] ?? '',
+        int.parse(state.pathParameters['pid'] ?? ''),
       );
 
   String get location => GoRouteData.$location(
@@ -99,9 +99,10 @@ extension $PersonRouteExtension on PersonRoute {
 extension $PersonDetailsRouteExtension on PersonDetailsRoute {
   static PersonDetailsRoute _fromState(GoRouterState state) =>
       PersonDetailsRoute(
-        state.pathParameters['fid']!,
-        int.parse(state.pathParameters['pid']!),
-        _$PersonDetailsEnumMap._$fromName(state.pathParameters['details']!),
+        state.pathParameters['fid'] ?? '',
+        int.parse(state.pathParameters['pid'] ?? ''),
+        _$PersonDetailsEnumMap
+            ._$fromName(state.pathParameters['details'] ?? ''),
         $extra: state.extra as int?,
       );
 
@@ -129,7 +130,7 @@ const _$PersonDetailsEnumMap = {
 
 extension $FamilyCountRouteExtension on FamilyCountRoute {
   static FamilyCountRoute _fromState(GoRouterState state) => FamilyCountRoute(
-        int.parse(state.pathParameters['count']!),
+        int.parse(state.pathParameters['count'] ?? ''),
       );
 
   String get location => GoRouteData.$location(
