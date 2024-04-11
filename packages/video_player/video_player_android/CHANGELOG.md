@@ -1,3 +1,7 @@
+## NEXT
+
+* Calls `onDestroy` instead of `initialize` in onDetachedFromEngine.
+
 ## 2.4.13
 
 * Updates minSdkVersion to 19.

@@ -95,7 +95,7 @@ public class VideoPlayerPlugin implements FlutterPlugin, AndroidVideoPlayerApi {
     }
     flutterState.stopListening(binding.getBinaryMessenger());
     flutterState = null;
-    initialize();
+    onDestroy();
   }
 
   private void disposeAllPlayers() {
