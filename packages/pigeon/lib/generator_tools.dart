@@ -13,7 +13,7 @@ import 'ast.dart';
 /// The current version of pigeon.
 ///
 /// This must match the version in pubspec.yaml.
-const String pigeonVersion = '18.0.0';
+const String pigeonVersion = '18.1.0';
 
 /// Read all the content from [stdin] to a String.
 String readStdin() {
@@ -300,6 +300,12 @@ const String seeAlsoWarning = 'See also: https://pub.dev/packages/pigeon';
 /// This lowers the chances of variable name collisions with user defined
 /// parameters.
 const String classNamePrefix = 'Pigeon';
+
+/// Prefix for apis generated for ProxyApi.
+///
+/// Since ProxyApis are intended to wrap a class and will often share the name
+/// of said class, host APIs should prefix the API with this protected name.
+const String hostProxyApiPrefix = '${classNamePrefix}Api';
 
 /// Name for the generated InstanceManager for ProxyApis.
 ///

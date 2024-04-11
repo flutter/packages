@@ -1,3 +1,7 @@
+## 18.1.0
+
+* [swift] Adds skeleton implementation for `@ProxyApi`.
+
 ## 18.0.0
 
 * Adds message channel suffix option to all APIs.

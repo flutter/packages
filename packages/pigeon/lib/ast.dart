@@ -4,7 +4,9 @@
 
 import 'package:collection/collection.dart' show ListEquality;
 import 'package:meta/meta.dart';
+
 import 'pigeon_lib.dart';
+import 'swift_generator.dart';
 
 typedef _ListEquals = bool Function(List<Object?>, List<Object?>);
 
@@ -139,6 +141,7 @@ class AstProxyApi extends Api {
     required this.fields,
     this.superClass,
     this.interfaces = const <TypeDeclaration>{},
+    this.swiftOptions,
   });
 
   /// List of constructors inside the API.
@@ -152,6 +155,10 @@ class AstProxyApi extends Api {
 
   /// Name of the classes this class considers to be implemented.
   Set<TypeDeclaration> interfaces;
+
+  /// Options that control how Swift code will be generated for a specific
+  /// ProxyApi.
+  final SwiftProxyApiOptions? swiftOptions;
 
   /// Methods implemented in the host platform language.
   Iterable<Method> get hostMethods => methods.where(

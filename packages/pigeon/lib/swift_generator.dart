@@ -48,6 +48,32 @@ class SwiftOptions {
   }
 }
 
+/// Options that control how Swift code will be generated for a specific
+/// ProxyApi.
+class SwiftProxyApiOptions {
+  /// Constructs a [SwiftProxyApiOptions].
+  const SwiftProxyApiOptions({
+    this.name,
+    this.import,
+    this.iosVersionRequirement,
+  });
+
+  /// The name of the Swift class.
+  ///
+  /// By default, generated code will use the same name as the class in the Dart
+  /// pigeon file.
+  final String? name;
+
+  /// The name of the module that needs to be imported to access the class.
+  final String? import;
+
+  /// The API version requirement for iOS.
+  ///
+  /// This adds `@available` annotations on top of any constructor, field, or
+  /// method that references this element.
+  final int? iosVersionRequirement;
+}
+
 /// Class that manages all Swift code generation.
 class SwiftGenerator extends StructuredGenerator<SwiftOptions> {
   /// Instantiates a Swift Generator.
