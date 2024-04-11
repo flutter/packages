@@ -1,3 +1,16 @@
+# Upsider Forked Rules of Operation for this Package
+
+## How to cut a branch
+The target branches for use with pubspeck are as follows.
+
+| Title  | Branch Name  | Example  | Description  |
+| :------------ | :------------ | :------------ | :------------ |
+|  Package Branch | packages/[package_name] | packages/local_auth | Branches referenced in pubspec.yaml |
+| Additional Function Branche | feature/[package_name_and_feature_name] | feture/local_auth_fix_strong_auth | Issue a PR for PACKAGES in the Additional Features branch  |
+
+## How to update each branch
+Use GitHub's "Sync fork" function to update main, and then update each packages branch based on the updated main.
+
 # Flutter Packages
 
 [![Release Status](https://github.com/flutter/packages/actions/workflows/release.yml/badge.svg)](https://github.com/flutter/packages/actions/workflows/release.yml)
