@@ -1,3 +1,7 @@
+## 0.8.9+6
+
+* Updates minSdkVersion to 19.
+
 ## 0.8.9+5
 
 * Bumps androidx.exifinterface:exifinterface from 1.3.6 to 1.3.7.
