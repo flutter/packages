@@ -99,10 +99,7 @@ class MarkersController {
       markerController.hideInfoWindow();
       result.success(null);
     } else {
-      result.error(
-          "Invalid markerId",
-          "hideInfoWindow called with invalid markerId or for hidden cluster marker",
-          null);
+      result.error("Invalid markerId", "hideInfoWindow called with invalid markerId", null);
     }
   }
 
@@ -111,10 +108,7 @@ class MarkersController {
     if (markerController != null) {
       result.success(markerController.isInfoWindowShown());
     } else {
-      result.error(
-          "Invalid markerId",
-          "isInfoWindowShown called with invalid markerId or for hidden cluster marker",
-          null);
+      result.error("Invalid markerId", "isInfoWindowShown called with invalid markerId", null);
     }
   }
 

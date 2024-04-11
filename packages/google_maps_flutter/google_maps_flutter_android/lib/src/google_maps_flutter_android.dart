@@ -724,7 +724,8 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
   }
 
   /// Parses cluster data from dynamic json objects and returns [Cluster] object.
-  /// Used by `cluster#onTap` method call handler and [getClusters] response parser.
+  /// Used by the `cluster#onTap` method call handler and the
+  /// [GoogleMapsInspectorAndroid.getClusters] response parser.
   static Cluster parseCluster(
       String clusterManagerIdString,
       Object positionObject,

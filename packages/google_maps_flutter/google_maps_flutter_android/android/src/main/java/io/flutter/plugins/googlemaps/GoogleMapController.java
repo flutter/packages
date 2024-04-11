@@ -394,6 +394,8 @@ final class GoogleMapController
         }
       case "clusterManager#getClusters":
         {
+          // The "clusterManagerId" is set in getClusters method at:
+          // packages/google_maps_flutter/google_maps_flutter_android/lib/src/google_map_inspector_android.dart
           Object clusterManagerId = call.argument("clusterManagerId");
           clusterManagersController.getClustersWithClusterManagerId(
               (String) clusterManagerId, result);

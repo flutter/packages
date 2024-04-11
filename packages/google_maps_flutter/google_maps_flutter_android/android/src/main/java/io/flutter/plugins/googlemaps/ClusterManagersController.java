@@ -160,6 +160,8 @@ class ClusterManagersController
   @SuppressWarnings("unchecked")
   private static String getClusterManagerId(Object clusterManagerData) {
     Map<String, Object> clusterMap = (Map<String, Object>) clusterManagerData;
+    // The "clusterManagerId" key is set at:
+    // https://github.com/flutter/packages/blob/dce6f0c91fcf01ee3a67e3475155ec9f16ce2a66/packages/google_maps_flutter/google_maps_flutter_platform_interface/lib/src/types/cluster_manager.dart#L62
     return (String) clusterMap.get("clusterManagerId");
   }
 
@@ -172,7 +174,9 @@ class ClusterManagersController
     ClusterManager<MarkerBuilder> clusterManager = clusterManagerIdToManager.get(clusterManagerId);
     if (clusterManager == null) {
       result.error(
-          "Invalid clusterManagerId", "getClusters called with invalid clusterManagerId", null);
+          "Invalid clusterManagerId",
+          "getClusters called with invalid clusterManagerId:" + clusterManagerId,
+          null);
       return;
     }
 

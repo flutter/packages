@@ -251,6 +251,9 @@ class Convert {
     Object bounds = latLngBoundsToJson(latLngBoundsBuilder.build());
 
     final Map<String, Object> data = new HashMap<>(4);
+
+    // For dart side implementation see parseCluster method at
+    // packages/google_maps_flutter/google_maps_flutter_android/lib/src/google_maps_flutter_android.dart
     data.put("clusterManagerId", clusterManagerId);
     data.put("position", position);
     data.put("bounds", bounds);

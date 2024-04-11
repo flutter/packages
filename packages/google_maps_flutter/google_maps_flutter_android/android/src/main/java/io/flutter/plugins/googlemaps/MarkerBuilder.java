@@ -27,7 +27,6 @@ class MarkerBuilder implements MarkerOptionsSink, ClusterItem {
 
   /** Update existing markerOptions with builder values */
   void update(MarkerOptions markerOptionsToUpdate) {
-    markerOptionsToUpdate.position(markerOptions.getPosition());
     markerOptionsToUpdate.alpha(markerOptions.getAlpha());
     markerOptionsToUpdate.anchor(markerOptions.getAnchorU(), markerOptions.getAnchorV());
     markerOptionsToUpdate.draggable(markerOptions.isDraggable());
