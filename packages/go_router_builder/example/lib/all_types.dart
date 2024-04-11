@@ -537,7 +537,8 @@ class BasePage<T> extends StatelessWidget {
                 'Query param with default value: $queryParamWithDefaultValue',
               ),
               SelectableText(GoRouterState.of(context).uri.path),
-              SelectableText(GoRouterState.of(context).uri.queryParameters.toString()),
+              SelectableText(
+                  GoRouterState.of(context).uri.queryParameters.toString()),
             ],
           ),
         ),
