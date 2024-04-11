@@ -16,6 +16,24 @@
 
 namespace test_plugin {
 
+class TestSmallApi : public core_tests_pigeontest::HostSmallApi {
+ public:
+  TestSmallApi();
+  virtual ~TestSmallApi();
+
+  TestSmallApi(const TestSmallApi&) = delete;
+  TestSmallApi& operator=(const TestSmallApi&) = delete;
+
+  void Echo(
+      const std::string& a_string,
+      std::function<void(core_tests_pigeontest::ErrorOr<std::string> reply)>
+          result) override;
+
+  void VoidVoid(std::function<
+                void(std::optional<core_tests_pigeontest::FlutterError> reply)>
+                    result) override;
+};
+
 // This plugin handles the native side of the integration tests in
 // example/integration_test/
 class TestPlugin : public flutter::Plugin,
@@ -23,7 +41,9 @@ class TestPlugin : public flutter::Plugin,
  public:
   static void RegisterWithRegistrar(flutter::PluginRegistrarWindows* registrar);
 
-  TestPlugin(flutter::BinaryMessenger* binary_messenger);
+  TestPlugin(flutter::BinaryMessenger* binary_messenger,
+             std::unique_ptr<TestSmallApi> host_small_api_one,
+             std::unique_ptr<TestSmallApi> host_small_api_two);
 
   virtual ~TestPlugin();
 
@@ -365,10 +385,20 @@ class TestPlugin : public flutter::Plugin,
                          std::optional<core_tests_pigeontest::AnEnum>>
                              reply)>
           result) override;
+  void CallFlutterSmallApiEchoString(
+      const std::string& a_string,
+      std::function<void(core_tests_pigeontest::ErrorOr<std::string> reply)>
+          result) override;
 
  private:
   std::unique_ptr<core_tests_pigeontest::FlutterIntegrationCoreApi>
       flutter_api_;
+  std::unique_ptr<core_tests_pigeontest::FlutterSmallApi>
+      flutter_small_api_one_;
+  std::unique_ptr<core_tests_pigeontest::FlutterSmallApi>
+      flutter_small_api_two_;
+  std::unique_ptr<TestSmallApi> host_small_api_one_;
+  std::unique_ptr<TestSmallApi> host_small_api_two_;
 };
 
 }  // namespace test_plugin
