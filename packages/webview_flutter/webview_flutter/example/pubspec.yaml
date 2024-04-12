@@ -17,16 +17,8 @@ dependencies:
     # The example app is bundled with the plugin so we use a path dependency on
     # the parent directory to use the current plugin's version.
     path: ../
-  webview_flutter_android:
-    git:
-      url: https://github.com/Sinishisimus/packages.git
-      path: packages/webview_flutter/webview_flutter_android
-      ref: feature/android_web_view_render_process_terminated
-  webview_flutter_wkwebview:
-    git:
-      url: https://github.com/Sinishisimus/packages.git
-      path: packages/webview_flutter/webview_flutter_wkwebview
-      ref: feature/android_web_view_render_process_terminated
+  webview_flutter_android: ^3.16.1
+  webview_flutter_wkwebview: ^3.13.0
 
 dev_dependencies:
   build_runner: ^2.1.5
@@ -35,11 +27,7 @@ dev_dependencies:
     sdk: flutter
   integration_test:
     sdk: flutter
-  webview_flutter_platform_interface:
-    git:
-      url: https://github.com/Sinishisimus/packages.git
-      path: packages/webview_flutter/webview_flutter_platform_interface
-      ref: feature/android_web_view_render_process_terminated
+  webview_flutter_platform_interface: ^2.10.1
 
 flutter:
   uses-material-design: true

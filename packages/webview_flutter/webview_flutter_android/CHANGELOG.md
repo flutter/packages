@@ -1,3 +1,8 @@
+## 3.16.1
+
+* Adds onWebViewRenderProcessTerminated WebViewClient callback to support
+  `PlatformNavigationDelegate.onWebViewRenderProcessTerminated`.
+
 ## 3.16.0
 
 * Adds onReceivedHttpError WebViewClient callback to support

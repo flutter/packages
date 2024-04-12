@@ -1,3 +1,10 @@
+## 4.7.1
+
+* Adds support for detecting web view render process termination on Android via navigation delegate. See
+  `NavigationDelegate.onWebViewRenderProcessTerminated`. 
+  Calling application should return `true` if termination was handled by the app, otherwise `false`.
+  For more details see: https://developer.android.com/reference/android/webkit/WebViewClient#onRenderProcessGone(android.webkit.WebView,%20android.webkit.RenderProcessGoneDetail)
+
 ## 4.7.0
 
 * Adds support to track scroll position changes.
