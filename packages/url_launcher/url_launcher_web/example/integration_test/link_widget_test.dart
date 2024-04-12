@@ -392,15 +392,21 @@ html.Element _findSingleAnchor() {
 }
 
 void _simulateClick(html.Element target) {
-  final html.MouseEvent clickEvent = html.MouseEvent('click');
-  clickEvent.initMouseEvent('click', /*bubbles*/ true);
-  target.dispatchEvent(clickEvent);
+  target.dispatchEvent(
+    html.MouseEvent(
+      'click',
+      html.MouseEventInit()..bubbles = true,
+    ),
+  );
 }
 
 void _simulateKeydown(html.Element target) {
-  final html.KeyboardEvent keydownEvent = html.KeyboardEvent('keydown');
-  keydownEvent.initKeyboardEvent('keydown', /*bubbles*/ true);
-  target.dispatchEvent(keydownEvent);
+  target.dispatchEvent(
+    html.KeyboardEvent(
+      'keydown',
+      html.KeyboardEventInit()..bubbles = true,
+    ),
+  );
 }
 
 class TestNavigatorObserver extends NavigatorObserver {
