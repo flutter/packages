@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'dart:async';
+import 'dart:io';
 
 import 'package:webview_flutter_platform_interface/webview_flutter_platform_interface.dart';
 
@@ -145,7 +146,11 @@ class NavigationDelegate {
       platform.setOnWebResourceError(onWebResourceError!);
     }
     if (onWebViewRenderProcessTerminated != null) {
-      platform.setOnWebViewRenderProcessTerminated(onWebViewRenderProcessTerminated!);
+      if (Platform.isAndroid) {
+        platform.setOnWebViewRenderProcessTerminated(onWebViewRenderProcessTerminated!);
+      }
+      // onWebViewRenderProcessTerminated is only available on Android, see:
+      // https://developer.android.com/reference/android/webkit/WebViewClient#onRenderProcessGone(android.webkit.WebView,%20android.webkit.RenderProcessGoneDetail)
     }
     if (onUrlChange != null) {
       platform.setOnUrlChange(onUrlChange);
