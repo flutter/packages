@@ -1,3 +1,8 @@
+## 0.8.9+6
+
+* Updates minSdkVersion to 19.
+* Updates minimum supported SDK version to Flutter 3.16/Dart 3.2.
+
 ## 0.8.9+5
 
 * Bumps androidx.exifinterface:exifinterface from 1.3.6 to 1.3.7.
