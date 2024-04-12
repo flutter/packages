@@ -5,8 +5,6 @@
 package io.flutter.plugins.pathprovider;
 
 import android.content.Context;
-import android.os.Build.VERSION;
-import android.os.Build.VERSION_CODES;
 import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;

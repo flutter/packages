@@ -4,8 +4,6 @@
 
 package io.flutter.plugins.pathprovider;
 
-import android.os.Build.VERSION;
-import android.os.Build.VERSION_CODES;
 import android.os.Environment;
 
 /** Helps to map the Dart `StorageDirectory` enum to a Android system constant. */
