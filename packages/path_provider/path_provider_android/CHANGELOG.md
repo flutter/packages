@@ -1,3 +1,13 @@
+## 2.2.4
+
+* Updates minSdkVersion version to 19.
+* Updates minimum supported SDK version to Flutter 3.16/Dart 3.2.
+
+## 2.2.3
+
+* Updates minimum supported SDK version to Flutter 3.13/Dart 3.1.
+* Updates compileSdk version to 34.
+
 ## 2.2.2
 
 * Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.

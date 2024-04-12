@@ -10,6 +10,7 @@ import 'package:file/file.dart';
 import 'common/core.dart';
 import 'common/output_utils.dart';
 import 'common/package_looping_command.dart';
+import 'common/plugin_utils.dart';
 import 'common/repository_package.dart';
 
 const int _exitUnsupportedPlatform = 2;
@@ -92,6 +93,14 @@ class PodspecCheckCommand extends PackageLoopingCommand {
           errors.add(podspec.basename);
         }
       }
+    }
+
+    if (pluginSupportsPlatform(platformIOS, package) &&
+        !podspecs.any(_hasPrivacyManifest)) {
+      printError('No PrivacyInfo.xcprivacy file specified. Please ensure that '
+          'a privacy manifest is included in the build using '
+          '`resource_bundles`');
+      errors.add('No privacy manifest');
     }
 
     return errors.isEmpty
@@ -191,5 +200,13 @@ class PodspecCheckCommand extends PackageLoopingCommand {
 \s*'LD_RUNPATH_SEARCH_PATHS' => '/usr/lib/swift',[^}]*
 \s*}''', dotAll: true);
     return !workaround.hasMatch(podspec.readAsStringSync());
+  }
+
+  /// Returns true if [podspec] specifies a .xcprivacy file.
+  bool _hasPrivacyManifest(File podspec) {
+    final RegExp manifestBundling = RegExp(r'''
+\.(?:ios\.)?resource_bundles\s*=\s*{[^}]*PrivacyInfo.xcprivacy''',
+        dotAll: true);
+    return manifestBundling.hasMatch(podspec.readAsStringSync());
   }
 }

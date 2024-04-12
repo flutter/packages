@@ -1,3 +1,29 @@
+## 0.9.15
+
+* Adds support to control video FPS and bitrate. See `CameraController.withSettings`.
+
+## 0.9.14+2
+
+* Removes `_ambiguate` methods from example code.
+
+## 0.9.14+1
+
+* Fixes bug where max resolution preset does not produce highest available resolution on iOS.
+
+## 0.9.14
+
+* Adds support to HEIF format.
+
+## 0.9.13+11
+
+* Fixes a memory leak of sample buffer when pause and resume the video recording.
+* Removes development team from example app.
+* Updates minimum iOS version to 12.0 and minimum Flutter version to 3.16.6.
+
+## 0.9.13+10
+
+* Adds privacy manifest.
+
 ## 0.9.13+9
 
 * Fixes new lint warnings.

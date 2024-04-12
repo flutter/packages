@@ -3,22 +3,22 @@ tasks:
     script: .ci/scripts/prepare_tool.sh
     infra_step: true # Note infra steps failing prevents "always" from running.
   - name: download Dart and macOS deps
-    script: script/tool_runner.sh
+    script: .ci/scripts/tool_runner.sh
     args: ["fetch-deps", "--macos", "--supporting-target-platforms-only"]
     infra_step: true
   - name: build examples
-    script: script/tool_runner.sh
+    script: .ci/scripts/tool_runner.sh
     args: ["build-examples", "--macos"]
   - name: xcode analyze
-    script: script/tool_runner.sh
+    script: .ci/scripts/tool_runner.sh
     args: ["xcode-analyze", "--macos"]
   - name: xcode analyze deprecation
     # Ensure we don't accidentally introduce deprecated code.
-    script: script/tool_runner.sh
+    script: .ci/scripts/tool_runner.sh
     args: ["xcode-analyze", "--macos", "--macos-min-version=12.3"]
   - name: native test
-    script: script/tool_runner.sh
+    script: .ci/scripts/tool_runner.sh
     args: ["native-test", "--macos"]
   - name: drive examples
-    script: script/tool_runner.sh
+    script: .ci/scripts/tool_runner.sh
     args: ["drive-examples", "--macos", "--exclude=script/configs/exclude_integration_macos.yaml"]

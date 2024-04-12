@@ -21,7 +21,6 @@ part 'product_details_wrapper.g.dart';
 @immutable
 class ProductDetailsWrapper {
   /// Creates a [ProductDetailsWrapper] with the given purchase details.
-  @visibleForTesting
   const ProductDetailsWrapper({
     required this.description,
     required this.name,
@@ -34,6 +33,8 @@ class ProductDetailsWrapper {
 
   /// Factory for creating a [ProductDetailsWrapper] from a [Map] with the
   /// product details.
+  @Deprecated('JSON serialization is not intended for public use, and will '
+      'be removed in a future version.')
   factory ProductDetailsWrapper.fromJson(Map<String, dynamic> map) =>
       _$ProductDetailsWrapperFromJson(map);
 
@@ -123,6 +124,8 @@ class ProductDetailsResponseWrapper implements HasBillingResponse {
   ///
   /// The map needs to have named string keys with values matching the names and
   /// types of all of the members on this class.
+  @Deprecated('JSON serialization is not intended for public use, and will '
+      'be removed in a future version.')
   factory ProductDetailsResponseWrapper.fromJson(Map<String, dynamic> map) =>
       _$ProductDetailsResponseWrapperFromJson(map);
 
@@ -178,6 +181,8 @@ class RecurrenceModeConverter implements JsonConverter<RecurrenceMode, int?> {
   const RecurrenceModeConverter();
 
   @override
+  @Deprecated('JSON serialization is not intended for public use, and will '
+      'be removed in a future version.')
   RecurrenceMode fromJson(int? json) {
     if (json == null) {
       return RecurrenceMode.nonRecurring;

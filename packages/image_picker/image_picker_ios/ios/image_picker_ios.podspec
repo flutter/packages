@@ -18,6 +18,7 @@ Downloaded by pub (not CocoaPods).
   s.public_header_files = 'Classes/**/*.h'
   s.module_map = 'Classes/ImagePickerPlugin.modulemap'
   s.dependency 'Flutter'
-  s.platform = :ios, '11.0'
+  s.platform = :ios, '12.0'
   s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES' }
+  s.resource_bundles = {'image_picker_ios_privacy' => ['Resources/PrivacyInfo.xcprivacy']}
 end

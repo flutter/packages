@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import XCTest
+
 @testable import test_plugin
 
 class NonNullFieldsTests: XCTestCase {

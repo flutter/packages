@@ -9,33 +9,36 @@ import static io.flutter.plugins.inapppurchase.Translator.fromPurchasesList;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.VisibleForTesting;
 import com.android.billingclient.api.BillingResult;
 import com.android.billingclient.api.Purchase;
 import com.android.billingclient.api.PurchasesUpdatedListener;
-import io.flutter.plugin.common.MethodChannel;
-import java.util.HashMap;
+import io.flutter.Log;
 import java.util.List;
-import java.util.Map;
 
 class PluginPurchaseListener implements PurchasesUpdatedListener {
-  private final MethodChannel channel;
+  private final Messages.InAppPurchaseCallbackApi callbackApi;
 
-  @VisibleForTesting
-  static final String ON_PURCHASES_UPDATED =
-      "PurchasesUpdatedListener#onPurchasesUpdated(BillingResult, List<Purchase>)";
-
-  PluginPurchaseListener(MethodChannel channel) {
-    this.channel = channel;
+  PluginPurchaseListener(Messages.InAppPurchaseCallbackApi callbackApi) {
+    this.callbackApi = callbackApi;
   }
 
   @Override
   public void onPurchasesUpdated(
       @NonNull BillingResult billingResult, @Nullable List<Purchase> purchases) {
-    final Map<String, Object> callbackArgs = new HashMap<>();
-    callbackArgs.put("billingResult", fromBillingResult(billingResult));
-    callbackArgs.put("responseCode", billingResult.getResponseCode());
-    callbackArgs.put("purchasesList", fromPurchasesList(purchases));
-    channel.invokeMethod(ON_PURCHASES_UPDATED, callbackArgs);
+    Messages.PlatformPurchasesResponse.Builder builder =
+        new Messages.PlatformPurchasesResponse.Builder()
+            .setBillingResult(fromBillingResult(billingResult))
+            .setPurchases(fromPurchasesList(purchases));
+    callbackApi.onPurchasesUpdated(
+        builder.build(),
+        new Messages.VoidResult() {
+          @Override
+          public void success() {}
+
+          @Override
+          public void error(@NonNull Throwable error) {
+            Log.e("IN_APP_PURCHASE", "onPurchaseUpdated handler error: " + error);
+          }
+        });
   }
 }

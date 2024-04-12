@@ -481,7 +481,6 @@ this command.
       switch (exitCode) {
         case xcodebuildNoTestExitCode:
           _printNoExampleTestsMessage(example, platform);
-          break;
         case 0:
           printSuccess('Successfully ran $platform xctest for $exampleName');
           // If this is the first test, assume success until something fails.
@@ -491,7 +490,6 @@ this command.
           if (exampleHasUnitTests) {
             ranUnitTests = true;
           }
-          break;
         default:
           // Any failure means a failure overall.
           overallResult = RunState.failed;

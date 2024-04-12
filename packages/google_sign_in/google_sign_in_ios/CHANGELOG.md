@@ -1,3 +1,16 @@
+## 5.7.5
+
+* Pins GoogleSignIn to iOS SDK "7.0.0" while preparing the update to 7.1.
+
+## 5.7.4
+
+* Improves type handling in Objective-C code.
+* Updates minimum iOS version to 12.0 and minimum Flutter version to 3.16.6.
+
+## 5.7.3
+
+* Adds privacy manifest.
+
 ## 5.7.2
 
 * Updates `clearAuthCache` override to match base class declaration.

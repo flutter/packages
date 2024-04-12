@@ -1,3 +1,36 @@
+## 0.6.22+1
+
+* Removes `_ambiguate` methods from code.
+
+## 0.6.22
+
+* Introduces a new `MarkdownElementBuilder.isBlockElement()` method to specify if custom element
+  is a block.
+
+## 0.6.21+1
+
+* Adds `onSelectionChanged` to the constructors of `Markdown` and `MarkdownBody`.
+
+## 0.6.21
+
+* Fixes support for `WidgetSpan` in `Text.rich` elements inside `MarkdownElementBuilder`.
+
+## 0.6.20+1
+
+* Updates minimum supported SDK version to Flutter 3.19.
+
+## 0.6.20
+
+* Adds `textScaler` to `MarkdownStyleSheet`, and deprecates `textScaleFactor`.
+  * Clients using `textScaleFactor: someFactor` should replace it with
+    `TextScaler.linear(someFactor)` to preserve behavior.
+* Removes use of deprecated Flutter framework `textScaleFactor` methods.
+* Updates minimum supported SDK version to Flutter 3.16.
+
+## 0.6.19
+
+* Replaces `RichText` with `Text.rich` so the widget can work with `SelectionArea` when `selectable` is set to false.
+
 ## 0.6.18+3
 
 * Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
@@ -36,7 +69,7 @@
 
 * Introduces a new `MarkdownElementBuilder.visitElementAfterWithContext()` method passing the widget `BuildContext` and
   the parent text's `TextStyle`.
-  
+
 ## 0.6.16
 
 * Adds `tableVerticalAlignment` property to allow aligning table cells vertically.

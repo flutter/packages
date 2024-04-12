@@ -13,6 +13,7 @@ library;
 
 import 'dart:io';
 
+import 'package:collection/collection.dart';
 import 'package:path/path.dart' as p;
 
 import 'shared/generation.dart';
@@ -35,21 +36,66 @@ void _validateTestCoverage(List<List<String>> shards) {
 }
 
 Future<void> _validateGeneratedTestFiles() async {
+  await _validateGeneratedFiles(
+    (String baseDir) => generateTestPigeons(baseDir: baseDir),
+    generationMessage: 'Generating test output',
+    incorrectFilesMessage:
+        'The following files are not updated, or not formatted correctly:',
+  );
+}
+
+Future<void> _validateGeneratedExampleFiles() async {
+  await _validateGeneratedFiles(
+    (String _) => generateExamplePigeons(),
+    generationMessage: 'Generating example output',
+    incorrectFilesMessage:
+        'Either messages.dart and messages_test.dart have non-matching definitions or\n'
+        'the following files are not updated, or not formatted correctly:',
+  );
+}
+
+Future<void> _validateGeneratedFiles(
+  Future<int> Function(String baseDirectory) generator, {
+  required String generationMessage,
+  required String incorrectFilesMessage,
+}) async {
+  // Generated file validation is split by platform, both to avoid duplication
+  // of work, and to avoid issues if different CI configurations have different
+  // setups (e.g., different clang-format versions or no clang-format at all).
+  final Set<GeneratorLanguage> languagesToValidate;
+  if (Platform.isLinux) {
+    languagesToValidate = <GeneratorLanguage>{
+      GeneratorLanguage.cpp,
+      GeneratorLanguage.dart,
+      GeneratorLanguage.java,
+      GeneratorLanguage.kotlin,
+      GeneratorLanguage.objc,
+    };
+  } else if (Platform.isMacOS) {
+    languagesToValidate = <GeneratorLanguage>{
+      GeneratorLanguage.swift,
+    };
+  } else {
+    return;
+  }
+
   final String baseDir = p.dirname(p.dirname(Platform.script.toFilePath()));
   final String repositoryRoot = p.dirname(p.dirname(baseDir));
   final String relativePigeonPath = p.relative(baseDir, from: repositoryRoot);
 
   print('Validating generated files:');
-  print('  Generating test output...');
-  final int generateExitCode = await generateTestPigeons(baseDir: baseDir);
+  print('  $generationMessage...');
+
+  final int generateExitCode = await generateExamplePigeons();
+
   if (generateExitCode != 0) {
     print('Generation failed; see above for errors.');
     exit(generateExitCode);
   }
 
   print('  Formatting output...');
-  final int formatExitCode =
-      await formatAllFiles(repositoryRoot: repositoryRoot);
+  final int formatExitCode = await formatAllFiles(
+      repositoryRoot: repositoryRoot, languages: languagesToValidate);
   if (formatExitCode != 0) {
     print('Formatting failed; see above for errors.');
     exit(formatExitCode);
@@ -58,20 +104,26 @@ Future<void> _validateGeneratedTestFiles() async {
   print('  Checking for changes...');
   final List<String> modifiedFiles = await _modifiedFiles(
       repositoryRoot: repositoryRoot, relativePigeonPath: relativePigeonPath);
+  final Set<String> extensions = languagesToValidate
+      .map((GeneratorLanguage lang) => _extensionsForLanguage(lang))
+      .flattened
+      .toSet();
+  final Iterable<String> filteredFiles = modifiedFiles.where((String path) =>
+      extensions.contains(p.extension(path).replaceFirst('.', '')));
 
-  if (modifiedFiles.isEmpty) {
+  if (filteredFiles.isEmpty) {
     return;
   }
 
-  print('The following files are not updated, or not formatted correctly:');
-  modifiedFiles.map((String line) => '  $line').forEach(print);
+  print(incorrectFilesMessage);
+  filteredFiles.map((String line) => '  $line').forEach(print);
 
   print('\nTo fix run "dart run tool/generate.dart --format" from the pigeon/ '
       'directory, or apply the diff with the command below.\n');
 
   final ProcessResult diffResult = await Process.run(
     'git',
-    <String>['diff', relativePigeonPath],
+    <String>['diff', ...filteredFiles],
     workingDirectory: repositoryRoot,
   );
   if (diffResult.exitCode != 0) {
@@ -84,58 +136,15 @@ Future<void> _validateGeneratedTestFiles() async {
   exit(1);
 }
 
-Future<void> _validateGeneratedExampleFiles() async {
-  final String baseDir = p.dirname(p.dirname(Platform.script.toFilePath()));
-  final String repositoryRoot = p.dirname(p.dirname(baseDir));
-  final String relativePigeonPath = p.relative(baseDir, from: repositoryRoot);
-
-  print('Validating generated files:');
-  print('  Generating example output...');
-
-  final int generateExitCode = await generateExamplePigeons();
-
-  if (generateExitCode != 0) {
-    print('Generation failed; see above for errors.');
-    exit(generateExitCode);
-  }
-
-  print('  Formatting output...');
-  final int formatExitCode =
-      await formatAllFiles(repositoryRoot: repositoryRoot);
-  if (formatExitCode != 0) {
-    print('Formatting failed; see above for errors.');
-    exit(formatExitCode);
-  }
-
-  print('  Checking for changes...');
-  final List<String> modifiedFiles = await _modifiedFiles(
-      repositoryRoot: repositoryRoot, relativePigeonPath: relativePigeonPath);
-
-  if (modifiedFiles.isEmpty) {
-    return;
-  }
-
-  print(
-      'Either messages.dart and messages_test.dart have non-matching definitions or');
-  print('the following files are not updated, or not formatted correctly:');
-  modifiedFiles.map((String line) => '  $line').forEach(print);
-
-  print('\nTo fix run "dart run tool/generate.dart --format" from the pigeon/ '
-      'directory, or apply the diff with the command below.\n');
-
-  final ProcessResult diffResult = await Process.run(
-    'git',
-    <String>['diff', relativePigeonPath],
-    workingDirectory: repositoryRoot,
-  );
-  if (diffResult.exitCode != 0) {
-    print('Unable to determine diff.');
-    exit(1);
-  }
-  print('patch -p1 <<DONE');
-  print(diffResult.stdout);
-  print('DONE');
-  exit(1);
+Set<String> _extensionsForLanguage(GeneratorLanguage language) {
+  return switch (language) {
+    GeneratorLanguage.cpp => <String>{'cc', 'cpp', 'h'},
+    GeneratorLanguage.dart => <String>{'dart'},
+    GeneratorLanguage.java => <String>{'java'},
+    GeneratorLanguage.kotlin => <String>{'kt'},
+    GeneratorLanguage.swift => <String>{'swift'},
+    GeneratorLanguage.objc => <String>{'h', 'm', 'mm'},
+  };
 }
 
 Future<List<String>> _modifiedFiles(
@@ -204,20 +213,13 @@ Future<void> main(List<String> args) async {
     ],
   ]);
 
-  // Ensure that all generated files are up to date. This is run only on Linux
-  // both to avoid duplication of work, and to avoid issues if different CI
-  // configurations have different setups (e.g., different clang-format versions
-  // or no clang-format at all).
-  if (Platform.isLinux) {
-    // Only run on master, since Dart format can change between versions.
-    // TODO(stuartmorgan): Make a more generic way to run this check only on
-    // master; this currently won't work for anything but Cirrus.
-    if (Platform.environment['CHANNEL'] == 'stable') {
-      print('Skipping generated file validation on stable.');
-    } else {
-      await _validateGeneratedTestFiles();
-      await _validateGeneratedExampleFiles();
-    }
+  // Ensure that all generated files are up to date.
+  // Only run on master, since Dart format can change between versions.
+  if (Platform.environment['CHANNEL'] == 'stable') {
+    print('Skipping generated file validation on stable.');
+  } else {
+    await _validateGeneratedTestFiles();
+    await _validateGeneratedExampleFiles();
   }
 
   final List<String> testsToRun;

@@ -258,6 +258,95 @@ void main() {
       expect(find.byType(DummyScreen), findsOneWidget);
     });
 
+    testWidgets(
+        'match top level route when location has scheme/host and has trailing /',
+        (WidgetTester tester) async {
+      final List<GoRoute> routes = <GoRoute>[
+        GoRoute(
+          path: '/',
+          builder: (BuildContext context, GoRouterState state) =>
+              const HomeScreen(),
+        ),
+      ];
+
+      final GoRouter router = await createRouter(routes, tester);
+      router.go('https://www.domain.com/?bar=baz');
+      await tester.pumpAndSettle();
+      final List<RouteMatchBase> matches =
+          router.routerDelegate.currentConfiguration.matches;
+      expect(matches, hasLength(1));
+      expect(matches.first.matchedLocation, '/');
+      expect(find.byType(HomeScreen), findsOneWidget);
+    });
+
+    testWidgets(
+        'match top level route when location has scheme/host and has trailing / (2)',
+        (WidgetTester tester) async {
+      final List<GoRoute> routes = <GoRoute>[
+        GoRoute(
+          path: '/',
+          builder: (BuildContext context, GoRouterState state) =>
+              const HomeScreen(),
+        ),
+        GoRoute(
+          path: '/login',
+          builder: (BuildContext context, GoRouterState state) =>
+              const LoginScreen(),
+        ),
+      ];
+
+      final GoRouter router = await createRouter(routes, tester);
+      router.go('https://www.domain.com/login/');
+      await tester.pumpAndSettle();
+      final List<RouteMatchBase> matches =
+          router.routerDelegate.currentConfiguration.matches;
+      expect(matches, hasLength(1));
+      expect(matches.first.matchedLocation, '/login');
+      expect(find.byType(LoginScreen), findsOneWidget);
+    });
+
+    testWidgets(
+        'match top level route when location has scheme/host and has trailing / (3)',
+        (WidgetTester tester) async {
+      final List<GoRoute> routes = <GoRoute>[
+        GoRoute(
+            path: '/profile',
+            builder: dummy,
+            redirect: (_, __) => '/profile/foo'),
+        GoRoute(path: '/profile/:kind', builder: dummy),
+      ];
+
+      final GoRouter router = await createRouter(routes, tester);
+      router.go('https://www.domain.com/profile/');
+      await tester.pumpAndSettle();
+      final List<RouteMatchBase> matches =
+          router.routerDelegate.currentConfiguration.matches;
+      expect(matches, hasLength(1));
+      expect(matches.first.matchedLocation, '/profile/foo');
+      expect(find.byType(DummyScreen), findsOneWidget);
+    });
+
+    testWidgets(
+        'match top level route when location has scheme/host and has trailing / (4)',
+        (WidgetTester tester) async {
+      final List<GoRoute> routes = <GoRoute>[
+        GoRoute(
+            path: '/profile',
+            builder: dummy,
+            redirect: (_, __) => '/profile/foo'),
+        GoRoute(path: '/profile/:kind', builder: dummy),
+      ];
+
+      final GoRouter router = await createRouter(routes, tester);
+      router.go('https://www.domain.com/profile/?bar=baz');
+      await tester.pumpAndSettle();
+      final List<RouteMatchBase> matches =
+          router.routerDelegate.currentConfiguration.matches;
+      expect(matches, hasLength(1));
+      expect(matches.first.matchedLocation, '/profile/foo');
+      expect(find.byType(DummyScreen), findsOneWidget);
+    });
+
     testWidgets('repeatedly pops imperative route does not crash',
         (WidgetTester tester) async {
       // Regression test for https://github.com/flutter/flutter/issues/123369.
@@ -774,8 +863,7 @@ void main() {
         'Handles the Android back button when parentNavigatorKey is set to the root navigator',
         (WidgetTester tester) async {
       final List<MethodCall> log = <MethodCall>[];
-      _ambiguate(TestDefaultBinaryMessengerBinding.instance)!
-          .defaultBinaryMessenger
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
           .setMockMethodCallHandler(SystemChannels.platform,
               (MethodCall methodCall) async {
         log.add(methodCall);
@@ -817,8 +905,7 @@ void main() {
     testWidgets("Handles the Android back button when ShellRoute can't pop",
         (WidgetTester tester) async {
       final List<MethodCall> log = <MethodCall>[];
-      _ambiguate(TestDefaultBinaryMessengerBinding.instance)!
-          .defaultBinaryMessenger
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
           .setMockMethodCallHandler(SystemChannels.platform,
               (MethodCall methodCall) async {
         log.add(methodCall);
@@ -881,6 +968,8 @@ void main() {
   testWidgets('does not crash when inherited widget changes',
       (WidgetTester tester) async {
     final ValueNotifier<String> notifier = ValueNotifier<String>('initial');
+
+    addTearDown(notifier.dispose);
     final List<GoRoute> routes = <GoRoute>[
       GoRoute(
           path: '/',
@@ -898,6 +987,7 @@ void main() {
     final GoRouter router = GoRouter(
       routes: routes,
     );
+    addTearDown(router.dispose);
     await tester.pumpWidget(
       MaterialApp.router(
         routerConfig: router,
@@ -917,8 +1007,7 @@ void main() {
       'Handles the Android back button when a second Shell has a GoRoute with parentNavigator key',
       (WidgetTester tester) async {
     final List<MethodCall> log = <MethodCall>[];
-    _ambiguate(TestDefaultBinaryMessengerBinding.instance)!
-        .defaultBinaryMessenger
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(SystemChannels.platform,
             (MethodCall methodCall) async {
       log.add(methodCall);
@@ -1008,8 +1097,7 @@ void main() {
     final List<MethodCall> log = <MethodCall>[];
     setUp(() {
       GoRouter.optionURLReflectsImperativeAPIs = false;
-      _ambiguate(TestDefaultBinaryMessengerBinding.instance)!
-          .defaultBinaryMessenger
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
           .setMockMethodCallHandler(SystemChannels.navigation,
               (MethodCall methodCall) async {
         log.add(methodCall);
@@ -1018,10 +1106,50 @@ void main() {
     });
     tearDown(() {
       GoRouter.optionURLReflectsImperativeAPIs = false;
-      _ambiguate(TestDefaultBinaryMessengerBinding.instance)!
-          .defaultBinaryMessenger
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
           .setMockMethodCallHandler(SystemChannels.navigation, null);
       log.clear();
+    });
+
+    testWidgets(
+        'on push shell route with optionURLReflectImperativeAPIs = true',
+        (WidgetTester tester) async {
+      GoRouter.optionURLReflectsImperativeAPIs = true;
+      final List<RouteBase> routes = <RouteBase>[
+        GoRoute(
+          path: '/',
+          builder: (BuildContext context, GoRouterState state) =>
+              const DummyScreen(),
+          routes: <RouteBase>[
+            ShellRoute(
+              builder:
+                  (BuildContext context, GoRouterState state, Widget child) =>
+                      child,
+              routes: <RouteBase>[
+                GoRoute(
+                  path: 'c',
+                  builder: (BuildContext context, GoRouterState state) =>
+                      const DummyScreen(),
+                )
+              ],
+            ),
+          ],
+        ),
+      ];
+
+      final GoRouter router = await createRouter(routes, tester);
+
+      log.clear();
+      router.push('/c?foo=bar');
+      final RouteMatchListCodec codec =
+          RouteMatchListCodec(router.configuration);
+      await tester.pumpAndSettle();
+      expect(log, <Object>[
+        isMethodCall('selectMultiEntryHistory', arguments: null),
+        IsRouteUpdateCall('/c?foo=bar', false,
+            codec.encode(router.routerDelegate.currentConfiguration)),
+      ]);
+      GoRouter.optionURLReflectsImperativeAPIs = false;
     });
 
     testWidgets('on push with optionURLReflectImperativeAPIs = true',
@@ -1306,10 +1434,7 @@ void main() {
       expect(find.byKey(const ValueKey<String>('home')), findsOneWidget);
 
       router.routeInformationProvider.didPushRouteInformation(
-          // TODO(chunhtai): remove this ignore and migrate the code
-          // https://github.com/flutter/flutter/issues/124045.
-          // ignore: deprecated_member_use
-          RouteInformation(location: location, state: state));
+          RouteInformation(uri: Uri.parse(location), state: state));
       await tester.pumpAndSettle();
       // Make sure it has all the imperative routes.
       expect(find.byKey(const ValueKey<String>('settings-1')), findsOneWidget);
@@ -2440,10 +2565,7 @@ void main() {
         routes,
         tester,
       );
-      // TODO(chunhtai): remove this ignore and migrate the code
-      // https://github.com/flutter/flutter/issues/124045.
-      // ignore: deprecated_member_use
-      expect(router.routeInformationProvider.value.location, '/dummy');
+      expect(router.routeInformationProvider.value.uri.path, '/dummy');
       TestWidgetsFlutterBinding.instance.platformDispatcher
           .clearDefaultRouteNameTestValue();
     });
@@ -3134,6 +3256,7 @@ void main() {
         (WidgetTester tester) async {
       final GoRouterNamedLocationSpy router =
           GoRouterNamedLocationSpy(routes: routes);
+      addTearDown(router.dispose);
       await tester.pumpWidget(
         MaterialApp.router(
           routerConfig: router,
@@ -3152,6 +3275,7 @@ void main() {
 
     testWidgets('calls [go] on closest GoRouter', (WidgetTester tester) async {
       final GoRouterGoSpy router = GoRouterGoSpy(routes: routes);
+      addTearDown(router.dispose);
       await tester.pumpWidget(
         MaterialApp.router(
           routerConfig: router,
@@ -3169,6 +3293,7 @@ void main() {
     testWidgets('calls [goNamed] on closest GoRouter',
         (WidgetTester tester) async {
       final GoRouterGoNamedSpy router = GoRouterGoNamedSpy(routes: routes);
+      addTearDown(router.dispose);
       await tester.pumpWidget(
         MaterialApp.router(
           routerConfig: router,
@@ -3190,6 +3315,7 @@ void main() {
     testWidgets('calls [push] on closest GoRouter',
         (WidgetTester tester) async {
       final GoRouterPushSpy router = GoRouterPushSpy(routes: routes);
+      addTearDown(router.dispose);
       await tester.pumpWidget(
         MaterialApp.router(
           routerConfig: router,
@@ -3207,6 +3333,7 @@ void main() {
     testWidgets('calls [push] on closest GoRouter and waits for result',
         (WidgetTester tester) async {
       final GoRouterPushSpy router = GoRouterPushSpy(routes: routes);
+      addTearDown(router.dispose);
       await tester.pumpWidget(
         MaterialApp.router(
           routeInformationProvider: router.routeInformationProvider,
@@ -3227,6 +3354,7 @@ void main() {
     testWidgets('calls [pushNamed] on closest GoRouter',
         (WidgetTester tester) async {
       final GoRouterPushNamedSpy router = GoRouterPushNamedSpy(routes: routes);
+      addTearDown(router.dispose);
       await tester.pumpWidget(
         MaterialApp.router(
           routerConfig: router,
@@ -3248,6 +3376,7 @@ void main() {
     testWidgets('calls [pushNamed] on closest GoRouter and waits for result',
         (WidgetTester tester) async {
       final GoRouterPushNamedSpy router = GoRouterPushNamedSpy(routes: routes);
+      addTearDown(router.dispose);
       await tester.pumpWidget(
         MaterialApp.router(
           routeInformationProvider: router.routeInformationProvider,
@@ -3271,6 +3400,7 @@ void main() {
 
     testWidgets('calls [pop] on closest GoRouter', (WidgetTester tester) async {
       final GoRouterPopSpy router = GoRouterPopSpy(routes: routes);
+      addTearDown(router.dispose);
       await tester.pumpWidget(
         MaterialApp.router(
           routerConfig: router,
@@ -3285,6 +3415,7 @@ void main() {
     testWidgets('calls [pop] on closest GoRouter with result',
         (WidgetTester tester) async {
       final GoRouterPopSpy router = GoRouterPopSpy(routes: routes);
+      addTearDown(router.dispose);
       await tester.pumpWidget(
         MaterialApp.router(
           routerConfig: router,
@@ -4237,6 +4368,7 @@ void main() {
               GoRoute(path: '/a', builder: (_, __) => const DummyScreen()),
             ],
           );
+          addTearDown(router.dispose);
 
           await tester.pumpWidget(
             MaterialApp.router(
@@ -4299,6 +4431,7 @@ void main() {
               ),
             ],
           );
+          addTearDown(router.dispose);
 
           await tester.pumpWidget(
             MaterialApp.router(
@@ -4365,6 +4498,7 @@ void main() {
               ),
             ],
           );
+          addTearDown(router.dispose);
 
           await tester.pumpWidget(
             MaterialApp.router(
@@ -4421,6 +4555,7 @@ void main() {
             ),
           ],
         );
+        addTearDown(router.dispose);
 
         await tester.pumpWidget(MaterialApp.router(routerConfig: router));
 
@@ -4490,6 +4625,7 @@ void main() {
               ),
             ],
           );
+          addTearDown(router.dispose);
 
           await tester.pumpWidget(
             MaterialApp.router(
@@ -4560,6 +4696,7 @@ void main() {
             ),
           ],
         );
+        addTearDown(router.dispose);
 
         await tester.pumpWidget(MaterialApp.router(routerConfig: router));
 
@@ -5158,9 +5295,3 @@ class IsRouteUpdateCall extends Matcher {
         .addDescriptionOf(replace);
   }
 }
-
-/// This allows a value of type T or T? to be treated as a value of type T?.
-///
-/// We use this so that APIs that have become non-nullable can still be used
-/// with `!` and `?` on the stable branch.
-T? _ambiguate<T>(T? value) => value;

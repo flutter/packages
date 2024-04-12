@@ -216,6 +216,7 @@ class RouteConfiguration {
       matchedLocation: matchList.uri.path,
       extra: matchList.extra,
       pageKey: const ValueKey<String>('topLevel'),
+      topRoute: matchList.lastOrNull?.route,
     );
   }
 

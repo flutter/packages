@@ -8,7 +8,7 @@ import 'package:file_selector_platform_interface/file_selector_platform_interfac
 import 'package:file_selector_web/src/dom_helper.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
-import 'package:web/helpers.dart';
+import 'package:web/web.dart';
 
 void main() {
   group('dom_helper', () {
@@ -18,11 +18,10 @@ void main() {
 
     FileList? createFileList(List<File> files) {
       final DataTransfer dataTransfer = DataTransfer();
+      // Tear-offs of external extension type interop member 'add' are disallowed.
+      // ignore: prefer_foreach
       for (final File e in files) {
-        // TODO(srujzs): This is necessary in order to support package:web 0.4.0.
-        // This was not needed with 0.3.0, hence the lint.
-        // ignore: unnecessary_cast
-        dataTransfer.items.add(e as JSAny);
+        dataTransfer.items.add(e);
       }
       return dataTransfer.files;
     }
@@ -42,17 +41,13 @@ void main() {
 
     setUp(() {
       domHelper = DomHelper();
-      input = (createElementTag('input') as HTMLInputElement)..type = 'file';
+      input = (document.createElement('input') as HTMLInputElement)
+        ..type = 'file';
     });
 
     group('getFiles', () {
-      final File mockFile1 =
-          // TODO(srujzs): Remove once typed JSArrays (JSArray<T>) get to `stable`.
-          // ignore: always_specify_types
-          File(<Object>['123456'].jsify as JSArray, 'file1.txt');
-      // TODO(srujzs): Remove once typed JSArrays (JSArray<T>) get to `stable`.
-      // ignore: always_specify_types
-      final File mockFile2 = File(<Object>[].jsify as JSArray, 'file2.txt');
+      final File mockFile1 = File(<JSAny>['123456'.toJS].toJS, 'file1.txt');
+      final File mockFile2 = File(<JSAny>[].toJS, 'file2.txt');
 
       testWidgets('works', (_) async {
         final Future<List<XFile>> futureFiles = domHelper.getFiles(
@@ -114,10 +109,7 @@ void main() {
       testWidgets('sets the <input /> attributes and clicks it', (_) async {
         const String accept = '.jpg,.png';
         const bool multiple = true;
-        bool wasClicked = false;
-
-        //ignore: unawaited_futures
-        input.onClick.first.then((_) => wasClicked = true);
+        final Future<bool> wasClicked = input.onClick.first.then((_) => true);
 
         final Future<List<XFile>> futureFile = domHelper.getFiles(
           accept: accept,
@@ -125,21 +117,19 @@ void main() {
           input: input,
         );
 
-        expect(input.matches('body'), true);
+        expect(input.isConnected, true,
+            reason: 'input must be injected into the DOM');
         expect(input.accept, accept);
         expect(input.multiple, multiple);
-        expect(
-          wasClicked,
-          true,
-          reason:
-              'The <input /> should be clicked otherwise no dialog will be shown',
-        );
+        expect(await wasClicked, true,
+            reason:
+                'The <input /> should be clicked otherwise no dialog will be shown');
 
         setFilesAndTriggerChange(<File>[]);
         await futureFile;
 
         // It should be already removed from the DOM after the file is resolved.
-        expect(input.parentElement, isNull);
+        expect(input.isConnected, isFalse);
       });
     });
   });

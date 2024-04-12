@@ -113,7 +113,6 @@ class UpdateDependencyCommand extends PackageLoopingCommand {
         switch (response.result) {
           case PubVersionFinderResult.success:
             _targetVersion = response.versions.first.toString();
-            break;
           case PubVersionFinderResult.fail:
             printError('''
 Error fetching $_targetPubPackage version from pub: ${response.httpResponse.statusCode}:

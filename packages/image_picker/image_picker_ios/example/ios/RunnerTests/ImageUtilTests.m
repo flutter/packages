@@ -8,31 +8,106 @@
 @import image_picker_ios.Test;
 @import XCTest;
 
+// Corner colors of test image scaled to 3x2. Format is "R G B A".
+static NSString *const kColorRepresentation3x2BottomLeftYellow = @"1 0.776471 0 1";
+static NSString *const kColorRepresentation3x2TopLeftRed = @"1 0.0666667 0 1";
+static NSString *const kColorRepresentation3x2BottomRightCyan = @"0 0.772549 1 1";
+static NSString *const kColorRepresentation3x2TopRightBlue = @"0 0.0705882 0.996078 1";
+
 @interface ImageUtilTests : XCTestCase
 @end
 
 @implementation ImageUtilTests
 
+static NSString *ColorStringAtPixel(UIImage *image, int pixelX, int pixelY) {
+  CGImageRef cgImage = image.CGImage;
+
+  uint32_t argb;
+  CGContextRef context1 = CGBitmapContextCreate(
+      &argb, 1, 1, CGImageGetBitsPerComponent(cgImage), CGImageGetBytesPerRow(cgImage),
+      CGColorSpaceCreateDeviceRGB(), CGImageGetBitmapInfo(cgImage));
+  CGContextDrawImage(
+      context1, CGRectMake(-pixelX, -pixelY, CGImageGetWidth(cgImage), CGImageGetHeight(cgImage)),
+      cgImage);
+  CGContextRelease(context1);
+  int blue = argb & 0xff;
+  int green = argb >> 8 & 0xff;
+  int red = argb >> 16 & 0xff;
+  int alpha = argb >> 24 & 0xff;
+
+  return [CIColor colorWithRed:red / 255.f
+                         green:green / 255.f
+                          blue:blue / 255.f
+                         alpha:alpha / 255.f]
+      .stringRepresentation;
+}
+
+- (void)testScaledImage_EqualSizeReturnsSameImage {
+  UIImage *image = [UIImage imageWithData:ImagePickerTestImages.JPGTestData];
+  UIImage *scaledImage = [FLTImagePickerImageUtil scaledImage:image
+                                                     maxWidth:@(image.size.width)
+                                                    maxHeight:@(image.size.height)
+                                          isMetadataAvailable:YES];
+
+  // Assert the same bytes pointer (not just equal objects).
+  XCTAssertEqual(image, scaledImage);
+}
+
+- (void)testScaledImage_NilSizeReturnsSameImage {
+  UIImage *image = [UIImage imageWithData:ImagePickerTestImages.JPGTestData];
+  UIImage *scaledImage = [FLTImagePickerImageUtil scaledImage:image
+                                                     maxWidth:nil
+                                                    maxHeight:nil
+                                          isMetadataAvailable:YES];
+
+  // Assert the same bytes pointer (not just equal objects).
+  XCTAssertEqual(image, scaledImage);
+}
+
 - (void)testScaledImage_ShouldBeScaled {
   UIImage *image = [UIImage imageWithData:ImagePickerTestImages.JPGTestData];
-  UIImage *newImage = [FLTImagePickerImageUtil scaledImage:image
-                                                  maxWidth:@3
-                                                 maxHeight:@2
-                                       isMetadataAvailable:YES];
 
-  XCTAssertEqual(newImage.size.width, 3);
-  XCTAssertEqual(newImage.size.height, 2);
+  CGFloat scaledWidth = 3;
+  CGFloat scaledHeight = 2;
+  UIImage *scaledImage = [FLTImagePickerImageUtil scaledImage:image
+                                                     maxWidth:@(scaledWidth)
+                                                    maxHeight:@(scaledHeight)
+                                          isMetadataAvailable:YES];
+  XCTAssertEqual(scaledImage.size.width, scaledWidth);
+  XCTAssertEqual(scaledImage.size.height, scaledHeight);
+
+  // Check the corners to make sure nothing has been rotated.
+  XCTAssertEqualObjects(ColorStringAtPixel(scaledImage, 0, 0),
+                        kColorRepresentation3x2BottomLeftYellow);
+  XCTAssertEqualObjects(ColorStringAtPixel(scaledImage, 0, scaledHeight - 1),
+                        kColorRepresentation3x2TopLeftRed);
+  XCTAssertEqualObjects(ColorStringAtPixel(scaledImage, scaledWidth - 1, 0),
+                        kColorRepresentation3x2BottomRightCyan);
+  XCTAssertEqualObjects(ColorStringAtPixel(scaledImage, scaledWidth - 1, scaledHeight - 1),
+                        kColorRepresentation3x2TopRightBlue);
 }
 
 - (void)testScaledImage_ShouldBeScaledWithNoMetadata {
   UIImage *image = [UIImage imageWithData:ImagePickerTestImages.JPGTestData];
-  UIImage *newImage = [FLTImagePickerImageUtil scaledImage:image
-                                                  maxWidth:@3
-                                                 maxHeight:@2
-                                       isMetadataAvailable:NO];
 
-  XCTAssertEqual(newImage.size.width, 3);
-  XCTAssertEqual(newImage.size.height, 2);
+  CGFloat scaledWidth = 3;
+  CGFloat scaledHeight = 2;
+  UIImage *scaledImage = [FLTImagePickerImageUtil scaledImage:image
+                                                     maxWidth:@(scaledWidth)
+                                                    maxHeight:@(scaledHeight)
+                                          isMetadataAvailable:NO];
+  XCTAssertEqual(scaledImage.size.width, scaledWidth);
+  XCTAssertEqual(scaledImage.size.height, scaledHeight);
+
+  // Check the corners to make sure nothing has been rotated.
+  XCTAssertEqualObjects(ColorStringAtPixel(scaledImage, 0, 0),
+                        kColorRepresentation3x2BottomLeftYellow);
+  XCTAssertEqualObjects(ColorStringAtPixel(scaledImage, 0, scaledHeight - 1),
+                        kColorRepresentation3x2TopLeftRed);
+  XCTAssertEqualObjects(ColorStringAtPixel(scaledImage, scaledWidth - 1, 0),
+                        kColorRepresentation3x2BottomRightCyan);
+  XCTAssertEqualObjects(ColorStringAtPixel(scaledImage, scaledWidth - 1, scaledHeight - 1),
+                        kColorRepresentation3x2TopRightBlue);
 }
 
 - (void)testScaledImage_ShouldBeCorrectRotation {

@@ -22,7 +22,7 @@ public class ImageCaptureHostApiImpl implements ImageCaptureHostApi {
   private final BinaryMessenger binaryMessenger;
   private final InstanceManager instanceManager;
 
-  private Context context;
+  @Nullable private Context context;
   private SystemServicesFlutterApiImpl systemServicesFlutterApiImpl;
 
   public static final String TEMPORARY_FILE_NAME = "CAP";
@@ -87,6 +87,10 @@ public class ImageCaptureHostApiImpl implements ImageCaptureHostApi {
   @Override
   public void takePicture(
       @NonNull Long identifier, @NonNull GeneratedCameraXLibrary.Result<String> result) {
+    if (context == null) {
+      throw new IllegalStateException("Context must be set to take picture.");
+    }
+
     ImageCapture imageCapture = getImageCaptureInstance(identifier);
     final File outputDir = context.getCacheDir();
     File temporaryCaptureFile;

@@ -48,6 +48,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /** Controller of a single GoogleMaps MapView instance. */
 final class GoogleMapController
@@ -87,6 +88,9 @@ final class GoogleMapController
   private List<Object> initialPolylines;
   private List<Object> initialCircles;
   private List<Map<String, ?>> initialTileOverlays;
+  // Null except between initialization and onMapReady.
+  private @Nullable String initialMapStyle;
+  private @Nullable String lastStyleError;
   @VisibleForTesting List<Float> initialPadding;
 
   GoogleMapController(
@@ -168,6 +172,10 @@ final class GoogleMapController
           initialPadding.get(1),
           initialPadding.get(2),
           initialPadding.get(3));
+    }
+    if (initialMapStyle != null) {
+      updateMapStyle(initialMapStyle);
+      initialMapStyle = null;
     }
   }
 
@@ -459,24 +467,20 @@ final class GoogleMapController
         }
       case "map#setStyle":
         {
-          boolean mapStyleSet;
-          if (call.arguments instanceof String) {
-            String mapStyle = (String) call.arguments;
-            if (mapStyle == null) {
-              mapStyleSet = googleMap.setMapStyle(null);
-            } else {
-              mapStyleSet = googleMap.setMapStyle(new MapStyleOptions(mapStyle));
-            }
-          } else {
-            mapStyleSet = googleMap.setMapStyle(null);
-          }
+          Object arg = call.arguments;
+          final String style = arg instanceof String ? (String) arg : null;
+          final boolean mapStyleSet = updateMapStyle(style);
           ArrayList<Object> mapStyleResult = new ArrayList<>(2);
           mapStyleResult.add(mapStyleSet);
           if (!mapStyleSet) {
-            mapStyleResult.add(
-                "Unable to set the map style. Please check console logs for errors.");
+            mapStyleResult.add(lastStyleError);
           }
           result.success(mapStyleResult);
+          break;
+        }
+      case "map#getStyleError":
+        {
+          result.success(lastStyleError);
           break;
         }
       case "tileOverlays#update":
@@ -925,5 +929,23 @@ final class GoogleMapController
 
   public void setBuildingsEnabled(boolean buildingsEnabled) {
     this.buildingsEnabled = buildingsEnabled;
+  }
+
+  public void setMapStyle(@Nullable String style) {
+    if (googleMap == null) {
+      initialMapStyle = style;
+    } else {
+      updateMapStyle(style);
+    }
+  }
+
+  private boolean updateMapStyle(String style) {
+    // Dart passes an empty string to indicate that the style should be cleared.
+    final MapStyleOptions mapStyleOptions =
+        style == null || style.isEmpty() ? null : new MapStyleOptions(style);
+    final boolean set = Objects.requireNonNull(googleMap).setMapStyle(mapStyleOptions);
+    lastStyleError =
+        set ? null : "Unable to set the map style. Please check console logs for errors.";
+    return set;
   }
 }

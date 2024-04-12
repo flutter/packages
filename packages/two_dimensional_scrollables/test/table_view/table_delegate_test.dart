@@ -7,7 +7,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:two_dimensional_scrollables/two_dimensional_scrollables.dart';
 
 const TableSpan span = TableSpan(extent: FixedTableSpanExtent(50));
-const Widget cell = SizedBox.shrink();
+const TableViewCell cell = TableViewCell(child: SizedBox.shrink());
 
 void main() {
   group('TableCellBuilderDelegate', () {
@@ -163,17 +163,21 @@ void main() {
         cellBuilder: (_, __) => cell,
         columnBuilder: (_) => span,
         rowBuilder: (_) => span,
-        columnCount: 5,
-        rowCount: 6,
+        columnCount: 1,
+        rowCount: 1,
       );
-      expect(delegate.addRepaintBoundaries, isTrue);
+      expect(delegate.addRepaintBoundaries, isFalse);
+      expect(cell.addRepaintBoundaries, isTrue);
     });
 
     test('Notifies listeners & rebuilds', () {
       int notified = 0;
       TableCellBuilderDelegate oldDelegate;
       TableSpan spanBuilder(int index) => span;
-      Widget cellBuilder(BuildContext context, TableVicinity vicinity) => cell;
+      TableViewCell cellBuilder(BuildContext context, TableVicinity vicinity) {
+        return cell;
+      }
+
       final TableCellBuilderDelegate delegate = TableCellBuilderDelegate(
         cellBuilder: cellBuilder,
         columnBuilder: spanBuilder,
@@ -219,7 +223,7 @@ void main() {
   group('TableCellListDelegate', () {
     test('exposes addAutomaticKeepAlives from super class', () {
       final TableCellListDelegate delegate = TableCellListDelegate(
-        cells: <List<Widget>>[<Widget>[]],
+        cells: <List<TableViewCell>>[<TableViewCell>[]],
         columnBuilder: (_) => span,
         rowBuilder: (_) => span,
         addAutomaticKeepAlives: false,
@@ -232,7 +236,7 @@ void main() {
       expect(
         () {
           delegate = TableCellListDelegate(
-            cells: <List<Widget>>[<Widget>[]],
+            cells: <List<TableViewCell>>[<TableViewCell>[]],
             columnBuilder: (_) => span,
             rowBuilder: (_) => span,
             pinnedColumnCount: -1, // asserts
@@ -249,7 +253,7 @@ void main() {
       expect(
         () {
           delegate = TableCellListDelegate(
-            cells: <List<Widget>>[<Widget>[]],
+            cells: <List<TableViewCell>>[<TableViewCell>[]],
             columnBuilder: (_) => span,
             rowBuilder: (_) => span,
             pinnedRowCount: -1, // asserts
@@ -266,9 +270,9 @@ void main() {
       expect(
         () {
           delegate = TableCellListDelegate(
-            cells: <List<Widget>>[
-              <Widget>[cell, cell],
-              <Widget>[cell, cell],
+            cells: <List<TableViewCell>>[
+              <TableViewCell>[cell, cell],
+              <TableViewCell>[cell, cell],
             ],
             columnBuilder: (_) => span,
             rowBuilder: (_) => span,
@@ -286,9 +290,9 @@ void main() {
       expect(
         () {
           delegate = TableCellListDelegate(
-            cells: <List<Widget>>[
-              <Widget>[cell, cell],
-              <Widget>[cell, cell],
+            cells: <List<TableViewCell>>[
+              <TableViewCell>[cell, cell],
+              <TableViewCell>[cell, cell],
             ],
             columnBuilder: (_) => span,
             rowBuilder: (_) => span,
@@ -311,9 +315,9 @@ void main() {
       expect(
         () {
           delegate = TableCellListDelegate(
-            cells: <List<Widget>>[
-              <Widget>[cell, cell],
-              <Widget>[cell, cell, cell],
+            cells: <List<TableViewCell>>[
+              <TableViewCell>[cell, cell],
+              <TableViewCell>[cell, cell, cell],
             ],
             columnBuilder: (_) => span,
             rowBuilder: (_) => span,
@@ -336,9 +340,9 @@ void main() {
       TableCellListDelegate oldDelegate;
       TableSpan spanBuilder(int index) => span;
       TableCellListDelegate delegate = TableCellListDelegate(
-        cells: <List<Widget>>[
-          <Widget>[cell, cell],
-          <Widget>[cell, cell],
+        cells: <List<TableViewCell>>[
+          <TableViewCell>[cell, cell],
+          <TableViewCell>[cell, cell],
         ],
         columnBuilder: spanBuilder,
         rowBuilder: spanBuilder,
@@ -363,9 +367,9 @@ void main() {
       // columnCount
       oldDelegate = delegate;
       delegate = TableCellListDelegate(
-        cells: <List<Widget>>[
-          <Widget>[cell, cell, cell],
-          <Widget>[cell, cell, cell],
+        cells: <List<TableViewCell>>[
+          <TableViewCell>[cell, cell, cell],
+          <TableViewCell>[cell, cell, cell],
         ],
         columnBuilder: spanBuilder,
         rowBuilder: spanBuilder,
@@ -375,9 +379,9 @@ void main() {
       // columnBuilder
       oldDelegate = delegate;
       delegate = TableCellListDelegate(
-        cells: <List<Widget>>[
-          <Widget>[cell, cell, cell],
-          <Widget>[cell, cell, cell],
+        cells: <List<TableViewCell>>[
+          <TableViewCell>[cell, cell, cell],
+          <TableViewCell>[cell, cell, cell],
         ],
         columnBuilder: (int index) => const TableSpan(
           extent: FixedTableSpanExtent(150),
@@ -389,10 +393,10 @@ void main() {
       // rowCount
       oldDelegate = delegate;
       delegate = TableCellListDelegate(
-        cells: <List<Widget>>[
-          <Widget>[cell, cell, cell],
-          <Widget>[cell, cell, cell],
-          <Widget>[cell, cell, cell],
+        cells: <List<TableViewCell>>[
+          <TableViewCell>[cell, cell, cell],
+          <TableViewCell>[cell, cell, cell],
+          <TableViewCell>[cell, cell, cell],
         ],
         columnBuilder: (int index) => const TableSpan(
           extent: FixedTableSpanExtent(150),
@@ -404,10 +408,10 @@ void main() {
       // rowBuilder
       oldDelegate = delegate;
       delegate = TableCellListDelegate(
-        cells: <List<Widget>>[
-          <Widget>[cell, cell, cell],
-          <Widget>[cell, cell, cell],
-          <Widget>[cell, cell, cell],
+        cells: <List<TableViewCell>>[
+          <TableViewCell>[cell, cell, cell],
+          <TableViewCell>[cell, cell, cell],
+          <TableViewCell>[cell, cell, cell],
         ],
         columnBuilder: (int index) => const TableSpan(
           extent: FixedTableSpanExtent(150),
@@ -421,10 +425,10 @@ void main() {
       // pinned row count
       oldDelegate = delegate;
       delegate = TableCellListDelegate(
-        cells: <List<Widget>>[
-          <Widget>[cell, cell, cell],
-          <Widget>[cell, cell, cell],
-          <Widget>[cell, cell, cell],
+        cells: <List<TableViewCell>>[
+          <TableViewCell>[cell, cell, cell],
+          <TableViewCell>[cell, cell, cell],
+          <TableViewCell>[cell, cell, cell],
         ],
         columnBuilder: (int index) => const TableSpan(
           extent: FixedTableSpanExtent(150),
@@ -439,10 +443,10 @@ void main() {
       // pinned column count
       oldDelegate = delegate;
       delegate = TableCellListDelegate(
-        cells: <List<Widget>>[
-          <Widget>[cell, cell, cell],
-          <Widget>[cell, cell, cell],
-          <Widget>[cell, cell, cell],
+        cells: <List<TableViewCell>>[
+          <TableViewCell>[cell, cell, cell],
+          <TableViewCell>[cell, cell, cell],
+          <TableViewCell>[cell, cell, cell],
         ],
         columnBuilder: (int index) => const TableSpan(
           extent: FixedTableSpanExtent(150),
@@ -461,10 +465,10 @@ void main() {
 
     test('Changing pinned row and column counts asserts valid values', () {
       final TableCellListDelegate delegate = TableCellListDelegate(
-        cells: <List<Widget>>[
-          <Widget>[cell, cell, cell],
-          <Widget>[cell, cell, cell],
-          <Widget>[cell, cell, cell],
+        cells: <List<TableViewCell>>[
+          <TableViewCell>[cell, cell, cell],
+          <TableViewCell>[cell, cell, cell],
+          <TableViewCell>[cell, cell, cell],
         ],
         columnBuilder: (int index) => const TableSpan(
           extent: FixedTableSpanExtent(150),

@@ -29,7 +29,10 @@ class Method extends Node {
     required this.name,
     required this.returnType,
     required this.parameters,
+    required this.location,
+    this.isRequired = true,
     this.isAsynchronous = false,
+    this.isStatic = false,
     this.offset,
     this.objcSelector = '',
     this.swiftFunction = '',
@@ -68,6 +71,18 @@ class Method extends Node {
   /// For example: [" List of documentation comments, separated by line.", ...]
   List<String> documentationComments;
 
+  /// Where the implementation of this method is located, host or Flutter.
+  ApiLocation location;
+
+  /// Whether this method is required to be implemented.
+  ///
+  /// This flag is typically used to determine whether a callback method for
+  /// a `ProxyApi` is nullable or not.
+  bool isRequired;
+
+  /// Whether this is a static method of a ProxyApi.
+  bool isStatic;
+
   @override
   String toString() {
     final String objcSelectorStr =
@@ -78,28 +93,303 @@ class Method extends Node {
   }
 }
 
-/// Represents a collection of [Method]s that are hosted on a given [location].
-class Api extends Node {
+/// Represents a collection of [Method]s that are implemented on the platform
+/// side.
+class AstHostApi extends Api {
+  /// Parametric constructor for [AstHostApi].
+  AstHostApi({
+    required super.name,
+    required super.methods,
+    super.documentationComments = const <String>[],
+    this.dartHostTestHandler,
+  });
+
+  /// The name of the Dart test interface to generate to help with testing.
+  String? dartHostTestHandler;
+
+  @override
+  String toString() {
+    return '(HostApi name:$name methods:$methods documentationComments:$documentationComments dartHostTestHandler:$dartHostTestHandler)';
+  }
+}
+
+/// Represents a collection of [Method]s that are hosted on the Flutter side.
+class AstFlutterApi extends Api {
+  /// Parametric constructor for [AstFlutterApi].
+  AstFlutterApi({
+    required super.name,
+    required super.methods,
+    super.documentationComments = const <String>[],
+  });
+
+  @override
+  String toString() {
+    return '(FlutterApi name:$name methods:$methods documentationComments:$documentationComments)';
+  }
+}
+
+/// Represents an API that wraps a native class.
+class AstProxyApi extends Api {
+  /// Parametric constructor for [AstProxyApi].
+  AstProxyApi({
+    required super.name,
+    required super.methods,
+    super.documentationComments = const <String>[],
+    required this.constructors,
+    required this.fields,
+    this.superClass,
+    this.interfaces = const <TypeDeclaration>{},
+  });
+
+  /// List of constructors inside the API.
+  final List<Constructor> constructors;
+
+  /// List of fields inside the API.
+  List<ApiField> fields;
+
+  /// Name of the class this class considers the super class.
+  TypeDeclaration? superClass;
+
+  /// Name of the classes this class considers to be implemented.
+  Set<TypeDeclaration> interfaces;
+
+  /// Methods implemented in the host platform language.
+  Iterable<Method> get hostMethods => methods.where(
+        (Method method) => method.location == ApiLocation.host,
+      );
+
+  /// Methods implemented in Flutter.
+  Iterable<Method> get flutterMethods => methods.where(
+        (Method method) => method.location == ApiLocation.flutter,
+      );
+
+  /// All fields that are attached.
+  ///
+  /// See [attached].
+  Iterable<ApiField> get attachedFields => fields.where(
+        (ApiField field) => field.isAttached,
+      );
+
+  /// All fields that are not attached.
+  ///
+  /// See [attached].
+  Iterable<ApiField> get unattachedFields => fields.where(
+        (ApiField field) => !field.isAttached,
+      );
+
+  /// A list of AstProxyApis where each `extends` the API that follows it.
+  ///
+  /// Returns an empty list if this api does not extend a ProxyApi.
+  ///
+  /// This method assumes the super classes of each ProxyApi doesn't create a
+  /// loop. Throws a [ArgumentError] if a loop is found.
+  ///
+  /// This method also assumes that all super classes are ProxyApis. Otherwise,
+  /// throws an [ArgumentError].
+  Iterable<AstProxyApi> allSuperClasses() {
+    final List<AstProxyApi> superClassChain = <AstProxyApi>[];
+
+    if (superClass != null && !superClass!.isProxyApi) {
+      throw ArgumentError(
+        'Could not find a ProxyApi for super class: ${superClass!.baseName}',
+      );
+    }
+
+    AstProxyApi? currentProxyApi = superClass?.associatedProxyApi;
+    while (currentProxyApi != null) {
+      if (superClassChain.contains(currentProxyApi)) {
+        throw ArgumentError(
+          'Loop found when processing super classes for a ProxyApi: '
+          '$name, ${superClassChain.map((AstProxyApi api) => api.name)}',
+        );
+      }
+
+      superClassChain.add(currentProxyApi);
+
+      if (currentProxyApi.superClass != null &&
+          !currentProxyApi.superClass!.isProxyApi) {
+        throw ArgumentError(
+          'Could not find a ProxyApi for super class: '
+          '${currentProxyApi.superClass!.baseName}',
+        );
+      }
+
+      currentProxyApi = currentProxyApi.superClass?.associatedProxyApi;
+    }
+
+    return superClassChain;
+  }
+
+  /// All ProxyApis this API `implements` and all the interfaces those APIs
+  /// `implements`.
+  Iterable<AstProxyApi> apisOfInterfaces() => _recursiveFindAllInterfaceApis();
+
+  /// All methods inherited from interfaces and the interfaces of interfaces.
+  Iterable<Method> flutterMethodsFromInterfaces() sync* {
+    for (final AstProxyApi proxyApi in apisOfInterfaces()) {
+      yield* proxyApi.methods;
+    }
+  }
+
+  /// A list of Flutter methods inherited from the ProxyApi that this ProxyApi
+  /// `extends`.
+  ///
+  /// This also recursively checks the ProxyApi that the super class `extends`
+  /// and so on.
+  ///
+  /// This also includes methods that super classes inherited from interfaces
+  /// with `implements`.
+  Iterable<Method> flutterMethodsFromSuperClasses() sync* {
+    for (final AstProxyApi proxyApi in allSuperClasses().toList().reversed) {
+      yield* proxyApi.flutterMethods;
+    }
+    if (superClass != null) {
+      final Set<AstProxyApi> interfaceApisFromSuperClasses =
+          superClass!.associatedProxyApi!._recursiveFindAllInterfaceApis();
+      for (final AstProxyApi proxyApi in interfaceApisFromSuperClasses) {
+        yield* proxyApi.methods;
+      }
+    }
+  }
+
+  /// Whether the api has a method that callbacks to Dart to add a new instance
+  /// to the InstanceManager.
+  ///
+  /// This is possible as long as no callback methods are required to
+  /// instantiate the class.
+  bool hasCallbackConstructor() {
+    return flutterMethods
+        .followedBy(flutterMethodsFromSuperClasses())
+        .followedBy(flutterMethodsFromInterfaces())
+        .every((Method method) => !method.isRequired);
+  }
+
+  // Recursively search for all the interfaces apis from a list of names of
+  // interfaces.
+  //
+  // This method assumes that all interfaces are ProxyApis and an api doesn't
+  // contains itself as an interface. Otherwise, throws an [ArgumentError].
+  Set<AstProxyApi> _recursiveFindAllInterfaceApis([
+    Set<AstProxyApi> seenApis = const <AstProxyApi>{},
+  ]) {
+    final Set<AstProxyApi> allInterfaces = <AstProxyApi>{};
+
+    allInterfaces.addAll(
+      interfaces.map(
+        (TypeDeclaration type) {
+          if (!type.isProxyApi) {
+            throw ArgumentError(
+              'Could not find a valid ProxyApi for an interface: $type',
+            );
+          } else if (seenApis.contains(type.associatedProxyApi)) {
+            throw ArgumentError(
+              'A ProxyApi cannot be a super class of itself: ${type.baseName}',
+            );
+          }
+          return type.associatedProxyApi!;
+        },
+      ),
+    );
+
+    // Adds the current api since it would be invalid for it to be an interface
+    // of itself.
+    final Set<AstProxyApi> newSeenApis = <AstProxyApi>{...seenApis, this};
+
+    for (final AstProxyApi interfaceApi in <AstProxyApi>{...allInterfaces}) {
+      allInterfaces.addAll(
+        interfaceApi._recursiveFindAllInterfaceApis(newSeenApis),
+      );
+    }
+
+    return allInterfaces;
+  }
+
+  @override
+  String toString() {
+    return '(ProxyApi name:$name methods:$methods field:$fields '
+        'documentationComments:$documentationComments '
+        'superClassName:$superClass interfacesNames:$interfaces)';
+  }
+}
+
+/// Represents a constructor for an API.
+class Constructor extends Method {
+  /// Parametric constructor for [Constructor].
+  Constructor({
+    required super.name,
+    required super.parameters,
+    super.offset,
+    super.swiftFunction = '',
+    super.documentationComments = const <String>[],
+  }) : super(
+          returnType: const TypeDeclaration.voidDeclaration(),
+          location: ApiLocation.host,
+        );
+
+  @override
+  String toString() {
+    final String swiftFunctionStr =
+        swiftFunction.isEmpty ? '' : ' swiftFunction:$swiftFunction';
+    return '(Constructor name:$name parameters:$parameters $swiftFunctionStr documentationComments:$documentationComments)';
+  }
+}
+
+/// Represents a field of an API.
+class ApiField extends NamedType {
+  /// Constructor for [ApiField].
+  ApiField({
+    required super.name,
+    required super.type,
+    super.offset,
+    super.documentationComments,
+    this.isAttached = false,
+    this.isStatic = false,
+  }) : assert(!isStatic || isAttached);
+
+  /// Whether this is an attached field for a [AstProxyApi].
+  ///
+  /// See [attached].
+  final bool isAttached;
+
+  /// Whether this is a static field of a [AstProxyApi].
+  ///
+  /// A static field must also be attached. See [attached].
+  final bool isStatic;
+
+  /// Returns a copy of [Parameter] instance with new attached [TypeDeclaration].
+  @override
+  ApiField copyWithType(TypeDeclaration type) {
+    return ApiField(
+      name: name,
+      type: type,
+      offset: offset,
+      documentationComments: documentationComments,
+      isAttached: isAttached,
+      isStatic: isStatic,
+    );
+  }
+
+  @override
+  String toString() {
+    return '(Field name:$name type:$type isAttached:$isAttached '
+        'isStatic:$isStatic documentationComments:$documentationComments)';
+  }
+}
+
+/// Represents a collection of [Method]s.
+sealed class Api extends Node {
   /// Parametric constructor for [Api].
   Api({
     required this.name,
-    required this.location,
     required this.methods,
-    this.dartHostTestHandler,
     this.documentationComments = const <String>[],
   });
 
   /// The name of the API.
   String name;
 
-  /// Where the API's implementation is located, host or Flutter.
-  ApiLocation location;
-
   /// List of methods inside the API.
   List<Method> methods;
-
-  /// The name of the Dart test interface to generate to help with testing.
-  String? dartHostTestHandler;
 
   /// List of documentation comments, separated by line.
   ///
@@ -110,7 +400,7 @@ class Api extends Node {
 
   @override
   String toString() {
-    return '(Api name:$name location:$location methods:$methods documentationComments:$documentationComments)';
+    return '(Api name:$name methods:$methods documentationComments:$documentationComments)';
   }
 }
 
@@ -123,6 +413,7 @@ class TypeDeclaration {
     required this.isNullable,
     this.associatedEnum,
     this.associatedClass,
+    this.associatedProxyApi,
     this.typeArguments = const <TypeDeclaration>[],
   });
 
@@ -132,6 +423,7 @@ class TypeDeclaration {
         isNullable = false,
         associatedEnum = null,
         associatedClass = null,
+        associatedProxyApi = null,
         typeArguments = const <TypeDeclaration>[];
 
   /// The base name of the [TypeDeclaration] (ex 'Foo' to 'Foo<Bar>?').
@@ -157,6 +449,12 @@ class TypeDeclaration {
 
   /// Associated [Class], if any.
   final Class? associatedClass;
+
+  /// Whether the [TypeDeclaration] has an [associatedProxyApi].
+  bool get isProxyApi => associatedProxyApi != null;
+
+  /// Associated [AstProxyApi], if any.
+  final AstProxyApi? associatedProxyApi;
 
   @override
   int get hashCode {
@@ -207,11 +505,21 @@ class TypeDeclaration {
     );
   }
 
+  /// Returns duplicated `TypeDeclaration` with attached `associatedProxyApi` value.
+  TypeDeclaration copyWithProxyApi(AstProxyApi proxyApiDefinition) {
+    return TypeDeclaration(
+      baseName: baseName,
+      isNullable: isNullable,
+      associatedProxyApi: proxyApiDefinition,
+      typeArguments: typeArguments,
+    );
+  }
+
   @override
   String toString() {
     final String typeArgumentsStr =
         typeArguments.isEmpty ? '' : 'typeArguments:$typeArguments';
-    return '(TypeDeclaration baseName:$baseName isNullable:$isNullable$typeArgumentsStr isEnum:$isEnum isClass:$isClass)';
+    return '(TypeDeclaration baseName:$baseName isNullable:$isNullable$typeArgumentsStr isEnum:$isEnum isClass:$isClass isProxyApi:$isProxyApi)';
   }
 }
 
@@ -247,6 +555,7 @@ class NamedType extends Node {
   final List<String> documentationComments;
 
   /// Returns a copy of [NamedType] instance with new attached [TypeDeclaration].
+  @mustBeOverridden
   NamedType copyWithType(TypeDeclaration type) {
     return NamedType(
       name: name,
@@ -330,6 +639,7 @@ class Class extends Node {
   Class({
     required this.name,
     required this.fields,
+    this.isSwiftClass = false,
     this.documentationComments = const <String>[],
   });
 
@@ -338,6 +648,12 @@ class Class extends Node {
 
   /// All the fields contained in the class.
   List<NamedType> fields;
+
+  /// Determines whether the defined class should be represented as a struct or
+  /// a class in Swift generation.
+  ///
+  /// Defaults to false, which would represent a struct.
+  bool isSwiftClass;
 
   /// List of documentation comments, separated by line.
   ///

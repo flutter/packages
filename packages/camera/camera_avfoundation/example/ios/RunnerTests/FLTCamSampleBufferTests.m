@@ -38,6 +38,41 @@
   CFRelease(deliveriedPixelBuffer);
 }
 
+- (void)testDidOutputSampleBuffer_mustNotChangeSampleBufferRetainCountAfterPauseResumeRecording {
+  FLTCam *cam = FLTCreateCamWithCaptureSessionQueue(dispatch_queue_create("test", NULL));
+  CMSampleBufferRef sampleBuffer = FLTCreateTestSampleBuffer();
+
+  id writerMock = OCMClassMock([AVAssetWriter class]);
+  OCMStub([writerMock alloc]).andReturn(writerMock);
+  OCMStub([writerMock initWithURL:OCMOCK_ANY fileType:OCMOCK_ANY error:[OCMArg setTo:nil]])
+      .andReturn(writerMock);
+  __block AVAssetWriterStatus status = AVAssetWriterStatusUnknown;
+  OCMStub([writerMock startWriting]).andDo(^(NSInvocation *invocation) {
+    status = AVAssetWriterStatusWriting;
+  });
+  OCMStub([writerMock status]).andDo(^(NSInvocation *invocation) {
+    [invocation setReturnValue:&status];
+  });
+
+  FLTThreadSafeFlutterResult *result =
+      [[FLTThreadSafeFlutterResult alloc] initWithResult:^(id result){
+          // no-op
+      }];
+
+  // Pause then resume the recording.
+  [cam startVideoRecordingWithResult:result];
+  [cam pauseVideoRecordingWithResult:result];
+  [cam resumeVideoRecordingWithResult:result];
+
+  [cam captureOutput:cam.captureVideoOutput
+      didOutputSampleBuffer:sampleBuffer
+             fromConnection:OCMClassMock([AVCaptureConnection class])];
+  XCTAssertEqual(CFGetRetainCount(sampleBuffer), 1,
+                 @"didOutputSampleBuffer must not change the sample buffer retain count after "
+                 @"pause resume recording.");
+  CFRelease(sampleBuffer);
+}
+
 - (void)testDidOutputSampleBufferIgnoreAudioSamplesBeforeVideoSamples {
   FLTCam *cam = FLTCreateCamWithCaptureSessionQueue(dispatch_queue_create("testing", NULL));
   CMSampleBufferRef videoSample = FLTCreateTestSampleBuffer();

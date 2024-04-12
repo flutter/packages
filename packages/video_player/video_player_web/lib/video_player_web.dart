@@ -3,12 +3,12 @@
 // found in the LICENSE file.
 
 import 'dart:async';
-import 'dart:html';
 import 'dart:ui_web' as ui_web;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_web_plugins/flutter_web_plugins.dart';
 import 'package:video_player_platform_interface/video_player_platform_interface.dart';
+import 'package:web/web.dart' as web;
 
 import 'src/video_player.dart';
 
@@ -71,7 +71,7 @@ class VideoPlayerPlugin extends VideoPlayerPlatform {
             'web implementation of video_player cannot play content uri'));
     }
 
-    final VideoElement videoElement = VideoElement()
+    final web.HTMLVideoElement videoElement = web.HTMLVideoElement()
       ..id = 'videoElement-$textureId'
       ..style.border = 'none'
       ..style.height = '100%'

@@ -1,3 +1,28 @@
+## 0.2.0
+
+* Adds support for infinite rows and columns in TableView.
+
+## 0.1.2
+
+* Fixes a layout issue for unpinned merged cells that follow pinned table spans.
+* Updates outdated sample code.
+
+## 0.1.1
+
+* Fixes a layout issue when pinned cells are merged.
+
+## 0.1.0
+
+* [Breaking change] Adds support for merged cells in the TableView.
+
+## 0.0.6
+
+* Fixes an error in TableSpanDecoration when one or both axes are reversed.
+
+## 0.0.5+2
+
+* Fixes must_call_super lint warning from pending framework change.
+
 ## 0.0.5+1
 
 * Fixes new lint warnings.

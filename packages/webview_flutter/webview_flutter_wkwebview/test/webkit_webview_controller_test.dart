@@ -23,6 +23,7 @@ import 'webkit_webview_controller_test.mocks.dart';
 @GenerateMocks(<Type>[
   NSUrl,
   UIScrollView,
+  UIScrollViewDelegate,
   WKPreferences,
   WKUserContentController,
   WKWebsiteDataStore,
@@ -36,6 +37,7 @@ void main() {
   group('WebKitWebViewController', () {
     WebKitWebViewController createControllerWithMocks({
       MockUIScrollView? mockScrollView,
+      UIScrollViewDelegate? scrollViewDelegate,
       MockWKPreferences? mockPreferences,
       WKUIDelegate? uiDelegate,
       MockWKUserContentController? mockUserContentController,
@@ -91,15 +93,39 @@ void main() {
               WKFrameInfo frame,
               WKMediaCaptureType type,
             )? requestMediaCapturePermission,
+            Future<void> Function(
+              String message,
+              WKFrameInfo frame,
+            )? runJavaScriptAlertDialog,
+            Future<bool> Function(
+              String message,
+              WKFrameInfo frame,
+            )? runJavaScriptConfirmDialog,
+            Future<String> Function(
+              String prompt,
+              String defaultText,
+              WKFrameInfo frame,
+            )? runJavaScriptTextInputDialog,
             InstanceManager? instanceManager,
           }) {
             return uiDelegate ??
                 CapturingUIDelegate(
-                  onCreateWebView: onCreateWebView,
-                  requestMediaCapturePermission: requestMediaCapturePermission,
-                );
+                    onCreateWebView: onCreateWebView,
+                    requestMediaCapturePermission:
+                        requestMediaCapturePermission,
+                    runJavaScriptAlertDialog: runJavaScriptAlertDialog,
+                    runJavaScriptConfirmDialog: runJavaScriptConfirmDialog,
+                    runJavaScriptTextInputDialog: runJavaScriptTextInputDialog);
           },
           createScriptMessageHandler: WKScriptMessageHandler.detached,
+          createUIScrollViewDelegate: ({
+            void Function(UIScrollView, double, double)? scrollViewDidScroll,
+          }) {
+            return scrollViewDelegate ??
+                CapturingUIScrollViewDelegate(
+                  scrollViewDidScroll: scrollViewDidScroll,
+                );
+          },
         ),
         instanceManager: instanceManager,
       );
@@ -756,6 +782,45 @@ void main() {
       );
     });
 
+    test('addJavaScriptChannel requires channel with a unique name', () async {
+      final WebKitProxy webKitProxy = WebKitProxy(
+        createScriptMessageHandler: ({
+          required void Function(
+            WKUserContentController userContentController,
+            WKScriptMessage message,
+          ) didReceiveScriptMessage,
+        }) {
+          return WKScriptMessageHandler.detached(
+            didReceiveScriptMessage: didReceiveScriptMessage,
+          );
+        },
+      );
+      final MockWKUserContentController mockUserContentController =
+          MockWKUserContentController();
+      final WebKitWebViewController controller = createControllerWithMocks(
+        mockUserContentController: mockUserContentController,
+      );
+
+      const String nonUniqueName = 'name';
+      final WebKitJavaScriptChannelParams javaScriptChannelParams =
+          WebKitJavaScriptChannelParams(
+        name: nonUniqueName,
+        onMessageReceived: (JavaScriptMessage message) {},
+        webKitProxy: webKitProxy,
+      );
+      await controller.addJavaScriptChannel(javaScriptChannelParams);
+
+      expect(
+        () => controller.addJavaScriptChannel(
+          JavaScriptChannelParams(
+            name: nonUniqueName,
+            onMessageReceived: (_) {},
+          ),
+        ),
+        throwsArgumentError,
+      );
+    });
+
     test('removeJavaScriptChannel', () async {
       final WebKitProxy webKitProxy = WebKitProxy(
         createScriptMessageHandler: ({
@@ -960,7 +1025,9 @@ void main() {
         WKWebViewConfiguration.detached(),
         const WKNavigationAction(
           request: request,
-          targetFrame: WKFrameInfo(isMainFrame: false),
+          targetFrame: WKFrameInfo(
+              isMainFrame: false,
+              request: NSUrlRequest(url: 'https://google.com')),
           navigationType: WKNavigationType.linkActivated,
         ),
       );
@@ -1179,7 +1246,9 @@ void main() {
         CapturingUIDelegate.lastCreatedDelegate,
         WKWebView.detached(),
         const WKSecurityOrigin(host: '', port: 0, protocol: ''),
-        const WKFrameInfo(isMainFrame: false),
+        const WKFrameInfo(
+            isMainFrame: false,
+            request: NSUrlRequest(url: 'https://google.com')),
         WKMediaCaptureType.microphone,
       );
 
@@ -1187,6 +1256,84 @@ void main() {
         WebViewPermissionResourceType.microphone,
       ]);
       expect(decision, WKPermissionDecision.grant);
+    });
+
+    group('JavaScript Dialog', () {
+      test('setOnJavaScriptAlertDialog', () async {
+        final WebKitWebViewController controller = createControllerWithMocks();
+        late final String message;
+        await controller.setOnJavaScriptAlertDialog(
+            (JavaScriptAlertDialogRequest request) async {
+          message = request.message;
+          return;
+        });
+
+        const String callbackMessage = 'Message';
+        final Future<void> Function(String message, WKFrameInfo frame)
+            onJavaScriptAlertDialog =
+            CapturingUIDelegate.lastCreatedDelegate.runJavaScriptAlertDialog!;
+        await onJavaScriptAlertDialog(
+            callbackMessage,
+            const WKFrameInfo(
+                isMainFrame: false,
+                request: NSUrlRequest(url: 'https://google.com')));
+
+        expect(message, callbackMessage);
+      });
+
+      test('setOnJavaScriptConfirmDialog', () async {
+        final WebKitWebViewController controller = createControllerWithMocks();
+        late final String message;
+        const bool callbackReturnValue = true;
+        await controller.setOnJavaScriptConfirmDialog(
+            (JavaScriptConfirmDialogRequest request) async {
+          message = request.message;
+          return callbackReturnValue;
+        });
+
+        const String callbackMessage = 'Message';
+        final Future<bool> Function(String message, WKFrameInfo frame)
+            onJavaScriptConfirmDialog =
+            CapturingUIDelegate.lastCreatedDelegate.runJavaScriptConfirmDialog!;
+        final bool returnValue = await onJavaScriptConfirmDialog(
+            callbackMessage,
+            const WKFrameInfo(
+                isMainFrame: false,
+                request: NSUrlRequest(url: 'https://google.com')));
+
+        expect(message, callbackMessage);
+        expect(returnValue, callbackReturnValue);
+      });
+
+      test('setOnJavaScriptTextInputDialog', () async {
+        final WebKitWebViewController controller = createControllerWithMocks();
+        late final String message;
+        late final String? defaultText;
+        const String callbackReturnValue = 'Return Value';
+        await controller.setOnJavaScriptTextInputDialog(
+            (JavaScriptTextInputDialogRequest request) async {
+          message = request.message;
+          defaultText = request.defaultText;
+          return callbackReturnValue;
+        });
+
+        const String callbackMessage = 'Message';
+        const String callbackDefaultText = 'Default Text';
+        final Future<String> Function(
+                String prompt, String defaultText, WKFrameInfo frame)
+            onJavaScriptTextInputDialog = CapturingUIDelegate
+                .lastCreatedDelegate.runJavaScriptTextInputDialog!;
+        final String returnValue = await onJavaScriptTextInputDialog(
+            callbackMessage,
+            callbackDefaultText,
+            const WKFrameInfo(
+                isMainFrame: false,
+                request: NSUrlRequest(url: 'https://google.com')));
+
+        expect(message, callbackMessage);
+        expect(defaultText, callbackDefaultText);
+        expect(returnValue, callbackReturnValue);
+      });
     });
 
     test('inspectable', () async {
@@ -1318,6 +1465,32 @@ window.addEventListener("error", function(e) {
         expect(logs[JavaScriptLogLevel.warning], 'Warning message');
       });
     });
+
+    test('setOnScrollPositionChange', () async {
+      final WebKitWebViewController controller = createControllerWithMocks();
+
+      final Completer<ScrollPositionChange> changeCompleter =
+          Completer<ScrollPositionChange>();
+      await controller.setOnScrollPositionChange(
+        (ScrollPositionChange change) {
+          changeCompleter.complete(change);
+        },
+      );
+
+      final void Function(
+        UIScrollView scrollView,
+        double,
+        double,
+      ) onScrollViewDidScroll = CapturingUIScrollViewDelegate
+          .lastCreatedDelegate.scrollViewDidScroll!;
+
+      final MockUIScrollView mockUIScrollView = MockUIScrollView();
+      onScrollViewDidScroll(mockUIScrollView, 1.0, 2.0);
+
+      final ScrollPositionChange change = await changeCompleter.future;
+      expect(change.x, 1.0);
+      expect(change.y, 2.0);
+    });
   });
 
   group('WebKitJavaScriptChannelParams', () {
@@ -1365,6 +1538,7 @@ class CapturingNavigationDelegate extends WKNavigationDelegate {
     super.didFailNavigation,
     super.didFailProvisionalNavigation,
     super.decidePolicyForNavigationAction,
+    super.decidePolicyForNavigationResponse,
     super.webViewWebContentProcessDidTerminate,
     super.didReceiveAuthenticationChallenge,
   }) : super.detached() {
@@ -1380,10 +1554,25 @@ class CapturingUIDelegate extends WKUIDelegate {
   CapturingUIDelegate({
     super.onCreateWebView,
     super.requestMediaCapturePermission,
+    super.runJavaScriptAlertDialog,
+    super.runJavaScriptConfirmDialog,
+    super.runJavaScriptTextInputDialog,
     super.instanceManager,
   }) : super.detached() {
     lastCreatedDelegate = this;
   }
 
   static CapturingUIDelegate lastCreatedDelegate = CapturingUIDelegate();
+}
+
+class CapturingUIScrollViewDelegate extends UIScrollViewDelegate {
+  CapturingUIScrollViewDelegate({
+    super.scrollViewDidScroll,
+    super.instanceManager,
+  }) : super.detached() {
+    lastCreatedDelegate = this;
+  }
+
+  static CapturingUIScrollViewDelegate lastCreatedDelegate =
+      CapturingUIScrollViewDelegate();
 }

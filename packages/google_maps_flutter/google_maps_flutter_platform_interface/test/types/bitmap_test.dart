@@ -17,7 +17,6 @@ void main() {
       final Object json = descriptor.toJson();
 
       // Rehydrate a new bitmap descriptor...
-      // ignore: deprecated_member_use_from_same_package
       final BitmapDescriptor descriptorFromJson =
           BitmapDescriptor.fromJson(json);
 

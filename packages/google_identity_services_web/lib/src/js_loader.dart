@@ -47,7 +47,7 @@ Future<void> loadWebSdk({
         ..async = true
         ..defer = true;
   if (trustedUrl != null) {
-    script.srcTT = trustedUrl;
+    script.trustedSrc = trustedUrl;
   } else {
     script.src = _url;
   }

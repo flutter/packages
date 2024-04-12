@@ -25,7 +25,9 @@ class AndroidWebViewProxy {
   });
 
   /// Constructs a [android_webview.WebView].
-  final android_webview.WebView Function() createAndroidWebView;
+  final android_webview.WebView Function({
+    void Function(int left, int top, int oldLeft, int oldTop)? onScrollChanged,
+  }) createAndroidWebView;
 
   /// Constructs a [android_webview.WebChromeClient].
   final android_webview.WebChromeClient Function({
@@ -53,12 +55,21 @@ class AndroidWebViewProxy {
             android_webview.CustomViewCallback callback)?
         onShowCustomView,
     void Function(android_webview.WebChromeClient instance)? onHideCustomView,
+    Future<void> Function(String url, String message)? onJsAlert,
+    Future<bool> Function(String url, String message)? onJsConfirm,
+    Future<String> Function(String url, String message, String defaultValue)?
+        onJsPrompt,
   }) createAndroidWebChromeClient;
 
   /// Constructs a [android_webview.WebViewClient].
   final android_webview.WebViewClient Function({
     void Function(android_webview.WebView webView, String url)? onPageStarted,
     void Function(android_webview.WebView webView, String url)? onPageFinished,
+    void Function(
+      android_webview.WebView webView,
+      android_webview.WebResourceRequest request,
+      android_webview.WebResourceResponse response,
+    )? onReceivedHttpError,
     void Function(
       android_webview.WebView webView,
       android_webview.WebResourceRequest request,

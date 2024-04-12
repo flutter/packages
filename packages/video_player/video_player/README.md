@@ -8,7 +8,7 @@ A Flutter plugin for iOS, Android and Web for playing back video on a Widget sur
 
 |             | Android | iOS   | macOS  | Web   |
 |-------------|---------|-------|--------|-------|
-| **Support** | SDK 16+ | 11.0+ | 10.14+ | Any\* |
+| **Support** | SDK 16+ | 12.0+ | 10.14+ | Any\* |
 
 ![The example app running in iOS](https://github.com/flutter/packages/blob/main/packages/video_player/video_player/doc/demo_ipod.gif?raw=true)
 
@@ -41,7 +41,7 @@ entitlement](https://docs.flutter.dev/platform-integration/macos/building#entitl
 
 ### Web
 
-> The Web platform does **not** suppport `dart:io`, so avoid using the `VideoPlayerController.file` constructor for the plugin. Using the constructor attempts to create a `VideoPlayerController.file` that will throw an `UnimplementedError`.
+> The Web platform does **not** support `dart:io`, so avoid using the `VideoPlayerController.file` constructor for the plugin. Using the constructor attempts to create a `VideoPlayerController.file` that will throw an `UnimplementedError`.
 
 \* Different web browsers may have different video-playback capabilities (supported formats, autoplay...). Check [package:video_player_web](https://pub.dev/packages/video_player_web) for more web-specific information.
 
@@ -118,8 +118,8 @@ class _VideoAppState extends State<VideoApp> {
 
   @override
   void dispose() {
-    super.dispose();
     _controller.dispose();
+    super.dispose();
   }
 }
 ```
