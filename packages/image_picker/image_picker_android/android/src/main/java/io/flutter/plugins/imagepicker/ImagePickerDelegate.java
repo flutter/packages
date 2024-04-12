@@ -320,9 +320,7 @@ public class ImagePickerDelegate
       pickMediaIntent.setType("*/*");
       String[] mimeTypes = {"video/*", "image/*"};
       pickMediaIntent.putExtra("CONTENT_TYPE", mimeTypes);
-      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-        pickMediaIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, generalOptions.getAllowMultiple());
-      }
+      pickMediaIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, generalOptions.getAllowMultiple());
     }
     activity.startActivityForResult(pickMediaIntent, REQUEST_CODE_CHOOSE_MEDIA_FROM_GALLERY);
   }
@@ -467,9 +465,7 @@ public class ImagePickerDelegate
     } else {
       pickMultiImageIntent = new Intent(Intent.ACTION_GET_CONTENT);
       pickMultiImageIntent.setType("image/*");
-      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-        pickMultiImageIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
-      }
+      pickMultiImageIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
     }
     activity.startActivityForResult(
         pickMultiImageIntent, REQUEST_CODE_CHOOSE_MULTI_IMAGE_FROM_GALLERY);
