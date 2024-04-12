@@ -378,6 +378,19 @@ class MockAndroidNavigationDelegate extends _i1.Mock
       ) as _i9.Future<void>);
 
   @override
+  _i9.Future<void> setOnWebViewRenderProcessTerminated(
+          _i3.WebViewRenderProcessTerminatedCallback?
+              onWebViewRenderProcessTerminatedCallback) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setOnWebViewRenderProcessTerminated,
+          [onWebViewRenderProcessTerminatedCallback],
+        ),
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
+
+  @override
   _i9.Future<void> setOnUrlChange(_i3.UrlChangeCallback? onUrlChange) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -1147,6 +1160,10 @@ class MockAndroidWebViewProxy extends _i1.Mock
       _i2.WebResourceRequest,
       _i2.WebResourceError,
     )? onReceivedRequestError,
+    bool Function(
+      _i2.WebView,
+      _i2.ProcessTerminationDetails,
+    )? onWebViewRenderProcessTerminated,
     void Function(
       _i2.WebView,
       _i2.WebResourceRequest,
@@ -1193,6 +1210,10 @@ class MockAndroidWebViewProxy extends _i1.Mock
             _i2.WebResourceRequest,
             _i2.WebResourceError,
           )? onReceivedRequestError,
+          bool Function(
+            _i2.WebView,
+            _i2.ProcessTerminationDetails,
+          )? onWebViewRenderProcessTerminated,
           void Function(
             _i2.WebView,
             _i2.WebResourceRequest,
@@ -1242,6 +1263,10 @@ class MockAndroidWebViewProxy extends _i1.Mock
             _i2.WebResourceRequest,
             _i2.WebResourceError,
           )? onReceivedRequestError,
+          bool Function(
+            _i2.WebView,
+            _i2.ProcessTerminationDetails,
+          )? onWebViewRenderProcessTerminated,
           void Function(
             _i2.WebView,
             _i2.WebResourceRequest,
@@ -1291,6 +1316,10 @@ class MockAndroidWebViewProxy extends _i1.Mock
           _i2.WebResourceRequest,
           _i2.WebResourceError,
         )? onReceivedRequestError,
+        bool Function(
+          _i2.WebView,
+          _i2.ProcessTerminationDetails,
+        )? onWebViewRenderProcessTerminated,
         void Function(
           _i2.WebView,
           _i2.WebResourceRequest,
@@ -2735,6 +2764,19 @@ class MockWebViewClient extends _i1.Mock implements _i2.WebViewClient {
         returnValue: _i9.Future<void>.value(),
         returnValueForMissingStub: _i9.Future<void>.value(),
       ) as _i9.Future<void>);
+
+  @override
+  _i9.Future<void>
+      setSynchronousReturnValueForApplicationDidHandleWebViewRenderProcessCrash(
+              bool? value) =>
+          (super.noSuchMethod(
+            Invocation.method(
+              #setSynchronousReturnValueForApplicationDidHandleWebViewRenderProcessCrash,
+              [value],
+            ),
+            returnValue: _i9.Future<void>.value(),
+            returnValueForMissingStub: _i9.Future<void>.value(),
+          ) as _i9.Future<void>);
 
   @override
   _i2.WebViewClient copy() => (super.noSuchMethod(

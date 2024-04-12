@@ -31,7 +31,9 @@ void main() {
       main_file.WebResourceRequest;
       main_file.WebResourceResponse;
       main_file.WebResourceError;
+      main_file.ProcessTerminationDetails;
       main_file.WebResourceErrorCallback;
+      main_file.WebViewRenderProcessTerminatedCallback;
       main_file.WebViewCookie;
       main_file.WebResourceErrorType;
       main_file.UrlChange;

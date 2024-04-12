@@ -705,6 +705,30 @@ void main() {
         );
       });
 
+      test('onWebViewRenderProcessTerminated', () {
+        late final List<Object> result;
+        when(mockWebViewClient.onWebViewRenderProcessTerminated).thenReturn(
+              (
+              WebView webView,
+              ProcessTerminationDetails details,
+              ) {
+            result = <Object>[webView, details];
+            return true;
+          },
+        );
+
+        flutterApi.onRenderProcessGone(
+          mockWebViewClientInstanceId,
+          mockWebViewInstanceId,
+          RenderProcessGoneDetailData(didCrash: true, rendererPriorityAtExit: 1,),
+        );
+
+        expect(
+          result,
+          containsAllInOrder(<Object?>[mockWebView, isNotNull]),
+        );
+      });
+
       test('onReceivedError', () {
         late final List<Object> result;
         when(mockWebViewClient.onReceivedError).thenReturn(

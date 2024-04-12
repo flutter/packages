@@ -115,6 +115,11 @@ class FakeNavigationDelegate extends PlatformNavigationDelegate {
   ) async {}
 
   @override
+  Future<void> setOnWebViewRenderProcessTerminated(
+    WebViewRenderProcessTerminatedCallback onWebViewRenderProcessTerminatedCallback,
+  ) async {}
+
+  @override
   Future<void> setOnUrlChange(UrlChangeCallback onUrlChange) async {}
 
   @override

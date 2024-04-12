@@ -135,6 +135,66 @@ void main() {
       expect(callbackError.isForMainFrame, true);
     });
 
+    test('onWebViewRenderProcessTerminated crash was handled by calling app', () {
+      final Completer<bool> completer = Completer<bool>();
+
+      final AndroidNavigationDelegate androidNavigationDelegate =
+      AndroidNavigationDelegate(_buildCreationParams());
+
+      late final bool crashWasHandledByCallingApp;
+      late final ProcessTerminationDetails callbackDetails;
+      androidNavigationDelegate.setOnWebViewRenderProcessTerminated(
+              (ProcessTerminationDetails details) {
+            callbackDetails = details;
+            crashWasHandledByCallingApp = true;
+            completer.complete(crashWasHandledByCallingApp);
+            return crashWasHandledByCallingApp;
+          });
+
+      CapturingWebViewClient.lastCreatedDelegate.onWebViewRenderProcessTerminated!(
+        android_webview.WebView.detached(),
+        const android_webview.ProcessTerminationDetails(
+          didCrash: true,
+          rendererPriorityAtExit: 1,
+        ),
+      );
+
+      expect(callbackDetails.didCrash, true);
+      expect(callbackDetails.rendererPriorityAtExit, 1);
+      expect(crashWasHandledByCallingApp, true);
+      expect(completer.isCompleted, true);
+    });
+
+    test('onWebViewRenderProcessTerminated crash was not handled by calling app', () {
+      final Completer<bool> completer = Completer<bool>();
+
+      final AndroidNavigationDelegate androidNavigationDelegate =
+      AndroidNavigationDelegate(_buildCreationParams());
+
+      late final bool crashWasHandledByCallingApp;
+      late final ProcessTerminationDetails callbackDetails;
+      androidNavigationDelegate.setOnWebViewRenderProcessTerminated(
+              (ProcessTerminationDetails details) {
+            callbackDetails = details;
+            crashWasHandledByCallingApp = false;
+            completer.complete(crashWasHandledByCallingApp);
+            return crashWasHandledByCallingApp;
+          });
+
+      CapturingWebViewClient.lastCreatedDelegate.onWebViewRenderProcessTerminated!(
+        android_webview.WebView.detached(),
+        const android_webview.ProcessTerminationDetails(
+          didCrash: true,
+          rendererPriorityAtExit: 1,
+        ),
+      );
+
+      expect(crashWasHandledByCallingApp, false);
+      expect(callbackDetails.didCrash, true);
+      expect(callbackDetails.rendererPriorityAtExit, 1);
+      expect(completer.isCompleted, true);
+    });
+
     test(
         'onNavigationRequest from requestLoading should not be called when loadUrlCallback is not specified',
         () {
@@ -573,10 +633,19 @@ class CapturingWebViewClient extends android_webview.WebViewClient {
 
   bool synchronousReturnValueForShouldOverrideUrlLoading = false;
 
+  bool synchronousReturnValueForApplicationDidHandleWebViewRenderProcessCrash = false;
+
   @override
   Future<void> setSynchronousReturnValueForShouldOverrideUrlLoading(
       bool value) async {
     synchronousReturnValueForShouldOverrideUrlLoading = value;
+  }
+
+  @override
+  Future<void> setSynchronousReturnValueForApplicationDidHandleWebViewRenderProcessCrash(
+      bool value,
+      ) async {
+    synchronousReturnValueForApplicationDidHandleWebViewRenderProcessCrash = value;
   }
 }
 

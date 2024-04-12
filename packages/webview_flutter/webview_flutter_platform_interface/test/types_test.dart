@@ -28,5 +28,14 @@ void main() {
       expect(response.statusCode, statusCode);
       expect(response.headers, headers);
     });
+
+    test('ProcessTerminationDetails', () {
+      const ProcessTerminationDetails details = ProcessTerminationDetails(
+        didCrash: true,
+        rendererPriorityAtExit: 1,
+      );
+      expect(details.didCrash, true);
+      expect(details.rendererPriorityAtExit, 1);
+    });
   });
 }
