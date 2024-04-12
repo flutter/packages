@@ -15,6 +15,10 @@ Enables Google Sign-In in Flutter apps.
   s.source_files = 'Classes/**/*.{h,m}'
   s.public_header_files = 'Classes/**/*.h'
   s.module_map = 'Classes/FLTGoogleSignInPlugin.modulemap'
+
+  # AppAuth is a transitive dependency of GoogleSignIn.
+  # Depend on 1.7.4 or higher, which defines modules.
+  s.dependency 'AppAuth', '~> 1.7.4'
   s.dependency 'GoogleSignIn', '~> 7.1'
   s.static_framework = true
   s.ios.dependency 'Flutter'
