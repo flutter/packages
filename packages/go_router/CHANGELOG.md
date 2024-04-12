@@ -1,6 +1,10 @@
-## 13.2.4
+## 13.2.5
 
 - Fixes unwanted logs when `hierarchicalLoggingEnabled` was set to `true`.
+
+## 13.2.4
+
+- Updates examples to use uri.path instead of uri.toString() for accessing the current location.
 
 ## 13.2.3
 
