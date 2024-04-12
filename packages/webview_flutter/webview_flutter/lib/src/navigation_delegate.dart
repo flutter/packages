@@ -149,7 +149,7 @@ class NavigationDelegate {
       if (Platform.isAndroid) {
         platform.setOnWebViewRenderProcessTerminated(onWebViewRenderProcessTerminated!);
       }
-      // onWebViewRenderProcessTerminated is only available on Android, see:
+      // onWebViewRenderProcessTerminated callback is only available on Android, see:
       // https://developer.android.com/reference/android/webkit/WebViewClient#onRenderProcessGone(android.webkit.WebView,%20android.webkit.RenderProcessGoneDetail)
     }
     if (onUrlChange != null) {
