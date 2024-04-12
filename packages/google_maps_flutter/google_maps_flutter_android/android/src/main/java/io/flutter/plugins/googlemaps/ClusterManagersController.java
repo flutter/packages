@@ -92,8 +92,9 @@ class ClusterManagersController
       throw new IllegalArgumentException("clusterManagerId was null");
     }
     ClusterManager<MarkerBuilder> clusterManager =
-        new ClusterManager<>(context, googleMap, markerManager);
-    ClusterRenderer clusterRenderer = new ClusterRenderer(context, googleMap, clusterManager, this);
+        new ClusterManager<MarkerBuilder>(context, googleMap, markerManager);
+    ClusterRenderer<MarkerBuilder> clusterRenderer =
+        new ClusterRenderer<MarkerBuilder>(context, googleMap, clusterManager, this);
     clusterManager.setRenderer(clusterRenderer);
     initListenersForClusterManager(clusterManager, this, clusterItemClickListener);
     clusterManagerIdToManager.put(clusterManagerId, clusterManager);
@@ -209,13 +210,13 @@ class ClusterManagersController
    * ClusterRenderer builds marker options for new markers to be rendered to the map. After cluster
    * item (marker) is rendered, it is sent to the listeners for control.
    */
-  private static class ClusterRenderer extends DefaultClusterRenderer<MarkerBuilder> {
+  private static class ClusterRenderer<T extends MarkerBuilder> extends DefaultClusterRenderer<T> {
     private final ClusterManagersController clusterManagersController;
 
     public ClusterRenderer(
         Context context,
         GoogleMap map,
-        ClusterManager<MarkerBuilder> clusterManager,
+        ClusterManager<T> clusterManager,
         ClusterManagersController clusterManagersController) {
       super(context, map, clusterManager);
       this.clusterManagersController = clusterManagersController;
@@ -223,14 +224,14 @@ class ClusterManagersController
 
     @Override
     protected void onBeforeClusterItemRendered(
-        @NonNull MarkerBuilder item, @NonNull MarkerOptions markerOptions) {
+        @NonNull T item, @NonNull MarkerOptions markerOptions) {
       // Builds new markerOptions for new marker created by the ClusterRenderer under
       // ClusterManager.
       item.update(markerOptions);
     }
 
     @Override
-    protected void onClusterItemRendered(@NonNull MarkerBuilder item, @NonNull Marker marker) {
+    protected void onClusterItemRendered(@NonNull T item, @NonNull Marker marker) {
       super.onClusterItemRendered(item, marker);
       clusterManagersController.onClusterItemRendered(item, marker);
     }

@@ -53,7 +53,7 @@ import java.util.Map;
 import java.util.Objects;
 
 /** Controller of a single GoogleMaps MapView instance. */
-final class GoogleMapController
+class GoogleMapController
     implements DefaultLifecycleObserver,
         ActivityPluginBinding.OnSaveInstanceStateListener,
         GoogleMapOptionsSink,
@@ -122,6 +122,35 @@ final class GoogleMapController
     this.polylinesController = new PolylinesController(methodChannel, density);
     this.circlesController = new CirclesController(methodChannel, density);
     this.tileOverlaysController = new TileOverlaysController(methodChannel);
+  }
+
+  // Constructor for testing purposes only
+  @VisibleForTesting
+  GoogleMapController(
+      int id,
+      Context context,
+      MethodChannel methodChannel,
+      LifecycleProvider lifecycleProvider,
+      GoogleMapOptions options,
+      ClusterManagersController clusterManagersController,
+      MarkersController markersController,
+      PolygonsController polygonsController,
+      PolylinesController polylinesController,
+      CirclesController circlesController,
+      TileOverlaysController tileOverlaysController) {
+    this.id = id;
+    this.context = context;
+    this.methodChannel = methodChannel;
+    this.options = options;
+    this.mapView = new MapView(context, options);
+    this.density = context.getResources().getDisplayMetrics().density;
+    this.lifecycleProvider = lifecycleProvider;
+    this.clusterManagersController = clusterManagersController;
+    this.markersController = markersController;
+    this.polygonsController = polygonsController;
+    this.polylinesController = polylinesController;
+    this.circlesController = circlesController;
+    this.tileOverlaysController = tileOverlaysController;
   }
 
   @Override
@@ -660,7 +689,8 @@ final class GoogleMapController
     googleMap.setOnMapLongClickListener(listener);
   }
 
-  private void setMarkerCollectionListener(@Nullable GoogleMapListener listener) {
+  @VisibleForTesting
+  public void setMarkerCollectionListener(@Nullable GoogleMapListener listener) {
     if (googleMap == null) {
       Log.v(TAG, "Controller was disposed before GoogleMap was ready.");
       return;
@@ -671,7 +701,8 @@ final class GoogleMapController
     markerCollection.setOnInfoWindowClickListener(listener);
   }
 
-  private void setClusterItemClickListener(
+  @VisibleForTesting
+  public void setClusterItemClickListener(
       @Nullable ClusterManager.OnClusterItemClickListener<MarkerBuilder> listener) {
     if (googleMap == null) {
       Log.v(TAG, "Controller was disposed before GoogleMap was ready.");
@@ -681,7 +712,8 @@ final class GoogleMapController
     clusterManagersController.setClusterItemClickListener(listener);
   }
 
-  private void setClusterItemRenderedListener(
+  @VisibleForTesting
+  public void setClusterItemRenderedListener(
       @Nullable ClusterManagersController.OnClusterItemRendered<MarkerBuilder> listener) {
     if (googleMap == null) {
       Log.v(TAG, "Controller was disposed before GoogleMap was ready.");

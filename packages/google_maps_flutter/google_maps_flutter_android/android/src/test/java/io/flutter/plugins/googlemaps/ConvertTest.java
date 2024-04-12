@@ -35,14 +35,18 @@ public class ConvertTest {
   @Test
   public void ConvertClustersToJsonReturnsCorrectData() {
     String clusterManagerId = "cm_1";
-    StaticCluster<MarkerBuilder> cluster = new StaticCluster<>(new LatLng(43.00, -87.90));
+    LatLng clusterPosition = new LatLng(43.00, -87.90);
+    LatLng markerPosition1 = new LatLng(43.05, -87.95);
+    LatLng markerPosition2 = new LatLng(43.02, -87.92);
+
+    StaticCluster<MarkerBuilder> cluster = new StaticCluster<>(clusterPosition);
 
     MarkerBuilder marker1 = new MarkerBuilder("m_1", clusterManagerId);
-    marker1.setPosition(new LatLng(43.05, -87.95));
+    marker1.setPosition(markerPosition1);
     cluster.add(marker1);
 
     MarkerBuilder marker2 = new MarkerBuilder("m_2", clusterManagerId);
-    marker2.setPosition(new LatLng(43.02, -87.92));
+    marker2.setPosition(markerPosition2);
     cluster.add(marker2);
 
     Set<Cluster<MarkerBuilder>> clusters = new HashSet<>();
@@ -60,8 +64,8 @@ public class ConvertTest {
 
     List<?> position = (List<?>) clusterData.get("position");
     Assert.assertTrue(position instanceof List);
-    Assert.assertEquals(43.00, (double) position.get(0), 1e-15);
-    Assert.assertEquals(-87.90, (double) position.get(1), 1e-15);
+    Assert.assertEquals(clusterPosition.latitude, (double) position.get(0), 1e-15);
+    Assert.assertEquals(clusterPosition.longitude, (double) position.get(1), 1e-15);
 
     Map<?, ?> bounds = (Map<?, ?>) clusterData.get("bounds");
     Assert.assertTrue(bounds instanceof Map);
@@ -69,10 +73,12 @@ public class ConvertTest {
     List<?> northeast = (List<?>) bounds.get("northeast");
     Assert.assertTrue(southwest instanceof List);
     Assert.assertTrue(northeast instanceof List);
-    Assert.assertEquals(43.02, (double) southwest.get(0), 1e-15);
-    Assert.assertEquals(-87.95, (double) southwest.get(1), 1e-15);
-    Assert.assertEquals(43.05, (double) northeast.get(0), 1e-15);
-    Assert.assertEquals(-87.92, (double) northeast.get(1), 1e-15);
+
+    // bounding data should combine data from marker positions markerPosition1 and markerPosition2
+    Assert.assertEquals(markerPosition2.latitude, (double) southwest.get(0), 1e-15);
+    Assert.assertEquals(markerPosition1.longitude, (double) southwest.get(1), 1e-15);
+    Assert.assertEquals(markerPosition1.latitude, (double) northeast.get(0), 1e-15);
+    Assert.assertEquals(markerPosition2.longitude, (double) northeast.get(1), 1e-15);
 
     Object markerIds = clusterData.get("markerIds");
     Assert.assertTrue(markerIds instanceof List);

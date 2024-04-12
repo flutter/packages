@@ -12,6 +12,7 @@ import io.flutter.plugin.common.MethodChannel;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 class MarkersController {
   private final HashMap<String, MarkerBuilder> markerIdToMarkerBuilder;
@@ -241,9 +242,9 @@ class MarkersController {
     String clusterManagerId = getClusterManagerId(marker);
     String oldClusterManagerId = markerBuilder.clusterManagerId();
 
-    // If the cluster ID on the updated marker has changed, the marker needs to be removed and re-added.
-    if (!((clusterManagerId == oldClusterManagerId)
-        || (clusterManagerId != null && clusterManagerId.equals(oldClusterManagerId)))) {
+    // If the cluster ID on the updated marker has changed, the marker needs to
+    // be removed and re-added to update its cluster manager state.
+    if (!(Objects.equals(clusterManagerId, oldClusterManagerId))) {
       removeMarker(markerId);
       addMarker(marker);
       return;
