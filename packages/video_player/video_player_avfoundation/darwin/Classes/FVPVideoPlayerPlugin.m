@@ -23,13 +23,6 @@
 @property(nonatomic, weak) AVPlayerItemVideoOutput *videoOutput;
 // The last time that has been validated as avaliable according to hasNewPixelBufferForItemTime:.
 @property(nonatomic, assign) CMTime lastKnownAvailableTime;
-// If YES, the engine is informed that a new texture is available any time the display link
-// callback is fired, regardless of the videoOutput state.
-//
-// TODO(stuartmorgan): Investigate removing this; it exists only to preserve existing iOS behavior
-// while implementing macOS, but iOS should very likely be doing the check as well. See
-// https://github.com/flutter/flutter/issues/138427.
-@property(nonatomic, assign) BOOL skipBufferAvailabilityCheck;
 @end
 
 @implementation FVPFrameUpdater
@@ -42,18 +35,10 @@
 }
 
 - (void)displayLinkFired {
-  // Only report a new frame if one is actually available, or the check is being skipped.
-  BOOL reportFrame = NO;
-  if (self.skipBufferAvailabilityCheck) {
-    reportFrame = YES;
-  } else {
-    CMTime outputItemTime = [self.videoOutput itemTimeForHostTime:CACurrentMediaTime()];
-    if ([self.videoOutput hasNewPixelBufferForItemTime:outputItemTime]) {
-      _lastKnownAvailableTime = outputItemTime;
-      reportFrame = YES;
-    }
-  }
-  if (reportFrame) {
+  // Only report a new frame if one is actually available.
+  CMTime outputItemTime = [self.videoOutput itemTimeForHostTime:CACurrentMediaTime()];
+  if ([self.videoOutput hasNewPixelBufferForItemTime:outputItemTime]) {
+    _lastKnownAvailableTime = outputItemTime;
     [_registry textureFrameAvailable:_textureId];
   }
 }
@@ -334,10 +319,6 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   };
   _videoOutput = [avFactory videoOutputWithPixelBufferAttributes:pixBuffAttributes];
   frameUpdater.videoOutput = _videoOutput;
-#if TARGET_OS_IOS
-  // See TODO on this property in FVPFrameUpdater.
-  frameUpdater.skipBufferAvailabilityCheck = YES;
-#endif
 
   [self addObserversForItem:item player:_player];
 
@@ -703,10 +684,7 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
 - (void)detachFromEngineForRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar {
   [self.playersByTextureId.allValues makeObjectsPerformSelector:@selector(disposeSansEventChannel)];
   [self.playersByTextureId removeAllObjects];
-  // TODO(57151): This should be commented out when 57151's fix lands on stable.
-  // This is the correct behavior we never did it in the past and the engine
-  // doesn't currently support it.
-  // FVPAVFoundationVideoPlayerApiSetup(registrar.messenger, nil);
+  SetUpFVPAVFoundationVideoPlayerApi(registrar.messenger, nil);
 }
 
 - (int64_t)onPlayerSetup:(FVPVideoPlayer *)player frameUpdater:(FVPFrameUpdater *)frameUpdater {
