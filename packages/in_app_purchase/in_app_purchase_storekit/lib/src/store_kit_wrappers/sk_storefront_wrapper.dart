@@ -69,8 +69,8 @@ class SKStorefrontWrapper {
   Map<String, dynamic> toMap() => _$SKStorefrontWrapperToJson(this);
 
   /// Converts the pigeon equivalent to an instance of SKStorefrontWrapper
-  static SKStorefrontWrapper convertFromPigeon(SKStorefrontMessage msg) {
+  static SKStorefrontWrapper convertFromPigeon(SKStorefrontMessage? msg) {
     return SKStorefrontWrapper(
-        countryCode: msg.countryCode, identifier: msg.identifier);
+        countryCode: msg!.countryCode, identifier: msg.identifier);
   }
 }

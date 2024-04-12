@@ -6,6 +6,8 @@
 #import <XCTest/XCTest.h>
 #import "FIAPaymentQueueHandler.h"
 #import "Stubs.h"
+//#import "InAppPurchasePlugin-Swift.h"
+
 
 @import in_app_purchase_storekit;
 
@@ -20,21 +22,20 @@
 
 - (void)setUp {
   self.receiptManagerStub = [FIAPReceiptManagerStub new];
-  self.plugin = [[InAppPurchasePlugin alloc]
-                 initReceiptManager:self.receiptManagerStub];
+  self.plugin = [[InAppPurchasePlugin alloc] initWithReceiptManager:_receiptManagerStub];
 
 }
 
 - (void)tearDown {
 }
-
+//
 - (void)testCanMakePayments {
   FlutterError *error;
-  NSNumber *result = [self.plugin canMakePaymentsWithError:&error];
-  XCTAssertTrue([result boolValue]);
+  bool result = [self.plugin canMakePayments];
+  XCTAssertTrue(result);
   XCTAssertNil(error);
 }
-
+////
 - (void)testPaymentQueueStorefront {
   if (@available(iOS 13, macOS 10.15, *)) {
     SKPaymentQueue *mockQueue = OCMClassMock(SKPaymentQueue.class);
@@ -46,17 +47,18 @@
     OCMStub(mockQueue.storefront).andReturn([[SKStorefrontStub alloc] initWithMap:storefrontMap]);
 
     self.plugin.paymentQueueHandler =
-        [[FIAPaymentQueueHandler alloc] initWithQueue:mockQueue
-                                  transactionsUpdated:nil
-                                   transactionRemoved:nil
-                             restoreTransactionFailed:nil
-                 restoreCompletedTransactionsFinished:nil
-                                shouldAddStorePayment:nil
-                                     updatedDownloads:nil
-                                     transactionCache:OCMClassMock(FIATransactionCache.class)];
+    [[FIAPaymentQueueHandler alloc] initWithQueue:mockQueue
+                              transactionsUpdated:nil
+                               transactionRemoved:nil
+                         restoreTransactionFailed:nil
+             restoreCompletedTransactionsFinished:nil
+                            shouldAddStorePayment:nil
+                                 updatedDownloads:nil
+                                 transactionCache:OCMClassMock(FIATransactionCache.class)];
 
     FlutterError *error;
-    SKStorefrontMessage *result = [self.plugin storefrontWithError:&error];
+    SKStorefrontMessage *result = [self.plugin testableStorefront];
+
 
     XCTAssertEqualObjects(result.countryCode, storefrontMap[@"countryCode"]);
     XCTAssertEqualObjects(result.identifier, storefrontMap[@"identifier"]);
@@ -65,6 +67,8 @@
     NSLog(@"Skip testPaymentQueueStorefront for iOS lower than 13.0 or macOS lower than 10.15.");
   }
 }
+
+
 
 - (void)testPaymentQueueStorefrontReturnsNil {
   if (@available(iOS 13, macOS 10.15, *)) {
