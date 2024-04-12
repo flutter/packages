@@ -1,6 +1,7 @@
 ## 6.1.23
 
 * Updates minSdkVersion to 19.
+* Updates minimum supported SDK version to Flutter 3.16.
 
 ## 6.1.22
 

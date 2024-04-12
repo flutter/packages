@@ -1,6 +1,7 @@
 ## 0.8.9+6
 
 * Updates minSdkVersion to 19.
+* Updates minimum supported SDK version to Flutter 3.16.
 
 ## 0.8.9+5
 
