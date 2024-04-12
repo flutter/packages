@@ -1,8 +1,12 @@
-## 1.0.8
+## 1.1.0
 
 * Adds limit parameter to `MediaOptions` and `MultiImagePickerOptions` which limits
   the number of media that can be selected. 
     * Currently supported only on iOS and Android.
+* Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
+
+## 1.0.8
+
 * Updates minimum supported SDK version to Flutter 3.13/Dart 3.1.
 * Updates support matrix in README to indicate that iOS 11 is no longer supported.
 * Clients on versions of Flutter that still support iOS 11 can continue to use this
