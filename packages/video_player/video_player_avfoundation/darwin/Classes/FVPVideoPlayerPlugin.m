@@ -709,8 +709,7 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   // FVPAVFoundationVideoPlayerApiSetup(registrar.messenger, nil);
 }
 
-- (FVPTextureMessage *)onPlayerSetup:(FVPVideoPlayer *)player
-                        frameUpdater:(FVPFrameUpdater *)frameUpdater {
+- (int64_t)onPlayerSetup:(FVPVideoPlayer *)player frameUpdater:(FVPFrameUpdater *)frameUpdater {
   int64_t textureId = [self.registry registerTexture:player];
   frameUpdater.textureId = textureId;
   FlutterEventChannel *eventChannel = [FlutterEventChannel
@@ -725,8 +724,7 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   // the engine is now expecting the texture to be populated.
   [player expectFrame];
 
-  FVPTextureMessage *result = [FVPTextureMessage makeWithTextureId:textureId];
-  return result;
+  return textureId;
 }
 
 - (void)initialize:(FlutterError *__autoreleasing *)error {
@@ -743,7 +741,8 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   [self.playersByTextureId removeAllObjects];
 }
 
-- (FVPTextureMessage *)create:(FVPCreateMessage *)input error:(FlutterError **)error {
+- (nullable NSNumber *)createWithOptions:(nonnull FVPCreationOptions *)options
+                                   error:(FlutterError **)error {
   FVPFrameUpdater *frameUpdater = [[FVPFrameUpdater alloc] initWithRegistry:_registry];
   FVPDisplayLink *displayLink =
       [self.displayLinkFactory displayLinkWithRegistrar:_registrar
@@ -752,12 +751,12 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
                                                }];
 
   FVPVideoPlayer *player;
-  if (input.asset) {
+  if (options.asset) {
     NSString *assetPath;
-    if (input.packageName) {
-      assetPath = [_registrar lookupKeyForAsset:input.asset fromPackage:input.packageName];
+    if (options.packageName) {
+      assetPath = [_registrar lookupKeyForAsset:options.asset fromPackage:options.packageName];
     } else {
-      assetPath = [_registrar lookupKeyForAsset:input.asset];
+      assetPath = [_registrar lookupKeyForAsset:options.asset];
     }
     @try {
       player = [[FVPVideoPlayer alloc] initWithAsset:assetPath
@@ -765,66 +764,65 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
                                          displayLink:displayLink
                                            avFactory:_avFactory
                                            registrar:self.registrar];
-      return [self onPlayerSetup:player frameUpdater:frameUpdater];
+      return @([self onPlayerSetup:player frameUpdater:frameUpdater]);
     } @catch (NSException *exception) {
       *error = [FlutterError errorWithCode:@"video_player" message:exception.reason details:nil];
       return nil;
     }
-  } else if (input.uri) {
-    player = [[FVPVideoPlayer alloc] initWithURL:[NSURL URLWithString:input.uri]
+  } else if (options.uri) {
+    player = [[FVPVideoPlayer alloc] initWithURL:[NSURL URLWithString:options.uri]
                                     frameUpdater:frameUpdater
                                      displayLink:displayLink
-                                     httpHeaders:input.httpHeaders
+                                     httpHeaders:options.httpHeaders
                                        avFactory:_avFactory
                                        registrar:self.registrar];
-    return [self onPlayerSetup:player frameUpdater:frameUpdater];
+    return @([self onPlayerSetup:player frameUpdater:frameUpdater]);
   } else {
     *error = [FlutterError errorWithCode:@"video_player" message:@"not implemented" details:nil];
     return nil;
   }
 }
 
-- (void)dispose:(FVPTextureMessage *)input error:(FlutterError **)error {
-  NSNumber *playerKey = @(input.textureId);
+- (void)disposePlayer:(NSInteger)textureId error:(FlutterError **)error {
+  NSNumber *playerKey = @(textureId);
   FVPVideoPlayer *player = self.playersByTextureId[playerKey];
-  [self.registry unregisterTexture:input.textureId];
+  [self.registry unregisterTexture:textureId];
   [self.playersByTextureId removeObjectForKey:playerKey];
   if (!player.disposed) {
     [player dispose];
   }
 }
 
-- (void)setLooping:(FVPLoopingMessage *)input error:(FlutterError **)error {
-  FVPVideoPlayer *player = self.playersByTextureId[@(input.textureId)];
-  player.isLooping = input.isLooping;
+- (void)setLooping:(BOOL)isLooping forPlayer:(NSInteger)textureId error:(FlutterError **)error {
+  FVPVideoPlayer *player = self.playersByTextureId[@(textureId)];
+  player.isLooping = isLooping;
 }
 
-- (void)setVolume:(FVPVolumeMessage *)input error:(FlutterError **)error {
-  FVPVideoPlayer *player = self.playersByTextureId[@(input.textureId)];
-  [player setVolume:input.volume];
+- (void)setVolume:(double)volume forPlayer:(NSInteger)textureId error:(FlutterError **)error {
+  FVPVideoPlayer *player = self.playersByTextureId[@(textureId)];
+  [player setVolume:volume];
 }
 
-- (void)setPlaybackSpeed:(FVPPlaybackSpeedMessage *)input error:(FlutterError **)error {
-  FVPVideoPlayer *player = self.playersByTextureId[@(input.textureId)];
-  [player setPlaybackSpeed:input.speed];
+- (void)setPlaybackSpeed:(double)speed forPlayer:(NSInteger)textureId error:(FlutterError **)error {
+  FVPVideoPlayer *player = self.playersByTextureId[@(textureId)];
+  [player setPlaybackSpeed:speed];
 }
 
-- (void)play:(FVPTextureMessage *)input error:(FlutterError **)error {
-  FVPVideoPlayer *player = self.playersByTextureId[@(input.textureId)];
+- (void)playPlayer:(NSInteger)textureId error:(FlutterError **)error {
+  FVPVideoPlayer *player = self.playersByTextureId[@(textureId)];
   [player play];
 }
 
-- (FVPPositionMessage *)position:(FVPTextureMessage *)input error:(FlutterError **)error {
-  FVPVideoPlayer *player = self.playersByTextureId[@(input.textureId)];
-  FVPPositionMessage *result = [FVPPositionMessage makeWithTextureId:input.textureId
-                                                            position:[player position]];
-  return result;
+- (nullable NSNumber *)positionForPlayer:(NSInteger)textureId error:(FlutterError **)error {
+  FVPVideoPlayer *player = self.playersByTextureId[@(textureId)];
+  return @([player position]);
 }
 
-- (void)seekTo:(FVPPositionMessage *)input
-    completion:(void (^)(FlutterError *_Nullable))completion {
-  FVPVideoPlayer *player = self.playersByTextureId[@(input.textureId)];
-  [player seekTo:input.position
+- (void)seekTo:(NSInteger)position
+     forPlayer:(NSInteger)textureId
+    completion:(nonnull void (^)(FlutterError *_Nullable))completion {
+  FVPVideoPlayer *player = self.playersByTextureId[@(textureId)];
+  [player seekTo:position
       completionHandler:^(BOOL finished) {
         dispatch_async(dispatch_get_main_queue(), ^{
           completion(nil);
@@ -832,17 +830,17 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
       }];
 }
 
-- (void)pause:(FVPTextureMessage *)input error:(FlutterError **)error {
-  FVPVideoPlayer *player = self.playersByTextureId[@(input.textureId)];
+- (void)pausePlayer:(NSInteger)textureId error:(FlutterError **)error {
+  FVPVideoPlayer *player = self.playersByTextureId[@(textureId)];
   [player pause];
 }
 
-- (void)setMixWithOthers:(FVPMixWithOthersMessage *)input
+- (void)setMixWithOthers:(BOOL)mixWithOthers
                    error:(FlutterError *_Nullable __autoreleasing *)error {
 #if TARGET_OS_OSX
   // AVAudioSession doesn't exist on macOS, and audio always mixes, so just no-op.
 #else
-  if (input.mixWithOthers) {
+  if (mixWithOthers) {
     [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayback
                                      withOptions:AVAudioSessionCategoryOptionMixWithOthers
                                            error:nil];
