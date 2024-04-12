@@ -1,6 +1,6 @@
 ## 2.2.4
 
-* Updates minSdkVersion version to 34.
+* Updates minSdkVersion version to 19.
 
 ## 2.2.3
 
