@@ -295,7 +295,7 @@ public class ImagePickerDelegate
 
   private void launchPickMediaFromGalleryIntent(Messages.GeneralOptions generalOptions) {
     Intent pickMediaIntent;
-    if (generalOptions.getUsePhotoPicker() && Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+    if (generalOptions.getUsePhotoPicker()) {
       if (generalOptions.getAllowMultiple()) {
         pickMediaIntent =
             new ActivityResultContracts.PickMultipleVisualMedia()
@@ -320,9 +320,7 @@ public class ImagePickerDelegate
       pickMediaIntent.setType("*/*");
       String[] mimeTypes = {"video/*", "image/*"};
       pickMediaIntent.putExtra("CONTENT_TYPE", mimeTypes);
-      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-        pickMediaIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, generalOptions.getAllowMultiple());
-      }
+      pickMediaIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, generalOptions.getAllowMultiple());
     }
     activity.startActivityForResult(pickMediaIntent, REQUEST_CODE_CHOOSE_MEDIA_FROM_GALLERY);
   }
@@ -341,7 +339,7 @@ public class ImagePickerDelegate
 
   private void launchPickVideoFromGalleryIntent(Boolean usePhotoPicker) {
     Intent pickVideoIntent;
-    if (usePhotoPicker && Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+    if (usePhotoPicker) {
       pickVideoIntent =
           new ActivityResultContracts.PickVisualMedia()
               .createIntent(
@@ -439,7 +437,7 @@ public class ImagePickerDelegate
 
   private void launchPickImageFromGalleryIntent(Boolean usePhotoPicker) {
     Intent pickImageIntent;
-    if (usePhotoPicker && Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+    if (usePhotoPicker) {
       pickImageIntent =
           new ActivityResultContracts.PickVisualMedia()
               .createIntent(
@@ -456,7 +454,7 @@ public class ImagePickerDelegate
 
   private void launchMultiPickImageFromGalleryIntent(Boolean usePhotoPicker) {
     Intent pickMultiImageIntent;
-    if (usePhotoPicker && Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+    if (usePhotoPicker) {
       pickMultiImageIntent =
           new ActivityResultContracts.PickMultipleVisualMedia()
               .createIntent(
@@ -467,9 +465,7 @@ public class ImagePickerDelegate
     } else {
       pickMultiImageIntent = new Intent(Intent.ACTION_GET_CONTENT);
       pickMultiImageIntent.setType("image/*");
-      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-        pickMultiImageIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
-      }
+      pickMultiImageIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
     }
     activity.startActivityForResult(
         pickMultiImageIntent, REQUEST_CODE_CHOOSE_MULTI_IMAGE_FROM_GALLERY);
