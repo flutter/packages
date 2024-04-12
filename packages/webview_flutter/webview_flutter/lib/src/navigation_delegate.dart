@@ -48,7 +48,8 @@ class NavigationDelegate {
     void Function(String url)? onPageFinished,
     void Function(int progress)? onProgress,
     void Function(WebResourceError error)? onWebResourceError,
-    bool Function(ProcessTerminationDetails details)? onWebViewRenderProcessTerminated,
+    bool Function(ProcessTerminationDetails details)?
+        onWebViewRenderProcessTerminated,
     void Function(UrlChange change)? onUrlChange,
     void Function(HttpAuthRequest request)? onHttpAuthRequest,
   }) : this.fromPlatformCreationParams(
@@ -101,7 +102,8 @@ class NavigationDelegate {
     void Function(String url)? onPageFinished,
     void Function(int progress)? onProgress,
     void Function(WebResourceError error)? onWebResourceError,
-    bool Function(ProcessTerminationDetails details)? onWebViewRenderProcessTerminated,
+    bool Function(ProcessTerminationDetails details)?
+        onWebViewRenderProcessTerminated,
     void Function(UrlChange change)? onUrlChange,
     void Function(HttpAuthRequest request)? onHttpAuthRequest,
   }) : this.fromPlatform(
@@ -147,7 +149,8 @@ class NavigationDelegate {
     }
     if (onWebViewRenderProcessTerminated != null) {
       if (Platform.isAndroid) {
-        platform.setOnWebViewRenderProcessTerminated(onWebViewRenderProcessTerminated!);
+        platform.setOnWebViewRenderProcessTerminated(
+            onWebViewRenderProcessTerminated!);
       }
       // onWebViewRenderProcessTerminated callback is only available on Android, see:
       // https://developer.android.com/reference/android/webkit/WebViewClient#onRenderProcessGone(android.webkit.WebView,%20android.webkit.RenderProcessGoneDetail)
@@ -188,5 +191,6 @@ class NavigationDelegate {
   final WebResourceErrorCallback? onWebResourceError;
 
   /// Invoked when a the given WebView's render process has exited.
-  final WebViewRenderProcessTerminatedCallback? onWebViewRenderProcessTerminated;
+  final WebViewRenderProcessTerminatedCallback?
+      onWebViewRenderProcessTerminated;
 }

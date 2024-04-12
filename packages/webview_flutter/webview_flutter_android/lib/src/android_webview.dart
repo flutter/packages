@@ -948,9 +948,9 @@ class WebViewClient extends JavaObject {
   /// Note that multiple WebView instances may be affected if they share a render process,
   /// not just the specific WebView which loaded chrome://crash.
   final bool Function(
-      WebView webView,
-      ProcessTerminationDetails details,
-      )? onWebViewRenderProcessTerminated;
+    WebView webView,
+    ProcessTerminationDetails details,
+  )? onWebViewRenderProcessTerminated;
 
   /// Report an error to the host application.
   ///
@@ -1018,10 +1018,13 @@ class WebViewClient extends JavaObject {
   /// that process has exited for the current [WebView], otherwise application will crash
   /// if render process crashed, or be killed if render process was killed by the system.
   /// Defaults to false.
-  Future<void> setSynchronousReturnValueForApplicationDidHandleWebViewRenderProcessCrash(
-      bool value,
-      ) {
-    return api.setShouldOverrideApplicationDidHandleWebViewRenderProcessCrashFromInstance(this, value);
+  Future<void>
+      setSynchronousReturnValueForApplicationDidHandleWebViewRenderProcessCrash(
+    bool value,
+  ) {
+    return api
+        .setShouldOverrideApplicationDidHandleWebViewRenderProcessCrashFromInstance(
+            this, value);
   }
 
   @override

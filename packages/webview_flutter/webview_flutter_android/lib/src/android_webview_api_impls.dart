@@ -660,10 +660,11 @@ class WebViewClientHostApiImpl extends WebViewClientHostApi {
   }
 
   /// Helper method to convert instances ids to objects.
-  Future<void> setShouldOverrideApplicationDidHandleWebViewRenderProcessCrashFromInstance(
-      WebViewClient instance,
-      bool value,
-      ) {
+  Future<void>
+      setShouldOverrideApplicationDidHandleWebViewRenderProcessCrashFromInstance(
+    WebViewClient instance,
+    bool value,
+  ) {
     return setSynchronousReturnValueForApplicationDidHandleWebViewRenderProcessCrash(
       instanceManager.getIdentifier(instance)!,
       value,
@@ -805,9 +806,12 @@ class WebViewClientFlutterApiImpl extends WebViewClientFlutterApi {
   }
 
   @override
-  bool onRenderProcessGone(int instanceId, int webViewInstanceId, RenderProcessGoneDetailData data) {
-    final WebViewClient? instance = instanceManager.getInstanceWithWeakReference(instanceId) as WebViewClient?;
-    final WebView? webViewInstance = instanceManager.getInstanceWithWeakReference(webViewInstanceId) as WebView?;
+  bool onRenderProcessGone(
+      int instanceId, int webViewInstanceId, RenderProcessGoneDetailData data) {
+    final WebViewClient? instance = instanceManager
+        .getInstanceWithWeakReference(instanceId) as WebViewClient?;
+    final WebView? webViewInstance = instanceManager
+        .getInstanceWithWeakReference(webViewInstanceId) as WebView?;
     assert(
       instance != null,
       'InstanceManager does not contain a WebViewClient with instanceId: $instanceId',
@@ -818,7 +822,8 @@ class WebViewClientFlutterApiImpl extends WebViewClientFlutterApi {
     );
     bool applicationDidHandleWebviewRenderCrash = false;
     if (instance!.onWebViewRenderProcessTerminated != null) {
-      applicationDidHandleWebviewRenderCrash = instance.onWebViewRenderProcessTerminated!(
+      applicationDidHandleWebviewRenderCrash =
+          instance.onWebViewRenderProcessTerminated!(
         webViewInstance!,
         ProcessTerminationDetails(
           didCrash: data.didCrash,

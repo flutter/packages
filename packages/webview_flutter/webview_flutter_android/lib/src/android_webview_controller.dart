@@ -1336,16 +1336,19 @@ class AndroidNavigationDelegate extends PlatformNavigationDelegate {
         android_webview.WebView webView,
         android_webview.ProcessTerminationDetails details,
       ) {
-        final WebViewRenderProcessTerminatedCallback? callback = weakThis.target?._onWebViewRenderProcessTerminated;
+        final WebViewRenderProcessTerminatedCallback? callback =
+            weakThis.target?._onWebViewRenderProcessTerminated;
         bool applicationDidHandleWebviewRenderCrash = false;
         if (callback != null) {
-          applicationDidHandleWebviewRenderCrash = callback(ProcessTerminationDetails(
+          applicationDidHandleWebviewRenderCrash =
+              callback(ProcessTerminationDetails(
             didCrash: details.didCrash,
             rendererPriorityAtExit: details.rendererPriorityAtExit,
           ));
         }
         _webViewClient
-            .setSynchronousReturnValueForApplicationDidHandleWebViewRenderProcessCrash(applicationDidHandleWebviewRenderCrash);
+            .setSynchronousReturnValueForApplicationDidHandleWebViewRenderProcessCrash(
+                applicationDidHandleWebviewRenderCrash);
         return applicationDidHandleWebviewRenderCrash;
       },
       onReceivedError: (
@@ -1562,9 +1565,11 @@ class AndroidNavigationDelegate extends PlatformNavigationDelegate {
 
   @override
   Future<void> setOnWebViewRenderProcessTerminated(
-    WebViewRenderProcessTerminatedCallback onWebViewRenderProcessTerminatedCallback,
+    WebViewRenderProcessTerminatedCallback
+        onWebViewRenderProcessTerminatedCallback,
   ) async {
-    _onWebViewRenderProcessTerminated = onWebViewRenderProcessTerminatedCallback;
+    _onWebViewRenderProcessTerminated =
+        onWebViewRenderProcessTerminatedCallback;
   }
 
   @override

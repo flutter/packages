@@ -85,7 +85,7 @@ class AndroidWebViewProxy {
     bool Function(
       android_webview.WebView webView,
       android_webview.ProcessTerminationDetails details,
-        )? onWebViewRenderProcessTerminated,
+    )? onWebViewRenderProcessTerminated,
     void Function(
       android_webview.WebView webView,
       android_webview.WebResourceRequest request,

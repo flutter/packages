@@ -27,7 +27,8 @@ typedef HttpResponseErrorCallback = void Function(HttpResponseError error);
 typedef WebResourceErrorCallback = void Function(WebResourceError error);
 
 /// Signature for callbacks that report that the given WebView's render process has exited.
-typedef WebViewRenderProcessTerminatedCallback = bool Function(ProcessTerminationDetails details);
+typedef WebViewRenderProcessTerminatedCallback = bool Function(
+    ProcessTerminationDetails details);
 
 /// Signature for callbacks that notify the host application of a change to the
 /// url of the web view.
@@ -134,9 +135,11 @@ abstract class PlatformNavigationDelegate extends PlatformInterface {
   /// Notify host application that the given WebView's render process has exited.
   /// See [PlatformWebViewController.setPlatformNavigationDelegate].
   Future<void> setOnWebViewRenderProcessTerminated(
-    WebViewRenderProcessTerminatedCallback onWebViewRenderProcessTerminatedCallback,
+    WebViewRenderProcessTerminatedCallback
+        onWebViewRenderProcessTerminatedCallback,
   ) {
-    throw UnimplementedError('setOnWebViewRenderProcessTerminated is not implemented on the current platform.');
+    throw UnimplementedError(
+        'setOnWebViewRenderProcessTerminated is not implemented on the current platform.');
   }
 
   /// Invoked when the underlying web view changes to a new url.
