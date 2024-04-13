@@ -1,4 +1,4 @@
-## NEXT
+## 2.4.14
 
 * Calls `onDestroy` instead of `initialize` in onDetachedFromEngine.
 
