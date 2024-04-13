@@ -1,3 +1,7 @@
+## 2.5.3
+
+* Updates iOS privacy manifest.
+
 ## 2.5.2
 
 * Fixes the tile overlay not correctly displaying on physical ios devices.
