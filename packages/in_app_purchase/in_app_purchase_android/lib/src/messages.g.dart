@@ -18,7 +18,8 @@ PlatformException _createConnectionError(String channelName) {
   );
 }
 
-List<Object?> wrapResponse({Object? result, PlatformException? error, bool empty = false}) {
+List<Object?> wrapResponse(
+    {Object? result, PlatformException? error, bool empty = false}) {
   if (empty) {
     return <Object?>[];
   }
@@ -40,8 +41,10 @@ enum PlatformBillingChoiceMode {
   ///
   /// Default state.
   playBillingOnly,
+
   /// Billing through app provided flow.
   alternativeBillingOnly,
+
   /// Users can choose Play billing or alternative billing.
   userChoiceBilling,
 }
@@ -220,9 +223,11 @@ class PlatformProductDetails {
       productType: PlatformProductType.values[result[3]! as int],
       title: result[4]! as String,
       oneTimePurchaseOfferDetails: result[5] != null
-          ? PlatformOneTimePurchaseOfferDetails.decode(result[5]! as List<Object?>)
+          ? PlatformOneTimePurchaseOfferDetails.decode(
+              result[5]! as List<Object?>)
           : null,
-      subscriptionOfferDetails: (result[6] as List<Object?>?)?.cast<PlatformSubscriptionOfferDetails?>(),
+      subscriptionOfferDetails: (result[6] as List<Object?>?)
+          ?.cast<PlatformSubscriptionOfferDetails?>(),
     );
   }
 }
@@ -250,7 +255,8 @@ class PlatformProductDetailsResponse {
     result as List<Object?>;
     return PlatformProductDetailsResponse(
       billingResult: PlatformBillingResult.decode(result[0]! as List<Object?>),
-      productDetails: (result[1] as List<Object?>?)!.cast<PlatformProductDetails?>(),
+      productDetails:
+          (result[1] as List<Object?>?)!.cast<PlatformProductDetails?>(),
     );
   }
 }
@@ -275,7 +281,8 @@ class PlatformAlternativeBillingOnlyReportingDetailsResponse {
     ];
   }
 
-  static PlatformAlternativeBillingOnlyReportingDetailsResponse decode(Object result) {
+  static PlatformAlternativeBillingOnlyReportingDetailsResponse decode(
+      Object result) {
     result as List<Object?>;
     return PlatformAlternativeBillingOnlyReportingDetailsResponse(
       billingResult: PlatformBillingResult.decode(result[0]! as List<Object?>),
@@ -579,7 +586,8 @@ class PlatformPurchaseHistoryResponse {
     result as List<Object?>;
     return PlatformPurchaseHistoryResponse(
       billingResult: PlatformBillingResult.decode(result[0]! as List<Object?>),
-      purchases: (result[1] as List<Object?>?)!.cast<PlatformPurchaseHistoryRecord?>(),
+      purchases:
+          (result[1] as List<Object?>?)!.cast<PlatformPurchaseHistoryRecord?>(),
     );
   }
 }
@@ -649,7 +657,8 @@ class PlatformSubscriptionOfferDetails {
       offerId: result[1] as String?,
       offerToken: result[2]! as String,
       offerTags: (result[3] as List<Object?>?)!.cast<String?>(),
-      pricingPhases: (result[4] as List<Object?>?)!.cast<PlatformPricingPhase?>(),
+      pricingPhases:
+          (result[4] as List<Object?>?)!.cast<PlatformPricingPhase?>(),
     );
   }
 }
@@ -681,7 +690,8 @@ class PlatformUserChoiceDetails {
     return PlatformUserChoiceDetails(
       originalExternalTransactionId: result[0] as String?,
       externalTransactionToken: result[1]! as String,
-      products: (result[2] as List<Object?>?)!.cast<PlatformUserChoiceProduct?>(),
+      products:
+          (result[2] as List<Object?>?)!.cast<PlatformUserChoiceProduct?>(),
     );
   }
 }
@@ -725,7 +735,8 @@ class _InAppPurchaseApiCodec extends StandardMessageCodec {
     if (value is PlatformAccountIdentifiers) {
       buffer.putUint8(128);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformAlternativeBillingOnlyReportingDetailsResponse) {
+    } else if (value
+        is PlatformAlternativeBillingOnlyReportingDetailsResponse) {
       buffer.putUint8(129);
       writeValue(buffer, value.encode());
     } else if (value is PlatformBillingConfigResponse) {
@@ -775,35 +786,36 @@ class _InAppPurchaseApiCodec extends StandardMessageCodec {
   @override
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
-      case 128: 
+      case 128:
         return PlatformAccountIdentifiers.decode(readValue(buffer)!);
-      case 129: 
-        return PlatformAlternativeBillingOnlyReportingDetailsResponse.decode(readValue(buffer)!);
-      case 130: 
+      case 129:
+        return PlatformAlternativeBillingOnlyReportingDetailsResponse.decode(
+            readValue(buffer)!);
+      case 130:
         return PlatformBillingConfigResponse.decode(readValue(buffer)!);
-      case 131: 
+      case 131:
         return PlatformBillingFlowParams.decode(readValue(buffer)!);
-      case 132: 
+      case 132:
         return PlatformBillingResult.decode(readValue(buffer)!);
-      case 133: 
+      case 133:
         return PlatformOneTimePurchaseOfferDetails.decode(readValue(buffer)!);
-      case 134: 
+      case 134:
         return PlatformPricingPhase.decode(readValue(buffer)!);
-      case 135: 
+      case 135:
         return PlatformProductDetails.decode(readValue(buffer)!);
-      case 136: 
+      case 136:
         return PlatformProductDetailsResponse.decode(readValue(buffer)!);
-      case 137: 
+      case 137:
         return PlatformPurchase.decode(readValue(buffer)!);
-      case 138: 
+      case 138:
         return PlatformPurchaseHistoryRecord.decode(readValue(buffer)!);
-      case 139: 
+      case 139:
         return PlatformPurchaseHistoryResponse.decode(readValue(buffer)!);
-      case 140: 
+      case 140:
         return PlatformPurchasesResponse.decode(readValue(buffer)!);
-      case 141: 
+      case 141:
         return PlatformQueryProduct.decode(readValue(buffer)!);
-      case 142: 
+      case 142:
         return PlatformSubscriptionOfferDetails.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
@@ -819,12 +831,15 @@ class InAppPurchaseApi {
       : __pigeon_binaryMessenger = binaryMessenger;
   final BinaryMessenger? __pigeon_binaryMessenger;
 
-  static const MessageCodec<Object?> pigeonChannelCodec = _InAppPurchaseApiCodec();
+  static const MessageCodec<Object?> pigeonChannelCodec =
+      _InAppPurchaseApiCodec();
 
   /// Wraps BillingClient#isReady.
   Future<bool> isReady() async {
-    const String __pigeon_channelName = 'dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.isReady';
-    final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<Object?>(
+    const String __pigeon_channelName =
+        'dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.isReady';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
       __pigeon_channelName,
       pigeonChannelCodec,
       binaryMessenger: __pigeon_binaryMessenger,
@@ -850,15 +865,18 @@ class InAppPurchaseApi {
   }
 
   /// Wraps BillingClient#startConnection(BillingClientStateListener).
-  Future<PlatformBillingResult> startConnection(int callbackHandle, PlatformBillingChoiceMode billingMode) async {
-    const String __pigeon_channelName = 'dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.startConnection';
-    final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<Object?>(
+  Future<PlatformBillingResult> startConnection(
+      int callbackHandle, PlatformBillingChoiceMode billingMode) async {
+    const String __pigeon_channelName =
+        'dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.startConnection';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
       __pigeon_channelName,
       pigeonChannelCodec,
       binaryMessenger: __pigeon_binaryMessenger,
     );
-    final List<Object?>? __pigeon_replyList =
-        await __pigeon_channel.send(<Object?>[callbackHandle, billingMode.index]) as List<Object?>?;
+    final List<Object?>? __pigeon_replyList = await __pigeon_channel
+        .send(<Object?>[callbackHandle, billingMode.index]) as List<Object?>?;
     if (__pigeon_replyList == null) {
       throw _createConnectionError(__pigeon_channelName);
     } else if (__pigeon_replyList.length > 1) {
@@ -879,8 +897,10 @@ class InAppPurchaseApi {
 
   /// Wraps BillingClient#endConnection(BillingClientStateListener).
   Future<void> endConnection() async {
-    const String __pigeon_channelName = 'dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.endConnection';
-    final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<Object?>(
+    const String __pigeon_channelName =
+        'dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.endConnection';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
       __pigeon_channelName,
       pigeonChannelCodec,
       binaryMessenger: __pigeon_binaryMessenger,
@@ -902,8 +922,10 @@ class InAppPurchaseApi {
 
   /// Wraps BillingClient#getBillingConfigAsync(GetBillingConfigParams, BillingConfigResponseListener).
   Future<PlatformBillingConfigResponse> getBillingConfigAsync() async {
-    const String __pigeon_channelName = 'dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.getBillingConfigAsync';
-    final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<Object?>(
+    const String __pigeon_channelName =
+        'dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.getBillingConfigAsync';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
       __pigeon_channelName,
       pigeonChannelCodec,
       binaryMessenger: __pigeon_binaryMessenger,
@@ -929,9 +951,12 @@ class InAppPurchaseApi {
   }
 
   /// Wraps BillingClient#launchBillingFlow(Activity, BillingFlowParams).
-  Future<PlatformBillingResult> launchBillingFlow(PlatformBillingFlowParams params) async {
-    const String __pigeon_channelName = 'dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.launchBillingFlow';
-    final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<Object?>(
+  Future<PlatformBillingResult> launchBillingFlow(
+      PlatformBillingFlowParams params) async {
+    const String __pigeon_channelName =
+        'dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.launchBillingFlow';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
       __pigeon_channelName,
       pigeonChannelCodec,
       binaryMessenger: __pigeon_binaryMessenger,
@@ -957,9 +982,12 @@ class InAppPurchaseApi {
   }
 
   /// Wraps BillingClient#acknowledgePurchase(AcknowledgePurchaseParams, AcknowledgePurchaseResponseListener).
-  Future<PlatformBillingResult> acknowledgePurchase(String purchaseToken) async {
-    const String __pigeon_channelName = 'dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.acknowledgePurchase';
-    final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<Object?>(
+  Future<PlatformBillingResult> acknowledgePurchase(
+      String purchaseToken) async {
+    const String __pigeon_channelName =
+        'dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.acknowledgePurchase';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
       __pigeon_channelName,
       pigeonChannelCodec,
       binaryMessenger: __pigeon_binaryMessenger,
@@ -986,8 +1014,10 @@ class InAppPurchaseApi {
 
   /// Wraps BillingClient#consumeAsync(ConsumeParams, ConsumeResponseListener).
   Future<PlatformBillingResult> consumeAsync(String purchaseToken) async {
-    const String __pigeon_channelName = 'dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.consumeAsync';
-    final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<Object?>(
+    const String __pigeon_channelName =
+        'dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.consumeAsync';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
       __pigeon_channelName,
       pigeonChannelCodec,
       binaryMessenger: __pigeon_binaryMessenger,
@@ -1013,15 +1043,18 @@ class InAppPurchaseApi {
   }
 
   /// Wraps BillingClient#queryPurchasesAsync(QueryPurchaseParams, PurchaseResponseListener).
-  Future<PlatformPurchasesResponse> queryPurchasesAsync(PlatformProductType productType) async {
-    const String __pigeon_channelName = 'dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.queryPurchasesAsync';
-    final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<Object?>(
+  Future<PlatformPurchasesResponse> queryPurchasesAsync(
+      PlatformProductType productType) async {
+    const String __pigeon_channelName =
+        'dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.queryPurchasesAsync';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
       __pigeon_channelName,
       pigeonChannelCodec,
       binaryMessenger: __pigeon_binaryMessenger,
     );
-    final List<Object?>? __pigeon_replyList =
-        await __pigeon_channel.send(<Object?>[productType.index]) as List<Object?>?;
+    final List<Object?>? __pigeon_replyList = await __pigeon_channel
+        .send(<Object?>[productType.index]) as List<Object?>?;
     if (__pigeon_replyList == null) {
       throw _createConnectionError(__pigeon_channelName);
     } else if (__pigeon_replyList.length > 1) {
@@ -1041,15 +1074,18 @@ class InAppPurchaseApi {
   }
 
   /// Wraps BillingClient#queryPurchaseHistoryAsync(QueryPurchaseHistoryParams, PurchaseHistoryResponseListener).
-  Future<PlatformPurchaseHistoryResponse> queryPurchaseHistoryAsync(PlatformProductType productType) async {
-    const String __pigeon_channelName = 'dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.queryPurchaseHistoryAsync';
-    final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<Object?>(
+  Future<PlatformPurchaseHistoryResponse> queryPurchaseHistoryAsync(
+      PlatformProductType productType) async {
+    const String __pigeon_channelName =
+        'dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.queryPurchaseHistoryAsync';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
       __pigeon_channelName,
       pigeonChannelCodec,
       binaryMessenger: __pigeon_binaryMessenger,
     );
-    final List<Object?>? __pigeon_replyList =
-        await __pigeon_channel.send(<Object?>[productType.index]) as List<Object?>?;
+    final List<Object?>? __pigeon_replyList = await __pigeon_channel
+        .send(<Object?>[productType.index]) as List<Object?>?;
     if (__pigeon_replyList == null) {
       throw _createConnectionError(__pigeon_channelName);
     } else if (__pigeon_replyList.length > 1) {
@@ -1069,9 +1105,12 @@ class InAppPurchaseApi {
   }
 
   /// Wraps BillingClient#queryProductDetailsAsync(QueryProductDetailsParams, ProductDetailsResponseListener).
-  Future<PlatformProductDetailsResponse> queryProductDetailsAsync(List<PlatformQueryProduct?> products) async {
-    const String __pigeon_channelName = 'dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.queryProductDetailsAsync';
-    final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<Object?>(
+  Future<PlatformProductDetailsResponse> queryProductDetailsAsync(
+      List<PlatformQueryProduct?> products) async {
+    const String __pigeon_channelName =
+        'dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.queryProductDetailsAsync';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
       __pigeon_channelName,
       pigeonChannelCodec,
       binaryMessenger: __pigeon_binaryMessenger,
@@ -1098,8 +1137,10 @@ class InAppPurchaseApi {
 
   /// Wraps BillingClient#isFeatureSupported(String).
   Future<bool> isFeatureSupported(String feature) async {
-    const String __pigeon_channelName = 'dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.isFeatureSupported';
-    final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<Object?>(
+    const String __pigeon_channelName =
+        'dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.isFeatureSupported';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
       __pigeon_channelName,
       pigeonChannelCodec,
       binaryMessenger: __pigeon_binaryMessenger,
@@ -1126,8 +1167,10 @@ class InAppPurchaseApi {
 
   /// Wraps BillingClient#isAlternativeBillingOnlyAvailableAsync().
   Future<PlatformBillingResult> isAlternativeBillingOnlyAvailableAsync() async {
-    const String __pigeon_channelName = 'dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.isAlternativeBillingOnlyAvailableAsync';
-    final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<Object?>(
+    const String __pigeon_channelName =
+        'dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.isAlternativeBillingOnlyAvailableAsync';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
       __pigeon_channelName,
       pigeonChannelCodec,
       binaryMessenger: __pigeon_binaryMessenger,
@@ -1153,9 +1196,12 @@ class InAppPurchaseApi {
   }
 
   /// Wraps BillingClient#showAlternativeBillingOnlyInformationDialog().
-  Future<PlatformBillingResult> showAlternativeBillingOnlyInformationDialog() async {
-    const String __pigeon_channelName = 'dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.showAlternativeBillingOnlyInformationDialog';
-    final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<Object?>(
+  Future<PlatformBillingResult>
+      showAlternativeBillingOnlyInformationDialog() async {
+    const String __pigeon_channelName =
+        'dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.showAlternativeBillingOnlyInformationDialog';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
       __pigeon_channelName,
       pigeonChannelCodec,
       binaryMessenger: __pigeon_binaryMessenger,
@@ -1181,9 +1227,12 @@ class InAppPurchaseApi {
   }
 
   /// Wraps BillingClient#createAlternativeBillingOnlyReportingDetailsAsync(AlternativeBillingOnlyReportingDetailsListener).
-  Future<PlatformAlternativeBillingOnlyReportingDetailsResponse> createAlternativeBillingOnlyReportingDetailsAsync() async {
-    const String __pigeon_channelName = 'dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.createAlternativeBillingOnlyReportingDetailsAsync';
-    final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<Object?>(
+  Future<PlatformAlternativeBillingOnlyReportingDetailsResponse>
+      createAlternativeBillingOnlyReportingDetailsAsync() async {
+    const String __pigeon_channelName =
+        'dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.createAlternativeBillingOnlyReportingDetailsAsync';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
       __pigeon_channelName,
       pigeonChannelCodec,
       binaryMessenger: __pigeon_binaryMessenger,
@@ -1204,7 +1253,8 @@ class InAppPurchaseApi {
         message: 'Host platform returned null value for non-null return value.',
       );
     } else {
-      return (__pigeon_replyList[0] as PlatformAlternativeBillingOnlyReportingDetailsResponse?)!;
+      return (__pigeon_replyList[0]
+          as PlatformAlternativeBillingOnlyReportingDetailsResponse?)!;
     }
   }
 }
@@ -1239,17 +1289,17 @@ class _InAppPurchaseCallbackApiCodec extends StandardMessageCodec {
   @override
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
-      case 128: 
+      case 128:
         return PlatformAccountIdentifiers.decode(readValue(buffer)!);
-      case 129: 
+      case 129:
         return PlatformBillingResult.decode(readValue(buffer)!);
-      case 130: 
+      case 130:
         return PlatformPurchase.decode(readValue(buffer)!);
-      case 131: 
+      case 131:
         return PlatformPurchasesResponse.decode(readValue(buffer)!);
-      case 132: 
+      case 132:
         return PlatformUserChoiceDetails.decode(readValue(buffer)!);
-      case 133: 
+      case 133:
         return PlatformUserChoiceProduct.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
@@ -1258,7 +1308,8 @@ class _InAppPurchaseCallbackApiCodec extends StandardMessageCodec {
 }
 
 abstract class InAppPurchaseCallbackApi {
-  static const MessageCodec<Object?> pigeonChannelCodec = _InAppPurchaseCallbackApiCodec();
+  static const MessageCodec<Object?> pigeonChannelCodec =
+      _InAppPurchaseCallbackApiCodec();
 
   /// Called for BillingClientStateListener#onBillingServiceDisconnected().
   void onBillingServiceDisconnected(int callbackHandle);
@@ -1269,17 +1320,20 @@ abstract class InAppPurchaseCallbackApi {
   /// Called for UserChoiceBillingListener#userSelectedAlternativeBilling(UserChoiceDetails).
   void userSelectedalternativeBilling(PlatformUserChoiceDetails details);
 
-  static void setup(InAppPurchaseCallbackApi? api, {BinaryMessenger? binaryMessenger}) {
+  static void setup(InAppPurchaseCallbackApi? api,
+      {BinaryMessenger? binaryMessenger}) {
     {
-      final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseCallbackApi.onBillingServiceDisconnected', pigeonChannelCodec,
+      final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
+              Object?>(
+          'dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseCallbackApi.onBillingServiceDisconnected',
+          pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
         __pigeon_channel.setMessageHandler(null);
       } else {
         __pigeon_channel.setMessageHandler((Object? message) async {
           assert(message != null,
-          'Argument for dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseCallbackApi.onBillingServiceDisconnected was null.');
+              'Argument for dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseCallbackApi.onBillingServiceDisconnected was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final int? arg_callbackHandle = (args[0] as int?);
           assert(arg_callbackHandle != null,
@@ -1289,24 +1343,28 @@ abstract class InAppPurchaseCallbackApi {
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
-          }          catch (e) {
-            return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
           }
         });
       }
     }
     {
-      final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseCallbackApi.onPurchasesUpdated', pigeonChannelCodec,
+      final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
+              Object?>(
+          'dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseCallbackApi.onPurchasesUpdated',
+          pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
         __pigeon_channel.setMessageHandler(null);
       } else {
         __pigeon_channel.setMessageHandler((Object? message) async {
           assert(message != null,
-          'Argument for dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseCallbackApi.onPurchasesUpdated was null.');
+              'Argument for dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseCallbackApi.onPurchasesUpdated was null.');
           final List<Object?> args = (message as List<Object?>?)!;
-          final PlatformPurchasesResponse? arg_update = (args[0] as PlatformPurchasesResponse?);
+          final PlatformPurchasesResponse? arg_update =
+              (args[0] as PlatformPurchasesResponse?);
           assert(arg_update != null,
               'Argument for dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseCallbackApi.onPurchasesUpdated was null, expected non-null PlatformPurchasesResponse.');
           try {
@@ -1314,24 +1372,28 @@ abstract class InAppPurchaseCallbackApi {
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
-          }          catch (e) {
-            return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
           }
         });
       }
     }
     {
-      final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseCallbackApi.userSelectedalternativeBilling', pigeonChannelCodec,
+      final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
+              Object?>(
+          'dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseCallbackApi.userSelectedalternativeBilling',
+          pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
         __pigeon_channel.setMessageHandler(null);
       } else {
         __pigeon_channel.setMessageHandler((Object? message) async {
           assert(message != null,
-          'Argument for dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseCallbackApi.userSelectedalternativeBilling was null.');
+              'Argument for dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseCallbackApi.userSelectedalternativeBilling was null.');
           final List<Object?> args = (message as List<Object?>?)!;
-          final PlatformUserChoiceDetails? arg_details = (args[0] as PlatformUserChoiceDetails?);
+          final PlatformUserChoiceDetails? arg_details =
+              (args[0] as PlatformUserChoiceDetails?);
           assert(arg_details != null,
               'Argument for dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseCallbackApi.userSelectedalternativeBilling was null, expected non-null PlatformUserChoiceDetails.');
           try {
@@ -1339,8 +1401,9 @@ abstract class InAppPurchaseCallbackApi {
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
-          }          catch (e) {
-            return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
           }
         });
       }

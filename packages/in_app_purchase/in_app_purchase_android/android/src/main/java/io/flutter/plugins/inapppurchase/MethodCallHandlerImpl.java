@@ -18,11 +18,9 @@ import android.app.Application;
 import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
-
 import com.android.billingclient.api.AcknowledgePurchaseParams;
 import com.android.billingclient.api.BillingClient;
 import com.android.billingclient.api.BillingClientStateListener;
@@ -35,7 +33,6 @@ import com.android.billingclient.api.ProductDetails;
 import com.android.billingclient.api.QueryProductDetailsParams;
 import com.android.billingclient.api.QueryPurchaseHistoryParams;
 import com.android.billingclient.api.QueryPurchasesParams;
-
 import io.flutter.plugins.inapppurchase.Messages.FlutterError;
 import io.flutter.plugins.inapppurchase.Messages.InAppPurchaseApi;
 import io.flutter.plugins.inapppurchase.Messages.InAppPurchaseCallbackApi;
@@ -48,7 +45,6 @@ import io.flutter.plugins.inapppurchase.Messages.PlatformPurchaseHistoryResponse
 import io.flutter.plugins.inapppurchase.Messages.PlatformPurchasesResponse;
 import io.flutter.plugins.inapppurchase.Messages.PlatformQueryProduct;
 import io.flutter.plugins.inapppurchase.Messages.Result;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

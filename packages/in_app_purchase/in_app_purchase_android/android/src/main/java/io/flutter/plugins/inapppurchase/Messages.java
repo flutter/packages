@@ -21,11 +21,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /** Generated class from Pigeon. */
 @SuppressWarnings({"unused", "unchecked", "CodeBlock2Expr", "RedundantSuppression", "serial"})
@@ -40,8 +37,7 @@ public class Messages {
     /** The error details. Must be a datatype supported by the api codec. */
     public final Object details;
 
-    public FlutterError(@NonNull String code, @Nullable String message, @Nullable Object details) 
-    {
+    public FlutterError(@NonNull String code, @Nullable String message, @Nullable Object details) {
       super(message);
       this.code = code;
       this.details = details;
@@ -60,14 +56,15 @@ public class Messages {
       errorList.add(exception.toString());
       errorList.add(exception.getClass().getSimpleName());
       errorList.add(
-        "Cause: " + exception.getCause() + ", Stacktrace: " + Log.getStackTraceString(exception));
+          "Cause: " + exception.getCause() + ", Stacktrace: " + Log.getStackTraceString(exception));
     }
     return errorList;
   }
 
   @NonNull
   protected static FlutterError createConnectionError(@NonNull String channelName) {
-    return new FlutterError("channel-error",  "Unable to establish connection on channel: " + channelName + ".", "");
+    return new FlutterError(
+        "channel-error", "Unable to establish connection on channel: " + channelName + ".", "");
   }
 
   @Target(METHOD)
@@ -91,7 +88,7 @@ public class Messages {
     /**
      * Billing through google play.
      *
-     * Default state.
+     * <p>Default state.
      */
     PLAY_BILLING_ONLY(0),
     /** Billing through app provided flow. */
@@ -135,7 +132,7 @@ public class Messages {
   /**
    * Pigeon version of Java QueryProductDetailsParams.Product.
    *
-   * Generated class from Pigeon that represents data sent in messages.
+   * <p>Generated class from Pigeon that represents data sent in messages.
    */
   public static final class PlatformQueryProduct {
     private @NonNull String productId;
@@ -214,7 +211,7 @@ public class Messages {
   /**
    * Pigeon version of Java AccountIdentifiers.
    *
-   * Generated class from Pigeon that represents data sent in messages.
+   * <p>Generated class from Pigeon that represents data sent in messages.
    */
   public static final class PlatformAccountIdentifiers {
     private @Nullable String obfuscatedAccountId;
@@ -284,7 +281,7 @@ public class Messages {
   /**
    * Pigeon version of Java BillingResult.
    *
-   * Generated class from Pigeon that represents data sent in messages.
+   * <p>Generated class from Pigeon that represents data sent in messages.
    */
   public static final class PlatformBillingResult {
     private @NonNull Long responseCode;
@@ -353,7 +350,10 @@ public class Messages {
     static @NonNull PlatformBillingResult fromList(@NonNull ArrayList<Object> list) {
       PlatformBillingResult pigeonResult = new PlatformBillingResult();
       Object responseCode = list.get(0);
-      pigeonResult.setResponseCode((responseCode == null) ? null : ((responseCode instanceof Integer) ? (Integer) responseCode : (Long) responseCode));
+      pigeonResult.setResponseCode(
+          (responseCode == null)
+              ? null
+              : ((responseCode instanceof Integer) ? (Integer) responseCode : (Long) responseCode));
       Object debugMessage = list.get(1);
       pigeonResult.setDebugMessage((String) debugMessage);
       return pigeonResult;
@@ -363,7 +363,7 @@ public class Messages {
   /**
    * Pigeon version of Java ProductDetails.OneTimePurchaseOfferDetails.
    *
-   * Generated class from Pigeon that represents data sent in messages.
+   * <p>Generated class from Pigeon that represents data sent in messages.
    */
   public static final class PlatformOneTimePurchaseOfferDetails {
     private @NonNull Long priceAmountMicros;
@@ -435,7 +435,8 @@ public class Messages {
       }
 
       public @NonNull PlatformOneTimePurchaseOfferDetails build() {
-        PlatformOneTimePurchaseOfferDetails pigeonReturn = new PlatformOneTimePurchaseOfferDetails();
+        PlatformOneTimePurchaseOfferDetails pigeonReturn =
+            new PlatformOneTimePurchaseOfferDetails();
         pigeonReturn.setPriceAmountMicros(priceAmountMicros);
         pigeonReturn.setFormattedPrice(formattedPrice);
         pigeonReturn.setPriceCurrencyCode(priceCurrencyCode);
@@ -455,7 +456,12 @@ public class Messages {
     static @NonNull PlatformOneTimePurchaseOfferDetails fromList(@NonNull ArrayList<Object> list) {
       PlatformOneTimePurchaseOfferDetails pigeonResult = new PlatformOneTimePurchaseOfferDetails();
       Object priceAmountMicros = list.get(0);
-      pigeonResult.setPriceAmountMicros((priceAmountMicros == null) ? null : ((priceAmountMicros instanceof Integer) ? (Integer) priceAmountMicros : (Long) priceAmountMicros));
+      pigeonResult.setPriceAmountMicros(
+          (priceAmountMicros == null)
+              ? null
+              : ((priceAmountMicros instanceof Integer)
+                  ? (Integer) priceAmountMicros
+                  : (Long) priceAmountMicros));
       Object formattedPrice = list.get(1);
       pigeonResult.setFormattedPrice((String) formattedPrice);
       Object priceCurrencyCode = list.get(2);
@@ -467,7 +473,7 @@ public class Messages {
   /**
    * Pigeon version of Java ProductDetails.
    *
-   * Generated class from Pigeon that represents data sent in messages.
+   * <p>Generated class from Pigeon that represents data sent in messages.
    */
   public static final class PlatformProductDetails {
     private @NonNull String description;
@@ -541,7 +547,8 @@ public class Messages {
       return oneTimePurchaseOfferDetails;
     }
 
-    public void setOneTimePurchaseOfferDetails(@Nullable PlatformOneTimePurchaseOfferDetails setterArg) {
+    public void setOneTimePurchaseOfferDetails(
+        @Nullable PlatformOneTimePurchaseOfferDetails setterArg) {
       this.oneTimePurchaseOfferDetails = setterArg;
     }
 
@@ -551,7 +558,8 @@ public class Messages {
       return subscriptionOfferDetails;
     }
 
-    public void setSubscriptionOfferDetails(@Nullable List<PlatformSubscriptionOfferDetails> setterArg) {
+    public void setSubscriptionOfferDetails(
+        @Nullable List<PlatformSubscriptionOfferDetails> setterArg) {
       this.subscriptionOfferDetails = setterArg;
     }
 
@@ -603,7 +611,8 @@ public class Messages {
       private @Nullable PlatformOneTimePurchaseOfferDetails oneTimePurchaseOfferDetails;
 
       @CanIgnoreReturnValue
-      public @NonNull Builder setOneTimePurchaseOfferDetails(@Nullable PlatformOneTimePurchaseOfferDetails setterArg) {
+      public @NonNull Builder setOneTimePurchaseOfferDetails(
+          @Nullable PlatformOneTimePurchaseOfferDetails setterArg) {
         this.oneTimePurchaseOfferDetails = setterArg;
         return this;
       }
@@ -611,7 +620,8 @@ public class Messages {
       private @Nullable List<PlatformSubscriptionOfferDetails> subscriptionOfferDetails;
 
       @CanIgnoreReturnValue
-      public @NonNull Builder setSubscriptionOfferDetails(@Nullable List<PlatformSubscriptionOfferDetails> setterArg) {
+      public @NonNull Builder setSubscriptionOfferDetails(
+          @Nullable List<PlatformSubscriptionOfferDetails> setterArg) {
         this.subscriptionOfferDetails = setterArg;
         return this;
       }
@@ -637,7 +647,8 @@ public class Messages {
       toListResult.add(productId);
       toListResult.add(productType == null ? null : productType.index);
       toListResult.add(title);
-      toListResult.add((oneTimePurchaseOfferDetails == null) ? null : oneTimePurchaseOfferDetails.toList());
+      toListResult.add(
+          (oneTimePurchaseOfferDetails == null) ? null : oneTimePurchaseOfferDetails.toList());
       toListResult.add(subscriptionOfferDetails);
       return toListResult;
     }
@@ -655,18 +666,23 @@ public class Messages {
       Object title = list.get(4);
       pigeonResult.setTitle((String) title);
       Object oneTimePurchaseOfferDetails = list.get(5);
-      pigeonResult.setOneTimePurchaseOfferDetails((oneTimePurchaseOfferDetails == null) ? null : PlatformOneTimePurchaseOfferDetails.fromList((ArrayList<Object>) oneTimePurchaseOfferDetails));
+      pigeonResult.setOneTimePurchaseOfferDetails(
+          (oneTimePurchaseOfferDetails == null)
+              ? null
+              : PlatformOneTimePurchaseOfferDetails.fromList(
+                  (ArrayList<Object>) oneTimePurchaseOfferDetails));
       Object subscriptionOfferDetails = list.get(6);
-      pigeonResult.setSubscriptionOfferDetails((List<PlatformSubscriptionOfferDetails>) subscriptionOfferDetails);
+      pigeonResult.setSubscriptionOfferDetails(
+          (List<PlatformSubscriptionOfferDetails>) subscriptionOfferDetails);
       return pigeonResult;
     }
   }
 
   /**
-   * Pigeon version of ProductDetailsResponseWrapper, which contains the
-   * components of the Java ProductDetailsResponseListener callback.
+   * Pigeon version of ProductDetailsResponseWrapper, which contains the components of the Java
+   * ProductDetailsResponseListener callback.
    *
-   * Generated class from Pigeon that represents data sent in messages.
+   * <p>Generated class from Pigeon that represents data sent in messages.
    */
   public static final class PlatformProductDetailsResponse {
     private @NonNull PlatformBillingResult billingResult;
@@ -735,7 +751,10 @@ public class Messages {
     static @NonNull PlatformProductDetailsResponse fromList(@NonNull ArrayList<Object> list) {
       PlatformProductDetailsResponse pigeonResult = new PlatformProductDetailsResponse();
       Object billingResult = list.get(0);
-      pigeonResult.setBillingResult((billingResult == null) ? null : PlatformBillingResult.fromList((ArrayList<Object>) billingResult));
+      pigeonResult.setBillingResult(
+          (billingResult == null)
+              ? null
+              : PlatformBillingResult.fromList((ArrayList<Object>) billingResult));
       Object productDetails = list.get(1);
       pigeonResult.setProductDetails((List<PlatformProductDetails>) productDetails);
       return pigeonResult;
@@ -743,11 +762,10 @@ public class Messages {
   }
 
   /**
-   * Pigeon version of AlternativeBillingOnlyReportingDetailsWrapper, which
-   * contains the components of the Java
-   * AlternativeBillingOnlyReportingDetailsListener callback.
+   * Pigeon version of AlternativeBillingOnlyReportingDetailsWrapper, which contains the components
+   * of the Java AlternativeBillingOnlyReportingDetailsListener callback.
    *
-   * Generated class from Pigeon that represents data sent in messages.
+   * <p>Generated class from Pigeon that represents data sent in messages.
    */
   public static final class PlatformAlternativeBillingOnlyReportingDetailsResponse {
     private @NonNull PlatformBillingResult billingResult;
@@ -798,7 +816,8 @@ public class Messages {
       }
 
       public @NonNull PlatformAlternativeBillingOnlyReportingDetailsResponse build() {
-        PlatformAlternativeBillingOnlyReportingDetailsResponse pigeonReturn = new PlatformAlternativeBillingOnlyReportingDetailsResponse();
+        PlatformAlternativeBillingOnlyReportingDetailsResponse pigeonReturn =
+            new PlatformAlternativeBillingOnlyReportingDetailsResponse();
         pigeonReturn.setBillingResult(billingResult);
         pigeonReturn.setExternalTransactionToken(externalTransactionToken);
         return pigeonReturn;
@@ -813,10 +832,15 @@ public class Messages {
       return toListResult;
     }
 
-    static @NonNull PlatformAlternativeBillingOnlyReportingDetailsResponse fromList(@NonNull ArrayList<Object> list) {
-      PlatformAlternativeBillingOnlyReportingDetailsResponse pigeonResult = new PlatformAlternativeBillingOnlyReportingDetailsResponse();
+    static @NonNull PlatformAlternativeBillingOnlyReportingDetailsResponse fromList(
+        @NonNull ArrayList<Object> list) {
+      PlatformAlternativeBillingOnlyReportingDetailsResponse pigeonResult =
+          new PlatformAlternativeBillingOnlyReportingDetailsResponse();
       Object billingResult = list.get(0);
-      pigeonResult.setBillingResult((billingResult == null) ? null : PlatformBillingResult.fromList((ArrayList<Object>) billingResult));
+      pigeonResult.setBillingResult(
+          (billingResult == null)
+              ? null
+              : PlatformBillingResult.fromList((ArrayList<Object>) billingResult));
       Object externalTransactionToken = list.get(1);
       pigeonResult.setExternalTransactionToken((String) externalTransactionToken);
       return pigeonResult;
@@ -824,10 +848,10 @@ public class Messages {
   }
 
   /**
-   * Pigeon version of BillingConfigWrapper, which contains the components of the
-   * Java BillingConfigResponseListener callback.
+   * Pigeon version of BillingConfigWrapper, which contains the components of the Java
+   * BillingConfigResponseListener callback.
    *
-   * Generated class from Pigeon that represents data sent in messages.
+   * <p>Generated class from Pigeon that represents data sent in messages.
    */
   public static final class PlatformBillingConfigResponse {
     private @NonNull PlatformBillingResult billingResult;
@@ -896,7 +920,10 @@ public class Messages {
     static @NonNull PlatformBillingConfigResponse fromList(@NonNull ArrayList<Object> list) {
       PlatformBillingConfigResponse pigeonResult = new PlatformBillingConfigResponse();
       Object billingResult = list.get(0);
-      pigeonResult.setBillingResult((billingResult == null) ? null : PlatformBillingResult.fromList((ArrayList<Object>) billingResult));
+      pigeonResult.setBillingResult(
+          (billingResult == null)
+              ? null
+              : PlatformBillingResult.fromList((ArrayList<Object>) billingResult));
       Object countryCode = list.get(1);
       pigeonResult.setCountryCode((String) countryCode);
       return pigeonResult;
@@ -906,7 +933,7 @@ public class Messages {
   /**
    * Pigeon version of Java BillingFlowParams.
    *
-   * Generated class from Pigeon that represents data sent in messages.
+   * <p>Generated class from Pigeon that represents data sent in messages.
    */
   public static final class PlatformBillingFlowParams {
     private @NonNull String product;
@@ -1100,9 +1127,19 @@ public class Messages {
       Object product = list.get(0);
       pigeonResult.setProduct((String) product);
       Object prorationMode = list.get(1);
-      pigeonResult.setProrationMode((prorationMode == null) ? null : ((prorationMode instanceof Integer) ? (Integer) prorationMode : (Long) prorationMode));
+      pigeonResult.setProrationMode(
+          (prorationMode == null)
+              ? null
+              : ((prorationMode instanceof Integer)
+                  ? (Integer) prorationMode
+                  : (Long) prorationMode));
       Object replacementMode = list.get(2);
-      pigeonResult.setReplacementMode((replacementMode == null) ? null : ((replacementMode instanceof Integer) ? (Integer) replacementMode : (Long) replacementMode));
+      pigeonResult.setReplacementMode(
+          (replacementMode == null)
+              ? null
+              : ((replacementMode instanceof Integer)
+                  ? (Integer) replacementMode
+                  : (Long) replacementMode));
       Object offerToken = list.get(3);
       pigeonResult.setOfferToken((String) offerToken);
       Object accountId = list.get(4);
@@ -1120,7 +1157,7 @@ public class Messages {
   /**
    * Pigeon version of Java ProductDetails.PricingPhase.
    *
-   * Generated class from Pigeon that represents data sent in messages.
+   * <p>Generated class from Pigeon that represents data sent in messages.
    */
   public static final class PlatformPricingPhase {
     private @NonNull Long billingCycleCount;
@@ -1281,11 +1318,21 @@ public class Messages {
     static @NonNull PlatformPricingPhase fromList(@NonNull ArrayList<Object> list) {
       PlatformPricingPhase pigeonResult = new PlatformPricingPhase();
       Object billingCycleCount = list.get(0);
-      pigeonResult.setBillingCycleCount((billingCycleCount == null) ? null : ((billingCycleCount instanceof Integer) ? (Integer) billingCycleCount : (Long) billingCycleCount));
+      pigeonResult.setBillingCycleCount(
+          (billingCycleCount == null)
+              ? null
+              : ((billingCycleCount instanceof Integer)
+                  ? (Integer) billingCycleCount
+                  : (Long) billingCycleCount));
       Object recurrenceMode = list.get(1);
       pigeonResult.setRecurrenceMode(PlatformRecurrenceMode.values()[(int) recurrenceMode]);
       Object priceAmountMicros = list.get(2);
-      pigeonResult.setPriceAmountMicros((priceAmountMicros == null) ? null : ((priceAmountMicros instanceof Integer) ? (Integer) priceAmountMicros : (Long) priceAmountMicros));
+      pigeonResult.setPriceAmountMicros(
+          (priceAmountMicros == null)
+              ? null
+              : ((priceAmountMicros instanceof Integer)
+                  ? (Integer) priceAmountMicros
+                  : (Long) priceAmountMicros));
       Object billingPeriod = list.get(3);
       pigeonResult.setBillingPeriod((String) billingPeriod);
       Object formattedPrice = list.get(4);
@@ -1299,9 +1346,9 @@ public class Messages {
   /**
    * Pigeon version of Java Purchase.
    *
-   * See also PurchaseWrapper on the Dart side.
+   * <p>See also PurchaseWrapper on the Dart side.
    *
-   * Generated class from Pigeon that represents data sent in messages.
+   * <p>Generated class from Pigeon that represents data sent in messages.
    */
   public static final class PlatformPurchase {
     private @Nullable String orderId;
@@ -1571,7 +1618,8 @@ public class Messages {
       private @Nullable PlatformAccountIdentifiers accountIdentifiers;
 
       @CanIgnoreReturnValue
-      public @NonNull Builder setAccountIdentifiers(@Nullable PlatformAccountIdentifiers setterArg) {
+      public @NonNull Builder setAccountIdentifiers(
+          @Nullable PlatformAccountIdentifiers setterArg) {
         this.accountIdentifiers = setterArg;
         return this;
       }
@@ -1621,7 +1669,10 @@ public class Messages {
       Object packageName = list.get(1);
       pigeonResult.setPackageName((String) packageName);
       Object purchaseTime = list.get(2);
-      pigeonResult.setPurchaseTime((purchaseTime == null) ? null : ((purchaseTime instanceof Integer) ? (Integer) purchaseTime : (Long) purchaseTime));
+      pigeonResult.setPurchaseTime(
+          (purchaseTime == null)
+              ? null
+              : ((purchaseTime instanceof Integer) ? (Integer) purchaseTime : (Long) purchaseTime));
       Object purchaseToken = list.get(3);
       pigeonResult.setPurchaseToken((String) purchaseToken);
       Object signature = list.get(4);
@@ -1637,11 +1688,17 @@ public class Messages {
       Object isAcknowledged = list.get(9);
       pigeonResult.setIsAcknowledged((Boolean) isAcknowledged);
       Object quantity = list.get(10);
-      pigeonResult.setQuantity((quantity == null) ? null : ((quantity instanceof Integer) ? (Integer) quantity : (Long) quantity));
+      pigeonResult.setQuantity(
+          (quantity == null)
+              ? null
+              : ((quantity instanceof Integer) ? (Integer) quantity : (Long) quantity));
       Object purchaseState = list.get(11);
       pigeonResult.setPurchaseState(PlatformPurchaseState.values()[(int) purchaseState]);
       Object accountIdentifiers = list.get(12);
-      pigeonResult.setAccountIdentifiers((accountIdentifiers == null) ? null : PlatformAccountIdentifiers.fromList((ArrayList<Object>) accountIdentifiers));
+      pigeonResult.setAccountIdentifiers(
+          (accountIdentifiers == null)
+              ? null
+              : PlatformAccountIdentifiers.fromList((ArrayList<Object>) accountIdentifiers));
       return pigeonResult;
     }
   }
@@ -1649,9 +1706,9 @@ public class Messages {
   /**
    * Pigeon version of PurchaseHistoryRecord.
    *
-   * See also PurchaseHistoryRecordWrapper on the Dart side.
+   * <p>See also PurchaseHistoryRecordWrapper on the Dart side.
    *
-   * Generated class from Pigeon that represents data sent in messages.
+   * <p>Generated class from Pigeon that represents data sent in messages.
    */
   public static final class PlatformPurchaseHistoryRecord {
     private @NonNull Long quantity;
@@ -1832,9 +1889,15 @@ public class Messages {
     static @NonNull PlatformPurchaseHistoryRecord fromList(@NonNull ArrayList<Object> list) {
       PlatformPurchaseHistoryRecord pigeonResult = new PlatformPurchaseHistoryRecord();
       Object quantity = list.get(0);
-      pigeonResult.setQuantity((quantity == null) ? null : ((quantity instanceof Integer) ? (Integer) quantity : (Long) quantity));
+      pigeonResult.setQuantity(
+          (quantity == null)
+              ? null
+              : ((quantity instanceof Integer) ? (Integer) quantity : (Long) quantity));
       Object purchaseTime = list.get(1);
-      pigeonResult.setPurchaseTime((purchaseTime == null) ? null : ((purchaseTime instanceof Integer) ? (Integer) purchaseTime : (Long) purchaseTime));
+      pigeonResult.setPurchaseTime(
+          (purchaseTime == null)
+              ? null
+              : ((purchaseTime instanceof Integer) ? (Integer) purchaseTime : (Long) purchaseTime));
       Object developerPayload = list.get(2);
       pigeonResult.setDeveloperPayload((String) developerPayload);
       Object originalJson = list.get(3);
@@ -1850,10 +1913,10 @@ public class Messages {
   }
 
   /**
-   * Pigeon version of PurchasesHistoryResult, which contains the components of
-   * the Java PurchaseHistoryResponseListener callback.
+   * Pigeon version of PurchasesHistoryResult, which contains the components of the Java
+   * PurchaseHistoryResponseListener callback.
    *
-   * Generated class from Pigeon that represents data sent in messages.
+   * <p>Generated class from Pigeon that represents data sent in messages.
    */
   public static final class PlatformPurchaseHistoryResponse {
     private @NonNull PlatformBillingResult billingResult;
@@ -1922,7 +1985,10 @@ public class Messages {
     static @NonNull PlatformPurchaseHistoryResponse fromList(@NonNull ArrayList<Object> list) {
       PlatformPurchaseHistoryResponse pigeonResult = new PlatformPurchaseHistoryResponse();
       Object billingResult = list.get(0);
-      pigeonResult.setBillingResult((billingResult == null) ? null : PlatformBillingResult.fromList((ArrayList<Object>) billingResult));
+      pigeonResult.setBillingResult(
+          (billingResult == null)
+              ? null
+              : PlatformBillingResult.fromList((ArrayList<Object>) billingResult));
       Object purchases = list.get(1);
       pigeonResult.setPurchases((List<PlatformPurchaseHistoryRecord>) purchases);
       return pigeonResult;
@@ -1930,10 +1996,10 @@ public class Messages {
   }
 
   /**
-   * Pigeon version of PurchasesResultWrapper, which contains the components of
-   * the Java PurchasesResponseListener callback.
+   * Pigeon version of PurchasesResultWrapper, which contains the components of the Java
+   * PurchasesResponseListener callback.
    *
-   * Generated class from Pigeon that represents data sent in messages.
+   * <p>Generated class from Pigeon that represents data sent in messages.
    */
   public static final class PlatformPurchasesResponse {
     private @NonNull PlatformBillingResult billingResult;
@@ -2002,7 +2068,10 @@ public class Messages {
     static @NonNull PlatformPurchasesResponse fromList(@NonNull ArrayList<Object> list) {
       PlatformPurchasesResponse pigeonResult = new PlatformPurchasesResponse();
       Object billingResult = list.get(0);
-      pigeonResult.setBillingResult((billingResult == null) ? null : PlatformBillingResult.fromList((ArrayList<Object>) billingResult));
+      pigeonResult.setBillingResult(
+          (billingResult == null)
+              ? null
+              : PlatformBillingResult.fromList((ArrayList<Object>) billingResult));
       Object purchases = list.get(1);
       pigeonResult.setPurchases((List<PlatformPurchase>) purchases);
       return pigeonResult;
@@ -2012,7 +2081,7 @@ public class Messages {
   /**
    * Pigeon version of Java ProductDetails.SubscriptionOfferDetails.
    *
-   * Generated class from Pigeon that represents data sent in messages.
+   * <p>Generated class from Pigeon that represents data sent in messages.
    */
   public static final class PlatformSubscriptionOfferDetails {
     private @NonNull String basePlanId;
@@ -2163,7 +2232,7 @@ public class Messages {
   /**
    * Pigeon version of UserChoiceDetailsWrapper and Java UserChoiceDetails.
    *
-   * Generated class from Pigeon that represents data sent in messages.
+   * <p>Generated class from Pigeon that represents data sent in messages.
    */
   public static final class PlatformUserChoiceDetails {
     private @Nullable String originalExternalTransactionId;
@@ -2264,7 +2333,7 @@ public class Messages {
   /**
    * Pigeon version of UserChoiseDetails.Product.
    *
-   * Generated class from Pigeon that represents data sent in messages.
+   * <p>Generated class from Pigeon that represents data sent in messages.
    */
   public static final class PlatformUserChoiceProduct {
     private @NonNull String id;
@@ -2398,7 +2467,8 @@ public class Messages {
         case (byte) 128:
           return PlatformAccountIdentifiers.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 129:
-          return PlatformAlternativeBillingOnlyReportingDetailsResponse.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformAlternativeBillingOnlyReportingDetailsResponse.fromList(
+              (ArrayList<Object>) readValue(buffer));
         case (byte) 130:
           return PlatformBillingConfigResponse.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 131:
@@ -2406,7 +2476,8 @@ public class Messages {
         case (byte) 132:
           return PlatformBillingResult.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 133:
-          return PlatformOneTimePurchaseOfferDetails.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformOneTimePurchaseOfferDetails.fromList(
+              (ArrayList<Object>) readValue(buffer));
         case (byte) 134:
           return PlatformPricingPhase.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 135:
@@ -2437,7 +2508,8 @@ public class Messages {
         writeValue(stream, ((PlatformAccountIdentifiers) value).toList());
       } else if (value instanceof PlatformAlternativeBillingOnlyReportingDetailsResponse) {
         stream.write(129);
-        writeValue(stream, ((PlatformAlternativeBillingOnlyReportingDetailsResponse) value).toList());
+        writeValue(
+            stream, ((PlatformAlternativeBillingOnlyReportingDetailsResponse) value).toList());
       } else if (value instanceof PlatformBillingConfigResponse) {
         stream.write(130);
         writeValue(stream, ((PlatformBillingConfigResponse) value).toList());
@@ -2486,47 +2558,77 @@ public class Messages {
   /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
   public interface InAppPurchaseApi {
     /** Wraps BillingClient#isReady. */
-    @NonNull 
+    @NonNull
     Boolean isReady();
     /** Wraps BillingClient#startConnection(BillingClientStateListener). */
-    void startConnection(@NonNull Long callbackHandle, @NonNull PlatformBillingChoiceMode billingMode, @NonNull Result<PlatformBillingResult> result);
+    void startConnection(
+        @NonNull Long callbackHandle,
+        @NonNull PlatformBillingChoiceMode billingMode,
+        @NonNull Result<PlatformBillingResult> result);
     /** Wraps BillingClient#endConnection(BillingClientStateListener). */
     void endConnection();
-    /** Wraps BillingClient#getBillingConfigAsync(GetBillingConfigParams, BillingConfigResponseListener). */
+    /**
+     * Wraps BillingClient#getBillingConfigAsync(GetBillingConfigParams,
+     * BillingConfigResponseListener).
+     */
     void getBillingConfigAsync(@NonNull Result<PlatformBillingConfigResponse> result);
     /** Wraps BillingClient#launchBillingFlow(Activity, BillingFlowParams). */
-    @NonNull 
+    @NonNull
     PlatformBillingResult launchBillingFlow(@NonNull PlatformBillingFlowParams params);
-    /** Wraps BillingClient#acknowledgePurchase(AcknowledgePurchaseParams, AcknowledgePurchaseResponseListener). */
-    void acknowledgePurchase(@NonNull String purchaseToken, @NonNull Result<PlatformBillingResult> result);
+    /**
+     * Wraps BillingClient#acknowledgePurchase(AcknowledgePurchaseParams,
+     * AcknowledgePurchaseResponseListener).
+     */
+    void acknowledgePurchase(
+        @NonNull String purchaseToken, @NonNull Result<PlatformBillingResult> result);
     /** Wraps BillingClient#consumeAsync(ConsumeParams, ConsumeResponseListener). */
     void consumeAsync(@NonNull String purchaseToken, @NonNull Result<PlatformBillingResult> result);
     /** Wraps BillingClient#queryPurchasesAsync(QueryPurchaseParams, PurchaseResponseListener). */
-    void queryPurchasesAsync(@NonNull PlatformProductType productType, @NonNull Result<PlatformPurchasesResponse> result);
-    /** Wraps BillingClient#queryPurchaseHistoryAsync(QueryPurchaseHistoryParams, PurchaseHistoryResponseListener). */
-    void queryPurchaseHistoryAsync(@NonNull PlatformProductType productType, @NonNull Result<PlatformPurchaseHistoryResponse> result);
-    /** Wraps BillingClient#queryProductDetailsAsync(QueryProductDetailsParams, ProductDetailsResponseListener). */
-    void queryProductDetailsAsync(@NonNull List<PlatformQueryProduct> products, @NonNull Result<PlatformProductDetailsResponse> result);
+    void queryPurchasesAsync(
+        @NonNull PlatformProductType productType,
+        @NonNull Result<PlatformPurchasesResponse> result);
+    /**
+     * Wraps BillingClient#queryPurchaseHistoryAsync(QueryPurchaseHistoryParams,
+     * PurchaseHistoryResponseListener).
+     */
+    void queryPurchaseHistoryAsync(
+        @NonNull PlatformProductType productType,
+        @NonNull Result<PlatformPurchaseHistoryResponse> result);
+    /**
+     * Wraps BillingClient#queryProductDetailsAsync(QueryProductDetailsParams,
+     * ProductDetailsResponseListener).
+     */
+    void queryProductDetailsAsync(
+        @NonNull List<PlatformQueryProduct> products,
+        @NonNull Result<PlatformProductDetailsResponse> result);
     /** Wraps BillingClient#isFeatureSupported(String). */
-    @NonNull 
+    @NonNull
     Boolean isFeatureSupported(@NonNull String feature);
     /** Wraps BillingClient#isAlternativeBillingOnlyAvailableAsync(). */
     void isAlternativeBillingOnlyAvailableAsync(@NonNull Result<PlatformBillingResult> result);
     /** Wraps BillingClient#showAlternativeBillingOnlyInformationDialog(). */
     void showAlternativeBillingOnlyInformationDialog(@NonNull Result<PlatformBillingResult> result);
-    /** Wraps BillingClient#createAlternativeBillingOnlyReportingDetailsAsync(AlternativeBillingOnlyReportingDetailsListener). */
-    void createAlternativeBillingOnlyReportingDetailsAsync(@NonNull Result<PlatformAlternativeBillingOnlyReportingDetailsResponse> result);
+    /**
+     * Wraps
+     * BillingClient#createAlternativeBillingOnlyReportingDetailsAsync(AlternativeBillingOnlyReportingDetailsListener).
+     */
+    void createAlternativeBillingOnlyReportingDetailsAsync(
+        @NonNull Result<PlatformAlternativeBillingOnlyReportingDetailsResponse> result);
 
     /** The codec used by InAppPurchaseApi. */
     static @NonNull MessageCodec<Object> getCodec() {
       return InAppPurchaseApiCodec.INSTANCE;
     }
-    /**Sets up an instance of `InAppPurchaseApi` to handle messages through the `binaryMessenger`. */
+    /**
+     * Sets up an instance of `InAppPurchaseApi` to handle messages through the `binaryMessenger`.
+     */
     static void setUp(@NonNull BinaryMessenger binaryMessenger, @Nullable InAppPurchaseApi api) {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.isReady", getCodec());
+                binaryMessenger,
+                "dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.isReady",
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -2534,8 +2636,7 @@ public class Messages {
                 try {
                   Boolean output = api.isReady();
                   wrapped.add(0, output);
-                }
- catch (Throwable exception) {
+                } catch (Throwable exception) {
                   ArrayList<Object> wrappedError = wrapError(exception);
                   wrapped = wrappedError;
                 }
@@ -2548,14 +2649,17 @@ public class Messages {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.startConnection", getCodec());
+                binaryMessenger,
+                "dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.startConnection",
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Number callbackHandleArg = (Number) args.get(0);
-                PlatformBillingChoiceMode billingModeArg = PlatformBillingChoiceMode.values()[(int) args.get(1)];
+                PlatformBillingChoiceMode billingModeArg =
+                    PlatformBillingChoiceMode.values()[(int) args.get(1)];
                 Result<PlatformBillingResult> resultCallback =
                     new Result<PlatformBillingResult>() {
                       public void success(PlatformBillingResult result) {
@@ -2569,7 +2673,10 @@ public class Messages {
                       }
                     };
 
-                api.startConnection((callbackHandleArg == null) ? null : callbackHandleArg.longValue(), billingModeArg, resultCallback);
+                api.startConnection(
+                    (callbackHandleArg == null) ? null : callbackHandleArg.longValue(),
+                    billingModeArg,
+                    resultCallback);
               });
         } else {
           channel.setMessageHandler(null);
@@ -2578,7 +2685,9 @@ public class Messages {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.endConnection", getCodec());
+                binaryMessenger,
+                "dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.endConnection",
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -2586,8 +2695,7 @@ public class Messages {
                 try {
                   api.endConnection();
                   wrapped.add(0, null);
-                }
- catch (Throwable exception) {
+                } catch (Throwable exception) {
                   ArrayList<Object> wrappedError = wrapError(exception);
                   wrapped = wrappedError;
                 }
@@ -2600,7 +2708,9 @@ public class Messages {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.getBillingConfigAsync", getCodec());
+                binaryMessenger,
+                "dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.getBillingConfigAsync",
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -2627,7 +2737,9 @@ public class Messages {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.launchBillingFlow", getCodec());
+                binaryMessenger,
+                "dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.launchBillingFlow",
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -2637,8 +2749,7 @@ public class Messages {
                 try {
                   PlatformBillingResult output = api.launchBillingFlow(paramsArg);
                   wrapped.add(0, output);
-                }
- catch (Throwable exception) {
+                } catch (Throwable exception) {
                   ArrayList<Object> wrappedError = wrapError(exception);
                   wrapped = wrappedError;
                 }
@@ -2651,7 +2762,9 @@ public class Messages {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.acknowledgePurchase", getCodec());
+                binaryMessenger,
+                "dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.acknowledgePurchase",
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -2680,7 +2793,9 @@ public class Messages {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.consumeAsync", getCodec());
+                binaryMessenger,
+                "dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.consumeAsync",
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -2709,13 +2824,16 @@ public class Messages {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.queryPurchasesAsync", getCodec());
+                binaryMessenger,
+                "dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.queryPurchasesAsync",
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
-                PlatformProductType productTypeArg = PlatformProductType.values()[(int) args.get(0)];
+                PlatformProductType productTypeArg =
+                    PlatformProductType.values()[(int) args.get(0)];
                 Result<PlatformPurchasesResponse> resultCallback =
                     new Result<PlatformPurchasesResponse>() {
                       public void success(PlatformPurchasesResponse result) {
@@ -2738,13 +2856,16 @@ public class Messages {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.queryPurchaseHistoryAsync", getCodec());
+                binaryMessenger,
+                "dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.queryPurchaseHistoryAsync",
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
-                PlatformProductType productTypeArg = PlatformProductType.values()[(int) args.get(0)];
+                PlatformProductType productTypeArg =
+                    PlatformProductType.values()[(int) args.get(0)];
                 Result<PlatformPurchaseHistoryResponse> resultCallback =
                     new Result<PlatformPurchaseHistoryResponse>() {
                       public void success(PlatformPurchaseHistoryResponse result) {
@@ -2767,7 +2888,9 @@ public class Messages {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.queryProductDetailsAsync", getCodec());
+                binaryMessenger,
+                "dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.queryProductDetailsAsync",
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -2796,7 +2919,9 @@ public class Messages {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.isFeatureSupported", getCodec());
+                binaryMessenger,
+                "dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.isFeatureSupported",
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -2806,8 +2931,7 @@ public class Messages {
                 try {
                   Boolean output = api.isFeatureSupported(featureArg);
                   wrapped.add(0, output);
-                }
- catch (Throwable exception) {
+                } catch (Throwable exception) {
                   ArrayList<Object> wrappedError = wrapError(exception);
                   wrapped = wrappedError;
                 }
@@ -2820,7 +2944,9 @@ public class Messages {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.isAlternativeBillingOnlyAvailableAsync", getCodec());
+                binaryMessenger,
+                "dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.isAlternativeBillingOnlyAvailableAsync",
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -2847,7 +2973,9 @@ public class Messages {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.showAlternativeBillingOnlyInformationDialog", getCodec());
+                binaryMessenger,
+                "dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.showAlternativeBillingOnlyInformationDialog",
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -2874,14 +3002,17 @@ public class Messages {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.createAlternativeBillingOnlyReportingDetailsAsync", getCodec());
+                binaryMessenger,
+                "dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.createAlternativeBillingOnlyReportingDetailsAsync",
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 Result<PlatformAlternativeBillingOnlyReportingDetailsResponse> resultCallback =
                     new Result<PlatformAlternativeBillingOnlyReportingDetailsResponse>() {
-                      public void success(PlatformAlternativeBillingOnlyReportingDetailsResponse result) {
+                      public void success(
+                          PlatformAlternativeBillingOnlyReportingDetailsResponse result) {
                         wrapped.add(0, result);
                         reply.reply(wrapped);
                       }
@@ -2902,7 +3033,8 @@ public class Messages {
   }
 
   private static class InAppPurchaseCallbackApiCodec extends StandardMessageCodec {
-    public static final InAppPurchaseCallbackApiCodec INSTANCE = new InAppPurchaseCallbackApiCodec();
+    public static final InAppPurchaseCallbackApiCodec INSTANCE =
+        new InAppPurchaseCallbackApiCodec();
 
     private InAppPurchaseCallbackApiCodec() {}
 
@@ -2960,72 +3092,87 @@ public class Messages {
       this.binaryMessenger = argBinaryMessenger;
     }
 
-    /** Public interface for sending reply. */ 
+    /** Public interface for sending reply. */
     /** The codec used by InAppPurchaseCallbackApi. */
     static @NonNull MessageCodec<Object> getCodec() {
       return InAppPurchaseCallbackApiCodec.INSTANCE;
     }
     /** Called for BillingClientStateListener#onBillingServiceDisconnected(). */
-    public void onBillingServiceDisconnected(@NonNull Long callbackHandleArg, @NonNull VoidResult result) {
-      final String channelName = "dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseCallbackApi.onBillingServiceDisconnected";
+    public void onBillingServiceDisconnected(
+        @NonNull Long callbackHandleArg, @NonNull VoidResult result) {
+      final String channelName =
+          "dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseCallbackApi.onBillingServiceDisconnected";
       BasicMessageChannel<Object> channel =
-          new BasicMessageChannel<>(
-              binaryMessenger, channelName, getCodec());
+          new BasicMessageChannel<>(binaryMessenger, channelName, getCodec());
       channel.send(
           new ArrayList<Object>(Collections.singletonList(callbackHandleArg)),
           channelReply -> {
             if (channelReply instanceof List) {
               List<Object> listReply = (List<Object>) channelReply;
               if (listReply.size() > 1) {
-                result.error(new FlutterError((String) listReply.get(0), (String) listReply.get(1), (String) listReply.get(2)));
+                result.error(
+                    new FlutterError(
+                        (String) listReply.get(0),
+                        (String) listReply.get(1),
+                        (String) listReply.get(2)));
               } else {
                 result.success();
               }
-            }  else {
+            } else {
               result.error(createConnectionError(channelName));
-            } 
+            }
           });
     }
     /** Called for PurchasesUpdatedListener#onPurchasesUpdated(BillingResult, List<Purchase>). */
-    public void onPurchasesUpdated(@NonNull PlatformPurchasesResponse updateArg, @NonNull VoidResult result) {
-      final String channelName = "dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseCallbackApi.onPurchasesUpdated";
+    public void onPurchasesUpdated(
+        @NonNull PlatformPurchasesResponse updateArg, @NonNull VoidResult result) {
+      final String channelName =
+          "dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseCallbackApi.onPurchasesUpdated";
       BasicMessageChannel<Object> channel =
-          new BasicMessageChannel<>(
-              binaryMessenger, channelName, getCodec());
+          new BasicMessageChannel<>(binaryMessenger, channelName, getCodec());
       channel.send(
           new ArrayList<Object>(Collections.singletonList(updateArg)),
           channelReply -> {
             if (channelReply instanceof List) {
               List<Object> listReply = (List<Object>) channelReply;
               if (listReply.size() > 1) {
-                result.error(new FlutterError((String) listReply.get(0), (String) listReply.get(1), (String) listReply.get(2)));
+                result.error(
+                    new FlutterError(
+                        (String) listReply.get(0),
+                        (String) listReply.get(1),
+                        (String) listReply.get(2)));
               } else {
                 result.success();
               }
-            }  else {
+            } else {
               result.error(createConnectionError(channelName));
-            } 
+            }
           });
     }
     /** Called for UserChoiceBillingListener#userSelectedAlternativeBilling(UserChoiceDetails). */
-    public void userSelectedalternativeBilling(@NonNull PlatformUserChoiceDetails detailsArg, @NonNull VoidResult result) {
-      final String channelName = "dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseCallbackApi.userSelectedalternativeBilling";
+    public void userSelectedalternativeBilling(
+        @NonNull PlatformUserChoiceDetails detailsArg, @NonNull VoidResult result) {
+      final String channelName =
+          "dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseCallbackApi.userSelectedalternativeBilling";
       BasicMessageChannel<Object> channel =
-          new BasicMessageChannel<>(
-              binaryMessenger, channelName, getCodec());
+          new BasicMessageChannel<>(binaryMessenger, channelName, getCodec());
       channel.send(
           new ArrayList<Object>(Collections.singletonList(detailsArg)),
           channelReply -> {
             if (channelReply instanceof List) {
               List<Object> listReply = (List<Object>) channelReply;
               if (listReply.size() > 1) {
-                result.error(new FlutterError((String) listReply.get(0), (String) listReply.get(1), (String) listReply.get(2)));
+                result.error(
+                    new FlutterError(
+                        (String) listReply.get(0),
+                        (String) listReply.get(1),
+                        (String) listReply.get(2)));
               } else {
                 result.success();
               }
-            }  else {
+            } else {
               result.error(createConnectionError(channelName));
-            } 
+            }
           });
     }
   }
