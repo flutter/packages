@@ -1,3 +1,7 @@
+## 0.6.23
+
+* Gracefully handle image dimension parsing failures.
+
 ## 0.6.22+1
 
 * Removes `_ambiguate` methods from code.
