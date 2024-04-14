@@ -354,7 +354,7 @@ void defineTests() {
     testWidgets(
       'should gracefully handle height parsing failures',
       (WidgetTester tester) async {
-        const String data = '![alt](https://img#50x)';
+        const String data = ' ![alt](https://img#50x)';
         await tester.pumpWidget(
           boilerplate(
             const Markdown(data: data),
