@@ -568,8 +568,8 @@ class MarkdownBuilder implements md.NodeVisitor {
     if (parts.length == 2) {
       final List<String> dimensions = parts.last.split('x');
       if (dimensions.length == 2) {
-        width = double.parse(dimensions[0]);
-        height = double.parse(dimensions[1]);
+        width = double.tryParse(dimensions[0]);
+        height = double.tryParse(dimensions[1]);
       }
     }
 
