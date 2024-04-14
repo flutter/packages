@@ -1,3 +1,7 @@
+## 0.3.4
+
+* Introduces new ReplacementMode for Android's billing client
+
 ## 0.3.3+1
 
 * Moves alternative billing listener creation to BillingClientFactoryImpl.

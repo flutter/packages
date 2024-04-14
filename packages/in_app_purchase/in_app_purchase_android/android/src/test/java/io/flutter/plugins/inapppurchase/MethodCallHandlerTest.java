@@ -6,6 +6,7 @@ package io.flutter.plugins.inapppurchase;
 
 import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.ACTIVITY_UNAVAILABLE;
 import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.PRORATION_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY;
+import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.REPLACEMENT_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static java.util.Collections.unmodifiableList;
@@ -28,6 +29,7 @@ import static org.mockito.Mockito.when;
 
 import android.app.Activity;
 import android.content.Context;
+
 import com.android.billingclient.api.AcknowledgePurchaseParams;
 import com.android.billingclient.api.AcknowledgePurchaseResponseListener;
 import com.android.billingclient.api.AlternativeBillingOnlyAvailabilityListener;
@@ -53,6 +55,7 @@ import com.android.billingclient.api.PurchasesResponseListener;
 import com.android.billingclient.api.QueryProductDetailsParams;
 import com.android.billingclient.api.QueryPurchaseHistoryParams;
 import com.android.billingclient.api.QueryPurchasesParams;
+
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
 import io.flutter.plugins.inapppurchase.Messages.FlutterError;
 import io.flutter.plugins.inapppurchase.Messages.InAppPurchaseCallbackApi;
@@ -66,12 +69,14 @@ import io.flutter.plugins.inapppurchase.Messages.PlatformProductType;
 import io.flutter.plugins.inapppurchase.Messages.PlatformPurchaseHistoryResponse;
 import io.flutter.plugins.inapppurchase.Messages.PlatformPurchasesResponse;
 import io.flutter.plugins.inapppurchase.Messages.PlatformQueryProduct;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -556,6 +561,8 @@ public class MethodCallHandlerTest {
     paramsBuilder.setProduct(productId);
     paramsBuilder.setProrationMode(
         (long) PRORATION_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY);
+    paramsBuilder.setReplacementMode(
+        (long) REPLACEMENT_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY);
 
     // Launch the billing flow
     BillingResult billingResult = buildBillingResult();
@@ -581,6 +588,8 @@ public class MethodCallHandlerTest {
     paramsBuilder.setAccountId(accountId);
     paramsBuilder.setProrationMode(
         (long) PRORATION_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY);
+    paramsBuilder.setReplacementMode(
+        (long) REPLACEMENT_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY);
 
     // Launch the billing flow
     BillingResult billingResult = buildBillingResult();
@@ -610,6 +619,8 @@ public class MethodCallHandlerTest {
     paramsBuilder.setAccountId(accountId);
     paramsBuilder.setProrationMode(
         (long) PRORATION_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY);
+    paramsBuilder.setReplacementMode(
+        (long) REPLACEMENT_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY);
 
     // Assert that the synchronous call throws an exception.
     FlutterError exception =
@@ -633,6 +644,8 @@ public class MethodCallHandlerTest {
     paramsBuilder.setOldProduct(oldProductId);
     paramsBuilder.setProrationMode(
         (long) PRORATION_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY);
+    paramsBuilder.setReplacementMode(
+        (long) REPLACEMENT_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY);
 
     // Launch the billing flow
     BillingResult billingResult = buildBillingResult();
@@ -660,6 +673,8 @@ public class MethodCallHandlerTest {
     paramsBuilder.setAccountId(accountId);
     paramsBuilder.setProrationMode(
         (long) PRORATION_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY);
+    paramsBuilder.setReplacementMode(
+        (long) REPLACEMENT_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY);
 
     // Launch the billing flow
     BillingResult billingResult = buildBillingResult();
@@ -695,6 +710,8 @@ public class MethodCallHandlerTest {
     paramsBuilder.setOldProduct(oldProductId);
     paramsBuilder.setPurchaseToken(purchaseToken);
     paramsBuilder.setProrationMode((long) prorationMode);
+    paramsBuilder.setReplacementMode(
+        (long) REPLACEMENT_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY);
 
     // Launch the billing flow
     BillingResult billingResult = buildBillingResult();
@@ -728,6 +745,8 @@ public class MethodCallHandlerTest {
     paramsBuilder.setAccountId(accountId);
     paramsBuilder.setOldProduct(null);
     paramsBuilder.setProrationMode((long) prorationMode);
+    paramsBuilder.setReplacementMode(
+        (long) REPLACEMENT_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY);
 
     // Launch the billing flow
     BillingResult billingResult = buildBillingResult();
@@ -742,6 +761,73 @@ public class MethodCallHandlerTest {
     assertTrue(
         Objects.requireNonNull(exception.getMessage())
             .contains("launchBillingFlow failed because oldProduct is null"));
+  }
+
+  @Test
+  @SuppressWarnings(value = "deprecation")
+  public void launchBillingFlow_ok_Replacement_with_null_OldProduct() {
+    // Fetch the product details first and query the method call
+    String productId = "foo";
+    String accountId = "account";
+    String queryOldProductId = "oldFoo";
+    int replacementMode =
+        BillingFlowParams.SubscriptionUpdateParams.ReplacementMode.CHARGE_PRORATED_PRICE;
+    queryForProducts(unmodifiableList(asList(productId, queryOldProductId)));
+    PlatformBillingFlowParams.Builder paramsBuilder = new PlatformBillingFlowParams.Builder();
+    paramsBuilder.setProduct(productId);
+    paramsBuilder.setAccountId(accountId);
+    paramsBuilder.setOldProduct(null);
+    paramsBuilder.setProrationMode(
+        (long) PRORATION_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY);
+    paramsBuilder.setReplacementMode((long) replacementMode);
+
+    // Launch the billing flow
+    BillingResult billingResult = buildBillingResult();
+    when(mockBillingClient.launchBillingFlow(any(), any())).thenReturn(billingResult);
+
+    // Assert that the synchronous call throws an exception.
+    FlutterError exception =
+        assertThrows(
+            FlutterError.class,
+            () -> methodChannelHandler.launchBillingFlow(paramsBuilder.build()));
+    assertEquals("IN_APP_PURCHASE_REQUIRE_OLD_PRODUCT", exception.code);
+    assertTrue(
+        Objects.requireNonNull(exception.getMessage())
+            .contains("launchBillingFlow failed because oldProduct is null"));
+  }
+
+  @Test
+  @SuppressWarnings(value = "deprecation")
+  public void launchBillingFlow_ok_Proration_and_Replacement_conflict() {
+    // Fetch the product details first and query the method call
+    String productId = "foo";
+    String accountId = "account";
+    String queryOldProductId = "oldFoo";
+    int prorationMode = BillingFlowParams.ProrationMode.IMMEDIATE_AND_CHARGE_PRORATED_PRICE;
+    int replacementMode =
+        BillingFlowParams.SubscriptionUpdateParams.ReplacementMode.CHARGE_PRORATED_PRICE;
+    queryForProducts(unmodifiableList(asList(productId, queryOldProductId)));
+    PlatformBillingFlowParams.Builder paramsBuilder = new PlatformBillingFlowParams.Builder();
+    paramsBuilder.setProduct(productId);
+    paramsBuilder.setAccountId(accountId);
+    paramsBuilder.setOldProduct(queryOldProductId);
+    paramsBuilder.setProrationMode((long) prorationMode);
+    paramsBuilder.setReplacementMode((long) replacementMode);
+
+    // Launch the billing flow
+    BillingResult billingResult = buildBillingResult();
+    when(mockBillingClient.launchBillingFlow(any(), any())).thenReturn(billingResult);
+
+    // Assert that the synchronous call throws an exception.
+    FlutterError exception =
+        assertThrows(
+            FlutterError.class,
+            () -> methodChannelHandler.launchBillingFlow(paramsBuilder.build()));
+    assertEquals("IN_APP_PURCHASE_CONFLICT_PRORATION_MODE_REPLACEMENT_MODE", exception.code);
+    assertTrue(
+        Objects.requireNonNull(exception.getMessage())
+            .contains(
+                "launchBillingFlow failed because you provided both prorationMode and replacementMode. You can only provide one of them."));
   }
 
   // TODO(gmackall): Replace uses of deprecated ProrationMode enum values with new
@@ -763,6 +849,8 @@ public class MethodCallHandlerTest {
     paramsBuilder.setOldProduct(oldProductId);
     paramsBuilder.setPurchaseToken(purchaseToken);
     paramsBuilder.setProrationMode((long) prorationMode);
+    paramsBuilder.setReplacementMode(
+        (long) REPLACEMENT_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY);
 
     // Launch the billing flow
     BillingResult billingResult = buildBillingResult();
@@ -790,6 +878,8 @@ public class MethodCallHandlerTest {
     paramsBuilder.setAccountId(accountId);
     paramsBuilder.setProrationMode(
         (long) PRORATION_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY);
+    paramsBuilder.setReplacementMode(
+        (long) REPLACEMENT_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY);
 
     // Assert that the synchronous call throws an exception.
     FlutterError exception =
@@ -811,6 +901,8 @@ public class MethodCallHandlerTest {
     paramsBuilder.setAccountId(accountId);
     paramsBuilder.setProrationMode(
         (long) PRORATION_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY);
+    paramsBuilder.setReplacementMode(
+        (long) REPLACEMENT_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY);
 
     // Assert that the synchronous call throws an exception.
     FlutterError exception =
@@ -835,6 +927,8 @@ public class MethodCallHandlerTest {
     paramsBuilder.setOldProduct(oldProductId);
     paramsBuilder.setProrationMode(
         (long) PRORATION_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY);
+    paramsBuilder.setReplacementMode(
+        (long) REPLACEMENT_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY);
 
     // Assert that the synchronous call throws an exception.
     FlutterError exception =

@@ -161,7 +161,8 @@ class InAppPurchaseAndroidPlatform extends InAppPurchasePlatform {
           oldProduct: changeSubscriptionParam?.oldPurchaseDetails.productID,
           purchaseToken: changeSubscriptionParam
               ?.oldPurchaseDetails.verificationData.serverVerificationData,
-          prorationMode: changeSubscriptionParam?.prorationMode),
+          prorationMode: changeSubscriptionParam?.prorationMode,
+          replacementMode: changeSubscriptionParam?.replacementMode),
     );
     return billingResultWrapper.responseCode == BillingResponse.ok;
   }
