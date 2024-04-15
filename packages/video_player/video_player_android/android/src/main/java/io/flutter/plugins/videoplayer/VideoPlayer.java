@@ -11,6 +11,7 @@ import android.content.Context;
 import android.net.Uri;
 import android.view.Surface;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.OptIn;
 import androidx.annotation.VisibleForTesting;
 import androidx.media3.common.AudioAttributes;
@@ -42,9 +43,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-// API marked with UnstableApi is safe to use, it is only delicate when targeting stable ABI
-// https://developer.android.com/media/media3/exoplayer/migration-guide#unstableapi
-@OptIn(markerClass = UnstableApi.class)
 final class VideoPlayer {
   private static final String FORMAT_SS = "ss";
   private static final String FORMAT_DASH = "dash";
@@ -90,7 +88,7 @@ final class VideoPlayer {
 
     MediaSource mediaSource = buildMediaSource(uri, dataSourceFactory, formatHint);
 
-    exoPlayer.setMediaSource(mediaSource);
+    unstableSetMediaSource(exoPlayer, mediaSource);
     exoPlayer.prepare();
 
     setUpVideoPlayer(exoPlayer, new QueuingEventSink());
@@ -121,11 +119,8 @@ final class VideoPlayer {
             ? httpHeaders.get(USER_AGENT)
             : "ExoPlayer";
 
-    httpDataSourceFactory.setUserAgent(userAgent).setAllowCrossProtocolRedirects(true);
-
-    if (httpHeadersNotEmpty) {
-      httpDataSourceFactory.setDefaultRequestProperties(httpHeaders);
-    }
+    unstableUpdateDataSourceFactory(
+        httpDataSourceFactory, httpHeaders, userAgent, httpHeadersNotEmpty);
   }
 
   private MediaSource buildMediaSource(
@@ -152,26 +147,7 @@ final class VideoPlayer {
           break;
       }
     }
-    switch (type) {
-      case C.CONTENT_TYPE_SS:
-        return new SsMediaSource.Factory(
-                new DefaultSsChunkSource.Factory(mediaDataSourceFactory), mediaDataSourceFactory)
-            .createMediaSource(MediaItem.fromUri(uri));
-      case C.CONTENT_TYPE_DASH:
-        return new DashMediaSource.Factory(
-                new DefaultDashChunkSource.Factory(mediaDataSourceFactory), mediaDataSourceFactory)
-            .createMediaSource(MediaItem.fromUri(uri));
-      case C.CONTENT_TYPE_HLS:
-        return new HlsMediaSource.Factory(mediaDataSourceFactory)
-            .createMediaSource(MediaItem.fromUri(uri));
-      case C.CONTENT_TYPE_OTHER:
-        return new ProgressiveMediaSource.Factory(mediaDataSourceFactory)
-            .createMediaSource(MediaItem.fromUri(uri));
-      default:
-        {
-          throw new IllegalStateException("Unsupported type: " + type);
-        }
-    }
+    return unstableBuildMediaSource(uri, mediaDataSourceFactory, type);
   }
 
   private void setUpVideoPlayer(ExoPlayer exoPlayer, QueuingEventSink eventSink) {
@@ -309,15 +285,15 @@ final class VideoPlayer {
       event.put("event", "initialized");
       event.put("duration", exoPlayer.getDuration());
 
-      if (exoPlayer.getVideoFormat() != null) {
-        Format videoFormat = exoPlayer.getVideoFormat();
+      Format videoFormat = unstableGetVideoFormat(exoPlayer);
+      if (videoFormat != null) {
         int width = videoFormat.width;
         int height = videoFormat.height;
-        int rotationDegrees = videoFormat.rotationDegrees;
+        int rotationDegrees = unstableGetRotationDegrees(videoFormat);
         // Switch the width/height if video was taken in portrait mode
         if (rotationDegrees == 90 || rotationDegrees == 270) {
-          width = exoPlayer.getVideoFormat().height;
-          height = exoPlayer.getVideoFormat().width;
+          width = videoFormat.height;
+          height = videoFormat.width;
         }
         event.put("width", width);
         event.put("height", height);
@@ -347,5 +323,64 @@ final class VideoPlayer {
     if (exoPlayer != null) {
       exoPlayer.release();
     }
+  }
+
+  // TODO: migrate to stable API, see https://github.com/flutter/flutter/issues/147039
+  @OptIn(markerClass = UnstableApi.class)
+  private static void unstableSetMediaSource(ExoPlayer exoPlayer, MediaSource mediaSource) {
+    exoPlayer.setMediaSource(mediaSource);
+  }
+
+  // TODO: migrate to stable API, see https://github.com/flutter/flutter/issues/147039
+  @OptIn(markerClass = UnstableApi.class)
+  private static void unstableUpdateDataSourceFactory(
+      DefaultHttpDataSource.Factory factory,
+      @NonNull Map<String, String> httpHeaders,
+      String userAgent,
+      boolean httpHeadersNotEmpty) {
+    factory.setUserAgent(userAgent).setAllowCrossProtocolRedirects(true);
+
+    if (httpHeadersNotEmpty) {
+      factory.setDefaultRequestProperties(httpHeaders);
+    }
+  }
+
+  // TODO: migrate to stable API, see https://github.com/flutter/flutter/issues/147039
+  @OptIn(markerClass = UnstableApi.class)
+  private static MediaSource unstableBuildMediaSource(
+      Uri uri, DataSource.Factory mediaDataSourceFactory, int type) {
+    switch (type) {
+      case C.CONTENT_TYPE_SS:
+        return new SsMediaSource.Factory(
+                new DefaultSsChunkSource.Factory(mediaDataSourceFactory), mediaDataSourceFactory)
+            .createMediaSource(MediaItem.fromUri(uri));
+      case C.CONTENT_TYPE_DASH:
+        return new DashMediaSource.Factory(
+                new DefaultDashChunkSource.Factory(mediaDataSourceFactory), mediaDataSourceFactory)
+            .createMediaSource(MediaItem.fromUri(uri));
+      case C.CONTENT_TYPE_HLS:
+        return new HlsMediaSource.Factory(mediaDataSourceFactory)
+            .createMediaSource(MediaItem.fromUri(uri));
+      case C.CONTENT_TYPE_OTHER:
+        return new ProgressiveMediaSource.Factory(mediaDataSourceFactory)
+            .createMediaSource(MediaItem.fromUri(uri));
+      default:
+        {
+          throw new IllegalStateException("Unsupported type: " + type);
+        }
+    }
+  }
+
+  // TODO: migrate to stable API, see https://github.com/flutter/flutter/issues/147039
+  @OptIn(markerClass = UnstableApi.class)
+  @Nullable
+  private static Format unstableGetVideoFormat(ExoPlayer exoPlayer) {
+    return exoPlayer.getVideoFormat();
+  }
+
+  // TODO: migrate to stable API, see https://github.com/flutter/flutter/issues/147039
+  @OptIn(markerClass = UnstableApi.class)
+  private static int unstableGetRotationDegrees(Format videoFormat) {
+    return videoFormat.rotationDegrees;
   }
 }
