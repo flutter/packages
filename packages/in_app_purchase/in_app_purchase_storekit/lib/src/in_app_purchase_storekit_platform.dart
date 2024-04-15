@@ -158,7 +158,7 @@ class InAppPurchaseStoreKitPlatform extends InAppPurchasePlatform {
   ///
   /// See: https://developer.apple.com/documentation/storekit/skstorefront?language=objc
   Future<String?> getCountryCode() async {
-    return (await SKPaymentQueueWrapper().storefront())?.countryCode;
+    return (await _skPaymentQueueWrapper.storefront())?.countryCode;
   }
 }
 
