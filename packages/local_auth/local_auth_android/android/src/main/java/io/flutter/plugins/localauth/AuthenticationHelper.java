@@ -75,9 +75,8 @@ class AuthenticationHelper extends BiometricPrompt.AuthenticationCallback
             .setSubtitle(strings.getBiometricHint())
             .setConfirmationRequired(options.getSensitiveTransaction());
 
-    int allowedAuthenticators =
-        // https://upsider.youtrack.cloud/issue/APP-343
-        BiometricManager.Authenticators.BIOMETRIC_STRONG;
+    // Allows only Strong
+    int allowedAuthenticators = BiometricManager.Authenticators.BIOMETRIC_STRONG;
 
     if (allowCredentials) {
       allowedAuthenticators |= BiometricManager.Authenticators.DEVICE_CREDENTIAL;
