@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:pub_semver/pub_semver.dart';
+
 import 'ast.dart';
 import 'functional.dart';
 import 'generator.dart';
@@ -55,7 +57,7 @@ class SwiftProxyApiOptions {
   const SwiftProxyApiOptions({
     this.name,
     this.import,
-    this.iosVersionRequirement,
+    this.minIosApi,
   });
 
   /// The name of the Swift class.
@@ -71,7 +73,7 @@ class SwiftProxyApiOptions {
   ///
   /// This adds `@available` annotations on top of any constructor, field, or
   /// method that references this element.
-  final int? iosVersionRequirement;
+  final String? minIosApi;
 }
 
 /// Class that manages all Swift code generation.
@@ -921,6 +923,24 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
       indent.writeln('$varChannelName.setMessageHandler(nil)');
     });
   }
+}
+
+(TypeDeclaration type, Version version)? _findHighestVersionRequirement(
+  Iterable<TypeDeclaration> types,
+) {
+  return findHighestApiRequirement<Version>(
+    types,
+    onGetApiRequirement: (TypeDeclaration type) {
+      final String? apiRequirement =
+          type.associatedProxyApi?.swiftOptions?.minIosApi;
+      if (apiRequirement != null) {
+        return Version.parse(apiRequirement);
+      }
+
+      return null;
+    },
+    onCompare: (Version one, Version two) => one.compareTo(two),
+  );
 }
 
 /// Calculates the name of the codec that will be generated for [api].

@@ -651,6 +651,48 @@ String? deducePackageName(String mainDartFile) {
   }
 }
 
+/// Find the [TypeDeclaration] that has the highest api requirement and its
+/// version, [T].
+///
+/// [T] depends on the language. For example, Android uses an int while iOS uses
+/// semantic versioning.
+(TypeDeclaration type, T version)? findHighestApiRequirement<T extends Object>(
+  Iterable<TypeDeclaration> types, {
+  required T? Function(TypeDeclaration) onGetApiRequirement,
+  required Comparator<T> onCompare,
+}) {
+  Iterable<TypeDeclaration> addAllRecursive(TypeDeclaration type) sync* {
+    yield type;
+    if (type.typeArguments.isNotEmpty) {
+      for (final TypeDeclaration typeArg in type.typeArguments) {
+        yield* addAllRecursive(typeArg);
+      }
+    }
+  }
+
+  final Iterable<TypeDeclaration> allReferencedTypes =
+      types.expand(addAllRecursive);
+
+  if (allReferencedTypes.isEmpty) {
+    return null;
+  }
+
+  final TypeDeclaration typeWithHighestRequirement = allReferencedTypes
+      .where((TypeDeclaration type) => onGetApiRequirement(type) != null)
+      .reduce(
+    (TypeDeclaration one, TypeDeclaration two) {
+      return onCompare(onGetApiRequirement(one)!, onGetApiRequirement(two)!) > 0
+          ? one
+          : two;
+    },
+  );
+
+  return (
+    typeWithHighestRequirement,
+    onGetApiRequirement(typeWithHighestRequirement)!,
+  );
+}
+
 /// Enum to specify api type when generating code.
 enum ApiType {
   /// Flutter api.

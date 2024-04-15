@@ -23,6 +23,7 @@ import 'package:analyzer/error/error.dart' show AnalysisError;
 import 'package:args/args.dart';
 import 'package:collection/collection.dart' as collection;
 import 'package:path/path.dart' as path;
+import 'package:pub_semver/pub_semver.dart';
 
 import 'ast.dart';
 import 'ast_generator.dart';
@@ -138,7 +139,7 @@ class FlutterApi {
 /// methods.
 class ProxyApi {
   /// Parametric constructor for [ProxyApi].
-  const ProxyApi({this.superClass});
+  const ProxyApi({this.superClass, this.swiftOptions});
 
   /// The proxy api that is a super class to this one.
   ///
@@ -148,6 +149,10 @@ class ProxyApi {
   /// Note that using this instead of `extends` can cause unexpected conflicts
   /// with inherited method names.
   final Type? superClass;
+
+  /// Options that control how Swift code will be generated for a specific
+  /// ProxyApi.
+  final SwiftProxyApiOptions? swiftOptions;
 }
 
 /// Metadata to annotation methods to control the selector used for objc output.
@@ -1541,6 +1546,30 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
           }
         }
 
+        SwiftProxyApiOptions? swiftOptions;
+        final Map<String, Object?>? swiftOptionsMap =
+            annotationMap['swiftOptions'] as Map<String, Object?>?;
+        if (swiftOptionsMap != null) {
+          swiftOptions = SwiftProxyApiOptions(
+            name: swiftOptionsMap['name']! as String?,
+            import: swiftOptionsMap['import'] as String?,
+            minIosApi: swiftOptionsMap['minIosApi'] as String?,
+          );
+        }
+
+        if (swiftOptions?.minIosApi != null) {
+          try {
+            Version.parse(swiftOptions!.minIosApi!);
+          } on FormatException catch (error) {
+            _errors.add(
+              Error(
+                message: 'Could not parse version: ${error.message}',
+                lineNumber: _calculateLineNumber(source, node.offset),
+              ),
+            );
+          }
+        }
+
         _currentApi = AstProxyApi(
           name: node.name.lexeme,
           methods: <Method>[],
@@ -1548,6 +1577,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
           fields: <ApiField>[],
           superClass: superClass,
           interfaces: interfaces,
+          swiftOptions: swiftOptions,
           documentationComments:
               _documentationCommentsParser(node.documentationComment?.tokens),
         );

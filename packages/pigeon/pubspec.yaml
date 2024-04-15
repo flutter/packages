@@ -15,6 +15,7 @@ dependencies:
   dart_style: ^2.3.4
   meta: ^1.9.0
   path: ^1.8.0
+  pub_semver: ^2.1.4
   yaml: ^3.1.1
 
 dev_dependencies:
