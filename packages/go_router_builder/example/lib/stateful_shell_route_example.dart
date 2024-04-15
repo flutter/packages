@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// ignore_for_file: public_member_api_docs
+// ignore_for_file: public_member_api_docs, unreachable_from_main
 
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
@@ -12,6 +12,7 @@ part 'stateful_shell_route_example.g.dart';
 
 final GlobalKey<NavigatorState> _sectionANavigatorKey =
     GlobalKey<NavigatorState>(debugLabel: 'sectionANav');
+
 void main() => runApp(App());
 
 class App extends StatelessWidget {

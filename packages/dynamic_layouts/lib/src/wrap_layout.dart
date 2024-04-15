@@ -113,10 +113,8 @@ class SliverGridWrappingTileLayout extends DynamicSliverGridLayout {
     switch (scrollDirection) {
       case Axis.vertical:
         addedSize = currentSizeUsed + childSize.width + crossAxisSpacing;
-        break;
       case Axis.horizontal:
         addedSize = currentSizeUsed + childSize.height + mainAxisSpacing;
-        break;
     }
 
     if (addedSize > crossAxisExtent && _model.last.currentSizeUsed > 0.0) {
@@ -130,7 +128,6 @@ class SliverGridWrappingTileLayout extends DynamicSliverGridLayout {
                   scrollOffset + _model.last.maxSliver + mainAxisSpacing,
             ),
           );
-          break;
         case Axis.horizontal:
           _model.add(
             _RunMetrics(
@@ -140,7 +137,6 @@ class SliverGridWrappingTileLayout extends DynamicSliverGridLayout {
                   scrollOffset + _model.last.maxSliver + crossAxisSpacing,
             ),
           );
-          break;
       }
 
       return DynamicSliverGridGeometry(
@@ -158,12 +154,10 @@ class SliverGridWrappingTileLayout extends DynamicSliverGridLayout {
         if (childSize.height + mainAxisSpacing > _model.last.maxSliver) {
           _model.last.maxSliver = childSize.height + mainAxisSpacing;
         }
-        break;
       case Axis.horizontal:
         if (childSize.width + crossAxisSpacing > _model.last.maxSliver) {
           _model.last.maxSliver = childSize.width + crossAxisSpacing;
         }
-        break;
     }
 
     return DynamicSliverGridGeometry(

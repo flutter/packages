@@ -29,7 +29,7 @@
 @implementation NullFieldsTest
 
 - (void)testMakeWithValues {
-  NullFieldsSearchRequest *request = [NullFieldsSearchRequest makeWithQuery:@"hello" identifier:@1];
+  NullFieldsSearchRequest *request = [NullFieldsSearchRequest makeWithQuery:@"hello" identifier:1];
 
   NullFieldsSearchReplyTypeBox *typeWrapper =
       [[NullFieldsSearchReplyTypeBox alloc] initWithValue:NullFieldsSearchReplyTypeSuccess];
@@ -48,7 +48,7 @@
 }
 
 - (void)testMakeRequestWithNulls {
-  NullFieldsSearchRequest *request = [NullFieldsSearchRequest makeWithQuery:nil identifier:@1];
+  NullFieldsSearchRequest *request = [NullFieldsSearchRequest makeWithQuery:nil identifier:1];
   XCTAssertNil(request.query);
 }
 
@@ -121,13 +121,13 @@
 }
 
 - (void)testRequestToListWithValuess {
-  NullFieldsSearchRequest *request = [NullFieldsSearchRequest makeWithQuery:@"hello" identifier:@1];
+  NullFieldsSearchRequest *request = [NullFieldsSearchRequest makeWithQuery:@"hello" identifier:1];
   NSArray *list = [request toList];
   XCTAssertEqual(@"hello", list[0]);
 }
 
 - (void)testRequestToListWithNulls {
-  NullFieldsSearchRequest *request = [NullFieldsSearchRequest makeWithQuery:nil identifier:@1];
+  NullFieldsSearchRequest *request = [NullFieldsSearchRequest makeWithQuery:nil identifier:1];
   NSArray *list = [request toList];
   XCTAssertEqual([NSNull null], list[0]);
 }
@@ -139,7 +139,7 @@
       makeWithResult:@"result"
                error:@"error"
              indices:@[ @1, @2, @3 ]
-             request:[NullFieldsSearchRequest makeWithQuery:@"hello" identifier:@1]
+             request:[NullFieldsSearchRequest makeWithQuery:@"hello" identifier:1]
                 type:typeWrapper];
   NSArray *list = [reply toList];
   NSArray *indices = @[ @1, @2, @3 ];

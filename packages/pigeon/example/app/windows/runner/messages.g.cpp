@@ -24,6 +24,13 @@ using flutter::EncodableList;
 using flutter::EncodableMap;
 using flutter::EncodableValue;
 
+FlutterError CreateConnectionError(const std::string channel_name) {
+  return FlutterError(
+      "channel-error",
+      "Unable to establish connection on channel: '" + channel_name + "'.",
+      EncodableValue(""));
+}
+
 // MessageData
 
 MessageData::MessageData(const Code& code, const EncodableMap& data)
@@ -133,14 +140,24 @@ const flutter::StandardMessageCodec& ExampleHostApi::GetCodec() {
 // `binary_messenger`.
 void ExampleHostApi::SetUp(flutter::BinaryMessenger* binary_messenger,
                            ExampleHostApi* api) {
+  ExampleHostApi::SetUp(binary_messenger, api, "");
+}
+
+void ExampleHostApi::SetUp(flutter::BinaryMessenger* binary_messenger,
+                           ExampleHostApi* api,
+                           const std::string& message_channel_suffix) {
+  const std::string prepended_suffix =
+      message_channel_suffix.length() > 0
+          ? std::string(".") + message_channel_suffix
+          : "";
   {
-    auto channel = std::make_unique<BasicMessageChannel<>>(
-        binary_messenger,
-        "dev.flutter.pigeon.pigeon_example_package.ExampleHostApi."
-        "getHostLanguage",
-        &GetCodec());
+    BasicMessageChannel<> channel(binary_messenger,
+                                  "dev.flutter.pigeon.pigeon_example_package."
+                                  "ExampleHostApi.getHostLanguage" +
+                                      prepended_suffix,
+                                  &GetCodec());
     if (api != nullptr) {
-      channel->SetMessageHandler(
+      channel.SetMessageHandler(
           [api](const EncodableValue& message,
                 const flutter::MessageReply<EncodableValue>& reply) {
             try {
@@ -157,16 +174,17 @@ void ExampleHostApi::SetUp(flutter::BinaryMessenger* binary_messenger,
             }
           });
     } else {
-      channel->SetMessageHandler(nullptr);
+      channel.SetMessageHandler(nullptr);
     }
   }
   {
-    auto channel = std::make_unique<BasicMessageChannel<>>(
+    BasicMessageChannel<> channel(
         binary_messenger,
-        "dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.add",
+        "dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.add" +
+            prepended_suffix,
         &GetCodec());
     if (api != nullptr) {
-      channel->SetMessageHandler(
+      channel.SetMessageHandler(
           [api](const EncodableValue& message,
                 const flutter::MessageReply<EncodableValue>& reply) {
             try {
@@ -196,16 +214,17 @@ void ExampleHostApi::SetUp(flutter::BinaryMessenger* binary_messenger,
             }
           });
     } else {
-      channel->SetMessageHandler(nullptr);
+      channel.SetMessageHandler(nullptr);
     }
   }
   {
-    auto channel = std::make_unique<BasicMessageChannel<>>(
+    BasicMessageChannel<> channel(
         binary_messenger,
-        "dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.sendMessage",
+        "dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.sendMessage" +
+            prepended_suffix,
         &GetCodec());
     if (api != nullptr) {
-      channel->SetMessageHandler(
+      channel.SetMessageHandler(
           [api](const EncodableValue& message,
                 const flutter::MessageReply<EncodableValue>& reply) {
             try {
@@ -232,7 +251,7 @@ void ExampleHostApi::SetUp(flutter::BinaryMessenger* binary_messenger,
             }
           });
     } else {
-      channel->SetMessageHandler(nullptr);
+      channel.SetMessageHandler(nullptr);
     }
   }
 }
@@ -252,7 +271,14 @@ EncodableValue ExampleHostApi::WrapError(const FlutterError& error) {
 // Generated class from Pigeon that represents Flutter messages that can be
 // called from C++.
 MessageFlutterApi::MessageFlutterApi(flutter::BinaryMessenger* binary_messenger)
-    : binary_messenger_(binary_messenger) {}
+    : binary_messenger_(binary_messenger), message_channel_suffix_("") {}
+
+MessageFlutterApi::MessageFlutterApi(flutter::BinaryMessenger* binary_messenger,
+                                     const std::string& message_channel_suffix)
+    : binary_messenger_(binary_messenger),
+      message_channel_suffix_(message_channel_suffix.length() > 0
+                                  ? std::string(".") + message_channel_suffix
+                                  : "") {}
 
 const flutter::StandardMessageCodec& MessageFlutterApi::GetCodec() {
   return flutter::StandardMessageCodec::GetInstance(
@@ -263,39 +289,38 @@ void MessageFlutterApi::FlutterMethod(
     const std::string* a_string_arg,
     std::function<void(const std::string&)>&& on_success,
     std::function<void(const FlutterError&)>&& on_error) {
-  auto channel = std::make_unique<BasicMessageChannel<>>(
-      binary_messenger_,
+  const std::string channel_name =
       "dev.flutter.pigeon.pigeon_example_package.MessageFlutterApi."
-      "flutterMethod",
-      &GetCodec());
+      "flutterMethod" +
+      message_channel_suffix_;
+  BasicMessageChannel<> channel(binary_messenger_, channel_name, &GetCodec());
   EncodableValue encoded_api_arguments = EncodableValue(EncodableList{
       a_string_arg ? EncodableValue(*a_string_arg) : EncodableValue(),
   });
-  channel->Send(encoded_api_arguments, [on_success = std::move(on_success),
-                                        on_error = std::move(on_error)](
-                                           const uint8_t* reply,
-                                           size_t reply_size) {
-    std::unique_ptr<EncodableValue> response =
-        GetCodec().DecodeMessage(reply, reply_size);
-    const auto& encodable_return_value = *response;
-    const auto* list_return_value =
-        std::get_if<EncodableList>(&encodable_return_value);
-    if (list_return_value) {
-      if (list_return_value->size() > 1) {
-        on_error(FlutterError(std::get<std::string>(list_return_value->at(0)),
-                              std::get<std::string>(list_return_value->at(1)),
-                              list_return_value->at(2)));
-      } else {
-        const auto& return_value =
-            std::get<std::string>(list_return_value->at(0));
-        on_success(return_value);
-      }
-    } else {
-      on_error(FlutterError("channel-error",
-                            "Unable to establish connection on channel.",
-                            EncodableValue("")));
-    }
-  });
+  channel.Send(
+      encoded_api_arguments, [channel_name, on_success = std::move(on_success),
+                              on_error = std::move(on_error)](
+                                 const uint8_t* reply, size_t reply_size) {
+        std::unique_ptr<EncodableValue> response =
+            GetCodec().DecodeMessage(reply, reply_size);
+        const auto& encodable_return_value = *response;
+        const auto* list_return_value =
+            std::get_if<EncodableList>(&encodable_return_value);
+        if (list_return_value) {
+          if (list_return_value->size() > 1) {
+            on_error(
+                FlutterError(std::get<std::string>(list_return_value->at(0)),
+                             std::get<std::string>(list_return_value->at(1)),
+                             list_return_value->at(2)));
+          } else {
+            const auto& return_value =
+                std::get<std::string>(list_return_value->at(0));
+            on_success(return_value);
+          }
+        } else {
+          on_error(CreateConnectionError(channel_name));
+        }
+      });
 }
 
 }  // namespace pigeon_example

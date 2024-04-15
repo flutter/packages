@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 @Timeout(Duration(seconds: 3600))
+library;
 
 import 'dart:async';
 import 'dart:convert';

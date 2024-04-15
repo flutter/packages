@@ -203,7 +203,7 @@ subprojects {
   }, timeout: const Timeout(Duration(seconds: 500)), skip: true);
 }
 
-class _VersionCode extends Comparable<_VersionCode> {
+class _VersionCode implements Comparable<_VersionCode> {
   _VersionCode(this.first, this.second, this.third, this.caret);
   _VersionCode.fromString(String str)
       : first = 0,

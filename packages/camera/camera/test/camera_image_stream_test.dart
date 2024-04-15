@@ -28,7 +28,7 @@ void main() {
         ResolutionPreset.max);
 
     expect(
-      () => cameraController.startImageStream((CameraImage image) => null),
+      () => cameraController.startImageStream((CameraImage image) {}),
       throwsA(
         isA<CameraException>()
             .having(
@@ -60,7 +60,7 @@ void main() {
         cameraController.value.copyWith(isRecordingVideo: true);
 
     expect(
-        () => cameraController.startImageStream((CameraImage image) => null),
+        () => cameraController.startImageStream((CameraImage image) {}),
         throwsA(isA<CameraException>().having(
           (CameraException error) => error.description,
           'A video recording is already started.',
@@ -81,7 +81,7 @@ void main() {
     cameraController.value =
         cameraController.value.copyWith(isStreamingImages: true);
     expect(
-        () => cameraController.startImageStream((CameraImage image) => null),
+        () => cameraController.startImageStream((CameraImage image) {}),
         throwsA(isA<CameraException>().having(
           (CameraException error) => error.description,
           'A camera has started streaming images.',
@@ -98,7 +98,7 @@ void main() {
         ResolutionPreset.max);
     await cameraController.initialize();
 
-    await cameraController.startImageStream((CameraImage image) => null);
+    await cameraController.startImageStream((CameraImage image) {});
 
     expect(mockPlatform.streamCallLog,
         <String>['onStreamedFrameAvailable', 'listen']);
@@ -157,7 +157,7 @@ void main() {
             sensorOrientation: 90),
         ResolutionPreset.max);
     await cameraController.initialize();
-    await cameraController.startImageStream((CameraImage image) => null);
+    await cameraController.startImageStream((CameraImage image) {});
     await cameraController.stopImageStream();
 
     expect(mockPlatform.streamCallLog,
@@ -175,7 +175,7 @@ void main() {
     await cameraController.initialize();
 
     await cameraController.startVideoRecording(
-        onAvailable: (CameraImage image) => null);
+        onAvailable: (CameraImage image) {});
 
     expect(
         mockPlatform.streamCallLog.contains('startVideoCapturing with stream'),

@@ -7,6 +7,8 @@
 @import Flutter;
 
 #import "CameraProperties.h"
+#import "FLTCamMediaSettings.h"
+#import "FLTCamMediaSettingsAVWrapper.h"
 #import "FLTThreadSafeEventChannel.h"
 #import "FLTThreadSafeFlutterResult.h"
 #import "FLTThreadSafeMethodChannel.h"
@@ -14,9 +16,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-/**
- * A class that manages camera's state and performs camera operations.
- */
+/// A class that manages camera's state and performs camera operations.
 @interface FLTCam : NSObject <FlutterTexture>
 
 @property(readonly, nonatomic) AVCaptureDevice *captureDevice;
@@ -30,33 +30,37 @@ NS_ASSUME_NONNULL_BEGIN
 @property(assign, nonatomic) FLTFlashMode flashMode;
 // Format used for video and image streaming.
 @property(assign, nonatomic) FourCharCode videoFormat;
+@property(assign, nonatomic) FCPFileFormat fileFormat;
 
 /// Initializes an `FLTCam` instance.
 /// @param cameraName a name used to uniquely identify the camera.
 /// @param resolutionPreset the resolution preset
-/// @param enableAudio YES if audio should be enabled for video capturing; NO otherwise.
+/// @param mediaSettings the media settings configuration parameters
+/// @param mediaSettingsAVWrapper AVFoundation wrapper to perform media settings related operations
+/// (for dependency injection in unit tests).
 /// @param orientation the orientation of camera
 /// @param captureSessionQueue the queue on which camera's capture session operations happen.
 /// @param error report to the caller if any error happened creating the camera.
 - (instancetype)initWithCameraName:(NSString *)cameraName
                   resolutionPreset:(NSString *)resolutionPreset
-                       enableAudio:(BOOL)enableAudio
+                     mediaSettings:(FLTCamMediaSettings *)mediaSettings
+            mediaSettingsAVWrapper:(FLTCamMediaSettingsAVWrapper *)mediaSettingsAVWrapper
                        orientation:(UIDeviceOrientation)orientation
                captureSessionQueue:(dispatch_queue_t)captureSessionQueue
                              error:(NSError **)error;
+
 - (void)start;
 - (void)stop;
 - (void)setDeviceOrientation:(UIDeviceOrientation)orientation;
 - (void)captureToFile:(FLTThreadSafeFlutterResult *)result;
 - (void)close;
 - (void)startVideoRecordingWithResult:(FLTThreadSafeFlutterResult *)result;
-/**
- * Starts recording a video with an optional streaming messenger.
- * If the messenger is non-null then it will be called for each
- * captured frame, allowing streaming concurrently with recording.
- *
- * @param messenger Nullable messenger for capturing each frame.
- */
+- (void)setImageFileFormat:(FCPFileFormat)fileFormat;
+/// Starts recording a video with an optional streaming messenger.
+/// If the messenger is non-null then it will be called for each
+/// captured frame, allowing streaming concurrently with recording.
+///
+/// @param messenger Nullable messenger for capturing each frame.
 - (void)startVideoRecordingWithResult:(FLTThreadSafeFlutterResult *)result
                 messengerForStreaming:(nullable NSObject<FlutterBinaryMessenger> *)messenger;
 - (void)stopVideoRecordingWithResult:(FLTThreadSafeFlutterResult *)result;
@@ -70,28 +74,24 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)setFocusModeWithResult:(FLTThreadSafeFlutterResult *)result mode:(NSString *)modeStr;
 - (void)applyFocusMode;
 
-/**
- * Acknowledges the receipt of one image stream frame.
- *
- * This should be called each time a frame is received. Failing to call it may
- * cause later frames to be dropped instead of streamed.
- */
+/// Acknowledges the receipt of one image stream frame.
+///
+/// This should be called each time a frame is received. Failing to call it may
+/// cause later frames to be dropped instead of streamed.
 - (void)receivedImageStreamData;
 
-/**
- * Applies FocusMode on the AVCaptureDevice.
- *
- * If the @c focusMode is set to FocusModeAuto the AVCaptureDevice is configured to use
- * AVCaptureFocusModeContinuousModeAutoFocus when supported, otherwise it is set to
- * AVCaptureFocusModeAutoFocus. If neither AVCaptureFocusModeContinuousModeAutoFocus nor
- * AVCaptureFocusModeAutoFocus are supported focus mode will not be set.
- * If @c focusMode is set to FocusModeLocked the AVCaptureDevice is configured to use
- * AVCaptureFocusModeAutoFocus. If AVCaptureFocusModeAutoFocus is not supported focus mode will not
- * be set.
- *
- * @param focusMode The focus mode that should be applied to the @captureDevice instance.
- * @param captureDevice The AVCaptureDevice to which the @focusMode will be applied.
- */
+/// Applies FocusMode on the AVCaptureDevice.
+///
+/// If the @c focusMode is set to FocusModeAuto the AVCaptureDevice is configured to use
+/// AVCaptureFocusModeContinuousModeAutoFocus when supported, otherwise it is set to
+/// AVCaptureFocusModeAutoFocus. If neither AVCaptureFocusModeContinuousModeAutoFocus nor
+/// AVCaptureFocusModeAutoFocus are supported focus mode will not be set.
+/// If @c focusMode is set to FocusModeLocked the AVCaptureDevice is configured to use
+/// AVCaptureFocusModeAutoFocus. If AVCaptureFocusModeAutoFocus is not supported focus mode will not
+/// be set.
+///
+/// @param focusMode The focus mode that should be applied to the @captureDevice instance.
+/// @param captureDevice The AVCaptureDevice to which the @focusMode will be applied.
 - (void)applyFocusMode:(FLTFocusMode)focusMode onDevice:(AVCaptureDevice *)captureDevice;
 - (void)pausePreviewWithResult:(FLTThreadSafeFlutterResult *)result;
 - (void)resumePreviewWithResult:(FLTThreadSafeFlutterResult *)result;

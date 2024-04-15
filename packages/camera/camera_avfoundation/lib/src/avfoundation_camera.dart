@@ -96,15 +96,30 @@ class AVFoundationCamera extends CameraPlatform {
     CameraDescription cameraDescription,
     ResolutionPreset? resolutionPreset, {
     bool enableAudio = false,
-  }) async {
+  }) =>
+      createCameraWithSettings(
+          cameraDescription,
+          MediaSettings(
+            resolutionPreset: resolutionPreset,
+            enableAudio: enableAudio,
+          ));
+
+  @override
+  Future<int> createCameraWithSettings(
+    CameraDescription cameraDescription,
+    MediaSettings? mediaSettings,
+  ) async {
     try {
       final Map<String, dynamic>? reply = await _channel
           .invokeMapMethod<String, dynamic>('create', <String, dynamic>{
         'cameraName': cameraDescription.name,
-        'resolutionPreset': resolutionPreset != null
-            ? _serializeResolutionPreset(resolutionPreset)
+        'resolutionPreset': null != mediaSettings?.resolutionPreset
+            ? _serializeResolutionPreset(mediaSettings!.resolutionPreset!)
             : null,
-        'enableAudio': enableAudio,
+        'fps': mediaSettings?.fps,
+        'videoBitrate': mediaSettings?.videoBitrate,
+        'audioBitrate': mediaSettings?.audioBitrate,
+        'enableAudio': mediaSettings?.enableAudio ?? true,
       });
 
       return reply!['cameraId']! as int;
@@ -310,7 +325,7 @@ class AVFoundationCamera extends CameraPlatform {
   }
 
   StreamController<CameraImageData> _createStreamController(
-      {Function()? onListen}) {
+      {void Function()? onListen}) {
     return StreamController<CameraImageData>(
       onListen: onListen ?? () {},
       onPause: _onFrameStreamPauseResume,
@@ -523,6 +538,17 @@ class AVFoundationCamera extends CameraPlatform {
   }
 
   @override
+  Future<void> setImageFileFormat(int cameraId, ImageFileFormat format) {
+    return _channel.invokeMethod<void>(
+      'setImageFileFormat',
+      <String, dynamic>{
+        'cameraId': cameraId,
+        'fileFormat': format.name,
+      },
+    );
+  }
+
+  @override
   Widget buildPreview(int cameraId) {
     return Texture(textureId: cameraId);
   }
@@ -580,7 +606,6 @@ class AVFoundationCamera extends CameraPlatform {
         final Map<String, Object?> arguments = _getArgumentDictionary(call);
         _deviceEventStreamController.add(DeviceOrientationChangedEvent(
             deserializeDeviceOrientation(arguments['orientation']! as String)));
-        break;
       default:
         throw MissingPluginException();
     }
@@ -604,7 +629,6 @@ class AVFoundationCamera extends CameraPlatform {
           deserializeFocusMode(arguments['focusMode']! as String),
           arguments['focusPointSupported']! as bool,
         ));
-        break;
       case 'resolution_changed':
         final Map<String, Object?> arguments = _getArgumentDictionary(call);
         cameraEventStreamController.add(CameraResolutionChangedEvent(
@@ -612,12 +636,10 @@ class AVFoundationCamera extends CameraPlatform {
           arguments['captureWidth']! as double,
           arguments['captureHeight']! as double,
         ));
-        break;
       case 'camera_closing':
         cameraEventStreamController.add(CameraClosingEvent(
           cameraId,
         ));
-        break;
       case 'video_recorded':
         final Map<String, Object?> arguments = _getArgumentDictionary(call);
         cameraEventStreamController.add(VideoRecordedEvent(
@@ -627,14 +649,12 @@ class AVFoundationCamera extends CameraPlatform {
               ? Duration(milliseconds: arguments['maxVideoDuration']! as int)
               : null,
         ));
-        break;
       case 'error':
         final Map<String, Object?> arguments = _getArgumentDictionary(call);
         cameraEventStreamController.add(CameraErrorEvent(
           cameraId,
           arguments['description']! as String,
         ));
-        break;
       default:
         throw MissingPluginException();
     }

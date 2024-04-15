@@ -30,7 +30,7 @@ void main() {
 
     // Setting up a handler requires bindings to be initialized, and since
     // registerWith is called very early in initialization the bindings won't
-    // have been initialized. While registerWith could intialize them, that
+    // have been initialized. While registerWith could initialize them, that
     // could slow down startup, so instead the handler should be set up lazily.
     final ByteData? response = await TestDefaultBinaryMessengerBinding
         .instance.defaultBinaryMessenger
@@ -72,6 +72,54 @@ void main() {
           arguments: <String, Object?>{
             'cameraName': 'Test',
             'resolutionPreset': 'high',
+            'enableAudio': false,
+            'fps': null,
+            'videoBitrate': null,
+            'audioBitrate': null,
+          },
+        ),
+      ]);
+      expect(cameraId, 1);
+    });
+
+    test(
+        'Should send creation data and receive back a camera id using createCameraWithSettings',
+        () async {
+      // Arrange
+      final MethodChannelMock cameraMockChannel = MethodChannelMock(
+          channelName: _channelName,
+          methods: <String, dynamic>{
+            'create': <String, dynamic>{
+              'cameraId': 1,
+              'imageFormatGroup': 'unknown',
+            }
+          });
+      final AndroidCamera camera = AndroidCamera();
+
+      // Act
+      final int cameraId = await camera.createCameraWithSettings(
+        const CameraDescription(
+            name: 'Test',
+            lensDirection: CameraLensDirection.back,
+            sensorOrientation: 0),
+        const MediaSettings(
+          resolutionPreset: ResolutionPreset.low,
+          fps: 15,
+          videoBitrate: 200000,
+          audioBitrate: 32000,
+        ),
+      );
+
+      // Assert
+      expect(cameraMockChannel.log, <Matcher>[
+        isMethodCall(
+          'create',
+          arguments: <String, Object?>{
+            'cameraName': 'Test',
+            'resolutionPreset': 'low',
+            'fps': 15,
+            'videoBitrate': 200000,
+            'audioBitrate': 32000,
             'enableAudio': false
           },
         ),

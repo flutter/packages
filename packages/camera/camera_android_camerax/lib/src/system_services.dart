@@ -5,10 +5,9 @@
 import 'dart:async';
 
 import 'package:camera_platform_interface/camera_platform_interface.dart'
-    show CameraException, DeviceOrientationChangedEvent;
+    show CameraException;
 import 'package:flutter/services.dart';
 
-import 'android_camera_camerax_flutter_api_impls.dart';
 import 'camerax_library.g.dart';
 
 // Ignoring lint indicating this class only contains static members
@@ -18,14 +17,6 @@ import 'camerax_library.g.dart';
 /// Utility class that offers access to Android system services needed for
 /// camera usage and other informational streams.
 class SystemServices {
-  /// Stream that emits the device orientation whenever it is changed.
-  ///
-  /// Values may start being added to the stream once
-  /// `startListeningForDeviceOrientationChange(...)` is called.
-  static final StreamController<DeviceOrientationChangedEvent>
-      deviceOrientationChangedStreamController =
-      StreamController<DeviceOrientationChangedEvent>.broadcast();
-
   /// Stream that emits the errors caused by camera usage on the native side.
   static final StreamController<String> cameraErrorStreamController =
       StreamController<String>.broadcast();
@@ -37,29 +28,6 @@ class SystemServices {
         SystemServicesHostApiImpl(binaryMessenger: binaryMessenger);
 
     return api.sendCameraPermissionsRequest(enableAudio);
-  }
-
-  /// Requests that [deviceOrientationChangedStreamController] start
-  /// emitting values for any change in device orientation.
-  static void startListeningForDeviceOrientationChange(
-      bool isFrontFacing, int sensorOrientation,
-      {BinaryMessenger? binaryMessenger}) {
-    AndroidCameraXCameraFlutterApis.instance.ensureSetUp();
-    final SystemServicesHostApi api =
-        SystemServicesHostApi(binaryMessenger: binaryMessenger);
-
-    api.startListeningForDeviceOrientationChange(
-        isFrontFacing, sensorOrientation);
-  }
-
-  /// Stops the [deviceOrientationChangedStreamController] from emitting values
-  /// for changes in device orientation.
-  static void stopListeningForDeviceOrientationChange(
-      {BinaryMessenger? binaryMessenger}) {
-    final SystemServicesHostApi api =
-        SystemServicesHostApi(binaryMessenger: binaryMessenger);
-
-    api.stopListeningForDeviceOrientationChange();
   }
 
   /// Returns a file path which was used to create a temporary file.
@@ -115,37 +83,6 @@ class SystemServicesHostApiImpl extends SystemServicesHostApi {
 class SystemServicesFlutterApiImpl implements SystemServicesFlutterApi {
   /// Constructs an [SystemServicesFlutterApiImpl].
   SystemServicesFlutterApiImpl();
-
-  /// Callback method for any changes in device orientation.
-  ///
-  /// Will only be called if
-  /// `SystemServices.startListeningForDeviceOrientationChange(...)` was called
-  /// to start listening for device orientation updates.
-  @override
-  void onDeviceOrientationChanged(String orientation) {
-    final DeviceOrientation deviceOrientation =
-        deserializeDeviceOrientation(orientation);
-    SystemServices.deviceOrientationChangedStreamController
-        .add(DeviceOrientationChangedEvent(deviceOrientation));
-  }
-
-  /// Deserializes device orientation in [String] format into a
-  /// [DeviceOrientation].
-  DeviceOrientation deserializeDeviceOrientation(String orientation) {
-    switch (orientation) {
-      case 'LANDSCAPE_LEFT':
-        return DeviceOrientation.landscapeLeft;
-      case 'LANDSCAPE_RIGHT':
-        return DeviceOrientation.landscapeRight;
-      case 'PORTRAIT_DOWN':
-        return DeviceOrientation.portraitDown;
-      case 'PORTRAIT_UP':
-        return DeviceOrientation.portraitUp;
-      default:
-        throw ArgumentError(
-            '"$orientation" is not a valid DeviceOrientation value');
-    }
-  }
 
   /// Callback method for any errors caused by camera usage on the Java side.
   @override

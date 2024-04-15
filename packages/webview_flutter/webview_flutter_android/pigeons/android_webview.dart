@@ -111,6 +111,14 @@ class WebResourceRequestData {
   Map<String?, String?> requestHeaders;
 }
 
+class WebResourceResponseData {
+  WebResourceResponseData(
+    this.statusCode,
+  );
+
+  int statusCode;
+}
+
 class WebResourceErrorData {
   WebResourceErrorData(this.errorCode, this.description);
 
@@ -268,6 +276,14 @@ abstract class WebViewHostApi {
 abstract class WebViewFlutterApi {
   /// Create a new Dart instance and add it to the `InstanceManager`.
   void create(int identifier);
+
+  void onScrollChanged(
+    int webViewInstanceId,
+    int left,
+    int top,
+    int oldLeft,
+    int oldTop,
+  );
 }
 
 @HostApi(dartHostTestHandler: 'TestWebSettingsHostApi')
@@ -329,6 +345,13 @@ abstract class WebViewClientFlutterApi {
 
   void onPageFinished(int instanceId, int webViewInstanceId, String url);
 
+  void onReceivedHttpError(
+    int instanceId,
+    int webViewInstanceId,
+    WebResourceRequestData request,
+    WebResourceResponseData response,
+  );
+
   void onReceivedRequestError(
     int instanceId,
     int webViewInstanceId,
@@ -357,6 +380,14 @@ abstract class WebViewClientFlutterApi {
     int webViewInstanceId,
     String url,
     bool isReload,
+  );
+
+  void onReceivedHttpAuthRequest(
+    int instanceId,
+    int webViewInstanceId,
+    int httpAuthHandlerInstanceId,
+    String host,
+    String realm,
   );
 }
 
@@ -387,6 +418,21 @@ abstract class WebChromeClientHostApi {
   );
 
   void setSynchronousReturnValueForOnConsoleMessage(
+    int instanceId,
+    bool value,
+  );
+
+  void setSynchronousReturnValueForOnJsAlert(
+    int instanceId,
+    bool value,
+  );
+
+  void setSynchronousReturnValueForOnJsConfirm(
+    int instanceId,
+    bool value,
+  );
+
+  void setSynchronousReturnValueForOnJsPrompt(
     int instanceId,
     bool value,
   );
@@ -435,6 +481,16 @@ abstract class WebChromeClientFlutterApi {
 
   /// Callback to Dart function `WebChromeClient.onConsoleMessage`.
   void onConsoleMessage(int instanceId, ConsoleMessage message);
+
+  @async
+  void onJsAlert(int instanceId, String url, String message);
+
+  @async
+  bool onJsConfirm(int instanceId, String url, String message);
+
+  @async
+  String onJsPrompt(
+      int instanceId, String url, String message, String defaultValue);
 }
 
 @HostApi(dartHostTestHandler: 'TestWebStorageHostApi')
@@ -548,6 +604,38 @@ abstract class GeolocationPermissionsCallbackHostApi {
 /// See https://developer.android.com/reference/android/webkit/GeolocationPermissions.Callback.
 @FlutterApi()
 abstract class GeolocationPermissionsCallbackFlutterApi {
+  /// Create a new Dart instance and add it to the `InstanceManager`.
+  void create(int instanceId);
+}
+
+/// Host API for `HttpAuthHandler`.
+///
+/// This class may handle instantiating and adding native object instances that
+/// are attached to a Dart instance or handle method calls on the associated
+/// native class or an instance of the class.
+///
+/// See https://developer.android.com/reference/android/webkit/HttpAuthHandler.
+@HostApi(dartHostTestHandler: 'TestHttpAuthHandlerHostApi')
+abstract class HttpAuthHandlerHostApi {
+  /// Handles Dart method `HttpAuthHandler.useHttpAuthUsernamePassword`.
+  bool useHttpAuthUsernamePassword(int instanceId);
+
+  /// Handles Dart method `HttpAuthHandler.cancel`.
+  void cancel(int instanceId);
+
+  /// Handles Dart method `HttpAuthHandler.proceed`.
+  void proceed(int instanceId, String username, String password);
+}
+
+/// Flutter API for `HttpAuthHandler`.
+///
+/// This class may handle instantiating and adding Dart instances that are
+/// attached to a native instance or receiving callback methods from an
+/// overridden native class.
+///
+/// See https://developer.android.com/reference/android/webkit/HttpAuthHandler.
+@FlutterApi()
+abstract class HttpAuthHandlerFlutterApi {
   /// Create a new Dart instance and add it to the `InstanceManager`.
   void create(int instanceId);
 }

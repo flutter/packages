@@ -6,10 +6,10 @@ import 'dart:convert';
 import 'dart:io'
     show
         Process,
+        ProcessException,
         ProcessResult,
         ProcessSignal,
         ProcessStartMode,
-        ProcessException,
         systemEncoding;
 
 import 'common.dart';

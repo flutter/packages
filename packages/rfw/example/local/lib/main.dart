@@ -49,7 +49,7 @@ class _ExampleState extends State<Example> {
   static WidgetLibrary _createLocalWidgets() {
     return LocalWidgetLibrary(<String, LocalWidgetBuilder>{
       'GreenBox': (BuildContext context, DataSource source) {
-        return Container(
+        return ColoredBox(
           color: const Color(0xFF002211),
           child: source.child(<Object>['child']),
         );

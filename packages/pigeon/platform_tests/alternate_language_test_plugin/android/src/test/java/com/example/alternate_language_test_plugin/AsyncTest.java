@@ -24,8 +24,8 @@ public class AsyncTest {
     }
 
     @Override
-    public void voidVoid(Result<Void> result) {
-      result.success(null);
+    public void voidVoid(VoidResult result) {
+      result.success();
     }
   }
 
@@ -36,7 +36,7 @@ public class AsyncTest {
     }
 
     @Override
-    public void voidVoid(Result<Void> result) {
+    public void voidVoid(VoidResult result) {
       result.error(new Exception("error"));
     }
   }

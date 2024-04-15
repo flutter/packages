@@ -118,7 +118,10 @@ enum MomentSkippedReason {
   tap_outside('tap_outside'),
 
   /// issuing_failed
-  issuing_failed('issuing_failed');
+  issuing_failed('issuing_failed'),
+
+  /// Unknown reason
+  unknown_reason('unknown_reason');
 
   ///
   const MomentSkippedReason(String reason) : _reason = reason;
@@ -137,7 +140,10 @@ enum MomentDismissedReason {
   cancel_called('cancel_called'),
 
   /// flow_restarted
-  flow_restarted('flow_restarted');
+  flow_restarted('flow_restarted'),
+
+  /// Unknown reason
+  unknown_reason('unknown_reason');
 
   ///
   const MomentDismissedReason(String reason) : _reason = reason;
@@ -204,7 +210,13 @@ enum CredentialSelectBy {
   /// A user without an existing session first pressed the Sign In With Google
   /// button to select a Google Account and then pressed the Confirm button to
   /// consent and share credentials.
-  btn_confirm_add_session('btn_confirm_add_session');
+  btn_confirm_add_session('btn_confirm_add_session'),
+
+  /// A user with an existing session used the browser's "FedCM" flow.
+  fedcm('fedcm'),
+
+  /// A fedcm authentication without user intervention.
+  fedcm_auto('fedcm_auto');
 
   ///
   const CredentialSelectBy(String selectBy) : _selectBy = selectBy;

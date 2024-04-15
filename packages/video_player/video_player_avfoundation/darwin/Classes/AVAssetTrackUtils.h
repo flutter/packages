@@ -4,11 +4,9 @@
 
 #import <AVFoundation/AVFoundation.h>
 
-/**
- * Returns a standardized transform
- * according to the orientation of the track.
- *
- * Note: https://stackoverflow.com/questions/64161544
- * `AVAssetTrack.preferredTransform` can have wrong `tx` and `ty`.
- */
+/// Returns a standardized transform
+/// according to the orientation of the track.
+///
+/// Note: https://stackoverflow.com/questions/64161544
+/// `AVAssetTrack.preferredTransform` can have wrong `tx` and `ty`.
 CGAffineTransform FVPGetStandardizedTransformForTrack(AVAssetTrack* track);

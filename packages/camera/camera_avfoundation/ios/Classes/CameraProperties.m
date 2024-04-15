@@ -90,9 +90,9 @@ UIDeviceOrientation FLTGetUIDeviceOrientationForString(NSString *orientation) {
   if ([orientation isEqualToString:@"portraitDown"]) {
     return UIDeviceOrientationPortraitUpsideDown;
   } else if ([orientation isEqualToString:@"landscapeLeft"]) {
-    return UIDeviceOrientationLandscapeRight;
-  } else if ([orientation isEqualToString:@"landscapeRight"]) {
     return UIDeviceOrientationLandscapeLeft;
+  } else if ([orientation isEqualToString:@"landscapeRight"]) {
+    return UIDeviceOrientationLandscapeRight;
   } else if ([orientation isEqualToString:@"portraitUp"]) {
     return UIDeviceOrientationPortrait;
   } else {
@@ -104,9 +104,9 @@ NSString *FLTGetStringForUIDeviceOrientation(UIDeviceOrientation orientation) {
   switch (orientation) {
     case UIDeviceOrientationPortraitUpsideDown:
       return @"portraitDown";
-    case UIDeviceOrientationLandscapeRight:
-      return @"landscapeLeft";
     case UIDeviceOrientationLandscapeLeft:
+      return @"landscapeLeft";
+    case UIDeviceOrientationLandscapeRight:
       return @"landscapeRight";
     case UIDeviceOrientationPortrait:
     default:
@@ -146,5 +146,17 @@ OSType FLTGetVideoFormatFromString(NSString *videoFormatString) {
   } else {
     NSLog(@"The selected imageFormatGroup is not supported by iOS. Defaulting to brga8888");
     return kCVPixelFormatType_32BGRA;
+  }
+}
+
+#pragma mark - file format
+
+FCPFileFormat FCPGetFileFormatFromString(NSString *fileFormatString) {
+  if ([fileFormatString isEqualToString:@"jpg"]) {
+    return FCPFileFormatJPEG;
+  } else if ([fileFormatString isEqualToString:@"heif"]) {
+    return FCPFileFormatHEIF;
+  } else {
+    return FCPFileFormatInvalid;
   }
 }
