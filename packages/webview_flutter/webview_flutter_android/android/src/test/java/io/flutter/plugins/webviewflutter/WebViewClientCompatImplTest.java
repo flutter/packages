@@ -37,8 +37,6 @@ public class WebViewClientCompatImplTest {
 
   @Mock public WebView mockWebView;
 
-  @Mock public WebViewClientCompatImpl mockWebViewClient;
-
   InstanceManager instanceManager;
   WebViewClientHostApiImpl hostApiImpl;
   WebViewClientCompatImpl webViewClient;
@@ -161,6 +159,7 @@ public class WebViewClientCompatImplTest {
 
   @Test
   public void setReturnValueForShouldOverrideUrlLoading() {
+    WebViewClientHostApiImpl.WebViewClientCompatImpl mockWebViewClient = mock();
     final WebViewClientHostApiImpl webViewClientHostApi =
         new WebViewClientHostApiImpl(
             instanceManager,
