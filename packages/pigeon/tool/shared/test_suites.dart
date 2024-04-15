@@ -364,8 +364,9 @@ Future<int> _runLinuxUnitTests() async {
     return compileCode;
   }
 
-  const String buildDirBase = '$examplePath/build/linux/plugins';
-  const String buildRelativeBinaryPath = 'debug/test_plugin/test_plugin_test';
+  const String buildDirBase = '$examplePath/build/linux';
+  const String buildRelativeBinaryPath =
+      'debug/plugins/test_plugin/test_plugin_test';
   const String arm64Path = '$buildDirBase/arm64/$buildRelativeBinaryPath';
   const String x64Path = '$buildDirBase/x64/$buildRelativeBinaryPath';
   if (File(arm64Path).existsSync()) {

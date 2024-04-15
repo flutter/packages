@@ -15,6 +15,8 @@ flutter:
         pluginClass: TestPlugin
       ios:
         pluginClass: TestPlugin
+      linux:
+        pluginClass: TestPlugin
       macos:
         pluginClass: TestPlugin
       windows:
