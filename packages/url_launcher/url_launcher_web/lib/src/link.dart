@@ -109,8 +109,10 @@ class LinkViewController extends PlatformViewController {
       // This is the first controller being created, attach the global click
       // listener.
 
-      // We listen to `keydown` events in the capture phase to ensure that we
-      // receive the event even if the engine calls `stopPropagation`.
+      // Why listen in the capture phase?
+      //
+      // To ensure we always receive the event even if the engine calls
+      // `stopPropagation`.
       html.window
           .addEventListener('keydown', _jsGlobalKeydownListener, _useCapture);
       html.window.addEventListener('click', _jsGlobalClickListener);
@@ -150,6 +152,52 @@ class LinkViewController extends PlatformViewController {
   static final JSFunction _jsGlobalClickListener = _onGlobalClick.toJS;
 
   static void _onGlobalKeydown(html.KeyboardEvent event) {
+    // Why not use `event.target`?
+    //
+    // Because the target is usually <flutter-view> and not the <a> element, so
+    // it's not very helpful. That's because focus management is handled by
+    // Flutter, and the browser doesn't always know which element is focused. In
+    // fact, in many cases, the focused widget is fully drawn on canvas and
+    // there's no corresponding HTML element to receive browser focus.
+
+    // Why not check for "Enter" or "Space" keys?
+    //
+    // Because we don't know (nor do we want to assume) which keys the app
+    // considers to be "trigger" keys. So we let the app do its thing, and if it
+    // decides to "trigger" the link, it will call `followLink`, which will set
+    // `_hitTestedViewId` to the ID of the triggered Link.
+
+    // Life of a keydown event:
+    //
+    // For simplicity, let's assume we are dealing with a Link widget setup with
+    // with a button widget like this:
+    //
+    // ```dart
+    // Link(
+    //   uri: Uri.parse('...'),
+    //   builder: (context, followLink) {
+    //     return ElevatedButton(
+    //       onPressed: followLink,
+    //       child: const Text('Press me'),
+    //     );
+    //   },
+    // );
+    // ```
+    //
+    // 1. The user navigates through the UI using the Tab key until they reach
+    //    the button in question.
+    // 2. The user presses the Enter key to trigger the link.
+    // 3. The framework receives the Enter keydown event:
+    //    - The event is dispatched to the button widget.
+    //    - The button widget calls `onPressed` and therefor `followLink`.
+    //    - `followLink` calls `LinkViewController.registerHitTest`.
+    //    - `LinkViewController.registerHitTest` sets `_hitTestedViewId`.
+    // 4. The `LinkViewController` also receives the keydown event:
+    //    - We check the value of `_hitTestedViewId`.
+    //    - If `_hitTestedViewId` is set, it means the app triggered the link.
+    //    - We navigate to the Link's URI.
+
+
     // The keydown event is not directly associated with the target Link, so
     // we need to look for the recently hit tested Link to handle the event.
     if (_hitTestedViewId != null) {
