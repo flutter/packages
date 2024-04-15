@@ -1,7 +1,3 @@
-## 0.3.4
-
-* Adds getCountryCode api.
-
 ## 0.3.3
 
 * Converts data objects in internal platform communication to Pigeon.

@@ -28,3 +28,8 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+
+# FOR TESTING AND INITIAL REVIEW ONLY. DO NOT MERGE.
+# See https://github.com/flutter/flutter/wiki/Contributing-to-Plugins-and-Packages#changing-federated-plugins
+dependency_overrides:
+   {in_app_purchase_android: {path: ../../../in_app_purchase/in_app_purchase_android}, in_app_purchase_platform_interface: {path: ../../../in_app_purchase/in_app_purchase_platform_interface}}
