@@ -514,8 +514,9 @@ Map<TypeDeclaration, List<int>> getReferencedTypes(
     }
   }
 
-  final Iterable<TypeDeclaration> allReferencedTypes =
-      types.expand(addAllRecursive);
+  final Iterable<TypeDeclaration> allReferencedTypes = types
+      .expand(addAllRecursive)
+      .where((TypeDeclaration type) => onGetApiRequirement(type) != null);
 
   if (allReferencedTypes.isEmpty) {
     return null;
