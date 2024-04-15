@@ -2,8 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'dart:math';
-
 import 'package:graphs/graphs.dart';
 
 import 'ast.dart';
@@ -1140,10 +1138,10 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
         methodName: newInstanceMethodName,
         dartPackageName: dartPackageName,
       ),
-      minApiRequirement: _typeWithHighestApiRequirement(<TypeDeclaration>[
+      minApiRequirement: _findAndroidHighestApiRequirement(<TypeDeclaration>[
         apiAsTypeDeclaration,
         ...api.unattachedFields.map((ApiField field) => field.type),
-      ])?.associatedProxyApi?.kotlinOptions?.minAndroidApi,
+      ])?.version,
       dartPackageName: dartPackageName,
       parameters: <Parameter>[
         Parameter(
@@ -1167,26 +1165,16 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
   }
 }
 
-TypeDeclaration? _typeWithHighestApiRequirement(
+({TypeDeclaration type, int version})? _findAndroidHighestApiRequirement(
   Iterable<TypeDeclaration> types,
 ) {
-  int highestMin = 1;
-  TypeDeclaration? highestNamedType;
-
-  for (final TypeDeclaration type in types) {
-    final int? typeMin = type.associatedProxyApi?.kotlinOptions?.minAndroidApi;
-    final int? typeArgumentMin = _typeWithHighestApiRequirement(
-      type.typeArguments,
-    )?.associatedProxyApi?.kotlinOptions?.minAndroidApi;
-    final int newMin = max(typeMin ?? 1, typeArgumentMin ?? 1);
-
-    if (newMin > highestMin) {
-      highestMin = newMin;
-      highestNamedType = type;
-    }
-  }
-
-  return highestMin == 1 ? null : highestNamedType;
+  return findHighestApiRequirement(
+    types,
+    onGetApiRequirement: (TypeDeclaration type) {
+      return type.associatedProxyApi?.kotlinOptions?.minAndroidApi;
+    },
+    onCompare: (int first, int second) => first.compareTo(second),
+  );
 }
 
 HostDatatype _getHostDatatype(Root root, NamedType field) {
