@@ -33,9 +33,9 @@ class TreeViewNode<T> {
     T content, {
     List<TreeViewNode<T>>? children,
     bool expanded = false,
-  }) : _expanded = children != null && children.isNotEmpty && expanded,
-       _content = content,
-       _children = children ?? <TreeViewNode<T>>[];
+  })  : _expanded = children != null && children.isNotEmpty && expanded,
+        _content = content,
+        _children = children ?? <TreeViewNode<T>>[];
 
   /// The subject matter of the node.
   ///
@@ -64,7 +64,7 @@ class TreeViewNode<T> {
   @override
   String toString() {
     return 'TreeViewNode: $content, depth: ${depth == 0 ? 'root' : depth}, '
-      '${children.isEmpty ? 'leaf' : 'parent, expanded: $isExpanded'}';
+        '${children.isEmpty ? 'leaf' : 'parent, expanded: $isExpanded'}';
   }
 }
 
@@ -258,7 +258,9 @@ class TreeViewController {
   ///    encloses the given context. Also includes some sample code in its
   ///    documentation.
   static TreeViewController? maybeOf(BuildContext context) {
-    return context.findAncestorStateOfType<TreeViewState<dynamic>>()?.controller;
+    return context
+        .findAncestorStateOfType<TreeViewState<dynamic>>()
+        ?.controller;
   }
 }
 
@@ -482,8 +484,12 @@ class TreeView<T> extends StatefulWidget {
   static Widget defaultTreeNodeBuilder(
     BuildContext context,
     TreeViewNode<dynamic> node, {
-    AnimationStyle? animationStyle
+    AnimationStyle? animationStyle,
   }) {
+    final Duration animationDuration =
+        animationStyle?.duration ?? TreeView.defaultAnimationDuration;
+    final Curve animationCurve =
+        animationStyle?.curve ?? TreeView.defaultAnimationCurve;
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Row(children: <Widget>[
@@ -497,8 +503,8 @@ class TreeView<T> extends StatefulWidget {
             child: node.children.isNotEmpty
                 ? AnimatedRotation(
                     turns: node.isExpanded ? 0.25 : 0.0,
-                    duration: animationStyle?.duration ?? TreeView.defaultAnimationDuration,
-                    curve: animationStyle?.curve ?? TreeView.defaultAnimationCurve,
+                    duration: animationDuration,
+                    curve: animationCurve,
                     child: const Icon(IconData(0x25BA), size: 14),
                   )
                 : null,
@@ -523,7 +529,8 @@ typedef _AnimationRecord = ({
   UniqueKey key,
 });
 
-class _TreeViewNodeParentDataWidget extends ParentDataWidget<TreeViewNodeParentData> {
+class _TreeViewNodeParentDataWidget
+    extends ParentDataWidget<TreeViewNodeParentData> {
   const _TreeViewNodeParentDataWidget({
     required this.depth,
     required super.child,
@@ -533,7 +540,8 @@ class _TreeViewNodeParentDataWidget extends ParentDataWidget<TreeViewNodeParentD
 
   @override
   void applyParentData(RenderObject renderObject) {
-    final TreeViewNodeParentData parentData = renderObject.parentData! as TreeViewNodeParentData;
+    final TreeViewNodeParentData parentData =
+        renderObject.parentData! as TreeViewNodeParentData;
     bool needsLayout = false;
 
     if (parentData.depth != depth) {
@@ -558,7 +566,8 @@ class _TreeViewNodeParentDataWidget extends ParentDataWidget<TreeViewNodeParentD
 }
 
 // TODO
-class TreeViewState<T> extends State<TreeView<T>> with TickerProviderStateMixin, TreeViewStateMixin<T> {
+class TreeViewState<T> extends State<TreeView<T>>
+    with TickerProviderStateMixin, TreeViewStateMixin<T> {
   // TODO
   TreeViewController get controller => _treeController!;
   TreeViewController? _treeController;
@@ -587,8 +596,10 @@ class TreeViewState<T> extends State<TreeView<T>> with TickerProviderStateMixin,
     }
   }
 
-  final Map<TreeViewNode<T>, _AnimationRecord> _currentAnimationForParent = <TreeViewNode<T>, _AnimationRecord>{};
-  final Map<UniqueKey, TreeViewNodesAnimation> _activeAnimations = <UniqueKey, TreeViewNodesAnimation>{};
+  final Map<TreeViewNode<T>, _AnimationRecord> _currentAnimationForParent =
+      <TreeViewNode<T>, _AnimationRecord>{};
+  final Map<UniqueKey, TreeViewNodesAnimation> _activeAnimations =
+      <UniqueKey, TreeViewNodesAnimation>{};
 
   @override
   void initState() {
@@ -737,7 +748,8 @@ class TreeViewState<T> extends State<TreeView<T>> with TickerProviderStateMixin,
     // animations keys each time we build with an updated active node list.
     _activeAnimations.clear();
     for (final TreeViewNode<T> node in _currentAnimationForParent.keys) {
-      final _AnimationRecord animationRecord = _currentAnimationForParent[node]!;
+      final _AnimationRecord animationRecord =
+          _currentAnimationForParent[node]!;
       final int leadingChildIndex = _activeNodes.indexOf(node) + 1;
       final TreeViewNodesAnimation animatingChildren = (
         fromIndex: leadingChildIndex,
@@ -760,13 +772,17 @@ class TreeViewState<T> extends State<TreeView<T>> with TickerProviderStateMixin,
       if (widget.onNodeToggle != null) {
         widget.onNodeToggle!(node);
       }
-      final AnimationController controller = _currentAnimationForParent[node]?.controller
-        ?? AnimationController(
-          value: node._expanded ? 0.0 : 1.0,
-          vsync: this,
-          duration: widget.animationStyle?.duration ?? TreeView.defaultAnimationDuration,
-        )..addStatusListener((AnimationStatus status) {
-          switch(status) {
+      final AnimationController controller =
+          _currentAnimationForParent[node]?.controller ??
+              AnimationController(
+                value: node._expanded ? 0.0 : 1.0,
+                vsync: this,
+                duration: widget.animationStyle?.duration ??
+                    TreeView.defaultAnimationDuration,
+              );
+      controller
+        ..addStatusListener((AnimationStatus status) {
+          switch (status) {
             case AnimationStatus.dismissed:
             case AnimationStatus.completed:
               _currentAnimationForParent[node]!.controller.dispose();
@@ -775,13 +791,14 @@ class TreeViewState<T> extends State<TreeView<T>> with TickerProviderStateMixin,
             case AnimationStatus.forward:
             case AnimationStatus.reverse:
           }
-        })..addListener(() {
-          setState((){
+        })
+        ..addListener(() {
+          setState(() {
             _updateActiveAnimations();
           });
         });
 
-      switch(controller.status) {
+      switch (controller.status) {
         case AnimationStatus.forward:
         case AnimationStatus.reverse:
           // We're interrupting an animation already in progress.
@@ -837,12 +854,15 @@ class _TreeView extends TwoDimensionalScrollView {
     required this.indentation,
     required int rowCount,
     bool addAutomaticKeepAlives = true,
-  }) : super(delegate: TreeRowBuilderDelegate(
-    nodeBuilder: nodeBuilder,
-    rowBuilder: rowBuilder,
-    rowCount: rowCount,
-    addAutomaticKeepAlives: addAutomaticKeepAlives,
-  ));
+  })  : assert(verticalDetails.direction == AxisDirection.down),
+        assert(horizontalDetails.direction == AxisDirection.right),
+        super(
+            delegate: TreeRowBuilderDelegate(
+          nodeBuilder: nodeBuilder,
+          rowBuilder: rowBuilder,
+          rowCount: rowCount,
+          addAutomaticKeepAlives: addAutomaticKeepAlives,
+        ));
 
   final Map<UniqueKey, TreeViewNodesAnimation> activeAnimations;
   final TreeViewTraversalOrder traversalOrder;
@@ -916,9 +936,12 @@ class TreeViewport extends TwoDimensionalViewport {
   }
 
   @override
-  void updateRenderObject(BuildContext context, RenderTreeViewport renderObject) {
+  void updateRenderObject(
+    BuildContext context,
+    RenderTreeViewport renderObject,
+  ) {
     renderObject
-      ..activeAnimations=  activeAnimations
+      ..activeAnimations = activeAnimations
       ..traversalOrder = traversalOrder
       ..indentation = indentation
       ..horizontalOffset = horizontalOffset

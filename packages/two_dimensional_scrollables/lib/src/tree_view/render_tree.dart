@@ -28,9 +28,9 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
     required super.childManager,
     super.cacheExtent,
     super.clipBehavior,
-  }) : _activeAnimations = activeAnimations,
-       _traversalOrder = traversalOrder,
-       _indentation = indentation;
+  })  : _activeAnimations = activeAnimations,
+        _traversalOrder = traversalOrder,
+        _indentation = indentation;
 
   @override
   TreeRowDelegateMixin get delegate => super.delegate as TreeRowDelegateMixin;
@@ -46,6 +46,7 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
   Map<UniqueKey, TreeViewNodesAnimation> get activeAnimations {
     return _activeAnimations;
   }
+
   Map<UniqueKey, TreeViewNodesAnimation> _activeAnimations;
   set activeAnimations(Map<UniqueKey, TreeViewNodesAnimation> value) {
     if (_activeAnimations == value) {
@@ -156,10 +157,10 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
     for (int row = 0; row < delegate.rowCount; row++) {
       final double leadingOffset = startOfRow;
       _Span? span = _rowMetrics.remove(row);
-    assert(needsDelegateRebuild || span != null);
+      assert(needsDelegateRebuild || span != null);
       final TreeRow configuration = needsDelegateRebuild
-        ? delegate.buildRow(ChildVicinity(yIndex: row, xIndex: 0))
-        : span!.configuration;
+          ? delegate.buildRow(ChildVicinity(yIndex: row, xIndex: 0))
+          : span!.configuration;
       span ??= _Span();
       span.update(
         configuration: configuration,
@@ -172,8 +173,7 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
         ),
       );
       newRowMetrics[row] = span;
-      if (span.trailingOffset >= verticalOffset.pixels &&
-        _firstRow == null) {
+      if (span.trailingOffset >= verticalOffset.pixels && _firstRow == null) {
         _firstRow = row;
       }
       if (span.trailingOffset >= _targetRowPixel && _lastRow == null) {
@@ -207,6 +207,9 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
 
   @override
   void layoutChildSequence() {
+    assert(verticalAxisDirection == AxisDirection.down &&
+        horizontalAxisDirection == AxisDirection.right);
+
     _updateAnimationCache();
     if (needsDelegateRebuild || didResize) {
       // Recomputes the table metrics, invalidates any cached information.
@@ -248,7 +251,8 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
     // TODO(Piinks): Keep track of longest width during layout for update to scroll bounds.
   }
 
-  final Map<UniqueKey, LayerHandle<ClipRectLayer>> _clipHandles = <UniqueKey, LayerHandle<ClipRectLayer>>{};
+  final Map<UniqueKey, LayerHandle<ClipRectLayer>> _clipHandles =
+      <UniqueKey, LayerHandle<ClipRectLayer>>{};
 
   @override
   void paint(PaintingContext context, Offset offset) {
@@ -268,7 +272,7 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
       final _Span rowSpan = _rowMetrics[row]!;
       final TreeRow configuration = rowSpan.configuration;
       if (configuration.backgroundDecoration != null ||
-        configuration.foregroundDecoration != null) {
+          configuration.foregroundDecoration != null) {
         final RenderBox child = getChildFor(
           ChildVicinity(xIndex: 0, yIndex: row),
         )!;
@@ -285,13 +289,15 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
         }
 
         if (configuration.backgroundDecoration != null) {
-          final Rect rect =
-              getRowRect(configuration.backgroundDecoration!.consumeSpanPadding);
+          final Rect rect = getRowRect(
+            configuration.backgroundDecoration!.consumeSpanPadding,
+          );
           backgroundRows[rect] = configuration.backgroundDecoration!;
         }
         if (configuration.foregroundDecoration != null) {
-          final Rect rect =
-              getRowRect(configuration.foregroundDecoration!.consumeSpanPadding);
+          final Rect rect = getRowRect(
+            configuration.foregroundDecoration!.consumeSpanPadding,
+          );
           foregroundRows[rect] = configuration.foregroundDecoration!;
         }
       }
@@ -301,11 +307,11 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
     // Background decorations first.
     backgroundRows.forEach((Rect rect, TreeRowDecoration decoration) {
       final TreeRowDecorationPaintDetails paintingDetails =
-        TreeRowDecorationPaintDetails(
-          canvas: context.canvas,
-          rect: rect,
-          axisDirection: horizontalAxisDirection,
-        );
+          TreeRowDecorationPaintDetails(
+        canvas: context.canvas,
+        rect: rect,
+        axisDirection: horizontalAxisDirection,
+      );
       decoration.paint(paintingDetails);
     });
     // Child nodes.
@@ -321,11 +327,11 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
     // Foreground decorations.
     foregroundRows.forEach((Rect rect, TreeRowDecoration decoration) {
       final TreeRowDecorationPaintDetails paintingDetails =
-        TreeRowDecorationPaintDetails(
-          canvas: context.canvas,
-          rect: rect,
-          axisDirection: horizontalAxisDirection,
-        );
+          TreeRowDecorationPaintDetails(
+        canvas: context.canvas,
+        rect: rect,
+        axisDirection: horizontalAxisDirection,
+      );
       decoration.paint(paintingDetails);
     });
   }

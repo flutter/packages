@@ -52,7 +52,7 @@ mixin TreeRowDelegateMixin on TwoDimensionalChildDelegate {
 /// [TreeRows] always have a [ChildVicinity.xIndex] of zero, with the
 /// [ChildVicinity.yIndex] representing their index in the main axis of the
 /// [TreeViewport].
-typedef ChildVicinityToRowBuilder = TreeRow Function (ChildVicinity);
+typedef ChildVicinityToRowBuilder = TreeRow Function(ChildVicinity);
 
 /// A delegate that supplies nodes for a [TreeViewport] on demand using a
 /// builder callback.

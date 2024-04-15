@@ -135,7 +135,8 @@ class TreeViewIndentationType {
   /// The default indentation of child [TreeViewNode]s in a [TreeView].
   ///
   /// Child nodes will be offset by 10 pixels for each level in the tree.
-  static const TreeViewIndentationType standard = TreeViewIndentationType._internal(10.0);
+  static const TreeViewIndentationType standard =
+      TreeViewIndentationType._internal(10.0);
 
   /// Configures no offsetting of child nodes in a [TreeView].
   ///
@@ -143,7 +144,8 @@ class TreeViewIndentationType {
   /// [TreeView.treeNodeBuilder] instead for more customization options.
   ///
   /// Child nodes will not be offset in the tree.
-  static const TreeViewIndentationType none = TreeViewIndentationType._internal(0.0);
+  static const TreeViewIndentationType none =
+      TreeViewIndentationType._internal(0.0);
 
   /// Configures a custom offset for indenting child nodes in a [TreeView].
   ///
