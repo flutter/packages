@@ -339,7 +339,7 @@ public class FileSelectorApiImpl implements GeneratedFileSelectorApi.FileSelecto
       return null;
     }
 
-    try {
+    // try {
     //         System.out.println("CAMILLE: " + uri.getPath());
     //   System.out.println("CAMILLE: " + DocumentsContract.getDocumentId(uri));
     // Uri newUri = DocumentsContract.buildDocumentUri(uri.getAuthority(), DocumentsContract.getDocumentId(uri));
@@ -348,10 +348,10 @@ public class FileSelectorApiImpl implements GeneratedFileSelectorApi.FileSelecto
     // System.out.println("CAMILLE: " + docUriPath2);
     // // System.out.println("CAMILLE: " + DocumentsContract.findDocumentPath(contentResolver, newUri));
         // final Uri docUri = DocumentsContract.buildDocumentUriUsingTree(uri, DocumentsContract.getTreeDocumentId(uri));
-    System.out.println("CAMILLE: " + DocumentsContract.findDocumentPath(contentResolver, uri));
-    } catch (Exception e) {System.out.println(" CAMILLE ERROR: " + e.toString());}
+    // System.out.println("CAMILLE: " + DocumentsContract.findDocumentPath(contentResolver, uri));
+    // } catch (Exception e) {System.out.println(" CAMILLE ERROR: " + e.toString());}
     // final Uri docUri = DocumentsContract.buildDocumentUri(uri, DocumentsContract.getTreeDocumentId(uri));
-    final String docUrIPath = FileUtils.getPathFromUri(activityPluginBinding.getActivity(), uri);
+    final String docUrIPath = FileUtils.getPathFromUri2(activityPluginBinding.getActivity(), uri);
 
     return new GeneratedFileSelectorApi.FileResponse.Builder()
         .setName(name)
