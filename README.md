@@ -1,6 +1,6 @@
 # Upsider Forked Rules of Operation for this Package
 
-## How to cut a branch
+## How to create a branch
 The target branches for use with pubspeck are as follows.
 
 | Title  | Branch Name  | Example  | Description  |
