@@ -7,14 +7,20 @@ import 'dart:collection';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 
-import '../common/span.dart';
+import '../common/implementation_span.dart';
 import 'tree_delegate.dart';
 import 'tree_span.dart';
 import 'tree_temp.dart';
 
-// TODO
+/// A render object for viewing [RenderBox]es in a tree format that extends in
+/// both the horizontal and vertical dimensions.
+///
+/// [RenderTreeViewport] is the visual workhorse of the [TreeView]. It
+/// displays a subset of its [TreeViewNode] rows according to its own dimensions
+/// and the given [verticalOffset] and [horizontalOffset]. As the offset varies,
+/// different nodes are visible through the viewport.
 class RenderTreeViewport extends RenderTwoDimensionalViewport {
-  // TODO
+  /// Creates a viewport for [RenderBox] objects in a tree format of rows.
   RenderTreeViewport({
     required Map<UniqueKey, TreeViewNodesAnimation> activeAnimations,
     required TreeViewTraversalOrder traversalOrder,
@@ -249,6 +255,7 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
     }
     // _updateScrollBounds
     // TODO(Piinks): Keep track of longest width during layout for update to scroll bounds.
+    // TODO(Piinks): Depth map
   }
 
   final Map<UniqueKey, LayerHandle<ClipRectLayer>> _clipHandles =

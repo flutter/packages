@@ -198,7 +198,6 @@ class TreeViewController {
   ///
   /// To return null if there is no [TreeView] use [maybeOf] instead.
   ///
-  /// {@tool dartpad}
   /// Typical usage of the [TreeViewController.of] function is to call it
   /// from within the `build` method of a descendant of an [TreeView].
   ///
@@ -211,10 +210,9 @@ class TreeViewController {
   /// [BuildContext] that is "under" the [TreeView]:
   ///
   // TODO(Piinks): add sample code
-  /// {@end-tool}
   static TreeViewController of(BuildContext context) {
-    final TreeViewState<dynamic>? result =
-        context.findAncestorStateOfType<TreeViewState<dynamic>>();
+    final _TreeViewState<dynamic>? result =
+        context.findAncestorStateOfType<_TreeViewState<dynamic>>();
     if (result != null) {
       return result.controller;
     }
@@ -259,7 +257,7 @@ class TreeViewController {
   ///    documentation.
   static TreeViewController? maybeOf(BuildContext context) {
     return context
-        .findAncestorStateOfType<TreeViewState<dynamic>>()
+        .findAncestorStateOfType<_TreeViewState<dynamic>>()
         ?.controller;
   }
 }
@@ -302,7 +300,17 @@ class TreeView<T> extends StatefulWidget {
     this.indentation = TreeViewIndentationType.standard,
   });
 
-  // TODO
+  /// The [TreeViewport] has an area before and after the visible area to cache
+  /// rows that are about to become visible when the user scrolls.
+  ///
+  /// [TreeRow]s that fall in this cache area are laid out even though they are
+  /// not (yet) visible on screen. The [cacheExtent] describes how many pixels
+  /// the cache area extends before the leading edge and after the trailing edge
+  /// of the viewport.
+  ///
+  /// See also:
+  ///
+  ///   * [TwoDimensionalScrollView.cacheExtent]
   final double? cacheExtent;
 
   /// Whether scrolling gestures should lock to one axes, allow free movement
@@ -312,7 +320,16 @@ class TreeView<T> extends StatefulWidget {
   /// at a time.
   final DiagonalDragBehavior diagonalDragBehavior;
 
-  // TODO
+  /// Whether this is the primary scroll view associated with the parent
+  /// [PrimaryScrollController].
+  ///
+  /// When this is true, the scroll view is scrollable even if it does not have
+  /// sufficient content to actually scroll. Otherwise, by default the user can
+  /// only scroll the view if it has sufficient content.
+  ///
+  /// See also:
+  ///
+  ///   * [TwoDimensionalScrollView.primary]
   final bool? primary;
 
   /// The main axis of the two.
@@ -332,13 +349,24 @@ class TreeView<T> extends StatefulWidget {
   /// [ScrollController], [ScrollPhysics] and more for the horizontal axis.
   final ScrollableDetails horizontalDetails;
 
-  // TODO
+  /// Determines the way that drag start behavior is handled.
+  ///
+  /// By default, the drag start behavior is [DragStartBehavior.start].
+  ///
+  /// See also:
+  ///
+  ///  * [TwoDimensionalScrollView.dragStartBehavior]
   final DragStartBehavior dragStartBehavior;
 
-  // TODO
+  /// [ScrollViewKeyboardDismissBehavior] the defines how this [ScrollView] will
+  /// dismiss the keyboard automatically.
   final ScrollViewKeyboardDismissBehavior keyboardDismissBehavior;
 
-  // TODO
+  /// The bounds of the [TreeViewport] will be clipped (or not) according to
+  /// this option.
+  ///
+  /// See the enum [Clip] for details of all possible options and their common
+  /// use cases.
   ///
   /// Defaults to [Clip.hardEdge].
   final Clip clipBehavior;
@@ -362,7 +390,7 @@ class TreeView<T> extends StatefulWidget {
   ///
   /// By default, if this is unset, the [TreeView.defaultTreeRowBuilder]
   /// is used.
-  final TreeRowBuilder treeRowBuilder;
+  final TreeViewRowBuilder treeRowBuilder;
 
   /// If provided, the controller can be used to expand and collapse
   /// [TreeViewNodes]s, or lookup information about the current state of the
@@ -493,8 +521,6 @@ class TreeView<T> extends StatefulWidget {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Row(children: <Widget>[
-        // Indent - TODO(Piinks): Turn this into an example to show indent handled internally and externally
-        // SizedBox.square(dimension: node.depth! * 10.0),
         // Icon for parent nodes
         TreeView.toggleNodeWith(
           node: node,
@@ -519,7 +545,7 @@ class TreeView<T> extends StatefulWidget {
   }
 
   @override
-  State<TreeView<T>> createState() => TreeViewState<T>();
+  State<TreeView<T>> createState() => _TreeViewState<T>();
 }
 
 // Used in TreeViewState for code simplicity.
@@ -565,10 +591,9 @@ class _TreeViewNodeParentDataWidget
   }
 }
 
-// TODO
-class TreeViewState<T> extends State<TreeView<T>>
+/// State object for a [Scrollable] widget.
+class _TreeViewState<T> extends State<TreeView<T>>
     with TickerProviderStateMixin, TreeViewStateMixin<T> {
-  // TODO
   TreeViewController get controller => _treeController!;
   TreeViewController? _treeController;
 
@@ -890,9 +915,11 @@ class _TreeView extends TwoDimensionalScrollView {
   }
 }
 
-// TODO
+/// A widget through which a portion of a tree of [TreeViewNode] children are
+/// viewed as rows, typically in combination with a [TreeView].
 class TreeViewport extends TwoDimensionalViewport {
-  /// TODO
+  /// Creates a viewport for [Widget]s that extend and scroll in both
+  /// horizontal and vertical dimensions.
   const TreeViewport({
     super.key,
     required super.verticalOffset,
@@ -908,13 +935,23 @@ class TreeViewport extends TwoDimensionalViewport {
     required this.indentation,
   });
 
-  // TODO
+  /// The currently active [TreeViewNode] animations.
+  ///
+  /// Since the indexing of animating nodes can change at any time from
+  /// inserting and removing them from the tree, the unique key is used to track
+  /// an animation of nodes independent of their indexing across frames.
   final Map<UniqueKey, TreeViewNodesAnimation> activeAnimations;
 
-  // TODO
+  /// The order in which child nodes of the tree will be traversed.
+  ///
+  /// The default traversal order is [TreeViewTraversalOrder.depthFirst].
   final TreeViewTraversalOrder traversalOrder;
 
-  // TODO
+  /// The number of pixels by which child nodes will be offset in the cross axis
+  /// based on their [TreeViewNodeParentData.depth].
+  ///
+  /// If zero, can alternatively offset children in [TreeView.treeRowBuilder]
+  /// for more options to customize the indented space.
   final double indentation;
 
   @override

@@ -12,7 +12,7 @@ import 'tree_span.dart';
 ///
 /// Used by the [TreeViewDelegateMixin.buildRow] to configure rows in the
 /// [TreeView].
-typedef TreeRowBuilder = TreeRow Function(TreeViewNode<dynamic> node);
+typedef TreeViewRowBuilder = TreeRow Function(TreeViewNode<dynamic> node);
 
 /// Signature for a function that creates a [Widget] to represent the given
 /// [TreeViewNode] in the [TreeView].
@@ -58,7 +58,7 @@ typedef ChildVicinityToRowBuilder = TreeRow Function(ChildVicinity);
 /// builder callback.
 ///
 /// This is not typically used directly, instead being created and managed by
-/// the [TreeViewState] so that the builder can be called for only those
+/// the [TreeView] so that the builder can be called for only those
 /// [TreeViewNode]s that are currently active in the [TreeView].
 ///
 /// The [rowCount] is determined by the number of active nodes in the

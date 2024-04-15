@@ -8,7 +8,7 @@ import 'dart:math' as math;
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 
-import '../common/span.dart';
+import '../common/implementation_span.dart';
 import 'table_cell.dart';
 import 'table_delegate.dart';
 import 'table_span.dart';
