@@ -167,7 +167,8 @@ class FakeStoreKitPlatform implements TestInAppPurchaseApi {
     }
   }
 
-  void setStoreFrontInfo({required String countryCode, required String identifier}) {
+  void setStoreFrontInfo(
+      {required String countryCode, required String identifier}) {
     _countryCode = countryCode;
     _countryIdentifier = identifier;
   }

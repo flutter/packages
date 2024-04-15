@@ -760,8 +760,7 @@ void main() {
 
       when(mockApi.getBillingConfigAsync())
           .thenAnswer((_) async => platformBillingConfigFromWrapper(expected));
-      final String countryCode =
-          await iapAndroidPlatform.getCountryCode();
+      final String countryCode = await iapAndroidPlatform.getCountryCode();
 
       expect(countryCode, equals(expectedCountryCode));
     });

@@ -571,11 +571,11 @@ void main() {
     });
   });
 
-
   group('billing configuration', () {
     test('country_code', () async {
       const String expectedCountryCode = 'CA';
-      fakeStoreKitPlatform.setStoreFrontInfo(countryCode: expectedCountryCode, identifier: 'ABC');
+      fakeStoreKitPlatform.setStoreFrontInfo(
+          countryCode: expectedCountryCode, identifier: 'ABC');
       final String? countryCode = await iapStoreKitPlatform.getCountryCode();
       expect(countryCode, expectedCountryCode);
     });
