@@ -14,11 +14,11 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 
 import android.graphics.SurfaceTexture;
-import com.google.android.exoplayer2.ExoPlayer;
-import com.google.android.exoplayer2.Format;
-import com.google.android.exoplayer2.PlaybackException;
-import com.google.android.exoplayer2.Player;
-import com.google.android.exoplayer2.upstream.DefaultHttpDataSource;
+import androidx.media3.common.Format;
+import androidx.media3.common.PlaybackException;
+import androidx.media3.common.Player;
+import androidx.media3.datasource.DefaultHttpDataSource;
+import androidx.media3.exoplayer.ExoPlayer;
 import io.flutter.plugin.common.EventChannel;
 import io.flutter.view.TextureRegistry;
 import java.util.HashMap;
