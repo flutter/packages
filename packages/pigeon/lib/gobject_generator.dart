@@ -784,7 +784,7 @@ class GObjectSourceGenerator extends StructuredGenerator<GObjectOptions> {
               "g_autoptr($responseClassName) response = self->vtable->$methodName(${vfuncArgs.join(', ')});");
           indent.writeScoped('if (response == nullptr) {', '}', () {
             indent.writeln(
-                'g_warning("No response returned to ${api.name}.${method.name}");');
+                'g_warning("No response returned to %s.%s", "${api.name}", "${method.name}");');
             indent.writeln('return;');
           });
 
@@ -794,7 +794,7 @@ class GObjectSourceGenerator extends StructuredGenerator<GObjectOptions> {
               'if (!fl_basic_message_channel_respond(channel, response_handle, response->value, &error)) {',
               '}', () {
             indent.writeln(
-                'g_warning("Failed to send response to ${api.name}.${method.name}: %s", error->message);');
+                'g_warning("Failed to send response to %s.%s: %s", "${api.name}", "${method.name}", error->message);');
           });
         }
       });
@@ -879,7 +879,7 @@ class GObjectSourceGenerator extends StructuredGenerator<GObjectOptions> {
             'if (!fl_basic_message_channel_respond(self->${methodName}_channel, response_handle, response->value, &error)) {',
             '}', () {
           indent.writeln(
-              'g_warning("Failed to send response to ${api.name}.${method.name}: %s", error->message);');
+              'g_warning("Failed to send response to %s.%s: %s", "${api.name}", "${method.name}", error->message);');
         });
       });
 
@@ -901,7 +901,7 @@ class GObjectSourceGenerator extends StructuredGenerator<GObjectOptions> {
             'if (!fl_basic_message_channel_respond(self->${methodName}_channel, response_handle, response->value, &error)) {',
             '}', () {
           indent.writeln(
-              'g_warning("Failed to send response to ${api.name}.${method.name}: %s", error->message);');
+              'g_warning("Failed to send response to %s.%s: %s", "${api.name}", "${method.name}", error->message);');
         });
       });
     }
