@@ -20,6 +20,7 @@ import androidx.test.core.app.ApplicationProvider;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.Marker;
 import com.google.maps.android.clustering.ClusterManager;
+import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.MethodChannel;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -42,9 +43,9 @@ public class GoogleMapControllerTest {
 
   private Context context;
   private ComponentActivity activity;
-  private GoogleMapController googleMapController;
 
   AutoCloseable mockCloseable;
+  @Mock BinaryMessenger mockMessenger;
   @Mock GoogleMap mockGoogleMap;
   @Mock MethodChannel mockMethodChannel;
   @Mock ClusterManagersController mockClusterManagersController;
@@ -59,7 +60,20 @@ public class GoogleMapControllerTest {
     mockCloseable = MockitoAnnotations.openMocks(this);
     context = ApplicationProvider.getApplicationContext();
     setUpActivityLegacy();
-    googleMapController =
+  }
+
+  // Returns GoogleMapController instance.
+  // See getGoogleMapControllerWithMockedDependencies for version with dependency injections.
+  public GoogleMapController getGoogleMapController() {
+    GoogleMapController googleMapController =
+        new GoogleMapController(0, context, mockMessenger, activity::getLifecycle, null);
+    googleMapController.init();
+    return googleMapController;
+  }
+
+  // Returns GoogleMapController instance with mocked dependency injections.
+  public GoogleMapController getGoogleMapControllerWithMockedDependencies() {
+    GoogleMapController googleMapController =
         new GoogleMapController(
             0,
             context,
@@ -73,6 +87,7 @@ public class GoogleMapControllerTest {
             mockCirclesController,
             mockTileOverlaysController);
     googleMapController.init();
+    return googleMapController;
   }
 
   // TODO(stuartmorgan): Update this to a non-deprecated test API.
@@ -89,6 +104,7 @@ public class GoogleMapControllerTest {
 
   @Test
   public void DisposeReleaseTheMap() throws InterruptedException {
+    GoogleMapController googleMapController = getGoogleMapController();
     googleMapController.onMapReady(mockGoogleMap);
     assertTrue(googleMapController != null);
     googleMapController.dispose();
@@ -97,6 +113,7 @@ public class GoogleMapControllerTest {
 
   @Test
   public void OnDestroyReleaseTheMap() throws InterruptedException {
+    GoogleMapController googleMapController = getGoogleMapController();
     googleMapController.onMapReady(mockGoogleMap);
     assertTrue(googleMapController != null);
     googleMapController.onDestroy(activity);
@@ -105,6 +122,7 @@ public class GoogleMapControllerTest {
 
   @Test
   public void OnMapReadySetsPaddingIfInitialPaddingIsThere() {
+    GoogleMapController googleMapController = getGoogleMapController();
     float padding = 10f;
     int paddingWithDensity = (int) (padding * googleMapController.density);
     googleMapController.setInitialPadding(padding, padding, padding, padding);
@@ -115,6 +133,7 @@ public class GoogleMapControllerTest {
 
   @Test
   public void SetPaddingStoresThePaddingValuesInInInitialPaddingWhenGoogleMapIsNull() {
+    GoogleMapController googleMapController = getGoogleMapController();
     assertNull(googleMapController.initialPadding);
     googleMapController.setPadding(0f, 0f, 0f, 0f);
     assertNotNull(googleMapController.initialPadding);
@@ -123,6 +142,7 @@ public class GoogleMapControllerTest {
 
   @Test
   public void OnMapReadySetsMarkerCollectionListener() {
+    GoogleMapController googleMapController = getGoogleMapController();
     GoogleMapController spyGoogleMapController = spy(googleMapController);
     // setMarkerCollectionListener method should be called when map is ready
     spyGoogleMapController.onMapReady(mockGoogleMap);
@@ -139,6 +159,7 @@ public class GoogleMapControllerTest {
   @Test
   @SuppressWarnings("unchecked")
   public void OnMapReadySetsClusterItemClickListener() {
+    GoogleMapController googleMapController = getGoogleMapController();
     GoogleMapController spyGoogleMapController = spy(googleMapController);
     // setMarkerCollectionListener method should be called when map is ready
     spyGoogleMapController.onMapReady(mockGoogleMap);
@@ -155,6 +176,7 @@ public class GoogleMapControllerTest {
   @Test
   @SuppressWarnings("unchecked")
   public void OnMapReadySetsClusterItemRenderedListener() {
+    GoogleMapController googleMapController = getGoogleMapController();
     GoogleMapController spyGoogleMapController = spy(googleMapController);
     // setMarkerCollectionListener method should be called when map is ready
     spyGoogleMapController.onMapReady(mockGoogleMap);
@@ -171,6 +193,7 @@ public class GoogleMapControllerTest {
 
   @Test
   public void SetInitialClusterManagers() {
+    GoogleMapController googleMapController = getGoogleMapControllerWithMockedDependencies();
     Map<String, Object> initialClusterManager = new HashMap<>();
     initialClusterManager.put("clusterManagerId", "cm_1");
     List<Object> initialClusterManagers = new ArrayList<>();
@@ -184,6 +207,7 @@ public class GoogleMapControllerTest {
 
   @Test
   public void OnClusterItemRenderedCallsMarkersController() {
+    GoogleMapController googleMapController = getGoogleMapControllerWithMockedDependencies();
     MarkerBuilder markerBuilder = new MarkerBuilder("m_1", "cm_1");
     final Marker marker = mock(Marker.class);
     googleMapController.onClusterItemRendered(markerBuilder, marker);
@@ -192,6 +216,7 @@ public class GoogleMapControllerTest {
 
   @Test
   public void OnClusterItemClickCallsMarkersController() {
+    GoogleMapController googleMapController = getGoogleMapControllerWithMockedDependencies();
     MarkerBuilder markerBuilder = new MarkerBuilder("m_1", "cm_1");
 
     googleMapController.onClusterItemClick(markerBuilder);
