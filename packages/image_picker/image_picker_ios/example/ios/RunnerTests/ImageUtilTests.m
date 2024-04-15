@@ -217,4 +217,14 @@ static NSString *ColorStringAtPixel(UIImage *image, int pixelX, int pixelY) {
   XCTAssertEqual(newImage.size.height, 7);
 }
 
+- (void)testScaledImage_ImageIsNil {
+  UIImage *image = nil;
+  UIImage *scaledImage = [FLTImagePickerImageUtil scaledImage:image
+                                                     maxWidth:@1440
+                                                    maxHeight:@1440
+                                          isMetadataAvailable:YES];
+
+  // Assert the same bytes pointer (not just equal objects).
+  XCTAssertEqual(image, scaledImage);
+}
 @end
