@@ -14,6 +14,23 @@ set(PLUGIN_NAME "test_plugin_plugin")
 # Any new source files that you add to the plugin should be added here.
 list(APPEND PLUGIN_SOURCES
   "test_plugin.cc"
+  # Generated sources.
+  "pigeon/core_tests.gen.cc"
+  "pigeon/core_tests.gen.h"
+  "pigeon/enum.gen.cc"
+  "pigeon/enum.gen.h"
+  "pigeon/message.gen.cc"
+  "pigeon/message.gen.h"
+  "pigeon/multiple_arity.gen.cc"
+  "pigeon/multiple_arity.gen.h"
+  "pigeon/non_null_fields.gen.cc"
+  "pigeon/non_null_fields.gen.h"
+  "pigeon/null_fields.gen.cc"
+  "pigeon/null_fields.gen.h"
+  "pigeon/nullable_returns.gen.cc"
+  "pigeon/nullable_returns.gen.h"
+  "pigeon/primitive.gen.cc"
+  "pigeon/primitive.gen.h"
 )
 
 # Define the plugin library target. Its name must not be changed (see comment
@@ -77,6 +94,7 @@ FetchContent_MakeAvailable(googletest)
 # The plugin's exported API is not very useful for unit testing, so build the
 # sources directly into the test binary rather than using the shared library.
 add_executable(${TEST_RUNNER}
+  # TODO(stuartmorgan): Add real tests.
   test/test_plugin_test.cc
   ${PLUGIN_SOURCES}
 )
