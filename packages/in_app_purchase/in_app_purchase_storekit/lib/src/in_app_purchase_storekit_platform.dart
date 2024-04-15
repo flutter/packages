@@ -153,6 +153,14 @@ class InAppPurchaseStoreKitPlatform extends InAppPurchasePlatform {
     );
     return productDetailsResponse;
   }
+
+  /// Returns the country code from SKStoreFrontWrapper.
+  ///
+  /// See: https://developer.apple.com/documentation/storekit/skstorefront?language=objc
+  @override
+  Future<String?> getCountryCode() async {
+    return (await SKPaymentQueueWrapper().storefront())?.countryCode;
+  }
 }
 
 enum _TransactionRestoreState {

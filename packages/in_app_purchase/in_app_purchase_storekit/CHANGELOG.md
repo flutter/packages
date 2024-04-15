@@ -1,3 +1,7 @@
+## 0.3.14
+
+* Adds getCountryCode api.
+
 ## 0.3.13+1
 
 * Handle translation of errors nested in dictionaries.

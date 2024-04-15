@@ -209,4 +209,21 @@ class InAppPurchase implements InAppPurchasePlatformAdditionProvider {
       InAppPurchasePlatform.instance.restorePurchases(
         applicationUserName: applicationUserName,
       );
+
+  /// Returns the users country.
+  ///
+  /// Android:
+  /// Returns Play billing country code based on ISO-3166-1 alpha2 format.
+  ///
+  /// See: https://developer.android.com/reference/com/android/billingclient/api/BillingConfig
+  /// See: https://unicode.org/cldr/charts/latest/supplemental/territory_containment_un_m_49.html
+  ///
+  /// iOS:
+  /// Returns the country code from SKStoreFrontWrapper.
+  ///
+  /// See: https://developer.apple.com/documentation/storekit/skstorefront?language=objc
+  ///
+  ///
+  Future<void> countryCode() =>
+      throw UnimplementedError('countryCode() has not been implemented.');
 }
