@@ -205,7 +205,6 @@ public class FileSelectorApiImpl implements GeneratedFileSelectorApi.FileSelecto
               if (resultCode == Activity.RESULT_OK && data != null) {
                 final Uri uri = data.getData();
                 final Uri docUri = DocumentsContract.buildDocumentUriUsingTree(uri, DocumentsContract.getTreeDocumentId(uri));
-                System.out.println(docUri);
                 try {
                   final String path = FileUtils.getPathFromUri(activityPluginBinding.getActivity(), docUri);
                   result.success(path);
@@ -339,24 +338,12 @@ public class FileSelectorApiImpl implements GeneratedFileSelectorApi.FileSelecto
       return null;
     }
 
-    // try {
-    //         System.out.println("CAMILLE: " + uri.getPath());
-    //   System.out.println("CAMILLE: " + DocumentsContract.getDocumentId(uri));
-    // Uri newUri = DocumentsContract.buildDocumentUri(uri.getAuthority(), DocumentsContract.getDocumentId(uri));
-    // System.out.println("CAMILLE: " + newUri.getPath());
-    // final String docUriPath2 = FileUtils.getPathFromUri(activityPluginBinding.getActivity(), newUri);
-    // System.out.println("CAMILLE: " + docUriPath2);
-    // // System.out.println("CAMILLE: " + DocumentsContract.findDocumentPath(contentResolver, newUri));
-        // final Uri docUri = DocumentsContract.buildDocumentUriUsingTree(uri, DocumentsContract.getTreeDocumentId(uri));
-    // System.out.println("CAMILLE: " + DocumentsContract.findDocumentPath(contentResolver, uri));
-    // } catch (Exception e) {System.out.println(" CAMILLE ERROR: " + e.toString());}
-    // final Uri docUri = DocumentsContract.buildDocumentUri(uri, DocumentsContract.getTreeDocumentId(uri));
-    final String docUrIPath = FileUtils.getPathFromUri2(activityPluginBinding.getActivity(), uri);
+    final String docUriPath = FileUtils.getPathFromCopyOfFileFromUri(activityPluginBinding.getActivity(), uri);
 
     return new GeneratedFileSelectorApi.FileResponse.Builder()
         .setName(name)
         .setBytes(bytes)
-        .setPath(docUrIPath)
+        .setPath(docUriPath)
         .setMimeType(contentResolver.getType(uri))
         .setSize(size.longValue())
         .build();
