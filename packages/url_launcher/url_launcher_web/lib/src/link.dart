@@ -197,7 +197,6 @@ class LinkViewController extends PlatformViewController {
     //    - If `_hitTestedViewId` is set, it means the app triggered the link.
     //    - We navigate to the Link's URI.
 
-
     // The keydown event is not directly associated with the target Link, so
     // we need to look for the recently hit tested Link to handle the event.
     if (_hitTestedViewId != null) {
