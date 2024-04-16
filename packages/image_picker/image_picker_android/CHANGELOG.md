@@ -1,3 +1,7 @@
+## 0.8.10
+
+* Adds limit parameter to `MediaOptions` and `MultiImagePickerOptions` that sets a limit to how many media or image items can be selected.
+
 ## 0.8.9+6
 
 * Updates minSdkVersion to 19.
