@@ -76,8 +76,12 @@ FlValue* pigeon_example_package_message_data_get_data(
 static FlValue* pigeon_example_package_message_data_to_list(
     PigeonExamplePackageMessageData* self) {
   FlValue* values = fl_value_new_list();
-  fl_value_append_take(values, fl_value_new_string(self->name));
-  fl_value_append_take(values, fl_value_new_string(self->description));
+  fl_value_append_take(values, self->name != nullptr
+                                   ? fl_value_new_string(self->name)
+                                   : fl_value_new_null());
+  fl_value_append_take(values, self->description != nullptr
+                                   ? fl_value_new_string(self->description)
+                                   : fl_value_new_null());
   fl_value_append_take(values, fl_value_new_int(self->code));
   fl_value_append_take(values, fl_value_ref(self->data));
   return values;
@@ -85,12 +89,20 @@ static FlValue* pigeon_example_package_message_data_to_list(
 
 static PigeonExamplePackageMessageData*
 pigeon_example_package_message_data_new_from_list(FlValue* values) {
-  return pigeon_example_package_message_data_new(
-      fl_value_get_string(fl_value_get_list_value(values, 0)),
-      fl_value_get_string(fl_value_get_list_value(values, 1)),
-      static_cast<PigeonExamplePackageCode>(
-          fl_value_get_int(fl_value_get_list_value(values, 2))),
-      fl_value_get_list_value(values, 3));
+  FlValue* value0 = fl_value_get_list_value(values, 0);
+  const gchar* name = fl_value_get_type(value0) == FL_VALUE_TYPE_NULL
+                          ? nullptr
+                          : fl_value_get_string(value0);
+  FlValue* value1 = fl_value_get_list_value(values, 1);
+  const gchar* description = fl_value_get_type(value1) == FL_VALUE_TYPE_NULL
+                                 ? nullptr
+                                 : fl_value_get_string(value1);
+  FlValue* value2 = fl_value_get_list_value(values, 2);
+  PigeonExamplePackageCode code =
+      static_cast<PigeonExamplePackageCode>(fl_value_get_int(value2));
+  FlValue* value3 = fl_value_get_list_value(values, 3);
+  FlValue* data = value3;
+  return pigeon_example_package_message_data_new(name, description, code, data);
 }
 
 G_DECLARE_FINAL_TYPE(PigeonExamplePackageExampleHostApiCodec,
@@ -381,7 +393,7 @@ G_DEFINE_TYPE(PigeonExamplePackageExampleHostApi,
               pigeon_example_package_example_host_api, G_TYPE_OBJECT)
 
 static void get_host_language_cb(
-    FlBasicMessageChannel* channel, FlValue* message,
+    FlBasicMessageChannel* channel, FlValue* message_,
     FlBasicMessageChannelResponseHandle* response_handle, gpointer user_data) {
   PigeonExamplePackageExampleHostApi* self =
       PIGEON_EXAMPLE_PACKAGE_EXAMPLE_HOST_API(user_data);
@@ -406,7 +418,7 @@ static void get_host_language_cb(
   }
 }
 
-static void add_cb(FlBasicMessageChannel* channel, FlValue* message,
+static void add_cb(FlBasicMessageChannel* channel, FlValue* message_,
                    FlBasicMessageChannelResponseHandle* response_handle,
                    gpointer user_data) {
   PigeonExamplePackageExampleHostApi* self =
@@ -416,11 +428,12 @@ static void add_cb(FlBasicMessageChannel* channel, FlValue* message,
     return;
   }
 
-  FlValue* value0 = fl_value_get_list_value(message, 0);
-  FlValue* value1 = fl_value_get_list_value(message, 1);
+  FlValue* value0 = fl_value_get_list_value(message_, 0);
+  int64_t a = fl_value_get_int(value0);
+  FlValue* value1 = fl_value_get_list_value(message_, 1);
+  int64_t b = fl_value_get_int(value1);
   g_autoptr(PigeonExamplePackageExampleHostApiAddResponse) response =
-      self->vtable->add(self, fl_value_get_int(value0),
-                        fl_value_get_int(value1), self->user_data);
+      self->vtable->add(self, a, b, self->user_data);
   if (response == nullptr) {
     g_warning("No response returned to %s.%s", "ExampleHostApi", "add");
     return;
@@ -435,7 +448,7 @@ static void add_cb(FlBasicMessageChannel* channel, FlValue* message,
 }
 
 static void send_message_cb(
-    FlBasicMessageChannel* channel, FlValue* message,
+    FlBasicMessageChannel* channel, FlValue* message_,
     FlBasicMessageChannelResponseHandle* response_handle, gpointer user_data) {
   PigeonExamplePackageExampleHostApi* self =
       PIGEON_EXAMPLE_PACKAGE_EXAMPLE_HOST_API(user_data);
@@ -444,11 +457,11 @@ static void send_message_cb(
     return;
   }
 
-  FlValue* value0 = fl_value_get_list_value(message, 0);
-  self->vtable->send_message(self,
-                             PIGEON_EXAMPLE_PACKAGE_MESSAGE_DATA(
-                                 fl_value_get_custom_value_object(value0)),
-                             response_handle, self->user_data);
+  FlValue* value0 = fl_value_get_list_value(message_, 0);
+  PigeonExamplePackageMessageData* message =
+      PIGEON_EXAMPLE_PACKAGE_MESSAGE_DATA(
+          fl_value_get_custom_value_object(value0));
+  self->vtable->send_message(self, message, response_handle, self->user_data);
 }
 
 static void pigeon_example_package_example_host_api_dispose(GObject* object) {
@@ -587,7 +600,8 @@ void pigeon_example_package_message_flutter_api_flutter_method(
     GCancellable* cancellable, GAsyncReadyCallback callback,
     gpointer user_data) {
   g_autoptr(FlValue) args = fl_value_new_list();
-  fl_value_append_take(args, fl_value_new_string(a_string));
+  fl_value_append_take(args, a_string != nullptr ? fl_value_new_string(a_string)
+                                                 : fl_value_new_null());
   fl_method_channel_invoke_method(self->channel, "flutterMethod", args,
                                   cancellable, callback, user_data);
 }

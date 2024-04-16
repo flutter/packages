@@ -464,6 +464,10 @@ class GObjectSourceGenerator extends StructuredGenerator<GObjectOptions> {
         if (_isNumericListType(field.type)) {
           indent.writeln('size_t ${fieldName}_length;');
         }
+        if (_isNullablePrimitiveType(field.type)) {
+          indent.writeln(
+              '${_getType(module, field.type, isOutput: true, primitive: true)} ${fieldName}_value;');
+        }
       }
     });
 
@@ -510,7 +514,14 @@ class GObjectSourceGenerator extends StructuredGenerator<GObjectOptions> {
         final String value = _referenceValue(field.type, fieldName,
             lengthVariableName: '${fieldName}_length');
 
-        indent.writeln('self->$fieldName = $value;');
+        if (_isNullablePrimitiveType(field.type)) {
+          indent.writeln(
+              'self->${fieldName}_value = $value != nullptr ? *$value : ${_getDefaultValue(module, field.type, primitive: true)};');
+          indent.writeln(
+              'self->${fieldName} = $value != nullptr ? &self->${fieldName}_value : nullptr;');
+        } else {
+          indent.writeln('self->$fieldName = $value;');
+        }
         if (_isNumericListType(field.type)) {
           indent.writeln('self->${fieldName}_length = ${fieldName}_length;');
         }
@@ -558,8 +569,29 @@ class GObjectSourceGenerator extends StructuredGenerator<GObjectOptions> {
       final List<String> args = <String>[];
       for (int i = 0; i < classDefinition.fields.length; i++) {
         final NamedType field = classDefinition.fields[i];
-        args.add(_fromFlValue(
-            module, field.type, 'fl_value_get_list_value(values, $i)'));
+        final String fieldName = _snakeCaseFromCamelCase(field.name);
+        final String fieldType = _getType(module, field.type);
+        String fieldValue = _fromFlValue(module, field.type, 'value$i');
+        indent
+            .writeln('FlValue *value$i = fl_value_get_list_value(values, $i);');
+        if (_isNullablePrimitiveType(field.type)) {
+          indent.writeln('$fieldType $fieldName = nullptr;');
+          indent.writeln(
+              '${_getType(module, field.type, isOutput: true, primitive: true)} ${fieldName}_value;');
+          indent.writeScoped(
+              'if (fl_value_get_type(value$i) != FL_VALUE_TYPE_NULL) {', '}',
+              () {
+            indent.writeln('${fieldName}_value = $fieldValue;');
+            indent.writeln('$fieldName = &${fieldName}_value;');
+          });
+        } else {
+          if (field.type.isNullable) {
+            fieldValue =
+                'fl_value_get_type(value$i) == FL_VALUE_TYPE_NULL ? nullptr : $fieldValue';
+          }
+          indent.writeln('$fieldType $fieldName = $fieldValue;');
+        }
+        args.add(fieldName);
       }
       indent.writeln('return ${methodPrefix}_new(${args.join(', ')});');
     });
@@ -806,7 +838,7 @@ class GObjectSourceGenerator extends StructuredGenerator<GObjectOptions> {
 
       indent.newln();
       indent.writeScoped(
-          'static void ${methodName}_cb(FlBasicMessageChannel* channel, FlValue* message, FlBasicMessageChannelResponseHandle* response_handle, gpointer user_data) {',
+          'static void ${methodName}_cb(FlBasicMessageChannel* channel, FlValue* message_, FlBasicMessageChannelResponseHandle* response_handle, gpointer user_data) {',
           '}', () {
         _writeCastSelf(indent, module, api.name, 'user_data');
 
@@ -817,19 +849,38 @@ class GObjectSourceGenerator extends StructuredGenerator<GObjectOptions> {
           indent.writeln('return;');
         });
 
+        indent.newln();
         final List<String> methodArgs = <String>[];
         for (int i = 0; i < method.parameters.length; i++) {
-          methodArgs
-              .add(_fromFlValue(module, method.parameters[i].type, 'value$i'));
-          if (_isNumericListType(method.parameters[i].type)) {
-            methodArgs.add('fl_value_get_length(value$i)');
-          }
-        }
-
-        indent.newln();
-        for (int i = 0; i < method.parameters.length; i++) {
+          final Parameter param = method.parameters[i];
+          final String paramName = _snakeCaseFromCamelCase(param.name);
+          final String paramType = _getType(module, param.type);
           indent.writeln(
-              'FlValue* value$i = fl_value_get_list_value(message, $i);');
+              'FlValue* value$i = fl_value_get_list_value(message_, $i);');
+          if (_isNullablePrimitiveType(param.type)) {
+            final String primitiveType =
+                _getType(module, param.type, primitive: true);
+            indent.writeln('$paramType $paramName = nullptr;');
+            indent.writeln('$primitiveType ${paramName}_value;');
+            indent.writeScoped(
+                'if (fl_value_get_type(value$i) != FL_VALUE_TYPE_NULL) {', '}',
+                () {
+              final String paramValue =
+                  _fromFlValue(module, method.parameters[i].type, 'value$i');
+              indent.writeln('${paramName}_value = $paramValue;');
+              indent.writeln('$paramName = &${paramName}_value;');
+            });
+          } else {
+            final String paramValue =
+                _fromFlValue(module, method.parameters[i].type, 'value$i');
+            indent.writeln('$paramType $paramName = $paramValue;');
+          }
+          methodArgs.add(paramName);
+          if (_isNumericListType(method.parameters[i].type)) {
+            indent.writeln(
+                'size_t ${paramName}_length = fl_value_get_length(value$i);');
+            methodArgs.add('${paramName}_length');
+          }
         }
         if (method.isAsynchronous) {
           final List<String> vfuncArgs = <String>['self'];
@@ -1264,21 +1315,23 @@ String _getEnumValue(String module, String enumName, String memberName) {
 }
 
 // Returns code for storing a value of [type].
-String _getType(String module, TypeDeclaration type, {bool isOutput = false}) {
+String _getType(String module, TypeDeclaration type,
+    {bool isOutput = false, bool primitive = false}) {
   if (type.isClass) {
     return '${_getClassName(module, type.baseName)}*';
   } else if (type.isEnum) {
-    return _getClassName(module, type.baseName);
+    final String name = _getClassName(module, type.baseName);
+    return type.isNullable ? '$name*' : name;
   } else if (type.baseName == 'List' || type.baseName == 'Map') {
     return 'FlValue*';
   } else if (type.baseName == 'void') {
     return 'void';
   } else if (type.baseName == 'bool') {
-    return 'gboolean';
+    return type.isNullable && !primitive ? 'gboolean*' : 'gboolean';
   } else if (type.baseName == 'int') {
-    return 'int64_t';
+    return type.isNullable && !primitive ? 'int64_t*' : 'int64_t';
   } else if (type.baseName == 'double') {
-    return 'double';
+    return type.isNullable && !primitive ? 'double*' : 'double';
   } else if (type.baseName == 'String') {
     return isOutput ? 'gchar*' : 'const gchar*';
   } else if (type.baseName == 'Uint8List') {
@@ -1305,6 +1358,17 @@ bool _isNumericListType(TypeDeclaration type) {
       type.baseName == 'Float64List';
 }
 
+// Returns true if [type] is a nullable type with a primitive native data type.
+bool _isNullablePrimitiveType(TypeDeclaration type) {
+  if (!type.isNullable) {
+    return false;
+  }
+
+  return type.baseName == 'bool' ||
+      type.baseName == 'int' ||
+      type.baseName == 'double';
+}
+
 // Returns code to clear a value stored in [variableName], or null if no function required.
 String? _getClearFunction(TypeDeclaration type, String variableName) {
   if (type.isClass) {
@@ -1319,8 +1383,9 @@ String? _getClearFunction(TypeDeclaration type, String variableName) {
 }
 
 // Returns code for the default value for [type].
-String _getDefaultValue(String module, TypeDeclaration type) {
-  if (type.isClass) {
+String _getDefaultValue(String module, TypeDeclaration type,
+    {primitive = false}) {
+  if (type.isClass || (type.isNullable && !primitive)) {
     return 'nullptr';
   } else if (type.isEnum) {
     final String enumName = _getClassName(module, type.baseName);
@@ -1373,34 +1438,47 @@ String _referenceValue(TypeDeclaration type, String variableName,
 // [lengthVariableName] must be provided for the typed numeric *List types.
 String _makeFlValue(String module, TypeDeclaration type, String variableName,
     {String? lengthVariableName}) {
+  final String value;
   if (type.isClass) {
-    return 'fl_value_new_custom_object(0, G_OBJECT($variableName))';
+    value = 'fl_value_new_custom_object(0, G_OBJECT($variableName))';
   } else if (type.isEnum) {
-    return 'fl_value_new_int($variableName)';
+    value = 'fl_value_new_int($variableName)';
   } else if (type.baseName == 'List' || type.baseName == 'Map') {
-    return 'fl_value_ref($variableName)';
+    value = 'fl_value_ref($variableName)';
   } else if (type.baseName == 'void') {
-    return 'fl_value_new_null()';
+    value = 'fl_value_new_null()';
   } else if (type.baseName == 'bool') {
-    return 'fl_value_new_bool($variableName)';
+    value = type.isNullable
+        ? 'fl_value_new_bool(*$variableName)'
+        : 'fl_value_new_bool($variableName)';
   } else if (type.baseName == 'int') {
-    return 'fl_value_new_int($variableName)';
+    value = type.isNullable
+        ? 'fl_value_new_int(*$variableName)'
+        : 'fl_value_new_int($variableName)';
   } else if (type.baseName == 'double') {
-    return 'fl_value_new_double($variableName)';
+    value = type.isNullable
+        ? 'fl_value_new_double(*$variableName)'
+        : 'fl_value_new_double($variableName)';
   } else if (type.baseName == 'String') {
-    return 'fl_value_new_string($variableName)';
+    value = 'fl_value_new_string($variableName)';
   } else if (type.baseName == 'Uint8List') {
-    return 'fl_value_new_uint8_list($variableName, $lengthVariableName)';
+    value = 'fl_value_new_uint8_list($variableName, $lengthVariableName)';
   } else if (type.baseName == 'Int32List') {
-    return 'fl_value_new_int32_list($variableName, $lengthVariableName)';
+    value = 'fl_value_new_int32_list($variableName, $lengthVariableName)';
   } else if (type.baseName == 'Int64List') {
-    return 'fl_value_new_int64_list($variableName, $lengthVariableName)';
+    value = 'fl_value_new_int64_list($variableName, $lengthVariableName)';
   } else if (type.baseName == 'Float32List') {
-    return 'fl_value_new_float32_list($variableName, $lengthVariableName)';
+    value = 'fl_value_new_float32_list($variableName, $lengthVariableName)';
   } else if (type.baseName == 'Float64List') {
-    return 'fl_value_new_float_list($variableName, $lengthVariableName)';
+    value = 'fl_value_new_float_list($variableName, $lengthVariableName)';
   } else {
     throw Exception('Unknown type ${type.baseName}');
+  }
+
+  if (type.isNullable) {
+    return '$variableName != nullptr ? $value : fl_value_new_null()';
+  } else {
+    return value;
   }
 }
 
