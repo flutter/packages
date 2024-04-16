@@ -319,7 +319,7 @@ class GObjectHeaderGenerator extends StructuredGenerator<GObjectOptions> {
 
     final String returnType = _getType(module, method.returnType);
     indent.newln();
-    final List<String> constructorArgs = [
+    final List<String> constructorArgs = <String>[
       '$returnType return_value',
       if (_isNumericListType(method.returnType)) 'size_t return_value_length'
     ];
@@ -350,7 +350,7 @@ class GObjectHeaderGenerator extends StructuredGenerator<GObjectOptions> {
             methodArgs.add('size_t ${name}_length');
           }
         }
-        methodArgs.addAll([
+        methodArgs.addAll(<String>[
           if (method.isAsynchronous)
             'FlBasicMessageChannelResponseHandle* response_handle',
           'gpointer user_data',
@@ -634,7 +634,7 @@ class GObjectSourceGenerator extends StructuredGenerator<GObjectOptions> {
           asyncArgs.add('size_t ${name}_length');
         }
       }
-      asyncArgs.addAll([
+      asyncArgs.addAll(<String>[
         'GCancellable* cancellable',
         'GAsyncReadyCallback callback',
         'gpointer user_data',
@@ -753,7 +753,7 @@ class GObjectSourceGenerator extends StructuredGenerator<GObjectOptions> {
 
       final String returnType = _getType(module, method.returnType);
       indent.newln();
-      final List<String> constructorArgs = [
+      final List<String> constructorArgs = <String>[
         '$returnType return_value',
         if (_isNumericListType(method.returnType)) 'size_t return_value_length'
       ];
