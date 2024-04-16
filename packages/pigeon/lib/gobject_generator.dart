@@ -195,6 +195,9 @@ class GObjectHeaderGenerator extends StructuredGenerator<GObjectOptions> {
       final String fieldName = _snakeCaseFromCamelCase(field.name);
       final String type = _getType(module, field.type);
       constructorArgs.add('$type $fieldName');
+      if (_isNumericListType(field.type)) {
+        constructorArgs.add('size_t ${fieldName}_length');
+      }
     }
     indent.writeln(
         "$className* ${methodPrefix}_new(${constructorArgs.join(', ')});");
@@ -206,8 +209,12 @@ class GObjectHeaderGenerator extends StructuredGenerator<GObjectOptions> {
       indent.newln();
       addDocumentationComments(
           indent, field.documentationComments, _docCommentSpec);
+      final List<String> getterArgs = <String>[
+        '$className* self',
+        if (_isNumericListType(field.type)) 'size_t *length'
+      ];
       indent.writeln(
-          '$returnType ${methodPrefix}_get_$fieldName($className* self);');
+          '$returnType ${methodPrefix}_get_$fieldName(${getterArgs.join(', ')});');
     }
   }
 
@@ -256,6 +263,8 @@ class GObjectHeaderGenerator extends StructuredGenerator<GObjectOptions> {
         '$className* self',
         'GAsyncResult* result',
         if (returnType != 'void') '$returnType* return_value',
+        if (_isNumericListType(method.returnType))
+          'size_t* return_value_length',
         'GError** error'
       ];
       indent.newln();
@@ -310,8 +319,12 @@ class GObjectHeaderGenerator extends StructuredGenerator<GObjectOptions> {
 
     final String returnType = _getType(module, method.returnType);
     indent.newln();
+    final List<String> constructorArgs = [
+      '$returnType return_value',
+      if (_isNumericListType(method.returnType)) 'size_t return_value_length'
+    ];
     indent.writeln(
-        '$responseClassName* ${responseMethodPrefix}_new($returnType return_value);');
+        '$responseClassName* ${responseMethodPrefix}_new(${constructorArgs.join(', ')});');
 
     indent.newln();
     indent.writeln(
@@ -329,14 +342,19 @@ class GObjectHeaderGenerator extends StructuredGenerator<GObjectOptions> {
         final String responseName = _getResponseName(api.name, method.name);
         final String responseClassName = _getClassName(module, responseName);
 
-        final List<String> methodArgs = <String>[
-          '$className* self',
-          for (final Parameter param in method.parameters)
-            '${_getType(module, param.type)} ${_snakeCaseFromCamelCase(param.name)}',
+        final List<String> methodArgs = <String>['$className* self'];
+        for (final Parameter param in method.parameters) {
+          final String name = _snakeCaseFromCamelCase(param.name);
+          methodArgs.add('${_getType(module, param.type)} $name');
+          if (_isNumericListType(param.type)) {
+            methodArgs.add('size_t ${name}_length');
+          }
+        }
+        methodArgs.addAll([
           if (method.isAsynchronous)
             'FlBasicMessageChannelResponseHandle* response_handle',
           'gpointer user_data',
-        ];
+        ]);
         final String returnType =
             method.isAsynchronous ? 'void' : '$responseClassName*';
         indent.writeln("$returnType (*$methodName)(${methodArgs.join(', ')});");
@@ -356,7 +374,8 @@ class GObjectHeaderGenerator extends StructuredGenerator<GObjectOptions> {
     final List<String> respondArgs = <String>[
       '$className* self',
       'FlBasicMessageChannelResponseHandle* response_handle',
-      '$returnType return_value'
+      '$returnType return_value',
+      if (_isNumericListType(method.returnType)) 'size_t return_value_length'
     ];
     indent.writeln(
         "void ${methodPrefix}_respond_$methodName(${respondArgs.join(', ')});");
@@ -442,6 +461,9 @@ class GObjectSourceGenerator extends StructuredGenerator<GObjectOptions> {
         final String fieldName = _snakeCaseFromCamelCase(field.name);
         final String fieldType = _getType(module, field.type, isOutput: true);
         indent.writeln('$fieldType $fieldName;');
+        if (_isNumericListType(field.type)) {
+          indent.writeln('size_t ${fieldName}_length;');
+        }
       }
     });
 
@@ -470,10 +492,14 @@ class GObjectSourceGenerator extends StructuredGenerator<GObjectOptions> {
     indent.newln();
     _writeClassInit(indent, module, classDefinition.name, () {});
 
-    final List<String> constructorArgs = <String>[
-      for (final NamedType field in classDefinition.fields)
-        '${_getType(module, field.type)} ${_snakeCaseFromCamelCase(field.name)}',
-    ];
+    final List<String> constructorArgs = <String>[];
+    for (final NamedType field in classDefinition.fields) {
+      final String name = _snakeCaseFromCamelCase(field.name);
+      constructorArgs.add('${_getType(module, field.type)} $name');
+      if (_isNumericListType(field.type)) {
+        constructorArgs.add('size_t ${name}_length');
+      }
+    }
     indent.newln();
     indent.writeScoped(
         "$className* ${methodPrefix}_new(${constructorArgs.join(', ')}) {", '}',
@@ -481,9 +507,13 @@ class GObjectSourceGenerator extends StructuredGenerator<GObjectOptions> {
       _writeObjectNew(indent, module, classDefinition.name);
       for (final NamedType field in classDefinition.fields) {
         final String fieldName = _snakeCaseFromCamelCase(field.name);
-        final String value = _referenceValue(field.type, fieldName);
+        final String value = _referenceValue(field.type, fieldName,
+            lengthVariableName: '${fieldName}_length');
 
         indent.writeln('self->$fieldName = $value;');
+        if (_isNumericListType(field.type)) {
+          indent.writeln('self->${fieldName}_length = ${fieldName}_length;');
+        }
       }
       indent.writeln('return self;');
     });
@@ -493,11 +523,18 @@ class GObjectSourceGenerator extends StructuredGenerator<GObjectOptions> {
       final String returnType = _getType(module, field.type);
 
       indent.newln();
+      final List<String> getterArgs = <String>[
+        '$className* self',
+        if (_isNumericListType(field.type)) 'size_t *length'
+      ];
       indent.writeScoped(
-          '$returnType ${methodPrefix}_get_$fieldName($className* self) {', '}',
-          () {
+          '$returnType ${methodPrefix}_get_$fieldName(${getterArgs.join(', ')}) {',
+          '}', () {
         indent.writeln(
             'g_return_val_if_fail($testMacro(self), ${_getDefaultValue(module, field.type)});');
+        if (_isNumericListType(field.type)) {
+          indent.writeln('*length = self->${fieldName}_length;');
+        }
         indent.writeln('return self->$fieldName;');
       });
     }
@@ -509,7 +546,7 @@ class GObjectSourceGenerator extends StructuredGenerator<GObjectOptions> {
       for (final NamedType field in classDefinition.fields) {
         final String fieldName = _snakeCaseFromCamelCase(field.name);
         indent.writeln(
-            'fl_value_append_take(values, ${_makeFlValue(module, field.type, 'self->$fieldName')});');
+            'fl_value_append_take(values, ${_makeFlValue(module, field.type, 'self->$fieldName', lengthVariableName: 'self->${fieldName}_length')});');
       }
       indent.writeln('return values;');
     });
@@ -589,22 +626,29 @@ class GObjectSourceGenerator extends StructuredGenerator<GObjectOptions> {
     for (final Method method in api.methods) {
       final String methodName = _snakeCaseFromCamelCase(method.name);
 
-      final List<String> asyncArgs = <String>[
-        '$className* self',
-        for (final Parameter param in method.parameters)
-          '${_getType(module, param.type)} ${_snakeCaseFromCamelCase(param.name)}',
+      final List<String> asyncArgs = <String>['$className* self'];
+      for (final Parameter param in method.parameters) {
+        final String name = _snakeCaseFromCamelCase(param.name);
+        asyncArgs.add('${_getType(module, param.type)} $name');
+        if (_isNumericListType(param.type)) {
+          asyncArgs.add('size_t ${name}_length');
+        }
+      }
+      asyncArgs.addAll([
         'GCancellable* cancellable',
         'GAsyncReadyCallback callback',
         'gpointer user_data',
-      ];
+      ]);
       indent.newln();
       indent.writeScoped(
           "void ${methodPrefix}_$methodName(${asyncArgs.join(', ')}) {", '}',
           () {
         indent.writeln('g_autoptr(FlValue) args = fl_value_new_list();');
         for (final Parameter param in method.parameters) {
-          indent.writeln(
-              'fl_value_append_take(args, ${_makeFlValue(module, param.type, _snakeCaseFromCamelCase(param.name))});');
+          final String name = _snakeCaseFromCamelCase(param.name);
+          final String value = _makeFlValue(module, param.type, name,
+              lengthVariableName: '${name}_length');
+          indent.writeln('fl_value_append_take(args, $value);');
         }
         indent.writeln(
             'fl_method_channel_invoke_method(self->channel, "${method.name}", args, cancellable, callback, user_data);');
@@ -616,6 +660,8 @@ class GObjectSourceGenerator extends StructuredGenerator<GObjectOptions> {
         '$className* self',
         'GAsyncResult* result',
         if (returnType != 'void') '$returnType* return_value',
+        if (_isNumericListType(method.returnType))
+          'size_t* return_value_length',
         'GError** error',
       ];
       indent.newln();
@@ -640,7 +686,10 @@ class GObjectSourceGenerator extends StructuredGenerator<GObjectOptions> {
           final String returnValue =
               _fromFlValue(module, method.returnType, 'r');
           indent.writeln(
-              '*return_value = ${_referenceValue(method.returnType, returnValue)};');
+              '*return_value = ${_referenceValue(method.returnType, returnValue, lengthVariableName: 'fl_value_get_length(r)')};');
+          if (_isNumericListType(method.returnType)) {
+            indent.writeln('*return_value_length = fl_value_get_length(r);');
+          }
         }
 
         indent.newln();
@@ -704,13 +753,17 @@ class GObjectSourceGenerator extends StructuredGenerator<GObjectOptions> {
 
       final String returnType = _getType(module, method.returnType);
       indent.newln();
+      final List<String> constructorArgs = [
+        '$returnType return_value',
+        if (_isNumericListType(method.returnType)) 'size_t return_value_length'
+      ];
       indent.writeScoped(
-          "${method.isAsynchronous ? 'static ' : ''}$responseClassName* ${responseMethodPrefix}_new($returnType return_value) {",
+          "${method.isAsynchronous ? 'static ' : ''}$responseClassName* ${responseMethodPrefix}_new(${constructorArgs.join(', ')}) {",
           '}', () {
         _writeObjectNew(indent, module, responseName);
         indent.writeln('self->value = fl_value_new_list();');
         indent.writeln(
-            "fl_value_append_take(self->value, ${_makeFlValue(module, method.returnType, 'return_value')});");
+            "fl_value_append_take(self->value, ${_makeFlValue(module, method.returnType, 'return_value', lengthVariableName: 'return_value_length')});");
         indent.writeln('return self;');
       });
 
@@ -764,13 +817,20 @@ class GObjectSourceGenerator extends StructuredGenerator<GObjectOptions> {
           indent.writeln('return;');
         });
 
-        final List<String> methodArgs = <String>[
-          for (int i = 0; i < method.parameters.length; i++)
-            _fromFlValue(module, method.parameters[i].type,
-                'fl_value_get_list_value(message, $i)'),
-        ];
+        final List<String> methodArgs = <String>[];
+        for (int i = 0; i < method.parameters.length; i++) {
+          methodArgs
+              .add(_fromFlValue(module, method.parameters[i].type, 'value$i'));
+          if (_isNumericListType(method.parameters[i].type)) {
+            methodArgs.add('fl_value_get_length(value$i)');
+          }
+        }
 
         indent.newln();
+        for (int i = 0; i < method.parameters.length; i++) {
+          indent.writeln(
+              'FlValue* value$i = fl_value_get_list_value(message, $i);');
+        }
         if (method.isAsynchronous) {
           final List<String> vfuncArgs = <String>['self'];
           vfuncArgs.addAll(methodArgs);
@@ -1218,9 +1278,28 @@ String _getType(String module, TypeDeclaration type, {bool isOutput = false}) {
     return 'double';
   } else if (type.baseName == 'String') {
     return isOutput ? 'gchar*' : 'const gchar*';
+  } else if (type.baseName == 'Uint8List') {
+    return isOutput ? 'uint8_t*' : 'const uint8_t*';
+  } else if (type.baseName == 'Int32List') {
+    return isOutput ? 'int32_t*' : 'const int32_t*';
+  } else if (type.baseName == 'Int64List') {
+    return isOutput ? 'int64_t*' : 'const int64_t*';
+  } else if (type.baseName == 'Float32List') {
+    return isOutput ? 'float*' : 'const float*';
+  } else if (type.baseName == 'Float64List') {
+    return isOutput ? 'double*' : 'const double*';
   } else {
     throw Exception('Unknown type ${type.baseName}');
   }
+}
+
+// Returns true if [type] is a *List typed numeric list type.
+bool _isNumericListType(TypeDeclaration type) {
+  return type.baseName == 'Uint8List' ||
+      type.baseName == 'Int32List' ||
+      type.baseName == 'Int64List' ||
+      type.baseName == 'Float32List' ||
+      type.baseName == 'Float64List';
 }
 
 // Returns code to clear a value stored in [variableName], or null if no function required.
@@ -1255,24 +1334,42 @@ String _getDefaultValue(String module, TypeDeclaration type) {
     return '0.0';
   } else if (type.baseName == 'String') {
     return 'nullptr';
+  } else if (_isNumericListType(type)) {
+    return 'nullptr';
   } else {
     throw Exception('Unknown type ${type.baseName}');
   }
 }
 
 // Returns code to copy the native data type stored in [variableName].
-String _referenceValue(TypeDeclaration type, String variableName) {
+//
+// [lengthVariableName] must be provided for the typed numeric *List types.
+String _referenceValue(TypeDeclaration type, String variableName,
+    {String? lengthVariableName}) {
   if (type.isClass || type.baseName == 'List' || type.baseName == 'Map') {
     return 'g_object_ref($variableName)';
   } else if (type.baseName == 'String') {
     return 'g_strdup($variableName)';
+  } else if (type.baseName == 'Uint8List') {
+    return 'static_cast<uint8_t*>(g_memdup2($variableName, $lengthVariableName))';
+  } else if (type.baseName == 'Int32List') {
+    return 'static_cast<int32_t*>(g_memdup2($variableName, sizeof(int32_t) * $lengthVariableName))';
+  } else if (type.baseName == 'Int64List') {
+    return 'static_cast<int64_t*>(g_memdup2($variableName, sizeof(int64_t) * $lengthVariableName))';
+  } else if (type.baseName == 'Float32List') {
+    return 'static_cast<float*>(g_memdup2($variableName, sizeof(float) * $lengthVariableName))';
+  } else if (type.baseName == 'Float64List') {
+    return 'static_cast<double*>(g_memdup2($variableName, sizeof(double) * $lengthVariableName))';
   } else {
     return variableName;
   }
 }
 
 // Returns code to convert the native data type stored in [variableName] to a FlValue.
-String _makeFlValue(String module, TypeDeclaration type, String variableName) {
+//
+// [lengthVariableName] must be provided for the typed numeric *List types.
+String _makeFlValue(String module, TypeDeclaration type, String variableName,
+    {String? lengthVariableName}) {
   if (type.isClass) {
     return 'fl_value_new_custom_object(0, G_OBJECT($variableName))';
   } else if (type.isEnum) {
@@ -1289,6 +1386,16 @@ String _makeFlValue(String module, TypeDeclaration type, String variableName) {
     return 'fl_value_new_double($variableName)';
   } else if (type.baseName == 'String') {
     return 'fl_value_new_string($variableName)';
+  } else if (type.baseName == 'Uint8List') {
+    return 'fl_value_new_uint8_list($variableName, $lengthVariableName)';
+  } else if (type.baseName == 'Int32List') {
+    return 'fl_value_new_int32_list($variableName, $lengthVariableName)';
+  } else if (type.baseName == 'Int64List') {
+    return 'fl_value_new_int64_list($variableName, $lengthVariableName)';
+  } else if (type.baseName == 'Float32List') {
+    return 'fl_value_new_float32_list($variableName, $lengthVariableName)';
+  } else if (type.baseName == 'Float64List') {
+    return 'fl_value_new_float_list($variableName, $lengthVariableName)';
   } else {
     throw Exception('Unknown type ${type.baseName}');
   }
@@ -1312,6 +1419,16 @@ String _fromFlValue(String module, TypeDeclaration type, String variableName) {
     return 'fl_value_get_double($variableName)';
   } else if (type.baseName == 'String') {
     return 'fl_value_get_string($variableName)';
+  } else if (type.baseName == 'Uint8List') {
+    return 'fl_value_get_uint8_list($variableName)';
+  } else if (type.baseName == 'Int32List') {
+    return 'fl_value_get_int32_list($variableName)';
+  } else if (type.baseName == 'Int64List') {
+    return 'fl_value_get_int64_list($variableName)';
+  } else if (type.baseName == 'Float32List') {
+    return 'fl_value_get_float32_list($variableName)';
+  } else if (type.baseName == 'Float64List') {
+    return 'fl_value_get_float_list($variableName)';
   } else {
     throw Exception('Unknown type ${type.baseName}');
   }

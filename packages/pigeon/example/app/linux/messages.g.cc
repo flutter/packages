@@ -416,11 +416,11 @@ static void add_cb(FlBasicMessageChannel* channel, FlValue* message,
     return;
   }
 
+  FlValue* value0 = fl_value_get_list_value(message, 0);
+  FlValue* value1 = fl_value_get_list_value(message, 1);
   g_autoptr(PigeonExamplePackageExampleHostApiAddResponse) response =
-      self->vtable->add(self,
-                        fl_value_get_int(fl_value_get_list_value(message, 0)),
-                        fl_value_get_int(fl_value_get_list_value(message, 1)),
-                        self->user_data);
+      self->vtable->add(self, fl_value_get_int(value0),
+                        fl_value_get_int(value1), self->user_data);
   if (response == nullptr) {
     g_warning("No response returned to %s.%s", "ExampleHostApi", "add");
     return;
@@ -444,11 +444,11 @@ static void send_message_cb(
     return;
   }
 
-  self->vtable->send_message(
-      self,
-      PIGEON_EXAMPLE_PACKAGE_MESSAGE_DATA(fl_value_get_custom_value_object(
-          fl_value_get_list_value(message, 0))),
-      response_handle, self->user_data);
+  FlValue* value0 = fl_value_get_list_value(message, 0);
+  self->vtable->send_message(self,
+                             PIGEON_EXAMPLE_PACKAGE_MESSAGE_DATA(
+                                 fl_value_get_custom_value_object(value0)),
+                             response_handle, self->user_data);
 }
 
 static void pigeon_example_package_example_host_api_dispose(GObject* object) {
