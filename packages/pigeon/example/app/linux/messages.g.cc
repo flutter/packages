@@ -393,15 +393,16 @@ static void get_host_language_cb(
   g_autoptr(PigeonExamplePackageExampleHostApiGetHostLanguageResponse)
       response = self->vtable->get_host_language(self, self->user_data);
   if (response == nullptr) {
-    g_warning("No response returned to ExampleHostApi.getHostLanguage");
+    g_warning("No response returned to %s.%s", "ExampleHostApi",
+              "getHostLanguage");
     return;
   }
 
   g_autoptr(GError) error = NULL;
   if (!fl_basic_message_channel_respond(channel, response_handle,
                                         response->value, &error)) {
-    g_warning("Failed to send response to ExampleHostApi.getHostLanguage: %s",
-              error->message);
+    g_warning("Failed to send response to %s.%s: %s", "ExampleHostApi",
+              "getHostLanguage", error->message);
   }
 }
 
@@ -421,14 +422,14 @@ static void add_cb(FlBasicMessageChannel* channel, FlValue* message,
                         fl_value_get_int(fl_value_get_list_value(message, 1)),
                         self->user_data);
   if (response == nullptr) {
-    g_warning("No response returned to ExampleHostApi.add");
+    g_warning("No response returned to %s.%s", "ExampleHostApi", "add");
     return;
   }
 
   g_autoptr(GError) error = NULL;
   if (!fl_basic_message_channel_respond(channel, response_handle,
                                         response->value, &error)) {
-    g_warning("Failed to send response to ExampleHostApi.add: %s",
+    g_warning("Failed to send response to %s.%s: %s", "ExampleHostApi", "add",
               error->message);
   }
 }
@@ -522,8 +523,8 @@ void pigeon_example_package_example_host_api_respond_send_message(
   if (!fl_basic_message_channel_respond(self->send_message_channel,
                                         response_handle, response->value,
                                         &error)) {
-    g_warning("Failed to send response to ExampleHostApi.sendMessage: %s",
-              error->message);
+    g_warning("Failed to send response to %s.%s: %s", "ExampleHostApi",
+              "sendMessage", error->message);
   }
 }
 
@@ -538,8 +539,8 @@ void pigeon_example_package_example_host_api_respond_error_send_message(
   if (!fl_basic_message_channel_respond(self->send_message_channel,
                                         response_handle, response->value,
                                         &error)) {
-    g_warning("Failed to send response to ExampleHostApi.sendMessage: %s",
-              error->message);
+    g_warning("Failed to send response to %s.%s: %s", "ExampleHostApi",
+              "sendMessage", error->message);
   }
 }
 
