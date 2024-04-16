@@ -24,6 +24,7 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
   /// Creates a viewport for [RenderBox] objects in a tree format of rows.
   RenderTreeViewport({
     required Map<UniqueKey, TreeViewNodesAnimation> activeAnimations,
+    required Map<int, int> rowDepths,
     required TreeViewTraversalOrder traversalOrder,
     required double indentation,
     required super.horizontalOffset,
@@ -31,13 +32,18 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
     required super.verticalOffset,
     required super.verticalAxisDirection,
     required TreeRowDelegateMixin super.delegate,
-    required super.mainAxis,
     required super.childManager,
     super.cacheExtent,
     super.clipBehavior,
   })  : _activeAnimations = activeAnimations,
+        _rowDepths = rowDepths,
         _traversalOrder = traversalOrder,
-        _indentation = indentation;
+        _indentation = indentation,
+        super(
+          mainAxis: traversalOrder == TreeViewTraversalOrder.depthFirst
+              ? Axis.vertical
+              : Axis.horizontal,
+        );
 
   @override
   TreeRowDelegateMixin get delegate => super.delegate as TreeRowDelegateMixin;
@@ -61,6 +67,19 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
     }
     _activeAnimations = value;
     markNeedsLayout(withDelegateRebuild: true);
+  }
+
+  /// The depth of each currently active node in the tree.
+  ///
+  /// This is used to properly set the [ChildVicinity] for the [traversalOrder].
+  Map<int, int> get rowDepths => _rowDepths;
+  Map<int, int> _rowDepths;
+  set rowDepths(Map<int, int> value) {
+    if (_rowDepths == value) {
+      return;
+    }
+    _rowDepths = value;
+    markNeedsLayout();
   }
 
   /// The order in which child nodes of the tree will be traversed.
@@ -131,18 +150,6 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
   }
 
   @override
-  void setupParentData(RenderBox child) {
-    if (child.parentData is! TreeViewNodeParentData) {
-      child.parentData = TreeViewNodeParentData();
-    }
-  }
-
-  @override
-  TreeViewNodeParentData parentDataOf(RenderBox child) {
-    return super.parentDataOf(child) as TreeViewNodeParentData;
-  }
-
-  @override
   void dispose() {
     _clipHandles.removeWhere(
       (UniqueKey key, LayerHandle<ClipRectLayer> handle) {
@@ -169,7 +176,10 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
       _Span? span = _rowMetrics.remove(currentIndex);
       assert(needsDelegateRebuild || span != null);
       final TreeRow configuration = needsDelegateRebuild
-          ? delegate.buildRow(ChildVicinity(yIndex: currentIndex, xIndex: 0))
+          ? delegate.buildRow(ChildVicinity(
+              xIndex: _rowDepths[currentIndex]!,
+              yIndex: currentIndex,
+            ))
           : span!.configuration;
       span ??= _Span();
       final double extent = configuration.extent.calculateExtent(
@@ -203,7 +213,10 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
       _Span? span = _rowMetrics.remove(row);
       assert(needsDelegateRebuild || span != null);
       final TreeRow configuration = needsDelegateRebuild
-          ? delegate.buildRow(ChildVicinity(yIndex: row, xIndex: 0))
+          ? delegate.buildRow(ChildVicinity(
+              xIndex: _rowDepths[row]!,
+              yIndex: row,
+            ))
           : span!.configuration;
       span ??= _Span();
       final double extent = configuration.extent.calculateExtent(
@@ -268,7 +281,7 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
   }
 
   void _updateScrollBounds() {
-    final double maxHorizontalExtent =math.max(
+    final double maxHorizontalExtent = math.max(
       0.0,
       _furthestHorizontalExtent - viewportDimension.width,
     );
@@ -323,9 +336,12 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
       }
       rowOffset += rowSpan.configuration.padding.leading;
 
-      final ChildVicinity vicinity = ChildVicinity(xIndex: 0, yIndex: row);
+      final ChildVicinity vicinity = ChildVicinity(
+        xIndex: _rowDepths[row]!,
+        yIndex: row,
+      );
       final RenderBox child = buildOrObtainChildFor(vicinity)!;
-      final TreeViewNodeParentData parentData = parentDataOf(child);
+      final TwoDimensionalViewportParentData parentData = parentDataOf(child);
       final BoxConstraints childConstraints = BoxConstraints(
         minHeight: rowHeight,
         maxHeight: rowHeight,
@@ -333,7 +349,7 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
       );
       child.layout(childConstraints, parentUsesSize: true);
       parentData.layoutOffset = Offset(
-        (parentData.depth * indentation) - horizontalOffset.pixels,
+        (_rowDepths[row]! * indentation) - horizontalOffset.pixels,
         rowOffset,
       );
       rowOffset += rowHeight + rowSpan.configuration.padding.trailing;
@@ -443,11 +459,12 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
       if (configuration.backgroundDecoration != null ||
           configuration.foregroundDecoration != null) {
         final RenderBox child = getChildFor(
-          ChildVicinity(xIndex: 0, yIndex: currentRow),
+          ChildVicinity(xIndex: _rowDepths[currentRow]!, yIndex: currentRow),
         )!;
 
         Rect getRowRect(bool consumePadding) {
-          final TreeViewNodeParentData parentData = parentDataOf(child);
+          final TwoDimensionalViewportParentData parentData =
+              parentDataOf(child);
           // Decoration rects cover the whole row from the left and right
           // edge of the viewport.
           return Rect.fromPoints(
@@ -486,9 +503,10 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
     // Child nodes.
     for (int row = leadingRow; row <= trailingRow; row++) {
       final RenderBox cell = getChildFor(
-        ChildVicinity(xIndex: 0, yIndex: row),
+        ChildVicinity(xIndex: _rowDepths[row]!, yIndex: row),
       )!;
-      final TreeViewNodeParentData cellParentData = parentDataOf(cell);
+      final TwoDimensionalViewportParentData cellParentData =
+          parentDataOf(cell);
       if (cellParentData.isVisible) {
         context.paintChild(cell, offset + cellParentData.paintOffset!);
       }

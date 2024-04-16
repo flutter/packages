@@ -79,16 +79,6 @@ typedef TreeViewNodesAnimation = ({
   double value,
 });
 
-/// Used to pass information down to [RenderTreeViewport].
-///
-/// The depth is used for breadth first traversal, where as depth first
-/// traversal follows the indexed order.
-class TreeViewNodeParentData extends TwoDimensionalViewportParentData {
-  /// The depth of the node, used by [RenderTreeViewport] to traverse nodes in
-  /// the designated [TreeViewTraversalOrder].
-  int depth = 0;
-}
-
 /// Traversal order pattern for [TreeViewNode]s that are children of a
 /// [TreeView].
 enum TreeViewTraversalOrder {

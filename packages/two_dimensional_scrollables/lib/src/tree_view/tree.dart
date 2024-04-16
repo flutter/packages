@@ -334,7 +334,12 @@ class TreeView<T> extends StatefulWidget {
 
   /// The main axis of the two.
   ///
-  /// Used to determine how to apply [primary] when true.
+  /// Used to determine how to apply [primary] when true. This will not affect
+  /// paint order or traversal order of [TreeViewNode]s. Nodes will be painted
+  /// in the order they are laid out in the vertical axis. For tree traversal,
+  /// see [TreeViewTraversalOrder].
+  ///
+  /// Defaults to [Axis.vertical].
   final Axis mainAxis;
 
   /// The configuration of the vertical Scrollable.
@@ -449,6 +454,10 @@ class TreeView<T> extends StatefulWidget {
 
   /// The order in which [TreeViewNode]s are visited.
   ///
+  /// This value will influence [TreeViewport.mainAxis] so nodes are traversed
+  /// properly when they are converted to a [ChildVicinity] in the coordinate
+  /// system.
+  ///
   /// Defaults to [TreeViewTraversalOrder.depthFirst].
   final TreeViewTraversalOrder traversalOrder;
 
@@ -555,42 +564,6 @@ typedef _AnimationRecord = ({
   UniqueKey key,
 });
 
-class _TreeViewNodeParentDataWidget
-    extends ParentDataWidget<TreeViewNodeParentData> {
-  const _TreeViewNodeParentDataWidget({
-    required this.depth,
-    required super.child,
-  }) : assert(depth >= 0);
-
-  final int depth;
-
-  @override
-  void applyParentData(RenderObject renderObject) {
-    final TreeViewNodeParentData parentData =
-        renderObject.parentData! as TreeViewNodeParentData;
-    bool needsLayout = false;
-
-    if (parentData.depth != depth) {
-      assert(depth >= 0);
-      parentData.depth = depth;
-      needsLayout = true;
-    }
-
-    if (needsLayout) {
-      renderObject.parent?.markNeedsLayout();
-    }
-  }
-
-  @override
-  Type get debugTypicalAncestorWidgetClass => TreeViewport;
-
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties.add(IntProperty('depth', depth));
-  }
-}
-
 /// State object for a [Scrollable] widget.
 class _TreeViewState<T> extends State<TreeView<T>>
     with TickerProviderStateMixin, TreeViewStateMixin<T> {
@@ -598,6 +571,7 @@ class _TreeViewState<T> extends State<TreeView<T>>
   TreeViewController? _treeController;
 
   final List<TreeViewNode<T>> _activeNodes = <TreeViewNode<T>>[];
+  final Map<int, int> _rowDepths = <int, int>{};
   void _unpackActiveNodes({
     int depth = 0,
     List<TreeViewNode<T>>? nodes,
@@ -605,12 +579,14 @@ class _TreeViewState<T> extends State<TreeView<T>>
   }) {
     if (nodes == null) {
       _activeNodes.clear();
+      _rowDepths.clear();
       nodes = widget.tree;
     }
     for (final TreeViewNode<T> node in nodes) {
       node._depth = depth;
       node._parent = parent;
       _activeNodes.add(node);
+      _rowDepths[_activeNodes.indexOf(node)] = depth;
       if (node.children.isNotEmpty && node.isExpanded) {
         _unpackActiveNodes(
           depth: depth + 1,
@@ -691,6 +667,7 @@ class _TreeViewState<T> extends State<TreeView<T>>
       clipBehavior: widget.clipBehavior,
       rowCount: _activeNodes.length,
       activeAnimations: _activeAnimations,
+      rowDepths: _rowDepths,
       nodeBuilder: (BuildContext context, ChildVicinity vicinity) {
         final TreeViewNode<T> node = _activeNodes[vicinity.yIndex];
         Widget child = widget.treeNodeBuilder(
@@ -703,10 +680,7 @@ class _TreeViewState<T> extends State<TreeView<T>>
           child = RepaintBoundary(child: child);
         }
 
-        return _TreeViewNodeParentDataWidget(
-          depth: node.depth!,
-          child: child,
-        );
+        return child;
       },
       rowBuilder: (ChildVicinity vicinity) {
         return widget.treeRowBuilder(_activeNodes[vicinity.yIndex]);
@@ -876,6 +850,7 @@ class _TreeView extends TwoDimensionalScrollView {
     required ChildVicinityToRowBuilder rowBuilder,
     this.traversalOrder = TreeViewTraversalOrder.depthFirst,
     required this.activeAnimations,
+    required this.rowDepths,
     required this.indentation,
     required int rowCount,
     bool addAutomaticKeepAlives = true,
@@ -890,6 +865,7 @@ class _TreeView extends TwoDimensionalScrollView {
         ));
 
   final Map<UniqueKey, TreeViewNodesAnimation> activeAnimations;
+  final Map<int, int> rowDepths;
   final TreeViewTraversalOrder traversalOrder;
   final double indentation;
 
@@ -905,10 +881,10 @@ class _TreeView extends TwoDimensionalScrollView {
       horizontalOffset: horizontalOffset,
       horizontalAxisDirection: horizontalDetails.direction,
       delegate: delegate as TreeRowDelegateMixin,
-      mainAxis: mainAxis,
       cacheExtent: cacheExtent,
       clipBehavior: clipBehavior,
       activeAnimations: activeAnimations,
+      rowDepths: rowDepths,
       traversalOrder: traversalOrder,
       indentation: indentation,
     );
@@ -927,13 +903,17 @@ class TreeViewport extends TwoDimensionalViewport {
     required super.horizontalOffset,
     required super.horizontalAxisDirection,
     required TreeRowDelegateMixin super.delegate,
-    required super.mainAxis,
     super.cacheExtent,
     super.clipBehavior,
     required this.activeAnimations,
+    required this.rowDepths,
     this.traversalOrder = TreeViewTraversalOrder.depthFirst,
     required this.indentation,
-  });
+  }) : super(
+          mainAxis: traversalOrder == TreeViewTraversalOrder.depthFirst
+              ? Axis.vertical
+              : Axis.horizontal,
+        );
 
   /// The currently active [TreeViewNode] animations.
   ///
@@ -941,6 +921,12 @@ class TreeViewport extends TwoDimensionalViewport {
   /// inserting and removing them from the tree, the unique key is used to track
   /// an animation of nodes independent of their indexing across frames.
   final Map<UniqueKey, TreeViewNodesAnimation> activeAnimations;
+
+  /// The depth of each active [TreeNode].
+  ///
+  /// This is used to properly traverse nodes according to
+  /// [traversalOrder].
+  final Map<int, int> rowDepths;
 
   /// The order in which child nodes of the tree will be traversed.
   ///
@@ -958,13 +944,13 @@ class TreeViewport extends TwoDimensionalViewport {
   RenderTreeViewport createRenderObject(BuildContext context) {
     return RenderTreeViewport(
       activeAnimations: activeAnimations,
+      rowDepths: rowDepths,
       traversalOrder: traversalOrder,
       indentation: indentation,
       horizontalOffset: horizontalOffset,
       horizontalAxisDirection: horizontalAxisDirection,
       verticalOffset: verticalOffset,
       verticalAxisDirection: verticalAxisDirection,
-      mainAxis: mainAxis,
       cacheExtent: cacheExtent,
       clipBehavior: clipBehavior,
       delegate: delegate as TreeRowDelegateMixin,
@@ -979,13 +965,13 @@ class TreeViewport extends TwoDimensionalViewport {
   ) {
     renderObject
       ..activeAnimations = activeAnimations
+      ..rowDepths = rowDepths
       ..traversalOrder = traversalOrder
       ..indentation = indentation
       ..horizontalOffset = horizontalOffset
       ..horizontalAxisDirection = horizontalAxisDirection
       ..verticalOffset = verticalOffset
       ..verticalAxisDirection = verticalAxisDirection
-      ..mainAxis = mainAxis
       ..cacheExtent = cacheExtent
       ..clipBehavior = clipBehavior
       ..delegate = delegate as TreeRowDelegateMixin;

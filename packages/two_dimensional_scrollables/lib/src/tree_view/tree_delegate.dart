@@ -75,7 +75,6 @@ class TreeRowBuilderDelegate extends TwoDimensionalChildBuilderDelegate
         _rowBuilder = rowBuilder,
         super(
           builder: nodeBuilder,
-          maxXIndex: 0,
           maxYIndex: rowCount - 1,
           // repaintBoundaries handled by TreeView
           addRepaintBoundaries: false,
