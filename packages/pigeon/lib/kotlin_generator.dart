@@ -1124,6 +1124,12 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
   }) {
     const String registrarName = '${classNamePrefix}ProxyApiRegistrar';
 
+    indent.format(
+      '/**\n'
+      ' * Provides implementations for each ProxyApi implementation and provides access to resources\n'
+      ' * needed by any implementation.\n'
+      ' */',
+    );
     indent.writeScoped(
       'abstract class $registrarName(val binaryMessenger: BinaryMessenger) {',
       '}',

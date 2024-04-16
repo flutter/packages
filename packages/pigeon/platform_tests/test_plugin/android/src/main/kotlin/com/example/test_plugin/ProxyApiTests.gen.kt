@@ -351,6 +351,10 @@ private class PigeonInstanceManagerApi(val binaryMessenger: BinaryMessenger) {
   }
 }
 
+/**
+ * Provides implementations for each ProxyApi implementation and provides access to resources
+ * needed by any implementation.
+ */
 abstract class PigeonProxyApiRegistrar(val binaryMessenger: BinaryMessenger) {
   val instanceManager: PigeonInstanceManager
   private var _codec: StandardMessageCodec? = null
