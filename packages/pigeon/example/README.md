@@ -19,8 +19,8 @@ needed for your project.
   cppOptions: CppOptions(namespace: 'pigeon_example'),
   cppHeaderOut: 'windows/runner/messages.g.h',
   cppSourceOut: 'windows/runner/messages.g.cpp',
-  gobjectHeaderOut: 'gobject/messages.g.h',
-  gobjectSourceOut: 'gobject/messages.g.cc',
+  gobjectHeaderOut: 'linux/messages.g.h',
+  gobjectSourceOut: 'linux/messages.g.cc',
   gobjectOptions: GObjectOptions(),
   kotlinOut:
       'android/app/src/main/kotlin/dev/flutter/pigeon_example_app/Messages.g.kt',
