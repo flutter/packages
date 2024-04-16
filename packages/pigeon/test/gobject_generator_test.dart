@@ -673,7 +673,7 @@ void main() {
       expect(
           code,
           contains(
-              '  g_autoptr(TestPackageApiDoSomethingResponse) response = self->vtable->do_something(self, fl_value_get_bool(fl_value_get_list_value(message, 0)), fl_value_get_int(fl_value_get_list_value(message, 1)), fl_value_get_string(fl_value_get_list_value(message, 2)), fl_value_get_list_value(message, 3), fl_value_get_list_value(message, 4), TEST_PACKAGE_PARAMETER_OBJECT(fl_value_get_custom_value_object(fl_value_get_list_value(message, 5))), TEST_PACKAGE_OBJECT(fl_value_get_custom_value_object(fl_value_get_list_value(message, 6))), self->user_data);'));
+              '  g_autoptr(TestPackageApiDoSomethingResponse) response = self->vtable->do_something(self, fl_value_get_bool(value0), fl_value_get_int(value1), fl_value_get_string(value2), value3, value4, TEST_PACKAGE_PARAMETER_OBJECT(fl_value_get_custom_value_object(value5)), TEST_PACKAGE_OBJECT(fl_value_get_custom_value_object(value6)), self->user_data);'));
     }
   });
 
