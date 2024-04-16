@@ -133,4 +133,9 @@ abstract class ImplementedSpan
 
   @override
   bool get validForMouseTracker => true;
+
+  @override
+  String toString({ DiagnosticLevel minLevel = DiagnosticLevel.info }) {
+    return 'Span, leadingOffset: $leadingOffset, extent: $extent';
+  }
 }
