@@ -535,10 +535,12 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
     Root root,
     Indent indent,
   ) {
-    const String codecName = '${classNamePrefix}ProxyApiBaseCodec';
-
     final Iterable<AstProxyApi> allProxyApis =
         root.apis.whereType<AstProxyApi>();
+
+    _writeProxyApiRegistrar(indent, allProxyApis: allProxyApis);
+
+    const String codecName = '${classNamePrefix}ProxyApiBaseCodec';
 
     // Sort APIs where edges are an API's super class and interfaces.
     //
@@ -569,45 +571,14 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
     );
 
     indent.writeScoped(
-      'abstract class $codecName(val binaryMessenger: BinaryMessenger, val instanceManager: $instanceManagerClassName) : StandardMessageCodec() {',
+      'private class $codecName(val registrar: PigeonProxyApiRegistrar) : StandardMessageCodec() {',
       '}',
       () {
-        for (final AstProxyApi api in sortedApis) {
-          _writeMethodDeclaration(
-            indent,
-            name: 'get$hostProxyApiPrefix${api.name}',
-            isAbstract: true,
-            documentationComments: <String>[
-              'An implementation of [$hostProxyApiPrefix${api.name}] used to add a new Dart instance of',
-              '`${api.name}` to the Dart `InstanceManager`.'
-            ],
-            returnType: TypeDeclaration(
-              baseName: '$hostProxyApiPrefix${api.name}',
-              isNullable: false,
-            ),
-            parameters: <Parameter>[],
-          );
-          indent.newln();
-        }
-
-        indent.writeScoped('fun setUpMessageHandlers() {', '}', () {
-          for (final AstProxyApi api in sortedApis) {
-            final bool hasHostMessageCalls = api.constructors.isNotEmpty ||
-                api.attachedFields.isNotEmpty ||
-                api.hostMethods.isNotEmpty;
-            if (hasHostMessageCalls) {
-              indent.writeln(
-                '$hostProxyApiPrefix${api.name}.setUpMessageHandlers(binaryMessenger, get$hostProxyApiPrefix${api.name}())',
-              );
-            }
-          }
-        });
-
         indent.format(
           'override fun readValueOfType(type: Byte, buffer: ByteBuffer): Any? {\n'
           '  return when (type) {\n'
           '    128.toByte() -> {\n'
-          '      return instanceManager.getInstance(\n'
+          '      return registrar.instanceManager.getInstance(\n'
           '          readValue(buffer).let { if (it is Int) it.toLong() else it as Long })\n'
           '    }\n'
           '    else -> super.readValueOfType(type, buffer)\n'
@@ -633,7 +604,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
 
                 indent.format(
                   '${index > 0 ? ' else ' : ''}if (${versionCheck}value is $className) {\n'
-                  '  get$hostProxyApiPrefix${api.name}().${classMemberNamePrefix}newInstance(value) { }\n'
+                  '  registrar.get$hostProxyApiPrefix${api.name}().${classMemberNamePrefix}newInstance(value) { }\n'
                   '}',
                 );
               },
@@ -642,9 +613,9 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
 
             indent.format(
               'when {\n'
-              '  instanceManager.containsInstance(value) -> {\n'
+              '  registrar.instanceManager.containsInstance(value) -> {\n'
               '    stream.write(128)\n'
-              '    writeValue(stream, instanceManager.getIdentifierForStrongReference(value))\n'
+              '    writeValue(stream, registrar.instanceManager.getIdentifierForStrongReference(value))\n'
               '  }\n'
               '  else -> super.writeValue(stream, value)\n'
               '}',
@@ -663,7 +634,6 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
     AstProxyApi api, {
     required String dartPackageName,
   }) {
-    const String codecName = '${classNamePrefix}ProxyApiBaseCodec';
     final String kotlinApiName = '$hostProxyApiPrefix${api.name}';
 
     addDocumentationComments(
@@ -673,7 +643,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
     );
     indent.writeln('@Suppress("UNCHECKED_CAST")');
     indent.writeScoped(
-      'abstract class $kotlinApiName(val codec: $codecName) {',
+      'abstract class $kotlinApiName(val pigeonRegistrar: ${classNamePrefix}ProxyApiRegistrar) {',
       '}',
       () {
         final String fullKotlinClassName =
@@ -1148,6 +1118,99 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
     });
   }
 
+  void _writeProxyApiRegistrar(
+    Indent indent, {
+    required Iterable<AstProxyApi> allProxyApis,
+  }) {
+    const String registrarName = '${classNamePrefix}ProxyApiRegistrar';
+
+    indent.writeScoped(
+      'abstract class $registrarName(val binaryMessenger: BinaryMessenger) {',
+      '}',
+      () {
+        indent.writeln('val instanceManager: PigeonInstanceManager');
+        indent.format(
+          'private var _codec: StandardMessageCodec? = null\n'
+          'val codec: StandardMessageCodec\n'
+          '  get() {\n'
+          '    if (_codec == null) {\n '
+          '      _codec = PigeonProxyApiBaseCodec(this)\n'
+          '    }\n'
+          '    return _codec!!\n'
+          '  }\n',
+        );
+        indent.format(
+          'init {\n'
+          '  val api = PigeonInstanceManagerApi(binaryMessenger)\n'
+          '  instanceManager =\n'
+          '    PigeonInstanceManager.create(\n'
+          '      object : PigeonInstanceManager.PigeonFinalizationListener {\n'
+          '        override fun onFinalize(identifier: Long) {\n'
+          '          api.removeStrongReference(identifier) {\n'
+          '            if (it.isFailure) {\n'
+          '              Log.e(\n'
+          '                "$registrarName",\n'
+          '                "Failed to remove Dart strong reference with identifier: \$identifier"\n'
+          '              )\n'
+          '            }\n'
+          '          }\n'
+          '        }\n'
+          '      })\n'
+          '}\n',
+        );
+        for (final AstProxyApi api in allProxyApis) {
+          _writeMethodDeclaration(
+            indent,
+            name: 'get$hostProxyApiPrefix${api.name}',
+            isAbstract: true,
+            documentationComments: <String>[
+              'An implementation of [$hostProxyApiPrefix${api.name}] used to add a new Dart instance of',
+              '`${api.name}` to the Dart `InstanceManager`.'
+            ],
+            returnType: TypeDeclaration(
+              baseName: '$hostProxyApiPrefix${api.name}',
+              isNullable: false,
+            ),
+            parameters: <Parameter>[],
+          );
+          indent.newln();
+        }
+
+        indent.writeScoped('fun setUp() {', '}', () {
+          indent.writeln(
+            'PigeonInstanceManagerApi.setUpMessageHandlers(binaryMessenger, instanceManager)',
+          );
+          for (final AstProxyApi api in allProxyApis) {
+            final bool hasHostMessageCalls = api.constructors.isNotEmpty ||
+                api.attachedFields.isNotEmpty ||
+                api.hostMethods.isNotEmpty;
+            if (hasHostMessageCalls) {
+              indent.writeln(
+                '$hostProxyApiPrefix${api.name}.setUpMessageHandlers(binaryMessenger, get$hostProxyApiPrefix${api.name}())',
+              );
+            }
+          }
+        });
+
+        indent.writeScoped('fun tearDown() {', '}', () {
+          indent.writeln(
+            'PigeonInstanceManagerApi.setUpMessageHandlers(binaryMessenger, null)',
+          );
+          for (final AstProxyApi api in allProxyApis) {
+            final bool hasHostMessageCalls = api.constructors.isNotEmpty ||
+                api.attachedFields.isNotEmpty ||
+                api.hostMethods.isNotEmpty;
+            if (hasHostMessageCalls) {
+              indent.writeln(
+                '$hostProxyApiPrefix${api.name}.setUpMessageHandlers(binaryMessenger, null)',
+              );
+            }
+          }
+        });
+      },
+    );
+  }
+
   // Writes the abstract method that instantiates a new instance of the Kotlin
   // class.
   void _writeProxyApiConstructorAbstractMethods(
@@ -1289,7 +1352,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
       '}',
       () {
         indent.writeln(
-          'val codec = api?.codec ?: StandardMessageCodec()',
+          'val codec = api?.pigeonRegistrar?.codec ?: StandardMessageCodec()',
         );
         void writeWithApiCheckIfNecessary(
           List<TypeDeclaration> types, {
@@ -1359,7 +1422,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
                   List<String> methodParameters, {
                   required String apiVarName,
                 }) {
-                  return '$apiVarName.codec.instanceManager.addDartCreatedInstance('
+                  return '$apiVarName.pigeonRegistrar.instanceManager.addDartCreatedInstance('
                       '$apiVarName.$name(${methodParameters.skip(1).join(',')}), ${methodParameters.first})';
                 },
                 parameters: <Parameter>[
@@ -1405,7 +1468,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
                 }) {
                   final String param =
                       methodParameters.length > 1 ? methodParameters.first : '';
-                  return '$apiVarName.codec.instanceManager.addDartCreatedInstance('
+                  return '$apiVarName.pigeonRegistrar.instanceManager.addDartCreatedInstance('
                       '$apiVarName.${field.name}($param), ${methodParameters.last})';
                 },
                 parameters: <Parameter>[
@@ -1511,7 +1574,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
         required String errorClassName,
       }) {
         indent.writeScoped(
-          'if (codec.instanceManager.containsInstance(${classMemberNamePrefix}instanceArg)) {',
+          'if (pigeonRegistrar.instanceManager.containsInstance(${classMemberNamePrefix}instanceArg)) {',
           '}',
           () {
             indent.writeln('Result.success(Unit)');
@@ -1520,7 +1583,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
         );
         if (api.hasCallbackConstructor()) {
           indent.writeln(
-            'val ${classMemberNamePrefix}identifierArg = codec.instanceManager.addHostCreatedInstance(${classMemberNamePrefix}instanceArg)',
+            'val ${classMemberNamePrefix}identifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(${classMemberNamePrefix}instanceArg)',
           );
           enumerate(api.unattachedFields, (int index, ApiField field) {
             final String argName = _getSafeArgumentName(index, field);
@@ -1529,7 +1592,9 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
             );
           });
 
-          indent.writeln('val binaryMessenger = codec.binaryMessenger');
+          indent
+              .writeln('val binaryMessenger = pigeonRegistrar.binaryMessenger');
+          indent.writeln('val codec = pigeonRegistrar.codec');
           _writeFlutterMethodMessageCall(
             indent,
             returnType: returnType,
@@ -1600,7 +1665,9 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
           required String channelName,
           required String errorClassName,
         }) {
-          indent.writeln('val binaryMessenger = codec.binaryMessenger');
+          indent
+              .writeln('val binaryMessenger = pigeonRegistrar.binaryMessenger');
+          indent.writeln('val codec = pigeonRegistrar.codec');
           _writeFlutterMethodMessageCall(
             indent,
             returnType: returnType,
@@ -1636,7 +1703,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
       );
 
       indent.writeScoped('{', '}', () {
-        indent.writeln('return codec.get$apiName()');
+        indent.writeln('return pigeonRegistrar.get$apiName()');
       });
       indent.newln();
     }

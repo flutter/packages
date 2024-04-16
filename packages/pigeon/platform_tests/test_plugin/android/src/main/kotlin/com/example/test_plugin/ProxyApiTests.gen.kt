@@ -102,30 +102,6 @@ class PigeonInstanceManager(private val finalizationListener: PigeonFinalization
     fun create(finalizationListener: PigeonFinalizationListener): PigeonInstanceManager {
       return PigeonInstanceManager(finalizationListener)
     }
-
-    /**
-     * Instantiate a new manager with an `PigeonInstanceManager`.
-     *
-     * @param api handles removing garbage collected weak references.
-     * @return a new `PigeonInstanceManager`.
-     */
-    fun create(api: PigeonInstanceManagerApi): PigeonInstanceManager {
-      val instanceManager =
-          create(
-              object : PigeonFinalizationListener {
-                override fun onFinalize(identifier: Long) {
-                  api.removeStrongReference(identifier) {
-                    if (it.isFailure) {
-                      Log.e(
-                          tag,
-                          "Failed to remove Dart strong reference with identifier: $identifier")
-                    }
-                  }
-                }
-              })
-      PigeonInstanceManagerApi.setUpMessageHandlers(api.binaryMessenger, instanceManager)
-      return instanceManager
-    }
   }
 
   /**
@@ -296,7 +272,7 @@ class PigeonInstanceManager(private val finalizationListener: PigeonFinalization
 }
 
 /** Generated API for managing the Dart and native `PigeonInstanceManager`s. */
-class PigeonInstanceManagerApi(internal val binaryMessenger: BinaryMessenger) {
+private class PigeonInstanceManagerApi(val binaryMessenger: BinaryMessenger) {
   companion object {
     /** The codec used by PigeonInstanceManagerApi. */
     private val codec: MessageCodec<Any?> by lazy { StandardMessageCodec() }
@@ -307,7 +283,7 @@ class PigeonInstanceManagerApi(internal val binaryMessenger: BinaryMessenger) {
      */
     fun setUpMessageHandlers(
         binaryMessenger: BinaryMessenger,
-        instanceManager: PigeonInstanceManager
+        instanceManager: PigeonInstanceManager?
     ) {
       run {
         val channel =
@@ -315,16 +291,20 @@ class PigeonInstanceManagerApi(internal val binaryMessenger: BinaryMessenger) {
                 binaryMessenger,
                 "dev.flutter.pigeon.pigeon_integration_tests.PigeonInstanceManagerApi.removeStrongReference",
                 codec)
-        channel.setMessageHandler { message, reply ->
-          val identifier = message as Number
-          val wrapped: List<Any?> =
-              try {
-                instanceManager.remove<Any?>(identifier.toLong())
-                listOf<Any?>(null)
-              } catch (exception: Throwable) {
-                wrapError(exception)
-              }
-          reply.reply(wrapped)
+        if (instanceManager != null) {
+          channel.setMessageHandler { message, reply ->
+            val identifier = message as Number
+            val wrapped: List<Any?> =
+                try {
+                  instanceManager.remove<Any?>(identifier.toLong())
+                  listOf<Any?>(null)
+                } catch (exception: Throwable) {
+                  wrapError(exception)
+                }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
         }
       }
       run {
@@ -333,15 +313,19 @@ class PigeonInstanceManagerApi(internal val binaryMessenger: BinaryMessenger) {
                 binaryMessenger,
                 "dev.flutter.pigeon.pigeon_integration_tests.PigeonInstanceManagerApi.clear",
                 codec)
-        channel.setMessageHandler { _, reply ->
-          val wrapped: List<Any?> =
-              try {
-                instanceManager.clear()
-                listOf<Any?>(null)
-              } catch (exception: Throwable) {
-                wrapError(exception)
-              }
-          reply.reply(wrapped)
+        if (instanceManager != null) {
+          channel.setMessageHandler { _, reply ->
+            val wrapped: List<Any?> =
+                try {
+                  instanceManager.clear()
+                  listOf<Any?>(null)
+                } catch (exception: Throwable) {
+                  wrapError(exception)
+                }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
         }
       }
     }
@@ -367,10 +351,34 @@ class PigeonInstanceManagerApi(internal val binaryMessenger: BinaryMessenger) {
   }
 }
 
-abstract class PigeonProxyApiBaseCodec(
-    val binaryMessenger: BinaryMessenger,
-    val instanceManager: PigeonInstanceManager
-) : StandardMessageCodec() {
+abstract class PigeonProxyApiRegistrar(val binaryMessenger: BinaryMessenger) {
+  val instanceManager: PigeonInstanceManager
+  private var _codec: StandardMessageCodec? = null
+  val codec: StandardMessageCodec
+    get() {
+      if (_codec == null) {
+        _codec = PigeonProxyApiBaseCodec(this)
+      }
+      return _codec!!
+    }
+
+  init {
+    val api = PigeonInstanceManagerApi(binaryMessenger)
+    instanceManager =
+        PigeonInstanceManager.create(
+            object : PigeonInstanceManager.PigeonFinalizationListener {
+              override fun onFinalize(identifier: Long) {
+                api.removeStrongReference(identifier) {
+                  if (it.isFailure) {
+                    Log.e(
+                        "PigeonProxyApiRegistrar",
+                        "Failed to remove Dart strong reference with identifier: $identifier")
+                  }
+                }
+              }
+            })
+  }
+
   /**
    * An implementation of [PigeonApiProxyApiTestClass] used to add a new Dart instance of
    * `ProxyApiTestClass` to the Dart `InstanceManager`.
@@ -389,17 +397,27 @@ abstract class PigeonProxyApiBaseCodec(
    */
   abstract fun getPigeonApiProxyApiInterface(): PigeonApiProxyApiInterface
 
-  fun setUpMessageHandlers() {
+  fun setUp() {
+    PigeonInstanceManagerApi.setUpMessageHandlers(binaryMessenger, instanceManager)
     PigeonApiProxyApiTestClass.setUpMessageHandlers(
         binaryMessenger, getPigeonApiProxyApiTestClass())
     PigeonApiProxyApiSuperClass.setUpMessageHandlers(
         binaryMessenger, getPigeonApiProxyApiSuperClass())
   }
 
+  fun tearDown() {
+    PigeonInstanceManagerApi.setUpMessageHandlers(binaryMessenger, null)
+    PigeonApiProxyApiTestClass.setUpMessageHandlers(binaryMessenger, null)
+    PigeonApiProxyApiSuperClass.setUpMessageHandlers(binaryMessenger, null)
+  }
+}
+
+private class PigeonProxyApiBaseCodec(val registrar: PigeonProxyApiRegistrar) :
+    StandardMessageCodec() {
   override fun readValueOfType(type: Byte, buffer: ByteBuffer): Any? {
     return when (type) {
       128.toByte() -> {
-        return instanceManager.getInstance(
+        return registrar.instanceManager.getInstance(
             readValue(buffer).let { if (it is Int) it.toLong() else it as Long })
       }
       else -> super.readValueOfType(type, buffer)
@@ -408,17 +426,17 @@ abstract class PigeonProxyApiBaseCodec(
 
   override fun writeValue(stream: ByteArrayOutputStream, value: Any?) {
     if (value is ProxyApiTestClass) {
-      getPigeonApiProxyApiTestClass().pigeon_newInstance(value) {}
+      registrar.getPigeonApiProxyApiTestClass().pigeon_newInstance(value) {}
     } else if (value is com.example.test_plugin.ProxyApiSuperClass) {
-      getPigeonApiProxyApiSuperClass().pigeon_newInstance(value) {}
+      registrar.getPigeonApiProxyApiSuperClass().pigeon_newInstance(value) {}
     } else if (value is ProxyApiInterface) {
-      getPigeonApiProxyApiInterface().pigeon_newInstance(value) {}
+      registrar.getPigeonApiProxyApiInterface().pigeon_newInstance(value) {}
     }
 
     when {
-      instanceManager.containsInstance(value) -> {
+      registrar.instanceManager.containsInstance(value) -> {
         stream.write(128)
-        writeValue(stream, instanceManager.getIdentifierForStrongReference(value))
+        writeValue(stream, registrar.instanceManager.getIdentifierForStrongReference(value))
       }
       else -> super.writeValue(stream, value)
     }
@@ -441,7 +459,7 @@ enum class ProxyApiTestEnum(val raw: Int) {
  * integration tests.
  */
 @Suppress("UNCHECKED_CAST")
-abstract class PigeonApiProxyApiTestClass(val codec: PigeonProxyApiBaseCodec) {
+abstract class PigeonApiProxyApiTestClass(val pigeonRegistrar: PigeonProxyApiRegistrar) {
   abstract fun pigeon_defaultConstructor(
       aBool: Boolean,
       anInt: Long,
@@ -942,7 +960,7 @@ abstract class PigeonApiProxyApiTestClass(val codec: PigeonProxyApiBaseCodec) {
   companion object {
     @Suppress("LocalVariableName")
     fun setUpMessageHandlers(binaryMessenger: BinaryMessenger, api: PigeonApiProxyApiTestClass?) {
-      val codec = api?.codec ?: StandardMessageCodec()
+      val codec = api?.pigeonRegistrar?.codec ?: StandardMessageCodec()
       run {
         val channel =
             BasicMessageChannel<Any?>(
@@ -993,7 +1011,7 @@ abstract class PigeonApiProxyApiTestClass(val codec: PigeonProxyApiBaseCodec) {
             val nullableProxyApiParamArg = args[36] as com.example.test_plugin.ProxyApiSuperClass?
             var wrapped: List<Any?>
             try {
-              api.codec.instanceManager.addDartCreatedInstance(
+              api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
                   api.pigeon_defaultConstructor(
                       aBoolArg,
                       anIntArg,
@@ -1055,7 +1073,7 @@ abstract class PigeonApiProxyApiTestClass(val codec: PigeonProxyApiBaseCodec) {
             val pigeon_identifierArg = args[1].let { if (it is Int) it.toLong() else it as Long }
             var wrapped: List<Any?>
             try {
-              api.codec.instanceManager.addDartCreatedInstance(
+              api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
                   api.attachedField(pigeon_instanceArg), pigeon_identifierArg)
               wrapped = listOf<Any?>(null)
             } catch (exception: Throwable) {
@@ -1079,7 +1097,7 @@ abstract class PigeonApiProxyApiTestClass(val codec: PigeonProxyApiBaseCodec) {
             val pigeon_identifierArg = args[0].let { if (it is Int) it.toLong() else it as Long }
             var wrapped: List<Any?>
             try {
-              api.codec.instanceManager.addDartCreatedInstance(
+              api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
                   api.staticAttachedField(), pigeon_identifierArg)
               wrapped = listOf<Any?>(null)
             } catch (exception: Throwable) {
@@ -2941,11 +2959,12 @@ abstract class PigeonApiProxyApiTestClass(val codec: PigeonProxyApiBaseCodec) {
   @Suppress("LocalVariableName", "FunctionName")
   /** Creates a Dart instance of ProxyApiTestClass and attaches it to [pigeon_instanceArg]. */
   fun pigeon_newInstance(pigeon_instanceArg: ProxyApiTestClass, callback: (Result<Unit>) -> Unit) {
-    if (codec.instanceManager.containsInstance(pigeon_instanceArg)) {
+    if (pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) {
       Result.success(Unit)
       return
     }
-    val pigeon_identifierArg = codec.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
+    val pigeon_identifierArg =
+        pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
     val aBoolArg = aBool(pigeon_instanceArg)
     val anIntArg = anInt(pigeon_instanceArg)
     val aDoubleArg = aDouble(pigeon_instanceArg)
@@ -2964,7 +2983,8 @@ abstract class PigeonApiProxyApiTestClass(val codec: PigeonProxyApiBaseCodec) {
     val aNullableMapArg = aNullableMap(pigeon_instanceArg)
     val aNullableEnumArg = aNullableEnum(pigeon_instanceArg)
     val aNullableProxyApiArg = aNullableProxyApi(pigeon_instanceArg)
-    val binaryMessenger = codec.binaryMessenger
+    val binaryMessenger = pigeonRegistrar.binaryMessenger
+    val codec = pigeonRegistrar.codec
     val channelName =
         "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.pigeon_newInstance"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
@@ -3005,7 +3025,8 @@ abstract class PigeonApiProxyApiTestClass(val codec: PigeonProxyApiBaseCodec) {
 
   /** A no-op function taking no arguments and returning no value, to sanity test basic calling. */
   fun flutterNoop(pigeon_instanceArg: ProxyApiTestClass, callback: (Result<Unit>) -> Unit) {
-    val binaryMessenger = codec.binaryMessenger
+    val binaryMessenger = pigeonRegistrar.binaryMessenger
+    val codec = pigeonRegistrar.codec
     val channelName = "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterNoop"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(pigeon_instanceArg)) {
@@ -3025,7 +3046,8 @@ abstract class PigeonApiProxyApiTestClass(val codec: PigeonProxyApiBaseCodec) {
 
   /** Responds with an error from an async function returning a value. */
   fun flutterThrowError(pigeon_instanceArg: ProxyApiTestClass, callback: (Result<Any?>) -> Unit) {
-    val binaryMessenger = codec.binaryMessenger
+    val binaryMessenger = pigeonRegistrar.binaryMessenger
+    val codec = pigeonRegistrar.codec
     val channelName =
         "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterThrowError"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
@@ -3050,7 +3072,8 @@ abstract class PigeonApiProxyApiTestClass(val codec: PigeonProxyApiBaseCodec) {
       pigeon_instanceArg: ProxyApiTestClass,
       callback: (Result<Unit>) -> Unit
   ) {
-    val binaryMessenger = codec.binaryMessenger
+    val binaryMessenger = pigeonRegistrar.binaryMessenger
+    val codec = pigeonRegistrar.codec
     val channelName =
         "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterThrowErrorFromVoid"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
@@ -3075,7 +3098,8 @@ abstract class PigeonApiProxyApiTestClass(val codec: PigeonProxyApiBaseCodec) {
       aBoolArg: Boolean,
       callback: (Result<Boolean>) -> Unit
   ) {
-    val binaryMessenger = codec.binaryMessenger
+    val binaryMessenger = pigeonRegistrar.binaryMessenger
+    val codec = pigeonRegistrar.codec
     val channelName =
         "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoBool"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
@@ -3108,7 +3132,8 @@ abstract class PigeonApiProxyApiTestClass(val codec: PigeonProxyApiBaseCodec) {
       anIntArg: Long,
       callback: (Result<Long>) -> Unit
   ) {
-    val binaryMessenger = codec.binaryMessenger
+    val binaryMessenger = pigeonRegistrar.binaryMessenger
+    val codec = pigeonRegistrar.codec
     val channelName = "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoInt"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(pigeon_instanceArg, anIntArg)) {
@@ -3140,7 +3165,8 @@ abstract class PigeonApiProxyApiTestClass(val codec: PigeonProxyApiBaseCodec) {
       aDoubleArg: Double,
       callback: (Result<Double>) -> Unit
   ) {
-    val binaryMessenger = codec.binaryMessenger
+    val binaryMessenger = pigeonRegistrar.binaryMessenger
+    val codec = pigeonRegistrar.codec
     val channelName =
         "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoDouble"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
@@ -3173,7 +3199,8 @@ abstract class PigeonApiProxyApiTestClass(val codec: PigeonProxyApiBaseCodec) {
       aStringArg: String,
       callback: (Result<String>) -> Unit
   ) {
-    val binaryMessenger = codec.binaryMessenger
+    val binaryMessenger = pigeonRegistrar.binaryMessenger
+    val codec = pigeonRegistrar.codec
     val channelName =
         "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoString"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
@@ -3206,7 +3233,8 @@ abstract class PigeonApiProxyApiTestClass(val codec: PigeonProxyApiBaseCodec) {
       aListArg: ByteArray,
       callback: (Result<ByteArray>) -> Unit
   ) {
-    val binaryMessenger = codec.binaryMessenger
+    val binaryMessenger = pigeonRegistrar.binaryMessenger
+    val codec = pigeonRegistrar.codec
     val channelName =
         "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoUint8List"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
@@ -3239,7 +3267,8 @@ abstract class PigeonApiProxyApiTestClass(val codec: PigeonProxyApiBaseCodec) {
       aListArg: List<Any?>,
       callback: (Result<List<Any?>>) -> Unit
   ) {
-    val binaryMessenger = codec.binaryMessenger
+    val binaryMessenger = pigeonRegistrar.binaryMessenger
+    val codec = pigeonRegistrar.codec
     val channelName =
         "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoList"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
@@ -3272,7 +3301,8 @@ abstract class PigeonApiProxyApiTestClass(val codec: PigeonProxyApiBaseCodec) {
       aListArg: List<ProxyApiTestClass?>,
       callback: (Result<List<ProxyApiTestClass?>>) -> Unit
   ) {
-    val binaryMessenger = codec.binaryMessenger
+    val binaryMessenger = pigeonRegistrar.binaryMessenger
+    val codec = pigeonRegistrar.codec
     val channelName =
         "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoProxyApiList"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
@@ -3305,7 +3335,8 @@ abstract class PigeonApiProxyApiTestClass(val codec: PigeonProxyApiBaseCodec) {
       aMapArg: Map<String?, Any?>,
       callback: (Result<Map<String?, Any?>>) -> Unit
   ) {
-    val binaryMessenger = codec.binaryMessenger
+    val binaryMessenger = pigeonRegistrar.binaryMessenger
+    val codec = pigeonRegistrar.codec
     val channelName = "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoMap"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(pigeon_instanceArg, aMapArg)) {
@@ -3337,7 +3368,8 @@ abstract class PigeonApiProxyApiTestClass(val codec: PigeonProxyApiBaseCodec) {
       aMapArg: Map<String?, ProxyApiTestClass?>,
       callback: (Result<Map<String?, ProxyApiTestClass?>>) -> Unit
   ) {
-    val binaryMessenger = codec.binaryMessenger
+    val binaryMessenger = pigeonRegistrar.binaryMessenger
+    val codec = pigeonRegistrar.codec
     val channelName =
         "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoProxyApiMap"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
@@ -3370,7 +3402,8 @@ abstract class PigeonApiProxyApiTestClass(val codec: PigeonProxyApiBaseCodec) {
       anEnumArg: ProxyApiTestEnum,
       callback: (Result<ProxyApiTestEnum>) -> Unit
   ) {
-    val binaryMessenger = codec.binaryMessenger
+    val binaryMessenger = pigeonRegistrar.binaryMessenger
+    val codec = pigeonRegistrar.codec
     val channelName =
         "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoEnum"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
@@ -3403,7 +3436,8 @@ abstract class PigeonApiProxyApiTestClass(val codec: PigeonProxyApiBaseCodec) {
       aProxyApiArg: com.example.test_plugin.ProxyApiSuperClass,
       callback: (Result<com.example.test_plugin.ProxyApiSuperClass>) -> Unit
   ) {
-    val binaryMessenger = codec.binaryMessenger
+    val binaryMessenger = pigeonRegistrar.binaryMessenger
+    val codec = pigeonRegistrar.codec
     val channelName =
         "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoProxyApi"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
@@ -3436,7 +3470,8 @@ abstract class PigeonApiProxyApiTestClass(val codec: PigeonProxyApiBaseCodec) {
       aBoolArg: Boolean?,
       callback: (Result<Boolean?>) -> Unit
   ) {
-    val binaryMessenger = codec.binaryMessenger
+    val binaryMessenger = pigeonRegistrar.binaryMessenger
+    val codec = pigeonRegistrar.codec
     val channelName =
         "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoNullableBool"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
@@ -3462,7 +3497,8 @@ abstract class PigeonApiProxyApiTestClass(val codec: PigeonProxyApiBaseCodec) {
       anIntArg: Long?,
       callback: (Result<Long?>) -> Unit
   ) {
-    val binaryMessenger = codec.binaryMessenger
+    val binaryMessenger = pigeonRegistrar.binaryMessenger
+    val codec = pigeonRegistrar.codec
     val channelName =
         "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoNullableInt"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
@@ -3488,7 +3524,8 @@ abstract class PigeonApiProxyApiTestClass(val codec: PigeonProxyApiBaseCodec) {
       aDoubleArg: Double?,
       callback: (Result<Double?>) -> Unit
   ) {
-    val binaryMessenger = codec.binaryMessenger
+    val binaryMessenger = pigeonRegistrar.binaryMessenger
+    val codec = pigeonRegistrar.codec
     val channelName =
         "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoNullableDouble"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
@@ -3514,7 +3551,8 @@ abstract class PigeonApiProxyApiTestClass(val codec: PigeonProxyApiBaseCodec) {
       aStringArg: String?,
       callback: (Result<String?>) -> Unit
   ) {
-    val binaryMessenger = codec.binaryMessenger
+    val binaryMessenger = pigeonRegistrar.binaryMessenger
+    val codec = pigeonRegistrar.codec
     val channelName =
         "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoNullableString"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
@@ -3540,7 +3578,8 @@ abstract class PigeonApiProxyApiTestClass(val codec: PigeonProxyApiBaseCodec) {
       aListArg: ByteArray?,
       callback: (Result<ByteArray?>) -> Unit
   ) {
-    val binaryMessenger = codec.binaryMessenger
+    val binaryMessenger = pigeonRegistrar.binaryMessenger
+    val codec = pigeonRegistrar.codec
     val channelName =
         "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoNullableUint8List"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
@@ -3566,7 +3605,8 @@ abstract class PigeonApiProxyApiTestClass(val codec: PigeonProxyApiBaseCodec) {
       aListArg: List<Any?>?,
       callback: (Result<List<Any?>?>) -> Unit
   ) {
-    val binaryMessenger = codec.binaryMessenger
+    val binaryMessenger = pigeonRegistrar.binaryMessenger
+    val codec = pigeonRegistrar.codec
     val channelName =
         "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoNullableList"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
@@ -3592,7 +3632,8 @@ abstract class PigeonApiProxyApiTestClass(val codec: PigeonProxyApiBaseCodec) {
       aMapArg: Map<String?, Any?>?,
       callback: (Result<Map<String?, Any?>?>) -> Unit
   ) {
-    val binaryMessenger = codec.binaryMessenger
+    val binaryMessenger = pigeonRegistrar.binaryMessenger
+    val codec = pigeonRegistrar.codec
     val channelName =
         "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoNullableMap"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
@@ -3618,7 +3659,8 @@ abstract class PigeonApiProxyApiTestClass(val codec: PigeonProxyApiBaseCodec) {
       anEnumArg: ProxyApiTestEnum?,
       callback: (Result<ProxyApiTestEnum?>) -> Unit
   ) {
-    val binaryMessenger = codec.binaryMessenger
+    val binaryMessenger = pigeonRegistrar.binaryMessenger
+    val codec = pigeonRegistrar.codec
     val channelName =
         "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoNullableEnum"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
@@ -3644,7 +3686,8 @@ abstract class PigeonApiProxyApiTestClass(val codec: PigeonProxyApiBaseCodec) {
       aProxyApiArg: com.example.test_plugin.ProxyApiSuperClass?,
       callback: (Result<com.example.test_plugin.ProxyApiSuperClass?>) -> Unit
   ) {
-    val binaryMessenger = codec.binaryMessenger
+    val binaryMessenger = pigeonRegistrar.binaryMessenger
+    val codec = pigeonRegistrar.codec
     val channelName =
         "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoNullableProxyApi"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
@@ -3669,7 +3712,8 @@ abstract class PigeonApiProxyApiTestClass(val codec: PigeonProxyApiBaseCodec) {
    * calling.
    */
   fun flutterNoopAsync(pigeon_instanceArg: ProxyApiTestClass, callback: (Result<Unit>) -> Unit) {
-    val binaryMessenger = codec.binaryMessenger
+    val binaryMessenger = pigeonRegistrar.binaryMessenger
+    val codec = pigeonRegistrar.codec
     val channelName =
         "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterNoopAsync"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
@@ -3694,7 +3738,8 @@ abstract class PigeonApiProxyApiTestClass(val codec: PigeonProxyApiBaseCodec) {
       aStringArg: String,
       callback: (Result<String>) -> Unit
   ) {
-    val binaryMessenger = codec.binaryMessenger
+    val binaryMessenger = pigeonRegistrar.binaryMessenger
+    val codec = pigeonRegistrar.codec
     val channelName =
         "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoAsyncString"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
@@ -3724,18 +3769,18 @@ abstract class PigeonApiProxyApiTestClass(val codec: PigeonProxyApiBaseCodec) {
   @Suppress("FunctionName")
   /** An implementation of [PigeonApiProxyApiSuperClass] used to access callback methods */
   fun pigeon_getPigeonApiProxyApiSuperClass(): PigeonApiProxyApiSuperClass {
-    return codec.getPigeonApiProxyApiSuperClass()
+    return pigeonRegistrar.getPigeonApiProxyApiSuperClass()
   }
 
   @Suppress("FunctionName")
   /** An implementation of [PigeonApiProxyApiInterface] used to access callback methods */
   fun pigeon_getPigeonApiProxyApiInterface(): PigeonApiProxyApiInterface {
-    return codec.getPigeonApiProxyApiInterface()
+    return pigeonRegistrar.getPigeonApiProxyApiInterface()
   }
 }
 /** ProxyApi to serve as a super class to the core ProxyApi class. */
 @Suppress("UNCHECKED_CAST")
-abstract class PigeonApiProxyApiSuperClass(val codec: PigeonProxyApiBaseCodec) {
+abstract class PigeonApiProxyApiSuperClass(val pigeonRegistrar: PigeonProxyApiRegistrar) {
   abstract fun pigeon_defaultConstructor(): com.example.test_plugin.ProxyApiSuperClass
 
   abstract fun aSuperMethod(pigeon_instance: com.example.test_plugin.ProxyApiSuperClass)
@@ -3743,7 +3788,7 @@ abstract class PigeonApiProxyApiSuperClass(val codec: PigeonProxyApiBaseCodec) {
   companion object {
     @Suppress("LocalVariableName")
     fun setUpMessageHandlers(binaryMessenger: BinaryMessenger, api: PigeonApiProxyApiSuperClass?) {
-      val codec = api?.codec ?: StandardMessageCodec()
+      val codec = api?.pigeonRegistrar?.codec ?: StandardMessageCodec()
       run {
         val channel =
             BasicMessageChannel<Any?>(
@@ -3756,7 +3801,7 @@ abstract class PigeonApiProxyApiSuperClass(val codec: PigeonProxyApiBaseCodec) {
             val pigeon_identifierArg = args[0].let { if (it is Int) it.toLong() else it as Long }
             var wrapped: List<Any?>
             try {
-              api.codec.instanceManager.addDartCreatedInstance(
+              api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
                   api.pigeon_defaultConstructor(), pigeon_identifierArg)
               wrapped = listOf<Any?>(null)
             } catch (exception: Throwable) {
@@ -3800,12 +3845,14 @@ abstract class PigeonApiProxyApiSuperClass(val codec: PigeonProxyApiBaseCodec) {
       pigeon_instanceArg: com.example.test_plugin.ProxyApiSuperClass,
       callback: (Result<Unit>) -> Unit
   ) {
-    if (codec.instanceManager.containsInstance(pigeon_instanceArg)) {
+    if (pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) {
       Result.success(Unit)
       return
     }
-    val pigeon_identifierArg = codec.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
-    val binaryMessenger = codec.binaryMessenger
+    val pigeon_identifierArg =
+        pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
+    val binaryMessenger = pigeonRegistrar.binaryMessenger
+    val codec = pigeonRegistrar.codec
     val channelName =
         "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiSuperClass.pigeon_newInstance"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
@@ -3826,16 +3873,18 @@ abstract class PigeonApiProxyApiSuperClass(val codec: PigeonProxyApiBaseCodec) {
 }
 /** ProxyApi to serve as an interface to the core ProxyApi class. */
 @Suppress("UNCHECKED_CAST")
-abstract class PigeonApiProxyApiInterface(val codec: PigeonProxyApiBaseCodec) {
+abstract class PigeonApiProxyApiInterface(val pigeonRegistrar: PigeonProxyApiRegistrar) {
   @Suppress("LocalVariableName", "FunctionName")
   /** Creates a Dart instance of ProxyApiInterface and attaches it to [pigeon_instanceArg]. */
   fun pigeon_newInstance(pigeon_instanceArg: ProxyApiInterface, callback: (Result<Unit>) -> Unit) {
-    if (codec.instanceManager.containsInstance(pigeon_instanceArg)) {
+    if (pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) {
       Result.success(Unit)
       return
     }
-    val pigeon_identifierArg = codec.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
-    val binaryMessenger = codec.binaryMessenger
+    val pigeon_identifierArg =
+        pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
+    val binaryMessenger = pigeonRegistrar.binaryMessenger
+    val codec = pigeonRegistrar.codec
     val channelName =
         "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiInterface.pigeon_newInstance"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
@@ -3855,7 +3904,8 @@ abstract class PigeonApiProxyApiInterface(val codec: PigeonProxyApiBaseCodec) {
   }
 
   fun anInterfaceMethod(pigeon_instanceArg: ProxyApiInterface, callback: (Result<Unit>) -> Unit) {
-    val binaryMessenger = codec.binaryMessenger
+    val binaryMessenger = pigeonRegistrar.binaryMessenger
+    val codec = pigeonRegistrar.codec
     val channelName =
         "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiInterface.anInterfaceMethod"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)

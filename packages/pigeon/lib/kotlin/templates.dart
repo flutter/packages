@@ -65,27 +65,6 @@ class $instanceManagerClassName(private val finalizationListener: $_finalization
     fun create(finalizationListener: $_finalizationListenerClassName): $instanceManagerClassName {
       return $instanceManagerClassName(finalizationListener)
     }
-
-    /**
-     * Instantiate a new manager with an `$instanceManagerClassName`.
-     *
-     * @param api handles removing garbage collected weak references.
-     * @return a new `$instanceManagerClassName`.
-     */
-    fun create(api: ${instanceManagerClassName}Api): $instanceManagerClassName {
-      val instanceManager = create(
-          object : $_finalizationListenerClassName {
-            override fun onFinalize(identifier: Long) {
-              api.removeStrongReference(identifier) {
-                if (it.isFailure) {
-                  Log.e(tag, "Failed to remove Dart strong reference with identifier: \$identifier")
-                }
-              }
-            }
-          })
-      $_instanceManagerApiName.setUpMessageHandlers(api.binaryMessenger, instanceManager)
-      return instanceManager
-    }
   }
 
   /**
@@ -282,7 +261,7 @@ String instanceManagerApiTemplate({
 /**
 * Generated API for managing the Dart and native `$instanceManagerClassName`s.
 */
-class $_instanceManagerApiName(internal val binaryMessenger: BinaryMessenger) {
+private class $_instanceManagerApiName(val binaryMessenger: BinaryMessenger) {
   companion object {
     /** The codec used by $_instanceManagerApiName. */
     private val codec: MessageCodec<Any?> by lazy {
@@ -293,30 +272,38 @@ class $_instanceManagerApiName(internal val binaryMessenger: BinaryMessenger) {
     * Sets up an instance of `$_instanceManagerApiName` to handle messages from the
     * `binaryMessenger`.
     */
-    fun setUpMessageHandlers(binaryMessenger: BinaryMessenger, instanceManager: $instanceManagerClassName) {
+    fun setUpMessageHandlers(binaryMessenger: BinaryMessenger, instanceManager: $instanceManagerClassName?) {
       run {
         val channel = BasicMessageChannel<Any?>(binaryMessenger, "$removeStrongReferenceName", codec)
-        channel.setMessageHandler { message, reply ->
-          val identifier = message as Number
-          val wrapped: List<Any?> = try {
-            instanceManager.remove<Any?>(identifier.toLong())
-            listOf<Any?>(null)
-          } catch (exception: Throwable) {
-            wrapError(exception)
+        if (instanceManager != null) {
+          channel.setMessageHandler { message, reply ->
+            val identifier = message as Number
+            val wrapped: List<Any?> = try {
+              instanceManager.remove<Any?>(identifier.toLong())
+              listOf<Any?>(null)
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
+            reply.reply(wrapped)
           }
-          reply.reply(wrapped)
-        }
+        } else {
+          channel.setMessageHandler(null)
+        }  
       }
       run {
         val channel = BasicMessageChannel<Any?>(binaryMessenger, "$clearName", codec)
-        channel.setMessageHandler { _, reply ->
-          val wrapped: List<Any?> = try {
-            instanceManager.clear()
-            listOf<Any?>(null)
-          } catch (exception: Throwable) {
-            wrapError(exception)
+        if (instanceManager != null) {
+          channel.setMessageHandler { _, reply ->
+            val wrapped: List<Any?> = try {
+              instanceManager.clear()
+              listOf<Any?>(null)
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
+            reply.reply(wrapped)
           }
-          reply.reply(wrapped)
+        } else {
+          channel.setMessageHandler(null)
         }
       }
     }

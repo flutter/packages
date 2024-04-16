@@ -12,7 +12,7 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi {
   private var flutterApi: FlutterIntegrationCoreApi? = null
   private var flutterSmallApiOne: FlutterSmallApi? = null
   private var flutterSmallApiTwo: FlutterSmallApi? = null
-  private var instanceManager: PigeonInstanceManager? = null
+  private var proxyApiRegistrar: ProxyApiRegistrar? = null
 
   override fun onAttachedToEngine(binding: FlutterPlugin.FlutterPluginBinding) {
     HostIntegrationCoreApi.setUp(binding.binaryMessenger, this)
@@ -24,14 +24,13 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi {
     flutterSmallApiOne = FlutterSmallApi(binding.binaryMessenger, "suffixOne")
     flutterSmallApiTwo = FlutterSmallApi(binding.binaryMessenger, "suffixTwo")
 
-    val instanceManagerApi = PigeonInstanceManagerApi(binding.binaryMessenger)
-    instanceManager = PigeonInstanceManager.create(instanceManagerApi)
-
-    val codec = ProxyApiCodec(binding.binaryMessenger, instanceManager!!)
-    codec.setUpMessageHandlers()
+    proxyApiRegistrar = ProxyApiRegistrar(binding.binaryMessenger)
+    proxyApiRegistrar!!.setUp()
   }
 
-  override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {}
+  override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
+    proxyApiRegistrar?.tearDown()
+  }
 
   // HostIntegrationCoreApi
 

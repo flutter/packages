@@ -12,8 +12,8 @@ open class ProxyApiSuperClass
 
 interface ProxyApiInterface
 
-class ProxyApiCodec(binaryMessenger: BinaryMessenger, instanceManager: PigeonInstanceManager) :
-    PigeonProxyApiBaseCodec(binaryMessenger, instanceManager) {
+class ProxyApiRegistrar(binaryMessenger: BinaryMessenger) :
+    PigeonProxyApiRegistrar(binaryMessenger) {
   override fun getPigeonApiProxyApiTestClass(): PigeonApiProxyApiTestClass {
     return ProxyApiTestClassApi(this)
   }
@@ -27,7 +27,8 @@ class ProxyApiCodec(binaryMessenger: BinaryMessenger, instanceManager: PigeonIns
   }
 }
 
-class ProxyApiTestClassApi(codec: PigeonProxyApiBaseCodec) : PigeonApiProxyApiTestClass(codec) {
+class ProxyApiTestClassApi(pigeonRegistrar: ProxyApiRegistrar) :
+    PigeonApiProxyApiTestClass(pigeonRegistrar) {
 
   override fun pigeon_defaultConstructor(
       aBool: Boolean,
@@ -673,7 +674,8 @@ class ProxyApiTestClassApi(codec: PigeonProxyApiBaseCodec) : PigeonApiProxyApiTe
   }
 }
 
-class ProxyApiSuperClassApi(codec: PigeonProxyApiBaseCodec) : PigeonApiProxyApiSuperClass(codec) {
+class ProxyApiSuperClassApi(pigeonRegistrar: ProxyApiRegistrar) :
+    PigeonApiProxyApiSuperClass(pigeonRegistrar) {
   override fun pigeon_defaultConstructor(): ProxyApiSuperClass {
     return ProxyApiSuperClass()
   }
@@ -681,4 +683,5 @@ class ProxyApiSuperClassApi(codec: PigeonProxyApiBaseCodec) : PigeonApiProxyApiS
   override fun aSuperMethod(pigeon_instance: ProxyApiSuperClass) {}
 }
 
-class ProxyApiInterfaceApi(codec: PigeonProxyApiBaseCodec) : PigeonApiProxyApiInterface(codec)
+class ProxyApiInterfaceApi(pigeonRegistrar: ProxyApiRegistrar) :
+    PigeonApiProxyApiInterface(pigeonRegistrar)
