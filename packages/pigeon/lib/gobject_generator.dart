@@ -464,10 +464,6 @@ class GObjectSourceGenerator extends StructuredGenerator<GObjectOptions> {
         if (_isNumericListType(field.type)) {
           indent.writeln('size_t ${fieldName}_length;');
         }
-        if (_isNullablePrimitiveType(field.type)) {
-          indent.writeln(
-              '${_getType(module, field.type, isOutput: true, primitive: true)} ${fieldName}_value;');
-        }
       }
     });
 
@@ -515,10 +511,16 @@ class GObjectSourceGenerator extends StructuredGenerator<GObjectOptions> {
             lengthVariableName: '${fieldName}_length');
 
         if (_isNullablePrimitiveType(field.type)) {
-          indent.writeln(
-              'self->${fieldName}_value = $value != nullptr ? *$value : ${_getDefaultValue(module, field.type, primitive: true)};');
-          indent.writeln(
-              'self->$fieldName = $value != nullptr ? &self->${fieldName}_value : nullptr;');
+          final String primitiveType =
+              _getType(module, field.type, primitive: true);
+          indent.writeScoped('if ($value != nullptr) {', '}', () {
+            indent.writeln(
+                'self->$fieldName = static_cast<$primitiveType*>(malloc(sizeof($primitiveType)));');
+            indent.writeln('*self->$fieldName = *$value;');
+          });
+          indent.writeScoped('else {', '}', () {
+            indent.writeln('self->$fieldName = nullptr;');
+          });
         } else {
           indent.writeln('self->$fieldName = $value;');
         }
@@ -717,8 +719,22 @@ class GObjectSourceGenerator extends StructuredGenerator<GObjectOptions> {
           indent.newln();
           final String returnValue =
               _fromFlValue(module, method.returnType, 'r');
-          indent.writeln(
-              '*return_value = ${_referenceValue(method.returnType, returnValue, lengthVariableName: 'fl_value_get_length(r)')};');
+          if (_isNullablePrimitiveType(method.returnType)) {
+            final String primitiveType =
+                _getType(module, method.returnType, primitive: true);
+            indent.writeScoped(
+                'if (fl_value_get_type(r) != FL_VALUE_TYPE_NULL) {', '}', () {
+              indent.writeln(
+                  '*return_value = static_cast<$primitiveType*>(malloc(sizeof($primitiveType)));');
+              indent.writeln('**return_value = $returnValue;');
+            });
+            indent.writeScoped('else {', '}', () {
+              indent.writeln('*return_value = nullptr;');
+            });
+          } else {
+            indent.writeln(
+                '*return_value = ${_referenceValue(method.returnType, returnValue, lengthVariableName: 'fl_value_get_length(r)')};');
+          }
           if (_isNumericListType(method.returnType)) {
             indent.writeln('*return_value_length = fl_value_get_length(r);');
           }
@@ -1384,6 +1400,8 @@ String? _getClearFunction(TypeDeclaration type, String variableName) {
   } else if (_isFlValueWrappedType(type)) {
     return 'g_clear_pointer(&$variableName, fl_value_unref)';
   } else if (type.baseName == 'String') {
+    return 'g_clear_pointer(&$variableName, g_free)';
+  } else if (_isNullablePrimitiveType(type)) {
     return 'g_clear_pointer(&$variableName, g_free)';
   } else {
     return null;
