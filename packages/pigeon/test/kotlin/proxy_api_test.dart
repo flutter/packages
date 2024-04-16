@@ -103,7 +103,7 @@ void main() {
       expect(
         code,
         contains(
-          r'abstract class PigeonApiApi(val codec: PigeonProxyApiBaseCodec)',
+          r'abstract class PigeonApiApi(val pigeonRegistrar: PigeonProxyApiRegistrar)',
         ),
       );
 
@@ -299,7 +299,7 @@ void main() {
         expect(
           code,
           contains(
-            'abstract class PigeonApiApi(val codec: PigeonProxyApiBaseCodec) ',
+            'abstract class PigeonApiApi(val pigeonRegistrar: PigeonProxyApiRegistrar) ',
           ),
         );
         expect(
@@ -315,7 +315,7 @@ void main() {
         expect(
           collapsedCode,
           contains(
-            r'api.codec.instanceManager.addDartCreatedInstance(api.pigeon_defaultConstructor(',
+            r'api.pigeonRegistrar.instanceManager.addDartCreatedInstance(api.pigeon_defaultConstructor(',
           ),
         );
       });
@@ -401,7 +401,7 @@ void main() {
         expect(
           code,
           contains(
-            'abstract class PigeonApiApi(val codec: PigeonProxyApiBaseCodec) ',
+            'abstract class PigeonApiApi(val pigeonRegistrar: PigeonProxyApiRegistrar) ',
           ),
         );
         expect(
@@ -415,7 +415,7 @@ void main() {
         expect(
           collapsedCode,
           contains(
-            r'api.codec.instanceManager.addDartCreatedInstance(api.name('
+            r'api.pigeonRegistrar.instanceManager.addDartCreatedInstance(api.name('
             r'validTypeArg,enumTypeArg,proxyApiTypeArg,nullableValidTypeArg,'
             r'nullableEnumTypeArg,nullableProxyApiTypeArg), pigeon_identifierArg)',
           ),
@@ -518,7 +518,7 @@ void main() {
         expect(
           collapsedCode,
           contains(
-            r'api.codec.instanceManager.addDartCreatedInstance(api.name('
+            r'api.pigeonRegistrar.instanceManager.addDartCreatedInstance(api.name('
             r'validTypeArg,enumTypeArg,proxyApiTypeArg,nullableValidTypeArg,'
             r'nullableEnumTypeArg,nullableProxyApiTypeArg), pigeon_identifierArg)',
           ),
@@ -609,7 +609,7 @@ void main() {
         expect(
           code,
           contains(
-            r'api.codec.instanceManager.addDartCreatedInstance(api.aField(pigeon_instanceArg), pigeon_identifierArg)',
+            r'api.pigeonRegistrar.instanceManager.addDartCreatedInstance(api.aField(pigeon_instanceArg), pigeon_identifierArg)',
           ),
         );
       });
@@ -661,7 +661,7 @@ void main() {
         expect(
           code,
           contains(
-            r'api.codec.instanceManager.addDartCreatedInstance(api.aField(), pigeon_identifierArg)',
+            r'api.pigeonRegistrar.instanceManager.addDartCreatedInstance(api.aField(), pigeon_identifierArg)',
           ),
         );
       });
