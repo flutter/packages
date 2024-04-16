@@ -1322,7 +1322,7 @@ String _getType(String module, TypeDeclaration type,
   } else if (type.isEnum) {
     final String name = _getClassName(module, type.baseName);
     return type.isNullable ? '$name*' : name;
-  } else if (type.baseName == 'List' || type.baseName == 'Map') {
+  } else if (_isFlValueWrappedType(type)) {
     return 'FlValue*';
   } else if (type.baseName == 'void') {
     return 'void';
@@ -1369,11 +1369,19 @@ bool _isNullablePrimitiveType(TypeDeclaration type) {
       type.baseName == 'double';
 }
 
+/// Whether [type] is a type that needs to stay an FLValue* since it can't be
+/// expressed as a more concrete type.
+bool _isFlValueWrappedType(TypeDeclaration type) {
+  return type.baseName == 'List' ||
+      type.baseName == 'Map' ||
+      type.baseName == 'Object';
+}
+
 // Returns code to clear a value stored in [variableName], or null if no function required.
 String? _getClearFunction(TypeDeclaration type, String variableName) {
   if (type.isClass) {
     return 'g_clear_object(&$variableName)';
-  } else if (type.baseName == 'List' || type.baseName == 'Map') {
+  } else if (_isFlValueWrappedType(type)) {
     return 'g_clear_pointer(&$variableName, fl_value_unref)';
   } else if (type.baseName == 'String') {
     return 'g_clear_pointer(&$variableName, g_free)';
@@ -1390,7 +1398,7 @@ String _getDefaultValue(String module, TypeDeclaration type,
   } else if (type.isEnum) {
     final String enumName = _getClassName(module, type.baseName);
     return 'static_cast<$enumName>(0)';
-  } else if (type.baseName == 'List' || type.baseName == 'Map') {
+  } else if (_isFlValueWrappedType(type)) {
     return 'nullptr';
   } else if (type.baseName == 'void') {
     return '';
@@ -1414,7 +1422,7 @@ String _getDefaultValue(String module, TypeDeclaration type,
 // [lengthVariableName] must be provided for the typed numeric *List types.
 String _referenceValue(TypeDeclaration type, String variableName,
     {String? lengthVariableName}) {
-  if (type.isClass || type.baseName == 'List' || type.baseName == 'Map') {
+  if (type.isClass || _isFlValueWrappedType(type)) {
     return 'g_object_ref($variableName)';
   } else if (type.baseName == 'String') {
     return 'g_strdup($variableName)';
@@ -1443,7 +1451,7 @@ String _makeFlValue(String module, TypeDeclaration type, String variableName,
     value = 'fl_value_new_custom_object(0, G_OBJECT($variableName))';
   } else if (type.isEnum) {
     value = 'fl_value_new_int($variableName)';
-  } else if (type.baseName == 'List' || type.baseName == 'Map') {
+  } else if (_isFlValueWrappedType(type)) {
     value = 'fl_value_ref($variableName)';
   } else if (type.baseName == 'void') {
     value = 'fl_value_new_null()';
@@ -1490,7 +1498,7 @@ String _fromFlValue(String module, TypeDeclaration type, String variableName) {
   } else if (type.isEnum) {
     final String enumName = _getClassName(module, type.baseName);
     return 'static_cast<$enumName>(fl_value_get_int($variableName))';
-  } else if (type.baseName == 'List' || type.baseName == 'Map') {
+  } else if (_isFlValueWrappedType(type)) {
     return variableName;
   } else if (type.baseName == 'bool') {
     return 'fl_value_get_bool($variableName)';
