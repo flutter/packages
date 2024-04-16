@@ -209,6 +209,6 @@ abstract class InAppPurchasePlatform extends PlatformInterface {
   /// See: https://developer.apple.com/documentation/storekit/skstorefront?language=objc
   ///
   ///
-  Future<void> countryCode() =>
+  Future<String> countryCode() =>
       throw UnimplementedError('countryCode() has not been implemented.');
 }
