@@ -3,9 +3,8 @@
 // found in the LICENSE file.
 
 @import AVFoundation;
+@import Flutter;
 @import Foundation;
-
-#import "FLTThreadSafeFlutterResult.h"
 
 NS_ASSUME_NONNULL_BEGIN
 

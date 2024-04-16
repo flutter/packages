@@ -11,10 +11,15 @@
 #import "CameraProperties.h"
 #import "FLTCam.h"
 #import "FLTThreadSafeEventChannel.h"
-#import "FLTThreadSafeFlutterResult.h"
 #import "FLTThreadSafeMethodChannel.h"
 #import "FLTThreadSafeTextureRegistry.h"
 #import "QueueUtils.h"
+
+static FlutterError *FlutterErrorFromNSError(NSError *error) {
+  return [FlutterError errorWithCode:[NSString stringWithFormat:@"Error %d", (int)error.code]
+                             message:error.localizedDescription
+                             details:error.domain];
+}
 
 @interface CameraPlugin ()
 @property(readonly, nonatomic) FLTThreadSafeTextureRegistry *registry;
@@ -95,14 +100,11 @@
   // Invoke the plugin on another dispatch queue to avoid blocking the UI.
   __weak typeof(self) weakSelf = self;
   dispatch_async(self.captureSessionQueue, ^{
-    FLTThreadSafeFlutterResult *threadSafeResult =
-        [[FLTThreadSafeFlutterResult alloc] initWithResult:result];
-    [weakSelf handleMethodCallAsync:call result:threadSafeResult];
+    [weakSelf handleMethodCallAsync:call result:result];
   });
 }
 
-- (void)handleMethodCallAsync:(FlutterMethodCall *)call
-                       result:(FLTThreadSafeFlutterResult *)result {
+- (void)handleMethodCallAsync:(FlutterMethodCall *)call result:(FlutterResult)result {
   if ([@"availableCameras" isEqualToString:call.method]) {
     NSMutableArray *discoveryDevices =
         [@[ AVCaptureDeviceTypeBuiltInWideAngleCamera, AVCaptureDeviceTypeBuiltInTelephotoCamera ]
@@ -136,18 +138,18 @@
         @"sensorOrientation" : @90,
       }];
     }
-    [result sendSuccessWithData:reply];
+    result(reply);
   } else if ([@"create" isEqualToString:call.method]) {
     [self handleCreateMethodCall:call result:result];
   } else if ([@"startImageStream" isEqualToString:call.method]) {
     [_camera startImageStreamWithMessenger:_messenger];
-    [result sendSuccess];
+    result(nil);
   } else if ([@"stopImageStream" isEqualToString:call.method]) {
     [_camera stopImageStream];
-    [result sendSuccess];
+    result(nil);
   } else if ([@"receivedImageStreamData" isEqualToString:call.method]) {
     [_camera receivedImageStreamData];
-    [result sendSuccess];
+    result(nil);
   } else {
     NSDictionary *argsMap = call.arguments;
     NSUInteger cameraId = ((NSNumber *)argsMap[@"cameraId"]).unsignedIntegerValue;
@@ -183,16 +185,16 @@
              }];
       [self sendDeviceOrientation:[UIDevice currentDevice].orientation];
       [_camera start];
-      [result sendSuccess];
+      result(nil);
     } else if ([@"takePicture" isEqualToString:call.method]) {
       [_camera captureToFile:result];
     } else if ([@"dispose" isEqualToString:call.method]) {
       [_registry unregisterTexture:cameraId];
       [_camera close];
-      [result sendSuccess];
+      result(nil);
     } else if ([@"prepareForVideoRecording" isEqualToString:call.method]) {
       [self.camera setUpCaptureSessionForAudio];
-      [result sendSuccess];
+      result(nil);
     } else if ([@"startVideoRecording" isEqualToString:call.method]) {
       BOOL enableStream = [call.arguments[@"enableStream"] boolValue];
       if (enableStream) {
@@ -227,11 +229,11 @@
       }
       [_camera setExposurePointWithResult:result x:x y:y];
     } else if ([@"getMinExposureOffset" isEqualToString:call.method]) {
-      [result sendSuccessWithData:@(_camera.captureDevice.minExposureTargetBias)];
+      result(@(_camera.captureDevice.minExposureTargetBias));
     } else if ([@"getMaxExposureOffset" isEqualToString:call.method]) {
-      [result sendSuccessWithData:@(_camera.captureDevice.maxExposureTargetBias)];
+      result(@(_camera.captureDevice.maxExposureTargetBias));
     } else if ([@"getExposureOffsetStepSize" isEqualToString:call.method]) {
-      [result sendSuccessWithData:@(0.0)];
+      result(@(0.0));
     } else if ([@"setExposureOffset" isEqualToString:call.method]) {
       [_camera setExposureOffsetWithResult:result
                                     offset:((NSNumber *)call.arguments[@"offset"]).doubleValue];
@@ -260,13 +262,12 @@
       NSString *fileFormat = call.arguments[@"fileFormat"];
       [_camera setImageFileFormat:FCPGetFileFormatFromString(fileFormat)];
     } else {
-      [result sendNotImplemented];
+      result(FlutterMethodNotImplemented);
     }
   }
 }
 
-- (void)handleCreateMethodCall:(FlutterMethodCall *)call
-                        result:(FLTThreadSafeFlutterResult *)result {
+- (void)handleCreateMethodCall:(FlutterMethodCall *)call result:(FlutterResult)result {
   // Create FLTCam only if granted camera access (and audio access if audio is enabled)
   __weak typeof(self) weakSelf = self;
   FLTRequestCameraPermissionWithCompletionHandler(^(FlutterError *error) {
@@ -274,7 +275,7 @@
     if (!strongSelf) return;
 
     if (error) {
-      [result sendFlutterError:error];
+      result(error);
     } else {
       // Request audio permission on `create` call with `enableAudio` argument instead of the
       // `prepareForVideoRecording` call. This is because `prepareForVideoRecording` call is
@@ -287,7 +288,7 @@
           typeof(self) strongSelf = weakSelf;
           if (!strongSelf) return;
           if (error) {
-            [result sendFlutterError:error];
+            result(error);
           } else {
             [strongSelf createCameraOnSessionQueueWithCreateMethodCall:call result:result];
           }
@@ -353,7 +354,7 @@
 }
 
 - (void)createCameraOnSessionQueueWithCreateMethodCall:(FlutterMethodCall *)createMethodCall
-                                                result:(FLTThreadSafeFlutterResult *)result {
+                                                result:(FlutterResult)result {
   __weak typeof(self) weakSelf = self;
   dispatch_async(self.captureSessionQueue, ^{
     typeof(self) strongSelf = weakSelf;
@@ -367,7 +368,7 @@
                                                                        fromMethod:createMethodCall
                                                                             error:&error];
     if (error) {
-      [result sendError:error];
+      result(FlutterErrorFromNSError(error));
       return;
     }
 
@@ -375,7 +376,7 @@
                                                                     fromMethod:createMethodCall
                                                                          error:&error];
     if (error) {
-      [result sendError:error];
+      result(FlutterErrorFromNSError(error));
       return;
     }
 
@@ -383,7 +384,7 @@
                                                                     fromMethod:createMethodCall
                                                                          error:&error];
     if (error) {
-      [result sendError:error];
+      result(FlutterErrorFromNSError(error));
       return;
     }
 
@@ -406,7 +407,7 @@
                                                error:&error];
 
     if (error) {
-      [result sendError:error];
+      result(FlutterErrorFromNSError(error));
     } else {
       if (strongSelf.camera) {
         [strongSelf.camera close];
@@ -414,9 +415,9 @@
       strongSelf.camera = cam;
       [strongSelf.registry registerTexture:cam
                                 completion:^(int64_t textureId) {
-                                  [result sendSuccessWithData:@{
+                                  result(@{
                                     @"cameraId" : @(textureId),
-                                  }];
+                                  });
                                 }];
     }
   });

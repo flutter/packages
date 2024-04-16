@@ -1,3 +1,7 @@
+## 0.9.15+1
+
+* Simplifies internal handling of method channel responses.
+
 ## 0.9.15
 
 * Adds support to control video FPS and bitrate. See `CameraController.withSettings`.

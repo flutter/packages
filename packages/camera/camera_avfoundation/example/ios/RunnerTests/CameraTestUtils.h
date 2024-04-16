@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 @import camera_avfoundation;
+@import camera_avfoundation.Test;
 
 NS_ASSUME_NONNULL_BEGIN
 

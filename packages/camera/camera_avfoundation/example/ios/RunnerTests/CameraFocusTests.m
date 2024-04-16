@@ -114,11 +114,11 @@
   [_camera setValue:_mockDevice forKey:@"captureDevice"];
 
   // Run test
-  [_camera setFocusPointWithResult:[[FLTThreadSafeFlutterResult alloc]
-                                       initWithResult:^(id _Nullable result){
-                                       }]
-                                 x:1
-                                 y:1];
+  [_camera
+      setFocusPointWithResult:^(id _Nullable result) {
+      }
+                            x:1
+                            y:1];
 
   // Verify the focus point of interest has been set
   OCMVerify([_mockDevice setFocusPointOfInterest:CGPointMake(1, 1)]);

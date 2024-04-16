@@ -7,7 +7,6 @@
 @import XCTest;
 @import AVFoundation;
 #import <OCMock/OCMock.h>
-#import "MockFLTThreadSafeFlutterResult.h"
 
 @interface AvailableCamerasTest : XCTestCase
 @end
@@ -56,17 +55,19 @@
   }
   OCMStub([discoverySessionMock devices]).andReturn([NSArray arrayWithArray:cameras]);
 
-  MockFLTThreadSafeFlutterResult *resultObject =
-      [[MockFLTThreadSafeFlutterResult alloc] initWithExpectation:expectation];
-
   // Set up method call
   FlutterMethodCall *call = [FlutterMethodCall methodCallWithMethodName:@"availableCameras"
                                                               arguments:nil];
 
-  [camera handleMethodCallAsync:call result:resultObject];
+  __block id resultValue;
+  [camera handleMethodCallAsync:call
+                         result:^(id _Nullable result) {
+                           resultValue = result;
+                           [expectation fulfill];
+                         }];
 
   // Verify the result
-  NSDictionary *dictionaryResult = (NSDictionary *)resultObject.receivedResult;
+  NSDictionary *dictionaryResult = (NSDictionary *)resultValue;
   if (@available(iOS 13.0, *)) {
     XCTAssertTrue([dictionaryResult count] == 4);
   } else {
@@ -104,17 +105,19 @@
   [cameras addObjectsFromArray:@[ wideAngleCamera, frontFacingCamera ]];
   OCMStub([discoverySessionMock devices]).andReturn([NSArray arrayWithArray:cameras]);
 
-  MockFLTThreadSafeFlutterResult *resultObject =
-      [[MockFLTThreadSafeFlutterResult alloc] initWithExpectation:expectation];
-
   // Set up method call
   FlutterMethodCall *call = [FlutterMethodCall methodCallWithMethodName:@"availableCameras"
                                                               arguments:nil];
 
-  [camera handleMethodCallAsync:call result:resultObject];
+  __block id resultValue;
+  [camera handleMethodCallAsync:call
+                         result:^(id _Nullable result) {
+                           resultValue = result;
+                           [expectation fulfill];
+                         }];
 
   // Verify the result
-  NSDictionary *dictionaryResult = (NSDictionary *)resultObject.receivedResult;
+  NSDictionary *dictionaryResult = (NSDictionary *)resultValue;
   XCTAssertTrue([dictionaryResult count] == 2);
 }
 

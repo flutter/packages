@@ -7,7 +7,6 @@
 @import XCTest;
 @import AVFoundation;
 #import <OCMock/OCMock.h>
-#import "MockFLTThreadSafeFlutterResult.h"
 
 @interface CameraMethodChannelTests : XCTestCase
 @end
@@ -28,19 +27,21 @@
   OCMStub([avCaptureSessionMock alloc]).andReturn(avCaptureSessionMock);
   OCMStub([avCaptureSessionMock canSetSessionPreset:[OCMArg any]]).andReturn(YES);
 
-  MockFLTThreadSafeFlutterResult *resultObject =
-      [[MockFLTThreadSafeFlutterResult alloc] initWithExpectation:expectation];
-
   // Set up method call
   FlutterMethodCall *call = [FlutterMethodCall
       methodCallWithMethodName:@"create"
                      arguments:@{@"resolutionPreset" : @"medium", @"enableAudio" : @(1)}];
 
-  [camera createCameraOnSessionQueueWithCreateMethodCall:call result:resultObject];
+  __block id resultValue;
+  [camera createCameraOnSessionQueueWithCreateMethodCall:call
+                                                  result:^(id _Nullable result) {
+                                                    resultValue = result;
+                                                    [expectation fulfill];
+                                                  }];
   [self waitForExpectationsWithTimeout:1 handler:nil];
 
   // Verify the result
-  NSDictionary *dictionaryResult = (NSDictionary *)resultObject.receivedResult;
+  NSDictionary *dictionaryResult = (NSDictionary *)resultValue;
   XCTAssertNotNil(dictionaryResult);
   XCTAssert([[dictionaryResult allKeys] containsObject:@"cameraId"]);
 }
