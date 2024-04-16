@@ -373,7 +373,8 @@ class PigeonOptions {
       gobjectHeaderOut: map['gobjectHeaderOut'] as String?,
       gobjectSourceOut: map['gobjectSourceOut'] as String?,
       gobjectOptions: map.containsKey('gobjectOptions')
-          ? GObjectOptions.fromMap(map['gobjectOptions']! as Map<String, Object>)
+          ? GObjectOptions.fromMap(
+              map['gobjectOptions']! as Map<String, Object>)
           : null,
       dartOptions: map.containsKey('dartOptions')
           ? DartOptions.fromMap(map['dartOptions']! as Map<String, Object>)
@@ -802,7 +803,8 @@ class GObjectGeneratorAdapter implements GeneratorAdapter {
       StringSink sink, PigeonOptions options, Root root, FileType fileType) {
     final GObjectOptions gobjectOptions =
         options.gobjectOptions ?? const GObjectOptions();
-    final GObjectOptions gobjectOptionsWithHeader = gobjectOptions.merge(GObjectOptions(
+    final GObjectOptions gobjectOptionsWithHeader =
+        gobjectOptions.merge(GObjectOptions(
       copyrightHeader: options.copyrightHeader != null
           ? _lineReader(
               path.posix.join(options.basePath ?? '', options.copyrightHeader))
@@ -2346,9 +2348,10 @@ ${_argParser.usage}''';
 
     if (options.gobjectHeaderOut != null) {
       options = options.merge(PigeonOptions(
-          gobjectOptions: (options.gobjectOptions ?? const GObjectOptions()).merge(
-              GObjectOptions(
-                  headerIncludePath: path.basename(options.gobjectHeaderOut!)))));
+          gobjectOptions: (options.gobjectOptions ?? const GObjectOptions())
+              .merge(GObjectOptions(
+                  headerIncludePath:
+                      path.basename(options.gobjectHeaderOut!)))));
     }
 
     for (final GeneratorAdapter adapter in safeGeneratorAdapters) {
