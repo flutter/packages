@@ -196,9 +196,10 @@
 
   GMSCameraUpdate *update = [FLTGoogleMapJSONConversions cameraUpdateFromChannelValue:channelValue];
 
-  GMSMapView *mapView = [[GMSMapView alloc]
-      initWithFrame:CGRectZero
-             camera:[GMSCameraPosition cameraWithTarget:CLLocationCoordinate2DMake(5, 6) zoom:1]];
+  GMSMapViewOptions *options = [[GMSMapViewOptions alloc] init];
+  options.frame = CGRectZero;
+  options.camera = [GMSCameraPosition cameraWithTarget:CLLocationCoordinate2DMake(5, 6) zoom:1];
+  GMSMapView *mapView = [[GMSMapView alloc] initWithOptions:options];
   [mapView moveCamera:update];
   const CGFloat accuracy = 0.001;
   XCTAssertEqualWithAccuracy(mapView.camera.target.latitude, 1,
