@@ -14,6 +14,7 @@
 #import "FLTThreadSafeMethodChannel.h"
 #import "FLTThreadSafeTextureRegistry.h"
 #import "QueueUtils.h"
+#import "messages.g.h"
 
 static FlutterError *FlutterErrorFromNSError(NSError *error) {
   return [FlutterError errorWithCode:[NSString stringWithFormat:@"Error %d", (int)error.code]
@@ -35,6 +36,7 @@ static FlutterError *FlutterErrorFromNSError(NSError *error) {
   CameraPlugin *instance = [[CameraPlugin alloc] initWithRegistry:[registrar textures]
                                                         messenger:[registrar messenger]];
   [registrar addMethodCallDelegate:instance channel:channel];
+  SetUpFCPCameraApi([registrar messenger], instance);
 }
 
 - (instancetype)initWithRegistry:(NSObject<FlutterTextureRegistry> *)registry
@@ -104,8 +106,12 @@ static FlutterError *FlutterErrorFromNSError(NSError *error) {
   });
 }
 
-- (void)handleMethodCallAsync:(FlutterMethodCall *)call result:(FlutterResult)result {
-  if ([@"availableCameras" isEqualToString:call.method]) {
+- (void)availableCamerasWithCompletion:
+    (nonnull void (^)(NSArray<FCPPlatformCameraDescription *> *_Nullable,
+                      FlutterError *_Nullable))completion {
+  // This doesn't interact with FLTCam, so can use an arbitrary thread rather than
+  // captureSessionQueue. It should still not be done on the main thread, however.
+  dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
     NSMutableArray *discoveryDevices =
         [@[ AVCaptureDeviceTypeBuiltInWideAngleCamera, AVCaptureDeviceTypeBuiltInTelephotoCamera ]
             mutableCopy];
@@ -117,29 +123,30 @@ static FlutterError *FlutterErrorFromNSError(NSError *error) {
                               mediaType:AVMediaTypeVideo
                                position:AVCaptureDevicePositionUnspecified];
     NSArray<AVCaptureDevice *> *devices = discoverySession.devices;
-    NSMutableArray<NSDictionary<NSString *, NSObject *> *> *reply =
+    NSMutableArray<FCPPlatformCameraDescription *> *reply =
         [[NSMutableArray alloc] initWithCapacity:devices.count];
     for (AVCaptureDevice *device in devices) {
-      NSString *lensFacing;
-      switch ([device position]) {
+      FCPPlatformCameraLensDirection lensFacing;
+      switch (device.position) {
         case AVCaptureDevicePositionBack:
-          lensFacing = @"back";
+          lensFacing = FCPPlatformCameraLensDirectionBack;
           break;
         case AVCaptureDevicePositionFront:
-          lensFacing = @"front";
+          lensFacing = FCPPlatformCameraLensDirectionFront;
           break;
         case AVCaptureDevicePositionUnspecified:
-          lensFacing = @"external";
+          lensFacing = FCPPlatformCameraLensDirectionExternal;
           break;
       }
-      [reply addObject:@{
-        @"name" : [device uniqueID],
-        @"lensFacing" : lensFacing,
-        @"sensorOrientation" : @90,
-      }];
+      [reply addObject:[FCPPlatformCameraDescription makeWithName:device.uniqueID
+                                                    lensDirection:lensFacing]];
     }
-    result(reply);
-  } else if ([@"create" isEqualToString:call.method]) {
+    completion(reply, nil);
+  });
+}
+
+- (void)handleMethodCallAsync:(FlutterMethodCall *)call result:(FlutterResult)result {
+  if ([@"create" isEqualToString:call.method]) {
     [self handleCreateMethodCall:call result:result];
   } else if ([@"startImageStream" isEqualToString:call.method]) {
     [_camera startImageStreamWithMessenger:_messenger];
