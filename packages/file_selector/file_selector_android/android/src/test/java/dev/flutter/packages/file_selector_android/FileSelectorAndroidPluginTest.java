@@ -190,7 +190,7 @@ public class FileSelectorAndroidPluginTest {
   @Test
   public void getDirectoryPathReturnsSuccessfully() {
     final Uri mockUri = mock(Uri.class);
-    when(mockUri.toString()).thenReturn("some/path/");
+    when(mockUri.toString()).thenReturn("some/path/"); //TODO: change this
 
     when(mockObjectFactory.newIntent(Intent.ACTION_OPEN_DOCUMENT_TREE)).thenReturn(mockIntent);
     when(mockActivityBinding.getActivity()).thenReturn(mockActivity);

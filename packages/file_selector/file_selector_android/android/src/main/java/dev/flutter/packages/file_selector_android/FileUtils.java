@@ -24,7 +24,6 @@
 package dev.flutter.packages.file_selector_android;
 
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Context;
@@ -35,7 +34,6 @@ import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.text.TextUtils;
-
 import android.provider.MediaStore;
 import android.webkit.MimeTypeMap;
 import io.flutter.Log;
@@ -63,7 +61,7 @@ public class FileUtils {
      * 
      * <p>Will return the path for on-device directories, but does not handle external storage volumes.
      */
-    public static String getPathFromUri(Activity activity, Uri uri) {
+    public static String getPathFromUri(Context context, Uri uri) {
         String uriAuthority = uri.getAuthority();
 
         if (uriAuthority.equals(EXTERNAL_DOCUMENT_AUTHORITY)) {
@@ -82,7 +80,7 @@ public class FileUtils {
         } else if (uriAuthority.equals(MEDIA_DOCUMENT_AUTHORITY)) {
             String uriDocumentId = DocumentsContract.getDocumentId(uri);
             String documentStorageVolume = uriDocumentId.split(":")[0];
-            ContentResolver contentResolver = activity.getContentResolver();
+            ContentResolver contentResolver = context.getContentResolver();
 
             // This makes an assumption that the URI has the content scheme, which we can safely
             // assume since this method only supports finding paths of URIs retrieved from
@@ -90,12 +88,13 @@ public class FileUtils {
             Cursor cursor = contentResolver.query(uri, null, null, null, null, null);
 
             if (cursor != null && cursor.moveToFirst()) {
-                return cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.RELATIVE_PATH)); // TODO(camsim99): probably making assumption here about file type
+                return cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.RELATIVE_PATH));
             } else {
-                throw new IllegalStateException("Was unable to retrieve path from URI " + uri.toString() + " by using Cursor.");
+                // Unable to retrieve path of file using cursor.
+                return null;
             }
         } else {
-            throw new UnsupportedOperationException("Retrieving the path from URIs with authority " + uriAuthority.toString() + " are unsupported by this plugin.");
+            throw new UnsupportedOperationException("Retrieving the path from URIs with authority " + uriAuthority.toString() + " is unsupported by this plugin.");
         }
     }
 
@@ -125,14 +124,15 @@ public class FileUtils {
 
         if (fileName == null) {
             if (extension == null) {
-                throw new IllegalArgumentException("CAMILLE: NO EXTENSION FOUND");
+                throw new IllegalArgumentException("No name nor extension found for file.");
             } else {
                 fileName = "file_selector" + extension;
             }
         } else if (extension != null) {
             fileName = getBaseName(fileName) + extension;
         } else {
-            throw new IllegalArgumentException("CAMILLE: NO EXTENSiON FOUND 2");
+            // TODO: check this logic
+            throw new IllegalArgumentException("Unable to determine name or extension for file.");
         }
 
         File file = new File(targetDirectory, fileName);

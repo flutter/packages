@@ -60,7 +60,7 @@ public class FileSelectorAndroidTest {
     onFlutterWidget(withText("Press to open an image file(png, jpg)")).perform(click());
     intended(hasAction(Intent.ACTION_OPEN_DOCUMENT));
     onFlutterWidget(withValueKey("result_image_name"))
-        .check(matches(withText("content://file_selector_android_test/dummy.png")));
+        .check(matches(withText("content://file_selector_android_test/dummy.png"))); // TODO: change this
   }
 
   @Test
@@ -68,7 +68,7 @@ public class FileSelectorAndroidTest {
     clearAnySystemDialog();
 
     final ClipData.Item clipDataItem =
-        new ClipData.Item(Uri.parse("content://file_selector_android_test/dummy.png"));
+        new ClipData.Item(Uri.parse("content://file_selector_android_test/dummy.png")); // TODO: change this
     final ClipData clipData = new ClipData("", new String[0], clipDataItem);
     clipData.addItem(clipDataItem);
 
