@@ -210,7 +210,7 @@ class InAppPurchase implements InAppPurchasePlatformAdditionProvider {
         applicationUserName: applicationUserName,
       );
 
-  /// Returns the users country.
+  /// Returns the user's country.
   ///
   /// Android:
   /// Returns Play billing country code based on ISO-3166-1 alpha2 format.
