@@ -320,7 +320,7 @@ class GObjectHeaderGenerator extends StructuredGenerator<GObjectOptions> {
     final String returnType = _getType(module, method.returnType);
     indent.newln();
     final List<String> constructorArgs = <String>[
-      '$returnType return_value',
+      if (returnType != 'void') '$returnType return_value',
       if (_isNumericListType(method.returnType)) 'size_t return_value_length'
     ];
     indent.writeln(
@@ -374,7 +374,7 @@ class GObjectHeaderGenerator extends StructuredGenerator<GObjectOptions> {
     final List<String> respondArgs = <String>[
       '$className* self',
       'FlBasicMessageChannelResponseHandle* response_handle',
-      '$returnType return_value',
+      if (returnType != 'void') '$returnType return_value',
       if (_isNumericListType(method.returnType)) 'size_t return_value_length'
     ];
     indent.writeln(
@@ -754,7 +754,7 @@ class GObjectSourceGenerator extends StructuredGenerator<GObjectOptions> {
       final String returnType = _getType(module, method.returnType);
       indent.newln();
       final List<String> constructorArgs = <String>[
-        '$returnType return_value',
+        if (returnType != 'void') '$returnType return_value',
         if (_isNumericListType(method.returnType)) 'size_t return_value_length'
       ];
       indent.writeScoped(
@@ -927,13 +927,16 @@ class GObjectSourceGenerator extends StructuredGenerator<GObjectOptions> {
       final List<String> respondArgs = <String>[
         '$className* self',
         'FlBasicMessageChannelResponseHandle* response_handle',
-        '$returnType return_value'
+        if (returnType != 'void') '$returnType return_value'
       ];
       indent.writeScoped(
           "void ${methodPrefix}_respond_$methodName(${respondArgs.join(', ')}) {",
           '}', () {
+        final List<String> returnArgs = <String>[
+          if (returnType != 'void') 'return_value'
+        ];
         indent.writeln(
-            'g_autoptr($responseClassName) response = ${responseMethodPrefix}_new(return_value);');
+            'g_autoptr($responseClassName) response = ${responseMethodPrefix}_new(${returnArgs.join(', ')});');
         indent.writeln('g_autoptr(GError) error = nullptr;');
         indent.writeScoped(
             'if (!fl_basic_message_channel_respond(self->${methodName}_channel, response_handle, response->value, &error)) {',
