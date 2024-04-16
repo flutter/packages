@@ -403,6 +403,24 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
           channelName: makeChannelName(api, method, dartPackageName),
           documentationComments: method.documentationComments,
           dartPackageName: dartPackageName,
+          onWriteBody: (
+            Indent indent, {
+            required List<Parameter> parameters,
+            required TypeDeclaration returnType,
+            required String channelName,
+            required String errorClassName,
+          }) {
+            indent.writeln(
+              r'val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""',
+            );
+            _writeFlutterMethodMessageCall(
+              indent,
+              parameters: parameters,
+              returnType: returnType,
+              channelName: '$channelName\$separatedMessageChannelSuffix',
+              errorClassName: errorClassName,
+            );
+          },
         );
       }
     });
@@ -474,9 +492,9 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
           for (final Method method in api.methods) {
             _writeHostMethodMessageHandler(
               indent,
-              api: api,
               name: method.name,
-              channelName: makeChannelName(api, method, dartPackageName),
+              channelName:
+                  '${makeChannelName(api, method, dartPackageName)}\$separatedMessageChannelSuffix',
               taskQueueType: method.taskQueueType,
               parameters: method.parameters,
               returnType: method.returnType,
@@ -926,7 +944,6 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
 
   void _writeHostMethodMessageHandler(
     Indent indent, {
-    required Api api,
     required String name,
     required String channelName,
     required TaskQueueType taskQueueType,
@@ -944,8 +961,10 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
         indent.writeln(
             'val $taskQueue = binaryMessenger.makeBackgroundTaskQueue()');
       }
+
       indent.write(
-          'val channel = BasicMessageChannel<Any?>(binaryMessenger, "$channelName\$separatedMessageChannelSuffix", codec');
+        'val channel = BasicMessageChannel<Any?>(binaryMessenger, "$channelName", codec',
+      );
 
       if (taskQueue != null) {
         indent.addln(', $taskQueue)');
@@ -1088,10 +1107,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
     }
 
     const String channel = 'channel';
-    indent.writeln(
-        r'val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""');
-    indent.writeln(
-        'val channelName = "$channelName\$separatedMessageChannelSuffix"');
+    indent.writeln('val channelName = "$channelName"');
     indent.writeln(
         'val $channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)');
     indent.writeScoped('$channel.send($sendArgument) {', '}', () {
@@ -1335,7 +1351,6 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
             onWrite: () {
               _writeHostMethodMessageHandler(
                 indent,
-                api: api,
                 name: name,
                 channelName: channelName,
                 taskQueueType: TaskQueueType.serial,
@@ -1380,7 +1395,6 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
             onWrite: () {
               _writeHostMethodMessageHandler(
                 indent,
-                api: api,
                 name: field.name,
                 channelName: channelName,
                 taskQueueType: TaskQueueType.serial,
@@ -1426,7 +1440,6 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
             onWrite: () {
               _writeHostMethodMessageHandler(
                 indent,
-                api: api,
                 name: method.name,
                 channelName: makeChannelName(api, method, dartPackageName),
                 taskQueueType: method.taskQueueType,
