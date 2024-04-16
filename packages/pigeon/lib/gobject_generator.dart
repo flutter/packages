@@ -518,7 +518,7 @@ class GObjectSourceGenerator extends StructuredGenerator<GObjectOptions> {
           indent.writeln(
               'self->${fieldName}_value = $value != nullptr ? *$value : ${_getDefaultValue(module, field.type, primitive: true)};');
           indent.writeln(
-              'self->${fieldName} = $value != nullptr ? &self->${fieldName}_value : nullptr;');
+              'self->$fieldName = $value != nullptr ? &self->${fieldName}_value : nullptr;');
         } else {
           indent.writeln('self->$fieldName = $value;');
         }
@@ -1384,7 +1384,7 @@ String? _getClearFunction(TypeDeclaration type, String variableName) {
 
 // Returns code for the default value for [type].
 String _getDefaultValue(String module, TypeDeclaration type,
-    {primitive = false}) {
+    {bool primitive = false}) {
   if (type.isClass || (type.isNullable && !primitive)) {
     return 'nullptr';
   } else if (type.isEnum) {
