@@ -243,6 +243,7 @@ Future<void> main() async {
     });
 
     testWidgets('Auto media playback', (WidgetTester tester) async {
+      print('hi');
       Completer<void> pageLoaded = Completer<void>();
 
       late PlatformWebViewControllerCreationParams params;
