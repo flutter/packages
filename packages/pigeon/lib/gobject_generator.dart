@@ -594,6 +594,11 @@ class GObjectSourceGenerator extends StructuredGenerator<GObjectOptions> {
           indent.writeln('$fieldType $fieldName = $fieldValue;');
         }
         args.add(fieldName);
+        if (_isNumericListType(field.type)) {
+          indent.writeln(
+              'size_t ${fieldName}_length = fl_value_get_length(value$i);');
+          args.add('${fieldName}_length');
+        }
       }
       indent.writeln('return ${methodPrefix}_new(${args.join(', ')});');
     });
@@ -994,13 +999,15 @@ class GObjectSourceGenerator extends StructuredGenerator<GObjectOptions> {
       final List<String> respondArgs = <String>[
         '$className* self',
         'FlBasicMessageChannelResponseHandle* response_handle',
-        if (returnType != 'void') '$returnType return_value'
+        if (returnType != 'void') '$returnType return_value',
+        if (_isNumericListType(method.returnType)) 'size_t return_value_length'
       ];
       indent.writeScoped(
           "void ${methodPrefix}_respond_$methodName(${respondArgs.join(', ')}) {",
           '}', () {
         final List<String> returnArgs = <String>[
-          if (returnType != 'void') 'return_value'
+          if (returnType != 'void') 'return_value',
+          if (_isNumericListType(method.returnType)) 'return_value_length'
         ];
         indent.writeln(
             'g_autoptr($responseClassName) response = ${responseMethodPrefix}_new(${returnArgs.join(', ')});');
