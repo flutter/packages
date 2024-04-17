@@ -243,14 +243,19 @@ class GObjectHeaderGenerator extends StructuredGenerator<GObjectOptions> {
     for (final Method method in api.methods) {
       final String methodName = _snakeCaseFromCamelCase(method.name);
 
-      final List<String> asyncArgs = <String>[
-        '$className* self',
-        for (final Parameter param in method.parameters)
-          '${_getType(module, param.type)} ${_snakeCaseFromCamelCase(param.name)}',
+      final List<String> asyncArgs = <String>['$className* self'];
+      for (final Parameter param in method.parameters) {
+        final String paramName = _snakeCaseFromCamelCase(param.name);
+        asyncArgs.add('${_getType(module, param.type)} $paramName');
+        if (_isNumericListType(param.type)) {
+          asyncArgs.add('size_t ${paramName}_length');
+        }
+      }
+      asyncArgs.addAll(<String>[
         'GCancellable* cancellable',
         'GAsyncReadyCallback callback',
         'gpointer user_data'
-      ];
+      ]);
       indent.newln();
       addDocumentationComments(
           indent, method.documentationComments, _docCommentSpec);
