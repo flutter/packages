@@ -47,18 +47,14 @@ String serializeDeviceOrientation(DeviceOrientation orientation) {
   return 'portraitUp';
 }
 
-/// Returns the device orientation for a given String.
-DeviceOrientation deserializeDeviceOrientation(String str) {
-  switch (str) {
-    case 'portraitUp':
-      return DeviceOrientation.portraitUp;
-    case 'portraitDown':
-      return DeviceOrientation.portraitDown;
-    case 'landscapeRight':
-      return DeviceOrientation.landscapeRight;
-    case 'landscapeLeft':
-      return DeviceOrientation.landscapeLeft;
-    default:
-      throw ArgumentError('"$str" is not a valid DeviceOrientation value');
-  }
+/// Converts a Pigeon [PlatformDeviceOrientation] to a [DeviceOrientation].
+DeviceOrientation deviceOrientationFromPlatform(
+    PlatformDeviceOrientation orientation) {
+  return switch (orientation) {
+    PlatformDeviceOrientation.portraitUp => DeviceOrientation.portraitUp,
+    PlatformDeviceOrientation.portraitDown => DeviceOrientation.portraitDown,
+    PlatformDeviceOrientation.landscapeLeft => DeviceOrientation.landscapeLeft,
+    PlatformDeviceOrientation.landscapeRight =>
+      DeviceOrientation.landscapeRight,
+  };
 }

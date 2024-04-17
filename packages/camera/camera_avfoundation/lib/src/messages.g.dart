@@ -18,6 +18,17 @@ PlatformException _createConnectionError(String channelName) {
   );
 }
 
+List<Object?> wrapResponse(
+    {Object? result, PlatformException? error, bool empty = false}) {
+  if (empty) {
+    return <Object?>[];
+  }
+  if (error == null) {
+    return <Object?>[result];
+  }
+  return <Object?>[error.code, error.message, error.details];
+}
+
 enum PlatformCameraLensDirection {
   /// Front facing camera (a user looking at the screen is seen by the camera).
   front,
@@ -27,6 +38,13 @@ enum PlatformCameraLensDirection {
 
   /// External camera which may not be mounted to the device.
   external,
+}
+
+enum PlatformDeviceOrientation {
+  portraitUp,
+  landscapeLeft,
+  portraitDown,
+  landscapeRight,
 }
 
 class PlatformCameraDescription {
@@ -123,6 +141,54 @@ class CameraApi {
     } else {
       return (__pigeon_replyList[0] as List<Object?>?)!
           .cast<PlatformCameraDescription?>();
+    }
+  }
+}
+
+/// Handler for native callbacks that are not tied to a specific camera ID.
+abstract class CameraGlobalEventApi {
+  static const MessageCodec<Object?> pigeonChannelCodec =
+      StandardMessageCodec();
+
+  /// Called when the device's physical orientation changes.
+  void deviceOrientationChanged(PlatformDeviceOrientation orientation);
+
+  static void setUp(
+    CameraGlobalEventApi? api, {
+    BinaryMessenger? binaryMessenger,
+    String messageChannelSuffix = '',
+  }) {
+    messageChannelSuffix =
+        messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
+    {
+      final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
+              Object?>(
+          'dev.flutter.pigeon.camera_avfoundation.CameraGlobalEventApi.deviceOrientationChanged$messageChannelSuffix',
+          pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        __pigeon_channel.setMessageHandler(null);
+      } else {
+        __pigeon_channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.camera_avfoundation.CameraGlobalEventApi.deviceOrientationChanged was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final PlatformDeviceOrientation? arg_orientation = args[0] == null
+              ? null
+              : PlatformDeviceOrientation.values[args[0]! as int];
+          assert(arg_orientation != null,
+              'Argument for dev.flutter.pigeon.camera_avfoundation.CameraGlobalEventApi.deviceOrientationChanged was null, expected non-null PlatformDeviceOrientation.');
+          try {
+            api.deviceOrientationChanged(arg_orientation!);
+            return wrapResponse(empty: true);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
+        });
+      }
     }
   }
 }

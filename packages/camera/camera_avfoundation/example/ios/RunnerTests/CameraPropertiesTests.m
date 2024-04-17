@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+@import camera_avfoundation;
 @import camera_avfoundation.Test;
 @import AVFoundation;
 @import XCTest;
@@ -93,15 +94,17 @@
 }
 
 - (void)testFLTGetStringForUIDeviceOrientation {
-  XCTAssertEqualObjects(@"portraitDown",
-                        FLTGetStringForUIDeviceOrientation(UIDeviceOrientationPortraitUpsideDown));
-  XCTAssertEqualObjects(@"landscapeLeft",
-                        FLTGetStringForUIDeviceOrientation(UIDeviceOrientationLandscapeLeft));
-  XCTAssertEqualObjects(@"landscapeRight",
-                        FLTGetStringForUIDeviceOrientation(UIDeviceOrientationLandscapeRight));
-  XCTAssertEqualObjects(@"portraitUp",
-                        FLTGetStringForUIDeviceOrientation(UIDeviceOrientationPortrait));
-  XCTAssertEqualObjects(@"portraitUp", FLTGetStringForUIDeviceOrientation(-1));
+  XCTAssertEqual(
+      FCPPlatformDeviceOrientationPortraitDown,
+      FCPGetPigeonDeviceOrientationForOrientation(UIDeviceOrientationPortraitUpsideDown));
+  XCTAssertEqual(FCPPlatformDeviceOrientationLandscapeLeft,
+                 FCPGetPigeonDeviceOrientationForOrientation(UIDeviceOrientationLandscapeLeft));
+  XCTAssertEqual(FCPPlatformDeviceOrientationLandscapeRight,
+                 FCPGetPigeonDeviceOrientationForOrientation(UIDeviceOrientationLandscapeRight));
+  XCTAssertEqual(FCPPlatformDeviceOrientationPortraitUp,
+                 FCPGetPigeonDeviceOrientationForOrientation(UIDeviceOrientationPortrait));
+  XCTAssertEqual(FCPPlatformDeviceOrientationPortraitUp,
+                 FCPGetPigeonDeviceOrientationForOrientation(-1));
 }
 
 #pragma mark - file format tests

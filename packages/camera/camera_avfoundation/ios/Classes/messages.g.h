@@ -28,6 +28,19 @@ typedef NS_ENUM(NSUInteger, FCPPlatformCameraLensDirection) {
 - (instancetype)initWithValue:(FCPPlatformCameraLensDirection)value;
 @end
 
+typedef NS_ENUM(NSUInteger, FCPPlatformDeviceOrientation) {
+  FCPPlatformDeviceOrientationPortraitUp = 0,
+  FCPPlatformDeviceOrientationLandscapeLeft = 1,
+  FCPPlatformDeviceOrientationPortraitDown = 2,
+  FCPPlatformDeviceOrientationLandscapeRight = 3,
+};
+
+/// Wrapper for FCPPlatformDeviceOrientation to allow for nullability.
+@interface FCPPlatformDeviceOrientationBox : NSObject
+@property(nonatomic, assign) FCPPlatformDeviceOrientation value;
+- (instancetype)initWithValue:(FCPPlatformDeviceOrientation)value;
+@end
+
 @class FCPPlatformCameraDescription;
 
 @interface FCPPlatformCameraDescription : NSObject
@@ -56,5 +69,18 @@ extern void SetUpFCPCameraApi(id<FlutterBinaryMessenger> binaryMessenger,
 extern void SetUpFCPCameraApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger,
                                         NSObject<FCPCameraApi> *_Nullable api,
                                         NSString *messageChannelSuffix);
+
+/// The codec used by FCPCameraGlobalEventApi.
+NSObject<FlutterMessageCodec> *FCPCameraGlobalEventApiGetCodec(void);
+
+/// Handler for native callbacks that are not tied to a specific camera ID.
+@interface FCPCameraGlobalEventApi : NSObject
+- (instancetype)initWithBinaryMessenger:(id<FlutterBinaryMessenger>)binaryMessenger;
+- (instancetype)initWithBinaryMessenger:(id<FlutterBinaryMessenger>)binaryMessenger
+                   messageChannelSuffix:(nullable NSString *)messageChannelSuffix;
+/// Called when the device's physical orientation changes.
+- (void)deviceOrientationChangedOrientation:(FCPPlatformDeviceOrientation)orientation
+                                 completion:(void (^)(FlutterError *_Nullable))completion;
+@end
 
 NS_ASSUME_NONNULL_END

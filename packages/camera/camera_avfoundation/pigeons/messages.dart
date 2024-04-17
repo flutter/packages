@@ -24,6 +24,14 @@ enum PlatformCameraLensDirection {
   external,
 }
 
+// Pigeon version of DeviceOrientation.
+enum PlatformDeviceOrientation {
+  portraitUp,
+  landscapeLeft,
+  portraitDown,
+  landscapeRight,
+}
+
 // Pigeon version of CameraDescription.
 class PlatformCameraDescription {
   PlatformCameraDescription({
@@ -47,4 +55,11 @@ abstract class CameraApi {
   @async
   @ObjCSelector('availableCamerasWithCompletion')
   List<PlatformCameraDescription?> getAvailableCameras();
+}
+
+/// Handler for native callbacks that are not tied to a specific camera ID.
+@FlutterApi()
+abstract class CameraGlobalEventApi {
+  /// Called when the device's physical orientation changes.
+  void deviceOrientationChanged(PlatformDeviceOrientation orientation);
 }

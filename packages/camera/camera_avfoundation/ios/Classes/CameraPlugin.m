@@ -25,6 +25,7 @@ static FlutterError *FlutterErrorFromNSError(NSError *error) {
 @interface CameraPlugin ()
 @property(readonly, nonatomic) FLTThreadSafeTextureRegistry *registry;
 @property(readonly, nonatomic) NSObject<FlutterBinaryMessenger> *messenger;
+@property(nonatomic) FCPCameraGlobalEventApi *globalEventAPI;
 @end
 
 @implementation CameraPlugin
@@ -41,37 +42,34 @@ static FlutterError *FlutterErrorFromNSError(NSError *error) {
 
 - (instancetype)initWithRegistry:(NSObject<FlutterTextureRegistry> *)registry
                        messenger:(NSObject<FlutterBinaryMessenger> *)messenger {
+  return
+      [self initWithRegistry:registry
+                   messenger:messenger
+                   globalAPI:[[FCPCameraGlobalEventApi alloc] initWithBinaryMessenger:messenger]];
+}
+
+- (instancetype)initWithRegistry:(NSObject<FlutterTextureRegistry> *)registry
+                       messenger:(NSObject<FlutterBinaryMessenger> *)messenger
+                       globalAPI:(FCPCameraGlobalEventApi *)globalAPI {
   self = [super init];
   NSAssert(self, @"super init cannot be nil");
   _registry = [[FLTThreadSafeTextureRegistry alloc] initWithTextureRegistry:registry];
   _messenger = messenger;
+  _globalEventAPI = globalAPI;
   _captureSessionQueue = dispatch_queue_create("io.flutter.camera.captureSessionQueue", NULL);
   dispatch_queue_set_specific(_captureSessionQueue, FLTCaptureSessionQueueSpecific,
                               (void *)FLTCaptureSessionQueueSpecific, NULL);
 
-  [self initDeviceEventMethodChannel];
-  [self startOrientationListener];
-  return self;
-}
-
-- (void)initDeviceEventMethodChannel {
-  FlutterMethodChannel *methodChannel = [FlutterMethodChannel
-      methodChannelWithName:@"plugins.flutter.io/camera_avfoundation/fromPlatform"
-            binaryMessenger:_messenger];
-  _deviceEventMethodChannel =
-      [[FLTThreadSafeMethodChannel alloc] initWithMethodChannel:methodChannel];
-}
-
-- (void)detachFromEngineForRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar {
-  [UIDevice.currentDevice endGeneratingDeviceOrientationNotifications];
-}
-
-- (void)startOrientationListener {
   [[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
   [[NSNotificationCenter defaultCenter] addObserver:self
                                            selector:@selector(orientationChanged:)
                                                name:UIDeviceOrientationDidChangeNotification
                                              object:[UIDevice currentDevice]];
+  return self;
+}
+
+- (void)detachFromEngineForRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar {
+  [UIDevice.currentDevice endGeneratingDeviceOrientationNotifications];
 }
 
 - (void)orientationChanged:(NSNotification *)note {
@@ -93,9 +91,17 @@ static FlutterError *FlutterErrorFromNSError(NSError *error) {
 }
 
 - (void)sendDeviceOrientation:(UIDeviceOrientation)orientation {
-  [_deviceEventMethodChannel
-      invokeMethod:@"orientation_changed"
-         arguments:@{@"orientation" : FLTGetStringForUIDeviceOrientation(orientation)}];
+  __weak typeof(self) weakSelf = self;
+  dispatch_async(dispatch_get_main_queue(), ^{
+    [weakSelf.globalEventAPI
+        deviceOrientationChangedOrientation:FCPGetPigeonDeviceOrientationForOrientation(orientation)
+                                 completion:^(FlutterError *error){
+                                     // Ignore errors; this is essentially a broadcast stream, and
+                                     // it's fine if the other end
+                                     // doesn't receive the message (e.g., if it doesn't currently
+                                     // have a listener set up).
+                                 }];
+  });
 }
 
 - (void)handleMethodCall:(FlutterMethodCall *)call result:(FlutterResult)result {

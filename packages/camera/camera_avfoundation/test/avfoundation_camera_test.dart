@@ -30,24 +30,6 @@ void main() {
     expect(CameraPlatform.instance, isA<AVFoundationCamera>());
   });
 
-  test('registration does not set message handlers', () async {
-    AVFoundationCamera.registerWith();
-
-    // Setting up a handler requires bindings to be initialized, and since
-    // registerWith is called very early in initialization the bindings won't
-    // have been initialized. While registerWith could initialize them, that
-    // could slow down startup, so instead the handler should be set up lazily.
-    final ByteData? response = await TestDefaultBinaryMessengerBinding
-        .instance.defaultBinaryMessenger
-        .handlePlatformMessage(
-            AVFoundationCamera.deviceEventChannelName,
-            const StandardMethodCodec().encodeMethodCall(const MethodCall(
-                'orientation_changed',
-                <String, Object>{'orientation': 'portraitDown'})),
-            (ByteData? data) {});
-    expect(response, null);
-  });
-
   group('Creation, Initialization & Disposal Tests', () {
     test('Should send creation data and receive back a camera id', () async {
       // Arrange
@@ -474,12 +456,8 @@ void main() {
       const DeviceOrientationChangedEvent event =
           DeviceOrientationChangedEvent(DeviceOrientation.portraitUp);
       for (int i = 0; i < 3; i++) {
-        await TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-            .handlePlatformMessage(
-                AVFoundationCamera.deviceEventChannelName,
-                const StandardMethodCodec().encodeMethodCall(
-                    MethodCall('orientation_changed', event.toJson())),
-                null);
+        camera.hostHandler
+            .deviceOrientationChanged(PlatformDeviceOrientation.portraitUp);
       }
 
       // Assert

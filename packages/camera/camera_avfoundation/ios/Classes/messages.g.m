@@ -25,6 +25,15 @@ static NSArray *wrapResult(id result, FlutterError *error) {
   return @[ result ?: [NSNull null] ];
 }
 
+static FlutterError *createConnectionError(NSString *channelName) {
+  return [FlutterError
+      errorWithCode:@"channel-error"
+            message:[NSString stringWithFormat:@"%@/%@/%@",
+                                               @"Unable to establish connection on channel: '",
+                                               channelName, @"'."]
+            details:@""];
+}
+
 static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
   id result = array[key];
   return (result == [NSNull null]) ? nil : result;
@@ -32,6 +41,16 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 
 @implementation FCPPlatformCameraLensDirectionBox
 - (instancetype)initWithValue:(FCPPlatformCameraLensDirection)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FCPPlatformDeviceOrientationBox
+- (instancetype)initWithValue:(FCPPlatformDeviceOrientation)value {
   self = [super init];
   if (self) {
     _value = value;
@@ -153,3 +172,57 @@ void SetUpFCPCameraApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger,
     }
   }
 }
+NSObject<FlutterMessageCodec> *FCPCameraGlobalEventApiGetCodec(void) {
+  static FlutterStandardMessageCodec *sSharedObject = nil;
+  sSharedObject = [FlutterStandardMessageCodec sharedInstance];
+  return sSharedObject;
+}
+
+@interface FCPCameraGlobalEventApi ()
+@property(nonatomic, strong) NSObject<FlutterBinaryMessenger> *binaryMessenger;
+@property(nonatomic, strong) NSString *messageChannelSuffix;
+@end
+
+@implementation FCPCameraGlobalEventApi
+
+- (instancetype)initWithBinaryMessenger:(NSObject<FlutterBinaryMessenger> *)binaryMessenger {
+  return [self initWithBinaryMessenger:binaryMessenger messageChannelSuffix:@""];
+}
+- (instancetype)initWithBinaryMessenger:(NSObject<FlutterBinaryMessenger> *)binaryMessenger
+                   messageChannelSuffix:(nullable NSString *)messageChannelSuffix {
+  self = [self init];
+  if (self) {
+    _binaryMessenger = binaryMessenger;
+    _messageChannelSuffix = [messageChannelSuffix length] == 0
+                                ? @""
+                                : [NSString stringWithFormat:@".%@", messageChannelSuffix];
+  }
+  return self;
+}
+- (void)deviceOrientationChangedOrientation:(FCPPlatformDeviceOrientation)arg_orientation
+                                 completion:(void (^)(FlutterError *_Nullable))completion {
+  NSString *channelName = [NSString
+      stringWithFormat:
+          @"%@%@",
+          @"dev.flutter.pigeon.camera_avfoundation.CameraGlobalEventApi.deviceOrientationChanged",
+          _messageChannelSuffix];
+  FlutterBasicMessageChannel *channel =
+      [FlutterBasicMessageChannel messageChannelWithName:channelName
+                                         binaryMessenger:self.binaryMessenger
+                                                   codec:FCPCameraGlobalEventApiGetCodec()];
+  [channel sendMessage:@[ [NSNumber numberWithInteger:arg_orientation] ]
+                 reply:^(NSArray<id> *reply) {
+                   if (reply != nil) {
+                     if (reply.count > 1) {
+                       completion([FlutterError errorWithCode:reply[0]
+                                                      message:reply[1]
+                                                      details:reply[2]]);
+                     } else {
+                       completion(nil);
+                     }
+                   } else {
+                     completion(createConnectionError(channelName));
+                   }
+                 }];
+}
+@end

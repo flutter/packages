@@ -35,12 +35,6 @@ class AVFoundationCamera extends CameraPlatform {
 
   final Map<int, MethodChannel> _channels = <int, MethodChannel>{};
 
-  /// The name of the channel that device events from the platform side are
-  /// sent on.
-  @visibleForTesting
-  static const String deviceEventChannelName =
-      'plugins.flutter.io/camera_avfoundation/fromPlatform';
-
   /// The controller we need to broadcast the different events coming
   /// from handleMethodCall, specific to camera events.
   ///
@@ -57,15 +51,12 @@ class AVFoundationCamera extends CameraPlatform {
   ///
   /// It is a `broadcast` because multiple controllers will connect to
   /// different stream views of this Controller.
-  late final StreamController<DeviceEvent> _deviceEventStreamController =
-      _createDeviceEventStreamController();
-
-  StreamController<DeviceEvent> _createDeviceEventStreamController() {
+  @visibleForTesting
+  late final HostDeviceMessageHandler hostHandler = () {
     // Set up the method handler lazily.
-    const MethodChannel channel = MethodChannel(deviceEventChannelName);
-    channel.setMethodCallHandler(_handleDeviceMethodCall);
-    return StreamController<DeviceEvent>.broadcast();
-  }
+    CameraGlobalEventApi.setUp(null);
+    return HostDeviceMessageHandler();
+  }();
 
   // The stream to receive frames from the native code.
   StreamSubscription<dynamic>? _platformImageStreamSubscription;
@@ -213,7 +204,7 @@ class AVFoundationCamera extends CameraPlatform {
 
   @override
   Stream<DeviceOrientationChangedEvent> onDeviceOrientationChanged() {
-    return _deviceEventStreamController.stream
+    return hostHandler.deviceEventStreamController.stream
         .whereType<DeviceOrientationChangedEvent>();
   }
 
@@ -598,18 +589,6 @@ class AVFoundationCamera extends CameraPlatform {
     return 'max';
   }
 
-  /// Converts messages received from the native platform into device events.
-  Future<dynamic> _handleDeviceMethodCall(MethodCall call) async {
-    switch (call.method) {
-      case 'orientation_changed':
-        final Map<String, Object?> arguments = _getArgumentDictionary(call);
-        _deviceEventStreamController.add(DeviceOrientationChangedEvent(
-            deserializeDeviceOrientation(arguments['orientation']! as String)));
-      default:
-        throw MissingPluginException();
-    }
-  }
-
   /// Converts messages received from the native platform into camera events.
   ///
   /// This is only exposed for test purposes. It shouldn't be used by clients of
@@ -665,5 +644,23 @@ class AVFoundationCamera extends CameraPlatform {
   /// arguments are known to be a map.
   Map<String, Object?> _getArgumentDictionary(MethodCall call) {
     return (call.arguments as Map<Object?, Object?>).cast<String, Object?>();
+  }
+}
+
+/// Callback handler for device-level events from the platform host.
+@visibleForTesting
+class HostDeviceMessageHandler implements CameraGlobalEventApi {
+  /// The controller used to broadcast general device events coming from the
+  /// host platform.
+  ///
+  /// It is a `broadcast` because multiple controllers will connect to
+  /// different stream views of this Controller.
+  final StreamController<DeviceEvent> deviceEventStreamController =
+      StreamController<DeviceEvent>.broadcast();
+
+  @override
+  void deviceOrientationChanged(PlatformDeviceOrientation orientation) {
+    deviceEventStreamController.add(DeviceOrientationChangedEvent(
+        deviceOrientationFromPlatform(orientation)));
   }
 }

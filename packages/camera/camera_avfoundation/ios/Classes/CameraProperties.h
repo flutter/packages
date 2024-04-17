@@ -5,6 +5,8 @@
 @import AVFoundation;
 @import Foundation;
 
+#import "messages.g.h"
+
 NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark - flash mode
@@ -71,8 +73,9 @@ extern FLTFocusMode FLTGetFLTFocusModeForString(NSString *mode);
 /// Gets UIDeviceOrientation from its string representation.
 extern UIDeviceOrientation FLTGetUIDeviceOrientationForString(NSString *orientation);
 
-/// Gets a string representation of UIDeviceOrientation.
-extern NSString *FLTGetStringForUIDeviceOrientation(UIDeviceOrientation orientation);
+/// Gets a Pigeon representation of UIDeviceOrientation.
+extern FCPPlatformDeviceOrientation FCPGetPigeonDeviceOrientationForOrientation(
+    UIDeviceOrientation orientation);
 
 #pragma mark - resolution preset
 

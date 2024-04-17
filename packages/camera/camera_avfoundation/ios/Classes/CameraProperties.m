@@ -100,17 +100,18 @@ UIDeviceOrientation FLTGetUIDeviceOrientationForString(NSString *orientation) {
   }
 }
 
-NSString *FLTGetStringForUIDeviceOrientation(UIDeviceOrientation orientation) {
+FCPPlatformDeviceOrientation FCPGetPigeonDeviceOrientationForOrientation(
+    UIDeviceOrientation orientation) {
   switch (orientation) {
     case UIDeviceOrientationPortraitUpsideDown:
-      return @"portraitDown";
+      return FCPPlatformDeviceOrientationPortraitDown;
     case UIDeviceOrientationLandscapeLeft:
-      return @"landscapeLeft";
+      return FCPPlatformDeviceOrientationLandscapeLeft;
     case UIDeviceOrientationLandscapeRight:
-      return @"landscapeRight";
+      return FCPPlatformDeviceOrientationLandscapeRight;
     case UIDeviceOrientationPortrait:
     default:
-      return @"portraitUp";
+      return FCPPlatformDeviceOrientationPortraitUp;
   };
 }
 
