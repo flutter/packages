@@ -95,6 +95,9 @@ public class FileUtils {
    *
    * <p>If the original file name is unknown, a predefined "file_selector" filename is used and the
    * file extension is deduced from the mime type.
+   *
+   * <p>Will return null if closing the output stream when done copying file contents does not for
+   * sure complete or if a security exception is encountered when opening the input stream.
    */
   @Nullable
   public static String getPathFromCopyOfFileFromUri(@NonNull Context context, @NonNull Uri uri) {
