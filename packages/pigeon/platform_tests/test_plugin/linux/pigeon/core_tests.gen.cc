@@ -233,13 +233,9 @@ struct _CoreTestsPigeonTestAllNullableTypes {
   GObject parent_instance;
 
   gboolean* a_nullable_bool;
-  gboolean a_nullable_bool_value;
   int64_t* a_nullable_int;
-  int64_t a_nullable_int_value;
   int64_t* a_nullable_int64;
-  int64_t a_nullable_int64_value;
   double* a_nullable_double;
-  double a_nullable_double_value;
   uint8_t* a_nullable_byte_array;
   size_t a_nullable_byte_array_length;
   int32_t* a_nullable4_byte_array;
@@ -265,6 +261,10 @@ G_DEFINE_TYPE(CoreTestsPigeonTestAllNullableTypes,
 static void core_tests_pigeon_test_all_nullable_types_dispose(GObject* object) {
   CoreTestsPigeonTestAllNullableTypes* self =
       CORE_TESTS_PIGEON_TEST_ALL_NULLABLE_TYPES(object);
+  g_clear_pointer(&self->a_nullable_bool, g_free);
+  g_clear_pointer(&self->a_nullable_int, g_free);
+  g_clear_pointer(&self->a_nullable_int64, g_free);
+  g_clear_pointer(&self->a_nullable_double, g_free);
   g_clear_pointer(&self->a_nullable_list, fl_value_unref);
   g_clear_pointer(&self->a_nullable_map, fl_value_unref);
   g_clear_pointer(&self->nullable_nested_list, fl_value_unref);
@@ -303,21 +303,30 @@ core_tests_pigeon_test_all_nullable_types_new(
   CoreTestsPigeonTestAllNullableTypes* self =
       CORE_TESTS_PIGEON_TEST_ALL_NULLABLE_TYPES(g_object_new(
           core_tests_pigeon_test_all_nullable_types_get_type(), nullptr));
-  self->a_nullable_bool_value =
-      a_nullable_bool != nullptr ? *a_nullable_bool : FALSE;
-  self->a_nullable_bool =
-      a_nullable_bool != nullptr ? &self->a_nullable_bool_value : nullptr;
-  self->a_nullable_int_value = a_nullable_int != nullptr ? *a_nullable_int : 0;
-  self->a_nullable_int =
-      a_nullable_int != nullptr ? &self->a_nullable_int_value : nullptr;
-  self->a_nullable_int64_value =
-      a_nullable_int64 != nullptr ? *a_nullable_int64 : 0;
-  self->a_nullable_int64 =
-      a_nullable_int64 != nullptr ? &self->a_nullable_int64_value : nullptr;
-  self->a_nullable_double_value =
-      a_nullable_double != nullptr ? *a_nullable_double : 0.0;
-  self->a_nullable_double =
-      a_nullable_double != nullptr ? &self->a_nullable_double_value : nullptr;
+  if (a_nullable_bool != nullptr) {
+    self->a_nullable_bool = static_cast<gboolean*>(malloc(sizeof(gboolean)));
+    *self->a_nullable_bool = *a_nullable_bool;
+  } else {
+    self->a_nullable_bool = nullptr;
+  }
+  if (a_nullable_int != nullptr) {
+    self->a_nullable_int = static_cast<int64_t*>(malloc(sizeof(int64_t)));
+    *self->a_nullable_int = *a_nullable_int;
+  } else {
+    self->a_nullable_int = nullptr;
+  }
+  if (a_nullable_int64 != nullptr) {
+    self->a_nullable_int64 = static_cast<int64_t*>(malloc(sizeof(int64_t)));
+    *self->a_nullable_int64 = *a_nullable_int64;
+  } else {
+    self->a_nullable_int64 = nullptr;
+  }
+  if (a_nullable_double != nullptr) {
+    self->a_nullable_double = static_cast<double*>(malloc(sizeof(double)));
+    *self->a_nullable_double = *a_nullable_double;
+  } else {
+    self->a_nullable_double = nullptr;
+  }
   self->a_nullable_byte_array = static_cast<uint8_t*>(
       g_memdup2(a_nullable_byte_array, a_nullable_byte_array_length));
   self->a_nullable_byte_array_length = a_nullable_byte_array_length;
@@ -640,13 +649,9 @@ struct _CoreTestsPigeonTestAllNullableTypesWithoutRecursion {
   GObject parent_instance;
 
   gboolean* a_nullable_bool;
-  gboolean a_nullable_bool_value;
   int64_t* a_nullable_int;
-  int64_t a_nullable_int_value;
   int64_t* a_nullable_int64;
-  int64_t a_nullable_int64_value;
   double* a_nullable_double;
-  double a_nullable_double_value;
   uint8_t* a_nullable_byte_array;
   size_t a_nullable_byte_array_length;
   int32_t* a_nullable4_byte_array;
@@ -673,6 +678,10 @@ static void core_tests_pigeon_test_all_nullable_types_without_recursion_dispose(
     GObject* object) {
   CoreTestsPigeonTestAllNullableTypesWithoutRecursion* self =
       CORE_TESTS_PIGEON_TEST_ALL_NULLABLE_TYPES_WITHOUT_RECURSION(object);
+  g_clear_pointer(&self->a_nullable_bool, g_free);
+  g_clear_pointer(&self->a_nullable_int, g_free);
+  g_clear_pointer(&self->a_nullable_int64, g_free);
+  g_clear_pointer(&self->a_nullable_double, g_free);
   g_clear_pointer(&self->a_nullable_list, fl_value_unref);
   g_clear_pointer(&self->a_nullable_map, fl_value_unref);
   g_clear_pointer(&self->nullable_nested_list, fl_value_unref);
@@ -712,21 +721,30 @@ core_tests_pigeon_test_all_nullable_types_without_recursion_new(
       CORE_TESTS_PIGEON_TEST_ALL_NULLABLE_TYPES_WITHOUT_RECURSION(g_object_new(
           core_tests_pigeon_test_all_nullable_types_without_recursion_get_type(),
           nullptr));
-  self->a_nullable_bool_value =
-      a_nullable_bool != nullptr ? *a_nullable_bool : FALSE;
-  self->a_nullable_bool =
-      a_nullable_bool != nullptr ? &self->a_nullable_bool_value : nullptr;
-  self->a_nullable_int_value = a_nullable_int != nullptr ? *a_nullable_int : 0;
-  self->a_nullable_int =
-      a_nullable_int != nullptr ? &self->a_nullable_int_value : nullptr;
-  self->a_nullable_int64_value =
-      a_nullable_int64 != nullptr ? *a_nullable_int64 : 0;
-  self->a_nullable_int64 =
-      a_nullable_int64 != nullptr ? &self->a_nullable_int64_value : nullptr;
-  self->a_nullable_double_value =
-      a_nullable_double != nullptr ? *a_nullable_double : 0.0;
-  self->a_nullable_double =
-      a_nullable_double != nullptr ? &self->a_nullable_double_value : nullptr;
+  if (a_nullable_bool != nullptr) {
+    self->a_nullable_bool = static_cast<gboolean*>(malloc(sizeof(gboolean)));
+    *self->a_nullable_bool = *a_nullable_bool;
+  } else {
+    self->a_nullable_bool = nullptr;
+  }
+  if (a_nullable_int != nullptr) {
+    self->a_nullable_int = static_cast<int64_t*>(malloc(sizeof(int64_t)));
+    *self->a_nullable_int = *a_nullable_int;
+  } else {
+    self->a_nullable_int = nullptr;
+  }
+  if (a_nullable_int64 != nullptr) {
+    self->a_nullable_int64 = static_cast<int64_t*>(malloc(sizeof(int64_t)));
+    *self->a_nullable_int64 = *a_nullable_int64;
+  } else {
+    self->a_nullable_int64 = nullptr;
+  }
+  if (a_nullable_double != nullptr) {
+    self->a_nullable_double = static_cast<double*>(malloc(sizeof(double)));
+    *self->a_nullable_double = *a_nullable_double;
+  } else {
+    self->a_nullable_double = nullptr;
+  }
   self->a_nullable_byte_array = static_cast<uint8_t*>(
       g_memdup2(a_nullable_byte_array, a_nullable_byte_array_length));
   self->a_nullable_byte_array_length = a_nullable_byte_array_length;
@@ -12789,7 +12807,12 @@ core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_bool_finish(
     return FALSE;
   }
 
-  *return_value = fl_value_get_bool(r);
+  if (fl_value_get_type(r) != FL_VALUE_TYPE_NULL) {
+    *return_value = static_cast<gboolean*>(malloc(sizeof(gboolean)));
+    **return_value = fl_value_get_bool(r);
+  } else {
+    *return_value = nullptr;
+  }
 
   return TRUE;
 }
@@ -12820,7 +12843,12 @@ core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_int_finish(
     return FALSE;
   }
 
-  *return_value = fl_value_get_int(r);
+  if (fl_value_get_type(r) != FL_VALUE_TYPE_NULL) {
+    *return_value = static_cast<int64_t*>(malloc(sizeof(int64_t)));
+    **return_value = fl_value_get_int(r);
+  } else {
+    *return_value = nullptr;
+  }
 
   return TRUE;
 }
@@ -12852,7 +12880,12 @@ core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_double_finish(
     return FALSE;
   }
 
-  *return_value = fl_value_get_double(r);
+  if (fl_value_get_type(r) != FL_VALUE_TYPE_NULL) {
+    *return_value = static_cast<double*>(malloc(sizeof(double)));
+    **return_value = fl_value_get_double(r);
+  } else {
+    *return_value = nullptr;
+  }
 
   return TRUE;
 }
