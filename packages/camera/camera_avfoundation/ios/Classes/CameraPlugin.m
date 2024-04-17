@@ -109,9 +109,7 @@ static FlutterError *FlutterErrorFromNSError(NSError *error) {
 - (void)availableCamerasWithCompletion:
     (nonnull void (^)(NSArray<FCPPlatformCameraDescription *> *_Nullable,
                       FlutterError *_Nullable))completion {
-  // This doesn't interact with FLTCam, so can use an arbitrary thread rather than
-  // captureSessionQueue. It should still not be done on the main thread, however.
-  dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+  dispatch_async(self.captureSessionQueue, ^{
     NSMutableArray *discoveryDevices =
         [@[ AVCaptureDeviceTypeBuiltInWideAngleCamera, AVCaptureDeviceTypeBuiltInTelephotoCamera ]
             mutableCopy];
