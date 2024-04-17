@@ -256,14 +256,14 @@ Future<void> main() async {
 
       WebViewController controller =
           WebViewController.fromPlatformCreationParams(params);
-      unawaited(controller.setJavaScriptMode(JavaScriptMode.unrestricted));
-      unawaited(controller.setNavigationDelegate(
+      await controller.setJavaScriptMode(JavaScriptMode.unrestricted);
+      await controller.setNavigationDelegate(
         NavigationDelegate(onPageFinished: (_) => pageLoaded.complete()),
-      ));
+      );
 
       if (controller.platform is AndroidWebViewController) {
-        unawaited((controller.platform as AndroidWebViewController)
-            .setMediaPlaybackRequiresUserGesture(false));
+        await (controller.platform as AndroidWebViewController)
+            .setMediaPlaybackRequiresUserGesture(false);
       }
 
       await controller.loadRequest(
@@ -280,13 +280,13 @@ Future<void> main() async {
 
       pageLoaded = Completer<void>();
       controller = WebViewController();
-      unawaited(controller.setJavaScriptMode(JavaScriptMode.unrestricted));
-      unawaited(controller.setNavigationDelegate(
+      await controller.setJavaScriptMode(JavaScriptMode.unrestricted);
+      await controller.setNavigationDelegate(
         NavigationDelegate(onPageFinished: (_) => pageLoaded.complete()),
-      ));
-      unawaited(controller.loadRequest(
+      );
+      await controller.loadRequest(
         Uri.parse('data:text/html;charset=utf-8;base64,$videoTestBase64'),
-      ));
+      );
 
       await tester.pumpWidget(WebViewWidget(controller: controller));
 
@@ -395,14 +395,14 @@ Future<void> main() async {
 
       WebViewController controller =
           WebViewController.fromPlatformCreationParams(params);
-      unawaited(controller.setJavaScriptMode(JavaScriptMode.unrestricted));
-      unawaited(controller.setNavigationDelegate(
+      await controller.setJavaScriptMode(JavaScriptMode.unrestricted);
+      await controller.setNavigationDelegate(
         NavigationDelegate(onPageFinished: (_) => pageLoaded.complete()),
-      ));
+      );
 
       if (controller.platform is AndroidWebViewController) {
-        unawaited((controller.platform as AndroidWebViewController)
-            .setMediaPlaybackRequiresUserGesture(false));
+        await (controller.platform as AndroidWebViewController)
+            .setMediaPlaybackRequiresUserGesture(false);
       }
 
       await controller.loadRequest(
@@ -420,13 +420,13 @@ Future<void> main() async {
 
       pageLoaded = Completer<void>();
       controller = WebViewController();
-      unawaited(controller.setJavaScriptMode(JavaScriptMode.unrestricted));
-      unawaited(controller.setNavigationDelegate(
+      await controller.setJavaScriptMode(JavaScriptMode.unrestricted);
+      await controller.setNavigationDelegate(
         NavigationDelegate(onPageFinished: (_) => pageLoaded.complete()),
-      ));
-      unawaited(controller.loadRequest(
+      );
+      await controller.loadRequest(
         Uri.parse('data:text/html;charset=utf-8;base64,$audioTestBase64'),
-      ));
+      );
 
       await tester.pumpWidget(WebViewWidget(controller: controller));
       await tester.pumpAndSettle();
