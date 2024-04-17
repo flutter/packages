@@ -1735,7 +1735,7 @@ ${_topicsSection()}
         );
       });
 
-      test('fails when integration_test is used in non dev dependency',
+      test('fails when integration_test, flutter_test or test are used in non dev dependency',
           () async {
         final RepositoryPackage package =
             createFakePackage('a_package', packagesDir, examples: <String>[]);
@@ -1743,7 +1743,11 @@ ${_topicsSection()}
         package.pubspecFile.writeAsStringSync('''
 ${_headerSection('a_package')}
 ${_environmentSection()}
-${_dependenciesSection(<String>['integration_test: \n    sdk: flutter'])}
+${_dependenciesSection(<String>[
+              'integration_test: \n    sdk: flutter',
+              'flutter_test: \n    sdk: flutter',
+              'test: 1.0.0'
+            ])}
 ${_devDependenciesSection()}
 ${_topicsSection()}
 ''');
@@ -1761,14 +1765,16 @@ ${_topicsSection()}
           containsAllInOrder(<Matcher>[
             contains(
                 'The following unexpected non-local dependencies were found:\n'
+                '  test\n'
                 '  integration_test\n'
+                '  flutter_test\n'
                 'Please see https://github.com/flutter/flutter/wiki/Contributing-to-Plugins-and-Packages#Dependencies '
                 'for more information and next steps.'),
           ]),
         );
       });
 
-      test('passes when integration_test is used in non published package',
+      test('passes when integration_test or flutter_test are used in non published package',
           () async {
         final RepositoryPackage package =
             createFakePackage('a_package', packagesDir, examples: <String>[]);
@@ -1776,7 +1782,10 @@ ${_topicsSection()}
         package.pubspecFile.writeAsStringSync('''
 ${_headerSection('a_package', publishable: false)}
 ${_environmentSection()}
-${_dependenciesSection(<String>['integration_test: \n    sdk: flutter'])}
+${_dependenciesSection(<String>[
+              'integration_test: \n    sdk: flutter',
+              'flutter_test: \n    sdk: flutter'
+            ])}
 ${_devDependenciesSection()}
 ${_topicsSection()}
 ''');

@@ -11,6 +11,7 @@ import 'common/repository_package.dart';
 
 const int _exitPrecacheFailed = 3;
 const int _exitNothingRequested = 4;
+const int _exitPodUpdateFailed = 5;
 
 /// Download dependencies, both Dart and native.
 ///
@@ -79,22 +80,28 @@ class FetchDepsCommand extends PackageLoopingCommand {
     // `pod install` requires having the platform artifacts precached. See
     // https://github.com/flutter/flutter/blob/fb7a763c640d247d090cbb373e4b3a0459ac171b/packages/flutter_tools/bin/podhelper.rb#L47
     // https://github.com/flutter/flutter/blob/fb7a763c640d247d090cbb373e4b3a0459ac171b/packages/flutter_tools/bin/podhelper.rb#L130
-    if (getBoolArg(platformIOS)) {
-      final int exitCode = await processRunner.runAndStream(
+    final bool precacheIOS = getBoolArg(platformIOS);
+    final bool precacheMacOS = getBoolArg(platformMacOS);
+    if (precacheIOS || precacheMacOS) {
+      final int precacheExitCode = await processRunner.runAndStream(
         flutterCommand,
-        <String>['precache', '--ios'],
+        <String>[
+          'precache',
+          if (precacheIOS)
+            '--ios',
+          if (precacheMacOS)
+            '--macos',
+        ],
       );
-      if (exitCode != 0) {
+      if (precacheExitCode != 0) {
         throw ToolExit(_exitPrecacheFailed);
       }
-    }
-    if (getBoolArg(platformMacOS)) {
-      final int exitCode = await processRunner.runAndStream(
-        flutterCommand,
-        <String>['precache', '--macos'],
+      final int updateUpdateExitCode = await processRunner.runAndStream(
+        'pod',
+        <String>['repo', 'update'],
       );
-      if (exitCode != 0) {
-        throw ToolExit(_exitPrecacheFailed);
+      if (updateUpdateExitCode != 0) {
+        throw ToolExit(_exitPodUpdateFailed);
       }
     }
   }
