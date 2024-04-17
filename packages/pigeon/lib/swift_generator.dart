@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:collection/collection.dart' as collection;
 import 'package:pub_semver/pub_semver.dart';
 
 import 'ast.dart';
@@ -104,7 +105,16 @@ class SwiftGenerator extends StructuredGenerator<SwiftOptions> {
     required String dartPackageName,
   }) {
     indent.writeln('import Foundation');
+
+    final Iterable<String> proxyApiImports = root.apis
+        .whereType<AstProxyApi>()
+        .map((AstProxyApi proxyApi) => proxyApi.swiftOptions?.import)
+        .whereNotNull();
+    for (final String import in proxyApiImports) {
+      indent.writeln('import $import');
+    }
     indent.newln();
+
     indent.format('''
 #if os(iOS)
   import Flutter
@@ -721,12 +731,13 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
     final bool hasFlutterApi = root.apis
         .whereType<AstFlutterApi>()
         .any((Api api) => api.methods.isNotEmpty);
+    final bool hasProxyApi = root.apis.any((Api api) => api is AstProxyApi);
 
-    if (hasHostApi) {
+    if (hasHostApi || hasProxyApi) {
       _writeWrapResult(indent);
       _writeWrapError(indent);
     }
-    if (hasFlutterApi) {
+    if (hasFlutterApi || hasProxyApi) {
       _writeCreateConnectionError(indent);
     }
     _writeIsNullish(indent);
@@ -1009,8 +1020,19 @@ String? _swiftTypeForBuiltinDartType(TypeDeclaration type) {
   }
 }
 
+String? _swiftTypeForProxyApiType(TypeDeclaration type) {
+  if (type.isProxyApi) {
+    return type.associatedProxyApi!.swiftOptions?.name ??
+        type.associatedProxyApi!.name;
+  }
+
+  return null;
+}
+
 String _swiftTypeForDartType(TypeDeclaration type) {
-  return _swiftTypeForBuiltinDartType(type) ?? type.baseName;
+  return _swiftTypeForBuiltinDartType(type) ??
+      _swiftTypeForProxyApiType(type) ??
+      type.baseName;
 }
 
 String _nullsafeSwiftTypeForDartType(TypeDeclaration type) {

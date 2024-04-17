@@ -670,16 +670,16 @@ String? deducePackageName(String mainDartFile) {
     }
   }
 
-  final Iterable<TypeDeclaration> allReferencedTypes =
-      types.expand(addAllRecursive);
+  final Iterable<TypeDeclaration> allReferencedTypes = types
+      .expand(addAllRecursive)
+      // TODO: Remove this in the `typeWithHighestRequirement` kotlin generator
+      .where((TypeDeclaration type) => onGetApiRequirement(type) != null);
 
   if (allReferencedTypes.isEmpty) {
     return null;
   }
 
-  final TypeDeclaration typeWithHighestRequirement = allReferencedTypes
-      .where((TypeDeclaration type) => onGetApiRequirement(type) != null)
-      .reduce(
+  final TypeDeclaration typeWithHighestRequirement = allReferencedTypes.reduce(
     (TypeDeclaration one, TypeDeclaration two) {
       return onCompare(onGetApiRequirement(one)!, onGetApiRequirement(two)!) > 0
           ? one
