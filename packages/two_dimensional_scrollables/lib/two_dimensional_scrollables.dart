@@ -5,7 +5,9 @@
 /// The [TableView] and associated widgets.
 ///
 /// To use, import `package:two_dimensional_scrollables/two_dimensional_scrollables.dart`.
-library table_view;
+library two_dimensional_scrollables;
+
+export 'src/common/span.dart';
 
 export 'src/table_view/table.dart';
 export 'src/table_view/table_cell.dart';
