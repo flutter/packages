@@ -1385,8 +1385,8 @@ bool _isNullablePrimitiveType(TypeDeclaration type) {
       type.baseName == 'double';
 }
 
-/// Whether [type] is a type that needs to stay an FLValue* since it can't be
-/// expressed as a more concrete type.
+// Whether [type] is a type that needs to stay an FlValue* since it can't be
+// expressed as a more concrete type.
 bool _isFlValueWrappedType(TypeDeclaration type) {
   return type.baseName == 'List' ||
       type.baseName == 'Map' ||
@@ -1468,7 +1468,9 @@ String _makeFlValue(String module, TypeDeclaration type, String variableName,
   if (type.isClass) {
     value = 'fl_value_new_custom_object(0, G_OBJECT($variableName))';
   } else if (type.isEnum) {
-    value = 'fl_value_new_int($variableName)';
+    value = type.isNullable
+        ? 'fl_value_new_int(static_cast<int64_t>(*$variableName))'
+        : 'fl_value_new_int(static_cast<int64_t>($variableName))';
   } else if (_isFlValueWrappedType(type)) {
     value = 'fl_value_ref($variableName)';
   } else if (type.baseName == 'void') {
@@ -1483,8 +1485,8 @@ String _makeFlValue(String module, TypeDeclaration type, String variableName,
         : 'fl_value_new_int($variableName)';
   } else if (type.baseName == 'double') {
     value = type.isNullable
-        ? 'fl_value_new_double(*$variableName)'
-        : 'fl_value_new_double($variableName)';
+        ? 'fl_value_new_float(*$variableName)'
+        : 'fl_value_new_float($variableName)';
   } else if (type.baseName == 'String') {
     value = 'fl_value_new_string($variableName)';
   } else if (type.baseName == 'Uint8List') {
