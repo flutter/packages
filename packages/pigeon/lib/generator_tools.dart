@@ -522,9 +522,7 @@ Map<TypeDeclaration, List<int>> getReferencedTypes(
     return null;
   }
 
-  final TypeDeclaration typeWithHighestRequirement = allReferencedTypes
-      .where((TypeDeclaration type) => onGetApiRequirement(type) != null)
-      .reduce(
+  final TypeDeclaration typeWithHighestRequirement = allReferencedTypes.reduce(
     (TypeDeclaration one, TypeDeclaration two) {
       return onCompare(onGetApiRequirement(one)!, onGetApiRequirement(two)!) > 0
           ? one
