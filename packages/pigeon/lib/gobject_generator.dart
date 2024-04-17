@@ -1525,7 +1525,7 @@ String _fromFlValue(String module, TypeDeclaration type, String variableName) {
   } else if (type.baseName == 'int') {
     return 'fl_value_get_int($variableName)';
   } else if (type.baseName == 'double') {
-    return 'fl_value_get_double($variableName)';
+    return 'fl_value_get_float($variableName)';
   } else if (type.baseName == 'String') {
     return 'fl_value_get_string($variableName)';
   } else if (type.baseName == 'Uint8List') {
