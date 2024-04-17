@@ -66,17 +66,18 @@ public class FileSelectorAndroidTest {
     onFlutterWidget(withText("Press to open an image file(png, jpg)")).perform(click());
     intended(hasAction(Intent.ACTION_OPEN_DOCUMENT));
     onFlutterWidget(withValueKey("result_image_name"))
-        .check(new WidgetAssertion() {
-          @Override
-          public void check(View flutterView, WidgetInfo widgetInfo) {
-              String filePath = widgetInfo.getText();
-              boolean isContentUri = filePath.contains("content://");
-              boolean containsExpectedFileName = filePath.contains(fileName);
+        .check(
+            new WidgetAssertion() {
+              @Override
+              public void check(View flutterView, WidgetInfo widgetInfo) {
+                String filePath = widgetInfo.getText();
+                boolean isContentUri = filePath.contains("content://");
+                boolean containsExpectedFileName = filePath.contains(fileName);
 
-              assertFalse(isContentUri);
-              assertTrue(containsExpectedFileName);
-          }
-        });
+                assertFalse(isContentUri);
+                assertTrue(containsExpectedFileName);
+              }
+            });
   }
 
   @Test

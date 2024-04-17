@@ -26,8 +26,7 @@ flutter:
         default_package: file_selector_windows
 
 dependencies:
-  file_selector_android:
-    path: ../file_selector_android/
+  file_selector_android: ^0.5.0
   file_selector_ios: ^0.5.0
   file_selector_linux: ^0.9.2
   file_selector_macos: ^0.9.3

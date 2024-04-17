@@ -39,14 +39,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.MockedStatic;
+import org.mockito.stubbing.Answer;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
-import org.robolectric.annotation.Implementation;
-import org.robolectric.annotation.Implements;
 import org.robolectric.shadows.ShadowContentResolver;
-import org.robolectric.shadows.ShadowEnvironment;
 import org.robolectric.shadows.ShadowMimeTypeMap;
-import org.mockito.stubbing.Answer;
 
 @RunWith(RobolectricTestRunner.class)
 public class FileUtilsTest {
@@ -70,13 +67,14 @@ public class FileUtilsTest {
   @Test
   public void getPathFromUri_returnsExpectedPathForExternalDocumentUri() {
     // Uri that represents Documents/test directory on device:
-    Uri uri = Uri.parse("content://com.android.externalstorage.documents/tree/primary%3ADocuments%2Ftest");
-    try (MockedStatic<DocumentsContract> mockedDocumentsContract = mockStatic(DocumentsContract.class)) {
-          mockedDocumentsContract
-            .when(() -> DocumentsContract.getDocumentId(uri))
-            .thenAnswer(
-                (Answer<String>)
-                    invocation -> "primary:Documents/test");
+    Uri uri =
+        Uri.parse(
+            "content://com.android.externalstorage.documents/tree/primary%3ADocuments%2Ftest");
+    try (MockedStatic<DocumentsContract> mockedDocumentsContract =
+        mockStatic(DocumentsContract.class)) {
+      mockedDocumentsContract
+          .when(() -> DocumentsContract.getDocumentId(uri))
+          .thenAnswer((Answer<String>) invocation -> "primary:Documents/test");
       String path = FileUtils.getPathFromUri(context, uri);
       String externalStorageDirectoryPath = Environment.getExternalStorageDirectory().getPath();
       String expectedPath = externalStorageDirectoryPath + "/Documents/test";
@@ -87,14 +85,16 @@ public class FileUtilsTest {
   @Test
   public void getPathFromUri_throwExceptionForExternalDocumentUriWithNonPrimaryStorageVolume() {
     // Uri that represents Documents/test directory from some external storage volume ("external" for this test):
-    Uri uri = Uri.parse("content://com.android.externalstorage.documents/tree/external%3ADocuments%2Ftest");
-        try (MockedStatic<DocumentsContract> mockedDocumentsContract = mockStatic(DocumentsContract.class)) {
-          mockedDocumentsContract
-            .when(() -> DocumentsContract.getDocumentId(uri))
-            .thenAnswer(
-                (Answer<String>)
-                    invocation -> "external:Documents/test");
-    assertThrows(UnsupportedOperationException.class, () -> FileUtils.getPathFromUri(context, uri));
+    Uri uri =
+        Uri.parse(
+            "content://com.android.externalstorage.documents/tree/external%3ADocuments%2Ftest");
+    try (MockedStatic<DocumentsContract> mockedDocumentsContract =
+        mockStatic(DocumentsContract.class)) {
+      mockedDocumentsContract
+          .when(() -> DocumentsContract.getDocumentId(uri))
+          .thenAnswer((Answer<String>) invocation -> "external:Documents/test");
+      assertThrows(
+          UnsupportedOperationException.class, () -> FileUtils.getPathFromUri(context, uri));
     }
   }
 
@@ -126,7 +126,8 @@ public class FileUtilsTest {
   }
 
   @Test
-  public void getPathFromCopyOfFileFromUri_returnsNullPathWhenSecurityExceptionThrown() throws IOException {
+  public void getPathFromCopyOfFileFromUri_returnsNullPathWhenSecurityExceptionThrown()
+      throws IOException {
     Uri uri = Uri.parse("content://dummy/dummy.png");
 
     ContentResolver mockContentResolver = mock(ContentResolver.class);
@@ -163,7 +164,8 @@ public class FileUtilsTest {
   }
 
   @Test
-  public void  getPathFromCopyOfFileFromUri_returnsExpectedPathForUriWithNoExtensionInBaseName() throws IOException {
+  public void getPathFromCopyOfFileFromUri_returnsExpectedPathForUriWithNoExtensionInBaseName()
+      throws IOException {
     Uri uri = MockContentProvider.NO_EXTENSION_URI;
     Robolectric.buildContentProvider(MockContentProvider.class).create("dummy");
     shadowContentResolver.registerInputStream(
@@ -173,7 +175,8 @@ public class FileUtilsTest {
   }
 
   @Test
-  public void getPathFromCopyOfFileFromUri_returnsExpectedPathForUriWithMismatchedTypeToFile() throws IOException {
+  public void getPathFromCopyOfFileFromUri_returnsExpectedPathForUriWithMismatchedTypeToFile()
+      throws IOException {
     Uri uri = MockContentProvider.WEBP_URI;
     Robolectric.buildContentProvider(MockContentProvider.class).create("dummy");
     shadowContentResolver.registerInputStream(
@@ -183,7 +186,8 @@ public class FileUtilsTest {
   }
 
   @Test
-  public void getPathFromCopyOfFileFromUri_returnsExpectedPathForUriWithUnknownType() throws IOException {
+  public void getPathFromCopyOfFileFromUri_returnsExpectedPathForUriWithUnknownType()
+      throws IOException {
     Uri uri = MockContentProvider.UNKNOWN_URI;
     Robolectric.buildContentProvider(MockContentProvider.class).create("dummy");
     shadowContentResolver.registerInputStream(

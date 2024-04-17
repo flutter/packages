@@ -4,6 +4,7 @@
 
 package dev.flutter.packages.file_selector_android;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.ClipData;
 import android.content.ContentResolver;
@@ -183,6 +184,7 @@ public class FileSelectorApiImpl implements GeneratedFileSelectorApi.FileSelecto
   }
 
   @Override
+  @TargetApi(21)
   public void getDirectoryPath(
       @Nullable String initialDirectory, @NonNull GeneratedFileSelectorApi.Result<String> result) {
     if (!sdkChecker.sdkIsAtLeast(android.os.Build.VERSION_CODES.LOLLIPOP)) {
@@ -204,9 +206,12 @@ public class FileSelectorApiImpl implements GeneratedFileSelectorApi.FileSelecto
             public void onResult(int resultCode, @Nullable Intent data) {
               if (resultCode == Activity.RESULT_OK && data != null) {
                 final Uri uri = data.getData();
-                final Uri docUri = DocumentsContract.buildDocumentUriUsingTree(uri, DocumentsContract.getTreeDocumentId(uri));
+                final Uri docUri =
+                    DocumentsContract.buildDocumentUriUsingTree(
+                        uri, DocumentsContract.getTreeDocumentId(uri));
                 try {
-                  final String path = FileUtils.getPathFromUri(activityPluginBinding.getActivity(), docUri);
+                  final String path =
+                      FileUtils.getPathFromUri(activityPluginBinding.getActivity(), docUri);
                   result.success(path);
                 } catch (UnsupportedOperationException exception) {
                   result.error(exception);
@@ -338,7 +343,8 @@ public class FileSelectorApiImpl implements GeneratedFileSelectorApi.FileSelecto
       return null;
     }
 
-    final String uriPath = FileUtils.getPathFromCopyOfFileFromUri(activityPluginBinding.getActivity(), uri);
+    final String uriPath =
+        FileUtils.getPathFromCopyOfFileFromUri(activityPluginBinding.getActivity(), uri);
 
     return new GeneratedFileSelectorApi.FileResponse.Builder()
         .setName(name)
