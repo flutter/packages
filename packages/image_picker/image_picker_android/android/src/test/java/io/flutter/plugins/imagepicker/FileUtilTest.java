@@ -62,6 +62,7 @@ public class FileUtilTest {
     shadowContentResolver.registerInputStream(
         uri, new ByteArrayInputStream("imageStream".getBytes(UTF_8)));
     String path = fileUtils.getPathFromUri(context, uri);
+    System.out.println(path);
     File file = new File(path);
     int size = (int) file.length();
     byte[] bytes = new byte[size];
