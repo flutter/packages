@@ -58,10 +58,10 @@ public class FileUtilsTest {
     contentResolver = spy(context.getContentResolver());
     shadowContentResolver = shadowOf(context.getContentResolver());
     ShadowMimeTypeMap mimeTypeMap = shadowOf(MimeTypeMap.getSingleton());
-    mimeTypeMap.addExtensionMimeTypMapping("txt", "document/txt");
-    mimeTypeMap.addExtensionMimeTypMapping("jpg", "image/jpeg");
-    mimeTypeMap.addExtensionMimeTypMapping("png", "image/png");
-    mimeTypeMap.addExtensionMimeTypMapping("webp", "image/webp");
+    mimeTypeMap.addExtensionMimeTypeMapping("txt", "document/txt");
+    mimeTypeMap.addExtensionMimeTypeMapping("jpg", "image/jpeg");
+    mimeTypeMap.addExtensionMimeTypeMapping("png", "image/png");
+    mimeTypeMap.addExtensionMimeTypeMapping("webp", "image/webp");
   }
 
   @Test
