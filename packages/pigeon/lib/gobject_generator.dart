@@ -1064,7 +1064,7 @@ void _writeCodec(GObjectOptions generatorOptions, Root root, Indent indent,
         _snakeCaseFromCamelCase(customClassName);
     indent.newln();
     indent.writeScoped(
-        'static gboolean write_$snakeCustomClassName(FlStandardMessageCodec* codec, GByteArray* buffer, $customClassName* value, GError** error) {',
+        'static gboolean ${methodPrefix}_write_$snakeCustomClassName(FlStandardMessageCodec* codec, GByteArray* buffer, $customClassName* value, GError** error) {',
         '}', () {
       indent.writeln('uint8_t type = ${customClass.enumeration};');
       indent.writeln('g_byte_array_append(buffer, &type, sizeof(uint8_t));');
@@ -1092,7 +1092,7 @@ void _writeCodec(GObjectOptions generatorOptions, Root root, Indent indent,
             final String castMacro =
                 _getClassCastMacro(module, customClass.name);
             indent.writeln(
-                'return write_$snakeCustomClassName(codec, buffer, $castMacro(fl_value_get_custom_value_object(value)), error);');
+                'return ${methodPrefix}_write_$snakeCustomClassName(codec, buffer, $castMacro(fl_value_get_custom_value_object(value)), error);');
           });
         }
       });
@@ -1109,7 +1109,7 @@ void _writeCodec(GObjectOptions generatorOptions, Root root, Indent indent,
         _snakeCaseFromCamelCase(customClassName);
     indent.newln();
     indent.writeScoped(
-        'static FlValue* read_$snakeCustomClassName(FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset, GError** error) {',
+        'static FlValue* ${methodPrefix}_read_$snakeCustomClassName(FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset, GError** error) {',
         '}', () {
       indent.writeln(
           'g_autoptr(FlValue) values = fl_standard_message_codec_read_value(codec, buffer, offset, error);');
@@ -1142,7 +1142,7 @@ void _writeCodec(GObjectOptions generatorOptions, Root root, Indent indent,
         indent.writeln('case ${customClass.enumeration}:');
         indent.nest(1, () {
           indent.writeln(
-              'return read_$snakeCustomClassName(codec, buffer, offset, error);');
+              'return ${methodPrefix}_read_$snakeCustomClassName(codec, buffer, offset, error);');
         });
       }
 
