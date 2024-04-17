@@ -82,7 +82,8 @@ static FlValue* pigeon_example_package_message_data_to_list(
   fl_value_append_take(values, self->description != nullptr
                                    ? fl_value_new_string(self->description)
                                    : fl_value_new_null());
-  fl_value_append_take(values, fl_value_new_int(self->code));
+  fl_value_append_take(values,
+                       fl_value_new_int(static_cast<int64_t>(self->code)));
   fl_value_append_take(values, fl_value_ref(self->data));
   return values;
 }
@@ -118,7 +119,8 @@ G_DEFINE_TYPE(PigeonExamplePackageExampleHostApiCodec,
               pigeon_example_package_example_host_api_codec,
               fl_standard_message_codec_get_type())
 
-static gboolean write_pigeon_example_package_message_data(
+static gboolean
+pigeon_example_package_example_host_api_write_pigeon_example_package_message_data(
     FlStandardMessageCodec* codec, GByteArray* buffer,
     PigeonExamplePackageMessageData* value, GError** error) {
   uint8_t type = 128;
@@ -134,7 +136,7 @@ static gboolean pigeon_example_package_example_host_api_write_value(
   if (fl_value_get_type(value) == FL_VALUE_TYPE_CUSTOM) {
     switch (fl_value_get_custom_type(value)) {
       case 128:
-        return write_pigeon_example_package_message_data(
+        return pigeon_example_package_example_host_api_write_pigeon_example_package_message_data(
             codec, buffer,
             PIGEON_EXAMPLE_PACKAGE_MESSAGE_DATA(
                 fl_value_get_custom_value_object(value)),
@@ -147,7 +149,8 @@ static gboolean pigeon_example_package_example_host_api_write_value(
       ->write_value(codec, buffer, value, error);
 }
 
-static FlValue* read_pigeon_example_package_message_data(
+static FlValue*
+pigeon_example_package_example_host_api_read_pigeon_example_package_message_data(
     FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
     GError** error) {
   g_autoptr(FlValue) values =
@@ -172,8 +175,8 @@ static FlValue* pigeon_example_package_example_host_api_read_value_of_type(
     GError** error) {
   switch (type) {
     case 128:
-      return read_pigeon_example_package_message_data(codec, buffer, offset,
-                                                      error);
+      return pigeon_example_package_example_host_api_read_pigeon_example_package_message_data(
+          codec, buffer, offset, error);
     default:
       return FL_STANDARD_MESSAGE_CODEC_CLASS(
                  pigeon_example_package_example_host_api_codec_parent_class)
