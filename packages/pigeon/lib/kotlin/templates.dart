@@ -37,6 +37,17 @@ class $instanceManagerClassName(private val finalizationListener: $_finalization
   private var nextIdentifier: Long = minHostCreatedIdentifier
   private var hasFinalizationListenerStopped = false
 
+  /**
+   * Modifies the time interval used to define how often this instance removes garbage collected
+   * weak references to native Android objects that this instance was managing.
+   */
+  var clearFinalizedWeakReferencesInterval: Long = 3000
+    set(value) {
+      handler.removeCallbacks { this.releaseAllFinalizedInstances() }
+      field = value
+      releaseAllFinalizedInstances()
+    }
+
   init {
     handler.postDelayed(
       { releaseAllFinalizedInstances() },
@@ -50,7 +61,6 @@ class $instanceManagerClassName(private val finalizationListener: $_finalization
     // Host uses identifiers >= 2^16 and Dart is expected to use values n where,
     // 0 <= n < 2^16.
     private const val minHostCreatedIdentifier: Long = 65536
-    private const val clearFinalizedWeakReferencesInterval: Long = 3000
     private const val tag = "$instanceManagerClassName"
 
     /**
