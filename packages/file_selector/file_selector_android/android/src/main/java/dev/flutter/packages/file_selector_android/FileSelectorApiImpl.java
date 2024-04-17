@@ -204,7 +204,6 @@ public class FileSelectorApiImpl implements GeneratedFileSelectorApi.FileSelecto
             public void onResult(int resultCode, @Nullable Intent data) {
               if (resultCode == Activity.RESULT_OK && data != null) {
                 final Uri uri = data.getData();
-                System.out.println(uri);
                 final Uri docUri = DocumentsContract.buildDocumentUriUsingTree(uri, DocumentsContract.getTreeDocumentId(uri));
                 try {
                   final String path = FileUtils.getPathFromUri(activityPluginBinding.getActivity(), docUri);
@@ -339,7 +338,6 @@ public class FileSelectorApiImpl implements GeneratedFileSelectorApi.FileSelecto
       return null;
     }
 
-    System.out.println(uri);
     final String uriPath = FileUtils.getPathFromCopyOfFileFromUri(activityPluginBinding.getActivity(), uri);
 
     return new GeneratedFileSelectorApi.FileResponse.Builder()

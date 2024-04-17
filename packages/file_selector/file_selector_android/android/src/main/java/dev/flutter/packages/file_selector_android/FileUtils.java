@@ -49,9 +49,6 @@ public class FileUtils {
     /** URI authority that represents access to external storage providers. */
     public static String EXTERNAL_DOCUMENT_AUTHORITY = "com.android.externalstorage.documents";
 
-    /** URI authority that represents a media document. */
-    public static String MEDIA_DOCUMENT_AUTHORITY = "com.android.providers.media.documents";
-
     /**
      * Retrieves path of directory represented by the specified {@code Uri}.
      * 
@@ -62,52 +59,22 @@ public class FileUtils {
      * <p>Will return the path for on-device directories, but does not handle external storage volumes.
      */
     public static String getPathFromUri(Context context, Uri uri) {
-                    System.out.println("CAMILLE AA");
-
         String uriAuthority = uri.getAuthority();
-            System.out.println("CAMILLE AB");
 
         if (uriAuthority.equals(EXTERNAL_DOCUMENT_AUTHORITY)) {
-                                    System.out.println("CAMILLE AC");
-
             String uriDocumentId = DocumentsContract.getDocumentId(uri);
-            System.out.println(uriDocumentId);
-                        System.out.println("CAMILLE AD");
-
             String documentStorageVolume = uriDocumentId.split(":")[0];
-            System.out.println("CAMILLE A");
 
             // Non-primary storage volumes come from SD cards, USB drives, etc. and are
             // not handled here.
             if (!documentStorageVolume.equals("primary")) {
-                            System.out.println("CAMILLE B");
-
                 throw new UnsupportedOperationException("Retrieving the path of a document from storage volume " + documentStorageVolume + " is unsupported by this plugin.");
             }
             String innermostDirectoryName = uriDocumentId.split(":")[1];
             String externalStorageDirectory = Environment.getExternalStorageDirectory().getPath();
-            System.out.println("CAMILLE C");
 
             return externalStorageDirectory + "/" + innermostDirectoryName;
         }
-        // } else if (uriAuthority.equals(MEDIA_DOCUMENT_AUTHORITY)) {
-        //     System.out.println("HERE!!!!!11");
-        //     String uriDocumentId = DocumentsContract.getDocumentId(uri);
-        //     String documentStorageVolume = uriDocumentId.split(":")[0];
-        //     ContentResolver contentResolver = context.getContentResolver();
-
-        //     // This makes an assumption that the URI has the content scheme, which we can safely
-        //     // assume since this method only supports finding paths of URIs retrieved from
-        //     // the Intents ACTION_OPEN_FILE(S) and ACTION_OPEN_DOCUMENT_TREE.
-        //     Cursor cursor = contentResolver.query(uri, null, null, null, null, null);
-
-        //     if (cursor != null && cursor.moveToFirst()) {
-        //         return cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.RELATIVE_PATH));
-        //     } else {
-        //         // Unable to retrieve path of file using cursor.
-        //         return null;
-        //     }
-        // } 
         else {
             throw new UnsupportedOperationException("Retrieving the path from URIs with authority " + uriAuthority.toString() + " is unsupported by this plugin.");
         }
@@ -131,8 +98,6 @@ public class FileUtils {
         String uuid = UUID.randomUUID().toString();
         File targetDirectory = new File(context.getCacheDir(), uuid);
         targetDirectory.mkdir();
-        // TODO(camsim99): according to the docs, `deleteOnExit` does not work reliably on Android; we should preferably
-        // just clear the picked files after the app startup.
         targetDirectory.deleteOnExit();
         String fileName = getFileName(context, uri);
         String extension = getFileExtension(context, uri);
@@ -148,9 +113,11 @@ public class FileUtils {
         }
 
         File file = new File(targetDirectory, fileName);
+
         try (OutputStream outputStream = new FileOutputStream(file)) {
             copy(inputStream, outputStream);
             return file.getPath();
+
         }
         } catch (IOException e) {
         // If closing the output stream fails, we cannot be sure that the
@@ -173,13 +140,9 @@ public class FileUtils {
 
         try {
         if (uriFile.getScheme().equals(ContentResolver.SCHEME_CONTENT)) {
-            System.out.println("CAMILLE 1");
             final MimeTypeMap mime = MimeTypeMap.getSingleton();
-            System.out.println(uriFile);
-            System.out.println(context.getContentResolver().getType(uriFile));
             extension = mime.getExtensionFromMimeType(context.getContentResolver().getType(uriFile));
         } else {
-             System.out.println("CAMILLE 2");
             extension =
                 MimeTypeMap.getFileExtensionFromUrl(
                     Uri.fromFile(new File(uriFile.getPath())).toString());

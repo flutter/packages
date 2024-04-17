@@ -52,7 +52,6 @@ import org.mockito.stubbing.Answer;
 public class FileUtilsTest {
 
   private Context context;
-  final private String externalStorageDirectoryPath = Environment.getExternalStorageDirectory().getPath();
   ShadowContentResolver shadowContentResolver;
   ContentResolver contentResolver;
 
@@ -79,19 +78,11 @@ public class FileUtilsTest {
                 (Answer<String>)
                     invocation -> "primary:Documents/test");
       String path = FileUtils.getPathFromUri(context, uri);
+      String externalStorageDirectoryPath = Environment.getExternalStorageDirectory().getPath();
       String expectedPath = externalStorageDirectoryPath + "/Documents/test";
       assertEquals(path, expectedPath);
     }
   }
-
-//  @Test
-//   public void getPathFromUri_returnsExpectedPathForMediaDocumentUri() {
-//     // Uri that represents tex
-//     Uri uri = Uri.parse("content://com.android.providers.media.documents/document/document%3A35");
-//     String path = FileUtils.getPathFromUri(context, uri);
-//     String expectedPath = ""; // TODO
-//     assertEquals(path, expectedPath);
-//   }
 
   @Test
   public void getPathFromUri_throwExceptionForExternalDocumentUriWithNonPrimaryStorageVolume() {
@@ -115,15 +106,12 @@ public class FileUtilsTest {
 
   @Test
   public void getPathFromCopyOfFileFromUri_returnsPathWithContent() throws IOException {
-        Uri uri = Uri.parse("content://dummy/dummy.png");
-    Context mc = mock(Context.class);
-    ContentResolver mcr = mock(ContentResolver.class);
-    when(mc.getContentResolver()).thenReturn(mcr);
-    when(mcr.getType(uri)).thenReturn("image/png");
-    // when(contentResolver.getType(uri)).thenReturn("image/png"); // try using mock context
-    // shadowContentResolver.registerInputStream(
-    //     uri, new ByteArrayInputStream("fileStream".getBytes(UTF_8)));
-    String path = FileUtils.getPathFromCopyOfFileFromUri(mc, uri);
+    Uri uri = MockContentProvider.PNG_URI;
+    Robolectric.buildContentProvider(MockContentProvider.class).create("dummy");
+    shadowContentResolver.registerInputStream(
+        uri, new ByteArrayInputStream("fileStream".getBytes(UTF_8)));
+
+    String path = FileUtils.getPathFromCopyOfFileFromUri(context, uri);
     File file = new File(path);
     int size = (int) file.length();
     byte[] bytes = new byte[size];
@@ -133,148 +121,79 @@ public class FileUtilsTest {
     buf.close();
 
     assertTrue(bytes.length > 0);
-    // String fileStream = new String(bytes, UTF_8);
-    // assertEquals("fileStream", fileStream);
+    String fileStream = new String(bytes, UTF_8);
+    assertEquals("fileStream", fileStream);
   }
 
+  @Test
+  public void getPathFromCopyOfFileFromUri_returnsNullPathWhenSecurityExceptionThrown() throws IOException {
+    Uri uri = Uri.parse("content://dummy/dummy.png");
 
-//   @Test
-//   public void getPathFromCopyOfFileFromUri_returnsNullPathWhenSecurityExceptionThrown() throws IOException {
-//     Uri uri = Uri.parse("content://dummy/dummy.png");
+    ContentResolver mockContentResolver = mock(ContentResolver.class);
+    when(mockContentResolver.openInputStream(any(Uri.class))).thenThrow(SecurityException.class);
 
-//     ContentResolver mockContentResolver = mock(ContentResolver.class);
-//     when(mockContentResolver.openInputStream(any(Uri.class))).thenThrow(SecurityException.class);
+    Context mockContext = mock(Context.class);
+    when(mockContext.getContentResolver()).thenReturn(mockContentResolver);
 
-//     Context mockContext = mock(Context.class);
-//     when(mockContext.getContentResolver()).thenReturn(mockContentResolver);
+    String path = FileUtils.getPathFromCopyOfFileFromUri(mockContext, uri);
 
-//     String path = FileUtils.getPathFromCopyOfFileFromUri(mockContext, uri);
+    assertNull(path);
+  }
 
-//     assertNull(path);
-//   }
+  @Test
+  public void getFileExtension_returnsExpectedFileExtension() throws IOException {
+    Uri uri = MockContentProvider.TXT_URI;
+    Robolectric.buildContentProvider(MockContentProvider.class).create("dummy");
+    shadowContentResolver.registerInputStream(
+        uri, new ByteArrayInputStream("fileStream".getBytes(UTF_8)));
 
-//   @Test
-//   public void getFileExtension_returnsExpectedTextFileExtension() throws IOException {
-//     Uri uri = Uri.parse("content://document/dummy.txt");
-//     shadowContentResolver.registerInputStream(
-//         uri, new ByteArrayInputStream("fileStream".getBytes(UTF_8)));
-//     String path = FileUtils.getPathFromCopyOfFileFromUri(context, uri);
-//     assertTrue(path.endsWith(".txt"));
-//   }
+    String path = FileUtils.getPathFromCopyOfFileFromUri(context, uri);
+    System.out.println(path);
+    assertTrue(path.endsWith(".txt"));
+  }
 
-//   @Test
-//   public void getFileExtension_returnsExpectedImageExtension() throws IOException {
-//     Uri uri = Uri.parse("content://dummy/dummy.png");
-//     shadowContentResolver.registerInputStream(
-//         uri, new ByteArrayInputStream("fileStream".getBytes(UTF_8)));
-//     String path = FileUtils.getPathFromCopyOfFileFromUri(context, uri);
-//     assertTrue(path.endsWith(".jpg"));
-//   }
+  @Test
+  public void getFileName_returnsExpectedName() throws IOException {
+    Uri uri = MockContentProvider.PNG_URI;
+    Robolectric.buildContentProvider(MockContentProvider.class).create("dummy");
+    shadowContentResolver.registerInputStream(
+        uri, new ByteArrayInputStream("fileStream".getBytes(UTF_8)));
+    String path = FileUtils.getPathFromCopyOfFileFromUri(context, uri);
+    assertTrue(path.endsWith("a.b.png"));
+  }
 
-//   @Test
-//   public void getFileName_returnsExpectedName() throws IOException {
-//     Uri uri = MockContentProvider.PNG_URI;
-//     Robolectric.buildContentProvider(MockContentProvider.class).create("dummy");
-//     shadowContentResolver.registerInputStream(
-//         uri, new ByteArrayInputStream("fileStream".getBytes(UTF_8)));
-//     String path = FileUtils.getPathFromCopyOfFileFromUri(context, uri);
-//     assertTrue(path.endsWith("a.b.png"));
-//   }
+  @Test
+  public void  getPathFromCopyOfFileFromUri_returnsExpectedPathForUriWithNoExtensionInBaseName() throws IOException {
+    Uri uri = MockContentProvider.NO_EXTENSION_URI;
+    Robolectric.buildContentProvider(MockContentProvider.class).create("dummy");
+    shadowContentResolver.registerInputStream(
+        uri, new ByteArrayInputStream("fileStream".getBytes(UTF_8)));
+    String path = FileUtils.getPathFromCopyOfFileFromUri(context, uri);
+    assertTrue(path.endsWith("abc.png"));
+  }
 
-//   @Test
-//   public void  getPathFromCopyOfFileFromUri_returnsExpectedPathForUriWithNoExtensionInBaseName() throws IOException {
-//     Uri uri = MockContentProvider.NO_EXTENSION_URI;
-//     Robolectric.buildContentProvider(MockContentProvider.class).create("dummy");
-//     shadowContentResolver.registerInputStream(
-//         uri, new ByteArrayInputStream("fileStream".getBytes(UTF_8)));
-//     String path = FileUtils.getPathFromCopyOfFileFromUri(context, uri);
-//     assertTrue(path.endsWith("abc.png"));
-//   }
+  @Test
+  public void getPathFromCopyOfFileFromUri_returnsExpectedPathForUriWithMismatchedTypeToFile() throws IOException {
+    Uri uri = MockContentProvider.WEBP_URI;
+    Robolectric.buildContentProvider(MockContentProvider.class).create("dummy");
+    shadowContentResolver.registerInputStream(
+        uri, new ByteArrayInputStream("fileStream".getBytes(UTF_8)));
+    String path = FileUtils.getPathFromCopyOfFileFromUri(context, uri);
+    assertTrue(path.endsWith("c.d.webp"));
+  }
 
-//   @Test
-//   public void getPathFromCopyOfFileFromUri_returnsExpectedPathForUriWithMismatchedTypeToFile() throws IOException {
-//     Uri uri = MockContentProvider.WEBP_URI;
-//     Robolectric.buildContentProvider(MockContentProvider.class).create("dummy");
-//     shadowContentResolver.registerInputStream(
-//         uri, new ByteArrayInputStream("fileStream".getBytes(UTF_8)));
-//     String path = FileUtils.getPathFromCopyOfFileFromUri(context, uri);
-//     assertTrue(path.endsWith("c.d.webp"));
-//   }
-
-//   @Test
-//   public void getPathFromCopyOfFileFromUri_returnsExpectedPathForUriWithUnknownType() throws IOException {
-//     Uri uri = MockContentProvider.UNKNOWN_URI;
-//     Robolectric.buildContentProvider(MockContentProvider.class).create("dummy");
-//     shadowContentResolver.registerInputStream(
-//         uri, new ByteArrayInputStream("fileStream".getBytes(UTF_8)));
-//     String path = FileUtils.getPathFromCopyOfFileFromUri(context, uri);
-//     assertTrue(path.endsWith("e.f.g"));
-//   }
-
-  // @Implements(ShadowContentResolver.class)
-  // private static class TestShadowContentResolver extends ShadowContentResolver {
-  // public static final Uri PNG_URI_2 = Uri.parse("content://dummy/dummy.png");
-  // public static final Uri TXT_URI = Uri.parse("content://document/dummy.txt");
-  //   public static final Uri PNG_URI = Uri.parse("content://dummy/a.b.png");
-  //   public static final Uri WEBP_URI = Uri.parse("content://dummy/c.d.png");
-  //   public static final Uri UNKNOWN_URI = Uri.parse("content://dummy/e.f.g");
-  //   public static final Uri NO_EXTENSION_URI = Uri.parse("content://dummy/abc");
-
-  //   // @Override
-  //   // public boolean onCreate() {
-  //   //   return true;
-  //   // }
-
-  //   // @Nullable
-  //   // @Override
-  //   // public Cursor query(
-  //   //     @NonNull Uri uri,
-  //   //     @Nullable String[] projection,
-  //   //     @Nullable String selection,
-  //   //     @Nullable String[] selectionArgs,
-  //   //     @Nullable String sortOrder) {
-  //   //   MatrixCursor cursor = new MatrixCursor(new String[] {MediaStore.MediaColumns.DISPLAY_NAME});
-  //   //   cursor.addRow(new Object[] {uri.getLastPathSegment()});
-  //   //   return cursor;
-  //   // }
-
-  //   @Nullable
-  //   @Implementation
-  //   public String getType(@NonNull Uri uri) {
-  //     System.out.println("HERE!!!!!");
-  //     if (uri.equals(TXT_URI)) return "document/txt";
-  //     if (uri.equals(PNG_URI)) return "image/png";
-  //     if (uri.equals(PNG_URI_2)) return "image/png";
-  //     if (uri.equals(WEBP_URI)) return "image/webp";
-  //     if (uri.equals(NO_EXTENSION_URI)) return "image/png";
-  //     return null;
-  //   }
-
-  //   // @Nullable
-  //   // @Override
-  //   // public Uri insert(@NonNull Uri uri, @Nullable ContentValues values) {
-  //   //   return null;
-  //   // }
-
-  //   // @Override
-  //   // public int delete(
-  //   //     @NonNull Uri uri, @Nullable String selection, @Nullable String[] selectionArgs) {
-  //   //   return 0;
-  //   // }
-
-  //   @Override
-  //   public int update(
-  //       @NonNull Uri uri,
-  //       @Nullable ContentValues values,
-  //       @Nullable String selection,
-  //       @Nullable String[] selectionArgs) {
-  //     return 0;
-  //   }
-  // }
-  
+  @Test
+  public void getPathFromCopyOfFileFromUri_returnsExpectedPathForUriWithUnknownType() throws IOException {
+    Uri uri = MockContentProvider.UNKNOWN_URI;
+    Robolectric.buildContentProvider(MockContentProvider.class).create("dummy");
+    shadowContentResolver.registerInputStream(
+        uri, new ByteArrayInputStream("fileStream".getBytes(UTF_8)));
+    String path = FileUtils.getPathFromCopyOfFileFromUri(context, uri);
+    assertTrue(path.endsWith("e.f.g"));
+  }
 
   private static class MockContentProvider extends ContentProvider {
-    public static final Uri TXT_URI = Uri.parse("content://document/dummy.txt");
+    public static final Uri TXT_URI = Uri.parse("content://dummy/dummydocument");
     public static final Uri PNG_URI = Uri.parse("content://dummy/a.b.png");
     public static final Uri WEBP_URI = Uri.parse("content://dummy/c.d.png");
     public static final Uri UNKNOWN_URI = Uri.parse("content://dummy/e.f.g");
@@ -301,7 +220,6 @@ public class FileUtilsTest {
     @Nullable
     @Override
     public String getType(@NonNull Uri uri) {
-      System.out.println("HERE");
       if (uri.equals(TXT_URI)) return "document/txt";
       if (uri.equals(PNG_URI)) return "image/png";
       if (uri.equals(WEBP_URI)) return "image/webp";
