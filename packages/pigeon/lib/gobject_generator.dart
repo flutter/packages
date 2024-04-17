@@ -859,7 +859,7 @@ class GObjectSourceGenerator extends StructuredGenerator<GObjectOptions> {
 
       indent.newln();
       indent.writeScoped(
-          'static void ${methodName}_cb(FlBasicMessageChannel* channel, FlValue* message_, FlBasicMessageChannelResponseHandle* response_handle, gpointer user_data) {',
+          'static void ${methodPrefix}_${methodName}_cb(FlBasicMessageChannel* channel, FlValue* message_, FlBasicMessageChannelResponseHandle* response_handle, gpointer user_data) {',
           '}', () {
         _writeCastSelf(indent, module, api.name, 'user_data');
 
@@ -979,7 +979,7 @@ class GObjectSourceGenerator extends StructuredGenerator<GObjectOptions> {
         indent.writeln(
             'self->${methodName}_channel = fl_basic_message_channel_new(messenger, "$channelName", FL_MESSAGE_CODEC(codec));');
         indent.writeln(
-            'fl_basic_message_channel_set_message_handler(self->${methodName}_channel, ${methodName}_cb, self, nullptr);');
+            'fl_basic_message_channel_set_message_handler(self->${methodName}_channel, ${methodPrefix}_${methodName}_cb, self, nullptr);');
       }
 
       indent.newln();

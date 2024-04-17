@@ -395,7 +395,7 @@ struct _PigeonExamplePackageExampleHostApi {
 G_DEFINE_TYPE(PigeonExamplePackageExampleHostApi,
               pigeon_example_package_example_host_api, G_TYPE_OBJECT)
 
-static void get_host_language_cb(
+static void pigeon_example_package_example_host_api_get_host_language_cb(
     FlBasicMessageChannel* channel, FlValue* message_,
     FlBasicMessageChannelResponseHandle* response_handle, gpointer user_data) {
   PigeonExamplePackageExampleHostApi* self =
@@ -421,9 +421,9 @@ static void get_host_language_cb(
   }
 }
 
-static void add_cb(FlBasicMessageChannel* channel, FlValue* message_,
-                   FlBasicMessageChannelResponseHandle* response_handle,
-                   gpointer user_data) {
+static void pigeon_example_package_example_host_api_add_cb(
+    FlBasicMessageChannel* channel, FlValue* message_,
+    FlBasicMessageChannelResponseHandle* response_handle, gpointer user_data) {
   PigeonExamplePackageExampleHostApi* self =
       PIGEON_EXAMPLE_PACKAGE_EXAMPLE_HOST_API(user_data);
 
@@ -450,7 +450,7 @@ static void add_cb(FlBasicMessageChannel* channel, FlValue* message_,
   }
 }
 
-static void send_message_cb(
+static void pigeon_example_package_example_host_api_send_message_cb(
     FlBasicMessageChannel* channel, FlValue* message_,
     FlBasicMessageChannelResponseHandle* response_handle, gpointer user_data) {
   PigeonExamplePackageExampleHostApi* self =
@@ -512,18 +512,22 @@ PigeonExamplePackageExampleHostApi* pigeon_example_package_example_host_api_new(
                                    "ExampleHostApi.getHostLanguage",
                                    FL_MESSAGE_CODEC(codec));
   fl_basic_message_channel_set_message_handler(
-      self->get_host_language_channel, get_host_language_cb, self, nullptr);
+      self->get_host_language_channel,
+      pigeon_example_package_example_host_api_get_host_language_cb, self,
+      nullptr);
   self->add_channel = fl_basic_message_channel_new(
       messenger, "dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.add",
       FL_MESSAGE_CODEC(codec));
-  fl_basic_message_channel_set_message_handler(self->add_channel, add_cb, self,
-                                               nullptr);
+  fl_basic_message_channel_set_message_handler(
+      self->add_channel, pigeon_example_package_example_host_api_add_cb, self,
+      nullptr);
   self->send_message_channel = fl_basic_message_channel_new(
       messenger,
       "dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.sendMessage",
       FL_MESSAGE_CODEC(codec));
-  fl_basic_message_channel_set_message_handler(self->send_message_channel,
-                                               send_message_cb, self, nullptr);
+  fl_basic_message_channel_set_message_handler(
+      self->send_message_channel,
+      pigeon_example_package_example_host_api_send_message_cb, self, nullptr);
 
   return self;
 }
