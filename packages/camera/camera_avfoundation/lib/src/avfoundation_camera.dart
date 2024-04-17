@@ -21,6 +21,7 @@ const MethodChannel _channel =
 
 /// An iOS implementation of [CameraPlatform] based on AVFoundation.
 class AVFoundationCamera extends CameraPlatform {
+  /// Creates a new AVFoundation-based [CameraPlatform] implementation instance.
   AVFoundationCamera({@visibleForTesting CameraApi? api})
       : _hostApi = api ?? CameraApi();
 
