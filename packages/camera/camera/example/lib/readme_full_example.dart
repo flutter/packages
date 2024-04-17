@@ -4,7 +4,6 @@
 
 // #docregion FullAppExample
 import 'package:camera/camera.dart';
-import 'package:camera_platform_interface/camera_platform_interface.dart';
 import 'package:flutter/material.dart';
 
 late List<CameraDescription> _cameras;
@@ -31,16 +30,7 @@ class _CameraAppState extends State<CameraApp> {
   @override
   void initState() {
     super.initState();
-    controller = CameraController.withSettings(
-      _cameras[0],
-      const MediaSettings(
-        resolutionPreset: ResolutionPreset.low,
-        fps: 15,
-        videoBitrate: 200000,
-        audioBitrate: 32000,
-        enableAudio: true,
-      ),
-    );
+    controller = CameraController(_cameras[0], ResolutionPreset.max);
     controller.initialize().then((_) {
       if (!mounted) {
         return;
