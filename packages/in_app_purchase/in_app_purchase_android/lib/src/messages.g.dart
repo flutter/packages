@@ -49,9 +49,23 @@ enum PlatformBillingChoiceMode {
   userChoiceBilling,
 }
 
-/// Pigeon version of Java Product.
-class PlatformProduct {
-  PlatformProduct({
+/// Pigeon version of Java Purchase.PurchaseState.
+enum PlatformPurchaseState {
+  unspecified,
+  purchased,
+  pending,
+}
+
+/// Pigeon version of Java ProductDetails.RecurrenceMode.
+enum PlatformRecurrenceMode {
+  finiteRecurring,
+  infiniteRecurring,
+  nonRecurring,
+}
+
+/// Pigeon version of Java QueryProductDetailsParams.Product.
+class PlatformQueryProduct {
+  PlatformQueryProduct({
     required this.productId,
     required this.productType,
   });
@@ -67,11 +81,38 @@ class PlatformProduct {
     ];
   }
 
-  static PlatformProduct decode(Object result) {
+  static PlatformQueryProduct decode(Object result) {
     result as List<Object?>;
-    return PlatformProduct(
+    return PlatformQueryProduct(
       productId: result[0]! as String,
       productType: PlatformProductType.values[result[1]! as int],
+    );
+  }
+}
+
+/// Pigeon version of Java AccountIdentifiers.
+class PlatformAccountIdentifiers {
+  PlatformAccountIdentifiers({
+    this.obfuscatedAccountId,
+    this.obfuscatedProfileId,
+  });
+
+  String? obfuscatedAccountId;
+
+  String? obfuscatedProfileId;
+
+  Object encode() {
+    return <Object?>[
+      obfuscatedAccountId,
+      obfuscatedProfileId,
+    ];
+  }
+
+  static PlatformAccountIdentifiers decode(Object result) {
+    result as List<Object?>;
+    return PlatformAccountIdentifiers(
+      obfuscatedAccountId: result[0] as String?,
+      obfuscatedProfileId: result[1] as String?,
     );
   }
 }
@@ -103,24 +144,110 @@ class PlatformBillingResult {
   }
 }
 
+/// Pigeon version of Java ProductDetails.OneTimePurchaseOfferDetails.
+class PlatformOneTimePurchaseOfferDetails {
+  PlatformOneTimePurchaseOfferDetails({
+    required this.priceAmountMicros,
+    required this.formattedPrice,
+    required this.priceCurrencyCode,
+  });
+
+  int priceAmountMicros;
+
+  String formattedPrice;
+
+  String priceCurrencyCode;
+
+  Object encode() {
+    return <Object?>[
+      priceAmountMicros,
+      formattedPrice,
+      priceCurrencyCode,
+    ];
+  }
+
+  static PlatformOneTimePurchaseOfferDetails decode(Object result) {
+    result as List<Object?>;
+    return PlatformOneTimePurchaseOfferDetails(
+      priceAmountMicros: result[0]! as int,
+      formattedPrice: result[1]! as String,
+      priceCurrencyCode: result[2]! as String,
+    );
+  }
+}
+
+/// Pigeon version of Java ProductDetails.
+class PlatformProductDetails {
+  PlatformProductDetails({
+    required this.description,
+    required this.name,
+    required this.productId,
+    required this.productType,
+    required this.title,
+    this.oneTimePurchaseOfferDetails,
+    this.subscriptionOfferDetails,
+  });
+
+  String description;
+
+  String name;
+
+  String productId;
+
+  PlatformProductType productType;
+
+  String title;
+
+  PlatformOneTimePurchaseOfferDetails? oneTimePurchaseOfferDetails;
+
+  List<PlatformSubscriptionOfferDetails?>? subscriptionOfferDetails;
+
+  Object encode() {
+    return <Object?>[
+      description,
+      name,
+      productId,
+      productType.index,
+      title,
+      oneTimePurchaseOfferDetails?.encode(),
+      subscriptionOfferDetails,
+    ];
+  }
+
+  static PlatformProductDetails decode(Object result) {
+    result as List<Object?>;
+    return PlatformProductDetails(
+      description: result[0]! as String,
+      name: result[1]! as String,
+      productId: result[2]! as String,
+      productType: PlatformProductType.values[result[3]! as int],
+      title: result[4]! as String,
+      oneTimePurchaseOfferDetails: result[5] != null
+          ? PlatformOneTimePurchaseOfferDetails.decode(
+              result[5]! as List<Object?>)
+          : null,
+      subscriptionOfferDetails: (result[6] as List<Object?>?)
+          ?.cast<PlatformSubscriptionOfferDetails?>(),
+    );
+  }
+}
+
 /// Pigeon version of ProductDetailsResponseWrapper, which contains the
 /// components of the Java ProductDetailsResponseListener callback.
 class PlatformProductDetailsResponse {
   PlatformProductDetailsResponse({
     required this.billingResult,
-    required this.productDetailsJsonList,
+    required this.productDetails,
   });
 
   PlatformBillingResult billingResult;
 
-  /// A JSON-compatible list of details, where each entry in the list is a
-  /// Map<String, Object?> JSON encoding of the product details.
-  List<Object?> productDetailsJsonList;
+  List<PlatformProductDetails?> productDetails;
 
   Object encode() {
     return <Object?>[
       billingResult.encode(),
-      productDetailsJsonList,
+      productDetails,
     ];
   }
 
@@ -128,7 +255,8 @@ class PlatformProductDetailsResponse {
     result as List<Object?>;
     return PlatformProductDetailsResponse(
       billingResult: PlatformBillingResult.decode(result[0]! as List<Object?>),
-      productDetailsJsonList: (result[1] as List<Object?>?)!.cast<Object?>(),
+      productDetails:
+          (result[1] as List<Object?>?)!.cast<PlatformProductDetails?>(),
     );
   }
 }
@@ -243,24 +371,209 @@ class PlatformBillingFlowParams {
   }
 }
 
+/// Pigeon version of Java ProductDetails.PricingPhase.
+class PlatformPricingPhase {
+  PlatformPricingPhase({
+    required this.billingCycleCount,
+    required this.recurrenceMode,
+    required this.priceAmountMicros,
+    required this.billingPeriod,
+    required this.formattedPrice,
+    required this.priceCurrencyCode,
+  });
+
+  int billingCycleCount;
+
+  PlatformRecurrenceMode recurrenceMode;
+
+  int priceAmountMicros;
+
+  String billingPeriod;
+
+  String formattedPrice;
+
+  String priceCurrencyCode;
+
+  Object encode() {
+    return <Object?>[
+      billingCycleCount,
+      recurrenceMode.index,
+      priceAmountMicros,
+      billingPeriod,
+      formattedPrice,
+      priceCurrencyCode,
+    ];
+  }
+
+  static PlatformPricingPhase decode(Object result) {
+    result as List<Object?>;
+    return PlatformPricingPhase(
+      billingCycleCount: result[0]! as int,
+      recurrenceMode: PlatformRecurrenceMode.values[result[1]! as int],
+      priceAmountMicros: result[2]! as int,
+      billingPeriod: result[3]! as String,
+      formattedPrice: result[4]! as String,
+      priceCurrencyCode: result[5]! as String,
+    );
+  }
+}
+
+/// Pigeon version of Java Purchase.
+///
+/// See also PurchaseWrapper on the Dart side.
+class PlatformPurchase {
+  PlatformPurchase({
+    this.orderId,
+    required this.packageName,
+    required this.purchaseTime,
+    required this.purchaseToken,
+    required this.signature,
+    required this.products,
+    required this.isAutoRenewing,
+    required this.originalJson,
+    required this.developerPayload,
+    required this.isAcknowledged,
+    required this.quantity,
+    required this.purchaseState,
+    this.accountIdentifiers,
+  });
+
+  String? orderId;
+
+  String packageName;
+
+  int purchaseTime;
+
+  String purchaseToken;
+
+  String signature;
+
+  List<String?> products;
+
+  bool isAutoRenewing;
+
+  String originalJson;
+
+  String developerPayload;
+
+  bool isAcknowledged;
+
+  int quantity;
+
+  PlatformPurchaseState purchaseState;
+
+  PlatformAccountIdentifiers? accountIdentifiers;
+
+  Object encode() {
+    return <Object?>[
+      orderId,
+      packageName,
+      purchaseTime,
+      purchaseToken,
+      signature,
+      products,
+      isAutoRenewing,
+      originalJson,
+      developerPayload,
+      isAcknowledged,
+      quantity,
+      purchaseState.index,
+      accountIdentifiers?.encode(),
+    ];
+  }
+
+  static PlatformPurchase decode(Object result) {
+    result as List<Object?>;
+    return PlatformPurchase(
+      orderId: result[0] as String?,
+      packageName: result[1]! as String,
+      purchaseTime: result[2]! as int,
+      purchaseToken: result[3]! as String,
+      signature: result[4]! as String,
+      products: (result[5] as List<Object?>?)!.cast<String?>(),
+      isAutoRenewing: result[6]! as bool,
+      originalJson: result[7]! as String,
+      developerPayload: result[8]! as String,
+      isAcknowledged: result[9]! as bool,
+      quantity: result[10]! as int,
+      purchaseState: PlatformPurchaseState.values[result[11]! as int],
+      accountIdentifiers: result[12] != null
+          ? PlatformAccountIdentifiers.decode(result[12]! as List<Object?>)
+          : null,
+    );
+  }
+}
+
+/// Pigeon version of PurchaseHistoryRecord.
+///
+/// See also PurchaseHistoryRecordWrapper on the Dart side.
+class PlatformPurchaseHistoryRecord {
+  PlatformPurchaseHistoryRecord({
+    required this.quantity,
+    required this.purchaseTime,
+    this.developerPayload,
+    required this.originalJson,
+    required this.purchaseToken,
+    required this.signature,
+    required this.products,
+  });
+
+  int quantity;
+
+  int purchaseTime;
+
+  String? developerPayload;
+
+  String originalJson;
+
+  String purchaseToken;
+
+  String signature;
+
+  List<String?> products;
+
+  Object encode() {
+    return <Object?>[
+      quantity,
+      purchaseTime,
+      developerPayload,
+      originalJson,
+      purchaseToken,
+      signature,
+      products,
+    ];
+  }
+
+  static PlatformPurchaseHistoryRecord decode(Object result) {
+    result as List<Object?>;
+    return PlatformPurchaseHistoryRecord(
+      quantity: result[0]! as int,
+      purchaseTime: result[1]! as int,
+      developerPayload: result[2] as String?,
+      originalJson: result[3]! as String,
+      purchaseToken: result[4]! as String,
+      signature: result[5]! as String,
+      products: (result[6] as List<Object?>?)!.cast<String?>(),
+    );
+  }
+}
+
 /// Pigeon version of PurchasesHistoryResult, which contains the components of
 /// the Java PurchaseHistoryResponseListener callback.
 class PlatformPurchaseHistoryResponse {
   PlatformPurchaseHistoryResponse({
     required this.billingResult,
-    required this.purchaseHistoryRecordJsonList,
+    required this.purchases,
   });
 
   PlatformBillingResult billingResult;
 
-  /// A JSON-compatible list of purchase history records, where each entry in
-  /// the list is a Map<String, Object?> JSON encoding of the record.
-  List<Object?> purchaseHistoryRecordJsonList;
+  List<PlatformPurchaseHistoryRecord?> purchases;
 
   Object encode() {
     return <Object?>[
       billingResult.encode(),
-      purchaseHistoryRecordJsonList,
+      purchases,
     ];
   }
 
@@ -268,8 +581,8 @@ class PlatformPurchaseHistoryResponse {
     result as List<Object?>;
     return PlatformPurchaseHistoryResponse(
       billingResult: PlatformBillingResult.decode(result[0]! as List<Object?>),
-      purchaseHistoryRecordJsonList:
-          (result[1] as List<Object?>?)!.cast<Object?>(),
+      purchases:
+          (result[1] as List<Object?>?)!.cast<PlatformPurchaseHistoryRecord?>(),
     );
   }
 }
@@ -279,19 +592,17 @@ class PlatformPurchaseHistoryResponse {
 class PlatformPurchasesResponse {
   PlatformPurchasesResponse({
     required this.billingResult,
-    required this.purchasesJsonList,
+    required this.purchases,
   });
 
   PlatformBillingResult billingResult;
 
-  /// A JSON-compatible list of purchases, where each entry in the list is a
-  /// Map<String, Object?> JSON encoding of the product details.
-  List<Object?> purchasesJsonList;
+  List<PlatformPurchase?> purchases;
 
   Object encode() {
     return <Object?>[
       billingResult.encode(),
-      purchasesJsonList,
+      purchases,
     ];
   }
 
@@ -299,7 +610,50 @@ class PlatformPurchasesResponse {
     result as List<Object?>;
     return PlatformPurchasesResponse(
       billingResult: PlatformBillingResult.decode(result[0]! as List<Object?>),
-      purchasesJsonList: (result[1] as List<Object?>?)!.cast<Object?>(),
+      purchases: (result[1] as List<Object?>?)!.cast<PlatformPurchase?>(),
+    );
+  }
+}
+
+/// Pigeon version of Java ProductDetails.SubscriptionOfferDetails.
+class PlatformSubscriptionOfferDetails {
+  PlatformSubscriptionOfferDetails({
+    required this.basePlanId,
+    this.offerId,
+    required this.offerToken,
+    required this.offerTags,
+    required this.pricingPhases,
+  });
+
+  String basePlanId;
+
+  String? offerId;
+
+  String offerToken;
+
+  List<String?> offerTags;
+
+  List<PlatformPricingPhase?> pricingPhases;
+
+  Object encode() {
+    return <Object?>[
+      basePlanId,
+      offerId,
+      offerToken,
+      offerTags,
+      pricingPhases,
+    ];
+  }
+
+  static PlatformSubscriptionOfferDetails decode(Object result) {
+    result as List<Object?>;
+    return PlatformSubscriptionOfferDetails(
+      basePlanId: result[0]! as String,
+      offerId: result[1] as String?,
+      offerToken: result[2]! as String,
+      offerTags: (result[3] as List<Object?>?)!.cast<String?>(),
+      pricingPhases:
+          (result[4] as List<Object?>?)!.cast<PlatformPricingPhase?>(),
     );
   }
 }
@@ -309,22 +663,20 @@ class PlatformUserChoiceDetails {
   PlatformUserChoiceDetails({
     this.originalExternalTransactionId,
     required this.externalTransactionToken,
-    required this.productsJsonList,
+    required this.products,
   });
 
   String? originalExternalTransactionId;
 
   String externalTransactionToken;
 
-  /// A JSON-compatible list of products, where each entry in the list is a
-  /// Map<String, Object?> JSON encoding of the product.
-  List<Object?> productsJsonList;
+  List<PlatformUserChoiceProduct?> products;
 
   Object encode() {
     return <Object?>[
       originalExternalTransactionId,
       externalTransactionToken,
-      productsJsonList,
+      products,
     ];
   }
 
@@ -333,7 +685,40 @@ class PlatformUserChoiceDetails {
     return PlatformUserChoiceDetails(
       originalExternalTransactionId: result[0] as String?,
       externalTransactionToken: result[1]! as String,
-      productsJsonList: (result[2] as List<Object?>?)!.cast<Object?>(),
+      products:
+          (result[2] as List<Object?>?)!.cast<PlatformUserChoiceProduct?>(),
+    );
+  }
+}
+
+/// Pigeon version of UserChoiseDetails.Product.
+class PlatformUserChoiceProduct {
+  PlatformUserChoiceProduct({
+    required this.id,
+    this.offerToken,
+    required this.type,
+  });
+
+  String id;
+
+  String? offerToken;
+
+  PlatformProductType type;
+
+  Object encode() {
+    return <Object?>[
+      id,
+      offerToken,
+      type.index,
+    ];
+  }
+
+  static PlatformUserChoiceProduct decode(Object result) {
+    result as List<Object?>;
+    return PlatformUserChoiceProduct(
+      id: result[0]! as String,
+      offerToken: result[1] as String?,
+      type: PlatformProductType.values[result[2]! as int],
     );
   }
 }
@@ -342,29 +727,51 @@ class _InAppPurchaseApiCodec extends StandardMessageCodec {
   const _InAppPurchaseApiCodec();
   @override
   void writeValue(WriteBuffer buffer, Object? value) {
-    if (value is PlatformAlternativeBillingOnlyReportingDetailsResponse) {
+    if (value is PlatformAccountIdentifiers) {
       buffer.putUint8(128);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformBillingConfigResponse) {
+    } else if (value
+        is PlatformAlternativeBillingOnlyReportingDetailsResponse) {
       buffer.putUint8(129);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformBillingFlowParams) {
+    } else if (value is PlatformBillingConfigResponse) {
       buffer.putUint8(130);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformBillingResult) {
+    } else if (value is PlatformBillingFlowParams) {
       buffer.putUint8(131);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformProduct) {
+    } else if (value is PlatformBillingResult) {
       buffer.putUint8(132);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformProductDetailsResponse) {
+    } else if (value is PlatformOneTimePurchaseOfferDetails) {
       buffer.putUint8(133);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformPurchaseHistoryResponse) {
+    } else if (value is PlatformPricingPhase) {
       buffer.putUint8(134);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformPurchasesResponse) {
+    } else if (value is PlatformProductDetails) {
       buffer.putUint8(135);
+      writeValue(buffer, value.encode());
+    } else if (value is PlatformProductDetailsResponse) {
+      buffer.putUint8(136);
+      writeValue(buffer, value.encode());
+    } else if (value is PlatformPurchase) {
+      buffer.putUint8(137);
+      writeValue(buffer, value.encode());
+    } else if (value is PlatformPurchaseHistoryRecord) {
+      buffer.putUint8(138);
+      writeValue(buffer, value.encode());
+    } else if (value is PlatformPurchaseHistoryResponse) {
+      buffer.putUint8(139);
+      writeValue(buffer, value.encode());
+    } else if (value is PlatformPurchasesResponse) {
+      buffer.putUint8(140);
+      writeValue(buffer, value.encode());
+    } else if (value is PlatformQueryProduct) {
+      buffer.putUint8(141);
+      writeValue(buffer, value.encode());
+    } else if (value is PlatformSubscriptionOfferDetails) {
+      buffer.putUint8(142);
       writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
@@ -375,22 +782,36 @@ class _InAppPurchaseApiCodec extends StandardMessageCodec {
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
       case 128:
+        return PlatformAccountIdentifiers.decode(readValue(buffer)!);
+      case 129:
         return PlatformAlternativeBillingOnlyReportingDetailsResponse.decode(
             readValue(buffer)!);
-      case 129:
-        return PlatformBillingConfigResponse.decode(readValue(buffer)!);
       case 130:
-        return PlatformBillingFlowParams.decode(readValue(buffer)!);
+        return PlatformBillingConfigResponse.decode(readValue(buffer)!);
       case 131:
-        return PlatformBillingResult.decode(readValue(buffer)!);
+        return PlatformBillingFlowParams.decode(readValue(buffer)!);
       case 132:
-        return PlatformProduct.decode(readValue(buffer)!);
+        return PlatformBillingResult.decode(readValue(buffer)!);
       case 133:
-        return PlatformProductDetailsResponse.decode(readValue(buffer)!);
+        return PlatformOneTimePurchaseOfferDetails.decode(readValue(buffer)!);
       case 134:
-        return PlatformPurchaseHistoryResponse.decode(readValue(buffer)!);
+        return PlatformPricingPhase.decode(readValue(buffer)!);
       case 135:
+        return PlatformProductDetails.decode(readValue(buffer)!);
+      case 136:
+        return PlatformProductDetailsResponse.decode(readValue(buffer)!);
+      case 137:
+        return PlatformPurchase.decode(readValue(buffer)!);
+      case 138:
+        return PlatformPurchaseHistoryRecord.decode(readValue(buffer)!);
+      case 139:
+        return PlatformPurchaseHistoryResponse.decode(readValue(buffer)!);
+      case 140:
         return PlatformPurchasesResponse.decode(readValue(buffer)!);
+      case 141:
+        return PlatformQueryProduct.decode(readValue(buffer)!);
+      case 142:
+        return PlatformSubscriptionOfferDetails.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
     }
@@ -680,7 +1101,7 @@ class InAppPurchaseApi {
 
   /// Wraps BillingClient#queryProductDetailsAsync(QueryProductDetailsParams, ProductDetailsResponseListener).
   Future<PlatformProductDetailsResponse> queryProductDetailsAsync(
-      List<PlatformProduct?> products) async {
+      List<PlatformQueryProduct?> products) async {
     const String __pigeon_channelName =
         'dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.queryProductDetailsAsync';
     final BasicMessageChannel<Object?> __pigeon_channel =
@@ -837,14 +1258,23 @@ class _InAppPurchaseCallbackApiCodec extends StandardMessageCodec {
   const _InAppPurchaseCallbackApiCodec();
   @override
   void writeValue(WriteBuffer buffer, Object? value) {
-    if (value is PlatformBillingResult) {
+    if (value is PlatformAccountIdentifiers) {
       buffer.putUint8(128);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformPurchasesResponse) {
+    } else if (value is PlatformBillingResult) {
       buffer.putUint8(129);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformUserChoiceDetails) {
+    } else if (value is PlatformPurchase) {
       buffer.putUint8(130);
+      writeValue(buffer, value.encode());
+    } else if (value is PlatformPurchasesResponse) {
+      buffer.putUint8(131);
+      writeValue(buffer, value.encode());
+    } else if (value is PlatformUserChoiceDetails) {
+      buffer.putUint8(132);
+      writeValue(buffer, value.encode());
+    } else if (value is PlatformUserChoiceProduct) {
+      buffer.putUint8(133);
       writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
@@ -855,11 +1285,17 @@ class _InAppPurchaseCallbackApiCodec extends StandardMessageCodec {
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
       case 128:
-        return PlatformBillingResult.decode(readValue(buffer)!);
+        return PlatformAccountIdentifiers.decode(readValue(buffer)!);
       case 129:
-        return PlatformPurchasesResponse.decode(readValue(buffer)!);
+        return PlatformBillingResult.decode(readValue(buffer)!);
       case 130:
+        return PlatformPurchase.decode(readValue(buffer)!);
+      case 131:
+        return PlatformPurchasesResponse.decode(readValue(buffer)!);
+      case 132:
         return PlatformUserChoiceDetails.decode(readValue(buffer)!);
+      case 133:
+        return PlatformUserChoiceProduct.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
     }
