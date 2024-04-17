@@ -38,6 +38,9 @@ const String _flutterBuildTypeWindows = 'windows';
 
 const String _flutterBuildTypeAndroidAlias = 'android';
 
+/// Key for Swift Package Manager.
+const String _swiftPackageManagerFlag = 'swift-package-manager';
+
 /// A command to build the example applications for packages.
 class BuildExamplesCommand extends PackageLoopingCommand {
   /// Creates an instance of the build command.
@@ -58,6 +61,7 @@ class BuildExamplesCommand extends PackageLoopingCommand {
       defaultsTo: '',
       help: 'Enables the given Dart SDK experiments.',
     );
+    argParser.addFlag(_swiftPackageManagerFlag);
   }
 
   // Maps the switch this command uses to identify a platform to information
@@ -111,6 +115,15 @@ class BuildExamplesCommand extends PackageLoopingCommand {
       'single key "$_pluginToolsConfigGlobalKey" containing a list of build '
       'arguments.';
 
+  /// Returns true if `--swift-package-manager` flag was passed along with
+  /// either `--ios` or `--macos`.
+  bool get usingSwiftPackageManager {
+    final List<String> platformFlags = _platforms.keys.toList();
+    return getBoolArg(_swiftPackageManagerFlag) &&
+        (platformFlags.contains(platformIOS) ||
+            platformFlags.contains(platformMacOS));
+  }
+
   @override
   Future<void> initializeRun() async {
     final List<String> platformFlags = _platforms.keys.toList();
@@ -120,6 +133,14 @@ class BuildExamplesCommand extends PackageLoopingCommand {
           'None of ${platformFlags.map((String platform) => '--$platform').join(', ')} '
           'were specified. At least one platform must be provided.');
       throw ToolExit(_exitNoPlatformFlags);
+    }
+
+    if (usingSwiftPackageManager) {
+      await processRunner.runAndStream(
+        flutterCommand,
+        <String>['config', '--enable-swift-package-manager'],
+        exitOnError: true,
+      );
     }
   }
 
@@ -269,6 +290,12 @@ class BuildExamplesCommand extends PackageLoopingCommand {
   }) async {
     final String enableExperiment = getStringArg(kEnableExperiment);
 
+    // Clean app before building when using Swift Package Manager since this
+    // is the second time it's being built.
+    if (usingSwiftPackageManager) {
+      await _cleanExample(example);
+    }
+
     final int exitCode = await processRunner.runAndStream(
       flutterCommand,
       <String>[
@@ -278,6 +305,19 @@ class BuildExamplesCommand extends PackageLoopingCommand {
         ..._readExtraBuildFlagsConfiguration(example.directory),
         if (enableExperiment.isNotEmpty)
           '--enable-experiment=$enableExperiment',
+      ],
+      workingDir: example.directory,
+    );
+    return exitCode == 0;
+  }
+
+  Future<bool> _cleanExample(
+    RepositoryPackage example,
+  ) async {
+    final int exitCode = await processRunner.runAndStream(
+      flutterCommand,
+      <String>[
+        'clean',
       ],
       workingDir: example.directory,
     );
