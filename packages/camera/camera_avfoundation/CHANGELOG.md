@@ -1,3 +1,7 @@
+## 0.9.15+2
+
+* Converts camera query to Pigeon.
+
 ## 0.9.15+1
 
 * Simplifies internal handling of method channel responses.

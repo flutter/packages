@@ -15,8 +15,7 @@
 
 - (void)testAvailableCamerasShouldReturnAllCamerasOnMultiCameraIPhone {
   CameraPlugin *camera = [[CameraPlugin alloc] initWithRegistry:nil messenger:nil];
-  XCTestExpectation *expectation =
-      [[XCTestExpectation alloc] initWithDescription:@"Result finished"];
+  XCTestExpectation *expectation = [self expectationWithDescription:@"Result finished"];
 
   // iPhone 13 Cameras:
   AVCaptureDevice *wideAngleCamera = OCMClassMock([AVCaptureDevice class]);
@@ -55,29 +54,26 @@
   }
   OCMStub([discoverySessionMock devices]).andReturn([NSArray arrayWithArray:cameras]);
 
-  // Set up method call
-  FlutterMethodCall *call = [FlutterMethodCall methodCallWithMethodName:@"availableCameras"
-                                                              arguments:nil];
-
-  __block id resultValue;
-  [camera handleMethodCallAsync:call
-                         result:^(id _Nullable result) {
-                           resultValue = result;
-                           [expectation fulfill];
-                         }];
+  __block NSArray<FCPPlatformCameraDescription *> *resultValue;
+  [camera
+      availableCamerasWithCompletion:^(NSArray<FCPPlatformCameraDescription *> *_Nullable result,
+                                       FlutterError *_Nullable error) {
+        XCTAssertNil(error);
+        resultValue = result;
+        [expectation fulfill];
+      }];
+  [self waitForExpectationsWithTimeout:30 handler:nil];
 
   // Verify the result
-  NSDictionary *dictionaryResult = (NSDictionary *)resultValue;
   if (@available(iOS 13.0, *)) {
-    XCTAssertTrue([dictionaryResult count] == 4);
+    XCTAssertEqual(resultValue.count, 4);
   } else {
-    XCTAssertTrue([dictionaryResult count] == 3);
+    XCTAssertEqual(resultValue.count, 3);
   }
 }
 - (void)testAvailableCamerasShouldReturnOneCameraOnSingleCameraIPhone {
   CameraPlugin *camera = [[CameraPlugin alloc] initWithRegistry:nil messenger:nil];
-  XCTestExpectation *expectation =
-      [[XCTestExpectation alloc] initWithDescription:@"Result finished"];
+  XCTestExpectation *expectation = [self expectationWithDescription:@"Result finished"];
 
   // iPhone 8 Cameras:
   AVCaptureDevice *wideAngleCamera = OCMClassMock([AVCaptureDevice class]);
@@ -105,20 +101,19 @@
   [cameras addObjectsFromArray:@[ wideAngleCamera, frontFacingCamera ]];
   OCMStub([discoverySessionMock devices]).andReturn([NSArray arrayWithArray:cameras]);
 
-  // Set up method call
-  FlutterMethodCall *call = [FlutterMethodCall methodCallWithMethodName:@"availableCameras"
-                                                              arguments:nil];
-
-  __block id resultValue;
-  [camera handleMethodCallAsync:call
-                         result:^(id _Nullable result) {
-                           resultValue = result;
-                           [expectation fulfill];
-                         }];
+  __block NSArray<FCPPlatformCameraDescription *> *resultValue;
+  [camera
+      availableCamerasWithCompletion:^(NSArray<FCPPlatformCameraDescription *> *_Nullable result,
+                                       FlutterError *_Nullable error) {
+        XCTAssertNil(error);
+        resultValue = result;
+        [expectation fulfill];
+      }];
+  [self waitForExpectationsWithTimeout:30 handler:nil];
 
   // Verify the result
-  NSDictionary *dictionaryResult = (NSDictionary *)resultValue;
-  XCTAssertTrue([dictionaryResult count] == 2);
+  XCTAssertEqual(resultValue.count, 2);
+  ;
 }
 
 @end
