@@ -7,8 +7,9 @@
 @import Flutter;
 
 #import "CameraProperties.h"
+#import "FLTCamMediaSettings.h"
+#import "FLTCamMediaSettingsAVWrapper.h"
 #import "FLTThreadSafeEventChannel.h"
-#import "FLTThreadSafeFlutterResult.h"
 #import "FLTThreadSafeMethodChannel.h"
 #import "FLTThreadSafeTextureRegistry.h"
 
@@ -33,13 +34,16 @@ NS_ASSUME_NONNULL_BEGIN
 /// Initializes an `FLTCam` instance.
 /// @param cameraName a name used to uniquely identify the camera.
 /// @param resolutionPreset the resolution preset
-/// @param enableAudio YES if audio should be enabled for video capturing; NO otherwise.
+/// @param mediaSettings the media settings configuration parameters
+/// @param mediaSettingsAVWrapper AVFoundation wrapper to perform media settings related operations
+/// (for dependency injection in unit tests).
 /// @param orientation the orientation of camera
 /// @param captureSessionQueue the queue on which camera's capture session operations happen.
 /// @param error report to the caller if any error happened creating the camera.
 - (instancetype)initWithCameraName:(NSString *)cameraName
                   resolutionPreset:(NSString *)resolutionPreset
-                       enableAudio:(BOOL)enableAudio
+                     mediaSettings:(FLTCamMediaSettings *)mediaSettings
+            mediaSettingsAVWrapper:(FLTCamMediaSettingsAVWrapper *)mediaSettingsAVWrapper
                        orientation:(UIDeviceOrientation)orientation
                captureSessionQueue:(dispatch_queue_t)captureSessionQueue
                              error:(NSError **)error;
@@ -47,26 +51,26 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)start;
 - (void)stop;
 - (void)setDeviceOrientation:(UIDeviceOrientation)orientation;
-- (void)captureToFile:(FLTThreadSafeFlutterResult *)result;
+- (void)captureToFile:(FlutterResult)result;
 - (void)close;
-- (void)startVideoRecordingWithResult:(FLTThreadSafeFlutterResult *)result;
+- (void)startVideoRecordingWithResult:(FlutterResult)result;
 - (void)setImageFileFormat:(FCPFileFormat)fileFormat;
 /// Starts recording a video with an optional streaming messenger.
 /// If the messenger is non-null then it will be called for each
 /// captured frame, allowing streaming concurrently with recording.
 ///
 /// @param messenger Nullable messenger for capturing each frame.
-- (void)startVideoRecordingWithResult:(FLTThreadSafeFlutterResult *)result
+- (void)startVideoRecordingWithResult:(FlutterResult)result
                 messengerForStreaming:(nullable NSObject<FlutterBinaryMessenger> *)messenger;
-- (void)stopVideoRecordingWithResult:(FLTThreadSafeFlutterResult *)result;
-- (void)pauseVideoRecordingWithResult:(FLTThreadSafeFlutterResult *)result;
-- (void)resumeVideoRecordingWithResult:(FLTThreadSafeFlutterResult *)result;
-- (void)lockCaptureOrientationWithResult:(FLTThreadSafeFlutterResult *)result
+- (void)stopVideoRecordingWithResult:(FlutterResult)result;
+- (void)pauseVideoRecordingWithResult:(FlutterResult)result;
+- (void)resumeVideoRecordingWithResult:(FlutterResult)result;
+- (void)lockCaptureOrientationWithResult:(FlutterResult)result
                              orientation:(NSString *)orientationStr;
-- (void)unlockCaptureOrientationWithResult:(FLTThreadSafeFlutterResult *)result;
-- (void)setFlashModeWithResult:(FLTThreadSafeFlutterResult *)result mode:(NSString *)modeStr;
-- (void)setExposureModeWithResult:(FLTThreadSafeFlutterResult *)result mode:(NSString *)modeStr;
-- (void)setFocusModeWithResult:(FLTThreadSafeFlutterResult *)result mode:(NSString *)modeStr;
+- (void)unlockCaptureOrientationWithResult:(FlutterResult)result;
+- (void)setFlashModeWithResult:(FlutterResult)result mode:(NSString *)modeStr;
+- (void)setExposureModeWithResult:(FlutterResult)result mode:(NSString *)modeStr;
+- (void)setFocusModeWithResult:(FlutterResult)result mode:(NSString *)modeStr;
 - (void)applyFocusMode;
 
 /// Acknowledges the receipt of one image stream frame.
@@ -88,18 +92,17 @@ NS_ASSUME_NONNULL_BEGIN
 /// @param focusMode The focus mode that should be applied to the @captureDevice instance.
 /// @param captureDevice The AVCaptureDevice to which the @focusMode will be applied.
 - (void)applyFocusMode:(FLTFocusMode)focusMode onDevice:(AVCaptureDevice *)captureDevice;
-- (void)pausePreviewWithResult:(FLTThreadSafeFlutterResult *)result;
-- (void)resumePreviewWithResult:(FLTThreadSafeFlutterResult *)result;
-- (void)setDescriptionWhileRecording:(NSString *)cameraName
-                              result:(FLTThreadSafeFlutterResult *)result;
-- (void)setExposurePointWithResult:(FLTThreadSafeFlutterResult *)result x:(double)x y:(double)y;
-- (void)setFocusPointWithResult:(FLTThreadSafeFlutterResult *)result x:(double)x y:(double)y;
-- (void)setExposureOffsetWithResult:(FLTThreadSafeFlutterResult *)result offset:(double)offset;
+- (void)pausePreviewWithResult:(FlutterResult)result;
+- (void)resumePreviewWithResult:(FlutterResult)result;
+- (void)setDescriptionWhileRecording:(NSString *)cameraName result:(FlutterResult)result;
+- (void)setExposurePointWithResult:(FlutterResult)result x:(double)x y:(double)y;
+- (void)setFocusPointWithResult:(FlutterResult)result x:(double)x y:(double)y;
+- (void)setExposureOffsetWithResult:(FlutterResult)result offset:(double)offset;
 - (void)startImageStreamWithMessenger:(NSObject<FlutterBinaryMessenger> *)messenger;
 - (void)stopImageStream;
-- (void)getMaxZoomLevelWithResult:(FLTThreadSafeFlutterResult *)result;
-- (void)getMinZoomLevelWithResult:(FLTThreadSafeFlutterResult *)result;
-- (void)setZoomLevel:(CGFloat)zoom Result:(FLTThreadSafeFlutterResult *)result;
+- (void)getMaxZoomLevelWithResult:(FlutterResult)result;
+- (void)getMinZoomLevelWithResult:(FlutterResult)result;
+- (void)setZoomLevel:(CGFloat)zoom Result:(FlutterResult)result;
 - (void)setUpCaptureSessionForAudio;
 
 @end

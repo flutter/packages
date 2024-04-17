@@ -12,7 +12,6 @@ framework module camera_avfoundation {
     header "FLTCam_Test.h"
     header "FLTSavePhotoDelegate_Test.h"
     header "FLTThreadSafeEventChannel.h"
-    header "FLTThreadSafeFlutterResult.h"
     header "FLTThreadSafeMethodChannel.h"
     header "FLTThreadSafeTextureRegistry.h"
     header "QueueUtils.h"
