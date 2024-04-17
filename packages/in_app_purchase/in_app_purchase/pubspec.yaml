@@ -23,7 +23,7 @@ dependencies:
     sdk: flutter
   in_app_purchase_android: ^0.3.4
   in_app_purchase_platform_interface: ^1.4.0
-  in_app_purchase_storekit: ^0.3.4
+  in_app_purchase_storekit: ^0.3.14
 
 dev_dependencies:
   flutter_test:
@@ -42,8 +42,3 @@ screenshots:
     path: doc/iap_ios.gif
   - description: 'Example of in-app purchase on android'
     path: doc/iap_android.gif
-
-# FOR TESTING AND INITIAL REVIEW ONLY. DO NOT MERGE.
-# See https://github.com/flutter/flutter/wiki/Contributing-to-Plugins-and-Packages#changing-federated-plugins
-dependency_overrides:
-   {in_app_purchase_android: {path: ../../in_app_purchase/in_app_purchase_android}, in_app_purchase_platform_interface: {path: ../../in_app_purchase/in_app_purchase_platform_interface}, in_app_purchase_storekit: {path: ../../in_app_purchase/in_app_purchase_storekit}}
