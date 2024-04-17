@@ -7,7 +7,6 @@
 /// To use, import `package:two_dimensional_scrollables/two_dimensional_scrollables.dart`.
 library two_dimensional_scrollables;
 
-// Do not export implementation_span.dart.
 export 'src/common/span.dart';
 
 export 'src/table_view/table.dart';
