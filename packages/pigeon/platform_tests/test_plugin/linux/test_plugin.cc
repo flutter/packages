@@ -84,7 +84,7 @@ static CoreTestsPigeonTestHostIntegrationCoreApiEchoStringResponse* echo_string(
     CoreTestsPigeonTestHostIntegrationCoreApi* api, const gchar* a_string,
     gpointer user_data) {
   return core_tests_pigeon_test_host_integration_core_api_echo_string_response_new(
-      an_string);
+      a_string);
 }
 
 static CoreTestsPigeonTestHostIntegrationCoreApiEchoUint8ListResponse*
@@ -265,7 +265,7 @@ static void noop_async(CoreTestsPigeonTestHostIntegrationCoreApi* api,
                        FlBasicMessageChannelResponseHandle* response_handle,
                        gpointer user_data) {
   core_tests_pigeon_test_host_integration_core_api_respond_echo_async_noop(
-      self, response_handle);
+      api, response_handle);
 }
 
 static void echo_async_int(CoreTestsPigeonTestHostIntegrationCoreApi* api,
@@ -273,28 +273,28 @@ static void echo_async_int(CoreTestsPigeonTestHostIntegrationCoreApi* api,
                            FlBasicMessageChannelResponseHandle* response_handle,
                            gpointer user_data) {
   core_tests_pigeon_test_host_integration_core_api_respond_echo_async_int(
-      self, response_handle, an_int);
+      api, response_handle, an_int);
 }
 
 static void echo_async_double(
     CoreTestsPigeonTestHostIntegrationCoreApi* api, double a_double,
     FlBasicMessageChannelResponseHandle* response_handle, gpointer user_data) {
   core_tests_pigeon_test_host_integration_core_api_respond_echo_async_double(
-      self, response_handle, a_double);
+      api, response_handle, a_double);
 }
 
 static void echo_async_bool(
     CoreTestsPigeonTestHostIntegrationCoreApi* api, gboolean a_bool,
     FlBasicMessageChannelResponseHandle* response_handle, gpointer user_data) {
   core_tests_pigeon_test_host_integration_core_api_respond_echo_async_bool(
-      self, response_handle, a_bool);
+      api, response_handle, a_bool);
 }
 
 static void echo_async_string(
     CoreTestsPigeonTestHostIntegrationCoreApi* api, const gchar* a_string,
     FlBasicMessageChannelResponseHandle* response_handle, gpointer user_data) {
   core_tests_pigeon_test_host_integration_core_api_respond_echo_async_string(
-      self, response_handle, a_string);
+      api, response_handle, a_string);
 }
 
 static void echo_async_uint8_list(
@@ -302,21 +302,21 @@ static void echo_async_uint8_list(
     const uint8_t* a_uint8_list, size_t a_uint8_list_length,
     FlBasicMessageChannelResponseHandle* response_handle, gpointer user_data) {
   core_tests_pigeon_test_host_integration_core_api_respond_echo_async_uint8_list(
-      self, response_handle, a_uint8_list, a_uint8_list_length);
+      api, response_handle, a_uint8_list, a_uint8_list_length);
 }
 
 static void echo_async_object(
     CoreTestsPigeonTestHostIntegrationCoreApi* api, FlValue* an_object,
     FlBasicMessageChannelResponseHandle* response_handle, gpointer user_data) {
   core_tests_pigeon_test_host_integration_core_api_respond_echo_async_object(
-      self, response_handle, a_object);
+      api, response_handle, an_object);
 }
 
 static void echo_async_list(
     CoreTestsPigeonTestHostIntegrationCoreApi* api, FlValue* a_list,
     FlBasicMessageChannelResponseHandle* response_handle, gpointer user_data) {
   core_tests_pigeon_test_host_integration_core_api_respond_echo_async_list(
-      self, response_handle, a_list);
+      api, response_handle, a_list);
 }
 
 static void echo_async_map(CoreTestsPigeonTestHostIntegrationCoreApi* api,
@@ -324,7 +324,7 @@ static void echo_async_map(CoreTestsPigeonTestHostIntegrationCoreApi* api,
                            FlBasicMessageChannelResponseHandle* response_handle,
                            gpointer user_data) {
   core_tests_pigeon_test_host_integration_core_api_respond_echo_async_map(
-      self, response_handle, a_map);
+      api, response_handle, a_map);
 }
 
 static void echo_async_enum(
@@ -332,7 +332,7 @@ static void echo_async_enum(
     CoreTestsPigeonTestAnEnum an_enum,
     FlBasicMessageChannelResponseHandle* response_handle, gpointer user_data) {
   core_tests_pigeon_test_host_integration_core_api_respond_echo_async_enum(
-      self, response_handle, an_enum);
+      api, response_handle, an_enum);
 }
 
 static void throw_async_error(
@@ -340,7 +340,7 @@ static void throw_async_error(
     FlBasicMessageChannelResponseHandle* response_handle, gpointer user_data) {
   g_autoptr(FlValue) details = fl_value_new_string("details");
   core_tests_pigeon_test_host_integration_core_api_respond_error_throw_async_error(
-      self, response_handle, "code", "message", details);
+      api, response_handle, "code", "message", details);
 }
 
 static void throw_async_error_from_void(
@@ -348,7 +348,7 @@ static void throw_async_error_from_void(
     FlBasicMessageChannelResponseHandle* response_handle, gpointer user_data) {
   g_autoptr(FlValue) details = fl_value_new_string("details");
   core_tests_pigeon_test_host_integration_core_api_respond_error_throw_async_error_from_void(
-      self, response_handle, "code", "message", details);
+      api, response_handle, "code", "message", details);
 }
 
 static void throw_async_flutter_error(
@@ -356,7 +356,7 @@ static void throw_async_flutter_error(
     FlBasicMessageChannelResponseHandle* response_handle, gpointer user_data) {
   g_autoptr(FlValue) details = fl_value_new_string("details");
   core_tests_pigeon_test_host_integration_core_api_respond_error_throw_async_flutter_error(
-      self, response_handle, "code", "message", details);
+      api, response_handle, "code", "message", details);
 }
 
 static void echo_async_all_types(
@@ -364,7 +364,7 @@ static void echo_async_all_types(
     CoreTestsPigeonTestAllTypes* everything,
     FlBasicMessageChannelResponseHandle* response_handle, gpointer user_data) {
   core_tests_pigeon_test_host_integration_core_api_respond_echo_async_all_types(
-      self, response_handle, everything);
+      api, response_handle, everything);
 }
 
 static void echo_async_nullable_all_nullable_types(
@@ -372,7 +372,7 @@ static void echo_async_nullable_all_nullable_types(
     CoreTestsPigeonTestAllNullableTypes* everything,
     FlBasicMessageChannelResponseHandle* response_handle, gpointer user_data) {
   core_tests_pigeon_test_host_integration_core_api_respond_echo_async_all_nullable_types(
-      self, response_handle, everything);
+      api, response_handle, everything);
 }
 
 static void echo_async_nullable_all_nullable_types_without_recursion(
@@ -380,35 +380,35 @@ static void echo_async_nullable_all_nullable_types_without_recursion(
     CoreTestsPigeonTestAllNullableTypesWithoutRecursion* everything,
     FlBasicMessageChannelResponseHandle* response_handle, gpointer user_data) {
   core_tests_pigeon_test_host_integration_core_api_respond_echo_async_all_nullable_types_without_recursion(
-      self, response_handle, everything);
+      api, response_handle, everything);
 }
 
 static void echo_async_nullable_int(
     CoreTestsPigeonTestHostIntegrationCoreApi* api, int64_t* an_int,
     FlBasicMessageChannelResponseHandle* response_handle, gpointer user_data) {
   core_tests_pigeon_test_host_integration_core_api_respond_echo_async_nullable_int(
-      self, response_handle, an_int);
+      api, response_handle, an_int);
 }
 
 static void echo_async_nullable_double(
     CoreTestsPigeonTestHostIntegrationCoreApi* api, double* a_double,
     FlBasicMessageChannelResponseHandle* response_handle, gpointer user_data) {
   core_tests_pigeon_test_host_integration_core_api_respond_echo_async_nullable_double(
-      self, response_handle, a_double);
+      api, response_handle, a_double);
 }
 
 static void echo_async_nullable_bool(
     CoreTestsPigeonTestHostIntegrationCoreApi* api, gboolean* a_bool,
     FlBasicMessageChannelResponseHandle* response_handle, gpointer user_data) {
   core_tests_pigeon_test_host_integration_core_api_respond_echo_async_nullable_bool(
-      self, response_handle, a_bool);
+      api, response_handle, a_bool);
 }
 
 static void echo_async_nullable_string(
     CoreTestsPigeonTestHostIntegrationCoreApi* api, const gchar* a_string,
     FlBasicMessageChannelResponseHandle* response_handle, gpointer user_data) {
   core_tests_pigeon_test_host_integration_core_api_respond_echo_async_nullable_string(
-      self, response_handle, a_string);
+      api, response_handle, a_string);
 }
 
 static void echo_async_nullable_uint8_list(
@@ -416,14 +416,14 @@ static void echo_async_nullable_uint8_list(
     const uint8_t* a_uint8_list, size_t a_uint8_list_length,
     FlBasicMessageChannelResponseHandle* response_handle, gpointer user_data) {
   core_tests_pigeon_test_host_integration_core_api_respond_echo_async_nullable_uint8_list(
-      self, response_handle, a_uint8_list, a_uint8_list_length);
+      api, response_handle, a_uint8_list, a_uint8_list_length);
 }
 
 static void echo_async_nullable_object(
     CoreTestsPigeonTestHostIntegrationCoreApi* api, FlValue* an_object,
     FlBasicMessageChannelResponseHandle* response_handle, gpointer user_data) {
   core_tests_pigeon_test_host_integration_core_api_respond_echo_async_nullable_object(
-      self, response_handle, a_object);
+      api, response_handle, an_object);
 }
 
 static void echo_async_nullable_list(
