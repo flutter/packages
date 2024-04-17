@@ -201,7 +201,7 @@ class MockInAppPurchasePlatform extends Fake
     return Future<void>.value();
   }
 
-   @override
+  @override
   Future<String> countryCode() {
     log.add(const MethodCall('countryCode'));
     return Future<String>.value('USA');
