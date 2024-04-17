@@ -1,6 +1,6 @@
 ## 0.3.4
 
-* Adds `countryCode` API.
+* Adds `countryCode` API. 
 
 ## 0.3.3+1
 
