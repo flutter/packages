@@ -357,7 +357,6 @@ Future<void> main() async {
     });
 
     testWidgets('Auto media playback', (WidgetTester tester) async {
-      print('hi');
       Completer<WebViewController> controllerCompleter =
           Completer<WebViewController>();
       Completer<void> pageLoaded = Completer<void>();
