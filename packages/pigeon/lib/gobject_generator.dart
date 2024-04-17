@@ -1337,7 +1337,7 @@ String _getType(String module, TypeDeclaration type,
     return '${_getClassName(module, type.baseName)}*';
   } else if (type.isEnum) {
     final String name = _getClassName(module, type.baseName);
-    return type.isNullable ? '$name*' : name;
+    return type.isNullable && !primitive ? '$name*' : name;
   } else if (_isFlValueWrappedType(type)) {
     return 'FlValue*';
   } else if (type.baseName == 'void') {
@@ -1380,7 +1380,8 @@ bool _isNullablePrimitiveType(TypeDeclaration type) {
     return false;
   }
 
-  return type.baseName == 'bool' ||
+  return type.isEnum ||
+      type.baseName == 'bool' ||
       type.baseName == 'int' ||
       type.baseName == 'double';
 }
