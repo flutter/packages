@@ -15,12 +15,7 @@ G_BEGIN_DECLS
 #define FLUTTER_PLUGIN_EXPORT
 #endif
 
-typedef struct _TestPlugin TestPlugin;
-typedef struct {
-  GObjectClass parent_class;
-} TestPluginClass;
-
-FLUTTER_PLUGIN_EXPORT GType test_plugin_get_type();
+G_DECLARE_FINAL_TYPE(TestPlugin, test_plugin, TEST, PLUGIN, GObject)
 
 FLUTTER_PLUGIN_EXPORT void test_plugin_register_with_registrar(
     FlPluginRegistrar* registrar);

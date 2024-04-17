@@ -13,18 +13,19 @@
 #include "pigeon/core_tests.gen.h"
 #include "test_plugin_private.h"
 
-#define TEST_PLUGIN(obj) \
-  (G_TYPE_CHECK_INSTANCE_CAST((obj), test_plugin_get_type(), TestPlugin))
-
 struct _TestPlugin {
   GObject parent_instance;
 
   CoreTestsPigeonTestHostIntegrationCoreApi* host_core_api;
 
+  CoreTestsPigeonTestHostSmallApi* host_small_api;
+
   CoreTestsPigeonTestFlutterIntegrationCoreApi* flutter_core_api;
+
+  CoreTestsPigeonTestFlutterSmallApi* flutter_small_api;
 };
 
-G_DEFINE_TYPE(TestPlugin, test_plugin, g_object_get_type())
+G_DEFINE_TYPE(TestPlugin, test_plugin, G_TYPE_OBJECT)
 
 static CoreTestsPigeonTestHostIntegrationCoreApiNoopResponse* noop(
     CoreTestsPigeonTestHostIntegrationCoreApi* api, gpointer user_data) {
@@ -120,7 +121,8 @@ static CoreTestsPigeonTestHostIntegrationCoreApiEchoClassWrapperResponse*
 echo_class_wrapper(CoreTestsPigeonTestHostIntegrationCoreApi* api,
                    CoreTestsPigeonTestAllClassesWrapper* wrapper,
                    gpointer user_data) {
-  // FIXME
+  return core_tests_pigeon_test_host_integration_core_api_echo_class_wrapper_response_new(
+      wrapper);
 }
 
 static CoreTestsPigeonTestHostIntegrationCoreApiEchoEnumResponse* echo_enum(
@@ -133,26 +135,30 @@ static CoreTestsPigeonTestHostIntegrationCoreApiEchoEnumResponse* echo_enum(
 static CoreTestsPigeonTestHostIntegrationCoreApiEchoNamedDefaultStringResponse*
 echo_named_default_string(CoreTestsPigeonTestHostIntegrationCoreApi* api,
                           const gchar* a_string, gpointer user_data) {
-  // FIXME
+  return core_tests_pigeon_test_host_integration_core_api_echo_named_default_string_response_new(
+      a_string);
 }
 
 static CoreTestsPigeonTestHostIntegrationCoreApiEchoOptionalDefaultDoubleResponse*
 echo_optional_default_double(CoreTestsPigeonTestHostIntegrationCoreApi* api,
                              double a_double, gpointer user_data) {
-  // FIXME
+  return core_tests_pigeon_test_host_integration_core_api_echo_optional_default_double_response_new(
+      a_double);
 }
 
 static CoreTestsPigeonTestHostIntegrationCoreApiEchoRequiredIntResponse*
 echo_required_int(CoreTestsPigeonTestHostIntegrationCoreApi* api,
                   int64_t an_int, gpointer user_data) {
-  // FIXME
+  return core_tests_pigeon_test_host_integration_core_api_echo_required_int_response_new(
+      an_int);
 }
 
 static CoreTestsPigeonTestHostIntegrationCoreApiEchoAllNullableTypesResponse*
 echo_all_nullable_types(CoreTestsPigeonTestHostIntegrationCoreApi* api,
                         CoreTestsPigeonTestAllNullableTypes* everything,
                         gpointer user_data) {
-  // FIXME
+  return core_tests_pigeon_test_host_integration_core_api_echo_all_nullable_types_response_new(
+      everything);
 }
 
 static CoreTestsPigeonTestHostIntegrationCoreApiEchoAllNullableTypesWithoutRecursionResponse*
@@ -160,21 +166,35 @@ echo_all_nullable_types_without_recursion(
     CoreTestsPigeonTestHostIntegrationCoreApi* api,
     CoreTestsPigeonTestAllNullableTypesWithoutRecursion* everything,
     gpointer user_data) {
-  // FIXME
+  return core_tests_pigeon_test_host_integration_core_api_echo_all_nullable_types_without_recursion_response_new(
+      everything);
 }
 
 static CoreTestsPigeonTestHostIntegrationCoreApiExtractNestedNullableStringResponse*
 extract_nested_nullable_string(CoreTestsPigeonTestHostIntegrationCoreApi* api,
                                CoreTestsPigeonTestAllClassesWrapper* wrapper,
                                gpointer user_data) {
-  // FIXME
+  CoreTestsPigeonTestAllNullableTypes* types =
+      core_tests_pigeon_test_all_classes_wrapper_get_all_nullable_types(
+          wrapper);
+  return core_tests_pigeon_test_host_integration_core_api_extract_nested_nullable_string_response_new(
+      core_tests_pigeon_test_all_nullable_types_get_a_nullable_string(types));
 }
 
 static CoreTestsPigeonTestHostIntegrationCoreApiCreateNestedNullableStringResponse*
 create_nested_nullable_string(CoreTestsPigeonTestHostIntegrationCoreApi* api,
                               const gchar* nullable_string,
                               gpointer user_data) {
-  // FIXME
+  // FIXME: Make new_full?
+  g_autoptr(CoreTestsPigeonTestAllNullableTypes) types =
+      core_tests_pigeon_test_all_nullable_types_new(
+          nullptr, nullptr, nullptr, nullptr, nullptr, 0, nullptr, 0, nullptr,
+          0, nullptr, 0, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+          nullable_string, nullptr, nullptr);
+  g_autoptr(CoreTestsPigeonTestAllClassesWrapper) wrapper =
+      core_tests_pigeon_test_all_classes_wrapper_new(types, nullptr, nullptr);
+  return core_tests_pigeon_test_host_integration_core_api_create_nested_nullable_string_response_new(
+      wrapper);
 }
 
 static CoreTestsPigeonTestHostIntegrationCoreApiSendMultipleNullableTypesResponse*
@@ -182,7 +202,13 @@ send_multiple_nullable_types(CoreTestsPigeonTestHostIntegrationCoreApi* api,
                              gboolean* a_nullable_bool, int64_t* a_nullable_int,
                              const gchar* a_nullable_string,
                              gpointer user_data) {
-  // FIXME
+  g_autoptr(CoreTestsPigeonTestAllNullableTypes) types =
+      core_tests_pigeon_test_all_nullable_types_new(
+          a_nullable_bool, a_nullable_int, nullptr, nullptr, nullptr, 0,
+          nullptr, 0, nullptr, 0, nullptr, 0, nullptr, nullptr, nullptr,
+          nullptr, nullptr, nullptr, a_nullable_string, nullptr, nullptr);
+  return core_tests_pigeon_test_host_integration_core_api_send_multiple_nullable_types_response_new(
+      types);
 }
 
 static CoreTestsPigeonTestHostIntegrationCoreApiSendMultipleNullableTypesWithoutRecursionResponse*
@@ -190,31 +216,41 @@ send_multiple_nullable_types_without_recursion(
     CoreTestsPigeonTestHostIntegrationCoreApi* api, gboolean* a_nullable_bool,
     int64_t* a_nullable_int, const gchar* a_nullable_string,
     gpointer user_data) {
-  // FIXME
+  g_autoptr(CoreTestsPigeonTestAllNullableTypesWithoutRecursion) types =
+      core_tests_pigeon_test_all_nullable_types_without_recursion_new(
+          a_nullable_bool, a_nullable_int, nullptr, nullptr, nullptr, 0,
+          nullptr, 0, nullptr, 0, nullptr, 0, nullptr, nullptr, nullptr,
+          nullptr, nullptr, nullptr, a_nullable_string, nullptr);
+  return core_tests_pigeon_test_host_integration_core_api_send_multiple_nullable_types_without_recursion_response_new(
+      types);
 }
 
 static CoreTestsPigeonTestHostIntegrationCoreApiEchoNullableIntResponse*
 echo_nullable_int(CoreTestsPigeonTestHostIntegrationCoreApi* api,
                   int64_t* a_nullable_int, gpointer user_data) {
-  // FIXME
+  return core_tests_pigeon_test_host_integration_core_api_echo_nullable_int_response_new(
+      a_nullable_int);
 }
 
 static CoreTestsPigeonTestHostIntegrationCoreApiEchoNullableDoubleResponse*
 echo_nullable_double(CoreTestsPigeonTestHostIntegrationCoreApi* api,
                      double* a_nullable_double, gpointer user_data) {
-  // FIXME
+  return core_tests_pigeon_test_host_integration_core_api_echo_nullable_double_response_new(
+      a_nullable_double);
 }
 
 static CoreTestsPigeonTestHostIntegrationCoreApiEchoNullableBoolResponse*
 echo_nullable_bool(CoreTestsPigeonTestHostIntegrationCoreApi* api,
                    gboolean* a_nullable_bool, gpointer user_data) {
-  // FIXME
+  return core_tests_pigeon_test_host_integration_core_api_echo_nullable_bool_response_new(
+      a_nullable_bool);
 }
 
 static CoreTestsPigeonTestHostIntegrationCoreApiEchoNullableStringResponse*
 echo_nullable_string(CoreTestsPigeonTestHostIntegrationCoreApi* api,
                      const gchar* a_nullable_string, gpointer user_data) {
-  // FIXME
+  return core_tests_pigeon_test_host_integration_core_api_echo_nullable_string_response_new(
+      a_nullable_string);
 }
 
 static CoreTestsPigeonTestHostIntegrationCoreApiEchoNullableUint8ListResponse*
@@ -222,49 +258,56 @@ echo_nullable_uint8_list(CoreTestsPigeonTestHostIntegrationCoreApi* api,
                          const uint8_t* a_nullable_uint8_list,
                          size_t a_nullable_uint8_list_length,
                          gpointer user_data) {
-  // FIXME
+  return core_tests_pigeon_test_host_integration_core_api_echo_nullable_uint8_list_response_new(
+      a_nullable_uint8_list, a_nullable_uint8_list_length);
 }
 
 static CoreTestsPigeonTestHostIntegrationCoreApiEchoNullableObjectResponse*
 echo_nullable_object(CoreTestsPigeonTestHostIntegrationCoreApi* api,
                      FlValue* a_nullable_object, gpointer user_data) {
-  // FIXME
+  return core_tests_pigeon_test_host_integration_core_api_echo_nullable_object_response_new(
+      a_nullable_object);
 }
 
 static CoreTestsPigeonTestHostIntegrationCoreApiEchoNullableListResponse*
 echo_nullable_list(CoreTestsPigeonTestHostIntegrationCoreApi* api,
                    FlValue* a_nullable_list, gpointer user_data) {
-  // FIXME
+  return core_tests_pigeon_test_host_integration_core_api_echo_nullable_list_response_new(
+      a_nullable_list);
 }
 
 static CoreTestsPigeonTestHostIntegrationCoreApiEchoNullableMapResponse*
 echo_nullable_map(CoreTestsPigeonTestHostIntegrationCoreApi* api,
                   FlValue* a_nullable_map, gpointer user_data) {
-  // FIXME
+  return core_tests_pigeon_test_host_integration_core_api_echo_nullable_map_response_new(
+      a_nullable_map);
 }
 
 static CoreTestsPigeonTestHostIntegrationCoreApiEchoNullableEnumResponse*
 echo_nullable_enum(CoreTestsPigeonTestHostIntegrationCoreApi* api,
                    CoreTestsPigeonTestAnEnum* an_enum, gpointer user_data) {
-  // FIXME
+  return core_tests_pigeon_test_host_integration_core_api_echo_nullable_enum_response_new(
+      an_enum);
 }
 
 static CoreTestsPigeonTestHostIntegrationCoreApiEchoOptionalNullableIntResponse*
 echo_optional_nullable_int(CoreTestsPigeonTestHostIntegrationCoreApi* api,
                            int64_t* a_nullable_int, gpointer user_data) {
-  // FIXME
+  return core_tests_pigeon_test_host_integration_core_api_echo_optional_nullable_int_response_new(
+      a_nullable_int);
 }
 
 static CoreTestsPigeonTestHostIntegrationCoreApiEchoNamedNullableStringResponse*
 echo_named_nullable_string(CoreTestsPigeonTestHostIntegrationCoreApi* api,
                            const gchar* a_nullable_string, gpointer user_data) {
-  // FIXME
+  return core_tests_pigeon_test_host_integration_core_api_echo_named_nullable_string_response_new(
+      a_nullable_string);
 }
 
 static void noop_async(CoreTestsPigeonTestHostIntegrationCoreApi* api,
                        FlBasicMessageChannelResponseHandle* response_handle,
                        gpointer user_data) {
-  core_tests_pigeon_test_host_integration_core_api_respond_echo_async_noop(
+  core_tests_pigeon_test_host_integration_core_api_respond_noop_async(
       api, response_handle);
 }
 
@@ -298,8 +341,8 @@ static void echo_async_string(
 }
 
 static void echo_async_uint8_list(
-    CoreTestsPigeonTestHostIntegrationCoreApi* api,
-    const uint8_t* a_uint8_list, size_t a_uint8_list_length,
+    CoreTestsPigeonTestHostIntegrationCoreApi* api, const uint8_t* a_uint8_list,
+    size_t a_uint8_list_length,
     FlBasicMessageChannelResponseHandle* response_handle, gpointer user_data) {
   core_tests_pigeon_test_host_integration_core_api_respond_echo_async_uint8_list(
       api, response_handle, a_uint8_list, a_uint8_list_length);
@@ -371,7 +414,7 @@ static void echo_async_nullable_all_nullable_types(
     CoreTestsPigeonTestHostIntegrationCoreApi* api,
     CoreTestsPigeonTestAllNullableTypes* everything,
     FlBasicMessageChannelResponseHandle* response_handle, gpointer user_data) {
-  core_tests_pigeon_test_host_integration_core_api_respond_echo_async_all_nullable_types(
+  core_tests_pigeon_test_host_integration_core_api_respond_echo_async_nullable_all_nullable_types(
       api, response_handle, everything);
 }
 
@@ -379,7 +422,7 @@ static void echo_async_nullable_all_nullable_types_without_recursion(
     CoreTestsPigeonTestHostIntegrationCoreApi* api,
     CoreTestsPigeonTestAllNullableTypesWithoutRecursion* everything,
     FlBasicMessageChannelResponseHandle* response_handle, gpointer user_data) {
-  core_tests_pigeon_test_host_integration_core_api_respond_echo_async_all_nullable_types_without_recursion(
+  core_tests_pigeon_test_host_integration_core_api_respond_echo_async_nullable_all_nullable_types_without_recursion(
       api, response_handle, everything);
 }
 
@@ -412,8 +455,8 @@ static void echo_async_nullable_string(
 }
 
 static void echo_async_nullable_uint8_list(
-    CoreTestsPigeonTestHostIntegrationCoreApi* api,
-    const uint8_t* a_uint8_list, size_t a_uint8_list_length,
+    CoreTestsPigeonTestHostIntegrationCoreApi* api, const uint8_t* a_uint8_list,
+    size_t a_uint8_list_length,
     FlBasicMessageChannelResponseHandle* response_handle, gpointer user_data) {
   core_tests_pigeon_test_host_integration_core_api_respond_echo_async_nullable_uint8_list(
       api, response_handle, a_uint8_list, a_uint8_list_length);
@@ -429,26 +472,30 @@ static void echo_async_nullable_object(
 static void echo_async_nullable_list(
     CoreTestsPigeonTestHostIntegrationCoreApi* api, FlValue* a_list,
     FlBasicMessageChannelResponseHandle* response_handle, gpointer user_data) {
-  // FIXME
+  core_tests_pigeon_test_host_integration_core_api_respond_echo_async_nullable_list(
+      api, response_handle, a_list);
 }
 
 static void echo_async_nullable_map(
     CoreTestsPigeonTestHostIntegrationCoreApi* api, FlValue* a_map,
     FlBasicMessageChannelResponseHandle* response_handle, gpointer user_data) {
-  // FIXME
+  core_tests_pigeon_test_host_integration_core_api_respond_echo_async_nullable_map(
+      api, response_handle, a_map);
 }
 
 static void echo_async_nullable_enum(
     CoreTestsPigeonTestHostIntegrationCoreApi* api,
     CoreTestsPigeonTestAnEnum* an_enum,
     FlBasicMessageChannelResponseHandle* response_handle, gpointer user_data) {
-  // FIXME
+  core_tests_pigeon_test_host_integration_core_api_respond_echo_async_nullable_enum(
+      api, response_handle, an_enum);
 }
 
 static void call_flutter_noop(
     CoreTestsPigeonTestHostIntegrationCoreApi* api,
     FlBasicMessageChannelResponseHandle* response_handle, gpointer user_data) {
-  // FIXME
+  core_tests_pigeon_test_host_integration_core_api_respond_call_flutter_noop(
+      api, response_handle);
 }
 
 static void call_flutter_throw_error(
@@ -501,74 +548,98 @@ static void call_flutter_send_multiple_nullable_types_without_recursion(
 static void call_flutter_echo_bool(
     CoreTestsPigeonTestHostIntegrationCoreApi* api, gboolean a_bool,
     FlBasicMessageChannelResponseHandle* response_handle, gpointer user_data) {
-  // FIXME
+  core_tests_pigeon_test_host_integration_core_api_respond_call_flutter_echo_bool(
+      api, response_handle, a_bool);
 }
 
 static void call_flutter_echo_int(
     CoreTestsPigeonTestHostIntegrationCoreApi* api, int64_t an_int,
     FlBasicMessageChannelResponseHandle* response_handle, gpointer user_data) {
-  // FIXME
+  core_tests_pigeon_test_host_integration_core_api_respond_call_flutter_echo_int(
+      api, response_handle, an_int);
 }
 
 static void call_flutter_echo_double(
     CoreTestsPigeonTestHostIntegrationCoreApi* api, double a_double,
     FlBasicMessageChannelResponseHandle* response_handle, gpointer user_data) {
-  // FIXME
+  core_tests_pigeon_test_host_integration_core_api_respond_call_flutter_echo_double(
+      api, response_handle, a_double);
 }
 
 static void call_flutter_echo_string(
     CoreTestsPigeonTestHostIntegrationCoreApi* api, const gchar* a_string,
     FlBasicMessageChannelResponseHandle* response_handle, gpointer user_data) {
-  // FIXME
+  core_tests_pigeon_test_host_integration_core_api_respond_call_flutter_echo_string(
+      api, response_handle, a_string);
 }
 
 static void call_flutter_echo_uint8_list(
     CoreTestsPigeonTestHostIntegrationCoreApi* api, const uint8_t* a_list,
     size_t a_list_length, FlBasicMessageChannelResponseHandle* response_handle,
     gpointer user_data) {
-  // FIXME
+  core_tests_pigeon_test_host_integration_core_api_respond_call_flutter_echo_uint8_list(
+      api, response_handle, a_list, a_list_length);
 }
 
 static void call_flutter_echo_list(
     CoreTestsPigeonTestHostIntegrationCoreApi* api, FlValue* a_list,
     FlBasicMessageChannelResponseHandle* response_handle, gpointer user_data) {
-  // FIXME
+  core_tests_pigeon_test_host_integration_core_api_respond_call_flutter_echo_list(
+      api, response_handle, a_list);
 }
 
 static void call_flutter_echo_map(
     CoreTestsPigeonTestHostIntegrationCoreApi* api, FlValue* a_map,
     FlBasicMessageChannelResponseHandle* response_handle, gpointer user_data) {
-  // FIXME
+  core_tests_pigeon_test_host_integration_core_api_respond_call_flutter_echo_map(
+      api, response_handle, a_map);
 }
 
 static void call_flutter_echo_enum(
     CoreTestsPigeonTestHostIntegrationCoreApi* api,
     CoreTestsPigeonTestAnEnum an_enum,
     FlBasicMessageChannelResponseHandle* response_handle, gpointer user_data) {
-  // FIXME
+  core_tests_pigeon_test_host_integration_core_api_respond_call_flutter_echo_enum(
+      api, response_handle, an_enum);
 }
 
 static void call_flutter_echo_nullable_bool(
     CoreTestsPigeonTestHostIntegrationCoreApi* api, gboolean* a_bool,
     FlBasicMessageChannelResponseHandle* response_handle, gpointer user_data) {
-  // FIXME
+  core_tests_pigeon_test_host_integration_core_api_respond_call_flutter_echo_nullable_bool(
+      api, response_handle, a_bool);
 }
 
 static void call_flutter_echo_nullable_int(
     CoreTestsPigeonTestHostIntegrationCoreApi* api, int64_t* an_int,
     FlBasicMessageChannelResponseHandle* response_handle, gpointer user_data) {
-  // FIXME
+  core_tests_pigeon_test_host_integration_core_api_respond_call_flutter_echo_nullable_int(
+      api, response_handle, an_int);
 }
 
 static void call_flutter_echo_nullable_double(
     CoreTestsPigeonTestHostIntegrationCoreApi* api, double* a_double,
     FlBasicMessageChannelResponseHandle* response_handle, gpointer user_data) {
-  // FIXME
+  core_tests_pigeon_test_host_integration_core_api_respond_call_flutter_echo_nullable_double(
+      api, response_handle, a_double);
 }
 
 static void call_flutter_echo_nullable_string(
     CoreTestsPigeonTestHostIntegrationCoreApi* api, const gchar* a_string,
     FlBasicMessageChannelResponseHandle* response_handle, gpointer user_data) {
+  core_tests_pigeon_test_host_integration_core_api_respond_call_flutter_echo_nullable_string(
+      api, response_handle, a_string);
+}
+
+static void echo_nullable_uint8_list_cb(GObject* object, GAsyncResult* result,
+                                        gpointer user_data) {
+  g_autofree uint8_t* return_value = nullptr;
+  size_t return_value_length;
+  g_autoptr(GError) error = nullptr;
+  // gboolean r =
+  core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_uint8_list_finish(
+      CORE_TESTS_PIGEON_TEST_FLUTTER_INTEGRATION_CORE_API(object), result,
+      &return_value, &return_value_length, &error);
   // FIXME
 }
 
@@ -576,17 +647,24 @@ static void call_flutter_echo_nullable_uint8_list(
     CoreTestsPigeonTestHostIntegrationCoreApi* api, const uint8_t* a_list,
     size_t a_list_length, FlBasicMessageChannelResponseHandle* response_handle,
     gpointer user_data) {
-  // FIXME
+  TestPlugin* self = TEST_PLUGIN(user_data);
+  core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_uint8_list(
+      self->flutter_core_api, a_list, a_list_length, nullptr,
+      echo_nullable_uint8_list_cb, user_data);
+
+  core_tests_pigeon_test_host_integration_core_api_respond_call_flutter_echo_nullable_uint8_list(
+      api, response_handle, a_list, a_list_length);
 }
 
 static void echo_nullable_list_cb(GObject* object, GAsyncResult* result,
                                   gpointer user_data) {
-  g_autoptr(FLValue) return_value = nullptr;
+  g_autoptr(FlValue) return_value = nullptr;
   g_autoptr(GError) error = nullptr;
-  gboolean r =
-      core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_list_finish(
-          CORE_TESTS_PIGEON_TEST_FLUTTER_INTEGRATION_CORE_API(object), result,
-          &return_value, &error);
+  // gboolean r =
+  core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_list_finish(
+      CORE_TESTS_PIGEON_TEST_FLUTTER_INTEGRATION_CORE_API(object), result,
+      &return_value, &error);
+  // FIXME
 }
 
 static void call_flutter_echo_nullable_list(
@@ -611,10 +689,23 @@ static void call_flutter_echo_nullable_enum(
   // FIXME
 }
 
+static void echo_string_cb(GObject* object, GAsyncResult* result,
+                           gpointer user_data) {
+  g_autofree gchar* return_value = nullptr;
+  g_autoptr(GError) error = nullptr;
+  // gboolean r =
+  core_tests_pigeon_test_flutter_small_api_echo_string_finish(
+      CORE_TESTS_PIGEON_TEST_FLUTTER_SMALL_API(object), result, &return_value,
+      &error);
+  // FIXME
+}
+
 static void call_flutter_small_api_echo_string(
     CoreTestsPigeonTestHostIntegrationCoreApi* api, const gchar* a_string,
     FlBasicMessageChannelResponseHandle* response_handle, gpointer user_data) {
-  // FIXME
+  TestPlugin* self = TEST_PLUGIN(user_data);
+  core_tests_pigeon_test_flutter_small_api_echo_string(
+      self->flutter_small_api, a_string, nullptr, echo_string_cb, self);
 }
 
 static CoreTestsPigeonTestHostIntegrationCoreApiVTable host_core_api_vtable = {
@@ -713,6 +804,17 @@ static CoreTestsPigeonTestHostIntegrationCoreApiVTable host_core_api_vtable = {
     .call_flutter_echo_nullable_enum = call_flutter_echo_nullable_enum,
     .call_flutter_small_api_echo_string = call_flutter_small_api_echo_string};
 
+static void echo(CoreTestsPigeonTestHostSmallApi* api, const gchar* a_string,
+                 FlBasicMessageChannelResponseHandle* response_handle,
+                 gpointer user_data) {}
+
+static void void_void(CoreTestsPigeonTestHostSmallApi* api,
+                      FlBasicMessageChannelResponseHandle* response_handle,
+                      gpointer user_data) {}
+
+static CoreTestsPigeonTestHostSmallApiVTable host_small_api_vtable = {
+    .echo = echo, .void_void = void_void};
+
 // Called when a method call is received from Flutter.
 static void test_plugin_handle_method_call(TestPlugin* self,
                                            FlMethodCall* method_call) {
@@ -739,8 +841,12 @@ FlMethodResponse* get_platform_version() {
 
 static void test_plugin_dispose(GObject* object) {
   TestPlugin* self = TEST_PLUGIN(object);
-  g_clear_object(self->host_core_api);
-  g_clear_object(self->flutter_core_api);
+
+  g_clear_object(&self->host_core_api);
+  g_clear_object(&self->host_small_api);
+  g_clear_object(&self->flutter_core_api);
+  g_clear_object(&self->flutter_small_api);
+
   G_OBJECT_CLASS(test_plugin_parent_class)->dispose(object);
 }
 
@@ -754,9 +860,13 @@ static TestPlugin* test_plugin_new(FlBinaryMessenger* messenger) {
   TestPlugin* self = TEST_PLUGIN(g_object_new(test_plugin_get_type(), nullptr));
 
   self->host_core_api = core_tests_pigeon_test_host_integration_core_api_new(
-      messenger, host_core_api_vtable, g_object_ref(self), g_object_unref);
+      messenger, &host_core_api_vtable, g_object_ref(self), g_object_unref);
+  self->host_small_api = core_tests_pigeon_test_host_small_api_new(
+      messenger, &host_small_api_vtable, g_object_ref(self), g_object_unref);
   self->flutter_core_api =
       core_tests_pigeon_test_flutter_integration_core_api_new(messenger);
+  self->flutter_small_api =
+      core_tests_pigeon_test_flutter_small_api_new(messenger);
 
   return self;
 }
@@ -773,7 +883,8 @@ void test_plugin_register_with_registrar(FlPluginRegistrar* registrar) {
 
   g_autoptr(FlStandardMethodCodec) codec = fl_standard_method_codec_new();
   g_autoptr(FlMethodChannel) channel =
-      fl_method_channel_new(messenger, "test_plugin", FL_METHOD_CODEC(codec));
+      fl_method_channel_new(fl_plugin_registrar_get_messenger(registrar),
+                            "test_plugin", FL_METHOD_CODEC(codec));
   fl_method_channel_set_method_call_handler(
       channel, method_call_cb, g_object_ref(plugin), g_object_unref);
 }
