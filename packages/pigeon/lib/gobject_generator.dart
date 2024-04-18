@@ -181,7 +181,6 @@ class GObjectHeaderGenerator extends StructuredGenerator<GObjectOptions> {
   }) {
     final String module = _getModule(generatorOptions, dartPackageName);
     final String className = _getClassName(module, classDefinition.name);
-
     final String methodPrefix = _getMethodPrefix(module, classDefinition.name);
 
     indent.newln();
@@ -192,7 +191,7 @@ class GObjectHeaderGenerator extends StructuredGenerator<GObjectOptions> {
     indent.newln();
     final List<String> constructorArgs = <String>[];
     for (final NamedType field in classDefinition.fields) {
-      final String fieldName = _snakeCaseFromCamelCase(field.name);
+      final String fieldName = _getFieldName(field.name);
       final String type = _getType(module, field.type);
       constructorArgs.add('$type $fieldName');
       if (_isNumericListType(field.type)) {
@@ -203,7 +202,7 @@ class GObjectHeaderGenerator extends StructuredGenerator<GObjectOptions> {
         "$className* ${methodPrefix}_new(${constructorArgs.join(', ')});");
 
     for (final NamedType field in classDefinition.fields) {
-      final String fieldName = _snakeCaseFromCamelCase(field.name);
+      final String fieldName = _getFieldName(field.name);
       final String returnType = _getType(module, field.type);
 
       indent.newln();
@@ -241,7 +240,7 @@ class GObjectHeaderGenerator extends StructuredGenerator<GObjectOptions> {
         '$className* ${methodPrefix}_new(FlBinaryMessenger* messenger);');
 
     for (final Method method in api.methods) {
-      final String methodName = _snakeCaseFromCamelCase(method.name);
+      final String methodName = _getMethodName(method.name);
 
       final List<String> asyncArgs = <String>['$className* self'];
       for (final Parameter param in method.parameters) {
@@ -343,7 +342,7 @@ class GObjectHeaderGenerator extends StructuredGenerator<GObjectOptions> {
 
     indent.writeScoped('typedef struct {', '} $vtableName;', () {
       for (final Method method in api.methods) {
-        final String methodName = _snakeCaseFromCamelCase(method.name);
+        final String methodName = _getMethodName(method.name);
         final String responseName = _getResponseName(api.name, method.name);
         final String responseClassName = _getClassName(module, responseName);
 
@@ -372,7 +371,7 @@ class GObjectHeaderGenerator extends StructuredGenerator<GObjectOptions> {
       Indent indent, String module, Api api, Method method) {
     final String className = _getClassName(module, api.name);
     final String methodPrefix = _getMethodPrefix(module, api.name);
-    final String methodName = _snakeCaseFromCamelCase(method.name);
+    final String methodName = _getMethodName(method.name);
     final String returnType = _getType(module, method.returnType);
 
     indent.newln();
@@ -463,7 +462,7 @@ class GObjectSourceGenerator extends StructuredGenerator<GObjectOptions> {
     _writeObjectStruct(indent, module, classDefinition.name, () {
       indent.newln();
       for (final NamedType field in classDefinition.fields) {
-        final String fieldName = _snakeCaseFromCamelCase(field.name);
+        final String fieldName = _getFieldName(field.name);
         final String fieldType = _getType(module, field.type, isOutput: true);
         indent.writeln('$fieldType $fieldName;');
         if (_isNumericListType(field.type)) {
@@ -479,7 +478,7 @@ class GObjectSourceGenerator extends StructuredGenerator<GObjectOptions> {
     _writeDispose(indent, module, classDefinition.name, () {
       bool haveSelf = false;
       for (final NamedType field in classDefinition.fields) {
-        final String fieldName = _snakeCaseFromCamelCase(field.name);
+        final String fieldName = _getFieldName(field.name);
         final String? clear = _getClearFunction(field.type, 'self->$fieldName');
         if (clear != null) {
           if (!haveSelf) {
@@ -499,10 +498,10 @@ class GObjectSourceGenerator extends StructuredGenerator<GObjectOptions> {
 
     final List<String> constructorArgs = <String>[];
     for (final NamedType field in classDefinition.fields) {
-      final String name = _snakeCaseFromCamelCase(field.name);
-      constructorArgs.add('${_getType(module, field.type)} $name');
+      final String fieldName = _getFieldName(field.name);
+      constructorArgs.add('${_getType(module, field.type)} $fieldName');
       if (_isNumericListType(field.type)) {
-        constructorArgs.add('size_t ${name}_length');
+        constructorArgs.add('size_t ${fieldName}_length');
       }
     }
     indent.newln();
@@ -511,7 +510,7 @@ class GObjectSourceGenerator extends StructuredGenerator<GObjectOptions> {
         () {
       _writeObjectNew(indent, module, classDefinition.name);
       for (final NamedType field in classDefinition.fields) {
-        final String fieldName = _snakeCaseFromCamelCase(field.name);
+        final String fieldName = _getFieldName(field.name);
         final String value = _referenceValue(field.type, fieldName,
             lengthVariableName: '${fieldName}_length');
 
@@ -537,7 +536,7 @@ class GObjectSourceGenerator extends StructuredGenerator<GObjectOptions> {
     });
 
     for (final NamedType field in classDefinition.fields) {
-      final String fieldName = _snakeCaseFromCamelCase(field.name);
+      final String fieldName = _getFieldName(field.name);
       final String returnType = _getType(module, field.type);
 
       indent.newln();
@@ -562,7 +561,7 @@ class GObjectSourceGenerator extends StructuredGenerator<GObjectOptions> {
         'static FlValue* ${methodPrefix}_to_list($className* self) {', '}', () {
       indent.writeln('FlValue* values = fl_value_new_list();');
       for (final NamedType field in classDefinition.fields) {
-        final String fieldName = _snakeCaseFromCamelCase(field.name);
+        final String fieldName = _getFieldName(field.name);
         indent.writeln(
             'fl_value_append_take(values, ${_makeFlValue(module, field.type, 'self->$fieldName', lengthVariableName: 'self->${fieldName}_length')});');
       }
@@ -576,7 +575,7 @@ class GObjectSourceGenerator extends StructuredGenerator<GObjectOptions> {
       final List<String> args = <String>[];
       for (int i = 0; i < classDefinition.fields.length; i++) {
         final NamedType field = classDefinition.fields[i];
-        final String fieldName = _snakeCaseFromCamelCase(field.name);
+        final String fieldName = _getFieldName(field.name);
         final String fieldType = _getType(module, field.type);
         String fieldValue = _fromFlValue(module, field.type, 'value$i');
         indent
@@ -668,7 +667,7 @@ class GObjectSourceGenerator extends StructuredGenerator<GObjectOptions> {
     });
 
     for (final Method method in api.methods) {
-      final String methodName = _snakeCaseFromCamelCase(method.name);
+      final String methodName = _getMethodName(method.name);
 
       final List<String> asyncArgs = <String>['$className* self'];
       for (final Parameter param in method.parameters) {
@@ -849,7 +848,7 @@ class GObjectSourceGenerator extends StructuredGenerator<GObjectOptions> {
 
       indent.newln();
       for (final Method method in api.methods) {
-        final String methodName = _snakeCaseFromCamelCase(method.name);
+        final String methodName = _getMethodName(method.name);
         indent.writeln('FlBasicMessageChannel* ${methodName}_channel;');
       }
     });
@@ -858,7 +857,7 @@ class GObjectSourceGenerator extends StructuredGenerator<GObjectOptions> {
     _writeDefineType(indent, module, api.name);
 
     for (final Method method in api.methods) {
-      final String methodName = _snakeCaseFromCamelCase(method.name);
+      final String methodName = _getMethodName(method.name);
       final String responseName = _getResponseName(api.name, method.name);
       final String responseClassName = _getClassName(module, responseName);
 
@@ -948,7 +947,7 @@ class GObjectSourceGenerator extends StructuredGenerator<GObjectOptions> {
 
       indent.newln();
       for (final Method method in api.methods) {
-        final String methodName = _snakeCaseFromCamelCase(method.name);
+        final String methodName = _getMethodName(method.name);
         indent.writeln('g_clear_object(&self->${methodName}_channel);');
       }
     });
@@ -978,7 +977,7 @@ class GObjectSourceGenerator extends StructuredGenerator<GObjectOptions> {
             'g_autoptr(FlStandardMessageCodec) codec = fl_standard_message_codec_new();');
       }
       for (final Method method in api.methods) {
-        final String methodName = _snakeCaseFromCamelCase(method.name);
+        final String methodName = _getMethodName(method.name);
         final String channelName =
             makeChannelName(api, method, dartPackageName);
         indent.writeln(
@@ -994,7 +993,7 @@ class GObjectSourceGenerator extends StructuredGenerator<GObjectOptions> {
     for (final Method method
         in api.methods.where((Method method) => method.isAsynchronous)) {
       final String returnType = _getType(module, method.returnType);
-      final String methodName = _snakeCaseFromCamelCase(method.name);
+      final String methodName = _getMethodName(method.name);
       final String responseName = _getResponseName(api.name, method.name);
       final String responseClassName = _getClassName(module, responseName);
       final String responseMethodPrefix =
@@ -1314,6 +1313,24 @@ String _camelCaseFromSnakeCase(String snakeCase) {
 // Returns the GObject class name for [name].
 String _getClassName(String module, String name) {
   return '$module$name';
+}
+
+// Returns the name to use for a class field with [name].
+String _getFieldName(String name) {
+  final List<String> reservedNames = <String>["type"];
+  if (reservedNames.contains(name)) {
+    name += '_';
+  }
+  return _snakeCaseFromCamelCase(name);
+}
+
+// Returns the name to user for a class method with [name]
+String _getMethodName(String name) {
+  final List<String> reservedNames = <String>["new", "get_type"];
+  if (reservedNames.contains(name)) {
+    name += '_';
+  }
+  return _snakeCaseFromCamelCase(name);
 }
 
 /// Return the name of the VTable structure to use for API requests.
