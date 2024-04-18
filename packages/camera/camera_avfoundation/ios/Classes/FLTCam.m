@@ -10,6 +10,12 @@
 @import CoreMotion;
 #import <libkern/OSAtomic.h>
 
+static FlutterError *FlutterErrorFromNSError(NSError *error) {
+  return [FlutterError errorWithCode:[NSString stringWithFormat:@"Error %d", (int)error.code]
+                             message:error.localizedDescription
+                             details:error.domain];
+}
+
 @implementation FLTImageStreamHandler
 
 - (instancetype)initWithCaptureSessionQueue:(dispatch_queue_t)captureSessionQueue {
@@ -336,7 +342,7 @@ NSString *const errorMethod = @"error";
   }
 }
 
-- (void)captureToFile:(FLTThreadSafeFlutterResult *)result {
+- (void)captureToFile:(FlutterResult)result {
   AVCapturePhotoSettings *settings = [AVCapturePhotoSettings photoSettings];
 
   if (_resolutionPreset == FLTResolutionPresetMax) {
@@ -366,7 +372,7 @@ NSString *const errorMethod = @"error";
                                                     prefix:@"CAP_"
                                                      error:error];
   if (error) {
-    [result sendError:error];
+    result(FlutterErrorFromNSError(error));
     return;
   }
 
@@ -385,10 +391,10 @@ NSString *const errorMethod = @"error";
         });
 
         if (error) {
-          [result sendError:error];
+          result(FlutterErrorFromNSError(error));
         } else {
           NSAssert(path, @"Path must not be nil if no error.");
-          [result sendSuccessWithData:path];
+          result(path);
         }
       }];
 
@@ -793,11 +799,11 @@ NSString *const errorMethod = @"error";
   return pixelBuffer;
 }
 
-- (void)startVideoRecordingWithResult:(FLTThreadSafeFlutterResult *)result {
+- (void)startVideoRecordingWithResult:(FlutterResult)result {
   [self startVideoRecordingWithResult:result messengerForStreaming:nil];
 }
 
-- (void)startVideoRecordingWithResult:(FLTThreadSafeFlutterResult *)result
+- (void)startVideoRecordingWithResult:(FlutterResult)result
                 messengerForStreaming:(nullable NSObject<FlutterBinaryMessenger> *)messenger {
   if (!_isRecording) {
     if (messenger != nil) {
@@ -810,11 +816,11 @@ NSString *const errorMethod = @"error";
                                                            prefix:@"REC_"
                                                             error:error];
     if (error) {
-      [result sendError:error];
+      result(FlutterErrorFromNSError(error));
       return;
     }
     if (![self setupWriterForPath:_videoRecordingPath]) {
-      [result sendErrorWithCode:@"IOError" message:@"Setup Writer Failed" details:nil];
+      result([FlutterError errorWithCode:@"IOError" message:@"Setup Writer Failed" details:nil]);
       return;
     }
     _isRecording = YES;
@@ -823,13 +829,13 @@ NSString *const errorMethod = @"error";
     _audioTimeOffset = CMTimeMake(0, 1);
     _videoIsDisconnected = NO;
     _audioIsDisconnected = NO;
-    [result sendSuccess];
+    result(nil);
   } else {
-    [result sendErrorWithCode:@"Error" message:@"Video is already recording" details:nil];
+    result([FlutterError errorWithCode:@"Error" message:@"Video is already recording" details:nil]);
   }
 }
 
-- (void)stopVideoRecordingWithResult:(FLTThreadSafeFlutterResult *)result {
+- (void)stopVideoRecordingWithResult:(FlutterResult)result {
   if (_isRecording) {
     _isRecording = NO;
 
@@ -837,12 +843,12 @@ NSString *const errorMethod = @"error";
       [_videoWriter finishWritingWithCompletionHandler:^{
         if (self->_videoWriter.status == AVAssetWriterStatusCompleted) {
           [self updateOrientation];
-          [result sendSuccessWithData:self->_videoRecordingPath];
+          result(self->_videoRecordingPath);
           self->_videoRecordingPath = nil;
         } else {
-          [result sendErrorWithCode:@"IOError"
-                            message:@"AVAssetWriter could not finish writing!"
-                            details:nil];
+          result([FlutterError errorWithCode:@"IOError"
+                                     message:@"AVAssetWriter could not finish writing!"
+                                     details:nil]);
         }
       }];
     }
@@ -851,35 +857,35 @@ NSString *const errorMethod = @"error";
         [NSError errorWithDomain:NSCocoaErrorDomain
                             code:NSURLErrorResourceUnavailable
                         userInfo:@{NSLocalizedDescriptionKey : @"Video is not recording!"}];
-    [result sendError:error];
+    result(FlutterErrorFromNSError(error));
   }
 }
 
-- (void)pauseVideoRecordingWithResult:(FLTThreadSafeFlutterResult *)result {
+- (void)pauseVideoRecordingWithResult:(FlutterResult)result {
   _isRecordingPaused = YES;
   _videoIsDisconnected = YES;
   _audioIsDisconnected = YES;
-  [result sendSuccess];
+  result(nil);
 }
 
-- (void)resumeVideoRecordingWithResult:(FLTThreadSafeFlutterResult *)result {
+- (void)resumeVideoRecordingWithResult:(FlutterResult)result {
   _isRecordingPaused = NO;
-  [result sendSuccess];
+  result(nil);
 }
 
-- (void)lockCaptureOrientationWithResult:(FLTThreadSafeFlutterResult *)result
+- (void)lockCaptureOrientationWithResult:(FlutterResult)result
                              orientation:(NSString *)orientationStr {
   UIDeviceOrientation orientation = FLTGetUIDeviceOrientationForString(orientationStr);
   // "Unknown" should never be sent, so is used to represent an unexpected
   // value.
   if (orientation == UIDeviceOrientationUnknown) {
-    [result sendError:[NSError errorWithDomain:NSCocoaErrorDomain
-                                          code:NSURLErrorUnknown
-                                      userInfo:@{
-                                        NSLocalizedDescriptionKey : [NSString
-                                            stringWithFormat:@"Unknown device orientation %@",
-                                                             orientationStr]
-                                      }]];
+    result(FlutterErrorFromNSError([NSError
+        errorWithDomain:NSCocoaErrorDomain
+                   code:NSURLErrorUnknown
+               userInfo:@{
+                 NSLocalizedDescriptionKey :
+                     [NSString stringWithFormat:@"Unknown device orientation %@", orientationStr]
+               }]));
     return;
   }
 
@@ -888,37 +894,38 @@ NSString *const errorMethod = @"error";
     [self updateOrientation];
   }
 
-  [result sendSuccess];
+  result(nil);
 }
 
-- (void)unlockCaptureOrientationWithResult:(FLTThreadSafeFlutterResult *)result {
+- (void)unlockCaptureOrientationWithResult:(FlutterResult)result {
   _lockedCaptureOrientation = UIDeviceOrientationUnknown;
   [self updateOrientation];
-  [result sendSuccess];
+  result(nil);
 }
 
-- (void)setFlashModeWithResult:(FLTThreadSafeFlutterResult *)result mode:(NSString *)modeStr {
+- (void)setFlashModeWithResult:(FlutterResult)result mode:(NSString *)modeStr {
   FLTFlashMode mode = FLTGetFLTFlashModeForString(modeStr);
   if (mode == FLTFlashModeInvalid) {
-    [result sendError:[NSError errorWithDomain:NSCocoaErrorDomain
-                                          code:NSURLErrorUnknown
-                                      userInfo:@{
-                                        NSLocalizedDescriptionKey : [NSString
-                                            stringWithFormat:@"Unknown flash mode %@", modeStr]
-                                      }]];
+    result(FlutterErrorFromNSError([NSError
+        errorWithDomain:NSCocoaErrorDomain
+                   code:NSURLErrorUnknown
+               userInfo:@{
+                 NSLocalizedDescriptionKey :
+                     [NSString stringWithFormat:@"Unknown flash mode %@", modeStr]
+               }]));
     return;
   }
   if (mode == FLTFlashModeTorch) {
     if (!_captureDevice.hasTorch) {
-      [result sendErrorWithCode:@"setFlashModeFailed"
-                        message:@"Device does not support torch mode"
-                        details:nil];
+      result([FlutterError errorWithCode:@"setFlashModeFailed"
+                                 message:@"Device does not support torch mode"
+                                 details:nil]);
       return;
     }
     if (!_captureDevice.isTorchAvailable) {
-      [result sendErrorWithCode:@"setFlashModeFailed"
-                        message:@"Torch mode is currently not available"
-                        details:nil];
+      result([FlutterError errorWithCode:@"setFlashModeFailed"
+                                 message:@"Torch mode is currently not available"
+                                 details:nil]);
       return;
     }
     if (_captureDevice.torchMode != AVCaptureTorchModeOn) {
@@ -928,17 +935,17 @@ NSString *const errorMethod = @"error";
     }
   } else {
     if (!_captureDevice.hasFlash) {
-      [result sendErrorWithCode:@"setFlashModeFailed"
-                        message:@"Device does not have flash capabilities"
-                        details:nil];
+      result([FlutterError errorWithCode:@"setFlashModeFailed"
+                                 message:@"Device does not have flash capabilities"
+                                 details:nil]);
       return;
     }
     AVCaptureFlashMode avFlashMode = FLTGetAVCaptureFlashModeForFLTFlashMode(mode);
     if (![_capturePhotoOutput.supportedFlashModes
             containsObject:[NSNumber numberWithInt:((int)avFlashMode)]]) {
-      [result sendErrorWithCode:@"setFlashModeFailed"
-                        message:@"Device does not support this specific flash mode"
-                        details:nil];
+      result([FlutterError errorWithCode:@"setFlashModeFailed"
+                                 message:@"Device does not support this specific flash mode"
+                                 details:nil]);
       return;
     }
     if (_captureDevice.torchMode != AVCaptureTorchModeOff) {
@@ -948,23 +955,24 @@ NSString *const errorMethod = @"error";
     }
   }
   _flashMode = mode;
-  [result sendSuccess];
+  result(nil);
 }
 
-- (void)setExposureModeWithResult:(FLTThreadSafeFlutterResult *)result mode:(NSString *)modeStr {
+- (void)setExposureModeWithResult:(FlutterResult)result mode:(NSString *)modeStr {
   FLTExposureMode mode = FLTGetFLTExposureModeForString(modeStr);
   if (mode == FLTExposureModeInvalid) {
-    [result sendError:[NSError errorWithDomain:NSCocoaErrorDomain
-                                          code:NSURLErrorUnknown
-                                      userInfo:@{
-                                        NSLocalizedDescriptionKey : [NSString
-                                            stringWithFormat:@"Unknown exposure mode %@", modeStr]
-                                      }]];
+    result(FlutterErrorFromNSError([NSError
+        errorWithDomain:NSCocoaErrorDomain
+                   code:NSURLErrorUnknown
+               userInfo:@{
+                 NSLocalizedDescriptionKey :
+                     [NSString stringWithFormat:@"Unknown exposure mode %@", modeStr]
+               }]));
     return;
   }
   _exposureMode = mode;
   [self applyExposureMode];
-  [result sendSuccess];
+  result(nil);
 }
 
 - (void)applyExposureMode {
@@ -989,20 +997,21 @@ NSString *const errorMethod = @"error";
   [_captureDevice unlockForConfiguration];
 }
 
-- (void)setFocusModeWithResult:(FLTThreadSafeFlutterResult *)result mode:(NSString *)modeStr {
+- (void)setFocusModeWithResult:(FlutterResult)result mode:(NSString *)modeStr {
   FLTFocusMode mode = FLTGetFLTFocusModeForString(modeStr);
   if (mode == FLTFocusModeInvalid) {
-    [result sendError:[NSError errorWithDomain:NSCocoaErrorDomain
-                                          code:NSURLErrorUnknown
-                                      userInfo:@{
-                                        NSLocalizedDescriptionKey : [NSString
-                                            stringWithFormat:@"Unknown focus mode %@", modeStr]
-                                      }]];
+    result(FlutterErrorFromNSError([NSError
+        errorWithDomain:NSCocoaErrorDomain
+                   code:NSURLErrorUnknown
+               userInfo:@{
+                 NSLocalizedDescriptionKey :
+                     [NSString stringWithFormat:@"Unknown focus mode %@", modeStr]
+               }]));
     return;
   }
   _focusMode = mode;
   [self applyFocusMode];
-  [result sendSuccess];
+  result(nil);
 }
 
 - (void)applyFocusMode {
@@ -1033,22 +1042,21 @@ NSString *const errorMethod = @"error";
   [captureDevice unlockForConfiguration];
 }
 
-- (void)pausePreviewWithResult:(FLTThreadSafeFlutterResult *)result {
+- (void)pausePreviewWithResult:(FlutterResult)result {
   _isPreviewPaused = true;
-  [result sendSuccess];
+  result(nil);
 }
 
-- (void)resumePreviewWithResult:(FLTThreadSafeFlutterResult *)result {
+- (void)resumePreviewWithResult:(FlutterResult)result {
   _isPreviewPaused = false;
-  [result sendSuccess];
+  result(nil);
 }
 
-- (void)setDescriptionWhileRecording:(NSString *)cameraName
-                              result:(FLTThreadSafeFlutterResult *)result {
+- (void)setDescriptionWhileRecording:(NSString *)cameraName result:(FlutterResult)result {
   if (!_isRecording) {
-    [result sendErrorWithCode:@"setDescriptionWhileRecordingFailed"
-                      message:@"Device was not recording"
-                      details:nil];
+    result([FlutterError errorWithCode:@"setDescriptionWhileRecordingFailed"
+                               message:@"Device was not recording"
+                               details:nil]);
     return;
   }
 
@@ -1068,7 +1076,7 @@ NSString *const errorMethod = @"error";
   NSError *error = nil;
   AVCaptureConnection *newConnection = [self createConnection:&error];
   if (error) {
-    [result sendError:error];
+    result(FlutterErrorFromNSError(error));
     return;
   }
 
@@ -1079,17 +1087,23 @@ NSString *const errorMethod = @"error";
 
   // Add the new connections to the session.
   if (![_videoCaptureSession canAddInput:_captureVideoInput])
-    [result sendErrorWithCode:@"VideoError" message:@"Unable switch video input" details:nil];
+    result([FlutterError errorWithCode:@"VideoError"
+                               message:@"Unable switch video input"
+                               details:nil]);
   [_videoCaptureSession addInputWithNoConnections:_captureVideoInput];
   if (![_videoCaptureSession canAddOutput:_captureVideoOutput])
-    [result sendErrorWithCode:@"VideoError" message:@"Unable switch video output" details:nil];
+    result([FlutterError errorWithCode:@"VideoError"
+                               message:@"Unable switch video output"
+                               details:nil]);
   [_videoCaptureSession addOutputWithNoConnections:_captureVideoOutput];
   if (![_videoCaptureSession canAddConnection:newConnection])
-    [result sendErrorWithCode:@"VideoError" message:@"Unable switch video connection" details:nil];
+    result([FlutterError errorWithCode:@"VideoError"
+                               message:@"Unable switch video connection"
+                               details:nil]);
   [_videoCaptureSession addConnection:newConnection];
   [_videoCaptureSession commitConfiguration];
 
-  [result sendSuccess];
+  result(nil);
 }
 
 - (CGPoint)getCGPointForCoordsWithOrientation:(UIDeviceOrientation)orientation
@@ -1117,11 +1131,11 @@ NSString *const errorMethod = @"error";
   return CGPointMake(x, y);
 }
 
-- (void)setExposurePointWithResult:(FLTThreadSafeFlutterResult *)result x:(double)x y:(double)y {
+- (void)setExposurePointWithResult:(FlutterResult)result x:(double)x y:(double)y {
   if (!_captureDevice.isExposurePointOfInterestSupported) {
-    [result sendErrorWithCode:@"setExposurePointFailed"
-                      message:@"Device does not have exposure point capabilities"
-                      details:nil];
+    result([FlutterError errorWithCode:@"setExposurePointFailed"
+                               message:@"Device does not have exposure point capabilities"
+                               details:nil]);
     return;
   }
   UIDeviceOrientation orientation = [[UIDevice currentDevice] orientation];
@@ -1132,14 +1146,14 @@ NSString *const errorMethod = @"error";
   [_captureDevice unlockForConfiguration];
   // Retrigger auto exposure
   [self applyExposureMode];
-  [result sendSuccess];
+  result(nil);
 }
 
-- (void)setFocusPointWithResult:(FLTThreadSafeFlutterResult *)result x:(double)x y:(double)y {
+- (void)setFocusPointWithResult:(FlutterResult)result x:(double)x y:(double)y {
   if (!_captureDevice.isFocusPointOfInterestSupported) {
-    [result sendErrorWithCode:@"setFocusPointFailed"
-                      message:@"Device does not have focus point capabilities"
-                      details:nil];
+    result([FlutterError errorWithCode:@"setFocusPointFailed"
+                               message:@"Device does not have focus point capabilities"
+                               details:nil]);
     return;
   }
   UIDeviceOrientation orientation = [[UIDevice currentDevice] orientation];
@@ -1151,14 +1165,14 @@ NSString *const errorMethod = @"error";
   [_captureDevice unlockForConfiguration];
   // Retrigger auto focus
   [self applyFocusMode];
-  [result sendSuccess];
+  result(nil);
 }
 
-- (void)setExposureOffsetWithResult:(FLTThreadSafeFlutterResult *)result offset:(double)offset {
+- (void)setExposureOffsetWithResult:(FlutterResult)result offset:(double)offset {
   [_captureDevice lockForConfiguration:nil];
   [_captureDevice setExposureTargetBias:offset completionHandler:nil];
   [_captureDevice unlockForConfiguration];
-  [result sendSuccessWithData:@(offset)];
+  result(@(offset));
 }
 
 - (void)startImageStreamWithMessenger:(NSObject<FlutterBinaryMessenger> *)messenger {
@@ -1211,18 +1225,18 @@ NSString *const errorMethod = @"error";
   self.streamingPendingFramesCount--;
 }
 
-- (void)getMaxZoomLevelWithResult:(FLTThreadSafeFlutterResult *)result {
+- (void)getMaxZoomLevelWithResult:(FlutterResult)result {
   CGFloat maxZoomFactor = [self getMaxAvailableZoomFactor];
 
-  [result sendSuccessWithData:[NSNumber numberWithFloat:maxZoomFactor]];
+  result([NSNumber numberWithFloat:maxZoomFactor]);
 }
 
-- (void)getMinZoomLevelWithResult:(FLTThreadSafeFlutterResult *)result {
+- (void)getMinZoomLevelWithResult:(FlutterResult)result {
   CGFloat minZoomFactor = [self getMinAvailableZoomFactor];
-  [result sendSuccessWithData:[NSNumber numberWithFloat:minZoomFactor]];
+  result([NSNumber numberWithFloat:minZoomFactor]);
 }
 
-- (void)setZoomLevel:(CGFloat)zoom Result:(FLTThreadSafeFlutterResult *)result {
+- (void)setZoomLevel:(CGFloat)zoom Result:(FlutterResult)result {
   CGFloat maxAvailableZoomFactor = [self getMaxAvailableZoomFactor];
   CGFloat minAvailableZoomFactor = [self getMinAvailableZoomFactor];
 
@@ -1231,19 +1245,19 @@ NSString *const errorMethod = @"error";
         stringWithFormat:@"Zoom level out of bounds (zoom level should be between %f and %f).",
                          minAvailableZoomFactor, maxAvailableZoomFactor];
 
-    [result sendErrorWithCode:@"ZOOM_ERROR" message:errorMessage details:nil];
+    result([FlutterError errorWithCode:@"ZOOM_ERROR" message:errorMessage details:nil]);
     return;
   }
 
   NSError *error = nil;
   if (![_captureDevice lockForConfiguration:&error]) {
-    [result sendError:error];
+    result(FlutterErrorFromNSError(error));
     return;
   }
   _captureDevice.videoZoomFactor = zoom;
   [_captureDevice unlockForConfiguration];
 
-  [result sendSuccess];
+  result(nil);
 }
 
 - (CGFloat)getMinAvailableZoomFactor {
