@@ -23,7 +23,10 @@ dependencies:
   flutter:
     sdk: flutter
   local_auth_android:
-    path: '../local_auth_android'
+    git:
+      url: https://github.com/upsidr/flutter_packages.git
+      path: packages/local_auth/local_auth_android
+      ref: packages/local_auth
   local_auth_darwin: ^1.2.1
   local_auth_platform_interface: ^1.0.1
   local_auth_windows: ^1.0.0
