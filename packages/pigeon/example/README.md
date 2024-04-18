@@ -235,6 +235,11 @@ static void handle_send_message(
   pigeon_example_package_example_host_api_respond_send_message(
       object, response_handle, TRUE);
 }
+
+static PigeonExamplePackageExampleHostApiVTable example_host_api_vtable = {
+    .get_host_language = handle_get_host_language,
+    .add = handle_add,
+    .send_message = handle_send_message};
 ```
 
 ## FlutterApi Example
