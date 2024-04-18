@@ -4,11 +4,13 @@
 
 #import "FLTCam.h"
 #import "FLTCam_Test.h"
-#import "FLTSavePhotoDelegate.h"
-#import "QueueUtils.h"
 
 @import CoreMotion;
 #import <libkern/OSAtomic.h>
+
+#import "FLTSavePhotoDelegate.h"
+#import "FLTThreadSafeEventChannel.h"
+#import "QueueUtils.h"
 
 static FlutterError *FlutterErrorFromNSError(NSError *error) {
   return [FlutterError errorWithCode:[NSString stringWithFormat:@"Error %d", (int)error.code]
@@ -286,6 +288,20 @@ NSString *const errorMethod = @"error";
   }
 
   return connection;
+}
+
+- (void)reportInitializationState {
+  CGSize previewSize = self.previewSize;
+  [_methodChannel
+      invokeMethod:@"initialized"
+         arguments:@{
+           @"previewWidth" : @(previewSize.width),
+           @"previewHeight" : @(previewSize.height),
+           @"exposureMode" : FLTGetStringForFLTExposureMode([self exposureMode]),
+           @"focusMode" : FLTGetStringForFLTFocusMode([self focusMode]),
+           @"exposurePointSupported" : @([self.captureDevice isExposurePointOfInterestSupported]),
+           @"focusPointSupported" : @([self.captureDevice isFocusPointOfInterestSupported]),
+         }];
 }
 
 - (void)start {

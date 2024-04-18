@@ -180,20 +180,9 @@ static FlutterError *FlutterErrorFromNSError(NSError *error) {
               [NSString stringWithFormat:@"plugins.flutter.io/camera_avfoundation/camera%lu",
                                          (unsigned long)cameraId]
                 binaryMessenger:_messenger];
-      FLTThreadSafeMethodChannel *threadSafeMethodChannel =
+      _camera.methodChannel =
           [[FLTThreadSafeMethodChannel alloc] initWithMethodChannel:methodChannel];
-      _camera.methodChannel = threadSafeMethodChannel;
-      [threadSafeMethodChannel
-          invokeMethod:@"initialized"
-             arguments:@{
-               @"previewWidth" : @(_camera.previewSize.width),
-               @"previewHeight" : @(_camera.previewSize.height),
-               @"exposureMode" : FLTGetStringForFLTExposureMode([_camera exposureMode]),
-               @"focusMode" : FLTGetStringForFLTFocusMode([_camera focusMode]),
-               @"exposurePointSupported" :
-                   @([_camera.captureDevice isExposurePointOfInterestSupported]),
-               @"focusPointSupported" : @([_camera.captureDevice isFocusPointOfInterestSupported]),
-             }];
+      [_camera reportInitializationState];
       [self sendDeviceOrientation:[UIDevice currentDevice].orientation];
       [_camera start];
       result(nil);

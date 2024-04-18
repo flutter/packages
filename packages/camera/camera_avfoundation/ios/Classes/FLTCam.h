@@ -9,7 +9,6 @@
 #import "CameraProperties.h"
 #import "FLTCamMediaSettings.h"
 #import "FLTCamMediaSettingsAVWrapper.h"
-#import "FLTThreadSafeEventChannel.h"
 #import "FLTThreadSafeMethodChannel.h"
 #import "FLTThreadSafeTextureRegistry.h"
 
@@ -48,6 +47,8 @@ NS_ASSUME_NONNULL_BEGIN
                captureSessionQueue:(dispatch_queue_t)captureSessionQueue
                              error:(NSError **)error;
 
+/// Informs the Dart side of the plugin of the current camera state and capabilities.
+- (void)reportInitializationState;
 - (void)start;
 - (void)stop;
 - (void)setDeviceOrientation:(UIDeviceOrientation)orientation;
