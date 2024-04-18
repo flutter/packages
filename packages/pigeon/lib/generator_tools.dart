@@ -656,7 +656,8 @@ String? deducePackageName(String mainDartFile) {
 ///
 /// [T] depends on the language. For example, Android uses an int while iOS uses
 /// semantic versioning.
-(TypeDeclaration type, T version)? findHighestApiRequirement<T extends Object>(
+({TypeDeclaration type, T version})?
+    findHighestApiRequirement<T extends Object>(
   Iterable<TypeDeclaration> types, {
   required T? Function(TypeDeclaration) onGetApiRequirement,
   required Comparator<T> onCompare,
@@ -672,7 +673,6 @@ String? deducePackageName(String mainDartFile) {
 
   final Iterable<TypeDeclaration> allReferencedTypes = types
       .expand(addAllRecursive)
-      // TODO: Remove this in the `typeWithHighestRequirement` kotlin generator
       .where((TypeDeclaration type) => onGetApiRequirement(type) != null);
 
   if (allReferencedTypes.isEmpty) {
@@ -688,8 +688,8 @@ String? deducePackageName(String mainDartFile) {
   );
 
   return (
-    typeWithHighestRequirement,
-    onGetApiRequirement(typeWithHighestRequirement)!,
+    type: typeWithHighestRequirement,
+    version: onGetApiRequirement(typeWithHighestRequirement)!,
   );
 }
 

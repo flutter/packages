@@ -459,6 +459,9 @@ public class ProxyApiSuperClass {}
 protocol ProxyApiInterface: AnyObject {}
 
 public protocol PigeonApiDelegateProxyApiTestClass {
+  /// woij
+  /// wef
+  @available(iOS 15.0.0, *)
   func pigeonDefaultConstructor(_ pigeonApi: PigeonApiProxyApiTestClass) throws -> ProxyApiTestClass
   func someField(_ pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass) throws
     -> Int

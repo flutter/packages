@@ -517,6 +517,51 @@ class SwiftGenerator extends StructuredGenerator<SwiftOptions> {
     indent.writeln(proxyApiReaderWriterTemplate(allProxyApis: allProxyApis));
   }
 
+  @override
+  void writeProxyApi(
+    SwiftOptions generatorOptions,
+    Root root,
+    Indent indent,
+    AstProxyApi api, {
+    required String dartPackageName,
+  }) {
+    final TypeDeclaration apiAsTypeDeclaration = TypeDeclaration(
+      baseName: api.name,
+      isNullable: false,
+      associatedProxyApi: api,
+    );
+
+    final String swiftApiDelegateName = '${classNamePrefix}Delegate${api.name}';
+    indent.writeScoped('protocol $swiftApiDelegateName: AnyObject {', '}', () {
+      _writeProxyApiConstructorDelegateMethods(
+        indent,
+        api,
+        apiAsTypeDeclaration: apiAsTypeDeclaration,
+      );
+      _writeProxyApiAttachedFieldDelegateMethods(
+        indent,
+        api,
+        apiAsTypeDeclaration: apiAsTypeDeclaration,
+      );
+      if (api.hasCallbackConstructor()) {
+        _writeProxyApiUnattachedFieldDelegateMethods(
+          indent,
+          api,
+          apiAsTypeDeclaration: apiAsTypeDeclaration,
+        );
+      }
+      _writeProxyApiHostMethodDelegateMethods(
+        indent,
+        api,
+        apiAsTypeDeclaration: apiAsTypeDeclaration,
+      );
+    });
+
+    final String swiftClassName = api.swiftOptions?.name ?? api.name;
+
+    final String swiftApiName = '$hostProxyApiPrefix${api.name}';
+  }
+
   /// Writes the codec class will be used for encoding messages for the [api].
   /// Example:
   /// private class FooHostApiCodecReader: FlutterStandardReader {...}
@@ -1070,9 +1115,195 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
       });
     });
   }
+
+  // Writes the delegate method that instantiates a new instance of the Kotlin
+  // class.
+  void _writeProxyApiConstructorDelegateMethods(
+    Indent indent,
+    AstProxyApi api, {
+    required TypeDeclaration apiAsTypeDeclaration,
+  }) {
+    for (final Constructor constructor in api.constructors) {
+      addDocumentationComments(
+        indent,
+        constructor.documentationComments,
+        _docCommentSpec,
+      );
+
+      final Version? versionRequirement =
+          _findHighestIosVersionRequirement(<TypeDeclaration>[
+        apiAsTypeDeclaration,
+        ...api.unattachedFields.map((ApiField field) => field.type),
+        ...constructor.parameters.map((Parameter parameter) => parameter.type),
+      ])?.version;
+      if (versionRequirement != null) {
+        indent.writeln('@available(iOS $versionRequirement, *))');
+      }
+
+      final String methodSignature = _getMethodSignature(
+        name: constructor.name.isNotEmpty
+            ? constructor.name
+            : 'pigeonDefaultConstructor',
+        parameters: <Parameter>[
+          Parameter(
+            name: 'pigeonApi',
+            type: TypeDeclaration(
+              baseName: '$hostProxyApiPrefix${api.name}',
+              isNullable: false,
+            ),
+          ),
+          ...api.unattachedFields.map((ApiField field) {
+            return Parameter(name: field.name, type: field.type);
+          }),
+          ...constructor.parameters
+        ],
+        returnType: apiAsTypeDeclaration,
+        errorTypeName: '',
+      );
+      indent.writeln(methodSignature);
+    }
+  }
+
+  // Writes the delegate method that handles instantiating an attached field.
+  void _writeProxyApiAttachedFieldDelegateMethods(
+    Indent indent,
+    AstProxyApi api, {
+    required TypeDeclaration apiAsTypeDeclaration,
+  }) {
+    for (final ApiField field in api.attachedFields) {
+      addDocumentationComments(
+        indent,
+        field.documentationComments,
+        _docCommentSpec,
+      );
+
+      final Version? versionRequirement =
+          _findHighestIosVersionRequirement(<TypeDeclaration>[
+        apiAsTypeDeclaration,
+        field.type,
+      ])?.version;
+      if (versionRequirement != null) {
+        indent.writeln('@available(iOS $versionRequirement, *))');
+      }
+
+      final String methodSignature = _getMethodSignature(
+        name: field.name,
+        parameters: <Parameter>[
+          Parameter(
+            name: 'pigeonApi',
+            type: TypeDeclaration(
+              baseName: '$hostProxyApiPrefix${api.name}',
+              isNullable: false,
+            ),
+          ),
+          if (!field.isStatic)
+            Parameter(
+              name: 'pigeonInstance',
+              type: apiAsTypeDeclaration,
+            ),
+        ],
+        returnType: field.type,
+        errorTypeName: '',
+      );
+      indent.writeln(methodSignature);
+    }
+  }
+
+  // Writes the delegate method that handles accessing an unattached field.
+  void _writeProxyApiUnattachedFieldDelegateMethods(
+    Indent indent,
+    AstProxyApi api, {
+    required TypeDeclaration apiAsTypeDeclaration,
+  }) {
+    for (final ApiField field in api.unattachedFields) {
+      addDocumentationComments(
+        indent,
+        field.documentationComments,
+        _docCommentSpec,
+      );
+
+      final Version? versionRequirement =
+          _findHighestIosVersionRequirement(<TypeDeclaration>[
+        apiAsTypeDeclaration,
+        field.type,
+      ])?.version;
+      if (versionRequirement != null) {
+        indent.writeln('@available(iOS $versionRequirement, *))');
+      }
+
+      final String methodSignature = _getMethodSignature(
+        name: field.name,
+        parameters: <Parameter>[
+          Parameter(
+            name: 'pigeonApi',
+            type: TypeDeclaration(
+              baseName: '$hostProxyApiPrefix${api.name}',
+              isNullable: false,
+            ),
+          ),
+          Parameter(
+            name: 'pigeonInstance',
+            type: apiAsTypeDeclaration,
+          ),
+        ],
+        returnType: field.type,
+        errorTypeName: '',
+      );
+      indent.writeln(methodSignature);
+    }
+  }
+
+  // Writes the delegate method that handles making a call from for a host
+  // method.
+  void _writeProxyApiHostMethodDelegateMethods(
+    Indent indent,
+    AstProxyApi api, {
+    required TypeDeclaration apiAsTypeDeclaration,
+  }) {
+    for (final Method method in api.hostMethods) {
+      addDocumentationComments(
+        indent,
+        method.documentationComments,
+        _docCommentSpec,
+      );
+
+      final Version? versionRequirement =
+          _findHighestIosVersionRequirement(<TypeDeclaration>[
+        if (!method.isStatic) apiAsTypeDeclaration,
+        method.returnType,
+        ...method.parameters.map((Parameter p) => p.type),
+      ])?.version;
+      if (versionRequirement != null) {
+        indent.writeln('@available(iOS $versionRequirement, *))');
+      }
+
+      final String methodSignature = _getMethodSignature(
+        name: method.name,
+        parameters: <Parameter>[
+          Parameter(
+            name: 'pigeonApi',
+            type: TypeDeclaration(
+              baseName: '$hostProxyApiPrefix${api.name}',
+              isNullable: false,
+            ),
+          ),
+          if (!method.isStatic)
+            Parameter(
+              name: 'pigeonInstance',
+              type: apiAsTypeDeclaration,
+            ),
+          ...method.parameters,
+        ],
+        returnType: method.returnType,
+        isAsynchronous: method.isAsynchronous,
+        errorTypeName: 'Error',
+      );
+      indent.writeln(methodSignature);
+    }
+  }
 }
 
-(TypeDeclaration type, Version version)? _findHighestIosVersionRequirement(
+({TypeDeclaration type, Version version})? _findHighestIosVersionRequirement(
   Iterable<TypeDeclaration> types,
 ) {
   return findHighestApiRequirement<Version>(
