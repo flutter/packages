@@ -48,7 +48,7 @@ public class FileUtils {
   /**
    * Retrieves path of directory represented by the specified {@code Uri}.
    *
-   * <p>Intended to handle any cases needed to return paths from URIS retrieved from open
+   * <p>Intended to handle any cases needed to return paths from URIs retrieved from open
    * documents/directories by starting one of {@code Intent.ACTION_OPEN_FILE}, {@code
    * Intent.ACTION_OPEN_FILES}, or {@code Intent.ACTION_OPEN_DOCUMENT_TREE}.
    *
