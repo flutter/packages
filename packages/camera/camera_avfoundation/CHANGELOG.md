@@ -1,3 +1,7 @@
+## 0.9.15+3
+
+* Converts host-to-Dart communcation to Pigeon.
+
 ## 0.9.15+2
 
 * Converts camera query to Pigeon.
