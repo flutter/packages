@@ -6,9 +6,6 @@ tasks:
     script: .ci/scripts/tool_runner.sh
     args: ["fetch-deps", "--macos", "--supporting-target-platforms-only"]
     infra_step: true
-  - name: build examples with CocoaPods integration
-    script: .ci/scripts/tool_runner.sh
-    args: ["build-examples", "--macos"]
   - name: build examples with Swift Package Manager integration
     script: .ci/scripts/tool_runner.sh
     args: ["build-examples", "--macos", "--swift-package-manager"]

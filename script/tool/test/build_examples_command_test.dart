@@ -197,11 +197,6 @@ void main() {
           ),
           ProcessCall(
             getFlutterCommand(mockPlatform),
-            const <String>['clean'],
-            pluginExampleDirectory.path,
-          ),
-          ProcessCall(
-            getFlutterCommand(mockPlatform),
             const <String>[
               'build',
               'ios',
@@ -337,11 +332,6 @@ void main() {
             getFlutterCommand(mockPlatform),
             const <String>['config', '--enable-swift-package-manager'],
             null,
-          ),
-          ProcessCall(
-            getFlutterCommand(mockPlatform),
-            const <String>['clean'],
-            pluginExampleDirectory.path,
           ),
           ProcessCall(
             getFlutterCommand(mockPlatform),

@@ -290,12 +290,6 @@ class BuildExamplesCommand extends PackageLoopingCommand {
   }) async {
     final String enableExperiment = getStringArg(kEnableExperiment);
 
-    // Clean app before building when using Swift Package Manager since this
-    // is the second time it's being built.
-    if (usingSwiftPackageManager) {
-      await _cleanExample(example);
-    }
-
     final int exitCode = await processRunner.runAndStream(
       flutterCommand,
       <String>[
@@ -305,19 +299,6 @@ class BuildExamplesCommand extends PackageLoopingCommand {
         ..._readExtraBuildFlagsConfiguration(example.directory),
         if (enableExperiment.isNotEmpty)
           '--enable-experiment=$enableExperiment',
-      ],
-      workingDir: example.directory,
-    );
-    return exitCode == 0;
-  }
-
-  Future<bool> _cleanExample(
-    RepositoryPackage example,
-  ) async {
-    final int exitCode = await processRunner.runAndStream(
-      flutterCommand,
-      <String>[
-        'clean',
       ],
       workingDir: example.directory,
     );
