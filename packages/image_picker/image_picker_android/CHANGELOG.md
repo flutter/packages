@@ -1,3 +1,7 @@
+## 0.8.10+1
+
+* Updates documentation to note that Android Photo Picker use is not optional on Android 13+.
+
 ## 0.8.10
 
 * Adds limit parameter to `MediaOptions` and `MultiImagePickerOptions` that sets a limit to how many media or image items can be selected.
