@@ -8,7 +8,6 @@ import 'dart:math' as math;
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 
-import '../common/implementation_span.dart';
 import 'tree_delegate.dart';
 import 'tree_span.dart';
 import 'tree_temp.dart';
