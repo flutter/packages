@@ -1,3 +1,7 @@
+## 0.3.15
+
+* Converts main plugin class to Swift
+
 ## 0.3.14
 
 * Adds `countryCode` API.
