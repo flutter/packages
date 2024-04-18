@@ -103,7 +103,7 @@ final class InstanceManagerTests: XCTestCase {
     let binaryMessenger = MockBinaryMessenger<String>(
       codec: FlutterStandardMessageCodec.sharedInstance())
 
-    class PigeonApiDelegateImpl: PigeonProxyApiRegistrarDelegate {
+    class PigeonApiDelegateImpl: PigeonProxyApiDelegate {
       func pigeonApiProxyApiTestClass(_ pigeonRegistrar: test_plugin.PigeonProxyApiRegistrar)
         -> test_plugin.PigeonApiProxyApiTestClass
       {

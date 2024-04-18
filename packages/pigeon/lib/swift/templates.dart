@@ -2,12 +2,25 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import '../ast.dart';
 import '../generator_tools.dart';
+
+/// Name of delegate that handles the callback when an object is deallocated
+/// in an `InstanceManager`.
+const String instanceManagerFinalizerDelegateName =
+    '${_instanceManagerFinalizerName}Delegate';
+
+/// The name of the registrar containing all the ProxyApi implementations.
+const String proxyApiRegistrarName = '${classNamePrefix}ProxyApiRegistrar';
+
+/// The name of the `ReaderWriter` that handles ProxyApis.
+const String proxyApiReaderWriterName =
+    '${classNamePrefix}ProxyApiCodecReaderWriter';
 
 /// Template for delegate with callback when an object is deallocated.
 const String instanceManagerFinalizerDelegateTemplate = '''
 /// Handles the callback when an object is deallocated.
-public protocol $_instanceManagerFinalizerDelegateName: AnyObject {
+public protocol $instanceManagerFinalizerDelegateName: AnyObject {
   /// Invoked when the strong reference of an object is deallocated in an `InstanceManager`.
   func onDeinit(identifier: Int64)
 }
@@ -22,15 +35,15 @@ internal final class $_instanceManagerFinalizerName {
   private let identifier: Int64
   // Reference to the delegate is weak because the callback should be ignored if the
   // `InstanceManager` is deallocated.
-  private weak var delegate: $_instanceManagerFinalizerDelegateName?
+  private weak var delegate: $instanceManagerFinalizerDelegateName?
 
-  private init(identifier: Int64, delegate: $_instanceManagerFinalizerDelegateName) {
+  private init(identifier: Int64, delegate: $instanceManagerFinalizerDelegateName) {
     self.identifier = identifier
     self.delegate = delegate
   }
 
   internal static func attach(
-    to instance: AnyObject, identifier: Int64, delegate: $_instanceManagerFinalizerDelegateName
+    to instance: AnyObject, identifier: Int64, delegate: $instanceManagerFinalizerDelegateName
   ) {
     let finalizer = $_instanceManagerFinalizerName(identifier: identifier, delegate: delegate)
     objc_setAssociatedObject(instance, associatedObjectKey, finalizer, .OBJC_ASSOCIATION_RETAIN)
@@ -56,7 +69,7 @@ const String instanceManagerTemplate = '''
 /// When an instance is added with an identifier, either can be used to retrieve the other.
 ///
 /// Added instances are added as a weak reference and a strong reference. When the strong
-/// reference is removed and the weak reference is deallocated,`$_instanceManagerFinalizerDelegateName.onDeinit`
+/// reference is removed and the weak reference is deallocated,`$instanceManagerFinalizerDelegateName.onDeinit`
 /// is called with the instance's identifier. However, if the strong reference is removed and then the identifier is
 /// retrieved with the intention to pass the identifier to Dart (e.g. by calling `identifierWithStrongReference`),
 /// the strong reference to the instance is re-added. The strong reference will then need to be removed manually
@@ -77,10 +90,10 @@ public class $instanceManagerClassName {
     keyOptions: .strongMemory, valueOptions: [.weakMemory, .objectPointerPersonality])
   private let strongInstances: NSMapTable<NSNumber, AnyObject> = NSMapTable(
     keyOptions: .strongMemory, valueOptions: [.strongMemory, .objectPointerPersonality])
-  private let finalizerDelegate: $_instanceManagerFinalizerDelegateName
+  private let finalizerDelegate: $instanceManagerFinalizerDelegateName
   private var nextIdentifier: Int64 = minHostCreatedIdentifier
 
-  public init(finalizerDelegate: $_instanceManagerFinalizerDelegateName) {
+  public init(finalizerDelegate: $instanceManagerFinalizerDelegateName) {
     self.finalizerDelegate = finalizerDelegate
   }
 
@@ -230,10 +243,7 @@ public class $instanceManagerClassName {
 ''';
 
 /// Creates the `InstanceManagerApi` with the passed string values.
-String instanceManagerApiTemplate({
-  required String dartPackageName,
-  required String errorClassName,
-}) {
+String instanceManagerApiTemplate({required String dartPackageName}) {
   final String removeStrongReferenceName = makeChannelNameWithStrings(
     apiName: _instanceManagerApiName,
     methodName: 'removeStrongReference',
@@ -313,9 +323,87 @@ private class $_instanceManagerApiName {
 ''';
 }
 
+/// Creates the Swift `ReaderWriter` for handling ProxyApis.
+String proxyApiReaderWriterTemplate({
+  required Iterable<AstProxyApi> allProxyApis,
+}) {
+  final String classChecker = allProxyApis.map<String>((AstProxyApi api) {
+    final String className = api.swiftOptions?.name ?? api.name;
+    String versionCheck = '';
+    if (api.swiftOptions?.minIosApi != null) {
+      versionCheck = '#available(iOS ${api.swiftOptions!.minIosApi!}, *), ';
+    }
+    return '''
+      if ${versionCheck}value is $className {
+        pigeonRegistrar.apiDelegate.pigeonApi${api.name}(pigeonRegistrar).pigeonNewInstance(
+          pigeonInstanceArg: value as! $className
+        ) { _ in }
+      }
+    ''';
+  }).join(' else ');
+
+  return '''
+private class $proxyApiReaderWriterName: FlutterStandardReaderWriter {
+  unowned let pigeonRegistrar: $proxyApiRegistrarName
+  
+  private class ${classNamePrefix}ProxyApiCodecReader: FlutterStandardReader {
+    unowned let pigeonRegistrar: $proxyApiRegistrarName
+
+    init(data: Data, pigeonRegistrar: $proxyApiRegistrarName) {
+      self.pigeonRegistrar = pigeonRegistrar
+      super.init(data: data)
+    }
+
+    override func readValue(ofType type: UInt8) -> Any? {
+      switch type {
+      case 128:
+        let identifier = self.readValue()
+        let instance: AnyObject? = pigeonRegistrar.instanceManager.instance(
+          forIdentifier: identifier is Int64 ? identifier as! Int64 : Int64(identifier as! Int32))
+        return instance
+      default:
+        return super.readValue(ofType: type)
+      }
+    }
+  }
+  
+  private class ${classNamePrefix}ProxyApiCodecWriter: FlutterStandardWriter {
+    unowned let pigeonRegistrar: $proxyApiRegistrarName
+
+    init(data: NSMutableData, pigeonRegistrar: $proxyApiRegistrarName) {
+      self.pigeonRegistrar = pigeonRegistrar
+      super.init(data: data)
+    }
+
+    override func writeValue(_ value: Any) {
+      $classChecker
+
+      if let instance = value as? AnyClass, pigeonRegistrar.instanceManager.containsInstance(instance)
+      {
+        super.writeByte(128)
+        super.writeValue(
+          pigeonRegistrar.instanceManager.identifierWithStrongReference(forInstance: instance)!)
+      } else {
+        super.writeValue(value)
+      }
+    }
+  }
+
+  init(pigeonRegistrar: $proxyApiRegistrarName) {
+    self.pigeonRegistrar = pigeonRegistrar
+  }
+
+  override func reader(with data: Data) -> FlutterStandardReader {
+    return PigeonProxyApiCodecReader(data: data, pigeonRegistrar: pigeonRegistrar)
+  }
+
+  override func writer(with data: NSMutableData) -> FlutterStandardWriter {
+    return PigeonProxyApiCodecWriter(data: data, pigeonRegistrar: pigeonRegistrar)
+  }
+}  
+''';
+}
+
 const String _instanceManagerApiName = '${instanceManagerClassName}Api';
 
 const String _instanceManagerFinalizerName = '${classNamePrefix}Finalizer';
-
-const String _instanceManagerFinalizerDelegateName =
-    '${_instanceManagerFinalizerName}Delegate';

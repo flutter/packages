@@ -9,6 +9,7 @@ import 'ast.dart';
 import 'functional.dart';
 import 'generator.dart';
 import 'generator_tools.dart';
+import 'swift/templates.dart';
 
 /// Documentation comment open symbol.
 const String _docCommentPrefix = '///';
@@ -477,6 +478,45 @@ class SwiftGenerator extends StructuredGenerator<SwiftOptions> {
     });
   }
 
+  @override
+  void writeInstanceManager(
+    SwiftOptions generatorOptions,
+    Root root,
+    Indent indent, {
+    required String dartPackageName,
+  }) {
+    indent.format(instanceManagerFinalizerDelegateTemplate);
+    indent.newln();
+    indent.format(instanceManagerFinalizerTemplate);
+    indent.newln();
+    indent.format(instanceManagerTemplate);
+  }
+
+  @override
+  void writeInstanceManagerApi(
+    SwiftOptions generatorOptions,
+    Root root,
+    Indent indent, {
+    required String dartPackageName,
+  }) {
+    indent.format(instanceManagerApiTemplate(
+      dartPackageName: dartPackageName,
+    ));
+  }
+
+  @override
+  void writeProxyApiBaseCodec(
+    SwiftOptions generatorOptions,
+    Root root,
+    Indent indent,
+  ) {
+    final Iterable<AstProxyApi> allProxyApis =
+        root.apis.whereType<AstProxyApi>();
+
+    _writeProxyApiRegistrar(indent, allProxyApis: allProxyApis);
+    indent.writeln(proxyApiReaderWriterTemplate(allProxyApis: allProxyApis));
+  }
+
   /// Writes the codec class will be used for encoding messages for the [api].
   /// Example:
   /// private class FooHostApiCodecReader: FlutterStandardReader {...}
@@ -934,9 +974,105 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
       indent.writeln('$varChannelName.setMessageHandler(nil)');
     });
   }
+
+  void _writeProxyApiRegistrar(
+    Indent indent, {
+    required Iterable<AstProxyApi> allProxyApis,
+  }) {
+    const String delegateName = '${classNamePrefix}ProxyApiDelegate';
+    indent.writeScoped('protocol $delegateName: AnyObject {', '}', () {
+      for (final AstProxyApi api in allProxyApis) {
+        final String hostApiName = '$hostProxyApiPrefix${api.name}';
+        indent.format(
+          '/// An implementation of [$hostApiName] used to add a new Dart instance of\n'
+          '/// `${api.name}` to the Dart `InstanceManager` and make calls to Dart.',
+        );
+        indent.writeln(
+          'func pigeonApi${api.name}(_ registrar: $proxyApiRegistrarName) -> $hostApiName',
+        );
+      }
+    });
+
+    indent.writeScoped('public class $proxyApiRegistrarName {', '}', () {
+      indent.writeln('let binaryMessenger: FlutterBinaryMessenger');
+      indent.writeln('let apiDelegate: $delegateName');
+      indent.writeln('let instanceManager: PigeonInstanceManager');
+
+      indent.writeln('private var _codec: FlutterStandardMessageCodec?');
+      indent.format(
+        'var codec: FlutterStandardMessageCodec {\n'
+        '  if _codec == nil {\n'
+        '    _codec = FlutterStandardMessageCodec(\n'
+        '      readerWriter: $proxyApiReaderWriterName(pigeonRegistrar: self))\n'
+        '  }\n'
+        '  return _codec!\n'
+        '}',
+      );
+      indent.newln();
+
+      indent.format(
+        'private class InstanceManagerApiFinalizerDelegate: $instanceManagerFinalizerDelegateName {\n'
+        '  let api: ${instanceManagerClassName}Api\n'
+        '\n'
+        '  init(_ api: ${instanceManagerClassName}Api) {\n'
+        '    self.api = api\n'
+        '  }\n'
+        '\n'
+        '  public func onDeinit(identifier: Int64) {\n'
+        '    api.removeStrongReference(withIdentifier: identifier) {\n'
+        '      _ in\n'
+        '    }\n'
+        '  }\n'
+        '}',
+      );
+      indent.newln();
+
+      indent.format(
+        'init(binaryMessenger: FlutterBinaryMessenger, apiDelegate: $delegateName) {\n'
+        '  self.binaryMessenger = binaryMessenger\n'
+        '  self.apiDelegate = apiDelegate\n'
+        '  self.instanceManager = $instanceManagerClassName(\n'
+        '    finalizerDelegate: InstanceManagerApiFinalizerDelegate(\n'
+        '      ${instanceManagerClassName}Api(binaryMessenger: binaryMessenger)))\n'
+        '}',
+      );
+      indent.newln();
+
+      bool apiHasHostMessageCalls(AstProxyApi api) =>
+          api.constructors.isNotEmpty ||
+          api.attachedFields.isNotEmpty ||
+          api.hostMethods.isNotEmpty;
+
+      indent.writeScoped('func setUp() {', '}', () {
+        indent.writeln(
+          '${instanceManagerClassName}Api.setUpMessageHandlers(binaryMessenger: binaryMessenger, instanceManager: instanceManager)',
+        );
+        for (final AstProxyApi api in allProxyApis) {
+          if (apiHasHostMessageCalls(api)) {
+            indent.writeln(
+              '$hostProxyApiPrefix${api.name}.setUpMessageHandlers(binaryMessenger: binaryMessenger, api: apiDelegate.pigeonApi${api.name}(self))',
+            );
+          }
+        }
+      });
+
+      indent.writeScoped('func tearDown() {', '}', () {
+        indent.writeln(
+          '${instanceManagerClassName}Api.setUpMessageHandlers(binaryMessenger: binaryMessenger, instanceManager: nil)',
+        );
+        for (final AstProxyApi api in allProxyApis) {
+          if (apiHasHostMessageCalls(api)) {
+            indent.writeln(
+              '$hostProxyApiPrefix${api.name}.setUpMessageHandlers(binaryMessenger: binaryMessenger, api: nil)',
+            );
+          }
+        }
+      });
+    });
+  }
 }
 
-(TypeDeclaration type, Version version)? _findHighestVersionRequirement(
+(TypeDeclaration type, Version version)? _findHighestIosVersionRequirement(
   Iterable<TypeDeclaration> types,
 ) {
   return findHighestApiRequirement<Version>(
