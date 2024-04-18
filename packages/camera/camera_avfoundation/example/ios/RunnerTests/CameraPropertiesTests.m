@@ -32,30 +32,16 @@
 
 #pragma mark - exposure mode tests
 
-- (void)testFLTGetStringForFLTExposureMode {
-  XCTAssertEqualObjects(@"auto", FLTGetStringForFLTExposureMode(FLTExposureModeAuto));
-  XCTAssertEqualObjects(@"locked", FLTGetStringForFLTExposureMode(FLTExposureModeLocked));
-  XCTAssertNil(FLTGetStringForFLTExposureMode(-1));
-}
-
-- (void)testFLTGetFLTExposureModeForString {
-  XCTAssertEqual(FLTExposureModeAuto, FLTGetFLTExposureModeForString(@"auto"));
-  XCTAssertEqual(FLTExposureModeLocked, FLTGetFLTExposureModeForString(@"locked"));
-  XCTAssertEqual(FLTExposureModeInvalid, FLTGetFLTExposureModeForString(@"unknown"));
+- (void)testFCPGetExposureModeForString {
+  XCTAssertEqual(FCPPlatformExposureModeAuto, FCPGetExposureModeForString(@"auto"));
+  XCTAssertEqual(FCPPlatformExposureModeLocked, FCPGetExposureModeForString(@"locked"));
 }
 
 #pragma mark - focus mode tests
 
-- (void)testFLTGetStringForFLTFocusMode {
-  XCTAssertEqualObjects(@"auto", FLTGetStringForFLTFocusMode(FLTFocusModeAuto));
-  XCTAssertEqualObjects(@"locked", FLTGetStringForFLTFocusMode(FLTFocusModeLocked));
-  XCTAssertNil(FLTGetStringForFLTFocusMode(-1));
-}
-
 - (void)testFLTGetFLTFocusModeForString {
-  XCTAssertEqual(FLTFocusModeAuto, FLTGetFLTFocusModeForString(@"auto"));
-  XCTAssertEqual(FLTFocusModeLocked, FLTGetFLTFocusModeForString(@"locked"));
-  XCTAssertEqual(FLTFocusModeInvalid, FLTGetFLTFocusModeForString(@"unknown"));
+  XCTAssertEqual(FCPPlatformFocusModeAuto, FCPGetFocusModeForString(@"auto"));
+  XCTAssertEqual(FCPPlatformFocusModeLocked, FCPGetFocusModeForString(@"locked"));
 }
 
 #pragma mark - resolution preset tests

@@ -174,11 +174,9 @@ static FlutterError *FlutterErrorFromNSError(NSError *error) {
           [weakSelf.registry textureFrameAvailable:cameraId];
         }
       };
-      _camera.methodChannel = [FlutterMethodChannel
-          methodChannelWithName:
-              [NSString stringWithFormat:@"plugins.flutter.io/camera_avfoundation/camera%lu",
-                                         (unsigned long)cameraId]
-                binaryMessenger:_messenger];
+      _camera.dartAPI = [[FCPCameraEventApi alloc]
+          initWithBinaryMessenger:_messenger
+             messageChannelSuffix:[NSString stringWithFormat:@"%ld", cameraId]];
       [_camera reportInitializationState];
       [self sendDeviceOrientation:[UIDevice currentDevice].orientation];
       [_camera start];

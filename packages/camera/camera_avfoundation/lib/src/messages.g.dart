@@ -47,6 +47,16 @@ enum PlatformDeviceOrientation {
   landscapeRight,
 }
 
+enum PlatformExposureMode {
+  auto,
+  locked,
+}
+
+enum PlatformFocusMode {
+  auto,
+  locked,
+}
+
 class PlatformCameraDescription {
   PlatformCameraDescription({
     required this.name,
@@ -71,6 +81,78 @@ class PlatformCameraDescription {
     return PlatformCameraDescription(
       name: result[0]! as String,
       lensDirection: PlatformCameraLensDirection.values[result[1]! as int],
+    );
+  }
+}
+
+class PlatformCameraState {
+  PlatformCameraState({
+    required this.previewSize,
+    required this.exposureMode,
+    required this.focusMode,
+    required this.exposurePointSupported,
+    required this.focusPointSupported,
+  });
+
+  /// The size of the preview, in pixels.
+  PlatformSize previewSize;
+
+  /// The default exposure mode
+  PlatformExposureMode exposureMode;
+
+  /// The default focus mode
+  PlatformFocusMode focusMode;
+
+  /// Whether setting exposure points is supported.
+  bool exposurePointSupported;
+
+  /// Whether setting focus points is supported.
+  bool focusPointSupported;
+
+  Object encode() {
+    return <Object?>[
+      previewSize.encode(),
+      exposureMode.index,
+      focusMode.index,
+      exposurePointSupported,
+      focusPointSupported,
+    ];
+  }
+
+  static PlatformCameraState decode(Object result) {
+    result as List<Object?>;
+    return PlatformCameraState(
+      previewSize: PlatformSize.decode(result[0]! as List<Object?>),
+      exposureMode: PlatformExposureMode.values[result[1]! as int],
+      focusMode: PlatformFocusMode.values[result[2]! as int],
+      exposurePointSupported: result[3]! as bool,
+      focusPointSupported: result[4]! as bool,
+    );
+  }
+}
+
+class PlatformSize {
+  PlatformSize({
+    required this.width,
+    required this.height,
+  });
+
+  double width;
+
+  double height;
+
+  Object encode() {
+    return <Object?>[
+      width,
+      height,
+    ];
+  }
+
+  static PlatformSize decode(Object result) {
+    result as List<Object?>;
+    return PlatformSize(
+      width: result[0]! as double,
+      height: result[1]! as double,
     );
   }
 }
@@ -180,6 +262,117 @@ abstract class CameraGlobalEventApi {
               'Argument for dev.flutter.pigeon.camera_avfoundation.CameraGlobalEventApi.deviceOrientationChanged was null, expected non-null PlatformDeviceOrientation.');
           try {
             api.deviceOrientationChanged(arg_orientation!);
+            return wrapResponse(empty: true);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
+        });
+      }
+    }
+  }
+}
+
+class _CameraEventApiCodec extends StandardMessageCodec {
+  const _CameraEventApiCodec();
+  @override
+  void writeValue(WriteBuffer buffer, Object? value) {
+    if (value is PlatformCameraState) {
+      buffer.putUint8(128);
+      writeValue(buffer, value.encode());
+    } else if (value is PlatformSize) {
+      buffer.putUint8(129);
+      writeValue(buffer, value.encode());
+    } else {
+      super.writeValue(buffer, value);
+    }
+  }
+
+  @override
+  Object? readValueOfType(int type, ReadBuffer buffer) {
+    switch (type) {
+      case 128:
+        return PlatformCameraState.decode(readValue(buffer)!);
+      case 129:
+        return PlatformSize.decode(readValue(buffer)!);
+      default:
+        return super.readValueOfType(type, buffer);
+    }
+  }
+}
+
+/// Handler for native callbacks that are tied to a specific camera ID.
+///
+/// This is intended to be initialized with the camera ID as a suffix.
+abstract class CameraEventApi {
+  static const MessageCodec<Object?> pigeonChannelCodec =
+      _CameraEventApiCodec();
+
+  /// Called when the camera is inialitized for use.
+  void initialized(PlatformCameraState initialState);
+
+  /// Called when an error occurs in the camera.
+  ///
+  /// This should be used for errors that occur outside of the context of
+  /// handling a specific HostApi call, such as during streaming.
+  void error(String message);
+
+  static void setUp(
+    CameraEventApi? api, {
+    BinaryMessenger? binaryMessenger,
+    String messageChannelSuffix = '',
+  }) {
+    messageChannelSuffix =
+        messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
+    {
+      final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
+              Object?>(
+          'dev.flutter.pigeon.camera_avfoundation.CameraEventApi.initialized$messageChannelSuffix',
+          pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        __pigeon_channel.setMessageHandler(null);
+      } else {
+        __pigeon_channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.camera_avfoundation.CameraEventApi.initialized was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final PlatformCameraState? arg_initialState =
+              (args[0] as PlatformCameraState?);
+          assert(arg_initialState != null,
+              'Argument for dev.flutter.pigeon.camera_avfoundation.CameraEventApi.initialized was null, expected non-null PlatformCameraState.');
+          try {
+            api.initialized(arg_initialState!);
+            return wrapResponse(empty: true);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
+              Object?>(
+          'dev.flutter.pigeon.camera_avfoundation.CameraEventApi.error$messageChannelSuffix',
+          pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        __pigeon_channel.setMessageHandler(null);
+      } else {
+        __pigeon_channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.camera_avfoundation.CameraEventApi.error was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final String? arg_message = (args[0] as String?);
+          assert(arg_message != null,
+              'Argument for dev.flutter.pigeon.camera_avfoundation.CameraEventApi.error was null, expected non-null String.');
+          try {
+            api.error(arg_message!);
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);

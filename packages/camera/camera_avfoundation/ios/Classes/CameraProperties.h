@@ -32,41 +32,15 @@ extern AVCaptureFlashMode FLTGetAVCaptureFlashModeForFLTFlashMode(FLTFlashMode m
 
 #pragma mark - exposure mode
 
-/// Represents camera's exposure mode. Mirrors ExposureMode in camera.dart.
-typedef NS_ENUM(NSInteger, FLTExposureMode) {
-  FLTExposureModeAuto,
-  FLTExposureModeLocked,
-  // This should never occur; it indicates an unknown value was received over
-  // the platform channel.
-  FLTExposureModeInvalid,
-};
-
-/// Gets a string representation of exposure mode.
-/// @param mode exposure mode
-extern NSString *FLTGetStringForFLTExposureMode(FLTExposureMode mode);
-
-/// Gets FLTExposureMode from its string representation.
-/// @param mode a string representation of the FLTExposureMode.
-extern FLTExposureMode FLTGetFLTExposureModeForString(NSString *mode);
+/// Gets FCPPlatformExposureMode from its string representation.
+/// @param mode a string representation of the exposure mode.
+extern FCPPlatformExposureMode FCPGetExposureModeForString(NSString *mode);
 
 #pragma mark - focus mode
 
-/// Represents camera's focus mode. Mirrors FocusMode in camera.dart.
-typedef NS_ENUM(NSInteger, FLTFocusMode) {
-  FLTFocusModeAuto,
-  FLTFocusModeLocked,
-  // This should never occur; it indicates an unknown value was received over
-  // the platform channel.
-  FLTFocusModeInvalid,
-};
-
-/// Gets a string representation from FLTFocusMode.
-/// @param mode focus mode
-extern NSString *FLTGetStringForFLTFocusMode(FLTFocusMode mode);
-
-/// Gets FLTFocusMode from its string representation.
+/// Gets FCPPlatformFocusMode from its string representation.
 /// @param mode a string representation of focus mode.
-extern FLTFocusMode FLTGetFLTFocusModeForString(NSString *mode);
+extern FCPPlatformFocusMode FCPGetFocusModeForString(NSString *mode);
 
 #pragma mark - device orientation
 

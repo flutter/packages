@@ -12,6 +12,7 @@
 #import "FLTSavePhotoDelegate.h"
 #import "FLTThreadSafeEventChannel.h"
 #import "QueueUtils.h"
+#import "messages.g.h"
 
 static FlutterError *FlutterErrorFromNSError(NSError *error) {
   return [FlutterError errorWithCode:[NSString stringWithFormat:@"Error %d", (int)error.code]
@@ -192,8 +193,8 @@ NSString *const errorMethod = @"error";
   _captureDevice = captureDeviceFactory();
   _videoDimensionsForFormat = videoDimensionsForFormat;
   _flashMode = _captureDevice.hasFlash ? FLTFlashModeAuto : FLTFlashModeOff;
-  _exposureMode = FLTExposureModeAuto;
-  _focusMode = FLTFocusModeAuto;
+  _exposureMode = FCPPlatformExposureModeAuto;
+  _focusMode = FCPPlatformFocusModeAuto;
   _lockedCaptureOrientation = UIDeviceOrientationUnknown;
   _deviceOrientation = orientation;
   _videoFormat = kCVPixelFormatType_32BGRA;
@@ -298,23 +299,20 @@ NSString *const errorMethod = @"error";
 
 - (void)reportInitializationState {
   // Get all the state on the current thread, not the main thread.
-  CGSize previewSize = self.previewSize;
-  NSString *exposureMode = FLTGetStringForFLTExposureMode(self.exposureMode);
-  NSString *focusMode = FLTGetStringForFLTFocusMode(self.focusMode);
-  BOOL isExposurePOISupported = self.captureDevice.exposurePointOfInterestSupported;
-  BOOL isFocusPOISupported = self.captureDevice.focusPointOfInterestSupported;
+  FCPPlatformCameraState *state = [FCPPlatformCameraState
+         makeWithPreviewSize:[FCPPlatformSize makeWithWidth:self.previewSize.width
+                                                     height:self.previewSize.height]
+                exposureMode:self.exposureMode
+                   focusMode:self.focusMode
+      exposurePointSupported:self.captureDevice.exposurePointOfInterestSupported
+         focusPointSupported:self.captureDevice.focusPointOfInterestSupported];
 
   __weak typeof(self) weakSelf = self;
   FLTEnsureToRunOnMainQueue(^{
-    [weakSelf.methodChannel invokeMethod:@"initialized"
-                               arguments:@{
-                                 @"previewWidth" : @(previewSize.width),
-                                 @"previewHeight" : @(previewSize.height),
-                                 @"exposureMode" : exposureMode,
-                                 @"focusMode" : focusMode,
-                                 @"exposurePointSupported" : @(isExposurePOISupported),
-                                 @"focusPointSupported" : @(isFocusPOISupported),
-                               }];
+    [weakSelf.dartAPI initializedWithState:state
+                                completion:^(FlutterError *error){
+                                    // Ignore any errors, as this is just an event broadcast.
+                                }];
   });
 }
 
@@ -981,17 +979,7 @@ NSString *const errorMethod = @"error";
 }
 
 - (void)setExposureModeWithResult:(FlutterResult)result mode:(NSString *)modeStr {
-  FLTExposureMode mode = FLTGetFLTExposureModeForString(modeStr);
-  if (mode == FLTExposureModeInvalid) {
-    result(FlutterErrorFromNSError([NSError
-        errorWithDomain:NSCocoaErrorDomain
-                   code:NSURLErrorUnknown
-               userInfo:@{
-                 NSLocalizedDescriptionKey :
-                     [NSString stringWithFormat:@"Unknown exposure mode %@", modeStr]
-               }]));
-    return;
-  }
+  FCPPlatformExposureMode mode = FCPGetExposureModeForString(modeStr);
   _exposureMode = mode;
   [self applyExposureMode];
   result(nil);
@@ -1000,37 +988,22 @@ NSString *const errorMethod = @"error";
 - (void)applyExposureMode {
   [_captureDevice lockForConfiguration:nil];
   switch (_exposureMode) {
-    case FLTExposureModeLocked:
+    case FCPPlatformExposureModeLocked:
       [_captureDevice setExposureMode:AVCaptureExposureModeAutoExpose];
       break;
-    case FLTExposureModeAuto:
+    case FCPPlatformExposureModeAuto:
       if ([_captureDevice isExposureModeSupported:AVCaptureExposureModeContinuousAutoExposure]) {
         [_captureDevice setExposureMode:AVCaptureExposureModeContinuousAutoExposure];
       } else {
         [_captureDevice setExposureMode:AVCaptureExposureModeAutoExpose];
       }
       break;
-    case FLTExposureModeInvalid:
-      // This state is not intended to be reachable; it exists only for error handling during
-      // message deserialization.
-      NSAssert(false, @"");
-      break;
   }
   [_captureDevice unlockForConfiguration];
 }
 
 - (void)setFocusModeWithResult:(FlutterResult)result mode:(NSString *)modeStr {
-  FLTFocusMode mode = FLTGetFLTFocusModeForString(modeStr);
-  if (mode == FLTFocusModeInvalid) {
-    result(FlutterErrorFromNSError([NSError
-        errorWithDomain:NSCocoaErrorDomain
-                   code:NSURLErrorUnknown
-               userInfo:@{
-                 NSLocalizedDescriptionKey :
-                     [NSString stringWithFormat:@"Unknown focus mode %@", modeStr]
-               }]));
-    return;
-  }
+  FCPPlatformFocusMode mode = FCPGetFocusModeForString(modeStr);
   _focusMode = mode;
   [self applyFocusMode];
   result(nil);
@@ -1040,25 +1013,20 @@ NSString *const errorMethod = @"error";
   [self applyFocusMode:_focusMode onDevice:_captureDevice];
 }
 
-- (void)applyFocusMode:(FLTFocusMode)focusMode onDevice:(AVCaptureDevice *)captureDevice {
+- (void)applyFocusMode:(FCPPlatformFocusMode)focusMode onDevice:(AVCaptureDevice *)captureDevice {
   [captureDevice lockForConfiguration:nil];
   switch (focusMode) {
-    case FLTFocusModeLocked:
+    case FCPPlatformFocusModeLocked:
       if ([captureDevice isFocusModeSupported:AVCaptureFocusModeAutoFocus]) {
         [captureDevice setFocusMode:AVCaptureFocusModeAutoFocus];
       }
       break;
-    case FLTFocusModeAuto:
+    case FCPPlatformFocusModeAuto:
       if ([captureDevice isFocusModeSupported:AVCaptureFocusModeContinuousAutoFocus]) {
         [captureDevice setFocusMode:AVCaptureFocusModeContinuousAutoFocus];
       } else if ([captureDevice isFocusModeSupported:AVCaptureFocusModeAutoFocus]) {
         [captureDevice setFocusMode:AVCaptureFocusModeAutoFocus];
       }
-      break;
-    case FLTFocusModeInvalid:
-      // This state is not intended to be reachable; it exists only for error handling during
-      // message deserialization.
-      NSAssert(false, @"");
       break;
   }
   [captureDevice unlockForConfiguration];
@@ -1414,7 +1382,10 @@ NSString *const errorMethod = @"error";
 - (void)reportErrorMessage:(NSString *)errorMessage {
   __weak typeof(self) weakSelf = self;
   FLTEnsureToRunOnMainQueue(^{
-    [weakSelf.methodChannel invokeMethod:errorMethod arguments:errorMessage];
+    [weakSelf.dartAPI reportError:errorMessage
+                       completion:^(FlutterError *error){
+                           // Ignore any errors, as this is just an event broadcast.
+                       }];
   });
 }
 

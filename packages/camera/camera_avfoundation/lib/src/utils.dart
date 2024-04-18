@@ -58,3 +58,19 @@ DeviceOrientation deviceOrientationFromPlatform(
       DeviceOrientation.landscapeRight,
   };
 }
+
+/// Converts a Pigeon [PlatformExposureMode] to an [ExposureMode].
+ExposureMode exposureModeFromPlatform(PlatformExposureMode mode) {
+  return switch (mode) {
+    PlatformExposureMode.auto => ExposureMode.auto,
+    PlatformExposureMode.locked => ExposureMode.locked,
+  };
+}
+
+/// Converts a Pigeon [PlatformFocusMode] to an [FocusMode].
+FocusMode focusModeFromPlatform(PlatformFocusMode mode) {
+  return switch (mode) {
+    PlatformFocusMode.auto => FocusMode.auto,
+    PlatformFocusMode.locked => FocusMode.locked,
+  };
+}

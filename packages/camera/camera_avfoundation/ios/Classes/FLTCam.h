@@ -10,6 +10,7 @@
 #import "FLTCamMediaSettings.h"
 #import "FLTCamMediaSettingsAVWrapper.h"
 #import "FLTThreadSafeTextureRegistry.h"
+#import "messages.g.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -20,12 +21,12 @@ NS_ASSUME_NONNULL_BEGIN
 @property(readonly, nonatomic) CGSize previewSize;
 @property(assign, nonatomic) BOOL isPreviewPaused;
 @property(nonatomic, copy) void (^onFrameAvailable)(void);
-/// The channel used to communicate with the Dart side of the plugin. Once initially set, this
+/// The API instance used to communicate with the Dart side of the plugin. Once initially set, this
 /// should only ever be accessed on the main thread.
-@property(nonatomic) FlutterMethodChannel *methodChannel;
+@property(nonatomic) FCPCameraEventApi *dartAPI;
 @property(assign, nonatomic) FLTResolutionPreset resolutionPreset;
-@property(assign, nonatomic) FLTExposureMode exposureMode;
-@property(assign, nonatomic) FLTFocusMode focusMode;
+@property(assign, nonatomic) FCPPlatformExposureMode exposureMode;
+@property(assign, nonatomic) FCPPlatformFocusMode focusMode;
 @property(assign, nonatomic) FLTFlashMode flashMode;
 // Format used for video and image streaming.
 @property(assign, nonatomic) FourCharCode videoFormat;
@@ -93,7 +94,7 @@ NS_ASSUME_NONNULL_BEGIN
 ///
 /// @param focusMode The focus mode that should be applied to the @captureDevice instance.
 /// @param captureDevice The AVCaptureDevice to which the @focusMode will be applied.
-- (void)applyFocusMode:(FLTFocusMode)focusMode onDevice:(AVCaptureDevice *)captureDevice;
+- (void)applyFocusMode:(FCPPlatformFocusMode)focusMode onDevice:(AVCaptureDevice *)captureDevice;
 - (void)pausePreviewWithResult:(FlutterResult)result;
 - (void)resumePreviewWithResult:(FlutterResult)result;
 - (void)setDescriptionWhileRecording:(NSString *)cameraName result:(FlutterResult)result;

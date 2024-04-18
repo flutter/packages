@@ -59,9 +59,41 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 }
 @end
 
+@implementation FCPPlatformExposureModeBox
+- (instancetype)initWithValue:(FCPPlatformExposureMode)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FCPPlatformFocusModeBox
+- (instancetype)initWithValue:(FCPPlatformFocusMode)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
 @interface FCPPlatformCameraDescription ()
 + (FCPPlatformCameraDescription *)fromList:(NSArray *)list;
 + (nullable FCPPlatformCameraDescription *)nullableFromList:(NSArray *)list;
+- (NSArray *)toList;
+@end
+
+@interface FCPPlatformCameraState ()
++ (FCPPlatformCameraState *)fromList:(NSArray *)list;
++ (nullable FCPPlatformCameraState *)nullableFromList:(NSArray *)list;
+- (NSArray *)toList;
+@end
+
+@interface FCPPlatformSize ()
++ (FCPPlatformSize *)fromList:(NSArray *)list;
++ (nullable FCPPlatformSize *)nullableFromList:(NSArray *)list;
 - (NSArray *)toList;
 @end
 
@@ -86,6 +118,67 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
   return @[
     self.name ?: [NSNull null],
     @(self.lensDirection),
+  ];
+}
+@end
+
+@implementation FCPPlatformCameraState
++ (instancetype)makeWithPreviewSize:(FCPPlatformSize *)previewSize
+                       exposureMode:(FCPPlatformExposureMode)exposureMode
+                          focusMode:(FCPPlatformFocusMode)focusMode
+             exposurePointSupported:(BOOL)exposurePointSupported
+                focusPointSupported:(BOOL)focusPointSupported {
+  FCPPlatformCameraState *pigeonResult = [[FCPPlatformCameraState alloc] init];
+  pigeonResult.previewSize = previewSize;
+  pigeonResult.exposureMode = exposureMode;
+  pigeonResult.focusMode = focusMode;
+  pigeonResult.exposurePointSupported = exposurePointSupported;
+  pigeonResult.focusPointSupported = focusPointSupported;
+  return pigeonResult;
+}
++ (FCPPlatformCameraState *)fromList:(NSArray *)list {
+  FCPPlatformCameraState *pigeonResult = [[FCPPlatformCameraState alloc] init];
+  pigeonResult.previewSize = [FCPPlatformSize nullableFromList:(GetNullableObjectAtIndex(list, 0))];
+  pigeonResult.exposureMode = [GetNullableObjectAtIndex(list, 1) integerValue];
+  pigeonResult.focusMode = [GetNullableObjectAtIndex(list, 2) integerValue];
+  pigeonResult.exposurePointSupported = [GetNullableObjectAtIndex(list, 3) boolValue];
+  pigeonResult.focusPointSupported = [GetNullableObjectAtIndex(list, 4) boolValue];
+  return pigeonResult;
+}
++ (nullable FCPPlatformCameraState *)nullableFromList:(NSArray *)list {
+  return (list) ? [FCPPlatformCameraState fromList:list] : nil;
+}
+- (NSArray *)toList {
+  return @[
+    (self.previewSize ? [self.previewSize toList] : [NSNull null]),
+    @(self.exposureMode),
+    @(self.focusMode),
+    @(self.exposurePointSupported),
+    @(self.focusPointSupported),
+  ];
+}
+@end
+
+@implementation FCPPlatformSize
++ (instancetype)makeWithWidth:(double)width height:(double)height {
+  FCPPlatformSize *pigeonResult = [[FCPPlatformSize alloc] init];
+  pigeonResult.width = width;
+  pigeonResult.height = height;
+  return pigeonResult;
+}
++ (FCPPlatformSize *)fromList:(NSArray *)list {
+  FCPPlatformSize *pigeonResult = [[FCPPlatformSize alloc] init];
+  pigeonResult.width = [GetNullableObjectAtIndex(list, 0) doubleValue];
+  pigeonResult.height = [GetNullableObjectAtIndex(list, 1) doubleValue];
+  return pigeonResult;
+}
++ (nullable FCPPlatformSize *)nullableFromList:(NSArray *)list {
+  return (list) ? [FCPPlatformSize fromList:list] : nil;
+}
+- (NSArray *)toList {
+  return @[
+    @(self.width),
+    @(self.height),
   ];
 }
 @end
@@ -211,6 +304,131 @@ NSObject<FlutterMessageCodec> *FCPCameraGlobalEventApiGetCodec(void) {
                                          binaryMessenger:self.binaryMessenger
                                                    codec:FCPCameraGlobalEventApiGetCodec()];
   [channel sendMessage:@[ [NSNumber numberWithInteger:arg_orientation] ]
+                 reply:^(NSArray<id> *reply) {
+                   if (reply != nil) {
+                     if (reply.count > 1) {
+                       completion([FlutterError errorWithCode:reply[0]
+                                                      message:reply[1]
+                                                      details:reply[2]]);
+                     } else {
+                       completion(nil);
+                     }
+                   } else {
+                     completion(createConnectionError(channelName));
+                   }
+                 }];
+}
+@end
+
+@interface FCPCameraEventApiCodecReader : FlutterStandardReader
+@end
+@implementation FCPCameraEventApiCodecReader
+- (nullable id)readValueOfType:(UInt8)type {
+  switch (type) {
+    case 128:
+      return [FCPPlatformCameraState fromList:[self readValue]];
+    case 129:
+      return [FCPPlatformSize fromList:[self readValue]];
+    default:
+      return [super readValueOfType:type];
+  }
+}
+@end
+
+@interface FCPCameraEventApiCodecWriter : FlutterStandardWriter
+@end
+@implementation FCPCameraEventApiCodecWriter
+- (void)writeValue:(id)value {
+  if ([value isKindOfClass:[FCPPlatformCameraState class]]) {
+    [self writeByte:128];
+    [self writeValue:[value toList]];
+  } else if ([value isKindOfClass:[FCPPlatformSize class]]) {
+    [self writeByte:129];
+    [self writeValue:[value toList]];
+  } else {
+    [super writeValue:value];
+  }
+}
+@end
+
+@interface FCPCameraEventApiCodecReaderWriter : FlutterStandardReaderWriter
+@end
+@implementation FCPCameraEventApiCodecReaderWriter
+- (FlutterStandardWriter *)writerWithData:(NSMutableData *)data {
+  return [[FCPCameraEventApiCodecWriter alloc] initWithData:data];
+}
+- (FlutterStandardReader *)readerWithData:(NSData *)data {
+  return [[FCPCameraEventApiCodecReader alloc] initWithData:data];
+}
+@end
+
+NSObject<FlutterMessageCodec> *FCPCameraEventApiGetCodec(void) {
+  static FlutterStandardMessageCodec *sSharedObject = nil;
+  static dispatch_once_t sPred = 0;
+  dispatch_once(&sPred, ^{
+    FCPCameraEventApiCodecReaderWriter *readerWriter =
+        [[FCPCameraEventApiCodecReaderWriter alloc] init];
+    sSharedObject = [FlutterStandardMessageCodec codecWithReaderWriter:readerWriter];
+  });
+  return sSharedObject;
+}
+
+@interface FCPCameraEventApi ()
+@property(nonatomic, strong) NSObject<FlutterBinaryMessenger> *binaryMessenger;
+@property(nonatomic, strong) NSString *messageChannelSuffix;
+@end
+
+@implementation FCPCameraEventApi
+
+- (instancetype)initWithBinaryMessenger:(NSObject<FlutterBinaryMessenger> *)binaryMessenger {
+  return [self initWithBinaryMessenger:binaryMessenger messageChannelSuffix:@""];
+}
+- (instancetype)initWithBinaryMessenger:(NSObject<FlutterBinaryMessenger> *)binaryMessenger
+                   messageChannelSuffix:(nullable NSString *)messageChannelSuffix {
+  self = [self init];
+  if (self) {
+    _binaryMessenger = binaryMessenger;
+    _messageChannelSuffix = [messageChannelSuffix length] == 0
+                                ? @""
+                                : [NSString stringWithFormat:@".%@", messageChannelSuffix];
+  }
+  return self;
+}
+- (void)initializedWithState:(FCPPlatformCameraState *)arg_initialState
+                  completion:(void (^)(FlutterError *_Nullable))completion {
+  NSString *channelName = [NSString
+      stringWithFormat:@"%@%@",
+                       @"dev.flutter.pigeon.camera_avfoundation.CameraEventApi.initialized",
+                       _messageChannelSuffix];
+  FlutterBasicMessageChannel *channel =
+      [FlutterBasicMessageChannel messageChannelWithName:channelName
+                                         binaryMessenger:self.binaryMessenger
+                                                   codec:FCPCameraEventApiGetCodec()];
+  [channel sendMessage:@[ arg_initialState ?: [NSNull null] ]
+                 reply:^(NSArray<id> *reply) {
+                   if (reply != nil) {
+                     if (reply.count > 1) {
+                       completion([FlutterError errorWithCode:reply[0]
+                                                      message:reply[1]
+                                                      details:reply[2]]);
+                     } else {
+                       completion(nil);
+                     }
+                   } else {
+                     completion(createConnectionError(channelName));
+                   }
+                 }];
+}
+- (void)reportError:(NSString *)arg_message
+         completion:(void (^)(FlutterError *_Nullable))completion {
+  NSString *channelName = [NSString
+      stringWithFormat:@"%@%@", @"dev.flutter.pigeon.camera_avfoundation.CameraEventApi.error",
+                       _messageChannelSuffix];
+  FlutterBasicMessageChannel *channel =
+      [FlutterBasicMessageChannel messageChannelWithName:channelName
+                                         binaryMessenger:self.binaryMessenger
+                                                   codec:FCPCameraEventApiGetCodec()];
+  [channel sendMessage:@[ arg_message ?: [NSNull null] ]
                  reply:^(NSArray<id> *reply) {
                    if (reply != nil) {
                      if (reply.count > 1) {

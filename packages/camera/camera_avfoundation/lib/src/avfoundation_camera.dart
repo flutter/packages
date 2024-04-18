@@ -33,8 +33,6 @@ class AVFoundationCamera extends CameraPlatform {
   /// Interface for calling host-side code.
   final CameraApi _hostApi;
 
-  final Map<int, MethodChannel> _channels = <int, MethodChannel>{};
-
   /// The controller we need to broadcast the different events coming
   /// from handleMethodCall, specific to camera events.
   ///
@@ -46,17 +44,19 @@ class AVFoundationCamera extends CameraPlatform {
   final StreamController<CameraEvent> cameraEventStreamController =
       StreamController<CameraEvent>.broadcast();
 
-  /// The controller we need to broadcast the different events coming
-  /// from handleMethodCall, specific to general device events.
-  ///
-  /// It is a `broadcast` because multiple controllers will connect to
-  /// different stream views of this Controller.
+  /// The handler for device-level messages that should be rebroadcast to
+  /// clients as [DeviceEvent]s.
   @visibleForTesting
   late final HostDeviceMessageHandler hostHandler = () {
     // Set up the method handler lazily.
-    CameraGlobalEventApi.setUp(null);
     return HostDeviceMessageHandler();
   }();
+
+  /// The per-camera handlers for messages that should be rebroadcast to
+  /// clients as [CameraEvent]s.
+  @visibleForTesting
+  final Map<int, HostCameraMessageHandler> hostCameraHandlers =
+      <int, HostCameraMessageHandler>{};
 
   // The stream to receive frames from the native code.
   StreamSubscription<dynamic>? _platformImageStreamSubscription;
@@ -123,13 +123,8 @@ class AVFoundationCamera extends CameraPlatform {
     int cameraId, {
     ImageFormatGroup imageFormatGroup = ImageFormatGroup.unknown,
   }) {
-    _channels.putIfAbsent(cameraId, () {
-      final MethodChannel channel = MethodChannel(
-          'plugins.flutter.io/camera_avfoundation/camera$cameraId');
-      channel.setMethodCallHandler(
-          (MethodCall call) => handleCameraMethodCall(call, cameraId));
-      return channel;
-    });
+    hostCameraHandlers.putIfAbsent(cameraId,
+        () => HostCameraMessageHandler(cameraId, cameraEventStreamController));
 
     final Completer<void> completer = Completer<void>();
 
@@ -165,11 +160,9 @@ class AVFoundationCamera extends CameraPlatform {
 
   @override
   Future<void> dispose(int cameraId) async {
-    if (_channels.containsKey(cameraId)) {
-      final MethodChannel? cameraChannel = _channels[cameraId];
-      cameraChannel?.setMethodCallHandler(null);
-      _channels.remove(cameraId);
-    }
+    final HostCameraMessageHandler? handler =
+        hostCameraHandlers.remove(cameraId);
+    handler?.dispose();
 
     await _channel.invokeMethod<void>(
       'dispose',
@@ -376,7 +369,7 @@ class AVFoundationCamera extends CameraPlatform {
         'setExposureMode',
         <String, dynamic>{
           'cameraId': cameraId,
-          'mode': serializeExposureMode(mode),
+          'mode': _serializeExposureMode(mode),
         },
       );
 
@@ -445,7 +438,7 @@ class AVFoundationCamera extends CameraPlatform {
         'setFocusMode',
         <String, dynamic>{
           'cameraId': cameraId,
-          'mode': serializeFocusMode(mode),
+          'mode': _serializeFocusMode(mode),
         },
       );
 
@@ -543,6 +536,38 @@ class AVFoundationCamera extends CameraPlatform {
     return Texture(textureId: cameraId);
   }
 
+  String _serializeFocusMode(FocusMode mode) {
+    switch (mode) {
+      case FocusMode.locked:
+        return 'locked';
+      case FocusMode.auto:
+        return 'auto';
+    }
+    // The enum comes from a different package, which could get a new value at
+    // any time, so provide a fallback that ensures this won't break when used
+    // with a version that contains new values. This is deliberately outside
+    // the switch rather than a `default` so that the linter will flag the
+    // switch as needing an update.
+    // ignore: dead_code
+    return 'auto';
+  }
+
+  String _serializeExposureMode(ExposureMode mode) {
+    switch (mode) {
+      case ExposureMode.locked:
+        return 'locked';
+      case ExposureMode.auto:
+        return 'auto';
+    }
+    // The enum comes from a different package, which could get a new value at
+    // any time, so provide a fallback that ensures this won't break when used
+    // with a version that contains new values. This is deliberately outside
+    // the switch rather than a `default` so that the linter will flag the
+    // switch as needing an update.
+    // ignore: dead_code
+    return 'auto';
+  }
+
   /// Returns the flash mode as a String.
   String _serializeFlashMode(FlashMode flashMode) {
     switch (flashMode) {
@@ -588,68 +613,16 @@ class AVFoundationCamera extends CameraPlatform {
     // ignore: dead_code
     return 'max';
   }
-
-  /// Converts messages received from the native platform into camera events.
-  ///
-  /// This is only exposed for test purposes. It shouldn't be used by clients of
-  /// the plugin as it may break or change at any time.
-  @visibleForTesting
-  Future<dynamic> handleCameraMethodCall(MethodCall call, int cameraId) async {
-    switch (call.method) {
-      case 'initialized':
-        final Map<String, Object?> arguments = _getArgumentDictionary(call);
-        cameraEventStreamController.add(CameraInitializedEvent(
-          cameraId,
-          arguments['previewWidth']! as double,
-          arguments['previewHeight']! as double,
-          deserializeExposureMode(arguments['exposureMode']! as String),
-          arguments['exposurePointSupported']! as bool,
-          deserializeFocusMode(arguments['focusMode']! as String),
-          arguments['focusPointSupported']! as bool,
-        ));
-      case 'resolution_changed':
-        final Map<String, Object?> arguments = _getArgumentDictionary(call);
-        cameraEventStreamController.add(CameraResolutionChangedEvent(
-          cameraId,
-          arguments['captureWidth']! as double,
-          arguments['captureHeight']! as double,
-        ));
-      case 'camera_closing':
-        cameraEventStreamController.add(CameraClosingEvent(
-          cameraId,
-        ));
-      case 'video_recorded':
-        final Map<String, Object?> arguments = _getArgumentDictionary(call);
-        cameraEventStreamController.add(VideoRecordedEvent(
-          cameraId,
-          XFile(arguments['path']! as String),
-          arguments['maxVideoDuration'] != null
-              ? Duration(milliseconds: arguments['maxVideoDuration']! as int)
-              : null,
-        ));
-      case 'error':
-        final Map<String, Object?> arguments = _getArgumentDictionary(call);
-        cameraEventStreamController.add(CameraErrorEvent(
-          cameraId,
-          arguments['description']! as String,
-        ));
-      default:
-        throw MissingPluginException();
-    }
-  }
-
-  /// Returns the arguments of [call] as typed string-keyed Map.
-  ///
-  /// This does not do any type validation, so is only safe to call if the
-  /// arguments are known to be a map.
-  Map<String, Object?> _getArgumentDictionary(MethodCall call) {
-    return (call.arguments as Map<Object?, Object?>).cast<String, Object?>();
-  }
 }
 
 /// Callback handler for device-level events from the platform host.
 @visibleForTesting
 class HostDeviceMessageHandler implements CameraGlobalEventApi {
+  /// Creates a new handler and registers it to listen to its platform channel.
+  HostDeviceMessageHandler() {
+    CameraGlobalEventApi.setUp(this);
+  }
+
   /// The controller used to broadcast general device events coming from the
   /// host platform.
   ///
@@ -662,5 +635,45 @@ class HostDeviceMessageHandler implements CameraGlobalEventApi {
   void deviceOrientationChanged(PlatformDeviceOrientation orientation) {
     deviceEventStreamController.add(DeviceOrientationChangedEvent(
         deviceOrientationFromPlatform(orientation)));
+  }
+}
+
+/// Callback handler for camera-level events from the platform host.
+@visibleForTesting
+class HostCameraMessageHandler implements CameraEventApi {
+  /// Creates a new handler that listens for events from camera [cameraId], and
+  /// broadcasts them to [streamController].
+  HostCameraMessageHandler(this.cameraId, this.streamController) {
+    CameraEventApi.setUp(this, messageChannelSuffix: cameraId.toString());
+  }
+
+  /// Removes the handler for native messages.
+  void dispose() {
+    CameraEventApi.setUp(null, messageChannelSuffix: cameraId.toString());
+  }
+
+  /// The camera ID this handler listens for events from.
+  final int cameraId;
+
+  /// The controller used to broadcast camera events coming from the
+  /// host platform.
+  final StreamController<CameraEvent> streamController;
+
+  @override
+  void error(String message) {
+    streamController.add(CameraErrorEvent(cameraId, message));
+  }
+
+  @override
+  void initialized(PlatformCameraState initialState) {
+    streamController.add(CameraInitializedEvent(
+      cameraId,
+      initialState.previewSize.width,
+      initialState.previewSize.height,
+      exposureModeFromPlatform(initialState.exposureMode),
+      initialState.exposurePointSupported,
+      focusModeFromPlatform(initialState.focusMode),
+      initialState.focusPointSupported,
+    ));
   }
 }

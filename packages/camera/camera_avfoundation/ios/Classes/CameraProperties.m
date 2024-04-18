@@ -36,51 +36,29 @@ AVCaptureFlashMode FLTGetAVCaptureFlashModeForFLTFlashMode(FLTFlashMode mode) {
 
 #pragma mark - exposure mode
 
-NSString *FLTGetStringForFLTExposureMode(FLTExposureMode mode) {
-  switch (mode) {
-    case FLTExposureModeAuto:
-      return @"auto";
-    case FLTExposureModeLocked:
-      return @"locked";
-    case FLTExposureModeInvalid:
-      // This value should never actually be used.
-      return nil;
-  }
-  return nil;
-}
-
-FLTExposureMode FLTGetFLTExposureModeForString(NSString *mode) {
+FCPPlatformExposureMode FCPGetExposureModeForString(NSString *mode) {
   if ([mode isEqualToString:@"auto"]) {
-    return FLTExposureModeAuto;
+    return FCPPlatformExposureModeAuto;
   } else if ([mode isEqualToString:@"locked"]) {
-    return FLTExposureModeLocked;
+    return FCPPlatformExposureModeLocked;
   } else {
-    return FLTExposureModeInvalid;
+    // This should be unreachable; see _serializeExposureMode in avfoundation_camera.dart.
+    NSCAssert(false, @"Unsupported exposure mode");
+    return FCPPlatformExposureModeAuto;
   }
 }
 
 #pragma mark - focus mode
 
-NSString *FLTGetStringForFLTFocusMode(FLTFocusMode mode) {
-  switch (mode) {
-    case FLTFocusModeAuto:
-      return @"auto";
-    case FLTFocusModeLocked:
-      return @"locked";
-    case FLTFocusModeInvalid:
-      // This value should never actually be used.
-      return nil;
-  }
-  return nil;
-}
-
-FLTFocusMode FLTGetFLTFocusModeForString(NSString *mode) {
+FCPPlatformFocusMode FCPGetFocusModeForString(NSString *mode) {
   if ([mode isEqualToString:@"auto"]) {
-    return FLTFocusModeAuto;
+    return FCPPlatformFocusModeAuto;
   } else if ([mode isEqualToString:@"locked"]) {
-    return FLTFocusModeLocked;
+    return FCPPlatformFocusModeLocked;
   } else {
-    return FLTFocusModeInvalid;
+    // This should be unreachable; see _serializeFocusMode in avfoundation_camera.dart.
+    NSCAssert(false, @"Unsupported focus mode");
+    return FCPPlatformFocusModeAuto;
   }
 }
 
