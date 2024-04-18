@@ -14,5 +14,8 @@ export 'src/table_view/table_cell.dart';
 export 'src/table_view/table_delegate.dart';
 export 'src/table_view/table_span.dart';
 
+export 'src/tree_view/render_tree.dart';
 export 'src/tree_view/tree.dart';
+export 'src/tree_view/tree_delegate.dart';
+export 'src/tree_view/tree_span.dart';
 export 'src/tree_view/tree_temp.dart';

@@ -5,7 +5,10 @@
 import 'dart:collection' show LinkedHashMap;
 import 'dart:math' as math;
 
+import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
 import 'tree_delegate.dart';
@@ -38,6 +41,8 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
         _rowDepths = rowDepths,
         _traversalOrder = traversalOrder,
         _indentation = indentation,
+        assert(verticalAxisDirection == AxisDirection.down &&
+            horizontalAxisDirection == AxisDirection.right),
         super(
           mainAxis: traversalOrder == TreeViewTraversalOrder.depthFirst
               ? Axis.vertical
@@ -305,9 +310,6 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
 
   @override
   void layoutChildSequence() {
-    assert(verticalAxisDirection == AxisDirection.down &&
-        horizontalAxisDirection == AxisDirection.right);
-
     _updateAnimationCache();
     if (needsDelegateRebuild || didResize) {
       // Recomputes the table metrics, invalidates any cached information.
@@ -523,22 +525,118 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
   }
 }
 
-class _Span extends ImplementedSpan {
+class _Span
+    with Diagnosticable
+    implements HitTestTarget, MouseTrackerAnnotation {
+  double get leadingOffset => _leadingOffset;
+  late double _leadingOffset;
+
+  double get extent => _extent;
+  late double _extent;
+
+  TreeRow get configuration => _configuration!;
+  TreeRow? _configuration;
+
   double get animationOffset => _animationOffset;
   late double _animationOffset;
 
-  @override
+  double get trailingOffset {
+    return leadingOffset +
+        extent +
+        configuration.padding.leading +
+        configuration.padding.trailing;
+  }
+
+  // ---- Span Management ----
+
   void update({
     required TreeRow configuration,
     required double leadingOffset,
     required double extent,
-    double animationOffset = 0.0,
+    required double animationOffset,
   }) {
+    _leadingOffset = leadingOffset;
+    _extent = extent;
     _animationOffset = animationOffset;
-    super.update(
-      configuration: configuration,
-      leadingOffset: leadingOffset,
-      extent: extent,
-    );
+    if (configuration == _configuration) {
+      return;
+    }
+    _configuration = configuration;
+    // Only sync recognizers if they are in use already.
+    if (_recognizers != null) {
+      _syncRecognizers();
+    }
   }
+
+  void dispose() {
+    _disposeRecognizers();
+  }
+
+  // ---- Recognizers management ----
+
+  Map<Type, GestureRecognizer>? _recognizers;
+
+  void _syncRecognizers() {
+    if (configuration.recognizerFactories.isEmpty) {
+      _disposeRecognizers();
+      return;
+    }
+    final Map<Type, GestureRecognizer> newRecognizers =
+        <Type, GestureRecognizer>{};
+    for (final Type type in configuration.recognizerFactories.keys) {
+      assert(!newRecognizers.containsKey(type));
+      newRecognizers[type] = _recognizers?.remove(type) ??
+          configuration.recognizerFactories[type]!.constructor();
+      assert(
+        newRecognizers[type].runtimeType == type,
+        'GestureRecognizerFactory of type $type created a GestureRecognizer of '
+        'type ${newRecognizers[type].runtimeType}. The '
+        'GestureRecognizerFactory must be specialized with the type of the '
+        'class that it returns from its constructor method.',
+      );
+      configuration.recognizerFactories[type]!
+          .initializer(newRecognizers[type]!);
+    }
+    _disposeRecognizers(); // only disposes the ones that where not re-used above.
+    _recognizers = newRecognizers;
+  }
+
+  void _disposeRecognizers() {
+    if (_recognizers != null) {
+      for (final GestureRecognizer recognizer in _recognizers!.values) {
+        recognizer.dispose();
+      }
+      _recognizers = null;
+    }
+  }
+
+  // ---- HitTestTarget ----
+
+  @override
+  void handleEvent(PointerEvent event, HitTestEntry entry) {
+    if (event is PointerDownEvent &&
+        configuration.recognizerFactories.isNotEmpty) {
+      if (_recognizers == null) {
+        _syncRecognizers();
+      }
+      assert(_recognizers != null);
+      for (final GestureRecognizer recognizer in _recognizers!.values) {
+        recognizer.addPointer(event);
+      }
+    }
+  }
+
+  // ---- MouseTrackerAnnotation ----
+
+  @override
+  MouseCursor get cursor => configuration.cursor;
+
+  @override
+  PointerEnterEventListener? get onEnter => configuration.onEnter;
+
+  @override
+  PointerExitEventListener? get onExit => configuration.onExit;
+
+  @override
+  bool get validForMouseTracker => true;
 }

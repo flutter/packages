@@ -277,7 +277,7 @@ class TreeViewController {
 class TreeView<T> extends StatefulWidget {
   /// Creates an instance of a [TreeView] for displaying [TreeViewNode]s
   /// that animate expanding and collapsing of nodes.
-  const TreeView({
+  TreeView({
     super.key,
     this.primary,
     this.mainAxis = Axis.vertical,
@@ -298,7 +298,8 @@ class TreeView<T> extends StatefulWidget {
     this.animationStyle,
     this.traversalOrder = TreeViewTraversalOrder.depthFirst,
     this.indentation = TreeViewIndentationType.standard,
-  });
+  }) : assert(verticalDetails.direction == AxisDirection.down &&
+            horizontalDetails.direction == AxisDirection.right);
 
   /// The [TreeViewport] has an area before and after the visible area to cache
   /// rows that are about to become visible when the user scrolls.
@@ -670,6 +671,7 @@ class _TreeViewState<T> extends State<TreeView<T>>
       rowDepths: _rowDepths,
       nodeBuilder: (BuildContext context, ChildVicinity vicinity) {
         final TreeViewNode<T> node = _activeNodes[vicinity.yIndex];
+        assert(vicinity.xIndex == node.depth);
         Widget child = widget.treeNodeBuilder(
           context,
           node,
@@ -704,13 +706,17 @@ class _TreeViewState<T> extends State<TreeView<T>>
   @override
   TreeViewNode<T>? getNodeFor(T content) => _getNode(content, widget.tree);
   TreeViewNode<T>? _getNode(T content, List<TreeViewNode<T>> tree) {
+    final List<TreeViewNode<T>> nextDepth = <TreeViewNode<T>>[];
     for (final TreeViewNode<T> node in tree) {
       if (node.content == content) {
         return node;
       }
       if (node.children.isNotEmpty) {
-        return _getNode(content, node.children);
+        nextDepth.addAll(node.children);
       }
+    }
+    if (nextDepth.isNotEmpty) {
+      return _getNode(content, nextDepth);
     }
     return null;
   }
@@ -909,7 +915,9 @@ class TreeViewport extends TwoDimensionalViewport {
     required this.rowDepths,
     this.traversalOrder = TreeViewTraversalOrder.depthFirst,
     required this.indentation,
-  }) : super(
+  })  : assert(verticalAxisDirection == AxisDirection.down &&
+            horizontalAxisDirection == AxisDirection.right),
+        super(
           mainAxis: traversalOrder == TreeViewTraversalOrder.depthFirst
               ? Axis.vertical
               : Axis.horizontal,
