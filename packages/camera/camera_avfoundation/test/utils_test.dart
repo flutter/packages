@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:camera_avfoundation/src/messages.g.dart';
 import 'package:camera_avfoundation/src/utils.dart';
 import 'package:camera_platform_interface/camera_platform_interface.dart';
 import 'package:flutter/services.dart';
@@ -9,29 +10,18 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   group('Utility methods', () {
-    test(
-        'Should return CameraLensDirection when valid value is supplied when parsing camera lens direction',
-        () {
+    test('Should convert CameraLensDirection values correctly', () {
       expect(
-        parseCameraLensDirection('back'),
+        cameraLensDirectionFromPlatform(PlatformCameraLensDirection.back),
         CameraLensDirection.back,
       );
       expect(
-        parseCameraLensDirection('front'),
+        cameraLensDirectionFromPlatform(PlatformCameraLensDirection.front),
         CameraLensDirection.front,
       );
       expect(
-        parseCameraLensDirection('external'),
+        cameraLensDirectionFromPlatform(PlatformCameraLensDirection.external),
         CameraLensDirection.external,
-      );
-    });
-
-    test(
-        'Should throw ArgumentException when invalid value is supplied when parsing camera lens direction',
-        () {
-      expect(
-        () => parseCameraLensDirection('test'),
-        throwsA(isArgumentError),
       );
     });
 
