@@ -18,10 +18,6 @@ Downloaded by pub (not CocoaPods).
   s.documentation_url = 'https://pub.dev/packages/in_app_purchase'
   s.swift_version = '5.0'
   s.source_files = 'Classes/**/*.{h,m,swift}'
-#  s.xcconfig = {
-#     'LIBRARY_SEARCH_PATHS' => '$(TOOLCHAIN_DIR)/usr/lib/swift/$(PLATFORM_NAME)/ $(SDKROOT)/usr/lib/swift',
-#     'LD_RUNPATH_SEARCH_PATHS' => '/usr/lib/swift',
-#  }
   s.public_header_files = 'Classes/**/*.h'
   s.ios.dependency 'Flutter'
   s.osx.dependency 'FlutterMacOS'
