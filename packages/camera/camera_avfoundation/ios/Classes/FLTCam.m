@@ -100,6 +100,11 @@ static FlutterError *FlutterErrorFromNSError(NSError *error) {
 @property(nonatomic, copy) VideoDimensionsForFormat videoDimensionsForFormat;
 /// A wrapper for AVCaptureDevice creation to allow for dependency injection in tests.
 @property(nonatomic, copy) CaptureDeviceFactory captureDeviceFactory;
+
+/// Reports the given error message to the Dart side of the plugin.
+///
+/// Can be called from any thread.
+- (void)reportErrorMessage:(NSString *)errorMessage;
 @end
 
 @implementation FLTCam
@@ -585,8 +590,7 @@ NSString *const errorMethod = @"error";
     }
   }
   if (!CMSampleBufferDataIsReady(sampleBuffer)) {
-    [_methodChannel invokeMethod:errorMethod
-                       arguments:@"sample buffer is not ready. Skipping sample"];
+    [self reportErrorMessage:@"sample buffer is not ready. Skipping sample"];
     return;
   }
   if (_isStreamingImages) {
@@ -661,8 +665,7 @@ NSString *const errorMethod = @"error";
   }
   if (_isRecording && !_isRecordingPaused) {
     if (_videoWriter.status == AVAssetWriterStatusFailed) {
-      [_methodChannel invokeMethod:errorMethod
-                         arguments:[NSString stringWithFormat:@"%@", _videoWriter.error]];
+      [self reportErrorMessage:[NSString stringWithFormat:@"%@", _videoWriter.error]];
       return;
     }
 
@@ -750,16 +753,13 @@ NSString *const errorMethod = @"error";
 - (void)newVideoSample:(CMSampleBufferRef)sampleBuffer {
   if (_videoWriter.status != AVAssetWriterStatusWriting) {
     if (_videoWriter.status == AVAssetWriterStatusFailed) {
-      [_methodChannel invokeMethod:errorMethod
-                         arguments:[NSString stringWithFormat:@"%@", _videoWriter.error]];
+      [self reportErrorMessage:[NSString stringWithFormat:@"%@", _videoWriter.error]];
     }
     return;
   }
   if (_videoWriterInput.readyForMoreMediaData) {
     if (![_videoWriterInput appendSampleBuffer:sampleBuffer]) {
-      [_methodChannel
-          invokeMethod:errorMethod
-             arguments:[NSString stringWithFormat:@"%@", @"Unable to write to video input"]];
+      [self reportErrorMessage:@"Unable to write to video input"];
     }
   }
 }
@@ -767,16 +767,13 @@ NSString *const errorMethod = @"error";
 - (void)newAudioSample:(CMSampleBufferRef)sampleBuffer {
   if (_videoWriter.status != AVAssetWriterStatusWriting) {
     if (_videoWriter.status == AVAssetWriterStatusFailed) {
-      [_methodChannel invokeMethod:errorMethod
-                         arguments:[NSString stringWithFormat:@"%@", _videoWriter.error]];
+      [self reportErrorMessage:[NSString stringWithFormat:@"%@", _videoWriter.error]];
     }
     return;
   }
   if (_audioWriterInput.readyForMoreMediaData) {
     if (![_audioWriterInput appendSampleBuffer:sampleBuffer]) {
-      [_methodChannel
-          invokeMethod:errorMethod
-             arguments:[NSString stringWithFormat:@"%@", @"Unable to write to audio input"]];
+      [self reportErrorMessage:@"Unable to write to audio input"];
     }
   }
 }
@@ -1223,8 +1220,7 @@ NSString *const errorMethod = @"error";
                                     });
                                   }];
   } else {
-    [_methodChannel invokeMethod:errorMethod
-                       arguments:@"Images from camera are already streaming!"];
+    [self reportErrorMessage:@"Images from camera are already streaming!"];
   }
 }
 
@@ -1233,7 +1229,7 @@ NSString *const errorMethod = @"error";
     _isStreamingImages = NO;
     _imageStreamHandler = nil;
   } else {
-    [_methodChannel invokeMethod:errorMethod arguments:@"Images from camera are not streaming!"];
+    [self reportErrorMessage:@"Images from camera are not streaming!"];
   }
 }
 
@@ -1302,7 +1298,7 @@ NSString *const errorMethod = @"error";
                                               error:&error];
   NSParameterAssert(_videoWriter);
   if (error) {
-    [_methodChannel invokeMethod:errorMethod arguments:error.description];
+    [self reportErrorMessage:error.description];
     return NO;
   }
 
@@ -1388,7 +1384,7 @@ NSString *const errorMethod = @"error";
   AVCaptureDeviceInput *audioInput = [AVCaptureDeviceInput deviceInputWithDevice:audioDevice
                                                                            error:&error];
   if (error) {
-    [_methodChannel invokeMethod:errorMethod arguments:error.description];
+    [self reportErrorMessage:error.description];
   }
   // Setup the audio output.
   _audioOutput = [[AVCaptureAudioDataOutput alloc] init];
@@ -1400,10 +1396,14 @@ NSString *const errorMethod = @"error";
       [_audioCaptureSession addOutput:_audioOutput];
       _isAudioSetup = YES;
     } else {
-      [_methodChannel invokeMethod:errorMethod
-                         arguments:@"Unable to add Audio input/output to session capture"];
+      [self reportErrorMessage:@"Unable to add Audio input/output to session capture"];
       _isAudioSetup = NO;
     }
   }
 }
+
+- (void)reportErrorMessage:(NSString *)errorMessage {
+  [_methodChannel invokeMethod:errorMethod arguments:errorMessage];
+}
+
 @end
