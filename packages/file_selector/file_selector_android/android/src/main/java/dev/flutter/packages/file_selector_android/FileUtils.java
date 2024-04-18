@@ -61,7 +61,15 @@ public class FileUtils {
 
     if (uriAuthority.equals(EXTERNAL_DOCUMENT_AUTHORITY)) {
       String uriDocumentId = DocumentsContract.getDocumentId(uri);
-      String documentStorageVolume = uriDocumentId.split(":")[0];
+      String[] uriDocumentIdSplit = uriDocumentId.split(":");
+
+      if (uriDocumentIdSplit.length < 2) {
+        // We expect the URI document ID to contain its storage volume and name to determine its path.
+        throw new UnsupportedOperationException(
+            "Retrieving the path of a document with an unknown storage volume or name is unsupported by this plugin.");
+      }
+
+      String documentStorageVolume = uriDocumentIdSplit[0];
 
       // Non-primary storage volumes come from SD cards, USB drives, etc. and are
       // not handled here.
@@ -71,7 +79,7 @@ public class FileUtils {
                 + documentStorageVolume
                 + " is unsupported by this plugin.");
       }
-      String innermostDirectoryName = uriDocumentId.split(":")[1];
+      String innermostDirectoryName = uriDocumentIdSplit[1];
       String externalStorageDirectory = Environment.getExternalStorageDirectory().getPath();
 
       return externalStorageDirectory + "/" + innermostDirectoryName;
@@ -96,8 +104,8 @@ public class FileUtils {
    * <p>If the original file name is unknown, a predefined "file_selector" filename is used and the
    * file extension is deduced from the mime type.
    *
-   * <p>Will return null if closing the output stream when done copying file contents does not for
-   * sure complete or if a security exception is encountered when opening the input stream.
+   * <p>Will return null if copying the URI contents into a new file does not complete successfully
+   * or if a security exception is encountered when opening the input stream to start the copying.
    */
   @Nullable
   public static String getPathFromCopyOfFileFromUri(@NonNull Context context, @NonNull Uri uri) {

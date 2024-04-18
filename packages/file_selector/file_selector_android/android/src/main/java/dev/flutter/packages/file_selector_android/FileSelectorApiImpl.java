@@ -107,6 +107,12 @@ public class FileSelectorApiImpl implements GeneratedFileSelectorApi.FileSelecto
             public void onResult(int resultCode, @Nullable Intent data) {
               if (resultCode == Activity.RESULT_OK && data != null) {
                 final Uri uri = data.getData();
+                if (uri == null) {
+                  // No data retrieved from opening file.
+                  result.error(new Exception("Failed to retrieve data from opening file."));
+                  return;
+                }
+
                 final GeneratedFileSelectorApi.FileResponse file = toFileResponse(uri);
                 if (file != null) {
                   result.success(file);
@@ -206,6 +212,12 @@ public class FileSelectorApiImpl implements GeneratedFileSelectorApi.FileSelecto
             public void onResult(int resultCode, @Nullable Intent data) {
               if (resultCode == Activity.RESULT_OK && data != null) {
                 final Uri uri = data.getData();
+                if (uri == null) {
+                  // No data retrieved from opening directory.
+                  result.error(new Exception("Failed to retrieve data from opening directory."));
+                  return;
+                }
+
                 final Uri docUri =
                     DocumentsContract.buildDocumentUriUsingTree(
                         uri, DocumentsContract.getTreeDocumentId(uri));
