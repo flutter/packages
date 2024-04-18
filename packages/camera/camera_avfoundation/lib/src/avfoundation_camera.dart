@@ -7,10 +7,12 @@ import 'dart:math';
 
 import 'package:camera_platform_interface/camera_platform_interface.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:stream_transform/stream_transform.dart';
 
+import 'messages.g.dart';
 import 'type_conversion.dart';
 import 'utils.dart';
 
@@ -19,10 +21,17 @@ const MethodChannel _channel =
 
 /// An iOS implementation of [CameraPlatform] based on AVFoundation.
 class AVFoundationCamera extends CameraPlatform {
+  /// Creates a new AVFoundation-based [CameraPlatform] implementation instance.
+  AVFoundationCamera({@visibleForTesting CameraApi? api})
+      : _hostApi = api ?? CameraApi();
+
   /// Registers this class as the default instance of [CameraPlatform].
   static void registerWith() {
     CameraPlatform.instance = AVFoundationCamera();
   }
+
+  /// Interface for calling host-side code.
+  final CameraApi _hostApi;
 
   final Map<int, MethodChannel> _channels = <int, MethodChannel>{};
 
@@ -71,21 +80,11 @@ class AVFoundationCamera extends CameraPlatform {
   @override
   Future<List<CameraDescription>> availableCameras() async {
     try {
-      final List<Map<dynamic, dynamic>>? cameras = await _channel
-          .invokeListMethod<Map<dynamic, dynamic>>('availableCameras');
-
-      if (cameras == null) {
-        return <CameraDescription>[];
-      }
-
-      return cameras.map((Map<dynamic, dynamic> camera) {
-        return CameraDescription(
-          name: camera['name']! as String,
-          lensDirection:
-              parseCameraLensDirection(camera['lensFacing']! as String),
-          sensorOrientation: camera['sensorOrientation']! as int,
-        );
-      }).toList();
+      return (await _hostApi.getAvailableCameras())
+          // See comment in messages.dart for why this is safe.
+          .map((PlatformCameraDescription? c) => c!)
+          .map(cameraDescriptionFromPlatform)
+          .toList();
     } on PlatformException catch (e) {
       throw CameraException(e.code, e.message);
     }
@@ -96,15 +95,30 @@ class AVFoundationCamera extends CameraPlatform {
     CameraDescription cameraDescription,
     ResolutionPreset? resolutionPreset, {
     bool enableAudio = false,
-  }) async {
+  }) =>
+      createCameraWithSettings(
+          cameraDescription,
+          MediaSettings(
+            resolutionPreset: resolutionPreset,
+            enableAudio: enableAudio,
+          ));
+
+  @override
+  Future<int> createCameraWithSettings(
+    CameraDescription cameraDescription,
+    MediaSettings? mediaSettings,
+  ) async {
     try {
       final Map<String, dynamic>? reply = await _channel
           .invokeMapMethod<String, dynamic>('create', <String, dynamic>{
         'cameraName': cameraDescription.name,
-        'resolutionPreset': resolutionPreset != null
-            ? _serializeResolutionPreset(resolutionPreset)
+        'resolutionPreset': null != mediaSettings?.resolutionPreset
+            ? _serializeResolutionPreset(mediaSettings!.resolutionPreset!)
             : null,
-        'enableAudio': enableAudio,
+        'fps': mediaSettings?.fps,
+        'videoBitrate': mediaSettings?.videoBitrate,
+        'audioBitrate': mediaSettings?.audioBitrate,
+        'enableAudio': mediaSettings?.enableAudio ?? true,
       });
 
       return reply!['cameraId']! as int;

@@ -6,7 +6,6 @@
 
 #import "CameraPlugin.h"
 #import "FLTCam.h"
-#import "FLTThreadSafeFlutterResult.h"
 
 /// APIs exposed for unit testing.
 @interface CameraPlugin ()
@@ -34,7 +33,7 @@
 /// @param call The method call command object.
 /// @param result A wrapper around the `FlutterResult` callback which ensures the callback is called
 /// on the main dispatch queue.
-- (void)handleMethodCallAsync:(FlutterMethodCall *)call result:(FLTThreadSafeFlutterResult *)result;
+- (void)handleMethodCallAsync:(FlutterMethodCall *)call result:(FlutterResult)result;
 
 /// Called by the @c NSNotificationManager each time the device's orientation is changed.
 ///
@@ -46,6 +45,5 @@
 /// @param createMethodCall the create method call
 /// @param result a thread safe flutter result wrapper object to report creation result.
 - (void)createCameraOnSessionQueueWithCreateMethodCall:(FlutterMethodCall *)createMethodCall
-                                                result:(FLTThreadSafeFlutterResult *)result;
-
+                                                result:(FlutterResult)result;
 @end

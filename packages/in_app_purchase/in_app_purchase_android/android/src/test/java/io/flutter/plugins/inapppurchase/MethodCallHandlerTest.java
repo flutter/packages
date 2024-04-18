@@ -6,9 +6,6 @@ package io.flutter.plugins.inapppurchase;
 
 import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.ACTIVITY_UNAVAILABLE;
 import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.PRORATION_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY;
-import static io.flutter.plugins.inapppurchase.Translator.fromProductDetailsList;
-import static io.flutter.plugins.inapppurchase.Translator.fromPurchaseHistoryRecordList;
-import static io.flutter.plugins.inapppurchase.Translator.fromPurchasesList;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static java.util.Collections.unmodifiableList;
@@ -56,8 +53,6 @@ import com.android.billingclient.api.PurchasesResponseListener;
 import com.android.billingclient.api.QueryProductDetailsParams;
 import com.android.billingclient.api.QueryPurchaseHistoryParams;
 import com.android.billingclient.api.QueryPurchasesParams;
-import com.android.billingclient.api.UserChoiceBillingListener;
-import com.android.billingclient.api.UserChoiceDetails;
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
 import io.flutter.plugins.inapppurchase.Messages.FlutterError;
 import io.flutter.plugins.inapppurchase.Messages.InAppPurchaseCallbackApi;
@@ -66,12 +61,11 @@ import io.flutter.plugins.inapppurchase.Messages.PlatformBillingChoiceMode;
 import io.flutter.plugins.inapppurchase.Messages.PlatformBillingConfigResponse;
 import io.flutter.plugins.inapppurchase.Messages.PlatformBillingFlowParams;
 import io.flutter.plugins.inapppurchase.Messages.PlatformBillingResult;
-import io.flutter.plugins.inapppurchase.Messages.PlatformProduct;
 import io.flutter.plugins.inapppurchase.Messages.PlatformProductDetailsResponse;
 import io.flutter.plugins.inapppurchase.Messages.PlatformProductType;
 import io.flutter.plugins.inapppurchase.Messages.PlatformPurchaseHistoryResponse;
 import io.flutter.plugins.inapppurchase.Messages.PlatformPurchasesResponse;
-import io.flutter.plugins.inapppurchase.Messages.PlatformUserChoiceDetails;
+import io.flutter.plugins.inapppurchase.Messages.PlatformQueryProduct;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -116,16 +110,15 @@ public class MethodCallHandlerTest {
     openMocks = MockitoAnnotations.openMocks(this);
     // Use the same client no matter if alternative billing is enabled or not.
     when(factory.createBillingClient(
-            context, mockCallbackApi, PlatformBillingChoiceMode.PLAY_BILLING_ONLY, null))
+            context, mockCallbackApi, PlatformBillingChoiceMode.PLAY_BILLING_ONLY))
         .thenReturn(mockBillingClient);
     when(factory.createBillingClient(
-            context, mockCallbackApi, PlatformBillingChoiceMode.ALTERNATIVE_BILLING_ONLY, null))
+            context, mockCallbackApi, PlatformBillingChoiceMode.ALTERNATIVE_BILLING_ONLY))
         .thenReturn(mockBillingClient);
     when(factory.createBillingClient(
             any(Context.class),
             any(InAppPurchaseCallbackApi.class),
-            eq(PlatformBillingChoiceMode.USER_CHOICE_BILLING),
-            any(UserChoiceBillingListener.class)))
+            eq(PlatformBillingChoiceMode.USER_CHOICE_BILLING)))
         .thenReturn(mockBillingClient);
     methodChannelHandler = new MethodCallHandlerImpl(activity, context, mockCallbackApi, factory);
     when(mockActivityPluginBinding.getActivity()).thenReturn(activity);
@@ -168,8 +161,7 @@ public class MethodCallHandlerTest {
         mockStartConnection(PlatformBillingChoiceMode.PLAY_BILLING_ONLY);
     verify(platformBillingResult, never()).success(any());
     verify(factory, times(1))
-        .createBillingClient(
-            context, mockCallbackApi, PlatformBillingChoiceMode.PLAY_BILLING_ONLY, null);
+        .createBillingClient(context, mockCallbackApi, PlatformBillingChoiceMode.PLAY_BILLING_ONLY);
 
     BillingResult billingResult = buildBillingResult();
     captor.getValue().onBillingSetupFinished(billingResult);
@@ -188,7 +180,7 @@ public class MethodCallHandlerTest {
     verify(platformBillingResult, never()).success(any());
     verify(factory, times(1))
         .createBillingClient(
-            context, mockCallbackApi, PlatformBillingChoiceMode.ALTERNATIVE_BILLING_ONLY, null);
+            context, mockCallbackApi, PlatformBillingChoiceMode.ALTERNATIVE_BILLING_ONLY);
 
     BillingResult billingResult = buildBillingResult();
     captor.getValue().onBillingSetupFinished(billingResult);
@@ -204,15 +196,13 @@ public class MethodCallHandlerTest {
   public void startConnectionUserChoiceBilling() {
     ArgumentCaptor<BillingClientStateListener> captor =
         mockStartConnection(PlatformBillingChoiceMode.USER_CHOICE_BILLING);
-    ArgumentCaptor<UserChoiceBillingListener> billingCaptor =
-        ArgumentCaptor.forClass(UserChoiceBillingListener.class);
     verify(platformBillingResult, never()).success(any());
+
     verify(factory, times(1))
         .createBillingClient(
             any(Context.class),
             any(InAppPurchaseCallbackApi.class),
-            eq(PlatformBillingChoiceMode.USER_CHOICE_BILLING),
-            billingCaptor.capture());
+            eq(PlatformBillingChoiceMode.USER_CHOICE_BILLING));
 
     BillingResult billingResult =
         BillingResult.newBuilder()
@@ -224,22 +214,6 @@ public class MethodCallHandlerTest {
     ArgumentCaptor<PlatformBillingResult> resultCaptor =
         ArgumentCaptor.forClass(PlatformBillingResult.class);
     verify(platformBillingResult, times(1)).success(resultCaptor.capture());
-    UserChoiceDetails details = mock(UserChoiceDetails.class);
-    final String externalTransactionToken = "someLongTokenId1234";
-    final String originalTransactionId = "originalTransactionId123456";
-    when(details.getExternalTransactionToken()).thenReturn(externalTransactionToken);
-    when(details.getOriginalExternalTransactionId()).thenReturn(originalTransactionId);
-    when(details.getProducts()).thenReturn(Collections.emptyList());
-    billingCaptor.getValue().userSelectedAlternativeBilling(details);
-
-    ArgumentCaptor<PlatformUserChoiceDetails> callbackCaptor =
-        ArgumentCaptor.forClass(PlatformUserChoiceDetails.class);
-    verify(mockCallbackApi, times(1))
-        .userSelectedalternativeBilling(callbackCaptor.capture(), any());
-    assertEquals(callbackCaptor.getValue().getExternalTransactionToken(), externalTransactionToken);
-    assertEquals(
-        callbackCaptor.getValue().getOriginalExternalTransactionId(), originalTransactionId);
-    assertTrue(callbackCaptor.getValue().getProductsJsonList().isEmpty());
   }
 
   @Test
@@ -249,8 +223,7 @@ public class MethodCallHandlerTest {
         mockStartConnection(PlatformBillingChoiceMode.PLAY_BILLING_ONLY);
     verify(platformBillingResult, never()).success(any());
     verify(factory, times(1))
-        .createBillingClient(
-            context, mockCallbackApi, PlatformBillingChoiceMode.PLAY_BILLING_ONLY, null);
+        .createBillingClient(context, mockCallbackApi, PlatformBillingChoiceMode.PLAY_BILLING_ONLY);
 
     BillingResult billingResult1 =
         BillingResult.newBuilder()
@@ -275,15 +248,12 @@ public class MethodCallHandlerTest {
     // Second connection.
     ArgumentCaptor<BillingClientStateListener> captor2 =
         mockStartConnection(PlatformBillingChoiceMode.USER_CHOICE_BILLING);
-    ArgumentCaptor<UserChoiceBillingListener> billingCaptor =
-        ArgumentCaptor.forClass(UserChoiceBillingListener.class);
     verify(platformBillingResult, never()).success(any());
     verify(factory, times(1))
         .createBillingClient(
             any(Context.class),
             any(InAppPurchaseCallbackApi.class),
-            eq(PlatformBillingChoiceMode.USER_CHOICE_BILLING),
-            billingCaptor.capture());
+            eq(PlatformBillingChoiceMode.USER_CHOICE_BILLING));
 
     BillingResult billingResult2 =
         BillingResult.newBuilder()
@@ -293,22 +263,6 @@ public class MethodCallHandlerTest {
     captor2.getValue().onBillingSetupFinished(billingResult2);
 
     verify(platformBillingResult, times(1)).success(any());
-    UserChoiceDetails details = mock(UserChoiceDetails.class);
-    final String externalTransactionToken = "someLongTokenId1234";
-    final String originalTransactionId = "originalTransactionId123456";
-    when(details.getExternalTransactionToken()).thenReturn(externalTransactionToken);
-    when(details.getOriginalExternalTransactionId()).thenReturn(originalTransactionId);
-    when(details.getProducts()).thenReturn(Collections.emptyList());
-    billingCaptor.getValue().userSelectedAlternativeBilling(details);
-
-    ArgumentCaptor<PlatformUserChoiceDetails> callbackCaptor =
-        ArgumentCaptor.forClass(PlatformUserChoiceDetails.class);
-    verify(mockCallbackApi, times(1))
-        .userSelectedalternativeBilling(callbackCaptor.capture(), any());
-    assertEquals(callbackCaptor.getValue().getExternalTransactionToken(), externalTransactionToken);
-    assertEquals(
-        callbackCaptor.getValue().getOriginalExternalTransactionId(), originalTransactionId);
-    assertTrue(callbackCaptor.getValue().getProductsJsonList().isEmpty());
   }
 
   @Test
@@ -545,7 +499,7 @@ public class MethodCallHandlerTest {
     // Connect a billing client and set up the product query listeners
     establishConnectedBillingClient();
     List<String> productsIds = asList("id1", "id2");
-    final List<PlatformProduct> productList =
+    final List<PlatformQueryProduct> productList =
         buildProductList(productsIds, PlatformProductType.INAPP);
 
     // Query for product details
@@ -568,8 +522,7 @@ public class MethodCallHandlerTest {
     verify(platformProductDetailsResult).success(resultCaptor.capture());
     PlatformProductDetailsResponse resultData = resultCaptor.getValue();
     assertResultsMatch(resultData.getBillingResult(), billingResult);
-    assertEquals(
-        resultData.getProductDetailsJsonList(), fromProductDetailsList(productDetailsResponse));
+    assertDetailListsMatch(productDetailsResponse, resultData.getProductDetails());
   }
 
   @Test
@@ -577,7 +530,7 @@ public class MethodCallHandlerTest {
     // Disconnect the Billing client and prepare a queryProductDetails call
     methodChannelHandler.endConnection();
     List<String> productsIds = asList("id1", "id2");
-    final List<PlatformProduct> productList =
+    final List<PlatformQueryProduct> productList =
         buildProductList(productsIds, PlatformProductType.INAPP);
 
     methodChannelHandler.queryProductDetailsAsync(productList, platformProductDetailsResult);
@@ -941,7 +894,7 @@ public class MethodCallHandlerTest {
     assertEquals(
         purchasesResponse.getBillingResult().getResponseCode().longValue(),
         BillingClient.BillingResponseCode.OK);
-    assertTrue(purchasesResponse.getPurchasesJsonList().isEmpty());
+    assertTrue(purchasesResponse.getPurchases().isEmpty());
   }
 
   @Test
@@ -949,7 +902,9 @@ public class MethodCallHandlerTest {
     // Set up an established billing client and all our mocked responses
     establishConnectedBillingClient();
     BillingResult billingResult = buildBillingResult();
-    List<PurchaseHistoryRecord> purchasesList = singletonList(buildPurchaseHistoryRecord("foo"));
+    final String purchaseToken = "foo";
+    List<PurchaseHistoryRecord> purchasesList =
+        singletonList(buildPurchaseHistoryRecord(purchaseToken));
     ArgumentCaptor<PurchaseHistoryResponseListener> listenerCaptor =
         ArgumentCaptor.forClass(PurchaseHistoryResponseListener.class);
 
@@ -965,8 +920,8 @@ public class MethodCallHandlerTest {
     verify(platformPurchaseHistoryResult).success(resultCaptor.capture());
     PlatformPurchaseHistoryResponse result = resultCaptor.getValue();
     assertResultsMatch(result.getBillingResult(), billingResult);
-    assertEquals(
-        fromPurchaseHistoryRecordList(purchasesList), result.getPurchaseHistoryRecordJsonList());
+    assertEquals(1, result.getPurchases().size());
+    assertEquals(purchaseToken, result.getPurchases().get(0).getPurchaseToken());
   }
 
   @Test
@@ -990,7 +945,8 @@ public class MethodCallHandlerTest {
     PluginPurchaseListener listener = new PluginPurchaseListener(mockCallbackApi);
 
     BillingResult billingResult = buildBillingResult();
-    List<Purchase> purchasesList = singletonList(buildPurchase("foo"));
+    final String orderId = "foo";
+    List<Purchase> purchasesList = singletonList(buildPurchase(orderId));
     ArgumentCaptor<PlatformPurchasesResponse> resultCaptor =
         ArgumentCaptor.forClass(PlatformPurchasesResponse.class);
     doNothing().when(mockCallbackApi).onPurchasesUpdated(resultCaptor.capture(), any());
@@ -998,7 +954,8 @@ public class MethodCallHandlerTest {
 
     PlatformPurchasesResponse response = resultCaptor.getValue();
     assertResultsMatch(response.getBillingResult(), billingResult);
-    assertEquals(fromPurchasesList(purchasesList), response.getPurchasesJsonList());
+    assertEquals(1, response.getPurchases().size());
+    assertEquals(orderId, response.getPurchases().get(0).getOrderId());
   }
 
   @Test
@@ -1118,7 +1075,7 @@ public class MethodCallHandlerTest {
     // Set up the query method call
     establishConnectedBillingClient();
     List<String> productsIds = asList("id1", "id2");
-    final List<PlatformProduct> productList =
+    final List<PlatformQueryProduct> productList =
         buildProductList(productsIds, PlatformProductType.INAPP);
 
     // Call the method.
@@ -1135,12 +1092,12 @@ public class MethodCallHandlerTest {
     listenerCaptor.getValue().onProductDetailsResponse(billingResult, productDetailsResponse);
   }
 
-  private List<PlatformProduct> buildProductList(
+  private List<PlatformQueryProduct> buildProductList(
       List<String> productIds, PlatformProductType productType) {
-    List<PlatformProduct> productList = new ArrayList<>();
+    List<PlatformQueryProduct> productList = new ArrayList<>();
     for (String productId : productIds) {
-      PlatformProduct.Builder builder =
-          new PlatformProduct.Builder().setProductId(productId).setProductType(productType);
+      PlatformQueryProduct.Builder builder =
+          new PlatformQueryProduct.Builder().setProductId(productId).setProductType(productType);
       productList.add(builder.build());
     }
     return productList;
@@ -1172,12 +1129,27 @@ public class MethodCallHandlerTest {
   private Purchase buildPurchase(String orderId) {
     Purchase purchase = mock(Purchase.class);
     when(purchase.getOrderId()).thenReturn(orderId);
+    when(purchase.getPurchaseState()).thenReturn(Purchase.PurchaseState.UNSPECIFIED_STATE);
+    when(purchase.getQuantity()).thenReturn(1);
+    when(purchase.getPurchaseTime()).thenReturn(0L);
+    when(purchase.getDeveloperPayload()).thenReturn("");
+    when(purchase.getOriginalJson()).thenReturn("");
+    when(purchase.getPackageName()).thenReturn("");
+    when(purchase.getPurchaseToken()).thenReturn("");
+    when(purchase.getSignature()).thenReturn("");
+    when(purchase.getProducts()).thenReturn(Collections.emptyList());
     return purchase;
   }
 
   private PurchaseHistoryRecord buildPurchaseHistoryRecord(String purchaseToken) {
     PurchaseHistoryRecord purchase = mock(PurchaseHistoryRecord.class);
     when(purchase.getPurchaseToken()).thenReturn(purchaseToken);
+    when(purchase.getQuantity()).thenReturn(1);
+    when(purchase.getPurchaseTime()).thenReturn(0L);
+    when(purchase.getDeveloperPayload()).thenReturn("");
+    when(purchase.getOriginalJson()).thenReturn("");
+    when(purchase.getSignature()).thenReturn("");
+    when(purchase.getProducts()).thenReturn(Collections.emptyList());
     return purchase;
   }
 
@@ -1195,5 +1167,27 @@ public class MethodCallHandlerTest {
   private void assertResultsMatch(PlatformBillingResult pigeonResult, BillingResult nativeResult) {
     assertEquals(pigeonResult.getResponseCode().longValue(), nativeResult.getResponseCode());
     assertEquals(pigeonResult.getDebugMessage(), nativeResult.getDebugMessage());
+  }
+
+  private void assertDetailListsMatch(
+      List<ProductDetails> expected, List<Messages.PlatformProductDetails> actual) {
+    assertEquals(expected.size(), actual.size());
+    for (int i = 0; i < expected.size(); i++) {
+      assertDetailsMatch(expected.get(i), actual.get(i));
+    }
+  }
+
+  private void assertDetailsMatch(ProductDetails expected, Messages.PlatformProductDetails actual) {
+    assertEquals(expected.getDescription(), actual.getDescription());
+    assertEquals(expected.getName(), actual.getName());
+    assertEquals(expected.getProductId(), actual.getProductId());
+    assertEquals(expected.getTitle(), actual.getTitle());
+    // This doesn't do a deep match; TranslatorTest covers that. This is just a sanity check.
+    assertEquals(
+        expected.getOneTimePurchaseOfferDetails() == null,
+        actual.getOneTimePurchaseOfferDetails() == null);
+    assertEquals(
+        expected.getSubscriptionOfferDetails() == null,
+        actual.getSubscriptionOfferDetails() == null);
   }
 }
