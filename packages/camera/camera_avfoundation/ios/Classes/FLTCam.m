@@ -6,6 +6,7 @@
 #import "FLTCam_Test.h"
 
 @import CoreMotion;
+@import Flutter;
 #import <libkern/OSAtomic.h>
 
 #import "FLTSavePhotoDelegate.h"
@@ -296,17 +297,25 @@ NSString *const errorMethod = @"error";
 }
 
 - (void)reportInitializationState {
+  // Get all the state on the current thread, not the main thread.
   CGSize previewSize = self.previewSize;
-  [_methodChannel
-      invokeMethod:@"initialized"
-         arguments:@{
-           @"previewWidth" : @(previewSize.width),
-           @"previewHeight" : @(previewSize.height),
-           @"exposureMode" : FLTGetStringForFLTExposureMode([self exposureMode]),
-           @"focusMode" : FLTGetStringForFLTFocusMode([self focusMode]),
-           @"exposurePointSupported" : @([self.captureDevice isExposurePointOfInterestSupported]),
-           @"focusPointSupported" : @([self.captureDevice isFocusPointOfInterestSupported]),
-         }];
+  NSString *exposureMode = FLTGetStringForFLTExposureMode(self.exposureMode);
+  NSString *focusMode = FLTGetStringForFLTFocusMode(self.focusMode);
+  BOOL isExposurePOISupported = self.captureDevice.exposurePointOfInterestSupported;
+  BOOL isFocusPOISupported = self.captureDevice.focusPointOfInterestSupported;
+
+  __weak typeof(self) weakSelf = self;
+  FLTEnsureToRunOnMainQueue(^{
+    [weakSelf.methodChannel invokeMethod:@"initialized"
+                               arguments:@{
+                                 @"previewWidth" : @(previewSize.width),
+                                 @"previewHeight" : @(previewSize.height),
+                                 @"exposureMode" : exposureMode,
+                                 @"focusMode" : focusMode,
+                                 @"exposurePointSupported" : @(isExposurePOISupported),
+                                 @"focusPointSupported" : @(isFocusPOISupported),
+                               }];
+  });
 }
 
 - (void)start {
@@ -1403,7 +1412,10 @@ NSString *const errorMethod = @"error";
 }
 
 - (void)reportErrorMessage:(NSString *)errorMessage {
-  [_methodChannel invokeMethod:errorMethod arguments:errorMessage];
+  __weak typeof(self) weakSelf = self;
+  FLTEnsureToRunOnMainQueue(^{
+    [weakSelf.methodChannel invokeMethod:errorMethod arguments:errorMessage];
+  });
 }
 
 @end

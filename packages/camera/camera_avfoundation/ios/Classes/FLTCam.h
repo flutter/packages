@@ -9,7 +9,6 @@
 #import "CameraProperties.h"
 #import "FLTCamMediaSettings.h"
 #import "FLTCamMediaSettingsAVWrapper.h"
-#import "FLTThreadSafeMethodChannel.h"
 #import "FLTThreadSafeTextureRegistry.h"
 
 NS_ASSUME_NONNULL_BEGIN
@@ -21,7 +20,9 @@ NS_ASSUME_NONNULL_BEGIN
 @property(readonly, nonatomic) CGSize previewSize;
 @property(assign, nonatomic) BOOL isPreviewPaused;
 @property(nonatomic, copy) void (^onFrameAvailable)(void);
-@property(nonatomic) FLTThreadSafeMethodChannel *methodChannel;
+/// The channel used to communicate with the Dart side of the plugin. Once initially set, this
+/// should only ever be accessed on the main thread.
+@property(nonatomic) FlutterMethodChannel *methodChannel;
 @property(assign, nonatomic) FLTResolutionPreset resolutionPreset;
 @property(assign, nonatomic) FLTExposureMode exposureMode;
 @property(assign, nonatomic) FLTFocusMode focusMode;

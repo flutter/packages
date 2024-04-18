@@ -11,7 +11,6 @@
 #import "CameraProperties.h"
 #import "FLTCam.h"
 #import "FLTThreadSafeEventChannel.h"
-#import "FLTThreadSafeMethodChannel.h"
 #import "FLTThreadSafeTextureRegistry.h"
 #import "QueueUtils.h"
 #import "messages.g.h"
@@ -175,13 +174,11 @@ static FlutterError *FlutterErrorFromNSError(NSError *error) {
           [weakSelf.registry textureFrameAvailable:cameraId];
         }
       };
-      FlutterMethodChannel *methodChannel = [FlutterMethodChannel
+      _camera.methodChannel = [FlutterMethodChannel
           methodChannelWithName:
               [NSString stringWithFormat:@"plugins.flutter.io/camera_avfoundation/camera%lu",
                                          (unsigned long)cameraId]
                 binaryMessenger:_messenger];
-      _camera.methodChannel =
-          [[FLTThreadSafeMethodChannel alloc] initWithMethodChannel:methodChannel];
       [_camera reportInitializationState];
       [self sendDeviceOrientation:[UIDevice currentDevice].orientation];
       [_camera start];
