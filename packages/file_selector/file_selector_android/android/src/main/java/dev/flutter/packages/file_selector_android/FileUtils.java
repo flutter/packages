@@ -59,7 +59,7 @@ public class FileUtils {
   public static String getPathFromUri(@NonNull Context context, @NonNull Uri uri) {
     String uriAuthority = uri.getAuthority();
 
-    if (uriAuthority.equals(EXTERNAL_DOCUMENT_AUTHORITY)) {
+    if (EXTERNAL_DOCUMENT_AUTHORITY.equals(uriAuthority)) {
       String uriDocumentId = DocumentsContract.getDocumentId(uri);
       String documentStorageVolume = uriDocumentId.split(":")[0];
 
