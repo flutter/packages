@@ -1317,7 +1317,7 @@ String _getClassName(String module, String name) {
 
 // Returns the name to use for a class field with [name].
 String _getFieldName(String name) {
-  final List<String> reservedNames = <String>["type"];
+  final List<String> reservedNames = <String>['type'];
   if (reservedNames.contains(name)) {
     name += '_';
   }
@@ -1326,7 +1326,7 @@ String _getFieldName(String name) {
 
 // Returns the name to user for a class method with [name]
 String _getMethodName(String name) {
-  final List<String> reservedNames = <String>["new", "get_type"];
+  final List<String> reservedNames = <String>['new', 'get_type'];
   if (reservedNames.contains(name)) {
     name += '_';
   }
