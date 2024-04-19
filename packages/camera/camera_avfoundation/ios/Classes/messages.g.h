@@ -28,7 +28,44 @@ typedef NS_ENUM(NSUInteger, FCPPlatformCameraLensDirection) {
 - (instancetype)initWithValue:(FCPPlatformCameraLensDirection)value;
 @end
 
+typedef NS_ENUM(NSUInteger, FCPPlatformDeviceOrientation) {
+  FCPPlatformDeviceOrientationPortraitUp = 0,
+  FCPPlatformDeviceOrientationLandscapeLeft = 1,
+  FCPPlatformDeviceOrientationPortraitDown = 2,
+  FCPPlatformDeviceOrientationLandscapeRight = 3,
+};
+
+/// Wrapper for FCPPlatformDeviceOrientation to allow for nullability.
+@interface FCPPlatformDeviceOrientationBox : NSObject
+@property(nonatomic, assign) FCPPlatformDeviceOrientation value;
+- (instancetype)initWithValue:(FCPPlatformDeviceOrientation)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FCPPlatformExposureMode) {
+  FCPPlatformExposureModeAuto = 0,
+  FCPPlatformExposureModeLocked = 1,
+};
+
+/// Wrapper for FCPPlatformExposureMode to allow for nullability.
+@interface FCPPlatformExposureModeBox : NSObject
+@property(nonatomic, assign) FCPPlatformExposureMode value;
+- (instancetype)initWithValue:(FCPPlatformExposureMode)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FCPPlatformFocusMode) {
+  FCPPlatformFocusModeAuto = 0,
+  FCPPlatformFocusModeLocked = 1,
+};
+
+/// Wrapper for FCPPlatformFocusMode to allow for nullability.
+@interface FCPPlatformFocusModeBox : NSObject
+@property(nonatomic, assign) FCPPlatformFocusMode value;
+- (instancetype)initWithValue:(FCPPlatformFocusMode)value;
+@end
+
 @class FCPPlatformCameraDescription;
+@class FCPPlatformCameraState;
+@class FCPPlatformSize;
 
 @interface FCPPlatformCameraDescription : NSObject
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
@@ -39,6 +76,34 @@ typedef NS_ENUM(NSUInteger, FCPPlatformCameraLensDirection) {
 @property(nonatomic, copy) NSString *name;
 /// The direction the camera is facing.
 @property(nonatomic, assign) FCPPlatformCameraLensDirection lensDirection;
+@end
+
+@interface FCPPlatformCameraState : NSObject
+/// `init` unavailable to enforce nonnull fields, see the `make` class method.
+- (instancetype)init NS_UNAVAILABLE;
++ (instancetype)makeWithPreviewSize:(FCPPlatformSize *)previewSize
+                       exposureMode:(FCPPlatformExposureMode)exposureMode
+                          focusMode:(FCPPlatformFocusMode)focusMode
+             exposurePointSupported:(BOOL)exposurePointSupported
+                focusPointSupported:(BOOL)focusPointSupported;
+/// The size of the preview, in pixels.
+@property(nonatomic, strong) FCPPlatformSize *previewSize;
+/// The default exposure mode
+@property(nonatomic, assign) FCPPlatformExposureMode exposureMode;
+/// The default focus mode
+@property(nonatomic, assign) FCPPlatformFocusMode focusMode;
+/// Whether setting exposure points is supported.
+@property(nonatomic, assign) BOOL exposurePointSupported;
+/// Whether setting focus points is supported.
+@property(nonatomic, assign) BOOL focusPointSupported;
+@end
+
+@interface FCPPlatformSize : NSObject
+/// `init` unavailable to enforce nonnull fields, see the `make` class method.
+- (instancetype)init NS_UNAVAILABLE;
++ (instancetype)makeWithWidth:(double)width height:(double)height;
+@property(nonatomic, assign) double width;
+@property(nonatomic, assign) double height;
 @end
 
 /// The codec used by FCPCameraApi.
@@ -56,5 +121,38 @@ extern void SetUpFCPCameraApi(id<FlutterBinaryMessenger> binaryMessenger,
 extern void SetUpFCPCameraApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger,
                                         NSObject<FCPCameraApi> *_Nullable api,
                                         NSString *messageChannelSuffix);
+
+/// The codec used by FCPCameraGlobalEventApi.
+NSObject<FlutterMessageCodec> *FCPCameraGlobalEventApiGetCodec(void);
+
+/// Handler for native callbacks that are not tied to a specific camera ID.
+@interface FCPCameraGlobalEventApi : NSObject
+- (instancetype)initWithBinaryMessenger:(id<FlutterBinaryMessenger>)binaryMessenger;
+- (instancetype)initWithBinaryMessenger:(id<FlutterBinaryMessenger>)binaryMessenger
+                   messageChannelSuffix:(nullable NSString *)messageChannelSuffix;
+/// Called when the device's physical orientation changes.
+- (void)deviceOrientationChangedOrientation:(FCPPlatformDeviceOrientation)orientation
+                                 completion:(void (^)(FlutterError *_Nullable))completion;
+@end
+
+/// The codec used by FCPCameraEventApi.
+NSObject<FlutterMessageCodec> *FCPCameraEventApiGetCodec(void);
+
+/// Handler for native callbacks that are tied to a specific camera ID.
+///
+/// This is intended to be initialized with the camera ID as a suffix.
+@interface FCPCameraEventApi : NSObject
+- (instancetype)initWithBinaryMessenger:(id<FlutterBinaryMessenger>)binaryMessenger;
+- (instancetype)initWithBinaryMessenger:(id<FlutterBinaryMessenger>)binaryMessenger
+                   messageChannelSuffix:(nullable NSString *)messageChannelSuffix;
+/// Called when the camera is inialitized for use.
+- (void)initializedWithState:(FCPPlatformCameraState *)initialState
+                  completion:(void (^)(FlutterError *_Nullable))completion;
+/// Called when an error occurs in the camera.
+///
+/// This should be used for errors that occur outside of the context of
+/// handling a specific HostApi call, such as during streaming.
+- (void)reportError:(NSString *)message completion:(void (^)(FlutterError *_Nullable))completion;
+@end
 
 NS_ASSUME_NONNULL_END
