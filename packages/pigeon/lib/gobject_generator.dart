@@ -460,7 +460,6 @@ class GObjectSourceGenerator extends StructuredGenerator<GObjectOptions> {
 
     indent.newln();
     _writeObjectStruct(indent, module, classDefinition.name, () {
-      indent.newln();
       for (final NamedType field in classDefinition.fields) {
         final String fieldName = _getFieldName(field.name);
         final String fieldType = _getType(module, field.type, isOutput: true);

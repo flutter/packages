@@ -1713,8 +1713,8 @@ gboolean core_tests_pigeon_test_flutter_integration_core_api_echo_string_finish(
 // Returns the passed byte list, to test serialization and deserialization.
 void core_tests_pigeon_test_flutter_integration_core_api_echo_uint8_list(
     CoreTestsPigeonTestFlutterIntegrationCoreApi* self, const uint8_t* a_list,
-    GCancellable* cancellable, GAsyncReadyCallback callback,
-    gpointer user_data);
+    size_t a_list_length, GCancellable* cancellable,
+    GAsyncReadyCallback callback, gpointer user_data);
 
 gboolean
 core_tests_pigeon_test_flutter_integration_core_api_echo_uint8_list_finish(
@@ -1798,8 +1798,8 @@ core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_string_finish(
 // Returns the passed byte list, to test serialization and deserialization.
 void core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_uint8_list(
     CoreTestsPigeonTestFlutterIntegrationCoreApi* self, const uint8_t* a_list,
-    GCancellable* cancellable, GAsyncReadyCallback callback,
-    gpointer user_data);
+    size_t a_list_length, GCancellable* cancellable,
+    GAsyncReadyCallback callback, gpointer user_data);
 
 gboolean
 core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_uint8_list_finish(
