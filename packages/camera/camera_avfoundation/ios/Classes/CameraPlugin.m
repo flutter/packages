@@ -111,6 +111,8 @@ static FlutterError *FlutterErrorFromNSError(NSError *error) {
   });
 }
 
+#pragma mark FCPCameraApi Implementation
+
 - (void)availableCamerasWithCompletion:
     (nonnull void (^)(NSArray<FCPPlatformCameraDescription *> *_Nullable,
                       FlutterError *_Nullable))completion {
@@ -160,28 +162,10 @@ static FlutterError *FlutterErrorFromNSError(NSError *error) {
     result(nil);
   } else {
     NSDictionary *argsMap = call.arguments;
-    NSUInteger cameraId = ((NSNumber *)argsMap[@"cameraId"]).unsignedIntegerValue;
-    if ([@"initialize" isEqualToString:call.method]) {
-      NSString *videoFormatValue = ((NSString *)argsMap[@"imageFormatGroup"]);
-
-      [_camera setVideoFormat:FLTGetVideoFormatFromString(videoFormatValue)];
-
-      __weak CameraPlugin *weakSelf = self;
-      _camera.onFrameAvailable = ^{
-        if (![weakSelf.camera isPreviewPaused]) {
-          [weakSelf.registry textureFrameAvailable:cameraId];
-        }
-      };
-      _camera.dartAPI = [[FCPCameraEventApi alloc]
-          initWithBinaryMessenger:_messenger
-             messageChannelSuffix:[NSString stringWithFormat:@"%ld", cameraId]];
-      [_camera reportInitializationState];
-      [self sendDeviceOrientation:[UIDevice currentDevice].orientation];
-      [_camera start];
-      result(nil);
-    } else if ([@"takePicture" isEqualToString:call.method]) {
+    if ([@"takePicture" isEqualToString:call.method]) {
       [_camera captureToFile:result];
     } else if ([@"dispose" isEqualToString:call.method]) {
+      NSUInteger cameraId = ((NSNumber *)argsMap[@"cameraId"]).unsignedIntegerValue;
       [_registry unregisterTexture:cameraId];
       [_camera close];
       result(nil);
@@ -301,39 +285,84 @@ static FlutterError *FlutterErrorFromNSError(NSError *error) {
   });
 }
 
+- (void)initializeCamera:(NSInteger)cameraId
+         withImageFormat:(FCPPlatformImageFormatGroup)imageFormat
+              completion:(nonnull void (^)(FlutterError *_Nullable))completion {
+  __weak typeof(self) weakSelf = self;
+  dispatch_async(self.captureSessionQueue, ^{
+    [weakSelf sessionQueueInitializeCamera:imageFormat
+                           withImageFormat:imageFormat
+                                completion:completion];
+  });
+}
+
+#pragma mark Private
+
+// This must be called on captureSessionQueue. It is extracted from
+// initializeCamera:withImageFormat:completion: to make it easier to reason about strong/weak
+// self pointers.
+- (void)sessionQueueInitializeCamera:(NSInteger)cameraId
+                     withImageFormat:(FCPPlatformImageFormatGroup)imageFormat
+                          completion:(nonnull void (^)(FlutterError *_Nullable))completion {
+  [_camera setVideoFormat:FCPGetPixelFormatForPigeonFormat(imageFormat)];
+
+  __weak CameraPlugin *weakSelf = self;
+  _camera.onFrameAvailable = ^{
+    typeof(self) strongSelf = weakSelf;
+    if (!strongSelf) return;
+    if (![strongSelf.camera isPreviewPaused]) {
+      [strongSelf.registry textureFrameAvailable:cameraId];
+    }
+  };
+  _camera.dartAPI = [[FCPCameraEventApi alloc]
+      initWithBinaryMessenger:_messenger
+         messageChannelSuffix:[NSString stringWithFormat:@"%ld", cameraId]];
+  [_camera reportInitializationState];
+  [self sendDeviceOrientation:[UIDevice currentDevice].orientation];
+  [_camera start];
+  completion(nil);
+}
+
 - (void)createCameraOnSessionQueueWithName:(NSString *)name
                                   settings:(FCPPlatformMediaSettings *)settings
                                 completion:(nonnull void (^)(NSNumber *_Nullable,
                                                              FlutterError *_Nullable))completion {
   __weak typeof(self) weakSelf = self;
   dispatch_async(self.captureSessionQueue, ^{
-    typeof(self) strongSelf = weakSelf;
-    if (!strongSelf) return;
-
-    FLTCamMediaSettingsAVWrapper *mediaSettingsAVWrapper =
-        [[FLTCamMediaSettingsAVWrapper alloc] init];
-
-    NSError *error;
-    FLTCam *cam = [[FLTCam alloc] initWithCameraName:name
-                                       mediaSettings:settings
-                              mediaSettingsAVWrapper:mediaSettingsAVWrapper
-                                         orientation:[[UIDevice currentDevice] orientation]
-                                 captureSessionQueue:strongSelf.captureSessionQueue
-                                               error:&error];
-
-    if (error) {
-      completion(nil, FlutterErrorFromNSError(error));
-    } else {
-      if (strongSelf.camera) {
-        [strongSelf.camera close];
-      }
-      strongSelf.camera = cam;
-      [strongSelf.registry registerTexture:cam
-                                completion:^(int64_t textureId) {
-                                  completion(@(textureId), nil);
-                                }];
-    }
+    [weakSelf sessionQueueCreateCameraWithName:name settings:settings completion:completion];
   });
+}
+
+// This must be called on captureSessionQueue. It is extracted from
+// initializeCamera:withImageFormat:completion: to make it easier to reason about strong/weak
+// self pointers.
+- (void)sessionQueueCreateCameraWithName:(NSString *)name
+                                settings:(FCPPlatformMediaSettings *)settings
+                              completion:(nonnull void (^)(NSNumber *_Nullable,
+                                                           FlutterError *_Nullable))completion {
+  FLTCamMediaSettingsAVWrapper *mediaSettingsAVWrapper =
+      [[FLTCamMediaSettingsAVWrapper alloc] init];
+
+  NSError *error;
+  FLTCam *cam = [[FLTCam alloc] initWithCameraName:name
+                                     mediaSettings:settings
+                            mediaSettingsAVWrapper:mediaSettingsAVWrapper
+                                       orientation:[[UIDevice currentDevice] orientation]
+                               captureSessionQueue:self.captureSessionQueue
+                                             error:&error];
+
+  if (error) {
+    completion(nil, FlutterErrorFromNSError(error));
+  } else {
+    if (_camera) {
+      [_camera close];
+    }
+    _camera = cam;
+    [self.registry registerTexture:cam
+                        completion:^(int64_t textureId) {
+                          completion(@(textureId), nil);
+                        }];
+  }
 }
 
 @end

@@ -119,38 +119,26 @@ class AVFoundationCamera extends CameraPlatform {
   Future<void> initializeCamera(
     int cameraId, {
     ImageFormatGroup imageFormatGroup = ImageFormatGroup.unknown,
-  }) {
+  }) async {
     hostCameraHandlers.putIfAbsent(cameraId,
         () => HostCameraMessageHandler(cameraId, cameraEventStreamController));
 
     final Completer<void> completer = Completer<void>();
 
-    onCameraInitialized(cameraId).first.then((CameraInitializedEvent value) {
+    unawaited(onCameraInitialized(cameraId)
+        .first
+        .then((CameraInitializedEvent value) {
       completer.complete();
-    });
+    }));
 
-    _channel.invokeMapMethod<String, dynamic>(
-      'initialize',
-      <String, dynamic>{
-        'cameraId': cameraId,
-        'imageFormatGroup': imageFormatGroup.name(),
-      },
-    ).catchError(
-      // TODO(srawlins): This should return a value of the future's type. This
-      // will fail upcoming analysis checks with
-      // https://github.com/flutter/flutter/issues/105750.
-      // ignore: body_might_complete_normally_catch_error
-      (Object error, StackTrace stackTrace) {
-        if (error is! PlatformException) {
-          // ignore: only_throw_errors
-          throw error;
-        }
-        completer.completeError(
-          CameraException(error.code, error.message),
-          stackTrace,
-        );
-      },
-    );
+    try {
+      await _hostApi.initialize(cameraId, _pigeonImageFormat(imageFormatGroup));
+    } on PlatformException catch (e, s) {
+      completer.completeError(
+        CameraException(e.code, e.message),
+        s,
+      );
+    }
 
     return completer.future;
   }
@@ -586,7 +574,7 @@ class AVFoundationCamera extends CameraPlatform {
     return 'off';
   }
 
-  /// Returns the resolution preset as a String.
+  /// Returns the resolution preset's Pigeon representation.
   PlatformResolutionPreset _pigeonResolutionPreset(
       ResolutionPreset? resolutionPreset) {
     if (resolutionPreset == null) {
@@ -615,6 +603,30 @@ class AVFoundationCamera extends CameraPlatform {
     // switch as needing an update.
     // ignore: dead_code
     return PlatformResolutionPreset.max;
+  }
+
+  /// Returns image format's Pigeon representation.
+  PlatformImageFormatGroup _pigeonImageFormat(ImageFormatGroup format) {
+    switch (format) {
+      // "unknown" is used to indicate the default.
+      case ImageFormatGroup.unknown:
+      case ImageFormatGroup.bgra8888:
+        return PlatformImageFormatGroup.bgra8888;
+      case ImageFormatGroup.yuv420:
+        return PlatformImageFormatGroup.yuv420;
+      case ImageFormatGroup.jpeg:
+      case ImageFormatGroup.nv21:
+      // Fall through.
+    }
+    // The enum comes from a different package, which could get a new value at
+    // any time, so provide a fallback that ensures this won't break when used
+    // with a version that contains new values. This is deliberately outside
+    // the switch rather than a `default` so that the linter will flag the
+    // switch as needing an update.
+    // TODO(stuartmorgan): Consider throwing an UnsupportedError, instead of
+    // doing fallback, when a specific unsupported format is requested. This
+    // would require a breaking change at this layer and the app-facing layer.
+    return PlatformImageFormatGroup.bgra8888;
   }
 }
 

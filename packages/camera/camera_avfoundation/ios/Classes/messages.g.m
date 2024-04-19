@@ -79,6 +79,16 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 }
 @end
 
+@implementation FCPPlatformImageFormatGroupBox
+- (instancetype)initWithValue:(FCPPlatformImageFormatGroup)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
 @implementation FCPPlatformResolutionPresetBox
 - (instancetype)initWithValue:(FCPPlatformResolutionPreset)value {
   self = [super init];
@@ -322,6 +332,7 @@ void SetUpFCPCameraApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger,
       [channel setMessageHandler:nil];
     }
   }
+  /// Create a new camera with the given settings, and returns its ID.
   {
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
            initWithName:[NSString stringWithFormat:
@@ -344,6 +355,36 @@ void SetUpFCPCameraApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger,
                        completion:^(NSNumber *_Nullable output, FlutterError *_Nullable error) {
                          callback(wrapResult(output, error));
                        }];
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
+  /// Initializes the camera with the given ID.
+  {
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:
+               [NSString
+                   stringWithFormat:@"%@%@",
+                                    @"dev.flutter.pigeon.camera_avfoundation.CameraApi.initialize",
+                                    messageChannelSuffix]
+        binaryMessenger:binaryMessenger
+                  codec:FCPCameraApiGetCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector(initializeCamera:withImageFormat:completion:)],
+                @"FCPCameraApi api (%@) doesn't respond to "
+                @"@selector(initializeCamera:withImageFormat:completion:)",
+                api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        NSArray *args = message;
+        NSInteger arg_cameraId = [GetNullableObjectAtIndex(args, 0) integerValue];
+        FCPPlatformImageFormatGroup arg_imageFormat =
+            [GetNullableObjectAtIndex(args, 1) integerValue];
+        [api initializeCamera:arg_cameraId
+              withImageFormat:arg_imageFormat
+                   completion:^(FlutterError *_Nullable error) {
+                     callback(wrapResult(nil, error));
+                   }];
       }];
     } else {
       [channel setMessageHandler:nil];

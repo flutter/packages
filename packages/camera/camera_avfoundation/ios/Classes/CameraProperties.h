@@ -53,8 +53,8 @@ extern FCPPlatformDeviceOrientation FCPGetPigeonDeviceOrientationForOrientation(
 
 #pragma mark - video format
 
-/// Gets VideoFormat from its string representation.
-extern OSType FLTGetVideoFormatFromString(NSString *videoFormatString);
+/// Gets VideoFormat from its Pigeon representation.
+extern OSType FCPGetPixelFormatForPigeonFormat(FCPPlatformImageFormatGroup imageFormat);
 
 /// Represents image format. Mirrors ImageFileFormat in camera.dart.
 typedef NS_ENUM(NSInteger, FCPFileFormat) {

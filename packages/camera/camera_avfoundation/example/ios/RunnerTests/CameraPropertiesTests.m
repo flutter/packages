@@ -47,10 +47,10 @@
 #pragma mark - video format tests
 
 - (void)testFLTGetVideoFormatFromString {
-  XCTAssertEqual(kCVPixelFormatType_32BGRA, FLTGetVideoFormatFromString(@"bgra8888"));
+  XCTAssertEqual(kCVPixelFormatType_32BGRA,
+                 FCPGetPixelFormatForPigeonFormat(FCPPlatformImageFormatGroupBgra8888));
   XCTAssertEqual(kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange,
-                 FLTGetVideoFormatFromString(@"yuv420"));
-  XCTAssertEqual(kCVPixelFormatType_32BGRA, FLTGetVideoFormatFromString(@"unknown"));
+                 FCPGetPixelFormatForPigeonFormat(FCPPlatformImageFormatGroupYuv420));
 }
 
 #pragma mark - device orientation tests

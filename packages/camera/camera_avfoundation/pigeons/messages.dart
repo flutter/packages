@@ -44,6 +44,12 @@ enum PlatformFocusMode {
   locked,
 }
 
+// Pigeon version of the subset of ImageFormatGroup supported on iOS.
+enum PlatformImageFormatGroup {
+  bgra8888,
+  yuv420,
+}
+
 // Pigeon version of ResolutionPreset.
 enum PlatformResolutionPreset {
   low,
@@ -129,9 +135,15 @@ abstract class CameraApi {
   @ObjCSelector('availableCamerasWithCompletion')
   List<PlatformCameraDescription?> getAvailableCameras();
 
+  /// Create a new camera with the given settings, and returns its ID.
   @async
   @ObjCSelector('createCameraWithName:settings:')
   int create(String cameraName, PlatformMediaSettings settings);
+
+  /// Initializes the camera with the given ID.
+  @async
+  @ObjCSelector('initializeCamera:withImageFormat:')
+  void initialize(int cameraId, PlatformImageFormatGroup imageFormat);
 }
 
 /// Handler for native callbacks that are not tied to a specific camera ID.

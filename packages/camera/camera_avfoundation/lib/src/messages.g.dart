@@ -57,6 +57,11 @@ enum PlatformFocusMode {
   locked,
 }
 
+enum PlatformImageFormatGroup {
+  bgra8888,
+  yuv420,
+}
+
 enum PlatformResolutionPreset {
   low,
   medium,
@@ -281,6 +286,7 @@ class CameraApi {
     }
   }
 
+  /// Create a new camera with the given settings, and returns its ID.
   Future<int> create(String cameraName, PlatformMediaSettings settings) async {
     final String __pigeon_channelName =
         'dev.flutter.pigeon.camera_avfoundation.CameraApi.create$__pigeon_messageChannelSuffix';
@@ -307,6 +313,32 @@ class CameraApi {
       );
     } else {
       return (__pigeon_replyList[0] as int?)!;
+    }
+  }
+
+  /// Initializes the camera with the given ID.
+  Future<void> initialize(
+      int cameraId, PlatformImageFormatGroup imageFormat) async {
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.camera_avfoundation.CameraApi.initialize$__pigeon_messageChannelSuffix';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: __pigeon_binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList = await __pigeon_channel
+        .send(<Object?>[cameraId, imageFormat.index]) as List<Object?>?;
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: __pigeon_replyList[0]! as String,
+        message: __pigeon_replyList[1] as String?,
+        details: __pigeon_replyList[2],
+      );
+    } else {
+      return;
     }
   }
 }

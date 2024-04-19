@@ -63,6 +63,17 @@ typedef NS_ENUM(NSUInteger, FCPPlatformFocusMode) {
 - (instancetype)initWithValue:(FCPPlatformFocusMode)value;
 @end
 
+typedef NS_ENUM(NSUInteger, FCPPlatformImageFormatGroup) {
+  FCPPlatformImageFormatGroupBgra8888 = 0,
+  FCPPlatformImageFormatGroupYuv420 = 1,
+};
+
+/// Wrapper for FCPPlatformImageFormatGroup to allow for nullability.
+@interface FCPPlatformImageFormatGroupBox : NSObject
+@property(nonatomic, assign) FCPPlatformImageFormatGroup value;
+- (instancetype)initWithValue:(FCPPlatformImageFormatGroup)value;
+@end
+
 typedef NS_ENUM(NSUInteger, FCPPlatformResolutionPreset) {
   FCPPlatformResolutionPresetLow = 0,
   FCPPlatformResolutionPresetMedium = 1,
@@ -144,9 +155,14 @@ NSObject<FlutterMessageCodec> *FCPCameraApiGetCodec(void);
 /// Returns the list of available cameras.
 - (void)availableCamerasWithCompletion:(void (^)(NSArray<FCPPlatformCameraDescription *> *_Nullable,
                                                  FlutterError *_Nullable))completion;
+/// Create a new camera with the given settings, and returns its ID.
 - (void)createCameraWithName:(NSString *)cameraName
                     settings:(FCPPlatformMediaSettings *)settings
                   completion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion;
+/// Initializes the camera with the given ID.
+- (void)initializeCamera:(NSInteger)cameraId
+         withImageFormat:(FCPPlatformImageFormatGroup)imageFormat
+              completion:(void (^)(FlutterError *_Nullable))completion;
 @end
 
 extern void SetUpFCPCameraApi(id<FlutterBinaryMessenger> binaryMessenger,

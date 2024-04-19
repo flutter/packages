@@ -134,16 +134,14 @@ void main() {
       'Should throw CameraException when initialize throws a PlatformException',
       () {
         // Arrange
+        const String exceptionCode = 'TESTING_ERROR_CODE';
+        const String exceptionMessage =
+            'Mock error message used during testing.';
         final MockCameraApi mockApi = MockCameraApi();
-        MethodChannelMock(
-          channelName: _channelName,
-          methods: <String, dynamic>{
-            'initialize': PlatformException(
-              code: 'TESTING_ERROR_CODE',
-              message: 'Mock error message used during testing.',
-            )
-          },
-        );
+        when(mockApi.initialize(any, any)).thenAnswer((_) async {
+          throw PlatformException(
+              code: exceptionCode, message: exceptionMessage);
+        });
         final AVFoundationCamera camera = AVFoundationCamera(api: mockApi);
 
         // Act
@@ -166,15 +164,6 @@ void main() {
     test('Should send initialization data', () async {
       // Arrange
       final MockCameraApi mockApi = MockCameraApi();
-      final MethodChannelMock cameraMockChannel = MethodChannelMock(
-          channelName: _channelName,
-          methods: <String, dynamic>{
-            'create': <String, dynamic>{
-              'cameraId': 1,
-              'imageFormatGroup': 'unknown',
-            },
-            'initialize': null
-          });
       final AVFoundationCamera camera = AVFoundationCamera(api: mockApi);
       final int cameraId = await camera.createCamera(
         const CameraDescription(
@@ -199,15 +188,11 @@ void main() {
       await initializeFuture;
 
       // Assert
-      expect(cameraMockChannel.log, <Matcher>[
-        isMethodCall(
-          'initialize',
-          arguments: <String, Object?>{
-            'cameraId': cameraId,
-            'imageFormatGroup': 'unknown',
-          },
-        ),
-      ]);
+      final VerificationResult verification =
+          verify(mockApi.initialize(captureAny, captureAny));
+      expect(verification.captured[0], cameraId);
+      // The default when unspecified should be bgra8888.
+      expect(verification.captured[1], PlatformImageFormatGroup.bgra8888);
     });
 
     test('Should send a disposal call on dispose', () async {
@@ -216,8 +201,6 @@ void main() {
       final MethodChannelMock cameraMockChannel = MethodChannelMock(
           channelName: _channelName,
           methods: <String, dynamic>{
-            'create': <String, dynamic>{'cameraId': 1},
-            'initialize': null,
             'dispose': <String, dynamic>{'cameraId': 1}
           });
 
@@ -247,7 +230,6 @@ void main() {
 
       // Assert
       expect(cameraMockChannel.log, <Matcher>[
-        anything, // initialize
         isMethodCall(
           'dispose',
           arguments: <String, Object?>{'cameraId': cameraId},
@@ -260,10 +242,6 @@ void main() {
     late AVFoundationCamera camera;
     late int cameraId;
     setUp(() async {
-      MethodChannelMock(
-        channelName: _channelName,
-        methods: <String, dynamic>{'initialize': null},
-      );
       final MockCameraApi mockApi = MockCameraApi();
       when(mockApi.create(any, any)).thenAnswer((_) async => 1);
       camera = AVFoundationCamera(api: mockApi);
@@ -376,10 +354,6 @@ void main() {
 
     setUp(() async {
       mockApi = MockCameraApi();
-      MethodChannelMock(
-        channelName: _channelName,
-        methods: <String, dynamic>{'initialize': null},
-      );
       when(mockApi.create(any, any)).thenAnswer((_) async => 1);
       camera = AVFoundationCamera(api: mockApi);
       cameraId = await camera.createCamera(

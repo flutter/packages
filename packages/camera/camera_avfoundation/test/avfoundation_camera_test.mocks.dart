@@ -55,4 +55,21 @@ class MockCameraApi extends _i1.Mock implements _i2.CameraApi {
         returnValue: _i3.Future<int>.value(0),
         returnValueForMissingStub: _i3.Future<int>.value(0),
       ) as _i3.Future<int>);
+
+  @override
+  _i3.Future<void> initialize(
+    int? cameraId,
+    _i2.PlatformImageFormatGroup? imageFormat,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #initialize,
+          [
+            cameraId,
+            imageFormat,
+          ],
+        ),
+        returnValue: _i3.Future<void>.value(),
+        returnValueForMissingStub: _i3.Future<void>.value(),
+      ) as _i3.Future<void>);
 }
