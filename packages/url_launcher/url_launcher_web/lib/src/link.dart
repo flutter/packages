@@ -236,7 +236,14 @@ class LinkViewController extends PlatformViewController {
   /// to only trigger the link if a hit test was registered and remains valid at
   /// the time the click handler executes.
   static void _onGlobalClick(html.MouseEvent event) {
-    triggeredMouseEvent = event;
+    final html.Element? targetElement = event.target as html.Element?;
+
+    // We only want to cache the mouse event if its target is a link, so that 
+    // we can later prevent its default behavior and handle how it should 
+    // open the link ourselves.
+    if(isLinkElement(targetElement) || isSemanticLinkElement(targetElement)) {
+      triggeredMouseEvent = event;
+    }
 
     if (followLinkTriggered) {
       final int? viewId = getViewIdFromTarget(event) ?? _hitTestedViewId;
@@ -439,4 +446,25 @@ bool isLinkElement(html.Element? element) {
   return element != null &&
       element.tagName == 'A' &&
       element.hasProperty(linkViewIdProperty.toJS).toDart;
+}
+
+/// Checks if the given [element] is a semantic Link. This is necessary because
+/// we need a way to distinguish click event targets that are links.
+bool isSemanticLinkElement(html.Element? element) {
+  return element != null &&
+      element.tagName == 'FLT-SEMANTICS' &&
+      hasLinkAncestor(element);
+}
+
+/// Checks if the given [element] has a link ancestor.
+bool hasLinkAncestor(html.Element? element) {
+  while (element != null) {
+    if(element.tagName == 'A') {
+      return true;
+    }
+
+    element = element.parentElement;
+  }
+
+  return false;
 }
