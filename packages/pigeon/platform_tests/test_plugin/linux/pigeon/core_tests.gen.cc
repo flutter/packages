@@ -76,11 +76,11 @@ CoreTestsPigeonTestAllTypes* core_tests_pigeon_test_all_types_new(
   self->a_float_array = static_cast<double*>(
       g_memdup2(a_float_array, sizeof(double) * a_float_array_length));
   self->a_float_array_length = a_float_array_length;
-  self->a_list = g_object_ref(a_list);
-  self->a_map = g_object_ref(a_map);
+  self->a_list = fl_value_ref(a_list);
+  self->a_map = fl_value_ref(a_map);
   self->an_enum = an_enum;
   self->a_string = g_strdup(a_string);
-  self->an_object = g_object_ref(an_object);
+  self->an_object = fl_value_ref(an_object);
   return self;
 }
 
@@ -346,12 +346,12 @@ core_tests_pigeon_test_all_nullable_types_new(
   self->a_nullable_float_array = static_cast<double*>(g_memdup2(
       a_nullable_float_array, sizeof(double) * a_nullable_float_array_length));
   self->a_nullable_float_array_length = a_nullable_float_array_length;
-  self->a_nullable_list = g_object_ref(a_nullable_list);
-  self->a_nullable_map = g_object_ref(a_nullable_map);
-  self->nullable_nested_list = g_object_ref(nullable_nested_list);
+  self->a_nullable_list = fl_value_ref(a_nullable_list);
+  self->a_nullable_map = fl_value_ref(a_nullable_map);
+  self->nullable_nested_list = fl_value_ref(nullable_nested_list);
   self->nullable_map_with_annotations =
-      g_object_ref(nullable_map_with_annotations);
-  self->nullable_map_with_object = g_object_ref(nullable_map_with_object);
+      fl_value_ref(nullable_map_with_annotations);
+  self->nullable_map_with_object = fl_value_ref(nullable_map_with_object);
   if (a_nullable_enum != nullptr) {
     self->a_nullable_enum = static_cast<CoreTestsPigeonTestAnEnum*>(
         malloc(sizeof(CoreTestsPigeonTestAnEnum)));
@@ -360,7 +360,7 @@ core_tests_pigeon_test_all_nullable_types_new(
     self->a_nullable_enum = nullptr;
   }
   self->a_nullable_string = g_strdup(a_nullable_string);
-  self->a_nullable_object = g_object_ref(a_nullable_object);
+  self->a_nullable_object = fl_value_ref(a_nullable_object);
   self->all_nullable_types = g_object_ref(all_nullable_types);
   return self;
 }
@@ -782,12 +782,12 @@ core_tests_pigeon_test_all_nullable_types_without_recursion_new(
   self->a_nullable_float_array = static_cast<double*>(g_memdup2(
       a_nullable_float_array, sizeof(double) * a_nullable_float_array_length));
   self->a_nullable_float_array_length = a_nullable_float_array_length;
-  self->a_nullable_list = g_object_ref(a_nullable_list);
-  self->a_nullable_map = g_object_ref(a_nullable_map);
-  self->nullable_nested_list = g_object_ref(nullable_nested_list);
+  self->a_nullable_list = fl_value_ref(a_nullable_list);
+  self->a_nullable_map = fl_value_ref(a_nullable_map);
+  self->nullable_nested_list = fl_value_ref(nullable_nested_list);
   self->nullable_map_with_annotations =
-      g_object_ref(nullable_map_with_annotations);
-  self->nullable_map_with_object = g_object_ref(nullable_map_with_object);
+      fl_value_ref(nullable_map_with_annotations);
+  self->nullable_map_with_object = fl_value_ref(nullable_map_with_object);
   if (a_nullable_enum != nullptr) {
     self->a_nullable_enum = static_cast<CoreTestsPigeonTestAnEnum*>(
         malloc(sizeof(CoreTestsPigeonTestAnEnum)));
@@ -796,7 +796,7 @@ core_tests_pigeon_test_all_nullable_types_without_recursion_new(
     self->a_nullable_enum = nullptr;
   }
   self->a_nullable_string = g_strdup(a_nullable_string);
-  self->a_nullable_object = g_object_ref(a_nullable_object);
+  self->a_nullable_object = fl_value_ref(a_nullable_object);
   return self;
 }
 
@@ -1255,7 +1255,7 @@ CoreTestsPigeonTestTestMessage* core_tests_pigeon_test_test_message_new(
     FlValue* test_list) {
   CoreTestsPigeonTestTestMessage* self = CORE_TESTS_PIGEON_TEST_TEST_MESSAGE(
       g_object_new(core_tests_pigeon_test_test_message_get_type(), nullptr));
-  self->test_list = g_object_ref(test_list);
+  self->test_list = fl_value_ref(test_list);
   return self;
 }
 
@@ -12586,7 +12586,7 @@ gboolean core_tests_pigeon_test_flutter_integration_core_api_throw_error_finish(
     return FALSE;
   }
 
-  *return_value = g_object_ref(r);
+  *return_value = fl_value_ref(r);
 
   return TRUE;
 }
@@ -12977,7 +12977,7 @@ gboolean core_tests_pigeon_test_flutter_integration_core_api_echo_list_finish(
     return FALSE;
   }
 
-  *return_value = g_object_ref(r);
+  *return_value = fl_value_ref(r);
 
   return TRUE;
 }
@@ -13006,7 +13006,7 @@ gboolean core_tests_pigeon_test_flutter_integration_core_api_echo_map_finish(
     return FALSE;
   }
 
-  *return_value = g_object_ref(r);
+  *return_value = fl_value_ref(r);
 
   return TRUE;
 }
@@ -13239,7 +13239,7 @@ core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_list_finish(
     return FALSE;
   }
 
-  *return_value = g_object_ref(r);
+  *return_value = fl_value_ref(r);
 
   return TRUE;
 }
@@ -13270,7 +13270,7 @@ core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_map_finish(
     return FALSE;
   }
 
-  *return_value = g_object_ref(r);
+  *return_value = fl_value_ref(r);
 
   return TRUE;
 }

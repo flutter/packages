@@ -1469,8 +1469,10 @@ String _getDefaultValue(String module, TypeDeclaration type,
 // [lengthVariableName] must be provided for the typed numeric *List types.
 String _referenceValue(TypeDeclaration type, String variableName,
     {String? lengthVariableName}) {
-  if (type.isClass || _isFlValueWrappedType(type)) {
+  if (type.isClass) {
     return 'g_object_ref($variableName)';
+  } else if (_isFlValueWrappedType(type)) {
+    return 'fl_value_ref($variableName)';
   } else if (type.baseName == 'String') {
     return 'g_strdup($variableName)';
   } else if (type.baseName == 'Uint8List') {
