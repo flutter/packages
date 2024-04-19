@@ -220,9 +220,9 @@ static NSString *ColorStringAtPixel(UIImage *image, int pixelX, int pixelY) {
 - (void)testScaledImage_ImageIsNil {
   UIImage *image = nil;
   UIImage *newImage = [FLTImagePickerImageUtil scaledImage:image
-                                                     maxWidth:@1440
-                                                    maxHeight:@1440
-                                          isMetadataAvailable:YES];
+                                                  maxWidth:@1440
+                                                 maxHeight:@1440
+                                       isMetadataAvailable:YES];
 
   XCTAssertEqual(newImage, nil);
 }
@@ -230,9 +230,9 @@ static NSString *ColorStringAtPixel(UIImage *image, int pixelX, int pixelY) {
 - (void)testScaledImage_ImageMaxWidthZeroAndMaxHeightIsZero {
   UIImage *image = [UIImage imageWithData:ImagePickerTestImages.JPGTestData];
   UIImage *newImage = [FLTImagePickerImageUtil scaledImage:image
-                                                     maxWidth:@0
-                                                    maxHeight:@0
-                                          isMetadataAvailable:YES];
+                                                  maxWidth:@0
+                                                 maxHeight:@0
+                                       isMetadataAvailable:YES];
 
   XCTAssertEqual(newImage, nil);
 }
