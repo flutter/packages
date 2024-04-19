@@ -20,6 +20,10 @@ class TableExampleApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: '2D Scrolling Examples',
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.purple),
+        appBarTheme: AppBarTheme(backgroundColor: Colors.purple[50]),
+      ),
       home: const ExampleHome(),
       routes: <String, WidgetBuilder>{
         '/table': (BuildContext context) => const TableExplorer(),

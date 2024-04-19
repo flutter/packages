@@ -27,7 +27,7 @@ class _TableExampleState extends State<TableExample> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 50),
+        padding: const EdgeInsets.symmetric(horizontal: 50.0),
         child: TableView.builder(
           verticalDetails: ScrollableDetails.vertical(
             controller: _verticalController,

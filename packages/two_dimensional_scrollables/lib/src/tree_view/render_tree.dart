@@ -11,9 +11,9 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
+import 'tree_core.dart';
 import 'tree_delegate.dart';
 import 'tree_span.dart';
-import 'tree_temp.dart';
 
 /// A render object for viewing [RenderBox]es in a tree format that extends in
 /// both the horizontal and vertical dimensions.
@@ -125,6 +125,11 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
     return cacheExtent + verticalOffset.pixels + viewportDimension.height;
   }
 
+  // Whether or not there is visual overflow in the viewport.
+  bool get _hasVisualOverflow => _verticalOverflows || _hoizontalOverflows;
+  bool _verticalOverflows = false;
+  bool _hoizontalOverflows = false;
+
   // Maps the index of parents to the animation key of their children.
   final Map<int, UniqueKey> _animationLeadingIndices = <int, UniqueKey>{};
   // Maps the key of child node animations to the fixed distance they are
@@ -151,6 +156,36 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
         return false;
       },
     );
+  }
+
+  @override
+  bool hitTestChildren(BoxHitTestResult result, {required Offset position}) {
+    RenderBox? row = firstChild;
+    while (row != null) {
+      final TwoDimensionalViewportParentData parentData = parentDataOf(row);
+      if (!parentData.isVisible) {
+        // This row is not visible, so it cannot be hit.
+        row = childAfter(row);
+        continue;
+      }
+      final Rect rowRect = parentData.paintOffset! & row.size;
+      if (rowRect.contains(position)) {
+        result.addWithPaintOffset(
+          offset: parentData.paintOffset,
+          position: position,
+          hitTest: (BoxHitTestResult result, Offset transformed) {
+            assert(transformed == position - parentData.paintOffset!);
+            return row!.hitTest(result, position: transformed);
+          },
+        );
+        result.add(
+          HitTestEntry(_rowMetrics[parentData.vicinity.yIndex]!),
+        );
+        return true;
+      }
+      row = childAfter(row);
+    }
+    return false;
   }
 
   @override
@@ -289,10 +324,12 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
       0.0,
       _furthestHorizontalExtent - viewportDimension.width,
     );
+    _hoizontalOverflows = maxHorizontalExtent > 0.0;
     final double maxVerticalExtent = math.max(
       0.0,
       _rowMetrics[_lastRow!]!.trailingOffset - viewportDimension.height,
     );
+    _verticalOverflows = maxVerticalExtent > 0.0;
 
     final bool acceptedDimension = horizontalOffset.applyContentDimensions(
           0.0,
@@ -364,6 +401,7 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
 
   final Map<UniqueKey, LayerHandle<ClipRectLayer>> _clipHandles =
       <UniqueKey, LayerHandle<ClipRectLayer>>{};
+  final UniqueKey _viewportClipKey = UniqueKey();
 
   @override
   void paint(PaintingContext context, Offset offset) {
@@ -374,13 +412,33 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
     assert(_firstRow != null && _lastRow != null);
 
     if (_animationLeadingIndices.isEmpty) {
-      // There are no animations running.
-      _paintRows(
-        context,
-        offset,
-        leadingRow: 0,
-        trailingRow: delegate.rowCount - 1,
-      );
+      // There are no animations running. Clip if there is visual overflow.
+      if (_hasVisualOverflow && clipBehavior != Clip.none) {
+        _clipHandles[_viewportClipKey] ??= LayerHandle<ClipRectLayer>();
+        _clipHandles[_viewportClipKey]!.layer = context.pushClipRect(
+          needsCompositing,
+          offset,
+          Offset.zero & size,
+          (PaintingContext context, Offset offset) {
+            _paintRows(
+              context,
+              offset,
+              leadingRow: 0,
+              trailingRow: delegate.rowCount - 1,
+            );
+          },
+          clipBehavior: clipBehavior,
+          oldLayer: _clipHandles[_viewportClipKey]!.layer,
+        );
+      } else {
+        _clipHandles[_viewportClipKey]?.layer = null;
+        _paintRows(
+          context,
+          offset,
+          leadingRow: 0,
+          trailingRow: delegate.rowCount - 1,
+        );
+      }
       return;
     }
 
@@ -401,13 +459,34 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
     }
     paintSegments.add((leadingIndex: leadingIndex, trailingIndex: _lastRow!));
 
-    // Paint, clipping for all but the first segment.
-    _paintRows(
-      context,
-      offset,
-      leadingRow: 0,
-      trailingRow: paintSegments.removeAt(0).trailingIndex,
-    );
+    // Paint, clipping for all but the first segment, unless there is visual
+    // overflow.
+    if (_hasVisualOverflow && clipBehavior != Clip.none) {
+      _clipHandles[_viewportClipKey] ??= LayerHandle<ClipRectLayer>();
+      _clipHandles[_viewportClipKey]!.layer = context.pushClipRect(
+        needsCompositing,
+        offset,
+        Offset.zero & size,
+        (PaintingContext context, Offset offset) {
+          _paintRows(
+            context,
+            offset,
+            leadingRow: 0,
+            trailingRow: paintSegments.removeAt(0).trailingIndex,
+          );
+        },
+        clipBehavior: clipBehavior,
+        oldLayer: _clipHandles[_viewportClipKey]!.layer,
+      );
+    } else {
+      _clipHandles[_viewportClipKey]?.layer = null;
+      _paintRows(
+        context,
+        offset,
+        leadingRow: 0,
+        trailingRow: paintSegments.removeAt(0).trailingIndex,
+      );
+    }
     // Paint the rest with clip layers.
     while (paintSegments.isNotEmpty) {
       final ({int leadingIndex, int trailingIndex}) segment =

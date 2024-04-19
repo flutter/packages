@@ -80,13 +80,14 @@ class _MergedTableExampleState extends State<MergedTableExample> {
 
   @override
   Widget build(BuildContext context) {
+    final Size screenSize = MediaQuery.sizeOf(context);
     return Scaffold(
-      backgroundColor: Colors.black87,
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 80.0),
+        padding: EdgeInsets.symmetric(horizontal: screenSize.width * 0.15),
         child: TableView.builder(
           cellBuilder: _buildCell,
           columnCount: 4,
+          pinnedColumnCount: 1,
           columnBuilder: _buildColumnSpan,
           rowCount: 51, // 17 primary colors * 3 rows each
           rowBuilder: _buildRowSpan,
@@ -124,7 +125,11 @@ class _MergedTableExampleState extends State<MergedTableExample> {
       extent: FixedTableSpanExtent(index == 0 ? 220 : 180),
       foregroundDecoration: index == 0
           ? const TableSpanDecoration(
-              border: TableSpanBorder(trailing: BorderSide(width: 5)),
+              border: TableSpanBorder(
+                  trailing: BorderSide(
+                width: 5,
+                color: Colors.white,
+              )),
             )
           : null,
     );

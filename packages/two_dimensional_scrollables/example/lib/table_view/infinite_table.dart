@@ -28,6 +28,7 @@ class _InfiniteExampleState extends State<InfiniteTableExample> {
         columnBuilder: _buildSpan,
         rowCount: _rowCount,
         rowBuilder: _buildSpan,
+        diagonalDragBehavior: DiagonalDragBehavior.free,
       ),
       persistentFooterAlignment: AlignmentDirectional.center,
       persistentFooterButtons: <Widget>[
@@ -76,7 +77,7 @@ class _InfiniteExampleState extends State<InfiniteTableExample> {
     return TableViewCell(
       child: ColoredBox(
         color: vicinity.row.isEven && vicinity.column.isOdd
-            ? Colors.blueAccent[100]!
+            ? Colors.indigo[200]!
             : (vicinity.row.isOdd && vicinity.column.isEven
                 ? Colors.indigo[100]!
                 : Colors.white),

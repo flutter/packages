@@ -63,6 +63,12 @@ mixin TreeViewStateMixin<T> {
   /// If no node exists, this will return null. This does not reflect whether
   /// or not a node [isActive], or if it is visible in the viewport.
   TreeViewNode<T>? getNodeFor(T content);
+
+  /// Returns the current row index of the given [TreeViewNode].
+  ///
+  /// If the node is not currently active in the tree, meaning its parent is
+  /// collapsed, this will return null.
+  int? getActiveIndexFor(TreeViewNode<T> node);
 }
 
 /// Represents the animation of the children of a parent [TreeViewNode] that

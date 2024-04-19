@@ -7,9 +7,9 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 
 import 'render_tree.dart';
+import 'tree_core.dart';
 import 'tree_delegate.dart';
 import 'tree_span.dart';
-import 'tree_temp.dart';
 
 // COPIED FROM FRAMEWORK - TreeViewNode (SliverTreeNode), TreeViewController (TreeController)
 // Should not deviate from the core components of the framework.
@@ -717,6 +717,14 @@ class _TreeViewState<T> extends State<TreeView<T>>
     }
     if (nextDepth.isNotEmpty) {
       return _getNode(content, nextDepth);
+    }
+    return null;
+  }
+
+  @override
+  int? getActiveIndexFor(TreeViewNode<T> node) {
+    if (_activeNodes.contains(node)) {
+      return _activeNodes.indexOf(node);
     }
     return null;
   }
