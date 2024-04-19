@@ -6,6 +6,7 @@
 
 #import "CameraPlugin.h"
 #import "FLTCam.h"
+#import "messages.g.h"
 
 /// APIs exposed for unit testing.
 @interface CameraPlugin ()
@@ -16,14 +17,15 @@
 /// An internal camera object that manages camera's state and performs camera operations.
 @property(nonatomic, strong) FLTCam *camera;
 
-/// A thread safe wrapper of the method channel used to send device events such as orientation
-/// changes.
-@property(nonatomic, strong) FLTThreadSafeMethodChannel *deviceEventMethodChannel;
-
 /// Inject @p FlutterTextureRegistry and @p FlutterBinaryMessenger for unit testing.
 - (instancetype)initWithRegistry:(NSObject<FlutterTextureRegistry> *)registry
+                       messenger:(NSObject<FlutterBinaryMessenger> *)messenger;
+
+/// Inject @p FlutterTextureRegistry, @p FlutterBinaryMessenger, and Pigeon callback handler for
+/// unit testing.
+- (instancetype)initWithRegistry:(NSObject<FlutterTextureRegistry> *)registry
                        messenger:(NSObject<FlutterBinaryMessenger> *)messenger
-    NS_DESIGNATED_INITIALIZER;
+                       globalAPI:(FCPCameraGlobalEventApi *)globalAPI NS_DESIGNATED_INITIALIZER;
 
 /// Hide the default public constructor.
 - (instancetype)init NS_UNAVAILABLE;
