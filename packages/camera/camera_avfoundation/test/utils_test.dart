@@ -36,14 +36,20 @@ void main() {
           'landscapeLeft');
     });
 
-    test('deserializeDeviceOrientation() should deserialize correctly', () {
-      expect(deserializeDeviceOrientation('portraitUp'),
+    test('deviceOrientationFromPlatform() should convert correctly', () {
+      expect(
+          deviceOrientationFromPlatform(PlatformDeviceOrientation.portraitUp),
           DeviceOrientation.portraitUp);
-      expect(deserializeDeviceOrientation('portraitDown'),
+      expect(
+          deviceOrientationFromPlatform(PlatformDeviceOrientation.portraitDown),
           DeviceOrientation.portraitDown);
-      expect(deserializeDeviceOrientation('landscapeRight'),
+      expect(
+          deviceOrientationFromPlatform(
+              PlatformDeviceOrientation.landscapeRight),
           DeviceOrientation.landscapeRight);
-      expect(deserializeDeviceOrientation('landscapeLeft'),
+      expect(
+          deviceOrientationFromPlatform(
+              PlatformDeviceOrientation.landscapeLeft),
           DeviceOrientation.landscapeLeft);
     });
   });
