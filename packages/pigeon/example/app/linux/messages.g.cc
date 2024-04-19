@@ -44,7 +44,7 @@ PigeonExamplePackageMessageData* pigeon_example_package_message_data_new(
   self->name = g_strdup(name);
   self->description = g_strdup(description);
   self->code = code;
-  self->data = g_object_ref(data);
+  self->data = fl_value_ref(data);
   return self;
 }
 
