@@ -55,11 +55,11 @@ void main() {
       ]);
     });
 
-    test('countryCode', () async {
-      final String country = await inAppPurchase.countryCode();
-      expect(country, 'USA');
+    test('getCountryCode', () async {
+      final String? countryCode = await inAppPurchase.getCountryCode();
+      expect(countryCode, 'USA');
       expect(fakePlatform.log, <Matcher>[
-        isMethodCall('countryCode', arguments: null),
+        isMethodCall('getCountryCode', arguments: null),
       ]);
     });
 
@@ -202,8 +202,8 @@ class MockInAppPurchasePlatform extends Fake
   }
 
   @override
-  Future<String> countryCode() {
-    log.add(const MethodCall('countryCode'));
+  Future<String> getCountryCode() {
+    log.add(const MethodCall('getCountryCode'));
     return Future<String>.value('USA');
   }
 }

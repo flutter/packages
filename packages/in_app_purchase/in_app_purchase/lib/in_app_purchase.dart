@@ -224,5 +224,5 @@ class InAppPurchase implements InAppPurchasePlatformAdditionProvider {
   /// See: https://developer.apple.com/documentation/storekit/skstorefront?language=objc
   ///
   ///
-  Future<String> countryCode() => InAppPurchasePlatform.instance.countryCode();
+  Future<String?> getCountryCode() => InAppPurchasePlatform.instance.getCountryCode();
 }

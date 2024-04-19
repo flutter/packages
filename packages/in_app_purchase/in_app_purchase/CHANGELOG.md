@@ -1,3 +1,7 @@
+## 3.2.1
+
+* Fix `countryCode` API.
+
 ## 3.2.0
 
 * Adds `countryCode` API.
