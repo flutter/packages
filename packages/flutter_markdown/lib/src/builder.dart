@@ -537,6 +537,8 @@ class MarkdownBuilder implements md.NodeVisitor {
               style: textSpan.style?.copyWith(
                 fontFeatures: <FontFeature>[
                   const FontFeature.enable('sups'),
+                  if (styleSheet.superscriptFontFeatureTag != null)
+                    FontFeature.enable(styleSheet.superscriptFontFeatureTag!),
                 ],
               ),
             ),

@@ -1,3 +1,9 @@
+## 0.7.1
+
+* Allows for choosing a custom font feature to create superscript in footnotes when the font does not support the `supr` font feature.
+  * Use the `superscriptFontFeatureTag` property in `MarkdownStyleSheet`.
+  * For example, for the `Roboto` font which doesn't support `supr`, you can set `numr`.
+
 ## 0.7.0
 
 * **BREAKING CHANGES**:
