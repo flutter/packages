@@ -1,6 +1,10 @@
-## 0.9.15+3
+## 0.9.15+4
 
 * Converts host-to-Dart communcation to Pigeon.
+
+## 0.9.15+3
+
+* Moves `pigeon` to `dev_dependencies`.
 
 ## 0.9.15+2
 
