@@ -735,8 +735,8 @@ class _TreeViewState<T> extends State<TreeView<T>>
   }
 
   @override
-  void expandAll() => _expand(widget.tree);
-  void _expand(List<TreeViewNode<T>> tree) {
+  void expandAll() => _expandAll(widget.tree);
+  void _expandAll(List<TreeViewNode<T>> tree) {
     for (final TreeViewNode<T> node in tree) {
       if (node.children.isNotEmpty) {
         if (!node.isExpanded) {
@@ -749,14 +749,14 @@ class _TreeViewState<T> extends State<TreeView<T>>
             node._expanded = true;
           }
         }
-        _expand(node.children);
+        _expandAll(node.children);
       }
     }
   }
 
   @override
-  void collapseAll() => _collapse(widget.tree);
-  void _collapse(List<TreeViewNode<T>> tree) {
+  void collapseAll() => _collapseAll(widget.tree);
+  void _collapseAll(List<TreeViewNode<T>> tree) {
     for (final TreeViewNode<T> node in tree) {
       if (node.children.isNotEmpty) {
         if (node.isExpanded) {
@@ -769,7 +769,7 @@ class _TreeViewState<T> extends State<TreeView<T>>
             node._expanded = false;
           }
         }
-        _collapse(node.children);
+        _collapseAll(node.children);
       }
     }
   }

@@ -34,25 +34,19 @@ void main() {
     expect(verticalPosition.pixels, 0.0);
     final CustomTreeExampleState state =
         tester.state(find.byType(CustomTreeExample)) as CustomTreeExampleState;
-    state.treeController.toggleNode(
-      state.treeController.getNodeFor('lib')!
-    );
+    state.treeController.toggleNode(state.treeController.getNodeFor('lib')!);
     await tester.pumpAndSettle();
     verticalPosition =
         (tester.state(verticalScrollable) as ScrollableState).position;
     expect(verticalPosition.maxScrollExtent, 0.0);
     expect(verticalPosition.pixels, 0.0);
-    state.treeController.toggleNode(
-      state.treeController.getNodeFor('test')!
-    );
+    state.treeController.toggleNode(state.treeController.getNodeFor('test')!);
     await tester.pumpAndSettle();
     verticalPosition =
         (tester.state(verticalScrollable) as ScrollableState).position;
     expect(verticalPosition.maxScrollExtent, 0.0);
     expect(verticalPosition.pixels, 0.0);
-    state.treeController.toggleNode(
-      state.treeController.getNodeFor('src')!
-    );
+    state.treeController.toggleNode(state.treeController.getNodeFor('src')!);
     await tester.pumpAndSettle();
     verticalPosition =
         (tester.state(verticalScrollable) as ScrollableState).position;

@@ -73,7 +73,7 @@ typedef MinTreeRowExtent = MinSpanExtent;
 typedef TreeRowDecoration = SpanDecoration;
 
 /// Describes the border for a [TreeRow].
-class TreeRowBorder extends SpanBorder{
+class TreeRowBorder extends SpanBorder {
   /// Creates a [TreeRowBorder].
   const TreeRowBorder({
     BorderSide top = BorderSide.none,
@@ -84,7 +84,10 @@ class TreeRowBorder extends SpanBorder{
 
   /// Creates a [TreeRowBorder] with the provided [BorderSide] applied to all
   /// sides.
-  const TreeRowBorder.all(BorderSide side) : left = side, right = side, super(leading: side, trailing: side);
+  const TreeRowBorder.all(BorderSide side)
+      : left = side,
+        right = side,
+        super(leading: side, trailing: side);
 
   /// The border to paint on the top, or leading edge of the [TreeRow].
   BorderSide get top => leading;

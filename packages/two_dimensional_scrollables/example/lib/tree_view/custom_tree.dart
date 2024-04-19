@@ -196,7 +196,9 @@ class CustomTreeExampleState extends State<CustomTreeExample> {
             treeRowBuilder: (TreeViewNode<dynamic> node) {
               if (_selectedNode == (node as TreeViewNode<String>)) {
                 return TreeRow(
-                  extent: const FixedTreeRowExtent(50.0),
+                  extent: FixedTreeRowExtent(
+                    node.children.isNotEmpty ? 60.0 : 50.0,
+                  ),
                   recognizerFactories: _getTapRecognizer(node),
                   backgroundDecoration: TreeRowDecoration(
                     color: Colors.amber[100],
@@ -206,7 +208,9 @@ class CustomTreeExampleState extends State<CustomTreeExample> {
                 );
               }
               return TreeRow(
-                extent: const FixedTreeRowExtent(50.0),
+                extent: FixedTreeRowExtent(
+                  node.children.isNotEmpty ? 60.0 : 50.0,
+                ),
                 recognizerFactories: _getTapRecognizer(node),
               );
             },

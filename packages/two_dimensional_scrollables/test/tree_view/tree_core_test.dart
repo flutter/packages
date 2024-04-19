@@ -17,8 +17,5 @@ void main() {
       value = TreeViewIndentationType.custom(50.0).value;
       expect(value, 50.0);
     });
-
-    testWidgets('Nodes in the tree are offset properly',
-        (WidgetTester tester) async {});
   });
 }
