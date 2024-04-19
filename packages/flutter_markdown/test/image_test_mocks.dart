@@ -44,11 +44,11 @@ MockHttpClient createMockImageHttpClient(SecurityContext? _) {
   // image tests that request an image.
   StreamSubscription<List<int>> imageStream(Invocation invocation) {
     final void Function(List<int>)? onData =
-        invocation.positionalArguments[0] as Function(List<int>)?;
+        invocation.positionalArguments[0] as void Function(List<int>)?;
     final void Function()? onDone =
-        invocation.namedArguments[#onDone] as Function()?;
-    final void Function(Object, [StackTrace?])? onError =
-        invocation.namedArguments[#onError] as Function(Object, [StackTrace?])?;
+        invocation.namedArguments[#onDone] as void Function()?;
+    final void Function(Object, [StackTrace?])? onError = invocation
+        .namedArguments[#onError] as void Function(Object, [StackTrace?])?;
     final bool? cancelOnError =
         invocation.namedArguments[#cancelOnError] as bool?;
 
