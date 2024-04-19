@@ -112,18 +112,16 @@ void main() {
     });
 
     test('can be initialized with media settings', () async {
-      final CameraController cameraController = CameraController.withSettings(
+      final CameraController cameraController = CameraController(
         const CameraDescription(
             name: 'cam',
             lensDirection: CameraLensDirection.back,
             sensorOrientation: 90),
-        const MediaSettings(
-          resolutionPreset: ResolutionPreset.low,
-          fps: 15,
-          videoBitrate: 200000,
-          audioBitrate: 32000,
-          enableAudio: true,
-        ),
+        ResolutionPreset.low,
+        fps: 15,
+        videoBitrate: 200000,
+        audioBitrate: 32000,
+        enableAudio: false,
       );
       await cameraController.initialize();
 
@@ -131,7 +129,7 @@ void main() {
       expect(cameraController.value.previewSize, const Size(75, 75));
       expect(cameraController.value.isInitialized, isTrue);
       expect(cameraController.resolutionPreset, ResolutionPreset.low);
-      expect(cameraController.enableAudio, true);
+      expect(cameraController.enableAudio, false);
       expect(cameraController.mediaSettings.fps, 15);
       expect(cameraController.mediaSettings.videoBitrate, 200000);
       expect(cameraController.mediaSettings.audioBitrate, 32000);

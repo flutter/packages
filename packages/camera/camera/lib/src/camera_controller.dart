@@ -232,21 +232,30 @@ class CameraValue {
 /// To show the camera preview on the screen use a [CameraPreview] widget.
 class CameraController extends ValueNotifier<CameraValue> {
   /// Creates a new camera controller in an uninitialized state.
+  ///
+  /// - [resolutionPreset] affect the quality of video recording and image capture.
+  /// - [enableAudio] controls audio presence in recorded video.
+  ///
+  /// Following parameters (if present) will overwrite [resolutionPreset] settings:
+  /// - [fps] controls rate at which frames should be captured by the camera in frames per second.
+  /// - [videoBitrate] controls the video encoding bit rate for recording.
+  /// - [audioBitrate] controls the audio encoding bit rate for recording.
+
   CameraController(
     CameraDescription description,
     ResolutionPreset resolutionPreset, {
     bool enableAudio = true,
+    int? fps,
+    int? videoBitrate,
+    int? audioBitrate,
     this.imageFormatGroup,
   })  : mediaSettings = MediaSettings(
-            resolutionPreset: resolutionPreset, enableAudio: enableAudio),
+            resolutionPreset: resolutionPreset,
+            enableAudio: enableAudio,
+            fps: fps,
+            videoBitrate: videoBitrate,
+            audioBitrate: audioBitrate),
         super(CameraValue.uninitialized(description));
-
-  /// Creates a new camera controller in an uninitialized state, using specified media settings like fps and bitrate.
-  CameraController.withSettings(
-    CameraDescription description,
-    this.mediaSettings, {
-    this.imageFormatGroup,
-  }) : super(CameraValue.uninitialized(description));
 
   /// The properties of the camera device controlled by this controller.
   CameraDescription get description => value.description;
@@ -266,7 +275,7 @@ class CameraController extends ValueNotifier<CameraValue> {
   /// The media settings this controller is targeting.
   ///
   /// This media settings are not guaranteed to be available on the device,
-  /// if unavailable a lower resolution will be used.
+  /// if unavailable a [resolutionPreset] default values will be used.
   ///
   /// See also: [MediaSettings].
   final MediaSettings mediaSettings;
