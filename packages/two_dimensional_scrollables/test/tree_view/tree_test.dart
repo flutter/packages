@@ -424,12 +424,13 @@ void main() {
       TreeViewNode<String>? toggledNode;
       await tester.pumpWidget(MaterialApp(
         home: TreeView<String>(
-            tree: simpleNodeSet,
-            controller: controller,
-            onNodeToggle: (TreeViewNode<dynamic> node) {
-              toggled = true;
-              toggledNode = node as TreeViewNode<String>;
-            },),
+          tree: simpleNodeSet,
+          controller: controller,
+          onNodeToggle: (TreeViewNode<dynamic> node) {
+            toggled = true;
+            toggledNode = node as TreeViewNode<String>;
+          },
+        ),
       ));
       expect(controller.isExpanded(simpleNodeSet[1]), isTrue);
       await tester.tap(find.byType(Icon).first);
