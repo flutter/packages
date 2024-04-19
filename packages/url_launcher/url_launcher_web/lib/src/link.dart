@@ -70,28 +70,36 @@ class WebLinkDelegateState extends State<WebLinkDelegate> {
     return Stack(
       fit: StackFit.passthrough,
       children: <Widget>[
-        widget.link.builder(
-          context,
-          widget.link.isDisabled ? null : _followLink,
+        Semantics(
+          link: true,
+          value: widget.link.uri.toString(),
+          child: widget.link.builder(
+            context,
+            widget.link.isDisabled ? null : _followLink,
+          ),
         ),
         Positioned.fill(
-          child: PlatformViewLink(
-            viewType: linkViewType,
-            onCreatePlatformView: (PlatformViewCreationParams params) {
-              _controller = LinkViewController.fromParams(params);
-              return _controller
-                ..setUri(widget.link.uri)
-                ..setTarget(widget.link.target);
-            },
-            surfaceFactory:
-                (BuildContext context, PlatformViewController controller) {
-              return PlatformViewSurface(
-                controller: controller,
-                gestureRecognizers: const <Factory<
-                    OneSequenceGestureRecognizer>>{},
-                hitTestBehavior: PlatformViewHitTestBehavior.transparent,
-              );
-            },
+          child: ExcludeFocus(
+            child: ExcludeSemantics(
+              child: PlatformViewLink(
+                viewType: linkViewType,
+                onCreatePlatformView: (PlatformViewCreationParams params) {
+                  _controller = LinkViewController.fromParams(params);
+                  return _controller
+                    ..setUri(widget.link.uri)
+                    ..setTarget(widget.link.target);
+                },
+                surfaceFactory:
+                    (BuildContext context, PlatformViewController controller) {
+                  return PlatformViewSurface(
+                    controller: controller,
+                    gestureRecognizers: const <Factory<
+                        OneSequenceGestureRecognizer>>{},
+                    hitTestBehavior: PlatformViewHitTestBehavior.transparent,
+                  );
+                },
+              ),
+            ),
           ),
         ),
       ],
@@ -115,7 +123,8 @@ class LinkViewController extends PlatformViewController {
       // `stopPropagation`.
       html.window
           .addEventListener('keydown', _jsGlobalKeydownListener, _useCapture);
-      html.window.addEventListener('click', _jsGlobalClickListener);
+      html.window
+          .addEventListener('click', _jsGlobalClickListener, _useCapture);
     }
     _instances[viewId] = this;
   }
@@ -200,19 +209,43 @@ class LinkViewController extends PlatformViewController {
     // The keydown event is not directly associated with the target Link, so
     // we need to look for the recently hit tested Link to handle the event.
     if (_hitTestedViewId != null) {
-      _instances[_hitTestedViewId]?._onDomKeydown();
+      final LinkViewController? instance = _instances[_hitTestedViewId];
+      final int? viewId = instance?.viewId;
+      assert(
+        _hitTestedViewId == viewId,
+        'Keydown event should only be handled by the hit tested Link',
+      );
+      instance?._triggerLink(event: null, isKeyboardEvent: true);
     }
     // After the keyboard event has been received, clean up the hit test state
     // so we can start fresh on the next event.
     unregisterHitTest();
   }
 
+  /// Keeps track of whether a hit test was registered.
+  static bool followLinkTriggered = false;
+
+  /// Keeps track of the last mouse event captured from our global click handler.
+  static html.MouseEvent? triggeredMouseEvent;
+
+  /// Global click handler that triggers on the `capture` phase. We use `capture`
+  /// because some events may be consumed and prevent further propagation at the
+  /// target. This may lead to issues (see: https://github.com/flutter/flutter/issues/143164)
+  /// where a followLink was executed but the event never bubbles back up to the
+  /// window (e.g. when button semantics obscure the platform view). We make sure
+  /// to only trigger the link if a hit test was registered and remains valid at
+  /// the time the click handler executes.
   static void _onGlobalClick(html.MouseEvent event) {
-    final int? viewId = getViewIdFromTarget(event);
-    _instances[viewId]?._onDomClick(event);
-    // After the DOM click event has been received, clean up the hit test state
-    // so we can start fresh on the next event.
-    unregisterHitTest();
+    triggeredMouseEvent = event;
+
+    if (followLinkTriggered) {
+      final int? viewId = getViewIdFromTarget(event) ?? _hitTestedViewId;
+
+      _instances[viewId]?._triggerLink(event: event, isKeyboardEvent: false);
+      // After the DOM click event has been received, clean up the hit test state
+      // so we can start fresh on the next event.
+      unregisterHitTest();
+    }
   }
 
   /// Call this method to indicate that a hit test has been registered for the
@@ -222,11 +255,26 @@ class LinkViewController extends PlatformViewController {
   /// `click` from the browser.
   static void registerHitTest(LinkViewController controller) {
     _hitTestedViewId = controller.viewId;
+    followLinkTriggered = true;
+
+    if (triggeredMouseEvent != null) {
+      _instances[_hitTestedViewId]
+          ?._triggerLink(event: triggeredMouseEvent, isKeyboardEvent: false);
+
+      unregisterHitTest();
+    }
+  }
+
+  /// Clears all state from global click handler and hit test registration.
+  static void clearTriggers() {
+    followLinkTriggered = false;
+    triggeredMouseEvent = null;
   }
 
   /// Removes all information about previously registered hit tests.
   static void unregisterHitTest() {
     _hitTestedViewId = null;
+    clearTriggers();
   }
 
   @override
@@ -255,47 +303,37 @@ class LinkViewController extends PlatformViewController {
     await SystemChannels.platform_views.invokeMethod<void>('create', args);
   }
 
-  void _onDomKeydown() {
-    assert(
-      _hitTestedViewId == viewId,
-      'Keydown event should only be handled by the hit tested Link',
-    );
-
-    if (_isExternalLink) {
-      // External links are not handled by the browser when triggered via a
-      // keydown, so we have to launch the url manually.
-      UrlLauncherPlatform.instance
-          .launchUrl(_uri.toString(), const LaunchOptions());
-      return;
-    }
-
-    // A uri that doesn't have a scheme is an internal route name. In this
-    // case, we push it via Flutter's navigation system instead of using
-    // `launchUrl`.
-    final String routeName = _uri.toString();
-    pushRouteNameToFramework(null, routeName);
-  }
-
-  void _onDomClick(html.MouseEvent event) {
+  /// Handles logic for external and internal links for links triggered by either
+  /// click or keydown events.
+  void _triggerLink(
+      {required html.MouseEvent? event, required bool isKeyboardEvent}) {
     final bool isHitTested = _hitTestedViewId == viewId;
+
     if (!isHitTested) {
       // There was no hit test registered for this click. This means the click
       // landed on the anchor element but not on the underlying widget. In this
       // case, we prevent the browser from following the click.
-      event.preventDefault();
+      event?.preventDefault();
       return;
     }
 
     if (_isExternalLink) {
-      // External links will be handled by the browser, so we don't have to do
-      // anything.
+      if (isKeyboardEvent) {
+        // External links are not handled by the browser when triggered via a
+        // keydown, so we have to launch the url manually.
+        UrlLauncherPlatform.instance
+            .launchUrl(_uri.toString(), const LaunchOptions());
+      }
+
+      // When triggerd by a click event, external links will be handled by the browser,
+      // so we don't have to do anything.
       return;
     }
 
     // A uri that doesn't have a scheme is an internal route name. In this
     // case, we push it via Flutter's navigation system instead of letting the
     // browser handle it.
-    event.preventDefault();
+    event?.preventDefault();
     final String routeName = _uri.toString();
     pushRouteNameToFramework(null, routeName);
   }
