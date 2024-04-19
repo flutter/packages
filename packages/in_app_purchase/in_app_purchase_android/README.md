@@ -13,7 +13,9 @@ should [add it to your `pubspec.yaml` as usual][3].
 
 ## Alternative/UserChoice Billing
 
-Alternative and UserChoice billing from google play is exposed from this package. Using this feature requires google play app configuration, checking if the feature is available (`isAlternativeBillingOnlyAvailable`) and informing users that google play does not handle all aspects of purchase (`showAlternativeBillingOnlyInformationDialog`). After those calls then you can call `setBillingChoice` and respond when a user attempts a purchase.
+Alternative and UserChoice billing from Google Play is exposed from this package.
+
+Using the Alternative billing only feature requires Google Play app configuration, checking if the feature is available (`isAlternativeBillingOnlyAvailable`) and informing users that Google Play does not handle all aspects of purchase (`showAlternativeBillingOnlyInformationDialog`). After those calls then you can call `setBillingChoice` and respond when a user attempts a purchase.
 
 [Google Play documentation for Alternative billing](https://developer.android.com/google/play/billing/alternative)
 
