@@ -51,26 +51,6 @@ extern UIDeviceOrientation FLTGetUIDeviceOrientationForString(NSString *orientat
 extern FCPPlatformDeviceOrientation FCPGetPigeonDeviceOrientationForOrientation(
     UIDeviceOrientation orientation);
 
-#pragma mark - resolution preset
-
-/// Represents camera's resolution present. Mirrors ResolutionPreset in camera.dart.
-typedef NS_ENUM(NSInteger, FLTResolutionPreset) {
-  FLTResolutionPresetVeryLow,
-  FLTResolutionPresetLow,
-  FLTResolutionPresetMedium,
-  FLTResolutionPresetHigh,
-  FLTResolutionPresetVeryHigh,
-  FLTResolutionPresetUltraHigh,
-  FLTResolutionPresetMax,
-  // This should never occur; it indicates an unknown value was received over
-  // the platform channel.
-  FLTResolutionPresetInvalid,
-};
-
-/// Gets FLTResolutionPreset from its string representation.
-/// @param preset a string representation of FLTResolutionPreset.
-extern FLTResolutionPreset FLTGetFLTResolutionPresetForString(NSString *preset);
-
 #pragma mark - video format
 
 /// Gets VideoFormat from its string representation.

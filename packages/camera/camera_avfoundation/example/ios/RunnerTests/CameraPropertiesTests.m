@@ -44,19 +44,6 @@
   XCTAssertEqual(FCPPlatformFocusModeLocked, FCPGetFocusModeForString(@"locked"));
 }
 
-#pragma mark - resolution preset tests
-
-- (void)testFLTGetFLTResolutionPresetForString {
-  XCTAssertEqual(FLTResolutionPresetVeryLow, FLTGetFLTResolutionPresetForString(@"veryLow"));
-  XCTAssertEqual(FLTResolutionPresetLow, FLTGetFLTResolutionPresetForString(@"low"));
-  XCTAssertEqual(FLTResolutionPresetMedium, FLTGetFLTResolutionPresetForString(@"medium"));
-  XCTAssertEqual(FLTResolutionPresetHigh, FLTGetFLTResolutionPresetForString(@"high"));
-  XCTAssertEqual(FLTResolutionPresetVeryHigh, FLTGetFLTResolutionPresetForString(@"veryHigh"));
-  XCTAssertEqual(FLTResolutionPresetUltraHigh, FLTGetFLTResolutionPresetForString(@"ultraHigh"));
-  XCTAssertEqual(FLTResolutionPresetMax, FLTGetFLTResolutionPresetForString(@"max"));
-  XCTAssertEqual(FLTResolutionPresetInvalid, FLTGetFLTResolutionPresetForString(@"unknown"));
-}
-
 #pragma mark - video format tests
 
 - (void)testFLTGetVideoFormatFromString {

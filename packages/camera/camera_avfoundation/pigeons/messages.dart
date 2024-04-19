@@ -44,6 +44,16 @@ enum PlatformFocusMode {
   locked,
 }
 
+// Pigeon version of ResolutionPreset.
+enum PlatformResolutionPreset {
+  low,
+  medium,
+  high,
+  veryHigh,
+  ultraHigh,
+  max,
+}
+
 // Pigeon version of CameraDescription.
 class PlatformCameraDescription {
   PlatformCameraDescription({
@@ -84,6 +94,23 @@ class PlatformCameraState {
   final bool focusPointSupported;
 }
 
+// Pigeon version of to MediaSettings.
+class PlatformMediaSettings {
+  PlatformMediaSettings({
+    required this.resolutionPreset,
+    required this.framesPerSecond,
+    required this.videoBitrate,
+    required this.audioBitrate,
+    required this.enableAudio,
+  });
+
+  final PlatformResolutionPreset resolutionPreset;
+  final int? framesPerSecond;
+  final int? videoBitrate;
+  final int? audioBitrate;
+  final bool enableAudio;
+}
+
 // Pigeon equivalent of CGSize.
 class PlatformSize {
   PlatformSize({required this.width, required this.height});
@@ -101,6 +128,10 @@ abstract class CameraApi {
   @async
   @ObjCSelector('availableCamerasWithCompletion')
   List<PlatformCameraDescription?> getAvailableCameras();
+
+  @async
+  @ObjCSelector('createCameraWithName:settings:')
+  int create(String cameraName, PlatformMediaSettings settings);
 }
 
 /// Handler for native callbacks that are not tied to a specific camera ID.

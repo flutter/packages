@@ -57,6 +57,15 @@ enum PlatformFocusMode {
   locked,
 }
 
+enum PlatformResolutionPreset {
+  low,
+  medium,
+  high,
+  veryHigh,
+  ultraHigh,
+  max,
+}
+
 class PlatformCameraDescription {
   PlatformCameraDescription({
     required this.name,
@@ -131,6 +140,47 @@ class PlatformCameraState {
   }
 }
 
+class PlatformMediaSettings {
+  PlatformMediaSettings({
+    required this.resolutionPreset,
+    this.framesPerSecond,
+    this.videoBitrate,
+    this.audioBitrate,
+    required this.enableAudio,
+  });
+
+  PlatformResolutionPreset resolutionPreset;
+
+  int? framesPerSecond;
+
+  int? videoBitrate;
+
+  int? audioBitrate;
+
+  bool enableAudio;
+
+  Object encode() {
+    return <Object?>[
+      resolutionPreset.index,
+      framesPerSecond,
+      videoBitrate,
+      audioBitrate,
+      enableAudio,
+    ];
+  }
+
+  static PlatformMediaSettings decode(Object result) {
+    result as List<Object?>;
+    return PlatformMediaSettings(
+      resolutionPreset: PlatformResolutionPreset.values[result[0]! as int],
+      framesPerSecond: result[1] as int?,
+      videoBitrate: result[2] as int?,
+      audioBitrate: result[3] as int?,
+      enableAudio: result[4]! as bool,
+    );
+  }
+}
+
 class PlatformSize {
   PlatformSize({
     required this.width,
@@ -164,6 +214,9 @@ class _CameraApiCodec extends StandardMessageCodec {
     if (value is PlatformCameraDescription) {
       buffer.putUint8(128);
       writeValue(buffer, value.encode());
+    } else if (value is PlatformMediaSettings) {
+      buffer.putUint8(129);
+      writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
     }
@@ -174,6 +227,8 @@ class _CameraApiCodec extends StandardMessageCodec {
     switch (type) {
       case 128:
         return PlatformCameraDescription.decode(readValue(buffer)!);
+      case 129:
+        return PlatformMediaSettings.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
     }
@@ -223,6 +278,35 @@ class CameraApi {
     } else {
       return (__pigeon_replyList[0] as List<Object?>?)!
           .cast<PlatformCameraDescription?>();
+    }
+  }
+
+  Future<int> create(String cameraName, PlatformMediaSettings settings) async {
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.camera_avfoundation.CameraApi.create$__pigeon_messageChannelSuffix';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: __pigeon_binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList = await __pigeon_channel
+        .send(<Object?>[cameraName, settings]) as List<Object?>?;
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: __pigeon_replyList[0]! as String,
+        message: __pigeon_replyList[1] as String?,
+        details: __pigeon_replyList[2],
+      );
+    } else if (__pigeon_replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (__pigeon_replyList[0] as int?)!;
     }
   }
 }

@@ -63,8 +63,24 @@ typedef NS_ENUM(NSUInteger, FCPPlatformFocusMode) {
 - (instancetype)initWithValue:(FCPPlatformFocusMode)value;
 @end
 
+typedef NS_ENUM(NSUInteger, FCPPlatformResolutionPreset) {
+  FCPPlatformResolutionPresetLow = 0,
+  FCPPlatformResolutionPresetMedium = 1,
+  FCPPlatformResolutionPresetHigh = 2,
+  FCPPlatformResolutionPresetVeryHigh = 3,
+  FCPPlatformResolutionPresetUltraHigh = 4,
+  FCPPlatformResolutionPresetMax = 5,
+};
+
+/// Wrapper for FCPPlatformResolutionPreset to allow for nullability.
+@interface FCPPlatformResolutionPresetBox : NSObject
+@property(nonatomic, assign) FCPPlatformResolutionPreset value;
+- (instancetype)initWithValue:(FCPPlatformResolutionPreset)value;
+@end
+
 @class FCPPlatformCameraDescription;
 @class FCPPlatformCameraState;
+@class FCPPlatformMediaSettings;
 @class FCPPlatformSize;
 
 @interface FCPPlatformCameraDescription : NSObject
@@ -98,6 +114,21 @@ typedef NS_ENUM(NSUInteger, FCPPlatformFocusMode) {
 @property(nonatomic, assign) BOOL focusPointSupported;
 @end
 
+@interface FCPPlatformMediaSettings : NSObject
+/// `init` unavailable to enforce nonnull fields, see the `make` class method.
+- (instancetype)init NS_UNAVAILABLE;
++ (instancetype)makeWithResolutionPreset:(FCPPlatformResolutionPreset)resolutionPreset
+                         framesPerSecond:(nullable NSNumber *)framesPerSecond
+                            videoBitrate:(nullable NSNumber *)videoBitrate
+                            audioBitrate:(nullable NSNumber *)audioBitrate
+                             enableAudio:(BOOL)enableAudio;
+@property(nonatomic, assign) FCPPlatformResolutionPreset resolutionPreset;
+@property(nonatomic, strong, nullable) NSNumber *framesPerSecond;
+@property(nonatomic, strong, nullable) NSNumber *videoBitrate;
+@property(nonatomic, strong, nullable) NSNumber *audioBitrate;
+@property(nonatomic, assign) BOOL enableAudio;
+@end
+
 @interface FCPPlatformSize : NSObject
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
@@ -113,6 +144,9 @@ NSObject<FlutterMessageCodec> *FCPCameraApiGetCodec(void);
 /// Returns the list of available cameras.
 - (void)availableCamerasWithCompletion:(void (^)(NSArray<FCPPlatformCameraDescription *> *_Nullable,
                                                  FlutterError *_Nullable))completion;
+- (void)createCameraWithName:(NSString *)cameraName
+                    settings:(FCPPlatformMediaSettings *)settings
+                  completion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion;
 @end
 
 extern void SetUpFCPCameraApi(id<FlutterBinaryMessenger> binaryMessenger,

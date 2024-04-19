@@ -149,9 +149,7 @@ static FlutterError *FlutterErrorFromNSError(NSError *error) {
 }
 
 - (void)handleMethodCallAsync:(FlutterMethodCall *)call result:(FlutterResult)result {
-  if ([@"create" isEqualToString:call.method]) {
-    [self handleCreateMethodCall:call result:result];
-  } else if ([@"startImageStream" isEqualToString:call.method]) {
+  if ([@"startImageStream" isEqualToString:call.method]) {
     [_camera startImageStreamWithMessenger:_messenger];
     result(nil);
   } else if ([@"stopImageStream" isEqualToString:call.method]) {
@@ -262,147 +260,69 @@ static FlutterError *FlutterErrorFromNSError(NSError *error) {
   }
 }
 
-- (void)handleCreateMethodCall:(FlutterMethodCall *)call result:(FlutterResult)result {
+- (void)createCameraWithName:(nonnull NSString *)cameraName
+                    settings:(nonnull FCPPlatformMediaSettings *)settings
+                  completion:
+                      (nonnull void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion {
   // Create FLTCam only if granted camera access (and audio access if audio is enabled)
   __weak typeof(self) weakSelf = self;
-  FLTRequestCameraPermissionWithCompletionHandler(^(FlutterError *error) {
-    typeof(self) strongSelf = weakSelf;
-    if (!strongSelf) return;
+  dispatch_async(self.captureSessionQueue, ^{
+    FLTRequestCameraPermissionWithCompletionHandler(^(FlutterError *error) {
+      typeof(self) strongSelf = weakSelf;
+      if (!strongSelf) return;
 
-    if (error) {
-      result(error);
-    } else {
-      // Request audio permission on `create` call with `enableAudio` argument instead of the
-      // `prepareForVideoRecording` call. This is because `prepareForVideoRecording` call is
-      // optional, and used as a workaround to fix a missing frame issue on iOS.
-      BOOL audioEnabled = [call.arguments[@"enableAudio"] boolValue];
-      if (audioEnabled) {
-        // Setup audio capture session only if granted audio access.
-        FLTRequestAudioPermissionWithCompletionHandler(^(FlutterError *error) {
-          // cannot use the outter `strongSelf`
-          typeof(self) strongSelf = weakSelf;
-          if (!strongSelf) return;
-          if (error) {
-            result(error);
-          } else {
-            [strongSelf createCameraOnSessionQueueWithCreateMethodCall:call result:result];
-          }
-        });
+      if (error) {
+        completion(nil, error);
       } else {
-        [strongSelf createCameraOnSessionQueueWithCreateMethodCall:call result:result];
+        // Request audio permission on `create` call with `enableAudio` argument instead of the
+        // `prepareForVideoRecording` call. This is because `prepareForVideoRecording` call is
+        // optional, and used as a workaround to fix a missing frame issue on iOS.
+        if (settings.enableAudio) {
+          // Setup audio capture session only if granted audio access.
+          FLTRequestAudioPermissionWithCompletionHandler(^(FlutterError *error) {
+            // cannot use the outter `strongSelf`
+            typeof(self) strongSelf = weakSelf;
+            if (!strongSelf) return;
+            if (error) {
+              completion(nil, error);
+            } else {
+              [strongSelf createCameraOnSessionQueueWithName:cameraName
+                                                    settings:settings
+                                                  completion:completion];
+            }
+          });
+        } else {
+          [strongSelf createCameraOnSessionQueueWithName:cameraName
+                                                settings:settings
+                                              completion:completion];
+        }
       }
-    }
+    });
   });
 }
 
-// Returns number value if provided and positive, or nil.
-// Used to parse values like framerates and bitrates, that are positive by nature.
-// nil allows to ignore unsupported values.
-+ (NSNumber *)positiveNumberValueOrNilForArgument:(NSString *)argument
-                                       fromMethod:(FlutterMethodCall *)flutterMethodCall
-                                            error:(NSError **)error {
-  id value = flutterMethodCall.arguments[argument];
-
-  if (!value || [value isEqual:[NSNull null]]) {
-    return nil;
-  }
-
-  if (![value isKindOfClass:[NSNumber class]]) {
-    if (error) {
-      *error = [NSError errorWithDomain:@"ArgumentError"
-                                   code:0
-                               userInfo:@{
-                                 NSLocalizedDescriptionKey :
-                                     [NSString stringWithFormat:@"%@ should be a number", argument]
-                               }];
-    }
-    return nil;
-  }
-
-  NSNumber *number = (NSNumber *)value;
-
-  if (isnan([number doubleValue])) {
-    if (error) {
-      *error = [NSError errorWithDomain:@"ArgumentError"
-                                   code:0
-                               userInfo:@{
-                                 NSLocalizedDescriptionKey :
-                                     [NSString stringWithFormat:@"%@ should not be a nan", argument]
-                               }];
-    }
-    return nil;
-  }
-
-  if ([number doubleValue] <= 0.0) {
-    if (error) {
-      *error = [NSError errorWithDomain:@"ArgumentError"
-                                   code:0
-                               userInfo:@{
-                                 NSLocalizedDescriptionKey : [NSString
-                                     stringWithFormat:@"%@ should be a positive number", argument]
-                               }];
-    }
-    return nil;
-  }
-
-  return number;
-}
-
-- (void)createCameraOnSessionQueueWithCreateMethodCall:(FlutterMethodCall *)createMethodCall
-                                                result:(FlutterResult)result {
+- (void)createCameraOnSessionQueueWithName:(NSString *)name
+                                  settings:(FCPPlatformMediaSettings *)settings
+                                completion:(nonnull void (^)(NSNumber *_Nullable,
+                                                             FlutterError *_Nullable))completion {
   __weak typeof(self) weakSelf = self;
   dispatch_async(self.captureSessionQueue, ^{
     typeof(self) strongSelf = weakSelf;
     if (!strongSelf) return;
 
-    NSString *cameraName = createMethodCall.arguments[@"cameraName"];
-
-    NSError *error;
-
-    NSNumber *framesPerSecond = [CameraPlugin positiveNumberValueOrNilForArgument:@"fps"
-                                                                       fromMethod:createMethodCall
-                                                                            error:&error];
-    if (error) {
-      result(FlutterErrorFromNSError(error));
-      return;
-    }
-
-    NSNumber *videoBitrate = [CameraPlugin positiveNumberValueOrNilForArgument:@"videoBitrate"
-                                                                    fromMethod:createMethodCall
-                                                                         error:&error];
-    if (error) {
-      result(FlutterErrorFromNSError(error));
-      return;
-    }
-
-    NSNumber *audioBitrate = [CameraPlugin positiveNumberValueOrNilForArgument:@"audioBitrate"
-                                                                    fromMethod:createMethodCall
-                                                                         error:&error];
-    if (error) {
-      result(FlutterErrorFromNSError(error));
-      return;
-    }
-
-    NSString *resolutionPreset = createMethodCall.arguments[@"resolutionPreset"];
-    NSNumber *enableAudio = createMethodCall.arguments[@"enableAudio"];
-    FLTCamMediaSettings *mediaSettings =
-        [[FLTCamMediaSettings alloc] initWithFramesPerSecond:framesPerSecond
-                                                videoBitrate:videoBitrate
-                                                audioBitrate:audioBitrate
-                                                 enableAudio:[enableAudio boolValue]];
     FLTCamMediaSettingsAVWrapper *mediaSettingsAVWrapper =
         [[FLTCamMediaSettingsAVWrapper alloc] init];
 
-    FLTCam *cam = [[FLTCam alloc] initWithCameraName:cameraName
-                                    resolutionPreset:resolutionPreset
-                                       mediaSettings:mediaSettings
+    NSError *error;
+    FLTCam *cam = [[FLTCam alloc] initWithCameraName:name
+                                       mediaSettings:settings
                               mediaSettingsAVWrapper:mediaSettingsAVWrapper
                                          orientation:[[UIDevice currentDevice] orientation]
                                  captureSessionQueue:strongSelf.captureSessionQueue
                                                error:&error];
 
     if (error) {
-      result(FlutterErrorFromNSError(error));
+      completion(nil, FlutterErrorFromNSError(error));
     } else {
       if (strongSelf.camera) {
         [strongSelf.camera close];
@@ -410,9 +330,7 @@ static FlutterError *FlutterErrorFromNSError(NSError *error) {
       strongSelf.camera = cam;
       [strongSelf.registry registerTexture:cam
                                 completion:^(int64_t textureId) {
-                                  result(@{
-                                    @"cameraId" : @(textureId),
-                                  });
+                                  completion(@(textureId), nil);
                                 }];
     }
   });

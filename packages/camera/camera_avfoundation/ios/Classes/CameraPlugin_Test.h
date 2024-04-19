@@ -44,8 +44,10 @@
 - (void)orientationChanged:(NSNotification *)notification;
 
 /// Creates FLTCam on session queue and reports the creation result.
-/// @param createMethodCall the create method call
-/// @param result a thread safe flutter result wrapper object to report creation result.
-- (void)createCameraOnSessionQueueWithCreateMethodCall:(FlutterMethodCall *)createMethodCall
-                                                result:(FlutterResult)result;
+/// @param name the name of the camera.
+/// @param settings the creation settings.
+/// @param completion the callback to inform the Dart side of the plugin of creation.
+- (void)createCameraOnSessionQueueWithName:(NSString *)name
+                                  settings:(FCPPlatformMediaSettings *)settings
+                                completion:(void (^)(NSNumber *, FlutterError *))completion;
 @end

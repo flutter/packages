@@ -25,10 +25,6 @@ import 'package:mockito/mockito.dart' as _i1;
 ///
 /// See the documentation for Mockito's code generation for more information.
 class MockCameraApi extends _i1.Mock implements _i2.CameraApi {
-  MockCameraApi() {
-    _i1.throwOnMissingStub(this);
-  }
-
   @override
   _i3.Future<List<_i2.PlatformCameraDescription?>> getAvailableCameras() =>
       (super.noSuchMethod(
@@ -38,5 +34,25 @@ class MockCameraApi extends _i1.Mock implements _i2.CameraApi {
         ),
         returnValue: _i3.Future<List<_i2.PlatformCameraDescription?>>.value(
             <_i2.PlatformCameraDescription?>[]),
+        returnValueForMissingStub:
+            _i3.Future<List<_i2.PlatformCameraDescription?>>.value(
+                <_i2.PlatformCameraDescription?>[]),
       ) as _i3.Future<List<_i2.PlatformCameraDescription?>>);
+
+  @override
+  _i3.Future<int> create(
+    String? cameraName,
+    _i2.PlatformMediaSettings? settings,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #create,
+          [
+            cameraName,
+            settings,
+          ],
+        ),
+        returnValue: _i3.Future<int>.value(0),
+        returnValueForMissingStub: _i3.Future<int>.value(0),
+      ) as _i3.Future<int>);
 }

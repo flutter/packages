@@ -7,7 +7,6 @@
 @import Flutter;
 
 #import "CameraProperties.h"
-#import "FLTCamMediaSettings.h"
 #import "FLTCamMediaSettingsAVWrapper.h"
 #import "FLTThreadSafeTextureRegistry.h"
 #import "messages.g.h"
@@ -24,7 +23,6 @@ NS_ASSUME_NONNULL_BEGIN
 /// The API instance used to communicate with the Dart side of the plugin. Once initially set, this
 /// should only ever be accessed on the main thread.
 @property(nonatomic) FCPCameraEventApi *dartAPI;
-@property(assign, nonatomic) FLTResolutionPreset resolutionPreset;
 @property(assign, nonatomic) FCPPlatformExposureMode exposureMode;
 @property(assign, nonatomic) FCPPlatformFocusMode focusMode;
 @property(assign, nonatomic) FLTFlashMode flashMode;
@@ -34,7 +32,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// Initializes an `FLTCam` instance.
 /// @param cameraName a name used to uniquely identify the camera.
-/// @param resolutionPreset the resolution preset
 /// @param mediaSettings the media settings configuration parameters
 /// @param mediaSettingsAVWrapper AVFoundation wrapper to perform media settings related operations
 /// (for dependency injection in unit tests).
@@ -42,8 +39,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// @param captureSessionQueue the queue on which camera's capture session operations happen.
 /// @param error report to the caller if any error happened creating the camera.
 - (instancetype)initWithCameraName:(NSString *)cameraName
-                  resolutionPreset:(NSString *)resolutionPreset
-                     mediaSettings:(FLTCamMediaSettings *)mediaSettings
+                     mediaSettings:(FCPPlatformMediaSettings *)mediaSettings
             mediaSettingsAVWrapper:(FLTCamMediaSettingsAVWrapper *)mediaSettingsAVWrapper
                        orientation:(UIDeviceOrientation)orientation
                captureSessionQueue:(dispatch_queue_t)captureSessionQueue

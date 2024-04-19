@@ -100,19 +100,16 @@ class AVFoundationCamera extends CameraPlatform {
     MediaSettings? mediaSettings,
   ) async {
     try {
-      final Map<String, dynamic>? reply = await _channel
-          .invokeMapMethod<String, dynamic>('create', <String, dynamic>{
-        'cameraName': cameraDescription.name,
-        'resolutionPreset': null != mediaSettings?.resolutionPreset
-            ? _serializeResolutionPreset(mediaSettings!.resolutionPreset!)
-            : null,
-        'fps': mediaSettings?.fps,
-        'videoBitrate': mediaSettings?.videoBitrate,
-        'audioBitrate': mediaSettings?.audioBitrate,
-        'enableAudio': mediaSettings?.enableAudio ?? true,
-      });
-
-      return reply!['cameraId']! as int;
+      return await _hostApi.create(
+          cameraDescription.name,
+          PlatformMediaSettings(
+            resolutionPreset:
+                _pigeonResolutionPreset(mediaSettings?.resolutionPreset),
+            framesPerSecond: mediaSettings?.fps,
+            videoBitrate: mediaSettings?.videoBitrate,
+            audioBitrate: mediaSettings?.audioBitrate,
+            enableAudio: mediaSettings?.enableAudio ?? true,
+          ));
     } on PlatformException catch (e) {
       throw CameraException(e.code, e.message);
     }
@@ -590,20 +587,26 @@ class AVFoundationCamera extends CameraPlatform {
   }
 
   /// Returns the resolution preset as a String.
-  String _serializeResolutionPreset(ResolutionPreset resolutionPreset) {
+  PlatformResolutionPreset _pigeonResolutionPreset(
+      ResolutionPreset? resolutionPreset) {
+    if (resolutionPreset == null) {
+      // Provide a default if one isn't provided, since the native side needs
+      // to set something.
+      return PlatformResolutionPreset.high;
+    }
     switch (resolutionPreset) {
       case ResolutionPreset.max:
-        return 'max';
+        return PlatformResolutionPreset.max;
       case ResolutionPreset.ultraHigh:
-        return 'ultraHigh';
+        return PlatformResolutionPreset.ultraHigh;
       case ResolutionPreset.veryHigh:
-        return 'veryHigh';
+        return PlatformResolutionPreset.veryHigh;
       case ResolutionPreset.high:
-        return 'high';
+        return PlatformResolutionPreset.high;
       case ResolutionPreset.medium:
-        return 'medium';
+        return PlatformResolutionPreset.medium;
       case ResolutionPreset.low:
-        return 'low';
+        return PlatformResolutionPreset.low;
     }
     // The enum comes from a different package, which could get a new value at
     // any time, so provide a fallback that ensures this won't break when used
@@ -611,7 +614,7 @@ class AVFoundationCamera extends CameraPlatform {
     // the switch rather than a `default` so that the linter will flag the
     // switch as needing an update.
     // ignore: dead_code
-    return 'max';
+    return PlatformResolutionPreset.max;
   }
 }
 

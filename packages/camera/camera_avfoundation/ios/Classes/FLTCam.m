@@ -51,7 +51,7 @@ static FlutterError *FlutterErrorFromNSError(NSError *error) {
                       AVCaptureAudioDataOutputSampleBufferDelegate>
 
 @property(readonly, nonatomic) int64_t textureId;
-@property(readonly, nonatomic) FLTCamMediaSettings *mediaSettings;
+@property(readonly, nonatomic) FCPPlatformMediaSettings *mediaSettings;
 @property(readonly, nonatomic) FLTCamMediaSettingsAVWrapper *mediaSettingsAVWrapper;
 @property(nonatomic) FLTImageStreamHandler *imageStreamHandler;
 @property(readonly, nonatomic) AVCaptureSession *videoCaptureSession;
@@ -114,14 +114,12 @@ static FlutterError *FlutterErrorFromNSError(NSError *error) {
 NSString *const errorMethod = @"error";
 
 - (instancetype)initWithCameraName:(NSString *)cameraName
-                  resolutionPreset:(NSString *)resolutionPreset
-                     mediaSettings:(FLTCamMediaSettings *)mediaSettings
+                     mediaSettings:(FCPPlatformMediaSettings *)mediaSettings
             mediaSettingsAVWrapper:(FLTCamMediaSettingsAVWrapper *)mediaSettingsAVWrapper
                        orientation:(UIDeviceOrientation)orientation
                captureSessionQueue:(dispatch_queue_t)captureSessionQueue
                              error:(NSError **)error {
   return [self initWithCameraName:cameraName
-                 resolutionPreset:resolutionPreset
                     mediaSettings:mediaSettings
            mediaSettingsAVWrapper:mediaSettingsAVWrapper
                       orientation:orientation
@@ -132,16 +130,14 @@ NSString *const errorMethod = @"error";
 }
 
 - (instancetype)initWithCameraName:(NSString *)cameraName
-                  resolutionPreset:(NSString *)resolutionPreset
-                     mediaSettings:(FLTCamMediaSettings *)mediaSettings
+                     mediaSettings:(FCPPlatformMediaSettings *)mediaSettings
             mediaSettingsAVWrapper:(FLTCamMediaSettingsAVWrapper *)mediaSettingsAVWrapper
                        orientation:(UIDeviceOrientation)orientation
                videoCaptureSession:(AVCaptureSession *)videoCaptureSession
                audioCaptureSession:(AVCaptureSession *)audioCaptureSession
                captureSessionQueue:(dispatch_queue_t)captureSessionQueue
                              error:(NSError **)error {
-  return [self initWithResolutionPreset:resolutionPreset
-      mediaSettings:mediaSettings
+  return [self initWithMediaSettings:mediaSettings
       mediaSettingsAVWrapper:mediaSettingsAVWrapper
       orientation:orientation
       videoCaptureSession:videoCaptureSession
@@ -156,30 +152,17 @@ NSString *const errorMethod = @"error";
       error:error];
 }
 
-- (instancetype)initWithResolutionPreset:(NSString *)resolutionPreset
-                           mediaSettings:(FLTCamMediaSettings *)mediaSettings
-                  mediaSettingsAVWrapper:(FLTCamMediaSettingsAVWrapper *)mediaSettingsAVWrapper
-                             orientation:(UIDeviceOrientation)orientation
-                     videoCaptureSession:(AVCaptureSession *)videoCaptureSession
-                     audioCaptureSession:(AVCaptureSession *)audioCaptureSession
-                     captureSessionQueue:(dispatch_queue_t)captureSessionQueue
-                    captureDeviceFactory:(CaptureDeviceFactory)captureDeviceFactory
-                videoDimensionsForFormat:(VideoDimensionsForFormat)videoDimensionsForFormat
-                                   error:(NSError **)error {
+- (instancetype)initWithMediaSettings:(FCPPlatformMediaSettings *)mediaSettings
+               mediaSettingsAVWrapper:(FLTCamMediaSettingsAVWrapper *)mediaSettingsAVWrapper
+                          orientation:(UIDeviceOrientation)orientation
+                  videoCaptureSession:(AVCaptureSession *)videoCaptureSession
+                  audioCaptureSession:(AVCaptureSession *)audioCaptureSession
+                  captureSessionQueue:(dispatch_queue_t)captureSessionQueue
+                 captureDeviceFactory:(CaptureDeviceFactory)captureDeviceFactory
+             videoDimensionsForFormat:(VideoDimensionsForFormat)videoDimensionsForFormat
+                                error:(NSError **)error {
   self = [super init];
   NSAssert(self, @"super init cannot be nil");
-  _resolutionPreset = FLTGetFLTResolutionPresetForString(resolutionPreset);
-  if (_resolutionPreset == FLTResolutionPresetInvalid) {
-    *error = [NSError
-        errorWithDomain:NSCocoaErrorDomain
-                   code:NSURLErrorUnknown
-               userInfo:@{
-                 NSLocalizedDescriptionKey :
-                     [NSString stringWithFormat:@"Unknown resolution preset %@", resolutionPreset]
-               }];
-    return nil;
-  }
-
   _mediaSettings = mediaSettings;
   _mediaSettingsAVWrapper = mediaSettingsAVWrapper;
 
@@ -236,7 +219,7 @@ NSString *const errorMethod = @"error";
       // If _resolutionPreset is not supported by camera there is
       // fallback to lower resolution presets.
       // If none can be selected there is error condition.
-      if (![self setCaptureSessionPreset:_resolutionPreset withError:error]) {
+      if (![self setCaptureSessionPreset:_mediaSettings.resolutionPreset withError:error]) {
         [_videoCaptureSession commitConfiguration];
         [_captureDevice unlockForConfiguration];
         return nil;
@@ -257,7 +240,7 @@ NSString *const errorMethod = @"error";
   } else {
     // If the frame rate is not important fall to a less restrictive
     // behavior (no configuration locking).
-    if (![self setCaptureSessionPreset:_resolutionPreset withError:error]) {
+    if (![self setCaptureSessionPreset:_mediaSettings.resolutionPreset withError:error]) {
       return nil;
     }
   }
@@ -373,7 +356,7 @@ NSString *const errorMethod = @"error";
 - (void)captureToFile:(FlutterResult)result {
   AVCapturePhotoSettings *settings = [AVCapturePhotoSettings photoSettings];
 
-  if (_resolutionPreset == FLTResolutionPresetMax) {
+  if (self.mediaSettings.resolutionPreset == FCPPlatformResolutionPresetMax) {
     [settings setHighResolutionPhotoEnabled:YES];
   }
 
@@ -477,9 +460,10 @@ NSString *const errorMethod = @"error";
   return file;
 }
 
-- (BOOL)setCaptureSessionPreset:(FLTResolutionPreset)resolutionPreset withError:(NSError **)error {
+- (BOOL)setCaptureSessionPreset:(FCPPlatformResolutionPreset)resolutionPreset
+                      withError:(NSError **)error {
   switch (resolutionPreset) {
-    case FLTResolutionPresetMax: {
+    case FCPPlatformResolutionPresetMax: {
       AVCaptureDeviceFormat *bestFormat =
           [self highestResolutionFormatForCaptureDevice:_captureDevice];
       if (bestFormat) {
@@ -497,7 +481,7 @@ NSString *const errorMethod = @"error";
         }
       }
     }
-    case FLTResolutionPresetUltraHigh:
+    case FCPPlatformResolutionPresetUltraHigh:
       if ([_videoCaptureSession canSetSessionPreset:AVCaptureSessionPreset3840x2160]) {
         _videoCaptureSession.sessionPreset = AVCaptureSessionPreset3840x2160;
         _previewSize = CGSizeMake(3840, 2160);
@@ -510,25 +494,25 @@ NSString *const errorMethod = @"error";
                        _captureDevice.activeFormat.highResolutionStillImageDimensions.height);
         break;
       }
-    case FLTResolutionPresetVeryHigh:
+    case FCPPlatformResolutionPresetVeryHigh:
       if ([_videoCaptureSession canSetSessionPreset:AVCaptureSessionPreset1920x1080]) {
         _videoCaptureSession.sessionPreset = AVCaptureSessionPreset1920x1080;
         _previewSize = CGSizeMake(1920, 1080);
         break;
       }
-    case FLTResolutionPresetHigh:
+    case FCPPlatformResolutionPresetHigh:
       if ([_videoCaptureSession canSetSessionPreset:AVCaptureSessionPreset1280x720]) {
         _videoCaptureSession.sessionPreset = AVCaptureSessionPreset1280x720;
         _previewSize = CGSizeMake(1280, 720);
         break;
       }
-    case FLTResolutionPresetMedium:
+    case FCPPlatformResolutionPresetMedium:
       if ([_videoCaptureSession canSetSessionPreset:AVCaptureSessionPreset640x480]) {
         _videoCaptureSession.sessionPreset = AVCaptureSessionPreset640x480;
         _previewSize = CGSizeMake(640, 480);
         break;
       }
-    case FLTResolutionPresetLow:
+    case FCPPlatformResolutionPresetLow:
       if ([_videoCaptureSession canSetSessionPreset:AVCaptureSessionPreset352x288]) {
         _videoCaptureSession.sessionPreset = AVCaptureSessionPreset352x288;
         _previewSize = CGSizeMake(352, 288);

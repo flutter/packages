@@ -79,6 +79,16 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 }
 @end
 
+@implementation FCPPlatformResolutionPresetBox
+- (instancetype)initWithValue:(FCPPlatformResolutionPreset)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
 @interface FCPPlatformCameraDescription ()
 + (FCPPlatformCameraDescription *)fromList:(NSArray *)list;
 + (nullable FCPPlatformCameraDescription *)nullableFromList:(NSArray *)list;
@@ -88,6 +98,12 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 @interface FCPPlatformCameraState ()
 + (FCPPlatformCameraState *)fromList:(NSArray *)list;
 + (nullable FCPPlatformCameraState *)nullableFromList:(NSArray *)list;
+- (NSArray *)toList;
+@end
+
+@interface FCPPlatformMediaSettings ()
++ (FCPPlatformMediaSettings *)fromList:(NSArray *)list;
++ (nullable FCPPlatformMediaSettings *)nullableFromList:(NSArray *)list;
 - (NSArray *)toList;
 @end
 
@@ -159,6 +175,43 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 }
 @end
 
+@implementation FCPPlatformMediaSettings
++ (instancetype)makeWithResolutionPreset:(FCPPlatformResolutionPreset)resolutionPreset
+                         framesPerSecond:(nullable NSNumber *)framesPerSecond
+                            videoBitrate:(nullable NSNumber *)videoBitrate
+                            audioBitrate:(nullable NSNumber *)audioBitrate
+                             enableAudio:(BOOL)enableAudio {
+  FCPPlatformMediaSettings *pigeonResult = [[FCPPlatformMediaSettings alloc] init];
+  pigeonResult.resolutionPreset = resolutionPreset;
+  pigeonResult.framesPerSecond = framesPerSecond;
+  pigeonResult.videoBitrate = videoBitrate;
+  pigeonResult.audioBitrate = audioBitrate;
+  pigeonResult.enableAudio = enableAudio;
+  return pigeonResult;
+}
++ (FCPPlatformMediaSettings *)fromList:(NSArray *)list {
+  FCPPlatformMediaSettings *pigeonResult = [[FCPPlatformMediaSettings alloc] init];
+  pigeonResult.resolutionPreset = [GetNullableObjectAtIndex(list, 0) integerValue];
+  pigeonResult.framesPerSecond = GetNullableObjectAtIndex(list, 1);
+  pigeonResult.videoBitrate = GetNullableObjectAtIndex(list, 2);
+  pigeonResult.audioBitrate = GetNullableObjectAtIndex(list, 3);
+  pigeonResult.enableAudio = [GetNullableObjectAtIndex(list, 4) boolValue];
+  return pigeonResult;
+}
++ (nullable FCPPlatformMediaSettings *)nullableFromList:(NSArray *)list {
+  return (list) ? [FCPPlatformMediaSettings fromList:list] : nil;
+}
+- (NSArray *)toList {
+  return @[
+    @(self.resolutionPreset),
+    self.framesPerSecond ?: [NSNull null],
+    self.videoBitrate ?: [NSNull null],
+    self.audioBitrate ?: [NSNull null],
+    @(self.enableAudio),
+  ];
+}
+@end
+
 @implementation FCPPlatformSize
 + (instancetype)makeWithWidth:(double)width height:(double)height {
   FCPPlatformSize *pigeonResult = [[FCPPlatformSize alloc] init];
@@ -190,6 +243,8 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
   switch (type) {
     case 128:
       return [FCPPlatformCameraDescription fromList:[self readValue]];
+    case 129:
+      return [FCPPlatformMediaSettings fromList:[self readValue]];
     default:
       return [super readValueOfType:type];
   }
@@ -202,6 +257,9 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 - (void)writeValue:(id)value {
   if ([value isKindOfClass:[FCPPlatformCameraDescription class]]) {
     [self writeByte:128];
+    [self writeValue:[value toList]];
+  } else if ([value isKindOfClass:[FCPPlatformMediaSettings class]]) {
+    [self writeByte:129];
     [self writeValue:[value toList]];
   } else {
     [super writeValue:value];
@@ -259,6 +317,33 @@ void SetUpFCPCameraApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger,
                  FlutterError *_Nullable error) {
           callback(wrapResult(output, error));
         }];
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
+  {
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:[NSString stringWithFormat:
+                                      @"%@%@",
+                                      @"dev.flutter.pigeon.camera_avfoundation.CameraApi.create",
+                                      messageChannelSuffix]
+        binaryMessenger:binaryMessenger
+                  codec:FCPCameraApiGetCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector(createCameraWithName:settings:completion:)],
+                @"FCPCameraApi api (%@) doesn't respond to "
+                @"@selector(createCameraWithName:settings:completion:)",
+                api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        NSArray *args = message;
+        NSString *arg_cameraName = GetNullableObjectAtIndex(args, 0);
+        FCPPlatformMediaSettings *arg_settings = GetNullableObjectAtIndex(args, 1);
+        [api createCameraWithName:arg_cameraName
+                         settings:arg_settings
+                       completion:^(NSNumber *_Nullable output, FlutterError *_Nullable error) {
+                         callback(wrapResult(output, error));
+                       }];
       }];
     } else {
       [channel setMessageHandler:nil];
