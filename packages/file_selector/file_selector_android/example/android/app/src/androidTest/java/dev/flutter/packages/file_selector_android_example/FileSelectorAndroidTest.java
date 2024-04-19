@@ -14,8 +14,7 @@ import static androidx.test.espresso.intent.Intents.intended;
 import static androidx.test.espresso.intent.Intents.intending;
 import static androidx.test.espresso.intent.matcher.IntentMatchers.hasAction;
 import static androidx.test.espresso.intent.matcher.IntentMatchers.hasExtra;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
 
 import android.app.Activity;
 import android.app.Instrumentation;
@@ -28,6 +27,7 @@ import androidx.test.espresso.flutter.api.WidgetAssertion;
 import androidx.test.espresso.flutter.model.WidgetInfo;
 import androidx.test.espresso.intent.rule.IntentsRule;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
+import java.util.UUID;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -71,11 +71,23 @@ public class FileSelectorAndroidTest {
               @Override
               public void check(View flutterView, WidgetInfo widgetInfo) {
                 String filePath = widgetInfo.getText();
-                boolean isContentUri = filePath.contains("content://");
-                boolean containsExpectedFileName = filePath.contains(fileName);
+                String expectedContentUri = "content://file_selector_android_test/dummy.png";
+                String expectedContentUriUuid =
+                    UUID.nameUUIDFromBytes(expectedContentUri.toString().getBytes()).toString();
 
-                assertFalse(isContentUri);
-                assertTrue(containsExpectedFileName);
+                myActivityTestRule
+                    .getScenario()
+                    .onActivity(
+                        activity -> {
+                          String expectedCacheDirectory = activity.getCacheDir().getPath();
+                          String expectedFilePath =
+                              expectedCacheDirectory
+                                  + "/"
+                                  + expectedContentUriUuid
+                                  + "/"
+                                  + fileName;
+                          assertEquals(filePath, expectedFilePath);
+                        });
               }
             });
   }

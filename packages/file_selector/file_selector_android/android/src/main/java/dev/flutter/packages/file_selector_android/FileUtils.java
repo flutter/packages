@@ -110,7 +110,7 @@ public class FileUtils {
   @Nullable
   public static String getPathFromCopyOfFileFromUri(@NonNull Context context, @NonNull Uri uri) {
     try (InputStream inputStream = context.getContentResolver().openInputStream(uri)) {
-      String uuid = UUID.randomUUID().toString();
+      String uuid = UUID.nameUUIDFromBytes(uri.toString().getBytes()).toString();
       File targetDirectory = new File(context.getCacheDir(), uuid);
       targetDirectory.mkdir();
       targetDirectory.deleteOnExit();
@@ -152,17 +152,17 @@ public class FileUtils {
   private static String getFileExtension(Context context, Uri uriFile) {
     String extension;
 
-    try {
-      if (uriFile.getScheme().equals(ContentResolver.SCHEME_CONTENT)) {
-        final MimeTypeMap mime = MimeTypeMap.getSingleton();
-        extension = mime.getExtensionFromMimeType(context.getContentResolver().getType(uriFile));
-      } else {
-        extension =
-            MimeTypeMap.getFileExtensionFromUrl(
-                Uri.fromFile(new File(uriFile.getPath())).toString());
+    if (uriFile.getScheme().equals(ContentResolver.SCHEME_CONTENT)) {
+      final MimeTypeMap mime = MimeTypeMap.getSingleton();
+      extension = mime.getExtensionFromMimeType(context.getContentResolver().getType(uriFile));
+    } else {
+      try {
+        Uri uriFromFile = Uri.fromFile(new File(uriFile.getPath()));
+        extension = MimeTypeMap.getFileExtensionFromUrl(uriFromFile.toString());
+      } catch (NullPointerException e) {
+        // File created from uriFile was null.
+        return null;
       }
-    } catch (Exception e) {
-      return null;
     }
 
     if (extension == null || extension.isEmpty()) {
