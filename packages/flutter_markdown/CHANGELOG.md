@@ -1,3 +1,9 @@
+## 0.7.0
+
+* **BREAKING CHANGES**:
+  * Replaces parameters at `bulletBuilder` with `MarkdownBulletParameters`.
+  * Introduces a new parameter `nestLevel` that exposes the bullet item's nesting level.
+
 ## 0.6.23
 
 * Gracefully handle image dimension parsing failures.
