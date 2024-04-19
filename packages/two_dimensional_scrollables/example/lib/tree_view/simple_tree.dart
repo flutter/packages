@@ -15,15 +15,21 @@ class TreeExample extends StatefulWidget {
   const TreeExample({super.key});
 
   @override
-  State<TreeExample> createState() => _TreeExampleState();
+  State<TreeExample> createState() => TreeExampleState();
 }
 
-class _TreeExampleState extends State<TreeExample> {
+/// The state of the [TreeExample].
+class TreeExampleState extends State<TreeExample> {
+  /// The [TreeViewController] associated with this [TreeView].
+  @visibleForTesting
+  final TreeViewController treeController = TreeViewController();
+
+  /// The [ScrollController] associated with the horizontal axis.
+  @visibleForTesting
+  final ScrollController horizontalController = ScrollController();
   TreeViewNode<String>? _selectedNode;
   final ScrollController _verticalController = ScrollController();
-  final ScrollController _horizontalController = ScrollController();
-  final TreeViewController _treeController = TreeViewController();
-  final List<TreeViewNode<String>> tree = <TreeViewNode<String>>[
+  final List<TreeViewNode<String>> _tree = <TreeViewNode<String>>[
     TreeViewNode<String>(
       "It's supercalifragilisticexpialidocious",
       children: <TreeViewNode<String>>[
@@ -81,22 +87,24 @@ class _TreeExampleState extends State<TreeExample> {
         border: Border.all(),
       ),
       child: Scrollbar(
-        controller: _horizontalController,
+        controller: horizontalController,
         thumbVisibility: true,
         child: Scrollbar(
           controller: _verticalController,
           thumbVisibility: true,
           child: TreeView<String>(
-            controller: _treeController,
+            controller: treeController,
             verticalDetails: ScrollableDetails.vertical(
               controller: _verticalController,
             ),
             horizontalDetails: ScrollableDetails.horizontal(
-              controller: _horizontalController,
+              controller: horizontalController,
             ),
-            tree: tree,
+            tree: _tree,
             onNodeToggle: (TreeViewNode<dynamic> node) {
-              _selectedNode = node as TreeViewNode<String>;
+              setState(() {
+                _selectedNode = node as TreeViewNode<String>;
+              });
             },
             treeRowBuilder: (TreeViewNode<dynamic> node) {
               if (_selectedNode == (node as TreeViewNode<String>)) {

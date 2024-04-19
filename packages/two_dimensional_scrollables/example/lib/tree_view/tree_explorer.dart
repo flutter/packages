@@ -4,8 +4,8 @@
 
 import 'package:flutter/material.dart';
 
-import 'simple_tree.dart';
 import 'custom_tree.dart';
+import 'simple_tree.dart';
 
 /// The page containing the interactive controls that modify the sample
 /// TreeView.
@@ -18,25 +18,29 @@ class TreeExplorer extends StatefulWidget {
   State<TreeExplorer> createState() => _TreeExplorerState();
 }
 
-enum _TreeExample {
+/// Which example is being displayed.
+enum TreeType {
+  /// Displays TreeExample.
   simple,
+
+  /// Displays CustomTreeExample.
   custom,
 }
 
 class _TreeExplorerState extends State<TreeExplorer> {
   final SizedBox _spacer = const SizedBox.square(dimension: 20.0);
-  _TreeExample _currentExample = _TreeExample.simple;
+  TreeType _currentExample = TreeType.simple;
   String _getTitle() {
     return switch (_currentExample) {
-      _TreeExample.simple => 'Simple TreeView',
-      _TreeExample.custom => 'Customizing TreeView',
+      TreeType.simple => 'Simple TreeView',
+      TreeType.custom => 'Customizing TreeView',
     };
   }
 
   Widget _getTree() {
     return switch (_currentExample) {
-      _TreeExample.simple => const TreeExample(),
-      _TreeExample.custom => const TreeExample(),
+      TreeType.simple => const TreeExample(),
+      TreeType.custom => const CustomTreeExample(),
     };
   }
 
@@ -46,10 +50,10 @@ class _TreeExplorerState extends State<TreeExplorer> {
       child: Row(
         children: <Widget>[
           const Spacer(),
-          Radio<_TreeExample>(
-            value: _TreeExample.simple,
+          Radio<TreeType>(
+            value: TreeType.simple,
             groupValue: _currentExample,
-            onChanged: (_TreeExample? value) {
+            onChanged: (TreeType? value) {
               setState(() {
                 _currentExample = value!;
               });
@@ -57,10 +61,10 @@ class _TreeExplorerState extends State<TreeExplorer> {
           ),
           const Text('Simple'),
           _spacer,
-          Radio<_TreeExample>(
-            value: _TreeExample.custom,
+          Radio<TreeType>(
+            value: TreeType.custom,
             groupValue: _currentExample,
-            onChanged: (_TreeExample? value) {
+            onChanged: (TreeType? value) {
               setState(() {
                 _currentExample = value!;
               });

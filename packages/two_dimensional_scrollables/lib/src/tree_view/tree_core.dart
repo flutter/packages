@@ -33,15 +33,16 @@ typedef TreeViewNodeCallback = void Function(TreeViewNode<dynamic> node);
 /// This allows the [TreeViewController] to be used in other widgets that implement
 /// this interface.
 mixin TreeViewStateMixin<T> {
-  /// Returns whether or not the given [TreeViewNode] is expanded.
+  /// Returns whether or not the given [TreeViewNode] is expanded, regardless of
+  /// whether or not it is active in the tree.
   bool isExpanded(TreeViewNode<T> node);
 
-  /// Returns whether or not the given [TreeViewNode] is enclosed within its parent
-  /// [TreeViewNode].
+  /// Returns whether or not the given [TreeViewNode] is enclosed within its
+  /// parent [TreeViewNode].
   ///
-  /// If the [TreeViewNode.parent] [isExpanded], or this is a root node, the given
-  /// node is active and this method will return true. This does not reflect
-  /// whether or not the node is visible in the [Viewport].
+  /// If the [TreeViewNode.parent] [isExpanded], or this is a root node, the
+  /// given node is active and this method will return true. This does not
+  /// reflect whether or not the node is visible in the [Viewport].
   bool isActive(TreeViewNode<T> node);
 
   /// Switches the given [TreeViewNode]s expanded state.
@@ -58,7 +59,8 @@ mixin TreeViewStateMixin<T> {
   /// Expands all parent [TreeViewNode]s in the tree.
   void expandAll();
 
-  /// Retrieves the [TreeViewNode] containing the associated content, if it exists.
+  /// Retrieves the [TreeViewNode] containing the associated content, if it
+  /// exists.
   ///
   /// If no node exists, this will return null. This does not reflect whether
   /// or not a node [isActive], or if it is visible in the viewport.

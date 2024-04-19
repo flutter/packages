@@ -19,28 +19,34 @@ class TableExplorer extends StatefulWidget {
   State<TableExplorer> createState() => _TableExplorerState();
 }
 
-enum _TableExample {
+/// Which example is being displayed.
+enum TableType {
+  /// Displays TableExample.
   simple,
+
+  /// Displays MergedTableExample.
   merged,
+
+  /// Displays InfiniteTableExample.
   infinite,
 }
 
 class _TableExplorerState extends State<TableExplorer> {
   final SizedBox _spacer = const SizedBox.square(dimension: 20.0);
-  _TableExample _currentExample = _TableExample.simple;
+  TableType _currentExample = TableType.simple;
   String _getTitle() {
     return switch (_currentExample) {
-      _TableExample.simple => 'Simple TableView',
-      _TableExample.merged => 'Merged cells in TableView',
-      _TableExample.infinite => 'Infinite TableView',
+      TableType.simple => 'Simple TableView',
+      TableType.merged => 'Merged cells in TableView',
+      TableType.infinite => 'Infinite TableView',
     };
   }
 
   Widget _getTable() {
     return switch (_currentExample) {
-      _TableExample.simple => const TableExample(),
-      _TableExample.merged => const MergedTableExample(),
-      _TableExample.infinite => const InfiniteTableExample(),
+      TableType.simple => const TableExample(),
+      TableType.merged => const MergedTableExample(),
+      TableType.infinite => const InfiniteTableExample(),
     };
   }
 
@@ -50,10 +56,10 @@ class _TableExplorerState extends State<TableExplorer> {
       child: Row(
         children: <Widget>[
           const Spacer(),
-          Radio<_TableExample>(
-            value: _TableExample.simple,
+          Radio<TableType>(
+            value: TableType.simple,
             groupValue: _currentExample,
-            onChanged: (_TableExample? value) {
+            onChanged: (TableType? value) {
               setState(() {
                 _currentExample = value!;
               });
@@ -61,10 +67,10 @@ class _TableExplorerState extends State<TableExplorer> {
           ),
           const Text('Simple'),
           _spacer,
-          Radio<_TableExample>(
-            value: _TableExample.merged,
+          Radio<TableType>(
+            value: TableType.merged,
             groupValue: _currentExample,
-            onChanged: (_TableExample? value) {
+            onChanged: (TableType? value) {
               setState(() {
                 _currentExample = value!;
               });
@@ -72,10 +78,10 @@ class _TableExplorerState extends State<TableExplorer> {
           ),
           const Text('Merged'),
           _spacer,
-          Radio<_TableExample>(
-            value: _TableExample.infinite,
+          Radio<TableType>(
+            value: TableType.infinite,
             groupValue: _currentExample,
-            onChanged: (_TableExample? value) {
+            onChanged: (TableType? value) {
               setState(() {
                 _currentExample = value!;
               });

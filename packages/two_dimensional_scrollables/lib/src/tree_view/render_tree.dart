@@ -126,9 +126,9 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
   }
 
   // Whether or not there is visual overflow in the viewport.
-  bool get _hasVisualOverflow => _verticalOverflows || _hoizontalOverflows;
+  bool get _hasVisualOverflow => _verticalOverflows || _horizontalOverflows;
   bool _verticalOverflows = false;
-  bool _hoizontalOverflows = false;
+  bool _horizontalOverflows = false;
 
   // Maps the index of parents to the animation key of their children.
   final Map<int, UniqueKey> _animationLeadingIndices = <int, UniqueKey>{};
@@ -324,7 +324,7 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
       0.0,
       _furthestHorizontalExtent - viewportDimension.width,
     );
-    _hoizontalOverflows = maxHorizontalExtent > 0.0;
+    _horizontalOverflows = maxHorizontalExtent > 0.0;
     final double maxVerticalExtent = math.max(
       0.0,
       _rowMetrics[_lastRow!]!.trailingOffset - viewportDimension.height,
@@ -423,8 +423,8 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
             _paintRows(
               context,
               offset,
-              leadingRow: 0,
-              trailingRow: delegate.rowCount - 1,
+              leadingRow: _firstRow!,
+              trailingRow: _lastRow!,
             );
           },
           clipBehavior: clipBehavior,
@@ -435,8 +435,8 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
         _paintRows(
           context,
           offset,
-          leadingRow: 0,
-          trailingRow: delegate.rowCount - 1,
+          leadingRow: _firstRow!,
+          trailingRow: _lastRow!,
         );
       }
       return;
@@ -497,7 +497,13 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
           _rowMetrics[segment.trailingIndex]!.trailingOffset;
       final Rect rect = Rect.fromPoints(
         Offset(0.0, leadingOffset),
-        Offset(viewportDimension.width, trailingOffset),
+        Offset(
+          viewportDimension.width,
+          math.min(
+            trailingOffset,
+            viewportDimension.height,
+          ),
+        ),
       );
       // We use the same animation key to keep track of the clip layer, unless
       // this is the odd man out segment.
@@ -549,7 +555,10 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
           // edge of the viewport.
           return Rect.fromPoints(
             Offset(0.0, parentData.layoutOffset!.dy),
-            Offset(viewportDimension.width, rowSpan.trailingOffset),
+            Offset(
+              viewportDimension.width,
+              rowSpan.trailingOffset - verticalOffset.pixels,
+            ),
           );
         }
 
@@ -582,13 +591,13 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
     });
     // Child nodes.
     for (int row = leadingRow; row <= trailingRow; row++) {
-      final RenderBox cell = getChildFor(
+      final RenderBox child = getChildFor(
         ChildVicinity(xIndex: _rowDepths[row]!, yIndex: row),
       )!;
       final TwoDimensionalViewportParentData cellParentData =
-          parentDataOf(cell);
+          parentDataOf(child);
       if (cellParentData.isVisible) {
-        context.paintChild(cell, offset + cellParentData.paintOffset!);
+        context.paintChild(child, offset + cellParentData.paintOffset!);
       }
     }
     // Foreground decorations.

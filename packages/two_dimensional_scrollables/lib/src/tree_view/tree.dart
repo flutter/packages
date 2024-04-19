@@ -487,12 +487,17 @@ class TreeView<T> extends StatefulWidget {
   /// If defining your own [TreeView.treeNodeBuilder], this method can be used
   /// to wrap any part, or all, of the returned widget in order to trigger the
   /// change in state for the node when tapped.
+  ///
+  /// The gesture uses [HitTestBehavior.translucent], so as to not conflict
+  /// with any [TreeRow.recognizerFactories] or other interactive content in the
+  /// [TreeRow].
   static Widget toggleNodeWith({
     required TreeViewNode<dynamic> node,
     required Widget child,
   }) {
     return Builder(builder: (BuildContext context) {
       return GestureDetector(
+        behavior: HitTestBehavior.translucent,
         onTap: () {
           TreeViewController.of(context).toggleNode(node);
         },
@@ -735,7 +740,14 @@ class _TreeViewState<T> extends State<TreeView<T>>
     for (final TreeViewNode<T> node in tree) {
       if (node.children.isNotEmpty) {
         if (!node.isExpanded) {
-          toggleNode(node);
+          if (_activeNodes.contains(node)) {
+            // This is an active node in the tree, trigger the animation and
+            // rebuild.
+            toggleNode(node);
+          } else {
+            // This is a hidden node. Update its expanded state.
+            node._expanded = true;
+          }
         }
         _expand(node.children);
       }
@@ -748,7 +760,14 @@ class _TreeViewState<T> extends State<TreeView<T>>
     for (final TreeViewNode<T> node in tree) {
       if (node.children.isNotEmpty) {
         if (node.isExpanded) {
-          toggleNode(node);
+          if (_activeNodes.contains(node)) {
+            // This is an active node in the tree, trigger the animation and
+            // rebuild.
+            toggleNode(node);
+          } else {
+            // This is a hidden node. Update its expanded state.
+            node._expanded = false;
+          }
         }
         _collapse(node.children);
       }

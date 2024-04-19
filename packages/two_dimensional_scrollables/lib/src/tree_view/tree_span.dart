@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:flutter/painting.dart';
+
 import '../common/span.dart';
 
 /// Defines the leading and trailing padding values of a [TreeRow].
@@ -71,7 +73,49 @@ typedef MinTreeRowExtent = MinSpanExtent;
 typedef TreeRowDecoration = SpanDecoration;
 
 /// Describes the border for a [TreeRow].
-typedef TreeRowBorder = SpanBorder;
+class TreeRowBorder extends SpanBorder{
+  /// Creates a [TreeRowBorder].
+  const TreeRowBorder({
+    BorderSide top = BorderSide.none,
+    BorderSide bottom = BorderSide.none,
+    this.left = BorderSide.none,
+    this.right = BorderSide.none,
+  }) : super(leading: top, trailing: bottom);
+
+  /// Creates a [TreeRowBorder] with the provided [BorderSide] applied to all
+  /// sides.
+  const TreeRowBorder.all(BorderSide side) : left = side, right = side, super(leading: side, trailing: side);
+
+  /// The border to paint on the top, or leading edge of the [TreeRow].
+  BorderSide get top => leading;
+
+  /// The border to paint on the top, or leading edge of the [TreeRow].
+  BorderSide get bottom => trailing;
+
+  /// The border to draw on the left side of the [TreeRow].
+  final BorderSide left;
+
+  /// The border to draw on the right side of the [TreeRow].
+  final BorderSide right;
+
+  @override
+  void paint(
+    SpanDecorationPaintDetails details,
+    BorderRadius? borderRadius,
+  ) {
+    final Border border = Border(
+      top: top,
+      bottom: bottom,
+      left: left,
+      right: right,
+    );
+    border.paint(
+      details.canvas,
+      details.rect,
+      borderRadius: borderRadius,
+    );
+  }
+}
 
 /// Provides the details of a given [TreeRowDecoration] for painting.
 ///

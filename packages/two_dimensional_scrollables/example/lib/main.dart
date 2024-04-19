@@ -8,13 +8,13 @@ import 'table_view/table_explorer.dart';
 import 'tree_view/tree_explorer.dart';
 
 void main() {
-  runApp(const TableExampleApp());
+  runApp(const ExampleApp());
 }
 
-/// A sample application that utilizes the TableView API.
-class TableExampleApp extends StatelessWidget {
-  /// Creates an instance of the TableView example app.
-  const TableExampleApp({super.key});
+/// A sample application that utilizes the TableView and TreeView APIs.
+class ExampleApp extends StatelessWidget {
+  /// Creates an instance of the example app.
+  const ExampleApp({super.key});
 
   @override
   Widget build(BuildContext context) {

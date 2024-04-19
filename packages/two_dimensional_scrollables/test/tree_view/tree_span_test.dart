@@ -167,7 +167,7 @@ void main() {
     expect(canvas.paint.color, const Color(0xffff0000));
     expect(canvas.paint.isAntiAlias, isFalse);
     final TestTreeRowBorder border = TestTreeRowBorder(
-      leading: const BorderSide(),
+      top: const BorderSide(),
     );
     decoration = TreeRowDecoration(
       border: border,
@@ -197,7 +197,7 @@ class TestCanvas implements Canvas {
 }
 
 class TestTreeRowBorder extends TreeRowBorder {
-  TestTreeRowBorder({super.leading});
+  TestTreeRowBorder({super.top});
   TreeRowDecorationPaintDetails? details;
   BorderRadius? radius;
   @override
