@@ -518,10 +518,13 @@ static void noop_cb(GObject* object, GAsyncResult* result, gpointer user_data) {
   g_autoptr(CallbackData) data = static_cast<CallbackData*>(user_data);
 
   g_autoptr(GError) error = nullptr;
-  // FIXME gboolean r =
-  core_tests_pigeon_test_flutter_integration_core_api_noop_finish(
-      CORE_TESTS_PIGEON_TEST_FLUTTER_INTEGRATION_CORE_API(object), result,
-      &error);
+  if (!core_tests_pigeon_test_flutter_integration_core_api_noop_finish(
+          CORE_TESTS_PIGEON_TEST_FLUTTER_INTEGRATION_CORE_API(object), result,
+          &error)) {
+    core_tests_pigeon_test_host_integration_core_api_respond_error_call_flutter_noop(
+        data->self->host_core_api, data->response_handle, "", "", nullptr);
+    return;
+  }
 
   core_tests_pigeon_test_host_integration_core_api_respond_call_flutter_noop(
       data->self->host_core_api, data->response_handle);
@@ -543,10 +546,13 @@ static void throw_error_cb(GObject* object, GAsyncResult* result,
 
   g_autoptr(FlValue) return_value = nullptr;
   g_autoptr(GError) error = nullptr;
-  // FIXME gboolean r =
-  core_tests_pigeon_test_flutter_integration_core_api_throw_error_finish(
-      CORE_TESTS_PIGEON_TEST_FLUTTER_INTEGRATION_CORE_API(object), result,
-      &return_value, &error);
+  if (!core_tests_pigeon_test_flutter_integration_core_api_throw_error_finish(
+          CORE_TESTS_PIGEON_TEST_FLUTTER_INTEGRATION_CORE_API(object), result,
+          &return_value, &error)) {
+    core_tests_pigeon_test_host_integration_core_api_respond_error_call_flutter_throw_error(
+        data->self->host_core_api, data->response_handle, "", "", nullptr);
+    return;
+  }
 
   core_tests_pigeon_test_host_integration_core_api_respond_call_flutter_throw_error(
       data->self->host_core_api, data->response_handle, return_value);
@@ -567,10 +573,13 @@ static void throw_error_from_void_cb(GObject* object, GAsyncResult* result,
   g_autoptr(CallbackData) data = static_cast<CallbackData*>(user_data);
 
   g_autoptr(GError) error = nullptr;
-  // FIXME gboolean r =
-  core_tests_pigeon_test_flutter_integration_core_api_throw_error_from_void_finish(
-      CORE_TESTS_PIGEON_TEST_FLUTTER_INTEGRATION_CORE_API(object), result,
-      &error);
+  if (!core_tests_pigeon_test_flutter_integration_core_api_throw_error_from_void_finish(
+          CORE_TESTS_PIGEON_TEST_FLUTTER_INTEGRATION_CORE_API(object), result,
+          &error)) {
+    core_tests_pigeon_test_host_integration_core_api_respond_error_call_flutter_throw_error_from_void(
+        data->self->host_core_api, data->response_handle, "", "", nullptr);
+    return;
+  }
 
   core_tests_pigeon_test_host_integration_core_api_respond_call_flutter_throw_error_from_void(
       data->self->host_core_api, data->response_handle);
@@ -592,10 +601,13 @@ static void echo_all_types_cb(GObject* object, GAsyncResult* result,
 
   g_autoptr(CoreTestsPigeonTestAllTypes) return_value = nullptr;
   g_autoptr(GError) error = nullptr;
-  // FIXME gboolean r =
-  core_tests_pigeon_test_flutter_integration_core_api_echo_all_types_finish(
-      CORE_TESTS_PIGEON_TEST_FLUTTER_INTEGRATION_CORE_API(object), result,
-      &return_value, &error);
+  if (!core_tests_pigeon_test_flutter_integration_core_api_echo_all_types_finish(
+          CORE_TESTS_PIGEON_TEST_FLUTTER_INTEGRATION_CORE_API(object), result,
+          &return_value, &error)) {
+    core_tests_pigeon_test_host_integration_core_api_respond_error_call_flutter_echo_all_types(
+        data->self->host_core_api, data->response_handle, "", "", nullptr);
+    return;
+  }
 
   core_tests_pigeon_test_host_integration_core_api_respond_call_flutter_echo_all_types(
       data->self->host_core_api, data->response_handle, return_value);
@@ -618,10 +630,13 @@ static void echo_all_nullable_types_cb(GObject* object, GAsyncResult* result,
 
   g_autoptr(CoreTestsPigeonTestAllNullableTypes) return_value = nullptr;
   g_autoptr(GError) error = nullptr;
-  // FIXME gboolean r =
-  core_tests_pigeon_test_flutter_integration_core_api_echo_all_nullable_types_finish(
-      CORE_TESTS_PIGEON_TEST_FLUTTER_INTEGRATION_CORE_API(object), result,
-      &return_value, &error);
+  if (!core_tests_pigeon_test_flutter_integration_core_api_echo_all_nullable_types_finish(
+          CORE_TESTS_PIGEON_TEST_FLUTTER_INTEGRATION_CORE_API(object), result,
+          &return_value, &error)) {
+    core_tests_pigeon_test_host_integration_core_api_respond_error_call_flutter_echo_all_nullable_types(
+        data->self->host_core_api, data->response_handle, "", "", nullptr);
+    return;
+  }
 
   core_tests_pigeon_test_host_integration_core_api_respond_call_flutter_echo_all_nullable_types(
       data->self->host_core_api, data->response_handle, return_value);
@@ -645,10 +660,13 @@ static void send_multiple_nullable_types_cb(GObject* object,
 
   g_autoptr(CoreTestsPigeonTestAllNullableTypes) return_value = nullptr;
   g_autoptr(GError) error = nullptr;
-  // FIXME gboolean r =
-  core_tests_pigeon_test_flutter_integration_core_api_send_multiple_nullable_types_finish(
-      CORE_TESTS_PIGEON_TEST_FLUTTER_INTEGRATION_CORE_API(object), result,
-      &return_value, &error);
+  if (!core_tests_pigeon_test_flutter_integration_core_api_send_multiple_nullable_types_finish(
+          CORE_TESTS_PIGEON_TEST_FLUTTER_INTEGRATION_CORE_API(object), result,
+          &return_value, &error)) {
+    core_tests_pigeon_test_host_integration_core_api_respond_error_call_flutter_send_multiple_nullable_types(
+        data->self->host_core_api, data->response_handle, "", "", nullptr);
+    return;
+  }
 
   core_tests_pigeon_test_host_integration_core_api_respond_call_flutter_send_multiple_nullable_types(
       data->self->host_core_api, data->response_handle, return_value);
@@ -674,10 +692,13 @@ static void echo_all_nullable_types_without_recursion_cb(GObject* object,
   g_autoptr(CoreTestsPigeonTestAllNullableTypesWithoutRecursion) return_value =
       nullptr;
   g_autoptr(GError) error = nullptr;
-  // FIXME gboolean r =
-  core_tests_pigeon_test_flutter_integration_core_api_echo_all_nullable_types_without_recursion_finish(
-      CORE_TESTS_PIGEON_TEST_FLUTTER_INTEGRATION_CORE_API(object), result,
-      &return_value, &error);
+  if (!core_tests_pigeon_test_flutter_integration_core_api_echo_all_nullable_types_without_recursion_finish(
+          CORE_TESTS_PIGEON_TEST_FLUTTER_INTEGRATION_CORE_API(object), result,
+          &return_value, &error)) {
+    core_tests_pigeon_test_host_integration_core_api_respond_error_call_flutter_echo_all_nullable_types_without_recursion(
+        data->self->host_core_api, data->response_handle, "", "", nullptr);
+    return;
+  }
 
   core_tests_pigeon_test_host_integration_core_api_respond_call_flutter_echo_all_nullable_types_without_recursion(
       data->self->host_core_api, data->response_handle, return_value);
@@ -702,10 +723,13 @@ static void send_multiple_nullable_types_without_recursion_cb(
   g_autoptr(CoreTestsPigeonTestAllNullableTypesWithoutRecursion) return_value =
       nullptr;
   g_autoptr(GError) error = nullptr;
-  // FIXME gboolean r =
-  core_tests_pigeon_test_flutter_integration_core_api_send_multiple_nullable_types_without_recursion_finish(
-      CORE_TESTS_PIGEON_TEST_FLUTTER_INTEGRATION_CORE_API(object), result,
-      &return_value, &error);
+  if (!core_tests_pigeon_test_flutter_integration_core_api_send_multiple_nullable_types_without_recursion_finish(
+          CORE_TESTS_PIGEON_TEST_FLUTTER_INTEGRATION_CORE_API(object), result,
+          &return_value, &error)) {
+    core_tests_pigeon_test_host_integration_core_api_respond_error_call_flutter_send_multiple_nullable_types_without_recursion(
+        data->self->host_core_api, data->response_handle, "", "", nullptr);
+    return;
+  }
 
   core_tests_pigeon_test_host_integration_core_api_respond_call_flutter_send_multiple_nullable_types_without_recursion(
       data->self->host_core_api, data->response_handle, return_value);
@@ -730,10 +754,13 @@ static void echo_bool_cb(GObject* object, GAsyncResult* result,
 
   gboolean return_value;
   g_autoptr(GError) error = nullptr;
-  // FIXME gboolean r =
-  core_tests_pigeon_test_flutter_integration_core_api_echo_bool_finish(
-      CORE_TESTS_PIGEON_TEST_FLUTTER_INTEGRATION_CORE_API(object), result,
-      &return_value, &error);
+  if (!core_tests_pigeon_test_flutter_integration_core_api_echo_bool_finish(
+          CORE_TESTS_PIGEON_TEST_FLUTTER_INTEGRATION_CORE_API(object), result,
+          &return_value, &error)) {
+    core_tests_pigeon_test_host_integration_core_api_respond_error_call_flutter_echo_bool(
+        data->self->host_core_api, data->response_handle, "", "", nullptr);
+    return;
+  }
 
   core_tests_pigeon_test_host_integration_core_api_respond_call_flutter_echo_bool(
       data->self->host_core_api, data->response_handle, return_value);
@@ -755,10 +782,13 @@ static void echo_int_cb(GObject* object, GAsyncResult* result,
 
   int64_t return_value;
   g_autoptr(GError) error = nullptr;
-  // FIXME gboolean r =
-  core_tests_pigeon_test_flutter_integration_core_api_echo_int_finish(
-      CORE_TESTS_PIGEON_TEST_FLUTTER_INTEGRATION_CORE_API(object), result,
-      &return_value, &error);
+  if (!core_tests_pigeon_test_flutter_integration_core_api_echo_int_finish(
+          CORE_TESTS_PIGEON_TEST_FLUTTER_INTEGRATION_CORE_API(object), result,
+          &return_value, &error)) {
+    core_tests_pigeon_test_host_integration_core_api_respond_error_call_flutter_echo_int(
+        data->self->host_core_api, data->response_handle, "", "", nullptr);
+    return;
+  }
 
   core_tests_pigeon_test_host_integration_core_api_respond_call_flutter_echo_int(
       data->self->host_core_api, data->response_handle, return_value);
@@ -780,10 +810,13 @@ static void echo_double_cb(GObject* object, GAsyncResult* result,
 
   double return_value;
   g_autoptr(GError) error = nullptr;
-  // FIXME gboolean r =
-  core_tests_pigeon_test_flutter_integration_core_api_echo_double_finish(
-      CORE_TESTS_PIGEON_TEST_FLUTTER_INTEGRATION_CORE_API(object), result,
-      &return_value, &error);
+  if (!core_tests_pigeon_test_flutter_integration_core_api_echo_double_finish(
+          CORE_TESTS_PIGEON_TEST_FLUTTER_INTEGRATION_CORE_API(object), result,
+          &return_value, &error)) {
+    core_tests_pigeon_test_host_integration_core_api_respond_error_call_flutter_echo_double(
+        data->self->host_core_api, data->response_handle, "", "", nullptr);
+    return;
+  }
 
   core_tests_pigeon_test_host_integration_core_api_respond_call_flutter_echo_double(
       data->self->host_core_api, data->response_handle, return_value);
@@ -805,10 +838,13 @@ static void echo_string_cb(GObject* object, GAsyncResult* result,
 
   g_autofree gchar* return_value = nullptr;
   g_autoptr(GError) error = nullptr;
-  // FIXME gboolean r =
-  core_tests_pigeon_test_flutter_integration_core_api_echo_string_finish(
-      CORE_TESTS_PIGEON_TEST_FLUTTER_INTEGRATION_CORE_API(object), result,
-      &return_value, &error);
+  if (!core_tests_pigeon_test_flutter_integration_core_api_echo_string_finish(
+          CORE_TESTS_PIGEON_TEST_FLUTTER_INTEGRATION_CORE_API(object), result,
+          &return_value, &error)) {
+    core_tests_pigeon_test_host_integration_core_api_respond_error_call_flutter_echo_string(
+        data->self->host_core_api, data->response_handle, "", "", nullptr);
+    return;
+  }
 
   core_tests_pigeon_test_host_integration_core_api_respond_call_flutter_echo_string(
       data->self->host_core_api, data->response_handle, return_value);
@@ -831,10 +867,13 @@ static void echo_uint8_list_cb(GObject* object, GAsyncResult* result,
   g_autofree uint8_t* return_value = nullptr;
   size_t return_value_length;
   g_autoptr(GError) error = nullptr;
-  // FIXME gboolean r =
-  core_tests_pigeon_test_flutter_integration_core_api_echo_uint8_list_finish(
-      CORE_TESTS_PIGEON_TEST_FLUTTER_INTEGRATION_CORE_API(object), result,
-      &return_value, &return_value_length, &error);
+  if (!core_tests_pigeon_test_flutter_integration_core_api_echo_uint8_list_finish(
+          CORE_TESTS_PIGEON_TEST_FLUTTER_INTEGRATION_CORE_API(object), result,
+          &return_value, &return_value_length, &error)) {
+    core_tests_pigeon_test_host_integration_core_api_respond_error_call_flutter_echo_uint8_list(
+        data->self->host_core_api, data->response_handle, "", "", nullptr);
+    return;
+  }
 
   core_tests_pigeon_test_host_integration_core_api_respond_call_flutter_echo_uint8_list(
       data->self->host_core_api, data->response_handle, return_value,
@@ -858,10 +897,13 @@ static void echo_list_cb(GObject* object, GAsyncResult* result,
 
   g_autoptr(FlValue) return_value = nullptr;
   g_autoptr(GError) error = nullptr;
-  // FIXME gboolean r =
-  core_tests_pigeon_test_flutter_integration_core_api_echo_list_finish(
-      CORE_TESTS_PIGEON_TEST_FLUTTER_INTEGRATION_CORE_API(object), result,
-      &return_value, &error);
+  if (!core_tests_pigeon_test_flutter_integration_core_api_echo_list_finish(
+          CORE_TESTS_PIGEON_TEST_FLUTTER_INTEGRATION_CORE_API(object), result,
+          &return_value, &error)) {
+    core_tests_pigeon_test_host_integration_core_api_respond_error_call_flutter_echo_list(
+        data->self->host_core_api, data->response_handle, "", "", nullptr);
+    return;
+  }
 
   core_tests_pigeon_test_host_integration_core_api_respond_call_flutter_echo_list(
       data->self->host_core_api, data->response_handle, return_value);
@@ -883,10 +925,13 @@ static void echo_map_cb(GObject* object, GAsyncResult* result,
 
   g_autoptr(FlValue) return_value = nullptr;
   g_autoptr(GError) error = nullptr;
-  // FIXME gboolean r =
-  core_tests_pigeon_test_flutter_integration_core_api_echo_map_finish(
-      CORE_TESTS_PIGEON_TEST_FLUTTER_INTEGRATION_CORE_API(object), result,
-      &return_value, &error);
+  if (!core_tests_pigeon_test_flutter_integration_core_api_echo_map_finish(
+          CORE_TESTS_PIGEON_TEST_FLUTTER_INTEGRATION_CORE_API(object), result,
+          &return_value, &error)) {
+    core_tests_pigeon_test_host_integration_core_api_respond_error_call_flutter_echo_map(
+        data->self->host_core_api, data->response_handle, "", "", nullptr);
+    return;
+  }
 
   core_tests_pigeon_test_host_integration_core_api_respond_call_flutter_echo_map(
       data->self->host_core_api, data->response_handle, return_value);
@@ -908,10 +953,13 @@ static void echo_enum_cb(GObject* object, GAsyncResult* result,
 
   CoreTestsPigeonTestAnEnum return_value;
   g_autoptr(GError) error = nullptr;
-  // FIXME gboolean r =
-  core_tests_pigeon_test_flutter_integration_core_api_echo_enum_finish(
-      CORE_TESTS_PIGEON_TEST_FLUTTER_INTEGRATION_CORE_API(object), result,
-      &return_value, &error);
+  if (!core_tests_pigeon_test_flutter_integration_core_api_echo_enum_finish(
+          CORE_TESTS_PIGEON_TEST_FLUTTER_INTEGRATION_CORE_API(object), result,
+          &return_value, &error)) {
+    core_tests_pigeon_test_host_integration_core_api_respond_error_call_flutter_echo_enum(
+        data->self->host_core_api, data->response_handle, "", "", nullptr);
+    return;
+  }
 
   core_tests_pigeon_test_host_integration_core_api_respond_call_flutter_echo_enum(
       data->self->host_core_api, data->response_handle, return_value);
@@ -934,10 +982,13 @@ static void echo_nullable_bool_cb(GObject* object, GAsyncResult* result,
 
   g_autofree gboolean* return_value = nullptr;
   g_autoptr(GError) error = nullptr;
-  // FIXME gboolean r =
-  core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_bool_finish(
-      CORE_TESTS_PIGEON_TEST_FLUTTER_INTEGRATION_CORE_API(object), result,
-      &return_value, &error);
+  if (!core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_bool_finish(
+          CORE_TESTS_PIGEON_TEST_FLUTTER_INTEGRATION_CORE_API(object), result,
+          &return_value, &error)) {
+    core_tests_pigeon_test_host_integration_core_api_respond_error_call_flutter_echo_nullable_bool(
+        data->self->host_core_api, data->response_handle, "", "", nullptr);
+    return;
+  }
 
   core_tests_pigeon_test_host_integration_core_api_respond_call_flutter_echo_nullable_bool(
       data->self->host_core_api, data->response_handle, return_value);
@@ -959,10 +1010,13 @@ static void echo_nullable_int_cb(GObject* object, GAsyncResult* result,
 
   g_autofree int64_t* return_value = nullptr;
   g_autoptr(GError) error = nullptr;
-  // FIXME gboolean r =
-  core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_int_finish(
-      CORE_TESTS_PIGEON_TEST_FLUTTER_INTEGRATION_CORE_API(object), result,
-      &return_value, &error);
+  if (!core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_int_finish(
+          CORE_TESTS_PIGEON_TEST_FLUTTER_INTEGRATION_CORE_API(object), result,
+          &return_value, &error)) {
+    core_tests_pigeon_test_host_integration_core_api_respond_error_call_flutter_echo_nullable_int(
+        data->self->host_core_api, data->response_handle, "", "", nullptr);
+    return;
+  }
 
   core_tests_pigeon_test_host_integration_core_api_respond_call_flutter_echo_nullable_int(
       data->self->host_core_api, data->response_handle, return_value);
@@ -984,10 +1038,13 @@ static void echo_nullable_double_cb(GObject* object, GAsyncResult* result,
 
   g_autofree double* return_value = nullptr;
   g_autoptr(GError) error = nullptr;
-  // FIXME gboolean r =
-  core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_double_finish(
-      CORE_TESTS_PIGEON_TEST_FLUTTER_INTEGRATION_CORE_API(object), result,
-      &return_value, &error);
+  if (!core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_double_finish(
+          CORE_TESTS_PIGEON_TEST_FLUTTER_INTEGRATION_CORE_API(object), result,
+          &return_value, &error)) {
+    core_tests_pigeon_test_host_integration_core_api_respond_error_call_flutter_echo_nullable_double(
+        data->self->host_core_api, data->response_handle, "", "", nullptr);
+    return;
+  }
 
   core_tests_pigeon_test_host_integration_core_api_respond_call_flutter_echo_nullable_double(
       data->self->host_core_api, data->response_handle, return_value);
@@ -1009,10 +1066,13 @@ static void echo_nullable_string_cb(GObject* object, GAsyncResult* result,
 
   g_autofree gchar* return_value = nullptr;
   g_autoptr(GError) error = nullptr;
-  // FIXME gboolean r =
-  core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_string_finish(
-      CORE_TESTS_PIGEON_TEST_FLUTTER_INTEGRATION_CORE_API(object), result,
-      &return_value, &error);
+  if (!core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_string_finish(
+          CORE_TESTS_PIGEON_TEST_FLUTTER_INTEGRATION_CORE_API(object), result,
+          &return_value, &error)) {
+    core_tests_pigeon_test_host_integration_core_api_respond_error_call_flutter_echo_nullable_string(
+        data->self->host_core_api, data->response_handle, "", "", nullptr);
+    return;
+  }
 
   core_tests_pigeon_test_host_integration_core_api_respond_call_flutter_echo_nullable_string(
       data->self->host_core_api, data->response_handle, return_value);
@@ -1035,10 +1095,13 @@ static void echo_nullable_uint8_list_cb(GObject* object, GAsyncResult* result,
   g_autofree uint8_t* return_value = nullptr;
   size_t return_value_length;
   g_autoptr(GError) error = nullptr;
-  // FIXME gboolean r =
-  core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_uint8_list_finish(
-      CORE_TESTS_PIGEON_TEST_FLUTTER_INTEGRATION_CORE_API(object), result,
-      &return_value, &return_value_length, &error);
+  if (!core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_uint8_list_finish(
+          CORE_TESTS_PIGEON_TEST_FLUTTER_INTEGRATION_CORE_API(object), result,
+          &return_value, &return_value_length, &error)) {
+    core_tests_pigeon_test_host_integration_core_api_respond_error_call_flutter_echo_nullable_uint8_list(
+        data->self->host_core_api, data->response_handle, "", "", nullptr);
+    return;
+  }
 
   core_tests_pigeon_test_host_integration_core_api_respond_call_flutter_echo_nullable_uint8_list(
       data->self->host_core_api, data->response_handle, return_value,
@@ -1062,10 +1125,13 @@ static void echo_nullable_list_cb(GObject* object, GAsyncResult* result,
 
   g_autoptr(FlValue) return_value = nullptr;
   g_autoptr(GError) error = nullptr;
-  // FIXME gboolean r =
-  core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_list_finish(
-      CORE_TESTS_PIGEON_TEST_FLUTTER_INTEGRATION_CORE_API(object), result,
-      &return_value, &error);
+  if (!core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_list_finish(
+          CORE_TESTS_PIGEON_TEST_FLUTTER_INTEGRATION_CORE_API(object), result,
+          &return_value, &error)) {
+    core_tests_pigeon_test_host_integration_core_api_respond_error_call_flutter_echo_nullable_list(
+        data->self->host_core_api, data->response_handle, "", "", nullptr);
+    return;
+  }
 
   core_tests_pigeon_test_host_integration_core_api_respond_call_flutter_echo_nullable_list(
       data->self->host_core_api, data->response_handle, return_value);
@@ -1087,10 +1153,13 @@ static void echo_nullable_map_cb(GObject* object, GAsyncResult* result,
 
   g_autoptr(FlValue) return_value = nullptr;
   g_autoptr(GError) error = nullptr;
-  // FIXME gboolean r =
-  core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_map_finish(
-      CORE_TESTS_PIGEON_TEST_FLUTTER_INTEGRATION_CORE_API(object), result,
-      &return_value, &error);
+  if (!core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_map_finish(
+          CORE_TESTS_PIGEON_TEST_FLUTTER_INTEGRATION_CORE_API(object), result,
+          &return_value, &error)) {
+    core_tests_pigeon_test_host_integration_core_api_respond_error_call_flutter_echo_nullable_map(
+        data->self->host_core_api, data->response_handle, "", "", nullptr);
+    return;
+  }
 
   core_tests_pigeon_test_host_integration_core_api_respond_call_flutter_echo_nullable_map(
       data->self->host_core_api, data->response_handle, return_value);
@@ -1112,10 +1181,13 @@ static void echo_nullable_enum_cb(GObject* object, GAsyncResult* result,
 
   g_autofree CoreTestsPigeonTestAnEnum* return_value = nullptr;
   g_autoptr(GError) error = nullptr;
-  // FIXME gboolean r =
-  core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_enum_finish(
-      CORE_TESTS_PIGEON_TEST_FLUTTER_INTEGRATION_CORE_API(object), result,
-      &return_value, &error);
+  if (!core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_enum_finish(
+          CORE_TESTS_PIGEON_TEST_FLUTTER_INTEGRATION_CORE_API(object), result,
+          &return_value, &error)) {
+    core_tests_pigeon_test_host_integration_core_api_respond_error_call_flutter_echo_nullable_enum(
+        data->self->host_core_api, data->response_handle, "", "", nullptr);
+    return;
+  }
 
   core_tests_pigeon_test_host_integration_core_api_respond_call_flutter_echo_nullable_enum(
       data->self->host_core_api, data->response_handle, return_value);
@@ -1138,10 +1210,13 @@ static void small_api_echo_string_cb(GObject* object, GAsyncResult* result,
 
   g_autofree gchar* return_value = nullptr;
   g_autoptr(GError) error = nullptr;
-  // FIXME gboolean r =
-  core_tests_pigeon_test_flutter_small_api_echo_string_finish(
-      CORE_TESTS_PIGEON_TEST_FLUTTER_SMALL_API(object), result, &return_value,
-      &error);
+  if (!core_tests_pigeon_test_flutter_small_api_echo_string_finish(
+          CORE_TESTS_PIGEON_TEST_FLUTTER_SMALL_API(object), result,
+          &return_value, &error)) {
+    core_tests_pigeon_test_host_integration_core_api_respond_error_call_flutter_small_api_echo_string(
+        data->self->host_core_api, data->response_handle, "", "", nullptr);
+    return;
+  }
 
   core_tests_pigeon_test_host_integration_core_api_respond_call_flutter_small_api_echo_string(
       data->self->host_core_api, data->response_handle, return_value);
