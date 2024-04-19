@@ -1,3 +1,15 @@
+## 0.9.15+4
+
+* Converts host-to-Dart communcation to Pigeon.
+
+## 0.9.15+3
+
+* Moves `pigeon` to `dev_dependencies`.
+
+## 0.9.15+2
+
+* Converts camera query to Pigeon.
+
 ## 0.9.15+1
 
 * Simplifies internal handling of method channel responses.

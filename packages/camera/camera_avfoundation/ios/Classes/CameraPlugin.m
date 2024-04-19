@@ -11,9 +11,9 @@
 #import "CameraProperties.h"
 #import "FLTCam.h"
 #import "FLTThreadSafeEventChannel.h"
-#import "FLTThreadSafeMethodChannel.h"
 #import "FLTThreadSafeTextureRegistry.h"
 #import "QueueUtils.h"
+#import "messages.g.h"
 
 static FlutterError *FlutterErrorFromNSError(NSError *error) {
   return [FlutterError errorWithCode:[NSString stringWithFormat:@"Error %d", (int)error.code]
@@ -24,6 +24,7 @@ static FlutterError *FlutterErrorFromNSError(NSError *error) {
 @interface CameraPlugin ()
 @property(readonly, nonatomic) FLTThreadSafeTextureRegistry *registry;
 @property(readonly, nonatomic) NSObject<FlutterBinaryMessenger> *messenger;
+@property(nonatomic) FCPCameraGlobalEventApi *globalEventAPI;
 @end
 
 @implementation CameraPlugin
@@ -35,41 +36,39 @@ static FlutterError *FlutterErrorFromNSError(NSError *error) {
   CameraPlugin *instance = [[CameraPlugin alloc] initWithRegistry:[registrar textures]
                                                         messenger:[registrar messenger]];
   [registrar addMethodCallDelegate:instance channel:channel];
+  SetUpFCPCameraApi([registrar messenger], instance);
 }
 
 - (instancetype)initWithRegistry:(NSObject<FlutterTextureRegistry> *)registry
                        messenger:(NSObject<FlutterBinaryMessenger> *)messenger {
+  return
+      [self initWithRegistry:registry
+                   messenger:messenger
+                   globalAPI:[[FCPCameraGlobalEventApi alloc] initWithBinaryMessenger:messenger]];
+}
+
+- (instancetype)initWithRegistry:(NSObject<FlutterTextureRegistry> *)registry
+                       messenger:(NSObject<FlutterBinaryMessenger> *)messenger
+                       globalAPI:(FCPCameraGlobalEventApi *)globalAPI {
   self = [super init];
   NSAssert(self, @"super init cannot be nil");
   _registry = [[FLTThreadSafeTextureRegistry alloc] initWithTextureRegistry:registry];
   _messenger = messenger;
+  _globalEventAPI = globalAPI;
   _captureSessionQueue = dispatch_queue_create("io.flutter.camera.captureSessionQueue", NULL);
   dispatch_queue_set_specific(_captureSessionQueue, FLTCaptureSessionQueueSpecific,
                               (void *)FLTCaptureSessionQueueSpecific, NULL);
 
-  [self initDeviceEventMethodChannel];
-  [self startOrientationListener];
-  return self;
-}
-
-- (void)initDeviceEventMethodChannel {
-  FlutterMethodChannel *methodChannel = [FlutterMethodChannel
-      methodChannelWithName:@"plugins.flutter.io/camera_avfoundation/fromPlatform"
-            binaryMessenger:_messenger];
-  _deviceEventMethodChannel =
-      [[FLTThreadSafeMethodChannel alloc] initWithMethodChannel:methodChannel];
-}
-
-- (void)detachFromEngineForRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar {
-  [UIDevice.currentDevice endGeneratingDeviceOrientationNotifications];
-}
-
-- (void)startOrientationListener {
   [[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
   [[NSNotificationCenter defaultCenter] addObserver:self
                                            selector:@selector(orientationChanged:)
                                                name:UIDeviceOrientationDidChangeNotification
                                              object:[UIDevice currentDevice]];
+  return self;
+}
+
+- (void)detachFromEngineForRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar {
+  [UIDevice.currentDevice endGeneratingDeviceOrientationNotifications];
 }
 
 - (void)orientationChanged:(NSNotification *)note {
@@ -91,9 +90,17 @@ static FlutterError *FlutterErrorFromNSError(NSError *error) {
 }
 
 - (void)sendDeviceOrientation:(UIDeviceOrientation)orientation {
-  [_deviceEventMethodChannel
-      invokeMethod:@"orientation_changed"
-         arguments:@{@"orientation" : FLTGetStringForUIDeviceOrientation(orientation)}];
+  __weak typeof(self) weakSelf = self;
+  dispatch_async(dispatch_get_main_queue(), ^{
+    [weakSelf.globalEventAPI
+        deviceOrientationChangedOrientation:FCPGetPigeonDeviceOrientationForOrientation(orientation)
+                                 completion:^(FlutterError *error){
+                                     // Ignore errors; this is essentially a broadcast stream, and
+                                     // it's fine if the other end
+                                     // doesn't receive the message (e.g., if it doesn't currently
+                                     // have a listener set up).
+                                 }];
+  });
 }
 
 - (void)handleMethodCall:(FlutterMethodCall *)call result:(FlutterResult)result {
@@ -104,8 +111,10 @@ static FlutterError *FlutterErrorFromNSError(NSError *error) {
   });
 }
 
-- (void)handleMethodCallAsync:(FlutterMethodCall *)call result:(FlutterResult)result {
-  if ([@"availableCameras" isEqualToString:call.method]) {
+- (void)availableCamerasWithCompletion:
+    (nonnull void (^)(NSArray<FCPPlatformCameraDescription *> *_Nullable,
+                      FlutterError *_Nullable))completion {
+  dispatch_async(self.captureSessionQueue, ^{
     NSMutableArray *discoveryDevices =
         [@[ AVCaptureDeviceTypeBuiltInWideAngleCamera, AVCaptureDeviceTypeBuiltInTelephotoCamera ]
             mutableCopy];
@@ -117,29 +126,30 @@ static FlutterError *FlutterErrorFromNSError(NSError *error) {
                               mediaType:AVMediaTypeVideo
                                position:AVCaptureDevicePositionUnspecified];
     NSArray<AVCaptureDevice *> *devices = discoverySession.devices;
-    NSMutableArray<NSDictionary<NSString *, NSObject *> *> *reply =
+    NSMutableArray<FCPPlatformCameraDescription *> *reply =
         [[NSMutableArray alloc] initWithCapacity:devices.count];
     for (AVCaptureDevice *device in devices) {
-      NSString *lensFacing;
-      switch ([device position]) {
+      FCPPlatformCameraLensDirection lensFacing;
+      switch (device.position) {
         case AVCaptureDevicePositionBack:
-          lensFacing = @"back";
+          lensFacing = FCPPlatformCameraLensDirectionBack;
           break;
         case AVCaptureDevicePositionFront:
-          lensFacing = @"front";
+          lensFacing = FCPPlatformCameraLensDirectionFront;
           break;
         case AVCaptureDevicePositionUnspecified:
-          lensFacing = @"external";
+          lensFacing = FCPPlatformCameraLensDirectionExternal;
           break;
       }
-      [reply addObject:@{
-        @"name" : [device uniqueID],
-        @"lensFacing" : lensFacing,
-        @"sensorOrientation" : @90,
-      }];
+      [reply addObject:[FCPPlatformCameraDescription makeWithName:device.uniqueID
+                                                    lensDirection:lensFacing]];
     }
-    result(reply);
-  } else if ([@"create" isEqualToString:call.method]) {
+    completion(reply, nil);
+  });
+}
+
+- (void)handleMethodCallAsync:(FlutterMethodCall *)call result:(FlutterResult)result {
+  if ([@"create" isEqualToString:call.method]) {
     [self handleCreateMethodCall:call result:result];
   } else if ([@"startImageStream" isEqualToString:call.method]) {
     [_camera startImageStreamWithMessenger:_messenger];
@@ -164,25 +174,10 @@ static FlutterError *FlutterErrorFromNSError(NSError *error) {
           [weakSelf.registry textureFrameAvailable:cameraId];
         }
       };
-      FlutterMethodChannel *methodChannel = [FlutterMethodChannel
-          methodChannelWithName:
-              [NSString stringWithFormat:@"plugins.flutter.io/camera_avfoundation/camera%lu",
-                                         (unsigned long)cameraId]
-                binaryMessenger:_messenger];
-      FLTThreadSafeMethodChannel *threadSafeMethodChannel =
-          [[FLTThreadSafeMethodChannel alloc] initWithMethodChannel:methodChannel];
-      _camera.methodChannel = threadSafeMethodChannel;
-      [threadSafeMethodChannel
-          invokeMethod:@"initialized"
-             arguments:@{
-               @"previewWidth" : @(_camera.previewSize.width),
-               @"previewHeight" : @(_camera.previewSize.height),
-               @"exposureMode" : FLTGetStringForFLTExposureMode([_camera exposureMode]),
-               @"focusMode" : FLTGetStringForFLTFocusMode([_camera focusMode]),
-               @"exposurePointSupported" :
-                   @([_camera.captureDevice isExposurePointOfInterestSupported]),
-               @"focusPointSupported" : @([_camera.captureDevice isFocusPointOfInterestSupported]),
-             }];
+      _camera.dartAPI = [[FCPCameraEventApi alloc]
+          initWithBinaryMessenger:_messenger
+             messageChannelSuffix:[NSString stringWithFormat:@"%ld", cameraId]];
+      [_camera reportInitializationState];
       [self sendDeviceOrientation:[UIDevice currentDevice].orientation];
       [_camera start];
       result(nil);
