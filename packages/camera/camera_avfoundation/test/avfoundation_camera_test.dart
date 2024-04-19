@@ -7,40 +7,27 @@ import 'dart:math';
 
 import 'package:async/async.dart';
 import 'package:camera_avfoundation/src/avfoundation_camera.dart';
+import 'package:camera_avfoundation/src/messages.g.dart';
 import 'package:camera_avfoundation/src/utils.dart';
 import 'package:camera_platform_interface/camera_platform_interface.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mockito/annotations.dart';
+import 'package:mockito/mockito.dart';
 
+import 'avfoundation_camera_test.mocks.dart';
 import 'method_channel_mock.dart';
 
 const String _channelName = 'plugins.flutter.io/camera_avfoundation';
 
+@GenerateMocks(<Type>[CameraApi])
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   test('registers instance', () async {
     AVFoundationCamera.registerWith();
     expect(CameraPlatform.instance, isA<AVFoundationCamera>());
-  });
-
-  test('registration does not set message handlers', () async {
-    AVFoundationCamera.registerWith();
-
-    // Setting up a handler requires bindings to be initialized, and since
-    // registerWith is called very early in initialization the bindings won't
-    // have been initialized. While registerWith could initialize them, that
-    // could slow down startup, so instead the handler should be set up lazily.
-    final ByteData? response = await TestDefaultBinaryMessengerBinding
-        .instance.defaultBinaryMessenger
-        .handlePlatformMessage(
-            AVFoundationCamera.deviceEventChannelName,
-            const StandardMethodCodec().encodeMethodCall(const MethodCall(
-                'orientation_changed',
-                <String, Object>{'orientation': 'portraitDown'})),
-            (ByteData? data) {});
-    expect(response, null);
   });
 
   group('Creation, Initialization & Disposal Tests', () {
@@ -356,76 +343,26 @@ void main() {
       final StreamQueue<CameraInitializedEvent> streamQueue =
           StreamQueue<CameraInitializedEvent>(eventStream);
 
+      final PlatformSize previewSize = PlatformSize(width: 3840, height: 2160);
       // Emit test events
       final CameraInitializedEvent event = CameraInitializedEvent(
         cameraId,
-        3840,
-        2160,
+        previewSize.width,
+        previewSize.height,
         ExposureMode.auto,
         true,
         FocusMode.auto,
         true,
       );
-      await camera.handleCameraMethodCall(
-          MethodCall('initialized', event.toJson()), cameraId);
+      camera.hostCameraHandlers[cameraId]!.initialized(PlatformCameraState(
+        previewSize: previewSize,
+        exposureMode: PlatformExposureMode.auto,
+        focusMode: PlatformFocusMode.auto,
+        exposurePointSupported: true,
+        focusPointSupported: true,
+      ));
 
       // Assert
-      expect(await streamQueue.next, event);
-
-      // Clean up
-      await streamQueue.cancel();
-    });
-
-    test('Should receive resolution changes', () async {
-      // Act
-      final Stream<CameraResolutionChangedEvent> resolutionStream =
-          camera.onCameraResolutionChanged(cameraId);
-      final StreamQueue<CameraResolutionChangedEvent> streamQueue =
-          StreamQueue<CameraResolutionChangedEvent>(resolutionStream);
-
-      // Emit test events
-      final CameraResolutionChangedEvent fhdEvent =
-          CameraResolutionChangedEvent(cameraId, 1920, 1080);
-      final CameraResolutionChangedEvent uhdEvent =
-          CameraResolutionChangedEvent(cameraId, 3840, 2160);
-      await camera.handleCameraMethodCall(
-          MethodCall('resolution_changed', fhdEvent.toJson()), cameraId);
-      await camera.handleCameraMethodCall(
-          MethodCall('resolution_changed', uhdEvent.toJson()), cameraId);
-      await camera.handleCameraMethodCall(
-          MethodCall('resolution_changed', fhdEvent.toJson()), cameraId);
-      await camera.handleCameraMethodCall(
-          MethodCall('resolution_changed', uhdEvent.toJson()), cameraId);
-
-      // Assert
-      expect(await streamQueue.next, fhdEvent);
-      expect(await streamQueue.next, uhdEvent);
-      expect(await streamQueue.next, fhdEvent);
-      expect(await streamQueue.next, uhdEvent);
-
-      // Clean up
-      await streamQueue.cancel();
-    });
-
-    test('Should receive camera closing events', () async {
-      // Act
-      final Stream<CameraClosingEvent> eventStream =
-          camera.onCameraClosing(cameraId);
-      final StreamQueue<CameraClosingEvent> streamQueue =
-          StreamQueue<CameraClosingEvent>(eventStream);
-
-      // Emit test events
-      final CameraClosingEvent event = CameraClosingEvent(cameraId);
-      await camera.handleCameraMethodCall(
-          MethodCall('camera_closing', event.toJson()), cameraId);
-      await camera.handleCameraMethodCall(
-          MethodCall('camera_closing', event.toJson()), cameraId);
-      await camera.handleCameraMethodCall(
-          MethodCall('camera_closing', event.toJson()), cameraId);
-
-      // Assert
-      expect(await streamQueue.next, event);
-      expect(await streamQueue.next, event);
       expect(await streamQueue.next, event);
 
       // Clean up
@@ -440,14 +377,11 @@ void main() {
           StreamQueue<CameraErrorEvent>(errorStream);
 
       // Emit test events
-      final CameraErrorEvent event =
-          CameraErrorEvent(cameraId, 'Error Description');
-      await camera.handleCameraMethodCall(
-          MethodCall('error', event.toJson()), cameraId);
-      await camera.handleCameraMethodCall(
-          MethodCall('error', event.toJson()), cameraId);
-      await camera.handleCameraMethodCall(
-          MethodCall('error', event.toJson()), cameraId);
+      const String errorMessage = 'Error Description';
+      final CameraErrorEvent event = CameraErrorEvent(cameraId, errorMessage);
+      camera.hostCameraHandlers[cameraId]!.error(errorMessage);
+      camera.hostCameraHandlers[cameraId]!.error(errorMessage);
+      camera.hostCameraHandlers[cameraId]!.error(errorMessage);
 
       // Assert
       expect(await streamQueue.next, event);
@@ -469,12 +403,8 @@ void main() {
       const DeviceOrientationChangedEvent event =
           DeviceOrientationChangedEvent(DeviceOrientation.portraitUp);
       for (int i = 0; i < 3; i++) {
-        await TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-            .handlePlatformMessage(
-                AVFoundationCamera.deviceEventChannelName,
-                const StandardMethodCodec().encodeMethodCall(
-                    MethodCall('orientation_changed', event.toJson())),
-                null);
+        camera.hostHandler
+            .deviceOrientationChanged(PlatformDeviceOrientation.portraitUp);
       }
 
       // Assert
@@ -488,10 +418,12 @@ void main() {
   });
 
   group('Function Tests', () {
+    late MockCameraApi mockApi;
     late AVFoundationCamera camera;
     late int cameraId;
 
     setUp(() async {
+      mockApi = MockCameraApi();
       MethodChannelMock(
         channelName: _channelName,
         methods: <String, dynamic>{
@@ -499,7 +431,7 @@ void main() {
           'initialize': null
         },
       );
-      camera = AVFoundationCamera();
+      camera = AVFoundationCamera(api: mockApi);
       cameraId = await camera.createCamera(
         const CameraDescription(
           name: 'Test',
@@ -525,68 +457,42 @@ void main() {
 
     test('Should fetch CameraDescription instances for available cameras',
         () async {
-      // Arrange
-      // This deliberately uses 'dynamic' since that's what actual platform
-      // channel results will be, so using typed mock data could mask type
-      // handling bugs in the code under test.
-      final List<dynamic> returnData = <dynamic>[
-        <String, dynamic>{
-          'name': 'Test 1',
-          'lensFacing': 'front',
-          'sensorOrientation': 1
-        },
-        <String, dynamic>{
-          'name': 'Test 2',
-          'lensFacing': 'back',
-          'sensorOrientation': 2
-        }
+      final List<PlatformCameraDescription> returnData =
+          <PlatformCameraDescription>[
+        PlatformCameraDescription(
+            name: 'Test 1', lensDirection: PlatformCameraLensDirection.front),
+        PlatformCameraDescription(
+            name: 'Test 2', lensDirection: PlatformCameraLensDirection.back),
       ];
-      final MethodChannelMock channel = MethodChannelMock(
-        channelName: _channelName,
-        methods: <String, dynamic>{'availableCameras': returnData},
-      );
+      when(mockApi.getAvailableCameras()).thenAnswer((_) async => returnData);
 
-      // Act
       final List<CameraDescription> cameras = await camera.availableCameras();
 
-      // Assert
-      expect(channel.log, <Matcher>[
-        isMethodCall('availableCameras', arguments: null),
-      ]);
       expect(cameras.length, returnData.length);
       for (int i = 0; i < returnData.length; i++) {
-        final Map<String, Object?> typedData =
-            (returnData[i] as Map<dynamic, dynamic>).cast<String, Object?>();
-        final CameraDescription cameraDescription = CameraDescription(
-          name: typedData['name']! as String,
-          lensDirection:
-              parseCameraLensDirection(typedData['lensFacing']! as String),
-          sensorOrientation: typedData['sensorOrientation']! as int,
-        );
-        expect(cameras[i], cameraDescription);
+        expect(cameras[i].name, returnData[i].name);
+        expect(cameras[i].lensDirection,
+            cameraLensDirectionFromPlatform(returnData[i].lensDirection));
+        // This value isn't provided by the platform, so is hard-coded to 90.
+        expect(cameras[i].sensorOrientation, 90);
       }
     });
 
     test(
         'Should throw CameraException when availableCameras throws a PlatformException',
         () {
-      // Arrange
-      MethodChannelMock(channelName: _channelName, methods: <String, dynamic>{
-        'availableCameras': PlatformException(
-          code: 'TESTING_ERROR_CODE',
-          message: 'Mock error message used during testing.',
-        )
-      });
+      const String code = 'TESTING_ERROR_CODE';
+      const String message = 'Mock error message used during testing.';
+      when(mockApi.getAvailableCameras()).thenAnswer(
+          (_) async => throw PlatformException(code: code, message: message));
 
-      // Act
       expect(
         camera.availableCameras,
         throwsA(
           isA<CameraException>()
+              .having((CameraException e) => e.code, 'code', code)
               .having(
-                  (CameraException e) => e.code, 'code', 'TESTING_ERROR_CODE')
-              .having((CameraException e) => e.description, 'description',
-                  'Mock error message used during testing.'),
+                  (CameraException e) => e.description, 'description', message),
         ),
       );
     });
@@ -986,16 +892,6 @@ void main() {
       // Act
       expect(widget is Texture, isTrue);
       expect((widget as Texture).textureId, cameraId);
-    });
-
-    test('Should throw MissingPluginException when handling unknown method',
-        () {
-      final AVFoundationCamera camera = AVFoundationCamera();
-
-      expect(
-          () => camera.handleCameraMethodCall(
-              const MethodCall('unknown_method'), 1),
-          throwsA(isA<MissingPluginException>()));
     });
 
     test('Should get the max zoom level', () async {

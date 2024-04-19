@@ -128,6 +128,7 @@ class ImagePicker {
     double? maxWidth,
     double? maxHeight,
     int? imageQuality,
+    int? limit,
     bool requestFullMetadata = true,
   }) {
     final ImageOptions imageOptions = ImageOptions.createAndValidate(
@@ -138,8 +139,9 @@ class ImagePicker {
     );
 
     return platform.getMultiImageWithOptions(
-      options: MultiImagePickerOptions(
+      options: MultiImagePickerOptions.createAndValidate(
         imageOptions: imageOptions,
+        limit: limit,
       ),
     );
   }
@@ -186,7 +188,7 @@ class ImagePicker {
     bool requestFullMetadata = true,
   }) async {
     final List<XFile> listMedia = await platform.getMedia(
-      options: MediaOptions(
+      options: MediaOptions.createAndValidate(
         imageOptions: ImageOptions.createAndValidate(
           maxHeight: maxHeight,
           maxWidth: maxWidth,
@@ -239,10 +241,11 @@ class ImagePicker {
     double? maxWidth,
     double? maxHeight,
     int? imageQuality,
+    int? limit,
     bool requestFullMetadata = true,
   }) {
     return platform.getMedia(
-      options: MediaOptions(
+      options: MediaOptions.createAndValidate(
         allowMultiple: true,
         imageOptions: ImageOptions.createAndValidate(
           maxHeight: maxHeight,
@@ -250,6 +253,7 @@ class ImagePicker {
           imageQuality: imageQuality,
           requestFullMetadata: requestFullMetadata,
         ),
+        limit: limit,
       ),
     );
   }
