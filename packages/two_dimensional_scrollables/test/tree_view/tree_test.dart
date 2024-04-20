@@ -269,15 +269,20 @@ void main() {
       controller.toggleNode(simpleNodeSet[1]);
       expect(
         controller.isExpanded(simpleNodeSet[1]),
-        isFalse,
+        isTrue,
       );
       expect(
         controller.isActive(simpleNodeSet[1].children[0]),
         isTrue,
       );
       // Nodes are not removed from the active list until the collapse animation
-      // completes.
+      // completes. The parent's expansions status also does not change until the
+      // animation completes.
       await tester.pumpAndSettle();
+      expect(
+        controller.isExpanded(simpleNodeSet[1]),
+        isFalse,
+      );
       expect(
         controller.isActive(simpleNodeSet[1].children[0]),
         isFalse,
@@ -321,6 +326,7 @@ void main() {
       expect(controller.isExpanded(simpleNodeSet[2]), isTrue);
       // Collapse both.
       controller.collapseAll();
+      await tester.pumpAndSettle();
       // Both parents from our simple node set have collapsed.
       // 'Root 1'
       expect(controller.isExpanded(simpleNodeSet[1]), isFalse);
@@ -351,7 +357,7 @@ void main() {
       controller.collapseNode(simpleNodeSet[1]);
       expect(
         controller.isExpanded(simpleNodeSet[1]),
-        isFalse,
+        isTrue,
       );
       expect(
         controller.isActive(simpleNodeSet[1].children[0]),
@@ -435,9 +441,11 @@ void main() {
       expect(controller.isExpanded(simpleNodeSet[1]), isTrue);
       await tester.tap(find.byType(Icon).first);
       await tester.pump();
-      expect(controller.isExpanded(simpleNodeSet[1]), isFalse);
+      expect(controller.isExpanded(simpleNodeSet[1]), isTrue);
       expect(toggled, isTrue);
       expect(toggledNode, simpleNodeSet[1]);
+      await tester.pumpAndSettle();
+      expect(controller.isExpanded(simpleNodeSet[1]), isFalse);
       toggled = false;
       toggledNode = null;
 
