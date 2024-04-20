@@ -20,6 +20,9 @@ import 'tree_span.dart';
 // components. They could also live on if at a later date the 2D TreeView
 // deviates or adds special features not relevant to the 1D components of the
 // framework.
+
+const double _kDefaultRowExtent = 40.0;
+
 /// A data structure for configuring children of a [TreeView].
 ///
 /// A [TreeViewNode.content] can be of any type, but must correspond with the
@@ -519,7 +522,7 @@ class TreeView<T> extends StatefulWidget {
   /// Used by [TreeView.defaultTreeRowBuilder].
   static TreeRow defaultTreeRowBuilder(TreeViewNode<dynamic> node) {
     return const TreeRow(
-      extent: FixedTreeRowExtent(40.0),
+      extent: FixedTreeRowExtent(_kDefaultRowExtent),
     );
   }
 
@@ -888,7 +891,7 @@ class _TreeViewState<T> extends State<TreeView<T>>
           controller.reverse().then((_) {
             // Removes nodes that have been hidden after the collapsing
             // animation completes, only change node expansion state after
-            // animation completes.
+            // animation completes as this effects which nodes are unpacked.
             node._expanded = false;
             _unpackActiveNodes();
           });
