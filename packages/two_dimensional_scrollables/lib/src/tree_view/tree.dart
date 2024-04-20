@@ -167,6 +167,15 @@ class TreeViewController {
     _state!.collapseAll();
   }
 
+  /// Returns the current row index of the given [TreeViewNode].
+  ///
+  /// If the node is not currently active in the tree, meaning its parent is
+  /// collapsed, this will return null.
+  int? getActiveIndexFor(TreeViewNode<dynamic> node) {
+    assert(_state != null);
+    return _state!.getActiveIndexFor(node);
+  }
+
   /// Collapses the [TreeViewNode] that was built with this controller.
   ///
   /// If the node is already in the collapsed state (see [isExpanded]), calling
@@ -207,9 +216,7 @@ class TreeViewController {
   /// the [TreeViewController] (since it's "above" the widget
   /// being returned in the widget tree). In cases like that you can
   /// add a [Builder] widget, which provides a new scope with a
-  /// [BuildContext] that is "under" the [TreeView]:
-  ///
-  // TODO(Piinks): add sample code
+  /// [BuildContext] that is "under" the [TreeView].
   static TreeViewController of(BuildContext context) {
     final _TreeViewState<dynamic>? result =
         context.findAncestorStateOfType<_TreeViewState<dynamic>>();
@@ -734,42 +741,62 @@ class _TreeViewState<T> extends State<TreeView<T>>
     return null;
   }
 
+  final List<TreeViewNode<T>> _activeNodesToExpand = <TreeViewNode<T>>[];
   @override
-  void expandAll() => _expandAll(widget.tree);
+  void expandAll() {
+    _activeNodesToExpand.clear();
+    _expandAll(widget.tree);
+    _activeNodesToExpand.reversed.forEach(toggleNode);
+  }
+
   void _expandAll(List<TreeViewNode<T>> tree) {
     for (final TreeViewNode<T> node in tree) {
       if (node.children.isNotEmpty) {
+        // This is a parent node.
+        // Expand all the children, and their children.
+        _expandAll(node.children);
         if (!node.isExpanded) {
+          // The node itself needs to be expanded.
           if (_activeNodes.contains(node)) {
-            // This is an active node in the tree, trigger the animation and
-            // rebuild.
-            toggleNode(node);
+            // This is an active node in the tree, add to
+            // the list to toggle once all hidden nodes
+            // have been handled.
+            _activeNodesToExpand.add(node);
           } else {
             // This is a hidden node. Update its expanded state.
             node._expanded = true;
           }
         }
-        _expandAll(node.children);
       }
     }
   }
 
+  final List<TreeViewNode<T>> _activeNodesToCollapse = <TreeViewNode<T>>[];
   @override
-  void collapseAll() => _collapseAll(widget.tree);
+  void collapseAll() {
+    _activeNodesToCollapse.clear();
+    _collapseAll(widget.tree);
+    _activeNodesToCollapse.reversed.forEach(toggleNode);
+  }
+
   void _collapseAll(List<TreeViewNode<T>> tree) {
     for (final TreeViewNode<T> node in tree) {
       if (node.children.isNotEmpty) {
+        // This is a parent node.
+        // Collapse all the children, and their children.
+        _collapseAll(node.children);
         if (node.isExpanded) {
+          // The node itself needs to be collapsed.
           if (_activeNodes.contains(node)) {
-            // This is an active node in the tree, trigger the animation and
-            // rebuild.
-            toggleNode(node);
+            // This is an active node in the tree, add to
+            // the list to toggle once all hidden nodes
+            // have been handled.
+            _activeNodesToCollapse.add(node);
           } else {
             // This is a hidden node. Update its expanded state.
             node._expanded = false;
           }
         }
-        _collapseAll(node.children);
       }
     }
   }
@@ -800,14 +827,13 @@ class _TreeViewState<T> extends State<TreeView<T>>
       return;
     }
     setState(() {
-      node._expanded = !node._expanded;
       if (widget.onNodeToggle != null) {
         widget.onNodeToggle!(node);
       }
       final AnimationController controller =
           _currentAnimationForParent[node]?.controller ??
               AnimationController(
-                value: node._expanded ? 0.0 : 1.0,
+                value: node._expanded ? 1.0 : 0.0,
                 vsync: this,
                 duration: widget.animationStyle?.duration ??
                     TreeView.defaultAnimationDuration,
@@ -850,17 +876,20 @@ class _TreeViewState<T> extends State<TreeView<T>>
         // render object, since the indexes can change at any time.
         key: UniqueKey(),
       );
-      switch (node._expanded) {
+      switch (!node._expanded) {
         case true:
           // Expanding
           // Adds new nodes that are coming into view.
+          node._expanded = true;
           _unpackActiveNodes();
           controller.forward();
         case false:
           // Collapsing
           controller.reverse().then((_) {
             // Removes nodes that have been hidden after the collapsing
+            // animation completes, only change node expansion state after
             // animation completes.
+            node._expanded = false;
             _unpackActiveNodes();
           });
       }

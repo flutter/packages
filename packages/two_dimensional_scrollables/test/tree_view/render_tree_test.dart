@@ -13,7 +13,7 @@ const TreeRow row = TreeRow(extent: FixedTreeRowExtent(100));
 
 TreeRow getTappableRow(TreeViewNode<String> node, VoidCallback callback) {
   return TreeRow(
-    extent: const FixedTableSpanExtent(100),
+    extent: const FixedTreeRowExtent(100),
     recognizerFactories: <Type, GestureRecognizerFactory>{
       TapGestureRecognizer:
           GestureRecognizerFactoryWithHandlers<TapGestureRecognizer>(
@@ -36,37 +36,45 @@ TreeRow getMouseTrackingRow({
   );
 }
 
-final List<TreeViewNode<String>> treeNodes = <TreeViewNode<String>>[
-  TreeViewNode<String>('First'),
-  TreeViewNode<String>(
-    'Second',
-    children: <TreeViewNode<String>>[
-      TreeViewNode<String>(
-        'alpha',
-        children: <TreeViewNode<String>>[
-          TreeViewNode<String>('uno'),
-          TreeViewNode<String>('dos'),
-          TreeViewNode<String>('tres'),
-        ],
-      ),
-      TreeViewNode<String>('beta'),
-      TreeViewNode<String>('kappa'),
-    ],
-  ),
-  TreeViewNode<String>(
-    'Third',
-    expanded: true,
-    children: <TreeViewNode<String>>[
-      TreeViewNode<String>('gamma'),
-      TreeViewNode<String>('delta'),
-      TreeViewNode<String>('epsilon'),
-    ],
-  ),
-  TreeViewNode<String>('Fourth'),
-];
+List<TreeViewNode<String>> _setUpNodes() {
+  return <TreeViewNode<String>>[
+    TreeViewNode<String>('First'),
+    TreeViewNode<String>(
+      'Second',
+      children: <TreeViewNode<String>>[
+        TreeViewNode<String>(
+          'alpha',
+          children: <TreeViewNode<String>>[
+            TreeViewNode<String>('uno'),
+            TreeViewNode<String>('dos'),
+            TreeViewNode<String>('tres'),
+          ],
+        ),
+        TreeViewNode<String>('beta'),
+        TreeViewNode<String>('kappa'),
+      ],
+    ),
+    TreeViewNode<String>(
+      'Third',
+      expanded: true,
+      children: <TreeViewNode<String>>[
+        TreeViewNode<String>('gamma'),
+        TreeViewNode<String>('delta'),
+        TreeViewNode<String>('epsilon'),
+      ],
+    ),
+    TreeViewNode<String>('Fourth'),
+  ];
+}
+
+List<TreeViewNode<String>> treeNodes = _setUpNodes();
 
 void main() {
   group('RenderTreeViewport', () {
+    setUp(() {
+      treeNodes = _setUpNodes();
+    });
+
     test('asserts proper axis directions', () {
       RenderTreeViewport? treeViewport;
       expect(
@@ -174,7 +182,7 @@ void main() {
       expect(treeViewport.traversalOrder, TreeViewTraversalOrder.breadthFirst);
     });
 
-    testWidgets('TableSpan gesture hit testing', (WidgetTester tester) async {
+    testWidgets('TreeRow gesture hit testing', (WidgetTester tester) async {
       int tapCounter = 0;
       final List<String> log = <String>[];
       final TreeView<String> treeView = TreeView<String>(
@@ -255,7 +263,54 @@ void main() {
       );
     });
 
+    testWidgets('Scrolls when there is enough content',
+        (WidgetTester tester) async {
+      final ScrollController verticalController = ScrollController();
+      final ScrollController horizontalController = ScrollController();
+      final TreeViewController treeController = TreeViewController();
+      addTearDown(verticalController.dispose);
+      addTearDown(horizontalController.dispose);
+      final TreeView<String> treeView = TreeView<String>(
+        controller: treeController,
+        verticalDetails:
+            ScrollableDetails.vertical(controller: verticalController,),
+        horizontalDetails:
+            ScrollableDetails.horizontal(controller: horizontalController,),
+        tree: treeNodes,
+        // Exaggerated to exceed viewport bounds.
+        indentation: TreeViewIndentationType.custom(500),
+        treeRowBuilder: (_) => row,
+      );
+      await tester.pumpWidget(MaterialApp(home: treeView));
+      await tester.pump();
+      expect(verticalController.position.pixels, 0.0);
+      // Room to scroll
+      expect(verticalController.position.maxScrollExtent, 100.0);
+      expect(horizontalController.position.pixels, 0.0);
+      // Room to scroll
+      expect(horizontalController.position.maxScrollExtent, 90.0);
+
+      verticalController.jumpTo(10.0);
+      horizontalController.jumpTo(10.0);
+      await tester.pump();
+      expect(verticalController.position.pixels, 10.0);
+      expect(verticalController.position.maxScrollExtent, 100.0);
+      expect(horizontalController.position.pixels, 10.0);
+      expect(horizontalController.position.maxScrollExtent, 90.0);
+
+      // Collapse a node. The horizontal extent should change to zero,
+      // and the position should corrrect.
+      treeController.toggleNode(treeController.getNodeFor('Third')!);
+      await tester.pumpAndSettle();
+      expect(horizontalController.position.pixels, 0.0);
+      expect(horizontalController.position.maxScrollExtent, 0.0);
+    });
+
     group('Layout', () {
+      setUp(() {
+        treeNodes = _setUpNodes();
+      });
+
       testWidgets('Basic', (WidgetTester tester) async {
         // Default layout, custom indentation values, row extents.
         TreeView<String> treeView = TreeView<String>(
@@ -493,7 +548,10 @@ void main() {
         // Customize the animation
         treeView = TreeView<String>(
           tree: treeNodes,
-          animationStyle: AnimationStyle(duration: const Duration(milliseconds: 500), curve: Curves.bounceIn,),
+          animationStyle: AnimationStyle(
+            duration: const Duration(milliseconds: 500),
+            curve: Curves.bounceIn,
+          ),
         );
         await tester.pumpWidget(MaterialApp(home: treeView));
         await tester.pump();
@@ -573,20 +631,336 @@ void main() {
         );
       });
 
-      testWidgets(
-          'Multiple animating node segments', (WidgetTester tester) async {
+      testWidgets('Multiple animating node segments',
+          (WidgetTester tester) async {
+        final TreeViewController controller = TreeViewController();
+        await tester.pumpWidget(MaterialApp(
+            home: TreeView<String>(
+          tree: treeNodes,
+          controller: controller,
+        )));
+        await tester.pump();
+        expect(find.text('Second'), findsOneWidget);
+        expect(find.text('alpha'), findsNothing); // Second is collapsed
+        expect(find.text('Third'), findsOneWidget);
+        expect(find.text('gamma'), findsOneWidget); // Third is expanded
 
-          });
+        expect(
+          tester.getRect(find.text('Second')),
+          const Rect.fromLTRB(46.0, 48.0, 334.0, 72.0),
+        );
+        expect(
+          tester.getRect(find.text('Third')),
+          const Rect.fromLTRB(46.0, 88.0, 286.0, 112.0),
+        );
+        expect(
+          tester.getRect(find.text('gamma')),
+          const Rect.fromLTRB(56.0, 128.0, 296.0, 152.0),
+        );
+
+        // Trigger two animations to run together.
+        // Collapse Third
+        await tester.tap(find.byType(Icon).last);
+        // Expand Second
+        await tester.tap(find.byType(Icon).first);
+        await tester.pump(const Duration(milliseconds: 15));
+        // Third is collapsing
+        expect(
+          tester.getRect(find.text('Third')),
+          const Rect.fromLTRB(46.0, 88.0, 286.0, 112.0),
+        );
+        expect(
+          tester.getRect(find.text('gamma')),
+          const Rect.fromLTRB(56.0, 128.0, 296.0, 152.0),
+        );
+        // Second is expanding
+        expect(
+          tester.getRect(find.text('Second')),
+          const Rect.fromLTRB(46.0, 48.0, 334.0, 72.0),
+        );
+        // alpha has been added and is animating into view.
+        expect(
+          tester.getRect(find.text('alpha')).top.floor(),
+          -32.0,
+        );
+        await tester.pump(const Duration(milliseconds: 15));
+        // Third is still collapsing. Third is sliding down
+        // as Seconds's children slide in, gamma is still exiting.
+        expect(
+          tester.getRect(find.text('Third')).top.floor(),
+          100.0,
+        );
+        // gamma appears to not have moved, this is because it is
+        // intersecting both animations, the positive offset of
+        // Second animation == the negative offset of Third
+        expect(
+          tester.getRect(find.text('gamma')),
+          const Rect.fromLTRB(56.0, 128.0, 296.0, 152.0),
+        );
+        // Second is still expanding
+        expect(
+          tester.getRect(find.text('Second')),
+          const Rect.fromLTRB(46.0, 48.0, 334.0, 72.0),
+        );
+        // alpha is still animating into view.
+        expect(
+          tester.getRect(find.text('alpha')).top.floor(),
+          -20.0,
+        );
+        // Progress the animation further
+        await tester.pump(const Duration(milliseconds: 15));
+        // Third is still collapsing. Third is sliding down
+        // as Seconds's children slide in, gamma is still exiting.
+        expect(
+          tester.getRect(find.text('Third')).top.floor(),
+          112.0,
+        );
+        // gamma appears to not have moved, this is because it is
+        // intersecting both animations, the positive offset of
+        // Second animation == the negative offset of Third
+        expect(
+          tester.getRect(find.text('gamma')),
+          const Rect.fromLTRB(56.0, 128.0, 296.0, 152.0),
+        );
+        // Second is still expanding
+        expect(
+          tester.getRect(find.text('Second')),
+          const Rect.fromLTRB(46.0, 48.0, 334.0, 72.0),
+        );
+        // alpha is still animating into view.
+        expect(
+          tester.getRect(find.text('alpha')).top.floor(),
+          -8.0,
+        );
+        // Complete the animations
+        await tester.pumpAndSettle();
+        expect(
+          tester.getRect(find.text('Third')),
+          const Rect.fromLTRB(46.0, 208.0, 286.0, 232.0),
+        );
+        // gamma has left the building
+        expect(find.text('gamma'), findsNothing);
+        expect(
+          tester.getRect(find.text('Second')),
+          const Rect.fromLTRB(46.0, 48.0, 334.0, 72.0),
+        );
+        // alpha is still animating into view.
+        expect(
+          tester.getRect(find.text('alpha')),
+          const Rect.fromLTRB(56.0, 88.0, 296.0, 112.0),
+        );
+      });
     });
 
     group('Painting', () {
-      testWidgets('only paints visible rows', (WidgetTester tester) async {
-
+      setUp(() {
+        treeNodes = _setUpNodes();
       });
-      testWidgets('paints decorations in correct order',
-          (WidgetTester tester) async {
 
-          });
+      testWidgets('only paints visible rows', (WidgetTester tester) async {
+        final ScrollController verticalController = ScrollController();
+        addTearDown(verticalController.dispose);
+        final TreeView<String> treeView = TreeView<String>(
+          treeRowBuilder: (_) => const TreeRow(extent: FixedTreeRowExtent(400)),
+          tree: treeNodes,
+          verticalDetails: ScrollableDetails.vertical(
+            controller: verticalController,
+          ),
+        );
+
+        await tester.pumpWidget(MaterialApp(home: treeView));
+        await tester.pump();
+        expect(verticalController.position.pixels, 0.0);
+        expect(verticalController.position.maxScrollExtent, 600.0);
+
+        bool rowNeedsPaint(String row) {
+          return find.text(row).evaluate().first.renderObject!.debugNeedsPaint;
+        }
+
+        expect(rowNeedsPaint('First'), isFalse);
+        expect(rowNeedsPaint('Second'), isFalse);
+        expect(rowNeedsPaint('Third'), isTrue); // In cacheExtent
+        expect(find.text('gamma'), findsNothing); // outside of cacheExtent
+      });
+
+      testWidgets('paints decorations correctly',
+          (WidgetTester tester) async {
+        final ScrollController verticalController = ScrollController();
+        final ScrollController horizontalController = ScrollController();
+        addTearDown(verticalController.dispose);
+        addTearDown(horizontalController.dispose);
+        const TreeRowDecoration rootForegroundDecoration = TreeRowDecoration(
+          color: Colors.red,
+        );
+        const TreeRowDecoration rootBackgroundDecoration = TreeRowDecoration(
+          color: Colors.blue,
+        );
+        const TreeRowDecoration foregroundDecoration = TreeRowDecoration(
+          color: Colors.orange,
+        );
+        const TreeRowDecoration backgroundDecoration = TreeRowDecoration(
+          color: Colors.green,
+        );
+        final TreeView<String> treeView = TreeView<String>(
+        verticalDetails:
+            ScrollableDetails.vertical(controller: verticalController,),
+        horizontalDetails:
+            ScrollableDetails.horizontal(controller: horizontalController,),
+          tree: treeNodes,
+          treeRowBuilder: (TreeViewNode<dynamic> node) {
+            return row.copyWith(
+              backgroundDecoration: node.depth! == 0
+                  ? rootBackgroundDecoration
+                  : backgroundDecoration,
+              foregroundDecoration: node.depth! == 0
+                  ? rootForegroundDecoration
+                  : foregroundDecoration,
+            );
+          },
+        );
+        await tester.pumpWidget(MaterialApp(home: treeView));
+        await tester.pump();
+        expect(verticalController.position.pixels, 0.0);
+        expect(verticalController.position.maxScrollExtent, 100.0);
+
+        expect(
+          find.byType(TreeViewport),
+          paints
+            ..rect(
+              rect: const Rect.fromLTRB(0.0, 0.0, 800.0, 100.0),
+              color: const Color(0xff2196f3),
+            )
+            ..rect(
+              rect: const Rect.fromLTRB(0.0, 100.0, 800.0, 200.0),
+              color: const Color(0xff2196f3),
+            )
+            ..rect(
+              rect: const Rect.fromLTRB(0.0, 200.0, 800.0, 300.0),
+              color: const Color(0xff2196f3),
+            )
+            ..rect(
+              rect: const Rect.fromLTRB(0.0, 300.0, 800.0, 400.0),
+              color: const Color(0xff4caf50),
+            )
+            ..rect(
+              rect: const Rect.fromLTRB(0.0, 400.0, 800.0, 500.0),
+              color: const Color(0xff4caf50),
+            )
+            ..rect(
+              rect: const Rect.fromLTRB(0.0, 500.0, 800.0, 600.0),
+              color: const Color(0xff4caf50),
+            )
+            ..rect(
+              rect: const Rect.fromLTRB(0.0, 600.0, 800.0, 700.0),
+              color: const Color(0xff2196f3),
+            )
+            ..paragraph()
+            ..paragraph()
+            ..paragraph()
+            ..paragraph()
+            ..paragraph()
+            ..paragraph()
+            ..paragraph()
+            ..rect(
+              rect: const Rect.fromLTRB(0.0, 0.0, 800.0, 100.0),
+              color: const Color(0xFFF44336),
+            )
+            ..rect(
+              rect: const Rect.fromLTRB(0.0, 100.0, 800.0, 200.0),
+              color: const Color(0xFFF44336),
+            )
+            ..rect(
+              rect: const Rect.fromLTRB(0.0, 200.0, 800.0, 300.0),
+              color: const Color(0xFFF44336),
+            )
+            ..rect(
+              rect: const Rect.fromLTRB(0.0, 300.0, 800.0, 400.0),
+              color: const Color(0xFFFF9800),
+            )
+            ..rect(
+              rect: const Rect.fromLTRB(0.0, 400.0, 800.0, 500.0),
+              color: const Color(0xFFFF9800),
+            )
+            ..rect(
+              rect: const Rect.fromLTRB(0.0, 500.0, 800.0, 600.0),
+              color: const Color(0xFFFF9800),
+            )
+            ..rect(
+              rect: const Rect.fromLTRB(0.0, 600.0, 800.0, 700.0),
+              color: const Color(0xFFF44336),
+            ),
+        );
+        // Change the scroll offset
+        verticalController.jumpTo(10.0);
+        await tester.pump();
+        expect(
+          find.byType(TreeViewport),
+          paints
+            ..rect(
+              rect: const Rect.fromLTRB(0.0, -10.0, 800.0, 90.0),
+              color: const Color(0xff2196f3),
+            )
+            ..rect(
+              rect: const Rect.fromLTRB(0.0, 90.0, 800.0, 190.0),
+              color: const Color(0xff2196f3),
+            )
+            ..rect(
+              rect: const Rect.fromLTRB(0.0, 190.0, 800.0, 290.0),
+              color: const Color(0xff2196f3),
+            )
+            ..rect(
+              rect: const Rect.fromLTRB(0.0, 290.0, 800.0, 390.0),
+              color: const Color(0xff4caf50),
+            )
+            ..rect(
+              rect: const Rect.fromLTRB(0.0, 390.0, 800.0, 490.0),
+              color: const Color(0xff4caf50),
+            )
+            ..rect(
+              rect: const Rect.fromLTRB(0.0, 490.0, 800.0, 590.0),
+              color: const Color(0xff4caf50),
+            )
+            ..rect(
+              rect: const Rect.fromLTRB(0.0, 590.0, 800.0, 690.0),
+              color: const Color(0xff2196f3),
+            )
+            ..paragraph()
+            ..paragraph()
+            ..paragraph()
+            ..paragraph()
+            ..paragraph()
+            ..paragraph()
+            ..paragraph()
+            ..rect(
+              rect: const Rect.fromLTRB(0.0, -10.0, 800.0, 90.0),
+              color: const Color(0xFFF44336),
+            )
+            ..rect(
+              rect: const Rect.fromLTRB(0.0, 90.0, 800.0, 190.0),
+              color: const Color(0xFFF44336),
+            )
+            ..rect(
+              rect: const Rect.fromLTRB(0.0, 190.0, 800.0, 290.0),
+              color: const Color(0xFFF44336),
+            )
+            ..rect(
+              rect: const Rect.fromLTRB(0.0, 290.0, 800.0, 390.0),
+              color: const Color(0xFFFF9800),
+            )
+            ..rect(
+              rect: const Rect.fromLTRB(0.0, 390.0, 800.0, 490.0),
+              color: const Color(0xFFFF9800),
+            )
+            ..rect(
+              rect: const Rect.fromLTRB(0.0, 490.0, 800.0, 590.0),
+              color: const Color(0xFFFF9800),
+            )
+            ..rect(
+              rect: const Rect.fromLTRB(0.0, 590.0, 800.0, 690.0),
+              color: const Color(0xFFF44336),
+            ),
+        );
+      });
     });
   });
 }

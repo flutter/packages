@@ -15,6 +15,9 @@ import 'tree_core.dart';
 import 'tree_delegate.dart';
 import 'tree_span.dart';
 
+// Used during paint to delineate animating portions of the tree.
+typedef _PaintSegment = ({int leadingIndex, int trailingIndex});
+
 /// A render object for viewing [RenderBox]es in a tree format that extends in
 /// both the horizontal and vertical dimensions.
 ///
@@ -349,11 +352,11 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
   void layoutChildSequence() {
     _updateAnimationCache();
     if (needsDelegateRebuild || didResize) {
-      // Recomputes the table metrics, invalidates any cached information.
+      // Recomputes the tree row metrics, invalidates any cached information.
       _furthestHorizontalExtent = 0.0;
       _updateRowMetrics();
     } else {
-      // Updates the visible cells based on cached table metrics.
+      // Updates the visible rows based on cached _rowMetrics.
       _updateFirstAndLastVisibleRow();
     }
 
@@ -447,8 +450,7 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
     int leadingIndex = _firstRow!;
     final List<int> animationIndices = _animationLeadingIndices.keys.toList()
       ..sort();
-    final List<({int leadingIndex, int trailingIndex})> paintSegments =
-        <({int leadingIndex, int trailingIndex})>[];
+    final List<_PaintSegment> paintSegments = <_PaintSegment>[];
     while (animationIndices.isNotEmpty) {
       final int trailingIndex = animationIndices.removeAt(0);
       paintSegments.add((
@@ -461,6 +463,7 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
 
     // Paint, clipping for all but the first segment, unless there is visual
     // overflow.
+    final _PaintSegment firstSegment = paintSegments.removeAt(0);
     if (_hasVisualOverflow && clipBehavior != Clip.none) {
       _clipHandles[_viewportClipKey] ??= LayerHandle<ClipRectLayer>();
       _clipHandles[_viewportClipKey]!.layer = context.pushClipRect(
@@ -471,8 +474,8 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
           _paintRows(
             context,
             offset,
-            leadingRow: 0,
-            trailingRow: paintSegments.removeAt(0).trailingIndex,
+            leadingRow: firstSegment.leadingIndex,
+            trailingRow: firstSegment.trailingIndex,
           );
         },
         clipBehavior: clipBehavior,
@@ -483,24 +486,23 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
       _paintRows(
         context,
         offset,
-        leadingRow: 0,
-        trailingRow: paintSegments.removeAt(0).trailingIndex,
+        leadingRow: firstSegment.leadingIndex,
+        trailingRow: firstSegment.trailingIndex,
       );
     }
     // Paint the rest with clip layers.
     while (paintSegments.isNotEmpty) {
-      final ({int leadingIndex, int trailingIndex}) segment =
-          paintSegments.removeAt(0);
+      final _PaintSegment segment = paintSegments.removeAt(0);
       final int parentIndex = segment.leadingIndex - 1;
       final double leadingOffset = _rowMetrics[parentIndex]!.trailingOffset;
       final double trailingOffset =
           _rowMetrics[segment.trailingIndex]!.trailingOffset;
       final Rect rect = Rect.fromPoints(
-        Offset(0.0, leadingOffset),
+        Offset(0.0, leadingOffset - verticalOffset.pixels),
         Offset(
           viewportDimension.width,
           math.min(
-            trailingOffset,
+            trailingOffset - verticalOffset.pixels,
             viewportDimension.height,
           ),
         ),
@@ -594,10 +596,10 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
       final RenderBox child = getChildFor(
         ChildVicinity(xIndex: _rowDepths[row]!, yIndex: row),
       )!;
-      final TwoDimensionalViewportParentData cellParentData =
+      final TwoDimensionalViewportParentData rowParentData =
           parentDataOf(child);
-      if (cellParentData.isVisible) {
-        context.paintChild(child, offset + cellParentData.paintOffset!);
+      if (rowParentData.isVisible) {
+        context.paintChild(child, offset + rowParentData.paintOffset!);
       }
     }
     // Foreground decorations.
