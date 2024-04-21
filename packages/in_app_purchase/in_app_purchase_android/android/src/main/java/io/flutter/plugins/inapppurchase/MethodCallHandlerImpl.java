@@ -10,7 +10,6 @@ import static io.flutter.plugins.inapppurchase.Translator.fromBillingResult;
 import static io.flutter.plugins.inapppurchase.Translator.fromProductDetailsList;
 import static io.flutter.plugins.inapppurchase.Translator.fromPurchaseHistoryRecordList;
 import static io.flutter.plugins.inapppurchase.Translator.fromPurchasesList;
-import static io.flutter.plugins.inapppurchase.Translator.fromUserChoiceDetails;
 import static io.flutter.plugins.inapppurchase.Translator.toProductList;
 import static io.flutter.plugins.inapppurchase.Translator.toProductTypeString;
 
@@ -34,7 +33,6 @@ import com.android.billingclient.api.ProductDetails;
 import com.android.billingclient.api.QueryProductDetailsParams;
 import com.android.billingclient.api.QueryPurchaseHistoryParams;
 import com.android.billingclient.api.QueryPurchasesParams;
-import com.android.billingclient.api.UserChoiceBillingListener;
 import io.flutter.plugins.inapppurchase.Messages.FlutterError;
 import io.flutter.plugins.inapppurchase.Messages.InAppPurchaseApi;
 import io.flutter.plugins.inapppurchase.Messages.InAppPurchaseCallbackApi;
@@ -437,10 +435,8 @@ class MethodCallHandlerImpl implements Application.ActivityLifecycleCallbacks, I
       @NonNull PlatformBillingChoiceMode billingMode,
       @NonNull Result<PlatformBillingResult> result) {
     if (billingClient == null) {
-      UserChoiceBillingListener listener = getUserChoiceBillingListener(billingMode);
       billingClient =
-          billingClientFactory.createBillingClient(
-              applicationContext, callbackApi, billingMode, listener);
+          billingClientFactory.createBillingClient(applicationContext, callbackApi, billingMode);
     }
 
     try {
@@ -480,30 +476,6 @@ class MethodCallHandlerImpl implements Application.ActivityLifecycleCallbacks, I
     } catch (RuntimeException e) {
       result.error(new FlutterError("error", e.getMessage(), Log.getStackTraceString(e)));
     }
-  }
-
-  @Nullable
-  private UserChoiceBillingListener getUserChoiceBillingListener(
-      PlatformBillingChoiceMode billingChoiceMode) {
-    UserChoiceBillingListener listener = null;
-    if (billingChoiceMode == PlatformBillingChoiceMode.USER_CHOICE_BILLING) {
-      listener =
-          userChoiceDetails ->
-              callbackApi.userSelectedalternativeBilling(
-                  fromUserChoiceDetails(userChoiceDetails),
-                  new Messages.VoidResult() {
-                    @Override
-                    public void success() {}
-
-                    @Override
-                    public void error(@NonNull Throwable error) {
-                      io.flutter.Log.e(
-                          "IN_APP_PURCHASE",
-                          "userSelectedalternativeBilling handler error: " + error);
-                    }
-                  });
-    }
-    return listener;
   }
 
   @Override
