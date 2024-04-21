@@ -445,7 +445,7 @@ class RouteConfiguration {
         _getRouteLevelRedirect(
             context, matchList, routeMatches, currentCheckIndex + 1);
     final RouteBase route = match.route;
-    FutureOr<String?> routeRedirectResult = route.redirect?.call(
+    final FutureOr<String?> routeRedirectResult = route.redirect!.call(
       context,
       match.buildState(this, matchList),
     );
