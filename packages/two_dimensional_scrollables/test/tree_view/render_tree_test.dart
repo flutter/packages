@@ -638,7 +638,7 @@ void main() {
             home: TreeView<String>(
           tree: treeNodes,
           controller: controller,
-        )));
+        ),));
         await tester.pump();
         expect(find.text('Second'), findsOneWidget);
         expect(find.text('alpha'), findsNothing); // Second is collapsed
@@ -744,7 +744,7 @@ void main() {
           tester.getRect(find.text('Second')),
           const Rect.fromLTRB(46.0, 48.0, 334.0, 72.0),
         );
-        // alpha is still animating into view.
+        // alpha is in place.
         expect(
           tester.getRect(find.text('alpha')),
           const Rect.fromLTRB(56.0, 88.0, 296.0, 112.0),
@@ -962,6 +962,7 @@ void main() {
         );
       });
     });
+  
   });
 }
 
