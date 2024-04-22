@@ -1,3 +1,7 @@
+## 0.8.10+1
+
+* Fixes a possible crash when calling a picker method UIGraphicsImageRenderer if imageToScale is nil.
+
 ## 0.8.10
 
 * Adds limit parameter to `MediaOptions` and `MultiImagePickerOptions` that sets a limit to how many media or image items can be selected.
