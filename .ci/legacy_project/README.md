@@ -42,3 +42,7 @@ and then deleting everything but `android/` from it:
 - Updates `gradle-wrapper.properties` from `6.7` to `6.7.1`, to add
   support for the Kotlin gradle plugin. If a user runs into this
   error, the error message is clear on how to upgrade.
+- Modifies `gradle-wrapper.properties` to upgrade the Android Gradle
+  Plugin Version (AGP) from version 4.1.0 to 7.0.0. If a user runs into
+  an error with the AGP version, the error message is clear on how to
+  upgrade the version to one that we support.
