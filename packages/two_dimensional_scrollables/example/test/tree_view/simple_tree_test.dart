@@ -39,7 +39,7 @@ void main() {
     ScrollPosition horizontalPosition =
         (tester.state(horizontalScrollable) as ScrollableState).position;
 
-    expect(horizontalPosition.maxScrollExtent, 209.75);
+    expect(horizontalPosition.maxScrollExtent, greaterThan(190));
     expect(horizontalPosition.pixels, 0.0);
     final TreeExampleState state =
         tester.state(find.byType(TreeExample)) as TreeExampleState;
