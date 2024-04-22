@@ -14,7 +14,7 @@ in both the vertical and horizontal axes.
 children lazily in a `TwoDimensionalViewport`. This widget can
 
 - Scroll diagonally, or lock axes
-- Build infinite rows and coolumns
+- Build infinite rows and columns
 - Apply decorations to rows and columns
 - Handle gestures & custom pointers for rows and columns
 - Pin rows and columns

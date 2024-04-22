@@ -272,10 +272,12 @@ void main() {
       addTearDown(horizontalController.dispose);
       final TreeView<String> treeView = TreeView<String>(
         controller: treeController,
-        verticalDetails:
-            ScrollableDetails.vertical(controller: verticalController,),
-        horizontalDetails:
-            ScrollableDetails.horizontal(controller: horizontalController,),
+        verticalDetails: ScrollableDetails.vertical(
+          controller: verticalController,
+        ),
+        horizontalDetails: ScrollableDetails.horizontal(
+          controller: horizontalController,
+        ),
         tree: treeNodes,
         // Exaggerated to exceed viewport bounds.
         indentation: TreeViewIndentationType.custom(500),
@@ -635,10 +637,11 @@ void main() {
           (WidgetTester tester) async {
         final TreeViewController controller = TreeViewController();
         await tester.pumpWidget(MaterialApp(
-            home: TreeView<String>(
-          tree: treeNodes,
-          controller: controller,
-        ),));
+          home: TreeView<String>(
+            tree: treeNodes,
+            controller: controller,
+          ),
+        ));
         await tester.pump();
         expect(find.text('Second'), findsOneWidget);
         expect(find.text('alpha'), findsNothing); // Second is collapsed
@@ -783,8 +786,7 @@ void main() {
         expect(find.text('gamma'), findsNothing); // outside of cacheExtent
       });
 
-      testWidgets('paints decorations correctly',
-          (WidgetTester tester) async {
+      testWidgets('paints decorations correctly', (WidgetTester tester) async {
         final ScrollController verticalController = ScrollController();
         final ScrollController horizontalController = ScrollController();
         addTearDown(verticalController.dispose);
@@ -802,10 +804,12 @@ void main() {
           color: Colors.green,
         );
         final TreeView<String> treeView = TreeView<String>(
-        verticalDetails:
-            ScrollableDetails.vertical(controller: verticalController,),
-        horizontalDetails:
-            ScrollableDetails.horizontal(controller: horizontalController,),
+          verticalDetails: ScrollableDetails.vertical(
+            controller: verticalController,
+          ),
+          horizontalDetails: ScrollableDetails.horizontal(
+            controller: horizontalController,
+          ),
           tree: treeNodes,
           treeRowBuilder: (TreeViewNode<dynamic> node) {
             return row.copyWith(
@@ -962,7 +966,6 @@ void main() {
         );
       });
     });
-  
   });
 }
 

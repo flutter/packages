@@ -30,7 +30,7 @@ class CustomTreeExampleState extends State<CustomTreeExample> {
 
   TreeViewNode<String>? _selectedNode;
   final ScrollController _horizontalController = ScrollController();
-  final List<TreeViewNode<String>> tree = <TreeViewNode<String>>[
+  final List<TreeViewNode<String>> _tree = <TreeViewNode<String>>[
     TreeViewNode<String>('README.md'),
     TreeViewNode<String>('analysis_options.yaml'),
     TreeViewNode<String>(
@@ -186,7 +186,7 @@ class CustomTreeExampleState extends State<CustomTreeExample> {
             horizontalDetails: ScrollableDetails.horizontal(
               controller: _horizontalController,
             ),
-            tree: tree,
+            tree: _tree,
             onNodeToggle: (TreeViewNode<dynamic> node) {
               setState(() {
                 _selectedNode = node as TreeViewNode<String>;

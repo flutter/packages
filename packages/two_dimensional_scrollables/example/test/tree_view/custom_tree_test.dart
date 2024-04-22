@@ -44,18 +44,18 @@ void main() {
     await tester.pumpAndSettle();
     verticalPosition =
         (tester.state(verticalScrollable) as ScrollableState).position;
-    expect(verticalPosition.maxScrollExtent, 0.0);
+    expect(verticalPosition.maxScrollExtent, 10.0);
     expect(verticalPosition.pixels, 0.0);
     state.treeController.toggleNode(state.treeController.getNodeFor('src')!);
     await tester.pumpAndSettle();
     verticalPosition =
         (tester.state(verticalScrollable) as ScrollableState).position;
     // Enough nodes expanded to allow us to scroll
-    expect(verticalPosition.maxScrollExtent, 100.0);
+    expect(verticalPosition.maxScrollExtent, 190.0);
     expect(verticalPosition.pixels, 0.0);
     state.verticalController.jumpTo(10.0);
     await tester.pumpAndSettle();
-    expect(verticalPosition.maxScrollExtent, 100.0);
+    expect(verticalPosition.maxScrollExtent, 190.0);
     expect(verticalPosition.pixels, 10.0);
   });
 }

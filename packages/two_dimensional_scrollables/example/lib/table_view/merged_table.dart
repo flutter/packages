@@ -126,10 +126,11 @@ class _MergedTableExampleState extends State<MergedTableExample> {
       foregroundDecoration: index == 0
           ? const TableSpanDecoration(
               border: TableSpanBorder(
-                  trailing: BorderSide(
-                width: 5,
-                color: Colors.white,
-              )),
+                trailing: BorderSide(
+                  width: 5,
+                  color: Colors.white,
+                ),
+              ),
             )
           : null,
     );

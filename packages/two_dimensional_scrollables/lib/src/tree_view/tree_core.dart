@@ -6,15 +6,15 @@ import 'package:flutter/widgets.dart';
 
 import 'tree.dart';
 
-// MOST OF THIS API IS COPIED FROM FRAMEWORK (whole file)
+// SHARED WITH FRAMEWORK (whole file)
 // Should not deviate from the core components of the framework.
 //
-// These classes are copied from the framework since they are not currently
-// available on the stable branch. After rolling to stable, these classes may be
-// deprecated, or made to be typedefs/subclasses of the framework core tree
-// components. They could also live on if at a later date the 2D TreeView
-// deviates or adds special features not relevant to the 1D components of the
-// framework.
+// These classes share the same surface as SliverTree in the framework since
+// they are not currently available on the stable branch. After rolling to
+// stable, these classes may be deprecated, or more likely made to be
+// typedefs/subclasses of the framework core tree components. They could also
+// live on if at a later date the 2D TreeView deviates or adds special features
+// not relevant to the 1D sliver components of the framework.
 
 /// Signature for a function that is called when a [TreeViewNode] is toggled,
 /// changing its expanded state.

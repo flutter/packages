@@ -4,9 +4,9 @@
 
 import 'package:flutter/material.dart';
 
-import 'simple_table.dart';
-import 'merged_table.dart';
 import 'infinite_table.dart';
+import 'merged_table.dart';
+import 'simple_table.dart';
 
 /// The page containing the interactive controls that modify the sample
 /// TableView.
