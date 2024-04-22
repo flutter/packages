@@ -29,6 +29,9 @@
 @implementation FLTImagePickerImageUtil : NSObject
 
 static UIImage *FLTImagePickerDrawScaledImage(UIImage *imageToScale, double width, double height) {
+  if (imageToScale == nil || width == 0 || height == 0) {
+    return nil;
+  }
   UIGraphicsImageRenderer *imageRenderer =
       [[UIGraphicsImageRenderer alloc] initWithSize:CGSizeMake(width, height)
                                              format:imageToScale.imageRendererFormat];
