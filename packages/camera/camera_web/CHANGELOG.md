@@ -1,3 +1,7 @@
+## 0.3.3+1
+
+- Supporting camera stream on web.
+
 ## 0.3.3
 
 - Supporting camera stream on web.
