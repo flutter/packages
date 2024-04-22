@@ -1,3 +1,7 @@
+## 0.3.3+1
+
+- Supporting camera stream on web.
+
 ## 0.3.3
 
 - Adds support to control video FPS and bitrate. See `CameraController.withSettings`.
