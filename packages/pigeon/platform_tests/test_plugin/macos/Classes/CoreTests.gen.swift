@@ -217,10 +217,7 @@ class AllNullableTypes {
     }
     let aNullableString: String? = nilOrValue(__pigeon_list[14])
     let aNullableObject: Any? = __pigeon_list[15]
-    var allNullableTypes: AllNullableTypes? = nil
-    if let allNullableTypesList: AllNullableTypes = nilOrValue(__pigeon_list[16]) {
-      allNullableTypes = allNullableTypesList as AllNullableTypes
-    }
+    let allNullableTypes: AllNullableTypes? = nilOrValue(__pigeon_list[16])
 
     return AllNullableTypes(
       aNullableBool: aNullableBool,
@@ -375,17 +372,9 @@ struct AllClassesWrapper {
   // swift-format-ignore: AlwaysUseLowerCamelCase
   static func fromList(_ __pigeon_list: [Any?]) -> AllClassesWrapper? {
     let allNullableTypes = __pigeon_list[0] as! AllNullableTypes
-    var allNullableTypesWithoutRecursion: AllNullableTypesWithoutRecursion? = nil
-    if let allNullableTypesWithoutRecursionList: AllNullableTypesWithoutRecursion = nilOrValue(
+    let allNullableTypesWithoutRecursion: AllNullableTypesWithoutRecursion? = nilOrValue(
       __pigeon_list[1])
-    {
-      allNullableTypesWithoutRecursion =
-        allNullableTypesWithoutRecursionList as AllNullableTypesWithoutRecursion
-    }
-    var allTypes: AllTypes? = nil
-    if let allTypesList: AllTypes = nilOrValue(__pigeon_list[2]) {
-      allTypes = allTypesList as AllTypes
-    }
+    let allTypes: AllTypes? = nilOrValue(__pigeon_list[2])
 
     return AllClassesWrapper(
       allNullableTypes: allNullableTypes,

@@ -38,6 +38,8 @@ class AllTypes {
   Int32List a4ByteArray;
   Int64List a8ByteArray;
   Float64List aFloatArray;
+  // This name is in a different format than the others to ensure that name
+  // collision with the work 'list' doesn't occur in the generated files.
   // ignore: always_specify_types, strict_raw_type
   List list;
   // ignore: always_specify_types, strict_raw_type

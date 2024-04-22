@@ -575,8 +575,7 @@ class ObjcSourceGenerator extends StructuredGenerator<ObjcOptions> {
       enumerate(getFieldsInSerializationOrder(classDefinition),
           (int index, final NamedType field) {
         final bool isEnumType = field.type.isEnum;
-        final String valueGetter =
-            _listGetter('list', field, index, generatorOptions.prefix);
+        final String valueGetter = "GetNullableObjectAtIndex('list', $index)";
         final String? primitiveExtractionMethod =
             _nsnumberExtractionMethod(field.type);
         final String ivarValueExpression;
@@ -1486,10 +1485,6 @@ String _makeObjcSignature({
 /// Generates the ".h" file for the AST represented by [root] to [sink] with the
 /// provided [options].
 void generateObjcHeader(ObjcOptions options, Root root, Indent indent) {}
-
-String _listGetter(String list, NamedType field, int index, String? prefix) {
-  return 'GetNullableObjectAtIndex($list, $index)';
-}
 
 String _arrayValue(NamedType field) {
   if (field.type.isEnum) {

@@ -69,10 +69,10 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 }
 + (PGNMessageData *)fromList:(NSArray *)list {
   PGNMessageData *pigeonResult = [[PGNMessageData alloc] init];
-  pigeonResult.name = GetNullableObjectAtIndex(list, 0);
-  pigeonResult.description = GetNullableObjectAtIndex(list, 1);
-  pigeonResult.code = [GetNullableObjectAtIndex(list, 2) integerValue];
-  pigeonResult.data = GetNullableObjectAtIndex(list, 3);
+  pigeonResult.name = GetNullableObjectAtIndex('list', 0);
+  pigeonResult.description = GetNullableObjectAtIndex('list', 1);
+  pigeonResult.code = [GetNullableObjectAtIndex('list', 2) integerValue];
+  pigeonResult.data = GetNullableObjectAtIndex('list', 3);
   return pigeonResult;
 }
 + (nullable PGNMessageData *)nullableFromList:(NSArray *)list {

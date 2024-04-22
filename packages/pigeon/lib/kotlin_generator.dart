@@ -97,8 +97,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
     }
     indent.writeln('// ${getGeneratedCodeWarning()}');
     indent.writeln('// $seeAlsoWarning');
-    indent.writeln(
-        '@file:Suppress("UNCHECKED_CAST", "LocalVariableName", "ArrayInDataClass")');
+    indent.writeln('@file:Suppress("UNCHECKED_CAST", "ArrayInDataClass")');
   }
 
   @override
@@ -176,7 +175,6 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
     addDocumentationComments(
         indent, classDefinition.documentationComments, _docCommentSpec,
         generatorComments: generatedMessages);
-
     indent.write('data class ${classDefinition.name} ');
     indent.addScoped('(', '', () {
       for (final NamedType element
@@ -249,6 +247,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
 
     indent.write('companion object ');
     indent.addScoped('{', '}', () {
+      indent.writeln('@Suppress("LocalVariableName")');
       indent
           .write('fun fromList(${varNamePrefix}list: List<Any?>): $className ');
 
@@ -262,8 +261,8 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
             if (field.type.isEnum) {
               indent.write('val ${field.name}: $fieldType? = ');
               indent.add('($listValue as Int?)?.let ');
-              indent.addScoped('{', '}', () {
-                indent.writeln('$fieldType.ofRaw(it)');
+              indent.addScoped('{ num ->', '}', () {
+                indent.writeln('$fieldType.ofRaw(num)');
               });
             } else {
               indent.writeln(
@@ -826,9 +825,9 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
             const String output = 'output';
             // Nullable enums require special handling.
             if (returnType.isEnum && returnType.isNullable) {
-              indent.writeScoped('val $output = (it[0] as Int?)?.let {', '}',
-                  () {
-                indent.writeln('${returnType.baseName}.ofRaw(it)');
+              indent.writeScoped(
+                  'val $output = (it[0] as Int?)?.let { num ->', '}', () {
+                indent.writeln('${returnType.baseName}.ofRaw(num)');
               });
             } else {
               indent.writeln(
@@ -958,8 +957,8 @@ String _cast(Indent indent, String variable, {required TypeDeclaration type}) {
   }
   if (type.isEnum) {
     if (type.isNullable) {
-      return '($variable as Int?)?.let {\n'
-          '${indent.str}  $typeString.ofRaw(it)\n'
+      return '($variable as Int?)?.let { num ->\n'
+          '${indent.str}  $typeString.ofRaw(num)\n'
           '${indent.str}}';
     }
     return '${type.baseName}.ofRaw($variable as Int)!!';
@@ -969,5 +968,5 @@ String _cast(Indent indent, String variable, {required TypeDeclaration type}) {
 
 String _castInt(bool isNullable) {
   final String nullability = isNullable ? '?' : '';
-  return '.let { if (it is Int) it.toLong() else it as Long$nullability }';
+  return '.let { num -> if (num is Int) num.toLong() else num as Long$nullability }';
 }

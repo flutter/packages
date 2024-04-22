@@ -213,9 +213,7 @@ class SwiftGenerator extends StructuredGenerator<SwiftOptions> {
           String toWriteValue = '';
           final String fieldName = field.name;
           final String nullsafe = field.type.isNullable ? '?' : '';
-          if (field.type.isClass) {
-            toWriteValue = fieldName;
-          } else if (field.type.isEnum) {
+          if (field.type.isEnum) {
             toWriteValue = '$fieldName$nullsafe.rawValue';
           } else {
             toWriteValue = field.name;
@@ -574,46 +572,23 @@ class SwiftGenerator extends StructuredGenerator<SwiftOptions> {
     required TypeDeclaration type,
   }) {
     final String fieldType = _swiftTypeForDartType(type);
-
-    if (type.isNullable) {
-      if (type.isClass) {
-        indent.writeln('var $variableName: $fieldType? = nil');
-        indent.write(
-            'if let ${variableName}List: $fieldType = nilOrValue($value) ');
-        indent.addScoped('{', '}', () {
-          indent.writeln('$variableName = ${variableName}List as $fieldType');
-        });
-      } else if (type.isEnum) {
-        indent.writeln('var $variableName: $fieldType? = nil');
+    if (type.isNullable && type.isEnum) {
+      indent.writeln('var $variableName: $fieldType? = nil');
+      indent.writeln(
+          'let ${variableName}EnumVal: Int? = ${_castForceUnwrap(value, const TypeDeclaration(baseName: 'Int', isNullable: true))}');
+      indent.write('if let ${variableName}RawValue = ${variableName}EnumVal ');
+      indent.addScoped('{', '}', () {
         indent.writeln(
-            'let ${variableName}EnumVal: Int? = ${_castForceUnwrap(value, const TypeDeclaration(baseName: 'Int', isNullable: true))}');
-        indent
-            .write('if let ${variableName}RawValue = ${variableName}EnumVal ');
-        indent.addScoped('{', '}', () {
-          indent.writeln(
-              '$variableName = $fieldType(rawValue: ${variableName}RawValue)!');
-        });
-      } else {
-        _writeGenericCasting(
-          indent: indent,
-          value: value,
-          variableName: variableName,
-          fieldType: fieldType,
-          type: type,
-        );
-      }
+            '$variableName = $fieldType(rawValue: ${variableName}RawValue)!');
+      });
     } else {
-      if (type.isClass) {
-        indent.writeln('let $variableName = $value as! $fieldType');
-      } else {
-        _writeGenericCasting(
-          indent: indent,
-          value: value,
-          variableName: variableName,
-          fieldType: fieldType,
-          type: type,
-        );
-      }
+      _writeGenericCasting(
+        indent: indent,
+        value: value,
+        variableName: variableName,
+        fieldType: fieldType,
+        type: type,
+      );
     }
   }
 

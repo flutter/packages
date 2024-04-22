@@ -1,8 +1,8 @@
 ## 17.3.1
 
-* Fixes double encode/decode of classes.
+* Fixes unnecessary calls of `toList` and `fromList` when encoding/decoding data classes.
 * [kotlin] Changes to some code to make it more idiomatic.
-* Removes collision with the word `list`.
+* Removes collisions with the word `list`.
 
 ## 17.3.0
 
