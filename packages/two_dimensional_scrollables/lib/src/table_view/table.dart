@@ -1007,7 +1007,7 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
                 _rowMetrics[firstRow]!.leadingOffset +
                 _rowMetrics[firstRow]!.configuration.padding.leading;
             if (_rowsAreInfinite && _rowMetrics[lastRow] == null) {
-              // The number of rows is infinte, and we have not calculated
+              // The number of rows is infinite, and we have not calculated
               // the metrics to the full extent of the merged cell. Update the
               // metrics so we have all the information for the merged area.
               _updateRowMetrics(appendRows: true, toRowIndex: lastRow);
@@ -1042,7 +1042,7 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
                 _columnMetrics[firstColumn]!.configuration.padding.leading;
 
             if (_columnsAreInfinite && _columnMetrics[lastColumn] == null) {
-              // The number of columns is infinte, and we have not calculated
+              // The number of columns is infinite, and we have not calculated
               // the metrics to the full extent of the merged cell. Update the
               // metrics so we have all the information for the merged area.
               _updateColumnMetrics(
