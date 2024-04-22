@@ -1,3 +1,7 @@
+## 2.0.20
+
+* Bumps AGP version to 8.3.2.
+
 ## 2.0.19
 
 * Updates minSdkVersion to 19.
