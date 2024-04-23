@@ -343,7 +343,7 @@ String proxyApiReaderWriterTemplate({
   }).join(' else ');
 
   return '''
-private class $proxyApiReaderWriterName: FlutterStandardReaderWriter {
+fileprivate class $proxyApiReaderWriterName: FlutterStandardReaderWriter {
   unowned let pigeonRegistrar: $proxyApiRegistrarName
   
   private class ${classNamePrefix}ProxyApiCodecReader: FlutterStandardReader {

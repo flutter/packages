@@ -390,7 +390,8 @@ class SwiftGenerator extends StructuredGenerator<SwiftOptions> {
         _writeFlutterMethod(
           indent,
           name: func.name,
-          channelName: makeChannelName(api, func, dartPackageName),
+          channelName:
+              '${makeChannelName(api, func, dartPackageName)}\\(messageChannelSuffix)',
           parameters: func.parameters,
           returnType: func.returnType,
           codecArgumentString: codecArgumentString,
@@ -591,9 +592,15 @@ class SwiftGenerator extends StructuredGenerator<SwiftOptions> {
       _writeProxyApiNewInstanceMethod(
         indent,
         api,
-        generatorOptions: generatorOptions,
         apiAsTypeDeclaration: apiAsTypeDeclaration,
         newInstanceMethodName: '${classMemberNamePrefix}newInstance',
+        dartPackageName: dartPackageName,
+      );
+
+      _writeProxyApiFlutterMethods(
+        indent,
+        api,
+        apiAsTypeDeclaration: apiAsTypeDeclaration,
         dartPackageName: dartPackageName,
       );
     });
@@ -890,7 +897,7 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
         indent,
         parameters: parameters,
         returnType: returnType,
-        channelName: '$channelName\\(messageChannelSuffix)',
+        channelName: channelName,
         codecArgumentString: codecArgumentString,
       );
     });
@@ -1614,7 +1621,6 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
   void _writeProxyApiNewInstanceMethod(
     Indent indent,
     AstProxyApi api, {
-    required SwiftOptions generatorOptions,
     required TypeDeclaration apiAsTypeDeclaration,
     required String newInstanceMethodName,
     required String dartPackageName,
@@ -1696,6 +1702,62 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
         );
       }
     });
+  }
+
+  // Writes the Flutter methods that call back to Dart.
+  void _writeProxyApiFlutterMethods(
+    Indent indent,
+    AstProxyApi api, {
+    required TypeDeclaration apiAsTypeDeclaration,
+    required String dartPackageName,
+  }) {
+    for (final Method method in api.flutterMethods) {
+      addDocumentationComments(
+        indent,
+        method.documentationComments,
+        _docCommentSpec,
+      );
+
+      final Version? versionRequirement = _findHighestIosVersionRequirement(
+        <TypeDeclaration>[
+          apiAsTypeDeclaration,
+          ...method.parameters.map((Parameter parameter) => parameter.type),
+          method.returnType,
+        ],
+      )?.version;
+      if (versionRequirement != null) {
+        indent.writeln('@available(iOS $versionRequirement, *))');
+      }
+
+      final String methodSignature = _getMethodSignature(
+        name: method.name,
+        parameters: <Parameter>[
+          Parameter(name: 'pigeonInstance', type: apiAsTypeDeclaration),
+          ...method.parameters,
+        ],
+        returnType: method.returnType,
+        isAsynchronous: true,
+        errorTypeName: 'FlutterError',
+        getParameterName: _getSafeArgumentName,
+      );
+
+      indent.writeScoped('$methodSignature {', '}', () {
+        indent.writeln('let binaryMessenger = pigeonRegistrar.binaryMessenger');
+        indent.writeln('let codec = pigeonRegistrar.codec');
+
+        _writeFlutterMethodMessageCall(
+          indent,
+          parameters: <Parameter>[
+            Parameter(name: 'pigeonInstance', type: apiAsTypeDeclaration),
+            ...method.parameters,
+          ],
+          returnType: method.returnType,
+          channelName: makeChannelName(api, method, dartPackageName),
+          codecArgumentString: ', codec: codec',
+        );
+      });
+      indent.newln();
+    }
   }
 }
 
