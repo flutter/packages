@@ -66,10 +66,10 @@ Future<void> main() async {
     final Completer<void> pageFinished = Completer<void>();
 
     final WebViewController controller = WebViewController();
-    await (controller.setNavigationDelegate(
+    await controller.setNavigationDelegate(
       NavigationDelegate(onPageFinished: (_) => pageFinished.complete()),
-    ));
-    await (controller.loadRequest(Uri.parse(primaryUrl)));
+    );
+    await controller.loadRequest(Uri.parse(primaryUrl));
 
     await tester.pumpWidget(WebViewWidget(controller: controller));
     await pageFinished.future;
@@ -82,11 +82,11 @@ Future<void> main() async {
     final Completer<void> pageFinished = Completer<void>();
 
     final WebViewController controller = WebViewController();
-    await (controller.setJavaScriptMode(JavaScriptMode.unrestricted));
-    await (controller.setNavigationDelegate(
+    await controller.setJavaScriptMode(JavaScriptMode.unrestricted);
+    await controller.setNavigationDelegate(
       NavigationDelegate(onPageFinished: (_) => pageFinished.complete()),
-    ));
-    await (controller.loadRequest(Uri.parse(primaryUrl)));
+    );
+    await controller.loadRequest(Uri.parse(primaryUrl));
 
     await tester.pumpWidget(WebViewWidget(controller: controller));
 
@@ -106,14 +106,14 @@ Future<void> main() async {
     final StreamController<String> pageLoads = StreamController<String>();
 
     final WebViewController controller = WebViewController();
-    await (controller.setJavaScriptMode(JavaScriptMode.unrestricted));
-    await (controller.setNavigationDelegate(
+    await controller.setJavaScriptMode(JavaScriptMode.unrestricted);
+    await controller.setNavigationDelegate(
       NavigationDelegate(onPageFinished: (String url) => pageLoads.add(url)),
-    ));
+    );
 
     await tester.pumpWidget(WebViewWidget(controller: controller));
 
-    await (controller.loadRequest(Uri.parse(headersUrl), headers: headers));
+    await controller.loadRequest(Uri.parse(headersUrl), headers: headers);
 
     await pageLoads.stream.firstWhere((String url) => url == headersUrl);
 
@@ -126,10 +126,10 @@ Future<void> main() async {
   testWidgets('JavascriptChannel', (WidgetTester tester) async {
     final Completer<void> pageFinished = Completer<void>();
     final WebViewController controller = WebViewController();
-    await (controller.setJavaScriptMode(JavaScriptMode.unrestricted));
-    await (controller.setNavigationDelegate(
+    await controller.setJavaScriptMode(JavaScriptMode.unrestricted);
+    await controller.setNavigationDelegate(
       NavigationDelegate(onPageFinished: (_) => pageFinished.complete()),
-    ));
+    );
 
     final Completer<String> channelCompleter = Completer<String>();
     await controller.addJavaScriptChannel(
@@ -187,12 +187,12 @@ Future<void> main() async {
     final Completer<void> pageFinished = Completer<void>();
 
     final WebViewController controller = WebViewController();
-    await (controller.setJavaScriptMode(JavaScriptMode.unrestricted));
-    await (controller.setNavigationDelegate(NavigationDelegate(
+    await controller.setJavaScriptMode(JavaScriptMode.unrestricted);
+    await controller.setNavigationDelegate(NavigationDelegate(
       onPageFinished: (_) => pageFinished.complete(),
-    )));
-    await (controller.setUserAgent('Custom_User_Agent1'));
-    await (controller.loadRequest(Uri.parse('about:blank')));
+    ));
+    await controller.setUserAgent('Custom_User_Agent1');
+    await controller.loadRequest(Uri.parse('about:blank'));
 
     await tester.pumpWidget(WebViewWidget(controller: controller));
 
@@ -334,18 +334,18 @@ Future<void> main() async {
       }
       final WebViewController controller =
           WebViewController.fromPlatformCreationParams(params);
-      await (controller.setJavaScriptMode(JavaScriptMode.unrestricted));
+      await controller.setJavaScriptMode(JavaScriptMode.unrestricted);
       print('C: Javascript mode set');
 
-      await (controller.setNavigationDelegate(
+      await controller.setNavigationDelegate(
         NavigationDelegate(onPageFinished: (_) {
           print('C: page loaded');
           pageLoaded.complete();
         }),
-      ));
+      );
       print('C: Navigation delegate set');
 
-      await (controller.addJavaScriptChannel(
+      await controller.addJavaScriptChannel(
         'VideoTestTime',
         onMessageReceived: (JavaScriptMessage message) {
           final double currentTime = double.parse(message.message);
@@ -354,12 +354,12 @@ Future<void> main() async {
             videoPlaying.complete(null);
           }
         },
-      ));
+      );
       print('C: js channel added');
 
       if (controller.platform is AndroidWebViewController) {
-        await ((controller.platform as AndroidWebViewController)
-            .setMediaPlaybackRequiresUserGesture(false));
+        await (controller.platform as AndroidWebViewController)
+            .setMediaPlaybackRequiresUserGesture(false);
         print('C: media playback requires user gesture set');
       }
 
@@ -508,13 +508,13 @@ Future<void> main() async {
     final Completer<void> pageLoaded = Completer<void>();
 
     final WebViewController controller = WebViewController();
-    await (controller.setJavaScriptMode(JavaScriptMode.unrestricted));
-    await (controller.setNavigationDelegate(NavigationDelegate(
+    await controller.setJavaScriptMode(JavaScriptMode.unrestricted);
+    await controller.setNavigationDelegate(NavigationDelegate(
       onPageFinished: (_) => pageLoaded.complete(),
-    )));
-    await (controller.loadRequest(
-      Uri.parse('data:text/html;charset=utf-8;base64,$getTitleTestBase64'),
     ));
+    await controller.loadRequest(
+      Uri.parse('data:text/html;charset=utf-8;base64,$getTitleTestBase64'),
+    );
 
     await tester.pumpWidget(WebViewWidget(controller: controller));
 
@@ -559,18 +559,18 @@ Future<void> main() async {
       final Completer<void> pageLoaded = Completer<void>();
       final WebViewController controller = WebViewController();
       ScrollPositionChange? recordedPosition;
-      await (controller.setJavaScriptMode(JavaScriptMode.unrestricted));
-      await (controller.setNavigationDelegate(NavigationDelegate(
+      await controller.setJavaScriptMode(JavaScriptMode.unrestricted);
+      await controller.setNavigationDelegate(NavigationDelegate(
         onPageFinished: (_) => pageLoaded.complete(),
-      )));
-      await (controller.setOnScrollPositionChange(
+      ));
+      await controller.setOnScrollPositionChange(
           (ScrollPositionChange contentOffsetChange) {
         recordedPosition = contentOffsetChange;
-      }));
+      });
 
-      await (controller.loadRequest(Uri.parse(
+      await controller.loadRequest(Uri.parse(
         'data:text/html;charset=utf-8;base64,$scrollTestPageBase64',
-      )));
+      ));
 
       await tester.pumpWidget(WebViewWidget(controller: controller));
 
@@ -617,19 +617,19 @@ Future<void> main() async {
       Completer<void> pageLoaded = Completer<void>();
 
       final WebViewController controller = WebViewController();
-      await (controller.setJavaScriptMode(JavaScriptMode.unrestricted));
-      await (controller.setNavigationDelegate(NavigationDelegate(
+      await controller.setJavaScriptMode(JavaScriptMode.unrestricted);
+      await controller.setNavigationDelegate(NavigationDelegate(
         onPageFinished: (_) => pageLoaded.complete(),
         onNavigationRequest: (NavigationRequest navigationRequest) {
           return (navigationRequest.url.contains('youtube.com'))
               ? NavigationDecision.prevent
               : NavigationDecision.navigate;
         },
-      )));
+      ));
 
       await tester.pumpWidget(WebViewWidget(controller: controller));
 
-      await (controller.loadRequest(Uri.parse(blankPageEncoded)));
+      await controller.loadRequest(Uri.parse(blankPageEncoded));
 
       await pageLoaded.future; // Wait for initial page load.
 
@@ -646,12 +646,12 @@ Future<void> main() async {
           Completer<WebResourceError>();
 
       final WebViewController controller = WebViewController();
-      await (controller.setJavaScriptMode(JavaScriptMode.unrestricted));
-      await (controller.setNavigationDelegate(
+      await controller.setJavaScriptMode(JavaScriptMode.unrestricted);
+      await controller.setNavigationDelegate(
           NavigationDelegate(onWebResourceError: (WebResourceError error) {
         errorCompleter.complete(error);
-      })));
-      await (controller.loadRequest(Uri.parse('https://www.notawebsite..com')));
+      }));
+      await controller.loadRequest(Uri.parse('https://www.notawebsite..com'));
 
       await tester.pumpWidget(WebViewWidget(controller: controller));
 
@@ -666,16 +666,16 @@ Future<void> main() async {
       final Completer<void> pageFinishCompleter = Completer<void>();
 
       final WebViewController controller = WebViewController();
-      await (controller.setJavaScriptMode(JavaScriptMode.unrestricted));
-      await (controller.setNavigationDelegate(NavigationDelegate(
+      await controller.setJavaScriptMode(JavaScriptMode.unrestricted);
+      await controller.setNavigationDelegate(NavigationDelegate(
         onPageFinished: (_) => pageFinishCompleter.complete(),
         onWebResourceError: (WebResourceError error) {
           errorCompleter.complete(error);
         },
-      )));
-      await (controller.loadRequest(
-        Uri.parse('data:text/html;charset=utf-8;base64,PCFET0NUWVBFIGh0bWw+'),
       ));
+      await controller.loadRequest(
+        Uri.parse('data:text/html;charset=utf-8;base64,PCFET0NUWVBFIGh0bWw+'),
+      );
 
       await tester.pumpWidget(WebViewWidget(controller: controller));
 
@@ -687,18 +687,18 @@ Future<void> main() async {
       Completer<void> pageLoaded = Completer<void>();
 
       final WebViewController controller = WebViewController();
-      await (controller.setJavaScriptMode(JavaScriptMode.unrestricted));
-      await (controller.setNavigationDelegate(NavigationDelegate(
+      await controller.setJavaScriptMode(JavaScriptMode.unrestricted);
+      await controller.setNavigationDelegate(NavigationDelegate(
           onPageFinished: (_) => pageLoaded.complete(),
           onNavigationRequest: (NavigationRequest navigationRequest) {
             return (navigationRequest.url.contains('youtube.com'))
                 ? NavigationDecision.prevent
                 : NavigationDecision.navigate;
-          })));
+          }));
 
       await tester.pumpWidget(WebViewWidget(controller: controller));
 
-      await (controller.loadRequest(Uri.parse(blankPageEncoded)));
+      await controller.loadRequest(Uri.parse(blankPageEncoded));
 
       await pageLoaded.future; // Wait for initial page load.
 
@@ -719,8 +719,8 @@ Future<void> main() async {
       Completer<void> pageLoaded = Completer<void>();
 
       final WebViewController controller = WebViewController();
-      await (controller.setJavaScriptMode(JavaScriptMode.unrestricted));
-      await (controller.setNavigationDelegate(NavigationDelegate(
+      await controller.setJavaScriptMode(JavaScriptMode.unrestricted);
+      await controller.setNavigationDelegate(NavigationDelegate(
           onPageFinished: (_) => pageLoaded.complete(),
           onNavigationRequest: (NavigationRequest navigationRequest) async {
             NavigationDecision decision = NavigationDecision.prevent;
@@ -728,11 +728,11 @@ Future<void> main() async {
                 const Duration(milliseconds: 10),
                 () => NavigationDecision.navigate);
             return decision;
-          })));
+          }));
 
       await tester.pumpWidget(WebViewWidget(controller: controller));
 
-      await (controller.loadRequest(Uri.parse(blankPageEncoded)));
+      await controller.loadRequest(Uri.parse(blankPageEncoded));
 
       await pageLoaded.future; // Wait for initial page load.
 
@@ -748,11 +748,11 @@ Future<void> main() async {
       final Completer<void> pageLoaded = Completer<void>();
 
       final WebViewController controller = WebViewController();
-      await (controller.setJavaScriptMode(JavaScriptMode.unrestricted));
-      await (controller.setNavigationDelegate(NavigationDelegate(
+      await controller.setJavaScriptMode(JavaScriptMode.unrestricted);
+      await controller.setNavigationDelegate(NavigationDelegate(
         onPageFinished: (_) => pageLoaded.complete(),
-      )));
-      await (controller.loadRequest(Uri.parse(blankPageEncoded)));
+      ));
+      await controller.loadRequest(Uri.parse(blankPageEncoded));
 
       await tester.pumpWidget(WebViewWidget(controller: controller));
 
@@ -779,9 +779,9 @@ Future<void> main() async {
       );
 
       final WebViewController controller = WebViewController();
-      await (controller.setJavaScriptMode(JavaScriptMode.unrestricted));
-      await (controller.setNavigationDelegate(navigationDelegate));
-      await (controller.loadRequest(Uri.parse(primaryUrl)));
+      await controller.setJavaScriptMode(JavaScriptMode.unrestricted);
+      await controller.setNavigationDelegate(navigationDelegate);
+      await controller.loadRequest(Uri.parse(primaryUrl));
 
       await tester.pumpWidget(WebViewWidget(controller: controller));
 
@@ -806,7 +806,7 @@ Future<void> main() async {
       final Completer<void> authRequested = Completer<void>();
       final WebViewController controller = WebViewController();
 
-      await (
+      (
         controller.setNavigationDelegate(
           NavigationDelegate(
             onHttpAuthRequest: (HttpAuthRequest request) =>
@@ -817,7 +817,7 @@ Future<void> main() async {
 
       await tester.pumpWidget(WebViewWidget(controller: controller));
 
-      await (controller.loadRequest(Uri.parse(basicAuthUrl)));
+      await controller.loadRequest(Uri.parse(basicAuthUrl));
 
       await expectLater(authRequested.future, completes);
     });
@@ -827,7 +827,7 @@ Future<void> main() async {
       final WebViewController controller = WebViewController();
       final Completer<void> pageFinished = Completer<void>();
 
-      await (
+      (
         controller.setNavigationDelegate(
           NavigationDelegate(
             onHttpAuthRequest: (HttpAuthRequest request) => request.onProceed(
@@ -844,7 +844,7 @@ Future<void> main() async {
 
       await tester.pumpWidget(WebViewWidget(controller: controller));
 
-      await (controller.loadRequest(Uri.parse(basicAuthUrl)));
+      await controller.loadRequest(Uri.parse(basicAuthUrl));
 
       await expectLater(pageFinished.future, completes);
     });
@@ -855,10 +855,10 @@ Future<void> main() async {
     final Completer<void> pageLoaded = Completer<void>();
 
     final WebViewController controller = WebViewController();
-    await (controller.setJavaScriptMode(JavaScriptMode.unrestricted));
-    await (controller.setNavigationDelegate(NavigationDelegate(
+    await controller.setJavaScriptMode(JavaScriptMode.unrestricted);
+    await controller.setNavigationDelegate(NavigationDelegate(
       onPageFinished: (_) => pageLoaded.complete(),
-    )));
+    ));
 
     await tester.pumpWidget(WebViewWidget(controller: controller));
 
@@ -874,11 +874,11 @@ Future<void> main() async {
       Completer<void> pageLoaded = Completer<void>();
 
       final WebViewController controller = WebViewController();
-      await (controller.setJavaScriptMode(JavaScriptMode.unrestricted));
-      await (controller.setNavigationDelegate(NavigationDelegate(
+      await controller.setJavaScriptMode(JavaScriptMode.unrestricted);
+      await controller.setNavigationDelegate(NavigationDelegate(
         onPageFinished: (_) => pageLoaded.complete(),
-      )));
-      await (controller.loadRequest(Uri.parse(primaryUrl)));
+      ));
+      await controller.loadRequest(Uri.parse(primaryUrl));
 
       await tester.pumpWidget(WebViewWidget(controller: controller));
 
@@ -904,11 +904,11 @@ Future<void> main() async {
       Completer<void> pageLoadCompleter = Completer<void>();
 
       final WebViewController controller = WebViewController();
-      await (controller.setJavaScriptMode(JavaScriptMode.unrestricted));
-      await (controller.setNavigationDelegate(NavigationDelegate(
+      await controller.setJavaScriptMode(JavaScriptMode.unrestricted);
+      await controller.setNavigationDelegate(NavigationDelegate(
         onPageFinished: (_) => pageLoadCompleter.complete(),
-      )));
-      await (controller.loadRequest(Uri.parse(primaryUrl)));
+      ));
+      await controller.loadRequest(Uri.parse(primaryUrl));
 
       await tester.pumpWidget(WebViewWidget(controller: controller));
 
