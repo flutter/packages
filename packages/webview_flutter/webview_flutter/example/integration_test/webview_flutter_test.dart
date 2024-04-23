@@ -346,7 +346,6 @@ Future<void> main() async {
       );
 
       await tester.pumpWidget(WebViewWidget(controller: controller));
-
       await tester.pumpAndSettle();
 
       await pageLoaded.future;
@@ -420,7 +419,6 @@ Future<void> main() async {
       );
 
       await tester.pumpWidget(WebViewWidget(controller: controller));
-
       await tester.pumpAndSettle();
 
       await pageLoaded.future;
@@ -443,7 +441,6 @@ Future<void> main() async {
       await tester.pumpWidget(WebViewWidget(controller: controller));
 
       await tester.pumpAndSettle();
-
       await pageLoaded.future;
 
       isPaused =
