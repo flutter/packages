@@ -319,8 +319,7 @@ void main() {
         name: 'cameraName',
         lensDirection: testLensDirection,
         sensorOrientation: testSensorOrientation);
-    const ResolutionPreset testResolutionPreset = ResolutionPreset.veryHigh;
-    const bool enableAudio = true;
+
     const int testSurfaceTextureId = 6;
 
     // Mock/Detached objects for (typically attached) objects created by
@@ -396,8 +395,16 @@ void main() {
     camera.processCameraProvider = mockProcessCameraProvider;
 
     expect(
-        await camera.createCamera(testCameraDescription, testResolutionPreset,
-            enableAudio: enableAudio),
+        await camera.createCameraWithSettings(
+          testCameraDescription,
+          const MediaSettings(
+            resolutionPreset: ResolutionPreset.low,
+            fps: 15,
+            videoBitrate: 200000,
+            audioBitrate: 32000,
+            enableAudio: true,
+          ),
+        ),
         equals(testSurfaceTextureId));
 
     // Verify permissions are requested and the camera starts listening for device orientation changes.
@@ -508,8 +515,15 @@ void main() {
         .thenAnswer((_) async => mockCameraControl);
     camera.processCameraProvider = mockProcessCameraProvider;
 
-    await camera.createCamera(testCameraDescription, testResolutionPreset,
-        enableAudio: enableAudio);
+    await camera.createCameraWithSettings(
+        testCameraDescription,
+        const MediaSettings(
+          resolutionPreset: testResolutionPreset,
+          fps: 15,
+          videoBitrate: 2000000,
+          audioBitrate: 64000,
+          enableAudio: enableAudio,
+        ));
 
     // Verify expected UseCases were bound.
     verify(camera.processCameraProvider!.bindToLifecycle(camera.cameraSelector!,
@@ -559,8 +573,11 @@ void main() {
 
     // Test non-null resolution presets.
     for (final ResolutionPreset resolutionPreset in ResolutionPreset.values) {
-      await camera.createCamera(testCameraDescription, resolutionPreset,
-          enableAudio: enableAudio);
+      await camera.createCamera(
+        testCameraDescription,
+        resolutionPreset,
+        enableAudio: enableAudio,
+      );
 
       Size? expectedBoundSize;
       ResolutionStrategy? expectedResolutionStrategy;
@@ -891,8 +908,6 @@ void main() {
         name: 'cameraName',
         lensDirection: testLensDirection,
         sensorOrientation: testSensorOrientation);
-    const ResolutionPreset testResolutionPreset = ResolutionPreset.veryHigh;
-    const bool enableAudio = true;
     const int resolutionWidth = 350;
     const int resolutionHeight = 750;
     final Camera mockCamera = MockCamera();
@@ -972,8 +987,16 @@ void main() {
     when(mockPreview.getResolutionInfo())
         .thenAnswer((_) async => testResolutionInfo);
 
-    await camera.createCamera(testCameraDescription, testResolutionPreset,
-        enableAudio: enableAudio);
+    await camera.createCameraWithSettings(
+      testCameraDescription,
+      const MediaSettings(
+        resolutionPreset: ResolutionPreset.medium,
+        fps: 15,
+        videoBitrate: 200000,
+        audioBitrate: 32000,
+        enableAudio: true,
+      ),
+    );
 
     // Start listening to camera events stream to verify the proper CameraInitializedEvent is sent.
     camera.cameraEventStreamController.stream.listen((CameraEvent event) {
@@ -1062,7 +1085,7 @@ void main() {
   });
 
   test(
-      'onDeviceOrientationChanged stream emits changes in device oreintation detected by system services',
+      'onDeviceOrientationChanged stream emits changes in device orientation detected by system services',
       () async {
     final AndroidCameraCameraX camera = AndroidCameraCameraX();
     final Stream<DeviceOrientationChangedEvent> eventStream =
@@ -2053,6 +2076,7 @@ void main() {
             as Analyzer;
 
     await capturedAnalyzer.analyze(mockImageProxy);
+
     final CameraImageData imageData = await imageDataCompleter.future;
 
     // Test Analyzer correctly process ImageProxy instances.

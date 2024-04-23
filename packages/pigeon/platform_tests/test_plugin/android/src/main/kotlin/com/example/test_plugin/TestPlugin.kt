@@ -5,14 +5,26 @@
 package com.example.test_plugin
 
 import io.flutter.embedding.engine.plugins.FlutterPlugin
+import io.flutter.embedding.engine.plugins.FlutterPlugin.FlutterPluginBinding
 
 /** This plugin handles the native side of the integration tests in example/integration_test/. */
 class TestPlugin : FlutterPlugin, HostIntegrationCoreApi {
   private var flutterApi: FlutterIntegrationCoreApi? = null
+<<<<<<< HEAD
+=======
+  private var flutterSmallApiOne: FlutterSmallApi? = null
+  private var flutterSmallApiTwo: FlutterSmallApi? = null
+>>>>>>> 88572212ae3fc45d634a31e2328d77651121f1af
 
   override fun onAttachedToEngine(binding: FlutterPlugin.FlutterPluginBinding) {
     HostIntegrationCoreApi.setUp(binding.binaryMessenger, this)
+    val testSuffixApiOne: TestPluginWithSuffix = TestPluginWithSuffix()
+    testSuffixApiOne.setUp(binding, "suffixOne")
+    val testSuffixApiTwo: TestPluginWithSuffix = TestPluginWithSuffix()
+    testSuffixApiTwo.setUp(binding, "suffixTwo")
     flutterApi = FlutterIntegrationCoreApi(binding.binaryMessenger)
+    flutterSmallApiOne = FlutterSmallApi(binding.binaryMessenger, "suffixOne")
+    flutterSmallApiTwo = FlutterSmallApi(binding.binaryMessenger, "suffixTwo")
   }
 
   override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {}
@@ -421,5 +433,34 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi {
 
   override fun callFlutterEchoNullableEnum(anEnum: AnEnum?, callback: (Result<AnEnum?>) -> Unit) {
     flutterApi!!.echoNullableEnum(anEnum) { echo -> callback(echo) }
+  }
+
+  override fun callFlutterSmallApiEchoString(aString: String, callback: (Result<String>) -> Unit) {
+    flutterSmallApiOne!!.echoString(aString) { echoOne ->
+      flutterSmallApiTwo!!.echoString(aString) { echoTwo ->
+        if (echoOne == echoTwo) {
+          callback(echoTwo)
+        } else {
+          callback(
+              Result.failure(
+                  Exception("Multi-instance responses were not matching: $echoOne, $echoTwo")))
+        }
+      }
+    }
+  }
+}
+
+class TestPluginWithSuffix : HostSmallApi {
+
+  fun setUp(binding: FlutterPluginBinding, suffix: String) {
+    HostSmallApi.setUp(binding.binaryMessenger, this, suffix)
+  }
+
+  override fun echo(aString: String, callback: (Result<String>) -> Unit) {
+    callback(Result.success(aString))
+  }
+
+  override fun voidVoid(callback: (Result<Unit>) -> Unit) {
+    callback(Result.success(Unit))
   }
 }

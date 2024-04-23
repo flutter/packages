@@ -343,8 +343,9 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
         generatorComments: generatedMessages);
 
     final String apiName = api.name;
-    indent
-        .write('class $apiName(private val binaryMessenger: BinaryMessenger) ');
+    indent.writeln('@Suppress("UNCHECKED_CAST")');
+    indent.write(
+        'class $apiName(private val binaryMessenger: BinaryMessenger, private val messageChannelSuffix: String = "") ');
     indent.addScoped('{', '}', () {
       indent.write('companion object ');
       indent.addScoped('{', '}', () {
@@ -432,8 +433,10 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
         indent.writeln(
             '/** Sets up an instance of `$apiName` to handle messages through the `binaryMessenger`. */');
         indent.write(
-            'fun setUp(binaryMessenger: BinaryMessenger, api: $apiName?) ');
+            'fun setUp(binaryMessenger: BinaryMessenger, api: $apiName?, messageChannelSuffix: String = "") ');
         indent.addScoped('{', '}', () {
+          indent.writeln(
+              r'val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""');
           for (final Method method in api.methods) {
             _writeHostMethodMessageHandler(
               indent,
@@ -660,9 +663,8 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
         indent.writeln(
             'val $taskQueue = binaryMessenger.makeBackgroundTaskQueue()');
       }
-
       indent.write(
-          'val channel = BasicMessageChannel<Any?>(binaryMessenger, "$channelName", codec');
+          'val channel = BasicMessageChannel<Any?>(binaryMessenger, "$channelName\$separatedMessageChannelSuffix", codec');
 
       if (taskQueue != null) {
         indent.addln(', $taskQueue)');
@@ -752,13 +754,6 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
     required String dartPackageName,
     List<String> documentationComments = const <String>[],
     int? minApiRequirement,
-    void Function(
-      Indent indent, {
-      required List<Parameter> parameters,
-      required TypeDeclaration returnType,
-      required String channelName,
-      required String errorClassName,
-    }) onWriteBody = _writeFlutterMethodMessageCall,
   }) {
     _writeMethodDeclaration(
       indent,
@@ -773,7 +768,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
 
     final String errorClassName = _getErrorClassName(generatorOptions);
     indent.addScoped('{', '}', () {
-      onWriteBody(
+      _writeFlutterMethodMessageCall(
         indent,
         parameters: parameters,
         returnType: returnType,
@@ -803,7 +798,10 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
     }
 
     const String channel = 'channel';
-    indent.writeln('val channelName = "$channelName"');
+    indent.writeln(
+        r'val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""');
+    indent.writeln(
+        'val channelName = "$channelName\$separatedMessageChannelSuffix"');
     indent.writeln(
         'val $channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)');
     indent.writeScoped('$channel.send($sendArgument) {', '}', () {

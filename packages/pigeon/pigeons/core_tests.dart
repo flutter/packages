@@ -602,6 +602,11 @@ abstract class HostIntegrationCoreApi {
   @ObjCSelector('callFlutterEchoNullableEnum:')
   @SwiftFunction('callFlutterNullableEcho(_:)')
   AnEnum? callFlutterEchoNullableEnum(AnEnum? anEnum);
+
+  @async
+  @ObjCSelector('callFlutterSmallApiEchoString:')
+  @SwiftFunction('callFlutterSmallApiEcho(_:)')
+  String callFlutterSmallApiEchoString(String aString);
 }
 
 /// The core interface that the Dart platform_test code implements for host
@@ -792,7 +797,7 @@ abstract class FlutterSmallApi {
   TestMessage echoWrappedList(TestMessage msg);
 
   @ObjCSelector('echoString:')
-  @SwiftFunction('echo(_:)')
+  @SwiftFunction('echo(string:)')
   String echoString(String aString);
 }
 

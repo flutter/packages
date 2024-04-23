@@ -15,6 +15,15 @@ import 'generator_tools.dart';
 /// Documentation comment open symbol.
 const String _docCommentPrefix = '///';
 
+/// Prefix for all local variables in host API methods.
+///
+/// This lowers the chances of variable name collisions with
+/// user defined parameters.
+const String _varNamePrefix = '__pigeon_';
+
+/// Name of the variable that contains the message channel suffix for APIs.
+const String _suffixVarName = '${_varNamePrefix}messageChannelSuffix';
+
 /// Name of the `InstanceManager` variable for a ProxyApi class;
 const String _instanceManagerVarName =
     '${classMemberNamePrefix}instanceManager';
@@ -302,7 +311,7 @@ $resultAt != null
   /// abstract class Foo {
   ///   static const MessageCodec<Object?> codec = FooCodec();
   ///   int add(int x, int y);
-  ///   static void setup(Foo api, {BinaryMessenger? binaryMessenger}) {...}
+  ///   static void setUp(Foo api, {BinaryMessenger? binaryMessenger}) {...}
   /// }
   @override
   void writeFlutterApi(
@@ -346,8 +355,11 @@ $resultAt != null
         indent.newln();
       }
       indent.write(
-          'static void setup(${api.name}? api, {BinaryMessenger? binaryMessenger}) ');
+          "static void setUp(${api.name}? api, {BinaryMessenger? binaryMessenger, String messageChannelSuffix = '',}) ");
       indent.addScoped('{', '}', () {
+        indent.writeln(
+            r"messageChannelSuffix = messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';");
+
         for (final Method func in api.methods) {
           _writeFlutterMethodMessageHandler(
             indent,
@@ -405,13 +417,16 @@ $resultAt != null
 /// Constructor for [${api.name}].  The [binaryMessenger] named argument is
 /// available for dependency injection.  If it is left null, the default
 /// BinaryMessenger will be used which routes to the host platform.
-${api.name}({BinaryMessenger? binaryMessenger})
-\t\t: ${varNamePrefix}binaryMessenger = binaryMessenger;
-final BinaryMessenger? ${varNamePrefix}binaryMessenger;
+${api.name}({BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
+    : ${_varNamePrefix}binaryMessenger = binaryMessenger,
+      ${_varNamePrefix}messageChannelSuffix = messageChannelSuffix.isNotEmpty ? '.\$messageChannelSuffix' : '';
+final BinaryMessenger? ${_varNamePrefix}binaryMessenger;
 ''');
 
       indent.writeln(
           'static const MessageCodec<Object?> $_pigeonChannelCodec = $codecName();');
+      indent.newln();
+      indent.writeln('final String $_suffixVarName;');
       indent.newln();
       for (final Method func in api.methods) {
         if (!first) {
@@ -426,6 +441,7 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
           returnType: func.returnType,
           documentationComments: func.documentationComments,
           channelName: makeChannelName(api, func, dartPackageName),
+          addSuffixVariable: true,
         );
       }
     });
@@ -725,12 +741,10 @@ PlatformException _createConnectionError(String channelName) {
     required TypeDeclaration returnType,
     required List<String> documentationComments,
     required String channelName,
+    required bool addSuffixVariable,
   }) {
     addDocumentationComments(indent, documentationComments, _docCommentSpec);
-    String argSignature = '';
-    if (parameters.isNotEmpty) {
-      argSignature = _getMethodParameterSignature(parameters);
-    }
+    final String argSignature = _getMethodParameterSignature(parameters);
     indent.write(
       'Future<${_addGenericTypesNullable(returnType)}> $name($argSignature) async ',
     );
@@ -740,6 +754,7 @@ PlatformException _createConnectionError(String channelName) {
         channelName: channelName,
         parameters: parameters,
         returnType: returnType,
+        addSuffixVariable: addSuffixVariable,
       );
     });
   }
@@ -749,6 +764,7 @@ PlatformException _createConnectionError(String channelName) {
     required String channelName,
     required Iterable<Parameter> parameters,
     required TypeDeclaration returnType,
+    required bool addSuffixVariable,
   }) {
     String sendArgument = 'null';
     if (parameters.isNotEmpty) {
@@ -763,9 +779,10 @@ PlatformException _createConnectionError(String channelName) {
       });
       sendArgument = '<Object?>[${argExpressions.join(', ')}]';
     }
-
-    indent
-        .writeln("const String ${varNamePrefix}channelName = '$channelName';");
+    final String channelSuffix = addSuffixVariable ? '\$$_suffixVarName' : '';
+    final String constOrFinal = addSuffixVariable ? 'final' : 'const';
+    indent.writeln(
+        "$constOrFinal String ${_varNamePrefix}channelName = '$channelName$channelSuffix';");
     indent.writeScoped(
         'final BasicMessageChannel<Object?> ${varNamePrefix}channel = BasicMessageChannel<Object?>(',
         ');', () {
@@ -833,6 +850,7 @@ if (${varNamePrefix}replyList == null) {
     required String channelName,
     required bool isMockHandler,
     required bool isAsynchronous,
+    bool addSuffixVariable = false,
     String nullHandlerExpression = 'api == null',
     String Function(String methodName, Iterable<Parameter> parameters,
             Iterable<String> safeArgumentNames)
@@ -844,7 +862,9 @@ if (${varNamePrefix}replyList == null) {
         'final BasicMessageChannel<Object?> ${varNamePrefix}channel = BasicMessageChannel<Object?>(',
       );
       indent.nest(2, () {
-        indent.writeln("'$channelName', $_pigeonChannelCodec,");
+        final String channelSuffix =
+            addSuffixVariable ? '' : r'$messageChannelSuffix';
+        indent.writeln("'$channelName$channelSuffix', $_pigeonChannelCodec,");
         indent.writeln(
           'binaryMessenger: binaryMessenger);',
         );
@@ -1044,6 +1064,7 @@ if (${varNamePrefix}replyList == null) {
                 final StringBuffer messageCallSink = StringBuffer();
                 _writeHostMethodMessageCall(
                   Indent(messageCallSink),
+                  addSuffixVariable: false,
                   channelName: channelName,
                   parameters: <Parameter>[
                     Parameter(
@@ -1434,6 +1455,7 @@ if (${varNamePrefix}replyList == null) {
               _writeFlutterMethodMessageHandler(
                 Indent(messageHandlerSink),
                 name: methodName,
+                addSuffixVariable: true,
                 parameters: <Parameter>[
                   Parameter(
                     name: '${classMemberNamePrefix}instanceIdentifier',
@@ -1489,6 +1511,7 @@ if (${varNamePrefix}replyList == null) {
               _writeFlutterMethodMessageHandler(
                 Indent(messageHandlerSink),
                 name: method.name,
+                addSuffixVariable: true,
                 parameters: <Parameter>[
                   Parameter(
                     name: '${classMemberNamePrefix}instance',
@@ -1559,6 +1582,7 @@ if (${varNamePrefix}replyList == null) {
                 final StringBuffer messageCallSink = StringBuffer();
                 _writeHostMethodMessageCall(
                   Indent(messageCallSink),
+                  addSuffixVariable: false,
                   channelName: makeChannelNameWithStrings(
                     apiName: apiName,
                     methodName: field.name,
@@ -1680,6 +1704,7 @@ if (${varNamePrefix}replyList == null) {
               final StringBuffer messageCallSink = StringBuffer();
               _writeHostMethodMessageCall(
                 Indent(messageCallSink),
+                addSuffixVariable: false,
                 channelName: makeChannelNameWithStrings(
                   apiName: apiName,
                   methodName: method.name,

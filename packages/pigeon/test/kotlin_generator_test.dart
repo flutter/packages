@@ -458,8 +458,10 @@ void main() {
       dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
-    expect(code,
-        contains('class Api(private val binaryMessenger: BinaryMessenger)'));
+    expect(
+        code,
+        contains(
+            'class Api(private val binaryMessenger: BinaryMessenger, private val messageChannelSuffix: String = "")'));
     expect(code, matches('fun doSomething.*Input.*Output'));
   });
 

@@ -1370,10 +1370,21 @@ const flutter::StandardMessageCodec& HostIntegrationCoreApi::GetCodec() {
 // the `binary_messenger`.
 void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
                                    HostIntegrationCoreApi* api) {
+  HostIntegrationCoreApi::SetUp(binary_messenger, api, "");
+}
+
+void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
+                                   HostIntegrationCoreApi* api,
+                                   const std::string& message_channel_suffix) {
+  const std::string prepended_suffix =
+      message_channel_suffix.length() > 0
+          ? std::string(".") + message_channel_suffix
+          : "";
   {
     BasicMessageChannel<> channel(binary_messenger,
                                   "dev.flutter.pigeon.pigeon_integration_tests."
-                                  "HostIntegrationCoreApi.noop",
+                                  "HostIntegrationCoreApi.noop" +
+                                      prepended_suffix,
                                   &GetCodec());
     if (api != nullptr) {
       channel.SetMessageHandler(
@@ -1399,7 +1410,8 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
   {
     BasicMessageChannel<> channel(binary_messenger,
                                   "dev.flutter.pigeon.pigeon_integration_tests."
-                                  "HostIntegrationCoreApi.echoAllTypes",
+                                  "HostIntegrationCoreApi.echoAllTypes" +
+                                      prepended_suffix,
                                   &GetCodec());
     if (api != nullptr) {
       channel.SetMessageHandler(
@@ -1434,7 +1446,8 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
   {
     BasicMessageChannel<> channel(binary_messenger,
                                   "dev.flutter.pigeon.pigeon_integration_tests."
-                                  "HostIntegrationCoreApi.throwError",
+                                  "HostIntegrationCoreApi.throwError" +
+                                      prepended_suffix,
                                   &GetCodec());
     if (api != nullptr) {
       channel.SetMessageHandler(
@@ -1466,7 +1479,8 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
   {
     BasicMessageChannel<> channel(binary_messenger,
                                   "dev.flutter.pigeon.pigeon_integration_tests."
-                                  "HostIntegrationCoreApi.throwErrorFromVoid",
+                                  "HostIntegrationCoreApi.throwErrorFromVoid" +
+                                      prepended_suffix,
                                   &GetCodec());
     if (api != nullptr) {
       channel.SetMessageHandler(
@@ -1492,7 +1506,8 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
   {
     BasicMessageChannel<> channel(binary_messenger,
                                   "dev.flutter.pigeon.pigeon_integration_tests."
-                                  "HostIntegrationCoreApi.throwFlutterError",
+                                  "HostIntegrationCoreApi.throwFlutterError" +
+                                      prepended_suffix,
                                   &GetCodec());
     if (api != nullptr) {
       channel.SetMessageHandler(
@@ -1525,7 +1540,8 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
   {
     BasicMessageChannel<> channel(binary_messenger,
                                   "dev.flutter.pigeon.pigeon_integration_tests."
-                                  "HostIntegrationCoreApi.echoInt",
+                                  "HostIntegrationCoreApi.echoInt" +
+                                      prepended_suffix,
                                   &GetCodec());
     if (api != nullptr) {
       channel.SetMessageHandler(
@@ -1558,7 +1574,8 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
   {
     BasicMessageChannel<> channel(binary_messenger,
                                   "dev.flutter.pigeon.pigeon_integration_tests."
-                                  "HostIntegrationCoreApi.echoDouble",
+                                  "HostIntegrationCoreApi.echoDouble" +
+                                      prepended_suffix,
                                   &GetCodec());
     if (api != nullptr) {
       channel.SetMessageHandler(
@@ -1592,7 +1609,8 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
   {
     BasicMessageChannel<> channel(binary_messenger,
                                   "dev.flutter.pigeon.pigeon_integration_tests."
-                                  "HostIntegrationCoreApi.echoBool",
+                                  "HostIntegrationCoreApi.echoBool" +
+                                      prepended_suffix,
                                   &GetCodec());
     if (api != nullptr) {
       channel.SetMessageHandler(
@@ -1625,7 +1643,8 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
   {
     BasicMessageChannel<> channel(binary_messenger,
                                   "dev.flutter.pigeon.pigeon_integration_tests."
-                                  "HostIntegrationCoreApi.echoString",
+                                  "HostIntegrationCoreApi.echoString" +
+                                      prepended_suffix,
                                   &GetCodec());
     if (api != nullptr) {
       channel.SetMessageHandler(
@@ -1659,7 +1678,8 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
   {
     BasicMessageChannel<> channel(binary_messenger,
                                   "dev.flutter.pigeon.pigeon_integration_tests."
-                                  "HostIntegrationCoreApi.echoUint8List",
+                                  "HostIntegrationCoreApi.echoUint8List" +
+                                      prepended_suffix,
                                   &GetCodec());
     if (api != nullptr) {
       channel.SetMessageHandler(
@@ -1694,7 +1714,8 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
   {
     BasicMessageChannel<> channel(binary_messenger,
                                   "dev.flutter.pigeon.pigeon_integration_tests."
-                                  "HostIntegrationCoreApi.echoObject",
+                                  "HostIntegrationCoreApi.echoObject" +
+                                      prepended_suffix,
                                   &GetCodec());
     if (api != nullptr) {
       channel.SetMessageHandler(
@@ -1727,7 +1748,8 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
   {
     BasicMessageChannel<> channel(binary_messenger,
                                   "dev.flutter.pigeon.pigeon_integration_tests."
-                                  "HostIntegrationCoreApi.echoList",
+                                  "HostIntegrationCoreApi.echoList" +
+                                      prepended_suffix,
                                   &GetCodec());
     if (api != nullptr) {
       channel.SetMessageHandler(
@@ -1761,7 +1783,8 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
   {
     BasicMessageChannel<> channel(binary_messenger,
                                   "dev.flutter.pigeon.pigeon_integration_tests."
-                                  "HostIntegrationCoreApi.echoMap",
+                                  "HostIntegrationCoreApi.echoMap" +
+                                      prepended_suffix,
                                   &GetCodec());
     if (api != nullptr) {
       channel.SetMessageHandler(
@@ -1795,7 +1818,8 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
   {
     BasicMessageChannel<> channel(binary_messenger,
                                   "dev.flutter.pigeon.pigeon_integration_tests."
-                                  "HostIntegrationCoreApi.echoClassWrapper",
+                                  "HostIntegrationCoreApi.echoClassWrapper" +
+                                      prepended_suffix,
                                   &GetCodec());
     if (api != nullptr) {
       channel.SetMessageHandler(
@@ -1831,7 +1855,8 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
   {
     BasicMessageChannel<> channel(binary_messenger,
                                   "dev.flutter.pigeon.pigeon_integration_tests."
-                                  "HostIntegrationCoreApi.echoEnum",
+                                  "HostIntegrationCoreApi.echoEnum" +
+                                      prepended_suffix,
                                   &GetCodec());
     if (api != nullptr) {
       channel.SetMessageHandler(
@@ -1867,7 +1892,8 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     BasicMessageChannel<> channel(
         binary_messenger,
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
-        "echoNamedDefaultString",
+        "echoNamedDefaultString" +
+            prepended_suffix,
         &GetCodec());
     if (api != nullptr) {
       channel.SetMessageHandler(
@@ -1903,7 +1929,8 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     BasicMessageChannel<> channel(
         binary_messenger,
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
-        "echoOptionalDefaultDouble",
+        "echoOptionalDefaultDouble" +
+            prepended_suffix,
         &GetCodec());
     if (api != nullptr) {
       channel.SetMessageHandler(
@@ -1938,7 +1965,8 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
   {
     BasicMessageChannel<> channel(binary_messenger,
                                   "dev.flutter.pigeon.pigeon_integration_tests."
-                                  "HostIntegrationCoreApi.echoRequiredInt",
+                                  "HostIntegrationCoreApi.echoRequiredInt" +
+                                      prepended_suffix,
                                   &GetCodec());
     if (api != nullptr) {
       channel.SetMessageHandler(
@@ -1969,10 +1997,12 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     }
   }
   {
-    BasicMessageChannel<> channel(binary_messenger,
-                                  "dev.flutter.pigeon.pigeon_integration_tests."
-                                  "HostIntegrationCoreApi.echoAllNullableTypes",
-                                  &GetCodec());
+    BasicMessageChannel<> channel(
+        binary_messenger,
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+        "echoAllNullableTypes" +
+            prepended_suffix,
+        &GetCodec());
     if (api != nullptr) {
       channel.SetMessageHandler(
           [api](const EncodableValue& message,
@@ -2011,7 +2041,8 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     BasicMessageChannel<> channel(
         binary_messenger,
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
-        "echoAllNullableTypesWithoutRecursion",
+        "echoAllNullableTypesWithoutRecursion" +
+            prepended_suffix,
         &GetCodec());
     if (api != nullptr) {
       channel.SetMessageHandler(
@@ -2051,7 +2082,8 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     BasicMessageChannel<> channel(
         binary_messenger,
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
-        "extractNestedNullableString",
+        "extractNestedNullableString" +
+            prepended_suffix,
         &GetCodec());
     if (api != nullptr) {
       channel.SetMessageHandler(
@@ -2093,7 +2125,8 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     BasicMessageChannel<> channel(
         binary_messenger,
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
-        "createNestedNullableString",
+        "createNestedNullableString" +
+            prepended_suffix,
         &GetCodec());
     if (api != nullptr) {
       channel.SetMessageHandler(
@@ -2126,7 +2159,8 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     BasicMessageChannel<> channel(
         binary_messenger,
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
-        "sendMultipleNullableTypes",
+        "sendMultipleNullableTypes" +
+            prepended_suffix,
         &GetCodec());
     if (api != nullptr) {
       channel.SetMessageHandler(
@@ -2172,7 +2206,8 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     BasicMessageChannel<> channel(
         binary_messenger,
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
-        "sendMultipleNullableTypesWithoutRecursion",
+        "sendMultipleNullableTypesWithoutRecursion" +
+            prepended_suffix,
         &GetCodec());
     if (api != nullptr) {
       channel.SetMessageHandler(
@@ -2218,7 +2253,8 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
   {
     BasicMessageChannel<> channel(binary_messenger,
                                   "dev.flutter.pigeon.pigeon_integration_tests."
-                                  "HostIntegrationCoreApi.echoNullableInt",
+                                  "HostIntegrationCoreApi.echoNullableInt" +
+                                      prepended_suffix,
                                   &GetCodec());
     if (api != nullptr) {
       channel.SetMessageHandler(
@@ -2261,7 +2297,8 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
   {
     BasicMessageChannel<> channel(binary_messenger,
                                   "dev.flutter.pigeon.pigeon_integration_tests."
-                                  "HostIntegrationCoreApi.echoNullableDouble",
+                                  "HostIntegrationCoreApi.echoNullableDouble" +
+                                      prepended_suffix,
                                   &GetCodec());
     if (api != nullptr) {
       channel.SetMessageHandler(
@@ -2298,7 +2335,8 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
   {
     BasicMessageChannel<> channel(binary_messenger,
                                   "dev.flutter.pigeon.pigeon_integration_tests."
-                                  "HostIntegrationCoreApi.echoNullableBool",
+                                  "HostIntegrationCoreApi.echoNullableBool" +
+                                      prepended_suffix,
                                   &GetCodec());
     if (api != nullptr) {
       channel.SetMessageHandler(
@@ -2335,7 +2373,8 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
   {
     BasicMessageChannel<> channel(binary_messenger,
                                   "dev.flutter.pigeon.pigeon_integration_tests."
-                                  "HostIntegrationCoreApi.echoNullableString",
+                                  "HostIntegrationCoreApi.echoNullableString" +
+                                      prepended_suffix,
                                   &GetCodec());
     if (api != nullptr) {
       channel.SetMessageHandler(
@@ -2373,7 +2412,8 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     BasicMessageChannel<> channel(
         binary_messenger,
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
-        "echoNullableUint8List",
+        "echoNullableUint8List" +
+            prepended_suffix,
         &GetCodec());
     if (api != nullptr) {
       channel.SetMessageHandler(
@@ -2411,7 +2451,8 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
   {
     BasicMessageChannel<> channel(binary_messenger,
                                   "dev.flutter.pigeon.pigeon_integration_tests."
-                                  "HostIntegrationCoreApi.echoNullableObject",
+                                  "HostIntegrationCoreApi.echoNullableObject" +
+                                      prepended_suffix,
                                   &GetCodec());
     if (api != nullptr) {
       channel.SetMessageHandler(
@@ -2448,7 +2489,8 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
   {
     BasicMessageChannel<> channel(binary_messenger,
                                   "dev.flutter.pigeon.pigeon_integration_tests."
-                                  "HostIntegrationCoreApi.echoNullableList",
+                                  "HostIntegrationCoreApi.echoNullableList" +
+                                      prepended_suffix,
                                   &GetCodec());
     if (api != nullptr) {
       channel.SetMessageHandler(
@@ -2485,7 +2527,8 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
   {
     BasicMessageChannel<> channel(binary_messenger,
                                   "dev.flutter.pigeon.pigeon_integration_tests."
-                                  "HostIntegrationCoreApi.echoNullableMap",
+                                  "HostIntegrationCoreApi.echoNullableMap" +
+                                      prepended_suffix,
                                   &GetCodec());
     if (api != nullptr) {
       channel.SetMessageHandler(
@@ -2522,7 +2565,8 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
   {
     BasicMessageChannel<> channel(binary_messenger,
                                   "dev.flutter.pigeon.pigeon_integration_tests."
-                                  "HostIntegrationCoreApi.echoNullableEnum",
+                                  "HostIntegrationCoreApi.echoNullableEnum" +
+                                      prepended_suffix,
                                   &GetCodec());
     if (api != nullptr) {
       channel.SetMessageHandler(
@@ -2567,7 +2611,8 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     BasicMessageChannel<> channel(
         binary_messenger,
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
-        "echoOptionalNullableInt",
+        "echoOptionalNullableInt" +
+            prepended_suffix,
         &GetCodec());
     if (api != nullptr) {
       channel.SetMessageHandler(
@@ -2611,7 +2656,8 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     BasicMessageChannel<> channel(
         binary_messenger,
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
-        "echoNamedNullableString",
+        "echoNamedNullableString" +
+            prepended_suffix,
         &GetCodec());
     if (api != nullptr) {
       channel.SetMessageHandler(
@@ -2648,7 +2694,8 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
   {
     BasicMessageChannel<> channel(binary_messenger,
                                   "dev.flutter.pigeon.pigeon_integration_tests."
-                                  "HostIntegrationCoreApi.noopAsync",
+                                  "HostIntegrationCoreApi.noopAsync" +
+                                      prepended_suffix,
                                   &GetCodec());
     if (api != nullptr) {
       channel.SetMessageHandler(
@@ -2675,7 +2722,8 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
   {
     BasicMessageChannel<> channel(binary_messenger,
                                   "dev.flutter.pigeon.pigeon_integration_tests."
-                                  "HostIntegrationCoreApi.echoAsyncInt",
+                                  "HostIntegrationCoreApi.echoAsyncInt" +
+                                      prepended_suffix,
                                   &GetCodec());
     if (api != nullptr) {
       channel.SetMessageHandler(
@@ -2710,7 +2758,8 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
   {
     BasicMessageChannel<> channel(binary_messenger,
                                   "dev.flutter.pigeon.pigeon_integration_tests."
-                                  "HostIntegrationCoreApi.echoAsyncDouble",
+                                  "HostIntegrationCoreApi.echoAsyncDouble" +
+                                      prepended_suffix,
                                   &GetCodec());
     if (api != nullptr) {
       channel.SetMessageHandler(
@@ -2747,7 +2796,8 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
   {
     BasicMessageChannel<> channel(binary_messenger,
                                   "dev.flutter.pigeon.pigeon_integration_tests."
-                                  "HostIntegrationCoreApi.echoAsyncBool",
+                                  "HostIntegrationCoreApi.echoAsyncBool" +
+                                      prepended_suffix,
                                   &GetCodec());
     if (api != nullptr) {
       channel.SetMessageHandler(
@@ -2782,7 +2832,8 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
   {
     BasicMessageChannel<> channel(binary_messenger,
                                   "dev.flutter.pigeon.pigeon_integration_tests."
-                                  "HostIntegrationCoreApi.echoAsyncString",
+                                  "HostIntegrationCoreApi.echoAsyncString" +
+                                      prepended_suffix,
                                   &GetCodec());
     if (api != nullptr) {
       channel.SetMessageHandler(
@@ -2819,7 +2870,8 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
   {
     BasicMessageChannel<> channel(binary_messenger,
                                   "dev.flutter.pigeon.pigeon_integration_tests."
-                                  "HostIntegrationCoreApi.echoAsyncUint8List",
+                                  "HostIntegrationCoreApi.echoAsyncUint8List" +
+                                      prepended_suffix,
                                   &GetCodec());
     if (api != nullptr) {
       channel.SetMessageHandler(
@@ -2857,7 +2909,8 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
   {
     BasicMessageChannel<> channel(binary_messenger,
                                   "dev.flutter.pigeon.pigeon_integration_tests."
-                                  "HostIntegrationCoreApi.echoAsyncObject",
+                                  "HostIntegrationCoreApi.echoAsyncObject" +
+                                      prepended_suffix,
                                   &GetCodec());
     if (api != nullptr) {
       channel.SetMessageHandler(
@@ -2893,7 +2946,8 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
   {
     BasicMessageChannel<> channel(binary_messenger,
                                   "dev.flutter.pigeon.pigeon_integration_tests."
-                                  "HostIntegrationCoreApi.echoAsyncList",
+                                  "HostIntegrationCoreApi.echoAsyncList" +
+                                      prepended_suffix,
                                   &GetCodec());
     if (api != nullptr) {
       channel.SetMessageHandler(
@@ -2930,7 +2984,8 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
   {
     BasicMessageChannel<> channel(binary_messenger,
                                   "dev.flutter.pigeon.pigeon_integration_tests."
-                                  "HostIntegrationCoreApi.echoAsyncMap",
+                                  "HostIntegrationCoreApi.echoAsyncMap" +
+                                      prepended_suffix,
                                   &GetCodec());
     if (api != nullptr) {
       channel.SetMessageHandler(
@@ -2967,7 +3022,8 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
   {
     BasicMessageChannel<> channel(binary_messenger,
                                   "dev.flutter.pigeon.pigeon_integration_tests."
-                                  "HostIntegrationCoreApi.echoAsyncEnum",
+                                  "HostIntegrationCoreApi.echoAsyncEnum" +
+                                      prepended_suffix,
                                   &GetCodec());
     if (api != nullptr) {
       channel.SetMessageHandler(
@@ -3004,7 +3060,8 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
   {
     BasicMessageChannel<> channel(binary_messenger,
                                   "dev.flutter.pigeon.pigeon_integration_tests."
-                                  "HostIntegrationCoreApi.throwAsyncError",
+                                  "HostIntegrationCoreApi.throwAsyncError" +
+                                      prepended_suffix,
                                   &GetCodec());
     if (api != nullptr) {
       channel.SetMessageHandler(
@@ -3039,7 +3096,8 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     BasicMessageChannel<> channel(
         binary_messenger,
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
-        "throwAsyncErrorFromVoid",
+        "throwAsyncErrorFromVoid" +
+            prepended_suffix,
         &GetCodec());
     if (api != nullptr) {
       channel.SetMessageHandler(
@@ -3068,7 +3126,8 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     BasicMessageChannel<> channel(
         binary_messenger,
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
-        "throwAsyncFlutterError",
+        "throwAsyncFlutterError" +
+            prepended_suffix,
         &GetCodec());
     if (api != nullptr) {
       channel.SetMessageHandler(
@@ -3102,7 +3161,8 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
   {
     BasicMessageChannel<> channel(binary_messenger,
                                   "dev.flutter.pigeon.pigeon_integration_tests."
-                                  "HostIntegrationCoreApi.echoAsyncAllTypes",
+                                  "HostIntegrationCoreApi.echoAsyncAllTypes" +
+                                      prepended_suffix,
                                   &GetCodec());
     if (api != nullptr) {
       channel.SetMessageHandler(
@@ -3140,7 +3200,8 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     BasicMessageChannel<> channel(
         binary_messenger,
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
-        "echoAsyncNullableAllNullableTypes",
+        "echoAsyncNullableAllNullableTypes" +
+            prepended_suffix,
         &GetCodec());
     if (api != nullptr) {
       channel.SetMessageHandler(
@@ -3182,7 +3243,8 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     BasicMessageChannel<> channel(
         binary_messenger,
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
-        "echoAsyncNullableAllNullableTypesWithoutRecursion",
+        "echoAsyncNullableAllNullableTypesWithoutRecursion" +
+            prepended_suffix,
         &GetCodec());
     if (api != nullptr) {
       channel.SetMessageHandler(
@@ -3223,10 +3285,12 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     }
   }
   {
-    BasicMessageChannel<> channel(binary_messenger,
-                                  "dev.flutter.pigeon.pigeon_integration_tests."
-                                  "HostIntegrationCoreApi.echoAsyncNullableInt",
-                                  &GetCodec());
+    BasicMessageChannel<> channel(
+        binary_messenger,
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+        "echoAsyncNullableInt" +
+            prepended_suffix,
+        &GetCodec());
     if (api != nullptr) {
       channel.SetMessageHandler(
           [api](const EncodableValue& message,
@@ -3269,7 +3333,8 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     BasicMessageChannel<> channel(
         binary_messenger,
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
-        "echoAsyncNullableDouble",
+        "echoAsyncNullableDouble" +
+            prepended_suffix,
         &GetCodec());
     if (api != nullptr) {
       channel.SetMessageHandler(
@@ -3309,7 +3374,8 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     BasicMessageChannel<> channel(
         binary_messenger,
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
-        "echoAsyncNullableBool",
+        "echoAsyncNullableBool" +
+            prepended_suffix,
         &GetCodec());
     if (api != nullptr) {
       channel.SetMessageHandler(
@@ -3347,7 +3413,8 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     BasicMessageChannel<> channel(
         binary_messenger,
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
-        "echoAsyncNullableString",
+        "echoAsyncNullableString" +
+            prepended_suffix,
         &GetCodec());
     if (api != nullptr) {
       channel.SetMessageHandler(
@@ -3387,7 +3454,8 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     BasicMessageChannel<> channel(
         binary_messenger,
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
-        "echoAsyncNullableUint8List",
+        "echoAsyncNullableUint8List" +
+            prepended_suffix,
         &GetCodec());
     if (api != nullptr) {
       channel.SetMessageHandler(
@@ -3428,7 +3496,8 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     BasicMessageChannel<> channel(
         binary_messenger,
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
-        "echoAsyncNullableObject",
+        "echoAsyncNullableObject" +
+            prepended_suffix,
         &GetCodec());
     if (api != nullptr) {
       channel.SetMessageHandler(
@@ -3467,7 +3536,8 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     BasicMessageChannel<> channel(
         binary_messenger,
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
-        "echoAsyncNullableList",
+        "echoAsyncNullableList" +
+            prepended_suffix,
         &GetCodec());
     if (api != nullptr) {
       channel.SetMessageHandler(
@@ -3504,10 +3574,12 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     }
   }
   {
-    BasicMessageChannel<> channel(binary_messenger,
-                                  "dev.flutter.pigeon.pigeon_integration_tests."
-                                  "HostIntegrationCoreApi.echoAsyncNullableMap",
-                                  &GetCodec());
+    BasicMessageChannel<> channel(
+        binary_messenger,
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+        "echoAsyncNullableMap" +
+            prepended_suffix,
+        &GetCodec());
     if (api != nullptr) {
       channel.SetMessageHandler(
           [api](const EncodableValue& message,
@@ -3546,7 +3618,8 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     BasicMessageChannel<> channel(
         binary_messenger,
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
-        "echoAsyncNullableEnum",
+        "echoAsyncNullableEnum" +
+            prepended_suffix,
         &GetCodec());
     if (api != nullptr) {
       channel.SetMessageHandler(
@@ -3592,7 +3665,8 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
   {
     BasicMessageChannel<> channel(binary_messenger,
                                   "dev.flutter.pigeon.pigeon_integration_tests."
-                                  "HostIntegrationCoreApi.callFlutterNoop",
+                                  "HostIntegrationCoreApi.callFlutterNoop" +
+                                      prepended_suffix,
                                   &GetCodec());
     if (api != nullptr) {
       channel.SetMessageHandler(
@@ -3621,7 +3695,8 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     BasicMessageChannel<> channel(
         binary_messenger,
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
-        "callFlutterThrowError",
+        "callFlutterThrowError" +
+            prepended_suffix,
         &GetCodec());
     if (api != nullptr) {
       channel.SetMessageHandler(
@@ -3656,7 +3731,8 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     BasicMessageChannel<> channel(
         binary_messenger,
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
-        "callFlutterThrowErrorFromVoid",
+        "callFlutterThrowErrorFromVoid" +
+            prepended_suffix,
         &GetCodec());
     if (api != nullptr) {
       channel.SetMessageHandler(
@@ -3685,7 +3761,8 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     BasicMessageChannel<> channel(
         binary_messenger,
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
-        "callFlutterEchoAllTypes",
+        "callFlutterEchoAllTypes" +
+            prepended_suffix,
         &GetCodec());
     if (api != nullptr) {
       channel.SetMessageHandler(
@@ -3723,7 +3800,8 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     BasicMessageChannel<> channel(
         binary_messenger,
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
-        "callFlutterEchoAllNullableTypes",
+        "callFlutterEchoAllNullableTypes" +
+            prepended_suffix,
         &GetCodec());
     if (api != nullptr) {
       channel.SetMessageHandler(
@@ -3765,7 +3843,8 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     BasicMessageChannel<> channel(
         binary_messenger,
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
-        "callFlutterSendMultipleNullableTypes",
+        "callFlutterSendMultipleNullableTypes" +
+            prepended_suffix,
         &GetCodec());
     if (api != nullptr) {
       channel.SetMessageHandler(
@@ -3813,7 +3892,8 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     BasicMessageChannel<> channel(
         binary_messenger,
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
-        "callFlutterEchoAllNullableTypesWithoutRecursion",
+        "callFlutterEchoAllNullableTypesWithoutRecursion" +
+            prepended_suffix,
         &GetCodec());
     if (api != nullptr) {
       channel.SetMessageHandler(
@@ -3857,7 +3937,8 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     BasicMessageChannel<> channel(
         binary_messenger,
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
-        "callFlutterSendMultipleNullableTypesWithoutRecursion",
+        "callFlutterSendMultipleNullableTypesWithoutRecursion" +
+            prepended_suffix,
         &GetCodec());
     if (api != nullptr) {
       channel.SetMessageHandler(
@@ -3904,7 +3985,8 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
   {
     BasicMessageChannel<> channel(binary_messenger,
                                   "dev.flutter.pigeon.pigeon_integration_tests."
-                                  "HostIntegrationCoreApi.callFlutterEchoBool",
+                                  "HostIntegrationCoreApi.callFlutterEchoBool" +
+                                      prepended_suffix,
                                   &GetCodec());
     if (api != nullptr) {
       channel.SetMessageHandler(
@@ -3940,7 +4022,8 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
   {
     BasicMessageChannel<> channel(binary_messenger,
                                   "dev.flutter.pigeon.pigeon_integration_tests."
-                                  "HostIntegrationCoreApi.callFlutterEchoInt",
+                                  "HostIntegrationCoreApi.callFlutterEchoInt" +
+                                      prepended_suffix,
                                   &GetCodec());
     if (api != nullptr) {
       channel.SetMessageHandler(
@@ -3977,7 +4060,8 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     BasicMessageChannel<> channel(
         binary_messenger,
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
-        "callFlutterEchoDouble",
+        "callFlutterEchoDouble" +
+            prepended_suffix,
         &GetCodec());
     if (api != nullptr) {
       channel.SetMessageHandler(
@@ -4015,7 +4099,8 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     BasicMessageChannel<> channel(
         binary_messenger,
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
-        "callFlutterEchoString",
+        "callFlutterEchoString" +
+            prepended_suffix,
         &GetCodec());
     if (api != nullptr) {
       channel.SetMessageHandler(
@@ -4053,7 +4138,8 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     BasicMessageChannel<> channel(
         binary_messenger,
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
-        "callFlutterEchoUint8List",
+        "callFlutterEchoUint8List" +
+            prepended_suffix,
         &GetCodec());
     if (api != nullptr) {
       channel.SetMessageHandler(
@@ -4090,7 +4176,8 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
   {
     BasicMessageChannel<> channel(binary_messenger,
                                   "dev.flutter.pigeon.pigeon_integration_tests."
-                                  "HostIntegrationCoreApi.callFlutterEchoList",
+                                  "HostIntegrationCoreApi.callFlutterEchoList" +
+                                      prepended_suffix,
                                   &GetCodec());
     if (api != nullptr) {
       channel.SetMessageHandler(
@@ -4127,7 +4214,8 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
   {
     BasicMessageChannel<> channel(binary_messenger,
                                   "dev.flutter.pigeon.pigeon_integration_tests."
-                                  "HostIntegrationCoreApi.callFlutterEchoMap",
+                                  "HostIntegrationCoreApi.callFlutterEchoMap" +
+                                      prepended_suffix,
                                   &GetCodec());
     if (api != nullptr) {
       channel.SetMessageHandler(
@@ -4164,7 +4252,8 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
   {
     BasicMessageChannel<> channel(binary_messenger,
                                   "dev.flutter.pigeon.pigeon_integration_tests."
-                                  "HostIntegrationCoreApi.callFlutterEchoEnum",
+                                  "HostIntegrationCoreApi.callFlutterEchoEnum" +
+                                      prepended_suffix,
                                   &GetCodec());
     if (api != nullptr) {
       channel.SetMessageHandler(
@@ -4202,7 +4291,8 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     BasicMessageChannel<> channel(
         binary_messenger,
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
-        "callFlutterEchoNullableBool",
+        "callFlutterEchoNullableBool" +
+            prepended_suffix,
         &GetCodec());
     if (api != nullptr) {
       channel.SetMessageHandler(
@@ -4240,7 +4330,8 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     BasicMessageChannel<> channel(
         binary_messenger,
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
-        "callFlutterEchoNullableInt",
+        "callFlutterEchoNullableInt" +
+            prepended_suffix,
         &GetCodec());
     if (api != nullptr) {
       channel.SetMessageHandler(
@@ -4284,7 +4375,8 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     BasicMessageChannel<> channel(
         binary_messenger,
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
-        "callFlutterEchoNullableDouble",
+        "callFlutterEchoNullableDouble" +
+            prepended_suffix,
         &GetCodec());
     if (api != nullptr) {
       channel.SetMessageHandler(
@@ -4324,7 +4416,8 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     BasicMessageChannel<> channel(
         binary_messenger,
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
-        "callFlutterEchoNullableString",
+        "callFlutterEchoNullableString" +
+            prepended_suffix,
         &GetCodec());
     if (api != nullptr) {
       channel.SetMessageHandler(
@@ -4364,7 +4457,8 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     BasicMessageChannel<> channel(
         binary_messenger,
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
-        "callFlutterEchoNullableUint8List",
+        "callFlutterEchoNullableUint8List" +
+            prepended_suffix,
         &GetCodec());
     if (api != nullptr) {
       channel.SetMessageHandler(
@@ -4405,7 +4499,8 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     BasicMessageChannel<> channel(
         binary_messenger,
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
-        "callFlutterEchoNullableList",
+        "callFlutterEchoNullableList" +
+            prepended_suffix,
         &GetCodec());
     if (api != nullptr) {
       channel.SetMessageHandler(
@@ -4445,7 +4540,8 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     BasicMessageChannel<> channel(
         binary_messenger,
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
-        "callFlutterEchoNullableMap",
+        "callFlutterEchoNullableMap" +
+            prepended_suffix,
         &GetCodec());
     if (api != nullptr) {
       channel.SetMessageHandler(
@@ -4485,7 +4581,8 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     BasicMessageChannel<> channel(
         binary_messenger,
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
-        "callFlutterEchoNullableEnum",
+        "callFlutterEchoNullableEnum" +
+            prepended_suffix,
         &GetCodec());
     if (api != nullptr) {
       channel.SetMessageHandler(
@@ -4518,6 +4615,45 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
                     } else {
                       wrapped.push_back(EncodableValue());
                     }
+                    reply(EncodableValue(std::move(wrapped)));
+                  });
+            } catch (const std::exception& exception) {
+              reply(WrapError(exception.what()));
+            }
+          });
+    } else {
+      channel.SetMessageHandler(nullptr);
+    }
+  }
+  {
+    BasicMessageChannel<> channel(
+        binary_messenger,
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+        "callFlutterSmallApiEchoString" +
+            prepended_suffix,
+        &GetCodec());
+    if (api != nullptr) {
+      channel.SetMessageHandler(
+          [api](const EncodableValue& message,
+                const flutter::MessageReply<EncodableValue>& reply) {
+            try {
+              const auto& args = std::get<EncodableList>(message);
+              const auto& encodable_a_string_arg = args.at(0);
+              if (encodable_a_string_arg.IsNull()) {
+                reply(WrapError("a_string_arg unexpectedly null."));
+                return;
+              }
+              const auto& a_string_arg =
+                  std::get<std::string>(encodable_a_string_arg);
+              api->CallFlutterSmallApiEchoString(
+                  a_string_arg, [reply](ErrorOr<std::string>&& output) {
+                    if (output.has_error()) {
+                      reply(WrapError(output.error()));
+                      return;
+                    }
+                    EncodableList wrapped;
+                    wrapped.push_back(
+                        EncodableValue(std::move(output).TakeValue()));
                     reply(EncodableValue(std::move(wrapped)));
                   });
             } catch (const std::exception& exception) {
@@ -4620,7 +4756,15 @@ void FlutterIntegrationCoreApiCodecSerializer::WriteValue(
 // called from C++.
 FlutterIntegrationCoreApi::FlutterIntegrationCoreApi(
     flutter::BinaryMessenger* binary_messenger)
-    : binary_messenger_(binary_messenger) {}
+    : binary_messenger_(binary_messenger), message_channel_suffix_("") {}
+
+FlutterIntegrationCoreApi::FlutterIntegrationCoreApi(
+    flutter::BinaryMessenger* binary_messenger,
+    const std::string& message_channel_suffix)
+    : binary_messenger_(binary_messenger),
+      message_channel_suffix_(message_channel_suffix.length() > 0
+                                  ? std::string(".") + message_channel_suffix
+                                  : "") {}
 
 const flutter::StandardMessageCodec& FlutterIntegrationCoreApi::GetCodec() {
   return flutter::StandardMessageCodec::GetInstance(
@@ -4632,7 +4776,8 @@ void FlutterIntegrationCoreApi::Noop(
     std::function<void(const FlutterError&)>&& on_error) {
   const std::string channel_name =
       "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi."
-      "noop";
+      "noop" +
+      message_channel_suffix_;
   BasicMessageChannel<> channel(binary_messenger_, channel_name, &GetCodec());
   EncodableValue encoded_api_arguments = EncodableValue();
   channel.Send(
@@ -4664,7 +4809,8 @@ void FlutterIntegrationCoreApi::ThrowError(
     std::function<void(const FlutterError&)>&& on_error) {
   const std::string channel_name =
       "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi."
-      "throwError";
+      "throwError" +
+      message_channel_suffix_;
   BasicMessageChannel<> channel(binary_messenger_, channel_name, &GetCodec());
   EncodableValue encoded_api_arguments = EncodableValue();
   channel.Send(
@@ -4697,7 +4843,8 @@ void FlutterIntegrationCoreApi::ThrowErrorFromVoid(
     std::function<void(const FlutterError&)>&& on_error) {
   const std::string channel_name =
       "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi."
-      "throwErrorFromVoid";
+      "throwErrorFromVoid" +
+      message_channel_suffix_;
   BasicMessageChannel<> channel(binary_messenger_, channel_name, &GetCodec());
   EncodableValue encoded_api_arguments = EncodableValue();
   channel.Send(
@@ -4730,7 +4877,8 @@ void FlutterIntegrationCoreApi::EchoAllTypes(
     std::function<void(const FlutterError&)>&& on_error) {
   const std::string channel_name =
       "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi."
-      "echoAllTypes";
+      "echoAllTypes" +
+      message_channel_suffix_;
   BasicMessageChannel<> channel(binary_messenger_, channel_name, &GetCodec());
   EncodableValue encoded_api_arguments = EncodableValue(EncodableList{
       CustomEncodableValue(everything_arg),
@@ -4767,7 +4915,8 @@ void FlutterIntegrationCoreApi::EchoAllNullableTypes(
     std::function<void(const FlutterError&)>&& on_error) {
   const std::string channel_name =
       "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi."
-      "echoAllNullableTypes";
+      "echoAllNullableTypes" +
+      message_channel_suffix_;
   BasicMessageChannel<> channel(binary_messenger_, channel_name, &GetCodec());
   EncodableValue encoded_api_arguments = EncodableValue(EncodableList{
       everything_arg ? CustomEncodableValue(*everything_arg) : EncodableValue(),
@@ -4805,7 +4954,8 @@ void FlutterIntegrationCoreApi::SendMultipleNullableTypes(
     std::function<void(const FlutterError&)>&& on_error) {
   const std::string channel_name =
       "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi."
-      "sendMultipleNullableTypes";
+      "sendMultipleNullableTypes" +
+      message_channel_suffix_;
   BasicMessageChannel<> channel(binary_messenger_, channel_name, &GetCodec());
   EncodableValue encoded_api_arguments = EncodableValue(EncodableList{
       a_nullable_bool_arg ? EncodableValue(*a_nullable_bool_arg)
@@ -4847,7 +4997,8 @@ void FlutterIntegrationCoreApi::EchoAllNullableTypesWithoutRecursion(
     std::function<void(const FlutterError&)>&& on_error) {
   const std::string channel_name =
       "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi."
-      "echoAllNullableTypesWithoutRecursion";
+      "echoAllNullableTypesWithoutRecursion" +
+      message_channel_suffix_;
   BasicMessageChannel<> channel(binary_messenger_, channel_name, &GetCodec());
   EncodableValue encoded_api_arguments = EncodableValue(EncodableList{
       everything_arg ? CustomEncodableValue(*everything_arg) : EncodableValue(),
@@ -4886,7 +5037,8 @@ void FlutterIntegrationCoreApi::SendMultipleNullableTypesWithoutRecursion(
     std::function<void(const FlutterError&)>&& on_error) {
   const std::string channel_name =
       "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi."
-      "sendMultipleNullableTypesWithoutRecursion";
+      "sendMultipleNullableTypesWithoutRecursion" +
+      message_channel_suffix_;
   BasicMessageChannel<> channel(binary_messenger_, channel_name, &GetCodec());
   EncodableValue encoded_api_arguments = EncodableValue(EncodableList{
       a_nullable_bool_arg ? EncodableValue(*a_nullable_bool_arg)
@@ -4928,7 +5080,8 @@ void FlutterIntegrationCoreApi::EchoBool(
     std::function<void(const FlutterError&)>&& on_error) {
   const std::string channel_name =
       "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi."
-      "echoBool";
+      "echoBool" +
+      message_channel_suffix_;
   BasicMessageChannel<> channel(binary_messenger_, channel_name, &GetCodec());
   EncodableValue encoded_api_arguments = EncodableValue(EncodableList{
       EncodableValue(a_bool_arg),
@@ -4963,7 +5116,8 @@ void FlutterIntegrationCoreApi::EchoInt(
     std::function<void(const FlutterError&)>&& on_error) {
   const std::string channel_name =
       "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi."
-      "echoInt";
+      "echoInt" +
+      message_channel_suffix_;
   BasicMessageChannel<> channel(binary_messenger_, channel_name, &GetCodec());
   EncodableValue encoded_api_arguments = EncodableValue(EncodableList{
       EncodableValue(an_int_arg),
@@ -4998,7 +5152,8 @@ void FlutterIntegrationCoreApi::EchoDouble(
     std::function<void(const FlutterError&)>&& on_error) {
   const std::string channel_name =
       "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi."
-      "echoDouble";
+      "echoDouble" +
+      message_channel_suffix_;
   BasicMessageChannel<> channel(binary_messenger_, channel_name, &GetCodec());
   EncodableValue encoded_api_arguments = EncodableValue(EncodableList{
       EncodableValue(a_double_arg),
@@ -5034,7 +5189,8 @@ void FlutterIntegrationCoreApi::EchoString(
     std::function<void(const FlutterError&)>&& on_error) {
   const std::string channel_name =
       "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi."
-      "echoString";
+      "echoString" +
+      message_channel_suffix_;
   BasicMessageChannel<> channel(binary_messenger_, channel_name, &GetCodec());
   EncodableValue encoded_api_arguments = EncodableValue(EncodableList{
       EncodableValue(a_string_arg),
@@ -5071,7 +5227,8 @@ void FlutterIntegrationCoreApi::EchoUint8List(
     std::function<void(const FlutterError&)>&& on_error) {
   const std::string channel_name =
       "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi."
-      "echoUint8List";
+      "echoUint8List" +
+      message_channel_suffix_;
   BasicMessageChannel<> channel(binary_messenger_, channel_name, &GetCodec());
   EncodableValue encoded_api_arguments = EncodableValue(EncodableList{
       EncodableValue(list_arg),
@@ -5108,7 +5265,8 @@ void FlutterIntegrationCoreApi::EchoList(
     std::function<void(const FlutterError&)>&& on_error) {
   const std::string channel_name =
       "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi."
-      "echoList";
+      "echoList" +
+      message_channel_suffix_;
   BasicMessageChannel<> channel(binary_messenger_, channel_name, &GetCodec());
   EncodableValue encoded_api_arguments = EncodableValue(EncodableList{
       EncodableValue(list_arg),
@@ -5145,7 +5303,8 @@ void FlutterIntegrationCoreApi::EchoMap(
     std::function<void(const FlutterError&)>&& on_error) {
   const std::string channel_name =
       "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi."
-      "echoMap";
+      "echoMap" +
+      message_channel_suffix_;
   BasicMessageChannel<> channel(binary_messenger_, channel_name, &GetCodec());
   EncodableValue encoded_api_arguments = EncodableValue(EncodableList{
       EncodableValue(a_map_arg),
@@ -5181,7 +5340,8 @@ void FlutterIntegrationCoreApi::EchoEnum(
     std::function<void(const FlutterError&)>&& on_error) {
   const std::string channel_name =
       "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi."
-      "echoEnum";
+      "echoEnum" +
+      message_channel_suffix_;
   BasicMessageChannel<> channel(binary_messenger_, channel_name, &GetCodec());
   EncodableValue encoded_api_arguments = EncodableValue(EncodableList{
       EncodableValue((int)an_enum_arg),
@@ -5217,7 +5377,8 @@ void FlutterIntegrationCoreApi::EchoNullableBool(
     std::function<void(const FlutterError&)>&& on_error) {
   const std::string channel_name =
       "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi."
-      "echoNullableBool";
+      "echoNullableBool" +
+      message_channel_suffix_;
   BasicMessageChannel<> channel(binary_messenger_, channel_name, &GetCodec());
   EncodableValue encoded_api_arguments = EncodableValue(EncodableList{
       a_bool_arg ? EncodableValue(*a_bool_arg) : EncodableValue(),
@@ -5252,7 +5413,8 @@ void FlutterIntegrationCoreApi::EchoNullableInt(
     std::function<void(const FlutterError&)>&& on_error) {
   const std::string channel_name =
       "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi."
-      "echoNullableInt";
+      "echoNullableInt" +
+      message_channel_suffix_;
   BasicMessageChannel<> channel(binary_messenger_, channel_name, &GetCodec());
   EncodableValue encoded_api_arguments = EncodableValue(EncodableList{
       an_int_arg ? EncodableValue(*an_int_arg) : EncodableValue(),
@@ -5292,7 +5454,8 @@ void FlutterIntegrationCoreApi::EchoNullableDouble(
     std::function<void(const FlutterError&)>&& on_error) {
   const std::string channel_name =
       "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi."
-      "echoNullableDouble";
+      "echoNullableDouble" +
+      message_channel_suffix_;
   BasicMessageChannel<> channel(binary_messenger_, channel_name, &GetCodec());
   EncodableValue encoded_api_arguments = EncodableValue(EncodableList{
       a_double_arg ? EncodableValue(*a_double_arg) : EncodableValue(),
@@ -5329,7 +5492,8 @@ void FlutterIntegrationCoreApi::EchoNullableString(
     std::function<void(const FlutterError&)>&& on_error) {
   const std::string channel_name =
       "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi."
-      "echoNullableString";
+      "echoNullableString" +
+      message_channel_suffix_;
   BasicMessageChannel<> channel(binary_messenger_, channel_name, &GetCodec());
   EncodableValue encoded_api_arguments = EncodableValue(EncodableList{
       a_string_arg ? EncodableValue(*a_string_arg) : EncodableValue(),
@@ -5366,7 +5530,8 @@ void FlutterIntegrationCoreApi::EchoNullableUint8List(
     std::function<void(const FlutterError&)>&& on_error) {
   const std::string channel_name =
       "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi."
-      "echoNullableUint8List";
+      "echoNullableUint8List" +
+      message_channel_suffix_;
   BasicMessageChannel<> channel(binary_messenger_, channel_name, &GetCodec());
   EncodableValue encoded_api_arguments = EncodableValue(EncodableList{
       list_arg ? EncodableValue(*list_arg) : EncodableValue(),
@@ -5403,7 +5568,8 @@ void FlutterIntegrationCoreApi::EchoNullableList(
     std::function<void(const FlutterError&)>&& on_error) {
   const std::string channel_name =
       "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi."
-      "echoNullableList";
+      "echoNullableList" +
+      message_channel_suffix_;
   BasicMessageChannel<> channel(binary_messenger_, channel_name, &GetCodec());
   EncodableValue encoded_api_arguments = EncodableValue(EncodableList{
       list_arg ? EncodableValue(*list_arg) : EncodableValue(),
@@ -5440,7 +5606,8 @@ void FlutterIntegrationCoreApi::EchoNullableMap(
     std::function<void(const FlutterError&)>&& on_error) {
   const std::string channel_name =
       "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi."
-      "echoNullableMap";
+      "echoNullableMap" +
+      message_channel_suffix_;
   BasicMessageChannel<> channel(binary_messenger_, channel_name, &GetCodec());
   EncodableValue encoded_api_arguments = EncodableValue(EncodableList{
       a_map_arg ? EncodableValue(*a_map_arg) : EncodableValue(),
@@ -5476,7 +5643,8 @@ void FlutterIntegrationCoreApi::EchoNullableEnum(
     std::function<void(const FlutterError&)>&& on_error) {
   const std::string channel_name =
       "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi."
-      "echoNullableEnum";
+      "echoNullableEnum" +
+      message_channel_suffix_;
   BasicMessageChannel<> channel(binary_messenger_, channel_name, &GetCodec());
   EncodableValue encoded_api_arguments = EncodableValue(EncodableList{
       an_enum_arg ? EncodableValue((int)(*an_enum_arg)) : EncodableValue(),
@@ -5517,7 +5685,8 @@ void FlutterIntegrationCoreApi::NoopAsync(
     std::function<void(const FlutterError&)>&& on_error) {
   const std::string channel_name =
       "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi."
-      "noopAsync";
+      "noopAsync" +
+      message_channel_suffix_;
   BasicMessageChannel<> channel(binary_messenger_, channel_name, &GetCodec());
   EncodableValue encoded_api_arguments = EncodableValue();
   channel.Send(
@@ -5550,7 +5719,8 @@ void FlutterIntegrationCoreApi::EchoAsyncString(
     std::function<void(const FlutterError&)>&& on_error) {
   const std::string channel_name =
       "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi."
-      "echoAsyncString";
+      "echoAsyncString" +
+      message_channel_suffix_;
   BasicMessageChannel<> channel(binary_messenger_, channel_name, &GetCodec());
   EncodableValue encoded_api_arguments = EncodableValue(EncodableList{
       EncodableValue(a_string_arg),
@@ -5591,10 +5761,21 @@ const flutter::StandardMessageCodec& HostTrivialApi::GetCodec() {
 // `binary_messenger`.
 void HostTrivialApi::SetUp(flutter::BinaryMessenger* binary_messenger,
                            HostTrivialApi* api) {
+  HostTrivialApi::SetUp(binary_messenger, api, "");
+}
+
+void HostTrivialApi::SetUp(flutter::BinaryMessenger* binary_messenger,
+                           HostTrivialApi* api,
+                           const std::string& message_channel_suffix) {
+  const std::string prepended_suffix =
+      message_channel_suffix.length() > 0
+          ? std::string(".") + message_channel_suffix
+          : "";
   {
     BasicMessageChannel<> channel(
         binary_messenger,
-        "dev.flutter.pigeon.pigeon_integration_tests.HostTrivialApi.noop",
+        "dev.flutter.pigeon.pigeon_integration_tests.HostTrivialApi.noop" +
+            prepended_suffix,
         &GetCodec());
     if (api != nullptr) {
       channel.SetMessageHandler(
@@ -5641,10 +5822,21 @@ const flutter::StandardMessageCodec& HostSmallApi::GetCodec() {
 // `binary_messenger`.
 void HostSmallApi::SetUp(flutter::BinaryMessenger* binary_messenger,
                          HostSmallApi* api) {
+  HostSmallApi::SetUp(binary_messenger, api, "");
+}
+
+void HostSmallApi::SetUp(flutter::BinaryMessenger* binary_messenger,
+                         HostSmallApi* api,
+                         const std::string& message_channel_suffix) {
+  const std::string prepended_suffix =
+      message_channel_suffix.length() > 0
+          ? std::string(".") + message_channel_suffix
+          : "";
   {
     BasicMessageChannel<> channel(
         binary_messenger,
-        "dev.flutter.pigeon.pigeon_integration_tests.HostSmallApi.echo",
+        "dev.flutter.pigeon.pigeon_integration_tests.HostSmallApi.echo" +
+            prepended_suffix,
         &GetCodec());
     if (api != nullptr) {
       channel.SetMessageHandler(
@@ -5680,7 +5872,8 @@ void HostSmallApi::SetUp(flutter::BinaryMessenger* binary_messenger,
   {
     BasicMessageChannel<> channel(
         binary_messenger,
-        "dev.flutter.pigeon.pigeon_integration_tests.HostSmallApi.voidVoid",
+        "dev.flutter.pigeon.pigeon_integration_tests.HostSmallApi.voidVoid" +
+            prepended_suffix,
         &GetCodec());
     if (api != nullptr) {
       channel.SetMessageHandler(
@@ -5750,7 +5943,14 @@ void FlutterSmallApiCodecSerializer::WriteValue(
 // Generated class from Pigeon that represents Flutter messages that can be
 // called from C++.
 FlutterSmallApi::FlutterSmallApi(flutter::BinaryMessenger* binary_messenger)
-    : binary_messenger_(binary_messenger) {}
+    : binary_messenger_(binary_messenger), message_channel_suffix_("") {}
+
+FlutterSmallApi::FlutterSmallApi(flutter::BinaryMessenger* binary_messenger,
+                                 const std::string& message_channel_suffix)
+    : binary_messenger_(binary_messenger),
+      message_channel_suffix_(message_channel_suffix.length() > 0
+                                  ? std::string(".") + message_channel_suffix
+                                  : "") {}
 
 const flutter::StandardMessageCodec& FlutterSmallApi::GetCodec() {
   return flutter::StandardMessageCodec::GetInstance(
@@ -5763,7 +5963,8 @@ void FlutterSmallApi::EchoWrappedList(
     std::function<void(const FlutterError&)>&& on_error) {
   const std::string channel_name =
       "dev.flutter.pigeon.pigeon_integration_tests.FlutterSmallApi."
-      "echoWrappedList";
+      "echoWrappedList" +
+      message_channel_suffix_;
   BasicMessageChannel<> channel(binary_messenger_, channel_name, &GetCodec());
   EncodableValue encoded_api_arguments = EncodableValue(EncodableList{
       CustomEncodableValue(msg_arg),
@@ -5799,7 +6000,8 @@ void FlutterSmallApi::EchoString(
     std::function<void(const std::string&)>&& on_success,
     std::function<void(const FlutterError&)>&& on_error) {
   const std::string channel_name =
-      "dev.flutter.pigeon.pigeon_integration_tests.FlutterSmallApi.echoString";
+      "dev.flutter.pigeon.pigeon_integration_tests.FlutterSmallApi.echoString" +
+      message_channel_suffix_;
   BasicMessageChannel<> channel(binary_messenger_, channel_name, &GetCodec());
   EncodableValue encoded_api_arguments = EncodableValue(EncodableList{
       EncodableValue(a_string_arg),
