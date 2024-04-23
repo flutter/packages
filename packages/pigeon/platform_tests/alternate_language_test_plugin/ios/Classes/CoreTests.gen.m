@@ -112,19 +112,19 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 }
 + (FLTAllTypes *)fromList:(NSArray *)list {
   FLTAllTypes *pigeonResult = [[FLTAllTypes alloc] init];
-  pigeonResult.aBool = [GetNullableObjectAtIndex('list', 0) boolValue];
-  pigeonResult.anInt = [GetNullableObjectAtIndex('list', 1) integerValue];
-  pigeonResult.anInt64 = [GetNullableObjectAtIndex('list', 2) integerValue];
-  pigeonResult.aDouble = [GetNullableObjectAtIndex('list', 3) doubleValue];
-  pigeonResult.aByteArray = GetNullableObjectAtIndex('list', 4);
-  pigeonResult.a4ByteArray = GetNullableObjectAtIndex('list', 5);
-  pigeonResult.a8ByteArray = GetNullableObjectAtIndex('list', 6);
-  pigeonResult.aFloatArray = GetNullableObjectAtIndex('list', 7);
-  pigeonResult.list = GetNullableObjectAtIndex('list', 8);
-  pigeonResult.aMap = GetNullableObjectAtIndex('list', 9);
-  pigeonResult.anEnum = [GetNullableObjectAtIndex('list', 10) integerValue];
-  pigeonResult.aString = GetNullableObjectAtIndex('list', 11);
-  pigeonResult.anObject = GetNullableObjectAtIndex('list', 12);
+  pigeonResult.aBool = [GetNullableObjectAtIndex(list, 0) boolValue];
+  pigeonResult.anInt = [GetNullableObjectAtIndex(list, 1) integerValue];
+  pigeonResult.anInt64 = [GetNullableObjectAtIndex(list, 2) integerValue];
+  pigeonResult.aDouble = [GetNullableObjectAtIndex(list, 3) doubleValue];
+  pigeonResult.aByteArray = GetNullableObjectAtIndex(list, 4);
+  pigeonResult.a4ByteArray = GetNullableObjectAtIndex(list, 5);
+  pigeonResult.a8ByteArray = GetNullableObjectAtIndex(list, 6);
+  pigeonResult.aFloatArray = GetNullableObjectAtIndex(list, 7);
+  pigeonResult.list = GetNullableObjectAtIndex(list, 8);
+  pigeonResult.aMap = GetNullableObjectAtIndex(list, 9);
+  pigeonResult.anEnum = [GetNullableObjectAtIndex(list, 10) integerValue];
+  pigeonResult.aString = GetNullableObjectAtIndex(list, 11);
+  pigeonResult.anObject = GetNullableObjectAtIndex(list, 12);
   return pigeonResult;
 }
 + (nullable FLTAllTypes *)nullableFromList:(NSArray *)list {
@@ -190,28 +190,28 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 }
 + (FLTAllNullableTypes *)fromList:(NSArray *)list {
   FLTAllNullableTypes *pigeonResult = [[FLTAllNullableTypes alloc] init];
-  pigeonResult.aNullableBool = GetNullableObjectAtIndex('list', 0);
-  pigeonResult.aNullableInt = GetNullableObjectAtIndex('list', 1);
-  pigeonResult.aNullableInt64 = GetNullableObjectAtIndex('list', 2);
-  pigeonResult.aNullableDouble = GetNullableObjectAtIndex('list', 3);
-  pigeonResult.aNullableByteArray = GetNullableObjectAtIndex('list', 4);
-  pigeonResult.aNullable4ByteArray = GetNullableObjectAtIndex('list', 5);
-  pigeonResult.aNullable8ByteArray = GetNullableObjectAtIndex('list', 6);
-  pigeonResult.aNullableFloatArray = GetNullableObjectAtIndex('list', 7);
-  pigeonResult.aNullableList = GetNullableObjectAtIndex('list', 8);
-  pigeonResult.aNullableMap = GetNullableObjectAtIndex('list', 9);
-  pigeonResult.nullableNestedList = GetNullableObjectAtIndex('list', 10);
-  pigeonResult.nullableMapWithAnnotations = GetNullableObjectAtIndex('list', 11);
-  pigeonResult.nullableMapWithObject = GetNullableObjectAtIndex('list', 12);
-  NSNumber *aNullableEnumAsNumber = GetNullableObjectAtIndex('list', 13);
+  pigeonResult.aNullableBool = GetNullableObjectAtIndex(list, 0);
+  pigeonResult.aNullableInt = GetNullableObjectAtIndex(list, 1);
+  pigeonResult.aNullableInt64 = GetNullableObjectAtIndex(list, 2);
+  pigeonResult.aNullableDouble = GetNullableObjectAtIndex(list, 3);
+  pigeonResult.aNullableByteArray = GetNullableObjectAtIndex(list, 4);
+  pigeonResult.aNullable4ByteArray = GetNullableObjectAtIndex(list, 5);
+  pigeonResult.aNullable8ByteArray = GetNullableObjectAtIndex(list, 6);
+  pigeonResult.aNullableFloatArray = GetNullableObjectAtIndex(list, 7);
+  pigeonResult.aNullableList = GetNullableObjectAtIndex(list, 8);
+  pigeonResult.aNullableMap = GetNullableObjectAtIndex(list, 9);
+  pigeonResult.nullableNestedList = GetNullableObjectAtIndex(list, 10);
+  pigeonResult.nullableMapWithAnnotations = GetNullableObjectAtIndex(list, 11);
+  pigeonResult.nullableMapWithObject = GetNullableObjectAtIndex(list, 12);
+  NSNumber *aNullableEnumAsNumber = GetNullableObjectAtIndex(list, 13);
   FLTAnEnumBox *aNullableEnum =
       aNullableEnumAsNumber == nil
           ? nil
           : [[FLTAnEnumBox alloc] initWithValue:[aNullableEnumAsNumber integerValue]];
   pigeonResult.aNullableEnum = aNullableEnum;
-  pigeonResult.aNullableString = GetNullableObjectAtIndex('list', 14);
-  pigeonResult.aNullableObject = GetNullableObjectAtIndex('list', 15);
-  pigeonResult.allNullableTypes = GetNullableObjectAtIndex('list', 16);
+  pigeonResult.aNullableString = GetNullableObjectAtIndex(list, 14);
+  pigeonResult.aNullableObject = GetNullableObjectAtIndex(list, 15);
+  pigeonResult.allNullableTypes = GetNullableObjectAtIndex(list, 16);
   return pigeonResult;
 }
 + (nullable FLTAllNullableTypes *)nullableFromList:(NSArray *)list {
@@ -282,27 +282,27 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 + (FLTAllNullableTypesWithoutRecursion *)fromList:(NSArray *)list {
   FLTAllNullableTypesWithoutRecursion *pigeonResult =
       [[FLTAllNullableTypesWithoutRecursion alloc] init];
-  pigeonResult.aNullableBool = GetNullableObjectAtIndex('list', 0);
-  pigeonResult.aNullableInt = GetNullableObjectAtIndex('list', 1);
-  pigeonResult.aNullableInt64 = GetNullableObjectAtIndex('list', 2);
-  pigeonResult.aNullableDouble = GetNullableObjectAtIndex('list', 3);
-  pigeonResult.aNullableByteArray = GetNullableObjectAtIndex('list', 4);
-  pigeonResult.aNullable4ByteArray = GetNullableObjectAtIndex('list', 5);
-  pigeonResult.aNullable8ByteArray = GetNullableObjectAtIndex('list', 6);
-  pigeonResult.aNullableFloatArray = GetNullableObjectAtIndex('list', 7);
-  pigeonResult.aNullableList = GetNullableObjectAtIndex('list', 8);
-  pigeonResult.aNullableMap = GetNullableObjectAtIndex('list', 9);
-  pigeonResult.nullableNestedList = GetNullableObjectAtIndex('list', 10);
-  pigeonResult.nullableMapWithAnnotations = GetNullableObjectAtIndex('list', 11);
-  pigeonResult.nullableMapWithObject = GetNullableObjectAtIndex('list', 12);
-  NSNumber *aNullableEnumAsNumber = GetNullableObjectAtIndex('list', 13);
+  pigeonResult.aNullableBool = GetNullableObjectAtIndex(list, 0);
+  pigeonResult.aNullableInt = GetNullableObjectAtIndex(list, 1);
+  pigeonResult.aNullableInt64 = GetNullableObjectAtIndex(list, 2);
+  pigeonResult.aNullableDouble = GetNullableObjectAtIndex(list, 3);
+  pigeonResult.aNullableByteArray = GetNullableObjectAtIndex(list, 4);
+  pigeonResult.aNullable4ByteArray = GetNullableObjectAtIndex(list, 5);
+  pigeonResult.aNullable8ByteArray = GetNullableObjectAtIndex(list, 6);
+  pigeonResult.aNullableFloatArray = GetNullableObjectAtIndex(list, 7);
+  pigeonResult.aNullableList = GetNullableObjectAtIndex(list, 8);
+  pigeonResult.aNullableMap = GetNullableObjectAtIndex(list, 9);
+  pigeonResult.nullableNestedList = GetNullableObjectAtIndex(list, 10);
+  pigeonResult.nullableMapWithAnnotations = GetNullableObjectAtIndex(list, 11);
+  pigeonResult.nullableMapWithObject = GetNullableObjectAtIndex(list, 12);
+  NSNumber *aNullableEnumAsNumber = GetNullableObjectAtIndex(list, 13);
   FLTAnEnumBox *aNullableEnum =
       aNullableEnumAsNumber == nil
           ? nil
           : [[FLTAnEnumBox alloc] initWithValue:[aNullableEnumAsNumber integerValue]];
   pigeonResult.aNullableEnum = aNullableEnum;
-  pigeonResult.aNullableString = GetNullableObjectAtIndex('list', 14);
-  pigeonResult.aNullableObject = GetNullableObjectAtIndex('list', 15);
+  pigeonResult.aNullableString = GetNullableObjectAtIndex(list, 14);
+  pigeonResult.aNullableObject = GetNullableObjectAtIndex(list, 15);
   return pigeonResult;
 }
 + (nullable FLTAllNullableTypesWithoutRecursion *)nullableFromList:(NSArray *)list {
@@ -344,9 +344,9 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 }
 + (FLTAllClassesWrapper *)fromList:(NSArray *)list {
   FLTAllClassesWrapper *pigeonResult = [[FLTAllClassesWrapper alloc] init];
-  pigeonResult.allNullableTypes = GetNullableObjectAtIndex('list', 0);
-  pigeonResult.allNullableTypesWithoutRecursion = GetNullableObjectAtIndex('list', 1);
-  pigeonResult.allTypes = GetNullableObjectAtIndex('list', 2);
+  pigeonResult.allNullableTypes = GetNullableObjectAtIndex(list, 0);
+  pigeonResult.allNullableTypesWithoutRecursion = GetNullableObjectAtIndex(list, 1);
+  pigeonResult.allTypes = GetNullableObjectAtIndex(list, 2);
   return pigeonResult;
 }
 + (nullable FLTAllClassesWrapper *)nullableFromList:(NSArray *)list {
@@ -369,7 +369,7 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 }
 + (FLTTestMessage *)fromList:(NSArray *)list {
   FLTTestMessage *pigeonResult = [[FLTTestMessage alloc] init];
-  pigeonResult.testList = GetNullableObjectAtIndex('list', 0);
+  pigeonResult.testList = GetNullableObjectAtIndex(list, 0);
   return pigeonResult;
 }
 + (nullable FLTTestMessage *)nullableFromList:(NSArray *)list {

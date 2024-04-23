@@ -580,7 +580,7 @@ class ObjcSourceGenerator extends StructuredGenerator<ObjcOptions> {
       enumerate(getFieldsInSerializationOrder(classDefinition),
           (int index, final NamedType field) {
         final bool isEnumType = field.type.isEnum;
-        final String valueGetter = "GetNullableObjectAtIndex('list', $index)";
+        final String valueGetter = "GetNullableObjectAtIndex(list, $index)";
         final String? primitiveExtractionMethod =
             _nsnumberExtractionMethod(field.type);
         final String ivarValueExpression;
