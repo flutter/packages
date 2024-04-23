@@ -1,4 +1,4 @@
-## NEXT
+## 6.3.0
 
 * Updates minimum supported SDK version to Flutter 3.13/Dart 3.1.
 * Adds support for picture-in-picture.

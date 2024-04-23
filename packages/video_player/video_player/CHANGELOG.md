@@ -1,4 +1,4 @@
-## NEXT
+## 2.9.0
 
 * Adds support for picture-in-picture on iOS.
 
