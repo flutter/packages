@@ -343,7 +343,6 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
         generatorComments: generatedMessages);
 
     final String apiName = api.name;
-    indent.writeln('@Suppress("UNCHECKED_CAST")');
     indent.write(
         'class $apiName(private val binaryMessenger: BinaryMessenger, private val messageChannelSuffix: String = "") ');
     indent.addScoped('{', '}', () {

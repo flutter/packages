@@ -759,15 +759,9 @@ class HostIntegrationCoreApi {
   }
 
   /// Returns the passed list, to test serialization and deserialization.
-<<<<<<< HEAD
   Future<List<Object?>> echoList(List<Object?> list) async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoList';
-=======
-  Future<List<Object?>> echoList(List<Object?> aList) async {
     final String __pigeon_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoList$__pigeon_messageChannelSuffix';
->>>>>>> 88572212ae3fc45d634a31e2328d77651121f1af
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
@@ -1637,15 +1631,9 @@ class HostIntegrationCoreApi {
   }
 
   /// Returns the passed list, to test asynchronous serialization and deserialization.
-<<<<<<< HEAD
   Future<List<Object?>> echoAsyncList(List<Object?> list) async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncList';
-=======
-  Future<List<Object?>> echoAsyncList(List<Object?> aList) async {
     final String __pigeon_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncList$__pigeon_messageChannelSuffix';
->>>>>>> 88572212ae3fc45d634a31e2328d77651121f1af
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
@@ -2042,15 +2030,9 @@ class HostIntegrationCoreApi {
   }
 
   /// Returns the passed list, to test asynchronous serialization and deserialization.
-<<<<<<< HEAD
   Future<List<Object?>?> echoAsyncNullableList(List<Object?>? list) async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableList';
-=======
-  Future<List<Object?>?> echoAsyncNullableList(List<Object?>? aList) async {
     final String __pigeon_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableList$__pigeon_messageChannelSuffix';
->>>>>>> 88572212ae3fc45d634a31e2328d77651121f1af
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
@@ -2457,15 +2439,9 @@ class HostIntegrationCoreApi {
     }
   }
 
-<<<<<<< HEAD
   Future<Uint8List> callFlutterEchoUint8List(Uint8List list) async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoUint8List';
-=======
-  Future<Uint8List> callFlutterEchoUint8List(Uint8List aList) async {
     final String __pigeon_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoUint8List$__pigeon_messageChannelSuffix';
->>>>>>> 88572212ae3fc45d634a31e2328d77651121f1af
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
@@ -2492,15 +2468,9 @@ class HostIntegrationCoreApi {
     }
   }
 
-<<<<<<< HEAD
   Future<List<Object?>> callFlutterEchoList(List<Object?> list) async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoList';
-=======
-  Future<List<Object?>> callFlutterEchoList(List<Object?> aList) async {
     final String __pigeon_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoList$__pigeon_messageChannelSuffix';
->>>>>>> 88572212ae3fc45d634a31e2328d77651121f1af
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
@@ -2683,15 +2653,9 @@ class HostIntegrationCoreApi {
     }
   }
 
-<<<<<<< HEAD
   Future<Uint8List?> callFlutterEchoNullableUint8List(Uint8List? list) async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableUint8List';
-=======
-  Future<Uint8List?> callFlutterEchoNullableUint8List(Uint8List? aList) async {
     final String __pigeon_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableUint8List$__pigeon_messageChannelSuffix';
->>>>>>> 88572212ae3fc45d634a31e2328d77651121f1af
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
@@ -2714,15 +2678,9 @@ class HostIntegrationCoreApi {
   }
 
   Future<List<Object?>?> callFlutterEchoNullableList(
-<<<<<<< HEAD
       List<Object?>? list) async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableList';
-=======
-      List<Object?>? aList) async {
     final String __pigeon_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableList$__pigeon_messageChannelSuffix';
->>>>>>> 88572212ae3fc45d634a31e2328d77651121f1af
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,

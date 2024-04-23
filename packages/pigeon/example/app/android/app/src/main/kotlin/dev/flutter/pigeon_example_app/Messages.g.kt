@@ -118,10 +118,6 @@ interface ExampleHostApi {
     /** The codec used by ExampleHostApi. */
     val codec: MessageCodec<Any?> by lazy { ExampleHostApiCodec }
     /** Sets up an instance of `ExampleHostApi` to handle messages through the `binaryMessenger`. */
-<<<<<<< HEAD
-    fun setUp(binaryMessenger: BinaryMessenger, api: ExampleHostApi?) {
-=======
-    @Suppress("UNCHECKED_CAST")
     fun setUp(
         binaryMessenger: BinaryMessenger,
         api: ExampleHostApi?,
@@ -129,7 +125,6 @@ interface ExampleHostApi {
     ) {
       val separatedMessageChannelSuffix =
           if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
->>>>>>> 88572212ae3fc45d634a31e2328d77651121f1af
       run {
         val channel =
             BasicMessageChannel<Any?>(
@@ -201,15 +196,10 @@ interface ExampleHostApi {
   }
 }
 /** Generated class from Pigeon that represents Flutter messages that can be called from Kotlin. */
-<<<<<<< HEAD
-class MessageFlutterApi(private val binaryMessenger: BinaryMessenger) {
-=======
-@Suppress("UNCHECKED_CAST")
 class MessageFlutterApi(
     private val binaryMessenger: BinaryMessenger,
     private val messageChannelSuffix: String = ""
 ) {
->>>>>>> 88572212ae3fc45d634a31e2328d77651121f1af
   companion object {
     /** The codec used by MessageFlutterApi. */
     val codec: MessageCodec<Any?> by lazy { StandardMessageCodec() }

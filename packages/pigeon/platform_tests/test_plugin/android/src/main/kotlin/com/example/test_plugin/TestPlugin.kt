@@ -10,11 +10,8 @@ import io.flutter.embedding.engine.plugins.FlutterPlugin.FlutterPluginBinding
 /** This plugin handles the native side of the integration tests in example/integration_test/. */
 class TestPlugin : FlutterPlugin, HostIntegrationCoreApi {
   private var flutterApi: FlutterIntegrationCoreApi? = null
-<<<<<<< HEAD
-=======
   private var flutterSmallApiOne: FlutterSmallApi? = null
   private var flutterSmallApiTwo: FlutterSmallApi? = null
->>>>>>> 88572212ae3fc45d634a31e2328d77651121f1af
 
   override fun onAttachedToEngine(binding: FlutterPlugin.FlutterPluginBinding) {
     HostIntegrationCoreApi.setUp(binding.binaryMessenger, this)

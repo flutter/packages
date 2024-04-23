@@ -635,10 +635,6 @@ interface HostIntegrationCoreApi {
      * Sets up an instance of `HostIntegrationCoreApi` to handle messages through the
      * `binaryMessenger`.
      */
-<<<<<<< HEAD
-    fun setUp(binaryMessenger: BinaryMessenger, api: HostIntegrationCoreApi?) {
-=======
-    @Suppress("UNCHECKED_CAST")
     fun setUp(
         binaryMessenger: BinaryMessenger,
         api: HostIntegrationCoreApi?,
@@ -646,7 +642,6 @@ interface HostIntegrationCoreApi {
     ) {
       val separatedMessageChannelSuffix =
           if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
->>>>>>> 88572212ae3fc45d634a31e2328d77651121f1af
       run {
         val channel =
             BasicMessageChannel<Any?>(
@@ -2680,15 +2675,10 @@ private object FlutterIntegrationCoreApiCodec : StandardMessageCodec() {
  *
  * Generated class from Pigeon that represents Flutter messages that can be called from Kotlin.
  */
-<<<<<<< HEAD
-class FlutterIntegrationCoreApi(private val binaryMessenger: BinaryMessenger) {
-=======
-@Suppress("UNCHECKED_CAST")
 class FlutterIntegrationCoreApi(
     private val binaryMessenger: BinaryMessenger,
     private val messageChannelSuffix: String = ""
 ) {
->>>>>>> 88572212ae3fc45d634a31e2328d77651121f1af
   companion object {
     /** The codec used by FlutterIntegrationCoreApi. */
     val codec: MessageCodec<Any?> by lazy { FlutterIntegrationCoreApiCodec }
@@ -3005,13 +2995,9 @@ class FlutterIntegrationCoreApi(
     }
   }
   /** Returns the passed byte list, to test serialization and deserialization. */
-<<<<<<< HEAD
   fun echoUint8List(listArg: ByteArray, callback: (Result<ByteArray>) -> Unit) {
-=======
-  fun echoUint8List(aListArg: ByteArray, callback: (Result<ByteArray>) -> Unit) {
     val separatedMessageChannelSuffix =
         if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
->>>>>>> 88572212ae3fc45d634a31e2328d77651121f1af
     val channelName =
         "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoUint8List$separatedMessageChannelSuffix"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
@@ -3036,13 +3022,9 @@ class FlutterIntegrationCoreApi(
     }
   }
   /** Returns the passed list, to test serialization and deserialization. */
-<<<<<<< HEAD
   fun echoList(listArg: List<Any?>, callback: (Result<List<Any?>>) -> Unit) {
-=======
-  fun echoList(aListArg: List<Any?>, callback: (Result<List<Any?>>) -> Unit) {
     val separatedMessageChannelSuffix =
         if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
->>>>>>> 88572212ae3fc45d634a31e2328d77651121f1af
     val channelName =
         "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoList$separatedMessageChannelSuffix"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
@@ -3201,13 +3183,9 @@ class FlutterIntegrationCoreApi(
     }
   }
   /** Returns the passed byte list, to test serialization and deserialization. */
-<<<<<<< HEAD
   fun echoNullableUint8List(listArg: ByteArray?, callback: (Result<ByteArray?>) -> Unit) {
-=======
-  fun echoNullableUint8List(aListArg: ByteArray?, callback: (Result<ByteArray?>) -> Unit) {
     val separatedMessageChannelSuffix =
         if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
->>>>>>> 88572212ae3fc45d634a31e2328d77651121f1af
     val channelName =
         "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableUint8List$separatedMessageChannelSuffix"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
@@ -3225,13 +3203,9 @@ class FlutterIntegrationCoreApi(
     }
   }
   /** Returns the passed list, to test serialization and deserialization. */
-<<<<<<< HEAD
   fun echoNullableList(listArg: List<Any?>?, callback: (Result<List<Any?>?>) -> Unit) {
-=======
-  fun echoNullableList(aListArg: List<Any?>?, callback: (Result<List<Any?>?>) -> Unit) {
     val separatedMessageChannelSuffix =
         if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
->>>>>>> 88572212ae3fc45d634a31e2328d77651121f1af
     val channelName =
         "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableList$separatedMessageChannelSuffix"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
@@ -3353,10 +3327,6 @@ interface HostTrivialApi {
     /** The codec used by HostTrivialApi. */
     val codec: MessageCodec<Any?> by lazy { StandardMessageCodec() }
     /** Sets up an instance of `HostTrivialApi` to handle messages through the `binaryMessenger`. */
-<<<<<<< HEAD
-    fun setUp(binaryMessenger: BinaryMessenger, api: HostTrivialApi?) {
-=======
-    @Suppress("UNCHECKED_CAST")
     fun setUp(
         binaryMessenger: BinaryMessenger,
         api: HostTrivialApi?,
@@ -3364,7 +3334,6 @@ interface HostTrivialApi {
     ) {
       val separatedMessageChannelSuffix =
           if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
->>>>>>> 88572212ae3fc45d634a31e2328d77651121f1af
       run {
         val channel =
             BasicMessageChannel<Any?>(
@@ -3403,10 +3372,6 @@ interface HostSmallApi {
     /** The codec used by HostSmallApi. */
     val codec: MessageCodec<Any?> by lazy { StandardMessageCodec() }
     /** Sets up an instance of `HostSmallApi` to handle messages through the `binaryMessenger`. */
-<<<<<<< HEAD
-    fun setUp(binaryMessenger: BinaryMessenger, api: HostSmallApi?) {
-=======
-    @Suppress("UNCHECKED_CAST")
     fun setUp(
         binaryMessenger: BinaryMessenger,
         api: HostSmallApi?,
@@ -3414,7 +3379,6 @@ interface HostSmallApi {
     ) {
       val separatedMessageChannelSuffix =
           if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
->>>>>>> 88572212ae3fc45d634a31e2328d77651121f1af
       run {
         val channel =
             BasicMessageChannel<Any?>(
@@ -3490,15 +3454,10 @@ private object FlutterSmallApiCodec : StandardMessageCodec() {
  *
  * Generated class from Pigeon that represents Flutter messages that can be called from Kotlin.
  */
-<<<<<<< HEAD
-class FlutterSmallApi(private val binaryMessenger: BinaryMessenger) {
-=======
-@Suppress("UNCHECKED_CAST")
 class FlutterSmallApi(
     private val binaryMessenger: BinaryMessenger,
     private val messageChannelSuffix: String = ""
 ) {
->>>>>>> 88572212ae3fc45d634a31e2328d77651121f1af
   companion object {
     /** The codec used by FlutterSmallApi. */
     val codec: MessageCodec<Any?> by lazy { FlutterSmallApiCodec }
