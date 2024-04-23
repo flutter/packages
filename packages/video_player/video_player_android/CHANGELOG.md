@@ -1,3 +1,7 @@
+## 2.5.0
+
+* Adds compatibilty with version 6.3.0 of the platform interface.
+
 ## 2.4.14
 
 * Calls `onDestroy` instead of `initialize` in onDetachedFromEngine.
