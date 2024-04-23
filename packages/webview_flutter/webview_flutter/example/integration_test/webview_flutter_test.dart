@@ -257,34 +257,25 @@ Future<void> main() async {
       WebViewController controller =
           WebViewController.fromPlatformCreationParams(params);
       await controller.setJavaScriptMode(JavaScriptMode.unrestricted);
-      print('C: Javascript mode set');
 
       await controller.setNavigationDelegate(
-        NavigationDelegate(onPageFinished: (_) {
-          print('C: page loaded');
-          pageLoaded.complete();
-        }),
+        NavigationDelegate(onPageFinished: (_) => pageLoaded.complete()),
       );
 
       if (controller.platform is AndroidWebViewController) {
         await (controller.platform as AndroidWebViewController)
             .setMediaPlaybackRequiresUserGesture(false);
-        print('C: media playback requires user gesture set');
       }
 
       await controller.loadRequest(
         Uri.parse('data:text/html;charset=utf-8;base64,$videoTestBase64'),
       );
-      print('C: request loaded');
 
       await tester.pumpWidget(WebViewWidget(controller: controller));
-      print('C: Widget pumped');
 
       await tester.pumpAndSettle();
-      print('C: Pumped and settle');
 
       await pageLoaded.future;
-      print('C: Future page loaded');
 
       bool isPaused =
           await controller.runJavaScriptReturningResult('isPaused();') as bool;
@@ -293,26 +284,20 @@ Future<void> main() async {
       pageLoaded = Completer<void>();
       controller = WebViewController();
       await controller.setJavaScriptMode(JavaScriptMode.unrestricted);
-      print('C: Javascript mode set 2');
 
       await controller.setNavigationDelegate(
         NavigationDelegate(onPageFinished: (_) => pageLoaded.complete()),
       );
-      print('C: Navigation delegate set 2');
 
       await controller.loadRequest(
         Uri.parse('data:text/html;charset=utf-8;base64,$videoTestBase64'),
       );
-      print('C: request loaded 2');
 
       await tester.pumpWidget(WebViewWidget(controller: controller));
-      print('C: Widget pumped 2');
 
       await tester.pumpAndSettle();
-      print('C: Pumped and settle 2');
 
       await pageLoaded.future;
-      print('C: Future page loaded 2');
 
       isPaused =
           await controller.runJavaScriptReturningResult('isPaused();') as bool;
@@ -335,15 +320,10 @@ Future<void> main() async {
       final WebViewController controller =
           WebViewController.fromPlatformCreationParams(params);
       await controller.setJavaScriptMode(JavaScriptMode.unrestricted);
-      print('C: Javascript mode set');
 
       await controller.setNavigationDelegate(
-        NavigationDelegate(onPageFinished: (_) {
-          print('C: page loaded');
-          pageLoaded.complete();
-        }),
+        NavigationDelegate(onPageFinished: (_) => pageLoaded.complete()),
       );
-      print('C: Navigation delegate set');
 
       await controller.addJavaScriptChannel(
         'VideoTestTime',
@@ -355,31 +335,24 @@ Future<void> main() async {
           }
         },
       );
-      print('C: js channel added');
 
       if (controller.platform is AndroidWebViewController) {
         await (controller.platform as AndroidWebViewController)
             .setMediaPlaybackRequiresUserGesture(false);
-        print('C: media playback requires user gesture set');
       }
 
       await controller.loadRequest(
         Uri.parse('data:text/html;charset=utf-8;base64,$videoTestBase64'),
       );
-      print('C: request loaded');
 
       await tester.pumpWidget(WebViewWidget(controller: controller));
-      print('C: Widget pumped');
 
       await tester.pumpAndSettle();
-      print('C: Pumped and settle');
 
       await pageLoaded.future;
-      print('C: Future page loaded');
 
       // Makes sure we get the correct event that indicates the video is actually playing.
       await videoPlaying.future;
-      print('C: Video playing loaded');
 
       final bool fullScreen = await controller
           .runJavaScriptReturningResult('isFullScreen();') as bool;
@@ -433,33 +406,24 @@ Future<void> main() async {
       WebViewController controller =
           WebViewController.fromPlatformCreationParams(params);
       await controller.setJavaScriptMode(JavaScriptMode.unrestricted);
-      print('C: Javascript mode set');
       await controller.setNavigationDelegate(
-        NavigationDelegate(onPageFinished: (_) {
-          print('C: page loaded');
-          pageLoaded.complete();
-        }),
+        NavigationDelegate(onPageFinished: (_) => pageLoaded.complete()),
       );
-      print('C: Navigation delegate set');
 
       if (controller.platform is AndroidWebViewController) {
         await (controller.platform as AndroidWebViewController)
             .setMediaPlaybackRequiresUserGesture(false);
-        print('C: media playback requires user gesture set');
       }
 
       await controller.loadRequest(
         Uri.parse('data:text/html;charset=utf-8;base64,$audioTestBase64'),
       );
-      print('C: request loaded');
 
       await tester.pumpWidget(WebViewWidget(controller: controller));
-      print('C: Widget pumped');
+
       await tester.pumpAndSettle();
-      print('C: Pumped and settle');
 
       await pageLoaded.future;
-      print('C: Future page loaded');
 
       bool isPaused =
           await controller.runJavaScriptReturningResult('isPaused();') as bool;
@@ -468,25 +432,19 @@ Future<void> main() async {
       pageLoaded = Completer<void>();
       controller = WebViewController();
       await controller.setJavaScriptMode(JavaScriptMode.unrestricted);
-      print('C: Javascript mode set 2');
       await controller.setNavigationDelegate(
         NavigationDelegate(onPageFinished: (_) => pageLoaded.complete()),
       );
-      print('C: Navigation delegate set 2');
 
       await controller.loadRequest(
         Uri.parse('data:text/html;charset=utf-8;base64,$audioTestBase64'),
       );
-      print('C: request loaded 2');
 
       await tester.pumpWidget(WebViewWidget(controller: controller));
-      print('C: Widget pumped 2');
 
       await tester.pumpAndSettle();
-      print('C: Pumped and settle 2');
 
       await pageLoaded.future;
-      print('C: Future page loaded 2');
 
       isPaused =
           await controller.runJavaScriptReturningResult('isPaused();') as bool;
@@ -806,12 +764,10 @@ Future<void> main() async {
       final Completer<void> authRequested = Completer<void>();
       final WebViewController controller = WebViewController();
 
-      (
-        controller.setNavigationDelegate(
-          NavigationDelegate(
-            onHttpAuthRequest: (HttpAuthRequest request) =>
-                authRequested.complete(),
-          ),
+      await controller.setNavigationDelegate(
+        NavigationDelegate(
+          onHttpAuthRequest: (HttpAuthRequest request) =>
+              authRequested.complete(),
         ),
       );
 
@@ -827,20 +783,16 @@ Future<void> main() async {
       final WebViewController controller = WebViewController();
       final Completer<void> pageFinished = Completer<void>();
 
-      (
-        controller.setNavigationDelegate(
-          NavigationDelegate(
-            onHttpAuthRequest: (HttpAuthRequest request) => request.onProceed(
-              const WebViewCredential(
-                user: 'user',
-                password: 'password',
-              ),
-            ),
-            onPageFinished: (_) => pageFinished.complete(),
-            onWebResourceError: (_) => fail('Authentication failed'),
+      await controller.setNavigationDelegate(NavigationDelegate(
+        onHttpAuthRequest: (HttpAuthRequest request) => request.onProceed(
+          const WebViewCredential(
+            user: 'user',
+            password: 'password',
           ),
         ),
-      );
+        onPageFinished: (_) => pageFinished.complete(),
+        onWebResourceError: (_) => fail('Authentication failed'),
+      ));
 
       await tester.pumpWidget(WebViewWidget(controller: controller));
 
