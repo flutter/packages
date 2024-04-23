@@ -319,7 +319,7 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   // Setting it to 1 would result in the picture-in-picture overlay always showing over other
   // widget. Setting it to 0.001 makes the placeholder invisible, but still allows the
   // picture-in-picture.
-   _playerLayer.opacity = 0.001;
+  _playerLayer.opacity = 0.001;
   [self.flutterViewLayer addSublayer:_playerLayer];
 
   [self setupPiPController];
@@ -356,12 +356,12 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
 - (void)setAutomaticallyStartsPictureInPicture:
     (BOOL)canStartPictureInPictureAutomaticallyFromInline {
   if (!self.pictureInPictureController) return;
-  #if TARGET_OS_IOS
-    if (@available(iOS 14.2, *)) {
-      self.pictureInPictureController.canStartPictureInPictureAutomaticallyFromInline =
-          canStartPictureInPictureAutomaticallyFromInline;
-    }
-  #endif  
+#if TARGET_OS_IOS
+  if (@available(iOS 14.2, *)) {
+    self.pictureInPictureController.canStartPictureInPictureAutomaticallyFromInline =
+        canStartPictureInPictureAutomaticallyFromInline;
+  }
+#endif
 }
 
 - (void)setPictureInPictureOverlaySettings:(CGRect)frame {
@@ -920,16 +920,16 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
             (FVPAutomaticallyStartsPictureInPictureMessage *)input
                                          error:(FlutterError **)error {
   FVPVideoPlayer *player = self.playersByTextureId[@(input.textureId)];
-  [player setAutomaticallyStartsPictureInPicture:input.enableStartPictureInPictureAutomaticallyFromInline];
+  [player setAutomaticallyStartsPictureInPicture:
+              input.enableStartPictureInPictureAutomaticallyFromInline];
 }
 
 - (void)setPictureInPictureOverlaySettings:(FVPSetPictureInPictureOverlaySettingsMessage *)input
                                      error:(FlutterError **)error {
   FVPVideoPlayer *player = self.playersByTextureId[@(input.textureId)];
-  [player setPictureInPictureOverlaySettings:CGRectMake(input.settings.left,
-                                                        input.settings.top,
-                                                        input.settings.width,
-                                                        input.settings.height)];
+  [player
+      setPictureInPictureOverlaySettings:CGRectMake(input.settings.left, input.settings.top,
+                                                    input.settings.width, input.settings.height)];
 }
 
 - (BOOL)doesInfoPlistSupportPictureInPicture {
@@ -939,17 +939,17 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
 }
 
 - (void)startPictureInPicture:(FVPStartPictureInPictureMessage *)input
-                        error:(FlutterError **)error {   
-  #if TARGET_OS_IOS
-    if (![self doesInfoPlistSupportPictureInPicture]) {
-      *error = [FlutterError
-          errorWithCode:@"video_player"
-                message:@"Failed to start picture-in-picture because UIBackgroundModes: audio "
-                        @"is not enabled in Info.plist"
-                details:nil];
-      return;
-    }
-  #endif
+                        error:(FlutterError **)error {
+#if TARGET_OS_IOS
+  if (![self doesInfoPlistSupportPictureInPicture]) {
+    *error = [FlutterError
+        errorWithCode:@"video_player"
+              message:@"Failed to start picture-in-picture because UIBackgroundModes: audio "
+                      @"is not enabled in Info.plist"
+              details:nil];
+    return;
+  }
+#endif
 
   FVPVideoPlayer *player = self.playersByTextureId[@(input.textureId)];
   [player startOrStopPictureInPicture:YES];

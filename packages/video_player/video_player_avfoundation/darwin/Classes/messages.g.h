@@ -24,60 +24,58 @@ NS_ASSUME_NONNULL_BEGIN
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
 + (instancetype)makeWithAsset:(nullable NSString *)asset
-    uri:(nullable NSString *)uri
-    packageName:(nullable NSString *)packageName
-    formatHint:(nullable NSString *)formatHint
-    httpHeaders:(NSDictionary<NSString *, NSString *> *)httpHeaders;
-@property(nonatomic, copy, nullable) NSString * asset;
-@property(nonatomic, copy, nullable) NSString * uri;
-@property(nonatomic, copy, nullable) NSString * packageName;
-@property(nonatomic, copy, nullable) NSString * formatHint;
-@property(nonatomic, copy) NSDictionary<NSString *, NSString *> * httpHeaders;
+                          uri:(nullable NSString *)uri
+                  packageName:(nullable NSString *)packageName
+                   formatHint:(nullable NSString *)formatHint
+                  httpHeaders:(NSDictionary<NSString *, NSString *> *)httpHeaders;
+@property(nonatomic, copy, nullable) NSString *asset;
+@property(nonatomic, copy, nullable) NSString *uri;
+@property(nonatomic, copy, nullable) NSString *packageName;
+@property(nonatomic, copy, nullable) NSString *formatHint;
+@property(nonatomic, copy) NSDictionary<NSString *, NSString *> *httpHeaders;
 @end
 
 @interface FVPAutomaticallyStartsPictureInPictureMessage : NSObject
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
-+ (instancetype)makeWithTextureId:(NSInteger )textureId
-    enableStartPictureInPictureAutomaticallyFromInline:(BOOL )enableStartPictureInPictureAutomaticallyFromInline;
-@property(nonatomic, assign) NSInteger  textureId;
-@property(nonatomic, assign) BOOL  enableStartPictureInPictureAutomaticallyFromInline;
++ (instancetype)makeWithTextureId:(NSInteger)textureId
+    enableStartPictureInPictureAutomaticallyFromInline:
+        (BOOL)enableStartPictureInPictureAutomaticallyFromInline;
+@property(nonatomic, assign) NSInteger textureId;
+@property(nonatomic, assign) BOOL enableStartPictureInPictureAutomaticallyFromInline;
 @end
 
 @interface FVPSetPictureInPictureOverlaySettingsMessage : NSObject
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
-+ (instancetype)makeWithTextureId:(NSInteger )textureId
-    settings:(nullable FVPPictureInPictureOverlaySettingsMessage *)settings;
-@property(nonatomic, assign) NSInteger  textureId;
-@property(nonatomic, strong, nullable) FVPPictureInPictureOverlaySettingsMessage * settings;
++ (instancetype)makeWithTextureId:(NSInteger)textureId
+                         settings:(nullable FVPPictureInPictureOverlaySettingsMessage *)settings;
+@property(nonatomic, assign) NSInteger textureId;
+@property(nonatomic, strong, nullable) FVPPictureInPictureOverlaySettingsMessage *settings;
 @end
 
 @interface FVPPictureInPictureOverlaySettingsMessage : NSObject
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
-+ (instancetype)makeWithTop:(double )top
-    left:(double )left
-    width:(double )width
-    height:(double )height;
-@property(nonatomic, assign) double  top;
-@property(nonatomic, assign) double  left;
-@property(nonatomic, assign) double  width;
-@property(nonatomic, assign) double  height;
++ (instancetype)makeWithTop:(double)top left:(double)left width:(double)width height:(double)height;
+@property(nonatomic, assign) double top;
+@property(nonatomic, assign) double left;
+@property(nonatomic, assign) double width;
+@property(nonatomic, assign) double height;
 @end
 
 @interface FVPStartPictureInPictureMessage : NSObject
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
-+ (instancetype)makeWithTextureId:(NSInteger )textureId;
-@property(nonatomic, assign) NSInteger  textureId;
++ (instancetype)makeWithTextureId:(NSInteger)textureId;
+@property(nonatomic, assign) NSInteger textureId;
 @end
 
 @interface FVPStopPictureInPictureMessage : NSObject
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
-+ (instancetype)makeWithTextureId:(NSInteger )textureId;
-@property(nonatomic, assign) NSInteger  textureId;
++ (instancetype)makeWithTextureId:(NSInteger)textureId;
+@property(nonatomic, assign) NSInteger textureId;
 @end
 
 /// The codec used by FVPAVFoundationVideoPlayerApi.
@@ -86,27 +84,45 @@ NSObject<FlutterMessageCodec> *FVPAVFoundationVideoPlayerApiGetCodec(void);
 @protocol FVPAVFoundationVideoPlayerApi
 - (void)initialize:(FlutterError *_Nullable *_Nonnull)error;
 /// @return `nil` only when `error != nil`.
-- (nullable NSNumber *)createWithOptions:(FVPCreationOptions *)creationOptions error:(FlutterError *_Nullable *_Nonnull)error;
+- (nullable NSNumber *)createWithOptions:(FVPCreationOptions *)creationOptions
+                                   error:(FlutterError *_Nullable *_Nonnull)error;
 - (void)disposePlayer:(NSInteger)textureId error:(FlutterError *_Nullable *_Nonnull)error;
-- (void)setLooping:(BOOL)isLooping forPlayer:(NSInteger)textureId error:(FlutterError *_Nullable *_Nonnull)error;
-- (void)setVolume:(double)volume forPlayer:(NSInteger)textureId error:(FlutterError *_Nullable *_Nonnull)error;
-- (void)setPlaybackSpeed:(double)speed forPlayer:(NSInteger)textureId error:(FlutterError *_Nullable *_Nonnull)error;
+- (void)setLooping:(BOOL)isLooping
+         forPlayer:(NSInteger)textureId
+             error:(FlutterError *_Nullable *_Nonnull)error;
+- (void)setVolume:(double)volume
+        forPlayer:(NSInteger)textureId
+            error:(FlutterError *_Nullable *_Nonnull)error;
+- (void)setPlaybackSpeed:(double)speed
+               forPlayer:(NSInteger)textureId
+                   error:(FlutterError *_Nullable *_Nonnull)error;
 - (void)playPlayer:(NSInteger)textureId error:(FlutterError *_Nullable *_Nonnull)error;
 /// @return `nil` only when `error != nil`.
-- (nullable NSNumber *)positionForPlayer:(NSInteger)textureId error:(FlutterError *_Nullable *_Nonnull)error;
-- (void)seekTo:(NSInteger)position forPlayer:(NSInteger)textureId completion:(void (^)(FlutterError *_Nullable))completion;
+- (nullable NSNumber *)positionForPlayer:(NSInteger)textureId
+                                   error:(FlutterError *_Nullable *_Nonnull)error;
+- (void)seekTo:(NSInteger)position
+     forPlayer:(NSInteger)textureId
+    completion:(void (^)(FlutterError *_Nullable))completion;
 - (void)pausePlayer:(NSInteger)textureId error:(FlutterError *_Nullable *_Nonnull)error;
 - (void)setMixWithOthers:(BOOL)mixWithOthers error:(FlutterError *_Nullable *_Nonnull)error;
 /// @return `nil` only when `error != nil`.
 - (nullable NSNumber *)isPictureInPictureSupported:(FlutterError *_Nullable *_Nonnull)error;
-- (void)setPictureInPictureOverlaySettings:(FVPSetPictureInPictureOverlaySettingsMessage *)msg error:(FlutterError *_Nullable *_Nonnull)error;
-- (void)setAutomaticallyStartsPictureInPicture:(FVPAutomaticallyStartsPictureInPictureMessage *)msg error:(FlutterError *_Nullable *_Nonnull)error;
-- (void)startPictureInPicture:(FVPStartPictureInPictureMessage *)msg error:(FlutterError *_Nullable *_Nonnull)error;
-- (void)stopPictureInPicture:(FVPStopPictureInPictureMessage *)msg error:(FlutterError *_Nullable *_Nonnull)error;
+- (void)setPictureInPictureOverlaySettings:(FVPSetPictureInPictureOverlaySettingsMessage *)msg
+                                     error:(FlutterError *_Nullable *_Nonnull)error;
+- (void)setAutomaticallyStartsPictureInPicture:(FVPAutomaticallyStartsPictureInPictureMessage *)msg
+                                         error:(FlutterError *_Nullable *_Nonnull)error;
+- (void)startPictureInPicture:(FVPStartPictureInPictureMessage *)msg
+                        error:(FlutterError *_Nullable *_Nonnull)error;
+- (void)stopPictureInPicture:(FVPStopPictureInPictureMessage *)msg
+                       error:(FlutterError *_Nullable *_Nonnull)error;
 @end
 
-extern void SetUpFVPAVFoundationVideoPlayerApi(id<FlutterBinaryMessenger> binaryMessenger, NSObject<FVPAVFoundationVideoPlayerApi> *_Nullable api);
+extern void SetUpFVPAVFoundationVideoPlayerApi(
+    id<FlutterBinaryMessenger> binaryMessenger,
+    NSObject<FVPAVFoundationVideoPlayerApi> *_Nullable api);
 
-extern void SetUpFVPAVFoundationVideoPlayerApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger, NSObject<FVPAVFoundationVideoPlayerApi> *_Nullable api, NSString *messageChannelSuffix);
+extern void SetUpFVPAVFoundationVideoPlayerApiWithSuffix(
+    id<FlutterBinaryMessenger> binaryMessenger,
+    NSObject<FVPAVFoundationVideoPlayerApi> *_Nullable api, NSString *messageChannelSuffix);
 
 NS_ASSUME_NONNULL_END
