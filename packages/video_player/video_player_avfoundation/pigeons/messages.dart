@@ -25,7 +25,6 @@ class CreationOptions {
 
 class MixWithOthersMessage {
   MixWithOthersMessage(this.mixWithOthers);
-
   bool mixWithOthers;
 }
 
@@ -34,7 +33,6 @@ class AutomaticallyStartsPictureInPictureMessage {
     this.textureId,
     this.enableStartPictureInPictureAutomaticallyFromInline,
   );
-
   int textureId;
   bool enableStartPictureInPictureAutomaticallyFromInline;
 }
@@ -44,7 +42,6 @@ class SetPictureInPictureOverlaySettingsMessage {
     this.textureId,
     this.settings,
   );
-
   int textureId;
   PictureInPictureOverlaySettingsMessage? settings;
 }
@@ -56,7 +53,6 @@ class PictureInPictureOverlaySettingsMessage {
     required this.width,
     required this.height,
   });
-
   double top;
   double left;
   double width;
@@ -71,7 +67,6 @@ class StartPictureInPictureMessage {
 
 class StopPictureInPictureMessage {
   StopPictureInPictureMessage(this.textureId);
-
   int textureId;
 }
 

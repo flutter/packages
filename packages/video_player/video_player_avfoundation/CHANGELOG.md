@@ -1,9 +1,12 @@
+## 2.6.0
+
+* Adds support for picture-in-picture.
+
 ## 2.5.7
 
 * Adds frame availability checks on iOS.
 * Simplifies internal platform channel interfaces.
 * Updates minimum iOS version to 12.0 and minimum Flutter version to 3.16.6.
-* Adds support for picture-in-picture.
 
 ## 2.5.6
 
