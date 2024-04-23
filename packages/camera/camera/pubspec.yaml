@@ -37,10 +37,3 @@ dev_dependencies:
 
 topics:
   - camera
-
-# FOR TESTING ONLY. DO NOT MERGE.
-dependency_overrides:
-  video_player:
-    path: ../../video_player/video_player
-  video_player_platform_interface:
-    path: ../../video_player/video_player_platform_interface
