@@ -42,11 +42,15 @@ class VideoPlayerValue {
   });
 
   /// Returns an instance for a video that hasn't been loaded.
-  const VideoPlayerValue.uninitialized() : this(duration: Duration.zero, isInitialized: false);
+  const VideoPlayerValue.uninitialized()
+      : this(duration: Duration.zero, isInitialized: false);
 
   /// Returns an instance with the given [errorDescription].
   const VideoPlayerValue.erroneous(String errorDescription)
-      : this(duration: Duration.zero, isInitialized: false, errorDescription: errorDescription);
+      : this(
+            duration: Duration.zero,
+            isInitialized: false,
+            errorDescription: errorDescription);
 
   /// The total duration of the video.
   ///
@@ -235,7 +239,8 @@ class MiniController extends ValueNotifier<VideoPlayerValue> {
         );
     }
 
-    _textureId = (await _platform.create(dataSourceDescription)) ?? kUninitializedTextureId;
+    _textureId = (await _platform.create(dataSourceDescription)) ??
+        kUninitializedTextureId;
     _creatingCompleter!.complete(null);
     final Completer<void> initializingCompleter = Completer<void>();
 
@@ -277,7 +282,9 @@ class MiniController extends ValueNotifier<VideoPlayerValue> {
       }
     }
 
-    _eventSubscription = _platform.videoEventsFor(_textureId).listen(eventListener, onError: errorListener);
+    _eventSubscription = _platform
+        .videoEventsFor(_textureId)
+        .listen(eventListener, onError: errorListener);
     return initializingCompleter.future;
   }
 
@@ -415,7 +422,9 @@ class _VideoPlayerState extends State<VideoPlayer> {
 
   @override
   Widget build(BuildContext context) {
-    return _textureId == MiniController.kUninitializedTextureId ? Container() : _platform.buildView(_textureId);
+    return _textureId == MiniController.kUninitializedTextureId
+        ? Container()
+        : _platform.buildView(_textureId);
   }
 }
 
