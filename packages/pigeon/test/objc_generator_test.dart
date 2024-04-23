@@ -530,10 +530,8 @@ void main() {
     );
     final String code = sink.toString();
     expect(code, contains('@implementation Foobar'));
-    expect(
-        code,
-        contains(
-            'pigeonResult.aBool = GetNullableObjectAtIndex(__pigeon_list, 0);'));
+    expect(code,
+        contains('pigeonResult.aBool = GetNullableObjectAtIndex(list, 0);'));
   });
 
   test('nested class header', () {
@@ -602,10 +600,8 @@ void main() {
       dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
-    expect(
-        code,
-        contains(
-            'pigeonResult.nested = GetNullableObjectAtIndex(__pigeon_list, 0);'));
+    expect(code,
+        contains('pigeonResult.nested = GetNullableObjectAtIndex(list, 0);'));
   });
 
   test('prefix class header', () {

@@ -578,7 +578,8 @@ void main() {
     expect(code, contains('var nested: Nested? = nil'));
     expect(code,
         contains('static func fromList(_ __pigeon_list: [Any?]) -> Outer?'));
-    expect(code, contains('nested = nestedList as Nested'));
+    expect(
+        code, contains('let nested: Nested? = nilOrValue(__pigeon_list[0])'));
     expect(code, contains('func toList() -> [Any?]'));
     expect(code, isNot(contains('if (')));
     // Single-element list serializations should not have a trailing comma.

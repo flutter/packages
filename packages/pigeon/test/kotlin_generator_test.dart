@@ -390,7 +390,7 @@ void main() {
     expect(
         code,
         contains(
-            'val aInt = __pigeon_list[1].let { if (it is Int) it.toLong() else it as Long }'));
+            'val aInt = __pigeon_list[1].let { num -> if (num is Int) num.toLong() else num as Long }'));
     expect(code, contains('val aNullableBool: Boolean? = null'));
     expect(code, contains('val aNullableInt: Long? = null'));
     expect(code, contains('val aNullableDouble: Double? = null'));
@@ -402,7 +402,7 @@ void main() {
     expect(
         code,
         contains(
-            'val aNullableInt = __pigeon_list[9].let { if (it is Int) it.toLong() else it as Long? }'));
+            'val aNullableInt = __pigeon_list[9].let { num -> if (num is Int) num.toLong() else num as Long? }'));
   });
 
   test('gen one flutter api', () {
@@ -1162,11 +1162,11 @@ void main() {
     expect(
         code,
         contains(
-            'val xArg = args[0].let { if (it is Int) it.toLong() else it as Long }'));
+            'val xArg = args[0].let { num -> if (num is Int) num.toLong() else num as Long }'));
     expect(
         code,
         contains(
-            'val yArg = args[1].let { if (it is Int) it.toLong() else it as Long }'));
+            'val yArg = args[1].let { num -> if (num is Int) num.toLong() else num as Long }'));
     expect(code, contains('listOf<Any?>(api.add(xArg, yArg))'));
     expect(code, contains('reply.reply(wrapped)'));
   });
@@ -1205,7 +1205,7 @@ void main() {
     expect(
       code,
       contains(
-          'val output = it[0].let { if (it is Int) it.toLong() else it as Long }'),
+          'val output = it[0].let { num -> if (num is Int) num.toLong() else num as Long }'),
     );
     expect(code, contains('callback(Result.success(output))'));
     expect(
@@ -1310,7 +1310,7 @@ void main() {
     expect(
         code,
         contains(
-            'val fooArg = args[0].let { if (it is Int) it.toLong() else it as Long? }'));
+            'val fooArg = args[0].let { num -> if (num is Int) num.toLong() else num as Long? }'));
   });
 
   test('nullable argument flutter', () {
