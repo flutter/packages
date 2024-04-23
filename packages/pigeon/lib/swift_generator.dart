@@ -558,8 +558,6 @@ class SwiftGenerator extends StructuredGenerator<SwiftOptions> {
       );
     });
 
-    final String swiftClassName = api.swiftOptions?.name ?? api.name;
-
     final String swiftApiName = '$hostProxyApiPrefix${api.name}';
 
     indent.writeScoped('public class $swiftApiName {', '}', () {
@@ -1513,83 +1511,101 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
           );
         }
 
-        // for (final ApiField field in api.attachedFields) {
-        //   final String channelName = makeChannelNameWithStrings(
-        //     apiName: api.name,
-        //     methodName: field.name,
-        //     dartPackageName: dartPackageName,
-        //   );
-        //   writeWithApiCheckIfNecessary(
-        //     <TypeDeclaration>[apiAsTypeDeclaration, field.type],
-        //     channelName: channelName,
-        //     onWrite: () {
-        //       _writeHostMethodMessageHandler(
-        //         indent,
-        //         name: field.name,
-        //         channelName: channelName,
-        //         returnType: const TypeDeclaration.voidDeclaration(),
-        //         onCreateCall: (
-        //           List<String> methodParameters, {
-        //           required String apiVarName,
-        //         }) {
-        //           final String param =
-        //               methodParameters.length > 1 ? methodParameters.first : '';
-        //           return '$apiVarName.pigeonRegistrar.instanceManager.addDartCreatedInstance('
-        //               '$apiVarName.${field.name}($param), ${methodParameters.last})';
-        //         },
-        //         parameters: <Parameter>[
-        //           if (!field.isStatic)
-        //             Parameter(
-        //               name: '${classMemberNamePrefix}instance',
-        //               type: apiAsTypeDeclaration,
-        //             ),
-        //           Parameter(
-        //             name: '${classMemberNamePrefix}identifier',
-        //             type: const TypeDeclaration(
-        //               baseName: 'int',
-        //               isNullable: false,
-        //             ),
-        //           ),
-        //         ],
-        //       );
-        //     },
-        //   );
-        // }
-        //
-        // for (final Method method in api.hostMethods) {
-        //   final String channelName =
-        //       makeChannelName(api, method, dartPackageName);
-        //   writeWithApiCheckIfNecessary(
-        //     <TypeDeclaration>[
-        //       if (!method.isStatic) apiAsTypeDeclaration,
-        //       method.returnType,
-        //       ...method.parameters.map((Parameter p) => p.type),
-        //     ],
-        //     channelName: channelName,
-        //     onWrite: () {
-        //       _writeHostMethodMessageHandler(
-        //         indent,
-        //         name: method.name,
-        //         channelName: makeChannelName(api, method, dartPackageName),
-        //         taskQueueType: method.taskQueueType,
-        //         returnType: method.returnType,
-        //         isAsynchronous: method.isAsynchronous,
-        //         parameters: <Parameter>[
-        //           if (!method.isStatic)
-        //             Parameter(
-        //               name: '${classMemberNamePrefix}instance',
-        //               type: TypeDeclaration(
-        //                 baseName: fullKotlinClassName,
-        //                 isNullable: false,
-        //                 associatedProxyApi: api,
-        //               ),
-        //             ),
-        //           ...method.parameters,
-        //         ],
-        //       );
-        //     },
-        //   );
-        // }
+        for (final ApiField field in api.attachedFields) {
+          final String channelName = makeChannelNameWithStrings(
+            apiName: api.name,
+            methodName: field.name,
+            dartPackageName: dartPackageName,
+          );
+          writeWithApiCheckIfNecessary(
+            <TypeDeclaration>[apiAsTypeDeclaration, field.type],
+            methodName: field.name,
+            channelName: channelName,
+            onWrite: () {
+              _writeHostMethodMessageHandler(
+                indent,
+                name: field.name,
+                channelName: channelName,
+                swiftFunction: null,
+                isAsynchronous: false,
+                returnType: const TypeDeclaration.voidDeclaration(),
+                codecArgumentString: ', codec: codec',
+                onCreateCall: (
+                  List<String> methodParameters, {
+                  required String apiVarName,
+                }) {
+                  final String instanceArg = field.isStatic
+                      ? ''
+                      : ', pigeonInstance: pigeonInstanceArg';
+                  return '$apiVarName.pigeonRegistrar.instanceManager.addDartCreatedInstance('
+                      'try $apiVarName.pigeonDelegate.${field.name}(pigeonApi: api$instanceArg), '
+                      'withIdentifier: pigeonIdentifierArg)';
+                },
+                parameters: <Parameter>[
+                  if (!field.isStatic)
+                    Parameter(
+                      name: 'pigeonInstance',
+                      type: apiAsTypeDeclaration,
+                    ),
+                  Parameter(
+                    name: 'pigeonIdentifier',
+                    type: const TypeDeclaration(
+                      baseName: 'int',
+                      isNullable: false,
+                    ),
+                  ),
+                ],
+              );
+            },
+          );
+        }
+
+        for (final Method method in api.hostMethods) {
+          final String channelName =
+              makeChannelName(api, method, dartPackageName);
+          writeWithApiCheckIfNecessary(
+            <TypeDeclaration>[
+              apiAsTypeDeclaration,
+              method.returnType,
+              ...method.parameters.map((Parameter parameter) => parameter.type),
+            ],
+            methodName: method.name,
+            channelName: channelName,
+            onWrite: () {
+              _writeHostMethodMessageHandler(
+                indent,
+                name: method.name,
+                channelName: makeChannelName(api, method, dartPackageName),
+                returnType: method.returnType,
+                isAsynchronous: method.isAsynchronous,
+                swiftFunction: null,
+                codecArgumentString: ', codec: codec',
+                onCreateCall: (
+                  List<String> methodParameters, {
+                  required String apiVarName,
+                }) {
+                  final String tryStatement =
+                      method.isAsynchronous ? '' : 'try ';
+                  final List<String> parameters = <String>[
+                    'pigeonApi: $apiVarName',
+                    // Skip the identifier used by the InstanceManager.
+                    ...methodParameters,
+                  ];
+
+                  return '$tryStatement$apiVarName.pigeonDelegate.${method.name}(${parameters.join(', ')})';
+                },
+                parameters: <Parameter>[
+                  if (!method.isStatic)
+                    Parameter(
+                      name: 'pigeonInstance',
+                      type: apiAsTypeDeclaration,
+                    ),
+                  ...method.parameters,
+                ],
+              );
+            },
+          );
+        }
       },
     );
   }
