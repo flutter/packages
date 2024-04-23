@@ -865,13 +865,12 @@ Future<void> main() async {
         const PlatformNavigationDelegateCreationParams(),
       );
       await delegate.setOnPageFinished((_) => pageLoaded.complete());
-      (
-        delegate.setOnNavigationRequest((NavigationRequest navigationRequest) {
-          return (navigationRequest.url.contains('youtube.com'))
-              ? NavigationDecision.prevent
-              : NavigationDecision.navigate;
-        }),
-      );
+      await delegate
+          .setOnNavigationRequest((NavigationRequest navigationRequest) {
+        return (navigationRequest.url.contains('youtube.com'))
+            ? NavigationDecision.prevent
+            : NavigationDecision.navigate;
+      });
       await controller.setPlatformNavigationDelegate(delegate);
 
       await controller.loadRequest(
@@ -907,11 +906,9 @@ Future<void> main() async {
       final PlatformNavigationDelegate delegate = PlatformNavigationDelegate(
         const PlatformNavigationDelegateCreationParams(),
       );
-      (
-        delegate.setOnWebResourceError((WebResourceError error) {
-          errorCompleter.complete(error);
-        }),
-      );
+      await delegate.setOnWebResourceError((WebResourceError error) {
+        errorCompleter.complete(error);
+      });
       await controller.setPlatformNavigationDelegate(delegate);
 
       await controller.loadRequest(
@@ -949,14 +946,10 @@ Future<void> main() async {
       final PlatformNavigationDelegate delegate = PlatformNavigationDelegate(
         const PlatformNavigationDelegateCreationParams(),
       );
-      (
-        delegate.setOnPageFinished((_) => pageFinishCompleter.complete()),
-      );
-      (
-        delegate.setOnWebResourceError((WebResourceError error) {
-          errorCompleter.complete(error);
-        }),
-      );
+      await delegate.setOnPageFinished((_) => pageFinishCompleter.complete());
+      await delegate.setOnWebResourceError((WebResourceError error) {
+        errorCompleter.complete(error);
+      });
       await controller.setPlatformNavigationDelegate(delegate);
       await controller.loadRequest(
         LoadRequestParams(
@@ -1496,9 +1489,7 @@ Future<void> main() async {
     );
 
     await controller.setJavaScriptMode(JavaScriptMode.unrestricted);
-    (
-      controller.loadRequest(LoadRequestParams(uri: Uri.parse(primaryUrl))),
-    );
+    await controller.loadRequest(LoadRequestParams(uri: Uri.parse(primaryUrl)));
 
     await tester.pumpWidget(Builder(
       builder: (BuildContext context) {
@@ -1527,9 +1518,7 @@ Future<void> main() async {
     );
 
     await controller.setJavaScriptMode(JavaScriptMode.unrestricted);
-    (
-      controller.loadRequest(LoadRequestParams(uri: Uri.parse(primaryUrl))),
-    );
+    await controller.loadRequest(LoadRequestParams(uri: Uri.parse(primaryUrl)));
 
     await tester.pumpWidget(Builder(
       builder: (BuildContext context) {
@@ -1556,9 +1545,7 @@ Future<void> main() async {
     );
 
     await controller.setJavaScriptMode(JavaScriptMode.unrestricted);
-    (
-      controller.loadRequest(LoadRequestParams(uri: Uri.parse(primaryUrl))),
-    );
+    await controller.loadRequest(LoadRequestParams(uri: Uri.parse(primaryUrl)));
 
     await tester.pumpWidget(Builder(
       builder: (BuildContext context) {
