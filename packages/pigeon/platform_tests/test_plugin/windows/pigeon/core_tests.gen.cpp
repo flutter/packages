@@ -689,8 +689,8 @@ AllNullableTypes AllNullableTypes::FromEncodableList(
   }
   auto& encodable_all_nullable_types = list[16];
   if (!encodable_all_nullable_types.IsNull()) {
-    decoded.set_all_nullable_types(
-        std::get<AllNullableTypes>(encodable_all_nullable_types));
+    decoded.set_all_nullable_types(std::any_cast<const AllNullableTypes&>(
+        std::get<CustomEncodableValue>(encodable_all_nullable_types)));
   }
   return decoded;
 }
@@ -1236,16 +1236,19 @@ EncodableList AllClassesWrapper::ToEncodableList() const {
 
 AllClassesWrapper AllClassesWrapper::FromEncodableList(
     const EncodableList& list) {
-  AllClassesWrapper decoded(std::get<AllNullableTypes>(list[0]));
+  AllClassesWrapper decoded(std::any_cast<const AllNullableTypes&>(
+      std::get<CustomEncodableValue>(list[0])));
   auto& encodable_all_nullable_types_without_recursion = list[1];
   if (!encodable_all_nullable_types_without_recursion.IsNull()) {
     decoded.set_all_nullable_types_without_recursion(
-        std::get<AllNullableTypesWithoutRecursion>(
-            encodable_all_nullable_types_without_recursion));
+        std::any_cast<const AllNullableTypesWithoutRecursion&>(
+            std::get<CustomEncodableValue>(
+                encodable_all_nullable_types_without_recursion)));
   }
   auto& encodable_all_types = list[2];
   if (!encodable_all_types.IsNull()) {
-    decoded.set_all_types(std::get<AllTypes>(encodable_all_types));
+    decoded.set_all_types(std::any_cast<const AllTypes&>(
+        std::get<CustomEncodableValue>(encodable_all_types)));
   }
   return decoded;
 }
