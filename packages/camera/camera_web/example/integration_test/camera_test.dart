@@ -1713,11 +1713,10 @@ void main() {
             textureId: textureId,
             cameraService: cameraService,
           )..videoElement = videoElement;
-
           when(() => videoElement.srcObject).thenAnswer(
             (_) => mediaStream,
           );
-
+          await camera.initialize();
           final CameraImageData cameraImageData =
               await camera.cameraFrameStream().first;
           expect(
