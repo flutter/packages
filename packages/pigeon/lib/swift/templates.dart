@@ -336,7 +336,7 @@ String proxyApiReaderWriterTemplate({
     return '''
       if ${versionCheck}value is $className {
         pigeonRegistrar.apiDelegate.pigeonApi${api.name}(pigeonRegistrar).pigeonNewInstance(
-          pigeonInstanceArg: value as! $className
+          pigeonInstance: value as! $className
         ) { _ in }
       }
     ''';

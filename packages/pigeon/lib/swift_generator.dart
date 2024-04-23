@@ -887,6 +887,24 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
       getParameterName: _getSafeArgumentName,
     );
 
+    indent.writeScoped('$methodSignature {', '}', () {
+      _writeFlutterMethodMessageCall(
+        indent,
+        parameters: parameters,
+        returnType: returnType,
+        channelName: '$channelName\\(messageChannelSuffix)',
+        codecArgumentString: codecArgumentString,
+      );
+    });
+  }
+
+  void _writeFlutterMethodMessageCall(
+    Indent indent, {
+    required List<Parameter> parameters,
+    required TypeDeclaration returnType,
+    required String channelName,
+    required String codecArgumentString,
+  }) {
     /// Returns an argument name that can be used in a context where it is possible to collide.
     String getEnumSafeArgumentExpression(int count, NamedType argument) {
       String enumTag = '';
@@ -897,55 +915,52 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
       return '${_getArgumentName(count, argument)}Arg$enumTag';
     }
 
-    indent.writeScoped('$methodSignature {', '}', () {
-      final Iterable<String> enumSafeArgNames = parameters.asMap().entries.map(
-          (MapEntry<int, NamedType> e) =>
-              getEnumSafeArgumentExpression(e.key, e.value));
-      final String sendArgument = parameters.isEmpty
-          ? 'nil'
-          : '[${enumSafeArgNames.join(', ')}] as [Any?]';
-      const String channel = 'channel';
-      indent.writeln(
-          'let channelName: String = "$channelName\\(messageChannelSuffix)"');
-      indent.writeln(
-          'let $channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger$codecArgumentString)');
-      indent.write('$channel.sendMessage($sendArgument) ');
+    final Iterable<String> enumSafeArgNames = parameters.asMap().entries.map(
+        (MapEntry<int, NamedType> e) =>
+            getEnumSafeArgumentExpression(e.key, e.value));
+    final String sendArgument = parameters.isEmpty
+        ? 'nil'
+        : '[${enumSafeArgNames.join(', ')}] as [Any?]';
+    const String channel = 'channel';
+    indent.writeln('let channelName: String = "$channelName"');
+    indent.writeln(
+        'let $channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger$codecArgumentString)');
+    indent.write('$channel.sendMessage($sendArgument) ');
 
-      indent.addScoped('{ response in', '}', () {
-        indent.writeScoped(
-            'guard let listResponse = response as? [Any?] else {', '}', () {
+    indent.addScoped('{ response in', '}', () {
+      indent.writeScoped(
+          'guard let listResponse = response as? [Any?] else {', '}', () {
+        indent.writeln(
+            'completion(.failure(createConnectionError(withChannelName: channelName)))');
+        indent.writeln('return');
+      });
+      indent.writeScoped('if listResponse.count > 1 {', '} ', () {
+        indent.writeln('let code: String = listResponse[0] as! String');
+        indent.writeln('let message: String? = nilOrValue(listResponse[1])');
+        indent.writeln('let details: String? = nilOrValue(listResponse[2])');
+        indent.writeln(
+            'completion(.failure(FlutterError(code: code, message: message, details: details)))');
+      }, addTrailingNewline: false);
+      if (!returnType.isNullable && !returnType.isVoid) {
+        indent.addScoped('else if listResponse[0] == nil {', '} ', () {
           indent.writeln(
-              'completion(.failure(createConnectionError(withChannelName: channelName)))');
-          indent.writeln('return');
-        });
-        indent.writeScoped('if listResponse.count > 1 {', '} ', () {
-          indent.writeln('let code: String = listResponse[0] as! String');
-          indent.writeln('let message: String? = nilOrValue(listResponse[1])');
-          indent.writeln('let details: String? = nilOrValue(listResponse[2])');
-          indent.writeln(
-              'completion(.failure(FlutterError(code: code, message: message, details: details)))');
+              'completion(.failure(FlutterError(code: "null-error", message: "Flutter api returned null value for non-null return value.", details: "")))');
         }, addTrailingNewline: false);
-        if (!returnType.isNullable && !returnType.isVoid) {
-          indent.addScoped('else if listResponse[0] == nil {', '} ', () {
-            indent.writeln(
-                'completion(.failure(FlutterError(code: "null-error", message: "Flutter api returned null value for non-null return value.", details: "")))');
-          }, addTrailingNewline: false);
+      }
+      indent.addScoped('else {', '}', () {
+        if (returnType.isVoid) {
+          indent.writeln('completion(.success(Void()))');
+        } else {
+          final String fieldType = _swiftTypeForDartType(returnType);
+          _writeGenericCasting(
+            indent: indent,
+            value: 'listResponse[0]',
+            variableName: 'result',
+            fieldType: fieldType,
+            type: returnType,
+          );
+          indent.writeln('completion(.success(result))');
         }
-        indent.addScoped('else {', '}', () {
-          if (returnType.isVoid) {
-            indent.writeln('completion(.success(Void()))');
-          } else {
-            final String fieldType = _swiftTypeForDartType(returnType);
-            _writeGenericCasting(
-              indent: indent,
-              value: 'listResponse[0]',
-              variableName: 'result',
-              fieldType: fieldType,
-              type: returnType,
-            );
-            indent.writeln('completion(.success(result))');
-          }
-        });
       });
     });
   }
@@ -1384,7 +1399,6 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
     required TypeDeclaration apiAsTypeDeclaration,
     required String swiftApiName,
     required String dartPackageName,
-    //required String fullKotlinClassName,
   }) {
     indent.writeScoped(
       'static func setUpMessageHandlers(binaryMessenger: FlutterBinaryMessenger, api: $swiftApiName?) {',
@@ -1471,6 +1485,7 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
                 }) {
                   final List<String> parameters = <String>[
                     'pigeonApi: $apiVarName',
+                    // Skip the identifier used by the InstanceManager.
                     ...methodParameters.skip(1),
                   ];
                   return '$apiVarName.pigeonRegistrar.instanceManager.addDartCreatedInstance(\n'
@@ -1577,6 +1592,94 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
         // }
       },
     );
+  }
+
+  // Writes the method that calls to Dart to instantiate a new Dart instance.
+  void _writeProxyApiNewInstanceMethod(
+    Indent indent,
+    AstProxyApi api, {
+    required SwiftOptions generatorOptions,
+    required TypeDeclaration apiAsTypeDeclaration,
+    required String newInstanceMethodName,
+    required String dartPackageName,
+  }) {
+    addDocumentationComments(
+      indent,
+      <String>[
+        'Creates a Dart instance of ${api.name} and attaches it to [pigeonInstance].'
+      ],
+      _docCommentSpec,
+    );
+
+    final Version? versionRequirement = _findHighestIosVersionRequirement(
+      api.unattachedFields.map((ApiField field) => field.type),
+    )?.version;
+    if (versionRequirement != null) {
+      indent.writeln('@available(iOS $versionRequirement, *))');
+    }
+
+    final String methodSignature = _getMethodSignature(
+      name: 'pigeonNewInstance',
+      parameters: <Parameter>[
+        Parameter(name: 'pigeonInstance', type: apiAsTypeDeclaration),
+      ],
+      returnType: const TypeDeclaration.voidDeclaration(),
+      isAsynchronous: true,
+      errorTypeName: 'FlutterError',
+    );
+    indent.writeScoped('$methodSignature {', '}', () {
+      indent.writeScoped(
+        'if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance) {',
+        '}',
+        () {
+          indent.writeln('completion(.success(Void()))');
+          indent.writeln('return');
+        },
+      );
+      if (api.hasCallbackConstructor()) {
+        indent.writeln(
+          'let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeonInstance)',
+        );
+        enumerate(api.unattachedFields, (int index, ApiField field) {
+          final String argName = _getSafeArgumentName(index, field);
+          indent.writeln(
+            'let $argName = try! pigeonDelegate.${field.name}(pigeonApi: self, pigeonInstance: pigeonInstance)',
+          );
+        });
+        indent.writeln(
+          'let binaryMessenger = pigeonRegistrar.binaryMessenger',
+        );
+        indent.writeln('let codec = pigeonRegistrar.codec');
+        _writeFlutterMethodMessageCall(
+          indent,
+          parameters: <Parameter>[
+            Parameter(
+              name: 'pigeonIdentifier',
+              type: const TypeDeclaration(
+                baseName: 'int',
+                isNullable: false,
+              ),
+            ),
+            ...api.unattachedFields.map(
+              (ApiField field) {
+                return Parameter(name: field.name, type: field.type);
+              },
+            ),
+          ],
+          returnType: const TypeDeclaration.voidDeclaration(),
+          channelName: makeChannelNameWithStrings(
+            apiName: api.name,
+            methodName: newInstanceMethodName,
+            dartPackageName: dartPackageName,
+          ),
+          codecArgumentString: ', codec: codec',
+        );
+      } else {
+        indent.writeln(
+          'print("Error: Attempting to create a new Dart instance of ${api.name}, but the class has a nonnull callback method.")',
+        );
+      }
+    });
   }
 }
 

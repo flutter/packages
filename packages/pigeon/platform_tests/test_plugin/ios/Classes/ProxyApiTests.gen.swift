@@ -429,15 +429,15 @@ private class PigeonProxyApiCodecReaderWriter: FlutterStandardReaderWriter {
     override func writeValue(_ value: Any) {
       if value is ProxyApiTestClass {
         pigeonRegistrar.apiDelegate.pigeonApiProxyApiTestClass(pigeonRegistrar).pigeonNewInstance(
-          pigeonInstanceArg: value as! ProxyApiTestClass
+          pigeonInstance: value as! ProxyApiTestClass
         ) { _ in }
       } else if value is ProxyApiSuperClass {
         pigeonRegistrar.apiDelegate.pigeonApiProxyApiSuperClass(pigeonRegistrar).pigeonNewInstance(
-          pigeonInstanceArg: value as! ProxyApiSuperClass
+          pigeonInstance: value as! ProxyApiSuperClass
         ) { _ in }
       } else if value is ProxyApiInterface {
         pigeonRegistrar.apiDelegate.pigeonApiProxyApiInterface(pigeonRegistrar).pigeonNewInstance(
-          pigeonInstanceArg: value as! ProxyApiInterface
+          pigeonInstance: value as! ProxyApiInterface
         ) { _ in }
       }
 
@@ -921,6 +921,72 @@ public class PigeonApiProxyApiTestClass {
     }
   }
 
+  ///Creates a Dart instance of ProxyApiTestClass and attaches it to [pigeonInstance].
+  func pigeonNewInstance(
+    pigeonInstance: ProxyApiTestClass, completion: @escaping (Result<Void, FlutterError>) -> Void
+  ) {
+    if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance) {
+      completion(.success(Void()))
+      return
+    }
+    let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeonInstance)
+    let aBoolArg = try! pigeonDelegate.aBool(pigeonApi: self, pigeonInstance: pigeonInstance)
+    let anIntArg = try! pigeonDelegate.anInt(pigeonApi: self, pigeonInstance: pigeonInstance)
+    let aDoubleArg = try! pigeonDelegate.aDouble(pigeonApi: self, pigeonInstance: pigeonInstance)
+    let aStringArg = try! pigeonDelegate.aString(pigeonApi: self, pigeonInstance: pigeonInstance)
+    let aUint8ListArg = try! pigeonDelegate.aUint8List(
+      pigeonApi: self, pigeonInstance: pigeonInstance)
+    let aListArg = try! pigeonDelegate.aList(pigeonApi: self, pigeonInstance: pigeonInstance)
+    let aMapArg = try! pigeonDelegate.aMap(pigeonApi: self, pigeonInstance: pigeonInstance)
+    let anEnumArg = try! pigeonDelegate.anEnum(pigeonApi: self, pigeonInstance: pigeonInstance)
+    let aProxyApiArg = try! pigeonDelegate.aProxyApi(
+      pigeonApi: self, pigeonInstance: pigeonInstance)
+    let aNullableBoolArg = try! pigeonDelegate.aNullableBool(
+      pigeonApi: self, pigeonInstance: pigeonInstance)
+    let aNullableIntArg = try! pigeonDelegate.aNullableInt(
+      pigeonApi: self, pigeonInstance: pigeonInstance)
+    let aNullableDoubleArg = try! pigeonDelegate.aNullableDouble(
+      pigeonApi: self, pigeonInstance: pigeonInstance)
+    let aNullableStringArg = try! pigeonDelegate.aNullableString(
+      pigeonApi: self, pigeonInstance: pigeonInstance)
+    let aNullableUint8ListArg = try! pigeonDelegate.aNullableUint8List(
+      pigeonApi: self, pigeonInstance: pigeonInstance)
+    let aNullableListArg = try! pigeonDelegate.aNullableList(
+      pigeonApi: self, pigeonInstance: pigeonInstance)
+    let aNullableMapArg = try! pigeonDelegate.aNullableMap(
+      pigeonApi: self, pigeonInstance: pigeonInstance)
+    let aNullableEnumArg = try! pigeonDelegate.aNullableEnum(
+      pigeonApi: self, pigeonInstance: pigeonInstance)
+    let aNullableProxyApiArg = try! pigeonDelegate.aNullableProxyApi(
+      pigeonApi: self, pigeonInstance: pigeonInstance)
+    let binaryMessenger = pigeonRegistrar.binaryMessenger
+    let codec = pigeonRegistrar.codec
+    let channelName: String =
+      "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.pigeon_newInstance"
+    let channel = FlutterBasicMessageChannel(
+      name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+    channel.sendMessage(
+      [
+        pigeonIdentifierArg, aBoolArg, anIntArg, aDoubleArg, aStringArg, aUint8ListArg, aListArg,
+        aMapArg, anEnumArg.rawValue, aProxyApiArg, aNullableBoolArg, aNullableIntArg,
+        aNullableDoubleArg, aNullableStringArg, aNullableUint8ListArg, aNullableListArg,
+        aNullableMapArg, aNullableEnumArg?.rawValue, aNullableProxyApiArg,
+      ] as [Any?]
+    ) { response in
+      guard let listResponse = response as? [Any?] else {
+        completion(.failure(createConnectionError(withChannelName: channelName)))
+        return
+      }
+      if listResponse.count > 1 {
+        let code: String = listResponse[0] as! String
+        let message: String? = nilOrValue(listResponse[1])
+        let details: String? = nilOrValue(listResponse[2])
+        completion(.failure(FlutterError(code: code, message: message, details: details)))
+      } else {
+        completion(.success(Void()))
+      }
+    }
+  }
 }
 protocol PigeonDelegateProxyApiSuperClass: AnyObject {
   func pigeonDefaultConstructor(pigeonApi: PigeonApiProxyApiSuperClass) throws -> ProxyApiSuperClass
@@ -964,6 +1030,36 @@ public class PigeonApiProxyApiSuperClass {
     }
   }
 
+  ///Creates a Dart instance of ProxyApiSuperClass and attaches it to [pigeonInstance].
+  func pigeonNewInstance(
+    pigeonInstance: ProxyApiSuperClass, completion: @escaping (Result<Void, FlutterError>) -> Void
+  ) {
+    if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance) {
+      completion(.success(Void()))
+      return
+    }
+    let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeonInstance)
+    let binaryMessenger = pigeonRegistrar.binaryMessenger
+    let codec = pigeonRegistrar.codec
+    let channelName: String =
+      "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiSuperClass.pigeon_newInstance"
+    let channel = FlutterBasicMessageChannel(
+      name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+    channel.sendMessage([pigeonIdentifierArg] as [Any?]) { response in
+      guard let listResponse = response as? [Any?] else {
+        completion(.failure(createConnectionError(withChannelName: channelName)))
+        return
+      }
+      if listResponse.count > 1 {
+        let code: String = listResponse[0] as! String
+        let message: String? = nilOrValue(listResponse[1])
+        let details: String? = nilOrValue(listResponse[2])
+        completion(.failure(FlutterError(code: code, message: message, details: details)))
+      } else {
+        completion(.success(Void()))
+      }
+    }
+  }
 }
 protocol PigeonDelegateProxyApiInterface: AnyObject {
 }
@@ -973,5 +1069,35 @@ public class PigeonApiProxyApiInterface {
   init(pigeonRegistrar: PigeonProxyApiRegistrar, delegate: PigeonDelegateProxyApiInterface) {
     self.pigeonRegistrar = pigeonRegistrar
     self.pigeonDelegate = delegate
+  }
+  ///Creates a Dart instance of ProxyApiInterface and attaches it to [pigeonInstance].
+  func pigeonNewInstance(
+    pigeonInstance: ProxyApiInterface, completion: @escaping (Result<Void, FlutterError>) -> Void
+  ) {
+    if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance) {
+      completion(.success(Void()))
+      return
+    }
+    let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeonInstance)
+    let binaryMessenger = pigeonRegistrar.binaryMessenger
+    let codec = pigeonRegistrar.codec
+    let channelName: String =
+      "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiInterface.pigeon_newInstance"
+    let channel = FlutterBasicMessageChannel(
+      name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+    channel.sendMessage([pigeonIdentifierArg] as [Any?]) { response in
+      guard let listResponse = response as? [Any?] else {
+        completion(.failure(createConnectionError(withChannelName: channelName)))
+        return
+      }
+      if listResponse.count > 1 {
+        let code: String = listResponse[0] as! String
+        let message: String? = nilOrValue(listResponse[1])
+        let details: String? = nilOrValue(listResponse[2])
+        completion(.failure(FlutterError(code: code, message: message, details: details)))
+      } else {
+        completion(.success(Void()))
+      }
+    }
   }
 }
