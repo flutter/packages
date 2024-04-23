@@ -885,6 +885,8 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// interface, respectively.
   @override
   Future<void> startVideoCapturing(VideoCaptureOptions options) async {
+    // TODO(camsim99): add conditional logic here.
+    processCameraProvider!.unbind(<UseCase>[imageAnalysis!]);
     if (recording != null) {
       // There is currently an active recording, so do not start a new one.
       return;
