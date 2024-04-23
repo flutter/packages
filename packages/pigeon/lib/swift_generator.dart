@@ -560,6 +560,35 @@ class SwiftGenerator extends StructuredGenerator<SwiftOptions> {
     final String swiftClassName = api.swiftOptions?.name ?? api.name;
 
     final String swiftApiName = '$hostProxyApiPrefix${api.name}';
+
+    indent.writeScoped('public class $swiftApiName {', '}', () {
+      indent.writeln('unowned let pigeonRegistrar: $proxyApiRegistrarName');
+      indent.writeln('let pigeonDelegate: $swiftApiDelegateName');
+
+      _writeProxyApiInheritedApiMethods(indent, api);
+
+      indent.writeScoped(
+        'init(pigeonRegistrar: $proxyApiRegistrarName, delegate: $swiftApiDelegateName) {',
+        '}',
+        () {
+          indent.writeln('self.pigeonRegistrar = pigeonRegistrar');
+          indent.writeln('self.pigeonDelegate = delegate');
+        },
+      );
+
+      if (api.constructors.isNotEmpty ||
+          api.attachedFields.isNotEmpty ||
+          api.hostMethods.isNotEmpty) {
+        _writeProxyApiMessageHandlerMethod(
+          indent,
+          api,
+          apiAsTypeDeclaration: apiAsTypeDeclaration,
+          swiftApiName: swiftApiName,
+          dartPackageName: dartPackageName,
+        );
+        indent.newln();
+      }
+    });
   }
 
   /// Writes the codec class will be used for encoding messages for the [api].
@@ -921,6 +950,8 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
     required String codecArgumentString,
     required String? swiftFunction,
     List<String> documentationComments = const <String>[],
+    String Function(List<String> safeArgNames, {required String apiVarName})?
+        onCreateCall,
   }) {
     final _SwiftFunctionComponents components = _SwiftFunctionComponents(
       name: name,
@@ -962,13 +993,17 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
           });
         }
         final String tryStatement = isAsynchronous ? '' : 'try ';
-        // Empty parens are not required when calling a method whose only
-        // argument is a trailing closure.
-        final String argumentString = methodArgument.isEmpty && isAsynchronous
-            ? ''
-            : '(${methodArgument.join(', ')})';
-        final String call =
-            '${tryStatement}api.${components.name}$argumentString';
+        late final String call;
+        if (onCreateCall == null) {
+          // Empty parens are not required when calling a method whose only
+          // argument is a trailing closure.
+          final String argumentString = methodArgument.isEmpty && isAsynchronous
+              ? ''
+              : '(${methodArgument.join(', ')})';
+          call = '${tryStatement}api.${components.name}$argumentString';
+        } else {
+          call = onCreateCall(methodArgument, apiVarName: 'api');
+        }
         if (isAsynchronous) {
           final String resultName = returnType.isVoid ? 'nil' : 'res';
           final String successVariableInit =
@@ -1300,6 +1335,238 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
       );
       indent.writeln(methodSignature);
     }
+  }
+
+  // Writes the getters for accessing the implementation of other ProxyApis.
+  //
+  // These are used for inherited Flutter methods.
+  void _writeProxyApiInheritedApiMethods(Indent indent, AstProxyApi api) {
+    final Set<String> inheritedApiNames = <String>{
+      if (api.superClass != null) api.superClass!.baseName,
+      ...api.interfaces.map((TypeDeclaration type) => type.baseName),
+    };
+    for (final String name in inheritedApiNames) {
+      addDocumentationComments(
+        indent,
+        <String>[
+          'An implementation of [$name] used to access callback methods',
+        ],
+        _docCommentSpec,
+      );
+      indent.writeScoped(
+        'var pigeonApi$name: $hostProxyApiPrefix$name {',
+        '}',
+        () {
+          indent.writeln(
+            'return pigeonRegistrar.apiDelegate.pigeonApi$name(pigeonRegistrar)',
+          );
+        },
+      );
+      indent.newln();
+    }
+  }
+
+  // Writes the `..setUpMessageHandler` method to ensure incoming messages are
+  // handled by the correct delegate host methods.
+  void _writeProxyApiMessageHandlerMethod(
+    Indent indent,
+    AstProxyApi api, {
+    required TypeDeclaration apiAsTypeDeclaration,
+    required String swiftApiName,
+    required String dartPackageName,
+    //required String fullKotlinClassName,
+  }) {
+    indent.writeScoped(
+      'static func setUpMessageHandlers(binaryMessenger: FlutterBinaryMessenger, api: $swiftApiName?) {',
+      '}',
+      () {
+        indent.format(
+          'let codec: FlutterStandardMessageCodec =\n'
+          '  api != nil\n'
+          '  ? FlutterStandardMessageCodec(\n'
+          '    readerWriter: $proxyApiReaderWriterName(pigeonRegistrar: api!.pigeonRegistrar))\n'
+          '  : FlutterStandardMessageCodec.sharedInstance()',
+        );
+        void writeWithApiCheckIfNecessary(
+          List<TypeDeclaration> types, {
+          required String methodName,
+          required String channelName,
+          required void Function() onWrite,
+        }) {
+          final ({TypeDeclaration type, Version version})? typeWithRequirement =
+              _findHighestIosVersionRequirement(types);
+          if (typeWithRequirement != null) {
+            final Version apiRequirement = typeWithRequirement.version;
+            indent.writeScoped(
+              'if #available(iOS $apiRequirement, *) {',
+              '}',
+              onWrite,
+              addTrailingNewline: false,
+            );
+            indent.writeScoped(' else {', '}', () {
+              final String className = typeWithRequirement
+                      .type.associatedProxyApi!.swiftOptions?.name ??
+                  typeWithRequirement.type.baseName;
+              final String varChannelName = '${methodName}Channel';
+              indent.format(
+                'let $varChannelName = FlutterBasicMessageChannel(\n'
+                '  name: "$channelName",\n'
+                '  binaryMessenger: binaryMessenger, codec: codec)\n'
+                'if let api = api {\n'
+                '  $varChannelName.setMessageHandler { message, reply in\n'
+                '    reply(wrapError(FlutterError(code: "PigeonUnsupportedOperationError",\n'
+                '                                 message: "Call references class `$className`, which requires version $apiRequirement.",\n'
+                '                                 details: nil\n'
+                '                                )))\n'
+                '  }\n'
+                '} else {\n'
+                '  $varChannelName.setMessageHandler(nil)\n'
+                '}',
+              );
+            });
+          } else {
+            onWrite();
+          }
+        }
+
+        for (final Constructor constructor in api.constructors) {
+          final String name = constructor.name.isNotEmpty
+              ? constructor.name
+              : 'pigeonDefaultConstructor';
+          final String channelName = makeChannelNameWithStrings(
+            apiName: api.name,
+            methodName: '${classMemberNamePrefix}defaultConstructor',
+            dartPackageName: dartPackageName,
+          );
+          writeWithApiCheckIfNecessary(
+            <TypeDeclaration>[
+              apiAsTypeDeclaration,
+              ...api.unattachedFields.map((ApiField f) => f.type),
+              ...constructor.parameters.map((Parameter p) => p.type),
+            ],
+            methodName: name,
+            channelName: channelName,
+            onWrite: () {
+              _writeHostMethodMessageHandler(
+                indent,
+                name: name,
+                channelName: channelName,
+                returnType: const TypeDeclaration.voidDeclaration(),
+                codecArgumentString: ', codec: codec',
+                swiftFunction: null,
+                isAsynchronous: false,
+                onCreateCall: (
+                  List<String> methodParameters, {
+                  required String apiVarName,
+                }) {
+                  final List<String> parameters = <String>[
+                    'pigeonApi: $apiVarName',
+                    ...methodParameters.skip(1),
+                  ];
+                  return '$apiVarName.pigeonRegistrar.instanceManager.addDartCreatedInstance(\n'
+                      'try $apiVarName.pigeonDelegate.$name(${parameters.join(', ')}),\n'
+                      'withIdentifier: pigeonIdentifierArg)';
+                },
+                parameters: <Parameter>[
+                  Parameter(
+                    name: 'pigeonIdentifier',
+                    type: const TypeDeclaration(
+                      baseName: 'int',
+                      isNullable: false,
+                    ),
+                  ),
+                  ...api.unattachedFields.map((ApiField field) {
+                    return Parameter(
+                      name: field.name,
+                      type: field.type,
+                    );
+                  }),
+                  ...constructor.parameters,
+                ],
+              );
+            },
+          );
+        }
+
+        // for (final ApiField field in api.attachedFields) {
+        //   final String channelName = makeChannelNameWithStrings(
+        //     apiName: api.name,
+        //     methodName: field.name,
+        //     dartPackageName: dartPackageName,
+        //   );
+        //   writeWithApiCheckIfNecessary(
+        //     <TypeDeclaration>[apiAsTypeDeclaration, field.type],
+        //     channelName: channelName,
+        //     onWrite: () {
+        //       _writeHostMethodMessageHandler(
+        //         indent,
+        //         name: field.name,
+        //         channelName: channelName,
+        //         returnType: const TypeDeclaration.voidDeclaration(),
+        //         onCreateCall: (
+        //           List<String> methodParameters, {
+        //           required String apiVarName,
+        //         }) {
+        //           final String param =
+        //               methodParameters.length > 1 ? methodParameters.first : '';
+        //           return '$apiVarName.pigeonRegistrar.instanceManager.addDartCreatedInstance('
+        //               '$apiVarName.${field.name}($param), ${methodParameters.last})';
+        //         },
+        //         parameters: <Parameter>[
+        //           if (!field.isStatic)
+        //             Parameter(
+        //               name: '${classMemberNamePrefix}instance',
+        //               type: apiAsTypeDeclaration,
+        //             ),
+        //           Parameter(
+        //             name: '${classMemberNamePrefix}identifier',
+        //             type: const TypeDeclaration(
+        //               baseName: 'int',
+        //               isNullable: false,
+        //             ),
+        //           ),
+        //         ],
+        //       );
+        //     },
+        //   );
+        // }
+        //
+        // for (final Method method in api.hostMethods) {
+        //   final String channelName =
+        //       makeChannelName(api, method, dartPackageName);
+        //   writeWithApiCheckIfNecessary(
+        //     <TypeDeclaration>[
+        //       if (!method.isStatic) apiAsTypeDeclaration,
+        //       method.returnType,
+        //       ...method.parameters.map((Parameter p) => p.type),
+        //     ],
+        //     channelName: channelName,
+        //     onWrite: () {
+        //       _writeHostMethodMessageHandler(
+        //         indent,
+        //         name: method.name,
+        //         channelName: makeChannelName(api, method, dartPackageName),
+        //         taskQueueType: method.taskQueueType,
+        //         returnType: method.returnType,
+        //         isAsynchronous: method.isAsynchronous,
+        //         parameters: <Parameter>[
+        //           if (!method.isStatic)
+        //             Parameter(
+        //               name: '${classMemberNamePrefix}instance',
+        //               type: TypeDeclaration(
+        //                 baseName: fullKotlinClassName,
+        //                 isNullable: false,
+        //                 associatedProxyApi: api,
+        //               ),
+        //             ),
+        //           ...method.parameters,
+        //         ],
+        //       );
+        //     },
+        //   );
+        // }
+      },
+    );
   }
 }
 

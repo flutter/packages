@@ -458,163 +458,183 @@ public class ProxyApiTestClass {}
 public class ProxyApiSuperClass {}
 protocol ProxyApiInterface: AnyObject {}
 
-public protocol PigeonApiDelegateProxyApiTestClass {
-  /// woij
-  /// wef
-  @available(iOS 15.0.0, *)
-  func pigeonDefaultConstructor(_ pigeonApi: PigeonApiProxyApiTestClass) throws -> ProxyApiTestClass
-  func someField(_ pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass) throws
-    -> Int
-  func attachedField(_ pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass)
-    throws -> ProxyApiSuperClass
-  func echo(_ pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, aBool: Bool)
-    throws -> Bool
-}
-
-public class PigeonApiProxyApiTestClass {
-  unowned let pigeonRegistrar: PigeonProxyApiRegistrar
-  let pigeonDelegate: PigeonApiDelegateProxyApiTestClass
-
-  var pigeonApiProxyApiSuperClass: PigeonApiProxyApiTestClass {
-    return pigeonRegistrar.apiDelegate.pigeonApiProxyApiTestClass(pigeonRegistrar)
-  }
-
-  init(pigeonRegistrar: PigeonProxyApiRegistrar, delegate: PigeonApiDelegateProxyApiTestClass) {
-    self.pigeonRegistrar = pigeonRegistrar
-    self.pigeonDelegate = delegate
-  }
-
-  static func setUpMessageHandlers(
-    binaryMessenger: FlutterBinaryMessenger, api: PigeonApiProxyApiTestClass?
-  ) {
-    let codec: FlutterStandardMessageCodec =
-      api != nil
-      ? FlutterStandardMessageCodec(
-        readerWriter: PigeonProxyApiBaseCodecReaderWriter(pigeonRegistrar: api!.pigeonRegistrar))
-      : FlutterStandardMessageCodec.sharedInstance()
-    let pigeonDefaultConstructorChannel = FlutterBasicMessageChannel(
-      name: "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoBool",
-      binaryMessenger: binaryMessenger, codec: codec)
-    if let api = api {
-      pigeonDefaultConstructorChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
-        let pigeonIdentifierArg = args[0] is Int64 ? args[0] as! Int64 : Int64(args[0] as! Int32)
-        do {
-          api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
-            try api.pigeonDelegate.pigeonDefaultConstructor(api),
-            withIdentifier: pigeonIdentifierArg)
-          reply(wrapResult(nil))
-        } catch {
-          reply(wrapError(error))
-        }
-      }
-    } else {
-      pigeonDefaultConstructorChannel.setMessageHandler(nil)
-    }
-    let attachedFieldChannel = FlutterBasicMessageChannel(
-      name: "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoBool",
-      binaryMessenger: binaryMessenger, codec: codec)
-    if let api = api {
-      attachedFieldChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
-        let pigeonInstanceArg = args[0] as! ProxyApiTestClass
-        let pigeonIdentifierArg = args[1] is Int64 ? args[1] as! Int64 : Int64(args[1] as! Int32)
-        do {
-          api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
-            try api.pigeonDelegate.attachedField(api, pigeonInstance: pigeonInstanceArg),
-            withIdentifier: pigeonIdentifierArg)
-          reply(wrapResult(nil))
-        } catch {
-          reply(wrapError(error))
-        }
-      }
-    } else {
-      attachedFieldChannel.setMessageHandler(nil)
-    }
-    let echoBoolChannel = FlutterBasicMessageChannel(
-      name: "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoBool",
-      binaryMessenger: binaryMessenger, codec: codec)
-    if let api = api {
-      echoBoolChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
-        let pigeonInstanceArg = args[0] as! ProxyApiTestClass
-        let aBoolArg = args[1] as! Bool
-        do {
-          let result = try api.pigeonDelegate.echo(
-            api, pigeonInstance: pigeonInstanceArg, aBool: aBoolArg)
-          reply(wrapResult(result))
-        } catch {
-          reply(wrapError(error))
-        }
-      }
-    } else {
-      echoBoolChannel.setMessageHandler(nil)
-    }
-  }
-
-  func pigeonNewInstance(
-    pigeonInstanceArg: ProxyApiTestClass,
-    completion: @escaping (Result<Void, FlutterError>) -> Void
-  ) {
-    if pigeonRegistrar.instanceManager.containsInstance(pigeonInstanceArg) {
-      completion(.success(Void()))
-      return
-    }
-    let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(
-      pigeonInstanceArg)
-    let binaryMessenger = pigeonRegistrar.binaryMessenger
-    let codec = pigeonRegistrar.codec
-
-    let channelName: String =
-      "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.noop"
-    let channel = FlutterBasicMessageChannel(
-      name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-    channel.sendMessage([pigeonIdentifierArg] as [Any?]) { response in
-      guard let listResponse = response as? [Any?] else {
-        completion(.failure(createConnectionError(withChannelName: channelName)))
-        return
-      }
-      if listResponse.count > 1 {
-        let code: String = listResponse[0] as! String
-        let message: String? = nilOrValue(listResponse[1])
-        let details: String? = nilOrValue(listResponse[2])
-        completion(.failure(FlutterError(code: code, message: message, details: details)))
-      } else {
-        completion(.success(Void()))
-      }
-    }
-  }
-
-  func echo(
-    _ aBool: Bool, completion: @escaping (Result<Bool, FlutterError>) -> Void
-  ) {
-    let binaryMessenger = pigeonRegistrar.binaryMessenger
-    let codec = pigeonRegistrar.codec
-
-    let channelName: String =
-      "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoAllTypes"
-    let channel = FlutterBasicMessageChannel(
-      name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-    channel.sendMessage([aBool] as [Any?]) { response in
-      guard let listResponse = response as? [Any?] else {
-        completion(.failure(createConnectionError(withChannelName: channelName)))
-        return
-      }
-      if listResponse.count > 1 {
-        let code: String = listResponse[0] as! String
-        let message: String? = nilOrValue(listResponse[1])
-        let details: String? = nilOrValue(listResponse[2])
-        completion(.failure(FlutterError(code: code, message: message, details: details)))
-      } else if listResponse[0] == nil {
-        completion(
-          .failure(
-            FlutterError(
-              code: "null-error",
-              message: "Flutter api returned null value for non-null return value.", details: "")))
-      } else {
-        let result = listResponse[0] as! Bool
-        completion(.success(result))
-      }
-    }
-  }
-}
+//public protocol PigeonApiDelegateProxyApiTestClass {
+//  /// woij
+//  /// wef
+//  @available(iOS 15.0.0, *)
+//  func pigeonDefaultConstructor(_ pigeonApi: PigeonApiProxyApiTestClass) throws -> ProxyApiTestClass
+//  func someField(_ pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass) throws
+//    -> Int
+//  func attachedField(_ pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass)
+//    throws -> ProxyApiSuperClass
+//  func echo(_ pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, aBool: Bool)
+//    throws -> Bool
+//}
+//
+//public class PigeonApiProxyApiTestClass {
+//  unowned let pigeonRegistrar: PigeonProxyApiRegistrar
+//  let pigeonDelegate: PigeonApiDelegateProxyApiTestClass
+//
+//  var pigeonApiProxyApiSuperClass: PigeonApiProxyApiTestClass {
+//    return pigeonRegistrar.apiDelegate.pigeonApiProxyApiTestClass(pigeonRegistrar)
+//  }
+//
+//  init(pigeonRegistrar: PigeonProxyApiRegistrar, delegate: PigeonApiDelegateProxyApiTestClass) {
+//    self.pigeonRegistrar = pigeonRegistrar
+//    self.pigeonDelegate = delegate
+//  }
+//
+//  static func setUpMessageHandlers(
+//    binaryMessenger: FlutterBinaryMessenger, api: PigeonApiProxyApiTestClass?
+//  ) {
+//    let codec: FlutterStandardMessageCodec =
+//      api != nil
+//      ? FlutterStandardMessageCodec(
+//        readerWriter: PigeonProxyApiBaseCodecReaderWriter(pigeonRegistrar: api!.pigeonRegistrar))
+//      : FlutterStandardMessageCodec.sharedInstance()
+//    if #available(iOS 13.4, *) {
+//      let pigeonDefaultConstructorChannel = FlutterBasicMessageChannel(
+//        name: "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoBool",
+//        binaryMessenger: binaryMessenger, codec: codec)
+//      if let api = api {
+//        pigeonDefaultConstructorChannel.setMessageHandler { message, reply in
+//          let args = message as! [Any?]
+//          let pigeonIdentifierArg = args[0] is Int64 ? args[0] as! Int64 : Int64(args[0] as! Int32)
+//          do {
+//            api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
+//              try api.pigeonDelegate.pigeonDefaultConstructor(api),
+//              withIdentifier: pigeonIdentifierArg)
+//            reply(wrapResult(nil))
+//          } catch {
+//            reply(wrapError(error))
+//          }
+//        }
+//      } else {
+//        pigeonDefaultConstructorChannel.setMessageHandler(nil)
+//      }
+//    } else {
+//      let pigeonDefaultConstructorChannel = FlutterBasicMessageChannel(
+//        name: "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoBool",
+//        binaryMessenger: binaryMessenger, codec: codec)
+//      if let api = api {
+//        pigeonDefaultConstructorChannel.setMessageHandler { message, reply in
+//          reply(
+//            wrapError(
+//              FlutterError(
+//                code: "PigeonUnsupportedOperationError",
+//                message:
+//                  "Call references class `$className`, which requires version $apiRequirement.",
+//                details: nil
+//              )))
+//        }
+//      } else {
+//        pigeonDefaultConstructorChannel.setMessageHandler(nil)
+//      }
+//    }
+//    let attachedFieldChannel = FlutterBasicMessageChannel(
+//      name: "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoBool",
+//      binaryMessenger: binaryMessenger, codec: codec)
+//    if let api = api {
+//      attachedFieldChannel.setMessageHandler { message, reply in
+//        let args = message as! [Any?]
+//        let pigeonInstanceArg = args[0] as! ProxyApiTestClass
+//        let pigeonIdentifierArg = args[1] is Int64 ? args[1] as! Int64 : Int64(args[1] as! Int32)
+//        do {
+//          api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
+//            try api.pigeonDelegate.attachedField(api, pigeonInstance: pigeonInstanceArg),
+//            withIdentifier: pigeonIdentifierArg)
+//          reply(wrapResult(nil))
+//        } catch {
+//          reply(wrapError(error))
+//        }
+//      }
+//    } else {
+//      attachedFieldChannel.setMessageHandler(nil)
+//    }
+//    let echoBoolChannel = FlutterBasicMessageChannel(
+//      name: "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoBool",
+//      binaryMessenger: binaryMessenger, codec: codec)
+//    if let api = api {
+//      echoBoolChannel.setMessageHandler { message, reply in
+//        let args = message as! [Any?]
+//        let pigeonInstanceArg = args[0] as! ProxyApiTestClass
+//        let aBoolArg = args[1] as! Bool
+//        do {
+//          let result = try api.pigeonDelegate.echo(
+//            api, pigeonInstance: pigeonInstanceArg, aBool: aBoolArg)
+//          reply(wrapResult(result))
+//        } catch {
+//          reply(wrapError(error))
+//        }
+//      }
+//    } else {
+//      echoBoolChannel.setMessageHandler(nil)
+//    }
+//  }
+//
+//  func pigeonNewInstance(
+//    pigeonInstanceArg: ProxyApiTestClass,
+//    completion: @escaping (Result<Void, FlutterError>) -> Void
+//  ) {
+//    if pigeonRegistrar.instanceManager.containsInstance(pigeonInstanceArg) {
+//      completion(.success(Void()))
+//      return
+//    }
+//    let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(
+//      pigeonInstanceArg)
+//    let binaryMessenger = pigeonRegistrar.binaryMessenger
+//    let codec = pigeonRegistrar.codec
+//
+//    let channelName: String =
+//      "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.noop"
+//    let channel = FlutterBasicMessageChannel(
+//      name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+//    channel.sendMessage([pigeonIdentifierArg] as [Any?]) { response in
+//      guard let listResponse = response as? [Any?] else {
+//        completion(.failure(createConnectionError(withChannelName: channelName)))
+//        return
+//      }
+//      if listResponse.count > 1 {
+//        let code: String = listResponse[0] as! String
+//        let message: String? = nilOrValue(listResponse[1])
+//        let details: String? = nilOrValue(listResponse[2])
+//        completion(.failure(FlutterError(code: code, message: message, details: details)))
+//      } else {
+//        completion(.success(Void()))
+//      }
+//    }
+//  }
+//
+//  func echo(
+//    _ aBool: Bool, completion: @escaping (Result<Bool, FlutterError>) -> Void
+//  ) {
+//    let binaryMessenger = pigeonRegistrar.binaryMessenger
+//    let codec = pigeonRegistrar.codec
+//
+//    let channelName: String =
+//      "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoAllTypes"
+//    let channel = FlutterBasicMessageChannel(
+//      name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+//    channel.sendMessage([aBool] as [Any?]) { response in
+//      guard let listResponse = response as? [Any?] else {
+//        completion(.failure(createConnectionError(withChannelName: channelName)))
+//        return
+//      }
+//      if listResponse.count > 1 {
+//        let code: String = listResponse[0] as! String
+//        let message: String? = nilOrValue(listResponse[1])
+//        let details: String? = nilOrValue(listResponse[2])
+//        completion(.failure(FlutterError(code: code, message: message, details: details)))
+//      } else if listResponse[0] == nil {
+//        completion(
+//          .failure(
+//            FlutterError(
+//              code: "null-error",
+//              message: "Flutter api returned null value for non-null return value.", details: "")))
+//      } else {
+//        let result = listResponse[0] as! Bool
+//        completion(.success(result))
+//      }
+//    }
+//  }
+//}
