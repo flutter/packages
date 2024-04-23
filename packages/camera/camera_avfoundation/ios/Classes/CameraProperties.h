@@ -9,63 +9,19 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-#pragma mark - flash mode
-
-/// Represents camera's flash mode. Mirrors `FlashMode` enum in flash_mode.dart.
-typedef NS_ENUM(NSInteger, FLTFlashMode) {
-  FLTFlashModeOff,
-  FLTFlashModeAuto,
-  FLTFlashModeAlways,
-  FLTFlashModeTorch,
-  // This should never occur; it indicates an unknown value was received over
-  // the platform channel.
-  FLTFlashModeInvalid,
-};
-
-/// Gets FLTFlashMode from its string representation.
-/// @param mode a string representation of the FLTFlashMode.
-extern FLTFlashMode FLTGetFLTFlashModeForString(NSString *mode);
-
 /// Gets AVCaptureFlashMode from FLTFlashMode.
 /// @param mode flash mode.
-extern AVCaptureFlashMode FLTGetAVCaptureFlashModeForFLTFlashMode(FLTFlashMode mode);
+extern AVCaptureFlashMode FCPGetAVCaptureFlashModeForPigeonFlashMode(FCPPlatformFlashMode mode);
 
-#pragma mark - exposure mode
-
-/// Gets FCPPlatformExposureMode from its string representation.
-/// @param mode a string representation of the exposure mode.
-extern FCPPlatformExposureMode FCPGetExposureModeForString(NSString *mode);
-
-#pragma mark - focus mode
-
-/// Gets FCPPlatformFocusMode from its string representation.
-/// @param mode a string representation of focus mode.
-extern FCPPlatformFocusMode FCPGetFocusModeForString(NSString *mode);
-
-#pragma mark - device orientation
-
-/// Gets UIDeviceOrientation from its string representation.
-extern UIDeviceOrientation FLTGetUIDeviceOrientationForString(NSString *orientation);
+/// Gets UIDeviceOrientation from its Pigeon representation.
+extern UIDeviceOrientation FCPGetUIDeviceOrientationForPigeonDeviceOrientation(
+    FCPPlatformDeviceOrientation orientation);
 
 /// Gets a Pigeon representation of UIDeviceOrientation.
 extern FCPPlatformDeviceOrientation FCPGetPigeonDeviceOrientationForOrientation(
     UIDeviceOrientation orientation);
 
-#pragma mark - video format
-
 /// Gets VideoFormat from its Pigeon representation.
 extern OSType FCPGetPixelFormatForPigeonFormat(FCPPlatformImageFormatGroup imageFormat);
-
-/// Represents image format. Mirrors ImageFileFormat in camera.dart.
-typedef NS_ENUM(NSInteger, FCPFileFormat) {
-  FCPFileFormatJPEG,
-  FCPFileFormatHEIF,
-  FCPFileFormatInvalid,
-};
-
-#pragma mark - image extension
-
-/// Gets a string representation of ImageFileFormat.
-extern FCPFileFormat FCPGetFileFormatFromString(NSString *fileFormatString);
 
 NS_ASSUME_NONNULL_END

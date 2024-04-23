@@ -52,6 +52,19 @@ typedef NS_ENUM(NSUInteger, FCPPlatformExposureMode) {
 - (instancetype)initWithValue:(FCPPlatformExposureMode)value;
 @end
 
+typedef NS_ENUM(NSUInteger, FCPPlatformFlashMode) {
+  FCPPlatformFlashModeOff = 0,
+  FCPPlatformFlashModeAuto = 1,
+  FCPPlatformFlashModeAlways = 2,
+  FCPPlatformFlashModeTorch = 3,
+};
+
+/// Wrapper for FCPPlatformFlashMode to allow for nullability.
+@interface FCPPlatformFlashModeBox : NSObject
+@property(nonatomic, assign) FCPPlatformFlashMode value;
+- (instancetype)initWithValue:(FCPPlatformFlashMode)value;
+@end
+
 typedef NS_ENUM(NSUInteger, FCPPlatformFocusMode) {
   FCPPlatformFocusModeAuto = 0,
   FCPPlatformFocusModeLocked = 1,
@@ -61,6 +74,18 @@ typedef NS_ENUM(NSUInteger, FCPPlatformFocusMode) {
 @interface FCPPlatformFocusModeBox : NSObject
 @property(nonatomic, assign) FCPPlatformFocusMode value;
 - (instancetype)initWithValue:(FCPPlatformFocusMode)value;
+@end
+
+/// Pigeon version of ImageFileFormat.
+typedef NS_ENUM(NSUInteger, FCPPlatformImageFileFormat) {
+  FCPPlatformImageFileFormatJpeg = 0,
+  FCPPlatformImageFileFormatHeif = 1,
+};
+
+/// Wrapper for FCPPlatformImageFileFormat to allow for nullability.
+@interface FCPPlatformImageFileFormatBox : NSObject
+@property(nonatomic, assign) FCPPlatformImageFileFormat value;
+- (instancetype)initWithValue:(FCPPlatformImageFileFormat)value;
 @end
 
 typedef NS_ENUM(NSUInteger, FCPPlatformImageFormatGroup) {
@@ -92,6 +117,7 @@ typedef NS_ENUM(NSUInteger, FCPPlatformResolutionPreset) {
 @class FCPPlatformCameraDescription;
 @class FCPPlatformCameraState;
 @class FCPPlatformMediaSettings;
+@class FCPPlatformPoint;
 @class FCPPlatformSize;
 
 @interface FCPPlatformCameraDescription : NSObject
@@ -140,6 +166,14 @@ typedef NS_ENUM(NSUInteger, FCPPlatformResolutionPreset) {
 @property(nonatomic, assign) BOOL enableAudio;
 @end
 
+@interface FCPPlatformPoint : NSObject
+/// `init` unavailable to enforce nonnull fields, see the `make` class method.
+- (instancetype)init NS_UNAVAILABLE;
++ (instancetype)makeWithX:(double)x y:(double)y;
+@property(nonatomic, assign) double x;
+@property(nonatomic, assign) double y;
+@end
+
 @interface FCPPlatformSize : NSObject
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
@@ -163,6 +197,84 @@ NSObject<FlutterMessageCodec> *FCPCameraApiGetCodec(void);
 - (void)initializeCamera:(NSInteger)cameraId
          withImageFormat:(FCPPlatformImageFormatGroup)imageFormat
               completion:(void (^)(FlutterError *_Nullable))completion;
+/// Begins streaming frames from the camera.
+- (void)startImageStreamWithCompletion:(void (^)(FlutterError *_Nullable))completion;
+/// Stops streaming frames from the camera.
+- (void)stopImageStreamWithCompletion:(void (^)(FlutterError *_Nullable))completion;
+/// Called by the Dart side of the plugin when it has received the last image
+/// frame sent.
+///
+/// This is used to throttle sending frames across the channel.
+- (void)receivedImageStreamDataWithCompletion:(void (^)(FlutterError *_Nullable))completion;
+/// Indicates that the given camera is no longer being used on the Dart side,
+/// and any associated resources can be cleaned up.
+- (void)disposeCamera:(NSInteger)cameraId completion:(void (^)(FlutterError *_Nullable))completion;
+/// Locks the camera capture to the current device orientation.
+- (void)lockCaptureOrientation:(FCPPlatformDeviceOrientation)orientation
+                    completion:(void (^)(FlutterError *_Nullable))completion;
+/// Unlocks camera capture orientation, allowing it to automatically adapt to
+/// device orientation.
+- (void)unlockCaptureOrientationWithCompletion:(void (^)(FlutterError *_Nullable))completion;
+/// Takes a picture with the current settings, and returns the path to the
+/// resulting file.
+- (void)takePictureWithCompletion:(void (^)(NSString *_Nullable,
+                                            FlutterError *_Nullable))completion;
+/// Does any preprocessing necessary before beginning to record video.
+- (void)prepareForVideoRecordingWithCompletion:(void (^)(FlutterError *_Nullable))completion;
+/// Begins recording video, optionally enabling streaming to Dart at the same
+/// time.
+- (void)startVideoRecordingWithStreaming:(BOOL)enableStream
+                              completion:(void (^)(FlutterError *_Nullable))completion;
+/// Stops recording video, and results the path to the resulting file.
+- (void)stopVideoRecordingWithCompletion:(void (^)(NSString *_Nullable,
+                                                   FlutterError *_Nullable))completion;
+/// Pauses video recording.
+- (void)pauseVideoRecordingWithCompletion:(void (^)(FlutterError *_Nullable))completion;
+/// Resumes a previously paused video recording.
+- (void)resumeVideoRecordingWithCompletion:(void (^)(FlutterError *_Nullable))completion;
+/// Switches the camera to the given flash mode.
+- (void)setFlashMode:(FCPPlatformFlashMode)mode
+          completion:(void (^)(FlutterError *_Nullable))completion;
+/// Switches the camera to the given exposure mode.
+- (void)setExposureMode:(FCPPlatformExposureMode)mode
+             completion:(void (^)(FlutterError *_Nullable))completion;
+/// Anchors auto-exposure to the given point in (0,1) coordinate space.
+///
+/// A null value resets to the default exposure point.
+- (void)setExposurePoint:(nullable FCPPlatformPoint *)point
+              completion:(void (^)(FlutterError *_Nullable))completion;
+/// Returns the minimum exposure offset supported by the camera.
+- (void)getMinimumExposureOffset:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion;
+/// Returns the maximum exposure offset supported by the camera.
+- (void)getMaximumExposureOffset:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion;
+/// Sets the exposure offset manually to the given value.
+- (void)setExposureOffset:(double)offset completion:(void (^)(FlutterError *_Nullable))completion;
+/// Switches the camera to the given focus mode.
+- (void)setFocusMode:(FCPPlatformFocusMode)mode
+          completion:(void (^)(FlutterError *_Nullable))completion;
+/// Anchors auto-focus to the given point in (0,1) coordinate space.
+///
+/// A null value resets to the default focus point.
+- (void)setFocusPoint:(nullable FCPPlatformPoint *)point
+           completion:(void (^)(FlutterError *_Nullable))completion;
+/// Returns the minimum zoom level supported by the camera.
+- (void)getMinimumZoomLevel:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion;
+/// Returns the maximum zoom level supported by the camera.
+- (void)getMaximumZoomLevel:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion;
+/// Sets the zoom factor.
+- (void)setZoomLevel:(double)zoom completion:(void (^)(FlutterError *_Nullable))completion;
+/// Pauses streaming of preview frames.
+- (void)pausePreviewWithCompletion:(void (^)(FlutterError *_Nullable))completion;
+/// Resumes a previously paused preview stream.
+- (void)resumePreviewWithCompletion:(void (^)(FlutterError *_Nullable))completion;
+/// Changes the camera used while recording video.
+///
+/// This should only be called while video recording is active.
+- (void)updateDescriptionWhileRecordingCameraName:(NSString *)cameraName
+                                       completion:(void (^)(FlutterError *_Nullable))completion;
+/// Sets the file format used for taking pictures.
+- (void)setImageFileFormat:(FCPPlatformImageFileFormat)format
+                completion:(void (^)(FlutterError *_Nullable))completion;
 @end
 
 extern void SetUpFCPCameraApi(id<FlutterBinaryMessenger> binaryMessenger,

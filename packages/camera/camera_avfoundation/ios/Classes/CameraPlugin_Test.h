@@ -30,13 +30,6 @@
 /// Hide the default public constructor.
 - (instancetype)init NS_UNAVAILABLE;
 
-/// Handles `FlutterMethodCall`s and ensures result is send on the main dispatch queue.
-///
-/// @param call The method call command object.
-/// @param result A wrapper around the `FlutterResult` callback which ensures the callback is called
-/// on the main dispatch queue.
-- (void)handleMethodCallAsync:(FlutterMethodCall *)call result:(FlutterResult)result;
-
 /// Called by the @c NSNotificationManager each time the device's orientation is changed.
 ///
 /// @param notification @c NSNotification instance containing a reference to the `UIDevice` object

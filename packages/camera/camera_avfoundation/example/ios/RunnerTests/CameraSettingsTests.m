@@ -153,9 +153,10 @@ static const BOOL gTestEnableAudio = YES;
                     timeout:1
                enforceOrder:YES];
 
-  [camera startVideoRecordingWithResult:^(id _Nullable result){
-
-  }];
+  [camera
+      startVideoRecordingWithCompletion:^(FlutterError *_Nullable error) {
+      }
+                  messengerForStreaming:nil];
 
   [self waitForExpectations:@[
     injectedWrapper.audioSettingsExpectation, injectedWrapper.videoSettingsExpectation

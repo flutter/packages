@@ -18,14 +18,12 @@
       [self expectationWithDescription:@"dispose's result block must be called"];
   XCTestExpectation *createExpectation =
       [self expectationWithDescription:@"create's result block must be called"];
-  FlutterMethodCall *disposeCall = [FlutterMethodCall methodCallWithMethodName:@"dispose"
-                                                                     arguments:nil];
   // Mimic a dispose call followed by a create call, which can be triggered by slightly dragging the
   // home bar, causing the app to be inactive, and immediately regain active.
-  [camera handleMethodCall:disposeCall
-                    result:^(id _Nullable result) {
-                      [disposeExpectation fulfill];
-                    }];
+  [camera disposeCamera:0
+             completion:^(FlutterError *_Nullable error) {
+               [disposeExpectation fulfill];
+             }];
   [camera createCameraOnSessionQueueWithName:@"acamera"
                                     settings:[FCPPlatformMediaSettings
                                                  makeWithResolutionPreset:

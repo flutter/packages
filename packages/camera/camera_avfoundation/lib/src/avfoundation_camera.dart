@@ -6,7 +6,6 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:camera_platform_interface/camera_platform_interface.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
@@ -15,9 +14,6 @@ import 'package:stream_transform/stream_transform.dart';
 import 'messages.g.dart';
 import 'type_conversion.dart';
 import 'utils.dart';
-
-const MethodChannel _channel =
-    MethodChannel('plugins.flutter.io/camera_avfoundation');
 
 /// An iOS implementation of [CameraPlatform] based on AVFoundation.
 class AVFoundationCamera extends CameraPlatform {
@@ -149,10 +145,7 @@ class AVFoundationCamera extends CameraPlatform {
         hostCameraHandlers.remove(cameraId);
     handler?.dispose();
 
-    await _channel.invokeMethod<void>(
-      'dispose',
-      <String, dynamic>{'cameraId': cameraId},
-    );
+    await _hostApi.dispose(cameraId);
   }
 
   @override
@@ -191,43 +184,25 @@ class AVFoundationCamera extends CameraPlatform {
     int cameraId,
     DeviceOrientation orientation,
   ) async {
-    await _channel.invokeMethod<String>(
-      'lockCaptureOrientation',
-      <String, dynamic>{
-        'cameraId': cameraId,
-        'orientation': serializeDeviceOrientation(orientation)
-      },
-    );
+    await _hostApi
+        .lockCaptureOrientation(serializeDeviceOrientation(orientation));
   }
 
   @override
   Future<void> unlockCaptureOrientation(int cameraId) async {
-    await _channel.invokeMethod<String>(
-      'unlockCaptureOrientation',
-      <String, dynamic>{'cameraId': cameraId},
-    );
+    await _hostApi.unlockCaptureOrientation();
   }
 
   @override
   Future<XFile> takePicture(int cameraId) async {
-    final String? path = await _channel.invokeMethod<String>(
-      'takePicture',
-      <String, dynamic>{'cameraId': cameraId},
-    );
-
-    if (path == null) {
-      throw CameraException(
-        'INVALID_PATH',
-        'The platform "$defaultTargetPlatform" did not return a path while reporting success. The platform should always return a valid path or report an error.',
-      );
-    }
-
+    final String path = await _hostApi.takePicture();
     return XFile(path);
   }
 
   @override
-  Future<void> prepareForVideoRecording() =>
-      _channel.invokeMethod<void>('prepareForVideoRecording');
+  Future<void> prepareForVideoRecording() async {
+    await _hostApi.prepareForVideoRecording();
+  }
 
   @override
   Future<void> startVideoRecording(int cameraId,
@@ -238,14 +213,8 @@ class AVFoundationCamera extends CameraPlatform {
 
   @override
   Future<void> startVideoCapturing(VideoCaptureOptions options) async {
-    await _channel.invokeMethod<void>(
-      'startVideoRecording',
-      <String, dynamic>{
-        'cameraId': options.cameraId,
-        'maxVideoDuration': options.maxDuration?.inMilliseconds,
-        'enableStream': options.streamCallback != null,
-      },
-    );
+    // Max video duration is currently not supported.
+    await _hostApi.startVideoRecording(options.streamCallback != null);
 
     if (options.streamCallback != null) {
       _frameStreamController = _createStreamController();
@@ -256,33 +225,19 @@ class AVFoundationCamera extends CameraPlatform {
 
   @override
   Future<XFile> stopVideoRecording(int cameraId) async {
-    final String? path = await _channel.invokeMethod<String>(
-      'stopVideoRecording',
-      <String, dynamic>{'cameraId': cameraId},
-    );
-
-    if (path == null) {
-      throw CameraException(
-        'INVALID_PATH',
-        'The platform "$defaultTargetPlatform" did not return a path while reporting success. The platform should always return a valid path or report an error.',
-      );
-    }
-
+    final String path = await _hostApi.stopVideoRecording();
     return XFile(path);
   }
 
   @override
-  Future<void> pauseVideoRecording(int cameraId) => _channel.invokeMethod<void>(
-        'pauseVideoRecording',
-        <String, dynamic>{'cameraId': cameraId},
-      );
+  Future<void> pauseVideoRecording(int cameraId) async {
+    await _hostApi.pauseVideoRecording();
+  }
 
   @override
-  Future<void> resumeVideoRecording(int cameraId) =>
-      _channel.invokeMethod<void>(
-        'resumeVideoRecording',
-        <String, dynamic>{'cameraId': cameraId},
-      );
+  Future<void> resumeVideoRecording(int cameraId) async {
+    await _hostApi.resumeVideoRecording();
+  }
 
   @override
   Stream<CameraImageData> onStreamedFrameAvailable(int cameraId,
@@ -307,7 +262,7 @@ class AVFoundationCamera extends CameraPlatform {
   }
 
   Future<void> _startPlatformStream() async {
-    await _channel.invokeMethod<void>('startImageStream');
+    await _hostApi.startImageStream();
     _startStreamListener();
   }
 
@@ -317,7 +272,7 @@ class AVFoundationCamera extends CameraPlatform {
     _platformImageStreamSubscription =
         cameraEventChannel.receiveBroadcastStream().listen((dynamic imageData) {
       try {
-        _channel.invokeMethod<void>('receivedImageStreamData');
+        _hostApi.receivedImageStreamData();
       } on PlatformException catch (e) {
         throw CameraException(e.code, e.message);
       }
@@ -327,7 +282,7 @@ class AVFoundationCamera extends CameraPlatform {
   }
 
   FutureOr<void> _onFrameStreamCancel() async {
-    await _channel.invokeMethod<void>('stopImageStream');
+    await _hostApi.stopImageStream();
     await _platformImageStreamSubscription?.cancel();
     _platformImageStreamSubscription = null;
     _frameStreamController = null;
@@ -339,140 +294,75 @@ class AVFoundationCamera extends CameraPlatform {
   }
 
   @override
-  Future<void> setFlashMode(int cameraId, FlashMode mode) =>
-      _channel.invokeMethod<void>(
-        'setFlashMode',
-        <String, dynamic>{
-          'cameraId': cameraId,
-          'mode': _serializeFlashMode(mode),
-        },
-      );
+  Future<void> setFlashMode(int cameraId, FlashMode mode) async {
+    await _hostApi.setFlashMode(_pigeonFlashMode(mode));
+  }
 
   @override
-  Future<void> setExposureMode(int cameraId, ExposureMode mode) =>
-      _channel.invokeMethod<void>(
-        'setExposureMode',
-        <String, dynamic>{
-          'cameraId': cameraId,
-          'mode': _serializeExposureMode(mode),
-        },
-      );
+  Future<void> setExposureMode(int cameraId, ExposureMode mode) async {
+    await _hostApi.setExposureMode(_pigeonExposureMode(mode));
+  }
 
   @override
-  Future<void> setExposurePoint(int cameraId, Point<double>? point) {
+  Future<void> setExposurePoint(int cameraId, Point<double>? point) async {
     assert(point == null || point.x >= 0 && point.x <= 1);
     assert(point == null || point.y >= 0 && point.y <= 1);
 
-    return _channel.invokeMethod<void>(
-      'setExposurePoint',
-      <String, dynamic>{
-        'cameraId': cameraId,
-        'reset': point == null,
-        'x': point?.x,
-        'y': point?.y,
-      },
-    );
+    await _hostApi.setExposurePoint(_pigeonPoint(point));
   }
 
   @override
   Future<double> getMinExposureOffset(int cameraId) async {
-    final double? minExposureOffset = await _channel.invokeMethod<double>(
-      'getMinExposureOffset',
-      <String, dynamic>{'cameraId': cameraId},
-    );
-
-    return minExposureOffset!;
+    return _hostApi.getMinExposureOffset();
   }
 
   @override
   Future<double> getMaxExposureOffset(int cameraId) async {
-    final double? maxExposureOffset = await _channel.invokeMethod<double>(
-      'getMaxExposureOffset',
-      <String, dynamic>{'cameraId': cameraId},
-    );
-
-    return maxExposureOffset!;
+    return _hostApi.getMaxExposureOffset();
   }
 
   @override
   Future<double> getExposureOffsetStepSize(int cameraId) async {
-    final double? stepSize = await _channel.invokeMethod<double>(
-      'getExposureOffsetStepSize',
-      <String, dynamic>{'cameraId': cameraId},
-    );
-
-    return stepSize!;
+    // iOS has no step size.
+    return 0;
   }
 
   @override
   Future<double> setExposureOffset(int cameraId, double offset) async {
-    final double? appliedOffset = await _channel.invokeMethod<double>(
-      'setExposureOffset',
-      <String, dynamic>{
-        'cameraId': cameraId,
-        'offset': offset,
-      },
-    );
-
-    return appliedOffset!;
+    await _hostApi.setExposureOffset(offset);
+    // The platform API allows for implementations that have to adjust the
+    // target offset and return the actual offset used, but there is never
+    // adjustment in this implementation.
+    return offset;
   }
 
   @override
-  Future<void> setFocusMode(int cameraId, FocusMode mode) =>
-      _channel.invokeMethod<void>(
-        'setFocusMode',
-        <String, dynamic>{
-          'cameraId': cameraId,
-          'mode': _serializeFocusMode(mode),
-        },
-      );
+  Future<void> setFocusMode(int cameraId, FocusMode mode) async {
+    await _hostApi.setFocusMode(_pigeonFocusMode(mode));
+  }
 
   @override
-  Future<void> setFocusPoint(int cameraId, Point<double>? point) {
+  Future<void> setFocusPoint(int cameraId, Point<double>? point) async {
     assert(point == null || point.x >= 0 && point.x <= 1);
     assert(point == null || point.y >= 0 && point.y <= 1);
 
-    return _channel.invokeMethod<void>(
-      'setFocusPoint',
-      <String, dynamic>{
-        'cameraId': cameraId,
-        'reset': point == null,
-        'x': point?.x,
-        'y': point?.y,
-      },
-    );
+    await _hostApi.setFocusPoint(_pigeonPoint(point));
   }
 
   @override
   Future<double> getMaxZoomLevel(int cameraId) async {
-    final double? maxZoomLevel = await _channel.invokeMethod<double>(
-      'getMaxZoomLevel',
-      <String, dynamic>{'cameraId': cameraId},
-    );
-
-    return maxZoomLevel!;
+    return _hostApi.getMaxZoomLevel();
   }
 
   @override
   Future<double> getMinZoomLevel(int cameraId) async {
-    final double? minZoomLevel = await _channel.invokeMethod<double>(
-      'getMinZoomLevel',
-      <String, dynamic>{'cameraId': cameraId},
-    );
-
-    return minZoomLevel!;
+    return _hostApi.getMinZoomLevel();
   }
 
   @override
   Future<void> setZoomLevel(int cameraId, double zoom) async {
     try {
-      await _channel.invokeMethod<double>(
-        'setZoomLevel',
-        <String, dynamic>{
-          'cameraId': cameraId,
-          'zoom': zoom,
-        },
-      );
+      await _hostApi.setZoomLevel(zoom);
     } on PlatformException catch (e) {
       throw CameraException(e.code, e.message);
     }
@@ -480,40 +370,23 @@ class AVFoundationCamera extends CameraPlatform {
 
   @override
   Future<void> pausePreview(int cameraId) async {
-    await _channel.invokeMethod<double>(
-      'pausePreview',
-      <String, dynamic>{'cameraId': cameraId},
-    );
+    await _hostApi.pausePreview();
   }
 
   @override
   Future<void> resumePreview(int cameraId) async {
-    await _channel.invokeMethod<double>(
-      'resumePreview',
-      <String, dynamic>{'cameraId': cameraId},
-    );
+    await _hostApi.resumePreview();
   }
 
   @override
   Future<void> setDescriptionWhileRecording(
       CameraDescription description) async {
-    await _channel.invokeMethod<double>(
-      'setDescriptionWhileRecording',
-      <String, dynamic>{
-        'cameraName': description.name,
-      },
-    );
+    await _hostApi.updateDescriptionWhileRecording(description.name);
   }
 
   @override
-  Future<void> setImageFileFormat(int cameraId, ImageFileFormat format) {
-    return _channel.invokeMethod<void>(
-      'setImageFileFormat',
-      <String, dynamic>{
-        'cameraId': cameraId,
-        'fileFormat': format.name,
-      },
-    );
+  Future<void> setImageFileFormat(int cameraId, ImageFileFormat format) async {
+    await _hostApi.setImageFileFormat(_pigeonImageFileFormat(format));
   }
 
   @override
@@ -521,12 +394,13 @@ class AVFoundationCamera extends CameraPlatform {
     return Texture(textureId: cameraId);
   }
 
-  String _serializeFocusMode(FocusMode mode) {
+  /// Returns an [FocusMode]'s Pigeon representation.
+  PlatformFocusMode _pigeonFocusMode(FocusMode mode) {
     switch (mode) {
       case FocusMode.locked:
-        return 'locked';
+        return PlatformFocusMode.locked;
       case FocusMode.auto:
-        return 'auto';
+        return PlatformFocusMode.auto;
     }
     // The enum comes from a different package, which could get a new value at
     // any time, so provide a fallback that ensures this won't break when used
@@ -534,15 +408,16 @@ class AVFoundationCamera extends CameraPlatform {
     // the switch rather than a `default` so that the linter will flag the
     // switch as needing an update.
     // ignore: dead_code
-    return 'auto';
+    return PlatformFocusMode.auto;
   }
 
-  String _serializeExposureMode(ExposureMode mode) {
+  /// Returns an [ExposureMode]'s Pigeon representation.
+  PlatformExposureMode _pigeonExposureMode(ExposureMode mode) {
     switch (mode) {
       case ExposureMode.locked:
-        return 'locked';
+        return PlatformExposureMode.locked;
       case ExposureMode.auto:
-        return 'auto';
+        return PlatformExposureMode.auto;
     }
     // The enum comes from a different package, which could get a new value at
     // any time, so provide a fallback that ensures this won't break when used
@@ -550,20 +425,20 @@ class AVFoundationCamera extends CameraPlatform {
     // the switch rather than a `default` so that the linter will flag the
     // switch as needing an update.
     // ignore: dead_code
-    return 'auto';
+    return PlatformExposureMode.auto;
   }
 
-  /// Returns the flash mode as a String.
-  String _serializeFlashMode(FlashMode flashMode) {
+  /// Returns a [FlashMode]'s Pigeon representation.
+  PlatformFlashMode _pigeonFlashMode(FlashMode flashMode) {
     switch (flashMode) {
       case FlashMode.off:
-        return 'off';
+        return PlatformFlashMode.off;
       case FlashMode.auto:
-        return 'auto';
+        return PlatformFlashMode.auto;
       case FlashMode.always:
-        return 'always';
+        return PlatformFlashMode.always;
       case FlashMode.torch:
-        return 'torch';
+        return PlatformFlashMode.torch;
     }
     // The enum comes from a different package, which could get a new value at
     // any time, so provide a fallback that ensures this won't break when used
@@ -571,10 +446,10 @@ class AVFoundationCamera extends CameraPlatform {
     // the switch rather than a `default` so that the linter will flag the
     // switch as needing an update.
     // ignore: dead_code
-    return 'off';
+    return PlatformFlashMode.off;
   }
 
-  /// Returns the resolution preset's Pigeon representation.
+  /// Returns a [ResolutionPreset]'s Pigeon representation.
   PlatformResolutionPreset _pigeonResolutionPreset(
       ResolutionPreset? resolutionPreset) {
     if (resolutionPreset == null) {
@@ -605,7 +480,7 @@ class AVFoundationCamera extends CameraPlatform {
     return PlatformResolutionPreset.max;
   }
 
-  /// Returns image format's Pigeon representation.
+  /// Returns an [ImageFormatGroup]'s Pigeon representation.
   PlatformImageFormatGroup _pigeonImageFormat(ImageFormatGroup format) {
     switch (format) {
       // "unknown" is used to indicate the default.
@@ -627,6 +502,34 @@ class AVFoundationCamera extends CameraPlatform {
     // doing fallback, when a specific unsupported format is requested. This
     // would require a breaking change at this layer and the app-facing layer.
     return PlatformImageFormatGroup.bgra8888;
+  }
+
+  /// Returns an [ImageFileFormat]'s Pigeon representation.
+  PlatformImageFileFormat _pigeonImageFileFormat(ImageFileFormat format) {
+    switch (format) {
+      case ImageFileFormat.heif:
+        return PlatformImageFileFormat.heif;
+      case ImageFileFormat.jpeg:
+        return PlatformImageFileFormat.jpeg;
+    }
+    // The enum comes from a different package, which could get a new value at
+    // any time, so provide a fallback that ensures this won't break when used
+    // with a version that contains new values. This is deliberately outside
+    // the switch rather than a `default` so that the linter will flag the
+    // switch as needing an update.
+    // TODO(stuartmorgan): Consider throwing an UnsupportedError, instead of
+    // doing fallback, when a specific unsupported format is requested. This
+    // would require a breaking change at this layer and the app-facing layer.
+    // ignore: dead_code
+    return PlatformImageFileFormat.jpeg;
+  }
+
+  /// Returns a [Point]s Pigeon representation.
+  PlatformPoint? _pigeonPoint(Point<double>? point) {
+    if (point == null) {
+      return null;
+    }
+    return PlatformPoint(x: point.x, y: point.y);
   }
 }
 
