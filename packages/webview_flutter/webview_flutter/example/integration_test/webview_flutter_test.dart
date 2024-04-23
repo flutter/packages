@@ -280,6 +280,9 @@ Future<void> main() async {
       await tester.pumpWidget(WebViewWidget(controller: controller));
       print('C: Widget pumped');
 
+      await tester.pumpAndSettle();
+      print('C: Pumped and settle');
+
       await pageLoaded.future;
       print('C: Future page loaded');
 
