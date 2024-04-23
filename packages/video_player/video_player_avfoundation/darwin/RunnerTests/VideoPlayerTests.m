@@ -668,8 +668,10 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
   NSNumber *isPictureInPictureSupported = [videoPlayerPlugin isPictureInPictureSupported:&error];
   XCTAssertNil(error);
   XCTAssertNotNil(isPictureInPictureSupported);
-  XCTAssertEqual(isPictureInPictureSupported.boolValue,
-                 [AVPictureInPictureController isPictureInPictureSupported]);
+  if (@available(macOS 10.15, *)) {
+        XCTAssertEqual(isPictureInPictureSupported.boolValue,
+                       [AVPictureInPictureController isPictureInPictureSupported]);
+  }
   if (isPictureInPictureSupported.boolValue) {
     FVPStartPictureInPictureMessage *startPictureInPicture =
         [FVPStartPictureInPictureMessage makeWithTextureId:textureId.integerValue];
