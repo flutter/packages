@@ -262,7 +262,8 @@ class AndroidCameraCameraX extends CameraPlatform {
       cameraCount++;
 
       cameraDescriptions.add(CameraDescription(
-          name: cameraName,
+          name:
+              cameraName, // TODO(camsim99): get actual ID here from Camera2CameraInfo
           lensDirection: cameraLensDirection,
           sensorOrientation: cameraSensorOrientation));
     }
