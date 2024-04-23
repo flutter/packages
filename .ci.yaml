@@ -322,12 +322,14 @@ targets:
       version_file: flutter_master.version
       target_file: linux_custom_package_tests.yaml
       # Pigeon tests need Andoid deps (thus the Linux_android base), emulator,
-      # and clang-format.
+      # and Linux desktop deps.
       # web_benchmarks needs Chrome.
       dependencies: >-
         [
           {"dependency": "android_virtual_device", "version": "android_34_google_apis_x64.textpb"},
           {"dependency": "clang", "version": "git_revision:5d5aba78dbbee75508f01bcaa69aedb2ab79065a"},
+          {"dependency": "cmake", "version": "build_id:8787856497187628321"},
+          {"dependency": "ninja", "version": "version:1.9.0"},
           {"dependency": "chrome_and_driver", "version": "version:114.0"}
         ]
       channel: master
@@ -349,6 +351,8 @@ targets:
         [
           {"dependency": "android_virtual_device", "version": "android_34_google_apis_x64.textpb"},
           {"dependency": "clang", "version": "git_revision:5d5aba78dbbee75508f01bcaa69aedb2ab79065a"},
+          {"dependency": "cmake", "version": "build_id:8787856497187628321"},
+          {"dependency": "ninja", "version": "version:1.9.0"},
           {"dependency": "chrome_and_driver", "version": "version:114.0"}
         ]
       channel: stable

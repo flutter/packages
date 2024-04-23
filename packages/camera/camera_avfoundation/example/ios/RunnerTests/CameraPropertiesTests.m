@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+@import camera_avfoundation;
 @import camera_avfoundation.Test;
 @import AVFoundation;
 @import XCTest;
@@ -31,30 +32,16 @@
 
 #pragma mark - exposure mode tests
 
-- (void)testFLTGetStringForFLTExposureMode {
-  XCTAssertEqualObjects(@"auto", FLTGetStringForFLTExposureMode(FLTExposureModeAuto));
-  XCTAssertEqualObjects(@"locked", FLTGetStringForFLTExposureMode(FLTExposureModeLocked));
-  XCTAssertNil(FLTGetStringForFLTExposureMode(-1));
-}
-
-- (void)testFLTGetFLTExposureModeForString {
-  XCTAssertEqual(FLTExposureModeAuto, FLTGetFLTExposureModeForString(@"auto"));
-  XCTAssertEqual(FLTExposureModeLocked, FLTGetFLTExposureModeForString(@"locked"));
-  XCTAssertEqual(FLTExposureModeInvalid, FLTGetFLTExposureModeForString(@"unknown"));
+- (void)testFCPGetExposureModeForString {
+  XCTAssertEqual(FCPPlatformExposureModeAuto, FCPGetExposureModeForString(@"auto"));
+  XCTAssertEqual(FCPPlatformExposureModeLocked, FCPGetExposureModeForString(@"locked"));
 }
 
 #pragma mark - focus mode tests
 
-- (void)testFLTGetStringForFLTFocusMode {
-  XCTAssertEqualObjects(@"auto", FLTGetStringForFLTFocusMode(FLTFocusModeAuto));
-  XCTAssertEqualObjects(@"locked", FLTGetStringForFLTFocusMode(FLTFocusModeLocked));
-  XCTAssertNil(FLTGetStringForFLTFocusMode(-1));
-}
-
 - (void)testFLTGetFLTFocusModeForString {
-  XCTAssertEqual(FLTFocusModeAuto, FLTGetFLTFocusModeForString(@"auto"));
-  XCTAssertEqual(FLTFocusModeLocked, FLTGetFLTFocusModeForString(@"locked"));
-  XCTAssertEqual(FLTFocusModeInvalid, FLTGetFLTFocusModeForString(@"unknown"));
+  XCTAssertEqual(FCPPlatformFocusModeAuto, FCPGetFocusModeForString(@"auto"));
+  XCTAssertEqual(FCPPlatformFocusModeLocked, FCPGetFocusModeForString(@"locked"));
 }
 
 #pragma mark - resolution preset tests
@@ -93,15 +80,17 @@
 }
 
 - (void)testFLTGetStringForUIDeviceOrientation {
-  XCTAssertEqualObjects(@"portraitDown",
-                        FLTGetStringForUIDeviceOrientation(UIDeviceOrientationPortraitUpsideDown));
-  XCTAssertEqualObjects(@"landscapeLeft",
-                        FLTGetStringForUIDeviceOrientation(UIDeviceOrientationLandscapeLeft));
-  XCTAssertEqualObjects(@"landscapeRight",
-                        FLTGetStringForUIDeviceOrientation(UIDeviceOrientationLandscapeRight));
-  XCTAssertEqualObjects(@"portraitUp",
-                        FLTGetStringForUIDeviceOrientation(UIDeviceOrientationPortrait));
-  XCTAssertEqualObjects(@"portraitUp", FLTGetStringForUIDeviceOrientation(-1));
+  XCTAssertEqual(
+      FCPPlatformDeviceOrientationPortraitDown,
+      FCPGetPigeonDeviceOrientationForOrientation(UIDeviceOrientationPortraitUpsideDown));
+  XCTAssertEqual(FCPPlatformDeviceOrientationLandscapeLeft,
+                 FCPGetPigeonDeviceOrientationForOrientation(UIDeviceOrientationLandscapeLeft));
+  XCTAssertEqual(FCPPlatformDeviceOrientationLandscapeRight,
+                 FCPGetPigeonDeviceOrientationForOrientation(UIDeviceOrientationLandscapeRight));
+  XCTAssertEqual(FCPPlatformDeviceOrientationPortraitUp,
+                 FCPGetPigeonDeviceOrientationForOrientation(UIDeviceOrientationPortrait));
+  XCTAssertEqual(FCPPlatformDeviceOrientationPortraitUp,
+                 FCPGetPigeonDeviceOrientationForOrientation(-1));
 }
 
 #pragma mark - file format tests
