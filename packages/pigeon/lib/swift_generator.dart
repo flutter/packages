@@ -465,7 +465,8 @@ class SwiftGenerator extends StructuredGenerator<SwiftOptions> {
           _writeHostMethodMessageHandler(
             indent,
             name: method.name,
-            channelName: makeChannelName(api, method, dartPackageName),
+            channelName:
+                '${makeChannelName(api, method, dartPackageName)}\\(channelSuffix)',
             parameters: method.parameters,
             returnType: method.returnType,
             isAsynchronous: method.isAsynchronous,
@@ -588,6 +589,15 @@ class SwiftGenerator extends StructuredGenerator<SwiftOptions> {
         );
         indent.newln();
       }
+
+      _writeProxyApiNewInstanceMethod(
+        indent,
+        api,
+        generatorOptions: generatorOptions,
+        apiAsTypeDeclaration: apiAsTypeDeclaration,
+        newInstanceMethodName: '${classMemberNamePrefix}newInstance',
+        dartPackageName: dartPackageName,
+      );
     });
   }
 
@@ -963,7 +973,7 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
     final String varChannelName = '${name}Channel';
     addDocumentationComments(indent, documentationComments, _docCommentSpec);
     indent.writeln(
-        'let $varChannelName = FlutterBasicMessageChannel(name: "$channelName\\(channelSuffix)", binaryMessenger: binaryMessenger$codecArgumentString)');
+        'let $varChannelName = FlutterBasicMessageChannel(name: "$channelName", binaryMessenger: binaryMessenger$codecArgumentString)');
     indent.write('if let api = api ');
     indent.addScoped('{', '}', () {
       indent.write('$varChannelName.setMessageHandler ');
