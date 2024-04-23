@@ -35,5 +35,9 @@ flutter:
 dependency_overrides:
   video_player:
     path: ../../../video_player/video_player
+  video_player_android:
+    path: ../../../video_player/video_player_android
+  video_player_avfoundation:
+    path: ../../../video_player/video_player_avfoundation
   video_player_platform_interface:
     path: ../../../video_player/video_player_platform_interface
