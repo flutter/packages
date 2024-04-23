@@ -1559,11 +1559,12 @@ class _Subscription {
   }
 }
 
-ErrorWidget _buildErrorWidget(String message) {
-  FlutterError.reportError(FlutterErrorDetails(
+Widget _buildErrorWidget(String message) {
+  final FlutterErrorDetails detail = FlutterErrorDetails(
     exception: message,
     stack: StackTrace.current,
     library: 'Remote Flutter Widgets',
-  ));
-  return ErrorWidget(message);
+  );
+  FlutterError.reportError(detail);
+  return ErrorWidget.builder(detail);
 }

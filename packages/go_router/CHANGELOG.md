@@ -1,6 +1,19 @@
-## NEXT
+## 13.2.4
 
-* Updates minimum supported SDK version to Flutter 3.13/Dart 3.1.
+- Updates examples to use uri.path instead of uri.toString() for accessing the current location.
+
+## 13.2.3
+
+- Fixes an issue where deep links without path caused an exception
+
+## 13.2.2
+
+- Fixes restoreRouteInformation issue when GoRouter.optionURLReflectsImperativeAPIs is true and the last match is ShellRouteMatch
+
+## 13.2.1
+
+- Updates minimum supported SDK version to Flutter 3.16/Dart 3.2.
+- Fixes memory leaks.
 
 ## 13.2.0
 

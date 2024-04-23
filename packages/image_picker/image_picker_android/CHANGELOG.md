@@ -1,5 +1,19 @@
-## NEXT
+## 0.8.10
 
+* Adds limit parameter to `MediaOptions` and `MultiImagePickerOptions` that sets a limit to how many media or image items can be selected.
+
+## 0.8.9+6
+
+* Updates minSdkVersion to 19.
+* Updates minimum supported SDK version to Flutter 3.16/Dart 3.2.
+
+## 0.8.9+5
+
+* Bumps androidx.exifinterface:exifinterface from 1.3.6 to 1.3.7.
+
+## 0.8.9+4
+
+* Minimizes scope of deprecation warning suppression to only the versions where it is required.
 * Updates minimum supported SDK version to Flutter 3.13/Dart 3.1.
 * Updates compileSdk version to 34.
 
