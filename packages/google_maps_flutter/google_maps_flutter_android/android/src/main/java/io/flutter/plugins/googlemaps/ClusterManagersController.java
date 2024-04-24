@@ -161,8 +161,7 @@ class ClusterManagersController
   @SuppressWarnings("unchecked")
   private static String getClusterManagerId(Object clusterManagerData) {
     Map<String, Object> clusterMap = (Map<String, Object>) clusterManagerData;
-    // The "clusterManagerId" key is set at:
-    // https://github.com/flutter/packages/blob/dce6f0c91fcf01ee3a67e3475155ec9f16ce2a66/packages/google_maps_flutter/google_maps_flutter_platform_interface/lib/src/types/cluster_manager.dart#L62
+    // Ref: google_maps_flutter_platform_interface/lib/src/types/cluster_manager.dart ClusterManager.toJson() method.
     return (String) clusterMap.get("clusterManagerId");
   }
 
