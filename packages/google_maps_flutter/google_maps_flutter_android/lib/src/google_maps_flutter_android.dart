@@ -173,6 +173,11 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
   }
 
   @override
+  Stream<GroundOverlayTapEvent> onGroundOverlayTap({required int mapId}) {
+    return _events(mapId).whereType<GroundOverlayTapEvent>();
+  }
+
+  @override
   Stream<MapTapEvent> onTap({required int mapId}) {
     return _events(mapId).whereType<MapTapEvent>();
   }
@@ -279,6 +284,12 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
           arguments['zoom'] as int?,
         );
         return tile.toJson();
+      case 'groundOverlay#onTap':
+        final Map<String, Object?> arguments = _getArgumentDictionary(call);
+        final GroundOverlayId groundOverlayId =
+            GroundOverlayId(arguments['groundOverlayId']! as String);
+        _mapEventStreamController
+            .add(GroundOverlayTapEvent(mapId, groundOverlayId));
       case 'cluster#onTap':
         final Map<String, Object?> arguments = _getArgumentDictionary(call);
         final Cluster cluster = parseCluster(
@@ -376,6 +387,17 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
     return _channel(mapId).invokeMethod<void>(
       'tileOverlays#update',
       updates.toJson(),
+    );
+  }
+
+  @override
+  Future<void> updateGroundOverlays(
+    GroundOverlayUpdates groundOverlayUpdates, {
+    required int mapId,
+  }) {
+    return _channel(mapId).invokeMethod<void>(
+      'groundOverlays#update',
+      groundOverlayUpdates.toJson(),
     );
   }
 
@@ -588,6 +610,9 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
       'tileOverlaysToAdd': serializeTileOverlaySet(mapObjects.tileOverlays),
       'clusterManagersToAdd':
           serializeClusterManagerSet(mapObjects.clusterManagers),
+      'groundOverlaysToAdd': serializeGroundOverlaySet(
+        mapObjects.groundOverlays,
+      ),
     };
 
     const String viewType = 'plugins.flutter.dev/google_maps_android';
@@ -666,6 +691,7 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
     Set<Circle> circles = const <Circle>{},
     Set<TileOverlay> tileOverlays = const <TileOverlay>{},
     Set<ClusterManager> clusterManagers = const <ClusterManager>{},
+    Set<GroundOverlay> groundOverlays = const <GroundOverlay>{},
     Set<Factory<OneSequenceGestureRecognizer>>? gestureRecognizers,
     Map<String, dynamic> mapOptions = const <String, dynamic>{},
   }) {
@@ -681,6 +707,7 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
           polylines: polylines,
           circles: circles,
           clusterManagers: clusterManagers,
+          groundOverlays: groundOverlays,
           tileOverlays: tileOverlays),
       mapOptions: mapOptions,
     );
@@ -697,6 +724,7 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
     Set<Circle> circles = const <Circle>{},
     Set<TileOverlay> tileOverlays = const <TileOverlay>{},
     Set<ClusterManager> clusterManagers = const <ClusterManager>{},
+    Set<GroundOverlay> groundOverlays = const <GroundOverlay>{},
     Set<Factory<OneSequenceGestureRecognizer>>? gestureRecognizers,
     Map<String, dynamic> mapOptions = const <String, dynamic>{},
   }) {
@@ -711,6 +739,7 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
       circles: circles,
       tileOverlays: tileOverlays,
       clusterManagers: clusterManagers,
+      groundOverlays: groundOverlays,
       gestureRecognizers: gestureRecognizers,
       mapOptions: mapOptions,
     );

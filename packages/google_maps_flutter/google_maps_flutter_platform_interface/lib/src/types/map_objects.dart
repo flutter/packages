@@ -21,6 +21,7 @@ class MapObjects {
     this.polylines = const <Polyline>{},
     this.circles = const <Circle>{},
     this.tileOverlays = const <TileOverlay>{},
+    this.groundOverlays = const <GroundOverlay>{},
     this.clusterManagers = const <ClusterManager>{},
   });
 
@@ -29,5 +30,6 @@ class MapObjects {
   final Set<Polyline> polylines;
   final Set<Circle> circles;
   final Set<TileOverlay> tileOverlays;
+  final Set<GroundOverlay> groundOverlays;
   final Set<ClusterManager> clusterManagers;
 }
