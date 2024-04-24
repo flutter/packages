@@ -63,7 +63,8 @@ typedef NavigatorBuilder = Widget Function(
 ///
 /// If the return value is true or the future resolve to true, the route will
 /// exit as usual. Otherwise, the operation will abort.
-typedef ExitCallback = FutureOr<bool> Function(BuildContext context);
+typedef ExitCallback = FutureOr<bool> Function(
+    BuildContext context, GoRouterState state);
 
 /// The base class for [GoRoute] and [ShellRoute].
 ///
