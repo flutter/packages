@@ -20,7 +20,7 @@ const String proxyApiReaderWriterName =
 /// Template for delegate with callback when an object is deallocated.
 const String instanceManagerFinalizerDelegateTemplate = '''
 /// Handles the callback when an object is deallocated.
-public protocol $instanceManagerFinalizerDelegateName: AnyObject {
+protocol $instanceManagerFinalizerDelegateName: AnyObject {
   /// Invoked when the strong reference of an object is deallocated in an `InstanceManager`.
   func onDeinit(identifier: Int64)
 }
@@ -76,7 +76,7 @@ const String instanceManagerTemplate = '''
 /// again.
 ///
 /// Accessing and inserting to an InstanceManager is thread safe.
-public class $instanceManagerClassName {
+final class $instanceManagerClassName {
   // Identifiers are locked to a specific range to avoid collisions with objects
   // created simultaneously from Dart.
   // Host uses identifiers >= 2^16 and Dart is expected to use values n where,
@@ -343,7 +343,7 @@ String proxyApiReaderWriterTemplate({
   }).join(' else ');
 
   return '''
-fileprivate class $proxyApiReaderWriterName: FlutterStandardReaderWriter {
+private class $proxyApiReaderWriterName: FlutterStandardReaderWriter {
   unowned let pigeonRegistrar: $proxyApiRegistrarName
   
   private class ${classNamePrefix}ProxyApiCodecReader: FlutterStandardReader {

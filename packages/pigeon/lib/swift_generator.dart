@@ -1651,7 +1651,7 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
     );
     indent.writeScoped('$methodSignature {', '}', () {
       indent.writeScoped(
-        'if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance) {',
+        'if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {',
         '}',
         () {
           indent.writeln('completion(.success(Void()))');
@@ -1660,7 +1660,7 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
       );
       if (api.hasCallbackConstructor()) {
         indent.writeln(
-          'let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeonInstance)',
+          'let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeonInstance as AnyObject)',
         );
         enumerate(api.unattachedFields, (int index, ApiField field) {
           final String argName = _getSafeArgumentName(index, field);

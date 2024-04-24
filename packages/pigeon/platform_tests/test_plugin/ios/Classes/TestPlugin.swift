@@ -14,6 +14,7 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
   var flutterAPI: FlutterIntegrationCoreApi
   var flutterSmallApiOne: FlutterSmallApi
   var flutterSmallApiTwo: FlutterSmallApi
+  var proxyApiRegistrar: PigeonProxyApiRegistrar?
 
   public static func register(with registrar: FlutterPluginRegistrar) {
     let plugin = TestPlugin(binaryMessenger: registrar.messenger())
@@ -28,6 +29,14 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
       binaryMessenger: binaryMessenger, messageChannelSuffix: "suffixOne")
     flutterSmallApiTwo = FlutterSmallApi(
       binaryMessenger: binaryMessenger, messageChannelSuffix: "suffixTwo")
+    proxyApiRegistrar = PigeonProxyApiRegistrar(
+      binaryMessenger: binaryMessenger, apiDelegate: ProxyApiDelegate())
+    proxyApiRegistrar!.setUp()
+  }
+
+  public func detachFromEngine(for registrar: FlutterPluginRegistrar) {
+    proxyApiRegistrar!.tearDown()
+    proxyApiRegistrar = nil
   }
 
   // MARK: HostIntegrationCoreApi implementation

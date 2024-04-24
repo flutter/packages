@@ -104,42 +104,8 @@ final class InstanceManagerTests: XCTestCase {
     let binaryMessenger = MockBinaryMessenger<String>(
       codec: FlutterStandardMessageCodec.sharedInstance())
 
-    class PigeonApiDelegateImpl: PigeonProxyApiDelegate {
-      func pigeonApiProxyApiTestClass(_ pigeonRegistrar: test_plugin.PigeonProxyApiRegistrar)
-        -> PigeonApiProxyApiTestClass
-      {
-        class ProxyApiDel: PigeonDelegateProxyApiTestClass {
-          func pigeonDefaultConstructor(_ pigeonApi: PigeonApiProxyApiTestClass) throws
-            -> test_plugin.ProxyApiTestClass
-          {
-            return ProxyApiTestClass()
-          }
-
-          func someField(
-            _ pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: test_plugin.ProxyApiTestClass
-          ) throws -> Int {
-            return 3
-          }
-
-          func attachedField(
-            _ pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: test_plugin.ProxyApiTestClass
-          ) throws -> test_plugin.ProxyApiSuperClass {
-            return ProxyApiSuperClass()
-          }
-
-          func echo(
-            _ pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: test_plugin.ProxyApiTestClass,
-            aBool: Bool
-          ) throws -> Bool {
-            return true
-          }
-        }
-
-        return PigeonApiProxyApiTestClass(pigeonRegistrar: pigeonRegistrar, delegate: ProxyApiDel())
-      }
-    }
     var registrar: PigeonProxyApiRegistrar? = PigeonProxyApiRegistrar(
-      binaryMessenger: binaryMessenger, apiDelegate: PigeonApiDelegateImpl())
+      binaryMessenger: binaryMessenger, apiDelegate: ProxyApiDelegate())
 
     // Add the scenario where the InstanceManager contains an instance that contains a ProxyApi implementation
     class TestClass {

@@ -49,7 +49,7 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
   return value as! T?
 }
 /// Handles the callback when an object is deallocated.
-public protocol PigeonFinalizerDelegate: AnyObject {
+protocol PigeonFinalizerDelegate: AnyObject {
   /// Invoked when the strong reference of an object is deallocated in an `InstanceManager`.
   func onDeinit(identifier: Int64)
 }
@@ -99,7 +99,7 @@ internal final class PigeonFinalizer {
 /// again.
 ///
 /// Accessing and inserting to an InstanceManager is thread safe.
-public class PigeonInstanceManager {
+final class PigeonInstanceManager {
   // Identifiers are locked to a specific range to avoid collisions with objects
   // created simultaneously from Dart.
   // Host uses identifiers >= 2^16 and Dart is expected to use values n where,
@@ -2547,11 +2547,12 @@ final class PigeonApiProxyApiTestClass {
   func pigeonNewInstance(
     pigeonInstance: ProxyApiTestClass, completion: @escaping (Result<Void, FlutterError>) -> Void
   ) {
-    if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance) {
+    if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {
       completion(.success(Void()))
       return
     }
-    let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeonInstance)
+    let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(
+      pigeonInstance as AnyObject)
     let aBoolArg = try! pigeonDelegate.aBool(pigeonApi: self, pigeonInstance: pigeonInstance)
     let anIntArg = try! pigeonDelegate.anInt(pigeonApi: self, pigeonInstance: pigeonInstance)
     let aDoubleArg = try! pigeonDelegate.aDouble(pigeonApi: self, pigeonInstance: pigeonInstance)
@@ -3454,11 +3455,12 @@ final class PigeonApiProxyApiSuperClass {
   func pigeonNewInstance(
     pigeonInstance: ProxyApiSuperClass, completion: @escaping (Result<Void, FlutterError>) -> Void
   ) {
-    if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance) {
+    if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {
       completion(.success(Void()))
       return
     }
-    let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeonInstance)
+    let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(
+      pigeonInstance as AnyObject)
     let binaryMessenger = pigeonRegistrar.binaryMessenger
     let codec = pigeonRegistrar.codec
     let channelName: String =
@@ -3494,11 +3496,12 @@ final class PigeonApiProxyApiInterface {
   func pigeonNewInstance(
     pigeonInstance: ProxyApiInterface, completion: @escaping (Result<Void, FlutterError>) -> Void
   ) {
-    if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance) {
+    if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {
       completion(.success(Void()))
       return
     }
-    let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeonInstance)
+    let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(
+      pigeonInstance as AnyObject)
     let binaryMessenger = pigeonRegistrar.binaryMessenger
     let codec = pigeonRegistrar.codec
     let channelName: String =
