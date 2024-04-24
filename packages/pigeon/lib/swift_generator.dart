@@ -534,7 +534,7 @@ class SwiftGenerator extends StructuredGenerator<SwiftOptions> {
     );
 
     final String swiftApiDelegateName = '${classNamePrefix}Delegate${api.name}';
-    indent.writeScoped('protocol $swiftApiDelegateName: AnyObject {', '}', () {
+    indent.writeScoped('protocol $swiftApiDelegateName {', '}', () {
       _writeProxyApiConstructorDelegateMethods(
         indent,
         api,
@@ -561,7 +561,7 @@ class SwiftGenerator extends StructuredGenerator<SwiftOptions> {
 
     final String swiftApiName = '$hostProxyApiPrefix${api.name}';
 
-    indent.writeScoped('public class $swiftApiName {', '}', () {
+    indent.writeScoped('final class $swiftApiName {', '}', () {
       indent.writeln('unowned let pigeonRegistrar: $proxyApiRegistrarName');
       indent.writeln('let pigeonDelegate: $swiftApiDelegateName');
 
@@ -1090,7 +1090,7 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
     required Iterable<AstProxyApi> allProxyApis,
   }) {
     const String delegateName = '${classNamePrefix}ProxyApiDelegate';
-    indent.writeScoped('protocol $delegateName: AnyObject {', '}', () {
+    indent.writeScoped('protocol $delegateName {', '}', () {
       for (final AstProxyApi api in allProxyApis) {
         final String hostApiName = '$hostProxyApiPrefix${api.name}';
         indent.format(
@@ -1103,7 +1103,7 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
       }
     });
 
-    indent.writeScoped('public class $proxyApiRegistrarName {', '}', () {
+    indent.writeScoped('open class $proxyApiRegistrarName {', '}', () {
       indent.writeln('let binaryMessenger: FlutterBinaryMessenger');
       indent.writeln('let apiDelegate: $delegateName');
       indent.writeln('let instanceManager: PigeonInstanceManager');

@@ -46,6 +46,7 @@
 - meta
 - mime
 - path
+- pub_semver
 - shelf
 - shelf_static
 - source_gen

@@ -330,7 +330,7 @@ private class PigeonInstanceManagerApi {
   }
 }
 
-protocol PigeonProxyApiDelegate: AnyObject {
+protocol PigeonProxyApiDelegate {
   /// An implementation of [PigeonApiProxyApiTestClass] used to add a new Dart instance of
   /// `ProxyApiTestClass` to the Dart `InstanceManager` and make calls to Dart.
   func pigeonApiProxyApiTestClass(_ registrar: PigeonProxyApiRegistrar)
@@ -344,7 +344,7 @@ protocol PigeonProxyApiDelegate: AnyObject {
   func pigeonApiProxyApiInterface(_ registrar: PigeonProxyApiRegistrar)
     -> PigeonApiProxyApiInterface
 }
-public class PigeonProxyApiRegistrar {
+open class PigeonProxyApiRegistrar {
   let binaryMessenger: FlutterBinaryMessenger
   let apiDelegate: PigeonProxyApiDelegate
   let instanceManager: PigeonInstanceManager
@@ -394,7 +394,7 @@ public class PigeonProxyApiRegistrar {
     PigeonApiProxyApiSuperClass.setUpMessageHandlers(binaryMessenger: binaryMessenger, api: nil)
   }
 }
-fileprivate class PigeonProxyApiCodecReaderWriter: FlutterStandardReaderWriter {
+private class PigeonProxyApiCodecReaderWriter: FlutterStandardReaderWriter {
   unowned let pigeonRegistrar: PigeonProxyApiRegistrar
 
   private class PigeonProxyApiCodecReader: FlutterStandardReader {
@@ -471,7 +471,7 @@ enum ProxyApiTestEnum: Int {
   case two = 1
   case three = 2
 }
-protocol PigeonDelegateProxyApiTestClass: AnyObject {
+protocol PigeonDelegateProxyApiTestClass {
   func pigeonDefaultConstructor(
     pigeonApi: PigeonApiProxyApiTestClass, aBool: Bool, anInt: Int64, aDouble: Double,
     aString: String, aUint8List: FlutterStandardTypedData, aList: [Any?], aMap: [String?: Any?],
@@ -815,7 +815,7 @@ protocol PigeonDelegateProxyApiTestClass: AnyObject {
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, aString: String,
     completion: @escaping (Result<String, Error>) -> Void)
 }
-public class PigeonApiProxyApiTestClass {
+final class PigeonApiProxyApiTestClass {
   unowned let pigeonRegistrar: PigeonProxyApiRegistrar
   let pigeonDelegate: PigeonDelegateProxyApiTestClass
   ///An implementation of [ProxyApiSuperClass] used to access callback methods
@@ -3391,12 +3391,12 @@ public class PigeonApiProxyApiTestClass {
   }
 
 }
-protocol PigeonDelegateProxyApiSuperClass: AnyObject {
+protocol PigeonDelegateProxyApiSuperClass {
   func pigeonDefaultConstructor(pigeonApi: PigeonApiProxyApiSuperClass) throws -> ProxyApiSuperClass
   func aSuperMethod(pigeonApi: PigeonApiProxyApiSuperClass, pigeonInstance: ProxyApiSuperClass)
     throws
 }
-public class PigeonApiProxyApiSuperClass {
+final class PigeonApiProxyApiSuperClass {
   unowned let pigeonRegistrar: PigeonProxyApiRegistrar
   let pigeonDelegate: PigeonDelegateProxyApiSuperClass
   init(pigeonRegistrar: PigeonProxyApiRegistrar, delegate: PigeonDelegateProxyApiSuperClass) {
@@ -3481,9 +3481,9 @@ public class PigeonApiProxyApiSuperClass {
     }
   }
 }
-protocol PigeonDelegateProxyApiInterface: AnyObject {
+protocol PigeonDelegateProxyApiInterface {
 }
-public class PigeonApiProxyApiInterface {
+final class PigeonApiProxyApiInterface {
   unowned let pigeonRegistrar: PigeonProxyApiRegistrar
   let pigeonDelegate: PigeonDelegateProxyApiInterface
   init(pigeonRegistrar: PigeonProxyApiRegistrar, delegate: PigeonDelegateProxyApiInterface) {
