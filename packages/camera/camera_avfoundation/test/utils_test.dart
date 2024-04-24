@@ -27,13 +27,13 @@ void main() {
 
     test('serializeDeviceOrientation() should serialize correctly', () {
       expect(serializeDeviceOrientation(DeviceOrientation.portraitUp),
-          'portraitUp');
+          PlatformDeviceOrientation.portraitUp);
       expect(serializeDeviceOrientation(DeviceOrientation.portraitDown),
-          'portraitDown');
+          PlatformDeviceOrientation.portraitDown);
       expect(serializeDeviceOrientation(DeviceOrientation.landscapeRight),
-          'landscapeRight');
+          PlatformDeviceOrientation.landscapeRight);
       expect(serializeDeviceOrientation(DeviceOrientation.landscapeLeft),
-          'landscapeLeft');
+          PlatformDeviceOrientation.landscapeLeft);
     });
 
     test('deviceOrientationFromPlatform() should convert correctly', () {

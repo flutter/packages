@@ -55,12 +55,12 @@
   });
 
   // Pause then resume the recording.
-  [cam startVideoRecordingWithResult:^(id _Nullable result){
-  }];
-  [cam pauseVideoRecordingWithResult:^(id _Nullable result){
-  }];
-  [cam resumeVideoRecordingWithResult:^(id _Nullable result){
-  }];
+  [cam
+      startVideoRecordingWithCompletion:^(FlutterError *_Nullable error) {
+      }
+                  messengerForStreaming:nil];
+  [cam pauseVideoRecording];
+  [cam resumeVideoRecording];
 
   [cam captureOutput:cam.captureVideoOutput
       didOutputSampleBuffer:sampleBuffer
@@ -111,8 +111,10 @@
     writtenSamples = [writtenSamples arrayByAddingObject:@"audio"];
   });
 
-  [cam startVideoRecordingWithResult:^(id _Nullable result){
-  }];
+  [cam
+      startVideoRecordingWithCompletion:^(FlutterError *_Nullable error) {
+      }
+                  messengerForStreaming:nil];
 
   [cam captureOutput:nil didOutputSampleBuffer:audioSample fromConnection:connectionMock];
   [cam captureOutput:nil didOutputSampleBuffer:audioSample fromConnection:connectionMock];

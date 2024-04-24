@@ -1,3 +1,8 @@
+## 0.9.16
+
+* Converts Dart-to-host communcation to Pigeon.
+* Fixes a race condition in camera disposal.
+
 ## 0.9.15+4
 
 * Converts host-to-Dart communcation to Pigeon.
@@ -121,11 +126,11 @@
 
 ## 0.9.8+5
 
-* Fixes a regression introduced in 0.9.8+4 where the stream handler is not set. 
+* Fixes a regression introduced in 0.9.8+4 where the stream handler is not set.
 
 ## 0.9.8+4
 
-* Fixes a crash due to sending orientation change events when the engine is torn down. 
+* Fixes a crash due to sending orientation change events when the engine is torn down.
 
 ## 0.9.8+3
 

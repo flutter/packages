@@ -4,78 +4,32 @@
 
 #import "CameraProperties.h"
 
-#pragma mark - flash mode
-
-FLTFlashMode FLTGetFLTFlashModeForString(NSString *mode) {
-  if ([mode isEqualToString:@"off"]) {
-    return FLTFlashModeOff;
-  } else if ([mode isEqualToString:@"auto"]) {
-    return FLTFlashModeAuto;
-  } else if ([mode isEqualToString:@"always"]) {
-    return FLTFlashModeAlways;
-  } else if ([mode isEqualToString:@"torch"]) {
-    return FLTFlashModeTorch;
-  } else {
-    return FLTFlashModeInvalid;
-  }
-}
-
-AVCaptureFlashMode FLTGetAVCaptureFlashModeForFLTFlashMode(FLTFlashMode mode) {
+AVCaptureFlashMode FCPGetAVCaptureFlashModeForPigeonFlashMode(FCPPlatformFlashMode mode) {
   switch (mode) {
-    case FLTFlashModeOff:
+    case FCPPlatformFlashModeOff:
       return AVCaptureFlashModeOff;
-    case FLTFlashModeAuto:
+    case FCPPlatformFlashModeAuto:
       return AVCaptureFlashModeAuto;
-    case FLTFlashModeAlways:
+    case FCPPlatformFlashModeAlways:
       return AVCaptureFlashModeOn;
-    case FLTFlashModeTorch:
-    default:
+    case FCPPlatformFlashModeTorch:
+      NSCAssert(false, @"This mode cannot be converted, and requires custom handling.");
       return -1;
   }
 }
 
-#pragma mark - exposure mode
-
-FCPPlatformExposureMode FCPGetExposureModeForString(NSString *mode) {
-  if ([mode isEqualToString:@"auto"]) {
-    return FCPPlatformExposureModeAuto;
-  } else if ([mode isEqualToString:@"locked"]) {
-    return FCPPlatformExposureModeLocked;
-  } else {
-    // This should be unreachable; see _serializeExposureMode in avfoundation_camera.dart.
-    NSCAssert(false, @"Unsupported exposure mode");
-    return FCPPlatformExposureModeAuto;
-  }
-}
-
-#pragma mark - focus mode
-
-FCPPlatformFocusMode FCPGetFocusModeForString(NSString *mode) {
-  if ([mode isEqualToString:@"auto"]) {
-    return FCPPlatformFocusModeAuto;
-  } else if ([mode isEqualToString:@"locked"]) {
-    return FCPPlatformFocusModeLocked;
-  } else {
-    // This should be unreachable; see _serializeFocusMode in avfoundation_camera.dart.
-    NSCAssert(false, @"Unsupported focus mode");
-    return FCPPlatformFocusModeAuto;
-  }
-}
-
-#pragma mark - device orientation
-
-UIDeviceOrientation FLTGetUIDeviceOrientationForString(NSString *orientation) {
-  if ([orientation isEqualToString:@"portraitDown"]) {
-    return UIDeviceOrientationPortraitUpsideDown;
-  } else if ([orientation isEqualToString:@"landscapeLeft"]) {
-    return UIDeviceOrientationLandscapeLeft;
-  } else if ([orientation isEqualToString:@"landscapeRight"]) {
-    return UIDeviceOrientationLandscapeRight;
-  } else if ([orientation isEqualToString:@"portraitUp"]) {
-    return UIDeviceOrientationPortrait;
-  } else {
-    return UIDeviceOrientationUnknown;
-  }
+UIDeviceOrientation FCPGetUIDeviceOrientationForPigeonDeviceOrientation(
+    FCPPlatformDeviceOrientation orientation) {
+  switch (orientation) {
+    case FCPPlatformDeviceOrientationPortraitDown:
+      return UIDeviceOrientationPortraitUpsideDown;
+    case FCPPlatformDeviceOrientationLandscapeLeft:
+      return UIDeviceOrientationLandscapeLeft;
+    case FCPPlatformDeviceOrientationLandscapeRight:
+      return UIDeviceOrientationLandscapeRight;
+    case FCPPlatformDeviceOrientationPortraitUp:
+      return UIDeviceOrientationPortrait;
+  };
 }
 
 FCPPlatformDeviceOrientation FCPGetPigeonDeviceOrientationForOrientation(
@@ -93,49 +47,11 @@ FCPPlatformDeviceOrientation FCPGetPigeonDeviceOrientationForOrientation(
   };
 }
 
-#pragma mark - resolution preset
-
-FLTResolutionPreset FLTGetFLTResolutionPresetForString(NSString *preset) {
-  if ([preset isEqualToString:@"veryLow"]) {
-    return FLTResolutionPresetVeryLow;
-  } else if ([preset isEqualToString:@"low"]) {
-    return FLTResolutionPresetLow;
-  } else if ([preset isEqualToString:@"medium"]) {
-    return FLTResolutionPresetMedium;
-  } else if ([preset isEqualToString:@"high"]) {
-    return FLTResolutionPresetHigh;
-  } else if ([preset isEqualToString:@"veryHigh"]) {
-    return FLTResolutionPresetVeryHigh;
-  } else if ([preset isEqualToString:@"ultraHigh"]) {
-    return FLTResolutionPresetUltraHigh;
-  } else if ([preset isEqualToString:@"max"]) {
-    return FLTResolutionPresetMax;
-  } else {
-    return FLTResolutionPresetInvalid;
-  }
-}
-
-#pragma mark - video format
-
-OSType FLTGetVideoFormatFromString(NSString *videoFormatString) {
-  if ([videoFormatString isEqualToString:@"bgra8888"]) {
-    return kCVPixelFormatType_32BGRA;
-  } else if ([videoFormatString isEqualToString:@"yuv420"]) {
-    return kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange;
-  } else {
-    NSLog(@"The selected imageFormatGroup is not supported by iOS. Defaulting to brga8888");
-    return kCVPixelFormatType_32BGRA;
-  }
-}
-
-#pragma mark - file format
-
-FCPFileFormat FCPGetFileFormatFromString(NSString *fileFormatString) {
-  if ([fileFormatString isEqualToString:@"jpg"]) {
-    return FCPFileFormatJPEG;
-  } else if ([fileFormatString isEqualToString:@"heif"]) {
-    return FCPFileFormatHEIF;
-  } else {
-    return FCPFileFormatInvalid;
+OSType FCPGetPixelFormatForPigeonFormat(FCPPlatformImageFormatGroup imageFormat) {
+  switch (imageFormat) {
+    case FCPPlatformImageFormatGroupBgra8888:
+      return kCVPixelFormatType_32BGRA;
+    case FCPPlatformImageFormatGroupYuv420:
+      return kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange;
   }
 }
