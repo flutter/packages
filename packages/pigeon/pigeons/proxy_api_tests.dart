@@ -455,7 +455,7 @@ abstract class ProxyApiTestClass extends ProxyApiSuperClass
 }
 
 /// ProxyApi to serve as a super class to the core ProxyApi class.
-@ProxyApi()
+@ProxyApi(swiftOptions: SwiftProxyApiOptions(name: 'ProxyApiSuperClass'))
 abstract class ProxyApiSuperClass {
   ProxyApiSuperClass();
 
