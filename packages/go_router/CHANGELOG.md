@@ -1,3 +1,7 @@
+## 13.2.5
+
+- Fixes an issue where route future does not complete when popping shell route.
+
 ## 13.2.4
 
 - Updates examples to use uri.path instead of uri.toString() for accessing the current location.
