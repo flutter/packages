@@ -27,13 +27,19 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI {
   public var transactionObserverCallbackChannel: FlutterMethodChannel?
 
   public static func register(with registrar: FlutterPluginRegistrar) {
+#if os(iOS)
+    let messenger = registrar.messenger();
+#endif
+#if os(macOS)
+    let messenger = registrar.messenger;
+#endif
     let channel = FlutterMethodChannel(
       name: "plugins.flutter.io/in_app_purchase",
-      binaryMessenger: registrar.messenger())
+      binaryMessenger: messenger)
     let instance = InAppPurchasePlugin(registrar: registrar)
     registrar.addMethodCallDelegate(instance, channel: channel)
     registrar.addApplicationDelegate(instance)
-    SetUpInAppPurchaseAPI(registrar.messenger(), instance)
+    SetUpInAppPurchaseAPI(messenger, instance)
   }
 
   public init(receiptManager: FIAPReceiptManager) {
@@ -80,8 +86,14 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI {
         weakSelf!.updatedDownloads()
       }, transactionCache: FIATransactionCache())
 
+#if os(iOS)
+    let messenger = registrar.messenger();
+#endif
+#if os(macOS)
+    let messenger = registrar.messenger;
+#endif
     transactionObserverCallbackChannel = FlutterMethodChannel(
-      name: "plugins.flutter.io/in_app_purchase", binaryMessenger: registrar.messenger())
+      name: "plugins.flutter.io/in_app_purchase", binaryMessenger: messenger)
   }
 
   public func canMakePaymentsWithError(_ error: AutoreleasingUnsafeMutablePointer<FlutterError?>)
