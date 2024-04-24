@@ -15,68 +15,39 @@
 
 #pragma mark - flash mode tests
 
-- (void)testFLTGetFLTFlashModeForString {
-  XCTAssertEqual(FLTFlashModeOff, FLTGetFLTFlashModeForString(@"off"));
-  XCTAssertEqual(FLTFlashModeAuto, FLTGetFLTFlashModeForString(@"auto"));
-  XCTAssertEqual(FLTFlashModeAlways, FLTGetFLTFlashModeForString(@"always"));
-  XCTAssertEqual(FLTFlashModeTorch, FLTGetFLTFlashModeForString(@"torch"));
-  XCTAssertEqual(FLTFlashModeInvalid, FLTGetFLTFlashModeForString(@"unknown"));
-}
-
-- (void)testFLTGetAVCaptureFlashModeForFLTFlashMode {
-  XCTAssertEqual(AVCaptureFlashModeOff, FLTGetAVCaptureFlashModeForFLTFlashMode(FLTFlashModeOff));
-  XCTAssertEqual(AVCaptureFlashModeAuto, FLTGetAVCaptureFlashModeForFLTFlashMode(FLTFlashModeAuto));
-  XCTAssertEqual(AVCaptureFlashModeOn, FLTGetAVCaptureFlashModeForFLTFlashMode(FLTFlashModeAlways));
-  XCTAssertEqual(-1, FLTGetAVCaptureFlashModeForFLTFlashMode(FLTFlashModeTorch));
-}
-
-#pragma mark - exposure mode tests
-
-- (void)testFCPGetExposureModeForString {
-  XCTAssertEqual(FCPPlatformExposureModeAuto, FCPGetExposureModeForString(@"auto"));
-  XCTAssertEqual(FCPPlatformExposureModeLocked, FCPGetExposureModeForString(@"locked"));
-}
-
-#pragma mark - focus mode tests
-
-- (void)testFLTGetFLTFocusModeForString {
-  XCTAssertEqual(FCPPlatformFocusModeAuto, FCPGetFocusModeForString(@"auto"));
-  XCTAssertEqual(FCPPlatformFocusModeLocked, FCPGetFocusModeForString(@"locked"));
-}
-
-#pragma mark - resolution preset tests
-
-- (void)testFLTGetFLTResolutionPresetForString {
-  XCTAssertEqual(FLTResolutionPresetVeryLow, FLTGetFLTResolutionPresetForString(@"veryLow"));
-  XCTAssertEqual(FLTResolutionPresetLow, FLTGetFLTResolutionPresetForString(@"low"));
-  XCTAssertEqual(FLTResolutionPresetMedium, FLTGetFLTResolutionPresetForString(@"medium"));
-  XCTAssertEqual(FLTResolutionPresetHigh, FLTGetFLTResolutionPresetForString(@"high"));
-  XCTAssertEqual(FLTResolutionPresetVeryHigh, FLTGetFLTResolutionPresetForString(@"veryHigh"));
-  XCTAssertEqual(FLTResolutionPresetUltraHigh, FLTGetFLTResolutionPresetForString(@"ultraHigh"));
-  XCTAssertEqual(FLTResolutionPresetMax, FLTGetFLTResolutionPresetForString(@"max"));
-  XCTAssertEqual(FLTResolutionPresetInvalid, FLTGetFLTResolutionPresetForString(@"unknown"));
+- (void)testFCPGetAVCaptureFlashModeForPigeonFlashMode {
+  XCTAssertEqual(AVCaptureFlashModeOff,
+                 FCPGetAVCaptureFlashModeForPigeonFlashMode(FCPPlatformFlashModeOff));
+  XCTAssertEqual(AVCaptureFlashModeAuto,
+                 FCPGetAVCaptureFlashModeForPigeonFlashMode(FCPPlatformFlashModeAuto));
+  XCTAssertEqual(AVCaptureFlashModeOn,
+                 FCPGetAVCaptureFlashModeForPigeonFlashMode(FCPPlatformFlashModeAlways));
+  XCTAssertThrows(FCPGetAVCaptureFlashModeForPigeonFlashMode(FCPPlatformFlashModeTorch));
 }
 
 #pragma mark - video format tests
 
-- (void)testFLTGetVideoFormatFromString {
-  XCTAssertEqual(kCVPixelFormatType_32BGRA, FLTGetVideoFormatFromString(@"bgra8888"));
+- (void)testFCPGetPixelFormatForPigeonFormat {
+  XCTAssertEqual(kCVPixelFormatType_32BGRA,
+                 FCPGetPixelFormatForPigeonFormat(FCPPlatformImageFormatGroupBgra8888));
   XCTAssertEqual(kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange,
-                 FLTGetVideoFormatFromString(@"yuv420"));
-  XCTAssertEqual(kCVPixelFormatType_32BGRA, FLTGetVideoFormatFromString(@"unknown"));
+                 FCPGetPixelFormatForPigeonFormat(FCPPlatformImageFormatGroupYuv420));
 }
 
 #pragma mark - device orientation tests
 
-- (void)testFLTGetUIDeviceOrientationForString {
+- (void)testFCPGetUIDeviceOrientationForPigeonDeviceOrientation {
   XCTAssertEqual(UIDeviceOrientationPortraitUpsideDown,
-                 FLTGetUIDeviceOrientationForString(@"portraitDown"));
+                 FCPGetUIDeviceOrientationForPigeonDeviceOrientation(
+                     FCPPlatformDeviceOrientationPortraitDown));
   XCTAssertEqual(UIDeviceOrientationLandscapeLeft,
-                 FLTGetUIDeviceOrientationForString(@"landscapeLeft"));
+                 FCPGetUIDeviceOrientationForPigeonDeviceOrientation(
+                     FCPPlatformDeviceOrientationLandscapeLeft));
   XCTAssertEqual(UIDeviceOrientationLandscapeRight,
-                 FLTGetUIDeviceOrientationForString(@"landscapeRight"));
-  XCTAssertEqual(UIDeviceOrientationPortrait, FLTGetUIDeviceOrientationForString(@"portraitUp"));
-  XCTAssertEqual(UIDeviceOrientationUnknown, FLTGetUIDeviceOrientationForString(@"unknown"));
+                 FCPGetUIDeviceOrientationForPigeonDeviceOrientation(
+                     FCPPlatformDeviceOrientationLandscapeRight));
+  XCTAssertEqual(UIDeviceOrientationPortrait, FCPGetUIDeviceOrientationForPigeonDeviceOrientation(
+                                                  FCPPlatformDeviceOrientationPortraitUp));
 }
 
 - (void)testFLTGetStringForUIDeviceOrientation {
@@ -91,14 +62,6 @@
                  FCPGetPigeonDeviceOrientationForOrientation(UIDeviceOrientationPortrait));
   XCTAssertEqual(FCPPlatformDeviceOrientationPortraitUp,
                  FCPGetPigeonDeviceOrientationForOrientation(-1));
-}
-
-#pragma mark - file format tests
-
-- (void)testFLTGetFileFormatForString {
-  XCTAssertEqual(FCPFileFormatJPEG, FCPGetFileFormatFromString(@"jpg"));
-  XCTAssertEqual(FCPFileFormatHEIF, FCPGetFileFormatFromString(@"heif"));
-  XCTAssertEqual(FCPFileFormatInvalid, FCPGetFileFormatFromString(@"unknown"));
 }
 
 @end
