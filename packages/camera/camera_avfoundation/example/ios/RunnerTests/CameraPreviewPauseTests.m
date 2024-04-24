@@ -16,16 +16,14 @@
 - (void)testPausePreviewWithResult_shouldPausePreview {
   FLTCam *camera = [[FLTCam alloc] init];
 
-  [camera pausePreviewWithResult:^(id _Nullable result){
-  }];
+  [camera pausePreview];
   XCTAssertTrue(camera.isPreviewPaused);
 }
 
 - (void)testResumePreviewWithResult_shouldResumePreview {
   FLTCam *camera = [[FLTCam alloc] init];
 
-  [camera resumePreviewWithResult:^(id _Nullable result){
-  }];
+  [camera resumePreview];
   XCTAssertFalse(camera.isPreviewPaused);
 }
 
