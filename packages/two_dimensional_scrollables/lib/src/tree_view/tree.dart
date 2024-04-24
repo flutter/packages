@@ -550,6 +550,7 @@ class TreeView<T> extends StatefulWidget {
             dimension: 30.0,
             child: node.children.isNotEmpty
                 ? AnimatedRotation(
+                    key: Key(node.content.toString()),
                     turns: node.isExpanded ? 0.25 : 0.0,
                     duration: animationDuration,
                     curve: animationCurve,
@@ -586,6 +587,19 @@ class _TreeViewState<T> extends State<TreeView<T>>
   // The flat representation of the tree, omitting nodes that are not active.
   final List<TreeViewNode<T>> _activeNodes = <TreeViewNode<T>>[];
   final Map<int, int> _rowDepths = <int, int>{};
+  bool _shouldUnpackNode(TreeViewNode<T> node) {
+    if (node.children.isEmpty) {
+      // No children to unpack.
+      return false;
+    }
+    if (_currentAnimationForParent[node] != null) {
+      // Whether expanding or collapsing, the child nodes are still active, so
+      // unpack.
+      return true;
+    }
+    // If we are not animating, respect node.isExpanded;
+    return node.isExpanded;
+  }
   // Flattens the tree, omitting nodes that are not active.
   void _unpackActiveNodes({
     int depth = 0,
@@ -602,7 +616,7 @@ class _TreeViewState<T> extends State<TreeView<T>>
       node._parent = parent;
       _activeNodes.add(node);
       _rowDepths[_activeNodes.indexOf(node)] = depth;
-      if (node.children.isNotEmpty && node.isExpanded) {
+      if (_shouldUnpackNode(node)) {
         _unpackActiveNodes(
           depth: depth + 1,
           nodes: node.children,
@@ -830,13 +844,14 @@ class _TreeViewState<T> extends State<TreeView<T>>
       return;
     }
     setState(() {
+      node._expanded = !node._expanded;
       if (widget.onNodeToggle != null) {
         widget.onNodeToggle!(node);
       }
       final AnimationController controller =
           _currentAnimationForParent[node]?.controller ??
               AnimationController(
-                value: node._expanded ? 1.0 : 0.0,
+                value: node._expanded ? 0.0 : 1.0,
                 vsync: this,
                 duration: widget.animationStyle?.duration ??
                     TreeView.defaultAnimationDuration,
@@ -879,20 +894,14 @@ class _TreeViewState<T> extends State<TreeView<T>>
         // render object, since the indexes can change at any time.
         key: UniqueKey(),
       );
-      switch (!node._expanded) {
+      switch (node._expanded) {
         case true:
           // Expanding
-          // Adds new nodes that are coming into view.
-          node._expanded = true;
           _unpackActiveNodes();
           controller.forward();
         case false:
           // Collapsing
           controller.reverse().then((_) {
-            // Removes nodes that have been hidden after the collapsing
-            // animation completes, only change node expansion state after
-            // animation completes as this effects which nodes are unpacked.
-            node._expanded = false;
             _unpackActiveNodes();
           });
       }
