@@ -21,6 +21,7 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
     HostIntegrationCoreApiSetup.setUp(binaryMessenger: registrar.messenger(), api: plugin)
     TestPluginWithSuffix.register(with: registrar, suffix: "suffixOne")
     TestPluginWithSuffix.register(with: registrar, suffix: "suffixTwo")
+    registrar.publish(plugin)
   }
 
   init(binaryMessenger: FlutterBinaryMessenger) {
