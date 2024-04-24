@@ -1780,7 +1780,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
   });
 
   group('Proxy API Tests', () {
-    if (targetGenerator != TargetGenerator.kotlin) {
+    if (targetGenerator != TargetGenerator.swift) {
       return;
     }
 
