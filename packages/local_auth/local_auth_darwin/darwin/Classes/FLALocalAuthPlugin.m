@@ -70,8 +70,8 @@ typedef void (^FLADAuthCompletion)(FLADAuthResultDetails *_Nullable, FlutterErro
 }
 
 /// Returns an instance that uses the given factory to create LAContexts.
-- (instancetype)initWithContextFactoryAndRegistrar:(NSObject<FLADAuthContextFactory> *)factory
-                                      andRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar {
+- (instancetype)initWithContextFactory:(NSObject<FLADAuthContextFactory> *)factory
+                          andRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar {
   self = [super init];
   if (self) {
     _registrar = registrar;
