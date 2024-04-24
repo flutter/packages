@@ -78,7 +78,7 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
 
   /// The depth of each currently active node in the tree.
   ///
-  /// This is used to properly set the [ChildVicinity] for the [traversalOrder].
+  /// This is used to properly set the [TreeVicinity] for the [traversalOrder].
   Map<int, int> get rowDepths => _rowDepths;
   Map<int, int> _rowDepths;
   set rowDepths(Map<int, int> value) {
@@ -103,9 +103,9 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
   }
 
   /// The number of pixels by which child nodes will be offset in the cross axis
-  /// based on their [TreeViewNodeParentData.depth].
+  /// based on [rowDepths].
   ///
-  /// If zero, can alternatively offset children in [TreeView.treeRowBuilder]
+  /// If zero, children can alternatively be offset in [TreeView.treeRowBuilder]
   /// for more options to customize the indented space.
   double get indentation => _indentation;
   double _indentation;
@@ -133,11 +133,14 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
   bool _verticalOverflows = false;
   bool _horizontalOverflows = false;
 
+  // Since the index of animating children can change at anytime, we use a
+  // UniqueKey to track them during the lifetime of the animation.
   // Maps the index of parents to the animation key of their children.
   final Map<int, UniqueKey> _animationLeadingIndices = <int, UniqueKey>{};
   // Maps the key of child node animations to the fixed distance they are
   // traversing during the animation. Determined at the start of the animation.
   final Map<UniqueKey, double> _animationOffsets = <UniqueKey, double>{};
+  // Updates the cache at the start of eah layout pass.
   void _updateAnimationCache() {
     _animationLeadingIndices.clear();
     _activeAnimations.forEach(
@@ -206,6 +209,8 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
   }
 
   void _computeAnimationOffsetFor(UniqueKey key, double position) {
+    // `position` represents the trailing edge of the parent node that initiated
+    // the animation.
     assert(_activeAnimations[key] != null);
     double currentPosition = position;
     final int startingIndex = _activeAnimations[key]!.fromIndex;
@@ -213,14 +218,14 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
     int currentIndex = startingIndex;
     double totalAnimatingOffset = 0.0;
     // We animate only a portion of children that would be visible/in the cache
-    // extent, unless all children would fit on the screen.
+    // extent, unless all animating children would fit on the screen.
     while (currentIndex <= lastIndex && currentPosition < _targetRowPixel) {
       _Span? span = _rowMetrics.remove(currentIndex);
       assert(needsDelegateRebuild || span != null);
       final TreeRow configuration = needsDelegateRebuild
-          ? delegate.buildRow(ChildVicinity(
-              xIndex: _rowDepths[currentIndex]!,
-              yIndex: currentIndex,
+          ? delegate.buildRow(TreeVicinity(
+              depth: _rowDepths[currentIndex]!,
+              row: currentIndex,
             ))
           : span!.configuration;
       span ??= _Span();
@@ -255,9 +260,9 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
       _Span? span = _rowMetrics.remove(row);
       assert(needsDelegateRebuild || span != null);
       final TreeRow configuration = needsDelegateRebuild
-          ? delegate.buildRow(ChildVicinity(
-              xIndex: _rowDepths[row]!,
-              yIndex: row,
+          ? delegate.buildRow(TreeVicinity(
+              depth: _rowDepths[row]!,
+              row: row,
             ))
           : span!.configuration;
       span ??= _Span();
@@ -328,6 +333,7 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
       _furthestHorizontalExtent - viewportDimension.width,
     );
     _horizontalOverflows = maxHorizontalExtent > 0.0;
+
     final double maxVerticalExtent = math.max(
       0.0,
       _rowMetrics[_lastRow!]!.trailingOffset - viewportDimension.height,
@@ -377,9 +383,9 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
       }
       rowOffset += rowSpan.configuration.padding.leading;
 
-      final ChildVicinity vicinity = ChildVicinity(
-        xIndex: _rowDepths[row]!,
-        yIndex: row,
+      final TreeVicinity vicinity = TreeVicinity(
+        depth: _rowDepths[row]!,
+        row: row,
       );
       final RenderBox child = buildOrObtainChildFor(vicinity)!;
       final TwoDimensionalViewportParentData parentData = parentDataOf(child);
@@ -402,8 +408,14 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
     _updateScrollBounds();
   }
 
+  // Maps the UniqueKey associated with animating node segments with the clip
+  // LayerHandle.
   final Map<UniqueKey, LayerHandle<ClipRectLayer>> _clipHandles =
       <UniqueKey, LayerHandle<ClipRectLayer>>{};
+  // Used as the UniqueKey for the viewport or leading segment that does not
+  // have an animation key. When we are not animating, this clips the viewport
+  // bounds if there is visual overflow. When we are animating, it clips the
+  // leading segment if there is visual overflow.
   final UniqueKey _viewportClipKey = UniqueKey();
 
   @override
@@ -415,7 +427,7 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
     assert(_firstRow != null && _lastRow != null);
 
     if (_animationLeadingIndices.isEmpty) {
-      // There are no animations running. Clip if there is visual overflow.
+      // There are no animations running. Clip only if there is visual overflow.
       if (_hasVisualOverflow && clipBehavior != Clip.none) {
         _clipHandles[_viewportClipKey] ??= LayerHandle<ClipRectLayer>();
         _clipHandles[_viewportClipKey]!.layer = context.pushClipRect(
@@ -547,7 +559,7 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
       if (configuration.backgroundDecoration != null ||
           configuration.foregroundDecoration != null) {
         final RenderBox child = getChildFor(
-          ChildVicinity(xIndex: _rowDepths[currentRow]!, yIndex: currentRow),
+          TreeVicinity(depth: _rowDepths[currentRow]!, row: currentRow),
         )!;
 
         Rect getRowRect(bool consumePadding) {
@@ -594,7 +606,7 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
     // Child nodes.
     for (int row = leadingRow; row <= trailingRow; row++) {
       final RenderBox child = getChildFor(
-        ChildVicinity(xIndex: _rowDepths[row]!, yIndex: row),
+        TreeVicinity(depth: _rowDepths[row]!, row: row),
       )!;
       final TwoDimensionalViewportParentData rowParentData =
           parentDataOf(child);

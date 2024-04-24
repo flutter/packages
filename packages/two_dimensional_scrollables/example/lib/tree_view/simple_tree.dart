@@ -67,7 +67,8 @@ class TreeExampleState extends State<TreeExample> {
   ];
 
   Map<Type, GestureRecognizerFactory> _getTapRecognizer(
-      TreeViewNode<String> node) {
+    TreeViewNode<String> node,
+  ) {
     return <Type, GestureRecognizerFactory>{
       TapGestureRecognizer:
           GestureRecognizerFactoryWithHandlers<TapGestureRecognizer>(
@@ -83,9 +84,7 @@ class TreeExampleState extends State<TreeExample> {
 
   Widget _getTree() {
     return DecoratedBox(
-      decoration: BoxDecoration(
-        border: Border.all(),
-      ),
+      decoration: BoxDecoration(border: Border.all()),
       child: Scrollbar(
         controller: horizontalController,
         thumbVisibility: true,

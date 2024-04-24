@@ -9,6 +9,15 @@ import 'package:two_dimensional_scrollables/two_dimensional_scrollables.dart';
 const TreeRow span = TreeRow(extent: FixedTreeRowExtent(50));
 
 void main() {
+  test('TreeVicinity converts ChildVicinity', () {
+    const TreeVicinity vicinity = TreeVicinity(depth: 5, row: 10);
+    expect(vicinity.xIndex, 5);
+    expect(vicinity.yIndex, 10);
+    expect(vicinity.row, 10);
+    expect(vicinity.depth, 5);
+    expect(vicinity.toString(), '(row: 10, depth: 5)');
+  });
+
   group('TreeRowBuilderDelegate', () {
     test('exposes addAutomaticKeepAlives from super class', () {
       final TreeRowBuilderDelegate delegate = TreeRowBuilderDelegate(

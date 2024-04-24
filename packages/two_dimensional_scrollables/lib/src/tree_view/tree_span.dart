@@ -21,7 +21,7 @@ typedef TreeRow = Span;
 ///
 /// Extents will not be computed for every frame unless the delegate has been
 /// updated. Otherwise, after the extents are computed during the first layout
-/// passed, they are cached and reused in subsequent frames.
+/// pass, they are cached and reused in subsequent frames.
 typedef TreeRowExtentDelegate = SpanExtentDelegate;
 
 /// Defines the extent, or height, of a [TreeRow].

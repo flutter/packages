@@ -25,34 +25,60 @@ typedef TreeViewNodeBuilder = Widget Function(
   AnimationStyle? animationStyle,
 });
 
+/// The position of a [TreeRow] in a [TreeViewport] in relation
+/// to other children of the viewport..
+///
+/// This subclass translates the abstract [ChildVicinity.xIndex] and
+/// [ChildVicinity.yIndex] into terms of row index and depth for ease of use
+/// within the context of a [TreeView].
+@immutable
+class TreeVicinity extends ChildVicinity {
+  /// Creates a reference to a [TreeRow] in a [TreeView], with the [xIndex] and
+  /// [yIndex] converted to terms of [depth] and [row], respectively.
+  const TreeVicinity({
+    required int depth,
+    required int row,
+  }) : super(xIndex: depth, yIndex: row);
+
+  /// The row index of the [TreeRow] in the [TreeView].
+  ///
+  /// Equivalent to the [yIndex].
+  int get row => yIndex;
+
+  /// The depth of the [TreeRow] in the [TreeView].
+  ///
+  /// Equivalent to the [xIndex].
+  int get depth => xIndex;
+
+  @override
+  String toString() => '(row: $row, depth: $depth)';
+}
+
 /// A mixin that defines the model for a [TwoDimensionalChildDelegate] to be
 /// used with a [TreeView].
 mixin TreeRowDelegateMixin on TwoDimensionalChildDelegate {
   /// The number of rows that the tree has active nodes for.
   ///
-  /// The [buildRow] method will be called for nodes that are currently active,
-  /// meaning they are not contained within an unexpanded parent node.
+  /// The [buildRow] method will be called for [TreeViewNode]s that are
+  /// currently active, meaning they are not contained within an unexpanded
+  /// parent node.
   ///
-  /// The [buildRow] method must provide a valid [TreeRow] for all active nodes.=
+  /// The [buildRow] method must provide a valid [TreeRow] for all active nodes.
   ///
   /// If the value returned by this getter changes throughout the lifetime of
   /// the delegate object, [notifyListeners] must be called.
   int get rowCount;
 
   /// Builds the [TreeRow] that describe the row for the provided
-  /// [ChildVicinity].
+  /// [TreeVicinity].
   ///
   /// The builder must return a valid [TreeRow] for all active nodes in the
   /// tree.
-  TreeRow buildRow(ChildVicinity vicinity);
+  TreeRow buildRow(TreeVicinity vicinity);
 }
 
-/// Returns a [TreeRow] for the given [ChildVicinity] in the [TreeView].
-///
-/// [TreeRows] always have a [ChildVicinity.xIndex] of zero, with the
-/// [ChildVicinity.yIndex] representing their index in the main axis of the
-/// [TreeViewport].
-typedef ChildVicinityToRowBuilder = TreeRow Function(ChildVicinity);
+/// Returns a [TreeRow] for the given [TreeVicinity] in the [TreeView].
+typedef TreeVicinityToRowBuilder = TreeRow Function(TreeVicinity);
 
 /// A delegate that supplies nodes for a [TreeViewport] on demand using a
 /// builder callback.
@@ -70,7 +96,7 @@ class TreeRowBuilderDelegate extends TwoDimensionalChildBuilderDelegate
     required int rowCount,
     super.addAutomaticKeepAlives,
     required TwoDimensionalIndexedWidgetBuilder nodeBuilder,
-    required ChildVicinityToRowBuilder rowBuilder,
+    required TreeVicinityToRowBuilder rowBuilder,
   })  : assert(rowCount >= 0),
         _rowBuilder = rowBuilder,
         super(
@@ -90,8 +116,8 @@ class TreeRowBuilderDelegate extends TwoDimensionalChildBuilderDelegate
   }
 
   /// Builds the [TreeRow] that describes the row for the provided
-  /// [ChildVicinity].
-  final ChildVicinityToRowBuilder _rowBuilder;
+  /// [TreeVicinity].
+  final TreeVicinityToRowBuilder _rowBuilder;
   @override
-  TreeRow buildRow(ChildVicinity vicinity) => _rowBuilder(vicinity);
+  TreeRow buildRow(TreeVicinity vicinity) => _rowBuilder(vicinity);
 }

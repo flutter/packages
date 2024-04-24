@@ -11,8 +11,8 @@ void main() {
     tester.view.physicalSize = const Size.square(800.0);
     await tester.pumpWidget(const MaterialApp(home: InfiniteTableExample()));
     await tester.pump();
-
     expect(find.text('0:0'), findsOneWidget);
+
     final Finder verticalScrollable = find.byWidgetPredicate((Widget widget) {
       if (widget is Scrollable) {
         return widget.axisDirection == AxisDirection.down;
@@ -21,6 +21,7 @@ void main() {
     });
     final ScrollPosition verticalPosition =
         (tester.state(verticalScrollable) as ScrollableState).position;
+
     final Finder horizontalScrollable = find.byWidgetPredicate((Widget widget) {
       if (widget is Scrollable) {
         return widget.axisDirection == AxisDirection.right;
@@ -29,6 +30,7 @@ void main() {
     });
     final ScrollPosition horizontalPosition =
         (tester.state(horizontalScrollable) as ScrollableState).position;
+
     expect(verticalPosition.pixels, 0.0);
     expect(verticalPosition.maxScrollExtent, double.infinity);
     expect(horizontalPosition.pixels, 0.0);

@@ -219,16 +219,17 @@ void main() {
       int enterCounter = 0;
       int exitCounter = 0;
       final TreeView<String> treeView = TreeView<String>(
-          tree: treeNodes,
-          treeRowBuilder: (TreeViewNode<dynamic> node) {
-            if (node.depth! == 0) {
-              return getMouseTrackingRow(
-                onEnter: (_) => enterCounter++,
-                onExit: (_) => exitCounter++,
-              );
-            }
-            return row;
-          });
+        tree: treeNodes,
+        treeRowBuilder: (TreeViewNode<dynamic> node) {
+          if (node.depth! == 0) {
+            return getMouseTrackingRow(
+              onEnter: (_) => enterCounter++,
+              onExit: (_) => exitCounter++,
+            );
+          }
+          return row;
+        },
+      );
 
       await tester.pumpWidget(MaterialApp(home: treeView));
       await tester.pumpAndSettle();

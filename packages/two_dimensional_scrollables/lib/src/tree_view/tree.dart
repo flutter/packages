@@ -77,7 +77,7 @@ class TreeViewNode<T> {
 /// programmatically, for example to reconfigure an existing node
 /// based on a system event. To do so, create an [TreeView]
 /// with an [TreeViewController] that's owned by a stateful widget
-/// or look up the tile's automatically created [TreeViewController]
+/// or look up the tree's automatically created [TreeViewController]
 /// with [TreeViewController.of]
 ///
 /// The controller's methods to expand or collapse nodes cause the
@@ -91,9 +91,6 @@ class TreeViewController {
 
   /// Whether the given [TreeViewNode] built with this controller is in an
   /// expanded state.
-  ///
-  /// This property doesn't take the animation into account. It reports `true`
-  /// even if the expansion animation is not completed.
   ///
   /// See also:
   ///
@@ -144,7 +141,7 @@ class TreeViewController {
   /// Calling this method may cause the [TreeView] to rebuild, so it may
   /// not be called from a build method.
   ///
-  /// Calling this method will trigger an [TreeView.onNodeToggle] callback.
+  /// Calling this method will trigger the [TreeView.onNodeToggle] callback.
   ///
   /// See also:
   ///
@@ -187,7 +184,7 @@ class TreeViewController {
   /// Calling this method may cause the [TreeView] to rebuild, so it may
   /// not be called from a build method.
   ///
-  /// Calling this method will trigger an [TreeView.onNodeToggle] callback.
+  /// Calling this method will trigger the [TreeView.onNodeToggle] callback.
   ///
   /// See also:
   ///
@@ -272,14 +269,14 @@ class TreeViewController {
   }
 }
 
-// END of framework copied classes.
+// END of framework shared classes.
 
 /// A two dimensional viewport for lazily displaying [TreeViewNode]s that expand
 /// and collapse in a vertically and horizontally scrolling [TreeViewport].
 ///
-/// The rows of the tree are laid our on demand, using
-/// [TreeView.treeRowBuilder]. This will only be called for the nodes that are
-/// visible, or within the [TreeViewport.cacheExtent.]
+/// The rows of the tree are laid out on demand, using
+/// [TreeView.treeNodeBuilder]. This will only be called for the nodes that are
+/// visible, or within the [TreeViewport.cacheExtent].
 ///
 /// Only [TreeViewport]s that scroll with a vertical axis direction of
 /// [AxisDirection.down] and a horizontal axis direction of
@@ -409,7 +406,7 @@ class TreeView<T> extends StatefulWidget {
   final TreeViewRowBuilder treeRowBuilder;
 
   /// If provided, the controller can be used to expand and collapse
-  /// [TreeViewNodes]s, or lookup information about the current state of the
+  /// [TreeViewNode]s, or lookup information about the current state of the
   /// [TreeView].
   final TreeViewController? controller;
 
@@ -446,11 +443,11 @@ class TreeView<T> extends StatefulWidget {
   /// Used to override the toggle animation's curve and duration.
   ///
   /// If [AnimationStyle.duration] is provided, it will be used to override
-  /// the [TreeView.defaultAnimationDuration], which defaults to 150
+  /// the [TreeView.defaultAnimationDuration], which is 150
   /// milliseconds.
   ///
   /// If [AnimationStyle.curve] is provided, it will be used to override
-  /// the [TreeView.defaultAnimationCurve], defaults to [Curves.linear].
+  /// the [TreeView.defaultAnimationCurve], which is [Curves.linear].
   ///
   /// To disable the tree animation, use [AnimationStyle.noAnimation].
   final AnimationStyle? animationStyle;
@@ -466,8 +463,8 @@ class TreeView<T> extends StatefulWidget {
   /// The order in which [TreeViewNode]s are visited.
   ///
   /// This value will influence [TreeViewport.mainAxis] so nodes are traversed
-  /// properly when they are converted to a [ChildVicinity] in the coordinate
-  /// system.
+  /// properly when they are converted to a [TreeVicinity] in the context of the
+  /// active nodes of the tree.
   ///
   /// Defaults to [TreeViewTraversalOrder.depthFirst].
   final TreeViewTraversalOrder traversalOrder;
@@ -475,8 +472,8 @@ class TreeView<T> extends StatefulWidget {
   /// The number of pixels children will be offset by in the cross axis based on
   /// their [TreeViewNode.depth].
   ///
-  /// By default, the indentation is handled by [RenderTreeViewport]. Child nodes
-  /// are offset by the indentation specified by
+  /// By default, the indentation is handled by [RenderTreeViewport]. Child
+  /// nodes are offset by the indentation specified by
   /// [TreeViewIndentationType.value] in the cross axis of the viewport. This
   /// means the space allotted to the indentation will not be part of the space
   /// made available to the Widget returned by [TreeView.treeNodeBuilder].
@@ -586,8 +583,10 @@ class _TreeViewState<T> extends State<TreeView<T>>
   TreeViewController get controller => _treeController!;
   TreeViewController? _treeController;
 
+  // The flat representation of the tree, omitting nodes that are not active.
   final List<TreeViewNode<T>> _activeNodes = <TreeViewNode<T>>[];
   final Map<int, int> _rowDepths = <int, int>{};
+  // Flattens the tree, omitting nodes that are not active.
   void _unpackActiveNodes({
     int depth = 0,
     List<TreeViewNode<T>>? nodes,
@@ -685,8 +684,9 @@ class _TreeViewState<T> extends State<TreeView<T>>
       activeAnimations: _activeAnimations,
       rowDepths: _rowDepths,
       nodeBuilder: (BuildContext context, ChildVicinity vicinity) {
-        final TreeViewNode<T> node = _activeNodes[vicinity.yIndex];
-        assert(vicinity.xIndex == node.depth);
+        vicinity = vicinity as TreeVicinity;
+        final TreeViewNode<T> node = _activeNodes[vicinity.row];
+        assert(vicinity.depth == node.depth);
         Widget child = widget.treeNodeBuilder(
           context,
           node,
@@ -699,7 +699,7 @@ class _TreeViewState<T> extends State<TreeView<T>>
 
         return child;
       },
-      rowBuilder: (ChildVicinity vicinity) {
+      rowBuilder: (TreeVicinity vicinity) {
         return widget.treeRowBuilder(_activeNodes[vicinity.yIndex]);
       },
       addAutomaticKeepAlives: widget.addAutomaticKeepAlives,
@@ -912,7 +912,7 @@ class _TreeView extends TwoDimensionalScrollView {
     super.keyboardDismissBehavior,
     super.clipBehavior,
     required TwoDimensionalIndexedWidgetBuilder nodeBuilder,
-    required ChildVicinityToRowBuilder rowBuilder,
+    required TreeVicinityToRowBuilder rowBuilder,
     this.traversalOrder = TreeViewTraversalOrder.depthFirst,
     required this.activeAnimations,
     required this.rowDepths,
@@ -1001,7 +1001,7 @@ class TreeViewport extends TwoDimensionalViewport {
   final TreeViewTraversalOrder traversalOrder;
 
   /// The number of pixels by which child nodes will be offset in the cross axis
-  /// based on their [TreeViewNodeParentData.depth].
+  /// based on their [TreeViewNode.depth].
   ///
   /// If zero, can alternatively offset children in [TreeView.treeRowBuilder]
   /// for more options to customize the indented space.

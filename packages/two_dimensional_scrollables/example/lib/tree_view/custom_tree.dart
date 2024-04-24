@@ -150,7 +150,8 @@ class CustomTreeExampleState extends State<CustomTreeExample> {
   }
 
   Map<Type, GestureRecognizerFactory> _getTapRecognizer(
-      TreeViewNode<String> node) {
+    TreeViewNode<String> node,
+  ) {
     return <Type, GestureRecognizerFactory>{
       TapGestureRecognizer:
           GestureRecognizerFactoryWithHandlers<TapGestureRecognizer>(

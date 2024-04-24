@@ -30,8 +30,8 @@ typedef TreeViewNodeCallback = void Function(TreeViewNode<dynamic> node);
 ///
 /// Used by [TreeView] to implement an interface for the [TreeViewController].
 ///
-/// This allows the [TreeViewController] to be used in other widgets that implement
-/// this interface.
+/// This allows the [TreeViewController] to be used in other widgets that
+/// implement this interface.
 mixin TreeViewStateMixin<T> {
   /// Returns whether or not the given [TreeViewNode] is expanded, regardless of
   /// whether or not it is active in the tree.

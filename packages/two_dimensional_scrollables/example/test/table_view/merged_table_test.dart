@@ -10,8 +10,8 @@ void main() {
   testWidgets('Builds and can scroll', (WidgetTester tester) async {
     await tester.pumpWidget(const MaterialApp(home: MergedTableExample()));
     await tester.pump();
-
     expect(find.text('Red, 500'), findsOneWidget);
+
     final Finder verticalScrollable = find.byWidgetPredicate((Widget widget) {
       if (widget is Scrollable) {
         return widget.axisDirection == AxisDirection.down;
@@ -20,6 +20,7 @@ void main() {
     });
     final ScrollPosition verticalPosition =
         (tester.state(verticalScrollable) as ScrollableState).position;
+
     final Finder horizontalScrollable = find.byWidgetPredicate((Widget widget) {
       if (widget is Scrollable) {
         return widget.axisDirection == AxisDirection.right;
@@ -28,6 +29,7 @@ void main() {
     });
     final ScrollPosition horizontalPosition =
         (tester.state(horizontalScrollable) as ScrollableState).position;
+
     expect(verticalPosition.pixels, 0.0);
     expect(verticalPosition.maxScrollExtent, 5605.0);
     expect(horizontalPosition.pixels, 0.0);

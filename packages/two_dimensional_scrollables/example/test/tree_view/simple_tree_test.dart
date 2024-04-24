@@ -41,8 +41,10 @@ void main() {
 
     expect(horizontalPosition.maxScrollExtent, greaterThan(190));
     expect(horizontalPosition.pixels, 0.0);
-    final TreeExampleState state =
-        tester.state(find.byType(TreeExample)) as TreeExampleState;
+    final TreeExampleState state = tester.state(
+      find.byType(TreeExample),
+    ) as TreeExampleState;
+
     state.treeController.expandAll();
     await tester.pumpAndSettle();
     horizontalPosition =
