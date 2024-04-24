@@ -187,7 +187,8 @@ class FakeStoreKitPlatform implements TestInAppPurchaseApi {
   @override
   void finishTransaction(Map<String?, Object?> finishMap) {
     finishedTransactions.add(createPurchasedTransaction(
-        finishMap['productIdentifier']! as String, finishMap['transactionIdentifier']! as String,
+        finishMap['productIdentifier']! as String,
+        finishMap['transactionIdentifier']! as String,
         quantity: transactionList.first.payment.quantity));
   }
 
