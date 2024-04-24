@@ -1,4 +1,4 @@
-## 1.1.0+1
+## 1.1.1
 
 * Updates documentation to note that Android Photo Picker use is not optional on Android 13+.
 
