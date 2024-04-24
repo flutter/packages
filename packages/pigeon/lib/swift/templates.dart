@@ -334,9 +334,9 @@ String proxyApiReaderWriterTemplate({
       versionCheck = '#available(iOS ${api.swiftOptions!.minIosApi!}, *), ';
     }
     return '''
-      if ${versionCheck}value is $className {
+      if ${versionCheck}let instance = value as? $className {
         pigeonRegistrar.apiDelegate.pigeonApi${api.name}(pigeonRegistrar).pigeonNewInstance(
-          pigeonInstance: value as! $className
+          pigeonInstance: instance
         ) { _ in }
       }
     ''';
@@ -378,7 +378,7 @@ private class $proxyApiReaderWriterName: FlutterStandardReaderWriter {
     override func writeValue(_ value: Any) {
       $classChecker
 
-      if let instance = value as? AnyClass, pigeonRegistrar.instanceManager.containsInstance(instance)
+      if let instance = value as AnyObject?, pigeonRegistrar.instanceManager.containsInstance(instance)
       {
         super.writeByte(128)
         super.writeValue(
