@@ -3462,6 +3462,53 @@ void main() {
       expect(find.text('Screen B'), findsOneWidget);
     });
 
+    testWidgets('can complete leaf route', (WidgetTester tester) async {
+      Future<bool?>? routeFuture;
+      final List<RouteBase> routes = <RouteBase>[
+        GoRoute(
+          path: '/',
+          builder: (BuildContext context, GoRouterState state) {
+            return Scaffold(
+              body: TextButton(
+                onPressed: () async {
+                  routeFuture = context.push<bool>('/a');
+                },
+                child: const Text('press'),
+              ),
+            );
+          },
+        ),
+        ShellRoute(
+          builder: (BuildContext context, GoRouterState state, Widget child) {
+            return Scaffold(
+              body: child,
+            );
+          },
+          routes: <RouteBase>[
+            GoRoute(
+              path: '/a',
+              builder: (BuildContext context, GoRouterState state) {
+                return const Scaffold(
+                  body: Text('Screen A'),
+                );
+              },
+            ),
+          ],
+        ),
+      ];
+
+      final GoRouter router = await createRouter(routes, tester);
+      expect(find.text('press'), findsOneWidget);
+
+      await tester.tap(find.text('press'));
+      await tester.pumpAndSettle();
+      expect(find.text('Screen A'), findsOneWidget);
+
+      router.pop<bool>(true);
+      final bool? result = await routeFuture;
+      expect(result, isTrue);
+    });
+
     testWidgets(
         'Pops from the correct Navigator when the Android back button is pressed',
         (WidgetTester tester) async {
