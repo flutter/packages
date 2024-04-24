@@ -4,3 +4,4 @@
 *.gen.swift
 !CoreTests.gen.swift
 !ProxyApiTests.gen.swift
+!ProxyApiTestClass.swift

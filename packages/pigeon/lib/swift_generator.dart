@@ -110,7 +110,8 @@ class SwiftGenerator extends StructuredGenerator<SwiftOptions> {
     final Iterable<String> proxyApiImports = root.apis
         .whereType<AstProxyApi>()
         .map((AstProxyApi proxyApi) => proxyApi.swiftOptions?.import)
-        .whereNotNull();
+        .whereNotNull()
+        .toSet();
     for (final String import in proxyApiImports) {
       indent.writeln('import $import');
     }
