@@ -215,8 +215,8 @@ abstract class ProxyApiTestClass extends ProxyApiSuperClass
 
   /// Returns the passed list with ProxyApis, to test serialization and
   /// deserialization.
-  List<ProxyApiTestClass?> echoProxyApiList(
-    List<ProxyApiTestClass?> aList,
+  List<ProxyApiTestClass> echoProxyApiList(
+    List<ProxyApiTestClass> aList,
   );
 
   /// Returns the passed map, to test serialization and deserialization.

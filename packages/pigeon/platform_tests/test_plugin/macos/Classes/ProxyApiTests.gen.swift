@@ -571,8 +571,8 @@ protocol PigeonDelegateProxyApiTestClass {
   /// deserialization.
   func echoProxyApiList(
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
-    aList: [ProxyApiTestClass?]
-  ) throws -> [ProxyApiTestClass?]
+    aList: [ProxyApiTestClass]
+  ) throws -> [ProxyApiTestClass]
   /// Returns the passed map, to test serialization and deserialization.
   func echoMap(
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, aMap: [String?: Any?]
@@ -1169,7 +1169,7 @@ final class PigeonApiProxyApiTestClass {
       echoProxyApiListChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
-        let aListArg = args[1] as! [ProxyApiTestClass?]
+        let aListArg = args[1] as! [ProxyApiTestClass]
         do {
           let result = try api.pigeonDelegate.echoProxyApiList(
             pigeonApi: api, pigeonInstance: pigeonInstanceArg, aList: aListArg)

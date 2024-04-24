@@ -874,8 +874,8 @@ class ProxyApiDelegate: PigeonProxyApiDelegate {
 
       func echoProxyApiList(
         pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
-        aList: [ProxyApiTestClass?]
-      ) throws -> [ProxyApiTestClass?] {
+        aList: [ProxyApiTestClass]
+      ) throws -> [ProxyApiTestClass] {
         return aList
       }
 
