@@ -289,7 +289,7 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI {
         completion(requestError)
         return
       }
-      completion(nil)
+      completion(nil);
       self?.requestHandlers.remove(handler)
     }
   }
