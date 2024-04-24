@@ -26,6 +26,7 @@ class Camera2CameraInfo extends JavaObject {
             instanceManager: instanceManager) {
     _api = _Camera2CameraInfoHostApiImpl(
         binaryMessenger: binaryMessenger, instanceManager: instanceManager);
+        AndroidCameraXCameraFlutterApis.instance.ensureSetUp();
   }
 
   late final _Camera2CameraInfoHostApiImpl _api;
@@ -35,11 +36,12 @@ class Camera2CameraInfo extends JavaObject {
       {BinaryMessenger? binaryMessenger, InstanceManager? instanceManager}) {
     final _Camera2CameraInfoHostApiImpl api = _Camera2CameraInfoHostApiImpl(
         binaryMessenger: binaryMessenger, instanceManager: instanceManager);
+    AndroidCameraXCameraFlutterApis.instance.ensureSetUp();
     return api.fromInstances(cameraInfo);
   }
 
   /// Retrieves the value of `CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL`
-  /// for the device who [cameraInfo] pertains to.
+  /// for the device to which this instance pertains to.
   ///
   /// See https://developer.android.com/reference/android/hardware/camera2/CameraCharacteristics#INFO_SUPPORTED_HARDWARE_LEVEL
   /// for more information.
@@ -49,7 +51,7 @@ class Camera2CameraInfo extends JavaObject {
   /// Gets the String camera ID.
   ///
   /// The ID may change based on the internal configuration of the camera to which
-  /// [cameraInfo] pertains.
+  /// this instances pertains.
   Future<String> getCameraId() => _api.getCameraIdFromInstance(this);
 }
 

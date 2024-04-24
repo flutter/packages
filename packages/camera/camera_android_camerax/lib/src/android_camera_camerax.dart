@@ -17,8 +17,10 @@ import 'analyzer.dart';
 import 'aspect_ratio_strategy.dart';
 import 'camera.dart';
 import 'camera2_camera_control.dart';
+import 'camera2_camera_info.dart';
 import 'camera_control.dart';
 import 'camera_info.dart';
+import 'camera_metadata.dart';
 import 'camera_selector.dart';
 import 'camera_state.dart';
 import 'camerax_library.g.dart';
@@ -292,9 +294,9 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// uninitialized camera instance, this method retrieves a
   /// [ProcessCameraProvider] instance.
   ///
-  /// The specified [resolutionPreset] is the target resolution that CameraX
-  /// will attempt to select for the [UseCase]s constructed in this method
-  /// ([preview], [imageCapture], [imageAnalysis], [videoCapture]). If
+  /// The specified `mediaSettings.resolutionPreset` is the target resolution
+  /// that CameraX will attempt to select for the [UseCase]s constructed in this
+  /// method ([preview], [imageCapture], [imageAnalysis], [videoCapture]). If
   /// unavailable, a fallback behavior of targeting the next highest resolution
   /// will be attempted. See https://developer.android.com/media/camera/camerax/configuration#specify-resolution.
   ///
@@ -805,6 +807,12 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// [cameraId] is not used.
   @override
   Future<XFile> takePicture(int cameraId) async {
+    final bool imageCaptureIsBound =
+        await processCameraProvider!.isBound(imageCapture!);
+    if (!imageCaptureIsBound) {
+      camera = await processCameraProvider!
+          .bindToLifecycle(cameraSelector!, <UseCase>[imageCapture!]);
+    }
     // Set flash mode.
     if (_currentFlashMode != null) {
       await imageCapture!.setFlashMode(_currentFlashMode!);
@@ -886,8 +894,28 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// interface, respectively.
   @override
   Future<void> startVideoCapturing(VideoCaptureOptions options) async {
-    // TODO(camsim99): add conditional logic here.
-    processCameraProvider!.unbind(<UseCase>[imageAnalysis!]);
+    final Camera2CameraInfo camera2CameraInfo =
+        await proxy.getCamera2CameraInfo(cameraInfo!);
+    final int cameraInfoSupportedHardwareLevel =
+        await camera2CameraInfo.getSupportedHardwareLevel();
+    final bool cameraSupportsHardwareLevel3 =
+        cameraInfoSupportedHardwareLevel ==
+            CameraMetadata.infoSupportedHardwareLevel3;
+
+    dynamic Function(CameraImageData)? streamCallback = options.streamCallback;
+    if (!_previewIsPaused) {
+      if (!cameraSupportsHardwareLevel3 || streamCallback == null) {
+        // Concurrent preview + video recording + image streaming is not supported
+        // unless the camera device is cameraSupportsHardwareLevel3 or better.
+        streamCallback = null;
+        await _unbindUseCaseFromLifecycle(imageAnalysis!);
+      } else {
+        // If image streaming concurrently with video recording, image capture
+        // is unsupported.
+        await _unbindUseCaseFromLifecycle(imageCapture!);
+      }
+    }
+
     if (recording != null) {
       // There is currently an active recording, so do not start a new one.
       return;
@@ -911,8 +939,8 @@ class AndroidCameraCameraX extends CameraPlatform {
     pendingRecording = await recorder!.prepareRecording(videoOutputPath!);
     recording = await pendingRecording!.start();
 
-    if (options.streamCallback != null) {
-      onStreamedFrameAvailable(options.cameraId).listen(options.streamCallback);
+    if (streamCallback != null) {
+      onStreamedFrameAvailable(options.cameraId).listen(streamCallback);
     }
   }
 
@@ -945,6 +973,7 @@ class AndroidCameraCameraX extends CameraPlatform {
     await recording!.close();
     recording = null;
     pendingRecording = null;
+    await _unbindUseCaseFromLifecycle(videoCapture!);
     return XFile(videoOutputPath!);
   }
 
@@ -1007,6 +1036,13 @@ class AndroidCameraCameraX extends CameraPlatform {
 
   /// Configures the [imageAnalysis] instance for image streaming.
   Future<void> _configureImageAnalysis(int cameraId) async {
+    final bool imageAnalysisBound =
+        await processCameraProvider!.isBound(imageAnalysis!);
+    if (!imageAnalysisBound) {
+      camera = await processCameraProvider!
+          .bindToLifecycle(cameraSelector!, <UseCase>[imageAnalysis!]);
+    }
+
     // Set target rotation to default CameraX rotation only if capture
     // orientation not locked.
     if (!captureOrientationLocked && shouldSetDefaultRotation) {
@@ -1148,13 +1184,13 @@ class AndroidCameraCameraX extends CameraPlatform {
   int _getRotationConstantFromDeviceOrientation(DeviceOrientation orientation) {
     switch (orientation) {
       case DeviceOrientation.portraitUp:
-        return Surface.ROTATION_0;
+        return Surface.rotation0;
       case DeviceOrientation.landscapeLeft:
-        return Surface.ROTATION_90;
+        return Surface.rotation90;
       case DeviceOrientation.portraitDown:
-        return Surface.ROTATION_180;
+        return Surface.rotation180;
       case DeviceOrientation.landscapeRight:
-        return Surface.ROTATION_270;
+        return Surface.rotation270;
     }
   }
 
