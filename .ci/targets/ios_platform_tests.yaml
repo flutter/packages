@@ -9,7 +9,7 @@ tasks:
     script: .ci/scripts/tool_runner.sh
     args: ["fetch-deps", "--ios", "--supporting-target-platforms-only"]
     infra_step: true
-  - name: build examples with Swift Package Manager integration
+  - name: build examples
     script: .ci/scripts/tool_runner.sh
     args: ["build-examples", "--ios", "--swift-package-manager"]
   - name: xcode analyze

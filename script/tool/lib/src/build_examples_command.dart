@@ -135,7 +135,10 @@ class BuildExamplesCommand extends PackageLoopingCommand {
       throw ToolExit(_exitNoPlatformFlags);
     }
 
-    if (usingSwiftPackageManager) {
+    // TODO(vashworth): Enable on stable once Swift Package Manager feature is
+    // available on stable.
+    if (usingSwiftPackageManager &&
+        platform.environment['CHANNEL'] != 'stable') {
       await processRunner.runAndStream(
         flutterCommand,
         <String>['config', '--enable-swift-package-manager'],
