@@ -600,6 +600,7 @@ class _TreeViewState<T> extends State<TreeView<T>>
     // If we are not animating, respect node.isExpanded;
     return node.isExpanded;
   }
+
   // Flattens the tree, omitting nodes that are not active.
   void _unpackActiveNodes({
     int depth = 0,
