@@ -28,6 +28,7 @@
 		33CC11132044BFA00003C045 /* MainFlutterWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33CC11122044BFA00003C045 /* MainFlutterWindow.swift */; };
 		A2C6CD5797E6A6721FDBCA1C /* Pods_Runner.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 36DEEA66738F64D983F76848 /* Pods_Runner.framework */; };
 		C51E64432925727D7AC7BBFF /* Pods_RunnerTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE8A421F08C80BE6E90142D5 /* Pods_RunnerTests.framework */; };
+		F2C3A7412BD9D33D000D35F2 /* Stubs.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2C3A7402BD9D33D000D35F2 /* Stubs.swift */; };
 		F79BDC102905FBE300E3999D /* FIAPPaymentQueueDeleteTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F79BDC0F2905FBE300E3999D /* FIAPPaymentQueueDeleteTests.m */; };
 		F79BDC122905FBF700E3999D /* FIATransactionCacheTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F79BDC112905FBF700E3999D /* FIATransactionCacheTests.m */; };
 		F79BDC142905FBFE00E3999D /* InAppPurchasePluginTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F79BDC132905FBFE00E3999D /* InAppPurchasePluginTests.m */; };
@@ -91,6 +92,8 @@
 		9A4FEABF1DEF0D106FEB7974 /* Pods-Runner.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.release.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.release.xcconfig"; sourceTree = "<group>"; };
 		B6C8FD76BB3278AA51FED870 /* Pods-Runner.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.debug.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.debug.xcconfig"; sourceTree = "<group>"; };
 		EE8A421F08C80BE6E90142D5 /* Pods_RunnerTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RunnerTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		F2C3A73F2BD9D33D000D35F2 /* RunnerTests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "RunnerTests-Bridging-Header.h"; sourceTree = "<group>"; };
+		F2C3A7402BD9D33D000D35F2 /* Stubs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Stubs.swift; sourceTree = "<group>"; };
 		F700DD0228E652A10004836B /* RunnerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RunnerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		F79BDC0F2905FBE300E3999D /* FIAPPaymentQueueDeleteTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FIAPPaymentQueueDeleteTests.m; path = ../../shared/RunnerTests/FIAPPaymentQueueDeleteTests.m; sourceTree = "<group>"; };
 		F79BDC112905FBF700E3999D /* FIATransactionCacheTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FIATransactionCacheTests.m; path = ../../shared/RunnerTests/FIATransactionCacheTests.m; sourceTree = "<group>"; };
@@ -223,6 +226,8 @@
 				F79BDC1D2905FC3900E3999D /* TranslatorTests.m */,
 				F79BDC192905FC1F00E3999D /* ProductRequestHandlerTests.m */,
 				F79BDC112905FBF700E3999D /* FIATransactionCacheTests.m */,
+				F2C3A7402BD9D33D000D35F2 /* Stubs.swift */,
+				F2C3A73F2BD9D33D000D35F2 /* RunnerTests-Bridging-Header.h */,
 			);
 			path = RunnerTests;
 			sourceTree = "<group>";
@@ -298,7 +303,7 @@
 					};
 					F700DD0128E652A10004836B = {
 						CreatedOnToolsVersion = 14.0.1;
-						LastSwiftMigration = 1400;
+						LastSwiftMigration = 1530;
 						TestTargetID = 33CC10EC2044A3C60003C045;
 					};
 				};
@@ -483,6 +488,7 @@
 				F79BDC102905FBE300E3999D /* FIAPPaymentQueueDeleteTests.m in Sources */,
 				F79BDC142905FBFE00E3999D /* InAppPurchasePluginTests.m in Sources */,
 				F79BDC122905FBF700E3999D /* FIATransactionCacheTests.m in Sources */,
+				F2C3A7412BD9D33D000D35F2 /* Stubs.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -771,6 +777,9 @@
 				PRODUCT_BUNDLE_IDENTIFIER = dev.flutter.plugins.RunnerTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_OBJC_BRIDGING_HEADER = "RunnerTests/RunnerTests-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/example.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/example";
 			};
 			name = Debug;
@@ -801,6 +810,8 @@
 				PRODUCT_BUNDLE_IDENTIFIER = dev.flutter.plugins.RunnerTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_OBJC_BRIDGING_HEADER = "RunnerTests/RunnerTests-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/example.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/example";
 			};
 			name = Release;
@@ -831,6 +842,8 @@
 				PRODUCT_BUNDLE_IDENTIFIER = dev.flutter.plugins.RunnerTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_OBJC_BRIDGING_HEADER = "RunnerTests/RunnerTests-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/example.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/example";
 			};
 			name = Profile;
