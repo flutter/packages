@@ -45,8 +45,9 @@
 
   // `FLTCam::captureToFile` runs on capture session queue.
   dispatch_async(captureSessionQueue, ^{
-    [cam captureToFile:^(id _Nullable result) {
-      XCTAssertTrue([result isKindOfClass:[FlutterError class]]);
+    [cam captureToFileWithCompletion:^(NSString *result, FlutterError *error) {
+      XCTAssertNil(result);
+      XCTAssertNotNil(error);
       [errorExpectation fulfill];
     }];
   });
@@ -84,7 +85,7 @@
 
   // `FLTCam::captureToFile` runs on capture session queue.
   dispatch_async(captureSessionQueue, ^{
-    [cam captureToFile:^(id _Nullable result) {
+    [cam captureToFileWithCompletion:^(NSString *result, FlutterError *error) {
       XCTAssertEqual(result, filePath);
       [pathExpectation fulfill];
     }];
@@ -100,7 +101,7 @@
   dispatch_queue_set_specific(captureSessionQueue, FLTCaptureSessionQueueSpecific,
                               (void *)FLTCaptureSessionQueueSpecific, NULL);
   FLTCam *cam = FLTCreateCamWithCaptureSessionQueue(captureSessionQueue);
-  [cam setImageFileFormat:FCPFileFormatHEIF];
+  [cam setImageFileFormat:FCPPlatformImageFileFormatHeif];
 
   AVCapturePhotoSettings *settings =
       [AVCapturePhotoSettings photoSettingsWithFormat:@{AVVideoCodecKey : AVVideoCodecTypeHEVC}];
@@ -125,8 +126,7 @@
   cam.capturePhotoOutput = mockOutput;
   // `FLTCam::captureToFile` runs on capture session queue.
   dispatch_async(captureSessionQueue, ^{
-    [cam captureToFile:^(id _Nullable result) {
-      NSString *filePath = (NSString *)result;
+    [cam captureToFileWithCompletion:^(NSString *filePath, FlutterError *error) {
       XCTAssertEqualObjects([filePath pathExtension], @"heif");
       [expectation fulfill];
     }];
@@ -142,7 +142,7 @@
   dispatch_queue_set_specific(captureSessionQueue, FLTCaptureSessionQueueSpecific,
                               (void *)FLTCaptureSessionQueueSpecific, NULL);
   FLTCam *cam = FLTCreateCamWithCaptureSessionQueue(captureSessionQueue);
-  [cam setImageFileFormat:FCPFileFormatHEIF];
+  [cam setImageFileFormat:FCPPlatformImageFileFormatHeif];
 
   AVCapturePhotoSettings *settings = [AVCapturePhotoSettings photoSettings];
   id mockSettings = OCMClassMock([AVCapturePhotoSettings class]);
@@ -162,8 +162,7 @@
   cam.capturePhotoOutput = mockOutput;
   // `FLTCam::captureToFile` runs on capture session queue.
   dispatch_async(captureSessionQueue, ^{
-    [cam captureToFile:^(id _Nullable result) {
-      NSString *filePath = (NSString *)result;
+    [cam captureToFileWithCompletion:^(NSString *filePath, FlutterError *error) {
       XCTAssertEqualObjects([filePath pathExtension], @"jpg");
       [expectation fulfill];
     }];

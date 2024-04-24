@@ -153,8 +153,12 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
   }
 
   void _completeRouteMatch(Object? result, RouteMatchBase match) {
-    if (match is ImperativeRouteMatch) {
-      match.complete(result);
+    RouteMatchBase walker = match;
+    while (walker is ShellRouteMatch) {
+      walker = walker.matches.last;
+    }
+    if (walker is ImperativeRouteMatch) {
+      walker.complete(result);
     }
     currentConfiguration = currentConfiguration.remove(match);
     notifyListeners();
