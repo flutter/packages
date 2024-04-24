@@ -78,12 +78,12 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 
 @implementation FLADAuthStrings
 + (instancetype)makeWithReason:(NSString *)reason
-    lockOut:(NSString *)lockOut
-    goToSettingsButton:(nullable NSString *)goToSettingsButton
-    goToSettingsDescription:(nullable NSString *)goToSettingsDescription
-    cancelButton:(NSString *)cancelButton
-    localizedFallbackTitle:(nullable NSString *)localizedFallbackTitle {
-  FLADAuthStrings* pigeonResult = [[FLADAuthStrings alloc] init];
+                       lockOut:(NSString *)lockOut
+            goToSettingsButton:(nullable NSString *)goToSettingsButton
+       goToSettingsDescription:(nullable NSString *)goToSettingsDescription
+                  cancelButton:(NSString *)cancelButton
+        localizedFallbackTitle:(nullable NSString *)localizedFallbackTitle {
+  FLADAuthStrings *pigeonResult = [[FLADAuthStrings alloc] init];
   pigeonResult.reason = reason;
   pigeonResult.lockOut = lockOut;
   pigeonResult.goToSettingsButton = goToSettingsButton;
@@ -118,10 +118,10 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 @end
 
 @implementation FLADAuthOptions
-+ (instancetype)makeWithBiometricOnly:(BOOL )biometricOnly
-    sticky:(BOOL )sticky
-    useErrorDialogs:(BOOL )useErrorDialogs {
-  FLADAuthOptions* pigeonResult = [[FLADAuthOptions alloc] init];
++ (instancetype)makeWithBiometricOnly:(BOOL)biometricOnly
+                               sticky:(BOOL)sticky
+                      useErrorDialogs:(BOOL)useErrorDialogs {
+  FLADAuthOptions *pigeonResult = [[FLADAuthOptions alloc] init];
   pigeonResult.biometricOnly = biometricOnly;
   pigeonResult.sticky = sticky;
   pigeonResult.useErrorDialogs = useErrorDialogs;
@@ -148,9 +148,9 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 
 @implementation FLADAuthResultDetails
 + (instancetype)makeWithResult:(FLADAuthResult)result
-    errorMessage:(nullable NSString *)errorMessage
-    errorDetails:(nullable NSString *)errorDetails {
-  FLADAuthResultDetails* pigeonResult = [[FLADAuthResultDetails alloc] init];
+                  errorMessage:(nullable NSString *)errorMessage
+                  errorDetails:(nullable NSString *)errorDetails {
+  FLADAuthResultDetails *pigeonResult = [[FLADAuthResultDetails alloc] init];
   pigeonResult.result = result;
   pigeonResult.errorMessage = errorMessage;
   pigeonResult.errorDetails = errorDetails;
@@ -177,7 +177,7 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 
 @implementation FLADAuthBiometricWrapper
 + (instancetype)makeWithValue:(FLADAuthBiometric)value {
-  FLADAuthBiometricWrapper* pigeonResult = [[FLADAuthBiometricWrapper alloc] init];
+  FLADAuthBiometricWrapper *pigeonResult = [[FLADAuthBiometricWrapper alloc] init];
   pigeonResult.value = value;
   return pigeonResult;
 }
@@ -201,13 +201,13 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 @implementation FLADLocalAuthApiCodecReader
 - (nullable id)readValueOfType:(UInt8)type {
   switch (type) {
-    case 128: 
+    case 128:
       return [FLADAuthBiometricWrapper fromList:[self readValue]];
-    case 129: 
+    case 129:
       return [FLADAuthOptions fromList:[self readValue]];
-    case 130: 
+    case 130:
       return [FLADAuthResultDetails fromList:[self readValue]];
-    case 131: 
+    case 131:
       return [FLADAuthStrings fromList:[self readValue]];
     default:
       return [super readValueOfType:type];
@@ -252,22 +252,26 @@ NSObject<FlutterMessageCodec> *FLADLocalAuthApiGetCodec(void) {
   static FlutterStandardMessageCodec *sSharedObject = nil;
   static dispatch_once_t sPred = 0;
   dispatch_once(&sPred, ^{
-    FLADLocalAuthApiCodecReaderWriter *readerWriter = [[FLADLocalAuthApiCodecReaderWriter alloc] init];
+    FLADLocalAuthApiCodecReaderWriter *readerWriter =
+        [[FLADLocalAuthApiCodecReaderWriter alloc] init];
     sSharedObject = [FlutterStandardMessageCodec codecWithReaderWriter:readerWriter];
   });
   return sSharedObject;
 }
 
-void SetUpFLADLocalAuthApi(id<FlutterBinaryMessenger> binaryMessenger, NSObject<FLADLocalAuthApi> *api) {
+void SetUpFLADLocalAuthApi(id<FlutterBinaryMessenger> binaryMessenger,
+                           NSObject<FLADLocalAuthApi> *api) {
   /// Returns true if this device supports authentication.
   {
-    FlutterBasicMessageChannel *channel =
-      [[FlutterBasicMessageChannel alloc]
-        initWithName:@"dev.flutter.pigeon.local_auth_darwin.LocalAuthApi.isDeviceSupported"
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:@"dev.flutter.pigeon.local_auth_darwin.LocalAuthApi.isDeviceSupported"
         binaryMessenger:binaryMessenger
-        codec:FLADLocalAuthApiGetCodec()];
+                  codec:FLADLocalAuthApiGetCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(isDeviceSupportedWithError:)], @"FLADLocalAuthApi api (%@) doesn't respond to @selector(isDeviceSupportedWithError:)", api);
+      NSCAssert(
+          [api respondsToSelector:@selector(isDeviceSupportedWithError:)],
+          @"FLADLocalAuthApi api (%@) doesn't respond to @selector(isDeviceSupportedWithError:)",
+          api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         FlutterError *error;
         NSNumber *output = [api isDeviceSupportedWithError:&error];
@@ -280,13 +284,16 @@ void SetUpFLADLocalAuthApi(id<FlutterBinaryMessenger> binaryMessenger, NSObject<
   /// Returns true if this device can support biometric authentication, whether
   /// any biometrics are enrolled or not.
   {
-    FlutterBasicMessageChannel *channel =
-      [[FlutterBasicMessageChannel alloc]
-        initWithName:@"dev.flutter.pigeon.local_auth_darwin.LocalAuthApi.deviceCanSupportBiometrics"
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:
+               @"dev.flutter.pigeon.local_auth_darwin.LocalAuthApi.deviceCanSupportBiometrics"
         binaryMessenger:binaryMessenger
-        codec:FLADLocalAuthApiGetCodec()];
+                  codec:FLADLocalAuthApiGetCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(deviceCanSupportBiometricsWithError:)], @"FLADLocalAuthApi api (%@) doesn't respond to @selector(deviceCanSupportBiometricsWithError:)", api);
+      NSCAssert([api respondsToSelector:@selector(deviceCanSupportBiometricsWithError:)],
+                @"FLADLocalAuthApi api (%@) doesn't respond to "
+                @"@selector(deviceCanSupportBiometricsWithError:)",
+                api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         FlutterError *error;
         NSNumber *output = [api deviceCanSupportBiometricsWithError:&error];
@@ -299,13 +306,15 @@ void SetUpFLADLocalAuthApi(id<FlutterBinaryMessenger> binaryMessenger, NSObject<
   /// Returns the biometric types that are enrolled, and can thus be used
   /// without additional setup.
   {
-    FlutterBasicMessageChannel *channel =
-      [[FlutterBasicMessageChannel alloc]
-        initWithName:@"dev.flutter.pigeon.local_auth_darwin.LocalAuthApi.getEnrolledBiometrics"
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:@"dev.flutter.pigeon.local_auth_darwin.LocalAuthApi.getEnrolledBiometrics"
         binaryMessenger:binaryMessenger
-        codec:FLADLocalAuthApiGetCodec()];
+                  codec:FLADLocalAuthApiGetCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(getEnrolledBiometricsWithError:)], @"FLADLocalAuthApi api (%@) doesn't respond to @selector(getEnrolledBiometricsWithError:)", api);
+      NSCAssert([api respondsToSelector:@selector(getEnrolledBiometricsWithError:)],
+                @"FLADLocalAuthApi api (%@) doesn't respond to "
+                @"@selector(getEnrolledBiometricsWithError:)",
+                api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         FlutterError *error;
         NSArray<FLADAuthBiometricWrapper *> *output = [api getEnrolledBiometricsWithError:&error];
@@ -318,20 +327,25 @@ void SetUpFLADLocalAuthApi(id<FlutterBinaryMessenger> binaryMessenger, NSObject<
   /// Attempts to authenticate the user with the provided [options], and using
   /// [strings] for any UI.
   {
-    FlutterBasicMessageChannel *channel =
-      [[FlutterBasicMessageChannel alloc]
-        initWithName:@"dev.flutter.pigeon.local_auth_darwin.LocalAuthApi.authenticate"
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:@"dev.flutter.pigeon.local_auth_darwin.LocalAuthApi.authenticate"
         binaryMessenger:binaryMessenger
-        codec:FLADLocalAuthApiGetCodec()];
+                  codec:FLADLocalAuthApiGetCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(authenticateWithOptions:strings:completion:)], @"FLADLocalAuthApi api (%@) doesn't respond to @selector(authenticateWithOptions:strings:completion:)", api);
+      NSCAssert([api respondsToSelector:@selector(authenticateWithOptions:strings:completion:)],
+                @"FLADLocalAuthApi api (%@) doesn't respond to "
+                @"@selector(authenticateWithOptions:strings:completion:)",
+                api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray *args = message;
         FLADAuthOptions *arg_options = GetNullableObjectAtIndex(args, 0);
         FLADAuthStrings *arg_strings = GetNullableObjectAtIndex(args, 1);
-        [api authenticateWithOptions:arg_options strings:arg_strings completion:^(FLADAuthResultDetails *_Nullable output, FlutterError *_Nullable error) {
-          callback(wrapResult(output, error));
-        }];
+        [api authenticateWithOptions:arg_options
+                             strings:arg_strings
+                          completion:^(FLADAuthResultDetails *_Nullable output,
+                                       FlutterError *_Nullable error) {
+                            callback(wrapResult(output, error));
+                          }];
       }];
     } else {
       [channel setMessageHandler:nil];

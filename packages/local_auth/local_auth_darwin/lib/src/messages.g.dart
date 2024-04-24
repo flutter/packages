@@ -22,12 +22,16 @@ PlatformException _createConnectionError(String channelName) {
 enum AuthResult {
   /// The user authenticated successfully.
   success,
+
   /// The user failed to successfully authenticate.
   failure,
+
   /// The authentication system was not available.
   errorNotAvailable,
+
   /// No biometrics are enrolled.
   errorNotEnrolled,
+
   /// No passcode is set.
   errorPasscodeNotSet,
 }
@@ -197,13 +201,13 @@ class _LocalAuthApiCodec extends StandardMessageCodec {
   @override
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
-      case 128: 
+      case 128:
         return AuthBiometricWrapper.decode(readValue(buffer)!);
-      case 129: 
+      case 129:
         return AuthOptions.decode(readValue(buffer)!);
-      case 130: 
+      case 130:
         return AuthResultDetails.decode(readValue(buffer)!);
-      case 131: 
+      case 131:
         return AuthStrings.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
@@ -223,14 +227,14 @@ class LocalAuthApi {
 
   /// Returns true if this device supports authentication.
   Future<bool> isDeviceSupported() async {
-    const String channelName = 'dev.flutter.pigeon.local_auth_darwin.LocalAuthApi.isDeviceSupported';
+    const String channelName =
+        'dev.flutter.pigeon.local_auth_darwin.LocalAuthApi.isDeviceSupported';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
       channelName,
       codec,
       binaryMessenger: _binaryMessenger,
     );
-    final List<Object?>? replyList =
-        await channel.send(null) as List<Object?>?;
+    final List<Object?>? replyList = await channel.send(null) as List<Object?>?;
     if (replyList == null) {
       throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {
@@ -252,14 +256,14 @@ class LocalAuthApi {
   /// Returns true if this device can support biometric authentication, whether
   /// any biometrics are enrolled or not.
   Future<bool> deviceCanSupportBiometrics() async {
-    const String channelName = 'dev.flutter.pigeon.local_auth_darwin.LocalAuthApi.deviceCanSupportBiometrics';
+    const String channelName =
+        'dev.flutter.pigeon.local_auth_darwin.LocalAuthApi.deviceCanSupportBiometrics';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
       channelName,
       codec,
       binaryMessenger: _binaryMessenger,
     );
-    final List<Object?>? replyList =
-        await channel.send(null) as List<Object?>?;
+    final List<Object?>? replyList = await channel.send(null) as List<Object?>?;
     if (replyList == null) {
       throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {
@@ -281,14 +285,14 @@ class LocalAuthApi {
   /// Returns the biometric types that are enrolled, and can thus be used
   /// without additional setup.
   Future<List<AuthBiometricWrapper?>> getEnrolledBiometrics() async {
-    const String channelName = 'dev.flutter.pigeon.local_auth_darwin.LocalAuthApi.getEnrolledBiometrics';
+    const String channelName =
+        'dev.flutter.pigeon.local_auth_darwin.LocalAuthApi.getEnrolledBiometrics';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
       channelName,
       codec,
       binaryMessenger: _binaryMessenger,
     );
-    final List<Object?>? replyList =
-        await channel.send(null) as List<Object?>?;
+    final List<Object?>? replyList = await channel.send(null) as List<Object?>?;
     if (replyList == null) {
       throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {
@@ -309,15 +313,17 @@ class LocalAuthApi {
 
   /// Attempts to authenticate the user with the provided [options], and using
   /// [strings] for any UI.
-  Future<AuthResultDetails> authenticate(AuthOptions arg_options, AuthStrings arg_strings) async {
-    const String channelName = 'dev.flutter.pigeon.local_auth_darwin.LocalAuthApi.authenticate';
+  Future<AuthResultDetails> authenticate(
+      AuthOptions arg_options, AuthStrings arg_strings) async {
+    const String channelName =
+        'dev.flutter.pigeon.local_auth_darwin.LocalAuthApi.authenticate';
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
       channelName,
       codec,
       binaryMessenger: _binaryMessenger,
     );
-    final List<Object?>? replyList =
-        await channel.send(<Object?>[arg_options, arg_strings]) as List<Object?>?;
+    final List<Object?>? replyList = await channel
+        .send(<Object?>[arg_options, arg_strings]) as List<Object?>?;
     if (replyList == null) {
       throw _createConnectionError(channelName);
     } else if (replyList.length > 1) {

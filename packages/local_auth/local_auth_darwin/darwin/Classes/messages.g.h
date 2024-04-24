@@ -57,42 +57,42 @@ typedef NS_ENUM(NSUInteger, FLADAuthBiometric) {
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
 + (instancetype)makeWithReason:(NSString *)reason
-    lockOut:(NSString *)lockOut
-    goToSettingsButton:(nullable NSString *)goToSettingsButton
-    goToSettingsDescription:(nullable NSString *)goToSettingsDescription
-    cancelButton:(NSString *)cancelButton
-    localizedFallbackTitle:(nullable NSString *)localizedFallbackTitle;
-@property(nonatomic, copy) NSString * reason;
-@property(nonatomic, copy) NSString * lockOut;
-@property(nonatomic, copy, nullable) NSString * goToSettingsButton;
-@property(nonatomic, copy, nullable) NSString * goToSettingsDescription;
-@property(nonatomic, copy) NSString * cancelButton;
-@property(nonatomic, copy, nullable) NSString * localizedFallbackTitle;
+                       lockOut:(NSString *)lockOut
+            goToSettingsButton:(nullable NSString *)goToSettingsButton
+       goToSettingsDescription:(nullable NSString *)goToSettingsDescription
+                  cancelButton:(NSString *)cancelButton
+        localizedFallbackTitle:(nullable NSString *)localizedFallbackTitle;
+@property(nonatomic, copy) NSString *reason;
+@property(nonatomic, copy) NSString *lockOut;
+@property(nonatomic, copy, nullable) NSString *goToSettingsButton;
+@property(nonatomic, copy, nullable) NSString *goToSettingsDescription;
+@property(nonatomic, copy) NSString *cancelButton;
+@property(nonatomic, copy, nullable) NSString *localizedFallbackTitle;
 @end
 
 @interface FLADAuthOptions : NSObject
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
-+ (instancetype)makeWithBiometricOnly:(BOOL )biometricOnly
-    sticky:(BOOL )sticky
-    useErrorDialogs:(BOOL )useErrorDialogs;
-@property(nonatomic, assign) BOOL  biometricOnly;
-@property(nonatomic, assign) BOOL  sticky;
-@property(nonatomic, assign) BOOL  useErrorDialogs;
++ (instancetype)makeWithBiometricOnly:(BOOL)biometricOnly
+                               sticky:(BOOL)sticky
+                      useErrorDialogs:(BOOL)useErrorDialogs;
+@property(nonatomic, assign) BOOL biometricOnly;
+@property(nonatomic, assign) BOOL sticky;
+@property(nonatomic, assign) BOOL useErrorDialogs;
 @end
 
 @interface FLADAuthResultDetails : NSObject
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
 + (instancetype)makeWithResult:(FLADAuthResult)result
-    errorMessage:(nullable NSString *)errorMessage
-    errorDetails:(nullable NSString *)errorDetails;
+                  errorMessage:(nullable NSString *)errorMessage
+                  errorDetails:(nullable NSString *)errorDetails;
 /// The result of authenticating.
 @property(nonatomic, assign) FLADAuthResult result;
 /// A system-provided error message, if any.
-@property(nonatomic, copy, nullable) NSString * errorMessage;
+@property(nonatomic, copy, nullable) NSString *errorMessage;
 /// System-provided error details, if any.
-@property(nonatomic, copy, nullable) NSString * errorDetails;
+@property(nonatomic, copy, nullable) NSString *errorDetails;
 @end
 
 @interface FLADAuthBiometricWrapper : NSObject
@@ -119,12 +119,17 @@ NSObject<FlutterMessageCodec> *FLADLocalAuthApiGetCodec(void);
 /// without additional setup.
 ///
 /// @return `nil` only when `error != nil`.
-- (nullable NSArray<FLADAuthBiometricWrapper *> *)getEnrolledBiometricsWithError:(FlutterError *_Nullable *_Nonnull)error;
+- (nullable NSArray<FLADAuthBiometricWrapper *> *)getEnrolledBiometricsWithError:
+    (FlutterError *_Nullable *_Nonnull)error;
 /// Attempts to authenticate the user with the provided [options], and using
 /// [strings] for any UI.
-- (void)authenticateWithOptions:(FLADAuthOptions *)options strings:(FLADAuthStrings *)strings completion:(void (^)(FLADAuthResultDetails *_Nullable, FlutterError *_Nullable))completion;
+- (void)authenticateWithOptions:(FLADAuthOptions *)options
+                        strings:(FLADAuthStrings *)strings
+                     completion:(void (^)(FLADAuthResultDetails *_Nullable,
+                                          FlutterError *_Nullable))completion;
 @end
 
-extern void SetUpFLADLocalAuthApi(id<FlutterBinaryMessenger> binaryMessenger, NSObject<FLADLocalAuthApi> *_Nullable api);
+extern void SetUpFLADLocalAuthApi(id<FlutterBinaryMessenger> binaryMessenger,
+                                  NSObject<FLADLocalAuthApi> *_Nullable api);
 
 NS_ASSUME_NONNULL_END
