@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-part of google_maps_flutter_web;
+part of '../google_maps_flutter_web.dart';
 
 /// The `PolygonController` class wraps a [gmaps.Polyline] and its `onTap` behavior.
 class PolylineController {

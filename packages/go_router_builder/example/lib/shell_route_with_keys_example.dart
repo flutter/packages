@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// ignore_for_file: public_member_api_docs
+// ignore_for_file: public_member_api_docs, unreachable_from_main
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -57,7 +57,7 @@ class MyShellRouteScreen extends StatelessWidget {
   final Widget child;
 
   int getCurrentIndex(BuildContext context) {
-    final String location = GoRouterState.of(context).uri.toString();
+    final String location = GoRouterState.of(context).uri.path;
     if (location.startsWith('/users')) {
       return 1;
     }
@@ -87,10 +87,8 @@ class MyShellRouteScreen extends StatelessWidget {
               switch (index) {
                 case 0:
                   const HomeRouteData().go(context);
-                  break;
                 case 1:
                   const UsersRouteData().go(context);
-                  break;
               }
             },
           ),

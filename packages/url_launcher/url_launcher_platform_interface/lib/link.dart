@@ -28,6 +28,7 @@ const MethodCodec _codec = JSONMethodCodec();
 ///
 /// This is a class instead of an enum to allow future customizability e.g.
 /// opening a link in a specific iframe.
+// ignore: use_enums
 class LinkTarget {
   /// Const private constructor with a [debugLabel] to allow the creation of
   /// multiple distinct const instances.
@@ -85,10 +86,7 @@ abstract class LinkInfo {
 // TODO(ianh): Remove the first argument.
 Future<ByteData> pushRouteNameToFramework(Object? _, String routeName) {
   final Completer<ByteData> completer = Completer<ByteData>();
-  // TODO(chunhtai): remove this ignore and migrate the code
-  // https://github.com/flutter/flutter/issues/124045.
-  // ignore: deprecated_member_use
-  SystemNavigator.routeInformationUpdated(location: routeName);
+  SystemNavigator.routeInformationUpdated(uri: Uri.parse(routeName));
   ui.channelBuffers.push(
     'flutter/navigation',
     _codec.encodeMethodCall(

@@ -11,11 +11,9 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-/**
- * Flutter api implementation for WKWebViewConfiguration.
- *
- * Handles making callbacks to Dart for a WKWebViewConfiguration.
- */
+/// Flutter api implementation for WKWebViewConfiguration.
+///
+/// Handles making callbacks to Dart for a WKWebViewConfiguration.
 @interface FWFWebViewConfigurationFlutterApiImpl : FWFWKWebViewConfigurationFlutterApi
 - (instancetype)initWithBinaryMessenger:(id<FlutterBinaryMessenger>)binaryMessenger
                         instanceManager:(FWFInstanceManager *)instanceManager;
@@ -24,9 +22,7 @@ NS_ASSUME_NONNULL_BEGIN
                      completion:(void (^)(FlutterError *_Nullable))completion;
 @end
 
-/**
- * Implementation of WKWebViewConfiguration for FWFWebViewConfigurationHostApiImpl.
- */
+/// Implementation of WKWebViewConfiguration for FWFWebViewConfigurationHostApiImpl.
 @interface FWFWebViewConfiguration : WKWebViewConfiguration
 @property(readonly, nonnull, nonatomic) FWFObjectFlutterApiImpl *objectApi;
 
@@ -34,11 +30,9 @@ NS_ASSUME_NONNULL_BEGIN
                         instanceManager:(FWFInstanceManager *)instanceManager;
 @end
 
-/**
- * Host api implementation for WKWebViewConfiguration.
- *
- * Handles creating WKWebViewConfiguration that intercommunicate with a paired Dart object.
- */
+/// Host api implementation for WKWebViewConfiguration.
+///
+/// Handles creating WKWebViewConfiguration that intercommunicate with a paired Dart object.
 @interface FWFWebViewConfigurationHostApiImpl : NSObject <FWFWKWebViewConfigurationHostApi>
 - (instancetype)initWithBinaryMessenger:(id<FlutterBinaryMessenger>)binaryMessenger
                         instanceManager:(FWFInstanceManager *)instanceManager;

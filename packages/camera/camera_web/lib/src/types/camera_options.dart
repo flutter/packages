@@ -145,21 +145,21 @@ class VideoConstraints {
 ///
 /// Specifies whether the requested camera should be facing away
 /// or toward the user.
-class CameraType {
+enum CameraType {
+  /// The camera is facing away from the user, viewing their environment.
+  /// This includes the back camera on a smartphone.
+  environment._('environment'),
+
+  /// The camera is facing toward the user.
+  /// This includes the front camera on a smartphone.
+  user._('user');
+
   const CameraType._(this._type);
 
   final String _type;
 
   @override
   String toString() => _type;
-
-  /// The camera is facing away from the user, viewing their environment.
-  /// This includes the back camera on a smartphone.
-  static const CameraType environment = CameraType._('environment');
-
-  /// The camera is facing toward the user.
-  /// This includes the front camera on a smartphone.
-  static const CameraType user = CameraType._('user');
 }
 
 /// Indicates the direction in which the desired camera should be pointing.

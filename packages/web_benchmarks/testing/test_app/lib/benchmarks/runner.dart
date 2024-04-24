@@ -8,15 +8,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:web_benchmarks/client.dart';
 
-import '../aboutpage.dart' show backKey;
-import '../homepage.dart' show aboutPageKey, textKey;
+import '../about_page.dart' show backKey;
+import '../home_page.dart' show aboutPageKey, textKey;
 import '../main.dart';
 
 /// A recorder that measures frame building durations.
 abstract class AppRecorder extends WidgetRecorder {
   AppRecorder({required this.benchmarkName}) : super(name: benchmarkName);
 
-  final String benchmarkName;
+  final String benchmarkName; // ignore: unreachable_from_main
 
   Future<void> automate();
 

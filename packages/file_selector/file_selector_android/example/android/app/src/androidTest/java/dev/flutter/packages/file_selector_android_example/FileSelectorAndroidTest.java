@@ -20,6 +20,7 @@ import android.app.Instrumentation;
 import android.content.ClipData;
 import android.content.Intent;
 import android.net.Uri;
+import androidx.test.core.app.ActivityScenario;
 import androidx.test.espresso.intent.rule.IntentsRule;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import org.junit.Rule;
@@ -32,12 +33,28 @@ public class FileSelectorAndroidTest {
 
   @Rule public IntentsRule intentsRule = new IntentsRule();
 
+  public void clearAnySystemDialog() {
+    myActivityTestRule
+        .getScenario()
+        .onActivity(
+            new ActivityScenario.ActivityAction<DriverExtensionActivity>() {
+              @Override
+              public void perform(DriverExtensionActivity activity) {
+                Intent closeDialog = new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS);
+                activity.sendBroadcast(closeDialog);
+              }
+            });
+  }
+
   @Test
   public void openImageFile() {
+    clearAnySystemDialog();
+
     final Instrumentation.ActivityResult result =
         new Instrumentation.ActivityResult(
             Activity.RESULT_OK,
             new Intent().setData(Uri.parse("content://file_selector_android_test/dummy.png")));
+
     intending(hasAction(Intent.ACTION_OPEN_DOCUMENT)).respondWith(result);
     onFlutterWidget(withText("Open an image")).perform(click());
     onFlutterWidget(withText("Press to open an image file(png, jpg)")).perform(click());
@@ -48,6 +65,8 @@ public class FileSelectorAndroidTest {
 
   @Test
   public void openImageFiles() {
+    clearAnySystemDialog();
+
     final ClipData.Item clipDataItem =
         new ClipData.Item(Uri.parse("content://file_selector_android_test/dummy.png"));
     final ClipData clipData = new ClipData("", new String[0], clipDataItem);

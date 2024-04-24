@@ -165,15 +165,6 @@
   [self verifySavingImageWithPickerResult:result fullMetadata:YES withExtension:@"jpg"];
 }
 
-- (void)testSaveSVGImage API_AVAILABLE(ios(14)) {
-  NSURL *imageURL = [[NSBundle bundleForClass:[self class]] URLForResource:@"svgImage"
-                                                             withExtension:@"svg"];
-  NSItemProvider *itemProvider = [[NSItemProvider alloc] initWithContentsOfURL:imageURL];
-  PHPickerResult *result = [self createPickerResultWithProvider:itemProvider];
-
-  [self verifySavingImageWithPickerResult:result fullMetadata:YES withExtension:@"jpg"];
-}
-
 - (void)testSaveTIFFImage API_AVAILABLE(ios(14)) {
   NSURL *imageURL = [[NSBundle bundleForClass:[self class]] URLForResource:@"tiffImage"
                                                              withExtension:@"tiff"];

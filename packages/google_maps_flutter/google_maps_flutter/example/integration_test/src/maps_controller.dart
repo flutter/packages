@@ -70,7 +70,9 @@ void runTests() {
       // Android doesn't like the layout required for the web, so we skip web in this test.
       // The equivalent web test already exists here:
       // https://github.com/flutter/packages/blob/c43cc13498a1a1c4f3d1b8af2add9ce7c15bd6d0/packages/google_maps_flutter/google_maps_flutter_web/example/integration_test/projection_test.dart#L78
-      skip: isWeb);
+      skip: isWeb ||
+          // TODO(stuartmorgan): Re-enable; see https://github.com/flutter/flutter/issues/139825
+          isIOS);
 
   testWidgets('testGetVisibleRegion', (WidgetTester tester) async {
     final Key key = GlobalKey();
@@ -135,7 +137,9 @@ void runTests() {
 
     expect(firstVisibleRegion, isNot(secondVisibleRegion));
     expect(secondVisibleRegion.contains(newCenter), isTrue);
-  });
+  },
+      // TODO(stuartmorgan): Re-enable; see https://github.com/flutter/flutter/issues/139825
+      skip: isIOS);
 
   testWidgets('testSetMapStyle valid Json String', (WidgetTester tester) async {
     final Key key = GlobalKey();
@@ -269,7 +273,9 @@ void runTests() {
     await tester.pumpAndSettle();
     zoom = await controller.getZoomLevel();
     expect(zoom, equals(7));
-  });
+  },
+      // TODO(stuartmorgan): Re-enable; see https://github.com/flutter/flutter/issues/139825
+      skip: isIOS);
 
   testWidgets('testScreenCoordinate', (WidgetTester tester) async {
     final Key key = GlobalKey();
@@ -302,7 +308,9 @@ void runTests() {
     final ScreenCoordinate topLeft =
         await controller.getScreenCoordinate(northWest);
     expect(topLeft, const ScreenCoordinate(x: 0, y: 0));
-  });
+  },
+      // TODO(stuartmorgan): Re-enable; see https://github.com/flutter/flutter/issues/139825
+      skip: isIOS);
 
   testWidgets('testResizeWidget', (WidgetTester tester) async {
     final Completer<GoogleMapController> controllerCompleter =
@@ -366,6 +374,14 @@ void runTests() {
     );
     final GoogleMapController controller = await controllerCompleter.future;
 
+    await tester.pumpAndSettle();
+
+    // TODO(mossmana): Adding this delay addresses
+    // https://github.com/flutter/flutter/issues/131783. It may be related
+    // to https://github.com/flutter/flutter/issues/54758 and should be
+    // re-evaluated when that issue is fixed.
+    await Future<void>.delayed(const Duration(seconds: 1));
+
     bool iwVisibleStatus =
         await controller.isMarkerInfoWindowShown(marker.markerId);
     expect(iwVisibleStatus, false);
@@ -406,7 +422,8 @@ void runTests() {
   },
       // TODO(cyanglaz): un-skip the test when we can test this on CI with API key enabled.
       // https://github.com/flutter/flutter/issues/57057
-      skip: isAndroid || isWeb);
+      // https://github.com/flutter/flutter/issues/139825
+      skip: isAndroid || isWeb || isIOS);
 
   testWidgets(
     'testCloudMapId',
@@ -431,6 +448,28 @@ void runTests() {
       await mapIdCompleter.future;
     },
   );
+
+  testWidgets('getStyleError reports last error', (WidgetTester tester) async {
+    final Key key = GlobalKey();
+    final Completer<GoogleMapController> controllerCompleter =
+        Completer<GoogleMapController>();
+
+    await pumpMap(
+      tester,
+      GoogleMap(
+        key: key,
+        initialCameraPosition: kInitialCameraPosition,
+        style: '[[[this is an invalid style',
+        onMapCreated: (GoogleMapController controller) {
+          controllerCompleter.complete(controller);
+        },
+      ),
+    );
+
+    final GoogleMapController controller = await controllerCompleter.future;
+    final String? error = await controller.getStyleError();
+    expect(error, isNotNull);
+  });
 }
 
 /// Repeatedly checks an asynchronous value against a test condition.

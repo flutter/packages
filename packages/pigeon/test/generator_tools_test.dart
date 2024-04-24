@@ -37,6 +37,18 @@ bool _equalMaps(Map<String, Object> x, Map<String, Object> y) {
   return true;
 }
 
+final Class emptyClass = Class(name: 'className', fields: <NamedType>[
+  NamedType(
+    name: 'namedTypeName',
+    type: const TypeDeclaration(baseName: 'baseName', isNullable: false),
+  )
+]);
+
+final Enum emptyEnum = Enum(
+  name: 'enumName',
+  members: <EnumMember>[EnumMember(name: 'enumMemberName')],
+);
+
 void main() {
   test('test merge maps', () {
     final Map<String, Object> source = <String, Object>{
@@ -66,24 +78,31 @@ void main() {
   });
 
   test('get codec classes from argument type arguments', () {
-    final Api api =
-        Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
+    final AstFlutterApi api = AstFlutterApi(name: 'Api', methods: <Method>[
       Method(
         name: 'doSomething',
-        arguments: <NamedType>[
-          NamedType(
-            type: const TypeDeclaration(
+        location: ApiLocation.flutter,
+        parameters: <Parameter>[
+          Parameter(
+            type: TypeDeclaration(
               baseName: 'List',
               isNullable: false,
               typeArguments: <TypeDeclaration>[
-                TypeDeclaration(baseName: 'Input', isNullable: true)
+                TypeDeclaration(
+                  baseName: 'Input',
+                  isNullable: true,
+                  associatedClass: emptyClass,
+                )
               ],
             ),
             name: '',
           )
         ],
-        returnType:
-            const TypeDeclaration(baseName: 'Output', isNullable: false),
+        returnType: TypeDeclaration(
+          baseName: 'Output',
+          isNullable: false,
+          associatedClass: emptyClass,
+        ),
         isAsynchronous: true,
       )
     ]);
@@ -104,21 +123,29 @@ void main() {
   });
 
   test('get codec classes from return value type arguments', () {
-    final Api api =
-        Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
+    final AstFlutterApi api = AstFlutterApi(name: 'Api', methods: <Method>[
       Method(
         name: 'doSomething',
-        arguments: <NamedType>[
-          NamedType(
-            type: const TypeDeclaration(baseName: 'Output', isNullable: false),
+        location: ApiLocation.flutter,
+        parameters: <Parameter>[
+          Parameter(
+            type: TypeDeclaration(
+              baseName: 'Output',
+              isNullable: false,
+              associatedClass: emptyClass,
+            ),
             name: '',
           )
         ],
-        returnType: const TypeDeclaration(
+        returnType: TypeDeclaration(
           baseName: 'List',
           isNullable: false,
           typeArguments: <TypeDeclaration>[
-            TypeDeclaration(baseName: 'Input', isNullable: true)
+            TypeDeclaration(
+              baseName: 'Input',
+              isNullable: true,
+              associatedClass: emptyClass,
+            )
           ],
         ),
         isAsynchronous: true,
@@ -141,17 +168,25 @@ void main() {
   });
 
   test('get codec classes from all arguments', () {
-    final Api api =
-        Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
+    final AstFlutterApi api = AstFlutterApi(name: 'Api', methods: <Method>[
       Method(
         name: 'doSomething',
-        arguments: <NamedType>[
-          NamedType(
-            type: const TypeDeclaration(baseName: 'Foo', isNullable: false),
+        location: ApiLocation.flutter,
+        parameters: <Parameter>[
+          Parameter(
+            type: TypeDeclaration(
+              baseName: 'Foo',
+              isNullable: false,
+              associatedClass: emptyClass,
+            ),
             name: '',
           ),
-          NamedType(
-            type: const TypeDeclaration(baseName: 'Bar', isNullable: false),
+          Parameter(
+            type: TypeDeclaration(
+              baseName: 'Bar',
+              isNullable: false,
+              associatedEnum: emptyEnum,
+            ),
             name: '',
           ),
         ],
@@ -181,17 +216,22 @@ void main() {
 
   test('getCodecClasses: nested type arguments', () {
     final Root root = Root(apis: <Api>[
-      Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
+      AstFlutterApi(name: 'Api', methods: <Method>[
         Method(
           name: 'foo',
-          arguments: <NamedType>[
-            NamedType(
+          location: ApiLocation.flutter,
+          parameters: <Parameter>[
+            Parameter(
                 name: 'x',
-                type: const TypeDeclaration(
+                type: TypeDeclaration(
                     isNullable: false,
                     baseName: 'List',
                     typeArguments: <TypeDeclaration>[
-                      TypeDeclaration(baseName: 'Foo', isNullable: true)
+                      TypeDeclaration(
+                        baseName: 'Foo',
+                        isNullable: true,
+                        associatedClass: emptyClass,
+                      )
                     ])),
           ],
           returnType: const TypeDeclaration.voidDeclaration(),
@@ -201,12 +241,19 @@ void main() {
       Class(name: 'Foo', fields: <NamedType>[
         NamedType(
             name: 'bar',
-            type: const TypeDeclaration(baseName: 'Bar', isNullable: true)),
+            type: TypeDeclaration(
+              baseName: 'Bar',
+              isNullable: true,
+              associatedClass: emptyClass,
+            )),
       ]),
       Class(name: 'Bar', fields: <NamedType>[
         NamedType(
             name: 'value',
-            type: const TypeDeclaration(baseName: 'int', isNullable: true))
+            type: const TypeDeclaration(
+              baseName: 'int',
+              isNullable: true,
+            ))
       ])
     ], enums: <Enum>[]);
     final List<EnumeratedClass> classes =
@@ -226,14 +273,14 @@ void main() {
 
   test('getCodecClasses: with Object', () {
     final Root root = Root(apis: <Api>[
-      Api(
+      AstFlutterApi(
         name: 'Api1',
-        location: ApiLocation.flutter,
         methods: <Method>[
           Method(
             name: 'foo',
-            arguments: <NamedType>[
-              NamedType(
+            location: ApiLocation.flutter,
+            parameters: <Parameter>[
+              Parameter(
                   name: 'x',
                   type: const TypeDeclaration(
                       isNullable: false,
@@ -265,33 +312,39 @@ void main() {
 
   test('getCodecClasses: unique entries', () {
     final Root root = Root(apis: <Api>[
-      Api(
+      AstFlutterApi(
         name: 'Api1',
-        location: ApiLocation.flutter,
         methods: <Method>[
           Method(
             name: 'foo',
-            arguments: <NamedType>[
-              NamedType(
+            location: ApiLocation.flutter,
+            parameters: <Parameter>[
+              Parameter(
                   name: 'x',
-                  type: const TypeDeclaration(
-                      isNullable: false, baseName: 'Foo')),
+                  type: TypeDeclaration(
+                    isNullable: false,
+                    baseName: 'Foo',
+                    associatedClass: emptyClass,
+                  )),
             ],
             returnType: const TypeDeclaration.voidDeclaration(),
           )
         ],
       ),
-      Api(
+      AstHostApi(
         name: 'Api2',
-        location: ApiLocation.host,
         methods: <Method>[
           Method(
             name: 'foo',
-            arguments: <NamedType>[
-              NamedType(
+            location: ApiLocation.host,
+            parameters: <Parameter>[
+              Parameter(
                   name: 'x',
-                  type: const TypeDeclaration(
-                      isNullable: false, baseName: 'Foo')),
+                  type: TypeDeclaration(
+                    isNullable: false,
+                    baseName: 'Foo',
+                    associatedClass: emptyClass,
+                  )),
             ],
             returnType: const TypeDeclaration.voidDeclaration(),
           )
@@ -319,5 +372,153 @@ void main() {
         deducePackageName('./pigeons/core_tests.dart');
 
     expect(dartPackageName, 'pigeon');
+  });
+
+  test('recursiveGetSuperClassApisChain', () {
+    final AstProxyApi superClassOfSuperClassApi = AstProxyApi(
+      name: 'Api3',
+      methods: <Method>[],
+      constructors: <Constructor>[],
+      fields: <ApiField>[],
+    );
+    final AstProxyApi superClassApi = AstProxyApi(
+      name: 'Api2',
+      methods: <Method>[],
+      constructors: <Constructor>[],
+      fields: <ApiField>[],
+      superClass: TypeDeclaration(
+        baseName: 'Api3',
+        isNullable: false,
+        associatedProxyApi: superClassOfSuperClassApi,
+      ),
+    );
+    final AstProxyApi api = AstProxyApi(
+      name: 'Api',
+      methods: <Method>[],
+      constructors: <Constructor>[],
+      fields: <ApiField>[],
+      superClass: TypeDeclaration(
+        baseName: 'Api2',
+        isNullable: false,
+        associatedProxyApi: superClassApi,
+      ),
+    );
+
+    expect(
+      api.allSuperClasses().toList(),
+      containsAllInOrder(<AstProxyApi>[
+        superClassApi,
+        superClassOfSuperClassApi,
+      ]),
+    );
+  });
+
+  test('recursiveFindAllInterfacesApis', () {
+    final AstProxyApi interfaceOfInterfaceApi2 = AstProxyApi(
+      name: 'Api5',
+      methods: <Method>[],
+      constructors: <Constructor>[],
+      fields: <ApiField>[],
+    );
+    final AstProxyApi interfaceOfInterfaceApi = AstProxyApi(
+      name: 'Api4',
+      methods: <Method>[],
+      constructors: <Constructor>[],
+      fields: <ApiField>[],
+    );
+    final AstProxyApi interfaceApi2 = AstProxyApi(
+      name: 'Api3',
+      methods: <Method>[],
+      constructors: <Constructor>[],
+      fields: <ApiField>[],
+      interfaces: <TypeDeclaration>{
+        TypeDeclaration(
+          baseName: 'Api5',
+          isNullable: false,
+          associatedProxyApi: interfaceOfInterfaceApi2,
+        ),
+      },
+    );
+    final AstProxyApi interfaceApi = AstProxyApi(
+      name: 'Api2',
+      methods: <Method>[],
+      constructors: <Constructor>[],
+      fields: <ApiField>[],
+      interfaces: <TypeDeclaration>{
+        TypeDeclaration(
+          baseName: 'Api4',
+          isNullable: false,
+          associatedProxyApi: interfaceOfInterfaceApi,
+        ),
+        TypeDeclaration(
+          baseName: 'Api5',
+          isNullable: false,
+          associatedProxyApi: interfaceOfInterfaceApi2,
+        ),
+      },
+    );
+    final AstProxyApi api = AstProxyApi(
+      name: 'Api',
+      methods: <Method>[],
+      constructors: <Constructor>[],
+      fields: <ApiField>[],
+      interfaces: <TypeDeclaration>{
+        TypeDeclaration(
+          baseName: 'Api2',
+          isNullable: false,
+          associatedProxyApi: interfaceApi,
+        ),
+        TypeDeclaration(
+          baseName: 'Api3',
+          isNullable: false,
+          associatedProxyApi: interfaceApi2,
+        ),
+      },
+    );
+
+    expect(
+      api.apisOfInterfaces(),
+      containsAll(<AstProxyApi>[
+        interfaceApi,
+        interfaceApi2,
+        interfaceOfInterfaceApi,
+        interfaceOfInterfaceApi2,
+      ]),
+    );
+  });
+
+  test(
+      'recursiveFindAllInterfacesApis throws error if api recursively implements itself',
+      () {
+    final AstProxyApi a = AstProxyApi(
+      name: 'A',
+      methods: <Method>[],
+      constructors: <Constructor>[],
+      fields: <ApiField>[],
+    );
+    final AstProxyApi b = AstProxyApi(
+      name: 'B',
+      methods: <Method>[],
+      constructors: <Constructor>[],
+      fields: <ApiField>[],
+    );
+    final AstProxyApi c = AstProxyApi(
+      name: 'C',
+      methods: <Method>[],
+      constructors: <Constructor>[],
+      fields: <ApiField>[],
+    );
+
+    a.interfaces = <TypeDeclaration>{
+      TypeDeclaration(baseName: 'B', isNullable: false, associatedProxyApi: b),
+    };
+    b.interfaces = <TypeDeclaration>{
+      TypeDeclaration(baseName: 'C', isNullable: false, associatedProxyApi: c),
+    };
+    c.interfaces = <TypeDeclaration>{
+      TypeDeclaration(baseName: 'A', isNullable: false, associatedProxyApi: a),
+    };
+
+    expect(() => a.apisOfInterfaces(), throwsArgumentError);
   });
 }

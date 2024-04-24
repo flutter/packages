@@ -56,7 +56,7 @@
                                                             camera:FLTSourceCameraRear]
                       maxSize:[[FLTMaxSize alloc] init]
                       quality:nil
-                 fullMetadata:@YES
+                 fullMetadata:YES
                    completion:^(NSString *_Nullable result, FlutterError *_Nullable error){
                    }];
 
@@ -89,7 +89,7 @@
                                                             camera:FLTSourceCameraFront]
                       maxSize:[[FLTMaxSize alloc] init]
                       quality:nil
-                 fullMetadata:@YES
+                 fullMetadata:YES
                    completion:^(NSString *_Nullable result, FlutterError *_Nullable error){
                    }];
 
@@ -174,7 +174,8 @@
 
   [plugin pickMultiImageWithMaxSize:[FLTMaxSize makeWithWidth:@(100) height:@(200)]
                             quality:@(50)
-                       fullMetadata:@YES
+                       fullMetadata:YES
+                              limit:nil
                          completion:^(NSArray<NSString *> *_Nullable result,
                                       FlutterError *_Nullable error){
                          }];
@@ -197,8 +198,9 @@
   FLTMediaSelectionOptions *mediaSelectionOptions =
       [FLTMediaSelectionOptions makeWithMaxSize:[FLTMaxSize makeWithWidth:@(100) height:@(200)]
                                    imageQuality:@(50)
-                            requestFullMetadata:@YES
-                                  allowMultiple:@YES];
+                            requestFullMetadata:YES
+                                  allowMultiple:YES
+                                          limit:nil];
 
   [plugin pickMediaWithMediaSelectionOptions:mediaSelectionOptions
                                   completion:^(NSArray<NSString *> *_Nullable result,
@@ -219,7 +221,7 @@
                                                             camera:FLTSourceCameraFront]
                       maxSize:[[FLTMaxSize alloc] init]
                       quality:nil
-                 fullMetadata:@NO
+                 fullMetadata:NO
                    completion:^(NSString *_Nullable result, FlutterError *_Nullable error){
                    }];
 
@@ -235,7 +237,8 @@
 
   [plugin pickMultiImageWithMaxSize:[[FLTMaxSize alloc] init]
                             quality:nil
-                       fullMetadata:@NO
+                       fullMetadata:NO
+                              limit:nil
                          completion:^(NSArray<NSString *> *_Nullable result,
                                       FlutterError *_Nullable error){
                          }];
@@ -253,8 +256,9 @@
   FLTMediaSelectionOptions *mediaSelectionOptions =
       [FLTMediaSelectionOptions makeWithMaxSize:[FLTMaxSize makeWithWidth:@(100) height:@(200)]
                                    imageQuality:@(50)
-                            requestFullMetadata:@YES
-                                  allowMultiple:@YES];
+                            requestFullMetadata:YES
+                                  allowMultiple:YES
+                                          limit:nil];
 
   [plugin pickMediaWithMediaSelectionOptions:mediaSelectionOptions
 
@@ -279,7 +283,7 @@
                                                             camera:FLTSourceCameraRear]
                       maxSize:[[FLTMaxSize alloc] init]
                       quality:nil
-                 fullMetadata:@YES
+                 fullMetadata:YES
                    completion:^(NSString *_Nullable result, FlutterError *_Nullable error){
                    }];
 
@@ -502,7 +506,7 @@
                                                             camera:FLTSourceCameraFront]
                       maxSize:[[FLTMaxSize alloc] init]
                       quality:nil
-                 fullMetadata:@YES
+                 fullMetadata:YES
                    completion:^(NSString *result, FlutterError *error){
                    }];
   OCMVerifyAll(mockPhotoLibrary);
@@ -521,7 +525,7 @@
                                                             camera:FLTSourceCameraFront]
                       maxSize:[[FLTMaxSize alloc] init]
                       quality:nil
-                 fullMetadata:@YES
+                 fullMetadata:YES
                    completion:^(NSString *result, FlutterError *error) {
                      XCTAssertNil(result);
                      XCTAssertEqualObjects(error.code, @"photo_access_denied");
@@ -529,6 +533,161 @@
                      [resultExpectation fulfill];
                    }];
   [self waitForExpectationsWithTimeout:30 handler:nil];
+}
+
+- (void)testPickMultiImageDuplicateCallCancels API_AVAILABLE(ios(14)) {
+  id mockPhotoLibrary = OCMClassMock([PHPhotoLibrary class]);
+  OCMStub([mockPhotoLibrary authorizationStatusForAccessLevel:PHAccessLevelReadWrite])
+      .andReturn(PHAuthorizationStatusNotDetermined);
+  OCMExpect([mockPhotoLibrary requestAuthorizationForAccessLevel:PHAccessLevelReadWrite
+                                                         handler:OCMOCK_ANY]);
+
+  FLTImagePickerPlugin *plugin = [[FLTImagePickerPlugin alloc] init];
+
+  XCTestExpectation *firstCallExpectation = [self expectationWithDescription:@"first call"];
+  [plugin pickMultiImageWithMaxSize:[FLTMaxSize makeWithWidth:@100 height:@100]
+                            quality:nil
+                       fullMetadata:YES
+                              limit:nil
+                         completion:^(NSArray<NSString *> *result, FlutterError *error) {
+                           XCTAssertNotNil(error);
+                           XCTAssertEqualObjects(error.code, @"multiple_request");
+                           [firstCallExpectation fulfill];
+                         }];
+  [plugin pickMultiImageWithMaxSize:[FLTMaxSize makeWithWidth:@100 height:@100]
+                            quality:nil
+                       fullMetadata:YES
+                              limit:nil
+                         completion:^(NSArray<NSString *> *result, FlutterError *error){
+                         }];
+  [self waitForExpectationsWithTimeout:30 handler:nil];
+}
+
+- (void)testPickMediaDuplicateCallCancels API_AVAILABLE(ios(14)) {
+  id mockPhotoLibrary = OCMClassMock([PHPhotoLibrary class]);
+  OCMStub([mockPhotoLibrary authorizationStatusForAccessLevel:PHAccessLevelReadWrite])
+      .andReturn(PHAuthorizationStatusNotDetermined);
+  OCMExpect([mockPhotoLibrary requestAuthorizationForAccessLevel:PHAccessLevelReadWrite
+                                                         handler:OCMOCK_ANY]);
+
+  FLTImagePickerPlugin *plugin = [[FLTImagePickerPlugin alloc] init];
+
+  FLTMediaSelectionOptions *options =
+      [FLTMediaSelectionOptions makeWithMaxSize:[FLTMaxSize makeWithWidth:@(100) height:@(200)]
+                                   imageQuality:@(50)
+                            requestFullMetadata:YES
+                                  allowMultiple:YES
+                                          limit:nil];
+  XCTestExpectation *firstCallExpectation = [self expectationWithDescription:@"first call"];
+  [plugin pickMediaWithMediaSelectionOptions:options
+                                  completion:^(NSArray<NSString *> *result, FlutterError *error) {
+                                    XCTAssertNotNil(error);
+                                    XCTAssertEqualObjects(error.code, @"multiple_request");
+                                    [firstCallExpectation fulfill];
+                                  }];
+  [plugin pickMediaWithMediaSelectionOptions:options
+                                  completion:^(NSArray<NSString *> *result, FlutterError *error){
+                                  }];
+  [self waitForExpectationsWithTimeout:30 handler:nil];
+}
+
+- (void)testPickVideoDuplicateCallCancels API_AVAILABLE(ios(14)) {
+  id mockPhotoLibrary = OCMClassMock([AVCaptureDevice class]);
+  OCMStub([mockPhotoLibrary authorizationStatusForMediaType:AVMediaTypeVideo])
+      .andReturn(AVAuthorizationStatusNotDetermined);
+
+  FLTImagePickerPlugin *plugin = [[FLTImagePickerPlugin alloc] init];
+
+  FLTSourceSpecification *source = [FLTSourceSpecification makeWithType:FLTSourceTypeCamera
+                                                                 camera:FLTSourceCameraRear];
+  XCTestExpectation *firstCallExpectation = [self expectationWithDescription:@"first call"];
+  [plugin pickVideoWithSource:source
+                  maxDuration:nil
+                   completion:^(NSString *result, FlutterError *error) {
+                     XCTAssertNotNil(error);
+                     XCTAssertEqualObjects(error.code, @"multiple_request");
+                     [firstCallExpectation fulfill];
+                   }];
+  [plugin pickVideoWithSource:source
+                  maxDuration:nil
+                   completion:^(NSString *result, FlutterError *error){
+                   }];
+  [self waitForExpectationsWithTimeout:30 handler:nil];
+}
+
+- (void)testPickMultiImageWithLimit {
+  FLTImagePickerPlugin *plugin = [[FLTImagePickerPlugin alloc] init];
+  [plugin pickMultiImageWithMaxSize:[[FLTMaxSize alloc] init]
+                            quality:nil
+                       fullMetadata:NO
+                              limit:@(2)
+                         completion:^(NSArray<NSString *> *_Nullable result,
+                                      FlutterError *_Nullable error){
+                         }];
+  XCTAssertEqual(plugin.callContext.maxImageCount, 2);
+}
+
+- (void)testPickMediaWithLimitAllowsMultiple {
+  FLTImagePickerPlugin *plugin = [[FLTImagePickerPlugin alloc] init];
+  FLTMediaSelectionOptions *mediaSelectionOptions =
+      [FLTMediaSelectionOptions makeWithMaxSize:[FLTMaxSize makeWithWidth:@(100) height:@(200)]
+                                   imageQuality:nil
+                            requestFullMetadata:NO
+                                  allowMultiple:YES
+                                          limit:@(2)];
+
+  [plugin pickMediaWithMediaSelectionOptions:mediaSelectionOptions
+                                  completion:^(NSArray<NSString *> *_Nullable result,
+                                               FlutterError *_Nullable error){
+                                  }];
+
+  XCTAssertEqual(plugin.callContext.maxImageCount, 2);
+}
+
+- (void)testPickMediaWithLimitMultipleNotAllowed {
+  FLTImagePickerPlugin *plugin = [[FLTImagePickerPlugin alloc] init];
+  FLTMediaSelectionOptions *mediaSelectionOptions =
+      [FLTMediaSelectionOptions makeWithMaxSize:[FLTMaxSize makeWithWidth:@(100) height:@(200)]
+                                   imageQuality:nil
+                            requestFullMetadata:NO
+                                  allowMultiple:NO
+                                          limit:@(2)];
+
+  [plugin pickMediaWithMediaSelectionOptions:mediaSelectionOptions
+                                  completion:^(NSArray<NSString *> *_Nullable result,
+                                               FlutterError *_Nullable error){
+                                  }];
+
+  XCTAssertEqual(plugin.callContext.maxImageCount, 1);
+}
+
+- (void)testPickMultiImageWithoutLimit {
+  FLTImagePickerPlugin *plugin = [[FLTImagePickerPlugin alloc] init];
+  [plugin pickMultiImageWithMaxSize:[[FLTMaxSize alloc] init]
+                            quality:nil
+                       fullMetadata:NO
+                              limit:nil
+                         completion:^(NSArray<NSString *> *_Nullable result,
+                                      FlutterError *_Nullable error){
+                         }];
+  XCTAssertEqual(plugin.callContext.maxImageCount, 0);
+}
+
+- (void)testPickMediaWithoutLimitAllowsMultiple {
+  FLTImagePickerPlugin *plugin = [[FLTImagePickerPlugin alloc] init];
+  FLTMediaSelectionOptions *mediaSelectionOptions =
+      [FLTMediaSelectionOptions makeWithMaxSize:[FLTMaxSize makeWithWidth:@(100) height:@(200)]
+                                   imageQuality:nil
+                            requestFullMetadata:NO
+                                  allowMultiple:YES
+                                          limit:nil];
+
+  [plugin pickMediaWithMediaSelectionOptions:mediaSelectionOptions
+                                  completion:^(NSArray<NSString *> *_Nullable result,
+                                               FlutterError *_Nullable error){
+                                  }];
+
+  XCTAssertEqual(plugin.callContext.maxImageCount, 0);
 }
 
 @end

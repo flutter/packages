@@ -1,0 +1,26 @@
+name: pointer_interceptor_web_example
+description: "Demonstrates how to use the pointer_interceptor_web plugin."
+publish_to: 'none'
+
+environment:
+  sdk: ^3.3.0
+  flutter: ">=3.19.0"
+
+dependencies:
+  cupertino_icons: ^1.0.2
+  flutter:
+    sdk: flutter
+  pointer_interceptor_platform_interface: ^0.10.0
+  pointer_interceptor_web:
+    path: ../../pointer_interceptor_web
+  web: ^0.5.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  integration_test:
+    sdk: flutter
+
+flutter:
+  uses-material-design: true
+

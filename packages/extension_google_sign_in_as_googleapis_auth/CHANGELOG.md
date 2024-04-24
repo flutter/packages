@@ -1,3 +1,12 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.13/Dart 3.1.
+
+## 2.0.12
+
+* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+* Updates README to improve example of using google_sign_in plugin with the `googleapis` package.
+
 ## 2.0.11
 
 * Adds pub topics to package metadata.

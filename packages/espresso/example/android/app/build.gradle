@@ -25,7 +25,7 @@ apply plugin: 'com.android.application'
 apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 
 android {
-    compileSdkVersion flutter.compileSdkVersion
+    compileSdk flutter.compileSdkVersion
     // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
     namespace "com.example.espresso_example"
 

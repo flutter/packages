@@ -3,8 +3,8 @@ description: Demonstrates how to use the url_launcher plugin.
 publish_to: none
 
 environment:
-  sdk: ">=2.19.0 <4.0.0"
-  flutter: ">=3.7.0"
+  sdk: ^3.1.0
+  flutter: ">=3.13.0"
 
 dependencies:
   flutter:
@@ -16,15 +16,15 @@ dependencies:
     # The example app is bundled with the plugin so we use a path dependency on
     # the parent directory to use the current plugin's version.
     path: ../
-  url_launcher_platform_interface: ^2.0.3
+  url_launcher_platform_interface: ^2.3.1
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   integration_test:
     sdk: flutter
-  mockito: 5.4.1
-  plugin_platform_interface: ^2.0.0
+  mockito: 5.4.4
+  plugin_platform_interface: ^2.1.7
 
 flutter:
   uses-material-design: true

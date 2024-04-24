@@ -86,7 +86,7 @@ class InAppPurchaseStoreKitPlatform extends InAppPurchasePlatform {
   @override
   Future<bool> buyConsumable(
       {required PurchaseParam purchaseParam, bool autoConsume = true}) {
-    assert(autoConsume == true, 'On iOS, we should always auto consume');
+    assert(autoConsume, 'On iOS, we should always auto consume');
     return buyNonConsumable(purchaseParam: purchaseParam);
   }
 
@@ -152,6 +152,14 @@ class InAppPurchaseStoreKitPlatform extends InAppPurchasePlatform {
               details: exception.details),
     );
     return productDetailsResponse;
+  }
+
+  /// Returns the country code from SKStoreFrontWrapper.
+  ///
+  /// Uses the ISO 3166-1 Alpha-3 country code representation.
+  /// See: https://developer.apple.com/documentation/storekit/skstorefront?language=objc
+  Future<String?> getCountryCode() async {
+    return (await _skPaymentQueueWrapper.storefront())?.countryCode;
   }
 }
 

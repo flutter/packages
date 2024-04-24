@@ -24,8 +24,8 @@ public class AsyncTest {
     }
 
     @Override
-    public void voidVoid(Result<Void> result) {
-      result.success(null);
+    public void voidVoid(VoidResult result) {
+      result.success();
     }
   }
 
@@ -36,7 +36,7 @@ public class AsyncTest {
     }
 
     @Override
-    public void voidVoid(Result<Void> result) {
+    public void voidVoid(VoidResult result) {
       result.error(new Exception("error"));
     }
   }
@@ -45,7 +45,7 @@ public class AsyncTest {
   public void asyncSuccess() {
     Success api = new Success();
     BinaryMessenger binaryMessenger = mock(BinaryMessenger.class);
-    HostSmallApi.setup(binaryMessenger, api);
+    HostSmallApi.setUp(binaryMessenger, api);
     ArgumentCaptor<BinaryMessenger.BinaryMessageHandler> handler =
         ArgumentCaptor.forClass(BinaryMessenger.BinaryMessageHandler.class);
     verify(binaryMessenger)
@@ -76,7 +76,7 @@ public class AsyncTest {
   public void asyncError() {
     Error api = new Error();
     BinaryMessenger binaryMessenger = mock(BinaryMessenger.class);
-    HostSmallApi.setup(binaryMessenger, api);
+    HostSmallApi.setUp(binaryMessenger, api);
     ArgumentCaptor<BinaryMessenger.BinaryMessageHandler> handler =
         ArgumentCaptor.forClass(BinaryMessenger.BinaryMessageHandler.class);
     verify(binaryMessenger)

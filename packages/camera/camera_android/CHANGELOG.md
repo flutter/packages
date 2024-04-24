@@ -1,3 +1,43 @@
+## 0.10.9+1
+
+* Changes the visibility of a number of fields to `@VisibleForTesting` in order simplify testing.
+
+## 0.10.9
+
+* Adds support to control video FPS and bitrate. See `CameraController.withSettings`.
+
+## 0.10.8+18
+
+* Updates annotations lib to 1.7.1.
+
+## 0.10.8+17
+
+* Updates minimum supported SDK version to Flutter 3.13/Dart 3.1.
+* Updates compileSdk version to 34.
+* Updates `README.md` to encourage developers to opt into `camera_android_camerax`.
+
+## 0.10.8+16
+
+* Fixes new lint warnings.
+
+## 0.10.8+15
+
+* Updates example app to use non-deprecated video_player method.
+
+## 0.10.8+14
+
+* Fixes `pausePreview` null pointer error. `pausePreview` should not be called 
+  when camera is closed or not configured.
+* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+
+## 0.10.8+13
+
+* Updates annotations lib to 1.7.0.
+
+## 0.10.8+12
+
+* Fixes handling of autofocus state when taking a picture.
+
 ## 0.10.8+11
 
 * Downgrades AGP version for compatibility with legacy projects.

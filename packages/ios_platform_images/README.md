@@ -1,4 +1,4 @@
-# IOS Platform Images
+# iOS Platform Images
 
 A Flutter plugin to share images between Flutter and iOS.
 
@@ -10,37 +10,30 @@ When loading images from Image.xcassets the device specific variant is chosen
 
 |             | iOS   |
 |-------------|-------|
-| **Support** | 11.0+ |
+| **Support** | 12.0+ |
 
 ## Usage
 
 ### iOS->Flutter Example
 
-``` dart
-// Import package
-import 'package:ios_platform_images/ios_platform_images.dart';
-
-Widget build(BuildContext context) {
-  return MaterialApp(
-    home: Scaffold(
-      body: Center(
-        child: Image(image: IosPlatformImages.load("flutter")),
-      ),
-      //..
-    ),
-  );
-}
+<?code-excerpt "example/lib/main.dart (Usage)"?>
+```dart
+// "flutter" is a resource in Assets.xcassets.
+final Image xcassetImage = Image(
+  image: IosPlatformImages.load('flutter'),
+  semanticLabel: 'Flutter logo',
+);
 ```
 
-`IosPlatformImages.load` functions like [[UIImage imageNamed:]](https://developer.apple.com/documentation/uikit/uiimage/1624146-imagenamed).
+`IosPlatformImages.load` works similarly to [`UIImage(named:)`](https://developer.apple.com/documentation/uikit/uiimage/1624146-imagenamed).
 
 ### Flutter->iOS Example
 
-```objc
-#import <ios_platform_images/UIImage+ios_platform_images.h>
+```swift
+import ios_platform_images
 
-static UIImageView* MakeImage() {
-  UIImage* image = [UIImage flutterImageWithName:@"assets/foo.png"];
-  return [[UIImageView alloc] initWithImage:image];
+func makeImage() -> UIImageView {
+    let image = UIImage.flutterImageWithName("assets/foo.png")
+    return UIImageView(image: image)
 }
 ```

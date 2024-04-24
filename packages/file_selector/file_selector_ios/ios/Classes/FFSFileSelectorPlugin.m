@@ -8,6 +8,34 @@
 
 #import <objc/runtime.h>
 
+// TODO(stuartmorgan): When migrating to Swift, eliminate this in favor of
+// adding FFSViewPresenter conformance to UIViewController.
+@interface FFSPresentingViewController : NSObject <FFSViewPresenter>
+- (instancetype)initWithViewController:(nullable UIViewController *)controller;
+// The wrapped controller.
+@property(nonatomic) UIViewController *controller;
+@end
+
+@implementation FFSPresentingViewController
+- (instancetype)initWithViewController:(nullable UIViewController *)controller {
+  self = [super init];
+  if (self) {
+    _controller = controller;
+  }
+  return self;
+}
+
+- (void)presentViewController:(UIViewController *)viewControllerToPresent
+                     animated:(BOOL)animated
+                   completion:(void (^__nullable)(void))completion {
+  [self.controller presentViewController:viewControllerToPresent
+                                animated:animated
+                              completion:completion];
+}
+@end
+
+#pragma mark -
+
 @implementation FFSFileSelectorPlugin
 
 #pragma mark - FFSFileSelectorApi
@@ -21,15 +49,17 @@
                  initWithDocumentTypes:config.utis
                                 inMode:UIDocumentPickerModeImport];
   documentPicker.delegate = self;
-  documentPicker.allowsMultipleSelection = config.allowMultiSelection.boolValue;
+  documentPicker.allowsMultipleSelection = config.allowMultiSelection;
 
-  UIViewController *presentingVC =
-      self.presentingViewControllerOverride
-          ?: UIApplication.sharedApplication.delegate.window.rootViewController;
-  if (presentingVC) {
+  id<FFSViewPresenter> presenter =
+      self.viewPresenterOverride
+          ?: [[FFSPresentingViewController alloc]
+                 initWithViewController:UIApplication.sharedApplication.delegate.window
+                                            .rootViewController];
+  if (presenter) {
     objc_setAssociatedObject(documentPicker, @selector(openFileSelectorWithConfig:completion:),
                              completion, OBJC_ASSOCIATION_COPY_NONATOMIC);
-    [presentingVC presentViewController:documentPicker animated:YES completion:nil];
+    [presenter presentViewController:documentPicker animated:YES completion:nil];
   } else {
     completion(nil, [FlutterError errorWithCode:@"error"
                                         message:@"Missing root view controller."
@@ -41,7 +71,7 @@
 
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar {
   FFSFileSelectorPlugin *plugin = [[FFSFileSelectorPlugin alloc] init];
-  FFSFileSelectorApiSetup(registrar.messenger, plugin);
+  SetUpFFSFileSelectorApi(registrar.messenger, plugin);
 }
 
 #pragma mark - UIDocumentPickerDelegate

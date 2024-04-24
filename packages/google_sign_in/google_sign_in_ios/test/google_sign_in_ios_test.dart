@@ -13,12 +13,12 @@ import 'package:mockito/mockito.dart';
 import 'google_sign_in_ios_test.mocks.dart';
 
 final GoogleSignInUserData _user = GoogleSignInUserData(
-  email: 'john.doe@gmail.com',
-  id: '8162538176523816253123',
-  photoUrl: 'https://lh5.googleusercontent.com/photo.jpg',
-  displayName: 'John Doe',
-  serverAuthCode: '789',
-);
+    email: 'john.doe@gmail.com',
+    id: '8162538176523816253123',
+    photoUrl: 'https://lh5.googleusercontent.com/photo.jpg',
+    displayName: 'John Doe',
+    serverAuthCode: '789',
+    idToken: '123');
 
 final GoogleSignInTokenData _token = GoogleSignInTokenData(
   idToken: '123',
@@ -60,6 +60,7 @@ void main() {
           photoUrl: _user.photoUrl,
           displayName: _user.displayName,
           serverAuthCode: _user.serverAuthCode,
+          idToken: _user.idToken,
         ));
 
     final dynamic response = await googleSignIn.signInSilently();
@@ -82,6 +83,7 @@ void main() {
           photoUrl: _user.photoUrl,
           displayName: _user.displayName,
           serverAuthCode: _user.serverAuthCode,
+          idToken: _user.idToken,
         ));
 
     final dynamic response = await googleSignIn.signIn();

@@ -1,3 +1,17 @@
+## 2.0.19
+
+* Updates minSdkVersion to 19.
+* Updates minimum supported SDK version to Flutter 3.16/Dart 3.2.
+
+## 2.0.18
+
+* Updates minimum supported SDK version to Flutter 3.13/Dart 3.1.
+* Updates compileSdk version to 34.
+
+## 2.0.17
+
+* Updates annotations lib to 1.7.0.
+
 ## 2.0.16
 
 * Adds pub topics to package metadata.

@@ -1,3 +1,73 @@
+## 0.7.1
+
+* Allows for choosing a custom font feature to create superscript in footnotes when the font does not support the `supr` font feature.
+  * Use the `superscriptFontFeatureTag` property in `MarkdownStyleSheet`.
+  * For example, for the `Roboto` font which doesn't support `supr`, you can set `numr`.
+
+## 0.7.0
+
+* **BREAKING CHANGES**:
+  * Replaces parameters at `bulletBuilder` with `MarkdownBulletParameters`.
+  * Introduces a new parameter `nestLevel` that exposes the bullet item's nesting level.
+
+## 0.6.23
+
+* Gracefully handle image dimension parsing failures.
+
+## 0.6.22+1
+
+* Removes `_ambiguate` methods from code.
+
+## 0.6.22
+
+* Introduces a new `MarkdownElementBuilder.isBlockElement()` method to specify if custom element
+  is a block.
+
+## 0.6.21+1
+
+* Adds `onSelectionChanged` to the constructors of `Markdown` and `MarkdownBody`.
+
+## 0.6.21
+
+* Fixes support for `WidgetSpan` in `Text.rich` elements inside `MarkdownElementBuilder`.
+
+## 0.6.20+1
+
+* Updates minimum supported SDK version to Flutter 3.19.
+
+## 0.6.20
+
+* Adds `textScaler` to `MarkdownStyleSheet`, and deprecates `textScaleFactor`.
+  * Clients using `textScaleFactor: someFactor` should replace it with
+    `TextScaler.linear(someFactor)` to preserve behavior.
+* Removes use of deprecated Flutter framework `textScaleFactor` methods.
+* Updates minimum supported SDK version to Flutter 3.16.
+
+## 0.6.19
+
+* Replaces `RichText` with `Text.rich` so the widget can work with `SelectionArea` when `selectable` is set to false.
+
+## 0.6.18+3
+
+* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+* Fixes lint warnings.
+
+## 0.6.18+2
+
+* Removes leading whitespace from list items.
+
+## 0.6.18+1
+
+* Fixes a typo in README.
+
+## 0.6.18
+
+* Adds support for `footnote`.
+
+## 0.6.17+4
+
+* Fixes an issue where a code block would overlap its container decoration.
+
 ## 0.6.17+3
 
 * Fixes an incorrect note about SDK versions in the 0.6.17+2 CHANGELOG.md entry.
@@ -15,7 +85,7 @@
 
 * Introduces a new `MarkdownElementBuilder.visitElementAfterWithContext()` method passing the widget `BuildContext` and
   the parent text's `TextStyle`.
-  
+
 ## 0.6.16
 
 * Adds `tableVerticalAlignment` property to allow aligning table cells vertically.

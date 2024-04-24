@@ -1,3 +1,26 @@
+## 2.5.1
+
+- Updates examples to use uri.path instead of uri.toString() for accessing the current location.
+
+## 2.5.0
+
+* Updates minimum supported SDK version to Flutter 3.13/Dart 3.1.
+* Updates dependencies to require `analyzer` 5.2.0 or later.
+* Adds `restorationScopeId` to `ShellRouteData`.
+
+## 2.4.1
+
+* Fixes new lint warnings.
+
+## 2.4.0
+
+* Adds support for passing observers to the ShellRoute for the nested Navigator.
+* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+
+## 2.3.4
+
+* Fixes a bug of typeArguments losing NullabilitySuffix
+
 ## 2.3.3
 
 * Adds `initialLocation` for `StatefulShellBranchConfig`

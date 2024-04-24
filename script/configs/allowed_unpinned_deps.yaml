@@ -25,9 +25,11 @@
 - build_config
 - build_runner
 - build_test
+- code_builder
 - collection
 - convert
 - crypto
+- dart_style
 - fake_async
 - ffi
 - gcloud
@@ -51,6 +53,7 @@
 - test_api
 - vm_service
 - wasm
+- web
 - yaml
 # Google-owned packages
 - _discoveryapis_commons
@@ -59,8 +62,6 @@
 - googleapis
 - googleapis_auth
 - json_annotation
-- platform
-- process
 - quiver
 - sanitize_html
 - source_helper

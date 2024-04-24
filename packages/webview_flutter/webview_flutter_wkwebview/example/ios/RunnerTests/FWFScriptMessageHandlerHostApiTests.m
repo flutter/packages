@@ -50,7 +50,7 @@
               instanceManager:instanceManager];
 
   FlutterError *error;
-  [hostAPI createWithIdentifier:@0 error:&error];
+  [hostAPI createWithIdentifier:0 error:&error];
 
   FWFScriptMessageHandler *scriptMessageHandler =
       (FWFScriptMessageHandler *)[instanceManager instanceForIdentifier:0];
@@ -78,8 +78,8 @@
   [mockHandler userContentController:userContentController
              didReceiveScriptMessage:mockScriptMessage];
   OCMVerify([mockFlutterAPI
-      didReceiveScriptMessageForHandlerWithIdentifier:@0
-                      userContentControllerIdentifier:@1
+      didReceiveScriptMessageForHandlerWithIdentifier:0
+                      userContentControllerIdentifier:1
                                               message:[OCMArg isKindOfClass:[FWFWKScriptMessageData
                                                                                 class]]
                                            completion:OCMOCK_ANY]);

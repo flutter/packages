@@ -54,11 +54,9 @@ final MarkdownStyleSheet Function(BuildContext, MarkdownStyleSheetBaseTheme?)
       result = (Platform.isIOS || Platform.isMacOS)
           ? MarkdownStyleSheet.fromCupertinoTheme(CupertinoTheme.of(context))
           : MarkdownStyleSheet.fromTheme(Theme.of(context));
-      break;
     case MarkdownStyleSheetBaseTheme.cupertino:
       result =
           MarkdownStyleSheet.fromCupertinoTheme(CupertinoTheme.of(context));
-      break;
     case MarkdownStyleSheetBaseTheme.material:
     // ignore: no_default_cases
     default:
@@ -66,8 +64,7 @@ final MarkdownStyleSheet Function(BuildContext, MarkdownStyleSheetBaseTheme?)
   }
 
   return result.copyWith(
-    textScaleFactor:
-        MediaQuery.textScaleFactorOf(context), // ignore: deprecated_member_use
+    textScaler: MediaQuery.textScalerOf(context),
   );
 };
 

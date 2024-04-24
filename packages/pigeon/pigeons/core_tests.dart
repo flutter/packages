@@ -8,6 +8,8 @@ enum AnEnum {
   one,
   two,
   three,
+  fortyTwo,
+  fourHundredTwentyTwo,
 }
 
 /// A class containing all supported types.
@@ -46,8 +48,54 @@ class AllTypes {
 }
 
 /// A class containing all supported nullable types.
+@SwiftClass()
 class AllNullableTypes {
   AllNullableTypes(
+    this.aNullableBool,
+    this.aNullableInt,
+    this.aNullableInt64,
+    this.aNullableDouble,
+    this.aNullableByteArray,
+    this.aNullable4ByteArray,
+    this.aNullable8ByteArray,
+    this.aNullableFloatArray,
+    this.aNullableList,
+    this.aNullableMap,
+    this.nullableNestedList,
+    this.nullableMapWithAnnotations,
+    this.nullableMapWithObject,
+    this.aNullableEnum,
+    this.aNullableString,
+    this.aNullableObject,
+    this.allNullableTypes,
+  );
+
+  bool? aNullableBool;
+  int? aNullableInt;
+  int? aNullableInt64;
+  double? aNullableDouble;
+  Uint8List? aNullableByteArray;
+  Int32List? aNullable4ByteArray;
+  Int64List? aNullable8ByteArray;
+  Float64List? aNullableFloatArray;
+  // ignore: always_specify_types, strict_raw_type
+  List? aNullableList;
+  // ignore: always_specify_types, strict_raw_type
+  Map? aNullableMap;
+  List<List<bool?>?>? nullableNestedList;
+  Map<String?, String?>? nullableMapWithAnnotations;
+  Map<String?, Object?>? nullableMapWithObject;
+  AnEnum? aNullableEnum;
+  String? aNullableString;
+  Object? aNullableObject;
+  AllNullableTypes? allNullableTypes;
+}
+
+/// The primary purpose for this class is to ensure coverage of Swift structs
+/// with nullable items, as the primary [AllNullableTypes] class is being used to
+/// test Swift classes.
+class AllNullableTypesWithoutRecursion {
+  AllNullableTypesWithoutRecursion(
     this.aNullableBool,
     this.aNullableInt,
     this.aNullableInt64,
@@ -92,8 +140,10 @@ class AllNullableTypes {
 /// `AllNullableTypes` is non-nullable here as it is easier to instantiate
 /// than `AllTypes` when testing doesn't require both (ie. testing null classes).
 class AllClassesWrapper {
-  AllClassesWrapper(this.allNullableTypes, this.allTypes);
+  AllClassesWrapper(this.allNullableTypes,
+      this.allNullableTypesWithoutRecursion, this.allTypes);
   AllNullableTypes allNullableTypes;
+  AllNullableTypesWithoutRecursion? allNullableTypesWithoutRecursion;
   AllTypes? allTypes;
 }
 
@@ -171,12 +221,33 @@ abstract class HostIntegrationCoreApi {
   @SwiftFunction('echo(_:)')
   AnEnum echoEnum(AnEnum anEnum);
 
+  /// Returns the default string.
+  @ObjCSelector('echoNamedDefaultString:')
+  @SwiftFunction('echoNamedDefault(_:)')
+  String echoNamedDefaultString({String aString = 'default'});
+
+  /// Returns passed in double.
+  @ObjCSelector('echoOptionalDefaultDouble:')
+  @SwiftFunction('echoOptionalDefault(_:)')
+  double echoOptionalDefaultDouble([double aDouble = 3.14]);
+
+  /// Returns passed in int.
+  @ObjCSelector('echoRequiredInt:')
+  @SwiftFunction('echoRequired(_:)')
+  int echoRequiredInt({required int anInt});
+
   // ========== Synchronous nullable method tests ==========
 
   /// Returns the passed object, to test serialization and deserialization.
   @ObjCSelector('echoAllNullableTypes:')
   @SwiftFunction('echo(_:)')
   AllNullableTypes? echoAllNullableTypes(AllNullableTypes? everything);
+
+  /// Returns the passed object, to test serialization and deserialization.
+  @ObjCSelector('echoAllNullableTypesWithoutRecursion:')
+  @SwiftFunction('echo(_:)')
+  AllNullableTypesWithoutRecursion? echoAllNullableTypesWithoutRecursion(
+      AllNullableTypesWithoutRecursion? everything);
 
   /// Returns the inner `aString` value from the wrapped object, to test
   /// sending of nested objects.
@@ -194,6 +265,13 @@ abstract class HostIntegrationCoreApi {
   @ObjCSelector('sendMultipleNullableTypesABool:anInt:aString:')
   @SwiftFunction('sendMultipleNullableTypes(aBool:anInt:aString:)')
   AllNullableTypes sendMultipleNullableTypes(
+      bool? aNullableBool, int? aNullableInt, String? aNullableString);
+
+  /// Returns passed in arguments of multiple types.
+  @ObjCSelector('sendMultipleNullableTypesWithoutRecursionABool:anInt:aString:')
+  @SwiftFunction(
+      'sendMultipleNullableTypesWithoutRecursion(aBool:anInt:aString:)')
+  AllNullableTypesWithoutRecursion sendMultipleNullableTypesWithoutRecursion(
       bool? aNullableBool, int? aNullableInt, String? aNullableString);
 
   /// Returns passed in int.
@@ -239,6 +317,16 @@ abstract class HostIntegrationCoreApi {
   @ObjCSelector('echoNullableEnum:')
   @SwiftFunction('echoNullable(_:)')
   AnEnum? echoNullableEnum(AnEnum? anEnum);
+
+  /// Returns passed in int.
+  @ObjCSelector('echoOptionalNullableInt:')
+  @SwiftFunction('echoOptional(_:)')
+  int? echoOptionalNullableInt([int? aNullableInt]);
+
+  /// Returns the passed in string.
+  @ObjCSelector('echoNamedNullableString:')
+  @SwiftFunction('echoNamed(_:)')
+  String? echoNamedNullableString({String? aNullableString});
 
   // ========== Asynchronous method tests ==========
 
@@ -326,6 +414,14 @@ abstract class HostIntegrationCoreApi {
   AllNullableTypes? echoAsyncNullableAllNullableTypes(
       AllNullableTypes? everything);
 
+  /// Returns the passed object, to test serialization and deserialization.
+  @async
+  @ObjCSelector('echoAsyncNullableAllNullableTypesWithoutRecursion:')
+  @SwiftFunction('echoAsync(_:)')
+  AllNullableTypesWithoutRecursion?
+      echoAsyncNullableAllNullableTypesWithoutRecursion(
+          AllNullableTypesWithoutRecursion? everything);
+
   /// Returns passed in int asynchronously.
   @async
   @ObjCSelector('echoAsyncNullableInt:')
@@ -409,6 +505,22 @@ abstract class HostIntegrationCoreApi {
       bool? aNullableBool, int? aNullableInt, String? aNullableString);
 
   @async
+  @ObjCSelector('callFlutterEchoAllNullableTypesWithoutRecursion:')
+  @SwiftFunction('callFlutterEcho(_:)')
+  AllNullableTypesWithoutRecursion?
+      callFlutterEchoAllNullableTypesWithoutRecursion(
+          AllNullableTypesWithoutRecursion? everything);
+
+  @async
+  @ObjCSelector(
+      'callFlutterSendMultipleNullableTypesWithoutRecursionABool:anInt:aString:')
+  @SwiftFunction(
+      'callFlutterSendMultipleNullableTypesWithoutRecursion(aBool:anInt:aString:)')
+  AllNullableTypesWithoutRecursion
+      callFlutterSendMultipleNullableTypesWithoutRecursion(
+          bool? aNullableBool, int? aNullableInt, String? aNullableString);
+
+  @async
   @ObjCSelector('callFlutterEchoBool:')
   @SwiftFunction('callFlutterEcho(_:)')
   bool callFlutterEchoBool(bool aBool);
@@ -488,6 +600,11 @@ abstract class HostIntegrationCoreApi {
   @ObjCSelector('callFlutterEchoNullableEnum:')
   @SwiftFunction('callFlutterNullableEcho(_:)')
   AnEnum? callFlutterEchoNullableEnum(AnEnum? anEnum);
+
+  @async
+  @ObjCSelector('callFlutterSmallApiEchoString:')
+  @SwiftFunction('callFlutterSmallApiEcho(_:)')
+  String callFlutterSmallApiEchoString(String aString);
 }
 
 /// The core interface that the Dart platform_test code implements for host
@@ -520,6 +637,21 @@ abstract class FlutterIntegrationCoreApi {
   @ObjCSelector('sendMultipleNullableTypesABool:anInt:aString:')
   @SwiftFunction('sendMultipleNullableTypes(aBool:anInt:aString:)')
   AllNullableTypes sendMultipleNullableTypes(
+      bool? aNullableBool, int? aNullableInt, String? aNullableString);
+
+  /// Returns the passed object, to test serialization and deserialization.
+  @ObjCSelector('echoAllNullableTypesWithoutRecursion:')
+  @SwiftFunction('echoNullable(_:)')
+  AllNullableTypesWithoutRecursion? echoAllNullableTypesWithoutRecursion(
+      AllNullableTypesWithoutRecursion? everything);
+
+  /// Returns passed in arguments of multiple types.
+  ///
+  /// Tests multiple-arity FlutterApi handling.
+  @ObjCSelector('sendMultipleNullableTypesWithoutRecursionABool:anInt:aString:')
+  @SwiftFunction(
+      'sendMultipleNullableTypesWithoutRecursion(aBool:anInt:aString:)')
+  AllNullableTypesWithoutRecursion sendMultipleNullableTypesWithoutRecursion(
       bool? aNullableBool, int? aNullableInt, String? aNullableString);
 
   // ========== Non-nullable argument/return type tests ==========
@@ -661,6 +793,10 @@ abstract class FlutterSmallApi {
   @ObjCSelector('echoWrappedList:')
   @SwiftFunction('echo(_:)')
   TestMessage echoWrappedList(TestMessage msg);
+
+  @ObjCSelector('echoString:')
+  @SwiftFunction('echo(string:)')
+  String echoString(String aString);
 }
 
 /// A data class containing a List, used in unit tests.

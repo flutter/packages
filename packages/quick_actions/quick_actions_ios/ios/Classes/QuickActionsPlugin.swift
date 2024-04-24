@@ -4,48 +4,36 @@
 
 import Flutter
 
-public final class QuickActionsPlugin: NSObject, FlutterPlugin {
+public final class QuickActionsPlugin: NSObject, FlutterPlugin, IOSQuickActionsApi {
 
   public static func register(with registrar: FlutterPluginRegistrar) {
-    let channel = FlutterMethodChannel(
-      name: "plugins.flutter.io/quick_actions_ios",
-      binaryMessenger: registrar.messenger())
-    let instance = QuickActionsPlugin(channel: channel)
-    registrar.addMethodCallDelegate(instance, channel: channel)
+    let messenger = registrar.messenger()
+    let flutterApi = IOSQuickActionsFlutterApi(binaryMessenger: messenger)
+    let instance = QuickActionsPlugin(flutterApi: flutterApi)
+    IOSQuickActionsApiSetup.setUp(binaryMessenger: messenger, api: instance)
     registrar.addApplicationDelegate(instance)
   }
 
-  private let channel: MethodChannel
   private let shortcutItemProvider: ShortcutItemProviding
-  private let shortcutItemParser: ShortcutItemParser
+  private let flutterApi: IOSQuickActionsFlutterApiProtocol
   /// The type of the shortcut item selected when launching the app.
   private var launchingShortcutType: String? = nil
 
   init(
-    channel: MethodChannel,
-    shortcutItemProvider: ShortcutItemProviding = UIApplication.shared,
-    shortcutItemParser: ShortcutItemParser = DefaultShortcutItemParser()
+    flutterApi: IOSQuickActionsFlutterApiProtocol,
+    shortcutItemProvider: ShortcutItemProviding = UIApplication.shared
   ) {
-    self.channel = channel
+    self.flutterApi = flutterApi
     self.shortcutItemProvider = shortcutItemProvider
-    self.shortcutItemParser = shortcutItemParser
   }
 
-  public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
-    switch call.method {
-    case "setShortcutItems":
-      // `arguments` must be an array of dictionaries
-      let items = call.arguments as! [[String: Any]]
-      shortcutItemProvider.shortcutItems = shortcutItemParser.parseShortcutItems(items)
-      result(nil)
-    case "clearShortcutItems":
-      shortcutItemProvider.shortcutItems = []
-      result(nil)
-    case "getLaunchAction":
-      result(nil)
-    case _:
-      result(FlutterMethodNotImplemented)
-    }
+  func setShortcutItems(itemsList: [ShortcutItemMessage]) {
+    shortcutItemProvider.shortcutItems =
+      convertShortcutItemMessageListToUIApplicationShortcutItemList(itemsList)
+  }
+
+  func clearShortcutItems() {
+    shortcutItemProvider.shortcutItems = []
   }
 
   public func application(
@@ -84,8 +72,37 @@ public final class QuickActionsPlugin: NSObject, FlutterPlugin {
     }
   }
 
-  private func handleShortcut(_ shortcut: String) {
-    channel.invokeMethod("launch", arguments: shortcut)
+  func handleShortcut(_ shortcut: String) {
+    flutterApi.launchAction(action: shortcut) { _ in
+      // noop
+    }
   }
 
+  private func convertShortcutItemMessageListToUIApplicationShortcutItemList(
+    _ items: [ShortcutItemMessage]
+  ) -> [UIApplicationShortcutItem] {
+    return items.compactMap { convertShortcutItemMessageToUIApplicationShortcutItem(with: $0) }
+  }
+
+  private func convertShortcutItemMessageToUIApplicationShortcutItem(
+    with shortcut: ShortcutItemMessage
+  )
+    -> UIApplicationShortcutItem?
+  {
+
+    let type = shortcut.type
+    let localizedTitle = shortcut.localizedTitle
+
+    let icon = (shortcut.icon).map {
+      UIApplicationShortcutIcon(templateImageName: $0)
+    }
+
+    // type and localizedTitle are required.
+    return UIApplicationShortcutItem(
+      type: type,
+      localizedTitle: localizedTitle,
+      localizedSubtitle: nil,
+      icon: icon,
+      userInfo: nil)
+  }
 }

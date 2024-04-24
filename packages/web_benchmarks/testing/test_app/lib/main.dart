@@ -4,8 +4,9 @@
 
 import 'package:flutter/material.dart';
 
-import 'aboutpage.dart';
-import 'homepage.dart';
+import 'about_page.dart';
+import 'home_page.dart';
+import 'icon_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -26,6 +27,7 @@ class MyApp extends StatelessWidget {
       routes: <String, WidgetBuilder>{
         'home': (_) => const HomePage(title: 'Flutter Demo Home Page'),
         'about': (_) => const AboutPage(),
+        'icon_generator': (_) => const IconGeneratorPage(),
       },
     );
   }

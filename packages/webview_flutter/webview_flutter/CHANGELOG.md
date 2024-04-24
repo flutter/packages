@@ -1,3 +1,47 @@
+## 4.7.0
+
+* Adds support to track scroll position changes.
+* Updates minimum supported SDK version to Flutter 3.16.6/Dart 3.2.3.
+
+## 4.6.0
+
+* Adds support for custom handling of JavaScript dialogs. See
+  `WebViewController.setOnJavaScriptAlertDialog`, `WebViewController.setOnJavaScriptConfirmDialog`
+  and `WebViewController.setOnJavaScriptTextInputDialog`.
+* Updates minimum Dart version to 3.2.3 and minimum Flutter version to 3.16.6.
+
+## 4.5.0
+
+* Adds support for HTTP basic authentication. See `NavigationDelegate(onReceivedHttpAuthRequest)`.
+* Updates support matrix in README to indicate that iOS 11 is no longer supported.
+* Clients on versions of Flutter that still support iOS 11 can continue to use this
+  package with iOS 11, but will not receive any further updates to the iOS implementation.
+
+## 4.4.4
+
+* Updates minimum required plugin_platform_interface version to 2.1.7.
+
+## 4.4.3
+
+* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+* Fixes new lint warnings.
+
+## 4.4.2
+
+* Fixes `use_build_context_synchronously` lint violations in the example app.
+
+## 4.4.1
+
+* Exposes `JavaScriptLogLevel` from platform interface.
+
+## 4.4.0
+
+* Adds support to register a callback to receive JavaScript console messages. See `WebViewController.setOnConsoleMessage`.
+
+## 4.3.0
+
+* Adds support to retrieve the user agent. See `WebViewController.getUserAgent`.
+
 ## 4.2.4
 
 * Adds pub topics to package metadata.

@@ -8,15 +8,15 @@ import 'package:image_picker_platform_interface/image_picker_platform_interface.
 
 export 'package:image_picker_platform_interface/image_picker_platform_interface.dart'
     show
-        kTypeImage,
-        kTypeVideo,
-        ImageSource,
         CameraDevice,
+        ImageSource,
         LostData,
         LostDataResponse,
         PickedFile,
+        RetrieveType,
         XFile,
-        RetrieveType;
+        kTypeImage,
+        kTypeVideo;
 
 /// Provides an easy way to pick an image/video from the image library,
 /// or to take a picture/video with the camera.
@@ -128,6 +128,7 @@ class ImagePicker {
     double? maxWidth,
     double? maxHeight,
     int? imageQuality,
+    int? limit,
     bool requestFullMetadata = true,
   }) {
     final ImageOptions imageOptions = ImageOptions.createAndValidate(
@@ -138,8 +139,9 @@ class ImagePicker {
     );
 
     return platform.getMultiImageWithOptions(
-      options: MultiImagePickerOptions(
+      options: MultiImagePickerOptions.createAndValidate(
         imageOptions: imageOptions,
+        limit: limit,
       ),
     );
   }
@@ -186,7 +188,7 @@ class ImagePicker {
     bool requestFullMetadata = true,
   }) async {
     final List<XFile> listMedia = await platform.getMedia(
-      options: MediaOptions(
+      options: MediaOptions.createAndValidate(
         imageOptions: ImageOptions.createAndValidate(
           maxHeight: maxHeight,
           maxWidth: maxWidth,
@@ -239,10 +241,11 @@ class ImagePicker {
     double? maxWidth,
     double? maxHeight,
     int? imageQuality,
+    int? limit,
     bool requestFullMetadata = true,
   }) {
     return platform.getMedia(
-      options: MediaOptions(
+      options: MediaOptions.createAndValidate(
         allowMultiple: true,
         imageOptions: ImageOptions.createAndValidate(
           maxHeight: maxHeight,
@@ -250,6 +253,7 @@ class ImagePicker {
           imageQuality: imageQuality,
           requestFullMetadata: requestFullMetadata,
         ),
+        limit: limit,
       ),
     );
   }

@@ -9,6 +9,7 @@
 // This file is hand-formatted.
 
 import 'dart:math' as math show pi;
+// ignore: unnecessary_import, see https://github.com/flutter/flutter/pull/138881
 import 'dart:ui' show FontFeature; // TODO(ianh): https://github.com/flutter/flutter/issues/87235
 
 import 'package:flutter/material.dart';

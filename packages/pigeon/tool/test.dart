@@ -9,6 +9,8 @@
 ///
 /// usage: dart run tool/test.dart
 ////////////////////////////////////////////////////////////////////////////////
+library;
+
 import 'dart:io' show Platform, exit;
 import 'dart:math';
 

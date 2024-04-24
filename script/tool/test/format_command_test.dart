@@ -22,6 +22,7 @@ void main() {
   late FormatCommand analyzeCommand;
   late CommandRunner<void> runner;
   late String javaFormatPath;
+  late String kotlinFormatPath;
 
   setUp(() {
     fileSystem = MemoryFileSystem();
@@ -34,12 +35,16 @@ void main() {
       platform: mockPlatform,
     );
 
-    // Create the java formatter file that the command checks for, to avoid
-    // a download.
+    // Create the Java and Kotlin formatter files that the command checks for,
+    // to avoid a download.
     final p.Context path = analyzeCommand.path;
     javaFormatPath = path.join(path.dirname(path.fromUri(mockPlatform.script)),
         'google-java-format-1.3-all-deps.jar');
     fileSystem.file(javaFormatPath).createSync(recursive: true);
+    kotlinFormatPath = path.join(
+        path.dirname(path.fromUri(mockPlatform.script)),
+        'ktfmt-0.46-jar-with-dependencies.jar');
+    fileSystem.file(kotlinFormatPath).createSync(recursive: true);
 
     runner = CommandRunner<void>('format_command', 'Test for format_command');
     runner.addCommand(analyzeCommand);
@@ -164,6 +169,16 @@ void main() {
         ]));
   });
 
+  test('skips dart if --no-dart flag is provided', () async {
+    const List<String> files = <String>[
+      'lib/a.dart',
+    ];
+    createFakePlugin('a_plugin', packagesDir, extraFiles: files);
+
+    await runCapturingPrint(runner, <String>['format', '--no-dart']);
+    expect(processRunner.recordedCalls, orderedEquals(<ProcessCall>[]));
+  });
+
   test('formats .java files', () async {
     const List<String> files = <String>[
       'android/src/main/java/io/flutter/plugins/a_plugin/a.java',
@@ -215,7 +230,7 @@ void main() {
         containsAllInOrder(<Matcher>[
           contains(
               'Unable to run "java". Make sure that it is in your path, or '
-              'provide a full path with --java.'),
+              'provide a full path with --java-path.'),
         ]));
   });
 
@@ -245,7 +260,7 @@ void main() {
         ]));
   });
 
-  test('honors --java flag', () async {
+  test('honors --java-path flag', () async {
     const List<String> files = <String>[
       'android/src/main/java/io/flutter/plugins/a_plugin/a.java',
       'android/src/main/java/io/flutter/plugins/a_plugin/b.java',
@@ -256,7 +271,8 @@ void main() {
       extraFiles: files,
     );
 
-    await runCapturingPrint(runner, <String>['format', '--java=/path/to/java']);
+    await runCapturingPrint(
+        runner, <String>['format', '--java-path=/path/to/java']);
 
     expect(
         processRunner.recordedCalls,
@@ -272,6 +288,16 @@ void main() {
               ],
               packagesDir.path),
         ]));
+  });
+
+  test('skips Java if --no-java flag is provided', () async {
+    const List<String> files = <String>[
+      'android/src/main/java/io/flutter/plugins/a_plugin/a.java',
+    ];
+    createFakePlugin('a_plugin', packagesDir, extraFiles: files);
+
+    await runCapturingPrint(runner, <String>['format', '--no-java']);
+    expect(processRunner.recordedCalls, orderedEquals(<ProcessCall>[]));
   });
 
   test('formats c-ish files', () async {
@@ -327,7 +353,7 @@ void main() {
         output,
         containsAllInOrder(<Matcher>[
           contains('Unable to run "clang-format". Make sure that it is in your '
-              'path, or provide a full path with --clang-format.'),
+              'path, or provide a full path with --clang-format-path.'),
         ]));
   });
 
@@ -371,7 +397,7 @@ void main() {
         ]));
   });
 
-  test('honors --clang-format flag', () async {
+  test('honors --clang-format-path flag', () async {
     const List<String> files = <String>[
       'windows/foo_plugin.cpp',
     ];
@@ -381,8 +407,8 @@ void main() {
       extraFiles: files,
     );
 
-    await runCapturingPrint(
-        runner, <String>['format', '--clang-format=/path/to/clang-format']);
+    await runCapturingPrint(runner,
+        <String>['format', '--clang-format-path=/path/to/clang-format']);
 
     expect(
         processRunner.recordedCalls,
@@ -426,6 +452,231 @@ void main() {
           contains(
               'Failed to format C, C++, and Objective-C files: exit code 1.'),
         ]));
+  });
+
+  test('skips clang-format if --no-clang-format flag is provided', () async {
+    const List<String> files = <String>[
+      'linux/foo_plugin.cc',
+    ];
+    createFakePlugin('a_plugin', packagesDir, extraFiles: files);
+
+    await runCapturingPrint(runner, <String>['format', '--no-clang-format']);
+    expect(processRunner.recordedCalls, orderedEquals(<ProcessCall>[]));
+  });
+
+  group('kotlin-format', () {
+    test('formats .kt files', () async {
+      const List<String> files = <String>[
+        'android/src/main/kotlin/io/flutter/plugins/a_plugin/a.kt',
+        'android/src/main/kotlin/io/flutter/plugins/a_plugin/b.kt',
+      ];
+      final RepositoryPackage plugin = createFakePlugin(
+        'a_plugin',
+        packagesDir,
+        extraFiles: files,
+      );
+
+      await runCapturingPrint(runner, <String>['format']);
+
+      expect(
+          processRunner.recordedCalls,
+          orderedEquals(<ProcessCall>[
+            const ProcessCall('java', <String>['-version'], null),
+            ProcessCall(
+                'java',
+                <String>[
+                  '-jar',
+                  kotlinFormatPath,
+                  ...getPackagesDirRelativePaths(plugin, files)
+                ],
+                packagesDir.path),
+          ]));
+    });
+
+    test('fails if Kotlin formatter fails', () async {
+      const List<String> files = <String>[
+        'android/src/main/kotlin/io/flutter/plugins/a_plugin/a.kt',
+        'android/src/main/kotlin/io/flutter/plugins/a_plugin/b.kt',
+      ];
+      createFakePlugin('a_plugin', packagesDir, extraFiles: files);
+
+      processRunner.mockProcessesForExecutable['java'] = <FakeProcessInfo>[
+        FakeProcessInfo(
+            MockProcess(), <String>['-version']), // check for working java
+        FakeProcessInfo(MockProcess(exitCode: 1), <String>['-jar']), // format
+      ];
+      Error? commandError;
+      final List<String> output = await runCapturingPrint(
+          runner, <String>['format'], errorHandler: (Error e) {
+        commandError = e;
+      });
+
+      expect(commandError, isA<ToolExit>());
+      expect(
+          output,
+          containsAllInOrder(<Matcher>[
+            contains('Failed to format Kotlin files: exit code 1.'),
+          ]));
+    });
+
+    test('skips Kotlin if --no-kotlin flag is provided', () async {
+      const List<String> files = <String>[
+        'android/src/main/kotlin/io/flutter/plugins/a_plugin/a.kt',
+      ];
+      createFakePlugin('a_plugin', packagesDir, extraFiles: files);
+
+      await runCapturingPrint(runner, <String>['format', '--no-kotlin']);
+      expect(processRunner.recordedCalls, orderedEquals(<ProcessCall>[]));
+    });
+  });
+
+  group('swift-format', () {
+    test('formats Swift if --swift-format flag is provided', () async {
+      const List<String> files = <String>[
+        'macos/foo.swift',
+      ];
+      final RepositoryPackage plugin = createFakePlugin(
+        'a_plugin',
+        packagesDir,
+        extraFiles: files,
+      );
+
+      await runCapturingPrint(runner, <String>[
+        'format',
+        '--swift',
+        '--swift-format-path=/path/to/swift-format'
+      ]);
+
+      expect(
+          processRunner.recordedCalls,
+          orderedEquals(<ProcessCall>[
+            const ProcessCall(
+              '/path/to/swift-format',
+              <String>['--version'],
+              null,
+            ),
+            ProcessCall(
+              '/path/to/swift-format',
+              <String>['-i', ...getPackagesDirRelativePaths(plugin, files)],
+              packagesDir.path,
+            ),
+            ProcessCall(
+              '/path/to/swift-format',
+              <String>[
+                'lint',
+                '--parallel',
+                '--strict',
+                ...getPackagesDirRelativePaths(plugin, files),
+              ],
+              packagesDir.path,
+            ),
+          ]));
+    });
+
+    test('skips Swift if --no-swift flag is provided', () async {
+      const List<String> files = <String>[
+        'macos/foo.swift',
+      ];
+      createFakePlugin(
+        'a_plugin',
+        packagesDir,
+        extraFiles: files,
+      );
+
+      await runCapturingPrint(runner, <String>['format', '--no-swift']);
+
+      expect(processRunner.recordedCalls, orderedEquals(<ProcessCall>[]));
+    });
+
+    test('fails with a clear message if swift-format is not in the path',
+        () async {
+      const List<String> files = <String>[
+        'macos/foo.swift',
+      ];
+      createFakePlugin('a_plugin', packagesDir, extraFiles: files);
+
+      processRunner.mockProcessesForExecutable['swift-format'] =
+          <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(exitCode: 1), <String>['--version']),
+      ];
+      Error? commandError;
+      final List<String> output = await runCapturingPrint(
+          runner, <String>['format', '--swift'], errorHandler: (Error e) {
+        commandError = e;
+      });
+
+      expect(commandError, isA<ToolExit>());
+      expect(
+          output,
+          containsAllInOrder(<Matcher>[
+            contains(
+                'Unable to run "swift-format". Make sure that it is in your path, or '
+                'provide a full path with --swift-format-path.'),
+          ]));
+    });
+
+    test('fails if swift-format lint fails', () async {
+      const List<String> files = <String>[
+        'macos/foo.swift',
+      ];
+      createFakePlugin('a_plugin', packagesDir, extraFiles: files);
+
+      processRunner.mockProcessesForExecutable['swift-format'] =
+          <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(),
+            <String>['--version']), // check for working swift-format
+        FakeProcessInfo(MockProcess(), <String>['-i']),
+        FakeProcessInfo(MockProcess(exitCode: 1), <String>[
+          'lint',
+          '--parallel',
+          '--strict',
+        ]),
+      ];
+      Error? commandError;
+      final List<String> output = await runCapturingPrint(runner, <String>[
+        'format',
+        '--swift',
+        '--swift-format-path=swift-format'
+      ], errorHandler: (Error e) {
+        commandError = e;
+      });
+
+      expect(commandError, isA<ToolExit>());
+      expect(
+          output,
+          containsAllInOrder(<Matcher>[
+            contains('Failed to lint Swift files: exit code 1.'),
+          ]));
+    });
+
+    test('fails if swift-format fails', () async {
+      const List<String> files = <String>[
+        'macos/foo.swift',
+      ];
+      createFakePlugin('a_plugin', packagesDir, extraFiles: files);
+
+      processRunner.mockProcessesForExecutable['swift-format'] =
+          <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(),
+            <String>['--version']), // check for working swift-format
+        FakeProcessInfo(MockProcess(exitCode: 1), <String>['-i']),
+      ];
+      Error? commandError;
+      final List<String> output = await runCapturingPrint(runner, <String>[
+        'format',
+        '--swift',
+        '--swift-format-path=swift-format'
+      ], errorHandler: (Error e) {
+        commandError = e;
+      });
+
+      expect(commandError, isA<ToolExit>());
+      expect(
+          output,
+          containsAllInOrder(<Matcher>[
+            contains('Failed to format Swift files: exit code 1.'),
+          ]));
+    });
   });
 
   test('skips known non-repo files', () async {
@@ -483,6 +734,52 @@ void main() {
                 ...getPackagesDirRelativePaths(plugin, javaFiles)
               ],
               packagesDir.path),
+        ]));
+  });
+
+  test('skips GeneratedPluginRegistrant.swift', () async {
+    const String sourceFile = 'macos/Classes/Foo.swift';
+    final RepositoryPackage plugin = createFakePlugin(
+      'a_plugin',
+      packagesDir,
+      extraFiles: <String>[
+        sourceFile,
+        'example/macos/Flutter/GeneratedPluginRegistrant.swift',
+      ],
+    );
+
+    await runCapturingPrint(runner, <String>[
+      'format',
+      '--swift',
+      '--swift-format-path=/path/to/swift-format'
+    ]);
+
+    expect(
+        processRunner.recordedCalls,
+        orderedEquals(<ProcessCall>[
+          const ProcessCall(
+            '/path/to/swift-format',
+            <String>['--version'],
+            null,
+          ),
+          ProcessCall(
+            '/path/to/swift-format',
+            <String>[
+              '-i',
+              ...getPackagesDirRelativePaths(plugin, <String>[sourceFile])
+            ],
+            packagesDir.path,
+          ),
+          ProcessCall(
+            '/path/to/swift-format',
+            <String>[
+              'lint',
+              '--parallel',
+              '--strict',
+              ...getPackagesDirRelativePaths(plugin, <String>[sourceFile]),
+            ],
+            packagesDir.path,
+          ),
         ]));
   });
 

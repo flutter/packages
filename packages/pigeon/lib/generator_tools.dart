@@ -13,7 +13,7 @@ import 'ast.dart';
 /// The current version of pigeon.
 ///
 /// This must match the version in pubspec.yaml.
-const String pigeonVersion = '11.0.1';
+const String pigeonVersion = '18.0.0';
 
 /// Read all the content from [stdin] to a String.
 String readStdin() {
@@ -164,10 +164,25 @@ class Indent {
   }
 }
 
-/// Create the generated channel name for a [func] on a [api].
-String makeChannelName(Api api, Method func, String dartPackageName) {
-  return 'dev.flutter.pigeon.$dartPackageName.${api.name}.${func.name}';
+/// Create the generated channel name for a [method] on an [api].
+String makeChannelName(Api api, Method method, String dartPackageName) {
+  return makeChannelNameWithStrings(
+    apiName: api.name,
+    methodName: method.name,
+    dartPackageName: dartPackageName,
+  );
 }
+
+/// Create the generated channel name for a method on an api.
+String makeChannelNameWithStrings({
+  required String apiName,
+  required String methodName,
+  required String dartPackageName,
+}) {
+  return 'dev.flutter.pigeon.$dartPackageName.$apiName.$methodName';
+}
+
+// TODO(tarrinneal): Determine whether HostDataType is needed.
 
 /// Represents the mapping of a Dart datatype to a Host datatype.
 class HostDatatype {
@@ -199,10 +214,10 @@ class HostDatatype {
 /// datatype for the Dart datatype for builtin types.
 ///
 /// [customResolver] can modify the datatype of custom types.
-HostDatatype getFieldHostDatatype(NamedType field, List<Class> classes,
-    List<Enum> enums, String? Function(TypeDeclaration) builtinResolver,
+HostDatatype getFieldHostDatatype(
+    NamedType field, String? Function(TypeDeclaration) builtinResolver,
     {String Function(String)? customResolver}) {
-  return _getHostDatatype(field.type, classes, enums, builtinResolver,
+  return _getHostDatatype(field.type, builtinResolver,
       customResolver: customResolver, fieldName: field.name);
 }
 
@@ -213,19 +228,19 @@ HostDatatype getFieldHostDatatype(NamedType field, List<Class> classes,
 /// datatype for the Dart datatype for builtin types.
 ///
 /// [customResolver] can modify the datatype of custom types.
-HostDatatype getHostDatatype(TypeDeclaration type, List<Class> classes,
-    List<Enum> enums, String? Function(TypeDeclaration) builtinResolver,
+HostDatatype getHostDatatype(
+    TypeDeclaration type, String? Function(TypeDeclaration) builtinResolver,
     {String Function(String)? customResolver}) {
-  return _getHostDatatype(type, classes, enums, builtinResolver,
+  return _getHostDatatype(type, builtinResolver,
       customResolver: customResolver);
 }
 
-HostDatatype _getHostDatatype(TypeDeclaration type, List<Class> classes,
-    List<Enum> enums, String? Function(TypeDeclaration) builtinResolver,
+HostDatatype _getHostDatatype(
+    TypeDeclaration type, String? Function(TypeDeclaration) builtinResolver,
     {String Function(String)? customResolver, String? fieldName}) {
   final String? datatype = builtinResolver(type);
   if (datatype == null) {
-    if (classes.map((Class x) => x.name).contains(type.baseName)) {
+    if (type.isClass) {
       final String customName = customResolver != null
           ? customResolver(type.baseName)
           : type.baseName;
@@ -235,7 +250,7 @@ HostDatatype _getHostDatatype(TypeDeclaration type, List<Class> classes,
         isNullable: type.isNullable,
         isEnum: false,
       );
-    } else if (enums.map((Enum x) => x.name).contains(type.baseName)) {
+    } else if (type.isEnum) {
       final String customName = customResolver != null
           ? customResolver(type.baseName)
           : type.baseName;
@@ -280,6 +295,24 @@ String getGeneratedCodeWarning() {
 /// String to be printed after `getGeneratedCodeWarning()'s warning`.
 const String seeAlsoWarning = 'See also: https://pub.dev/packages/pigeon';
 
+/// Prefix for utility classes generated for ProxyApis.
+///
+/// This lowers the chances of variable name collisions with user defined
+/// parameters.
+const String classNamePrefix = 'Pigeon';
+
+/// Name for the generated InstanceManager for ProxyApis.
+///
+/// This lowers the chances of variable name collisions with user defined
+/// parameters.
+const String instanceManagerClassName = '${classNamePrefix}InstanceManager';
+
+/// Prefix for class member names not defined by the user.
+///
+/// This lowers the chances of variable name collisions with user defined
+/// parameters.
+const String classMemberNamePrefix = 'pigeon_';
+
 /// Collection of keys used in dictionaries across generators.
 class Keys {
   /// The key in the result hash for the 'result' value.
@@ -307,7 +340,7 @@ bool isVoid(TypeMirror type) {
 void addLines(Indent indent, Iterable<String> lines, {String? linePrefix}) {
   final String prefix = linePrefix ?? '';
   for (final String line in lines) {
-    indent.writeln('$prefix$line');
+    indent.writeln(line.isNotEmpty ? '$prefix$line' : prefix.trimRight());
   }
 }
 
@@ -412,10 +445,23 @@ Map<TypeDeclaration, List<int>> getReferencedTypes(
   final _Bag<TypeDeclaration, int> references = _Bag<TypeDeclaration, int>();
   for (final Api api in apis) {
     for (final Method method in api.methods) {
-      for (final NamedType field in method.arguments) {
+      for (final NamedType field in method.parameters) {
         references.addMany(_getTypeArguments(field.type), field.offset);
       }
       references.addMany(_getTypeArguments(method.returnType), method.offset);
+    }
+    if (api is AstProxyApi) {
+      for (final Constructor constructor in api.constructors) {
+        for (final NamedType parameter in constructor.parameters) {
+          references.addMany(
+            _getTypeArguments(parameter.type),
+            parameter.offset,
+          );
+        }
+      }
+      for (final ApiField field in api.fields) {
+        references.addMany(_getTypeArguments(field.type), field.offset);
+      }
     }
   }
 
@@ -478,10 +524,6 @@ Iterable<EnumeratedClass> getCodecClasses(Api api, Root root) sync* {
   }
 }
 
-/// Returns true if the [TypeDeclaration] represents an enum.
-bool isEnum(Root root, TypeDeclaration type) =>
-    root.enums.map((Enum e) => e.name).contains(type.baseName);
-
 /// Describes how to format a document comment.
 class DocumentCommentSpecification {
   /// Constructor for [DocumentationCommentSpecification]
@@ -512,6 +554,23 @@ void addDocumentationComments(
   DocumentCommentSpecification commentSpec, {
   List<String> generatorComments = const <String>[],
 }) {
+  asDocumentationComments(
+    comments,
+    commentSpec,
+    generatorComments: generatorComments,
+  ).forEach(indent.writeln);
+}
+
+/// Formats documentation comments and adds them to current Indent.
+///
+/// The [comments] list is meant for comments written in the input dart file.
+/// The [generatorComments] list is meant for comments added by the generators.
+/// Include white space for all tokens when called, no assumptions are made.
+Iterable<String> asDocumentationComments(
+  Iterable<String> comments,
+  DocumentCommentSpecification commentSpec, {
+  List<String> generatorComments = const <String>[],
+}) sync* {
   final List<String> allComments = <String>[
     ...comments,
     if (comments.isNotEmpty && generatorComments.isNotEmpty) '',
@@ -520,31 +579,27 @@ void addDocumentationComments(
   String currentLineOpenToken = commentSpec.openCommentToken;
   if (allComments.length > 1) {
     if (commentSpec.closeCommentToken != '') {
-      indent.writeln(commentSpec.openCommentToken);
+      yield commentSpec.openCommentToken;
       currentLineOpenToken = commentSpec.blockContinuationToken;
     }
     for (String line in allComments) {
       if (line.isNotEmpty && line[0] != ' ') {
         line = ' $line';
       }
-      indent.writeln(
-        '$currentLineOpenToken$line',
-      );
+      yield '$currentLineOpenToken$line';
     }
     if (commentSpec.closeCommentToken != '') {
-      indent.writeln(commentSpec.closeCommentToken);
+      yield commentSpec.closeCommentToken;
     }
   } else if (allComments.length == 1) {
-    indent.writeln(
-      '$currentLineOpenToken${allComments.first}${commentSpec.closeCommentToken}',
-    );
+    yield '$currentLineOpenToken${allComments.first}${commentSpec.closeCommentToken}';
   }
 }
 
 /// Returns an ordered list of fields to provide consistent serialization order.
-Iterable<NamedType> getFieldsInSerializationOrder(Class klass) {
+Iterable<NamedType> getFieldsInSerializationOrder(Class classDefinition) {
   // This returns the fields in the order they are declared in the pigeon file.
-  return klass.fields;
+  return classDefinition.fields;
 }
 
 /// Crawls up the path of [dartFilePath] until it finds a pubspec.yaml in a

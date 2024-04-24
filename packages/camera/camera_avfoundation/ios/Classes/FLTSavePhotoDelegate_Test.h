@@ -4,15 +4,17 @@
 
 #import "FLTSavePhotoDelegate.h"
 
-/**
- API exposed for unit tests.
- */
+/// API exposed for unit tests.
 @interface FLTSavePhotoDelegate ()
 
 /// The completion handler block for capture and save photo operations.
 /// Can be called from either main queue or IO queue.
 /// Exposed for unit tests to manually trigger the completion.
 @property(readonly, nonatomic) FLTSavePhotoDelegateCompletionHandler completionHandler;
+
+/// The path for captured photo file.
+/// Exposed for unit tests to verify the captured photo file path.
+@property(readwrite, nonatomic) NSString *filePath;
 
 /// Handler to write captured photo data into a file.
 /// @param error the capture error.
