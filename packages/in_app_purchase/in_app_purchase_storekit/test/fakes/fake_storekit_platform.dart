@@ -27,6 +27,8 @@ class FakeStoreKitPlatform implements TestInAppPurchaseApi {
   bool queueIsActive = false;
   Map<String, dynamic> discountReceived = <String, dynamic>{};
   bool isPaymentQueueDelegateRegistered = false;
+  String _countryCode = 'USA';
+  String _countryIdentifier = 'LL';
 
   void reset() {
     transactionList = <SKPaymentTransactionWrapper>[];
@@ -53,6 +55,8 @@ class FakeStoreKitPlatform implements TestInAppPurchaseApi {
     queueIsActive = false;
     discountReceived = <String, dynamic>{};
     isPaymentQueueDelegateRegistered = false;
+    _countryCode = 'USA';
+    _countryIdentifier = 'LL';
   }
 
   SKPaymentTransactionWrapper createPendingTransaction(String id,
@@ -163,9 +167,16 @@ class FakeStoreKitPlatform implements TestInAppPurchaseApi {
     }
   }
 
+  void setStoreFrontInfo(
+      {required String countryCode, required String identifier}) {
+    _countryCode = countryCode;
+    _countryIdentifier = identifier;
+  }
+
   @override
   SKStorefrontMessage storefront() {
-    throw UnimplementedError();
+    return SKStorefrontMessage(
+        countryCode: _countryCode, identifier: _countryIdentifier);
   }
 
   @override

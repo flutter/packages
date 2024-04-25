@@ -17,7 +17,6 @@ part 'one_time_purchase_offer_details_wrapper.g.dart';
 @immutable
 class OneTimePurchaseOfferDetailsWrapper {
   /// Creates a [OneTimePurchaseOfferDetailsWrapper].
-  @visibleForTesting
   const OneTimePurchaseOfferDetailsWrapper({
     required this.formattedPrice,
     required this.priceAmountMicros,
@@ -26,6 +25,8 @@ class OneTimePurchaseOfferDetailsWrapper {
 
   /// Factory for creating a [OneTimePurchaseOfferDetailsWrapper] from a [Map]
   /// with the offer details.
+  @Deprecated('JSON serialization is not intended for public use, and will '
+      'be removed in a future version.')
   factory OneTimePurchaseOfferDetailsWrapper.fromJson(
           Map<String, dynamic> map) =>
       _$OneTimePurchaseOfferDetailsWrapperFromJson(map);
