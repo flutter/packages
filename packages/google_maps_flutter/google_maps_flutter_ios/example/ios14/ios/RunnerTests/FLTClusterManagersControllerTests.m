@@ -11,10 +11,6 @@
 #import <OCMock/OCMock.h>
 #import "PartiallyMockedMapView.h"
 
-@interface FLTGoogleMapFactory (Test)
-@property(strong, nonatomic, readonly) id<NSObject> sharedMapServices;
-@end
-
 @interface FLTClusterManagersControllerTests : XCTestCase
 @end
 

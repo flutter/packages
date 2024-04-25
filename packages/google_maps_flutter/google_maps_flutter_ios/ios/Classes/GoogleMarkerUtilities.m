@@ -20,7 +20,7 @@
   marker.userData = userData;
 }
 
-+ (NSString *)getMarkerIdentifierFrom:(GMSMarker *)marker {
++ (nullable NSString *)getMarkerIdentifierFrom:(GMSMarker *)marker {
   if ([marker.userData isKindOfClass:[GoogleMarkerUserData class]]) {
     GoogleMarkerUserData *userData = (GoogleMarkerUserData *)marker.userData;
     return userData.markerIdentifier;
@@ -28,7 +28,7 @@
   return nil;
 }
 
-+ (NSString *)getClusterManagerIdentifierFrom:(GMSMarker *)marker {
++ (nullable NSString *)getClusterManagerIdentifierFrom:(GMSMarker *)marker {
   if ([marker.userData isKindOfClass:[GoogleMarkerUserData class]]) {
     GoogleMarkerUserData *userData = (GoogleMarkerUserData *)marker.userData;
     return userData.clusterManagerIdentifier;

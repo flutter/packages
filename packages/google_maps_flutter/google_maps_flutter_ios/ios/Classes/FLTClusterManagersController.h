@@ -33,8 +33,8 @@ NS_ASSUME_NONNULL_BEGIN
 /// Returns the ClusterManager for the given identifier.
 ///
 /// @param identifier identifier of the ClusterManager.
-/// @return GMUClusterManager if found otherwise nil.
-- (GMUClusterManager *)clusterManagerWithIdentifier:(NSString *)identifier;
+/// @return GMUClusterManager if found; otherwise, nil.
+- (nullable GMUClusterManager *)clusterManagerWithIdentifier:(NSString *)identifier;
 
 /// Converts clusters managed by the specified ClusterManager to
 /// serializable array of clusters.

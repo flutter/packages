@@ -3,14 +3,20 @@
 // found in the LICENSE file.
 
 #import "FLTClusterManagersController.h"
+
 #import "FLTGoogleMapJSONConversions.h"
 #import "GoogleMarkerUtilities.h"
 
 @interface FLTClusterManagersController ()
 
+/// A dictionary that cluster managers unique identifiers to GMUClusterManager instances.
 @property(strong, nonatomic)
     NSMutableDictionary<NSString *, GMUClusterManager *> *clusterManagerIdentifierToManagers;
+
+/// The method channel that is used to communicate with the Flutter implementation.
 @property(strong, nonatomic) FlutterMethodChannel *methodChannel;
+
+/// The current GMSMapView instance on which the cluster managers are operating.
 @property(strong, nonatomic) GMSMapView *mapView;
 
 @end
@@ -54,7 +60,7 @@
   }
 }
 
-- (GMUClusterManager *)clusterManagerWithIdentifier:(NSString *)identifier {
+- (nullable GMUClusterManager *)clusterManagerWithIdentifier:(NSString *)identifier {
   return [self.clusterManagerIdentifierToManagers objectForKey:identifier];
 }
 
@@ -103,8 +109,8 @@
 /// Returns the cluster manager id for given cluster.
 ///
 /// @param cluster identifier of the ClusterManager.
-/// @return id NSString if found otherwise nil.
-- (NSString *)clusterManagerIdentifierForCluster:(GMUStaticCluster *)cluster {
+/// @return id NSString if found; otherwise, nil.
+- (nullable NSString *)clusterManagerIdentifierForCluster:(GMUStaticCluster *)cluster {
   if ([cluster.items count] == 0) {
     return nil;
   }
@@ -120,8 +126,8 @@
 /// Converts GMSStaticCluster to serializable cluster dictionary.
 ///
 /// @param cluster GMUStaticCluster object.
-/// @return NSDictionary if found otherwise nil.
-- (NSDictionary *)serializableDictionaryForCluster:(GMUStaticCluster *)cluster {
+/// @return NSDictionary if found; otherwise, nil.
+- (nullable NSDictionary *)serializableDictionaryForCluster:(GMUStaticCluster *)cluster {
   NSString *clusterManagerId = [self clusterManagerIdentifierForCluster:cluster];
   if (!clusterManagerId) {
     return nil;

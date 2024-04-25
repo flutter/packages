@@ -4,10 +4,14 @@
 
 #import <Foundation/Foundation.h>
 
-// Defines user data object for markers.
+/// Defines user data object for markers.
 @interface GoogleMarkerUserData : NSObject
 
-@property(nonatomic, strong) NSString *markerIdentifier;
-@property(nonatomic, strong) NSString *clusterManagerIdentifier;
+/// The identifier of the marker.
+@property(nonatomic, copy) NSString *markerIdentifier;
+
+/// The identifier of the cluster manager.
+/// This property is set only if the marker is managed by a cluster manager.
+@property(nonatomic, copy) NSString *clusterManagerIdentifier;
 
 @end

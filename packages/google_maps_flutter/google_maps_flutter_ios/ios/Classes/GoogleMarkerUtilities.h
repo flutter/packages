@@ -24,14 +24,14 @@ NS_ASSUME_NONNULL_BEGIN
 /// Get MarkerIdentifier from GMSMarker UserData.
 ///
 /// @param marker GMSMarker object.
-/// @return NSString if found otherwise nil.
-+ (NSString *)getMarkerIdentifierFrom:(GMSMarker *)marker;
+/// @return NSString if found; otherwise, nil.
++ (nullable NSString *)getMarkerIdentifierFrom:(GMSMarker *)marker;
 
 /// Get ClusterManagerIdentifier from GMSMarker UserData.
 ///
 /// @param marker GMSMarker object.
-/// @return NSString if found otherwise nil.
-+ (NSString *)getClusterManagerIdentifierFrom:(GMSMarker *)marker;
+/// @return NSString if found; otherwise, nil.
++ (nullable NSString *)getClusterManagerIdentifierFrom:(GMSMarker *)marker;
 
 @end
 

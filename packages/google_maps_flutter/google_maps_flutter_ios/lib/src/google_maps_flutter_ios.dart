@@ -266,8 +266,8 @@ class GoogleMapsFlutterIOS extends GoogleMapsFlutterPlatform {
         final Cluster cluster = parseCluster(
             arguments['clusterManagerId']! as String,
             arguments['position']!,
-            arguments['bounds']! as Map<dynamic, dynamic>,
-            arguments['markerIds']! as List<dynamic>);
+            arguments['bounds']! as Map<Object?, Object?>,
+            arguments['markerIds']! as List<Object?>);
         _mapEventStreamController.add(ClusterTapEvent(
           mapId,
           cluster,
@@ -620,15 +620,15 @@ class GoogleMapsFlutterIOS extends GoogleMapsFlutterPlatform {
   static Cluster parseCluster(
       String clusterManagerIdString,
       Object positionObject,
-      Map<dynamic, dynamic> boundsMap,
-      List<dynamic> markerIdsList) {
+      Map<Object?, Object?> boundsMap,
+      List<Object?> markerIdsList) {
     final ClusterManagerId clusterManagerId =
         ClusterManagerId(clusterManagerIdString);
     final LatLng position = LatLng.fromJson(positionObject)!;
 
-    final Map<String, List<dynamic>> latLngData = boundsMap.map(
-        (dynamic key, dynamic object) => MapEntry<String, List<dynamic>>(
-            key as String, object as List<dynamic>));
+    final Map<String, List<Object?>> latLngData = boundsMap.map(
+        (Object? key, Object? object) => MapEntry<String, List<Object?>>(
+            key! as String, object! as List<Object?>));
 
     final LatLngBounds bounds = LatLngBounds(
         northeast: LatLng.fromJson(latLngData['northeast'])!,

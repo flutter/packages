@@ -118,17 +118,17 @@ class GoogleMapsInspectorIOS extends GoogleMapsInspectorPlatform {
     required int mapId,
     required ClusterManagerId clusterManagerId,
   }) async {
-    final List<dynamic> data = (await _channelProvider(mapId)!
-        .invokeMethod<List<dynamic>>('clusterManager#getClusters',
+    final List<Object> data = (await _channelProvider(mapId)!
+        .invokeMethod<List<Object>>('clusterManager#getClusters',
             <String, String>{'clusterManagerId': clusterManagerId.value}))!;
-    return data.map<Cluster>((dynamic clusterData) {
-      final Map<String, dynamic> clusterDataMap =
-          Map<String, dynamic>.from(clusterData as Map<dynamic, dynamic>);
+    return data.map<Cluster>((Object clusterData) {
+      final Map<String, Object> clusterDataMap =
+          Map<String, Object>.from(clusterData as Map<Object, Object>);
       return GoogleMapsFlutterIOS.parseCluster(
           clusterDataMap['clusterManagerId']! as String,
-          clusterDataMap['position']! as Object,
-          clusterDataMap['bounds']! as Map<dynamic, dynamic>,
-          clusterDataMap['markerIds']! as List<dynamic>);
+          clusterDataMap['position']!,
+          clusterDataMap['bounds']! as Map<Object?, Object?>,
+          clusterDataMap['markerIds']! as List<Object?>);
     }).toList();
   }
 }
