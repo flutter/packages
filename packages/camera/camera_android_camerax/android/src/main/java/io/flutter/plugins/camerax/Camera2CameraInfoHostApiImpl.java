@@ -5,9 +5,11 @@
 package io.flutter.plugins.camerax;
 
 import android.content.Context;
+import android.hardware.camera2.CameraCharacteristics;
 import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
-import androidx.camera.core.Camera2CameraInfo;
+import androidx.camera.camera2.interop.Camera2CameraInfo;
+import androidx.camera.core.CameraInfo;
 import androidx.camera.core.FocusMeteringAction;
 import androidx.camera.core.FocusMeteringResult;
 import androidx.core.content.ContextCompat;
@@ -26,6 +28,7 @@ import java.util.Objects;
  * Dart instance or handle method calls on the associated native class or an instance of the class.
  */
 public class Camera2CameraInfoHostApiImpl implements Camera2CameraInfoHostApi {
+  private final BinaryMessenger binaryMessenger;
   private final InstanceManager instanceManager;
   private final Camera2CameraInfoProxy proxy;
 
@@ -52,6 +55,7 @@ public class Camera2CameraInfoHostApiImpl implements Camera2CameraInfoHostApi {
   /**
    * Constructs an {@link Camera2CameraInfoHostApiImpl}.
    *
+   * @param binaryMessenger used to communicate with Dart over asynchronous messages
    * @param instanceManager maintains instances stored to communicate with attached Dart objects
    * @param context {@link Context} used to retrieve {@code Executor}
    */
@@ -64,6 +68,7 @@ public class Camera2CameraInfoHostApiImpl implements Camera2CameraInfoHostApi {
   /**
    * Constructs an {@link Camera2CameraInfoHostApiImpl}.
    *
+   * @param binaryMessenger used to communicate with Dart over asynchronous messages
    * @param instanceManager maintains instances stored to communicate with attached Dart objects
    * @param proxy proxy for methods of {@link Camera2CameraInfo}
    */
@@ -73,6 +78,7 @@ public class Camera2CameraInfoHostApiImpl implements Camera2CameraInfoHostApi {
       @NonNull InstanceManager instanceManager,
       @NonNull Camera2CameraInfoProxy proxy) {
     this.instanceManager = instanceManager;
+    this.binaryMessenger = binaryMessenger;
     this.proxy = proxy;
   }
 
@@ -84,6 +90,7 @@ public class Camera2CameraInfoHostApiImpl implements Camera2CameraInfoHostApi {
     final Camera2CameraInfoFlutterApiImpl flutterApi = new Camera2CameraInfoFlutterApiImpl(binaryMessenger, instanceManager);
 
     flutterApi.create(camera2CameraInfo, reply -> {});
+    return instanceManager.getIdentifierForStrongReference(camera2CameraInfo);
   }
 
   @Override

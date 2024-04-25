@@ -26,7 +26,7 @@ class Camera2CameraInfo extends JavaObject {
             instanceManager: instanceManager) {
     _api = _Camera2CameraInfoHostApiImpl(
         binaryMessenger: binaryMessenger, instanceManager: instanceManager);
-        AndroidCameraXCameraFlutterApis.instance.ensureSetUp();
+    AndroidCameraXCameraFlutterApis.instance.ensureSetUp();
   }
 
   late final _Camera2CameraInfoHostApiImpl _api;
@@ -87,7 +87,6 @@ class _Camera2CameraInfoHostApiImpl extends Camera2CameraInfoHostApi {
     return getSupportedHardwareLevel(identifier!);
   }
 
-  // TODO(camsim99): have this return empty string if unsuccessful to allow this to be graceful.
   Future<String> getCameraIdFromInstance(Camera2CameraInfo instance) {
     final int? identifier = instanceManager.getIdentifier(instance);
     return getCameraId(identifier!);

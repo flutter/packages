@@ -782,7 +782,7 @@ class AndroidCameraCameraX extends CameraPlatform {
   @override
   Future<void> resumePreview(int cameraId) async {
     _previewIsPaused = false;
-    await _bindPreviewToLifecycle(cameraId);
+    await _bindUseCaseToLifecycle(preview!, cameraId);
   }
 
   /// Returns a widget showing a live camera preview.
@@ -810,8 +810,7 @@ class AndroidCameraCameraX extends CameraPlatform {
     final bool imageCaptureIsBound =
         await processCameraProvider!.isBound(imageCapture!);
     if (!imageCaptureIsBound) {
-      camera = await processCameraProvider!
-          .bindToLifecycle(cameraSelector!, <UseCase>[imageCapture!]);
+      await _bindUseCaseToLifecycle(imageCapture!, cameraId);
     }
     // Set flash mode.
     if (_currentFlashMode != null) {
@@ -922,9 +921,7 @@ class AndroidCameraCameraX extends CameraPlatform {
     }
 
     if (!(await processCameraProvider!.isBound(videoCapture!))) {
-      camera = await processCameraProvider!
-          .bindToLifecycle(cameraSelector!, <UseCase>[videoCapture!]);
-      await _updateCameraInfoAndLiveCameraState(options.cameraId);
+      await _bindUseCaseToLifecycle(videoCapture!, options.cameraId);
     }
 
     // Set target rotation to default CameraX rotation only if capture
@@ -1016,21 +1013,23 @@ class AndroidCameraCameraX extends CameraPlatform {
   // Methods for binding UseCases to the lifecycle of the camera controlled
   // by a ProcessCameraProvider instance:
 
-  /// Binds [preview] instance to the camera lifecycle controlled by the
+  /// Binds [useCase] to the camera lifecycle controlled by the
   /// [processCameraProvider].
   ///
   /// [cameraId] used to build [CameraEvent]s should you wish to filter
   /// these based on a reference to a cameraId received from calling
   /// `createCamera(...)`.
-  Future<void> _bindPreviewToLifecycle(int cameraId) async {
-    final bool previewIsBound = await processCameraProvider!.isBound(preview!);
-    if (previewIsBound || _previewIsPaused) {
-      // Only bind if preview is not already bound or intentionally paused.
+  Future<void> _bindUseCaseToLifecycle(UseCase useCase, int cameraId) async {
+    final bool useCaseIsBound = await processCameraProvider!.isBound(useCase);
+    final bool useCaseIsPausedPreview = useCase is Preview && _previewIsPaused;
+    if (useCaseIsBound || useCaseIsPausedPreview) {
+      // Only bind if useCase is not already bound or preview is intentionally
+      // paused.
       return;
     }
 
     camera = await processCameraProvider!
-        .bindToLifecycle(cameraSelector!, <UseCase>[preview!]);
+        .bindToLifecycle(cameraSelector!, <UseCase>[useCase]);
     await _updateCameraInfoAndLiveCameraState(cameraId);
   }
 
@@ -1039,8 +1038,7 @@ class AndroidCameraCameraX extends CameraPlatform {
     final bool imageAnalysisBound =
         await processCameraProvider!.isBound(imageAnalysis!);
     if (!imageAnalysisBound) {
-      camera = await processCameraProvider!
-          .bindToLifecycle(cameraSelector!, <UseCase>[imageAnalysis!]);
+      await _bindUseCaseToLifecycle(imageAnalysis!, cameraId);
     }
 
     // Set target rotation to default CameraX rotation only if capture

@@ -1458,7 +1458,7 @@ void main() {
       final TestSystemServicesHostApi mockSystemServicesApi =
           MockTestSystemServicesHostApi();
       TestSystemServicesHostApi.setup(mockSystemServicesApi);
-      const int defaultTargetRotation = Surface.ROTATION_270;
+      const int defaultTargetRotation = Surface.rotation270;
 
       // Set directly for test versus calling createCamera.
       camera.processCameraProvider = MockProcessCameraProvider();
@@ -1653,7 +1653,7 @@ void main() {
     final AndroidCameraCameraX camera = AndroidCameraCameraX();
     final MockImageCapture mockImageCapture = MockImageCapture();
     const int cameraId = 3;
-    const int defaultTargetRotation = Surface.ROTATION_180;
+    const int defaultTargetRotation = Surface.rotation180;
 
     // Set directly for test versus calling createCamera.
     camera.imageCapture = mockImageCapture;
@@ -2121,7 +2121,7 @@ void main() {
       () async {
     final AndroidCameraCameraX camera = AndroidCameraCameraX();
     const int cameraId = 35;
-    const int defaultTargetRotation = Surface.ROTATION_90;
+    const int defaultTargetRotation = Surface.rotation90;
     final MockImageAnalysis mockImageAnalysis = MockImageAnalysis();
 
     // Set directly for test versus calling createCamera.
@@ -2195,13 +2195,13 @@ void main() {
       int? expectedTargetRotation;
       switch (orientation) {
         case DeviceOrientation.portraitUp:
-          expectedTargetRotation = Surface.ROTATION_0;
+          expectedTargetRotation = Surface.rotation0;
         case DeviceOrientation.landscapeLeft:
-          expectedTargetRotation = Surface.ROTATION_90;
+          expectedTargetRotation = Surface.rotation90;
         case DeviceOrientation.portraitDown:
-          expectedTargetRotation = Surface.ROTATION_180;
+          expectedTargetRotation = Surface.rotation180;
         case DeviceOrientation.landscapeRight:
-          expectedTargetRotation = Surface.ROTATION_270;
+          expectedTargetRotation = Surface.rotation270;
       }
 
       await camera.lockCaptureOrientation(cameraId, orientation);
