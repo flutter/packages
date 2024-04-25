@@ -912,7 +912,7 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
     indent.newln();
     indent.writeln(
         '/// Error thrown by Pigeon. Encapsulates a code, message, and details.');
-    indent.writeln('class PigeonError: Swift.Error {');
+    indent.writeln('final class PigeonError: Swift.Error {');
     indent.nest(1, () {
       indent.writeln('let code: String');
       indent.writeln('let message: String?');
@@ -923,6 +923,14 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
         indent.writeln('self.code = code');
         indent.writeln('self.message = message');
         indent.writeln('self.details = details');
+      });
+      indent.writeln('}');
+      indent.newln();
+      indent.writeln('init(flutterError: FlutterError) {');
+      indent.nest(1, () {
+        indent.writeln('self.code = flutterError.code');
+        indent.writeln('self.message = flutterError.message');
+        indent.writeln('self.details = flutterError.details');
       });
       indent.writeln('}');
       indent.newln();

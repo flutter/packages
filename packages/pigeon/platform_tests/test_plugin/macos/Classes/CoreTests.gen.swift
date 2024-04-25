@@ -16,7 +16,7 @@ import Foundation
 #endif
 
 /// Error thrown by Pigeon. Encapsulates a code, message, and details.
-class PigeonError: Swift.Error {
+final class PigeonError: Swift.Error {
   let code: String
   let message: String?
   let details: Any?
@@ -25,6 +25,12 @@ class PigeonError: Swift.Error {
     self.code = code
     self.message = message
     self.details = details
+  }
+
+  init(flutterError: FlutterError) {
+    self.code = flutterError.code
+    self.message = flutterError.message
+    self.details = flutterError.details
   }
 
   var localizedDescription: String {
