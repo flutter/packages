@@ -586,4 +586,82 @@ void main() {
     expect(tester.widget<Material>(find.byType(Material)).clipBehavior,
         Clip.antiAlias);
   });
+
+  testWidgets('Slider properties', (WidgetTester tester) async {
+    final Runtime runtime = setupRuntime();
+    final DynamicContent data = DynamicContent();
+    final List<String> eventLog = <String>[];
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: ThemeData(useMaterial3: false),
+        home: RemoteWidget(
+          runtime: runtime,
+          data: data,
+          widget: const FullyQualifiedWidgetName(testName, 'root'),
+          onEvent: (String eventName, DynamicMap eventArguments) {
+            eventLog.add('$eventName $eventArguments');
+          },
+        ),
+      ),
+    );
+    expect(
+      tester.takeException().toString(),
+      contains('Could not find remote widget named'),
+    );
+
+    runtime.update(testName, parseLibraryFile('''
+      import core;
+      import material;
+      widget root = Scaffold(
+        body: Center(
+          child: Slider(
+          onChanged: event 'slider' {  },
+          min: 10.0,
+          max: 100.0,
+          divisions: 100,
+          value: 20.0,
+          activeColor: 0xFF0000FF,
+          inactiveColor: 0xFF00FF00,
+          secondaryActiveColor: 0xFFFF0000,
+          thumbColor: 0xFF000000,
+      )));
+    '''));
+    await tester.pump();
+
+    final Finder sliderFinder = find.byType(Slider);
+    final Slider slider = tester.widget<Slider>(sliderFinder);
+    expect(slider.value, 20.0);
+    expect(slider.min, 10.0);
+    expect(slider.max, 100.0);
+    expect(slider.divisions, 100);
+    expect(slider.activeColor, const Color(0xFF0000FF));
+    expect(slider.inactiveColor, const Color(0xFF00FF00));
+    expect(slider.secondaryActiveColor, const Color(0xFFFF0000));
+    expect(slider.thumbColor, const Color(0xFF000000));
+
+    runtime.update(testName, parseLibraryFile('''
+      import core;
+      import material;
+      
+      widget root = Scaffold(
+          body: Container(    
+            child: Slider(
+            onChanged: event 'slider' {  },
+            onChangeStart: event 'slider.start' {  },
+            onChangeEnd: event 'slider.end' {  },
+            min: 0.0,
+            max: 100.0,
+            divisions: 100,
+            value: 0.0,
+        )));
+    '''));
+    await tester.pump();
+
+    //drag slider
+    await tester.slideToValue(sliderFinder, 20.0);
+    await tester.pumpAndSettle();
+    expect(eventLog, contains('slider {value: 20.0}'));
+    expect(eventLog, contains('slider.start {value: 0.0}'));
+    expect(eventLog, contains('slider.end {value: 20.0}'));
+  });
 }
