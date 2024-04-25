@@ -316,7 +316,7 @@ class SwiftGenerator extends StructuredGenerator<SwiftOptions> {
           name: func.name,
           parameters: func.parameters,
           returnType: func.returnType,
-          errorTypeName: 'FlutterError',
+          errorTypeName: 'PigeonError',
           isAsynchronous: true,
           swiftFunction: func.swiftFunction,
           getParameterName: _getSafeArgumentName,
@@ -673,10 +673,10 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
   void _writeCreateConnectionError(Indent indent) {
     indent.newln();
     indent.writeScoped(
-        'private func createConnectionError(withChannelName channelName: String) -> FlutterError {',
+        'private func createConnectionError(withChannelName channelName: String) -> PigeonError {',
         '}', () {
       indent.writeln(
-          'return FlutterError(code: "channel-error", message: "Unable to establish connection on channel: \'\\(channelName)\'.", details: "")');
+          'return PigeonError(code: "channel-error", message: "Unable to establish connection on channel: \'\\(channelName)\'.", details: "")');
     });
   }
 
@@ -693,6 +693,8 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
     final bool hasFlutterApi = root.apis
         .whereType<AstFlutterApi>()
         .any((Api api) => api.methods.isNotEmpty);
+
+    _writePigeonError(indent);
 
     if (hasHostApi) {
       _writeWrapResult(indent);
@@ -718,7 +720,7 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
       name: name,
       parameters: parameters,
       returnType: returnType,
-      errorTypeName: 'FlutterError',
+      errorTypeName: 'PigeonError',
       isAsynchronous: true,
       swiftFunction: swiftFunction,
       getParameterName: _getSafeArgumentName,
@@ -760,12 +762,12 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
           indent.writeln('let message: String? = nilOrValue(listResponse[1])');
           indent.writeln('let details: String? = nilOrValue(listResponse[2])');
           indent.writeln(
-              'completion(.failure(FlutterError(code: code, message: message, details: details)))');
+              'completion(.failure(PigeonError(code: code, message: message, details: details)))');
         }, addTrailingNewline: false);
         if (!returnType.isNullable && !returnType.isVoid) {
           indent.addScoped('else if listResponse[0] == nil {', '} ', () {
             indent.writeln(
-                'completion(.failure(FlutterError(code: "null-error", message: "Flutter api returned null value for non-null return value.", details: "")))');
+                'completion(.failure(PigeonError(code: "null-error", message: "Flutter api returned null value for non-null return value.", details: "")))');
           }, addTrailingNewline: false);
         }
         indent.addScoped('else {', '}', () {
@@ -894,6 +896,51 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
     indent.addScoped(' else {', '}', () {
       indent.writeln('$varChannelName.setMessageHandler(nil)');
     });
+  }
+
+  void _writePigeonError(Indent indent) {
+    indent.newln();
+    indent.writeln(
+        '/// Error thrown by Pigeon. Encapsulates a code, message, and details.');
+    indent.writeln('class PigeonError: Swift.Error {');
+    indent.nest(1, () {
+      indent.writeln('let code: String');
+      indent.writeln('let message: String?');
+      indent.writeln('let details: Any?');
+      indent.newln();
+      indent.writeln('init(code: String, message: String?, details: Any?) {');
+      indent.nest(1, () {
+        indent.writeln('self.code = code');
+        indent.writeln('self.message = message');
+        indent.writeln('self.details = details');
+      });
+      indent.writeln('}');
+      indent.newln();
+      indent.writeln('var localizedDescription: String {');
+      indent.nest(1, () {
+        indent.writeln('let detailsDescription: String');
+        indent.writeln(
+            'if let convertibleObject = details as? CustomStringConvertible {');
+        indent.nest(1, () {
+          indent.writeln('detailsDescription = convertibleObject.description');
+        });
+        indent.writeln('} else if let _ = details {');
+        indent.nest(1, () {
+          indent.writeln('detailsDescription = "<non-convertible object>"');
+        });
+        indent.writeln('} else {');
+        indent.nest(1, () {
+          indent.writeln('detailsDescription = "<nil>"');
+        });
+        indent.writeln('}');
+        indent.writeln(
+            r'return "PigeonError(code: \(code), message: \(message ?? "<nil>"), details: \(detailsDescription)"');
+      });
+      indent.write('}');
+    });
+    indent.newln();
+    indent.write('}');
+    indent.newln();
   }
 }
 

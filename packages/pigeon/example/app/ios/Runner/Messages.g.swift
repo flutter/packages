@@ -14,6 +14,32 @@ import Foundation
   #error("Unsupported platform.")
 #endif
 
+/// Error thrown by Pigeon. Encapsulates a code, message, and details.
+class PigeonError: Swift.Error {
+  let code: String
+  let message: String?
+  let details: Any?
+
+  init(code: String, message: String?, details: Any?) {
+    self.code = code
+    self.message = message
+    self.details = details
+  }
+
+  var localizedDescription: String {
+    let detailsDescription: String
+    if let convertibleObject = details as? CustomStringConvertible {
+      detailsDescription = convertibleObject.description
+    } else if let _ = details {
+      detailsDescription = "<non-convertible object>"
+    } else {
+      detailsDescription = "<nil>"
+    }
+    return
+      "PigeonError(code: \(code), message: \(message ?? "<nil>"), details: \(detailsDescription)"
+  }
+}
+
 private func wrapResult(_ result: Any?) -> [Any?] {
   return [result]
 }
@@ -33,8 +59,8 @@ private func wrapError(_ error: Any) -> [Any?] {
   ]
 }
 
-private func createConnectionError(withChannelName channelName: String) -> FlutterError {
-  return FlutterError(
+private func createConnectionError(withChannelName channelName: String) -> PigeonError {
+  return PigeonError(
     code: "channel-error", message: "Unable to establish connection on channel: '\(channelName)'.",
     details: "")
 }
@@ -193,7 +219,7 @@ class ExampleHostApiSetup {
 /// Generated protocol from Pigeon that represents Flutter messages that can be called from Swift.
 protocol MessageFlutterApiProtocol {
   func flutterMethod(
-    aString aStringArg: String?, completion: @escaping (Result<String, FlutterError>) -> Void)
+    aString aStringArg: String?, completion: @escaping (Result<String, PigeonError>) -> Void)
 }
 class MessageFlutterApi: MessageFlutterApiProtocol {
   private let binaryMessenger: FlutterBinaryMessenger
@@ -203,7 +229,7 @@ class MessageFlutterApi: MessageFlutterApiProtocol {
     self.messageChannelSuffix = messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : ""
   }
   func flutterMethod(
-    aString aStringArg: String?, completion: @escaping (Result<String, FlutterError>) -> Void
+    aString aStringArg: String?, completion: @escaping (Result<String, PigeonError>) -> Void
   ) {
     let channelName: String =
       "dev.flutter.pigeon.pigeon_example_package.MessageFlutterApi.flutterMethod\(messageChannelSuffix)"
@@ -217,11 +243,11 @@ class MessageFlutterApi: MessageFlutterApiProtocol {
         let code: String = listResponse[0] as! String
         let message: String? = nilOrValue(listResponse[1])
         let details: String? = nilOrValue(listResponse[2])
-        completion(.failure(FlutterError(code: code, message: message, details: details)))
+        completion(.failure(PigeonError(code: code, message: message, details: details)))
       } else if listResponse[0] == nil {
         completion(
           .failure(
-            FlutterError(
+            PigeonError(
               code: "null-error",
               message: "Flutter api returned null value for non-null return value.", details: "")))
       } else {

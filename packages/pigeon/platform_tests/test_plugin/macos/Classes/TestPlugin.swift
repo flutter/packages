@@ -5,8 +5,6 @@
 import Cocoa
 import FlutterMacOS
 
-extension FlutterError: Error {}
-
 /// This plugin handles the native side of the integration tests in
 /// example/integration_test/.
 public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
