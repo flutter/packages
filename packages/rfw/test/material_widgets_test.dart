@@ -660,8 +660,15 @@ void main() {
     //drag slider
     await tester.slideToValue(sliderFinder, 20.0);
     await tester.pumpAndSettle();
-    expect(eventLog, contains('slider {value: 20.0}'));
-    expect(eventLog, contains('slider.start {value: 0.0}'));
-    expect(eventLog, contains('slider.end {value: 20.0}'));
+    expect(eventLog,
+        contains(kIsWeb ? 'slider {value: 20}' : 'slider {value: 20.0}'));
+    expect(
+        eventLog,
+        contains(
+            kIsWeb ? 'slider.start {value: 0}' : 'slider.start {value: 0.0}'));
+    expect(
+        eventLog,
+        contains(
+            kIsWeb ? 'slider.end {value: 20}' : 'slider.end {value: 20.0}'));
   });
 }
