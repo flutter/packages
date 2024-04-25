@@ -374,7 +374,7 @@ void main() {
   group('HeatmapsController', () {
     late HeatmapsController controller;
 
-    const List<WeightedLatLng> _heatmapPoints = <WeightedLatLng>[
+    const List<WeightedLatLng> heatmapPoints = <WeightedLatLng>[
       WeightedLatLng(LatLng(37.782, -122.447)),
       WeightedLatLng(LatLng(37.782, -122.445)),
       WeightedLatLng(LatLng(37.782, -122.443)),
@@ -400,12 +400,12 @@ void main() {
       final Set<Heatmap> heatmaps = <Heatmap>{
         const Heatmap(
           heatmapId: HeatmapId('1'),
-          data: _heatmapPoints,
+          data: heatmapPoints,
           radius: HeatmapRadius.fromPlatformSpecificValue(20),
         ),
         const Heatmap(
           heatmapId: HeatmapId('2'),
-          data: _heatmapPoints,
+          data: heatmapPoints,
           radius: HeatmapRadius.fromPlatformSpecificValue(20),
         ),
       };
@@ -422,7 +422,7 @@ void main() {
       final Set<Heatmap> heatmaps = <Heatmap>{
         const Heatmap(
           heatmapId: HeatmapId('1'),
-          data: _heatmapPoints,
+          data: heatmapPoints,
           radius: HeatmapRadius.fromPlatformSpecificValue(20),
         ),
       };
@@ -449,17 +449,17 @@ void main() {
       final Set<Heatmap> heatmaps = <Heatmap>{
         const Heatmap(
           heatmapId: HeatmapId('1'),
-          data: _heatmapPoints,
+          data: heatmapPoints,
           radius: HeatmapRadius.fromPlatformSpecificValue(20),
         ),
         const Heatmap(
           heatmapId: HeatmapId('2'),
-          data: _heatmapPoints,
+          data: heatmapPoints,
           radius: HeatmapRadius.fromPlatformSpecificValue(20),
         ),
         const Heatmap(
           heatmapId: HeatmapId('3'),
-          data: _heatmapPoints,
+          data: heatmapPoints,
           radius: HeatmapRadius.fromPlatformSpecificValue(20),
         ),
       };
@@ -486,7 +486,7 @@ void main() {
       final Set<Heatmap> heatmaps = <Heatmap>{
         Heatmap(
           heatmapId: const HeatmapId('1'),
-          data: _heatmapPoints,
+          data: heatmapPoints,
           gradient: HeatmapGradient(
             const <HeatmapGradientColor>[
               HeatmapGradientColor(Color(0xFFFABADA), 0)
