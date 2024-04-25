@@ -77,7 +77,7 @@ Future<int> generateTestPigeons({required String baseDir}) async {
   final String sharedDartOutputBase =
       p.join(baseDir, 'platform_tests', 'shared_test_plugin_code');
 
-  for (final String input in inputs) {
+  for (final (int index, String input) in inputs.indexed) {
     final String pascalCaseName = _snakeToPascalCase(input);
     final Set<GeneratorLanguage> skipLanguages =
         _unsupportedFiles[input] ?? <GeneratorLanguage>{};
@@ -114,6 +114,7 @@ Future<int> generateTestPigeons({required String baseDir}) async {
       cppNamespace: '${input}_pigeontest',
       suppressVersion: true,
       dartPackageName: 'pigeon_integration_tests',
+      swiftEmitErrorClass: index == 0,
     );
     if (generateCode != 0) {
       return generateCode;
@@ -129,6 +130,7 @@ Future<int> generateTestPigeons({required String baseDir}) async {
           : '$outputBase/macos/Classes/$pascalCaseName.gen.swift',
       suppressVersion: true,
       dartPackageName: 'pigeon_integration_tests',
+      swiftEmitErrorClass: index == 0,
     );
     if (generateCode != 0) {
       return generateCode;
@@ -202,6 +204,7 @@ Future<int> runPigeon({
   String copyrightHeader = './copyright_header.txt',
   String? basePath,
   String? dartPackageName,
+  bool swiftEmitErrorClass = true,
 }) async {
   // Temporarily suppress the version output via the global flag if requested.
   // This is done because having the version in all the generated test output
@@ -236,7 +239,7 @@ Future<int> runPigeon({
     objcSourceOut: objcSourceOut,
     objcOptions: ObjcOptions(prefix: objcPrefix),
     swiftOut: swiftOut,
-    swiftOptions: const SwiftOptions(),
+    swiftOptions: SwiftOptions(swiftEmitErrorClass: swiftEmitErrorClass),
     basePath: basePath,
     dartPackageName: dartPackageName,
   ));

@@ -2084,6 +2084,8 @@ ${_argParser.usage}''';
         help: 'Path to generated Objective-C header file (.h).')
     ..addOption('objc_prefix',
         help: 'Prefix for generated Objective-C classes and protocols.')
+    ..addOption('swift_emit_error_class',
+        help: 'Adds an error class to the generated Swift code.')
     ..addOption('copyright_header',
         help:
             'Path to file with copyright header to be prepended to generated code.')
@@ -2125,6 +2127,9 @@ ${_argParser.usage}''';
             results['java_use_generated_annotation'] as bool?,
       ),
       swiftOut: results['swift_out'] as String?,
+      swiftOptions: SwiftOptions(
+        swiftEmitErrorClass: results['swift_emit_error_class'] as bool?,
+      ),
       kotlinOut: results['kotlin_out'] as String?,
       kotlinOptions: KotlinOptions(
         package: results['kotlin_package'] as String?,

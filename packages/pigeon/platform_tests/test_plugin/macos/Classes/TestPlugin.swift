@@ -5,6 +5,11 @@
 import Cocoa
 import FlutterMacOS
 
+// If someone want to throw FlutterError from Swift, they need to conform to Error protocol.
+// However this is not recommended as this extension will be public visibility, as
+// both FlutterError and Error are public.
+extension FlutterError: Error {}
+
 /// This plugin handles the native side of the integration tests in
 /// example/integration_test/.
 public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {

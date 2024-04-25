@@ -19,16 +19,22 @@ class SwiftOptions {
   /// Creates a [SwiftOptions] object
   const SwiftOptions({
     this.copyrightHeader,
+    this.swiftEmitErrorClass,
   });
 
   /// A copyright header that will get prepended to generated code.
   final Iterable<String>? copyrightHeader;
+
+  /// Whether to emit the PigeonError class in the generated code.
+  /// Defaults to true.
+  final bool? swiftEmitErrorClass;
 
   /// Creates a [SwiftOptions] from a Map representation where:
   /// `x = SwiftOptions.fromList(x.toMap())`.
   static SwiftOptions fromList(Map<String, Object> map) {
     return SwiftOptions(
       copyrightHeader: map['copyrightHeader'] as Iterable<String>?,
+      swiftEmitErrorClass: map['swiftEmitErrorClass'] as bool?,
     );
   }
 
@@ -37,6 +43,8 @@ class SwiftOptions {
   Map<String, Object> toMap() {
     final Map<String, Object> result = <String, Object>{
       if (copyrightHeader != null) 'copyrightHeader': copyrightHeader!,
+      if (swiftEmitErrorClass != null)
+        'swiftEmitErrorClass': swiftEmitErrorClass!,
     };
     return result;
   }
@@ -694,7 +702,9 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
         .whereType<AstFlutterApi>()
         .any((Api api) => api.methods.isNotEmpty);
 
-    _writePigeonError(indent);
+    if (generatorOptions.swiftEmitErrorClass ?? true) {
+      _writePigeonError(indent);
+    }
 
     if (hasHostApi) {
       _writeWrapResult(indent);
