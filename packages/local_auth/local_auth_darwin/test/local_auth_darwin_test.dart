@@ -87,6 +87,8 @@ void main() {
   group('authenticate', () {
     group('strings', () {
       test('passes default values when nothing is provided', () async {
+        plugin = LocalAuthDarwin(api: api, overrideUseMacOSAuthMessages: false);
+
         when(api.authenticate(any, any)).thenAnswer(
             (_) async => AuthResultDetails(result: AuthResult.success));
 
@@ -109,6 +111,8 @@ void main() {
 
       test('passes default values when only other platform values are provided',
           () async {
+        plugin = LocalAuthDarwin(api: api, overrideUseMacOSAuthMessages: false);
+
         when(api.authenticate(any, any)).thenAnswer(
             (_) async => AuthResultDetails(result: AuthResult.success));
 
@@ -133,7 +137,6 @@ void main() {
       test(
           'passes default values when only MacOSAuthMessages platform values are provided',
           () async {
-        api = MockLocalAuthApi();
         plugin = LocalAuthDarwin(api: api, overrideUseMacOSAuthMessages: true);
 
         when(api.authenticate(any, any)).thenAnswer(
@@ -159,6 +162,9 @@ void main() {
       test(
         'passes all non-default values correctly with IOSAuthMessages',
         () async {
+          plugin =
+              LocalAuthDarwin(api: api, overrideUseMacOSAuthMessages: false);
+
           when(api.authenticate(any, any)).thenAnswer(
               (_) async => AuthResultDetails(result: AuthResult.success));
 
@@ -199,7 +205,6 @@ void main() {
 
       test('passes all non-default values correctly with MacOSAuthMessages',
           () async {
-        api = MockLocalAuthApi();
         plugin = LocalAuthDarwin(api: api, overrideUseMacOSAuthMessages: true);
         when(api.authenticate(any, any)).thenAnswer(
             (_) async => AuthResultDetails(result: AuthResult.success));
@@ -231,6 +236,8 @@ void main() {
       });
 
       test('passes provided messages with default fallbacks', () async {
+        plugin = LocalAuthDarwin(api: api, overrideUseMacOSAuthMessages: false);
+
         when(api.authenticate(any, any)).thenAnswer(
             (_) async => AuthResultDetails(result: AuthResult.success));
 
@@ -267,6 +274,8 @@ void main() {
 
     group('options', () {
       test('passes default values', () async {
+        plugin = LocalAuthDarwin(api: api, overrideUseMacOSAuthMessages: false);
+
         when(api.authenticate(any, any)).thenAnswer(
             (_) async => AuthResultDetails(result: AuthResult.success));
 

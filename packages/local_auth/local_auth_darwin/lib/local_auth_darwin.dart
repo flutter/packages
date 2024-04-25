@@ -22,7 +22,7 @@ class LocalAuthDarwin extends LocalAuthPlatform {
   /// Creates a new plugin implementation instance.
   LocalAuthDarwin({
     @visibleForTesting LocalAuthApi? api,
-    @visibleForTesting bool? overrideUseMacOSAuthMessages = false,
+    @visibleForTesting bool? overrideUseMacOSAuthMessages,
   })  : _api = api ?? LocalAuthApi(),
         _useMacOSAuthMessages =
             overrideUseMacOSAuthMessages ?? Platform.isMacOS;
