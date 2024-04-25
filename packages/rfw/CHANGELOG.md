@@ -1,3 +1,6 @@
+## 1.0.27
+* Adds `Slider` material widget
+
 ## 1.0.26
 * Supports overriding the error widget builder.
 
