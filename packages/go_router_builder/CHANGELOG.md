@@ -1,3 +1,7 @@
+## 2.6.0
+
+* Adds support for passing observers to the StatefulShellBranch for the nested Navigator.
+
 ## 2.5.1
 
 - Updates examples to use uri.path instead of uri.toString() for accessing the current location.
