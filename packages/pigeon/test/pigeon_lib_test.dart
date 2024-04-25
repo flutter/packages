@@ -128,6 +128,18 @@ void main() {
     expect(opts.javaOptions!.useGeneratedAnnotation, isTrue);
   });
 
+  test('parse args - swift_emit_pigeon_error_class', () {
+    // Without this option, the default should be true.
+    final PigeonOptions opts0 = Pigeon.parseArgs(<String>[]);
+    expect(opts0.swiftOptions!.emitPigeonErrorClass, isTrue);
+    final PigeonOptions opts1 =
+        Pigeon.parseArgs(<String>['--swift_emit_pigeon_error_class=true']);
+    expect(opts1.swiftOptions!.emitPigeonErrorClass, isTrue);
+    final PigeonOptions opts2 =
+        Pigeon.parseArgs(<String>['--swift_emit_pigeon_error_class=false']);
+    expect(opts2.swiftOptions!.emitPigeonErrorClass, isFalse);
+  });
+
   test('parse args - cpp_source_out', () {
     final PigeonOptions opts =
         Pigeon.parseArgs(<String>['--cpp_source_out', 'foo.cpp']);

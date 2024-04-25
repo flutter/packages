@@ -2084,7 +2084,7 @@ ${_argParser.usage}''';
         help: 'Path to generated Objective-C header file (.h).')
     ..addOption('objc_prefix',
         help: 'Prefix for generated Objective-C classes and protocols.')
-    ..addOption('swift_emit_error_class',
+    ..addOption('swift_emit_pigeon_error_class',
         help: 'Adds an error class to the generated Swift code.')
     ..addOption('copyright_header',
         help:
@@ -2128,7 +2128,10 @@ ${_argParser.usage}''';
       ),
       swiftOut: results['swift_out'] as String?,
       swiftOptions: SwiftOptions(
-        swiftEmitErrorClass: results['swift_emit_error_class'] as bool?,
+        emitPigeonErrorClass:
+            (results['swift_emit_pigeon_error_class'] as String?)
+                    ?.toLowerCase() !=
+                'false',
       ),
       kotlinOut: results['kotlin_out'] as String?,
       kotlinOptions: KotlinOptions(
