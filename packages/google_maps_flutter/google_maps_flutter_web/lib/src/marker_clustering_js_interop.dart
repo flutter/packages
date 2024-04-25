@@ -2,8 +2,10 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:js_interop';
+import 'dart:js_util' as js_util;
+
 import 'package:google_maps/google_maps.dart' as gmaps;
-import 'package:js/js.dart';
 
 /// A typedef representing a callback function for handling cluster tap events.
 typedef ClusterClickHandler = void Function(
@@ -12,7 +14,7 @@ typedef ClusterClickHandler = void Function(
 /// The [MarkerClustererOptions] object used to initialize [MarkerClusterer].
 @JS()
 @anonymous
-abstract class MarkerClustererOptions {
+extension type MarkerClustererOptions._(JSObject _) implements JSObject {
   /// Constructs a new [MarkerClustererOptions] object.
   external factory MarkerClustererOptions();
 
@@ -37,7 +39,7 @@ abstract class MarkerClustererOptions {
 
 /// The cluster object handled by the [MarkerClusterer].
 @JS('markerClusterer.Cluster')
-abstract class MarkerClustererCluster {
+extension type MarkerClustererCluster._(JSObject _) implements JSObject {
   /// Getter for the cluster marker.
   external gmaps.Marker get marker;
 
@@ -62,7 +64,7 @@ abstract class MarkerClustererCluster {
 
 /// The [MarkerClusterer] object used to cluster markers on the map.
 @JS('markerClusterer.MarkerClusterer')
-class MarkerClusterer {
+extension type MarkerClusterer._(JSObject _) implements JSObject {
   /// Constructs a new [MarkerClusterer] object.
   external MarkerClusterer(MarkerClustererOptions options);
 
@@ -92,9 +94,6 @@ class MarkerClusterer {
 
   /// Recalculates and draws all the marker clusters.
   external void render();
-
-  /// Flag to control the need for re-rendering the cluster after bulk changes.
-  bool dirty = false;
 }
 
 /// Creates [MarkerClusterer] object with given [gmaps.GMap] and
@@ -110,7 +109,7 @@ MarkerClustererOptions _createClusterOptions(
     gmaps.GMap map, ClusterClickHandler onClusterClickHandler) {
   final MarkerClustererOptions options = MarkerClustererOptions()
     ..map = map
-    ..onClusterClick = allowInterop(onClusterClickHandler);
+    ..onClusterClick = js_util.allowInterop(onClusterClickHandler);
 
   return options;
 }

@@ -74,7 +74,7 @@ class ClusterManagersController extends GeometryController {
         _clusterManagerIdToMarkerClusterer[clusterManagerId];
     if (markerClusterer != null) {
       markerClusterer.addMarker(marker, true);
-      markerClusterer.dirty = true;
+      markerClusterer.render();
     }
   }
 
@@ -86,23 +86,9 @@ class ClusterManagersController extends GeometryController {
           _clusterManagerIdToMarkerClusterer[clusterManagerId];
       if (markerClusterer != null) {
         markerClusterer.removeMarker(marker, true);
-        markerClusterer.dirty = true;
+        markerClusterer.render();
       }
     }
-  }
-
-  /// Renders all cluster managers that are marked as dirty.
-  ///
-  /// This mechanism is used to batch changes to the cluster managers to avoid
-  /// unnecessary re-renders.
-  /// [MarkerClusterer] is marked as dirty when a marker is added or removed.
-  void renderDirty() {
-    _clusterManagerIdToMarkerClusterer.values
-        .where((MarkerClusterer markerClusterer) => markerClusterer.dirty)
-        .forEach((MarkerClusterer markerClusterer) {
-      markerClusterer.dirty = false;
-      markerClusterer.render();
-    });
   }
 
   /// Returns list of clusters in [MarkerClusterer] with given

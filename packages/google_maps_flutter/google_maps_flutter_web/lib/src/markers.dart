@@ -31,7 +31,6 @@ class MarkersController extends GeometryController {
   /// Wraps each [Marker] into its corresponding [MarkerController].
   void addMarkers(Set<Marker> markersToAdd) {
     markersToAdd.forEach(_addMarker);
-    _clusterManagersController.renderDirty();
   }
 
   void _addMarker(Marker marker) {
@@ -93,7 +92,6 @@ class MarkersController extends GeometryController {
   /// Updates a set of [Marker] objects with new options.
   void changeMarkers(Set<Marker> markersToChange) {
     markersToChange.forEach(_changeMarker);
-    _clusterManagersController.renderDirty();
   }
 
   void _changeMarker(Marker marker) {
@@ -126,7 +124,6 @@ class MarkersController extends GeometryController {
   /// Removes a set of [MarkerId]s from the cache.
   void removeMarkers(Set<MarkerId> markerIdsToRemove) {
     markerIdsToRemove.forEach(_removeMarker);
-    _clusterManagersController.renderDirty();
   }
 
   void _removeMarker(MarkerId markerId) {
