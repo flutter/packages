@@ -55,8 +55,7 @@ typedef AVCaptureDevice * (^CaptureDeviceFactory)(void);
 /// Initializes a camera instance.
 /// Allows for injecting dependencies that are usually internal.
 - (instancetype)initWithCameraName:(NSString *)cameraName
-                  resolutionPreset:(NSString *)resolutionPreset
-                     mediaSettings:(FLTCamMediaSettings *)mediaSettings
+                     mediaSettings:(FCPPlatformMediaSettings *)mediaSettings
             mediaSettingsAVWrapper:(FLTCamMediaSettingsAVWrapper *)mediaSettingsAVWrapper
                        orientation:(UIDeviceOrientation)orientation
                videoCaptureSession:(AVCaptureSession *)videoCaptureSession
@@ -67,16 +66,15 @@ typedef AVCaptureDevice * (^CaptureDeviceFactory)(void);
 ///  Initializes a camera instance.
 ///  Allows for testing with specified resolution, audio preference, orientation,
 ///  and direct access to capture sessions and blocks.
-- (instancetype)initWithResolutionPreset:(NSString *)resolutionPreset
-                           mediaSettings:(FLTCamMediaSettings *)mediaSettings
-                  mediaSettingsAVWrapper:(FLTCamMediaSettingsAVWrapper *)mediaSettingsAVWrapper
-                             orientation:(UIDeviceOrientation)orientation
-                     videoCaptureSession:(AVCaptureSession *)videoCaptureSession
-                     audioCaptureSession:(AVCaptureSession *)audioCaptureSession
-                     captureSessionQueue:(dispatch_queue_t)captureSessionQueue
-                    captureDeviceFactory:(CaptureDeviceFactory)captureDeviceFactory
-                videoDimensionsForFormat:(VideoDimensionsForFormat)videoDimensionsForFormat
-                                   error:(NSError **)error;
+- (instancetype)initWithMediaSettings:(FCPPlatformMediaSettings *)mediaSettings
+               mediaSettingsAVWrapper:(FLTCamMediaSettingsAVWrapper *)mediaSettingsAVWrapper
+                          orientation:(UIDeviceOrientation)orientation
+                  videoCaptureSession:(AVCaptureSession *)videoCaptureSession
+                  audioCaptureSession:(AVCaptureSession *)audioCaptureSession
+                  captureSessionQueue:(dispatch_queue_t)captureSessionQueue
+                 captureDeviceFactory:(CaptureDeviceFactory)captureDeviceFactory
+             videoDimensionsForFormat:(VideoDimensionsForFormat)videoDimensionsForFormat
+                                error:(NSError **)error;
 
 /// Start streaming images.
 - (void)startImageStreamWithMessenger:(NSObject<FlutterBinaryMessenger> *)messenger
