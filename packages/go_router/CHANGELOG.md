@@ -1,3 +1,7 @@
+## 14.0.1
+
+- Updates the redirection documentation for clarity
+
 ## 14.0.0
 
 - **BREAKING CHANGE**
