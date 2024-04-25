@@ -928,23 +928,11 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
       indent.newln();
       indent.writeln('var localizedDescription: String {');
       indent.nest(1, () {
-        indent.writeln('let detailsDescription: String');
-        indent.writeln(
-            'if let convertibleObject = details as? CustomStringConvertible {');
+        indent.writeln('return');
         indent.nest(1, () {
-          indent.writeln('detailsDescription = convertibleObject.description');
+          indent.writeln(
+              r'"PigeonError(code: \(code), message: \(message ?? "<nil>"), details: \(details ?? "<nil>")"');
         });
-        indent.writeln('} else if let _ = details {');
-        indent.nest(1, () {
-          indent.writeln('detailsDescription = "<non-convertible object>"');
-        });
-        indent.writeln('} else {');
-        indent.nest(1, () {
-          indent.writeln('detailsDescription = "<nil>"');
-        });
-        indent.writeln('}');
-        indent.writeln(
-            r'return "PigeonError(code: \(code), message: \(message ?? "<nil>"), details: \(detailsDescription)"');
       });
       indent.write('}');
     });

@@ -27,16 +27,8 @@ class PigeonError: Swift.Error {
   }
 
   var localizedDescription: String {
-    let detailsDescription: String
-    if let convertibleObject = details as? CustomStringConvertible {
-      detailsDescription = convertibleObject.description
-    } else if let _ = details {
-      detailsDescription = "<non-convertible object>"
-    } else {
-      detailsDescription = "<nil>"
-    }
     return
-      "PigeonError(code: \(code), message: \(message ?? "<nil>"), details: \(detailsDescription)"
+      "PigeonError(code: \(code), message: \(message ?? "<nil>"), details: \(details ?? "<nil>")"
   }
 }
 
