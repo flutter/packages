@@ -2,7 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:local_auth_darwin/local_auth_darwin.dart';
@@ -134,7 +133,8 @@ void main() {
       test(
           'passes default values when only MacOSAuthMessages platform values are provided',
           () async {
-        debugDefaultTargetPlatformOverride = TargetPlatform.macOS;
+        api = MockLocalAuthApi();
+        plugin = LocalAuthDarwin(api: api, overrideUseMacOSAuthMessages: true);
 
         when(api.authenticate(any, any)).thenAnswer(
             (_) async => AuthResultDetails(result: AuthResult.success));
@@ -154,8 +154,6 @@ void main() {
         expect(strings.goToSettingsDescription, macOSGoToSettingsDescription);
         expect(strings.cancelButton, macOSOkButton);
         expect(strings.localizedFallbackTitle, null);
-
-        debugDefaultTargetPlatformOverride = null;
       });
 
       test(
@@ -201,8 +199,8 @@ void main() {
 
       test('passes all non-default values correctly with MacOSAuthMessages',
           () async {
-        debugDefaultTargetPlatformOverride = TargetPlatform.macOS;
-
+        api = MockLocalAuthApi();
+        plugin = LocalAuthDarwin(api: api, overrideUseMacOSAuthMessages: true);
         when(api.authenticate(any, any)).thenAnswer(
             (_) async => AuthResultDetails(result: AuthResult.success));
 
@@ -230,8 +228,6 @@ void main() {
         expect(strings.lockOut, lockOut);
         expect(strings.cancelButton, cancel);
         expect(strings.localizedFallbackTitle, localizedFallbackTitle);
-
-        debugDefaultTargetPlatformOverride = null;
       });
 
       test('passes provided messages with default fallbacks', () async {

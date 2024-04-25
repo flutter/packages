@@ -2,8 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:flutter/foundation.dart'
-    show defaultTargetPlatform, visibleForTesting;
+import 'dart:io';
+
+import 'package:flutter/foundation.dart' show visibleForTesting;
 import 'package:flutter/services.dart';
 import 'package:local_auth_platform_interface/local_auth_platform_interface.dart';
 
@@ -21,7 +22,10 @@ class LocalAuthDarwin extends LocalAuthPlatform {
   /// Creates a new plugin implementation instance.
   LocalAuthDarwin({
     @visibleForTesting LocalAuthApi? api,
-  }) : _api = api ?? LocalAuthApi();
+    @visibleForTesting bool? overrideUseMacOSAuthMessages = false,
+  })  : _api = api ?? LocalAuthApi(),
+        _useMacOSAuthMessages =
+            overrideUseMacOSAuthMessages ?? Platform.isMacOS;
 
   /// Registers this class as the default instance of [LocalAuthPlatform].
   static void registerWith() {
@@ -29,6 +33,7 @@ class LocalAuthDarwin extends LocalAuthPlatform {
   }
 
   final LocalAuthApi _api;
+  final bool _useMacOSAuthMessages;
 
   @override
   Future<bool> authenticate({
@@ -42,7 +47,7 @@ class LocalAuthDarwin extends LocalAuthPlatform {
             biometricOnly: options.biometricOnly,
             sticky: options.stickyAuth,
             useErrorDialogs: options.useErrorDialogs),
-        defaultTargetPlatform == TargetPlatform.macOS
+        _useMacOSAuthMessages
             ? _pigeonStringsFromMacOSAuthMessages(localizedReason, authMessages)
             : _pigeonStringsFromiOSAuthMessages(localizedReason, authMessages));
     // TODO(stuartmorgan): Replace this with structured errors, coordinated
@@ -116,8 +121,6 @@ class LocalAuthDarwin extends LocalAuthPlatform {
       goToSettingsButton: messages?.goToSettingsButton ?? goToSettings,
       goToSettingsDescription:
           messages?.goToSettingsDescription ?? iOSGoToSettingsDescription,
-      // TODO(stuartmorgan): The default's name is confusing here for legacy
-      // reasons; this should be fixed as part of some future breaking change.
       cancelButton: messages?.cancelButton ?? iOSOkButton,
       localizedFallbackTitle: messages?.localizedFallbackTitle,
     );
@@ -137,8 +140,6 @@ class LocalAuthDarwin extends LocalAuthPlatform {
       lockOut: messages?.lockOut ?? macOSLockOut,
       goToSettingsDescription:
           messages?.goToSettingsDescription ?? macOSGoToSettingsDescription,
-      // TODO(stuartmorgan): The default's name is confusing here for legacy
-      // reasons; this should be fixed as part of some future breaking change.
       cancelButton: messages?.cancelButton ?? macOSOkButton,
       localizedFallbackTitle: messages?.localizedFallbackTitle,
     );
