@@ -77,7 +77,7 @@ Future<int> generateTestPigeons({required String baseDir}) async {
   final String sharedDartOutputBase =
       p.join(baseDir, 'platform_tests', 'shared_test_plugin_code');
 
-  for (final (int index, String input) in inputs.indexed) {
+  for (final String input in inputs) {
     final String pascalCaseName = _snakeToPascalCase(input);
     final Set<GeneratorLanguage> skipLanguages =
         _unsupportedFiles[input] ?? <GeneratorLanguage>{};
@@ -114,7 +114,7 @@ Future<int> generateTestPigeons({required String baseDir}) async {
       cppNamespace: '${input}_pigeontest',
       suppressVersion: true,
       dartPackageName: 'pigeon_integration_tests',
-      swiftEmitErrorClass: index == 0,
+      swiftEmitErrorClass: input == 'core_tests',
     );
     if (generateCode != 0) {
       return generateCode;
@@ -130,7 +130,7 @@ Future<int> generateTestPigeons({required String baseDir}) async {
           : '$outputBase/macos/Classes/$pascalCaseName.gen.swift',
       suppressVersion: true,
       dartPackageName: 'pigeon_integration_tests',
-      swiftEmitErrorClass: index == 0,
+      swiftEmitErrorClass: input == 'core_tests',
     );
     if (generateCode != 0) {
       return generateCode;

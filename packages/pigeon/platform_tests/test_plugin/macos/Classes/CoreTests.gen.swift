@@ -15,6 +15,24 @@ import Foundation
   #error("Unsupported platform.")
 #endif
 
+/// Error thrown by Pigeon. Encapsulates a code, message, and details.
+class PigeonError: Swift.Error {
+  let code: String
+  let message: String?
+  let details: Any?
+
+  init(code: String, message: String?, details: Any?) {
+    self.code = code
+    self.message = message
+    self.details = details
+  }
+
+  var localizedDescription: String {
+    return
+      "PigeonError(code: \(code), message: \(message ?? "<nil>"), details: \(details ?? "<nil>")"
+  }
+}
+
 private func wrapResult(_ result: Any?) -> [Any?] {
   return [result]
 }
