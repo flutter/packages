@@ -19,6 +19,23 @@ Widget _mapWithHeatmaps(Set<Heatmap> heatmaps) {
   );
 }
 
+const List<WeightedLatLng> _heatmapPoints = <WeightedLatLng>[
+  WeightedLatLng(LatLng(37.782, -122.447)),
+  WeightedLatLng(LatLng(37.782, -122.445)),
+  WeightedLatLng(LatLng(37.782, -122.443)),
+  WeightedLatLng(LatLng(37.782, -122.441)),
+  WeightedLatLng(LatLng(37.782, -122.439)),
+  WeightedLatLng(LatLng(37.782, -122.437)),
+  WeightedLatLng(LatLng(37.782, -122.435)),
+  WeightedLatLng(LatLng(37.785, -122.447)),
+  WeightedLatLng(LatLng(37.785, -122.445)),
+  WeightedLatLng(LatLng(37.785, -122.443)),
+  WeightedLatLng(LatLng(37.785, -122.441)),
+  WeightedLatLng(LatLng(37.785, -122.439)),
+  WeightedLatLng(LatLng(37.785, -122.437)),
+  WeightedLatLng(LatLng(37.785, -122.435))
+];
+
 void main() {
   late FakeGoogleMapsFlutterPlatform platform;
 
@@ -30,6 +47,7 @@ void main() {
   testWidgets('Initializing a heatmap', (WidgetTester tester) async {
     const Heatmap h1 = Heatmap(
       heatmapId: HeatmapId('heatmap_1'),
+      data: _heatmapPoints,
       radius: HeatmapRadius.fromPlatformSpecificValue(20),
     );
     await tester.pumpWidget(_mapWithHeatmaps(<Heatmap>{h1}));
@@ -47,10 +65,12 @@ void main() {
   testWidgets('Adding a heatmap', (WidgetTester tester) async {
     const Heatmap h1 = Heatmap(
       heatmapId: HeatmapId('heatmap_1'),
+      data: _heatmapPoints,
       radius: HeatmapRadius.fromPlatformSpecificValue(20),
     );
     const Heatmap h2 = Heatmap(
       heatmapId: HeatmapId('heatmap_2'),
+      data: _heatmapPoints,
       radius: HeatmapRadius.fromPlatformSpecificValue(20),
     );
 
@@ -71,6 +91,7 @@ void main() {
   testWidgets('Removing a heatmap', (WidgetTester tester) async {
     const Heatmap h1 = Heatmap(
       heatmapId: HeatmapId('heatmap_1'),
+      data: _heatmapPoints,
       radius: HeatmapRadius.fromPlatformSpecificValue(20),
     );
 
@@ -89,10 +110,12 @@ void main() {
   testWidgets('Updating a heatmap', (WidgetTester tester) async {
     const Heatmap h1 = Heatmap(
       heatmapId: HeatmapId('heatmap_1'),
+      data: _heatmapPoints,
       radius: HeatmapRadius.fromPlatformSpecificValue(20),
     );
     const Heatmap h2 = Heatmap(
       heatmapId: HeatmapId('heatmap_1'),
+      data: _heatmapPoints,
       radius: HeatmapRadius.fromPlatformSpecificValue(10),
     );
 
@@ -110,10 +133,12 @@ void main() {
   testWidgets('Updating a heatmap', (WidgetTester tester) async {
     const Heatmap h1 = Heatmap(
       heatmapId: HeatmapId('heatmap_1'),
+      data: _heatmapPoints,
       radius: HeatmapRadius.fromPlatformSpecificValue(20),
     );
     const Heatmap h2 = Heatmap(
       heatmapId: HeatmapId('heatmap_1'),
+      data: _heatmapPoints,
       radius: HeatmapRadius.fromPlatformSpecificValue(10),
     );
 
@@ -131,20 +156,24 @@ void main() {
   testWidgets('Multi Update', (WidgetTester tester) async {
     Heatmap h1 = const Heatmap(
       heatmapId: HeatmapId('heatmap_1'),
+      data: _heatmapPoints,
       radius: HeatmapRadius.fromPlatformSpecificValue(20),
     );
     Heatmap h2 = const Heatmap(
       heatmapId: HeatmapId('heatmap_2'),
+      data: _heatmapPoints,
       radius: HeatmapRadius.fromPlatformSpecificValue(20),
     );
     final Set<Heatmap> prev = <Heatmap>{h1, h2};
     h1 = const Heatmap(
       heatmapId: HeatmapId('heatmap_1'),
+      data: _heatmapPoints,
       dissipating: false,
       radius: HeatmapRadius.fromPlatformSpecificValue(20),
     );
     h2 = const Heatmap(
       heatmapId: HeatmapId('heatmap_2'),
+      data: _heatmapPoints,
       radius: HeatmapRadius.fromPlatformSpecificValue(10),
     );
     final Set<Heatmap> cur = <Heatmap>{h1, h2};
@@ -162,10 +191,12 @@ void main() {
   testWidgets('Multi Update', (WidgetTester tester) async {
     Heatmap h2 = const Heatmap(
       heatmapId: HeatmapId('heatmap_2'),
+      data: _heatmapPoints,
       radius: HeatmapRadius.fromPlatformSpecificValue(20),
     );
     const Heatmap h3 = Heatmap(
       heatmapId: HeatmapId('heatmap_3'),
+      data: _heatmapPoints,
       radius: HeatmapRadius.fromPlatformSpecificValue(20),
     );
     final Set<Heatmap> prev = <Heatmap>{h2, h3};
@@ -173,10 +204,12 @@ void main() {
     // h1 is added, h2 is updated, h3 is removed.
     const Heatmap h1 = Heatmap(
       heatmapId: HeatmapId('heatmap_1'),
+      data: _heatmapPoints,
       radius: HeatmapRadius.fromPlatformSpecificValue(20),
     );
     h2 = const Heatmap(
       heatmapId: HeatmapId('heatmap_2'),
+      data: _heatmapPoints,
       radius: HeatmapRadius.fromPlatformSpecificValue(10),
     );
     final Set<Heatmap> cur = <Heatmap>{h1, h2};
@@ -199,19 +232,23 @@ void main() {
   testWidgets('Partial Update', (WidgetTester tester) async {
     const Heatmap h1 = Heatmap(
       heatmapId: HeatmapId('heatmap_1'),
+      data: _heatmapPoints,
       radius: HeatmapRadius.fromPlatformSpecificValue(20),
     );
     const Heatmap h2 = Heatmap(
       heatmapId: HeatmapId('heatmap_2'),
+      data: _heatmapPoints,
       radius: HeatmapRadius.fromPlatformSpecificValue(20),
     );
     Heatmap h3 = const Heatmap(
       heatmapId: HeatmapId('heatmap_3'),
+      data: _heatmapPoints,
       radius: HeatmapRadius.fromPlatformSpecificValue(20),
     );
     final Set<Heatmap> prev = <Heatmap>{h1, h2, h3};
     h3 = const Heatmap(
       heatmapId: HeatmapId('heatmap_3'),
+      data: _heatmapPoints,
       radius: HeatmapRadius.fromPlatformSpecificValue(10),
     );
     final Set<Heatmap> cur = <Heatmap>{h1, h2, h3};

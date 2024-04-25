@@ -697,13 +697,32 @@ void main() {
         final MockHeatmapsController mock = MockHeatmapsController();
         controller.debugSetOverrides(heatmaps: mock);
 
+        const List<WeightedLatLng> _heatmapPoints = <WeightedLatLng>[
+          WeightedLatLng(LatLng(37.782, -122.447)),
+          WeightedLatLng(LatLng(37.782, -122.445)),
+          WeightedLatLng(LatLng(37.782, -122.443)),
+          WeightedLatLng(LatLng(37.782, -122.441)),
+          WeightedLatLng(LatLng(37.782, -122.439)),
+          WeightedLatLng(LatLng(37.782, -122.437)),
+          WeightedLatLng(LatLng(37.782, -122.435)),
+          WeightedLatLng(LatLng(37.785, -122.447)),
+          WeightedLatLng(LatLng(37.785, -122.445)),
+          WeightedLatLng(LatLng(37.785, -122.443)),
+          WeightedLatLng(LatLng(37.785, -122.441)),
+          WeightedLatLng(LatLng(37.785, -122.439)),
+          WeightedLatLng(LatLng(37.785, -122.437)),
+          WeightedLatLng(LatLng(37.785, -122.435))
+        ];
+
         final Set<Heatmap> previous = <Heatmap>{
           const Heatmap(
             heatmapId: HeatmapId('to-be-updated'),
+            data: _heatmapPoints,
             radius: HeatmapRadius.fromPlatformSpecificValue(20),
           ),
           const Heatmap(
             heatmapId: HeatmapId('to-be-removed'),
+            data: _heatmapPoints,
             radius: HeatmapRadius.fromPlatformSpecificValue(20),
           ),
         };
@@ -711,11 +730,13 @@ void main() {
         final Set<Heatmap> current = <Heatmap>{
           const Heatmap(
             heatmapId: HeatmapId('to-be-updated'),
+            data: _heatmapPoints,
             dissipating: false,
             radius: HeatmapRadius.fromPlatformSpecificValue(20),
           ),
           const Heatmap(
             heatmapId: HeatmapId('to-be-added'),
+            data: _heatmapPoints,
             radius: HeatmapRadius.fromPlatformSpecificValue(20),
           ),
         };
@@ -728,12 +749,14 @@ void main() {
         verify(mock.addHeatmaps(<Heatmap>{
           const Heatmap(
             heatmapId: HeatmapId('to-be-added'),
+            data: _heatmapPoints,
             radius: HeatmapRadius.fromPlatformSpecificValue(20),
           ),
         }));
         verify(mock.changeHeatmaps(<Heatmap>{
           const Heatmap(
             heatmapId: HeatmapId('to-be-updated'),
+            data: _heatmapPoints,
             dissipating: false,
             radius: HeatmapRadius.fromPlatformSpecificValue(20),
           ),

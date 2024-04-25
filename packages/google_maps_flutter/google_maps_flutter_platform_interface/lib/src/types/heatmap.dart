@@ -66,7 +66,7 @@ class Heatmap implements MapsObject<Heatmap> {
   /// [GoogleMap].
   const Heatmap({
     required this.heatmapId,
-    this.data = const <WeightedLatLng>[],
+    required this.data,
     this.dissipating = true,
     this.gradient,
     this.maxIntensity,
@@ -83,6 +83,8 @@ class Heatmap implements MapsObject<Heatmap> {
   HeatmapId get mapsId => heatmapId;
 
   /// The data points to display.
+  ///
+  /// This list must not be empty.
   final List<WeightedLatLng> data;
 
   /// Specifies whether heatmaps dissipate on zoom.
