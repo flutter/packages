@@ -18,6 +18,24 @@ typedef void (^FLADAuthCompletion)(FLADAuthResultDetails *_Nullable, FlutterErro
 }
 @end
 
+@interface FLADefaultAlertFactory : NSObject <FLADAlertFactory>
+@end
+
+@implementation FLADefaultAlertFactory
+
+#if TARGET_OS_OSX
+- (NSAlert *)createNSAlert {
+  return [[NSAlert alloc] init];
+}
+#elif TARGET_OS_IOS
+- (UIAlertController *)createUIAlert:(NSString *)message {
+  return [UIAlertController alertControllerWithTitle:@""
+                                             message:message
+                                      preferredStyle:UIAlertControllerStyleAlert];
+}
+#endif
+@end
+
 #pragma mark -
 
 /// A data container for sticky auth state.
@@ -49,6 +67,7 @@ typedef void (^FLADAuthCompletion)(FLADAuthResultDetails *_Nullable, FlutterErro
 @interface FLALocalAuthPlugin ()
 @property(nonatomic, strong, nullable) FLAStickyAuthState *lastCallState;
 @property(nonatomic, strong) NSObject<FLADAuthContextFactory> *authContextFactory;
+@property(nonatomic, strong) NSObject<FLADAlertFactory> *alertFactory;
 @property(nonatomic, strong) NSObject<FlutterPluginRegistrar> *registrar;
 @end
 
@@ -65,17 +84,20 @@ typedef void (^FLADAuthCompletion)(FLADAuthResultDetails *_Nullable, FlutterErro
   if (self) {
     _registrar = registrar;
     _authContextFactory = [[FLADefaultAuthContextFactory alloc] init];
+    _alertFactory = [[FLADefaultAlertFactory alloc] init];
   }
   return self;
 }
 
 /// Returns an instance that uses the given factory to create LAContexts.
-- (instancetype)initWithContextFactory:(NSObject<FLADAuthContextFactory> *)factory
-                          andRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar {
+- (instancetype)initWithContextFactory:(NSObject<FLADAuthContextFactory> *)authFactory
+                          andRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar
+                       andAlertFactory:(NSObject<FLADAlertFactory> *)alertFactory {
   self = [super init];
   if (self) {
     _registrar = registrar;
-    _authContextFactory = factory;
+    _authContextFactory = authFactory;
+    _alertFactory = alertFactory;
   }
   return self;
 }
@@ -167,7 +189,7 @@ typedef void (^FLADAuthCompletion)(FLADAuthResultDetails *_Nullable, FlutterErro
      openSettingsButtonTitle:(NSString *)openSettingsButtonTitle
                   completion:(FLADAuthCompletion)completion {
 #if TARGET_OS_OSX
-  NSAlert *alert = [[NSAlert alloc] init];
+  NSAlert *alert = [_alertFactory createNSAlert];
   [alert setMessageText:message];
   [alert addButtonWithTitle:dismissButtonTitle];
   NSWindow *window = self.registrar.view.window;
@@ -177,10 +199,7 @@ typedef void (^FLADAuthCompletion)(FLADAuthResultDetails *_Nullable, FlutterErro
                 }];
   return;
 #elif TARGET_OS_IOS
-  UIAlertController *alert =
-      [UIAlertController alertControllerWithTitle:@""
-                                          message:message
-                                   preferredStyle:UIAlertControllerStyleAlert];
+  UIAlertController *alert = [_alertFactory createUIAlert:message];
 
   UIAlertAction *defaultAction = [UIAlertAction actionWithTitle:dismissButtonTitle
                                                           style:UIAlertActionStyleDefault

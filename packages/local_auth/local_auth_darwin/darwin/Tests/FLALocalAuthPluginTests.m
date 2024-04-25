@@ -38,6 +38,49 @@ static const NSTimeInterval kTimeout = 30.0;
 
 @end
 
+@interface StubAlertFactory : NSObject <FLADAlertFactory>
+#if TARGET_OS_OSX
+@property(copy, nonatomic) NSAlert *alert;
+- (instancetype)initWithNSAlert:(NSAlert *)alert;
+#else
+@property(copy, nonatomic) UIAlertController *alertController;
+- (instancetype)initWithUIAlertController:(UIAlertController *)alertController;
+#endif
+
+@end
+
+@implementation StubAlertFactory
+
+#if TARGET_OS_OSX
+
+- (instancetype)initWithNSAlert:(NSAlert *)alert {
+  self = [super init];
+  if (self) {
+    _alert = alert;
+  }
+  return self;
+}
+
+- (NSAlert *)createNSAlert {
+  return _alert;
+}
+#else
+
+- (instancetype)initWithUIAlertController:(UIAlertController *)alertController {
+  self = [super init];
+  if (self) {
+    _alertController = alertController;
+  }
+  return self;
+}
+
+- (UIAlertController *)createUIAlert:(NSString *)message {
+  return _alertController;
+}
+
+#endif
+
+@end
 #pragma mark -
 
 @interface FLALocalAuthPluginTests : XCTestCase
@@ -49,14 +92,30 @@ static const NSTimeInterval kTimeout = 30.0;
   self.continueAfterFailure = NO;
 }
 
+- (StubAlertFactory *)createStubAlertFactory {
+  StubAlertFactory *alertFactory;
+#if TARGET_OS_OSX
+
+  id mockNSAlert = OCMClassMock([NSAlert class]);
+  alertFactory = [[StubAlertFactory alloc] initWithNSAlert:mockNSAlert];
+#else
+  id mockUIAlertController = OCMClassMock([UIAlertController class]);
+  alertFactory = [[StubAlertFactory alloc] initWithUIAlertController:mockUIAlertController];
+#endif
+
+  return alertFactory;
+}
+
 - (void)testSuccessfullAuthWithBiometrics {
   id mockAuthContext = OCMClassMock([LAContext class]);
+  StubAlertFactory *alertFactory = [self createStubAlertFactory];
 
   id registrar = OCMProtocolMock(@protocol(FlutterPluginRegistrar));
 
   FLALocalAuthPlugin *plugin = [[FLALocalAuthPlugin alloc]
       initWithContextFactory:[[StubAuthContextFactory alloc] initWithContexts:@[ mockAuthContext ]]
-                andRegistrar:registrar];
+                andRegistrar:registrar
+             andAlertFactory:alertFactory];
 
   const LAPolicy policy = LAPolicyDeviceOwnerAuthenticationWithBiometrics;
   FLADAuthStrings *strings = [self createAuthStrings];
@@ -94,9 +153,12 @@ static const NSTimeInterval kTimeout = 30.0;
   id mockAuthContext = OCMClassMock([LAContext class]);
   id registrar = OCMProtocolMock(@protocol(FlutterPluginRegistrar));
 
+  StubAlertFactory *alertFactory = [self createStubAlertFactory];
+
   FLALocalAuthPlugin *plugin = [[FLALocalAuthPlugin alloc]
       initWithContextFactory:[[StubAuthContextFactory alloc] initWithContexts:@[ mockAuthContext ]]
-                andRegistrar:registrar];
+                andRegistrar:registrar
+             andAlertFactory:alertFactory];
 
   const LAPolicy policy = LAPolicyDeviceOwnerAuthentication;
   FLADAuthStrings *strings = [self createAuthStrings];
@@ -133,10 +195,12 @@ static const NSTimeInterval kTimeout = 30.0;
 - (void)testFailedAuthWithBiometrics {
   id mockAuthContext = OCMClassMock([LAContext class]);
   id registrar = OCMProtocolMock(@protocol(FlutterPluginRegistrar));
+  StubAlertFactory *alertFactory = [self createStubAlertFactory];
 
   FLALocalAuthPlugin *plugin = [[FLALocalAuthPlugin alloc]
       initWithContextFactory:[[StubAuthContextFactory alloc] initWithContexts:@[ mockAuthContext ]]
-                andRegistrar:registrar];
+                andRegistrar:registrar
+             andAlertFactory:alertFactory];
 
   const LAPolicy policy = LAPolicyDeviceOwnerAuthenticationWithBiometrics;
   FLADAuthStrings *strings = [self createAuthStrings];
@@ -178,9 +242,12 @@ static const NSTimeInterval kTimeout = 30.0;
   id mockAuthContext = OCMClassMock([LAContext class]);
   id registrar = OCMProtocolMock(@protocol(FlutterPluginRegistrar));
 
+  StubAlertFactory *alertFactory = [self createStubAlertFactory];
+
   FLALocalAuthPlugin *plugin = [[FLALocalAuthPlugin alloc]
       initWithContextFactory:[[StubAuthContextFactory alloc] initWithContexts:@[ mockAuthContext ]]
-                andRegistrar:registrar];
+                andRegistrar:registrar
+             andAlertFactory:alertFactory];
 
   const LAPolicy policy = LAPolicyDeviceOwnerAuthentication;
   FLADAuthStrings *strings = [self createAuthStrings];
@@ -217,10 +284,12 @@ static const NSTimeInterval kTimeout = 30.0;
 - (void)testSystemCancelledWithoutStickyAuth {
   id mockAuthContext = OCMClassMock([LAContext class]);
   id registrar = OCMProtocolMock(@protocol(FlutterPluginRegistrar));
+  StubAlertFactory *alertFactory = [self createStubAlertFactory];
 
   FLALocalAuthPlugin *plugin = [[FLALocalAuthPlugin alloc]
       initWithContextFactory:[[StubAuthContextFactory alloc] initWithContexts:@[ mockAuthContext ]]
-                andRegistrar:registrar];
+                andRegistrar:registrar
+             andAlertFactory:alertFactory];
 
   const LAPolicy policy = LAPolicyDeviceOwnerAuthentication;
   FLADAuthStrings *strings = [self createAuthStrings];
@@ -257,10 +326,12 @@ static const NSTimeInterval kTimeout = 30.0;
 - (void)testFailedAuthWithoutBiometrics {
   id mockAuthContext = OCMClassMock([LAContext class]);
   id registrar = OCMProtocolMock(@protocol(FlutterPluginRegistrar));
+  StubAlertFactory *alertFactory = [self createStubAlertFactory];
 
   FLALocalAuthPlugin *plugin = [[FLALocalAuthPlugin alloc]
       initWithContextFactory:[[StubAuthContextFactory alloc] initWithContexts:@[ mockAuthContext ]]
-                andRegistrar:registrar];
+                andRegistrar:registrar
+             andAlertFactory:alertFactory];
   const LAPolicy policy = LAPolicyDeviceOwnerAuthentication;
   FLADAuthStrings *strings = [self createAuthStrings];
   OCMStub([mockAuthContext canEvaluatePolicy:policy error:[OCMArg setTo:nil]]).andReturn(YES);
@@ -300,10 +371,12 @@ static const NSTimeInterval kTimeout = 30.0;
 - (void)testLocalizedFallbackTitle {
   id mockAuthContext = OCMClassMock([LAContext class]);
   id registrar = OCMProtocolMock(@protocol(FlutterPluginRegistrar));
+  StubAlertFactory *alertFactory = [self createStubAlertFactory];
 
   FLALocalAuthPlugin *plugin = [[FLALocalAuthPlugin alloc]
       initWithContextFactory:[[StubAuthContextFactory alloc] initWithContexts:@[ mockAuthContext ]]
-                andRegistrar:registrar];
+                andRegistrar:registrar
+             andAlertFactory:alertFactory];
   const LAPolicy policy = LAPolicyDeviceOwnerAuthentication;
   FLADAuthStrings *strings = [self createAuthStrings];
   strings.localizedFallbackTitle = @"a title";
@@ -339,10 +412,12 @@ static const NSTimeInterval kTimeout = 30.0;
 - (void)testSkippedLocalizedFallbackTitle {
   id mockAuthContext = OCMClassMock([LAContext class]);
   id registrar = OCMProtocolMock(@protocol(FlutterPluginRegistrar));
+  StubAlertFactory *alertFactory = [self createStubAlertFactory];
 
   FLALocalAuthPlugin *plugin = [[FLALocalAuthPlugin alloc]
       initWithContextFactory:[[StubAuthContextFactory alloc] initWithContexts:@[ mockAuthContext ]]
-                andRegistrar:registrar];
+                andRegistrar:registrar
+             andAlertFactory:alertFactory];
 
   const LAPolicy policy = LAPolicyDeviceOwnerAuthentication;
   FLADAuthStrings *strings = [self createAuthStrings];
@@ -378,10 +453,12 @@ static const NSTimeInterval kTimeout = 30.0;
 - (void)testDeviceSupportsBiometrics_withEnrolledHardware {
   id mockAuthContext = OCMClassMock([LAContext class]);
   id registrar = OCMProtocolMock(@protocol(FlutterPluginRegistrar));
+  StubAlertFactory *alertFactory = [self createStubAlertFactory];
 
   FLALocalAuthPlugin *plugin = [[FLALocalAuthPlugin alloc]
       initWithContextFactory:[[StubAuthContextFactory alloc] initWithContexts:@[ mockAuthContext ]]
-                andRegistrar:registrar];
+                andRegistrar:registrar
+             andAlertFactory:alertFactory];
 
   const LAPolicy policy = LAPolicyDeviceOwnerAuthenticationWithBiometrics;
   OCMStub([mockAuthContext canEvaluatePolicy:policy error:[OCMArg setTo:nil]]).andReturn(YES);
@@ -395,10 +472,12 @@ static const NSTimeInterval kTimeout = 30.0;
 - (void)testDeviceSupportsBiometrics_withNonEnrolledHardware {
   id mockAuthContext = OCMClassMock([LAContext class]);
   id registrar = OCMProtocolMock(@protocol(FlutterPluginRegistrar));
+  StubAlertFactory *alertFactory = [self createStubAlertFactory];
 
   FLALocalAuthPlugin *plugin = [[FLALocalAuthPlugin alloc]
       initWithContextFactory:[[StubAuthContextFactory alloc] initWithContexts:@[ mockAuthContext ]]
-                andRegistrar:registrar];
+                andRegistrar:registrar
+             andAlertFactory:alertFactory];
 
   const LAPolicy policy = LAPolicyDeviceOwnerAuthenticationWithBiometrics;
   void (^canEvaluatePolicyHandler)(NSInvocation *) = ^(NSInvocation *invocation) {
@@ -424,10 +503,12 @@ static const NSTimeInterval kTimeout = 30.0;
 - (void)testDeviceSupportsBiometrics_withNoBiometricHardware {
   id mockAuthContext = OCMClassMock([LAContext class]);
   id registrar = OCMProtocolMock(@protocol(FlutterPluginRegistrar));
+  StubAlertFactory *alertFactory = [self createStubAlertFactory];
 
   FLALocalAuthPlugin *plugin = [[FLALocalAuthPlugin alloc]
       initWithContextFactory:[[StubAuthContextFactory alloc] initWithContexts:@[ mockAuthContext ]]
-                andRegistrar:registrar];
+                andRegistrar:registrar
+             andAlertFactory:alertFactory];
 
   const LAPolicy policy = LAPolicyDeviceOwnerAuthenticationWithBiometrics;
   void (^canEvaluatePolicyHandler)(NSInvocation *) = ^(NSInvocation *invocation) {
@@ -453,10 +534,12 @@ static const NSTimeInterval kTimeout = 30.0;
 - (void)testGetEnrolledBiometricsWithFaceID {
   id mockAuthContext = OCMClassMock([LAContext class]);
   id registrar = OCMProtocolMock(@protocol(FlutterPluginRegistrar));
+  StubAlertFactory *alertFactory = [self createStubAlertFactory];
 
   FLALocalAuthPlugin *plugin = [[FLALocalAuthPlugin alloc]
       initWithContextFactory:[[StubAuthContextFactory alloc] initWithContexts:@[ mockAuthContext ]]
-                andRegistrar:registrar];
+                andRegistrar:registrar
+             andAlertFactory:alertFactory];
 
   const LAPolicy policy = LAPolicyDeviceOwnerAuthenticationWithBiometrics;
   OCMStub([mockAuthContext canEvaluatePolicy:policy error:[OCMArg setTo:nil]]).andReturn(YES);
@@ -474,10 +557,12 @@ static const NSTimeInterval kTimeout = 30.0;
 - (void)testGetEnrolledBiometricsWithTouchID {
   id mockAuthContext = OCMClassMock([LAContext class]);
   id registrar = OCMProtocolMock(@protocol(FlutterPluginRegistrar));
+  StubAlertFactory *alertFactory = [self createStubAlertFactory];
 
   FLALocalAuthPlugin *plugin = [[FLALocalAuthPlugin alloc]
       initWithContextFactory:[[StubAuthContextFactory alloc] initWithContexts:@[ mockAuthContext ]]
-                andRegistrar:registrar];
+                andRegistrar:registrar
+             andAlertFactory:alertFactory];
 
   const LAPolicy policy = LAPolicyDeviceOwnerAuthenticationWithBiometrics;
   OCMStub([mockAuthContext canEvaluatePolicy:policy error:[OCMArg setTo:nil]]).andReturn(YES);
@@ -493,10 +578,12 @@ static const NSTimeInterval kTimeout = 30.0;
 - (void)testGetEnrolledBiometricsWithoutEnrolledHardware {
   id mockAuthContext = OCMClassMock([LAContext class]);
   id registrar = OCMProtocolMock(@protocol(FlutterPluginRegistrar));
+  StubAlertFactory *alertFactory = [self createStubAlertFactory];
 
   FLALocalAuthPlugin *plugin = [[FLALocalAuthPlugin alloc]
       initWithContextFactory:[[StubAuthContextFactory alloc] initWithContexts:@[ mockAuthContext ]]
-                andRegistrar:registrar];
+                andRegistrar:registrar
+             andAlertFactory:alertFactory];
 
   const LAPolicy policy = LAPolicyDeviceOwnerAuthenticationWithBiometrics;
   void (^canEvaluatePolicyHandler)(NSInvocation *) = ^(NSInvocation *invocation) {
@@ -525,10 +612,12 @@ static const NSTimeInterval kTimeout = 30.0;
                                        error:[OCMArg setTo:nil]])
       .andReturn(YES);
   id registrar = OCMProtocolMock(@protocol(FlutterPluginRegistrar));
+  StubAlertFactory *alertFactory = [self createStubAlertFactory];
 
   FLALocalAuthPlugin *plugin = [[FLALocalAuthPlugin alloc]
       initWithContextFactory:[[StubAuthContextFactory alloc] initWithContexts:@[ mockAuthContext ]]
-                andRegistrar:registrar];
+                andRegistrar:registrar
+             andAlertFactory:alertFactory];
 
   FlutterError *error;
   NSNumber *result = [plugin isDeviceSupportedWithError:&error];
@@ -542,10 +631,12 @@ static const NSTimeInterval kTimeout = 30.0;
                                        error:[OCMArg setTo:nil]])
       .andReturn(NO);
   id registrar = OCMProtocolMock(@protocol(FlutterPluginRegistrar));
+  StubAlertFactory *alertFactory = [self createStubAlertFactory];
 
   FLALocalAuthPlugin *plugin = [[FLALocalAuthPlugin alloc]
       initWithContextFactory:[[StubAuthContextFactory alloc] initWithContexts:@[ mockAuthContext ]]
-                andRegistrar:registrar];
+                andRegistrar:registrar
+             andAlertFactory:alertFactory];
 
   FlutterError *error;
   NSNumber *result = [plugin isDeviceSupportedWithError:&error];

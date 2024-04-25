@@ -15,9 +15,20 @@
 - (LAContext *)createAuthContext;
 @end
 
+@protocol FLADAlertFactory <NSObject>
+
+#if TARGET_OS_OSX
+- (NSAlert *)createNSAlert;
+#elif TARGET_OS_IOS
+- (UIAlertController *)createUIAlert:(NSString *)message;
+#endif
+
+@end
+
 @interface FLALocalAuthPlugin ()
 /// Returns an instance that uses the given factory to create LAContexts.
-- (instancetype)initWithContextFactory:(NSObject<FLADAuthContextFactory> *)factory
+- (instancetype)initWithContextFactory:(NSObject<FLADAuthContextFactory> *)authFactory
                           andRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar
+                       andAlertFactory:(NSObject<FLADAlertFactory> *)alertFactory
     NS_DESIGNATED_INITIALIZER;
 @end
