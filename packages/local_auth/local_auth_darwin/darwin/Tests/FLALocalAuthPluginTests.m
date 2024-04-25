@@ -237,6 +237,59 @@ static const NSTimeInterval kTimeout = 30.0;
                        }];
   [self waitForExpectationsWithTimeout:kTimeout handler:nil];
 }
+#if TARGET_OS_OSX
+
+- (void)testFailedAuthWithBiometricsAndValidNSAlertErrorDialog {
+  id mockAuthContext = OCMClassMock([LAContext class]);
+  id registrar = OCMProtocolMock(@protocol(FlutterPluginRegistrar));
+  NSObject<FlutterPluginRegistrar> *reg = (NSObject<FlutterPluginRegistrar> *)registrar;
+
+  StubAlertFactory *alertFactory = [self createStubAlertFactory];
+
+  FLALocalAuthPlugin *plugin = [[FLALocalAuthPlugin alloc]
+      initWithContextFactory:[[StubAuthContextFactory alloc] initWithContexts:@[ mockAuthContext ]]
+                andRegistrar:registrar
+             andAlertFactory:alertFactory];
+
+  const LAPolicy policy = LAPolicyDeviceOwnerAuthenticationWithBiometrics;
+  FLADAuthStrings *strings = [self createAuthStrings];
+  OCMStub([mockAuthContext canEvaluatePolicy:policy error:[OCMArg setTo:nil]]).andReturn(YES);
+
+  // evaluatePolicy:localizedReason:reply: calls back on an internal queue, which is not
+  // guaranteed to be on the main thread. Ensure that's handled correctly by calling back on
+  // a background thread.
+  void (^backgroundThreadReplyCaller)(NSInvocation *) = ^(NSInvocation *invocation) {
+    void (^reply)(BOOL, NSError *);
+    [invocation getArgument:&reply atIndex:4];
+    dispatch_async(dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0), ^{
+      reply(NO, [NSError errorWithDomain:@"error" code:LAErrorAuthenticationFailed userInfo:nil]);
+    });
+  };
+  OCMStub([mockAuthContext evaluatePolicy:policy localizedReason:strings.reason reply:[OCMArg any]])
+      .andDo(backgroundThreadReplyCaller);
+
+  XCTestExpectation *expectation = [self expectationWithDescription:@"Result is called"];
+  [plugin authenticateWithOptions:[FLADAuthOptions makeWithBiometricOnly:YES
+                                                                  sticky:NO
+                                                         useErrorDialogs:YES]
+                          strings:strings
+                       completion:^(FLADAuthResultDetails *_Nullable resultDetails,
+                                    FlutterError *_Nullable error) {
+                         XCTAssertTrue([NSThread isMainThread]);
+                         // Tests that the alert window is the same as the registrar window
+                         XCTAssertEqual(alertFactory.alert.window, reg.view.window);
+                         // TODO(stuartmorgan): Fix this; this was the pre-Pigeon-migration
+                         // behavior, so is preserved as part of the migration, but a failed
+                         // authentication should return failure, not an error that results in a
+                         // PlatformException.
+                         XCTAssertEqual(resultDetails.result, FLADAuthResultErrorNotAvailable);
+                         XCTAssertNil(error);
+                         [expectation fulfill];
+                       }];
+  [self waitForExpectationsWithTimeout:kTimeout handler:nil];
+}
+
+#endif
 
 - (void)testFailedWithUnknownErrorCode {
   id mockAuthContext = OCMClassMock([LAContext class]);
