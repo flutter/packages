@@ -1,3 +1,7 @@
+## 0.8.10+2
+
+* Adds Swift Package Manager compatibility.
+
 ## 0.8.10+1
 
 * Fixes a possible crash when calling a picker method UIGraphicsImageRenderer if imageToScale is nil.
