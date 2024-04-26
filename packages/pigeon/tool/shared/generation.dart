@@ -82,16 +82,17 @@ Future<int> generateTestPigeons({required String baseDir}) async {
     final Set<GeneratorLanguage> skipLanguages =
         _unsupportedFiles[input] ?? <GeneratorLanguage>{};
 
-    final bool kotlinAndSwiftErrorClassGenerationTestFiles =
+    final bool kotlinErrorClassGenerationTestFiles =
         input == 'core_tests' || input == 'background_platform_channels';
 
-    final String kotlinErrorName = kotlinAndSwiftErrorClassGenerationTestFiles
+    final String kotlinErrorName = kotlinErrorClassGenerationTestFiles
         ? 'FlutterError'
         : '${pascalCaseName}Error';
 
-    final String swiftErrorName = kotlinAndSwiftErrorClassGenerationTestFiles
-        ? 'PigeonError'
-        : '${pascalCaseName}Error';
+    final bool swiftErrorUseDefaultErrorName = input == 'core_tests';
+
+    final String? swiftErrorClassName =
+        swiftErrorUseDefaultErrorName ? null : '${pascalCaseName}Error';
 
     // Generate the default language test plugin output.
     int generateCode = await runPigeon(
@@ -108,8 +109,7 @@ Future<int> generateTestPigeons({required String baseDir}) async {
       swiftOut: skipLanguages.contains(GeneratorLanguage.swift)
           ? null
           : '$outputBase/ios/Classes/$pascalCaseName.gen.swift',
-      swiftErrorClassName: swiftErrorName,
-      swiftIncludeErrorClass: input != 'core_tests',
+      swiftErrorClassName: swiftErrorClassName,
       // Windows
       cppHeaderOut: skipLanguages.contains(GeneratorLanguage.cpp)
           ? null
@@ -133,8 +133,7 @@ Future<int> generateTestPigeons({required String baseDir}) async {
       swiftOut: skipLanguages.contains(GeneratorLanguage.swift)
           ? null
           : '$outputBase/macos/Classes/$pascalCaseName.gen.swift',
-      swiftErrorClassName: swiftErrorName,
-      swiftIncludeErrorClass: input != 'core_tests',
+      swiftErrorClassName: swiftErrorClassName,
       suppressVersion: true,
       dartPackageName: 'pigeon_integration_tests',
     );
@@ -197,7 +196,6 @@ Future<int> runPigeon({
   bool kotlinIncludeErrorClass = true,
   String? swiftOut,
   String? swiftErrorClassName,
-  bool swiftIncludeErrorClass = true,
   String? cppHeaderOut,
   String? cppSourceOut,
   String? cppNamespace,
@@ -248,7 +246,6 @@ Future<int> runPigeon({
     swiftOut: swiftOut,
     swiftOptions: SwiftOptions(
       errorClassName: swiftErrorClassName,
-      includeErrorClass: swiftIncludeErrorClass,
     ),
     basePath: basePath,
     dartPackageName: dartPackageName,

@@ -20,7 +20,6 @@ class SwiftOptions {
   const SwiftOptions({
     this.copyrightHeader,
     this.errorClassName,
-    this.includeErrorClass = true,
   });
 
   /// A copyright header that will get prepended to generated code.
@@ -29,19 +28,12 @@ class SwiftOptions {
   /// The name of the error class used for passing custom error parameters.
   final String? errorClassName;
 
-  /// Whether to include the error class in generation.
-  ///
-  /// This should only ever be set to false if you have another generated
-  /// Kotlin file in the same directory.
-  final bool includeErrorClass;
-
   /// Creates a [SwiftOptions] from a Map representation where:
   /// `x = SwiftOptions.fromList(x.toMap())`.
   static SwiftOptions fromList(Map<String, Object> map) {
     return SwiftOptions(
       copyrightHeader: map['copyrightHeader'] as Iterable<String>?,
       errorClassName: map['errorClassName'] as String?,
-      includeErrorClass: map['includeErrorClass'] as bool? ?? true,
     );
   }
 
@@ -51,7 +43,6 @@ class SwiftOptions {
     final Map<String, Object> result = <String, Object>{
       if (copyrightHeader != null) 'copyrightHeader': copyrightHeader!,
       if (errorClassName != null) 'errorClassName': errorClassName!,
-      'includeErrorClass': includeErrorClass,
     };
     return result;
   }
@@ -728,9 +719,8 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
     if (hasFlutterApi) {
       _writeCreateConnectionError(generatorOptions, indent);
     }
-    if (generatorOptions.includeErrorClass) {
-      _writePigeonError(generatorOptions, indent);
-    }
+
+    _writePigeonError(generatorOptions, indent);
     _writeIsNullish(indent);
     _writeNilOrValue(indent);
   }
@@ -930,7 +920,7 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
   void _writePigeonError(SwiftOptions generatorOptions, Indent indent) {
     indent.newln();
     indent.writeln(
-        '/// Error class for passing custom error details to Flutter via a thrown PlatformException.');
+        '/// Error class for passing custom error details to Flutter.');
     indent.writeln(
         'final class ${_getErrorClassName(generatorOptions)}: Error {');
     indent.nest(1, () {

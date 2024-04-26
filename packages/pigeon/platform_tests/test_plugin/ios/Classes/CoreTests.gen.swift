@@ -47,6 +47,30 @@ private func createConnectionError(withChannelName channelName: String) -> Pigeo
     details: "")
 }
 
+/// Error class for passing custom error details to Flutter.
+final class PigeonError: Error {
+  let code: String
+  let message: String?
+  let details: Any?
+
+  init(code: String, message: String?, details: Any?) {
+    self.code = code
+    self.message = message
+    self.details = details
+  }
+
+  init(flutterError: FlutterError) {
+    self.code = flutterError.code
+    self.message = flutterError.message
+    self.details = flutterError.details
+  }
+
+  var localizedDescription: String {
+    return
+      "PigeonError(code: \(code), message: \(message ?? "<nil>"), details: \(details ?? "<nil>")"
+  }
+}
+
 private func isNullish(_ value: Any?) -> Bool {
   return value is NSNull || value == nil
 }
