@@ -122,6 +122,19 @@ class MockPlatformNavigationDelegate extends _i1.Mock
       ) as _i4.Future<void>);
 
   @override
+  _i4.Future<void> setOnWebViewRenderProcessTerminated(
+          _i3.WebViewRenderProcessTerminatedCallback?
+              onWebViewRenderProcessTerminatedCallback) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setOnWebViewRenderProcessTerminated,
+          [onWebViewRenderProcessTerminatedCallback],
+        ),
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
+
+  @override
   _i4.Future<void> setOnUrlChange(_i3.UrlChangeCallback? onUrlChange) =>
       (super.noSuchMethod(
         Invocation.method(
