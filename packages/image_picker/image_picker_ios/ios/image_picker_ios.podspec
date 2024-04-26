@@ -21,4 +21,5 @@ Downloaded by pub (not CocoaPods).
   s.platform = :ios, '12.0'
   s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES' }
   s.resource_bundles = {'image_picker_ios_privacy' => ['image_picker_ios/Sources/image_picker_ios/Resources/PrivacyInfo.xcprivacy']}
+  s.exclude_files = ['image_picker_ios/Package.swift', 'image_picker_ios/Sources/image_picker_ios/include/module.modulemap']
 end
