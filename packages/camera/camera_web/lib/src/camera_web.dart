@@ -43,6 +43,7 @@ class CameraPlugin extends CameraPlatform {
   @visibleForTesting
   final Map<int, Camera> cameras = <int, Camera>{};
   int _textureCounter = 1;
+  List<CameraDescription>? _availableCameras;
 
   /// Metadata associated with each camera description.
   /// Populated in [availableCameras].
@@ -82,47 +83,99 @@ class CameraPlugin extends CameraPlatform {
   html.Window? window = html.window;
 
   @override
-  Future<List<CameraDescription>> availableCameras() async {
-    try {
-      final html.MediaDevices? mediaDevices = window?.navigator.mediaDevices;
-      final List<CameraDescription> cameras = <CameraDescription>[];
+  // Future<List<CameraDescription>> availableCameras() async {
+  //   try {
+  //     final html.MediaDevices? mediaDevices = window?.navigator.mediaDevices;
+  //     final List<CameraDescription> cameras = <CameraDescription>[];
+  Future<List<html.MediaDeviceInfo>> _videoInputDevices() async {
+    final html.MediaDevices? mediaDevices = window?.navigator.mediaDevices;
 
-      // Throw a not supported exception if the current browser window
-      // does not support any media devices.
-      if (mediaDevices == null) {
-        throw PlatformException(
-          code: CameraErrorCode.notSupported.toString(),
-          message: 'The camera is not supported on this device.',
+    // Throw a not supported exception if the current browser window
+    // does not support any media devices.
+    // if (mediaDevices == null) {
+    //   throw PlatformException(
+    //     code: CameraErrorCode.notSupported.toString(),
+    //     message: 'The camera is not supported on this device.',
+    //   );
+    // }
+
+    // Throw a not supported exception if the current browser window
+    // does not support any media devices.
+    if (mediaDevices == null) {
+      throw PlatformException(
+        code: CameraErrorCode.notSupported.toString(),
+        message: 'The camera is not supported on this device.',
+      );
+    }
+
+    // Request video permissions only.
+    // final html.MediaStream cameraStream =
+    //     await _cameraService.getMediaStreamForOptions(const CameraOptions());
+
+    // Request available media devices.
+    final List<dynamic> devices = await mediaDevices.enumerateDevices();
+
+    // Release the camera stream used to request video permissions.
+    // cameraStream
+    //     .getVideoTracks()
+    //     .forEach((html.MediaStreamTrack videoTrack) => videoTrack.stop());
+
+    // Filter video input devices.
+    final Iterable<html.MediaDeviceInfo> videoInputDevices = devices
+        .whereType<html.MediaDeviceInfo>()
+        .where((html.MediaDeviceInfo device) =>
+            device.kind == MediaDeviceKind.videoInput)
+
+        // Request available media devices.
+        // final List<dynamic> devices = await mediaDevices.enumerateDevices();
+
+        /// The device id property is currently not supported on Internet Explorer:
+        /// https://developer.mozilla.org/en-US/docs/Web/API/MediaDeviceInfo/deviceId#browser_compatibility
+        .where(
+          (html.MediaDeviceInfo device) =>
+              device.deviceId != null && device.deviceId!.isNotEmpty,
         );
+
+    // Filter video input devices.
+    // final Iterable<html.MediaDeviceInfo> videoInputDevices = devices
+    //     .whereType<html.MediaDeviceInfo>()
+    //     .where((html.MediaDeviceInfo device) =>
+    //         device.kind == MediaDeviceKind.videoInput)
+
+    /// The device id property is currently not supported on Internet Explorer:
+    /// https://developer.mozilla.org/en-US/docs/Web/API/MediaDeviceInfo/deviceId#browser_compatibility
+    // .where(
+    //   (html.MediaDeviceInfo device) =>
+    //       device.deviceId != null && device.deviceId!.isNotEmpty,
+    // );
+
+    return videoInputDevices.toList();
+  }
+
+  @override
+  Future<List<CameraDescription>> availableCameras() async {
+    if (_availableCameras != null) {
+      return _availableCameras!;
+    }
+    try {
+      final List<CameraDescription> cameraDescriptions = <CameraDescription>[];
+
+      final bool hasPermission = cameras.isNotEmpty;
+      if (!hasPermission) {
+        // Request video permissions only.
+        final html.MediaStream cameraStream = await _cameraService
+            .getMediaStreamForOptions(const CameraOptions());
+
+        // Release the camera stream used to request video permissions.
+        cameraStream
+            .getVideoTracks()
+            .forEach((html.MediaStreamTrack videoTrack) => videoTrack.stop());
       }
 
-      // Request video permissions only.
-      final html.MediaStream cameraStream =
-          await _cameraService.getMediaStreamForOptions(const CameraOptions());
-
-      // Release the camera stream used to request video permissions.
-      cameraStream
-          .getVideoTracks()
-          .forEach((html.MediaStreamTrack videoTrack) => videoTrack.stop());
-
-      // Request available media devices.
-      final List<dynamic> devices = await mediaDevices.enumerateDevices();
-
-      // Filter video input devices.
-      final Iterable<html.MediaDeviceInfo> videoInputDevices = devices
-          .whereType<html.MediaDeviceInfo>()
-          .where((html.MediaDeviceInfo device) =>
-              device.kind == MediaDeviceKind.videoInput)
-
-          /// The device id property is currently not supported on Internet Explorer:
-          /// https://developer.mozilla.org/en-US/docs/Web/API/MediaDeviceInfo/deviceId#browser_compatibility
-          .where(
-            (html.MediaDeviceInfo device) =>
-                device.deviceId != null && device.deviceId!.isNotEmpty,
-          );
-
       // Map video input devices to camera descriptions.
-      for (final html.MediaDeviceInfo videoInputDevice in videoInputDevices) {
+      // for (final html.MediaDeviceInfo videoInputDevice in videoInputDevices) {
+      for (final html.MediaDeviceInfo videoInputDevice
+          in await _videoInputDevices()) {
         // Get the video stream for the current video input device
         // to later use for the available video tracks.
         final html.MediaStream videoStream = await _getVideoStreamForDevice(
@@ -134,54 +187,97 @@ class CameraPlugin extends CameraPlatform {
         final List<html.MediaStreamTrack> videoTracks =
             videoStream.getVideoTracks();
 
-        if (videoTracks.isNotEmpty) {
-          // Get the facing mode from the first available video track.
-          final String? facingMode =
-              _cameraService.getFacingModeForVideoTrack(videoTracks.first);
+        // if (videoTracks.isNotEmpty) {
+        //   // Get the facing mode from the first available video track.
+        //   final String? facingMode =
+        //       _cameraService.getFacingModeForVideoTrack(videoTracks.first);
 
-          // Get the lens direction based on the facing mode.
-          // Fallback to the external lens direction
-          // if the facing mode is not available.
-          final CameraLensDirection lensDirection = facingMode != null
-              ? _cameraService.mapFacingModeToLensDirection(facingMode)
-              : CameraLensDirection.external;
+        //   // Get the lens direction based on the facing mode.
+        //   // Fallback to the external lens direction
+        //   // if the facing mode is not available.
+        //   final CameraLensDirection lensDirection = facingMode != null
+        //       ? _cameraService.mapFacingModeToLensDirection(facingMode)
+        //       : CameraLensDirection.external;
 
-          // Create a camera description.
-          //
-          // The name is a camera label which might be empty
-          // if no permissions to media devices have been granted.
-          //
-          // MediaDeviceInfo.label:
-          // https://developer.mozilla.org/en-US/docs/Web/API/MediaDeviceInfo/label
-          //
-          // Sensor orientation is currently not supported.
-          final String cameraLabel = videoInputDevice.label ?? '';
-          final CameraDescription camera = CameraDescription(
-            name: cameraLabel,
-            lensDirection: lensDirection,
-            sensorOrientation: 0,
-          );
+        //   // Create a camera description.
+        //   //
+        //   // The name is a camera label which might be empty
+        //   // if no permissions to media devices have been granted.
+        //   //
+        //   // MediaDeviceInfo.label:
+        //   // https://developer.mozilla.org/en-US/docs/Web/API/MediaDeviceInfo/label
+        //   //
+        //   // Sensor orientation is currently not supported.
+        //   final String cameraLabel = videoInputDevice.label ?? '';
+        //   final CameraDescription camera = CameraDescription(
+        //     name: cameraLabel,
+        //     lensDirection: lensDirection,
+        //     sensorOrientation: 0,
+        //   );
 
-          final CameraMetadata cameraMetadata = CameraMetadata(
-            deviceId: videoInputDevice.deviceId!,
-            facingMode: facingMode,
-          );
+        //   final CameraMetadata cameraMetadata = CameraMetadata(
+        //     deviceId: videoInputDevice.deviceId!,
+        //     facingMode: facingMode,
+        //   );
 
-          cameras.add(camera);
+        //   cameras.add(camera);
 
-          camerasMetadata[camera] = cameraMetadata;
+        //   camerasMetadata[camera] = cameraMetadata;
 
+        if (videoTracks.isEmpty) {
+          // Ignore as no video tracks exist in the current video input device.
+          continue;
+        }
+
+        // Get the facing mode from the first available video track.
+        final String? facingMode =
+            _cameraService.getFacingModeForVideoTrack(videoTracks.first);
+
+        // Get the lens direction based on the facing mode.
+        // Fallback to the external lens direction
+        // if the facing mode is not available.
+        final CameraLensDirection lensDirection = facingMode != null
+            ? mapFacingModeToLensDirection(facingMode)
+            : CameraLensDirection.external;
+
+        // Create a camera description.
+        //
+        // The name is a camera label which might be empty
+        // if no permissions to media devices have been granted.
+        //
+        // MediaDeviceInfo.label:
+        // https://developer.mozilla.org/en-US/docs/Web/API/MediaDeviceInfo/label
+        //
+        // Sensor orientation is currently not supported.
+        final String cameraLabel = videoInputDevice.label ?? '';
+        final CameraDescription camera = CameraDescription(
+          name: cameraLabel,
+          lensDirection: lensDirection,
+          sensorOrientation: 0,
+        );
+
+        final CameraMetadata cameraMetadata = CameraMetadata(
+          deviceId: videoInputDevice.deviceId!,
+          facingMode: facingMode,
+        );
+
+        cameraDescriptions.add(camera);
+
+        camerasMetadata[camera] = cameraMetadata;
+
+        if (!hasPermission) {
           // Release the camera stream of the current video input device.
           for (final html.MediaStreamTrack videoTrack in videoTracks) {
             videoTrack.stop();
           }
-        } else {
-          // Ignore as no video tracks exist in the current video input device.
-          continue;
+          // } else {
+          //   // Ignore as no video tracks exist in the current video input device.
+          //   continue;
         }
       }
 
-      return cameras;
+      _availableCameras = cameraDescriptions;
+      return cameraDescriptions;
     } on html.DomException catch (e) {
       throw CameraException(e.name, e.message);
     } on PlatformException catch (e) {
@@ -211,26 +307,34 @@ class CameraPlugin extends CameraPlatform {
     MediaSettings? mediaSettings,
   ) async {
     try {
-      if (!camerasMetadata.containsKey(cameraDescription)) {
-        throw PlatformException(
-          code: CameraErrorCode.missingMetadata.toString(),
-          message:
-              'Missing camera metadata. Make sure to call `availableCameras` before creating a camera.',
-        );
-      }
+      // if (!camerasMetadata.containsKey(cameraDescription)) {
+      //   throw PlatformException(
+      //     code: CameraErrorCode.missingMetadata.toString(),
+      //     message:
+      //         'Missing camera metadata. Make sure to call `availableCameras` before creating a camera.',
+      //   );
+      // }
 
       final int textureId = _textureCounter++;
 
-      final CameraMetadata cameraMetadata = camerasMetadata[cameraDescription]!;
+      // final CameraMetadata cameraMetadata = camerasMetadata[cameraDescription]!;
+      final CameraMetadata? cameraMetadata = camerasMetadata[cameraDescription];
 
-      final CameraType? cameraType = cameraMetadata.facingMode != null
-          ? _cameraService.mapFacingModeToCameraType(cameraMetadata.facingMode!)
-          : null;
+      // final CameraType? cameraType = cameraMetadata.facingMode != null
+      //     ? _cameraService.mapFacingModeToCameraType(cameraMetadata.facingMode!)
+      //     : null;
+
+      final String? facingMode = cameraMetadata?.facingMode;
+      final CameraType cameraType = facingMode != null
+          ? mapFacingModeToCameraType(facingMode)
+          : mapLensDirectionToCameraType(cameraDescription.lensDirection);
 
       // Use the highest resolution possible
       // if the resolution preset is not specified.
-      final Size videoSize = _cameraService.mapResolutionPresetToSize(
-          mediaSettings?.resolutionPreset ?? ResolutionPreset.max);
+      // final Size videoSize = _cameraService.mapResolutionPresetToSize(
+      //     mediaSettings?.resolutionPreset ?? ResolutionPreset.max);
+
+      final Size videoSize = mapResolutionPresetToSize(ResolutionPreset.max);
 
       // Create a camera with the given audio and video constraints.
       // Sensor orientation is currently not supported.
@@ -240,15 +344,16 @@ class CameraPlugin extends CameraPlatform {
         options: CameraOptions(
           audio: AudioConstraints(enabled: mediaSettings?.enableAudio ?? true),
           video: VideoConstraints(
-            facingMode:
-                cameraType != null ? FacingModeConstraint(cameraType) : null,
+            // facingMode:
+            //     cameraType != null ? FacingModeConstraint(cameraType) : null,
+            facingMode: FacingModeConstraint(cameraType),
             width: VideoSizeConstraint(
               ideal: videoSize.width.toInt(),
             ),
             height: VideoSizeConstraint(
               ideal: videoSize.height.toInt(),
             ),
-            deviceId: cameraMetadata.deviceId,
+            deviceId: cameraMetadata?.deviceId,
           ),
         ),
         recorderOptions: (
@@ -383,8 +488,10 @@ class CameraPlugin extends CameraPlatform {
 
       return orientation.onChange.startWith(initialOrientationEvent).map(
         (html.Event _) {
-          final DeviceOrientation deviceOrientation = _cameraService
-              .mapOrientationTypeToDeviceOrientation(orientation.type!);
+          // final DeviceOrientation deviceOrientation = _cameraService
+          //     .mapOrientationTypeToDeviceOrientation(orientation.type!);
+          final DeviceOrientation deviceOrientation =
+              mapOrientationTypeToDeviceOrientation(orientation.type!);
           return DeviceOrientationChangedEvent(deviceOrientation);
         },
       );
@@ -405,7 +512,8 @@ class CameraPlugin extends CameraPlatform {
 
       if (screenOrientation != null && documentElement != null) {
         final String orientationType =
-            _cameraService.mapDeviceOrientationToOrientationType(orientation);
+            // _cameraService.mapDeviceOrientationToOrientationType(orientation);
+            mapDeviceOrientationToOrientationType(orientation);
 
         // Full-screen mode may be required to modify the device orientation.
         // See: https://w3c.github.io/screen-orientation/#interaction-with-fullscreen-api

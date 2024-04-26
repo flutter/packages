@@ -44,9 +44,9 @@ class CameraErrorCode {
   /// The user media support is disabled in the current browser.
   static const CameraErrorCode security = CameraErrorCode._('cameraSecurity');
 
-  /// The camera metadata is missing.
-  static const CameraErrorCode missingMetadata =
-      CameraErrorCode._('cameraMissingMetadata');
+  // /// The camera metadata is missing.
+  // static const CameraErrorCode missingMetadata =
+  //     CameraErrorCode._('cameraMissingMetadata');
 
   /// The camera orientation is not supported.
   static const CameraErrorCode orientationNotSupported =
