@@ -1,6 +1,6 @@
 ## 3.16.1
 
-* Adds onWebViewRenderProcessTerminated WebViewClient callback to support
+* Adds onWebViewRenderProcessTerminated WebViewClient callback on Android to support
   `PlatformNavigationDelegate.onWebViewRenderProcessTerminated`.
 
 ## 3.16.0
