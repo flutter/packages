@@ -68,4 +68,8 @@ class ProxyApiRegistrar(binaryMessenger: BinaryMessenger, var context: Context) 
   override fun getPigeonApiView(): PigeonApiView {
     return ViewProxyApi(this)
   }
+
+  override fun getPigeonApiMediaPlayer(): PigeonApiMediaPlayer {
+    return MediaPlayerProxyApi(this)
+  }
 }

@@ -8,8 +8,7 @@
 import 'dart:async';
 import 'dart:typed_data' show Float64List, Int32List, Int64List, Uint8List;
 
-import 'package:flutter/foundation.dart'
-    show ReadBuffer, WriteBuffer, immutable, protected;
+import 'package:flutter/foundation.dart' show ReadBuffer, WriteBuffer, immutable, protected;
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart' show WidgetsFlutterBinding;
 
@@ -20,8 +19,7 @@ PlatformException _createConnectionError(String channelName) {
   );
 }
 
-List<Object?> wrapResponse(
-    {Object? result, PlatformException? error, bool empty = false}) {
+List<Object?> wrapResponse({Object? result, PlatformException? error, bool empty = false}) {
   if (empty) {
     return <Object?>[];
   }
@@ -30,7 +28,6 @@ List<Object?> wrapResponse(
   }
   return <Object?>[error.code, error.message, error.details];
 }
-
 /// An immutable object that serves as the base class for all ProxyApis and
 /// can provide functional copies of itself.
 ///
@@ -116,8 +113,7 @@ class PigeonInstanceManager {
   final Expando<int> _identifiers = Expando<int>();
   final Map<int, WeakReference<PigeonProxyApiBaseClass>> _weakInstances =
       <int, WeakReference<PigeonProxyApiBaseClass>>{};
-  final Map<int, PigeonProxyApiBaseClass> _strongInstances =
-      <int, PigeonProxyApiBaseClass>{};
+  final Map<int, PigeonProxyApiBaseClass> _strongInstances = <int, PigeonProxyApiBaseClass>{};
   late final Finalizer<int> _finalizer;
   int _nextIdentifier = 0;
 
@@ -135,37 +131,23 @@ class PigeonInstanceManager {
         api.removeStrongReference(identifier);
       },
     );
-    _PigeonInstanceManagerApi.setUpMessageHandlers(
-        instanceManager: instanceManager);
-    BaseDisplayContainer.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    AdDisplayContainer.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    AdsLoader.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    AdsRequest.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    AdsManager.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    ImaSdkFactory.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    VideoAdPlayer.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    VideoProgressUpdate.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    VideoAdPlayerCallback.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    AdMediaInfo.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    AdPodInfo.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    FrameLayout.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    ViewGroup.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    VideoView.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
+    _PigeonInstanceManagerApi.setUpMessageHandlers(instanceManager: instanceManager);
+    BaseDisplayContainer.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    AdDisplayContainer.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    AdsLoader.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    AdsRequest.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    AdsManager.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    ImaSdkFactory.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    VideoAdPlayer.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    VideoProgressUpdate.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    VideoAdPlayerCallback.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    AdMediaInfo.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    AdPodInfo.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    FrameLayout.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    ViewGroup.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    VideoView.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
     View.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    MediaPlayer.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
     return instanceManager;
   }
 
@@ -229,19 +211,15 @@ class PigeonInstanceManager {
   ///
   /// This method also expects the host `InstanceManager` to have a strong
   /// reference to the instance the identifier is associated with.
-  T? getInstanceWithWeakReference<T extends PigeonProxyApiBaseClass>(
-      int identifier) {
-    final PigeonProxyApiBaseClass? weakInstance =
-        _weakInstances[identifier]?.target;
+  T? getInstanceWithWeakReference<T extends PigeonProxyApiBaseClass>(int identifier) {
+    final PigeonProxyApiBaseClass? weakInstance = _weakInstances[identifier]?.target;
 
     if (weakInstance == null) {
-      final PigeonProxyApiBaseClass? strongInstance =
-          _strongInstances[identifier];
+      final PigeonProxyApiBaseClass? strongInstance = _strongInstances[identifier];
       if (strongInstance != null) {
         final PigeonProxyApiBaseClass copy = strongInstance.pigeon_copy();
         _identifiers[copy] = identifier;
-        _weakInstances[identifier] =
-            WeakReference<PigeonProxyApiBaseClass>(copy);
+        _weakInstances[identifier] = WeakReference<PigeonProxyApiBaseClass>(copy);
         _finalizer.attach(copy, identifier, detach: copy);
         return copy as T;
       }
@@ -265,20 +243,17 @@ class PigeonInstanceManager {
   /// added.
   ///
   /// Returns unique identifier of the [instance] added.
-  void addHostCreatedInstance(
-      PigeonProxyApiBaseClass instance, int identifier) {
+  void addHostCreatedInstance(PigeonProxyApiBaseClass instance, int identifier) {
     _addInstanceWithIdentifier(instance, identifier);
   }
 
-  void _addInstanceWithIdentifier(
-      PigeonProxyApiBaseClass instance, int identifier) {
+  void _addInstanceWithIdentifier(PigeonProxyApiBaseClass instance, int identifier) {
     assert(!containsIdentifier(identifier));
     assert(getIdentifier(instance) == null);
     assert(identifier >= 0);
 
     _identifiers[instance] = identifier;
-    _weakInstances[identifier] =
-        WeakReference<PigeonProxyApiBaseClass>(instance);
+    _weakInstances[identifier] = WeakReference<PigeonProxyApiBaseClass>(instance);
     _finalizer.attach(instance, identifier, detach: instance);
 
     final PigeonProxyApiBaseClass copy = instance.pigeon_copy();
@@ -309,9 +284,9 @@ class _PigeonInstanceManagerApi {
       : _binaryMessenger = binaryMessenger;
 
   final BinaryMessenger? _binaryMessenger;
-
+  
   static const MessageCodec<Object?> pigeonChannelCodec =
-      StandardMessageCodec();
+     StandardMessageCodec();
 
   static void setUpMessageHandlers({
     BinaryMessenger? binaryMessenger,
@@ -387,30 +362,28 @@ class _PigeonInstanceManagerApi {
     }
   }
 }
-
 class _PigeonProxyApiBaseCodec extends StandardMessageCodec {
-  const _PigeonProxyApiBaseCodec(this.instanceManager);
-  final PigeonInstanceManager instanceManager;
-  @override
-  void writeValue(WriteBuffer buffer, Object? value) {
-    if (value is PigeonProxyApiBaseClass) {
-      buffer.putUint8(128);
-      writeValue(buffer, instanceManager.getIdentifier(value));
-    } else {
-      super.writeValue(buffer, value);
-    }
-  }
-
-  @override
-  Object? readValueOfType(int type, ReadBuffer buffer) {
-    switch (type) {
-      case 128:
-        return instanceManager
-            .getInstanceWithWeakReference(readValue(buffer)! as int);
-      default:
-        return super.readValueOfType(type, buffer);
-    }
-  }
+ const _PigeonProxyApiBaseCodec(this.instanceManager);
+ final PigeonInstanceManager instanceManager;
+ @override
+ void writeValue(WriteBuffer buffer, Object? value) {
+   if (value is PigeonProxyApiBaseClass) {
+     buffer.putUint8(128);
+     writeValue(buffer, instanceManager.getIdentifier(value));
+   } else {
+     super.writeValue(buffer, value);
+   }
+ }
+ @override
+ Object? readValueOfType(int type, ReadBuffer buffer) {
+   switch (type) {
+     case 128:
+       return instanceManager
+           .getInstanceWithWeakReference(readValue(buffer)! as int);
+     default:
+       return super.readValueOfType(type, buffer);
+   }
+ }
 }
 
 /// A base class for more specialized container interfaces.
@@ -2375,6 +2348,42 @@ class ViewGroup extends View {
 ///
 /// See https://developer.android.com/reference/android/widget/VideoView.
 class VideoView extends View {
+  VideoView({
+    super.pigeon_binaryMessenger,
+    super.pigeon_instanceManager,
+    this.onPrepared,
+    this.onCompletion,
+    required this.onError,
+  }) : super.pigeon_detached() {
+    final int __pigeon_instanceIdentifier =
+        pigeon_instanceManager.addDartCreatedInstance(this);
+    final _PigeonProxyApiBaseCodec pigeonChannelCodec = __pigeon_codecVideoView;
+    final BinaryMessenger? __pigeon_binaryMessenger = pigeon_binaryMessenger;
+    () async {
+      const String __pigeon_channelName =
+          'dev.flutter.pigeon.interactive_media_ads.VideoView.pigeon_defaultConstructor';
+      final BasicMessageChannel<Object?> __pigeon_channel =
+          BasicMessageChannel<Object?>(
+        __pigeon_channelName,
+        pigeonChannelCodec,
+        binaryMessenger: __pigeon_binaryMessenger,
+      );
+      final List<Object?>? __pigeon_replyList = await __pigeon_channel
+          .send(<Object?>[__pigeon_instanceIdentifier]) as List<Object?>?;
+      if (__pigeon_replyList == null) {
+        throw _createConnectionError(__pigeon_channelName);
+      } else if (__pigeon_replyList.length > 1) {
+        throw PlatformException(
+          code: __pigeon_replyList[0]! as String,
+          message: __pigeon_replyList[1] as String?,
+          details: __pigeon_replyList[2],
+        );
+      } else {
+        return;
+      }
+    }();
+  }
+
   /// Constructs [VideoView] without creating the associated native object.
   ///
   /// This should only be used by subclasses created by this library or to
@@ -2383,44 +2392,206 @@ class VideoView extends View {
   VideoView.pigeon_detached({
     super.pigeon_binaryMessenger,
     super.pigeon_instanceManager,
+    this.onPrepared,
+    this.onCompletion,
+    required this.onError,
   }) : super.pigeon_detached();
+
+  late final _PigeonProxyApiBaseCodec __pigeon_codecVideoView =
+      _PigeonProxyApiBaseCodec(pigeon_instanceManager);
+
+  /// Callback to be invoked when the media source is ready for playback.
+  ///
+  /// For the associated Native object to be automatically garbage collected,
+  /// it is required that the implementation of this `Function` doesn't have a
+  /// strong reference to the encapsulating class instance. When this `Function`
+  /// references a non-local variable, it is strongly recommended to access it
+  /// with a `WeakReference`:
+  ///
+  /// ```dart
+  /// final WeakReference weakMyVariable = WeakReference(myVariable);
+  /// final VideoView instance = VideoView(
+  ///  onPrepared: (VideoView pigeon_instance, ...) {
+  ///    print(weakMyVariable?.target);
+  ///  },
+  /// );
+  /// ```
+  ///
+  /// Alternatively, [PigeonInstanceManager.removeWeakReference] can be used to
+  /// release the associated Native object manually.
+  final void Function(
+    VideoView pigeon_instance,
+    MediaPlayer player,
+  )? onPrepared;
+
+  /// Callback to be invoked when playback of a media source has completed.
+  ///
+  /// For the associated Native object to be automatically garbage collected,
+  /// it is required that the implementation of this `Function` doesn't have a
+  /// strong reference to the encapsulating class instance. When this `Function`
+  /// references a non-local variable, it is strongly recommended to access it
+  /// with a `WeakReference`:
+  ///
+  /// ```dart
+  /// final WeakReference weakMyVariable = WeakReference(myVariable);
+  /// final VideoView instance = VideoView(
+  ///  onCompletion: (VideoView pigeon_instance, ...) {
+  ///    print(weakMyVariable?.target);
+  ///  },
+  /// );
+  /// ```
+  ///
+  /// Alternatively, [PigeonInstanceManager.removeWeakReference] can be used to
+  /// release the associated Native object manually.
+  final void Function(
+    VideoView pigeon_instance,
+    MediaPlayer player,
+  )? onCompletion;
+
+  /// Callback to be invoked when there has been an error during an asynchronous
+  /// operation.
+  ///
+  /// For the associated Native object to be automatically garbage collected,
+  /// it is required that the implementation of this `Function` doesn't have a
+  /// strong reference to the encapsulating class instance. When this `Function`
+  /// references a non-local variable, it is strongly recommended to access it
+  /// with a `WeakReference`:
+  ///
+  /// ```dart
+  /// final WeakReference weakMyVariable = WeakReference(myVariable);
+  /// final VideoView instance = VideoView(
+  ///  onError: (VideoView pigeon_instance, ...) {
+  ///    print(weakMyVariable?.target);
+  ///  },
+  /// );
+  /// ```
+  ///
+  /// Alternatively, [PigeonInstanceManager.removeWeakReference] can be used to
+  /// release the associated Native object manually.
+  final void Function(
+    VideoView pigeon_instance,
+    MediaPlayer player,
+    int what,
+    int extra,
+  ) onError;
 
   static void pigeon_setUpMessageHandlers({
     bool pigeon_clearHandlers = false,
     BinaryMessenger? pigeon_binaryMessenger,
     PigeonInstanceManager? pigeon_instanceManager,
-    VideoView Function()? pigeon_newInstance,
+    void Function(
+      VideoView pigeon_instance,
+      MediaPlayer player,
+    )? onPrepared,
+    void Function(
+      VideoView pigeon_instance,
+      MediaPlayer player,
+    )? onCompletion,
+    void Function(
+      VideoView pigeon_instance,
+      MediaPlayer player,
+      int what,
+      int extra,
+    )? onError,
   }) {
     final _PigeonProxyApiBaseCodec pigeonChannelCodec =
         _PigeonProxyApiBaseCodec(
             pigeon_instanceManager ?? PigeonInstanceManager.instance);
     final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
     {
-      final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
-              Object?>(
-          'dev.flutter.pigeon.interactive_media_ads.VideoView.pigeon_newInstance',
-          pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
+      final BasicMessageChannel<Object?> __pigeon_channel =
+          BasicMessageChannel<Object?>(
+              'dev.flutter.pigeon.interactive_media_ads.VideoView.onPrepared',
+              pigeonChannelCodec,
+              binaryMessenger: binaryMessenger);
       if (pigeon_clearHandlers) {
         __pigeon_channel.setMessageHandler(null);
       } else {
         __pigeon_channel.setMessageHandler((Object? message) async {
           assert(message != null,
-              'Argument for dev.flutter.pigeon.interactive_media_ads.VideoView.pigeon_newInstance was null.');
+              'Argument for dev.flutter.pigeon.interactive_media_ads.VideoView.onPrepared was null.');
           final List<Object?> args = (message as List<Object?>?)!;
-          final int? arg_pigeon_instanceIdentifier = (args[0] as int?);
-          assert(arg_pigeon_instanceIdentifier != null,
-              'Argument for dev.flutter.pigeon.interactive_media_ads.VideoView.pigeon_newInstance was null, expected non-null int.');
+          final VideoView? arg_pigeon_instance = (args[0] as VideoView?);
+          assert(arg_pigeon_instance != null,
+              'Argument for dev.flutter.pigeon.interactive_media_ads.VideoView.onPrepared was null, expected non-null VideoView.');
+          final MediaPlayer? arg_player = (args[1] as MediaPlayer?);
+          assert(arg_player != null,
+              'Argument for dev.flutter.pigeon.interactive_media_ads.VideoView.onPrepared was null, expected non-null MediaPlayer.');
           try {
-            (pigeon_instanceManager ?? PigeonInstanceManager.instance)
-                .addHostCreatedInstance(
-              pigeon_newInstance?.call() ??
-                  VideoView.pigeon_detached(
-                    pigeon_binaryMessenger: pigeon_binaryMessenger,
-                    pigeon_instanceManager: pigeon_instanceManager,
-                  ),
-              arg_pigeon_instanceIdentifier!,
-            );
+            (onPrepared ?? arg_pigeon_instance!.onPrepared)
+                ?.call(arg_pigeon_instance!, arg_player!);
+            return wrapResponse(empty: true);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
+        });
+      }
+    }
+
+    {
+      final BasicMessageChannel<Object?> __pigeon_channel =
+          BasicMessageChannel<Object?>(
+              'dev.flutter.pigeon.interactive_media_ads.VideoView.onCompletion',
+              pigeonChannelCodec,
+              binaryMessenger: binaryMessenger);
+      if (pigeon_clearHandlers) {
+        __pigeon_channel.setMessageHandler(null);
+      } else {
+        __pigeon_channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.interactive_media_ads.VideoView.onCompletion was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final VideoView? arg_pigeon_instance = (args[0] as VideoView?);
+          assert(arg_pigeon_instance != null,
+              'Argument for dev.flutter.pigeon.interactive_media_ads.VideoView.onCompletion was null, expected non-null VideoView.');
+          final MediaPlayer? arg_player = (args[1] as MediaPlayer?);
+          assert(arg_player != null,
+              'Argument for dev.flutter.pigeon.interactive_media_ads.VideoView.onCompletion was null, expected non-null MediaPlayer.');
+          try {
+            (onCompletion ?? arg_pigeon_instance!.onCompletion)
+                ?.call(arg_pigeon_instance!, arg_player!);
+            return wrapResponse(empty: true);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
+        });
+      }
+    }
+
+    {
+      final BasicMessageChannel<Object?> __pigeon_channel =
+          BasicMessageChannel<Object?>(
+              'dev.flutter.pigeon.interactive_media_ads.VideoView.onError',
+              pigeonChannelCodec,
+              binaryMessenger: binaryMessenger);
+      if (pigeon_clearHandlers) {
+        __pigeon_channel.setMessageHandler(null);
+      } else {
+        __pigeon_channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.interactive_media_ads.VideoView.onError was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final VideoView? arg_pigeon_instance = (args[0] as VideoView?);
+          assert(arg_pigeon_instance != null,
+              'Argument for dev.flutter.pigeon.interactive_media_ads.VideoView.onError was null, expected non-null VideoView.');
+          final MediaPlayer? arg_player = (args[1] as MediaPlayer?);
+          assert(arg_player != null,
+              'Argument for dev.flutter.pigeon.interactive_media_ads.VideoView.onError was null, expected non-null MediaPlayer.');
+          final int? arg_what = (args[2] as int?);
+          assert(arg_what != null,
+              'Argument for dev.flutter.pigeon.interactive_media_ads.VideoView.onError was null, expected non-null int.');
+          final int? arg_extra = (args[3] as int?);
+          assert(arg_extra != null,
+              'Argument for dev.flutter.pigeon.interactive_media_ads.VideoView.onError was null, expected non-null int.');
+          try {
+            (onError ?? arg_pigeon_instance!.onError)
+                .call(arg_pigeon_instance!, arg_player!, arg_what!, arg_extra!);
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
@@ -2433,11 +2604,75 @@ class VideoView extends View {
     }
   }
 
+  /// Sets the URI of the video.
+  Future<void> setVideoUri(String uri) async {
+    final _PigeonProxyApiBaseCodec pigeonChannelCodec = __pigeon_codecVideoView;
+    final BinaryMessenger? __pigeon_binaryMessenger = pigeon_binaryMessenger;
+    const String __pigeon_channelName =
+        'dev.flutter.pigeon.interactive_media_ads.VideoView.setVideoUri';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: __pigeon_binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        await __pigeon_channel.send(<Object?>[this, uri]) as List<Object?>?;
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: __pigeon_replyList[0]! as String,
+        message: __pigeon_replyList[1] as String?,
+        details: __pigeon_replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  /// The current position of the playing video.
+  ///
+  /// In milliseconds.
+  Future<int> getCurrentPosition() async {
+    final _PigeonProxyApiBaseCodec pigeonChannelCodec = __pigeon_codecVideoView;
+    final BinaryMessenger? __pigeon_binaryMessenger = pigeon_binaryMessenger;
+    const String __pigeon_channelName =
+        'dev.flutter.pigeon.interactive_media_ads.VideoView.getCurrentPosition';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: __pigeon_binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        await __pigeon_channel.send(<Object?>[this]) as List<Object?>?;
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: __pigeon_replyList[0]! as String,
+        message: __pigeon_replyList[1] as String?,
+        details: __pigeon_replyList[2],
+      );
+    } else if (__pigeon_replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (__pigeon_replyList[0] as int?)!;
+    }
+  }
+
   @override
   VideoView pigeon_copy() {
     return VideoView.pigeon_detached(
       pigeon_binaryMessenger: pigeon_binaryMessenger,
       pigeon_instanceManager: pigeon_instanceManager,
+      onPrepared: onPrepared,
+      onCompletion: onCompletion,
+      onError: onError,
     );
   }
 }
@@ -2512,3 +2747,196 @@ class View extends PigeonProxyApiBaseClass {
     );
   }
 }
+
+/// MediaPlayer class can be used to control playback of audio/video files and
+/// streams.
+///
+/// See https://developer.android.com/reference/android/media/MediaPlayer.
+class MediaPlayer extends PigeonProxyApiBaseClass {
+  /// Constructs [MediaPlayer] without creating the associated native object.
+  ///
+  /// This should only be used by subclasses created by this library or to
+  /// create copies for an [PigeonInstanceManager].
+  @protected
+  MediaPlayer.pigeon_detached({
+    super.pigeon_binaryMessenger,
+    super.pigeon_instanceManager,
+  });
+
+  late final _PigeonProxyApiBaseCodec __pigeon_codecMediaPlayer =
+      _PigeonProxyApiBaseCodec(pigeon_instanceManager);
+
+  static void pigeon_setUpMessageHandlers({
+    bool pigeon_clearHandlers = false,
+    BinaryMessenger? pigeon_binaryMessenger,
+    PigeonInstanceManager? pigeon_instanceManager,
+    MediaPlayer Function()? pigeon_newInstance,
+  }) {
+    final _PigeonProxyApiBaseCodec pigeonChannelCodec =
+        _PigeonProxyApiBaseCodec(
+            pigeon_instanceManager ?? PigeonInstanceManager.instance);
+    final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
+    {
+      final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
+              Object?>(
+          'dev.flutter.pigeon.interactive_media_ads.MediaPlayer.pigeon_newInstance',
+          pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
+      if (pigeon_clearHandlers) {
+        __pigeon_channel.setMessageHandler(null);
+      } else {
+        __pigeon_channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.interactive_media_ads.MediaPlayer.pigeon_newInstance was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final int? arg_pigeon_instanceIdentifier = (args[0] as int?);
+          assert(arg_pigeon_instanceIdentifier != null,
+              'Argument for dev.flutter.pigeon.interactive_media_ads.MediaPlayer.pigeon_newInstance was null, expected non-null int.');
+          try {
+            (pigeon_instanceManager ?? PigeonInstanceManager.instance)
+                .addHostCreatedInstance(
+              pigeon_newInstance?.call() ??
+                  MediaPlayer.pigeon_detached(
+                    pigeon_binaryMessenger: pigeon_binaryMessenger,
+                    pigeon_instanceManager: pigeon_instanceManager,
+                  ),
+              arg_pigeon_instanceIdentifier!,
+            );
+            return wrapResponse(empty: true);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
+        });
+      }
+    }
+  }
+
+  /// Gets the duration of the file.
+  Future<int> getDuration() async {
+    final _PigeonProxyApiBaseCodec pigeonChannelCodec =
+        __pigeon_codecMediaPlayer;
+    final BinaryMessenger? __pigeon_binaryMessenger = pigeon_binaryMessenger;
+    const String __pigeon_channelName =
+        'dev.flutter.pigeon.interactive_media_ads.MediaPlayer.getDuration';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: __pigeon_binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        await __pigeon_channel.send(<Object?>[this]) as List<Object?>?;
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: __pigeon_replyList[0]! as String,
+        message: __pigeon_replyList[1] as String?,
+        details: __pigeon_replyList[2],
+      );
+    } else if (__pigeon_replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (__pigeon_replyList[0] as int?)!;
+    }
+  }
+
+  /// Seeks to specified time position.
+  Future<void> seekTo(int mSec) async {
+    final _PigeonProxyApiBaseCodec pigeonChannelCodec =
+        __pigeon_codecMediaPlayer;
+    final BinaryMessenger? __pigeon_binaryMessenger = pigeon_binaryMessenger;
+    const String __pigeon_channelName =
+        'dev.flutter.pigeon.interactive_media_ads.MediaPlayer.seekTo';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: __pigeon_binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        await __pigeon_channel.send(<Object?>[this, mSec]) as List<Object?>?;
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: __pigeon_replyList[0]! as String,
+        message: __pigeon_replyList[1] as String?,
+        details: __pigeon_replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  /// Starts or resumes playback.
+  Future<void> start() async {
+    final _PigeonProxyApiBaseCodec pigeonChannelCodec =
+        __pigeon_codecMediaPlayer;
+    final BinaryMessenger? __pigeon_binaryMessenger = pigeon_binaryMessenger;
+    const String __pigeon_channelName =
+        'dev.flutter.pigeon.interactive_media_ads.MediaPlayer.start';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: __pigeon_binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        await __pigeon_channel.send(<Object?>[this]) as List<Object?>?;
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: __pigeon_replyList[0]! as String,
+        message: __pigeon_replyList[1] as String?,
+        details: __pigeon_replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  /// Pauses playback.
+  Future<void> pause() async {
+    final _PigeonProxyApiBaseCodec pigeonChannelCodec =
+        __pigeon_codecMediaPlayer;
+    final BinaryMessenger? __pigeon_binaryMessenger = pigeon_binaryMessenger;
+    const String __pigeon_channelName =
+        'dev.flutter.pigeon.interactive_media_ads.MediaPlayer.pause';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: __pigeon_binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        await __pigeon_channel.send(<Object?>[this]) as List<Object?>?;
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: __pigeon_replyList[0]! as String,
+        message: __pigeon_replyList[1] as String?,
+        details: __pigeon_replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  @override
+  MediaPlayer pigeon_copy() {
+    return MediaPlayer.pigeon_detached(
+      pigeon_binaryMessenger: pigeon_binaryMessenger,
+      pigeon_instanceManager: pigeon_instanceManager,
+    );
+  }
+}
+

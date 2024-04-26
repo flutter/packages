@@ -277,7 +277,27 @@ abstract class ViewGroup extends View {
     fullClassName: 'android.widget.VideoView',
   ),
 )
-abstract class VideoView extends View {}
+abstract class VideoView extends View {
+  VideoView();
+
+  /// Callback to be invoked when the media source is ready for playback.
+  late final void Function(MediaPlayer player)? onPrepared;
+
+  /// Callback to be invoked when playback of a media source has completed.
+  late final void Function(MediaPlayer player)? onCompletion;
+
+  /// Callback to be invoked when there has been an error during an asynchronous
+  /// operation.
+  late final void Function(MediaPlayer player, int what, int extra) onError;
+
+  /// Sets the URI of the video.
+  void setVideoUri(String uri);
+
+  /// The current position of the playing video.
+  ///
+  /// In milliseconds.
+  int getCurrentPosition();
+}
 
 /// This class represents the basic building block for user interface components.
 ///
@@ -286,3 +306,26 @@ abstract class VideoView extends View {}
   kotlinOptions: KotlinProxyApiOptions(fullClassName: 'android.view.View'),
 )
 abstract class View {}
+
+/// MediaPlayer class can be used to control playback of audio/video files and
+/// streams.
+///
+/// See https://developer.android.com/reference/android/media/MediaPlayer.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'android.media.MediaPlayer',
+  ),
+)
+abstract class MediaPlayer {
+  /// Gets the duration of the file.
+  int getDuration();
+
+  /// Seeks to specified time position.
+  void seekTo(int mSec);
+
+  /// Starts or resumes playback.
+  void start();
+
+  /// Pauses playback.
+  void pause();
+}
