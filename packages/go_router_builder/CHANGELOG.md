@@ -1,3 +1,7 @@
+## NEXT
+
+- Adds an example and a test with `onExit`.
+
 ## 2.6.0
 
 * Adds support for passing observers to the StatefulShellBranch for the nested Navigator.
