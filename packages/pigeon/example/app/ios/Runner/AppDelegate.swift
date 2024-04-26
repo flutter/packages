@@ -5,6 +5,7 @@
 import Flutter
 import UIKit
 
+// #docregion swift-class
 private class PigeonApiImplementation: ExampleHostApi {
   func getHostLanguage() throws -> String {
     return "Swift"
