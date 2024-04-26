@@ -82,11 +82,15 @@ Future<int> generateTestPigeons({required String baseDir}) async {
     final Set<GeneratorLanguage> skipLanguages =
         _unsupportedFiles[input] ?? <GeneratorLanguage>{};
 
-    final bool kotlinErrorClassGenerationTestFiles =
+    final bool kotlinAndSwiftErrorClassGenerationTestFiles =
         input == 'core_tests' || input == 'background_platform_channels';
 
-    final String kotlinErrorName = kotlinErrorClassGenerationTestFiles
+    final String kotlinErrorName = kotlinAndSwiftErrorClassGenerationTestFiles
         ? 'FlutterError'
+        : '${pascalCaseName}Error';
+
+    final String swiftErrorName = kotlinAndSwiftErrorClassGenerationTestFiles
+        ? 'PigeonError'
         : '${pascalCaseName}Error';
 
     // Generate the default language test plugin output.
@@ -104,6 +108,8 @@ Future<int> generateTestPigeons({required String baseDir}) async {
       swiftOut: skipLanguages.contains(GeneratorLanguage.swift)
           ? null
           : '$outputBase/ios/Classes/$pascalCaseName.gen.swift',
+      swiftErrorClassName: swiftErrorName,
+      swiftIncludeErrorClass: input != 'core_tests',
       // Windows
       cppHeaderOut: skipLanguages.contains(GeneratorLanguage.cpp)
           ? null
@@ -114,7 +120,6 @@ Future<int> generateTestPigeons({required String baseDir}) async {
       cppNamespace: '${input}_pigeontest',
       suppressVersion: true,
       dartPackageName: 'pigeon_integration_tests',
-      swiftEmitPigeonErrorClass: input == 'core_tests',
     );
     if (generateCode != 0) {
       return generateCode;
@@ -128,9 +133,10 @@ Future<int> generateTestPigeons({required String baseDir}) async {
       swiftOut: skipLanguages.contains(GeneratorLanguage.swift)
           ? null
           : '$outputBase/macos/Classes/$pascalCaseName.gen.swift',
+      swiftErrorClassName: swiftErrorName,
+      swiftIncludeErrorClass: input != 'core_tests',
       suppressVersion: true,
       dartPackageName: 'pigeon_integration_tests',
-      swiftEmitPigeonErrorClass: input == 'core_tests',
     );
     if (generateCode != 0) {
       return generateCode;
@@ -190,6 +196,8 @@ Future<int> runPigeon({
   String? kotlinErrorClassName,
   bool kotlinIncludeErrorClass = true,
   String? swiftOut,
+  String? swiftErrorClassName,
+  bool swiftIncludeErrorClass = true,
   String? cppHeaderOut,
   String? cppSourceOut,
   String? cppNamespace,
@@ -204,7 +212,6 @@ Future<int> runPigeon({
   String copyrightHeader = './copyright_header.txt',
   String? basePath,
   String? dartPackageName,
-  bool swiftEmitPigeonErrorClass = true,
 }) async {
   // Temporarily suppress the version output via the global flag if requested.
   // This is done because having the version in all the generated test output
@@ -239,7 +246,10 @@ Future<int> runPigeon({
     objcSourceOut: objcSourceOut,
     objcOptions: ObjcOptions(prefix: objcPrefix),
     swiftOut: swiftOut,
-    swiftOptions: SwiftOptions(emitPigeonErrorClass: swiftEmitPigeonErrorClass),
+    swiftOptions: SwiftOptions(
+      errorClassName: swiftErrorClassName,
+      includeErrorClass: swiftIncludeErrorClass,
+    ),
     basePath: basePath,
     dartPackageName: dartPackageName,
   ));
