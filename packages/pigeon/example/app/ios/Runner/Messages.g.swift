@@ -50,6 +50,13 @@ private func wrapError(_ error: Any) -> [Any?] {
       flutterError.details,
     ]
   }
+  if let pigeonError = error as? PigeonError {
+    return [
+      pigeonError.code,
+      pigeonError.message,
+      pigeonError.details,
+    ]
+  }
   return [
     "\(error)",
     "\(type(of: error))",

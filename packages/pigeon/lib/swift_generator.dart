@@ -660,6 +660,15 @@ class SwiftGenerator extends StructuredGenerator<SwiftOptions> {
           indent.writeln('flutterError.details,');
         });
       });
+      indent.write('if let pigeonError = error as? PigeonError ');
+      indent.addScoped('{', '}', () {
+        indent.write('return ');
+        indent.addScoped('[', ']', () {
+          indent.writeln('pigeonError.code,');
+          indent.writeln('pigeonError.message,');
+          indent.writeln('pigeonError.details,');
+        });
+      });
       indent.write('return ');
       indent.addScoped('[', ']', () {
         indent.writeln(r'"\(error)",');
