@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+// ignore_for_file: avoid_unused_constructor_parameters
+
 import 'package:pigeon/pigeon.dart';
 
 @ConfigurePigeon(
@@ -72,3 +74,215 @@ abstract class AdsRequest {}
   ),
 )
 abstract class AdsManager {}
+
+/// Factory class for creating SDK objects.
+///
+/// See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/ImaSdkFactory.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'com.google.ads.interactivemedia.v3.api.ImaSdkFactory',
+  ),
+)
+abstract class ImaSdkFactory {
+  @static
+  AdDisplayContainer createAdDisplayContainer(
+    ViewGroup container,
+    VideoAdPlayer player,
+  );
+}
+
+/// Defines the set of methods that a video player must implement to be used by
+/// the IMA SDK, as well as a set of callbacks that it must fire.
+///
+/// See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/player/VideoAdPlayer.html.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName:
+        'com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer',
+  ),
+)
+abstract class VideoAdPlayer {
+  /// Adds a callback.
+  late final void Function(VideoAdPlayerCallback callback) addCallback;
+
+  /// Loads a video ad hosted at AdMediaInfo.
+  late final void Function(AdMediaInfo adMediaInfo, AdPodInfo adPodInfo) loadAd;
+
+  /// Pauses playing the current ad.
+  late final void Function(AdMediaInfo adMediaInfo) pauseAd;
+
+  /// Starts or resumes playing the video ad referenced by the AdMediaInfo,
+  /// provided loadAd has already been called for it.
+  late final void Function(AdMediaInfo adMediaInfo) playAd;
+
+  /// Cleans up and releases all resources used by the `VideoAdPlayer`.
+  late final void Function() release;
+
+  /// Removes a callback.
+  late final void Function(VideoAdPlayerCallback callback) removeCallback;
+
+  /// Stops playing the current ad.
+  late final void Function(AdMediaInfo adMediaInfo) stopAd;
+
+  /// The volume of the player as a percentage from 0 to 100.
+  void setVolume(int value);
+
+  /// The `VideoProgressUpdate` describing playback progress of the current
+  /// video.
+  void setAdProgress(VideoProgressUpdate progress);
+}
+
+/// Defines an update to the video's progress.
+///
+/// See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/player/VideoProgressUpdate.html.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName:
+        'com.google.ads.interactivemedia.v3.api.player.VideoProgressUpdate',
+  ),
+)
+abstract class VideoProgressUpdate {
+  VideoProgressUpdate(int currentTimeMs, int durationMs);
+
+  /// Value to use for cases when progress is not yet defined, such as video
+  /// initialization.
+  @static
+  @attached
+  late final VideoProgressUpdate videoTimeNotReady;
+}
+
+/// Callbacks that the player must fire.
+///
+/// See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/player/VideoAdPlayer.VideoAdPlayerCallback.html
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName:
+        'com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer.VideoAdPlayerCallback',
+  ),
+)
+abstract class VideoAdPlayerCallback {
+  /// Fire this callback periodically as ad playback occurs.
+  void onAdProgress(
+    AdMediaInfo adMediaInfo,
+    VideoProgressUpdate videoProgressUpdate,
+  );
+
+  /// Fire this callback when video playback stalls waiting for data.
+  void onBuffering(AdMediaInfo adMediaInfo);
+
+  /// Fire this callback when all content has finished playing.
+  void onContentComplete();
+
+  /// Fire this callback when the video finishes playing.
+  void onEnded(AdMediaInfo adMediaInfo);
+
+  /// Fire this callback when the video has encountered an error.
+  void onError(AdMediaInfo adMediaInfo);
+
+  /// Fire this callback when the video is ready to begin playback.
+  void onLoaded(AdMediaInfo adMediaInfo);
+
+  /// Fire this callback when the video is paused.
+  void onPause(AdMediaInfo adMediaInfo);
+
+  /// Fire this callback when the player begins playing a video.
+  void onPlay(AdMediaInfo adMediaInfo);
+
+  /// Fire this callback when the video is unpaused.
+  void onResume(AdMediaInfo adMediaInfo);
+
+  /// Fire this callback when the playback volume changes.
+  void onVolumeChanged(AdMediaInfo adMediaInfo, int percentage);
+}
+
+/// The minimal information required to play an ad.
+///
+/// See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/player/AdMediaInfo.html.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'com.google.ads.interactivemedia.v3.api.player.AdMediaInfo',
+  ),
+)
+abstract class AdMediaInfo {
+  late final String url;
+}
+
+/// An ad may be part of a pod of ads.
+///
+/// See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/AdPodInfo.html.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'com.google.ads.interactivemedia.v3.api.AdPodInfo',
+  ),
+)
+abstract class AdPodInfo {
+  /// The position of the ad within the pod.
+  ///
+  /// The value returned is one-based, for example, 1 of 2, 2 of 2, etc. If the
+  /// ad is not part of a pod, this will return 1.
+  late final int adPosition;
+
+  /// The maximum duration of the pod in seconds.
+  ///
+  /// For unknown duration, -1 is returned.
+  late final double maxDuration;
+
+  /// Client side and DAI VOD: Returns the index of the ad pod.
+  late final int podIndex;
+
+  /// The content time offset at which the current ad pod was scheduled.
+  ///
+  /// For preroll pod, 0 is returned. For midrolls, the scheduled time is
+  /// returned in seconds. For postroll, -1 is returned. Defaults to 0 if this
+  /// ad is not part of a pod, or the pod is not part of an ad playlist.
+  late final double timeOffset;
+
+  /// The total number of ads contained within this pod, including bumpers.
+  late final int totalAds;
+
+  /// Returns true if the ad is a bumper ad.
+  late final bool isBumper;
+}
+
+/// FrameLayout is designed to block out an area on the screen to display a
+/// single item.
+///
+/// See https://developer.android.com/reference/android/widget/FrameLayout.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'android.widget.FrameLayout',
+  ),
+)
+abstract class FrameLayout extends ViewGroup {
+  FrameLayout();
+}
+
+/// A special view that can contain other views (called children.)
+///
+/// See https://developer.android.com/reference/android/view/ViewGroup.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'android.view.ViewGroup',
+  ),
+)
+abstract class ViewGroup extends View {
+  void addView(View view);
+}
+
+/// Displays a video file.
+///
+/// See https://developer.android.com/reference/android/widget/VideoView.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'android.widget.VideoView',
+  ),
+)
+abstract class VideoView extends View {}
+
+/// This class represents the basic building block for user interface components.
+///
+/// See https://developer.android.com/reference/android/view/View.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(fullClassName: 'android.view.View'),
+)
+abstract class View {}
