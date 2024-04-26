@@ -48,8 +48,10 @@ class RunnerTests: XCTestCase {
 }
 
 class FlutterApiFromProtocol: FlutterSmallApiProtocol {
-  func echo(string aStringArg: String, completion: @escaping (Result<String, test_plugin.PigeonError>) -> Void)
-  {
+  func echo(
+    string aStringArg: String,
+    completion: @escaping (Result<String, test_plugin.PigeonError>) -> Void
+  ) {
     completion(.success(aStringArg))
   }
 
