@@ -934,7 +934,8 @@ class WebViewClient extends JavaObject {
     WebResourceError error,
   )? onReceivedRequestError;
 
-  /// Notify host application that the given WebView's render process has exited.
+  /// Notify host application that the given WebView's render process has exited (Android only).
+  /// See: https://developer.android.com/reference/android/webkit/WebViewClient#onRenderProcessGone(android.webkit.WebView,%20android.webkit.RenderProcessGoneDetail)
   ///
   /// Multiple WebView instances may be associated with a single render process;
   /// onRenderProcessGone will be called for each WebView that was affected.
@@ -1552,7 +1553,7 @@ class WebResourceError {
   final String description;
 }
 
-/// This class provides more specific information about why the render process exited.
+/// This class provides more specific information about why the webview render process exited (Android only).
 /// The application may use this to decide how to handle the situation.
 /// See [WebViewClient.onWebViewRenderProcessTerminated].
 class ProcessTerminationDetails {

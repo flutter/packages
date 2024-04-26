@@ -147,7 +147,7 @@ class NavigationDelegate {
       platform.setOnWebResourceError(onWebResourceError!);
     }
     if (onWebViewRenderProcessTerminated != null) {
-      // onWebViewRenderProcessTerminated callback is only available on Android, see:
+      // onWebViewRenderProcessTerminated callback is available on Android only, see:
       // https://developer.android.com/reference/android/webkit/WebViewClient#onRenderProcessGone(android.webkit.WebView,%20android.webkit.RenderProcessGoneDetail)
       platform.setOnWebViewRenderProcessTerminated(onWebViewRenderProcessTerminated!);
     }
@@ -186,7 +186,8 @@ class NavigationDelegate {
   /// Invoked when a resource loading error occurred.
   final WebResourceErrorCallback? onWebResourceError;
 
-  /// Invoked when a the given WebView's render process has exited.
+  /// Invoked when a the given WebView's render process has exited (Android only).
+  /// See: https://developer.android.com/reference/android/webkit/WebViewClient#onRenderProcessGone(android.webkit.WebView,%20android.webkit.RenderProcessGoneDetail)
   final WebViewRenderProcessTerminatedCallback?
       onWebViewRenderProcessTerminated;
 }
