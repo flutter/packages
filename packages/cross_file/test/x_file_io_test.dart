@@ -110,6 +110,41 @@ void main() {
       await tempDir.delete(recursive: true);
     });
   });
+
+  group('Create with a custom source', () {
+    final XFile file = XFile.fromCustomSource(
+        TestXFileSource(DateTime.now(), 'text/plain', bytes, textFilePath));
+
+    test('Can be read as a string', () async {
+      expect(await file.readAsString(), equals(expectedStringContents));
+    });
+    test('Can be read as bytes', () async {
+      expect(await file.readAsBytes(), equals(bytes));
+    });
+
+    test('Can be read as a stream', () async {
+      expect(await file.openRead().first, equals(bytes));
+    });
+
+    test('Stream can be sliced', () async {
+      expect(await file.openRead(2, 5).first, equals(bytes.sublist(2, 5)));
+    });
+
+    test('Function saveTo(..) creates file', () async {
+      final Directory tempDir = Directory.systemTemp.createTempSync();
+      final File targetFile = File('${tempDir.path}/newFilePath.txt');
+      if (targetFile.existsSync()) {
+        await targetFile.delete();
+      }
+
+      await file.saveTo(targetFile.path);
+
+      expect(targetFile.existsSync(), isTrue);
+      expect(targetFile.readAsStringSync(), 'Hello, world!');
+
+      await tempDir.delete(recursive: true);
+    });
+  });
 }
 
 // This is to create an analysis error if the version of XFile in
@@ -129,5 +164,31 @@ class TestXFile extends XFile {
   Future<Uint8List> readAsBytes() {
     hasBeenRead = true;
     return super.readAsBytes();
+  }
+}
+
+/// An XFileSource that uses a fixed last modified time and byte contents.
+class TestXFileSource extends XFileSource {
+  TestXFileSource(this._lastModified, this.mimeType, this.bytes, this.path);
+
+  final DateTime _lastModified;
+  @override
+  final String? mimeType;
+  final Uint8List bytes;
+  @override
+  final String path;
+
+  @override
+  Future<DateTime> lastModified() => Future<DateTime>.value(_lastModified);
+
+  @override
+  Future<int> length() => Future<int>.value(bytes.length);
+
+  @override
+  String get name => path.split(Platform.pathSeparator).last;
+
+  @override
+  Stream<Uint8List> openRead([int? start, int? end]) {
+    return Stream<Uint8List>.value(bytes.sublist(start ?? 0, end));
   }
 }

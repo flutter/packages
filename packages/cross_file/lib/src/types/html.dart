@@ -12,6 +12,7 @@ import 'package:web/web.dart';
 
 import '../web_helpers/web_helpers.dart';
 import 'base.dart';
+import 'x_file_source.dart';
 
 // Four Gigabytes, in bytes.
 const int _fourGigabytes = 4 * 1024 * 1024 * 1024;
@@ -42,6 +43,7 @@ class XFile extends XFileBase {
         _overrides = overrides,
         _lastModified = lastModified ?? DateTime.fromMillisecondsSinceEpoch(0),
         _name = name ?? '',
+        _source = null,
         super(path) {
     // Cache `bytes` as Blob, if passed.
     if (bytes != null) {
@@ -63,6 +65,7 @@ class XFile extends XFileBase {
         _overrides = overrides,
         _lastModified = lastModified ?? DateTime.fromMillisecondsSinceEpoch(0),
         _name = name ?? '',
+        _source = null,
         super(path) {
     if (path == null) {
       _browserBlob = _createBlobFromBytes(bytes, mimeType);
@@ -71,6 +74,18 @@ class XFile extends XFileBase {
       _path = path;
     }
   }
+
+  /// Construct a CrossFile object from a custom source.
+  XFile.fromCustomSource(
+    XFileSource source, {
+    @visibleForTesting CrossFileTestOverrides? overrides,
+  })  : _mimeType = null,
+        _length = null,
+        _overrides = overrides,
+        _lastModified = null,
+        _name = null,
+        _source = source,
+        super(null);
 
   // Initializes a Blob from a bunch of `bytes` and an optional `mimeType`.
   Blob _createBlobFromBytes(Uint8List bytes, String? mimeType) {
@@ -85,19 +100,20 @@ class XFile extends XFileBase {
   // MimeType of the file (eg: "image/gif").
   final String? _mimeType;
   // Name (with extension) of the file (eg: "anim.gif")
-  final String _name;
+  final String? _name;
   // Path of the file (must be a valid Blob URL, when set manually!)
-  late String _path;
+  String? _path;
   // The size of the file (in bytes).
   final int? _length;
   // The time the file was last modified.
-  final DateTime _lastModified;
+  final DateTime? _lastModified;
 
   // The link to the binary object in the browser memory (Blob).
   // This can be passed in (as `bytes` in the constructor) or derived from
   // [_path] with a fetch request.
   // (Similar to a (read-only) dart:io File.)
   Blob? _browserBlob;
+  final XFileSource? _source;
 
   // An html Element that will be used to trigger a "save as" dialog later.
   // TODO(dit): https://github.com/flutter/flutter/issues/91400 Remove this _target.
@@ -111,16 +127,21 @@ class XFile extends XFileBase {
   bool get _hasTestOverrides => _overrides != null;
 
   @override
-  String? get mimeType => _mimeType;
+  String? get mimeType {
+    return _mimeType ?? _source?.mimeType;
+  }
 
   @override
-  String get name => _name;
+  String get name {
+    return _name ?? _source!.name;
+  }
 
   @override
-  String get path => _path;
+  String get path => _path ?? _source!.path;
 
   @override
-  Future<DateTime> lastModified() async => _lastModified;
+  Future<DateTime> lastModified() async =>
+      _lastModified ?? await _source!.lastModified();
 
   Future<Blob> get _blob async {
     if (_browserBlob != null) {
@@ -157,20 +178,30 @@ class XFile extends XFileBase {
 
   @override
   Future<Uint8List> readAsBytes() async {
-    return _blob.then(_blobToByteBuffer);
+    return _source?.openRead().toList().then((List<Uint8List> chunks) {
+          return Uint8List.fromList(
+              chunks.expand((Uint8List chunk) => chunk).toList());
+        }) ??
+        _blob.then(_blobToByteBuffer);
   }
 
   @override
-  Future<int> length() async => _length ?? (await _blob).size;
+  Future<int> length() async =>
+      _length ?? await _source?.length() ?? (await _blob).size;
 
   @override
-  Future<String> readAsString({Encoding encoding = utf8}) async {
+  Future<String> readAsString({Encoding encoding = utf8}) {
     return readAsBytes().then(encoding.decode);
   }
 
   // TODO(dit): https://github.com/flutter/flutter/issues/91867 Implement openRead properly.
   @override
   Stream<Uint8List> openRead([int? start, int? end]) async* {
+    if (_source != null) {
+      yield* _source.openRead(start, end);
+      return;
+    }
+
     final Blob blob = await _blob;
 
     final Blob slice = blob.slice(start ?? 0, end ?? blob.size, blob.type);

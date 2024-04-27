@@ -5,3 +5,4 @@
 export 'types/interface.dart'
     if (dart.library.js_interop) 'types/html.dart'
     if (dart.library.io) 'types/io.dart';
+export 'types/x_file_source.dart';

@@ -63,6 +63,29 @@ void main() {
     });
   });
 
+  group('Create with a custom source', () {
+    final XFile file = XFile.fromCustomSource(
+      TestXFileSource(
+          DateTime.now(), 'text/plain', bytes, textFileUrl, textFile.name),
+    );
+
+    test('Can be read as a string', () async {
+      expect(await file.readAsString(), equals(expectedStringContents));
+    });
+
+    test('Can be read as bytes', () async {
+      expect(await file.readAsBytes(), equals(bytes));
+    });
+
+    test('Can be read as a stream', () async {
+      expect(await file.openRead().first, equals(bytes));
+    });
+
+    test('Stream can be sliced', () async {
+      expect(await file.openRead(2, 5).first, equals(bytes.sublist(2, 5)));
+    });
+  });
+
   group('Blob backend', () {
     final XFile file = XFile(textFileUrl);
 
@@ -89,57 +112,143 @@ void main() {
     const String crossFileDomElementId = '__x_file_dom_element';
 
     group('CrossFile saveTo(..)', () {
-      test('creates a DOM container', () async {
-        final XFile file = XFile.fromData(bytes);
+      group('From data', () {
+        test('creates a DOM container', () async {
+          final XFile file = XFile.fromData(bytes);
 
-        await file.saveTo('');
+          await file.saveTo('');
 
-        final html.Element? container =
-            html.document.querySelector('#$crossFileDomElementId');
+          final html.Element? container =
+              html.document.querySelector('#$crossFileDomElementId');
 
-        expect(container, isNotNull);
-      });
+          expect(container, isNotNull);
+        });
 
-      test('create anchor element', () async {
-        final XFile file = XFile.fromData(bytes, name: textFile.name);
+        test('create anchor element', () async {
+          final XFile file = XFile.fromData(bytes, name: textFile.name);
 
-        await file.saveTo('path');
+          await file.saveTo('path');
 
-        final html.Element container =
-            html.document.querySelector('#$crossFileDomElementId')!;
+          final html.Element container =
+              html.document.querySelector('#$crossFileDomElementId')!;
 
-        late html.HTMLAnchorElement element;
-        for (int i = 0; i < container.childNodes.length; i++) {
-          final html.Element test = container.children.item(i)!;
-          if (test.tagName == 'A') {
-            element = test as html.HTMLAnchorElement;
-            break;
+          late html.HTMLAnchorElement element;
+          for (int i = 0; i < container.childNodes.length; i++) {
+            final html.Element test = container.children.item(i)!;
+            if (test.tagName == 'A') {
+              element = test as html.HTMLAnchorElement;
+              break;
+            }
           }
-        }
 
-        // if element is not found, the `firstWhere` call will throw StateError.
-        expect(element.href, file.path);
-        expect(element.download, file.name);
+          // if element is not found, the `firstWhere` call will throw StateError.
+          expect(element.href, file.path);
+          expect(element.download, file.name);
+        });
+
+        test('anchor element is clicked', () async {
+          final html.HTMLAnchorElement mockAnchor =
+              html.document.createElement('a') as html.HTMLAnchorElement;
+
+          final CrossFileTestOverrides overrides = CrossFileTestOverrides(
+            createAnchorElement: (_, __) => mockAnchor,
+          );
+
+          final XFile file =
+              XFile.fromData(bytes, name: textFile.name, overrides: overrides);
+
+          bool clicked = false;
+          mockAnchor.onClick.listen((html.MouseEvent event) => clicked = true);
+
+          await file.saveTo('path');
+
+          expect(clicked, true);
+        });
       });
 
-      test('anchor element is clicked', () async {
-        final html.HTMLAnchorElement mockAnchor =
-            html.document.createElement('a') as html.HTMLAnchorElement;
+      group('from a custom source', () {
+        test('creates a DOM container', () async {
+          final XFile file = XFile.fromCustomSource(TestXFileSource(
+              DateTime.now(), 'text/plain', bytes, textFileUrl, ''));
 
-        final CrossFileTestOverrides overrides = CrossFileTestOverrides(
-          createAnchorElement: (_, __) => mockAnchor,
-        );
+          await file.saveTo('');
 
-        final XFile file =
-            XFile.fromData(bytes, name: textFile.name, overrides: overrides);
+          final html.Element? container =
+              html.document.querySelector('#$crossFileDomElementId');
 
-        bool clicked = false;
-        mockAnchor.onClick.listen((html.MouseEvent event) => clicked = true);
+          expect(container, isNotNull);
+        });
 
-        await file.saveTo('path');
+        test('create anchor element', () async {
+          final XFile file = XFile.fromCustomSource(TestXFileSource(
+              DateTime.now(), 'text/plain', bytes, textFileUrl, ''));
 
-        expect(clicked, true);
+          await file.saveTo('path');
+
+          final html.Element container =
+              html.document.querySelector('#$crossFileDomElementId')!;
+
+          late html.HTMLAnchorElement element;
+          for (int i = 0; i < container.childNodes.length; i++) {
+            final html.Element test = container.children.item(i)!;
+            if (test.tagName == 'A') {
+              element = test as html.HTMLAnchorElement;
+              break;
+            }
+          }
+
+          // if element is not found, the `firstWhere` call will throw StateError.
+          expect(element.href, file.path);
+          expect(element.download, file.name);
+        });
+
+        test('anchor element is clicked', () async {
+          final html.HTMLAnchorElement mockAnchor =
+              html.document.createElement('a') as html.HTMLAnchorElement;
+
+          final CrossFileTestOverrides overrides = CrossFileTestOverrides(
+            createAnchorElement: (_, __) => mockAnchor,
+          );
+
+          final XFile file = XFile.fromCustomSource(
+              TestXFileSource(DateTime.now(), 'text/plain', bytes, textFileUrl,
+                  textFile.name),
+              overrides: overrides);
+
+          bool clicked = false;
+          mockAnchor.onClick.listen((html.MouseEvent event) => clicked = true);
+
+          await file.saveTo('path');
+
+          expect(clicked, true);
+        });
       });
     });
   });
+}
+
+/// An XFileSource that uses a fixed last modified time and byte contents.
+class TestXFileSource extends XFileSource {
+  TestXFileSource(
+      this._lastModified, this.mimeType, this.bytes, this.path, this.name);
+
+  final DateTime _lastModified;
+  @override
+  final String? mimeType;
+  final Uint8List bytes;
+  @override
+  final String path;
+  @override
+  final String name;
+
+  @override
+  Future<DateTime> lastModified() => Future<DateTime>.value(_lastModified);
+
+  @override
+  Future<int> length() => Future<int>.value(bytes.length);
+
+  @override
+  Stream<Uint8List> openRead([int? start, int? end]) {
+    return Stream<Uint8List>.value(bytes.sublist(start ?? 0, end));
+  }
 }
