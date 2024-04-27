@@ -829,6 +829,8 @@ abstract class PigeonApiImaSdkFactory(val pigeonRegistrar: PigeonProxyApiRegistr
  */
 @Suppress("UNCHECKED_CAST")
 abstract class PigeonApiVideoAdPlayer(val pigeonRegistrar: PigeonProxyApiRegistrar) {
+  abstract fun pigeon_defaultConstructor(): com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer
+
   /** The volume of the player as a percentage from 0 to 100. */
   abstract fun setVolume(pigeon_instance: com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer, value: Long)
 
@@ -842,6 +844,25 @@ abstract class PigeonApiVideoAdPlayer(val pigeonRegistrar: PigeonProxyApiRegistr
     @Suppress("LocalVariableName")
     fun setUpMessageHandlers(binaryMessenger: BinaryMessenger, api: PigeonApiVideoAdPlayer?) {
       val codec = api?.pigeonRegistrar?.codec ?: StandardMessageCodec()
+      run {
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.VideoAdPlayer.pigeon_defaultConstructor", codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_identifierArg = args[0].let { if (it is Int) it.toLong() else it as Long }
+            var wrapped: List<Any?>
+            try {
+              api.pigeonRegistrar.instanceManager.addDartCreatedInstance(api.pigeon_defaultConstructor(), pigeon_identifierArg)
+              wrapped = listOf<Any?>(null)
+            } catch (exception: Throwable) {
+              wrapped = wrapError(exception)
+            }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
       run {
         val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.VideoAdPlayer.setVolume", codec)
         if (api != null) {
@@ -1870,6 +1891,9 @@ abstract class PigeonApiMediaPlayer(val pigeonRegistrar: PigeonProxyApiRegistrar
   /** Pauses playback. */
   abstract fun pause(pigeon_instance: android.media.MediaPlayer)
 
+  /** Stops playback after playback has been started or paused. */
+  abstract fun stop(pigeon_instance: android.media.MediaPlayer)
+
   companion object {
     @Suppress("LocalVariableName")
     fun setUpMessageHandlers(binaryMessenger: BinaryMessenger, api: PigeonApiMediaPlayer?) {
@@ -1940,6 +1964,25 @@ abstract class PigeonApiMediaPlayer(val pigeonRegistrar: PigeonProxyApiRegistrar
             var wrapped: List<Any?>
             try {
               api.pause(pigeon_instanceArg)
+              wrapped = listOf<Any?>(null)
+            } catch (exception: Throwable) {
+              wrapped = wrapError(exception)
+            }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.MediaPlayer.stop", codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as android.media.MediaPlayer
+            var wrapped: List<Any?>
+            try {
+              api.stop(pigeon_instanceArg)
               wrapped = listOf<Any?>(null)
             } catch (exception: Throwable) {
               wrapped = wrapError(exception)

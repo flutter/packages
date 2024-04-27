@@ -102,6 +102,8 @@ abstract class ImaSdkFactory {
   ),
 )
 abstract class VideoAdPlayer {
+  VideoAdPlayer();
+
   /// Adds a callback.
   late final void Function(VideoAdPlayerCallback callback) addCallback;
 
@@ -328,4 +330,7 @@ abstract class MediaPlayer {
 
   /// Pauses playback.
   void pause();
+
+  /// Stops playback after playback has been started or paused.
+  void stop();
 }

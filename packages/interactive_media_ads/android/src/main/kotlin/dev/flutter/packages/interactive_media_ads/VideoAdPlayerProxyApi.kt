@@ -1,15 +1,62 @@
 package dev.flutter.packages.interactive_media_ads
 
+import com.google.ads.interactivemedia.v3.api.AdPodInfo
+import com.google.ads.interactivemedia.v3.api.player.AdMediaInfo
 import com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer
 import com.google.ads.interactivemedia.v3.api.player.VideoProgressUpdate
 
 class VideoAdPlayerProxyApi(pigeonRegistrar: PigeonProxyApiRegistrar) :
     PigeonApiVideoAdPlayer(pigeonRegistrar) {
+  override fun pigeon_defaultConstructor(): VideoAdPlayer {
+    return VideoAdPlayerImpl(this)
+  }
+
+  private class VideoAdPlayerImpl(val api: VideoAdPlayerProxyApi): VideoAdPlayer {
+    var volume: Int = 0;
+    var adProgress: VideoProgressUpdate = VideoProgressUpdate.VIDEO_TIME_NOT_READY
+
+    override fun getAdProgress(): VideoProgressUpdate {
+      return adProgress
+    }
+
+    override fun getVolume(): Int {
+      return volume
+    }
+
+    override fun addCallback(callback: VideoAdPlayer.VideoAdPlayerCallback) {
+      api.addCallback(this, callbackArg = callback) {}
+    }
+
+    override fun loadAd(adMediaInfo: AdMediaInfo, adPodInfo: AdPodInfo) {
+      api.loadAd(this, adMediaInfo, adPodInfo) {}
+    }
+
+    override fun pauseAd(adMediaInfo: AdMediaInfo) {
+      api.pauseAd(this, adMediaInfo) {}
+    }
+
+    override fun playAd(adMediaInfo: AdMediaInfo) {
+      api.playAd(this, adMediaInfo) {}
+    }
+
+    override fun release() {
+      api.release(this) {}
+    }
+
+    override fun removeCallback(callback: VideoAdPlayer.VideoAdPlayerCallback) {
+      api.removeCallback(this, callbackArg = callback) {}
+    }
+
+    override fun stopAd(adMediaInfo: AdMediaInfo) {
+      api.stopAd(this, adMediaInfo) {}
+    }
+  }
+
   override fun setVolume(pigeon_instance: VideoAdPlayer, value: Long) {
-    TODO("Not yet implemented")
+    (pigeon_instance as VideoAdPlayerImpl).volume = value.toInt()
   }
 
   override fun setAdProgress(pigeon_instance: VideoAdPlayer, progress: VideoProgressUpdate) {
-    TODO("Not yet implemented")
+    (pigeon_instance as VideoAdPlayerImpl).adProgress = progress
   }
 }

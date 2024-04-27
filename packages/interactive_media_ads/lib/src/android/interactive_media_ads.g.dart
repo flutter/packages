@@ -861,6 +861,47 @@ class ImaSdkFactory extends PigeonProxyApiBaseClass {
 ///
 /// See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/player/VideoAdPlayer.html.
 class VideoAdPlayer extends PigeonProxyApiBaseClass {
+  VideoAdPlayer({
+    super.pigeon_binaryMessenger,
+    super.pigeon_instanceManager,
+    required this.addCallback,
+    required this.loadAd,
+    required this.pauseAd,
+    required this.playAd,
+    required this.release,
+    required this.removeCallback,
+    required this.stopAd,
+  }) {
+    final int __pigeon_instanceIdentifier =
+        pigeon_instanceManager.addDartCreatedInstance(this);
+    final _PigeonProxyApiBaseCodec pigeonChannelCodec =
+        __pigeon_codecVideoAdPlayer;
+    final BinaryMessenger? __pigeon_binaryMessenger = pigeon_binaryMessenger;
+    () async {
+      const String __pigeon_channelName =
+          'dev.flutter.pigeon.interactive_media_ads.VideoAdPlayer.pigeon_defaultConstructor';
+      final BasicMessageChannel<Object?> __pigeon_channel =
+          BasicMessageChannel<Object?>(
+        __pigeon_channelName,
+        pigeonChannelCodec,
+        binaryMessenger: __pigeon_binaryMessenger,
+      );
+      final List<Object?>? __pigeon_replyList = await __pigeon_channel
+          .send(<Object?>[__pigeon_instanceIdentifier]) as List<Object?>?;
+      if (__pigeon_replyList == null) {
+        throw _createConnectionError(__pigeon_channelName);
+      } else if (__pigeon_replyList.length > 1) {
+        throw PlatformException(
+          code: __pigeon_replyList[0]! as String,
+          message: __pigeon_replyList[1] as String?,
+          details: __pigeon_replyList[2],
+        );
+      } else {
+        return;
+      }
+    }();
+  }
+
   /// Constructs [VideoAdPlayer] without creating the associated native object.
   ///
   /// This should only be used by subclasses created by this library or to
@@ -2910,6 +2951,34 @@ class MediaPlayer extends PigeonProxyApiBaseClass {
     final BinaryMessenger? __pigeon_binaryMessenger = pigeon_binaryMessenger;
     const String __pigeon_channelName =
         'dev.flutter.pigeon.interactive_media_ads.MediaPlayer.pause';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: __pigeon_binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        await __pigeon_channel.send(<Object?>[this]) as List<Object?>?;
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: __pigeon_replyList[0]! as String,
+        message: __pigeon_replyList[1] as String?,
+        details: __pigeon_replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  /// Stops playback after playback has been started or paused.
+  Future<void> stop() async {
+    final _PigeonProxyApiBaseCodec pigeonChannelCodec =
+        __pigeon_codecMediaPlayer;
+    final BinaryMessenger? __pigeon_binaryMessenger = pigeon_binaryMessenger;
+    const String __pigeon_channelName =
+        'dev.flutter.pigeon.interactive_media_ads.MediaPlayer.stop';
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,

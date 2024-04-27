@@ -20,4 +20,8 @@ class MediaPlayerProxyApi(pigeonRegistrar: PigeonProxyApiRegistrar) : PigeonApiM
   override fun pause(pigeon_instance: MediaPlayer) {
     pigeon_instance.pause()
   }
+
+  override fun stop(pigeon_instance: MediaPlayer) {
+    pigeon_instance.stop()
+  }
 }
