@@ -13,14 +13,13 @@ import 'package:cross_file/cross_file.dart';
 import 'package:test/test.dart';
 import 'package:web/web.dart' as html;
 
+import 'common.dart';
+
 const String expectedStringContents = 'Hello, world! I ❤ ñ! 空手';
 final Uint8List bytes = Uint8List.fromList(utf8.encode(expectedStringContents));
 final html.File textFile =
     html.File(<JSUint8Array>[bytes.toJS].toJS, 'hello.txt');
-final String textFileUrl =
-    // TODO(kevmoo): drop ignore when pkg:web constraint excludes v0.3
-    // ignore: unnecessary_cast
-    html.URL.createObjectURL(textFile as JSObject);
+final String textFileUrl = html.URL.createObjectURL(textFile as JSObject);
 
 void main() {
   group('Create with an objectUrl', () {
@@ -112,7 +111,7 @@ void main() {
     const String crossFileDomElementId = '__x_file_dom_element';
 
     group('CrossFile saveTo(..)', () {
-      group('From data', () {
+      group('from data', () {
         test('creates a DOM container', () async {
           final XFile file = XFile.fromData(bytes);
 
@@ -225,30 +224,4 @@ void main() {
       });
     });
   });
-}
-
-/// An XFileSource that uses a fixed last modified time and byte contents.
-class TestXFileSource extends XFileSource {
-  TestXFileSource(
-      this._lastModified, this.mimeType, this.bytes, this.path, this.name);
-
-  final DateTime _lastModified;
-  @override
-  final String? mimeType;
-  final Uint8List bytes;
-  @override
-  final String path;
-  @override
-  final String name;
-
-  @override
-  Future<DateTime> lastModified() => Future<DateTime>.value(_lastModified);
-
-  @override
-  Future<int> length() => Future<int>.value(bytes.length);
-
-  @override
-  Stream<Uint8List> openRead([int? start, int? end]) {
-    return Stream<Uint8List>.value(bytes.sublist(start ?? 0, end));
-  }
 }

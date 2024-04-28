@@ -56,13 +56,8 @@ class XFile extends XFileBase {
   /// won't be altered or caught by this `XFile`.
   XFile.fromCustomSource(
     XFileSource source, {
-    String? mimeType,
-    String? name,
-    int? length,
-    DateTime? lastModified,
-    String? path,
     @visibleForTesting CrossFileTestOverrides? overrides,
-  }) : super(path) {
+  }) : super(null) {
     throw UnimplementedError(
         'CrossFile is not available in your current platform.');
   }

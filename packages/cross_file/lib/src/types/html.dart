@@ -133,11 +133,17 @@ class XFile extends XFileBase {
 
   @override
   String get name {
-    return _name ?? _source!.name;
+    return _name ?? _source!.name ?? '';
   }
 
   @override
-  String get path => _path ?? _source!.path;
+  String get path {
+    if ((_path ?? _source!.path) == null) {
+      _path = URL.createObjectURL(_browserBlob!);
+    }
+
+    return _path ?? _source!.path!;
+  }
 
   @override
   Future<DateTime> lastModified() async =>
@@ -145,6 +151,12 @@ class XFile extends XFileBase {
 
   Future<Blob> get _blob async {
     if (_browserBlob != null) {
+      return _browserBlob!;
+    }
+
+    // We lazy-load the blob into memory as it could not be used at all during the lifetime of the XFile.
+    if (_source != null) {
+      _browserBlob = _createBlobFromBytes(await readAsBytes(), mimeType);
       return _browserBlob!;
     }
 

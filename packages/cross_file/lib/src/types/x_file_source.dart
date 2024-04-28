@@ -13,12 +13,12 @@ abstract class XFileSource {
   /// This should not be trusted to always be valid, if not at all.
   ///
   /// For the web implementation, this should be a blob URL.
-  String get path;
+  String? get path;
 
   /// The name of the file as it was selected by the user in their device.
   ///
-  /// This represents most of the time the basename of `path`.
-  String get name;
+  /// This represents most of the time the basename of `path` excepted on web.
+  String? get name;
 
   /// Get the last-modified time for the CrossFile
   ///

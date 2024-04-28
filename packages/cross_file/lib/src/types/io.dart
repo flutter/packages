@@ -109,7 +109,7 @@ class XFile extends XFileBase {
 
     if (_source != null) {
       // Clear the file before writing to it
-      await fileToSave.writeAsBytes(<int>[]);
+      await fileToSave.writeAsBytes(<int>[], flush: true);
 
       await _source.openRead().forEach((Uint8List chunk) {
         fileToSave.writeAsBytesSync(chunk, mode: FileMode.append);
@@ -129,7 +129,7 @@ class XFile extends XFileBase {
       return _file.path;
     }
 
-    return _source!.path;
+    return _source!.path ?? '';
   }
 
   @override
@@ -140,7 +140,7 @@ class XFile extends XFileBase {
 
     // Name could be different from the basename of the path on Android
     // as the full path may not be available.
-    return _source!.name;
+    return _source!.name ?? '';
   }
 
   @override

@@ -12,6 +12,8 @@ import 'dart:typed_data';
 import 'package:cross_file/cross_file.dart';
 import 'package:test/test.dart';
 
+import 'common.dart';
+
 final String pathPrefix =
     Directory.current.path.endsWith('test') ? './assets/' : './test/assets/';
 final String path = '${pathPrefix}hello.txt';
@@ -112,8 +114,8 @@ void main() {
   });
 
   group('Create with a custom source', () {
-    final XFile file = XFile.fromCustomSource(
-        TestXFileSource(DateTime.now(), 'text/plain', bytes, textFilePath));
+    final XFile file = XFile.fromCustomSource(TestXFileSource(
+        DateTime.now(), 'text/plain', bytes, textFilePath, null));
 
     test('Can be read as a string', () async {
       expect(await file.readAsString(), equals(expectedStringContents));
@@ -164,31 +166,5 @@ class TestXFile extends XFile {
   Future<Uint8List> readAsBytes() {
     hasBeenRead = true;
     return super.readAsBytes();
-  }
-}
-
-/// An XFileSource that uses a fixed last modified time and byte contents.
-class TestXFileSource extends XFileSource {
-  TestXFileSource(this._lastModified, this.mimeType, this.bytes, this.path);
-
-  final DateTime _lastModified;
-  @override
-  final String? mimeType;
-  final Uint8List bytes;
-  @override
-  final String path;
-
-  @override
-  Future<DateTime> lastModified() => Future<DateTime>.value(_lastModified);
-
-  @override
-  Future<int> length() => Future<int>.value(bytes.length);
-
-  @override
-  String get name => path.split(Platform.pathSeparator).last;
-
-  @override
-  Stream<Uint8List> openRead([int? start, int? end]) {
-    return Stream<Uint8List>.value(bytes.sublist(start ?? 0, end));
   }
 }
