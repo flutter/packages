@@ -1,3 +1,8 @@
+## 0.3.5
+
+* Adds a new constructor (`.fromCustomSource`) to add custom sources
+  for XFiles' content and metadata using an `XFileSource` implementation.
+
 ## 0.3.4+1
 
 * Removes a few deprecated API usages.
