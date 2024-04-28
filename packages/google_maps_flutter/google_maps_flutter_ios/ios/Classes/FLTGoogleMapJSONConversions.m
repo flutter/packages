@@ -142,7 +142,7 @@
   return nil;
 }
 
-+ (NSArray<GMSStrokeStyle *> *)strokeStylesFromPatterns:(NSArray *)patterns
++ (NSArray<GMSStrokeStyle *> *)strokeStylesFromPatterns:(NSArray<NSArray *> *)patterns
                                             strokeColor:(UIColor *)strokeColor {
   NSMutableArray *strokeStyles = [[NSMutableArray alloc] initWithCapacity:[patterns count]];
   for (unsigned int i = 0; i < [patterns count]; i++) {
@@ -156,7 +156,7 @@
   return strokeStyles;
 }
 
-+ (NSArray<NSNumber *> *)spanLengthsFromPatterns:(NSArray *)patterns {
++ (NSArray<NSNumber *> *)spanLengthsFromPatterns:(NSArray<NSArray *> *)patterns {
   NSMutableArray *lengths = [[NSMutableArray alloc] initWithCapacity:[patterns count]];
   for (unsigned int i = 0; i < [patterns count]; i++) {
     NSNumber *length = [patterns[i] count] > 1 ? patterns[i][1] : @0;
