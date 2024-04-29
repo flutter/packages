@@ -22,6 +22,7 @@ from your project's root directory.
 ## Limitations
 
 ### Concurrent preview display, video recording, and image streaming
+
 The CameraX plugin only supports the concurrent camera use cases supported by Camerax; see
 [their documentation][6] for more information. To avoid the usage of unsupported concurrent
 use cases, the plugin behaves according to the following:
