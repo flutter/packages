@@ -1,3 +1,7 @@
+## 14.0.2
+
+- Fixes unwanted logs when `hierarchicalLoggingEnabled` was set to `true`.
+
 ## 14.0.1
 
 - Updates the redirection documentation for clarity
