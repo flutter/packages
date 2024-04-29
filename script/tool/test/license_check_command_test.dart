@@ -120,6 +120,7 @@ void main() {
         'foo.mocks.dart',
         // Ignored files.
         'resource.h',
+        'Package.swift',
       ];
 
       for (final String name in ignoredFiles) {
