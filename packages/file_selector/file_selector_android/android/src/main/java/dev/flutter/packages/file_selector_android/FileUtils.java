@@ -73,6 +73,9 @@ public class FileUtils {
 
       // Non-primary storage volumes come from SD cards, USB drives, etc. and are
       // not handled here.
+      //
+      // Constant for primary storage volumes found at
+      // https://cs.android.com/android/platform/superproject/main/+/main:frameworks/base/core/java/android/provider/DocumentsContract.java;l=255?q=Documentscont&ss=android%2Fplatform%2Fsuperproject%2Fmain.
       if (!documentStorageVolume.equals("primary")) {
         throw new UnsupportedOperationException(
             "Retrieving the path of a document from storage volume "
