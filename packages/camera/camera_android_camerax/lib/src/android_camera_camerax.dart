@@ -807,11 +807,7 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// [cameraId] is not used.
   @override
   Future<XFile> takePicture(int cameraId) async {
-    final bool imageCaptureIsBound =
-        await processCameraProvider!.isBound(imageCapture!);
-    if (!imageCaptureIsBound) {
-      await _bindUseCaseToLifecycle(imageCapture!, cameraId);
-    }
+    await _bindUseCaseToLifecycle(imageCapture!, cameraId);
     // Set flash mode.
     if (_currentFlashMode != null) {
       await imageCapture!.setFlashMode(_currentFlashMode!);
@@ -893,6 +889,11 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// interface, respectively.
   @override
   Future<void> startVideoCapturing(VideoCaptureOptions options) async {
+    if (recording != null) {
+      // There is currently an active recording, so do not start a new one.
+      return;
+    }
+
     final Camera2CameraInfo camera2CameraInfo =
         await proxy.getCamera2CameraInfo(cameraInfo!);
     final int cameraInfoSupportedHardwareLevel =
@@ -915,14 +916,7 @@ class AndroidCameraCameraX extends CameraPlatform {
       }
     }
 
-    if (recording != null) {
-      // There is currently an active recording, so do not start a new one.
-      return;
-    }
-
-    if (!(await processCameraProvider!.isBound(videoCapture!))) {
-      await _bindUseCaseToLifecycle(videoCapture!, options.cameraId);
-    }
+    await _bindUseCaseToLifecycle(videoCapture!, options.cameraId);
 
     // Set target rotation to default CameraX rotation only if capture
     // orientation not locked.
@@ -1004,7 +998,7 @@ class AndroidCameraCameraX extends CameraPlatform {
   Stream<CameraImageData> onStreamedFrameAvailable(int cameraId,
       {CameraImageStreamOptions? options}) {
     cameraImageDataStreamController = StreamController<CameraImageData>(
-      onListen: () => _configureImageAnalysis(cameraId),
+      onListen: () async => _configureImageAnalysis(cameraId),
       onCancel: _onFrameStreamCancel,
     );
     return cameraImageDataStreamController!.stream;
@@ -1014,7 +1008,7 @@ class AndroidCameraCameraX extends CameraPlatform {
   // by a ProcessCameraProvider instance:
 
   /// Binds [useCase] to the camera lifecycle controlled by the
-  /// [processCameraProvider].
+  /// [processCameraProvider] if not already bound.
   ///
   /// [cameraId] used to build [CameraEvent]s should you wish to filter
   /// these based on a reference to a cameraId received from calling
@@ -1022,6 +1016,7 @@ class AndroidCameraCameraX extends CameraPlatform {
   Future<void> _bindUseCaseToLifecycle(UseCase useCase, int cameraId) async {
     final bool useCaseIsBound = await processCameraProvider!.isBound(useCase);
     final bool useCaseIsPausedPreview = useCase is Preview && _previewIsPaused;
+
     if (useCaseIsBound || useCaseIsPausedPreview) {
       // Only bind if useCase is not already bound or preview is intentionally
       // paused.
@@ -1030,16 +1025,13 @@ class AndroidCameraCameraX extends CameraPlatform {
 
     camera = await processCameraProvider!
         .bindToLifecycle(cameraSelector!, <UseCase>[useCase]);
+
     await _updateCameraInfoAndLiveCameraState(cameraId);
   }
 
   /// Configures the [imageAnalysis] instance for image streaming.
   Future<void> _configureImageAnalysis(int cameraId) async {
-    final bool imageAnalysisBound =
-        await processCameraProvider!.isBound(imageAnalysis!);
-    if (!imageAnalysisBound) {
-      await _bindUseCaseToLifecycle(imageAnalysis!, cameraId);
-    }
+    await _bindUseCaseToLifecycle(imageAnalysis!, cameraId);
 
     // Set target rotation to default CameraX rotation only if capture
     // orientation not locked.
@@ -1081,7 +1073,7 @@ class AndroidCameraCameraX extends CameraPlatform {
   }
 
   /// Unbinds [useCase] from camera lifecycle controlled by the
-  /// [processCameraProvider].
+  /// [processCameraProvider] if not already unbound.
   Future<void> _unbindUseCaseFromLifecycle(UseCase useCase) async {
     final bool useCaseIsBound = await processCameraProvider!.isBound(useCase);
     if (!useCaseIsBound) {
