@@ -122,9 +122,19 @@ class _FakeWKWebViewConfiguration_8 extends _i1.SmartFake
         );
 }
 
-class _FakeWKScriptMessageHandler_9 extends _i1.SmartFake
+class _FakeWKWebView_9 extends _i1.SmartFake implements _i5.WKWebView {
+  _FakeWKWebView_9(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
+class _FakeWKScriptMessageHandler_10 extends _i1.SmartFake
     implements _i5.WKScriptMessageHandler {
-  _FakeWKScriptMessageHandler_9(
+  _FakeWKScriptMessageHandler_10(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -659,14 +669,22 @@ class MockWKWebsiteDataStore extends _i1.Mock
       ) as _i6.Future<void>);
 }
 
-/// A class which mocks [WKWebView].
+/// A class which mocks [WKWebViewIOS].
 ///
 /// See the documentation for Mockito's code generation for more information.
-// ignore: must_be_immutable
-class MockWKWebView extends _i1.Mock implements _i5.WKWebView {
-  MockWKWebView() {
+class MockWKWebViewIOS extends _i1.Mock implements _i5.WKWebViewIOS {
+  MockWKWebViewIOS() {
     _i1.throwOnMissingStub(this);
   }
+
+  @override
+  _i4.UIScrollView get scrollView => (super.noSuchMethod(
+        Invocation.getter(#scrollView),
+        returnValue: _FakeUIScrollView_2(
+          this,
+          Invocation.getter(#scrollView),
+        ),
+      ) as _i4.UIScrollView);
 
   @override
   _i5.WKWebViewConfiguration get configuration => (super.noSuchMethod(
@@ -676,6 +694,41 @@ class MockWKWebView extends _i1.Mock implements _i5.WKWebView {
           Invocation.getter(#configuration),
         ),
       ) as _i5.WKWebViewConfiguration);
+
+  @override
+  _i5.WKWebView copy() => (super.noSuchMethod(
+        Invocation.method(
+          #copy,
+          [],
+        ),
+        returnValue: _FakeWKWebView_9(
+          this,
+          Invocation.method(
+            #copy,
+            [],
+          ),
+        ),
+      ) as _i5.WKWebView);
+
+  @override
+  _i6.Future<void> setBackgroundColor(_i7.Color? color) => (super.noSuchMethod(
+        Invocation.method(
+          #setBackgroundColor,
+          [color],
+        ),
+        returnValue: _i6.Future<void>.value(),
+        returnValueForMissingStub: _i6.Future<void>.value(),
+      ) as _i6.Future<void>);
+
+  @override
+  _i6.Future<void> setOpaque(bool? opaque) => (super.noSuchMethod(
+        Invocation.method(
+          #setOpaque,
+          [opaque],
+        ),
+        returnValue: _i6.Future<void>.value(),
+        returnValueForMissingStub: _i6.Future<void>.value(),
+      ) as _i6.Future<void>);
 
   @override
   _i6.Future<void> setUIDelegate(_i5.WKUIDelegate? delegate) =>
@@ -908,21 +961,6 @@ class MockWKWebView extends _i1.Mock implements _i5.WKWebView {
         returnValue: _i6.Future<void>.value(),
         returnValueForMissingStub: _i6.Future<void>.value(),
       ) as _i6.Future<void>);
-
-  @override
-  _i2.NSObject copy() => (super.noSuchMethod(
-        Invocation.method(
-          #copy,
-          [],
-        ),
-        returnValue: _FakeNSObject_0(
-          this,
-          Invocation.method(
-            #copy,
-            [],
-          ),
-        ),
-      ) as _i2.NSObject);
 }
 
 /// A class which mocks [WKWebViewConfiguration].
@@ -1077,7 +1115,7 @@ class MockWKScriptMessageHandler extends _i1.Mock
           #copy,
           [],
         ),
-        returnValue: _FakeWKScriptMessageHandler_9(
+        returnValue: _FakeWKScriptMessageHandler_10(
           this,
           Invocation.method(
             #copy,

@@ -90,7 +90,7 @@ void main() {
 
       CapturingNavigationDelegate
           .lastCreatedDelegate.decidePolicyForNavigationResponse!(
-        WKWebView.detached(),
+        WKWebViewIOS.detached(),
         const WKNavigationResponse(
             response: NSHttpUrlResponse(statusCode: 401), forMainFrame: true),
       );
@@ -117,7 +117,7 @@ void main() {
 
       CapturingNavigationDelegate
           .lastCreatedDelegate.decidePolicyForNavigationResponse!(
-        WKWebView.detached(),
+        WKWebViewIOS.detached(),
         const WKNavigationResponse(
             response: NSHttpUrlResponse(statusCode: 399), forMainFrame: true),
       );
