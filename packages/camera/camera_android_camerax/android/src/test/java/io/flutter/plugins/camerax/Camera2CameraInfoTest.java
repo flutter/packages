@@ -12,22 +12,16 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import android.content.Context;
-import androidx.camera.camera2.interop.Camera2CameraInfo;
-import androidx.camera.camera2.interop.CaptureRequestOptions;
-import androidx.camera.core.CameraInfo;
 import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraMetadata;
-import com.google.common.util.concurrent.FutureCallback;
-import com.google.common.util.concurrent.Futures;
-import com.google.common.util.concurrent.ListenableFuture;
+import androidx.camera.camera2.interop.Camera2CameraInfo;
+import androidx.camera.core.CameraInfo;
 import io.flutter.plugin.common.BinaryMessenger;
 import java.util.Objects;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
@@ -61,7 +55,7 @@ public class Camera2CameraInfoTest {
     final long cameraInfoIdentifier = 92;
 
     testInstanceManager.addDartCreatedInstance(mockCameraInfo, cameraInfoIdentifier);
-        testInstanceManager.addDartCreatedInstance(mockCamera2CameraInfo, camera2CameraInfoIdentifier);
+    testInstanceManager.addDartCreatedInstance(mockCamera2CameraInfo, camera2CameraInfoIdentifier);
 
     try (MockedStatic<Camera2CameraInfo> mockedCamera2CameraInfo =
         Mockito.mockStatic(Camera2CameraInfo.class)) {
@@ -70,7 +64,8 @@ public class Camera2CameraInfoTest {
           .thenAnswer((Answer<Camera2CameraInfo>) invocation -> mockCamera2CameraInfo);
 
       hostApi.createFrom(cameraInfoIdentifier);
-      assertEquals(testInstanceManager.getInstance(camera2CameraInfoIdentifier), mockCamera2CameraInfo);
+      assertEquals(
+          testInstanceManager.getInstance(camera2CameraInfoIdentifier), mockCamera2CameraInfo);
     }
   }
 
@@ -82,9 +77,13 @@ public class Camera2CameraInfoTest {
     final int expectedHardwareLevel = CameraMetadata.INFO_SUPPORTED_HARDWARE_LEVEL_FULL;
 
     testInstanceManager.addDartCreatedInstance(mockCamera2CameraInfo, camera2CameraInfoIdentifier);
-    when(mockCamera2CameraInfo.getCameraCharacteristic(CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL)).thenReturn(expectedHardwareLevel);
+    when(mockCamera2CameraInfo.getCameraCharacteristic(
+            CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL))
+        .thenReturn(expectedHardwareLevel);
 
-    assertEquals(expectedHardwareLevel, hostApi.getSupportedHardwareLevel(camera2CameraInfoIdentifier).intValue());
+    assertEquals(
+        expectedHardwareLevel,
+        hostApi.getSupportedHardwareLevel(camera2CameraInfoIdentifier).intValue());
   }
 
   @Test
@@ -108,7 +107,8 @@ public class Camera2CameraInfoTest {
     spyFlutterApi.create(mockCamera2CameraInfo, reply -> {});
 
     final long identifier =
-        Objects.requireNonNull(testInstanceManager.getIdentifierForStrongReference(mockCamera2CameraInfo));
+        Objects.requireNonNull(
+            testInstanceManager.getIdentifierForStrongReference(mockCamera2CameraInfo));
     verify(spyFlutterApi).create(eq(identifier), any());
   }
 }

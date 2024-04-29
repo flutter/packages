@@ -2049,7 +2049,7 @@ void main() {
 
     when(mockProcessCameraProvider.bindToLifecycle(any, any))
         .thenAnswer((_) => Future<Camera>.value(mockCamera));
-    when(mockProcessCameraProvider.isBound(camera.imageAnalysis!))
+    when(mockProcessCameraProvider.isBound(camera.imageAnalysis))
         .thenAnswer((_) async => true);
     when(mockCamera.getCameraInfo())
         .thenAnswer((_) => Future<CameraInfo>.value(mockCameraInfo));
@@ -2090,7 +2090,7 @@ void main() {
     // Ignore setting target rotation for this test; tested seprately.
     camera.captureOrientationLocked = true;
 
-    when(mockProcessCameraProvider.isBound(camera.imageAnalysis!))
+    when(mockProcessCameraProvider.isBound(camera.imageAnalysis))
         .thenAnswer((_) async => true);
 
     final CameraImageData mockCameraImageData = MockCameraImageData();
