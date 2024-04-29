@@ -263,9 +263,10 @@ class AndroidCameraCameraX extends CameraPlatform {
       cameraName = 'Camera $cameraCount';
       cameraCount++;
 
+      // TODO(camsim99): Use camera ID retrieved from Camera2CameraInfo as
+      // camera name: https://github.com/flutter/flutter/issues/147545.
       cameraDescriptions.add(CameraDescription(
-          name:
-              cameraName, // TODO(camsim99): get actual ID here from Camera2CameraInfo
+          name: cameraName,
           lensDirection: cameraLensDirection,
           sensorOrientation: cameraSensorOrientation));
     }
@@ -896,6 +897,14 @@ class AndroidCameraCameraX extends CameraPlatform {
 
     dynamic Function(CameraImageData)? streamCallback = options.streamCallback;
     if (!_previewIsPaused) {
+      // The plugin binds the preview use case to the camera lifecycle when
+      // createCamera is called, but camera use cases can become limited
+      // when video recording and displaying a preview concurrently. This logic
+      // will prioritize attempting to continue displaying the preview,
+      // stream images, and record video if specified and supported. Otherwise,
+      // the preview must be paused in order to allow those concurrently. See
+      // https://developer.android.com/media/camera/camerax/architecture#combine-use-cases
+      // for more information on supported concurrent camera use cases.
       final Camera2CameraInfo camera2CameraInfo =
           await proxy.getCamera2CameraInfo(cameraInfo!);
       final int cameraInfoSupportedHardwareLevel =

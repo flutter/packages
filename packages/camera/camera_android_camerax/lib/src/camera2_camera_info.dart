@@ -31,7 +31,7 @@ class Camera2CameraInfo extends JavaObject {
 
   late final _Camera2CameraInfoHostApiImpl _api;
 
-  /// Retrieves [Camera2CameraInfo] isntance from [cameraInfo].
+  /// Retrieves [Camera2CameraInfo] instance from [cameraInfo].
   static Future<Camera2CameraInfo> from(CameraInfo cameraInfo,
       {BinaryMessenger? binaryMessenger, InstanceManager? instanceManager}) {
     final _Camera2CameraInfoHostApiImpl api = _Camera2CameraInfoHostApiImpl(
@@ -48,7 +48,7 @@ class Camera2CameraInfo extends JavaObject {
   Future<int> getSupportedHardwareLevel() =>
       _api.getSupportedHardwareLevelFromInstance(this);
 
-  /// Gets the String camera ID.
+  /// Gets the camera ID.
   ///
   /// The ID may change based on the internal configuration of the camera to which
   /// this instances pertains.

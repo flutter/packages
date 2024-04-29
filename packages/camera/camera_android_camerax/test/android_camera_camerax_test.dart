@@ -3663,7 +3663,7 @@ void main() {
   });
 
   test(
-      'startVideoCapturing unbinds ImageAnalysis use case when camera device is not at least level 3 and no image streaming callback is specified',
+      'startVideoCapturing unbinds ImageAnalysis use case when camera device is not at least level 3, no image streaming callback is specified, and preview is not paused',
       () async {
     // Set up mocks and constants.
     final AndroidCameraCameraX camera = AndroidCameraCameraX();
@@ -3724,7 +3724,7 @@ void main() {
   });
 
   test(
-      'startVideoCapturing unbinds ImageAnalysis use case when image streaming callback not specified and camera device is level 3',
+      'startVideoCapturing unbinds ImageAnalysis use case when image streaming callback not specified, camera device is level 3, and preview is not paused',
       () async {
     // Set up mocks and constants.
     final AndroidCameraCameraX camera = AndroidCameraCameraX();
@@ -3785,7 +3785,7 @@ void main() {
   });
 
   test(
-      'startVideoCapturing unbinds ImageAnalysis use case when image streaming callback is specified and camera device is not at least level 3',
+      'startVideoCapturing unbinds ImageAnalysis use case when image streaming callback is specified, camera device is not at least level 3, and preview is not paused',
       () async {
     // Set up mocks and constants.
     final AndroidCameraCameraX camera = AndroidCameraCameraX();
@@ -3846,7 +3846,7 @@ void main() {
   });
 
   test(
-      'startVideoCapturing unbinds ImageCapture use case when image streaming callback is specified and camera device is at least level 3',
+      'startVideoCapturing unbinds ImageCapture use case when image streaming callback is specified,  camera device is at least level 3, and preview is not paused',
       () async {
     // Set up mocks and constants.
     final AndroidCameraCameraX camera = AndroidCameraCameraX();
