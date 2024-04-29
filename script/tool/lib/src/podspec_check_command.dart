@@ -161,7 +161,8 @@ class PodspecCheckCommand extends PackageLoopingCommand {
   }
 
   /// Returns true if there is any iOS plugin implementation code written in
-  /// Swift.
+  /// Swift. Skips files named "Package.swift", which is a Swift Pacakge Manager
+  /// manifest file and does not mean the plugin is written in Swift.
   Future<bool> _hasIOSSwiftCode(RepositoryPackage package) async {
     return getFilesForPackage(package).any((File entity) {
       final String relativePath =
@@ -171,7 +172,8 @@ class PodspecCheckCommand extends PackageLoopingCommand {
         return false;
       }
       final String filePath = entity.path;
-      return path.extension(filePath) == '.swift';
+      return entity.basename != 'Package.swift' &&
+          path.extension(filePath) == '.swift';
     });
   }
 
