@@ -140,17 +140,17 @@ static long const FWFMinHostCreatedIdentifier = 65536;
   NSNumber *__block identifierNumber = nil;
   dispatch_sync(_lockQueue, ^{
     identifierNumber = [self.identifiers objectForKey:instance];
-    if (identifierNumber) {
+    if (identifierNumber != nil) {
       [self.strongInstances setObject:instance forKey:identifierNumber];
     }
   });
-  return identifierNumber ? identifierNumber.longValue : NSNotFound;
+  return identifierNumber != nil ? identifierNumber.longValue : NSNotFound;
 }
 
 - (BOOL)containsInstance:(nonnull NSObject *)instance {
   BOOL __block containsInstance;
   dispatch_sync(_lockQueue, ^{
-    containsInstance = [self.identifiers objectForKey:instance];
+    containsInstance = [self.identifiers objectForKey:instance] != nil;
   });
   return containsInstance;
 }

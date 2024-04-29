@@ -276,7 +276,7 @@
                                                     response.disposition);
 
                                             NSURLCredential *credential =
-                                                response.credentialIdentifier
+                                                response.credentialIdentifier != nil
                                                     ? (NSURLCredential *)[self.navigationDelegateAPI
                                                                               .instanceManager
                                                           instanceForIdentifier:

@@ -39,6 +39,10 @@
 - (void)setJavaScriptEnabledForPreferencesWithIdentifier:(NSInteger)identifier
                                                isEnabled:(BOOL)enabled
                                                    error:(FlutterError *_Nullable *_Nonnull)error {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+  // TODO(stuartmorgan): Replace with new API. See https://github.com/flutter/flutter/issues/125901
   [[self preferencesForIdentifier:identifier] setJavaScriptEnabled:enabled];
+#pragma clang diagnostic pop
 }
 @end
