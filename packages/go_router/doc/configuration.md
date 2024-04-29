@@ -167,23 +167,32 @@ provides a default implementation for managing the branch navigators, using an
 When using StatefulShellRoute, routes aren't configured on the shell route 
 itself. Instead, they are configured for each of the branches. Example:
 
+<?code-excerpt "../example/lib/stateful_shell_route.dart (configuration-branches)"?>
 ```dart
-StatefulShellRoute.indexedStack(
-  branches: <StatefulShellBranch>[
-    StatefulShellBranch(
-      routes: <RouteBase>[
-        GoRoute(
-          path: '/a',
-          builder: (BuildContext context, GoRouterState state) {
-            return const RootScreen(label: 'A');
-          },             
-        ),
-      ],
-    ),
-    /* ... */
-  ],
-  /* builder: ... */
-);
+branches: <StatefulShellBranch>[
+  // The route branch for the first tab of the bottom navigation bar.
+  StatefulShellBranch(
+    navigatorKey: _sectionANavigatorKey,
+    routes: <RouteBase>[
+      GoRoute(
+        // The screen to display as the root in the first tab of the
+        // bottom navigation bar.
+        path: '/a',
+        builder: (BuildContext context, GoRouterState state) =>
+            const RootScreen(label: 'A', detailsPath: '/a/details'),
+        routes: <RouteBase>[
+          // The details screen to display stacked on navigator of the
+          // first tab. This will cover screen A but not the application
+          // shell (bottom navigation bar).
+          GoRoute(
+            path: 'details',
+            builder: (BuildContext context, GoRouterState state) =>
+                const DetailsScreen(label: 'A'),
+          ),
+        ],
+      ),
+    ],
+  ),
 ```
 
 Similar to ShellRoute, a builder must be provided to build the actual shell 
@@ -191,20 +200,17 @@ Widget that encapsulates the branch navigation container. The latter is
 implemented by the class [StatefulNavigationShell](https://pub.dev/documentation/go_router/latest/go_router/StatefulNavigationShell-class.html), 
 which is passed as the last argument to the builder function. Example:
 
+<?code-excerpt "../example/lib/stateful_shell_route.dart (configuration-builder)"?>
 ```dart
 StatefulShellRoute.indexedStack(
   builder: (BuildContext context, GoRouterState state,
       StatefulNavigationShell navigationShell) {
-    return Scaffold(
-      body: navigationShell,
-      /* ... */
-      bottomNavigationBar: BottomNavigationBar(
-        /* ... */
-      ),
-    );
+    // Return the widget that implements the custom shell (in this case
+    // using a BottomNavigationBar). The StatefulNavigationShell is passed
+    // to be able access the state of the shell and to navigate to other
+    // branches in a stateful way.
+    return ScaffoldWithNavBar(navigationShell: navigationShell);
   },
-  /* branches: ... */
-)
 ```
 
 Within the custom shell widget, the StatefulNavigationShell is first and 
@@ -212,15 +218,31 @@ foremost used as the child, or body, of the shell. Secondly, it is also used for
 handling stateful switching between branches, as well as providing the currently 
 active branch index. Example:
 
+<?code-excerpt "../example/lib/stateful_shell_route.dart (configuration-custom-shell)"?>
 ```dart
-return Scaffold(
-  body: navigationShell,
-  bottomNavigationBar: BottomNavigationBar(
-    /* items: ... */       
-    currentIndex: navigationShell.currentIndex,
-    onTap: (int index) => navigationShell.goBranch(index),
-  ),
-);
+@override
+Widget build(BuildContext context) {
+  return Scaffold(
+    // The StatefulNavigationShell from the associated StatefulShellRoute is
+    // directly passed as the body of the Scaffold.
+    body: navigationShell,
+    bottomNavigationBar: BottomNavigationBar(
+      // Here, the items of BottomNavigationBar are hard coded. In a real
+      // world scenario, the items would most likely be generated from the
+      // branches of the shell route, which can be fetched using
+      // `navigationShell.route.branches`.
+      items: const <BottomNavigationBarItem>[
+        BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Section A'),
+        BottomNavigationBarItem(icon: Icon(Icons.work), label: 'Section B'),
+        BottomNavigationBarItem(icon: Icon(Icons.tab), label: 'Section C'),
+      ],
+      currentIndex: navigationShell.currentIndex,
+      // Navigate to the current location of the branch at the provided index
+      // when tapping an item in the BottomNavigationBar.
+      onTap: (int index) => navigationShell.goBranch(index),
+    ),
+  );
+}
 ```
 
 For a complete example, see the [Stateful Nested 
@@ -258,4 +280,4 @@ final _router = GoRouter(
 [GoRoute]: https://pub.dev/documentation/go_router/latest/go_router/GoRoute-class.html
 [GoRouterState]: https://pub.dev/documentation/go_router/latest/go_router/GoRouterState-class.html
 [ShellRoute]: https://pub.dev/documentation/go_router/latest/go_router/ShellRoute-class.html
-[StatefulShellRoute]: https://pub.dev/documentation/go_router/latest/go_router/ShellRoute-class.html
+[StatefulShellRoute]: https://pub.dev/documentation/go_router/latest/go_router/StatefulShellRoute-class.html

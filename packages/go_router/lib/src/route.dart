@@ -773,6 +773,8 @@ class ShellRoute extends ShellRouteBase {
 /// * [Custom StatefulShellRoute example](https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/others/custom_stateful_shell_route.dart)
 /// which demonstrates how to customize the container for the branch Navigators
 /// and how to implement animated transitions when switching branches.
+///
+/// {@category Configuration}
 class StatefulShellRoute extends ShellRouteBase {
   /// Constructs a [StatefulShellRoute] from a list of [StatefulShellBranch]es,
   /// each representing a separate nested navigation tree (branch).
