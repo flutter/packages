@@ -84,7 +84,7 @@ public class Camera2CameraInfoTest {
     testInstanceManager.addDartCreatedInstance(mockCamera2CameraInfo, camera2CameraInfoIdentifier);
     when(mockCamera2CameraInfo.getCameraCharacteristic(CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL)).thenReturn(expectedHardwareLevel);
 
-    assertEquals(expectedHardwareLevel, hostApi.getSupportedHardwareLevel(camera2CameraInfoIdentifier).intValue(););
+    assertEquals(expectedHardwareLevel, hostApi.getSupportedHardwareLevel(camera2CameraInfoIdentifier).intValue());
   }
 
   @Test

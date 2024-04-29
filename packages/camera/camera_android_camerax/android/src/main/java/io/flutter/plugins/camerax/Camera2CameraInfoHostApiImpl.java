@@ -10,15 +10,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
 import androidx.camera.camera2.interop.Camera2CameraInfo;
 import androidx.camera.core.CameraInfo;
-import androidx.camera.core.FocusMeteringAction;
-import androidx.camera.core.FocusMeteringResult;
-import androidx.core.content.ContextCompat;
-import com.google.common.util.concurrent.FutureCallback;
-import com.google.common.util.concurrent.Futures;
-import com.google.common.util.concurrent.ListenableFuture;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugins.camerax.GeneratedCameraXLibrary.Camera2CameraInfoHostApi;
-import io.flutter.plugins.camerax.GeneratedCameraXLibrary.Result;
 import java.util.Objects;
 
 /**
@@ -36,20 +29,21 @@ public class Camera2CameraInfoHostApiImpl implements Camera2CameraInfoHostApi {
   @VisibleForTesting
   public static class Camera2CameraInfoProxy {
 
-   @NonNull
-   public Camera2CameraInfo createFrom(CameraInfo cameraInfo) { 
-     return Camera2CameraInfo.from(cameraInfo);
-   }
+    @NonNull
+    public Camera2CameraInfo createFrom(CameraInfo cameraInfo) {
+      return Camera2CameraInfo.from(cameraInfo);
+    }
 
-   @NonNull
-   public Integer getSupportedHardwareLevel(Camera2CameraInfo camera2CameraInfo) {
-    return camera2CameraInfo.getCameraCharacteristic(CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL);
-   }
+    @NonNull
+    public Integer getSupportedHardwareLevel(Camera2CameraInfo camera2CameraInfo) {
+      return camera2CameraInfo.getCameraCharacteristic(
+          CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL);
+    }
 
-  @NonNull
-   public String getCameraId(Camera2CameraInfo camera2CameraInfo) {
-    return camera2CameraInfo.getCameraId();
-   }
+    @NonNull
+    public String getCameraId(Camera2CameraInfo camera2CameraInfo) {
+      return camera2CameraInfo.getCameraId();
+    }
   }
 
   /**
@@ -60,8 +54,7 @@ public class Camera2CameraInfoHostApiImpl implements Camera2CameraInfoHostApi {
    * @param context {@link Context} used to retrieve {@code Executor}
    */
   public Camera2CameraInfoHostApiImpl(
-      @NonNull BinaryMessenger binaryMessenger,
-      @NonNull InstanceManager instanceManager) {
+      @NonNull BinaryMessenger binaryMessenger, @NonNull InstanceManager instanceManager) {
     this(binaryMessenger, instanceManager, new Camera2CameraInfoProxy());
   }
 
@@ -85,16 +78,18 @@ public class Camera2CameraInfoHostApiImpl implements Camera2CameraInfoHostApi {
   @Override
   @NonNull
   public Long createFrom(@NonNull Long cameraInfoIdentifier) {
-    final CameraInfo cameraInfo = Objects.requireNonNull(instanceManager.getInstance(cameraInfoIdentifier));
+    final CameraInfo cameraInfo =
+        Objects.requireNonNull(instanceManager.getInstance(cameraInfoIdentifier));
     final Camera2CameraInfo camera2CameraInfo = proxy.createFrom(cameraInfo);
-    final Camera2CameraInfoFlutterApiImpl flutterApi = new Camera2CameraInfoFlutterApiImpl(binaryMessenger, instanceManager);
+    final Camera2CameraInfoFlutterApiImpl flutterApi =
+        new Camera2CameraInfoFlutterApiImpl(binaryMessenger, instanceManager);
 
     flutterApi.create(camera2CameraInfo, reply -> {});
     return instanceManager.getIdentifierForStrongReference(camera2CameraInfo);
   }
 
   @Override
-  @NonNull 
+  @NonNull
   public Long getSupportedHardwareLevel(@NonNull Long identifier) {
     return Long.valueOf(proxy.getSupportedHardwareLevel(getCamera2CameraInfoInstance(identifier)));
   }

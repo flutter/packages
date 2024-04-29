@@ -6,8 +6,8 @@ package io.flutter.plugins.camerax;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import io.flutter.plugin.common.BinaryMessenger;
 import androidx.camera.camera2.interop.Camera2CameraInfo;
+import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugins.camerax.GeneratedCameraXLibrary.Camera2CameraInfoFlutterApi;
 
 public class Camera2CameraInfoFlutterApiImpl extends Camera2CameraInfoFlutterApi {
