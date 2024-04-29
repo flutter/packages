@@ -1,6 +1,11 @@
-## NEXT
+## 3.0.4
 
-* Updates minimum supported SDK version to Flutter 3.13/Dart 3.1.
+* Improves README example and updates it to use code excerpts.
+
+## 3.0.3
+
+* Migrates package and tests to `package:web`.
+* Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
 
 ## 3.0.2
 

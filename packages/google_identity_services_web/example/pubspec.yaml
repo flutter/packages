@@ -3,8 +3,8 @@ description: An example for the google_identity_services_web package, OneTap.
 publish_to: 'none'
 
 environment:
-  flutter: ">=3.16.0"
-  sdk: ">=3.2.0 <4.0.0"
+  sdk: ^3.3.0
+  flutter: ">=3.19.0"
 
 dependencies:
   flutter:
@@ -12,7 +12,7 @@ dependencies:
   google_identity_services_web:
     path: ../
   http: ">=0.13.0 <2.0.0"
-  web: ^0.5.0
+  web: ^0.5.1
 
 dev_dependencies:
   build_runner: ^2.1.10 # To extract README excerpts only.

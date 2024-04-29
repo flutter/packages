@@ -4,10 +4,12 @@
 
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
 import 'billing_client_wrapper.dart';
 import 'purchase_wrapper.dart';
+import 'user_choice_details_wrapper.dart';
 
 /// Abstraction of result of [BillingClient] operation that includes
 /// a [BillingResponse].
@@ -15,6 +17,13 @@ abstract class HasBillingResponse {
   /// The status of the operation.
   abstract final BillingResponse responseCode;
 }
+
+/// Factory for creating BillingClient instances, to allow injection of
+/// custom billing clients in tests.
+@visibleForTesting
+typedef BillingClientFactory = BillingClient Function(
+    PurchasesUpdatedListener onPurchasesUpdated,
+    UserSelectedAlternativeBillingListener? alternativeBillingListener);
 
 /// Utility class that manages a [BillingClient] connection.
 ///
@@ -32,10 +41,19 @@ class BillingClientManager {
   /// Creates the [BillingClientManager].
   ///
   /// Immediately initializes connection to the underlying [BillingClient].
-  BillingClientManager()
-      : _billingChoiceMode = BillingChoiceMode.playBillingOnly {
+  BillingClientManager(
+      {@visibleForTesting BillingClientFactory? billingClientFactory})
+      : _billingChoiceMode = BillingChoiceMode.playBillingOnly,
+        _billingClientFactory = billingClientFactory ?? _createBillingClient {
     _connect();
   }
+
+  /// Stream of `userSelectedAlternativeBilling` events from the [BillingClient].
+  ///
+  /// This is a broadcast stream, so it can be listened to multiple times.
+  /// A "done" event will be sent after [dispose] is called.
+  late final Stream<UserChoiceDetailsWrapper> userChoiceDetailsStream =
+      _userChoiceAlternativeBillingController.stream;
 
   /// Stream of `onPurchasesUpdated` events from the [BillingClient].
   ///
@@ -49,12 +67,24 @@ class BillingClientManager {
   /// In order to access the [BillingClient], use [runWithClient]
   /// and [runWithClientNonRetryable] methods.
   @visibleForTesting
-  late final BillingClient client = BillingClient(_onPurchasesUpdated);
+  late final BillingClient client = _billingClientFactory(
+      _onPurchasesUpdated, onUserChoiceAlternativeBilling);
+
+  // Default (non-test) implementation of _billingClientFactory.
+  static BillingClient _createBillingClient(
+      PurchasesUpdatedListener onPurchasesUpdated,
+      UserSelectedAlternativeBillingListener? onUserChoiceAlternativeBilling) {
+    return BillingClient(onPurchasesUpdated, onUserChoiceAlternativeBilling);
+  }
 
   final StreamController<PurchasesResultWrapper> _purchasesUpdatedController =
       StreamController<PurchasesResultWrapper>.broadcast();
+  final StreamController<UserChoiceDetailsWrapper>
+      _userChoiceAlternativeBillingController =
+      StreamController<UserChoiceDetailsWrapper>.broadcast();
 
   BillingChoiceMode _billingChoiceMode;
+  final BillingClientFactory _billingClientFactory;
   bool _isConnecting = false;
   bool _isDisposed = false;
 
@@ -113,12 +143,14 @@ class BillingClientManager {
   /// After calling [dispose]:
   /// - Further connection attempts will not be made.
   /// - [purchasesUpdatedStream] will be closed.
+  /// - [userChoiceDetailsStream] will be closed.
   /// - Calls to [runWithClient] and [runWithClientNonRetryable] will throw.
   void dispose() {
     _debugAssertNotDisposed();
     _isDisposed = true;
     client.endConnection();
     _purchasesUpdatedController.close();
+    _userChoiceAlternativeBillingController.close();
   }
 
   /// Ends connection to [BillingClient] and reconnects with [billingChoiceMode].
@@ -167,5 +199,15 @@ class BillingClientManager {
       'A BillingClientManager was used after being disposed. Once you have '
       'called dispose() on a BillingClientManager, it can no longer be used.',
     );
+  }
+
+  /// Callback passed to [BillingClient] to use when customer chooses
+  /// alternative billing.
+  @visibleForTesting
+  void onUserChoiceAlternativeBilling(UserChoiceDetailsWrapper event) {
+    if (_isDisposed) {
+      return;
+    }
+    _userChoiceAlternativeBillingController.add(event);
   }
 }

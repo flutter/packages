@@ -31,12 +31,10 @@
 
 @interface FLTImagePickerPlugin ()
 
-/**
- * The UIImagePickerController instances that will be used when a new
- * controller would normally be created. Each call to
- * createImagePickerController will remove the current first element from
- * the array.
- */
+/// The UIImagePickerController instances that will be used when a new
+/// controller would normally be created. Each call to
+/// createImagePickerController will remove the current first element from
+/// the array.
 @property(strong, nonatomic)
     NSMutableArray<UIImagePickerController *> *imagePickerControllerOverrides;
 
@@ -84,11 +82,9 @@ typedef NS_ENUM(NSInteger, ImagePickerClassType) { UIImagePickerClassType, PHPic
   return topController;
 }
 
-/**
- * Returns the UIImagePickerControllerCameraDevice to use given [source].
- *
- * @param source The source specification from Dart.
- */
+/// Returns the UIImagePickerControllerCameraDevice to use given [source].
+///
+/// @param source The source specification from Dart.
 - (UIImagePickerControllerCameraDevice)cameraDeviceForSource:(FLTSourceSpecification *)source {
   switch (source.camera) {
     case FLTSourceCameraFront:
@@ -194,6 +190,7 @@ typedef NS_ENUM(NSInteger, ImagePickerClassType) { UIImagePickerClassType, PHPic
 - (void)pickMultiImageWithMaxSize:(nonnull FLTMaxSize *)maxSize
                           quality:(nullable NSNumber *)imageQuality
                      fullMetadata:(BOOL)fullMetadata
+                            limit:(nullable NSNumber *)limit
                        completion:(nonnull void (^)(NSArray<NSString *> *_Nullable,
                                                     FlutterError *_Nullable))completion {
   [self cancelInProgressCall];
@@ -202,6 +199,7 @@ typedef NS_ENUM(NSInteger, ImagePickerClassType) { UIImagePickerClassType, PHPic
   context.maxSize = maxSize;
   context.imageQuality = imageQuality;
   context.requestFullMetadata = fullMetadata;
+  context.maxImageCount = limit.intValue;
 
   if (@available(iOS 14, *)) {
     [self launchPHPickerWithContext:context];
@@ -223,8 +221,11 @@ typedef NS_ENUM(NSInteger, ImagePickerClassType) { UIImagePickerClassType, PHPic
   context.imageQuality = [mediaSelectionOptions imageQuality];
   context.requestFullMetadata = [mediaSelectionOptions requestFullMetadata];
   context.includeVideo = YES;
+  NSNumber *limit = [mediaSelectionOptions limit];
   if (!mediaSelectionOptions.allowMultiple) {
     context.maxImageCount = 1;
+  } else if (limit != nil) {
+    context.maxImageCount = limit.intValue;
   }
 
   if (@available(iOS 14, *)) {
@@ -287,12 +288,10 @@ typedef NS_ENUM(NSInteger, ImagePickerClassType) { UIImagePickerClassType, PHPic
 
 #pragma mark -
 
-/**
- * If a call is still in progress, cancels it by returning an error and then clearing state.
- *
- * TODO(stuartmorgan): Eliminate this, and instead track context per image picker (e.g., using
- * associated objects).
- */
+/// If a call is still in progress, cancels it by returning an error and then clearing state.
+///
+/// TODO(stuartmorgan): Eliminate this, and instead track context per image picker (e.g., using
+/// associated objects).
 - (void)cancelInProgressCall {
   if (self.callContext) {
     [self sendCallResultWithError:[FlutterError errorWithCode:@"multiple_request"
@@ -687,12 +686,10 @@ typedef NS_ENUM(NSInteger, ImagePickerClassType) { UIImagePickerClassType, PHPic
   self.callContext = nil;
 }
 
-/**
- * Sends the given error via `callContext.result` as the result of the original platform channel
- * method call, clearing the in-progress call state.
- *
- * @param error The error to return.
- */
+/// Sends the given error via `callContext.result` as the result of the original platform channel
+/// method call, clearing the in-progress call state.
+///
+/// @param error The error to return.
 - (void)sendCallResultWithError:(FlutterError *)error {
   if (!self.callContext) {
     return;

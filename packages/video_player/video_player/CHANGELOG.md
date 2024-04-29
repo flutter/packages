@@ -1,5 +1,19 @@
-## NEXT
+## 2.8.6
 
+* Updates minimum iOS implementation version to include a privacy manifest.
+* Updates minimum supported SDK version to Flutter 3.16.6/Dart 3.2.3.
+
+## 2.8.5
+
+* Updates example to call `super.dispose()` last.
+
+## 2.8.4
+
+* Removes `_ambiguate` methods from code.
+
+## 2.8.3
+
+* Fixes typo in `README.md`.
 * Updates minimum supported SDK version to Flutter 3.13/Dart 3.1.
 * Updates support matrix in README to indicate that iOS 11 is no longer supported.
 * Clients on versions of Flutter that still support iOS 11 can continue to use this

@@ -1035,6 +1035,22 @@ class WebKitNavigationDelegate extends PlatformNavigationDelegate {
           weakThis.target!._onPageStarted!(url ?? '');
         }
       },
+      decidePolicyForNavigationResponse:
+          (WKWebView webView, WKNavigationResponse response) async {
+        if (weakThis.target?._onHttpError != null &&
+            response.response.statusCode >= 400) {
+          weakThis.target!._onHttpError!(
+            HttpResponseError(
+              response: WebResourceResponse(
+                uri: null,
+                statusCode: response.response.statusCode,
+              ),
+            ),
+          );
+        }
+
+        return WKNavigationResponsePolicy.allow;
+      },
       decidePolicyForNavigationAction: (
         WKWebView webView,
         WKNavigationAction action,
@@ -1149,6 +1165,7 @@ class WebKitNavigationDelegate extends PlatformNavigationDelegate {
 
   PageEventCallback? _onPageFinished;
   PageEventCallback? _onPageStarted;
+  HttpResponseErrorCallback? _onHttpError;
   ProgressCallback? _onProgress;
   WebResourceErrorCallback? _onWebResourceError;
   NavigationRequestCallback? _onNavigationRequest;
@@ -1163,6 +1180,11 @@ class WebKitNavigationDelegate extends PlatformNavigationDelegate {
   @override
   Future<void> setOnPageStarted(PageEventCallback onPageStarted) async {
     _onPageStarted = onPageStarted;
+  }
+
+  @override
+  Future<void> setOnHttpError(HttpResponseErrorCallback onHttpError) async {
+    _onHttpError = onHttpError;
   }
 
   @override

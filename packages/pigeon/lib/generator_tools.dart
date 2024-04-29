@@ -13,7 +13,7 @@ import 'ast.dart';
 /// The current version of pigeon.
 ///
 /// This must match the version in pubspec.yaml.
-const String pigeonVersion = '17.1.1';
+const String pigeonVersion = '18.0.0';
 
 /// Read all the content from [stdin] to a String.
 String readStdin() {
@@ -164,9 +164,22 @@ class Indent {
   }
 }
 
-/// Create the generated channel name for a [func] on a [api].
-String makeChannelName(Api api, Method func, String dartPackageName) {
-  return 'dev.flutter.pigeon.$dartPackageName.${api.name}.${func.name}';
+/// Create the generated channel name for a [method] on an [api].
+String makeChannelName(Api api, Method method, String dartPackageName) {
+  return makeChannelNameWithStrings(
+    apiName: api.name,
+    methodName: method.name,
+    dartPackageName: dartPackageName,
+  );
+}
+
+/// Create the generated channel name for a method on an api.
+String makeChannelNameWithStrings({
+  required String apiName,
+  required String methodName,
+  required String dartPackageName,
+}) {
+  return 'dev.flutter.pigeon.$dartPackageName.$apiName.$methodName';
 }
 
 // TODO(tarrinneal): Determine whether HostDataType is needed.
@@ -286,7 +299,7 @@ const String seeAlsoWarning = 'See also: https://pub.dev/packages/pigeon';
 ///
 /// This lowers the chances of variable name collisions with user defined
 /// parameters.
-const String classNamePrefix = 'Pigeon_';
+const String classNamePrefix = 'Pigeon';
 
 /// Name for the generated InstanceManager for ProxyApis.
 ///
@@ -541,6 +554,23 @@ void addDocumentationComments(
   DocumentCommentSpecification commentSpec, {
   List<String> generatorComments = const <String>[],
 }) {
+  asDocumentationComments(
+    comments,
+    commentSpec,
+    generatorComments: generatorComments,
+  ).forEach(indent.writeln);
+}
+
+/// Formats documentation comments and adds them to current Indent.
+///
+/// The [comments] list is meant for comments written in the input dart file.
+/// The [generatorComments] list is meant for comments added by the generators.
+/// Include white space for all tokens when called, no assumptions are made.
+Iterable<String> asDocumentationComments(
+  Iterable<String> comments,
+  DocumentCommentSpecification commentSpec, {
+  List<String> generatorComments = const <String>[],
+}) sync* {
   final List<String> allComments = <String>[
     ...comments,
     if (comments.isNotEmpty && generatorComments.isNotEmpty) '',
@@ -549,24 +579,20 @@ void addDocumentationComments(
   String currentLineOpenToken = commentSpec.openCommentToken;
   if (allComments.length > 1) {
     if (commentSpec.closeCommentToken != '') {
-      indent.writeln(commentSpec.openCommentToken);
+      yield commentSpec.openCommentToken;
       currentLineOpenToken = commentSpec.blockContinuationToken;
     }
     for (String line in allComments) {
       if (line.isNotEmpty && line[0] != ' ') {
         line = ' $line';
       }
-      indent.writeln(
-        '$currentLineOpenToken$line',
-      );
+      yield '$currentLineOpenToken$line';
     }
     if (commentSpec.closeCommentToken != '') {
-      indent.writeln(commentSpec.closeCommentToken);
+      yield commentSpec.closeCommentToken;
     }
   } else if (allComments.length == 1) {
-    indent.writeln(
-      '$currentLineOpenToken${allComments.first}${commentSpec.closeCommentToken}',
-    );
+    yield '$currentLineOpenToken${allComments.first}${commentSpec.closeCommentToken}';
   }
 }
 
@@ -617,92 +643,6 @@ String? deducePackageName(String mainDartFile) {
   } catch (_) {
     return null;
   }
-}
-
-/// Recursively search for all the interfaces apis from a list of names of
-/// interfaces.
-///
-/// This method assumes that all interfaces are ProxyApis and an api doesn't
-/// contains itself as an interface. Otherwise, throws an [ArgumentError].
-Set<AstProxyApi> recursiveFindAllInterfaceApis(
-  AstProxyApi api, {
-  Set<AstProxyApi> seenApis = const <AstProxyApi>{},
-}) {
-  final Set<AstProxyApi> allInterfaces = <AstProxyApi>{};
-
-  allInterfaces.addAll(
-    api.interfaces.map(
-      (TypeDeclaration type) {
-        if (!type.isProxyApi) {
-          throw ArgumentError(
-            'Could not find a valid ProxyApi for an interface: $type',
-          );
-        } else if (seenApis.contains(type.associatedProxyApi)) {
-          throw ArgumentError(
-            'A ProxyApi cannot be a super class of itself: ${type.baseName}',
-          );
-        }
-        return type.associatedProxyApi!;
-      },
-    ),
-  );
-
-  // Adds the current api since it would be invalid for it to be an interface
-  // of itself.
-  final Set<AstProxyApi> newSeenApis = <AstProxyApi>{...seenApis, api};
-
-  for (final AstProxyApi interfaceApi in <AstProxyApi>{...allInterfaces}) {
-    allInterfaces.addAll(recursiveFindAllInterfaceApis(
-      interfaceApi,
-      seenApis: newSeenApis,
-    ));
-  }
-
-  return allInterfaces;
-}
-
-/// Creates a list of ProxyApis where each `extends` the ProxyApi that follows
-/// it.
-///
-/// Returns an empty list if [proxyApi] does not extend a ProxyApi.
-///
-/// This method assumes the super classes of each ProxyApi doesn't create a
-/// loop. Throws a [ArgumentError] if a loop is found.
-///
-/// This method also assumes that all super classes are ProxyApis. Otherwise,
-/// throws an [ArgumentError].
-List<AstProxyApi> recursiveGetSuperClassApisChain(AstProxyApi api) {
-  final List<AstProxyApi> superClassChain = <AstProxyApi>[];
-
-  if (api.superClass != null && !api.superClass!.isProxyApi) {
-    throw ArgumentError(
-      'Could not find a ProxyApi for super class: ${api.superClass!.baseName}',
-    );
-  }
-
-  AstProxyApi? currentProxyApi = api.superClass?.associatedProxyApi;
-  while (currentProxyApi != null) {
-    if (superClassChain.contains(currentProxyApi)) {
-      throw ArgumentError(
-        'Loop found when processing super classes for a ProxyApi: '
-        '${api.name}, ${superClassChain.map((AstProxyApi api) => api.name)}',
-      );
-    }
-
-    superClassChain.add(currentProxyApi);
-
-    if (currentProxyApi.superClass != null &&
-        !currentProxyApi.superClass!.isProxyApi) {
-      throw ArgumentError(
-        'Could not find a ProxyApi for super class: '
-        '${currentProxyApi.superClass!.baseName}',
-      );
-    }
-
-    currentProxyApi = currentProxyApi.superClass?.associatedProxyApi;
-  }
-
-  return superClassChain;
 }
 
 /// Enum to specify api type when generating code.

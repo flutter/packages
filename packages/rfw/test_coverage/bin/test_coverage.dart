@@ -18,15 +18,15 @@ import 'package:meta/meta.dart';
 // once it is loaded you can call `M-x coverlay-display-stats` to get a summary
 // of the files to look at.)
 
-// Please update these targets when you update this package.
-// Please ensure that test coverage continues to be 100%.
-// Don't forget to update the lastUpdate date too!
-const int targetLines = 3333;
-const String targetPercent = '100';
-const String lastUpdate = '2024-02-26';
+// If Dart coverage increases the number of lines that could be covered, it is
+// possible that this package will no longer report 100% coverage even though
+// nothing has changed about the package itself. In the event that that happens,
+// set this constant to the number of lines currently being covered and file a
+// bug, cc'ing the current package owner (Hixie) so that they can add more tests.
+const int? targetLines = null;
 
 @immutable
-/* final */ class LcovLine {
+final class LcovLine {
   const LcovLine(this.filename, this.line);
   final String filename;
   final int line;
@@ -161,53 +161,42 @@ Future<void> main(List<String> arguments) async {
   final String coveredPercent =
       (100.0 * coveredLines / totalLines).toStringAsFixed(1);
 
-  // We only check the TARGET_LINES matches, not the TARGET_PERCENT,
-  // because we expect the percentage to drop over time as Dart fixes
-  // various bugs in how it determines what lines are coverable.
-  if (coveredLines < targetLines && targetLines <= totalLines) {
+  if (targetLines != null) {
+    if (targetLines! < totalLines) {
+      print(
+        'Warning: test_coverage has an override set to reduce the expected number of covered lines from $totalLines to $targetLines.\n'
+        'New tests should be written to cover all lines in the package.',
+      );
+      totalLines = targetLines!;
+    } else if (targetLines == totalLines) {
+      print(
+        'Warning: test_coverage has a redundant targetLines; it is equal to the actual number of coverable lines ($totalLines).\n'
+        'Update test_coverage.dart to set the targetLines constant to null.',
+      );
+    } else {
+      print(
+        'Warning: test_coverage has an outdated targetLines ($targetLines) that is above the total number of lines in the package ($totalLines).\n'
+        'Update test_coverage.dart to set the targetLines constant to null.',
+      );
+    }
+  }
+
+  if (coveredLines < totalLines) {
     print('');
     print('                  ╭──────────────────────────────╮');
     print('                  │ COVERAGE REGRESSION DETECTED │');
     print('                  ╰──────────────────────────────╯');
     print('');
     print(
-      'Coverage has reduced to only $coveredLines lines ($coveredPercent%). This is lower than',
-    );
-    print(
-      'it was as of $lastUpdate, when coverage was $targetPercent%, covering $targetLines lines.',
-    );
-    print(
-      'Please add sufficient tests to get coverage back to 100%, and update',
-    );
-    print(
-      'test_coverage/bin/test_coverage.dart to have the appropriate targets.',
+      'Coverage has reduced to only $coveredLines lines ($coveredPercent%), out\n'
+      'of $totalLines total lines; ${totalLines - coveredLines} lines are not covered by tests.\n'
+      'Please add sufficient tests to get coverage back to 100%.',
     );
     print('');
     print(
       'When in doubt, ask @Hixie for advice. Thanks!',
     );
     exit(1);
-  } else {
-    if (coveredLines < totalLines) {
-      print(
-        'Warning: Coverage of package:rfw is no longer 100%. (Coverage is now $coveredPercent%, $coveredLines/$totalLines lines.)',
-      );
-    }
-    if (coveredLines > targetLines) {
-      print(
-        'Total lines of covered code has increased, and coverage script is now out of date.\n'
-        'Coverage is now $coveredPercent%, $coveredLines/$totalLines lines, whereas previously there were only $targetLines lines.\n'
-        'Update the "targetLines" constant at the top of rfw/test_coverage/bin/test_coverage.dart (to $coveredLines).',
-      );
-    }
-    if (targetLines > totalLines) {
-      print(
-        'Total lines of code has reduced, and coverage script is now out of date.\n'
-        'Coverage is now $coveredPercent%, $coveredLines/$totalLines lines, but previously there were $targetLines lines.\n'
-        'Update the "targetLines" constant at the top of rfw/test_coverage/bin/test_coverage.dart (to $totalLines).',
-      );
-      exit(1);
-    }
   }
 
   coverageDirectory.deleteSync(recursive: true);

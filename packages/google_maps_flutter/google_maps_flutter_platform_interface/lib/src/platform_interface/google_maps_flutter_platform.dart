@@ -142,6 +142,20 @@ abstract class GoogleMapsFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('updateTileOverlays() has not been implemented.');
   }
 
+  /// Updates cluster manager configuration.
+  ///
+  /// Change listeners are notified once the update has been made on the
+  /// platform side.
+  ///
+  /// The returned [Future] completes after listeners have been notified.
+  Future<void> updateClusterManagers(
+    ClusterManagerUpdates clusterManagerUpdates, {
+    required int mapId,
+  }) {
+    throw UnimplementedError(
+        'updateClusterManagers() has not been implemented.');
+  }
+
   /// Clears the tile cache so that all tiles will be requested again from the
   /// [TileProvider].
   ///
@@ -355,6 +369,11 @@ abstract class GoogleMapsFlutterPlatform extends PlatformInterface {
   /// A Map has been long-pressed at a certain [LatLng].
   Stream<MapLongPressEvent> onLongPress({required int mapId}) {
     throw UnimplementedError('onLongPress() has not been implemented.');
+  }
+
+  /// A marker icon managed by [ClusterManager] has been tapped.
+  Stream<ClusterTapEvent> onClusterTap({required int mapId}) {
+    throw UnimplementedError('onClusterTap() has not been implemented.');
   }
 
   /// Dispose of whatever resources the `mapId` is holding on to.

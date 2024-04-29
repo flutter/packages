@@ -11,3 +11,4 @@ export 'src/billing_client_wrappers/product_details_wrapper.dart';
 export 'src/billing_client_wrappers/product_wrapper.dart';
 export 'src/billing_client_wrappers/purchase_wrapper.dart';
 export 'src/billing_client_wrappers/subscription_offer_details_wrapper.dart';
+export 'src/billing_client_wrappers/user_choice_details_wrapper.dart';

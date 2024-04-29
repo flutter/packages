@@ -11,6 +11,7 @@ import static io.flutter.plugins.inapppurchase.Translator.fromProductDetailsList
 import static io.flutter.plugins.inapppurchase.Translator.fromPurchaseHistoryRecordList;
 import static io.flutter.plugins.inapppurchase.Translator.fromPurchasesList;
 import static io.flutter.plugins.inapppurchase.Translator.toProductList;
+import static io.flutter.plugins.inapppurchase.Translator.toProductTypeString;
 
 import android.app.Activity;
 import android.app.Application;
@@ -30,77 +31,32 @@ import com.android.billingclient.api.ConsumeResponseListener;
 import com.android.billingclient.api.GetBillingConfigParams;
 import com.android.billingclient.api.ProductDetails;
 import com.android.billingclient.api.QueryProductDetailsParams;
-import com.android.billingclient.api.QueryProductDetailsParams.Product;
 import com.android.billingclient.api.QueryPurchaseHistoryParams;
 import com.android.billingclient.api.QueryPurchasesParams;
-import io.flutter.plugin.common.MethodCall;
-import io.flutter.plugin.common.MethodChannel;
+import io.flutter.plugins.inapppurchase.Messages.FlutterError;
+import io.flutter.plugins.inapppurchase.Messages.InAppPurchaseApi;
+import io.flutter.plugins.inapppurchase.Messages.InAppPurchaseCallbackApi;
+import io.flutter.plugins.inapppurchase.Messages.PlatformBillingChoiceMode;
+import io.flutter.plugins.inapppurchase.Messages.PlatformBillingFlowParams;
+import io.flutter.plugins.inapppurchase.Messages.PlatformBillingResult;
+import io.flutter.plugins.inapppurchase.Messages.PlatformProductDetailsResponse;
+import io.flutter.plugins.inapppurchase.Messages.PlatformProductType;
+import io.flutter.plugins.inapppurchase.Messages.PlatformPurchaseHistoryResponse;
+import io.flutter.plugins.inapppurchase.Messages.PlatformPurchasesResponse;
+import io.flutter.plugins.inapppurchase.Messages.PlatformQueryProduct;
+import io.flutter.plugins.inapppurchase.Messages.Result;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /** Handles method channel for the plugin. */
-class MethodCallHandlerImpl
-    implements MethodChannel.MethodCallHandler, Application.ActivityLifecycleCallbacks {
-
-  @VisibleForTesting
-  static final class MethodNames {
-    static final String IS_READY = "BillingClient#isReady()";
-    static final String START_CONNECTION =
-        "BillingClient#startConnection(BillingClientStateListener)";
-    static final String END_CONNECTION = "BillingClient#endConnection()";
-    static final String ON_DISCONNECT = "BillingClientStateListener#onBillingServiceDisconnected()";
-    static final String QUERY_PRODUCT_DETAILS =
-        "BillingClient#queryProductDetailsAsync(QueryProductDetailsParams, ProductDetailsResponseListener)";
-    static final String LAUNCH_BILLING_FLOW =
-        "BillingClient#launchBillingFlow(Activity, BillingFlowParams)";
-    static final String QUERY_PURCHASES_ASYNC =
-        "BillingClient#queryPurchasesAsync(QueryPurchaseParams, PurchaseResponseListener)";
-    static final String QUERY_PURCHASE_HISTORY_ASYNC =
-        "BillingClient#queryPurchaseHistoryAsync(QueryPurchaseHistoryParams, PurchaseHistoryResponseListener)";
-    static final String CONSUME_PURCHASE_ASYNC =
-        "BillingClient#consumeAsync(ConsumeParams, ConsumeResponseListener)";
-    static final String ACKNOWLEDGE_PURCHASE =
-        "BillingClient#acknowledgePurchase(AcknowledgePurchaseParams, AcknowledgePurchaseResponseListener)";
-    static final String IS_FEATURE_SUPPORTED = "BillingClient#isFeatureSupported(String)";
-    static final String GET_CONNECTION_STATE = "BillingClient#getConnectionState()";
-    static final String GET_BILLING_CONFIG = "BillingClient#getBillingConfig()";
-    static final String IS_ALTERNATIVE_BILLING_ONLY_AVAILABLE =
-        "BillingClient#isAlternativeBillingOnlyAvailable()";
-    static final String CREATE_ALTERNATIVE_BILLING_ONLY_REPORTING_DETAILS =
-        "BillingClient#createAlternativeBillingOnlyReportingDetails()";
-    static final String SHOW_ALTERNATIVE_BILLING_ONLY_INFORMATION_DIALOG =
-        "BillingClient#showAlternativeBillingOnlyInformationDialog()";
-
-    private MethodNames() {}
-  }
-
-  @VisibleForTesting
-  static final class MethodArgs {
-
-    // Key for an int argument passed into startConnection
-    static final String HANDLE = "handle";
-    // Key for a boolean argument passed into startConnection.
-    static final String BILLING_CHOICE_MODE = "billingChoiceMode";
-
-    private MethodArgs() {}
-  }
-
-  /**
-   * Values here must match values used in
-   * in_app_purchase_android/lib/src/billing_client_wrappers/billing_client_wrapper.dart
-   */
-  static final class BillingChoiceMode {
-    static final int PLAY_BILLING_ONLY = 0;
-    static final int ALTERNATIVE_BILLING_ONLY = 1;
-  }
-
+class MethodCallHandlerImpl implements Application.ActivityLifecycleCallbacks, InAppPurchaseApi {
   // TODO(gmackall): Replace uses of deprecated ProrationMode enum values with new
   // ReplacementMode enum values.
   // https://github.com/flutter/flutter/issues/128957.
   @SuppressWarnings(value = "deprecation")
-  private static final int PRORATION_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY =
+  @VisibleForTesting
+  static final int PRORATION_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY =
       com.android.billingclient.api.BillingFlowParams.ProrationMode
           .UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY;
 
@@ -114,7 +70,7 @@ class MethodCallHandlerImpl
 
   @Nullable private Activity activity;
   private final Context applicationContext;
-  final MethodChannel methodChannel;
+  final InAppPurchaseCallbackApi callbackApi;
 
   private final HashMap<String, ProductDetails> cachedProducts = new HashMap<>();
 
@@ -122,12 +78,12 @@ class MethodCallHandlerImpl
   MethodCallHandlerImpl(
       @Nullable Activity activity,
       @NonNull Context applicationContext,
-      @NonNull MethodChannel methodChannel,
+      @NonNull InAppPurchaseCallbackApi callbackApi,
       @NonNull BillingClientFactory billingClientFactory) {
     this.billingClientFactory = billingClientFactory;
     this.applicationContext = applicationContext;
     this.activity = activity;
-    this.methodChannel = methodChannel;
+    this.callbackApi = callbackApi;
   }
 
   /**
@@ -139,22 +95,22 @@ class MethodCallHandlerImpl
   }
 
   @Override
-  public void onActivityCreated(Activity activity, Bundle savedInstanceState) {}
+  public void onActivityCreated(@NonNull Activity activity, Bundle savedInstanceState) {}
 
   @Override
-  public void onActivityStarted(Activity activity) {}
+  public void onActivityStarted(@NonNull Activity activity) {}
 
   @Override
-  public void onActivityResumed(Activity activity) {}
+  public void onActivityResumed(@NonNull Activity activity) {}
 
   @Override
-  public void onActivityPaused(Activity activity) {}
+  public void onActivityPaused(@NonNull Activity activity) {}
 
   @Override
-  public void onActivitySaveInstanceState(Activity activity, Bundle outState) {}
+  public void onActivitySaveInstanceState(@NonNull Activity activity, @NonNull Bundle outState) {}
 
   @Override
-  public void onActivityDestroyed(Activity activity) {
+  public void onActivityDestroyed(@NonNull Activity activity) {
     if (this.activity == activity && this.applicationContext != null) {
       ((Application) this.applicationContext).unregisterActivityLifecycleCallbacks(this);
       endBillingClientConnection();
@@ -162,132 +118,84 @@ class MethodCallHandlerImpl
   }
 
   @Override
-  public void onActivityStopped(Activity activity) {}
+  public void onActivityStopped(@NonNull Activity activity) {}
 
   void onDetachedFromActivity() {
     endBillingClientConnection();
   }
 
   @Override
-  public void onMethodCall(@NonNull MethodCall call, @NonNull MethodChannel.Result result) {
-    switch (call.method) {
-      case MethodNames.IS_READY:
-        isReady(result);
-        break;
-      case MethodNames.START_CONNECTION:
-        final int handle = (int) call.argument(MethodArgs.HANDLE);
-        int billingChoiceMode = BillingChoiceMode.PLAY_BILLING_ONLY;
-        if (call.hasArgument(MethodArgs.BILLING_CHOICE_MODE)) {
-          billingChoiceMode = call.argument(MethodArgs.BILLING_CHOICE_MODE);
-        }
-        startConnection(handle, result, billingChoiceMode);
-        break;
-      case MethodNames.END_CONNECTION:
-        endConnection(result);
-        break;
-      case MethodNames.QUERY_PRODUCT_DETAILS:
-        List<Product> productList = toProductList(call.argument("productList"));
-        queryProductDetailsAsync(productList, result);
-        break;
-      case MethodNames.LAUNCH_BILLING_FLOW:
-        launchBillingFlow(
-            (String) call.argument("product"),
-            (String) call.argument("offerToken"),
-            (String) call.argument("accountId"),
-            (String) call.argument("obfuscatedProfileId"),
-            (String) call.argument("oldProduct"),
-            (String) call.argument("purchaseToken"),
-            call.hasArgument("prorationMode")
-                ? (int) call.argument("prorationMode")
-                : PRORATION_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY,
-            result);
-        break;
-      case MethodNames.QUERY_PURCHASES_ASYNC:
-        queryPurchasesAsync((String) call.argument("productType"), result);
-        break;
-      case MethodNames.QUERY_PURCHASE_HISTORY_ASYNC:
-        queryPurchaseHistoryAsync((String) call.argument("productType"), result);
-        break;
-      case MethodNames.CONSUME_PURCHASE_ASYNC:
-        consumeAsync((String) call.argument("purchaseToken"), result);
-        break;
-      case MethodNames.ACKNOWLEDGE_PURCHASE:
-        acknowledgePurchase((String) call.argument("purchaseToken"), result);
-        break;
-      case MethodNames.IS_FEATURE_SUPPORTED:
-        isFeatureSupported((String) call.argument("feature"), result);
-        break;
-      case MethodNames.GET_CONNECTION_STATE:
-        getConnectionState(result);
-        break;
-      case MethodNames.GET_BILLING_CONFIG:
-        getBillingConfig(result);
-        break;
-      case MethodNames.IS_ALTERNATIVE_BILLING_ONLY_AVAILABLE:
-        isAlternativeBillingOnlyAvailable(result);
-        break;
-      case MethodNames.CREATE_ALTERNATIVE_BILLING_ONLY_REPORTING_DETAILS:
-        createAlternativeBillingOnlyReportingDetails(result);
-        break;
-      case MethodNames.SHOW_ALTERNATIVE_BILLING_ONLY_INFORMATION_DIALOG:
-        showAlternativeBillingOnlyInformationDialog(result);
-        break;
-      default:
-        result.notImplemented();
-    }
-  }
-
-  private void showAlternativeBillingOnlyInformationDialog(final MethodChannel.Result result) {
-    if (billingClientError(result)) {
+  public void showAlternativeBillingOnlyInformationDialog(
+      @NonNull Result<PlatformBillingResult> result) {
+    if (billingClient == null) {
+      result.error(getNullBillingClientError());
       return;
     }
     if (activity == null) {
-      result.error(ACTIVITY_UNAVAILABLE, "Not attempting to show dialog", null);
+      result.error(new FlutterError(ACTIVITY_UNAVAILABLE, "Not attempting to show dialog", null));
       return;
     }
-    billingClient.showAlternativeBillingOnlyInformationDialog(
-        activity,
-        billingResult -> {
-          result.success(fromBillingResult(billingResult));
-        });
+    try {
+      billingClient.showAlternativeBillingOnlyInformationDialog(
+          activity, billingResult -> result.success(fromBillingResult(billingResult)));
+    } catch (RuntimeException e) {
+      result.error(new FlutterError("error", e.getMessage(), Log.getStackTraceString(e)));
+    }
   }
 
-  private void createAlternativeBillingOnlyReportingDetails(final MethodChannel.Result result) {
-    if (billingClientError(result)) {
+  @Override
+  public void createAlternativeBillingOnlyReportingDetailsAsync(
+      @NonNull Result<Messages.PlatformAlternativeBillingOnlyReportingDetailsResponse> result) {
+    if (billingClient == null) {
+      result.error(getNullBillingClientError());
       return;
     }
-    billingClient.createAlternativeBillingOnlyReportingDetailsAsync(
-        ((billingResult, alternativeBillingOnlyReportingDetails) -> {
-          result.success(
-              fromAlternativeBillingOnlyReportingDetails(
-                  billingResult, alternativeBillingOnlyReportingDetails));
-        }));
+    try {
+      billingClient.createAlternativeBillingOnlyReportingDetailsAsync(
+          ((billingResult, alternativeBillingOnlyReportingDetails) ->
+              result.success(
+                  fromAlternativeBillingOnlyReportingDetails(
+                      billingResult, alternativeBillingOnlyReportingDetails))));
+    } catch (RuntimeException e) {
+      result.error(new FlutterError("error", e.getMessage(), Log.getStackTraceString(e)));
+    }
   }
 
-  private void isAlternativeBillingOnlyAvailable(final MethodChannel.Result result) {
-    if (billingClientError(result)) {
+  @Override
+  public void isAlternativeBillingOnlyAvailableAsync(
+      @NonNull Result<PlatformBillingResult> result) {
+    if (billingClient == null) {
+      result.error(getNullBillingClientError());
       return;
     }
-    billingClient.isAlternativeBillingOnlyAvailableAsync(
-        billingResult -> {
-          result.success(fromBillingResult(billingResult));
-        });
+    try {
+      billingClient.isAlternativeBillingOnlyAvailableAsync(
+          billingResult -> result.success(fromBillingResult(billingResult)));
+    } catch (RuntimeException e) {
+      result.error(new FlutterError("error", e.getMessage(), Log.getStackTraceString(e)));
+    }
   }
 
-  private void getBillingConfig(final MethodChannel.Result result) {
-    if (billingClientError(result)) {
+  @Override
+  public void getBillingConfigAsync(
+      @NonNull Result<Messages.PlatformBillingConfigResponse> result) {
+    if (billingClient == null) {
+      result.error(getNullBillingClientError());
       return;
     }
-    billingClient.getBillingConfigAsync(
-        GetBillingConfigParams.newBuilder().build(),
-        (billingResult, billingConfig) -> {
-          result.success(fromBillingConfig(billingResult, billingConfig));
-        });
+    try {
+      billingClient.getBillingConfigAsync(
+          GetBillingConfigParams.newBuilder().build(),
+          (billingResult, billingConfig) ->
+              result.success(fromBillingConfig(billingResult, billingConfig)));
+    } catch (RuntimeException e) {
+      result.error(new FlutterError("error", e.getMessage(), Log.getStackTraceString(e)));
+    }
   }
 
-  private void endConnection(final MethodChannel.Result result) {
+  @Override
+  public void endConnection() {
     endBillingClientConnection();
-    result.success(null);
   }
 
   private void endBillingClientConnection() {
@@ -297,57 +205,59 @@ class MethodCallHandlerImpl
     }
   }
 
-  private void isReady(MethodChannel.Result result) {
-    if (billingClientError(result)) {
-      return;
+  @Override
+  @NonNull
+  public Boolean isReady() {
+    if (billingClient == null) {
+      throw getNullBillingClientError();
     }
-
-    result.success(billingClient.isReady());
+    return billingClient.isReady();
   }
 
-  private void queryProductDetailsAsync(
-      final List<Product> productList, final MethodChannel.Result result) {
-    if (billingClientError(result)) {
+  @Override
+  public void queryProductDetailsAsync(
+      @NonNull List<PlatformQueryProduct> products,
+      @NonNull Result<PlatformProductDetailsResponse> result) {
+    if (billingClient == null) {
+      result.error(getNullBillingClientError());
       return;
     }
 
-    QueryProductDetailsParams params =
-        QueryProductDetailsParams.newBuilder().setProductList(productList).build();
-    billingClient.queryProductDetailsAsync(
-        params,
-        (billingResult, productDetailsList) -> {
-          updateCachedProducts(productDetailsList);
-          final Map<String, Object> productDetailsResponse = new HashMap<>();
-          productDetailsResponse.put("billingResult", fromBillingResult(billingResult));
-          productDetailsResponse.put(
-              "productDetailsList", fromProductDetailsList(productDetailsList));
-          result.success(productDetailsResponse);
-        });
+    try {
+      QueryProductDetailsParams params =
+          QueryProductDetailsParams.newBuilder().setProductList(toProductList(products)).build();
+      billingClient.queryProductDetailsAsync(
+          params,
+          (billingResult, productDetailsList) -> {
+            updateCachedProducts(productDetailsList);
+            final PlatformProductDetailsResponse.Builder responseBuilder =
+                new PlatformProductDetailsResponse.Builder()
+                    .setBillingResult(fromBillingResult(billingResult))
+                    .setProductDetails(fromProductDetailsList(productDetailsList));
+            result.success(responseBuilder.build());
+          });
+    } catch (RuntimeException e) {
+      result.error(new FlutterError("error", e.getMessage(), Log.getStackTraceString(e)));
+    }
   }
 
-  private void launchBillingFlow(
-      String product,
-      @Nullable String offerToken,
-      @Nullable String accountId,
-      @Nullable String obfuscatedProfileId,
-      @Nullable String oldProduct,
-      @Nullable String purchaseToken,
-      int prorationMode,
-      MethodChannel.Result result) {
-    if (billingClientError(result)) {
-      return;
+  @Override
+  public @NonNull PlatformBillingResult launchBillingFlow(
+      @NonNull PlatformBillingFlowParams params) {
+    if (billingClient == null) {
+      throw getNullBillingClientError();
     }
 
-    com.android.billingclient.api.ProductDetails productDetails = cachedProducts.get(product);
+    com.android.billingclient.api.ProductDetails productDetails =
+        cachedProducts.get(params.getProduct());
     if (productDetails == null) {
-      result.error(
+      throw new FlutterError(
           "NOT_FOUND",
           "Details for product "
-              + product
+              + params.getProduct()
               + " are not available. It might because products were not fetched prior to the call. Please fetch the products first. An example of how to fetch the products could be found here: "
               + LOAD_PRODUCT_DOC_URL,
           null);
-      return;
     }
 
     @Nullable
@@ -356,58 +266,57 @@ class MethodCallHandlerImpl
     if (subscriptionOfferDetails != null) {
       boolean isValidOfferToken = false;
       for (ProductDetails.SubscriptionOfferDetails offerDetails : subscriptionOfferDetails) {
-        if (offerToken != null && offerToken.equals(offerDetails.getOfferToken())) {
+        if (params.getOfferToken() != null
+            && params.getOfferToken().equals(offerDetails.getOfferToken())) {
           isValidOfferToken = true;
           break;
         }
       }
       if (!isValidOfferToken) {
-        result.error(
+        throw new FlutterError(
             "INVALID_OFFER_TOKEN",
             "Offer token "
-                + offerToken
+                + params.getOfferToken()
                 + " for product "
-                + product
+                + params.getProduct()
                 + " is not valid. Make sure to only pass offer tokens that belong to the product. To obtain offer tokens for a product, fetch the products. An example of how to fetch the products could be found here: "
                 + LOAD_PRODUCT_DOC_URL,
             null);
-        return;
       }
     }
 
-    if (oldProduct == null
-        && prorationMode != PRORATION_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY) {
-      result.error(
+    if (params.getOldProduct() == null
+        && params.getProrationMode()
+            != PRORATION_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY) {
+      throw new FlutterError(
           "IN_APP_PURCHASE_REQUIRE_OLD_PRODUCT",
           "launchBillingFlow failed because oldProduct is null. You must provide a valid oldProduct in order to use a proration mode.",
           null);
-      return;
-    } else if (oldProduct != null && !cachedProducts.containsKey(oldProduct)) {
-      result.error(
+    } else if (params.getOldProduct() != null
+        && !cachedProducts.containsKey(params.getOldProduct())) {
+      throw new FlutterError(
           "IN_APP_PURCHASE_INVALID_OLD_PRODUCT",
           "Details for product "
-              + oldProduct
+              + params.getOldProduct()
               + " are not available. It might because products were not fetched prior to the call. Please fetch the products first. An example of how to fetch the products could be found here: "
               + LOAD_PRODUCT_DOC_URL,
           null);
-      return;
     }
 
     if (activity == null) {
-      result.error(
+      throw new FlutterError(
           ACTIVITY_UNAVAILABLE,
           "Details for product "
-              + product
+              + params.getProduct()
               + " are not available. This method must be run with the app in foreground.",
           null);
-      return;
     }
 
     BillingFlowParams.ProductDetailsParams.Builder productDetailsParamsBuilder =
         BillingFlowParams.ProductDetailsParams.newBuilder();
     productDetailsParamsBuilder.setProductDetails(productDetails);
-    if (offerToken != null) {
-      productDetailsParamsBuilder.setOfferToken(offerToken);
+    if (params.getOfferToken() != null) {
+      productDetailsParamsBuilder.setOfferToken(params.getOfferToken());
     }
 
     List<BillingFlowParams.ProductDetailsParams> productDetailsParamsList = new ArrayList<>();
@@ -415,22 +324,24 @@ class MethodCallHandlerImpl
 
     BillingFlowParams.Builder paramsBuilder =
         BillingFlowParams.newBuilder().setProductDetailsParamsList(productDetailsParamsList);
-    if (accountId != null && !accountId.isEmpty()) {
-      paramsBuilder.setObfuscatedAccountId(accountId);
+    if (params.getAccountId() != null && !params.getAccountId().isEmpty()) {
+      paramsBuilder.setObfuscatedAccountId(params.getAccountId());
     }
-    if (obfuscatedProfileId != null && !obfuscatedProfileId.isEmpty()) {
-      paramsBuilder.setObfuscatedProfileId(obfuscatedProfileId);
+    if (params.getObfuscatedProfileId() != null && !params.getObfuscatedProfileId().isEmpty()) {
+      paramsBuilder.setObfuscatedProfileId(params.getObfuscatedProfileId());
     }
     BillingFlowParams.SubscriptionUpdateParams.Builder subscriptionUpdateParamsBuilder =
         BillingFlowParams.SubscriptionUpdateParams.newBuilder();
-    if (oldProduct != null && !oldProduct.isEmpty() && purchaseToken != null) {
-      subscriptionUpdateParamsBuilder.setOldPurchaseToken(purchaseToken);
+    if (params.getOldProduct() != null
+        && !params.getOldProduct().isEmpty()
+        && params.getPurchaseToken() != null) {
+      subscriptionUpdateParamsBuilder.setOldPurchaseToken(params.getPurchaseToken());
       // Set the prorationMode using a helper to minimize impact of deprecation warning suppression.
-      setReplaceProrationMode(subscriptionUpdateParamsBuilder, prorationMode);
+      setReplaceProrationMode(
+          subscriptionUpdateParamsBuilder, params.getProrationMode().intValue());
       paramsBuilder.setSubscriptionUpdateParams(subscriptionUpdateParamsBuilder.build());
     }
-    result.success(
-        fromBillingResult(billingClient.launchBillingFlow(activity, paramsBuilder.build())));
+    return fromBillingResult(billingClient.launchBillingFlow(activity, paramsBuilder.build()));
   }
 
   // TODO(gmackall): Replace uses of deprecated setReplaceProrationMode.
@@ -443,108 +354,145 @@ class MethodCallHandlerImpl
     builder.setReplaceProrationMode(prorationMode);
   }
 
-  private void consumeAsync(String purchaseToken, final MethodChannel.Result result) {
-    if (billingClientError(result)) {
+  @Override
+  public void consumeAsync(
+      @NonNull String purchaseToken, @NonNull Result<PlatformBillingResult> result) {
+    if (billingClient == null) {
+      result.error(getNullBillingClientError());
       return;
     }
 
-    ConsumeResponseListener listener =
-        (billingResult, outToken) -> result.success(fromBillingResult(billingResult));
-    ConsumeParams.Builder paramsBuilder =
-        ConsumeParams.newBuilder().setPurchaseToken(purchaseToken);
+    try {
+      ConsumeResponseListener listener =
+          (billingResult, outToken) -> result.success(fromBillingResult(billingResult));
+      ConsumeParams.Builder paramsBuilder =
+          ConsumeParams.newBuilder().setPurchaseToken(purchaseToken);
+      ConsumeParams params = paramsBuilder.build();
 
-    ConsumeParams params = paramsBuilder.build();
-
-    billingClient.consumeAsync(params, listener);
+      billingClient.consumeAsync(params, listener);
+    } catch (RuntimeException e) {
+      result.error(new FlutterError("error", e.getMessage(), Log.getStackTraceString(e)));
+    }
   }
 
-  private void queryPurchasesAsync(String productType, MethodChannel.Result result) {
-    if (billingClientError(result)) {
+  @Override
+  public void queryPurchasesAsync(
+      @NonNull PlatformProductType productType,
+      @NonNull Result<Messages.PlatformPurchasesResponse> result) {
+    if (billingClient == null) {
+      result.error(getNullBillingClientError());
       return;
     }
 
-    // Like in our connect call, consider the billing client responding a "success" here regardless
-    // of status code.
-    QueryPurchasesParams.Builder paramsBuilder = QueryPurchasesParams.newBuilder();
-    paramsBuilder.setProductType(productType);
-    billingClient.queryPurchasesAsync(
-        paramsBuilder.build(),
-        (billingResult, purchasesList) -> {
-          final Map<String, Object> serialized = new HashMap<>();
-          // The response code is no longer passed, as part of billing 4.0, so we pass OK here
-          // as success is implied by calling this callback.
-          serialized.put("responseCode", BillingClient.BillingResponseCode.OK);
-          serialized.put("billingResult", fromBillingResult(billingResult));
-          serialized.put("purchasesList", fromPurchasesList(purchasesList));
-          result.success(serialized);
-        });
+    try {
+      // Like in our connect call, consider the billing client responding a "success" here regardless
+      // of status code.
+      QueryPurchasesParams.Builder paramsBuilder = QueryPurchasesParams.newBuilder();
+      paramsBuilder.setProductType(toProductTypeString(productType));
+      billingClient.queryPurchasesAsync(
+          paramsBuilder.build(),
+          (billingResult, purchasesList) -> {
+            PlatformPurchasesResponse.Builder builder =
+                new PlatformPurchasesResponse.Builder()
+                    .setBillingResult(fromBillingResult(billingResult))
+                    .setPurchases(fromPurchasesList(purchasesList));
+            result.success(builder.build());
+          });
+    } catch (RuntimeException e) {
+      result.error(new FlutterError("error", e.getMessage(), Log.getStackTraceString(e)));
+    }
   }
 
-  private void queryPurchaseHistoryAsync(String productType, final MethodChannel.Result result) {
-    if (billingClientError(result)) {
+  @Override
+  public void queryPurchaseHistoryAsync(
+      @NonNull PlatformProductType productType,
+      @NonNull Result<Messages.PlatformPurchaseHistoryResponse> result) {
+    if (billingClient == null) {
+      result.error(getNullBillingClientError());
       return;
     }
 
-    billingClient.queryPurchaseHistoryAsync(
-        QueryPurchaseHistoryParams.newBuilder().setProductType(productType).build(),
-        (billingResult, purchasesList) -> {
-          final Map<String, Object> serialized = new HashMap<>();
-          serialized.put("billingResult", fromBillingResult(billingResult));
-          serialized.put("purchaseHistoryRecordList", fromPurchaseHistoryRecordList(purchasesList));
-          result.success(serialized);
-        });
-  }
-
-  private void getConnectionState(final MethodChannel.Result result) {
-    if (billingClientError(result)) {
-      return;
+    try {
+      billingClient.queryPurchaseHistoryAsync(
+          QueryPurchaseHistoryParams.newBuilder()
+              .setProductType(toProductTypeString(productType))
+              .build(),
+          (billingResult, purchasesList) -> {
+            PlatformPurchaseHistoryResponse.Builder builder =
+                new PlatformPurchaseHistoryResponse.Builder()
+                    .setBillingResult(fromBillingResult(billingResult))
+                    .setPurchases(fromPurchaseHistoryRecordList(purchasesList));
+            result.success(builder.build());
+          });
+    } catch (RuntimeException e) {
+      result.error(new FlutterError("error", e.getMessage(), Log.getStackTraceString(e)));
     }
-    final Map<String, Object> serialized = new HashMap<>();
-    serialized.put("connectionState", billingClient.getConnectionState());
-    result.success(serialized);
   }
 
-  private void startConnection(
-      final int handle, final MethodChannel.Result result, int billingChoiceMode) {
+  @Override
+  public void startConnection(
+      @NonNull Long handle,
+      @NonNull PlatformBillingChoiceMode billingMode,
+      @NonNull Result<PlatformBillingResult> result) {
     if (billingClient == null) {
       billingClient =
-          billingClientFactory.createBillingClient(
-              applicationContext, methodChannel, billingChoiceMode);
+          billingClientFactory.createBillingClient(applicationContext, callbackApi, billingMode);
     }
 
-    billingClient.startConnection(
-        new BillingClientStateListener() {
-          private boolean alreadyFinished = false;
+    try {
+      billingClient.startConnection(
+          new BillingClientStateListener() {
+            private boolean alreadyFinished = false;
 
-          @Override
-          public void onBillingSetupFinished(@NonNull BillingResult billingResult) {
-            if (alreadyFinished) {
-              Log.d(TAG, "Tried to call onBillingSetupFinished multiple times.");
-              return;
+            @Override
+            public void onBillingSetupFinished(@NonNull BillingResult billingResult) {
+              if (alreadyFinished) {
+                Log.d(TAG, "Tried to call onBillingSetupFinished multiple times.");
+                return;
+              }
+              alreadyFinished = true;
+              // Consider the fact that we've finished a success, leave it to the Dart side to
+              // validate the responseCode.
+              result.success(fromBillingResult(billingResult));
             }
-            alreadyFinished = true;
-            // Consider the fact that we've finished a success, leave it to the Dart side to
-            // validate the responseCode.
-            result.success(fromBillingResult(billingResult));
-          }
 
-          @Override
-          public void onBillingServiceDisconnected() {
-            final Map<String, Object> arguments = new HashMap<>();
-            arguments.put("handle", handle);
-            methodChannel.invokeMethod(MethodNames.ON_DISCONNECT, arguments);
-          }
-        });
+            @Override
+            public void onBillingServiceDisconnected() {
+              callbackApi.onBillingServiceDisconnected(
+                  handle,
+                  new Messages.VoidResult() {
+                    @Override
+                    public void success() {}
+
+                    @Override
+                    public void error(@NonNull Throwable error) {
+                      io.flutter.Log.e(
+                          "IN_APP_PURCHASE",
+                          "onBillingServiceDisconnected handler error: " + error);
+                    }
+                  });
+            }
+          });
+    } catch (RuntimeException e) {
+      result.error(new FlutterError("error", e.getMessage(), Log.getStackTraceString(e)));
+    }
   }
 
-  private void acknowledgePurchase(String purchaseToken, final MethodChannel.Result result) {
-    if (billingClientError(result)) {
+  @Override
+  public void acknowledgePurchase(
+      @NonNull String purchaseToken, @NonNull Result<PlatformBillingResult> result) {
+    if (billingClient == null) {
+      result.error(getNullBillingClientError());
       return;
     }
-    AcknowledgePurchaseParams params =
-        AcknowledgePurchaseParams.newBuilder().setPurchaseToken(purchaseToken).build();
-    billingClient.acknowledgePurchase(
-        params, billingResult -> result.success(fromBillingResult(billingResult)));
+    try {
+      AcknowledgePurchaseParams params =
+          AcknowledgePurchaseParams.newBuilder().setPurchaseToken(purchaseToken).build();
+      billingClient.acknowledgePurchase(
+          params, billingResult -> result.success(fromBillingResult(billingResult)));
+    } catch (RuntimeException e) {
+      result.error(new FlutterError("error", e.getMessage(), Log.getStackTraceString(e)));
+    }
   }
 
   protected void updateCachedProducts(@Nullable List<ProductDetails> productDetailsList) {
@@ -557,21 +505,16 @@ class MethodCallHandlerImpl
     }
   }
 
-  private boolean billingClientError(MethodChannel.Result result) {
-    if (billingClient != null) {
-      return false;
-    }
-
-    result.error("UNAVAILABLE", "BillingClient is unset. Try reconnecting.", null);
-    return true;
+  private @NonNull FlutterError getNullBillingClientError() {
+    return new FlutterError("UNAVAILABLE", "BillingClient is unset. Try reconnecting.", null);
   }
 
-  private void isFeatureSupported(String feature, MethodChannel.Result result) {
-    if (billingClientError(result)) {
-      return;
+  @Override
+  public @NonNull Boolean isFeatureSupported(@NonNull String feature) {
+    if (billingClient == null) {
+      throw getNullBillingClientError();
     }
-    assert billingClient != null;
     BillingResult billingResult = billingClient.isFeatureSupported(feature);
-    result.success(billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK);
+    return billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK;
   }
 }

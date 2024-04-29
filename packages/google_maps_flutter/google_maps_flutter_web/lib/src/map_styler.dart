@@ -2,14 +2,18 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+// TODO(srujzs): Needed for https://github.com/dart-lang/sdk/issues/54801. Once
+// we publish a version with a min SDK constraint that contains this fix,
+// remove.
+@JS()
+library;
+
 import 'dart:js_interop';
 
 /// The interop type for a Google Maps Map Styler.
 ///
 /// See: https://developers.google.com/maps/documentation/javascript/style-reference#stylers
 @JS()
-@staticInterop
-@anonymous
 extension type MapStyler._(JSObject _) implements JSObject {
   /// Create a new [MapStyler] instance.
   external factory MapStyler({

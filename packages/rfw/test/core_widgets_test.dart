@@ -293,7 +293,7 @@ void main() {
     '''));
     await tester.pump();
     expect(find.byType(ClipRRect), findsOneWidget);
-    final RenderClipRRect renderClip = tester.allRenderObjects.whereType<RenderClipRRect>().first; 
+    final RenderClipRRect renderClip = tester.allRenderObjects.whereType<RenderClipRRect>().first;
     expect(renderClip.clipBehavior, equals(Clip.antiAlias));
     expect(renderClip.borderRadius, equals(BorderRadius.zero));
   });

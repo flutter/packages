@@ -2,37 +2,30 @@
 
 An Android implementation of [`camera`][1] that uses the [CameraX library][2].
 
-*Note*: This package is under development, so please note the
-[missing features and limitations](#missing-features-and-limitations), but
-otherwise feel free to try out the current implementation and provide any
-feedback by filing issues under [`flutter/flutter`][5] with `[camerax]` in
-the title, which will be actively triaged.
+*Note*: This implementation will become the default implementation of `camera`
+on Android by May 2024, so **we strongly encourage you to opt into it**
+by using [the instructions](#usage) below. If any of [the limitations](#limitations)
+prevent you from using `camera_android_camerax` or if you run into any problems,
+please report these issues under [`flutter/flutter`][5] with `[camerax]` in
+the title.
 
 ## Usage
 
-This package is [non-endorsed][3]; the endorsed Android implementation of `camera`
-is [`camera_android`][4]. To use this implementation of the plugin instead of
-`camera_android`, you will need to specify it in your `pubspec.yaml` file as a
-dependency in addition to `camera`:
+To use this plugin instead of [`camera_android`][4], run
 
-```yaml
-dependencies:
-  # ...along with your other dependencies
-  camera: ^0.10.4
-  camera_android_camerax: ^0.5.0
+```sh
+$ flutter pub add camera_android_camerax
 ```
 
-## Missing features and limitations
+from your project's root directory.
+
+## Limitations
 
 ### 240p resolution configuration for video recording
 
 240p resolution configuration for video recording is unsupported by CameraX,
 and thus, the plugin will fall back to 480p if configured with a
 `ResolutionPreset`.
-
-### Focus mode configuration \[[Issue #120467][120467]\]
-
-`setFocusMode` is unimplemented.
 
 ### Setting maximum duration and stream options for video capture
 

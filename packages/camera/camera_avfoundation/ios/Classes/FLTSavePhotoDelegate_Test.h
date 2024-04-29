@@ -4,9 +4,7 @@
 
 #import "FLTSavePhotoDelegate.h"
 
-/**
- API exposed for unit tests.
- */
+/// API exposed for unit tests.
 @interface FLTSavePhotoDelegate ()
 
 /// The completion handler block for capture and save photo operations.

@@ -36,6 +36,30 @@ void defineTests() {
     );
 
     testWidgets(
+      'Custom block element',
+      (WidgetTester tester) async {
+        const String blockContent = 'note block';
+        await tester.pumpWidget(
+          boilerplate(
+            Markdown(
+              data: '[!NOTE] $blockContent',
+              extensionSet: md.ExtensionSet.none,
+              blockSyntaxes: <md.BlockSyntax>[NoteSyntax()],
+              builders: <String, MarkdownElementBuilder>{
+                'note': NoteBuilder(),
+              },
+            ),
+          ),
+        );
+        final ColoredBox container =
+            tester.widgetList(find.byType(ColoredBox)).first as ColoredBox;
+        expect(container.color, Colors.red);
+        expect(container.child, isInstanceOf<Text>());
+        expect((container.child! as Text).data, blockContent);
+      },
+    );
+
+    testWidgets(
       'link for wikistyle',
       (WidgetTester tester) async {
         await tester.pumpWidget(
@@ -77,9 +101,8 @@ void defineTests() {
         );
 
         final Text textWidget = tester.widget(find.byType(Text));
-        final TextSpan span =
-            (textWidget.textSpan! as TextSpan).children![0] as TextSpan;
-        final WidgetSpan widgetSpan = span.children![0] as WidgetSpan;
+        final TextSpan textSpan = textWidget.textSpan! as TextSpan;
+        final WidgetSpan widgetSpan = textSpan.children![0] as WidgetSpan;
         expect(widgetSpan.child, isInstanceOf<Container>());
       },
     );
@@ -133,10 +156,9 @@ void defineTests() {
       final TextSpan textSpan = textWidget.textSpan! as TextSpan;
       final TextSpan start = textSpan.children![0] as TextSpan;
       expect(start.text, 'this test replaces a string with a ');
-      final TextSpan end = textSpan.children![1] as TextSpan;
-      final TextSpan foo = end.children![0] as TextSpan;
+      final TextSpan foo = textSpan.children![1] as TextSpan;
       expect(foo.text, 'foo');
-      final WidgetSpan widgetSpan = end.children![1] as WidgetSpan;
+      final WidgetSpan widgetSpan = textSpan.children![2] as WidgetSpan;
       expect(widgetSpan.child, isInstanceOf<Container>());
     },
   );
@@ -332,4 +354,29 @@ class ImgBuilder extends MarkdownElementBuilder {
   Widget? visitElementAfter(md.Element element, TextStyle? preferredStyle) {
     return Text('foo', style: preferredStyle);
   }
+}
+
+class NoteBuilder extends MarkdownElementBuilder {
+  @override
+  Widget? visitText(md.Text text, TextStyle? preferredStyle) {
+    return ColoredBox(
+        color: Colors.red, child: Text(text.text, style: preferredStyle));
+  }
+
+  @override
+  bool isBlockElement() {
+    return true;
+  }
+}
+
+class NoteSyntax extends md.BlockSyntax {
+  @override
+  md.Node? parse(md.BlockParser parser) {
+    final md.Line line = parser.current;
+    parser.advance();
+    return md.Element('note', <md.Node>[md.Text(line.content.substring(8))]);
+  }
+
+  @override
+  RegExp get pattern => RegExp(r'^\[!NOTE] ');
 }

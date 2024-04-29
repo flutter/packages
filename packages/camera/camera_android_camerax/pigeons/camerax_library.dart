@@ -366,6 +366,7 @@ abstract class ResolutionSelectorHostApi {
   void create(
     int identifier,
     int? resolutionStrategyIdentifier,
+    int? resolutionSelectorIdentifier,
     int? aspectRatioStrategyIdentifier,
   );
 }
@@ -501,7 +502,8 @@ abstract class CameraControlFlutterApi {
 
 @HostApi(dartHostTestHandler: 'TestFocusMeteringActionHostApi')
 abstract class FocusMeteringActionHostApi {
-  void create(int identifier, List<MeteringPointInfo> meteringPointInfos);
+  void create(int identifier, List<MeteringPointInfo> meteringPointInfos,
+      bool? disableAutoCancel);
 }
 
 @HostApi(dartHostTestHandler: 'TestFocusMeteringResultHostApi')
@@ -534,4 +536,10 @@ abstract class Camera2CameraControlHostApi {
   @async
   void addCaptureRequestOptions(
       int identifier, int captureRequestOptionsIdentifier);
+}
+
+@HostApi(dartHostTestHandler: 'TestResolutionFilterHostApi')
+abstract class ResolutionFilterHostApi {
+  void createWithOnePreferredSize(
+      int identifier, ResolutionInfo preferredResolution);
 }

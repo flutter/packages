@@ -15,11 +15,9 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-/**
- * Host api implementation for WKUserContentController.
- *
- * Handles creating WKUserContentController that intercommunicate with a paired Dart object.
- */
+/// Host api implementation for WKUserContentController.
+///
+/// Handles creating WKUserContentController that intercommunicate with a paired Dart object.
 @interface FWFUserContentControllerHostApiImpl : NSObject <FWFWKUserContentControllerHostApi>
 - (instancetype)initWithInstanceManager:(FWFInstanceManager *)instanceManager;
 @end

@@ -6,7 +6,7 @@
 
 #import "CameraPlugin.h"
 #import "FLTCam.h"
-#import "FLTThreadSafeFlutterResult.h"
+#import "messages.g.h"
 
 /// APIs exposed for unit testing.
 @interface CameraPlugin ()
@@ -17,24 +17,18 @@
 /// An internal camera object that manages camera's state and performs camera operations.
 @property(nonatomic, strong) FLTCam *camera;
 
-/// A thread safe wrapper of the method channel used to send device events such as orientation
-/// changes.
-@property(nonatomic, strong) FLTThreadSafeMethodChannel *deviceEventMethodChannel;
-
 /// Inject @p FlutterTextureRegistry and @p FlutterBinaryMessenger for unit testing.
 - (instancetype)initWithRegistry:(NSObject<FlutterTextureRegistry> *)registry
+                       messenger:(NSObject<FlutterBinaryMessenger> *)messenger;
+
+/// Inject @p FlutterTextureRegistry, @p FlutterBinaryMessenger, and Pigeon callback handler for
+/// unit testing.
+- (instancetype)initWithRegistry:(NSObject<FlutterTextureRegistry> *)registry
                        messenger:(NSObject<FlutterBinaryMessenger> *)messenger
-    NS_DESIGNATED_INITIALIZER;
+                       globalAPI:(FCPCameraGlobalEventApi *)globalAPI NS_DESIGNATED_INITIALIZER;
 
 /// Hide the default public constructor.
 - (instancetype)init NS_UNAVAILABLE;
-
-/// Handles `FlutterMethodCall`s and ensures result is send on the main dispatch queue.
-///
-/// @param call The method call command object.
-/// @param result A wrapper around the `FlutterResult` callback which ensures the callback is called
-/// on the main dispatch queue.
-- (void)handleMethodCallAsync:(FlutterMethodCall *)call result:(FLTThreadSafeFlutterResult *)result;
 
 /// Called by the @c NSNotificationManager each time the device's orientation is changed.
 ///
@@ -43,9 +37,10 @@
 - (void)orientationChanged:(NSNotification *)notification;
 
 /// Creates FLTCam on session queue and reports the creation result.
-/// @param createMethodCall the create method call
-/// @param result a thread safe flutter result wrapper object to report creation result.
-- (void)createCameraOnSessionQueueWithCreateMethodCall:(FlutterMethodCall *)createMethodCall
-                                                result:(FLTThreadSafeFlutterResult *)result;
-
+/// @param name the name of the camera.
+/// @param settings the creation settings.
+/// @param completion the callback to inform the Dart side of the plugin of creation.
+- (void)createCameraOnSessionQueueWithName:(NSString *)name
+                                  settings:(FCPPlatformMediaSettings *)settings
+                                completion:(void (^)(NSNumber *, FlutterError *))completion;
 @end

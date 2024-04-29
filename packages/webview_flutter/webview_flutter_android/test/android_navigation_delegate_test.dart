@@ -59,6 +59,29 @@ void main() {
       expect(callbackUrl, 'https://www.google.com');
     });
 
+    test('onHttpError from onReceivedHttpError', () {
+      final AndroidNavigationDelegate androidNavigationDelegate =
+          AndroidNavigationDelegate(_buildCreationParams());
+
+      late final HttpResponseError callbackError;
+      androidNavigationDelegate.setOnHttpError(
+          (HttpResponseError httpError) => callbackError = httpError);
+
+      CapturingWebViewClient.lastCreatedDelegate.onReceivedHttpError!(
+          android_webview.WebView.detached(),
+          android_webview.WebResourceRequest(
+            url: 'https://www.google.com',
+            isForMainFrame: false,
+            isRedirect: true,
+            hasGesture: true,
+            method: 'GET',
+            requestHeaders: <String, String>{'X-Mock': 'mocking'},
+          ),
+          android_webview.WebResourceResponse(statusCode: 401));
+
+      expect(callbackError.response?.statusCode, 401);
+    });
+
     test('onWebResourceError from onReceivedRequestError', () {
       final AndroidNavigationDelegate androidNavigationDelegate =
           AndroidNavigationDelegate(_buildCreationParams());
@@ -532,6 +555,7 @@ class CapturingWebViewClient extends android_webview.WebViewClient {
   CapturingWebViewClient({
     super.onPageFinished,
     super.onPageStarted,
+    super.onReceivedHttpError,
     super.onReceivedError,
     super.onReceivedHttpAuthRequest,
     super.onReceivedRequestError,

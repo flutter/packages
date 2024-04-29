@@ -298,6 +298,8 @@ const int _msEvent = 0x0E;
 const int _msSwitch = 0x0F;
 const int _msDefault = 0x10;
 const int _msSetState = 0x11;
+const int _msWidgetBuilder = 0x12;
+const int _msWidgetBuilderArgReference = 0x13;
 
 /// API for decoding Remote Flutter Widgets binary blobs.
 ///
@@ -453,6 +455,10 @@ class _BlobDecoder {
         return _readSwitch();
       case _msSetState:
         return SetStateHandler(StateReference(_readPartList()), _readArgument());
+      case _msWidgetBuilder:
+        return _readWidgetBuilder();
+      case _msWidgetBuilderArgReference:
+        return WidgetBuilderArgReference(_readString(), _readPartList());
       default:
         return _parseValue(type, _readArgument);
     }
@@ -466,6 +472,16 @@ class _BlobDecoder {
   ConstructorCall _readWidget() {
     final String name = _readString();
     return ConstructorCall(name, _readMap(_readArgument)!);
+  }
+
+  WidgetBuilderDeclaration _readWidgetBuilder() {
+    final String argumentName = _readString();
+    final int type = _readByte();
+    if (type != _msWidget && type != _msSwitch) {
+      throw FormatException('Unrecognized data type 0x${type.toRadixString(16).toUpperCase().padLeft(2, "0")} while decoding widget builder blob.');
+    }
+    final BlobNode widget = type == _msWidget ? _readWidget() : _readSwitch();
+    return WidgetBuilderDeclaration(argumentName, widget);
   }
 
   WidgetDeclaration _readDeclaration() {
@@ -613,12 +629,21 @@ class _BlobEncoder {
       bytes.addByte(_msWidget);
       _writeString(value.name);
       _writeMap(value.arguments, _writeArgument);
+    } else if (value is WidgetBuilderDeclaration) {
+      bytes.addByte(_msWidgetBuilder);
+      _writeString(value.argumentName);
+      _writeArgument(value.widget);
     } else if (value is ArgsReference) {
       bytes.addByte(_msArgsReference);
       _writeInt64(value.parts.length);
       value.parts.forEach(_writePart);
     } else if (value is DataReference) {
       bytes.addByte(_msDataReference);
+      _writeInt64(value.parts.length);
+      value.parts.forEach(_writePart);
+    } else if (value is WidgetBuilderArgReference) {
+      bytes.addByte(_msWidgetBuilderArgReference);
+      _writeString(value.argumentName);
       _writeInt64(value.parts.length);
       value.parts.forEach(_writePart);
     } else if (value is LoopReference) {
