@@ -387,6 +387,8 @@ void main() {
       createResolutionFilterWithOnePreferredSize: (_) => MockResolutionFilter(),
     );
 
+    camera.processCameraProvider = mockProcessCameraProvider;
+
     when(mockPreview.setSurfaceProvider())
         .thenAnswer((_) async => testSurfaceTextureId);
     when(mockProcessCameraProvider.bindToLifecycle(mockBackCameraSelector,
@@ -395,7 +397,6 @@ void main() {
     when(mockCamera.getCameraInfo()).thenAnswer((_) async => mockCameraInfo);
     when(mockCameraInfo.getCameraState())
         .thenAnswer((_) async => mockLiveCameraState);
-    camera.processCameraProvider = mockProcessCameraProvider;
 
     expect(
         await camera.createCameraWithSettings(
@@ -1622,53 +1623,81 @@ void main() {
         await camera.stopVideoRecording(0);
       }, throwsA(isA<CameraException>()));
     });
-  });
 
-  test(
-      'stopVideoRecording throws a camera exception if '
-      'videoOutputPath is null, and sets recording to null', () async {
-    final AndroidCameraCameraX camera = AndroidCameraCameraX();
-    final MockRecording mockRecording = MockRecording();
-    final MockVideoCapture mockVideoCapture = MockVideoCapture();
+    test(
+        'stopVideoRecording throws a camera exception if '
+        'videoOutputPath is null, and sets recording to null', () async {
+      final AndroidCameraCameraX camera = AndroidCameraCameraX();
+      final MockRecording mockRecording = MockRecording();
+      final MockVideoCapture mockVideoCapture = MockVideoCapture();
 
-    // Set directly for test versus calling startVideoCapturing.
-    camera.processCameraProvider = MockProcessCameraProvider();
-    camera.recording = mockRecording;
-    camera.videoOutputPath = null;
-    camera.videoCapture = mockVideoCapture;
+      // Set directly for test versus calling startVideoCapturing.
+      camera.processCameraProvider = MockProcessCameraProvider();
+      camera.recording = mockRecording;
+      camera.videoOutputPath = null;
+      camera.videoCapture = mockVideoCapture;
 
-    // Tell plugin that videoCapture use case was bound to start recording.
-    when(camera.processCameraProvider!.isBound(mockVideoCapture))
-        .thenAnswer((_) async => true);
+      // Tell plugin that videoCapture use case was bound to start recording.
+      when(camera.processCameraProvider!.isBound(mockVideoCapture))
+          .thenAnswer((_) async => true);
 
-    await expectLater(() async {
-      await camera.stopVideoRecording(0);
-    }, throwsA(isA<CameraException>()));
-    expect(camera.recording, null);
-  });
+      await expectLater(() async {
+        await camera.stopVideoRecording(0);
+      }, throwsA(isA<CameraException>()));
+      expect(camera.recording, null);
+    });
 
-  test(
-      'calling stopVideoRecording twice stops the recording '
-      'and then throws a CameraException', () async {
-    final AndroidCameraCameraX camera = AndroidCameraCameraX();
-    final MockRecording recording = MockRecording();
-    final MockProcessCameraProvider processCameraProvider =
-        MockProcessCameraProvider();
-    final MockVideoCapture videoCapture = MockVideoCapture();
-    const String videoOutputPath = '/test/output/path';
+    test(
+        'calling stopVideoRecording twice stops the recording '
+        'and then throws a CameraException', () async {
+      final AndroidCameraCameraX camera = AndroidCameraCameraX();
+      final MockRecording recording = MockRecording();
+      final MockProcessCameraProvider processCameraProvider =
+          MockProcessCameraProvider();
+      final MockVideoCapture videoCapture = MockVideoCapture();
+      const String videoOutputPath = '/test/output/path';
 
-    // Set directly for test versus calling createCamera and startVideoCapturing.
-    camera.processCameraProvider = processCameraProvider;
-    camera.recording = recording;
-    camera.videoCapture = videoCapture;
-    camera.videoOutputPath = videoOutputPath;
+      // Set directly for test versus calling createCamera and startVideoCapturing.
+      camera.processCameraProvider = processCameraProvider;
+      camera.recording = recording;
+      camera.videoCapture = videoCapture;
+      camera.videoOutputPath = videoOutputPath;
 
-    final XFile file = await camera.stopVideoRecording(0);
-    expect(file.path, videoOutputPath);
+      final XFile file = await camera.stopVideoRecording(0);
+      expect(file.path, videoOutputPath);
 
-    await expectLater(() async {
-      await camera.stopVideoRecording(0);
-    }, throwsA(isA<CameraException>()));
+      await expectLater(() async {
+        await camera.stopVideoRecording(0);
+      }, throwsA(isA<CameraException>()));
+    });
+
+    test(
+        'VideoCapture use case is unbound from lifecycle when video recording stops',
+        () async {
+      final AndroidCameraCameraX camera = AndroidCameraCameraX();
+      final MockRecording recording = MockRecording();
+      final MockProcessCameraProvider processCameraProvider =
+          MockProcessCameraProvider();
+      final MockVideoCapture videoCapture = MockVideoCapture();
+      const String videoOutputPath = '/test/output/path';
+
+      // Set directly for test versus calling createCamera and startVideoCapturing.
+      camera.processCameraProvider = processCameraProvider;
+      camera.recording = recording;
+      camera.videoCapture = videoCapture;
+      camera.videoOutputPath = videoOutputPath;
+
+      // Tell plugin that videoCapture use case was bound to start recording.
+      when(camera.processCameraProvider!.isBound(videoCapture))
+          .thenAnswer((_) async => true);
+
+      await camera.stopVideoRecording(90);
+      verify(processCameraProvider.unbind(<UseCase>[videoCapture]));
+
+      // Verify that recording stops.
+      verify(recording.close());
+      verifyNoMoreInteractions(recording);
+    });
   });
 
   test(
@@ -3587,5 +3616,296 @@ void main() {
     final FocusMeteringAction capturedAction =
         verificationResult.captured.single as FocusMeteringAction;
     expect(capturedAction.disableAutoCancel, isFalse);
+  });
+
+  test(
+      'onStreamedFrameAvailable binds ImageAnalysis use case when not already bound',
+      () async {
+    final AndroidCameraCameraX camera = AndroidCameraCameraX();
+    const int cameraId = 22;
+    final MockImageAnalysis mockImageAnalysis = MockImageAnalysis();
+    final MockProcessCameraProvider mockProcessCameraProvider =
+        MockProcessCameraProvider();
+    final MockCamera mockCamera = MockCamera();
+    final MockCameraInfo mockCameraInfo = MockCameraInfo();
+
+    // Set directly for test versus calling createCamera.
+    camera.imageAnalysis = mockImageAnalysis;
+    camera.processCameraProvider = mockProcessCameraProvider;
+    camera.cameraSelector = MockCameraSelector();
+
+    // Ignore setting target rotation for this test; tested seprately.
+    camera.captureOrientationLocked = true;
+
+    // Tell plugin to create a detached analyzer for testing purposes.
+    camera.proxy = CameraXProxy(
+      createAnalyzer: (_) => MockAnalyzer(),
+      createCameraStateObserver: (_) => MockObserver(),
+    );
+
+    when(mockProcessCameraProvider.isBound(mockImageAnalysis))
+        .thenAnswer((_) async => false);
+    when(mockProcessCameraProvider.bindToLifecycle(
+        any, <UseCase>[mockImageAnalysis])).thenAnswer((_) async => mockCamera);
+    when(mockCamera.getCameraInfo()).thenAnswer((_) async => mockCameraInfo);
+    when(mockCameraInfo.getCameraState())
+        .thenAnswer((_) async => MockLiveCameraState());
+
+    final StreamSubscription<CameraImageData> imageStreamSubscription = camera
+        .onStreamedFrameAvailable(cameraId)
+        .listen((CameraImageData data) {});
+
+    await untilCalled(mockImageAnalysis.setAnalyzer(any));
+    verify(mockProcessCameraProvider
+        .bindToLifecycle(camera.cameraSelector, <UseCase>[mockImageAnalysis]));
+
+    await imageStreamSubscription.cancel();
+  });
+
+  test(
+      'startVideoCapturing unbinds ImageAnalysis use case when camera device is not at least level 3 and no image streaming callback is specified',
+      () async {
+    // Set up mocks and constants.
+    final AndroidCameraCameraX camera = AndroidCameraCameraX();
+    final MockPendingRecording mockPendingRecording = MockPendingRecording();
+    final MockRecording mockRecording = MockRecording();
+    final MockCamera mockCamera = MockCamera();
+    final MockCameraInfo mockCameraInfo = MockCameraInfo();
+    final MockCamera2CameraInfo mockCamera2CameraInfo = MockCamera2CameraInfo();
+    final TestSystemServicesHostApi mockSystemServicesApi =
+        MockTestSystemServicesHostApi();
+    TestSystemServicesHostApi.setup(mockSystemServicesApi);
+
+    // Set directly for test versus calling createCamera.
+    camera.processCameraProvider = MockProcessCameraProvider();
+    camera.recorder = MockRecorder();
+    camera.videoCapture = MockVideoCapture();
+    camera.cameraSelector = MockCameraSelector();
+    camera.cameraInfo = MockCameraInfo();
+    camera.imageAnalysis = MockImageAnalysis();
+
+    // Ignore setting target rotation for this test; tested seprately.
+    camera.captureOrientationLocked = true;
+
+    // Tell plugin to create detached Observer when camera info updated.
+    camera.proxy = CameraXProxy(
+        createCameraStateObserver: (void Function(Object) onChanged) =>
+            Observer<CameraState>.detached(onChanged: onChanged),
+        getCamera2CameraInfo: (CameraInfo cameraInfo) =>
+            Future<Camera2CameraInfo>.value(mockCamera2CameraInfo));
+
+    const int cameraId = 7;
+    const String outputPath = '/temp/MOV123.temp';
+
+    // Mock method calls.
+    when(mockSystemServicesApi.getTempFilePath(camera.videoPrefix, '.temp'))
+        .thenReturn(outputPath);
+    when(camera.recorder!.prepareRecording(outputPath))
+        .thenAnswer((_) async => mockPendingRecording);
+    when(mockPendingRecording.start()).thenAnswer((_) async => mockRecording);
+    when(camera.processCameraProvider!.isBound(camera.videoCapture!))
+        .thenAnswer((_) async => false);
+    when(camera.processCameraProvider!.isBound(camera.imageAnalysis!))
+        .thenAnswer((_) async => true);
+    when(camera.processCameraProvider!.bindToLifecycle(
+            camera.cameraSelector!, <UseCase>[camera.videoCapture!]))
+        .thenAnswer((_) async => mockCamera);
+    when(mockCamera.getCameraInfo())
+        .thenAnswer((_) => Future<CameraInfo>.value(mockCameraInfo));
+    when(mockCameraInfo.getCameraState())
+        .thenAnswer((_) async => MockLiveCameraState());
+    when(mockCamera2CameraInfo.getSupportedHardwareLevel()).thenAnswer(
+        (_) async => CameraMetadata.infoSupportedHardwareLevelLegacy);
+
+    await camera.startVideoCapturing(const VideoCaptureOptions(cameraId));
+
+    verify(
+        camera.processCameraProvider!.unbind(<UseCase>[camera.imageAnalysis!]));
+  });
+
+  test(
+      'startVideoCapturing unbinds ImageAnalysis use case when image streaming callback not specified and camera device is level 3',
+      () async {
+    // Set up mocks and constants.
+    final AndroidCameraCameraX camera = AndroidCameraCameraX();
+    final MockPendingRecording mockPendingRecording = MockPendingRecording();
+    final MockRecording mockRecording = MockRecording();
+    final MockCamera mockCamera = MockCamera();
+    final MockCameraInfo mockCameraInfo = MockCameraInfo();
+    final MockCamera2CameraInfo mockCamera2CameraInfo = MockCamera2CameraInfo();
+    final TestSystemServicesHostApi mockSystemServicesApi =
+        MockTestSystemServicesHostApi();
+    TestSystemServicesHostApi.setup(mockSystemServicesApi);
+
+    // Set directly for test versus calling createCamera.
+    camera.processCameraProvider = MockProcessCameraProvider();
+    camera.recorder = MockRecorder();
+    camera.videoCapture = MockVideoCapture();
+    camera.cameraSelector = MockCameraSelector();
+    camera.cameraInfo = MockCameraInfo();
+    camera.imageAnalysis = MockImageAnalysis();
+
+    // Ignore setting target rotation for this test; tested seprately.
+    camera.captureOrientationLocked = true;
+
+    // Tell plugin to create detached Observer when camera info updated.
+    camera.proxy = CameraXProxy(
+        createCameraStateObserver: (void Function(Object) onChanged) =>
+            Observer<CameraState>.detached(onChanged: onChanged),
+        getCamera2CameraInfo: (CameraInfo cameraInfo) =>
+            Future<Camera2CameraInfo>.value(mockCamera2CameraInfo));
+
+    const int cameraId = 77;
+    const String outputPath = '/temp/MOV123.temp';
+
+    // Mock method calls.
+    when(mockSystemServicesApi.getTempFilePath(camera.videoPrefix, '.temp'))
+        .thenReturn(outputPath);
+    when(camera.recorder!.prepareRecording(outputPath))
+        .thenAnswer((_) async => mockPendingRecording);
+    when(mockPendingRecording.start()).thenAnswer((_) async => mockRecording);
+    when(camera.processCameraProvider!.isBound(camera.videoCapture!))
+        .thenAnswer((_) async => false);
+    when(camera.processCameraProvider!.isBound(camera.imageAnalysis!))
+        .thenAnswer((_) async => true);
+    when(camera.processCameraProvider!.bindToLifecycle(
+            camera.cameraSelector!, <UseCase>[camera.videoCapture!]))
+        .thenAnswer((_) async => mockCamera);
+    when(mockCamera.getCameraInfo())
+        .thenAnswer((_) => Future<CameraInfo>.value(mockCameraInfo));
+    when(mockCameraInfo.getCameraState())
+        .thenAnswer((_) async => MockLiveCameraState());
+    when(mockCamera2CameraInfo.getSupportedHardwareLevel())
+        .thenAnswer((_) async => CameraMetadata.infoSupportedHardwareLevel3);
+
+    await camera.startVideoCapturing(const VideoCaptureOptions(cameraId));
+
+    verify(
+        camera.processCameraProvider!.unbind(<UseCase>[camera.imageAnalysis!]));
+  });
+
+  test(
+      'startVideoCapturing unbinds ImageAnalysis use case when image streaming callback is specified and camera device is not at least level 3',
+      () async {
+    // Set up mocks and constants.
+    final AndroidCameraCameraX camera = AndroidCameraCameraX();
+    final MockPendingRecording mockPendingRecording = MockPendingRecording();
+    final MockRecording mockRecording = MockRecording();
+    final MockCamera mockCamera = MockCamera();
+    final MockCameraInfo mockCameraInfo = MockCameraInfo();
+    final MockCamera2CameraInfo mockCamera2CameraInfo = MockCamera2CameraInfo();
+    final TestSystemServicesHostApi mockSystemServicesApi =
+        MockTestSystemServicesHostApi();
+    TestSystemServicesHostApi.setup(mockSystemServicesApi);
+
+    // Set directly for test versus calling createCamera.
+    camera.processCameraProvider = MockProcessCameraProvider();
+    camera.recorder = MockRecorder();
+    camera.videoCapture = MockVideoCapture();
+    camera.cameraSelector = MockCameraSelector();
+    camera.cameraInfo = MockCameraInfo();
+    camera.imageAnalysis = MockImageAnalysis();
+
+    // Ignore setting target rotation for this test; tested seprately.
+    camera.captureOrientationLocked = true;
+
+    // Tell plugin to create detached Observer when camera info updated.
+    camera.proxy = CameraXProxy(
+        createCameraStateObserver: (void Function(Object) onChanged) =>
+            Observer<CameraState>.detached(onChanged: onChanged),
+        getCamera2CameraInfo: (CameraInfo cameraInfo) =>
+            Future<Camera2CameraInfo>.value(mockCamera2CameraInfo));
+
+    const int cameraId = 87;
+    const String outputPath = '/temp/MOV123.temp';
+
+    // Mock method calls.
+    when(mockSystemServicesApi.getTempFilePath(camera.videoPrefix, '.temp'))
+        .thenReturn(outputPath);
+    when(camera.recorder!.prepareRecording(outputPath))
+        .thenAnswer((_) async => mockPendingRecording);
+    when(mockPendingRecording.start()).thenAnswer((_) async => mockRecording);
+    when(camera.processCameraProvider!.isBound(camera.videoCapture!))
+        .thenAnswer((_) async => false);
+    when(camera.processCameraProvider!.isBound(camera.imageAnalysis!))
+        .thenAnswer((_) async => true);
+    when(camera.processCameraProvider!.bindToLifecycle(
+            camera.cameraSelector!, <UseCase>[camera.videoCapture!]))
+        .thenAnswer((_) async => mockCamera);
+    when(mockCamera.getCameraInfo())
+        .thenAnswer((_) => Future<CameraInfo>.value(mockCameraInfo));
+    when(mockCameraInfo.getCameraState())
+        .thenAnswer((_) async => MockLiveCameraState());
+    when(mockCamera2CameraInfo.getSupportedHardwareLevel()).thenAnswer(
+        (_) async => CameraMetadata.infoSupportedHardwareLevelExternal);
+
+    await camera.startVideoCapturing(VideoCaptureOptions(cameraId,
+        streamCallback: (CameraImageData image) {}));
+    verify(
+        camera.processCameraProvider!.unbind(<UseCase>[camera.imageAnalysis!]));
+  });
+
+  test(
+      'startVideoCapturing unbinds ImageCapture use case when image streaming callback is specified and camera device is at least level 3',
+      () async {
+    // Set up mocks and constants.
+    final AndroidCameraCameraX camera = AndroidCameraCameraX();
+    final MockPendingRecording mockPendingRecording = MockPendingRecording();
+    final MockRecording mockRecording = MockRecording();
+    final MockCamera mockCamera = MockCamera();
+    final MockCameraInfo mockCameraInfo = MockCameraInfo();
+    final MockCamera2CameraInfo mockCamera2CameraInfo = MockCamera2CameraInfo();
+    final TestSystemServicesHostApi mockSystemServicesApi =
+        MockTestSystemServicesHostApi();
+    TestSystemServicesHostApi.setup(mockSystemServicesApi);
+
+    // Set directly for test versus calling createCamera.
+    camera.processCameraProvider = MockProcessCameraProvider();
+    camera.recorder = MockRecorder();
+    camera.videoCapture = MockVideoCapture();
+    camera.cameraSelector = MockCameraSelector();
+    camera.cameraInfo = MockCameraInfo();
+    camera.imageAnalysis = MockImageAnalysis();
+    camera.imageCapture = MockImageCapture();
+
+    // Ignore setting target rotation for this test; tested seprately.
+    camera.captureOrientationLocked = true;
+
+    // Tell plugin to create detached Observer when camera info updated.
+    camera.proxy = CameraXProxy(
+        createCameraStateObserver: (void Function(Object) onChanged) =>
+            Observer<CameraState>.detached(onChanged: onChanged),
+        getCamera2CameraInfo: (CameraInfo cameraInfo) =>
+            Future<Camera2CameraInfo>.value(mockCamera2CameraInfo));
+
+    const int cameraId = 87;
+    const String outputPath = '/temp/MOV123.temp';
+
+    // Mock method calls.
+    when(mockSystemServicesApi.getTempFilePath(camera.videoPrefix, '.temp'))
+        .thenReturn(outputPath);
+    when(camera.recorder!.prepareRecording(outputPath))
+        .thenAnswer((_) async => mockPendingRecording);
+    when(mockPendingRecording.start()).thenAnswer((_) async => mockRecording);
+    when(camera.processCameraProvider!.isBound(camera.videoCapture!))
+        .thenAnswer((_) async => false);
+    when(camera.processCameraProvider!.isBound(camera.imageCapture!))
+        .thenAnswer((_) async => true);
+    when(camera.processCameraProvider!.isBound(camera.imageAnalysis!))
+        .thenAnswer((_) async => true);
+    when(camera.processCameraProvider!.bindToLifecycle(
+            camera.cameraSelector!, <UseCase>[camera.videoCapture!]))
+        .thenAnswer((_) async => mockCamera);
+    when(mockCamera.getCameraInfo())
+        .thenAnswer((_) => Future<CameraInfo>.value(mockCameraInfo));
+    when(mockCameraInfo.getCameraState())
+        .thenAnswer((_) async => MockLiveCameraState());
+    when(mockCamera2CameraInfo.getSupportedHardwareLevel())
+        .thenAnswer((_) async => CameraMetadata.infoSupportedHardwareLevel3);
+
+    await camera.startVideoCapturing(VideoCaptureOptions(cameraId,
+        streamCallback: (CameraImageData image) {}));
+    verify(
+        camera.processCameraProvider!.unbind(<UseCase>[camera.imageCapture!]));
   });
 }
