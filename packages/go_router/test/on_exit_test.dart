@@ -25,7 +25,7 @@ void main() {
             path: '1',
             builder: (BuildContext context, GoRouterState state) =>
                 DummyScreen(key: page1),
-            onExit: (BuildContext context) {
+            onExit: (BuildContext context, GoRouterState state) {
               return allow;
             },
           )
@@ -61,7 +61,7 @@ void main() {
         path: '/1',
         builder: (BuildContext context, GoRouterState state) =>
             DummyScreen(key: page1),
-        onExit: (BuildContext context) {
+        onExit: (BuildContext context, GoRouterState state) {
           return allow;
         },
       )
@@ -95,7 +95,7 @@ void main() {
             path: '1',
             builder: (BuildContext context, GoRouterState state) =>
                 DummyScreen(key: page1),
-            onExit: (BuildContext context) async {
+            onExit: (BuildContext context, GoRouterState state) async {
               return allow.future;
             },
           )
@@ -139,7 +139,7 @@ void main() {
         path: '/1',
         builder: (BuildContext context, GoRouterState state) =>
             DummyScreen(key: page1),
-        onExit: (BuildContext context) async {
+        onExit: (BuildContext context, GoRouterState state) async {
           return allow.future;
         },
       )
@@ -176,7 +176,7 @@ void main() {
         path: '/',
         builder: (BuildContext context, GoRouterState state) =>
             DummyScreen(key: home),
-        onExit: (BuildContext context) {
+        onExit: (BuildContext context, GoRouterState state) {
           return allow;
         },
       ),
@@ -201,7 +201,7 @@ void main() {
         path: '/',
         builder: (BuildContext context, GoRouterState state) =>
             DummyScreen(key: home),
-        onExit: (BuildContext context) async {
+        onExit: (BuildContext context, GoRouterState state) async {
           return allow;
         },
       ),
@@ -227,7 +227,7 @@ void main() {
           path: '/',
           builder: (BuildContext context, GoRouterState state) =>
               DummyScreen(key: home),
-          onExit: (BuildContext context) {
+          onExit: (BuildContext context, GoRouterState state) {
             return allow;
           },
         ),
@@ -242,5 +242,76 @@ void main() {
 
     allow = true;
     expect(await router.routerDelegate.popRoute(), false);
+  });
+
+  testWidgets('It should provide the correct state to the onExit callback',
+      (WidgetTester tester) async {
+    final UniqueKey home = UniqueKey();
+    final UniqueKey page1 = UniqueKey();
+    final UniqueKey page2 = UniqueKey();
+    final UniqueKey page3 = UniqueKey();
+    late final GoRouterState onExitState1;
+    late final GoRouterState onExitState2;
+    late final GoRouterState onExitState3;
+    final List<GoRoute> routes = <GoRoute>[
+      GoRoute(
+        path: '/',
+        builder: (BuildContext context, GoRouterState state) =>
+            DummyScreen(key: home),
+        routes: <GoRoute>[
+          GoRoute(
+            path: '1',
+            builder: (BuildContext context, GoRouterState state) =>
+                DummyScreen(key: page1),
+            onExit: (BuildContext context, GoRouterState state) {
+              onExitState1 = state;
+              return true;
+            },
+            routes: <GoRoute>[
+              GoRoute(
+                path: '2',
+                builder: (BuildContext context, GoRouterState state) =>
+                    DummyScreen(key: page2),
+                onExit: (BuildContext context, GoRouterState state) {
+                  onExitState2 = state;
+                  return true;
+                },
+                routes: <GoRoute>[
+                  GoRoute(
+                    path: '3',
+                    builder: (BuildContext context, GoRouterState state) =>
+                        DummyScreen(key: page3),
+                    onExit: (BuildContext context, GoRouterState state) {
+                      onExitState3 = state;
+                      return true;
+                    },
+                  )
+                ],
+              )
+            ],
+          )
+        ],
+      ),
+    ];
+
+    final GoRouter router =
+        await createRouter(routes, tester, initialLocation: '/1/2/3');
+    expect(find.byKey(page3), findsOneWidget);
+
+    router.pop();
+    await tester.pumpAndSettle();
+    expect(find.byKey(page2), findsOneWidget);
+
+    expect(onExitState3.uri.toString(), '/1/2/3');
+
+    router.pop();
+    await tester.pumpAndSettle();
+    expect(find.byKey(page1), findsOneWidget);
+    expect(onExitState2.uri.toString(), '/1/2');
+
+    router.pop();
+    await tester.pumpAndSettle();
+    expect(find.byKey(home), findsOneWidget);
+    expect(onExitState1.uri.toString(), '/1');
   });
 }

@@ -99,7 +99,6 @@ class MockWKUIDelegate extends _i1.Mock implements _i2.WKUIDelegate {
           ),
         ),
       ) as _i2.WKUIDelegate);
-
   @override
   _i3.Future<void> addObserver(
     _i4.NSObject? observer, {
@@ -118,7 +117,6 @@ class MockWKUIDelegate extends _i1.Mock implements _i2.WKUIDelegate {
         returnValue: _i3.Future<void>.value(),
         returnValueForMissingStub: _i3.Future<void>.value(),
       ) as _i3.Future<void>);
-
   @override
   _i3.Future<void> removeObserver(
     _i4.NSObject? observer, {
@@ -153,7 +151,6 @@ class MockWKWebViewConfiguration extends _i1.Mock
           Invocation.getter(#userContentController),
         ),
       ) as _i2.WKUserContentController);
-
   @override
   _i2.WKPreferences get preferences => (super.noSuchMethod(
         Invocation.getter(#preferences),
@@ -162,7 +159,6 @@ class MockWKWebViewConfiguration extends _i1.Mock
           Invocation.getter(#preferences),
         ),
       ) as _i2.WKPreferences);
-
   @override
   _i2.WKWebsiteDataStore get websiteDataStore => (super.noSuchMethod(
         Invocation.getter(#websiteDataStore),
@@ -171,7 +167,6 @@ class MockWKWebViewConfiguration extends _i1.Mock
           Invocation.getter(#websiteDataStore),
         ),
       ) as _i2.WKWebsiteDataStore);
-
   @override
   _i3.Future<void> setAllowsInlineMediaPlayback(bool? allow) =>
       (super.noSuchMethod(
@@ -182,7 +177,6 @@ class MockWKWebViewConfiguration extends _i1.Mock
         returnValue: _i3.Future<void>.value(),
         returnValueForMissingStub: _i3.Future<void>.value(),
       ) as _i3.Future<void>);
-
   @override
   _i3.Future<void> setLimitsNavigationsToAppBoundDomains(bool? limit) =>
       (super.noSuchMethod(
@@ -193,7 +187,6 @@ class MockWKWebViewConfiguration extends _i1.Mock
         returnValue: _i3.Future<void>.value(),
         returnValueForMissingStub: _i3.Future<void>.value(),
       ) as _i3.Future<void>);
-
   @override
   _i3.Future<void> setMediaTypesRequiringUserActionForPlayback(
           Set<_i2.WKAudiovisualMediaType>? types) =>
@@ -205,7 +198,6 @@ class MockWKWebViewConfiguration extends _i1.Mock
         returnValue: _i3.Future<void>.value(),
         returnValueForMissingStub: _i3.Future<void>.value(),
       ) as _i3.Future<void>);
-
   @override
   _i2.WKWebViewConfiguration copy() => (super.noSuchMethod(
         Invocation.method(
@@ -220,7 +212,6 @@ class MockWKWebViewConfiguration extends _i1.Mock
           ),
         ),
       ) as _i2.WKWebViewConfiguration);
-
   @override
   _i3.Future<void> addObserver(
     _i4.NSObject? observer, {
@@ -239,7 +230,6 @@ class MockWKWebViewConfiguration extends _i1.Mock
         returnValue: _i3.Future<void>.value(),
         returnValueForMissingStub: _i3.Future<void>.value(),
       ) as _i3.Future<void>);
-
   @override
   _i3.Future<void> removeObserver(
     _i4.NSObject? observer, {

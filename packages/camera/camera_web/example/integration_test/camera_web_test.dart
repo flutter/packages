@@ -533,32 +533,52 @@ void main() {
             enableAudio: true,
           );
 
-          expect(
-            (CameraPlatform.instance as CameraPlugin).cameras[cameraId],
-            isA<Camera>()
-                .having(
-                  (Camera camera) => camera.textureId,
-                  'textureId',
-                  cameraId,
-                )
-                .having(
-                  (Camera camera) => camera.options,
-                  'options',
-                  CameraOptions(
-                    audio: const AudioConstraints(enabled: true),
-                    video: VideoConstraints(
-                      facingMode: FacingModeConstraint(CameraType.user),
-                      width: VideoSizeConstraint(
-                        ideal: ultraHighResolutionSize.width.toInt(),
-                      ),
-                      height: VideoSizeConstraint(
-                        ideal: ultraHighResolutionSize.height.toInt(),
-                      ),
-                      deviceId: cameraMetadata.deviceId,
-                    ),
-                  ),
-                ),
+          final Camera? camera =
+              (CameraPlatform.instance as CameraPlugin).cameras[cameraId];
+
+          expect(camera, isA<Camera>());
+          expect(camera!.textureId, cameraId);
+          expect(camera.options.audio.enabled, isTrue);
+          expect(camera.options.video.facingMode,
+              equals(FacingModeConstraint(CameraType.user)));
+          expect(camera.options.video.width!.ideal,
+              ultraHighResolutionSize.width.toInt());
+          expect(camera.options.video.height!.ideal,
+              ultraHighResolutionSize.height.toInt());
+          expect(camera.options.video.deviceId, cameraMetadata.deviceId);
+        });
+
+        testWidgets('with appropriate createCameraWithSettings options',
+            (WidgetTester tester) async {
+          when(
+            () => cameraService
+                .mapResolutionPresetToSize(ResolutionPreset.ultraHigh),
+          ).thenReturn(ultraHighResolutionSize);
+
+          final int cameraId =
+              await CameraPlatform.instance.createCameraWithSettings(
+            cameraDescription,
+            const MediaSettings(
+              resolutionPreset: ResolutionPreset.ultraHigh,
+              videoBitrate: 200000,
+              audioBitrate: 32000,
+              enableAudio: true,
+            ),
           );
+
+          final Camera? camera =
+              (CameraPlatform.instance as CameraPlugin).cameras[cameraId];
+
+          expect(camera, isA<Camera>());
+          expect(camera!.textureId, cameraId);
+          expect(camera.options.audio.enabled, isTrue);
+          expect(camera.options.video.facingMode,
+              equals(FacingModeConstraint(CameraType.user)));
+          expect(camera.options.video.width!.ideal,
+              ultraHighResolutionSize.width.toInt());
+          expect(camera.options.video.height!.ideal,
+              ultraHighResolutionSize.height.toInt());
+          expect(camera.options.video.deviceId, cameraMetadata.deviceId);
         });
 
         testWidgets(
@@ -574,26 +594,50 @@ void main() {
             null,
           );
 
-          expect(
-            (CameraPlatform.instance as CameraPlugin).cameras[cameraId],
-            isA<Camera>().having(
-              (Camera camera) => camera.options,
-              'options',
-              CameraOptions(
-                audio: const AudioConstraints(),
-                video: VideoConstraints(
-                  facingMode: FacingModeConstraint(CameraType.user),
-                  width: VideoSizeConstraint(
-                    ideal: maxResolutionSize.width.toInt(),
-                  ),
-                  height: VideoSizeConstraint(
-                    ideal: maxResolutionSize.height.toInt(),
-                  ),
-                  deviceId: cameraMetadata.deviceId,
-                ),
-              ),
+          final Camera? camera =
+              (CameraPlatform.instance as CameraPlugin).cameras[cameraId];
+
+          expect(camera, isA<Camera>());
+          expect(camera!.textureId, cameraId);
+          expect(camera.options.audio.enabled, isFalse);
+          expect(camera.options.video.facingMode,
+              equals(FacingModeConstraint(CameraType.user)));
+          expect(camera.options.video.width!.ideal,
+              maxResolutionSize.width.toInt());
+          expect(camera.options.video.height!.ideal,
+              maxResolutionSize.height.toInt());
+          expect(camera.options.video.deviceId, cameraMetadata.deviceId);
+        });
+
+        testWidgets(
+            'with a max resolution preset '
+            'and enabled audio set to false '
+            'when no options are specified '
+            'using createCameraWithSettings', (WidgetTester tester) async {
+          when(
+            () => cameraService.mapResolutionPresetToSize(ResolutionPreset.max),
+          ).thenReturn(maxResolutionSize);
+
+          final int cameraId =
+              await CameraPlatform.instance.createCameraWithSettings(
+            cameraDescription,
+            const MediaSettings(
+              resolutionPreset: ResolutionPreset.max,
             ),
           );
+
+          final Camera? camera =
+              (CameraPlatform.instance as CameraPlugin).cameras[cameraId];
+
+          expect(camera, isA<Camera>());
+          expect(camera!.options.audio.enabled, isFalse);
+          expect(camera.options.video.facingMode,
+              equals(FacingModeConstraint(CameraType.user)));
+          expect(camera.options.video.width!.ideal,
+              maxResolutionSize.width.toInt());
+          expect(camera.options.video.height!.ideal,
+              maxResolutionSize.height.toInt());
+          expect(camera.options.video.deviceId, cameraMetadata.deviceId);
         });
       });
 
@@ -610,6 +654,37 @@ void main() {
               sensorOrientation: 0,
             ),
             ResolutionPreset.ultraHigh,
+          ),
+          throwsA(
+            isA<CameraException>().having(
+              (CameraException e) => e.code,
+              'code',
+              CameraErrorCode.missingMetadata.toString(),
+            ),
+          ),
+        );
+      });
+
+      testWidgets(
+          'throws CameraException '
+          'with missingMetadata error '
+          'if there is no metadata '
+          'for the given camera description '
+          'using createCameraWithSettings', (WidgetTester tester) async {
+        expect(
+          () => CameraPlatform.instance.createCameraWithSettings(
+            const CameraDescription(
+              name: 'name',
+              lensDirection: CameraLensDirection.back,
+              sensorOrientation: 0,
+            ),
+            const MediaSettings(
+              resolutionPreset: ResolutionPreset.low,
+              fps: 15,
+              videoBitrate: 200000,
+              audioBitrate: 32000,
+              enableAudio: true,
+            ),
           ),
           throwsA(
             isA<CameraException>().having(
@@ -2384,10 +2459,9 @@ void main() {
 
       testWidgets('onCameraResolutionChanged emits an empty stream',
           (WidgetTester tester) async {
-        expect(
-          CameraPlatform.instance.onCameraResolutionChanged(cameraId),
-          emits(isEmpty),
-        );
+        final Stream<CameraResolutionChangedEvent> stream =
+            CameraPlatform.instance.onCameraResolutionChanged(cameraId);
+        expect(await stream.isEmpty, isTrue);
       });
 
       testWidgets(
@@ -2436,7 +2510,7 @@ void main() {
 
           final FakeMediaError error = FakeMediaError(
             MediaError.MEDIA_ERR_NETWORK,
-            'A network error occured.',
+            'A network error occurred.',
           );
 
           final CameraErrorCode errorCode =
@@ -2968,20 +3042,18 @@ void main() {
               (WidgetTester tester) async {
             when(() => window.screen).thenReturn(null);
 
-            expect(
-              CameraPlatform.instance.onDeviceOrientationChanged(),
-              emits(isEmpty),
-            );
+            final Stream<DeviceOrientationChangedEvent> stream =
+                CameraPlatform.instance.onDeviceOrientationChanged();
+            expect(await stream.isEmpty, isTrue);
           });
 
           testWidgets('when screen orientation is not supported',
               (WidgetTester tester) async {
             when(() => screen.orientation).thenReturn(null);
 
-            expect(
-              CameraPlatform.instance.onDeviceOrientationChanged(),
-              emits(isEmpty),
-            );
+            final Stream<DeviceOrientationChangedEvent> stream =
+                CameraPlatform.instance.onDeviceOrientationChanged();
+            expect(await stream.isEmpty, isTrue);
           });
         });
 
