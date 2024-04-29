@@ -7,9 +7,11 @@ package io.flutter.plugins.camerax;
 import android.content.Context;
 import android.hardware.camera2.CameraCharacteristics;
 import androidx.annotation.NonNull;
+import androidx.annotation.OptIn;
 import androidx.annotation.VisibleForTesting;
 import androidx.camera.camera2.interop.Camera2CameraInfo;
 import androidx.camera.core.CameraInfo;
+import androidx.camera.camera2.interop.ExperimentalCamera2Interop;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugins.camerax.GeneratedCameraXLibrary.Camera2CameraInfoHostApi;
 import java.util.Objects;
@@ -30,18 +32,21 @@ public class Camera2CameraInfoHostApiImpl implements Camera2CameraInfoHostApi {
   public static class Camera2CameraInfoProxy {
 
     @NonNull
-    public Camera2CameraInfo createFrom(CameraInfo cameraInfo) {
+    @OptIn(markerClass = ExperimentalCamera2Interop.class)
+    public Camera2CameraInfo createFrom(@NonNull CameraInfo cameraInfo) {
       return Camera2CameraInfo.from(cameraInfo);
     }
 
     @NonNull
-    public Integer getSupportedHardwareLevel(Camera2CameraInfo camera2CameraInfo) {
+    @OptIn(markerClass = ExperimentalCamera2Interop.class)
+    public Integer getSupportedHardwareLevel(@NonNull Camera2CameraInfo camera2CameraInfo) {
       return camera2CameraInfo.getCameraCharacteristic(
           CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL);
     }
 
     @NonNull
-    public String getCameraId(Camera2CameraInfo camera2CameraInfo) {
+    @OptIn(markerClass = ExperimentalCamera2Interop.class)
+    public String getCameraId(@NonNull Camera2CameraInfo camera2CameraInfo) {
       return camera2CameraInfo.getCameraId();
     }
   }
