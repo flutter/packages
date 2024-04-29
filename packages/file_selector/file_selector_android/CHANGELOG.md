@@ -1,3 +1,7 @@
+## 0.5.1+1
+
+* Updates `LICENSE` file to cover licensed code used in `FileUtils.java`.
+
 ## 0.5.1
 
 * Updates minimum supported SDK version to Flutter 3.13/Dart 3.1.
