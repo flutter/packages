@@ -894,16 +894,16 @@ class AndroidCameraCameraX extends CameraPlatform {
       return;
     }
 
-    final Camera2CameraInfo camera2CameraInfo =
-        await proxy.getCamera2CameraInfo(cameraInfo!);
-    final int cameraInfoSupportedHardwareLevel =
-        await camera2CameraInfo.getSupportedHardwareLevel();
-    final bool cameraSupportsHardwareLevel3 =
-        cameraInfoSupportedHardwareLevel ==
-            CameraMetadata.infoSupportedHardwareLevel3;
-
     dynamic Function(CameraImageData)? streamCallback = options.streamCallback;
     if (!_previewIsPaused) {
+      final Camera2CameraInfo camera2CameraInfo =
+          await proxy.getCamera2CameraInfo(cameraInfo!);
+      final int cameraInfoSupportedHardwareLevel =
+          await camera2CameraInfo.getSupportedHardwareLevel();
+      final bool cameraSupportsHardwareLevel3 =
+          cameraInfoSupportedHardwareLevel ==
+              CameraMetadata.infoSupportedHardwareLevel3;
+
       if (!cameraSupportsHardwareLevel3 || streamCallback == null) {
         // Concurrent preview + video recording + image streaming is not supported
         // unless the camera device is cameraSupportsHardwareLevel3 or better.
