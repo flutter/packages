@@ -4,5 +4,19 @@
 
 package dev.flutter.packages.interactive_media_ads
 
+import com.google.ads.interactivemedia.v3.api.AdsManager
+
 class AdsManagerProxyApi(pigeonRegistrar: PigeonProxyApiRegistrar) :
-    PigeonApiAdsManager(pigeonRegistrar) {}
+    PigeonApiAdsManager(pigeonRegistrar) {
+  override fun discardAdBreak(pigeon_instance: AdsManager) {
+    pigeon_instance.discardAdBreak()
+  }
+
+  override fun pause(pigeon_instance: AdsManager) {
+    pigeon_instance.pause()
+  }
+
+  override fun start(pigeon_instance: AdsManager) {
+    pigeon_instance.start()
+  }
+}

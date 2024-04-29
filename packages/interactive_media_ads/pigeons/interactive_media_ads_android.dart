@@ -22,6 +22,58 @@ import 'package:pigeon/pigeon.dart';
   ),
 )
 
+/// The types of error that can be encountered.
+///
+/// See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/AdError.AdErrorCode.html.
+enum AdErrorCode {
+  /// Ads player was not provided.
+  adsPlayerWasNotProvided,
+
+  /// An unexpected error occurred and the cause is not known.
+  unknownError,
+}
+
+/// Specifies when the error was encountered, during either ad loading or playback.
+///
+/// See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/AdError.AdErrorType.html.
+enum AdErrorType {
+  /// Indicates that the error was encountered when the ad was being loaded.
+  load,
+
+  /// Indicates that the error was encountered after the ad loaded, during ad play.
+  play,
+
+  /// The error is not recognized by this wrapper.
+  unknown,
+}
+
+/// Types of events that can occur during ad playback.
+///
+/// See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/AdEvent.AdEventType.html.
+enum AdEventType {
+  /// Fired when an ad break is ready from VMAP or ad rule ads.
+  adBreakReady,
+
+  /// Fired when the ads manager is done playing all the valid ads in the ads
+  /// response, or when the response doesn't return any valid ads.
+  allAdsCompleted,
+
+  /// Fired when an ad completes playing.
+  completed,
+
+  /// Fired when content should be paused.
+  contentPauseRequested,
+
+  /// Fired when content should be resumed.
+  contentResumeRequested,
+
+  /// Fired when the VAST response has been received.
+  loaded,
+
+  /// The event type is not recognized by this wrapper.
+  unknown,
+}
+
 /// A base class for more specialized container interfaces.
 ///
 /// See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/BaseDisplayContainer.html.
@@ -52,7 +104,98 @@ abstract class AdDisplayContainer implements BaseDisplayContainer {}
     fullClassName: 'com.google.ads.interactivemedia.v3.api.AdsLoader',
   ),
 )
-abstract class AdsLoader {}
+abstract class AdsLoader {
+  /// Registers a listener for errors that occur during the ads request.
+  void addAdErrorListener(AdErrorListener listener);
+
+  /// Registers a listener for the ads manager loaded event.
+  void addAdsLoadedListener(AdsLoadedListener listener);
+
+  /// Requests ads from a server.
+  void requestAds(AdsRequest request);
+}
+
+/// An event raised when ads are successfully loaded from the ad server through an AdsLoader.
+///
+/// See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/AdsManagerLoadedEvent.html.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName:
+        'com.google.ads.interactivemedia.v3.api.AdsManagerLoadedEvent',
+  ),
+)
+abstract class AdsManagerLoadedEvent {
+  /// The ads manager that will control playback of the loaded ads, or null when
+  /// using dynamic ad insertion.
+  late final AdsManager manager;
+}
+
+/// Listener interface for notification of ad load or stream load completion.
+///
+/// See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/AdsLoader.AdsLoadedListener.html.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName:
+        'com.google.ads.interactivemedia.v3.api.AdsLoader.AdsLoadedListener',
+  ),
+)
+abstract class AdsLoadedListener {
+  AdsLoadedListener();
+
+  /// Called once the AdsManager or StreamManager has been loaded.
+  late final void Function(AdsManagerLoadedEvent event) onAdsManagerLoaded;
+}
+
+/// Interface for classes that will listen to AdErrorEvents.
+///
+/// See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/AdErrorEvent.AdErrorListener.html.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName:
+        'com.google.ads.interactivemedia.v3.api.AdErrorEvent.AdErrorListener',
+  ),
+)
+abstract class AdErrorListener {
+  AdErrorListener();
+
+  /// Called when an error occurs.
+  late final void Function(AdErrorEvent event) onAdError;
+}
+
+/// An event raised when there is an error loading or playing ads.
+///
+/// See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/AdErrorEvent.html.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'com.google.ads.interactivemedia.v3.api.AdErrorEvent',
+  ),
+)
+abstract class AdErrorEvent {
+  /// The AdError that caused this event.
+  late final AdError error;
+}
+
+/// An error that occurred in the SDK.
+///
+/// See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/AdError.html.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'com.google.ads.interactivemedia.v3.api.AdError',
+  ),
+)
+abstract class AdError {
+  /// The error's code.
+  late final AdErrorCode errorCode;
+
+  /// The error code's number.
+  late final int errorCodeNumber;
+
+  /// The error's type.
+  late final AdErrorType errorType;
+
+  /// A human-readable summary of the error.
+  late final String message;
+}
 
 /// An object containing the data used to request ads from the server.
 ///
@@ -62,7 +205,25 @@ abstract class AdsLoader {}
     fullClassName: 'com.google.ads.interactivemedia.v3.api.AdsRequest',
   ),
 )
-abstract class AdsRequest {}
+abstract class AdsRequest {
+  /// Sets the URL from which ads will be requested.
+  void setAdTagUrl(String adTagUrl);
+
+  /// Attaches a ContentProgressProvider instance to allow scheduling ad breaks
+  /// based on content progress (cue points).
+  void setContentProgressProvider(ContentProgressProvider provider);
+}
+
+/// Defines an interface to allow SDK to track progress of the content video.
+///
+/// See https://developers.google.com/ad-manager/dynamic-ad-insertion/sdk/android/api/reference/com/google/ads/interactivemedia/v3/api/player/ContentProgressProvider.html.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName:
+        'com.google.ads.interactivemedia.v3.api.player.ContentProgressProvider',
+  ),
+)
+abstract class ContentProgressProvider {}
 
 /// An object which handles playing ads after they've been received from the
 /// server.
@@ -73,7 +234,70 @@ abstract class AdsRequest {}
     fullClassName: 'com.google.ads.interactivemedia.v3.api.AdsManager',
   ),
 )
-abstract class AdsManager {}
+abstract class AdsManager extends BaseManager {
+  /// Discards current ad break and resumes content.
+  void discardAdBreak();
+
+  /// Pauses the current ad.
+  void pause();
+
+  /// Starts playing the ads.
+  void start();
+}
+
+/// Base interface for managing ads..
+///
+/// See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/BaseManager.html.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'com.google.ads.interactivemedia.v3.api.BaseManager',
+  ),
+)
+abstract class BaseManager {
+  /// Registers a listener for errors that occur during the ad or stream
+  /// initialization and playback.
+  void addAdErrorListener(AdErrorListener errorListener);
+
+  /// Registers a listener for ad events that occur during ad or stream
+  /// initialization and playback.
+  void addAdEventListener(AdEventListener adEventListener);
+
+  /// Stops the ad and all tracking, then releases all assets that were loaded
+  /// to play the ad.
+  void destroy();
+
+  /// Initializes the ad experience using default rendering settings
+  void init();
+}
+
+/// Listener interface for ad events.
+///
+/// See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/AdEvent.AdEventListener.html.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName:
+        'com.google.ads.interactivemedia.v3.api.AdEvent.AdEventListener',
+  ),
+)
+abstract class AdEventListener {
+  AdEventListener();
+
+  /// Respond to an occurrence of an AdEvent.
+  late final void Function(AdEvent event) onAdEvent;
+}
+
+/// Event to notify publisher that an event occurred with an Ad.
+///
+/// See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/AdEvent.html.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'com.google.ads.interactivemedia.v3.api.AdEvent',
+  ),
+)
+abstract class AdEvent {
+  /// The type of event that occurred.
+  late final AdEventType type;
+}
 
 /// Factory class for creating SDK objects.
 ///
@@ -85,11 +309,38 @@ abstract class AdsManager {}
 )
 abstract class ImaSdkFactory {
   @static
+  @attached
+  late final ImaSdkFactory instance;
+
+  @static
   AdDisplayContainer createAdDisplayContainer(
     ViewGroup container,
     VideoAdPlayer player,
   );
+
+  /// Creates an `ImaSdkSettings` object for configuring the IMA SDK.
+  ImaSdkSettings createImaSdkSettings();
+
+  /// Creates an `AdsLoader` for requesting ads using the specified settings
+  /// object.
+  AdsLoader createAdsLoader(
+    ImaSdkSettings settings,
+    AdDisplayContainer container,
+  );
+
+  /// Creates an AdsRequest object to contain the data used to request ads.
+  AdsRequest createAdsRequest();
 }
+
+/// Defines general SDK settings that are used when creating an `AdsLoader`.
+///
+/// See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/ImaSdkSettings.html.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'com.google.ads.interactivemedia.v3.api.ImaSdkSettings',
+  ),
+)
+abstract class ImaSdkSettings {}
 
 /// Defines the set of methods that a video player must implement to be used by
 /// the IMA SDK, as well as a set of callbacks that it must fire.

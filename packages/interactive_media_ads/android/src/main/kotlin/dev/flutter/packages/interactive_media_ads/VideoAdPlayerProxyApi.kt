@@ -11,8 +11,9 @@ class VideoAdPlayerProxyApi(pigeonRegistrar: PigeonProxyApiRegistrar) :
     return VideoAdPlayerImpl(this)
   }
 
-  private class VideoAdPlayerImpl(val api: VideoAdPlayerProxyApi): VideoAdPlayer {
-    var volume: Int = 0;
+  private class VideoAdPlayerImpl(val api: VideoAdPlayerProxyApi) : VideoAdPlayer {
+    var volume: Int = 0
+
     var adProgress: VideoProgressUpdate = VideoProgressUpdate.VIDEO_TIME_NOT_READY
 
     override fun getAdProgress(): VideoProgressUpdate {

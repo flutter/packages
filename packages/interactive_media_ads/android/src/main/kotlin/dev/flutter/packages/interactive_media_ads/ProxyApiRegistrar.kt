@@ -21,16 +21,56 @@ class ProxyApiRegistrar(binaryMessenger: BinaryMessenger, var context: Context) 
     return AdsLoaderProxyApi(this)
   }
 
+  override fun getPigeonApiAdsManagerLoadedEvent(): PigeonApiAdsManagerLoadedEvent {
+    return AdsManagerLoadedEventProxyApi(this)
+  }
+
+  override fun getPigeonApiAdsLoadedListener(): PigeonApiAdsLoadedListener {
+    return AdsLoadedListenerProxyApi(this)
+  }
+
+  override fun getPigeonApiAdErrorListener(): PigeonApiAdErrorListener {
+    return AdErrorListenerProxyApi(this)
+  }
+
+  override fun getPigeonApiAdErrorEvent(): PigeonApiAdErrorEvent {
+    return AdErrorEventProxyApi(this)
+  }
+
+  override fun getPigeonApiAdError(): PigeonApiAdError {
+    return AdErrorProxyApi(this)
+  }
+
   override fun getPigeonApiAdsRequest(): PigeonApiAdsRequest {
     return AdsRequestProxyApi(this)
+  }
+
+  override fun getPigeonApiContentProgressProvider(): PigeonApiContentProgressProvider {
+    return ContentProgressProviderProxyApi(this)
   }
 
   override fun getPigeonApiAdsManager(): PigeonApiAdsManager {
     return AdsManagerProxyApi(this)
   }
 
+  override fun getPigeonApiBaseManager(): PigeonApiBaseManager {
+    return BaseManagerProxyApi(this)
+  }
+
+  override fun getPigeonApiAdEventListener(): PigeonApiAdEventListener {
+    return AdEventListenerProxyApi(this)
+  }
+
+  override fun getPigeonApiAdEvent(): PigeonApiAdEvent {
+    return AdEventProxyApi(this)
+  }
+
   override fun getPigeonApiImaSdkFactory(): PigeonApiImaSdkFactory {
     return ImaSdkFactoryProxyApi(this)
+  }
+
+  override fun getPigeonApiImaSdkSettings(): PigeonApiImaSdkSettings {
+    return ImaSdkSettingsProxyApi(this)
   }
 
   override fun getPigeonApiVideoAdPlayer(): PigeonApiVideoAdPlayer {

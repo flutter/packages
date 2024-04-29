@@ -20,7 +20,7 @@ final class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
   }
 
   final Set<VideoAdPlayerCallback> videoAdPlayerCallbacks =
-      <VideoAdPlayerCallback>{};g
+      <VideoAdPlayerCallback>{};
 
   AdMediaInfo? loadedAdMediaInfo;
   int savedAdPosition = 0;
