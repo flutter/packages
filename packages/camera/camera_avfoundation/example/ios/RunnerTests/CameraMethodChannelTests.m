@@ -28,22 +28,24 @@
   OCMStub([avCaptureSessionMock canSetSessionPreset:[OCMArg any]]).andReturn(YES);
 
   // Set up method call
-  FlutterMethodCall *call = [FlutterMethodCall
-      methodCallWithMethodName:@"create"
-                     arguments:@{@"resolutionPreset" : @"medium", @"enableAudio" : @(1)}];
-
-  __block id resultValue;
-  [camera createCameraOnSessionQueueWithCreateMethodCall:call
-                                                  result:^(id _Nullable result) {
-                                                    resultValue = result;
-                                                    [expectation fulfill];
-                                                  }];
-  [self waitForExpectationsWithTimeout:1 handler:nil];
+  __block NSNumber *resultValue;
+  [camera createCameraOnSessionQueueWithName:@"acamera"
+                                    settings:[FCPPlatformMediaSettings
+                                                 makeWithResolutionPreset:
+                                                     FCPPlatformResolutionPresetMedium
+                                                          framesPerSecond:nil
+                                                             videoBitrate:nil
+                                                             audioBitrate:nil
+                                                              enableAudio:YES]
+                                  completion:^(NSNumber *_Nullable result,
+                                               FlutterError *_Nullable error) {
+                                    resultValue = result;
+                                    [expectation fulfill];
+                                  }];
+  [self waitForExpectationsWithTimeout:30 handler:nil];
 
   // Verify the result
-  NSDictionary *dictionaryResult = (NSDictionary *)resultValue;
-  XCTAssertNotNil(dictionaryResult);
-  XCTAssert([[dictionaryResult allKeys] containsObject:@"cameraId"]);
+  XCTAssertNotNil(resultValue);
 }
 
 @end

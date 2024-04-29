@@ -26,17 +26,18 @@ CameraLensDirection cameraLensDirectionFromPlatform(
   };
 }
 
-/// Returns the device orientation as a String.
-String serializeDeviceOrientation(DeviceOrientation orientation) {
+/// Convents the given device orientation to Pigeon.
+PlatformDeviceOrientation serializeDeviceOrientation(
+    DeviceOrientation orientation) {
   switch (orientation) {
     case DeviceOrientation.portraitUp:
-      return 'portraitUp';
+      return PlatformDeviceOrientation.portraitUp;
     case DeviceOrientation.portraitDown:
-      return 'portraitDown';
+      return PlatformDeviceOrientation.portraitDown;
     case DeviceOrientation.landscapeRight:
-      return 'landscapeRight';
+      return PlatformDeviceOrientation.landscapeRight;
     case DeviceOrientation.landscapeLeft:
-      return 'landscapeLeft';
+      return PlatformDeviceOrientation.landscapeLeft;
   }
   // The enum comes from a different package, which could get a new value at
   // any time, so provide a fallback that ensures this won't break when used
@@ -44,7 +45,7 @@ String serializeDeviceOrientation(DeviceOrientation orientation) {
   // the switch rather than a `default` so that the linter will flag the
   // switch as needing an update.
   // ignore: dead_code
-  return 'portraitUp';
+  return PlatformDeviceOrientation.portraitUp;
 }
 
 /// Converts a Pigeon [PlatformDeviceOrientation] to a [DeviceOrientation].
