@@ -1,3 +1,7 @@
+## 14.0.2
+
+- Fixes correctness of the state provided in the `onExit`.
+
 ## 14.0.1
 
 - Updates the redirection documentation for clarity
