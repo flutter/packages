@@ -50,9 +50,9 @@ void main() {
 
       setUp(() {
         mockPlatformHostApi = MockTestWKWebsiteDataStoreHostApi();
-        TestWKWebsiteDataStoreHostApi.setup(mockPlatformHostApi);
+        TestWKWebsiteDataStoreHostApi.setUp(mockPlatformHostApi);
 
-        TestWKWebViewConfigurationHostApi.setup(
+        TestWKWebViewConfigurationHostApi.setUp(
           MockTestWKWebViewConfigurationHostApi(),
         );
         webViewConfiguration = WKWebViewConfiguration(
@@ -66,8 +66,8 @@ void main() {
       });
 
       tearDown(() {
-        TestWKWebsiteDataStoreHostApi.setup(null);
-        TestWKWebViewConfigurationHostApi.setup(null);
+        TestWKWebsiteDataStoreHostApi.setUp(null);
+        TestWKWebViewConfigurationHostApi.setUp(null);
       });
 
       test('WKWebViewConfigurationFlutterApi.create', () {
