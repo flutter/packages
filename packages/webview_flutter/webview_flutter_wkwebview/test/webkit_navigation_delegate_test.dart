@@ -30,7 +30,7 @@ void main() {
 
     test('setOnPageFinished', () {
       final WebKitNavigationDelegate webKitDelegate = WebKitNavigationDelegate(
-        WebKitNavigationDelegateCreationParams(
+        const WebKitNavigationDelegateCreationParams(
           webKitProxy: WebKitProxy(
             createNavigationDelegate: CapturingNavigationDelegate.new,
             createUIDelegate: CapturingUIDelegate.new,
@@ -51,7 +51,7 @@ void main() {
 
     test('setOnPageStarted', () {
       final WebKitNavigationDelegate webKitDelegate = WebKitNavigationDelegate(
-        WebKitNavigationDelegateCreationParams(
+        const WebKitNavigationDelegateCreationParams(
           webKitProxy: WebKitProxy(
             createNavigationDelegate: CapturingNavigationDelegate.new,
             createUIDelegate: CapturingUIDelegate.new,
@@ -127,7 +127,7 @@ void main() {
 
     test('onWebResourceError from didFailNavigation', () {
       final WebKitNavigationDelegate webKitDelegate = WebKitNavigationDelegate(
-        WebKitNavigationDelegateCreationParams(
+        const WebKitNavigationDelegateCreationParams(
           webKitProxy: WebKitProxy(
             createNavigationDelegate: CapturingNavigationDelegate.new,
             createUIDelegate: CapturingUIDelegate.new,
@@ -165,7 +165,7 @@ void main() {
 
     test('onWebResourceError from didFailProvisionalNavigation', () {
       final WebKitNavigationDelegate webKitDelegate = WebKitNavigationDelegate(
-        WebKitNavigationDelegateCreationParams(
+        const WebKitNavigationDelegateCreationParams(
           webKitProxy: WebKitProxy(
             createNavigationDelegate: CapturingNavigationDelegate.new,
             createUIDelegate: CapturingUIDelegate.new,
@@ -204,7 +204,7 @@ void main() {
 
     test('onWebResourceError from webViewWebContentProcessDidTerminate', () {
       final WebKitNavigationDelegate webKitDelegate = WebKitNavigationDelegate(
-        WebKitNavigationDelegateCreationParams(
+        const WebKitNavigationDelegateCreationParams(
           webKitProxy: WebKitProxy(
             createNavigationDelegate: CapturingNavigationDelegate.new,
             createUIDelegate: CapturingUIDelegate.new,
@@ -236,7 +236,7 @@ void main() {
 
     test('onNavigationRequest from decidePolicyForNavigationAction', () {
       final WebKitNavigationDelegate webKitDelegate = WebKitNavigationDelegate(
-        WebKitNavigationDelegateCreationParams(
+        const WebKitNavigationDelegateCreationParams(
           webKitProxy: WebKitProxy(
             createNavigationDelegate: CapturingNavigationDelegate.new,
             createUIDelegate: CapturingUIDelegate.new,
@@ -275,7 +275,7 @@ void main() {
     test('onHttpBasicAuthRequest emits host and realm', () {
       final WebKitNavigationDelegate iosNavigationDelegate =
           WebKitNavigationDelegate(
-        WebKitNavigationDelegateCreationParams(
+        const WebKitNavigationDelegateCreationParams(
           webKitProxy: WebKitProxy(
             createNavigationDelegate: CapturingNavigationDelegate.new,
           ),

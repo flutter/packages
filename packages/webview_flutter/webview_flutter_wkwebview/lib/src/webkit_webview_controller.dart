@@ -45,7 +45,7 @@ class WebKitWebViewControllerCreationParams
     extends PlatformWebViewControllerCreationParams {
   /// Constructs a [WebKitWebViewControllerCreationParams].
   WebKitWebViewControllerCreationParams({
-    @visibleForTesting WebKitProxy? webKitProxy,
+    @visibleForTesting this.webKitProxy = const WebKitProxy(),
     this.mediaTypesRequiringUserAction = const <PlaybackMediaTypes>{
       PlaybackMediaTypes.audio,
       PlaybackMediaTypes.video,
@@ -53,11 +53,10 @@ class WebKitWebViewControllerCreationParams
     this.allowsInlineMediaPlayback = false,
     this.limitsNavigationsToAppBoundDomains = false,
     @visibleForTesting InstanceManager? instanceManager,
-  })  : webKitProxy = webKitProxy ?? WebKitProxy(),
-        _instanceManager = instanceManager ?? NSObject.globalInstanceManager {
-    _configuration = this.webKitProxy.createWebViewConfiguration(
-          instanceManager: _instanceManager,
-        );
+  }) : _instanceManager = instanceManager ?? NSObject.globalInstanceManager {
+    _configuration = webKitProxy.createWebViewConfiguration(
+      instanceManager: _instanceManager,
+    );
 
     if (mediaTypesRequiringUserAction.isEmpty) {
       _configuration.setMediaTypesRequiringUserActionForPlayback(
@@ -89,7 +88,7 @@ class WebKitWebViewControllerCreationParams
     // Recommended placeholder to prevent being broken by platform interface.
     // ignore: avoid_unused_constructor_parameters
     PlatformWebViewControllerCreationParams params, {
-    @visibleForTesting WebKitProxy? webKitProxy,
+    @visibleForTesting WebKitProxy webKitProxy = const WebKitProxy(),
     Set<PlaybackMediaTypes> mediaTypesRequiringUserAction =
         const <PlaybackMediaTypes>{
       PlaybackMediaTypes.audio,
@@ -823,10 +822,9 @@ class WebKitJavaScriptChannelParams extends JavaScriptChannelParams {
   WebKitJavaScriptChannelParams({
     required super.name,
     required super.onMessageReceived,
-    @visibleForTesting WebKitProxy? webKitProxy,
+    @visibleForTesting WebKitProxy webKitProxy = const WebKitProxy(),
   })  : assert(name.isNotEmpty),
-        _messageHandler =
-            (webKitProxy ?? WebKitProxy()).createScriptMessageHandler(
+        _messageHandler = webKitProxy.createScriptMessageHandler(
           didReceiveScriptMessage: withWeakReferenceTo(
             onMessageReceived,
             (WeakReference<void Function(JavaScriptMessage)> weakReference) {
@@ -848,7 +846,7 @@ class WebKitJavaScriptChannelParams extends JavaScriptChannelParams {
   /// [JavaScriptChannelParams].
   WebKitJavaScriptChannelParams.fromJavaScriptChannelParams(
     JavaScriptChannelParams params, {
-    @visibleForTesting WebKitProxy? webKitProxy,
+    @visibleForTesting WebKitProxy webKitProxy = const WebKitProxy(),
   }) : this(
           name: params.name,
           onMessageReceived: params.onMessageReceived,
@@ -992,17 +990,17 @@ class WebKitWebResourceError extends WebResourceError {
 class WebKitNavigationDelegateCreationParams
     extends PlatformNavigationDelegateCreationParams {
   /// Constructs a [WebKitNavigationDelegateCreationParams].
-  WebKitNavigationDelegateCreationParams({
-    @visibleForTesting WebKitProxy? webKitProxy,
-  }) : webKitProxy = webKitProxy ?? WebKitProxy();
+  const WebKitNavigationDelegateCreationParams({
+    @visibleForTesting this.webKitProxy = const WebKitProxy(),
+  });
 
   /// Constructs a [WebKitNavigationDelegateCreationParams] using a
   /// [PlatformNavigationDelegateCreationParams].
-  WebKitNavigationDelegateCreationParams.fromPlatformNavigationDelegateCreationParams(
+  const WebKitNavigationDelegateCreationParams.fromPlatformNavigationDelegateCreationParams(
     // Recommended placeholder to prevent being broken by platform interface.
     // ignore: avoid_unused_constructor_parameters
     PlatformNavigationDelegateCreationParams params, {
-    @visibleForTesting WebKitProxy? webKitProxy,
+    @visibleForTesting WebKitProxy webKitProxy = const WebKitProxy(),
   }) : this(webKitProxy: webKitProxy);
 
   /// Handles constructing objects and calling static methods for the WebKit

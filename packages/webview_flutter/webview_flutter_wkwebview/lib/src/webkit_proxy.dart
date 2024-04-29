@@ -14,8 +14,9 @@ import 'web_kit/web_kit.dart';
 WKWebsiteDataStore _defaultWebsiteDataStore() =>
     WKWebsiteDataStore.defaultDataStore;
 
-/// The type for a WKWebView implementation's constructor.
-typedef WebViewConstructor = WKWebView Function(
+// This convenience method was added because Dart doesn't support constant
+// function literals: https://github.com/dart-lang/language/issues/1048.
+WKWebView _platformWebViewConstructor(
   WKWebViewConfiguration configuration, {
   void Function(
     String keyPath,
@@ -23,7 +24,13 @@ typedef WebViewConstructor = WKWebView Function(
     Map<NSKeyValueChangeKey, Object?> change,
   )? observeValue,
   InstanceManager? instanceManager,
-});
+}) {
+  return Platform.isIOS
+      ? WKWebViewIOS(configuration,
+          observeValue: observeValue, instanceManager: instanceManager)
+      : WKWebViewMacOS(configuration,
+          observeValue: observeValue, instanceManager: instanceManager);
+}
 
 /// Handles constructing objects and calling static methods for the WebKit
 /// native library.
@@ -36,19 +43,26 @@ typedef WebViewConstructor = WKWebView Function(
 /// it intends to return.
 class WebKitProxy {
   /// Constructs a [WebKitProxy].
-  WebKitProxy({
-    WebViewConstructor? createWebView,
+  const WebKitProxy({
+    this.createWebView = _platformWebViewConstructor,
     this.createWebViewConfiguration = WKWebViewConfiguration.new,
     this.createScriptMessageHandler = WKScriptMessageHandler.new,
     this.defaultWebsiteDataStore = _defaultWebsiteDataStore,
     this.createNavigationDelegate = WKNavigationDelegate.new,
     this.createUIDelegate = WKUIDelegate.new,
     this.createUIScrollViewDelegate = UIScrollViewDelegate.new,
-  }) : createWebView = createWebView ??
-            (Platform.isIOS ? WKWebViewIOS.new : WKWebViewMacOS.new);
+  });
 
   /// Constructs a [WKWebView].
-  final WebViewConstructor createWebView;
+  final WKWebView Function(
+    WKWebViewConfiguration configuration, {
+    void Function(
+      String keyPath,
+      NSObject object,
+      Map<NSKeyValueChangeKey, Object?> change,
+    )? observeValue,
+    InstanceManager? instanceManager,
+  }) createWebView;
 
   /// Constructs a [WKWebViewConfiguration].
   final WKWebViewConfiguration Function({
