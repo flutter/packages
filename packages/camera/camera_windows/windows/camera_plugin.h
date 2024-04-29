@@ -15,6 +15,7 @@
 #include "camera.h"
 #include "capture_controller.h"
 #include "capture_controller_listener.h"
+#include "messages.g.h"
 
 namespace camera_windows {
 using flutter::MethodResult;
@@ -27,6 +28,7 @@ class MockCameraPlugin;
 }  // namespace test
 
 class CameraPlugin : public flutter::Plugin,
+                     public CameraApi,
                      public VideoCaptureDeviceEnumerator {
  public:
   static void RegisterWithRegistrar(flutter::PluginRegistrarWindows* registrar);
@@ -49,6 +51,31 @@ class CameraPlugin : public flutter::Plugin,
   // Called when a method is called on plugin channel.
   void HandleMethodCall(const flutter::MethodCall<>& method_call,
                         std::unique_ptr<MethodResult<>> result);
+
+  // CameraApi:
+  ErrorOr<flutter::EncodableList> AvailableCameras() override;
+  void Create(const std::string& camera_name,
+              const PlatformMediaSettings& settings,
+              std::function<void(ErrorOr<std::string> reply)> result) override;
+  void Initialize(
+      int64_t camera_id,
+      std::function<void(ErrorOr<PlatformSize> reply)> result) override;
+  void PausePreview(
+      int64_t camera_id,
+      std::function<void(std::optional<FlutterError> reply)> result) override;
+  void ResumePreview(
+      int64_t camera_id,
+      std::function<void(std::optional<FlutterError> reply)> result) override;
+  void StartVideoRecording(
+      int64_t camera_id, const PlatformVideoCaptureOptions& options,
+      std::function<void(std::optional<FlutterError> reply)> result) override;
+  void StopVideoRecording(
+      int64_t camera_id,
+      std::function<void(ErrorOr<std::string> reply)> result) override;
+  void TakePicture(
+      int64_t camera_id,
+      std::function<void(ErrorOr<std::string> reply)> result) override;
+  std::optional<FlutterError> Dispose(int64_t camera_id) override;
 
  private:
   // Loops through cameras and returns camera

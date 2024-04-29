@@ -13,7 +13,24 @@ import 'package:pigeon/pigeon.dart';
 ))
 
 /// Pigeon version of pltaform interface's ResolutionPreset.
-enum ResolutionPreset { low, medium, high, veryHigh, ultraHigh, max }
+enum PlatformResolutionPreset { low, medium, high, veryHigh, ultraHigh, max }
+
+// Pigeon version of to MediaSettings.
+class PlatformMediaSettings {
+  PlatformMediaSettings({
+    required this.resolutionPreset,
+    required this.framesPerSecond,
+    required this.videoBitrate,
+    required this.audioBitrate,
+    required this.enableAudio,
+  });
+
+  final PlatformResolutionPreset resolutionPreset;
+  final int? framesPerSecond;
+  final int? videoBitrate;
+  final int? audioBitrate;
+  final bool enableAudio;
+}
 
 /// A representation of a size from the native camera APIs.
 class PlatformSize {
@@ -37,15 +54,14 @@ abstract class CameraApi {
 
   /// Creates a camera instance for the given device name and settings.
   @async
-  String create(
-      String cameraName, ResolutionPreset? resolutionPreset, bool enableAudio);
+  String create(String cameraName, PlatformMediaSettings settings);
 
   /// Initializes a camera, and returns the size of its preview.
   @async
   PlatformSize initialize(int cameraId);
 
   /// Disposes a camera that is no longer in use.
-  PlatformSize dispose(int cameraId);
+  void dispose(int cameraId);
 
   /// Takes a picture with the given camera, and returns the path to the
   /// resulting file.

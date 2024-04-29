@@ -49,29 +49,45 @@ CameraImpl::~CameraImpl() {
 
 bool CameraImpl::InitCamera(flutter::TextureRegistrar* texture_registrar,
                             flutter::BinaryMessenger* messenger,
-                            ResolutionPreset resolution_preset,
-                            const RecordSettings& record_settings) {
+                            const PlatformMediaSettings& media_settings) {
   auto capture_controller_factory =
       std::make_unique<CaptureControllerFactoryImpl>();
   return InitCamera(std::move(capture_controller_factory), texture_registrar,
-                    messenger, resolution_preset, record_settings);
+                    messenger, media_settings);
 }
 
 bool CameraImpl::InitCamera(
     std::unique_ptr<CaptureControllerFactory> capture_controller_factory,
     flutter::TextureRegistrar* texture_registrar,
-    flutter::BinaryMessenger* messenger, ResolutionPreset resolution_preset,
-    const RecordSettings& record_settings) {
+    flutter::BinaryMessenger* messenger,
+    const PlatformMediaSettings& media_settings) {
   assert(!device_id_.empty());
   messenger_ = messenger;
   capture_controller_ =
       capture_controller_factory->CreateCaptureController(this);
-  return capture_controller_->InitCaptureDevice(
-      texture_registrar, device_id_, resolution_preset, record_settings);
+  return capture_controller_->InitCaptureDevice(texture_registrar, device_id_,
+                                                media_settings);
 }
 
-bool CameraImpl::AddPendingResult(
-    PendingResultType type, std::unique_ptr<flutter::MethodResult<>> result) {
+bool CameraImpl::AddPendingVoidResult(
+    PendingResultType type,
+    std::function<void(std::optional<FlutterError> reply)> result) {
+  AddPendingResult(type, result);
+}
+
+bool CameraImpl::AddPendingStringResult(
+    PendingResultType type,
+    std::function<void(ErrorOr<std::string> reply)> result) {
+  AddPendingResult(type, result);
+}
+
+bool CameraImpl::AddPendingSizeResult(
+    PendingResultType type,
+    std::function<void(ErrorOr<PlatformSize> reply)> result) {
+  AddPendingResult(type, result);
+}
+
+bool CameraImpl::AddPendingResult(PendingResultType type, AsyncResult) {
   assert(result);
 
   auto it = pending_results_.find(type);
@@ -84,11 +100,38 @@ bool CameraImpl::AddPendingResult(
   return true;
 }
 
-std::unique_ptr<flutter::MethodResult<>> CameraImpl::GetPendingResultByType(
+std::function<void(std::optional<FlutterError> reply)>
+CameraImpl::GetPendingVoidResultByType(PendingResultType type) {
+  std::optional<AsyncResult> result = GetPendingResultByType(type);
+  if (!result) {
+    return nullptr;
+  }
+  return std::get<std::function<void(std::optional<FlutterError>)>>(result);
+}
+
+std::function<void(ErrorOr<std::string> reply)>
+CameraImpl::GetPendingStringResultByType(PendingResultType type) {
+  std::optional<AsyncResult> result = GetPendingResultByType(type);
+  if (!result) {
+    return nullptr;
+  }
+  return std::get<std::function<void(ErrorOr<std::string>)>>(result);
+}
+
+std::function<void(ErrorOr<PlatformSize> reply)>
+CameraImpl::GetPendingSizeResultByType(PendingResultType type) {
+  std::optional<AsyncResult> result = GetPendingResultByType(type);
+  if (!result) {
+    return nullptr;
+  }
+  return std::get<std::function<void(ErrorOr<PlatformSize>)>>(result);
+}
+
+std::optional<AsyncResult> CameraImpl::GetPendingResultByType(
     PendingResultType type) {
   auto it = pending_results_.find(type);
   if (it == pending_results_.end()) {
-    return nullptr;
+    return std::nullopt;
   }
   auto result = std::move(it->second);
   pending_results_.erase(it);
@@ -105,9 +148,8 @@ bool CameraImpl::HasPendingResultByType(PendingResultType type) const {
 
 void CameraImpl::SendErrorForPendingResults(const std::string& error_code,
                                             const std::string& description) {
-  for (const auto& pending_result : pending_results_) {
-    pending_result.second->Error(error_code, description);
-  }
+  std::visit([](auto&& arg) { arg(FlutterError(error_code, description)); },
+             pending_results_);
   pending_results_.clear();
 }
 

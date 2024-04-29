@@ -176,15 +176,16 @@ HRESULT RecordHandler::InitRecordSink(IMFCaptureEngine* capture_engine,
     return hr;
   }
 
-  if (media_settings_.fps.has_value()) {
-    assert(media_settings_.fps.value() > 0);
-    SetFrameRate(video_record_media_type.Get(), media_settings_.fps.value(), 1);
+  if (media_settings_.frames_per_second()) {
+    assert(*media_settings_.frames_per_second() > 0);
+    SetFrameRate(video_record_media_type.Get(),
+                 *media_settings_.frames_per_second(), 1);
   }
 
-  if (media_settings_.video_bitrate.has_value()) {
-    assert(media_settings_.video_bitrate.value() > 0);
+  if (media_settings_.video_bitrate()) {
+    assert(#media_settings_.video_bitrate() > 0);
     SetVideoBitrate(video_record_media_type.Get(),
-                    media_settings_.video_bitrate.value());
+                    *media_settings_.video_bitrate());
   }
 
   DWORD video_record_sink_stream_index;

@@ -10,12 +10,21 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:stream_transform/stream_transform.dart';
 
+import 'src/messages.g.dart';
+
 /// An implementation of [CameraPlatform] for Windows.
 class CameraWindows extends CameraPlatform {
+  /// Creates a new Windows [CameraPlatform] implementation instance.
+  CameraWindows({@visibleForTesting CameraApi? api})
+      : _hostApi = api ?? CameraApi();
+
   /// Registers the Windows implementation of CameraPlatform.
   static void registerWith() {
     CameraPlatform.instance = CameraWindows();
   }
+
+  /// Interface for calling host-side code.
+  final CameraApi _hostApi;
 
   /// The method channel used to interact with the native platform.
   @visibleForTesting
@@ -43,19 +52,18 @@ class CameraWindows extends CameraPlatform {
   @override
   Future<List<CameraDescription>> availableCameras() async {
     try {
-      final List<Map<dynamic, dynamic>>? cameras = await pluginChannel
-          .invokeListMethod<Map<dynamic, dynamic>>('availableCameras');
+      final List<String?> cameras = await _hostApi.availableCameras();
 
-      if (cameras == null) {
-        return <CameraDescription>[];
-      }
-
-      return cameras.map((Map<dynamic, dynamic> camera) {
+      return cameras.map((String? cameraName) {
         return CameraDescription(
-          name: camera['name'] as String,
-          lensDirection:
-              parseCameraLensDirection(camera['lensFacing'] as String),
-          sensorOrientation: camera['sensorOrientation'] as int,
+          // This type is only nullable due to Pigeon limitations, see
+          // https://github.com/flutter/flutter/issues/97848. The native code
+          // will never return null.
+          name: cameraName!,
+          // TODO(stuartmorgan): Implement these; see
+          // https://github.com/flutter/flutter/issues/97540.
+          lensDirection: CameraLensDirection.front,
+          sensorOrientation: 0,
         );
       }).toList();
     } on PlatformException catch (e) {
@@ -439,19 +447,5 @@ class CameraWindows extends CameraPlatform {
       default:
         throw UnimplementedError();
     }
-  }
-
-  /// Parses string presentation of the camera lens direction and returns enum value.
-  @visibleForTesting
-  CameraLensDirection parseCameraLensDirection(String string) {
-    switch (string) {
-      case 'front':
-        return CameraLensDirection.front;
-      case 'back':
-        return CameraLensDirection.back;
-      case 'external':
-        return CameraLensDirection.external;
-    }
-    throw ArgumentError('Unknown CameraLensDirection value');
   }
 }
