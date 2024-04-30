@@ -630,12 +630,19 @@ class WebKitWebViewController extends PlatformWebViewController {
   }
 
   Future<void> _injectConsoleOverride() {
-    // Using the replacer parameter of JSON.stringify() to solve the error
+    // Within overrideScript, a series of console output methods such as
+    // console.log will be rewritten to pass the output content to the dart end.
+    //
+    // These output contents will first be serialized through JSON.stringify(),
+    // but if the output content contains cyclic objects, it will encounter the
+    // following error.
     // TypeError: JSON.stringify cannot serialize cyclic structures.
     // See https://github.com/flutter/flutter/issues/144535.
     //
     // Considering this is just looking at the logs printed via console.log,
     // the cyclic object is not important, so remove it.
+    // Therefore, the replacer parameter of JSON.stringify() is used and the
+    // removeCyclicObject method is passed in to solve the error.
     const WKUserScript overrideScript = WKUserScript(
       '''
 var _flutter_webview_plugin_overrides = _flutter_webview_plugin_overrides || {
