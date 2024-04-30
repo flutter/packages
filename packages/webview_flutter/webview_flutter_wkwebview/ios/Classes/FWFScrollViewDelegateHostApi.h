@@ -11,20 +11,16 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-/**
- * Flutter api implementation for UIScrollViewDelegate.
- *
- * Handles making callbacks to Dart for a UIScrollViewDelegate.
- */
+/// Flutter api implementation for UIScrollViewDelegate.
+///
+/// Handles making callbacks to Dart for a UIScrollViewDelegate.
 @interface FWFScrollViewDelegateFlutterApiImpl : FWFUIScrollViewDelegateFlutterApi
 
 - (instancetype)initWithBinaryMessenger:(id<FlutterBinaryMessenger>)binaryMessenger
                         instanceManager:(FWFInstanceManager *)instanceManager;
 @end
 
-/**
- * Implementation of WKUIScrollViewDelegate for FWFUIScrollViewDelegateHostApiImpl.
- */
+/// Implementation of WKUIScrollViewDelegate for FWFUIScrollViewDelegateHostApiImpl.
 @interface FWFScrollViewDelegate : FWFObject <UIScrollViewDelegate>
 @property(readonly, nonnull, nonatomic) FWFScrollViewDelegateFlutterApiImpl *scrollViewDelegateAPI;
 
@@ -33,11 +29,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-/**
- * Host api implementation for UIScrollViewDelegate.
- *
- * Handles creating UIScrollView that intercommunicate with a paired Dart object.
- */
+/// Host api implementation for UIScrollViewDelegate.
+///
+/// Handles creating UIScrollView that intercommunicate with a paired Dart object.
 @interface FWFScrollViewDelegateHostApiImpl : NSObject <FWFUIScrollViewDelegateHostApi>
 - (instancetype)initWithBinaryMessenger:(id<FlutterBinaryMessenger>)binaryMessenger
                         instanceManager:(FWFInstanceManager *)instanceManager;

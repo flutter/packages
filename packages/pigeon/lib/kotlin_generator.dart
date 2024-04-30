@@ -32,6 +32,7 @@ class KotlinOptions {
     this.package,
     this.copyrightHeader,
     this.errorClassName,
+    this.includeErrorClass = true,
   });
 
   /// The package where the generated class will live.
@@ -43,6 +44,12 @@ class KotlinOptions {
   /// The name of the error class used for passing custom error parameters.
   final String? errorClassName;
 
+  /// Whether to include the error class in generation.
+  ///
+  /// This should only ever be set to false if you have another generated
+  /// Kotlin file in the same directory.
+  final bool includeErrorClass;
+
   /// Creates a [KotlinOptions] from a Map representation where:
   /// `x = KotlinOptions.fromMap(x.toMap())`.
   static KotlinOptions fromMap(Map<String, Object> map) {
@@ -50,6 +57,7 @@ class KotlinOptions {
       package: map['package'] as String?,
       copyrightHeader: map['copyrightHeader'] as Iterable<String>?,
       errorClassName: map['errorClassName'] as String?,
+      includeErrorClass: map['includeErrorClass'] as bool? ?? true,
     );
   }
 
@@ -60,6 +68,7 @@ class KotlinOptions {
       if (package != null) 'package': package!,
       if (copyrightHeader != null) 'copyrightHeader': copyrightHeader!,
       if (errorClassName != null) 'errorClassName': errorClassName!,
+      'includeErrorClass': includeErrorClass,
     };
     return result;
   }
@@ -298,7 +307,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
     addDocumentationComments(
         indent, field.documentationComments, _docCommentSpec);
     indent.write(
-        'val ${field.name}: ${_nullsafeKotlinTypeForDartType(field.type)}');
+        'val ${field.name}: ${_nullSafeKotlinTypeForDartType(field.type)}');
     final String defaultNil = field.type.isNullable ? ' = null' : '';
     indent.add(defaultNil);
   }
@@ -345,8 +354,8 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
 
     final String apiName = api.name;
     indent.writeln('@Suppress("UNCHECKED_CAST")');
-    indent
-        .write('class $apiName(private val binaryMessenger: BinaryMessenger) ');
+    indent.write(
+        'class $apiName(private val binaryMessenger: BinaryMessenger, private val messageChannelSuffix: String = "") ');
     indent.addScoped('{', '}', () {
       indent.write('companion object ');
       indent.addScoped('{', '}', () {
@@ -361,16 +370,15 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
         });
       });
 
-      final String errorClassName = _getErrorClassName(generatorOptions);
       for (final Method method in api.methods) {
         _writeFlutterMethod(
           indent,
+          generatorOptions: generatorOptions,
           name: method.name,
           parameters: method.parameters,
           returnType: method.returnType,
           channelName: makeChannelName(api, method, dartPackageName),
           documentationComments: method.documentationComments,
-          errorClassName: errorClassName,
           dartPackageName: dartPackageName,
         );
       }
@@ -436,8 +444,10 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
             '/** Sets up an instance of `$apiName` to handle messages through the `binaryMessenger`. */');
         indent.writeln('@Suppress("UNCHECKED_CAST")');
         indent.write(
-            'fun setUp(binaryMessenger: BinaryMessenger, api: $apiName?) ');
+            'fun setUp(binaryMessenger: BinaryMessenger, api: $apiName?, messageChannelSuffix: String = "") ');
         indent.addScoped('{', '}', () {
+          indent.writeln(
+              r'val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""');
           for (final Method method in api.methods) {
             _writeHostMethodMessageHandler(
               indent,
@@ -588,7 +598,9 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
     if (hasFlutterApi) {
       _writeCreateConnectionError(generatorOptions, indent);
     }
-    _writeErrorClass(generatorOptions, indent);
+    if (generatorOptions.includeErrorClass) {
+      _writeErrorClass(generatorOptions, indent);
+    }
   }
 
   static void _writeMethodDeclaration(
@@ -606,7 +618,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
     final List<String> argSignature = <String>[];
     if (parameters.isNotEmpty) {
       final Iterable<String> argTypes = parameters
-          .map((NamedType e) => _nullsafeKotlinTypeForDartType(e.type));
+          .map((NamedType e) => _nullSafeKotlinTypeForDartType(e.type));
       final Iterable<String> argNames = indexMap(parameters, getArgumentName);
       argSignature.addAll(
         map2(
@@ -620,7 +632,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
     }
 
     final String returnTypeString =
-        returnType.isVoid ? '' : _nullsafeKotlinTypeForDartType(returnType);
+        returnType.isVoid ? '' : _nullSafeKotlinTypeForDartType(returnType);
 
     final String resultType = returnType.isVoid ? 'Unit' : returnTypeString;
     addDocumentationComments(indent, documentationComments, _docCommentSpec);
@@ -665,9 +677,8 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
         indent.writeln(
             'val $taskQueue = binaryMessenger.makeBackgroundTaskQueue()');
       }
-
       indent.write(
-          'val channel = BasicMessageChannel<Any?>(binaryMessenger, "$channelName", codec');
+          'val channel = BasicMessageChannel<Any?>(binaryMessenger, "$channelName\$separatedMessageChannelSuffix", codec');
 
       if (taskQueue != null) {
         indent.addln(', $taskQueue)');
@@ -700,7 +711,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
             indent.write('$call ');
             final String resultType = returnType.isVoid
                 ? 'Unit'
-                : _nullsafeKotlinTypeForDartType(returnType);
+                : _nullSafeKotlinTypeForDartType(returnType);
             indent.addScoped('{ result: Result<$resultType> ->', '}', () {
               indent.writeln('val error = result.exceptionOrNull()');
               indent.writeScoped('if (error != null) {', '}', () {
@@ -751,21 +762,14 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
 
   void _writeFlutterMethod(
     Indent indent, {
+    required KotlinOptions generatorOptions,
     required String name,
     required List<Parameter> parameters,
     required TypeDeclaration returnType,
     required String channelName,
-    required String errorClassName,
     required String dartPackageName,
     List<String> documentationComments = const <String>[],
     int? minApiRequirement,
-    void Function(
-      Indent indent, {
-      required List<Parameter> parameters,
-      required TypeDeclaration returnType,
-      required String channelName,
-      required String errorClassName,
-    }) onWriteBody = _writeFlutterMethodMessageCall,
   }) {
     _writeMethodDeclaration(
       indent,
@@ -778,8 +782,9 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
       getArgumentName: _getSafeArgumentName,
     );
 
+    final String errorClassName = _getErrorClassName(generatorOptions);
     indent.addScoped('{', '}', () {
-      onWriteBody(
+      _writeFlutterMethodMessageCall(
         indent,
         parameters: parameters,
         returnType: returnType,
@@ -809,7 +814,10 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
     }
 
     const String channel = 'channel';
-    indent.writeln('val channelName = "$channelName"');
+    indent.writeln(
+        r'val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""');
+    indent.writeln(
+        'val channelName = "$channelName\$separatedMessageChannelSuffix"');
     indent.writeln(
         'val $channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)');
     indent.writeScoped('$channel.send($sendArgument) {', '}', () {
@@ -910,9 +918,9 @@ String _kotlinTypeForBuiltinGenericDartType(TypeDeclaration type) {
   } else {
     switch (type.baseName) {
       case 'List':
-        return 'List<${_nullsafeKotlinTypeForDartType(type.typeArguments.first)}>';
+        return 'List<${_nullSafeKotlinTypeForDartType(type.typeArguments.first)}>';
       case 'Map':
-        return 'Map<${_nullsafeKotlinTypeForDartType(type.typeArguments.first)}, ${_nullsafeKotlinTypeForDartType(type.typeArguments.last)}>';
+        return 'Map<${_nullSafeKotlinTypeForDartType(type.typeArguments.first)}, ${_nullSafeKotlinTypeForDartType(type.typeArguments.last)}>';
       default:
         return '${type.baseName}<${_flattenTypeArguments(type.typeArguments)}>';
     }
@@ -946,7 +954,7 @@ String _kotlinTypeForDartType(TypeDeclaration type) {
   return _kotlinTypeForBuiltinDartType(type) ?? type.baseName;
 }
 
-String _nullsafeKotlinTypeForDartType(TypeDeclaration type) {
+String _nullSafeKotlinTypeForDartType(TypeDeclaration type) {
   final String nullSafe = type.isNullable ? '?' : '';
   return '${_kotlinTypeForDartType(type)}$nullSafe';
 }
@@ -969,7 +977,7 @@ String _cast(Indent indent, String variable, {required TypeDeclaration type}) {
     }
     return '${type.baseName}.ofRaw($variable as Int)!!';
   }
-  return '$variable as ${_nullsafeKotlinTypeForDartType(type)}';
+  return '$variable as ${_nullSafeKotlinTypeForDartType(type)}';
 }
 
 String _castInt(bool isNullable) {

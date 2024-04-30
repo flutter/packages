@@ -191,6 +191,26 @@
   XCTAssertEqualObjects(expectedMap, map);
 }
 
+- (void)testErrorWithNestedUnderlyingError {
+  NSError *underlyingError = [NSError errorWithDomain:SKErrorDomain code:2 userInfo:nil];
+  NSError *mainError =
+      [NSError errorWithDomain:SKErrorDomain
+                          code:3
+                      userInfo:@{@"nesting" : @{@"underlyingError" : underlyingError}}];
+  NSDictionary *expectedMap = @{
+    @"domain" : SKErrorDomain,
+    @"code" : @3,
+    @"userInfo" : @{
+      @"nesting" : @{
+        @"underlyingError" : @{@"domain" : SKErrorDomain, @"code" : @2, @"userInfo" : @{}},
+
+      }
+    }
+  };
+  NSDictionary *map = [FIAObjectTranslator getMapFromNSError:mainError];
+  XCTAssertEqualObjects(expectedMap, map);
+}
+
 - (void)testErrorWithUnsupportedUserInfo {
   NSError *error = [NSError errorWithDomain:SKErrorDomain
                                        code:3

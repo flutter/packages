@@ -737,6 +737,52 @@ void main() {
         ]));
   });
 
+  test('skips GeneratedPluginRegistrant.swift', () async {
+    const String sourceFile = 'macos/Classes/Foo.swift';
+    final RepositoryPackage plugin = createFakePlugin(
+      'a_plugin',
+      packagesDir,
+      extraFiles: <String>[
+        sourceFile,
+        'example/macos/Flutter/GeneratedPluginRegistrant.swift',
+      ],
+    );
+
+    await runCapturingPrint(runner, <String>[
+      'format',
+      '--swift',
+      '--swift-format-path=/path/to/swift-format'
+    ]);
+
+    expect(
+        processRunner.recordedCalls,
+        orderedEquals(<ProcessCall>[
+          const ProcessCall(
+            '/path/to/swift-format',
+            <String>['--version'],
+            null,
+          ),
+          ProcessCall(
+            '/path/to/swift-format',
+            <String>[
+              '-i',
+              ...getPackagesDirRelativePaths(plugin, <String>[sourceFile])
+            ],
+            packagesDir.path,
+          ),
+          ProcessCall(
+            '/path/to/swift-format',
+            <String>[
+              'lint',
+              '--parallel',
+              '--strict',
+              ...getPackagesDirRelativePaths(plugin, <String>[sourceFile]),
+            ],
+            packagesDir.path,
+          ),
+        ]));
+  });
+
   test('fails if files are changed with --fail-on-change', () async {
     const List<String> files = <String>[
       'linux/foo_plugin.cc',

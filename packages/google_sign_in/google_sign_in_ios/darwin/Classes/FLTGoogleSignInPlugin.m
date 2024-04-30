@@ -329,18 +329,16 @@ static FlutterError *getFlutterError(NSError *error) {
 #pragma clang diagnostic pop
 }
 
-/**
- * This method recursively iterate through the view hierarchy
- * to return the top most view controller.
- *
- * It supports the following scenarios:
- *
- * - The view controller is presenting another view.
- * - The view controller is a UINavigationController.
- * - The view controller is a UITabBarController.
- *
- * @return The top most view controller.
- */
+/// This method recursively iterate through the view hierarchy
+/// to return the top most view controller.
+///
+/// It supports the following scenarios:
+///
+/// - The view controller is presenting another view.
+/// - The view controller is a UINavigationController.
+/// - The view controller is a UITabBarController.
+///
+/// @return The top most view controller.
 - (UIViewController *)topViewControllerFromViewController:(UIViewController *)viewController {
   if ([viewController isKindOfClass:[UINavigationController class]]) {
     UINavigationController *navigationController = (UINavigationController *)viewController;

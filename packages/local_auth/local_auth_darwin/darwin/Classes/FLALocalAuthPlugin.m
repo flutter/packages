@@ -8,9 +8,7 @@
 
 typedef void (^FLADAuthCompletion)(FLADAuthResultDetails *_Nullable, FlutterError *_Nullable);
 
-/**
- * A default context factory that wraps standard LAContext allocation.
- */
+/// A default context factory that wraps standard LAContext allocation.
 @interface FLADefaultAuthContextFactory : NSObject <FLADAuthContextFactory>
 @end
 
@@ -22,9 +20,7 @@ typedef void (^FLADAuthCompletion)(FLADAuthResultDetails *_Nullable, FlutterErro
 
 #pragma mark -
 
-/**
- * A data container for sticky auth state.
- */
+/// A data container for sticky auth state.
 @interface FLAStickyAuthState : NSObject
 @property(nonatomic, strong, nonnull) FLADAuthOptions *options;
 @property(nonatomic, strong, nonnull) FLADAuthStrings *strings;

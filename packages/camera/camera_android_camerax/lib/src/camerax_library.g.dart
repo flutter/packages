@@ -1914,7 +1914,10 @@ class ResolutionSelectorHostApi {
 
   static const MessageCodec<Object?> codec = StandardMessageCodec();
 
-  Future<void> create(int arg_identifier, int? arg_resolutionStrategyIdentifier,
+  Future<void> create(
+      int arg_identifier,
+      int? arg_resolutionStrategyIdentifier,
+      int? arg_resolutionSelectorIdentifier,
       int? arg_aspectRatioStrategyIdentifier) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.ResolutionSelectorHostApi.create', codec,
@@ -1922,6 +1925,7 @@ class ResolutionSelectorHostApi {
     final List<Object?>? replyList = await channel.send(<Object?>[
       arg_identifier,
       arg_resolutionStrategyIdentifier,
+      arg_resolutionSelectorIdentifier,
       arg_aspectRatioStrategyIdentifier
     ]) as List<Object?>?;
     if (replyList == null) {
@@ -3035,14 +3039,18 @@ class FocusMeteringActionHostApi {
 
   static const MessageCodec<Object?> codec = _FocusMeteringActionHostApiCodec();
 
-  Future<void> create(int arg_identifier,
-      List<MeteringPointInfo?> arg_meteringPointInfos) async {
+  Future<void> create(
+      int arg_identifier,
+      List<MeteringPointInfo?> arg_meteringPointInfos,
+      bool? arg_disableAutoCancel) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.FocusMeteringActionHostApi.create', codec,
         binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList =
-        await channel.send(<Object?>[arg_identifier, arg_meteringPointInfos])
-            as List<Object?>?;
+    final List<Object?>? replyList = await channel.send(<Object?>[
+      arg_identifier,
+      arg_meteringPointInfos,
+      arg_disableAutoCancel
+    ]) as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',
@@ -3320,6 +3328,65 @@ class Camera2CameraControlHostApi {
     final List<Object?>? replyList = await channel.send(
             <Object?>[arg_identifier, arg_captureRequestOptionsIdentifier])
         as List<Object?>?;
+    if (replyList == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyList.length > 1) {
+      throw PlatformException(
+        code: replyList[0]! as String,
+        message: replyList[1] as String?,
+        details: replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+}
+
+class _ResolutionFilterHostApiCodec extends StandardMessageCodec {
+  const _ResolutionFilterHostApiCodec();
+  @override
+  void writeValue(WriteBuffer buffer, Object? value) {
+    if (value is ResolutionInfo) {
+      buffer.putUint8(128);
+      writeValue(buffer, value.encode());
+    } else {
+      super.writeValue(buffer, value);
+    }
+  }
+
+  @override
+  Object? readValueOfType(int type, ReadBuffer buffer) {
+    switch (type) {
+      case 128:
+        return ResolutionInfo.decode(readValue(buffer)!);
+      default:
+        return super.readValueOfType(type, buffer);
+    }
+  }
+}
+
+class ResolutionFilterHostApi {
+  /// Constructor for [ResolutionFilterHostApi].  The [binaryMessenger] named argument is
+  /// available for dependency injection.  If it is left null, the default
+  /// BinaryMessenger will be used which routes to the host platform.
+  ResolutionFilterHostApi({BinaryMessenger? binaryMessenger})
+      : _binaryMessenger = binaryMessenger;
+  final BinaryMessenger? _binaryMessenger;
+
+  static const MessageCodec<Object?> codec = _ResolutionFilterHostApiCodec();
+
+  Future<void> createWithOnePreferredSize(
+      int arg_identifier, ResolutionInfo arg_preferredResolution) async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.ResolutionFilterHostApi.createWithOnePreferredSize',
+        codec,
+        binaryMessenger: _binaryMessenger);
+    final List<Object?>? replyList =
+        await channel.send(<Object?>[arg_identifier, arg_preferredResolution])
+            as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',

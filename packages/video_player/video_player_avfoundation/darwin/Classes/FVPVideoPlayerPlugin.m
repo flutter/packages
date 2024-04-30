@@ -23,13 +23,6 @@
 @property(nonatomic, weak) AVPlayerItemVideoOutput *videoOutput;
 // The last time that has been validated as avaliable according to hasNewPixelBufferForItemTime:.
 @property(nonatomic, assign) CMTime lastKnownAvailableTime;
-// If YES, the engine is informed that a new texture is available any time the display link
-// callback is fired, regardless of the videoOutput state.
-//
-// TODO(stuartmorgan): Investigate removing this; it exists only to preserve existing iOS behavior
-// while implementing macOS, but iOS should very likely be doing the check as well. See
-// https://github.com/flutter/flutter/issues/138427.
-@property(nonatomic, assign) BOOL skipBufferAvailabilityCheck;
 @end
 
 @implementation FVPFrameUpdater
@@ -42,18 +35,10 @@
 }
 
 - (void)displayLinkFired {
-  // Only report a new frame if one is actually available, or the check is being skipped.
-  BOOL reportFrame = NO;
-  if (self.skipBufferAvailabilityCheck) {
-    reportFrame = YES;
-  } else {
-    CMTime outputItemTime = [self.videoOutput itemTimeForHostTime:CACurrentMediaTime()];
-    if ([self.videoOutput hasNewPixelBufferForItemTime:outputItemTime]) {
-      _lastKnownAvailableTime = outputItemTime;
-      reportFrame = YES;
-    }
-  }
-  if (reportFrame) {
+  // Only report a new frame if one is actually available.
+  CMTime outputItemTime = [self.videoOutput itemTimeForHostTime:CACurrentMediaTime()];
+  if ([self.videoOutput hasNewPixelBufferForItemTime:outputItemTime]) {
+    _lastKnownAvailableTime = outputItemTime;
     [_registry textureFrameAvailable:_textureId];
   }
 }
@@ -72,7 +57,7 @@
 }
 @end
 
-/** Non-test implementation of the diplay link factory. */
+/// Non-test implementation of the diplay link factory.
 @interface FVPDefaultDisplayLinkFactory : NSObject <FVPDisplayLinkFactory>
 @end
 
@@ -334,10 +319,6 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   };
   _videoOutput = [avFactory videoOutputWithPixelBufferAttributes:pixBuffAttributes];
   frameUpdater.videoOutput = _videoOutput;
-#if TARGET_OS_IOS
-  // See TODO on this property in FVPFrameUpdater.
-  frameUpdater.skipBufferAvailabilityCheck = YES;
-#endif
 
   [self addObserversForItem:item player:_player];
 
@@ -703,14 +684,10 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
 - (void)detachFromEngineForRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar {
   [self.playersByTextureId.allValues makeObjectsPerformSelector:@selector(disposeSansEventChannel)];
   [self.playersByTextureId removeAllObjects];
-  // TODO(57151): This should be commented out when 57151's fix lands on stable.
-  // This is the correct behavior we never did it in the past and the engine
-  // doesn't currently support it.
-  // FVPAVFoundationVideoPlayerApiSetup(registrar.messenger, nil);
+  SetUpFVPAVFoundationVideoPlayerApi(registrar.messenger, nil);
 }
 
-- (FVPTextureMessage *)onPlayerSetup:(FVPVideoPlayer *)player
-                        frameUpdater:(FVPFrameUpdater *)frameUpdater {
+- (int64_t)onPlayerSetup:(FVPVideoPlayer *)player frameUpdater:(FVPFrameUpdater *)frameUpdater {
   int64_t textureId = [self.registry registerTexture:player];
   frameUpdater.textureId = textureId;
   FlutterEventChannel *eventChannel = [FlutterEventChannel
@@ -725,8 +702,7 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   // the engine is now expecting the texture to be populated.
   [player expectFrame];
 
-  FVPTextureMessage *result = [FVPTextureMessage makeWithTextureId:textureId];
-  return result;
+  return textureId;
 }
 
 - (void)initialize:(FlutterError *__autoreleasing *)error {
@@ -743,7 +719,8 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   [self.playersByTextureId removeAllObjects];
 }
 
-- (FVPTextureMessage *)create:(FVPCreateMessage *)input error:(FlutterError **)error {
+- (nullable NSNumber *)createWithOptions:(nonnull FVPCreationOptions *)options
+                                   error:(FlutterError **)error {
   FVPFrameUpdater *frameUpdater = [[FVPFrameUpdater alloc] initWithRegistry:_registry];
   FVPDisplayLink *displayLink =
       [self.displayLinkFactory displayLinkWithRegistrar:_registrar
@@ -752,12 +729,12 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
                                                }];
 
   FVPVideoPlayer *player;
-  if (input.asset) {
+  if (options.asset) {
     NSString *assetPath;
-    if (input.packageName) {
-      assetPath = [_registrar lookupKeyForAsset:input.asset fromPackage:input.packageName];
+    if (options.packageName) {
+      assetPath = [_registrar lookupKeyForAsset:options.asset fromPackage:options.packageName];
     } else {
-      assetPath = [_registrar lookupKeyForAsset:input.asset];
+      assetPath = [_registrar lookupKeyForAsset:options.asset];
     }
     @try {
       player = [[FVPVideoPlayer alloc] initWithAsset:assetPath
@@ -765,79 +742,65 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
                                          displayLink:displayLink
                                            avFactory:_avFactory
                                            registrar:self.registrar];
-      return [self onPlayerSetup:player frameUpdater:frameUpdater];
+      return @([self onPlayerSetup:player frameUpdater:frameUpdater]);
     } @catch (NSException *exception) {
       *error = [FlutterError errorWithCode:@"video_player" message:exception.reason details:nil];
       return nil;
     }
-  } else if (input.uri) {
-    player = [[FVPVideoPlayer alloc] initWithURL:[NSURL URLWithString:input.uri]
+  } else if (options.uri) {
+    player = [[FVPVideoPlayer alloc] initWithURL:[NSURL URLWithString:options.uri]
                                     frameUpdater:frameUpdater
                                      displayLink:displayLink
-                                     httpHeaders:input.httpHeaders
+                                     httpHeaders:options.httpHeaders
                                        avFactory:_avFactory
                                        registrar:self.registrar];
-    return [self onPlayerSetup:player frameUpdater:frameUpdater];
+    return @([self onPlayerSetup:player frameUpdater:frameUpdater]);
   } else {
     *error = [FlutterError errorWithCode:@"video_player" message:@"not implemented" details:nil];
     return nil;
   }
 }
 
-- (void)dispose:(FVPTextureMessage *)input error:(FlutterError **)error {
-  NSNumber *playerKey = @(input.textureId);
+- (void)disposePlayer:(NSInteger)textureId error:(FlutterError **)error {
+  NSNumber *playerKey = @(textureId);
   FVPVideoPlayer *player = self.playersByTextureId[playerKey];
-  [self.registry unregisterTexture:input.textureId];
+  [self.registry unregisterTexture:textureId];
   [self.playersByTextureId removeObjectForKey:playerKey];
-  // If the Flutter contains https://github.com/flutter/engine/pull/12695,
-  // the `player` is disposed via `onTextureUnregistered` at the right time.
-  // Without https://github.com/flutter/engine/pull/12695, there is no guarantee that the
-  // texture has completed the un-reregistration. It may leads a crash if we dispose the
-  // `player` before the texture is unregistered. We add a dispatch_after hack to make sure the
-  // texture is unregistered before we dispose the `player`.
-  //
-  // TODO(cyanglaz): Remove this dispatch block when
-  // https://github.com/flutter/flutter/commit/8159a9906095efc9af8b223f5e232cb63542ad0b is in
-  // stable And update the min flutter version of the plugin to the stable version.
-  dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)),
-                 dispatch_get_main_queue(), ^{
-                   if (!player.disposed) {
-                     [player dispose];
-                   }
-                 });
+  if (!player.disposed) {
+    [player dispose];
+  }
 }
 
-- (void)setLooping:(FVPLoopingMessage *)input error:(FlutterError **)error {
-  FVPVideoPlayer *player = self.playersByTextureId[@(input.textureId)];
-  player.isLooping = input.isLooping;
+- (void)setLooping:(BOOL)isLooping forPlayer:(NSInteger)textureId error:(FlutterError **)error {
+  FVPVideoPlayer *player = self.playersByTextureId[@(textureId)];
+  player.isLooping = isLooping;
 }
 
-- (void)setVolume:(FVPVolumeMessage *)input error:(FlutterError **)error {
-  FVPVideoPlayer *player = self.playersByTextureId[@(input.textureId)];
-  [player setVolume:input.volume];
+- (void)setVolume:(double)volume forPlayer:(NSInteger)textureId error:(FlutterError **)error {
+  FVPVideoPlayer *player = self.playersByTextureId[@(textureId)];
+  [player setVolume:volume];
 }
 
-- (void)setPlaybackSpeed:(FVPPlaybackSpeedMessage *)input error:(FlutterError **)error {
-  FVPVideoPlayer *player = self.playersByTextureId[@(input.textureId)];
-  [player setPlaybackSpeed:input.speed];
+- (void)setPlaybackSpeed:(double)speed forPlayer:(NSInteger)textureId error:(FlutterError **)error {
+  FVPVideoPlayer *player = self.playersByTextureId[@(textureId)];
+  [player setPlaybackSpeed:speed];
 }
 
-- (void)play:(FVPTextureMessage *)input error:(FlutterError **)error {
-  FVPVideoPlayer *player = self.playersByTextureId[@(input.textureId)];
+- (void)playPlayer:(NSInteger)textureId error:(FlutterError **)error {
+  FVPVideoPlayer *player = self.playersByTextureId[@(textureId)];
   [player play];
 }
 
-- (FVPPositionMessage *)position:(FVPTextureMessage *)input error:(FlutterError **)error {
-  FVPVideoPlayer *player = self.playersByTextureId[@(input.textureId)];
-  FVPPositionMessage *result = [FVPPositionMessage makeWithTextureId:input.textureId
-                                                            position:[player position]];
-  return result;
+- (nullable NSNumber *)positionForPlayer:(NSInteger)textureId error:(FlutterError **)error {
+  FVPVideoPlayer *player = self.playersByTextureId[@(textureId)];
+  return @([player position]);
 }
 
-- (void)seekTo:(FVPPositionMessage *)input
-    completion:(void (^)(FlutterError *_Nullable))completion {
-  FVPVideoPlayer *player = self.playersByTextureId[@(input.textureId)];
-  [player seekTo:input.position
+- (void)seekTo:(NSInteger)position
+     forPlayer:(NSInteger)textureId
+    completion:(nonnull void (^)(FlutterError *_Nullable))completion {
+  FVPVideoPlayer *player = self.playersByTextureId[@(textureId)];
+  [player seekTo:position
       completionHandler:^(BOOL finished) {
         dispatch_async(dispatch_get_main_queue(), ^{
           completion(nil);
@@ -845,17 +808,17 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
       }];
 }
 
-- (void)pause:(FVPTextureMessage *)input error:(FlutterError **)error {
-  FVPVideoPlayer *player = self.playersByTextureId[@(input.textureId)];
+- (void)pausePlayer:(NSInteger)textureId error:(FlutterError **)error {
+  FVPVideoPlayer *player = self.playersByTextureId[@(textureId)];
   [player pause];
 }
 
-- (void)setMixWithOthers:(FVPMixWithOthersMessage *)input
+- (void)setMixWithOthers:(BOOL)mixWithOthers
                    error:(FlutterError *_Nullable __autoreleasing *)error {
 #if TARGET_OS_OSX
   // AVAudioSession doesn't exist on macOS, and audio always mixes, so just no-op.
 #else
-  if (input.mixWithOthers) {
+  if (mixWithOthers) {
     [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayback
                                      withOptions:AVAudioSessionCategoryOptionMixWithOthers
                                            error:nil];

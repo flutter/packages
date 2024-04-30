@@ -267,4 +267,46 @@
   XCTAssertEqual(callbackDisposition, NSURLSessionAuthChallengeCancelAuthenticationChallenge);
   XCTAssertEqualObjects(callbackCredential, credential);
 }
+
+- (void)testDecidePolicyForNavigationResponse {
+  FWFInstanceManager *instanceManager = [[FWFInstanceManager alloc] init];
+
+  FWFNavigationDelegate *mockDelegate = [self mockNavigationDelegateWithManager:instanceManager
+                                                                     identifier:0];
+  FWFNavigationDelegateFlutterApiImpl *mockFlutterAPI =
+      [self mockFlutterApiWithManager:instanceManager];
+
+  OCMStub([mockDelegate navigationDelegateAPI]).andReturn(mockFlutterAPI);
+
+  WKWebView *mockWebView = OCMClassMock([WKWebView class]);
+  [instanceManager addDartCreatedInstance:mockWebView withIdentifier:1];
+
+  WKNavigationResponse *mockNavigationResponse = OCMClassMock([WKNavigationResponse class]);
+  OCMStub([mockNavigationResponse isForMainFrame]).andReturn(YES);
+
+  NSHTTPURLResponse *mockURLResponse = OCMClassMock([NSHTTPURLResponse class]);
+  OCMStub([mockURLResponse statusCode]).andReturn(1);
+  OCMStub([mockNavigationResponse response]).andReturn(mockURLResponse);
+
+  OCMStub([mockFlutterAPI
+      decidePolicyForNavigationResponseForDelegateWithIdentifier:0
+                                               webViewIdentifier:1
+                                              navigationResponse:OCMOCK_ANY
+                                                      completion:
+                                                          ([OCMArg
+                                                              invokeBlockWithArgs:
+                                                                  [[FWFWKNavigationResponsePolicyEnumBox
+                                                                      alloc]
+                                                                      initWithValue:
+                                                                          FWFWKNavigationResponsePolicyEnumAllow],
+                                                                  [NSNull null], nil])]);
+
+  WKNavigationResponsePolicy __block callbackPolicy = -1;
+  [mockDelegate webView:mockWebView
+      decidePolicyForNavigationResponse:mockNavigationResponse
+                        decisionHandler:^(WKNavigationResponsePolicy policy) {
+                          callbackPolicy = policy;
+                        }];
+  XCTAssertEqual(callbackPolicy, WKNavigationResponsePolicyAllow);
+}
 @end

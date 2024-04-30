@@ -1,3 +1,7 @@
+## 0.3.1+1
+
+* Uses `TrustedTypes` from `web: ^0.5.1`.
+
 ## 0.3.1
 
 * Updates web code to package `web: ^0.5.0`.

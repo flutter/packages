@@ -10,15 +10,24 @@ extension FlutterError: Error {}
 /// This plugin handles the native side of the integration tests in
 /// example/integration_test/.
 public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
+
   var flutterAPI: FlutterIntegrationCoreApi
+  var flutterSmallApiOne: FlutterSmallApi
+  var flutterSmallApiTwo: FlutterSmallApi
 
   public static func register(with registrar: FlutterPluginRegistrar) {
     let plugin = TestPlugin(binaryMessenger: registrar.messenger())
     HostIntegrationCoreApiSetup.setUp(binaryMessenger: registrar.messenger(), api: plugin)
+    TestPluginWithSuffix.register(with: registrar, suffix: "suffixOne")
+    TestPluginWithSuffix.register(with: registrar, suffix: "suffixTwo")
   }
 
   init(binaryMessenger: FlutterBinaryMessenger) {
     flutterAPI = FlutterIntegrationCoreApi(binaryMessenger: binaryMessenger)
+    flutterSmallApiOne = FlutterSmallApi(
+      binaryMessenger: binaryMessenger, messageChannelSuffix: "suffixOne")
+    flutterSmallApiTwo = FlutterSmallApi(
+      binaryMessenger: binaryMessenger, messageChannelSuffix: "suffixTwo")
   }
 
   // MARK: HostIntegrationCoreApi implementation
@@ -32,6 +41,11 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
   }
 
   func echo(_ everything: AllNullableTypes?) -> AllNullableTypes? {
+    return everything
+  }
+  func echo(_ everything: AllNullableTypesWithoutRecursion?) throws
+    -> AllNullableTypesWithoutRecursion?
+  {
     return everything
   }
 
@@ -99,6 +113,14 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
     aBool aNullableBool: Bool?, anInt aNullableInt: Int64?, aString aNullableString: String?
   ) -> AllNullableTypes {
     let someThings = AllNullableTypes(
+      aNullableBool: aNullableBool, aNullableInt: aNullableInt, aNullableString: aNullableString)
+    return someThings
+  }
+
+  func sendMultipleNullableTypesWithoutRecursion(
+    aBool aNullableBool: Bool?, anInt aNullableInt: Int64?, aString aNullableString: String?
+  ) throws -> AllNullableTypesWithoutRecursion {
+    let someThings = AllNullableTypesWithoutRecursion(
       aNullableBool: aNullableBool, aNullableInt: aNullableInt, aNullableString: aNullableString)
     return someThings
   }
@@ -182,6 +204,13 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
   func echoAsync(
     _ everything: AllNullableTypes?,
     completion: @escaping (Result<AllNullableTypes?, Error>) -> Void
+  ) {
+    completion(.success(everything))
+  }
+
+  func echoAsync(
+    _ everything: AllNullableTypesWithoutRecursion?,
+    completion: @escaping (Result<AllNullableTypesWithoutRecursion?, Error>) -> Void
   ) {
     completion(.success(everything))
   }
@@ -331,6 +360,20 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
     }
   }
 
+  func callFlutterEcho(
+    _ everything: AllNullableTypesWithoutRecursion?,
+    completion: @escaping (Result<AllNullableTypesWithoutRecursion?, Error>) -> Void
+  ) {
+    flutterAPI.echoNullable(everything) { response in
+      switch response {
+      case .success(let res):
+        completion(.success(res))
+      case .failure(let error):
+        completion(.failure(error))
+      }
+    }
+  }
+
   func callFlutterSendMultipleNullableTypes(
     aBool aNullableBool: Bool?,
     anInt aNullableInt: Int64?,
@@ -338,6 +381,24 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
     completion: @escaping (Result<AllNullableTypes, Error>) -> Void
   ) {
     flutterAPI.sendMultipleNullableTypes(
+      aBool: aNullableBool,
+      anInt: aNullableInt,
+      aString: aNullableString
+    ) { response in
+      switch response {
+      case .success(let res):
+        completion(.success(res))
+      case .failure(let error):
+        completion(.failure(error))
+      }
+    }
+  }
+
+  func callFlutterSendMultipleNullableTypesWithoutRecursion(
+    aBool aNullableBool: Bool?, anInt aNullableInt: Int64?, aString aNullableString: String?,
+    completion: @escaping (Result<AllNullableTypesWithoutRecursion, Error>) -> Void
+  ) {
+    flutterAPI.sendMultipleNullableTypesWithoutRecursion(
       aBool: aNullableBool,
       anInt: aNullableInt,
       aString: aNullableString
@@ -547,4 +608,50 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
       }
     }
   }
+
+  func callFlutterSmallApiEcho(
+    _ aString: String, completion: @escaping (Result<String, Error>) -> Void
+  ) {
+    flutterSmallApiOne.echo(string: aString) { responseOne in
+      self.flutterSmallApiTwo.echo(string: aString) { responseTwo in
+        switch responseOne {
+        case .success(let resOne):
+          switch responseTwo {
+          case .success(let resTwo):
+            if resOne == resTwo {
+              completion(.success(resOne))
+            } else {
+              completion(
+                .failure(
+                  FlutterError(
+                    code: "",
+                    message: "Multi-instance responses were not matching: \(resOne), \(resTwo)",
+                    details: nil)))
+            }
+          case .failure(let error):
+            completion(.failure(error))
+          }
+        case .failure(let error):
+          completion(.failure(error))
+        }
+      }
+    }
+  }
+}
+
+public class TestPluginWithSuffix: HostSmallApi {
+  public static func register(with registrar: FlutterPluginRegistrar, suffix: String) {
+    let plugin = TestPluginWithSuffix()
+    HostSmallApiSetup.setUp(
+      binaryMessenger: registrar.messenger(), api: plugin, messageChannelSuffix: suffix)
+  }
+
+  func echo(aString: String, completion: @escaping (Result<String, Error>) -> Void) {
+    completion(.success(aString))
+  }
+
+  func voidVoid(completion: @escaping (Result<Void, Error>) -> Void) {
+    completion(.success(Void()))
+  }
+
 }
