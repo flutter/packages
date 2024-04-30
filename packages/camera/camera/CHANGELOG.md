@@ -1,5 +1,7 @@
-## NEXT
+## 0.11.0
 
+* **Breaking Change** Changes the Android implementation of the camera plugin from `camera_android`
+  to `camera_android_camerax`. To continue using `camera_android`, use `camera <0.11.0`.
 * Updates minimum supported SDK version to Flutter 3.13/Dart 3.1.
 * Updates support matrix in README to indicate that iOS 11 is no longer supported.
 * Clients on versions of Flutter that still support iOS 11 can continue to use this

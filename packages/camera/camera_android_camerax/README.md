@@ -1,17 +1,23 @@
 # camera\_android\_camerax
 
-An Android implementation of [`camera`][1] that uses the [CameraX library][2].
+The Android implementation of [`camera`][1] built with the [CameraX library][2].
 
-*Note*: This implementation will become the default implementation of `camera`
-on Android by May 2024, so **we strongly encourage you to opt into it**
-by using [the instructions](#usage) below. If any of [the limitations](#limitations)
-prevent you from using `camera_android_camerax` or if you run into any problems,
-please report these issues under [`flutter/flutter`][5] with `[camerax]` in
-the title.
+*Note*: If any of [the limitations](#limitations) prevent you from using
+using `camera_android_camerax` or if you run into any problems, please report
+report these issues under [`flutter/flutter`][5] with `[camerax]` in the title.
+You may also opt back into the [`camera_android`][6] implementation if you need.
 
 ## Usage
 
-To use this plugin instead of [`camera_android`][4], run
+As of `camera: ^0.11.0`, this package is [endorsed][3], which means you can
+simply use `camera` normally. This package will be automatically be included
+in your app when you do, so you do not need to add it to your `pubspec.yaml`.
+
+However, if you `import` this package to use any of its APIs directly, you
+should add it to your `pubspec.yaml` as usual.
+
+If using `camera: <0.11.0` and wish to use this plugin instead of [`camera_android`][4],
+run
 
 ```sh
 $ flutter pub add camera_android_camerax
@@ -24,7 +30,7 @@ from your project's root directory.
 ### 240p resolution configuration for video recording
 
 240p resolution configuration for video recording is unsupported by CameraX,
-and thus, the plugin will fall back to 480p if configured with a
+and thus, the plugin will fall back to target 480p if configured with a
 `ResolutionPreset`.
 
 ### Setting maximum duration and stream options for video capture
@@ -42,14 +48,7 @@ For more information on contributing to this plugin, see [`CONTRIBUTING.md`](CON
 
 [1]: https://pub.dev/packages/camera
 [2]: https://developer.android.com/training/camerax
-[3]: https://docs.flutter.dev/packages-and-plugins/developing-packages#non-endorsed-federated-plugin
+[3]: https://flutter.dev/docs/development/packages-and-plugins/developing-packages#endorsed-federated-plugin
 [4]: https://pub.dev/packages/camera_android
 [5]: https://github.com/flutter/flutter/issues/new/choose
-[120462]: https://github.com/flutter/flutter/issues/120462
-[125915]: https://github.com/flutter/flutter/issues/125915
-[120715]: https://github.com/flutter/flutter/issues/120715
-[120468]: https://github.com/flutter/flutter/issues/120468
-[120467]: https://github.com/flutter/flutter/issues/120467
-[125371]: https://github.com/flutter/flutter/issues/125371
-[126477]: https://github.com/flutter/flutter/issues/126477
-[127896]: https://github.com/flutter/flutter/issues/127896
+[6]: https://pub.dev/packages/camera_android#usage
