@@ -91,7 +91,8 @@ String enumMapName(InterfaceType type) => '_\$${type.element.name}EnumMap';
 
 String _stateValueAccess(ParameterElement element, Set<String> pathParameters) {
   if (element.isExtraField) {
-    return 'extra as ${element.type.getDisplayString()}';
+    // ignore: avoid_redundant_argument_values
+    return 'extra as ${element.type.getDisplayString(withNullability: true)}';
   }
 
   late String access;
