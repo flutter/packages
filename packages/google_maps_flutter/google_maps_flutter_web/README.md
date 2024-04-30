@@ -50,6 +50,19 @@ To request multiple libraries, separate them with commas:
 
 Now you should be able to use the Google Maps plugin normally.
 
+## Marker clustering
+
+If you need marker clustering support, modify the <head> tag to load the [js-markerclusterer](https://github.com/googlemaps/js-markerclusterer#install) library. Ensure you are using the currently supported version `2.5.3`, like so:
+
+```html
+<head>
+
+  <!-- // Other stuff -->
+
+  <script src="https://unpkg.com/@googlemaps/markerclusterer@2.5.3/dist/index.min.js"></script>
+</head>
+```
+
 ## Limitations of the web version
 
 The following map options are not available in web, because the map doesn't rotate there:
