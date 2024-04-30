@@ -166,7 +166,7 @@ class PodspecCheckCommand extends PackageLoopingCommand {
   Future<bool> _hasIOSSwiftCode(RepositoryPackage package) async {
     final String iosSwiftPackageManifestPath = package
         .platformDirectory(FlutterPlatform.ios)
-        .childDirectory(package.displayName)
+        .childDirectory(package.directory.basename)
         .childFile('Package.swift')
         .path;
     return getFilesForPackage(package).any((File entity) {
