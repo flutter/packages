@@ -233,7 +233,6 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
           exitingMatches.length - 1,
           context: navigatorContext,
           matches: exitingMatches,
-          // configuration: configuration,
         ).then<void>((bool exit) {
           if (!exit) {
             return SynchronousFuture<void>(null);
