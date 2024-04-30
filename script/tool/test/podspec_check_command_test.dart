@@ -319,8 +319,14 @@ void main() {
 
     test('fails if an iOS Swift plugin is missing the search paths workaround',
         () async {
-      final RepositoryPackage plugin = createFakePlugin('plugin1', packagesDir,
-          extraFiles: <String>['ios/Classes/SomeSwift.swift']);
+      final RepositoryPackage plugin = createFakePlugin(
+        'plugin1',
+        packagesDir,
+        extraFiles: <String>[
+          'ios/Classes/SomeSwift.swift',
+          'ios/plugin1/Package.swift',
+        ],
+      );
       _writeFakePodspec(plugin, 'ios');
 
       Error? commandError;
@@ -374,6 +380,27 @@ void main() {
               contains('The following packages had errors:'),
               contains('plugin1:\n'
                   '    plugin1.podspec')
+            ],
+          ));
+    });
+
+    test('does not require the search paths workaround for iOS Package.swift',
+        () async {
+      final RepositoryPackage plugin = createFakePlugin(
+        'plugin1',
+        packagesDir,
+        extraFiles: <String>['ios/plugin1/Package.swift'],
+      );
+      _writeFakePodspec(plugin, 'ios');
+
+      final List<String> output =
+          await runCapturingPrint(runner, <String>['podspec-check']);
+
+      expect(
+          output,
+          containsAllInOrder(
+            <Matcher>[
+              contains('Ran for 1 package(s)'),
             ],
           ));
     });
