@@ -1,3 +1,7 @@
+## 0.1.10+2
+
+* Reduce rebuilds when invoking `isActive` method.
+
 ## 0.1.10+1
 
 * Removes a broken design document link from the README.
