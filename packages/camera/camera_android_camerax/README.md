@@ -31,7 +31,8 @@ use cases, the plugin behaves according to the following:
   (via `startVideoCapturing(cameraId, VideoCaptureOptions(streamCallback:...))`) is supported.
 * If the preview is not paused
   * **and** the camera device is at least supported hardware [`LEVEL_3`][7], then concurrent
-    video recording and image streaming is supported.
+    video recording and image streaming is supported, but concurrent video recording, image
+    streaming, and image capture is not supported.
   * **and** the camera device is not at least [`LEVEL_3`][7], then concurrent video recording
     and image streaming is not supported.
 
