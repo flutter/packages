@@ -122,6 +122,10 @@ add_custom_command(TARGET ${TEST_RUNNER} POST_BUILD
   COMMAND ${CMAKE_COMMAND} -E copy_if_different
   "${FLUTTER_LIBRARY}" $<TARGET_FILE_DIR:${TEST_RUNNER}>
 )
+# Override apply_standard_settings for exceptions due to
+# https://developercommunity.visualstudio.com/t/stdany-doesnt-link-when-exceptions-are-disabled/376072
+# TODO(stuartmorgan): Remove this once CI is using VS 2022 or later.
+target_compile_definitions(${TEST_RUNNER} PRIVATE "_HAS_EXCEPTIONS=1")
 
 include(GoogleTest)
 gtest_discover_tests(${TEST_RUNNER})
