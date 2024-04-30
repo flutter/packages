@@ -57,7 +57,7 @@ void main() {
     await tester.pumpWidget(const DymmyWidget());
     expect(find.byKey(const Key('button')), findsOneWidget);
 
-    // first build
+    // First build.
     expect(DymmyWidget.built, isTrue);
 
     // Invoke `isActive` method.
