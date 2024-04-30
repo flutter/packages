@@ -1,3 +1,7 @@
+## 2.8.0
+
+* Adds support for marker clustering.
+
 ## 2.7.0
 
 * Adds support for `MapConfiguration.style`.
