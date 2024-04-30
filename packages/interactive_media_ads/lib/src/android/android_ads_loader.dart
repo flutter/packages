@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import '../../interactive_media_ads.dart';
 import '../platform_interface/platform_ads_loader.dart';
 import 'android_ad_display_container.dart';
@@ -78,15 +80,22 @@ final class AndroidAdsLoader extends PlatformAdsLoader {
   }
 
   @override
-  Future<void> contentComplete() async {}
+  Future<void> contentComplete() async {
+    for (final interactive_media_ads.VideoAdPlayerCallback callback
+        in (params.container as AndroidAdDisplayContainer)
+            .videoAdPlayerCallbacks) {
+      unawaited(callback.onContentComplete());
+    }
+  }
 
   @override
   Future<void> requestAds(AdsRequest request) async {
     final interactive_media_ads.AdsLoader adsLoader = await adsLoaderFuture;
 
-    final interactive_media_ads.AdsRequest request =
+    final interactive_media_ads.AdsRequest androidRequest =
         await sdkFactory.createAdsRequest();
+    unawaited(androidRequest.setAdTagUrl(request.adTagUrl));
 
-    await adsLoader.requestAds(request);
+    await adsLoader.requestAds(androidRequest);
   }
 }

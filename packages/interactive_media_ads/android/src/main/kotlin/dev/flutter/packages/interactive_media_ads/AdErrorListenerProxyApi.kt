@@ -1,5 +1,6 @@
 package dev.flutter.packages.interactive_media_ads
 
+import android.app.Activity
 import com.google.ads.interactivemedia.v3.api.AdErrorEvent
 
 class AdErrorListenerProxyApi(pigeonRegistrar: PigeonProxyApiRegistrar) :
@@ -7,7 +8,9 @@ class AdErrorListenerProxyApi(pigeonRegistrar: PigeonProxyApiRegistrar) :
   private class AdErrorListenerImpl(val api: AdErrorListenerProxyApi) :
       AdErrorEvent.AdErrorListener {
     override fun onAdError(event: AdErrorEvent) {
-      api.onAdError(this, event) {}
+      ((api.pigeonRegistrar as ProxyApiRegistrar).context as Activity).runOnUiThread {
+        api.onAdError(this, event) {}
+      }
     }
   }
 

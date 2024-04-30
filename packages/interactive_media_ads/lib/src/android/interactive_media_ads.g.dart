@@ -8,8 +8,7 @@
 import 'dart:async';
 import 'dart:typed_data' show Float64List, Int32List, Int64List, Uint8List;
 
-import 'package:flutter/foundation.dart'
-    show ReadBuffer, WriteBuffer, immutable, protected;
+import 'package:flutter/foundation.dart' show ReadBuffer, WriteBuffer, immutable, protected;
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart' show WidgetsFlutterBinding;
 
@@ -20,8 +19,7 @@ PlatformException _createConnectionError(String channelName) {
   );
 }
 
-List<Object?> wrapResponse(
-    {Object? result, PlatformException? error, bool empty = false}) {
+List<Object?> wrapResponse({Object? result, PlatformException? error, bool empty = false}) {
   if (empty) {
     return <Object?>[];
   }
@@ -30,7 +28,6 @@ List<Object?> wrapResponse(
   }
   return <Object?>[error.code, error.message, error.details];
 }
-
 /// An immutable object that serves as the base class for all ProxyApis and
 /// can provide functional copies of itself.
 ///
@@ -116,8 +113,7 @@ class PigeonInstanceManager {
   final Expando<int> _identifiers = Expando<int>();
   final Map<int, WeakReference<PigeonProxyApiBaseClass>> _weakInstances =
       <int, WeakReference<PigeonProxyApiBaseClass>>{};
-  final Map<int, PigeonProxyApiBaseClass> _strongInstances =
-      <int, PigeonProxyApiBaseClass>{};
+  final Map<int, PigeonProxyApiBaseClass> _strongInstances = <int, PigeonProxyApiBaseClass>{};
   late final Finalizer<int> _finalizer;
   int _nextIdentifier = 0;
 
@@ -135,59 +131,33 @@ class PigeonInstanceManager {
         api.removeStrongReference(identifier);
       },
     );
-    _PigeonInstanceManagerApi.setUpMessageHandlers(
-        instanceManager: instanceManager);
-    BaseDisplayContainer.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    AdDisplayContainer.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    AdsLoader.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    AdsManagerLoadedEvent.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    AdsLoadedListener.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    AdErrorListener.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    AdErrorEvent.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    AdError.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    AdsRequest.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    ContentProgressProvider.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    AdsManager.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    BaseManager.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    AdEventListener.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    AdEvent.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    ImaSdkFactory.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    ImaSdkSettings.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    VideoAdPlayer.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    VideoProgressUpdate.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    VideoAdPlayerCallback.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    AdMediaInfo.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    AdPodInfo.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    FrameLayout.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    ViewGroup.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    VideoView.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
+    _PigeonInstanceManagerApi.setUpMessageHandlers(instanceManager: instanceManager);
+    BaseDisplayContainer.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    AdDisplayContainer.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    AdsLoader.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    AdsManagerLoadedEvent.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    AdsLoadedListener.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    AdErrorListener.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    AdErrorEvent.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    AdError.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    AdsRequest.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    ContentProgressProvider.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    AdsManager.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    BaseManager.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    AdEventListener.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    AdEvent.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    ImaSdkFactory.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    ImaSdkSettings.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    VideoAdPlayer.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    VideoProgressUpdate.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    VideoAdPlayerCallback.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    AdMediaInfo.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    AdPodInfo.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    FrameLayout.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    ViewGroup.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    VideoView.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
     View.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
-    MediaPlayer.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
+    MediaPlayer.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
     return instanceManager;
   }
 
@@ -251,19 +221,15 @@ class PigeonInstanceManager {
   ///
   /// This method also expects the host `InstanceManager` to have a strong
   /// reference to the instance the identifier is associated with.
-  T? getInstanceWithWeakReference<T extends PigeonProxyApiBaseClass>(
-      int identifier) {
-    final PigeonProxyApiBaseClass? weakInstance =
-        _weakInstances[identifier]?.target;
+  T? getInstanceWithWeakReference<T extends PigeonProxyApiBaseClass>(int identifier) {
+    final PigeonProxyApiBaseClass? weakInstance = _weakInstances[identifier]?.target;
 
     if (weakInstance == null) {
-      final PigeonProxyApiBaseClass? strongInstance =
-          _strongInstances[identifier];
+      final PigeonProxyApiBaseClass? strongInstance = _strongInstances[identifier];
       if (strongInstance != null) {
         final PigeonProxyApiBaseClass copy = strongInstance.pigeon_copy();
         _identifiers[copy] = identifier;
-        _weakInstances[identifier] =
-            WeakReference<PigeonProxyApiBaseClass>(copy);
+        _weakInstances[identifier] = WeakReference<PigeonProxyApiBaseClass>(copy);
         _finalizer.attach(copy, identifier, detach: copy);
         return copy as T;
       }
@@ -287,20 +253,17 @@ class PigeonInstanceManager {
   /// added.
   ///
   /// Returns unique identifier of the [instance] added.
-  void addHostCreatedInstance(
-      PigeonProxyApiBaseClass instance, int identifier) {
+  void addHostCreatedInstance(PigeonProxyApiBaseClass instance, int identifier) {
     _addInstanceWithIdentifier(instance, identifier);
   }
 
-  void _addInstanceWithIdentifier(
-      PigeonProxyApiBaseClass instance, int identifier) {
+  void _addInstanceWithIdentifier(PigeonProxyApiBaseClass instance, int identifier) {
     assert(!containsIdentifier(identifier));
     assert(getIdentifier(instance) == null);
     assert(identifier >= 0);
 
     _identifiers[instance] = identifier;
-    _weakInstances[identifier] =
-        WeakReference<PigeonProxyApiBaseClass>(instance);
+    _weakInstances[identifier] = WeakReference<PigeonProxyApiBaseClass>(instance);
     _finalizer.attach(instance, identifier, detach: instance);
 
     final PigeonProxyApiBaseClass copy = instance.pigeon_copy();
@@ -331,9 +294,9 @@ class _PigeonInstanceManagerApi {
       : _binaryMessenger = binaryMessenger;
 
   final BinaryMessenger? _binaryMessenger;
-
+  
   static const MessageCodec<Object?> pigeonChannelCodec =
-      StandardMessageCodec();
+     StandardMessageCodec();
 
   static void setUpMessageHandlers({
     BinaryMessenger? binaryMessenger,
@@ -409,31 +372,30 @@ class _PigeonInstanceManagerApi {
     }
   }
 }
-
 class _PigeonProxyApiBaseCodec extends StandardMessageCodec {
-  const _PigeonProxyApiBaseCodec(this.instanceManager);
-  final PigeonInstanceManager instanceManager;
-  @override
-  void writeValue(WriteBuffer buffer, Object? value) {
-    if (value is PigeonProxyApiBaseClass) {
-      buffer.putUint8(128);
-      writeValue(buffer, instanceManager.getIdentifier(value));
-    } else {
-      super.writeValue(buffer, value);
-    }
-  }
-
-  @override
-  Object? readValueOfType(int type, ReadBuffer buffer) {
-    switch (type) {
-      case 128:
-        return instanceManager
-            .getInstanceWithWeakReference(readValue(buffer)! as int);
-      default:
-        return super.readValueOfType(type, buffer);
-    }
-  }
+ const _PigeonProxyApiBaseCodec(this.instanceManager);
+ final PigeonInstanceManager instanceManager;
+ @override
+ void writeValue(WriteBuffer buffer, Object? value) {
+   if (value is PigeonProxyApiBaseClass) {
+     buffer.putUint8(128);
+     writeValue(buffer, instanceManager.getIdentifier(value));
+   } else {
+     super.writeValue(buffer, value);
+   }
+ }
+ @override
+ Object? readValueOfType(int type, ReadBuffer buffer) {
+   switch (type) {
+     case 128:
+       return instanceManager
+           .getInstanceWithWeakReference(readValue(buffer)! as int);
+     default:
+       return super.readValueOfType(type, buffer);
+   }
+ }
 }
+
 
 /// The types of error that can be encountered.
 ///
@@ -441,7 +403,6 @@ class _PigeonProxyApiBaseCodec extends StandardMessageCodec {
 enum AdErrorCode {
   /// Ads player was not provided.
   adsPlayerWasNotProvided,
-
   /// An unexpected error occurred and the cause is not known.
   unknownError,
 }
@@ -452,10 +413,8 @@ enum AdErrorCode {
 enum AdErrorType {
   /// Indicates that the error was encountered when the ad was being loaded.
   load,
-
   /// Indicates that the error was encountered after the ad loaded, during ad play.
   play,
-
   /// The error is not recognized by this wrapper.
   unknown,
 }
@@ -466,27 +425,20 @@ enum AdErrorType {
 enum AdEventType {
   /// Fired when an ad break is ready from VMAP or ad rule ads.
   adBreakReady,
-
   /// Fired when the ads manager is done playing all the valid ads in the ads
   /// response, or when the response doesn't return any valid ads.
   allAdsCompleted,
-
   /// Fired when an ad completes playing.
   completed,
-
   /// Fired when content should be paused.
   contentPauseRequested,
-
   /// Fired when content should be resumed.
   contentResumeRequested,
-
   /// Fired when the VAST response has been received.
   loaded,
-
   /// The event type is not recognized by this wrapper.
   unknown,
 }
-
 /// A base class for more specialized container interfaces.
 ///
 /// See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/BaseDisplayContainer.html.
@@ -4574,3 +4526,4 @@ class MediaPlayer extends PigeonProxyApiBaseClass {
     );
   }
 }
+

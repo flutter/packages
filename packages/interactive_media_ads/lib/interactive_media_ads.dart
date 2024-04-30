@@ -8,3 +8,4 @@ export 'src/ads_manager_delegate.dart';
 export 'src/platform_interface/ad_error.dart';
 export 'src/platform_interface/ad_event.dart';
 export 'src/platform_interface/ads_request.dart';
+export 'src/platform_interface/platform_ads_loader.dart' show AdsLoadErrorData;

@@ -14,7 +14,8 @@ final class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
         WeakReference<AndroidAdDisplayContainer>(this);
     videoView = _setUpVideoView(weakThis);
     frameLayout.addView(videoView);
-    _setUpAdDisplayContainer(weakThis).then((_) {
+    _setUpAdDisplayContainer(weakThis).then((AdDisplayContainer container) {
+      adDisplayContainer = container;
       params.onContainerAdded(this);
     });
   }
