@@ -67,7 +67,7 @@ void main() {
     DymmyWidget.built = false;
 
     // Should not rebuild after modifying any property in `MediaQuery`.
-    tester.platformDispatcher.platformBrightnessTestValue = Brightness.dark;
+    tester.platformDispatcher.textScaleFactorTestValue = 2;
     await tester.pumpAndSettle();
     expect(DymmyWidget.built, isFalse);
   });
