@@ -130,38 +130,6 @@ abstract class AdsManagerLoadedEvent {
   late final AdsManager manager;
 }
 
-/// Listener interface for notification of ad load or stream load completion.
-///
-/// See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/AdsLoader.AdsLoadedListener.html.
-@ProxyApi(
-  kotlinOptions: KotlinProxyApiOptions(
-    fullClassName:
-        'com.google.ads.interactivemedia.v3.api.AdsLoader.AdsLoadedListener',
-  ),
-)
-abstract class AdsLoadedListener {
-  AdsLoadedListener();
-
-  /// Called once the AdsManager or StreamManager has been loaded.
-  late final void Function(AdsManagerLoadedEvent event) onAdsManagerLoaded;
-}
-
-/// Interface for classes that will listen to AdErrorEvents.
-///
-/// See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/AdErrorEvent.AdErrorListener.html.
-@ProxyApi(
-  kotlinOptions: KotlinProxyApiOptions(
-    fullClassName:
-        'com.google.ads.interactivemedia.v3.api.AdErrorEvent.AdErrorListener',
-  ),
-)
-abstract class AdErrorListener {
-  AdErrorListener();
-
-  /// Called when an error occurs.
-  late final void Function(AdErrorEvent event) onAdError;
-}
-
 /// An event raised when there is an error loading or playing ads.
 ///
 /// See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/AdErrorEvent.html.
@@ -270,22 +238,6 @@ abstract class BaseManager {
   void init();
 }
 
-/// Listener interface for ad events.
-///
-/// See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/AdEvent.AdEventListener.html.
-@ProxyApi(
-  kotlinOptions: KotlinProxyApiOptions(
-    fullClassName:
-        'com.google.ads.interactivemedia.v3.api.AdEvent.AdEventListener',
-  ),
-)
-abstract class AdEventListener {
-  AdEventListener();
-
-  /// Respond to an occurrence of an AdEvent.
-  late final void Function(AdEvent event) onAdEvent;
-}
-
 /// Event to notify publisher that an event occurred with an Ad.
 ///
 /// See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/AdEvent.html.
@@ -342,49 +294,6 @@ abstract class ImaSdkFactory {
 )
 abstract class ImaSdkSettings {}
 
-/// Defines the set of methods that a video player must implement to be used by
-/// the IMA SDK, as well as a set of callbacks that it must fire.
-///
-/// See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/player/VideoAdPlayer.html.
-@ProxyApi(
-  kotlinOptions: KotlinProxyApiOptions(
-    fullClassName:
-        'com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer',
-  ),
-)
-abstract class VideoAdPlayer {
-  VideoAdPlayer();
-
-  /// Adds a callback.
-  late final void Function(VideoAdPlayerCallback callback) addCallback;
-
-  /// Loads a video ad hosted at AdMediaInfo.
-  late final void Function(AdMediaInfo adMediaInfo, AdPodInfo adPodInfo) loadAd;
-
-  /// Pauses playing the current ad.
-  late final void Function(AdMediaInfo adMediaInfo) pauseAd;
-
-  /// Starts or resumes playing the video ad referenced by the AdMediaInfo,
-  /// provided loadAd has already been called for it.
-  late final void Function(AdMediaInfo adMediaInfo) playAd;
-
-  /// Cleans up and releases all resources used by the `VideoAdPlayer`.
-  late final void Function() release;
-
-  /// Removes a callback.
-  late final void Function(VideoAdPlayerCallback callback) removeCallback;
-
-  /// Stops playing the current ad.
-  late final void Function(AdMediaInfo adMediaInfo) stopAd;
-
-  /// The volume of the player as a percentage from 0 to 100.
-  void setVolume(int value);
-
-  /// The `VideoProgressUpdate` describing playback progress of the current
-  /// video.
-  void setAdProgress(VideoProgressUpdate progress);
-}
-
 /// Defines an update to the video's progress.
 ///
 /// See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/player/VideoProgressUpdate.html.
@@ -402,50 +311,6 @@ abstract class VideoProgressUpdate {
   @static
   @attached
   late final VideoProgressUpdate videoTimeNotReady;
-}
-
-/// Callbacks that the player must fire.
-///
-/// See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/player/VideoAdPlayer.VideoAdPlayerCallback.html
-@ProxyApi(
-  kotlinOptions: KotlinProxyApiOptions(
-    fullClassName:
-        'com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer.VideoAdPlayerCallback',
-  ),
-)
-abstract class VideoAdPlayerCallback {
-  /// Fire this callback periodically as ad playback occurs.
-  void onAdProgress(
-    AdMediaInfo adMediaInfo,
-    VideoProgressUpdate videoProgressUpdate,
-  );
-
-  /// Fire this callback when video playback stalls waiting for data.
-  void onBuffering(AdMediaInfo adMediaInfo);
-
-  /// Fire this callback when all content has finished playing.
-  void onContentComplete();
-
-  /// Fire this callback when the video finishes playing.
-  void onEnded(AdMediaInfo adMediaInfo);
-
-  /// Fire this callback when the video has encountered an error.
-  void onError(AdMediaInfo adMediaInfo);
-
-  /// Fire this callback when the video is ready to begin playback.
-  void onLoaded(AdMediaInfo adMediaInfo);
-
-  /// Fire this callback when the video is paused.
-  void onPause(AdMediaInfo adMediaInfo);
-
-  /// Fire this callback when the player begins playing a video.
-  void onPlay(AdMediaInfo adMediaInfo);
-
-  /// Fire this callback when the video is unpaused.
-  void onResume(AdMediaInfo adMediaInfo);
-
-  /// Fire this callback when the playback volume changes.
-  void onVolumeChanged(AdMediaInfo adMediaInfo, int percentage);
 }
 
 /// The minimal information required to play an ad.
@@ -584,4 +449,139 @@ abstract class MediaPlayer {
 
   /// Stops playback after playback has been started or paused.
   void stop();
+}
+
+/// Callbacks that the player must fire.
+///
+/// See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/player/VideoAdPlayer.VideoAdPlayerCallback.html
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName:
+        'com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer.VideoAdPlayerCallback',
+  ),
+)
+abstract class VideoAdPlayerCallback {
+  /// Fire this callback periodically as ad playback occurs.
+  void onAdProgress(
+    AdMediaInfo adMediaInfo,
+    VideoProgressUpdate videoProgressUpdate,
+  );
+
+  /// Fire this callback when video playback stalls waiting for data.
+  void onBuffering(AdMediaInfo adMediaInfo);
+
+  /// Fire this callback when all content has finished playing.
+  void onContentComplete();
+
+  /// Fire this callback when the video finishes playing.
+  void onEnded(AdMediaInfo adMediaInfo);
+
+  /// Fire this callback when the video has encountered an error.
+  void onError(AdMediaInfo adMediaInfo);
+
+  /// Fire this callback when the video is ready to begin playback.
+  void onLoaded(AdMediaInfo adMediaInfo);
+
+  /// Fire this callback when the video is paused.
+  void onPause(AdMediaInfo adMediaInfo);
+
+  /// Fire this callback when the player begins playing a video.
+  void onPlay(AdMediaInfo adMediaInfo);
+
+  /// Fire this callback when the video is unpaused.
+  void onResume(AdMediaInfo adMediaInfo);
+
+  /// Fire this callback when the playback volume changes.
+  void onVolumeChanged(AdMediaInfo adMediaInfo, int percentage);
+}
+
+/// Defines the set of methods that a video player must implement to be used by
+/// the IMA SDK, as well as a set of callbacks that it must fire.
+///
+/// See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/player/VideoAdPlayer.html.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName:
+        'com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer',
+  ),
+)
+abstract class VideoAdPlayer {
+  VideoAdPlayer();
+
+  /// Adds a callback.
+  late final void Function(VideoAdPlayerCallback callback) addCallback;
+
+  /// Loads a video ad hosted at AdMediaInfo.
+  late final void Function(AdMediaInfo adMediaInfo, AdPodInfo adPodInfo) loadAd;
+
+  /// Pauses playing the current ad.
+  late final void Function(AdMediaInfo adMediaInfo) pauseAd;
+
+  /// Starts or resumes playing the video ad referenced by the AdMediaInfo,
+  /// provided loadAd has already been called for it.
+  late final void Function(AdMediaInfo adMediaInfo) playAd;
+
+  /// Cleans up and releases all resources used by the `VideoAdPlayer`.
+  late final void Function() release;
+
+  /// Removes a callback.
+  late final void Function(VideoAdPlayerCallback callback) removeCallback;
+
+  /// Stops playing the current ad.
+  late final void Function(AdMediaInfo adMediaInfo) stopAd;
+
+  /// The volume of the player as a percentage from 0 to 100.
+  void setVolume(int value);
+
+  /// The `VideoProgressUpdate` describing playback progress of the current
+  /// video.
+  void setAdProgress(VideoProgressUpdate progress);
+}
+
+/// Listener interface for notification of ad load or stream load completion.
+///
+/// See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/AdsLoader.AdsLoadedListener.html.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName:
+        'com.google.ads.interactivemedia.v3.api.AdsLoader.AdsLoadedListener',
+  ),
+)
+abstract class AdsLoadedListener {
+  AdsLoadedListener();
+
+  /// Called once the AdsManager or StreamManager has been loaded.
+  late final void Function(AdsManagerLoadedEvent event) onAdsManagerLoaded;
+}
+
+/// Interface for classes that will listen to AdErrorEvents.
+///
+/// See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/AdErrorEvent.AdErrorListener.html.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName:
+        'com.google.ads.interactivemedia.v3.api.AdErrorEvent.AdErrorListener',
+  ),
+)
+abstract class AdErrorListener {
+  AdErrorListener();
+
+  /// Called when an error occurs.
+  late final void Function(AdErrorEvent event) onAdError;
+}
+
+/// Listener interface for ad events.
+///
+/// See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/AdEvent.AdEventListener.html.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName:
+        'com.google.ads.interactivemedia.v3.api.AdEvent.AdEventListener',
+  ),
+)
+abstract class AdEventListener {
+  AdEventListener();
+
+  /// Respond to an occurrence of an AdEvent.
+  late final void Function(AdEvent event) onAdEvent;
 }

@@ -13,7 +13,6 @@ import io.flutter.plugin.common.StandardMessageCodec
 import io.flutter.plugin.platform.PlatformView
 import io.flutter.plugin.platform.PlatformViewFactory
 
-
 /** InteractiveMediaAdsPlugin */
 class InteractiveMediaAdsPlugin : FlutterPlugin, ActivityAware {
   private lateinit var pluginBinding: FlutterPlugin.FlutterPluginBinding
@@ -26,7 +25,9 @@ class InteractiveMediaAdsPlugin : FlutterPlugin, ActivityAware {
         ProxyApiRegistrar(pluginBinding.binaryMessenger, context = pluginBinding.applicationContext)
     registrar.setUp()
 
-    flutterPluginBinding.platformViewRegistry.registerViewFactory("interactive_media_ads.packages.flutter.dev/view",FlutterViewFactory(registrar.instanceManager))
+    flutterPluginBinding.platformViewRegistry.registerViewFactory(
+        "interactive_media_ads.packages.flutter.dev/view",
+        FlutterViewFactory(registrar.instanceManager))
   }
 
   override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
@@ -52,11 +53,12 @@ class InteractiveMediaAdsPlugin : FlutterPlugin, ActivityAware {
 }
 
 internal class FlutterViewFactory(private val instanceManager: PigeonInstanceManager) :
-  PlatformViewFactory(StandardMessageCodec.INSTANCE) {
+    PlatformViewFactory(StandardMessageCodec.INSTANCE) {
 
   override fun create(context: Context, viewId: Int, args: Any?): PlatformView {
-    val identifier = args as Int?
-      ?: throw IllegalStateException("An identifier is required to retrieve a View instance.")
+    val identifier =
+        args as Int?
+            ?: throw IllegalStateException("An identifier is required to retrieve a View instance.")
     val instance: Any? = instanceManager.getInstance(identifier.toLong())
     if (instance is PlatformView) {
       return instance
@@ -69,8 +71,6 @@ internal class FlutterViewFactory(private val instanceManager: PigeonInstanceMan
         override fun dispose() {}
       }
     }
-    throw IllegalStateException(
-      "Unable to find a PlatformView or View instance: $args, $instance"
-    )
+    throw IllegalStateException("Unable to find a PlatformView or View instance: $args, $instance")
   }
 }
