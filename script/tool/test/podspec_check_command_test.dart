@@ -324,7 +324,7 @@ void main() {
         packagesDir,
         extraFiles: <String>[
           'ios/Classes/SomeSwift.swift',
-          'ios/Package.swift',
+          'ios/plugin1/Package.swift',
         ],
       );
       _writeFakePodspec(plugin, 'ios');
@@ -384,12 +384,12 @@ void main() {
           ));
     });
 
-    test('does not require the search paths workaround for Package.swift',
+    test('does not require the search paths workaround for iOS Package.swift',
         () async {
       final RepositoryPackage plugin = createFakePlugin(
         'plugin1',
         packagesDir,
-        extraFiles: <String>['ios/Package.swift'],
+        extraFiles: <String>['ios/plugin1/Package.swift'],
       );
       _writeFakePodspec(plugin, 'ios');
 

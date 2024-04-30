@@ -120,7 +120,6 @@ void main() {
         'foo.mocks.dart',
         // Ignored files.
         'resource.h',
-        'Package.swift',
       ];
 
       for (final String name in ignoredFiles) {
@@ -543,6 +542,23 @@ void main() {
             contains(
                 'No recognized license was found for the following third-party files:'),
             contains('  third_party/bad.cc'),
+          ]));
+    });
+
+    test('passes if Package.swift has license blocks', () async {
+      final File checked = root.childFile('Package.swift');
+      checked.createSync();
+      writeLicense(checked, prefix: '// swift-tools-version: 5.9\n');
+
+      final List<String> output =
+          await runCapturingPrint(runner, <String>['license-check']);
+
+      // Sanity check that the test did actually check a file.
+      expect(
+          output,
+          containsAllInOrder(<Matcher>[
+            contains('Checking Package.swift'),
+            contains('All files passed validation!'),
           ]));
     });
   });

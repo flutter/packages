@@ -164,6 +164,11 @@ class PodspecCheckCommand extends PackageLoopingCommand {
   /// Swift. Skips files named "Package.swift", which is a Swift Pacakge Manager
   /// manifest file and does not mean the plugin is written in Swift.
   Future<bool> _hasIOSSwiftCode(RepositoryPackage package) async {
+    final String iosSwiftPackageManifestPath = package
+        .platformDirectory(FlutterPlatform.ios)
+        .childDirectory(package.displayName)
+        .childFile('Package.swift')
+        .path;
     return getFilesForPackage(package).any((File entity) {
       final String relativePath =
           getRelativePosixPath(entity, from: package.directory);
@@ -172,7 +177,7 @@ class PodspecCheckCommand extends PackageLoopingCommand {
         return false;
       }
       final String filePath = entity.path;
-      return entity.basename != 'Package.swift' &&
+      return filePath != iosSwiftPackageManifestPath &&
           path.extension(filePath) == '.swift';
     });
   }
