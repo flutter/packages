@@ -631,7 +631,8 @@ class WebKitWebViewController extends PlatformWebViewController {
 
   Future<void> _injectConsoleOverride() {
     // Within overrideScript, a series of console output methods such as
-    // console.log will be rewritten to pass the output content to the dart end.
+    // console.log will be rewritten to pass the output content to the Flutter
+    // end.
     //
     // These output contents will first be serialized through JSON.stringify(),
     // but if the output content contains cyclic objects, it will encounter the
