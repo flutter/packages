@@ -1387,7 +1387,7 @@ void main() {
       when(mockCameraInfo.getCameraState())
           .thenAnswer((_) async => MockLiveCameraState());
       when(mockCamera2CameraInfo.getSupportedHardwareLevel()).thenAnswer(
-          (_) async => CameraMetadata.infoSupportedHardwareLevelLegacy);
+          (_) async => CameraMetadata.infoSupportedHardwareLevelLimited);
 
       await camera.startVideoCapturing(const VideoCaptureOptions(cameraId));
 
@@ -3714,8 +3714,8 @@ void main() {
         .thenAnswer((_) => Future<CameraInfo>.value(mockCameraInfo));
     when(mockCameraInfo.getCameraState())
         .thenAnswer((_) async => MockLiveCameraState());
-    when(mockCamera2CameraInfo.getSupportedHardwareLevel()).thenAnswer(
-        (_) async => CameraMetadata.infoSupportedHardwareLevelLegacy);
+    when(mockCamera2CameraInfo.getSupportedHardwareLevel())
+        .thenAnswer((_) async => CameraMetadata.infoSupportedHardwareLevelFull);
 
     await camera.startVideoCapturing(const VideoCaptureOptions(cameraId));
 
@@ -3971,6 +3971,73 @@ void main() {
     verifyNever(
         camera.processCameraProvider!.unbind(<UseCase>[camera.imageCapture!]));
     verifyNever(
+        camera.processCameraProvider!.unbind(<UseCase>[camera.imageAnalysis!]));
+  });
+
+  test(
+      'startVideoCapturing unbinds ImageCapture and ImageAnalysis use cases when running on a legacy hardware device',
+      () async {
+    // Set up mocks and constants.
+    final AndroidCameraCameraX camera = AndroidCameraCameraX();
+    final MockPendingRecording mockPendingRecording = MockPendingRecording();
+    final MockRecording mockRecording = MockRecording();
+    final MockCamera mockCamera = MockCamera();
+    final MockCameraInfo mockCameraInfo = MockCameraInfo();
+    final MockCamera2CameraInfo mockCamera2CameraInfo = MockCamera2CameraInfo();
+    final TestSystemServicesHostApi mockSystemServicesApi =
+        MockTestSystemServicesHostApi();
+    TestSystemServicesHostApi.setup(mockSystemServicesApi);
+
+    // Set directly for test versus calling createCamera.
+    camera.processCameraProvider = MockProcessCameraProvider();
+    camera.recorder = MockRecorder();
+    camera.videoCapture = MockVideoCapture();
+    camera.cameraSelector = MockCameraSelector();
+    camera.cameraInfo = MockCameraInfo();
+    camera.imageAnalysis = MockImageAnalysis();
+    camera.imageCapture = MockImageCapture();
+    camera.preview = MockPreview();
+
+    // Ignore setting target rotation for this test; tested seprately.
+    camera.captureOrientationLocked = true;
+
+    // Tell plugin to create detached Observer when camera info updated.
+    camera.proxy = CameraXProxy(
+        createCameraStateObserver: (void Function(Object) onChanged) =>
+            Observer<CameraState>.detached(onChanged: onChanged),
+        getCamera2CameraInfo: (CameraInfo cameraInfo) =>
+            Future<Camera2CameraInfo>.value(mockCamera2CameraInfo));
+
+    const int cameraId = 44;
+    const String outputPath = '/temp/MOV123.temp';
+
+    // Mock method calls.
+    when(mockSystemServicesApi.getTempFilePath(camera.videoPrefix, '.temp'))
+        .thenReturn(outputPath);
+    when(camera.recorder!.prepareRecording(outputPath))
+        .thenAnswer((_) async => mockPendingRecording);
+    when(mockPendingRecording.start()).thenAnswer((_) async => mockRecording);
+    when(camera.processCameraProvider!.isBound(camera.videoCapture!))
+        .thenAnswer((_) async => false);
+    when(camera.processCameraProvider!.isBound(camera.imageCapture!))
+        .thenAnswer((_) async => true);
+    when(camera.processCameraProvider!.isBound(camera.imageAnalysis!))
+        .thenAnswer((_) async => true);
+    when(camera.processCameraProvider!.bindToLifecycle(
+            camera.cameraSelector!, <UseCase>[camera.videoCapture!]))
+        .thenAnswer((_) async => mockCamera);
+    when(mockCamera.getCameraInfo())
+        .thenAnswer((_) => Future<CameraInfo>.value(mockCameraInfo));
+    when(mockCameraInfo.getCameraState())
+        .thenAnswer((_) async => MockLiveCameraState());
+    when(mockCamera2CameraInfo.getSupportedHardwareLevel()).thenAnswer(
+        (_) async => CameraMetadata.infoSupportedHardwareLevelLegacy);
+
+    await camera.startVideoCapturing(const VideoCaptureOptions(cameraId));
+
+    verify(
+        camera.processCameraProvider!.unbind(<UseCase>[camera.imageCapture!]));
+    verify(
         camera.processCameraProvider!.unbind(<UseCase>[camera.imageAnalysis!]));
   });
 }
