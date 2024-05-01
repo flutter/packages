@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class ExampleSimple extends StatefulWidget {
-  const ExampleSimple({Key? key}) : super(key: key);
+  const ExampleSimple({super.key});
 
   @override
   ExampleSimpleState createState() => ExampleSimpleState();
