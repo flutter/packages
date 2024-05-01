@@ -405,7 +405,8 @@ void main() {
           ));
     });
 
-    test('does not require the search paths workaround for darwin Package.swift',
+    test(
+        'does not require the search paths workaround for darwin Package.swift',
         () async {
       final RepositoryPackage plugin = createFakePlugin(
         'plugin1',
