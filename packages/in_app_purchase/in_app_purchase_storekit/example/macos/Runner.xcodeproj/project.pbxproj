@@ -805,7 +805,6 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.15;
 				MARKETING_VERSION = 1.0;
 				MTL_FAST_MATH = YES;
-				OTHER_SWIFT_FLAGS = "$(inherited) -D COCOAPODS -Xcc -fmodule-map-file=\"${PODS_ROOT}/Headers/Public/in_app_purchase_storekit/in_app_purchase_storekit.modulemap\" -Xcc -fmodule-map-file=\"${PODS_ROOT}/Headers/Public/integration_test/integration_test.modulemap\" -Xcc -fmodule-map-file=\"${PODS_ROOT}/Headers/Public/shared_preferences_macos/shared_preferences_macos.modulemap\"";
 				PRODUCT_BUNDLE_IDENTIFIER = dev.flutter.plugins.RunnerTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
@@ -837,7 +836,6 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.15;
 				MARKETING_VERSION = 1.0;
 				MTL_FAST_MATH = YES;
-				OTHER_SWIFT_FLAGS = "$(inherited) -D COCOAPODS -Xcc -fmodule-map-file=\"${PODS_ROOT}/Headers/Public/in_app_purchase_storekit/in_app_purchase_storekit.modulemap\" -Xcc -fmodule-map-file=\"${PODS_ROOT}/Headers/Public/integration_test/integration_test.modulemap\" -Xcc -fmodule-map-file=\"${PODS_ROOT}/Headers/Public/shared_preferences_macos/shared_preferences_macos.modulemap\"";
 				PRODUCT_BUNDLE_IDENTIFIER = dev.flutter.plugins.RunnerTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
