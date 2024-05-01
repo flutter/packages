@@ -1,3 +1,7 @@
+## 2.5.8
+
+* Adds Swift Package Manager compatibility.
+
 ## 2.5.7
 
 * Adds frame availability checks on iOS.
