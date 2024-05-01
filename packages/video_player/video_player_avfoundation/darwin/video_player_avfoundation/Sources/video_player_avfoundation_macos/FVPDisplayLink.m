@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#import "../FVPDisplayLink.h"
+#import "video_player_avfoundation/FVPDisplayLink.h"
 
 #import <CoreVideo/CoreVideo.h>
 #import <Foundation/Foundation.h>
