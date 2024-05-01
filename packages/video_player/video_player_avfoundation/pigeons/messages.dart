@@ -7,8 +7,10 @@ import 'package:pigeon/pigeon.dart';
 @ConfigurePigeon(PigeonOptions(
   dartOut: 'lib/src/messages.g.dart',
   dartTestOut: 'test/test_api.g.dart',
-  objcHeaderOut: 'darwin/video_player_avfoundation/Sources/video_player_avfoundation/include/video_player_avfoundation/messages.g.h',
-  objcSourceOut: 'darwin/video_player_avfoundation/Sources/video_player_avfoundation/messages.g.m',
+  objcHeaderOut:
+      'darwin/video_player_avfoundation/Sources/video_player_avfoundation/include/video_player_avfoundation/messages.g.h',
+  objcSourceOut:
+      'darwin/video_player_avfoundation/Sources/video_player_avfoundation/messages.g.m',
   objcOptions: ObjcOptions(
     prefix: 'FVP',
     headerIncludePath: 'video_player_avfoundation/messages.g.h',
