@@ -475,7 +475,24 @@
 - (void)testRefreshReceiptRequest {
   XCTestExpectation *expectation =
       [self expectationWithDescription:@"completion handler successfully called"];
-  [self.plugin refreshReceiptReceiptProperties:nil
+
+
+  id mockHandler = OCMClassMock([FIAPRequestHandler class]);
+  InAppPurchasePlugin *plugin = [[InAppPurchasePlugin alloc]
+      initWithReceiptManager:_receiptManagerStub
+              handlerFactory:^FIAPRequestHandler *(SKRequest *request) {
+                return mockHandler;
+              }];
+
+  NSError *recieptError = [NSError errorWithDomain:@"errorDomain"
+                                              code:0
+                                          userInfo:@{NSLocalizedDescriptionKey : @"description"}];
+
+  OCMStub([mockHandler
+      startProductRequestWithCompletionHandler:([OCMArg invokeBlockWithArgs:[NSNull null],
+                                                                            recieptError, nil])]);
+
+  [plugin refreshReceiptReceiptProperties:nil
                                     completion:^(FlutterError *_Nullable error) {
                                       [expectation fulfill];
                                     }];
@@ -491,10 +508,28 @@
 
   XCTestExpectation *expectation =
       [self expectationWithDescription:@"completion handler successfully called"];
-  [self.plugin refreshReceiptReceiptProperties:properties
+
+
+  id mockHandler = OCMClassMock([FIAPRequestHandler class]);
+  InAppPurchasePlugin *plugin = [[InAppPurchasePlugin alloc]
+      initWithReceiptManager:_receiptManagerStub
+              handlerFactory:^FIAPRequestHandler *(SKRequest *request) {
+                return mockHandler;
+              }];
+
+  NSError *recieptError = [NSError errorWithDomain:@"errorDomain"
+                                              code:0
+                                          userInfo:@{NSLocalizedDescriptionKey : @"description"}];
+
+  OCMStub([mockHandler
+      startProductRequestWithCompletionHandler:([OCMArg invokeBlockWithArgs:[NSNull null],
+                                                                            recieptError, nil])]);
+
+  [plugin refreshReceiptReceiptProperties:properties
                                     completion:^(FlutterError *_Nullable error) {
                                       [expectation fulfill];
                                     }];
+
   [self waitForExpectations:@[ expectation ] timeout:5];
 }
 
@@ -632,7 +667,6 @@
     XCTAssertNotNil(self.plugin.paymentQueueHandler.delegate);
   }
 }
-#endif
 
 - (void)testRemovePaymentQueueDelegate {
   if (@available(iOS 13, *)) {
@@ -657,6 +691,7 @@
     XCTAssertNil(self.plugin.paymentQueueHandler.delegate);
   }
 }
+#endif
 
 - (void)testHandleTransactionsUpdated {
   NSDictionary *transactionMap = @{
