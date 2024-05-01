@@ -8,9 +8,9 @@
 #import <AVFoundation/AVFoundation.h>
 #import <GLKit/GLKit.h>
 
-#import "video_player_avfoundation/AVAssetTrackUtils.h"
-#import "video_player_avfoundation/FVPDisplayLink.h"
-#import "video_player_avfoundation/messages.g.h"
+#import "./include/video_player_avfoundation/AVAssetTrackUtils.h"
+#import "./include/video_player_avfoundation/FVPDisplayLink.h"
+#import "./include/video_player_avfoundation/messages.g.h"
 
 #if !__has_feature(objc_arc)
 #error Code Requires ARC.

@@ -13,7 +13,7 @@ import 'package:pigeon/pigeon.dart';
       'darwin/video_player_avfoundation/Sources/video_player_avfoundation/messages.g.m',
   objcOptions: ObjcOptions(
     prefix: 'FVP',
-    headerIncludePath: 'video_player_avfoundation/messages.g.h',
+    headerIncludePath: './include/video_player_avfoundation/messages.g.h',
   ),
   copyrightHeader: 'pigeons/copyright.txt',
 ))
