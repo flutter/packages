@@ -14,7 +14,6 @@ Downloaded by pub (not CocoaPods).
   s.author           = { 'Flutter Dev Team' => 'flutter-dev@googlegroups.com' }
   s.source           = { :http => 'https://github.com/flutter/packages/tree/main/packages/video_player/video_player_avfoundation' }
   s.documentation_url = 'https://pub.dev/packages/video_player'
-  s.source_files = 'Classes/*'
   s.source_files = 'video_player_avfoundation/Sources/video_player_avfoundation/**/*.{h,m}'
   s.ios.source_files = 'video_player_avfoundation/Sources/video_player_avfoundation_ios/*'
   s.osx.source_files = 'video_player_avfoundation/Sources/video_player_avfoundation_macos/*'
