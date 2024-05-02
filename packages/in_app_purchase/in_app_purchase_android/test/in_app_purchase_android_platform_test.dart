@@ -760,9 +760,11 @@ void main() {
 
       when(mockApi.getBillingConfigAsync())
           .thenAnswer((_) async => platformBillingConfigFromWrapper(expected));
-      final String countryCode = await iapAndroidPlatform.getCountryCode();
+      final String countryCode = await iapAndroidPlatform.countryCode();
 
       expect(countryCode, equals(expectedCountryCode));
+      // Ensure deprecated code keeps working until removed.
+      expect(await iapAndroidPlatform.getCountryCode(), equals(expectedCountryCode));
     });
   });
 }
