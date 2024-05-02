@@ -764,7 +764,8 @@ void main() {
 
       expect(countryCode, equals(expectedCountryCode));
       // Ensure deprecated code keeps working until removed.
-      expect(await iapAndroidPlatform.getCountryCode(), equals(expectedCountryCode));
+      expect(await iapAndroidPlatform.getCountryCode(),
+          equals(expectedCountryCode));
     });
   });
 }
