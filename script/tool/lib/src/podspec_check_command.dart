@@ -169,6 +169,11 @@ class PodspecCheckCommand extends PackageLoopingCommand {
         .childDirectory(package.directory.basename)
         .childFile('Package.swift')
         .path;
+    final String darwinSwiftPackageManifestPath = package.directory
+        .childDirectory('darwin')
+        .childDirectory(package.directory.basename)
+        .childFile('Package.swift')
+        .path;
     return getFilesForPackage(package).any((File entity) {
       final String relativePath =
           getRelativePosixPath(entity, from: package.directory);
@@ -178,6 +183,7 @@ class PodspecCheckCommand extends PackageLoopingCommand {
       }
       final String filePath = entity.path;
       return filePath != iosSwiftPackageManifestPath &&
+          filePath != darwinSwiftPackageManifestPath &&
           path.extension(filePath) == '.swift';
     });
   }
