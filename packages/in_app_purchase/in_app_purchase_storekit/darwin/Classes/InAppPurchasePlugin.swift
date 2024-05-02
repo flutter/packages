@@ -226,8 +226,8 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI {
   public func finishTransactionFinishMap(
     _ finishMap: [String: Any], error: AutoreleasingUnsafeMutablePointer<FlutterError?>
   ) {
-    guard let transactionIdentifier = finishMap["transactionIdentifier"] as? String,
-      let productIdentifier = finishMap["productIdentifier"] as? String
+    let transactionIdentifier = (finishMap["transactionIdentifier"] ?? "") as? String
+    guard let productIdentifier = finishMap["productIdentifier"] as? String
     else {
       return
     }
@@ -235,10 +235,11 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI {
     let pendingTransactions = paymentQueueHandler!.getUnfinishedTransactions()
 
     for transaction in pendingTransactions {
-      // Check if the current transaction's identifier matches the provided one,
-      // or both identifiers are nil and the product identifiers match.
+      // If the user cancels the purchase dialog we won't have a transactionIdentifier.
+      // So if it is null AND a transaction in the pendingTransactions list has
+      // also a null transactionIdentifier we check for equal product identifiers.
       if transaction.transactionIdentifier == transactionIdentifier
-        || (transactionIdentifier == NSNull().description
+        || (transactionIdentifier == ""
           && transaction.transactionIdentifier == nil
           && transaction.payment.productIdentifier == productIdentifier)
       {
