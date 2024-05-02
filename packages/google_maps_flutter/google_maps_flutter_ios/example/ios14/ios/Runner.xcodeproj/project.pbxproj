@@ -13,13 +13,14 @@
 		4510D964F3B1259FEDD3ABA6 /* libPods-Runner.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7755F8F4BABC3D6A0BD4048B /* libPods-Runner.a */; };
 		6851F3562835BC180032B7C8 /* FLTGoogleMapJSONConversionsConversionTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6851F3552835BC180032B7C8 /* FLTGoogleMapJSONConversionsConversionTests.m */; };
 		68E4726A2836FF0C00BDDDAC /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 68E472692836FF0C00BDDDAC /* MapKit.framework */; };
+		78521A5F2BE43055004D1DC1 /* OCMock in Frameworks */ = {isa = PBXBuildFile; productRef = 78521A5E2BE43055004D1DC1 /* OCMock */; };
 		978B8F6F1D3862AE00F588F7 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 7AFFD8EE1D35381100E5BB4D /* AppDelegate.m */; };
 		97C146F31CF9000F007C117D /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 97C146F21CF9000F007C117D /* main.m */; };
 		97C146FC1CF9000F007C117D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FA1CF9000F007C117D /* Main.storyboard */; };
 		97C146FE1CF9000F007C117D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FD1CF9000F007C117D /* Assets.xcassets */; };
 		97C147011CF9000F007C117D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FF1CF9000F007C117D /* LaunchScreen.storyboard */; };
-		F269303B2BB389BF00BF17C4 /* assets in Resources */ = {isa = PBXBuildFile; fileRef = F269303A2BB389BF00BF17C4 /* assets */; };
 		982F2A6C27BADE17003C81F4 /* PartiallyMockedMapView.m in Sources */ = {isa = PBXBuildFile; fileRef = 982F2A6B27BADE17003C81F4 /* PartiallyMockedMapView.m */; };
+		F269303B2BB389BF00BF17C4 /* assets in Resources */ = {isa = PBXBuildFile; fileRef = F269303A2BB389BF00BF17C4 /* assets */; };
 		F7151F13265D7ED70028CB91 /* GoogleMapsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F7151F12265D7ED70028CB91 /* GoogleMapsTests.m */; };
 		F7151F21265D7EE50028CB91 /* GoogleMapsUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = F7151F20265D7EE50028CB91 /* GoogleMapsUITests.m */; };
 		FC8F35FC8CD533B128950487 /* libPods-RunnerTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F267F68029D1A4E2E4C572A7 /* libPods-RunnerTests.a */; };
@@ -103,6 +104,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				78521A5F2BE43055004D1DC1 /* OCMock in Frameworks */,
 				68E4726A2836FF0C00BDDDAC /* MapKit.framework in Frameworks */,
 				FC8F35FC8CD533B128950487 /* libPods-RunnerTests.a in Frameworks */,
 			);
@@ -260,6 +262,9 @@
 				F7151F16265D7ED70028CB91 /* PBXTargetDependency */,
 			);
 			name = RunnerTests;
+			packageProductDependencies = (
+				78521A5E2BE43055004D1DC1 /* OCMock */,
+			);
 			productName = RunnerTests;
 			productReference = F7151F10265D7ED70028CB91 /* RunnerTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
@@ -315,6 +320,9 @@
 				Base,
 			);
 			mainGroup = 97C146E51CF9000F007C117D;
+			packageReferences = (
+				78521A5D2BE43055004D1DC1 /* XCRemoteSwiftPackageReference "ocmock" */,
+			);
 			productRefGroup = 97C146EF1CF9000F007C117D /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -784,6 +792,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		78521A5D2BE43055004D1DC1 /* XCRemoteSwiftPackageReference "ocmock" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/erikdoe/ocmock";
+			requirement = {
+				kind = revision;
+				revision = afd2c6924e8a36cb872bc475248b978f743c6050;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		78521A5E2BE43055004D1DC1 /* OCMock */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 78521A5D2BE43055004D1DC1 /* XCRemoteSwiftPackageReference "ocmock" */;
+			productName = OCMock;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 97C146E61CF9000F007C117D /* Project object */;
 }

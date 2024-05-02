@@ -2,9 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#import "GoogleMapController.h"
-#import "FLTGoogleMapJSONConversions.h"
-#import "FLTGoogleMapTileOverlayController.h"
+#import "./include/google_maps_flutter_ios/GoogleMapController.h"
+#import "./include/google_maps_flutter_ios/FLTGoogleMapJSONConversions.h"
+#import "./include/google_maps_flutter_ios/FLTGoogleMapTileOverlayController.h"
 
 #pragma mark - Conversion of JSON-like values sent via platform channels. Forward declarations.
 
