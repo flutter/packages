@@ -11,7 +11,6 @@ import StoreKit
   import FlutterMacOS
 #endif
 
-@objcMembers
 public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI {
   // Properties
   private let receiptManager: FIAPReceiptManager
@@ -21,8 +20,11 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI {
   // note - the type should be FIAPPaymentQueueDelegate, but this is only available >= iOS 13,
   private var requestHandlers = Set<FIAPRequestHandler>()
   private var handlerFactory: ((SKRequest) -> FIAPRequestHandler)
+  @objc
   public var registrar: FlutterPluginRegistrar?
+  @objc
   public var paymentQueueHandler: FIAPaymentQueueHandler?
+  @objc
   public var transactionObserverCallbackChannel: FlutterMethodChannel?
 
   public static func register(with registrar: FlutterPluginRegistrar) {
@@ -41,6 +43,7 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI {
     SetUpInAppPurchaseAPI(messenger, instance)
   }
 
+  @objc
   public init(receiptManager: FIAPReceiptManager) {
     self.receiptManager = receiptManager
     self.requestHandlers = Set<FIAPRequestHandler>()
@@ -51,6 +54,7 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI {
     super.init()
   }
 
+  @objc
   public convenience init(
     receiptManager: FIAPReceiptManager,
     handlerFactory: @escaping (SKRequest) -> FIAPRequestHandler
@@ -352,6 +356,7 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI {
     #endif
   }
 
+  @objc
   public func handleTransactionsUpdated(_ transactions: [SKPaymentTransaction]) {
     let maps = transactions.map { transaction in
       FIAObjectTranslator.getMapFrom(transaction)
@@ -359,6 +364,7 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI {
     transactionObserverCallbackChannel!.invokeMethod("updatedTransactions", arguments: maps)
   }
 
+  @objc
   public func handleTransactionsRemoved(_ transactions: [SKPaymentTransaction]) {
     let maps = transactions.map { transaction in
       FIAObjectTranslator.getMapFrom(transaction)
@@ -366,16 +372,19 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI {
     transactionObserverCallbackChannel!.invokeMethod("removedTransactions", arguments: maps)
   }
 
+  @objc
   public func handleTransactionRestoreFailed(_ error: NSError) {
     transactionObserverCallbackChannel!.invokeMethod(
       "restoreCompletedTransactionsFailed", arguments: FIAObjectTranslator.getMapFrom(error))
   }
 
+  @objc
   public func restoreCompletedTransactionsFinished() {
     transactionObserverCallbackChannel!.invokeMethod(
       "paymentQueueRestoreCompletedTransactionsFinished", arguments: nil)
   }
 
+  @objc
   public func shouldAddStorePayment(payment: SKPayment, product: SKProduct) -> Bool {
     productsCache[product.productIdentifier] = product
     transactionObserverCallbackChannel!
