@@ -476,7 +476,6 @@
   XCTestExpectation *expectation =
       [self expectationWithDescription:@"completion handler successfully called"];
 
-
   id mockHandler = OCMClassMock([FIAPRequestHandler class]);
   InAppPurchasePlugin *plugin = [[InAppPurchasePlugin alloc]
       initWithReceiptManager:_receiptManagerStub
@@ -493,9 +492,9 @@
                                                                             recieptError, nil])]);
 
   [plugin refreshReceiptReceiptProperties:nil
-                                    completion:^(FlutterError *_Nullable error) {
-                                      [expectation fulfill];
-                                    }];
+                               completion:^(FlutterError *_Nullable error) {
+                                 [expectation fulfill];
+                               }];
   [self waitForExpectations:@[ expectation ] timeout:5];
 }
 
@@ -508,7 +507,6 @@
 
   XCTestExpectation *expectation =
       [self expectationWithDescription:@"completion handler successfully called"];
-
 
   id mockHandler = OCMClassMock([FIAPRequestHandler class]);
   InAppPurchasePlugin *plugin = [[InAppPurchasePlugin alloc]
@@ -526,9 +524,9 @@
                                                                             recieptError, nil])]);
 
   [plugin refreshReceiptReceiptProperties:properties
-                                    completion:^(FlutterError *_Nullable error) {
-                                      [expectation fulfill];
-                                    }];
+                               completion:^(FlutterError *_Nullable error) {
+                                 [expectation fulfill];
+                               }];
 
   [self waitForExpectations:@[ expectation ] timeout:5];
 }
@@ -704,7 +702,8 @@
     @"transactionTimeStamp" : @([NSDate date].timeIntervalSince1970),
   };
 
-  InAppPurchasePlugin *plugin = [[InAppPurchasePlugin alloc] initWithReceiptManager:_receiptManagerStub];
+  InAppPurchasePlugin *plugin =
+      [[InAppPurchasePlugin alloc] initWithReceiptManager:_receiptManagerStub];
   FlutterMethodChannel *mockChannel = OCMClassMock([FlutterMethodChannel class]);
   plugin.transactionObserverCallbackChannel = mockChannel;
   OCMStub([mockChannel invokeMethod:[OCMArg any] arguments:[OCMArg any]]);
@@ -730,7 +729,8 @@
     @"transactionTimeStamp" : @([NSDate date].timeIntervalSince1970),
   };
 
-  InAppPurchasePlugin *plugin = [[InAppPurchasePlugin alloc] initWithReceiptManager:_receiptManagerStub];
+  InAppPurchasePlugin *plugin =
+      [[InAppPurchasePlugin alloc] initWithReceiptManager:_receiptManagerStub];
   FlutterMethodChannel *mockChannel = OCMClassMock([FlutterMethodChannel class]);
   plugin.transactionObserverCallbackChannel = mockChannel;
   OCMStub([mockChannel invokeMethod:[OCMArg any] arguments:[OCMArg any]]);
@@ -746,7 +746,8 @@
 }
 
 - (void)testHandleTransactionRestoreFailed {
-  InAppPurchasePlugin *plugin = [[InAppPurchasePlugin alloc] initWithReceiptManager:_receiptManagerStub];
+  InAppPurchasePlugin *plugin =
+      [[InAppPurchasePlugin alloc] initWithReceiptManager:_receiptManagerStub];
   FlutterMethodChannel *mockChannel = OCMClassMock([FlutterMethodChannel class]);
   plugin.transactionObserverCallbackChannel = mockChannel;
   OCMStub([mockChannel invokeMethod:[OCMArg any] arguments:[OCMArg any]]);
@@ -758,7 +759,8 @@
 }
 
 - (void)testRestoreCompletedTransactionsFinished {
-  InAppPurchasePlugin *plugin = [[InAppPurchasePlugin alloc] initWithReceiptManager:_receiptManagerStub];
+  InAppPurchasePlugin *plugin =
+      [[InAppPurchasePlugin alloc] initWithReceiptManager:_receiptManagerStub];
   FlutterMethodChannel *mockChannel = OCMClassMock([FlutterMethodChannel class]);
   plugin.transactionObserverCallbackChannel = mockChannel;
   OCMStub([mockChannel invokeMethod:[OCMArg any] arguments:[OCMArg any]]);
@@ -788,7 +790,8 @@
   SKMutablePayment *payment = [FIAObjectTranslator getSKMutablePaymentFromMap:paymentMap];
   SKProductStub *product = [[SKProductStub alloc] initWithMap:productMap];
 
-  InAppPurchasePlugin *plugin = [[InAppPurchasePlugin alloc] initWithReceiptManager:_receiptManagerStub];
+  InAppPurchasePlugin *plugin =
+      [[InAppPurchasePlugin alloc] initWithReceiptManager:_receiptManagerStub];
   FlutterMethodChannel *mockChannel = OCMClassMock([FlutterMethodChannel class]);
   plugin.transactionObserverCallbackChannel = mockChannel;
   OCMStub([mockChannel invokeMethod:[OCMArg any] arguments:[OCMArg any]]);

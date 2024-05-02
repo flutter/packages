@@ -11,28 +11,27 @@ import StoreKit
   import FlutterMacOS
 #endif
 
-extension FlutterError: Error {}
 @objcMembers
 public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI {
   // Properties
-  private(set) var productsCache: NSMutableDictionary = [:]
-  private(set) var paymentQueueDelegateCallbackChannel: FlutterMethodChannel?
-  private(set) var receiptManager: FIAPReceiptManager?
-  private(set) var paymentQueueDelegate: Any? = nil
+  private let receiptManager: FIAPReceiptManager
+  private var productsCache: NSMutableDictionary = [:]
+  private var paymentQueueDelegateCallbackChannel: FlutterMethodChannel?
+  private var paymentQueueDelegate: Any? = nil
   // note - the type should be FIAPPaymentQueueDelegate, but this is only available >= iOS 13,
   private var requestHandlers = Set<FIAPRequestHandler>()
-  private var handlerFactory: ((SKRequest) -> FIAPRequestHandler)?
+  private var handlerFactory: ((SKRequest) -> FIAPRequestHandler)
   public var registrar: FlutterPluginRegistrar?
   public var paymentQueueHandler: FIAPaymentQueueHandler?
   public var transactionObserverCallbackChannel: FlutterMethodChannel?
 
   public static func register(with registrar: FlutterPluginRegistrar) {
-#if os(iOS)
-    let messenger = registrar.messenger();
-#endif
-#if os(macOS)
-    let messenger = registrar.messenger;
-#endif
+    #if os(iOS)
+      let messenger = registrar.messenger()
+    #endif
+    #if os(macOS)
+      let messenger = registrar.messenger
+    #endif
     let channel = FlutterMethodChannel(
       name: "plugins.flutter.io/in_app_purchase",
       binaryMessenger: messenger)
@@ -53,7 +52,8 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI {
   }
 
   public convenience init(
-    receiptManager: FIAPReceiptManager, handlerFactory: @escaping (SKRequest) -> FIAPRequestHandler
+    receiptManager: FIAPReceiptManager,
+    handlerFactory: @escaping (SKRequest) -> FIAPRequestHandler
   ) {
     self.init(receiptManager: receiptManager)
     self.handlerFactory = handlerFactory
@@ -63,35 +63,32 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI {
     self.init(receiptManager: FIAPReceiptManager())
     self.registrar = registrar
 
-    weak var weakSelf = self
-
     self.paymentQueueHandler = FIAPaymentQueueHandler(
       queue: SKPaymentQueue.default(),
-      transactionsUpdated: { (transactions: [SKPaymentTransaction]) -> Void in
-        weakSelf!.handleTransactionsUpdated(transactions)
+      transactionsUpdated: { [weak self] (transactions: [SKPaymentTransaction]) -> Void in
+        self?.handleTransactionsUpdated(transactions)
       },
-      transactionRemoved: { (transactions: [SKPaymentTransaction]) -> Void in
-        weakSelf!.handleTransactionsRemoved(transactions)
+      transactionRemoved: { [weak self] (transactions: [SKPaymentTransaction]) -> Void in
+        self?.handleTransactionsRemoved(transactions)
       },
-      restoreTransactionFailed: { error in
-        weakSelf!.handleTransactionRestoreFailed(error as NSError)
+      restoreTransactionFailed: { [weak self] error in
+        self?.handleTransactionRestoreFailed(error as NSError)
       },
-      restoreCompletedTransactionsFinished: { () -> Void in
-        weakSelf!.restoreCompletedTransactionsFinished()
+      restoreCompletedTransactionsFinished: { [weak self] () -> Void in
+        self?.restoreCompletedTransactionsFinished()
       },
-      shouldAddStorePayment: { (payment: SKPayment, product: SKProduct) -> Bool in
-        return weakSelf!.shouldAddStorePayment(payment: payment, product: product)
+      shouldAddStorePayment: { [weak self] (payment: SKPayment, product: SKProduct) -> Bool in
+        return self?.shouldAddStorePayment(payment: payment, product: product) ?? false
       },
-      updatedDownloads: { _ in
-        weakSelf!.updatedDownloads()
+      updatedDownloads: { [weak self] _ in
+        self?.updatedDownloads()
       }, transactionCache: FIATransactionCache())
-
-#if os(iOS)
-    let messenger = registrar.messenger();
-#endif
-#if os(macOS)
-    let messenger = registrar.messenger;
-#endif
+    #if os(iOS)
+      let messenger = registrar.messenger()
+    #endif
+    #if os(macOS)
+      let messenger = registrar.messenger
+    #endif
     transactionObserverCallbackChannel = FlutterMethodChannel(
       name: "plugins.flutter.io/in_app_purchase", binaryMessenger: messenger)
   }
@@ -105,12 +102,10 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI {
   public func transactionsWithError(_ error: AutoreleasingUnsafeMutablePointer<FlutterError?>)
     -> [SKPaymentTransactionMessage]?
   {
-    let transactions = self.paymentQueueHandler?.getUnfinishedTransactions() ?? []
+    let transactions = self.paymentQueueHandler!.getUnfinishedTransactions()
     var transactionMaps: [SKPaymentTransactionMessage] = []
-    for transaction in transactions {
-      if let map = FIAObjectTranslator.convertTransaction(toPigeon: transaction) {
-        transactionMaps.append(map)
-      }
+    transactionMaps = transactions.compactMap {
+      FIAObjectTranslator.convertTransaction(toPigeon: $0)
     }
     return transactionMaps
   }
@@ -120,7 +115,7 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI {
   {
     if #available(iOS 13.0, *) {
       let storefront = self.paymentQueueHandler?.storefront
-      if storefront == nil {
+      guard let storefront else {
         return nil
       }
       return FIAObjectTranslator.convertStorefront(toPigeon: storefront)
@@ -133,13 +128,12 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI {
     completion: @escaping (SKProductsResponseMessage?, FlutterError?) -> Void
   ) {
     let request = getProductRequest(withIdentifiers: Set(productIdentifiers))
-    let handler = handlerFactory!(request)
+    let handler = handlerFactory(request)
     requestHandlers.insert(handler)
 
-    handler.startProductRequest { response, startProductRequestError in
-      var error: FlutterError
+    handler.startProductRequest { [weak self] response, startProductRequestError in
       if let startProductRequestError = startProductRequestError {
-        error = FlutterError(
+        let error = FlutterError(
           code: "storekit_getproductrequest_platform_error",
           message: startProductRequestError.localizedDescription,
           details: startProductRequestError.localizedDescription)
@@ -148,7 +142,7 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI {
       }
 
       guard let response = response else {
-        error = FlutterError(
+        let error = FlutterError(
           code: "storekit_platform_no_response",
           message:
             "Failed to get SKProductResponse in startRequest call. Error occurred on iOS platform",
@@ -157,8 +151,8 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI {
         return
       }
 
-      response.products.forEach { product in
-        self.productsCache[product.productIdentifier] = product
+      for product in response.products {
+        self?.productsCache[product.productIdentifier] = product
       }
 
       if #available(iOS 12.2, *) {
@@ -166,7 +160,7 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI {
           completion(responseMessage, nil)
         }
       }
-      self.requestHandlers.remove(handler)
+      self?.requestHandlers.remove(handler)
     }
   }
 
@@ -215,7 +209,7 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI {
       }
     }
 
-    guard self.paymentQueueHandler?.add(payment) == true else {
+    if !self.paymentQueueHandler!.add(payment) {
       error.pointee = FlutterError(
         code: "storekit_duplicate_product_object",
         message:
@@ -267,7 +261,7 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI {
     _ error: AutoreleasingUnsafeMutablePointer<FlutterError?>
   ) -> String? {
     var flutterError: FlutterError? = nil
-    let receiptData: String? = receiptManager!.retrieveReceiptWithError(&flutterError)
+    let receiptData: String? = receiptManager.retrieveReceiptWithError(&flutterError)
     if receiptData == nil {
       error.pointee = flutterError
       return nil
@@ -281,16 +275,17 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI {
     var request: SKReceiptRefreshRequest
     if let receiptProperties = receiptProperties {
       // If receiptProperties is not nil, this call is for testing.
-      var properties: [String: Any] = [:]
-      properties[SKReceiptPropertyIsExpired] = receiptProperties["isExpired"]!
-      properties[SKReceiptPropertyIsRevoked] = receiptProperties["isRevoked"]!
-      properties[SKReceiptPropertyIsVolumePurchase] = receiptProperties["isVolumePurchase"]!
+      let properties = [
+        SKReceiptPropertyIsExpired: receiptProperties["isExpired"]!,
+        SKReceiptPropertyIsRevoked: receiptProperties["isRevoked"]!,
+        SKReceiptPropertyIsVolumePurchase: receiptProperties["isVolumePurchase"]!,
+      ]
       request = getRefreshReceiptRequest(properties: properties)
     } else {
       request = getRefreshReceiptRequest(properties: nil)
     }
 
-    let handler = handlerFactory!(request)
+    let handler = handlerFactory(request)
     requestHandlers.insert(handler)
     handler.startProductRequest { [weak self] response, error in
       if let error = error {
@@ -301,7 +296,7 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI {
         completion(requestError)
         return
       }
-      completion(nil);
+      completion(nil)
       self?.requestHandlers.remove(handler)
     }
   }
@@ -358,19 +353,15 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI {
   }
 
   public func handleTransactionsUpdated(_ transactions: [SKPaymentTransaction]) {
-    var maps: [[AnyHashable: Any]] = []
-    for transaction in transactions {
-      let map = FIAObjectTranslator.getMapFrom(transaction)
-      maps.append(map)
+    let maps = transactions.map { transaction in
+      FIAObjectTranslator.getMapFrom(transaction)
     }
     transactionObserverCallbackChannel!.invokeMethod("updatedTransactions", arguments: maps)
   }
 
   public func handleTransactionsRemoved(_ transactions: [SKPaymentTransaction]) {
-    var maps: [[AnyHashable: Any]] = []
-    for transaction in transactions {
-      let map = FIAObjectTranslator.getMapFrom(transaction)
-      maps.append(map)
+    let maps = transactions.map { transaction in
+      FIAObjectTranslator.getMapFrom(transaction)
     }
     transactionObserverCallbackChannel!.invokeMethod("removedTransactions", arguments: maps)
   }
