@@ -1,3 +1,7 @@
+## 0.3.15
+
+* Replaces `getCountryCode` with `countryCode`.
+
 ## 0.3.14
 
 * Adds `countryCode` API.

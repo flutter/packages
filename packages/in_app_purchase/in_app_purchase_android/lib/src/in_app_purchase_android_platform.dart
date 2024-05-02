@@ -317,9 +317,14 @@ class InAppPurchaseAndroidPlatform extends InAppPurchasePlatform {
   ///
   /// See: https://developer.android.com/reference/com/android/billingclient/api/BillingConfig
   /// See: https://unicode.org/cldr/charts/latest/supplemental/territory_containment_un_m_49.html
-  Future<String> getCountryCode() async {
+  @override
+  Future<String> countryCode() async {
     final BillingConfigWrapper billingConfig = await billingClientManager
         .runWithClient((BillingClient client) => client.getBillingConfig());
     return billingConfig.countryCode;
   }
+
+  /// Use countryCode instead.
+  @Deprecated('Use countryCode')
+  Future<String> getCountryCode() => countryCode();
 }
