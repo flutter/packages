@@ -405,6 +405,28 @@ void main() {
           ));
     });
 
+    test(
+        'does not require the search paths workaround for darwin Package.swift',
+        () async {
+      final RepositoryPackage plugin = createFakePlugin(
+        'plugin1',
+        packagesDir,
+        extraFiles: <String>['darwin/plugin1/Package.swift'],
+      );
+      _writeFakePodspec(plugin, 'darwin');
+
+      final List<String> output =
+          await runCapturingPrint(runner, <String>['podspec-check']);
+
+      expect(
+          output,
+          containsAllInOrder(
+            <Matcher>[
+              contains('Ran for 1 package(s)'),
+            ],
+          ));
+    });
+
     test('does not require the search paths workaround for macOS plugins',
         () async {
       final RepositoryPackage plugin = createFakePlugin('plugin1', packagesDir,
