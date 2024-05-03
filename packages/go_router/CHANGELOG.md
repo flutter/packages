@@ -2,6 +2,14 @@
 
 - Adds route redirect to ShellRoutes
 
+## 14.0.2
+
+- Fixes unwanted logs when `hierarchicalLoggingEnabled` was set to `true`.
+
+## 14.0.1
+
+- Updates the redirection documentation for clarity
+
 ## 14.0.0
 
 - **BREAKING CHANGE**
