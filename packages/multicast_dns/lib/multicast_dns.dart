@@ -132,28 +132,6 @@ class MDnsClient {
     for (final NetworkInterface interface in interfaces) {
       // Create a socket for sending on each adapter.
       final InternetAddress targetAddress = interface.addresses[0];
-      final RawDatagramSocket socket = await _rawDatagramSocketFactory(
-        targetAddress,
-        selectedMDnsPort,
-        reuseAddress: true,
-        reusePort: true,
-        ttl: 255,
-      );
-      _sockets.add(socket);
-      // Ensure that we're using this address/interface for multicast.
-      if (targetAddress.type == InternetAddressType.IPv4) {
-        socket.setRawOption(RawSocketOption(
-          RawSocketOption.levelIPv4,
-          RawSocketOption.IPv4MulticastInterface,
-          targetAddress.rawAddress,
-        ));
-      } else {
-        socket.setRawOption(RawSocketOption.fromInt(
-          RawSocketOption.levelIPv6,
-          RawSocketOption.IPv6MulticastInterface,
-          interface.index,
-        ));
-      }
       // Join multicast on this interface.
       incoming.joinMulticast(_mDnsAddress!, interface);
     }
