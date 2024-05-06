@@ -1,4 +1,4 @@
-## 0.8.10+2
+## 0.8.11
 
 * Adds Swift Package Manager compatibility.
 
