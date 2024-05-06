@@ -1,3 +1,7 @@
+## 0.6.4
+
+* Prevents usage of unsupported concurrent `UseCase`s based on the capabiliites of the camera device.
+
 ## 0.6.3
 
 * Shortens default interval that internal Java `InstanceManager` uses to release garbage collected weak references to

@@ -543,3 +543,17 @@ abstract class ResolutionFilterHostApi {
   void createWithOnePreferredSize(
       int identifier, ResolutionInfo preferredResolution);
 }
+
+@HostApi(dartHostTestHandler: 'TestCamera2CameraInfoHostApi')
+abstract class Camera2CameraInfoHostApi {
+  int createFrom(int cameraInfoIdentifier);
+
+  int getSupportedHardwareLevel(int identifier);
+
+  String getCameraId(int identifier);
+}
+
+@FlutterApi()
+abstract class Camera2CameraInfoFlutterApi {
+  void create(int identifier);
+}

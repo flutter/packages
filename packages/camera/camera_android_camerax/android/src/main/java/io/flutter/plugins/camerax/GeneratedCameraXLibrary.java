@@ -4267,4 +4267,137 @@ public class GeneratedCameraXLibrary {
       }
     }
   }
+  /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
+  public interface Camera2CameraInfoHostApi {
+
+    @NonNull
+    Long createFrom(@NonNull Long cameraInfoIdentifier);
+
+    @NonNull
+    Long getSupportedHardwareLevel(@NonNull Long identifier);
+
+    @NonNull
+    String getCameraId(@NonNull Long identifier);
+
+    /** The codec used by Camera2CameraInfoHostApi. */
+    static @NonNull MessageCodec<Object> getCodec() {
+      return new StandardMessageCodec();
+    }
+    /**
+     * Sets up an instance of `Camera2CameraInfoHostApi` to handle messages through the
+     * `binaryMessenger`.
+     */
+    static void setup(
+        @NonNull BinaryMessenger binaryMessenger, @Nullable Camera2CameraInfoHostApi api) {
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.Camera2CameraInfoHostApi.createFrom",
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                Number cameraInfoIdentifierArg = (Number) args.get(0);
+                try {
+                  Long output =
+                      api.createFrom(
+                          (cameraInfoIdentifierArg == null)
+                              ? null
+                              : cameraInfoIdentifierArg.longValue());
+                  wrapped.add(0, output);
+                } catch (Throwable exception) {
+                  ArrayList<Object> wrappedError = wrapError(exception);
+                  wrapped = wrappedError;
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.Camera2CameraInfoHostApi.getSupportedHardwareLevel",
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                Number identifierArg = (Number) args.get(0);
+                try {
+                  Long output =
+                      api.getSupportedHardwareLevel(
+                          (identifierArg == null) ? null : identifierArg.longValue());
+                  wrapped.add(0, output);
+                } catch (Throwable exception) {
+                  ArrayList<Object> wrappedError = wrapError(exception);
+                  wrapped = wrappedError;
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.Camera2CameraInfoHostApi.getCameraId",
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                Number identifierArg = (Number) args.get(0);
+                try {
+                  String output =
+                      api.getCameraId((identifierArg == null) ? null : identifierArg.longValue());
+                  wrapped.add(0, output);
+                } catch (Throwable exception) {
+                  ArrayList<Object> wrappedError = wrapError(exception);
+                  wrapped = wrappedError;
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+    }
+  }
+  /** Generated class from Pigeon that represents Flutter messages that can be called from Java. */
+  public static class Camera2CameraInfoFlutterApi {
+    private final @NonNull BinaryMessenger binaryMessenger;
+
+    public Camera2CameraInfoFlutterApi(@NonNull BinaryMessenger argBinaryMessenger) {
+      this.binaryMessenger = argBinaryMessenger;
+    }
+
+    /** Public interface for sending reply. */
+    @SuppressWarnings("UnknownNullness")
+    public interface Reply<T> {
+      void reply(T reply);
+    }
+    /** The codec used by Camera2CameraInfoFlutterApi. */
+    static @NonNull MessageCodec<Object> getCodec() {
+      return new StandardMessageCodec();
+    }
+
+    public void create(@NonNull Long identifierArg, @NonNull Reply<Void> callback) {
+      BasicMessageChannel<Object> channel =
+          new BasicMessageChannel<>(
+              binaryMessenger, "dev.flutter.pigeon.Camera2CameraInfoFlutterApi.create", getCodec());
+      channel.send(
+          new ArrayList<Object>(Collections.singletonList(identifierArg)),
+          channelReply -> callback.reply(null));
+    }
+  }
 }
