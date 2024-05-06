@@ -1,6 +1,6 @@
 ## 0.6.4+1
 
-* Adds empty implementation for `prepareVideoRecording` since this optimization is not used on Android.
+* Adds empty implementation for `prepareForVideoRecording` since this optimization is not used on Android.
 
 ## 0.6.4
 
