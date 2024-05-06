@@ -110,7 +110,7 @@ class DriveExamplesCommand extends PackageLoopingCommand {
     _targetDeviceFlags = <String, List<String>>{
       if (getBoolArg(platformAndroid))
         platformAndroid: <String>['-d', androidDevice!],
-      if (getBoolArg(platformIOS)) platformIOS: <String>['-d', iOSDevice!],
+      if (getBoolArg(platformIOS)) platformIOS: <String>['-d', iOSDevice!, '-v'],
       if (getBoolArg(platformLinux)) platformLinux: <String>['-d', 'linux'],
       if (getBoolArg(platformMacOS)) platformMacOS: <String>['-d', 'macos'],
       if (getBoolArg(platformWeb))
