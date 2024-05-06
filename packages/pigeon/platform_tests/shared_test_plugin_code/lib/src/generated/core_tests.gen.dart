@@ -38,6 +38,73 @@ enum AnEnum {
   fourHundredTwentyTwo,
 }
 
+class AllMapTypes {
+  AllMapTypes({
+    required this.map,
+  });
+
+  Map<Object?, Object?> map;
+
+  Object encode() {
+    return <Object?>[
+      map,
+    ];
+  }
+
+  static AllMapTypes decode(Object result) {
+    result as List<Object?>;
+    return AllMapTypes(
+      map: result[0]! as Map<Object?, Object?>,
+    );
+  }
+}
+
+class AllListTypes {
+  AllListTypes({
+    required this.list,
+    required this.stringList,
+    required this.intList,
+    required this.doubleList,
+    required this.boolList,
+    required this.enumList,
+  });
+
+  List<Object?> list;
+
+  List<String?> stringList;
+
+  List<int?> intList;
+
+  List<double?> doubleList;
+
+  List<bool?> boolList;
+
+  List<AnEnum?> enumList;
+
+  Object encode() {
+    return <Object?>[
+      list,
+      stringList,
+      intList,
+      doubleList,
+      boolList,
+      enumList,
+    ];
+  }
+
+  static AllListTypes decode(Object result) {
+    result as List<Object?>;
+    return AllListTypes(
+      list: result[0]! as List<Object?>,
+      stringList: (result[1] as List<Object?>?)!.cast<String?>(),
+      intList: (result[2] as List<Object?>?)!.cast<int?>(),
+      doubleList: (result[3] as List<Object?>?)!.cast<double?>(),
+      boolList: (result[4] as List<Object?>?)!.cast<bool?>(),
+      enumList: (result[5] as List<Object?>?)!.cast<AnEnum?>(),
+    );
+  }
+}
+
 /// A class containing all supported types.
 class AllTypes {
   AllTypes({
@@ -372,73 +439,6 @@ class AllClassesWrapper {
   }
 }
 
-class AllMapTypes {
-  AllMapTypes({
-    required this.map,
-  });
-
-  Map<Object?, Object?> map;
-
-  Object encode() {
-    return <Object?>[
-      map,
-    ];
-  }
-
-  static AllMapTypes decode(Object result) {
-    result as List<Object?>;
-    return AllMapTypes(
-      map: result[0]! as Map<Object?, Object?>,
-    );
-  }
-}
-
-class AllListTypes {
-  AllListTypes({
-    required this.list,
-    required this.stringList,
-    required this.intList,
-    required this.doubleList,
-    required this.boolList,
-    required this.enumList,
-  });
-
-  List<Object?> list;
-
-  List<String?> stringList;
-
-  List<int?> intList;
-
-  List<double?> doubleList;
-
-  List<bool?> boolList;
-
-  List<AnEnum?> enumList;
-
-  Object encode() {
-    return <Object?>[
-      list,
-      stringList,
-      intList,
-      doubleList,
-      boolList,
-      enumList,
-    ];
-  }
-
-  static AllListTypes decode(Object result) {
-    result as List<Object?>;
-    return AllListTypes(
-      list: result[0]! as List<Object?>,
-      stringList: (result[1] as List<Object?>?)!.cast<String?>(),
-      intList: (result[2] as List<Object?>?)!.cast<int?>(),
-      doubleList: (result[3] as List<Object?>?)!.cast<double?>(),
-      boolList: (result[4] as List<Object?>?)!.cast<bool?>(),
-      enumList: (result[5] as List<Object?>?)!.cast<AnEnum?>(),
-    );
-  }
-}
-
 /// A data class containing a List, used in unit tests.
 class TestMessage {
   TestMessage({
@@ -465,22 +465,22 @@ class _PigeonCodec extends StandardMessageCodec {
   const _PigeonCodec();
   @override
   void writeValue(WriteBuffer buffer, Object? value) {
-    if (value is AllTypes) {
+    if (value is AllMapTypes) {
       buffer.putUint8(128);
       writeValue(buffer, value.encode());
-    } else if (value is AllNullableTypes) {
+    } else if (value is AllListTypes) {
       buffer.putUint8(129);
       writeValue(buffer, value.encode());
-    } else if (value is AllNullableTypesWithoutRecursion) {
+    } else if (value is AllTypes) {
       buffer.putUint8(130);
       writeValue(buffer, value.encode());
-    } else if (value is AllClassesWrapper) {
+    } else if (value is AllNullableTypes) {
       buffer.putUint8(131);
       writeValue(buffer, value.encode());
-    } else if (value is AllMapTypes) {
+    } else if (value is AllNullableTypesWithoutRecursion) {
       buffer.putUint8(132);
       writeValue(buffer, value.encode());
-    } else if (value is AllListTypes) {
+    } else if (value is AllClassesWrapper) {
       buffer.putUint8(133);
       writeValue(buffer, value.encode());
     } else if (value is TestMessage) {
@@ -498,17 +498,17 @@ class _PigeonCodec extends StandardMessageCodec {
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
       case 128:
-        return AllTypes.decode(readValue(buffer)!);
-      case 129:
-        return AllNullableTypes.decode(readValue(buffer)!);
-      case 130:
-        return AllNullableTypesWithoutRecursion.decode(readValue(buffer)!);
-      case 131:
-        return AllClassesWrapper.decode(readValue(buffer)!);
-      case 132:
         return AllMapTypes.decode(readValue(buffer)!);
-      case 133:
+      case 129:
         return AllListTypes.decode(readValue(buffer)!);
+      case 130:
+        return AllTypes.decode(readValue(buffer)!);
+      case 131:
+        return AllNullableTypes.decode(readValue(buffer)!);
+      case 132:
+        return AllNullableTypesWithoutRecursion.decode(readValue(buffer)!);
+      case 133:
+        return AllClassesWrapper.decode(readValue(buffer)!);
       case 134:
         return TestMessage.decode(readValue(buffer)!);
       case 135:

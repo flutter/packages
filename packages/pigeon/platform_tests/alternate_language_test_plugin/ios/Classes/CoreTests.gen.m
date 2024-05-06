@@ -50,6 +50,18 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 }
 @end
 
+@interface FLTAllMapTypes ()
++ (FLTAllMapTypes *)fromList:(NSArray *)list;
++ (nullable FLTAllMapTypes *)nullableFromList:(NSArray *)list;
+- (NSArray *)toList;
+@end
+
+@interface FLTAllListTypes ()
++ (FLTAllListTypes *)fromList:(NSArray *)list;
++ (nullable FLTAllListTypes *)nullableFromList:(NSArray *)list;
+- (NSArray *)toList;
+@end
+
 @interface FLTAllTypes ()
 + (FLTAllTypes *)fromList:(NSArray *)list;
 + (nullable FLTAllTypes *)nullableFromList:(NSArray *)list;
@@ -74,22 +86,72 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 - (NSArray *)toList;
 @end
 
-@interface FLTAllMapTypes ()
-+ (FLTAllMapTypes *)fromList:(NSArray *)list;
-+ (nullable FLTAllMapTypes *)nullableFromList:(NSArray *)list;
-- (NSArray *)toList;
-@end
-
-@interface FLTAllListTypes ()
-+ (FLTAllListTypes *)fromList:(NSArray *)list;
-+ (nullable FLTAllListTypes *)nullableFromList:(NSArray *)list;
-- (NSArray *)toList;
-@end
-
 @interface FLTTestMessage ()
 + (FLTTestMessage *)fromList:(NSArray *)list;
 + (nullable FLTTestMessage *)nullableFromList:(NSArray *)list;
 - (NSArray *)toList;
+@end
+
+@implementation FLTAllMapTypes
++ (instancetype)makeWithMap:(NSDictionary *)map {
+  FLTAllMapTypes *pigeonResult = [[FLTAllMapTypes alloc] init];
+  pigeonResult.map = map;
+  return pigeonResult;
+}
++ (FLTAllMapTypes *)fromList:(NSArray *)list {
+  FLTAllMapTypes *pigeonResult = [[FLTAllMapTypes alloc] init];
+  pigeonResult.map = GetNullableObjectAtIndex(list, 0);
+  return pigeonResult;
+}
++ (nullable FLTAllMapTypes *)nullableFromList:(NSArray *)list {
+  return (list) ? [FLTAllMapTypes fromList:list] : nil;
+}
+- (NSArray *)toList {
+  return @[
+    self.map ?: [NSNull null],
+  ];
+}
+@end
+
+@implementation FLTAllListTypes
++ (instancetype)makeWithList:(NSArray *)list
+                  stringList:(NSArray<NSString *> *)stringList
+                     intList:(NSArray<NSNumber *> *)intList
+                  doubleList:(NSArray<NSNumber *> *)doubleList
+                    boolList:(NSArray<NSNumber *> *)boolList
+                    enumList:(NSArray<FLTAnEnumBox *> *)enumList {
+  FLTAllListTypes *pigeonResult = [[FLTAllListTypes alloc] init];
+  pigeonResult.list = list;
+  pigeonResult.stringList = stringList;
+  pigeonResult.intList = intList;
+  pigeonResult.doubleList = doubleList;
+  pigeonResult.boolList = boolList;
+  pigeonResult.enumList = enumList;
+  return pigeonResult;
+}
++ (FLTAllListTypes *)fromList:(NSArray *)list {
+  FLTAllListTypes *pigeonResult = [[FLTAllListTypes alloc] init];
+  pigeonResult.list = GetNullableObjectAtIndex(list, 0);
+  pigeonResult.stringList = GetNullableObjectAtIndex(list, 1);
+  pigeonResult.intList = GetNullableObjectAtIndex(list, 2);
+  pigeonResult.doubleList = GetNullableObjectAtIndex(list, 3);
+  pigeonResult.boolList = GetNullableObjectAtIndex(list, 4);
+  pigeonResult.enumList = GetNullableObjectAtIndex(list, 5);
+  return pigeonResult;
+}
++ (nullable FLTAllListTypes *)nullableFromList:(NSArray *)list {
+  return (list) ? [FLTAllListTypes fromList:list] : nil;
+}
+- (NSArray *)toList {
+  return @[
+    self.list ?: [NSNull null],
+    self.stringList ?: [NSNull null],
+    self.intList ?: [NSNull null],
+    self.doubleList ?: [NSNull null],
+    self.boolList ?: [NSNull null],
+    self.enumList ?: [NSNull null],
+  ];
+}
 @end
 
 @implementation FLTAllTypes
@@ -370,68 +432,6 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 }
 @end
 
-@implementation FLTAllMapTypes
-+ (instancetype)makeWithMap:(NSDictionary *)map {
-  FLTAllMapTypes *pigeonResult = [[FLTAllMapTypes alloc] init];
-  pigeonResult.map = map;
-  return pigeonResult;
-}
-+ (FLTAllMapTypes *)fromList:(NSArray *)list {
-  FLTAllMapTypes *pigeonResult = [[FLTAllMapTypes alloc] init];
-  pigeonResult.map = GetNullableObjectAtIndex(list, 0);
-  return pigeonResult;
-}
-+ (nullable FLTAllMapTypes *)nullableFromList:(NSArray *)list {
-  return (list) ? [FLTAllMapTypes fromList:list] : nil;
-}
-- (NSArray *)toList {
-  return @[
-    self.map ?: [NSNull null],
-  ];
-}
-@end
-
-@implementation FLTAllListTypes
-+ (instancetype)makeWithList:(NSArray *)list
-                  stringList:(NSArray<NSString *> *)stringList
-                     intList:(NSArray<NSNumber *> *)intList
-                  doubleList:(NSArray<NSNumber *> *)doubleList
-                    boolList:(NSArray<NSNumber *> *)boolList
-                    enumList:(NSArray<FLTAnEnumBox *> *)enumList {
-  FLTAllListTypes *pigeonResult = [[FLTAllListTypes alloc] init];
-  pigeonResult.list = list;
-  pigeonResult.stringList = stringList;
-  pigeonResult.intList = intList;
-  pigeonResult.doubleList = doubleList;
-  pigeonResult.boolList = boolList;
-  pigeonResult.enumList = enumList;
-  return pigeonResult;
-}
-+ (FLTAllListTypes *)fromList:(NSArray *)list {
-  FLTAllListTypes *pigeonResult = [[FLTAllListTypes alloc] init];
-  pigeonResult.list = GetNullableObjectAtIndex(list, 0);
-  pigeonResult.stringList = GetNullableObjectAtIndex(list, 1);
-  pigeonResult.intList = GetNullableObjectAtIndex(list, 2);
-  pigeonResult.doubleList = GetNullableObjectAtIndex(list, 3);
-  pigeonResult.boolList = GetNullableObjectAtIndex(list, 4);
-  pigeonResult.enumList = GetNullableObjectAtIndex(list, 5);
-  return pigeonResult;
-}
-+ (nullable FLTAllListTypes *)nullableFromList:(NSArray *)list {
-  return (list) ? [FLTAllListTypes fromList:list] : nil;
-}
-- (NSArray *)toList {
-  return @[
-    self.list ?: [NSNull null],
-    self.stringList ?: [NSNull null],
-    self.intList ?: [NSNull null],
-    self.doubleList ?: [NSNull null],
-    self.boolList ?: [NSNull null],
-    self.enumList ?: [NSNull null],
-  ];
-}
-@end
-
 @implementation FLTTestMessage
 + (instancetype)makeWithTestList:(nullable NSArray *)testList {
   FLTTestMessage *pigeonResult = [[FLTTestMessage alloc] init];
@@ -459,17 +459,17 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 - (nullable id)readValueOfType:(UInt8)type {
   switch (type) {
     case 128:
-      return [FLTAllTypes fromList:[self readValue]];
-    case 129:
-      return [FLTAllNullableTypes fromList:[self readValue]];
-    case 130:
-      return [FLTAllNullableTypesWithoutRecursion fromList:[self readValue]];
-    case 131:
-      return [FLTAllClassesWrapper fromList:[self readValue]];
-    case 132:
       return [FLTAllMapTypes fromList:[self readValue]];
-    case 133:
+    case 129:
       return [FLTAllListTypes fromList:[self readValue]];
+    case 130:
+      return [FLTAllTypes fromList:[self readValue]];
+    case 131:
+      return [FLTAllNullableTypes fromList:[self readValue]];
+    case 132:
+      return [FLTAllNullableTypesWithoutRecursion fromList:[self readValue]];
+    case 133:
+      return [FLTAllClassesWrapper fromList:[self readValue]];
     case 134:
       return [FLTTestMessage fromList:[self readValue]];
     case 135: {
@@ -487,22 +487,22 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 @end
 @implementation CoreTestsPigeonCodecWriter
 - (void)writeValue:(id)value {
-  if ([value isKindOfClass:[FLTAllTypes class]]) {
+  if ([value isKindOfClass:[FLTAllMapTypes class]]) {
     [self writeByte:128];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FLTAllNullableTypes class]]) {
+  } else if ([value isKindOfClass:[FLTAllListTypes class]]) {
     [self writeByte:129];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FLTAllNullableTypesWithoutRecursion class]]) {
+  } else if ([value isKindOfClass:[FLTAllTypes class]]) {
     [self writeByte:130];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FLTAllClassesWrapper class]]) {
+  } else if ([value isKindOfClass:[FLTAllNullableTypes class]]) {
     [self writeByte:131];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FLTAllMapTypes class]]) {
+  } else if ([value isKindOfClass:[FLTAllNullableTypesWithoutRecursion class]]) {
     [self writeByte:132];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FLTAllListTypes class]]) {
+  } else if ([value isKindOfClass:[FLTAllClassesWrapper class]]) {
     [self writeByte:133];
     [self writeValue:[value toList]];
   } else if ([value isKindOfClass:[FLTTestMessage class]]) {

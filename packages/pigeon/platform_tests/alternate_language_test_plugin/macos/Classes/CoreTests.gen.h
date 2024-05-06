@@ -28,13 +28,37 @@ typedef NS_ENUM(NSUInteger, AnEnum) {
 - (instancetype)initWithValue:(AnEnum)value;
 @end
 
+@class AllMapTypes;
+@class AllListTypes;
 @class AllTypes;
 @class AllNullableTypes;
 @class AllNullableTypesWithoutRecursion;
 @class AllClassesWrapper;
-@class AllMapTypes;
-@class AllListTypes;
 @class TestMessage;
+
+@interface AllMapTypes : NSObject
+/// `init` unavailable to enforce nonnull fields, see the `make` class method.
+- (instancetype)init NS_UNAVAILABLE;
++ (instancetype)makeWithMap:(NSDictionary *)map;
+@property(nonatomic, copy) NSDictionary *map;
+@end
+
+@interface AllListTypes : NSObject
+/// `init` unavailable to enforce nonnull fields, see the `make` class method.
+- (instancetype)init NS_UNAVAILABLE;
++ (instancetype)makeWithList:(NSArray *)list
+                  stringList:(NSArray<NSString *> *)stringList
+                     intList:(NSArray<NSNumber *> *)intList
+                  doubleList:(NSArray<NSNumber *> *)doubleList
+                    boolList:(NSArray<NSNumber *> *)boolList
+                    enumList:(NSArray<AnEnumBox *> *)enumList;
+@property(nonatomic, copy) NSArray *list;
+@property(nonatomic, copy) NSArray<NSString *> *stringList;
+@property(nonatomic, copy) NSArray<NSNumber *> *intList;
+@property(nonatomic, copy) NSArray<NSNumber *> *doubleList;
+@property(nonatomic, copy) NSArray<NSNumber *> *boolList;
+@property(nonatomic, copy) NSArray<AnEnumBox *> *enumList;
+@end
 
 /// A class containing all supported types.
 @interface AllTypes : NSObject
@@ -168,30 +192,6 @@ typedef NS_ENUM(NSUInteger, AnEnum) {
 @property(nonatomic, strong, nullable)
     AllNullableTypesWithoutRecursion *allNullableTypesWithoutRecursion;
 @property(nonatomic, strong, nullable) AllTypes *allTypes;
-@end
-
-@interface AllMapTypes : NSObject
-/// `init` unavailable to enforce nonnull fields, see the `make` class method.
-- (instancetype)init NS_UNAVAILABLE;
-+ (instancetype)makeWithMap:(NSDictionary *)map;
-@property(nonatomic, copy) NSDictionary *map;
-@end
-
-@interface AllListTypes : NSObject
-/// `init` unavailable to enforce nonnull fields, see the `make` class method.
-- (instancetype)init NS_UNAVAILABLE;
-+ (instancetype)makeWithList:(NSArray *)list
-                  stringList:(NSArray<NSString *> *)stringList
-                     intList:(NSArray<NSNumber *> *)intList
-                  doubleList:(NSArray<NSNumber *> *)doubleList
-                    boolList:(NSArray<NSNumber *> *)boolList
-                    enumList:(NSArray<AnEnumBox *> *)enumList;
-@property(nonatomic, copy) NSArray *list;
-@property(nonatomic, copy) NSArray<NSString *> *stringList;
-@property(nonatomic, copy) NSArray<NSNumber *> *intList;
-@property(nonatomic, copy) NSArray<NSNumber *> *doubleList;
-@property(nonatomic, copy) NSArray<NSNumber *> *boolList;
-@property(nonatomic, copy) NSArray<AnEnumBox *> *enumList;
 @end
 
 /// A data class containing a List, used in unit tests.

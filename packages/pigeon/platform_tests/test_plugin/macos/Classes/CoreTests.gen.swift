@@ -57,6 +57,64 @@ enum AnEnum: Int {
   case fourHundredTwentyTwo = 4
 }
 
+/// Generated class from Pigeon that represents data sent in messages.
+struct AllMapTypes {
+  var map: [AnyHashable: Any?]
+
+  // swift-format-ignore: AlwaysUseLowerCamelCase
+  static func fromList(_ __pigeon_list: [Any?]) -> AllMapTypes? {
+    let map = __pigeon_list[0] as! [AnyHashable: Any?]
+
+    return AllMapTypes(
+      map: map
+    )
+  }
+  func toList() -> [Any?] {
+    return [
+      map
+    ]
+  }
+}
+
+/// Generated class from Pigeon that represents data sent in messages.
+struct AllListTypes {
+  var list: [Any?]
+  var stringList: [String?]
+  var intList: [Int64?]
+  var doubleList: [Double?]
+  var boolList: [Bool?]
+  var enumList: [AnEnum?]
+
+  // swift-format-ignore: AlwaysUseLowerCamelCase
+  static func fromList(_ __pigeon_list: [Any?]) -> AllListTypes? {
+    let list = __pigeon_list[0] as! [Any?]
+    let stringList = __pigeon_list[1] as! [String?]
+    let intList = __pigeon_list[2] as! [Int64?]
+    let doubleList = __pigeon_list[3] as! [Double?]
+    let boolList = __pigeon_list[4] as! [Bool?]
+    let enumList = __pigeon_list[5] as! [AnEnum?]
+
+    return AllListTypes(
+      list: list,
+      stringList: stringList,
+      intList: intList,
+      doubleList: doubleList,
+      boolList: boolList,
+      enumList: enumList
+    )
+  }
+  func toList() -> [Any?] {
+    return [
+      list,
+      stringList,
+      intList,
+      doubleList,
+      boolList,
+      enumList,
+    ]
+  }
+}
+
 /// A class containing all supported types.
 ///
 /// Generated class from Pigeon that represents data sent in messages.
@@ -391,64 +449,6 @@ struct AllClassesWrapper {
   }
 }
 
-/// Generated class from Pigeon that represents data sent in messages.
-struct AllMapTypes {
-  var map: [AnyHashable: Any?]
-
-  // swift-format-ignore: AlwaysUseLowerCamelCase
-  static func fromList(_ __pigeon_list: [Any?]) -> AllMapTypes? {
-    let map = __pigeon_list[0] as! [AnyHashable: Any?]
-
-    return AllMapTypes(
-      map: map
-    )
-  }
-  func toList() -> [Any?] {
-    return [
-      map
-    ]
-  }
-}
-
-/// Generated class from Pigeon that represents data sent in messages.
-struct AllListTypes {
-  var list: [Any?]
-  var stringList: [String?]
-  var intList: [Int64?]
-  var doubleList: [Double?]
-  var boolList: [Bool?]
-  var enumList: [AnEnum?]
-
-  // swift-format-ignore: AlwaysUseLowerCamelCase
-  static func fromList(_ __pigeon_list: [Any?]) -> AllListTypes? {
-    let list = __pigeon_list[0] as! [Any?]
-    let stringList = __pigeon_list[1] as! [String?]
-    let intList = __pigeon_list[2] as! [Int64?]
-    let doubleList = __pigeon_list[3] as! [Double?]
-    let boolList = __pigeon_list[4] as! [Bool?]
-    let enumList = __pigeon_list[5] as! [AnEnum?]
-
-    return AllListTypes(
-      list: list,
-      stringList: stringList,
-      intList: intList,
-      doubleList: doubleList,
-      boolList: boolList,
-      enumList: enumList
-    )
-  }
-  func toList() -> [Any?] {
-    return [
-      list,
-      stringList,
-      intList,
-      doubleList,
-      boolList,
-      enumList,
-    ]
-  }
-}
-
 /// A data class containing a List, used in unit tests.
 ///
 /// Generated class from Pigeon that represents data sent in messages.
@@ -473,17 +473,17 @@ private class CoreTestsPigeonCodecReader: FlutterStandardReader {
   override func readValue(ofType type: UInt8) -> Any? {
     switch type {
     case 128:
-      return AllTypes.fromList(self.readValue() as! [Any?])
-    case 129:
-      return AllNullableTypes.fromList(self.readValue() as! [Any?])
-    case 130:
-      return AllNullableTypesWithoutRecursion.fromList(self.readValue() as! [Any?])
-    case 131:
-      return AllClassesWrapper.fromList(self.readValue() as! [Any?])
-    case 132:
       return AllMapTypes.fromList(self.readValue() as! [Any?])
-    case 133:
+    case 129:
       return AllListTypes.fromList(self.readValue() as! [Any?])
+    case 130:
+      return AllTypes.fromList(self.readValue() as! [Any?])
+    case 131:
+      return AllNullableTypes.fromList(self.readValue() as! [Any?])
+    case 132:
+      return AllNullableTypesWithoutRecursion.fromList(self.readValue() as! [Any?])
+    case 133:
+      return AllClassesWrapper.fromList(self.readValue() as! [Any?])
     case 134:
       return TestMessage.fromList(self.readValue() as! [Any?])
     case 135:
@@ -501,22 +501,22 @@ private class CoreTestsPigeonCodecReader: FlutterStandardReader {
 
 private class CoreTestsPigeonCodecWriter: FlutterStandardWriter {
   override func writeValue(_ value: Any) {
-    if let value = value as? AllTypes {
+    if let value = value as? AllMapTypes {
       super.writeByte(128)
       super.writeValue(value.toList())
-    } else if let value = value as? AllNullableTypes {
+    } else if let value = value as? AllListTypes {
       super.writeByte(129)
       super.writeValue(value.toList())
-    } else if let value = value as? AllNullableTypesWithoutRecursion {
+    } else if let value = value as? AllTypes {
       super.writeByte(130)
       super.writeValue(value.toList())
-    } else if let value = value as? AllClassesWrapper {
+    } else if let value = value as? AllNullableTypes {
       super.writeByte(131)
       super.writeValue(value.toList())
-    } else if let value = value as? AllMapTypes {
+    } else if let value = value as? AllNullableTypesWithoutRecursion {
       super.writeByte(132)
       super.writeValue(value.toList())
-    } else if let value = value as? AllListTypes {
+    } else if let value = value as? AllClassesWrapper {
       super.writeByte(133)
       super.writeValue(value.toList())
     } else if let value = value as? TestMessage {

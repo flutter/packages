@@ -28,13 +28,37 @@ typedef NS_ENUM(NSUInteger, FLTAnEnum) {
 - (instancetype)initWithValue:(FLTAnEnum)value;
 @end
 
+@class FLTAllMapTypes;
+@class FLTAllListTypes;
 @class FLTAllTypes;
 @class FLTAllNullableTypes;
 @class FLTAllNullableTypesWithoutRecursion;
 @class FLTAllClassesWrapper;
-@class FLTAllMapTypes;
-@class FLTAllListTypes;
 @class FLTTestMessage;
+
+@interface FLTAllMapTypes : NSObject
+/// `init` unavailable to enforce nonnull fields, see the `make` class method.
+- (instancetype)init NS_UNAVAILABLE;
++ (instancetype)makeWithMap:(NSDictionary *)map;
+@property(nonatomic, copy) NSDictionary *map;
+@end
+
+@interface FLTAllListTypes : NSObject
+/// `init` unavailable to enforce nonnull fields, see the `make` class method.
+- (instancetype)init NS_UNAVAILABLE;
++ (instancetype)makeWithList:(NSArray *)list
+                  stringList:(NSArray<NSString *> *)stringList
+                     intList:(NSArray<NSNumber *> *)intList
+                  doubleList:(NSArray<NSNumber *> *)doubleList
+                    boolList:(NSArray<NSNumber *> *)boolList
+                    enumList:(NSArray<FLTAnEnumBox *> *)enumList;
+@property(nonatomic, copy) NSArray *list;
+@property(nonatomic, copy) NSArray<NSString *> *stringList;
+@property(nonatomic, copy) NSArray<NSNumber *> *intList;
+@property(nonatomic, copy) NSArray<NSNumber *> *doubleList;
+@property(nonatomic, copy) NSArray<NSNumber *> *boolList;
+@property(nonatomic, copy) NSArray<FLTAnEnumBox *> *enumList;
+@end
 
 /// A class containing all supported types.
 @interface FLTAllTypes : NSObject
@@ -168,30 +192,6 @@ typedef NS_ENUM(NSUInteger, FLTAnEnum) {
 @property(nonatomic, strong, nullable)
     FLTAllNullableTypesWithoutRecursion *allNullableTypesWithoutRecursion;
 @property(nonatomic, strong, nullable) FLTAllTypes *allTypes;
-@end
-
-@interface FLTAllMapTypes : NSObject
-/// `init` unavailable to enforce nonnull fields, see the `make` class method.
-- (instancetype)init NS_UNAVAILABLE;
-+ (instancetype)makeWithMap:(NSDictionary *)map;
-@property(nonatomic, copy) NSDictionary *map;
-@end
-
-@interface FLTAllListTypes : NSObject
-/// `init` unavailable to enforce nonnull fields, see the `make` class method.
-- (instancetype)init NS_UNAVAILABLE;
-+ (instancetype)makeWithList:(NSArray *)list
-                  stringList:(NSArray<NSString *> *)stringList
-                     intList:(NSArray<NSNumber *> *)intList
-                  doubleList:(NSArray<NSNumber *> *)doubleList
-                    boolList:(NSArray<NSNumber *> *)boolList
-                    enumList:(NSArray<FLTAnEnumBox *> *)enumList;
-@property(nonatomic, copy) NSArray *list;
-@property(nonatomic, copy) NSArray<NSString *> *stringList;
-@property(nonatomic, copy) NSArray<NSNumber *> *intList;
-@property(nonatomic, copy) NSArray<NSNumber *> *doubleList;
-@property(nonatomic, copy) NSArray<NSNumber *> *boolList;
-@property(nonatomic, copy) NSArray<FLTAnEnumBox *> *enumList;
 @end
 
 /// A data class containing a List, used in unit tests.

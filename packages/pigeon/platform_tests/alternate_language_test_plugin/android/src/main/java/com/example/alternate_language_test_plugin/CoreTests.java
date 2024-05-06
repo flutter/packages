@@ -88,6 +88,231 @@ public class CoreTests {
     }
   }
 
+  /** Generated class from Pigeon that represents data sent in messages. */
+  public static final class AllMapTypes {
+    private @NonNull Map<Object, Object> map;
+
+    public @NonNull Map<Object, Object> getMap() {
+      return map;
+    }
+
+    public void setMap(@NonNull Map<Object, Object> setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"map\" is null.");
+      }
+      this.map = setterArg;
+    }
+
+    /** Constructor is non-public to enforce null safety; use Builder. */
+    AllMapTypes() {}
+
+    public static final class Builder {
+
+      private @Nullable Map<Object, Object> map;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setMap(@NonNull Map<Object, Object> setterArg) {
+        this.map = setterArg;
+        return this;
+      }
+
+      public @NonNull AllMapTypes build() {
+        AllMapTypes pigeonReturn = new AllMapTypes();
+        pigeonReturn.setMap(map);
+        return pigeonReturn;
+      }
+    }
+
+    @NonNull
+    ArrayList<Object> toList() {
+      ArrayList<Object> toListResult = new ArrayList<Object>(1);
+      toListResult.add(map);
+      return toListResult;
+    }
+
+    static @NonNull AllMapTypes fromList(@NonNull ArrayList<Object> __pigeon_list) {
+      AllMapTypes pigeonResult = new AllMapTypes();
+      Object map = __pigeon_list.get(0);
+      pigeonResult.setMap((Map<Object, Object>) map);
+      return pigeonResult;
+    }
+  }
+
+  /** Generated class from Pigeon that represents data sent in messages. */
+  public static final class AllListTypes {
+    private @NonNull List<Object> list;
+
+    public @NonNull List<Object> getList() {
+      return list;
+    }
+
+    public void setList(@NonNull List<Object> setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"list\" is null.");
+      }
+      this.list = setterArg;
+    }
+
+    private @NonNull List<String> stringList;
+
+    public @NonNull List<String> getStringList() {
+      return stringList;
+    }
+
+    public void setStringList(@NonNull List<String> setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"stringList\" is null.");
+      }
+      this.stringList = setterArg;
+    }
+
+    private @NonNull List<Long> intList;
+
+    public @NonNull List<Long> getIntList() {
+      return intList;
+    }
+
+    public void setIntList(@NonNull List<Long> setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"intList\" is null.");
+      }
+      this.intList = setterArg;
+    }
+
+    private @NonNull List<Double> doubleList;
+
+    public @NonNull List<Double> getDoubleList() {
+      return doubleList;
+    }
+
+    public void setDoubleList(@NonNull List<Double> setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"doubleList\" is null.");
+      }
+      this.doubleList = setterArg;
+    }
+
+    private @NonNull List<Boolean> boolList;
+
+    public @NonNull List<Boolean> getBoolList() {
+      return boolList;
+    }
+
+    public void setBoolList(@NonNull List<Boolean> setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"boolList\" is null.");
+      }
+      this.boolList = setterArg;
+    }
+
+    private @NonNull List<AnEnum> enumList;
+
+    public @NonNull List<AnEnum> getEnumList() {
+      return enumList;
+    }
+
+    public void setEnumList(@NonNull List<AnEnum> setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"enumList\" is null.");
+      }
+      this.enumList = setterArg;
+    }
+
+    /** Constructor is non-public to enforce null safety; use Builder. */
+    AllListTypes() {}
+
+    public static final class Builder {
+
+      private @Nullable List<Object> list;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setList(@NonNull List<Object> setterArg) {
+        this.list = setterArg;
+        return this;
+      }
+
+      private @Nullable List<String> stringList;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setStringList(@NonNull List<String> setterArg) {
+        this.stringList = setterArg;
+        return this;
+      }
+
+      private @Nullable List<Long> intList;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setIntList(@NonNull List<Long> setterArg) {
+        this.intList = setterArg;
+        return this;
+      }
+
+      private @Nullable List<Double> doubleList;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setDoubleList(@NonNull List<Double> setterArg) {
+        this.doubleList = setterArg;
+        return this;
+      }
+
+      private @Nullable List<Boolean> boolList;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setBoolList(@NonNull List<Boolean> setterArg) {
+        this.boolList = setterArg;
+        return this;
+      }
+
+      private @Nullable List<AnEnum> enumList;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setEnumList(@NonNull List<AnEnum> setterArg) {
+        this.enumList = setterArg;
+        return this;
+      }
+
+      public @NonNull AllListTypes build() {
+        AllListTypes pigeonReturn = new AllListTypes();
+        pigeonReturn.setList(list);
+        pigeonReturn.setStringList(stringList);
+        pigeonReturn.setIntList(intList);
+        pigeonReturn.setDoubleList(doubleList);
+        pigeonReturn.setBoolList(boolList);
+        pigeonReturn.setEnumList(enumList);
+        return pigeonReturn;
+      }
+    }
+
+    @NonNull
+    ArrayList<Object> toList() {
+      ArrayList<Object> toListResult = new ArrayList<Object>(6);
+      toListResult.add(list);
+      toListResult.add(stringList);
+      toListResult.add(intList);
+      toListResult.add(doubleList);
+      toListResult.add(boolList);
+      toListResult.add(enumList);
+      return toListResult;
+    }
+
+    static @NonNull AllListTypes fromList(@NonNull ArrayList<Object> __pigeon_list) {
+      AllListTypes pigeonResult = new AllListTypes();
+      Object list = __pigeon_list.get(0);
+      pigeonResult.setList((List<Object>) list);
+      Object stringList = __pigeon_list.get(1);
+      pigeonResult.setStringList((List<String>) stringList);
+      Object intList = __pigeon_list.get(2);
+      pigeonResult.setIntList((List<Long>) intList);
+      Object doubleList = __pigeon_list.get(3);
+      pigeonResult.setDoubleList((List<Double>) doubleList);
+      Object boolList = __pigeon_list.get(4);
+      pigeonResult.setBoolList((List<Boolean>) boolList);
+      Object enumList = __pigeon_list.get(5);
+      pigeonResult.setEnumList((List<AnEnum>) enumList);
+      return pigeonResult;
+    }
+  }
+
   /**
    * A class containing all supported types.
    *
@@ -1399,231 +1624,6 @@ public class CoreTests {
     }
   }
 
-  /** Generated class from Pigeon that represents data sent in messages. */
-  public static final class AllMapTypes {
-    private @NonNull Map<Object, Object> map;
-
-    public @NonNull Map<Object, Object> getMap() {
-      return map;
-    }
-
-    public void setMap(@NonNull Map<Object, Object> setterArg) {
-      if (setterArg == null) {
-        throw new IllegalStateException("Nonnull field \"map\" is null.");
-      }
-      this.map = setterArg;
-    }
-
-    /** Constructor is non-public to enforce null safety; use Builder. */
-    AllMapTypes() {}
-
-    public static final class Builder {
-
-      private @Nullable Map<Object, Object> map;
-
-      @CanIgnoreReturnValue
-      public @NonNull Builder setMap(@NonNull Map<Object, Object> setterArg) {
-        this.map = setterArg;
-        return this;
-      }
-
-      public @NonNull AllMapTypes build() {
-        AllMapTypes pigeonReturn = new AllMapTypes();
-        pigeonReturn.setMap(map);
-        return pigeonReturn;
-      }
-    }
-
-    @NonNull
-    ArrayList<Object> toList() {
-      ArrayList<Object> toListResult = new ArrayList<Object>(1);
-      toListResult.add(map);
-      return toListResult;
-    }
-
-    static @NonNull AllMapTypes fromList(@NonNull ArrayList<Object> __pigeon_list) {
-      AllMapTypes pigeonResult = new AllMapTypes();
-      Object map = __pigeon_list.get(0);
-      pigeonResult.setMap((Map<Object, Object>) map);
-      return pigeonResult;
-    }
-  }
-
-  /** Generated class from Pigeon that represents data sent in messages. */
-  public static final class AllListTypes {
-    private @NonNull List<Object> list;
-
-    public @NonNull List<Object> getList() {
-      return list;
-    }
-
-    public void setList(@NonNull List<Object> setterArg) {
-      if (setterArg == null) {
-        throw new IllegalStateException("Nonnull field \"list\" is null.");
-      }
-      this.list = setterArg;
-    }
-
-    private @NonNull List<String> stringList;
-
-    public @NonNull List<String> getStringList() {
-      return stringList;
-    }
-
-    public void setStringList(@NonNull List<String> setterArg) {
-      if (setterArg == null) {
-        throw new IllegalStateException("Nonnull field \"stringList\" is null.");
-      }
-      this.stringList = setterArg;
-    }
-
-    private @NonNull List<Long> intList;
-
-    public @NonNull List<Long> getIntList() {
-      return intList;
-    }
-
-    public void setIntList(@NonNull List<Long> setterArg) {
-      if (setterArg == null) {
-        throw new IllegalStateException("Nonnull field \"intList\" is null.");
-      }
-      this.intList = setterArg;
-    }
-
-    private @NonNull List<Double> doubleList;
-
-    public @NonNull List<Double> getDoubleList() {
-      return doubleList;
-    }
-
-    public void setDoubleList(@NonNull List<Double> setterArg) {
-      if (setterArg == null) {
-        throw new IllegalStateException("Nonnull field \"doubleList\" is null.");
-      }
-      this.doubleList = setterArg;
-    }
-
-    private @NonNull List<Boolean> boolList;
-
-    public @NonNull List<Boolean> getBoolList() {
-      return boolList;
-    }
-
-    public void setBoolList(@NonNull List<Boolean> setterArg) {
-      if (setterArg == null) {
-        throw new IllegalStateException("Nonnull field \"boolList\" is null.");
-      }
-      this.boolList = setterArg;
-    }
-
-    private @NonNull List<AnEnum> enumList;
-
-    public @NonNull List<AnEnum> getEnumList() {
-      return enumList;
-    }
-
-    public void setEnumList(@NonNull List<AnEnum> setterArg) {
-      if (setterArg == null) {
-        throw new IllegalStateException("Nonnull field \"enumList\" is null.");
-      }
-      this.enumList = setterArg;
-    }
-
-    /** Constructor is non-public to enforce null safety; use Builder. */
-    AllListTypes() {}
-
-    public static final class Builder {
-
-      private @Nullable List<Object> list;
-
-      @CanIgnoreReturnValue
-      public @NonNull Builder setList(@NonNull List<Object> setterArg) {
-        this.list = setterArg;
-        return this;
-      }
-
-      private @Nullable List<String> stringList;
-
-      @CanIgnoreReturnValue
-      public @NonNull Builder setStringList(@NonNull List<String> setterArg) {
-        this.stringList = setterArg;
-        return this;
-      }
-
-      private @Nullable List<Long> intList;
-
-      @CanIgnoreReturnValue
-      public @NonNull Builder setIntList(@NonNull List<Long> setterArg) {
-        this.intList = setterArg;
-        return this;
-      }
-
-      private @Nullable List<Double> doubleList;
-
-      @CanIgnoreReturnValue
-      public @NonNull Builder setDoubleList(@NonNull List<Double> setterArg) {
-        this.doubleList = setterArg;
-        return this;
-      }
-
-      private @Nullable List<Boolean> boolList;
-
-      @CanIgnoreReturnValue
-      public @NonNull Builder setBoolList(@NonNull List<Boolean> setterArg) {
-        this.boolList = setterArg;
-        return this;
-      }
-
-      private @Nullable List<AnEnum> enumList;
-
-      @CanIgnoreReturnValue
-      public @NonNull Builder setEnumList(@NonNull List<AnEnum> setterArg) {
-        this.enumList = setterArg;
-        return this;
-      }
-
-      public @NonNull AllListTypes build() {
-        AllListTypes pigeonReturn = new AllListTypes();
-        pigeonReturn.setList(list);
-        pigeonReturn.setStringList(stringList);
-        pigeonReturn.setIntList(intList);
-        pigeonReturn.setDoubleList(doubleList);
-        pigeonReturn.setBoolList(boolList);
-        pigeonReturn.setEnumList(enumList);
-        return pigeonReturn;
-      }
-    }
-
-    @NonNull
-    ArrayList<Object> toList() {
-      ArrayList<Object> toListResult = new ArrayList<Object>(6);
-      toListResult.add(list);
-      toListResult.add(stringList);
-      toListResult.add(intList);
-      toListResult.add(doubleList);
-      toListResult.add(boolList);
-      toListResult.add(enumList);
-      return toListResult;
-    }
-
-    static @NonNull AllListTypes fromList(@NonNull ArrayList<Object> __pigeon_list) {
-      AllListTypes pigeonResult = new AllListTypes();
-      Object list = __pigeon_list.get(0);
-      pigeonResult.setList((List<Object>) list);
-      Object stringList = __pigeon_list.get(1);
-      pigeonResult.setStringList((List<String>) stringList);
-      Object intList = __pigeon_list.get(2);
-      pigeonResult.setIntList((List<Long>) intList);
-      Object doubleList = __pigeon_list.get(3);
-      pigeonResult.setDoubleList((List<Double>) doubleList);
-      Object boolList = __pigeon_list.get(4);
-      pigeonResult.setBoolList((List<Boolean>) boolList);
-      Object enumList = __pigeon_list.get(5);
-      pigeonResult.setEnumList((List<AnEnum>) enumList);
-      return pigeonResult;
-    }
-  }
-
   /**
    * A data class containing a List, used in unit tests.
    *
@@ -1681,17 +1681,17 @@ public class CoreTests {
     protected Object readValueOfType(byte type, @NonNull ByteBuffer buffer) {
       switch (type) {
         case (byte) 128:
-          return AllTypes.fromList((ArrayList<Object>) readValue(buffer));
-        case (byte) 129:
-          return AllNullableTypes.fromList((ArrayList<Object>) readValue(buffer));
-        case (byte) 130:
-          return AllNullableTypesWithoutRecursion.fromList((ArrayList<Object>) readValue(buffer));
-        case (byte) 131:
-          return AllClassesWrapper.fromList((ArrayList<Object>) readValue(buffer));
-        case (byte) 132:
           return AllMapTypes.fromList((ArrayList<Object>) readValue(buffer));
-        case (byte) 133:
+        case (byte) 129:
           return AllListTypes.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 130:
+          return AllTypes.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 131:
+          return AllNullableTypes.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 132:
+          return AllNullableTypesWithoutRecursion.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 133:
+          return AllClassesWrapper.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 134:
           return TestMessage.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 135:
@@ -1704,24 +1704,24 @@ public class CoreTests {
 
     @Override
     protected void writeValue(@NonNull ByteArrayOutputStream stream, Object value) {
-      if (value instanceof AllTypes) {
+      if (value instanceof AllMapTypes) {
         stream.write(128);
-        writeValue(stream, ((AllTypes) value).toList());
-      } else if (value instanceof AllNullableTypes) {
-        stream.write(129);
-        writeValue(stream, ((AllNullableTypes) value).toList());
-      } else if (value instanceof AllNullableTypesWithoutRecursion) {
-        stream.write(130);
-        writeValue(stream, ((AllNullableTypesWithoutRecursion) value).toList());
-      } else if (value instanceof AllClassesWrapper) {
-        stream.write(131);
-        writeValue(stream, ((AllClassesWrapper) value).toList());
-      } else if (value instanceof AllMapTypes) {
-        stream.write(132);
         writeValue(stream, ((AllMapTypes) value).toList());
       } else if (value instanceof AllListTypes) {
-        stream.write(133);
+        stream.write(129);
         writeValue(stream, ((AllListTypes) value).toList());
+      } else if (value instanceof AllTypes) {
+        stream.write(130);
+        writeValue(stream, ((AllTypes) value).toList());
+      } else if (value instanceof AllNullableTypes) {
+        stream.write(131);
+        writeValue(stream, ((AllNullableTypes) value).toList());
+      } else if (value instanceof AllNullableTypesWithoutRecursion) {
+        stream.write(132);
+        writeValue(stream, ((AllNullableTypesWithoutRecursion) value).toList());
+      } else if (value instanceof AllClassesWrapper) {
+        stream.write(133);
+        writeValue(stream, ((AllClassesWrapper) value).toList());
       } else if (value instanceof TestMessage) {
         stream.write(134);
         writeValue(stream, ((TestMessage) value).toList());

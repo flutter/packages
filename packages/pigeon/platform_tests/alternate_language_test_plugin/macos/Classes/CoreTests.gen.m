@@ -50,6 +50,18 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 }
 @end
 
+@interface AllMapTypes ()
++ (AllMapTypes *)fromList:(NSArray *)list;
++ (nullable AllMapTypes *)nullableFromList:(NSArray *)list;
+- (NSArray *)toList;
+@end
+
+@interface AllListTypes ()
++ (AllListTypes *)fromList:(NSArray *)list;
++ (nullable AllListTypes *)nullableFromList:(NSArray *)list;
+- (NSArray *)toList;
+@end
+
 @interface AllTypes ()
 + (AllTypes *)fromList:(NSArray *)list;
 + (nullable AllTypes *)nullableFromList:(NSArray *)list;
@@ -74,22 +86,72 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 - (NSArray *)toList;
 @end
 
-@interface AllMapTypes ()
-+ (AllMapTypes *)fromList:(NSArray *)list;
-+ (nullable AllMapTypes *)nullableFromList:(NSArray *)list;
-- (NSArray *)toList;
-@end
-
-@interface AllListTypes ()
-+ (AllListTypes *)fromList:(NSArray *)list;
-+ (nullable AllListTypes *)nullableFromList:(NSArray *)list;
-- (NSArray *)toList;
-@end
-
 @interface TestMessage ()
 + (TestMessage *)fromList:(NSArray *)list;
 + (nullable TestMessage *)nullableFromList:(NSArray *)list;
 - (NSArray *)toList;
+@end
+
+@implementation AllMapTypes
++ (instancetype)makeWithMap:(NSDictionary *)map {
+  AllMapTypes *pigeonResult = [[AllMapTypes alloc] init];
+  pigeonResult.map = map;
+  return pigeonResult;
+}
++ (AllMapTypes *)fromList:(NSArray *)list {
+  AllMapTypes *pigeonResult = [[AllMapTypes alloc] init];
+  pigeonResult.map = GetNullableObjectAtIndex(list, 0);
+  return pigeonResult;
+}
++ (nullable AllMapTypes *)nullableFromList:(NSArray *)list {
+  return (list) ? [AllMapTypes fromList:list] : nil;
+}
+- (NSArray *)toList {
+  return @[
+    self.map ?: [NSNull null],
+  ];
+}
+@end
+
+@implementation AllListTypes
++ (instancetype)makeWithList:(NSArray *)list
+                  stringList:(NSArray<NSString *> *)stringList
+                     intList:(NSArray<NSNumber *> *)intList
+                  doubleList:(NSArray<NSNumber *> *)doubleList
+                    boolList:(NSArray<NSNumber *> *)boolList
+                    enumList:(NSArray<AnEnumBox *> *)enumList {
+  AllListTypes *pigeonResult = [[AllListTypes alloc] init];
+  pigeonResult.list = list;
+  pigeonResult.stringList = stringList;
+  pigeonResult.intList = intList;
+  pigeonResult.doubleList = doubleList;
+  pigeonResult.boolList = boolList;
+  pigeonResult.enumList = enumList;
+  return pigeonResult;
+}
++ (AllListTypes *)fromList:(NSArray *)list {
+  AllListTypes *pigeonResult = [[AllListTypes alloc] init];
+  pigeonResult.list = GetNullableObjectAtIndex(list, 0);
+  pigeonResult.stringList = GetNullableObjectAtIndex(list, 1);
+  pigeonResult.intList = GetNullableObjectAtIndex(list, 2);
+  pigeonResult.doubleList = GetNullableObjectAtIndex(list, 3);
+  pigeonResult.boolList = GetNullableObjectAtIndex(list, 4);
+  pigeonResult.enumList = GetNullableObjectAtIndex(list, 5);
+  return pigeonResult;
+}
++ (nullable AllListTypes *)nullableFromList:(NSArray *)list {
+  return (list) ? [AllListTypes fromList:list] : nil;
+}
+- (NSArray *)toList {
+  return @[
+    self.list ?: [NSNull null],
+    self.stringList ?: [NSNull null],
+    self.intList ?: [NSNull null],
+    self.doubleList ?: [NSNull null],
+    self.boolList ?: [NSNull null],
+    self.enumList ?: [NSNull null],
+  ];
+}
 @end
 
 @implementation AllTypes
@@ -368,68 +430,6 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 }
 @end
 
-@implementation AllMapTypes
-+ (instancetype)makeWithMap:(NSDictionary *)map {
-  AllMapTypes *pigeonResult = [[AllMapTypes alloc] init];
-  pigeonResult.map = map;
-  return pigeonResult;
-}
-+ (AllMapTypes *)fromList:(NSArray *)list {
-  AllMapTypes *pigeonResult = [[AllMapTypes alloc] init];
-  pigeonResult.map = GetNullableObjectAtIndex(list, 0);
-  return pigeonResult;
-}
-+ (nullable AllMapTypes *)nullableFromList:(NSArray *)list {
-  return (list) ? [AllMapTypes fromList:list] : nil;
-}
-- (NSArray *)toList {
-  return @[
-    self.map ?: [NSNull null],
-  ];
-}
-@end
-
-@implementation AllListTypes
-+ (instancetype)makeWithList:(NSArray *)list
-                  stringList:(NSArray<NSString *> *)stringList
-                     intList:(NSArray<NSNumber *> *)intList
-                  doubleList:(NSArray<NSNumber *> *)doubleList
-                    boolList:(NSArray<NSNumber *> *)boolList
-                    enumList:(NSArray<AnEnumBox *> *)enumList {
-  AllListTypes *pigeonResult = [[AllListTypes alloc] init];
-  pigeonResult.list = list;
-  pigeonResult.stringList = stringList;
-  pigeonResult.intList = intList;
-  pigeonResult.doubleList = doubleList;
-  pigeonResult.boolList = boolList;
-  pigeonResult.enumList = enumList;
-  return pigeonResult;
-}
-+ (AllListTypes *)fromList:(NSArray *)list {
-  AllListTypes *pigeonResult = [[AllListTypes alloc] init];
-  pigeonResult.list = GetNullableObjectAtIndex(list, 0);
-  pigeonResult.stringList = GetNullableObjectAtIndex(list, 1);
-  pigeonResult.intList = GetNullableObjectAtIndex(list, 2);
-  pigeonResult.doubleList = GetNullableObjectAtIndex(list, 3);
-  pigeonResult.boolList = GetNullableObjectAtIndex(list, 4);
-  pigeonResult.enumList = GetNullableObjectAtIndex(list, 5);
-  return pigeonResult;
-}
-+ (nullable AllListTypes *)nullableFromList:(NSArray *)list {
-  return (list) ? [AllListTypes fromList:list] : nil;
-}
-- (NSArray *)toList {
-  return @[
-    self.list ?: [NSNull null],
-    self.stringList ?: [NSNull null],
-    self.intList ?: [NSNull null],
-    self.doubleList ?: [NSNull null],
-    self.boolList ?: [NSNull null],
-    self.enumList ?: [NSNull null],
-  ];
-}
-@end
-
 @implementation TestMessage
 + (instancetype)makeWithTestList:(nullable NSArray *)testList {
   TestMessage *pigeonResult = [[TestMessage alloc] init];
@@ -457,17 +457,17 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 - (nullable id)readValueOfType:(UInt8)type {
   switch (type) {
     case 128:
-      return [AllTypes fromList:[self readValue]];
-    case 129:
-      return [AllNullableTypes fromList:[self readValue]];
-    case 130:
-      return [AllNullableTypesWithoutRecursion fromList:[self readValue]];
-    case 131:
-      return [AllClassesWrapper fromList:[self readValue]];
-    case 132:
       return [AllMapTypes fromList:[self readValue]];
-    case 133:
+    case 129:
       return [AllListTypes fromList:[self readValue]];
+    case 130:
+      return [AllTypes fromList:[self readValue]];
+    case 131:
+      return [AllNullableTypes fromList:[self readValue]];
+    case 132:
+      return [AllNullableTypesWithoutRecursion fromList:[self readValue]];
+    case 133:
+      return [AllClassesWrapper fromList:[self readValue]];
     case 134:
       return [TestMessage fromList:[self readValue]];
     case 135: {
@@ -485,22 +485,22 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 @end
 @implementation CoreTestsPigeonCodecWriter
 - (void)writeValue:(id)value {
-  if ([value isKindOfClass:[AllTypes class]]) {
+  if ([value isKindOfClass:[AllMapTypes class]]) {
     [self writeByte:128];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[AllNullableTypes class]]) {
+  } else if ([value isKindOfClass:[AllListTypes class]]) {
     [self writeByte:129];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[AllNullableTypesWithoutRecursion class]]) {
+  } else if ([value isKindOfClass:[AllTypes class]]) {
     [self writeByte:130];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[AllClassesWrapper class]]) {
+  } else if ([value isKindOfClass:[AllNullableTypes class]]) {
     [self writeByte:131];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[AllMapTypes class]]) {
+  } else if ([value isKindOfClass:[AllNullableTypesWithoutRecursion class]]) {
     [self writeByte:132];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[AllListTypes class]]) {
+  } else if ([value isKindOfClass:[AllClassesWrapper class]]) {
     [self writeByte:133];
     [self writeValue:[value toList]];
   } else if ([value isKindOfClass:[TestMessage class]]) {

@@ -50,6 +50,58 @@ enum class AnEnum(val raw: Int) {
   }
 }
 
+/** Generated class from Pigeon that represents data sent in messages. */
+data class AllMapTypes(val map: Map<Any, Any?>) {
+
+  companion object {
+    @Suppress("LocalVariableName")
+    fun fromList(__pigeon_list: List<Any?>): AllMapTypes {
+      val map = __pigeon_list[0] as Map<Any, Any?>
+      return AllMapTypes(map)
+    }
+  }
+
+  fun toList(): List<Any?> {
+    return listOf(
+        map,
+    )
+  }
+}
+
+/** Generated class from Pigeon that represents data sent in messages. */
+data class AllListTypes(
+    val list: List<Any?>,
+    val stringList: List<String?>,
+    val intList: List<Long?>,
+    val doubleList: List<Double?>,
+    val boolList: List<Boolean?>,
+    val enumList: List<AnEnum?>
+) {
+  companion object {
+    @Suppress("LocalVariableName")
+    fun fromList(__pigeon_list: List<Any?>): AllListTypes {
+      val list = __pigeon_list[0] as List<Any?>
+      val stringList = __pigeon_list[1] as List<String?>
+      val intList = __pigeon_list[2] as List<Long?>
+      val doubleList = __pigeon_list[3] as List<Double?>
+      val boolList = __pigeon_list[4] as List<Boolean?>
+      val enumList = __pigeon_list[5] as List<AnEnum?>
+      return AllListTypes(list, stringList, intList, doubleList, boolList, enumList)
+    }
+  }
+
+  fun toList(): List<Any?> {
+    return listOf(
+        list,
+        stringList,
+        intList,
+        doubleList,
+        boolList,
+        enumList,
+    )
+  }
+}
+
 /**
  * A class containing all supported types.
  *
@@ -340,58 +392,6 @@ data class AllClassesWrapper(
   }
 }
 
-/** Generated class from Pigeon that represents data sent in messages. */
-data class AllMapTypes(val map: Map<Any, Any?>) {
-
-  companion object {
-    @Suppress("LocalVariableName")
-    fun fromList(__pigeon_list: List<Any?>): AllMapTypes {
-      val map = __pigeon_list[0] as Map<Any, Any?>
-      return AllMapTypes(map)
-    }
-  }
-
-  fun toList(): List<Any?> {
-    return listOf(
-        map,
-    )
-  }
-}
-
-/** Generated class from Pigeon that represents data sent in messages. */
-data class AllListTypes(
-    val list: List<Any?>,
-    val stringList: List<String?>,
-    val intList: List<Long?>,
-    val doubleList: List<Double?>,
-    val boolList: List<Boolean?>,
-    val enumList: List<AnEnum?>
-) {
-  companion object {
-    @Suppress("LocalVariableName")
-    fun fromList(__pigeon_list: List<Any?>): AllListTypes {
-      val list = __pigeon_list[0] as List<Any?>
-      val stringList = __pigeon_list[1] as List<String?>
-      val intList = __pigeon_list[2] as List<Long?>
-      val doubleList = __pigeon_list[3] as List<Double?>
-      val boolList = __pigeon_list[4] as List<Boolean?>
-      val enumList = __pigeon_list[5] as List<AnEnum?>
-      return AllListTypes(list, stringList, intList, doubleList, boolList, enumList)
-    }
-  }
-
-  fun toList(): List<Any?> {
-    return listOf(
-        list,
-        stringList,
-        intList,
-        doubleList,
-        boolList,
-        enumList,
-    )
-  }
-}
-
 /**
  * A data class containing a List, used in unit tests.
  *
@@ -418,24 +418,24 @@ private object CoreTestsPigeonCodec : StandardMessageCodec() {
   override fun readValueOfType(type: Byte, buffer: ByteBuffer): Any? {
     return when (type) {
       128.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let { AllTypes.fromList(it) }
+        return (readValue(buffer) as? List<Any?>)?.let { AllMapTypes.fromList(it) }
       }
       129.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let { AllNullableTypes.fromList(it) }
+        return (readValue(buffer) as? List<Any?>)?.let { AllListTypes.fromList(it) }
       }
       130.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let { AllTypes.fromList(it) }
+      }
+      131.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let { AllNullableTypes.fromList(it) }
+      }
+      132.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
           AllNullableTypesWithoutRecursion.fromList(it)
         }
       }
-      131.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let { AllClassesWrapper.fromList(it) }
-      }
-      132.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let { AllMapTypes.fromList(it) }
-      }
       133.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let { AllListTypes.fromList(it) }
+        return (readValue(buffer) as? List<Any?>)?.let { AllClassesWrapper.fromList(it) }
       }
       134.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let { TestMessage.fromList(it) }
@@ -449,27 +449,27 @@ private object CoreTestsPigeonCodec : StandardMessageCodec() {
 
   override fun writeValue(stream: ByteArrayOutputStream, value: Any?) {
     when (value) {
-      is AllTypes -> {
+      is AllMapTypes -> {
         stream.write(128)
         writeValue(stream, value.toList())
       }
-      is AllNullableTypes -> {
+      is AllListTypes -> {
         stream.write(129)
         writeValue(stream, value.toList())
       }
-      is AllNullableTypesWithoutRecursion -> {
+      is AllTypes -> {
         stream.write(130)
         writeValue(stream, value.toList())
       }
-      is AllClassesWrapper -> {
+      is AllNullableTypes -> {
         stream.write(131)
         writeValue(stream, value.toList())
       }
-      is AllMapTypes -> {
+      is AllNullableTypesWithoutRecursion -> {
         stream.write(132)
         writeValue(stream, value.toList())
       }
-      is AllListTypes -> {
+      is AllClassesWrapper -> {
         stream.write(133)
         writeValue(stream, value.toList())
       }

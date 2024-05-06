@@ -73,6 +73,85 @@ enum class AnEnum {
   fourHundredTwentyTwo = 4
 };
 
+// Generated class from Pigeon that represents data sent in messages.
+class AllMapTypes {
+ public:
+  // Constructs an object setting all fields.
+  explicit AllMapTypes(const flutter::EncodableMap& map);
+
+  const flutter::EncodableMap& map() const;
+  void set_map(const flutter::EncodableMap& value_arg);
+
+ private:
+  static AllMapTypes FromEncodableList(const flutter::EncodableList& list);
+  flutter::EncodableList ToEncodableList() const;
+  friend class AllTypes;
+  friend class HostIntegrationCoreApi;
+  friend class PigeonCodecSerializer;
+  friend class FlutterIntegrationCoreApi;
+  friend class PigeonCodecSerializer;
+  friend class HostTrivialApi;
+  friend class PigeonCodecSerializer;
+  friend class HostSmallApi;
+  friend class PigeonCodecSerializer;
+  friend class FlutterSmallApi;
+  friend class PigeonCodecSerializer;
+  friend class CoreTestsTest;
+  flutter::EncodableMap map_;
+};
+
+// Generated class from Pigeon that represents data sent in messages.
+class AllListTypes {
+ public:
+  // Constructs an object setting all fields.
+  explicit AllListTypes(const flutter::EncodableList& list,
+                        const flutter::EncodableList& string_list,
+                        const flutter::EncodableList& int_list,
+                        const flutter::EncodableList& double_list,
+                        const flutter::EncodableList& bool_list,
+                        const flutter::EncodableList& enum_list);
+
+  const flutter::EncodableList& list() const;
+  void set_list(const flutter::EncodableList& value_arg);
+
+  const flutter::EncodableList& string_list() const;
+  void set_string_list(const flutter::EncodableList& value_arg);
+
+  const flutter::EncodableList& int_list() const;
+  void set_int_list(const flutter::EncodableList& value_arg);
+
+  const flutter::EncodableList& double_list() const;
+  void set_double_list(const flutter::EncodableList& value_arg);
+
+  const flutter::EncodableList& bool_list() const;
+  void set_bool_list(const flutter::EncodableList& value_arg);
+
+  const flutter::EncodableList& enum_list() const;
+  void set_enum_list(const flutter::EncodableList& value_arg);
+
+ private:
+  static AllListTypes FromEncodableList(const flutter::EncodableList& list);
+  flutter::EncodableList ToEncodableList() const;
+  friend class AllTypes;
+  friend class HostIntegrationCoreApi;
+  friend class PigeonCodecSerializer;
+  friend class FlutterIntegrationCoreApi;
+  friend class PigeonCodecSerializer;
+  friend class HostTrivialApi;
+  friend class PigeonCodecSerializer;
+  friend class HostSmallApi;
+  friend class PigeonCodecSerializer;
+  friend class FlutterSmallApi;
+  friend class PigeonCodecSerializer;
+  friend class CoreTestsTest;
+  flutter::EncodableList list_;
+  flutter::EncodableList string_list_;
+  flutter::EncodableList int_list_;
+  flutter::EncodableList double_list_;
+  flutter::EncodableList bool_list_;
+  flutter::EncodableList enum_list_;
+};
+
 // A class containing all supported types.
 //
 // Generated class from Pigeon that represents data sent in messages.
@@ -488,85 +567,6 @@ class AllClassesWrapper {
   std::unique_ptr<AllNullableTypesWithoutRecursion>
       all_nullable_types_without_recursion_;
   std::unique_ptr<AllTypes> all_types_;
-};
-
-// Generated class from Pigeon that represents data sent in messages.
-class AllMapTypes {
- public:
-  // Constructs an object setting all fields.
-  explicit AllMapTypes(const flutter::EncodableMap& map);
-
-  const flutter::EncodableMap& map() const;
-  void set_map(const flutter::EncodableMap& value_arg);
-
- private:
-  static AllMapTypes FromEncodableList(const flutter::EncodableList& list);
-  flutter::EncodableList ToEncodableList() const;
-  friend class AllTypes;
-  friend class HostIntegrationCoreApi;
-  friend class PigeonCodecSerializer;
-  friend class FlutterIntegrationCoreApi;
-  friend class PigeonCodecSerializer;
-  friend class HostTrivialApi;
-  friend class PigeonCodecSerializer;
-  friend class HostSmallApi;
-  friend class PigeonCodecSerializer;
-  friend class FlutterSmallApi;
-  friend class PigeonCodecSerializer;
-  friend class CoreTestsTest;
-  flutter::EncodableMap map_;
-};
-
-// Generated class from Pigeon that represents data sent in messages.
-class AllListTypes {
- public:
-  // Constructs an object setting all fields.
-  explicit AllListTypes(const flutter::EncodableList& list,
-                        const flutter::EncodableList& string_list,
-                        const flutter::EncodableList& int_list,
-                        const flutter::EncodableList& double_list,
-                        const flutter::EncodableList& bool_list,
-                        const flutter::EncodableList& enum_list);
-
-  const flutter::EncodableList& list() const;
-  void set_list(const flutter::EncodableList& value_arg);
-
-  const flutter::EncodableList& string_list() const;
-  void set_string_list(const flutter::EncodableList& value_arg);
-
-  const flutter::EncodableList& int_list() const;
-  void set_int_list(const flutter::EncodableList& value_arg);
-
-  const flutter::EncodableList& double_list() const;
-  void set_double_list(const flutter::EncodableList& value_arg);
-
-  const flutter::EncodableList& bool_list() const;
-  void set_bool_list(const flutter::EncodableList& value_arg);
-
-  const flutter::EncodableList& enum_list() const;
-  void set_enum_list(const flutter::EncodableList& value_arg);
-
- private:
-  static AllListTypes FromEncodableList(const flutter::EncodableList& list);
-  flutter::EncodableList ToEncodableList() const;
-  friend class AllTypes;
-  friend class HostIntegrationCoreApi;
-  friend class PigeonCodecSerializer;
-  friend class FlutterIntegrationCoreApi;
-  friend class PigeonCodecSerializer;
-  friend class HostTrivialApi;
-  friend class PigeonCodecSerializer;
-  friend class HostSmallApi;
-  friend class PigeonCodecSerializer;
-  friend class FlutterSmallApi;
-  friend class PigeonCodecSerializer;
-  friend class CoreTestsTest;
-  flutter::EncodableList list_;
-  flutter::EncodableList string_list_;
-  flutter::EncodableList int_list_;
-  flutter::EncodableList double_list_;
-  flutter::EncodableList bool_list_;
-  flutter::EncodableList enum_list_;
 };
 
 // A data class containing a List, used in unit tests.

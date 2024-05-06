@@ -22,6 +22,54 @@ class SimpleClass {
   bool aBool;
 }
 
+class AllMapTypes {
+  AllMapTypes(
+    this.map,
+    // this.stringMap,
+    // this.intMap,
+    // this.doubleMap,
+    // this.boolMap,
+    // this.enumMap,
+    // this.listMap,
+    // this.mapMap,
+    // this.classMap,
+  );
+  // ignore: strict_raw_type, always_specify_types
+  Map map;
+  // Map<String?, String?> stringMap;
+  // Map<int?, int?> intMap;
+  // Map<double?, double?> doubleMap;
+  // Map<bool?, bool?> boolMap;
+  // Map<AnEnum?, AnEnum?> enumMap;
+  // Map<String?, List<Object?>?> listMap;
+  // Map<String?, Map<Object?, Object?>?> mapMap;
+  // Map<String?, SimpleClass?> classMap;
+}
+
+class AllListTypes {
+  AllListTypes(
+    this.list,
+    this.stringList,
+    this.intList,
+    this.doubleList,
+    this.boolList,
+    this.enumList,
+    // this.listList,
+    // this.mapList,
+    // this.classList,
+  );
+  // ignore: strict_raw_type, always_specify_types
+  List list;
+  List<String?> stringList;
+  List<int?> intList;
+  List<double?> doubleList;
+  List<bool?> boolList;
+  List<AnEnum?> enumList;
+  // List<List<Object?>?> listList;
+  // List<Map<Object, Object?>?> mapList;
+  // List<SimpleClass?> classList;
+}
+
 /// A class containing all supported types.
 class AllTypes {
   AllTypes({
@@ -161,54 +209,6 @@ class AllClassesWrapper {
   AllNullableTypes allNullableTypes;
   AllNullableTypesWithoutRecursion? allNullableTypesWithoutRecursion;
   AllTypes? allTypes;
-}
-
-class AllMapTypes {
-  AllMapTypes(
-    this.map,
-    // this.stringMap,
-    // this.intMap,
-    // this.doubleMap,
-    // this.boolMap,
-    // this.enumMap,
-    // this.listMap,
-    // this.mapMap,
-    // this.classMap,
-  );
-  // ignore: strict_raw_type, always_specify_types
-  Map map;
-  // Map<String?, String?> stringMap;
-  // Map<int?, int?> intMap;
-  // Map<double?, double?> doubleMap;
-  // Map<bool?, bool?> boolMap;
-  // Map<AnEnum?, AnEnum?> enumMap;
-  // Map<String?, List<Object?>?> listMap;
-  // Map<String?, Map<Object?, Object?>?> mapMap;
-  // Map<String?, SimpleClass?> classMap;
-}
-
-class AllListTypes {
-  AllListTypes(
-    this.list,
-    this.stringList,
-    this.intList,
-    this.doubleList,
-    this.boolList,
-    this.enumList,
-    // this.listList,
-    // this.mapList,
-    // this.classList,
-  );
-  // ignore: strict_raw_type, always_specify_types
-  List list;
-  List<String?> stringList;
-  List<int?> intList;
-  List<double?> doubleList;
-  List<bool?> boolList;
-  List<AnEnum?> enumList;
-  // List<List<Object?>?> listList;
-  // List<Map<Object, Object?>?> mapList;
-  // List<SimpleClass?> classList;
 }
 
 /// The core interface that each host language plugin must implement in

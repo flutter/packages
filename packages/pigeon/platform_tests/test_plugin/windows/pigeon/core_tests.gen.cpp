@@ -32,6 +32,97 @@ FlutterError CreateConnectionError(const std::string channel_name) {
       EncodableValue(""));
 }
 
+// AllMapTypes
+
+AllMapTypes::AllMapTypes(const EncodableMap& map) : map_(map) {}
+
+const EncodableMap& AllMapTypes::map() const { return map_; }
+
+void AllMapTypes::set_map(const EncodableMap& value_arg) { map_ = value_arg; }
+
+EncodableList AllMapTypes::ToEncodableList() const {
+  EncodableList list;
+  list.reserve(1);
+  list.push_back(EncodableValue(map_));
+  return list;
+}
+
+AllMapTypes AllMapTypes::FromEncodableList(const EncodableList& list) {
+  AllMapTypes decoded(std::get<EncodableMap>(list[0]));
+  return decoded;
+}
+
+// AllListTypes
+
+AllListTypes::AllListTypes(const EncodableList& list,
+                           const EncodableList& string_list,
+                           const EncodableList& int_list,
+                           const EncodableList& double_list,
+                           const EncodableList& bool_list,
+                           const EncodableList& enum_list)
+    : list_(list),
+      string_list_(string_list),
+      int_list_(int_list),
+      double_list_(double_list),
+      bool_list_(bool_list),
+      enum_list_(enum_list) {}
+
+const EncodableList& AllListTypes::list() const { return list_; }
+
+void AllListTypes::set_list(const EncodableList& value_arg) {
+  list_ = value_arg;
+}
+
+const EncodableList& AllListTypes::string_list() const { return string_list_; }
+
+void AllListTypes::set_string_list(const EncodableList& value_arg) {
+  string_list_ = value_arg;
+}
+
+const EncodableList& AllListTypes::int_list() const { return int_list_; }
+
+void AllListTypes::set_int_list(const EncodableList& value_arg) {
+  int_list_ = value_arg;
+}
+
+const EncodableList& AllListTypes::double_list() const { return double_list_; }
+
+void AllListTypes::set_double_list(const EncodableList& value_arg) {
+  double_list_ = value_arg;
+}
+
+const EncodableList& AllListTypes::bool_list() const { return bool_list_; }
+
+void AllListTypes::set_bool_list(const EncodableList& value_arg) {
+  bool_list_ = value_arg;
+}
+
+const EncodableList& AllListTypes::enum_list() const { return enum_list_; }
+
+void AllListTypes::set_enum_list(const EncodableList& value_arg) {
+  enum_list_ = value_arg;
+}
+
+EncodableList AllListTypes::ToEncodableList() const {
+  EncodableList list;
+  list.reserve(6);
+  list.push_back(EncodableValue(list_));
+  list.push_back(EncodableValue(string_list_));
+  list.push_back(EncodableValue(int_list_));
+  list.push_back(EncodableValue(double_list_));
+  list.push_back(EncodableValue(bool_list_));
+  list.push_back(EncodableValue(enum_list_));
+  return list;
+}
+
+AllListTypes AllListTypes::FromEncodableList(const EncodableList& list) {
+  AllListTypes decoded(
+      std::get<EncodableList>(list[0]), std::get<EncodableList>(list[1]),
+      std::get<EncodableList>(list[2]), std::get<EncodableList>(list[3]),
+      std::get<EncodableList>(list[4]), std::get<EncodableList>(list[5]));
+  return decoded;
+}
+
 // AllTypes
 
 AllTypes::AllTypes(bool a_bool, int64_t an_int, int64_t an_int64,
@@ -1308,97 +1399,6 @@ AllClassesWrapper AllClassesWrapper::FromEncodableList(
   return decoded;
 }
 
-// AllMapTypes
-
-AllMapTypes::AllMapTypes(const EncodableMap& map) : map_(map) {}
-
-const EncodableMap& AllMapTypes::map() const { return map_; }
-
-void AllMapTypes::set_map(const EncodableMap& value_arg) { map_ = value_arg; }
-
-EncodableList AllMapTypes::ToEncodableList() const {
-  EncodableList list;
-  list.reserve(1);
-  list.push_back(EncodableValue(map_));
-  return list;
-}
-
-AllMapTypes AllMapTypes::FromEncodableList(const EncodableList& list) {
-  AllMapTypes decoded(std::get<EncodableMap>(list[0]));
-  return decoded;
-}
-
-// AllListTypes
-
-AllListTypes::AllListTypes(const EncodableList& list,
-                           const EncodableList& string_list,
-                           const EncodableList& int_list,
-                           const EncodableList& double_list,
-                           const EncodableList& bool_list,
-                           const EncodableList& enum_list)
-    : list_(list),
-      string_list_(string_list),
-      int_list_(int_list),
-      double_list_(double_list),
-      bool_list_(bool_list),
-      enum_list_(enum_list) {}
-
-const EncodableList& AllListTypes::list() const { return list_; }
-
-void AllListTypes::set_list(const EncodableList& value_arg) {
-  list_ = value_arg;
-}
-
-const EncodableList& AllListTypes::string_list() const { return string_list_; }
-
-void AllListTypes::set_string_list(const EncodableList& value_arg) {
-  string_list_ = value_arg;
-}
-
-const EncodableList& AllListTypes::int_list() const { return int_list_; }
-
-void AllListTypes::set_int_list(const EncodableList& value_arg) {
-  int_list_ = value_arg;
-}
-
-const EncodableList& AllListTypes::double_list() const { return double_list_; }
-
-void AllListTypes::set_double_list(const EncodableList& value_arg) {
-  double_list_ = value_arg;
-}
-
-const EncodableList& AllListTypes::bool_list() const { return bool_list_; }
-
-void AllListTypes::set_bool_list(const EncodableList& value_arg) {
-  bool_list_ = value_arg;
-}
-
-const EncodableList& AllListTypes::enum_list() const { return enum_list_; }
-
-void AllListTypes::set_enum_list(const EncodableList& value_arg) {
-  enum_list_ = value_arg;
-}
-
-EncodableList AllListTypes::ToEncodableList() const {
-  EncodableList list;
-  list.reserve(6);
-  list.push_back(EncodableValue(list_));
-  list.push_back(EncodableValue(string_list_));
-  list.push_back(EncodableValue(int_list_));
-  list.push_back(EncodableValue(double_list_));
-  list.push_back(EncodableValue(bool_list_));
-  list.push_back(EncodableValue(enum_list_));
-  return list;
-}
-
-AllListTypes AllListTypes::FromEncodableList(const EncodableList& list) {
-  AllListTypes decoded(
-      std::get<EncodableList>(list[0]), std::get<EncodableList>(list[1]),
-      std::get<EncodableList>(list[2]), std::get<EncodableList>(list[3]),
-      std::get<EncodableList>(list[4]), std::get<EncodableList>(list[5]));
-  return decoded;
-}
-
 // TestMessage
 
 TestMessage::TestMessage() {}
@@ -1442,23 +1442,23 @@ EncodableValue PigeonCodecSerializer::ReadValueOfType(
     uint8_t type, flutter::ByteStreamReader* stream) const {
   switch (type) {
     case 128:
-      return CustomEncodableValue(AllTypes::FromEncodableList(
+      return CustomEncodableValue(AllMapTypes::FromEncodableList(
           std::get<EncodableList>(ReadValue(stream))));
     case 129:
-      return CustomEncodableValue(AllNullableTypes::FromEncodableList(
+      return CustomEncodableValue(AllListTypes::FromEncodableList(
           std::get<EncodableList>(ReadValue(stream))));
     case 130:
+      return CustomEncodableValue(AllTypes::FromEncodableList(
+          std::get<EncodableList>(ReadValue(stream))));
+    case 131:
+      return CustomEncodableValue(AllNullableTypes::FromEncodableList(
+          std::get<EncodableList>(ReadValue(stream))));
+    case 132:
       return CustomEncodableValue(
           AllNullableTypesWithoutRecursion::FromEncodableList(
               std::get<EncodableList>(ReadValue(stream))));
-    case 131:
-      return CustomEncodableValue(AllClassesWrapper::FromEncodableList(
-          std::get<EncodableList>(ReadValue(stream))));
-    case 132:
-      return CustomEncodableValue(AllMapTypes::FromEncodableList(
-          std::get<EncodableList>(ReadValue(stream))));
     case 133:
-      return CustomEncodableValue(AllListTypes::FromEncodableList(
+      return CustomEncodableValue(AllClassesWrapper::FromEncodableList(
           std::get<EncodableList>(ReadValue(stream))));
     case 134:
       return CustomEncodableValue(TestMessage::FromEncodableList(
@@ -1480,38 +1480,8 @@ void PigeonCodecSerializer::WriteValue(
     const EncodableValue& value, flutter::ByteStreamWriter* stream) const {
   if (const CustomEncodableValue* custom_value =
           std::get_if<CustomEncodableValue>(&value)) {
-    if (custom_value->type() == typeid(AllTypes)) {
-      stream->WriteByte(128);
-      WriteValue(EncodableValue(
-                     std::any_cast<AllTypes>(*custom_value).ToEncodableList()),
-                 stream);
-      return;
-    }
-    if (custom_value->type() == typeid(AllNullableTypes)) {
-      stream->WriteByte(129);
-      WriteValue(
-          EncodableValue(
-              std::any_cast<AllNullableTypes>(*custom_value).ToEncodableList()),
-          stream);
-      return;
-    }
-    if (custom_value->type() == typeid(AllNullableTypesWithoutRecursion)) {
-      stream->WriteByte(130);
-      WriteValue(EncodableValue(std::any_cast<AllNullableTypesWithoutRecursion>(
-                                    *custom_value)
-                                    .ToEncodableList()),
-                 stream);
-      return;
-    }
-    if (custom_value->type() == typeid(AllClassesWrapper)) {
-      stream->WriteByte(131);
-      WriteValue(EncodableValue(std::any_cast<AllClassesWrapper>(*custom_value)
-                                    .ToEncodableList()),
-                 stream);
-      return;
-    }
     if (custom_value->type() == typeid(AllMapTypes)) {
-      stream->WriteByte(132);
+      stream->WriteByte(128);
       WriteValue(
           EncodableValue(
               std::any_cast<AllMapTypes>(*custom_value).ToEncodableList()),
@@ -1519,11 +1489,41 @@ void PigeonCodecSerializer::WriteValue(
       return;
     }
     if (custom_value->type() == typeid(AllListTypes)) {
-      stream->WriteByte(133);
+      stream->WriteByte(129);
       WriteValue(
           EncodableValue(
               std::any_cast<AllListTypes>(*custom_value).ToEncodableList()),
           stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AllTypes)) {
+      stream->WriteByte(130);
+      WriteValue(EncodableValue(
+                     std::any_cast<AllTypes>(*custom_value).ToEncodableList()),
+                 stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AllNullableTypes)) {
+      stream->WriteByte(131);
+      WriteValue(
+          EncodableValue(
+              std::any_cast<AllNullableTypes>(*custom_value).ToEncodableList()),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AllNullableTypesWithoutRecursion)) {
+      stream->WriteByte(132);
+      WriteValue(EncodableValue(std::any_cast<AllNullableTypesWithoutRecursion>(
+                                    *custom_value)
+                                    .ToEncodableList()),
+                 stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AllClassesWrapper)) {
+      stream->WriteByte(133);
+      WriteValue(EncodableValue(std::any_cast<AllClassesWrapper>(*custom_value)
+                                    .ToEncodableList()),
+                 stream);
       return;
     }
     if (custom_value->type() == typeid(TestMessage)) {
