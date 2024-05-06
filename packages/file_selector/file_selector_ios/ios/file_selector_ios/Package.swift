@@ -9,7 +9,6 @@ let package = Package(
         .iOS("12.0")
     ],
     products: [
-        // If the plugin name contains "_", replace with "-" for the library name
         .library(name: "file-selector-ios", targets: ["file_selector_ios"])
     ],
     dependencies: [],

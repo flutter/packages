@@ -9,7 +9,6 @@ let package = Package(
         .macOS("10.14")
     ],
     products: [
-        // If the plugin name contains "_", replace with "-" for the library name
         .library(name: "file-selector-macos", targets: ["file_selector_macos"])
     ],
     dependencies: [],
