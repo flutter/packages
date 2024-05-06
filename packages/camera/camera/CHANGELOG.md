@@ -1,5 +1,6 @@
-## NEXT
+## 0.10.6
 
+* Adds support to control video fps and bitrate. See `CameraController` constructor.
 * Updates minimum supported SDK version to Flutter 3.13/Dart 3.1.
 * Updates support matrix in README to indicate that iOS 11 is no longer supported.
 * Clients on versions of Flutter that still support iOS 11 can continue to use this
