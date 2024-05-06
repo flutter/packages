@@ -867,6 +867,15 @@ class AndroidCameraCameraX extends CameraPlatform {
     }
   }
 
+  /// Prepare the capture session for video recording.
+  ///
+  /// This optimization is not used on Android, so this implementation is a
+  /// no-op.
+  @override
+  Future<void> prepareForVideoRecording() {
+    return Future<void>.value();
+  }
+
   /// Configures and starts a video recording. Returns silently without doing
   /// anything if there is currently an active recording.
   ///
