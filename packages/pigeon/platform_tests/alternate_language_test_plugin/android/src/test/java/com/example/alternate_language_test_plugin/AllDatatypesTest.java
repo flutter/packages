@@ -33,7 +33,7 @@ public class AllDatatypesTest {
     assertArrayEquals(firstTypes.getA4ByteArray(), secondTypes.getA4ByteArray());
     assertArrayEquals(firstTypes.getA8ByteArray(), secondTypes.getA8ByteArray());
     assertTrue(floatArraysEqual(firstTypes.getAFloatArray(), secondTypes.getAFloatArray()));
-    assertArrayEquals(firstTypes.getAList().toArray(), secondTypes.getAList().toArray());
+    assertArrayEquals(firstTypes.getList().toArray(), secondTypes.getList().toArray());
     assertArrayEquals(
         firstTypes.getAMap().keySet().toArray(), secondTypes.getAMap().keySet().toArray());
     assertArrayEquals(
@@ -154,7 +154,7 @@ public class AllDatatypesTest {
             .setA4ByteArray(new int[] {1, 2, 3, 4})
             .setA8ByteArray(new long[] {1, 2, 3, 4})
             .setAFloatArray(new double[] {0.5, 0.25, 1.5, 1.25})
-            .setAList(Arrays.asList(new int[] {1, 2, 3}))
+            .setList(Arrays.asList(new int[] {1, 2, 3}))
             .setAMap(makeMap("hello", 1234))
             .setAnEnum(CoreTests.AnEnum.ONE)
             .setAnObject(0)
