@@ -841,11 +841,6 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
   }
 }
 
-HostDatatype _getHostDatatype(Root root, NamedType field) {
-  return getFieldHostDatatype(
-      field, (TypeDeclaration x) => _kotlinTypeForBuiltinDartType(x));
-}
-
 /// Calculates the name of the codec that will be generated for [api].
 String _getCodecName(Api api) => '${api.name}Codec';
 
