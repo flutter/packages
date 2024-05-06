@@ -3,8 +3,9 @@
 // found in the LICENSE file.
 
 #import "FFSFileSelectorPlugin.h"
+
+#import "./include/file_selector_ios/messages.g.h"
 #import "FFSFileSelectorPlugin_Test.h"
-#import "messages.g.h"
 
 #import <objc/runtime.h>
 

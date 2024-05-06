@@ -1,3 +1,7 @@
+## 0.5.2
+
+* Adds Swift Package Manager compatibility.
+
 ## 0.5.1+9
 
 * Adjusts implementation for testabiity.
