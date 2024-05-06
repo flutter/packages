@@ -4,6 +4,7 @@ import '../platform_interface/platform_ads_loader.dart';
 import '../platform_interface/platform_ads_manager_delegate.dart';
 import 'android_ad_display_container.dart';
 import 'android_ads_loader.dart';
+import 'android_ads_manager.dart';
 
 final class AndroidInteractiveMediaAds extends InteractiveMediaAdsPlatform {
   @override
@@ -24,6 +25,6 @@ final class AndroidInteractiveMediaAds extends InteractiveMediaAdsPlatform {
   PlatformAdsManagerDelegate createPlatformAdsManagerDelegate(
     PlatformAdsManagerDelegateCreationParams params,
   ) {
-    return PlatformAdsManagerDelegate(params);
+    return AndroidAdsManagerDelegate(params);
   }
 }

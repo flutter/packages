@@ -9,9 +9,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_driver/driver_extension.dart';
 import 'package:interactive_media_ads/interactive_media_ads.dart';
+import 'package:interactive_media_ads/src/android/interactive_media_ads.g.dart'
+    as android_ima;
 import 'package:video_player/video_player.dart';
 import 'package:interactive_media_ads/src/platform_interface/platform_interface.dart';
 import 'package:interactive_media_ads/src/android/android_interactive_media_ads.dart';
+import 'package:interactive_media_ads/src/android/android_ad_display_container.dart';
 
 /// Entry point for integration tests that require espresso.
 @pragma('vm:entry-point')
@@ -33,7 +36,7 @@ class AdExampleWidget extends StatefulWidget {
 class AdExampleWidgetState extends State<AdExampleWidget> {
   late final AdsLoader adsLoader;
   AdsManager? adsManager;
-  bool shouldShowContentVideo = false;
+  bool shouldShowContentVideo = true;
 
   late final VideoPlayerController contentVideoController;
 
@@ -43,11 +46,13 @@ class AdExampleWidgetState extends State<AdExampleWidget> {
     },
   );
 
+  late final Timer progressTimer;
+
   @override
   void initState() {
     super.initState();
     contentVideoController = VideoPlayerController.networkUrl(Uri.parse(
-        'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4'))
+        'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4'))
       ..addListener(() {
         if (contentVideoController.value.position ==
             contentVideoController.value.duration) {
@@ -58,6 +63,27 @@ class AdExampleWidgetState extends State<AdExampleWidget> {
         // Ensure the first frame is shown after the video is initialized, even before the play button has been pressed.
         setState(() {});
       });
+
+    progressTimer = Timer.periodic(const Duration(seconds: 3), (Timer timer) {
+      if (contentVideoController.value.isInitialized &&
+          shouldShowContentVideo &&
+          contentVideoController.value.isPlaying) {
+        // print(contentVideoController.value.position.inMilliseconds);
+        // final AndroidAdDisplayContainer container =
+        //     adDisplayContainer.platform as AndroidAdDisplayContainer;
+        // for (final android_ima.VideoAdPlayerCallback a
+        //     in container.videoAdPlayerCallbacks) {
+        //   a.onAdProgress(
+        //     container.loadedAdMediaInfo!,
+        //     android_ima.VideoProgressUpdate(
+        //       currentTimeMs:
+        //           contentVideoController.value.position.inMilliseconds,
+        //       durationMs: contentVideoController.value.duration.inMilliseconds,
+        //     ),
+        //   );
+        // }
+      }
+    });
   }
 
   Future<void> resumeContent() {
@@ -78,11 +104,14 @@ class AdExampleWidgetState extends State<AdExampleWidget> {
     adsLoader = AdsLoader(
       container: container,
       onAdsLoaded: (OnAdsLoadedData data) {
+        print('AdLoaded');
         final AdsManager manager = data.manager;
         adsManager = data.manager;
+        print(manager.platform.runtimeType);
 
         manager.setAdsManagerDelegate(AdsManagerDelegate(
           onAdEvent: (AdEvent event) {
+            print('AdEvent ${event.type}');
             switch (event.type) {
               case AdEventType.loaded:
                 manager.start();
@@ -138,20 +167,37 @@ class AdExampleWidgetState extends State<AdExampleWidget> {
           height: 300,
           child: Stack(
             children: <Widget>[
+              // The display container must be on screen before any Ads can be
+              // loaded and can't be removed between ads. This handles clicks for
+              // ads.
+              adDisplayContainer,
               if (contentVideoController.value.isInitialized &&
                   shouldShowContentVideo)
                 AspectRatio(
                   aspectRatio: contentVideoController.value.aspectRatio,
                   child: VideoPlayer(contentVideoController),
                 ),
-              // The display container must be on screen before any Ads can be
-              // loaded and can't be removed between ads. This handles clicks for
-              // ads.
-              adDisplayContainer,
             ],
           ),
         ),
       ),
+      floatingActionButton:
+          contentVideoController.value.isInitialized && shouldShowContentVideo
+              ? FloatingActionButton(
+                  onPressed: () {
+                    setState(() {
+                      contentVideoController.value.isPlaying
+                          ? contentVideoController.pause()
+                          : contentVideoController.play();
+                    });
+                  },
+                  child: Icon(
+                    contentVideoController.value.isPlaying
+                        ? Icons.pause
+                        : Icons.play_arrow,
+                  ),
+                )
+              : null,
     );
   }
 }

@@ -5,12 +5,10 @@ import com.google.ads.interactivemedia.v3.api.AdError
 class AdErrorProxyApi(pigeonRegistrar: PigeonProxyApiRegistrar) :
     PigeonApiAdError(pigeonRegistrar) {
   override fun errorCode(pigeon_instance: AdError): AdErrorCode {
-    when (pigeon_instance.errorCode) {
+    return when (pigeon_instance.errorCode) {
       AdError.AdErrorCode.ADS_PLAYER_NOT_PROVIDED -> AdErrorCode.ADS_PLAYER_WAS_NOT_PROVIDED
       else -> AdErrorCode.UNKNOWN_ERROR
     }
-
-    return AdErrorCode.UNKNOWN_ERROR
   }
 
   override fun errorCodeNumber(pigeon_instance: AdError): Long {
@@ -18,12 +16,11 @@ class AdErrorProxyApi(pigeonRegistrar: PigeonProxyApiRegistrar) :
   }
 
   override fun errorType(pigeon_instance: AdError): AdErrorType {
-    when (pigeon_instance.errorType) {
+    return when (pigeon_instance.errorType) {
       AdError.AdErrorType.LOAD -> AdErrorType.LOAD
       AdError.AdErrorType.PLAY -> AdErrorType.PLAY
+      else -> AdErrorType.UNKNOWN
     }
-
-    return AdErrorType.UNKNOWN
   }
 
   override fun message(pigeon_instance: AdError): String {

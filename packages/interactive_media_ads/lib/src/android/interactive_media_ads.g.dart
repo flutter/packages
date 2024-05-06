@@ -464,12 +464,37 @@ enum AdErrorType {
 ///
 /// See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/AdEvent.AdEventType.html.
 enum AdEventType {
+  /// Fired when an ad break in a stream ends.
+  adBreakEnded,
+
+  /// Fired when an ad break will not play back any ads.
+  adBreakFetchError,
+
   /// Fired when an ad break is ready from VMAP or ad rule ads.
   adBreakReady,
+
+  /// Fired when an ad break in a stream starts.
+  adBreakStarted,
+
+  /// Fired when playback stalls while the ad buffers.
+  adBuffering,
+
+  /// Fired when an ad period in a stream ends.
+  adPeriodEnded,
+
+  /// Fired when an ad period in a stream starts.
+  adPeriodStarted,
+
+  /// Fired to inform of ad progress and can be used by publisher to display a
+  /// countdown timer.
+  adProgress,
 
   /// Fired when the ads manager is done playing all the valid ads in the ads
   /// response, or when the response doesn't return any valid ads.
   allAdsCompleted,
+
+  /// Fired when an ad is clicked.
+  clicked,
 
   /// Fired when an ad completes playing.
   completed,
@@ -480,8 +505,48 @@ enum AdEventType {
   /// Fired when content should be resumed.
   contentResumeRequested,
 
+  /// Fired when VOD stream cuepoints have changed.
+  cuepointsChanged,
+
+  /// Fired when the ad playhead crosses first quartile.
+  firstQuartile,
+
+  /// The user has closed the icon fallback image dialog.
+  iconFallbackImageClosed,
+
+  /// The user has tapped an ad icon.
+  iconTapped,
+
   /// Fired when the VAST response has been received.
   loaded,
+
+  /// Fired to enable the SDK to communicate a message to be logged, which is
+  /// stored in adData.
+  log,
+
+  /// Fired when the ad playhead crosses midpoint.
+  midpoint,
+
+  /// Fired when an ad is paused.
+  paused,
+
+  /// Fired when an ad is resumed.
+  resumed,
+
+  /// Fired when an ad changes its skippable state.
+  skippableStateChanged,
+
+  /// Fired when an ad was skipped.
+  skipped,
+
+  /// Fired when an ad starts playing.
+  started,
+
+  /// Fired when a non-clickthrough portion of a video ad is clicked.
+  tapped,
+
+  /// Fired when the ad playhead crosses third quartile.
+  thirdQuartile,
 
   /// The event type is not recognized by this wrapper.
   unknown,

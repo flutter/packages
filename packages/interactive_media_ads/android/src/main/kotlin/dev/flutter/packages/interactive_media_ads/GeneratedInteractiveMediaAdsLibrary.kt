@@ -710,23 +710,65 @@ enum class AdErrorType(val raw: Int) {
  * https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/AdEvent.AdEventType.html.
  */
 enum class AdEventType(val raw: Int) {
+  /** Fired when an ad break in a stream ends. */
+  AD_BREAK_ENDED(0),
+  /** Fired when an ad break will not play back any ads. */
+  AD_BREAK_FETCH_ERROR(1),
   /** Fired when an ad break is ready from VMAP or ad rule ads. */
-  AD_BREAK_READY(0),
+  AD_BREAK_READY(2),
+  /** Fired when an ad break in a stream starts. */
+  AD_BREAK_STARTED(3),
+  /** Fired when playback stalls while the ad buffers. */
+  AD_BUFFERING(4),
+  /** Fired when an ad period in a stream ends. */
+  AD_PERIOD_ENDED(5),
+  /** Fired when an ad period in a stream starts. */
+  AD_PERIOD_STARTED(6),
+  /** Fired to inform of ad progress and can be used by publisher to display a countdown timer. */
+  AD_PROGRESS(7),
   /**
    * Fired when the ads manager is done playing all the valid ads in the ads response, or when the
    * response doesn't return any valid ads.
    */
-  ALL_ADS_COMPLETED(1),
+  ALL_ADS_COMPLETED(8),
+  /** Fired when an ad is clicked. */
+  CLICKED(9),
   /** Fired when an ad completes playing. */
-  COMPLETED(2),
+  COMPLETED(10),
   /** Fired when content should be paused. */
-  CONTENT_PAUSE_REQUESTED(3),
+  CONTENT_PAUSE_REQUESTED(11),
   /** Fired when content should be resumed. */
-  CONTENT_RESUME_REQUESTED(4),
+  CONTENT_RESUME_REQUESTED(12),
+  /** Fired when VOD stream cuepoints have changed. */
+  CUEPOINTS_CHANGED(13),
+  /** Fired when the ad playhead crosses first quartile. */
+  FIRST_QUARTILE(14),
+  /** The user has closed the icon fallback image dialog. */
+  ICON_FALLBACK_IMAGE_CLOSED(15),
+  /** The user has tapped an ad icon. */
+  ICON_TAPPED(16),
   /** Fired when the VAST response has been received. */
-  LOADED(5),
+  LOADED(17),
+  /** Fired to enable the SDK to communicate a message to be logged, which is stored in adData. */
+  LOG(18),
+  /** Fired when the ad playhead crosses midpoint. */
+  MIDPOINT(19),
+  /** Fired when an ad is paused. */
+  PAUSED(20),
+  /** Fired when an ad is resumed. */
+  RESUMED(21),
+  /** Fired when an ad changes its skippable state. */
+  SKIPPABLE_STATE_CHANGED(22),
+  /** Fired when an ad was skipped. */
+  SKIPPED(23),
+  /** Fired when an ad starts playing. */
+  STARTED(24),
+  /** Fired when a non-clickthrough portion of a video ad is clicked. */
+  TAPPED(25),
+  /** Fired when the ad playhead crosses third quartile. */
+  THIRD_QUARTILE(26),
   /** The event type is not recognized by this wrapper. */
-  UNKNOWN(6);
+  UNKNOWN(27);
 
   companion object {
     fun ofRaw(raw: Int): AdEventType? {

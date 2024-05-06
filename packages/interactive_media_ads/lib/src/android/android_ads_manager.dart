@@ -34,10 +34,15 @@ class AndroidAdsManager extends PlatformAdsManager {
   }
 
   static void _addListeners(WeakReference<AndroidAdsManager> weakThis) {
+    print('Adding listeners');
+    print(weakThis.target);
     weakThis.target?.manager.addAdEventListener(
       interactive_media_ads.AdEventListener(
         onAdEvent: (_, interactive_media_ads.AdEvent event) {
           late final AdEventType eventType;
+
+          print('OnAdEvent');
+          print(event.type);
 
           switch (event.type) {
             case interactive_media_ads.AdEventType.allAdsCompleted:
@@ -52,6 +57,27 @@ class AndroidAdsManager extends PlatformAdsManager {
               eventType = AdEventType.loaded;
             case interactive_media_ads.AdEventType.unknown:
             case interactive_media_ads.AdEventType.adBreakReady:
+            case interactive_media_ads.AdEventType.adBreakEnded:
+            case interactive_media_ads.AdEventType.adBreakFetchError:
+            case interactive_media_ads.AdEventType.adBreakStarted:
+            case interactive_media_ads.AdEventType.adBuffering:
+            case interactive_media_ads.AdEventType.adPeriodEnded:
+            case interactive_media_ads.AdEventType.adPeriodStarted:
+            case interactive_media_ads.AdEventType.adProgress:
+            case interactive_media_ads.AdEventType.clicked:
+            case interactive_media_ads.AdEventType.cuepointsChanged:
+            case interactive_media_ads.AdEventType.firstQuartile:
+            case interactive_media_ads.AdEventType.iconFallbackImageClosed:
+            case interactive_media_ads.AdEventType.iconTapped:
+            case interactive_media_ads.AdEventType.log:
+            case interactive_media_ads.AdEventType.midpoint:
+            case interactive_media_ads.AdEventType.paused:
+            case interactive_media_ads.AdEventType.resumed:
+            case interactive_media_ads.AdEventType.skippableStateChanged:
+            case interactive_media_ads.AdEventType.skipped:
+            case interactive_media_ads.AdEventType.started:
+            case interactive_media_ads.AdEventType.tapped:
+            case interactive_media_ads.AdEventType.thirdQuartile:
               return;
           }
           weakThis.target?.managerDelegate?.params.onAdEvent
@@ -88,4 +114,8 @@ class AndroidAdsManager extends PlatformAdsManager {
       ),
     );
   }
+}
+
+final class AndroidAdsManagerDelegate extends PlatformAdsManagerDelegate {
+  AndroidAdsManagerDelegate(super.params) : super.implementation();
 }
