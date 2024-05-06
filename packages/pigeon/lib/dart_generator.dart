@@ -230,11 +230,7 @@ class DartGenerator extends StructuredGenerator<DartOptions> {
         for (final NamedType field
             in getFieldsInSerializationOrder(classDefinition)) {
           final String conditional = field.type.isNullable ? '?' : '';
-          if (field.type.isClass) {
-            indent.writeln(
-              '${field.name},',
-            );
-          } else if (field.type.isEnum) {
+          if (field.type.isEnum) {
             indent.writeln(
               '${field.name}$conditional.index,',
             );

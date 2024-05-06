@@ -945,9 +945,6 @@ String _swiftTypeForDartType(TypeDeclaration type) {
 
 String _nullsafeSwiftTypeForDartType(TypeDeclaration type) {
   final String nullSafe = type.isNullable ? '?' : '';
-  if (type.baseName == 'Map') {
-    return '${_swiftTypeForBuiltinGenericDartType(type)}$nullSafe';
-  }
   return '${_swiftTypeForDartType(type)}$nullSafe';
 }
 

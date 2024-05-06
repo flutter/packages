@@ -220,11 +220,10 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
       indent.addScoped('(', ')', () {
         for (final NamedType field
             in getFieldsInSerializationOrder(classDefinition)) {
-          final HostDatatype hostDatatype = _getHostDatatype(root, field);
           String toWriteValue = '';
           final String fieldName = field.name;
           final String safeCall = field.type.isNullable ? '?' : '';
-          if (!hostDatatype.isBuiltin && field.type.isEnum) {
+          if (field.type.isEnum) {
             toWriteValue = '$fieldName$safeCall.raw';
           } else {
             toWriteValue = fieldName;
