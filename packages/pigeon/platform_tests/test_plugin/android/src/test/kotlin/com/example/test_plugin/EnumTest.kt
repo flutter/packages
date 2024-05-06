@@ -12,10 +12,9 @@ import io.mockk.verify
 import java.nio.ByteBuffer
 import java.util.ArrayList
 import junit.framework.TestCase
-import org.junit.Test
 
 internal class EnumTest : TestCase() {
-  @Test
+
   fun testEchoHost() {
     val binaryMessenger = mockk<BinaryMessenger>()
     val api = mockk<EnumApi2Host>()
@@ -47,7 +46,6 @@ internal class EnumTest : TestCase() {
     verify { api.echo(input) }
   }
 
-  @Test
   fun testEchoFlutter() {
     val binaryMessenger = mockk<BinaryMessenger>()
     val api = EnumApi2Flutter(binaryMessenger)

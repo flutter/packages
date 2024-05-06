@@ -8,6 +8,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 
 import 'generated.dart';
+import 'src/generated/core_tests.gen.dart';
 
 const int _biggerThanBigInt = 3000000000;
 const int _regularInt = 42;
@@ -35,6 +36,43 @@ enum TargetGenerator {
 void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
+  void compareAllMaps(
+      AllMapTypes? allMapTypesOne, AllMapTypes? allMapTypesTwo) {
+    expect(allMapTypesOne == null, allMapTypesTwo == null);
+    if (allMapTypesOne == null || allMapTypesTwo == null) {
+      return;
+    }
+    expect(mapEquals(allMapTypesOne.map, allMapTypesTwo.map), true);
+    // expect(mapEquals(allMapTypesOne.stringMap, allMapTypesTwo.stringMap), true);
+    // expect(mapEquals(allMapTypesOne.boolMap, allMapTypesTwo.boolMap), true);
+    // expect(mapEquals(allMapTypesOne.doubleMap, allMapTypesTwo.doubleMap), true);
+    // expect(mapEquals(allMapTypesOne.enumMap, allMapTypesTwo.enumMap), true);
+    // expect(mapEquals(allMapTypesOne.intMap, allMapTypesTwo.intMap), true);
+    // expect(mapEquals(allMapTypesOne.listMap, allMapTypesTwo.listMap), true);
+    // expect(mapEquals(allMapTypesOne.mapMap, allMapTypesTwo.mapMap), true);
+  }
+
+  void compareAllLists(
+      AllListTypes? allListTypesOne, AllListTypes? allListTypesTwo) {
+    expect(allListTypesOne == null, allListTypesTwo == null);
+    if (allListTypesOne == null || allListTypesTwo == null) {
+      return;
+    }
+    expect(listEquals(allListTypesOne.list, allListTypesTwo.list), true);
+    expect(listEquals(allListTypesOne.stringList, allListTypesTwo.stringList),
+        true);
+    expect(
+        listEquals(allListTypesOne.boolList, allListTypesTwo.boolList), true);
+    expect(listEquals(allListTypesOne.doubleList, allListTypesTwo.doubleList),
+        true);
+    expect(
+        listEquals(allListTypesOne.enumList, allListTypesTwo.enumList), true);
+    expect(listEquals(allListTypesOne.intList, allListTypesTwo.intList), true);
+    // expect(
+    //     listEquals(allListTypesOne.listList, allListTypesTwo.listList), true);
+    // expect(listEquals(allListTypesOne.mapList, allListTypesTwo.mapList), true);
+  }
+
   void compareAllTypes(AllTypes? allTypesOne, AllTypes? allTypesTwo) {
     expect(allTypesOne == null, allTypesTwo == null);
     if (allTypesOne == null || allTypesTwo == null) {
@@ -53,6 +91,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
     expect(mapEquals(allTypesOne.aMap, allTypesTwo.aMap), true);
     expect(allTypesOne.anEnum, allTypesTwo.anEnum);
     expect(allTypesOne.anObject, allTypesTwo.anObject);
+    compareAllMaps(allTypesOne.allMaps, allTypesTwo.allMaps);
+    compareAllLists(allTypesOne.allLists, allTypesTwo.allLists);
   }
 
   void compareAllNullableTypes(AllNullableTypes? allNullableTypesOne,
@@ -180,6 +220,183 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
     compareAllTypes(wrapperOne.allTypes, wrapperTwo.allTypes);
   }
 
+  final Map<Object?, Object?> map = <Object?, Object?>{
+    'a': 1,
+    'b': 2.0,
+    'c': 'three',
+    'd': false,
+    'e': null
+  };
+
+  final Map<String?, String?> stringMap = <String?, String?>{
+    'a': '1',
+    'b': '2.0',
+    'c': 'three',
+    'd': 'false',
+    'e': null
+  };
+
+  final Map<int?, int?> intMap = <int?, int?>{1: 1, 2: 2, 3: 3, 4: 4, 5: null};
+
+  final Map<double?, double?> doubleMap = <double?, double?>{
+    1: 1.1,
+    2: 2.2,
+    3: 3.3,
+    4: 4.4,
+    5.5: null
+  };
+
+  final Map<bool?, bool?> boolMap = <bool?, bool?>{
+    true: false,
+    false: true,
+  };
+
+  final Map<AnEnum?, AnEnum?> enumMap = <AnEnum?, AnEnum?>{
+    AnEnum.one: AnEnum.fourHundredTwentyTwo,
+    AnEnum.two: AnEnum.fortyTwo,
+    AnEnum.three: AnEnum.three,
+    AnEnum.fortyTwo: AnEnum.two,
+    AnEnum.fourHundredTwentyTwo: null
+  };
+
+  final List<Object?> list = <Object?>[
+    'Thing 1',
+    2,
+    true,
+    3.14,
+    null,
+  ];
+
+  final List<String?> stringList = <String?>[
+    'Thing 1',
+    '2',
+    'true',
+    '3.14',
+    null,
+  ];
+
+  final List<int?> intList = <int?>[
+    1,
+    2,
+    3,
+    4,
+    null,
+  ];
+
+  final List<double?> doubleList = <double?>[
+    1,
+    2.99999,
+    3,
+    3.14,
+    null,
+  ];
+
+  final List<bool?> boolList = <bool?>[
+    true,
+    false,
+    true,
+    false,
+    null,
+  ];
+
+  final List<AnEnum?> enumList = <AnEnum?>[
+    AnEnum.one,
+    AnEnum.two,
+    AnEnum.three,
+    AnEnum.fortyTwo,
+    AnEnum.fourHundredTwentyTwo,
+    null,
+  ];
+
+  final Map<String?, List<Object?>?> listMap = <String?, List<Object?>?>{
+    'list': list,
+    'stringList': stringList,
+    'intList': intList,
+    'doubleList': doubleList,
+    'boolList': boolList,
+    'enumList': enumList,
+  };
+
+  final Map<String?, Map<Object?, Object?>?> mapMap =
+      <String?, Map<Object?, Object?>?>{
+    'map': map,
+    'stringMap': stringMap,
+    'intMap': intMap,
+    'doubleMap': doubleMap,
+    'boolMap': boolMap,
+    'enumMap': enumMap,
+  };
+
+  final List<List<Object?>?> listList = <List<Object?>?>[
+    list,
+    stringList,
+    intList,
+    doubleList,
+    boolList,
+    enumList,
+    null,
+  ];
+
+  final List<Map<Object?, Object?>?> mapList = <Map<Object?, Object?>?>[
+    map,
+    stringMap,
+    intMap,
+    doubleMap,
+    boolMap,
+    enumMap,
+    null,
+  ];
+
+  // final SimpleClass genericSimpleClassOne =
+  //     SimpleClass(aString: 'string', aBool: false);
+
+  // final SimpleClass genericSimpleClassTwo =
+  //     SimpleClass(aString: 'string', aBool: false);
+
+  // final SimpleClass genericSimpleClassThree =
+  //     SimpleClass(aString: 'string', aBool: false);
+
+  // final SimpleClass genericSimpleClassFour =
+  //     SimpleClass(aString: 'string', aBool: false);
+
+  // final Map<String?, SimpleClass?> classMap = <String?, SimpleClass?>{
+  //   'one': genericSimpleClassOne,
+  //   'two': genericSimpleClassTwo,
+  //   'three': genericSimpleClassThree,
+  //   'four': genericSimpleClassFour,
+  // };
+
+  // final List<SimpleClass?> classList = <SimpleClass?>[
+  //   genericSimpleClassOne,
+  //   genericSimpleClassTwo,
+  //   genericSimpleClassThree,
+  //   genericSimpleClassFour,
+  // ];
+
+  final AllMapTypes genericAllMaps = AllMapTypes(
+    map: map,
+    // stringMap: stringMap,
+    // intMap: intMap,
+    // doubleMap: doubleMap,
+    // boolMap: boolMap,
+    // enumMap: enumMap,
+    // listMap: listMap,
+    // mapMap: mapMap,
+    // classMap: classMap,
+  );
+
+  final AllListTypes genericAllLists = AllListTypes(
+    list: list,
+    stringList: stringList,
+    intList: intList,
+    doubleList: doubleList,
+    boolList: boolList,
+    enumList: enumList,
+    // listList: listList,
+    // mapList: mapList,
+    // classList: classList,
+  );
+
   final AllTypes genericAllTypes = AllTypes(
     aBool: true,
     anInt: _regularInt,
@@ -200,6 +417,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
     },
     anEnum: AnEnum.fortyTwo,
     anObject: 1,
+    allMaps: genericAllMaps,
+    allLists: genericAllLists,
   );
 
   final AllNullableTypes genericAllNullableTypes = AllNullableTypes(

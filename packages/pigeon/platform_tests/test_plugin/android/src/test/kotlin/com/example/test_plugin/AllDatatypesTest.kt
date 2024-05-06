@@ -10,7 +10,6 @@ import io.mockk.mockk
 import java.nio.ByteBuffer
 import java.util.ArrayList
 import junit.framework.TestCase
-import org.junit.Test
 
 internal class AllDatatypesTest : TestCase() {
   fun compareAllTypes(firstTypes: AllTypes?, secondTypes: AllTypes?) {
@@ -33,7 +32,10 @@ internal class AllDatatypesTest : TestCase() {
     assertEquals(firstTypes.anObject, secondTypes.anObject)
   }
 
-  fun compareAllNullableTypes(firstTypes: AllNullableTypes?, secondTypes: AllNullableTypes?) {
+  private fun compareAllNullableTypes(
+      firstTypes: AllNullableTypes?,
+      secondTypes: AllNullableTypes?
+  ) {
     assertEquals(firstTypes == null, secondTypes == null)
     if (firstTypes == null || secondTypes == null) {
       return
@@ -52,7 +54,6 @@ internal class AllDatatypesTest : TestCase() {
     assertEquals(firstTypes.aNullableObject, secondTypes.aNullableObject)
   }
 
-  @Test
   fun testNullValues() {
     val everything = AllNullableTypes()
     val binaryMessenger = mockk<BinaryMessenger>()
@@ -71,10 +72,10 @@ internal class AllDatatypesTest : TestCase() {
         }
 
     var didCall = false
-    api.echoAllNullableTypes(everything) {
+    api.echoAllNullableTypes(everything) { result ->
       didCall = true
       val output =
-          (it.getOrNull())?.let {
+          (result.getOrNull())?.let {
             assertNull(it.aNullableBool)
             assertNull(it.aNullableInt)
             assertNull(it.aNullableDouble)
@@ -93,7 +94,6 @@ internal class AllDatatypesTest : TestCase() {
     assertTrue(didCall)
   }
 
-  @Test
   fun testHasValues() {
     val everything =
         AllNullableTypes(
@@ -134,7 +134,6 @@ internal class AllDatatypesTest : TestCase() {
     assertTrue(didCall)
   }
 
-  @Test
   fun testIntegerToLong() {
     val everything = AllNullableTypes(aNullableInt = 123L)
     val list = everything.toList()

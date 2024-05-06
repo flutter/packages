@@ -74,6 +74,8 @@ struct AllTypes {
   var anEnum: AnEnum
   var aString: String
   var anObject: Any
+  var allMaps: AllMapTypes
+  var allLists: AllListTypes
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
   static func fromList(_ __pigeon_list: [Any?]) -> AllTypes? {
@@ -89,9 +91,11 @@ struct AllTypes {
     let aFloatArray = __pigeon_list[7] as! FlutterStandardTypedData
     let list = __pigeon_list[8] as! [Any?]
     let aMap = __pigeon_list[9] as! [AnyHashable: Any?]
-    let anEnum = AnEnum(rawValue: __pigeon_list[10] as! Int)!
+    let anEnum = __pigeon_list[10] as! AnEnum
     let aString = __pigeon_list[11] as! String
     let anObject = __pigeon_list[12]!
+    let allMaps = __pigeon_list[13] as! AllMapTypes
+    let allLists = __pigeon_list[14] as! AllListTypes
 
     return AllTypes(
       aBool: aBool,
@@ -106,7 +110,9 @@ struct AllTypes {
       aMap: aMap,
       anEnum: anEnum,
       aString: aString,
-      anObject: anObject
+      anObject: anObject,
+      allMaps: allMaps,
+      allLists: allLists
     )
   }
   func toList() -> [Any?] {
@@ -121,9 +127,11 @@ struct AllTypes {
       aFloatArray,
       list,
       aMap,
-      anEnum.rawValue,
+      anEnum,
       aString,
       anObject,
+      allMaps,
+      allLists,
     ]
   }
 }
@@ -210,11 +218,7 @@ class AllNullableTypes {
     let nullableNestedList: [[Bool?]?]? = nilOrValue(__pigeon_list[10])
     let nullableMapWithAnnotations: [String?: String?]? = nilOrValue(__pigeon_list[11])
     let nullableMapWithObject: [String?: Any?]? = nilOrValue(__pigeon_list[12])
-    var aNullableEnum: AnEnum? = nil
-    let aNullableEnumEnumVal: Int? = nilOrValue(__pigeon_list[13])
-    if let aNullableEnumRawValue = aNullableEnumEnumVal {
-      aNullableEnum = AnEnum(rawValue: aNullableEnumRawValue)!
-    }
+    let aNullableEnum: AnEnum? = nilOrValue(__pigeon_list[13])
     let aNullableString: String? = nilOrValue(__pigeon_list[14])
     let aNullableObject: Any? = __pigeon_list[15]
     let allNullableTypes: AllNullableTypes? = nilOrValue(__pigeon_list[16])
@@ -254,7 +258,7 @@ class AllNullableTypes {
       nullableNestedList,
       nullableMapWithAnnotations,
       nullableMapWithObject,
-      aNullableEnum?.rawValue,
+      aNullableEnum,
       aNullableString,
       aNullableObject,
       allNullableTypes,
@@ -308,11 +312,7 @@ struct AllNullableTypesWithoutRecursion {
     let nullableNestedList: [[Bool?]?]? = nilOrValue(__pigeon_list[10])
     let nullableMapWithAnnotations: [String?: String?]? = nilOrValue(__pigeon_list[11])
     let nullableMapWithObject: [String?: Any?]? = nilOrValue(__pigeon_list[12])
-    var aNullableEnum: AnEnum? = nil
-    let aNullableEnumEnumVal: Int? = nilOrValue(__pigeon_list[13])
-    if let aNullableEnumRawValue = aNullableEnumEnumVal {
-      aNullableEnum = AnEnum(rawValue: aNullableEnumRawValue)!
-    }
+    let aNullableEnum: AnEnum? = nilOrValue(__pigeon_list[13])
     let aNullableString: String? = nilOrValue(__pigeon_list[14])
     let aNullableObject: Any? = __pigeon_list[15]
 
@@ -350,7 +350,7 @@ struct AllNullableTypesWithoutRecursion {
       nullableNestedList,
       nullableMapWithAnnotations,
       nullableMapWithObject,
-      aNullableEnum?.rawValue,
+      aNullableEnum,
       aNullableString,
       aNullableObject,
     ]
@@ -391,6 +391,64 @@ struct AllClassesWrapper {
   }
 }
 
+/// Generated class from Pigeon that represents data sent in messages.
+struct AllMapTypes {
+  var map: [AnyHashable: Any?]
+
+  // swift-format-ignore: AlwaysUseLowerCamelCase
+  static func fromList(_ __pigeon_list: [Any?]) -> AllMapTypes? {
+    let map = __pigeon_list[0] as! [AnyHashable: Any?]
+
+    return AllMapTypes(
+      map: map
+    )
+  }
+  func toList() -> [Any?] {
+    return [
+      map
+    ]
+  }
+}
+
+/// Generated class from Pigeon that represents data sent in messages.
+struct AllListTypes {
+  var list: [Any?]
+  var stringList: [String?]
+  var intList: [Int64?]
+  var doubleList: [Double?]
+  var boolList: [Bool?]
+  var enumList: [AnEnum?]
+
+  // swift-format-ignore: AlwaysUseLowerCamelCase
+  static func fromList(_ __pigeon_list: [Any?]) -> AllListTypes? {
+    let list = __pigeon_list[0] as! [Any?]
+    let stringList = __pigeon_list[1] as! [String?]
+    let intList = __pigeon_list[2] as! [Int64?]
+    let doubleList = __pigeon_list[3] as! [Double?]
+    let boolList = __pigeon_list[4] as! [Bool?]
+    let enumList = __pigeon_list[5] as! [AnEnum?]
+
+    return AllListTypes(
+      list: list,
+      stringList: stringList,
+      intList: intList,
+      doubleList: doubleList,
+      boolList: boolList,
+      enumList: enumList
+    )
+  }
+  func toList() -> [Any?] {
+    return [
+      list,
+      stringList,
+      intList,
+      doubleList,
+      boolList,
+      enumList,
+    ]
+  }
+}
+
 /// A data class containing a List, used in unit tests.
 ///
 /// Generated class from Pigeon that represents data sent in messages.
@@ -411,29 +469,39 @@ struct TestMessage {
     ]
   }
 }
-
-private class HostIntegrationCoreApiCodecReader: FlutterStandardReader {
+private class CoreTestsPigeonCodecReader: FlutterStandardReader {
   override func readValue(ofType type: UInt8) -> Any? {
     switch type {
     case 128:
-      return AllClassesWrapper.fromList(self.readValue() as! [Any?])
+      return AllTypes.fromList(self.readValue() as! [Any?])
     case 129:
       return AllNullableTypes.fromList(self.readValue() as! [Any?])
     case 130:
       return AllNullableTypesWithoutRecursion.fromList(self.readValue() as! [Any?])
     case 131:
-      return AllTypes.fromList(self.readValue() as! [Any?])
+      return AllClassesWrapper.fromList(self.readValue() as! [Any?])
     case 132:
+      return AllMapTypes.fromList(self.readValue() as! [Any?])
+    case 133:
+      return AllListTypes.fromList(self.readValue() as! [Any?])
+    case 134:
       return TestMessage.fromList(self.readValue() as! [Any?])
+    case 135:
+      var enumResult: AnEnum? = nil
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
+      if let enumResultAsInt = enumResultAsInt {
+        enumResult = AnEnum(rawValue: enumResultAsInt)
+      }
+      return enumResult
     default:
       return super.readValue(ofType: type)
     }
   }
 }
 
-private class HostIntegrationCoreApiCodecWriter: FlutterStandardWriter {
+private class CoreTestsPigeonCodecWriter: FlutterStandardWriter {
   override func writeValue(_ value: Any) {
-    if let value = value as? AllClassesWrapper {
+    if let value = value as? AllTypes {
       super.writeByte(128)
       super.writeValue(value.toList())
     } else if let value = value as? AllNullableTypes {
@@ -442,31 +510,39 @@ private class HostIntegrationCoreApiCodecWriter: FlutterStandardWriter {
     } else if let value = value as? AllNullableTypesWithoutRecursion {
       super.writeByte(130)
       super.writeValue(value.toList())
-    } else if let value = value as? AllTypes {
+    } else if let value = value as? AllClassesWrapper {
       super.writeByte(131)
       super.writeValue(value.toList())
-    } else if let value = value as? TestMessage {
+    } else if let value = value as? AllMapTypes {
       super.writeByte(132)
       super.writeValue(value.toList())
+    } else if let value = value as? AllListTypes {
+      super.writeByte(133)
+      super.writeValue(value.toList())
+    } else if let value = value as? TestMessage {
+      super.writeByte(134)
+      super.writeValue(value.toList())
+    } else if let value = value as? AnEnum {
+      super.writeByte(135)
+      super.writeValue(value.rawValue)
     } else {
       super.writeValue(value)
     }
   }
 }
 
-private class HostIntegrationCoreApiCodecReaderWriter: FlutterStandardReaderWriter {
+private class CoreTestsPigeonCodecReaderWriter: FlutterStandardReaderWriter {
   override func reader(with data: Data) -> FlutterStandardReader {
-    return HostIntegrationCoreApiCodecReader(data: data)
+    return CoreTestsPigeonCodecReader(data: data)
   }
 
   override func writer(with data: NSMutableData) -> FlutterStandardWriter {
-    return HostIntegrationCoreApiCodecWriter(data: data)
+    return CoreTestsPigeonCodecWriter(data: data)
   }
 }
 
-class HostIntegrationCoreApiCodec: FlutterStandardMessageCodec {
-  static let shared = HostIntegrationCoreApiCodec(
-    readerWriter: HostIntegrationCoreApiCodecReaderWriter())
+class CoreTestsPigeonCodec: FlutterStandardMessageCodec {
+  static let shared = CoreTestsPigeonCodec(readerWriter: CoreTestsPigeonCodecReaderWriter())
 }
 
 /// The core interface that each host language plugin must implement in
@@ -662,8 +738,7 @@ protocol HostIntegrationCoreApi {
 
 /// Generated setup class from Pigeon to handle messages through the `binaryMessenger`.
 class HostIntegrationCoreApiSetup {
-  /// The codec used by HostIntegrationCoreApi.
-  static var codec: FlutterStandardMessageCodec { HostIntegrationCoreApiCodec.shared }
+  static var codec: FlutterStandardMessageCodec { CoreTestsPigeonCodec.shared }
   /// Sets up an instance of `HostIntegrationCoreApi` to handle messages through the `binaryMessenger`.
   static func setUp(
     binaryMessenger: FlutterBinaryMessenger, api: HostIntegrationCoreApi?,
@@ -937,10 +1012,10 @@ class HostIntegrationCoreApiSetup {
     if let api = api {
       echoEnumChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
-        let anEnumArg = AnEnum(rawValue: args[0] as! Int)!
+        let anEnumArg = args[0] as! AnEnum
         do {
           let result = try api.echo(anEnumArg)
-          reply(wrapResult(result.rawValue))
+          reply(wrapResult(result))
         } catch {
           reply(wrapError(error))
         }
@@ -1292,10 +1367,10 @@ class HostIntegrationCoreApiSetup {
     if let api = api {
       echoNullableEnumChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
-        let anEnumArg: AnEnum? = isNullish(args[0]) ? nil : AnEnum(rawValue: args[0] as! Int)!
+        let anEnumArg: AnEnum? = nilOrValue(args[0])
         do {
           let result = try api.echoNullable(anEnumArg)
-          reply(wrapResult(result?.rawValue))
+          reply(wrapResult(result))
         } catch {
           reply(wrapError(error))
         }
@@ -1539,11 +1614,11 @@ class HostIntegrationCoreApiSetup {
     if let api = api {
       echoAsyncEnumChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
-        let anEnumArg = AnEnum(rawValue: args[0] as! Int)!
+        let anEnumArg = args[0] as! AnEnum
         api.echoAsync(anEnumArg) { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res.rawValue))
+            reply(wrapResult(res))
           case .failure(let error):
             reply(wrapError(error))
           }
@@ -1850,11 +1925,11 @@ class HostIntegrationCoreApiSetup {
     if let api = api {
       echoAsyncNullableEnumChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
-        let anEnumArg: AnEnum? = isNullish(args[0]) ? nil : AnEnum(rawValue: args[0] as! Int)!
+        let anEnumArg: AnEnum? = nilOrValue(args[0])
         api.echoAsyncNullable(anEnumArg) { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res?.rawValue))
+            reply(wrapResult(res))
           case .failure(let error):
             reply(wrapError(error))
           }
@@ -2177,11 +2252,11 @@ class HostIntegrationCoreApiSetup {
     if let api = api {
       callFlutterEchoEnumChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
-        let anEnumArg = AnEnum(rawValue: args[0] as! Int)!
+        let anEnumArg = args[0] as! AnEnum
         api.callFlutterEcho(anEnumArg) { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res.rawValue))
+            reply(wrapResult(res))
           case .failure(let error):
             reply(wrapError(error))
           }
@@ -2339,11 +2414,11 @@ class HostIntegrationCoreApiSetup {
     if let api = api {
       callFlutterEchoNullableEnumChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
-        let anEnumArg: AnEnum? = isNullish(args[0]) ? nil : AnEnum(rawValue: args[0] as! Int)!
+        let anEnumArg: AnEnum? = nilOrValue(args[0])
         api.callFlutterNullableEcho(anEnumArg) { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res?.rawValue))
+            reply(wrapResult(res))
           case .failure(let error):
             reply(wrapError(error))
           }
@@ -2374,63 +2449,6 @@ class HostIntegrationCoreApiSetup {
     }
   }
 }
-private class FlutterIntegrationCoreApiCodecReader: FlutterStandardReader {
-  override func readValue(ofType type: UInt8) -> Any? {
-    switch type {
-    case 128:
-      return AllClassesWrapper.fromList(self.readValue() as! [Any?])
-    case 129:
-      return AllNullableTypes.fromList(self.readValue() as! [Any?])
-    case 130:
-      return AllNullableTypesWithoutRecursion.fromList(self.readValue() as! [Any?])
-    case 131:
-      return AllTypes.fromList(self.readValue() as! [Any?])
-    case 132:
-      return TestMessage.fromList(self.readValue() as! [Any?])
-    default:
-      return super.readValue(ofType: type)
-    }
-  }
-}
-
-private class FlutterIntegrationCoreApiCodecWriter: FlutterStandardWriter {
-  override func writeValue(_ value: Any) {
-    if let value = value as? AllClassesWrapper {
-      super.writeByte(128)
-      super.writeValue(value.toList())
-    } else if let value = value as? AllNullableTypes {
-      super.writeByte(129)
-      super.writeValue(value.toList())
-    } else if let value = value as? AllNullableTypesWithoutRecursion {
-      super.writeByte(130)
-      super.writeValue(value.toList())
-    } else if let value = value as? AllTypes {
-      super.writeByte(131)
-      super.writeValue(value.toList())
-    } else if let value = value as? TestMessage {
-      super.writeByte(132)
-      super.writeValue(value.toList())
-    } else {
-      super.writeValue(value)
-    }
-  }
-}
-
-private class FlutterIntegrationCoreApiCodecReaderWriter: FlutterStandardReaderWriter {
-  override func reader(with data: Data) -> FlutterStandardReader {
-    return FlutterIntegrationCoreApiCodecReader(data: data)
-  }
-
-  override func writer(with data: NSMutableData) -> FlutterStandardWriter {
-    return FlutterIntegrationCoreApiCodecWriter(data: data)
-  }
-}
-
-class FlutterIntegrationCoreApiCodec: FlutterStandardMessageCodec {
-  static let shared = FlutterIntegrationCoreApiCodec(
-    readerWriter: FlutterIntegrationCoreApiCodecReaderWriter())
-}
-
 /// The core interface that the Dart platform_test code implements for host
 /// integration tests to call into.
 ///
@@ -2526,8 +2544,8 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
     self.binaryMessenger = binaryMessenger
     self.messageChannelSuffix = messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : ""
   }
-  var codec: FlutterStandardMessageCodec {
-    return FlutterIntegrationCoreApiCodec.shared
+  var codec: CoreTestsPigeonCodec {
+    return CoreTestsPigeonCodec.shared
   }
   /// A no-op function taking no arguments and returning no value, to sanity
   /// test basic calling.
@@ -2953,7 +2971,7 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
       "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoEnum\(messageChannelSuffix)"
     let channel = FlutterBasicMessageChannel(
       name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-    channel.sendMessage([anEnumArg.rawValue] as [Any?]) { response in
+    channel.sendMessage([anEnumArg] as [Any?]) { response in
       guard let listResponse = response as? [Any?] else {
         completion(.failure(createConnectionError(withChannelName: channelName)))
         return
@@ -2970,7 +2988,7 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
               code: "null-error",
               message: "Flutter api returned null value for non-null return value.", details: "")))
       } else {
-        let result = AnEnum(rawValue: listResponse[0] as! Int)!
+        let result = listResponse[0] as! AnEnum
         completion(.success(result))
       }
     }
@@ -3156,7 +3174,7 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
       "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableEnum\(messageChannelSuffix)"
     let channel = FlutterBasicMessageChannel(
       name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-    channel.sendMessage([anEnumArg?.rawValue] as [Any?]) { response in
+    channel.sendMessage([anEnumArg] as [Any?]) { response in
       guard let listResponse = response as? [Any?] else {
         completion(.failure(createConnectionError(withChannelName: channelName)))
         return
@@ -3167,8 +3185,7 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
         let details: String? = nilOrValue(listResponse[2])
         completion(.failure(FlutterError(code: code, message: message, details: details)))
       } else {
-        let result: AnEnum? =
-          isNullish(listResponse[0]) ? nil : AnEnum(rawValue: listResponse[0] as! Int)!
+        let result: AnEnum? = nilOrValue(listResponse[0])
         completion(.success(result))
       }
     }
@@ -3234,7 +3251,7 @@ protocol HostTrivialApi {
 
 /// Generated setup class from Pigeon to handle messages through the `binaryMessenger`.
 class HostTrivialApiSetup {
-  /// The codec used by HostTrivialApi.
+  static var codec: FlutterStandardMessageCodec { CoreTestsPigeonCodec.shared }
   /// Sets up an instance of `HostTrivialApi` to handle messages through the `binaryMessenger`.
   static func setUp(
     binaryMessenger: FlutterBinaryMessenger, api: HostTrivialApi?, messageChannelSuffix: String = ""
@@ -3242,7 +3259,7 @@ class HostTrivialApiSetup {
     let channelSuffix = messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : ""
     let noopChannel = FlutterBasicMessageChannel(
       name: "dev.flutter.pigeon.pigeon_integration_tests.HostTrivialApi.noop\(channelSuffix)",
-      binaryMessenger: binaryMessenger)
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       noopChannel.setMessageHandler { _, reply in
         do {
@@ -3267,7 +3284,7 @@ protocol HostSmallApi {
 
 /// Generated setup class from Pigeon to handle messages through the `binaryMessenger`.
 class HostSmallApiSetup {
-  /// The codec used by HostSmallApi.
+  static var codec: FlutterStandardMessageCodec { CoreTestsPigeonCodec.shared }
   /// Sets up an instance of `HostSmallApi` to handle messages through the `binaryMessenger`.
   static func setUp(
     binaryMessenger: FlutterBinaryMessenger, api: HostSmallApi?, messageChannelSuffix: String = ""
@@ -3275,7 +3292,7 @@ class HostSmallApiSetup {
     let channelSuffix = messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : ""
     let echoChannel = FlutterBasicMessageChannel(
       name: "dev.flutter.pigeon.pigeon_integration_tests.HostSmallApi.echo\(channelSuffix)",
-      binaryMessenger: binaryMessenger)
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       echoChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
@@ -3294,7 +3311,7 @@ class HostSmallApiSetup {
     }
     let voidVoidChannel = FlutterBasicMessageChannel(
       name: "dev.flutter.pigeon.pigeon_integration_tests.HostSmallApi.voidVoid\(channelSuffix)",
-      binaryMessenger: binaryMessenger)
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       voidVoidChannel.setMessageHandler { _, reply in
         api.voidVoid { result in
@@ -3311,42 +3328,6 @@ class HostSmallApiSetup {
     }
   }
 }
-private class FlutterSmallApiCodecReader: FlutterStandardReader {
-  override func readValue(ofType type: UInt8) -> Any? {
-    switch type {
-    case 128:
-      return TestMessage.fromList(self.readValue() as! [Any?])
-    default:
-      return super.readValue(ofType: type)
-    }
-  }
-}
-
-private class FlutterSmallApiCodecWriter: FlutterStandardWriter {
-  override func writeValue(_ value: Any) {
-    if let value = value as? TestMessage {
-      super.writeByte(128)
-      super.writeValue(value.toList())
-    } else {
-      super.writeValue(value)
-    }
-  }
-}
-
-private class FlutterSmallApiCodecReaderWriter: FlutterStandardReaderWriter {
-  override func reader(with data: Data) -> FlutterStandardReader {
-    return FlutterSmallApiCodecReader(data: data)
-  }
-
-  override func writer(with data: NSMutableData) -> FlutterStandardWriter {
-    return FlutterSmallApiCodecWriter(data: data)
-  }
-}
-
-class FlutterSmallApiCodec: FlutterStandardMessageCodec {
-  static let shared = FlutterSmallApiCodec(readerWriter: FlutterSmallApiCodecReaderWriter())
-}
-
 /// A simple API called in some unit tests.
 ///
 /// Generated protocol from Pigeon that represents Flutter messages that can be called from Swift.
@@ -3362,8 +3343,8 @@ class FlutterSmallApi: FlutterSmallApiProtocol {
     self.binaryMessenger = binaryMessenger
     self.messageChannelSuffix = messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : ""
   }
-  var codec: FlutterStandardMessageCodec {
-    return FlutterSmallApiCodec.shared
+  var codec: CoreTestsPigeonCodec {
+    return CoreTestsPigeonCodec.shared
   }
   func echo(
     _ msgArg: TestMessage, completion: @escaping (Result<TestMessage, FlutterError>) -> Void

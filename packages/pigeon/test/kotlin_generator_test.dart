@@ -133,8 +133,8 @@ void main() {
     expect(code, contains('val field1: Foo,'));
     expect(code, contains('val field2: String'));
     expect(code, contains('fun fromList(__pigeon_list: List<Any?>): Bar'));
-    expect(
-        code, contains('val field1 = Foo.ofRaw(__pigeon_list[0] as Int)!!\n'));
+    expect(code, contains('Foo.ofRaw(it)'));
+    expect(code, contains('val field1 = __pigeon_list[0] as Foo'));
     expect(code, contains('val field2 = __pigeon_list[1] as String\n'));
     expect(code, contains('fun toList(): List<Any?>'));
   });
@@ -173,7 +173,7 @@ void main() {
     );
     final String code = sink.toString();
     expect(code, contains('enum class Foo(val raw: Int) {'));
-    expect(code, contains('val fooArg = Foo.ofRaw(args[0] as Int)'));
+    expect(code, contains('Foo.ofRaw(it)'));
   });
 
   test('gen one host api', () {
@@ -1487,47 +1487,7 @@ void main() {
     expect(code, isNot(contains('*//')));
   });
 
-  test("doesn't create codecs if no custom datatypes", () {
-    final Root root = Root(
-      apis: <Api>[
-        AstFlutterApi(
-          name: 'Api',
-          methods: <Method>[
-            Method(
-              name: 'method',
-              location: ApiLocation.flutter,
-              returnType: const TypeDeclaration.voidDeclaration(),
-              parameters: <Parameter>[
-                Parameter(
-                  name: 'field',
-                  type: const TypeDeclaration(
-                    baseName: 'int',
-                    isNullable: true,
-                  ),
-                ),
-              ],
-            )
-          ],
-        )
-      ],
-      classes: <Class>[],
-      enums: <Enum>[],
-    );
-    final StringBuffer sink = StringBuffer();
-    const KotlinOptions kotlinOptions = KotlinOptions();
-    const KotlinGenerator generator = KotlinGenerator();
-    generator.generate(
-      kotlinOptions,
-      root,
-      sink,
-      dartPackageName: DEFAULT_PACKAGE_NAME,
-    );
-    final String code = sink.toString();
-    expect(code, isNot(contains(' : StandardMessageCodec() ')));
-    expect(code, contains('StandardMessageCodec'));
-  });
-
-  test('creates custom codecs if custom datatypes present', () {
+  test('creates custom codecs', () {
     final Root root = Root(apis: <Api>[
       AstFlutterApi(name: 'Api', methods: <Method>[
         Method(

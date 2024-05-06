@@ -74,6 +74,18 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 - (NSArray *)toList;
 @end
 
+@interface FLTAllMapTypes ()
++ (FLTAllMapTypes *)fromList:(NSArray *)list;
++ (nullable FLTAllMapTypes *)nullableFromList:(NSArray *)list;
+- (NSArray *)toList;
+@end
+
+@interface FLTAllListTypes ()
++ (FLTAllListTypes *)fromList:(NSArray *)list;
++ (nullable FLTAllListTypes *)nullableFromList:(NSArray *)list;
+- (NSArray *)toList;
+@end
+
 @interface FLTTestMessage ()
 + (FLTTestMessage *)fromList:(NSArray *)list;
 + (nullable FLTTestMessage *)nullableFromList:(NSArray *)list;
@@ -93,7 +105,9 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
                          aMap:(NSDictionary *)aMap
                        anEnum:(FLTAnEnum)anEnum
                       aString:(NSString *)aString
-                     anObject:(id)anObject {
+                     anObject:(id)anObject
+                      allMaps:(FLTAllMapTypes *)allMaps
+                     allLists:(FLTAllListTypes *)allLists {
   FLTAllTypes *pigeonResult = [[FLTAllTypes alloc] init];
   pigeonResult.aBool = aBool;
   pigeonResult.anInt = anInt;
@@ -108,6 +122,8 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
   pigeonResult.anEnum = anEnum;
   pigeonResult.aString = aString;
   pigeonResult.anObject = anObject;
+  pigeonResult.allMaps = allMaps;
+  pigeonResult.allLists = allLists;
   return pigeonResult;
 }
 + (FLTAllTypes *)fromList:(NSArray *)list {
@@ -122,9 +138,12 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
   pigeonResult.aFloatArray = GetNullableObjectAtIndex(list, 7);
   pigeonResult.list = GetNullableObjectAtIndex(list, 8);
   pigeonResult.aMap = GetNullableObjectAtIndex(list, 9);
-  pigeonResult.anEnum = [GetNullableObjectAtIndex(list, 10) integerValue];
+  FLTAnEnumBox *enumBox = GetNullableObjectAtIndex(list, 10);
+  pigeonResult.anEnum = enumBox.value;
   pigeonResult.aString = GetNullableObjectAtIndex(list, 11);
   pigeonResult.anObject = GetNullableObjectAtIndex(list, 12);
+  pigeonResult.allMaps = GetNullableObjectAtIndex(list, 13);
+  pigeonResult.allLists = GetNullableObjectAtIndex(list, 14);
   return pigeonResult;
 }
 + (nullable FLTAllTypes *)nullableFromList:(NSArray *)list {
@@ -142,9 +161,11 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
     self.aFloatArray ?: [NSNull null],
     self.list ?: [NSNull null],
     self.aMap ?: [NSNull null],
-    @(self.anEnum),
+    [[FLTAnEnumBox alloc] initWithValue:self.anEnum],
     self.aString ?: [NSNull null],
     self.anObject ?: [NSNull null],
+    self.allMaps ?: [NSNull null],
+    self.allLists ?: [NSNull null],
   ];
 }
 @end
@@ -203,12 +224,7 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
   pigeonResult.nullableNestedList = GetNullableObjectAtIndex(list, 10);
   pigeonResult.nullableMapWithAnnotations = GetNullableObjectAtIndex(list, 11);
   pigeonResult.nullableMapWithObject = GetNullableObjectAtIndex(list, 12);
-  NSNumber *aNullableEnumAsNumber = GetNullableObjectAtIndex(list, 13);
-  FLTAnEnumBox *aNullableEnum =
-      aNullableEnumAsNumber == nil
-          ? nil
-          : [[FLTAnEnumBox alloc] initWithValue:[aNullableEnumAsNumber integerValue]];
-  pigeonResult.aNullableEnum = aNullableEnum;
+  pigeonResult.aNullableEnum = GetNullableObjectAtIndex(list, 13);
   pigeonResult.aNullableString = GetNullableObjectAtIndex(list, 14);
   pigeonResult.aNullableObject = GetNullableObjectAtIndex(list, 15);
   pigeonResult.allNullableTypes = GetNullableObjectAtIndex(list, 16);
@@ -232,8 +248,7 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
     self.nullableNestedList ?: [NSNull null],
     self.nullableMapWithAnnotations ?: [NSNull null],
     self.nullableMapWithObject ?: [NSNull null],
-    (self.aNullableEnum == nil ? [NSNull null]
-                               : [NSNumber numberWithInteger:self.aNullableEnum.value]),
+    self.aNullableEnum ?: [NSNull null],
     self.aNullableString ?: [NSNull null],
     self.aNullableObject ?: [NSNull null],
     self.allNullableTypes ?: [NSNull null],
@@ -295,12 +310,7 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
   pigeonResult.nullableNestedList = GetNullableObjectAtIndex(list, 10);
   pigeonResult.nullableMapWithAnnotations = GetNullableObjectAtIndex(list, 11);
   pigeonResult.nullableMapWithObject = GetNullableObjectAtIndex(list, 12);
-  NSNumber *aNullableEnumAsNumber = GetNullableObjectAtIndex(list, 13);
-  FLTAnEnumBox *aNullableEnum =
-      aNullableEnumAsNumber == nil
-          ? nil
-          : [[FLTAnEnumBox alloc] initWithValue:[aNullableEnumAsNumber integerValue]];
-  pigeonResult.aNullableEnum = aNullableEnum;
+  pigeonResult.aNullableEnum = GetNullableObjectAtIndex(list, 13);
   pigeonResult.aNullableString = GetNullableObjectAtIndex(list, 14);
   pigeonResult.aNullableObject = GetNullableObjectAtIndex(list, 15);
   return pigeonResult;
@@ -323,8 +333,7 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
     self.nullableNestedList ?: [NSNull null],
     self.nullableMapWithAnnotations ?: [NSNull null],
     self.nullableMapWithObject ?: [NSNull null],
-    (self.aNullableEnum == nil ? [NSNull null]
-                               : [NSNumber numberWithInteger:self.aNullableEnum.value]),
+    self.aNullableEnum ?: [NSNull null],
     self.aNullableString ?: [NSNull null],
     self.aNullableObject ?: [NSNull null],
   ];
@@ -361,6 +370,68 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 }
 @end
 
+@implementation FLTAllMapTypes
++ (instancetype)makeWithMap:(NSDictionary *)map {
+  FLTAllMapTypes *pigeonResult = [[FLTAllMapTypes alloc] init];
+  pigeonResult.map = map;
+  return pigeonResult;
+}
++ (FLTAllMapTypes *)fromList:(NSArray *)list {
+  FLTAllMapTypes *pigeonResult = [[FLTAllMapTypes alloc] init];
+  pigeonResult.map = GetNullableObjectAtIndex(list, 0);
+  return pigeonResult;
+}
++ (nullable FLTAllMapTypes *)nullableFromList:(NSArray *)list {
+  return (list) ? [FLTAllMapTypes fromList:list] : nil;
+}
+- (NSArray *)toList {
+  return @[
+    self.map ?: [NSNull null],
+  ];
+}
+@end
+
+@implementation FLTAllListTypes
++ (instancetype)makeWithList:(NSArray *)list
+                  stringList:(NSArray<NSString *> *)stringList
+                     intList:(NSArray<NSNumber *> *)intList
+                  doubleList:(NSArray<NSNumber *> *)doubleList
+                    boolList:(NSArray<NSNumber *> *)boolList
+                    enumList:(NSArray<FLTAnEnumBox *> *)enumList {
+  FLTAllListTypes *pigeonResult = [[FLTAllListTypes alloc] init];
+  pigeonResult.list = list;
+  pigeonResult.stringList = stringList;
+  pigeonResult.intList = intList;
+  pigeonResult.doubleList = doubleList;
+  pigeonResult.boolList = boolList;
+  pigeonResult.enumList = enumList;
+  return pigeonResult;
+}
++ (FLTAllListTypes *)fromList:(NSArray *)list {
+  FLTAllListTypes *pigeonResult = [[FLTAllListTypes alloc] init];
+  pigeonResult.list = GetNullableObjectAtIndex(list, 0);
+  pigeonResult.stringList = GetNullableObjectAtIndex(list, 1);
+  pigeonResult.intList = GetNullableObjectAtIndex(list, 2);
+  pigeonResult.doubleList = GetNullableObjectAtIndex(list, 3);
+  pigeonResult.boolList = GetNullableObjectAtIndex(list, 4);
+  pigeonResult.enumList = GetNullableObjectAtIndex(list, 5);
+  return pigeonResult;
+}
++ (nullable FLTAllListTypes *)nullableFromList:(NSArray *)list {
+  return (list) ? [FLTAllListTypes fromList:list] : nil;
+}
+- (NSArray *)toList {
+  return @[
+    self.list ?: [NSNull null],
+    self.stringList ?: [NSNull null],
+    self.intList ?: [NSNull null],
+    self.doubleList ?: [NSNull null],
+    self.boolList ?: [NSNull null],
+    self.enumList ?: [NSNull null],
+  ];
+}
+@end
+
 @implementation FLTTestMessage
 + (instancetype)makeWithTestList:(nullable NSArray *)testList {
   FLTTestMessage *pigeonResult = [[FLTTestMessage alloc] init];
@@ -382,32 +453,41 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 }
 @end
 
-@interface FLTHostIntegrationCoreApiCodecReader : FlutterStandardReader
+@interface CoreTestsPigeonCodecReader : FlutterStandardReader
 @end
-@implementation FLTHostIntegrationCoreApiCodecReader
+@implementation CoreTestsPigeonCodecReader
 - (nullable id)readValueOfType:(UInt8)type {
   switch (type) {
     case 128:
-      return [FLTAllClassesWrapper fromList:[self readValue]];
+      return [FLTAllTypes fromList:[self readValue]];
     case 129:
       return [FLTAllNullableTypes fromList:[self readValue]];
     case 130:
       return [FLTAllNullableTypesWithoutRecursion fromList:[self readValue]];
     case 131:
-      return [FLTAllTypes fromList:[self readValue]];
+      return [FLTAllClassesWrapper fromList:[self readValue]];
     case 132:
+      return [FLTAllMapTypes fromList:[self readValue]];
+    case 133:
+      return [FLTAllListTypes fromList:[self readValue]];
+    case 134:
       return [FLTTestMessage fromList:[self readValue]];
+    case 135: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil ? nil
+                                 : [[FLTAnEnumBox alloc] initWithValue:[enumAsNumber integerValue]];
+    }
     default:
       return [super readValueOfType:type];
   }
 }
 @end
 
-@interface FLTHostIntegrationCoreApiCodecWriter : FlutterStandardWriter
+@interface CoreTestsPigeonCodecWriter : FlutterStandardWriter
 @end
-@implementation FLTHostIntegrationCoreApiCodecWriter
+@implementation CoreTestsPigeonCodecWriter
 - (void)writeValue:(id)value {
-  if ([value isKindOfClass:[FLTAllClassesWrapper class]]) {
+  if ([value isKindOfClass:[FLTAllTypes class]]) {
     [self writeByte:128];
     [self writeValue:[value toList]];
   } else if ([value isKindOfClass:[FLTAllNullableTypes class]]) {
@@ -416,40 +496,49 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
   } else if ([value isKindOfClass:[FLTAllNullableTypesWithoutRecursion class]]) {
     [self writeByte:130];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FLTAllTypes class]]) {
+  } else if ([value isKindOfClass:[FLTAllClassesWrapper class]]) {
     [self writeByte:131];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FLTTestMessage class]]) {
+  } else if ([value isKindOfClass:[FLTAllMapTypes class]]) {
     [self writeByte:132];
     [self writeValue:[value toList]];
+  } else if ([value isKindOfClass:[FLTAllListTypes class]]) {
+    [self writeByte:133];
+    [self writeValue:[value toList]];
+  } else if ([value isKindOfClass:[FLTTestMessage class]]) {
+    [self writeByte:134];
+    [self writeValue:[value toList]];
+  } else if ([value isKindOfClass:[FLTAnEnumBox class]]) {
+    FLTAnEnumBox *box = (FLTAnEnumBox *)value;
+    [self writeByte:135];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
   } else {
     [super writeValue:value];
   }
 }
 @end
 
-@interface FLTHostIntegrationCoreApiCodecReaderWriter : FlutterStandardReaderWriter
+@interface CoreTestsPigeonCodecReaderWriter : FlutterStandardReaderWriter
 @end
-@implementation FLTHostIntegrationCoreApiCodecReaderWriter
+@implementation CoreTestsPigeonCodecReaderWriter
 - (FlutterStandardWriter *)writerWithData:(NSMutableData *)data {
-  return [[FLTHostIntegrationCoreApiCodecWriter alloc] initWithData:data];
+  return [[CoreTestsPigeonCodecWriter alloc] initWithData:data];
 }
 - (FlutterStandardReader *)readerWithData:(NSData *)data {
-  return [[FLTHostIntegrationCoreApiCodecReader alloc] initWithData:data];
+  return [[CoreTestsPigeonCodecReader alloc] initWithData:data];
 }
 @end
 
-NSObject<FlutterMessageCodec> *FLTHostIntegrationCoreApiGetCodec(void) {
+NSObject<FlutterMessageCodec> *FLTCoreTestsGetCodec(void) {
   static FlutterStandardMessageCodec *sSharedObject = nil;
   static dispatch_once_t sPred = 0;
   dispatch_once(&sPred, ^{
-    FLTHostIntegrationCoreApiCodecReaderWriter *readerWriter =
-        [[FLTHostIntegrationCoreApiCodecReaderWriter alloc] init];
+    CoreTestsPigeonCodecReaderWriter *readerWriter =
+        [[CoreTestsPigeonCodecReaderWriter alloc] init];
     sSharedObject = [FlutterStandardMessageCodec codecWithReaderWriter:readerWriter];
   });
   return sSharedObject;
 }
-
 void SetUpFLTHostIntegrationCoreApi(id<FlutterBinaryMessenger> binaryMessenger,
                                     NSObject<FLTHostIntegrationCoreApi> *api) {
   SetUpFLTHostIntegrationCoreApiWithSuffix(binaryMessenger, api, @"");
@@ -470,7 +559,7 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                                    @"HostIntegrationCoreApi.noop",
                                                    messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTCoreTestsGetCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(noopWithError:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to @selector(noopWithError:)",
@@ -492,7 +581,7 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                                    @"HostIntegrationCoreApi.echoAllTypes",
                                                    messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTCoreTestsGetCodec()];
     if (api) {
       NSCAssert(
           [api respondsToSelector:@selector(echoAllTypes:error:)],
@@ -517,7 +606,7 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                                    @"HostIntegrationCoreApi.throwError",
                                                    messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTCoreTestsGetCodec()];
     if (api) {
       NSCAssert(
           [api respondsToSelector:@selector(throwErrorWithError:)],
@@ -540,7 +629,7 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                                    @"HostIntegrationCoreApi.throwErrorFromVoid",
                                                    messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTCoreTestsGetCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(throwErrorFromVoidWithError:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
@@ -563,7 +652,7 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                                    @"HostIntegrationCoreApi.throwFlutterError",
                                                    messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTCoreTestsGetCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(throwFlutterErrorWithError:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
@@ -586,7 +675,7 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                                    @"HostIntegrationCoreApi.echoInt",
                                                    messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTCoreTestsGetCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(echoInt:error:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to @selector(echoInt:error:)",
@@ -610,7 +699,7 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                                    @"HostIntegrationCoreApi.echoDouble",
                                                    messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTCoreTestsGetCodec()];
     if (api) {
       NSCAssert(
           [api respondsToSelector:@selector(echoDouble:error:)],
@@ -635,7 +724,7 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                                    @"HostIntegrationCoreApi.echoBool",
                                                    messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTCoreTestsGetCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(echoBool:error:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to @selector(echoBool:error:)",
@@ -659,7 +748,7 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                                    @"HostIntegrationCoreApi.echoString",
                                                    messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTCoreTestsGetCodec()];
     if (api) {
       NSCAssert(
           [api respondsToSelector:@selector(echoString:error:)],
@@ -684,7 +773,7 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                                    @"HostIntegrationCoreApi.echoUint8List",
                                                    messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTCoreTestsGetCodec()];
     if (api) {
       NSCAssert(
           [api respondsToSelector:@selector(echoUint8List:error:)],
@@ -709,7 +798,7 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                                    @"HostIntegrationCoreApi.echoObject",
                                                    messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTCoreTestsGetCodec()];
     if (api) {
       NSCAssert(
           [api respondsToSelector:@selector(echoObject:error:)],
@@ -734,7 +823,7 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                                    @"HostIntegrationCoreApi.echoList",
                                                    messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTCoreTestsGetCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(echoList:error:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to @selector(echoList:error:)",
@@ -758,7 +847,7 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                                    @"HostIntegrationCoreApi.echoMap",
                                                    messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTCoreTestsGetCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(echoMap:error:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to @selector(echoMap:error:)",
@@ -782,7 +871,7 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                                    @"HostIntegrationCoreApi.echoClassWrapper",
                                                    messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTCoreTestsGetCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(echoClassWrapper:error:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
@@ -807,17 +896,17 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                                    @"HostIntegrationCoreApi.echoEnum",
                                                    messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTCoreTestsGetCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(echoEnum:error:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to @selector(echoEnum:error:)",
                 api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray *args = message;
-        FLTAnEnum arg_anEnum = [GetNullableObjectAtIndex(args, 0) integerValue];
+        FLTAnEnumBox *enumBox = GetNullableObjectAtIndex(args, 0);
+        FLTAnEnum arg_anEnum = enumBox.value;
         FlutterError *error;
-        FLTAnEnumBox *enumBox = [api echoEnum:arg_anEnum error:&error];
-        NSNumber *output = enumBox == nil ? nil : [NSNumber numberWithInteger:enumBox.value];
+        FLTAnEnumBox *output = [api echoEnum:arg_anEnum error:&error];
         callback(wrapResult(output, error));
       }];
     } else {
@@ -832,7 +921,7 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                                    @"HostIntegrationCoreApi.echoNamedDefaultString",
                                                    messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTCoreTestsGetCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(echoNamedDefaultString:error:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
@@ -858,7 +947,7 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                              @"HostIntegrationCoreApi.echoOptionalDefaultDouble",
                                              messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTCoreTestsGetCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(echoOptionalDefaultDouble:error:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
@@ -883,7 +972,7 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                                    @"HostIntegrationCoreApi.echoRequiredInt",
                                                    messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTCoreTestsGetCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(echoRequiredInt:error:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
@@ -908,7 +997,7 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                                    @"HostIntegrationCoreApi.echoAllNullableTypes",
                                                    messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTCoreTestsGetCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(echoAllNullableTypes:error:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
@@ -935,7 +1024,7 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                     @"HostIntegrationCoreApi.echoAllNullableTypesWithoutRecursion",
                                     messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTCoreTestsGetCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(echoAllNullableTypesWithoutRecursion:error:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
@@ -963,7 +1052,7 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                              @"HostIntegrationCoreApi.extractNestedNullableString",
                                              messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTCoreTestsGetCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(extractNestedNullableStringFrom:error:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
@@ -990,7 +1079,7 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                              @"HostIntegrationCoreApi.createNestedNullableString",
                                              messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTCoreTestsGetCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(createNestedObjectWithNullableString:error:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
@@ -1017,7 +1106,7 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                              @"HostIntegrationCoreApi.sendMultipleNullableTypes",
                                              messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTCoreTestsGetCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(sendMultipleNullableTypesABool:
                                                                            anInt:aString:error:)],
@@ -1050,7 +1139,7 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                 @"HostIntegrationCoreApi.sendMultipleNullableTypesWithoutRecursion",
                                 messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTCoreTestsGetCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector
                      (sendMultipleNullableTypesWithoutRecursionABool:anInt:aString:error:)],
@@ -1082,7 +1171,7 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                                    @"HostIntegrationCoreApi.echoNullableInt",
                                                    messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTCoreTestsGetCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(echoNullableInt:error:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
@@ -1107,7 +1196,7 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                                    @"HostIntegrationCoreApi.echoNullableDouble",
                                                    messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTCoreTestsGetCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(echoNullableDouble:error:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
@@ -1132,7 +1221,7 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                                    @"HostIntegrationCoreApi.echoNullableBool",
                                                    messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTCoreTestsGetCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(echoNullableBool:error:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
@@ -1157,7 +1246,7 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                                    @"HostIntegrationCoreApi.echoNullableString",
                                                    messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTCoreTestsGetCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(echoNullableString:error:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
@@ -1182,7 +1271,7 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                                    @"HostIntegrationCoreApi.echoNullableUint8List",
                                                    messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTCoreTestsGetCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(echoNullableUint8List:error:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
@@ -1208,7 +1297,7 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                                    @"HostIntegrationCoreApi.echoNullableObject",
                                                    messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTCoreTestsGetCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(echoNullableObject:error:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
@@ -1233,7 +1322,7 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                                    @"HostIntegrationCoreApi.echoNullableList",
                                                    messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTCoreTestsGetCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(echoNullableList:error:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
@@ -1258,7 +1347,7 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                                    @"HostIntegrationCoreApi.echoNullableMap",
                                                    messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTCoreTestsGetCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(echoNullableMap:error:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
@@ -1282,7 +1371,7 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                                    @"HostIntegrationCoreApi.echoNullableEnum",
                                                    messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTCoreTestsGetCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(echoNullableEnum:error:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
@@ -1290,14 +1379,9 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                 api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray *args = message;
-        NSNumber *arg_anEnumAsNumber = GetNullableObjectAtIndex(args, 0);
-        FLTAnEnumBox *arg_anEnum =
-            arg_anEnumAsNumber == nil
-                ? nil
-                : [[FLTAnEnumBox alloc] initWithValue:[arg_anEnumAsNumber integerValue]];
+        FLTAnEnumBox *arg_anEnum = GetNullableObjectAtIndex(args, 0);
         FlutterError *error;
-        FLTAnEnumBox *enumBox = [api echoNullableEnum:arg_anEnum error:&error];
-        NSNumber *output = enumBox == nil ? nil : [NSNumber numberWithInteger:enumBox.value];
+        FLTAnEnumBox *output = [api echoNullableEnum:arg_anEnum error:&error];
         callback(wrapResult(output, error));
       }];
     } else {
@@ -1313,7 +1397,7 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                              @"HostIntegrationCoreApi.echoOptionalNullableInt",
                                              messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTCoreTestsGetCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(echoOptionalNullableInt:error:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
@@ -1339,7 +1423,7 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                              @"HostIntegrationCoreApi.echoNamedNullableString",
                                              messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTCoreTestsGetCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(echoNamedNullableString:error:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
@@ -1365,7 +1449,7 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                                    @"HostIntegrationCoreApi.noopAsync",
                                                    messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTCoreTestsGetCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(noopAsyncWithCompletion:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
@@ -1388,7 +1472,7 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                                    @"HostIntegrationCoreApi.echoAsyncInt",
                                                    messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTCoreTestsGetCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(echoAsyncInt:completion:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
@@ -1414,7 +1498,7 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                                    @"HostIntegrationCoreApi.echoAsyncDouble",
                                                    messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTCoreTestsGetCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(echoAsyncDouble:completion:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
@@ -1440,7 +1524,7 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                                    @"HostIntegrationCoreApi.echoAsyncBool",
                                                    messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTCoreTestsGetCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(echoAsyncBool:completion:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
@@ -1466,7 +1550,7 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                                    @"HostIntegrationCoreApi.echoAsyncString",
                                                    messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTCoreTestsGetCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(echoAsyncString:completion:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
@@ -1492,7 +1576,7 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                                    @"HostIntegrationCoreApi.echoAsyncUint8List",
                                                    messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTCoreTestsGetCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(echoAsyncUint8List:completion:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
@@ -1519,7 +1603,7 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                                    @"HostIntegrationCoreApi.echoAsyncObject",
                                                    messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTCoreTestsGetCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(echoAsyncObject:completion:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
@@ -1545,7 +1629,7 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                                    @"HostIntegrationCoreApi.echoAsyncList",
                                                    messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTCoreTestsGetCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(echoAsyncList:completion:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
@@ -1571,7 +1655,7 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                                    @"HostIntegrationCoreApi.echoAsyncMap",
                                                    messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTCoreTestsGetCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(echoAsyncMap:completion:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
@@ -1598,7 +1682,7 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                                    @"HostIntegrationCoreApi.echoAsyncEnum",
                                                    messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTCoreTestsGetCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(echoAsyncEnum:completion:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
@@ -1606,11 +1690,10 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                 api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray *args = message;
-        FLTAnEnum arg_anEnum = [GetNullableObjectAtIndex(args, 0) integerValue];
+        FLTAnEnumBox *enumBox = GetNullableObjectAtIndex(args, 0);
+        FLTAnEnum arg_anEnum = enumBox.value;
         [api echoAsyncEnum:arg_anEnum
-                completion:^(FLTAnEnumBox *_Nullable enumValue, FlutterError *_Nullable error) {
-                  NSNumber *output =
-                      enumValue == nil ? nil : [NSNumber numberWithInteger:enumValue.value];
+                completion:^(FLTAnEnumBox *_Nullable output, FlutterError *_Nullable error) {
                   callback(wrapResult(output, error));
                 }];
       }];
@@ -1626,7 +1709,7 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                                    @"HostIntegrationCoreApi.throwAsyncError",
                                                    messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTCoreTestsGetCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(throwAsyncErrorWithCompletion:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
@@ -1650,7 +1733,7 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                              @"HostIntegrationCoreApi.throwAsyncErrorFromVoid",
                                              messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTCoreTestsGetCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(throwAsyncErrorFromVoidWithCompletion:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
@@ -1673,7 +1756,7 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                                    @"HostIntegrationCoreApi.throwAsyncFlutterError",
                                                    messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTCoreTestsGetCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(throwAsyncFlutterErrorWithCompletion:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
@@ -1697,7 +1780,7 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                                    @"HostIntegrationCoreApi.echoAsyncAllTypes",
                                                    messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTCoreTestsGetCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(echoAsyncAllTypes:completion:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
@@ -1724,7 +1807,7 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                       @"HostIntegrationCoreApi.echoAsyncNullableAllNullableTypes",
                                       messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTCoreTestsGetCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(echoAsyncNullableAllNullableTypes:completion:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
@@ -1753,7 +1836,7 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                              @"echoAsyncNullableAllNullableTypesWithoutRecursion",
                                              messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTCoreTestsGetCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector
                      (echoAsyncNullableAllNullableTypesWithoutRecursion:completion:)],
@@ -1782,7 +1865,7 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                                    @"HostIntegrationCoreApi.echoAsyncNullableInt",
                                                    messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTCoreTestsGetCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(echoAsyncNullableInt:completion:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
@@ -1809,7 +1892,7 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                              @"HostIntegrationCoreApi.echoAsyncNullableDouble",
                                              messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTCoreTestsGetCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(echoAsyncNullableDouble:completion:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
@@ -1835,7 +1918,7 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                                    @"HostIntegrationCoreApi.echoAsyncNullableBool",
                                                    messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTCoreTestsGetCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(echoAsyncNullableBool:completion:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
@@ -1862,7 +1945,7 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                              @"HostIntegrationCoreApi.echoAsyncNullableString",
                                              messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTCoreTestsGetCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(echoAsyncNullableString:completion:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
@@ -1889,7 +1972,7 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                              @"HostIntegrationCoreApi.echoAsyncNullableUint8List",
                                              messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTCoreTestsGetCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(echoAsyncNullableUint8List:completion:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
@@ -1917,7 +2000,7 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                              @"HostIntegrationCoreApi.echoAsyncNullableObject",
                                              messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTCoreTestsGetCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(echoAsyncNullableObject:completion:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
@@ -1943,7 +2026,7 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                                    @"HostIntegrationCoreApi.echoAsyncNullableList",
                                                    messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTCoreTestsGetCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(echoAsyncNullableList:completion:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
@@ -1969,7 +2052,7 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                                    @"HostIntegrationCoreApi.echoAsyncNullableMap",
                                                    messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTCoreTestsGetCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(echoAsyncNullableMap:completion:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
@@ -1996,7 +2079,7 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                                    @"HostIntegrationCoreApi.echoAsyncNullableEnum",
                                                    messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTCoreTestsGetCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(echoAsyncNullableEnum:completion:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
@@ -2004,18 +2087,12 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                 api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray *args = message;
-        NSNumber *arg_anEnumAsNumber = GetNullableObjectAtIndex(args, 0);
-        FLTAnEnumBox *arg_anEnum =
-            arg_anEnumAsNumber == nil
-                ? nil
-                : [[FLTAnEnumBox alloc] initWithValue:[arg_anEnumAsNumber integerValue]];
-        [api echoAsyncNullableEnum:arg_anEnum
-                        completion:^(FLTAnEnumBox *_Nullable enumValue,
-                                     FlutterError *_Nullable error) {
-                          NSNumber *output =
-                              enumValue == nil ? nil : [NSNumber numberWithInteger:enumValue.value];
-                          callback(wrapResult(output, error));
-                        }];
+        FLTAnEnumBox *arg_anEnum = GetNullableObjectAtIndex(args, 0);
+        [api
+            echoAsyncNullableEnum:arg_anEnum
+                       completion:^(FLTAnEnumBox *_Nullable output, FlutterError *_Nullable error) {
+                         callback(wrapResult(output, error));
+                       }];
       }];
     } else {
       [channel setMessageHandler:nil];
@@ -2028,7 +2105,7 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                                    @"HostIntegrationCoreApi.callFlutterNoop",
                                                    messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTCoreTestsGetCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(callFlutterNoopWithCompletion:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
@@ -2050,7 +2127,7 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                                    @"HostIntegrationCoreApi.callFlutterThrowError",
                                                    messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTCoreTestsGetCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(callFlutterThrowErrorWithCompletion:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
@@ -2074,7 +2151,7 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                           @"HostIntegrationCoreApi.callFlutterThrowErrorFromVoid",
                                           messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTCoreTestsGetCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(callFlutterThrowErrorFromVoidWithCompletion:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
@@ -2097,7 +2174,7 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                              @"HostIntegrationCoreApi.callFlutterEchoAllTypes",
                                              messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTCoreTestsGetCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(callFlutterEchoAllTypes:completion:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
@@ -2124,7 +2201,7 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                           @"HostIntegrationCoreApi.callFlutterEchoAllNullableTypes",
                                           messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTCoreTestsGetCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(callFlutterEchoAllNullableTypes:completion:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
@@ -2152,7 +2229,7 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                     @"HostIntegrationCoreApi.callFlutterSendMultipleNullableTypes",
                                     messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTCoreTestsGetCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector
                      (callFlutterSendMultipleNullableTypesABool:anInt:aString:completion:)],
@@ -2185,7 +2262,7 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                              @"callFlutterEchoAllNullableTypesWithoutRecursion",
                                              messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTCoreTestsGetCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector
                      (callFlutterEchoAllNullableTypesWithoutRecursion:completion:)],
@@ -2215,7 +2292,7 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                              @"callFlutterSendMultipleNullableTypesWithoutRecursion",
                              messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTCoreTestsGetCodec()];
     if (api) {
       NSCAssert(
           [api respondsToSelector:@selector
@@ -2251,7 +2328,7 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                                    @"HostIntegrationCoreApi.callFlutterEchoBool",
                                                    messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTCoreTestsGetCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(callFlutterEchoBool:completion:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
@@ -2276,7 +2353,7 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                                    @"HostIntegrationCoreApi.callFlutterEchoInt",
                                                    messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTCoreTestsGetCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(callFlutterEchoInt:completion:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
@@ -2301,7 +2378,7 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                                    @"HostIntegrationCoreApi.callFlutterEchoDouble",
                                                    messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTCoreTestsGetCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(callFlutterEchoDouble:completion:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
@@ -2326,7 +2403,7 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                                    @"HostIntegrationCoreApi.callFlutterEchoString",
                                                    messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTCoreTestsGetCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(callFlutterEchoString:completion:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
@@ -2352,7 +2429,7 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                              @"HostIntegrationCoreApi.callFlutterEchoUint8List",
                                              messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTCoreTestsGetCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(callFlutterEchoUint8List:completion:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
@@ -2378,7 +2455,7 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                                    @"HostIntegrationCoreApi.callFlutterEchoList",
                                                    messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTCoreTestsGetCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(callFlutterEchoList:completion:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
@@ -2403,7 +2480,7 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                                    @"HostIntegrationCoreApi.callFlutterEchoMap",
                                                    messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTCoreTestsGetCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(callFlutterEchoMap:completion:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
@@ -2429,7 +2506,7 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                                    @"HostIntegrationCoreApi.callFlutterEchoEnum",
                                                    messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTCoreTestsGetCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(callFlutterEchoEnum:completion:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
@@ -2437,12 +2514,10 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                 api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray *args = message;
-        FLTAnEnum arg_anEnum = [GetNullableObjectAtIndex(args, 0) integerValue];
+        FLTAnEnumBox *enumBox = GetNullableObjectAtIndex(args, 0);
+        FLTAnEnum arg_anEnum = enumBox.value;
         [api callFlutterEchoEnum:arg_anEnum
-                      completion:^(FLTAnEnumBox *_Nullable enumValue,
-                                   FlutterError *_Nullable error) {
-                        NSNumber *output =
-                            enumValue == nil ? nil : [NSNumber numberWithInteger:enumValue.value];
+                      completion:^(FLTAnEnumBox *_Nullable output, FlutterError *_Nullable error) {
                         callback(wrapResult(output, error));
                       }];
       }];
@@ -2458,7 +2533,7 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                              @"HostIntegrationCoreApi.callFlutterEchoNullableBool",
                                              messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTCoreTestsGetCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(callFlutterEchoNullableBool:completion:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
@@ -2485,7 +2560,7 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                              @"HostIntegrationCoreApi.callFlutterEchoNullableInt",
                                              messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTCoreTestsGetCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(callFlutterEchoNullableInt:completion:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
@@ -2512,7 +2587,7 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                           @"HostIntegrationCoreApi.callFlutterEchoNullableDouble",
                                           messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTCoreTestsGetCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(callFlutterEchoNullableDouble:completion:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
@@ -2539,7 +2614,7 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                           @"HostIntegrationCoreApi.callFlutterEchoNullableString",
                                           messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTCoreTestsGetCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(callFlutterEchoNullableString:completion:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
@@ -2566,7 +2641,7 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                       @"HostIntegrationCoreApi.callFlutterEchoNullableUint8List",
                                       messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTCoreTestsGetCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(callFlutterEchoNullableUint8List:completion:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
@@ -2593,7 +2668,7 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                              @"HostIntegrationCoreApi.callFlutterEchoNullableList",
                                              messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTCoreTestsGetCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(callFlutterEchoNullableList:completion:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
@@ -2620,7 +2695,7 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                              @"HostIntegrationCoreApi.callFlutterEchoNullableMap",
                                              messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTCoreTestsGetCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(callFlutterEchoNullableMap:completion:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
@@ -2647,7 +2722,7 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                              @"HostIntegrationCoreApi.callFlutterEchoNullableEnum",
                                              messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTCoreTestsGetCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(callFlutterEchoNullableEnum:completion:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
@@ -2655,17 +2730,10 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                 api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray *args = message;
-        NSNumber *arg_anEnumAsNumber = GetNullableObjectAtIndex(args, 0);
-        FLTAnEnumBox *arg_anEnum =
-            arg_anEnumAsNumber == nil
-                ? nil
-                : [[FLTAnEnumBox alloc] initWithValue:[arg_anEnumAsNumber integerValue]];
+        FLTAnEnumBox *arg_anEnum = GetNullableObjectAtIndex(args, 0);
         [api callFlutterEchoNullableEnum:arg_anEnum
-                              completion:^(FLTAnEnumBox *_Nullable enumValue,
+                              completion:^(FLTAnEnumBox *_Nullable output,
                                            FlutterError *_Nullable error) {
-                                NSNumber *output =
-                                    enumValue == nil ? nil
-                                                     : [NSNumber numberWithInteger:enumValue.value];
                                 callback(wrapResult(output, error));
                               }];
       }];
@@ -2681,7 +2749,7 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                           @"HostIntegrationCoreApi.callFlutterSmallApiEchoString",
                                           messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostIntegrationCoreApiGetCodec()];
+                  codec:FLTCoreTestsGetCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(callFlutterSmallApiEchoString:completion:)],
                 @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
@@ -2701,74 +2769,6 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
     }
   }
 }
-@interface FLTFlutterIntegrationCoreApiCodecReader : FlutterStandardReader
-@end
-@implementation FLTFlutterIntegrationCoreApiCodecReader
-- (nullable id)readValueOfType:(UInt8)type {
-  switch (type) {
-    case 128:
-      return [FLTAllClassesWrapper fromList:[self readValue]];
-    case 129:
-      return [FLTAllNullableTypes fromList:[self readValue]];
-    case 130:
-      return [FLTAllNullableTypesWithoutRecursion fromList:[self readValue]];
-    case 131:
-      return [FLTAllTypes fromList:[self readValue]];
-    case 132:
-      return [FLTTestMessage fromList:[self readValue]];
-    default:
-      return [super readValueOfType:type];
-  }
-}
-@end
-
-@interface FLTFlutterIntegrationCoreApiCodecWriter : FlutterStandardWriter
-@end
-@implementation FLTFlutterIntegrationCoreApiCodecWriter
-- (void)writeValue:(id)value {
-  if ([value isKindOfClass:[FLTAllClassesWrapper class]]) {
-    [self writeByte:128];
-    [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FLTAllNullableTypes class]]) {
-    [self writeByte:129];
-    [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FLTAllNullableTypesWithoutRecursion class]]) {
-    [self writeByte:130];
-    [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FLTAllTypes class]]) {
-    [self writeByte:131];
-    [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FLTTestMessage class]]) {
-    [self writeByte:132];
-    [self writeValue:[value toList]];
-  } else {
-    [super writeValue:value];
-  }
-}
-@end
-
-@interface FLTFlutterIntegrationCoreApiCodecReaderWriter : FlutterStandardReaderWriter
-@end
-@implementation FLTFlutterIntegrationCoreApiCodecReaderWriter
-- (FlutterStandardWriter *)writerWithData:(NSMutableData *)data {
-  return [[FLTFlutterIntegrationCoreApiCodecWriter alloc] initWithData:data];
-}
-- (FlutterStandardReader *)readerWithData:(NSData *)data {
-  return [[FLTFlutterIntegrationCoreApiCodecReader alloc] initWithData:data];
-}
-@end
-
-NSObject<FlutterMessageCodec> *FLTFlutterIntegrationCoreApiGetCodec(void) {
-  static FlutterStandardMessageCodec *sSharedObject = nil;
-  static dispatch_once_t sPred = 0;
-  dispatch_once(&sPred, ^{
-    FLTFlutterIntegrationCoreApiCodecReaderWriter *readerWriter =
-        [[FLTFlutterIntegrationCoreApiCodecReaderWriter alloc] init];
-    sSharedObject = [FlutterStandardMessageCodec codecWithReaderWriter:readerWriter];
-  });
-  return sSharedObject;
-}
-
 @interface FLTFlutterIntegrationCoreApi ()
 @property(nonatomic, strong) NSObject<FlutterBinaryMessenger> *binaryMessenger;
 @property(nonatomic, strong) NSString *messageChannelSuffix;
@@ -2798,7 +2798,7 @@ NSObject<FlutterMessageCodec> *FLTFlutterIntegrationCoreApiGetCodec(void) {
   FlutterBasicMessageChannel *channel =
       [FlutterBasicMessageChannel messageChannelWithName:channelName
                                          binaryMessenger:self.binaryMessenger
-                                                   codec:FLTFlutterIntegrationCoreApiGetCodec()];
+                                                   codec:FLTCoreTestsGetCodec()];
   [channel sendMessage:nil
                  reply:^(NSArray<id> *reply) {
                    if (reply != nil) {
@@ -2823,7 +2823,7 @@ NSObject<FlutterMessageCodec> *FLTFlutterIntegrationCoreApiGetCodec(void) {
   FlutterBasicMessageChannel *channel =
       [FlutterBasicMessageChannel messageChannelWithName:channelName
                                          binaryMessenger:self.binaryMessenger
-                                                   codec:FLTFlutterIntegrationCoreApiGetCodec()];
+                                                   codec:FLTCoreTestsGetCodec()];
   [channel sendMessage:nil
                  reply:^(NSArray<id> *reply) {
                    if (reply != nil) {
@@ -2849,7 +2849,7 @@ NSObject<FlutterMessageCodec> *FLTFlutterIntegrationCoreApiGetCodec(void) {
   FlutterBasicMessageChannel *channel =
       [FlutterBasicMessageChannel messageChannelWithName:channelName
                                          binaryMessenger:self.binaryMessenger
-                                                   codec:FLTFlutterIntegrationCoreApiGetCodec()];
+                                                   codec:FLTCoreTestsGetCodec()];
   [channel sendMessage:nil
                  reply:^(NSArray<id> *reply) {
                    if (reply != nil) {
@@ -2875,7 +2875,7 @@ NSObject<FlutterMessageCodec> *FLTFlutterIntegrationCoreApiGetCodec(void) {
   FlutterBasicMessageChannel *channel =
       [FlutterBasicMessageChannel messageChannelWithName:channelName
                                          binaryMessenger:self.binaryMessenger
-                                                   codec:FLTFlutterIntegrationCoreApiGetCodec()];
+                                                   codec:FLTCoreTestsGetCodec()];
   [channel sendMessage:@[ arg_everything ?: [NSNull null] ]
                  reply:^(NSArray<id> *reply) {
                    if (reply != nil) {
@@ -2903,7 +2903,7 @@ NSObject<FlutterMessageCodec> *FLTFlutterIntegrationCoreApiGetCodec(void) {
   FlutterBasicMessageChannel *channel =
       [FlutterBasicMessageChannel messageChannelWithName:channelName
                                          binaryMessenger:self.binaryMessenger
-                                                   codec:FLTFlutterIntegrationCoreApiGetCodec()];
+                                                   codec:FLTCoreTestsGetCodec()];
   [channel sendMessage:@[ arg_everything ?: [NSNull null] ]
                  reply:^(NSArray<id> *reply) {
                    if (reply != nil) {
@@ -2933,7 +2933,7 @@ NSObject<FlutterMessageCodec> *FLTFlutterIntegrationCoreApiGetCodec(void) {
   FlutterBasicMessageChannel *channel =
       [FlutterBasicMessageChannel messageChannelWithName:channelName
                                          binaryMessenger:self.binaryMessenger
-                                                   codec:FLTFlutterIntegrationCoreApiGetCodec()];
+                                                   codec:FLTCoreTestsGetCodec()];
   [channel sendMessage:@[
     arg_aNullableBool ?: [NSNull null], arg_aNullableInt ?: [NSNull null],
     arg_aNullableString ?: [NSNull null]
@@ -2966,7 +2966,7 @@ NSObject<FlutterMessageCodec> *FLTFlutterIntegrationCoreApiGetCodec(void) {
   FlutterBasicMessageChannel *channel =
       [FlutterBasicMessageChannel messageChannelWithName:channelName
                                          binaryMessenger:self.binaryMessenger
-                                                   codec:FLTFlutterIntegrationCoreApiGetCodec()];
+                                                   codec:FLTCoreTestsGetCodec()];
   [channel sendMessage:@[ arg_everything ?: [NSNull null] ]
                  reply:^(NSArray<id> *reply) {
                    if (reply != nil) {
@@ -2999,7 +2999,7 @@ NSObject<FlutterMessageCodec> *FLTFlutterIntegrationCoreApiGetCodec(void) {
   FlutterBasicMessageChannel *channel =
       [FlutterBasicMessageChannel messageChannelWithName:channelName
                                          binaryMessenger:self.binaryMessenger
-                                                   codec:FLTFlutterIntegrationCoreApiGetCodec()];
+                                                   codec:FLTCoreTestsGetCodec()];
   [channel sendMessage:@[
     arg_aNullableBool ?: [NSNull null], arg_aNullableInt ?: [NSNull null],
     arg_aNullableString ?: [NSNull null]
@@ -3030,7 +3030,7 @@ NSObject<FlutterMessageCodec> *FLTFlutterIntegrationCoreApiGetCodec(void) {
   FlutterBasicMessageChannel *channel =
       [FlutterBasicMessageChannel messageChannelWithName:channelName
                                          binaryMessenger:self.binaryMessenger
-                                                   codec:FLTFlutterIntegrationCoreApiGetCodec()];
+                                                   codec:FLTCoreTestsGetCodec()];
   [channel sendMessage:@[ @(arg_aBool) ]
                  reply:^(NSArray<id> *reply) {
                    if (reply != nil) {
@@ -3056,7 +3056,7 @@ NSObject<FlutterMessageCodec> *FLTFlutterIntegrationCoreApiGetCodec(void) {
   FlutterBasicMessageChannel *channel =
       [FlutterBasicMessageChannel messageChannelWithName:channelName
                                          binaryMessenger:self.binaryMessenger
-                                                   codec:FLTFlutterIntegrationCoreApiGetCodec()];
+                                                   codec:FLTCoreTestsGetCodec()];
   [channel sendMessage:@[ @(arg_anInt) ]
                  reply:^(NSArray<id> *reply) {
                    if (reply != nil) {
@@ -3083,7 +3083,7 @@ NSObject<FlutterMessageCodec> *FLTFlutterIntegrationCoreApiGetCodec(void) {
   FlutterBasicMessageChannel *channel =
       [FlutterBasicMessageChannel messageChannelWithName:channelName
                                          binaryMessenger:self.binaryMessenger
-                                                   codec:FLTFlutterIntegrationCoreApiGetCodec()];
+                                                   codec:FLTCoreTestsGetCodec()];
   [channel sendMessage:@[ @(arg_aDouble) ]
                  reply:^(NSArray<id> *reply) {
                    if (reply != nil) {
@@ -3110,7 +3110,7 @@ NSObject<FlutterMessageCodec> *FLTFlutterIntegrationCoreApiGetCodec(void) {
   FlutterBasicMessageChannel *channel =
       [FlutterBasicMessageChannel messageChannelWithName:channelName
                                          binaryMessenger:self.binaryMessenger
-                                                   codec:FLTFlutterIntegrationCoreApiGetCodec()];
+                                                   codec:FLTCoreTestsGetCodec()];
   [channel sendMessage:@[ arg_aString ?: [NSNull null] ]
                  reply:^(NSArray<id> *reply) {
                    if (reply != nil) {
@@ -3138,7 +3138,7 @@ NSObject<FlutterMessageCodec> *FLTFlutterIntegrationCoreApiGetCodec(void) {
   FlutterBasicMessageChannel *channel =
       [FlutterBasicMessageChannel messageChannelWithName:channelName
                                          binaryMessenger:self.binaryMessenger
-                                                   codec:FLTFlutterIntegrationCoreApiGetCodec()];
+                                                   codec:FLTCoreTestsGetCodec()];
   [channel sendMessage:@[ arg_list ?: [NSNull null] ]
                  reply:^(NSArray<id> *reply) {
                    if (reply != nil) {
@@ -3166,7 +3166,7 @@ NSObject<FlutterMessageCodec> *FLTFlutterIntegrationCoreApiGetCodec(void) {
   FlutterBasicMessageChannel *channel =
       [FlutterBasicMessageChannel messageChannelWithName:channelName
                                          binaryMessenger:self.binaryMessenger
-                                                   codec:FLTFlutterIntegrationCoreApiGetCodec()];
+                                                   codec:FLTCoreTestsGetCodec()];
   [channel sendMessage:@[ arg_list ?: [NSNull null] ]
                  reply:^(NSArray<id> *reply) {
                    if (reply != nil) {
@@ -3193,7 +3193,7 @@ NSObject<FlutterMessageCodec> *FLTFlutterIntegrationCoreApiGetCodec(void) {
   FlutterBasicMessageChannel *channel =
       [FlutterBasicMessageChannel messageChannelWithName:channelName
                                          binaryMessenger:self.binaryMessenger
-                                                   codec:FLTFlutterIntegrationCoreApiGetCodec()];
+                                                   codec:FLTCoreTestsGetCodec()];
   [channel sendMessage:@[ arg_aMap ?: [NSNull null] ]
                  reply:^(NSArray<id> *reply) {
                    if (reply != nil) {
@@ -3221,8 +3221,8 @@ NSObject<FlutterMessageCodec> *FLTFlutterIntegrationCoreApiGetCodec(void) {
   FlutterBasicMessageChannel *channel =
       [FlutterBasicMessageChannel messageChannelWithName:channelName
                                          binaryMessenger:self.binaryMessenger
-                                                   codec:FLTFlutterIntegrationCoreApiGetCodec()];
-  [channel sendMessage:@[ [NSNumber numberWithInteger:arg_anEnum] ]
+                                                   codec:FLTCoreTestsGetCodec()];
+  [channel sendMessage:@[ [[FLTAnEnumBox alloc] initWithValue:arg_anEnum] ]
                  reply:^(NSArray<id> *reply) {
                    if (reply != nil) {
                      if (reply.count > 1) {
@@ -3230,11 +3230,7 @@ NSObject<FlutterMessageCodec> *FLTFlutterIntegrationCoreApiGetCodec(void) {
                                                            message:reply[1]
                                                            details:reply[2]]);
                      } else {
-                       NSNumber *outputAsNumber = reply[0] == [NSNull null] ? nil : reply[0];
-                       FLTAnEnumBox *output =
-                           outputAsNumber == nil
-                               ? nil
-                               : [[FLTAnEnumBox alloc] initWithValue:[outputAsNumber integerValue]];
+                       FLTAnEnumBox *output = reply[0] == [NSNull null] ? nil : reply[0];
                        completion(output, nil);
                      }
                    } else {
@@ -3252,7 +3248,7 @@ NSObject<FlutterMessageCodec> *FLTFlutterIntegrationCoreApiGetCodec(void) {
   FlutterBasicMessageChannel *channel =
       [FlutterBasicMessageChannel messageChannelWithName:channelName
                                          binaryMessenger:self.binaryMessenger
-                                                   codec:FLTFlutterIntegrationCoreApiGetCodec()];
+                                                   codec:FLTCoreTestsGetCodec()];
   [channel sendMessage:@[ arg_aBool ?: [NSNull null] ]
                  reply:^(NSArray<id> *reply) {
                    if (reply != nil) {
@@ -3279,7 +3275,7 @@ NSObject<FlutterMessageCodec> *FLTFlutterIntegrationCoreApiGetCodec(void) {
   FlutterBasicMessageChannel *channel =
       [FlutterBasicMessageChannel messageChannelWithName:channelName
                                          binaryMessenger:self.binaryMessenger
-                                                   codec:FLTFlutterIntegrationCoreApiGetCodec()];
+                                                   codec:FLTCoreTestsGetCodec()];
   [channel sendMessage:@[ arg_anInt ?: [NSNull null] ]
                  reply:^(NSArray<id> *reply) {
                    if (reply != nil) {
@@ -3306,7 +3302,7 @@ NSObject<FlutterMessageCodec> *FLTFlutterIntegrationCoreApiGetCodec(void) {
   FlutterBasicMessageChannel *channel =
       [FlutterBasicMessageChannel messageChannelWithName:channelName
                                          binaryMessenger:self.binaryMessenger
-                                                   codec:FLTFlutterIntegrationCoreApiGetCodec()];
+                                                   codec:FLTCoreTestsGetCodec()];
   [channel sendMessage:@[ arg_aDouble ?: [NSNull null] ]
                  reply:^(NSArray<id> *reply) {
                    if (reply != nil) {
@@ -3333,7 +3329,7 @@ NSObject<FlutterMessageCodec> *FLTFlutterIntegrationCoreApiGetCodec(void) {
   FlutterBasicMessageChannel *channel =
       [FlutterBasicMessageChannel messageChannelWithName:channelName
                                          binaryMessenger:self.binaryMessenger
-                                                   codec:FLTFlutterIntegrationCoreApiGetCodec()];
+                                                   codec:FLTCoreTestsGetCodec()];
   [channel sendMessage:@[ arg_aString ?: [NSNull null] ]
                  reply:^(NSArray<id> *reply) {
                    if (reply != nil) {
@@ -3361,7 +3357,7 @@ NSObject<FlutterMessageCodec> *FLTFlutterIntegrationCoreApiGetCodec(void) {
   FlutterBasicMessageChannel *channel =
       [FlutterBasicMessageChannel messageChannelWithName:channelName
                                          binaryMessenger:self.binaryMessenger
-                                                   codec:FLTFlutterIntegrationCoreApiGetCodec()];
+                                                   codec:FLTCoreTestsGetCodec()];
   [channel sendMessage:@[ arg_list ?: [NSNull null] ]
                  reply:^(NSArray<id> *reply) {
                    if (reply != nil) {
@@ -3389,7 +3385,7 @@ NSObject<FlutterMessageCodec> *FLTFlutterIntegrationCoreApiGetCodec(void) {
   FlutterBasicMessageChannel *channel =
       [FlutterBasicMessageChannel messageChannelWithName:channelName
                                          binaryMessenger:self.binaryMessenger
-                                                   codec:FLTFlutterIntegrationCoreApiGetCodec()];
+                                                   codec:FLTCoreTestsGetCodec()];
   [channel sendMessage:@[ arg_list ?: [NSNull null] ]
                  reply:^(NSArray<id> *reply) {
                    if (reply != nil) {
@@ -3417,7 +3413,7 @@ NSObject<FlutterMessageCodec> *FLTFlutterIntegrationCoreApiGetCodec(void) {
   FlutterBasicMessageChannel *channel =
       [FlutterBasicMessageChannel messageChannelWithName:channelName
                                          binaryMessenger:self.binaryMessenger
-                                                   codec:FLTFlutterIntegrationCoreApiGetCodec()];
+                                                   codec:FLTCoreTestsGetCodec()];
   [channel sendMessage:@[ arg_aMap ?: [NSNull null] ]
                  reply:^(NSArray<id> *reply) {
                    if (reply != nil) {
@@ -3445,9 +3441,8 @@ NSObject<FlutterMessageCodec> *FLTFlutterIntegrationCoreApiGetCodec(void) {
   FlutterBasicMessageChannel *channel =
       [FlutterBasicMessageChannel messageChannelWithName:channelName
                                          binaryMessenger:self.binaryMessenger
-                                                   codec:FLTFlutterIntegrationCoreApiGetCodec()];
-  [channel sendMessage:@[ arg_anEnum == nil ? [NSNull null]
-                                            : [NSNumber numberWithInteger:arg_anEnum.value] ]
+                                                   codec:FLTCoreTestsGetCodec()];
+  [channel sendMessage:@[ arg_anEnum == nil ? [NSNull null] : arg_anEnum ]
                  reply:^(NSArray<id> *reply) {
                    if (reply != nil) {
                      if (reply.count > 1) {
@@ -3455,11 +3450,7 @@ NSObject<FlutterMessageCodec> *FLTFlutterIntegrationCoreApiGetCodec(void) {
                                                            message:reply[1]
                                                            details:reply[2]]);
                      } else {
-                       NSNumber *outputAsNumber = reply[0] == [NSNull null] ? nil : reply[0];
-                       FLTAnEnumBox *output =
-                           outputAsNumber == nil
-                               ? nil
-                               : [[FLTAnEnumBox alloc] initWithValue:[outputAsNumber integerValue]];
+                       FLTAnEnumBox *output = reply[0] == [NSNull null] ? nil : reply[0];
                        completion(output, nil);
                      }
                    } else {
@@ -3476,7 +3467,7 @@ NSObject<FlutterMessageCodec> *FLTFlutterIntegrationCoreApiGetCodec(void) {
   FlutterBasicMessageChannel *channel =
       [FlutterBasicMessageChannel messageChannelWithName:channelName
                                          binaryMessenger:self.binaryMessenger
-                                                   codec:FLTFlutterIntegrationCoreApiGetCodec()];
+                                                   codec:FLTCoreTestsGetCodec()];
   [channel sendMessage:nil
                  reply:^(NSArray<id> *reply) {
                    if (reply != nil) {
@@ -3502,7 +3493,7 @@ NSObject<FlutterMessageCodec> *FLTFlutterIntegrationCoreApiGetCodec(void) {
   FlutterBasicMessageChannel *channel =
       [FlutterBasicMessageChannel messageChannelWithName:channelName
                                          binaryMessenger:self.binaryMessenger
-                                                   codec:FLTFlutterIntegrationCoreApiGetCodec()];
+                                                   codec:FLTCoreTestsGetCodec()];
   [channel sendMessage:@[ arg_aString ?: [NSNull null] ]
                  reply:^(NSArray<id> *reply) {
                    if (reply != nil) {
@@ -3520,12 +3511,6 @@ NSObject<FlutterMessageCodec> *FLTFlutterIntegrationCoreApiGetCodec(void) {
                  }];
 }
 @end
-
-NSObject<FlutterMessageCodec> *FLTHostTrivialApiGetCodec(void) {
-  static FlutterStandardMessageCodec *sSharedObject = nil;
-  sSharedObject = [FlutterStandardMessageCodec sharedInstance];
-  return sSharedObject;
-}
 
 void SetUpFLTHostTrivialApi(id<FlutterBinaryMessenger> binaryMessenger,
                             NSObject<FLTHostTrivialApi> *api) {
@@ -3546,7 +3531,7 @@ void SetUpFLTHostTrivialApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger
                                 @"dev.flutter.pigeon.pigeon_integration_tests.HostTrivialApi.noop",
                                 messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostTrivialApiGetCodec()];
+                  codec:FLTCoreTestsGetCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(noopWithError:)],
                 @"FLTHostTrivialApi api (%@) doesn't respond to @selector(noopWithError:)", api);
@@ -3560,12 +3545,6 @@ void SetUpFLTHostTrivialApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger
     }
   }
 }
-NSObject<FlutterMessageCodec> *FLTHostSmallApiGetCodec(void) {
-  static FlutterStandardMessageCodec *sSharedObject = nil;
-  sSharedObject = [FlutterStandardMessageCodec sharedInstance];
-  return sSharedObject;
-}
-
 void SetUpFLTHostSmallApi(id<FlutterBinaryMessenger> binaryMessenger,
                           NSObject<FLTHostSmallApi> *api) {
   SetUpFLTHostSmallApiWithSuffix(binaryMessenger, api, @"");
@@ -3585,7 +3564,7 @@ void SetUpFLTHostSmallApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger,
                                 @"dev.flutter.pigeon.pigeon_integration_tests.HostSmallApi.echo",
                                 messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostSmallApiGetCodec()];
+                  codec:FLTCoreTestsGetCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(echoString:completion:)],
                 @"FLTHostSmallApi api (%@) doesn't respond to @selector(echoString:completion:)",
@@ -3609,7 +3588,7 @@ void SetUpFLTHostSmallApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger,
                                                    @"HostSmallApi.voidVoid",
                                                    messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FLTHostSmallApiGetCodec()];
+                  codec:FLTCoreTestsGetCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(voidVoidWithCompletion:)],
                 @"FLTHostSmallApi api (%@) doesn't respond to @selector(voidVoidWithCompletion:)",
@@ -3624,54 +3603,6 @@ void SetUpFLTHostSmallApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger,
     }
   }
 }
-@interface FLTFlutterSmallApiCodecReader : FlutterStandardReader
-@end
-@implementation FLTFlutterSmallApiCodecReader
-- (nullable id)readValueOfType:(UInt8)type {
-  switch (type) {
-    case 128:
-      return [FLTTestMessage fromList:[self readValue]];
-    default:
-      return [super readValueOfType:type];
-  }
-}
-@end
-
-@interface FLTFlutterSmallApiCodecWriter : FlutterStandardWriter
-@end
-@implementation FLTFlutterSmallApiCodecWriter
-- (void)writeValue:(id)value {
-  if ([value isKindOfClass:[FLTTestMessage class]]) {
-    [self writeByte:128];
-    [self writeValue:[value toList]];
-  } else {
-    [super writeValue:value];
-  }
-}
-@end
-
-@interface FLTFlutterSmallApiCodecReaderWriter : FlutterStandardReaderWriter
-@end
-@implementation FLTFlutterSmallApiCodecReaderWriter
-- (FlutterStandardWriter *)writerWithData:(NSMutableData *)data {
-  return [[FLTFlutterSmallApiCodecWriter alloc] initWithData:data];
-}
-- (FlutterStandardReader *)readerWithData:(NSData *)data {
-  return [[FLTFlutterSmallApiCodecReader alloc] initWithData:data];
-}
-@end
-
-NSObject<FlutterMessageCodec> *FLTFlutterSmallApiGetCodec(void) {
-  static FlutterStandardMessageCodec *sSharedObject = nil;
-  static dispatch_once_t sPred = 0;
-  dispatch_once(&sPred, ^{
-    FLTFlutterSmallApiCodecReaderWriter *readerWriter =
-        [[FLTFlutterSmallApiCodecReaderWriter alloc] init];
-    sSharedObject = [FlutterStandardMessageCodec codecWithReaderWriter:readerWriter];
-  });
-  return sSharedObject;
-}
-
 @interface FLTFlutterSmallApi ()
 @property(nonatomic, strong) NSObject<FlutterBinaryMessenger> *binaryMessenger;
 @property(nonatomic, strong) NSString *messageChannelSuffix;
@@ -3702,7 +3633,7 @@ NSObject<FlutterMessageCodec> *FLTFlutterSmallApiGetCodec(void) {
   FlutterBasicMessageChannel *channel =
       [FlutterBasicMessageChannel messageChannelWithName:channelName
                                          binaryMessenger:self.binaryMessenger
-                                                   codec:FLTFlutterSmallApiGetCodec()];
+                                                   codec:FLTCoreTestsGetCodec()];
   [channel sendMessage:@[ arg_msg ?: [NSNull null] ]
                  reply:^(NSArray<id> *reply) {
                    if (reply != nil) {
@@ -3728,7 +3659,7 @@ NSObject<FlutterMessageCodec> *FLTFlutterSmallApiGetCodec(void) {
   FlutterBasicMessageChannel *channel =
       [FlutterBasicMessageChannel messageChannelWithName:channelName
                                          binaryMessenger:self.binaryMessenger
-                                                   codec:FLTFlutterSmallApiGetCodec()];
+                                                   codec:FLTCoreTestsGetCodec()];
   [channel sendMessage:@[ arg_aString ?: [NSNull null] ]
                  reply:^(NSArray<id> *reply) {
                    if (reply != nil) {

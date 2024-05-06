@@ -381,16 +381,26 @@ Map<String, Object> mergeMaps(
   return result;
 }
 
-/// A class name that is enumerated.
-class EnumeratedClass {
+/// A type name that is enumerated.
+class EnumeratedType {
   /// Constructor.
-  EnumeratedClass(this.name, this.enumeration);
+  EnumeratedType(this.name, this.enumeration, this.type,
+      {this.associatedClass, this.associatedEnum});
 
-  /// The name of the class.
+  /// The name of the type.
   final String name;
 
   /// The enumeration of the class.
   final int enumeration;
+
+  /// The type of custom type of the enumerated type.
+  final CustomTypes type;
+
+  /// The associated Class that is represented by the [EnumeratedType].
+  final Class? associatedClass;
+
+  /// The associated Enum that is represented by the [EnumeratedType].
+  final Enum? associatedEnum;
 }
 
 /// Supported basic datatypes.
@@ -494,39 +504,42 @@ Map<TypeDeclaration, List<int>> getReferencedTypes(
   return references.map;
 }
 
-/// Returns true if the concrete type cannot be determined at compile-time.
-bool _isConcreteTypeAmbiguous(TypeDeclaration type) {
-  return (type.baseName == 'List' && type.typeArguments.isEmpty) ||
-      (type.baseName == 'Map' && type.typeArguments.isEmpty) ||
-      type.baseName == 'Object';
+/// All custom definable data types.
+enum CustomTypes {
+  /// A custom Class.
+  customClass,
+
+  /// A custom Enum.
+  customEnum,
 }
 
-/// Given an [Api], return the enumerated classes that must exist in the codec
+/// Return the enumerated types that must exist in the codec
 /// where the enumeration should be the key used in the buffer.
-Iterable<EnumeratedClass> getCodecClasses(Api api, Root root) sync* {
-  final Set<String> enumNames = root.enums.map((Enum e) => e.name).toSet();
-  final Map<TypeDeclaration, List<int>> referencedTypes =
-      getReferencedTypes(<Api>[api], root.classes);
-  final Iterable<String> allTypeNames =
-      referencedTypes.keys.any(_isConcreteTypeAmbiguous)
-          ? root.classes.map((Class aClass) => aClass.name)
-          : referencedTypes.keys.map((TypeDeclaration e) => e.baseName);
-  final List<String> sortedNames = allTypeNames
-      .where((String element) =>
-          element != 'void' &&
-          !validTypes.contains(element) &&
-          !enumNames.contains(element))
-      .toList();
-  sortedNames.sort();
-  int enumeration = _minimumCodecFieldKey;
+Iterable<EnumeratedType> getEnumeratedTypes(Root root) sync* {
   const int maxCustomClassesPerApi = 255 - _minimumCodecFieldKey;
-  if (sortedNames.length > maxCustomClassesPerApi) {
+  if (root.classes.length + root.enums.length > maxCustomClassesPerApi) {
     throw Exception(
         "Pigeon doesn't support more than $maxCustomClassesPerApi referenced custom classes per API, try splitting up your APIs.");
   }
-  for (final String name in sortedNames) {
-    yield EnumeratedClass(name, enumeration);
-    enumeration += 1;
+  int index = 0;
+  for (final Class customClass in root.classes) {
+    yield EnumeratedType(
+      customClass.name,
+      index + _minimumCodecFieldKey,
+      CustomTypes.customClass,
+      associatedClass: customClass,
+    );
+    index += 1;
+  }
+
+  for (final Enum customEnum in root.enums) {
+    yield EnumeratedType(
+      customEnum.name,
+      index + _minimumCodecFieldKey,
+      CustomTypes.customEnum,
+      associatedEnum: customEnum,
+    );
+    index += 1;
   }
 }
 
@@ -684,4 +697,26 @@ class OutputFileOptions<T> {
 
   /// Options for specified language across all file types.
   T languageOptions;
+}
+
+/// Converts strings to Upper Camel Case.
+String toUpperCamelCase(String text) {
+  String symbol = '';
+  String className = '';
+  if (text.contains(' ')) {
+    symbol = ' ';
+  } else if (text.contains('_')) {
+    symbol = '_';
+  } else if (text.contains('-')) {
+    symbol = '-';
+  }
+  if (symbol == ' ' || symbol == '_' || symbol == '-') {
+    final List<String> words = text.split(symbol);
+    for (final String word in words) {
+      className += word.substring(0, 1).toUpperCase() + word.substring(1);
+    }
+  } else {
+    className = text.substring(0, 1).toUpperCase() + text.substring(1);
+  }
+  return className;
 }

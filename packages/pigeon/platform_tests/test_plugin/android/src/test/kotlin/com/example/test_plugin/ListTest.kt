@@ -10,10 +10,9 @@ import io.mockk.mockk
 import java.nio.ByteBuffer
 import java.util.ArrayList
 import junit.framework.TestCase
-import org.junit.Test
 
 class ListTest : TestCase() {
-  @Test
+
   fun testListInList() {
     val binaryMessenger = mockk<BinaryMessenger>()
     val api = FlutterSmallApi(binaryMessenger)

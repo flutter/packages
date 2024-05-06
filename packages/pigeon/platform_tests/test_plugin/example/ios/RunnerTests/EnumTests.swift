@@ -21,7 +21,7 @@ extension DataWithEnum: Equatable {
 class EnumTests: XCTestCase {
 
   func testEchoHost() throws {
-    let binaryMessenger = MockBinaryMessenger<DataWithEnum>(codec: EnumApi2HostCodec.shared)
+    let binaryMessenger = MockBinaryMessenger<DataWithEnum>(codec: EnumPigeonCodec.shared)
     EnumApi2HostSetup.setUp(binaryMessenger: binaryMessenger, api: MockEnumApi2Host())
     let channelName = "dev.flutter.pigeon.pigeon_integration_tests.EnumApi2Host.echo"
     XCTAssertNotNil(binaryMessenger.handlers[channelName])
@@ -44,7 +44,7 @@ class EnumTests: XCTestCase {
 
   func testEchoFlutter() throws {
     let data = DataWithEnum(state: .error)
-    let binaryMessenger = EchoBinaryMessenger(codec: EnumApi2HostCodec.shared)
+    let binaryMessenger = EchoBinaryMessenger(codec: EnumPigeonCodec.shared)
     let api = EnumApi2Flutter(binaryMessenger: binaryMessenger)
 
     let expectation = XCTestExpectation(description: "callback")

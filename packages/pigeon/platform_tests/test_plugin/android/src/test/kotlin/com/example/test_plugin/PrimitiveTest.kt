@@ -10,10 +10,9 @@ import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
 import junit.framework.TestCase
-import org.junit.Test
 
 class PrimitiveTest : TestCase() {
-  @Test
+
   fun testIntPrimitiveHost() {
     val binaryMessenger = mockk<BinaryMessenger>(relaxed = true)
     val api = mockk<PrimitiveHostApi>(relaxed = true)
@@ -42,7 +41,6 @@ class PrimitiveTest : TestCase() {
     verify { api.anInt(input.toLong()) }
   }
 
-  @Test
   fun testIntPrimitiveFlutter() {
     val binaryMessenger = EchoBinaryMessenger(MultipleArityFlutterApi.codec)
     val api = PrimitiveFlutterApi(binaryMessenger)
@@ -58,7 +56,6 @@ class PrimitiveTest : TestCase() {
     assertTrue(didCall)
   }
 
-  @Test
   fun testBoolPrimitiveHost() {
     val binaryMessenger = mockk<BinaryMessenger>(relaxed = true)
     val api = mockk<PrimitiveHostApi>(relaxed = true)
@@ -87,7 +84,6 @@ class PrimitiveTest : TestCase() {
     verify { api.aBool(input) }
   }
 
-  @Test
   fun testBoolPrimitiveFlutter() {
     val binaryMessenger = EchoBinaryMessenger(MultipleArityFlutterApi.codec)
     val api = PrimitiveFlutterApi(binaryMessenger)
@@ -103,7 +99,6 @@ class PrimitiveTest : TestCase() {
     assertTrue(didCall)
   }
 
-  @Test
   fun testStringPrimitiveHost() {
     val binaryMessenger = mockk<BinaryMessenger>(relaxed = true)
     val api = mockk<PrimitiveHostApi>(relaxed = true)
@@ -132,7 +127,6 @@ class PrimitiveTest : TestCase() {
     verify { api.aString(input) }
   }
 
-  @Test
   fun testDoublePrimitiveHost() {
     val binaryMessenger = mockk<BinaryMessenger>(relaxed = true)
     val api = mockk<PrimitiveHostApi>(relaxed = true)
@@ -161,7 +155,6 @@ class PrimitiveTest : TestCase() {
     verify { api.aDouble(input) }
   }
 
-  @Test
   fun testDoublePrimitiveFlutter() {
     val binaryMessenger = EchoBinaryMessenger(MultipleArityFlutterApi.codec)
     val api = PrimitiveFlutterApi(binaryMessenger)
@@ -177,7 +170,6 @@ class PrimitiveTest : TestCase() {
     assertTrue(didCall)
   }
 
-  @Test
   fun testMapPrimitiveHost() {
     val binaryMessenger = mockk<BinaryMessenger>(relaxed = true)
     val api = mockk<PrimitiveHostApi>(relaxed = true)
@@ -206,7 +198,6 @@ class PrimitiveTest : TestCase() {
     verify { api.aMap(input) }
   }
 
-  @Test
   fun testMapPrimitiveFlutter() {
     val binaryMessenger = EchoBinaryMessenger(MultipleArityFlutterApi.codec)
     val api = PrimitiveFlutterApi(binaryMessenger)
@@ -222,7 +213,6 @@ class PrimitiveTest : TestCase() {
     assertTrue(didCall)
   }
 
-  @Test
   fun testListPrimitiveHost() {
     val binaryMessenger = mockk<BinaryMessenger>(relaxed = true)
     val api = mockk<PrimitiveHostApi>(relaxed = true)
@@ -251,7 +241,6 @@ class PrimitiveTest : TestCase() {
     verify { api.aList(input) }
   }
 
-  @Test
   fun testListPrimitiveFlutter() {
     val binaryMessenger = EchoBinaryMessenger(MultipleArityFlutterApi.codec)
     val api = PrimitiveFlutterApi(binaryMessenger)
@@ -267,7 +256,6 @@ class PrimitiveTest : TestCase() {
     assertTrue(didCall)
   }
 
-  @Test
   fun testInt32ListPrimitiveHost() {
     val binaryMessenger = mockk<BinaryMessenger>(relaxed = true)
     val api = mockk<PrimitiveHostApi>(relaxed = true)
@@ -296,7 +284,6 @@ class PrimitiveTest : TestCase() {
     verify { api.anInt32List(input) }
   }
 
-  @Test
   fun testInt32ListPrimitiveFlutter() {
     val binaryMessenger = EchoBinaryMessenger(MultipleArityFlutterApi.codec)
     val api = PrimitiveFlutterApi(binaryMessenger)
@@ -312,7 +299,6 @@ class PrimitiveTest : TestCase() {
     assertTrue(didCall)
   }
 
-  @Test
   fun testBoolListPrimitiveHost() {
     val binaryMessenger = mockk<BinaryMessenger>(relaxed = true)
     val api = mockk<PrimitiveHostApi>(relaxed = true)
@@ -341,7 +327,6 @@ class PrimitiveTest : TestCase() {
     verify { api.aBoolList(input) }
   }
 
-  @Test
   fun testBoolListPrimitiveFlutter() {
     val binaryMessenger = EchoBinaryMessenger(MultipleArityFlutterApi.codec)
     val api = PrimitiveFlutterApi(binaryMessenger)
@@ -357,7 +342,6 @@ class PrimitiveTest : TestCase() {
     assertTrue(didCall)
   }
 
-  @Test
   fun testStringIntMapPrimitiveHost() {
     val binaryMessenger = mockk<BinaryMessenger>(relaxed = true)
     val api = mockk<PrimitiveHostApi>(relaxed = true)
@@ -386,7 +370,6 @@ class PrimitiveTest : TestCase() {
     verify { api.aStringIntMap(input) }
   }
 
-  @Test
   fun testStringIntMapPrimitiveFlutter() {
     val binaryMessenger = EchoBinaryMessenger(MultipleArityFlutterApi.codec)
     val api = PrimitiveFlutterApi(binaryMessenger)

@@ -71,7 +71,8 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
   PGNMessageData *pigeonResult = [[PGNMessageData alloc] init];
   pigeonResult.name = GetNullableObjectAtIndex(list, 0);
   pigeonResult.description = GetNullableObjectAtIndex(list, 1);
-  pigeonResult.code = [GetNullableObjectAtIndex(list, 2) integerValue];
+  PGNCodeBox *enumBox = GetNullableObjectAtIndex(list, 2);
+  pigeonResult.code = enumBox.value;
   pigeonResult.data = GetNullableObjectAtIndex(list, 3);
   return pigeonResult;
 }
@@ -82,60 +83,67 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
   return @[
     self.name ?: [NSNull null],
     self.description ?: [NSNull null],
-    @(self.code),
+    [[PGNCodeBox alloc] initWithValue:self.code],
     self.data ?: [NSNull null],
   ];
 }
 @end
 
-@interface PGNExampleHostApiCodecReader : FlutterStandardReader
+@interface messagesPigeonCodecReader : FlutterStandardReader
 @end
-@implementation PGNExampleHostApiCodecReader
+@implementation messagesPigeonCodecReader
 - (nullable id)readValueOfType:(UInt8)type {
   switch (type) {
     case 128:
       return [PGNMessageData fromList:[self readValue]];
+    case 129: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil ? nil
+                                 : [[PGNCodeBox alloc] initWithValue:[enumAsNumber integerValue]];
+    }
     default:
       return [super readValueOfType:type];
   }
 }
 @end
 
-@interface PGNExampleHostApiCodecWriter : FlutterStandardWriter
+@interface messagesPigeonCodecWriter : FlutterStandardWriter
 @end
-@implementation PGNExampleHostApiCodecWriter
+@implementation messagesPigeonCodecWriter
 - (void)writeValue:(id)value {
   if ([value isKindOfClass:[PGNMessageData class]]) {
     [self writeByte:128];
     [self writeValue:[value toList]];
+  } else if ([value isKindOfClass:[PGNCodeBox class]]) {
+    PGNCodeBox *box = (PGNCodeBox *)value;
+    [self writeByte:129];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
   } else {
     [super writeValue:value];
   }
 }
 @end
 
-@interface PGNExampleHostApiCodecReaderWriter : FlutterStandardReaderWriter
+@interface messagesPigeonCodecReaderWriter : FlutterStandardReaderWriter
 @end
-@implementation PGNExampleHostApiCodecReaderWriter
+@implementation messagesPigeonCodecReaderWriter
 - (FlutterStandardWriter *)writerWithData:(NSMutableData *)data {
-  return [[PGNExampleHostApiCodecWriter alloc] initWithData:data];
+  return [[messagesPigeonCodecWriter alloc] initWithData:data];
 }
 - (FlutterStandardReader *)readerWithData:(NSData *)data {
-  return [[PGNExampleHostApiCodecReader alloc] initWithData:data];
+  return [[messagesPigeonCodecReader alloc] initWithData:data];
 }
 @end
 
-NSObject<FlutterMessageCodec> *PGNExampleHostApiGetCodec(void) {
+NSObject<FlutterMessageCodec> *PGNmessagesGetCodec(void) {
   static FlutterStandardMessageCodec *sSharedObject = nil;
   static dispatch_once_t sPred = 0;
   dispatch_once(&sPred, ^{
-    PGNExampleHostApiCodecReaderWriter *readerWriter =
-        [[PGNExampleHostApiCodecReaderWriter alloc] init];
+    messagesPigeonCodecReaderWriter *readerWriter = [[messagesPigeonCodecReaderWriter alloc] init];
     sSharedObject = [FlutterStandardMessageCodec codecWithReaderWriter:readerWriter];
   });
   return sSharedObject;
 }
-
 void SetUpPGNExampleHostApi(id<FlutterBinaryMessenger> binaryMessenger,
                             NSObject<PGNExampleHostApi> *api) {
   SetUpPGNExampleHostApiWithSuffix(binaryMessenger, api, @"");
@@ -154,7 +162,7 @@ void SetUpPGNExampleHostApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger
                                                    @"ExampleHostApi.getHostLanguage",
                                                    messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:PGNExampleHostApiGetCodec()];
+                  codec:PGNmessagesGetCodec()];
     if (api) {
       NSCAssert(
           [api respondsToSelector:@selector(getHostLanguageWithError:)],
@@ -177,7 +185,7 @@ void SetUpPGNExampleHostApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger
                                     @"dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.add",
                                     messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:PGNExampleHostApiGetCodec()];
+                  codec:PGNmessagesGetCodec()];
     if (api) {
       NSCAssert(
           [api respondsToSelector:@selector(addNumber:toNumber:error:)],
@@ -202,7 +210,7 @@ void SetUpPGNExampleHostApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger
                                                    @"ExampleHostApi.sendMessage",
                                                    messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:PGNExampleHostApiGetCodec()];
+                  codec:PGNmessagesGetCodec()];
     if (api) {
       NSCAssert([api respondsToSelector:@selector(sendMessageMessage:completion:)],
                 @"PGNExampleHostApi api (%@) doesn't respond to "
@@ -221,12 +229,6 @@ void SetUpPGNExampleHostApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger
     }
   }
 }
-NSObject<FlutterMessageCodec> *PGNMessageFlutterApiGetCodec(void) {
-  static FlutterStandardMessageCodec *sSharedObject = nil;
-  sSharedObject = [FlutterStandardMessageCodec sharedInstance];
-  return sSharedObject;
-}
-
 @interface PGNMessageFlutterApi ()
 @property(nonatomic, strong) NSObject<FlutterBinaryMessenger> *binaryMessenger;
 @property(nonatomic, strong) NSString *messageChannelSuffix;
@@ -257,7 +259,7 @@ NSObject<FlutterMessageCodec> *PGNMessageFlutterApiGetCodec(void) {
   FlutterBasicMessageChannel *channel =
       [FlutterBasicMessageChannel messageChannelWithName:channelName
                                          binaryMessenger:self.binaryMessenger
-                                                   codec:PGNMessageFlutterApiGetCodec()];
+                                                   codec:PGNmessagesGetCodec()];
   [channel sendMessage:@[ arg_aString ?: [NSNull null] ]
                  reply:^(NSArray<id> *reply) {
                    if (reply != nil) {

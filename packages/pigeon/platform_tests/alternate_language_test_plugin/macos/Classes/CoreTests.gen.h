@@ -32,6 +32,8 @@ typedef NS_ENUM(NSUInteger, AnEnum) {
 @class AllNullableTypes;
 @class AllNullableTypesWithoutRecursion;
 @class AllClassesWrapper;
+@class AllMapTypes;
+@class AllListTypes;
 @class TestMessage;
 
 /// A class containing all supported types.
@@ -50,7 +52,9 @@ typedef NS_ENUM(NSUInteger, AnEnum) {
                          aMap:(NSDictionary *)aMap
                        anEnum:(AnEnum)anEnum
                       aString:(NSString *)aString
-                     anObject:(id)anObject;
+                     anObject:(id)anObject
+                      allMaps:(AllMapTypes *)allMaps
+                     allLists:(AllListTypes *)allLists;
 @property(nonatomic, assign) BOOL aBool;
 @property(nonatomic, assign) NSInteger anInt;
 @property(nonatomic, assign) NSInteger anInt64;
@@ -64,6 +68,8 @@ typedef NS_ENUM(NSUInteger, AnEnum) {
 @property(nonatomic, assign) AnEnum anEnum;
 @property(nonatomic, copy) NSString *aString;
 @property(nonatomic, strong) id anObject;
+@property(nonatomic, strong) AllMapTypes *allMaps;
+@property(nonatomic, strong) AllListTypes *allLists;
 @end
 
 /// A class containing all supported nullable types.
@@ -164,14 +170,38 @@ typedef NS_ENUM(NSUInteger, AnEnum) {
 @property(nonatomic, strong, nullable) AllTypes *allTypes;
 @end
 
+@interface AllMapTypes : NSObject
+/// `init` unavailable to enforce nonnull fields, see the `make` class method.
+- (instancetype)init NS_UNAVAILABLE;
++ (instancetype)makeWithMap:(NSDictionary *)map;
+@property(nonatomic, copy) NSDictionary *map;
+@end
+
+@interface AllListTypes : NSObject
+/// `init` unavailable to enforce nonnull fields, see the `make` class method.
+- (instancetype)init NS_UNAVAILABLE;
++ (instancetype)makeWithList:(NSArray *)list
+                  stringList:(NSArray<NSString *> *)stringList
+                     intList:(NSArray<NSNumber *> *)intList
+                  doubleList:(NSArray<NSNumber *> *)doubleList
+                    boolList:(NSArray<NSNumber *> *)boolList
+                    enumList:(NSArray<AnEnumBox *> *)enumList;
+@property(nonatomic, copy) NSArray *list;
+@property(nonatomic, copy) NSArray<NSString *> *stringList;
+@property(nonatomic, copy) NSArray<NSNumber *> *intList;
+@property(nonatomic, copy) NSArray<NSNumber *> *doubleList;
+@property(nonatomic, copy) NSArray<NSNumber *> *boolList;
+@property(nonatomic, copy) NSArray<AnEnumBox *> *enumList;
+@end
+
 /// A data class containing a List, used in unit tests.
 @interface TestMessage : NSObject
 + (instancetype)makeWithTestList:(nullable NSArray *)testList;
 @property(nonatomic, copy, nullable) NSArray *testList;
 @end
 
-/// The codec used by HostIntegrationCoreApi.
-NSObject<FlutterMessageCodec> *HostIntegrationCoreApiGetCodec(void);
+/// The codec used by all APIs.
+NSObject<FlutterMessageCodec> *CoreTestsGetCodec(void);
 
 /// The core interface that each host language plugin must implement in
 /// platform_test integration tests.
@@ -483,9 +513,6 @@ extern void SetUpHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> bin
                                                   NSObject<HostIntegrationCoreApi> *_Nullable api,
                                                   NSString *messageChannelSuffix);
 
-/// The codec used by FlutterIntegrationCoreApi.
-NSObject<FlutterMessageCodec> *FlutterIntegrationCoreApiGetCodec(void);
-
 /// The core interface that the Dart platform_test code implements for host
 /// integration tests to call into.
 @interface FlutterIntegrationCoreApi : NSObject
@@ -588,9 +615,6 @@ NSObject<FlutterMessageCodec> *FlutterIntegrationCoreApiGetCodec(void);
              completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion;
 @end
 
-/// The codec used by HostTrivialApi.
-NSObject<FlutterMessageCodec> *HostTrivialApiGetCodec(void);
-
 /// An API that can be implemented for minimal, compile-only tests.
 @protocol HostTrivialApi
 - (void)noopWithError:(FlutterError *_Nullable *_Nonnull)error;
@@ -602,9 +626,6 @@ extern void SetUpHostTrivialApi(id<FlutterBinaryMessenger> binaryMessenger,
 extern void SetUpHostTrivialApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger,
                                           NSObject<HostTrivialApi> *_Nullable api,
                                           NSString *messageChannelSuffix);
-
-/// The codec used by HostSmallApi.
-NSObject<FlutterMessageCodec> *HostSmallApiGetCodec(void);
 
 /// A simple API implemented in some unit tests.
 @protocol HostSmallApi
@@ -619,9 +640,6 @@ extern void SetUpHostSmallApi(id<FlutterBinaryMessenger> binaryMessenger,
 extern void SetUpHostSmallApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger,
                                         NSObject<HostSmallApi> *_Nullable api,
                                         NSString *messageChannelSuffix);
-
-/// The codec used by FlutterSmallApi.
-NSObject<FlutterMessageCodec> *FlutterSmallApiGetCodec(void);
 
 /// A simple API called in some unit tests.
 @interface FlutterSmallApi : NSObject

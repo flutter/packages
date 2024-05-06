@@ -11,10 +11,9 @@ import io.mockk.slot
 import java.nio.ByteBuffer
 import java.util.ArrayList
 import junit.framework.TestCase
-import org.junit.Test
 
 class MultipleArityTests : TestCase() {
-  @Test
+
   fun testSimpleHost() {
     val binaryMessenger = mockk<BinaryMessenger>()
     val api = mockk<MultipleArityHostApi>()
@@ -41,7 +40,6 @@ class MultipleArityTests : TestCase() {
     }
   }
 
-  @Test
   fun testSimpleFlutter() {
     val binaryMessenger = mockk<BinaryMessenger>()
     val api = MultipleArityFlutterApi(binaryMessenger)

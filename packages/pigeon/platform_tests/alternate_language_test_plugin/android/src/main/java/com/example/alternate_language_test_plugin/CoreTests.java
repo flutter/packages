@@ -263,6 +263,32 @@ public class CoreTests {
       this.anObject = setterArg;
     }
 
+    private @NonNull AllMapTypes allMaps;
+
+    public @NonNull AllMapTypes getAllMaps() {
+      return allMaps;
+    }
+
+    public void setAllMaps(@NonNull AllMapTypes setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"allMaps\" is null.");
+      }
+      this.allMaps = setterArg;
+    }
+
+    private @NonNull AllListTypes allLists;
+
+    public @NonNull AllListTypes getAllLists() {
+      return allLists;
+    }
+
+    public void setAllLists(@NonNull AllListTypes setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"allLists\" is null.");
+      }
+      this.allLists = setterArg;
+    }
+
     /** Constructor is non-public to enforce null safety; use Builder. */
     AllTypes() {}
 
@@ -372,6 +398,22 @@ public class CoreTests {
         return this;
       }
 
+      private @Nullable AllMapTypes allMaps;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setAllMaps(@NonNull AllMapTypes setterArg) {
+        this.allMaps = setterArg;
+        return this;
+      }
+
+      private @Nullable AllListTypes allLists;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setAllLists(@NonNull AllListTypes setterArg) {
+        this.allLists = setterArg;
+        return this;
+      }
+
       public @NonNull AllTypes build() {
         AllTypes pigeonReturn = new AllTypes();
         pigeonReturn.setABool(aBool);
@@ -387,13 +429,15 @@ public class CoreTests {
         pigeonReturn.setAnEnum(anEnum);
         pigeonReturn.setAString(aString);
         pigeonReturn.setAnObject(anObject);
+        pigeonReturn.setAllMaps(allMaps);
+        pigeonReturn.setAllLists(allLists);
         return pigeonReturn;
       }
     }
 
     @NonNull
     ArrayList<Object> toList() {
-      ArrayList<Object> toListResult = new ArrayList<Object>(13);
+      ArrayList<Object> toListResult = new ArrayList<Object>(15);
       toListResult.add(aBool);
       toListResult.add(anInt);
       toListResult.add(anInt64);
@@ -404,9 +448,11 @@ public class CoreTests {
       toListResult.add(aFloatArray);
       toListResult.add(list);
       toListResult.add(aMap);
-      toListResult.add(anEnum == null ? null : anEnum.index);
+      toListResult.add(anEnum);
       toListResult.add(aString);
       toListResult.add(anObject);
+      toListResult.add(allMaps);
+      toListResult.add(allLists);
       return toListResult;
     }
 
@@ -437,11 +483,15 @@ public class CoreTests {
       Object aMap = __pigeon_list.get(9);
       pigeonResult.setAMap((Map<Object, Object>) aMap);
       Object anEnum = __pigeon_list.get(10);
-      pigeonResult.setAnEnum(AnEnum.values()[(int) anEnum]);
+      pigeonResult.setAnEnum((AnEnum) anEnum);
       Object aString = __pigeon_list.get(11);
       pigeonResult.setAString((String) aString);
       Object anObject = __pigeon_list.get(12);
       pigeonResult.setAnObject(anObject);
+      Object allMaps = __pigeon_list.get(13);
+      pigeonResult.setAllMaps((AllMapTypes) allMaps);
+      Object allLists = __pigeon_list.get(14);
+      pigeonResult.setAllLists((AllListTypes) allLists);
       return pigeonResult;
     }
   }
@@ -800,7 +850,7 @@ public class CoreTests {
       toListResult.add(nullableNestedList);
       toListResult.add(nullableMapWithAnnotations);
       toListResult.add(nullableMapWithObject);
-      toListResult.add(aNullableEnum == null ? null : aNullableEnum.index);
+      toListResult.add(aNullableEnum);
       toListResult.add(aNullableString);
       toListResult.add(aNullableObject);
       toListResult.add(allNullableTypes);
@@ -844,8 +894,7 @@ public class CoreTests {
       Object nullableMapWithObject = __pigeon_list.get(12);
       pigeonResult.setNullableMapWithObject((Map<String, Object>) nullableMapWithObject);
       Object aNullableEnum = __pigeon_list.get(13);
-      pigeonResult.setANullableEnum(
-          aNullableEnum == null ? null : AnEnum.values()[(int) aNullableEnum]);
+      pigeonResult.setANullableEnum((AnEnum) aNullableEnum);
       Object aNullableString = __pigeon_list.get(14);
       pigeonResult.setANullableString((String) aNullableString);
       Object aNullableObject = __pigeon_list.get(15);
@@ -1192,7 +1241,7 @@ public class CoreTests {
       toListResult.add(nullableNestedList);
       toListResult.add(nullableMapWithAnnotations);
       toListResult.add(nullableMapWithObject);
-      toListResult.add(aNullableEnum == null ? null : aNullableEnum.index);
+      toListResult.add(aNullableEnum);
       toListResult.add(aNullableString);
       toListResult.add(aNullableObject);
       return toListResult;
@@ -1236,8 +1285,7 @@ public class CoreTests {
       Object nullableMapWithObject = __pigeon_list.get(12);
       pigeonResult.setNullableMapWithObject((Map<String, Object>) nullableMapWithObject);
       Object aNullableEnum = __pigeon_list.get(13);
-      pigeonResult.setANullableEnum(
-          aNullableEnum == null ? null : AnEnum.values()[(int) aNullableEnum]);
+      pigeonResult.setANullableEnum((AnEnum) aNullableEnum);
       Object aNullableString = __pigeon_list.get(14);
       pigeonResult.setANullableString((String) aNullableString);
       Object aNullableObject = __pigeon_list.get(15);
@@ -1351,6 +1399,231 @@ public class CoreTests {
     }
   }
 
+  /** Generated class from Pigeon that represents data sent in messages. */
+  public static final class AllMapTypes {
+    private @NonNull Map<Object, Object> map;
+
+    public @NonNull Map<Object, Object> getMap() {
+      return map;
+    }
+
+    public void setMap(@NonNull Map<Object, Object> setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"map\" is null.");
+      }
+      this.map = setterArg;
+    }
+
+    /** Constructor is non-public to enforce null safety; use Builder. */
+    AllMapTypes() {}
+
+    public static final class Builder {
+
+      private @Nullable Map<Object, Object> map;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setMap(@NonNull Map<Object, Object> setterArg) {
+        this.map = setterArg;
+        return this;
+      }
+
+      public @NonNull AllMapTypes build() {
+        AllMapTypes pigeonReturn = new AllMapTypes();
+        pigeonReturn.setMap(map);
+        return pigeonReturn;
+      }
+    }
+
+    @NonNull
+    ArrayList<Object> toList() {
+      ArrayList<Object> toListResult = new ArrayList<Object>(1);
+      toListResult.add(map);
+      return toListResult;
+    }
+
+    static @NonNull AllMapTypes fromList(@NonNull ArrayList<Object> __pigeon_list) {
+      AllMapTypes pigeonResult = new AllMapTypes();
+      Object map = __pigeon_list.get(0);
+      pigeonResult.setMap((Map<Object, Object>) map);
+      return pigeonResult;
+    }
+  }
+
+  /** Generated class from Pigeon that represents data sent in messages. */
+  public static final class AllListTypes {
+    private @NonNull List<Object> list;
+
+    public @NonNull List<Object> getList() {
+      return list;
+    }
+
+    public void setList(@NonNull List<Object> setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"list\" is null.");
+      }
+      this.list = setterArg;
+    }
+
+    private @NonNull List<String> stringList;
+
+    public @NonNull List<String> getStringList() {
+      return stringList;
+    }
+
+    public void setStringList(@NonNull List<String> setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"stringList\" is null.");
+      }
+      this.stringList = setterArg;
+    }
+
+    private @NonNull List<Long> intList;
+
+    public @NonNull List<Long> getIntList() {
+      return intList;
+    }
+
+    public void setIntList(@NonNull List<Long> setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"intList\" is null.");
+      }
+      this.intList = setterArg;
+    }
+
+    private @NonNull List<Double> doubleList;
+
+    public @NonNull List<Double> getDoubleList() {
+      return doubleList;
+    }
+
+    public void setDoubleList(@NonNull List<Double> setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"doubleList\" is null.");
+      }
+      this.doubleList = setterArg;
+    }
+
+    private @NonNull List<Boolean> boolList;
+
+    public @NonNull List<Boolean> getBoolList() {
+      return boolList;
+    }
+
+    public void setBoolList(@NonNull List<Boolean> setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"boolList\" is null.");
+      }
+      this.boolList = setterArg;
+    }
+
+    private @NonNull List<AnEnum> enumList;
+
+    public @NonNull List<AnEnum> getEnumList() {
+      return enumList;
+    }
+
+    public void setEnumList(@NonNull List<AnEnum> setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"enumList\" is null.");
+      }
+      this.enumList = setterArg;
+    }
+
+    /** Constructor is non-public to enforce null safety; use Builder. */
+    AllListTypes() {}
+
+    public static final class Builder {
+
+      private @Nullable List<Object> list;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setList(@NonNull List<Object> setterArg) {
+        this.list = setterArg;
+        return this;
+      }
+
+      private @Nullable List<String> stringList;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setStringList(@NonNull List<String> setterArg) {
+        this.stringList = setterArg;
+        return this;
+      }
+
+      private @Nullable List<Long> intList;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setIntList(@NonNull List<Long> setterArg) {
+        this.intList = setterArg;
+        return this;
+      }
+
+      private @Nullable List<Double> doubleList;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setDoubleList(@NonNull List<Double> setterArg) {
+        this.doubleList = setterArg;
+        return this;
+      }
+
+      private @Nullable List<Boolean> boolList;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setBoolList(@NonNull List<Boolean> setterArg) {
+        this.boolList = setterArg;
+        return this;
+      }
+
+      private @Nullable List<AnEnum> enumList;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setEnumList(@NonNull List<AnEnum> setterArg) {
+        this.enumList = setterArg;
+        return this;
+      }
+
+      public @NonNull AllListTypes build() {
+        AllListTypes pigeonReturn = new AllListTypes();
+        pigeonReturn.setList(list);
+        pigeonReturn.setStringList(stringList);
+        pigeonReturn.setIntList(intList);
+        pigeonReturn.setDoubleList(doubleList);
+        pigeonReturn.setBoolList(boolList);
+        pigeonReturn.setEnumList(enumList);
+        return pigeonReturn;
+      }
+    }
+
+    @NonNull
+    ArrayList<Object> toList() {
+      ArrayList<Object> toListResult = new ArrayList<Object>(6);
+      toListResult.add(list);
+      toListResult.add(stringList);
+      toListResult.add(intList);
+      toListResult.add(doubleList);
+      toListResult.add(boolList);
+      toListResult.add(enumList);
+      return toListResult;
+    }
+
+    static @NonNull AllListTypes fromList(@NonNull ArrayList<Object> __pigeon_list) {
+      AllListTypes pigeonResult = new AllListTypes();
+      Object list = __pigeon_list.get(0);
+      pigeonResult.setList((List<Object>) list);
+      Object stringList = __pigeon_list.get(1);
+      pigeonResult.setStringList((List<String>) stringList);
+      Object intList = __pigeon_list.get(2);
+      pigeonResult.setIntList((List<Long>) intList);
+      Object doubleList = __pigeon_list.get(3);
+      pigeonResult.setDoubleList((List<Double>) doubleList);
+      Object boolList = __pigeon_list.get(4);
+      pigeonResult.setBoolList((List<Boolean>) boolList);
+      Object enumList = __pigeon_list.get(5);
+      pigeonResult.setEnumList((List<AnEnum>) enumList);
+      return pigeonResult;
+    }
+  }
+
   /**
    * A data class containing a List, used in unit tests.
    *
@@ -1399,6 +1672,68 @@ public class CoreTests {
     }
   }
 
+  private static class PigeonCodec extends StandardMessageCodec {
+    public static final PigeonCodec INSTANCE = new PigeonCodec();
+
+    private PigeonCodec() {}
+
+    @Override
+    protected Object readValueOfType(byte type, @NonNull ByteBuffer buffer) {
+      switch (type) {
+        case (byte) 128:
+          return AllTypes.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 129:
+          return AllNullableTypes.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 130:
+          return AllNullableTypesWithoutRecursion.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 131:
+          return AllClassesWrapper.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 132:
+          return AllMapTypes.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 133:
+          return AllListTypes.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 134:
+          return TestMessage.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 135:
+          Object value = readValue(buffer);
+          return value == null ? null : AnEnum.values()[(int) value];
+        default:
+          return super.readValueOfType(type, buffer);
+      }
+    }
+
+    @Override
+    protected void writeValue(@NonNull ByteArrayOutputStream stream, Object value) {
+      if (value instanceof AllTypes) {
+        stream.write(128);
+        writeValue(stream, ((AllTypes) value).toList());
+      } else if (value instanceof AllNullableTypes) {
+        stream.write(129);
+        writeValue(stream, ((AllNullableTypes) value).toList());
+      } else if (value instanceof AllNullableTypesWithoutRecursion) {
+        stream.write(130);
+        writeValue(stream, ((AllNullableTypesWithoutRecursion) value).toList());
+      } else if (value instanceof AllClassesWrapper) {
+        stream.write(131);
+        writeValue(stream, ((AllClassesWrapper) value).toList());
+      } else if (value instanceof AllMapTypes) {
+        stream.write(132);
+        writeValue(stream, ((AllMapTypes) value).toList());
+      } else if (value instanceof AllListTypes) {
+        stream.write(133);
+        writeValue(stream, ((AllListTypes) value).toList());
+      } else if (value instanceof TestMessage) {
+        stream.write(134);
+        writeValue(stream, ((TestMessage) value).toList());
+      } else if (value instanceof AnEnum) {
+        stream.write(135);
+        writeValue(stream, value == null ? null : ((AnEnum) value).index);
+      } else {
+        super.writeValue(stream, value);
+      }
+    }
+  }
+
   /** Asynchronous error handling return type for non-nullable API method returns. */
   public interface Result<T> {
     /** Success case callback method for handling returns. */
@@ -1423,53 +1758,6 @@ public class CoreTests {
     /** Failure case callback method for handling errors. */
     void error(@NonNull Throwable error);
   }
-
-  private static class HostIntegrationCoreApiCodec extends StandardMessageCodec {
-    public static final HostIntegrationCoreApiCodec INSTANCE = new HostIntegrationCoreApiCodec();
-
-    private HostIntegrationCoreApiCodec() {}
-
-    @Override
-    protected Object readValueOfType(byte type, @NonNull ByteBuffer buffer) {
-      switch (type) {
-        case (byte) 128:
-          return AllClassesWrapper.fromList((ArrayList<Object>) readValue(buffer));
-        case (byte) 129:
-          return AllNullableTypes.fromList((ArrayList<Object>) readValue(buffer));
-        case (byte) 130:
-          return AllNullableTypesWithoutRecursion.fromList((ArrayList<Object>) readValue(buffer));
-        case (byte) 131:
-          return AllTypes.fromList((ArrayList<Object>) readValue(buffer));
-        case (byte) 132:
-          return TestMessage.fromList((ArrayList<Object>) readValue(buffer));
-        default:
-          return super.readValueOfType(type, buffer);
-      }
-    }
-
-    @Override
-    protected void writeValue(@NonNull ByteArrayOutputStream stream, Object value) {
-      if (value instanceof AllClassesWrapper) {
-        stream.write(128);
-        writeValue(stream, ((AllClassesWrapper) value).toList());
-      } else if (value instanceof AllNullableTypes) {
-        stream.write(129);
-        writeValue(stream, ((AllNullableTypes) value).toList());
-      } else if (value instanceof AllNullableTypesWithoutRecursion) {
-        stream.write(130);
-        writeValue(stream, ((AllNullableTypesWithoutRecursion) value).toList());
-      } else if (value instanceof AllTypes) {
-        stream.write(131);
-        writeValue(stream, ((AllTypes) value).toList());
-      } else if (value instanceof TestMessage) {
-        stream.write(132);
-        writeValue(stream, ((TestMessage) value).toList());
-      } else {
-        super.writeValue(stream, value);
-      }
-    }
-  }
-
   /**
    * The core interface that each host language plugin must implement in platform_test integration
    * tests.
@@ -1725,7 +2013,7 @@ public class CoreTests {
 
     /** The codec used by HostIntegrationCoreApi. */
     static @NonNull MessageCodec<Object> getCodec() {
-      return HostIntegrationCoreApiCodec.INSTANCE;
+      return PigeonCodec.INSTANCE;
     }
     /**
      * Sets up an instance of `HostIntegrationCoreApi` to handle messages through the
@@ -2109,10 +2397,10 @@ public class CoreTests {
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
-                AnEnum anEnumArg = AnEnum.values()[(int) args.get(0)];
+                AnEnum anEnumArg = (AnEnum) args.get(0);
                 try {
                   AnEnum output = api.echoEnum(anEnumArg);
-                  wrapped.add(0, output.index);
+                  wrapped.add(0, output);
                 } catch (Throwable exception) {
                   ArrayList<Object> wrappedError = wrapError(exception);
                   wrapped = wrappedError;
@@ -2594,10 +2882,10 @@ public class CoreTests {
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
-                AnEnum anEnumArg = args.get(0) == null ? null : AnEnum.values()[(int) args.get(0)];
+                AnEnum anEnumArg = (AnEnum) args.get(0);
                 try {
                   AnEnum output = api.echoNullableEnum(anEnumArg);
-                  wrapped.add(0, output == null ? null : output.index);
+                  wrapped.add(0, output);
                 } catch (Throwable exception) {
                   ArrayList<Object> wrappedError = wrapError(exception);
                   wrapped = wrappedError;
@@ -2960,11 +3248,11 @@ public class CoreTests {
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
-                AnEnum anEnumArg = AnEnum.values()[(int) args.get(0)];
+                AnEnum anEnumArg = (AnEnum) args.get(0);
                 Result<AnEnum> resultCallback =
                     new Result<AnEnum>() {
                       public void success(AnEnum result) {
-                        wrapped.add(0, result.index);
+                        wrapped.add(0, result);
                         reply.reply(wrapped);
                       }
 
@@ -3437,11 +3725,11 @@ public class CoreTests {
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
-                AnEnum anEnumArg = args.get(0) == null ? null : AnEnum.values()[(int) args.get(0)];
+                AnEnum anEnumArg = (AnEnum) args.get(0);
                 NullableResult<AnEnum> resultCallback =
                     new NullableResult<AnEnum>() {
                       public void success(AnEnum result) {
-                        wrapped.add(0, result == null ? null : result.index);
+                        wrapped.add(0, result);
                         reply.reply(wrapped);
                       }
 
@@ -3957,11 +4245,11 @@ public class CoreTests {
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
-                AnEnum anEnumArg = AnEnum.values()[(int) args.get(0)];
+                AnEnum anEnumArg = (AnEnum) args.get(0);
                 Result<AnEnum> resultCallback =
                     new Result<AnEnum>() {
                       public void success(AnEnum result) {
-                        wrapped.add(0, result.index);
+                        wrapped.add(0, result);
                         reply.reply(wrapped);
                       }
 
@@ -4214,11 +4502,11 @@ public class CoreTests {
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
-                AnEnum anEnumArg = args.get(0) == null ? null : AnEnum.values()[(int) args.get(0)];
+                AnEnum anEnumArg = (AnEnum) args.get(0);
                 NullableResult<AnEnum> resultCallback =
                     new NullableResult<AnEnum>() {
                       public void success(AnEnum result) {
-                        wrapped.add(0, result == null ? null : result.index);
+                        wrapped.add(0, result);
                         reply.reply(wrapped);
                       }
 
@@ -4268,54 +4556,6 @@ public class CoreTests {
       }
     }
   }
-
-  private static class FlutterIntegrationCoreApiCodec extends StandardMessageCodec {
-    public static final FlutterIntegrationCoreApiCodec INSTANCE =
-        new FlutterIntegrationCoreApiCodec();
-
-    private FlutterIntegrationCoreApiCodec() {}
-
-    @Override
-    protected Object readValueOfType(byte type, @NonNull ByteBuffer buffer) {
-      switch (type) {
-        case (byte) 128:
-          return AllClassesWrapper.fromList((ArrayList<Object>) readValue(buffer));
-        case (byte) 129:
-          return AllNullableTypes.fromList((ArrayList<Object>) readValue(buffer));
-        case (byte) 130:
-          return AllNullableTypesWithoutRecursion.fromList((ArrayList<Object>) readValue(buffer));
-        case (byte) 131:
-          return AllTypes.fromList((ArrayList<Object>) readValue(buffer));
-        case (byte) 132:
-          return TestMessage.fromList((ArrayList<Object>) readValue(buffer));
-        default:
-          return super.readValueOfType(type, buffer);
-      }
-    }
-
-    @Override
-    protected void writeValue(@NonNull ByteArrayOutputStream stream, Object value) {
-      if (value instanceof AllClassesWrapper) {
-        stream.write(128);
-        writeValue(stream, ((AllClassesWrapper) value).toList());
-      } else if (value instanceof AllNullableTypes) {
-        stream.write(129);
-        writeValue(stream, ((AllNullableTypes) value).toList());
-      } else if (value instanceof AllNullableTypesWithoutRecursion) {
-        stream.write(130);
-        writeValue(stream, ((AllNullableTypesWithoutRecursion) value).toList());
-      } else if (value instanceof AllTypes) {
-        stream.write(131);
-        writeValue(stream, ((AllTypes) value).toList());
-      } else if (value instanceof TestMessage) {
-        stream.write(132);
-        writeValue(stream, ((TestMessage) value).toList());
-      } else {
-        super.writeValue(stream, value);
-      }
-    }
-  }
-
   /**
    * The core interface that the Dart platform_test code implements for host integration tests to
    * call into.
@@ -4339,7 +4579,7 @@ public class CoreTests {
     /** Public interface for sending reply. */
     /** The codec used by FlutterIntegrationCoreApi. */
     static @NonNull MessageCodec<Object> getCodec() {
-      return FlutterIntegrationCoreApiCodec.INSTANCE;
+      return PigeonCodec.INSTANCE;
     }
     /**
      * A no-op function taking no arguments and returning no value, to sanity test basic calling.
@@ -4853,7 +5093,7 @@ public class CoreTests {
       BasicMessageChannel<Object> channel =
           new BasicMessageChannel<>(binaryMessenger, channelName, getCodec());
       channel.send(
-          new ArrayList<Object>(Collections.singletonList(anEnumArg.index)),
+          new ArrayList<Object>(Collections.singletonList(anEnumArg)),
           channelReply -> {
             if (channelReply instanceof List) {
               List<Object> listReply = (List<Object>) channelReply;
@@ -4871,7 +5111,7 @@ public class CoreTests {
                         ""));
               } else {
                 @SuppressWarnings("ConstantConditions")
-                AnEnum output = AnEnum.values()[(int) listReply.get(0)];
+                AnEnum output = (AnEnum) listReply.get(0);
                 result.success(output);
               }
             } else {
@@ -5092,8 +5332,7 @@ public class CoreTests {
       BasicMessageChannel<Object> channel =
           new BasicMessageChannel<>(binaryMessenger, channelName, getCodec());
       channel.send(
-          new ArrayList<Object>(
-              Collections.singletonList(anEnumArg == null ? null : anEnumArg.index)),
+          new ArrayList<Object>(Collections.singletonList(anEnumArg)),
           channelReply -> {
             if (channelReply instanceof List) {
               List<Object> listReply = (List<Object>) channelReply;
@@ -5105,8 +5344,7 @@ public class CoreTests {
                         (String) listReply.get(2)));
               } else {
                 @SuppressWarnings("ConstantConditions")
-                AnEnum output =
-                    listReply.get(0) == null ? null : AnEnum.values()[(int) listReply.get(0)];
+                AnEnum output = (AnEnum) listReply.get(0);
                 result.success(output);
               }
             } else {
@@ -5189,7 +5427,7 @@ public class CoreTests {
 
     /** The codec used by HostTrivialApi. */
     static @NonNull MessageCodec<Object> getCodec() {
-      return new StandardMessageCodec();
+      return PigeonCodec.INSTANCE;
     }
     /** Sets up an instance of `HostTrivialApi` to handle messages through the `binaryMessenger`. */
     static void setUp(@NonNull BinaryMessenger binaryMessenger, @Nullable HostTrivialApi api) {
@@ -5240,7 +5478,7 @@ public class CoreTests {
 
     /** The codec used by HostSmallApi. */
     static @NonNull MessageCodec<Object> getCodec() {
-      return new StandardMessageCodec();
+      return PigeonCodec.INSTANCE;
     }
     /** Sets up an instance of `HostSmallApi` to handle messages through the `binaryMessenger`. */
     static void setUp(@NonNull BinaryMessenger binaryMessenger, @Nullable HostSmallApi api) {
@@ -5316,33 +5554,6 @@ public class CoreTests {
       }
     }
   }
-
-  private static class FlutterSmallApiCodec extends StandardMessageCodec {
-    public static final FlutterSmallApiCodec INSTANCE = new FlutterSmallApiCodec();
-
-    private FlutterSmallApiCodec() {}
-
-    @Override
-    protected Object readValueOfType(byte type, @NonNull ByteBuffer buffer) {
-      switch (type) {
-        case (byte) 128:
-          return TestMessage.fromList((ArrayList<Object>) readValue(buffer));
-        default:
-          return super.readValueOfType(type, buffer);
-      }
-    }
-
-    @Override
-    protected void writeValue(@NonNull ByteArrayOutputStream stream, Object value) {
-      if (value instanceof TestMessage) {
-        stream.write(128);
-        writeValue(stream, ((TestMessage) value).toList());
-      } else {
-        super.writeValue(stream, value);
-      }
-    }
-  }
-
   /**
    * A simple API called in some unit tests.
    *
@@ -5365,7 +5576,7 @@ public class CoreTests {
     /** Public interface for sending reply. */
     /** The codec used by FlutterSmallApi. */
     static @NonNull MessageCodec<Object> getCodec() {
-      return FlutterSmallApiCodec.INSTANCE;
+      return PigeonCodec.INSTANCE;
     }
 
     public void echoWrappedList(@NonNull TestMessage msgArg, @NonNull Result<TestMessage> result) {

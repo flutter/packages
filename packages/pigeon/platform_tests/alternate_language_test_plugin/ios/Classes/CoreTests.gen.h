@@ -32,6 +32,8 @@ typedef NS_ENUM(NSUInteger, FLTAnEnum) {
 @class FLTAllNullableTypes;
 @class FLTAllNullableTypesWithoutRecursion;
 @class FLTAllClassesWrapper;
+@class FLTAllMapTypes;
+@class FLTAllListTypes;
 @class FLTTestMessage;
 
 /// A class containing all supported types.
@@ -50,7 +52,9 @@ typedef NS_ENUM(NSUInteger, FLTAnEnum) {
                          aMap:(NSDictionary *)aMap
                        anEnum:(FLTAnEnum)anEnum
                       aString:(NSString *)aString
-                     anObject:(id)anObject;
+                     anObject:(id)anObject
+                      allMaps:(FLTAllMapTypes *)allMaps
+                     allLists:(FLTAllListTypes *)allLists;
 @property(nonatomic, assign) BOOL aBool;
 @property(nonatomic, assign) NSInteger anInt;
 @property(nonatomic, assign) NSInteger anInt64;
@@ -64,6 +68,8 @@ typedef NS_ENUM(NSUInteger, FLTAnEnum) {
 @property(nonatomic, assign) FLTAnEnum anEnum;
 @property(nonatomic, copy) NSString *aString;
 @property(nonatomic, strong) id anObject;
+@property(nonatomic, strong) FLTAllMapTypes *allMaps;
+@property(nonatomic, strong) FLTAllListTypes *allLists;
 @end
 
 /// A class containing all supported nullable types.
@@ -164,14 +170,38 @@ typedef NS_ENUM(NSUInteger, FLTAnEnum) {
 @property(nonatomic, strong, nullable) FLTAllTypes *allTypes;
 @end
 
+@interface FLTAllMapTypes : NSObject
+/// `init` unavailable to enforce nonnull fields, see the `make` class method.
+- (instancetype)init NS_UNAVAILABLE;
++ (instancetype)makeWithMap:(NSDictionary *)map;
+@property(nonatomic, copy) NSDictionary *map;
+@end
+
+@interface FLTAllListTypes : NSObject
+/// `init` unavailable to enforce nonnull fields, see the `make` class method.
+- (instancetype)init NS_UNAVAILABLE;
++ (instancetype)makeWithList:(NSArray *)list
+                  stringList:(NSArray<NSString *> *)stringList
+                     intList:(NSArray<NSNumber *> *)intList
+                  doubleList:(NSArray<NSNumber *> *)doubleList
+                    boolList:(NSArray<NSNumber *> *)boolList
+                    enumList:(NSArray<FLTAnEnumBox *> *)enumList;
+@property(nonatomic, copy) NSArray *list;
+@property(nonatomic, copy) NSArray<NSString *> *stringList;
+@property(nonatomic, copy) NSArray<NSNumber *> *intList;
+@property(nonatomic, copy) NSArray<NSNumber *> *doubleList;
+@property(nonatomic, copy) NSArray<NSNumber *> *boolList;
+@property(nonatomic, copy) NSArray<FLTAnEnumBox *> *enumList;
+@end
+
 /// A data class containing a List, used in unit tests.
 @interface FLTTestMessage : NSObject
 + (instancetype)makeWithTestList:(nullable NSArray *)testList;
 @property(nonatomic, copy, nullable) NSArray *testList;
 @end
 
-/// The codec used by FLTHostIntegrationCoreApi.
-NSObject<FlutterMessageCodec> *FLTHostIntegrationCoreApiGetCodec(void);
+/// The codec used by all APIs.
+NSObject<FlutterMessageCodec> *FLTCoreTestsGetCodec(void);
 
 /// The core interface that each host language plugin must implement in
 /// platform_test integration tests.
@@ -486,9 +516,6 @@ extern void SetUpFLTHostIntegrationCoreApiWithSuffix(
     id<FlutterBinaryMessenger> binaryMessenger, NSObject<FLTHostIntegrationCoreApi> *_Nullable api,
     NSString *messageChannelSuffix);
 
-/// The codec used by FLTFlutterIntegrationCoreApi.
-NSObject<FlutterMessageCodec> *FLTFlutterIntegrationCoreApiGetCodec(void);
-
 /// The core interface that the Dart platform_test code implements for host
 /// integration tests to call into.
 @interface FLTFlutterIntegrationCoreApi : NSObject
@@ -592,9 +619,6 @@ NSObject<FlutterMessageCodec> *FLTFlutterIntegrationCoreApiGetCodec(void);
              completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion;
 @end
 
-/// The codec used by FLTHostTrivialApi.
-NSObject<FlutterMessageCodec> *FLTHostTrivialApiGetCodec(void);
-
 /// An API that can be implemented for minimal, compile-only tests.
 @protocol FLTHostTrivialApi
 - (void)noopWithError:(FlutterError *_Nullable *_Nonnull)error;
@@ -606,9 +630,6 @@ extern void SetUpFLTHostTrivialApi(id<FlutterBinaryMessenger> binaryMessenger,
 extern void SetUpFLTHostTrivialApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger,
                                              NSObject<FLTHostTrivialApi> *_Nullable api,
                                              NSString *messageChannelSuffix);
-
-/// The codec used by FLTHostSmallApi.
-NSObject<FlutterMessageCodec> *FLTHostSmallApiGetCodec(void);
 
 /// A simple API implemented in some unit tests.
 @protocol FLTHostSmallApi
@@ -623,9 +644,6 @@ extern void SetUpFLTHostSmallApi(id<FlutterBinaryMessenger> binaryMessenger,
 extern void SetUpFLTHostSmallApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger,
                                            NSObject<FLTHostSmallApi> *_Nullable api,
                                            NSString *messageChannelSuffix);
-
-/// The codec used by FLTFlutterSmallApi.
-NSObject<FlutterMessageCodec> *FLTFlutterSmallApiGetCodec(void);
 
 /// A simple API called in some unit tests.
 @interface FLTFlutterSmallApi : NSObject

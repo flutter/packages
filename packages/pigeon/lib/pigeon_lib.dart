@@ -621,6 +621,12 @@ class ObjcGeneratorAdapter implements GeneratorAdapter {
       StringSink sink, PigeonOptions options, Root root, FileType fileType) {
     final ObjcOptions objcOptions = options.objcOptions ?? const ObjcOptions();
     final ObjcOptions objcOptionsWithHeader = objcOptions.merge(ObjcOptions(
+      localizedClassModifier: options.objcSourceOut
+              ?.split('/')
+              .lastOrNull
+              ?.split('.')
+              .firstOrNull ??
+          '',
       copyrightHeader: options.copyrightHeader != null
           ? _lineReader(
               path.posix.join(options.basePath ?? '', options.copyrightHeader))
@@ -701,6 +707,8 @@ class SwiftGeneratorAdapter implements GeneratorAdapter {
       StringSink sink, PigeonOptions options, Root root, FileType fileType) {
     SwiftOptions swiftOptions = options.swiftOptions ?? const SwiftOptions();
     swiftOptions = swiftOptions.merge(SwiftOptions(
+      localizedClassModifier:
+          options.swiftOut?.split('/').lastOrNull?.split('.').firstOrNull ?? '',
       copyrightHeader: options.copyrightHeader != null
           ? _lineReader(
               path.posix.join(options.basePath ?? '', options.copyrightHeader))
@@ -783,6 +791,9 @@ class KotlinGeneratorAdapter implements GeneratorAdapter {
     kotlinOptions = kotlinOptions.merge(KotlinOptions(
       errorClassName: kotlinOptions.errorClassName ?? 'FlutterError',
       includeErrorClass: kotlinOptions.includeErrorClass,
+      localizedClassModifier:
+          options.kotlinOut?.split('/').lastOrNull?.split('.').firstOrNull ??
+              '',
       copyrightHeader: options.copyrightHeader != null
           ? _lineReader(
               path.posix.join(options.basePath ?? '', options.copyrightHeader))
@@ -835,13 +846,6 @@ List<Error> _validateAst(Root root, String source) {
           result.add(Error(
             message:
                 'Generic type parameters must be nullable in field "${field.name}" in class "${classDefinition.name}".',
-            lineNumber: _calculateLineNumberNullable(source, field.offset),
-          ));
-        }
-        if (customEnums.contains(typeArgument.baseName)) {
-          result.add(Error(
-            message:
-                'Enum types aren\'t supported in type arguments in "${field.name}" in class "${classDefinition.name}".',
             lineNumber: _calculateLineNumberNullable(source, field.offset),
           ));
         }
@@ -1345,12 +1349,20 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
               (Api apiDefinition) => apiDefinition.name == type.baseName,
             );
     if (assocClass != null) {
-      return type.copyWithClass(assocClass);
+      type = type.copyWithClass(assocClass);
     } else if (assocEnum != null) {
-      return type.copyWithEnum(assocEnum);
+      type = type.copyWithEnum(assocEnum);
     } else if (assocProxyApi != null) {
-      return type.copyWithProxyApi(assocProxyApi);
+      type = type.copyWithProxyApi(assocProxyApi);
     }
+    if (type.typeArguments.isNotEmpty) {
+      final List<TypeDeclaration> newTypes = <TypeDeclaration>[];
+      for (final TypeDeclaration type in type.typeArguments) {
+        newTypes.add(_attachAssociatedDefinition(type));
+      }
+      type = type.copyWithTypeArguments(newTypes);
+    }
+
     return type;
   }
 
@@ -1980,7 +1992,7 @@ class Pigeon {
   }
 
   /// Reads the file located at [path] and generates [ParseResults] by parsing
-  /// it.  [types] optionally filters out what datatypes are actually parsed.
+  /// it. [types] optionally filters out what datatypes are actually parsed.
   /// [sdkPath] for specifying the Dart SDK path for
   /// [AnalysisContextCollection].
   ParseResults parseFile(String inputPath, {String? sdkPath}) {

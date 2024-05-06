@@ -119,7 +119,12 @@ void main() {
     );
     final String code = sink.toString();
     expect(code, contains('enum Foo: Int'));
-    expect(code, contains('let fooArg = Foo(rawValue: args[0] as! Int)!'));
+    expect(
+        code,
+        contains(
+            'let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)'));
+    expect(code, contains('enumResult = Foo(rawValue: enumResultAsInt)'));
+    expect(code, contains('let fooArg = args[0] as! Foo'));
     expect(code, isNot(contains('if (')));
   });
 
@@ -1326,46 +1331,7 @@ void main() {
     expect(code, contains('/// ///'));
   });
 
-  test("doesn't create codecs if no custom datatypes", () {
-    final Root root = Root(
-      apis: <Api>[
-        AstFlutterApi(
-          name: 'Api',
-          methods: <Method>[
-            Method(
-              name: 'method',
-              location: ApiLocation.flutter,
-              returnType: const TypeDeclaration.voidDeclaration(),
-              parameters: <Parameter>[
-                Parameter(
-                  name: 'field',
-                  type: const TypeDeclaration(
-                    baseName: 'int',
-                    isNullable: true,
-                  ),
-                ),
-              ],
-            )
-          ],
-        )
-      ],
-      classes: <Class>[],
-      enums: <Enum>[],
-    );
-    final StringBuffer sink = StringBuffer();
-    const SwiftOptions swiftOptions = SwiftOptions();
-    const SwiftGenerator generator = SwiftGenerator();
-    generator.generate(
-      swiftOptions,
-      root,
-      sink,
-      dartPackageName: DEFAULT_PACKAGE_NAME,
-    );
-    final String code = sink.toString();
-    expect(code, isNot(contains(': FlutterStandardReader ')));
-  });
-
-  test('creates custom codecs if custom datatypes present', () {
+  test('creates custom codecs', () {
     final Root root = Root(apis: <Api>[
       AstFlutterApi(name: 'Api', methods: <Method>[
         Method(
