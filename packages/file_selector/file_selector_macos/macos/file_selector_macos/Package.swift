@@ -4,18 +4,18 @@
 import PackageDescription
 
 let package = Package(
-    name: "file_selector_macos",
-    platforms: [
-        .macOS("10.14")
-    ],
-    products: [
-        .library(name: "file-selector-macos", targets: ["file_selector_macos"])
-    ],
-    dependencies: [],
-    targets: [
-        .target(
-            name: "file_selector_macos",
-            dependencies: []
-        )
-    ]
+  name: "file_selector_macos",
+  platforms: [
+    .macOS("10.14")
+  ],
+  products: [
+    .library(name: "file-selector-macos", targets: ["file_selector_macos"])
+  ],
+  dependencies: [],
+  targets: [
+    .target(
+      name: "file_selector_macos",
+      dependencies: []
+    )
+  ]
 )
