@@ -2260,14 +2260,16 @@ ${_argParser.usage}''';
       options = options.merge(PigeonOptions(
           objcOptions: (options.objcOptions ?? const ObjcOptions()).merge(
               ObjcOptions(
-                  headerIncludePath: path.basename(options.objcHeaderOut!)))));
+                  headerIncludePath: options.objcOptions?.headerIncludePath ??
+                      path.basename(options.objcHeaderOut!)))));
     }
 
     if (options.cppHeaderOut != null) {
       options = options.merge(PigeonOptions(
           cppOptions: (options.cppOptions ?? const CppOptions()).merge(
               CppOptions(
-                  headerIncludePath: path.basename(options.cppHeaderOut!)))));
+                  headerIncludePath: options.cppOptions?.headerIncludePath ??
+                      path.basename(options.cppHeaderOut!)))));
     }
 
     for (final GeneratorAdapter adapter in safeGeneratorAdapters) {
