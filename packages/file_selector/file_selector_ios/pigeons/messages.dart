@@ -7,7 +7,7 @@ import 'package:pigeon/pigeon.dart';
 @ConfigurePigeon(PigeonOptions(
   dartOut: 'lib/src/messages.g.dart',
   dartTestOut: 'test/test_api.g.dart',
-  objcHeaderOut: 'ios/file_selector_ios/Sources/file_selector_ios/messages.g.h',
+  objcHeaderOut: 'ios/file_selector_ios/Sources/file_selector_ios/include/file_selector_ios/messages.g.h',
   objcSourceOut: 'ios/file_selector_ios/Sources/file_selector_ios/messages.g.m',
   objcOptions: ObjcOptions(
     prefix: 'FFS',
