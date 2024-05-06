@@ -150,7 +150,6 @@ targets:
     recipe: packages/packages
     timeout: 60
     properties:
-      add_recipes_cq: "true"
       target_file: dart_unit_tests.yaml
       channel: master
       version_file: flutter_master.version
@@ -208,7 +207,6 @@ targets:
     recipe: packages/packages
     timeout: 60
     properties:
-      add_recipes_cq: "true"
       target_file: web_dart_unit_tests.yaml
       channel: master
       version_file: flutter_master.version
@@ -251,7 +249,6 @@ targets:
     recipe: packages/packages
     timeout: 30
     properties:
-      add_recipes_cq: "true"
       target_file: analyze.yaml
       channel: master
       version_file: flutter_master.version
@@ -366,7 +363,6 @@ targets:
     recipe: packages/packages
     timeout: 30
     properties:
-      add_recipes_cq: "true"
       version_file: flutter_master.version
       target_file: android_build_all_packages.yaml
       channel: master
@@ -1055,7 +1051,6 @@ targets:
     recipe: packages/packages
     timeout: 30
     properties:
-      add_recipes_cq: "true"
       version_file: flutter_master.version
       target_file: macos_repo_checks.yaml
       dependencies: >
@@ -1070,7 +1065,6 @@ targets:
     recipe: packages/packages
     timeout: 30
     properties:
-      add_recipes_cq: "true"
       version_file: flutter_master.version
       target_file: macos_build_all_packages.yaml
       channel: master
@@ -1125,7 +1119,6 @@ targets:
     recipe: packages/packages
     timeout: 60
     properties:
-      add_recipes_cq: "true"
       version_file: flutter_master.version
       target_file: macos_custom_package_tests.yaml
       channel: master
@@ -1142,7 +1135,6 @@ targets:
     recipe: packages/packages
     timeout: 60
     properties:
-      add_recipes_cq: "true"
       version_file: flutter_stable.version
       target_file: macos_custom_package_tests.yaml
       channel: stable
@@ -1163,7 +1155,6 @@ targets:
     timeout: 30
     properties:
       channel: master
-      add_recipes_cq: "true"
       version_file: flutter_master.version
       target_file: ios_build_all_packages.yaml
       env_variables: >-
@@ -1176,7 +1167,6 @@ targets:
     timeout: 30
     properties:
       channel: stable
-      add_recipes_cq: "true"
       version_file: flutter_stable.version
       target_file: ios_build_all_packages.yaml
       env_variables: >-
@@ -1204,7 +1194,6 @@ targets:
     timeout: 60
     properties:
       channel: master
-      add_recipes_cq: "true"
       version_file: flutter_master.version
       target_file: ios_platform_tests.yaml
       package_sharding: "--shardIndex 1 --shardCount 5"
@@ -1219,7 +1208,6 @@ targets:
     timeout: 60
     properties:
       channel: master
-      add_recipes_cq: "true"
       version_file: flutter_master.version
       target_file: ios_platform_tests.yaml
       package_sharding: "--shardIndex 2 --shardCount 5"
@@ -1234,7 +1222,6 @@ targets:
     timeout: 60
     properties:
       channel: master
-      add_recipes_cq: "true"
       version_file: flutter_master.version
       target_file: ios_platform_tests.yaml
       package_sharding: "--shardIndex 3 --shardCount 5"
@@ -1249,7 +1236,6 @@ targets:
     timeout: 60
     properties:
       channel: master
-      add_recipes_cq: "true"
       version_file: flutter_master.version
       target_file: ios_platform_tests.yaml
       package_sharding: "--shardIndex 4 --shardCount 5"
@@ -1340,7 +1326,6 @@ targets:
     recipe: packages/packages
     timeout: 60
     properties:
-      add_recipes_cq: "true"
       target_file: windows_custom_package_tests.yaml
       channel: master
       version_file: flutter_master.version
@@ -1404,7 +1389,6 @@ targets:
     recipe: packages/packages
     timeout: 60
     properties:
-      add_recipes_cq: "true"
       target_file: windows_build_and_platform_tests.yaml
       channel: master
       version_file: flutter_master.version
@@ -1423,7 +1407,6 @@ targets:
     recipe: packages/packages
     timeout: 60
     properties:
-      add_recipes_cq: "true"
       target_file: windows_build_and_platform_tests.yaml
       channel: stable
       version_file: flutter_stable.version
@@ -1442,7 +1425,6 @@ targets:
     recipe: packages/packages
     timeout: 60
     properties:
-      add_recipes_cq: "true"
       target_file: windows_build_and_platform_tests.yaml
       channel: stable
       version_file: flutter_stable.version
@@ -1461,7 +1443,6 @@ targets:
     recipe: packages/packages
     timeout: 30
     properties:
-      add_recipes_cq: "true"
       target_file: windows_build_all_packages.yaml
       channel: master
       version_file: flutter_master.version
@@ -1515,7 +1496,6 @@ targets:
     timeout: 30
     bringup: true
     properties:
-      add_recipes_cq: "true"
       target_file: windows_build_all_packages.yaml
       channel: stable
       version_file: flutter_stable.version

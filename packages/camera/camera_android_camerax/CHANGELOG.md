@@ -1,8 +1,11 @@
-## 0.6.4+1
+## 0.6.4+2
 
 * Updates `README.md` to reflect the fact that the `camera_android_camerax` camera plugin implementation
   is the endorsed Android implementation for `camera: ^0.11.0`.
-* Adds empty implementation for `prepareVideoRecording`, which is not used for Android.
+
+## 0.6.4+1
+
+* Adds empty implementation for `prepareForVideoRecording` since this optimization is not used on Android.
 
 ## 0.6.4
 
