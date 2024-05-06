@@ -1,3 +1,8 @@
+## 0.6.4+1
+
+* Updates `README.md` to reflect the fact that the `camera_android_camerax` camera plugin implementation
+  is the endorsed Android implementation for `camera: ^0.11.0`.
+
 ## 0.6.4
 
 * Prevents usage of unsupported concurrent `UseCase`s based on the capabiliites of the camera device.
