@@ -11,6 +11,7 @@ import 'package:pigeon/pigeon.dart';
   objcSourceOut: 'ios/file_selector_ios/Sources/file_selector_ios/messages.g.m',
   objcOptions: ObjcOptions(
     prefix: 'FFS',
+    headerIncludePath: './include/file_selector_ios/messages.g.h',
   ),
   copyrightHeader: 'pigeons/copyright.txt',
 ))
