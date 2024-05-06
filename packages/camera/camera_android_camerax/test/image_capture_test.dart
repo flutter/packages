@@ -36,7 +36,7 @@ void main() {
       );
       ImageCapture.detached(
         instanceManager: instanceManager,
-        initialTargetRotation: Surface.ROTATION_180,
+        initialTargetRotation: Surface.rotation180,
         targetFlashMode: ImageCapture.flashModeOn,
         resolutionSelector: MockResolutionSelector(),
       );
@@ -53,7 +53,7 @@ void main() {
         onWeakReferenceRemoved: (_) {},
       );
 
-      const int targetRotation = Surface.ROTATION_270;
+      const int targetRotation = Surface.rotation270;
       const int targetFlashMode = ImageCapture.flashModeAuto;
       final MockResolutionSelector mockResolutionSelector =
           MockResolutionSelector();
@@ -112,7 +112,7 @@ void main() {
       final InstanceManager instanceManager = InstanceManager(
         onWeakReferenceRemoved: (_) {},
       );
-      const int targetRotation = Surface.ROTATION_180;
+      const int targetRotation = Surface.rotation180;
       final ImageCapture imageCapture = ImageCapture.detached(
         instanceManager: instanceManager,
       );
