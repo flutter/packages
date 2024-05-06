@@ -4040,4 +4040,22 @@ void main() {
     verify(
         camera.processCameraProvider!.unbind(<UseCase>[camera.imageAnalysis!]));
   });
+
+  test(
+      'prepareForVideoRecording does not make any calls involving starting video recording',
+      () async {
+    final AndroidCameraCameraX camera = AndroidCameraCameraX();
+
+    // Set directly for test versus calling createCamera.
+    camera.processCameraProvider = MockProcessCameraProvider();
+    camera.recorder = MockRecorder();
+    camera.videoCapture = MockVideoCapture();
+    camera.camera = MockCamera();
+
+    await camera.prepareForVideoRecording();
+    verifyNoMoreInteractions(camera.processCameraProvider);
+    verifyNoMoreInteractions(camera.recorder);
+    verifyNoMoreInteractions(camera.videoCapture);
+    verifyNoMoreInteractions(camera.camera);
+  });
 }
