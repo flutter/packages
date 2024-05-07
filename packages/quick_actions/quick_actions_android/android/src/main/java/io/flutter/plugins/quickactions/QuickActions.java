@@ -18,7 +18,6 @@ import androidx.annotation.Nullable;
 import androidx.core.content.pm.ShortcutInfoCompat;
 import androidx.core.content.pm.ShortcutManagerCompat;
 import androidx.core.graphics.drawable.IconCompat;
-
 import io.flutter.plugins.quickactions.Messages.AndroidQuickActionsApi;
 import io.flutter.plugins.quickactions.Messages.FlutterError;
 import io.flutter.plugins.quickactions.Messages.Result;
@@ -132,7 +131,8 @@ final class QuickActions implements AndroidQuickActionsApi {
       final String icon = shortcut.getIcon();
       final String type = shortcut.getType();
       final String title = shortcut.getLocalizedTitle();
-      final ShortcutInfoCompat.Builder shortcutBuilder = new ShortcutInfoCompat.Builder(context, type);
+      final ShortcutInfoCompat.Builder shortcutBuilder =
+          new ShortcutInfoCompat.Builder(context, type);
 
       final int resourceId = loadResourceId(context, icon);
       final Intent intent = getIntentToOpenMainActivity(type);
