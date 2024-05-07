@@ -88,9 +88,9 @@
   return anObject;
 }
 
-- (nullable NSArray<id> *)echoList:(NSArray<id> *)aList
+- (nullable NSArray<id> *)echoList:(NSArray<id> *)list
                              error:(FlutterError *_Nullable *_Nonnull)error {
-  return aList;
+  return list;
 }
 
 - (nullable NSDictionary<NSString *, id> *)echoMap:(NSDictionary<NSString *, id> *)aMap
@@ -288,9 +288,9 @@
   completion(anObject, nil);
 }
 
-- (void)echoAsyncList:(NSArray<id> *)aList
+- (void)echoAsyncList:(NSArray<id> *)list
            completion:(void (^)(NSArray<id> *_Nullable, FlutterError *_Nullable))completion {
-  completion(aList, nil);
+  completion(list, nil);
 }
 
 - (void)echoAsyncMap:(NSDictionary<NSString *, id> *)aMap
@@ -335,10 +335,10 @@
   completion(anObject, nil);
 }
 
-- (void)echoAsyncNullableList:(nullable NSArray<id> *)aList
+- (void)echoAsyncNullableList:(nullable NSArray<id> *)list
                    completion:
                        (void (^)(NSArray<id> *_Nullable, FlutterError *_Nullable))completion {
-  completion(aList, nil);
+  completion(list, nil);
 }
 
 - (void)echoAsyncNullableMap:(nullable NSDictionary<NSString *, id> *)aMap
@@ -443,18 +443,18 @@
                    }];
 }
 
-- (void)callFlutterEchoUint8List:(FlutterStandardTypedData *)aList
+- (void)callFlutterEchoUint8List:(FlutterStandardTypedData *)list
                       completion:(void (^)(FlutterStandardTypedData *_Nullable,
                                            FlutterError *_Nullable))completion {
-  [self.flutterAPI echoUint8List:aList
+  [self.flutterAPI echoUint8List:list
                       completion:^(FlutterStandardTypedData *value, FlutterError *error) {
                         completion(value, error);
                       }];
 }
 
-- (void)callFlutterEchoList:(NSArray<id> *)aList
+- (void)callFlutterEchoList:(NSArray<id> *)list
                  completion:(void (^)(NSArray<id> *_Nullable, FlutterError *_Nullable))completion {
-  [self.flutterAPI echoList:aList
+  [self.flutterAPI echoList:list
                  completion:^(NSArray<id> *value, FlutterError *error) {
                    completion(value, error);
                  }];
@@ -535,19 +535,19 @@
                            }];
 }
 
-- (void)callFlutterEchoNullableUint8List:(nullable FlutterStandardTypedData *)aList
+- (void)callFlutterEchoNullableUint8List:(nullable FlutterStandardTypedData *)list
                               completion:(void (^)(FlutterStandardTypedData *_Nullable,
                                                    FlutterError *_Nullable))completion {
-  [self.flutterAPI echoNullableUint8List:aList
+  [self.flutterAPI echoNullableUint8List:list
                               completion:^(FlutterStandardTypedData *value, FlutterError *error) {
                                 completion(value, error);
                               }];
 }
 
-- (void)callFlutterEchoNullableList:(nullable NSArray<id> *)aList
+- (void)callFlutterEchoNullableList:(nullable NSArray<id> *)list
                          completion:
                              (void (^)(NSArray<id> *_Nullable, FlutterError *_Nullable))completion {
-  [self.flutterAPI echoNullableList:aList
+  [self.flutterAPI echoNullableList:list
                          completion:^(NSArray<id> *value, FlutterError *error) {
                            completion(value, error);
                          }];
