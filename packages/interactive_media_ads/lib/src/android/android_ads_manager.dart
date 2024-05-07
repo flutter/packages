@@ -34,15 +34,10 @@ class AndroidAdsManager extends PlatformAdsManager {
   }
 
   static void _addListeners(WeakReference<AndroidAdsManager> weakThis) {
-    print('Adding listeners');
-    print(weakThis.target);
     weakThis.target?.manager.addAdEventListener(
       interactive_media_ads.AdEventListener(
         onAdEvent: (_, interactive_media_ads.AdEvent event) {
           late final AdEventType eventType;
-
-          print('OnAdEvent');
-          print(event.type);
 
           switch (event.type) {
             case interactive_media_ads.AdEventType.allAdsCompleted:

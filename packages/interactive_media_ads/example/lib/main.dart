@@ -104,14 +104,12 @@ class AdExampleWidgetState extends State<AdExampleWidget> {
     adsLoader = AdsLoader(
       container: container,
       onAdsLoaded: (OnAdsLoadedData data) {
-        print('AdLoaded');
         final AdsManager manager = data.manager;
         adsManager = data.manager;
-        print(manager.platform.runtimeType);
 
         manager.setAdsManagerDelegate(AdsManagerDelegate(
           onAdEvent: (AdEvent event) {
-            print('AdEvent ${event.type}');
+            debugPrint('AdEvent ${event.type}');
             switch (event.type) {
               case AdEventType.loaded:
                 manager.start();
@@ -127,8 +125,6 @@ class AdExampleWidgetState extends State<AdExampleWidget> {
             }
           },
           onAdErrorEvent: (AdErrorEvent event) {
-            print('ERROR:');
-            print(event.error.message);
             //manager.discardAdBreak();
             resumeContent();
           },
