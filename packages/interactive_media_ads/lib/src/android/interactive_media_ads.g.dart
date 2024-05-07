@@ -357,7 +357,7 @@ class _PigeonInstanceManagerApi {
         r'Argument for $channelName, expected non-null int.',
       );
       (instanceManager ?? PigeonInstanceManager.instance).remove(identifier!);
-      return;
+      return <Object?>[];
     });
   }
 
