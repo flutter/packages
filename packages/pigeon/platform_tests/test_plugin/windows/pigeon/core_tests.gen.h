@@ -84,7 +84,7 @@ class AllTypes {
                     const std::vector<int32_t>& a4_byte_array,
                     const std::vector<int64_t>& a8_byte_array,
                     const std::vector<double>& a_float_array,
-                    const flutter::EncodableList& a_list,
+                    const flutter::EncodableList& list,
                     const flutter::EncodableMap& a_map, const AnEnum& an_enum,
                     const std::string& a_string,
                     const flutter::EncodableValue& an_object);
@@ -113,8 +113,8 @@ class AllTypes {
   const std::vector<double>& a_float_array() const;
   void set_a_float_array(const std::vector<double>& value_arg);
 
-  const flutter::EncodableList& a_list() const;
-  void set_a_list(const flutter::EncodableList& value_arg);
+  const flutter::EncodableList& list() const;
+  void set_list(const flutter::EncodableList& value_arg);
 
   const flutter::EncodableMap& a_map() const;
   void set_a_map(const flutter::EncodableMap& value_arg);
@@ -151,7 +151,7 @@ class AllTypes {
   std::vector<int32_t> a4_byte_array_;
   std::vector<int64_t> a8_byte_array_;
   std::vector<double> a_float_array_;
-  flutter::EncodableList a_list_;
+  flutter::EncodableList list_;
   flutter::EncodableMap a_map_;
   AnEnum an_enum_;
   std::string a_string_;
@@ -563,7 +563,7 @@ class HostIntegrationCoreApi {
       const flutter::EncodableValue& an_object) = 0;
   // Returns the passed list, to test serialization and deserialization.
   virtual ErrorOr<flutter::EncodableList> EchoList(
-      const flutter::EncodableList& a_list) = 0;
+      const flutter::EncodableList& list) = 0;
   // Returns the passed map, to test serialization and deserialization.
   virtual ErrorOr<flutter::EncodableMap> EchoMap(
       const flutter::EncodableMap& a_map) = 0;
@@ -664,7 +664,7 @@ class HostIntegrationCoreApi {
   // Returns the passed list, to test asynchronous serialization and
   // deserialization.
   virtual void EchoAsyncList(
-      const flutter::EncodableList& a_list,
+      const flutter::EncodableList& list,
       std::function<void(ErrorOr<flutter::EncodableList> reply)> result) = 0;
   // Returns the passed map, to test asynchronous serialization and
   // deserialization.
@@ -732,7 +732,7 @@ class HostIntegrationCoreApi {
   // Returns the passed list, to test asynchronous serialization and
   // deserialization.
   virtual void EchoAsyncNullableList(
-      const flutter::EncodableList* a_list,
+      const flutter::EncodableList* list,
       std::function<void(ErrorOr<std::optional<flutter::EncodableList>> reply)>
           result) = 0;
   // Returns the passed map, to test asynchronous serialization and
@@ -784,10 +784,10 @@ class HostIntegrationCoreApi {
       const std::string& a_string,
       std::function<void(ErrorOr<std::string> reply)> result) = 0;
   virtual void CallFlutterEchoUint8List(
-      const std::vector<uint8_t>& a_list,
+      const std::vector<uint8_t>& list,
       std::function<void(ErrorOr<std::vector<uint8_t>> reply)> result) = 0;
   virtual void CallFlutterEchoList(
-      const flutter::EncodableList& a_list,
+      const flutter::EncodableList& list,
       std::function<void(ErrorOr<flutter::EncodableList> reply)> result) = 0;
   virtual void CallFlutterEchoMap(
       const flutter::EncodableMap& a_map,
@@ -809,11 +809,11 @@ class HostIntegrationCoreApi {
       std::function<void(ErrorOr<std::optional<std::string>> reply)>
           result) = 0;
   virtual void CallFlutterEchoNullableUint8List(
-      const std::vector<uint8_t>* a_list,
+      const std::vector<uint8_t>* list,
       std::function<void(ErrorOr<std::optional<std::vector<uint8_t>>> reply)>
           result) = 0;
   virtual void CallFlutterEchoNullableList(
-      const flutter::EncodableList* a_list,
+      const flutter::EncodableList* list,
       std::function<void(ErrorOr<std::optional<flutter::EncodableList>> reply)>
           result) = 0;
   virtual void CallFlutterEchoNullableMap(
@@ -926,11 +926,11 @@ class FlutterIntegrationCoreApi {
                   std::function<void(const FlutterError&)>&& on_error);
   // Returns the passed byte list, to test serialization and deserialization.
   void EchoUint8List(
-      const std::vector<uint8_t>& a_list,
+      const std::vector<uint8_t>& list,
       std::function<void(const std::vector<uint8_t>&)>&& on_success,
       std::function<void(const FlutterError&)>&& on_error);
   // Returns the passed list, to test serialization and deserialization.
-  void EchoList(const flutter::EncodableList& a_list,
+  void EchoList(const flutter::EncodableList& list,
                 std::function<void(const flutter::EncodableList&)>&& on_success,
                 std::function<void(const FlutterError&)>&& on_error);
   // Returns the passed map, to test serialization and deserialization.
@@ -959,12 +959,12 @@ class FlutterIntegrationCoreApi {
                           std::function<void(const FlutterError&)>&& on_error);
   // Returns the passed byte list, to test serialization and deserialization.
   void EchoNullableUint8List(
-      const std::vector<uint8_t>* a_list,
+      const std::vector<uint8_t>* list,
       std::function<void(const std::vector<uint8_t>*)>&& on_success,
       std::function<void(const FlutterError&)>&& on_error);
   // Returns the passed list, to test serialization and deserialization.
   void EchoNullableList(
-      const flutter::EncodableList* a_list,
+      const flutter::EncodableList* list,
       std::function<void(const flutter::EncodableList*)>&& on_success,
       std::function<void(const FlutterError&)>&& on_error);
   // Returns the passed map, to test serialization and deserialization.

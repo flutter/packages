@@ -5,6 +5,8 @@
 package io.flutter.plugins.webviewflutter;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -17,7 +19,6 @@ import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import androidx.annotation.NonNull;
-import io.flutter.plugins.webviewflutter.WebViewClientHostApiImpl.WebViewClientCompatImpl;
 import io.flutter.plugins.webviewflutter.WebViewClientHostApiImpl.WebViewClientCreator;
 import java.util.HashMap;
 import org.junit.After;
@@ -28,18 +29,16 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 
-public class WebViewClientTest {
+public class WebViewClientImplTest {
   @Rule public MockitoRule mockitoRule = MockitoJUnit.rule();
 
   @Mock public WebViewClientFlutterApiImpl mockFlutterApi;
 
   @Mock public WebView mockWebView;
 
-  @Mock public WebViewClientCompatImpl mockWebViewClient;
-
   InstanceManager instanceManager;
   WebViewClientHostApiImpl hostApiImpl;
-  WebViewClientCompatImpl webViewClient;
+  WebViewClientHostApiImpl.WebViewClientImpl webViewClient;
 
   @Before
   public void setUp() {
@@ -51,7 +50,7 @@ public class WebViewClientTest {
           @NonNull
           public WebViewClient createWebViewClient(
               @NonNull WebViewClientFlutterApiImpl flutterApi) {
-            webViewClient = (WebViewClientCompatImpl) super.createWebViewClient(flutterApi);
+            webViewClient = new WebViewClientHostApiImpl.WebViewClientImpl(flutterApi);
             return webViewClient;
           }
         };
@@ -94,6 +93,54 @@ public class WebViewClientTest {
   }
 
   @Test
+  public void urlLoadingForMainFrame() {
+    webViewClient.setReturnValueForShouldOverrideUrlLoading(false);
+
+    final WebResourceRequest mockRequest = mock(WebResourceRequest.class);
+    when(mockRequest.isForMainFrame()).thenReturn(true);
+
+    assertFalse(webViewClient.shouldOverrideUrlLoading(mockWebView, mockRequest));
+    verify(mockFlutterApi)
+        .requestLoading(eq(webViewClient), eq(mockWebView), eq(mockRequest), any());
+  }
+
+  @Test
+  public void urlLoadingForMainFrameWithOverride() {
+    webViewClient.setReturnValueForShouldOverrideUrlLoading(true);
+
+    final WebResourceRequest mockRequest = mock(WebResourceRequest.class);
+    when(mockRequest.isForMainFrame()).thenReturn(true);
+
+    assertTrue(webViewClient.shouldOverrideUrlLoading(mockWebView, mockRequest));
+    verify(mockFlutterApi)
+        .requestLoading(eq(webViewClient), eq(mockWebView), eq(mockRequest), any());
+  }
+
+  @Test
+  public void urlLoadingNotForMainFrame() {
+    webViewClient.setReturnValueForShouldOverrideUrlLoading(false);
+
+    final WebResourceRequest mockRequest = mock(WebResourceRequest.class);
+    when(mockRequest.isForMainFrame()).thenReturn(false);
+
+    assertFalse(webViewClient.shouldOverrideUrlLoading(mockWebView, mockRequest));
+    verify(mockFlutterApi)
+        .requestLoading(eq(webViewClient), eq(mockWebView), eq(mockRequest), any());
+  }
+
+  @Test
+  public void urlLoadingNotForMainFrameWithOverride() {
+    webViewClient.setReturnValueForShouldOverrideUrlLoading(true);
+
+    final WebResourceRequest mockRequest = mock(WebResourceRequest.class);
+    when(mockRequest.isForMainFrame()).thenReturn(false);
+
+    assertFalse(webViewClient.shouldOverrideUrlLoading(mockWebView, mockRequest));
+    verify(mockFlutterApi)
+        .requestLoading(eq(webViewClient), eq(mockWebView), eq(mockRequest), any());
+  }
+
+  @Test
   public void convertWebResourceRequestWithNullHeaders() {
     final Uri mockUri = mock(Uri.class);
     when(mockUri.toString()).thenReturn("");
@@ -107,27 +154,6 @@ public class WebViewClientTest {
     final GeneratedAndroidWebView.WebResourceRequestData data =
         WebViewClientFlutterApiImpl.createWebResourceRequestData(mockRequest);
     assertEquals(data.getRequestHeaders(), new HashMap<String, String>());
-  }
-
-  @Test
-  public void setReturnValueForShouldOverrideUrlLoading() {
-    final WebViewClientHostApiImpl webViewClientHostApi =
-        new WebViewClientHostApiImpl(
-            instanceManager,
-            new WebViewClientCreator() {
-              @NonNull
-              @Override
-              public WebViewClient createWebViewClient(
-                  @NonNull WebViewClientFlutterApiImpl flutterApi) {
-                return mockWebViewClient;
-              }
-            },
-            mockFlutterApi);
-
-    instanceManager.addDartCreatedInstance(mockWebViewClient, 2);
-    webViewClientHostApi.setSynchronousReturnValueForShouldOverrideUrlLoading(2L, false);
-
-    verify(mockWebViewClient).setReturnValueForShouldOverrideUrlLoading(false);
   }
 
   @Test
