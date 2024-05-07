@@ -268,7 +268,7 @@ class _$apiName {
         r'Argument for \$channelName, expected non-null int.',
       );
       (instanceManager ?? $instanceManagerClassName.instance).remove(identifier!);
-      return;
+      return <Object?>[];
     });
   }
 
