@@ -10,8 +10,7 @@ import PackageDescription
 let package = Package(
   name: "ios_platform_images",
   platforms: [
-    .iOS("12.0"),
-    .macOS("10.14"),
+    .iOS("12.0")
   ],
   products: [
     .library(name: "ios-platform-images", targets: ["ios_platform_images"])
