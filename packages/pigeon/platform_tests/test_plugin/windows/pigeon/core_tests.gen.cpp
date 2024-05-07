@@ -298,7 +298,8 @@ AllTypes AllTypes::FromEncodableList(const EncodableList& list) {
       std::get<std::vector<int32_t>>(list[5]),
       std::get<std::vector<int64_t>>(list[6]),
       std::get<std::vector<double>>(list[7]), std::get<EncodableList>(list[8]),
-      std::get<EncodableMap>(list[9]), std::get<AnEnum>(list[10]),
+      std::get<EncodableMap>(list[9]),
+      std::any_cast<const AnEnum&>(std::get<CustomEncodableValue>(list[10])),
       std::get<std::string>(list[11]), list[12],
       std::any_cast<const AllMapTypes&>(
           std::get<CustomEncodableValue>(list[13])),
@@ -823,7 +824,8 @@ AllNullableTypes AllNullableTypes::FromEncodableList(
   }
   auto& encodable_a_nullable_enum = list[13];
   if (!encodable_a_nullable_enum.IsNull()) {
-    decoded.set_a_nullable_enum(std::get<AnEnum>(encodable_a_nullable_enum));
+    decoded.set_a_nullable_enum(std::any_cast<const AnEnum&>(
+        std::get<CustomEncodableValue>(encodable_a_nullable_enum)));
   }
   auto& encodable_a_nullable_string = list[14];
   if (!encodable_a_nullable_string.IsNull()) {
@@ -1268,7 +1270,8 @@ AllNullableTypesWithoutRecursion::FromEncodableList(const EncodableList& list) {
   }
   auto& encodable_a_nullable_enum = list[13];
   if (!encodable_a_nullable_enum.IsNull()) {
-    decoded.set_a_nullable_enum(std::get<AnEnum>(encodable_a_nullable_enum));
+    decoded.set_a_nullable_enum(std::any_cast<const AnEnum&>(
+        std::get<CustomEncodableValue>(encodable_a_nullable_enum)));
   }
   auto& encodable_a_nullable_string = list[14];
   if (!encodable_a_nullable_string.IsNull()) {

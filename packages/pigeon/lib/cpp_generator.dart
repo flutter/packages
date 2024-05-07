@@ -821,7 +821,7 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
       } else {
         final HostDatatype hostDatatype =
             getFieldHostDatatype(field, _shortBaseCppTypeForBuiltinDartType);
-        if (field.type.isClass) {
+        if (field.type.isClass || field.type.isEnum) {
           return _classReferenceFromEncodableValue(hostDatatype, encodable);
         } else {
           return 'std::get<${hostDatatype.datatype}>($encodable)';
