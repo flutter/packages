@@ -505,20 +505,20 @@ Map<String, LocalWidgetBuilder> get _materialWidgetsDefinitions => <String, Loca
     final min = source.v<double>(['min']) ?? 0.0;
     final value = source.v<double>(['value']) ?? min;
     final labelText = source.v<String>(['label']);
-    final label = labelText != null ? '$labelText:${value.toStringAsFixed(2)}' : value.toStringAsFixed(2);
+    final label = labelText != null ? '$labelText: ${value.toStringAsFixed(2)}' : value.toStringAsFixed(2);
     return Slider(
       value: value,
       secondaryTrackValue: source.v<double>(['secondaryTrackValue']),
       onChanged: source.handler(['onChanged'],
-              (HandlerTrigger trigger) => (double value) {
+          (HandlerTrigger trigger) => (double value) {
             trigger({'value': value});
           }),
       onChangeStart: source.handler(['onChangeStart'],
-              (HandlerTrigger trigger) => (double value) {
+          (HandlerTrigger trigger) => (double value) {
             trigger({'value': value});
           }),
       onChangeEnd: source.handler(['onChangeEnd'],
-              (HandlerTrigger trigger) => (double value) {
+          (HandlerTrigger trigger) => (double value) {
             trigger({'value': value});
           }),
       min: min,

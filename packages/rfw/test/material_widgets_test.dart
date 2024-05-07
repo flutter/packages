@@ -658,7 +658,7 @@ void main() {
     await tester.pump();
 
     //drag slider
-    await tester.slideToValue(sliderFinder, 20.0);
+    await _slideToValue(tester, sliderFinder, 20.0);
     await tester.pumpAndSettle();
     expect(eventLog,
         contains(kIsWeb ? 'slider {value: 20}' : 'slider {value: 20.0}'));
@@ -672,3 +672,15 @@ void main() {
             kIsWeb ? 'slider.end {value: 20}' : 'slider.end {value: 20.0}'));
   });
 }
+// slide to value for material slider in tests
+Future<void> _slideToValue(
+    WidgetTester widgetTester, Finder slider, double value,
+    {double paddingOffset = 24.0}) async {
+  final Offset zeroPoint = widgetTester.getTopLeft(slider) +
+      Offset(paddingOffset, widgetTester.getSize(slider).height / 2);
+  final double totalWidth =
+      widgetTester.getSize(slider).width - (2 * paddingOffset);
+  final double calculateOffset = value * (totalWidth / 100);
+  await widgetTester.dragFrom(zeroPoint, Offset(calculateOffset, 0));
+}
+
