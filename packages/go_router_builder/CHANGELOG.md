@@ -1,3 +1,12 @@
+## 2.6.1
+
+* Fixes typo in `durationDecoderHelperName`.
+* Updates development dependency to `dart_style-2.3.6` (compatible with `analyzer-6.5.0`).
+
+## 2.6.0
+
+* Adds support for passing observers to the StatefulShellBranch for the nested Navigator.
+
 ## 2.5.1
 
 - Updates examples to use uri.path instead of uri.toString() for accessing the current location.
