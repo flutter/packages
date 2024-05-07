@@ -1466,7 +1466,7 @@ EncodableValue PigeonCodecSerializer::ReadValueOfType(
     case 134:
       return CustomEncodableValue(TestMessage::FromEncodableList(
           std::get<EncodableList>(ReadValue(stream))));
-    case 135:
+    case 135: {
       const auto& encodable_enum_arg = ReadValue(stream);
       const int64_t enum_arg_value =
           encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
@@ -1474,6 +1474,7 @@ EncodableValue PigeonCodecSerializer::ReadValueOfType(
                  ? CustomEncodableValue(std::nullopt)
                  : CustomEncodableValue(std::make_optional<AnEnum>(
                        static_cast<AnEnum>(enum_arg_value)));
+    }
     default:
       return flutter::StandardCodecSerializer::ReadValueOfType(type, stream);
   }

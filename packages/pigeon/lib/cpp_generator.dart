@@ -906,12 +906,14 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
               indent.writeln(
                   'return CustomEncodableValue(${customType.name}::FromEncodableList(std::get<EncodableList>(ReadValue(stream))));');
             } else if (customType.type == CustomTypes.customEnum) {
-              indent.writeln(
-                  'const auto& encodable_enum_arg = ReadValue(stream);');
-              indent.writeln(
-                  'const int64_t enum_arg_value = encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();');
-              indent.writeln(
-                  'return encodable_enum_arg.IsNull() ? CustomEncodableValue(std::nullopt) : CustomEncodableValue(std::make_optional<${customType.name}>(static_cast<${customType.name}>(enum_arg_value)));');
+              indent.writeScoped('{', '}', () {
+                indent.writeln(
+                    'const auto& encodable_enum_arg = ReadValue(stream);');
+                indent.writeln(
+                    'const int64_t enum_arg_value = encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();');
+                indent.writeln(
+                    'return encodable_enum_arg.IsNull() ? CustomEncodableValue(std::nullopt) : CustomEncodableValue(std::make_optional<${customType.name}>(static_cast<${customType.name}>(enum_arg_value)));');
+              });
             }
           });
         }
