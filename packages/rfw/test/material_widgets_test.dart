@@ -672,6 +672,7 @@ void main() {
             kIsWeb ? 'slider.end {value: 20}' : 'slider.end {value: 20.0}'));
   });
 }
+
 // slide to value for material slider in tests
 Future<void> _slideToValue(
     WidgetTester widgetTester, Finder slider, double value,
@@ -683,4 +684,3 @@ Future<void> _slideToValue(
   final double calculateOffset = value * (totalWidth / 100);
   await widgetTester.dragFrom(zeroPoint, Offset(calculateOffset, 0));
 }
-

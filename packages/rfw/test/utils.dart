@@ -5,8 +5,6 @@
 import 'dart:io' show Platform;
 
 import 'package:flutter/foundation.dart';
-import 'package:flutter_test/flutter_test.dart';
-
 // Detects if we're running the tests on the main channel.
 //
 // This is useful for _tests_ that depend on _Flutter_ features that have not
