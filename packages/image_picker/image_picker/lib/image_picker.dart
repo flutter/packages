@@ -112,6 +112,12 @@ class ImagePicker {
   /// image types such as JPEG and on Android PNG and WebP, too. If compression is not
   /// supported for the image that is picked, a warning message will be logged.
   ///
+  /// The `limit` parameter modifies the maximum number of images that can be selected.
+  /// On Android, you need to set ImagePickerAndroid's useAndroidPhotoPicker to
+  /// true for this parameter to be valid.
+  /// See: https://github.com/flutter/packages/blob/main/packages/image_picker/image_picker_android/README.md#photo-picker
+  /// for code.
+  ///
   /// Use `requestFullMetadata` (defaults to `true`) to control how much additional
   /// information the plugin tries to get.
   /// If `requestFullMetadata` is set to `true`, the plugin tries to get the full
@@ -224,6 +230,12 @@ class ImagePicker {
   /// the original quality will be returned. Compression is only supported for certain
   /// image types such as JPEG and on Android PNG and WebP, too. If compression is not
   /// supported for the image that is picked, a warning message will be logged.
+  ///
+  /// The `limit` parameter modifies the maximum number of media that can be selected.
+  /// On Android, you need to set ImagePickerAndroid's useAndroidPhotoPicker to
+  /// true for this parameter to be valid.
+  /// See: https://github.com/flutter/packages/blob/main/packages/image_picker/image_picker_android/README.md#photo-picker
+  /// for code.
   ///
   /// Use `requestFullMetadata` (defaults to `true`) to control how much additional
   /// information the plugin tries to get.
