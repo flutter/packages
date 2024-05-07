@@ -49,7 +49,7 @@ static const NSTimeInterval kTimeout = 30.0;
   self.continueAfterFailure = NO;
 }
 
-- (void)testSuccessfullAuthWithBiometrics {
+- (void)testSuccessfulAuthWithBiometrics {
   id mockAuthContext = OCMClassMock([LAContext class]);
   FLALocalAuthPlugin *plugin = [[FLALocalAuthPlugin alloc]
       initWithContextFactory:[[StubAuthContextFactory alloc]
@@ -373,6 +373,45 @@ static const NSTimeInterval kTimeout = 30.0;
   NSNumber *result = [plugin deviceCanSupportBiometricsWithError:&error];
   XCTAssertTrue([result boolValue]);
   XCTAssertNil(error);
+}
+
+- (void)testGetEnrolledBiometricsWithFaceID_NotEnrolled {
+  id mockAuthContext = OCMClassMock([LAContext class]);
+  FLALocalAuthPlugin *plugin = [[FLALocalAuthPlugin alloc]
+      initWithContextFactory:[[StubAuthContextFactory alloc]
+                                 initWithContexts:@[ mockAuthContext ]]];
+
+  const LAPolicy policy = LAPolicyDeviceOwnerAuthenticationWithBiometrics;
+  FLADAuthStrings *strings = [self createAuthStrings];
+
+  OCMStub([mockAuthContext biometryType]).andReturn(LABiometryTypeFaceID);
+  void (^canEvaluatePolicyHandler)(NSInvocation *) = ^(NSInvocation *invocation) {
+    // Write error
+    NSError *__autoreleasing *authError;
+    [invocation getArgument:&authError atIndex:3];
+    *authError = [NSError errorWithDomain:@"error" code:LAErrorBiometryNotAvailable userInfo:nil];
+    // Write return value
+    BOOL returnValue = NO;
+    NSValue *nsReturnValue = [NSValue valueWithBytes:&returnValue objCType:@encode(BOOL)];
+    [invocation setReturnValue:&nsReturnValue];
+  };
+  OCMStub([mockAuthContext canEvaluatePolicy:policy
+                                       error:(NSError * __autoreleasing *)[OCMArg anyPointer]])
+      .andDo(canEvaluatePolicyHandler);
+
+  XCTestExpectation *expectation = [self expectationWithDescription:@"Result is called"];
+  [plugin authenticateWithOptions:[FLADAuthOptions makeWithBiometricOnly:YES
+                                                                  sticky:NO
+                                                         useErrorDialogs:NO]
+                          strings:strings
+                       completion:^(FLADAuthResultDetails *_Nullable resultDetails,
+                                    FlutterError *_Nullable error) {
+                         XCTAssertTrue([NSThread isMainThread]);
+                         XCTAssertEqual(resultDetails.result, FLADAuthResultErrorNotAvailable);
+                         XCTAssertNil(error);
+                         [expectation fulfill];
+                       }];
+  [self waitForExpectationsWithTimeout:kTimeout handler:nil];
 }
 
 - (void)testDeviceSupportsBiometrics_withNonEnrolledHardware {

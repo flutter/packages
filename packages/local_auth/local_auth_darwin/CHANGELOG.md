@@ -1,3 +1,7 @@
+## 1.2.3
+
+* Fixes an issue biometrics are shown as unavailable rather than disabled when turned off in settings
+
 ## 1.2.2
 
 * Adds compatibility with `intl` 0.19.0.
