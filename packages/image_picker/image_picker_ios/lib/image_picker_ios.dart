@@ -133,12 +133,19 @@ class ImagePickerIOS extends ImagePickerPlatform {
       throw ArgumentError.value(maxHeight, 'maxHeight', 'cannot be negative');
     }
 
+    final int? limit = options.limit;
+    if (limit != null && limit < 2) {
+      throw ArgumentError.value(limit, 'limit', 'cannot be lower than 2');
+    }
+
     // TODO(stuartmorgan): Remove the cast once Pigeon supports non-nullable
     //  generics, https://github.com/flutter/flutter/issues/97848
     return (await _hostApi.pickMultiImage(
-            MaxSize(width: maxWidth, height: maxHeight),
-            imageQuality,
-            options.imageOptions.requestFullMetadata))
+      MaxSize(width: maxWidth, height: maxHeight),
+      imageQuality,
+      options.imageOptions.requestFullMetadata,
+      limit,
+    ))
         .cast<String>();
   }
 
@@ -210,11 +217,28 @@ class ImagePickerIOS extends ImagePickerPlatform {
       MediaOptions mediaOptions) {
     final MaxSize maxSize =
         _imageOptionsToMaxSizeWithValidation(mediaOptions.imageOptions);
+
+    final bool allowMultiple = mediaOptions.allowMultiple;
+    final int? limit = mediaOptions.limit;
+
+    if (!allowMultiple && limit != null) {
+      throw ArgumentError.value(
+        allowMultiple,
+        'allowMultiple',
+        'cannot be false, when limit is not null',
+      );
+    }
+
+    if (limit != null && limit < 2) {
+      throw ArgumentError.value(limit, 'limit', 'cannot be lower than 2');
+    }
+
     return MediaSelectionOptions(
       maxSize: maxSize,
       imageQuality: mediaOptions.imageOptions.imageQuality,
       requestFullMetadata: mediaOptions.imageOptions.requestFullMetadata,
       allowMultiple: mediaOptions.allowMultiple,
+      limit: mediaOptions.limit,
     );
   }
 

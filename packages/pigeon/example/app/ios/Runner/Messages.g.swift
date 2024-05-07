@@ -60,11 +60,12 @@ struct MessageData {
   var code: Code
   var data: [String?: String?]
 
-  static func fromList(_ list: [Any?]) -> MessageData? {
-    let name: String? = nilOrValue(list[0])
-    let description: String? = nilOrValue(list[1])
-    let code = Code(rawValue: list[2] as! Int)!
-    let data = list[3] as! [String?: String?]
+  // swift-format-ignore: AlwaysUseLowerCamelCase
+  static func fromList(_ __pigeon_list: [Any?]) -> MessageData? {
+    let name: String? = nilOrValue(__pigeon_list[0])
+    let description: String? = nilOrValue(__pigeon_list[1])
+    let code = Code(rawValue: __pigeon_list[2] as! Int)!
+    let data = __pigeon_list[3] as! [String?: String?]
 
     return MessageData(
       name: name,

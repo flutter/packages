@@ -29,10 +29,15 @@ class _MyAppState extends State<MyApp> {
   bool _initialized = false;
   bool _recording = false;
   bool _recordingTimed = false;
-  bool _recordAudio = true;
   bool _previewPaused = false;
   Size? _previewSize;
-  ResolutionPreset _resolutionPreset = ResolutionPreset.veryHigh;
+  MediaSettings _mediaSettings = const MediaSettings(
+    resolutionPreset: ResolutionPreset.low,
+    fps: 15,
+    videoBitrate: 200000,
+    audioBitrate: 32000,
+    enableAudio: true,
+  );
   StreamSubscription<CameraErrorEvent>? _errorStreamSubscription;
   StreamSubscription<CameraClosingEvent>? _cameraClosingStreamSubscription;
 
@@ -93,10 +98,9 @@ class _MyAppState extends State<MyApp> {
       final int cameraIndex = _cameraIndex % _cameras.length;
       final CameraDescription camera = _cameras[cameraIndex];
 
-      cameraId = await CameraPlatform.instance.createCamera(
+      cameraId = await CameraPlatform.instance.createCameraWithSettings(
         camera,
-        _resolutionPreset,
-        enableAudio: _recordAudio,
+        _mediaSettings,
       );
 
       unawaited(_errorStreamSubscription?.cancel());
@@ -276,7 +280,13 @@ class _MyAppState extends State<MyApp> {
 
   Future<void> _onResolutionChange(ResolutionPreset newValue) async {
     setState(() {
-      _resolutionPreset = newValue;
+      _mediaSettings = MediaSettings(
+        resolutionPreset: newValue,
+        fps: _mediaSettings.fps,
+        videoBitrate: _mediaSettings.videoBitrate,
+        audioBitrate: _mediaSettings.audioBitrate,
+        enableAudio: _mediaSettings.enableAudio,
+      );
     });
     if (_initialized && _cameraId >= 0) {
       // Re-inits camera with new resolution preset.
@@ -287,7 +297,13 @@ class _MyAppState extends State<MyApp> {
 
   Future<void> _onAudioChange(bool recordAudio) async {
     setState(() {
-      _recordAudio = recordAudio;
+      _mediaSettings = MediaSettings(
+        resolutionPreset: _mediaSettings.resolutionPreset,
+        fps: _mediaSettings.fps,
+        videoBitrate: _mediaSettings.videoBitrate,
+        audioBitrate: _mediaSettings.audioBitrate,
+        enableAudio: recordAudio,
+      );
     });
     if (_initialized && _cameraId >= 0) {
       // Re-inits camera with new record audio setting.
@@ -359,7 +375,7 @@ class _MyAppState extends State<MyApp> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   DropdownButton<ResolutionPreset>(
-                    value: _resolutionPreset,
+                    value: _mediaSettings.resolutionPreset,
                     onChanged: (ResolutionPreset? value) {
                       if (value != null) {
                         _onResolutionChange(value);
@@ -370,7 +386,7 @@ class _MyAppState extends State<MyApp> {
                   const SizedBox(width: 20),
                   const Text('Audio:'),
                   Switch(
-                      value: _recordAudio,
+                      value: _mediaSettings.enableAudio,
                       onChanged: (bool state) => _onAudioChange(state)),
                   const SizedBox(width: 20),
                   ElevatedButton(
