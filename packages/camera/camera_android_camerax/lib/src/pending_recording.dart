@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:async';
+
 import 'package:flutter/services.dart' show BinaryMessenger;
 import 'package:meta/meta.dart' show immutable;
 
@@ -29,6 +31,10 @@ class PendingRecording extends JavaObject {
   }
 
   late final PendingRecordingHostApiImpl _api;
+
+  /// Stream that emits an event when the corresponding video recording is finalized.
+  static final StreamController<void> videoRecordingFinalizedStreamController =
+      StreamController<void>.broadcast();
 
   /// Starts the recording, making it an active recording.
   Future<Recording> start() {
@@ -99,5 +105,10 @@ class PendingRecordingFlutterApiImpl extends PendingRecordingFlutterApi {
         instanceManager: instanceManager,
       );
     });
+  }
+
+  @override
+  void onVideoRecordingFinalized() {
+    PendingRecording.videoRecordingFinalizedStreamController.add(null);
   }
 }

@@ -1585,6 +1585,8 @@ abstract class PendingRecordingFlutterApi {
 
   void create(int identifier);
 
+  void onVideoRecordingFinalized();
+
   static void setup(PendingRecordingFlutterApi? api,
       {BinaryMessenger? binaryMessenger}) {
     {
@@ -1602,6 +1604,21 @@ abstract class PendingRecordingFlutterApi {
           assert(arg_identifier != null,
               'Argument for dev.flutter.pigeon.PendingRecordingFlutterApi.create was null, expected non-null int.');
           api.create(arg_identifier!);
+          return;
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.PendingRecordingFlutterApi.onVideoRecordingFinalized',
+          codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        channel.setMessageHandler(null);
+      } else {
+        channel.setMessageHandler((Object? message) async {
+          // ignore message
+          api.onVideoRecordingFinalized();
           return;
         });
       }

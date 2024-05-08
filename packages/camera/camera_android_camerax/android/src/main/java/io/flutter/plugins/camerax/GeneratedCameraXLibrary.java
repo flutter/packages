@@ -2144,6 +2144,15 @@ public class GeneratedCameraXLibrary {
           new ArrayList<Object>(Collections.singletonList(identifierArg)),
           channelReply -> callback.reply(null));
     }
+
+    public void onVideoRecordingFinalized(@NonNull Reply<Void> callback) {
+      BasicMessageChannel<Object> channel =
+          new BasicMessageChannel<>(
+              binaryMessenger,
+              "dev.flutter.pigeon.PendingRecordingFlutterApi.onVideoRecordingFinalized",
+              getCodec());
+      channel.send(null, channelReply -> callback.reply(null));
+    }
   }
   /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
   public interface RecordingHostApi {

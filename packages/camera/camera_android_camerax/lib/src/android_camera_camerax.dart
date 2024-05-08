@@ -113,6 +113,12 @@ class AndroidCameraCameraX extends CameraPlatform {
   @visibleForTesting
   String? videoOutputPath;
 
+  /// Stream queue to pick up finalized viceo recording events in
+  /// [stopVideoRecording].
+  final StreamQueue<void> videoRecordingFinalizedStreamQueue =
+      StreamQueue<void>(
+          PendingRecording.videoRecordingFinalizedStreamController.stream);
+
   /// Whether or not [preview] has been bound to the lifecycle of the camera by
   /// [createCamera].
   @visibleForTesting
@@ -122,7 +128,7 @@ class AndroidCameraCameraX extends CameraPlatform {
 
   /// The prefix used to create the filename for video recording files.
   @visibleForTesting
-  final String videoPrefix = 'MOV';
+  final String videoPrefix = 'REC';
 
   /// The [ImageCapture] instance that can be configured to capture a still image.
   @visibleForTesting
@@ -777,6 +783,14 @@ class AndroidCameraCameraX extends CameraPlatform {
     await _unbindUseCaseFromLifecycle(preview!);
   }
 
+  /// Sets the active camera while recording.
+  ///
+  /// Currently unsupported, so is a no-op.
+  @override
+  Future<void> setDescriptionWhileRecording(CameraDescription description) {
+    return Future<void>.value();
+  }
+
   /// Resume the paused preview for the selected camera.
   ///
   /// [cameraId] not used.
@@ -955,8 +969,7 @@ class AndroidCameraCameraX extends CameraPlatform {
           .setTargetRotation(await proxy.getDefaultDisplayRotation());
     }
 
-    videoOutputPath =
-        await SystemServices.getTempFilePath(videoPrefix, '.temp');
+    videoOutputPath = await SystemServices.getTempFilePath(videoPrefix, '.mp4');
     pendingRecording = await recorder!.prepareRecording(videoOutputPath!);
     recording = await pendingRecording!.start();
 
@@ -979,21 +992,22 @@ class AndroidCameraCameraX extends CameraPlatform {
           'Attempting to stop a '
               'video recording while no recording is in progress.');
     }
+
+    /// Stop the active recording and wiat for the video recording to be finalized.
+    await recording!.close();
+    await videoRecordingFinalizedStreamQueue.next;
+    recording = null;
+    pendingRecording = null;
+
     if (videoOutputPath == null) {
-      // Stop the current active recording as we will be unable to complete it
-      // in this error case.
-      await recording!.close();
-      recording = null;
-      pendingRecording = null;
+      // Handle any errors with finalizing video recording.
       throw CameraException(
           'INVALID_PATH',
           'The platform did not return a path '
               'while reporting success. The platform should always '
               'return a valid path or report an error.');
     }
-    await recording!.close();
-    recording = null;
-    pendingRecording = null;
+
     await _unbindUseCaseFromLifecycle(videoCapture!);
     return XFile(videoOutputPath!);
   }

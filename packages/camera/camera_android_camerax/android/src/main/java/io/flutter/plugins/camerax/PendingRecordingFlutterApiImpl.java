@@ -22,4 +22,8 @@ public class PendingRecordingFlutterApiImpl extends PendingRecordingFlutterApi {
   void create(@NonNull PendingRecording pendingRecording, @Nullable Reply<Void> reply) {
     create(instanceManager.addHostCreatedInstance(pendingRecording), reply);
   }
+
+  void sendVideoRecordingFinalizedEvent(@NonNull Reply<Void> reply) {
+    super.onVideoRecordingFinalized(reply);
+  }
 }
