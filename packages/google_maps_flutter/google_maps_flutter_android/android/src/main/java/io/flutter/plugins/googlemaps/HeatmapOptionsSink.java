@@ -4,13 +4,15 @@
 
 package io.flutter.plugins.googlemaps;
 
+import androidx.annotation.NonNull;
+
 import com.google.maps.android.heatmaps.Gradient;
 import com.google.maps.android.heatmaps.WeightedLatLng;
 import java.util.List;
 
 /** Receiver of Heatmap configuration options. */
 interface HeatmapOptionsSink {
-  void setWeightedData(List<WeightedLatLng> weightedData);
+  void setWeightedData(@NonNull List<WeightedLatLng> weightedData);
 
   void setGradient(Gradient gradient);
 

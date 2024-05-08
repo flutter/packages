@@ -4,6 +4,8 @@
 
 package io.flutter.plugins.googlemaps;
 
+import androidx.annotation.NonNull;
+
 import com.google.android.gms.maps.model.TileOverlay;
 import com.google.maps.android.heatmaps.Gradient;
 import com.google.maps.android.heatmaps.HeatmapTileProvider;
@@ -28,7 +30,7 @@ public class HeatmapController implements HeatmapOptionsSink {
   }
 
   @Override
-  public void setWeightedData(List<WeightedLatLng> weightedData) {
+  public void setWeightedData(@NonNull List<WeightedLatLng> weightedData) {
     heatmap.setWeightedData(weightedData);
   }
 
