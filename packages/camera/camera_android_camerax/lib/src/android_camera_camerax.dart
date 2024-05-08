@@ -124,6 +124,10 @@ class AndroidCameraCameraX extends CameraPlatform {
   @visibleForTesting
   final String videoPrefix = 'REC';
 
+  /// la la la TODO
+  final StreamQueue<String> lol = StreamQueue<String>(
+      PendingRecording.videoRecordingFinalizedStreamController.stream);
+
   /// The [ImageCapture] instance that can be configured to capture a still image.
   @visibleForTesting
   ImageCapture? imageCapture;
@@ -986,23 +990,26 @@ class AndroidCameraCameraX extends CameraPlatform {
           'Attempting to stop a '
               'video recording while no recording is in progress.');
     }
+
+    // Stop the current active recording.
+    await recording!.close();
+    await lol.next;
+    // await PendingRecording.videoRecordingFinalizedStreamController.stream.first;
+    print('CAMILLE HI!');
+    // Wait for video recording to finalize. may want to move other logic in here.
+
+    recording = null;
+    pendingRecording = null;
+
     if (videoOutputPath == null) {
-      // Stop the current active recording as we will be unable to complete it
-      // in this error case.
-      await recording!.close();
-      recording = null;
-      pendingRecording = null;
       throw CameraException(
           'INVALID_PATH',
           'The platform did not return a path '
               'while reporting success. The platform should always '
               'return a valid path or report an error.');
     }
-    await recording!.close();
-    recording = null;
-    pendingRecording = null;
-    await _unbindUseCaseFromLifecycle(videoCapture!);
 
+    await _unbindUseCaseFromLifecycle(videoCapture!);
     return XFile(videoOutputPath!);
   }
 

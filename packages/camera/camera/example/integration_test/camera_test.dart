@@ -186,7 +186,6 @@ void main() {
     final XFile file = await controller.stopVideoRecording();
     final int recordingTime =
         DateTime.now().millisecondsSinceEpoch - recordingStart;
-    await Future.delayed(const Duration(seconds: 5));
 
     final File videoFile = File(file.path);
     print('CAMILLE PATH: ${videoFile.absolute.path}');
@@ -225,7 +224,7 @@ void main() {
     final XFile file = await controller.stopVideoRecording();
     final int recordingTime =
         DateTime.now().millisecondsSinceEpoch - recordingStart;
-    await Future<void>.delayed(Duration(seconds: 5));
+    // await Future<void>.delayed(Duration(seconds: 5));
 
     final File videoFile = File(file.path);
     print('CAMILLE PATH: ${videoFile.absolute.path}');

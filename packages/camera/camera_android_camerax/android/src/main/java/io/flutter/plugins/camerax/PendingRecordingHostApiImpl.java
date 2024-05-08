@@ -24,6 +24,8 @@ public class PendingRecordingHostApiImpl implements PendingRecordingHostApi {
 
   @VisibleForTesting @NonNull public CameraXProxy cameraXProxy = new CameraXProxy();
 
+  PendingRecordingFlutterApiImpl pendingRecordingFlutterApi;
+
   @VisibleForTesting SystemServicesFlutterApiImpl systemServicesFlutterApi;
 
   @VisibleForTesting RecordingFlutterApiImpl recordingFlutterApi;
@@ -37,6 +39,7 @@ public class PendingRecordingHostApiImpl implements PendingRecordingHostApi {
     this.context = context;
     systemServicesFlutterApi = cameraXProxy.createSystemServicesFlutterApiImpl(binaryMessenger);
     recordingFlutterApi = new RecordingFlutterApiImpl(binaryMessenger, instanceManager);
+    pendingRecordingFlutterApi = new PendingRecordingFlutterApiImpl(binaryMessenger, instanceManager);
   }
 
   /** Sets the context, which is used to get the {@link Executor} needed to start the recording. */
@@ -88,6 +91,7 @@ public class PendingRecordingHostApiImpl implements PendingRecordingHostApi {
         }
         systemServicesFlutterApi.sendCameraError(cameraErrorMessage, reply -> {});
       }
+      pendingRecordingFlutterApi.sendVideoRecordingFinalizedEvent(reply -> {});
     }
   }
 
