@@ -4,23 +4,6 @@
 
 ## 0.3.3
 
-- Supporting camera stream on web.
-- Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
-
-## 0.3.5
-
-- Migrates to package:web to support WASM
-- Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
-
-## 0.3.4
-
-- Removes `maxVideoDuration`/`maxDuration`, as the feature was never exposed at
-  the app-facing package level, and is deprecated at the platform interface
-  level.
-- Updates minimum supported SDK version to Flutter 3.16/Dart 3.2.
-
-## 0.3.3
-
 - Adds support to control video FPS and bitrate. See `CameraController.withSettings`.
 - Updates minimum supported SDK version to Flutter 3.13/Dart 3.1.
 
