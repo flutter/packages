@@ -1,3 +1,7 @@
+## 2.6.1
+
+* Adds files to make include directory permanent.
+
 ## 2.6.0
 
 * Adds Swift Package Manager compatibility.
