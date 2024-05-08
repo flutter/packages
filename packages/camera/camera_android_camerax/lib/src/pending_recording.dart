@@ -33,9 +33,8 @@ class PendingRecording extends JavaObject {
   late final PendingRecordingHostApiImpl _api;
 
   /// Stream that emits an event when the corresponding video recording is finalized.
-  static final StreamController<String>
-      videoRecordingFinalizedStreamController =
-      StreamController<String>.broadcast();
+  static final StreamController<void> videoRecordingFinalizedStreamController =
+      StreamController<void>.broadcast();
 
   /// Starts the recording, making it an active recording.
   Future<Recording> start() {
@@ -110,7 +109,6 @@ class PendingRecordingFlutterApiImpl extends PendingRecordingFlutterApi {
 
   @override
   void onVideoRecordingFinalized() {
-    PendingRecording.videoRecordingFinalizedStreamController
-        .add('Video recording has been finalized');
+    PendingRecording.videoRecordingFinalizedStreamController.add(null);
   }
 }

@@ -125,7 +125,7 @@ class AndroidCameraCameraX extends CameraPlatform {
   final String videoPrefix = 'REC';
 
   /// la la la TODO
-  final StreamQueue<String> lol = StreamQueue<String>(
+  final StreamQueue<void> lol = StreamQueue<void>(
       PendingRecording.videoRecordingFinalizedStreamController.stream);
 
   /// The [ImageCapture] instance that can be configured to capture a still image.
