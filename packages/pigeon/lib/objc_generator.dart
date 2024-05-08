@@ -580,8 +580,7 @@ class ObjcSourceGenerator extends StructuredGenerator<ObjcOptions> {
       enumerate(getFieldsInSerializationOrder(classDefinition),
           (int index, final NamedType field) {
         final bool isEnumType = field.type.isEnum;
-        final String valueGetter =
-            _listGetter('list', field, index, generatorOptions.prefix);
+        final String valueGetter = 'GetNullableObjectAtIndex(list, $index)';
         final String? primitiveExtractionMethod =
             _nsnumberExtractionMethod(field.type);
         final String ivarValueExpression;
@@ -1500,22 +1499,8 @@ String _makeObjcSignature({
 /// provided [options].
 void generateObjcHeader(ObjcOptions options, Root root, Indent indent) {}
 
-String _listGetter(String list, NamedType field, int index, String? prefix) {
-  if (field.type.isClass) {
-    String className = field.type.baseName;
-    if (prefix != null) {
-      className = '$prefix$className';
-    }
-    return '[$className nullableFromList:(GetNullableObjectAtIndex($list, $index))]';
-  } else {
-    return 'GetNullableObjectAtIndex($list, $index)';
-  }
-}
-
 String _arrayValue(NamedType field) {
-  if (field.type.isClass) {
-    return '(self.${field.name} ? [self.${field.name} toList] : [NSNull null])';
-  } else if (field.type.isEnum) {
+  if (field.type.isEnum) {
     if (field.type.isNullable) {
       return '(self.${field.name} == nil ? [NSNull null] : [NSNumber numberWithInteger:self.${field.name}.value])';
     }

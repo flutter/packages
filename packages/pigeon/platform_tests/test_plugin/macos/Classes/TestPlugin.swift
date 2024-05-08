@@ -87,8 +87,8 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
     return anObject
   }
 
-  func echo(_ aList: [Any?]) throws -> [Any?] {
-    return aList
+  func echo(_ list: [Any?]) throws -> [Any?] {
+    return list
   }
 
   func echo(_ aMap: [String?: Any?]) throws -> [String?: Any?] {
@@ -244,8 +244,8 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
     completion(.success(anObject))
   }
 
-  func echoAsync(_ aList: [Any?], completion: @escaping (Result<[Any?], Error>) -> Void) {
-    completion(.success(aList))
+  func echoAsync(_ list: [Any?], completion: @escaping (Result<[Any?], Error>) -> Void) {
+    completion(.success(list))
   }
 
   func echoAsync(
@@ -287,8 +287,8 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
     completion(.success(anObject))
   }
 
-  func echoAsyncNullable(_ aList: [Any?]?, completion: @escaping (Result<[Any?]?, Error>) -> Void) {
-    completion(.success(aList))
+  func echoAsyncNullable(_ list: [Any?]?, completion: @escaping (Result<[Any?]?, Error>) -> Void) {
+    completion(.success(list))
   }
 
   func echoAsyncNullable(
@@ -459,10 +459,10 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
   }
 
   func callFlutterEcho(
-    _ aList: FlutterStandardTypedData,
+    _ list: FlutterStandardTypedData,
     completion: @escaping (Result<FlutterStandardTypedData, Error>) -> Void
   ) {
-    flutterAPI.echo(aList) { response in
+    flutterAPI.echo(list) { response in
       switch response {
       case .success(let res):
         completion(.success(res))
@@ -472,8 +472,8 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
     }
   }
 
-  func callFlutterEcho(_ aList: [Any?], completion: @escaping (Result<[Any?], Error>) -> Void) {
-    flutterAPI.echo(aList) { response in
+  func callFlutterEcho(_ list: [Any?], completion: @escaping (Result<[Any?], Error>) -> Void) {
+    flutterAPI.echo(list) { response in
       switch response {
       case .success(let res):
         completion(.success(res))
@@ -559,10 +559,10 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
   }
 
   func callFlutterEchoNullable(
-    _ aList: FlutterStandardTypedData?,
+    _ list: FlutterStandardTypedData?,
     completion: @escaping (Result<FlutterStandardTypedData?, Error>) -> Void
   ) {
-    flutterAPI.echoNullable(aList) { response in
+    flutterAPI.echoNullable(list) { response in
       switch response {
       case .success(let res):
         completion(.success(res))
@@ -573,9 +573,9 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
   }
 
   func callFlutterEchoNullable(
-    _ aList: [Any?]?, completion: @escaping (Result<[Any?]?, Error>) -> Void
+    _ list: [Any?]?, completion: @escaping (Result<[Any?]?, Error>) -> Void
   ) {
-    flutterAPI.echoNullable(aList) { response in
+    flutterAPI.echoNullable(list) { response in
       switch response {
       case .success(let res):
         completion(.success(res))
