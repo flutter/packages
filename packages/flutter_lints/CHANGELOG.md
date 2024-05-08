@@ -1,10 +1,10 @@
 ## 4.0.0
 
-* Updated `package:lints` dependency to version 4.0.0, with the following changes:
-    * added `library_annotations`
-    * added `no_wildcard_variable_uses`
-    * removed `package_prefixed_library_names`
-    * removed `library_names`
+* Updates `package:lints` dependency to version 4.0.0, with the following changes:
+    * adds `library_annotations`
+    * adds `no_wildcard_variable_uses`
+    * removes `package_prefixed_library_names`
+    * removes `library_names`
 
 ## 3.0.2
 
