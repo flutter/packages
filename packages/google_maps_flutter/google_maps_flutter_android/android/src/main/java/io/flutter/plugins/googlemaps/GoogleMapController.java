@@ -145,6 +145,7 @@ class GoogleMapController
       PolygonsController polygonsController,
       PolylinesController polylinesController,
       CirclesController circlesController,
+      HeatmapsController heatmapController,
       TileOverlaysController tileOverlaysController) {
     this.id = id;
     this.context = context;
@@ -158,6 +159,7 @@ class GoogleMapController
     this.polygonsController = polygonsController;
     this.polylinesController = polylinesController;
     this.circlesController = circlesController;
+    this.heatmapsController = heatmapController;
     this.tileOverlaysController = tileOverlaysController;
   }
 

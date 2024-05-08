@@ -53,6 +53,7 @@ public class GoogleMapControllerTest {
   @Mock PolygonsController mockPolygonsController;
   @Mock PolylinesController mockPolylinesController;
   @Mock CirclesController mockCirclesController;
+  @Mock HeatmapsController mockHeatmapsController;
   @Mock TileOverlaysController mockTileOverlaysController;
 
   @Before
@@ -85,6 +86,7 @@ public class GoogleMapControllerTest {
             mockPolygonsController,
             mockPolylinesController,
             mockCirclesController,
+            mockHeatmapsController,
             mockTileOverlaysController);
     googleMapController.init();
     return googleMapController;
