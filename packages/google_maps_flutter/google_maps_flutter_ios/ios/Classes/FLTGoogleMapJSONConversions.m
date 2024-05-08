@@ -213,7 +213,7 @@ NSString *const kHeatmapGradientColorMapSizeKey = @"colorMapSize";
 
   return [[GMUGradient alloc] initWithColors:colors
                                  startPoints:data[kHeatmapGradientStartPointsKey]
-                                colorMapSize:[data[kHeatmapGradienColorMapSizeKey] intValue]];
+                                colorMapSize:[data[kHeatmapGradientColorMapSizeKey] intValue]];
 }
 
 + (NSDictionary *)dictionaryFromGradient:(GMUGradient *)gradient {
@@ -225,7 +225,7 @@ NSString *const kHeatmapGradientColorMapSizeKey = @"colorMapSize";
   return @{
     kHeatmapGradientColorsKey : colorCodes,
     kHeatmapGradientStartPointsKey : gradient.startPoints,
-    kHeatmapGradienColorMapSizeKey : @(gradient.mapSize)
+    kHeatmapGradientColorMapSizeKey : @(gradient.mapSize)
   };
 }
 

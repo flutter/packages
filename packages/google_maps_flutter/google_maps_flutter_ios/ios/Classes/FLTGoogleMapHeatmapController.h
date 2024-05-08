@@ -22,7 +22,7 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (instancetype)initWithHeatmapTileLayer:(GMUHeatmapTileLayer *)heatmapTileLayer
                                  mapView:(GMSMapView *)mapView
-                                 options:(NSDictionary *)options;
+                                 options:(NSDictionary<NSString *, id> *)options;
 
 // Removes this heatmap from the map.
 - (void)removeHeatmap;

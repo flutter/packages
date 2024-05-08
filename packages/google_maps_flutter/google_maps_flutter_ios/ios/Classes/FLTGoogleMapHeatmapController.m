@@ -18,7 +18,7 @@
 @implementation FLTGoogleMapHeatmapController
 - (instancetype)initWithHeatmapTileLayer:(GMUHeatmapTileLayer *)heatmapTileLayer
                                  mapView:(GMSMapView *)mapView
-                                 options:(NSDictionary *)options {
+                                 options:(NSDictionary<NSString *, id> *)options {
   self = [super init];
   if (self) {
     _heatmapTileLayer = heatmapTileLayer;
