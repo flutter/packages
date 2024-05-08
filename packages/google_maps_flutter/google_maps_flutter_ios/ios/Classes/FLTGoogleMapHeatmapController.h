@@ -35,7 +35,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface FLTHeatmapsController : NSObject
 
 // Initializes the controller with a GMSMapView.
-- (instancetype)init:(GMSMapView *)mapView;
+- (instancetype)initWithMapView:(GMSMapView *)mapView;
 
 // Adds heatmaps to the map.
 - (void)addHeatmaps:(NSArray *)heatmapsToAdd;

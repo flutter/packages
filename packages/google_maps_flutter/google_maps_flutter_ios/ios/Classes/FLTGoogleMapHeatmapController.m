@@ -120,7 +120,7 @@
 @end
 
 @implementation FLTHeatmapsController
-- (instancetype)init:(GMSMapView *)mapView {
+- (instancetype)initWithMapView:(GMSMapView *)mapView {
   self = [super init];
   if (self) {
     _mapView = mapView;
