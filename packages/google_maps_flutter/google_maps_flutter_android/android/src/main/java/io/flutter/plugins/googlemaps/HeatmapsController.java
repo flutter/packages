@@ -4,6 +4,8 @@
 
 package io.flutter.plugins.googlemaps;
 
+import static io.flutter.plugins.googlemaps.Convert.HEATMAP_ID_KEY;
+
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.TileOverlay;
 import com.google.android.gms.maps.model.TileOverlayOptions;
@@ -107,6 +109,6 @@ public class HeatmapsController {
   @SuppressWarnings("unchecked")
   private static String getHeatmapId(Object heatmap) {
     Map<String, Object> heatmapMap = (Map<String, Object>) heatmap;
-    return (String) heatmapMap.get("heatmapId");
+    return (String) heatmapMap.get(HEATMAP_ID_KEY);
   }
 }

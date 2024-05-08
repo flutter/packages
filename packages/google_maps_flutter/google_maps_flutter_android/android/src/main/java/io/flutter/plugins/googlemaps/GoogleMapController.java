@@ -4,6 +4,11 @@
 
 package io.flutter.plugins.googlemaps;
 
+import static io.flutter.plugins.googlemaps.Convert.HEATMAPS_TO_ADD_KEY;
+import static io.flutter.plugins.googlemaps.Convert.HEATMAPS_TO_CHANGE_KEY;
+import static io.flutter.plugins.googlemaps.Convert.HEATMAP_IDS_TO_REMOVE_KEY;
+import static io.flutter.plugins.googlemaps.Convert.HEATMAP_ID_KEY;
+
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -470,11 +475,11 @@ class GoogleMapController
         }
       case "heatmaps#update":
         {
-          List<Object> heatmapsToAdd = call.argument("heatmapsToAdd");
+          List<Object> heatmapsToAdd = call.argument(HEATMAPS_TO_ADD_KEY);
           heatmapsController.addHeatmaps(heatmapsToAdd);
-          List<Object> heatmapsToChange = call.argument("heatmapsToChange");
+          List<Object> heatmapsToChange = call.argument(HEATMAPS_TO_CHANGE_KEY);
           heatmapsController.changeHeatmaps(heatmapsToChange);
-          List<String> heatmapIdsToRemove = call.argument("heatmapIdsToRemove");
+          List<String> heatmapIdsToRemove = call.argument(HEATMAP_IDS_TO_REMOVE_KEY);
           heatmapsController.removeHeatmaps(heatmapIdsToRemove);
           result.success(null);
           break;
@@ -591,7 +596,7 @@ class GoogleMapController
         }
       case "map#getHeatmapInfo":
         {
-          String heatmapId = call.argument("heatmapId");
+          String heatmapId = call.argument(HEATMAP_ID_KEY);
           result.success(heatmapsController.getHeatmapInfo(heatmapId));
           break;
         }

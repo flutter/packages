@@ -41,6 +41,18 @@ import java.util.Objects;
 
 /** Conversions between JSON-like values and GoogleMaps data types. */
 class Convert {
+  public static final String HEATMAPS_TO_ADD_KEY = "heatmapsToAdd";
+  public static final String HEATMAPS_TO_CHANGE_KEY = "heatmapsToChange";
+  public static final String HEATMAP_IDS_TO_REMOVE_KEY = "heatmapIdsToRemove";
+  public static final String HEATMAP_ID_KEY = "heatmapId";
+  public static final String HEATMAP_DATA_KEY = "data";
+  public static final String HEATMAP_GRADIENT_KEY = "gradient";
+  public static final String HEATMAP_MAX_INTENSITY_KEY = "maxIntensity";
+  public static final String HEATMAP_OPACITY_KEY = "opacity";
+  public static final String HEATMAP_RADIUS_KEY = "radius";
+  public static final String HEATMAP_GRADIENT_COLORS_KEY = "colors";
+  public static final String HEATMAP_GRADIENT_START_POINTS_KEY = "startPoints";
+  public static final String HEATMAP_GRADIENT_COLOR_MAP_SIZE_KEY = "colorMapSize";
 
   // TODO(hamdikahloun): FlutterMain has been deprecated and should be replaced with FlutterLoader
   //  when it's available in Stable channel: https://github.com/flutter/flutter/issues/70923.
@@ -652,27 +664,27 @@ class Convert {
 
   static String interpretHeatmapOptions(Object o, HeatmapOptionsSink sink) {
     final Map<?, ?> data = toMap(o);
-    final Object rawWeightedData = data.get("data");
+    final Object rawWeightedData = data.get(HEATMAP_DATA_KEY);
     if (rawWeightedData != null) {
       sink.setWeightedData(toWeightedData(rawWeightedData));
     }
-    final Object gradient = data.get("gradient");
+    final Object gradient = data.get(HEATMAP_GRADIENT_KEY);
     if (gradient != null) {
       sink.setGradient(toGradient(gradient));
     }
-    final Object maxIntensity = data.get("maxIntensity");
+    final Object maxIntensity = data.get(HEATMAP_MAX_INTENSITY_KEY);
     if (maxIntensity != null) {
       sink.setMaxIntensity(toDouble(maxIntensity));
     }
-    final Object opacity = data.get("opacity");
+    final Object opacity = data.get(HEATMAP_OPACITY_KEY);
     if (opacity != null) {
       sink.setOpacity(toDouble(opacity));
     }
-    final Object radius = data.get("radius");
+    final Object radius = data.get(HEATMAP_RADIUS_KEY);
     if (radius != null) {
       sink.setRadius(toInt(radius));
     }
-    final String heatmapId = (String) data.get("heatmapId");
+    final String heatmapId = (String) data.get(HEATMAP_ID_KEY);
     if (heatmapId == null) {
       throw new IllegalArgumentException("heatmapId was null");
     } else {
@@ -700,11 +712,11 @@ class Convert {
     final Gradient gradient = (Gradient) gradientField.get(heatmap);
 
     Map<String, Object> heatmapInfo = new HashMap<>();
-    heatmapInfo.put("data", Convert.weightedDataToJson(Objects.requireNonNull(data)));
-    heatmapInfo.put("gradient", gradientToJson(Objects.requireNonNull(gradient)));
-    heatmapInfo.put("maxIntensity", maxIntensityField.get(heatmap));
-    heatmapInfo.put("opacity", opacityField.get(heatmap));
-    heatmapInfo.put("radius", radiusField.get(heatmap));
+    heatmapInfo.put(HEATMAP_DATA_KEY, Convert.weightedDataToJson(Objects.requireNonNull(data)));
+    heatmapInfo.put(HEATMAP_GRADIENT_KEY, gradientToJson(Objects.requireNonNull(gradient)));
+    heatmapInfo.put(HEATMAP_MAX_INTENSITY_KEY, maxIntensityField.get(heatmap));
+    heatmapInfo.put(HEATMAP_OPACITY_KEY, opacityField.get(heatmap));
+    heatmapInfo.put(HEATMAP_RADIUS_KEY, radiusField.get(heatmap));
 
     return heatmapInfo;
   }
@@ -743,30 +755,30 @@ class Convert {
   private static Gradient toGradient(Object o) {
     final Map<?, ?> data = toMap(o);
 
-    final List<?> colorData = toList(data.get("colors"));
+    final List<?> colorData = toList(data.get(HEATMAP_GRADIENT_COLORS_KEY));
     assert colorData != null;
     final int[] colors = new int[colorData.size()];
     for (int i = 0; i < colorData.size(); i++) {
       colors[i] = toInt(colorData.get(i));
     }
 
-    final List<?> startPointData = toList(data.get("startPoints"));
+    final List<?> startPointData = toList(data.get(HEATMAP_GRADIENT_START_POINTS_KEY));
     assert startPointData != null;
     final float[] startPoints = new float[startPointData.size()];
     for (int i = 0; i < startPointData.size(); i++) {
       startPoints[i] = toFloat(startPointData.get(i));
     }
 
-    final int colorMapSize = toInt(data.get("colorMapSize"));
+    final int colorMapSize = toInt(data.get(HEATMAP_GRADIENT_COLOR_MAP_SIZE_KEY));
 
     return new Gradient(colors, startPoints, colorMapSize);
   }
 
   private static Object gradientToJson(Gradient gradient) {
     final Map<String, Object> data = new HashMap<>();
-    data.put("colors", gradient.mColors);
-    data.put("startPoints", gradient.mStartPoints);
-    data.put("colorMapSize", gradient.mColorMapSize);
+    data.put(HEATMAP_GRADIENT_COLORS_KEY, gradient.mColors);
+    data.put(HEATMAP_GRADIENT_START_POINTS_KEY, gradient.mStartPoints);
+    data.put(HEATMAP_GRADIENT_COLOR_MAP_SIZE_KEY, gradient.mColorMapSize);
     return data;
   }
 
