@@ -1,3 +1,7 @@
+## 0.8.12
+
+* Fixes app crashes on Android 12+ caused by selected images with size 0.
+
 ## 0.8.11
 
 * Updates documentation to note that Android Photo Picker use is not optional on Android 13+.
