@@ -36,11 +36,5 @@ Downloaded by pub (not CocoaPods).
     'LIBRARY_SEARCH_PATHS' => '$(inherited) $(TOOLCHAIN_DIR)/usr/lib/swift/$(PLATFORM_NAME)/ $(SDKROOT)/usr/lib/swift',
     'LD_RUNPATH_SEARCH_PATHS' => '$(inherited) /usr/lib/swift',
   }
-  # GoogleMaps 6.x does not support arm64 simulators, but also doesn't declare
-  # explicitly that it doesn't, so mark that here so that the Flutter tool knows
-  # to build the Runner for x86_64 instead. See https://github.com/flutter/flutter/issues/94491
-  # TODO(stuartmorgan): Remove EXCLUDED_ARCHS once this plugin requires iOS 13+,
-  # at which point Cocoapods will resolve to a version of GoogleMaps that has
-  # arm64 support.
   s.resource_bundles = {'google_maps_flutter_ios_privacy' => ['Resources/PrivacyInfo.xcprivacy']}
 end

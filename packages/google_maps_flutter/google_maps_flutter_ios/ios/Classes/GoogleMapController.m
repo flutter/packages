@@ -67,6 +67,8 @@
 @property(nonatomic, strong) FLTPolygonsController *polygonsController;
 @property(nonatomic, strong) FLTPolylinesController *polylinesController;
 @property(nonatomic, strong) FLTCirclesController *circlesController;
+
+// The controller that handles heatmaps
 @property(nonatomic, strong) FLTHeatmapsController *heatmapsController;
 @property(nonatomic, strong) FLTTileOverlaysController *tileOverlaysController;
 // The resulting error message, if any, from the last attempt to set the map style.
