@@ -9,7 +9,6 @@ import com.google.maps.android.heatmaps.Gradient;
 import com.google.maps.android.heatmaps.HeatmapTileProvider;
 import com.google.maps.android.heatmaps.WeightedLatLng;
 import java.util.List;
-import java.util.Map;
 
 public class HeatmapController implements HeatmapOptionsSink {
   private final HeatmapTileProvider heatmap;

@@ -7,7 +7,6 @@ package io.flutter.plugins.googlemaps;
 import static io.flutter.plugins.googlemaps.Convert.HEATMAP_ID_KEY;
 
 import androidx.annotation.VisibleForTesting;
-
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.TileOverlay;
 import com.google.android.gms.maps.model.TileOverlayOptions;

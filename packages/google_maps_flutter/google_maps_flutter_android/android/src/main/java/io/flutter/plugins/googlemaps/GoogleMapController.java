@@ -7,7 +7,6 @@ package io.flutter.plugins.googlemaps;
 import static io.flutter.plugins.googlemaps.Convert.HEATMAPS_TO_ADD_KEY;
 import static io.flutter.plugins.googlemaps.Convert.HEATMAPS_TO_CHANGE_KEY;
 import static io.flutter.plugins.googlemaps.Convert.HEATMAP_IDS_TO_REMOVE_KEY;
-import static io.flutter.plugins.googlemaps.Convert.HEATMAP_ID_KEY;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
