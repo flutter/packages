@@ -33,6 +33,7 @@ NS_ASSUME_NONNULL_BEGIN
 + (NSArray *)arrayFromWeightedData:(NSArray<GMUWeightedLatLng *> *)weightedData;
 + (GMUGradient *)gradientFromDictionary:(NSDictionary *)data;
 + (NSDictionary *)dictionaryFromGradient:(GMUGradient *)gradient;
++ (BOOL)isNull:(id)object;
 
 @end
 

@@ -61,34 +61,35 @@
 - (void)setMap {
   _heatmapTileLayer.map = _mapView;
 }
+
 - (void)interpretHeatmapOptions:(NSDictionary *)data {
   NSArray *weightedData = data[@"data"];
-  if (weightedData != nil && weightedData != (id)[NSNull null]) {
+  if (![FLTGoogleMapJSONConversions isNull:weightedData]) {
     [self setWeightedData:[FLTGoogleMapJSONConversions weightedDataFromArray:weightedData]];
   }
 
   NSDictionary *gradient = data[@"gradient"];
-  if (gradient != nil && gradient != (id)[NSNull null]) {
+  if (![FLTGoogleMapJSONConversions isNull:gradient]) {
     [self setGradient:[FLTGoogleMapJSONConversions gradientFromDictionary:gradient]];
   }
 
   NSNumber *opacity = data[@"opacity"];
-  if (opacity != nil && opacity != (id)[NSNull null]) {
+  if (![FLTGoogleMapJSONConversions isNull:opacity]) {
     [self setOpacity:[opacity doubleValue]];
   }
 
   NSNumber *radius = data[@"radius"];
-  if (radius != nil && radius != (id)[NSNull null]) {
+  if (![FLTGoogleMapJSONConversions isNull:radius]) {
     [self setRadius:[radius intValue]];
   }
 
   NSNumber *minimumZoomIntensity = data[@"minimumZoomIntensity"];
-  if (minimumZoomIntensity != nil && minimumZoomIntensity != (id)[NSNull null]) {
+  if (![FLTGoogleMapJSONConversions isNull:minimumZoomIntensity]) {
     [self setMinimumZoomIntensity:[minimumZoomIntensity intValue]];
   }
 
   NSNumber *maximumZoomIntensity = data[@"maximumZoomIntensity"];
-  if (maximumZoomIntensity != nil && maximumZoomIntensity != (id)[NSNull null]) {
+  if (![FLTGoogleMapJSONConversions isNull:maximumZoomIntensity]) {
     [self setMaximumZoomIntensity:[maximumZoomIntensity intValue]];
   }
 

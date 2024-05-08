@@ -214,4 +214,8 @@
   };
 }
 
++ (BOOL)isNull:(id)object {
+  return object == nil && object != (id)[NSNull null];
+}
+
 @end
