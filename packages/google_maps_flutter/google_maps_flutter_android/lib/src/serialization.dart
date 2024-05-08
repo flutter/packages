@@ -5,6 +5,22 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart';
 
+String _objectsToAddKey(String name) => '${name}sToAdd';
+String _objectsToChangeKey(String name) => '${name}sToChange';
+String _objectIdsToRemoveKey(String name) => '${name}IdsToRemove';
+const String _heatmapIdKey = 'heatmapId';
+const String _heatmapDataKey = 'data';
+const String _heatmapDissipatingKey = 'dissipating';
+const String _heatmapGradientKey = 'gradient';
+const String _heatmapMaxIntensityKey = 'maxIntensity';
+const String _heatmapOpacityKey = 'opacity';
+const String _heatmapRadiusKey = 'radius';
+const String _heatmapMinimumZoomIntensityKey = 'minimumZoomIntensity';
+const String _heatmapMaximumZoomIntensityKey = 'maximumZoomIntensity';
+const String _heatmapGradientColorsKey = 'colors';
+const String _heatmapGradientStartPointsKey = 'startPoints';
+const String _heatmapGradientColorMapSizeKey = 'colorMapSize';
+
 void _addIfNonNull(Map<String, Object?> map, String fieldName, Object? value) {
   if (value != null) {
     map[fieldName] = value;
@@ -20,17 +36,17 @@ Object serializeMapsObjectUpdates<T extends MapsObject<T>>(
 
   _addIfNonNull(
     json,
-    '${updates.objectName}sToAdd',
+    _objectsToAddKey(updates.objectName),
     updates.objectsToAdd.map(serialize).toList(),
   );
   _addIfNonNull(
     json,
-    '${updates.objectName}sToChange',
+    _objectsToChangeKey(updates.objectName),
     updates.objectsToChange.map(serialize).toList(),
   );
   _addIfNonNull(
     json,
-    '${updates.objectName}IdsToRemove',
+    _objectIdsToRemoveKey(updates.objectName),
     updates.objectIdsToRemove
         .map<String>((MapsObjectId<T> m) => m.value)
         .toList(),
@@ -43,23 +59,26 @@ Object serializeMapsObjectUpdates<T extends MapsObject<T>>(
 Object serializeHeatmap(Heatmap heatmap) {
   final Map<String, Object> json = <String, Object>{};
 
-  _addIfNonNull(json, 'heatmapId', heatmap.heatmapId.value);
+  _addIfNonNull(json, _heatmapIdKey, heatmap.heatmapId.value);
   _addIfNonNull(
     json,
-    'data',
+    _heatmapDataKey,
     heatmap.data.map(serializeWeightedLatLng).toList(),
   );
-  _addIfNonNull(json, 'dissipating', heatmap.dissipating);
+  _addIfNonNull(json, _heatmapDissipatingKey, heatmap.dissipating);
 
   final HeatmapGradient? gradient = heatmap.gradient;
   if (gradient != null) {
-    _addIfNonNull(json, 'gradient', serializeHeatmapGradient(gradient));
+    _addIfNonNull(
+        json, _heatmapGradientKey, serializeHeatmapGradient(gradient));
   }
-  _addIfNonNull(json, 'maxIntensity', heatmap.maxIntensity);
-  _addIfNonNull(json, 'opacity', heatmap.opacity);
-  _addIfNonNull(json, 'radius', heatmap.radius.pixels);
-  _addIfNonNull(json, 'minimumZoomIntensity', heatmap.minimumZoomIntensity);
-  _addIfNonNull(json, 'maximumZoomIntensity', heatmap.maximumZoomIntensity);
+  _addIfNonNull(json, _heatmapMaxIntensityKey, heatmap.maxIntensity);
+  _addIfNonNull(json, _heatmapOpacityKey, heatmap.opacity);
+  _addIfNonNull(json, _heatmapRadiusKey, heatmap.radius.pixels);
+  _addIfNonNull(
+      json, _heatmapMinimumZoomIntensityKey, heatmap.minimumZoomIntensity);
+  _addIfNonNull(
+      json, _heatmapMaximumZoomIntensityKey, heatmap.maximumZoomIntensity);
 
   return json;
 }
@@ -101,15 +120,15 @@ Object serializeHeatmapGradient(HeatmapGradient gradient) {
 
   _addIfNonNull(
     json,
-    'colors',
+    _heatmapGradientColorsKey,
     gradient.colors.map((HeatmapGradientColor e) => e.color.value).toList(),
   );
   _addIfNonNull(
     json,
-    'startPoints',
+    _heatmapGradientStartPointsKey,
     gradient.colors.map((HeatmapGradientColor e) => e.startPoint).toList(),
   );
-  _addIfNonNull(json, 'colorMapSize', gradient.colorMapSize);
+  _addIfNonNull(json, _heatmapGradientColorMapSizeKey, gradient.colorMapSize);
 
   return json;
 }
@@ -121,18 +140,20 @@ HeatmapGradient? deserializeHeatmapGradient(Object? json) {
   }
   assert(json is Map);
   final Map<String, Object?> map = (json as Map<Object?, Object?>).cast();
-  final List<Color> colors = (map['colors']! as List<Object?>)
+  final List<Color> colors = (map[_heatmapGradientColorsKey]! as List<Object?>)
       .whereType<int>()
       .map((int e) => Color(e))
       .toList();
   final List<double> startPoints =
-      (map['startPoints']! as List<Object?>).whereType<double>().toList();
+      (map[_heatmapGradientStartPointsKey]! as List<Object?>)
+          .whereType<double>()
+          .toList();
   final List<HeatmapGradientColor> gradientColors = <HeatmapGradientColor>[];
   for (int i = 0; i < colors.length; i++) {
     gradientColors.add(HeatmapGradientColor(colors[i], startPoints[i]));
   }
   return HeatmapGradient(
     gradientColors,
-    colorMapSize: map['colorMapSize'] as int? ?? 256,
+    colorMapSize: map[_heatmapGradientColorMapSizeKey] as int? ?? 256,
   );
 }
