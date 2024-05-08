@@ -72,6 +72,9 @@ class HeatmapBodyState extends State<HeatmapBody> {
 
   @override
   Widget build(BuildContext context) {
+    // The Google Maps SDK handles radius differently across platforms.
+    // It is the developer's responsibility to ensure proper behavior on
+    // each platform.
     final int radius;
     if (kIsWeb) {
       radius = 10;
@@ -125,7 +128,6 @@ class HeatmapBodyState extends State<HeatmapBody> {
                       ],
                     ),
                     maxIntensity: 1,
-                    // Radius behaves differently on web and Android/iOS.
                     radius: HeatmapRadius.fromPlatformSpecificValue(radius),
                   )
                 }),
