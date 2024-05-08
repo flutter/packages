@@ -354,7 +354,7 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
       self.pictureInPictureController.delegate = self;
     }
   } else {
-    // We don't do anything here because there is no setup required below macOS 10.15
+    // We don't do anything here because there is no setup required below macOS 10.15.
   }
 }
 
