@@ -838,6 +838,7 @@ public class ImagePickerDelegateTest {
     ArgumentCaptor<List<String>> pathListCapture = ArgumentCaptor.forClass(List.class);
     verify(mockResult).success(pathListCapture.capture());
     assertEquals(0, pathListCapture.getValue().size());
+    verifyNoMoreInteractions(mockResult);
   }
 
   private ImagePickerDelegate createDelegate() {
