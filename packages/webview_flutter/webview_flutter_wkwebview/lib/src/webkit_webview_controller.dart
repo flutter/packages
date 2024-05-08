@@ -648,18 +648,18 @@ class WebKitWebViewController extends PlatformWebViewController {
       '''
 var _flutter_webview_plugin_overrides = _flutter_webview_plugin_overrides || {
   removeCyclicObject: function() {
-    const levelObjects = [];
+    const traversalStack = [];
     return function (k, v) {
       if (typeof v !== "object" || v === null) { return v; }
       const currentParentObj = this;
       while (
-        levelObjects.length > 0 &&
-        levelObjects[levelObjects.length - 1] !== currentParentObj
+        traversalStack.length > 0 &&
+        traversalStack[traversalStack.length - 1] !== currentParentObj
       ) {
-        levelObjects.pop();
+        traversalStack.pop();
       }
-      if (levelObjects.includes(v)) { return; }
-      levelObjects.push(v);
+      if (traversalStack.includes(v)) { return; }
+      traversalStack.push(v);
       return v;
     };
   },
