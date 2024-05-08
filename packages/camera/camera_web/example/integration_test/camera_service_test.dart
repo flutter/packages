@@ -2,6 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:async';
+import 'dart:html';
+import 'dart:js_util' as js_util;
 // ignore_for_file: only_throw_errors
 
 import 'dart:async';
