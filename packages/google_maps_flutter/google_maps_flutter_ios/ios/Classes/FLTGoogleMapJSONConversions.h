@@ -29,7 +29,7 @@ extern NSString *const kHeatmapGradientColorMapSizeKey;
 + (CGPoint)pointFromArray:(NSArray *)array;
 + (NSArray *)arrayFromLocation:(CLLocationCoordinate2D)location;
 + (UIColor *)colorFromRGBA:(NSNumber *)data;
-+ (NSNumber *)rgbaFromColor:(UIColor *)color;
++ (NSNumber *)RGBAFromColor:(UIColor *)color;
 + (NSArray<CLLocation *> *)pointsFromLatLongs:(NSArray *)data;
 + (NSArray<NSArray<CLLocation *> *> *)holesFromPointsArray:(NSArray *)data;
 + (nullable NSDictionary<NSString *, id> *)dictionaryFromPosition:
@@ -41,13 +41,12 @@ extern NSString *const kHeatmapGradientColorMapSizeKey;
 + (GMSCoordinateBounds *)coordinateBoundsFromLatLongs:(NSArray *)latlongs;
 + (GMSMapViewType)mapViewTypeFromTypeValue:(NSNumber *)value;
 + (nullable GMSCameraUpdate *)cameraUpdateFromChannelValue:(NSArray *)channelValue;
-+ (nullable GMUWeightedLatLng *)weightedLatLngFromArray:(NSArray *)data;
-+ (NSArray *)arrayFromWeightedLatLng:(GMUWeightedLatLng *)weightedLatLng;
-+ (NSArray<GMUWeightedLatLng *> *)weightedDataFromArray:(NSArray *)data;
-+ (NSArray *)arrayFromWeightedData:(NSArray<GMUWeightedLatLng *> *)weightedData;
-+ (GMUGradient *)gradientFromDictionary:(NSDictionary *)data;
-+ (NSDictionary *)dictionaryFromGradient:(GMUGradient *)gradient;
-+ (BOOL)isNull:(id)object;
++ (nullable GMUWeightedLatLng *)weightedLatLngFromArray:(NSArray<id> *)data;
++ (NSArray<id> *)arrayFromWeightedLatLng:(GMUWeightedLatLng *)weightedLatLng;
++ (NSArray<GMUWeightedLatLng *> *)weightedDataFromArray:(NSArray<NSArray<id> *> *)data;
++ (NSArray<NSArray<id> *> *)arrayFromWeightedData:(NSArray<GMUWeightedLatLng *> *)weightedData;
++ (GMUGradient *)gradientFromDictionary:(NSDictionary<NSString *, id> *)data;
++ (NSDictionary<NSString *, id> *)dictionaryFromGradient:(GMUGradient *)gradient;
 
 @end
 
