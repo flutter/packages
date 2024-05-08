@@ -145,6 +145,40 @@ void main() {
     skip: true,
   );
 
+  testWidgets('Video capture records valid video', (WidgetTester tester) async {
+    final List<CameraDescription> cameras = await availableCameras();
+    if (cameras.isEmpty) {
+      return;
+    }
+
+    final CameraController controller = CameraController(
+      cameras[0],
+      ResolutionPreset.low,
+      enableAudio: false,
+    );
+    await controller.initialize();
+    await controller.prepareForVideoRecording();
+
+    await controller.startVideoRecording();
+    final int recordingStart = DateTime.now().millisecondsSinceEpoch;
+
+    sleep(const Duration(seconds: 2));
+
+    final XFile file = await controller.stopVideoRecording();
+    final int recordingTime =
+        DateTime.now().millisecondsSinceEpoch - recordingStart;
+
+    final File videoFile = File(file.path);
+    final VideoPlayerController videoController = VideoPlayerController.file(
+      videoFile,
+    );
+    await videoController.initialize();
+    final int duration = videoController.value.duration.inMilliseconds;
+    await videoController.dispose();
+
+    expect(duration, lessThan(recordingTime));
+  });
+
   testWidgets('Pause and resume video recording', (WidgetTester tester) async {
     final List<CameraDescription> cameras = await availableCameras();
     if (cameras.isEmpty) {
