@@ -12,13 +12,17 @@ NS_ASSUME_NONNULL_BEGIN
 @interface FLTGoogleMapHeatmapController : NSObject
 
 /**
- Initializes an instance of this class with a heatmap tile layer, a map view, and additional configuration options.
+ Initializes an instance of this class with a heatmap tile layer, a map view, and additional
+ configuration options.
 
- @param heatmapTileLayer The heatmap tile layer (of type GMUHeatmapTileLayer) that will be used to display heatmap data on the map.
+ @param heatmapTileLayer The heatmap tile layer (of type GMUHeatmapTileLayer) that will be used to
+ display heatmap data on the map.
  @param mapView The map view (of type GMSMapView) where the heatmap layer will be overlaid.
- @param options A dictionary (NSDictionary) containing any additional options or configuration settings for customizing the heatmap layer.
+ @param options A dictionary (NSDictionary) containing any additional options or configuration
+ settings for customizing the heatmap layer.
 
- @return An initialized instance of this class, configured with the specified heatmap tile layer, map view, and additional options.
+ @return An initialized instance of this class, configured with the specified heatmap tile layer,
+ map view, and additional options.
  */
 - (instancetype)initWithHeatmapTileLayer:(GMUHeatmapTileLayer *)heatmapTileLayer
                                  mapView:(GMSMapView *)mapView

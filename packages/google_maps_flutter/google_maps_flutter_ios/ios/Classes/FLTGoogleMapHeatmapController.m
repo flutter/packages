@@ -17,8 +17,9 @@
 @end
 
 // Static wrapper for interpreting heatmap options.
-static void InterpretHeatmapOptions(FLTGoogleMapHeatmapController *self, NSDictionary<NSString *, id> *options) {
-    [self interpretHeatmapOptions:options];
+static void InterpretHeatmapOptions(FLTGoogleMapHeatmapController *self,
+                                    NSDictionary<NSString *, id> *options) {
+  [self interpretHeatmapOptions:options];
 }
 
 @implementation FLTGoogleMapHeatmapController
