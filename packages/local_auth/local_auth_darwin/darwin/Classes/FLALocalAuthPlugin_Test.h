@@ -15,8 +15,8 @@
 - (LAContext *)createAuthContext;
 @end
 
-/// Protocol for a source of alert factory that wraps standard UIAlertController and NSAlert allocation for iOS and
-/// macOS respectfully. Used to allow context injection in unit tests.
+/// Protocol for a source of alert factory that wraps standard UIAlertController and NSAlert
+/// allocation for iOS and macOS respectfully. Used to allow context injection in unit tests.
 @protocol FLADAlertFactory <NSObject>
 
 #if TARGET_OS_OSX
