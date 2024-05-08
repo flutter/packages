@@ -20,7 +20,7 @@
 @protocol FLADAlertFactory <NSObject>
 
 #if TARGET_OS_OSX
-- (NSAlert *)createNSAlert;
+- (NSAlert *)createAlert;
 #elif TARGET_OS_IOS
 - (UIAlertController *)createAlertControllerWithTitle:(nullable NSString *)title
                                               message:(nullable NSString *)message
