@@ -105,7 +105,7 @@ static void InterpretHeatmapOptions(FLTGoogleMapHeatmapController *self, NSDicti
   [self setMap];
 }
 - (NSDictionary<NSString *, id> *)getHeatmapInfo {
-  NSMutableDictionary *options = [[NSMutableDictionary alloc] init];
+  NSMutableDictionary *options = [@{} mutableCopy];
   options[kHeatmapDataKey] =
       [FLTGoogleMapJSONConversions arrayFromWeightedData:_heatmapTileLayer.weightedData];
   options[kHeatmapGradientKey] =
@@ -133,7 +133,7 @@ static void InterpretHeatmapOptions(FLTGoogleMapHeatmapController *self, NSDicti
   self = [super init];
   if (self) {
     _mapView = mapView;
-    _heatmapIdToController = [[NSMutableDictionary alloc] init];
+    _heatmapIdToController = [@{} mutableCopy];
   }
   return self;
 }
