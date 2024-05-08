@@ -38,19 +38,19 @@ NS_ASSUME_NONNULL_BEGIN
 - (instancetype)initWithMapView:(GMSMapView *)mapView;
 
 // Adds heatmaps to the map.
-- (void)addHeatmaps:(NSArray *)heatmapsToAdd;
+- (void)addHeatmaps:(NSArray<NSDictionary<NSString *, id> *> *)heatmapsToAdd;
 
 // Updates heatmaps on the map.
-- (void)changeHeatmaps:(NSArray *)heatmapsToChange;
+- (void)changeHeatmaps:(NSArray<NSDictionary<NSString *, id> *> *)heatmapsToChange;
 
 // Removes heatmaps from the map.
-- (void)removeHeatmapsWithIdentifiers:(NSArray *)identifiers;
+- (void)removeHeatmapsWithIdentifiers:(NSArray<NSString *> *)identifiers;
 
 // Returns true if a heatmap with the given identifier exists on the map.
 - (bool)hasHeatmapWithIdentifier:(NSString *)identifier;
 
 // Returns the data of the heatmap with the given identifier.
-- (nullable NSDictionary *)heatmapInfoWithIdentifier:(NSString *)identifier;
+- (nullable NSDictionary<NSString *, id> *)heatmapInfoWithIdentifier:(NSString *)identifier;
 @end
 
 NS_ASSUME_NONNULL_END
