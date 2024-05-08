@@ -1134,7 +1134,18 @@ class StatefulNavigationShell extends StatefulWidget {
       /// Recursively traverses the routes of the provided StackedShellBranch to
       /// find the first GoRoute, from which a full path will be derived.
       final GoRoute route = branch.defaultRoute!;
-      return _router.configuration.locationForRoute(route)!;
+      final List<String> parameters = <String>[];
+      patternToRegExp(route.path, parameters);
+      assert(
+        parameters.isEmpty,
+        'The first route in the branch contains parameter[s] $parameters. '
+        'The goBranch cannot infer its location string because of this. '
+        'Please provide an initialLocation to the StatefulShellBranch at '
+        'the index $index.',
+      );
+      final String fullPath = _router.configuration.locationForRoute(route)!;
+      return patternToPath(
+          fullPath, shellRouteContext.routerState.pathParameters);
     }
   }
 
@@ -1268,7 +1279,6 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell>
   /// initialLocation is true, this method will navigate to initial location of
   /// the branch (see [StatefulShellBranch.initialLocation]).
   void goBranch(int index, {bool initialLocation = false}) {
-    assert(index >= 0 && index < route.branches.length);
     final RouteMatchList? matchList =
         initialLocation ? null : _matchListForBranch(index);
     if (matchList != null && matchList.isNotEmpty) {
