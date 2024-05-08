@@ -12,21 +12,20 @@ import StoreKit
 #endif
 
 public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI {
-  // Properties
   private let receiptManager: FIAPReceiptManager
   private var productsCache: NSMutableDictionary = [:]
   private var paymentQueueDelegateCallbackChannel: FlutterMethodChannel?
-  private var paymentQueueDelegate: Any? = nil
   // note - the type should be FIAPPaymentQueueDelegate, but this is only available >= iOS 13,
+  private var paymentQueueDelegate: Any? = nil
   private var requestHandlers = Set<FIAPRequestHandler>()
   private var handlerFactory: ((SKRequest) -> FIAPRequestHandler)
+  // TODO(louisehsu): Once tests are migrated to swift, we can use @testable import, and make theses vars private again
   @objc
   public var registrar: FlutterPluginRegistrar?
   @objc
   public var paymentQueueHandler: FIAPaymentQueueHandler?
   @objc
   public var transactionObserverCallbackChannel: FlutterMethodChannel?
-  // TODO(louisehsu): Once tests are migrated to swift, we can use @testable import, and make theses vars private again
 
   public static func register(with registrar: FlutterPluginRegistrar) {
     #if os(iOS)
