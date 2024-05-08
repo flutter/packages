@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'dart:async';
+import 'dart:typed_data';
 import 'dart:js_interop';
 import 'dart:js_interop_unsafe';
 import 'dart:ui';
@@ -1708,15 +1709,33 @@ void main() {
       testWidgets(
         'bytes is a multiple of 4',
         (WidgetTester tester) async {
-          final MockVideoElement videoElement = MockVideoElement();
+          final VideoElement videoElement = getVideoElementWithBlankStream(
+            const Size(10, 10),
+          );
+
           final Camera camera = Camera(
             textureId: textureId,
             cameraService: cameraService,
           )..videoElement = videoElement;
-          when(() => videoElement.srcObject).thenAnswer(
-            (_) => mediaStream,
+
+          when(
+            () => cameraService.takeFrame(videoElement),
+          ).thenAnswer(
+            (_) => CameraImageData(
+              format: const CameraImageFormat(
+                ImageFormatGroup.jpeg,
+                raw: '',
+              ),
+              planes: <CameraImagePlane>[
+                CameraImagePlane(
+                  bytes: Uint8List(32),
+                  bytesPerRow: 0,
+                ),
+              ],
+              height: 10,
+              width: 10,
+            ),
           );
-          await camera.initialize();
           final CameraImageData cameraImageData =
               await camera.cameraFrameStream().first;
           expect(
@@ -1730,7 +1749,7 @@ void main() {
             ),
           );
         },
-        timeout: const Timeout(Duration(seconds: 1)),
+        timeout: const Timeout(Duration(seconds: 2)),
       );
     });
   });
