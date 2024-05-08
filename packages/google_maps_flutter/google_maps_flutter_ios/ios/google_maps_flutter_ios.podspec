@@ -28,7 +28,8 @@ Downloaded by pub (not CocoaPods).
   s.dependency 'Google-Maps-iOS-Utils'
   s.static_framework = true
   s.platform = :ios, '14.0'
-  s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES' }
+  # DO NOT MERGE: The ECLUDED_ARCHS key is a temporary workaround necessitated by https://github.com/googlemaps/google-maps-ios-utils/issues/456
+  s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES', 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'arm64' }
   # "Google-Maps-iOS-Utils" is static and contains Swift classes.
   # Find the Swift runtime when these plugins are built as libraries without `use_frameworks!`
   s.swift_version = '5.0'
