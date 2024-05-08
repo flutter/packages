@@ -119,13 +119,9 @@ TEST_F(NullFieldsTest, ReplyFromListWithValues) {
   EncodableList list{
       EncodableValue("result"),
       EncodableValue("error"),
-      EncodableValue(EncodableList{
-          EncodableValue(1),
-          EncodableValue(2),
-          EncodableValue(3),
-      }),
+      EncodableValue(EncodableList({1, 2, 3})),
       CustomEncodableValue(request),
-      EncodableValue(0),
+      CustomEncodableValue(NullFieldsSearchReplyType::success),
   };
   NullFieldsSearchReply reply = ReplyFromList(list);
 
