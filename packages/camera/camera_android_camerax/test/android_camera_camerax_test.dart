@@ -1290,10 +1290,10 @@ void main() {
               Future<Camera2CameraInfo>.value(mockCamera2CameraInfo));
 
       const int cameraId = 17;
-      const String outputPath = '/temp/MOV123.temp';
+      const String outputPath = '/temp/REC123.mp4';
 
       // Mock method calls.
-      when(mockSystemServicesApi.getTempFilePath(camera.videoPrefix, '.temp'))
+      when(mockSystemServicesApi.getTempFilePath(camera.videoPrefix, '.mp4'))
           .thenReturn(outputPath);
       when(camera.recorder!.prepareRecording(outputPath))
           .thenAnswer((_) async => mockPendingRecording);
@@ -1369,10 +1369,10 @@ void main() {
               Future<Camera2CameraInfo>.value(mockCamera2CameraInfo));
 
       const int cameraId = 17;
-      const String outputPath = '/temp/MOV123.temp';
+      const String outputPath = '/temp/REC123.mp4';
 
       // Mock method calls.
-      when(mockSystemServicesApi.getTempFilePath(camera.videoPrefix, '.temp'))
+      when(mockSystemServicesApi.getTempFilePath(camera.videoPrefix, '.mp4'))
           .thenReturn(outputPath);
       when(camera.recorder!.prepareRecording(outputPath))
           .thenAnswer((_) async => mockPendingRecording);
@@ -1398,7 +1398,7 @@ void main() {
 
       await camera.startVideoCapturing(const VideoCaptureOptions(cameraId));
       // Verify that each of these calls happened only once.
-      verify(mockSystemServicesApi.getTempFilePath(camera.videoPrefix, '.temp'))
+      verify(mockSystemServicesApi.getTempFilePath(camera.videoPrefix, '.mp4'))
           .called(1);
       verifyNoMoreInteractions(mockSystemServicesApi);
       verify(camera.recorder!.prepareRecording(outputPath)).called(1);
@@ -1448,7 +1448,7 @@ void main() {
                   : MockCamera2CameraInfo());
 
       const int cameraId = 17;
-      const String outputPath = '/temp/MOV123.temp';
+      const String outputPath = '/temp/REC123.mp4';
       final Completer<CameraImageData> imageDataCompleter =
           Completer<CameraImageData>();
       final VideoCaptureOptions videoCaptureOptions = VideoCaptureOptions(
@@ -1461,7 +1461,7 @@ void main() {
           .thenAnswer((_) async => true);
       when(camera.processCameraProvider!.isBound(camera.imageAnalysis!))
           .thenAnswer((_) async => true);
-      when(mockSystemServicesApi.getTempFilePath(camera.videoPrefix, '.temp'))
+      when(mockSystemServicesApi.getTempFilePath(camera.videoPrefix, '.mp4'))
           .thenReturn(outputPath);
       when(camera.recorder!.prepareRecording(outputPath))
           .thenAnswer((_) async => mockPendingRecording);
@@ -1516,10 +1516,10 @@ void main() {
                   : MockCamera2CameraInfo());
 
       const int cameraId = 87;
-      const String outputPath = '/temp/MOV123.temp';
+      const String outputPath = '/temp/REC123.mp4';
 
       // Mock method calls.
-      when(mockSystemServicesApi.getTempFilePath(camera.videoPrefix, '.temp'))
+      when(mockSystemServicesApi.getTempFilePath(camera.videoPrefix, '.mp4'))
           .thenReturn(outputPath);
       when(camera.recorder!.prepareRecording(outputPath))
           .thenAnswer((_) async => mockPendingRecording);
@@ -1601,6 +1601,9 @@ void main() {
       when(camera.processCameraProvider!.isBound(videoCapture))
           .thenAnswer((_) async => true);
 
+      // Simulate video recording being finalized so stopVideoRecording completes.
+      PendingRecording.videoRecordingFinalizedStreamController.add(null);
+
       final XFile file = await camera.stopVideoRecording(0);
       expect(file.path, videoOutputPath);
 
@@ -1642,6 +1645,8 @@ void main() {
           .thenAnswer((_) async => true);
 
       await expectLater(() async {
+        // Simulate video recording being finalized so stopVideoRecording completes.
+        PendingRecording.videoRecordingFinalizedStreamController.add(null);
         await camera.stopVideoRecording(0);
       }, throwsA(isA<CameraException>()));
       expect(camera.recording, null);
@@ -1662,6 +1667,9 @@ void main() {
       camera.recording = recording;
       camera.videoCapture = videoCapture;
       camera.videoOutputPath = videoOutputPath;
+
+      // Simulate video recording being finalized so stopVideoRecording completes.
+      PendingRecording.videoRecordingFinalizedStreamController.add(null);
 
       final XFile file = await camera.stopVideoRecording(0);
       expect(file.path, videoOutputPath);
@@ -1691,12 +1699,37 @@ void main() {
       when(camera.processCameraProvider!.isBound(videoCapture))
           .thenAnswer((_) async => true);
 
+      // Simulate video recording being finalized so stopVideoRecording completes.
+      PendingRecording.videoRecordingFinalizedStreamController.add(null);
+
       await camera.stopVideoRecording(90);
       verify(processCameraProvider.unbind(<UseCase>[videoCapture]));
 
       // Verify that recording stops.
       verify(recording.close());
       verifyNoMoreInteractions(recording);
+    });
+
+    test(
+        'setDescriptionWhileRecording does not make any calls involving starting video recording',
+        () async {
+      // TODO(camsim99): Modify test when implemented, see https://github.com/flutter/flutter/issues/148013.
+      final AndroidCameraCameraX camera = AndroidCameraCameraX();
+
+      // Set directly for test versus calling createCamera.
+      camera.processCameraProvider = MockProcessCameraProvider();
+      camera.recorder = MockRecorder();
+      camera.videoCapture = MockVideoCapture();
+      camera.camera = MockCamera();
+
+      await camera.setDescriptionWhileRecording(const CameraDescription(
+          name: 'fakeCameraName',
+          lensDirection: CameraLensDirection.back,
+          sensorOrientation: 90));
+      verifyNoMoreInteractions(camera.processCameraProvider);
+      verifyNoMoreInteractions(camera.recorder);
+      verifyNoMoreInteractions(camera.videoCapture);
+      verifyNoMoreInteractions(camera.camera);
     });
   });
 
@@ -3695,10 +3728,10 @@ void main() {
             Future<Camera2CameraInfo>.value(mockCamera2CameraInfo));
 
     const int cameraId = 7;
-    const String outputPath = '/temp/MOV123.temp';
+    const String outputPath = '/temp/REC123.mp4';
 
     // Mock method calls.
-    when(mockSystemServicesApi.getTempFilePath(camera.videoPrefix, '.temp'))
+    when(mockSystemServicesApi.getTempFilePath(camera.videoPrefix, '.mp4'))
         .thenReturn(outputPath);
     when(camera.recorder!.prepareRecording(outputPath))
         .thenAnswer((_) async => mockPendingRecording);
@@ -3756,10 +3789,10 @@ void main() {
             Future<Camera2CameraInfo>.value(mockCamera2CameraInfo));
 
     const int cameraId = 77;
-    const String outputPath = '/temp/MOV123.temp';
+    const String outputPath = '/temp/REC123.mp4';
 
     // Mock method calls.
-    when(mockSystemServicesApi.getTempFilePath(camera.videoPrefix, '.temp'))
+    when(mockSystemServicesApi.getTempFilePath(camera.videoPrefix, '.mp4'))
         .thenReturn(outputPath);
     when(camera.recorder!.prepareRecording(outputPath))
         .thenAnswer((_) async => mockPendingRecording);
@@ -3817,10 +3850,10 @@ void main() {
             Future<Camera2CameraInfo>.value(mockCamera2CameraInfo));
 
     const int cameraId = 87;
-    const String outputPath = '/temp/MOV123.temp';
+    const String outputPath = '/temp/REC123.mp4';
 
     // Mock method calls.
-    when(mockSystemServicesApi.getTempFilePath(camera.videoPrefix, '.temp'))
+    when(mockSystemServicesApi.getTempFilePath(camera.videoPrefix, '.mp4'))
         .thenReturn(outputPath);
     when(camera.recorder!.prepareRecording(outputPath))
         .thenAnswer((_) async => mockPendingRecording);
@@ -3882,10 +3915,10 @@ void main() {
             Future<Camera2CameraInfo>.value(mockCamera2CameraInfo));
 
     const int cameraId = 107;
-    const String outputPath = '/temp/MOV123.temp';
+    const String outputPath = '/temp/REC123.mp4';
 
     // Mock method calls.
-    when(mockSystemServicesApi.getTempFilePath(camera.videoPrefix, '.temp'))
+    when(mockSystemServicesApi.getTempFilePath(camera.videoPrefix, '.mp4'))
         .thenReturn(outputPath);
     when(camera.recorder!.prepareRecording(outputPath))
         .thenAnswer((_) async => mockPendingRecording);
@@ -3947,10 +3980,10 @@ void main() {
             Future<Camera2CameraInfo>.value(mockCamera2CameraInfo));
 
     const int cameraId = 97;
-    const String outputPath = '/temp/MOV123.temp';
+    const String outputPath = '/temp/REC123.mp4';
 
     // Mock method calls.
-    when(mockSystemServicesApi.getTempFilePath(camera.videoPrefix, '.temp'))
+    when(mockSystemServicesApi.getTempFilePath(camera.videoPrefix, '.mp4'))
         .thenReturn(outputPath);
     when(camera.recorder!.prepareRecording(outputPath))
         .thenAnswer((_) async => mockPendingRecording);
@@ -4009,10 +4042,10 @@ void main() {
             Future<Camera2CameraInfo>.value(mockCamera2CameraInfo));
 
     const int cameraId = 44;
-    const String outputPath = '/temp/MOV123.temp';
+    const String outputPath = '/temp/REC123.mp4';
 
     // Mock method calls.
-    when(mockSystemServicesApi.getTempFilePath(camera.videoPrefix, '.temp'))
+    when(mockSystemServicesApi.getTempFilePath(camera.videoPrefix, '.mp4'))
         .thenReturn(outputPath);
     when(camera.recorder!.prepareRecording(outputPath))
         .thenAnswer((_) async => mockPendingRecording);

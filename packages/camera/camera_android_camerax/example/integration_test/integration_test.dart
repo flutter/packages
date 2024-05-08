@@ -219,8 +219,8 @@ void main() {
     }
 
     final CameraController controller = CameraController(cameras[0],
-        mediaSettings: const MediaSettings(
-            resolutionPreset: ResolutionPreset.low, enableAudio: false));
+        mediaSettings:
+            const MediaSettings(resolutionPreset: ResolutionPreset.low));
     await controller.initialize();
     await controller.prepareForVideoRecording();
 

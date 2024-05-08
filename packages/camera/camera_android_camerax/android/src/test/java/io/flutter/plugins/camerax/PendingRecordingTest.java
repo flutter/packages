@@ -91,7 +91,7 @@ public class PendingRecordingTest {
 
     pendingRecordingHostApi.handleVideoRecordEvent(event);
 
-    verify(mockPendingRecordingFlutterApi).sendVideoRecordingFinalizedEventaError(any());
+    verify(mockPendingRecordingFlutterApi).sendVideoRecordingFinalizedEvent(any());
     verify(mockSystemServicesFlutterApi).sendCameraError(eq(eventMessage), any());
   }
 
@@ -107,7 +107,7 @@ public class PendingRecordingTest {
 
     pendingRecordingHostApi.handleVideoRecordEvent(event);
 
-    verify(mockPendingRecordingFlutterApi).sendVideoRecordingFinalizedEventaError(any());
+    verify(mockPendingRecordingFlutterApi).sendVideoRecordingFinalizedEvent(any());
   }
 
   @Test
