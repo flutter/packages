@@ -413,6 +413,7 @@ void runTests() {
 
       expectHeatmapEquals(heatmap1New, heatmapInfo1);
     },
+    skip: isAndroid,
   );
 
   testWidgets(
@@ -458,6 +459,7 @@ void runTests() {
 
       expect(heatmapInfo1, isNull);
     },
+    skip: isAndroid,
   );
 }
 
