@@ -71,33 +71,33 @@ static void InterpretHeatmapOptions(FLTGoogleMapHeatmapController *self, NSDicti
 }
 
 - (void)interpretHeatmapOptions:(NSDictionary<NSString *, id> *)data {
-  NSArray<GMUWeightedLatLng *> *weightedData = data[kHeatmapDataKey];
-  if (![FLTGoogleMapJSONConversions isNull:weightedData]) {
+  id weightedData = data[kHeatmapDataKey];
+  if ([weightedData isKindOfClass:[NSArray class]]) {
     [self setWeightedData:[FLTGoogleMapJSONConversions weightedDataFromArray:weightedData]];
   }
 
-  NSDictionary<NSString *, id> *gradient = data[kHeatmapGradientKey];
-  if (![FLTGoogleMapJSONConversions isNull:gradient]) {
+  id gradient = data[kHeatmapGradientKey];
+  if ([gradient isKindOfClass:[NSDictionary class]]) {
     [self setGradient:[FLTGoogleMapJSONConversions gradientFromDictionary:gradient]];
   }
 
-  NSNumber *opacity = data[kHeatmapOpacityKey];
-  if (![FLTGoogleMapJSONConversions isNull:opacity]) {
+  id opacity = data[kHeatmapOpacityKey];
+  if ([opacity isKindOfClass:[NSNumber class]]) {
     [self setOpacity:[opacity doubleValue]];
   }
 
-  NSNumber *radius = data[kHeatmapRadiusKey];
-  if (![FLTGoogleMapJSONConversions isNull:radius]) {
+  id radius = data[kHeatmapRadiusKey];
+  if ([radius isKindOfClass:[NSNumber class]]) {
     [self setRadius:[radius intValue]];
   }
 
-  NSNumber *minimumZoomIntensity = data[kHeatmapMinimumZoomIntensityKey];
-  if (![FLTGoogleMapJSONConversions isNull:minimumZoomIntensity]) {
+  id minimumZoomIntensity = data[kHeatmapMinimumZoomIntensityKey];
+  if ([minimumZoomIntensity isKindOfClass:[NSNumber class]]) {
     [self setMinimumZoomIntensity:[minimumZoomIntensity intValue]];
   }
 
-  NSNumber *maximumZoomIntensity = data[kHeatmapMaximumZoomIntensityKey];
-  if (![FLTGoogleMapJSONConversions isNull:maximumZoomIntensity]) {
+  id maximumZoomIntensity = data[kHeatmapMaximumZoomIntensityKey];
+  if ([maximumZoomIntensity isKindOfClass:[NSNumber class]]) {
     [self setMaximumZoomIntensity:[maximumZoomIntensity intValue]];
   }
 
