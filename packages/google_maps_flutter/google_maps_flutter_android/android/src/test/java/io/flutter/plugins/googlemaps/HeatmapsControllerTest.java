@@ -2,6 +2,7 @@ package io.flutter.plugins.googlemaps;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
@@ -23,7 +24,7 @@ import com.google.maps.android.heatmaps.WeightedLatLng;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
+import org.mockito.ArgumentMatcher;
 import org.mockito.Mockito;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
@@ -43,6 +44,7 @@ public class HeatmapsControllerTest {
     public void setUp() {
         controller = spy(new HeatmapsController());
         googleMap = mock(GoogleMap.class);
+        controller.setGoogleMap(googleMap);
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -61,11 +63,13 @@ public class HeatmapsControllerTest {
     @Test
     public void controller_AddChangeAndRemoveHeatmap() {
         final TileOverlay tileOverlay = mock(TileOverlay.class);
+        final HeatmapTileProvider heatmap = mock(HeatmapTileProvider.class);
 
         final String googleHeatmapId = "abc123";
         final Object heatmapData = weightedDataToJson(Collections.singletonList(new WeightedLatLng(new LatLng(1.1, 2.2), 3.3)));
 
         when(googleMap.addTileOverlay(any(TileOverlayOptions.class))).thenReturn(tileOverlay);
+        doReturn(heatmap).when(controller).buildHeatmap(any(HeatmapBuilder.class));
 
         final Map<String, Object> heatmapOptions1 = new HashMap<>();
         heatmapOptions1.put(HEATMAP_ID_KEY, googleHeatmapId);
@@ -74,11 +78,12 @@ public class HeatmapsControllerTest {
         final List<Object> heatmaps = Collections.singletonList(heatmapOptions1);
         controller.addHeatmaps(heatmaps);
 
-        ArgumentCaptor<TileOverlayOptions> optionsCaptor = ArgumentCaptor.forClass(TileOverlayOptions.class);
-        Mockito.verify(googleMap, times(1)).addTileOverlay(optionsCaptor.capture());
-        final TileOverlayOptions options = optionsCaptor.getValue();
-        assert options.getTileProvider() != null;
-        final HeatmapTileProvider heatmap = spy((HeatmapTileProvider) options.getTileProvider());
+        Mockito.verify(googleMap, times(1)).addTileOverlay(Mockito.argThat(new ArgumentMatcher<TileOverlayOptions>() {
+            @Override
+            public boolean matches(TileOverlayOptions argument) {
+                return argument.getTileProvider() instanceof HeatmapTileProvider;
+            }
+        }));
 
         final float opacity = 0.1f;
         final Map<String, Object> heatmapOptions2 = new HashMap<>();
