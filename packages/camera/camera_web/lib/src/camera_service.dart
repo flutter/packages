@@ -388,24 +388,23 @@ class CameraService {
   }
 
   ///Returns frame at a specific time using video element
-  Future<CameraImageData?> takeFrame(html.VideoElement videoElement) async {
-    if (!(videoElement.isConnected ?? false)) {
-      return null;
-    }
-
-    final int videoWidth = videoElement.videoWidth;
-    final int videoHeight = videoElement.videoHeight;
+  CameraImageData takeFrame(html.VideoElement videoElement) {
     final List<String> widthPx = videoElement.style.width.split('px');
     final List<String> heightPx = videoElement.style.height.split('px');
     final String widthString =
-        widthPx.isNotEmpty ? widthPx.first : '$videoWidth';
+        widthPx.isNotEmpty ? widthPx.first : '${videoElement.videoWidth}';
     final String heightString =
-        heightPx.isNotEmpty ? heightPx.first : '$videoHeight';
-    final int width = int.tryParse(widthString) ?? videoWidth;
-    final int height = int.tryParse(heightString) ?? videoHeight;
+        heightPx.isNotEmpty ? heightPx.first : '${videoElement.videoHeight}';
+    final int width = int.tryParse(widthString) ?? videoElement.videoWidth;
+    final int height = int.tryParse(heightString) ?? videoElement.videoHeight;
 
+    if (width == 0 || height == 0) {
+      throw Exception(
+        'Computed dimensions are zero: width=$width, height=$height',
+      );
+    }
     final bool canUseOffscreenCanvas =
-        JsUtil().hasProperty(html.window, 'OffscreenCanvas');
+        jsUtil.hasProperty(window!, 'OffscreenCanvas');
     late html.ImageData imageData;
     if (canUseOffscreenCanvas) {
       final html.OffscreenCanvas canvas = html.OffscreenCanvas(width, height);
@@ -423,17 +422,8 @@ class CameraService {
     }
     final ByteBuffer byteBuffer = imageData.data.buffer;
 
-    return CameraImageData(
-      format: const CameraImageFormat(
-        ImageFormatGroup.jpeg,
-        raw: '',
-      ),
-      planes: <CameraImagePlane>[
-        CameraImagePlane(
-          bytes: byteBuffer.asUint8List(),
-          bytesPerRow: 0,
-        ),
-      ],
+    return getCameraImageDataFromBytes(
+      byteBuffer.asUint8List(),
       height: imageData.height,
       width: imageData.width,
     );

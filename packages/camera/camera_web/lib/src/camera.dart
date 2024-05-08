@@ -655,11 +655,8 @@ class Camera {
 
   /// Called when a new animation frame is available.
   Future<void> _onAnimationFrame([num? _]) async {
-    final CameraImageData? image = await _cameraService.takeFrame(videoElement);
-    if (image != null) {
-      _cameraFrameStreamController.add(image);
-    }
-
+    final CameraImageData image = _cameraService.takeFrame(videoElement);
+    _cameraFrameStreamController.add(image);
     if (_cameraFrameStreamController.hasListener) {
       window!.requestAnimationFrame(_onAnimationFrame);
     }
