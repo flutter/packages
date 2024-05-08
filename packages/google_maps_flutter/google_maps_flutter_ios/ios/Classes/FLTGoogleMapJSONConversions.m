@@ -183,7 +183,7 @@ NSString *const kHeatmapGradientColorMapSizeKey = @"colorMapSize";
 }
 
 + (NSArray<GMUWeightedLatLng *> *)weightedDataFromArray:(NSArray<NSArray<id> *> *)data {
-  NSMutableArray<GMUWeightedLatLng *> *weightedData = [[NSMutableArray alloc] init];
+  NSMutableArray<GMUWeightedLatLng *> *weightedData = [[NSMutableArray alloc] initWithCapacity:data.count];
   for (NSArray<id> *item in data) {
     GMUWeightedLatLng *weightedLatLng =
         [FLTGoogleMapJSONConversions weightedLatLngFromArray:item];
@@ -195,7 +195,7 @@ NSString *const kHeatmapGradientColorMapSizeKey = @"colorMapSize";
 }
 
 + (NSArray<NSArray<id> *> *)arrayFromWeightedData:(NSArray<GMUWeightedLatLng *> *)weightedData {
-  NSMutableArray *data = [[NSMutableArray alloc] init];
+  NSMutableArray *data = [[NSMutableArray alloc] initWithCapacity:weightedData.count];
   for (GMUWeightedLatLng *weightedLatLng in weightedData) {
     [data addObject:[FLTGoogleMapJSONConversions arrayFromWeightedLatLng:weightedLatLng]];
   }
@@ -204,9 +204,8 @@ NSString *const kHeatmapGradientColorMapSizeKey = @"colorMapSize";
 }
 
 + (GMUGradient *)gradientFromDictionary:(NSDictionary<NSString *, id> *)data {
-  NSMutableArray<UIColor *> *colors = [[NSMutableArray alloc] init];
-
   NSArray *colorData = data[kHeatmapGradientColorsKey];
+  NSMutableArray<UIColor *> *colors = [[NSMutableArray alloc] initWithCapacity:colorData.count];
   for (NSNumber *colorCode in colorData) {
     [colors addObject:[FLTGoogleMapJSONConversions colorFromRGBA:colorCode]];
   }
@@ -217,7 +216,7 @@ NSString *const kHeatmapGradientColorMapSizeKey = @"colorMapSize";
 }
 
 + (NSDictionary<NSString *, id> *)dictionaryFromGradient:(GMUGradient *)gradient {
-  NSMutableArray<NSNumber *> *colorCodes = [[NSMutableArray alloc] init];
+  NSMutableArray<NSNumber *> *colorCodes = [[NSMutableArray alloc] initWithCapacity:gradient.colors.count];
   for (UIColor *color in gradient.colors) {
     [colorCodes addObject:[FLTGoogleMapJSONConversions RGBAFromColor:color]];
   }
