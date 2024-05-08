@@ -71,6 +71,7 @@
 
 #pragma mark -
 
+API_AVAILABLE(macos(10.15))
 @interface FVPVideoPlayer () <AVPictureInPictureControllerDelegate>
 @property(readonly, nonatomic) AVPlayerItemVideoOutput *videoOutput;
 @property(nonatomic) AVPictureInPictureController *pictureInPictureController;
@@ -345,11 +346,15 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
  * the controller.
  */
 - (void)setupPiPController {
-  if ([AVPictureInPictureController isPictureInPictureSupported]) {
-    self.pictureInPictureController =
-        [[AVPictureInPictureController alloc] initWithPlayerLayer:self.playerLayer];
-    [self setAutomaticallyStartsPictureInPicture:NO];
-    self.pictureInPictureController.delegate = self;
+  if (@available(macOS 10.15, *)) {
+    if ([AVPictureInPictureController isPictureInPictureSupported]) {
+      self.pictureInPictureController =
+          [[AVPictureInPictureController alloc] initWithPlayerLayer:self.playerLayer];
+      [self setAutomaticallyStartsPictureInPicture:NO];
+      self.pictureInPictureController.delegate = self;
+    }
+  } else {
+    // We don't do anything here because there is no setup required below macOS 10.15
   }
 }
 
@@ -371,8 +376,12 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
 }
 
 - (void)startOrStopPictureInPicture:(BOOL)shouldPictureInPictureStart {
-  if (![AVPictureInPictureController isPictureInPictureSupported] ||
-      self.isPictureInPictureStarted == shouldPictureInPictureStart) {
+  if (@available(macOS 10.15, *)) {
+    if (![AVPictureInPictureController isPictureInPictureSupported] ||
+        self.isPictureInPictureStarted == shouldPictureInPictureStart) {
+      return;
+    }
+  } else {
     return;
   }
 
@@ -393,7 +402,7 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
 #pragma mark - AVPictureInPictureControllerDelegate
 
 - (void)pictureInPictureControllerDidStopPictureInPicture:
-    (AVPictureInPictureController *)pictureInPictureController {
+    (AVPictureInPictureController *)pictureInPictureController API_AVAILABLE(macos(10.15)) {
   self.isPictureInPictureStarted = NO;
   if (_eventSink != nil) {
     _eventSink(@{@"event" : @"stoppedPictureInPicture"});
@@ -401,7 +410,7 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
 }
 
 - (void)pictureInPictureControllerDidStartPictureInPicture:
-    (AVPictureInPictureController *)pictureInPictureController {
+    (AVPictureInPictureController *)pictureInPictureController API_AVAILABLE(macos(10.15)) {
   self.isPictureInPictureStarted = YES;
   if (_eventSink != nil) {
     _eventSink(@{@"event" : @"startingPictureInPicture"});
@@ -912,8 +921,12 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
 
 - (nullable NSNumber *)isPictureInPictureSupported:
     (FlutterError *_Nullable __autoreleasing *_Nonnull)error {
-  return @([AVPictureInPictureController isPictureInPictureSupported] &&
-           [self doesInfoPlistSupportPictureInPicture]);
+  if (@available(macOS 10.15, *)) {
+    return @([AVPictureInPictureController isPictureInPictureSupported] &&
+             [self doesInfoPlistSupportPictureInPicture]);
+  } else {
+    return FALSE;
+  }
 }
 
 - (void)setAutomaticallyStartsPictureInPicture:
