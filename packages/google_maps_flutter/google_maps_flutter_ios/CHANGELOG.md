@@ -1,6 +1,6 @@
 ## 2.6.0
 
-* Adds support for patterns in polylines on iOS.
+* Adds support for patterns in polylines.
 
 ## 2.5.1
 
