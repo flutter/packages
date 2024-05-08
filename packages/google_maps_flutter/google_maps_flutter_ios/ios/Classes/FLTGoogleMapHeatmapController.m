@@ -8,9 +8,10 @@
 
 @interface FLTGoogleMapHeatmapController ()
 
+// The heatmap tile layer this controller handles.
 @property(nonatomic, strong) GMUHeatmapTileLayer *heatmapTileLayer;
 
-// The map view owned by GoogmeMapController
+// The map view owned by GoogmeMapController.
 @property(nonatomic, weak) GMSMapView *mapView;
 
 @end
@@ -95,7 +96,7 @@
     [self setMaximumZoomIntensity:[maximumZoomIntensity intValue]];
   }
 
-  // The map must be set each time for options to update
+  // The map must be set each time for options to update.
   [self setMap];
 }
 - (NSDictionary<NSString *, id> *)getHeatmapInfo {
@@ -114,7 +115,10 @@
 
 @interface FLTHeatmapsController ()
 
+// A map from heatmapId to the controller that manages it.
 @property(nonatomic, strong) NSMutableDictionary *heatmapIdToController;
+
+// The map view owned by GoogmeMapController.
 @property(nonatomic, weak) GMSMapView *mapView;
 
 @end
