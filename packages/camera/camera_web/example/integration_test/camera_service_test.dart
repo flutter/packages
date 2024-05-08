@@ -4,6 +4,7 @@
 
 // ignore_for_file: only_throw_errors
 
+import 'dart:async';
 import 'dart:js_interop';
 import 'dart:js_interop_unsafe';
 
@@ -902,6 +903,32 @@ void main() {
           equals(DeviceOrientation.portraitUp),
         );
       });
+    });
+
+    group('takeFrame', () {
+      testWidgets(
+        'returns Camera Image of Size '
+        'when videoElement is of Size',
+        (WidgetTester widgetTester) async {
+          const Size size = Size(10, 10);
+          final Completer<void> completer = Completer<void>();
+          final VideoElement videoElement = getVideoElementWithBlankStream(size)
+            ..onLoadedMetadata.listen((_) {
+              completer.complete();
+            })
+            ..load();
+          await completer.future;
+          final CameraImageData cameraImageData =
+              cameraService.takeFrame(videoElement);
+          expect(
+            size,
+            Size(
+              cameraImageData.width.toDouble(),
+              cameraImageData.height.toDouble(),
+            ),
+          );
+        },
+      );
     });
   });
 }
