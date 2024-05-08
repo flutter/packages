@@ -15,12 +15,16 @@
 - (LAContext *)createAuthContext;
 @end
 
+/// Protocol for a source of alert factory that wraps standard UIAlertController and NSAlert allocation for iOS and
+/// macOS respectfully. Used to allow context injection in unit tests.
 @protocol FLADAlertFactory <NSObject>
 
 #if TARGET_OS_OSX
 - (NSAlert *)createNSAlert;
 #elif TARGET_OS_IOS
-- (UIAlertController *)createUIAlert:(NSString *)message;
+- (UIAlertController *)createAlertControllerWithTitle:(nullable NSString *)title
+                                              message:(nullable NSString *)message
+                                       preferredStyle:(UIAlertControllerStyle)preferredStyle;
 #endif
 
 @end
@@ -28,7 +32,7 @@
 @interface FLALocalAuthPlugin ()
 /// Returns an instance that uses the given factory to create LAContexts.
 - (instancetype)initWithContextFactory:(NSObject<FLADAuthContextFactory> *)authFactory
-                          andRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar
-                       andAlertFactory:(NSObject<FLADAlertFactory> *)alertFactory
+                             registrar:(NSObject<FlutterPluginRegistrar> *)registrar
+                          alertFactory:(NSObject<FLADAlertFactory> *)alertFactory
     NS_DESIGNATED_INITIALIZER;
 @end

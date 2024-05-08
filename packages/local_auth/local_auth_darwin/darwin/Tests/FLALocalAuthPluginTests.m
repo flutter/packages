@@ -114,8 +114,8 @@ static const NSTimeInterval kTimeout = 30.0;
 
   FLALocalAuthPlugin *plugin = [[FLALocalAuthPlugin alloc]
       initWithContextFactory:[[StubAuthContextFactory alloc] initWithContexts:@[ mockAuthContext ]]
-                andRegistrar:registrar
-             andAlertFactory:alertFactory];
+                   registrar:registrar
+                alertFactory:alertFactory];
 
   const LAPolicy policy = LAPolicyDeviceOwnerAuthenticationWithBiometrics;
   FLADAuthStrings *strings = [self createAuthStrings];
@@ -157,8 +157,8 @@ static const NSTimeInterval kTimeout = 30.0;
 
   FLALocalAuthPlugin *plugin = [[FLALocalAuthPlugin alloc]
       initWithContextFactory:[[StubAuthContextFactory alloc] initWithContexts:@[ mockAuthContext ]]
-                andRegistrar:registrar
-             andAlertFactory:alertFactory];
+                   registrar:registrar
+                alertFactory:alertFactory];
 
   const LAPolicy policy = LAPolicyDeviceOwnerAuthentication;
   FLADAuthStrings *strings = [self createAuthStrings];
@@ -199,8 +199,8 @@ static const NSTimeInterval kTimeout = 30.0;
 
   FLALocalAuthPlugin *plugin = [[FLALocalAuthPlugin alloc]
       initWithContextFactory:[[StubAuthContextFactory alloc] initWithContexts:@[ mockAuthContext ]]
-                andRegistrar:registrar
-             andAlertFactory:alertFactory];
+                   registrar:registrar
+                alertFactory:alertFactory];
 
   const LAPolicy policy = LAPolicyDeviceOwnerAuthenticationWithBiometrics;
   FLADAuthStrings *strings = [self createAuthStrings];
@@ -299,8 +299,8 @@ static const NSTimeInterval kTimeout = 30.0;
 
   FLALocalAuthPlugin *plugin = [[FLALocalAuthPlugin alloc]
       initWithContextFactory:[[StubAuthContextFactory alloc] initWithContexts:@[ mockAuthContext ]]
-                andRegistrar:registrar
-             andAlertFactory:alertFactory];
+                   registrar:registrar
+                alertFactory:alertFactory];
 
   const LAPolicy policy = LAPolicyDeviceOwnerAuthentication;
   FLADAuthStrings *strings = [self createAuthStrings];
@@ -341,8 +341,8 @@ static const NSTimeInterval kTimeout = 30.0;
 
   FLALocalAuthPlugin *plugin = [[FLALocalAuthPlugin alloc]
       initWithContextFactory:[[StubAuthContextFactory alloc] initWithContexts:@[ mockAuthContext ]]
-                andRegistrar:registrar
-             andAlertFactory:alertFactory];
+                   registrar:registrar
+                alertFactory:alertFactory];
 
   const LAPolicy policy = LAPolicyDeviceOwnerAuthentication;
   FLADAuthStrings *strings = [self createAuthStrings];
@@ -383,8 +383,8 @@ static const NSTimeInterval kTimeout = 30.0;
 
   FLALocalAuthPlugin *plugin = [[FLALocalAuthPlugin alloc]
       initWithContextFactory:[[StubAuthContextFactory alloc] initWithContexts:@[ mockAuthContext ]]
-                andRegistrar:registrar
-             andAlertFactory:alertFactory];
+                   registrar:registrar
+                alertFactory:alertFactory];
   const LAPolicy policy = LAPolicyDeviceOwnerAuthentication;
   FLADAuthStrings *strings = [self createAuthStrings];
   OCMStub([mockAuthContext canEvaluatePolicy:policy error:[OCMArg setTo:nil]]).andReturn(YES);
@@ -428,8 +428,8 @@ static const NSTimeInterval kTimeout = 30.0;
 
   FLALocalAuthPlugin *plugin = [[FLALocalAuthPlugin alloc]
       initWithContextFactory:[[StubAuthContextFactory alloc] initWithContexts:@[ mockAuthContext ]]
-                andRegistrar:registrar
-             andAlertFactory:alertFactory];
+                   registrar:registrar
+                alertFactory:alertFactory];
   const LAPolicy policy = LAPolicyDeviceOwnerAuthentication;
   FLADAuthStrings *strings = [self createAuthStrings];
   strings.localizedFallbackTitle = @"a title";
@@ -469,8 +469,8 @@ static const NSTimeInterval kTimeout = 30.0;
 
   FLALocalAuthPlugin *plugin = [[FLALocalAuthPlugin alloc]
       initWithContextFactory:[[StubAuthContextFactory alloc] initWithContexts:@[ mockAuthContext ]]
-                andRegistrar:registrar
-             andAlertFactory:alertFactory];
+                   registrar:registrar
+                alertFactory:alertFactory];
 
   const LAPolicy policy = LAPolicyDeviceOwnerAuthentication;
   FLADAuthStrings *strings = [self createAuthStrings];
@@ -510,8 +510,8 @@ static const NSTimeInterval kTimeout = 30.0;
 
   FLALocalAuthPlugin *plugin = [[FLALocalAuthPlugin alloc]
       initWithContextFactory:[[StubAuthContextFactory alloc] initWithContexts:@[ mockAuthContext ]]
-                andRegistrar:registrar
-             andAlertFactory:alertFactory];
+                   registrar:registrar
+                alertFactory:alertFactory];
 
   const LAPolicy policy = LAPolicyDeviceOwnerAuthenticationWithBiometrics;
   OCMStub([mockAuthContext canEvaluatePolicy:policy error:[OCMArg setTo:nil]]).andReturn(YES);
@@ -529,8 +529,8 @@ static const NSTimeInterval kTimeout = 30.0;
 
   FLALocalAuthPlugin *plugin = [[FLALocalAuthPlugin alloc]
       initWithContextFactory:[[StubAuthContextFactory alloc] initWithContexts:@[ mockAuthContext ]]
-                andRegistrar:registrar
-             andAlertFactory:alertFactory];
+                   registrar:registrar
+                alertFactory:alertFactory];
 
   const LAPolicy policy = LAPolicyDeviceOwnerAuthenticationWithBiometrics;
   void (^canEvaluatePolicyHandler)(NSInvocation *) = ^(NSInvocation *invocation) {
@@ -560,8 +560,8 @@ static const NSTimeInterval kTimeout = 30.0;
 
   FLALocalAuthPlugin *plugin = [[FLALocalAuthPlugin alloc]
       initWithContextFactory:[[StubAuthContextFactory alloc] initWithContexts:@[ mockAuthContext ]]
-                andRegistrar:registrar
-             andAlertFactory:alertFactory];
+                   registrar:registrar
+                alertFactory:alertFactory];
 
   const LAPolicy policy = LAPolicyDeviceOwnerAuthenticationWithBiometrics;
   void (^canEvaluatePolicyHandler)(NSInvocation *) = ^(NSInvocation *invocation) {
@@ -591,8 +591,8 @@ static const NSTimeInterval kTimeout = 30.0;
 
   FLALocalAuthPlugin *plugin = [[FLALocalAuthPlugin alloc]
       initWithContextFactory:[[StubAuthContextFactory alloc] initWithContexts:@[ mockAuthContext ]]
-                andRegistrar:registrar
-             andAlertFactory:alertFactory];
+                   registrar:registrar
+                alertFactory:alertFactory];
 
   const LAPolicy policy = LAPolicyDeviceOwnerAuthenticationWithBiometrics;
   OCMStub([mockAuthContext canEvaluatePolicy:policy error:[OCMArg setTo:nil]]).andReturn(YES);
@@ -614,8 +614,8 @@ static const NSTimeInterval kTimeout = 30.0;
 
   FLALocalAuthPlugin *plugin = [[FLALocalAuthPlugin alloc]
       initWithContextFactory:[[StubAuthContextFactory alloc] initWithContexts:@[ mockAuthContext ]]
-                andRegistrar:registrar
-             andAlertFactory:alertFactory];
+                   registrar:registrar
+                alertFactory:alertFactory];
 
   const LAPolicy policy = LAPolicyDeviceOwnerAuthenticationWithBiometrics;
   OCMStub([mockAuthContext canEvaluatePolicy:policy error:[OCMArg setTo:nil]]).andReturn(YES);
@@ -635,8 +635,8 @@ static const NSTimeInterval kTimeout = 30.0;
 
   FLALocalAuthPlugin *plugin = [[FLALocalAuthPlugin alloc]
       initWithContextFactory:[[StubAuthContextFactory alloc] initWithContexts:@[ mockAuthContext ]]
-                andRegistrar:registrar
-             andAlertFactory:alertFactory];
+                   registrar:registrar
+                alertFactory:alertFactory];
 
   const LAPolicy policy = LAPolicyDeviceOwnerAuthenticationWithBiometrics;
   void (^canEvaluatePolicyHandler)(NSInvocation *) = ^(NSInvocation *invocation) {
@@ -669,8 +669,8 @@ static const NSTimeInterval kTimeout = 30.0;
 
   FLALocalAuthPlugin *plugin = [[FLALocalAuthPlugin alloc]
       initWithContextFactory:[[StubAuthContextFactory alloc] initWithContexts:@[ mockAuthContext ]]
-                andRegistrar:registrar
-             andAlertFactory:alertFactory];
+                   registrar:registrar
+                alertFactory:alertFactory];
 
   FlutterError *error;
   NSNumber *result = [plugin isDeviceSupportedWithError:&error];
@@ -688,8 +688,8 @@ static const NSTimeInterval kTimeout = 30.0;
 
   FLALocalAuthPlugin *plugin = [[FLALocalAuthPlugin alloc]
       initWithContextFactory:[[StubAuthContextFactory alloc] initWithContexts:@[ mockAuthContext ]]
-                andRegistrar:registrar
-             andAlertFactory:alertFactory];
+                   registrar:registrar
+                alertFactory:alertFactory];
 
   FlutterError *error;
   NSNumber *result = [plugin isDeviceSupportedWithError:&error];

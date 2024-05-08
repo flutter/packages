@@ -17,21 +17,24 @@ typedef void (^FLADAuthCompletion)(FLADAuthResultDetails *_Nullable, FlutterErro
   return [[LAContext alloc] init];
 }
 @end
-
+/// A default alert factory that wraps standard UIAlertController and NSAlert allocation for iOS and
+/// macOS respectfully.
 @interface FLADefaultAlertFactory : NSObject <FLADAlertFactory>
 @end
 
 @implementation FLADefaultAlertFactory
 
 #if TARGET_OS_OSX
-- (NSAlert *)createNSAlert {
+- (NSAlert *)createAlert {
   return [[NSAlert alloc] init];
 }
 #elif TARGET_OS_IOS
-- (UIAlertController *)createUIAlert:(NSString *)message {
-  return [UIAlertController alertControllerWithTitle:@""
+- (UIAlertController *)createAlertControllerWithTitle:(nullable NSString *)title
+                                              message:(nullable NSString *)message
+                                       preferredStyle:(UIAlertControllerStyle)preferredStyle {
+  return [UIAlertController alertControllerWithTitle:title
                                              message:message
-                                      preferredStyle:UIAlertControllerStyleAlert];
+                                      preferredStyle:preferredStyle];
 }
 #endif
 @end
@@ -64,6 +67,7 @@ typedef void (^FLADAuthCompletion)(FLADAuthResultDetails *_Nullable, FlutterErro
 
 #pragma mark -
 
+/// A flutter plugin for local authentication.
 @interface FLALocalAuthPlugin ()
 @property(nonatomic, strong, nullable) FLAStickyAuthState *lastCallState;
 @property(nonatomic, strong) NSObject<FLADAuthContextFactory> *authContextFactory;
@@ -74,25 +78,21 @@ typedef void (^FLADAuthCompletion)(FLADAuthResultDetails *_Nullable, FlutterErro
 @implementation FLALocalAuthPlugin
 
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar {
-  FLALocalAuthPlugin *instance = [[FLALocalAuthPlugin alloc] initWithRegistrar:registrar];
+  NSObject<FLADAlertFactory> *alertFactory = [[FLADefaultAlertFactory alloc] init];
+  NSObject<FLADAuthContextFactory> *authContextFactory =
+      [[FLADefaultAuthContextFactory alloc] init];
+  FLALocalAuthPlugin *instance =
+      [[FLALocalAuthPlugin alloc] initWithContextFactory:authContextFactory
+                                               registrar:registrar
+                                            alertFactory:alertFactory];
   [registrar addApplicationDelegate:instance];
   SetUpFLADLocalAuthApi([registrar messenger], instance);
 }
 
-- (instancetype)initWithRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar {
-  self = [super init];
-  if (self) {
-    _registrar = registrar;
-    _authContextFactory = [[FLADefaultAuthContextFactory alloc] init];
-    _alertFactory = [[FLADefaultAlertFactory alloc] init];
-  }
-  return self;
-}
-
 /// Returns an instance that uses the given factory to create LAContexts.
 - (instancetype)initWithContextFactory:(NSObject<FLADAuthContextFactory> *)authFactory
-                          andRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar
-                       andAlertFactory:(NSObject<FLADAlertFactory> *)alertFactory {
+                             registrar:(NSObject<FlutterPluginRegistrar> *)registrar
+                          alertFactory:(NSObject<FLADAlertFactory> *)alertFactory {
   self = [super init];
   if (self) {
     _registrar = registrar;
@@ -189,7 +189,7 @@ typedef void (^FLADAuthCompletion)(FLADAuthResultDetails *_Nullable, FlutterErro
      openSettingsButtonTitle:(NSString *)openSettingsButtonTitle
                   completion:(FLADAuthCompletion)completion {
 #if TARGET_OS_OSX
-  NSAlert *alert = [_alertFactory createNSAlert];
+  NSAlert *alert = [_alertFactory createAlert];
   [alert setMessageText:message];
   [alert addButtonWithTitle:dismissButtonTitle];
   NSWindow *window = self.registrar.view.window;
@@ -199,7 +199,10 @@ typedef void (^FLADAuthCompletion)(FLADAuthResultDetails *_Nullable, FlutterErro
                 }];
   return;
 #elif TARGET_OS_IOS
-  UIAlertController *alert = [_alertFactory createUIAlert:message];
+  UIAlertController *alert =
+      [_alertFactory createAlertControllerWithTitle:@""
+                                            message:message
+                                     preferredStyle:UIAlertControllerStyleAlert];
 
   UIAlertAction *defaultAction = [UIAlertAction actionWithTitle:dismissButtonTitle
                                                           style:UIAlertActionStyleDefault
