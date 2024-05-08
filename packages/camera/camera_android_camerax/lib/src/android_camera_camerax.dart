@@ -788,6 +788,7 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// Currently unsupported, so is a no-op.
   @override
   Future<void> setDescriptionWhileRecording(CameraDescription description) {
+    // TODO(camsim99): Implement this feature, see https://github.com/flutter/flutter/issues/148013.
     return Future<void>.value();
   }
 

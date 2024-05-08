@@ -41,6 +41,7 @@ public class PendingRecordingTest {
   @Mock public RecordingFlutterApiImpl mockRecordingFlutterApi;
   @Mock public Context mockContext;
   @Mock public SystemServicesFlutterApiImpl mockSystemServicesFlutterApi;
+  @Mock public PendingRecordingFlutterApiImpl mockPendingRecordingFlutterApi;
   @Mock public VideoRecordEvent.Finalize event;
   @Mock public Throwable throwable;
 
@@ -80,6 +81,7 @@ public class PendingRecordingTest {
     PendingRecordingHostApiImpl pendingRecordingHostApi =
         new PendingRecordingHostApiImpl(mockBinaryMessenger, testInstanceManager, mockContext);
     pendingRecordingHostApi.systemServicesFlutterApi = mockSystemServicesFlutterApi;
+    pendingRecordingHostApi.pendingRecordingFlutterApi = mockPendingRecordingFlutterApi;
     final String eventMessage = "example failure message";
 
     when(event.hasError()).thenReturn(true);
@@ -89,7 +91,23 @@ public class PendingRecordingTest {
 
     pendingRecordingHostApi.handleVideoRecordEvent(event);
 
+    verify(mockPendingRecordingFlutterApi).sendVideoRecordingFinalizedEventaError(any());
     verify(mockSystemServicesFlutterApi).sendCameraError(eq(eventMessage), any());
+  }
+
+  @Test
+  public void handleVideoRecordEvent_SendsVideoRecordingFinalizedEvent() {
+    PendingRecordingHostApiImpl pendingRecordingHostApi =
+        new PendingRecordingHostApiImpl(mockBinaryMessenger, testInstanceManager, mockContext);
+    pendingRecordingHostApi.pendingRecordingFlutterApi = mockPendingRecordingFlutterApi;
+    final String eventMessage = "example failure message";
+
+    when(event.hasError()).thenReturn(false);
+    doNothing().when(mockSystemServicesFlutterApi).sendCameraError(any(), any());
+
+    pendingRecordingHostApi.handleVideoRecordEvent(event);
+
+    verify(mockPendingRecordingFlutterApi).sendVideoRecordingFinalizedEventaError(any());
   }
 
   @Test

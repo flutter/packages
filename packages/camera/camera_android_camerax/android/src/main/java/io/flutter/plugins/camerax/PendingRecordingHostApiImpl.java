@@ -24,7 +24,7 @@ public class PendingRecordingHostApiImpl implements PendingRecordingHostApi {
 
   @VisibleForTesting @NonNull public CameraXProxy cameraXProxy = new CameraXProxy();
 
-  PendingRecordingFlutterApiImpl pendingRecordingFlutterApi;
+  @VisibleForTesting PendingRecordingFlutterApiImpl pendingRecordingFlutterApi;
 
   @VisibleForTesting SystemServicesFlutterApiImpl systemServicesFlutterApi;
 
