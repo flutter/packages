@@ -167,27 +167,29 @@ void main() {
     final int recordingStart = DateTime.now().millisecondsSinceEpoch;
     sleep(const Duration(milliseconds: 500));
 
-    await controller.pauseVideoRecording();
-    startPause = DateTime.now().millisecondsSinceEpoch;
-    sleep(const Duration(milliseconds: 500));
-    await controller.resumeVideoRecording();
-    timePaused += DateTime.now().millisecondsSinceEpoch - startPause;
+    // await controller.pauseVideoRecording();
+    // startPause = DateTime.now().millisecondsSinceEpoch;
+    // sleep(const Duration(milliseconds: 500));
+    // await controller.resumeVideoRecording();
+    // timePaused += DateTime.now().millisecondsSinceEpoch - startPause;
 
-    sleep(const Duration(milliseconds: 500));
+    // sleep(const Duration(milliseconds: 500));
 
-    await controller.pauseVideoRecording();
-    startPause = DateTime.now().millisecondsSinceEpoch;
-    sleep(const Duration(milliseconds: 500));
-    await controller.resumeVideoRecording();
-    timePaused += DateTime.now().millisecondsSinceEpoch - startPause;
+    // await controller.pauseVideoRecording();
+    // startPause = DateTime.now().millisecondsSinceEpoch;
+    // sleep(const Duration(milliseconds: 500));
+    // await controller.resumeVideoRecording();
+    // timePaused += DateTime.now().millisecondsSinceEpoch - startPause;
 
-    sleep(const Duration(milliseconds: 500));
+    // sleep(const Duration(milliseconds: 500));
 
     final XFile file = await controller.stopVideoRecording();
     final int recordingTime =
         DateTime.now().millisecondsSinceEpoch - recordingStart;
+    await Future.delayed(const Duration(seconds: 10));
 
     final File videoFile = File(file.path);
+    print('CAMILLE PATH: ${videoFile.absolute.path}');
     final VideoPlayerController videoController = VideoPlayerController.file(
       videoFile,
     );

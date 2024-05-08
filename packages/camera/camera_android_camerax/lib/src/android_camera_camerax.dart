@@ -777,6 +777,14 @@ class AndroidCameraCameraX extends CameraPlatform {
     await _unbindUseCaseFromLifecycle(preview!);
   }
 
+  /// Sets the active camera while recording.
+  ///
+  /// Currently unsupported, so is a no-op.
+  @override
+  Future<void> setDescriptionWhileRecording(CameraDescription description) {
+    return Future<void>.value();
+  }
+
   /// Resume the paused preview for the selected camera.
   ///
   /// [cameraId] not used.
@@ -955,8 +963,7 @@ class AndroidCameraCameraX extends CameraPlatform {
           .setTargetRotation(await proxy.getDefaultDisplayRotation());
     }
 
-    videoOutputPath =
-        await SystemServices.getTempFilePath(videoPrefix, '.temp');
+    videoOutputPath = await SystemServices.getTempFilePath(videoPrefix, '.mp4');
     pendingRecording = await recorder!.prepareRecording(videoOutputPath!);
     recording = await pendingRecording!.start();
 
@@ -995,6 +1002,7 @@ class AndroidCameraCameraX extends CameraPlatform {
     recording = null;
     pendingRecording = null;
     await _unbindUseCaseFromLifecycle(videoCapture!);
+
     return XFile(videoOutputPath!);
   }
 

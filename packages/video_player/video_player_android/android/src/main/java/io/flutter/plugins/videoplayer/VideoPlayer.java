@@ -147,6 +147,7 @@ final class VideoPlayer {
           break;
       }
     }
+    System.out.println("CAMILLE: " + type);
     switch (type) {
       case C.CONTENT_TYPE_SS:
         return new SsMediaSource.Factory(
@@ -226,6 +227,8 @@ final class VideoPlayer {
 
           @Override
           public void onPlayerError(@NonNull final PlaybackException error) {
+            System.out.println("CAMILLE");
+            System.out.println(error);
             setBuffering(false);
             if (error.errorCode == PlaybackException.ERROR_CODE_BEHIND_LIVE_WINDOW) {
               // See https://exoplayer.dev/live-streaming.html#behindlivewindowexception-and-error_code_behind_live_window
