@@ -167,26 +167,26 @@ void main() {
     final int recordingStart = DateTime.now().millisecondsSinceEpoch;
     sleep(const Duration(milliseconds: 500));
 
-    // await controller.pauseVideoRecording();
-    // startPause = DateTime.now().millisecondsSinceEpoch;
-    // sleep(const Duration(milliseconds: 500));
-    // await controller.resumeVideoRecording();
-    // timePaused += DateTime.now().millisecondsSinceEpoch - startPause;
+    await controller.pauseVideoRecording();
+    startPause = DateTime.now().millisecondsSinceEpoch;
+    sleep(const Duration(milliseconds: 500));
+    await controller.resumeVideoRecording();
+    timePaused += DateTime.now().millisecondsSinceEpoch - startPause;
 
-    // sleep(const Duration(milliseconds: 500));
+    sleep(const Duration(milliseconds: 500));
 
-    // await controller.pauseVideoRecording();
-    // startPause = DateTime.now().millisecondsSinceEpoch;
-    // sleep(const Duration(milliseconds: 500));
-    // await controller.resumeVideoRecording();
-    // timePaused += DateTime.now().millisecondsSinceEpoch - startPause;
+    await controller.pauseVideoRecording();
+    startPause = DateTime.now().millisecondsSinceEpoch;
+    sleep(const Duration(milliseconds: 500));
+    await controller.resumeVideoRecording();
+    timePaused += DateTime.now().millisecondsSinceEpoch - startPause;
 
-    // sleep(const Duration(milliseconds: 500));
+    sleep(const Duration(milliseconds: 500));
 
     final XFile file = await controller.stopVideoRecording();
     final int recordingTime =
         DateTime.now().millisecondsSinceEpoch - recordingStart;
-    await Future.delayed(const Duration(seconds: 10));
+    await Future.delayed(const Duration(seconds: 5));
 
     final File videoFile = File(file.path);
     print('CAMILLE PATH: ${videoFile.absolute.path}');
@@ -198,6 +198,46 @@ void main() {
     await videoController.dispose();
 
     expect(duration, lessThan(recordingTime - timePaused));
+  }, skip: !Platform.isAndroid);
+
+  testWidgets('Video recording', (WidgetTester tester) async {
+    final List<CameraDescription> cameras = await availableCameras();
+    if (cameras.isEmpty) {
+      return;
+    }
+
+    final CameraController controller = CameraController(
+      cameras[0],
+      ResolutionPreset.low,
+      enableAudio: false,
+    );
+
+    await controller.initialize();
+    await controller.prepareForVideoRecording();
+
+    // int startPause;
+    // int timePaused = 0;
+
+    await controller.startVideoRecording();
+    final int recordingStart = DateTime.now().millisecondsSinceEpoch;
+    sleep(const Duration(seconds: 2));
+
+    final XFile file = await controller.stopVideoRecording();
+    final int recordingTime =
+        DateTime.now().millisecondsSinceEpoch - recordingStart;
+    await Future<void>.delayed(Duration(seconds: 5));
+
+    final File videoFile = File(file.path);
+    print('CAMILLE PATH: ${videoFile.absolute.path}');
+    // Trying to prove that we can recetr ieve recorded vdeo, that we can play it on a phone, that we can pla it on a Mac, then if that works, figure out what we are missing on CameraX end or video player end. If that does work, then we ned to figure out why the video is invalid. ..if works in app but not test environment, figure out the difference between that and running manually. If it doens't work in sample app, then we know that we are back at square one.i
+    final VideoPlayerController videoController = VideoPlayerController.file(
+      videoFile,
+    );
+    await videoController.initialize();
+    final int duration = videoController.value.duration.inMilliseconds;
+    await videoController.dispose();
+
+    expect(duration, lessThan(recordingTime));
   }, skip: !Platform.isAndroid);
 
   testWidgets(

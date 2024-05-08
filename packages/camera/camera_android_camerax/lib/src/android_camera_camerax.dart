@@ -122,7 +122,7 @@ class AndroidCameraCameraX extends CameraPlatform {
 
   /// The prefix used to create the filename for video recording files.
   @visibleForTesting
-  final String videoPrefix = 'MOV';
+  final String videoPrefix = 'REC';
 
   /// The [ImageCapture] instance that can be configured to capture a still image.
   @visibleForTesting
