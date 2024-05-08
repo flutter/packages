@@ -11,6 +11,20 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface FLTGoogleMapJSONConversions : NSObject
 
+extern NSString *const kHeatmapsToAddKey;
+extern NSString *const kHeatmapsToChangeKey;
+extern NSString *const kHeatmapIdsToRemoveKey;
+extern NSString *const kHeatmapIdKey;
+extern NSString *const kHeatmapDataKey;
+extern NSString *const kHeatmapGradientKey;
+extern NSString *const kHeatmapOpacityKey;
+extern NSString *const kHeatmapRadiusKey;
+extern NSString *const kHeatmapMinimumZoomIntensityKey;
+extern NSString *const kHeatmapMaximumZoomIntensityKey;
+extern NSString *const kHeatmapGradientColorsKey;
+extern NSString *const kHeatmapGradientStartPointsKey;
+extern NSString *const kHeatmapGradientColorMapSizeKey;
+
 + (CLLocationCoordinate2D)locationFromLatLong:(NSArray *)latlong;
 + (CGPoint)pointFromArray:(NSArray *)array;
 + (NSArray *)arrayFromLocation:(CLLocationCoordinate2D)location;

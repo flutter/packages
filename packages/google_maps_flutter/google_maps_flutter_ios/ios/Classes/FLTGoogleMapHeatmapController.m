@@ -65,32 +65,32 @@
 }
 
 - (void)interpretHeatmapOptions:(NSDictionary *)data {
-  NSArray *weightedData = data[@"data"];
+  NSArray *weightedData = data[kHeatmapDataKey];
   if (![FLTGoogleMapJSONConversions isNull:weightedData]) {
     [self setWeightedData:[FLTGoogleMapJSONConversions weightedDataFromArray:weightedData]];
   }
 
-  NSDictionary *gradient = data[@"gradient"];
+  NSDictionary *gradient = data[kHeatmapGradientKey];
   if (![FLTGoogleMapJSONConversions isNull:gradient]) {
     [self setGradient:[FLTGoogleMapJSONConversions gradientFromDictionary:gradient]];
   }
 
-  NSNumber *opacity = data[@"opacity"];
+  NSNumber *opacity = data[kHeatmapOpacityKey];
   if (![FLTGoogleMapJSONConversions isNull:opacity]) {
     [self setOpacity:[opacity doubleValue]];
   }
 
-  NSNumber *radius = data[@"radius"];
+  NSNumber *radius = data[kHeatmapRadiusKey];
   if (![FLTGoogleMapJSONConversions isNull:radius]) {
     [self setRadius:[radius intValue]];
   }
 
-  NSNumber *minimumZoomIntensity = data[@"minimumZoomIntensity"];
+  NSNumber *minimumZoomIntensity = data[kHeatmapMinimumZoomIntensityKey];
   if (![FLTGoogleMapJSONConversions isNull:minimumZoomIntensity]) {
     [self setMinimumZoomIntensity:[minimumZoomIntensity intValue]];
   }
 
-  NSNumber *maximumZoomIntensity = data[@"maximumZoomIntensity"];
+  NSNumber *maximumZoomIntensity = data[kHeatmapMaximumZoomIntensityKey];
   if (![FLTGoogleMapJSONConversions isNull:maximumZoomIntensity]) {
     [self setMaximumZoomIntensity:[maximumZoomIntensity intValue]];
   }
@@ -100,14 +100,14 @@
 }
 - (NSDictionary *)getHeatmapInfo {
   NSMutableDictionary *options = [[NSMutableDictionary alloc] init];
-  options[@"data"] =
+  options[kHeatmapDataKey] =
       [FLTGoogleMapJSONConversions arrayFromWeightedData:_heatmapTileLayer.weightedData];
-  options[@"gradient"] =
+  options[kHeatmapGradientKey] =
       [FLTGoogleMapJSONConversions dictionaryFromGradient:_heatmapTileLayer.gradient];
-  options[@"opacity"] = @(_heatmapTileLayer.opacity);
-  options[@"radius"] = @(_heatmapTileLayer.radius);
-  options[@"minimumZoomIntensity"] = @(_heatmapTileLayer.minimumZoomIntensity);
-  options[@"maximumZoomIntensity"] = @(_heatmapTileLayer.maximumZoomIntensity);
+  options[kHeatmapOpacityKey] = @(_heatmapTileLayer.opacity);
+  options[kHeatmapRadiusKey] = @(_heatmapTileLayer.radius);
+  options[kHeatmapMinimumZoomIntensityKey] = @(_heatmapTileLayer.minimumZoomIntensity);
+  options[kHeatmapMaximumZoomIntensityKey] = @(_heatmapTileLayer.maximumZoomIntensity);
   return options;
 }
 @end
@@ -174,6 +174,6 @@
   return [self.heatmapIdToController[identifier] getHeatmapInfo];
 }
 + (NSString *)getHeatmapIdentifier:(NSDictionary *)heatmap {
-  return heatmap[@"heatmapId"];
+  return heatmap[kHeatmapIdKey];
 }
 @end

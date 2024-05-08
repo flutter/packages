@@ -6,6 +6,21 @@
 
 @implementation FLTGoogleMapJSONConversions
 
+// These keys must match with serialization.dart
+NSString *const kHeatmapsToAddKey = @"heatmapsToAdd";
+NSString *const kHeatmapsToChangeKey = @"heatmapsToChange";
+NSString *const kHeatmapIdsToRemoveKey = @"heatmapIdsToRemove";
+NSString *const kHeatmapIdKey = @"heatmapId";
+NSString *const kHeatmapDataKey = @"data";
+NSString *const kHeatmapGradientKey = @"gradient";
+NSString *const kHeatmapOpacityKey = @"opacity";
+NSString *const kHeatmapRadiusKey = @"radius";
+NSString *const kHeatmapMinimumZoomIntensityKey = @"minimumZoomIntensity";
+NSString *const kHeatmapMaximumZoomIntensityKey = @"maximumZoomIntensity";
+NSString *const kHeatmapGradientColorsKey = @"colors";
+NSString *const kHeatmapGradientStartPointsKey = @"startPoints";
+NSString *const kHeatmapGradientColorMapSizeKey = @"colorMapSize";
+
 + (CLLocationCoordinate2D)locationFromLatLong:(NSArray *)latlong {
   return CLLocationCoordinate2DMake([latlong[0] doubleValue], [latlong[1] doubleValue]);
 }
@@ -191,14 +206,14 @@
 + (GMUGradient *)gradientFromDictionary:(NSDictionary *)data {
   NSMutableArray<UIColor *> *colors = [[NSMutableArray alloc] init];
 
-  NSArray *colorData = data[@"colors"];
+  NSArray *colorData = data[kHeatmapGradientColorsKey];
   for (NSNumber *colorCode in colorData) {
     [colors addObject:[FLTGoogleMapJSONConversions colorFromRGBA:colorCode]];
   }
 
   return [[GMUGradient alloc] initWithColors:colors
-                                 startPoints:data[@"startPoints"]
-                                colorMapSize:[data[@"colorMapSize"] intValue]];
+                                 startPoints:data[kHeatmapGradientStartPointsKey]
+                                colorMapSize:[data[kHeatmapGradienColorMapSizeKey] intValue]];
 }
 
 + (NSDictionary *)dictionaryFromGradient:(GMUGradient *)gradient {
@@ -208,9 +223,9 @@
   }
 
   return @{
-    @"colors" : colorCodes,
-    @"startPoints" : gradient.startPoints,
-    @"colorMapSize" : @(gradient.mapSize)
+    kHeatmapGradientColorsKey : colorCodes,
+    kHeatmapGradientStartPointsKey : gradient.startPoints,
+    kHeatmapGradienColorMapSizeKey : @(gradient.mapSize)
   };
 }
 

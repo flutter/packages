@@ -155,7 +155,7 @@
     if ([circlesToAdd isKindOfClass:[NSArray class]]) {
       [_circlesController addCircles:circlesToAdd];
     }
-    id heatmapsToAdd = args[@"heatmapsToAdd"];
+    id heatmapsToAdd = args[kHeatmapsToAddKey];
     if ([heatmapsToAdd isKindOfClass:[NSArray class]]) {
       [_heatmapsController addHeatmaps:heatmapsToAdd];
     }
@@ -346,15 +346,15 @@
     }
     result(nil);
   } else if ([call.method isEqualToString:@"heatmaps#update"]) {
-    id heatmapsToAdd = call.arguments[@"heatmapsToAdd"];
+    id heatmapsToAdd = call.arguments[kHeatmapsToAddKey];
     if ([heatmapsToAdd isKindOfClass:[NSArray class]]) {
       [_heatmapsController addHeatmaps:heatmapsToAdd];
     }
-    id heatmapsToChange = call.arguments[@"heatmapsToChange"];
+    id heatmapsToChange = call.arguments[kHeatmapsToChangeKey];
     if ([heatmapsToChange isKindOfClass:[NSArray class]]) {
       [_heatmapsController changeHeatmaps:heatmapsToChange];
     }
-    id heatmapIdsToRemove = call.arguments[@"heatmapIdsToRemove"];
+    id heatmapIdsToRemove = call.arguments[kHeatmapIdsToRemoveKey];
     if ([heatmapIdsToRemove isKindOfClass:[NSArray class]]) {
       [_heatmapsController removeHeatmapsWithIdentifiers:heatmapIdsToRemove];
     }
@@ -426,7 +426,7 @@
     NSString *rawTileOverlayId = call.arguments[@"tileOverlayId"];
     result([self.tileOverlaysController tileOverlayInfoWithIdentifier:rawTileOverlayId]);
   } else if ([call.method isEqualToString:@"map#getHeatmapInfo"]) {
-    NSString *rawHeatmapId = call.arguments[@"heatmapId"];
+    NSString *rawHeatmapId = call.arguments[kHeatmapIdKey];
     result([self.heatmapsController heatmapInfoWithIdentifier:rawHeatmapId]);
   } else {
     result(FlutterMethodNotImplemented);
