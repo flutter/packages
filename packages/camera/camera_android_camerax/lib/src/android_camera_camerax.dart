@@ -994,9 +994,6 @@ class AndroidCameraCameraX extends CameraPlatform {
     // Stop the current active recording.
     await recording!.close();
     await lol.next;
-    // await PendingRecording.videoRecordingFinalizedStreamController.stream.first;
-    print('CAMILLE HI!');
-    // Wait for video recording to finalize. may want to move other logic in here.
 
     recording = null;
     pendingRecording = null;

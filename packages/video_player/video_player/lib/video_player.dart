@@ -399,7 +399,6 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     _creatingCompleter = Completer<void>();
 
     late DataSource dataSourceDescription;
-    print('CAMILLE data source type: $dataSourceType');
     switch (dataSourceType) {
       case DataSourceType.asset:
         dataSourceDescription = DataSource(
