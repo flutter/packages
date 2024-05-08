@@ -669,8 +669,8 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
   XCTAssertNil(error);
   XCTAssertNotNil(isPictureInPictureSupported);
   if (@available(macOS 10.15, *)) {
-        XCTAssertEqual(isPictureInPictureSupported.boolValue,
-                       [AVPictureInPictureController isPictureInPictureSupported]);
+    XCTAssertEqual(isPictureInPictureSupported.boolValue,
+                   [AVPictureInPictureController isPictureInPictureSupported]);
   }
   if (isPictureInPictureSupported.boolValue) {
     FVPStartPictureInPictureMessage *startPictureInPicture =
