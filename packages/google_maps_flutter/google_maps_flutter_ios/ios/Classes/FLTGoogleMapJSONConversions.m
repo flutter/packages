@@ -6,7 +6,7 @@
 
 @implementation FLTGoogleMapJSONConversions
 
-// These keys must match with serialization.dart
+// These constants must match the corresponding constants in serialization.dart
 NSString *const kHeatmapsToAddKey = @"heatmapsToAdd";
 NSString *const kHeatmapsToChangeKey = @"heatmapsToChange";
 NSString *const kHeatmapIdsToRemoveKey = @"heatmapIdsToRemove";

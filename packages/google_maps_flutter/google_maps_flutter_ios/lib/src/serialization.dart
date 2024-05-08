@@ -5,7 +5,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart';
 
-// These keys must match with FLTGoogleMapJSONConversions.m
+// These constants must match the corresponding constants in FLTGoogleMapJSONConversions.m
 String _objectsToAddKey(String name) => '${name}sToAdd';
 String _objectsToChangeKey(String name) => '${name}sToChange';
 String _objectIdsToRemoveKey(String name) => '${name}IdsToRemove';
