@@ -16,6 +16,11 @@
 
 @end
 
+// Static wrapper for interpreting heatmap options.
+static void InterpretHeatmapOptions(FLTGoogleMapHeatmapController *self, NSDictionary<NSString *, id> *options) {
+    [self interpretHeatmapOptions:options];
+}
+
 @implementation FLTGoogleMapHeatmapController
 - (instancetype)initWithHeatmapTileLayer:(GMUHeatmapTileLayer *)heatmapTileLayer
                                  mapView:(GMSMapView *)mapView
@@ -24,7 +29,7 @@
   if (self) {
     _heatmapTileLayer = heatmapTileLayer;
     _mapView = mapView;
-    [self interpretHeatmapOptions:options];
+    InterpretHeatmapOptions(self, options);
   }
   return self;
 }

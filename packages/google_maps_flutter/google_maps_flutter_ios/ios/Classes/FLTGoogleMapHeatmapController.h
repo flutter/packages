@@ -27,8 +27,11 @@ NS_ASSUME_NONNULL_BEGIN
 // Removes this heatmap from the map.
 - (void)removeHeatmap;
 
-// Clears the tile cache in order to visually udpate this heatmap
+// Clears the tile cache in order to visually udpate this heatmap.
 - (void)clearTileCache;
+
+// Reads heatmap data from a dictionary and configures the heatmapTileLayer accordingly.
+- (void)interpretHeatmapOptions:(NSDictionary<NSString *, id> *)data;
 @end
 
 // Defines an interface for controlling heatmaps from Flutter.
