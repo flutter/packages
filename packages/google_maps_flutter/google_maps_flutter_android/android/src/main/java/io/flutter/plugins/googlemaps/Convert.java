@@ -30,7 +30,6 @@ import com.google.maps.android.heatmaps.Gradient;
 import com.google.maps.android.heatmaps.HeatmapTileProvider;
 import com.google.maps.android.heatmaps.WeightedLatLng;
 import com.google.maps.android.projection.SphericalMercatorProjection;
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -693,35 +692,6 @@ class Convert {
     }
   }
 
-  static Map<String, Object> heatmapToJson(HeatmapTileProvider heatmap)
-      throws NoSuchFieldException, IllegalAccessException {
-    final Field dataField = HeatmapTileProvider.class.getDeclaredField("mData");
-    final Field gradientField = HeatmapTileProvider.class.getDeclaredField("mGradient");
-    final Field maxIntensityField =
-        HeatmapTileProvider.class.getDeclaredField("mCustomMaxIntensity");
-    final Field opacityField = HeatmapTileProvider.class.getDeclaredField("mOpacity");
-    final Field radiusField = HeatmapTileProvider.class.getDeclaredField("mRadius");
-
-    dataField.setAccessible(true);
-    gradientField.setAccessible(true);
-    maxIntensityField.setAccessible(true);
-    opacityField.setAccessible(true);
-    radiusField.setAccessible(true);
-
-    @SuppressWarnings("unchecked")
-    final List<WeightedLatLng> data = (List<WeightedLatLng>) dataField.get(heatmap);
-    final Gradient gradient = (Gradient) gradientField.get(heatmap);
-
-    Map<String, Object> heatmapInfo = new HashMap<>();
-    heatmapInfo.put(HEATMAP_DATA_KEY, Convert.weightedDataToJson(Objects.requireNonNull(data)));
-    heatmapInfo.put(HEATMAP_GRADIENT_KEY, gradientToJson(Objects.requireNonNull(gradient)));
-    heatmapInfo.put(HEATMAP_MAX_INTENSITY_KEY, maxIntensityField.get(heatmap));
-    heatmapInfo.put(HEATMAP_OPACITY_KEY, opacityField.get(heatmap));
-    heatmapInfo.put(HEATMAP_RADIUS_KEY, radiusField.get(heatmap));
-
-    return heatmapInfo;
-  }
-
   @VisibleForTesting
   public static List<LatLng> toPoints(Object o) {
     final List<?> data = toList(o);
@@ -744,7 +714,7 @@ class Convert {
     return weightedData;
   }
 
-  private static Object weightedDataToJson(List<WeightedLatLng> weightedData) {
+  public static Object weightedDataToJson(List<WeightedLatLng> weightedData) {
     final List<Object> data = new ArrayList<>(weightedData.size());
 
     for (WeightedLatLng weightedLatLng : weightedData) {

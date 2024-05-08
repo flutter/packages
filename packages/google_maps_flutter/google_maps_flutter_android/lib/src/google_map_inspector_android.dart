@@ -7,7 +7,6 @@ import 'package:flutter/services.dart';
 import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart';
 
 import 'google_maps_flutter_android.dart';
-import 'serialization.dart';
 
 /// An Android of implementation of [GoogleMapsInspectorPlatform].
 @visibleForTesting
@@ -81,31 +80,6 @@ class GoogleMapsInspectorAndroid extends GoogleMapsInspectorPlatform {
       visible: tileInfo['visible']! as bool,
       // Android and iOS return different types.
       zIndex: (tileInfo['zIndex']! as num).toInt(),
-    );
-  }
-
-  @override
-  Future<Heatmap?> getHeatmapInfo(HeatmapId heatmapId,
-      {required int mapId}) async {
-    final Map<String, Object?>? heatmapInfo = await _channelProvider(mapId)!
-        .invokeMapMethod<String, dynamic>(
-            'map#getHeatmapInfo', <String, String>{
-      'heatmapId': heatmapId.value,
-    });
-    if (heatmapInfo == null) {
-      return null;
-    }
-
-    return Heatmap(
-      heatmapId: heatmapId,
-      data: (heatmapInfo['data']! as List<Object?>)
-          .map(deserializeWeightedLatLng)
-          .whereType<WeightedLatLng>()
-          .toList(),
-      gradient: deserializeHeatmapGradient(heatmapInfo['gradient']),
-      maxIntensity: heatmapInfo['maxIntensity']! as double,
-      opacity: heatmapInfo['opacity']! as double,
-      radius: HeatmapRadius.fromJson(heatmapInfo['radius']),
     );
   }
 

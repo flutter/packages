@@ -28,14 +28,6 @@ public class HeatmapController implements HeatmapOptionsSink {
     heatmapTileOverlay.clearTileCache();
   }
 
-  Map<String, Object> getHeatmapInfo() {
-    try {
-      return Convert.heatmapToJson(heatmap);
-    } catch (Exception e) {
-      return null;
-    }
-  }
-
   @Override
   public void setWeightedData(List<WeightedLatLng> weightedData) {
     heatmap.setWeightedData(weightedData);

@@ -352,6 +352,8 @@ void runTests() {
       expectHeatmapEquals(heatmap1, heatmapInfo1);
       expectHeatmapEquals(heatmap2, heatmapInfo2);
     },
+    // Heatmap data is not readable from the Android SDK
+    skip: isAndroid,
   );
 
   testWidgets(

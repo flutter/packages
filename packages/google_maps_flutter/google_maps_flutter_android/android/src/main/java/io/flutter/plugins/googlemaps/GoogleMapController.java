@@ -596,12 +596,6 @@ class GoogleMapController
           result.success(tileOverlaysController.getTileOverlayInfo(tileOverlayId));
           break;
         }
-      case "map#getHeatmapInfo":
-        {
-          String heatmapId = call.argument(HEATMAP_ID_KEY);
-          result.success(heatmapsController.getHeatmapInfo(heatmapId));
-          break;
-        }
       default:
         result.notImplemented();
     }

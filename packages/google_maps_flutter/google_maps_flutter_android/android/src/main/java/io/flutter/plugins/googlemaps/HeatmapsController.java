@@ -56,22 +56,6 @@ public class HeatmapsController {
     }
   }
 
-  Map<String, Object> getHeatmapInfo(String heatmapId) {
-    if (heatmapId == null) {
-      return null;
-    }
-    HeatmapController heatmapController = heatmapIdToController.get(heatmapId);
-    if (heatmapController == null) {
-      return null;
-    }
-
-    try {
-      return heatmapController.getHeatmapInfo();
-    } catch (Exception e) {
-      return null;
-    }
-  }
-
   private void addHeatmap(Object heatmapOptions) {
     if (heatmapOptions == null) {
       return;
