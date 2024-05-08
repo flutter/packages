@@ -9,6 +9,8 @@
 @interface FLTGoogleMapHeatmapController ()
 
 @property(nonatomic, strong) GMUHeatmapTileLayer *heatmapTileLayer;
+
+// The map view owned by GoogmeMapController
 @property(nonatomic, weak) GMSMapView *mapView;
 
 @end
