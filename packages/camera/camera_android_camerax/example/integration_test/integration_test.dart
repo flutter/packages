@@ -195,8 +195,11 @@ void main() {
     await controller.startVideoRecording();
     final int recordingStart = DateTime.now().millisecondsSinceEpoch;
 
-    sleep(const Duration(seconds: 2));
+    const int recordDuration = 2000;
+    sleep(const Duration(milliseconds: recordDuration));
 
+    final int preStopTime =
+        DateTime.now().millisecondsSinceEpoch - recordingStart;
     final XFile file = await controller.stopVideoRecording();
     final int postStopTime =
         DateTime.now().millisecondsSinceEpoch - recordingStart;
@@ -209,6 +212,7 @@ void main() {
     final int duration = videoController.value.duration.inMilliseconds;
     await videoController.dispose();
 
+    expect(duration, greaterThan(preStopTime));
     expect(duration, lessThan(postStopTime));
   });
 
