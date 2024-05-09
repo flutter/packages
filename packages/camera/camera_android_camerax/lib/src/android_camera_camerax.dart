@@ -122,11 +122,7 @@ class AndroidCameraCameraX extends CameraPlatform {
 
   /// The prefix used to create the filename for video recording files.
   @visibleForTesting
-  final String videoPrefix = 'REC';
-
-  /// la la la TODO
-  final StreamQueue<void> lol = StreamQueue<void>(
-      PendingRecording.videoRecordingFinalizedStreamController.stream);
+  final String videoPrefix = 'MOV';
 
   /// The [ImageCapture] instance that can be configured to capture a still image.
   @visibleForTesting
@@ -781,14 +777,6 @@ class AndroidCameraCameraX extends CameraPlatform {
     await _unbindUseCaseFromLifecycle(preview!);
   }
 
-  /// Sets the active camera while recording.
-  ///
-  /// Currently unsupported, so is a no-op.
-  @override
-  Future<void> setDescriptionWhileRecording(CameraDescription description) {
-    return Future<void>.value();
-  }
-
   /// Resume the paused preview for the selected camera.
   ///
   /// [cameraId] not used.
@@ -967,7 +955,8 @@ class AndroidCameraCameraX extends CameraPlatform {
           .setTargetRotation(await proxy.getDefaultDisplayRotation());
     }
 
-    videoOutputPath = await SystemServices.getTempFilePath(videoPrefix, '.mp4');
+    videoOutputPath =
+        await SystemServices.getTempFilePath(videoPrefix, '.temp');
     pendingRecording = await recorder!.prepareRecording(videoOutputPath!);
     recording = await pendingRecording!.start();
 
@@ -990,22 +979,21 @@ class AndroidCameraCameraX extends CameraPlatform {
           'Attempting to stop a '
               'video recording while no recording is in progress.');
     }
-
-    // Stop the current active recording.
-    await recording!.close();
-    await lol.next;
-
-    recording = null;
-    pendingRecording = null;
-
     if (videoOutputPath == null) {
+      // Stop the current active recording as we will be unable to complete it
+      // in this error case.
+      await recording!.close();
+      recording = null;
+      pendingRecording = null;
       throw CameraException(
           'INVALID_PATH',
           'The platform did not return a path '
               'while reporting success. The platform should always '
               'return a valid path or report an error.');
     }
-
+    await recording!.close();
+    recording = null;
+    pendingRecording = null;
     await _unbindUseCaseFromLifecycle(videoCapture!);
     return XFile(videoOutputPath!);
   }

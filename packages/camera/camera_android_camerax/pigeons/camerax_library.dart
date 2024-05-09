@@ -325,8 +325,6 @@ abstract class PendingRecordingHostApi {
 @FlutterApi()
 abstract class PendingRecordingFlutterApi {
   void create(int identifier);
-
-  void onVideoRecordingFinalized();
 }
 
 @HostApi(dartHostTestHandler: 'TestRecordingHostApi')

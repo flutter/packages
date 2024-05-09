@@ -94,7 +94,7 @@ public class SystemServicesHostApiImpl implements SystemServicesHostApi {
     }
 
     try {
-      File path = File.createTempFile(prefix, suffix, new File ("/sdcard/Download/")); //context.getCacheDir());
+      File path = File.createTempFile(prefix, suffix, context.getCacheDir());
       return path.toString();
     } catch (IOException | SecurityException e) {
       throw new GeneratedCameraXLibrary.FlutterError(
