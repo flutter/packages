@@ -895,7 +895,7 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
   void _writePigeonError(SwiftOptions generatorOptions, Indent indent) {
     indent.newln();
     indent.writeln(
-        '/// Error class for passing custom error details to Flutter.');
+        '/// Error class for passing custom error details to Dart side.');
     indent.writeln(
         'final class ${_getErrorClassName(generatorOptions)}: Error {');
     indent.nest(1, () {

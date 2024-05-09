@@ -46,7 +46,7 @@ private func createConnectionError(withChannelName channelName: String) -> Pigeo
     details: "")
 }
 
-/// Error class for passing custom error details to Flutter.
+/// Error class for passing custom error details to Dart side.
 final class PigeonError: Error {
   let code: String
   let message: String?
