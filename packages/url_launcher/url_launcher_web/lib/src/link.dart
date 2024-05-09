@@ -42,12 +42,39 @@ class WebLinkDelegate extends StatefulWidget {
   WebLinkDelegateState createState() => WebLinkDelegateState();
 }
 
+extension on Uri {
+  String getHref() {
+    if (hasScheme) {
+      // External URIs are not modified.
+      return toString();
+    }
+
+    if (ui_web.urlStrategy == null) {
+      // If there's no UrlStrategy, we leave the URI as is.
+      return toString();
+    }
+
+    // In case an internal uri is given, the uri must be properly encoded
+    // using the currently used UrlStrategy.
+    return ui_web.urlStrategy!.prepareExternalUrl(toString());
+  }
+}
+
+int _nextSemanticsIdentifier = 0;
+
 /// The link delegate used on the web platform.
 ///
 /// For external URIs, it lets the browser do its thing. For app route names, it
 /// pushes the route name to the framework.
 class WebLinkDelegateState extends State<WebLinkDelegate> {
   late LinkViewController _controller;
+  late final String _semanticIdentifier;
+
+  @override
+  void initState() {
+    super.initState();
+    _semanticIdentifier = 'sem-id-${_nextSemanticsIdentifier++}';
+  }
 
   @override
   void didUpdateWidget(WebLinkDelegate oldWidget) {
@@ -61,7 +88,7 @@ class WebLinkDelegateState extends State<WebLinkDelegate> {
   }
 
   Future<void> _followLink() {
-    LinkViewController.registerHitTest(_controller);
+    LinkViewController.onFollowLink(_controller.viewId);
     return Future<void>.value();
   }
 
@@ -70,28 +97,37 @@ class WebLinkDelegateState extends State<WebLinkDelegate> {
     return Stack(
       fit: StackFit.passthrough,
       children: <Widget>[
-        widget.link.builder(
-          context,
-          widget.link.isDisabled ? null : _followLink,
+        Semantics(
+          link: true,
+          identifier: _semanticIdentifier,
+          value: widget.link.uri?.getHref(),
+          child: widget.link.builder(
+            context,
+            widget.link.isDisabled ? null : _followLink,
+          ),
         ),
         Positioned.fill(
-          child: PlatformViewLink(
-            viewType: linkViewType,
-            onCreatePlatformView: (PlatformViewCreationParams params) {
-              _controller = LinkViewController.fromParams(params);
-              return _controller
-                ..setUri(widget.link.uri)
-                ..setTarget(widget.link.target);
-            },
-            surfaceFactory:
-                (BuildContext context, PlatformViewController controller) {
-              return PlatformViewSurface(
-                controller: controller,
-                gestureRecognizers: const <Factory<
-                    OneSequenceGestureRecognizer>>{},
-                hitTestBehavior: PlatformViewHitTestBehavior.transparent,
-              );
-            },
+          child: ExcludeFocus(
+            child: ExcludeSemantics(
+              child: PlatformViewLink(
+                viewType: linkViewType,
+                onCreatePlatformView: (PlatformViewCreationParams params) {
+                  _controller = LinkViewController.fromParams(params, _semanticIdentifier);
+                  return _controller
+                    ..setUri(widget.link.uri)
+                    ..setTarget(widget.link.target);
+                },
+                surfaceFactory:
+                    (BuildContext context, PlatformViewController controller) {
+                  return PlatformViewSurface(
+                    controller: controller,
+                    gestureRecognizers: const <Factory<
+                        OneSequenceGestureRecognizer>>{},
+                    hitTestBehavior: PlatformViewHitTestBehavior.transparent,
+                  );
+                },
+              ),
+            ),
           ),
         ),
       ],
@@ -101,55 +137,160 @@ class WebLinkDelegateState extends State<WebLinkDelegate> {
 
 final JSAny _useCapture = <String, Object>{'capture': true}.jsify()!;
 
+/// Keeps track of the signals required to trigger a link.
+///
+/// Automatically resets the signals after a certain delay. This is to prevent
+/// the signals from getting stale.
+class LinkTriggerSignals {
+  LinkTriggerSignals({required this.staleTimeout});
+
+  /// Specifies the duration after which the signals are considered stale.
+  ///
+  /// Signals have to arrive within [staleTimeout] duration between them to be
+  /// considered valid. If they don't, the signals are reset.
+  final Duration staleTimeout;
+
+  /// Whether the we got all the signals required to trigger the link.
+  bool get isReadyToTrigger => _hasFollowLink && _hasDomEvent;
+
+  int? get viewId {
+    assert(_isValid);
+
+    return _viewIdFromFollowLink;
+  }
+
+  void registerFollowLink({required int viewId}) {
+    _hasFollowLink = true;
+    _viewIdFromFollowLink = viewId;
+    _update();
+  }
+
+  void registerDomEvent({
+    required int? viewId,
+    required html.MouseEvent? mouseEvent,
+  }) {
+    if (mouseEvent != null && viewId == null) {
+      throw AssertionError('`viewId` must be provided for mouse events');
+    }
+    _hasDomEvent = true;
+    _viewIdFromDomEvent = viewId;
+    this.mouseEvent = mouseEvent;
+    _update();
+  }
+
+  bool _hasFollowLink = false;
+  bool _hasDomEvent = false;
+
+  int? _viewIdFromFollowLink;
+  int? _viewIdFromDomEvent;
+
+  html.MouseEvent? mouseEvent;
+
+  // The signals state is considered invalid if the view IDs from the follow
+  // link and the DOM event don't match.
+  bool get _isValid {
+    if (_viewIdFromFollowLink == null || _viewIdFromDomEvent == null) {
+      // We haven't received all view IDs yet, so we can't determine if the
+      // signals are valid.
+      return true;
+    }
+
+    return _viewIdFromFollowLink == _viewIdFromDomEvent;
+  }
+
+  Timer? _resetTimer;
+
+  void _update() {
+    // When the state of signals is invalid, we reset the signals immediately.
+    if (_isValid) {
+      _resetTimer?.cancel();
+      _resetTimer = Timer(staleTimeout, reset);
+    } else {
+      reset();
+    }
+  }
+
+  /// Reset all signals to their initial state.
+  void reset() {
+    _resetTimer?.cancel();
+    _resetTimer = null;
+
+    _hasFollowLink = false;
+    _hasDomEvent = false;
+
+    _viewIdFromFollowLink = null;
+    _viewIdFromDomEvent = null;
+
+    mouseEvent = null;
+  }
+}
+
 /// Controls link views.
 class LinkViewController extends PlatformViewController {
   /// Creates a [LinkViewController] instance with the unique [viewId].
-  LinkViewController(this.viewId) {
-    if (_instances.isEmpty) {
+  LinkViewController(this.viewId, this._semanticIdentifier) {
+    if (_instancesByViewId.isEmpty) {
       // This is the first controller being created, attach the global click
       // listener.
-
-      // Why listen in the capture phase?
-      //
-      // To ensure we always receive the event even if the engine calls
-      // `stopPropagation`.
-      html.window
-          .addEventListener('keydown', _jsGlobalKeydownListener, _useCapture);
-      html.window.addEventListener('click', _jsGlobalClickListener);
+      _attachGlobalListeners();
     }
-    _instances[viewId] = this;
+    _instancesByViewId[viewId] = this;
+    _instancesBySemanticIdentifier[_semanticIdentifier] = this;
   }
 
   /// Creates and initializes a [LinkViewController] instance with the given
   /// platform view [params].
   factory LinkViewController.fromParams(
     PlatformViewCreationParams params,
+    String semanticIdentifier,
   ) {
     final int viewId = params.id;
-    final LinkViewController controller = LinkViewController(viewId);
+    final LinkViewController controller = LinkViewController(viewId, semanticIdentifier);
     controller._initialize().then((_) {
       /// Because _initialize is async, it can happen that [LinkViewController.dispose]
       /// may get called before this `then` callback.
       /// Check that the `controller` that was created by this factory is not
       /// disposed before calling `onPlatformViewCreated`.
-      if (_instances[viewId] == controller) {
+      if (_instancesByViewId[viewId] == controller) {
         params.onPlatformViewCreated(viewId);
       }
     });
     return controller;
   }
 
-  static final Map<int, LinkViewController> _instances =
+  static final Map<int, LinkViewController> _instancesByViewId =
       <int, LinkViewController>{};
+  static final Map<String, LinkViewController> _instancesBySemanticIdentifier =
+      <String, LinkViewController>{};
 
   static html.Element _viewFactory(int viewId) {
-    return _instances[viewId]!._element;
+    return _instancesByViewId[viewId]!._element;
   }
 
-  static int? _hitTestedViewId;
+  static final LinkTriggerSignals _triggerSignals =
+      LinkTriggerSignals(staleTimeout: const Duration(milliseconds: 500));
 
   static final JSFunction _jsGlobalKeydownListener = _onGlobalKeydown.toJS;
   static final JSFunction _jsGlobalClickListener = _onGlobalClick.toJS;
+
+  static void _attachGlobalListeners() {
+    // Why listen in the capture phase?
+    //
+    // To ensure we always receive the event even if the engine calls
+    // `stopPropagation`.
+    html.window
+      ..addEventListener('keydown', _jsGlobalKeydownListener, _useCapture)
+      ..addEventListener('click', _jsGlobalClickListener, _useCapture);
+
+    // TODO(mdebbar): Cleanup the global listeners on hot restart.
+    // https://github.com/flutter/flutter/issues/148133
+  }
+
+  static void _detachGlobalListeners() {
+    html.window
+      ..removeEventListener('keydown', _jsGlobalKeydownListener, _useCapture)
+      ..removeEventListener('click', _jsGlobalClickListener, _useCapture);
+  }
 
   static void _onGlobalKeydown(html.KeyboardEvent event) {
     // Why not use `event.target`?
@@ -197,22 +338,54 @@ class LinkViewController extends PlatformViewController {
     //    - If `_hitTestedViewId` is set, it means the app triggered the link.
     //    - We navigate to the Link's URI.
 
-    // The keydown event is not directly associated with the target Link, so
-    // we need to look for the recently hit tested Link to handle the event.
-    if (_hitTestedViewId != null) {
-      _instances[_hitTestedViewId]?._onDomKeydown();
+    if (_isModifierKey(event)) {
+      // Modifier keys (i.e. Shift, Ctrl, Alt, Meta) cannot trigger a Link.
+      return;
     }
-    // After the keyboard event has been received, clean up the hit test state
-    // so we can start fresh on the next event.
-    unregisterHitTest();
+
+    // The keydown event is not directly associated with the target Link, so
+    // we can't find the `viewId` from the event.
+    _triggerSignals.registerDomEvent(viewId: null, mouseEvent: null);
+
+    if (_triggerSignals.isReadyToTrigger) {
+      _triggerLink();
+    }
   }
 
+  /// Global click handler that triggers on the `capture` phase. We use `capture`
+  /// because some events may be consumed and prevent further propagation at the
+  /// target. This may lead to issues (see: https://github.com/flutter/flutter/issues/143164)
+  /// where a followLink was executed but the event never bubbles back up to the
+  /// window (e.g. when button semantics obscure the platform view). We make sure
+  /// to only trigger the link if a hit test was registered and remains valid at
+  /// the time the click handler executes.
   static void _onGlobalClick(html.MouseEvent event) {
-    final int? viewId = getViewIdFromTarget(event);
-    _instances[viewId]?._onDomClick(event);
-    // After the DOM click event has been received, clean up the hit test state
-    // so we can start fresh on the next event.
-    unregisterHitTest();
+    final html.Element? targetElement = event.target as html.Element?;
+
+    // We only want to handle clicks that land on *our* links, whether that's a
+    // platform view link or a semantics link.
+    final int? viewIdFromTarget = _getViewIdFromLink(targetElement) ??
+        _getViewIdFromSemanticLink(targetElement);
+
+    if (viewIdFromTarget == null) {
+      // The click target was not one of our links, so we don't want to
+      // interfere with it.
+      //
+      // We also want to reset the signals in this case.
+      _triggerSignals.reset();
+      return;
+    }
+
+    // TODO: preventDefault if there's a mismatch in view IDs.
+
+    _triggerSignals.registerDomEvent(
+      viewId: viewIdFromTarget,
+      mouseEvent: event,
+    );
+
+    if (_triggerSignals.isReadyToTrigger) {
+      _triggerLink();
+    }
   }
 
   /// Call this method to indicate that a hit test has been registered for the
@@ -220,17 +393,19 @@ class LinkViewController extends PlatformViewController {
   ///
   /// The [onClick] callback is invoked when the anchor element receives a
   /// `click` from the browser.
-  static void registerHitTest(LinkViewController controller) {
-    _hitTestedViewId = controller.viewId;
-  }
+  static void onFollowLink(int viewId) {
+    // TODO: preventDefault on mouseEvent if there's a mismatch in view IDs.
+    _triggerSignals.registerFollowLink(viewId: viewId);
 
-  /// Removes all information about previously registered hit tests.
-  static void unregisterHitTest() {
-    _hitTestedViewId = null;
+    if (_triggerSignals.isReadyToTrigger) {
+      _triggerLink();
+    }
   }
 
   @override
   final int viewId;
+
+  final String _semanticIdentifier;
 
   late html.HTMLElement _element;
 
@@ -255,48 +430,41 @@ class LinkViewController extends PlatformViewController {
     await SystemChannels.platform_views.invokeMethod<void>('create', args);
   }
 
-  void _onDomKeydown() {
-    assert(
-      _hitTestedViewId == viewId,
-      'Keydown event should only be handled by the hit tested Link',
-    );
+  /// Triggers the Link that has already received all the required signals.
+  ///
+  /// It also handles logic for external vs internal links, triggered by a mouse
+  /// vs keyboard event.
+  static void _triggerLink() {
+    assert(_triggerSignals.isReadyToTrigger);
 
-    if (_isExternalLink) {
-      // External links are not handled by the browser when triggered via a
-      // keydown, so we have to launch the url manually.
-      UrlLauncherPlatform.instance
-          .launchUrl(_uri.toString(), const LaunchOptions());
+    final LinkViewController controller = _instancesByViewId[_triggerSignals.viewId!]!;
+    final html.MouseEvent? mouseEvent = _triggerSignals.mouseEvent;
+
+    // Make sure to reset no matter what code path we end up taking.
+    _triggerSignals.reset();
+
+    if (mouseEvent != null && _isModifierKey(mouseEvent)) {
       return;
     }
 
-    // A uri that doesn't have a scheme is an internal route name. In this
-    // case, we push it via Flutter's navigation system instead of using
-    // `launchUrl`.
-    final String routeName = _uri.toString();
-    pushRouteNameToFramework(null, routeName);
-  }
+    if (controller._isExternalLink) {
+      if (mouseEvent == null) {
+        // When external links are trigger by keyboard, they are not handled by
+        // the browser. So we have to launch the url manually.
+        UrlLauncherPlatform.instance
+            .launchUrl(controller._uri.toString(), const LaunchOptions());
+      }
 
-  void _onDomClick(html.MouseEvent event) {
-    final bool isHitTested = _hitTestedViewId == viewId;
-    if (!isHitTested) {
-      // There was no hit test registered for this click. This means the click
-      // landed on the anchor element but not on the underlying widget. In this
-      // case, we prevent the browser from following the click.
-      event.preventDefault();
-      return;
-    }
-
-    if (_isExternalLink) {
-      // External links will be handled by the browser, so we don't have to do
-      // anything.
+      // When triggerd by a mouse event, external links will be handled by the
+      // browser, so we don't have to do anything.
       return;
     }
 
     // A uri that doesn't have a scheme is an internal route name. In this
     // case, we push it via Flutter's navigation system instead of letting the
     // browser handle it.
-    event.preventDefault();
-    final String routeName = _uri.toString();
+    mouseEvent?.preventDefault();
+    final String routeName = controller._uri.toString();
     pushRouteNameToFramework(null, routeName);
   }
 
@@ -311,13 +479,7 @@ class LinkViewController extends PlatformViewController {
     if (uri == null) {
       _element.removeAttribute('href');
     } else {
-      String href = uri.toString();
-      // in case an internal uri is given, the url mus be properly encoded
-      // using the currently used [UrlStrategy]
-      if (!uri.hasScheme) {
-        href = ui_web.urlStrategy?.prepareExternalUrl(href) ?? href;
-      }
-      _element.setAttribute('href', href);
+      _element.setAttribute('href', uri.getHref());
     }
   }
 
@@ -342,6 +504,24 @@ class LinkViewController extends PlatformViewController {
     return '_self';
   }
 
+  /// Finds the view ID in the Link's semantic element.
+  ///
+  /// Returns null if [target] is not a semantics element for one of our Links.
+  static int? _getViewIdFromSemanticLink(html.Element? target) {
+    // TODO: what if `target` IS the <a> semantic element?
+    if (target != null && _isWithinSemanticTree(target)) {
+      final html.Element? semanticLink = _getClosestSemanticLink(target);
+      if (semanticLink != null) {
+        // TODO: Find out the view ID of semantic link.
+        final String? semanticIdentifier = semanticLink.getAttribute('semantic-identifier');
+        if (semanticIdentifier != null) {
+          return _instancesBySemanticIdentifier[semanticIdentifier]?.viewId;
+        }
+      }
+    }
+    return null;
+  }
+
   @override
   Future<void> clearFocus() async {
     // Currently this does nothing on Flutter Web.
@@ -356,49 +536,51 @@ class LinkViewController extends PlatformViewController {
 
   @override
   Future<void> dispose() async {
-    assert(_instances[viewId] == this);
-    _instances.remove(viewId);
-    if (_instances.isEmpty) {
-      html.window.removeEventListener('click', _jsGlobalClickListener);
-      html.window.removeEventListener(
-          'keydown', _jsGlobalKeydownListener, _useCapture);
+    assert(_instancesByViewId[viewId] == this);
+    assert(_instancesBySemanticIdentifier[_semanticIdentifier] == this);
+
+    _instancesByViewId.remove(viewId);
+    _instancesBySemanticIdentifier.remove(_semanticIdentifier);
+
+    if (_instancesByViewId.isEmpty) {
+      _detachGlobalListeners();
     }
     await SystemChannels.platform_views.invokeMethod<void>('dispose', viewId);
   }
 }
 
-/// Finds the view id of the DOM element targeted by the [event].
-int? getViewIdFromTarget(html.Event event) {
-  final html.Element? linkElement = getLinkElementFromTarget(event);
-  if (linkElement != null) {
-    return linkElement.getProperty<JSNumber>(linkViewIdProperty.toJS).toDartInt;
-  }
-  return null;
-}
-
-/// Finds the targeted DOM element by the [event].
+/// Finds the view ID in the Link's platform view element.
 ///
-/// It handles the case where the target element is inside a shadow DOM too.
-html.Element? getLinkElementFromTarget(html.Event event) {
-  final html.EventTarget? target = event.target;
-  if (target != null && target is html.Element) {
-    if (isLinkElement(target)) {
-      return target;
-    }
-    if (target.shadowRoot != null) {
-      final html.Node? child = target.shadowRoot!.lastChild;
-      if (child != null && child is html.Element && isLinkElement(child)) {
-        return child;
-      }
-    }
+/// Returns null if [target] is not a platform view of one of our Links.
+int? _getViewIdFromLink(html.Element? target) {
+  final JSString linkViewIdPropertyJS = linkViewIdProperty.toJS;
+  if (target != null && target.tagName.toLowerCase() == 'a') {
+    return target.getProperty<JSNumber?>(linkViewIdPropertyJS)?.toDartInt;
   }
   return null;
 }
 
-/// Checks if the given [element] is a link that was created by
-/// [LinkViewController].
-bool isLinkElement(html.Element? element) {
-  return element != null &&
-      element.tagName == 'A' &&
-      element.hasProperty(linkViewIdProperty.toJS).toDart;
+/// Whether [element] is within the semantic tree of a Flutter View.
+bool _isWithinSemanticTree(html.Element element) {
+  return element.closest('flt-semantics-host') != null;
+}
+
+/// Returns the closest semantic link ancestor of the given [element].
+///
+/// If [element] itself is a link, it is returned.
+html.Element? _getClosestSemanticLink(html.Element element) {
+  assert(_isWithinSemanticTree(element));
+  return element.closest('a[id^="flt-semantic-node-"]');
+}
+
+bool _isModifierKey(html.Event event) {
+  // This method accepts both KeyboardEvent and MouseEvent but there's no common
+  // interface that contains the `ctrlKey`, `altKey`, `metaKey`, and `shiftKey`
+  // properties. So we have to cast the event to either `KeyboardEvent` or
+  // `MouseEvent` to access these properties.
+  //
+  // It's safe to cast both event types to `KeyboardEvent` because it's just
+  // JS-interop and has no concrete runtime type.
+  event as html.KeyboardEvent;
+  return event.ctrlKey || event.altKey || event.metaKey || event.shiftKey;
 }
