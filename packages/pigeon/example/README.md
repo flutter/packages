@@ -115,7 +115,8 @@ Future<bool> sendMessage(String messageText) {
 ### Swift
 
 This is the code that will use the generated Swift code to receive calls from Flutter.
-packages/pigeon/example/app/ios/Runner/AppDelegate.swift
+Unlike other languages, when throwing an error (both synchronous and asynchronous), use `PigeonError` instead of `FlutterError`, as `FlutterError` is not conforming to `Swift.Error`.
+Previously, a workaround was to declare an extension to `FlutterError` to conform to `Swift.Error`, but, as of Pigeon 19.0.0, `PigeonError` is provided for this purpose. Older code still using `FlutterError` will continue to work, but it is recommended to switch to `PigeonError` and remove the extension.
 <?code-excerpt "ios/Runner/AppDelegate.swift (swift-class)"?>
 ```swift
 private class PigeonApiImplementation: ExampleHostApi {
@@ -125,14 +126,14 @@ private class PigeonApiImplementation: ExampleHostApi {
 
   func add(_ a: Int64, to b: Int64) throws -> Int64 {
     if a < 0 || b < 0 {
-      throw FlutterError(code: "code", message: "message", details: "details")
+      throw PigeonError(code: "code", message: "message", details: "details")
     }
     return a + b
   }
 
   func sendMessage(message: MessageData, completion: @escaping (Result<Bool, Error>) -> Void) {
     if message.code == Code.one {
-      completion(.failure(FlutterError(code: "code", message: "message", details: "details")))
+      completion(.failure(PigeonError(code: "code", message: "message", details: "details")))
       return
     }
     completion(.success(true))
