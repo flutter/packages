@@ -188,6 +188,9 @@ class HomeScreen extends StatelessWidget {
                     unawaited(FamilyCountRoute(familyData.length)
                         .push<int>(context)
                         .then((int? value) {
+                      if (!context.mounted) {
+                        return;
+                      }
                       if (value != null) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(

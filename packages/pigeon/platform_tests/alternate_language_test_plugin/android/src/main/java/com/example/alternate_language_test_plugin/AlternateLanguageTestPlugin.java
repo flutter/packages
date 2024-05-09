@@ -109,8 +109,8 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
   }
 
   @Override
-  public @NonNull List<Object> echoList(@NonNull List<Object> aList) {
-    return aList;
+  public @NonNull List<Object> echoList(@NonNull List<Object> list) {
+    return list;
   }
 
   @Override
@@ -160,13 +160,11 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
       @Nullable Boolean aNullableBool,
       @Nullable Long aNullableInt,
       @Nullable String aNullableString) {
-    AllNullableTypes someThings =
-        new AllNullableTypes.Builder()
-            .setANullableBool(aNullableBool)
-            .setANullableInt(aNullableInt)
-            .setANullableString(aNullableString)
-            .build();
-    return someThings;
+    return new AllNullableTypes.Builder()
+        .setANullableBool(aNullableBool)
+        .setANullableInt(aNullableInt)
+        .setANullableString(aNullableString)
+        .build();
   }
 
   @Override
@@ -174,13 +172,11 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
       @Nullable Boolean aNullableBool,
       @Nullable Long aNullableInt,
       @Nullable String aNullableString) {
-    AllNullableTypesWithoutRecursion someThings =
-        new AllNullableTypesWithoutRecursion.Builder()
-            .setANullableBool(aNullableBool)
-            .setANullableInt(aNullableInt)
-            .setANullableString(aNullableString)
-            .build();
-    return someThings;
+    return new AllNullableTypesWithoutRecursion.Builder()
+        .setANullableBool(aNullableBool)
+        .setANullableInt(aNullableInt)
+        .setANullableString(aNullableString)
+        .build();
   }
 
   @Override
@@ -307,8 +303,8 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
   }
 
   @Override
-  public void echoAsyncList(@NonNull List<Object> aList, @NonNull Result<List<Object>> result) {
-    result.success(aList);
+  public void echoAsyncList(@NonNull List<Object> list, @NonNull Result<List<Object>> result) {
+    result.success(list);
   }
 
   @Override
@@ -359,8 +355,8 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
 
   @Override
   public void echoAsyncNullableList(
-      @Nullable List<Object> aList, @NonNull NullableResult<List<Object>> result) {
-    result.success(aList);
+      @Nullable List<Object> list, @NonNull NullableResult<List<Object>> result) {
+    result.success(list);
   }
 
   @Override
@@ -377,28 +373,33 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
 
   @Override
   public void callFlutterNoop(@NonNull VoidResult result) {
+    assert flutterApi != null;
     flutterApi.noop(result);
   }
 
   @Override
   public void callFlutterThrowError(@NonNull NullableResult<Object> result) {
+    assert flutterApi != null;
     flutterApi.throwError(result);
   }
 
   @Override
   public void callFlutterThrowErrorFromVoid(@NonNull VoidResult result) {
+    assert flutterApi != null;
     flutterApi.throwErrorFromVoid(result);
   }
 
   @Override
   public void callFlutterEchoAllTypes(
       @NonNull AllTypes everything, @NonNull Result<AllTypes> result) {
+    assert flutterApi != null;
     flutterApi.echoAllTypes(everything, result);
   }
 
   @Override
   public void callFlutterEchoAllNullableTypes(
       @Nullable AllNullableTypes everything, @NonNull NullableResult<AllNullableTypes> result) {
+    assert flutterApi != null;
     flutterApi.echoAllNullableTypes(everything, result);
   }
 
@@ -408,6 +409,7 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
       @Nullable Long aNullableInt,
       @Nullable String aNullableString,
       @NonNull Result<AllNullableTypes> result) {
+    assert flutterApi != null;
     flutterApi.sendMultipleNullableTypes(aNullableBool, aNullableInt, aNullableString, result);
   }
 
@@ -415,6 +417,7 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
   public void callFlutterEchoAllNullableTypesWithoutRecursion(
       @Nullable AllNullableTypesWithoutRecursion everything,
       @NonNull NullableResult<AllNullableTypesWithoutRecursion> result) {
+    assert flutterApi != null;
     flutterApi.echoAllNullableTypesWithoutRecursion(everything, result);
   }
 
@@ -424,97 +427,114 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
       @Nullable Long aNullableInt,
       @Nullable String aNullableString,
       @NonNull Result<AllNullableTypesWithoutRecursion> result) {
+    assert flutterApi != null;
     flutterApi.sendMultipleNullableTypesWithoutRecursion(
         aNullableBool, aNullableInt, aNullableString, result);
   }
 
   @Override
   public void callFlutterEchoBool(@NonNull Boolean aBool, @NonNull Result<Boolean> result) {
+    assert flutterApi != null;
     flutterApi.echoBool(aBool, result);
   }
 
   @Override
   public void callFlutterEchoInt(@NonNull Long anInt, @NonNull Result<Long> result) {
+    assert flutterApi != null;
     flutterApi.echoInt(anInt, result);
   }
 
   @Override
   public void callFlutterEchoDouble(@NonNull Double aDouble, @NonNull Result<Double> result) {
+    assert flutterApi != null;
     flutterApi.echoDouble(aDouble, result);
   }
 
   @Override
   public void callFlutterEchoString(@NonNull String aString, @NonNull Result<String> result) {
+    assert flutterApi != null;
     flutterApi.echoString(aString, result);
   }
 
   @Override
-  public void callFlutterEchoUint8List(@NonNull byte[] aList, @NonNull Result<byte[]> result) {
-    flutterApi.echoUint8List(aList, result);
+  public void callFlutterEchoUint8List(@NonNull byte[] list, @NonNull Result<byte[]> result) {
+    assert flutterApi != null;
+    flutterApi.echoUint8List(list, result);
   }
 
   @Override
   public void callFlutterEchoList(
-      @NonNull List<Object> aList, @NonNull Result<List<Object>> result) {
-    flutterApi.echoList(aList, result);
+      @NonNull List<Object> list, @NonNull Result<List<Object>> result) {
+    assert flutterApi != null;
+    flutterApi.echoList(list, result);
   }
 
   @Override
   public void callFlutterEchoMap(
       @NonNull Map<String, Object> aMap, @NonNull Result<Map<String, Object>> result) {
+    assert flutterApi != null;
     flutterApi.echoMap(aMap, result);
   }
 
   @Override
   public void callFlutterEchoEnum(@NonNull AnEnum anEnum, @NonNull Result<AnEnum> result) {
+    assert flutterApi != null;
     flutterApi.echoEnum(anEnum, result);
   }
 
   @Override
   public void callFlutterEchoNullableBool(
       @Nullable Boolean aBool, @NonNull NullableResult<Boolean> result) {
+    assert flutterApi != null;
     flutterApi.echoNullableBool(aBool, result);
   }
 
   @Override
   public void callFlutterEchoNullableInt(
       @Nullable Long anInt, @NonNull NullableResult<Long> result) {
+    assert flutterApi != null;
     flutterApi.echoNullableInt(anInt, result);
   }
 
   @Override
   public void callFlutterEchoNullableDouble(
       @Nullable Double aDouble, @NonNull NullableResult<Double> result) {
+    assert flutterApi != null;
     flutterApi.echoNullableDouble(aDouble, result);
   }
 
   @Override
   public void callFlutterEchoNullableString(
       @Nullable String aString, @NonNull NullableResult<String> result) {
+    assert flutterApi != null;
     flutterApi.echoNullableString(aString, result);
   }
 
   @Override
   public void callFlutterEchoNullableUint8List(
-      @Nullable byte[] aList, @NonNull NullableResult<byte[]> result) {
-    flutterApi.echoNullableUint8List(aList, result);
+      @Nullable byte[] list, @NonNull NullableResult<byte[]> result) {
+    assert flutterApi != null;
+    flutterApi.echoNullableUint8List(list, result);
   }
 
   @Override
   public void callFlutterEchoNullableList(
-      @Nullable List<Object> aList, @NonNull NullableResult<List<Object>> result) {
-    flutterApi.echoNullableList(aList, result);
+      @Nullable List<Object> list, @NonNull NullableResult<List<Object>> result) {
+    assert flutterApi != null;
+    flutterApi.echoNullableList(list, result);
   }
 
   @Override
   public void callFlutterEchoNullableMap(
       @Nullable Map<String, Object> aMap, @NonNull NullableResult<Map<String, Object>> result) {
+    assert flutterApi != null;
     flutterApi.echoNullableMap(aMap, result);
   }
 
   @Override
   public void callFlutterEchoNullableEnum(
       @Nullable AnEnum anEnum, @NonNull NullableResult<AnEnum> result) {
+    assert flutterApi != null;
     flutterApi.echoNullableEnum(anEnum, result);
   }
 
