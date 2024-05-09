@@ -970,7 +970,8 @@ class AndroidCameraCameraX extends CameraPlatform {
           .setTargetRotation(await proxy.getDefaultDisplayRotation());
     }
 
-    videoOutputPath = await SystemServices.getTempFilePath(videoPrefix, '.mp4');
+    videoOutputPath =
+        await SystemServices.getTempFilePath(videoPrefix, '.temp');
     pendingRecording = await recorder!.prepareRecording(videoOutputPath!);
     recording = await pendingRecording!.start();
 
