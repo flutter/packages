@@ -130,8 +130,6 @@ class MDnsClient {
         (await interfacesFactory(listenAddress.type)).toList();
 
     for (final NetworkInterface interface in interfaces) {
-      // Create a socket for sending on each adapter.
-      final InternetAddress targetAddress = interface.addresses[0];
       // Join multicast on this interface.
       incoming.joinMulticast(_mDnsAddress!, interface);
     }
