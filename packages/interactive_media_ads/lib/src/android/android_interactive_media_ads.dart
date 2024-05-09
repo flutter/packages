@@ -10,6 +10,11 @@ import 'android_ad_display_container.dart';
 
 /// Android implementation of [InteractiveMediaAdsPlatform].
 final class AndroidInteractiveMediaAds extends InteractiveMediaAdsPlatform {
+  /// Registers this class as the default instance of [HelloPluginPlatform].
+  static void registerWith() {
+    InteractiveMediaAdsPlatform.instance = AndroidInteractiveMediaAds();
+  }
+
   @override
   PlatformAdDisplayContainer createPlatformAdDisplayContainer(
     PlatformAdDisplayContainerCreationParams params,

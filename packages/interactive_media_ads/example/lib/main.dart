@@ -4,17 +4,10 @@
 
 import 'dart:async';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_driver/driver_extension.dart';
 import 'package:interactive_media_ads/interactive_media_ads.dart';
-import 'package:interactive_media_ads/src/android/interactive_media_ads.g.dart'
-    as android_ima;
 import 'package:video_player/video_player.dart';
-import 'package:interactive_media_ads/src/platform_interface/platform_interface.dart';
-import 'package:interactive_media_ads/src/android/android_interactive_media_ads.dart';
-import 'package:interactive_media_ads/src/android/android_ad_display_container.dart';
 
 /// Entry point for integration tests that require espresso.
 @pragma('vm:entry-point')
@@ -24,39 +17,42 @@ void integrationTestMain() {
 }
 
 void main() {
-  InteractiveMediaAdsPlatform.instance = AndroidInteractiveMediaAds();
-  runApp(MaterialApp(home: AdExampleWidget()));
+  runApp(const MaterialApp(home: AdExampleWidget()));
 }
 
+/// Example widget displaying an Ad during a video.
 class AdExampleWidget extends StatefulWidget {
+  /// Constructs an [AdExampleWidget].
+  const AdExampleWidget({super.key});
+
   @override
-  AdExampleWidgetState createState() => AdExampleWidgetState();
+  State<AdExampleWidget> createState() => _AdExampleWidgetState();
 }
 
-class AdExampleWidgetState extends State<AdExampleWidget> {
-  late final AdsLoader adsLoader;
-  AdsManager? adsManager;
-  bool shouldShowContentVideo = true;
+class _AdExampleWidgetState extends State<AdExampleWidget> {
+  late final AdsLoader _adsLoader;
+  AdsManager? _adsManager;
+  bool _shouldShowContentVideo = true;
 
-  late final VideoPlayerController contentVideoController;
+  late final VideoPlayerController _contentVideoController;
 
-  late final AdDisplayContainer adDisplayContainer = AdDisplayContainer(
+  late final AdDisplayContainer _adDisplayContainer = AdDisplayContainer(
     onContainerAdded: (AdDisplayContainer container) {
-      requestAds(container);
+      _requestAds(container);
     },
   );
 
-  late final Timer progressTimer;
+  //late final Timer progressTimer;
 
   @override
   void initState() {
     super.initState();
-    contentVideoController = VideoPlayerController.networkUrl(Uri.parse(
+    _contentVideoController = VideoPlayerController.networkUrl(Uri.parse(
         'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4'))
       ..addListener(() {
-        if (contentVideoController.value.position ==
-            contentVideoController.value.duration) {
-          adsLoader.contentComplete();
+        if (_contentVideoController.value.position ==
+            _contentVideoController.value.duration) {
+          _adsLoader.contentComplete();
         }
       })
       ..initialize().then((_) {
@@ -64,82 +60,81 @@ class AdExampleWidgetState extends State<AdExampleWidget> {
         setState(() {});
       });
 
-    progressTimer = Timer.periodic(const Duration(seconds: 3), (Timer timer) {
-      if (contentVideoController.value.isInitialized &&
-          shouldShowContentVideo &&
-          contentVideoController.value.isPlaying) {
-        print(contentVideoController.value.position.inMilliseconds);
-        final AndroidAdDisplayContainer container =
-            adDisplayContainer.platform as AndroidAdDisplayContainer;
-        for (final android_ima.VideoAdPlayerCallback a
-            in container.videoAdPlayerCallbacks) {
-          a.onAdProgress(
-            container.loadedAdMediaInfo!,
-            android_ima.VideoProgressUpdate(
-              currentTimeMs:
-                  contentVideoController.value.position.inMilliseconds,
-              durationMs: contentVideoController.value.duration.inMilliseconds,
-            ),
-          );
-        }
-      }
-    });
+    // progressTimer = Timer.periodic(const Duration(seconds: 3), (Timer timer) {
+    //   if (contentVideoController.value.isInitialized &&
+    //       shouldShowContentVideo &&
+    //       contentVideoController.value.isPlaying) {
+    //     print(contentVideoController.value.position.inMilliseconds);
+    //     final AndroidAdDisplayContainer container =
+    //         adDisplayContainer.platform as AndroidAdDisplayContainer;
+    //     for (final android_ima.VideoAdPlayerCallback a
+    //         in container.videoAdPlayerCallbacks) {
+    //       a.onAdProgress(
+    //         container.loadedAdMediaInfo!,
+    //         android_ima.VideoProgressUpdate(
+    //           currentTimeMs:
+    //               contentVideoController.value.position.inMilliseconds,
+    //           durationMs: contentVideoController.value.duration.inMilliseconds,
+    //         ),
+    //       );
+    //     }
+    //   }
+    // });
   }
 
-  Future<void> resumeContent() {
+  Future<void> _resumeContent() {
     setState(() {
-      shouldShowContentVideo = true;
+      _shouldShowContentVideo = true;
     });
-    return contentVideoController.play();
+    return _contentVideoController.play();
   }
 
-  Future<void> pauseContent() {
+  Future<void> _pauseContent() {
     setState(() {
-      shouldShowContentVideo = false;
+      _shouldShowContentVideo = false;
     });
-    return contentVideoController.pause();
+    return _contentVideoController.pause();
   }
 
-  Future<void> requestAds(AdDisplayContainer container) {
-    adsLoader = AdsLoader(
+  Future<void> _requestAds(AdDisplayContainer container) {
+    _adsLoader = AdsLoader(
       container: container,
       onAdsLoaded: (OnAdsLoadedData data) {
         final AdsManager manager = data.manager;
-        adsManager = data.manager;
+        _adsManager = data.manager;
 
         manager.setAdsManagerDelegate(AdsManagerDelegate(
           onAdEvent: (AdEvent event) {
-            debugPrint('AdEvent ${event.type}');
+            debugPrint('OnAdEvent: ${event.type}');
             switch (event.type) {
               case AdEventType.loaded:
                 manager.start();
               case AdEventType.contentPauseRequested:
-                pauseContent();
+                _pauseContent();
               case AdEventType.contentResumeRequested:
-                resumeContent();
+                _resumeContent();
               case AdEventType.allAdsCompleted:
                 manager.destroy();
-                adsManager = null;
+                _adsManager = null;
               case AdEventType.clicked:
               case AdEventType.complete:
             }
           },
           onAdErrorEvent: (AdErrorEvent event) {
             //manager.discardAdBreak();
-            resumeContent();
+            _resumeContent();
           },
         ));
 
         manager.init();
       },
       onAdsLoadError: (AdsLoadErrorData data) {
-        print('Error 2:');
-        print(data.error.message);
-        resumeContent();
+        debugPrint('OnAdsLoadError: ${data.error.message}');
+        _resumeContent();
       },
     );
 
-    return adsLoader.requestAds(
+    return _adsLoader.requestAds(
       AdsRequest(
         adTagUrl:
             'https://pubads.g.doubleclick.net/gampad/ads?iu=/21775744923/external/single_ad_samples&sz=640x480&cust_params=sample_ct%3Dlinear&ciu_szs=300x250%2C728x90&gdfp_req=1&output=vast&unviewed_position_start=1&env=vp&impl=s&correlator=',
@@ -150,8 +145,8 @@ class AdExampleWidgetState extends State<AdExampleWidget> {
   @override
   void dispose() {
     super.dispose();
-    contentVideoController.dispose();
-    adsManager?.destroy();
+    _contentVideoController.dispose();
+    _adsManager?.destroy();
   }
 
   @override
@@ -166,29 +161,29 @@ class AdExampleWidgetState extends State<AdExampleWidget> {
               // The display container must be on screen before any Ads can be
               // loaded and can't be removed between ads. This handles clicks for
               // ads.
-              adDisplayContainer,
-              if (contentVideoController.value.isInitialized &&
-                  shouldShowContentVideo)
+              _adDisplayContainer,
+              if (_contentVideoController.value.isInitialized &&
+                  _shouldShowContentVideo)
                 AspectRatio(
-                  aspectRatio: contentVideoController.value.aspectRatio,
-                  child: VideoPlayer(contentVideoController),
+                  aspectRatio: _contentVideoController.value.aspectRatio,
+                  child: VideoPlayer(_contentVideoController),
                 ),
             ],
           ),
         ),
       ),
       floatingActionButton:
-          contentVideoController.value.isInitialized && shouldShowContentVideo
+          _contentVideoController.value.isInitialized && _shouldShowContentVideo
               ? FloatingActionButton(
                   onPressed: () {
                     setState(() {
-                      contentVideoController.value.isPlaying
-                          ? contentVideoController.pause()
-                          : contentVideoController.play();
+                      _contentVideoController.value.isPlaying
+                          ? _contentVideoController.pause()
+                          : _contentVideoController.play();
                     });
                   },
                   child: Icon(
-                    contentVideoController.value.isPlaying
+                    _contentVideoController.value.isPlaying
                         ? Icons.pause
                         : Icons.play_arrow,
                   ),
