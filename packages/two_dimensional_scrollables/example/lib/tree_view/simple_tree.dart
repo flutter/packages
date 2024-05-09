@@ -100,12 +100,12 @@ class TreeExampleState extends State<TreeExample> {
               controller: horizontalController,
             ),
             tree: _tree,
-            onNodeToggle: (TreeViewNode<dynamic> node) {
+            onNodeToggle: (TreeViewNode<Object?> node) {
               setState(() {
                 _selectedNode = node as TreeViewNode<String>;
               });
             },
-            treeRowBuilder: (TreeViewNode<dynamic> node) {
+            treeRowBuilder: (TreeViewNode<Object?> node) {
               if (_selectedNode == (node as TreeViewNode<String>)) {
                 return TreeView.defaultTreeRowBuilder(node).copyWith(
                   recognizerFactories: _getTapRecognizer(node),
@@ -124,6 +124,13 @@ class TreeExampleState extends State<TreeExample> {
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _verticalController.dispose();
+    horizontalController.dispose();
+    super.dispose();
   }
 
   @override

@@ -105,9 +105,9 @@ class CustomTreeExampleState extends State<CustomTreeExample> {
 
   Widget _treeNodeBuilder(
     BuildContext context,
-    TreeViewNode<dynamic> node, {
-    AnimationStyle? animationStyle,
-  }) {
+    TreeViewNode<Object?> node,
+    AnimationStyle toggleAnimationStyle,
+  ) {
     final bool isParentNode = node.children.isNotEmpty;
     final BorderSide border = BorderSide(
       width: 2,
@@ -188,13 +188,13 @@ class CustomTreeExampleState extends State<CustomTreeExample> {
               controller: _horizontalController,
             ),
             tree: _tree,
-            onNodeToggle: (TreeViewNode<dynamic> node) {
+            onNodeToggle: (TreeViewNode<Object?> node) {
               setState(() {
                 _selectedNode = node as TreeViewNode<String>;
               });
             },
             treeNodeBuilder: _treeNodeBuilder,
-            treeRowBuilder: (TreeViewNode<dynamic> node) {
+            treeRowBuilder: (TreeViewNode<Object?> node) {
               if (_selectedNode == (node as TreeViewNode<String>)) {
                 return TreeRow(
                   extent: FixedTreeRowExtent(
@@ -225,11 +225,17 @@ class CustomTreeExampleState extends State<CustomTreeExample> {
   }
 
   @override
+  void dispose() {
+    verticalController.dispose();
+    _horizontalController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final Size screenSize = MediaQuery.sizeOf(context);
     final List<Widget> selectedChildren = <Widget>[];
     if (_selectedNode != null) {
-      selectedChildren.clear();
       selectedChildren.addAll(<Widget>[
         const Spacer(),
         Icon(

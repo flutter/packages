@@ -5,6 +5,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:two_dimensional_scrollables/src/tree_view/tree.dart';
 import 'package:two_dimensional_scrollables/two_dimensional_scrollables.dart';
 
 List<TreeViewNode<String>> simpleNodeSet = <TreeViewNode<String>>[
@@ -130,14 +131,14 @@ void main() {
           controller: controller,
           treeNodeBuilder: (
             BuildContext context,
-            TreeViewNode<dynamic> node, {
-            AnimationStyle? animationStyle,
-          }) {
+            TreeViewNode<Object?> node,
+            AnimationStyle toggleAnimationStyle,
+          ) {
             returnedController ??= TreeViewController.of(context);
             return TreeView.defaultTreeNodeBuilder(
               context,
               node,
-              animationStyle: animationStyle,
+              toggleAnimationStyle,
             );
           },
         ),
@@ -153,14 +154,14 @@ void main() {
           tree: simpleNodeSet,
           treeNodeBuilder: (
             BuildContext context,
-            TreeViewNode<dynamic> node, {
-            AnimationStyle? animationStyle,
-          }) {
+            TreeViewNode<Object?> node,
+            AnimationStyle toggleAnimationStyle,
+          ) {
             returnedController ??= TreeViewController.maybeOf(context);
             return TreeView.defaultTreeNodeBuilder(
               context,
               node,
-              animationStyle: animationStyle,
+              toggleAnimationStyle,
             );
           },
         ),
@@ -432,7 +433,7 @@ void main() {
         home: TreeView<String>(
           tree: simpleNodeSet,
           controller: controller,
-          onNodeToggle: (TreeViewNode<dynamic> node) {
+          onNodeToggle: (TreeViewNode<Object?> node) {
             toggled = true;
             toggledNode = node as TreeViewNode<String>;
           },
@@ -454,21 +455,21 @@ void main() {
         home: TreeView<String>(
           tree: simpleNodeSet,
           controller: controller,
-          onNodeToggle: (TreeViewNode<dynamic> node) {
+          onNodeToggle: (TreeViewNode<Object?> node) {
             toggled = true;
             toggledNode = node as TreeViewNode<String>;
           },
           treeNodeBuilder: (
             BuildContext context,
-            TreeViewNode<dynamic> node, {
-            AnimationStyle? animationStyle,
-          }) {
-            final Duration animationDuration =
-                animationStyle?.duration ?? TreeView.defaultAnimationDuration;
+            TreeViewNode<Object?> node,
+            AnimationStyle toggleAnimationStyle,
+          ) {
+            final Duration animationDuration = toggleAnimationStyle.duration ??
+                TreeView.defaultAnimationDuration;
             final Curve animationCurve =
-                animationStyle?.curve ?? TreeView.defaultAnimationCurve;
+                toggleAnimationStyle.curve ?? TreeView.defaultAnimationCurve;
             // This makes the whole row trigger toggling.
-            return TreeView.toggleNodeWith(
+            return TreeView.wrapChildToToggleNode(
               node: node,
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
@@ -513,49 +514,55 @@ void main() {
           tree: simpleNodeSet,
           treeNodeBuilder: (
             BuildContext context,
-            TreeViewNode<dynamic> node, {
-            AnimationStyle? animationStyle,
-          }) {
-            style ??= animationStyle;
+            TreeViewNode<Object?> node,
+            AnimationStyle toggleAnimationStyle,
+          ) {
+            style ??= toggleAnimationStyle;
             return Text(node.content.toString());
           },
         ),
       ));
       // Default
-      expect(style, isNull);
+      expect(
+        style,
+        AnimationStyle(
+          duration: TreeView.defaultAnimationDuration,
+          curve: TreeView.defaultAnimationCurve,
+        ),
+      );
 
       await tester.pumpWidget(MaterialApp(
         home: TreeView<String>(
           tree: simpleNodeSet,
-          animationStyle: AnimationStyle.noAnimation,
+          toggleAnimationStyle: AnimationStyle.noAnimation,
           treeNodeBuilder: (
             BuildContext context,
-            TreeViewNode<dynamic> node, {
-            AnimationStyle? animationStyle,
-          }) {
-            style ??= animationStyle;
+            TreeViewNode<Object?> node,
+            AnimationStyle toggleAnimationStyle,
+          ) {
+            style = toggleAnimationStyle;
             return Text(node.content.toString());
           },
         ),
       ));
       expect(style, isNotNull);
-      expect(style!.curve, null);
+      expect(style!.curve, isNull);
       expect(style!.duration, Duration.zero);
       style = null;
 
       await tester.pumpWidget(MaterialApp(
         home: TreeView<String>(
           tree: simpleNodeSet,
-          animationStyle: AnimationStyle(
+          toggleAnimationStyle: AnimationStyle(
             curve: Curves.easeIn,
             duration: const Duration(milliseconds: 200),
           ),
           treeNodeBuilder: (
             BuildContext context,
-            TreeViewNode<dynamic> node, {
-            AnimationStyle? animationStyle,
-          }) {
-            style ??= animationStyle;
+            TreeViewNode<Object?> node,
+            AnimationStyle toggleAnimationStyle,
+          ) {
+            style ??= toggleAnimationStyle;
             return Text(node.content.toString());
           },
         ),

@@ -12,7 +12,7 @@ import 'tree_span.dart';
 ///
 /// Used by the [TreeViewDelegateMixin.buildRow] to configure rows in the
 /// [TreeView].
-typedef TreeViewRowBuilder = TreeRow Function(TreeViewNode<dynamic> node);
+typedef TreeViewRowBuilder = TreeRow Function(TreeViewNode<Object?> node);
 
 /// Signature for a function that creates a [Widget] to represent the given
 /// [TreeViewNode] in the [TreeView].
@@ -21,12 +21,12 @@ typedef TreeViewRowBuilder = TreeRow Function(TreeViewNode<dynamic> node);
 /// tree.
 typedef TreeViewNodeBuilder = Widget Function(
   BuildContext context,
-  TreeViewNode<dynamic> node, {
-  AnimationStyle? animationStyle,
-});
+  TreeViewNode<Object?> node,
+  AnimationStyle toggleAnimationStyle,
+);
 
 /// The position of a [TreeRow] in a [TreeViewport] in relation
-/// to other children of the viewport..
+/// to other children of the viewport.
 ///
 /// This subclass translates the abstract [ChildVicinity.xIndex] and
 /// [ChildVicinity.yIndex] into terms of row index and depth for ease of use
@@ -46,6 +46,8 @@ class TreeVicinity extends ChildVicinity {
   int get row => yIndex;
 
   /// The depth of the [TreeRow] in the [TreeView].
+  ///
+  /// Root [TreeViewNode]s have a depth of 0.
   ///
   /// Equivalent to the [xIndex].
   int get depth => xIndex;

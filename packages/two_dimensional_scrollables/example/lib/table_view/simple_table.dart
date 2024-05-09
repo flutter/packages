@@ -24,6 +24,12 @@ class _TableExampleState extends State<TableExample> {
   int _rowCount = 20;
 
   @override
+  void dispose() {
+    _verticalController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Padding(

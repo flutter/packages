@@ -99,7 +99,11 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
       return;
     }
     _traversalOrder = value;
-    // We don't need to layout again. This is used when we visit children.
+    // Changing mainAxis will call markNeedsLayout.
+    mainAxis = switch (value) {
+      TreeViewTraversalOrder.depthFirst => Axis.vertical,
+      TreeViewTraversalOrder.breadthFirst => Axis.horizontal,
+    };
   }
 
   /// The number of pixels by which child nodes will be offset in the cross axis
@@ -174,7 +178,8 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
         row = childAfter(row);
         continue;
       }
-      final Rect rowRect = parentData.paintOffset! & row.size;
+      final Rect rowRect = parentData.paintOffset! &
+          Size(viewportDimension.width, row.size.height);
       if (rowRect.contains(position)) {
         result.addWithPaintOffset(
           offset: parentData.paintOffset,

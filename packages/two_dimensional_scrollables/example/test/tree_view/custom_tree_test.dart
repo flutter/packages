@@ -18,7 +18,7 @@ void main() {
     expect(find.text('common'), findsOneWidget);
   });
 
-  testWidgets('Can scroll ', (WidgetTester tester) async {
+  testWidgets('Can scroll', (WidgetTester tester) async {
     await tester.pumpWidget(const MaterialApp(home: CustomTreeExample()));
     await tester.pumpAndSettle();
 

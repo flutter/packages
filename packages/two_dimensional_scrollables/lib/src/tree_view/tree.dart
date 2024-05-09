@@ -25,8 +25,8 @@ const double _kDefaultRowExtent = 40.0;
 
 /// A data structure for configuring children of a [TreeView].
 ///
-/// A [TreeViewNode.content] can be of any type, but must correspond with the
-/// same type of the [TreeView].
+/// A [TreeViewNode.content] can be of any type [T], but must correspond with
+/// the same type of the [TreeView].
 ///
 /// Getters for [depth], [parent] and [isExpanded] are managed by the
 /// [TreeView]'s state.
@@ -43,10 +43,16 @@ class TreeViewNode<T> {
   /// The subject matter of the node.
   ///
   /// Must correspond with the type of [TreeView].
+  ///
+  /// The content is used to generate a unique [Key] in
+  /// [TreeView.defaultTreeNodeBuilder] for maintain animation performance.
   T get content => _content;
   final T _content;
 
-  /// Other [TreeViewNode]s this this node will be [parent] to.
+  /// Other [TreeViewNode]s that this node will be [parent] to.
+  ///
+  /// Modifying the children of nodes in a [TreeView] will cause the tree to be
+  /// rebuilt so that newly added active nodes are reflected in the tree.
   List<TreeViewNode<T>> get children => _children;
   final List<TreeViewNode<T>> _children;
 
@@ -75,8 +81,8 @@ class TreeViewNode<T> {
 ///
 /// It can be useful to expand or collapse nodes of the tree
 /// programmatically, for example to reconfigure an existing node
-/// based on a system event. To do so, create an [TreeView]
-/// with an [TreeViewController] that's owned by a stateful widget
+/// based on a system event. To do so, create a [TreeView]
+/// with a [TreeViewController] that's owned by a stateful widget
 /// or look up the tree's automatically created [TreeViewController]
 /// with [TreeViewController.of]
 ///
@@ -87,7 +93,7 @@ class TreeViewController {
   /// Create a controller to be used with [TreeView.controller].
   TreeViewController();
 
-  TreeViewStateMixin<dynamic>? _state;
+  TreeViewStateMixin<Object?>? _state;
 
   /// Whether the given [TreeViewNode] built with this controller is in an
   /// expanded state.
@@ -97,7 +103,7 @@ class TreeViewController {
   ///  * [expandNode], which expands a given [TreeViewNode].
   ///  * [collapseNode], which collapses a given [TreeViewNode].
   ///  * [TreeView.controller] to create an TreeView with a controller.
-  bool isExpanded(TreeViewNode<dynamic> node) {
+  bool isExpanded(TreeViewNode<Object?> node) {
     assert(_state != null);
     return _state!.isExpanded(node);
   }
@@ -108,7 +114,7 @@ class TreeViewController {
   /// If the [TreeViewNode.parent] [isExpanded], or this is a root node, the given
   /// node is active and this method will return true. This does not reflect
   /// whether or not the node is visible in the [Viewport].
-  bool isActive(TreeViewNode<dynamic> node) {
+  bool isActive(TreeViewNode<Object?> node) {
     assert(_state != null);
     return _state!.isActive(node);
   }
@@ -117,7 +123,7 @@ class TreeViewController {
   ///
   /// If no node exists, this will return null. This does not reflect whether
   /// or not a node [isActive], or if it is currently visible in the viewport.
-  TreeViewNode<dynamic>? getNodeFor(dynamic content) {
+  TreeViewNode<Object?>? getNodeFor(Object? content) {
     assert(_state != null);
     return _state!.getNodeFor(content);
   }
@@ -125,10 +131,10 @@ class TreeViewController {
   /// Switches the given [TreeViewNode]s expanded state.
   ///
   /// May trigger an animation to reveal or hide the node's children based on
-  /// the [TreeView.animationStyle].
+  /// the [TreeView.toggleAnimationStyle].
   ///
   /// If the node does not have any children, nothing will happen.
-  void toggleNode(TreeViewNode<dynamic> node) {
+  void toggleNode(TreeViewNode<Object?> node) {
     assert(_state != null);
     return _state!.toggleNode(node);
   }
@@ -148,7 +154,7 @@ class TreeViewController {
   ///  * [collapseNode], which collapses the [TreeViewNode].
   ///  * [isExpanded] to check whether the tile is expanded.
   ///  * [TreeView.controller] to create an TreeView with a controller.
-  void expandNode(TreeViewNode<dynamic> node) {
+  void expandNode(TreeViewNode<Object?> node) {
     assert(_state != null);
     if (!node.isExpanded) {
       _state!.toggleNode(node);
@@ -171,7 +177,7 @@ class TreeViewController {
   ///
   /// If the node is not currently active in the tree, meaning its parent is
   /// collapsed, this will return null.
-  int? getActiveIndexFor(TreeViewNode<dynamic> node) {
+  int? getActiveIndexFor(TreeViewNode<Object?> node) {
     assert(_state != null);
     return _state!.getActiveIndexFor(node);
   }
@@ -191,7 +197,7 @@ class TreeViewController {
   ///  * [expandNode], which expands the tile.
   ///  * [isExpanded] to check whether the tile is expanded.
   ///  * [TreeView.controller] to create an TreeView with a controller.
-  void collapseNode(TreeViewNode<dynamic> node) {
+  void collapseNode(TreeViewNode<Object?> node) {
     assert(_state != null);
     if (node.isExpanded) {
       _state!.toggleNode(node);
@@ -218,8 +224,8 @@ class TreeViewController {
   /// add a [Builder] widget, which provides a new scope with a
   /// [BuildContext] that is "under" the [TreeView].
   static TreeViewController of(BuildContext context) {
-    final _TreeViewState<dynamic>? result =
-        context.findAncestorStateOfType<_TreeViewState<dynamic>>();
+    final _TreeViewState<Object?>? result =
+        context.findAncestorStateOfType<_TreeViewState<Object?>>();
     if (result != null) {
       return result.controller;
     }
@@ -264,28 +270,51 @@ class TreeViewController {
   ///    documentation.
   static TreeViewController? maybeOf(BuildContext context) {
     return context
-        .findAncestorStateOfType<_TreeViewState<dynamic>>()
+        .findAncestorStateOfType<_TreeViewState<Object?>>()
         ?.controller;
   }
 }
 
 // END of framework shared classes.
 
-/// A two dimensional viewport for lazily displaying [TreeViewNode]s that expand
-/// and collapse in a vertically and horizontally scrolling [TreeViewport].
+/// A widget that displays [TreeViewNode]s that expand and collapse in a
+/// vertically and horizontally scrolling [TreeViewport].
 ///
-/// The rows of the tree are laid out on demand, using
-/// [TreeView.treeNodeBuilder]. This will only be called for the nodes that are
-/// visible, or within the [TreeViewport.cacheExtent].
+/// The rows of the tree are laid out on demand by the [TreeViewport]'s render
+/// object, using [TreeView.treeNodeBuilder]. This will only be called for the
+/// nodes that are visible, or within the [TreeViewport.cacheExtent].
 ///
-/// Only [TreeViewport]s that scroll with a vertical axis direction of
+/// The [TreeView.treeNodeBuilder] returns the [Widget] that represents the
+/// given [TreeViewNode].
+///
+/// The [TreeView.treeRowBuilder] returns a [TreeRow],
+/// which provides details about the row such as the [TreeRowExtent], as well as
+/// any [TreeRow.recognizerFactories], [TreeRowDecoration]s, and more.
+///
+/// Providing a [TreeController] will enable querying and controlling the state
+/// of nodes in the tree.
+///
+/// Each active node of the tree will have a [TreeVicinity], representing the
+/// resolved row index of the node, based on what nodes are active, as well as
+/// the depth. This vicinity is used to traverse the tree as indicated by
+/// [traversalOrder].
+///
+/// A [TreeView] only supports a vertical axis direction of
 /// [AxisDirection.down] and a horizontal axis direction of
-/// [AxisDirection.right] can use TreeView.
+/// [AxisDirection.right].
 class TreeView<T> extends StatefulWidget {
   /// Creates an instance of a [TreeView] for displaying [TreeViewNode]s
   /// that animate expanding and collapsing of nodes.
   TreeView({
     super.key,
+    required this.tree,
+    this.treeNodeBuilder = TreeView.defaultTreeNodeBuilder,
+    this.treeRowBuilder = TreeView.defaultTreeRowBuilder,
+    this.controller,
+    this.onNodeToggle,
+    this.toggleAnimationStyle,
+    this.traversalOrder = TreeViewTraversalOrder.depthFirst,
+    this.indentation = TreeViewIndentationType.standard,
     this.primary,
     this.mainAxis = Axis.vertical,
     this.verticalDetails = const ScrollableDetails.vertical(),
@@ -295,38 +324,85 @@ class TreeView<T> extends StatefulWidget {
     this.dragStartBehavior = DragStartBehavior.start,
     this.keyboardDismissBehavior = ScrollViewKeyboardDismissBehavior.manual,
     this.clipBehavior = Clip.hardEdge,
-    required this.tree,
-    this.treeNodeBuilder = TreeView.defaultTreeNodeBuilder,
-    this.treeRowBuilder = TreeView.defaultTreeRowBuilder,
-    this.controller,
-    this.onNodeToggle,
     this.addAutomaticKeepAlives = true,
     this.addRepaintBoundaries = true,
-    this.animationStyle,
-    this.traversalOrder = TreeViewTraversalOrder.depthFirst,
-    this.indentation = TreeViewIndentationType.standard,
   }) : assert(verticalDetails.direction == AxisDirection.down &&
             horizontalDetails.direction == AxisDirection.right);
 
-  /// The [TreeViewport] has an area before and after the visible area to cache
-  /// rows that are about to become visible when the user scrolls.
+  /// The list of [TreeViewNode]s that may be displayed in the [TreeView].
   ///
-  /// [TreeRow]s that fall in this cache area are laid out even though they are
-  /// not (yet) visible on screen. The [cacheExtent] describes how many pixels
-  /// the cache area extends before the leading edge and after the trailing edge
-  /// of the viewport.
-  ///
-  /// See also:
-  ///
-  ///   * [TwoDimensionalScrollView.cacheExtent]
-  final double? cacheExtent;
+  /// Beyond root nodes, or those in this list, whether or not a given
+  /// [TreeViewNode] is displayed depends on the [TreeViewNode.isExpanded] value
+  /// of its parent. The [TreeView] will set the [TreeViewNode.parent] and
+  /// [TreeViewNode.depth] as nodes are built on demand to ensure the integrity
+  /// of the tree.
+  final List<TreeViewNode<T>> tree;
 
-  /// Whether scrolling gestures should lock to one axes, allow free movement
-  /// in both axes, or be evaluated on a weighted scale.
+  /// Called to build an entry of the [TreeView] for the given [TreeViewNode].
   ///
-  /// Defaults to [DiagonalDragBehavior.none], locking axes to receive input one
-  /// at a time.
-  final DiagonalDragBehavior diagonalDragBehavior;
+  /// By default, if this is unset, the [TreeView.defaultTreeNodeBuilder] is
+  /// used.
+  final TreeViewNodeBuilder treeNodeBuilder;
+
+  /// Builds the [TreeRow] that describes the row for the provided
+  /// [TreeViewNode].
+  ///
+  /// By default, if this is unset, the [TreeView.defaultTreeRowBuilder]
+  /// is used.
+  final TreeViewRowBuilder treeRowBuilder;
+
+  /// If provided, the controller can be used to expand and collapse
+  /// [TreeViewNode]s, or lookup information about the current state of the
+  /// [TreeView].
+  final TreeViewController? controller;
+
+  /// Called when a [TreeViewNode] is toggled to expand or collapse.
+  ///
+  /// This will be called before the collapse or expand animation starts, but
+  /// after the [TreeViewNode.isExpanded] value is updated. This means that
+  /// [TreeViewNode.isExpanded] will reflect the value it is transitioning to as
+  /// a result of being toggled.
+  ///
+  /// This will not be called if a [TreeViewNode] does not have any children.
+  final TreeViewNodeCallback? onNodeToggle;
+
+  /// The default [AnimationStyle] for expanding and collapsing nodes in the
+  /// [TreeView].
+  ///
+  /// The default [AnimationStyle.duration] uses
+  /// [TreeView.defaultAnimationDuration], which is 150 milliseconds.
+  ///
+  /// The default [AnimationStyle.curve] uses [TreeView.defaultAnimationCurve],
+  /// which is [Curves.linear].
+  ///
+  /// To disable the tree animation, use [AnimationStyle.noAnimation].
+  final AnimationStyle? toggleAnimationStyle;
+
+  /// The order in which [TreeViewNode]s are visited.
+  ///
+  /// This value will influence [TreeViewport.mainAxis] so nodes are traversed
+  /// properly when they are converted to a [TreeVicinity] in the context of the
+  /// active nodes of the tree.
+  ///
+  /// Defaults to [TreeViewTraversalOrder.depthFirst].
+  final TreeViewTraversalOrder traversalOrder;
+
+  /// The number of pixels children will be offset by in the cross axis based on
+  /// their [TreeViewNode.depth].
+  ///
+  /// By default, the indentation is handled by [RenderTreeViewport]. Child
+  /// nodes are offset by the indentation specified by
+  /// [TreeViewIndentationType.value] in the cross axis of the viewport. This
+  /// means the space allotted to the indentation will not be part of the space
+  /// made available to the Widget returned by [TreeView.treeNodeBuilder].
+  ///
+  /// Alternatively, the indentation can be implemented in
+  /// [TreeView.treeNodeBuilder]. By providing [TreeViewIndentationType.none],
+  /// the depth of the given tree row can be accessed
+  /// in [TreeView.treeNodeBuilder] through [TreeViewNode.depth]. This allows
+  /// for more customization in building tree rows, such as filling the indented
+  /// area with decorations or ink effects.
+  final TreeViewIndentationType indentation;
 
   /// Whether this is the primary scroll view associated with the parent
   /// [PrimaryScrollController].
@@ -337,7 +413,8 @@ class TreeView<T> extends StatefulWidget {
   ///
   /// See also:
   ///
-  ///   * [TwoDimensionalScrollView.primary]
+  ///   * [TwoDimensionalScrollView.primary], whether or not the
+  ///     [TreeView.mainAxis] will use the [PrimaryScrollController].
   final bool? primary;
 
   /// The main axis of the two.
@@ -362,6 +439,27 @@ class TreeView<T> extends StatefulWidget {
   /// [ScrollController], [ScrollPhysics] and more for the horizontal axis.
   final ScrollableDetails horizontalDetails;
 
+  /// The [TreeViewport] has an area before and after the visible area to cache
+  /// rows that are about to become visible when the user scrolls.
+  ///
+  /// [TreeRow]s that fall in this cache area are laid out even though they are
+  /// not (yet) visible on screen. The [cacheExtent] describes how many pixels
+  /// the cache area extends before the leading edge and after the trailing edge
+  /// of the viewport.
+  ///
+  /// See also:
+  ///
+  ///   * [TwoDimensionalScrollView.cacheExtent], the area beyond the viewport
+  ///     bounds where soon-to-be-visible children are rendered.
+  final double? cacheExtent;
+
+  /// Whether scrolling gestures should lock to one axes, allow free movement
+  /// in both axes, or be evaluated on a weighted scale.
+  ///
+  /// Defaults to [DiagonalDragBehavior.none], locking axes to receive input one
+  /// at a time.
+  final DiagonalDragBehavior diagonalDragBehavior;
+
   /// Determines the way that drag start behavior is handled.
   ///
   /// By default, the drag start behavior is [DragStartBehavior.start].
@@ -383,37 +481,6 @@ class TreeView<T> extends StatefulWidget {
   ///
   /// Defaults to [Clip.hardEdge].
   final Clip clipBehavior;
-
-  /// The list of [TreeViewNode]s that may be displayed in the [TreeView].
-  ///
-  /// Beyond root nodes, whether or not a given [TreeViewNode] is displayed
-  /// depends on the [TreeViewNode.isExpanded] value of its parent. The
-  /// [TreeView] will set the [TreeViewNode.parent] and [TreeViewNode.depth] as
-  /// nodes are built on demand to ensure the integrity of the tree.
-  final List<TreeViewNode<T>> tree;
-
-  /// Called to build an entry of the [TreeView] for the given [TreeViewNode].
-  ///
-  /// By default, if this is unset, the [TreeView.defaultTreeNodeBuilder] is
-  /// used.
-  final TreeViewNodeBuilder treeNodeBuilder;
-
-  /// Builds the [TreeRow] that describes the row for the provided
-  /// [TreeViewNode].
-  ///
-  /// By default, if this is unset, the [TreeView.defaultTreeRowBuilder]
-  /// is used.
-  final TreeViewRowBuilder treeRowBuilder;
-
-  /// If provided, the controller can be used to expand and collapse
-  /// [TreeViewNode]s, or lookup information about the current state of the
-  /// [TreeView].
-  final TreeViewController? controller;
-
-  /// Called when a [TreeViewNode] expands or collapses.
-  ///
-  /// This will not be called if a [TreeViewNode] does not have any children.
-  final TreeViewNodeCallback? onNodeToggle;
 
   /// Whether to wrap each row of the tree in an [AutomaticKeepAlive].
   ///
@@ -440,18 +507,6 @@ class TreeView<T> extends StatefulWidget {
   /// Defaults to true.
   final bool addRepaintBoundaries;
 
-  /// Used to override the toggle animation's curve and duration.
-  ///
-  /// If [AnimationStyle.duration] is provided, it will be used to override
-  /// the [TreeView.defaultAnimationDuration], which is 150
-  /// milliseconds.
-  ///
-  /// If [AnimationStyle.curve] is provided, it will be used to override
-  /// the [TreeView.defaultAnimationCurve], which is [Curves.linear].
-  ///
-  /// To disable the tree animation, use [AnimationStyle.noAnimation].
-  final AnimationStyle? animationStyle;
-
   /// A default of [Curves.linear], which is used in the tree's expanding and
   /// collapsing node animation.
   static const Curve defaultAnimationCurve = Curves.linear;
@@ -459,31 +514,6 @@ class TreeView<T> extends StatefulWidget {
   /// A default [Duration] of 150 milliseconds, which is used in the tree's
   /// expanding and collapsing node animation.
   static const Duration defaultAnimationDuration = Duration(milliseconds: 150);
-
-  /// The order in which [TreeViewNode]s are visited.
-  ///
-  /// This value will influence [TreeViewport.mainAxis] so nodes are traversed
-  /// properly when they are converted to a [TreeVicinity] in the context of the
-  /// active nodes of the tree.
-  ///
-  /// Defaults to [TreeViewTraversalOrder.depthFirst].
-  final TreeViewTraversalOrder traversalOrder;
-
-  /// The number of pixels children will be offset by in the cross axis based on
-  /// their [TreeViewNode.depth].
-  ///
-  /// By default, the indentation is handled by [RenderTreeViewport]. Child
-  /// nodes are offset by the indentation specified by
-  /// [TreeViewIndentationType.value] in the cross axis of the viewport. This
-  /// means the space allotted to the indentation will not be part of the space
-  /// made available to the Widget returned by [TreeView.treeNodeBuilder].
-  ///
-  /// Alternatively, the indentation can be implemented in
-  /// [TreeView.treeNodeBuilder], with the depth of the given tree row accessed
-  /// by [TreeViewNode.depth]. This allows for more customization in building
-  /// tree rows, such as filling the indented area with decorations or ink
-  /// effects.
-  final TreeViewIndentationType indentation;
 
   /// A wrapper method for triggering the expansion or collapse of a
   /// [TreeViewNode].
@@ -498,8 +528,8 @@ class TreeView<T> extends StatefulWidget {
   /// The gesture uses [HitTestBehavior.translucent], so as to not conflict
   /// with any [TreeRow.recognizerFactories] or other interactive content in the
   /// [TreeRow].
-  static Widget toggleNodeWith({
-    required TreeViewNode<dynamic> node,
+  static Widget wrapChildToToggleNode({
+    required TreeViewNode<Object?> node,
     required Widget child,
   }) {
     return Builder(builder: (BuildContext context) {
@@ -516,8 +546,8 @@ class TreeView<T> extends StatefulWidget {
   /// Returns the fixed height, default [TreeRow] for rows in the tree,
   /// which is 40 pixels.
   ///
-  /// Used by [TreeView.defaultTreeRowBuilder].
-  static TreeRow defaultTreeRowBuilder(TreeViewNode<dynamic> node) {
+  /// Used by [TreeView.treeRowBuilder].
+  static TreeRow defaultTreeRowBuilder(TreeViewNode<Object?> node) {
     return const TreeRow(
       extent: FixedTreeRowExtent(_kDefaultRowExtent),
     );
@@ -525,35 +555,38 @@ class TreeView<T> extends StatefulWidget {
 
   /// Returns the default tree row for a given [TreeViewNode].
   ///
-  /// Used by [TreeView.defaultTreeNodeBuilder].
+  /// Used by [TreeView.treeNodeBuilder].
   ///
   /// This will return a [Row] containing the [toString] of
   /// [TreeViewNode.content]. If the [TreeViewNode] is a parent of additional
-  /// nodes, a arrow icon will precede the content, and will trigger an expand
-  /// and collapse animation when tapped based on the [TreeView.animationStyle].
+  /// nodes, an arrow icon will precede the content, and will trigger an expand
+  /// and collapse animation when tapped based on the
+  /// [TreeView.toggleAnimationStyle].
   static Widget defaultTreeNodeBuilder(
     BuildContext context,
-    TreeViewNode<dynamic> node, {
-    AnimationStyle? animationStyle,
-  }) {
+    TreeViewNode<Object?> node,
+    AnimationStyle toggleAnimationStyle,
+  ) {
     final Duration animationDuration =
-        animationStyle?.duration ?? TreeView.defaultAnimationDuration;
+        toggleAnimationStyle.duration ?? TreeView.defaultAnimationDuration;
     final Curve animationCurve =
-        animationStyle?.curve ?? TreeView.defaultAnimationCurve;
+        toggleAnimationStyle.curve ?? TreeView.defaultAnimationCurve;
+    final int index = TreeViewController.of(context).getActiveIndexFor(node)!;
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Row(children: <Widget>[
         // Icon for parent nodes
-        TreeView.toggleNodeWith(
+        TreeView.wrapChildToToggleNode(
           node: node,
           child: SizedBox.square(
             dimension: 30.0,
             child: node.children.isNotEmpty
                 ? AnimatedRotation(
-                    key: Key(node.content.toString()),
+                    key: Key('$index - ${node.content}'),
                     turns: node.isExpanded ? 0.25 : 0.0,
                     duration: animationDuration,
                     curve: animationCurve,
+                    // Renders a unicode right-facing arrow. >
                     child: const Icon(IconData(0x25BA), size: 14),
                   )
                 : null,
@@ -574,11 +607,10 @@ class TreeView<T> extends StatefulWidget {
 // Used in TreeViewState for code simplicity.
 typedef _AnimationRecord = ({
   AnimationController controller,
-  Animation<double> animation,
+  CurvedAnimation animation,
   UniqueKey key,
 });
 
-/// State object for a [Scrollable] widget.
 class _TreeViewState<T> extends State<TreeView<T>>
     with TickerProviderStateMixin, TreeViewStateMixin<T> {
   TreeViewController get controller => _treeController!;
@@ -616,7 +648,7 @@ class _TreeViewState<T> extends State<TreeView<T>>
       node._depth = depth;
       node._parent = parent;
       _activeNodes.add(node);
-      _rowDepths[_activeNodes.indexOf(node)] = depth;
+      _rowDepths[_activeNodes.length - 1] = depth;
       if (_shouldUnpackNode(node)) {
         _unpackActiveNodes(
           depth: depth + 1,
@@ -635,7 +667,12 @@ class _TreeViewState<T> extends State<TreeView<T>>
   @override
   void initState() {
     _unpackActiveNodes();
-    assert(widget.controller?._state == null);
+    assert(
+      widget.controller?._state == null,
+      'The provided TreeViewController is already associated with another '
+      'TreeView. A TreeViewController can only be associated with one '
+      'TreeView.',
+    );
     _treeController = widget.controller ?? TreeViewController();
     _treeController!._state = this;
     super.initState();
@@ -643,6 +680,7 @@ class _TreeViewState<T> extends State<TreeView<T>>
 
   @override
   void didUpdateWidget(TreeView<T> oldWidget) {
+    super.didUpdateWidget(oldWidget);
     // Internal or provided, there is always a tree controller.
     assert(_treeController != null);
     if (oldWidget.controller == null && widget.controller != null) {
@@ -671,13 +709,14 @@ class _TreeViewState<T> extends State<TreeView<T>>
     // Internal or provided, there is always a tree controller.
     assert(_treeController != null);
     assert(_treeController!._state != null);
-    super.didUpdateWidget(oldWidget);
+    _unpackActiveNodes();
   }
 
   @override
   void dispose() {
     _treeController!._state = null;
     for (final _AnimationRecord record in _currentAnimationForParent.values) {
+      record.animation.dispose();
       record.controller.dispose();
     }
     super.dispose();
@@ -705,7 +744,11 @@ class _TreeViewState<T> extends State<TreeView<T>>
         Widget child = widget.treeNodeBuilder(
           context,
           node,
-          animationStyle: widget.animationStyle,
+          widget.toggleAnimationStyle ??
+              AnimationStyle(
+                curve: TreeView.defaultAnimationCurve,
+                duration: TreeView.defaultAnimationDuration,
+              ),
         );
 
         if (widget.addRepaintBoundaries) {
@@ -715,7 +758,7 @@ class _TreeViewState<T> extends State<TreeView<T>>
         return child;
       },
       rowBuilder: (TreeVicinity vicinity) {
-        return widget.treeRowBuilder(_activeNodes[vicinity.yIndex]);
+        return widget.treeRowBuilder(_activeNodes[vicinity.row]);
       },
       addAutomaticKeepAlives: widget.addAutomaticKeepAlives,
       traversalOrder: widget.traversalOrder,
@@ -759,27 +802,29 @@ class _TreeViewState<T> extends State<TreeView<T>>
     return null;
   }
 
-  final List<TreeViewNode<T>> _activeNodesToExpand = <TreeViewNode<T>>[];
   @override
   void expandAll() {
-    _activeNodesToExpand.clear();
-    _expandAll(widget.tree);
-    _activeNodesToExpand.reversed.forEach(toggleNode);
+    final List<TreeViewNode<T>> activeNodesToExpand = <TreeViewNode<T>>[];
+    _expandAll(widget.tree, activeNodesToExpand);
+    activeNodesToExpand.reversed.forEach(toggleNode);
   }
 
-  void _expandAll(List<TreeViewNode<T>> tree) {
+  void _expandAll(
+    List<TreeViewNode<T>> tree,
+    List<TreeViewNode<T>> activeNodesToExpand,
+  ) {
     for (final TreeViewNode<T> node in tree) {
       if (node.children.isNotEmpty) {
         // This is a parent node.
         // Expand all the children, and their children.
-        _expandAll(node.children);
+        _expandAll(node.children, activeNodesToExpand);
         if (!node.isExpanded) {
           // The node itself needs to be expanded.
           if (_activeNodes.contains(node)) {
             // This is an active node in the tree, add to
             // the list to toggle once all hidden nodes
             // have been handled.
-            _activeNodesToExpand.add(node);
+            activeNodesToExpand.add(node);
           } else {
             // This is a hidden node. Update its expanded state.
             node._expanded = true;
@@ -789,27 +834,29 @@ class _TreeViewState<T> extends State<TreeView<T>>
     }
   }
 
-  final List<TreeViewNode<T>> _activeNodesToCollapse = <TreeViewNode<T>>[];
   @override
   void collapseAll() {
-    _activeNodesToCollapse.clear();
-    _collapseAll(widget.tree);
-    _activeNodesToCollapse.reversed.forEach(toggleNode);
+    final List<TreeViewNode<T>> activeNodesToCollapse = <TreeViewNode<T>>[];
+    _collapseAll(widget.tree, activeNodesToCollapse);
+    activeNodesToCollapse.reversed.forEach(toggleNode);
   }
 
-  void _collapseAll(List<TreeViewNode<T>> tree) {
+  void _collapseAll(
+    List<TreeViewNode<T>> tree,
+    List<TreeViewNode<T>> activeNodesToCollapse,
+  ) {
     for (final TreeViewNode<T> node in tree) {
       if (node.children.isNotEmpty) {
         // This is a parent node.
         // Collapse all the children, and their children.
-        _collapseAll(node.children);
+        _collapseAll(node.children, activeNodesToCollapse);
         if (node.isExpanded) {
           // The node itself needs to be collapsed.
           if (_activeNodes.contains(node)) {
             // This is an active node in the tree, add to
             // the list to toggle once all hidden nodes
             // have been handled.
-            _activeNodesToCollapse.add(node);
+            activeNodesToCollapse.add(node);
           } else {
             // This is a hidden node. Update its expanded state.
             node._expanded = false;
@@ -854,7 +901,7 @@ class _TreeViewState<T> extends State<TreeView<T>>
               AnimationController(
                 value: node._expanded ? 0.0 : 1.0,
                 vsync: this,
-                duration: widget.animationStyle?.duration ??
+                duration: widget.toggleAnimationStyle?.duration ??
                     TreeView.defaultAnimationDuration,
               );
       controller
@@ -884,9 +931,10 @@ class _TreeViewState<T> extends State<TreeView<T>>
         case AnimationStatus.completed:
       }
 
-      final Animation<double> newAnimation = CurvedAnimation(
+      final CurvedAnimation newAnimation = CurvedAnimation(
         parent: controller,
-        curve: widget.animationStyle?.curve ?? TreeView.defaultAnimationCurve,
+        curve: widget.toggleAnimationStyle?.curve ??
+            TreeView.defaultAnimationCurve,
       );
       _currentAnimationForParent[node] = (
         controller: controller,

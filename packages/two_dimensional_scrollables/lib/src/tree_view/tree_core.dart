@@ -23,7 +23,7 @@ import 'tree.dart';
 ///
 ///   * [TreeViewNode.toggleNode], for controlling node expansion
 ///     programmatically.
-typedef TreeViewNodeCallback = void Function(TreeViewNode<dynamic> node);
+typedef TreeViewNodeCallback = void Function(TreeViewNode<Object?> node);
 
 /// A mixin for classes implementing a tree structure as expected by a
 /// [TreeViewController].
@@ -32,6 +32,9 @@ typedef TreeViewNodeCallback = void Function(TreeViewNode<dynamic> node);
 ///
 /// This allows the [TreeViewController] to be used in other widgets that
 /// implement this interface.
+///
+/// The type [T] correlates to the type of [TreeView] and [TreeViewNode],
+/// representing the type of [TreeViewNode.content].
 mixin TreeViewStateMixin<T> {
   /// Returns whether or not the given [TreeViewNode] is expanded, regardless of
   /// whether or not it is active in the tree.
@@ -40,15 +43,16 @@ mixin TreeViewStateMixin<T> {
   /// Returns whether or not the given [TreeViewNode] is enclosed within its
   /// parent [TreeViewNode].
   ///
-  /// If the [TreeViewNode.parent] [isExpanded], or this is a root node, the
-  /// given node is active and this method will return true. This does not
-  /// reflect whether or not the node is visible in the [Viewport].
+  /// If the [TreeViewNode.parent] [isExpanded] (and all its parents are
+  /// expanded), or this is a root node, the given node is active and this
+  /// method will return true. This does not reflect whether or not the node is
+  /// visible in the [Viewport].
   bool isActive(TreeViewNode<T> node);
 
   /// Switches the given [TreeViewNode]s expanded state.
   ///
   /// May trigger an animation to reveal or hide the node's children based on
-  /// the [TreeView.animationStyle].
+  /// the [TreeView.toggleAnimationStyle].
   ///
   /// If the node does not have any children, nothing will happen.
   void toggleNode(TreeViewNode<T> node);
@@ -76,11 +80,14 @@ mixin TreeViewStateMixin<T> {
 /// Represents the animation of the children of a parent [TreeViewNode] that
 /// are animating into or out of view.
 ///
-/// The [fromIndex] and [toIndex] are inclusive of the children following the
-/// parent, with the [value] representing the status of the current animation.
+/// The [fromIndex] and [toIndex] are identify the animating children following
+/// the parent, with the [value] representing the status of the current
+/// animation. The value of [toIndex] is inclusive, meaning the child at that
+/// index is included in the animating segment.
 ///
-/// Provided to [RenderTreeViewport] by [TreeView] to properly offset animating
-/// children.
+/// Provided to [RenderTreeViewport] as part of
+/// [RenderTreeViewport.activeAnimations] by [TreeView] to properly offset
+/// animating children.
 typedef TreeViewNodesAnimation = ({
   int fromIndex,
   int toIndex,

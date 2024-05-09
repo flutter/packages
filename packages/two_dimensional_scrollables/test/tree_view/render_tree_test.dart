@@ -187,7 +187,7 @@ void main() {
       final List<String> log = <String>[];
       final TreeView<String> treeView = TreeView<String>(
         tree: treeNodes,
-        treeRowBuilder: (TreeViewNode<dynamic> node) {
+        treeRowBuilder: (TreeViewNode<Object?> node) {
           if (node.depth! == 0) {
             return getTappableRow(
               node as TreeViewNode<String>,
@@ -220,7 +220,7 @@ void main() {
       int exitCounter = 0;
       final TreeView<String> treeView = TreeView<String>(
         tree: treeNodes,
-        treeRowBuilder: (TreeViewNode<dynamic> node) {
+        treeRowBuilder: (TreeViewNode<Object?> node) {
           if (node.depth! == 0) {
             return getMouseTrackingRow(
               onEnter: (_) => enterCounter++,
@@ -443,7 +443,7 @@ void main() {
 
         treeView = TreeView<String>(
           tree: treeNodes,
-          treeRowBuilder: (TreeViewNode<dynamic> node) {
+          treeRowBuilder: (TreeViewNode<Object?> node) {
             if (node.depth! == 1) {
               // extent == 100
               return row;
@@ -551,7 +551,7 @@ void main() {
         // Customize the animation
         treeView = TreeView<String>(
           tree: treeNodes,
-          animationStyle: AnimationStyle(
+          toggleAnimationStyle: AnimationStyle(
             duration: const Duration(milliseconds: 500),
             curve: Curves.bounceIn,
           ),
@@ -607,7 +607,7 @@ void main() {
         // Disable the animation
         treeView = TreeView<String>(
           tree: treeNodes,
-          animationStyle: AnimationStyle.noAnimation,
+          toggleAnimationStyle: AnimationStyle.noAnimation,
         );
         await tester.pumpWidget(MaterialApp(home: treeView));
         await tester.pump();
@@ -812,7 +812,7 @@ void main() {
             controller: horizontalController,
           ),
           tree: treeNodes,
-          treeRowBuilder: (TreeViewNode<dynamic> node) {
+          treeRowBuilder: (TreeViewNode<Object?> node) {
             return row.copyWith(
               backgroundDecoration: node.depth! == 0
                   ? rootBackgroundDecoration
@@ -1013,5 +1013,5 @@ class TestOffset extends ViewportOffset {
 
 class _NullBuildContext implements BuildContext, TwoDimensionalChildManager {
   @override
-  dynamic noSuchMethod(Invocation invocation) => throw UnimplementedError();
+  Object? noSuchMethod(Invocation invocation) => throw UnimplementedError();
 }

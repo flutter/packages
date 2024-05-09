@@ -5,7 +5,7 @@
 import 'package:flutter/material.dart';
 import 'package:two_dimensional_scrollables/two_dimensional_scrollables.dart';
 
-/// The class demonstrating and infinite number of rows and columns in
+/// The class demonstrating an infinite number of rows and columns in
 /// TableView.
 class InfiniteTableExample extends StatefulWidget {
   /// Creates a screen that demonstrates an infinite TableView widget.
@@ -74,13 +74,15 @@ class _InfiniteExampleState extends State<InfiniteTableExample> {
   }
 
   TableViewCell _buildCell(BuildContext context, TableVicinity vicinity) {
+    final Color boxColor =
+        switch ((vicinity.row.isEven, vicinity.column.isEven)) {
+      (true, false) || (false, true) => Colors.white,
+      (false, false) => Colors.indigo[100]!,
+      (true, true) => Colors.indigo[200]!
+    };
     return TableViewCell(
       child: ColoredBox(
-        color: vicinity.row.isEven && vicinity.column.isOdd
-            ? Colors.indigo[200]!
-            : (vicinity.row.isOdd && vicinity.column.isEven
-                ? Colors.indigo[100]!
-                : Colors.white),
+        color: boxColor,
         child: Center(
           child: Text('${vicinity.column}:${vicinity.row}'),
         ),
