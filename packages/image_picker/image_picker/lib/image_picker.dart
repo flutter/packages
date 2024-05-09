@@ -113,10 +113,7 @@ class ImagePicker {
   /// supported for the image that is picked, a warning message will be logged.
   ///
   /// The `limit` parameter modifies the maximum number of images that can be selected.
-  /// On Android, [ImagePickerAndroid.useAndroidPhotoPicker] must be set to `true`
-  /// to use the `limit` functionality. And it can only be ensured to take effect
-  /// on Android 13 or above. Otherwise, it depends on whether the corresponding
-  /// system app supports it.
+  /// This value may be ignored by platforms that cannot support it.
   ///
   /// Use `requestFullMetadata` (defaults to `true`) to control how much additional
   /// information the plugin tries to get.
@@ -232,10 +229,7 @@ class ImagePicker {
   /// supported for the image that is picked, a warning message will be logged.
   ///
   /// The `limit` parameter modifies the maximum number of media that can be selected.
-  /// On Android, [ImagePickerAndroid.useAndroidPhotoPicker] must be set to `true`
-  /// to use the `limit` functionality. And it can only be ensured to take effect
-  /// on Android 13 or above. Otherwise, it depends on whether the corresponding
-  /// system app supports it.
+  /// This value may be ignored by platforms that cannot support it.
   ///
   /// Use `requestFullMetadata` (defaults to `true`) to control how much additional
   /// information the plugin tries to get.
