@@ -14,7 +14,7 @@ flutter:
       android:
         package: dev.flutter.packages.interactive_media_ads
         pluginClass: InteractiveMediaAdsPlugin
-        dartPluginClass: AndroidWebViewPlatform
+        dartPluginClass: AndroidInteractiveMediaAds
       ios:
         pluginClass: InteractiveMediaAdsPlugin
 
