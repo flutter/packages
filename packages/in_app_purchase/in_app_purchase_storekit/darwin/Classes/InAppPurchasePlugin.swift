@@ -24,8 +24,10 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI {
   @objc
   public var registrar: FlutterPluginRegistrar?
   @objc
+  // This property is optional, as it requires self to exist to be initialized.
   public var paymentQueueHandler: FIAPaymentQueueHandler?
   @objc
+  // This property is optional, as it is set when the plugin is registered.
   public var transactionObserverCallbackChannel: FlutterMethodChannel?
 
   public static func register(with registrar: FlutterPluginRegistrar) {
@@ -45,7 +47,6 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI {
   }
 
   @objc
-  // This is the default init used by the other inits. Shouldn't be directly called.
   public init(
     receiptManager: FIAPReceiptManager,
     handlerFactory: @escaping (SKRequest) -> FIAPRequestHandler = {
@@ -58,13 +59,13 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI {
     super.init()
   }
 
-  // TODO(louisehsu): this initializer is for tests only. Make this private after the tests are moved to swift.
+  // This init is used for tests
   @objc
   public convenience init(receiptManager: FIAPReceiptManager) {
     self.init(receiptManager: receiptManager, handlerFactory: { FIAPRequestHandler(request: $0) })
   }
 
-  // This is the actual designated initializer that should be used
+  // This init gets called when the plugin gets registered
   public convenience init(registrar: FlutterPluginRegistrar) {
     self.init(receiptManager: FIAPReceiptManager())
     self.registrar = registrar
