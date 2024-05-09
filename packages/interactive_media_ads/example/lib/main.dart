@@ -68,20 +68,20 @@ class AdExampleWidgetState extends State<AdExampleWidget> {
       if (contentVideoController.value.isInitialized &&
           shouldShowContentVideo &&
           contentVideoController.value.isPlaying) {
-        // print(contentVideoController.value.position.inMilliseconds);
-        // final AndroidAdDisplayContainer container =
-        //     adDisplayContainer.platform as AndroidAdDisplayContainer;
-        // for (final android_ima.VideoAdPlayerCallback a
-        //     in container.videoAdPlayerCallbacks) {
-        //   a.onAdProgress(
-        //     container.loadedAdMediaInfo!,
-        //     android_ima.VideoProgressUpdate(
-        //       currentTimeMs:
-        //           contentVideoController.value.position.inMilliseconds,
-        //       durationMs: contentVideoController.value.duration.inMilliseconds,
-        //     ),
-        //   );
-        // }
+        print(contentVideoController.value.position.inMilliseconds);
+        final AndroidAdDisplayContainer container =
+            adDisplayContainer.platform as AndroidAdDisplayContainer;
+        for (final android_ima.VideoAdPlayerCallback a
+            in container.videoAdPlayerCallbacks) {
+          a.onAdProgress(
+            container.loadedAdMediaInfo!,
+            android_ima.VideoProgressUpdate(
+              currentTimeMs:
+                  contentVideoController.value.position.inMilliseconds,
+              durationMs: contentVideoController.value.duration.inMilliseconds,
+            ),
+          );
+        }
       }
     });
   }
