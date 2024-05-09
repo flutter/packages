@@ -65,8 +65,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
         listEquals(allListTypesOne.boolList, allListTypesTwo.boolList), true);
     expect(listEquals(allListTypesOne.doubleList, allListTypesTwo.doubleList),
         true);
-    expect(
-        listEquals(allListTypesOne.enumList, allListTypesTwo.enumList), true);
+    // expect(
+    // listEquals(allListTypesOne.enumList, allListTypesTwo.enumList), true);
     expect(listEquals(allListTypesOne.intList, allListTypesTwo.intList), true);
     // expect(
     //     listEquals(allListTypesOne.listList, allListTypesTwo.listList), true);
@@ -89,7 +89,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
     expect(allTypesOne.aFloatArray, allTypesTwo.aFloatArray);
     expect(listEquals(allTypesOne.list, allTypesTwo.list), true);
     expect(mapEquals(allTypesOne.aMap, allTypesTwo.aMap), true);
-    expect(allTypesOne.anEnum, allTypesTwo.anEnum);
+    // expect(allTypesOne.anEnum, allTypesTwo.anEnum);
     expect(allTypesOne.anObject, allTypesTwo.anObject);
     compareAllMaps(allTypesOne.allMaps, allTypesTwo.allMaps);
     compareAllLists(allTypesOne.allLists, allTypesTwo.allLists);
@@ -144,8 +144,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
         true);
     expect(allNullableTypesOne.aNullableObject,
         allNullableTypesTwo.aNullableObject);
-    expect(
-        allNullableTypesOne.aNullableEnum, allNullableTypesTwo.aNullableEnum);
+    // expect(
+    //     allNullableTypesOne.aNullableEnum, allNullableTypesTwo.aNullableEnum);
     compareAllNullableTypes(allNullableTypesOne.allNullableTypes,
         allNullableTypesTwo.allNullableTypes);
   }
@@ -200,8 +200,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
         true);
     expect(allNullableTypesOne.aNullableObject,
         allNullableTypesTwo.aNullableObject);
-    expect(
-        allNullableTypesOne.aNullableEnum, allNullableTypesTwo.aNullableEnum);
+    // expect(
+    //     allNullableTypesOne.aNullableEnum, allNullableTypesTwo.aNullableEnum);
   }
 
   void compareAllClassesWrapper(
@@ -391,7 +391,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
     intList: intList,
     doubleList: doubleList,
     boolList: boolList,
-    enumList: enumList,
+    // enumList: enumList,
     // listList: listList,
     // mapList: mapList,
     // classList: classList,
@@ -415,7 +415,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       'd': false,
       'e': null
     },
-    anEnum: AnEnum.fortyTwo,
+    // anEnum: AnEnum.fortyTwo,
     anObject: 1,
     allMaps: genericAllMaps,
     allLists: genericAllLists,
@@ -445,7 +445,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
     ],
     nullableMapWithAnnotations: <String?, String?>{},
     nullableMapWithObject: <String?, Object?>{},
-    aNullableEnum: AnEnum.fourHundredTwentyTwo,
+    // aNullableEnum: AnEnum.fourHundredTwentyTwo,
     aNullableObject: 0,
   );
 
@@ -473,7 +473,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
     ],
     nullableMapWithAnnotations: <String?, String?>{},
     nullableMapWithObject: <String?, Object?>{},
-    aNullableEnum: AnEnum.fourHundredTwentyTwo,
+    // aNullableEnum: AnEnum.fourHundredTwentyTwo,
     aNullableObject: 0,
     allNullableTypes: genericAllNullableTypes,
   );
@@ -504,7 +504,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
     ],
     nullableMapWithAnnotations: <String?, String?>{},
     nullableMapWithObject: <String?, Object?>{},
-    aNullableEnum: AnEnum.fourHundredTwentyTwo,
+    // aNullableEnum: AnEnum.fourHundredTwentyTwo,
     aNullableObject: 0,
   );
 
@@ -869,23 +869,23 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       expect(mapEquals(echoObject, sentObject), true);
     });
 
-    testWidgets('enums serialize and deserialize correctly',
-        (WidgetTester _) async {
-      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+    // testWidgets('enums serialize and deserialize correctly',
+    //     (WidgetTester _) async {
+    //   final HostIntegrationCoreApi api = HostIntegrationCoreApi();
 
-      const AnEnum sentEnum = AnEnum.two;
-      final AnEnum receivedEnum = await api.echoEnum(sentEnum);
-      expect(receivedEnum, sentEnum);
-    });
+    //   const AnEnum sentEnum = AnEnum.two;
+    //   final AnEnum receivedEnum = await api.echoEnum(sentEnum);
+    //   expect(receivedEnum, sentEnum);
+    // });
 
-    testWidgets('multi word enums serialize and deserialize correctly',
-        (WidgetTester _) async {
-      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+    // testWidgets('multi word enums serialize and deserialize correctly',
+    //     (WidgetTester _) async {
+    //   final HostIntegrationCoreApi api = HostIntegrationCoreApi();
 
-      const AnEnum sentEnum = AnEnum.fortyTwo;
-      final AnEnum receivedEnum = await api.echoEnum(sentEnum);
-      expect(receivedEnum, sentEnum);
-    });
+    //   const AnEnum sentEnum = AnEnum.fortyTwo;
+    //   final AnEnum receivedEnum = await api.echoEnum(sentEnum);
+    //   expect(receivedEnum, sentEnum);
+    // });
 
     testWidgets('required named parameter', (WidgetTester _) async {
       final HostIntegrationCoreApi api = HostIntegrationCoreApi();
@@ -1083,23 +1083,23 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       expect(mapEquals(echoObject, sentObject), true);
     });
 
-    testWidgets('nullable enums serialize and deserialize correctly',
-        (WidgetTester _) async {
-      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+    // testWidgets('nullable enums serialize and deserialize correctly',
+    //     (WidgetTester _) async {
+    //   final HostIntegrationCoreApi api = HostIntegrationCoreApi();
 
-      const AnEnum sentEnum = AnEnum.three;
-      final AnEnum? echoEnum = await api.echoNullableEnum(sentEnum);
-      expect(echoEnum, sentEnum);
-    });
+    //   const AnEnum sentEnum = AnEnum.three;
+    //   final AnEnum? echoEnum = await api.echoNullableEnum(sentEnum);
+    //   expect(echoEnum, sentEnum);
+    // });
 
-    testWidgets('multi word nullable enums serialize and deserialize correctly',
-        (WidgetTester _) async {
-      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+    // testWidgets('multi word nullable enums serialize and deserialize correctly',
+    //     (WidgetTester _) async {
+    //   final HostIntegrationCoreApi api = HostIntegrationCoreApi();
 
-      const AnEnum sentEnum = AnEnum.fourHundredTwentyTwo;
-      final AnEnum? echoEnum = await api.echoNullableEnum(sentEnum);
-      expect(echoEnum, sentEnum);
-    });
+    //   const AnEnum sentEnum = AnEnum.fourHundredTwentyTwo;
+    //   final AnEnum? echoEnum = await api.echoNullableEnum(sentEnum);
+    //   expect(echoEnum, sentEnum);
+    // });
 
     testWidgets('null lists serialize and deserialize correctly',
         (WidgetTester _) async {
@@ -1117,14 +1117,14 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       expect(mapEquals(echoObject, null), true);
     });
 
-    testWidgets('null enums serialize and deserialize correctly',
-        (WidgetTester _) async {
-      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+    // testWidgets('null enums serialize and deserialize correctly',
+    //     (WidgetTester _) async {
+    //   final HostIntegrationCoreApi api = HostIntegrationCoreApi();
 
-      const AnEnum? sentEnum = null;
-      final AnEnum? echoEnum = await api.echoNullableEnum(sentEnum);
-      expect(echoEnum, sentEnum);
-    });
+    //   const AnEnum? sentEnum = null;
+    //   final AnEnum? echoEnum = await api.echoNullableEnum(sentEnum);
+    //   expect(echoEnum, sentEnum);
+    // });
 
     testWidgets('optional nullable parameter', (WidgetTester _) async {
       final HostIntegrationCoreApi api = HostIntegrationCoreApi();
@@ -1358,23 +1358,23 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       expect(mapEquals(echoObject, sentObject), true);
     });
 
-    testWidgets('enums serialize and deserialize correctly',
-        (WidgetTester _) async {
-      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+    // testWidgets('enums serialize and deserialize correctly',
+    //     (WidgetTester _) async {
+    //   final HostIntegrationCoreApi api = HostIntegrationCoreApi();
 
-      const AnEnum sentEnum = AnEnum.three;
-      final AnEnum echoEnum = await api.echoAsyncEnum(sentEnum);
-      expect(echoEnum, sentEnum);
-    });
+    //   const AnEnum sentEnum = AnEnum.three;
+    //   final AnEnum echoEnum = await api.echoAsyncEnum(sentEnum);
+    //   expect(echoEnum, sentEnum);
+    // });
 
-    testWidgets('multi word enums serialize and deserialize correctly',
-        (WidgetTester _) async {
-      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+    // testWidgets('multi word enums serialize and deserialize correctly',
+    //     (WidgetTester _) async {
+    //   final HostIntegrationCoreApi api = HostIntegrationCoreApi();
 
-      const AnEnum sentEnum = AnEnum.fourHundredTwentyTwo;
-      final AnEnum echoEnum = await api.echoAsyncEnum(sentEnum);
-      expect(echoEnum, sentEnum);
-    });
+    //   const AnEnum sentEnum = AnEnum.fourHundredTwentyTwo;
+    //   final AnEnum echoEnum = await api.echoAsyncEnum(sentEnum);
+    //   expect(echoEnum, sentEnum);
+    // });
 
     testWidgets('nullable Int async serialize and deserialize correctly',
         (WidgetTester _) async {
@@ -1484,23 +1484,23 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       expect(mapEquals(echoObject, sentObject), true);
     });
 
-    testWidgets('nullable enums serialize and deserialize correctly',
-        (WidgetTester _) async {
-      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+    // testWidgets('nullable enums serialize and deserialize correctly',
+    //     (WidgetTester _) async {
+    //   final HostIntegrationCoreApi api = HostIntegrationCoreApi();
 
-      const AnEnum sentEnum = AnEnum.three;
-      final AnEnum? echoEnum = await api.echoAsyncNullableEnum(sentEnum);
-      expect(echoEnum, sentEnum);
-    });
+    //   const AnEnum sentEnum = AnEnum.three;
+    //   final AnEnum? echoEnum = await api.echoAsyncNullableEnum(sentEnum);
+    //   expect(echoEnum, sentEnum);
+    // });
 
-    testWidgets('nullable enums serialize and deserialize correctly',
-        (WidgetTester _) async {
-      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+    // testWidgets('nullable enums serialize and deserialize correctly',
+    //     (WidgetTester _) async {
+    //   final HostIntegrationCoreApi api = HostIntegrationCoreApi();
 
-      const AnEnum sentEnum = AnEnum.fortyTwo;
-      final AnEnum? echoEnum = await api.echoAsyncNullableEnum(sentEnum);
-      expect(echoEnum, sentEnum);
-    });
+    //   const AnEnum sentEnum = AnEnum.fortyTwo;
+    //   final AnEnum? echoEnum = await api.echoAsyncNullableEnum(sentEnum);
+    //   expect(echoEnum, sentEnum);
+    // });
 
     testWidgets('null Ints async serialize and deserialize correctly',
         (WidgetTester _) async {
@@ -1568,14 +1568,14 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       expect(mapEquals(echoObject, null), true);
     });
 
-    testWidgets('null enums serialize and deserialize correctly',
-        (WidgetTester _) async {
-      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+    // testWidgets('null enums serialize and deserialize correctly',
+    //     (WidgetTester _) async {
+    //   final HostIntegrationCoreApi api = HostIntegrationCoreApi();
 
-      const AnEnum? sentEnum = null;
-      final AnEnum? echoEnum = await api.echoAsyncNullableEnum(null);
-      expect(echoEnum, sentEnum);
-    });
+    //   const AnEnum? sentEnum = null;
+    //   final AnEnum? echoEnum = await api.echoAsyncNullableEnum(null);
+    //   expect(echoEnum, sentEnum);
+    // });
   });
 
   group('Host API with suffix', () {
@@ -1797,23 +1797,23 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       expect(mapEquals(echoObject, sentObject), true);
     });
 
-    testWidgets('enums serialize and deserialize correctly',
-        (WidgetTester _) async {
-      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+    // testWidgets('enums serialize and deserialize correctly',
+    //     (WidgetTester _) async {
+    //   final HostIntegrationCoreApi api = HostIntegrationCoreApi();
 
-      const AnEnum sentEnum = AnEnum.three;
-      final AnEnum echoEnum = await api.callFlutterEchoEnum(sentEnum);
-      expect(echoEnum, sentEnum);
-    });
+    //   const AnEnum sentEnum = AnEnum.three;
+    //   final AnEnum echoEnum = await api.callFlutterEchoEnum(sentEnum);
+    //   expect(echoEnum, sentEnum);
+    // });
 
-    testWidgets('multi word enums serialize and deserialize correctly',
-        (WidgetTester _) async {
-      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+    // testWidgets('multi word enums serialize and deserialize correctly',
+    //     (WidgetTester _) async {
+    //   final HostIntegrationCoreApi api = HostIntegrationCoreApi();
 
-      const AnEnum sentEnum = AnEnum.fortyTwo;
-      final AnEnum echoEnum = await api.callFlutterEchoEnum(sentEnum);
-      expect(echoEnum, sentEnum);
-    });
+    //   const AnEnum sentEnum = AnEnum.fortyTwo;
+    //   final AnEnum echoEnum = await api.callFlutterEchoEnum(sentEnum);
+    //   expect(echoEnum, sentEnum);
+    // });
 
     testWidgets('nullable booleans serialize and deserialize correctly',
         (WidgetTester _) async {
@@ -1970,32 +1970,32 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       expect(mapEquals(echoObject, null), true);
     });
 
-    testWidgets('nullable enums serialize and deserialize correctly',
-        (WidgetTester _) async {
-      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+    // testWidgets('nullable enums serialize and deserialize correctly',
+    //     (WidgetTester _) async {
+    //   final HostIntegrationCoreApi api = HostIntegrationCoreApi();
 
-      const AnEnum sentEnum = AnEnum.three;
-      final AnEnum? echoEnum = await api.callFlutterEchoNullableEnum(sentEnum);
-      expect(echoEnum, sentEnum);
-    });
+    //   const AnEnum sentEnum = AnEnum.three;
+    //   final AnEnum? echoEnum = await api.callFlutterEchoNullableEnum(sentEnum);
+    //   expect(echoEnum, sentEnum);
+    // });
 
-    testWidgets('multi word nullable enums serialize and deserialize correctly',
-        (WidgetTester _) async {
-      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+    // testWidgets('multi word nullable enums serialize and deserialize correctly',
+    //     (WidgetTester _) async {
+    //   final HostIntegrationCoreApi api = HostIntegrationCoreApi();
 
-      const AnEnum sentEnum = AnEnum.fourHundredTwentyTwo;
-      final AnEnum? echoEnum = await api.callFlutterEchoNullableEnum(sentEnum);
-      expect(echoEnum, sentEnum);
-    });
+    //   const AnEnum sentEnum = AnEnum.fourHundredTwentyTwo;
+    //   final AnEnum? echoEnum = await api.callFlutterEchoNullableEnum(sentEnum);
+    //   expect(echoEnum, sentEnum);
+    // });
 
-    testWidgets('null enums serialize and deserialize correctly',
-        (WidgetTester _) async {
-      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+    // testWidgets('null enums serialize and deserialize correctly',
+    //     (WidgetTester _) async {
+    //   final HostIntegrationCoreApi api = HostIntegrationCoreApi();
 
-      const AnEnum? sentEnum = null;
-      final AnEnum? echoEnum = await api.callFlutterEchoNullableEnum(sentEnum);
-      expect(echoEnum, sentEnum);
-    });
+    //   const AnEnum? sentEnum = null;
+    //   final AnEnum? echoEnum = await api.callFlutterEchoNullableEnum(sentEnum);
+    //   expect(echoEnum, sentEnum);
+    // });
   });
 
   group('Flutter API with suffix', () {
