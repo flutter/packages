@@ -196,26 +196,21 @@ void main() {
 
     int startPause;
     int timePaused = 0;
+    const int pauseIterations = 2;
 
     await controller.startVideoRecording();
     final int recordingStart = DateTime.now().millisecondsSinceEpoch;
     sleep(const Duration(milliseconds: 500));
 
-    await controller.pauseVideoRecording();
-    startPause = DateTime.now().millisecondsSinceEpoch;
-    sleep(const Duration(milliseconds: 500));
-    await controller.resumeVideoRecording();
-    timePaused += DateTime.now().millisecondsSinceEpoch - startPause;
+    for (int i = 0; i < pauseIterations; i++) {
+      await controller.pauseVideoRecording();
+      startPause = DateTime.now().millisecondsSinceEpoch;
+      sleep(const Duration(milliseconds: 500));
+      await controller.resumeVideoRecording();
+      timePaused += DateTime.now().millisecondsSinceEpoch - startPause;
 
-    sleep(const Duration(milliseconds: 500));
-
-    await controller.pauseVideoRecording();
-    startPause = DateTime.now().millisecondsSinceEpoch;
-    sleep(const Duration(milliseconds: 500));
-    await controller.resumeVideoRecording();
-    timePaused += DateTime.now().millisecondsSinceEpoch - startPause;
-
-    sleep(const Duration(milliseconds: 500));
+      sleep(const Duration(milliseconds: 500));
+    }
 
     final XFile file = await controller.stopVideoRecording();
     final int recordingTime =

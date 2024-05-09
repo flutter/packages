@@ -45,6 +45,11 @@ Change the minimum Android sdk version to 21 (or higher) in your `android/app/bu
 minSdkVersion 21
 ```
 
+It's important to note that the endorsed [`camera_android_camerax`][2] implementation of the camera plugin
+built with CameraX has several limitations; please see this list of all of [the list of limitations][3]
+for more details. If you wish to use the [`camera_android`][4] implementation of the camera plugin built
+with Camera2 that lacks these limitations, please follow [these instructions][5].
+
 ### Web integration
 
 For web integration details, see the
@@ -165,3 +170,7 @@ class _CameraAppState extends State<CameraApp> {
 For a more elaborate usage example see [here](https://github.com/flutter/packages/tree/main/packages/camera/camera/example).
 
 [1]: https://pub.dev/packages/camera_web#limitations-on-the-web-platform
+[2]: https://pub.dev/packages/camera_android_camerax
+[3]: https://pub.dev/packages/camera_android_camerax#limitations
+[4]: https://pub.dev/packages/camera_android
+[5]: https://pub.dev/packages/camera_android#usage
