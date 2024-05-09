@@ -54,15 +54,13 @@
     [invocation setReturnValue:&status];
   });
 
-  FLTThreadSafeFlutterResult *result =
-      [[FLTThreadSafeFlutterResult alloc] initWithResult:^(id result){
-          // no-op
-      }];
-
   // Pause then resume the recording.
-  [cam startVideoRecordingWithResult:result];
-  [cam pauseVideoRecordingWithResult:result];
-  [cam resumeVideoRecordingWithResult:result];
+  [cam
+      startVideoRecordingWithCompletion:^(FlutterError *_Nullable error) {
+      }
+                  messengerForStreaming:nil];
+  [cam pauseVideoRecording];
+  [cam resumeVideoRecording];
 
   [cam captureOutput:cam.captureVideoOutput
       didOutputSampleBuffer:sampleBuffer
@@ -113,10 +111,10 @@
     writtenSamples = [writtenSamples arrayByAddingObject:@"audio"];
   });
 
-  FLTThreadSafeFlutterResult *result =
-      [[FLTThreadSafeFlutterResult alloc] initWithResult:^(id result){
-      }];
-  [cam startVideoRecordingWithResult:result];
+  [cam
+      startVideoRecordingWithCompletion:^(FlutterError *_Nullable error) {
+      }
+                  messengerForStreaming:nil];
 
   [cam captureOutput:nil didOutputSampleBuffer:audioSample fromConnection:connectionMock];
   [cam captureOutput:nil didOutputSampleBuffer:audioSample fromConnection:connectionMock];

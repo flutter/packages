@@ -94,6 +94,35 @@ void defineTests() {
         ]);
       },
     );
+
+    testWidgets('custom bullet builder', (WidgetTester tester) async {
+      const String data =
+          '* Item 1\n   * Item 2\n      * Item 3\n   * Item 4\n* Item 5';
+      Widget builder(MarkdownBulletParameters parameters) => Text(
+            '${parameters.index} ${parameters.style == BulletStyle.orderedList ? 'ordered' : 'unordered'} ${parameters.nestLevel}',
+          );
+
+      await tester.pumpWidget(
+        boilerplate(
+          Markdown(data: data, bulletBuilder: builder),
+        ),
+      );
+
+      final Iterable<Widget> widgets = tester.allWidgets;
+
+      expectTextStrings(widgets, <String>[
+        '0 unordered 0',
+        'Item 1',
+        '0 unordered 1',
+        'Item 2',
+        '0 unordered 2',
+        'Item 3',
+        '1 unordered 1',
+        'Item 4',
+        '1 unordered 0',
+        'Item 5',
+      ]);
+    });
   });
 
   group('Ordered List', () {
@@ -135,6 +164,35 @@ void defineTests() {
       final Iterable<Widget> widgets = tester.allWidgets;
       expectTextStrings(widgets, <String>['1.', 'one', 'two']);
     });
+
+    testWidgets('custom bullet builder', (WidgetTester tester) async {
+      const String data =
+          '1. Item 1\n   1. Item 2\n      1. Item 3\n   1. Item 4\n1. Item 5';
+      Widget builder(MarkdownBulletParameters parameters) => Text(
+            '${parameters.index} ${parameters.style == BulletStyle.orderedList ? 'ordered' : 'unordered'} ${parameters.nestLevel}',
+          );
+
+      await tester.pumpWidget(
+        boilerplate(
+          Markdown(data: data, bulletBuilder: builder),
+        ),
+      );
+
+      final Iterable<Widget> widgets = tester.allWidgets;
+
+      expectTextStrings(widgets, <String>[
+        '0 ordered 0',
+        'Item 1',
+        '0 ordered 1',
+        'Item 2',
+        '0 ordered 2',
+        'Item 3',
+        '1 ordered 1',
+        'Item 4',
+        '1 ordered 0',
+        'Item 5',
+      ]);
+    });
   });
 
   group('Task List', () {
@@ -161,8 +219,8 @@ void defineTests() {
 
     testWidgets('custom bullet builder', (WidgetTester tester) async {
       const String data = '* Item 1\n* Item 2\n1) Item 3\n2) Item 4';
-      Widget builder(int index, BulletStyle style) => Text(
-          '$index ${style == BulletStyle.orderedList ? 'ordered' : 'unordered'}');
+      Widget builder(MarkdownBulletParameters parameters) => Text(
+          '${parameters.index} ${parameters.style == BulletStyle.orderedList ? 'ordered' : 'unordered'}');
 
       await tester.pumpWidget(
         boilerplate(
