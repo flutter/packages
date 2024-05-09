@@ -38,6 +38,7 @@ final class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
         _adDisplayContainer = await _setUpAdDisplayContainer(
           WeakReference<AndroidAdDisplayContainer>(this),
         );
+        params.onContainerAdded(this);
       },
     );
   }
