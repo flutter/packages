@@ -995,7 +995,7 @@ class AndroidCameraCameraX extends CameraPlatform {
               'video recording while no recording is in progress.');
     }
 
-    /// Stop the active recording and wiat for the video recording to be finalized.
+    /// Stop the active recording and wait for the video recording to be finalized.
     await recording!.close();
     await videoRecordingFinalizedStreamQueue.next;
     recording = null;
