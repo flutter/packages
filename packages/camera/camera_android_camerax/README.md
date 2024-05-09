@@ -38,7 +38,8 @@ use cases, the plugin behaves according to the following:
     streaming, and image capture is not supported.
 
 ### `setDescriptionWhileRecording` is unimplemented [Issue #148013][148013]
-`setDescriptionWhileRecording`, used to switch cameras while recording video, is currently unimplemented.
+`setDescriptionWhileRecording`, used to switch cameras while recording video, is currently unimplemented
+due to this not currently being supported by CameraX.
 
 ### 240p resolution configuration for video recording
 

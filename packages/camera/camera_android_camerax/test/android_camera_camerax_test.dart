@@ -1312,6 +1312,10 @@ void main() {
       when(mockCamera2CameraInfo.getSupportedHardwareLevel()).thenAnswer(
           (_) async => CameraMetadata.infoSupportedHardwareLevelLimited);
 
+      // Simulate video recording being started so startVideoRecording completes.
+      PendingRecording.videoRecordingEventStreamController
+          .add(VideoRecordEvent.start);
+
       await camera.startVideoCapturing(const VideoCaptureOptions(cameraId));
 
       // Verify VideoCapture UseCase is bound and camera & its properties
@@ -1388,6 +1392,10 @@ void main() {
           .thenAnswer((_) async => MockLiveCameraState());
       when(mockCamera2CameraInfo.getSupportedHardwareLevel()).thenAnswer(
           (_) async => CameraMetadata.infoSupportedHardwareLevelLimited);
+
+      // Simulate video recording being started so startVideoRecording completes.
+      PendingRecording.videoRecordingEventStreamController
+          .add(VideoRecordEvent.start);
 
       await camera.startVideoCapturing(const VideoCaptureOptions(cameraId));
 
@@ -1472,6 +1480,10 @@ void main() {
       when(mockCamera2CameraInfo.getSupportedHardwareLevel())
           .thenAnswer((_) async => CameraMetadata.infoSupportedHardwareLevel3);
 
+      // Simulate video recording being started so startVideoRecording completes.
+      PendingRecording.videoRecordingEventStreamController
+          .add(VideoRecordEvent.start);
+
       await camera.startVideoCapturing(videoCaptureOptions);
 
       final CameraImageData mockCameraImageData = MockCameraImageData();
@@ -1529,11 +1541,19 @@ void main() {
       when(camera.processCameraProvider!.isBound(camera.imageAnalysis!))
           .thenAnswer((_) async => false);
 
+      // Simulate video recording being started so startVideoRecording completes.
+      PendingRecording.videoRecordingEventStreamController
+          .add(VideoRecordEvent.start);
+
       // Orientation is unlocked and plugin does not need to set default target
       // rotation manually.
       camera.recording = null;
       await camera.startVideoCapturing(const VideoCaptureOptions(cameraId));
       verifyNever(mockVideoCapture.setTargetRotation(any));
+
+      // Simulate video recording being started so startVideoRecording completes.
+      PendingRecording.videoRecordingEventStreamController
+          .add(VideoRecordEvent.start);
 
       // Orientation is locked and plugin does not need to set default target
       // rotation manually.
@@ -1542,6 +1562,10 @@ void main() {
       await camera.startVideoCapturing(const VideoCaptureOptions(cameraId));
       verifyNever(mockVideoCapture.setTargetRotation(any));
 
+      // Simulate video recording being started so startVideoRecording completes.
+      PendingRecording.videoRecordingEventStreamController
+          .add(VideoRecordEvent.start);
+
       // Orientation is locked and plugin does need to set default target
       // rotation manually.
       camera.recording = null;
@@ -1549,6 +1573,10 @@ void main() {
       camera.shouldSetDefaultRotation = true;
       await camera.startVideoCapturing(const VideoCaptureOptions(cameraId));
       verifyNever(mockVideoCapture.setTargetRotation(any));
+
+      // Simulate video recording being started so startVideoRecording completes.
+      PendingRecording.videoRecordingEventStreamController
+          .add(VideoRecordEvent.start);
 
       // Orientation is unlocked and plugin does need to set default target
       // rotation manually.
@@ -1602,7 +1630,8 @@ void main() {
           .thenAnswer((_) async => true);
 
       // Simulate video recording being finalized so stopVideoRecording completes.
-      PendingRecording.videoRecordingFinalizedStreamController.add(null);
+      PendingRecording.videoRecordingEventStreamController
+          .add(VideoRecordEvent.finalize);
 
       final XFile file = await camera.stopVideoRecording(0);
       expect(file.path, videoOutputPath);
@@ -1646,7 +1675,8 @@ void main() {
 
       await expectLater(() async {
         // Simulate video recording being finalized so stopVideoRecording completes.
-        PendingRecording.videoRecordingFinalizedStreamController.add(null);
+        PendingRecording.videoRecordingEventStreamController
+            .add(VideoRecordEvent.finalize);
         await camera.stopVideoRecording(0);
       }, throwsA(isA<CameraException>()));
       expect(camera.recording, null);
@@ -1669,7 +1699,8 @@ void main() {
       camera.videoOutputPath = videoOutputPath;
 
       // Simulate video recording being finalized so stopVideoRecording completes.
-      PendingRecording.videoRecordingFinalizedStreamController.add(null);
+      PendingRecording.videoRecordingEventStreamController
+          .add(VideoRecordEvent.finalize);
 
       final XFile file = await camera.stopVideoRecording(0);
       expect(file.path, videoOutputPath);
@@ -1700,7 +1731,8 @@ void main() {
           .thenAnswer((_) async => true);
 
       // Simulate video recording being finalized so stopVideoRecording completes.
-      PendingRecording.videoRecordingFinalizedStreamController.add(null);
+      PendingRecording.videoRecordingEventStreamController
+          .add(VideoRecordEvent.finalize);
 
       await camera.stopVideoRecording(90);
       verify(processCameraProvider.unbind(<UseCase>[videoCapture]));
@@ -3750,6 +3782,10 @@ void main() {
     when(mockCamera2CameraInfo.getSupportedHardwareLevel())
         .thenAnswer((_) async => CameraMetadata.infoSupportedHardwareLevelFull);
 
+    // Simulate video recording being started so startVideoRecording completes.
+    PendingRecording.videoRecordingEventStreamController
+        .add(VideoRecordEvent.start);
+
     await camera.startVideoCapturing(const VideoCaptureOptions(cameraId));
 
     verify(
@@ -3811,6 +3847,10 @@ void main() {
     when(mockCamera2CameraInfo.getSupportedHardwareLevel())
         .thenAnswer((_) async => CameraMetadata.infoSupportedHardwareLevel3);
 
+    // Simulate video recording being started so startVideoRecording completes.
+    PendingRecording.videoRecordingEventStreamController
+        .add(VideoRecordEvent.start);
+
     await camera.startVideoCapturing(const VideoCaptureOptions(cameraId));
 
     verify(
@@ -3871,6 +3911,10 @@ void main() {
         .thenAnswer((_) async => MockLiveCameraState());
     when(mockCamera2CameraInfo.getSupportedHardwareLevel()).thenAnswer(
         (_) async => CameraMetadata.infoSupportedHardwareLevelExternal);
+
+    // Simulate video recording being started so startVideoRecording completes.
+    PendingRecording.videoRecordingEventStreamController
+        .add(VideoRecordEvent.start);
 
     await camera.startVideoCapturing(VideoCaptureOptions(cameraId,
         streamCallback: (CameraImageData image) {}));
@@ -3939,6 +3983,10 @@ void main() {
     when(mockCamera2CameraInfo.getSupportedHardwareLevel())
         .thenAnswer((_) async => CameraMetadata.infoSupportedHardwareLevel3);
 
+    // Simulate video recording being started so startVideoRecording completes.
+    PendingRecording.videoRecordingEventStreamController
+        .add(VideoRecordEvent.start);
+
     await camera.startVideoCapturing(VideoCaptureOptions(cameraId,
         streamCallback: (CameraImageData image) {}));
     verify(
@@ -3999,6 +4047,11 @@ void main() {
         .thenAnswer((_) async => MockLiveCameraState());
 
     await camera.pausePreview(cameraId);
+
+    // Simulate video recording being started so startVideoRecording completes.
+    PendingRecording.videoRecordingEventStreamController
+        .add(VideoRecordEvent.start);
+
     await camera.startVideoCapturing(const VideoCaptureOptions(cameraId));
 
     verifyNever(
@@ -4065,6 +4118,10 @@ void main() {
         .thenAnswer((_) async => MockLiveCameraState());
     when(mockCamera2CameraInfo.getSupportedHardwareLevel()).thenAnswer(
         (_) async => CameraMetadata.infoSupportedHardwareLevelLegacy);
+
+    // Simulate video recording being started so startVideoRecording completes.
+    PendingRecording.videoRecordingEventStreamController
+        .add(VideoRecordEvent.start);
 
     await camera.startVideoCapturing(const VideoCaptureOptions(cameraId));
 

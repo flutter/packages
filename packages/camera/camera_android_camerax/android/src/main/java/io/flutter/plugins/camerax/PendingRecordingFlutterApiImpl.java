@@ -9,6 +9,8 @@ import androidx.annotation.Nullable;
 import androidx.camera.video.PendingRecording;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugins.camerax.GeneratedCameraXLibrary.PendingRecordingFlutterApi;
+import io.flutter.plugins.camerax.GeneratedCameraXLibrary.VideoRecordEvent;
+import io.flutter.plugins.camerax.GeneratedCameraXLibrary.VideoRecordEventData;
 
 public class PendingRecordingFlutterApiImpl extends PendingRecordingFlutterApi {
   private final InstanceManager instanceManager;
@@ -24,6 +26,12 @@ public class PendingRecordingFlutterApiImpl extends PendingRecordingFlutterApi {
   }
 
   void sendVideoRecordingFinalizedEvent(@NonNull Reply<Void> reply) {
-    super.onVideoRecordingFinalized(reply);
+    super.onVideoRecordingEvent(
+        new VideoRecordEventData.Builder().setValue(VideoRecordEvent.FINALIZE).build(), reply);
+  }
+
+  void sendVideoRecordingStartedEvent(@NonNull Reply<Void> reply) {
+    super.onVideoRecordingEvent(
+        new VideoRecordEventData.Builder().setValue(VideoRecordEvent.START).build(), reply);
   }
 }

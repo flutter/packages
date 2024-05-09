@@ -77,10 +77,15 @@ public class PendingRecordingHostApiImpl implements PendingRecordingHostApi {
   /**
    * Handles {@link VideoRecordEvent}s that come in during video recording. Sends any errors
    * encountered using {@link SystemServicesFlutterApiImpl}.
+   *
+   * <p>Currently only sends {@link VideoRecordEvent.Start} and {@link VideoRecordEvent.Finalize}
+   * events to the Dart side.
    */
   @VisibleForTesting
   public void handleVideoRecordEvent(@NonNull VideoRecordEvent event) {
-    if (event instanceof VideoRecordEvent.Finalize) {
+    if (event instanceof VideoRecordEvent.Start) {
+      pendingRecordingFlutterApi.sendVideoRecordingStartedEvent(reply -> {});
+    } else if (event instanceof VideoRecordEvent.Finalize) {
       pendingRecordingFlutterApi.sendVideoRecordingFinalizedEvent(reply -> {});
       VideoRecordEvent.Finalize castedEvent = (VideoRecordEvent.Finalize) event;
       if (castedEvent.hasError()) {

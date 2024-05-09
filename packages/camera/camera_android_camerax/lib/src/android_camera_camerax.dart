@@ -115,9 +115,9 @@ class AndroidCameraCameraX extends CameraPlatform {
 
   /// Stream queue to pick up finalized viceo recording events in
   /// [stopVideoRecording].
-  final StreamQueue<void> videoRecordingFinalizedStreamQueue =
-      StreamQueue<void>(
-          PendingRecording.videoRecordingFinalizedStreamController.stream);
+  final StreamQueue<VideoRecordEvent> videoRecordingEventStreamQueue =
+      StreamQueue<VideoRecordEvent>(
+          PendingRecording.videoRecordingEventStreamController.stream);
 
   /// Whether or not [preview] has been bound to the lifecycle of the camera by
   /// [createCamera].
@@ -978,6 +978,12 @@ class AndroidCameraCameraX extends CameraPlatform {
     if (streamCallback != null) {
       onStreamedFrameAvailable(options.cameraId).listen(streamCallback);
     }
+
+    // Wait for video recording to start.
+    VideoRecordEvent event = await videoRecordingEventStreamQueue.next;
+    while (event != VideoRecordEvent.start) {
+      event = await videoRecordingEventStreamQueue.next;
+    }
   }
 
   /// Stops the video recording and returns the file where it was saved.
@@ -997,7 +1003,10 @@ class AndroidCameraCameraX extends CameraPlatform {
 
     /// Stop the active recording and wait for the video recording to be finalized.
     await recording!.close();
-    await videoRecordingFinalizedStreamQueue.next;
+    VideoRecordEvent event = await videoRecordingEventStreamQueue.next;
+    while (event != VideoRecordEvent.finalize) {
+      event = await videoRecordingEventStreamQueue.next;
+    }
     recording = null;
     pendingRecording = null;
 
@@ -1011,7 +1020,10 @@ class AndroidCameraCameraX extends CameraPlatform {
     }
 
     await _unbindUseCaseFromLifecycle(videoCapture!);
-    return XFile(videoOutputPath!);
+    final XFile videoFile = XFile(videoOutputPath!);
+    cameraEventStreamController
+        .add(VideoRecordedEvent(cameraId, videoFile, /* duration */ null));
+    return videoFile;
   }
 
   /// Pause the current video recording if it is not null.
