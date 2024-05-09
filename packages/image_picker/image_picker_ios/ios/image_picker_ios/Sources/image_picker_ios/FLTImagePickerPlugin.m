@@ -16,7 +16,7 @@
 #import "FLTImagePickerMetaDataUtil.h"
 #import "FLTImagePickerPhotoAssetUtil.h"
 #import "FLTPHPickerSaveImageToPathOperation.h"
-#import "messages.g.h"
+#import "./include/image_picker_ios/messages.g.h"
 
 @implementation FLTImagePickerMethodCallContext
 - (instancetype)initWithResult:(nonnull FlutterResultAdapter)result {
