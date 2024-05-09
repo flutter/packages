@@ -1472,8 +1472,7 @@ EncodableValue PigeonCodecSerializer::ReadValueOfType(
           encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
       return encodable_enum_arg.IsNull()
                  ? CustomEncodableValue(std::nullopt)
-                 : CustomEncodableValue(std::make_optional<AnEnum>(
-                       static_cast<AnEnum>(enum_arg_value)));
+                 : CustomEncodableValue(static_cast<AnEnum>(enum_arg_value));
     }
     default:
       return flutter::StandardCodecSerializer::ReadValueOfType(type, stream);
@@ -2065,7 +2064,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
               }
               EncodableList wrapped;
               wrapped.push_back(
-                  EncodableValue((int)std::move(output).TakeValue()));
+                  CustomEncodableValue(std::move(output).TakeValue()));
               reply(EncodableValue(std::move(wrapped)));
             } catch (const std::exception& exception) {
               reply(WrapError(exception.what()));
@@ -2774,7 +2773,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
               auto output_optional = std::move(output).TakeValue();
               if (output_optional) {
                 wrapped.push_back(
-                    EncodableValue((int)std::move(output_optional).value()));
+                    CustomEncodableValue(std::move(output_optional).value()));
               } else {
                 wrapped.push_back(EncodableValue());
               }
@@ -3226,7 +3225,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
                     }
                     EncodableList wrapped;
                     wrapped.push_back(
-                        EncodableValue((int)std::move(output).TakeValue()));
+                        CustomEncodableValue(std::move(output).TakeValue()));
                     reply(EncodableValue(std::move(wrapped)));
                   });
             } catch (const std::exception& exception) {
@@ -3820,8 +3819,8 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
                     EncodableList wrapped;
                     auto output_optional = std::move(output).TakeValue();
                     if (output_optional) {
-                      wrapped.push_back(EncodableValue(
-                          (int)std::move(output_optional).value()));
+                      wrapped.push_back(CustomEncodableValue(
+                          std::move(output_optional).value()));
                     } else {
                       wrapped.push_back(EncodableValue());
                     }
@@ -4449,7 +4448,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
                     }
                     EncodableList wrapped;
                     wrapped.push_back(
-                        EncodableValue((int)std::move(output).TakeValue()));
+                        CustomEncodableValue(std::move(output).TakeValue()));
                     reply(EncodableValue(std::move(wrapped)));
                   });
             } catch (const std::exception& exception) {
@@ -4776,8 +4775,8 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
                     EncodableList wrapped;
                     auto output_optional = std::move(output).TakeValue();
                     if (output_optional) {
-                      wrapped.push_back(EncodableValue(
-                          (int)std::move(output_optional).value()));
+                      wrapped.push_back(CustomEncodableValue(
+                          std::move(output_optional).value()));
                     } else {
                       wrapped.push_back(EncodableValue());
                     }

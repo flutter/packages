@@ -912,7 +912,7 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
                 indent.writeln(
                     'const int64_t enum_arg_value = encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();');
                 indent.writeln(
-                    'return encodable_enum_arg.IsNull() ? CustomEncodableValue(std::nullopt) : CustomEncodableValue(std::make_optional<${customType.name}>(static_cast<${customType.name}>(enum_arg_value)));');
+                    'return encodable_enum_arg.IsNull() ? CustomEncodableValue(std::nullopt) : CustomEncodableValue(static_cast<${customType.name}>(enum_arg_value));');
               });
             }
           });
@@ -1408,10 +1408,6 @@ return EncodableValue(EncodableList{
     final String errorGetter;
 
     const String nullValue = 'EncodableValue()';
-    String enumPrefix = '';
-    if (returnType.isEnum) {
-      enumPrefix = '(int) ';
-    }
     if (returnType.isVoid) {
       nonErrorPath = '${prefix}wrapped.push_back($nullValue);';
       errorCondition = 'output.has_value()';
@@ -1421,22 +1417,21 @@ return EncodableValue(EncodableList{
           getHostDatatype(returnType, _shortBaseCppTypeForBuiltinDartType);
 
       const String extractedValue = 'std::move(output).TakeValue()';
-      final String wrapperType = hostType.isBuiltin || returnType.isEnum
-          ? 'EncodableValue'
-          : 'CustomEncodableValue';
+      final String wrapperType =
+          hostType.isBuiltin ? 'EncodableValue' : 'CustomEncodableValue';
       if (returnType.isNullable) {
         // The value is a std::optional, so needs an extra layer of
         // handling.
         nonErrorPath = '''
 ${prefix}auto output_optional = $extractedValue;
 ${prefix}if (output_optional) {
-$prefix\twrapped.push_back($wrapperType(${enumPrefix}std::move(output_optional).value()));
+$prefix\twrapped.push_back($wrapperType(std::move(output_optional).value()));
 $prefix} else {
 $prefix\twrapped.push_back($nullValue);
 $prefix}''';
       } else {
         nonErrorPath =
-            '${prefix}wrapped.push_back($wrapperType($enumPrefix$extractedValue));';
+            '${prefix}wrapped.push_back($wrapperType($extractedValue));';
       }
       errorCondition = 'output.has_error()';
       errorGetter = 'error';
