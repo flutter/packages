@@ -911,14 +911,6 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
       });
       indent.writeln('}');
       indent.newln();
-      indent.writeln('init(flutterError: FlutterError) {');
-      indent.nest(1, () {
-        indent.writeln('self.code = flutterError.code');
-        indent.writeln('self.message = flutterError.message');
-        indent.writeln('self.details = flutterError.details');
-      });
-      indent.writeln('}');
-      indent.newln();
       indent.writeln('var localizedDescription: String {');
       indent.nest(1, () {
         indent.writeln('return');

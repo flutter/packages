@@ -58,12 +58,6 @@ final class PigeonError: Error {
     self.details = details
   }
 
-  init(flutterError: FlutterError) {
-    self.code = flutterError.code
-    self.message = flutterError.message
-    self.details = flutterError.details
-  }
-
   var localizedDescription: String {
     return
       "PigeonError(code: \(code), message: \(message ?? "<nil>"), details: \(details ?? "<nil>")"
