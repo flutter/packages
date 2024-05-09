@@ -1,6 +1,9 @@
 ## 0.6.5
 
-* Modifies `stopVideoRecording` to ensure the method only returns when the recorded video finishes saving to a file.
+* Modifies `stopVideoRecording` to ensure that the method only returns when CameraX reports that the
+  recorded video finishes saving to a file.
+* Modifies `startVideoCapturing` to ensure that the method only returns when CameraX reports that
+  video recording has started.
 * Adds empty implementation for `setDescriptionWhileRecording` and leaves a todo to add this feature.
 
 ## 0.6.4+1
