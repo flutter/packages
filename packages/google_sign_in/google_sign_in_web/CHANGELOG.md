@@ -1,4 +1,4 @@
-## 0.12.4+1
+## NEXT
 * Fixed README.md typo
 
 ## 0.12.4
