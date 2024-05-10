@@ -12,8 +12,11 @@
 
 pubspec.lock
 
+# iOS and macOS dependencies
+.build/
 Podfile.lock
 Pods/
+.swiftpm/
 .symlinks/
 
 *instrumentscli*.trace
