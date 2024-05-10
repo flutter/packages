@@ -1,4 +1,5 @@
 ## 19.0.0
+
 * **Breaking Change** [swift] Do not use `FlutterError` on the generated code.
 
 ## 18.0.1
