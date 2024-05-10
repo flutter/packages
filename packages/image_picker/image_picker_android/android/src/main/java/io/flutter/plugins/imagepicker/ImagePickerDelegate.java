@@ -404,7 +404,7 @@ public class ImagePickerDelegate
     } catch (ActivityNotFoundException e) {
       try {
         // If we can't delete the file again here, there's not really anything we can do about it.
-        //noinspection ResultOfMethodCallIgnored
+        // noinspection ResultOfMethodCallIgnored
         videoFile.delete();
       } catch (SecurityException exception) {
         exception.printStackTrace();
@@ -515,7 +515,7 @@ public class ImagePickerDelegate
     } catch (ActivityNotFoundException e) {
       try {
         // If we can't delete the file again here, there's not really anything we can do about it.
-        //noinspection ResultOfMethodCallIgnored
+        // noinspection ResultOfMethodCallIgnored
         imageFile.delete();
       } catch (SecurityException exception) {
         exception.printStackTrace();
@@ -692,7 +692,10 @@ public class ImagePickerDelegate
           paths.add(new MediaPath(path, mimeType));
         }
       } else {
-        paths.add(new MediaPath(fileUtils.getPathFromUri(activity, intent.getData()), null));
+        Uri uri = intent.getData();
+        if (uri != null) {
+          paths.add(new MediaPath(fileUtils.getPathFromUri(activity, uri), null));
+        }
       }
       handleMediaResult(paths);
       return;
