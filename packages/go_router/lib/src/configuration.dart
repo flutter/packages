@@ -525,7 +525,7 @@ class RouteConfiguration {
   String debugKnownRoutes() {
     final StringBuffer sb = StringBuffer();
     sb.writeln('Full paths for routes:');
-    _debugFullPathsFor(_routingConfig.value.routes, '', 0, sb);
+    _debugFullPathsFor(_routingConfig.value.routes, '', '', sb);
 
     if (_nameToPath.isNotEmpty) {
       sb.writeln('known full paths for route names:');
@@ -538,15 +538,35 @@ class RouteConfiguration {
   }
 
   void _debugFullPathsFor(List<RouteBase> routes, String parentFullpath,
-      int depth, StringBuffer sb) {
-    for (final RouteBase route in routes) {
+      String parentDecoration, StringBuffer sb) {
+    for (final (int index, RouteBase route) in routes.indexed) {
+      final String decoration =
+          _getDecoration(parentDecoration, index, routes.length);
+      String path = parentFullpath;
       if (route is GoRoute) {
-        final String fullPath = concatenatePaths(parentFullpath, route.path);
-        sb.writeln('  => ${''.padLeft(depth * 2)}$fullPath');
-        _debugFullPathsFor(route.routes, fullPath, depth + 1, sb);
+        path = concatenatePaths(parentFullpath, route.path);
+        final String screenName =
+            route.builder?.runtimeType.toString().split('=> ').last ?? '';
+        sb.writeln('$decoration$path ($screenName)'
+            '${route.name == null ? '' : ' (${route.name})'}');
       } else if (route is ShellRouteBase) {
-        _debugFullPathsFor(route.routes, parentFullpath, depth, sb);
+        sb.writeln('$decoration$parentFullpath (ShellRoute)');
       }
+      _debugFullPathsFor(route.routes, path, decoration, sb);
+    }
+  }
+
+  String _getDecoration(
+    String parentDecoration,
+    int index,
+    int length,
+  ) {
+    final String newDecoration =
+        parentDecoration.replaceAll('├─', '│ ').replaceAll('└─', '  ');
+    if (index == length - 1) {
+      return '$newDecoration└─';
+    } else {
+      return '$newDecoration├─';
     }
   }
 
