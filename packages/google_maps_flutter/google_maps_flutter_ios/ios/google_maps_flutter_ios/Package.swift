@@ -22,15 +22,17 @@ let package = Package(
     // broad as possible.
     // Versions earlier than 8.4 can't be supported because that's the first version
     // that supports privacy manifests.
-    .package(url: "https://github.com/googlemaps/ios-maps-sdk", "8.4.0"..<"9.0.0")
+//    .package(url: "https://github.com/googlemaps/ios-maps-sdk", "8.4.0"..<"9.0.0")
+    .package(url: "https://github.com/dogahe/DogaheMaps", exact: "1.0.26")
   ],
   targets: [
     .target(
       name: "google_maps_flutter_ios",
       dependencies: [
-        .product(name: "GoogleMaps", package: "ios-maps-sdk"),
-        .product(name: "GoogleMapsBase", package: "ios-maps-sdk"),
-        .product(name: "GoogleMapsCore", package: "ios-maps-sdk"),
+       .product(name: "GoogleMaps", package: "DogaheMaps")
+//        .product(name: "GoogleMaps", package: "ios-maps-sdk"),
+//        .product(name: "GoogleMapsBase", package: "ios-maps-sdk"),
+//        .product(name: "GoogleMapsCore", package: "ios-maps-sdk"),
       ],
       exclude: ["include/google_maps_flutter_ios.modulemap"],
       resources: [

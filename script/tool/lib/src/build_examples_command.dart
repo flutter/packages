@@ -77,7 +77,7 @@ class BuildExamplesCommand extends PackageLoopingCommand {
       'iOS',
       pluginPlatform: platformIOS,
       flutterBuildType: _flutterBuildTypeIOS,
-      extraBuildFlags: <String>['--no-codesign'],
+      extraBuildFlags: <String>['--no-codesign', '-v'],
     ),
     platformLinux: const _PlatformDetails(
       'Linux',
