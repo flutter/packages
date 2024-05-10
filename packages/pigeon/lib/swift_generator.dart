@@ -625,15 +625,6 @@ class SwiftGenerator extends StructuredGenerator<SwiftOptions> {
     indent.newln();
     indent.write('private func wrapError(_ error: Any) -> [Any?] ');
     indent.addScoped('{', '}', () {
-      indent.write('if let flutterError = error as? FlutterError ');
-      indent.addScoped('{', '}', () {
-        indent.write('return ');
-        indent.addScoped('[', ']', () {
-          indent.writeln('flutterError.code,');
-          indent.writeln('flutterError.message,');
-          indent.writeln('flutterError.details,');
-        });
-      });
       indent.write(
           'if let pigeonError = error as? ${_getErrorClassName(generatorOptions)} ');
       indent.addScoped('{', '}', () {
@@ -642,6 +633,15 @@ class SwiftGenerator extends StructuredGenerator<SwiftOptions> {
           indent.writeln('pigeonError.code,');
           indent.writeln('pigeonError.message,');
           indent.writeln('pigeonError.details,');
+        });
+      });
+      indent.write('if let flutterError = error as? FlutterError ');
+      indent.addScoped('{', '}', () {
+        indent.write('return ');
+        indent.addScoped('[', ']', () {
+          indent.writeln('flutterError.code,');
+          indent.writeln('flutterError.message,');
+          indent.writeln('flutterError.details,');
         });
       });
       indent.write('return ');
