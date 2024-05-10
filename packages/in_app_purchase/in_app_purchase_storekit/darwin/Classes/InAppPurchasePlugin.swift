@@ -16,7 +16,7 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI {
   private var productsCache: NSMutableDictionary = [:]
   private var paymentQueueDelegateCallbackChannel: FlutterMethodChannel?
   // note - the type should be FIAPPaymentQueueDelegate, but this is only available >= iOS 13,
-  // FIAPPaymentQueueDelegateonly gets set/used in registerPaymentQueueDelegateWithError or removePaymentQueueDelegateWithError, which both are ios13+ only
+  // FIAPPaymentQueueDelegate only gets set/used in registerPaymentQueueDelegateWithError or removePaymentQueueDelegateWithError, which both are ios13+ only
   private var paymentQueueDelegate: Any?
   private var requestHandlers = Set<FIAPRequestHandler>()
   private var handlerFactory: ((SKRequest) -> FIAPRequestHandler)
@@ -27,7 +27,7 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI {
   // This property is optional, as it requires self to exist to be initialized.
   public var paymentQueueHandler: FIAPaymentQueueHandler?
   @objc
-  // This property is optional, as it is set when the plugin is registered.
+  // This property is optional, as it needs to be set during plugin registration, and can't be directly initialized.
   public var transactionObserverCallbackChannel: FlutterMethodChannel?
 
   public static func register(with registrar: FlutterPluginRegistrar) {
@@ -54,7 +54,6 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI {
     }
   ) {
     self.receiptManager = receiptManager
-    self.requestHandlers = Set<FIAPRequestHandler>()
     self.handlerFactory = handlerFactory
     super.init()
   }
@@ -65,7 +64,7 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI {
     self.init(receiptManager: receiptManager, handlerFactory: { FIAPRequestHandler(request: $0) })
   }
 
-  // This init gets called when the plugin gets registered
+  // This init gets called during plugin registration
   public convenience init(registrar: FlutterPluginRegistrar) {
     self.init(receiptManager: FIAPReceiptManager())
     self.registrar = registrar
@@ -355,18 +354,20 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI {
 
   @objc
   public func handleTransactionsUpdated(_ transactions: [SKPaymentTransaction]) {
-    let maps = transactions.map {
+    let translatedTransactions = transactions.map {
       FIAObjectTranslator.getMapFrom($0)
     }
-    transactionObserverCallbackChannel?.invokeMethod("updatedTransactions", arguments: maps)
+    transactionObserverCallbackChannel?.invokeMethod(
+      "updatedTransactions", arguments: translatedTransactions)
   }
 
   @objc
   public func handleTransactionsRemoved(_ transactions: [SKPaymentTransaction]) {
-    let maps = transactions.map {
+    let translatedTransactions = transactions.map {
       FIAObjectTranslator.getMapFrom($0)
     }
-    transactionObserverCallbackChannel?.invokeMethod("removedTransactions", arguments: maps)
+    transactionObserverCallbackChannel?.invokeMethod(
+      "removedTransactions", arguments: translatedTransactions)
   }
 
   @objc
@@ -384,13 +385,12 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI {
   @objc
   public func shouldAddStorePayment(payment: SKPayment, product: SKProduct) -> Bool {
     productsCache[product.productIdentifier] = product
-    transactionObserverCallbackChannel?
-      .invokeMethod(
-        "shouldAddStorePayment",
-        arguments: [
-          "payment": FIAObjectTranslator.getMapFrom(payment),
-          "product": FIAObjectTranslator.getMapFrom(product),
-        ])
+    transactionObserverCallbackChannel?.invokeMethod(
+      "shouldAddStorePayment",
+      arguments: [
+        "payment": FIAObjectTranslator.getMapFrom(payment),
+        "product": FIAObjectTranslator.getMapFrom(product),
+      ])
     return false
   }
 
@@ -398,7 +398,7 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI {
     NSLog("Received an updatedDownloads callback, but downloads are not supported.")
   }
 
-  // MARK: - Methods to allow for testing
+  // MARK: - Methods exposed for testing
   func getProduct(productID: String) -> SKProduct? {
     return self.productsCache[productID] as? SKProduct
   }
