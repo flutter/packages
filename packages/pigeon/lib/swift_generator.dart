@@ -896,34 +896,27 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
     indent.newln();
     indent.writeln(
         '/// Error class for passing custom error details to Dart side.');
-    indent.writeln(
-        'final class ${_getErrorClassName(generatorOptions)}: Error {');
-    indent.nest(1, () {
+    indent.writeScoped(
+        'final class ${_getErrorClassName(generatorOptions)}: Error {', '}',
+        () {
       indent.writeln('let code: String');
       indent.writeln('let message: String?');
       indent.writeln('let details: Any?');
       indent.newln();
-      indent.writeln('init(code: String, message: String?, details: Any?) {');
-      indent.nest(1, () {
+      indent.writeScoped(
+          'init(code: String, message: String?, details: Any?) {', '}', () {
         indent.writeln('self.code = code');
         indent.writeln('self.message = message');
         indent.writeln('self.details = details');
       });
-      indent.writeln('}');
       indent.newln();
-      indent.writeln('var localizedDescription: String {');
-      indent.nest(1, () {
-        indent.writeln('return');
-        indent.nest(1, () {
+      indent.writeScoped('var localizedDescription: String {', '}', () {
+        indent.writeScoped('return', '', () {
           indent.writeln(
               '"${_getErrorClassName(generatorOptions)}(code: \\(code), message: \\(message ?? "<nil>"), details: \\(details ?? "<nil>")"');
-        });
+        }, addTrailingNewline: false);
       });
-      indent.write('}');
     });
-    indent.newln();
-    indent.write('}');
-    indent.newln();
   }
 }
 
