@@ -83,7 +83,6 @@ struct AllListTypes {
   var intList: [Int64?]
   var doubleList: [Double?]
   var boolList: [Bool?]
-  var enumList: [AnEnum?]
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
   static func fromList(_ __pigeon_list: [Any?]) -> AllListTypes? {
@@ -92,15 +91,13 @@ struct AllListTypes {
     let intList = __pigeon_list[2] as! [Int64?]
     let doubleList = __pigeon_list[3] as! [Double?]
     let boolList = __pigeon_list[4] as! [Bool?]
-    let enumList = __pigeon_list[5] as! [AnEnum?]
 
     return AllListTypes(
       list: list,
       stringList: stringList,
       intList: intList,
       doubleList: doubleList,
-      boolList: boolList,
-      enumList: enumList
+      boolList: boolList
     )
   }
   func toList() -> [Any?] {
@@ -110,7 +107,6 @@ struct AllListTypes {
       intList,
       doubleList,
       boolList,
-      enumList,
     ]
   }
 }
@@ -129,7 +125,6 @@ struct AllTypes {
   var aFloatArray: FlutterStandardTypedData
   var list: [Any?]
   var aMap: [AnyHashable: Any?]
-  var anEnum: AnEnum
   var aString: String
   var anObject: Any
   var allMaps: AllMapTypes
@@ -149,11 +144,10 @@ struct AllTypes {
     let aFloatArray = __pigeon_list[7] as! FlutterStandardTypedData
     let list = __pigeon_list[8] as! [Any?]
     let aMap = __pigeon_list[9] as! [AnyHashable: Any?]
-    let anEnum = __pigeon_list[10] as! AnEnum
-    let aString = __pigeon_list[11] as! String
-    let anObject = __pigeon_list[12]!
-    let allMaps = __pigeon_list[13] as! AllMapTypes
-    let allLists = __pigeon_list[14] as! AllListTypes
+    let aString = __pigeon_list[10] as! String
+    let anObject = __pigeon_list[11]!
+    let allMaps = __pigeon_list[12] as! AllMapTypes
+    let allLists = __pigeon_list[13] as! AllListTypes
 
     return AllTypes(
       aBool: aBool,
@@ -166,7 +160,6 @@ struct AllTypes {
       aFloatArray: aFloatArray,
       list: list,
       aMap: aMap,
-      anEnum: anEnum,
       aString: aString,
       anObject: anObject,
       allMaps: allMaps,
@@ -185,7 +178,6 @@ struct AllTypes {
       aFloatArray,
       list,
       aMap,
-      anEnum,
       aString,
       anObject,
       allMaps,
@@ -212,7 +204,6 @@ class AllNullableTypes {
     nullableNestedList: [[Bool?]?]? = nil,
     nullableMapWithAnnotations: [String?: String?]? = nil,
     nullableMapWithObject: [String?: Any?]? = nil,
-    aNullableEnum: AnEnum? = nil,
     aNullableString: String? = nil,
     aNullableObject: Any? = nil,
     allNullableTypes: AllNullableTypes? = nil
@@ -230,7 +221,6 @@ class AllNullableTypes {
     self.nullableNestedList = nullableNestedList
     self.nullableMapWithAnnotations = nullableMapWithAnnotations
     self.nullableMapWithObject = nullableMapWithObject
-    self.aNullableEnum = aNullableEnum
     self.aNullableString = aNullableString
     self.aNullableObject = aNullableObject
     self.allNullableTypes = allNullableTypes
@@ -248,7 +238,6 @@ class AllNullableTypes {
   var nullableNestedList: [[Bool?]?]?
   var nullableMapWithAnnotations: [String?: String?]?
   var nullableMapWithObject: [String?: Any?]?
-  var aNullableEnum: AnEnum?
   var aNullableString: String?
   var aNullableObject: Any?
   var allNullableTypes: AllNullableTypes?
@@ -276,10 +265,9 @@ class AllNullableTypes {
     let nullableNestedList: [[Bool?]?]? = nilOrValue(__pigeon_list[10])
     let nullableMapWithAnnotations: [String?: String?]? = nilOrValue(__pigeon_list[11])
     let nullableMapWithObject: [String?: Any?]? = nilOrValue(__pigeon_list[12])
-    let aNullableEnum: AnEnum? = nilOrValue(__pigeon_list[13])
-    let aNullableString: String? = nilOrValue(__pigeon_list[14])
-    let aNullableObject: Any? = __pigeon_list[15]
-    let allNullableTypes: AllNullableTypes? = nilOrValue(__pigeon_list[16])
+    let aNullableString: String? = nilOrValue(__pigeon_list[13])
+    let aNullableObject: Any? = __pigeon_list[14]
+    let allNullableTypes: AllNullableTypes? = nilOrValue(__pigeon_list[15])
 
     return AllNullableTypes(
       aNullableBool: aNullableBool,
@@ -295,7 +283,6 @@ class AllNullableTypes {
       nullableNestedList: nullableNestedList,
       nullableMapWithAnnotations: nullableMapWithAnnotations,
       nullableMapWithObject: nullableMapWithObject,
-      aNullableEnum: aNullableEnum,
       aNullableString: aNullableString,
       aNullableObject: aNullableObject,
       allNullableTypes: allNullableTypes
@@ -316,7 +303,6 @@ class AllNullableTypes {
       nullableNestedList,
       nullableMapWithAnnotations,
       nullableMapWithObject,
-      aNullableEnum,
       aNullableString,
       aNullableObject,
       allNullableTypes,
@@ -343,7 +329,6 @@ struct AllNullableTypesWithoutRecursion {
   var nullableNestedList: [[Bool?]?]? = nil
   var nullableMapWithAnnotations: [String?: String?]? = nil
   var nullableMapWithObject: [String?: Any?]? = nil
-  var aNullableEnum: AnEnum? = nil
   var aNullableString: String? = nil
   var aNullableObject: Any? = nil
 
@@ -370,9 +355,8 @@ struct AllNullableTypesWithoutRecursion {
     let nullableNestedList: [[Bool?]?]? = nilOrValue(__pigeon_list[10])
     let nullableMapWithAnnotations: [String?: String?]? = nilOrValue(__pigeon_list[11])
     let nullableMapWithObject: [String?: Any?]? = nilOrValue(__pigeon_list[12])
-    let aNullableEnum: AnEnum? = nilOrValue(__pigeon_list[13])
-    let aNullableString: String? = nilOrValue(__pigeon_list[14])
-    let aNullableObject: Any? = __pigeon_list[15]
+    let aNullableString: String? = nilOrValue(__pigeon_list[13])
+    let aNullableObject: Any? = __pigeon_list[14]
 
     return AllNullableTypesWithoutRecursion(
       aNullableBool: aNullableBool,
@@ -388,7 +372,6 @@ struct AllNullableTypesWithoutRecursion {
       nullableNestedList: nullableNestedList,
       nullableMapWithAnnotations: nullableMapWithAnnotations,
       nullableMapWithObject: nullableMapWithObject,
-      aNullableEnum: aNullableEnum,
       aNullableString: aNullableString,
       aNullableObject: aNullableObject
     )
@@ -408,7 +391,6 @@ struct AllNullableTypesWithoutRecursion {
       nullableNestedList,
       nullableMapWithAnnotations,
       nullableMapWithObject,
-      aNullableEnum,
       aNullableString,
       aNullableObject,
     ]
