@@ -1,3 +1,7 @@
+## 0.9.17
+
+* Adds Swift Package Manager compatibility.
+
 ## 0.9.16
 
 * Converts Dart-to-host communcation to Pigeon.
