@@ -23,7 +23,7 @@ let package = Package(
     // Versions earlier than 8.4 can't be supported because that's the first version
     // that supports privacy manifests.
 //    .package(url: "https://github.com/googlemaps/ios-maps-sdk", "8.4.0"..<"9.0.0")
-    .package(url: "https://github.com/dogahe/DogaheMaps", exact: "1.0.26")
+    .package(url: "https://github.com/vashworth/DogaheMaps", revision: "7cb209f67da64d11e128949ed3d7a356867a2c6c")
   ],
   targets: [
     .target(
