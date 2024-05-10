@@ -3,6 +3,10 @@
 * Adds `BrowserConfiguration` parameter, to configure in-app browser views, such as Android Custom Tabs or SFSafariViewController.
 * Adds `showTitle` to `BrowserConfiguration`, to allow showing webpage titles in in-app browser views.
 
+## 6.2.6
+
+* Updates minimum iOS implementation version to include a privacy manifest.
+
 ## 6.2.5
 
 * Removes use of deprecated `renderView` API.

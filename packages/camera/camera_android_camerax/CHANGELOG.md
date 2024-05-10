@@ -1,3 +1,19 @@
+## 0.6.4+1
+
+* Adds empty implementation for `prepareForVideoRecording` since this optimization is not used on Android.
+
+## 0.6.4
+
+* Prevents usage of unsupported concurrent `UseCase`s based on the capabiliites of the camera device.
+
+## 0.6.3
+
+* Shortens default interval that internal Java `InstanceManager` uses to release garbage collected weak references to
+  native objects.
+* Dynamically shortens interval that internal Java `InstanceManager` uses to release garbage collected weak references to
+  native objects when an `ImageAnalysis.Analyzer` is set/removed to account for increased memory usage of analyzing
+  images that may cause a crash.
+
 ## 0.6.2
 
 * Adds support to control video FPS and bitrate. See `CameraController.withSettings`.

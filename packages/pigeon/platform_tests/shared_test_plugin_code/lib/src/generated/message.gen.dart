@@ -130,16 +130,14 @@ class MessageNested {
 
   Object encode() {
     return <Object?>[
-      request?.encode(),
+      request,
     ];
   }
 
   static MessageNested decode(Object result) {
     result as List<Object?>;
     return MessageNested(
-      request: result[0] != null
-          ? MessageSearchRequest.decode(result[0]! as List<Object?>)
-          : null,
+      request: result[0] as MessageSearchRequest?,
     );
   }
 }

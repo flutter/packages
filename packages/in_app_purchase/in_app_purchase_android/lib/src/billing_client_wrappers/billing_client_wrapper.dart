@@ -139,8 +139,8 @@ class BillingClient {
   }) async {
     return productDetailsResponseWrapperFromPlatform(
         await _hostApi.queryProductDetailsAsync(productList
-            .map(
-                (ProductWrapper product) => platformProductFromWrapper(product))
+            .map((ProductWrapper product) =>
+                platformQueryProductFromWrapper(product))
             .toList()));
   }
 
@@ -473,6 +473,8 @@ class BillingChoiceModeConverter
   const BillingChoiceModeConverter();
 
   @override
+  @Deprecated('JSON serialization is not intended for public use, and will '
+      'be removed in a future version.')
   BillingChoiceMode fromJson(int? json) {
     if (json == null) {
       return BillingChoiceMode.playBillingOnly;
@@ -493,6 +495,8 @@ class BillingResponseConverter implements JsonConverter<BillingResponse, int?> {
   const BillingResponseConverter();
 
   @override
+  @Deprecated('JSON serialization is not intended for public use, and will '
+      'be removed in a future version.')
   BillingResponse fromJson(int? json) {
     if (json == null) {
       return BillingResponse.error;
@@ -533,6 +537,8 @@ class ProductTypeConverter implements JsonConverter<ProductType, String?> {
   const ProductTypeConverter();
 
   @override
+  @Deprecated('JSON serialization is not intended for public use, and will '
+      'be removed in a future version.')
   ProductType fromJson(String? json) {
     if (json == null) {
       return ProductType.inapp;
@@ -603,6 +609,8 @@ class ProrationModeConverter implements JsonConverter<ProrationMode, int?> {
   const ProrationModeConverter();
 
   @override
+  @Deprecated('JSON serialization is not intended for public use, and will '
+      'be removed in a future version.')
   ProrationMode fromJson(int? json) {
     if (json == null) {
       return ProrationMode.unknownSubscriptionUpgradeDowngradePolicy;
@@ -658,6 +666,8 @@ class BillingClientFeatureConverter
   const BillingClientFeatureConverter();
 
   @override
+  @Deprecated('JSON serialization is not intended for public use, and will '
+      'be removed in a future version.')
   BillingClientFeature fromJson(String json) {
     return $enumDecode<BillingClientFeature, dynamic>(
         _$BillingClientFeatureEnumMap.cast<BillingClientFeature, dynamic>(),

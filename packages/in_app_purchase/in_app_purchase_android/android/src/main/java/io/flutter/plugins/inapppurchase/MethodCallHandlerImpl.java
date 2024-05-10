@@ -10,7 +10,6 @@ import static io.flutter.plugins.inapppurchase.Translator.fromBillingResult;
 import static io.flutter.plugins.inapppurchase.Translator.fromProductDetailsList;
 import static io.flutter.plugins.inapppurchase.Translator.fromPurchaseHistoryRecordList;
 import static io.flutter.plugins.inapppurchase.Translator.fromPurchasesList;
-import static io.flutter.plugins.inapppurchase.Translator.fromUserChoiceDetails;
 import static io.flutter.plugins.inapppurchase.Translator.toProductList;
 import static io.flutter.plugins.inapppurchase.Translator.toProductTypeString;
 
@@ -34,18 +33,17 @@ import com.android.billingclient.api.ProductDetails;
 import com.android.billingclient.api.QueryProductDetailsParams;
 import com.android.billingclient.api.QueryPurchaseHistoryParams;
 import com.android.billingclient.api.QueryPurchasesParams;
-import com.android.billingclient.api.UserChoiceBillingListener;
 import io.flutter.plugins.inapppurchase.Messages.FlutterError;
 import io.flutter.plugins.inapppurchase.Messages.InAppPurchaseApi;
 import io.flutter.plugins.inapppurchase.Messages.InAppPurchaseCallbackApi;
 import io.flutter.plugins.inapppurchase.Messages.PlatformBillingChoiceMode;
 import io.flutter.plugins.inapppurchase.Messages.PlatformBillingFlowParams;
 import io.flutter.plugins.inapppurchase.Messages.PlatformBillingResult;
-import io.flutter.plugins.inapppurchase.Messages.PlatformProduct;
 import io.flutter.plugins.inapppurchase.Messages.PlatformProductDetailsResponse;
 import io.flutter.plugins.inapppurchase.Messages.PlatformProductType;
 import io.flutter.plugins.inapppurchase.Messages.PlatformPurchaseHistoryResponse;
 import io.flutter.plugins.inapppurchase.Messages.PlatformPurchasesResponse;
+import io.flutter.plugins.inapppurchase.Messages.PlatformQueryProduct;
 import io.flutter.plugins.inapppurchase.Messages.Result;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -218,7 +216,7 @@ class MethodCallHandlerImpl implements Application.ActivityLifecycleCallbacks, I
 
   @Override
   public void queryProductDetailsAsync(
-      @NonNull List<PlatformProduct> products,
+      @NonNull List<PlatformQueryProduct> products,
       @NonNull Result<PlatformProductDetailsResponse> result) {
     if (billingClient == null) {
       result.error(getNullBillingClientError());
@@ -235,7 +233,7 @@ class MethodCallHandlerImpl implements Application.ActivityLifecycleCallbacks, I
             final PlatformProductDetailsResponse.Builder responseBuilder =
                 new PlatformProductDetailsResponse.Builder()
                     .setBillingResult(fromBillingResult(billingResult))
-                    .setProductDetailsJsonList(fromProductDetailsList(productDetailsList));
+                    .setProductDetails(fromProductDetailsList(productDetailsList));
             result.success(responseBuilder.build());
           });
     } catch (RuntimeException e) {
@@ -397,7 +395,7 @@ class MethodCallHandlerImpl implements Application.ActivityLifecycleCallbacks, I
             PlatformPurchasesResponse.Builder builder =
                 new PlatformPurchasesResponse.Builder()
                     .setBillingResult(fromBillingResult(billingResult))
-                    .setPurchasesJsonList(fromPurchasesList(purchasesList));
+                    .setPurchases(fromPurchasesList(purchasesList));
             result.success(builder.build());
           });
     } catch (RuntimeException e) {
@@ -423,7 +421,7 @@ class MethodCallHandlerImpl implements Application.ActivityLifecycleCallbacks, I
             PlatformPurchaseHistoryResponse.Builder builder =
                 new PlatformPurchaseHistoryResponse.Builder()
                     .setBillingResult(fromBillingResult(billingResult))
-                    .setPurchaseHistoryRecordJsonList(fromPurchaseHistoryRecordList(purchasesList));
+                    .setPurchases(fromPurchaseHistoryRecordList(purchasesList));
             result.success(builder.build());
           });
     } catch (RuntimeException e) {
@@ -437,10 +435,8 @@ class MethodCallHandlerImpl implements Application.ActivityLifecycleCallbacks, I
       @NonNull PlatformBillingChoiceMode billingMode,
       @NonNull Result<PlatformBillingResult> result) {
     if (billingClient == null) {
-      UserChoiceBillingListener listener = getUserChoiceBillingListener(billingMode);
       billingClient =
-          billingClientFactory.createBillingClient(
-              applicationContext, callbackApi, billingMode, listener);
+          billingClientFactory.createBillingClient(applicationContext, callbackApi, billingMode);
     }
 
     try {
@@ -480,30 +476,6 @@ class MethodCallHandlerImpl implements Application.ActivityLifecycleCallbacks, I
     } catch (RuntimeException e) {
       result.error(new FlutterError("error", e.getMessage(), Log.getStackTraceString(e)));
     }
-  }
-
-  @Nullable
-  private UserChoiceBillingListener getUserChoiceBillingListener(
-      PlatformBillingChoiceMode billingChoiceMode) {
-    UserChoiceBillingListener listener = null;
-    if (billingChoiceMode == PlatformBillingChoiceMode.USER_CHOICE_BILLING) {
-      listener =
-          userChoiceDetails ->
-              callbackApi.userSelectedalternativeBilling(
-                  fromUserChoiceDetails(userChoiceDetails),
-                  new Messages.VoidResult() {
-                    @Override
-                    public void success() {}
-
-                    @Override
-                    public void error(@NonNull Throwable error) {
-                      io.flutter.Log.e(
-                          "IN_APP_PURCHASE",
-                          "userSelectedalternativeBilling handler error: " + error);
-                    }
-                  });
-    }
-    return listener;
   }
 
   @Override

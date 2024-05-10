@@ -317,7 +317,7 @@ class TableCellListDelegate extends TwoDimensionalChildListDelegate
   @override
   TableSpan? buildRow(int index) {
     if (index >= rowCount) {
-      // The list deleagte has a finite number of rows.
+      // The list delegate has a finite number of rows.
       return null;
     }
     return _rowBuilder(index);
