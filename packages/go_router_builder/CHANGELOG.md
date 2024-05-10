@@ -1,3 +1,7 @@
+## 2.6.2
+
+* Fixes a bug in the example app when accessing `BuildContext`.
+
 ## 2.6.1
 
 * Fixes typo in `durationDecoderHelperName`.
