@@ -37,6 +37,10 @@ use cases, the plugin behaves according to the following:
     video recording and image streaming is supported, but concurrent video recording, image
     streaming, and image capture is not supported.
 
+### `setDescriptionWhileRecording` is unimplemented [Issue #148013][148013]
+`setDescriptionWhileRecording`, used to switch cameras while recording video, is currently unimplemented
+due to this not currently being supported by CameraX.
+
 ### 240p resolution configuration for video recording
 
 240p resolution configuration for video recording is unsupported by CameraX,
@@ -64,11 +68,4 @@ For more information on contributing to this plugin, see [`CONTRIBUTING.md`](CON
 [6]: https://developer.android.com/media/camera/camerax/architecture#combine-use-cases
 [7]: https://developer.android.com/reference/android/hardware/camera2/CameraMetadata#INFO_SUPPORTED_HARDWARE_LEVEL_3
 [8]: https://developer.android.com/reference/android/hardware/camera2/CameraMetadata#INFO_SUPPORTED_HARDWARE_LEVEL_LIMITED
-[120462]: https://github.com/flutter/flutter/issues/120462
-[125915]: https://github.com/flutter/flutter/issues/125915
-[120715]: https://github.com/flutter/flutter/issues/120715
-[120468]: https://github.com/flutter/flutter/issues/120468
-[120467]: https://github.com/flutter/flutter/issues/120467
-[125371]: https://github.com/flutter/flutter/issues/125371
-[126477]: https://github.com/flutter/flutter/issues/126477
-[127896]: https://github.com/flutter/flutter/issues/127896
+[148013]: https://github.com/flutter/flutter/issues/148013
