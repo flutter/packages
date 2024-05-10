@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import UIKit
+
 @testable import quick_actions_ios
 
 final class MockShortcutItemProvider: ShortcutItemProviding {
