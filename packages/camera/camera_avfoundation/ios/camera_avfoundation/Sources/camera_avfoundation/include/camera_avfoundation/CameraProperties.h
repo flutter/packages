@@ -4,6 +4,7 @@
 
 @import AVFoundation;
 @import Foundation;
+@import UIKit;
 
 #import "messages.g.h"
 
