@@ -24,11 +24,13 @@ final class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
   final Set<ima.VideoAdPlayerCallback> _videoAdPlayerCallbacks =
       <ima.VideoAdPlayerCallback>{};
   late final ima.VideoView _videoView;
+  late final ima.AdDisplayContainer _adDisplayContainer;
   ima.AdMediaInfo? _loadedAdMediaInfo;
   // The saved ad position, used to resumed ad playback following an ad click-through.
   int _savedAdPosition = 0;
   ima.MediaPlayer? _mediaPlayer;
-  late final ima.AdDisplayContainer _adDisplayContainer;
+  Timer? _adProgressTimer;
+  int? _adDuration;
 
   @override
   Widget build(BuildContext context) {
@@ -46,6 +48,34 @@ final class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
   void _resetPlayer() {
     _mediaPlayer = null;
     _savedAdPosition = 0;
+    _adDuration = null;
+  }
+
+  void _startAdTracking() {
+    _adProgressTimer = Timer.periodic(
+      const Duration(seconds: 3),
+      (Timer timer) async {
+        final int currentPosition = await _videoView.getCurrentPosition();
+        await Future.wait(
+          _videoAdPlayerCallbacks.map(
+            (ima.VideoAdPlayerCallback callback) async {
+              await callback.onAdProgress(
+                _loadedAdMediaInfo!,
+                ima.VideoProgressUpdate(
+                  currentTimeMs: currentPosition,
+                  durationMs: _adDuration!,
+                ),
+              );
+            },
+          ),
+        );
+      },
+    );
+  }
+
+  void _stopAdTracking() {
+    _adProgressTimer?.cancel();
+    _adProgressTimer = null;
   }
 
   static ima.VideoView _setUpVideoView(
@@ -53,18 +83,27 @@ final class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
   ) {
     return ima.VideoView(
       onCompletion: (_, ima.MediaPlayer player) {
-        weakThis.target?._resetPlayer();
-      },
-      onPrepared: (_, ima.MediaPlayer player) {
         final AndroidAdDisplayContainer? container = weakThis.target;
         if (container != null) {
+          weakThis.target?._resetPlayer();
+          for (final ima.VideoAdPlayerCallback callback
+              in container._videoAdPlayerCallbacks) {
+            callback.onEnded(container._loadedAdMediaInfo!);
+          }
+        }
+      },
+      onPrepared: (_, ima.MediaPlayer player) async {
+        final AndroidAdDisplayContainer? container = weakThis.target;
+        if (container != null) {
+          container._adDuration = await player.getDuration();
           container._mediaPlayer = player;
           if (container._savedAdPosition > 0) {
-            player.seekTo(container._savedAdPosition);
+            await player.seekTo(container._savedAdPosition);
           }
         }
 
-        player.start();
+        await player.start();
+        container?._startAdTracking();
       },
       onError: (_, ima.MediaPlayer player, int what, int extra) {
         final AndroidAdDisplayContainer? container = weakThis.target;
@@ -98,6 +137,7 @@ final class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
           final AndroidAdDisplayContainer? container = weakThis.target;
           if (container != null) {
             await container._mediaPlayer!.pause();
+            container._stopAdTracking();
             container._savedAdPosition =
                 await container._videoView.getCurrentPosition();
           }
@@ -109,6 +149,7 @@ final class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
         stopAd: (_, ima.AdMediaInfo adMediaInfo) {
           final AndroidAdDisplayContainer? container = weakThis.target;
           if (container != null) {
+            container._stopAdTracking();
             container._resetPlayer();
             container._loadedAdMediaInfo = null;
           }

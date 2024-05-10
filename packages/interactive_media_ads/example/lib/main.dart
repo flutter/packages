@@ -42,13 +42,14 @@ class _AdExampleWidgetState extends State<AdExampleWidget> {
     },
   );
 
-  //late final Timer progressTimer;
-
   @override
   void initState() {
     super.initState();
-    _contentVideoController = VideoPlayerController.networkUrl(Uri.parse(
-        'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4'))
+    _contentVideoController = VideoPlayerController.networkUrl(
+      Uri.parse(
+        'https://storage.googleapis.com/gvabox/media/samples/stock.mp4',
+      ),
+    )
       ..addListener(() {
         if (_contentVideoController.value.position ==
             _contentVideoController.value.duration) {
@@ -59,27 +60,6 @@ class _AdExampleWidgetState extends State<AdExampleWidget> {
         // Ensure the first frame is shown after the video is initialized, even before the play button has been pressed.
         setState(() {});
       });
-
-    // progressTimer = Timer.periodic(const Duration(seconds: 3), (Timer timer) {
-    //   if (contentVideoController.value.isInitialized &&
-    //       shouldShowContentVideo &&
-    //       contentVideoController.value.isPlaying) {
-    //     print(contentVideoController.value.position.inMilliseconds);
-    //     final AndroidAdDisplayContainer container =
-    //         adDisplayContainer.platform as AndroidAdDisplayContainer;
-    //     for (final android_ima.VideoAdPlayerCallback a
-    //         in container.videoAdPlayerCallbacks) {
-    //       a.onAdProgress(
-    //         container.loadedAdMediaInfo!,
-    //         android_ima.VideoProgressUpdate(
-    //           currentTimeMs:
-    //               contentVideoController.value.position.inMilliseconds,
-    //           durationMs: contentVideoController.value.duration.inMilliseconds,
-    //         ),
-    //       );
-    //     }
-    //   }
-    // });
   }
 
   Future<void> _resumeContent() {
