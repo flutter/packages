@@ -147,6 +147,22 @@ public class GeneratedCameraXLibrary {
   }
 
   /**
+   * Video recording status.
+   *
+   * <p>See https://developer.android.com/reference/androidx/camera/video/VideoRecordEvent.
+   */
+  public enum VideoRecordEvent {
+    START(0),
+    FINALIZE(1);
+
+    final int index;
+
+    private VideoRecordEvent(final int index) {
+      this.index = index;
+    }
+  }
+
+  /**
    * The types of capture request options this plugin currently supports.
    *
    * <p>If you need to add another option to support, ensure the following is done on the Dart side:
@@ -554,6 +570,55 @@ public class GeneratedCameraXLibrary {
       VideoQualityData pigeonResult = new VideoQualityData();
       Object quality = list.get(0);
       pigeonResult.setQuality(quality == null ? null : VideoQuality.values()[(int) quality]);
+      return pigeonResult;
+    }
+  }
+
+  /** Generated class from Pigeon that represents data sent in messages. */
+  public static final class VideoRecordEventData {
+    private @NonNull VideoRecordEvent value;
+
+    public @NonNull VideoRecordEvent getValue() {
+      return value;
+    }
+
+    public void setValue(@NonNull VideoRecordEvent setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"value\" is null.");
+      }
+      this.value = setterArg;
+    }
+
+    /** Constructor is non-public to enforce null safety; use Builder. */
+    VideoRecordEventData() {}
+
+    public static final class Builder {
+
+      private @Nullable VideoRecordEvent value;
+
+      public @NonNull Builder setValue(@NonNull VideoRecordEvent setterArg) {
+        this.value = setterArg;
+        return this;
+      }
+
+      public @NonNull VideoRecordEventData build() {
+        VideoRecordEventData pigeonReturn = new VideoRecordEventData();
+        pigeonReturn.setValue(value);
+        return pigeonReturn;
+      }
+    }
+
+    @NonNull
+    ArrayList<Object> toList() {
+      ArrayList<Object> toListResult = new ArrayList<Object>(1);
+      toListResult.add(value == null ? null : value.index);
+      return toListResult;
+    }
+
+    static @NonNull VideoRecordEventData fromList(@NonNull ArrayList<Object> list) {
+      VideoRecordEventData pigeonResult = new VideoRecordEventData();
+      Object value = list.get(0);
+      pigeonResult.setValue(value == null ? null : VideoRecordEvent.values()[(int) value]);
       return pigeonResult;
     }
   }
@@ -2118,6 +2183,34 @@ public class GeneratedCameraXLibrary {
       }
     }
   }
+
+  private static class PendingRecordingFlutterApiCodec extends StandardMessageCodec {
+    public static final PendingRecordingFlutterApiCodec INSTANCE =
+        new PendingRecordingFlutterApiCodec();
+
+    private PendingRecordingFlutterApiCodec() {}
+
+    @Override
+    protected Object readValueOfType(byte type, @NonNull ByteBuffer buffer) {
+      switch (type) {
+        case (byte) 128:
+          return VideoRecordEventData.fromList((ArrayList<Object>) readValue(buffer));
+        default:
+          return super.readValueOfType(type, buffer);
+      }
+    }
+
+    @Override
+    protected void writeValue(@NonNull ByteArrayOutputStream stream, Object value) {
+      if (value instanceof VideoRecordEventData) {
+        stream.write(128);
+        writeValue(stream, ((VideoRecordEventData) value).toList());
+      } else {
+        super.writeValue(stream, value);
+      }
+    }
+  }
+
   /** Generated class from Pigeon that represents Flutter messages that can be called from Java. */
   public static class PendingRecordingFlutterApi {
     private final @NonNull BinaryMessenger binaryMessenger;
@@ -2133,7 +2226,7 @@ public class GeneratedCameraXLibrary {
     }
     /** The codec used by PendingRecordingFlutterApi. */
     static @NonNull MessageCodec<Object> getCodec() {
-      return new StandardMessageCodec();
+      return PendingRecordingFlutterApiCodec.INSTANCE;
     }
 
     public void create(@NonNull Long identifierArg, @NonNull Reply<Void> callback) {
@@ -2142,6 +2235,18 @@ public class GeneratedCameraXLibrary {
               binaryMessenger, "dev.flutter.pigeon.PendingRecordingFlutterApi.create", getCodec());
       channel.send(
           new ArrayList<Object>(Collections.singletonList(identifierArg)),
+          channelReply -> callback.reply(null));
+    }
+
+    public void onVideoRecordingEvent(
+        @NonNull VideoRecordEventData eventArg, @NonNull Reply<Void> callback) {
+      BasicMessageChannel<Object> channel =
+          new BasicMessageChannel<>(
+              binaryMessenger,
+              "dev.flutter.pigeon.PendingRecordingFlutterApi.onVideoRecordingEvent",
+              getCodec());
+      channel.send(
+          new ArrayList<Object>(Collections.singletonList(eventArg)),
           channelReply -> callback.reply(null));
     }
   }
@@ -4027,6 +4132,8 @@ public class GeneratedCameraXLibrary {
           return ResolutionInfo.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 134:
           return VideoQualityData.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 135:
+          return VideoRecordEventData.fromList((ArrayList<Object>) readValue(buffer));
         default:
           return super.readValueOfType(type, buffer);
       }
@@ -4055,6 +4162,9 @@ public class GeneratedCameraXLibrary {
       } else if (value instanceof VideoQualityData) {
         stream.write(134);
         writeValue(stream, ((VideoQualityData) value).toList());
+      } else if (value instanceof VideoRecordEventData) {
+        stream.write(135);
+        writeValue(stream, ((VideoRecordEventData) value).toList());
       } else {
         super.writeValue(stream, value);
       }
