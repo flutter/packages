@@ -5,7 +5,7 @@ The Android implementation of [`camera`][1] built with the [CameraX library][2].
 *Note*: If any of [the limitations](#limitations) prevent you from using
 using `camera_android_camerax` or if you run into any problems, please report
 report these issues under [`flutter/flutter`][5] with `[camerax]` in the title.
-You may also opt back into the [`camera_android`][6] implementation if you need.
+You may also opt back into the [`camera_android`][9] implementation if you need.
 
 ## Usage
 
@@ -34,6 +34,10 @@ use cases, the plugin behaves according to the following:
     video recording and image streaming is supported, but concurrent video recording, image
     streaming, and image capture is not supported.
 
+### `setDescriptionWhileRecording` is unimplemented [Issue #148013][148013]
+`setDescriptionWhileRecording`, used to switch cameras while recording video, is currently unimplemented
+due to this not currently being supported by CameraX.
+
 ### 240p resolution configuration for video recording
 
 240p resolution configuration for video recording is unsupported by CameraX, and thus,
@@ -58,4 +62,8 @@ For more information on contributing to this plugin, see [`CONTRIBUTING.md`](CON
 [3]: https://flutter.dev/docs/development/packages-and-plugins/developing-packages#endorsed-federated-plugin
 [4]: https://pub.dev/packages/camera_android
 [5]: https://github.com/flutter/flutter/issues/new/choose
-[6]: https://pub.dev/packages/camera_android#usage
+[6]: https://developer.android.com/media/camera/camerax/architecture#combine-use-cases
+[7]: https://developer.android.com/reference/android/hardware/camera2/CameraMetadata#INFO_SUPPORTED_HARDWARE_LEVEL_3
+[8]: https://developer.android.com/reference/android/hardware/camera2/CameraMetadata#INFO_SUPPORTED_HARDWARE_LEVEL_LIMITED
+[9]: https://pub.dev/packages/camera_android#usage
+[148013]: https://github.com/flutter/flutter/issues/148013

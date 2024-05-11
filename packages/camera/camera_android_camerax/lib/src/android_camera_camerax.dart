@@ -113,6 +113,12 @@ class AndroidCameraCameraX extends CameraPlatform {
   @visibleForTesting
   String? videoOutputPath;
 
+  /// Stream queue to pick up finalized viceo recording events in
+  /// [stopVideoRecording].
+  final StreamQueue<VideoRecordEvent> videoRecordingEventStreamQueue =
+      StreamQueue<VideoRecordEvent>(
+          PendingRecording.videoRecordingEventStreamController.stream);
+
   /// Whether or not [preview] has been bound to the lifecycle of the camera by
   /// [createCamera].
   @visibleForTesting
@@ -122,7 +128,7 @@ class AndroidCameraCameraX extends CameraPlatform {
 
   /// The prefix used to create the filename for video recording files.
   @visibleForTesting
-  final String videoPrefix = 'MOV';
+  final String videoPrefix = 'REC';
 
   /// The [ImageCapture] instance that can be configured to capture a still image.
   @visibleForTesting
@@ -777,6 +783,15 @@ class AndroidCameraCameraX extends CameraPlatform {
     await _unbindUseCaseFromLifecycle(preview!);
   }
 
+  /// Sets the active camera while recording.
+  ///
+  /// Currently unsupported, so is a no-op.
+  @override
+  Future<void> setDescriptionWhileRecording(CameraDescription description) {
+    // TODO(camsim99): Implement this feature, see https://github.com/flutter/flutter/issues/148013.
+    return Future<void>.value();
+  }
+
   /// Resume the paused preview for the selected camera.
   ///
   /// [cameraId] not used.
@@ -963,6 +978,12 @@ class AndroidCameraCameraX extends CameraPlatform {
     if (streamCallback != null) {
       onStreamedFrameAvailable(options.cameraId).listen(streamCallback);
     }
+
+    // Wait for video recording to start.
+    VideoRecordEvent event = await videoRecordingEventStreamQueue.next;
+    while (event != VideoRecordEvent.start) {
+      event = await videoRecordingEventStreamQueue.next;
+    }
   }
 
   /// Stops the video recording and returns the file where it was saved.
@@ -979,23 +1000,30 @@ class AndroidCameraCameraX extends CameraPlatform {
           'Attempting to stop a '
               'video recording while no recording is in progress.');
     }
+
+    /// Stop the active recording and wait for the video recording to be finalized.
+    await recording!.close();
+    VideoRecordEvent event = await videoRecordingEventStreamQueue.next;
+    while (event != VideoRecordEvent.finalize) {
+      event = await videoRecordingEventStreamQueue.next;
+    }
+    recording = null;
+    pendingRecording = null;
+
     if (videoOutputPath == null) {
-      // Stop the current active recording as we will be unable to complete it
-      // in this error case.
-      await recording!.close();
-      recording = null;
-      pendingRecording = null;
+      // Handle any errors with finalizing video recording.
       throw CameraException(
           'INVALID_PATH',
           'The platform did not return a path '
               'while reporting success. The platform should always '
               'return a valid path or report an error.');
     }
-    await recording!.close();
-    recording = null;
-    pendingRecording = null;
+
     await _unbindUseCaseFromLifecycle(videoCapture!);
-    return XFile(videoOutputPath!);
+    final XFile videoFile = XFile(videoOutputPath!);
+    cameraEventStreamController
+        .add(VideoRecordedEvent(cameraId, videoFile, /* duration */ null));
+    return videoFile;
   }
 
   /// Pause the current video recording if it is not null.
