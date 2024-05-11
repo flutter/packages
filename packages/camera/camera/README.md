@@ -45,10 +45,10 @@ Change the minimum Android sdk version to 21 (or higher) in your `android/app/bu
 minSdkVersion 21
 ```
 
-It's important to note that the endorsed [`camera_android_camerax`][2] implementation of the camera plugin
-built with CameraX has several limitations; please see this list of all of [the list of limitations][3]
-for more details. If you wish to use the [`camera_android`][4] implementation of the camera plugin built
-with Camera2 that lacks these limitations, please follow [these instructions][5].
+The endorsed [`camera_android_camerax`][2] implementation of the camera plugin built with CameraX has
+better support for more devices than `camera_android`, but has some limitations; please see [this list][3]
+for more details. If you wish to use the [`camera_android`][4] implementation of the camera plugin
+built with Camera2 that lacks these limitations, please follow [these instructions][5].
 
 ### Web integration
 

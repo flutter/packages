@@ -16,15 +16,6 @@ in your app when you do, so you do not need to add it to your `pubspec.yaml`.
 However, if you `import` this package to use any of its APIs directly, you
 should add it to your `pubspec.yaml` as usual.
 
-If using `camera: <0.11.0` and wish to use this plugin instead of [`camera_android`][4],
-run
-
-```sh
-$ flutter pub add camera_android_camerax
-```
-
-from your project's root directory.
-
 ## Limitations
 
 ### Concurrent preview display, video recording, image capture, and image streaming
@@ -45,9 +36,9 @@ use cases, the plugin behaves according to the following:
 
 ### 240p resolution configuration for video recording
 
-240p resolution configuration for video recording is unsupported by CameraX,
-and thus, the plugin will fall back to target 480p if configured with a
-`ResolutionPreset`.
+240p resolution configuration for video recording is unsupported by CameraX, and thus,
+the plugin will fall back to target 480p (`ResolutionPreset.medium`) if configured with
+`ResolutionPreset.low`.
 
 ### Setting maximum duration and stream options for video capture
 

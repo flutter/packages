@@ -1,8 +1,10 @@
 ## 0.11.0
 
 * **Breaking Change** Changes the Android implementation of the camera plugin from `camera_android`
-  to `camera_android_camerax`, which has full feature parity with `camera_android` except for all
-  of the limitations listed in `README.md`. To continue using `camera_android`, use `camera <0.11.0`.
+  to `camera_android_camerax`, which has better support for a wider range of devices. The CameraX
+  implementation full feature parity with `camera_android` except for the limitations listed in
+  `README.md`. To continue using `camera_android`, specify a dependency on `camera_android` in your
+  `pubspec.yaml`.
 
 ## 0.10.6
 
