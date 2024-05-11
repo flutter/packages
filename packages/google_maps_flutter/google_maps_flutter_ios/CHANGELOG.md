@@ -1,3 +1,7 @@
+## 2.6.1
+
+* Adds support for patterns in polylines.
+
 ## 2.6.0
 
 * Updates the minimum allowed verison of the Google Maps SDK to 8.4, for privacy
