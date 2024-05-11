@@ -11,6 +11,7 @@
 		1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */ = {isa = PBXBuildFile; fileRef = 1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */; };
 		3B3967161E833CAA004F5970 /* AppFrameworkInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */; };
 		4510D964F3B1259FEDD3ABA6 /* libPods-Runner.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7755F8F4BABC3D6A0BD4048B /* libPods-Runner.a */; };
+		478116522BEF8F47002F593E /* GoogleMapsPolylinesControllerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 478116512BEF8F47002F593E /* GoogleMapsPolylinesControllerTests.m */; };
 		6851F3562835BC180032B7C8 /* FLTGoogleMapJSONConversionsConversionTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6851F3552835BC180032B7C8 /* FLTGoogleMapJSONConversionsConversionTests.m */; };
 		68E4726A2836FF0C00BDDDAC /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 68E472692836FF0C00BDDDAC /* MapKit.framework */; };
 		978B8F6F1D3862AE00F588F7 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 7AFFD8EE1D35381100E5BB4D /* AppDelegate.m */; };
@@ -18,8 +19,8 @@
 		97C146FC1CF9000F007C117D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FA1CF9000F007C117D /* Main.storyboard */; };
 		97C146FE1CF9000F007C117D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FD1CF9000F007C117D /* Assets.xcassets */; };
 		97C147011CF9000F007C117D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FF1CF9000F007C117D /* LaunchScreen.storyboard */; };
-		F269303B2BB389BF00BF17C4 /* assets in Resources */ = {isa = PBXBuildFile; fileRef = F269303A2BB389BF00BF17C4 /* assets */; };
 		982F2A6C27BADE17003C81F4 /* PartiallyMockedMapView.m in Sources */ = {isa = PBXBuildFile; fileRef = 982F2A6B27BADE17003C81F4 /* PartiallyMockedMapView.m */; };
+		F269303B2BB389BF00BF17C4 /* assets in Resources */ = {isa = PBXBuildFile; fileRef = F269303A2BB389BF00BF17C4 /* assets */; };
 		F7151F13265D7ED70028CB91 /* GoogleMapsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F7151F12265D7ED70028CB91 /* GoogleMapsTests.m */; };
 		F7151F21265D7EE50028CB91 /* GoogleMapsUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = F7151F20265D7EE50028CB91 /* GoogleMapsUITests.m */; };
 		FC8F35FC8CD533B128950487 /* libPods-RunnerTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F267F68029D1A4E2E4C572A7 /* libPods-RunnerTests.a */; };
@@ -60,6 +61,7 @@
 		1498D2321E8E86230040F4C2 /* GeneratedPluginRegistrant.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GeneratedPluginRegistrant.h; sourceTree = "<group>"; };
 		1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GeneratedPluginRegistrant.m; sourceTree = "<group>"; };
 		3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = AppFrameworkInfo.plist; path = Flutter/AppFrameworkInfo.plist; sourceTree = "<group>"; };
+		478116512BEF8F47002F593E /* GoogleMapsPolylinesControllerTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GoogleMapsPolylinesControllerTests.m; sourceTree = "<group>"; };
 		6851F3552835BC180032B7C8 /* FLTGoogleMapJSONConversionsConversionTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FLTGoogleMapJSONConversionsConversionTests.m; sourceTree = "<group>"; };
 		68E472692836FF0C00BDDDAC /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.0.sdk/System/iOSSupport/System/Library/Frameworks/MapKit.framework; sourceTree = DEVELOPER_DIR; };
 		733AFAB37683A9DA7512F09C /* Pods-RunnerTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-RunnerTests/Pods-RunnerTests.release.xcconfig"; sourceTree = "<group>"; };
@@ -203,6 +205,7 @@
 				F269303A2BB389BF00BF17C4 /* assets */,
 				6851F3552835BC180032B7C8 /* FLTGoogleMapJSONConversionsConversionTests.m */,
 				F7151F12265D7ED70028CB91 /* GoogleMapsTests.m */,
+				478116512BEF8F47002F593E /* GoogleMapsPolylinesControllerTests.m */,
 				982F2A6A27BADE17003C81F4 /* PartiallyMockedMapView.h */,
 				982F2A6B27BADE17003C81F4 /* PartiallyMockedMapView.m */,
 				F7151F14265D7ED70028CB91 /* Info.plist */,
@@ -467,6 +470,7 @@
 				F7151F13265D7ED70028CB91 /* GoogleMapsTests.m in Sources */,
 				6851F3562835BC180032B7C8 /* FLTGoogleMapJSONConversionsConversionTests.m in Sources */,
 				982F2A6C27BADE17003C81F4 /* PartiallyMockedMapView.m in Sources */,
+				478116522BEF8F47002F593E /* GoogleMapsPolylinesControllerTests.m in Sources */,
 				0DD7B6C32B744EEF00E857FD /* FLTTileProviderControllerTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
