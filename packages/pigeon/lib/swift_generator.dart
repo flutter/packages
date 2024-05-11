@@ -125,11 +125,26 @@ class SwiftGenerator extends StructuredGenerator<SwiftOptions> {
         indent, classDefinition.documentationComments, _docCommentSpec,
         generatorComments: generatedComments);
 
-    indent.write('struct ${classDefinition.name} ');
+    if (classDefinition.isSwiftClass) {
+      indent.write('class ${classDefinition.name} ');
+    } else {
+      indent.write('struct ${classDefinition.name} ');
+    }
     indent.addScoped('{', '}', () {
-      getFieldsInSerializationOrder(classDefinition).forEach((NamedType field) {
-        _writeClassField(indent, field);
-      });
+      final Iterable<NamedType> fields =
+          getFieldsInSerializationOrder(classDefinition);
+
+      if (classDefinition.isSwiftClass) {
+        _writeClassInit(indent, fields.toList());
+      }
+
+      for (final NamedType field in fields) {
+        addDocumentationComments(
+            indent, field.documentationComments, _docCommentSpec);
+        indent.write('var ');
+        _writeClassField(indent, field, addNil: !classDefinition.isSwiftClass);
+        indent.newln();
+      }
 
       indent.newln();
       writeClassDecode(
@@ -147,6 +162,35 @@ class SwiftGenerator extends StructuredGenerator<SwiftOptions> {
         dartPackageName: dartPackageName,
       );
     });
+  }
+
+  void _writeClassInit(Indent indent, List<NamedType> fields) {
+    indent.writeScoped('init(', ')', () {
+      for (int i = 0; i < fields.length; i++) {
+        indent.write('');
+        _writeClassField(indent, fields[i]);
+        if (i == fields.length - 1) {
+          indent.newln();
+        } else {
+          indent.addln(',');
+        }
+      }
+    }, addTrailingNewline: false);
+    indent.addScoped(' {', '}', () {
+      for (final NamedType field in fields) {
+        _writeClassFieldInit(indent, field);
+      }
+    });
+  }
+
+  void _writeClassField(Indent indent, NamedType field, {bool addNil = true}) {
+    indent.add('${field.name}: ${_nullsafeSwiftTypeForDartType(field.type)}');
+    final String defaultNil = field.type.isNullable && addNil ? ' = nil' : '';
+    indent.add(defaultNil);
+  }
+
+  void _writeClassFieldInit(Indent indent, NamedType field) {
+    indent.writeln('self.${field.name} = ${field.name}');
   }
 
   @override
@@ -169,9 +213,7 @@ class SwiftGenerator extends StructuredGenerator<SwiftOptions> {
           String toWriteValue = '';
           final String fieldName = field.name;
           final String nullsafe = field.type.isNullable ? '?' : '';
-          if (field.type.isClass) {
-            toWriteValue = '$fieldName$nullsafe.toList()';
-          } else if (field.type.isEnum) {
+          if (field.type.isEnum) {
             toWriteValue = '$fieldName$nullsafe.rawValue';
           } else {
             toWriteValue = field.name;
@@ -192,12 +234,14 @@ class SwiftGenerator extends StructuredGenerator<SwiftOptions> {
     required String dartPackageName,
   }) {
     final String className = classDefinition.name;
-    indent.write('static func fromList(_ list: [Any?]) -> $className? ');
+    indent.writeln('// swift-format-ignore: AlwaysUseLowerCamelCase');
+    indent.write(
+        'static func fromList(_ ${varNamePrefix}list: [Any?]) -> $className? ');
 
     indent.addScoped('{', '}', () {
       enumerate(getFieldsInSerializationOrder(classDefinition),
           (int index, final NamedType field) {
-        final String listValue = 'list[$index]';
+        final String listValue = '${varNamePrefix}list[$index]';
 
         _writeDecodeCasting(
           indent: indent,
@@ -220,16 +264,6 @@ class SwiftGenerator extends StructuredGenerator<SwiftOptions> {
         }
       });
     });
-  }
-
-  void _writeClassField(Indent indent, NamedType field) {
-    addDocumentationComments(
-        indent, field.documentationComments, _docCommentSpec);
-
-    indent.write(
-        'var ${field.name}: ${_nullsafeSwiftTypeForDartType(field.type)}');
-    final String defaultNil = field.type.isNullable ? ' = nil' : '';
-    indent.addln(defaultNil);
   }
 
   @override
@@ -293,9 +327,13 @@ class SwiftGenerator extends StructuredGenerator<SwiftOptions> {
     indent.write('class ${api.name}: ${api.name}Protocol ');
     indent.addScoped('{', '}', () {
       indent.writeln('private let binaryMessenger: FlutterBinaryMessenger');
-      indent.write('init(binaryMessenger: FlutterBinaryMessenger) ');
+      indent.writeln('private let messageChannelSuffix: String');
+      indent.write(
+          'init(binaryMessenger: FlutterBinaryMessenger, messageChannelSuffix: String = "") ');
       indent.addScoped('{', '}', () {
         indent.writeln('self.binaryMessenger = binaryMessenger');
+        indent.writeln(
+            r'self.messageChannelSuffix = messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : ""');
       });
       final String codecName = _getCodecName(api);
       String codecArgumentString = '';
@@ -380,8 +418,10 @@ class SwiftGenerator extends StructuredGenerator<SwiftOptions> {
       indent.writeln(
           '$_docCommentPrefix Sets up an instance of `$apiName` to handle messages through the `binaryMessenger`.');
       indent.write(
-          'static func setUp(binaryMessenger: FlutterBinaryMessenger, api: $apiName?) ');
+          'static func setUp(binaryMessenger: FlutterBinaryMessenger, api: $apiName?, messageChannelSuffix: String = "") ');
       indent.addScoped('{', '}', () {
+        indent.writeln(
+            r'let channelSuffix = messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : ""');
         for (final Method method in api.methods) {
           _writeHostMethodMessageHandler(
             indent,
@@ -538,48 +578,23 @@ class SwiftGenerator extends StructuredGenerator<SwiftOptions> {
     required TypeDeclaration type,
   }) {
     final String fieldType = _swiftTypeForDartType(type);
-
-    if (type.isNullable) {
-      if (type.isClass) {
-        indent.writeln('var $variableName: $fieldType? = nil');
-        indent
-            .write('if let ${variableName}List: [Any?] = nilOrValue($value) ');
-        indent.addScoped('{', '}', () {
-          indent.writeln(
-              '$variableName = $fieldType.fromList(${variableName}List)');
-        });
-      } else if (type.isEnum) {
-        indent.writeln('var $variableName: $fieldType? = nil');
+    if (type.isNullable && type.isEnum) {
+      indent.writeln('var $variableName: $fieldType? = nil');
+      indent.writeln(
+          'let ${variableName}EnumVal: Int? = ${_castForceUnwrap(value, const TypeDeclaration(baseName: 'Int', isNullable: true))}');
+      indent.write('if let ${variableName}RawValue = ${variableName}EnumVal ');
+      indent.addScoped('{', '}', () {
         indent.writeln(
-            'let ${variableName}EnumVal: Int? = ${_castForceUnwrap(value, const TypeDeclaration(baseName: 'Int', isNullable: true))}');
-        indent
-            .write('if let ${variableName}RawValue = ${variableName}EnumVal ');
-        indent.addScoped('{', '}', () {
-          indent.writeln(
-              '$variableName = $fieldType(rawValue: ${variableName}RawValue)!');
-        });
-      } else {
-        _writeGenericCasting(
-          indent: indent,
-          value: value,
-          variableName: variableName,
-          fieldType: fieldType,
-          type: type,
-        );
-      }
+            '$variableName = $fieldType(rawValue: ${variableName}RawValue)!');
+      });
     } else {
-      if (type.isClass) {
-        indent.writeln(
-            'let $variableName = $fieldType.fromList($value as! [Any?])!');
-      } else {
-        _writeGenericCasting(
-          indent: indent,
-          value: value,
-          variableName: variableName,
-          fieldType: fieldType,
-          type: type,
-        );
-      }
+      _writeGenericCasting(
+        indent: indent,
+        value: value,
+        variableName: variableName,
+        fieldType: fieldType,
+        type: type,
+      );
     }
   }
 
@@ -702,7 +717,8 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
           ? 'nil'
           : '[${enumSafeArgNames.join(', ')}] as [Any?]';
       const String channel = 'channel';
-      indent.writeln('let channelName: String = "$channelName"');
+      indent.writeln(
+          'let channelName: String = "$channelName\\(messageChannelSuffix)"');
       indent.writeln(
           'let $channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger$codecArgumentString)');
       indent.write('$channel.sendMessage($sendArgument) ');
@@ -732,7 +748,6 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
             indent.writeln('completion(.success(Void()))');
           } else {
             final String fieldType = _swiftTypeForDartType(returnType);
-
             _writeGenericCasting(
               indent: indent,
               value: 'listResponse[0]',
@@ -740,7 +755,6 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
               fieldType: fieldType,
               type: returnType,
             );
-
             indent.writeln('completion(.success(result))');
           }
         });
@@ -768,9 +782,8 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
 
     final String varChannelName = '${name}Channel';
     addDocumentationComments(indent, documentationComments, _docCommentSpec);
-
     indent.writeln(
-        'let $varChannelName = FlutterBasicMessageChannel(name: "$channelName", binaryMessenger: binaryMessenger$codecArgumentString)');
+        'let $varChannelName = FlutterBasicMessageChannel(name: "$channelName\\(channelSuffix)", binaryMessenger: binaryMessenger$codecArgumentString)');
     indent.write('if let api = api ');
     indent.addScoped('{', '}', () {
       indent.write('$varChannelName.setMessageHandler ');
@@ -883,7 +896,8 @@ String _flattenTypeArguments(List<TypeDeclaration> args) {
 }
 
 String _swiftTypeForBuiltinGenericDartType(TypeDeclaration type) {
-  if (type.typeArguments.isEmpty) {
+  if (type.typeArguments.isEmpty ||
+      (type.typeArguments.first.baseName == 'Object')) {
     if (type.baseName == 'List') {
       return '[Any?]';
     } else if (type.baseName == 'Map') {

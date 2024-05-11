@@ -5,7 +5,9 @@
 import 'dart:ui' show Size;
 
 import 'analyzer.dart';
+import 'aspect_ratio_strategy.dart';
 import 'camera2_camera_control.dart';
+import 'camera2_camera_info.dart';
 import 'camera_control.dart';
 import 'camera_info.dart';
 import 'camera_selector.dart';
@@ -24,6 +26,7 @@ import 'preview.dart';
 import 'process_camera_provider.dart';
 import 'quality_selector.dart';
 import 'recorder.dart';
+import 'resolution_filter.dart';
 import 'resolution_selector.dart';
 import 'resolution_strategy.dart';
 import 'system_services.dart';
@@ -59,6 +62,10 @@ class CameraXProxy {
     this.createCaptureRequestOptions = _createAttachedCaptureRequestOptions,
     this.createMeteringPoint = _createAttachedMeteringPoint,
     this.createFocusMeteringAction = _createAttachedFocusMeteringAction,
+    this.createAspectRatioStrategy = _createAttachedAspectRatioStrategy,
+    this.createResolutionFilterWithOnePreferredSize =
+        _createAttachedResolutionFilterWithOnePreferredSize,
+    this.getCamera2CameraInfo = _getCamera2CameraInfo,
   });
 
   /// Returns a [ProcessCameraProvider] instance.
@@ -115,9 +122,11 @@ class CameraXProxy {
       int? fallbackRule}) createResolutionStrategy;
 
   /// Returns a [ResolutionSelector] configured with the specified
-  /// [ResolutionStrategy].
-  ResolutionSelector Function(ResolutionStrategy resolutionStrategy)
-      createResolutionSelector;
+  /// [ResolutionStrategy], [ResolutionFilter], and [AspectRatioStrategy].
+  ResolutionSelector Function(
+      ResolutionStrategy resolutionStrategy,
+      ResolutionFilter? resolutionFilter,
+      AspectRatioStrategy? aspectRatioStrategy) createResolutionSelector;
 
   /// Returns a [FallbackStrategy] configured with the specified [VideoQuality]
   /// and [VideoResolutionFallbackRule].
@@ -147,11 +156,11 @@ class CameraXProxy {
   /// rotation constants.
   Future<int> Function() getDefaultDisplayRotation;
 
-  /// Get [Camera2CameraControl] instance from [cameraControl].
+  /// Gets [Camera2CameraControl] instance from [cameraControl].
   Camera2CameraControl Function(CameraControl cameraControl)
       getCamera2CameraControl;
 
-  /// Create [CapureRequestOptions] with specified options.
+  /// Creates a [CaptureRequestOptions] with specified options.
   CaptureRequestOptions Function(
           List<(CaptureRequestKeySupportedType, Object?)> options)
       createCaptureRequestOptions;
@@ -166,6 +175,19 @@ class CameraXProxy {
   /// and their modes.
   FocusMeteringAction Function(List<(MeteringPoint, int?)> meteringPointInfos,
       bool? disableAutoCancel) createFocusMeteringAction;
+
+  /// Creates an [AspectRatioStrategy] with specified aspect ratio and fallback
+  /// rule.
+  AspectRatioStrategy Function(int aspectRatio, int fallbackRule)
+      createAspectRatioStrategy;
+
+  /// Creates a [ResolutionFilter] that prioritizes specified resolution.
+  ResolutionFilter Function(Size preferredResolution)
+      createResolutionFilterWithOnePreferredSize;
+
+  /// Gets [Camera2CameraInfo] instance from [cameraInfo].
+  Future<Camera2CameraInfo> Function(CameraInfo cameraInfo)
+      getCamera2CameraInfo;
 
   static Future<ProcessCameraProvider> _getProcessCameraProvider() {
     return ProcessCameraProvider.getInstance();
@@ -234,8 +256,13 @@ class CameraXProxy {
   }
 
   static ResolutionSelector _createAttachedResolutionSelector(
-      ResolutionStrategy resolutionStrategy) {
-    return ResolutionSelector(resolutionStrategy: resolutionStrategy);
+      ResolutionStrategy resolutionStrategy,
+      ResolutionFilter? resolutionFilter,
+      AspectRatioStrategy? aspectRatioStrategy) {
+    return ResolutionSelector(
+        resolutionStrategy: resolutionStrategy,
+        resolutionFilter: resolutionFilter,
+        aspectRatioStrategy: aspectRatioStrategy);
   }
 
   static FallbackStrategy _createAttachedFallbackStrategy(
@@ -290,5 +317,22 @@ class CameraXProxy {
     return FocusMeteringAction(
         meteringPointInfos: meteringPointInfos,
         disableAutoCancel: disableAutoCancel);
+  }
+
+  static AspectRatioStrategy _createAttachedAspectRatioStrategy(
+      int preferredAspectRatio, int fallbackRule) {
+    return AspectRatioStrategy(
+        preferredAspectRatio: preferredAspectRatio, fallbackRule: fallbackRule);
+  }
+
+  static ResolutionFilter _createAttachedResolutionFilterWithOnePreferredSize(
+      Size preferredSize) {
+    return ResolutionFilter.onePreferredSize(
+        preferredResolution: preferredSize);
+  }
+
+  static Future<Camera2CameraInfo> _getCamera2CameraInfo(
+      CameraInfo cameraInfo) async {
+    return Camera2CameraInfo.from(cameraInfo);
   }
 }

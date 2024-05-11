@@ -186,6 +186,8 @@ updates:
         update-types: ["version-update:semver-minor", "version-update:semver-patch"]
       - dependency-name: "androidx.test:*"
         update-types: ["version-update:semver-minor", "version-update:semver-patch"]
+      - dependency-name: "org.robolectric:*"
+        update-types: ["version-update:semver-minor", "version-update:semver-patch"]
 
   - package-ecosystem: "gradle"
     directory: "/packages/file_selector/file_selector_android/example/android/app"
@@ -388,6 +390,34 @@ updates:
     directory: "/packages/in_app_purchase/in_app_purchase/example/android/app"
     commit-message:
       prefix: "[in_app_pur]"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 10
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-minor", "version-update:semver-patch"]
+
+  - package-ecosystem: "gradle"
+    directory: "/packages/interactive_media_ads/android"
+    commit-message:
+      prefix: "[interactive_media_ads]"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 10
+    ignore:
+      - dependency-name: "com.android.tools.build:gradle"
+        update-types: ["version-update:semver-minor", "version-update:semver-patch"]
+      - dependency-name: "junit:junit"
+        update-types: ["version-update:semver-minor", "version-update:semver-patch"]
+      - dependency-name: "org.mockito:*"
+        update-types: ["version-update:semver-minor", "version-update:semver-patch"]
+      - dependency-name: "androidx.test:*"
+        update-types: ["version-update:semver-minor", "version-update:semver-patch"]
+
+  - package-ecosystem: "gradle"
+    directory: "/packages/interactive_media_ads/example/android/app"
+    commit-message:
+      prefix: "[interactive_media_ads]"
     schedule:
       interval: "weekly"
     open-pull-requests-limit: 10
