@@ -1,3 +1,7 @@
+## 14.1.1
+
+- Improves the logging of routes when `debugLogDiagnostics` is enabled or `debugKnownRoutes() is called. Explains the position of shell routes in the route tree
+
 ## 14.1.0
 
 - Adds route redirect to ShellRoutes
