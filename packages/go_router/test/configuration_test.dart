@@ -991,96 +991,97 @@ void main() {
             GlobalKey<NavigatorState>(debugLabel: 'shell');
 
         expect(
-            createRouteConfiguration(
-              navigatorKey: root,
-              routes: <RouteBase>[
-                GoRoute(
-                  path: '/a',
-                  parentNavigatorKey: root,
-                  builder: _mockScreenBuilder,
-                  routes: <RouteBase>[
-                    ShellRoute(
-                      navigatorKey: shell,
-                      builder: _mockShellBuilder,
-                      routes: <RouteBase>[
-                        GoRoute(
-                          path: 'b',
-                          parentNavigatorKey: shell,
-                          builder: _mockScreenBuilder,
-                        ),
-                        GoRoute(
-                          path: 'c',
-                          parentNavigatorKey: shell,
-                          builder: _mockScreenBuilder,
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-                GoRoute(
-                  path: '/d',
-                  parentNavigatorKey: root,
-                  builder: _mockScreenBuilder,
-                  routes: <RouteBase>[
-                    GoRoute(
-                      path: 'e',
-                      parentNavigatorKey: root,
-                      builder: _mockScreenBuilder,
-                      routes: <RouteBase>[
-                        GoRoute(
-                          path: 'f',
-                          parentNavigatorKey: root,
-                          builder: _mockScreenBuilder,
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-                GoRoute(
-                  path: '/g',
-                  builder: _mockScreenBuilder,
-                  routes: <RouteBase>[
-                    StatefulShellRoute.indexedStack(
-                      builder: _mockIndexedStackShellBuilder,
-                      branches: <StatefulShellBranch>[
-                        StatefulShellBranch(
-                          routes: <RouteBase>[
-                            GoRoute(
-                              path: 'h',
-                              builder: _mockScreenBuilder,
-                            ),
-                          ],
-                        ),
-                        StatefulShellBranch(
-                          routes: <RouteBase>[
-                            GoRoute(
-                              path: 'i',
-                              builder: _mockScreenBuilder,
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ],
-              redirectLimit: 10,
-              topRedirect: (BuildContext context, GoRouterState state) {
-                return null;
-              },
-            ).debugKnownRoutes(),
-            'Full paths for routes:\n'
-            '├─/a (Widget)\n'
-            '│ └─/a (ShellRoute)\n'
-            '│   ├─/a/b (Widget)\n'
-            '│   └─/a/c (Widget)\n'
-            '├─/d (Widget)\n'
-            '│ └─/d/e (Widget)\n'
-            '│   └─/d/e/f (Widget)\n'
-            '└─/g (Widget)\n'
-            '  └─/g (ShellRoute)\n'
-            '    ├─/g/h (Widget)\n'
-            '    └─/g/i (Widget)\n');
+          createRouteConfiguration(
+            navigatorKey: root,
+            routes: <RouteBase>[
+              GoRoute(
+                path: '/a',
+                parentNavigatorKey: root,
+                builder: _mockScreenBuilder,
+                routes: <RouteBase>[
+                  ShellRoute(
+                    navigatorKey: shell,
+                    builder: _mockShellBuilder,
+                    routes: <RouteBase>[
+                      GoRoute(
+                        path: 'b',
+                        parentNavigatorKey: shell,
+                        builder: _mockScreenBuilder,
+                      ),
+                      GoRoute(
+                        path: 'c',
+                        parentNavigatorKey: shell,
+                        builder: _mockScreenBuilder,
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              GoRoute(
+                path: '/d',
+                parentNavigatorKey: root,
+                builder: _mockScreenBuilder,
+                routes: <RouteBase>[
+                  GoRoute(
+                    path: 'e',
+                    parentNavigatorKey: root,
+                    builder: _mockScreenBuilder,
+                    routes: <RouteBase>[
+                      GoRoute(
+                        path: 'f',
+                        parentNavigatorKey: root,
+                        builder: _mockScreenBuilder,
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              GoRoute(
+                path: '/g',
+                builder: _mockScreenBuilder,
+                routes: <RouteBase>[
+                  StatefulShellRoute.indexedStack(
+                    builder: _mockIndexedStackShellBuilder,
+                    branches: <StatefulShellBranch>[
+                      StatefulShellBranch(
+                        routes: <RouteBase>[
+                          GoRoute(
+                            path: 'h',
+                            builder: _mockScreenBuilder,
+                          ),
+                        ],
+                      ),
+                      StatefulShellBranch(
+                        routes: <RouteBase>[
+                          GoRoute(
+                            path: 'i',
+                            builder: _mockScreenBuilder,
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ],
+            redirectLimit: 10,
+            topRedirect: (BuildContext context, GoRouterState state) {
+              return null;
+            },
+          ).debugKnownRoutes(),
+          'Full paths for routes:\n'
+          '├─/a (Widget)\n'
+          '│ └─ (ShellRoute)\n'
+          '│   ├─/a/b (Widget)\n'
+          '│   └─/a/c (Widget)\n'
+          '├─/d (Widget)\n'
+          '│ └─/d/e (Widget)\n'
+          '│   └─/d/e/f (Widget)\n'
+          '└─/g (Widget)\n'
+          '  └─ (ShellRoute)\n'
+          '    ├─/g/h (Widget)\n'
+          '    └─/g/i (Widget)\n',
+        );
       },
     );
   });
