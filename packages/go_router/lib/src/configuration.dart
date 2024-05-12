@@ -550,7 +550,7 @@ class RouteConfiguration {
         sb.writeln('$decoration$path ($screenName)'
             '${route.name == null ? '' : ' (${route.name})'}');
       } else if (route is ShellRouteBase) {
-        sb.writeln('$decoration$parentFullpath (ShellRoute)');
+        sb.writeln('$decoration (ShellRoute)');
       }
       _debugFullPathsFor(route.routes, path, decoration, sb);
     }
