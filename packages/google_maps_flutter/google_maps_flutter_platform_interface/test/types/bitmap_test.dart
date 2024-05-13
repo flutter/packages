@@ -411,7 +411,7 @@ void main() {
     });
   });
 
-  group('$AssetMapBitmap', () {
+  group('AssetMapBitmap', () {
     test('construct', () async {
       final BitmapDescriptor descriptor = AssetMapBitmap(
         'red_square.png',
@@ -548,7 +548,7 @@ void main() {
       // TODO(stuartmorgan): Investigate timeout on web.
       skip: kIsWeb);
 
-  group('$BytesMapBitmap', () {
+  group('BytesMapBitmap', () {
     test('construct with empty byte array, throws assertion error', () {
       expect(() {
         BytesMapBitmap(Uint8List.fromList(<int>[]));

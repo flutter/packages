@@ -26,7 +26,7 @@ enum MapBitmapScaling {
   ///
   /// This can be used if the image is already pre-scaled, or to increase
   /// performance with a large numbers of markers.
-  noScaling,
+  none,
 }
 
 // The default pixel ratio for custom bitmaps.
@@ -316,6 +316,29 @@ class BitmapDescriptor {
 /// Represents a [BitmapDescriptor] base class for map bitmaps.
 ///
 /// See [AssetMapBitmap] and [BytesMapBitmap] for concrete implementations.
+///
+/// The [imagePixelRatio] should be set to the correct pixel ratio of bitmap
+/// image. If the [width] or [height] is provided, the [imagePixelRatio]
+/// value is ignored.
+///
+/// [bitmapScaling] controls the scaling behavior:
+/// - [MapBitmapScaling.auto] automatically upscales and downscales the image
+///   to match the device's pixel ratio or the specified dimensions,
+///   maintaining consistency across devices.
+/// - [MapBitmapScaling.none] disables automatic scaling, which is
+///   useful when performance is a concern or if the asset is already scaled
+///   appropriately.
+///
+/// Optionally, [width] and [height] can be specified to control the dimensions
+/// of the rendered image:
+/// - If both [width] and [height] are non-null, the image will have the
+///   specified dimensions, which might distort the original aspect ratio,
+///   similar to [BoxFit.fill].
+/// - If only one of [width] and [height] is non-null, then the output image
+///   will be scaled to the associated width or height, and the other dimension
+///   will take whatever value is needed to maintain the image's original aspect
+///   ratio. These cases are similar to [BoxFit.fitWidth] and
+///   [BoxFit.fitHeight], respectively.
 abstract class MapBitmap extends BitmapDescriptor {
   MapBitmap._({
     required this.bitmapScaling,
@@ -328,12 +351,35 @@ abstract class MapBitmap extends BitmapDescriptor {
   final MapBitmapScaling bitmapScaling;
 
   /// The pixel ratio of the bitmap.
+  ///
+  /// If the [width] or [height] is provided, the [imagePixelRatio]
+  /// value is ignored.
   final double imagePixelRatio;
 
   /// The target width of the bitmap in logical pixels.
+  ///
+  /// - If [width] is provided and [height] is null, the image will be scaled to
+  ///   the associated width, and the height will take whatever value is needed
+  ///   to maintain the image's original aspect ratio. This is similar to
+  ///   [BoxFit.fitWidth].
+  /// - If both [width] and [height] are non-null, the image will have the
+  ///   specified dimensions, which might distort the original aspect ratio,
+  ///   similar to [BoxFit.fill].
+  /// - If neither [width] nor [height] is provided, the image will be rendered
+  ///   using the [imagePixelRatio] value.
   final double? width;
 
   /// The target height of the bitmap in logical pixels.
+  ///
+  /// - If [height] is provided and [width] is null, the image will be scaled to
+  ///   the associated height, and the width will take whatever value is needed
+  ///   to maintain the image's original aspect ratio. This is similar to
+  ///   [BoxFit.fitHeight].
+  /// - If both [width] and [height] are non-null, the image will have the
+  ///   specified dimensions, which might distort the original aspect ratio,
+  ///   similar to [BoxFit.fill].
+  /// - If neither [width] nor [height] is provided, the image will be rendered
+  ///   using the [imagePixelRatio] value.
   final double? height;
 }
 
@@ -375,10 +421,10 @@ abstract class MapBitmap extends BitmapDescriptor {
 /// - If both [width] and [height] are non-null, the image will have the
 ///   specified dimensions, which might distort the original aspect ratio,
 ///   similar to [BoxFit.fill].
-/// - If only one of `width` and `height` is non-null, then the output image
+/// - If only one of [width] and [height] is non-null, then the output image
 ///   will be scaled to the associated width or height, and the other dimension
 ///   will take whatever value is needed to maintain the image's original aspect
-///   ratio. These cases are simnilar to [BoxFit.fitWidth] and
+///   ratio. These cases are similar to [BoxFit.fitWidth] and
 ///   [BoxFit.fitHeight], respectively.
 ///
 /// ```dart
@@ -432,7 +478,7 @@ class AssetMapBitmap extends MapBitmap {
   /// - [MapBitmapScaling.auto] automatically upscales and downscales the image
   ///   to match the device's pixel ratio or the specified dimensions,
   ///   maintaining consistency across devices.
-  /// - [MapBitmapScaling.noScaling] disables automatic scaling, which is
+  /// - [MapBitmapScaling.none] disables automatic scaling, which is
   ///   useful when performance is a concern or if the asset is already scaled
   ///   appropriately.
   ///
@@ -441,10 +487,10 @@ class AssetMapBitmap extends MapBitmap {
   /// - If both [width] and [height] are non-null, the image will have the
   ///   specified dimensions, which might distort the original aspect ratio,
   ///   similar to [BoxFit.fill].
-  /// - If only one of `width` and `height` is non-null, then the output image
+  /// - If only one of [width] and [height] is non-null, then the output image
   ///   will be scaled to the associated width or height, and the other dimension
   ///   will take whatever value is needed to maintain the image's original aspect
-  ///   ratio. These cases are simnilar to [BoxFit.fitWidth] and
+  ///   ratio. These cases are similar to [BoxFit.fitWidth] and
   ///   [BoxFit.fitHeight], respectively.
   ///
   /// If [width] or [height] is provided, [imagePixelRatio] value is ignored.
@@ -495,10 +541,10 @@ class AssetMapBitmap extends MapBitmap {
   })  : assert(assetName.isNotEmpty, 'The asset name must not be empty.'),
         assert(imagePixelRatio > 0.0,
             'The imagePixelRatio must be greater than 0.'),
-        assert(bitmapScaling != MapBitmapScaling.noScaling || width == null,
-            'If bitmapScaling is set to MapBitmapScaling.noScaling, width parameter cannot be used.'),
-        assert(bitmapScaling != MapBitmapScaling.noScaling || height == null,
-            'If bitmapScaling is set to MapBitmapScaling.noScaling, height parameter cannot be used.'),
+        assert(bitmapScaling != MapBitmapScaling.none || width == null,
+            'If bitmapScaling is set to MapBitmapScaling.none, width parameter cannot be used.'),
+        assert(bitmapScaling != MapBitmapScaling.none || height == null,
+            'If bitmapScaling is set to MapBitmapScaling.none, height parameter cannot be used.'),
         super._();
 
   /// The type of the [BitmapDescriptor] object, used for the
@@ -524,17 +570,17 @@ class AssetMapBitmap extends MapBitmap {
   /// - If both [width] and [height] are non-null, the image will have the
   ///   specified dimensions, which might distort the original aspect ratio,
   ///   similar to [BoxFit.fill].
-  /// - If only one of `width` and `height` is non-null, then the output image
+  /// - If only one of [width] and [height] is non-null, then the output image
   ///   will be scaled to the associated width or height, and the other
   ///   dimension will take whatever value is needed to maintain the image's
-  ///   original aspect ratio. These cases are simnilar to [BoxFit.fitWidth] and
+  ///   original aspect ratio. These cases are similar to [BoxFit.fitWidth] and
   ///   [BoxFit.fitHeight], respectively.
   ///
   /// [bitmapScaling] controls the scaling behavior:
   /// - [MapBitmapScaling.auto] automatically upscales and downscales the image
   ///   to match the device's pixel ratio or the specified dimensions,
   ///   maintaining consistency across devices.
-  /// - [MapBitmapScaling.noScaling] disables automatic scaling, which is
+  /// - [MapBitmapScaling.none] disables automatic scaling, which is
   ///   useful when performance is a concern or if the asset is already scaled
   ///   appropriately.
   ///
@@ -632,7 +678,7 @@ class AssetMapBitmap extends MapBitmap {
 /// - [MapBitmapScaling.auto] automatically upscales and downscales the image
 ///   to match the device's pixel ratio or the specified dimensions,
 ///   maintaining consistency across devices.
-/// - [MapBitmapScaling.noScaling] disables automatic scaling, which is
+/// - [MapBitmapScaling.none] disables automatic scaling, which is
 ///   useful when performance is a concern or if the asset is already scaled
 ///   appropriately.
 ///
@@ -647,10 +693,10 @@ class AssetMapBitmap extends MapBitmap {
 /// - If both [width] and [height] are non-null, the image will have the
 ///   specified dimensions, which might distort the original aspect ratio,
 ///   similar to [BoxFit.fill].
-/// - If only one of `width` and `height` is non-null, then the output image
+/// - If only one of [width] and [height] is non-null, then the output image
 ///   will be scaled to the associated width or height, and the other
 ///   dimension will take whatever value is needed to maintain the image's
-///   original aspect ratio. These cases are simnilar to [BoxFit.fitWidth] and
+///   original aspect ratio. These cases are similar to [BoxFit.fitWidth] and
 ///   [BoxFit.fitHeight], respectively.
 ///
 /// The following example demonstrates how to create an [BytesMapBitmap] from
@@ -701,7 +747,7 @@ class BytesMapBitmap extends MapBitmap {
   /// - [MapBitmapScaling.auto] automatically upscales and downscales the image
   ///   to match the device's pixel ratio or the specified dimensions,
   ///   maintaining consistency across devices.
-  /// - [MapBitmapScaling.noScaling] disables automatic scaling, which is
+  /// - [MapBitmapScaling.none] disables automatic scaling, which is
   ///   useful when performance is a concern or if the asset is already scaled
   ///   appropriately.
   ///
@@ -716,10 +762,10 @@ class BytesMapBitmap extends MapBitmap {
   /// - If both [width] and [height] are non-null, the image will have the
   ///   specified dimensions, which might distort the original aspect ratio,
   ///   similar to [BoxFit.fill].
-  /// - If only one of `width` and `height` is non-null, then the output image
+  /// - If only one of [width] and [height] is non-null, then the output image
   ///   will be scaled to the associated width or height, and the other
   ///   dimension will take whatever value is needed to maintain the image's
-  ///   original aspect ratio. These cases are simnilar to [BoxFit.fitWidth] and
+  ///   original aspect ratio. These cases are similar to [BoxFit.fitWidth] and
   ///   [BoxFit.fitHeight], respectively.
   ///
   /// Throws an [AssertionError] if [byteData] is empty or if incompatible
@@ -769,13 +815,12 @@ class BytesMapBitmap extends MapBitmap {
   })  : assert(byteData.isNotEmpty,
             'Cannot create BitmapDescriptor with empty byteData.'),
         assert(
-            bitmapScaling != MapBitmapScaling.noScaling ||
-                imagePixelRatio == null,
-            'If bitmapScaling is set to MapBitmapScaling.noScaling, imagePixelRatio parameter cannot be used.'),
-        assert(bitmapScaling != MapBitmapScaling.noScaling || width == null,
-            'If bitmapScaling is set to MapBitmapScaling.noScaling, width parameter cannot be used.'),
-        assert(bitmapScaling != MapBitmapScaling.noScaling || height == null,
-            'If bitmapScaling is set to MapBitmapScaling.noScaling, height parameter cannot be used.'),
+            bitmapScaling != MapBitmapScaling.none || imagePixelRatio == null,
+            'If bitmapScaling is set to MapBitmapScaling.none, imagePixelRatio parameter cannot be used.'),
+        assert(bitmapScaling != MapBitmapScaling.none || width == null,
+            'If bitmapScaling is set to MapBitmapScaling.none, width parameter cannot be used.'),
+        assert(bitmapScaling != MapBitmapScaling.none || height == null,
+            'If bitmapScaling is set to MapBitmapScaling.none, height parameter cannot be used.'),
         super._(imagePixelRatio: imagePixelRatio ?? _naturalPixelRatio);
 
   /// The type of the MapBitmap object, used for the JSON serialization.
