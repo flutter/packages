@@ -24,6 +24,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.ClipData;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -35,7 +36,9 @@ import io.flutter.plugins.imagepicker.Messages.ImageSelectionOptions;
 import io.flutter.plugins.imagepicker.Messages.MediaSelectionOptions;
 import io.flutter.plugins.imagepicker.Messages.VideoSelectionOptions;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -815,30 +818,60 @@ public class ImagePickerDelegateTest {
   }
 
   @Test
-  public void
-      onActivityResult_whenImagePickedFromGallery_finishesWithEmptyListIfIntentDataIsNull() {
+  public void onActivityResult_whenImagePickedFromGallery_finishesWithErrorIfClipDataIsNull() {
+    when(mockIntent.getData()).thenReturn(null);
+    when(mockIntent.getClipData()).thenReturn(null);
+
+    Mockito.doAnswer(
+          invocation -> {
+            ((Runnable) invocation.getArgument(0)).run();
+            return null;
+          })
+            .when(mockExecutor)
+            .execute(any(Runnable.class));
+    ImagePickerDelegate delegate = createDelegateWithPendingResultAndOptions(
+            DEFAULT_IMAGE_OPTIONS,
+            null
+    );
+
+    delegate.onActivityResult(
+                ImagePickerDelegate.REQUEST_CODE_CHOOSE_MEDIA_FROM_GALLERY,
+                Activity.RESULT_OK,
+                mockIntent);
+
+    ArgumentCaptor<FlutterError> errorCaptor = ArgumentCaptor.forClass(FlutterError.class);
+    verify(mockResult).error(errorCaptor.capture());
+    assertEquals("no_valid_media_uri", errorCaptor.getValue().code);
+    assertEquals("Cannot find the selected media.", errorCaptor.getValue().getMessage());
+  }
+
+  @Test
+  public void onActivityResult_whenImagePickedFromGallery_finishesWithErrorIfClipDataUriIsNull() {
     setupMockClipDataNullUri();
     when(mockIntent.getData()).thenReturn(null);
     when(mockIntent.getClipData()).thenReturn(null);
 
     Mockito.doAnswer(
-            invocation -> {
-              ((Runnable) invocation.getArgument(0)).run();
-              return null;
-            })
-        .when(mockExecutor)
-        .execute(any(Runnable.class));
-    ImagePickerDelegate delegate =
-        createDelegateWithPendingResultAndOptions(DEFAULT_IMAGE_OPTIONS, null);
+                    invocation -> {
+                      ((Runnable) invocation.getArgument(0)).run();
+                      return null;
+                    })
+            .when(mockExecutor)
+            .execute(any(Runnable.class));
+    ImagePickerDelegate delegate = createDelegateWithPendingResultAndOptions(
+            DEFAULT_IMAGE_OPTIONS,
+            null
+    );
 
     delegate.onActivityResult(
-        ImagePickerDelegate.REQUEST_CODE_CHOOSE_MEDIA_FROM_GALLERY, Activity.RESULT_OK, mockIntent);
+            ImagePickerDelegate.REQUEST_CODE_CHOOSE_MEDIA_FROM_GALLERY,
+            Activity.RESULT_OK,
+            mockIntent);
 
-    @SuppressWarnings("unchecked")
-    ArgumentCaptor<List<String>> pathListCapture = ArgumentCaptor.forClass(List.class);
-    verify(mockResult).success(pathListCapture.capture());
-    assertEquals(0, pathListCapture.getValue().size());
-    verifyNoMoreInteractions(mockResult);
+    ArgumentCaptor<FlutterError> errorCaptor = ArgumentCaptor.forClass(FlutterError.class);
+    verify(mockResult).error(errorCaptor.capture());
+    assertEquals("no_valid_media_uri", errorCaptor.getValue().code);
+    assertEquals("Cannot find the selected media.", errorCaptor.getValue().getMessage());
   }
 
   private ImagePickerDelegate createDelegate() {

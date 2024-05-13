@@ -663,13 +663,18 @@ public class ImagePickerDelegate
         String path = fileUtils.getPathFromUri(activity, uri);
         // Again, same error state as above.
         if (path == null) {
+          System.out.println("FINAL CASE");
           return null;
         }
         String mimeType = includeMimeType ? activity.getContentResolver().getType(uri) : null;
         paths.add(new MediaPath(path, mimeType));
       }
     } else {
-      paths.add(new MediaPath(fileUtils.getPathFromUri(activity, uri), null));
+      String path = fileUtils.getPathFromUri(activity, uri);
+      if (path == null) {
+        return null;
+      }
+      paths.add(new MediaPath(path, null));
     }
     return paths;
   }
