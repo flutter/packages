@@ -58,12 +58,6 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI {
     super.init()
   }
 
-  // This init is used for tests
-  @objc
-  public convenience init(receiptManager: FIAPReceiptManager) {
-    self.init(receiptManager: receiptManager, handlerFactory: { FIAPRequestHandler(request: $0) })
-  }
-
   // This init gets called during plugin registration
   public convenience init(registrar: FlutterPluginRegistrar) {
     self.init(receiptManager: FIAPReceiptManager())

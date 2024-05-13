@@ -21,7 +21,11 @@
 
 - (void)setUp {
   self.receiptManagerStub = [FIAPReceiptManagerStub new];
-  self.plugin = [[InAppPurchasePluginStub alloc] initWithReceiptManager:self.receiptManagerStub];
+  self.plugin = [[InAppPurchasePluginStub alloc]
+      initWithReceiptManager:self.receiptManagerStub
+              handlerFactory:^FIAPRequestHandler *(SKRequest *request) {
+                return [[FIAPRequestHandler alloc] initWithRequest:request];
+              }];
 }
 
 - (void)tearDown {
@@ -702,8 +706,11 @@
     @"transactionTimeStamp" : @([NSDate date].timeIntervalSince1970),
   };
 
-  InAppPurchasePlugin *plugin =
-      [[InAppPurchasePlugin alloc] initWithReceiptManager:_receiptManagerStub];
+  InAppPurchasePlugin *plugin = [[InAppPurchasePluginStub alloc]
+      initWithReceiptManager:self.receiptManagerStub
+              handlerFactory:^FIAPRequestHandler *(SKRequest *request) {
+                return [[FIAPRequestHandler alloc] initWithRequest:request];
+              }];
   FlutterMethodChannel *mockChannel = OCMClassMock([FlutterMethodChannel class]);
   plugin.transactionObserverCallbackChannel = mockChannel;
   OCMStub([mockChannel invokeMethod:[OCMArg any] arguments:[OCMArg any]]);
@@ -729,8 +736,11 @@
     @"transactionTimeStamp" : @([NSDate date].timeIntervalSince1970),
   };
 
-  InAppPurchasePlugin *plugin =
-      [[InAppPurchasePlugin alloc] initWithReceiptManager:_receiptManagerStub];
+  InAppPurchasePlugin *plugin = [[InAppPurchasePluginStub alloc]
+      initWithReceiptManager:self.receiptManagerStub
+              handlerFactory:^FIAPRequestHandler *(SKRequest *request) {
+                return [[FIAPRequestHandler alloc] initWithRequest:request];
+              }];
   FlutterMethodChannel *mockChannel = OCMClassMock([FlutterMethodChannel class]);
   plugin.transactionObserverCallbackChannel = mockChannel;
   OCMStub([mockChannel invokeMethod:[OCMArg any] arguments:[OCMArg any]]);
@@ -746,8 +756,11 @@
 }
 
 - (void)testHandleTransactionRestoreFailed {
-  InAppPurchasePlugin *plugin =
-      [[InAppPurchasePlugin alloc] initWithReceiptManager:_receiptManagerStub];
+  InAppPurchasePlugin *plugin = [[InAppPurchasePluginStub alloc]
+      initWithReceiptManager:self.receiptManagerStub
+              handlerFactory:^FIAPRequestHandler *(SKRequest *request) {
+                return [[FIAPRequestHandler alloc] initWithRequest:request];
+              }];
   FlutterMethodChannel *mockChannel = OCMClassMock([FlutterMethodChannel class]);
   plugin.transactionObserverCallbackChannel = mockChannel;
   OCMStub([mockChannel invokeMethod:[OCMArg any] arguments:[OCMArg any]]);
@@ -759,8 +772,11 @@
 }
 
 - (void)testRestoreCompletedTransactionsFinished {
-  InAppPurchasePlugin *plugin =
-      [[InAppPurchasePlugin alloc] initWithReceiptManager:_receiptManagerStub];
+  InAppPurchasePlugin *plugin = [[InAppPurchasePluginStub alloc]
+      initWithReceiptManager:self.receiptManagerStub
+              handlerFactory:^FIAPRequestHandler *(SKRequest *request) {
+                return [[FIAPRequestHandler alloc] initWithRequest:request];
+              }];
   FlutterMethodChannel *mockChannel = OCMClassMock([FlutterMethodChannel class]);
   plugin.transactionObserverCallbackChannel = mockChannel;
   OCMStub([mockChannel invokeMethod:[OCMArg any] arguments:[OCMArg any]]);
@@ -790,8 +806,11 @@
   SKMutablePayment *payment = [FIAObjectTranslator getSKMutablePaymentFromMap:paymentMap];
   SKProductStub *product = [[SKProductStub alloc] initWithMap:productMap];
 
-  InAppPurchasePlugin *plugin =
-      [[InAppPurchasePlugin alloc] initWithReceiptManager:_receiptManagerStub];
+  InAppPurchasePlugin *plugin = [[InAppPurchasePluginStub alloc]
+      initWithReceiptManager:self.receiptManagerStub
+              handlerFactory:^FIAPRequestHandler *(SKRequest *request) {
+                return [[FIAPRequestHandler alloc] initWithRequest:request];
+              }];
   FlutterMethodChannel *mockChannel = OCMClassMock([FlutterMethodChannel class]);
   plugin.transactionObserverCallbackChannel = mockChannel;
   OCMStub([mockChannel invokeMethod:[OCMArg any] arguments:[OCMArg any]]);
