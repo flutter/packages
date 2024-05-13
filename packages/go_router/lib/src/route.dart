@@ -1136,13 +1136,7 @@ class StatefulNavigationShell extends StatefulWidget {
       final GoRoute route = branch.defaultRoute!;
       final List<String> parameters = <String>[];
       patternToRegExp(route.path, parameters);
-      assert(
-        parameters.isEmpty,
-        'The first route in the branch contains parameter[s] $parameters. '
-        'The goBranch cannot infer its location string because of this. '
-        'Please provide an initialLocation to the StatefulShellBranch at '
-        'the index $index.',
-      );
+      assert(parameters.isEmpty);
       final String fullPath = _router.configuration.locationForRoute(route)!;
       return patternToPath(
           fullPath, shellRouteContext.routerState.pathParameters);

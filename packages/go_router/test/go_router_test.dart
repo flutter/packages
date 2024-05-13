@@ -3958,7 +3958,7 @@ void main() {
 
     testWidgets(
         'Navigates to correct nested navigation tree in StatefulShellRoute '
-        'and maintains state', (WidgetTester tester) async {
+        'and maintains path parameters', (WidgetTester tester) async {
       StatefulNavigationShell? routeState;
 
       final List<RouteBase> routes = <RouteBase>[
@@ -3992,8 +3992,7 @@ void main() {
             ])
       ];
 
-      final GoRouter router =
-          await createRouter(routes, tester, initialLocation: '/123/a');
+      await createRouter(routes, tester, initialLocation: '/123/a');
       expect(find.text('a id is 123'), findsOneWidget);
 
       routeState!.goBranch(1);
