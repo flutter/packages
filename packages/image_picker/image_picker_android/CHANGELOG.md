@@ -1,3 +1,7 @@
+## 0.8.12+1
+
+* Fixes crashes caused by `handleChooseMultiImageResult` when selecting images with size 0.
+
 ## 0.8.12
 
 * Fixes app crashes on Android 12+ caused by selecting images with size 0.
