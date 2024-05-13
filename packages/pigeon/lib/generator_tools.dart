@@ -13,7 +13,13 @@ import 'ast.dart';
 /// The current version of pigeon.
 ///
 /// This must match the version in pubspec.yaml.
-const String pigeonVersion = '18.0.0';
+const String pigeonVersion = '18.0.1';
+
+/// Prefix for all local variables in methods.
+///
+/// This lowers the chances of variable name collisions with
+/// user defined parameters.
+const String varNamePrefix = '__pigeon_';
 
 /// Read all the content from [stdin] to a String.
 String readStdin() {

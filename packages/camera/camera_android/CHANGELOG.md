@@ -1,3 +1,8 @@
+## 0.10.9+2
+
+* Updates `README.md` to reflect the fact that the `camera_android_camerax` camera plugin implementation
+  is the endorsed Android implementation for `camera: ^0.11.0`.
+
 ## 0.10.9+1
 
 * Changes the visibility of a number of fields to `@VisibleForTesting` in order simplify testing.
