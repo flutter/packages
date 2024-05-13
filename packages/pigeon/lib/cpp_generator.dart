@@ -950,7 +950,7 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
                     'WriteValue(EncodableValue(std::any_cast<${customType.name}>(*custom_value).ToEncodableList()), stream);');
               } else if (customType.type == CustomTypes.customEnum) {
                 indent.writeln(
-                    'WriteValue(EncodableValue(std::any_cast<int>(*custom_value)), stream);');
+                    'WriteValue(EncodableValue(static_cast<int>(std::any_cast<${customType.name}>(*custom_value))), stream);');
               }
               indent.writeln('return;');
             });
@@ -1472,17 +1472,12 @@ ${prefix}reply(EncodableValue(std::move(wrapped)));''';
     bool isNestedClass,
   ) {
     final String encodableValue;
-    if (!hostType.isBuiltin &&
-        root.classes.any((Class c) => c.name == dartType.baseName)) {
-      final String nonNullValue = hostType.isNullable || isNestedClass
-          ? '*$variableName'
-          : variableName;
-      encodableValue = 'CustomEncodableValue($nonNullValue)';
-    } else if (!hostType.isBuiltin &&
-        root.enums.any((Enum e) => e.name == dartType.baseName)) {
+    if (!hostType.isBuiltin) {
       final String nonNullValue =
-          hostType.isNullable ? '(*$variableName)' : variableName;
-      encodableValue = 'EncodableValue((int)$nonNullValue)';
+          hostType.isNullable || (!hostType.isEnum && isNestedClass)
+              ? '*$variableName'
+              : variableName;
+      encodableValue = 'CustomEncodableValue($nonNullValue)';
     } else if (dartType.baseName == 'Object') {
       final String operator = hostType.isNullable ? '*' : '';
       encodableValue = '$operator$variableName';
@@ -1527,6 +1522,14 @@ ${prefix}reply(EncodableValue(std::move(wrapped)));''';
       } else if (hostType.isBuiltin) {
         indent.writeln(
             'const auto* $argName = std::get_if<${hostType.datatype}>(&$encodableArgName);');
+      } else if (hostType.isEnum) {
+        indent.format('''
+${hostType.datatype} ${argName}_value;
+const ${hostType.datatype}* $argName = nullptr;
+if (!$encodableArgName.IsNull()) {
+  ${argName}_value = ${_classReferenceFromEncodableValue(hostType, encodableArgName)};
+  $argName = &${argName}_value;
+}''');
       } else {
         indent.writeln(
             'const auto* $argName = &(${_classReferenceFromEncodableValue(hostType, encodableArgName)});');

@@ -22,6 +22,7 @@ class SimpleClass {
   bool aBool;
 }
 
+// TODO(tarrinneal): Add the functionality and tests for these data types.
 class AllMapTypes {
   AllMapTypes(
     this.map,
@@ -83,7 +84,7 @@ class AllTypes {
     required this.aFloatArray,
     this.list = const <Object?>[],
     this.aMap = const <String?, Object?>{},
-    // this.anEnum = AnEnum.one,
+    this.anEnum = AnEnum.one,
     this.aString = '',
     this.anObject = 0,
     required this.allMaps,
@@ -104,7 +105,7 @@ class AllTypes {
   List list;
   // ignore: always_specify_types, strict_raw_type
   Map aMap;
-  // AnEnum anEnum;
+  AnEnum anEnum;
   String aString;
   Object anObject;
   AllMapTypes allMaps;
@@ -128,7 +129,7 @@ class AllNullableTypes {
     this.nullableNestedList,
     this.nullableMapWithAnnotations,
     this.nullableMapWithObject,
-    // this.aNullableEnum,
+    this.aNullableEnum,
     this.aNullableString,
     this.aNullableObject,
     this.allNullableTypes,
@@ -149,7 +150,7 @@ class AllNullableTypes {
   List<List<bool?>?>? nullableNestedList;
   Map<String?, String?>? nullableMapWithAnnotations;
   Map<String?, Object?>? nullableMapWithObject;
-  // AnEnum? aNullableEnum;
+  AnEnum? aNullableEnum;
   String? aNullableString;
   Object? aNullableObject;
   AllNullableTypes? allNullableTypes;
@@ -173,7 +174,7 @@ class AllNullableTypesWithoutRecursion {
     this.nullableNestedList,
     this.nullableMapWithAnnotations,
     this.nullableMapWithObject,
-    // this.aNullableEnum,
+    this.aNullableEnum,
     this.aNullableString,
     this.aNullableObject,
   );
@@ -193,7 +194,7 @@ class AllNullableTypesWithoutRecursion {
   List<List<bool?>?>? nullableNestedList;
   Map<String?, String?>? nullableMapWithAnnotations;
   Map<String?, Object?>? nullableMapWithObject;
-  // AnEnum? aNullableEnum;
+  AnEnum? aNullableEnum;
   String? aNullableString;
   Object? aNullableObject;
 }
