@@ -232,6 +232,7 @@ typedef void (^FLADAuthCompletion)(FLADAuthResultDetails *_Nullable, FlutterErro
   switch (authError.code) {
     case LAErrorPasscodeNotSet:
     case LAErrorBiometryNotEnrolled:
+    case LAErrorBiometryNotAvailable:
       if (options.useErrorDialogs) {
         [self showAlertWithMessage:strings.goToSettingsDescription
                  dismissButtonTitle:strings.cancelButton
@@ -239,8 +240,13 @@ typedef void (^FLADAuthCompletion)(FLADAuthResultDetails *_Nullable, FlutterErro
                          completion:completion];
         return;
       }
-      result = authError.code == LAErrorPasscodeNotSet ? FLADAuthResultErrorPasscodeNotSet
-                                                       : FLADAuthResultErrorNotEnrolled;
+      if (authError.code == LAErrorPasscodeNotSet) {
+        result = FLADAuthResultErrorPasscodeNotSet;
+      } else if (authError.code == LAErrorBiometryNotEnrolled) {
+        result = FLADAuthResultErrorNotEnrolled;
+      } else if (authError.code == LAErrorBiometryNotAvailable) {
+        result = FLADAuthResultErrorNotAvailable;
+      }
       break;
     case LAErrorBiometryLockout:
       [self showAlertWithMessage:strings.lockOut

@@ -1,3 +1,7 @@
+## 1.3.1
+
+* Fixes an issue where biometrics are shown as unavailable rather than disabled when turned off in settings.
+
 ## 1.3.0
 
 * Adds Swift Package Manager compatibility.
