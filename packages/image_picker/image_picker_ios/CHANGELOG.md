@@ -1,3 +1,11 @@
+## 0.8.11+1
+
+* Makes all headers public with Swift Package Manager integration to keep inline with CocoaPods.
+
+## 0.8.11
+
+* Adds Swift Package Manager compatibility.
+
 ## 0.8.10+1
 
 * Fixes a possible crash when calling a picker method UIGraphicsImageRenderer if imageToScale is nil.

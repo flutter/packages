@@ -60,7 +60,7 @@ void main() {
     final InstanceManager instanceManager = InstanceManager(
       onWeakReferenceRemoved: (_) {},
     );
-    const int targetRotation = Surface.ROTATION_180;
+    const int targetRotation = Surface.rotation180;
     final VideoCapture videoCapture = VideoCapture.detached(
       instanceManager: instanceManager,
     );
