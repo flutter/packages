@@ -651,8 +651,7 @@ void main() {
       expect(
           code,
           contains(
-              'nullable_nested_ ? EncodableValue(nullable_nested_->ToEncodableList()) '
-              ': EncodableValue()'));
+              'nullable_nested_ ? CustomEncodableValue(*nullable_nested_) : EncodableValue())'));
 
       // Serialization should use push_back, not initializer lists, to avoid
       // copies.
@@ -805,13 +804,15 @@ void main() {
               'non_nullable_nested_ = std::make_unique<Nested>(value_arg);'));
       // Serialization uses the value directly.
       expect(code, contains('EncodableValue(non_nullable_bool_)'));
-      expect(code, contains('non_nullable_nested_->ToEncodableList()'));
+      expect(code, contains('CustomEncodableValue(*non_nullable_nested_)'));
 
       // Serialization should use push_back, not initializer lists, to avoid
       // copies.
       expect(code, contains('list.reserve(4)'));
       expect(
-          code, contains('list.push_back(EncodableValue(non_nullable_bool_))'));
+          code,
+          contains(
+              'list.push_back(CustomEncodableValue(*non_nullable_nested_))'));
     }
   });
 
@@ -1637,13 +1638,13 @@ void main() {
         dartPackageName: DEFAULT_PACKAGE_NAME,
       );
       final String code = sink.toString();
-      // Standard types are wrapped an EncodableValues.
+      // Standard types are wrapped in EncodableValues.
       expect(code, contains('EncodableValue(a_bool_arg)'));
       expect(code, contains('EncodableValue(an_int_arg)'));
       expect(code, contains('EncodableValue(a_string_arg)'));
       expect(code, contains('EncodableValue(a_list_arg)'));
       expect(code, contains('EncodableValue(a_map_arg)'));
-      // Class types use ToEncodableList.
+      // Class types are wrapped in CustomEncodableValues.
       expect(code, contains('CustomEncodableValue(an_object_arg)'));
     }
   });
