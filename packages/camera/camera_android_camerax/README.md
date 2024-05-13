@@ -21,6 +21,26 @@ from your project's root directory.
 
 ## Limitations
 
+### Concurrent preview display, video recording, image capture, and image streaming
+
+The CameraX plugin only supports the concurrent camera use cases supported by Camerax; see
+[their documentation][6] for more information. To avoid the usage of unsupported concurrent
+use cases, the plugin behaves according to the following:
+
+* If the preview is paused (via `pausePreview`), concurrent video recording and image capture
+  and/or image streaming (via `startVideoCapturing(cameraId, VideoCaptureOptions(streamCallback:...))`)
+  is supported.
+* If the preview is not paused
+  * **and** the camera device is at least supported hardware [`LIMITED`][8], then concurrent
+    image capture and video recording is supported.
+  * **and** the camera device is at least supported hardware [`LEVEL_3`][7], then concurrent
+    video recording and image streaming is supported, but concurrent video recording, image
+    streaming, and image capture is not supported.
+
+### `setDescriptionWhileRecording` is unimplemented [Issue #148013][148013]
+`setDescriptionWhileRecording`, used to switch cameras while recording video, is currently unimplemented
+due to this not currently being supported by CameraX.
+
 ### 240p resolution configuration for video recording
 
 240p resolution configuration for video recording is unsupported by CameraX,
@@ -45,11 +65,7 @@ For more information on contributing to this plugin, see [`CONTRIBUTING.md`](CON
 [3]: https://docs.flutter.dev/packages-and-plugins/developing-packages#non-endorsed-federated-plugin
 [4]: https://pub.dev/packages/camera_android
 [5]: https://github.com/flutter/flutter/issues/new/choose
-[120462]: https://github.com/flutter/flutter/issues/120462
-[125915]: https://github.com/flutter/flutter/issues/125915
-[120715]: https://github.com/flutter/flutter/issues/120715
-[120468]: https://github.com/flutter/flutter/issues/120468
-[120467]: https://github.com/flutter/flutter/issues/120467
-[125371]: https://github.com/flutter/flutter/issues/125371
-[126477]: https://github.com/flutter/flutter/issues/126477
-[127896]: https://github.com/flutter/flutter/issues/127896
+[6]: https://developer.android.com/media/camera/camerax/architecture#combine-use-cases
+[7]: https://developer.android.com/reference/android/hardware/camera2/CameraMetadata#INFO_SUPPORTED_HARDWARE_LEVEL_3
+[8]: https://developer.android.com/reference/android/hardware/camera2/CameraMetadata#INFO_SUPPORTED_HARDWARE_LEVEL_LIMITED
+[148013]: https://github.com/flutter/flutter/issues/148013

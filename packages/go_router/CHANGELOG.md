@@ -1,6 +1,10 @@
-## 14.0.3
+## 14.1.1
 
 - Fixes correctness of the state provided in the `onExit`.
+
+## 14.1.0
+
+- Adds route redirect to ShellRoutes
 
 ## 14.0.2
 

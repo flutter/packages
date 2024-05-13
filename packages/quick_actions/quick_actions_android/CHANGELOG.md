@@ -1,3 +1,7 @@
+## 1.0.12
+
+* Switches from using `ShortcutManager` to `ShortcutManagerCompat`.
+
 ## 1.0.11
 
 * Updates minSdkVersion to 19.
