@@ -47,6 +47,7 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI {
   }
 
   @objc
+  // This is the designated initializer
   public init(
     receiptManager: FIAPReceiptManager,
     handlerFactory: @escaping (SKRequest) -> FIAPRequestHandler = {
