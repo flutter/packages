@@ -841,6 +841,34 @@ public class ImagePickerDelegateTest {
     verifyNoMoreInteractions(mockResult);
   }
 
+  @Test
+  public void onActivityResult_whenImagePickedFromGallery_finishesWithEmptyListIfClipDataIsNull() {
+    setupMockClipDataNullUri();
+    when(mockIntent.getData()).thenReturn(null);
+    when(mockIntent.getClipData()).thenReturn(null);
+
+    Mockito.doAnswer(
+            invocation -> {
+              ((Runnable) invocation.getArgument(0)).run();
+              return null;
+            })
+        .when(mockExecutor)
+        .execute(any(Runnable.class));
+    ImagePickerDelegate delegate =
+        createDelegateWithPendingResultAndOptions(DEFAULT_IMAGE_OPTIONS, null);
+
+    delegate.onActivityResult(
+        ImagePickerDelegate.REQUEST_CODE_CHOOSE_MULTI_IMAGE_FROM_GALLERY,
+        Activity.RESULT_OK,
+        mockIntent);
+
+    @SuppressWarnings("unchecked")
+    ArgumentCaptor<List<String>> pathListCapture = ArgumentCaptor.forClass(List.class);
+    verify(mockResult).success(pathListCapture.capture());
+    assertEquals(0, pathListCapture.getValue().size());
+    verifyNoMoreInteractions(mockResult);
+  }
+
   private ImagePickerDelegate createDelegate() {
     return new ImagePickerDelegate(
         mockActivity,

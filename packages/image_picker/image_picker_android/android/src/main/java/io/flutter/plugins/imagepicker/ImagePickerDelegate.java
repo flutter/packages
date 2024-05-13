@@ -716,7 +716,10 @@ public class ImagePickerDelegate
                   null));
         }
       } else {
-        paths.add(new MediaPath(fileUtils.getPathFromUri(activity, intent.getData()), null));
+        Uri uri = intent.getData();
+        if (uri != null) {
+          paths.add(new MediaPath(fileUtils.getPathFromUri(activity, uri), null));
+        }
       }
       handleMediaResult(paths);
       return;
