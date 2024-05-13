@@ -23,11 +23,11 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI {
   // TODO(louisehsu): Once tests are migrated to swift, we can use @testable import, and make theses vars private again and remove all instances of @objc
   @objc
   public var registrar: FlutterPluginRegistrar?
-  @objc
   // This property is optional, as it requires self to exist to be initialized.
-  public var paymentQueueHandler: FIAPaymentQueueHandler?
   @objc
+  public var paymentQueueHandler: FIAPaymentQueueHandler?
   // This property is optional, as it needs to be set during plugin registration, and can't be directly initialized.
+  @objc
   public var transactionObserverCallbackChannel: FlutterMethodChannel?
 
   public static func register(with registrar: FlutterPluginRegistrar) {
@@ -47,7 +47,7 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI {
   }
 
   @objc
-  // This is the designated initializer
+  // This init is used for tests
   public init(
     receiptManager: FIAPReceiptManager,
     handlerFactory: @escaping (SKRequest) -> FIAPRequestHandler = {
