@@ -16,7 +16,7 @@ const String convertMapValueHelperName = r'_$convertMapValue';
 
 /// The name of the generated, private helper for converting [Duration] to
 /// [bool].
-const String durationDecoderHelperName = r'_$duractionConverter';
+const String durationDecoderHelperName = r'_$durationConverter';
 
 /// The name of the generated, private helper for converting [String] to [Enum].
 const String enumExtensionHelperName = r'_$fromName';
@@ -91,6 +91,7 @@ String enumMapName(InterfaceType type) => '_\$${type.element.name}EnumMap';
 
 String _stateValueAccess(ParameterElement element, Set<String> pathParameters) {
   if (element.isExtraField) {
+    // ignore: avoid_redundant_argument_values
     return 'extra as ${element.type.getDisplayString(withNullability: true)}';
   }
 

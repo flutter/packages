@@ -334,6 +334,42 @@ void defineTests() {
     );
 
     testWidgets(
+      'should gracefully handle width parsing failures',
+      (WidgetTester tester) async {
+        const String data = '![alt](https://img#x50)';
+        await tester.pumpWidget(
+          boilerplate(
+            const Markdown(data: data),
+          ),
+        );
+
+        final Image image = tester.widget(find.byType(Image));
+        final NetworkImage networkImage = image.image as NetworkImage;
+        expect(networkImage.url, 'https://img');
+        expect(image.width, null);
+        expect(image.height, 50);
+      },
+    );
+
+    testWidgets(
+      'should gracefully handle height parsing failures',
+      (WidgetTester tester) async {
+        const String data = ' ![alt](https://img#50x)';
+        await tester.pumpWidget(
+          boilerplate(
+            const Markdown(data: data),
+          ),
+        );
+
+        final Image image = tester.widget(find.byType(Image));
+        final NetworkImage networkImage = image.image as NetworkImage;
+        expect(networkImage.url, 'https://img');
+        expect(image.width, 50);
+        expect(image.height, null);
+      },
+    );
+
+    testWidgets(
       'custom image builder',
       (WidgetTester tester) async {
         const String data = '![alt](https://img.png)';
