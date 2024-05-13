@@ -74,8 +74,7 @@ data class AllListTypes(
     val stringList: List<String?>,
     val intList: List<Long?>,
     val doubleList: List<Double?>,
-    val boolList: List<Boolean?>,
-    val enumList: List<AnEnum?>
+    val boolList: List<Boolean?>
 ) {
   companion object {
     @Suppress("LocalVariableName")
@@ -85,8 +84,7 @@ data class AllListTypes(
       val intList = __pigeon_list[2] as List<Long?>
       val doubleList = __pigeon_list[3] as List<Double?>
       val boolList = __pigeon_list[4] as List<Boolean?>
-      val enumList = __pigeon_list[5] as List<AnEnum?>
-      return AllListTypes(list, stringList, intList, doubleList, boolList, enumList)
+      return AllListTypes(list, stringList, intList, doubleList, boolList)
     }
   }
 
@@ -97,7 +95,6 @@ data class AllListTypes(
         intList,
         doubleList,
         boolList,
-        enumList,
     )
   }
 }
@@ -118,7 +115,6 @@ data class AllTypes(
     val aFloatArray: DoubleArray,
     val list: List<Any?>,
     val aMap: Map<Any, Any?>,
-    val anEnum: AnEnum,
     val aString: String,
     val anObject: Any,
     val allMaps: AllMapTypes,
@@ -137,11 +133,10 @@ data class AllTypes(
       val aFloatArray = __pigeon_list[7] as DoubleArray
       val list = __pigeon_list[8] as List<Any?>
       val aMap = __pigeon_list[9] as Map<Any, Any?>
-      val anEnum = __pigeon_list[10] as AnEnum
-      val aString = __pigeon_list[11] as String
-      val anObject = __pigeon_list[12] as Any
-      val allMaps = __pigeon_list[13] as AllMapTypes
-      val allLists = __pigeon_list[14] as AllListTypes
+      val aString = __pigeon_list[10] as String
+      val anObject = __pigeon_list[11] as Any
+      val allMaps = __pigeon_list[12] as AllMapTypes
+      val allLists = __pigeon_list[13] as AllListTypes
       return AllTypes(
           aBool,
           anInt,
@@ -153,7 +148,6 @@ data class AllTypes(
           aFloatArray,
           list,
           aMap,
-          anEnum,
           aString,
           anObject,
           allMaps,
@@ -173,7 +167,6 @@ data class AllTypes(
         aFloatArray,
         list,
         aMap,
-        anEnum,
         aString,
         anObject,
         allMaps,
@@ -201,7 +194,6 @@ data class AllNullableTypes(
     val nullableNestedList: List<List<Boolean?>?>? = null,
     val nullableMapWithAnnotations: Map<String?, String?>? = null,
     val nullableMapWithObject: Map<String?, Any?>? = null,
-    val aNullableEnum: AnEnum? = null,
     val aNullableString: String? = null,
     val aNullableObject: Any? = null,
     val allNullableTypes: AllNullableTypes? = null
@@ -224,10 +216,9 @@ data class AllNullableTypes(
       val nullableNestedList = __pigeon_list[10] as List<List<Boolean?>?>?
       val nullableMapWithAnnotations = __pigeon_list[11] as Map<String?, String?>?
       val nullableMapWithObject = __pigeon_list[12] as Map<String?, Any?>?
-      val aNullableEnum = __pigeon_list[13] as AnEnum?
-      val aNullableString = __pigeon_list[14] as String?
-      val aNullableObject = __pigeon_list[15]
-      val allNullableTypes = __pigeon_list[16] as AllNullableTypes?
+      val aNullableString = __pigeon_list[13] as String?
+      val aNullableObject = __pigeon_list[14]
+      val allNullableTypes = __pigeon_list[15] as AllNullableTypes?
       return AllNullableTypes(
           aNullableBool,
           aNullableInt,
@@ -242,7 +233,6 @@ data class AllNullableTypes(
           nullableNestedList,
           nullableMapWithAnnotations,
           nullableMapWithObject,
-          aNullableEnum,
           aNullableString,
           aNullableObject,
           allNullableTypes)
@@ -264,7 +254,6 @@ data class AllNullableTypes(
         nullableNestedList,
         nullableMapWithAnnotations,
         nullableMapWithObject,
-        aNullableEnum,
         aNullableString,
         aNullableObject,
         allNullableTypes,
@@ -292,7 +281,6 @@ data class AllNullableTypesWithoutRecursion(
     val nullableNestedList: List<List<Boolean?>?>? = null,
     val nullableMapWithAnnotations: Map<String?, String?>? = null,
     val nullableMapWithObject: Map<String?, Any?>? = null,
-    val aNullableEnum: AnEnum? = null,
     val aNullableString: String? = null,
     val aNullableObject: Any? = null
 ) {
@@ -314,9 +302,8 @@ data class AllNullableTypesWithoutRecursion(
       val nullableNestedList = __pigeon_list[10] as List<List<Boolean?>?>?
       val nullableMapWithAnnotations = __pigeon_list[11] as Map<String?, String?>?
       val nullableMapWithObject = __pigeon_list[12] as Map<String?, Any?>?
-      val aNullableEnum = __pigeon_list[13] as AnEnum?
-      val aNullableString = __pigeon_list[14] as String?
-      val aNullableObject = __pigeon_list[15]
+      val aNullableString = __pigeon_list[13] as String?
+      val aNullableObject = __pigeon_list[14]
       return AllNullableTypesWithoutRecursion(
           aNullableBool,
           aNullableInt,
@@ -331,7 +318,6 @@ data class AllNullableTypesWithoutRecursion(
           nullableNestedList,
           nullableMapWithAnnotations,
           nullableMapWithObject,
-          aNullableEnum,
           aNullableString,
           aNullableObject)
     }
@@ -352,7 +338,6 @@ data class AllNullableTypesWithoutRecursion(
         nullableNestedList,
         nullableMapWithAnnotations,
         nullableMapWithObject,
-        aNullableEnum,
         aNullableString,
         aNullableObject,
     )

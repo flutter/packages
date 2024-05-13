@@ -238,7 +238,7 @@ void main() {
             val args = message as List<Any?>
             val inputArg = args[0] as Input
             val wrapped: List<Any?> = try {
-              listOf<Any?>(api.doSomething(inputArg))
+              listOf(api.doSomething(inputArg))
             } catch (exception: Throwable) {
               wrapError(exception)
             }
@@ -591,7 +591,7 @@ void main() {
     );
     final String code = sink.toString();
     expect(code, contains('fun doSomething(): Output'));
-    expect(code, contains('listOf<Any?>(api.doSomething())'));
+    expect(code, contains('listOf(api.doSomething())'));
     expect(code, contains('wrapError(exception)'));
     expect(code, contains('reply(wrapped)'));
   });
@@ -1089,7 +1089,7 @@ void main() {
     );
     final String code = sink.toString();
     expect(code, contains('fun doit(): List<Long?>'));
-    expect(code, contains('listOf<Any?>(api.doit())'));
+    expect(code, contains('listOf(api.doit())'));
     expect(code, contains('reply.reply(wrapped)'));
   });
 
@@ -1167,7 +1167,7 @@ void main() {
         code,
         contains(
             'val yArg = args[1].let { num -> if (num is Int) num.toLong() else num as Long }'));
-    expect(code, contains('listOf<Any?>(api.add(xArg, yArg))'));
+    expect(code, contains('listOf(api.add(xArg, yArg))'));
     expect(code, contains('reply.reply(wrapped)'));
   });
 

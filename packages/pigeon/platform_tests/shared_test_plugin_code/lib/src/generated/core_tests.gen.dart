@@ -66,7 +66,6 @@ class AllListTypes {
     required this.intList,
     required this.doubleList,
     required this.boolList,
-    required this.enumList,
   });
 
   List<Object?> list;
@@ -79,8 +78,6 @@ class AllListTypes {
 
   List<bool?> boolList;
 
-  List<AnEnum?> enumList;
-
   Object encode() {
     return <Object?>[
       list,
@@ -88,7 +85,6 @@ class AllListTypes {
       intList,
       doubleList,
       boolList,
-      enumList,
     ];
   }
 
@@ -100,7 +96,6 @@ class AllListTypes {
       intList: (result[2] as List<Object?>?)!.cast<int?>(),
       doubleList: (result[3] as List<Object?>?)!.cast<double?>(),
       boolList: (result[4] as List<Object?>?)!.cast<bool?>(),
-      enumList: (result[5] as List<Object?>?)!.cast<AnEnum?>(),
     );
   }
 }
@@ -118,7 +113,6 @@ class AllTypes {
     required this.aFloatArray,
     this.list = const <Object?>[],
     this.aMap = const <String?, Object?>{},
-    this.anEnum = AnEnum.one,
     this.aString = '',
     this.anObject = 0,
     required this.allMaps,
@@ -145,8 +139,6 @@ class AllTypes {
 
   Map<Object?, Object?> aMap;
 
-  AnEnum anEnum;
-
   String aString;
 
   Object anObject;
@@ -167,7 +159,6 @@ class AllTypes {
       aFloatArray,
       list,
       aMap,
-      anEnum,
       aString,
       anObject,
       allMaps,
@@ -188,11 +179,10 @@ class AllTypes {
       aFloatArray: result[7]! as Float64List,
       list: result[8]! as List<Object?>,
       aMap: result[9]! as Map<Object?, Object?>,
-      anEnum: result[10]! as AnEnum,
-      aString: result[11]! as String,
-      anObject: result[12]!,
-      allMaps: result[13]! as AllMapTypes,
-      allLists: result[14]! as AllListTypes,
+      aString: result[10]! as String,
+      anObject: result[11]!,
+      allMaps: result[12]! as AllMapTypes,
+      allLists: result[13]! as AllListTypes,
     );
   }
 }
@@ -213,7 +203,6 @@ class AllNullableTypes {
     this.nullableNestedList,
     this.nullableMapWithAnnotations,
     this.nullableMapWithObject,
-    this.aNullableEnum,
     this.aNullableString,
     this.aNullableObject,
     this.allNullableTypes,
@@ -245,8 +234,6 @@ class AllNullableTypes {
 
   Map<String?, Object?>? nullableMapWithObject;
 
-  AnEnum? aNullableEnum;
-
   String? aNullableString;
 
   Object? aNullableObject;
@@ -268,7 +255,6 @@ class AllNullableTypes {
       nullableNestedList,
       nullableMapWithAnnotations,
       nullableMapWithObject,
-      aNullableEnum,
       aNullableString,
       aNullableObject,
       allNullableTypes,
@@ -293,10 +279,9 @@ class AllNullableTypes {
           (result[11] as Map<Object?, Object?>?)?.cast<String?, String?>(),
       nullableMapWithObject:
           (result[12] as Map<Object?, Object?>?)?.cast<String?, Object?>(),
-      aNullableEnum: result[13] as AnEnum?,
-      aNullableString: result[14] as String?,
-      aNullableObject: result[15],
-      allNullableTypes: result[16] as AllNullableTypes?,
+      aNullableString: result[13] as String?,
+      aNullableObject: result[14],
+      allNullableTypes: result[15] as AllNullableTypes?,
     );
   }
 }
@@ -319,7 +304,6 @@ class AllNullableTypesWithoutRecursion {
     this.nullableNestedList,
     this.nullableMapWithAnnotations,
     this.nullableMapWithObject,
-    this.aNullableEnum,
     this.aNullableString,
     this.aNullableObject,
   });
@@ -350,8 +334,6 @@ class AllNullableTypesWithoutRecursion {
 
   Map<String?, Object?>? nullableMapWithObject;
 
-  AnEnum? aNullableEnum;
-
   String? aNullableString;
 
   Object? aNullableObject;
@@ -371,7 +353,6 @@ class AllNullableTypesWithoutRecursion {
       nullableNestedList,
       nullableMapWithAnnotations,
       nullableMapWithObject,
-      aNullableEnum,
       aNullableString,
       aNullableObject,
     ];
@@ -395,9 +376,8 @@ class AllNullableTypesWithoutRecursion {
           (result[11] as Map<Object?, Object?>?)?.cast<String?, String?>(),
       nullableMapWithObject:
           (result[12] as Map<Object?, Object?>?)?.cast<String?, Object?>(),
-      aNullableEnum: result[13] as AnEnum?,
-      aNullableString: result[14] as String?,
-      aNullableObject: result[15],
+      aNullableString: result[13] as String?,
+      aNullableObject: result[14],
     );
   }
 }

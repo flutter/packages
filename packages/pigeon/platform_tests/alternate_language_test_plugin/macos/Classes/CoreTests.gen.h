@@ -50,14 +50,12 @@ typedef NS_ENUM(NSUInteger, AnEnum) {
                   stringList:(NSArray<NSString *> *)stringList
                      intList:(NSArray<NSNumber *> *)intList
                   doubleList:(NSArray<NSNumber *> *)doubleList
-                    boolList:(NSArray<NSNumber *> *)boolList
-                    enumList:(NSArray<AnEnumBox *> *)enumList;
+                    boolList:(NSArray<NSNumber *> *)boolList;
 @property(nonatomic, copy) NSArray *list;
 @property(nonatomic, copy) NSArray<NSString *> *stringList;
 @property(nonatomic, copy) NSArray<NSNumber *> *intList;
 @property(nonatomic, copy) NSArray<NSNumber *> *doubleList;
 @property(nonatomic, copy) NSArray<NSNumber *> *boolList;
-@property(nonatomic, copy) NSArray<AnEnumBox *> *enumList;
 @end
 
 /// A class containing all supported types.
@@ -74,7 +72,6 @@ typedef NS_ENUM(NSUInteger, AnEnum) {
                   aFloatArray:(FlutterStandardTypedData *)aFloatArray
                          list:(NSArray *)list
                          aMap:(NSDictionary *)aMap
-                       anEnum:(AnEnum)anEnum
                       aString:(NSString *)aString
                      anObject:(id)anObject
                       allMaps:(AllMapTypes *)allMaps
@@ -89,7 +86,6 @@ typedef NS_ENUM(NSUInteger, AnEnum) {
 @property(nonatomic, strong) FlutterStandardTypedData *aFloatArray;
 @property(nonatomic, copy) NSArray *list;
 @property(nonatomic, copy) NSDictionary *aMap;
-@property(nonatomic, assign) AnEnum anEnum;
 @property(nonatomic, copy) NSString *aString;
 @property(nonatomic, strong) id anObject;
 @property(nonatomic, strong) AllMapTypes *allMaps;
@@ -112,7 +108,6 @@ typedef NS_ENUM(NSUInteger, AnEnum) {
            nullableMapWithAnnotations:
                (nullable NSDictionary<NSString *, NSString *> *)nullableMapWithAnnotations
                 nullableMapWithObject:(nullable NSDictionary<NSString *, id> *)nullableMapWithObject
-                        aNullableEnum:(nullable AnEnumBox *)aNullableEnum
                       aNullableString:(nullable NSString *)aNullableString
                       aNullableObject:(nullable id)aNullableObject
                      allNullableTypes:(nullable AllNullableTypes *)allNullableTypes;
@@ -130,7 +125,6 @@ typedef NS_ENUM(NSUInteger, AnEnum) {
 @property(nonatomic, copy, nullable)
     NSDictionary<NSString *, NSString *> *nullableMapWithAnnotations;
 @property(nonatomic, copy, nullable) NSDictionary<NSString *, id> *nullableMapWithObject;
-@property(nonatomic, strong, nullable) AnEnumBox *aNullableEnum;
 @property(nonatomic, copy, nullable) NSString *aNullableString;
 @property(nonatomic, strong, nullable) id aNullableObject;
 @property(nonatomic, strong, nullable) AllNullableTypes *allNullableTypes;
@@ -154,7 +148,6 @@ typedef NS_ENUM(NSUInteger, AnEnum) {
            nullableMapWithAnnotations:
                (nullable NSDictionary<NSString *, NSString *> *)nullableMapWithAnnotations
                 nullableMapWithObject:(nullable NSDictionary<NSString *, id> *)nullableMapWithObject
-                        aNullableEnum:(nullable AnEnumBox *)aNullableEnum
                       aNullableString:(nullable NSString *)aNullableString
                       aNullableObject:(nullable id)aNullableObject;
 @property(nonatomic, strong, nullable) NSNumber *aNullableBool;
@@ -171,7 +164,6 @@ typedef NS_ENUM(NSUInteger, AnEnum) {
 @property(nonatomic, copy, nullable)
     NSDictionary<NSString *, NSString *> *nullableMapWithAnnotations;
 @property(nonatomic, copy, nullable) NSDictionary<NSString *, id> *nullableMapWithObject;
-@property(nonatomic, strong, nullable) AnEnumBox *aNullableEnum;
 @property(nonatomic, copy, nullable) NSString *aNullableString;
 @property(nonatomic, strong, nullable) id aNullableObject;
 @end

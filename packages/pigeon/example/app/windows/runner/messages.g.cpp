@@ -88,7 +88,9 @@ EncodableList MessageData::ToEncodableList() const {
 }
 
 MessageData MessageData::FromEncodableList(const EncodableList& list) {
-  MessageData decoded(std::get<Code>(list[2]), std::get<EncodableMap>(list[3]));
+  MessageData decoded(
+      std::any_cast<const Code&>(std::get<CustomEncodableValue>(list[2])),
+      std::get<EncodableMap>(list[3]));
   auto& encodable_name = list[0];
   if (!encodable_name.IsNull()) {
     decoded.set_name(std::get<std::string>(encodable_name));
@@ -108,14 +110,14 @@ EncodableValue PigeonCodecSerializer::ReadValueOfType(
     case 128:
       return CustomEncodableValue(MessageData::FromEncodableList(
           std::get<EncodableList>(ReadValue(stream))));
-    case 129:
+    case 129: {
       const auto& encodable_enum_arg = ReadValue(stream);
       const int64_t enum_arg_value =
           encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
       return encodable_enum_arg.IsNull()
                  ? CustomEncodableValue(std::nullopt)
-                 : CustomEncodableValue(std::make_optional<Code>(
-                       static_cast<Code>(enum_arg_value)));
+                 : CustomEncodableValue(static_cast<Code>(enum_arg_value));
+    }
     default:
       return flutter::StandardCodecSerializer::ReadValueOfType(type, stream);
   }
