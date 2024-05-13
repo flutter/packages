@@ -661,6 +661,10 @@ public class ImagePickerDelegate
           return null;
         }
         String path = fileUtils.getPathFromUri(activity, uri);
+        // Again, same error state as above.
+        if (path == null) {
+          return null;
+        }
         String mimeType = includeMimeType ? activity.getContentResolver().getType(uri) : null;
         paths.add(new MediaPath(path, mimeType));
       }
