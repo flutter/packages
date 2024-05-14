@@ -5,10 +5,10 @@ module image_picker_ios {
   module * { export * }
 
   explicit module Test {
-    header "../FLTImagePickerPlugin_Test.h"
-    header "../FLTImagePickerImageUtil.h"
-    header "../FLTImagePickerMetaDataUtil.h"
-    header "../FLTImagePickerPhotoAssetUtil.h"
-    header "../FLTPHPickerSaveImageToPathOperation.h"
+    header "image_picker_ios/FLTImagePickerPlugin_Test.h"
+    header "image_picker_ios/FLTImagePickerImageUtil.h"
+    header "image_picker_ios/FLTImagePickerMetaDataUtil.h"
+    header "image_picker_ios/FLTImagePickerPhotoAssetUtil.h"
+    header "image_picker_ios/FLTPHPickerSaveImageToPathOperation.h"
   }
 }
