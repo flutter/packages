@@ -9,9 +9,9 @@ import com.google.ads.interactivemedia.v3.api.AdEvent
 
 class AdEventListenerProxyApi(pigeonRegistrar: PigeonProxyApiRegistrar) :
     PigeonApiAdEventListener(pigeonRegistrar) {
-  private class AdEventListenerImpl(val api: AdEventListenerProxyApi) : AdEvent.AdEventListener {
+  internal class AdEventListenerImpl(val api: AdEventListenerProxyApi) : AdEvent.AdEventListener {
     override fun onAdEvent(event: AdEvent) {
-      ((api.pigeonRegistrar as ProxyApiRegistrar).context as Activity).runOnUiThread {
+      (api.pigeonRegistrar as ProxyApiRegistrar).runOnMainThread {
         api.onAdEvent(this, event) {}
       }
     }

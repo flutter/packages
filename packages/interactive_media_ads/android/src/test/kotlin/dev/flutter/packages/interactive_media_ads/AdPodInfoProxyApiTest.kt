@@ -1,0 +1,70 @@
+package dev.flutter.packages.interactive_media_ads
+
+import com.google.ads.interactivemedia.v3.api.AdPodInfo
+import com.google.ads.interactivemedia.v3.api.player.AdMediaInfo
+import org.mockito.Mockito
+import org.mockito.kotlin.whenever
+import kotlin.test.Test
+import kotlin.test.assertEquals
+
+class AdPodInfoProxyApiTest {
+  @Test
+  fun adPosition() {
+    val api = ProxyApiRegistrar(Mockito.mock(), Mockito.mock()).getPigeonApiAdPodInfo()
+
+    val instance = Mockito.mock<AdPodInfo>()
+    whenever(instance.adPosition).thenReturn(0)
+
+    assertEquals(0, api.adPosition(instance))
+  }
+
+  @Test
+  fun maxDuration() {
+    val api = ProxyApiRegistrar(Mockito.mock(), Mockito.mock()).getPigeonApiAdPodInfo()
+
+    val instance = Mockito.mock<AdPodInfo>()
+    whenever(instance.maxDuration).thenReturn(0.0)
+
+    assertEquals(0.0, api.maxDuration(instance))
+  }
+
+  @Test
+  fun podIndex() {
+    val api = ProxyApiRegistrar(Mockito.mock(), Mockito.mock()).getPigeonApiAdPodInfo()
+
+    val instance = Mockito.mock<AdPodInfo>()
+    whenever(instance.podIndex).thenReturn(0)
+
+    assertEquals(0, api.podIndex(instance))
+  }
+
+  @Test
+  fun timeOffset() {
+    val api = ProxyApiRegistrar(Mockito.mock(), Mockito.mock()).getPigeonApiAdPodInfo()
+
+    val instance = Mockito.mock<AdPodInfo>()
+    whenever(instance.timeOffset).thenReturn(0.0)
+
+    assertEquals(0.0, api.timeOffset(instance))
+  }
+
+  @Test
+  fun totalAds() {
+    val api = ProxyApiRegistrar(Mockito.mock(), Mockito.mock()).getPigeonApiAdPodInfo()
+
+    val instance = Mockito.mock<AdPodInfo>()
+    whenever(instance.totalAds).thenReturn(0)
+
+    assertEquals(0, api.totalAds(instance))
+  }
+
+  @Test
+  fun isBumper() {
+    val api = ProxyApiRegistrar(Mockito.mock(), Mockito.mock()).getPigeonApiAdPodInfo()
+
+    val instance = Mockito.mock<AdPodInfo>()
+    whenever(instance.isBumper).thenReturn(true)
+
+    assertEquals(true, api.isBumper(instance))
+  }
+}

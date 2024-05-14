@@ -16,10 +16,10 @@ internal class AdErrorEventProxyApiTest {
   fun error() {
     val api = ProxyApiRegistrar(mock(), mock()).getPigeonApiAdErrorEvent()
 
-    val mockEvent = mock<AdErrorEvent>()
+    val instance = mock<AdErrorEvent>()
     val mockError = mock<AdError>()
-    whenever(mockEvent.error).thenReturn(mockError)
+    whenever(instance.error).thenReturn(mockError)
 
-    assertEquals(mockError, api.error(mockEvent))
+    assertEquals(mockError, api.error(instance))
   }
 }

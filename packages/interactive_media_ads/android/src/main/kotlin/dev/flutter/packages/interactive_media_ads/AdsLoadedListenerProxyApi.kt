@@ -9,10 +9,12 @@ import com.google.ads.interactivemedia.v3.api.AdsManagerLoadedEvent
 
 class AdsLoadedListenerProxyApi(pigeonRegistrar: PigeonProxyApiRegistrar) :
     PigeonApiAdsLoadedListener(pigeonRegistrar) {
-  private class AdsLoadedListenerImpl(val api: AdsLoadedListenerProxyApi) :
+  internal class AdsLoadedListenerImpl(val api: AdsLoadedListenerProxyApi) :
       AdsLoader.AdsLoadedListener {
     override fun onAdsManagerLoaded(event: AdsManagerLoadedEvent) {
-      api.onAdsManagerLoaded(this, event) {}
+      (api.pigeonRegistrar as ProxyApiRegistrar).runOnMainThread {
+        api.onAdsManagerLoaded(this, event) {}
+      }
     }
   }
 
