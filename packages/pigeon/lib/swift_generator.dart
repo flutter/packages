@@ -687,6 +687,8 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
         .whereType<AstFlutterApi>()
         .any((Api api) => api.methods.isNotEmpty);
 
+    _writePigeonError(generatorOptions, indent);
+
     if (hasHostApi) {
       _writeWrapResult(indent);
       _writeWrapError(generatorOptions, indent);
@@ -695,7 +697,6 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
       _writeCreateConnectionError(generatorOptions, indent);
     }
 
-    _writePigeonError(generatorOptions, indent);
     _writeIsNullish(indent);
     _writeNilOrValue(indent);
   }

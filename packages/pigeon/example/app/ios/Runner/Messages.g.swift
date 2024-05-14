@@ -14,6 +14,24 @@ import Foundation
   #error("Unsupported platform.")
 #endif
 
+/// Error class for passing custom error details to Dart side.
+final class PigeonError: Error {
+  let code: String
+  let message: String?
+  let details: Any?
+
+  init(code: String, message: String?, details: Any?) {
+    self.code = code
+    self.message = message
+    self.details = details
+  }
+
+  var localizedDescription: String {
+    return
+      "PigeonError(code: \(code), message: \(message ?? "<nil>"), details: \(details ?? "<nil>")"
+  }
+}
+
 private func wrapResult(_ result: Any?) -> [Any?] {
   return [result]
 }
@@ -44,24 +62,6 @@ private func createConnectionError(withChannelName channelName: String) -> Pigeo
   return PigeonError(
     code: "channel-error", message: "Unable to establish connection on channel: '\(channelName)'.",
     details: "")
-}
-
-/// Error class for passing custom error details to Dart side.
-final class PigeonError: Error {
-  let code: String
-  let message: String?
-  let details: Any?
-
-  init(code: String, message: String?, details: Any?) {
-    self.code = code
-    self.message = message
-    self.details = details
-  }
-
-  var localizedDescription: String {
-    return
-      "PigeonError(code: \(code), message: \(message ?? "<nil>"), details: \(details ?? "<nil>")"
-  }
 }
 
 private func isNullish(_ value: Any?) -> Bool {
