@@ -13,9 +13,7 @@ open class ProxyApiRegistrar(binaryMessenger: BinaryMessenger, var context: Cont
     PigeonProxyApiRegistrar(binaryMessenger) {
 
   internal open fun runOnMainThread(callback: Runnable) {
-    Handler(Looper.getMainLooper()).post {
-      callback.run()
-    }
+    Handler(Looper.getMainLooper()).post { callback.run() }
   }
 
   override fun getPigeonApiBaseDisplayContainer(): PigeonApiBaseDisplayContainer {

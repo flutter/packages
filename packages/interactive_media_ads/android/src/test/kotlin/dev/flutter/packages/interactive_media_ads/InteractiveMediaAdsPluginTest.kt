@@ -4,10 +4,7 @@
 
 package dev.flutter.packages.interactive_media_ads
 
-import io.flutter.plugin.common.MethodCall
-import io.flutter.plugin.common.MethodChannel
 import kotlin.test.Test
-import org.mockito.Mockito
 
 /*
  * This demonstrates a simple unit test of the Kotlin portion of this plugin's implementation.
@@ -18,8 +15,5 @@ import org.mockito.Mockito
  */
 
 internal class InteractiveMediaAdsPluginTest {
-  @Test
-  fun onMethodCall_getPlatformVersion_returnsExpectedValue() {
-
-  }
+  @Test fun onMethodCall_getPlatformVersion_returnsExpectedValue() {}
 }

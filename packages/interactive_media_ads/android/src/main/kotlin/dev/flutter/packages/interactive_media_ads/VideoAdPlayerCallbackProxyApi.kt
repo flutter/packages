@@ -40,7 +40,7 @@ class VideoAdPlayerCallbackProxyApi(pigeonRegistrar: PigeonProxyApiRegistrar) :
       pigeon_instance: VideoAdPlayer.VideoAdPlayerCallback,
       adMediaInfo: AdMediaInfo
   ) {
-    pigeon_instance.onEnded(adMediaInfo)
+    pigeon_instance.onError(adMediaInfo)
   }
 
   override fun onLoaded(

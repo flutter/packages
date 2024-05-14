@@ -11,9 +11,7 @@ class AdErrorListenerProxyApi(pigeonRegistrar: PigeonProxyApiRegistrar) :
   internal class AdErrorListenerImpl(val api: AdErrorListenerProxyApi) :
       AdErrorEvent.AdErrorListener {
     override fun onAdError(event: AdErrorEvent) {
-      (api.pigeonRegistrar as ProxyApiRegistrar).runOnMainThread {
-        api.onAdError(this, event) {}
-      }
+      (api.pigeonRegistrar as ProxyApiRegistrar).runOnMainThread { api.onAdError(this, event) {} }
     }
   }
 

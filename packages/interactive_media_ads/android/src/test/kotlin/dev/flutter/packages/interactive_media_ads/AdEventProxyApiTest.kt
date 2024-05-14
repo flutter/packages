@@ -4,12 +4,11 @@
 
 package dev.flutter.packages.interactive_media_ads
 
-import com.google.ads.interactivemedia.v3.api.AdError
 import com.google.ads.interactivemedia.v3.api.AdEvent
-import org.mockito.Mockito
-import org.mockito.kotlin.whenever
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import org.mockito.Mockito
+import org.mockito.kotlin.whenever
 
 class AdEventProxyApiTest {
   @Test

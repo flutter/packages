@@ -5,10 +5,10 @@
 package dev.flutter.packages.interactive_media_ads
 
 import com.google.ads.interactivemedia.v3.api.AdErrorEvent
-import org.mockito.Mockito.mock
-import org.mockito.Mockito.verify
 import kotlin.test.Test
 import kotlin.test.assertTrue
+import org.mockito.Mockito.mock
+import org.mockito.Mockito.verify
 import org.mockito.kotlin.any
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.whenever
