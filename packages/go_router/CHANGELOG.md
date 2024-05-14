@@ -1,6 +1,10 @@
-## 14.1.1
+## 14.1.2
 
 - Improves the logging of routes when `debugLogDiagnostics` is enabled or `debugKnownRoutes() is called. Explains the position of shell routes in the route tree. Prints the widget name of the routes it is building.
+
+## 14.1.1
+
+- Fixes correctness of the state provided in the `onExit`.
 
 ## 14.1.0
 
