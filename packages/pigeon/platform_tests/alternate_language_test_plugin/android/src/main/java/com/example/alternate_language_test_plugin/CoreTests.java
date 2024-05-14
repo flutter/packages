@@ -424,6 +424,19 @@ public class CoreTests {
       this.aMap = setterArg;
     }
 
+    private @NonNull AnEnum anEnum;
+
+    public @NonNull AnEnum getAnEnum() {
+      return anEnum;
+    }
+
+    public void setAnEnum(@NonNull AnEnum setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"anEnum\" is null.");
+      }
+      this.anEnum = setterArg;
+    }
+
     private @NonNull String aString;
 
     public @NonNull String getAString() {
@@ -561,6 +574,14 @@ public class CoreTests {
         return this;
       }
 
+      private @Nullable AnEnum anEnum;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setAnEnum(@NonNull AnEnum setterArg) {
+        this.anEnum = setterArg;
+        return this;
+      }
+
       private @Nullable String aString;
 
       @CanIgnoreReturnValue
@@ -605,6 +626,7 @@ public class CoreTests {
         pigeonReturn.setAFloatArray(aFloatArray);
         pigeonReturn.setList(list);
         pigeonReturn.setAMap(aMap);
+        pigeonReturn.setAnEnum(anEnum);
         pigeonReturn.setAString(aString);
         pigeonReturn.setAnObject(anObject);
         pigeonReturn.setAllMaps(allMaps);
@@ -615,7 +637,7 @@ public class CoreTests {
 
     @NonNull
     ArrayList<Object> toList() {
-      ArrayList<Object> toListResult = new ArrayList<Object>(14);
+      ArrayList<Object> toListResult = new ArrayList<Object>(15);
       toListResult.add(aBool);
       toListResult.add(anInt);
       toListResult.add(anInt64);
@@ -626,6 +648,7 @@ public class CoreTests {
       toListResult.add(aFloatArray);
       toListResult.add(list);
       toListResult.add(aMap);
+      toListResult.add(anEnum);
       toListResult.add(aString);
       toListResult.add(anObject);
       toListResult.add(allMaps);
@@ -659,13 +682,15 @@ public class CoreTests {
       pigeonResult.setList((List<Object>) list);
       Object aMap = __pigeon_list.get(9);
       pigeonResult.setAMap((Map<Object, Object>) aMap);
-      Object aString = __pigeon_list.get(10);
+      Object anEnum = __pigeon_list.get(10);
+      pigeonResult.setAnEnum((AnEnum) anEnum);
+      Object aString = __pigeon_list.get(11);
       pigeonResult.setAString((String) aString);
-      Object anObject = __pigeon_list.get(11);
+      Object anObject = __pigeon_list.get(12);
       pigeonResult.setAnObject(anObject);
-      Object allMaps = __pigeon_list.get(12);
+      Object allMaps = __pigeon_list.get(13);
       pigeonResult.setAllMaps((AllMapTypes) allMaps);
-      Object allLists = __pigeon_list.get(13);
+      Object allLists = __pigeon_list.get(14);
       pigeonResult.setAllLists((AllListTypes) allLists);
       return pigeonResult;
     }
@@ -807,6 +832,16 @@ public class CoreTests {
       this.nullableMapWithObject = setterArg;
     }
 
+    private @Nullable AnEnum aNullableEnum;
+
+    public @Nullable AnEnum getANullableEnum() {
+      return aNullableEnum;
+    }
+
+    public void setANullableEnum(@Nullable AnEnum setterArg) {
+      this.aNullableEnum = setterArg;
+    }
+
     private @Nullable String aNullableString;
 
     public @Nullable String getANullableString() {
@@ -944,6 +979,14 @@ public class CoreTests {
         return this;
       }
 
+      private @Nullable AnEnum aNullableEnum;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setANullableEnum(@Nullable AnEnum setterArg) {
+        this.aNullableEnum = setterArg;
+        return this;
+      }
+
       private @Nullable String aNullableString;
 
       @CanIgnoreReturnValue
@@ -983,6 +1026,7 @@ public class CoreTests {
         pigeonReturn.setNullableNestedList(nullableNestedList);
         pigeonReturn.setNullableMapWithAnnotations(nullableMapWithAnnotations);
         pigeonReturn.setNullableMapWithObject(nullableMapWithObject);
+        pigeonReturn.setANullableEnum(aNullableEnum);
         pigeonReturn.setANullableString(aNullableString);
         pigeonReturn.setANullableObject(aNullableObject);
         pigeonReturn.setAllNullableTypes(allNullableTypes);
@@ -992,7 +1036,7 @@ public class CoreTests {
 
     @NonNull
     ArrayList<Object> toList() {
-      ArrayList<Object> toListResult = new ArrayList<Object>(16);
+      ArrayList<Object> toListResult = new ArrayList<Object>(17);
       toListResult.add(aNullableBool);
       toListResult.add(aNullableInt);
       toListResult.add(aNullableInt64);
@@ -1006,6 +1050,7 @@ public class CoreTests {
       toListResult.add(nullableNestedList);
       toListResult.add(nullableMapWithAnnotations);
       toListResult.add(nullableMapWithObject);
+      toListResult.add(aNullableEnum);
       toListResult.add(aNullableString);
       toListResult.add(aNullableObject);
       toListResult.add(allNullableTypes);
@@ -1048,11 +1093,13 @@ public class CoreTests {
       pigeonResult.setNullableMapWithAnnotations((Map<String, String>) nullableMapWithAnnotations);
       Object nullableMapWithObject = __pigeon_list.get(12);
       pigeonResult.setNullableMapWithObject((Map<String, Object>) nullableMapWithObject);
-      Object aNullableString = __pigeon_list.get(13);
+      Object aNullableEnum = __pigeon_list.get(13);
+      pigeonResult.setANullableEnum((AnEnum) aNullableEnum);
+      Object aNullableString = __pigeon_list.get(14);
       pigeonResult.setANullableString((String) aNullableString);
-      Object aNullableObject = __pigeon_list.get(14);
+      Object aNullableObject = __pigeon_list.get(15);
       pigeonResult.setANullableObject(aNullableObject);
-      Object allNullableTypes = __pigeon_list.get(15);
+      Object allNullableTypes = __pigeon_list.get(16);
       pigeonResult.setAllNullableTypes((AllNullableTypes) allNullableTypes);
       return pigeonResult;
     }
@@ -1195,6 +1242,16 @@ public class CoreTests {
       this.nullableMapWithObject = setterArg;
     }
 
+    private @Nullable AnEnum aNullableEnum;
+
+    public @Nullable AnEnum getANullableEnum() {
+      return aNullableEnum;
+    }
+
+    public void setANullableEnum(@Nullable AnEnum setterArg) {
+      this.aNullableEnum = setterArg;
+    }
+
     private @Nullable String aNullableString;
 
     public @Nullable String getANullableString() {
@@ -1322,6 +1379,14 @@ public class CoreTests {
         return this;
       }
 
+      private @Nullable AnEnum aNullableEnum;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setANullableEnum(@Nullable AnEnum setterArg) {
+        this.aNullableEnum = setterArg;
+        return this;
+      }
+
       private @Nullable String aNullableString;
 
       @CanIgnoreReturnValue
@@ -1353,6 +1418,7 @@ public class CoreTests {
         pigeonReturn.setNullableNestedList(nullableNestedList);
         pigeonReturn.setNullableMapWithAnnotations(nullableMapWithAnnotations);
         pigeonReturn.setNullableMapWithObject(nullableMapWithObject);
+        pigeonReturn.setANullableEnum(aNullableEnum);
         pigeonReturn.setANullableString(aNullableString);
         pigeonReturn.setANullableObject(aNullableObject);
         return pigeonReturn;
@@ -1361,7 +1427,7 @@ public class CoreTests {
 
     @NonNull
     ArrayList<Object> toList() {
-      ArrayList<Object> toListResult = new ArrayList<Object>(15);
+      ArrayList<Object> toListResult = new ArrayList<Object>(16);
       toListResult.add(aNullableBool);
       toListResult.add(aNullableInt);
       toListResult.add(aNullableInt64);
@@ -1375,6 +1441,7 @@ public class CoreTests {
       toListResult.add(nullableNestedList);
       toListResult.add(nullableMapWithAnnotations);
       toListResult.add(nullableMapWithObject);
+      toListResult.add(aNullableEnum);
       toListResult.add(aNullableString);
       toListResult.add(aNullableObject);
       return toListResult;
@@ -1417,9 +1484,11 @@ public class CoreTests {
       pigeonResult.setNullableMapWithAnnotations((Map<String, String>) nullableMapWithAnnotations);
       Object nullableMapWithObject = __pigeon_list.get(12);
       pigeonResult.setNullableMapWithObject((Map<String, Object>) nullableMapWithObject);
-      Object aNullableString = __pigeon_list.get(13);
+      Object aNullableEnum = __pigeon_list.get(13);
+      pigeonResult.setANullableEnum((AnEnum) aNullableEnum);
+      Object aNullableString = __pigeon_list.get(14);
       pigeonResult.setANullableString((String) aNullableString);
-      Object aNullableObject = __pigeon_list.get(14);
+      Object aNullableObject = __pigeon_list.get(15);
       pigeonResult.setANullableObject(aNullableObject);
       return pigeonResult;
     }
@@ -1586,21 +1655,21 @@ public class CoreTests {
     @Override
     protected Object readValueOfType(byte type, @NonNull ByteBuffer buffer) {
       switch (type) {
-        case (byte) 128:
-          return AllMapTypes.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 129:
-          return AllListTypes.fromList((ArrayList<Object>) readValue(buffer));
+          return AllMapTypes.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 130:
-          return AllTypes.fromList((ArrayList<Object>) readValue(buffer));
+          return AllListTypes.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 131:
-          return AllNullableTypes.fromList((ArrayList<Object>) readValue(buffer));
+          return AllTypes.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 132:
-          return AllNullableTypesWithoutRecursion.fromList((ArrayList<Object>) readValue(buffer));
+          return AllNullableTypes.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 133:
-          return AllClassesWrapper.fromList((ArrayList<Object>) readValue(buffer));
+          return AllNullableTypesWithoutRecursion.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 134:
-          return TestMessage.fromList((ArrayList<Object>) readValue(buffer));
+          return AllClassesWrapper.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 135:
+          return TestMessage.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 136:
           Object value = readValue(buffer);
           return value == null ? null : AnEnum.values()[(int) value];
         default:
@@ -1611,28 +1680,28 @@ public class CoreTests {
     @Override
     protected void writeValue(@NonNull ByteArrayOutputStream stream, Object value) {
       if (value instanceof AllMapTypes) {
-        stream.write(128);
+        stream.write(129);
         writeValue(stream, ((AllMapTypes) value).toList());
       } else if (value instanceof AllListTypes) {
-        stream.write(129);
+        stream.write(130);
         writeValue(stream, ((AllListTypes) value).toList());
       } else if (value instanceof AllTypes) {
-        stream.write(130);
+        stream.write(131);
         writeValue(stream, ((AllTypes) value).toList());
       } else if (value instanceof AllNullableTypes) {
-        stream.write(131);
+        stream.write(132);
         writeValue(stream, ((AllNullableTypes) value).toList());
       } else if (value instanceof AllNullableTypesWithoutRecursion) {
-        stream.write(132);
+        stream.write(133);
         writeValue(stream, ((AllNullableTypesWithoutRecursion) value).toList());
       } else if (value instanceof AllClassesWrapper) {
-        stream.write(133);
+        stream.write(134);
         writeValue(stream, ((AllClassesWrapper) value).toList());
       } else if (value instanceof TestMessage) {
-        stream.write(134);
+        stream.write(135);
         writeValue(stream, ((TestMessage) value).toList());
       } else if (value instanceof AnEnum) {
-        stream.write(135);
+        stream.write(136);
         writeValue(stream, value == null ? null : ((AnEnum) value).index);
       } else {
         super.writeValue(stream, value);

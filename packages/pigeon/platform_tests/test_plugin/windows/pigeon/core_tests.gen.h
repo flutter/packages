@@ -159,7 +159,7 @@ class AllTypes {
                     const std::vector<int64_t>& a8_byte_array,
                     const std::vector<double>& a_float_array,
                     const flutter::EncodableList& list,
-                    const flutter::EncodableMap& a_map,
+                    const flutter::EncodableMap& a_map, const AnEnum& an_enum,
                     const std::string& a_string,
                     const flutter::EncodableValue& an_object,
                     const AllMapTypes& all_maps, const AllListTypes& all_lists);
@@ -199,6 +199,9 @@ class AllTypes {
   const flutter::EncodableMap& a_map() const;
   void set_a_map(const flutter::EncodableMap& value_arg);
 
+  const AnEnum& an_enum() const;
+  void set_an_enum(const AnEnum& value_arg);
+
   const std::string& a_string() const;
   void set_a_string(std::string_view value_arg);
 
@@ -236,6 +239,7 @@ class AllTypes {
   std::vector<double> a_float_array_;
   flutter::EncodableList list_;
   flutter::EncodableMap a_map_;
+  AnEnum an_enum_;
   std::string a_string_;
   flutter::EncodableValue an_object_;
   std::unique_ptr<AllMapTypes> all_maps_;
@@ -263,7 +267,7 @@ class AllNullableTypes {
       const flutter::EncodableList* nullable_nested_list,
       const flutter::EncodableMap* nullable_map_with_annotations,
       const flutter::EncodableMap* nullable_map_with_object,
-      const std::string* a_nullable_string,
+      const AnEnum* a_nullable_enum, const std::string* a_nullable_string,
       const flutter::EncodableValue* a_nullable_object,
       const AllNullableTypes* all_nullable_types);
 
@@ -326,6 +330,10 @@ class AllNullableTypes {
   void set_nullable_map_with_object(const flutter::EncodableMap* value_arg);
   void set_nullable_map_with_object(const flutter::EncodableMap& value_arg);
 
+  const AnEnum* a_nullable_enum() const;
+  void set_a_nullable_enum(const AnEnum* value_arg);
+  void set_a_nullable_enum(const AnEnum& value_arg);
+
   const std::string* a_nullable_string() const;
   void set_a_nullable_string(const std::string_view* value_arg);
   void set_a_nullable_string(std::string_view value_arg);
@@ -366,6 +374,7 @@ class AllNullableTypes {
   std::optional<flutter::EncodableList> nullable_nested_list_;
   std::optional<flutter::EncodableMap> nullable_map_with_annotations_;
   std::optional<flutter::EncodableMap> nullable_map_with_object_;
+  std::optional<AnEnum> a_nullable_enum_;
   std::optional<std::string> a_nullable_string_;
   std::optional<flutter::EncodableValue> a_nullable_object_;
   std::unique_ptr<AllNullableTypes> all_nullable_types_;
@@ -394,7 +403,7 @@ class AllNullableTypesWithoutRecursion {
       const flutter::EncodableList* nullable_nested_list,
       const flutter::EncodableMap* nullable_map_with_annotations,
       const flutter::EncodableMap* nullable_map_with_object,
-      const std::string* a_nullable_string,
+      const AnEnum* a_nullable_enum, const std::string* a_nullable_string,
       const flutter::EncodableValue* a_nullable_object);
 
   const bool* a_nullable_bool() const;
@@ -451,6 +460,10 @@ class AllNullableTypesWithoutRecursion {
   void set_nullable_map_with_object(const flutter::EncodableMap* value_arg);
   void set_nullable_map_with_object(const flutter::EncodableMap& value_arg);
 
+  const AnEnum* a_nullable_enum() const;
+  void set_a_nullable_enum(const AnEnum* value_arg);
+  void set_a_nullable_enum(const AnEnum& value_arg);
+
   const std::string* a_nullable_string() const;
   void set_a_nullable_string(const std::string_view* value_arg);
   void set_a_nullable_string(std::string_view value_arg);
@@ -488,6 +501,7 @@ class AllNullableTypesWithoutRecursion {
   std::optional<flutter::EncodableList> nullable_nested_list_;
   std::optional<flutter::EncodableMap> nullable_map_with_annotations_;
   std::optional<flutter::EncodableMap> nullable_map_with_object_;
+  std::optional<AnEnum> a_nullable_enum_;
   std::optional<std::string> a_nullable_string_;
   std::optional<flutter::EncodableValue> a_nullable_object_;
 };

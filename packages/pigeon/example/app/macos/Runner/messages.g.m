@@ -94,9 +94,9 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 @implementation messagesPigeonCodecReader
 - (nullable id)readValueOfType:(UInt8)type {
   switch (type) {
-    case 128:
+    case 129:
       return [PGNMessageData fromList:[self readValue]];
-    case 129: {
+    case 130: {
       NSNumber *enumAsNumber = [self readValue];
       return enumAsNumber == nil ? nil
                                  : [[PGNCodeBox alloc] initWithValue:[enumAsNumber integerValue]];
@@ -112,11 +112,11 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 @implementation messagesPigeonCodecWriter
 - (void)writeValue:(id)value {
   if ([value isKindOfClass:[PGNMessageData class]]) {
-    [self writeByte:128];
+    [self writeByte:129];
     [self writeValue:[value toList]];
   } else if ([value isKindOfClass:[PGNCodeBox class]]) {
     PGNCodeBox *box = (PGNCodeBox *)value;
-    [self writeByte:129];
+    [self writeByte:130];
     [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
   } else {
     [super writeValue:value];

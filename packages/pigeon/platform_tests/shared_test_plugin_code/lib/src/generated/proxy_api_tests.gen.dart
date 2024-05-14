@@ -366,7 +366,7 @@ class _PigeonInstanceManagerApi {
   }
 }
 
-class _PigeonProxyApiBaseCodec extends StandardMessageCodec {
+class _PigeonProxyApiBaseCodec extends _PigeonCodec {
   const _PigeonProxyApiBaseCodec(this.instanceManager);
   final PigeonInstanceManager instanceManager;
   @override
@@ -402,7 +402,7 @@ class _PigeonCodec extends StandardMessageCodec {
   @override
   void writeValue(WriteBuffer buffer, Object? value) {
     if (value is ProxyApiTestEnum) {
-      buffer.putUint8(128);
+      buffer.putUint8(129);
       writeValue(buffer, value.index);
     } else {
       super.writeValue(buffer, value);
@@ -412,7 +412,7 @@ class _PigeonCodec extends StandardMessageCodec {
   @override
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
-      case 128:
+      case 129:
         final int? value = readValue(buffer) as int?;
         return value == null ? null : ProxyApiTestEnum.values[value];
       default:

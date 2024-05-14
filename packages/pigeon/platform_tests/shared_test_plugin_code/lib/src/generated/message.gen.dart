@@ -145,16 +145,16 @@ class _PigeonCodec extends StandardMessageCodec {
   @override
   void writeValue(WriteBuffer buffer, Object? value) {
     if (value is MessageSearchRequest) {
-      buffer.putUint8(128);
-      writeValue(buffer, value.encode());
-    } else if (value is MessageSearchReply) {
       buffer.putUint8(129);
       writeValue(buffer, value.encode());
-    } else if (value is MessageNested) {
+    } else if (value is MessageSearchReply) {
       buffer.putUint8(130);
       writeValue(buffer, value.encode());
-    } else if (value is MessageRequestState) {
+    } else if (value is MessageNested) {
       buffer.putUint8(131);
+      writeValue(buffer, value.encode());
+    } else if (value is MessageRequestState) {
+      buffer.putUint8(132);
       writeValue(buffer, value.index);
     } else {
       super.writeValue(buffer, value);
@@ -164,13 +164,13 @@ class _PigeonCodec extends StandardMessageCodec {
   @override
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
-      case 128:
-        return MessageSearchRequest.decode(readValue(buffer)!);
       case 129:
-        return MessageSearchReply.decode(readValue(buffer)!);
+        return MessageSearchRequest.decode(readValue(buffer)!);
       case 130:
-        return MessageNested.decode(readValue(buffer)!);
+        return MessageSearchReply.decode(readValue(buffer)!);
       case 131:
+        return MessageNested.decode(readValue(buffer)!);
+      case 132:
         final int? value = readValue(buffer) as int?;
         return value == null ? null : MessageRequestState.values[value];
       default:

@@ -208,9 +208,9 @@ public class Messages {
     @Override
     protected Object readValueOfType(byte type, @NonNull ByteBuffer buffer) {
       switch (type) {
-        case (byte) 128:
-          return MessageData.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 129:
+          return MessageData.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 130:
           Object value = readValue(buffer);
           return value == null ? null : Code.values()[(int) value];
         default:
@@ -221,10 +221,10 @@ public class Messages {
     @Override
     protected void writeValue(@NonNull ByteArrayOutputStream stream, Object value) {
       if (value instanceof MessageData) {
-        stream.write(128);
+        stream.write(129);
         writeValue(stream, ((MessageData) value).toList());
       } else if (value instanceof Code) {
-        stream.write(129);
+        stream.write(130);
         writeValue(stream, value == null ? null : ((Code) value).index);
       } else {
         super.writeValue(stream, value);

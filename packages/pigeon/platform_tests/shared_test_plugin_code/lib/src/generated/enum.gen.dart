@@ -73,10 +73,10 @@ class _PigeonCodec extends StandardMessageCodec {
   @override
   void writeValue(WriteBuffer buffer, Object? value) {
     if (value is DataWithEnum) {
-      buffer.putUint8(128);
+      buffer.putUint8(129);
       writeValue(buffer, value.encode());
     } else if (value is EnumState) {
-      buffer.putUint8(129);
+      buffer.putUint8(130);
       writeValue(buffer, value.index);
     } else {
       super.writeValue(buffer, value);
@@ -86,9 +86,9 @@ class _PigeonCodec extends StandardMessageCodec {
   @override
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
-      case 128:
-        return DataWithEnum.decode(readValue(buffer)!);
       case 129:
+        return DataWithEnum.decode(readValue(buffer)!);
+      case 130:
         final int? value = readValue(buffer) as int?;
         return value == null ? null : EnumState.values[value];
       default:

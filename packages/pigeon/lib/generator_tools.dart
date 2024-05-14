@@ -420,7 +420,7 @@ const List<String> validTypes = <String>[
 
 /// Custom codecs' custom types are enumerated from 255 down to this number to
 /// avoid collisions with the StandardMessageCodec.
-const int _minimumCodecFieldKey = 128;
+const int _minimumCodecFieldKey = 129;
 
 Iterable<TypeDeclaration> _getTypeArguments(TypeDeclaration type) sync* {
   for (final TypeDeclaration typeArg in type.typeArguments) {

@@ -128,16 +128,16 @@ class _PigeonCodec extends StandardMessageCodec {
   @override
   void writeValue(WriteBuffer buffer, Object? value) {
     if (value is NonNullFieldSearchRequest) {
-      buffer.putUint8(128);
-      writeValue(buffer, value.encode());
-    } else if (value is ExtraData) {
       buffer.putUint8(129);
       writeValue(buffer, value.encode());
-    } else if (value is NonNullFieldSearchReply) {
+    } else if (value is ExtraData) {
       buffer.putUint8(130);
       writeValue(buffer, value.encode());
-    } else if (value is ReplyType) {
+    } else if (value is NonNullFieldSearchReply) {
       buffer.putUint8(131);
+      writeValue(buffer, value.encode());
+    } else if (value is ReplyType) {
+      buffer.putUint8(132);
       writeValue(buffer, value.index);
     } else {
       super.writeValue(buffer, value);
@@ -147,13 +147,13 @@ class _PigeonCodec extends StandardMessageCodec {
   @override
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
-      case 128:
-        return NonNullFieldSearchRequest.decode(readValue(buffer)!);
       case 129:
-        return ExtraData.decode(readValue(buffer)!);
+        return NonNullFieldSearchRequest.decode(readValue(buffer)!);
       case 130:
-        return NonNullFieldSearchReply.decode(readValue(buffer)!);
+        return ExtraData.decode(readValue(buffer)!);
       case 131:
+        return NonNullFieldSearchReply.decode(readValue(buffer)!);
+      case 132:
         final int? value = readValue(buffer) as int?;
         return value == null ? null : ReplyType.values[value];
       default:

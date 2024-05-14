@@ -113,16 +113,16 @@ class _PigeonCodec extends StandardMessageCodec {
   @override
   void writeValue(WriteBuffer buffer, Object? value) {
     if (value is FlutterSearchRequest) {
-      buffer.putUint8(128);
-      writeValue(buffer, value.encode());
-    } else if (value is FlutterSearchReply) {
       buffer.putUint8(129);
       writeValue(buffer, value.encode());
-    } else if (value is FlutterSearchRequests) {
+    } else if (value is FlutterSearchReply) {
       buffer.putUint8(130);
       writeValue(buffer, value.encode());
-    } else if (value is FlutterSearchReplies) {
+    } else if (value is FlutterSearchRequests) {
       buffer.putUint8(131);
+      writeValue(buffer, value.encode());
+    } else if (value is FlutterSearchReplies) {
+      buffer.putUint8(132);
       writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
@@ -132,13 +132,13 @@ class _PigeonCodec extends StandardMessageCodec {
   @override
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
-      case 128:
-        return FlutterSearchRequest.decode(readValue(buffer)!);
       case 129:
-        return FlutterSearchReply.decode(readValue(buffer)!);
+        return FlutterSearchRequest.decode(readValue(buffer)!);
       case 130:
-        return FlutterSearchRequests.decode(readValue(buffer)!);
+        return FlutterSearchReply.decode(readValue(buffer)!);
       case 131:
+        return FlutterSearchRequests.decode(readValue(buffer)!);
+      case 132:
         return FlutterSearchReplies.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);

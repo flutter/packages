@@ -125,6 +125,7 @@ struct AllTypes {
   var aFloatArray: FlutterStandardTypedData
   var list: [Any?]
   var aMap: [AnyHashable: Any?]
+  var anEnum: AnEnum
   var aString: String
   var anObject: Any
   var allMaps: AllMapTypes
@@ -144,10 +145,11 @@ struct AllTypes {
     let aFloatArray = __pigeon_list[7] as! FlutterStandardTypedData
     let list = __pigeon_list[8] as! [Any?]
     let aMap = __pigeon_list[9] as! [AnyHashable: Any?]
-    let aString = __pigeon_list[10] as! String
-    let anObject = __pigeon_list[11]!
-    let allMaps = __pigeon_list[12] as! AllMapTypes
-    let allLists = __pigeon_list[13] as! AllListTypes
+    let anEnum = __pigeon_list[10] as! AnEnum
+    let aString = __pigeon_list[11] as! String
+    let anObject = __pigeon_list[12]!
+    let allMaps = __pigeon_list[13] as! AllMapTypes
+    let allLists = __pigeon_list[14] as! AllListTypes
 
     return AllTypes(
       aBool: aBool,
@@ -160,6 +162,7 @@ struct AllTypes {
       aFloatArray: aFloatArray,
       list: list,
       aMap: aMap,
+      anEnum: anEnum,
       aString: aString,
       anObject: anObject,
       allMaps: allMaps,
@@ -178,6 +181,7 @@ struct AllTypes {
       aFloatArray,
       list,
       aMap,
+      anEnum,
       aString,
       anObject,
       allMaps,
@@ -204,6 +208,7 @@ class AllNullableTypes {
     nullableNestedList: [[Bool?]?]? = nil,
     nullableMapWithAnnotations: [String?: String?]? = nil,
     nullableMapWithObject: [String?: Any?]? = nil,
+    aNullableEnum: AnEnum? = nil,
     aNullableString: String? = nil,
     aNullableObject: Any? = nil,
     allNullableTypes: AllNullableTypes? = nil
@@ -221,6 +226,7 @@ class AllNullableTypes {
     self.nullableNestedList = nullableNestedList
     self.nullableMapWithAnnotations = nullableMapWithAnnotations
     self.nullableMapWithObject = nullableMapWithObject
+    self.aNullableEnum = aNullableEnum
     self.aNullableString = aNullableString
     self.aNullableObject = aNullableObject
     self.allNullableTypes = allNullableTypes
@@ -238,6 +244,7 @@ class AllNullableTypes {
   var nullableNestedList: [[Bool?]?]?
   var nullableMapWithAnnotations: [String?: String?]?
   var nullableMapWithObject: [String?: Any?]?
+  var aNullableEnum: AnEnum?
   var aNullableString: String?
   var aNullableObject: Any?
   var allNullableTypes: AllNullableTypes?
@@ -265,9 +272,10 @@ class AllNullableTypes {
     let nullableNestedList: [[Bool?]?]? = nilOrValue(__pigeon_list[10])
     let nullableMapWithAnnotations: [String?: String?]? = nilOrValue(__pigeon_list[11])
     let nullableMapWithObject: [String?: Any?]? = nilOrValue(__pigeon_list[12])
-    let aNullableString: String? = nilOrValue(__pigeon_list[13])
-    let aNullableObject: Any? = __pigeon_list[14]
-    let allNullableTypes: AllNullableTypes? = nilOrValue(__pigeon_list[15])
+    let aNullableEnum: AnEnum? = nilOrValue(__pigeon_list[13])
+    let aNullableString: String? = nilOrValue(__pigeon_list[14])
+    let aNullableObject: Any? = __pigeon_list[15]
+    let allNullableTypes: AllNullableTypes? = nilOrValue(__pigeon_list[16])
 
     return AllNullableTypes(
       aNullableBool: aNullableBool,
@@ -283,6 +291,7 @@ class AllNullableTypes {
       nullableNestedList: nullableNestedList,
       nullableMapWithAnnotations: nullableMapWithAnnotations,
       nullableMapWithObject: nullableMapWithObject,
+      aNullableEnum: aNullableEnum,
       aNullableString: aNullableString,
       aNullableObject: aNullableObject,
       allNullableTypes: allNullableTypes
@@ -303,6 +312,7 @@ class AllNullableTypes {
       nullableNestedList,
       nullableMapWithAnnotations,
       nullableMapWithObject,
+      aNullableEnum,
       aNullableString,
       aNullableObject,
       allNullableTypes,
@@ -329,6 +339,7 @@ struct AllNullableTypesWithoutRecursion {
   var nullableNestedList: [[Bool?]?]? = nil
   var nullableMapWithAnnotations: [String?: String?]? = nil
   var nullableMapWithObject: [String?: Any?]? = nil
+  var aNullableEnum: AnEnum? = nil
   var aNullableString: String? = nil
   var aNullableObject: Any? = nil
 
@@ -355,8 +366,9 @@ struct AllNullableTypesWithoutRecursion {
     let nullableNestedList: [[Bool?]?]? = nilOrValue(__pigeon_list[10])
     let nullableMapWithAnnotations: [String?: String?]? = nilOrValue(__pigeon_list[11])
     let nullableMapWithObject: [String?: Any?]? = nilOrValue(__pigeon_list[12])
-    let aNullableString: String? = nilOrValue(__pigeon_list[13])
-    let aNullableObject: Any? = __pigeon_list[14]
+    let aNullableEnum: AnEnum? = nilOrValue(__pigeon_list[13])
+    let aNullableString: String? = nilOrValue(__pigeon_list[14])
+    let aNullableObject: Any? = __pigeon_list[15]
 
     return AllNullableTypesWithoutRecursion(
       aNullableBool: aNullableBool,
@@ -372,6 +384,7 @@ struct AllNullableTypesWithoutRecursion {
       nullableNestedList: nullableNestedList,
       nullableMapWithAnnotations: nullableMapWithAnnotations,
       nullableMapWithObject: nullableMapWithObject,
+      aNullableEnum: aNullableEnum,
       aNullableString: aNullableString,
       aNullableObject: aNullableObject
     )
@@ -391,6 +404,7 @@ struct AllNullableTypesWithoutRecursion {
       nullableNestedList,
       nullableMapWithAnnotations,
       nullableMapWithObject,
+      aNullableEnum,
       aNullableString,
       aNullableObject,
     ]
@@ -454,21 +468,21 @@ struct TestMessage {
 private class CoreTestsPigeonCodecReader: FlutterStandardReader {
   override func readValue(ofType type: UInt8) -> Any? {
     switch type {
-    case 128:
-      return AllMapTypes.fromList(self.readValue() as! [Any?])
     case 129:
-      return AllListTypes.fromList(self.readValue() as! [Any?])
+      return AllMapTypes.fromList(self.readValue() as! [Any?])
     case 130:
-      return AllTypes.fromList(self.readValue() as! [Any?])
+      return AllListTypes.fromList(self.readValue() as! [Any?])
     case 131:
-      return AllNullableTypes.fromList(self.readValue() as! [Any?])
+      return AllTypes.fromList(self.readValue() as! [Any?])
     case 132:
-      return AllNullableTypesWithoutRecursion.fromList(self.readValue() as! [Any?])
+      return AllNullableTypes.fromList(self.readValue() as! [Any?])
     case 133:
-      return AllClassesWrapper.fromList(self.readValue() as! [Any?])
+      return AllNullableTypesWithoutRecursion.fromList(self.readValue() as! [Any?])
     case 134:
-      return TestMessage.fromList(self.readValue() as! [Any?])
+      return AllClassesWrapper.fromList(self.readValue() as! [Any?])
     case 135:
+      return TestMessage.fromList(self.readValue() as! [Any?])
+    case 136:
       var enumResult: AnEnum? = nil
       let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
       if let enumResultAsInt = enumResultAsInt {
@@ -484,28 +498,28 @@ private class CoreTestsPigeonCodecReader: FlutterStandardReader {
 private class CoreTestsPigeonCodecWriter: FlutterStandardWriter {
   override func writeValue(_ value: Any) {
     if let value = value as? AllMapTypes {
-      super.writeByte(128)
-      super.writeValue(value.toList())
-    } else if let value = value as? AllListTypes {
       super.writeByte(129)
       super.writeValue(value.toList())
-    } else if let value = value as? AllTypes {
+    } else if let value = value as? AllListTypes {
       super.writeByte(130)
       super.writeValue(value.toList())
-    } else if let value = value as? AllNullableTypes {
+    } else if let value = value as? AllTypes {
       super.writeByte(131)
       super.writeValue(value.toList())
-    } else if let value = value as? AllNullableTypesWithoutRecursion {
+    } else if let value = value as? AllNullableTypes {
       super.writeByte(132)
       super.writeValue(value.toList())
-    } else if let value = value as? AllClassesWrapper {
+    } else if let value = value as? AllNullableTypesWithoutRecursion {
       super.writeByte(133)
       super.writeValue(value.toList())
-    } else if let value = value as? TestMessage {
+    } else if let value = value as? AllClassesWrapper {
       super.writeByte(134)
       super.writeValue(value.toList())
-    } else if let value = value as? AnEnum {
+    } else if let value = value as? TestMessage {
       super.writeByte(135)
+      super.writeValue(value.toList())
+    } else if let value = value as? AnEnum {
+      super.writeByte(136)
       super.writeValue(value.rawValue)
     } else {
       super.writeValue(value)

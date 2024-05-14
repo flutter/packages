@@ -161,6 +161,7 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
                   aFloatArray:(FlutterStandardTypedData *)aFloatArray
                          list:(NSArray *)list
                          aMap:(NSDictionary *)aMap
+                       anEnum:(FLTAnEnum)anEnum
                       aString:(NSString *)aString
                      anObject:(id)anObject
                       allMaps:(FLTAllMapTypes *)allMaps
@@ -176,6 +177,7 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
   pigeonResult.aFloatArray = aFloatArray;
   pigeonResult.list = list;
   pigeonResult.aMap = aMap;
+  pigeonResult.anEnum = anEnum;
   pigeonResult.aString = aString;
   pigeonResult.anObject = anObject;
   pigeonResult.allMaps = allMaps;
@@ -194,10 +196,12 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
   pigeonResult.aFloatArray = GetNullableObjectAtIndex(list, 7);
   pigeonResult.list = GetNullableObjectAtIndex(list, 8);
   pigeonResult.aMap = GetNullableObjectAtIndex(list, 9);
-  pigeonResult.aString = GetNullableObjectAtIndex(list, 10);
-  pigeonResult.anObject = GetNullableObjectAtIndex(list, 11);
-  pigeonResult.allMaps = GetNullableObjectAtIndex(list, 12);
-  pigeonResult.allLists = GetNullableObjectAtIndex(list, 13);
+  FLTAnEnumBox *enumBox = GetNullableObjectAtIndex(list, 10);
+  pigeonResult.anEnum = enumBox.value;
+  pigeonResult.aString = GetNullableObjectAtIndex(list, 11);
+  pigeonResult.anObject = GetNullableObjectAtIndex(list, 12);
+  pigeonResult.allMaps = GetNullableObjectAtIndex(list, 13);
+  pigeonResult.allLists = GetNullableObjectAtIndex(list, 14);
   return pigeonResult;
 }
 + (nullable FLTAllTypes *)nullableFromList:(NSArray *)list {
@@ -215,6 +219,7 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
     self.aFloatArray ?: [NSNull null],
     self.list ?: [NSNull null],
     self.aMap ?: [NSNull null],
+    [[FLTAnEnumBox alloc] initWithValue:self.anEnum],
     self.aString ?: [NSNull null],
     self.anObject ?: [NSNull null],
     self.allMaps ?: [NSNull null],
@@ -238,6 +243,7 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
            nullableMapWithAnnotations:
                (nullable NSDictionary<NSString *, NSString *> *)nullableMapWithAnnotations
                 nullableMapWithObject:(nullable NSDictionary<NSString *, id> *)nullableMapWithObject
+                        aNullableEnum:(nullable FLTAnEnumBox *)aNullableEnum
                       aNullableString:(nullable NSString *)aNullableString
                       aNullableObject:(nullable id)aNullableObject
                      allNullableTypes:(nullable FLTAllNullableTypes *)allNullableTypes {
@@ -255,6 +261,7 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
   pigeonResult.nullableNestedList = nullableNestedList;
   pigeonResult.nullableMapWithAnnotations = nullableMapWithAnnotations;
   pigeonResult.nullableMapWithObject = nullableMapWithObject;
+  pigeonResult.aNullableEnum = aNullableEnum;
   pigeonResult.aNullableString = aNullableString;
   pigeonResult.aNullableObject = aNullableObject;
   pigeonResult.allNullableTypes = allNullableTypes;
@@ -275,9 +282,10 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
   pigeonResult.nullableNestedList = GetNullableObjectAtIndex(list, 10);
   pigeonResult.nullableMapWithAnnotations = GetNullableObjectAtIndex(list, 11);
   pigeonResult.nullableMapWithObject = GetNullableObjectAtIndex(list, 12);
-  pigeonResult.aNullableString = GetNullableObjectAtIndex(list, 13);
-  pigeonResult.aNullableObject = GetNullableObjectAtIndex(list, 14);
-  pigeonResult.allNullableTypes = GetNullableObjectAtIndex(list, 15);
+  pigeonResult.aNullableEnum = GetNullableObjectAtIndex(list, 13);
+  pigeonResult.aNullableString = GetNullableObjectAtIndex(list, 14);
+  pigeonResult.aNullableObject = GetNullableObjectAtIndex(list, 15);
+  pigeonResult.allNullableTypes = GetNullableObjectAtIndex(list, 16);
   return pigeonResult;
 }
 + (nullable FLTAllNullableTypes *)nullableFromList:(NSArray *)list {
@@ -298,6 +306,7 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
     self.nullableNestedList ?: [NSNull null],
     self.nullableMapWithAnnotations ?: [NSNull null],
     self.nullableMapWithObject ?: [NSNull null],
+    self.aNullableEnum ?: [NSNull null],
     self.aNullableString ?: [NSNull null],
     self.aNullableObject ?: [NSNull null],
     self.allNullableTypes ?: [NSNull null],
@@ -320,6 +329,7 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
            nullableMapWithAnnotations:
                (nullable NSDictionary<NSString *, NSString *> *)nullableMapWithAnnotations
                 nullableMapWithObject:(nullable NSDictionary<NSString *, id> *)nullableMapWithObject
+                        aNullableEnum:(nullable FLTAnEnumBox *)aNullableEnum
                       aNullableString:(nullable NSString *)aNullableString
                       aNullableObject:(nullable id)aNullableObject {
   FLTAllNullableTypesWithoutRecursion *pigeonResult =
@@ -337,6 +347,7 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
   pigeonResult.nullableNestedList = nullableNestedList;
   pigeonResult.nullableMapWithAnnotations = nullableMapWithAnnotations;
   pigeonResult.nullableMapWithObject = nullableMapWithObject;
+  pigeonResult.aNullableEnum = aNullableEnum;
   pigeonResult.aNullableString = aNullableString;
   pigeonResult.aNullableObject = aNullableObject;
   return pigeonResult;
@@ -357,8 +368,9 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
   pigeonResult.nullableNestedList = GetNullableObjectAtIndex(list, 10);
   pigeonResult.nullableMapWithAnnotations = GetNullableObjectAtIndex(list, 11);
   pigeonResult.nullableMapWithObject = GetNullableObjectAtIndex(list, 12);
-  pigeonResult.aNullableString = GetNullableObjectAtIndex(list, 13);
-  pigeonResult.aNullableObject = GetNullableObjectAtIndex(list, 14);
+  pigeonResult.aNullableEnum = GetNullableObjectAtIndex(list, 13);
+  pigeonResult.aNullableString = GetNullableObjectAtIndex(list, 14);
+  pigeonResult.aNullableObject = GetNullableObjectAtIndex(list, 15);
   return pigeonResult;
 }
 + (nullable FLTAllNullableTypesWithoutRecursion *)nullableFromList:(NSArray *)list {
@@ -379,6 +391,7 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
     self.nullableNestedList ?: [NSNull null],
     self.nullableMapWithAnnotations ?: [NSNull null],
     self.nullableMapWithObject ?: [NSNull null],
+    self.aNullableEnum ?: [NSNull null],
     self.aNullableString ?: [NSNull null],
     self.aNullableObject ?: [NSNull null],
   ];
@@ -441,21 +454,21 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 @implementation CoreTestsPigeonCodecReader
 - (nullable id)readValueOfType:(UInt8)type {
   switch (type) {
-    case 128:
-      return [FLTAllMapTypes fromList:[self readValue]];
     case 129:
-      return [FLTAllListTypes fromList:[self readValue]];
+      return [FLTAllMapTypes fromList:[self readValue]];
     case 130:
-      return [FLTAllTypes fromList:[self readValue]];
+      return [FLTAllListTypes fromList:[self readValue]];
     case 131:
-      return [FLTAllNullableTypes fromList:[self readValue]];
+      return [FLTAllTypes fromList:[self readValue]];
     case 132:
-      return [FLTAllNullableTypesWithoutRecursion fromList:[self readValue]];
+      return [FLTAllNullableTypes fromList:[self readValue]];
     case 133:
-      return [FLTAllClassesWrapper fromList:[self readValue]];
+      return [FLTAllNullableTypesWithoutRecursion fromList:[self readValue]];
     case 134:
+      return [FLTAllClassesWrapper fromList:[self readValue]];
+    case 135:
       return [FLTTestMessage fromList:[self readValue]];
-    case 135: {
+    case 136: {
       NSNumber *enumAsNumber = [self readValue];
       return enumAsNumber == nil ? nil
                                  : [[FLTAnEnumBox alloc] initWithValue:[enumAsNumber integerValue]];
@@ -471,29 +484,29 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 @implementation CoreTestsPigeonCodecWriter
 - (void)writeValue:(id)value {
   if ([value isKindOfClass:[FLTAllMapTypes class]]) {
-    [self writeByte:128];
-    [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FLTAllListTypes class]]) {
     [self writeByte:129];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FLTAllTypes class]]) {
+  } else if ([value isKindOfClass:[FLTAllListTypes class]]) {
     [self writeByte:130];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FLTAllNullableTypes class]]) {
+  } else if ([value isKindOfClass:[FLTAllTypes class]]) {
     [self writeByte:131];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FLTAllNullableTypesWithoutRecursion class]]) {
+  } else if ([value isKindOfClass:[FLTAllNullableTypes class]]) {
     [self writeByte:132];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FLTAllClassesWrapper class]]) {
+  } else if ([value isKindOfClass:[FLTAllNullableTypesWithoutRecursion class]]) {
     [self writeByte:133];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FLTTestMessage class]]) {
+  } else if ([value isKindOfClass:[FLTAllClassesWrapper class]]) {
     [self writeByte:134];
+    [self writeValue:[value toList]];
+  } else if ([value isKindOfClass:[FLTTestMessage class]]) {
+    [self writeByte:135];
     [self writeValue:[value toList]];
   } else if ([value isKindOfClass:[FLTAnEnumBox class]]) {
     FLTAnEnumBox *box = (FLTAnEnumBox *)value;
-    [self writeByte:135];
+    [self writeByte:136];
     [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
   } else {
     [super writeValue:value];

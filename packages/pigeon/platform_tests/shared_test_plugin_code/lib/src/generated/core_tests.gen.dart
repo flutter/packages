@@ -113,6 +113,7 @@ class AllTypes {
     required this.aFloatArray,
     this.list = const <Object?>[],
     this.aMap = const <String?, Object?>{},
+    this.anEnum = AnEnum.one,
     this.aString = '',
     this.anObject = 0,
     required this.allMaps,
@@ -139,6 +140,8 @@ class AllTypes {
 
   Map<Object?, Object?> aMap;
 
+  AnEnum anEnum;
+
   String aString;
 
   Object anObject;
@@ -159,6 +162,7 @@ class AllTypes {
       aFloatArray,
       list,
       aMap,
+      anEnum,
       aString,
       anObject,
       allMaps,
@@ -179,10 +183,11 @@ class AllTypes {
       aFloatArray: result[7]! as Float64List,
       list: result[8]! as List<Object?>,
       aMap: result[9]! as Map<Object?, Object?>,
-      aString: result[10]! as String,
-      anObject: result[11]!,
-      allMaps: result[12]! as AllMapTypes,
-      allLists: result[13]! as AllListTypes,
+      anEnum: result[10]! as AnEnum,
+      aString: result[11]! as String,
+      anObject: result[12]!,
+      allMaps: result[13]! as AllMapTypes,
+      allLists: result[14]! as AllListTypes,
     );
   }
 }
@@ -203,6 +208,7 @@ class AllNullableTypes {
     this.nullableNestedList,
     this.nullableMapWithAnnotations,
     this.nullableMapWithObject,
+    this.aNullableEnum,
     this.aNullableString,
     this.aNullableObject,
     this.allNullableTypes,
@@ -234,6 +240,8 @@ class AllNullableTypes {
 
   Map<String?, Object?>? nullableMapWithObject;
 
+  AnEnum? aNullableEnum;
+
   String? aNullableString;
 
   Object? aNullableObject;
@@ -255,6 +263,7 @@ class AllNullableTypes {
       nullableNestedList,
       nullableMapWithAnnotations,
       nullableMapWithObject,
+      aNullableEnum,
       aNullableString,
       aNullableObject,
       allNullableTypes,
@@ -279,9 +288,10 @@ class AllNullableTypes {
           (result[11] as Map<Object?, Object?>?)?.cast<String?, String?>(),
       nullableMapWithObject:
           (result[12] as Map<Object?, Object?>?)?.cast<String?, Object?>(),
-      aNullableString: result[13] as String?,
-      aNullableObject: result[14],
-      allNullableTypes: result[15] as AllNullableTypes?,
+      aNullableEnum: result[13] as AnEnum?,
+      aNullableString: result[14] as String?,
+      aNullableObject: result[15],
+      allNullableTypes: result[16] as AllNullableTypes?,
     );
   }
 }
@@ -304,6 +314,7 @@ class AllNullableTypesWithoutRecursion {
     this.nullableNestedList,
     this.nullableMapWithAnnotations,
     this.nullableMapWithObject,
+    this.aNullableEnum,
     this.aNullableString,
     this.aNullableObject,
   });
@@ -334,6 +345,8 @@ class AllNullableTypesWithoutRecursion {
 
   Map<String?, Object?>? nullableMapWithObject;
 
+  AnEnum? aNullableEnum;
+
   String? aNullableString;
 
   Object? aNullableObject;
@@ -353,6 +366,7 @@ class AllNullableTypesWithoutRecursion {
       nullableNestedList,
       nullableMapWithAnnotations,
       nullableMapWithObject,
+      aNullableEnum,
       aNullableString,
       aNullableObject,
     ];
@@ -376,8 +390,9 @@ class AllNullableTypesWithoutRecursion {
           (result[11] as Map<Object?, Object?>?)?.cast<String?, String?>(),
       nullableMapWithObject:
           (result[12] as Map<Object?, Object?>?)?.cast<String?, Object?>(),
-      aNullableString: result[13] as String?,
-      aNullableObject: result[14],
+      aNullableEnum: result[13] as AnEnum?,
+      aNullableString: result[14] as String?,
+      aNullableObject: result[15],
     );
   }
 }
@@ -446,28 +461,28 @@ class _PigeonCodec extends StandardMessageCodec {
   @override
   void writeValue(WriteBuffer buffer, Object? value) {
     if (value is AllMapTypes) {
-      buffer.putUint8(128);
-      writeValue(buffer, value.encode());
-    } else if (value is AllListTypes) {
       buffer.putUint8(129);
       writeValue(buffer, value.encode());
-    } else if (value is AllTypes) {
+    } else if (value is AllListTypes) {
       buffer.putUint8(130);
       writeValue(buffer, value.encode());
-    } else if (value is AllNullableTypes) {
+    } else if (value is AllTypes) {
       buffer.putUint8(131);
       writeValue(buffer, value.encode());
-    } else if (value is AllNullableTypesWithoutRecursion) {
+    } else if (value is AllNullableTypes) {
       buffer.putUint8(132);
       writeValue(buffer, value.encode());
-    } else if (value is AllClassesWrapper) {
+    } else if (value is AllNullableTypesWithoutRecursion) {
       buffer.putUint8(133);
       writeValue(buffer, value.encode());
-    } else if (value is TestMessage) {
+    } else if (value is AllClassesWrapper) {
       buffer.putUint8(134);
       writeValue(buffer, value.encode());
-    } else if (value is AnEnum) {
+    } else if (value is TestMessage) {
       buffer.putUint8(135);
+      writeValue(buffer, value.encode());
+    } else if (value is AnEnum) {
+      buffer.putUint8(136);
       writeValue(buffer, value.index);
     } else {
       super.writeValue(buffer, value);
@@ -477,21 +492,21 @@ class _PigeonCodec extends StandardMessageCodec {
   @override
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
-      case 128:
-        return AllMapTypes.decode(readValue(buffer)!);
       case 129:
-        return AllListTypes.decode(readValue(buffer)!);
+        return AllMapTypes.decode(readValue(buffer)!);
       case 130:
-        return AllTypes.decode(readValue(buffer)!);
+        return AllListTypes.decode(readValue(buffer)!);
       case 131:
-        return AllNullableTypes.decode(readValue(buffer)!);
+        return AllTypes.decode(readValue(buffer)!);
       case 132:
-        return AllNullableTypesWithoutRecursion.decode(readValue(buffer)!);
+        return AllNullableTypes.decode(readValue(buffer)!);
       case 133:
-        return AllClassesWrapper.decode(readValue(buffer)!);
+        return AllNullableTypesWithoutRecursion.decode(readValue(buffer)!);
       case 134:
-        return TestMessage.decode(readValue(buffer)!);
+        return AllClassesWrapper.decode(readValue(buffer)!);
       case 135:
+        return TestMessage.decode(readValue(buffer)!);
+      case 136:
         final int? value = readValue(buffer) as int?;
         return value == null ? null : AnEnum.values[value];
       default:

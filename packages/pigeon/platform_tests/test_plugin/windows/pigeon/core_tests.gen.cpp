@@ -122,8 +122,9 @@ AllTypes::AllTypes(bool a_bool, int64_t an_int, int64_t an_int64,
                    const std::vector<int64_t>& a8_byte_array,
                    const std::vector<double>& a_float_array,
                    const EncodableList& list, const EncodableMap& a_map,
-                   const std::string& a_string, const EncodableValue& an_object,
-                   const AllMapTypes& all_maps, const AllListTypes& all_lists)
+                   const AnEnum& an_enum, const std::string& a_string,
+                   const EncodableValue& an_object, const AllMapTypes& all_maps,
+                   const AllListTypes& all_lists)
     : a_bool_(a_bool),
       an_int_(an_int),
       an_int64_(an_int64),
@@ -134,6 +135,7 @@ AllTypes::AllTypes(bool a_bool, int64_t an_int, int64_t an_int64,
       a_float_array_(a_float_array),
       list_(list),
       a_map_(a_map),
+      an_enum_(an_enum),
       a_string_(a_string),
       an_object_(an_object),
       all_maps_(std::make_unique<AllMapTypes>(all_maps)),
@@ -150,6 +152,7 @@ AllTypes::AllTypes(const AllTypes& other)
       a_float_array_(other.a_float_array_),
       list_(other.list_),
       a_map_(other.a_map_),
+      an_enum_(other.an_enum_),
       a_string_(other.a_string_),
       an_object_(other.an_object_),
       all_maps_(std::make_unique<AllMapTypes>(*other.all_maps_)),
@@ -166,6 +169,7 @@ AllTypes& AllTypes::operator=(const AllTypes& other) {
   a_float_array_ = other.a_float_array_;
   list_ = other.list_;
   a_map_ = other.a_map_;
+  an_enum_ = other.an_enum_;
   a_string_ = other.a_string_;
   an_object_ = other.an_object_;
   all_maps_ = std::make_unique<AllMapTypes>(*other.all_maps_);
@@ -229,6 +233,10 @@ const EncodableMap& AllTypes::a_map() const { return a_map_; }
 
 void AllTypes::set_a_map(const EncodableMap& value_arg) { a_map_ = value_arg; }
 
+const AnEnum& AllTypes::an_enum() const { return an_enum_; }
+
+void AllTypes::set_an_enum(const AnEnum& value_arg) { an_enum_ = value_arg; }
+
 const std::string& AllTypes::a_string() const { return a_string_; }
 
 void AllTypes::set_a_string(std::string_view value_arg) {
@@ -255,7 +263,7 @@ void AllTypes::set_all_lists(const AllListTypes& value_arg) {
 
 EncodableList AllTypes::ToEncodableList() const {
   EncodableList list;
-  list.reserve(14);
+  list.reserve(15);
   list.push_back(EncodableValue(a_bool_));
   list.push_back(EncodableValue(an_int_));
   list.push_back(EncodableValue(an_int64_));
@@ -266,6 +274,7 @@ EncodableList AllTypes::ToEncodableList() const {
   list.push_back(EncodableValue(a_float_array_));
   list.push_back(EncodableValue(list_));
   list.push_back(EncodableValue(a_map_));
+  list.push_back(CustomEncodableValue(an_enum_));
   list.push_back(EncodableValue(a_string_));
   list.push_back(an_object_);
   list.push_back(CustomEncodableValue(*all_maps_));
@@ -280,12 +289,13 @@ AllTypes AllTypes::FromEncodableList(const EncodableList& list) {
       std::get<std::vector<int32_t>>(list[5]),
       std::get<std::vector<int64_t>>(list[6]),
       std::get<std::vector<double>>(list[7]), std::get<EncodableList>(list[8]),
-      std::get<EncodableMap>(list[9]), std::get<std::string>(list[10]),
-      list[11],
+      std::get<EncodableMap>(list[9]),
+      std::any_cast<const AnEnum&>(std::get<CustomEncodableValue>(list[10])),
+      std::get<std::string>(list[11]), list[12],
       std::any_cast<const AllMapTypes&>(
-          std::get<CustomEncodableValue>(list[12])),
+          std::get<CustomEncodableValue>(list[13])),
       std::any_cast<const AllListTypes&>(
-          std::get<CustomEncodableValue>(list[13])));
+          std::get<CustomEncodableValue>(list[14])));
   return decoded;
 }
 
@@ -303,7 +313,7 @@ AllNullableTypes::AllNullableTypes(
     const EncodableList* a_nullable_list, const EncodableMap* a_nullable_map,
     const EncodableList* nullable_nested_list,
     const EncodableMap* nullable_map_with_annotations,
-    const EncodableMap* nullable_map_with_object,
+    const EncodableMap* nullable_map_with_object, const AnEnum* a_nullable_enum,
     const std::string* a_nullable_string,
     const EncodableValue* a_nullable_object,
     const AllNullableTypes* all_nullable_types)
@@ -350,6 +360,8 @@ AllNullableTypes::AllNullableTypes(
           nullable_map_with_object
               ? std::optional<EncodableMap>(*nullable_map_with_object)
               : std::nullopt),
+      a_nullable_enum_(a_nullable_enum ? std::optional<AnEnum>(*a_nullable_enum)
+                                       : std::nullopt),
       a_nullable_string_(a_nullable_string
                              ? std::optional<std::string>(*a_nullable_string)
                              : std::nullopt),
@@ -409,6 +421,9 @@ AllNullableTypes::AllNullableTypes(const AllNullableTypes& other)
           other.nullable_map_with_object_
               ? std::optional<EncodableMap>(*other.nullable_map_with_object_)
               : std::nullopt),
+      a_nullable_enum_(other.a_nullable_enum_
+                           ? std::optional<AnEnum>(*other.a_nullable_enum_)
+                           : std::nullopt),
       a_nullable_string_(
           other.a_nullable_string_
               ? std::optional<std::string>(*other.a_nullable_string_)
@@ -436,6 +451,7 @@ AllNullableTypes& AllNullableTypes::operator=(const AllNullableTypes& other) {
   nullable_nested_list_ = other.nullable_nested_list_;
   nullable_map_with_annotations_ = other.nullable_map_with_annotations_;
   nullable_map_with_object_ = other.nullable_map_with_object_;
+  a_nullable_enum_ = other.a_nullable_enum_;
   a_nullable_string_ = other.a_nullable_string_;
   a_nullable_object_ = other.a_nullable_object_;
   all_nullable_types_ =
@@ -631,6 +647,19 @@ void AllNullableTypes::set_nullable_map_with_object(
   nullable_map_with_object_ = value_arg;
 }
 
+const AnEnum* AllNullableTypes::a_nullable_enum() const {
+  return a_nullable_enum_ ? &(*a_nullable_enum_) : nullptr;
+}
+
+void AllNullableTypes::set_a_nullable_enum(const AnEnum* value_arg) {
+  a_nullable_enum_ =
+      value_arg ? std::optional<AnEnum>(*value_arg) : std::nullopt;
+}
+
+void AllNullableTypes::set_a_nullable_enum(const AnEnum& value_arg) {
+  a_nullable_enum_ = value_arg;
+}
+
 const std::string* AllNullableTypes::a_nullable_string() const {
   return a_nullable_string_ ? &(*a_nullable_string_) : nullptr;
 }
@@ -675,7 +704,7 @@ void AllNullableTypes::set_all_nullable_types(
 
 EncodableList AllNullableTypes::ToEncodableList() const {
   EncodableList list;
-  list.reserve(16);
+  list.reserve(17);
   list.push_back(a_nullable_bool_ ? EncodableValue(*a_nullable_bool_)
                                   : EncodableValue());
   list.push_back(a_nullable_int_ ? EncodableValue(*a_nullable_int_)
@@ -708,6 +737,8 @@ EncodableList AllNullableTypes::ToEncodableList() const {
   list.push_back(nullable_map_with_object_
                      ? EncodableValue(*nullable_map_with_object_)
                      : EncodableValue());
+  list.push_back(a_nullable_enum_ ? CustomEncodableValue(*a_nullable_enum_)
+                                  : EncodableValue());
   list.push_back(a_nullable_string_ ? EncodableValue(*a_nullable_string_)
                                     : EncodableValue());
   list.push_back(a_nullable_object_ ? *a_nullable_object_ : EncodableValue());
@@ -782,16 +813,21 @@ AllNullableTypes AllNullableTypes::FromEncodableList(
     decoded.set_nullable_map_with_object(
         std::get<EncodableMap>(encodable_nullable_map_with_object));
   }
-  auto& encodable_a_nullable_string = list[13];
+  auto& encodable_a_nullable_enum = list[13];
+  if (!encodable_a_nullable_enum.IsNull()) {
+    decoded.set_a_nullable_enum(std::any_cast<const AnEnum&>(
+        std::get<CustomEncodableValue>(encodable_a_nullable_enum)));
+  }
+  auto& encodable_a_nullable_string = list[14];
   if (!encodable_a_nullable_string.IsNull()) {
     decoded.set_a_nullable_string(
         std::get<std::string>(encodable_a_nullable_string));
   }
-  auto& encodable_a_nullable_object = list[14];
+  auto& encodable_a_nullable_object = list[15];
   if (!encodable_a_nullable_object.IsNull()) {
     decoded.set_a_nullable_object(encodable_a_nullable_object);
   }
-  auto& encodable_all_nullable_types = list[15];
+  auto& encodable_all_nullable_types = list[16];
   if (!encodable_all_nullable_types.IsNull()) {
     decoded.set_all_nullable_types(std::any_cast<const AllNullableTypes&>(
         std::get<CustomEncodableValue>(encodable_all_nullable_types)));
@@ -813,7 +849,7 @@ AllNullableTypesWithoutRecursion::AllNullableTypesWithoutRecursion(
     const EncodableList* a_nullable_list, const EncodableMap* a_nullable_map,
     const EncodableList* nullable_nested_list,
     const EncodableMap* nullable_map_with_annotations,
-    const EncodableMap* nullable_map_with_object,
+    const EncodableMap* nullable_map_with_object, const AnEnum* a_nullable_enum,
     const std::string* a_nullable_string,
     const EncodableValue* a_nullable_object)
     : a_nullable_bool_(a_nullable_bool ? std::optional<bool>(*a_nullable_bool)
@@ -859,6 +895,8 @@ AllNullableTypesWithoutRecursion::AllNullableTypesWithoutRecursion(
           nullable_map_with_object
               ? std::optional<EncodableMap>(*nullable_map_with_object)
               : std::nullopt),
+      a_nullable_enum_(a_nullable_enum ? std::optional<AnEnum>(*a_nullable_enum)
+                                       : std::nullopt),
       a_nullable_string_(a_nullable_string
                              ? std::optional<std::string>(*a_nullable_string)
                              : std::nullopt),
@@ -1067,6 +1105,21 @@ void AllNullableTypesWithoutRecursion::set_nullable_map_with_object(
   nullable_map_with_object_ = value_arg;
 }
 
+const AnEnum* AllNullableTypesWithoutRecursion::a_nullable_enum() const {
+  return a_nullable_enum_ ? &(*a_nullable_enum_) : nullptr;
+}
+
+void AllNullableTypesWithoutRecursion::set_a_nullable_enum(
+    const AnEnum* value_arg) {
+  a_nullable_enum_ =
+      value_arg ? std::optional<AnEnum>(*value_arg) : std::nullopt;
+}
+
+void AllNullableTypesWithoutRecursion::set_a_nullable_enum(
+    const AnEnum& value_arg) {
+  a_nullable_enum_ = value_arg;
+}
+
 const std::string* AllNullableTypesWithoutRecursion::a_nullable_string() const {
   return a_nullable_string_ ? &(*a_nullable_string_) : nullptr;
 }
@@ -1100,7 +1153,7 @@ void AllNullableTypesWithoutRecursion::set_a_nullable_object(
 
 EncodableList AllNullableTypesWithoutRecursion::ToEncodableList() const {
   EncodableList list;
-  list.reserve(15);
+  list.reserve(16);
   list.push_back(a_nullable_bool_ ? EncodableValue(*a_nullable_bool_)
                                   : EncodableValue());
   list.push_back(a_nullable_int_ ? EncodableValue(*a_nullable_int_)
@@ -1133,6 +1186,8 @@ EncodableList AllNullableTypesWithoutRecursion::ToEncodableList() const {
   list.push_back(nullable_map_with_object_
                      ? EncodableValue(*nullable_map_with_object_)
                      : EncodableValue());
+  list.push_back(a_nullable_enum_ ? CustomEncodableValue(*a_nullable_enum_)
+                                  : EncodableValue());
   list.push_back(a_nullable_string_ ? EncodableValue(*a_nullable_string_)
                                     : EncodableValue());
   list.push_back(a_nullable_object_ ? *a_nullable_object_ : EncodableValue());
@@ -1204,12 +1259,17 @@ AllNullableTypesWithoutRecursion::FromEncodableList(const EncodableList& list) {
     decoded.set_nullable_map_with_object(
         std::get<EncodableMap>(encodable_nullable_map_with_object));
   }
-  auto& encodable_a_nullable_string = list[13];
+  auto& encodable_a_nullable_enum = list[13];
+  if (!encodable_a_nullable_enum.IsNull()) {
+    decoded.set_a_nullable_enum(std::any_cast<const AnEnum&>(
+        std::get<CustomEncodableValue>(encodable_a_nullable_enum)));
+  }
+  auto& encodable_a_nullable_string = list[14];
   if (!encodable_a_nullable_string.IsNull()) {
     decoded.set_a_nullable_string(
         std::get<std::string>(encodable_a_nullable_string));
   }
-  auto& encodable_a_nullable_object = list[14];
+  auto& encodable_a_nullable_object = list[15];
   if (!encodable_a_nullable_object.IsNull()) {
     decoded.set_a_nullable_object(encodable_a_nullable_object);
   }
@@ -1375,29 +1435,29 @@ PigeonCodecSerializer::PigeonCodecSerializer() {}
 EncodableValue PigeonCodecSerializer::ReadValueOfType(
     uint8_t type, flutter::ByteStreamReader* stream) const {
   switch (type) {
-    case 128:
+    case 129:
       return CustomEncodableValue(AllMapTypes::FromEncodableList(
           std::get<EncodableList>(ReadValue(stream))));
-    case 129:
+    case 130:
       return CustomEncodableValue(AllListTypes::FromEncodableList(
           std::get<EncodableList>(ReadValue(stream))));
-    case 130:
+    case 131:
       return CustomEncodableValue(AllTypes::FromEncodableList(
           std::get<EncodableList>(ReadValue(stream))));
-    case 131:
+    case 132:
       return CustomEncodableValue(AllNullableTypes::FromEncodableList(
           std::get<EncodableList>(ReadValue(stream))));
-    case 132:
+    case 133:
       return CustomEncodableValue(
           AllNullableTypesWithoutRecursion::FromEncodableList(
               std::get<EncodableList>(ReadValue(stream))));
-    case 133:
+    case 134:
       return CustomEncodableValue(AllClassesWrapper::FromEncodableList(
           std::get<EncodableList>(ReadValue(stream))));
-    case 134:
+    case 135:
       return CustomEncodableValue(TestMessage::FromEncodableList(
           std::get<EncodableList>(ReadValue(stream))));
-    case 135: {
+    case 136: {
       const auto& encodable_enum_arg = ReadValue(stream);
       const int64_t enum_arg_value =
           encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
@@ -1415,7 +1475,7 @@ void PigeonCodecSerializer::WriteValue(
   if (const CustomEncodableValue* custom_value =
           std::get_if<CustomEncodableValue>(&value)) {
     if (custom_value->type() == typeid(AllMapTypes)) {
-      stream->WriteByte(128);
+      stream->WriteByte(129);
       WriteValue(
           EncodableValue(
               std::any_cast<AllMapTypes>(*custom_value).ToEncodableList()),
@@ -1423,7 +1483,7 @@ void PigeonCodecSerializer::WriteValue(
       return;
     }
     if (custom_value->type() == typeid(AllListTypes)) {
-      stream->WriteByte(129);
+      stream->WriteByte(130);
       WriteValue(
           EncodableValue(
               std::any_cast<AllListTypes>(*custom_value).ToEncodableList()),
@@ -1431,14 +1491,14 @@ void PigeonCodecSerializer::WriteValue(
       return;
     }
     if (custom_value->type() == typeid(AllTypes)) {
-      stream->WriteByte(130);
+      stream->WriteByte(131);
       WriteValue(EncodableValue(
                      std::any_cast<AllTypes>(*custom_value).ToEncodableList()),
                  stream);
       return;
     }
     if (custom_value->type() == typeid(AllNullableTypes)) {
-      stream->WriteByte(131);
+      stream->WriteByte(132);
       WriteValue(
           EncodableValue(
               std::any_cast<AllNullableTypes>(*custom_value).ToEncodableList()),
@@ -1446,7 +1506,7 @@ void PigeonCodecSerializer::WriteValue(
       return;
     }
     if (custom_value->type() == typeid(AllNullableTypesWithoutRecursion)) {
-      stream->WriteByte(132);
+      stream->WriteByte(133);
       WriteValue(EncodableValue(std::any_cast<AllNullableTypesWithoutRecursion>(
                                     *custom_value)
                                     .ToEncodableList()),
@@ -1454,14 +1514,14 @@ void PigeonCodecSerializer::WriteValue(
       return;
     }
     if (custom_value->type() == typeid(AllClassesWrapper)) {
-      stream->WriteByte(133);
+      stream->WriteByte(134);
       WriteValue(EncodableValue(std::any_cast<AllClassesWrapper>(*custom_value)
                                     .ToEncodableList()),
                  stream);
       return;
     }
     if (custom_value->type() == typeid(TestMessage)) {
-      stream->WriteByte(134);
+      stream->WriteByte(135);
       WriteValue(
           EncodableValue(
               std::any_cast<TestMessage>(*custom_value).ToEncodableList()),
@@ -1469,8 +1529,10 @@ void PigeonCodecSerializer::WriteValue(
       return;
     }
     if (custom_value->type() == typeid(AnEnum)) {
-      stream->WriteByte(135);
-      WriteValue(EncodableValue(std::any_cast<int>(*custom_value)), stream);
+      stream->WriteByte(136);
+      WriteValue(EncodableValue(
+                     static_cast<int>(std::any_cast<AnEnum>(*custom_value))),
+                 stream);
       return;
     }
   }
@@ -2692,8 +2754,13 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
             try {
               const auto& args = std::get<EncodableList>(message);
               const auto& encodable_an_enum_arg = args.at(0);
-              const auto* an_enum_arg = &(std::any_cast<const AnEnum&>(
-                  std::get<CustomEncodableValue>(encodable_an_enum_arg)));
+              AnEnum an_enum_arg_value;
+              const AnEnum* an_enum_arg = nullptr;
+              if (!encodable_an_enum_arg.IsNull()) {
+                an_enum_arg_value = std::any_cast<const AnEnum&>(
+                    std::get<CustomEncodableValue>(encodable_an_enum_arg));
+                an_enum_arg = &an_enum_arg_value;
+              }
               ErrorOr<std::optional<AnEnum>> output = api->EchoNullableEnum(
                   an_enum_arg ? &(*an_enum_arg) : nullptr);
               if (output.has_error()) {
@@ -3738,8 +3805,13 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
             try {
               const auto& args = std::get<EncodableList>(message);
               const auto& encodable_an_enum_arg = args.at(0);
-              const auto* an_enum_arg = &(std::any_cast<const AnEnum&>(
-                  std::get<CustomEncodableValue>(encodable_an_enum_arg)));
+              AnEnum an_enum_arg_value;
+              const AnEnum* an_enum_arg = nullptr;
+              if (!encodable_an_enum_arg.IsNull()) {
+                an_enum_arg_value = std::any_cast<const AnEnum&>(
+                    std::get<CustomEncodableValue>(encodable_an_enum_arg));
+                an_enum_arg = &an_enum_arg_value;
+              }
               api->EchoAsyncNullableEnum(
                   an_enum_arg ? &(*an_enum_arg) : nullptr,
                   [reply](ErrorOr<std::optional<AnEnum>>&& output) {
@@ -4694,8 +4766,13 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
             try {
               const auto& args = std::get<EncodableList>(message);
               const auto& encodable_an_enum_arg = args.at(0);
-              const auto* an_enum_arg = &(std::any_cast<const AnEnum&>(
-                  std::get<CustomEncodableValue>(encodable_an_enum_arg)));
+              AnEnum an_enum_arg_value;
+              const AnEnum* an_enum_arg = nullptr;
+              if (!encodable_an_enum_arg.IsNull()) {
+                an_enum_arg_value = std::any_cast<const AnEnum&>(
+                    std::get<CustomEncodableValue>(encodable_an_enum_arg));
+                an_enum_arg = &an_enum_arg_value;
+              }
               api->CallFlutterEchoNullableEnum(
                   an_enum_arg ? &(*an_enum_arg) : nullptr,
                   [reply](ErrorOr<std::optional<AnEnum>>&& output) {
@@ -5367,7 +5444,7 @@ void FlutterIntegrationCoreApi::EchoEnum(
       message_channel_suffix_;
   BasicMessageChannel<> channel(binary_messenger_, channel_name, &GetCodec());
   EncodableValue encoded_api_arguments = EncodableValue(EncodableList{
-      EncodableValue((int)an_enum_arg),
+      CustomEncodableValue(an_enum_arg),
   });
   channel.Send(
       encoded_api_arguments, [channel_name, on_success = std::move(on_success),
@@ -5670,7 +5747,7 @@ void FlutterIntegrationCoreApi::EchoNullableEnum(
       message_channel_suffix_;
   BasicMessageChannel<> channel(binary_messenger_, channel_name, &GetCodec());
   EncodableValue encoded_api_arguments = EncodableValue(EncodableList{
-      an_enum_arg ? EncodableValue((int)(*an_enum_arg)) : EncodableValue(),
+      an_enum_arg ? CustomEncodableValue(*an_enum_arg) : EncodableValue(),
   });
   channel.Send(
       encoded_api_arguments, [channel_name, on_success = std::move(on_success),
@@ -5688,8 +5765,13 @@ void FlutterIntegrationCoreApi::EchoNullableEnum(
                              std::get<std::string>(list_return_value->at(1)),
                              list_return_value->at(2)));
           } else {
-            const auto* return_value = &(std::any_cast<const AnEnum&>(
-                std::get<CustomEncodableValue>(list_return_value->at(0))));
+            AnEnum return_value_value;
+            const AnEnum* return_value = nullptr;
+            if (!list_return_value->at(0).IsNull()) {
+              return_value_value = std::any_cast<const AnEnum&>(
+                  std::get<CustomEncodableValue>(list_return_value->at(0)));
+              return_value = &return_value_value;
+            }
             on_success(return_value);
           }
         } else {
