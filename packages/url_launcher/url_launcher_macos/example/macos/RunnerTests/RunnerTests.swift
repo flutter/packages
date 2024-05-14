@@ -7,6 +7,12 @@ import XCTest
 
 @testable import url_launcher_macos
 
+// Tests whether NSURL parsing is strict. When linking against the macOS 14 SDK or later,
+// NSURL uses a more lenient parser which will not return nil.
+private func urlParsingIsStrict() -> Bool {
+  return URL(string: "b a d U R L") == nil
+}
+
 /// A stub to simulate the system Url handler.
 class StubWorkspace: SystemURLHandler {
 
@@ -43,7 +49,11 @@ class RunnerTests: XCTestCase {
     let plugin = UrlLauncherPlugin()
 
     let result = try plugin.canLaunch(url: "invalid url")
-    XCTAssertEqual(result.error, .invalidUrl)
+    if urlParsingIsStrict() {
+      XCTAssertEqual(result.error, .invalidUrl)
+    } else {
+      XCTAssertFalse(result.value)
+    }
   }
 
   func testLaunchSuccessReturnsTrue() throws {
@@ -69,6 +79,10 @@ class RunnerTests: XCTestCase {
     let plugin = UrlLauncherPlugin()
 
     let result = try plugin.launch(url: "invalid url")
-    XCTAssertEqual(result.error, .invalidUrl)
+    if urlParsingIsStrict() {
+      XCTAssertEqual(result.error, .invalidUrl)
+    } else {
+      XCTAssertFalse(result.value)
+    }
   }
 }
