@@ -218,15 +218,23 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI {
     }
   }
 
+  // TODO(louisehsu): Once tests and pigeon are migrated to Swift, ensure the param type is [String:String] instead of [String:String?]
   public func finishTransactionFinishMap(
     _ finishMap: [String: Any], error: AutoreleasingUnsafeMutablePointer<FlutterError?>
   ) {
-    guard let productIdentifier = finishMap["productIdentifier"] as? String,
-      let transactionIdentifier = (finishMap["transactionIdentifier"] ?? "") as? String
-    else {
-      return
-    }
 
+    // casting [String:Any] into [String:String?] will auto convert `NSNull` into nil `String`
+    // TODO(louisehsu): This is a workaround for objc pigeon's NSNull support. Once we move to swift pigeon, this can be removed.
+    let castedFinishMap: [String: String] = finishMap.mapValues { value in
+      if let _ = value as? NSNull {
+        return ""
+      } else if let stringValue = value as? String {
+        return stringValue
+      }
+      fatalError("This dict should only contain either NSNull or String")
+    }
+    let productIdentifier = castedFinishMap["productIdentifier"]
+    let transactionIdentifier = castedFinishMap["transactionIdentifier"]
     let pendingTransactions = getPaymentQueueHandler().getUnfinishedTransactions()
 
     for transaction in pendingTransactions {
