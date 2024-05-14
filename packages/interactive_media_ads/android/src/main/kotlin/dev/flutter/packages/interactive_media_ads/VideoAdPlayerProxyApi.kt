@@ -16,16 +16,16 @@ class VideoAdPlayerProxyApi(pigeonRegistrar: PigeonProxyApiRegistrar) :
   }
 
   private class VideoAdPlayerImpl(val api: VideoAdPlayerProxyApi) : VideoAdPlayer {
-    var _volume: Int = 0
+    var savedVolume: Int = 0
 
-    var _adProgress: VideoProgressUpdate = VideoProgressUpdate.VIDEO_TIME_NOT_READY
+    var savedAdProgress: VideoProgressUpdate = VideoProgressUpdate.VIDEO_TIME_NOT_READY
 
     override fun getAdProgress(): VideoProgressUpdate {
-      return _adProgress
+      return savedAdProgress
     }
 
     override fun getVolume(): Int {
-      return _volume
+      return savedVolume
     }
 
     override fun addCallback(callback: VideoAdPlayer.VideoAdPlayerCallback) {
@@ -58,10 +58,10 @@ class VideoAdPlayerProxyApi(pigeonRegistrar: PigeonProxyApiRegistrar) :
   }
 
   override fun setVolume(pigeon_instance: VideoAdPlayer, value: Long) {
-    (pigeon_instance as VideoAdPlayerImpl)._volume = value.toInt()
+    (pigeon_instance as VideoAdPlayerImpl).savedVolume = value.toInt()
   }
 
   override fun setAdProgress(pigeon_instance: VideoAdPlayer, progress: VideoProgressUpdate) {
-    (pigeon_instance as VideoAdPlayerImpl)._adProgress = progress
+    (pigeon_instance as VideoAdPlayerImpl).savedAdProgress = progress
   }
 }
