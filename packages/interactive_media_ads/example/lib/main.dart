@@ -101,7 +101,7 @@ class _AdExampleWidgetState extends State<AdExampleWidget> {
             }
           },
           onAdErrorEvent: (AdErrorEvent event) {
-            //manager.discardAdBreak();
+            debugPrint('AdErrorEvent: ${event.error.message}');
             _resumeContent();
           },
         ));

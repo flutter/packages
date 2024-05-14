@@ -325,6 +325,7 @@ class AndroidAdsManager extends PlatformAdsManager {
               ),
             ),
           );
+          weakThis.target?._manager.discardAdBreak();
         },
       ),
     );
