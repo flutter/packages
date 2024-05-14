@@ -15,7 +15,7 @@ import org.mockito.kotlin.whenever
 class AdEventListenerProxyApiTest {
   @Test
   fun pigeon_defaultConstructor() {
-    val api = ProxyApiRegistrar(Mockito.mock(), Mockito.mock()).getPigeonApiAdEventListener()
+    val api = TestProxyApiRegistrar().getPigeonApiAdEventListener()
 
     assertTrue(api.pigeon_defaultConstructor() is AdEventListenerProxyApi.AdEventListenerImpl)
   }

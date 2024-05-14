@@ -13,7 +13,7 @@ import org.mockito.kotlin.whenever
 class AdErrorProxyApiTest {
   @Test
   fun errorCode() {
-    val api = ProxyApiRegistrar(Mockito.mock(), Mockito.mock()).getPigeonApiAdError()
+    val api = TestProxyApiRegistrar().getPigeonApiAdError()
 
     val instance = Mockito.mock<AdError>()
     whenever(instance.errorCode).thenReturn(AdError.AdErrorCode.VIDEO_PLAY_ERROR)
@@ -23,7 +23,7 @@ class AdErrorProxyApiTest {
 
   @Test
   fun errorCodeNumber() {
-    val api = ProxyApiRegistrar(Mockito.mock(), Mockito.mock()).getPigeonApiAdError()
+    val api = TestProxyApiRegistrar().getPigeonApiAdError()
 
     val instance = Mockito.mock<AdError>()
     whenever(instance.errorCodeNumber).thenReturn(0)
@@ -33,7 +33,7 @@ class AdErrorProxyApiTest {
 
   @Test
   fun errorType() {
-    val api = ProxyApiRegistrar(Mockito.mock(), Mockito.mock()).getPigeonApiAdError()
+    val api = TestProxyApiRegistrar().getPigeonApiAdError()
 
     val instance = Mockito.mock<AdError>()
     whenever(instance.errorType).thenReturn(AdError.AdErrorType.LOAD)
@@ -43,7 +43,7 @@ class AdErrorProxyApiTest {
 
   @Test
   fun message() {
-    val api = ProxyApiRegistrar(Mockito.mock(), Mockito.mock()).getPigeonApiAdError()
+    val api = TestProxyApiRegistrar().getPigeonApiAdError()
 
     val instance = Mockito.mock<AdError>()
     whenever(instance.message).thenReturn("message")

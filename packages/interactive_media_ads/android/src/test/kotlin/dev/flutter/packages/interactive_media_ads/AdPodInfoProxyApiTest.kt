@@ -13,7 +13,7 @@ import org.mockito.kotlin.whenever
 class AdPodInfoProxyApiTest {
   @Test
   fun adPosition() {
-    val api = ProxyApiRegistrar(Mockito.mock(), Mockito.mock()).getPigeonApiAdPodInfo()
+    val api = TestProxyApiRegistrar().getPigeonApiAdPodInfo()
 
     val instance = Mockito.mock<AdPodInfo>()
     whenever(instance.adPosition).thenReturn(0)
@@ -23,7 +23,7 @@ class AdPodInfoProxyApiTest {
 
   @Test
   fun maxDuration() {
-    val api = ProxyApiRegistrar(Mockito.mock(), Mockito.mock()).getPigeonApiAdPodInfo()
+    val api = TestProxyApiRegistrar().getPigeonApiAdPodInfo()
 
     val instance = Mockito.mock<AdPodInfo>()
     whenever(instance.maxDuration).thenReturn(0.0)
@@ -33,7 +33,7 @@ class AdPodInfoProxyApiTest {
 
   @Test
   fun podIndex() {
-    val api = ProxyApiRegistrar(Mockito.mock(), Mockito.mock()).getPigeonApiAdPodInfo()
+    val api = TestProxyApiRegistrar().getPigeonApiAdPodInfo()
 
     val instance = Mockito.mock<AdPodInfo>()
     whenever(instance.podIndex).thenReturn(0)
@@ -43,7 +43,7 @@ class AdPodInfoProxyApiTest {
 
   @Test
   fun timeOffset() {
-    val api = ProxyApiRegistrar(Mockito.mock(), Mockito.mock()).getPigeonApiAdPodInfo()
+    val api = TestProxyApiRegistrar().getPigeonApiAdPodInfo()
 
     val instance = Mockito.mock<AdPodInfo>()
     whenever(instance.timeOffset).thenReturn(0.0)
@@ -53,7 +53,7 @@ class AdPodInfoProxyApiTest {
 
   @Test
   fun totalAds() {
-    val api = ProxyApiRegistrar(Mockito.mock(), Mockito.mock()).getPigeonApiAdPodInfo()
+    val api = TestProxyApiRegistrar().getPigeonApiAdPodInfo()
 
     val instance = Mockito.mock<AdPodInfo>()
     whenever(instance.totalAds).thenReturn(0)
@@ -63,7 +63,7 @@ class AdPodInfoProxyApiTest {
 
   @Test
   fun isBumper() {
-    val api = ProxyApiRegistrar(Mockito.mock(), Mockito.mock()).getPigeonApiAdPodInfo()
+    val api = TestProxyApiRegistrar().getPigeonApiAdPodInfo()
 
     val instance = Mockito.mock<AdPodInfo>()
     whenever(instance.isBumper).thenReturn(true)

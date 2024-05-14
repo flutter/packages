@@ -15,7 +15,7 @@ import org.mockito.kotlin.verify
 class AdsLoaderProxyApiTest {
   @Test
   fun addAdErrorListener() {
-    val api = ProxyApiRegistrar(Mockito.mock(), Mockito.mock()).getPigeonApiAdsLoader()
+    val api = TestProxyApiRegistrar().getPigeonApiAdsLoader()
 
     val instance = mock<AdsLoader>()
     val mockListener = mock<AdErrorEvent.AdErrorListener>()
@@ -26,7 +26,7 @@ class AdsLoaderProxyApiTest {
 
   @Test
   fun addAdsLoadedListener() {
-    val api = ProxyApiRegistrar(Mockito.mock(), Mockito.mock()).getPigeonApiAdsLoader()
+    val api = TestProxyApiRegistrar().getPigeonApiAdsLoader()
 
     val instance = mock<AdsLoader>()
     val mockListener = mock<AdsLoader.AdsLoadedListener>()
@@ -37,7 +37,7 @@ class AdsLoaderProxyApiTest {
 
   @Test
   fun requestAds() {
-    val api = ProxyApiRegistrar(Mockito.mock(), Mockito.mock()).getPigeonApiAdsLoader()
+    val api = TestProxyApiRegistrar().getPigeonApiAdsLoader()
 
     val instance = mock<AdsLoader>()
     val mockRequest = mock<AdsRequest>()

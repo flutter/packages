@@ -14,7 +14,7 @@ import org.mockito.kotlin.whenever
 class AdsManagerLoadedEventProxyApiTest {
   @Test
   fun manager() {
-    val api = ProxyApiRegistrar(Mockito.mock(), Mockito.mock()).getPigeonApiAdsManagerLoadedEvent()
+    val api = TestProxyApiRegistrar().getPigeonApiAdsManagerLoadedEvent()
 
     val instance = Mockito.mock<AdsManagerLoadedEvent>()
     val mockManager = Mockito.mock<AdsManager>()

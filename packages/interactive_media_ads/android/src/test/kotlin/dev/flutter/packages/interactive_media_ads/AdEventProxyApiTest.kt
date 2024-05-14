@@ -13,7 +13,7 @@ import org.mockito.kotlin.whenever
 class AdEventProxyApiTest {
   @Test
   fun type() {
-    val api = ProxyApiRegistrar(Mockito.mock(), Mockito.mock()).getPigeonApiAdEvent()
+    val api = TestProxyApiRegistrar().getPigeonApiAdEvent()
 
     val instance = Mockito.mock<AdEvent>()
     whenever(instance.type).thenReturn(AdEvent.AdEventType.PAUSED)

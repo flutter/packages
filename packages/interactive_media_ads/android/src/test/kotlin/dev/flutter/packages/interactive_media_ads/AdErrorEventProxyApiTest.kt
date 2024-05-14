@@ -14,7 +14,7 @@ import org.mockito.kotlin.whenever
 internal class AdErrorEventProxyApiTest {
   @Test
   fun error() {
-    val api = ProxyApiRegistrar(mock(), mock()).getPigeonApiAdErrorEvent()
+    val api = TestProxyApiRegistrar().getPigeonApiAdErrorEvent()
 
     val instance = mock<AdErrorEvent>()
     val mockError = mock<AdError>()

@@ -13,7 +13,7 @@ import org.mockito.kotlin.whenever
 class AdMediaInfoProxyApiTest {
   @Test
   fun url() {
-    val api = ProxyApiRegistrar(Mockito.mock(), Mockito.mock()).getPigeonApiAdMediaInfo()
+    val api = TestProxyApiRegistrar().getPigeonApiAdMediaInfo()
 
     val instance = Mockito.mock<AdMediaInfo>()
     whenever(instance.url).thenReturn("url")
