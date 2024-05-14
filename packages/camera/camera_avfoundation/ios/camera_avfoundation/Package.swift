@@ -23,7 +23,8 @@ let package = Package(
       exclude: ["include/cocoapods_camera_avfoundation.modulemap"],
       resources: [
         .process("Resources")
-      ]
+      ],
+      publicHeadersPath: "public"
     )
   ]
 )

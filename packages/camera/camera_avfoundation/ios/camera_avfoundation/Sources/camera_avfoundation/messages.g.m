@@ -6,7 +6,7 @@
 
 // The line below is manually edited. See:
 // https://github.com/flutter/flutter/issues/147587
-#import "./include/camera_avfoundation/messages.g.h"
+#import <camera_avfoundation/messages.g.h>
 
 #if TARGET_OS_OSX
 #import <FlutterMacOS/FlutterMacOS.h>
