@@ -29,8 +29,77 @@ enum AdErrorCode {
   /// Ads player was not provided.
   adsPlayerWasNotProvided,
 
+  /// There was a problem requesting ads from the server.
+  adsRequestNetworkError,
+
+  /// A companion ad failed to load or render.
+  companionAdLoadingFailed,
+
+  /// There was a problem requesting ads from the server.
+  failedToRequestAds,
+
+  /// An error internal to the SDK occurred.
+  internalError,
+
+  /// Invalid arguments were provided to SDK methods.
+  invalidArguments,
+
+  /// An overlay ad failed to load.
+  overlayAdLoadingFailed,
+
+  /// An overlay ad failed to render.
+  overlayAdPlayingFailed,
+
+  /// Ads list was returned but ContentProgressProvider was not configured.
+  playlistNoContentTracking,
+
+  /// Ads loader sent ads loaded event when it was not expected.
+  unexpectedAdsLoadedEvent,
+
+  /// The ad response was not understood and cannot be parsed.
+  unknownAdResponse,
+
   /// An unexpected error occurred and the cause is not known.
   unknownError,
+
+  /// No assets were found in the VAST ad response.
+  vastAssetNotFound,
+
+  /// A VAST response containing a single `<VAST>` tag with no child tags.
+  vastEmptyResponse,
+
+  /// Assets were found in the VAST ad response for a linear ad, but none of
+  /// them matched the video player's capabilities.
+  vastLinearAssetMismatch,
+
+  /// At least one VAST wrapper ad loaded successfully and a subsequent wrapper
+  /// or inline ad load has timed out.
+  vastLoadTimeout,
+
+  /// The ad response was not recognized as a valid VAST ad.
+  vastMalformedResponse,
+
+  /// Failed to load media assets from a VAST response.
+  vastMediaLoadTimeout,
+
+  /// Assets were found in the VAST ad response for a nonlinear ad, but none of
+  /// them matched the video player's capabilities.
+  vastNonlinearAssetMismatch,
+
+  /// No Ads VAST response after one or more wrappers.
+  vastNoAdsAfterWrapper,
+
+  /// The maximum number of VAST wrapper redirects has been reached.
+  vastTooManyRedirects,
+
+  /// Trafficking error.
+  ///
+  /// Video player received an ad type that it was not expecting and/or cannot
+  /// display.
+  vastTraffickingError,
+
+  /// There was an error playing the video ad.
+  videoPlayError,
 }
 
 /// Specifies when the error was encountered, during either ad loading or playback.

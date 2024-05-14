@@ -20,6 +20,7 @@ final class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
     _frameLayout.addView(_videoView);
   }
 
+  static const int _progressPollingMs = 250;
   final ima.FrameLayout _frameLayout = ima.FrameLayout();
   final Set<ima.VideoAdPlayerCallback> _videoAdPlayerCallbacks =
       <ima.VideoAdPlayerCallback>{};
@@ -53,7 +54,7 @@ final class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
 
   void _startAdTracking() {
     _adProgressTimer = Timer.periodic(
-      const Duration(seconds: 3),
+      const Duration(milliseconds: _progressPollingMs),
       (Timer timer) async {
         final int currentPosition = await _videoView.getCurrentPosition();
         await Future.wait(
@@ -137,9 +138,9 @@ final class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
           final AndroidAdDisplayContainer? container = weakThis.target;
           if (container != null) {
             await container._mediaPlayer!.pause();
-            container._stopAdTracking();
             container._savedAdPosition =
                 await container._videoView.getCurrentPosition();
+            container._stopAdTracking();
           }
         },
         playAd: (_, ima.AdMediaInfo adMediaInfo) {
@@ -220,23 +221,11 @@ final class AndroidAdsLoader extends PlatformAdsLoader {
     ));
     adsLoader.addAdErrorListener(ima.AdErrorListener(
       onAdError: (_, ima.AdErrorEvent event) {
-        final AdErrorType errorType = switch (event.error.errorType) {
-          ima.AdErrorType.load => AdErrorType.loading,
-          ima.AdErrorType.play => AdErrorType.playing,
-          ima.AdErrorType.unknown => AdErrorType.unknown,
-        };
-
-        final AdErrorCode errorCode = switch (event.error.errorCode) {
-          ima.AdErrorCode.adsPlayerWasNotProvided =>
-            AdErrorCode.adsPlayerNotProvided,
-          ima.AdErrorCode.unknownError => AdErrorCode.unknownError,
-        };
-
         weakThis.target?.params.onAdsLoadError(
           AdsLoadErrorData(
             error: AdError(
-              type: errorType,
-              code: errorCode,
+              type: event.error.errorType.asInterfaceErrorType(),
+              code: event.error.errorCode.asInterfaceErrorCode(),
               message: event.error.message,
             ),
           ),
@@ -327,23 +316,11 @@ class AndroidAdsManager extends PlatformAdsManager {
     weakThis.target?._manager.addAdErrorListener(
       ima.AdErrorListener(
         onAdError: (_, ima.AdErrorEvent event) {
-          final AdErrorType errorType = switch (event.error.errorType) {
-            ima.AdErrorType.load => AdErrorType.loading,
-            ima.AdErrorType.play => AdErrorType.playing,
-            ima.AdErrorType.unknown => AdErrorType.unknown,
-          };
-
-          final AdErrorCode errorCode = switch (event.error.errorCode) {
-            ima.AdErrorCode.adsPlayerWasNotProvided =>
-              AdErrorCode.adsPlayerNotProvided,
-            ima.AdErrorCode.unknownError => AdErrorCode.unknownError,
-          };
-
           weakThis.target?._managerDelegate?.params.onAdErrorEvent?.call(
             AdErrorEvent(
               error: AdError(
-                type: errorType,
-                code: errorCode,
+                type: event.error.errorType.asInterfaceErrorType(),
+                code: event.error.errorCode.asInterfaceErrorCode(),
                 message: event.error.message,
               ),
             ),
@@ -358,4 +335,55 @@ class AndroidAdsManager extends PlatformAdsManager {
 final class AndroidAdsManagerDelegate extends PlatformAdsManagerDelegate {
   /// Constructs an [AndroidAdsManagerDelegate].
   AndroidAdsManagerDelegate(super.params) : super.implementation();
+}
+
+extension on ima.AdErrorType {
+  AdErrorType asInterfaceErrorType() {
+    return switch (this) {
+      ima.AdErrorType.load => AdErrorType.loading,
+      ima.AdErrorType.play => AdErrorType.playing,
+      ima.AdErrorType.unknown => AdErrorType.unknown,
+    };
+  }
+}
+
+extension on ima.AdErrorCode {
+  AdErrorCode asInterfaceErrorCode() {
+    return switch (this) {
+      ima.AdErrorCode.adsPlayerWasNotProvided =>
+        AdErrorCode.adsPlayerNotProvided,
+      ima.AdErrorCode.adsRequestNetworkError =>
+        AdErrorCode.adsRequestNetworkError,
+      ima.AdErrorCode.companionAdLoadingFailed =>
+        AdErrorCode.companionAdLoadingFailed,
+      ima.AdErrorCode.failedToRequestAds => AdErrorCode.failedToRequestAds,
+      ima.AdErrorCode.internalError => AdErrorCode.internalError,
+      ima.AdErrorCode.invalidArguments => AdErrorCode.invalidArguments,
+      ima.AdErrorCode.overlayAdLoadingFailed =>
+        AdErrorCode.overlayAdLoadingFailed,
+      ima.AdErrorCode.overlayAdPlayingFailed =>
+        AdErrorCode.overlayAdPlayingFailed,
+      ima.AdErrorCode.playlistNoContentTracking =>
+        AdErrorCode.playlistNoContentTracking,
+      ima.AdErrorCode.unexpectedAdsLoadedEvent =>
+        AdErrorCode.unexpectedAdsLoadedEvent,
+      ima.AdErrorCode.unknownAdResponse => AdErrorCode.unknownAdResponse,
+      ima.AdErrorCode.unknownError => AdErrorCode.unknownError,
+      ima.AdErrorCode.vastAssetNotFound => AdErrorCode.vastAssetNotFound,
+      ima.AdErrorCode.vastEmptyResponse => AdErrorCode.vastEmptyResponse,
+      ima.AdErrorCode.vastLinearAssetMismatch =>
+        AdErrorCode.vastLinearAssetMismatch,
+      ima.AdErrorCode.vastLoadTimeout => AdErrorCode.vastLoadTimeout,
+      ima.AdErrorCode.vastMalformedResponse =>
+        AdErrorCode.vastMalformedResponse,
+      ima.AdErrorCode.vastMediaLoadTimeout => AdErrorCode.vastMediaLoadTimeout,
+      ima.AdErrorCode.vastNonlinearAssetMismatch =>
+        AdErrorCode.vastNonlinearAssetMismatch,
+      ima.AdErrorCode.vastNoAdsAfterWrapper =>
+        AdErrorCode.vastNoAdsAfterWrapper,
+      ima.AdErrorCode.vastTooManyRedirects => AdErrorCode.vastTooManyRedirects,
+      ima.AdErrorCode.vastTraffickingError => AdErrorCode.vastTraffickingError,
+      ima.AdErrorCode.videoPlayError => AdErrorCode.videoPlayError,
+    };
+  }
 }

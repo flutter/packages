@@ -7,7 +7,28 @@ class AdErrorProxyApi(pigeonRegistrar: PigeonProxyApiRegistrar) :
   override fun errorCode(pigeon_instance: AdError): AdErrorCode {
     return when (pigeon_instance.errorCode) {
       AdError.AdErrorCode.ADS_PLAYER_NOT_PROVIDED -> AdErrorCode.ADS_PLAYER_WAS_NOT_PROVIDED
-      else -> AdErrorCode.UNKNOWN_ERROR
+      AdError.AdErrorCode.INTERNAL_ERROR -> AdErrorCode.INTERNAL_ERROR
+      AdError.AdErrorCode.VAST_MALFORMED_RESPONSE -> AdErrorCode.VAST_MALFORMED_RESPONSE
+      AdError.AdErrorCode.UNKNOWN_AD_RESPONSE -> AdErrorCode.UNKNOWN_AD_RESPONSE
+      AdError.AdErrorCode.VAST_TRAFFICKING_ERROR -> AdErrorCode.VAST_TRAFFICKING_ERROR
+      AdError.AdErrorCode.VAST_LOAD_TIMEOUT -> AdErrorCode.VAST_LOAD_TIMEOUT
+      AdError.AdErrorCode.VAST_TOO_MANY_REDIRECTS -> AdErrorCode.VAST_TOO_MANY_REDIRECTS
+      AdError.AdErrorCode.VAST_NO_ADS_AFTER_WRAPPER -> AdErrorCode.VAST_NO_ADS_AFTER_WRAPPER
+      AdError.AdErrorCode.VIDEO_PLAY_ERROR -> AdErrorCode.VIDEO_PLAY_ERROR
+      AdError.AdErrorCode.VAST_MEDIA_LOAD_TIMEOUT -> AdErrorCode.VAST_MEDIA_LOAD_TIMEOUT
+      AdError.AdErrorCode.VAST_LINEAR_ASSET_MISMATCH -> AdErrorCode.VAST_LINEAR_ASSET_MISMATCH
+      AdError.AdErrorCode.OVERLAY_AD_PLAYING_FAILED -> AdErrorCode.OVERLAY_AD_PLAYING_FAILED
+      AdError.AdErrorCode.OVERLAY_AD_LOADING_FAILED -> AdErrorCode.OVERLAY_AD_LOADING_FAILED
+      AdError.AdErrorCode.VAST_NONLINEAR_ASSET_MISMATCH -> AdErrorCode.VAST_NONLINEAR_ASSET_MISMATCH
+      AdError.AdErrorCode.COMPANION_AD_LOADING_FAILED -> AdErrorCode.COMPANION_AD_LOADING_FAILED
+      AdError.AdErrorCode.UNKNOWN_ERROR -> AdErrorCode.UNKNOWN_ERROR
+      AdError.AdErrorCode.VAST_EMPTY_RESPONSE -> AdErrorCode.VAST_EMPTY_RESPONSE
+      AdError.AdErrorCode.FAILED_TO_REQUEST_ADS -> AdErrorCode.FAILED_TO_REQUEST_ADS
+      AdError.AdErrorCode.VAST_ASSET_NOT_FOUND -> AdErrorCode.VAST_ASSET_NOT_FOUND
+      AdError.AdErrorCode.ADS_REQUEST_NETWORK_ERROR -> AdErrorCode.ADS_REQUEST_NETWORK_ERROR
+      AdError.AdErrorCode.INVALID_ARGUMENTS -> AdErrorCode.INVALID_ARGUMENTS
+      AdError.AdErrorCode.PLAYLIST_NO_CONTENT_TRACKING -> AdErrorCode.PLAYLIST_NO_CONTENT_TRACKING
+      AdError.AdErrorCode.UNEXPECTED_ADS_LOADED_EVENT -> AdErrorCode.UNEXPECTED_ADS_LOADED_EVENT
     }
   }
 

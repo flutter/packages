@@ -673,8 +673,63 @@ private class PigeonProxyApiBaseCodec(val registrar: PigeonProxyApiRegistrar) :
 enum class AdErrorCode(val raw: Int) {
   /** Ads player was not provided. */
   ADS_PLAYER_WAS_NOT_PROVIDED(0),
+  /** There was a problem requesting ads from the server. */
+  ADS_REQUEST_NETWORK_ERROR(1),
+  /** A companion ad failed to load or render. */
+  COMPANION_AD_LOADING_FAILED(2),
+  /** There was a problem requesting ads from the server. */
+  FAILED_TO_REQUEST_ADS(3),
+  /** An error internal to the SDK occurred. */
+  INTERNAL_ERROR(4),
+  /** Invalid arguments were provided to SDK methods. */
+  INVALID_ARGUMENTS(5),
+  /** An overlay ad failed to load. */
+  OVERLAY_AD_LOADING_FAILED(6),
+  /** An overlay ad failed to render. */
+  OVERLAY_AD_PLAYING_FAILED(7),
+  /** Ads list was returned but ContentProgressProvider was not configured. */
+  PLAYLIST_NO_CONTENT_TRACKING(8),
+  /** Ads loader sent ads loaded event when it was not expected. */
+  UNEXPECTED_ADS_LOADED_EVENT(9),
+  /** The ad response was not understood and cannot be parsed. */
+  UNKNOWN_AD_RESPONSE(10),
   /** An unexpected error occurred and the cause is not known. */
-  UNKNOWN_ERROR(1);
+  UNKNOWN_ERROR(11),
+  /** No assets were found in the VAST ad response. */
+  VAST_ASSET_NOT_FOUND(12),
+  /** A VAST response containing a single `<VAST>` tag with no child tags. */
+  VAST_EMPTY_RESPONSE(13),
+  /**
+   * Assets were found in the VAST ad response for a linear ad, but none of them matched the video
+   * player's capabilities.
+   */
+  VAST_LINEAR_ASSET_MISMATCH(14),
+  /**
+   * At least one VAST wrapper ad loaded successfully and a subsequent wrapper or inline ad load has
+   * timed out.
+   */
+  VAST_LOAD_TIMEOUT(15),
+  /** The ad response was not recognized as a valid VAST ad. */
+  VAST_MALFORMED_RESPONSE(16),
+  /** Failed to load media assets from a VAST response. */
+  VAST_MEDIA_LOAD_TIMEOUT(17),
+  /**
+   * Assets were found in the VAST ad response for a nonlinear ad, but none of them matched the
+   * video player's capabilities.
+   */
+  VAST_NONLINEAR_ASSET_MISMATCH(18),
+  /** No Ads VAST response after one or more wrappers. */
+  VAST_NO_ADS_AFTER_WRAPPER(19),
+  /** The maximum number of VAST wrapper redirects has been reached. */
+  VAST_TOO_MANY_REDIRECTS(20),
+  /**
+   * Trafficking error.
+   *
+   * Video player received an ad type that it was not expecting and/or cannot display.
+   */
+  VAST_TRAFFICKING_ERROR(21),
+  /** There was an error playing the video ad. */
+  VIDEO_PLAY_ERROR(22);
 
   companion object {
     fun ofRaw(raw: Int): AdErrorCode? {
