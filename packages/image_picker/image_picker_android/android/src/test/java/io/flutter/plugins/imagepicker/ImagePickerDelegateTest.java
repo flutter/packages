@@ -820,21 +820,17 @@ public class ImagePickerDelegateTest {
     when(mockIntent.getClipData()).thenReturn(null);
 
     Mockito.doAnswer(
-          invocation -> {
-            ((Runnable) invocation.getArgument(0)).run();
-            return null;
-          })
-            .when(mockExecutor)
-            .execute(any(Runnable.class));
-    ImagePickerDelegate delegate = createDelegateWithPendingResultAndOptions(
-            DEFAULT_IMAGE_OPTIONS,
-            null
-    );
+            invocation -> {
+              ((Runnable) invocation.getArgument(0)).run();
+              return null;
+            })
+        .when(mockExecutor)
+        .execute(any(Runnable.class));
+    ImagePickerDelegate delegate =
+        createDelegateWithPendingResultAndOptions(DEFAULT_IMAGE_OPTIONS, null);
 
     delegate.onActivityResult(
-                ImagePickerDelegate.REQUEST_CODE_CHOOSE_MEDIA_FROM_GALLERY,
-                Activity.RESULT_OK,
-                mockIntent);
+        ImagePickerDelegate.REQUEST_CODE_CHOOSE_MEDIA_FROM_GALLERY, Activity.RESULT_OK, mockIntent);
 
     ArgumentCaptor<FlutterError> errorCaptor = ArgumentCaptor.forClass(FlutterError.class);
     verify(mockResult).error(errorCaptor.capture());
@@ -849,21 +845,17 @@ public class ImagePickerDelegateTest {
     when(mockIntent.getClipData()).thenReturn(null);
 
     Mockito.doAnswer(
-                    invocation -> {
-                      ((Runnable) invocation.getArgument(0)).run();
-                      return null;
-                    })
-            .when(mockExecutor)
-            .execute(any(Runnable.class));
-    ImagePickerDelegate delegate = createDelegateWithPendingResultAndOptions(
-            DEFAULT_IMAGE_OPTIONS,
-            null
-    );
+            invocation -> {
+              ((Runnable) invocation.getArgument(0)).run();
+              return null;
+            })
+        .when(mockExecutor)
+        .execute(any(Runnable.class));
+    ImagePickerDelegate delegate =
+        createDelegateWithPendingResultAndOptions(DEFAULT_IMAGE_OPTIONS, null);
 
     delegate.onActivityResult(
-            ImagePickerDelegate.REQUEST_CODE_CHOOSE_MEDIA_FROM_GALLERY,
-            Activity.RESULT_OK,
-            mockIntent);
+        ImagePickerDelegate.REQUEST_CODE_CHOOSE_MEDIA_FROM_GALLERY, Activity.RESULT_OK, mockIntent);
 
     ArgumentCaptor<FlutterError> errorCaptor = ArgumentCaptor.forClass(FlutterError.class);
     verify(mockResult).error(errorCaptor.capture());
