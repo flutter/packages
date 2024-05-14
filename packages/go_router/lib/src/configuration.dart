@@ -545,10 +545,10 @@ class RouteConfiguration {
       String path = parentFullpath;
       if (route is GoRoute) {
         path = concatenatePaths(parentFullpath, route.path);
-        final String screenName =
-            route.builder?.runtimeType.toString().split('=> ').last ?? '';
-        sb.writeln('$decoration$path ($screenName)'
-            '${route.name == null ? '' : ' (${route.name})'}');
+        final String? screenName =
+            route.builder?.runtimeType.toString().split('=> ').last;
+        sb.writeln('$decoration$path '
+            '${screenName == null ? '' : '($screenName)'}');
       } else if (route is ShellRouteBase) {
         sb.writeln('$decoration (ShellRoute)');
       }
