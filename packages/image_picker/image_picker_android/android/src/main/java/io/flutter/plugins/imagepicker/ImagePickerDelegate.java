@@ -638,7 +638,8 @@ public class ImagePickerDelegate
     return true;
   }
 
-  private ArrayList<MediaPath> getPathsFromIntent(Intent data, boolean includeMimeType) {
+  @Nullable
+  private ArrayList<MediaPath> getPathsFromIntent(@NonNull Intent data, boolean includeMimeType) {
     ArrayList<MediaPath> paths = new ArrayList<>();
 
     Uri uri = data.getData();
