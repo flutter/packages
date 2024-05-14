@@ -16,6 +16,9 @@ void integrationTestMain() {
   main();
 }
 
+const String _adTagUrl =
+    'https://pubads.g.doubleclick.net/gampad/ads?iu=/21775744923/external/single_preroll_skippable&sz=640x480&ciu_szs=300x250%2C728x90&gdfp_req=1&output=vast&unviewed_position_start=1&env=vp&impl=s&correlator=';
+
 void main() {
   runApp(const MaterialApp(home: AdExampleWidget()));
 }
@@ -51,9 +54,9 @@ class _AdExampleWidgetState extends State<AdExampleWidget> {
       ),
     )
       ..addListener(() {
-        if (_contentVideoController.value.position ==
-            _contentVideoController.value.duration) {
+        if (_contentVideoController.value.isCompleted) {
           _adsLoader.contentComplete();
+          setState(() {});
         }
       })
       ..initialize().then((_) {
@@ -114,12 +117,7 @@ class _AdExampleWidgetState extends State<AdExampleWidget> {
       },
     );
 
-    return _adsLoader.requestAds(
-      AdsRequest(
-        adTagUrl:
-            'https://pubads.g.doubleclick.net/gampad/ads?iu=/21775744923/external/single_ad_samples&sz=640x480&cust_params=sample_ct%3Dlinear&ciu_szs=300x250%2C728x90&gdfp_req=1&output=vast&unviewed_position_start=1&env=vp&impl=s&correlator=',
-      ),
-    );
+    return _adsLoader.requestAds(AdsRequest(adTagUrl: _adTagUrl));
   }
 
   @override
@@ -135,13 +133,16 @@ class _AdExampleWidgetState extends State<AdExampleWidget> {
       body: Center(
         child: SizedBox(
           width: 300,
-          height: 300,
           child: Stack(
             children: <Widget>[
               // The display container must be on screen before any Ads can be
               // loaded and can't be removed between ads. This handles clicks for
               // ads.
-              _adDisplayContainer,
+              if (_contentVideoController.value.isInitialized)
+                AspectRatio(
+                  aspectRatio: _contentVideoController.value.aspectRatio,
+                  child: _adDisplayContainer,
+                ),
               if (_contentVideoController.value.isInitialized &&
                   _shouldShowContentVideo)
                 AspectRatio(
