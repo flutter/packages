@@ -292,10 +292,10 @@ targets:
     timeout: 30
     properties:
       target_file: analyze_legacy.yaml
-      channel: "3.22.6"
+      channel: "3.22.0"
       env_variables: >-
         {
-          "CHANNEL": "3.22.6"
+          "CHANNEL": "3.22.0"
         }
 
   - name: Linux analyze_legacy N-2
