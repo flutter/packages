@@ -737,7 +737,7 @@ public class ImagePickerDelegate
       // If there's no valid Uri, return an error
       if (paths == null) {
         finishWithError(
-            "missing_valid_image_uri", "Cannot find at least one " + "of the selected images.");
+            "missing_valid_image_uri", "Cannot find at least one of the selected images.");
         return;
       }
 
@@ -758,7 +758,7 @@ public class ImagePickerDelegate
         return;
       }
 
-      handleVideoResult(paths.get(0).path);
+      finishWithSuccess(paths.get(0).path);
       return;
     }
 
@@ -789,7 +789,7 @@ public class ImagePickerDelegate
           localPendingCameraMediaUrl != null
               ? localPendingCameraMediaUrl
               : Uri.parse(cache.retrievePendingCameraMediaUriPath()),
-          this::handleVideoResult);
+          this::finishWithSuccess);
       return;
     }
 
@@ -850,10 +850,6 @@ public class ImagePickerDelegate
       }
       finishWithListSuccess(finalPaths);
     }
-  }
-
-  private void handleVideoResult(String path) {
-    finishWithSuccess(path);
   }
 
   private boolean setPendingOptionsAndResult(
