@@ -5,4 +5,4 @@
 package dev.flutter.packages.interactive_media_ads
 
 class AdDisplayContainerProxyApi(pigeonRegistrar: PigeonProxyApiRegistrar) :
-    PigeonApiAdDisplayContainer(pigeonRegistrar) {}
+    PigeonApiAdDisplayContainer(pigeonRegistrar)
