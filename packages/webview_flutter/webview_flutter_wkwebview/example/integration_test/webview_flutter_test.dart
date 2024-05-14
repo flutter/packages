@@ -74,7 +74,10 @@ Future<void> main() async {
 
     final int gcIdentifier = await gcCompleter.future;
     expect(gcIdentifier, 0);
-  }, timeout: const Timeout(Duration(seconds: 10)));
+  },
+      // TODO(bparrishMines): See https://github.com/flutter/flutter/issues/148345
+      skip: true,
+      timeout: const Timeout(Duration(seconds: 10)));
 
   testWidgets(
     'WKWebView is released by garbage collection',
