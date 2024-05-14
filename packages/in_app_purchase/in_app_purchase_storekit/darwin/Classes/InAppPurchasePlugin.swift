@@ -223,11 +223,10 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI {
     _ finishMap: [String: Any], error: AutoreleasingUnsafeMutablePointer<FlutterError?>
   ) {
 
-    // casting [String:Any] into [String:String?] will auto convert `NSNull` into nil `String`
     // TODO(louisehsu): This is a workaround for objc pigeon's NSNull support. Once we move to swift pigeon, this can be removed.
-    let castedFinishMap: [String: String] = finishMap.mapValues { value in
+    let castedFinishMap: [String: String] = finishMap.compactMapValues { value in
       if let _ = value as? NSNull {
-        return ""
+        return nil
       } else if let stringValue = value as? String {
         return stringValue
       }
@@ -242,7 +241,7 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI {
       // So if it is null AND a transaction in the pendingTransactions list has
       // also a null transactionIdentifier we check for equal product identifiers.
       if transaction.transactionIdentifier == transactionIdentifier
-        || (transactionIdentifier == ""
+        || (transactionIdentifier == nil
           && transaction.transactionIdentifier == nil
           && transaction.payment.productIdentifier == productIdentifier)
       {
