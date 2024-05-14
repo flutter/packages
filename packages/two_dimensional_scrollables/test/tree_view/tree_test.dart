@@ -387,6 +387,28 @@ void main() {
   });
 
   group('TreeView', () {
+    setUp(() {
+      // Reset node conditions for each test.
+      simpleNodeSet = <TreeViewNode<String>>[
+        TreeViewNode<String>('Root 0'),
+        TreeViewNode<String>(
+          'Root 1',
+          expanded: true,
+          children: <TreeViewNode<String>>[
+            TreeViewNode<String>('Child 1:0'),
+            TreeViewNode<String>('Child 1:1'),
+          ],
+        ),
+        TreeViewNode<String>(
+          'Root 2',
+          children: <TreeViewNode<String>>[
+            TreeViewNode<String>('Child 2:0'),
+            TreeViewNode<String>('Child 2:1'),
+          ],
+        ),
+        TreeViewNode<String>('Root 3'),
+      ];
+    });
     test('asserts proper axis directions', () {
       TreeView<String>? treeView;
       expect(
@@ -570,6 +592,98 @@ void main() {
       expect(style!.curve, Curves.easeIn);
       expect(style!.duration, const Duration(milliseconds: 200));
     });
+
+    testWidgets('Adding more root TreeViewNodes are reflected in the tree', (WidgetTester tester) async {
+      final TreeViewController controller = TreeViewController();
+      await tester.pumpWidget(MaterialApp(
+        home: StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState) {
+            return Scaffold(
+              body: TreeView<String>(
+              tree: simpleNodeSet,
+              controller: controller,
+              ),
+              floatingActionButton: FloatingActionButton(onPressed: () {
+                setState(() {
+                  simpleNodeSet.add(TreeViewNode<String>('Added root'));
+                });
+              },),
+            );
+          },
+        ),
+      ));
+      await tester.pump();
+
+      expect(find.text('Root 0'), findsOneWidget);
+      expect(find.text('Root 1'), findsOneWidget);
+      expect(find.text('Child 1:0'), findsOneWidget);
+      expect(find.text('Child 1:1'), findsOneWidget);
+      expect(find.text('Root 2'), findsOneWidget);
+      expect(find.text('Child 2:0'), findsNothing);
+      expect(find.text('Child 2:1'), findsNothing);
+      expect(find.text('Root 3'), findsOneWidget);
+      expect(find.text('Added root'), findsNothing);
+
+      await tester.tap(find.byType(FloatingActionButton));
+      await tester.pump();
+
+      expect(find.text('Root 0'), findsOneWidget);
+      expect(find.text('Root 1'), findsOneWidget);
+      expect(find.text('Child 1:0'), findsOneWidget);
+      expect(find.text('Child 1:1'), findsOneWidget);
+      expect(find.text('Root 2'), findsOneWidget);
+      expect(find.text('Child 2:0'), findsNothing);
+      expect(find.text('Child 2:1'), findsNothing);
+      expect(find.text('Root 3'), findsOneWidget);
+      // Node was added
+      expect(find.text('Added root'), findsOneWidget);
+    });
+
+    testWidgets('Adding more TreeViewNodes below the root are reflected in the tree', (WidgetTester tester) async {
+      final TreeViewController controller = TreeViewController();
+      await tester.pumpWidget(MaterialApp(
+        home: StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState) {
+            return Scaffold(
+              body: TreeView<String>(
+              tree: simpleNodeSet,
+              controller: controller,
+              ),
+              floatingActionButton: FloatingActionButton(onPressed: () {
+                setState(() {
+                  simpleNodeSet[1].children.add(TreeViewNode<String>('Added child'),);
+                });
+              },),
+            );
+          },
+        ),
+      ));
+      await tester.pump();
+
+      expect(find.text('Root 0'), findsOneWidget);
+      expect(find.text('Root 1'), findsOneWidget);
+      expect(find.text('Child 1:0'), findsOneWidget);
+      expect(find.text('Child 1:1'), findsOneWidget);
+      expect(find.text('Added child'), findsNothing);
+      expect(find.text('Root 2'), findsOneWidget);
+      expect(find.text('Child 2:0'), findsNothing);
+      expect(find.text('Child 2:1'), findsNothing);
+      expect(find.text('Root 3'), findsOneWidget);
+
+      await tester.tap(find.byType(FloatingActionButton));
+      await tester.pump();
+
+      expect(find.text('Root 0'), findsOneWidget);
+      expect(find.text('Root 1'), findsOneWidget);
+      expect(find.text('Child 1:0'), findsOneWidget);
+      expect(find.text('Child 1:1'), findsOneWidget);
+      // Child node was added
+      expect(find.text('Added child'), findsOneWidget);
+      expect(find.text('Root 2'), findsOneWidget);
+      expect(find.text('Child 2:0'), findsNothing);
+      expect(find.text('Child 2:1'), findsNothing);
+      expect(find.text('Root 3'), findsOneWidget);
+    });
   });
 
   group('TreeViewport', () {
@@ -630,47 +744,6 @@ void main() {
         ),
       );
       expect(treeViewport, isNull);
-    });
-
-    test('Sets mainAxis based on traversal order', () {
-      TreeViewport treeViewport = TreeViewport(
-        verticalOffset: TestOffset(),
-        verticalAxisDirection: AxisDirection.down,
-        horizontalOffset: TestOffset(),
-        horizontalAxisDirection: AxisDirection.right,
-        delegate: TreeRowBuilderDelegate(
-          rowCount: 0,
-          nodeBuilder: (_, __) => const SizedBox(),
-          rowBuilder: (_) => const TreeRow(
-            extent: FixedTreeRowExtent(40.0),
-          ),
-        ),
-        activeAnimations: const <UniqueKey, TreeViewNodesAnimation>{},
-        rowDepths: const <int, int>{},
-        indentation: 0.0,
-      );
-      expect(treeViewport.mainAxis, Axis.vertical);
-      expect(treeViewport.traversalOrder, TreeViewTraversalOrder.depthFirst);
-
-      treeViewport = TreeViewport(
-        verticalOffset: TestOffset(),
-        verticalAxisDirection: AxisDirection.down,
-        horizontalOffset: TestOffset(),
-        horizontalAxisDirection: AxisDirection.right,
-        delegate: TreeRowBuilderDelegate(
-          rowCount: 0,
-          nodeBuilder: (_, __) => const SizedBox(),
-          rowBuilder: (_) => const TreeRow(
-            extent: FixedTreeRowExtent(40.0),
-          ),
-        ),
-        activeAnimations: const <UniqueKey, TreeViewNodesAnimation>{},
-        rowDepths: const <int, int>{},
-        indentation: 0.0,
-        traversalOrder: TreeViewTraversalOrder.breadthFirst,
-      );
-      expect(treeViewport.mainAxis, Axis.horizontal);
-      expect(treeViewport.traversalOrder, TreeViewTraversalOrder.breadthFirst);
     });
   });
 }

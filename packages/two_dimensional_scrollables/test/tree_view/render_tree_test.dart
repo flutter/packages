@@ -94,7 +94,6 @@ void main() {
             activeAnimations: const <UniqueKey, TreeViewNodesAnimation>{},
             rowDepths: const <int, int>{},
             indentation: 0.0,
-            traversalOrder: TreeViewTraversalOrder.depthFirst,
             childManager: _NullBuildContext(),
           );
         },
@@ -123,7 +122,6 @@ void main() {
             activeAnimations: const <UniqueKey, TreeViewNodesAnimation>{},
             rowDepths: const <int, int>{},
             indentation: 0.0,
-            traversalOrder: TreeViewTraversalOrder.depthFirst,
             childManager: _NullBuildContext(),
           );
         },
@@ -136,50 +134,6 @@ void main() {
         ),
       );
       expect(treeViewport, isNull);
-    });
-
-    test('Sets mainAxis based on traversal order', () {
-      RenderTreeViewport treeViewport = RenderTreeViewport(
-        verticalOffset: TestOffset(),
-        verticalAxisDirection: AxisDirection.down,
-        horizontalOffset: TestOffset(),
-        horizontalAxisDirection: AxisDirection.right,
-        delegate: TreeRowBuilderDelegate(
-          rowCount: 0,
-          nodeBuilder: (_, __) => const SizedBox(),
-          rowBuilder: (_) => const TreeRow(
-            extent: FixedTreeRowExtent(40.0),
-          ),
-        ),
-        activeAnimations: const <UniqueKey, TreeViewNodesAnimation>{},
-        rowDepths: const <int, int>{},
-        indentation: 0.0,
-        traversalOrder: TreeViewTraversalOrder.depthFirst,
-        childManager: _NullBuildContext(),
-      );
-      expect(treeViewport.mainAxis, Axis.vertical);
-      expect(treeViewport.traversalOrder, TreeViewTraversalOrder.depthFirst);
-
-      treeViewport = RenderTreeViewport(
-        verticalOffset: TestOffset(),
-        verticalAxisDirection: AxisDirection.down,
-        horizontalOffset: TestOffset(),
-        horizontalAxisDirection: AxisDirection.right,
-        delegate: TreeRowBuilderDelegate(
-          rowCount: 0,
-          nodeBuilder: (_, __) => const SizedBox(),
-          rowBuilder: (_) => const TreeRow(
-            extent: FixedTreeRowExtent(40.0),
-          ),
-        ),
-        activeAnimations: const <UniqueKey, TreeViewNodesAnimation>{},
-        rowDepths: const <int, int>{},
-        indentation: 0.0,
-        traversalOrder: TreeViewTraversalOrder.breadthFirst,
-        childManager: _NullBuildContext(),
-      );
-      expect(treeViewport.mainAxis, Axis.horizontal);
-      expect(treeViewport.traversalOrder, TreeViewTraversalOrder.breadthFirst);
     });
 
     testWidgets('TreeRow gesture hit testing', (WidgetTester tester) async {

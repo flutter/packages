@@ -11,15 +11,13 @@ import 'tree_core.dart';
 import 'tree_delegate.dart';
 import 'tree_span.dart';
 
-// SHARED WITH FRAMEWORK - TreeViewNode (SliverTreeNode), TreeViewController (SliverTreeController)
-// Should not deviate from the core components of the framework.
+// The classes in these files follow the same pattern as the one dimensional
+// sliver tree in the framework.
 //
-// These classes share the same surface as SliverTree in the framework since
-// they are not currently available on the stable branch. After rolling to
-// stable, these classes may be deprecated, or more likely made to be
-// typedefs/subclasses of the framework core tree components. They could also
-// live on if at a later date the 2D TreeView deviates or adds special features
-// not relevant to the 1D sliver components of the framework.
+// After rolling to stable, these classes may be deprecated, or more likely
+// made to be typedefs/subclasses of the framework core tree components. They
+// could also live on if at a later date the 2D TreeView deviates or adds
+// special features not relevant to the 1D sliver components of the framework.
 
 const double _kDefaultRowExtent = 40.0;
 
@@ -43,9 +41,6 @@ class TreeViewNode<T> {
   /// The subject matter of the node.
   ///
   /// Must correspond with the type of [TreeView].
-  ///
-  /// The content is used to generate a unique [Key] in
-  /// [TreeView.defaultTreeNodeBuilder] for maintain animation performance.
   T get content => _content;
   final T _content;
 
@@ -275,10 +270,13 @@ class TreeViewController {
   }
 }
 
-// END of framework shared classes.
+// END of shared surfaces from the framework.
 
 /// A widget that displays [TreeViewNode]s that expand and collapse in a
 /// vertically and horizontally scrolling [TreeViewport].
+///
+/// The type [T] correlates to the type of [TreeView] and [TreeViewNode],
+/// representing the type of [TreeViewNode.content].
 ///
 /// The rows of the tree are laid out on demand by the [TreeViewport]'s render
 /// object, using [TreeView.treeNodeBuilder]. This will only be called for the
@@ -296,8 +294,7 @@ class TreeViewController {
 ///
 /// Each active node of the tree will have a [TreeVicinity], representing the
 /// resolved row index of the node, based on what nodes are active, as well as
-/// the depth. This vicinity is used to traverse the tree as indicated by
-/// [traversalOrder].
+/// the depth.
 ///
 /// A [TreeView] only supports a vertical axis direction of
 /// [AxisDirection.down] and a horizontal axis direction of
@@ -313,7 +310,6 @@ class TreeView<T> extends StatefulWidget {
     this.controller,
     this.onNodeToggle,
     this.toggleAnimationStyle,
-    this.traversalOrder = TreeViewTraversalOrder.depthFirst,
     this.indentation = TreeViewIndentationType.standard,
     this.primary,
     this.mainAxis = Axis.vertical,
@@ -377,15 +373,6 @@ class TreeView<T> extends StatefulWidget {
   ///
   /// To disable the tree animation, use [AnimationStyle.noAnimation].
   final AnimationStyle? toggleAnimationStyle;
-
-  /// The order in which [TreeViewNode]s are visited.
-  ///
-  /// This value will influence [TreeViewport.mainAxis] so nodes are traversed
-  /// properly when they are converted to a [TreeVicinity] in the context of the
-  /// active nodes of the tree.
-  ///
-  /// Defaults to [TreeViewTraversalOrder.depthFirst].
-  final TreeViewTraversalOrder traversalOrder;
 
   /// The number of pixels children will be offset by in the cross axis based on
   /// their [TreeViewNode.depth].
@@ -507,6 +494,13 @@ class TreeView<T> extends StatefulWidget {
   /// Defaults to true.
   final bool addRepaintBoundaries;
 
+  /// The default [AnimationStyle] used for node expand and collapse animations,
+  /// when one has not been provided in [toggleAnimationStyle].
+  static AnimationStyle defaultToggleAnimationStyle = AnimationStyle(
+    curve: defaultAnimationCurve,
+    duration: defaultAnimationDuration,
+  );
+
   /// A default of [Curves.linear], which is used in the tree's expanding and
   /// collapsing node animation.
   static const Curve defaultAnimationCurve = Curves.linear;
@@ -553,7 +547,8 @@ class TreeView<T> extends StatefulWidget {
     );
   }
 
-  /// Returns the default tree row for a given [TreeViewNode].
+  /// Default builder for the widget representing a given [TreeViewNode] in the
+  /// tree.
   ///
   /// Used by [TreeView.treeNodeBuilder].
   ///
@@ -582,7 +577,7 @@ class TreeView<T> extends StatefulWidget {
             dimension: 30.0,
             child: node.children.isNotEmpty
                 ? AnimatedRotation(
-                    key: Key('$index - ${node.content}'),
+                    key: Key('$index'),
                     turns: node.isExpanded ? 0.25 : 0.0,
                     duration: animationDuration,
                     curve: animationCurve,
@@ -744,11 +739,7 @@ class _TreeViewState<T> extends State<TreeView<T>>
         Widget child = widget.treeNodeBuilder(
           context,
           node,
-          widget.toggleAnimationStyle ??
-              AnimationStyle(
-                curve: TreeView.defaultAnimationCurve,
-                duration: TreeView.defaultAnimationDuration,
-              ),
+          widget.toggleAnimationStyle ?? TreeView.defaultToggleAnimationStyle,
         );
 
         if (widget.addRepaintBoundaries) {
@@ -761,7 +752,6 @@ class _TreeViewState<T> extends State<TreeView<T>>
         return widget.treeRowBuilder(_activeNodes[vicinity.row]);
       },
       addAutomaticKeepAlives: widget.addAutomaticKeepAlives,
-      traversalOrder: widget.traversalOrder,
       indentation: widget.indentation.value,
     );
   }
@@ -971,7 +961,6 @@ class _TreeView extends TwoDimensionalScrollView {
     super.clipBehavior,
     required TwoDimensionalIndexedWidgetBuilder nodeBuilder,
     required TreeVicinityToRowBuilder rowBuilder,
-    this.traversalOrder = TreeViewTraversalOrder.depthFirst,
     required this.activeAnimations,
     required this.rowDepths,
     required this.indentation,
@@ -989,7 +978,6 @@ class _TreeView extends TwoDimensionalScrollView {
 
   final Map<UniqueKey, TreeViewNodesAnimation> activeAnimations;
   final Map<int, int> rowDepths;
-  final TreeViewTraversalOrder traversalOrder;
   final double indentation;
 
   @override
@@ -1008,7 +996,6 @@ class _TreeView extends TwoDimensionalScrollView {
       clipBehavior: clipBehavior,
       activeAnimations: activeAnimations,
       rowDepths: rowDepths,
-      traversalOrder: traversalOrder,
       indentation: indentation,
     );
   }
@@ -1030,15 +1017,10 @@ class TreeViewport extends TwoDimensionalViewport {
     super.clipBehavior,
     required this.activeAnimations,
     required this.rowDepths,
-    this.traversalOrder = TreeViewTraversalOrder.depthFirst,
     required this.indentation,
   })  : assert(verticalAxisDirection == AxisDirection.down &&
             horizontalAxisDirection == AxisDirection.right),
-        super(
-          mainAxis: traversalOrder == TreeViewTraversalOrder.depthFirst
-              ? Axis.vertical
-              : Axis.horizontal,
-        );
+        super(mainAxis: Axis.vertical);
 
   /// The currently active [TreeViewNode] animations.
   ///
@@ -1048,15 +1030,7 @@ class TreeViewport extends TwoDimensionalViewport {
   final Map<UniqueKey, TreeViewNodesAnimation> activeAnimations;
 
   /// The depth of each active [TreeNode].
-  ///
-  /// This is used to properly traverse nodes according to
-  /// [traversalOrder].
   final Map<int, int> rowDepths;
-
-  /// The order in which child nodes of the tree will be traversed.
-  ///
-  /// The default traversal order is [TreeViewTraversalOrder.depthFirst].
-  final TreeViewTraversalOrder traversalOrder;
 
   /// The number of pixels by which child nodes will be offset in the cross axis
   /// based on their [TreeViewNode.depth].
@@ -1070,7 +1044,6 @@ class TreeViewport extends TwoDimensionalViewport {
     return RenderTreeViewport(
       activeAnimations: activeAnimations,
       rowDepths: rowDepths,
-      traversalOrder: traversalOrder,
       indentation: indentation,
       horizontalOffset: horizontalOffset,
       horizontalAxisDirection: horizontalAxisDirection,
@@ -1091,7 +1064,6 @@ class TreeViewport extends TwoDimensionalViewport {
     renderObject
       ..activeAnimations = activeAnimations
       ..rowDepths = rowDepths
-      ..traversalOrder = traversalOrder
       ..indentation = indentation
       ..horizontalOffset = horizontalOffset
       ..horizontalAxisDirection = horizontalAxisDirection

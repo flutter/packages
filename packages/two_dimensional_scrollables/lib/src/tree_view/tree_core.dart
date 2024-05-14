@@ -6,15 +6,13 @@ import 'package:flutter/widgets.dart';
 
 import 'tree.dart';
 
-// SHARED WITH FRAMEWORK (whole file)
-// Should not deviate from the core components of the framework.
+// The classes in these files follow the same pattern as the one dimensional
+// sliver tree in the framework.
 //
-// These classes share the same surface as SliverTree in the framework since
-// they are not currently available on the stable branch. After rolling to
-// stable, these classes may be deprecated, or more likely made to be
-// typedefs/subclasses of the framework core tree components. They could also
-// live on if at a later date the 2D TreeView deviates or adds special features
-// not relevant to the 1D sliver components of the framework.
+// After rolling to stable, these classes may be deprecated, or more likely
+// made to be typedefs/subclasses of the framework core tree components. They
+// could also live on if at a later date the 2D TreeView deviates or adds
+// special features not relevant to the 1D sliver components of the framework.
 
 /// Signature for a function that is called when a [TreeViewNode] is toggled,
 /// changing its expanded state.
@@ -93,27 +91,6 @@ typedef TreeViewNodesAnimation = ({
   int toIndex,
   double value,
 });
-
-/// Traversal order pattern for [TreeViewNode]s that are children of a
-/// [TreeView].
-enum TreeViewTraversalOrder {
-  /// Pre-order depth traversal.
-  ///
-  /// This traversal pattern will visit each given [TreeViewNode] before
-  /// visiting each of its children.
-  ///
-  /// This is the default traversal pattern for [TreeView.traversalOrder].
-  depthFirst,
-
-  /// Lever order traversal.
-  ///
-  /// This traversal pattern will visit each node that exists at the same
-  /// [TreeViewNode.depth], before progressing to the next depth of nodes in
-  /// the tree.
-  ///
-  /// Can be used in [TreeView.traversalOrder], which defaults to [depthFirst].
-  breadthFirst,
-}
 
 /// The style of indentation for [TreeViewNode]s in a [TreeView], as handled
 /// by [RenderTreeViewport].

@@ -233,6 +233,7 @@ class CustomTreeExampleState extends State<CustomTreeExample> {
 
   @override
   Widget build(BuildContext context) {
+    // This example is assumes the full screen is available.
     final Size screenSize = MediaQuery.sizeOf(context);
     final List<Widget> selectedChildren = <Widget>[];
     if (_selectedNode != null) {

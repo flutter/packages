@@ -30,7 +30,6 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
   RenderTreeViewport({
     required Map<UniqueKey, TreeViewNodesAnimation> activeAnimations,
     required Map<int, int> rowDepths,
-    required TreeViewTraversalOrder traversalOrder,
     required double indentation,
     required super.horizontalOffset,
     required super.horizontalAxisDirection,
@@ -42,15 +41,11 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
     super.clipBehavior,
   })  : _activeAnimations = activeAnimations,
         _rowDepths = rowDepths,
-        _traversalOrder = traversalOrder,
         _indentation = indentation,
+        assert(indentation >= 0),
         assert(verticalAxisDirection == AxisDirection.down &&
             horizontalAxisDirection == AxisDirection.right),
-        super(
-          mainAxis: traversalOrder == TreeViewTraversalOrder.depthFirst
-              ? Axis.vertical
-              : Axis.horizontal,
-        );
+            super(mainAxis: Axis.vertical);
 
   @override
   TreeRowDelegateMixin get delegate => super.delegate as TreeRowDelegateMixin;
@@ -78,7 +73,7 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
 
   /// The depth of each currently active node in the tree.
   ///
-  /// This is used to properly set the [TreeVicinity] for the [traversalOrder].
+  /// This is used to properly set the [TreeVicinity].
   Map<int, int> get rowDepths => _rowDepths;
   Map<int, int> _rowDepths;
   set rowDepths(Map<int, int> value) {
@@ -87,23 +82,6 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
     }
     _rowDepths = value;
     markNeedsLayout();
-  }
-
-  /// The order in which child nodes of the tree will be traversed.
-  ///
-  /// The default traversal order is [TreeViewTraversalOrder.depthFirst].
-  TreeViewTraversalOrder get traversalOrder => _traversalOrder;
-  TreeViewTraversalOrder _traversalOrder;
-  set traversalOrder(TreeViewTraversalOrder value) {
-    if (_traversalOrder == value) {
-      return;
-    }
-    _traversalOrder = value;
-    // Changing mainAxis will call markNeedsLayout.
-    mainAxis = switch (value) {
-      TreeViewTraversalOrder.depthFirst => Axis.vertical,
-      TreeViewTraversalOrder.breadthFirst => Axis.horizontal,
-    };
   }
 
   /// The number of pixels by which child nodes will be offset in the cross axis
