@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.16/Dart 3.2.
+
 ## 0.5.1+1
 
 * Updates `LICENSE` file to cover licensed code used in `FileUtils.java`.
