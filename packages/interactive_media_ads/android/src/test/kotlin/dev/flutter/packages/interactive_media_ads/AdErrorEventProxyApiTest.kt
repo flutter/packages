@@ -8,7 +8,7 @@ import com.google.ads.interactivemedia.v3.api.AdError
 import com.google.ads.interactivemedia.v3.api.AdErrorEvent
 import kotlin.test.Test
 import org.mockito.Mockito.mock
-import org.mockito.Mockito.`when`
+import org.mockito.kotlin.whenever
 import kotlin.test.assertEquals
 
 internal class AdErrorEventProxyApiTest {
@@ -18,7 +18,7 @@ internal class AdErrorEventProxyApiTest {
 
     val mockEvent = mock<AdErrorEvent>()
     val mockError = mock<AdError>()
-    `when`(mockEvent.error).thenReturn(mockError)
+    whenever(mockEvent.error).thenReturn(mockError)
 
     assertEquals(mockError, api.error(mockEvent))
   }

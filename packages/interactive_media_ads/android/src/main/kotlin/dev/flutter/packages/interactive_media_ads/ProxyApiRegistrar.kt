@@ -5,10 +5,19 @@
 package dev.flutter.packages.interactive_media_ads
 
 import android.content.Context
+import android.os.Handler
+import android.os.Looper
 import io.flutter.plugin.common.BinaryMessenger
 
-class ProxyApiRegistrar(binaryMessenger: BinaryMessenger, var context: Context) :
+open class ProxyApiRegistrar(binaryMessenger: BinaryMessenger, var context: Context) :
     PigeonProxyApiRegistrar(binaryMessenger) {
+
+  internal open fun runOnMainThread(callback: Runnable) {
+    Handler(Looper.getMainLooper()).post {
+      callback.run()
+    }
+  }
+
   override fun getPigeonApiBaseDisplayContainer(): PigeonApiBaseDisplayContainer {
     return BaseDisplayContainerProxyApi(this)
   }
