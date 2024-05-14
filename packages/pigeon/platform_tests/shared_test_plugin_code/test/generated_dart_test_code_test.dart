@@ -44,7 +44,7 @@ void main() {
   test('simple', () async {
     final MessageNestedApi api = MessageNestedApi();
     final MockNested mock = MockNested();
-    TestNestedApi.setup(mock);
+    TestNestedApi.setUp(mock);
     final MessageSearchReply reply =
         await api.search(MessageNested()..request = null);
     expect(mock.didCall, true);
@@ -54,7 +54,7 @@ void main() {
   test('nested', () async {
     final MessageApi api = MessageApi();
     final Mock mock = Mock();
-    TestHostApi.setup(mock);
+    TestHostApi.setUp(mock);
     final MessageSearchReply reply =
         await api.search(MessageSearchRequest()..query = 'foo');
     expect(mock.log, <String>['search']);
@@ -64,7 +64,7 @@ void main() {
   test('no-arg calls', () async {
     final MessageApi api = MessageApi();
     final Mock mock = Mock();
-    TestHostApi.setup(mock);
+    TestHostApi.setUp(mock);
     await api.initialize();
     expect(mock.log, <String>['initialize']);
   });
@@ -73,7 +73,7 @@ void main() {
     'calling methods with null',
     () async {
       final Mock mock = Mock();
-      TestHostApi.setup(mock);
+      TestHostApi.setUp(mock);
       expect(
         await const BasicMessageChannel<Object?>(
           'dev.flutter.pigeon.pigeon_integration_tests.MessageApi.initialize',
