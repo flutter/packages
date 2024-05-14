@@ -44,11 +44,6 @@ final Class emptyClass = Class(name: 'className', fields: <NamedType>[
   )
 ]);
 
-final Enum emptyEnum = Enum(
-  name: 'enumName',
-  members: <EnumMember>[EnumMember(name: 'enumMemberName')],
-);
-
 void main() {
   test('test merge maps', () {
     final Map<String, Object> source = <String, Object>{
