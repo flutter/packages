@@ -45,7 +45,7 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
         assert(indentation >= 0),
         assert(verticalAxisDirection == AxisDirection.down &&
             horizontalAxisDirection == AxisDirection.right),
-            super(mainAxis: Axis.vertical);
+        super(mainAxis: Axis.vertical);
 
   @override
   TreeRowDelegateMixin get delegate => super.delegate as TreeRowDelegateMixin;

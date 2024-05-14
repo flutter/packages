@@ -593,21 +593,24 @@ void main() {
       expect(style!.duration, const Duration(milliseconds: 200));
     });
 
-    testWidgets('Adding more root TreeViewNodes are reflected in the tree', (WidgetTester tester) async {
+    testWidgets('Adding more root TreeViewNodes are reflected in the tree',
+        (WidgetTester tester) async {
       final TreeViewController controller = TreeViewController();
       await tester.pumpWidget(MaterialApp(
         home: StatefulBuilder(
           builder: (BuildContext context, StateSetter setState) {
             return Scaffold(
               body: TreeView<String>(
-              tree: simpleNodeSet,
-              controller: controller,
+                tree: simpleNodeSet,
+                controller: controller,
               ),
-              floatingActionButton: FloatingActionButton(onPressed: () {
-                setState(() {
-                  simpleNodeSet.add(TreeViewNode<String>('Added root'));
-                });
-              },),
+              floatingActionButton: FloatingActionButton(
+                onPressed: () {
+                  setState(() {
+                    simpleNodeSet.add(TreeViewNode<String>('Added root'));
+                  });
+                },
+              ),
             );
           },
         ),
@@ -639,21 +642,27 @@ void main() {
       expect(find.text('Added root'), findsOneWidget);
     });
 
-    testWidgets('Adding more TreeViewNodes below the root are reflected in the tree', (WidgetTester tester) async {
+    testWidgets(
+        'Adding more TreeViewNodes below the root are reflected in the tree',
+        (WidgetTester tester) async {
       final TreeViewController controller = TreeViewController();
       await tester.pumpWidget(MaterialApp(
         home: StatefulBuilder(
           builder: (BuildContext context, StateSetter setState) {
             return Scaffold(
               body: TreeView<String>(
-              tree: simpleNodeSet,
-              controller: controller,
+                tree: simpleNodeSet,
+                controller: controller,
               ),
-              floatingActionButton: FloatingActionButton(onPressed: () {
-                setState(() {
-                  simpleNodeSet[1].children.add(TreeViewNode<String>('Added child'),);
-                });
-              },),
+              floatingActionButton: FloatingActionButton(
+                onPressed: () {
+                  setState(() {
+                    simpleNodeSet[1].children.add(
+                          TreeViewNode<String>('Added child'),
+                        );
+                  });
+                },
+              ),
             );
           },
         ),
