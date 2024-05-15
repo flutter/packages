@@ -373,8 +373,8 @@ void defineTests() {
       'custom image builder',
       (WidgetTester tester) async {
         const String data = '![alt](https://img.png)';
-        Widget builder(Uri uri, String? title, String? alt) =>
-            Image.asset('assets/logo.png');
+        Widget builder(Uri uri, String? title, String? alt, double? width, double? height) =>
+            Image.asset('assets/logo.png',width: width, height: height);
 
         await tester.pumpWidget(
           boilerplate(
