@@ -2,6 +2,10 @@
 
 * Update to latest stable camerax `1.3.3`.
 
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.16/Dart 3.2.
+
 ## 0.6.5+1
 
 * Updates `README.md` to reflect the fact that the `camera_android_camerax` camera plugin implementation
