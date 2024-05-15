@@ -1,3 +1,7 @@
+## 0.6.5+2
+
+* Update to latest stable camerax `1.3.3`.
+
 ## 0.6.5+1
 
 * Updates `README.md` to reflect the fact that the `camera_android_camerax` camera plugin implementation
