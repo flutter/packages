@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.16/Dart 3.2.
+
 ## 18.0.1
 
 * Fixes unnecessary calls of `toList` and `fromList` when encoding/decoding data classes.

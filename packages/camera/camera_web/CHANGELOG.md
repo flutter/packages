@@ -2,6 +2,8 @@
 
 - Supporting camera image stream on web.
 
+* Updates minimum supported SDK version to Flutter 3.16/Dart 3.2.
+
 ## 0.3.3
 
 - Adds support to control video FPS and bitrate. See `CameraController.withSettings`.

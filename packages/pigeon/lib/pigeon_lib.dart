@@ -394,7 +394,7 @@ class PigeonOptions {
       if (oneLanguage != null) 'oneLanguage': oneLanguage!,
       if (debugGenerators != null) 'debugGenerators': debugGenerators!,
       if (basePath != null) 'basePath': basePath!,
-      if (_dartPackageName != null) 'dartPackageName': _dartPackageName!,
+      if (_dartPackageName != null) 'dartPackageName': _dartPackageName,
     };
     return result;
   }
