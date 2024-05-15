@@ -6,8 +6,8 @@ issue_tracker: https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+
 version: 4.1.11
 
 environment:
-  sdk: ^3.1.0
-  flutter: ">=3.13.0"
+  sdk: ^3.2.0
+  flutter: ">=3.16.0"
 
 dependencies:
   flutter:
