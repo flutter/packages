@@ -96,7 +96,7 @@ static const NSTimeInterval kTimeout = 30.0;
   StubAlertFactory *alertFactory;
 #if TARGET_OS_OSX
 
-    id nsAlert = [NSAlert class];
+    NSAlert* nsAlert = [[NSAlert alloc] init];
   alertFactory = [[StubAlertFactory alloc] initWithNSAlert:nsAlert];
 #else
   id mockUIAlertController = OCMClassMock([UIAlertController class]);
@@ -277,11 +277,7 @@ static const NSTimeInterval kTimeout = 30.0;
                                     FlutterError *_Nullable error) {
                          XCTAssertTrue([NSThread isMainThread]);
                          // Tests that the alert window is the same as the registrar window
-                         XCTAssertEqual(alertFactory.alert.window, reg.view.window);
-                         // TODO(stuartmorgan): Fix this; this was the pre-Pigeon-migration
-                         // behavior, so is preserved as part of the migration, but a failed
-                         // authentication should return failure, not an error that results in a
-                         // PlatformException.
+                         XCTAssertEqual(alertFactory.alert.window.parentWindow, reg.view.window);
                          XCTAssertEqual(resultDetails.result, FLADAuthResultErrorNotAvailable);
                          XCTAssertNil(error);
                          [expectation fulfill];
