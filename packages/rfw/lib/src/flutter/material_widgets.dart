@@ -77,7 +77,7 @@ import 'runtime.dart';
 ///  * Theming in general is not currently supported.
 ///
 ///  * Properties whose values are [Animation]s or based on
-///    [MaterialStateProperty] are not supported.
+///    [WidgetStateProperty] are not supported.
 ///
 ///  * Features related to focus or configuring mouse support are not
 ///    implemented.
@@ -94,7 +94,7 @@ import 'runtime.dart';
 ///
 /// In general, the trend will all of these unsupported features is that this
 /// library doesn't support features that can't be trivially expressed using the
-/// JSON-like structures of RFW. For example, [MaterialStateProperty] is
+/// JSON-like structures of RFW. For example, [WidgetStateProperty] is
 /// designed to be used with code to select the values, which doesn't work well
 /// in the RFW structure.
 LocalWidgetLibrary createMaterialWidgets() => LocalWidgetLibrary(_materialWidgetsDefinitions);
