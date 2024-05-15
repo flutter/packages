@@ -9,6 +9,24 @@ import 'package:flutter/widgets.dart';
 import '../platform_interface/platform_interface.dart';
 import 'android_view_widget.dart';
 import 'interactive_media_ads.g.dart' as ima;
+import 'interactive_media_ads_proxy.dart';
+
+final class AndroidAdDisplayContainerCreationParams
+    extends PlatformAdDisplayContainerCreationParams {
+  AndroidAdDisplayContainerCreationParams._(
+    PlatformAdDisplayContainerCreationParams params, {
+    this.proxy = const InteractiveMediaAdsProxy(),
+  }) : super(onContainerAdded: params.onContainerAdded);
+
+  factory AndroidAdDisplayContainerCreationParams.fromPlatformAdDisplayContainerCreationParams(
+    PlatformAdDisplayContainerCreationParams params, {
+    InteractiveMediaAdsProxy proxy = const InteractiveMediaAdsProxy(),
+  }) {
+    return AndroidAdDisplayContainerCreationParams._(params, proxy: proxy);
+  }
+
+  final InteractiveMediaAdsProxy proxy;
+}
 
 /// Android implementation of [PlatformAdDisplayContainer].
 final class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
@@ -22,7 +40,9 @@ final class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
   }
 
   static const int _progressPollingMs = 250;
-  final ima.FrameLayout _frameLayout = ima.FrameLayout();
+
+  late final ima.FrameLayout _frameLayout =
+      _androidParams.proxy.newFrameLayout();
   final Set<ima.VideoAdPlayerCallback> _videoAdPlayerCallbacks =
       <ima.VideoAdPlayerCallback>{};
   late final ima.VideoView _videoView;
@@ -34,6 +54,10 @@ final class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
   ima.MediaPlayer? _mediaPlayer;
   Timer? _adProgressTimer;
   int? _adDuration;
+
+  AndroidAdDisplayContainerCreationParams get _androidParams =>
+      AndroidAdDisplayContainerCreationParams
+          .fromPlatformAdDisplayContainerCreationParams(params);
 
   @override
   Widget build(BuildContext context) {
@@ -88,7 +112,7 @@ final class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
   static ima.VideoView _setUpVideoView(
     WeakReference<AndroidAdDisplayContainer> weakThis,
   ) {
-    return ima.VideoView(
+    return weakThis.target!._androidParams.proxy.newVideoView(
       onCompletion: (_, ima.MediaPlayer player) {
         final AndroidAdDisplayContainer? container = weakThis.target;
         if (container != null) {
