@@ -27,6 +27,9 @@
   return self;
 }
 
+static NSMutableDictionary *markerImages;
+
+
 - (void)showInfoWindow {
   self.mapView.selectedMarker = self.marker;
 }
@@ -184,9 +187,21 @@
   } else if ([iconData[0] isEqualToString:@"fromBytes"]) {
     if (iconData.count == 2) {
       @try {
+          if(markerImages == nil){
+              markerImages =  [[NSMutableDictionary alloc] init];
+          }
         FlutterStandardTypedData *byteData = iconData[1];
-        CGFloat screenScale = [[UIScreen mainScreen] scale];
-        image = [UIImage imageWithData:[byteData data] scale:screenScale];
+          if ([markerImages objectForKey:byteData.data] != nil) {
+              image = [markerImages objectForKey:byteData.data];
+              NSLog(@"Cache");
+
+          }else{
+              CGFloat screenScale = [[UIScreen mainScreen] scale];
+              image = [UIImage imageWithData:[byteData data] scale:screenScale];
+              [markerImages setObject:image forKey:byteData.data];
+              NSLog(@"Normal3");
+
+          }
       } @catch (NSException *exception) {
         @throw [NSException exceptionWithName:@"InvalidByteDescriptor"
                                        reason:@"Unable to interpret bytes as a valid image."
