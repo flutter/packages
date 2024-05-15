@@ -1,3 +1,7 @@
+## 0.5.2+1
+
+* Removes Swift Package Manager compatibility.
+
 ## 0.5.2
 
 * Adds Swift Package Manager compatibility.
