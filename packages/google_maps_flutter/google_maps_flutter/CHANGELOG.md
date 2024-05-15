@@ -1,3 +1,15 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.16/Dart 3.2.
+
+## 2.6.1
+
+* Updates the minimum version of the iOS implementation package to a version
+  with privacy manifest support.
+* Updates README and example app to reflect that the minimum supported version
+  is now iOS 14. Removal of support for iOS 12 and 13 was necessary due to the
+  upcoming App Store privary manifest requirements.
+
 ## 2.6.0
 
 * Adds `style` to the GoogleMap widget constructor. This allows setting the map

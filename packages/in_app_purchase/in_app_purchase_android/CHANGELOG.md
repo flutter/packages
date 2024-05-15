@@ -1,3 +1,27 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.16/Dart 3.2.
+
+## 0.3.5+1
+
+* Updates example to use `countryCode` instead of deprecated `getCountryCode`.
+
+## 0.3.5
+
+* Replaces `getCountryCode` with `countryCode`.
+
+## 0.3.4+1
+
+* Adds documentation for UserChoice and Alternative Billing.
+
+## 0.3.4
+
+* Adds `countryCode` API.
+
+## 0.3.3+1
+
+* Moves alternative billing listener creation to BillingClientFactoryImpl.
+
 ## 0.3.3
 
 * Converts data objects in internal platform communication to Pigeon.

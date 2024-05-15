@@ -80,8 +80,8 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi {
     return anObject
   }
 
-  override fun echoList(aList: List<Any?>): List<Any?> {
-    return aList
+  override fun echoList(list: List<Any?>): List<Any?> {
+    return list
   }
 
   override fun echoMap(aMap: Map<String?, Any?>): Map<String?, Any?> {
@@ -240,8 +240,8 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi {
     callback(Result.success(anObject))
   }
 
-  override fun echoAsyncList(aList: List<Any?>, callback: (Result<List<Any?>>) -> Unit) {
-    callback(Result.success(aList))
+  override fun echoAsyncList(list: List<Any?>, callback: (Result<List<Any?>>) -> Unit) {
+    callback(Result.success(list))
   }
 
   override fun echoAsyncMap(
@@ -282,8 +282,8 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi {
     callback(Result.success(anObject))
   }
 
-  override fun echoAsyncNullableList(aList: List<Any?>?, callback: (Result<List<Any?>?>) -> Unit) {
-    callback(Result.success(aList))
+  override fun echoAsyncNullableList(list: List<Any?>?, callback: (Result<List<Any?>?>) -> Unit) {
+    callback(Result.success(list))
   }
 
   override fun echoAsyncNullableMap(
@@ -359,12 +359,12 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi {
     flutterApi!!.echoString(aString) { echo -> callback(echo) }
   }
 
-  override fun callFlutterEchoUint8List(aList: ByteArray, callback: (Result<ByteArray>) -> Unit) {
-    flutterApi!!.echoUint8List(aList) { echo -> callback(echo) }
+  override fun callFlutterEchoUint8List(list: ByteArray, callback: (Result<ByteArray>) -> Unit) {
+    flutterApi!!.echoUint8List(list) { echo -> callback(echo) }
   }
 
-  override fun callFlutterEchoList(aList: List<Any?>, callback: (Result<List<Any?>>) -> Unit) {
-    flutterApi!!.echoList(aList) { echo -> callback(echo) }
+  override fun callFlutterEchoList(list: List<Any?>, callback: (Result<List<Any?>>) -> Unit) {
+    flutterApi!!.echoList(list) { echo -> callback(echo) }
   }
 
   override fun callFlutterEchoMap(
@@ -408,17 +408,17 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi {
   }
 
   override fun callFlutterEchoNullableUint8List(
-      aList: ByteArray?,
+      list: ByteArray?,
       callback: (Result<ByteArray?>) -> Unit
   ) {
-    flutterApi!!.echoNullableUint8List(aList) { echo -> callback(echo) }
+    flutterApi!!.echoNullableUint8List(list) { echo -> callback(echo) }
   }
 
   override fun callFlutterEchoNullableList(
-      aList: List<Any?>?,
+      list: List<Any?>?,
       callback: (Result<List<Any?>?>) -> Unit
   ) {
-    flutterApi!!.echoNullableList(aList) { echo -> callback(echo) }
+    flutterApi!!.echoNullableList(list) { echo -> callback(echo) }
   }
 
   override fun callFlutterEchoNullableMap(

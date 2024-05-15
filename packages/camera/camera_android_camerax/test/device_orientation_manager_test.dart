@@ -52,7 +52,7 @@ void main() {
       final MockTestDeviceOrientationManagerHostApi mockApi =
           MockTestDeviceOrientationManagerHostApi();
       TestDeviceOrientationManagerHostApi.setup(mockApi);
-      const int expectedRotation = Surface.ROTATION_180;
+      const int expectedRotation = Surface.rotation180;
 
       when(mockApi.getDefaultDisplayRotation()).thenReturn(expectedRotation);
 

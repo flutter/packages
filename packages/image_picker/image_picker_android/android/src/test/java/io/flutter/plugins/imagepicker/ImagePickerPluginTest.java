@@ -52,6 +52,19 @@ public class ImagePickerPluginTest {
       new GeneralOptions.Builder().setUsePhotoPicker(false).setAllowMultiple(false).build();
   private static final GeneralOptions GENERAL_OPTIONS_ALLOW_MULTIPLE_DONT_USE_PHOTO_PICKER =
       new GeneralOptions.Builder().setUsePhotoPicker(false).setAllowMultiple(true).build();
+  private static final GeneralOptions
+      GENERAL_OPTIONS_ALLOW_MULTIPLE_DONT_USE_PHOTO_PICKER_WITH_LIMIT =
+          new GeneralOptions.Builder()
+              .setUsePhotoPicker(false)
+              .setAllowMultiple(true)
+              .setLimit((long) 5)
+              .build();
+  private static final GeneralOptions GENERAL_OPTIONS_ALLOW_MULTIPLE_USE_PHOTO_PICKER_WITH_LIMIT =
+      new GeneralOptions.Builder()
+          .setUsePhotoPicker(true)
+          .setAllowMultiple(true)
+          .setLimit((long) 5)
+          .build();
   private static final SourceSpecification SOURCE_GALLERY =
       new SourceSpecification.Builder().setType(Messages.SourceType.GALLERY).build();
   private static final SourceSpecification SOURCE_CAMERA_FRONT =
@@ -171,7 +184,8 @@ public class ImagePickerPluginTest {
         DEFAULT_IMAGE_OPTIONS,
         GENERAL_OPTIONS_ALLOW_MULTIPLE_DONT_USE_PHOTO_PICKER,
         mockResult);
-    verify(mockImagePickerDelegate).chooseMultiImageFromGallery(any(), eq(false), any());
+    verify(mockImagePickerDelegate)
+        .chooseMultiImageFromGallery(any(), eq(false), eq(Integer.MAX_VALUE), any());
     verifyNoInteractions(mockResult);
   }
 
@@ -182,7 +196,30 @@ public class ImagePickerPluginTest {
         DEFAULT_IMAGE_OPTIONS,
         GENERAL_OPTIONS_ALLOW_MULTIPLE_USE_PHOTO_PICKER,
         mockResult);
-    verify(mockImagePickerDelegate).chooseMultiImageFromGallery(any(), eq(true), any());
+    verify(mockImagePickerDelegate)
+        .chooseMultiImageFromGallery(any(), eq(true), eq(Integer.MAX_VALUE), any());
+    verifyNoInteractions(mockResult);
+  }
+
+  @Test
+  public void pickImages_usingPhotoPicker_withLimit5_invokesChooseMultiImageFromGallery() {
+    plugin.pickImages(
+        SOURCE_GALLERY,
+        DEFAULT_IMAGE_OPTIONS,
+        GENERAL_OPTIONS_ALLOW_MULTIPLE_USE_PHOTO_PICKER_WITH_LIMIT,
+        mockResult);
+    verify(mockImagePickerDelegate).chooseMultiImageFromGallery(any(), eq(true), eq(5), any());
+    verifyNoInteractions(mockResult);
+  }
+
+  @Test
+  public void pickImages_withLimit5_invokesChooseMultiImageFromGallery() {
+    plugin.pickImages(
+        SOURCE_GALLERY,
+        DEFAULT_IMAGE_OPTIONS,
+        GENERAL_OPTIONS_ALLOW_MULTIPLE_DONT_USE_PHOTO_PICKER_WITH_LIMIT,
+        mockResult);
+    verify(mockImagePickerDelegate).chooseMultiImageFromGallery(any(), eq(false), eq(5), any());
     verifyNoInteractions(mockResult);
   }
 
