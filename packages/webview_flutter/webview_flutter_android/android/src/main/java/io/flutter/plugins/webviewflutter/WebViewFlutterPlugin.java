@@ -34,8 +34,6 @@ import io.flutter.plugins.webviewflutter.GeneratedAndroidWebView.WebViewHostApi;
  * Java platform implementation of the webview_flutter plugin.
  *
  * <p>Register this in an add to app scenario to gracefully handle activity and context changes.
- *
- * <p>Call {@link #registerWith} to use the stable {@code io.flutter.plugin.common} package instead.
  */
 public class WebViewFlutterPlugin implements FlutterPlugin, ActivityAware {
   @Nullable private InstanceManager instanceManager;
