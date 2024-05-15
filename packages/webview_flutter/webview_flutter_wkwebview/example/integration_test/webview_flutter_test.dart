@@ -1525,6 +1525,64 @@ Future<void> main() async {
       await expectLater(
           debugMessageReceived.future, completion('debug:Debug message'));
     });
+
+    testWidgets('can receive console log messages with cyclic object value',
+        (WidgetTester tester) async {
+      const String testPage = '''
+          <!DOCTYPE html>
+          <html>
+          <head>
+            <title>WebResourceError test</title>
+            <script type="text/javascript">
+            function onLoad() {
+              const obj1 = {
+                name: "obj1",
+              };
+              const obj2 = {
+                name: "obj2",
+                obj1: obj1,
+              };
+              const obj = {
+                obj1: obj1,
+                obj2: obj2,
+              };
+              obj.self = obj;
+              console.log(obj);
+            }
+          </script>
+          </head>
+          <body onload="onLoad();">
+          </html>
+         ''';
+
+      final Completer<String> debugMessageReceived = Completer<String>();
+      final PlatformWebViewController controller = PlatformWebViewController(
+        const PlatformWebViewControllerCreationParams(),
+      );
+      unawaited(controller.setJavaScriptMode(JavaScriptMode.unrestricted));
+
+      await controller
+          .setOnConsoleMessage((JavaScriptConsoleMessage consoleMessage) {
+        debugMessageReceived
+            .complete('${consoleMessage.level.name}:${consoleMessage.message}');
+      });
+
+      await controller.loadHtmlString(testPage);
+
+      await tester.pumpWidget(Builder(
+        builder: (BuildContext context) {
+          return PlatformWebViewWidget(
+            PlatformWebViewWidgetCreationParams(controller: controller),
+          ).build(context);
+        },
+      ));
+
+      await expectLater(
+        debugMessageReceived.future,
+        completion(
+            'log:{"obj1":{"name":"obj1"},"obj2":{"name":"obj2","obj1":{"name":"obj1"}}}'),
+      );
+    });
   });
 }
 
