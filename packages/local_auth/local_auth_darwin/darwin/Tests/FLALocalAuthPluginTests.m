@@ -40,10 +40,10 @@ static const NSTimeInterval kTimeout = 30.0;
 
 @interface StubAlertFactory : NSObject <FLADAlertFactory>
 #if TARGET_OS_OSX
-@property(copy, nonatomic) NSAlert *alert;
+@property(nonatomic) NSAlert *alert;
 - (instancetype)initWithNSAlert:(NSAlert *)alert;
 #else
-@property(copy, nonatomic) UIAlertController *alertController;
+@property(nonatomic) UIAlertController *alertController;
 - (instancetype)initWithUIAlertController:(UIAlertController *)alertController;
 #endif
 
@@ -61,7 +61,7 @@ static const NSTimeInterval kTimeout = 30.0;
   return self;
 }
 
-- (NSAlert *)createNSAlert {
+- (NSAlert *)createAlert {
   return _alert;
 }
 #else
@@ -96,8 +96,8 @@ static const NSTimeInterval kTimeout = 30.0;
   StubAlertFactory *alertFactory;
 #if TARGET_OS_OSX
 
-  id mockNSAlert = OCMClassMock([NSAlert class]);
-  alertFactory = [[StubAlertFactory alloc] initWithNSAlert:mockNSAlert];
+    id nsAlert = [NSAlert class];
+  alertFactory = [[StubAlertFactory alloc] initWithNSAlert:nsAlert];
 #else
   id mockUIAlertController = OCMClassMock([UIAlertController class]);
   alertFactory = [[StubAlertFactory alloc] initWithUIAlertController:mockUIAlertController];
