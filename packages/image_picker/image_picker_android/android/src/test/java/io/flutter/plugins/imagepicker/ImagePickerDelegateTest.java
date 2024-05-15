@@ -815,8 +815,31 @@ public class ImagePickerDelegateTest {
   }
 
   @Test
-  public void
-      onActivityResult_whenImagePickedFromGallery_finishesWithEmptyListIfIntentDataIsNull() {
+  public void onActivityResult_whenImagePickedFromGallery_finishesWithErrorIfClipDataIsNull() {
+    when(mockIntent.getData()).thenReturn(null);
+    when(mockIntent.getClipData()).thenReturn(null);
+
+    Mockito.doAnswer(
+            invocation -> {
+              ((Runnable) invocation.getArgument(0)).run();
+              return null;
+            })
+        .when(mockExecutor)
+        .execute(any(Runnable.class));
+    ImagePickerDelegate delegate =
+        createDelegateWithPendingResultAndOptions(DEFAULT_IMAGE_OPTIONS, null);
+
+    delegate.onActivityResult(
+        ImagePickerDelegate.REQUEST_CODE_CHOOSE_MEDIA_FROM_GALLERY, Activity.RESULT_OK, mockIntent);
+
+    ArgumentCaptor<FlutterError> errorCaptor = ArgumentCaptor.forClass(FlutterError.class);
+    verify(mockResult).error(errorCaptor.capture());
+    assertEquals("no_valid_media_uri", errorCaptor.getValue().code);
+    assertEquals("Cannot find the selected media.", errorCaptor.getValue().getMessage());
+  }
+
+  @Test
+  public void onActivityResult_whenImagePickedFromGallery_finishesWithErrorIfClipDataUriIsNull() {
     setupMockClipDataNullUri();
     when(mockIntent.getData()).thenReturn(null);
     when(mockIntent.getClipData()).thenReturn(null);
@@ -834,11 +857,10 @@ public class ImagePickerDelegateTest {
     delegate.onActivityResult(
         ImagePickerDelegate.REQUEST_CODE_CHOOSE_MEDIA_FROM_GALLERY, Activity.RESULT_OK, mockIntent);
 
-    @SuppressWarnings("unchecked")
-    ArgumentCaptor<List<String>> pathListCapture = ArgumentCaptor.forClass(List.class);
-    verify(mockResult).success(pathListCapture.capture());
-    assertEquals(0, pathListCapture.getValue().size());
-    verifyNoMoreInteractions(mockResult);
+    ArgumentCaptor<FlutterError> errorCaptor = ArgumentCaptor.forClass(FlutterError.class);
+    verify(mockResult).error(errorCaptor.capture());
+    assertEquals("no_valid_media_uri", errorCaptor.getValue().code);
+    assertEquals("Cannot find the selected media.", errorCaptor.getValue().getMessage());
   }
 
   private ImagePickerDelegate createDelegate() {
