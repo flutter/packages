@@ -4,7 +4,5 @@
 
 #import <Flutter/Flutter.h>
 
-#import "messages.g.h"
-
-@interface CameraPlugin : NSObject <FlutterPlugin, FCPCameraApi>
+@interface CameraPlugin : NSObject <FlutterPlugin>
 @end

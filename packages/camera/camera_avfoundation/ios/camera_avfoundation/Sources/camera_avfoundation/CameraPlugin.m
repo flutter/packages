@@ -3,17 +3,17 @@
 // found in the LICENSE file.
 
 #import <camera_avfoundation/CameraPlugin.h>
-#import <camera_avfoundation/CameraPlugin_Test.h>
+#import "CameraPlugin_Test.h"
 
 @import AVFoundation;
 @import Flutter;
 
-#import <camera_avfoundation/CameraPermissionUtils.h>
-#import <camera_avfoundation/CameraProperties.h>
-#import <camera_avfoundation/FLTCam.h>
-#import <camera_avfoundation/FLTThreadSafeEventChannel.h>
-#import <camera_avfoundation/QueueUtils.h>
-#import <camera_avfoundation/messages.g.h>
+#import "CameraPermissionUtils.h"
+#import "CameraProperties.h"
+#import "FLTCam.h"
+#import "FLTThreadSafeEventChannel.h"
+#import "QueueUtils.h"
+#import "messages.g.h"
 
 static FlutterError *FlutterErrorFromNSError(NSError *error) {
   return [FlutterError errorWithCode:[NSString stringWithFormat:@"Error %d", (int)error.code]

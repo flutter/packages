@@ -4,12 +4,12 @@
 
 // This header is available in the Test module. Import via "@import camera_avfoundation.Test;"
 
-#import "CameraPlugin.h"
+#import <camera_avfoundation/CameraPlugin.h>
 #import "FLTCam.h"
 #import "messages.g.h"
 
 /// APIs exposed for unit testing.
-@interface CameraPlugin ()
+@interface CameraPlugin () <FCPCameraApi>
 
 /// All FLTCam's state access and capture session related operations should be on run on this queue.
 @property(nonatomic, strong) dispatch_queue_t captureSessionQueue;

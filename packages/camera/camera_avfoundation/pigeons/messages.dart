@@ -10,10 +10,7 @@ import 'package:pigeon/pigeon.dart';
       'ios/camera_avfoundation/Sources/camera_avfoundation/include/camera_avfoundation/messages.g.h',
   objcSourceOut:
       'ios/camera_avfoundation/Sources/camera_avfoundation/messages.g.m',
-  objcOptions: ObjcOptions(
-    headerIncludePath: './include/camera_avfoundation/messages.g.h',
-    prefix: 'FCP',
-  ),
+  objcOptions: ObjcOptions(prefix: 'FCP'),
   copyrightHeader: 'pigeons/copyright.txt',
 ))
 

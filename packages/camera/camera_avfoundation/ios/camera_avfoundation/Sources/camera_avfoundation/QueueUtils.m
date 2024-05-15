@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#import <camera_avfoundation/QueueUtils.h>
+#import "QueueUtils.h"
 
 const char *FLTCaptureSessionQueueSpecific = "capture_session_queue";
 

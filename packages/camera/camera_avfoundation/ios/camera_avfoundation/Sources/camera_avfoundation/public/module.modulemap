@@ -5,13 +5,13 @@ module camera_avfoundation {
   module * { export * }
 
   explicit module Test {
-    header "camera_avfoundation/CameraPlugin_Test.h"
-    header "camera_avfoundation/CameraPermissionUtils.h"
-    header "camera_avfoundation/CameraProperties.h"
-    header "camera_avfoundation/FLTCam.h"
-    header "camera_avfoundation/FLTCam_Test.h"
-    header "camera_avfoundation/FLTSavePhotoDelegate_Test.h"
-    header "camera_avfoundation/FLTThreadSafeEventChannel.h"
-    header "camera_avfoundation/QueueUtils.h"
+    header "../CameraPlugin_Test.h"
+    header "../CameraPermissionUtils.h"
+    header "../CameraProperties.h"
+    header "../FLTCam.h"
+    header "../FLTCam_Test.h"
+    header "../FLTSavePhotoDelegate_Test.h"
+    header "../FLTThreadSafeEventChannel.h"
+    header "../QueueUtils.h"
   }
 }

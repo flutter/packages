@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#import <camera_avfoundation/FLTCamMediaSettingsAVWrapper.h>
+#import "FLTCamMediaSettingsAVWrapper.h"
 
 @implementation FLTCamMediaSettingsAVWrapper
 
