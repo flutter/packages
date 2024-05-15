@@ -5,23 +5,23 @@ tasks:
   - name: download Dart and Android deps
     script: .ci/scripts/tool_runner.sh
     infra_step: true
-    args: ["fetch-deps", "--android", "--supporting-target-platforms-only", "--exclude=script/configs/still_requires_api_33_avd.yaml"]
+    args: ["fetch-deps", "--android", "--supporting-target-platforms-only"]
   - name: build examples
     script: .ci/scripts/tool_runner.sh
-    args: ["build-examples", "--apk", "--exclude=script/configs/still_requires_api_33_avd.yaml"]
+    args: ["build-examples", "--apk"]
   - name: lint
     script: .ci/scripts/tool_runner.sh
-    args: ["lint-android", "--exclude=script/configs/still_requires_api_33_avd.yaml"]
+    args: ["lint-android"]
   # Native unit and native integration are split into two steps to allow for
   # different exclusions.
   # TODO(stuartmorgan): Eliminate the native unit test exclusion, and combine
   # these steps.
   - name: native unit tests
     script: .ci/scripts/tool_runner.sh
-    args: ["native-test", "--android", "--no-integration", "--exclude=script/configs/exclude_native_unit_android.yaml,script/configs/still_requires_api_33_avd.yaml"]
+    args: ["native-test", "--android", "--no-integration", "--exclude=script/configs/exclude_native_unit_android.yaml"]
   - name: native integration tests
     script: .ci/scripts/tool_runner.sh
-    args: ["native-test", "--android", "--no-unit", "--exclude=script/configs/still_requires_api_33_avd.yaml"]
+    args: ["native-test", "--android", "--no-unit"]
   - name: drive examples
     script: .ci/scripts/tool_runner.sh
-    args: ["drive-examples", "--android", "--exclude=script/configs/exclude_integration_android.yaml,script/configs/exclude_integration_android_emulator.yaml,script/configs/still_requires_api_33_avd.yaml"]
+    args: ["drive-examples", "--android", "--exclude=script/configs/exclude_integration_android.yaml,script/configs/exclude_integration_android_emulator.yaml"]
