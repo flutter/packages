@@ -232,8 +232,7 @@ public class ImagePickerPlugin implements FlutterPlugin, ActivityAware, ImagePic
       final Application application,
       final Activity activity,
       final ActivityPluginBinding activityBinding) {
-    activityState =
-        new ActivityState(application, activity, messenger, this, activityBinding);
+    activityState = new ActivityState(application, activity, messenger, this, activityBinding);
   }
 
   private void tearDown() {

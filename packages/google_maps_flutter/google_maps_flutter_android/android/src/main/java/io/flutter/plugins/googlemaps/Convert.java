@@ -26,14 +26,13 @@ import com.google.android.gms.maps.model.RoundCap;
 import com.google.android.gms.maps.model.SquareCap;
 import com.google.android.gms.maps.model.Tile;
 import com.google.maps.android.clustering.Cluster;
+import io.flutter.FlutterInjector;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import io.flutter.FlutterInjector;
 
 /** Conversions between JSON-like values and GoogleMaps data types. */
 class Convert {
@@ -50,16 +49,21 @@ class Convert {
       case "fromAsset":
         if (data.size() == 2) {
           return BitmapDescriptorFactory.fromAsset(
-              FlutterInjector.instance().flutterLoader().getLookupKeyForAsset(toString(data.get(1))));
+              FlutterInjector.instance()
+                  .flutterLoader()
+                  .getLookupKeyForAsset(toString(data.get(1))));
         } else {
           return BitmapDescriptorFactory.fromAsset(
-              FlutterInjector.instance().flutterLoader().getLookupKeyForAsset(
-                  toString(data.get(1)), toString(data.get(2))));
+              FlutterInjector.instance()
+                  .flutterLoader()
+                  .getLookupKeyForAsset(toString(data.get(1)), toString(data.get(2))));
         }
       case "fromAssetImage":
         if (data.size() == 3) {
           return BitmapDescriptorFactory.fromAsset(
-              FlutterInjector.instance().flutterLoader().getLookupKeyForAsset(toString(data.get(1))));
+              FlutterInjector.instance()
+                  .flutterLoader()
+                  .getLookupKeyForAsset(toString(data.get(1))));
         } else {
           throw new IllegalArgumentException(
               "'fromAssetImage' Expected exactly 3 arguments, got: " + data.size());

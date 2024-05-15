@@ -4,7 +4,6 @@
 
 package io.flutter.plugins.inapppurchase;
 
-import android.app.Application;
 import android.content.Context;
 import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;

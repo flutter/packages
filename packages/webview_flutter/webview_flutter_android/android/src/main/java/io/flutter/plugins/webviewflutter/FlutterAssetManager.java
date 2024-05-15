@@ -7,7 +7,6 @@ package io.flutter.plugins.webviewflutter;
 import android.content.res.AssetManager;
 import androidx.annotation.NonNull;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
-import io.flutter.plugin.common.PluginRegistry;
 import java.io.IOException;
 
 /** Provides access to the assets registered as part of the App bundle. */
