@@ -1,6 +1,7 @@
 ## 18.1.0
 
 * [kotlin] Adds implementation for `@ProxyApi`.
+* Updates minimum supported SDK version to Flutter 3.16/Dart 3.2.
 
 ## 18.0.1
 
