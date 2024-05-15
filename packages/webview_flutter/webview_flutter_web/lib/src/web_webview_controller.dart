@@ -3,10 +3,10 @@
 // found in the LICENSE file.
 
 import 'dart:convert';
-import 'dart:html' as html;
 import 'dart:ui_web' as ui_web;
 
 import 'package:flutter/cupertino.dart';
+import 'package:web/web.dart' as html;
 import 'package:webview_flutter_platform_interface/webview_flutter_platform_interface.dart';
 
 import 'content_type.dart';
@@ -38,7 +38,7 @@ class WebWebViewControllerCreationParams
 
   /// The underlying element used as the WebView.
   @visibleForTesting
-  final html.IFrameElement iFrame = html.IFrameElement()
+  final html.HTMLIFrameElement iFrame = html.HTMLIFrameElement()
     ..id = 'webView${_nextIFrameId++}'
     ..style.width = '100%'
     ..style.height = '100%'
@@ -86,7 +86,7 @@ class WebWebViewController extends PlatformWebViewController {
 
   /// Performs an AJAX request defined by [params].
   Future<void> _updateIFrameFromXhr(LoadRequestParams params) async {
-    final html.HttpRequest httpReq =
+    final html.XMLHttpRequest httpReq =
         await _webWebViewParams.httpRequestFactory.request(
       params.uri.toString(),
       method: params.method.serialize(),
@@ -101,7 +101,7 @@ class WebWebViewController extends PlatformWebViewController {
 
     // ignore: unsafe_html
     _webWebViewParams.iFrame.src = Uri.dataFromString(
-      httpReq.responseText ?? '',
+      httpReq.responseText,
       mimeType: contentType.mimeType,
       encoding: encoding,
     ).toString();

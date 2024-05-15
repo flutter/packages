@@ -2,7 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'dart:html';
+
+import 'package:web/helpers.dart';
+import 'package:web/web.dart' as html;
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
@@ -16,12 +18,12 @@ import 'package:webview_flutter_web/src/webview_flutter_web_legacy.dart';
 import 'webview_flutter_web_test.mocks.dart';
 
 @GenerateMocks(<Type>[
-  IFrameElement,
+  html.HTMLIFrameElement,
   BuildContext,
   CreationParams,
   WebViewPlatformCallbacksHandler,
   HttpRequestFactory,
-  HttpRequest,
+  html.XMLHttpRequest,
 ])
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -123,7 +125,7 @@ void main() {
           method: anyNamed('method'),
           requestHeaders: anyNamed('requestHeaders'),
           sendData: anyNamed('sendData'),
-        )).thenAnswer((_) => Future<HttpRequest>.value(mockHttpRequest));
+        )).thenAnswer((_) => Future<XMLHttpRequest>.value(mockHttpRequest));
         controller.httpRequestFactory = mockHttpRequestFactory;
         // Run
         await controller.loadRequest(
@@ -162,7 +164,7 @@ void main() {
           method: anyNamed('method'),
           requestHeaders: anyNamed('requestHeaders'),
           sendData: anyNamed('sendData'),
-        )).thenAnswer((_) => Future<HttpRequest>.value(mockHttpRequest));
+        )).thenAnswer((_) => Future<XMLHttpRequest>.value(mockHttpRequest));
         controller.httpRequestFactory = mockHttpRequestFactory;
         // Run
         await controller.loadRequest(
