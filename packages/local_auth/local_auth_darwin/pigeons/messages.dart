@@ -6,9 +6,12 @@ import 'package:pigeon/pigeon.dart';
 
 @ConfigurePigeon(PigeonOptions(
   dartOut: 'lib/src/messages.g.dart',
-  objcHeaderOut: 'darwin/Classes/messages.g.h',
-  objcSourceOut: 'darwin/Classes/messages.g.m',
+  objcHeaderOut:
+      'darwin/local_auth_darwin/Sources/local_auth_darwin/include/local_auth_darwin/messages.g.h',
+  objcSourceOut:
+      'darwin/local_auth_darwin/Sources/local_auth_darwin/messages.g.m',
   objcOptions: ObjcOptions(
+    headerIncludePath: './include/local_auth_darwin/messages.g.h',
     prefix: 'FLAD', // Avoid runtime collisions with old local_auth_ios classes.
   ),
   copyrightHeader: 'pigeons/copyright.txt',

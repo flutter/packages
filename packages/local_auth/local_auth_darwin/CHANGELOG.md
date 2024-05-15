@@ -1,6 +1,10 @@
-## 1.3.0
+## 1.4.0
 
 * Adds macOS support.
+
+## 1.3.0
+
+* Adds Swift Package Manager compatibility.
 
 ## 1.2.2
 

@@ -1,8 +1,8 @@
 // Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
-#import "FLALocalAuthPlugin.h"
-#import "FLALocalAuthPlugin_Test.h"
+#import "./include/local_auth_darwin/FLALocalAuthPlugin.h"
+#import "./include/local_auth_darwin/FLALocalAuthPlugin_Test.h"
 
 #import <LocalAuthentication/LocalAuthentication.h>
 

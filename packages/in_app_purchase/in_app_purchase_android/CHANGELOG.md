@@ -1,3 +1,11 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.16/Dart 3.2.
+
+## 0.3.5+1
+
+* Updates example to use `countryCode` instead of deprecated `getCountryCode`.
+
 ## 0.3.5
 
 * Replaces `getCountryCode` with `countryCode`.

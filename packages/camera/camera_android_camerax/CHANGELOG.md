@@ -1,3 +1,20 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.16/Dart 3.2.
+
+## 0.6.5+1
+
+* Updates `README.md` to reflect the fact that the `camera_android_camerax` camera plugin implementation
+  is the endorsed Android implementation for `camera: ^0.11.0`.
+
+## 0.6.5
+
+* Modifies `stopVideoRecording` to ensure that the method only returns when CameraX reports that the
+  recorded video finishes saving to a file.
+* Modifies `startVideoCapturing` to ensure that the method only returns when CameraX reports that
+  video recording has started.
+* Adds empty implementation for `setDescriptionWhileRecording` and leaves a todo to add this feature.
+
 ## 0.6.4+1
 
 * Adds empty implementation for `prepareForVideoRecording` since this optimization is not used on Android.
