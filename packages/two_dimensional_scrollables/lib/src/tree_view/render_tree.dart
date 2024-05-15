@@ -45,6 +45,7 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
         assert(indentation >= 0),
         assert(verticalAxisDirection == AxisDirection.down &&
             horizontalAxisDirection == AxisDirection.right),
+        // This is fixed as there is currently only one traversal pattern, https://github.com/flutter/flutter/issues/148357
         super(mainAxis: Axis.vertical);
 
   @override

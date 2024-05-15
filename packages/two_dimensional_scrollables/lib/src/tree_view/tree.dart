@@ -577,7 +577,7 @@ class TreeView<T> extends StatefulWidget {
             dimension: 30.0,
             child: node.children.isNotEmpty
                 ? AnimatedRotation(
-                    key: Key('$index'),
+                    key: ValueKey<int>(index),
                     turns: node.isExpanded ? 0.25 : 0.0,
                     duration: animationDuration,
                     curve: animationCurve,
@@ -1020,6 +1020,7 @@ class TreeViewport extends TwoDimensionalViewport {
     required this.indentation,
   })  : assert(verticalAxisDirection == AxisDirection.down &&
             horizontalAxisDirection == AxisDirection.right),
+        // This is fixed as there is currently only one traversal pattern, https://github.com/flutter/flutter/issues/148357
         super(mainAxis: Axis.vertical);
 
   /// The currently active [TreeViewNode] animations.
