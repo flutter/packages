@@ -1,6 +1,6 @@
 ## 0.8.11+2
 
-* Removes Swift Package Manager compatibility.
+* Temporarily remove Swift Package Manager compatibility to resolve issues with Cocoapods builds.
 
 ## 0.8.11+1
 
