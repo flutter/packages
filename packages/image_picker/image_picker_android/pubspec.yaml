@@ -6,7 +6,7 @@ version: 0.8.10
 
 environment:
   sdk: ^3.3.0
-  flutter: ">=3.19.0"
+  flutter: ">=3.22.0"
 
 flutter:
   plugin:
