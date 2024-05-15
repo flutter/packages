@@ -4,8 +4,8 @@ repository: https://github.com/flutter/packages/tree/main/packages/url_launcher/
 issue_tracker: https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+label%3A%22p%3A+url_launcher%22
 version: 6.3.1
 environment:
-  sdk: ^3.2.0
-  flutter: ">=3.16.0"
+  sdk: ^3.4.0
+  flutter: ">=3.22.0"
 
 flutter:
   plugin:
