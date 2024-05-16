@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum Flutter version to 3.22.0.
+
 ## 0.8.12+1
 
 * Fixes another app crash case on Android 12+, and refactors getting of paths from intents.

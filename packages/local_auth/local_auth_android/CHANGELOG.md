@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum Flutter version to 3.22.0.
+
 ## 1.0.38
 
 * Updates minSdkVersion to 19.
