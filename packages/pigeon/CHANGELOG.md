@@ -1,3 +1,7 @@
+## 19.0.1
+
+* Moves all codec logic to single custom codec per file.
+
 ## NEXT
 
 * Updates minimum supported SDK version to Flutter 3.16/Dart 3.2.
