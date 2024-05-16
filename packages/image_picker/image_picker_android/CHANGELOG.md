@@ -1,6 +1,6 @@
 ## NEXT
 
-* Updates minimum Flutter version to 3.22.0.
+* Updates minimum Flutter version to 3.22.
 
 ## 0.8.12+1
 
