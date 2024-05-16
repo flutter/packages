@@ -302,9 +302,7 @@ Future<void> main() async {
       isPaused =
           await controller.runJavaScriptReturningResult('isPaused();') as bool;
       expect(isPaused, true);
-    },
-        // TODO(bparrishMines): Stop skipping once https://github.com/flutter/flutter/issues/148487 is resolved
-        skip: true);
+    });
 
     testWidgets('Video plays inline', (WidgetTester tester) async {
       final Completer<void> pageLoaded = Completer<void>();
@@ -359,7 +357,9 @@ Future<void> main() async {
           .runJavaScriptReturningResult('isFullScreen();') as bool;
       expect(fullScreen, false);
     });
-  });
+  },
+      // TODO(bparrishMines): Stop skipping once https://github.com/flutter/flutter/issues/148487 is resolved
+      skip: true);
 
   group('Audio playback policy', () {
     late String audioTestBase64;
