@@ -117,6 +117,7 @@ class TableView extends TwoDimensionalScrollView {
     super.dragStartBehavior,
     super.keyboardDismissBehavior,
     super.clipBehavior,
+    required this.childPositionGetter,
   });
 
   /// Creates a [TableView] of widgets that are created on demand.
@@ -153,6 +154,7 @@ class TableView extends TwoDimensionalScrollView {
     int pinnedColumnCount = 0,
     int? columnCount,
     int? rowCount,
+    this.childPositionGetter,
     required TableSpanBuilder columnBuilder,
     required TableSpanBuilder rowBuilder,
     required TableViewCellBuilder cellBuilder,
@@ -195,6 +197,7 @@ class TableView extends TwoDimensionalScrollView {
     super.dragStartBehavior,
     super.keyboardDismissBehavior,
     super.clipBehavior,
+    this.childPositionGetter,
     int pinnedRowCount = 0,
     int pinnedColumnCount = 0,
     required TableSpanBuilder columnBuilder,
@@ -212,6 +215,9 @@ class TableView extends TwoDimensionalScrollView {
           ),
         );
 
+  /// A method to get the position of a child to determine where is that child in the table row
+  final ChildPositionGetter? childPositionGetter;
+
   @override
   TableViewport buildViewport(
     BuildContext context,
@@ -219,6 +225,7 @@ class TableView extends TwoDimensionalScrollView {
     ViewportOffset horizontalOffset,
   ) {
     return TableViewport(
+      childPositionGetter: childPositionGetter,
       verticalOffset: verticalOffset,
       verticalAxisDirection: verticalDetails.direction,
       horizontalOffset: horizontalOffset,
@@ -230,6 +237,11 @@ class TableView extends TwoDimensionalScrollView {
     );
   }
 }
+
+/// to get the position of a child in the Table
+/// when a table row is at top or the bottom edge of the viewport, the position respectively will be 0.0 to 1.0
+typedef ChildPositionGetter = void Function(
+    TableVicinity vicinity, double? position);
 
 /// A widget through which a portion of a Table of [Widget] children are viewed,
 /// typically in combination with a [TableView].
@@ -244,13 +256,18 @@ class TableViewport extends TwoDimensionalViewport {
     required super.horizontalAxisDirection,
     required TableCellDelegateMixin super.delegate,
     required super.mainAxis,
+    this.childPositionGetter,
     super.cacheExtent,
     super.clipBehavior,
   });
 
+  /// A method to get the position of a child to determine where is that child in the table row
+  final ChildPositionGetter? childPositionGetter;
+
   @override
   RenderTwoDimensionalViewport createRenderObject(BuildContext context) {
     return RenderTableViewport(
+      childPositionGetter: childPositionGetter,
       horizontalOffset: horizontalOffset,
       horizontalAxisDirection: horizontalAxisDirection,
       verticalOffset: verticalOffset,
@@ -298,9 +315,13 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
     required TableCellDelegateMixin super.delegate,
     required super.mainAxis,
     required super.childManager,
+    this.childPositionGetter,
     super.cacheExtent,
     super.clipBehavior,
   });
+
+  /// A method to get the position of a child to determine where is that child in the list
+  final ChildPositionGetter? childPositionGetter;
 
   @override
   TableCellDelegateMixin get delegate =>
@@ -342,6 +363,7 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
   }
 
   int? _rowNullTerminatedIndex;
+
   bool get _rowsAreInfinite => delegate.rowCount == null;
   // How far rows should be laid out in a given frame.
   double get _targetRowPixel {
@@ -846,6 +868,7 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
       // columns above
       assert(_lastNonPinnedColumn != null);
       assert(offsetIntoColumn != null);
+
       _layoutCells(
         start: TableVicinity(column: _firstNonPinnedColumn!, row: 0),
         end: TableVicinity(column: _lastNonPinnedColumn!, row: _lastPinnedRow!),
@@ -916,6 +939,21 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
     return true;
   }
 
+  void _getChildPosition(
+      {required double rowOffset,
+      required double standardRowHeight,
+      required TableVicinity vicinity}) {
+    if (childPositionGetter == null) {
+      return;
+    }
+    final double viewportHeight = viewportDimension.height;
+    final bool rowIsInBottomHalf = (viewportHeight / 2) > rowOffset;
+    final double offset =
+        rowIsInBottomHalf ? rowOffset : rowOffset + standardRowHeight;
+    final double percent = offset / viewportHeight;
+    childPositionGetter?.call(vicinity, percent.clamp(0, 1));
+  }
+
   void _layoutCells({
     required TableVicinity start,
     required TableVicinity end,
@@ -941,6 +979,12 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
         columnOffset += colSpan.configuration.padding.leading;
 
         final TableVicinity vicinity = TableVicinity(column: column, row: row);
+
+        _getChildPosition(
+            rowOffset: rowOffset,
+            standardRowHeight: standardRowHeight,
+            vicinity: vicinity);
+
         final RenderBox? cell = _mergedVicinities.keys.contains(vicinity)
             ? null
             : buildOrObtainChildFor(vicinity);
