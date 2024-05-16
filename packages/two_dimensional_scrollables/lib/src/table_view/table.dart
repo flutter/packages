@@ -361,8 +361,6 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
 
   int? _rowNullTerminatedIndex;
 
-  double spotPriceOffset = 0;
-
   bool get _rowsAreInfinite => delegate.rowCount == null;
   // How far rows should be laid out in a given frame.
   double get _targetRowPixel {
