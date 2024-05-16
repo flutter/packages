@@ -1,3 +1,7 @@
+## 0.5.2+1
+
+* Temporarily remove Swift Package Manager compatibility to resolve issues with Cocoapods builds.
+
 ## 0.5.2
 
 * Adds Swift Package Manager compatibility.
