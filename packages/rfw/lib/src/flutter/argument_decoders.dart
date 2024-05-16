@@ -9,8 +9,6 @@
 // This file is hand-formatted.
 
 import 'dart:math' as math show pi;
-// ignore: unnecessary_import, see https://github.com/flutter/flutter/pull/138881
-import 'dart:ui' show FontFeature; // TODO(ianh): https://github.com/flutter/flutter/issues/87235
 
 import 'package:flutter/material.dart';
 
@@ -91,6 +89,12 @@ class ArgumentDecoders {
   /// If the map has `start` and `y` keys, then it is interpreted as an
   /// [AlignmentDirectional] with those values. Otherwise if it has `x` and `y`
   /// it's an [Alignment] with those values. Otherwise it returns null.
+  ///
+  /// For example:
+  ///
+  /// ```rfwtxt
+  /// { start: 12.0, y: 5.0 } // AlignmentDirectional(12.0, 5.0)
+  /// ```
   static AlignmentGeometry? alignment(DataSource source, List<Object> key) {
     if (!source.isMap(key)) {
       return null;
@@ -115,6 +119,12 @@ class ArgumentDecoders {
   ///
   /// The keys used are `minWidth`, `maxWidth`, `minHeight`, and `maxHeight`.
   /// Omitted keys are defaulted to 0.0 for minimums and infinity for maximums.
+  ///
+  /// For example:
+  ///
+  /// ```rfwtxt
+  /// { minWidth: 10.0 } // BoxConstraints(minWidth: 10.0)
+  /// ```
   static BoxConstraints? boxConstraints(DataSource source, List<Object> key) {
     if (!source.isMap(key)) {
       return null;
@@ -139,6 +149,18 @@ class ArgumentDecoders {
   ///  * top: second value, defaulting to same as start.
   ///  * end: third value, defaulting to same as start.
   ///  * bottom: fourth value, defaulting to same as top.
+  ///
+  /// For example:
+  ///
+  /// ```rfwtxt
+  /// [ { color: 0xFF00FFFF, width: 0.0 }, { style: 'none' } ]
+  /// // BorderDirectional(
+  /// //   start: BorderSide(color: Color(0xFF00FFFF), width: 0.0),
+  /// //   top: BorderSide(style: BorderStyle.none),
+  /// //   end: BorderSide(color: Color(0xFF00FFFF), width: 0.0),
+  /// //   bottom: BorderSide(style: BorderStyle.none),
+  /// // )
+  /// ```
   static BoxBorder? border(DataSource source, List<Object> key) {
     final BorderSide? a = borderSide(source, [...key, 0]);
     if (a == null) {
@@ -167,6 +189,18 @@ class ArgumentDecoders {
   ///  * topEnd: second value, defaulting to same as topStart.
   ///  * bottomStart: third value, defaulting to same as topStart.
   ///  * bottomEnd: fourth value, defaulting to same as topEnd.
+  ///
+  /// For example:
+  ///
+  /// ```rfwtxt
+  /// [ { x: 20.0 }, { x: 5.0, y: 10.0 }, { x: 0.0 } ]
+  /// // BorderRadiusDirectional.only(
+  /// //   topStart: Radius.circular(20.0),
+  /// //   topEnd: Radius.elliptical(5.0, 10.0),
+  /// //   bottomStart: Radius.circular(0.0),
+  /// //   bottomEnd: Radius.elliptical(5.0, 10.0),
+  /// // )
+  /// ```
   static BorderRadiusGeometry? borderRadius(DataSource source, List<Object> key) {
     final Radius? a = radius(source, [...key, 0]);
     if (a == null) {
@@ -191,6 +225,12 @@ class ArgumentDecoders {
   /// keys `color` (see [color], defaults to black), `width` (a double, defaults
   /// to 1.0), and `style` (see [enumValue] for [BorderStyle], defaults to
   /// [BorderStyle.solid]).
+  ///
+  /// For example:
+  ///
+  /// ```rfwtxt
+  /// { color: 0xFF00FFFF, width: 0.0 } // BorderSide(color: Color(0xFF00FFFF), width: 0.0)
+  /// ```
   static BorderSide? borderSide(DataSource source, List<Object> key) {
     if (!source.isMap(key)) {
       return null;
@@ -210,6 +250,16 @@ class ArgumentDecoders {
   /// keys `color` (see [color], defaults to black), `offset` (see [offset],
   /// defaults to [Offset.zero]), `blurRadius` (double, defaults to zero), and
   /// `spreadRadius` (double, defaults to zero).
+  ///
+  /// For example:
+  ///
+  /// ```rfwtxt
+  /// { offset: { x: 2.0, y: 2.0 }, blurRadius: 5.0 }
+  /// // BoxShadow(
+  /// //   offset: const Offset(2.0, 2.0),
+  /// //   blurRadius: 5.0,
+  /// // ),
+  /// ```
   static BoxShadow boxShadow(DataSource source, List<Object> key) {
     if (!source.isMap(key)) {
       return const BoxShadow();
@@ -224,8 +274,10 @@ class ArgumentDecoders {
 
   /// Returns a [Color] from the specified integer.
   ///
-  /// Returns null if it's not an integer; otherwise, passes it to the [
-  /// Color] constructor.
+  /// Returns null if it's not an integer; otherwise, passes it to the
+  /// [Color] constructor.
+  ///
+  /// For example, 0xFFFF9900 is opaque orange.
   static Color? color(DataSource source, List<Object> key) {
     final int? value = source.v<int>(key);
     if (value == null) {
@@ -254,6 +306,13 @@ class ArgumentDecoders {
   /// that callback.
   ///
   /// Otherwise, returns null.
+  ///
+  /// For example:
+  ///
+  /// ```rfwtxt
+  /// { type: 'mode', color: 0xFFFFFFFF, blendMode: 'xor' }
+  /// // ColorFilter.mode(const Color(0xFFFFFFFF), BlendMode.xor)
+  /// ```
   static ColorFilter? colorFilter(DataSource source, List<Object> key) {
     final String? type = source.v<String>([...key, 'type']);
     switch (type) {
@@ -324,12 +383,11 @@ class ArgumentDecoders {
 
   /// Returns a [Color] from the specified integer.
   ///
-  /// Returns black if it's not an integer; otherwise, passes it to the [
-  /// Color] constructor.
+  /// Returns black if it's not an integer; otherwise, passes it to the
+  /// [Color] constructor.
   ///
   /// This is useful in situations where null is not acceptable, for example,
-  /// when providing a decoder to [list]. Otherwise, prefer using [DataSource.v]
-  /// directly.
+  /// when providing a decoder to [list]. Otherwise, prefer using [color].
   static Color colorOrBlack(DataSource source, List<Object> key) {
     return color(source, key) ?? const Color(0xFF000000);
   }
@@ -476,6 +534,20 @@ class ArgumentDecoders {
   /// that callback.
   ///
   /// Otherwise, returns null.
+  ///
+  /// For example:
+  ///
+  /// ```rfwtxt
+  /// {
+  ///   type: 'shape',
+  ///   color: 0xFF008080,
+  ///   shape: { type: 'stadium' },
+  /// }
+  /// // const ShapeDecoration(
+  /// //   color: const Color(0xFF008080),
+  /// //   shape: StadiumBorder(),
+  /// // )
+  /// ```
   static Decoration? decoration(DataSource source, List<Object> key) {
     final String? type = source.v<String>([...key, 'type']);
     switch (type) {
@@ -531,6 +603,13 @@ class ArgumentDecoders {
   /// ([alignment], defaults to [Alignment.center]), `centerSlice` ([rect]),
   /// `repeat` ([enumValue] of [ImageRepeat], defaults to [ImageRepeat.noRepeat]),
   /// `matchTextDirection` (boolean, defaults to false).
+  ///
+  /// For example:
+  ///
+  /// ```rfwtxt
+  /// { source: 'button.jpeg', fit: 'fill', centerSlice: { { x: 10.0, y: 10.0, w: 80.0, h: 80.0 } } }
+  /// // DecorationImage(image: AssetImage('button.jpeg'), fit: BoxFit.fill, centerSlice: Rect.fromLTWH(10, 10, 80, 80))
+  /// ```
   static DecorationImage? decorationImage(DataSource source, List<Object> key) {
     final ImageProvider? provider = imageProvider(source, key);
     if (provider == null) {
@@ -564,7 +643,7 @@ class ArgumentDecoders {
     return source.v<double>(key) ?? 0.0;
   }
 
-  /// Returns a [Duration] from the specified integer.
+  /// Returns a [Duration] from the specified integer, which specifies milliseconds.
   ///
   /// If it's not an integer, the default obtained from
   /// [AnimationDefaults.durationOf] is used (which is why a [BuildContext] is
@@ -589,6 +668,14 @@ class ArgumentDecoders {
   ///  * top: second value, defaulting to same as start.
   ///  * end: third value, defaulting to same as start.
   ///  * bottom: fourth value, defaulting to same as top.
+  ///
+  /// For example:
+  ///
+  /// ```rfwtxt
+  /// [ 5.0 ] // EdgeInsets.all(5.0)
+  /// [ 5.0, 2.0 ] // EdgeInsets.symmetric(horizontal: 5.0, vertical: 2.0)
+  /// [ 5.0, 2.0, 10.0 ] // EdgeInsets.fromLTRB(5.0, 2.0, 10.0, 2.0)
+  /// ```
   static EdgeInsetsGeometry? edgeInsets(DataSource source, List<Object> key) {
     final double? a = source.v<double>([...key, 0]);
     if (a == null) {
@@ -637,6 +724,13 @@ class ArgumentDecoders {
   /// value (defaulting to 1, which typically means "enabled").
   ///
   /// As this never returns null, it is possible to use it with [list].
+  ///
+  /// For example:
+  ///
+  /// ```rfwtxt
+  /// { feature: 'numr' } // FontFeature.numerators()
+  /// { feature: 'nalt', value: 3 } // FontFeature.notationalForms(3)
+  /// ```
   static FontFeature fontFeature(DataSource source, List<Object> key) {
     return FontFeature(source.v<String>([...key, 'feature']) ?? 'NONE', source.v<int>([...key, 'value']) ?? 1);
   }
@@ -678,6 +772,13 @@ class ArgumentDecoders {
   /// that callback.
   ///
   /// Otherwise, returns null.
+  ///
+  /// For example:
+  ///
+  /// ```rfwtxt
+  /// { type: 'linear', 'colors': [ 0xFF000000, 0xFF0000FF ], tileMode: 'mirror' }
+  /// // LinearGradient(colors: [ Color(0xFF000000), Color(0xFF0000FF) ], tileMode: TileMode.mirror)
+  /// ```
   static Gradient? gradient(DataSource source, List<Object> key) {
     final String? type = source.v<String>([...key, 'type']);
     switch (type) {
@@ -747,6 +848,13 @@ class ArgumentDecoders {
   /// that callback.
   ///
   /// Otherwise, returns null.
+  ///
+  /// For example:
+  ///
+  /// ```rfwtxt
+  /// { type: 'fixedCrossAxisCount', crossAxisCount: 3 }
+  /// // SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3)
+  /// ```
   static SliverGridDelegate? gridDelegate(DataSource source, List<Object> key) {
     final String? type = source.v<String>([...key, 'type']);
     switch (type) {
@@ -797,6 +905,12 @@ class ArgumentDecoders {
   /// When building the release build of an application that uses the RFW
   /// package, because this method creates non-const [IconData] objects
   /// dynamically, the `--no-tree-shake-icons` option must be used.
+  ///
+  /// For example:
+  ///
+  /// ```rfwtxt
+  /// { icon: 0xE32A, fontFamily: 'MaterialIcons' } // Icons.houseboat
+  /// ```
   static IconData? iconData(DataSource source, List<Object> key) {
     final int? icon = source.v<int>([...key, 'icon']);
     if (icon == null) {
@@ -844,6 +958,12 @@ class ArgumentDecoders {
   ///
   /// Otherwise, if there is no `source` key in the map, or if that cannot be
   /// parsed as a URL (absolute or relative), null is returned.
+  ///
+  /// For example:
+  ///
+  /// ```rfwtxt
+  /// { source: 'cats.png' } // AssetImage('cats.png')
+  /// ```
   static ImageProvider? imageProvider(DataSource source, List<Object> key) {
     final String? image = source.v<String>([...key, 'source']);
     if (image == null) {
@@ -890,11 +1010,11 @@ class ArgumentDecoders {
   ///
   /// If the string is null, returns null.
   ///
-  /// If there is no hyphen in the list, uses the one-argument form of [
-  /// Locale], passing the whole string.
+  /// If there is no hyphen in the list, uses the one-argument form of
+  /// [Locale], passing the whole string.
   ///
-  /// If there is one hyphen in the list, uses the two-argument form of [
-  /// Locale], passing the parts before and after the hyphen respectively.
+  /// If there is one hyphen in the list, uses the two-argument form of
+  /// [Locale], passing the parts before and after the hyphen respectively.
   ///
   /// If there are two or more hyphens, uses the [Locale.fromSubtags]
   /// constructor.
@@ -1096,6 +1216,12 @@ class ArgumentDecoders {
   /// (as in [Radius.circular]).
   ///
   /// If the `x` key is absent, the returned value is null.
+  ///
+  /// For example:
+  ///
+  /// ```rfwtxt
+  /// { x: 20.0 } // Radius.circular(20.0)
+  /// ```
   static Radius? radius(DataSource source, List<Object> key) {
     final double? x = source.v<double>([...key, 'x']);
     if (x == null) {
@@ -1112,6 +1238,12 @@ class ArgumentDecoders {
   /// Otherwise, returns a [Rect.fromLTWH] whose x, y, width, and height
   /// components are determined from the `x`, `y`, `w`, and `h` properties of
   /// the map, with missing (or non-double) values replaced by zeros.
+  ///
+  /// For example:
+  ///
+  /// ```rfwtxt
+  /// { w: 300.0, h: 150.0 } // Rect.fromLTWH(0, 0, 300, 150)
+  /// ```
   static Rect? rect(DataSource source, List<Object> key) {
     if (!source.isMap(key)) {
       return null;
