@@ -217,6 +217,7 @@ class _TableExampleState extends State<TableExample> {
       return;
     }
     print('Child position: $position');
-    WidgetsBinding.instance.endOfFrame.then((_) => childPositionListener.value = position!);
+    WidgetsBinding.instance.endOfFrame
+        .then((_) => childPositionListener.value = position!);
   }
 }
