@@ -42,7 +42,10 @@ class TableExample extends StatefulWidget {
 
 class _TableExampleState extends State<TableExample> {
   late final ScrollController _verticalController = ScrollController();
-  int _rowCount = 20;
+  int _rowCount = 40;
+  ValueNotifier<double> childPositionListener = ValueNotifier<double>(0.0);
+
+  final TableVicinity _childVicinity = const TableVicinity(column: 0, row: 10);
 
   @override
   Widget build(BuildContext context) {
@@ -53,6 +56,7 @@ class _TableExampleState extends State<TableExample> {
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 50),
         child: TableView.builder(
+          childPositionGetter: _onChildPosition,
           verticalDetails:
               ScrollableDetails.vertical(controller: _verticalController),
           cellBuilder: _buildCell,
@@ -88,11 +92,31 @@ class _TableExampleState extends State<TableExample> {
     );
   }
 
-  TableViewCell _buildCell(BuildContext context, TableVicinity vicinity) {
-    return TableViewCell(
-      child: Center(
-        child: Text('Tile c: ${vicinity.column}, r: ${vicinity.row}'),
+  Widget _childPosition() {
+    return ValueListenableBuilder<double>(
+      valueListenable: childPositionListener,
+      builder: (BuildContext context, double value, Widget? child) => Text(
+        'position: ${childPositionListener.value.toStringAsFixed(2)}',
       ),
+    );
+  }
+
+  TableViewCell _buildCell(BuildContext context, TableVicinity vicinity) {
+    Widget child = Center(
+      child: Text('Tile c: ${vicinity.column}, r: ${vicinity.row}'),
+    );
+
+    if (vicinity == _childVicinity) {
+      child = Column(
+        children: <Widget>[
+          child,
+          _childPosition(),
+        ],
+      );
+    }
+
+    return TableViewCell(
+      child: child,
     );
   }
 
@@ -186,5 +210,13 @@ class _TableExampleState extends State<TableExample> {
     }
     throw AssertionError(
         'This should be unreachable, as every index is accounted for in the switch clauses.');
+  }
+
+  void _onChildPosition(TableVicinity vicinity, double? position) {
+    if (vicinity != _childVicinity) {
+      return;
+    }
+    print('Child position: $position');
+    WidgetsBinding.instance.endOfFrame.then((_) => childPositionListener.value = position!);
   }
 }
