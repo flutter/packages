@@ -49,19 +49,35 @@ final class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
     _videoAdPlayer = _setUpVideoAdPlayer(weakThis);
   }
 
+  // The duration between each update to the IMA SDK of the progress of the
+  // currently playing ad.
   static const int _progressPollingMs = 250;
 
+  // ViewGroup used to create the `ima.AdDisplayContainer`.
   late final ima.FrameLayout _frameLayout =
       _androidParams._proxy.newFrameLayout();
+
+  // Handles ad playback.
+  late final ima.VideoView _videoView;
+  ima.MediaPlayer? _mediaPlayer;
+
+  // Callbacks that must be called to update to the state of ad playback.
   final Set<ima.VideoAdPlayerCallback> _videoAdPlayerCallbacks =
       <ima.VideoAdPlayerCallback>{};
-  late final ima.VideoView _videoView;
-  late final ima.AdDisplayContainer _adDisplayContainer;
+
+  // Handles ad playback callbacks from the IMA SDK.
   late final ima.VideoAdPlayer _videoAdPlayer;
+
+  late final ima.AdDisplayContainer _adDisplayContainer;
+
+  // Currently loaded ad.
   ima.AdMediaInfo? _loadedAdMediaInfo;
+
   // The saved ad position, used to resumed ad playback following an ad click-through.
   int _savedAdPosition = 0;
-  ima.MediaPlayer? _mediaPlayer;
+
+  // Timer used to periodically update the IMA SDK the progress of the currently
+  // playing ad.
   Timer? _adProgressTimer;
   int? _adDuration;
 
@@ -90,6 +106,8 @@ final class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
     _adDuration = null;
   }
 
+  // Starts periodically updating the IMA SDK the current progress of the
+  // currently playing ad.
   void _startAdTracking() {
     _adProgressTimer = Timer.periodic(
       const Duration(milliseconds: _progressPollingMs),
@@ -116,6 +134,8 @@ final class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
     );
   }
 
+  // Stops periodically updating the IMA SDK the current progress of the
+  // currently playing ad.
   void _stopAdTracking() {
     _adProgressTimer?.cancel();
     _adProgressTimer = null;
@@ -291,7 +311,7 @@ final class AndroidAdsLoader extends PlatformAdsLoader {
     adsLoader.addAdsLoadedListener(proxy.newAdsLoadedListener(
       onAdsManagerLoaded: (_, ima.AdsManagerLoadedEvent event) {
         weakThis.target?.params.onAdsLoaded(
-          PlatformOnAdsLoadedData(manager: AndroidAdsManager._(event.manager)),
+          PlatformOnAdsLoadedData(manager: AndroidAdsManager(event.manager)),
         );
       },
     ));
@@ -313,7 +333,8 @@ final class AndroidAdsLoader extends PlatformAdsLoader {
 
 /// Android implementation of [PlatformAdsManager].
 class AndroidAdsManager extends PlatformAdsManager {
-  AndroidAdsManager._(
+  /// Constructs an [AndroidAdsManager].
+  AndroidAdsManager(
     ima.AdsManager manager, {
     InteractiveMediaAdsProxy? proxy,
   })  : _manager = manager,
@@ -365,6 +386,8 @@ class AndroidAdsManager extends PlatformAdsManager {
               eventType = AdEventType.contentResumeRequested;
             case ima.AdEventType.loaded:
               eventType = AdEventType.loaded;
+            case ima.AdEventType.clicked:
+              eventType = AdEventType.clicked;
             case ima.AdEventType.unknown:
             case ima.AdEventType.adBreakReady:
             case ima.AdEventType.adBreakEnded:
@@ -374,7 +397,6 @@ class AndroidAdsManager extends PlatformAdsManager {
             case ima.AdEventType.adPeriodEnded:
             case ima.AdEventType.adPeriodStarted:
             case ima.AdEventType.adProgress:
-            case ima.AdEventType.clicked:
             case ima.AdEventType.cuepointsChanged:
             case ima.AdEventType.firstQuartile:
             case ima.AdEventType.iconFallbackImageClosed:

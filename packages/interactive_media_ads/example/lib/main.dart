@@ -16,6 +16,8 @@ void integrationTestMain() {
   main();
 }
 
+// IMA sample tag for a single skippable inline video ad. See more IMA sample
+// tags at https://developers.google.com/interactive-media-ads/docs/sdks/html5/client-side/tags
 const String _adTagUrl =
     'https://pubads.g.doubleclick.net/gampad/ads?iu=/21775744923/external/single_preroll_skippable&sz=640x480&ciu_szs=300x250%2C728x90&gdfp_req=1&output=vast&unviewed_position_start=1&env=vp&impl=s&correlator=';
 
@@ -133,24 +135,21 @@ class _AdExampleWidgetState extends State<AdExampleWidget> {
       body: Center(
         child: SizedBox(
           width: 300,
-          child: Stack(
-            children: <Widget>[
-              // The display container must be on screen before any Ads can be
-              // loaded and can't be removed between ads. This handles clicks for
-              // ads.
-              if (_contentVideoController.value.isInitialized)
-                AspectRatio(
+          child: _contentVideoController.value.isInitialized
+              ? Container()
+              : AspectRatio(
                   aspectRatio: _contentVideoController.value.aspectRatio,
-                  child: _adDisplayContainer,
+                  child: Stack(
+                    children: <Widget>[
+                      // The display container must be on screen before any Ads can be
+                      // loaded and can't be removed between ads. This handles clicks for
+                      // ads.
+                      _adDisplayContainer,
+                      if (_shouldShowContentVideo)
+                        VideoPlayer(_contentVideoController)
+                    ],
+                  ),
                 ),
-              if (_contentVideoController.value.isInitialized &&
-                  _shouldShowContentVideo)
-                AspectRatio(
-                  aspectRatio: _contentVideoController.value.aspectRatio,
-                  child: VideoPlayer(_contentVideoController),
-                ),
-            ],
-          ),
         ),
       ),
       floatingActionButton:
