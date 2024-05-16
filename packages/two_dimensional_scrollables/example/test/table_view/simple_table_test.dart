@@ -4,11 +4,11 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:table_view_example/main.dart';
+import 'package:two_dimensional_examples/table_view/simple_table.dart';
 
 void main() {
   testWidgets('Example app builds & scrolls', (WidgetTester tester) async {
-    await tester.pumpWidget(const TableExampleApp());
+    await tester.pumpWidget(const MaterialApp(home: TableExample()));
     await tester.pump();
 
     expect(find.text('Jump to Top'), findsOneWidget);
@@ -31,7 +31,7 @@ void main() {
   });
 
   testWidgets('Example app buttons work', (WidgetTester tester) async {
-    await tester.pumpWidget(const TableExampleApp());
+    await tester.pumpWidget(const MaterialApp(home: TableExample()));
     await tester.pump();
 
     final Finder scrollable = find.byWidgetPredicate((Widget widget) {
