@@ -144,28 +144,6 @@
 
 @end
 
-@interface InAppPurchasePluginStub ()
-@end
-
-@implementation InAppPurchasePluginStub
-
-- (SKProductRequestStub *)getProductRequestWithIdentifiers:(NSSet *)identifiers {
-  return [[SKProductRequestStub alloc] initWithProductIdentifiers:identifiers];
-}
-
-- (SKProduct *)getProduct:(NSString *)productID {
-  if ([productID isEqualToString:@""]) {
-    return nil;
-  }
-  return [[SKProductStub alloc] initWithProductID:productID];
-}
-
-- (SKReceiptRefreshRequestStub *)getRefreshReceiptRequest:(NSDictionary *)properties {
-  return [[SKReceiptRefreshRequestStub alloc] initWithReceiptProperties:properties];
-}
-
-@end
-
 @interface SKPaymentQueueStub ()
 
 @end

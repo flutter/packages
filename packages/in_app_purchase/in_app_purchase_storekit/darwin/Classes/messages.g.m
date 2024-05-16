@@ -700,7 +700,7 @@ void SetUpInAppPurchaseAPI(id<FlutterBinaryMessenger> binaryMessenger,
                 api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray *args = message;
-        NSDictionary<NSString *, NSString *> *arg_finishMap = GetNullableObjectAtIndex(args, 0);
+        NSDictionary<NSString *, id> *arg_finishMap = GetNullableObjectAtIndex(args, 0);
         FlutterError *error;
         [api finishTransactionFinishMap:arg_finishMap error:&error];
         callback(wrapResult(nil, error));
