@@ -20,6 +20,7 @@ class SwiftOptions {
   const SwiftOptions({
     this.copyrightHeader,
     this.localizedClassModifier,
+    this.errorClassName,
   });
 
   /// A copyright header that will get prepended to generated code.
@@ -28,12 +29,16 @@ class SwiftOptions {
   /// A String to augment class names to avoid cross file collisions.
   final String? localizedClassModifier;
 
+  /// The name of the error class used for passing custom error parameters.
+  final String? errorClassName;
+
   /// Creates a [SwiftOptions] from a Map representation where:
   /// `x = SwiftOptions.fromList(x.toMap())`.
   static SwiftOptions fromList(Map<String, Object> map) {
     return SwiftOptions(
       copyrightHeader: map['copyrightHeader'] as Iterable<String>?,
       localizedClassModifier: map['localizedClassModifier'] as String?,
+      errorClassName: map['errorClassName'] as String?,
     );
   }
 
@@ -44,6 +49,7 @@ class SwiftOptions {
       if (copyrightHeader != null) 'copyrightHeader': copyrightHeader!,
       if (localizedClassModifier != null)
         'localizedClassModifier': localizedClassModifier!,
+      if (errorClassName != null) 'errorClassName': errorClassName!,
     };
     return result;
   }
@@ -413,7 +419,7 @@ class SwiftGenerator extends StructuredGenerator<SwiftOptions> {
           name: func.name,
           parameters: func.parameters,
           returnType: func.returnType,
-          errorTypeName: 'FlutterError',
+          errorTypeName: _getErrorClassName(generatorOptions),
           isAsynchronous: true,
           swiftFunction: func.swiftFunction,
           getParameterName: _getSafeArgumentName,
@@ -443,6 +449,7 @@ class SwiftGenerator extends StructuredGenerator<SwiftOptions> {
             indent, func.documentationComments, _docCommentSpec);
         _writeFlutterMethod(
           indent,
+          generatorOptions: generatorOptions,
           name: func.name,
           channelName: makeChannelName(api, func, dartPackageName),
           parameters: func.parameters,
@@ -570,10 +577,20 @@ class SwiftGenerator extends StructuredGenerator<SwiftOptions> {
     });
   }
 
-  void _writeWrapError(Indent indent) {
+  void _writeWrapError(SwiftOptions generatorOptions, Indent indent) {
     indent.newln();
     indent.write('private func wrapError(_ error: Any) -> [Any?] ');
     indent.addScoped('{', '}', () {
+      indent.write(
+          'if let pigeonError = error as? ${_getErrorClassName(generatorOptions)} ');
+      indent.addScoped('{', '}', () {
+        indent.write('return ');
+        indent.addScoped('[', ']', () {
+          indent.writeln('pigeonError.code,');
+          indent.writeln('pigeonError.message,');
+          indent.writeln('pigeonError.details,');
+        });
+      });
       indent.write('if let flutterError = error as? FlutterError ');
       indent.addScoped('{', '}', () {
         indent.write('return ');
@@ -601,13 +618,14 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
 }''');
   }
 
-  void _writeCreateConnectionError(Indent indent) {
+  void _writeCreateConnectionError(
+      SwiftOptions generatorOptions, Indent indent) {
     indent.newln();
     indent.writeScoped(
-        'private func createConnectionError(withChannelName channelName: String) -> FlutterError {',
+        'private func createConnectionError(withChannelName channelName: String) -> ${_getErrorClassName(generatorOptions)} {',
         '}', () {
       indent.writeln(
-          'return FlutterError(code: "channel-error", message: "Unable to establish connection on channel: \'\\(channelName)\'.", details: "")');
+          'return ${_getErrorClassName(generatorOptions)}(code: "channel-error", message: "Unable to establish connection on channel: \'\\(channelName)\'.", details: "")');
     });
   }
 
@@ -625,19 +643,23 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
         .whereType<AstFlutterApi>()
         .any((Api api) => api.methods.isNotEmpty);
 
+    _writePigeonError(generatorOptions, indent);
+
     if (hasHostApi) {
       _writeWrapResult(indent);
-      _writeWrapError(indent);
+      _writeWrapError(generatorOptions, indent);
     }
     if (hasFlutterApi) {
-      _writeCreateConnectionError(indent);
+      _writeCreateConnectionError(generatorOptions, indent);
     }
+
     _writeIsNullish(indent);
     _writeNilOrValue(indent);
   }
 
   void _writeFlutterMethod(
     Indent indent, {
+    required SwiftOptions generatorOptions,
     required String name,
     required String channelName,
     required List<Parameter> parameters,
@@ -648,7 +670,7 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
       name: name,
       parameters: parameters,
       returnType: returnType,
-      errorTypeName: 'FlutterError',
+      errorTypeName: _getErrorClassName(generatorOptions),
       isAsynchronous: true,
       swiftFunction: swiftFunction,
       getParameterName: _getSafeArgumentName,
@@ -685,12 +707,12 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
           indent.writeln('let message: String? = nilOrValue(listResponse[1])');
           indent.writeln('let details: String? = nilOrValue(listResponse[2])');
           indent.writeln(
-              'completion(.failure(FlutterError(code: code, message: message, details: details)))');
+              'completion(.failure(${_getErrorClassName(generatorOptions)}(code: code, message: message, details: details)))');
         }, addTrailingNewline: false);
         if (!returnType.isNullable && !returnType.isVoid) {
           indent.addScoped('else if listResponse[0] == nil {', '} ', () {
             indent.writeln(
-                'completion(.failure(FlutterError(code: "null-error", message: "Flutter api returned null value for non-null return value.", details: "")))');
+                'completion(.failure(${_getErrorClassName(generatorOptions)}(code: "null-error", message: "Flutter api returned null value for non-null return value.", details: "")))');
           }, addTrailingNewline: false);
         }
         indent.addScoped('else {', '}', () {
@@ -809,11 +831,41 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
       indent.writeln('$varChannelName.setMessageHandler(nil)');
     });
   }
+
+  void _writePigeonError(SwiftOptions generatorOptions, Indent indent) {
+    indent.newln();
+    indent.writeln(
+        '/// Error class for passing custom error details to Dart side.');
+    indent.writeScoped(
+        'final class ${_getErrorClassName(generatorOptions)}: Error {', '}',
+        () {
+      indent.writeln('let code: String');
+      indent.writeln('let message: String?');
+      indent.writeln('let details: Any?');
+      indent.newln();
+      indent.writeScoped(
+          'init(code: String, message: String?, details: Any?) {', '}', () {
+        indent.writeln('self.code = code');
+        indent.writeln('self.message = message');
+        indent.writeln('self.details = details');
+      });
+      indent.newln();
+      indent.writeScoped('var localizedDescription: String {', '}', () {
+        indent.writeScoped('return', '', () {
+          indent.writeln(
+              '"${_getErrorClassName(generatorOptions)}(code: \\(code), message: \\(message ?? "<nil>"), details: \\(details ?? "<nil>")"');
+        }, addTrailingNewline: false);
+      });
+    });
+  }
 }
 
 /// Calculates the name of the codec that will be generated for [api].
 String _getCodecName(SwiftOptions options) =>
     '${options.localizedClassModifier}PigeonCodec';
+
+String _getErrorClassName(SwiftOptions generatorOptions) =>
+    generatorOptions.errorClassName ?? 'PigeonError';
 
 String _getArgumentName(int count, NamedType argument) =>
     argument.name.isEmpty ? 'arg$count' : argument.name;

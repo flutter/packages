@@ -4135,7 +4135,7 @@ void main() {
 
 class _NullBuildContext implements BuildContext, TwoDimensionalChildManager {
   @override
-  dynamic noSuchMethod(Invocation invocation) => throw UnimplementedError();
+  Object? noSuchMethod(Invocation invocation) => throw UnimplementedError();
 }
 
 RenderTableViewport getViewport(WidgetTester tester, Key childKey) {
