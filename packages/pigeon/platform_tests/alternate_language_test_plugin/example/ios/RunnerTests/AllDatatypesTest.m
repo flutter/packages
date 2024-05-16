@@ -33,8 +33,12 @@
                    XCTAssertNil(result.aNullable4ByteArray);
                    XCTAssertNil(result.aNullable8ByteArray);
                    XCTAssertNil(result.aNullableFloatArray);
-                   XCTAssertNil(result.aNullableList);
-                   XCTAssertNil(result.aNullableMap);
+                   XCTAssertNil(result.allNullableLists.list);
+                   XCTAssertNil(result.allNullableLists.boolList);
+                   XCTAssertNil(result.allNullableLists.intList);
+                   XCTAssertNil(result.allNullableLists.doubleList);
+                   XCTAssertNil(result.allNullableLists.stringList);
+                   XCTAssertNil(result.allNullableMaps.map);
                    [expectation fulfill];
                  }];
   [self waitForExpectations:@[ expectation ] timeout:1.0];
@@ -54,34 +58,50 @@
       typedDataWithInt64:[@"12345678" dataUsingEncoding:NSUTF8StringEncoding]];
   everything.aNullableFloatArray = [FlutterStandardTypedData
       typedDataWithFloat64:[@"12345678" dataUsingEncoding:NSUTF8StringEncoding]];
-  everything.aNullableList = @[ @(1), @(2) ];
-  everything.aNullableMap = @{@"hello" : @(1234)};
   everything.nullableMapWithObject = @{@"hello" : @(1234), @"goodbye" : @"world"};
+  everything.allNullableLists = [[FLTAllNullableListTypes alloc] init];
+  everything.allNullableMaps = [[FLTAllNullableMapTypes alloc] init];
+  everything.allNullableLists.boolList = @[ @YES, @NO ];
+  everything.allNullableLists.intList = @[ @1, @2 ];
+  everything.allNullableLists.doubleList = @[ @1.1, @2.2 ];
+  everything.allNullableLists.stringList = @[ @"string", @"another one" ];
+  everything.allNullableLists.list = @[ @"string", @1 ];
+  everything.allNullableMaps.map = @{@"hello" : @(1234), @"goodbye" : @"world"};
   EchoBinaryMessenger *binaryMessenger =
       [[EchoBinaryMessenger alloc] initWithCodec:FLTCoreTestsGetCodec()];
   FLTFlutterIntegrationCoreApi *api =
       [[FLTFlutterIntegrationCoreApi alloc] initWithBinaryMessenger:binaryMessenger];
   XCTestExpectation *expectation = [self expectationWithDescription:@"callback"];
-  [api echoAllNullableTypes:everything
-                 completion:^(FLTAllNullableTypes *_Nonnull result, FlutterError *_Nullable error) {
-                   XCTAssertEqual(result.aNullableBool, everything.aNullableBool);
-                   XCTAssertEqual(result.aNullableInt, everything.aNullableInt);
-                   XCTAssertEqual(result.aNullableDouble, everything.aNullableDouble);
-                   XCTAssertEqualObjects(result.aNullableString, everything.aNullableString);
-                   XCTAssertEqualObjects(result.aNullableByteArray.data,
-                                         everything.aNullableByteArray.data);
-                   XCTAssertEqualObjects(result.aNullable4ByteArray.data,
-                                         everything.aNullable4ByteArray.data);
-                   XCTAssertEqualObjects(result.aNullable8ByteArray.data,
-                                         everything.aNullable8ByteArray.data);
-                   XCTAssertEqualObjects(result.aNullableFloatArray.data,
-                                         everything.aNullableFloatArray.data);
-                   XCTAssertEqualObjects(result.aNullableList, everything.aNullableList);
-                   XCTAssertEqualObjects(result.aNullableMap, everything.aNullableMap);
-                   XCTAssertEqualObjects(result.nullableMapWithObject,
-                                         everything.nullableMapWithObject);
-                   [expectation fulfill];
-                 }];
+  [api
+      echoAllNullableTypes:everything
+                completion:^(FLTAllNullableTypes *_Nonnull result, FlutterError *_Nullable error) {
+                  XCTAssertEqual(result.aNullableBool, everything.aNullableBool);
+                  XCTAssertEqual(result.aNullableInt, everything.aNullableInt);
+                  XCTAssertEqual(result.aNullableDouble, everything.aNullableDouble);
+                  XCTAssertEqualObjects(result.aNullableString, everything.aNullableString);
+                  XCTAssertEqualObjects(result.aNullableByteArray.data,
+                                        everything.aNullableByteArray.data);
+                  XCTAssertEqualObjects(result.aNullable4ByteArray.data,
+                                        everything.aNullable4ByteArray.data);
+                  XCTAssertEqualObjects(result.aNullable8ByteArray.data,
+                                        everything.aNullable8ByteArray.data);
+                  XCTAssertEqualObjects(result.aNullableFloatArray.data,
+                                        everything.aNullableFloatArray.data);
+                  XCTAssertEqualObjects(result.nullableMapWithObject,
+                                        everything.nullableMapWithObject);
+                  XCTAssertEqualObjects(result.allNullableLists.list,
+                                        everything.allNullableLists.list);
+                  XCTAssertEqualObjects(result.allNullableLists.boolList,
+                                        everything.allNullableLists.boolList);
+                  XCTAssertEqualObjects(result.allNullableLists.intList,
+                                        everything.allNullableLists.intList);
+                  XCTAssertEqualObjects(result.allNullableLists.doubleList,
+                                        everything.allNullableLists.doubleList);
+                  XCTAssertEqualObjects(result.allNullableLists.stringList,
+                                        everything.allNullableLists.stringList);
+                  XCTAssertEqualObjects(result.allNullableMaps.map, everything.allNullableMaps.map);
+                  [expectation fulfill];
+                }];
   [self waitForExpectations:@[ expectation ] timeout:1.0];
 }
 

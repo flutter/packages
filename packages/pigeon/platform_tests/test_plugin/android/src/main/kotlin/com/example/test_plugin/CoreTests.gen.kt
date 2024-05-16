@@ -99,6 +99,55 @@ data class AllListTypes(
   }
 }
 
+/** Generated class from Pigeon that represents data sent in messages. */
+data class AllNullableMapTypes(val map: Map<Any, Any?>? = null) {
+
+  companion object {
+    @Suppress("LocalVariableName")
+    fun fromList(__pigeon_list: List<Any?>): AllNullableMapTypes {
+      val map = __pigeon_list[0] as Map<Any, Any?>?
+      return AllNullableMapTypes(map)
+    }
+  }
+
+  fun toList(): List<Any?> {
+    return listOf(
+        map,
+    )
+  }
+}
+
+/** Generated class from Pigeon that represents data sent in messages. */
+data class AllNullableListTypes(
+    val list: List<Any?>? = null,
+    val stringList: List<String?>? = null,
+    val intList: List<Long?>? = null,
+    val doubleList: List<Double?>? = null,
+    val boolList: List<Boolean?>? = null
+) {
+  companion object {
+    @Suppress("LocalVariableName")
+    fun fromList(__pigeon_list: List<Any?>): AllNullableListTypes {
+      val list = __pigeon_list[0] as List<Any?>?
+      val stringList = __pigeon_list[1] as List<String?>?
+      val intList = __pigeon_list[2] as List<Long?>?
+      val doubleList = __pigeon_list[3] as List<Double?>?
+      val boolList = __pigeon_list[4] as List<Boolean?>?
+      return AllNullableListTypes(list, stringList, intList, doubleList, boolList)
+    }
+  }
+
+  fun toList(): List<Any?> {
+    return listOf(
+        list,
+        stringList,
+        intList,
+        doubleList,
+        boolList,
+    )
+  }
+}
+
 /**
  * A class containing all supported types.
  *
@@ -113,8 +162,6 @@ data class AllTypes(
     val a4ByteArray: IntArray,
     val a8ByteArray: LongArray,
     val aFloatArray: DoubleArray,
-    val list: List<Any?>,
-    val aMap: Map<Any, Any?>,
     val anEnum: AnEnum,
     val aString: String,
     val anObject: Any,
@@ -132,13 +179,11 @@ data class AllTypes(
       val a4ByteArray = __pigeon_list[5] as IntArray
       val a8ByteArray = __pigeon_list[6] as LongArray
       val aFloatArray = __pigeon_list[7] as DoubleArray
-      val list = __pigeon_list[8] as List<Any?>
-      val aMap = __pigeon_list[9] as Map<Any, Any?>
-      val anEnum = __pigeon_list[10] as AnEnum
-      val aString = __pigeon_list[11] as String
-      val anObject = __pigeon_list[12] as Any
-      val allMaps = __pigeon_list[13] as AllMapTypes
-      val allLists = __pigeon_list[14] as AllListTypes
+      val anEnum = __pigeon_list[8] as AnEnum
+      val aString = __pigeon_list[9] as String
+      val anObject = __pigeon_list[10] as Any
+      val allMaps = __pigeon_list[11] as AllMapTypes
+      val allLists = __pigeon_list[12] as AllListTypes
       return AllTypes(
           aBool,
           anInt,
@@ -148,8 +193,6 @@ data class AllTypes(
           a4ByteArray,
           a8ByteArray,
           aFloatArray,
-          list,
-          aMap,
           anEnum,
           aString,
           anObject,
@@ -168,8 +211,6 @@ data class AllTypes(
         a4ByteArray,
         a8ByteArray,
         aFloatArray,
-        list,
-        aMap,
         anEnum,
         aString,
         anObject,
@@ -193,14 +234,14 @@ data class AllNullableTypes(
     val aNullable4ByteArray: IntArray? = null,
     val aNullable8ByteArray: LongArray? = null,
     val aNullableFloatArray: DoubleArray? = null,
-    val aNullableList: List<Any?>? = null,
-    val aNullableMap: Map<Any, Any?>? = null,
     val nullableNestedList: List<List<Boolean?>?>? = null,
     val nullableMapWithAnnotations: Map<String?, String?>? = null,
     val nullableMapWithObject: Map<String?, Any?>? = null,
     val aNullableEnum: AnEnum? = null,
     val aNullableString: String? = null,
     val aNullableObject: Any? = null,
+    val allNullableLists: AllNullableListTypes? = null,
+    val allNullableMaps: AllNullableMapTypes? = null,
     val allNullableTypes: AllNullableTypes? = null
 ) {
   companion object {
@@ -216,14 +257,14 @@ data class AllNullableTypes(
       val aNullable4ByteArray = __pigeon_list[5] as IntArray?
       val aNullable8ByteArray = __pigeon_list[6] as LongArray?
       val aNullableFloatArray = __pigeon_list[7] as DoubleArray?
-      val aNullableList = __pigeon_list[8] as List<Any?>?
-      val aNullableMap = __pigeon_list[9] as Map<Any, Any?>?
-      val nullableNestedList = __pigeon_list[10] as List<List<Boolean?>?>?
-      val nullableMapWithAnnotations = __pigeon_list[11] as Map<String?, String?>?
-      val nullableMapWithObject = __pigeon_list[12] as Map<String?, Any?>?
-      val aNullableEnum = __pigeon_list[13] as AnEnum?
-      val aNullableString = __pigeon_list[14] as String?
-      val aNullableObject = __pigeon_list[15]
+      val nullableNestedList = __pigeon_list[8] as List<List<Boolean?>?>?
+      val nullableMapWithAnnotations = __pigeon_list[9] as Map<String?, String?>?
+      val nullableMapWithObject = __pigeon_list[10] as Map<String?, Any?>?
+      val aNullableEnum = __pigeon_list[11] as AnEnum?
+      val aNullableString = __pigeon_list[12] as String?
+      val aNullableObject = __pigeon_list[13]
+      val allNullableLists = __pigeon_list[14] as AllNullableListTypes?
+      val allNullableMaps = __pigeon_list[15] as AllNullableMapTypes?
       val allNullableTypes = __pigeon_list[16] as AllNullableTypes?
       return AllNullableTypes(
           aNullableBool,
@@ -234,14 +275,14 @@ data class AllNullableTypes(
           aNullable4ByteArray,
           aNullable8ByteArray,
           aNullableFloatArray,
-          aNullableList,
-          aNullableMap,
           nullableNestedList,
           nullableMapWithAnnotations,
           nullableMapWithObject,
           aNullableEnum,
           aNullableString,
           aNullableObject,
+          allNullableLists,
+          allNullableMaps,
           allNullableTypes)
     }
   }
@@ -256,14 +297,14 @@ data class AllNullableTypes(
         aNullable4ByteArray,
         aNullable8ByteArray,
         aNullableFloatArray,
-        aNullableList,
-        aNullableMap,
         nullableNestedList,
         nullableMapWithAnnotations,
         nullableMapWithObject,
         aNullableEnum,
         aNullableString,
         aNullableObject,
+        allNullableLists,
+        allNullableMaps,
         allNullableTypes,
     )
   }
@@ -291,7 +332,9 @@ data class AllNullableTypesWithoutRecursion(
     val nullableMapWithObject: Map<String?, Any?>? = null,
     val aNullableEnum: AnEnum? = null,
     val aNullableString: String? = null,
-    val aNullableObject: Any? = null
+    val aNullableObject: Any? = null,
+    val allNullableLists: AllNullableListTypes? = null,
+    val allNullableMaps: AllNullableMapTypes? = null
 ) {
   companion object {
     @Suppress("LocalVariableName")
@@ -314,6 +357,8 @@ data class AllNullableTypesWithoutRecursion(
       val aNullableEnum = __pigeon_list[13] as AnEnum?
       val aNullableString = __pigeon_list[14] as String?
       val aNullableObject = __pigeon_list[15]
+      val allNullableLists = __pigeon_list[16] as AllNullableListTypes?
+      val allNullableMaps = __pigeon_list[17] as AllNullableMapTypes?
       return AllNullableTypesWithoutRecursion(
           aNullableBool,
           aNullableInt,
@@ -330,7 +375,9 @@ data class AllNullableTypesWithoutRecursion(
           nullableMapWithObject,
           aNullableEnum,
           aNullableString,
-          aNullableObject)
+          aNullableObject,
+          allNullableLists,
+          allNullableMaps)
     }
   }
 
@@ -352,6 +399,8 @@ data class AllNullableTypesWithoutRecursion(
         aNullableEnum,
         aNullableString,
         aNullableObject,
+        allNullableLists,
+        allNullableMaps,
     )
   }
 }
@@ -421,23 +470,29 @@ private object CoreTestsPigeonCodec : StandardMessageCodec() {
         return (readValue(buffer) as? List<Any?>)?.let { AllListTypes.fromList(it) }
       }
       131.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let { AllTypes.fromList(it) }
+        return (readValue(buffer) as? List<Any?>)?.let { AllNullableMapTypes.fromList(it) }
       }
       132.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let { AllNullableTypes.fromList(it) }
+        return (readValue(buffer) as? List<Any?>)?.let { AllNullableListTypes.fromList(it) }
       }
       133.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let { AllTypes.fromList(it) }
+      }
+      134.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let { AllNullableTypes.fromList(it) }
+      }
+      135.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
           AllNullableTypesWithoutRecursion.fromList(it)
         }
       }
-      134.toByte() -> {
+      136.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let { AllClassesWrapper.fromList(it) }
       }
-      135.toByte() -> {
+      137.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let { TestMessage.fromList(it) }
       }
-      136.toByte() -> {
+      138.toByte() -> {
         return (readValue(buffer) as Int?)?.let { AnEnum.ofRaw(it) }
       }
       else -> super.readValueOfType(type, buffer)
@@ -454,28 +509,36 @@ private object CoreTestsPigeonCodec : StandardMessageCodec() {
         stream.write(130)
         writeValue(stream, value.toList())
       }
-      is AllTypes -> {
+      is AllNullableMapTypes -> {
         stream.write(131)
         writeValue(stream, value.toList())
       }
-      is AllNullableTypes -> {
+      is AllNullableListTypes -> {
         stream.write(132)
         writeValue(stream, value.toList())
       }
-      is AllNullableTypesWithoutRecursion -> {
+      is AllTypes -> {
         stream.write(133)
         writeValue(stream, value.toList())
       }
-      is AllClassesWrapper -> {
+      is AllNullableTypes -> {
         stream.write(134)
         writeValue(stream, value.toList())
       }
-      is TestMessage -> {
+      is AllNullableTypesWithoutRecursion -> {
         stream.write(135)
         writeValue(stream, value.toList())
       }
-      is AnEnum -> {
+      is AllClassesWrapper -> {
         stream.write(136)
+        writeValue(stream, value.toList())
+      }
+      is TestMessage -> {
+        stream.write(137)
+        writeValue(stream, value.toList())
+      }
+      is AnEnum -> {
+        stream.write(138)
         writeValue(stream, value.raw)
       }
       else -> super.writeValue(stream, value)

@@ -7,6 +7,10 @@ package com.example.alternate_language_test_plugin;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
+import com.example.alternate_language_test_plugin.CoreTests.AllListTypes;
+import com.example.alternate_language_test_plugin.CoreTests.AllMapTypes;
+import com.example.alternate_language_test_plugin.CoreTests.AllNullableListTypes;
+import com.example.alternate_language_test_plugin.CoreTests.AllNullableMapTypes;
 import com.example.alternate_language_test_plugin.CoreTests.AllNullableTypes;
 import com.example.alternate_language_test_plugin.CoreTests.AllTypes;
 import com.example.alternate_language_test_plugin.CoreTests.FlutterIntegrationCoreApi;
@@ -18,6 +22,52 @@ import java.util.HashMap;
 import org.junit.Test;
 
 public class AllDatatypesTest {
+  void compareAllListTypes(AllListTypes firstTypes, AllListTypes secondTypes) {
+    assertEquals(firstTypes == null, secondTypes == null);
+    if (firstTypes == null || secondTypes == null) {
+      return;
+    }
+    assertArrayEquals(firstTypes.getList().toArray(), secondTypes.getList().toArray());
+    assertArrayEquals(firstTypes.getStringList().toArray(), secondTypes.getStringList().toArray());
+    assertArrayEquals(firstTypes.getBoolList().toArray(), secondTypes.getBoolList().toArray());
+    assertArrayEquals(firstTypes.getDoubleList().toArray(), secondTypes.getDoubleList().toArray());
+    assertArrayEquals(firstTypes.getIntList().toArray(), secondTypes.getIntList().toArray());
+  }
+
+  void compareAllMapTypes(AllMapTypes firstTypes, AllMapTypes secondTypes) {
+    assertEquals(firstTypes == null, secondTypes == null);
+    if (firstTypes == null || secondTypes == null) {
+      return;
+    }
+    assertArrayEquals(
+        firstTypes.getMap().keySet().toArray(), secondTypes.getMap().keySet().toArray());
+    assertArrayEquals(
+        firstTypes.getMap().values().toArray(), secondTypes.getMap().values().toArray());
+  }
+
+  void compareAllNullableListTypes(
+      AllNullableListTypes firstTypes, AllNullableListTypes secondTypes) {
+    assertEquals(firstTypes == null, secondTypes == null);
+    if (firstTypes == null || secondTypes == null) {
+      return;
+    }
+    assertArrayEquals(firstTypes.getList().toArray(), secondTypes.getList().toArray());
+    assertArrayEquals(firstTypes.getStringList().toArray(), secondTypes.getStringList().toArray());
+    assertArrayEquals(firstTypes.getBoolList().toArray(), secondTypes.getBoolList().toArray());
+    assertArrayEquals(firstTypes.getDoubleList().toArray(), secondTypes.getDoubleList().toArray());
+    assertArrayEquals(firstTypes.getIntList().toArray(), secondTypes.getIntList().toArray());
+  }
+
+  void compareAllNullableMapTypes(AllNullableMapTypes firstTypes, AllNullableMapTypes secondTypes) {
+    assertEquals(firstTypes == null, secondTypes == null);
+    if (firstTypes == null || secondTypes == null) {
+      return;
+    }
+    assertArrayEquals(
+        firstTypes.getMap().keySet().toArray(), secondTypes.getMap().keySet().toArray());
+    assertArrayEquals(
+        firstTypes.getMap().values().toArray(), secondTypes.getMap().values().toArray());
+  }
 
   void compareAllTypes(AllTypes firstTypes, AllTypes secondTypes) {
     assertEquals(firstTypes == null, secondTypes == null);
@@ -33,13 +83,10 @@ public class AllDatatypesTest {
     assertArrayEquals(firstTypes.getA4ByteArray(), secondTypes.getA4ByteArray());
     assertArrayEquals(firstTypes.getA8ByteArray(), secondTypes.getA8ByteArray());
     assertTrue(floatArraysEqual(firstTypes.getAFloatArray(), secondTypes.getAFloatArray()));
-    assertArrayEquals(firstTypes.getList().toArray(), secondTypes.getList().toArray());
-    assertArrayEquals(
-        firstTypes.getAMap().keySet().toArray(), secondTypes.getAMap().keySet().toArray());
-    assertArrayEquals(
-        firstTypes.getAMap().values().toArray(), secondTypes.getAMap().values().toArray());
     assertEquals(firstTypes.getAnEnum(), secondTypes.getAnEnum());
     assertEquals(firstTypes.getAnObject(), secondTypes.getAnObject());
+    compareAllListTypes(firstTypes.getAllLists(), secondTypes.getAllLists());
+    compareAllMapTypes(firstTypes.getAllMaps(), secondTypes.getAllMaps());
   }
 
   void compareAllNullableTypes(AllNullableTypes firstTypes, AllNullableTypes secondTypes) {
@@ -58,22 +105,19 @@ public class AllDatatypesTest {
         floatArraysEqual(
             firstTypes.getANullableFloatArray(), secondTypes.getANullableFloatArray()));
     assertArrayEquals(
-        firstTypes.getANullableList().toArray(), secondTypes.getANullableList().toArray());
-    assertArrayEquals(
-        firstTypes.getANullableMap().keySet().toArray(),
-        secondTypes.getANullableMap().keySet().toArray());
-    assertArrayEquals(
-        firstTypes.getANullableMap().values().toArray(),
-        secondTypes.getANullableMap().values().toArray());
-    assertArrayEquals(
         firstTypes.getNullableMapWithObject().values().toArray(),
         secondTypes.getNullableMapWithObject().values().toArray());
     assertEquals(firstTypes.getANullableObject(), secondTypes.getANullableObject());
+    compareAllNullableListTypes(
+        firstTypes.getAllNullableLists(), secondTypes.getAllNullableLists());
+    compareAllNullableMapTypes(firstTypes.getAllNullableMaps(), secondTypes.getAllNullableMaps());
   }
 
   @Test
   public void nullValues() {
     AllNullableTypes everything = new AllNullableTypes();
+    everything.setAllNullableLists(new AllNullableListTypes());
+    everything.setAllNullableMaps(new AllNullableMapTypes());
     BinaryMessenger binaryMessenger = mock(BinaryMessenger.class);
     doAnswer(
             invocation -> {
@@ -97,6 +141,9 @@ public class AllDatatypesTest {
         new CoreTests.NullableResult<AllNullableTypes>() {
           public void success(AllNullableTypes result) {
             didCall[0] = true;
+            ;
+            AllNullableListTypes allNullableLists = everything.getAllNullableLists();
+            AllNullableMapTypes allNullableMaps = everything.getAllNullableMaps();
             assertNull(everything.getANullableBool());
             assertNull(everything.getANullableInt());
             assertNull(everything.getANullableDouble());
@@ -105,9 +152,13 @@ public class AllDatatypesTest {
             assertNull(everything.getANullable4ByteArray());
             assertNull(everything.getANullable8ByteArray());
             assertNull(everything.getANullableFloatArray());
-            assertNull(everything.getANullableList());
-            assertNull(everything.getANullableMap());
             assertNull(everything.getNullableMapWithObject());
+            assertNull(allNullableLists.getList());
+            assertNull(allNullableLists.getDoubleList());
+            assertNull(allNullableLists.getIntList());
+            assertNull(allNullableLists.getStringList());
+            assertNull(allNullableLists.getBoolList());
+            assertNull(allNullableMaps.getMap());
           }
 
           public void error(Throwable error) {
@@ -143,6 +194,25 @@ public class AllDatatypesTest {
 
   @Test
   public void hasValues() {
+    AllListTypes allLists =
+        new AllListTypes.Builder()
+            .setBoolList(Arrays.asList(new Boolean[] {true, false}))
+            .setDoubleList(Arrays.asList(new Double[] {0.5, 0.25, 1.5, 1.25}))
+            .setIntList(Arrays.asList(new Long[] {1l, 2l, 3l, 4l}))
+            .setList(Arrays.asList(new int[] {1, 2, 3, 4}))
+            .setStringList(Arrays.asList(new String[] {"string", "another one"}))
+            .build();
+    AllMapTypes allMaps = new AllMapTypes.Builder().setMap(makeMap("hello", 1234)).build();
+    AllNullableListTypes allNullableLists =
+        new AllNullableListTypes.Builder()
+            .setBoolList(Arrays.asList(new Boolean[] {true, false}))
+            .setDoubleList(Arrays.asList(new Double[] {0.5, 0.25, 1.5, 1.25}))
+            .setIntList(Arrays.asList(new Long[] {1l, 2l, 3l, 4l}))
+            .setList(Arrays.asList(new int[] {1, 2, 3, 4}))
+            .setStringList(Arrays.asList(new String[] {"string", "another one"}))
+            .build();
+    AllNullableMapTypes allNullableMaps =
+        new AllNullableMapTypes.Builder().setMap(makeMap("hello", 1234)).build();
     AllTypes allEverything =
         new AllTypes.Builder()
             .setABool(false)
@@ -154,10 +224,10 @@ public class AllDatatypesTest {
             .setA4ByteArray(new int[] {1, 2, 3, 4})
             .setA8ByteArray(new long[] {1, 2, 3, 4})
             .setAFloatArray(new double[] {0.5, 0.25, 1.5, 1.25})
-            .setList(Arrays.asList(new int[] {1, 2, 3}))
-            .setAMap(makeMap("hello", 1234))
             .setAnEnum(CoreTests.AnEnum.ONE)
             .setAnObject(0)
+            .setAllLists(allLists)
+            .setAllMaps(allMaps)
             .build();
 
     AllNullableTypes everything =
@@ -170,10 +240,10 @@ public class AllDatatypesTest {
             .setANullable4ByteArray(new int[] {1, 2, 3, 4})
             .setANullable8ByteArray(new long[] {1, 2, 3, 4})
             .setANullableFloatArray(new double[] {0.5, 0.25, 1.5, 1.25})
-            .setANullableList(Arrays.asList(new int[] {1, 2, 3}))
-            .setANullableMap(makeMap("hello", 1234))
             .setNullableMapWithObject(makeStringMap("hello", 1234))
             .setANullableObject(0)
+            .setAllNullableLists(allNullableLists)
+            .setAllNullableMaps(allNullableMaps)
             .build();
 
     BinaryMessenger binaryMessenger = mock(BinaryMessenger.class);

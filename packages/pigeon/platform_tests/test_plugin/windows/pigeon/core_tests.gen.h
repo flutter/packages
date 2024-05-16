@@ -147,6 +147,96 @@ class AllListTypes {
   flutter::EncodableList bool_list_;
 };
 
+// Generated class from Pigeon that represents data sent in messages.
+class AllNullableMapTypes {
+ public:
+  // Constructs an object setting all non-nullable fields.
+  AllNullableMapTypes();
+
+  // Constructs an object setting all fields.
+  explicit AllNullableMapTypes(const flutter::EncodableMap* map);
+
+  const flutter::EncodableMap* map() const;
+  void set_map(const flutter::EncodableMap* value_arg);
+  void set_map(const flutter::EncodableMap& value_arg);
+
+ private:
+  static AllNullableMapTypes FromEncodableList(
+      const flutter::EncodableList& list);
+  flutter::EncodableList ToEncodableList() const;
+  friend class AllNullableTypes;
+  friend class AllNullableTypesWithoutRecursion;
+  friend class HostIntegrationCoreApi;
+  friend class PigeonCodecSerializer;
+  friend class FlutterIntegrationCoreApi;
+  friend class PigeonCodecSerializer;
+  friend class HostTrivialApi;
+  friend class PigeonCodecSerializer;
+  friend class HostSmallApi;
+  friend class PigeonCodecSerializer;
+  friend class FlutterSmallApi;
+  friend class PigeonCodecSerializer;
+  friend class CoreTestsTest;
+  std::optional<flutter::EncodableMap> map_;
+};
+
+// Generated class from Pigeon that represents data sent in messages.
+class AllNullableListTypes {
+ public:
+  // Constructs an object setting all non-nullable fields.
+  AllNullableListTypes();
+
+  // Constructs an object setting all fields.
+  explicit AllNullableListTypes(const flutter::EncodableList* list,
+                                const flutter::EncodableList* string_list,
+                                const flutter::EncodableList* int_list,
+                                const flutter::EncodableList* double_list,
+                                const flutter::EncodableList* bool_list);
+
+  const flutter::EncodableList* list() const;
+  void set_list(const flutter::EncodableList* value_arg);
+  void set_list(const flutter::EncodableList& value_arg);
+
+  const flutter::EncodableList* string_list() const;
+  void set_string_list(const flutter::EncodableList* value_arg);
+  void set_string_list(const flutter::EncodableList& value_arg);
+
+  const flutter::EncodableList* int_list() const;
+  void set_int_list(const flutter::EncodableList* value_arg);
+  void set_int_list(const flutter::EncodableList& value_arg);
+
+  const flutter::EncodableList* double_list() const;
+  void set_double_list(const flutter::EncodableList* value_arg);
+  void set_double_list(const flutter::EncodableList& value_arg);
+
+  const flutter::EncodableList* bool_list() const;
+  void set_bool_list(const flutter::EncodableList* value_arg);
+  void set_bool_list(const flutter::EncodableList& value_arg);
+
+ private:
+  static AllNullableListTypes FromEncodableList(
+      const flutter::EncodableList& list);
+  flutter::EncodableList ToEncodableList() const;
+  friend class AllNullableTypes;
+  friend class AllNullableTypesWithoutRecursion;
+  friend class HostIntegrationCoreApi;
+  friend class PigeonCodecSerializer;
+  friend class FlutterIntegrationCoreApi;
+  friend class PigeonCodecSerializer;
+  friend class HostTrivialApi;
+  friend class PigeonCodecSerializer;
+  friend class HostSmallApi;
+  friend class PigeonCodecSerializer;
+  friend class FlutterSmallApi;
+  friend class PigeonCodecSerializer;
+  friend class CoreTestsTest;
+  std::optional<flutter::EncodableList> list_;
+  std::optional<flutter::EncodableList> string_list_;
+  std::optional<flutter::EncodableList> int_list_;
+  std::optional<flutter::EncodableList> double_list_;
+  std::optional<flutter::EncodableList> bool_list_;
+};
+
 // A class containing all supported types.
 //
 // Generated class from Pigeon that represents data sent in messages.
@@ -158,9 +248,7 @@ class AllTypes {
                     const std::vector<int32_t>& a4_byte_array,
                     const std::vector<int64_t>& a8_byte_array,
                     const std::vector<double>& a_float_array,
-                    const flutter::EncodableList& list,
-                    const flutter::EncodableMap& a_map, const AnEnum& an_enum,
-                    const std::string& a_string,
+                    const AnEnum& an_enum, const std::string& a_string,
                     const flutter::EncodableValue& an_object,
                     const AllMapTypes& all_maps, const AllListTypes& all_lists);
 
@@ -192,12 +280,6 @@ class AllTypes {
 
   const std::vector<double>& a_float_array() const;
   void set_a_float_array(const std::vector<double>& value_arg);
-
-  const flutter::EncodableList& list() const;
-  void set_list(const flutter::EncodableList& value_arg);
-
-  const flutter::EncodableMap& a_map() const;
-  void set_a_map(const flutter::EncodableMap& value_arg);
 
   const AnEnum& an_enum() const;
   void set_an_enum(const AnEnum& value_arg);
@@ -237,8 +319,6 @@ class AllTypes {
   std::vector<int32_t> a4_byte_array_;
   std::vector<int64_t> a8_byte_array_;
   std::vector<double> a_float_array_;
-  flutter::EncodableList list_;
-  flutter::EncodableMap a_map_;
   AnEnum an_enum_;
   std::string a_string_;
   flutter::EncodableValue an_object_;
@@ -262,13 +342,13 @@ class AllNullableTypes {
       const std::vector<int32_t>* a_nullable4_byte_array,
       const std::vector<int64_t>* a_nullable8_byte_array,
       const std::vector<double>* a_nullable_float_array,
-      const flutter::EncodableList* a_nullable_list,
-      const flutter::EncodableMap* a_nullable_map,
       const flutter::EncodableList* nullable_nested_list,
       const flutter::EncodableMap* nullable_map_with_annotations,
       const flutter::EncodableMap* nullable_map_with_object,
       const AnEnum* a_nullable_enum, const std::string* a_nullable_string,
       const flutter::EncodableValue* a_nullable_object,
+      const AllNullableListTypes* all_nullable_lists,
+      const AllNullableMapTypes* all_nullable_maps,
       const AllNullableTypes* all_nullable_types);
 
   ~AllNullableTypes() = default;
@@ -308,14 +388,6 @@ class AllNullableTypes {
   void set_a_nullable_float_array(const std::vector<double>* value_arg);
   void set_a_nullable_float_array(const std::vector<double>& value_arg);
 
-  const flutter::EncodableList* a_nullable_list() const;
-  void set_a_nullable_list(const flutter::EncodableList* value_arg);
-  void set_a_nullable_list(const flutter::EncodableList& value_arg);
-
-  const flutter::EncodableMap* a_nullable_map() const;
-  void set_a_nullable_map(const flutter::EncodableMap* value_arg);
-  void set_a_nullable_map(const flutter::EncodableMap& value_arg);
-
   const flutter::EncodableList* nullable_nested_list() const;
   void set_nullable_nested_list(const flutter::EncodableList* value_arg);
   void set_nullable_nested_list(const flutter::EncodableList& value_arg);
@@ -341,6 +413,14 @@ class AllNullableTypes {
   const flutter::EncodableValue* a_nullable_object() const;
   void set_a_nullable_object(const flutter::EncodableValue* value_arg);
   void set_a_nullable_object(const flutter::EncodableValue& value_arg);
+
+  const AllNullableListTypes* all_nullable_lists() const;
+  void set_all_nullable_lists(const AllNullableListTypes* value_arg);
+  void set_all_nullable_lists(const AllNullableListTypes& value_arg);
+
+  const AllNullableMapTypes* all_nullable_maps() const;
+  void set_all_nullable_maps(const AllNullableMapTypes* value_arg);
+  void set_all_nullable_maps(const AllNullableMapTypes& value_arg);
 
   const AllNullableTypes* all_nullable_types() const;
   void set_all_nullable_types(const AllNullableTypes* value_arg);
@@ -369,14 +449,14 @@ class AllNullableTypes {
   std::optional<std::vector<int32_t>> a_nullable4_byte_array_;
   std::optional<std::vector<int64_t>> a_nullable8_byte_array_;
   std::optional<std::vector<double>> a_nullable_float_array_;
-  std::optional<flutter::EncodableList> a_nullable_list_;
-  std::optional<flutter::EncodableMap> a_nullable_map_;
   std::optional<flutter::EncodableList> nullable_nested_list_;
   std::optional<flutter::EncodableMap> nullable_map_with_annotations_;
   std::optional<flutter::EncodableMap> nullable_map_with_object_;
   std::optional<AnEnum> a_nullable_enum_;
   std::optional<std::string> a_nullable_string_;
   std::optional<flutter::EncodableValue> a_nullable_object_;
+  std::unique_ptr<AllNullableListTypes> all_nullable_lists_;
+  std::unique_ptr<AllNullableMapTypes> all_nullable_maps_;
   std::unique_ptr<AllNullableTypes> all_nullable_types_;
 };
 
@@ -404,8 +484,19 @@ class AllNullableTypesWithoutRecursion {
       const flutter::EncodableMap* nullable_map_with_annotations,
       const flutter::EncodableMap* nullable_map_with_object,
       const AnEnum* a_nullable_enum, const std::string* a_nullable_string,
-      const flutter::EncodableValue* a_nullable_object);
+      const flutter::EncodableValue* a_nullable_object,
+      const AllNullableListTypes* all_nullable_lists,
+      const AllNullableMapTypes* all_nullable_maps);
 
+  ~AllNullableTypesWithoutRecursion() = default;
+  AllNullableTypesWithoutRecursion(
+      const AllNullableTypesWithoutRecursion& other);
+  AllNullableTypesWithoutRecursion& operator=(
+      const AllNullableTypesWithoutRecursion& other);
+  AllNullableTypesWithoutRecursion(AllNullableTypesWithoutRecursion&& other) =
+      default;
+  AllNullableTypesWithoutRecursion& operator=(
+      AllNullableTypesWithoutRecursion&& other) noexcept = default;
   const bool* a_nullable_bool() const;
   void set_a_nullable_bool(const bool* value_arg);
   void set_a_nullable_bool(bool value_arg);
@@ -472,6 +563,14 @@ class AllNullableTypesWithoutRecursion {
   void set_a_nullable_object(const flutter::EncodableValue* value_arg);
   void set_a_nullable_object(const flutter::EncodableValue& value_arg);
 
+  const AllNullableListTypes* all_nullable_lists() const;
+  void set_all_nullable_lists(const AllNullableListTypes* value_arg);
+  void set_all_nullable_lists(const AllNullableListTypes& value_arg);
+
+  const AllNullableMapTypes* all_nullable_maps() const;
+  void set_all_nullable_maps(const AllNullableMapTypes* value_arg);
+  void set_all_nullable_maps(const AllNullableMapTypes& value_arg);
+
  private:
   static AllNullableTypesWithoutRecursion FromEncodableList(
       const flutter::EncodableList& list);
@@ -504,6 +603,8 @@ class AllNullableTypesWithoutRecursion {
   std::optional<AnEnum> a_nullable_enum_;
   std::optional<std::string> a_nullable_string_;
   std::optional<flutter::EncodableValue> a_nullable_object_;
+  std::unique_ptr<AllNullableListTypes> all_nullable_lists_;
+  std::unique_ptr<AllNullableMapTypes> all_nullable_maps_;
 };
 
 // A class for testing nested class handling.

@@ -59,12 +59,65 @@ class AllListTypes {
     // this.mapList,
     // this.classList,
   );
+  // This name is in a different format than the others to ensure that name
+  // collision with the work 'list' doesn't occur in the generated files.
   // ignore: strict_raw_type, always_specify_types
   List list;
   List<String?> stringList;
   List<int?> intList;
   List<double?> doubleList;
   List<bool?> boolList;
+  // List<AnEnum?> enumList;
+  // List<List<Object?>?> listList;
+  // List<Map<Object, Object?>?> mapList;
+  // List<SimpleClass?> classList;
+}
+
+// TODO(tarrinneal): Add the functionality and tests for these data types.
+class AllNullableMapTypes {
+  AllNullableMapTypes(
+    this.map,
+    // this.stringMap,
+    // this.intMap,
+    // this.doubleMap,
+    // this.boolMap,
+    // this.enumMap,
+    // this.listMap,
+    // this.mapMap,
+    // this.classMap,
+  );
+  // ignore: strict_raw_type, always_specify_types
+  Map? map;
+  // Map<String?, String?> stringMap;
+  // Map<int?, int?> intMap;
+  // Map<double?, double?> doubleMap;
+  // Map<bool?, bool?> boolMap;
+  // Map<AnEnum?, AnEnum?> enumMap;
+  // Map<String?, List<Object?>?> listMap;
+  // Map<String?, Map<Object?, Object?>?> mapMap;
+  // Map<String?, SimpleClass?> classMap;
+}
+
+class AllNullableListTypes {
+  AllNullableListTypes(
+    this.list,
+    this.stringList,
+    this.intList,
+    this.doubleList,
+    this.boolList,
+    // this.enumList,
+    // this.listList,
+    // this.mapList,
+    // this.classList,
+  );
+  // This name is in a different format than the others to ensure that name
+  // collision with the work 'list' doesn't occur in the generated files.
+  // ignore: strict_raw_type, always_specify_types
+  List? list;
+  List<String?>? stringList;
+  List<int?>? intList;
+  List<double?>? doubleList;
+  List<bool?>? boolList;
   // List<AnEnum?> enumList;
   // List<List<Object?>?> listList;
   // List<Map<Object, Object?>?> mapList;
@@ -82,8 +135,6 @@ class AllTypes {
     required this.a4ByteArray,
     required this.a8ByteArray,
     required this.aFloatArray,
-    this.list = const <Object?>[],
-    this.aMap = const <String?, Object?>{},
     this.anEnum = AnEnum.one,
     this.aString = '',
     this.anObject = 0,
@@ -99,12 +150,6 @@ class AllTypes {
   Int32List a4ByteArray;
   Int64List a8ByteArray;
   Float64List aFloatArray;
-  // This name is in a different format than the others to ensure that name
-  // collision with the work 'list' doesn't occur in the generated files.
-  // ignore: always_specify_types, strict_raw_type
-  List list;
-  // ignore: always_specify_types, strict_raw_type
-  Map aMap;
   AnEnum anEnum;
   String aString;
   Object anObject;
@@ -124,14 +169,14 @@ class AllNullableTypes {
     this.aNullable4ByteArray,
     this.aNullable8ByteArray,
     this.aNullableFloatArray,
-    this.aNullableList,
-    this.aNullableMap,
     this.nullableNestedList,
     this.nullableMapWithAnnotations,
     this.nullableMapWithObject,
     this.aNullableEnum,
     this.aNullableString,
     this.aNullableObject,
+    this.allNullableLists,
+    this.allNullableMaps,
     this.allNullableTypes,
   );
 
@@ -143,16 +188,14 @@ class AllNullableTypes {
   Int32List? aNullable4ByteArray;
   Int64List? aNullable8ByteArray;
   Float64List? aNullableFloatArray;
-  // ignore: always_specify_types, strict_raw_type
-  List? aNullableList;
-  // ignore: always_specify_types, strict_raw_type
-  Map? aNullableMap;
   List<List<bool?>?>? nullableNestedList;
   Map<String?, String?>? nullableMapWithAnnotations;
   Map<String?, Object?>? nullableMapWithObject;
   AnEnum? aNullableEnum;
   String? aNullableString;
   Object? aNullableObject;
+  AllNullableListTypes? allNullableLists;
+  AllNullableMapTypes? allNullableMaps;
   AllNullableTypes? allNullableTypes;
 }
 
@@ -177,6 +220,8 @@ class AllNullableTypesWithoutRecursion {
     this.aNullableEnum,
     this.aNullableString,
     this.aNullableObject,
+    this.allNullableLists,
+    this.allNullableMaps,
   );
 
   bool? aNullableBool;
@@ -197,6 +242,8 @@ class AllNullableTypesWithoutRecursion {
   AnEnum? aNullableEnum;
   String? aNullableString;
   Object? aNullableObject;
+  AllNullableListTypes? allNullableLists;
+  AllNullableMapTypes? allNullableMaps;
 }
 
 /// A class for testing nested class handling.
