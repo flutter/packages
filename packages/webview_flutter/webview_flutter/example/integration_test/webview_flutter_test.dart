@@ -303,7 +303,7 @@ Future<void> main() async {
           await controller.runJavaScriptReturningResult('isPaused();') as bool;
       expect(isPaused, true);
     },
-        // TODO: Stop skipping once https://github.com/flutter/flutter/issues/148487 is resolved
+        // TODO(bparrishMines): Stop skipping once https://github.com/flutter/flutter/issues/148487 is resolved
         skip: true);
 
     testWidgets('Video plays inline', (WidgetTester tester) async {
