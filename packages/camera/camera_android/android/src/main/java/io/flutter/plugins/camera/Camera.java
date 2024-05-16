@@ -105,13 +105,13 @@ class Camera implements CameraCaptureCallback.CameraCaptureStateListener,
    * Takes an input/output surface and orients the recording correctly. This is needed because
    * switching cameras while recording causes the wrong orientation.
    */
-  private VideoRenderer videoRenderer;
+  @VisibleForTesting VideoRenderer videoRenderer;
 
   /**
    * Whether or not the camera aligns with the initial way the camera was facing if the camera was
    * flipped.
    */
-  private int initialCameraFacing;
+  @VisibleForTesting int initialCameraFacing;
 
   private final TextureRegistry.SurfaceProducer surfaceProducer;
   private final VideoCaptureSettings videoCaptureSettings;
@@ -130,16 +130,16 @@ class Camera implements CameraCaptureCallback.CameraCaptureStateListener,
 
   CameraDeviceWrapper cameraDevice;
   CameraCaptureSession captureSession;
-  private ImageReader pictureImageReader;
+  @VisibleForTesting ImageReader pictureImageReader;
   ImageStreamReader imageStreamReader;
   /** {@link CaptureRequest.Builder} for the camera preview */
   CaptureRequest.Builder previewRequestBuilder;
 
-  private MediaRecorder mediaRecorder;
+  @VisibleForTesting MediaRecorder mediaRecorder;
   /** True when recording video. */
   boolean recordingVideo;
   /** True when the preview is paused. */
-  private boolean pausedPreview;
+  @VisibleForTesting boolean pausedPreview;
 
   private File captureFile;
 

@@ -7,6 +7,7 @@ import 'dart:ui' show Size;
 import 'analyzer.dart';
 import 'aspect_ratio_strategy.dart';
 import 'camera2_camera_control.dart';
+import 'camera2_camera_info.dart';
 import 'camera_control.dart';
 import 'camera_info.dart';
 import 'camera_selector.dart';
@@ -64,6 +65,7 @@ class CameraXProxy {
     this.createAspectRatioStrategy = _createAttachedAspectRatioStrategy,
     this.createResolutionFilterWithOnePreferredSize =
         _createAttachedResolutionFilterWithOnePreferredSize,
+    this.getCamera2CameraInfo = _getCamera2CameraInfo,
   });
 
   /// Returns a [ProcessCameraProvider] instance.
@@ -154,7 +156,7 @@ class CameraXProxy {
   /// rotation constants.
   Future<int> Function() getDefaultDisplayRotation;
 
-  /// Get [Camera2CameraControl] instance from [cameraControl].
+  /// Gets [Camera2CameraControl] instance from [cameraControl].
   Camera2CameraControl Function(CameraControl cameraControl)
       getCamera2CameraControl;
 
@@ -182,6 +184,10 @@ class CameraXProxy {
   /// Creates a [ResolutionFilter] that prioritizes specified resolution.
   ResolutionFilter Function(Size preferredResolution)
       createResolutionFilterWithOnePreferredSize;
+
+  /// Gets [Camera2CameraInfo] instance from [cameraInfo].
+  Future<Camera2CameraInfo> Function(CameraInfo cameraInfo)
+      getCamera2CameraInfo;
 
   static Future<ProcessCameraProvider> _getProcessCameraProvider() {
     return ProcessCameraProvider.getInstance();
@@ -323,5 +329,10 @@ class CameraXProxy {
       Size preferredSize) {
     return ResolutionFilter.onePreferredSize(
         preferredResolution: preferredSize);
+  }
+
+  static Future<Camera2CameraInfo> _getCamera2CameraInfo(
+      CameraInfo cameraInfo) async {
+    return Camera2CameraInfo.from(cameraInfo);
   }
 }

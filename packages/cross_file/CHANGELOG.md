@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.16/Dart 3.2.
+
 ## 0.3.4+1
 
 * Removes a few deprecated API usages.
