@@ -113,7 +113,7 @@ class Camera implements CameraCaptureCallback.CameraCaptureStateListener,
    */
   @VisibleForTesting int initialCameraFacing;
 
-  private final TextureRegistry.SurfaceProducer surfaceProducer;
+  @VisibleForTesting final TextureRegistry.SurfaceProducer surfaceProducer;
   private final VideoCaptureSettings videoCaptureSettings;
   private final Context applicationContext;
   final DartMessenger dartMessenger;
