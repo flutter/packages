@@ -27,7 +27,7 @@ class FlutterIOOverrides extends io.IOOverrides {
     if (_fileSystemDelegate == null) {
       return super.createDirectory(path);
     }
-    return _fileSystemDelegate!.directory(path);
+    return _fileSystemDelegate.directory(path);
   }
 
   @override
@@ -35,7 +35,7 @@ class FlutterIOOverrides extends io.IOOverrides {
     if (_fileSystemDelegate == null) {
       return super.createFile(path);
     }
-    return _fileSystemDelegate!.file(path);
+    return _fileSystemDelegate.file(path);
   }
 
   @override
@@ -43,7 +43,7 @@ class FlutterIOOverrides extends io.IOOverrides {
     if (_fileSystemDelegate == null) {
       return super.createLink(path);
     }
-    return _fileSystemDelegate!.link(path);
+    return _fileSystemDelegate.link(path);
   }
 
   @override
@@ -51,7 +51,7 @@ class FlutterIOOverrides extends io.IOOverrides {
     if (_fileSystemDelegate == null) {
       return super.fsWatch(path, events, recursive);
     }
-    return _fileSystemDelegate!
+    return _fileSystemDelegate
         .file(path)
         .watch(events: events, recursive: recursive);
   }
@@ -61,7 +61,7 @@ class FlutterIOOverrides extends io.IOOverrides {
     if (_fileSystemDelegate == null) {
       return super.fsWatchIsSupported();
     }
-    return _fileSystemDelegate!.isWatchSupported;
+    return _fileSystemDelegate.isWatchSupported;
   }
 
   @override
@@ -69,7 +69,7 @@ class FlutterIOOverrides extends io.IOOverrides {
     if (_fileSystemDelegate == null) {
       return super.fseGetType(path, followLinks);
     }
-    return _fileSystemDelegate!.type(path, followLinks: followLinks);
+    return _fileSystemDelegate.type(path, followLinks: followLinks);
   }
 
   @override
@@ -77,7 +77,7 @@ class FlutterIOOverrides extends io.IOOverrides {
     if (_fileSystemDelegate == null) {
       return super.fseGetTypeSync(path, followLinks);
     }
-    return _fileSystemDelegate!.typeSync(path, followLinks: followLinks);
+    return _fileSystemDelegate.typeSync(path, followLinks: followLinks);
   }
 
   @override
@@ -85,7 +85,7 @@ class FlutterIOOverrides extends io.IOOverrides {
     if (_fileSystemDelegate == null) {
       return super.fseIdentical(path1, path2);
     }
-    return _fileSystemDelegate!.identical(path1, path2);
+    return _fileSystemDelegate.identical(path1, path2);
   }
 
   @override
@@ -93,7 +93,7 @@ class FlutterIOOverrides extends io.IOOverrides {
     if (_fileSystemDelegate == null) {
       return super.fseIdenticalSync(path1, path2);
     }
-    return _fileSystemDelegate!.identicalSync(path1, path2);
+    return _fileSystemDelegate.identicalSync(path1, path2);
   }
 
   @override
@@ -101,7 +101,7 @@ class FlutterIOOverrides extends io.IOOverrides {
     if (_fileSystemDelegate == null) {
       return super.getCurrentDirectory();
     }
-    return _fileSystemDelegate!.currentDirectory;
+    return _fileSystemDelegate.currentDirectory;
   }
 
   @override
@@ -109,7 +109,7 @@ class FlutterIOOverrides extends io.IOOverrides {
     if (_fileSystemDelegate == null) {
       return super.getSystemTempDirectory();
     }
-    return _fileSystemDelegate!.systemTempDirectory;
+    return _fileSystemDelegate.systemTempDirectory;
   }
 
   @override
@@ -117,7 +117,7 @@ class FlutterIOOverrides extends io.IOOverrides {
     if (_fileSystemDelegate == null) {
       return super.setCurrentDirectory(path);
     }
-    _fileSystemDelegate!.currentDirectory = path;
+    _fileSystemDelegate.currentDirectory = path;
   }
 
   @override
@@ -125,7 +125,7 @@ class FlutterIOOverrides extends io.IOOverrides {
     if (_fileSystemDelegate == null) {
       return super.stat(path);
     }
-    return _fileSystemDelegate!.stat(path);
+    return _fileSystemDelegate.stat(path);
   }
 
   @override
@@ -133,6 +133,6 @@ class FlutterIOOverrides extends io.IOOverrides {
     if (_fileSystemDelegate == null) {
       return super.statSync(path);
     }
-    return _fileSystemDelegate!.statSync(path);
+    return _fileSystemDelegate.statSync(path);
   }
 }

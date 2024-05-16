@@ -53,8 +53,7 @@ should be returned via the provided callback.
 To pass custom details into `PlatformException` for error handling, 
 use `FlutterError` in your Host API. [Example](./example/README.md#HostApi_Example).
 
-To use `FlutterError` in Swift you must first extend a standard error.
-[Example](./example/README.md#AppDelegate.swift).
+For swift, use `PigeonError` instead of `FlutterError` when throwing an error. See [Example#Swift](./example/README.md#Swift) for more details.
 
 #### Objective-C and C++
 
@@ -74,6 +73,11 @@ When targeting a Flutter version that supports the
 [TaskQueue API](https://docs.flutter.dev/development/platform-integration/platform-channels?tab=type-mappings-kotlin-tab#channels-and-platform-threading)
 the threading model for handling HostApi methods can be selected with the
 `TaskQueue` annotation.
+
+### Multi-Instance Support
+
+Host and Flutter APIs now support the ability to provide a unique message channel suffix string 
+to the api to allow for multiple instances to be created and operate in parallel. 
 
 ## Usage
 

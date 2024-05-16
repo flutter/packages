@@ -49,7 +49,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
     expect(allTypesOne.a4ByteArray, allTypesTwo.a4ByteArray);
     expect(allTypesOne.a8ByteArray, allTypesTwo.a8ByteArray);
     expect(allTypesOne.aFloatArray, allTypesTwo.aFloatArray);
-    expect(listEquals(allTypesOne.aList, allTypesTwo.aList), true);
+    expect(listEquals(allTypesOne.list, allTypesTwo.list), true);
     expect(mapEquals(allTypesOne.aMap, allTypesTwo.aMap), true);
     expect(allTypesOne.anEnum, allTypesTwo.anEnum);
     expect(allTypesOne.anObject, allTypesTwo.anObject);
@@ -190,7 +190,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
     a4ByteArray: Int32List.fromList(<int>[4, 5, 6]),
     a8ByteArray: Int64List.fromList(<int>[7, 8, 9]),
     aFloatArray: Float64List.fromList(<double>[2.71828, _doublePi]),
-    aList: <Object?>['Thing 1', 2, true, 3.14, null],
+    list: <Object?>['Thing 1', 2, true, 3.14, null],
     aMap: <Object?, Object?>{
       'a': 1,
       'b': 2.0,
@@ -1359,13 +1359,49 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
     });
   });
 
+  group('Host API with suffix', () {
+    testWidgets('echo string succeeds with suffix with multiple instances',
+        (_) async {
+      final HostSmallApi apiWithSuffixOne =
+          HostSmallApi(messageChannelSuffix: 'suffixOne');
+      final HostSmallApi apiWithSuffixTwo =
+          HostSmallApi(messageChannelSuffix: 'suffixTwo');
+      const String sentString = "I'm a computer";
+      final String echoStringOne = await apiWithSuffixOne.echo(sentString);
+      final String echoStringTwo = await apiWithSuffixTwo.echo(sentString);
+      expect(sentString, echoStringOne);
+      expect(sentString, echoStringTwo);
+    });
+
+    testWidgets('multiple instances will have different method channel names',
+        (_) async {
+      // The only way to get the channel name back is to throw an exception.
+      // These APIs have no corresponding APIs on the host platforms.
+      final HostSmallApi apiWithSuffixOne =
+          HostSmallApi(messageChannelSuffix: 'suffixWithNoHost');
+      final HostSmallApi apiWithSuffixTwo =
+          HostSmallApi(messageChannelSuffix: 'suffixWithoutHost');
+      const String sentString = "I'm a computer";
+      try {
+        await apiWithSuffixOne.echo(sentString);
+      } on PlatformException catch (e) {
+        expect(e.message, contains('suffixWithNoHost'));
+      }
+      try {
+        await apiWithSuffixTwo.echo(sentString);
+      } on PlatformException catch (e) {
+        expect(e.message, contains('suffixWithoutHost'));
+      }
+    });
+  });
+
   // These tests rely on the async Dart->host calls to work correctly, since
   // the host->Dart call is wrapped in a driving Dart->host call, so any test
   // added to this group should have coverage of the relevant arguments and
   // return value in the "Host async API tests" group.
   group('Flutter API tests', () {
     setUp(() {
-      FlutterIntegrationCoreApi.setup(_FlutterApiTestImplementation());
+      FlutterIntegrationCoreApi.setUp(_FlutterApiTestImplementation());
     });
 
     testWidgets('basic void->void call works', (WidgetTester _) async {
@@ -1742,6 +1778,28 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       expect(echoEnum, sentEnum);
     });
   });
+
+  group('Flutter API with suffix', () {
+    setUp(() {
+      FlutterSmallApi.setUp(
+        _SmallFlutterApi(),
+        messageChannelSuffix: 'suffixOne',
+      );
+      FlutterSmallApi.setUp(
+        _SmallFlutterApi(),
+        messageChannelSuffix: 'suffixTwo',
+      );
+    });
+
+    testWidgets('echo string succeeds with suffix with multiple instances',
+        (_) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+      const String sentObject = "I'm a computer";
+      final String echoObject =
+          await api.callFlutterSmallApiEchoString(sentObject);
+      expect(echoObject, sentObject);
+    });
+  });
 }
 
 class _FlutterApiTestImplementation implements FlutterIntegrationCoreApi {
@@ -1805,10 +1863,10 @@ class _FlutterApiTestImplementation implements FlutterIntegrationCoreApi {
   String echoString(String aString) => aString;
 
   @override
-  Uint8List echoUint8List(Uint8List aList) => aList;
+  Uint8List echoUint8List(Uint8List list) => list;
 
   @override
-  List<Object?> echoList(List<Object?> aList) => aList;
+  List<Object?> echoList(List<Object?> list) => list;
 
   @override
   Map<String?, Object?> echoMap(Map<String?, Object?> aMap) => aMap;
@@ -1826,7 +1884,7 @@ class _FlutterApiTestImplementation implements FlutterIntegrationCoreApi {
   int? echoNullableInt(int? anInt) => anInt;
 
   @override
-  List<Object?>? echoNullableList(List<Object?>? aList) => aList;
+  List<Object?>? echoNullableList(List<Object?>? list) => list;
 
   @override
   Map<String?, Object?>? echoNullableMap(Map<String?, Object?>? aMap) => aMap;
@@ -1835,7 +1893,7 @@ class _FlutterApiTestImplementation implements FlutterIntegrationCoreApi {
   String? echoNullableString(String? aString) => aString;
 
   @override
-  Uint8List? echoNullableUint8List(Uint8List? aList) => aList;
+  Uint8List? echoNullableUint8List(Uint8List? list) => list;
 
   @override
   AnEnum? echoNullableEnum(AnEnum? anEnum) => anEnum;
@@ -1846,5 +1904,17 @@ class _FlutterApiTestImplementation implements FlutterIntegrationCoreApi {
   @override
   Future<String> echoAsyncString(String aString) async {
     return aString;
+  }
+}
+
+class _SmallFlutterApi implements FlutterSmallApi {
+  @override
+  String echoString(String aString) {
+    return aString;
+  }
+
+  @override
+  TestMessage echoWrappedList(TestMessage msg) {
+    return msg;
   }
 }

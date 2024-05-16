@@ -14,11 +14,36 @@ import Foundation
   #error("Unsupported platform.")
 #endif
 
+/// Error class for passing custom error details to Dart side.
+final class PigeonError: Error {
+  let code: String
+  let message: String?
+  let details: Any?
+
+  init(code: String, message: String?, details: Any?) {
+    self.code = code
+    self.message = message
+    self.details = details
+  }
+
+  var localizedDescription: String {
+    return
+      "PigeonError(code: \(code), message: \(message ?? "<nil>"), details: \(details ?? "<nil>")"
+  }
+}
+
 private func wrapResult(_ result: Any?) -> [Any?] {
   return [result]
 }
 
 private func wrapError(_ error: Any) -> [Any?] {
+  if let pigeonError = error as? PigeonError {
+    return [
+      pigeonError.code,
+      pigeonError.message,
+      pigeonError.details,
+    ]
+  }
   if let flutterError = error as? FlutterError {
     return [
       flutterError.code,
@@ -33,8 +58,8 @@ private func wrapError(_ error: Any) -> [Any?] {
   ]
 }
 
-private func createConnectionError(withChannelName channelName: String) -> FlutterError {
-  return FlutterError(
+private func createConnectionError(withChannelName channelName: String) -> PigeonError {
+  return PigeonError(
     code: "channel-error", message: "Unable to establish connection on channel: '\(channelName)'.",
     details: "")
 }
@@ -60,11 +85,12 @@ struct MessageData {
   var code: Code
   var data: [String?: String?]
 
-  static func fromList(_ list: [Any?]) -> MessageData? {
-    let name: String? = nilOrValue(list[0])
-    let description: String? = nilOrValue(list[1])
-    let code = Code(rawValue: list[2] as! Int)!
-    let data = list[3] as! [String?: String?]
+  // swift-format-ignore: AlwaysUseLowerCamelCase
+  static func fromList(_ __pigeon_list: [Any?]) -> MessageData? {
+    let name: String? = nilOrValue(__pigeon_list[0])
+    let description: String? = nilOrValue(__pigeon_list[1])
+    let code = Code(rawValue: __pigeon_list[2] as! Int)!
+    let data = __pigeon_list[3] as! [String?: String?]
 
     return MessageData(
       name: name,
@@ -131,9 +157,13 @@ class ExampleHostApiSetup {
   /// The codec used by ExampleHostApi.
   static var codec: FlutterStandardMessageCodec { ExampleHostApiCodec.shared }
   /// Sets up an instance of `ExampleHostApi` to handle messages through the `binaryMessenger`.
-  static func setUp(binaryMessenger: FlutterBinaryMessenger, api: ExampleHostApi?) {
+  static func setUp(
+    binaryMessenger: FlutterBinaryMessenger, api: ExampleHostApi?, messageChannelSuffix: String = ""
+  ) {
+    let channelSuffix = messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : ""
     let getHostLanguageChannel = FlutterBasicMessageChannel(
-      name: "dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.getHostLanguage",
+      name:
+        "dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.getHostLanguage\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       getHostLanguageChannel.setMessageHandler { _, reply in
@@ -148,7 +178,7 @@ class ExampleHostApiSetup {
       getHostLanguageChannel.setMessageHandler(nil)
     }
     let addChannel = FlutterBasicMessageChannel(
-      name: "dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.add",
+      name: "dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.add\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       addChannel.setMessageHandler { message, reply in
@@ -166,7 +196,7 @@ class ExampleHostApiSetup {
       addChannel.setMessageHandler(nil)
     }
     let sendMessageChannel = FlutterBasicMessageChannel(
-      name: "dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.sendMessage",
+      name: "dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.sendMessage\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       sendMessageChannel.setMessageHandler { message, reply in
@@ -189,18 +219,20 @@ class ExampleHostApiSetup {
 /// Generated protocol from Pigeon that represents Flutter messages that can be called from Swift.
 protocol MessageFlutterApiProtocol {
   func flutterMethod(
-    aString aStringArg: String?, completion: @escaping (Result<String, FlutterError>) -> Void)
+    aString aStringArg: String?, completion: @escaping (Result<String, PigeonError>) -> Void)
 }
 class MessageFlutterApi: MessageFlutterApiProtocol {
   private let binaryMessenger: FlutterBinaryMessenger
-  init(binaryMessenger: FlutterBinaryMessenger) {
+  private let messageChannelSuffix: String
+  init(binaryMessenger: FlutterBinaryMessenger, messageChannelSuffix: String = "") {
     self.binaryMessenger = binaryMessenger
+    self.messageChannelSuffix = messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : ""
   }
   func flutterMethod(
-    aString aStringArg: String?, completion: @escaping (Result<String, FlutterError>) -> Void
+    aString aStringArg: String?, completion: @escaping (Result<String, PigeonError>) -> Void
   ) {
     let channelName: String =
-      "dev.flutter.pigeon.pigeon_example_package.MessageFlutterApi.flutterMethod"
+      "dev.flutter.pigeon.pigeon_example_package.MessageFlutterApi.flutterMethod\(messageChannelSuffix)"
     let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger)
     channel.sendMessage([aStringArg] as [Any?]) { response in
       guard let listResponse = response as? [Any?] else {
@@ -211,11 +243,11 @@ class MessageFlutterApi: MessageFlutterApiProtocol {
         let code: String = listResponse[0] as! String
         let message: String? = nilOrValue(listResponse[1])
         let details: String? = nilOrValue(listResponse[2])
-        completion(.failure(FlutterError(code: code, message: message, details: details)))
+        completion(.failure(PigeonError(code: code, message: message, details: details)))
       } else if listResponse[0] == nil {
         completion(
           .failure(
-            FlutterError(
+            PigeonError(
               code: "null-error",
               message: "Flutter api returned null value for non-null return value.", details: "")))
       } else {

@@ -50,7 +50,8 @@ void main() {
     final String code = sink.toString();
     expect(code, contains('struct Foobar'));
     expect(code, contains('var field1: Int64? = nil'));
-    expect(code, contains('static func fromList(_ list: [Any?]) -> Foobar?'));
+    expect(code,
+        contains('static func fromList(_ __pigeon_list: [Any?]) -> Foobar?'));
     expect(code, contains('func toList() -> [Any?]'));
     expect(code, isNot(contains('if (')));
   });
@@ -303,7 +304,10 @@ void main() {
     );
     final String code = sink.toString();
     expect(code, contains('class Api'));
-    expect(code, contains('init(binaryMessenger: FlutterBinaryMessenger)'));
+    expect(
+        code,
+        contains(
+            'init(binaryMessenger: FlutterBinaryMessenger, messageChannelSuffix: String = "")'));
     expect(code, matches('func doSomething.*Input.*Output'));
     expect(code, isNot(contains('if (')));
     expect(code, isNot(matches(RegExp(r';$', multiLine: true))));
@@ -391,7 +395,7 @@ void main() {
     );
     final String code = sink.toString();
     expect(code,
-        contains('completion: @escaping (Result<Void, FlutterError>) -> Void'));
+        contains('completion: @escaping (Result<Void, PigeonError>) -> Void'));
     expect(code, contains('completion(.success(Void()))'));
     expect(code, isNot(contains('if (')));
   });
@@ -473,7 +477,7 @@ void main() {
     expect(
         code,
         contains(
-            'func doSomething(completion: @escaping (Result<Output, FlutterError>) -> Void)'));
+            'func doSomething(completion: @escaping (Result<Output, PigeonError>) -> Void)'));
     expect(code, contains('channel.sendMessage(nil'));
     expect(code, isNot(contains('if (')));
   });
@@ -572,8 +576,10 @@ void main() {
     expect(code, contains('struct Outer'));
     expect(code, contains('struct Nested'));
     expect(code, contains('var nested: Nested? = nil'));
-    expect(code, contains('static func fromList(_ list: [Any?]) -> Outer?'));
-    expect(code, contains('nested = Nested.fromList(nestedList)'));
+    expect(code,
+        contains('static func fromList(_ __pigeon_list: [Any?]) -> Outer?'));
+    expect(
+        code, contains('let nested: Nested? = nilOrValue(__pigeon_list[0])'));
     expect(code, contains('func toList() -> [Any?]'));
     expect(code, isNot(contains('if (')));
     // Single-element list serializations should not have a trailing comma.
@@ -958,7 +964,7 @@ void main() {
     expect(
         code,
         contains(
-            'func doit(completion: @escaping (Result<[Int64?], FlutterError>) -> Void)'));
+            'func doit(completion: @escaping (Result<[Int64?], PigeonError>) -> Void)'));
     expect(code, contains('let result = listResponse[0] as! [Int64?]'));
     expect(code, contains('completion(.success(result))'));
   });
@@ -1046,7 +1052,7 @@ void main() {
     expect(
         code,
         contains(
-            'func add(x xArg: Int64, y yArg: Int64, completion: @escaping (Result<Int64, FlutterError>) -> Void)'));
+            'func add(x xArg: Int64, y yArg: Int64, completion: @escaping (Result<Int64, PigeonError>) -> Void)'));
     expect(code,
         contains('channel.sendMessage([xArg, yArg] as [Any?]) { response in'));
   });
@@ -1186,7 +1192,7 @@ void main() {
     expect(
         code,
         contains(
-            'func doit(foo fooArg: Int64?, completion: @escaping (Result<Void, FlutterError>) -> Void)'));
+            'func doit(foo fooArg: Int64?, completion: @escaping (Result<Void, PigeonError>) -> Void)'));
   });
 
   test('nonnull fields', () {
@@ -1566,6 +1572,6 @@ void main() {
     expect(
         code,
         contains(
-            'return FlutterError(code: "channel-error", message: "Unable to establish connection on channel: \'\\(channelName)\'.", details: "")'));
+            'return PigeonError(code: "channel-error", message: "Unable to establish connection on channel: \'\\(channelName)\'.", details: "")'));
   });
 }

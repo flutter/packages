@@ -29,10 +29,11 @@ using ::testing::_;
 using ::testing::Eq;
 using ::testing::Return;
 
-void MockInitCaptureController(CaptureControllerImpl* capture_controller,
-                               MockTextureRegistrar* texture_registrar,
-                               MockCaptureEngine* engine, MockCamera* camera,
-                               int64_t mock_texture_id) {
+void MockInitCaptureController(
+    CaptureControllerImpl* capture_controller,
+    MockTextureRegistrar* texture_registrar, MockCaptureEngine* engine,
+    MockCamera* camera, int64_t mock_texture_id,
+    const RecordSettings record_settings = RecordSettings(true)) {
   ComPtr<MockMediaSource> video_source = new MockMediaSource();
   ComPtr<MockMediaSource> audio_source = new MockMediaSource();
 
@@ -60,7 +61,8 @@ void MockInitCaptureController(CaptureControllerImpl* capture_controller,
   EXPECT_CALL(*engine, Initialize).Times(1);
 
   bool result = capture_controller->InitCaptureDevice(
-      texture_registrar, MOCK_DEVICE_ID, true, ResolutionPreset::kAuto);
+      texture_registrar, MOCK_DEVICE_ID, ResolutionPreset::kAuto,
+      record_settings);
 
   EXPECT_TRUE(result);
 
@@ -258,7 +260,8 @@ TEST(CaptureController, InitCaptureEngineCanOnlyBeCalledOnce) {
   EXPECT_CALL(*camera, OnCreateCaptureEngineFailed).Times(1);
 
   bool result = capture_controller->InitCaptureDevice(
-      texture_registrar.get(), MOCK_DEVICE_ID, true, ResolutionPreset::kAuto);
+      texture_registrar.get(), MOCK_DEVICE_ID, ResolutionPreset::kAuto,
+      RecordSettings(true));
 
   EXPECT_FALSE(result);
 
@@ -299,7 +302,8 @@ TEST(CaptureController, InitCaptureEngineReportsFailure) {
       .Times(1);
 
   bool result = capture_controller->InitCaptureDevice(
-      texture_registrar.get(), MOCK_DEVICE_ID, true, ResolutionPreset::kAuto);
+      texture_registrar.get(), MOCK_DEVICE_ID, ResolutionPreset::kAuto,
+      RecordSettings(true));
 
   EXPECT_FALSE(result);
   EXPECT_FALSE(engine->initialized_);
@@ -343,7 +347,8 @@ TEST(CaptureController, InitCaptureEngineReportsAccessDenied) {
       .Times(1);
 
   bool result = capture_controller->InitCaptureDevice(
-      texture_registrar.get(), MOCK_DEVICE_ID, true, ResolutionPreset::kAuto);
+      texture_registrar.get(), MOCK_DEVICE_ID, ResolutionPreset::kAuto,
+      RecordSettings(true));
 
   EXPECT_FALSE(result);
   EXPECT_FALSE(engine->initialized_);
@@ -685,6 +690,110 @@ TEST(CaptureController, StartRecordSuccess) {
   std::string mock_path_to_video = "mock_path_to_video";
   MockRecordStart(capture_controller.get(), engine.Get(), record_sink.Get(),
                   camera.get(), mock_path_to_video);
+
+  // Called by destructor
+  EXPECT_CALL(*(engine.Get()), StopRecord(true, false))
+      .Times(1)
+      .WillOnce(Return(S_OK));
+
+  capture_controller = nullptr;
+  texture_registrar = nullptr;
+  engine = nullptr;
+  camera = nullptr;
+  record_sink = nullptr;
+}
+
+MATCHER_P2(WithFpsAndBitrate, fps, video_bitrate, "") {
+  UINT64 fps_value;
+  UINT32 video_bitrate_value;
+  return S_OK == arg->GetUINT64(MF_MT_FRAME_RATE, &fps_value) &&
+         S_OK == arg->GetUINT32(MF_MT_AVG_BITRATE, &video_bitrate_value) &&
+         fps_value == Pack2UINT32AsUINT64(static_cast<UINT32>(fps), 1) &&
+         video_bitrate_value == static_cast<UINT32>(video_bitrate);
+}
+
+MATCHER_P(WithAudioBitrate, audio_bitrate, "") {
+  UINT32 audio_bitrate_value;
+  return S_OK == arg->GetUINT32(MF_MT_AUDIO_AVG_BYTES_PER_SECOND,
+                                &audio_bitrate_value) &&
+         audio_bitrate_value == static_cast<UINT32>(audio_bitrate);
+}
+
+TEST(CaptureController, StartRecordWithSettingsSuccess) {
+  ComPtr<MockCaptureEngine> engine = new MockCaptureEngine();
+  std::unique_ptr<MockCamera> camera =
+      std::make_unique<MockCamera>(MOCK_DEVICE_ID);
+  std::unique_ptr<CaptureControllerImpl> capture_controller =
+      std::make_unique<CaptureControllerImpl>(camera.get());
+  std::unique_ptr<MockTextureRegistrar> texture_registrar =
+      std::make_unique<MockTextureRegistrar>();
+
+  int64_t mock_texture_id = 1234;
+
+  const auto kFps = 5;
+  const auto kVideoBitrate = 200000;
+  const auto kAudioBitrate = 32000;
+
+  RecordSettings record_settings;
+  record_settings.record_audio = true;
+  record_settings.fps = kFps;
+  record_settings.video_bitrate = kVideoBitrate;
+  record_settings.audio_bitrate = kAudioBitrate;
+
+  // Initialize capture controller to be able to start preview
+  MockInitCaptureController(capture_controller.get(), texture_registrar.get(),
+                            engine.Get(), camera.get(), mock_texture_id,
+                            record_settings);
+
+  ComPtr<MockCaptureSource> capture_source = new MockCaptureSource();
+
+  // Prepare fake media types
+  MockAvailableMediaTypes(engine.Get(), capture_source.Get(), 1, 1);
+
+  // Start record
+  ComPtr<MockCaptureRecordSink> record_sink = new MockCaptureRecordSink();
+
+  std::string mock_path_to_video = "mock_path_to_video";
+
+  EXPECT_CALL(*engine.Get(), StartRecord()).Times(1).WillOnce(Return(S_OK));
+
+  EXPECT_CALL(*engine.Get(), GetSink(MF_CAPTURE_ENGINE_SINK_TYPE_RECORD, _))
+      .Times(1)
+      .WillOnce(
+          [src_sink = record_sink.Get()](MF_CAPTURE_ENGINE_SINK_TYPE sink_type,
+                                         IMFCaptureSink** target_sink) {
+            *target_sink = src_sink;
+            src_sink->AddRef();
+            return S_OK;
+          });
+
+  EXPECT_CALL(*record_sink.Get(), RemoveAllStreams)
+      .Times(1)
+      .WillOnce(Return(S_OK));
+
+  EXPECT_CALL(
+      *record_sink.Get(),
+      AddStream(
+          Eq((DWORD)MF_CAPTURE_ENGINE_PREFERRED_SOURCE_STREAM_FOR_VIDEO_RECORD),
+          WithFpsAndBitrate(kFps, kVideoBitrate), _, _))
+      .Times(1)
+      .WillRepeatedly(Return(S_OK));
+
+  EXPECT_CALL(
+      *record_sink.Get(),
+      AddStream(Eq((DWORD)MF_CAPTURE_ENGINE_PREFERRED_SOURCE_STREAM_FOR_AUDIO),
+                WithAudioBitrate(kAudioBitrate), _, _))
+      .Times(1)
+      .WillRepeatedly(Return(S_OK));
+
+  EXPECT_CALL(*record_sink.Get(), SetOutputFileName)
+      .Times(1)
+      .WillOnce(Return(S_OK));
+
+  capture_controller->StartRecord(mock_path_to_video, -1);
+
+  EXPECT_CALL(*camera, OnStartRecordSucceeded()).Times(1);
+  engine->CreateFakeEvent(S_OK, MF_CAPTURE_ENGINE_RECORD_STARTED);
 
   // Called by destructor
   EXPECT_CALL(*(engine.Get()), StopRecord(true, false))

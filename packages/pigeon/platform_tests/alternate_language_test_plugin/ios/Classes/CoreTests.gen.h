@@ -46,7 +46,7 @@ typedef NS_ENUM(NSUInteger, FLTAnEnum) {
                   a4ByteArray:(FlutterStandardTypedData *)a4ByteArray
                   a8ByteArray:(FlutterStandardTypedData *)a8ByteArray
                   aFloatArray:(FlutterStandardTypedData *)aFloatArray
-                        aList:(NSArray *)aList
+                         list:(NSArray *)list
                          aMap:(NSDictionary *)aMap
                        anEnum:(FLTAnEnum)anEnum
                       aString:(NSString *)aString
@@ -59,7 +59,7 @@ typedef NS_ENUM(NSUInteger, FLTAnEnum) {
 @property(nonatomic, strong) FlutterStandardTypedData *a4ByteArray;
 @property(nonatomic, strong) FlutterStandardTypedData *a8ByteArray;
 @property(nonatomic, strong) FlutterStandardTypedData *aFloatArray;
-@property(nonatomic, copy) NSArray *aList;
+@property(nonatomic, copy) NSArray *list;
 @property(nonatomic, copy) NSDictionary *aMap;
 @property(nonatomic, assign) FLTAnEnum anEnum;
 @property(nonatomic, copy) NSString *aString;
@@ -219,7 +219,7 @@ NSObject<FlutterMessageCodec> *FLTHostIntegrationCoreApiGetCodec(void);
 /// Returns the passed list, to test serialization and deserialization.
 ///
 /// @return `nil` only when `error != nil`.
-- (nullable NSArray<id> *)echoList:(NSArray<id> *)aList
+- (nullable NSArray<id> *)echoList:(NSArray<id> *)list
                              error:(FlutterError *_Nullable *_Nonnull)error;
 /// Returns the passed map, to test serialization and deserialization.
 ///
@@ -342,7 +342,7 @@ NSObject<FlutterMessageCodec> *FLTHostIntegrationCoreApiGetCodec(void);
 - (void)echoAsyncObject:(id)anObject
              completion:(void (^)(id _Nullable, FlutterError *_Nullable))completion;
 /// Returns the passed list, to test asynchronous serialization and deserialization.
-- (void)echoAsyncList:(NSArray<id> *)aList
+- (void)echoAsyncList:(NSArray<id> *)list
            completion:(void (^)(NSArray<id> *_Nullable, FlutterError *_Nullable))completion;
 /// Returns the passed map, to test asynchronous serialization and deserialization.
 - (void)echoAsyncMap:(NSDictionary<NSString *, id> *)aMap
@@ -392,7 +392,7 @@ NSObject<FlutterMessageCodec> *FLTHostIntegrationCoreApiGetCodec(void);
 - (void)echoAsyncNullableObject:(nullable id)anObject
                      completion:(void (^)(id _Nullable, FlutterError *_Nullable))completion;
 /// Returns the passed list, to test asynchronous serialization and deserialization.
-- (void)echoAsyncNullableList:(nullable NSArray<id> *)aList
+- (void)echoAsyncNullableList:(nullable NSArray<id> *)list
                    completion:(void (^)(NSArray<id> *_Nullable, FlutterError *_Nullable))completion;
 /// Returns the passed map, to test asynchronous serialization and deserialization.
 - (void)echoAsyncNullableMap:(nullable NSDictionary<NSString *, id> *)aMap
@@ -440,10 +440,10 @@ NSObject<FlutterMessageCodec> *FLTHostIntegrationCoreApiGetCodec(void);
                    completion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion;
 - (void)callFlutterEchoString:(NSString *)aString
                    completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion;
-- (void)callFlutterEchoUint8List:(FlutterStandardTypedData *)aList
+- (void)callFlutterEchoUint8List:(FlutterStandardTypedData *)list
                       completion:(void (^)(FlutterStandardTypedData *_Nullable,
                                            FlutterError *_Nullable))completion;
-- (void)callFlutterEchoList:(NSArray<id> *)aList
+- (void)callFlutterEchoList:(NSArray<id> *)list
                  completion:(void (^)(NSArray<id> *_Nullable, FlutterError *_Nullable))completion;
 - (void)callFlutterEchoMap:(NSDictionary<NSString *, id> *)aMap
                 completion:(void (^)(NSDictionary<NSString *, id> *_Nullable,
@@ -462,10 +462,10 @@ NSObject<FlutterMessageCodec> *FLTHostIntegrationCoreApiGetCodec(void);
 - (void)callFlutterEchoNullableString:(nullable NSString *)aString
                            completion:
                                (void (^)(NSString *_Nullable, FlutterError *_Nullable))completion;
-- (void)callFlutterEchoNullableUint8List:(nullable FlutterStandardTypedData *)aList
+- (void)callFlutterEchoNullableUint8List:(nullable FlutterStandardTypedData *)list
                               completion:(void (^)(FlutterStandardTypedData *_Nullable,
                                                    FlutterError *_Nullable))completion;
-- (void)callFlutterEchoNullableList:(nullable NSArray<id> *)aList
+- (void)callFlutterEchoNullableList:(nullable NSArray<id> *)list
                          completion:
                              (void (^)(NSArray<id> *_Nullable, FlutterError *_Nullable))completion;
 - (void)callFlutterEchoNullableMap:(nullable NSDictionary<NSString *, id> *)aMap
@@ -474,10 +474,17 @@ NSObject<FlutterMessageCodec> *FLTHostIntegrationCoreApiGetCodec(void);
 - (void)callFlutterEchoNullableEnum:(nullable FLTAnEnumBox *)anEnumBoxed
                          completion:
                              (void (^)(FLTAnEnumBox *_Nullable, FlutterError *_Nullable))completion;
+- (void)callFlutterSmallApiEchoString:(NSString *)aString
+                           completion:
+                               (void (^)(NSString *_Nullable, FlutterError *_Nullable))completion;
 @end
 
 extern void SetUpFLTHostIntegrationCoreApi(id<FlutterBinaryMessenger> binaryMessenger,
                                            NSObject<FLTHostIntegrationCoreApi> *_Nullable api);
+
+extern void SetUpFLTHostIntegrationCoreApiWithSuffix(
+    id<FlutterBinaryMessenger> binaryMessenger, NSObject<FLTHostIntegrationCoreApi> *_Nullable api,
+    NSString *messageChannelSuffix);
 
 /// The codec used by FLTFlutterIntegrationCoreApi.
 NSObject<FlutterMessageCodec> *FLTFlutterIntegrationCoreApiGetCodec(void);
@@ -486,6 +493,8 @@ NSObject<FlutterMessageCodec> *FLTFlutterIntegrationCoreApiGetCodec(void);
 /// integration tests to call into.
 @interface FLTFlutterIntegrationCoreApi : NSObject
 - (instancetype)initWithBinaryMessenger:(id<FlutterBinaryMessenger>)binaryMessenger;
+- (instancetype)initWithBinaryMessenger:(id<FlutterBinaryMessenger>)binaryMessenger
+                   messageChannelSuffix:(nullable NSString *)messageChannelSuffix;
 /// A no-op function taking no arguments and returning no value, to sanity
 /// test basic calling.
 - (void)noopWithCompletion:(void (^)(FlutterError *_Nullable))completion;
@@ -536,11 +545,11 @@ NSObject<FlutterMessageCodec> *FLTFlutterIntegrationCoreApiGetCodec(void);
 - (void)echoString:(NSString *)aString
         completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion;
 /// Returns the passed byte list, to test serialization and deserialization.
-- (void)echoUint8List:(FlutterStandardTypedData *)aList
+- (void)echoUint8List:(FlutterStandardTypedData *)list
            completion:
                (void (^)(FlutterStandardTypedData *_Nullable, FlutterError *_Nullable))completion;
 /// Returns the passed list, to test serialization and deserialization.
-- (void)echoList:(NSArray<id> *)aList
+- (void)echoList:(NSArray<id> *)list
       completion:(void (^)(NSArray<id> *_Nullable, FlutterError *_Nullable))completion;
 /// Returns the passed map, to test serialization and deserialization.
 - (void)echoMap:(NSDictionary<NSString *, id> *)aMap
@@ -562,11 +571,11 @@ NSObject<FlutterMessageCodec> *FLTFlutterIntegrationCoreApiGetCodec(void);
 - (void)echoNullableString:(nullable NSString *)aString
                 completion:(void (^)(NSString *_Nullable, FlutterError *_Nullable))completion;
 /// Returns the passed byte list, to test serialization and deserialization.
-- (void)echoNullableUint8List:(nullable FlutterStandardTypedData *)aList
+- (void)echoNullableUint8List:(nullable FlutterStandardTypedData *)list
                    completion:(void (^)(FlutterStandardTypedData *_Nullable,
                                         FlutterError *_Nullable))completion;
 /// Returns the passed list, to test serialization and deserialization.
-- (void)echoNullableList:(nullable NSArray<id> *)aList
+- (void)echoNullableList:(nullable NSArray<id> *)list
               completion:(void (^)(NSArray<id> *_Nullable, FlutterError *_Nullable))completion;
 /// Returns the passed map, to test serialization and deserialization.
 - (void)echoNullableMap:(nullable NSDictionary<NSString *, id> *)aMap
@@ -594,6 +603,10 @@ NSObject<FlutterMessageCodec> *FLTHostTrivialApiGetCodec(void);
 extern void SetUpFLTHostTrivialApi(id<FlutterBinaryMessenger> binaryMessenger,
                                    NSObject<FLTHostTrivialApi> *_Nullable api);
 
+extern void SetUpFLTHostTrivialApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger,
+                                             NSObject<FLTHostTrivialApi> *_Nullable api,
+                                             NSString *messageChannelSuffix);
+
 /// The codec used by FLTHostSmallApi.
 NSObject<FlutterMessageCodec> *FLTHostSmallApiGetCodec(void);
 
@@ -607,12 +620,18 @@ NSObject<FlutterMessageCodec> *FLTHostSmallApiGetCodec(void);
 extern void SetUpFLTHostSmallApi(id<FlutterBinaryMessenger> binaryMessenger,
                                  NSObject<FLTHostSmallApi> *_Nullable api);
 
+extern void SetUpFLTHostSmallApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger,
+                                           NSObject<FLTHostSmallApi> *_Nullable api,
+                                           NSString *messageChannelSuffix);
+
 /// The codec used by FLTFlutterSmallApi.
 NSObject<FlutterMessageCodec> *FLTFlutterSmallApiGetCodec(void);
 
 /// A simple API called in some unit tests.
 @interface FLTFlutterSmallApi : NSObject
 - (instancetype)initWithBinaryMessenger:(id<FlutterBinaryMessenger>)binaryMessenger;
+- (instancetype)initWithBinaryMessenger:(id<FlutterBinaryMessenger>)binaryMessenger
+                   messageChannelSuffix:(nullable NSString *)messageChannelSuffix;
 - (void)echoWrappedList:(FLTTestMessage *)msg
              completion:(void (^)(FLTTestMessage *_Nullable, FlutterError *_Nullable))completion;
 - (void)echoString:(NSString *)aString
