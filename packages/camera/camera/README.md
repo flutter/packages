@@ -50,7 +50,8 @@ better support for more devices than `camera_android`, but has some limitations;
 for more details. If you wish to use the [`camera_android`][4] implementation of the camera plugin
 built with Camera2 that lacks these limitations, please follow [these instructions][5].
 
-To additionally allow image streaming while your app is in the background, please follow [these instructions][6].
+If you wish to allow image streaming while your app is in the background, there are additional steps required;
+please see [these instructions][6] for more details.
 
 ### Web integration
 

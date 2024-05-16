@@ -55,15 +55,15 @@ and thus, those parameters will silently be ignored.
 
 ### Writing to external storage to save image files
 
-In order to save captured images and videos to files for devices running Android 10 or below,
-CameraX requires specifying the `WRITE_EXTERNAL_STORAGE` permission (see [the documentation][11]).
+In order to save captured images and videos to files on Android 10 and below, CameraX
+requires specifying the `WRITE_EXTERNAL_STORAGE` permission (see [the CameraX documentation][10]).
 This is already done in the plugin, so no further action is required on your end. To understand
-the implications of specificying this permission, see [the documentation][12].
+the implications of specificying this permission, see [the `WRITE_EXTERNAL_STORAGE` documentation][11].
 
 ### Allowing image streaming in the background
 
-To allow for background image streaming as of Android 14+, you will need to specify the foreground
-[`TYPE_CAMERA`][10] foreground service permission in your app's manifest. Specifically, in
+As of Android 14, to allow for background image streaming, you will need to specify the foreground
+[`TYPE_CAMERA`][12] foreground service permission in your app's manifest. Specifically, in
 `your_app/android/app/src/main/AndroidManifest.xml` add the following:
 
 ```xml
@@ -72,7 +72,6 @@ To allow for background image streaming as of Android 14+, you will need to spec
   ...
 </manifest>
 ```
-
 
 ## Contributing
 
@@ -89,7 +88,7 @@ For more information on contributing to this plugin, see [`CONTRIBUTING.md`](CON
 [7]: https://developer.android.com/reference/android/hardware/camera2/CameraMetadata#INFO_SUPPORTED_HARDWARE_LEVEL_3
 [8]: https://developer.android.com/reference/android/hardware/camera2/CameraMetadata#INFO_SUPPORTED_HARDWARE_LEVEL_LIMITED
 [9]: https://pub.dev/packages/camera_android#usage
-[10]: https://developer.android.com/reference/android/Manifest.permission#FOREGROUND_SERVICE_CAMERA
-[11]: https://developer.android.com/media/camera/camerax/architecture#permissions
-[12]: https://developer.android.com/reference/android/Manifest.permission#WRITE_EXTERNAL_STORAGE
+[10]: https://developer.android.com/media/camera/camerax/architecture#permissions
+[11]: https://developer.android.com/reference/android/Manifest.permission#WRITE_EXTERNAL_STORAGE
+[12]: https://developer.android.com/reference/android/Manifest.permission#FOREGROUND_SERVICE_CAMERA
 [148013]: https://github.com/flutter/flutter/issues/148013
