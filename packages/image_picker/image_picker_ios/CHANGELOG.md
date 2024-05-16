@@ -1,3 +1,7 @@
+## 0.8.11+2
+
+* Temporarily remove Swift Package Manager compatibility to resolve issues with Cocoapods builds.
+
 ## 0.8.11+1
 
 * Makes all headers public with Swift Package Manager integration to keep inline with CocoaPods.
