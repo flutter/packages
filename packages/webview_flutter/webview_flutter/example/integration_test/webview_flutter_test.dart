@@ -302,7 +302,9 @@ Future<void> main() async {
       isPaused =
           await controller.runJavaScriptReturningResult('isPaused();') as bool;
       expect(isPaused, true);
-    });
+    },
+        // TODO: Stop skipping once https://github.com/flutter/flutter/issues/148487 is resolved
+        skip: true);
 
     testWidgets('Video plays inline', (WidgetTester tester) async {
       final Completer<void> pageLoaded = Completer<void>();
