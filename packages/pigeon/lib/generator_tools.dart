@@ -519,7 +519,7 @@ Iterable<EnumeratedType> getEnumeratedTypes(Root root) sync* {
   const int maxCustomClassesPerApi = 255 - _minimumCodecFieldKey;
   if (root.classes.length + root.enums.length > maxCustomClassesPerApi) {
     throw Exception(
-        "Pigeon doesn't support more than $maxCustomClassesPerApi referenced custom classes per API, try splitting up your APIs.");
+        "Pigeon doesn't currently support more than $maxCustomClassesPerApi referenced custom classes per file.");
   }
   int index = 0;
   for (final Class customClass in root.classes) {
