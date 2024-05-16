@@ -32,246 +32,6 @@ FlutterError CreateConnectionError(const std::string channel_name) {
       EncodableValue(""));
 }
 
-// AllMapTypes
-
-AllMapTypes::AllMapTypes(const EncodableMap& map) : map_(map) {}
-
-const EncodableMap& AllMapTypes::map() const { return map_; }
-
-void AllMapTypes::set_map(const EncodableMap& value_arg) { map_ = value_arg; }
-
-EncodableList AllMapTypes::ToEncodableList() const {
-  EncodableList list;
-  list.reserve(1);
-  list.push_back(EncodableValue(map_));
-  return list;
-}
-
-AllMapTypes AllMapTypes::FromEncodableList(const EncodableList& list) {
-  AllMapTypes decoded(std::get<EncodableMap>(list[0]));
-  return decoded;
-}
-
-// AllListTypes
-
-AllListTypes::AllListTypes(const EncodableList& list,
-                           const EncodableList& string_list,
-                           const EncodableList& int_list,
-                           const EncodableList& double_list,
-                           const EncodableList& bool_list)
-    : list_(list),
-      string_list_(string_list),
-      int_list_(int_list),
-      double_list_(double_list),
-      bool_list_(bool_list) {}
-
-const EncodableList& AllListTypes::list() const { return list_; }
-
-void AllListTypes::set_list(const EncodableList& value_arg) {
-  list_ = value_arg;
-}
-
-const EncodableList& AllListTypes::string_list() const { return string_list_; }
-
-void AllListTypes::set_string_list(const EncodableList& value_arg) {
-  string_list_ = value_arg;
-}
-
-const EncodableList& AllListTypes::int_list() const { return int_list_; }
-
-void AllListTypes::set_int_list(const EncodableList& value_arg) {
-  int_list_ = value_arg;
-}
-
-const EncodableList& AllListTypes::double_list() const { return double_list_; }
-
-void AllListTypes::set_double_list(const EncodableList& value_arg) {
-  double_list_ = value_arg;
-}
-
-const EncodableList& AllListTypes::bool_list() const { return bool_list_; }
-
-void AllListTypes::set_bool_list(const EncodableList& value_arg) {
-  bool_list_ = value_arg;
-}
-
-EncodableList AllListTypes::ToEncodableList() const {
-  EncodableList list;
-  list.reserve(5);
-  list.push_back(EncodableValue(list_));
-  list.push_back(EncodableValue(string_list_));
-  list.push_back(EncodableValue(int_list_));
-  list.push_back(EncodableValue(double_list_));
-  list.push_back(EncodableValue(bool_list_));
-  return list;
-}
-
-AllListTypes AllListTypes::FromEncodableList(const EncodableList& list) {
-  AllListTypes decoded(
-      std::get<EncodableList>(list[0]), std::get<EncodableList>(list[1]),
-      std::get<EncodableList>(list[2]), std::get<EncodableList>(list[3]),
-      std::get<EncodableList>(list[4]));
-  return decoded;
-}
-
-// AllNullableMapTypes
-
-AllNullableMapTypes::AllNullableMapTypes() {}
-
-AllNullableMapTypes::AllNullableMapTypes(const EncodableMap* map)
-    : map_(map ? std::optional<EncodableMap>(*map) : std::nullopt) {}
-
-const EncodableMap* AllNullableMapTypes::map() const {
-  return map_ ? &(*map_) : nullptr;
-}
-
-void AllNullableMapTypes::set_map(const EncodableMap* value_arg) {
-  map_ = value_arg ? std::optional<EncodableMap>(*value_arg) : std::nullopt;
-}
-
-void AllNullableMapTypes::set_map(const EncodableMap& value_arg) {
-  map_ = value_arg;
-}
-
-EncodableList AllNullableMapTypes::ToEncodableList() const {
-  EncodableList list;
-  list.reserve(1);
-  list.push_back(map_ ? EncodableValue(*map_) : EncodableValue());
-  return list;
-}
-
-AllNullableMapTypes AllNullableMapTypes::FromEncodableList(
-    const EncodableList& list) {
-  AllNullableMapTypes decoded;
-  auto& encodable_map = list[0];
-  if (!encodable_map.IsNull()) {
-    decoded.set_map(std::get<EncodableMap>(encodable_map));
-  }
-  return decoded;
-}
-
-// AllNullableListTypes
-
-AllNullableListTypes::AllNullableListTypes() {}
-
-AllNullableListTypes::AllNullableListTypes(const EncodableList* list,
-                                           const EncodableList* string_list,
-                                           const EncodableList* int_list,
-                                           const EncodableList* double_list,
-                                           const EncodableList* bool_list)
-    : list_(list ? std::optional<EncodableList>(*list) : std::nullopt),
-      string_list_(string_list ? std::optional<EncodableList>(*string_list)
-                               : std::nullopt),
-      int_list_(int_list ? std::optional<EncodableList>(*int_list)
-                         : std::nullopt),
-      double_list_(double_list ? std::optional<EncodableList>(*double_list)
-                               : std::nullopt),
-      bool_list_(bool_list ? std::optional<EncodableList>(*bool_list)
-                           : std::nullopt) {}
-
-const EncodableList* AllNullableListTypes::list() const {
-  return list_ ? &(*list_) : nullptr;
-}
-
-void AllNullableListTypes::set_list(const EncodableList* value_arg) {
-  list_ = value_arg ? std::optional<EncodableList>(*value_arg) : std::nullopt;
-}
-
-void AllNullableListTypes::set_list(const EncodableList& value_arg) {
-  list_ = value_arg;
-}
-
-const EncodableList* AllNullableListTypes::string_list() const {
-  return string_list_ ? &(*string_list_) : nullptr;
-}
-
-void AllNullableListTypes::set_string_list(const EncodableList* value_arg) {
-  string_list_ =
-      value_arg ? std::optional<EncodableList>(*value_arg) : std::nullopt;
-}
-
-void AllNullableListTypes::set_string_list(const EncodableList& value_arg) {
-  string_list_ = value_arg;
-}
-
-const EncodableList* AllNullableListTypes::int_list() const {
-  return int_list_ ? &(*int_list_) : nullptr;
-}
-
-void AllNullableListTypes::set_int_list(const EncodableList* value_arg) {
-  int_list_ =
-      value_arg ? std::optional<EncodableList>(*value_arg) : std::nullopt;
-}
-
-void AllNullableListTypes::set_int_list(const EncodableList& value_arg) {
-  int_list_ = value_arg;
-}
-
-const EncodableList* AllNullableListTypes::double_list() const {
-  return double_list_ ? &(*double_list_) : nullptr;
-}
-
-void AllNullableListTypes::set_double_list(const EncodableList* value_arg) {
-  double_list_ =
-      value_arg ? std::optional<EncodableList>(*value_arg) : std::nullopt;
-}
-
-void AllNullableListTypes::set_double_list(const EncodableList& value_arg) {
-  double_list_ = value_arg;
-}
-
-const EncodableList* AllNullableListTypes::bool_list() const {
-  return bool_list_ ? &(*bool_list_) : nullptr;
-}
-
-void AllNullableListTypes::set_bool_list(const EncodableList* value_arg) {
-  bool_list_ =
-      value_arg ? std::optional<EncodableList>(*value_arg) : std::nullopt;
-}
-
-void AllNullableListTypes::set_bool_list(const EncodableList& value_arg) {
-  bool_list_ = value_arg;
-}
-
-EncodableList AllNullableListTypes::ToEncodableList() const {
-  EncodableList list;
-  list.reserve(5);
-  list.push_back(list_ ? EncodableValue(*list_) : EncodableValue());
-  list.push_back(string_list_ ? EncodableValue(*string_list_)
-                              : EncodableValue());
-  list.push_back(int_list_ ? EncodableValue(*int_list_) : EncodableValue());
-  list.push_back(double_list_ ? EncodableValue(*double_list_)
-                              : EncodableValue());
-  list.push_back(bool_list_ ? EncodableValue(*bool_list_) : EncodableValue());
-  return list;
-}
-
-AllNullableListTypes AllNullableListTypes::FromEncodableList(
-    const EncodableList& list) {
-  AllNullableListTypes decoded;
-  auto& encodable_list = list[0];
-  if (!encodable_list.IsNull()) {
-    decoded.set_list(std::get<EncodableList>(encodable_list));
-  }
-  auto& encodable_string_list = list[1];
-  if (!encodable_string_list.IsNull()) {
-    decoded.set_string_list(std::get<EncodableList>(encodable_string_list));
-  }
-  auto& encodable_int_list = list[2];
-  if (!encodable_int_list.IsNull()) {
-    decoded.set_int_list(std::get<EncodableList>(encodable_int_list));
-  }
-  auto& encodable_double_list = list[3];
-  if (!encodable_double_list.IsNull()) {
-    decoded.set_double_list(std::get<EncodableList>(encodable_double_list));
-  }
-  auto& encodable_bool_list = list[4];
-  if (!encodable_bool_list.IsNull()) {
-    decoded.set_bool_list(std::get<EncodableList>(encodable_bool_list));
-  }
-  return decoded;
-}
-
 // AllTypes
 
 AllTypes::AllTypes(bool a_bool, int64_t an_int, int64_t an_int64,
@@ -280,8 +40,11 @@ AllTypes::AllTypes(bool a_bool, int64_t an_int, int64_t an_int64,
                    const std::vector<int64_t>& a8_byte_array,
                    const std::vector<double>& a_float_array,
                    const AnEnum& an_enum, const std::string& a_string,
-                   const EncodableValue& an_object, const AllMapTypes& all_maps,
-                   const AllListTypes& all_lists)
+                   const EncodableValue& an_object, const EncodableList& list,
+                   const EncodableList& string_list,
+                   const EncodableList& int_list,
+                   const EncodableList& double_list,
+                   const EncodableList& bool_list, const EncodableMap& map)
     : a_bool_(a_bool),
       an_int_(an_int),
       an_int64_(an_int64),
@@ -293,40 +56,12 @@ AllTypes::AllTypes(bool a_bool, int64_t an_int, int64_t an_int64,
       an_enum_(an_enum),
       a_string_(a_string),
       an_object_(an_object),
-      all_maps_(std::make_unique<AllMapTypes>(all_maps)),
-      all_lists_(std::make_unique<AllListTypes>(all_lists)) {}
-
-AllTypes::AllTypes(const AllTypes& other)
-    : a_bool_(other.a_bool_),
-      an_int_(other.an_int_),
-      an_int64_(other.an_int64_),
-      a_double_(other.a_double_),
-      a_byte_array_(other.a_byte_array_),
-      a4_byte_array_(other.a4_byte_array_),
-      a8_byte_array_(other.a8_byte_array_),
-      a_float_array_(other.a_float_array_),
-      an_enum_(other.an_enum_),
-      a_string_(other.a_string_),
-      an_object_(other.an_object_),
-      all_maps_(std::make_unique<AllMapTypes>(*other.all_maps_)),
-      all_lists_(std::make_unique<AllListTypes>(*other.all_lists_)) {}
-
-AllTypes& AllTypes::operator=(const AllTypes& other) {
-  a_bool_ = other.a_bool_;
-  an_int_ = other.an_int_;
-  an_int64_ = other.an_int64_;
-  a_double_ = other.a_double_;
-  a_byte_array_ = other.a_byte_array_;
-  a4_byte_array_ = other.a4_byte_array_;
-  a8_byte_array_ = other.a8_byte_array_;
-  a_float_array_ = other.a_float_array_;
-  an_enum_ = other.an_enum_;
-  a_string_ = other.a_string_;
-  an_object_ = other.an_object_;
-  all_maps_ = std::make_unique<AllMapTypes>(*other.all_maps_);
-  all_lists_ = std::make_unique<AllListTypes>(*other.all_lists_);
-  return *this;
-}
+      list_(list),
+      string_list_(string_list),
+      int_list_(int_list),
+      double_list_(double_list),
+      bool_list_(bool_list),
+      map_(map) {}
 
 bool AllTypes::a_bool() const { return a_bool_; }
 
@@ -392,21 +127,41 @@ void AllTypes::set_an_object(const EncodableValue& value_arg) {
   an_object_ = value_arg;
 }
 
-const AllMapTypes& AllTypes::all_maps() const { return *all_maps_; }
+const EncodableList& AllTypes::list() const { return list_; }
 
-void AllTypes::set_all_maps(const AllMapTypes& value_arg) {
-  all_maps_ = std::make_unique<AllMapTypes>(value_arg);
+void AllTypes::set_list(const EncodableList& value_arg) { list_ = value_arg; }
+
+const EncodableList& AllTypes::string_list() const { return string_list_; }
+
+void AllTypes::set_string_list(const EncodableList& value_arg) {
+  string_list_ = value_arg;
 }
 
-const AllListTypes& AllTypes::all_lists() const { return *all_lists_; }
+const EncodableList& AllTypes::int_list() const { return int_list_; }
 
-void AllTypes::set_all_lists(const AllListTypes& value_arg) {
-  all_lists_ = std::make_unique<AllListTypes>(value_arg);
+void AllTypes::set_int_list(const EncodableList& value_arg) {
+  int_list_ = value_arg;
 }
+
+const EncodableList& AllTypes::double_list() const { return double_list_; }
+
+void AllTypes::set_double_list(const EncodableList& value_arg) {
+  double_list_ = value_arg;
+}
+
+const EncodableList& AllTypes::bool_list() const { return bool_list_; }
+
+void AllTypes::set_bool_list(const EncodableList& value_arg) {
+  bool_list_ = value_arg;
+}
+
+const EncodableMap& AllTypes::map() const { return map_; }
+
+void AllTypes::set_map(const EncodableMap& value_arg) { map_ = value_arg; }
 
 EncodableList AllTypes::ToEncodableList() const {
   EncodableList list;
-  list.reserve(13);
+  list.reserve(17);
   list.push_back(EncodableValue(a_bool_));
   list.push_back(EncodableValue(an_int_));
   list.push_back(EncodableValue(an_int64_));
@@ -418,8 +173,12 @@ EncodableList AllTypes::ToEncodableList() const {
   list.push_back(CustomEncodableValue(an_enum_));
   list.push_back(EncodableValue(a_string_));
   list.push_back(an_object_);
-  list.push_back(CustomEncodableValue(*all_maps_));
-  list.push_back(CustomEncodableValue(*all_lists_));
+  list.push_back(EncodableValue(list_));
+  list.push_back(EncodableValue(string_list_));
+  list.push_back(EncodableValue(int_list_));
+  list.push_back(EncodableValue(double_list_));
+  list.push_back(EncodableValue(bool_list_));
+  list.push_back(EncodableValue(map_));
   return list;
 }
 
@@ -432,10 +191,9 @@ AllTypes AllTypes::FromEncodableList(const EncodableList& list) {
       std::get<std::vector<double>>(list[7]),
       std::any_cast<const AnEnum&>(std::get<CustomEncodableValue>(list[8])),
       std::get<std::string>(list[9]), list[10],
-      std::any_cast<const AllMapTypes&>(
-          std::get<CustomEncodableValue>(list[11])),
-      std::any_cast<const AllListTypes&>(
-          std::get<CustomEncodableValue>(list[12])));
+      std::get<EncodableList>(list[11]), std::get<EncodableList>(list[12]),
+      std::get<EncodableList>(list[13]), std::get<EncodableList>(list[14]),
+      std::get<EncodableList>(list[15]), std::get<EncodableMap>(list[16]));
   return decoded;
 }
 
@@ -455,9 +213,10 @@ AllNullableTypes::AllNullableTypes(
     const EncodableMap* nullable_map_with_object, const AnEnum* a_nullable_enum,
     const std::string* a_nullable_string,
     const EncodableValue* a_nullable_object,
-    const AllNullableListTypes* all_nullable_lists,
-    const AllNullableMapTypes* all_nullable_maps,
-    const AllNullableTypes* all_nullable_types)
+    const AllNullableTypes* all_nullable_types, const EncodableList* list,
+    const EncodableList* string_list, const EncodableList* int_list,
+    const EncodableList* double_list, const EncodableList* bool_list,
+    const EncodableMap* map)
     : a_nullable_bool_(a_nullable_bool ? std::optional<bool>(*a_nullable_bool)
                                        : std::nullopt),
       a_nullable_int_(a_nullable_int ? std::optional<int64_t>(*a_nullable_int)
@@ -503,18 +262,20 @@ AllNullableTypes::AllNullableTypes(
       a_nullable_object_(a_nullable_object
                              ? std::optional<EncodableValue>(*a_nullable_object)
                              : std::nullopt),
-      all_nullable_lists_(
-          all_nullable_lists
-              ? std::make_unique<AllNullableListTypes>(*all_nullable_lists)
-              : nullptr),
-      all_nullable_maps_(
-          all_nullable_maps
-              ? std::make_unique<AllNullableMapTypes>(*all_nullable_maps)
-              : nullptr),
       all_nullable_types_(
           all_nullable_types
               ? std::make_unique<AllNullableTypes>(*all_nullable_types)
-              : nullptr) {}
+              : nullptr),
+      list_(list ? std::optional<EncodableList>(*list) : std::nullopt),
+      string_list_(string_list ? std::optional<EncodableList>(*string_list)
+                               : std::nullopt),
+      int_list_(int_list ? std::optional<EncodableList>(*int_list)
+                         : std::nullopt),
+      double_list_(double_list ? std::optional<EncodableList>(*double_list)
+                               : std::nullopt),
+      bool_list_(bool_list ? std::optional<EncodableList>(*bool_list)
+                           : std::nullopt),
+      map_(map ? std::optional<EncodableMap>(*map) : std::nullopt) {}
 
 AllNullableTypes::AllNullableTypes(const AllNullableTypes& other)
     : a_nullable_bool_(other.a_nullable_bool_
@@ -569,18 +330,25 @@ AllNullableTypes::AllNullableTypes(const AllNullableTypes& other)
           other.a_nullable_object_
               ? std::optional<EncodableValue>(*other.a_nullable_object_)
               : std::nullopt),
-      all_nullable_lists_(other.all_nullable_lists_
-                              ? std::make_unique<AllNullableListTypes>(
-                                    *other.all_nullable_lists_)
-                              : nullptr),
-      all_nullable_maps_(
-          other.all_nullable_maps_
-              ? std::make_unique<AllNullableMapTypes>(*other.all_nullable_maps_)
-              : nullptr),
       all_nullable_types_(
           other.all_nullable_types_
               ? std::make_unique<AllNullableTypes>(*other.all_nullable_types_)
-              : nullptr) {}
+              : nullptr),
+      list_(other.list_ ? std::optional<EncodableList>(*other.list_)
+                        : std::nullopt),
+      string_list_(other.string_list_
+                       ? std::optional<EncodableList>(*other.string_list_)
+                       : std::nullopt),
+      int_list_(other.int_list_ ? std::optional<EncodableList>(*other.int_list_)
+                                : std::nullopt),
+      double_list_(other.double_list_
+                       ? std::optional<EncodableList>(*other.double_list_)
+                       : std::nullopt),
+      bool_list_(other.bool_list_
+                     ? std::optional<EncodableList>(*other.bool_list_)
+                     : std::nullopt),
+      map_(other.map_ ? std::optional<EncodableMap>(*other.map_)
+                      : std::nullopt) {}
 
 AllNullableTypes& AllNullableTypes::operator=(const AllNullableTypes& other) {
   a_nullable_bool_ = other.a_nullable_bool_;
@@ -597,18 +365,16 @@ AllNullableTypes& AllNullableTypes::operator=(const AllNullableTypes& other) {
   a_nullable_enum_ = other.a_nullable_enum_;
   a_nullable_string_ = other.a_nullable_string_;
   a_nullable_object_ = other.a_nullable_object_;
-  all_nullable_lists_ =
-      other.all_nullable_lists_
-          ? std::make_unique<AllNullableListTypes>(*other.all_nullable_lists_)
-          : nullptr;
-  all_nullable_maps_ =
-      other.all_nullable_maps_
-          ? std::make_unique<AllNullableMapTypes>(*other.all_nullable_maps_)
-          : nullptr;
   all_nullable_types_ =
       other.all_nullable_types_
           ? std::make_unique<AllNullableTypes>(*other.all_nullable_types_)
           : nullptr;
+  list_ = other.list_;
+  string_list_ = other.string_list_;
+  int_list_ = other.int_list_;
+  double_list_ = other.double_list_;
+  bool_list_ = other.bool_list_;
+  map_ = other.map_;
   return *this;
 }
 
@@ -812,36 +578,6 @@ void AllNullableTypes::set_a_nullable_object(const EncodableValue& value_arg) {
   a_nullable_object_ = value_arg;
 }
 
-const AllNullableListTypes* AllNullableTypes::all_nullable_lists() const {
-  return all_nullable_lists_.get();
-}
-
-void AllNullableTypes::set_all_nullable_lists(
-    const AllNullableListTypes* value_arg) {
-  all_nullable_lists_ =
-      value_arg ? std::make_unique<AllNullableListTypes>(*value_arg) : nullptr;
-}
-
-void AllNullableTypes::set_all_nullable_lists(
-    const AllNullableListTypes& value_arg) {
-  all_nullable_lists_ = std::make_unique<AllNullableListTypes>(value_arg);
-}
-
-const AllNullableMapTypes* AllNullableTypes::all_nullable_maps() const {
-  return all_nullable_maps_.get();
-}
-
-void AllNullableTypes::set_all_nullable_maps(
-    const AllNullableMapTypes* value_arg) {
-  all_nullable_maps_ =
-      value_arg ? std::make_unique<AllNullableMapTypes>(*value_arg) : nullptr;
-}
-
-void AllNullableTypes::set_all_nullable_maps(
-    const AllNullableMapTypes& value_arg) {
-  all_nullable_maps_ = std::make_unique<AllNullableMapTypes>(value_arg);
-}
-
 const AllNullableTypes* AllNullableTypes::all_nullable_types() const {
   return all_nullable_types_.get();
 }
@@ -857,9 +593,85 @@ void AllNullableTypes::set_all_nullable_types(
   all_nullable_types_ = std::make_unique<AllNullableTypes>(value_arg);
 }
 
+const EncodableList* AllNullableTypes::list() const {
+  return list_ ? &(*list_) : nullptr;
+}
+
+void AllNullableTypes::set_list(const EncodableList* value_arg) {
+  list_ = value_arg ? std::optional<EncodableList>(*value_arg) : std::nullopt;
+}
+
+void AllNullableTypes::set_list(const EncodableList& value_arg) {
+  list_ = value_arg;
+}
+
+const EncodableList* AllNullableTypes::string_list() const {
+  return string_list_ ? &(*string_list_) : nullptr;
+}
+
+void AllNullableTypes::set_string_list(const EncodableList* value_arg) {
+  string_list_ =
+      value_arg ? std::optional<EncodableList>(*value_arg) : std::nullopt;
+}
+
+void AllNullableTypes::set_string_list(const EncodableList& value_arg) {
+  string_list_ = value_arg;
+}
+
+const EncodableList* AllNullableTypes::int_list() const {
+  return int_list_ ? &(*int_list_) : nullptr;
+}
+
+void AllNullableTypes::set_int_list(const EncodableList* value_arg) {
+  int_list_ =
+      value_arg ? std::optional<EncodableList>(*value_arg) : std::nullopt;
+}
+
+void AllNullableTypes::set_int_list(const EncodableList& value_arg) {
+  int_list_ = value_arg;
+}
+
+const EncodableList* AllNullableTypes::double_list() const {
+  return double_list_ ? &(*double_list_) : nullptr;
+}
+
+void AllNullableTypes::set_double_list(const EncodableList* value_arg) {
+  double_list_ =
+      value_arg ? std::optional<EncodableList>(*value_arg) : std::nullopt;
+}
+
+void AllNullableTypes::set_double_list(const EncodableList& value_arg) {
+  double_list_ = value_arg;
+}
+
+const EncodableList* AllNullableTypes::bool_list() const {
+  return bool_list_ ? &(*bool_list_) : nullptr;
+}
+
+void AllNullableTypes::set_bool_list(const EncodableList* value_arg) {
+  bool_list_ =
+      value_arg ? std::optional<EncodableList>(*value_arg) : std::nullopt;
+}
+
+void AllNullableTypes::set_bool_list(const EncodableList& value_arg) {
+  bool_list_ = value_arg;
+}
+
+const EncodableMap* AllNullableTypes::map() const {
+  return map_ ? &(*map_) : nullptr;
+}
+
+void AllNullableTypes::set_map(const EncodableMap* value_arg) {
+  map_ = value_arg ? std::optional<EncodableMap>(*value_arg) : std::nullopt;
+}
+
+void AllNullableTypes::set_map(const EncodableMap& value_arg) {
+  map_ = value_arg;
+}
+
 EncodableList AllNullableTypes::ToEncodableList() const {
   EncodableList list;
-  list.reserve(17);
+  list.reserve(21);
   list.push_back(a_nullable_bool_ ? EncodableValue(*a_nullable_bool_)
                                   : EncodableValue());
   list.push_back(a_nullable_int_ ? EncodableValue(*a_nullable_int_)
@@ -893,14 +705,17 @@ EncodableList AllNullableTypes::ToEncodableList() const {
   list.push_back(a_nullable_string_ ? EncodableValue(*a_nullable_string_)
                                     : EncodableValue());
   list.push_back(a_nullable_object_ ? *a_nullable_object_ : EncodableValue());
-  list.push_back(all_nullable_lists_
-                     ? CustomEncodableValue(*all_nullable_lists_)
-                     : EncodableValue());
-  list.push_back(all_nullable_maps_ ? CustomEncodableValue(*all_nullable_maps_)
-                                    : EncodableValue());
   list.push_back(all_nullable_types_
                      ? CustomEncodableValue(*all_nullable_types_)
                      : EncodableValue());
+  list.push_back(list_ ? EncodableValue(*list_) : EncodableValue());
+  list.push_back(string_list_ ? EncodableValue(*string_list_)
+                              : EncodableValue());
+  list.push_back(int_list_ ? EncodableValue(*int_list_) : EncodableValue());
+  list.push_back(double_list_ ? EncodableValue(*double_list_)
+                              : EncodableValue());
+  list.push_back(bool_list_ ? EncodableValue(*bool_list_) : EncodableValue());
+  list.push_back(map_ ? EncodableValue(*map_) : EncodableValue());
   return list;
 }
 
@@ -973,20 +788,34 @@ AllNullableTypes AllNullableTypes::FromEncodableList(
   if (!encodable_a_nullable_object.IsNull()) {
     decoded.set_a_nullable_object(encodable_a_nullable_object);
   }
-  auto& encodable_all_nullable_lists = list[14];
-  if (!encodable_all_nullable_lists.IsNull()) {
-    decoded.set_all_nullable_lists(std::any_cast<const AllNullableListTypes&>(
-        std::get<CustomEncodableValue>(encodable_all_nullable_lists)));
-  }
-  auto& encodable_all_nullable_maps = list[15];
-  if (!encodable_all_nullable_maps.IsNull()) {
-    decoded.set_all_nullable_maps(std::any_cast<const AllNullableMapTypes&>(
-        std::get<CustomEncodableValue>(encodable_all_nullable_maps)));
-  }
-  auto& encodable_all_nullable_types = list[16];
+  auto& encodable_all_nullable_types = list[14];
   if (!encodable_all_nullable_types.IsNull()) {
     decoded.set_all_nullable_types(std::any_cast<const AllNullableTypes&>(
         std::get<CustomEncodableValue>(encodable_all_nullable_types)));
+  }
+  auto& encodable_list = list[15];
+  if (!encodable_list.IsNull()) {
+    decoded.set_list(std::get<EncodableList>(encodable_list));
+  }
+  auto& encodable_string_list = list[16];
+  if (!encodable_string_list.IsNull()) {
+    decoded.set_string_list(std::get<EncodableList>(encodable_string_list));
+  }
+  auto& encodable_int_list = list[17];
+  if (!encodable_int_list.IsNull()) {
+    decoded.set_int_list(std::get<EncodableList>(encodable_int_list));
+  }
+  auto& encodable_double_list = list[18];
+  if (!encodable_double_list.IsNull()) {
+    decoded.set_double_list(std::get<EncodableList>(encodable_double_list));
+  }
+  auto& encodable_bool_list = list[19];
+  if (!encodable_bool_list.IsNull()) {
+    decoded.set_bool_list(std::get<EncodableList>(encodable_bool_list));
+  }
+  auto& encodable_map = list[20];
+  if (!encodable_map.IsNull()) {
+    decoded.set_map(std::get<EncodableMap>(encodable_map));
   }
   return decoded;
 }
@@ -1002,14 +831,14 @@ AllNullableTypesWithoutRecursion::AllNullableTypesWithoutRecursion(
     const std::vector<int32_t>* a_nullable4_byte_array,
     const std::vector<int64_t>* a_nullable8_byte_array,
     const std::vector<double>* a_nullable_float_array,
-    const EncodableList* a_nullable_list, const EncodableMap* a_nullable_map,
     const EncodableList* nullable_nested_list,
     const EncodableMap* nullable_map_with_annotations,
     const EncodableMap* nullable_map_with_object, const AnEnum* a_nullable_enum,
     const std::string* a_nullable_string,
-    const EncodableValue* a_nullable_object,
-    const AllNullableListTypes* all_nullable_lists,
-    const AllNullableMapTypes* all_nullable_maps)
+    const EncodableValue* a_nullable_object, const EncodableList* list,
+    const EncodableList* string_list, const EncodableList* int_list,
+    const EncodableList* double_list, const EncodableList* bool_list,
+    const EncodableMap* map)
     : a_nullable_bool_(a_nullable_bool ? std::optional<bool>(*a_nullable_bool)
                                        : std::nullopt),
       a_nullable_int_(a_nullable_int ? std::optional<int64_t>(*a_nullable_int)
@@ -1036,12 +865,6 @@ AllNullableTypesWithoutRecursion::AllNullableTypesWithoutRecursion(
           a_nullable_float_array
               ? std::optional<std::vector<double>>(*a_nullable_float_array)
               : std::nullopt),
-      a_nullable_list_(a_nullable_list
-                           ? std::optional<EncodableList>(*a_nullable_list)
-                           : std::nullopt),
-      a_nullable_map_(a_nullable_map
-                          ? std::optional<EncodableMap>(*a_nullable_map)
-                          : std::nullopt),
       nullable_nested_list_(nullable_nested_list ? std::optional<EncodableList>(
                                                        *nullable_nested_list)
                                                  : std::nullopt),
@@ -1061,112 +884,16 @@ AllNullableTypesWithoutRecursion::AllNullableTypesWithoutRecursion(
       a_nullable_object_(a_nullable_object
                              ? std::optional<EncodableValue>(*a_nullable_object)
                              : std::nullopt),
-      all_nullable_lists_(
-          all_nullable_lists
-              ? std::make_unique<AllNullableListTypes>(*all_nullable_lists)
-              : nullptr),
-      all_nullable_maps_(
-          all_nullable_maps
-              ? std::make_unique<AllNullableMapTypes>(*all_nullable_maps)
-              : nullptr) {}
-
-AllNullableTypesWithoutRecursion::AllNullableTypesWithoutRecursion(
-    const AllNullableTypesWithoutRecursion& other)
-    : a_nullable_bool_(other.a_nullable_bool_
-                           ? std::optional<bool>(*other.a_nullable_bool_)
+      list_(list ? std::optional<EncodableList>(*list) : std::nullopt),
+      string_list_(string_list ? std::optional<EncodableList>(*string_list)
+                               : std::nullopt),
+      int_list_(int_list ? std::optional<EncodableList>(*int_list)
+                         : std::nullopt),
+      double_list_(double_list ? std::optional<EncodableList>(*double_list)
+                               : std::nullopt),
+      bool_list_(bool_list ? std::optional<EncodableList>(*bool_list)
                            : std::nullopt),
-      a_nullable_int_(other.a_nullable_int_
-                          ? std::optional<int64_t>(*other.a_nullable_int_)
-                          : std::nullopt),
-      a_nullable_int64_(other.a_nullable_int64_
-                            ? std::optional<int64_t>(*other.a_nullable_int64_)
-                            : std::nullopt),
-      a_nullable_double_(other.a_nullable_double_
-                             ? std::optional<double>(*other.a_nullable_double_)
-                             : std::nullopt),
-      a_nullable_byte_array_(other.a_nullable_byte_array_
-                                 ? std::optional<std::vector<uint8_t>>(
-                                       *other.a_nullable_byte_array_)
-                                 : std::nullopt),
-      a_nullable4_byte_array_(other.a_nullable4_byte_array_
-                                  ? std::optional<std::vector<int32_t>>(
-                                        *other.a_nullable4_byte_array_)
-                                  : std::nullopt),
-      a_nullable8_byte_array_(other.a_nullable8_byte_array_
-                                  ? std::optional<std::vector<int64_t>>(
-                                        *other.a_nullable8_byte_array_)
-                                  : std::nullopt),
-      a_nullable_float_array_(other.a_nullable_float_array_
-                                  ? std::optional<std::vector<double>>(
-                                        *other.a_nullable_float_array_)
-                                  : std::nullopt),
-      a_nullable_list_(other.a_nullable_list_ ? std::optional<EncodableList>(
-                                                    *other.a_nullable_list_)
-                                              : std::nullopt),
-      a_nullable_map_(other.a_nullable_map_
-                          ? std::optional<EncodableMap>(*other.a_nullable_map_)
-                          : std::nullopt),
-      nullable_nested_list_(
-          other.nullable_nested_list_
-              ? std::optional<EncodableList>(*other.nullable_nested_list_)
-              : std::nullopt),
-      nullable_map_with_annotations_(
-          other.nullable_map_with_annotations_
-              ? std::optional<EncodableMap>(
-                    *other.nullable_map_with_annotations_)
-              : std::nullopt),
-      nullable_map_with_object_(
-          other.nullable_map_with_object_
-              ? std::optional<EncodableMap>(*other.nullable_map_with_object_)
-              : std::nullopt),
-      a_nullable_enum_(other.a_nullable_enum_
-                           ? std::optional<AnEnum>(*other.a_nullable_enum_)
-                           : std::nullopt),
-      a_nullable_string_(
-          other.a_nullable_string_
-              ? std::optional<std::string>(*other.a_nullable_string_)
-              : std::nullopt),
-      a_nullable_object_(
-          other.a_nullable_object_
-              ? std::optional<EncodableValue>(*other.a_nullable_object_)
-              : std::nullopt),
-      all_nullable_lists_(other.all_nullable_lists_
-                              ? std::make_unique<AllNullableListTypes>(
-                                    *other.all_nullable_lists_)
-                              : nullptr),
-      all_nullable_maps_(
-          other.all_nullable_maps_
-              ? std::make_unique<AllNullableMapTypes>(*other.all_nullable_maps_)
-              : nullptr) {}
-
-AllNullableTypesWithoutRecursion& AllNullableTypesWithoutRecursion::operator=(
-    const AllNullableTypesWithoutRecursion& other) {
-  a_nullable_bool_ = other.a_nullable_bool_;
-  a_nullable_int_ = other.a_nullable_int_;
-  a_nullable_int64_ = other.a_nullable_int64_;
-  a_nullable_double_ = other.a_nullable_double_;
-  a_nullable_byte_array_ = other.a_nullable_byte_array_;
-  a_nullable4_byte_array_ = other.a_nullable4_byte_array_;
-  a_nullable8_byte_array_ = other.a_nullable8_byte_array_;
-  a_nullable_float_array_ = other.a_nullable_float_array_;
-  a_nullable_list_ = other.a_nullable_list_;
-  a_nullable_map_ = other.a_nullable_map_;
-  nullable_nested_list_ = other.nullable_nested_list_;
-  nullable_map_with_annotations_ = other.nullable_map_with_annotations_;
-  nullable_map_with_object_ = other.nullable_map_with_object_;
-  a_nullable_enum_ = other.a_nullable_enum_;
-  a_nullable_string_ = other.a_nullable_string_;
-  a_nullable_object_ = other.a_nullable_object_;
-  all_nullable_lists_ =
-      other.all_nullable_lists_
-          ? std::make_unique<AllNullableListTypes>(*other.all_nullable_lists_)
-          : nullptr;
-  all_nullable_maps_ =
-      other.all_nullable_maps_
-          ? std::make_unique<AllNullableMapTypes>(*other.all_nullable_maps_)
-          : nullptr;
-  return *this;
-}
+      map_(map ? std::optional<EncodableMap>(*map) : std::nullopt) {}
 
 const bool* AllNullableTypesWithoutRecursion::a_nullable_bool() const {
   return a_nullable_bool_ ? &(*a_nullable_bool_) : nullptr;
@@ -1290,36 +1017,6 @@ void AllNullableTypesWithoutRecursion::set_a_nullable_float_array(
   a_nullable_float_array_ = value_arg;
 }
 
-const EncodableList* AllNullableTypesWithoutRecursion::a_nullable_list() const {
-  return a_nullable_list_ ? &(*a_nullable_list_) : nullptr;
-}
-
-void AllNullableTypesWithoutRecursion::set_a_nullable_list(
-    const EncodableList* value_arg) {
-  a_nullable_list_ =
-      value_arg ? std::optional<EncodableList>(*value_arg) : std::nullopt;
-}
-
-void AllNullableTypesWithoutRecursion::set_a_nullable_list(
-    const EncodableList& value_arg) {
-  a_nullable_list_ = value_arg;
-}
-
-const EncodableMap* AllNullableTypesWithoutRecursion::a_nullable_map() const {
-  return a_nullable_map_ ? &(*a_nullable_map_) : nullptr;
-}
-
-void AllNullableTypesWithoutRecursion::set_a_nullable_map(
-    const EncodableMap* value_arg) {
-  a_nullable_map_ =
-      value_arg ? std::optional<EncodableMap>(*value_arg) : std::nullopt;
-}
-
-void AllNullableTypesWithoutRecursion::set_a_nullable_map(
-    const EncodableMap& value_arg) {
-  a_nullable_map_ = value_arg;
-}
-
 const EncodableList* AllNullableTypesWithoutRecursion::nullable_nested_list()
     const {
   return nullable_nested_list_ ? &(*nullable_nested_list_) : nullptr;
@@ -1415,41 +1112,95 @@ void AllNullableTypesWithoutRecursion::set_a_nullable_object(
   a_nullable_object_ = value_arg;
 }
 
-const AllNullableListTypes*
-AllNullableTypesWithoutRecursion::all_nullable_lists() const {
-  return all_nullable_lists_.get();
+const EncodableList* AllNullableTypesWithoutRecursion::list() const {
+  return list_ ? &(*list_) : nullptr;
 }
 
-void AllNullableTypesWithoutRecursion::set_all_nullable_lists(
-    const AllNullableListTypes* value_arg) {
-  all_nullable_lists_ =
-      value_arg ? std::make_unique<AllNullableListTypes>(*value_arg) : nullptr;
+void AllNullableTypesWithoutRecursion::set_list(
+    const EncodableList* value_arg) {
+  list_ = value_arg ? std::optional<EncodableList>(*value_arg) : std::nullopt;
 }
 
-void AllNullableTypesWithoutRecursion::set_all_nullable_lists(
-    const AllNullableListTypes& value_arg) {
-  all_nullable_lists_ = std::make_unique<AllNullableListTypes>(value_arg);
+void AllNullableTypesWithoutRecursion::set_list(
+    const EncodableList& value_arg) {
+  list_ = value_arg;
 }
 
-const AllNullableMapTypes* AllNullableTypesWithoutRecursion::all_nullable_maps()
-    const {
-  return all_nullable_maps_.get();
+const EncodableList* AllNullableTypesWithoutRecursion::string_list() const {
+  return string_list_ ? &(*string_list_) : nullptr;
 }
 
-void AllNullableTypesWithoutRecursion::set_all_nullable_maps(
-    const AllNullableMapTypes* value_arg) {
-  all_nullable_maps_ =
-      value_arg ? std::make_unique<AllNullableMapTypes>(*value_arg) : nullptr;
+void AllNullableTypesWithoutRecursion::set_string_list(
+    const EncodableList* value_arg) {
+  string_list_ =
+      value_arg ? std::optional<EncodableList>(*value_arg) : std::nullopt;
 }
 
-void AllNullableTypesWithoutRecursion::set_all_nullable_maps(
-    const AllNullableMapTypes& value_arg) {
-  all_nullable_maps_ = std::make_unique<AllNullableMapTypes>(value_arg);
+void AllNullableTypesWithoutRecursion::set_string_list(
+    const EncodableList& value_arg) {
+  string_list_ = value_arg;
+}
+
+const EncodableList* AllNullableTypesWithoutRecursion::int_list() const {
+  return int_list_ ? &(*int_list_) : nullptr;
+}
+
+void AllNullableTypesWithoutRecursion::set_int_list(
+    const EncodableList* value_arg) {
+  int_list_ =
+      value_arg ? std::optional<EncodableList>(*value_arg) : std::nullopt;
+}
+
+void AllNullableTypesWithoutRecursion::set_int_list(
+    const EncodableList& value_arg) {
+  int_list_ = value_arg;
+}
+
+const EncodableList* AllNullableTypesWithoutRecursion::double_list() const {
+  return double_list_ ? &(*double_list_) : nullptr;
+}
+
+void AllNullableTypesWithoutRecursion::set_double_list(
+    const EncodableList* value_arg) {
+  double_list_ =
+      value_arg ? std::optional<EncodableList>(*value_arg) : std::nullopt;
+}
+
+void AllNullableTypesWithoutRecursion::set_double_list(
+    const EncodableList& value_arg) {
+  double_list_ = value_arg;
+}
+
+const EncodableList* AllNullableTypesWithoutRecursion::bool_list() const {
+  return bool_list_ ? &(*bool_list_) : nullptr;
+}
+
+void AllNullableTypesWithoutRecursion::set_bool_list(
+    const EncodableList* value_arg) {
+  bool_list_ =
+      value_arg ? std::optional<EncodableList>(*value_arg) : std::nullopt;
+}
+
+void AllNullableTypesWithoutRecursion::set_bool_list(
+    const EncodableList& value_arg) {
+  bool_list_ = value_arg;
+}
+
+const EncodableMap* AllNullableTypesWithoutRecursion::map() const {
+  return map_ ? &(*map_) : nullptr;
+}
+
+void AllNullableTypesWithoutRecursion::set_map(const EncodableMap* value_arg) {
+  map_ = value_arg ? std::optional<EncodableMap>(*value_arg) : std::nullopt;
+}
+
+void AllNullableTypesWithoutRecursion::set_map(const EncodableMap& value_arg) {
+  map_ = value_arg;
 }
 
 EncodableList AllNullableTypesWithoutRecursion::ToEncodableList() const {
   EncodableList list;
-  list.reserve(18);
+  list.reserve(20);
   list.push_back(a_nullable_bool_ ? EncodableValue(*a_nullable_bool_)
                                   : EncodableValue());
   list.push_back(a_nullable_int_ ? EncodableValue(*a_nullable_int_)
@@ -1470,10 +1221,6 @@ EncodableList AllNullableTypesWithoutRecursion::ToEncodableList() const {
   list.push_back(a_nullable_float_array_
                      ? EncodableValue(*a_nullable_float_array_)
                      : EncodableValue());
-  list.push_back(a_nullable_list_ ? EncodableValue(*a_nullable_list_)
-                                  : EncodableValue());
-  list.push_back(a_nullable_map_ ? EncodableValue(*a_nullable_map_)
-                                 : EncodableValue());
   list.push_back(nullable_nested_list_ ? EncodableValue(*nullable_nested_list_)
                                        : EncodableValue());
   list.push_back(nullable_map_with_annotations_
@@ -1487,11 +1234,14 @@ EncodableList AllNullableTypesWithoutRecursion::ToEncodableList() const {
   list.push_back(a_nullable_string_ ? EncodableValue(*a_nullable_string_)
                                     : EncodableValue());
   list.push_back(a_nullable_object_ ? *a_nullable_object_ : EncodableValue());
-  list.push_back(all_nullable_lists_
-                     ? CustomEncodableValue(*all_nullable_lists_)
-                     : EncodableValue());
-  list.push_back(all_nullable_maps_ ? CustomEncodableValue(*all_nullable_maps_)
-                                    : EncodableValue());
+  list.push_back(list_ ? EncodableValue(*list_) : EncodableValue());
+  list.push_back(string_list_ ? EncodableValue(*string_list_)
+                              : EncodableValue());
+  list.push_back(int_list_ ? EncodableValue(*int_list_) : EncodableValue());
+  list.push_back(double_list_ ? EncodableValue(*double_list_)
+                              : EncodableValue());
+  list.push_back(bool_list_ ? EncodableValue(*bool_list_) : EncodableValue());
+  list.push_back(map_ ? EncodableValue(*map_) : EncodableValue());
   return list;
 }
 
@@ -1535,54 +1285,58 @@ AllNullableTypesWithoutRecursion::FromEncodableList(const EncodableList& list) {
     decoded.set_a_nullable_float_array(
         std::get<std::vector<double>>(encodable_a_nullable_float_array));
   }
-  auto& encodable_a_nullable_list = list[8];
-  if (!encodable_a_nullable_list.IsNull()) {
-    decoded.set_a_nullable_list(
-        std::get<EncodableList>(encodable_a_nullable_list));
-  }
-  auto& encodable_a_nullable_map = list[9];
-  if (!encodable_a_nullable_map.IsNull()) {
-    decoded.set_a_nullable_map(
-        std::get<EncodableMap>(encodable_a_nullable_map));
-  }
-  auto& encodable_nullable_nested_list = list[10];
+  auto& encodable_nullable_nested_list = list[8];
   if (!encodable_nullable_nested_list.IsNull()) {
     decoded.set_nullable_nested_list(
         std::get<EncodableList>(encodable_nullable_nested_list));
   }
-  auto& encodable_nullable_map_with_annotations = list[11];
+  auto& encodable_nullable_map_with_annotations = list[9];
   if (!encodable_nullable_map_with_annotations.IsNull()) {
     decoded.set_nullable_map_with_annotations(
         std::get<EncodableMap>(encodable_nullable_map_with_annotations));
   }
-  auto& encodable_nullable_map_with_object = list[12];
+  auto& encodable_nullable_map_with_object = list[10];
   if (!encodable_nullable_map_with_object.IsNull()) {
     decoded.set_nullable_map_with_object(
         std::get<EncodableMap>(encodable_nullable_map_with_object));
   }
-  auto& encodable_a_nullable_enum = list[13];
+  auto& encodable_a_nullable_enum = list[11];
   if (!encodable_a_nullable_enum.IsNull()) {
     decoded.set_a_nullable_enum(std::any_cast<const AnEnum&>(
         std::get<CustomEncodableValue>(encodable_a_nullable_enum)));
   }
-  auto& encodable_a_nullable_string = list[14];
+  auto& encodable_a_nullable_string = list[12];
   if (!encodable_a_nullable_string.IsNull()) {
     decoded.set_a_nullable_string(
         std::get<std::string>(encodable_a_nullable_string));
   }
-  auto& encodable_a_nullable_object = list[15];
+  auto& encodable_a_nullable_object = list[13];
   if (!encodable_a_nullable_object.IsNull()) {
     decoded.set_a_nullable_object(encodable_a_nullable_object);
   }
-  auto& encodable_all_nullable_lists = list[16];
-  if (!encodable_all_nullable_lists.IsNull()) {
-    decoded.set_all_nullable_lists(std::any_cast<const AllNullableListTypes&>(
-        std::get<CustomEncodableValue>(encodable_all_nullable_lists)));
+  auto& encodable_list = list[14];
+  if (!encodable_list.IsNull()) {
+    decoded.set_list(std::get<EncodableList>(encodable_list));
   }
-  auto& encodable_all_nullable_maps = list[17];
-  if (!encodable_all_nullable_maps.IsNull()) {
-    decoded.set_all_nullable_maps(std::any_cast<const AllNullableMapTypes&>(
-        std::get<CustomEncodableValue>(encodable_all_nullable_maps)));
+  auto& encodable_string_list = list[15];
+  if (!encodable_string_list.IsNull()) {
+    decoded.set_string_list(std::get<EncodableList>(encodable_string_list));
+  }
+  auto& encodable_int_list = list[16];
+  if (!encodable_int_list.IsNull()) {
+    decoded.set_int_list(std::get<EncodableList>(encodable_int_list));
+  }
+  auto& encodable_double_list = list[17];
+  if (!encodable_double_list.IsNull()) {
+    decoded.set_double_list(std::get<EncodableList>(encodable_double_list));
+  }
+  auto& encodable_bool_list = list[18];
+  if (!encodable_bool_list.IsNull()) {
+    decoded.set_bool_list(std::get<EncodableList>(encodable_bool_list));
+  }
+  auto& encodable_map = list[19];
+  if (!encodable_map.IsNull()) {
+    decoded.set_map(std::get<EncodableMap>(encodable_map));
   }
   return decoded;
 }
@@ -1747,34 +1501,22 @@ EncodableValue PigeonCodecSerializer::ReadValueOfType(
     uint8_t type, flutter::ByteStreamReader* stream) const {
   switch (type) {
     case 129:
-      return CustomEncodableValue(AllMapTypes::FromEncodableList(
-          std::get<EncodableList>(ReadValue(stream))));
-    case 130:
-      return CustomEncodableValue(AllListTypes::FromEncodableList(
-          std::get<EncodableList>(ReadValue(stream))));
-    case 131:
-      return CustomEncodableValue(AllNullableMapTypes::FromEncodableList(
-          std::get<EncodableList>(ReadValue(stream))));
-    case 132:
-      return CustomEncodableValue(AllNullableListTypes::FromEncodableList(
-          std::get<EncodableList>(ReadValue(stream))));
-    case 133:
       return CustomEncodableValue(AllTypes::FromEncodableList(
           std::get<EncodableList>(ReadValue(stream))));
-    case 134:
+    case 130:
       return CustomEncodableValue(AllNullableTypes::FromEncodableList(
           std::get<EncodableList>(ReadValue(stream))));
-    case 135:
+    case 131:
       return CustomEncodableValue(
           AllNullableTypesWithoutRecursion::FromEncodableList(
               std::get<EncodableList>(ReadValue(stream))));
-    case 136:
+    case 132:
       return CustomEncodableValue(AllClassesWrapper::FromEncodableList(
           std::get<EncodableList>(ReadValue(stream))));
-    case 137:
+    case 133:
       return CustomEncodableValue(TestMessage::FromEncodableList(
           std::get<EncodableList>(ReadValue(stream))));
-    case 138: {
+    case 134: {
       const auto& encodable_enum_arg = ReadValue(stream);
       const int64_t enum_arg_value =
           encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
@@ -1791,47 +1533,15 @@ void PigeonCodecSerializer::WriteValue(
     const EncodableValue& value, flutter::ByteStreamWriter* stream) const {
   if (const CustomEncodableValue* custom_value =
           std::get_if<CustomEncodableValue>(&value)) {
-    if (custom_value->type() == typeid(AllMapTypes)) {
-      stream->WriteByte(129);
-      WriteValue(
-          EncodableValue(
-              std::any_cast<AllMapTypes>(*custom_value).ToEncodableList()),
-          stream);
-      return;
-    }
-    if (custom_value->type() == typeid(AllListTypes)) {
-      stream->WriteByte(130);
-      WriteValue(
-          EncodableValue(
-              std::any_cast<AllListTypes>(*custom_value).ToEncodableList()),
-          stream);
-      return;
-    }
-    if (custom_value->type() == typeid(AllNullableMapTypes)) {
-      stream->WriteByte(131);
-      WriteValue(
-          EncodableValue(std::any_cast<AllNullableMapTypes>(*custom_value)
-                             .ToEncodableList()),
-          stream);
-      return;
-    }
-    if (custom_value->type() == typeid(AllNullableListTypes)) {
-      stream->WriteByte(132);
-      WriteValue(
-          EncodableValue(std::any_cast<AllNullableListTypes>(*custom_value)
-                             .ToEncodableList()),
-          stream);
-      return;
-    }
     if (custom_value->type() == typeid(AllTypes)) {
-      stream->WriteByte(133);
+      stream->WriteByte(129);
       WriteValue(EncodableValue(
                      std::any_cast<AllTypes>(*custom_value).ToEncodableList()),
                  stream);
       return;
     }
     if (custom_value->type() == typeid(AllNullableTypes)) {
-      stream->WriteByte(134);
+      stream->WriteByte(130);
       WriteValue(
           EncodableValue(
               std::any_cast<AllNullableTypes>(*custom_value).ToEncodableList()),
@@ -1839,7 +1549,7 @@ void PigeonCodecSerializer::WriteValue(
       return;
     }
     if (custom_value->type() == typeid(AllNullableTypesWithoutRecursion)) {
-      stream->WriteByte(135);
+      stream->WriteByte(131);
       WriteValue(EncodableValue(std::any_cast<AllNullableTypesWithoutRecursion>(
                                     *custom_value)
                                     .ToEncodableList()),
@@ -1847,14 +1557,14 @@ void PigeonCodecSerializer::WriteValue(
       return;
     }
     if (custom_value->type() == typeid(AllClassesWrapper)) {
-      stream->WriteByte(136);
+      stream->WriteByte(132);
       WriteValue(EncodableValue(std::any_cast<AllClassesWrapper>(*custom_value)
                                     .ToEncodableList()),
                  stream);
       return;
     }
     if (custom_value->type() == typeid(TestMessage)) {
-      stream->WriteByte(137);
+      stream->WriteByte(133);
       WriteValue(
           EncodableValue(
               std::any_cast<TestMessage>(*custom_value).ToEncodableList()),
@@ -1862,7 +1572,7 @@ void PigeonCodecSerializer::WriteValue(
       return;
     }
     if (custom_value->type() == typeid(AnEnum)) {
-      stream->WriteByte(138);
+      stream->WriteByte(134);
       WriteValue(EncodableValue(
                      static_cast<int>(std::any_cast<AnEnum>(*custom_value))),
                  stream);

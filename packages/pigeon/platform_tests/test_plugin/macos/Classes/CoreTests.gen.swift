@@ -57,114 +57,6 @@ enum AnEnum: Int {
   case fourHundredTwentyTwo = 4
 }
 
-/// Generated class from Pigeon that represents data sent in messages.
-struct AllMapTypes {
-  var map: [AnyHashable: Any?]
-
-  // swift-format-ignore: AlwaysUseLowerCamelCase
-  static func fromList(_ __pigeon_list: [Any?]) -> AllMapTypes? {
-    let map = __pigeon_list[0] as! [AnyHashable: Any?]
-
-    return AllMapTypes(
-      map: map
-    )
-  }
-  func toList() -> [Any?] {
-    return [
-      map
-    ]
-  }
-}
-
-/// Generated class from Pigeon that represents data sent in messages.
-struct AllListTypes {
-  var list: [Any?]
-  var stringList: [String?]
-  var intList: [Int64?]
-  var doubleList: [Double?]
-  var boolList: [Bool?]
-
-  // swift-format-ignore: AlwaysUseLowerCamelCase
-  static func fromList(_ __pigeon_list: [Any?]) -> AllListTypes? {
-    let list = __pigeon_list[0] as! [Any?]
-    let stringList = __pigeon_list[1] as! [String?]
-    let intList = __pigeon_list[2] as! [Int64?]
-    let doubleList = __pigeon_list[3] as! [Double?]
-    let boolList = __pigeon_list[4] as! [Bool?]
-
-    return AllListTypes(
-      list: list,
-      stringList: stringList,
-      intList: intList,
-      doubleList: doubleList,
-      boolList: boolList
-    )
-  }
-  func toList() -> [Any?] {
-    return [
-      list,
-      stringList,
-      intList,
-      doubleList,
-      boolList,
-    ]
-  }
-}
-
-/// Generated class from Pigeon that represents data sent in messages.
-struct AllNullableMapTypes {
-  var map: [AnyHashable: Any?]? = nil
-
-  // swift-format-ignore: AlwaysUseLowerCamelCase
-  static func fromList(_ __pigeon_list: [Any?]) -> AllNullableMapTypes? {
-    let map: [AnyHashable: Any?]? = nilOrValue(__pigeon_list[0])
-
-    return AllNullableMapTypes(
-      map: map
-    )
-  }
-  func toList() -> [Any?] {
-    return [
-      map
-    ]
-  }
-}
-
-/// Generated class from Pigeon that represents data sent in messages.
-struct AllNullableListTypes {
-  var list: [Any?]? = nil
-  var stringList: [String?]? = nil
-  var intList: [Int64?]? = nil
-  var doubleList: [Double?]? = nil
-  var boolList: [Bool?]? = nil
-
-  // swift-format-ignore: AlwaysUseLowerCamelCase
-  static func fromList(_ __pigeon_list: [Any?]) -> AllNullableListTypes? {
-    let list: [Any?]? = nilOrValue(__pigeon_list[0])
-    let stringList: [String?]? = nilOrValue(__pigeon_list[1])
-    let intList: [Int64?]? = nilOrValue(__pigeon_list[2])
-    let doubleList: [Double?]? = nilOrValue(__pigeon_list[3])
-    let boolList: [Bool?]? = nilOrValue(__pigeon_list[4])
-
-    return AllNullableListTypes(
-      list: list,
-      stringList: stringList,
-      intList: intList,
-      doubleList: doubleList,
-      boolList: boolList
-    )
-  }
-  func toList() -> [Any?] {
-    return [
-      list,
-      stringList,
-      intList,
-      doubleList,
-      boolList,
-    ]
-  }
-}
-
 /// A class containing all supported types.
 ///
 /// Generated class from Pigeon that represents data sent in messages.
@@ -180,8 +72,12 @@ struct AllTypes {
   var anEnum: AnEnum
   var aString: String
   var anObject: Any
-  var allMaps: AllMapTypes
-  var allLists: AllListTypes
+  var list: [Any?]
+  var stringList: [String?]
+  var intList: [Int64?]
+  var doubleList: [Double?]
+  var boolList: [Bool?]
+  var map: [AnyHashable: Any?]
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
   static func fromList(_ __pigeon_list: [Any?]) -> AllTypes? {
@@ -198,8 +94,12 @@ struct AllTypes {
     let anEnum = __pigeon_list[8] as! AnEnum
     let aString = __pigeon_list[9] as! String
     let anObject = __pigeon_list[10]!
-    let allMaps = __pigeon_list[11] as! AllMapTypes
-    let allLists = __pigeon_list[12] as! AllListTypes
+    let list = __pigeon_list[11] as! [Any?]
+    let stringList = __pigeon_list[12] as! [String?]
+    let intList = __pigeon_list[13] as! [Int64?]
+    let doubleList = __pigeon_list[14] as! [Double?]
+    let boolList = __pigeon_list[15] as! [Bool?]
+    let map = __pigeon_list[16] as! [AnyHashable: Any?]
 
     return AllTypes(
       aBool: aBool,
@@ -213,8 +113,12 @@ struct AllTypes {
       anEnum: anEnum,
       aString: aString,
       anObject: anObject,
-      allMaps: allMaps,
-      allLists: allLists
+      list: list,
+      stringList: stringList,
+      intList: intList,
+      doubleList: doubleList,
+      boolList: boolList,
+      map: map
     )
   }
   func toList() -> [Any?] {
@@ -230,8 +134,12 @@ struct AllTypes {
       anEnum,
       aString,
       anObject,
-      allMaps,
-      allLists,
+      list,
+      stringList,
+      intList,
+      doubleList,
+      boolList,
+      map,
     ]
   }
 }
@@ -255,9 +163,13 @@ class AllNullableTypes {
     aNullableEnum: AnEnum? = nil,
     aNullableString: String? = nil,
     aNullableObject: Any? = nil,
-    allNullableLists: AllNullableListTypes? = nil,
-    allNullableMaps: AllNullableMapTypes? = nil,
-    allNullableTypes: AllNullableTypes? = nil
+    allNullableTypes: AllNullableTypes? = nil,
+    list: [Any?]? = nil,
+    stringList: [String?]? = nil,
+    intList: [Int64?]? = nil,
+    doubleList: [Double?]? = nil,
+    boolList: [Bool?]? = nil,
+    map: [AnyHashable: Any?]? = nil
   ) {
     self.aNullableBool = aNullableBool
     self.aNullableInt = aNullableInt
@@ -273,9 +185,13 @@ class AllNullableTypes {
     self.aNullableEnum = aNullableEnum
     self.aNullableString = aNullableString
     self.aNullableObject = aNullableObject
-    self.allNullableLists = allNullableLists
-    self.allNullableMaps = allNullableMaps
     self.allNullableTypes = allNullableTypes
+    self.list = list
+    self.stringList = stringList
+    self.intList = intList
+    self.doubleList = doubleList
+    self.boolList = boolList
+    self.map = map
   }
   var aNullableBool: Bool?
   var aNullableInt: Int64?
@@ -291,9 +207,13 @@ class AllNullableTypes {
   var aNullableEnum: AnEnum?
   var aNullableString: String?
   var aNullableObject: Any?
-  var allNullableLists: AllNullableListTypes?
-  var allNullableMaps: AllNullableMapTypes?
   var allNullableTypes: AllNullableTypes?
+  var list: [Any?]?
+  var stringList: [String?]?
+  var intList: [Int64?]?
+  var doubleList: [Double?]?
+  var boolList: [Bool?]?
+  var map: [AnyHashable: Any?]?
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
   static func fromList(_ __pigeon_list: [Any?]) -> AllNullableTypes? {
@@ -319,9 +239,13 @@ class AllNullableTypes {
     let aNullableEnum: AnEnum? = nilOrValue(__pigeon_list[11])
     let aNullableString: String? = nilOrValue(__pigeon_list[12])
     let aNullableObject: Any? = __pigeon_list[13]
-    let allNullableLists: AllNullableListTypes? = nilOrValue(__pigeon_list[14])
-    let allNullableMaps: AllNullableMapTypes? = nilOrValue(__pigeon_list[15])
-    let allNullableTypes: AllNullableTypes? = nilOrValue(__pigeon_list[16])
+    let allNullableTypes: AllNullableTypes? = nilOrValue(__pigeon_list[14])
+    let list: [Any?]? = nilOrValue(__pigeon_list[15])
+    let stringList: [String?]? = nilOrValue(__pigeon_list[16])
+    let intList: [Int64?]? = nilOrValue(__pigeon_list[17])
+    let doubleList: [Double?]? = nilOrValue(__pigeon_list[18])
+    let boolList: [Bool?]? = nilOrValue(__pigeon_list[19])
+    let map: [AnyHashable: Any?]? = nilOrValue(__pigeon_list[20])
 
     return AllNullableTypes(
       aNullableBool: aNullableBool,
@@ -338,9 +262,13 @@ class AllNullableTypes {
       aNullableEnum: aNullableEnum,
       aNullableString: aNullableString,
       aNullableObject: aNullableObject,
-      allNullableLists: allNullableLists,
-      allNullableMaps: allNullableMaps,
-      allNullableTypes: allNullableTypes
+      allNullableTypes: allNullableTypes,
+      list: list,
+      stringList: stringList,
+      intList: intList,
+      doubleList: doubleList,
+      boolList: boolList,
+      map: map
     )
   }
   func toList() -> [Any?] {
@@ -359,9 +287,13 @@ class AllNullableTypes {
       aNullableEnum,
       aNullableString,
       aNullableObject,
-      allNullableLists,
-      allNullableMaps,
       allNullableTypes,
+      list,
+      stringList,
+      intList,
+      doubleList,
+      boolList,
+      map,
     ]
   }
 }
@@ -380,16 +312,18 @@ struct AllNullableTypesWithoutRecursion {
   var aNullable4ByteArray: FlutterStandardTypedData? = nil
   var aNullable8ByteArray: FlutterStandardTypedData? = nil
   var aNullableFloatArray: FlutterStandardTypedData? = nil
-  var aNullableList: [Any?]? = nil
-  var aNullableMap: [AnyHashable: Any?]? = nil
   var nullableNestedList: [[Bool?]?]? = nil
   var nullableMapWithAnnotations: [String?: String?]? = nil
   var nullableMapWithObject: [String?: Any?]? = nil
   var aNullableEnum: AnEnum? = nil
   var aNullableString: String? = nil
   var aNullableObject: Any? = nil
-  var allNullableLists: AllNullableListTypes? = nil
-  var allNullableMaps: AllNullableMapTypes? = nil
+  var list: [Any?]? = nil
+  var stringList: [String?]? = nil
+  var intList: [Int64?]? = nil
+  var doubleList: [Double?]? = nil
+  var boolList: [Bool?]? = nil
+  var map: [AnyHashable: Any?]? = nil
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
   static func fromList(_ __pigeon_list: [Any?]) -> AllNullableTypesWithoutRecursion? {
@@ -409,16 +343,18 @@ struct AllNullableTypesWithoutRecursion {
     let aNullable4ByteArray: FlutterStandardTypedData? = nilOrValue(__pigeon_list[5])
     let aNullable8ByteArray: FlutterStandardTypedData? = nilOrValue(__pigeon_list[6])
     let aNullableFloatArray: FlutterStandardTypedData? = nilOrValue(__pigeon_list[7])
-    let aNullableList: [Any?]? = nilOrValue(__pigeon_list[8])
-    let aNullableMap: [AnyHashable: Any?]? = nilOrValue(__pigeon_list[9])
-    let nullableNestedList: [[Bool?]?]? = nilOrValue(__pigeon_list[10])
-    let nullableMapWithAnnotations: [String?: String?]? = nilOrValue(__pigeon_list[11])
-    let nullableMapWithObject: [String?: Any?]? = nilOrValue(__pigeon_list[12])
-    let aNullableEnum: AnEnum? = nilOrValue(__pigeon_list[13])
-    let aNullableString: String? = nilOrValue(__pigeon_list[14])
-    let aNullableObject: Any? = __pigeon_list[15]
-    let allNullableLists: AllNullableListTypes? = nilOrValue(__pigeon_list[16])
-    let allNullableMaps: AllNullableMapTypes? = nilOrValue(__pigeon_list[17])
+    let nullableNestedList: [[Bool?]?]? = nilOrValue(__pigeon_list[8])
+    let nullableMapWithAnnotations: [String?: String?]? = nilOrValue(__pigeon_list[9])
+    let nullableMapWithObject: [String?: Any?]? = nilOrValue(__pigeon_list[10])
+    let aNullableEnum: AnEnum? = nilOrValue(__pigeon_list[11])
+    let aNullableString: String? = nilOrValue(__pigeon_list[12])
+    let aNullableObject: Any? = __pigeon_list[13]
+    let list: [Any?]? = nilOrValue(__pigeon_list[14])
+    let stringList: [String?]? = nilOrValue(__pigeon_list[15])
+    let intList: [Int64?]? = nilOrValue(__pigeon_list[16])
+    let doubleList: [Double?]? = nilOrValue(__pigeon_list[17])
+    let boolList: [Bool?]? = nilOrValue(__pigeon_list[18])
+    let map: [AnyHashable: Any?]? = nilOrValue(__pigeon_list[19])
 
     return AllNullableTypesWithoutRecursion(
       aNullableBool: aNullableBool,
@@ -429,16 +365,18 @@ struct AllNullableTypesWithoutRecursion {
       aNullable4ByteArray: aNullable4ByteArray,
       aNullable8ByteArray: aNullable8ByteArray,
       aNullableFloatArray: aNullableFloatArray,
-      aNullableList: aNullableList,
-      aNullableMap: aNullableMap,
       nullableNestedList: nullableNestedList,
       nullableMapWithAnnotations: nullableMapWithAnnotations,
       nullableMapWithObject: nullableMapWithObject,
       aNullableEnum: aNullableEnum,
       aNullableString: aNullableString,
       aNullableObject: aNullableObject,
-      allNullableLists: allNullableLists,
-      allNullableMaps: allNullableMaps
+      list: list,
+      stringList: stringList,
+      intList: intList,
+      doubleList: doubleList,
+      boolList: boolList,
+      map: map
     )
   }
   func toList() -> [Any?] {
@@ -451,16 +389,18 @@ struct AllNullableTypesWithoutRecursion {
       aNullable4ByteArray,
       aNullable8ByteArray,
       aNullableFloatArray,
-      aNullableList,
-      aNullableMap,
       nullableNestedList,
       nullableMapWithAnnotations,
       nullableMapWithObject,
       aNullableEnum,
       aNullableString,
       aNullableObject,
-      allNullableLists,
-      allNullableMaps,
+      list,
+      stringList,
+      intList,
+      doubleList,
+      boolList,
+      map,
     ]
   }
 }
@@ -523,24 +463,16 @@ private class CoreTestsPigeonCodecReader: FlutterStandardReader {
   override func readValue(ofType type: UInt8) -> Any? {
     switch type {
     case 129:
-      return AllMapTypes.fromList(self.readValue() as! [Any?])
-    case 130:
-      return AllListTypes.fromList(self.readValue() as! [Any?])
-    case 131:
-      return AllNullableMapTypes.fromList(self.readValue() as! [Any?])
-    case 132:
-      return AllNullableListTypes.fromList(self.readValue() as! [Any?])
-    case 133:
       return AllTypes.fromList(self.readValue() as! [Any?])
-    case 134:
+    case 130:
       return AllNullableTypes.fromList(self.readValue() as! [Any?])
-    case 135:
+    case 131:
       return AllNullableTypesWithoutRecursion.fromList(self.readValue() as! [Any?])
-    case 136:
+    case 132:
       return AllClassesWrapper.fromList(self.readValue() as! [Any?])
-    case 137:
+    case 133:
       return TestMessage.fromList(self.readValue() as! [Any?])
-    case 138:
+    case 134:
       var enumResult: AnEnum? = nil
       let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
       if let enumResultAsInt = enumResultAsInt {
@@ -555,35 +487,23 @@ private class CoreTestsPigeonCodecReader: FlutterStandardReader {
 
 private class CoreTestsPigeonCodecWriter: FlutterStandardWriter {
   override func writeValue(_ value: Any) {
-    if let value = value as? AllMapTypes {
+    if let value = value as? AllTypes {
       super.writeByte(129)
       super.writeValue(value.toList())
-    } else if let value = value as? AllListTypes {
+    } else if let value = value as? AllNullableTypes {
       super.writeByte(130)
       super.writeValue(value.toList())
-    } else if let value = value as? AllNullableMapTypes {
+    } else if let value = value as? AllNullableTypesWithoutRecursion {
       super.writeByte(131)
       super.writeValue(value.toList())
-    } else if let value = value as? AllNullableListTypes {
+    } else if let value = value as? AllClassesWrapper {
       super.writeByte(132)
       super.writeValue(value.toList())
-    } else if let value = value as? AllTypes {
+    } else if let value = value as? TestMessage {
       super.writeByte(133)
       super.writeValue(value.toList())
-    } else if let value = value as? AllNullableTypes {
-      super.writeByte(134)
-      super.writeValue(value.toList())
-    } else if let value = value as? AllNullableTypesWithoutRecursion {
-      super.writeByte(135)
-      super.writeValue(value.toList())
-    } else if let value = value as? AllClassesWrapper {
-      super.writeByte(136)
-      super.writeValue(value.toList())
-    } else if let value = value as? TestMessage {
-      super.writeByte(137)
-      super.writeValue(value.toList())
     } else if let value = value as? AnEnum {
-      super.writeByte(138)
+      super.writeByte(134)
       super.writeValue(value.rawValue)
     } else {
       super.writeValue(value)

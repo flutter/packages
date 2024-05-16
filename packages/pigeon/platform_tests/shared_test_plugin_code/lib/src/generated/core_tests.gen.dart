@@ -38,130 +38,6 @@ enum AnEnum {
   fourHundredTwentyTwo,
 }
 
-class AllMapTypes {
-  AllMapTypes({
-    required this.map,
-  });
-
-  Map<Object?, Object?> map;
-
-  Object encode() {
-    return <Object?>[
-      map,
-    ];
-  }
-
-  static AllMapTypes decode(Object result) {
-    result as List<Object?>;
-    return AllMapTypes(
-      map: result[0]! as Map<Object?, Object?>,
-    );
-  }
-}
-
-class AllListTypes {
-  AllListTypes({
-    required this.list,
-    required this.stringList,
-    required this.intList,
-    required this.doubleList,
-    required this.boolList,
-  });
-
-  List<Object?> list;
-
-  List<String?> stringList;
-
-  List<int?> intList;
-
-  List<double?> doubleList;
-
-  List<bool?> boolList;
-
-  Object encode() {
-    return <Object?>[
-      list,
-      stringList,
-      intList,
-      doubleList,
-      boolList,
-    ];
-  }
-
-  static AllListTypes decode(Object result) {
-    result as List<Object?>;
-    return AllListTypes(
-      list: result[0]! as List<Object?>,
-      stringList: (result[1] as List<Object?>?)!.cast<String?>(),
-      intList: (result[2] as List<Object?>?)!.cast<int?>(),
-      doubleList: (result[3] as List<Object?>?)!.cast<double?>(),
-      boolList: (result[4] as List<Object?>?)!.cast<bool?>(),
-    );
-  }
-}
-
-class AllNullableMapTypes {
-  AllNullableMapTypes({
-    this.map,
-  });
-
-  Map<Object?, Object?>? map;
-
-  Object encode() {
-    return <Object?>[
-      map,
-    ];
-  }
-
-  static AllNullableMapTypes decode(Object result) {
-    result as List<Object?>;
-    return AllNullableMapTypes(
-      map: result[0] as Map<Object?, Object?>?,
-    );
-  }
-}
-
-class AllNullableListTypes {
-  AllNullableListTypes({
-    this.list,
-    this.stringList,
-    this.intList,
-    this.doubleList,
-    this.boolList,
-  });
-
-  List<Object?>? list;
-
-  List<String?>? stringList;
-
-  List<int?>? intList;
-
-  List<double?>? doubleList;
-
-  List<bool?>? boolList;
-
-  Object encode() {
-    return <Object?>[
-      list,
-      stringList,
-      intList,
-      doubleList,
-      boolList,
-    ];
-  }
-
-  static AllNullableListTypes decode(Object result) {
-    result as List<Object?>;
-    return AllNullableListTypes(
-      list: result[0] as List<Object?>?,
-      stringList: (result[1] as List<Object?>?)?.cast<String?>(),
-      intList: (result[2] as List<Object?>?)?.cast<int?>(),
-      doubleList: (result[3] as List<Object?>?)?.cast<double?>(),
-      boolList: (result[4] as List<Object?>?)?.cast<bool?>(),
-    );
-  }
-}
-
 /// A class containing all supported types.
 class AllTypes {
   AllTypes({
@@ -176,8 +52,12 @@ class AllTypes {
     this.anEnum = AnEnum.one,
     this.aString = '',
     this.anObject = 0,
-    required this.allMaps,
-    required this.allLists,
+    required this.list,
+    required this.stringList,
+    required this.intList,
+    required this.doubleList,
+    required this.boolList,
+    required this.map,
   });
 
   bool aBool;
@@ -202,9 +82,17 @@ class AllTypes {
 
   Object anObject;
 
-  AllMapTypes allMaps;
+  List<Object?> list;
 
-  AllListTypes allLists;
+  List<String?> stringList;
+
+  List<int?> intList;
+
+  List<double?> doubleList;
+
+  List<bool?> boolList;
+
+  Map<Object?, Object?> map;
 
   Object encode() {
     return <Object?>[
@@ -219,8 +107,12 @@ class AllTypes {
       anEnum,
       aString,
       anObject,
-      allMaps,
-      allLists,
+      list,
+      stringList,
+      intList,
+      doubleList,
+      boolList,
+      map,
     ];
   }
 
@@ -238,8 +130,12 @@ class AllTypes {
       anEnum: result[8]! as AnEnum,
       aString: result[9]! as String,
       anObject: result[10]!,
-      allMaps: result[11]! as AllMapTypes,
-      allLists: result[12]! as AllListTypes,
+      list: result[11]! as List<Object?>,
+      stringList: (result[12] as List<Object?>?)!.cast<String?>(),
+      intList: (result[13] as List<Object?>?)!.cast<int?>(),
+      doubleList: (result[14] as List<Object?>?)!.cast<double?>(),
+      boolList: (result[15] as List<Object?>?)!.cast<bool?>(),
+      map: result[16]! as Map<Object?, Object?>,
     );
   }
 }
@@ -261,9 +157,13 @@ class AllNullableTypes {
     this.aNullableEnum,
     this.aNullableString,
     this.aNullableObject,
-    this.allNullableLists,
-    this.allNullableMaps,
     this.allNullableTypes,
+    this.list,
+    this.stringList,
+    this.intList,
+    this.doubleList,
+    this.boolList,
+    this.map,
   });
 
   bool? aNullableBool;
@@ -294,11 +194,19 @@ class AllNullableTypes {
 
   Object? aNullableObject;
 
-  AllNullableListTypes? allNullableLists;
-
-  AllNullableMapTypes? allNullableMaps;
-
   AllNullableTypes? allNullableTypes;
+
+  List<Object?>? list;
+
+  List<String?>? stringList;
+
+  List<int?>? intList;
+
+  List<double?>? doubleList;
+
+  List<bool?>? boolList;
+
+  Map<Object?, Object?>? map;
 
   Object encode() {
     return <Object?>[
@@ -316,9 +224,13 @@ class AllNullableTypes {
       aNullableEnum,
       aNullableString,
       aNullableObject,
-      allNullableLists,
-      allNullableMaps,
       allNullableTypes,
+      list,
+      stringList,
+      intList,
+      doubleList,
+      boolList,
+      map,
     ];
   }
 
@@ -341,9 +253,13 @@ class AllNullableTypes {
       aNullableEnum: result[11] as AnEnum?,
       aNullableString: result[12] as String?,
       aNullableObject: result[13],
-      allNullableLists: result[14] as AllNullableListTypes?,
-      allNullableMaps: result[15] as AllNullableMapTypes?,
-      allNullableTypes: result[16] as AllNullableTypes?,
+      allNullableTypes: result[14] as AllNullableTypes?,
+      list: result[15] as List<Object?>?,
+      stringList: (result[16] as List<Object?>?)?.cast<String?>(),
+      intList: (result[17] as List<Object?>?)?.cast<int?>(),
+      doubleList: (result[18] as List<Object?>?)?.cast<double?>(),
+      boolList: (result[19] as List<Object?>?)?.cast<bool?>(),
+      map: result[20] as Map<Object?, Object?>?,
     );
   }
 }
@@ -361,16 +277,18 @@ class AllNullableTypesWithoutRecursion {
     this.aNullable4ByteArray,
     this.aNullable8ByteArray,
     this.aNullableFloatArray,
-    this.aNullableList,
-    this.aNullableMap,
     this.nullableNestedList,
     this.nullableMapWithAnnotations,
     this.nullableMapWithObject,
     this.aNullableEnum,
     this.aNullableString,
     this.aNullableObject,
-    this.allNullableLists,
-    this.allNullableMaps,
+    this.list,
+    this.stringList,
+    this.intList,
+    this.doubleList,
+    this.boolList,
+    this.map,
   });
 
   bool? aNullableBool;
@@ -389,10 +307,6 @@ class AllNullableTypesWithoutRecursion {
 
   Float64List? aNullableFloatArray;
 
-  List<Object?>? aNullableList;
-
-  Map<Object?, Object?>? aNullableMap;
-
   List<List<bool?>?>? nullableNestedList;
 
   Map<String?, String?>? nullableMapWithAnnotations;
@@ -405,9 +319,17 @@ class AllNullableTypesWithoutRecursion {
 
   Object? aNullableObject;
 
-  AllNullableListTypes? allNullableLists;
+  List<Object?>? list;
 
-  AllNullableMapTypes? allNullableMaps;
+  List<String?>? stringList;
+
+  List<int?>? intList;
+
+  List<double?>? doubleList;
+
+  List<bool?>? boolList;
+
+  Map<Object?, Object?>? map;
 
   Object encode() {
     return <Object?>[
@@ -419,16 +341,18 @@ class AllNullableTypesWithoutRecursion {
       aNullable4ByteArray,
       aNullable8ByteArray,
       aNullableFloatArray,
-      aNullableList,
-      aNullableMap,
       nullableNestedList,
       nullableMapWithAnnotations,
       nullableMapWithObject,
       aNullableEnum,
       aNullableString,
       aNullableObject,
-      allNullableLists,
-      allNullableMaps,
+      list,
+      stringList,
+      intList,
+      doubleList,
+      boolList,
+      map,
     ];
   }
 
@@ -443,18 +367,20 @@ class AllNullableTypesWithoutRecursion {
       aNullable4ByteArray: result[5] as Int32List?,
       aNullable8ByteArray: result[6] as Int64List?,
       aNullableFloatArray: result[7] as Float64List?,
-      aNullableList: result[8] as List<Object?>?,
-      aNullableMap: result[9] as Map<Object?, Object?>?,
-      nullableNestedList: (result[10] as List<Object?>?)?.cast<List<bool?>?>(),
+      nullableNestedList: (result[8] as List<Object?>?)?.cast<List<bool?>?>(),
       nullableMapWithAnnotations:
-          (result[11] as Map<Object?, Object?>?)?.cast<String?, String?>(),
+          (result[9] as Map<Object?, Object?>?)?.cast<String?, String?>(),
       nullableMapWithObject:
-          (result[12] as Map<Object?, Object?>?)?.cast<String?, Object?>(),
-      aNullableEnum: result[13] as AnEnum?,
-      aNullableString: result[14] as String?,
-      aNullableObject: result[15],
-      allNullableLists: result[16] as AllNullableListTypes?,
-      allNullableMaps: result[17] as AllNullableMapTypes?,
+          (result[10] as Map<Object?, Object?>?)?.cast<String?, Object?>(),
+      aNullableEnum: result[11] as AnEnum?,
+      aNullableString: result[12] as String?,
+      aNullableObject: result[13],
+      list: result[14] as List<Object?>?,
+      stringList: (result[15] as List<Object?>?)?.cast<String?>(),
+      intList: (result[16] as List<Object?>?)?.cast<int?>(),
+      doubleList: (result[17] as List<Object?>?)?.cast<double?>(),
+      boolList: (result[18] as List<Object?>?)?.cast<bool?>(),
+      map: result[19] as Map<Object?, Object?>?,
     );
   }
 }
@@ -522,35 +448,23 @@ class _PigeonCodec extends StandardMessageCodec {
   const _PigeonCodec();
   @override
   void writeValue(WriteBuffer buffer, Object? value) {
-    if (value is AllMapTypes) {
+    if (value is AllTypes) {
       buffer.putUint8(129);
       writeValue(buffer, value.encode());
-    } else if (value is AllListTypes) {
+    } else if (value is AllNullableTypes) {
       buffer.putUint8(130);
       writeValue(buffer, value.encode());
-    } else if (value is AllNullableMapTypes) {
+    } else if (value is AllNullableTypesWithoutRecursion) {
       buffer.putUint8(131);
       writeValue(buffer, value.encode());
-    } else if (value is AllNullableListTypes) {
+    } else if (value is AllClassesWrapper) {
       buffer.putUint8(132);
       writeValue(buffer, value.encode());
-    } else if (value is AllTypes) {
+    } else if (value is TestMessage) {
       buffer.putUint8(133);
       writeValue(buffer, value.encode());
-    } else if (value is AllNullableTypes) {
-      buffer.putUint8(134);
-      writeValue(buffer, value.encode());
-    } else if (value is AllNullableTypesWithoutRecursion) {
-      buffer.putUint8(135);
-      writeValue(buffer, value.encode());
-    } else if (value is AllClassesWrapper) {
-      buffer.putUint8(136);
-      writeValue(buffer, value.encode());
-    } else if (value is TestMessage) {
-      buffer.putUint8(137);
-      writeValue(buffer, value.encode());
     } else if (value is AnEnum) {
-      buffer.putUint8(138);
+      buffer.putUint8(134);
       writeValue(buffer, value.index);
     } else {
       super.writeValue(buffer, value);
@@ -561,24 +475,16 @@ class _PigeonCodec extends StandardMessageCodec {
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
       case 129:
-        return AllMapTypes.decode(readValue(buffer)!);
-      case 130:
-        return AllListTypes.decode(readValue(buffer)!);
-      case 131:
-        return AllNullableMapTypes.decode(readValue(buffer)!);
-      case 132:
-        return AllNullableListTypes.decode(readValue(buffer)!);
-      case 133:
         return AllTypes.decode(readValue(buffer)!);
-      case 134:
+      case 130:
         return AllNullableTypes.decode(readValue(buffer)!);
-      case 135:
+      case 131:
         return AllNullableTypesWithoutRecursion.decode(readValue(buffer)!);
-      case 136:
+      case 132:
         return AllClassesWrapper.decode(readValue(buffer)!);
-      case 137:
+      case 133:
         return TestMessage.decode(readValue(buffer)!);
-      case 138:
+      case 134:
         final int? value = readValue(buffer) as int?;
         return value == null ? null : AnEnum.values[value];
       default:

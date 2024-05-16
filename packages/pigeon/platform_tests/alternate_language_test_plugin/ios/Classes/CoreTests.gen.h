@@ -28,55 +28,11 @@ typedef NS_ENUM(NSUInteger, FLTAnEnum) {
 - (instancetype)initWithValue:(FLTAnEnum)value;
 @end
 
-@class FLTAllMapTypes;
-@class FLTAllListTypes;
-@class FLTAllNullableMapTypes;
-@class FLTAllNullableListTypes;
 @class FLTAllTypes;
 @class FLTAllNullableTypes;
 @class FLTAllNullableTypesWithoutRecursion;
 @class FLTAllClassesWrapper;
 @class FLTTestMessage;
-
-@interface FLTAllMapTypes : NSObject
-/// `init` unavailable to enforce nonnull fields, see the `make` class method.
-- (instancetype)init NS_UNAVAILABLE;
-+ (instancetype)makeWithMap:(NSDictionary *)map;
-@property(nonatomic, copy) NSDictionary *map;
-@end
-
-@interface FLTAllListTypes : NSObject
-/// `init` unavailable to enforce nonnull fields, see the `make` class method.
-- (instancetype)init NS_UNAVAILABLE;
-+ (instancetype)makeWithList:(NSArray *)list
-                  stringList:(NSArray<NSString *> *)stringList
-                     intList:(NSArray<NSNumber *> *)intList
-                  doubleList:(NSArray<NSNumber *> *)doubleList
-                    boolList:(NSArray<NSNumber *> *)boolList;
-@property(nonatomic, copy) NSArray *list;
-@property(nonatomic, copy) NSArray<NSString *> *stringList;
-@property(nonatomic, copy) NSArray<NSNumber *> *intList;
-@property(nonatomic, copy) NSArray<NSNumber *> *doubleList;
-@property(nonatomic, copy) NSArray<NSNumber *> *boolList;
-@end
-
-@interface FLTAllNullableMapTypes : NSObject
-+ (instancetype)makeWithMap:(nullable NSDictionary *)map;
-@property(nonatomic, copy, nullable) NSDictionary *map;
-@end
-
-@interface FLTAllNullableListTypes : NSObject
-+ (instancetype)makeWithList:(nullable NSArray *)list
-                  stringList:(nullable NSArray<NSString *> *)stringList
-                     intList:(nullable NSArray<NSNumber *> *)intList
-                  doubleList:(nullable NSArray<NSNumber *> *)doubleList
-                    boolList:(nullable NSArray<NSNumber *> *)boolList;
-@property(nonatomic, copy, nullable) NSArray *list;
-@property(nonatomic, copy, nullable) NSArray<NSString *> *stringList;
-@property(nonatomic, copy, nullable) NSArray<NSNumber *> *intList;
-@property(nonatomic, copy, nullable) NSArray<NSNumber *> *doubleList;
-@property(nonatomic, copy, nullable) NSArray<NSNumber *> *boolList;
-@end
 
 /// A class containing all supported types.
 @interface FLTAllTypes : NSObject
@@ -93,8 +49,12 @@ typedef NS_ENUM(NSUInteger, FLTAnEnum) {
                        anEnum:(FLTAnEnum)anEnum
                       aString:(NSString *)aString
                      anObject:(id)anObject
-                      allMaps:(FLTAllMapTypes *)allMaps
-                     allLists:(FLTAllListTypes *)allLists;
+                         list:(NSArray *)list
+                   stringList:(NSArray<NSString *> *)stringList
+                      intList:(NSArray<NSNumber *> *)intList
+                   doubleList:(NSArray<NSNumber *> *)doubleList
+                     boolList:(NSArray<NSNumber *> *)boolList
+                          map:(NSDictionary *)map;
 @property(nonatomic, assign) BOOL aBool;
 @property(nonatomic, assign) NSInteger anInt;
 @property(nonatomic, assign) NSInteger anInt64;
@@ -106,8 +66,12 @@ typedef NS_ENUM(NSUInteger, FLTAnEnum) {
 @property(nonatomic, assign) FLTAnEnum anEnum;
 @property(nonatomic, copy) NSString *aString;
 @property(nonatomic, strong) id anObject;
-@property(nonatomic, strong) FLTAllMapTypes *allMaps;
-@property(nonatomic, strong) FLTAllListTypes *allLists;
+@property(nonatomic, copy) NSArray *list;
+@property(nonatomic, copy) NSArray<NSString *> *stringList;
+@property(nonatomic, copy) NSArray<NSNumber *> *intList;
+@property(nonatomic, copy) NSArray<NSNumber *> *doubleList;
+@property(nonatomic, copy) NSArray<NSNumber *> *boolList;
+@property(nonatomic, copy) NSDictionary *map;
 @end
 
 /// A class containing all supported nullable types.
@@ -127,9 +91,13 @@ typedef NS_ENUM(NSUInteger, FLTAnEnum) {
                         aNullableEnum:(nullable FLTAnEnumBox *)aNullableEnum
                       aNullableString:(nullable NSString *)aNullableString
                       aNullableObject:(nullable id)aNullableObject
-                     allNullableLists:(nullable FLTAllNullableListTypes *)allNullableLists
-                      allNullableMaps:(nullable FLTAllNullableMapTypes *)allNullableMaps
-                     allNullableTypes:(nullable FLTAllNullableTypes *)allNullableTypes;
+                     allNullableTypes:(nullable FLTAllNullableTypes *)allNullableTypes
+                                 list:(nullable NSArray *)list
+                           stringList:(nullable NSArray<NSString *> *)stringList
+                              intList:(nullable NSArray<NSNumber *> *)intList
+                           doubleList:(nullable NSArray<NSNumber *> *)doubleList
+                             boolList:(nullable NSArray<NSNumber *> *)boolList
+                                  map:(nullable NSDictionary *)map;
 @property(nonatomic, strong, nullable) NSNumber *aNullableBool;
 @property(nonatomic, strong, nullable) NSNumber *aNullableInt;
 @property(nonatomic, strong, nullable) NSNumber *aNullableInt64;
@@ -145,9 +113,13 @@ typedef NS_ENUM(NSUInteger, FLTAnEnum) {
 @property(nonatomic, strong, nullable) FLTAnEnumBox *aNullableEnum;
 @property(nonatomic, copy, nullable) NSString *aNullableString;
 @property(nonatomic, strong, nullable) id aNullableObject;
-@property(nonatomic, strong, nullable) FLTAllNullableListTypes *allNullableLists;
-@property(nonatomic, strong, nullable) FLTAllNullableMapTypes *allNullableMaps;
 @property(nonatomic, strong, nullable) FLTAllNullableTypes *allNullableTypes;
+@property(nonatomic, copy, nullable) NSArray *list;
+@property(nonatomic, copy, nullable) NSArray<NSString *> *stringList;
+@property(nonatomic, copy, nullable) NSArray<NSNumber *> *intList;
+@property(nonatomic, copy, nullable) NSArray<NSNumber *> *doubleList;
+@property(nonatomic, copy, nullable) NSArray<NSNumber *> *boolList;
+@property(nonatomic, copy, nullable) NSDictionary *map;
 @end
 
 /// The primary purpose for this class is to ensure coverage of Swift structs
@@ -162,8 +134,6 @@ typedef NS_ENUM(NSUInteger, FLTAnEnum) {
                   aNullable4ByteArray:(nullable FlutterStandardTypedData *)aNullable4ByteArray
                   aNullable8ByteArray:(nullable FlutterStandardTypedData *)aNullable8ByteArray
                   aNullableFloatArray:(nullable FlutterStandardTypedData *)aNullableFloatArray
-                        aNullableList:(nullable NSArray *)aNullableList
-                         aNullableMap:(nullable NSDictionary *)aNullableMap
                    nullableNestedList:(nullable NSArray<NSArray<NSNumber *> *> *)nullableNestedList
            nullableMapWithAnnotations:
                (nullable NSDictionary<NSString *, NSString *> *)nullableMapWithAnnotations
@@ -171,8 +141,12 @@ typedef NS_ENUM(NSUInteger, FLTAnEnum) {
                         aNullableEnum:(nullable FLTAnEnumBox *)aNullableEnum
                       aNullableString:(nullable NSString *)aNullableString
                       aNullableObject:(nullable id)aNullableObject
-                     allNullableLists:(nullable FLTAllNullableListTypes *)allNullableLists
-                      allNullableMaps:(nullable FLTAllNullableMapTypes *)allNullableMaps;
+                                 list:(nullable NSArray *)list
+                           stringList:(nullable NSArray<NSString *> *)stringList
+                              intList:(nullable NSArray<NSNumber *> *)intList
+                           doubleList:(nullable NSArray<NSNumber *> *)doubleList
+                             boolList:(nullable NSArray<NSNumber *> *)boolList
+                                  map:(nullable NSDictionary *)map;
 @property(nonatomic, strong, nullable) NSNumber *aNullableBool;
 @property(nonatomic, strong, nullable) NSNumber *aNullableInt;
 @property(nonatomic, strong, nullable) NSNumber *aNullableInt64;
@@ -181,8 +155,6 @@ typedef NS_ENUM(NSUInteger, FLTAnEnum) {
 @property(nonatomic, strong, nullable) FlutterStandardTypedData *aNullable4ByteArray;
 @property(nonatomic, strong, nullable) FlutterStandardTypedData *aNullable8ByteArray;
 @property(nonatomic, strong, nullable) FlutterStandardTypedData *aNullableFloatArray;
-@property(nonatomic, copy, nullable) NSArray *aNullableList;
-@property(nonatomic, copy, nullable) NSDictionary *aNullableMap;
 @property(nonatomic, copy, nullable) NSArray<NSArray<NSNumber *> *> *nullableNestedList;
 @property(nonatomic, copy, nullable)
     NSDictionary<NSString *, NSString *> *nullableMapWithAnnotations;
@@ -190,8 +162,12 @@ typedef NS_ENUM(NSUInteger, FLTAnEnum) {
 @property(nonatomic, strong, nullable) FLTAnEnumBox *aNullableEnum;
 @property(nonatomic, copy, nullable) NSString *aNullableString;
 @property(nonatomic, strong, nullable) id aNullableObject;
-@property(nonatomic, strong, nullable) FLTAllNullableListTypes *allNullableLists;
-@property(nonatomic, strong, nullable) FLTAllNullableMapTypes *allNullableMaps;
+@property(nonatomic, copy, nullable) NSArray *list;
+@property(nonatomic, copy, nullable) NSArray<NSString *> *stringList;
+@property(nonatomic, copy, nullable) NSArray<NSNumber *> *intList;
+@property(nonatomic, copy, nullable) NSArray<NSNumber *> *doubleList;
+@property(nonatomic, copy, nullable) NSArray<NSNumber *> *boolList;
+@property(nonatomic, copy, nullable) NSDictionary *map;
 @end
 
 /// A class for testing nested class handling.
