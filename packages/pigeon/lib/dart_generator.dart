@@ -284,7 +284,59 @@ class DartGenerator extends StructuredGenerator<DartOptions> {
     required String dartPackageName,
   }) {
     indent.newln();
-    _writeCodec(indent, root);
+    final Iterable<EnumeratedType> enumeratedTypes = getEnumeratedTypes(root);
+    indent.newln();
+    indent.write('class $_pigeonCodec extends StandardMessageCodec');
+    indent.addScoped(' {', '}', () {
+      indent.writeln('const $_pigeonCodec();');
+      if (enumeratedTypes.isNotEmpty) {
+        indent.writeln('@override');
+        indent.write('void writeValue(WriteBuffer buffer, Object? value) ');
+        indent.addScoped('{', '}', () {
+          enumerate(enumeratedTypes,
+              (int index, final EnumeratedType customType) {
+            indent.writeScoped('if (value is ${customType.name}) {', '} else ',
+                () {
+              indent.writeln('buffer.putUint8(${customType.enumeration});');
+              if (customType.type == CustomTypes.customClass) {
+                indent.writeln('writeValue(buffer, value.encode());');
+              } else if (customType.type == CustomTypes.customEnum) {
+                indent.writeln('writeValue(buffer, value.index);');
+              }
+            }, addTrailingNewline: false);
+          });
+          indent.addScoped('{', '}', () {
+            indent.writeln('super.writeValue(buffer, value);');
+          });
+        });
+        indent.newln();
+        indent.writeln('@override');
+        indent.write('Object? readValueOfType(int type, ReadBuffer buffer) ');
+        indent.addScoped('{', '}', () {
+          indent.write('switch (type) ');
+          indent.addScoped('{', '}', () {
+            for (final EnumeratedType customType in enumeratedTypes) {
+              indent.writeln('case ${customType.enumeration}: ');
+              indent.nest(1, () {
+                if (customType.type == CustomTypes.customClass) {
+                  indent.writeln(
+                      'return ${customType.name}.decode(readValue(buffer)!);');
+                } else if (customType.type == CustomTypes.customEnum) {
+                  indent
+                      .writeln('final int? value = readValue(buffer) as int?;');
+                  indent.writeln(
+                      'return value == null ? null : ${customType.name}.values[value];');
+                }
+              });
+            }
+            indent.writeln('default:');
+            indent.nest(1, () {
+              indent.writeln('return super.readValueOfType(type, buffer);');
+            });
+          });
+        });
+      }
+    });
   }
 
   /// Writes the code for host [Api], [api].
@@ -1747,65 +1799,6 @@ String _escapeForDartSingleQuotedString(String raw) {
       .replaceAll(r'\', r'\\')
       .replaceAll(r'$', r'\$')
       .replaceAll(r"'", r"\'");
-}
-
-/// Writes the codec that will be used by all APIs.
-/// Example:
-///
-/// class FooCodec extends StandardMessageCodec {...}
-void _writeCodec(Indent indent, Root root) {
-  final Iterable<EnumeratedType> enumeratedTypes = getEnumeratedTypes(root);
-  indent.newln();
-  indent.write('class $_pigeonCodec extends StandardMessageCodec');
-  indent.addScoped(' {', '}', () {
-    indent.writeln('const $_pigeonCodec();');
-    if (enumeratedTypes.isNotEmpty) {
-      indent.writeln('@override');
-      indent.write('void writeValue(WriteBuffer buffer, Object? value) ');
-      indent.addScoped('{', '}', () {
-        enumerate(enumeratedTypes,
-            (int index, final EnumeratedType customType) {
-          indent.writeScoped('if (value is ${customType.name}) {', '} else ',
-              () {
-            indent.writeln('buffer.putUint8(${customType.enumeration});');
-            if (customType.type == CustomTypes.customClass) {
-              indent.writeln('writeValue(buffer, value.encode());');
-            } else if (customType.type == CustomTypes.customEnum) {
-              indent.writeln('writeValue(buffer, value.index);');
-            }
-          }, addTrailingNewline: false);
-        });
-        indent.addScoped('{', '}', () {
-          indent.writeln('super.writeValue(buffer, value);');
-        });
-      });
-      indent.newln();
-      indent.writeln('@override');
-      indent.write('Object? readValueOfType(int type, ReadBuffer buffer) ');
-      indent.addScoped('{', '}', () {
-        indent.write('switch (type) ');
-        indent.addScoped('{', '}', () {
-          for (final EnumeratedType customType in enumeratedTypes) {
-            indent.writeln('case ${customType.enumeration}: ');
-            indent.nest(1, () {
-              if (customType.type == CustomTypes.customClass) {
-                indent.writeln(
-                    'return ${customType.name}.decode(readValue(buffer)!);');
-              } else if (customType.type == CustomTypes.customEnum) {
-                indent.writeln('final int? value = readValue(buffer) as int?;');
-                indent.writeln(
-                    'return value == null ? null : ${customType.name}.values[value];');
-              }
-            });
-          }
-          indent.writeln('default:');
-          indent.nest(1, () {
-            indent.writeln('return super.readValueOfType(type, buffer);');
-          });
-        });
-      });
-    }
-  });
 }
 
 /// Creates a Dart type where all type arguments are [Objects].

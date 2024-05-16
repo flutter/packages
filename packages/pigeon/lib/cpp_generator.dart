@@ -811,9 +811,6 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
     // Returns the expression to convert the given EncodableValue to a field
     // value.
     String getValueExpression(NamedType field, String encodable) {
-      // if (field.type.isEnum) {
-      //   return '(${field.type.baseName})(std::get<int32_t>($encodable))';
-      // } else
       if (field.type.baseName == 'int') {
         return '$encodable.LongValue()';
       } else if (field.type.baseName == 'Object') {
