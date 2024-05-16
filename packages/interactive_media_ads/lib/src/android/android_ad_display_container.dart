@@ -73,7 +73,8 @@ final class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
   // Currently loaded ad.
   ima.AdMediaInfo? _loadedAdMediaInfo;
 
-  // The saved ad position, used to resumed ad playback following an ad click-through.
+  // The saved ad position, used to resumed ad playback following an ad
+  // click-through.
   int _savedAdPosition = 0;
 
   // Timer used to periodically update the IMA SDK the progress of the currently
@@ -81,13 +82,16 @@ final class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
   Timer? _adProgressTimer;
   int? _adDuration;
 
-  AndroidAdDisplayContainerCreationParams get _androidParams =>
-      AndroidAdDisplayContainerCreationParams
-          .fromPlatformAdDisplayContainerCreationParams(params);
+  late final AndroidAdDisplayContainerCreationParams _androidParams =
+      params is AndroidAdDisplayContainerCreationParams
+          ? params as AndroidAdDisplayContainerCreationParams
+          : AndroidAdDisplayContainerCreationParams
+              .fromPlatformAdDisplayContainerCreationParams(params);
 
   @override
   Widget build(BuildContext context) {
     return AndroidViewWidget(
+      key: params.key,
       view: _frameLayout,
       onPlatformViewCreated: () async {
         _adDisplayContainer =
@@ -261,9 +265,12 @@ final class AndroidAdsLoader extends PlatformAdsLoader {
       _androidParams._proxy.instanceImaSdkFactory();
   late Future<ima.AdsLoader> _adsLoaderFuture;
 
-  AndroidAdsLoaderCreationParams get _androidParams =>
-      AndroidAdsLoaderCreationParams.fromPlatformAdsLoaderCreationParams(
-          params);
+  late final AndroidAdsLoaderCreationParams _androidParams =
+      params is AndroidAdsLoaderCreationParams
+          ? params as AndroidAdsLoaderCreationParams
+          : AndroidAdsLoaderCreationParams.fromPlatformAdsLoaderCreationParams(
+              params,
+            );
 
   @override
   Future<void> contentComplete() async {

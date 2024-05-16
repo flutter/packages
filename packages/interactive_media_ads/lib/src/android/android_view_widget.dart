@@ -8,7 +8,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
-import 'interactive_media_ads.g.dart' as interactive_media_ads;
+import 'interactive_media_ads.g.dart' as ima;
 import 'platform_views_service_proxy.dart';
 
 /// Represents a Flutter implementation of the Android [View](https://developer.android.com/reference/android/view/View)
@@ -25,20 +25,20 @@ class AndroidViewWidget extends StatelessWidget {
     this.layoutDirection = TextDirection.ltr,
     this.onPlatformViewCreated,
     this.displayWithHybridComposition = false,
-    interactive_media_ads.PigeonInstanceManager? instanceManager,
+    ima.PigeonInstanceManager? instanceManager,
     this.platformViewsServiceProxy = const PlatformViewsServiceProxy(),
   }) : instanceManager = instanceManager ??
-            interactive_media_ads.PigeonInstanceManager.instance;
+            ima.PigeonInstanceManager.instance;
 
   /// The reference to the Android native view that should be shown.
-  final interactive_media_ads.View view;
+  final ima.View view;
 
   /// Maintains instances used to communicate with the native objects they
   /// represent.
   ///
   /// This field is exposed for testing purposes only and should not be used
   /// outside of tests.
-  final interactive_media_ads.PigeonInstanceManager instanceManager;
+  final ima.PigeonInstanceManager instanceManager;
 
   /// Proxy that provides access to the platform views service.
   ///
@@ -57,7 +57,6 @@ class AndroidViewWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return PlatformViewLink(
-      key: key,
       viewType: 'plugins.flutter.io/webview',
       surfaceFactory: (
         BuildContext context,
