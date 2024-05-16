@@ -5,8 +5,6 @@
 import Cocoa
 import FlutterMacOS
 
-extension FlutterError: Error {}
-
 /// This plugin handles the native side of the integration tests in
 /// example/integration_test/.
 public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
@@ -49,15 +47,15 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
   }
 
   func throwError() throws -> Any? {
-    throw FlutterError(code: "code", message: "message", details: "details")
+    throw PigeonError(code: "code", message: "message", details: "details")
   }
 
   func throwErrorFromVoid() throws {
-    throw FlutterError(code: "code", message: "message", details: "details")
+    throw PigeonError(code: "code", message: "message", details: "details")
   }
 
   func throwFlutterError() throws -> Any? {
-    throw FlutterError(code: "code", message: "message", details: "details")
+    throw PigeonError(code: "code", message: "message", details: "details")
   }
 
   func echo(_ anInt: Int64) -> Int64 {
@@ -185,15 +183,15 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
   }
 
   func throwAsyncError(completion: @escaping (Result<Any?, Error>) -> Void) {
-    completion(.failure(FlutterError(code: "code", message: "message", details: "details")))
+    completion(.failure(PigeonError(code: "code", message: "message", details: "details")))
   }
 
   func throwAsyncErrorFromVoid(completion: @escaping (Result<Void, Error>) -> Void) {
-    completion(.failure(FlutterError(code: "code", message: "message", details: "details")))
+    completion(.failure(PigeonError(code: "code", message: "message", details: "details")))
   }
 
   func throwAsyncFlutterError(completion: @escaping (Result<Any?, Error>) -> Void) {
-    completion(.failure(FlutterError(code: "code", message: "message", details: "details")))
+    completion(.failure(PigeonError(code: "code", message: "message", details: "details")))
   }
 
   func echoAsync(_ everything: AllTypes, completion: @escaping (Result<AllTypes, Error>) -> Void) {
@@ -622,7 +620,7 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
             } else {
               completion(
                 .failure(
-                  FlutterError(
+                  PigeonError(
                     code: "",
                     message: "Multi-instance responses were not matching: \(resOne), \(resTwo)",
                     details: nil)))
