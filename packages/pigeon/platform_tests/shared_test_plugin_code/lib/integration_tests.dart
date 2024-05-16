@@ -57,19 +57,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
     expect(listEquals(allTypesOne.boolList, allTypesTwo.boolList), true);
     expect(listEquals(allTypesOne.doubleList, allTypesTwo.doubleList), true);
     expect(listEquals(allTypesOne.intList, allTypesTwo.intList), true);
-    // expect(
-    // listEquals(allTypesOne.enumList, allTypesTwo.enumList), true);
-    // expect(
-    //     listEquals(allTypesOne.listList, allTypesTwo.listList), true);
-    // expect(listEquals(allTypesOne.mapList, allTypesTwo.mapList), true);
     expect(mapEquals(allTypesOne.map, allTypesTwo.map), true);
-    // expect(mapEquals(allTypesOne.stringMap, allTypesTwo.stringMap), true);
-    // expect(mapEquals(allTypesOne.boolMap, allTypesTwo.boolMap), true);
-    // expect(mapEquals(allTypesOne.doubleMap, allTypesTwo.doubleMap), true);
-    // expect(mapEquals(allTypesOne.enumMap, allTypesTwo.enumMap), true);
-    // expect(mapEquals(allTypesOne.intMap, allTypesTwo.intMap), true);
-    // expect(mapEquals(allTypesOne.listMap, allTypesTwo.listMap), true);
-    // expect(mapEquals(allTypesOne.mapMap, allTypesTwo.mapMap), true);
   }
 
   void compareAllNullableTypes(AllNullableTypes? allNullableTypesOne,
@@ -132,19 +120,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
         true);
     expect(listEquals(allNullableTypesOne.intList, allNullableTypesTwo.intList),
         true);
-    // expect(
-    // listEquals(allNullableTypesOne.enumList, allNullableTypesTwo.enumList), true);
-    // expect(
-    //     listEquals(allNullableTypesOne.listList, allNullableTypesTwo.listList), true);
-    // expect(listEquals(allNullableTypesOne.mapList, allNullableTypesTwo.mapList), true);
     expect(mapEquals(allNullableTypesOne.map, allNullableTypesTwo.map), true);
-    // expect(mapEquals(allNullableTypesOne.stringMap, allNullableTypesTwo.stringMap), true);
-    // expect(mapEquals(allNullableTypesOne.boolMap, allNullableTypesTwo.boolMap), true);
-    // expect(mapEquals(allNullableTypesOne.doubleMap, allNullableTypesTwo.doubleMap), true);
-    // expect(mapEquals(allNullableTypesOne.enumMap, allNullableTypesTwo.enumMap), true);
-    // expect(mapEquals(allNullableTypesOne.intMap, allNullableTypesTwo.intMap), true);
-    // expect(mapEquals(allNullableTypesOne.listMap, allNullableTypesTwo.listMap), true);
-    // expect(mapEquals(allNullableTypesOne.mapMap, allNullableTypesTwo.mapMap), true);
   }
 
   void compareAllNullableTypesWithoutRecursion(
@@ -206,19 +182,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
         true);
     expect(listEquals(allNullableTypesOne.intList, allNullableTypesTwo.intList),
         true);
-    // expect(
-    // listEquals(allNullableTypesOne.enumList, allNullableTypesTwo.enumList), true);
-    // expect(
-    //     listEquals(allNullableTypesOne.listList, allNullableTypesTwo.listList), true);
-    // expect(listEquals(allNullableTypesOne.mapList, allNullableTypesTwo.mapList), true);
     expect(mapEquals(allNullableTypesOne.map, allNullableTypesTwo.map), true);
-    // expect(mapEquals(allNullableTypesOne.stringMap, allNullableTypesTwo.stringMap), true);
-    // expect(mapEquals(allNullableTypesOne.boolMap, allNullableTypesTwo.boolMap), true);
-    // expect(mapEquals(allNullableTypesOne.doubleMap, allNullableTypesTwo.doubleMap), true);
-    // expect(mapEquals(allNullableTypesOne.enumMap, allNullableTypesTwo.enumMap), true);
-    // expect(mapEquals(allNullableTypesOne.intMap, allNullableTypesTwo.intMap), true);
-    // expect(mapEquals(allNullableTypesOne.listMap, allNullableTypesTwo.listMap), true);
-    // expect(mapEquals(allNullableTypesOne.mapMap, allNullableTypesTwo.mapMap), true);
   }
 
   void compareAllClassesWrapper(
@@ -244,37 +208,6 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
     'd': false,
     'e': null
   };
-
-  // final Map<String?, String?> stringMap = <String?, String?>{
-  //   'a': '1',
-  //   'b': '2.0',
-  //   'c': 'three',
-  //   'd': 'false',
-  //   'e': null
-  // };
-
-  // final Map<int?, int?> intMap = <int?, int?>{1: 1, 2: 2, 3: 3, 4: 4, 5: null};
-
-  // final Map<double?, double?> doubleMap = <double?, double?>{
-  //   1: 1.1,
-  //   2: 2.2,
-  //   3: 3.3,
-  //   4: 4.4,
-  //   5.5: null
-  // };
-
-  // final Map<bool?, bool?> boolMap = <bool?, bool?>{
-  //   true: false,
-  //   false: true,
-  // };
-
-  // final Map<AnEnum?, AnEnum?> enumMap = <AnEnum?, AnEnum?>{
-  //   AnEnum.one: AnEnum.fourHundredTwentyTwo,
-  //   AnEnum.two: AnEnum.fortyTwo,
-  //   AnEnum.three: AnEnum.three,
-  //   AnEnum.fortyTwo: AnEnum.two,
-  //   AnEnum.fourHundredTwentyTwo: null
-  // };
 
   final List<Object?> list = <Object?>[
     'Thing 1',
@@ -316,80 +249,6 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
     null,
   ];
 
-  // final List<AnEnum?> enumList = <AnEnum?>[
-  //   AnEnum.one,
-  //   AnEnum.two,
-  //   AnEnum.three,
-  //   AnEnum.fortyTwo,
-  //   AnEnum.fourHundredTwentyTwo,
-  //   null,
-  // ];
-
-  // final Map<String?, List<Object?>?> listMap = <String?, List<Object?>?>{
-  //   'list': list,
-  //   'stringList': stringList,
-  //   'intList': intList,
-  //   'doubleList': doubleList,
-  //   'boolList': boolList,
-  //   'enumList': enumList,
-  // };
-
-  // final Map<String?, Map<Object?, Object?>?> mapMap =
-  //     <String?, Map<Object?, Object?>?>{
-  //   'map': map,
-  //   'stringMap': stringMap,
-  //   'intMap': intMap,
-  //   'doubleMap': doubleMap,
-  //   'boolMap': boolMap,
-  //   'enumMap': enumMap,
-  // };
-
-  // final List<List<Object?>?> listList = <List<Object?>?>[
-  //   list,
-  //   stringList,
-  //   intList,
-  //   doubleList,
-  //   boolList,
-  //   enumList,
-  //   null,
-  // ];
-
-  // final List<Map<Object?, Object?>?> mapList = <Map<Object?, Object?>?>[
-  //   map,
-  //   stringMap,
-  //   intMap,
-  //   doubleMap,
-  //   boolMap,
-  //   enumMap,
-  //   null,
-  // ];
-
-  // final SimpleClass genericSimpleClassOne =
-  //     SimpleClass(aString: 'string', aBool: false);
-
-  // final SimpleClass genericSimpleClassTwo =
-  //     SimpleClass(aString: 'string', aBool: false);
-
-  // final SimpleClass genericSimpleClassThree =
-  //     SimpleClass(aString: 'string', aBool: false);
-
-  // final SimpleClass genericSimpleClassFour =
-  //     SimpleClass(aString: 'string', aBool: false);
-
-  // final Map<String?, SimpleClass?> classMap = <String?, SimpleClass?>{
-  //   'one': genericSimpleClassOne,
-  //   'two': genericSimpleClassTwo,
-  //   'three': genericSimpleClassThree,
-  //   'four': genericSimpleClassFour,
-  // };
-
-  // final List<SimpleClass?> classList = <SimpleClass?>[
-  //   genericSimpleClassOne,
-  //   genericSimpleClassTwo,
-  //   genericSimpleClassThree,
-  //   genericSimpleClassFour,
-  // ];
-
   final AllTypes genericAllTypes = AllTypes(
     aBool: true,
     anInt: _regularInt,
@@ -407,19 +266,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
     intList: intList,
     doubleList: doubleList,
     boolList: boolList,
-    // enumList: enumList,
-    // listList: listList,
-    // mapList: mapList,
-    // classList: classList,
     map: map,
-    // stringMap: stringMap,
-    // intMap: intMap,
-    // doubleMap: doubleMap,
-    // boolMap: boolMap,
-    // enumMap: enumMap,
-    // listMap: listMap,
-    // mapMap: mapMap,
-    // classMap: classMap,
   );
 
   final AllNullableTypes genericAllNullableTypes = AllNullableTypes(
@@ -445,19 +292,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
     intList: intList,
     doubleList: doubleList,
     boolList: boolList,
-    // enumList: enumList,
-    // listList: listList,
-    // mapList: mapList,
-    // classList: classList,
     map: map,
-    // stringMap: stringMap,
-    // intMap: intMap,
-    // doubleMap: doubleMap,
-    // boolMap: boolMap,
-    // enumMap: enumMap,
-    // listMap: listMap,
-    // mapMap: mapMap,
-    // classMap: classMap,
   );
 
   final AllNullableTypes recursiveAllNullableTypes = AllNullableTypes(
@@ -484,19 +319,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
     intList: intList,
     doubleList: doubleList,
     boolList: boolList,
-    // enumList: enumList,
-    // listList: listList,
-    // mapList: mapList,
-    // classList: classList,
     map: map,
-    // stringMap: stringMap,
-    // intMap: intMap,
-    // doubleMap: doubleMap,
-    // boolMap: boolMap,
-    // enumMap: enumMap,
-    // listMap: listMap,
-    // mapMap: mapMap,
-    // classMap: classMap,
   );
 
   final AllNullableTypesWithoutRecursion
@@ -524,19 +347,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
     intList: intList,
     doubleList: doubleList,
     boolList: boolList,
-    // enumList: enumList,
-    // listList: listList,
-    // mapList: mapList,
-    // classList: classList,
     map: map,
-    // stringMap: stringMap,
-    // intMap: intMap,
-    // doubleMap: doubleMap,
-    // boolMap: boolMap,
-    // enumMap: enumMap,
-    // listMap: listMap,
-    // mapMap: mapMap,
-    // classMap: classMap,
   );
 
   group('Host sync API tests', () {
