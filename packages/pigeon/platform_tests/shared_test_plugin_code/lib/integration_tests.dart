@@ -49,7 +49,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
     expect(allTypesOne.a4ByteArray, allTypesTwo.a4ByteArray);
     expect(allTypesOne.a8ByteArray, allTypesTwo.a8ByteArray);
     expect(allTypesOne.aFloatArray, allTypesTwo.aFloatArray);
-    expect(listEquals(allTypesOne.aList, allTypesTwo.aList), true);
+    expect(listEquals(allTypesOne.list, allTypesTwo.list), true);
     expect(mapEquals(allTypesOne.aMap, allTypesTwo.aMap), true);
     expect(allTypesOne.anEnum, allTypesTwo.anEnum);
     expect(allTypesOne.anObject, allTypesTwo.anObject);
@@ -190,7 +190,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
     a4ByteArray: Int32List.fromList(<int>[4, 5, 6]),
     a8ByteArray: Int64List.fromList(<int>[7, 8, 9]),
     aFloatArray: Float64List.fromList(<double>[2.71828, _doublePi]),
-    aList: <Object?>['Thing 1', 2, true, 3.14, null],
+    list: <Object?>['Thing 1', 2, true, 3.14, null],
     aMap: <Object?, Object?>{
       'a': 1,
       'b': 2.0,
@@ -1863,10 +1863,10 @@ class _FlutterApiTestImplementation implements FlutterIntegrationCoreApi {
   String echoString(String aString) => aString;
 
   @override
-  Uint8List echoUint8List(Uint8List aList) => aList;
+  Uint8List echoUint8List(Uint8List list) => list;
 
   @override
-  List<Object?> echoList(List<Object?> aList) => aList;
+  List<Object?> echoList(List<Object?> list) => list;
 
   @override
   Map<String?, Object?> echoMap(Map<String?, Object?> aMap) => aMap;
@@ -1884,7 +1884,7 @@ class _FlutterApiTestImplementation implements FlutterIntegrationCoreApi {
   int? echoNullableInt(int? anInt) => anInt;
 
   @override
-  List<Object?>? echoNullableList(List<Object?>? aList) => aList;
+  List<Object?>? echoNullableList(List<Object?>? list) => list;
 
   @override
   Map<String?, Object?>? echoNullableMap(Map<String?, Object?>? aMap) => aMap;
@@ -1893,7 +1893,7 @@ class _FlutterApiTestImplementation implements FlutterIntegrationCoreApi {
   String? echoNullableString(String? aString) => aString;
 
   @override
-  Uint8List? echoNullableUint8List(Uint8List? aList) => aList;
+  Uint8List? echoNullableUint8List(Uint8List? list) => list;
 
   @override
   AnEnum? echoNullableEnum(AnEnum? anEnum) => anEnum;

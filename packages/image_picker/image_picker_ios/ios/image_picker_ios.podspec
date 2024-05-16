@@ -14,11 +14,11 @@ Downloaded by pub (not CocoaPods).
   s.author           = { 'Flutter Dev Team' => 'flutter-dev@googlegroups.com' }
   s.source           = { :http => 'https://github.com/flutter/packages/tree/main/packages/image_picker_ios' }
   s.documentation_url = 'https://pub.dev/packages/image_picker_ios'
-  s.source_files = 'Classes/**/*.{h,m}'
-  s.public_header_files = 'Classes/**/*.h'
-  s.module_map = 'Classes/ImagePickerPlugin.modulemap'
+  s.source_files = 'image_picker_ios/Sources/image_picker_ios/**/*.{h,m}'
+  s.public_header_files = 'image_picker_ios/Sources/image_picker_ios/**/*.h'
+  s.module_map = 'image_picker_ios/Sources/image_picker_ios/include/ImagePickerPlugin.modulemap'
   s.dependency 'Flutter'
   s.platform = :ios, '12.0'
   s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES' }
-  s.resource_bundles = {'image_picker_ios_privacy' => ['Resources/PrivacyInfo.xcprivacy']}
+  s.resource_bundles = {'image_picker_ios_privacy' => ['image_picker_ios/Sources/image_picker_ios/Resources/PrivacyInfo.xcprivacy']}
 end

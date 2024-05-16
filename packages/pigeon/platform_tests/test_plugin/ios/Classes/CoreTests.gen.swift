@@ -15,11 +15,36 @@ import Foundation
   #error("Unsupported platform.")
 #endif
 
+/// Error class for passing custom error details to Dart side.
+final class PigeonError: Error {
+  let code: String
+  let message: String?
+  let details: Any?
+
+  init(code: String, message: String?, details: Any?) {
+    self.code = code
+    self.message = message
+    self.details = details
+  }
+
+  var localizedDescription: String {
+    return
+      "PigeonError(code: \(code), message: \(message ?? "<nil>"), details: \(details ?? "<nil>")"
+  }
+}
+
 private func wrapResult(_ result: Any?) -> [Any?] {
   return [result]
 }
 
 private func wrapError(_ error: Any) -> [Any?] {
+  if let pigeonError = error as? PigeonError {
+    return [
+      pigeonError.code,
+      pigeonError.message,
+      pigeonError.details,
+    ]
+  }
   if let flutterError = error as? FlutterError {
     return [
       flutterError.code,
@@ -34,8 +59,8 @@ private func wrapError(_ error: Any) -> [Any?] {
   ]
 }
 
-private func createConnectionError(withChannelName channelName: String) -> FlutterError {
-  return FlutterError(
+private func createConnectionError(withChannelName channelName: String) -> PigeonError {
+  return PigeonError(
     code: "channel-error", message: "Unable to establish connection on channel: '\(channelName)'.",
     details: "")
 }
@@ -69,26 +94,29 @@ struct AllTypes {
   var a4ByteArray: FlutterStandardTypedData
   var a8ByteArray: FlutterStandardTypedData
   var aFloatArray: FlutterStandardTypedData
-  var aList: [Any?]
+  var list: [Any?]
   var aMap: [AnyHashable: Any?]
   var anEnum: AnEnum
   var aString: String
   var anObject: Any
 
-  static func fromList(_ list: [Any?]) -> AllTypes? {
-    let aBool = list[0] as! Bool
-    let anInt = list[1] is Int64 ? list[1] as! Int64 : Int64(list[1] as! Int32)
-    let anInt64 = list[2] is Int64 ? list[2] as! Int64 : Int64(list[2] as! Int32)
-    let aDouble = list[3] as! Double
-    let aByteArray = list[4] as! FlutterStandardTypedData
-    let a4ByteArray = list[5] as! FlutterStandardTypedData
-    let a8ByteArray = list[6] as! FlutterStandardTypedData
-    let aFloatArray = list[7] as! FlutterStandardTypedData
-    let aList = list[8] as! [Any?]
-    let aMap = list[9] as! [AnyHashable: Any?]
-    let anEnum = AnEnum(rawValue: list[10] as! Int)!
-    let aString = list[11] as! String
-    let anObject = list[12]!
+  // swift-format-ignore: AlwaysUseLowerCamelCase
+  static func fromList(_ __pigeon_list: [Any?]) -> AllTypes? {
+    let aBool = __pigeon_list[0] as! Bool
+    let anInt =
+      __pigeon_list[1] is Int64 ? __pigeon_list[1] as! Int64 : Int64(__pigeon_list[1] as! Int32)
+    let anInt64 =
+      __pigeon_list[2] is Int64 ? __pigeon_list[2] as! Int64 : Int64(__pigeon_list[2] as! Int32)
+    let aDouble = __pigeon_list[3] as! Double
+    let aByteArray = __pigeon_list[4] as! FlutterStandardTypedData
+    let a4ByteArray = __pigeon_list[5] as! FlutterStandardTypedData
+    let a8ByteArray = __pigeon_list[6] as! FlutterStandardTypedData
+    let aFloatArray = __pigeon_list[7] as! FlutterStandardTypedData
+    let list = __pigeon_list[8] as! [Any?]
+    let aMap = __pigeon_list[9] as! [AnyHashable: Any?]
+    let anEnum = AnEnum(rawValue: __pigeon_list[10] as! Int)!
+    let aString = __pigeon_list[11] as! String
+    let anObject = __pigeon_list[12]!
 
     return AllTypes(
       aBool: aBool,
@@ -99,7 +127,7 @@ struct AllTypes {
       a4ByteArray: a4ByteArray,
       a8ByteArray: a8ByteArray,
       aFloatArray: aFloatArray,
-      aList: aList,
+      list: list,
       aMap: aMap,
       anEnum: anEnum,
       aString: aString,
@@ -116,7 +144,7 @@ struct AllTypes {
       a4ByteArray,
       a8ByteArray,
       aFloatArray,
-      aList,
+      list,
       aMap,
       anEnum.rawValue,
       aString,
@@ -184,33 +212,37 @@ class AllNullableTypes {
   var aNullableObject: Any?
   var allNullableTypes: AllNullableTypes?
 
-  static func fromList(_ list: [Any?]) -> AllNullableTypes? {
-    let aNullableBool: Bool? = nilOrValue(list[0])
+  // swift-format-ignore: AlwaysUseLowerCamelCase
+  static func fromList(_ __pigeon_list: [Any?]) -> AllNullableTypes? {
+    let aNullableBool: Bool? = nilOrValue(__pigeon_list[0])
     let aNullableInt: Int64? =
-      isNullish(list[1]) ? nil : (list[1] is Int64? ? list[1] as! Int64? : Int64(list[1] as! Int32))
+      isNullish(__pigeon_list[1])
+      ? nil
+      : (__pigeon_list[1] is Int64?
+        ? __pigeon_list[1] as! Int64? : Int64(__pigeon_list[1] as! Int32))
     let aNullableInt64: Int64? =
-      isNullish(list[2]) ? nil : (list[2] is Int64? ? list[2] as! Int64? : Int64(list[2] as! Int32))
-    let aNullableDouble: Double? = nilOrValue(list[3])
-    let aNullableByteArray: FlutterStandardTypedData? = nilOrValue(list[4])
-    let aNullable4ByteArray: FlutterStandardTypedData? = nilOrValue(list[5])
-    let aNullable8ByteArray: FlutterStandardTypedData? = nilOrValue(list[6])
-    let aNullableFloatArray: FlutterStandardTypedData? = nilOrValue(list[7])
-    let aNullableList: [Any?]? = nilOrValue(list[8])
-    let aNullableMap: [AnyHashable: Any?]? = nilOrValue(list[9])
-    let nullableNestedList: [[Bool?]?]? = nilOrValue(list[10])
-    let nullableMapWithAnnotations: [String?: String?]? = nilOrValue(list[11])
-    let nullableMapWithObject: [String?: Any?]? = nilOrValue(list[12])
+      isNullish(__pigeon_list[2])
+      ? nil
+      : (__pigeon_list[2] is Int64?
+        ? __pigeon_list[2] as! Int64? : Int64(__pigeon_list[2] as! Int32))
+    let aNullableDouble: Double? = nilOrValue(__pigeon_list[3])
+    let aNullableByteArray: FlutterStandardTypedData? = nilOrValue(__pigeon_list[4])
+    let aNullable4ByteArray: FlutterStandardTypedData? = nilOrValue(__pigeon_list[5])
+    let aNullable8ByteArray: FlutterStandardTypedData? = nilOrValue(__pigeon_list[6])
+    let aNullableFloatArray: FlutterStandardTypedData? = nilOrValue(__pigeon_list[7])
+    let aNullableList: [Any?]? = nilOrValue(__pigeon_list[8])
+    let aNullableMap: [AnyHashable: Any?]? = nilOrValue(__pigeon_list[9])
+    let nullableNestedList: [[Bool?]?]? = nilOrValue(__pigeon_list[10])
+    let nullableMapWithAnnotations: [String?: String?]? = nilOrValue(__pigeon_list[11])
+    let nullableMapWithObject: [String?: Any?]? = nilOrValue(__pigeon_list[12])
     var aNullableEnum: AnEnum? = nil
-    let aNullableEnumEnumVal: Int? = nilOrValue(list[13])
+    let aNullableEnumEnumVal: Int? = nilOrValue(__pigeon_list[13])
     if let aNullableEnumRawValue = aNullableEnumEnumVal {
       aNullableEnum = AnEnum(rawValue: aNullableEnumRawValue)!
     }
-    let aNullableString: String? = nilOrValue(list[14])
-    let aNullableObject: Any? = list[15]
-    var allNullableTypes: AllNullableTypes? = nil
-    if let allNullableTypesList: [Any?] = nilOrValue(list[16]) {
-      allNullableTypes = AllNullableTypes.fromList(allNullableTypesList)
-    }
+    let aNullableString: String? = nilOrValue(__pigeon_list[14])
+    let aNullableObject: Any? = __pigeon_list[15]
+    let allNullableTypes: AllNullableTypes? = nilOrValue(__pigeon_list[16])
 
     return AllNullableTypes(
       aNullableBool: aNullableBool,
@@ -250,7 +282,7 @@ class AllNullableTypes {
       aNullableEnum?.rawValue,
       aNullableString,
       aNullableObject,
-      allNullableTypes?.toList(),
+      allNullableTypes,
     ]
   }
 }
@@ -278,29 +310,36 @@ struct AllNullableTypesWithoutRecursion {
   var aNullableString: String? = nil
   var aNullableObject: Any? = nil
 
-  static func fromList(_ list: [Any?]) -> AllNullableTypesWithoutRecursion? {
-    let aNullableBool: Bool? = nilOrValue(list[0])
+  // swift-format-ignore: AlwaysUseLowerCamelCase
+  static func fromList(_ __pigeon_list: [Any?]) -> AllNullableTypesWithoutRecursion? {
+    let aNullableBool: Bool? = nilOrValue(__pigeon_list[0])
     let aNullableInt: Int64? =
-      isNullish(list[1]) ? nil : (list[1] is Int64? ? list[1] as! Int64? : Int64(list[1] as! Int32))
+      isNullish(__pigeon_list[1])
+      ? nil
+      : (__pigeon_list[1] is Int64?
+        ? __pigeon_list[1] as! Int64? : Int64(__pigeon_list[1] as! Int32))
     let aNullableInt64: Int64? =
-      isNullish(list[2]) ? nil : (list[2] is Int64? ? list[2] as! Int64? : Int64(list[2] as! Int32))
-    let aNullableDouble: Double? = nilOrValue(list[3])
-    let aNullableByteArray: FlutterStandardTypedData? = nilOrValue(list[4])
-    let aNullable4ByteArray: FlutterStandardTypedData? = nilOrValue(list[5])
-    let aNullable8ByteArray: FlutterStandardTypedData? = nilOrValue(list[6])
-    let aNullableFloatArray: FlutterStandardTypedData? = nilOrValue(list[7])
-    let aNullableList: [Any?]? = nilOrValue(list[8])
-    let aNullableMap: [AnyHashable: Any?]? = nilOrValue(list[9])
-    let nullableNestedList: [[Bool?]?]? = nilOrValue(list[10])
-    let nullableMapWithAnnotations: [String?: String?]? = nilOrValue(list[11])
-    let nullableMapWithObject: [String?: Any?]? = nilOrValue(list[12])
+      isNullish(__pigeon_list[2])
+      ? nil
+      : (__pigeon_list[2] is Int64?
+        ? __pigeon_list[2] as! Int64? : Int64(__pigeon_list[2] as! Int32))
+    let aNullableDouble: Double? = nilOrValue(__pigeon_list[3])
+    let aNullableByteArray: FlutterStandardTypedData? = nilOrValue(__pigeon_list[4])
+    let aNullable4ByteArray: FlutterStandardTypedData? = nilOrValue(__pigeon_list[5])
+    let aNullable8ByteArray: FlutterStandardTypedData? = nilOrValue(__pigeon_list[6])
+    let aNullableFloatArray: FlutterStandardTypedData? = nilOrValue(__pigeon_list[7])
+    let aNullableList: [Any?]? = nilOrValue(__pigeon_list[8])
+    let aNullableMap: [AnyHashable: Any?]? = nilOrValue(__pigeon_list[9])
+    let nullableNestedList: [[Bool?]?]? = nilOrValue(__pigeon_list[10])
+    let nullableMapWithAnnotations: [String?: String?]? = nilOrValue(__pigeon_list[11])
+    let nullableMapWithObject: [String?: Any?]? = nilOrValue(__pigeon_list[12])
     var aNullableEnum: AnEnum? = nil
-    let aNullableEnumEnumVal: Int? = nilOrValue(list[13])
+    let aNullableEnumEnumVal: Int? = nilOrValue(__pigeon_list[13])
     if let aNullableEnumRawValue = aNullableEnumEnumVal {
       aNullableEnum = AnEnum(rawValue: aNullableEnumRawValue)!
     }
-    let aNullableString: String? = nilOrValue(list[14])
-    let aNullableObject: Any? = list[15]
+    let aNullableString: String? = nilOrValue(__pigeon_list[14])
+    let aNullableObject: Any? = __pigeon_list[15]
 
     return AllNullableTypesWithoutRecursion(
       aNullableBool: aNullableBool,
@@ -355,17 +394,12 @@ struct AllClassesWrapper {
   var allNullableTypesWithoutRecursion: AllNullableTypesWithoutRecursion? = nil
   var allTypes: AllTypes? = nil
 
-  static func fromList(_ list: [Any?]) -> AllClassesWrapper? {
-    let allNullableTypes = AllNullableTypes.fromList(list[0] as! [Any?])!
-    var allNullableTypesWithoutRecursion: AllNullableTypesWithoutRecursion? = nil
-    if let allNullableTypesWithoutRecursionList: [Any?] = nilOrValue(list[1]) {
-      allNullableTypesWithoutRecursion = AllNullableTypesWithoutRecursion.fromList(
-        allNullableTypesWithoutRecursionList)
-    }
-    var allTypes: AllTypes? = nil
-    if let allTypesList: [Any?] = nilOrValue(list[2]) {
-      allTypes = AllTypes.fromList(allTypesList)
-    }
+  // swift-format-ignore: AlwaysUseLowerCamelCase
+  static func fromList(_ __pigeon_list: [Any?]) -> AllClassesWrapper? {
+    let allNullableTypes = __pigeon_list[0] as! AllNullableTypes
+    let allNullableTypesWithoutRecursion: AllNullableTypesWithoutRecursion? = nilOrValue(
+      __pigeon_list[1])
+    let allTypes: AllTypes? = nilOrValue(__pigeon_list[2])
 
     return AllClassesWrapper(
       allNullableTypes: allNullableTypes,
@@ -375,9 +409,9 @@ struct AllClassesWrapper {
   }
   func toList() -> [Any?] {
     return [
-      allNullableTypes.toList(),
-      allNullableTypesWithoutRecursion?.toList(),
-      allTypes?.toList(),
+      allNullableTypes,
+      allNullableTypesWithoutRecursion,
+      allTypes,
     ]
   }
 }
@@ -388,8 +422,9 @@ struct AllClassesWrapper {
 struct TestMessage {
   var testList: [Any?]? = nil
 
-  static func fromList(_ list: [Any?]) -> TestMessage? {
-    let testList: [Any?]? = nilOrValue(list[0])
+  // swift-format-ignore: AlwaysUseLowerCamelCase
+  static func fromList(_ __pigeon_list: [Any?]) -> TestMessage? {
+    let testList: [Any?]? = nilOrValue(__pigeon_list[0])
 
     return TestMessage(
       testList: testList
@@ -488,7 +523,7 @@ protocol HostIntegrationCoreApi {
   /// Returns the passed in generic Object.
   func echo(_ anObject: Any) throws -> Any
   /// Returns the passed list, to test serialization and deserialization.
-  func echo(_ aList: [Any?]) throws -> [Any?]
+  func echo(_ list: [Any?]) throws -> [Any?]
   /// Returns the passed map, to test serialization and deserialization.
   func echo(_ aMap: [String?: Any?]) throws -> [String?: Any?]
   /// Returns the passed map to test nested class serialization and deserialization.
@@ -559,7 +594,7 @@ protocol HostIntegrationCoreApi {
   /// Returns the passed in generic Object asynchronously.
   func echoAsync(_ anObject: Any, completion: @escaping (Result<Any, Error>) -> Void)
   /// Returns the passed list, to test asynchronous serialization and deserialization.
-  func echoAsync(_ aList: [Any?], completion: @escaping (Result<[Any?], Error>) -> Void)
+  func echoAsync(_ list: [Any?], completion: @escaping (Result<[Any?], Error>) -> Void)
   /// Returns the passed map, to test asynchronous serialization and deserialization.
   func echoAsync(
     _ aMap: [String?: Any?], completion: @escaping (Result<[String?: Any?], Error>) -> Void)
@@ -596,7 +631,7 @@ protocol HostIntegrationCoreApi {
   /// Returns the passed in generic Object asynchronously.
   func echoAsyncNullable(_ anObject: Any?, completion: @escaping (Result<Any?, Error>) -> Void)
   /// Returns the passed list, to test asynchronous serialization and deserialization.
-  func echoAsyncNullable(_ aList: [Any?]?, completion: @escaping (Result<[Any?]?, Error>) -> Void)
+  func echoAsyncNullable(_ list: [Any?]?, completion: @escaping (Result<[Any?]?, Error>) -> Void)
   /// Returns the passed map, to test asynchronous serialization and deserialization.
   func echoAsyncNullable(
     _ aMap: [String?: Any?]?, completion: @escaping (Result<[String?: Any?]?, Error>) -> Void)
@@ -624,9 +659,9 @@ protocol HostIntegrationCoreApi {
   func callFlutterEcho(_ aDouble: Double, completion: @escaping (Result<Double, Error>) -> Void)
   func callFlutterEcho(_ aString: String, completion: @escaping (Result<String, Error>) -> Void)
   func callFlutterEcho(
-    _ aList: FlutterStandardTypedData,
+    _ list: FlutterStandardTypedData,
     completion: @escaping (Result<FlutterStandardTypedData, Error>) -> Void)
-  func callFlutterEcho(_ aList: [Any?], completion: @escaping (Result<[Any?], Error>) -> Void)
+  func callFlutterEcho(_ list: [Any?], completion: @escaping (Result<[Any?], Error>) -> Void)
   func callFlutterEcho(
     _ aMap: [String?: Any?], completion: @escaping (Result<[String?: Any?], Error>) -> Void)
   func callFlutterEcho(_ anEnum: AnEnum, completion: @escaping (Result<AnEnum, Error>) -> Void)
@@ -638,10 +673,10 @@ protocol HostIntegrationCoreApi {
   func callFlutterEchoNullable(
     _ aString: String?, completion: @escaping (Result<String?, Error>) -> Void)
   func callFlutterEchoNullable(
-    _ aList: FlutterStandardTypedData?,
+    _ list: FlutterStandardTypedData?,
     completion: @escaping (Result<FlutterStandardTypedData?, Error>) -> Void)
   func callFlutterEchoNullable(
-    _ aList: [Any?]?, completion: @escaping (Result<[Any?]?, Error>) -> Void)
+    _ list: [Any?]?, completion: @escaping (Result<[Any?]?, Error>) -> Void)
   func callFlutterEchoNullable(
     _ aMap: [String?: Any?]?, completion: @escaping (Result<[String?: Any?]?, Error>) -> Void)
   func callFlutterNullableEcho(
@@ -870,9 +905,9 @@ class HostIntegrationCoreApiSetup {
     if let api = api {
       echoListChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
-        let aListArg = args[0] as! [Any?]
+        let listArg = args[0] as! [Any?]
         do {
-          let result = try api.echo(aListArg)
+          let result = try api.echo(listArg)
           reply(wrapResult(result))
         } catch {
           reply(wrapError(error))
@@ -1487,8 +1522,8 @@ class HostIntegrationCoreApiSetup {
     if let api = api {
       echoAsyncListChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
-        let aListArg = args[0] as! [Any?]
-        api.echoAsync(aListArg) { result in
+        let listArg = args[0] as! [Any?]
+        api.echoAsync(listArg) { result in
           switch result {
           case .success(let res):
             reply(wrapResult(res))
@@ -1798,8 +1833,8 @@ class HostIntegrationCoreApiSetup {
     if let api = api {
       echoAsyncNullableListChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
-        let aListArg: [Any?]? = nilOrValue(args[0])
-        api.echoAsyncNullable(aListArg) { result in
+        let listArg: [Any?]? = nilOrValue(args[0])
+        api.echoAsyncNullable(listArg) { result in
           switch result {
           case .success(let res):
             reply(wrapResult(res))
@@ -2107,8 +2142,8 @@ class HostIntegrationCoreApiSetup {
     if let api = api {
       callFlutterEchoUint8ListChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
-        let aListArg = args[0] as! FlutterStandardTypedData
-        api.callFlutterEcho(aListArg) { result in
+        let listArg = args[0] as! FlutterStandardTypedData
+        api.callFlutterEcho(listArg) { result in
           switch result {
           case .success(let res):
             reply(wrapResult(res))
@@ -2127,8 +2162,8 @@ class HostIntegrationCoreApiSetup {
     if let api = api {
       callFlutterEchoListChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
-        let aListArg = args[0] as! [Any?]
-        api.callFlutterEcho(aListArg) { result in
+        let listArg = args[0] as! [Any?]
+        api.callFlutterEcho(listArg) { result in
           switch result {
           case .success(let res):
             reply(wrapResult(res))
@@ -2269,8 +2304,8 @@ class HostIntegrationCoreApiSetup {
     if let api = api {
       callFlutterEchoNullableUint8ListChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
-        let aListArg: FlutterStandardTypedData? = nilOrValue(args[0])
-        api.callFlutterEchoNullable(aListArg) { result in
+        let listArg: FlutterStandardTypedData? = nilOrValue(args[0])
+        api.callFlutterEchoNullable(listArg) { result in
           switch result {
           case .success(let res):
             reply(wrapResult(res))
@@ -2289,8 +2324,8 @@ class HostIntegrationCoreApiSetup {
     if let api = api {
       callFlutterEchoNullableListChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
-        let aListArg: [Any?]? = nilOrValue(args[0])
-        api.callFlutterEchoNullable(aListArg) { result in
+        let listArg: [Any?]? = nilOrValue(args[0])
+        api.callFlutterEchoNullable(listArg) { result in
           switch result {
           case .success(let res):
             reply(wrapResult(res))
@@ -2428,86 +2463,85 @@ class FlutterIntegrationCoreApiCodec: FlutterStandardMessageCodec {
 protocol FlutterIntegrationCoreApiProtocol {
   /// A no-op function taking no arguments and returning no value, to sanity
   /// test basic calling.
-  func noop(completion: @escaping (Result<Void, FlutterError>) -> Void)
+  func noop(completion: @escaping (Result<Void, PigeonError>) -> Void)
   /// Responds with an error from an async function returning a value.
-  func throwError(completion: @escaping (Result<Any?, FlutterError>) -> Void)
+  func throwError(completion: @escaping (Result<Any?, PigeonError>) -> Void)
   /// Responds with an error from an async void function.
-  func throwErrorFromVoid(completion: @escaping (Result<Void, FlutterError>) -> Void)
+  func throwErrorFromVoid(completion: @escaping (Result<Void, PigeonError>) -> Void)
   /// Returns the passed object, to test serialization and deserialization.
   func echo(
-    _ everythingArg: AllTypes, completion: @escaping (Result<AllTypes, FlutterError>) -> Void)
+    _ everythingArg: AllTypes, completion: @escaping (Result<AllTypes, PigeonError>) -> Void)
   /// Returns the passed object, to test serialization and deserialization.
   func echoNullable(
     _ everythingArg: AllNullableTypes?,
-    completion: @escaping (Result<AllNullableTypes?, FlutterError>) -> Void)
+    completion: @escaping (Result<AllNullableTypes?, PigeonError>) -> Void)
   /// Returns passed in arguments of multiple types.
   ///
   /// Tests multiple-arity FlutterApi handling.
   func sendMultipleNullableTypes(
     aBool aNullableBoolArg: Bool?, anInt aNullableIntArg: Int64?,
     aString aNullableStringArg: String?,
-    completion: @escaping (Result<AllNullableTypes, FlutterError>) -> Void)
+    completion: @escaping (Result<AllNullableTypes, PigeonError>) -> Void)
   /// Returns the passed object, to test serialization and deserialization.
   func echoNullable(
     _ everythingArg: AllNullableTypesWithoutRecursion?,
-    completion: @escaping (Result<AllNullableTypesWithoutRecursion?, FlutterError>) -> Void)
+    completion: @escaping (Result<AllNullableTypesWithoutRecursion?, PigeonError>) -> Void)
   /// Returns passed in arguments of multiple types.
   ///
   /// Tests multiple-arity FlutterApi handling.
   func sendMultipleNullableTypesWithoutRecursion(
     aBool aNullableBoolArg: Bool?, anInt aNullableIntArg: Int64?,
     aString aNullableStringArg: String?,
-    completion: @escaping (Result<AllNullableTypesWithoutRecursion, FlutterError>) -> Void)
+    completion: @escaping (Result<AllNullableTypesWithoutRecursion, PigeonError>) -> Void)
   /// Returns the passed boolean, to test serialization and deserialization.
-  func echo(_ aBoolArg: Bool, completion: @escaping (Result<Bool, FlutterError>) -> Void)
+  func echo(_ aBoolArg: Bool, completion: @escaping (Result<Bool, PigeonError>) -> Void)
   /// Returns the passed int, to test serialization and deserialization.
-  func echo(_ anIntArg: Int64, completion: @escaping (Result<Int64, FlutterError>) -> Void)
+  func echo(_ anIntArg: Int64, completion: @escaping (Result<Int64, PigeonError>) -> Void)
   /// Returns the passed double, to test serialization and deserialization.
-  func echo(_ aDoubleArg: Double, completion: @escaping (Result<Double, FlutterError>) -> Void)
+  func echo(_ aDoubleArg: Double, completion: @escaping (Result<Double, PigeonError>) -> Void)
   /// Returns the passed string, to test serialization and deserialization.
-  func echo(_ aStringArg: String, completion: @escaping (Result<String, FlutterError>) -> Void)
+  func echo(_ aStringArg: String, completion: @escaping (Result<String, PigeonError>) -> Void)
   /// Returns the passed byte list, to test serialization and deserialization.
   func echo(
-    _ aListArg: FlutterStandardTypedData,
-    completion: @escaping (Result<FlutterStandardTypedData, FlutterError>) -> Void)
+    _ listArg: FlutterStandardTypedData,
+    completion: @escaping (Result<FlutterStandardTypedData, PigeonError>) -> Void)
   /// Returns the passed list, to test serialization and deserialization.
-  func echo(_ aListArg: [Any?], completion: @escaping (Result<[Any?], FlutterError>) -> Void)
+  func echo(_ listArg: [Any?], completion: @escaping (Result<[Any?], PigeonError>) -> Void)
   /// Returns the passed map, to test serialization and deserialization.
   func echo(
-    _ aMapArg: [String?: Any?],
-    completion: @escaping (Result<[String?: Any?], FlutterError>) -> Void)
+    _ aMapArg: [String?: Any?], completion: @escaping (Result<[String?: Any?], PigeonError>) -> Void
+  )
   /// Returns the passed enum to test serialization and deserialization.
-  func echo(_ anEnumArg: AnEnum, completion: @escaping (Result<AnEnum, FlutterError>) -> Void)
+  func echo(_ anEnumArg: AnEnum, completion: @escaping (Result<AnEnum, PigeonError>) -> Void)
   /// Returns the passed boolean, to test serialization and deserialization.
-  func echoNullable(_ aBoolArg: Bool?, completion: @escaping (Result<Bool?, FlutterError>) -> Void)
+  func echoNullable(_ aBoolArg: Bool?, completion: @escaping (Result<Bool?, PigeonError>) -> Void)
   /// Returns the passed int, to test serialization and deserialization.
-  func echoNullable(
-    _ anIntArg: Int64?, completion: @escaping (Result<Int64?, FlutterError>) -> Void)
+  func echoNullable(_ anIntArg: Int64?, completion: @escaping (Result<Int64?, PigeonError>) -> Void)
   /// Returns the passed double, to test serialization and deserialization.
   func echoNullable(
-    _ aDoubleArg: Double?, completion: @escaping (Result<Double?, FlutterError>) -> Void)
+    _ aDoubleArg: Double?, completion: @escaping (Result<Double?, PigeonError>) -> Void)
   /// Returns the passed string, to test serialization and deserialization.
   func echoNullable(
-    _ aStringArg: String?, completion: @escaping (Result<String?, FlutterError>) -> Void)
+    _ aStringArg: String?, completion: @escaping (Result<String?, PigeonError>) -> Void)
   /// Returns the passed byte list, to test serialization and deserialization.
   func echoNullable(
-    _ aListArg: FlutterStandardTypedData?,
-    completion: @escaping (Result<FlutterStandardTypedData?, FlutterError>) -> Void)
+    _ listArg: FlutterStandardTypedData?,
+    completion: @escaping (Result<FlutterStandardTypedData?, PigeonError>) -> Void)
   /// Returns the passed list, to test serialization and deserialization.
   func echoNullable(
-    _ aListArg: [Any?]?, completion: @escaping (Result<[Any?]?, FlutterError>) -> Void)
+    _ listArg: [Any?]?, completion: @escaping (Result<[Any?]?, PigeonError>) -> Void)
   /// Returns the passed map, to test serialization and deserialization.
   func echoNullable(
     _ aMapArg: [String?: Any?]?,
-    completion: @escaping (Result<[String?: Any?]?, FlutterError>) -> Void)
+    completion: @escaping (Result<[String?: Any?]?, PigeonError>) -> Void)
   /// Returns the passed enum to test serialization and deserialization.
   func echoNullable(
-    _ anEnumArg: AnEnum?, completion: @escaping (Result<AnEnum?, FlutterError>) -> Void)
+    _ anEnumArg: AnEnum?, completion: @escaping (Result<AnEnum?, PigeonError>) -> Void)
   /// A no-op function taking no arguments and returning no value, to sanity
   /// test basic asynchronous calling.
-  func noopAsync(completion: @escaping (Result<Void, FlutterError>) -> Void)
+  func noopAsync(completion: @escaping (Result<Void, PigeonError>) -> Void)
   /// Returns the passed in generic Object asynchronously.
-  func echoAsync(_ aStringArg: String, completion: @escaping (Result<String, FlutterError>) -> Void)
+  func echoAsync(_ aStringArg: String, completion: @escaping (Result<String, PigeonError>) -> Void)
 }
 class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
   private let binaryMessenger: FlutterBinaryMessenger
@@ -2521,7 +2555,7 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
   }
   /// A no-op function taking no arguments and returning no value, to sanity
   /// test basic calling.
-  func noop(completion: @escaping (Result<Void, FlutterError>) -> Void) {
+  func noop(completion: @escaping (Result<Void, PigeonError>) -> Void) {
     let channelName: String =
       "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.noop\(messageChannelSuffix)"
     let channel = FlutterBasicMessageChannel(
@@ -2535,14 +2569,14 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
         let code: String = listResponse[0] as! String
         let message: String? = nilOrValue(listResponse[1])
         let details: String? = nilOrValue(listResponse[2])
-        completion(.failure(FlutterError(code: code, message: message, details: details)))
+        completion(.failure(PigeonError(code: code, message: message, details: details)))
       } else {
         completion(.success(Void()))
       }
     }
   }
   /// Responds with an error from an async function returning a value.
-  func throwError(completion: @escaping (Result<Any?, FlutterError>) -> Void) {
+  func throwError(completion: @escaping (Result<Any?, PigeonError>) -> Void) {
     let channelName: String =
       "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.throwError\(messageChannelSuffix)"
     let channel = FlutterBasicMessageChannel(
@@ -2556,7 +2590,7 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
         let code: String = listResponse[0] as! String
         let message: String? = nilOrValue(listResponse[1])
         let details: String? = nilOrValue(listResponse[2])
-        completion(.failure(FlutterError(code: code, message: message, details: details)))
+        completion(.failure(PigeonError(code: code, message: message, details: details)))
       } else {
         let result: Any? = listResponse[0]
         completion(.success(result))
@@ -2564,7 +2598,7 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
     }
   }
   /// Responds with an error from an async void function.
-  func throwErrorFromVoid(completion: @escaping (Result<Void, FlutterError>) -> Void) {
+  func throwErrorFromVoid(completion: @escaping (Result<Void, PigeonError>) -> Void) {
     let channelName: String =
       "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.throwErrorFromVoid\(messageChannelSuffix)"
     let channel = FlutterBasicMessageChannel(
@@ -2578,7 +2612,7 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
         let code: String = listResponse[0] as! String
         let message: String? = nilOrValue(listResponse[1])
         let details: String? = nilOrValue(listResponse[2])
-        completion(.failure(FlutterError(code: code, message: message, details: details)))
+        completion(.failure(PigeonError(code: code, message: message, details: details)))
       } else {
         completion(.success(Void()))
       }
@@ -2586,7 +2620,7 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
   }
   /// Returns the passed object, to test serialization and deserialization.
   func echo(
-    _ everythingArg: AllTypes, completion: @escaping (Result<AllTypes, FlutterError>) -> Void
+    _ everythingArg: AllTypes, completion: @escaping (Result<AllTypes, PigeonError>) -> Void
   ) {
     let channelName: String =
       "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoAllTypes\(messageChannelSuffix)"
@@ -2601,11 +2635,11 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
         let code: String = listResponse[0] as! String
         let message: String? = nilOrValue(listResponse[1])
         let details: String? = nilOrValue(listResponse[2])
-        completion(.failure(FlutterError(code: code, message: message, details: details)))
+        completion(.failure(PigeonError(code: code, message: message, details: details)))
       } else if listResponse[0] == nil {
         completion(
           .failure(
-            FlutterError(
+            PigeonError(
               code: "null-error",
               message: "Flutter api returned null value for non-null return value.", details: "")))
       } else {
@@ -2617,7 +2651,7 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
   /// Returns the passed object, to test serialization and deserialization.
   func echoNullable(
     _ everythingArg: AllNullableTypes?,
-    completion: @escaping (Result<AllNullableTypes?, FlutterError>) -> Void
+    completion: @escaping (Result<AllNullableTypes?, PigeonError>) -> Void
   ) {
     let channelName: String =
       "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoAllNullableTypes\(messageChannelSuffix)"
@@ -2632,7 +2666,7 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
         let code: String = listResponse[0] as! String
         let message: String? = nilOrValue(listResponse[1])
         let details: String? = nilOrValue(listResponse[2])
-        completion(.failure(FlutterError(code: code, message: message, details: details)))
+        completion(.failure(PigeonError(code: code, message: message, details: details)))
       } else {
         let result: AllNullableTypes? = nilOrValue(listResponse[0])
         completion(.success(result))
@@ -2645,7 +2679,7 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
   func sendMultipleNullableTypes(
     aBool aNullableBoolArg: Bool?, anInt aNullableIntArg: Int64?,
     aString aNullableStringArg: String?,
-    completion: @escaping (Result<AllNullableTypes, FlutterError>) -> Void
+    completion: @escaping (Result<AllNullableTypes, PigeonError>) -> Void
   ) {
     let channelName: String =
       "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.sendMultipleNullableTypes\(messageChannelSuffix)"
@@ -2661,11 +2695,11 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
         let code: String = listResponse[0] as! String
         let message: String? = nilOrValue(listResponse[1])
         let details: String? = nilOrValue(listResponse[2])
-        completion(.failure(FlutterError(code: code, message: message, details: details)))
+        completion(.failure(PigeonError(code: code, message: message, details: details)))
       } else if listResponse[0] == nil {
         completion(
           .failure(
-            FlutterError(
+            PigeonError(
               code: "null-error",
               message: "Flutter api returned null value for non-null return value.", details: "")))
       } else {
@@ -2677,7 +2711,7 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
   /// Returns the passed object, to test serialization and deserialization.
   func echoNullable(
     _ everythingArg: AllNullableTypesWithoutRecursion?,
-    completion: @escaping (Result<AllNullableTypesWithoutRecursion?, FlutterError>) -> Void
+    completion: @escaping (Result<AllNullableTypesWithoutRecursion?, PigeonError>) -> Void
   ) {
     let channelName: String =
       "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoAllNullableTypesWithoutRecursion\(messageChannelSuffix)"
@@ -2692,7 +2726,7 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
         let code: String = listResponse[0] as! String
         let message: String? = nilOrValue(listResponse[1])
         let details: String? = nilOrValue(listResponse[2])
-        completion(.failure(FlutterError(code: code, message: message, details: details)))
+        completion(.failure(PigeonError(code: code, message: message, details: details)))
       } else {
         let result: AllNullableTypesWithoutRecursion? = nilOrValue(listResponse[0])
         completion(.success(result))
@@ -2705,7 +2739,7 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
   func sendMultipleNullableTypesWithoutRecursion(
     aBool aNullableBoolArg: Bool?, anInt aNullableIntArg: Int64?,
     aString aNullableStringArg: String?,
-    completion: @escaping (Result<AllNullableTypesWithoutRecursion, FlutterError>) -> Void
+    completion: @escaping (Result<AllNullableTypesWithoutRecursion, PigeonError>) -> Void
   ) {
     let channelName: String =
       "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.sendMultipleNullableTypesWithoutRecursion\(messageChannelSuffix)"
@@ -2721,11 +2755,11 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
         let code: String = listResponse[0] as! String
         let message: String? = nilOrValue(listResponse[1])
         let details: String? = nilOrValue(listResponse[2])
-        completion(.failure(FlutterError(code: code, message: message, details: details)))
+        completion(.failure(PigeonError(code: code, message: message, details: details)))
       } else if listResponse[0] == nil {
         completion(
           .failure(
-            FlutterError(
+            PigeonError(
               code: "null-error",
               message: "Flutter api returned null value for non-null return value.", details: "")))
       } else {
@@ -2735,7 +2769,7 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
     }
   }
   /// Returns the passed boolean, to test serialization and deserialization.
-  func echo(_ aBoolArg: Bool, completion: @escaping (Result<Bool, FlutterError>) -> Void) {
+  func echo(_ aBoolArg: Bool, completion: @escaping (Result<Bool, PigeonError>) -> Void) {
     let channelName: String =
       "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoBool\(messageChannelSuffix)"
     let channel = FlutterBasicMessageChannel(
@@ -2749,11 +2783,11 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
         let code: String = listResponse[0] as! String
         let message: String? = nilOrValue(listResponse[1])
         let details: String? = nilOrValue(listResponse[2])
-        completion(.failure(FlutterError(code: code, message: message, details: details)))
+        completion(.failure(PigeonError(code: code, message: message, details: details)))
       } else if listResponse[0] == nil {
         completion(
           .failure(
-            FlutterError(
+            PigeonError(
               code: "null-error",
               message: "Flutter api returned null value for non-null return value.", details: "")))
       } else {
@@ -2763,7 +2797,7 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
     }
   }
   /// Returns the passed int, to test serialization and deserialization.
-  func echo(_ anIntArg: Int64, completion: @escaping (Result<Int64, FlutterError>) -> Void) {
+  func echo(_ anIntArg: Int64, completion: @escaping (Result<Int64, PigeonError>) -> Void) {
     let channelName: String =
       "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoInt\(messageChannelSuffix)"
     let channel = FlutterBasicMessageChannel(
@@ -2777,11 +2811,11 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
         let code: String = listResponse[0] as! String
         let message: String? = nilOrValue(listResponse[1])
         let details: String? = nilOrValue(listResponse[2])
-        completion(.failure(FlutterError(code: code, message: message, details: details)))
+        completion(.failure(PigeonError(code: code, message: message, details: details)))
       } else if listResponse[0] == nil {
         completion(
           .failure(
-            FlutterError(
+            PigeonError(
               code: "null-error",
               message: "Flutter api returned null value for non-null return value.", details: "")))
       } else {
@@ -2792,7 +2826,7 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
     }
   }
   /// Returns the passed double, to test serialization and deserialization.
-  func echo(_ aDoubleArg: Double, completion: @escaping (Result<Double, FlutterError>) -> Void) {
+  func echo(_ aDoubleArg: Double, completion: @escaping (Result<Double, PigeonError>) -> Void) {
     let channelName: String =
       "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoDouble\(messageChannelSuffix)"
     let channel = FlutterBasicMessageChannel(
@@ -2806,11 +2840,11 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
         let code: String = listResponse[0] as! String
         let message: String? = nilOrValue(listResponse[1])
         let details: String? = nilOrValue(listResponse[2])
-        completion(.failure(FlutterError(code: code, message: message, details: details)))
+        completion(.failure(PigeonError(code: code, message: message, details: details)))
       } else if listResponse[0] == nil {
         completion(
           .failure(
-            FlutterError(
+            PigeonError(
               code: "null-error",
               message: "Flutter api returned null value for non-null return value.", details: "")))
       } else {
@@ -2820,7 +2854,7 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
     }
   }
   /// Returns the passed string, to test serialization and deserialization.
-  func echo(_ aStringArg: String, completion: @escaping (Result<String, FlutterError>) -> Void) {
+  func echo(_ aStringArg: String, completion: @escaping (Result<String, PigeonError>) -> Void) {
     let channelName: String =
       "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoString\(messageChannelSuffix)"
     let channel = FlutterBasicMessageChannel(
@@ -2834,11 +2868,11 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
         let code: String = listResponse[0] as! String
         let message: String? = nilOrValue(listResponse[1])
         let details: String? = nilOrValue(listResponse[2])
-        completion(.failure(FlutterError(code: code, message: message, details: details)))
+        completion(.failure(PigeonError(code: code, message: message, details: details)))
       } else if listResponse[0] == nil {
         completion(
           .failure(
-            FlutterError(
+            PigeonError(
               code: "null-error",
               message: "Flutter api returned null value for non-null return value.", details: "")))
       } else {
@@ -2849,14 +2883,14 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
   }
   /// Returns the passed byte list, to test serialization and deserialization.
   func echo(
-    _ aListArg: FlutterStandardTypedData,
-    completion: @escaping (Result<FlutterStandardTypedData, FlutterError>) -> Void
+    _ listArg: FlutterStandardTypedData,
+    completion: @escaping (Result<FlutterStandardTypedData, PigeonError>) -> Void
   ) {
     let channelName: String =
       "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoUint8List\(messageChannelSuffix)"
     let channel = FlutterBasicMessageChannel(
       name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-    channel.sendMessage([aListArg] as [Any?]) { response in
+    channel.sendMessage([listArg] as [Any?]) { response in
       guard let listResponse = response as? [Any?] else {
         completion(.failure(createConnectionError(withChannelName: channelName)))
         return
@@ -2865,11 +2899,11 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
         let code: String = listResponse[0] as! String
         let message: String? = nilOrValue(listResponse[1])
         let details: String? = nilOrValue(listResponse[2])
-        completion(.failure(FlutterError(code: code, message: message, details: details)))
+        completion(.failure(PigeonError(code: code, message: message, details: details)))
       } else if listResponse[0] == nil {
         completion(
           .failure(
-            FlutterError(
+            PigeonError(
               code: "null-error",
               message: "Flutter api returned null value for non-null return value.", details: "")))
       } else {
@@ -2879,12 +2913,12 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
     }
   }
   /// Returns the passed list, to test serialization and deserialization.
-  func echo(_ aListArg: [Any?], completion: @escaping (Result<[Any?], FlutterError>) -> Void) {
+  func echo(_ listArg: [Any?], completion: @escaping (Result<[Any?], PigeonError>) -> Void) {
     let channelName: String =
       "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoList\(messageChannelSuffix)"
     let channel = FlutterBasicMessageChannel(
       name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-    channel.sendMessage([aListArg] as [Any?]) { response in
+    channel.sendMessage([listArg] as [Any?]) { response in
       guard let listResponse = response as? [Any?] else {
         completion(.failure(createConnectionError(withChannelName: channelName)))
         return
@@ -2893,11 +2927,11 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
         let code: String = listResponse[0] as! String
         let message: String? = nilOrValue(listResponse[1])
         let details: String? = nilOrValue(listResponse[2])
-        completion(.failure(FlutterError(code: code, message: message, details: details)))
+        completion(.failure(PigeonError(code: code, message: message, details: details)))
       } else if listResponse[0] == nil {
         completion(
           .failure(
-            FlutterError(
+            PigeonError(
               code: "null-error",
               message: "Flutter api returned null value for non-null return value.", details: "")))
       } else {
@@ -2908,8 +2942,7 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
   }
   /// Returns the passed map, to test serialization and deserialization.
   func echo(
-    _ aMapArg: [String?: Any?],
-    completion: @escaping (Result<[String?: Any?], FlutterError>) -> Void
+    _ aMapArg: [String?: Any?], completion: @escaping (Result<[String?: Any?], PigeonError>) -> Void
   ) {
     let channelName: String =
       "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoMap\(messageChannelSuffix)"
@@ -2924,11 +2957,11 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
         let code: String = listResponse[0] as! String
         let message: String? = nilOrValue(listResponse[1])
         let details: String? = nilOrValue(listResponse[2])
-        completion(.failure(FlutterError(code: code, message: message, details: details)))
+        completion(.failure(PigeonError(code: code, message: message, details: details)))
       } else if listResponse[0] == nil {
         completion(
           .failure(
-            FlutterError(
+            PigeonError(
               code: "null-error",
               message: "Flutter api returned null value for non-null return value.", details: "")))
       } else {
@@ -2938,7 +2971,7 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
     }
   }
   /// Returns the passed enum to test serialization and deserialization.
-  func echo(_ anEnumArg: AnEnum, completion: @escaping (Result<AnEnum, FlutterError>) -> Void) {
+  func echo(_ anEnumArg: AnEnum, completion: @escaping (Result<AnEnum, PigeonError>) -> Void) {
     let channelName: String =
       "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoEnum\(messageChannelSuffix)"
     let channel = FlutterBasicMessageChannel(
@@ -2952,11 +2985,11 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
         let code: String = listResponse[0] as! String
         let message: String? = nilOrValue(listResponse[1])
         let details: String? = nilOrValue(listResponse[2])
-        completion(.failure(FlutterError(code: code, message: message, details: details)))
+        completion(.failure(PigeonError(code: code, message: message, details: details)))
       } else if listResponse[0] == nil {
         completion(
           .failure(
-            FlutterError(
+            PigeonError(
               code: "null-error",
               message: "Flutter api returned null value for non-null return value.", details: "")))
       } else {
@@ -2966,8 +2999,7 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
     }
   }
   /// Returns the passed boolean, to test serialization and deserialization.
-  func echoNullable(_ aBoolArg: Bool?, completion: @escaping (Result<Bool?, FlutterError>) -> Void)
-  {
+  func echoNullable(_ aBoolArg: Bool?, completion: @escaping (Result<Bool?, PigeonError>) -> Void) {
     let channelName: String =
       "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableBool\(messageChannelSuffix)"
     let channel = FlutterBasicMessageChannel(
@@ -2981,7 +3013,7 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
         let code: String = listResponse[0] as! String
         let message: String? = nilOrValue(listResponse[1])
         let details: String? = nilOrValue(listResponse[2])
-        completion(.failure(FlutterError(code: code, message: message, details: details)))
+        completion(.failure(PigeonError(code: code, message: message, details: details)))
       } else {
         let result: Bool? = nilOrValue(listResponse[0])
         completion(.success(result))
@@ -2989,9 +3021,8 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
     }
   }
   /// Returns the passed int, to test serialization and deserialization.
-  func echoNullable(
-    _ anIntArg: Int64?, completion: @escaping (Result<Int64?, FlutterError>) -> Void
-  ) {
+  func echoNullable(_ anIntArg: Int64?, completion: @escaping (Result<Int64?, PigeonError>) -> Void)
+  {
     let channelName: String =
       "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableInt\(messageChannelSuffix)"
     let channel = FlutterBasicMessageChannel(
@@ -3005,7 +3036,7 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
         let code: String = listResponse[0] as! String
         let message: String? = nilOrValue(listResponse[1])
         let details: String? = nilOrValue(listResponse[2])
-        completion(.failure(FlutterError(code: code, message: message, details: details)))
+        completion(.failure(PigeonError(code: code, message: message, details: details)))
       } else {
         let result: Int64? =
           isNullish(listResponse[0])
@@ -3018,7 +3049,7 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
   }
   /// Returns the passed double, to test serialization and deserialization.
   func echoNullable(
-    _ aDoubleArg: Double?, completion: @escaping (Result<Double?, FlutterError>) -> Void
+    _ aDoubleArg: Double?, completion: @escaping (Result<Double?, PigeonError>) -> Void
   ) {
     let channelName: String =
       "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableDouble\(messageChannelSuffix)"
@@ -3033,7 +3064,7 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
         let code: String = listResponse[0] as! String
         let message: String? = nilOrValue(listResponse[1])
         let details: String? = nilOrValue(listResponse[2])
-        completion(.failure(FlutterError(code: code, message: message, details: details)))
+        completion(.failure(PigeonError(code: code, message: message, details: details)))
       } else {
         let result: Double? = nilOrValue(listResponse[0])
         completion(.success(result))
@@ -3042,7 +3073,7 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
   }
   /// Returns the passed string, to test serialization and deserialization.
   func echoNullable(
-    _ aStringArg: String?, completion: @escaping (Result<String?, FlutterError>) -> Void
+    _ aStringArg: String?, completion: @escaping (Result<String?, PigeonError>) -> Void
   ) {
     let channelName: String =
       "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableString\(messageChannelSuffix)"
@@ -3057,7 +3088,7 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
         let code: String = listResponse[0] as! String
         let message: String? = nilOrValue(listResponse[1])
         let details: String? = nilOrValue(listResponse[2])
-        completion(.failure(FlutterError(code: code, message: message, details: details)))
+        completion(.failure(PigeonError(code: code, message: message, details: details)))
       } else {
         let result: String? = nilOrValue(listResponse[0])
         completion(.success(result))
@@ -3066,14 +3097,14 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
   }
   /// Returns the passed byte list, to test serialization and deserialization.
   func echoNullable(
-    _ aListArg: FlutterStandardTypedData?,
-    completion: @escaping (Result<FlutterStandardTypedData?, FlutterError>) -> Void
+    _ listArg: FlutterStandardTypedData?,
+    completion: @escaping (Result<FlutterStandardTypedData?, PigeonError>) -> Void
   ) {
     let channelName: String =
       "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableUint8List\(messageChannelSuffix)"
     let channel = FlutterBasicMessageChannel(
       name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-    channel.sendMessage([aListArg] as [Any?]) { response in
+    channel.sendMessage([listArg] as [Any?]) { response in
       guard let listResponse = response as? [Any?] else {
         completion(.failure(createConnectionError(withChannelName: channelName)))
         return
@@ -3082,7 +3113,7 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
         let code: String = listResponse[0] as! String
         let message: String? = nilOrValue(listResponse[1])
         let details: String? = nilOrValue(listResponse[2])
-        completion(.failure(FlutterError(code: code, message: message, details: details)))
+        completion(.failure(PigeonError(code: code, message: message, details: details)))
       } else {
         let result: FlutterStandardTypedData? = nilOrValue(listResponse[0])
         completion(.success(result))
@@ -3091,13 +3122,13 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
   }
   /// Returns the passed list, to test serialization and deserialization.
   func echoNullable(
-    _ aListArg: [Any?]?, completion: @escaping (Result<[Any?]?, FlutterError>) -> Void
+    _ listArg: [Any?]?, completion: @escaping (Result<[Any?]?, PigeonError>) -> Void
   ) {
     let channelName: String =
       "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableList\(messageChannelSuffix)"
     let channel = FlutterBasicMessageChannel(
       name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-    channel.sendMessage([aListArg] as [Any?]) { response in
+    channel.sendMessage([listArg] as [Any?]) { response in
       guard let listResponse = response as? [Any?] else {
         completion(.failure(createConnectionError(withChannelName: channelName)))
         return
@@ -3106,7 +3137,7 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
         let code: String = listResponse[0] as! String
         let message: String? = nilOrValue(listResponse[1])
         let details: String? = nilOrValue(listResponse[2])
-        completion(.failure(FlutterError(code: code, message: message, details: details)))
+        completion(.failure(PigeonError(code: code, message: message, details: details)))
       } else {
         let result: [Any?]? = nilOrValue(listResponse[0])
         completion(.success(result))
@@ -3116,7 +3147,7 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
   /// Returns the passed map, to test serialization and deserialization.
   func echoNullable(
     _ aMapArg: [String?: Any?]?,
-    completion: @escaping (Result<[String?: Any?]?, FlutterError>) -> Void
+    completion: @escaping (Result<[String?: Any?]?, PigeonError>) -> Void
   ) {
     let channelName: String =
       "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableMap\(messageChannelSuffix)"
@@ -3131,7 +3162,7 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
         let code: String = listResponse[0] as! String
         let message: String? = nilOrValue(listResponse[1])
         let details: String? = nilOrValue(listResponse[2])
-        completion(.failure(FlutterError(code: code, message: message, details: details)))
+        completion(.failure(PigeonError(code: code, message: message, details: details)))
       } else {
         let result: [String?: Any?]? = nilOrValue(listResponse[0])
         completion(.success(result))
@@ -3140,7 +3171,7 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
   }
   /// Returns the passed enum to test serialization and deserialization.
   func echoNullable(
-    _ anEnumArg: AnEnum?, completion: @escaping (Result<AnEnum?, FlutterError>) -> Void
+    _ anEnumArg: AnEnum?, completion: @escaping (Result<AnEnum?, PigeonError>) -> Void
   ) {
     let channelName: String =
       "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableEnum\(messageChannelSuffix)"
@@ -3155,7 +3186,7 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
         let code: String = listResponse[0] as! String
         let message: String? = nilOrValue(listResponse[1])
         let details: String? = nilOrValue(listResponse[2])
-        completion(.failure(FlutterError(code: code, message: message, details: details)))
+        completion(.failure(PigeonError(code: code, message: message, details: details)))
       } else {
         let result: AnEnum? =
           isNullish(listResponse[0]) ? nil : AnEnum(rawValue: listResponse[0] as! Int)!
@@ -3165,7 +3196,7 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
   }
   /// A no-op function taking no arguments and returning no value, to sanity
   /// test basic asynchronous calling.
-  func noopAsync(completion: @escaping (Result<Void, FlutterError>) -> Void) {
+  func noopAsync(completion: @escaping (Result<Void, PigeonError>) -> Void) {
     let channelName: String =
       "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.noopAsync\(messageChannelSuffix)"
     let channel = FlutterBasicMessageChannel(
@@ -3179,14 +3210,14 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
         let code: String = listResponse[0] as! String
         let message: String? = nilOrValue(listResponse[1])
         let details: String? = nilOrValue(listResponse[2])
-        completion(.failure(FlutterError(code: code, message: message, details: details)))
+        completion(.failure(PigeonError(code: code, message: message, details: details)))
       } else {
         completion(.success(Void()))
       }
     }
   }
   /// Returns the passed in generic Object asynchronously.
-  func echoAsync(_ aStringArg: String, completion: @escaping (Result<String, FlutterError>) -> Void)
+  func echoAsync(_ aStringArg: String, completion: @escaping (Result<String, PigeonError>) -> Void)
   {
     let channelName: String =
       "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoAsyncString\(messageChannelSuffix)"
@@ -3201,11 +3232,11 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
         let code: String = listResponse[0] as! String
         let message: String? = nilOrValue(listResponse[1])
         let details: String? = nilOrValue(listResponse[2])
-        completion(.failure(FlutterError(code: code, message: message, details: details)))
+        completion(.failure(PigeonError(code: code, message: message, details: details)))
       } else if listResponse[0] == nil {
         completion(
           .failure(
-            FlutterError(
+            PigeonError(
               code: "null-error",
               message: "Flutter api returned null value for non-null return value.", details: "")))
       } else {
@@ -3341,9 +3372,8 @@ class FlutterSmallApiCodec: FlutterStandardMessageCodec {
 ///
 /// Generated protocol from Pigeon that represents Flutter messages that can be called from Swift.
 protocol FlutterSmallApiProtocol {
-  func echo(
-    _ msgArg: TestMessage, completion: @escaping (Result<TestMessage, FlutterError>) -> Void)
-  func echo(string aStringArg: String, completion: @escaping (Result<String, FlutterError>) -> Void)
+  func echo(_ msgArg: TestMessage, completion: @escaping (Result<TestMessage, PigeonError>) -> Void)
+  func echo(string aStringArg: String, completion: @escaping (Result<String, PigeonError>) -> Void)
 }
 class FlutterSmallApi: FlutterSmallApiProtocol {
   private let binaryMessenger: FlutterBinaryMessenger
@@ -3355,9 +3385,8 @@ class FlutterSmallApi: FlutterSmallApiProtocol {
   var codec: FlutterStandardMessageCodec {
     return FlutterSmallApiCodec.shared
   }
-  func echo(
-    _ msgArg: TestMessage, completion: @escaping (Result<TestMessage, FlutterError>) -> Void
-  ) {
+  func echo(_ msgArg: TestMessage, completion: @escaping (Result<TestMessage, PigeonError>) -> Void)
+  {
     let channelName: String =
       "dev.flutter.pigeon.pigeon_integration_tests.FlutterSmallApi.echoWrappedList\(messageChannelSuffix)"
     let channel = FlutterBasicMessageChannel(
@@ -3371,11 +3400,11 @@ class FlutterSmallApi: FlutterSmallApiProtocol {
         let code: String = listResponse[0] as! String
         let message: String? = nilOrValue(listResponse[1])
         let details: String? = nilOrValue(listResponse[2])
-        completion(.failure(FlutterError(code: code, message: message, details: details)))
+        completion(.failure(PigeonError(code: code, message: message, details: details)))
       } else if listResponse[0] == nil {
         completion(
           .failure(
-            FlutterError(
+            PigeonError(
               code: "null-error",
               message: "Flutter api returned null value for non-null return value.", details: "")))
       } else {
@@ -3384,7 +3413,7 @@ class FlutterSmallApi: FlutterSmallApiProtocol {
       }
     }
   }
-  func echo(string aStringArg: String, completion: @escaping (Result<String, FlutterError>) -> Void)
+  func echo(string aStringArg: String, completion: @escaping (Result<String, PigeonError>) -> Void)
   {
     let channelName: String =
       "dev.flutter.pigeon.pigeon_integration_tests.FlutterSmallApi.echoString\(messageChannelSuffix)"
@@ -3399,11 +3428,11 @@ class FlutterSmallApi: FlutterSmallApiProtocol {
         let code: String = listResponse[0] as! String
         let message: String? = nilOrValue(listResponse[1])
         let details: String? = nilOrValue(listResponse[2])
-        completion(.failure(FlutterError(code: code, message: message, details: details)))
+        completion(.failure(PigeonError(code: code, message: message, details: details)))
       } else if listResponse[0] == nil {
         completion(
           .failure(
-            FlutterError(
+            PigeonError(
               code: "null-error",
               message: "Flutter api returned null value for non-null return value.", details: "")))
       } else {

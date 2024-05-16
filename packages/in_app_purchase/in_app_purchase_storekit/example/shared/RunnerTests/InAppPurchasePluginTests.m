@@ -5,7 +5,7 @@
 #import <OCMock/OCMock.h>
 #import <XCTest/XCTest.h>
 #import "FIAPaymentQueueHandler.h"
-#import "InAppPurchasePlugin+TestOnly.h"
+#import "RunnerTests-Swift.h"
 #import "Stubs.h"
 
 @import in_app_purchase_storekit;
@@ -21,7 +21,11 @@
 
 - (void)setUp {
   self.receiptManagerStub = [FIAPReceiptManagerStub new];
-  self.plugin = [[InAppPurchasePluginStub alloc] initWithReceiptManager:self.receiptManagerStub];
+  self.plugin = [[InAppPurchasePluginStub alloc]
+      initWithReceiptManager:self.receiptManagerStub
+              handlerFactory:^FIAPRequestHandler *(SKRequest *request) {
+                return [[FIAPRequestHandler alloc] initWithRequest:request];
+              }];
 }
 
 - (void)tearDown {
@@ -184,7 +188,7 @@
 
   id mockHandler = OCMClassMock([FIAPRequestHandler class]);
   InAppPurchasePlugin *plugin = [[InAppPurchasePlugin alloc]
-      initWithReceiptManager:nil
+      initWithReceiptManager:_receiptManagerStub
               handlerFactory:^FIAPRequestHandler *(SKRequest *request) {
                 return mockHandler;
               }];
@@ -219,7 +223,7 @@
   id mockHandler = OCMClassMock([FIAPRequestHandler class]);
 
   InAppPurchasePlugin *plugin = [[InAppPurchasePlugin alloc]
-      initWithReceiptManager:nil
+      initWithReceiptManager:_receiptManagerStub
               handlerFactory:^FIAPRequestHandler *(SKRequest *request) {
                 return mockHandler;
               }];
@@ -475,10 +479,26 @@
 - (void)testRefreshReceiptRequest {
   XCTestExpectation *expectation =
       [self expectationWithDescription:@"completion handler successfully called"];
-  [self.plugin refreshReceiptReceiptProperties:nil
-                                    completion:^(FlutterError *_Nullable error) {
-                                      [expectation fulfill];
-                                    }];
+
+  id mockHandler = OCMClassMock([FIAPRequestHandler class]);
+  InAppPurchasePlugin *plugin = [[InAppPurchasePlugin alloc]
+      initWithReceiptManager:_receiptManagerStub
+              handlerFactory:^FIAPRequestHandler *(SKRequest *request) {
+                return mockHandler;
+              }];
+
+  NSError *recieptError = [NSError errorWithDomain:@"errorDomain"
+                                              code:0
+                                          userInfo:@{NSLocalizedDescriptionKey : @"description"}];
+
+  OCMStub([mockHandler
+      startProductRequestWithCompletionHandler:([OCMArg invokeBlockWithArgs:[NSNull null],
+                                                                            recieptError, nil])]);
+
+  [plugin refreshReceiptReceiptProperties:nil
+                               completion:^(FlutterError *_Nullable error) {
+                                 [expectation fulfill];
+                               }];
   [self waitForExpectations:@[ expectation ] timeout:5];
 }
 
@@ -491,10 +511,27 @@
 
   XCTestExpectation *expectation =
       [self expectationWithDescription:@"completion handler successfully called"];
-  [self.plugin refreshReceiptReceiptProperties:properties
-                                    completion:^(FlutterError *_Nullable error) {
-                                      [expectation fulfill];
-                                    }];
+
+  id mockHandler = OCMClassMock([FIAPRequestHandler class]);
+  InAppPurchasePlugin *plugin = [[InAppPurchasePlugin alloc]
+      initWithReceiptManager:_receiptManagerStub
+              handlerFactory:^FIAPRequestHandler *(SKRequest *request) {
+                return mockHandler;
+              }];
+
+  NSError *recieptError = [NSError errorWithDomain:@"errorDomain"
+                                              code:0
+                                          userInfo:@{NSLocalizedDescriptionKey : @"description"}];
+
+  OCMStub([mockHandler
+      startProductRequestWithCompletionHandler:([OCMArg invokeBlockWithArgs:[NSNull null],
+                                                                            recieptError, nil])]);
+
+  [plugin refreshReceiptReceiptProperties:properties
+                               completion:^(FlutterError *_Nullable error) {
+                                 [expectation fulfill];
+                               }];
+
   [self waitForExpectations:@[ expectation ] timeout:5];
 }
 
@@ -509,7 +546,7 @@
 
   id mockHandler = OCMClassMock([FIAPRequestHandler class]);
   InAppPurchasePlugin *plugin = [[InAppPurchasePlugin alloc]
-      initWithReceiptManager:nil
+      initWithReceiptManager:_receiptManagerStub
               handlerFactory:^FIAPRequestHandler *(SKRequest *request) {
                 return mockHandler;
               }];
@@ -614,6 +651,14 @@
                                      updatedDownloads:nil
                                      transactionCache:OCMClassMock(FIATransactionCache.class)];
 
+    self.plugin.registrar = OCMProtocolMock(@protocol(FlutterPluginRegistrar));
+
+    id<FlutterPluginRegistrar> registrarMock = OCMProtocolMock(@protocol(FlutterPluginRegistrar));
+    self.plugin.registrar = registrarMock;
+
+    id binaryMessengerMock = OCMProtocolMock(@protocol(FlutterBinaryMessenger));
+    OCMStub([registrarMock messenger]).andReturn(binaryMessengerMock);
+
     // Verify the delegate is nil before we register one.
     XCTAssertNil(self.plugin.paymentQueueHandler.delegate);
 
@@ -624,7 +669,6 @@
     XCTAssertNotNil(self.plugin.paymentQueueHandler.delegate);
   }
 }
-#endif
 
 - (void)testRemovePaymentQueueDelegate {
   if (@available(iOS 13, *)) {
@@ -649,6 +693,7 @@
     XCTAssertNil(self.plugin.paymentQueueHandler.delegate);
   }
 }
+#endif
 
 - (void)testHandleTransactionsUpdated {
   NSDictionary *transactionMap = @{
@@ -661,7 +706,11 @@
     @"transactionTimeStamp" : @([NSDate date].timeIntervalSince1970),
   };
 
-  InAppPurchasePlugin *plugin = [[InAppPurchasePlugin alloc] initWithReceiptManager:nil];
+  InAppPurchasePlugin *plugin = [[InAppPurchasePluginStub alloc]
+      initWithReceiptManager:self.receiptManagerStub
+              handlerFactory:^FIAPRequestHandler *(SKRequest *request) {
+                return [[FIAPRequestHandler alloc] initWithRequest:request];
+              }];
   FlutterMethodChannel *mockChannel = OCMClassMock([FlutterMethodChannel class]);
   plugin.transactionObserverCallbackChannel = mockChannel;
   OCMStub([mockChannel invokeMethod:[OCMArg any] arguments:[OCMArg any]]);
@@ -687,7 +736,11 @@
     @"transactionTimeStamp" : @([NSDate date].timeIntervalSince1970),
   };
 
-  InAppPurchasePlugin *plugin = [[InAppPurchasePlugin alloc] initWithReceiptManager:nil];
+  InAppPurchasePlugin *plugin = [[InAppPurchasePluginStub alloc]
+      initWithReceiptManager:self.receiptManagerStub
+              handlerFactory:^FIAPRequestHandler *(SKRequest *request) {
+                return [[FIAPRequestHandler alloc] initWithRequest:request];
+              }];
   FlutterMethodChannel *mockChannel = OCMClassMock([FlutterMethodChannel class]);
   plugin.transactionObserverCallbackChannel = mockChannel;
   OCMStub([mockChannel invokeMethod:[OCMArg any] arguments:[OCMArg any]]);
@@ -703,19 +756,27 @@
 }
 
 - (void)testHandleTransactionRestoreFailed {
-  InAppPurchasePlugin *plugin = [[InAppPurchasePlugin alloc] initWithReceiptManager:nil];
+  InAppPurchasePlugin *plugin = [[InAppPurchasePluginStub alloc]
+      initWithReceiptManager:self.receiptManagerStub
+              handlerFactory:^FIAPRequestHandler *(SKRequest *request) {
+                return [[FIAPRequestHandler alloc] initWithRequest:request];
+              }];
   FlutterMethodChannel *mockChannel = OCMClassMock([FlutterMethodChannel class]);
   plugin.transactionObserverCallbackChannel = mockChannel;
   OCMStub([mockChannel invokeMethod:[OCMArg any] arguments:[OCMArg any]]);
 
-  NSError *error;
+  NSError *error = [NSError errorWithDomain:@"error" code:0 userInfo:nil];
   [plugin handleTransactionRestoreFailed:error];
   OCMVerify(times(1), [mockChannel invokeMethod:@"restoreCompletedTransactionsFailed"
                                       arguments:[FIAObjectTranslator getMapFromNSError:error]]);
 }
 
 - (void)testRestoreCompletedTransactionsFinished {
-  InAppPurchasePlugin *plugin = [[InAppPurchasePlugin alloc] initWithReceiptManager:nil];
+  InAppPurchasePlugin *plugin = [[InAppPurchasePluginStub alloc]
+      initWithReceiptManager:self.receiptManagerStub
+              handlerFactory:^FIAPRequestHandler *(SKRequest *request) {
+                return [[FIAPRequestHandler alloc] initWithRequest:request];
+              }];
   FlutterMethodChannel *mockChannel = OCMClassMock([FlutterMethodChannel class]);
   plugin.transactionObserverCallbackChannel = mockChannel;
   OCMStub([mockChannel invokeMethod:[OCMArg any] arguments:[OCMArg any]]);
@@ -745,7 +806,11 @@
   SKMutablePayment *payment = [FIAObjectTranslator getSKMutablePaymentFromMap:paymentMap];
   SKProductStub *product = [[SKProductStub alloc] initWithMap:productMap];
 
-  InAppPurchasePlugin *plugin = [[InAppPurchasePlugin alloc] initWithReceiptManager:nil];
+  InAppPurchasePlugin *plugin = [[InAppPurchasePluginStub alloc]
+      initWithReceiptManager:self.receiptManagerStub
+              handlerFactory:^FIAPRequestHandler *(SKRequest *request) {
+                return [[FIAPRequestHandler alloc] initWithRequest:request];
+              }];
   FlutterMethodChannel *mockChannel = OCMClassMock([FlutterMethodChannel class]);
   plugin.transactionObserverCallbackChannel = mockChannel;
   OCMStub([mockChannel invokeMethod:[OCMArg any] arguments:[OCMArg any]]);
@@ -755,7 +820,7 @@
     @"product" : [FIAObjectTranslator getMapFromSKProduct:product]
   };
 
-  BOOL result = [plugin shouldAddStorePayment:payment product:product];
+  BOOL result = [plugin shouldAddStorePaymentWithPayment:payment product:product];
   XCTAssertEqual(result, NO);
   OCMVerify(times(1), [mockChannel invokeMethod:@"shouldAddStorePayment" arguments:args]);
 }
