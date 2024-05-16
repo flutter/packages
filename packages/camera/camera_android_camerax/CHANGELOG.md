@@ -1,3 +1,7 @@
+## 0.6.2
+
+* Adds support to control video FPS and bitrate. See `CameraController.withSettings`.
+
 ## 0.6.1+1
 
 * Moves integration_test dependency to dev_dependencies.
