@@ -8,7 +8,6 @@ import com.google.ads.interactivemedia.v3.api.AdErrorEvent
 import com.google.ads.interactivemedia.v3.api.AdsLoader
 import com.google.ads.interactivemedia.v3.api.AdsRequest
 import kotlin.test.Test
-import org.mockito.Mockito
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
 

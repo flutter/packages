@@ -30,7 +30,7 @@ dev_dependencies:
   pigeon:
     git:
       url: git@github.com:bparrishMines/packages.git
-      ref: pigeon_kotlin_split
+      ref: pigeon_helper
       path: packages/pigeon
 
 topics:
