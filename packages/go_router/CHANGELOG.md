@@ -1,3 +1,7 @@
+## 14.1.2
+
+- Fixes issue that path parameters are not set when using the `goBranch`.
+
 ## 14.1.1
 
 - Fixes correctness of the state provided in the `onExit`.
