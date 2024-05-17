@@ -673,7 +673,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Flutter",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.bradenbagby.test;
+				PRODUCT_BUNDLE_IDENTIFIER = dev.flutter.plugins.cameraExample;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -697,7 +697,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Flutter",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.bradenbagby.test;
+				PRODUCT_BUNDLE_IDENTIFIER = dev.flutter.plugins.cameraExample;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
