@@ -20,6 +20,7 @@ API_AVAILABLE(ios(11.2), macos(10.13.2))
 
 @interface SKProductStub : SKProduct
 - (instancetype)initWithMap:(NSDictionary *)map;
+- (instancetype)initWithProductID:(NSString *)productIdentifier;
 @end
 
 @interface SKProductRequestStub : SKProductsRequest
@@ -30,9 +31,6 @@ API_AVAILABLE(ios(11.2), macos(10.13.2))
 
 @interface SKProductsResponseStub : SKProductsResponse
 - (instancetype)initWithMap:(NSDictionary *)map;
-@end
-
-@interface InAppPurchasePluginStub : InAppPurchasePlugin
 @end
 
 @interface SKRequestStub : SKRequest

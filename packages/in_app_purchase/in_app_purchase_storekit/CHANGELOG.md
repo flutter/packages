@@ -1,3 +1,7 @@
+## 0.3.16
+
+* Converts main plugin class to Swift
+
 ## 0.3.15
 
 * Replaces `getCountryCode` with `countryCode`.
