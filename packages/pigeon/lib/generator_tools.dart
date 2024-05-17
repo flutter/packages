@@ -37,7 +37,7 @@ bool debugGenerators = false;
 
 /// A helper class for managing indentation, wrapping a [StringSink].
 class Indent {
-  /// Constructor which takes a [StringSink] [Ident] will wrap.
+  /// Constructor which takes a [StringSink] [Indent] will wrap.
   Indent(this._sink);
 
   int _count = 0;
