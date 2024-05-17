@@ -13,7 +13,10 @@ typedef void (^FLADAuthCompletion)(FLADAuthResultDetails *_Nullable, FlutterErro
 @end
 
 @implementation FLADefaultAuthContextFactory
-- (LAContext *)createAuthContext {
+- (id<FLADAuthContext>)createAuthContext {
+  // This works because FLADAuthContext intentionally uses the same signatures as LAContext.
+  // TODO(stuartmorgan): When converting to Swift, explicitly add conformance via an LAContext
+  // extension.
   return [[LAContext alloc] init];
 }
 @end
@@ -77,7 +80,7 @@ typedef void (^FLADAuthCompletion)(FLADAuthResultDetails *_Nullable, FlutterErro
                         strings:(nonnull FLADAuthStrings *)strings
                      completion:(nonnull void (^)(FLADAuthResultDetails *_Nullable,
                                                   FlutterError *_Nullable))completion {
-  LAContext *context = [self.authContextFactory createAuthContext];
+  id<FLADAuthContext> context = [self.authContextFactory createAuthContext];
   NSError *authError = nil;
   self.lastCallState = nil;
   context.localizedFallbackTitle = strings.localizedFallbackTitle;
@@ -103,7 +106,7 @@ typedef void (^FLADAuthCompletion)(FLADAuthResultDetails *_Nullable, FlutterErro
 
 - (nullable NSNumber *)deviceCanSupportBiometricsWithError:
     (FlutterError *_Nullable __autoreleasing *_Nonnull)error {
-  LAContext *context = [self.authContextFactory createAuthContext];
+  id<FLADAuthContext> context = [self.authContextFactory createAuthContext];
   NSError *authError = nil;
   // Check if authentication with biometrics is possible.
   if ([context canEvaluatePolicy:LAPolicyDeviceOwnerAuthenticationWithBiometrics
@@ -124,7 +127,7 @@ typedef void (^FLADAuthCompletion)(FLADAuthResultDetails *_Nullable, FlutterErro
 
 - (nullable NSArray<FLADAuthBiometricWrapper *> *)getEnrolledBiometricsWithError:
     (FlutterError *_Nullable __autoreleasing *_Nonnull)error {
-  LAContext *context = [self.authContextFactory createAuthContext];
+  id<FLADAuthContext> context = [self.authContextFactory createAuthContext];
   NSError *authError = nil;
   NSMutableArray<FLADAuthBiometricWrapper *> *biometrics = [[NSMutableArray alloc] init];
   if ([context canEvaluatePolicy:LAPolicyDeviceOwnerAuthenticationWithBiometrics
@@ -143,7 +146,7 @@ typedef void (^FLADAuthCompletion)(FLADAuthResultDetails *_Nullable, FlutterErro
 
 - (nullable NSNumber *)isDeviceSupportedWithError:
     (FlutterError *_Nullable __autoreleasing *_Nonnull)error {
-  LAContext *context = [self.authContextFactory createAuthContext];
+  id<FLADAuthContext> context = [self.authContextFactory createAuthContext];
   return @([context canEvaluatePolicy:LAPolicyDeviceOwnerAuthentication error:NULL]);
 }
 
