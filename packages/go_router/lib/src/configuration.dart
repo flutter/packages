@@ -525,7 +525,8 @@ class RouteConfiguration {
   String debugKnownRoutes() {
     final StringBuffer sb = StringBuffer();
     sb.writeln('Full paths for routes:');
-    _debugFullPathsFor(_routingConfig.value.routes, '', '', sb);
+    _debugFullPathsFor(
+        _routingConfig.value.routes, '', const <_DecorationType>[], sb);
 
     if (_nameToPath.isNotEmpty) {
       sb.writeln('known full paths for route names:');
@@ -538,35 +539,50 @@ class RouteConfiguration {
   }
 
   void _debugFullPathsFor(List<RouteBase> routes, String parentFullpath,
-      String parentDecoration, StringBuffer sb) {
+      List<_DecorationType> parentDecoration, StringBuffer sb) {
     for (final (int index, RouteBase route) in routes.indexed) {
-      final String decoration =
+      final List<_DecorationType> decoration =
           _getDecoration(parentDecoration, index, routes.length);
+      final String decorationString =
+          decoration.map((_DecorationType e) => e.toString()).join();
       String path = parentFullpath;
       if (route is GoRoute) {
         path = concatenatePaths(parentFullpath, route.path);
         final String? screenName =
             route.builder?.runtimeType.toString().split('=> ').last;
-        sb.writeln('$decoration$path '
+        sb.writeln('$decorationString$path '
             '${screenName == null ? '' : '($screenName)'}');
       } else if (route is ShellRouteBase) {
-        sb.writeln('$decoration (ShellRoute)');
+        sb.writeln('$decorationString (ShellRoute)');
       }
       _debugFullPathsFor(route.routes, path, decoration, sb);
     }
   }
 
-  String _getDecoration(
-    String parentDecoration,
+  List<_DecorationType> _getDecoration(
+    List<_DecorationType> parentDecoration,
     int index,
     int length,
   ) {
-    final String newDecoration =
-        parentDecoration.replaceAll('├─', '│ ').replaceAll('└─', '  ');
+    final Iterable<_DecorationType> newDecoration =
+        parentDecoration.map((_DecorationType e) {
+      switch (e) {
+        // swap
+        case _DecorationType.branch:
+          return _DecorationType.parentBranch;
+        case _DecorationType.leaf:
+          return _DecorationType.none;
+        // no swap
+        case _DecorationType.parentBranch:
+          return _DecorationType.parentBranch;
+        case _DecorationType.none:
+          return _DecorationType.none;
+      }
+    });
     if (index == length - 1) {
-      return '$newDecoration└─';
+      return <_DecorationType>[...newDecoration, _DecorationType.leaf];
     } else {
-      return '$newDecoration├─';
+      return <_DecorationType>[...newDecoration, _DecorationType.branch];
     }
   }
 
@@ -594,4 +610,19 @@ class RouteConfiguration {
       }
     }
   }
+}
+
+enum _DecorationType {
+  parentBranch('│ '),
+  branch('├─'),
+  leaf('└─'),
+  none('  '),
+  ;
+
+  const _DecorationType(this.value);
+
+  final String value;
+
+  @override
+  String toString() => value;
 }
