@@ -20,11 +20,10 @@ let package = Package(
     .target(
       name: "camera_avfoundation",
       dependencies: [],
-      exclude: ["include/cocoapods_camera_avfoundation.modulemap"],
+      exclude: ["cocoapods_headers"],
       resources: [
         .process("Resources")
-      ],
-      publicHeadersPath: "public"
+      ]
     )
   ]
 )
