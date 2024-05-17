@@ -8,21 +8,21 @@
 import PackageDescription
 
 let package = Package(
-    name: "interactive_media_ads",
-    platforms: [
-        .iOS("12.0")
-    ],
-    products: [
-        .library(name: "interactive-media-ads", targets: ["interactive_media_ads"])
-    ],
-    dependencies: [],
-    targets: [
-        .target(
-            name: "interactive_media_ads",
-            dependencies: [],
-            resources: [
-                .process("Resources")
-            ]
-        )
-    ]
+  name: "interactive_media_ads",
+  platforms: [
+    .iOS("12.0")
+  ],
+  products: [
+    .library(name: "interactive-media-ads", targets: ["interactive_media_ads"])
+  ],
+  dependencies: [],
+  targets: [
+    .target(
+      name: "interactive_media_ads",
+      dependencies: [],
+      resources: [
+        .process("Resources")
+      ]
+    )
+  ]
 )
