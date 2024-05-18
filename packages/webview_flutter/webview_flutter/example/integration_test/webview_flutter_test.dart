@@ -357,7 +357,9 @@ Future<void> main() async {
           .runJavaScriptReturningResult('isFullScreen();') as bool;
       expect(fullScreen, false);
     });
-  });
+  },
+      // TODO(bparrishMines): Stop skipping once https://github.com/flutter/flutter/issues/148487 is resolved
+      skip: true);
 
   group('Audio playback policy', () {
     late String audioTestBase64;
