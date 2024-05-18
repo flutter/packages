@@ -3956,6 +3956,50 @@ void main() {
       expect(statefulWidgetKey.currentState?.counter, equals(0));
     });
 
+    testWidgets(
+        'Navigates to correct nested navigation tree in StatefulShellRoute '
+        'and maintains path parameters', (WidgetTester tester) async {
+      StatefulNavigationShell? routeState;
+
+      final List<RouteBase> routes = <RouteBase>[
+        GoRoute(
+            path: '/:id',
+            builder: (_, __) => const Placeholder(),
+            routes: <RouteBase>[
+              StatefulShellRoute.indexedStack(
+                builder: (BuildContext context, GoRouterState state,
+                    StatefulNavigationShell navigationShell) {
+                  routeState = navigationShell;
+                  return navigationShell;
+                },
+                branches: <StatefulShellBranch>[
+                  StatefulShellBranch(routes: <GoRoute>[
+                    GoRoute(
+                      path: 'a',
+                      builder: (BuildContext context, GoRouterState state) =>
+                          Text('a id is ${state.pathParameters['id']}'),
+                    ),
+                  ]),
+                  StatefulShellBranch(routes: <GoRoute>[
+                    GoRoute(
+                      path: 'b',
+                      builder: (BuildContext context, GoRouterState state) =>
+                          Text('b id is ${state.pathParameters['id']}'),
+                    ),
+                  ]),
+                ],
+              ),
+            ])
+      ];
+
+      await createRouter(routes, tester, initialLocation: '/123/a');
+      expect(find.text('a id is 123'), findsOneWidget);
+
+      routeState!.goBranch(1);
+      await tester.pumpAndSettle();
+      expect(find.text('b id is 123'), findsOneWidget);
+    });
+
     testWidgets('Maintains state for nested StatefulShellRoute',
         (WidgetTester tester) async {
       final GlobalKey<NavigatorState> rootNavigatorKey =
