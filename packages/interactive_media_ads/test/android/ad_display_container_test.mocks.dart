@@ -110,8 +110,9 @@ class _FakeVideoAdPlayerCallback_7 extends _i1.SmartFake
         );
 }
 
-class _FakeVideoView_8 extends _i1.SmartFake implements _i2.VideoView {
-  _FakeVideoView_8(
+class _FakeVideoProgressUpdate_8 extends _i1.SmartFake
+    implements _i2.VideoProgressUpdate {
+  _FakeVideoProgressUpdate_8(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -120,8 +121,8 @@ class _FakeVideoView_8 extends _i1.SmartFake implements _i2.VideoView {
         );
 }
 
-class _FakeOffset_9 extends _i1.SmartFake implements _i3.Offset {
-  _FakeOffset_9(
+class _FakeVideoView_9 extends _i1.SmartFake implements _i2.VideoView {
+  _FakeVideoView_9(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -130,8 +131,8 @@ class _FakeOffset_9 extends _i1.SmartFake implements _i3.Offset {
         );
 }
 
-class _FakeSize_10 extends _i1.SmartFake implements _i3.Size {
-  _FakeSize_10(
+class _FakeOffset_10 extends _i1.SmartFake implements _i3.Offset {
+  _FakeOffset_10(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -140,9 +141,19 @@ class _FakeSize_10 extends _i1.SmartFake implements _i3.Size {
         );
 }
 
-class _FakeExpensiveAndroidViewController_11 extends _i1.SmartFake
+class _FakeSize_11 extends _i1.SmartFake implements _i3.Size {
+  _FakeSize_11(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
+class _FakeExpensiveAndroidViewController_12 extends _i1.SmartFake
     implements _i4.ExpensiveAndroidViewController {
-  _FakeExpensiveAndroidViewController_11(
+  _FakeExpensiveAndroidViewController_12(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -151,9 +162,9 @@ class _FakeExpensiveAndroidViewController_11 extends _i1.SmartFake
         );
 }
 
-class _FakeSurfaceAndroidViewController_12 extends _i1.SmartFake
+class _FakeSurfaceAndroidViewController_13 extends _i1.SmartFake
     implements _i4.SurfaceAndroidViewController {
-  _FakeSurfaceAndroidViewController_12(
+  _FakeSurfaceAndroidViewController_13(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -822,6 +833,47 @@ class MockVideoAdPlayerCallback extends _i1.Mock
       ) as _i2.VideoAdPlayerCallback);
 }
 
+/// A class which mocks [VideoProgressUpdate].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockVideoProgressUpdate extends _i1.Mock
+    implements _i2.VideoProgressUpdate {
+  @override
+  _i2.PigeonInstanceManager get pigeon_instanceManager => (super.noSuchMethod(
+        Invocation.getter(#pigeon_instanceManager),
+        returnValue: _FakePigeonInstanceManager_0(
+          this,
+          Invocation.getter(#pigeon_instanceManager),
+        ),
+        returnValueForMissingStub: _FakePigeonInstanceManager_0(
+          this,
+          Invocation.getter(#pigeon_instanceManager),
+        ),
+      ) as _i2.PigeonInstanceManager);
+
+  @override
+  _i2.VideoProgressUpdate pigeon_copy() => (super.noSuchMethod(
+        Invocation.method(
+          #pigeon_copy,
+          [],
+        ),
+        returnValue: _FakeVideoProgressUpdate_8(
+          this,
+          Invocation.method(
+            #pigeon_copy,
+            [],
+          ),
+        ),
+        returnValueForMissingStub: _FakeVideoProgressUpdate_8(
+          this,
+          Invocation.method(
+            #pigeon_copy,
+            [],
+          ),
+        ),
+      ) as _i2.VideoProgressUpdate);
+}
+
 /// A class which mocks [VideoView].
 ///
 /// See the documentation for Mockito's code generation for more information.
@@ -892,14 +944,14 @@ class MockVideoView extends _i1.Mock implements _i2.VideoView {
           #pigeon_copy,
           [],
         ),
-        returnValue: _FakeVideoView_8(
+        returnValue: _FakeVideoView_9(
           this,
           Invocation.method(
             #pigeon_copy,
             [],
           ),
         ),
-        returnValueForMissingStub: _FakeVideoView_8(
+        returnValueForMissingStub: _FakeVideoView_9(
           this,
           Invocation.method(
             #pigeon_copy,
@@ -938,11 +990,11 @@ class MockSurfaceAndroidViewController extends _i1.Mock
   @override
   _i4.PointTransformer get pointTransformer => (super.noSuchMethod(
         Invocation.getter(#pointTransformer),
-        returnValue: (_i3.Offset position) => _FakeOffset_9(
+        returnValue: (_i3.Offset position) => _FakeOffset_10(
           this,
           Invocation.getter(#pointTransformer),
         ),
-        returnValueForMissingStub: (_i3.Offset position) => _FakeOffset_9(
+        returnValueForMissingStub: (_i3.Offset position) => _FakeOffset_10(
           this,
           Invocation.getter(#pointTransformer),
         ),
@@ -1006,14 +1058,14 @@ class MockSurfaceAndroidViewController extends _i1.Mock
           #setSize,
           [size],
         ),
-        returnValue: _i6.Future<_i3.Size>.value(_FakeSize_10(
+        returnValue: _i6.Future<_i3.Size>.value(_FakeSize_11(
           this,
           Invocation.method(
             #setSize,
             [size],
           ),
         )),
-        returnValueForMissingStub: _i6.Future<_i3.Size>.value(_FakeSize_10(
+        returnValueForMissingStub: _i6.Future<_i3.Size>.value(_FakeSize_11(
           this,
           Invocation.method(
             #setSize,
@@ -1126,7 +1178,7 @@ class MockPlatformViewsServiceProxy extends _i1.Mock
             #onFocus: onFocus,
           },
         ),
-        returnValue: _FakeExpensiveAndroidViewController_11(
+        returnValue: _FakeExpensiveAndroidViewController_12(
           this,
           Invocation.method(
             #initExpensiveAndroidView,
@@ -1141,7 +1193,7 @@ class MockPlatformViewsServiceProxy extends _i1.Mock
             },
           ),
         ),
-        returnValueForMissingStub: _FakeExpensiveAndroidViewController_11(
+        returnValueForMissingStub: _FakeExpensiveAndroidViewController_12(
           this,
           Invocation.method(
             #initExpensiveAndroidView,
@@ -1180,7 +1232,7 @@ class MockPlatformViewsServiceProxy extends _i1.Mock
             #onFocus: onFocus,
           },
         ),
-        returnValue: _FakeSurfaceAndroidViewController_12(
+        returnValue: _FakeSurfaceAndroidViewController_13(
           this,
           Invocation.method(
             #initSurfaceAndroidView,
@@ -1195,7 +1247,7 @@ class MockPlatformViewsServiceProxy extends _i1.Mock
             },
           ),
         ),
-        returnValueForMissingStub: _FakeSurfaceAndroidViewController_12(
+        returnValueForMissingStub: _FakeSurfaceAndroidViewController_13(
           this,
           Invocation.method(
             #initSurfaceAndroidView,

@@ -203,10 +203,10 @@ final class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
       removeCallback: (_, ima.VideoAdPlayerCallback callback) {
         weakThis.target?._videoAdPlayerCallbacks.remove(callback);
       },
-      loadAd: (_, ima.AdMediaInfo adMediaInfo, ima.AdPodInfo adPodInfo) {
+      loadAd: (_, ima.AdMediaInfo adMediaInfo, __) {
         weakThis.target?._loadedAdMediaInfo = adMediaInfo;
       },
-      pauseAd: (_, ima.AdMediaInfo adMediaInfo) async {
+      pauseAd: (_, __) async {
         final AndroidAdDisplayContainer? container = weakThis.target;
         if (container != null) {
           await container._mediaPlayer!.pause();
@@ -219,7 +219,7 @@ final class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
         weakThis.target?._videoView.setVideoUri(adMediaInfo.url);
       },
       release: (_) {},
-      stopAd: (_, ima.AdMediaInfo adMediaInfo) {
+      stopAd: (_, __) {
         final AndroidAdDisplayContainer? container = weakThis.target;
         if (container != null) {
           container._stopAdTracking();
@@ -239,7 +239,7 @@ final class AndroidAdsLoaderCreationParams
     required super.container,
     required super.onAdsLoaded,
     required super.onAdsLoadError,
-    InteractiveMediaAdsProxy? proxy,
+    @visibleForTesting InteractiveMediaAdsProxy? proxy,
   })  : _proxy = proxy ?? const InteractiveMediaAdsProxy(),
         super();
 
@@ -349,9 +349,10 @@ final class AndroidAdsLoader extends PlatformAdsLoader {
 /// Android implementation of [PlatformAdsManager].
 class AndroidAdsManager extends PlatformAdsManager {
   /// Constructs an [AndroidAdsManager].
+  @visibleForTesting
   AndroidAdsManager(
     ima.AdsManager manager, {
-    InteractiveMediaAdsProxy? proxy,
+    @visibleForTesting InteractiveMediaAdsProxy? proxy,
   })  : _manager = manager,
         _proxy = proxy ?? const InteractiveMediaAdsProxy();
 
