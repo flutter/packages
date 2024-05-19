@@ -409,7 +409,8 @@ void defineTests() {
         // Force the asset image to be rasterized so it can be compared.
         await tester.runAsync(() async {
           final Element element = tester.element(find.byType(Markdown));
-          await precacheImage(image.image, element);
+          await precacheImage(image.image, element,
+              size: Size(image.width!, image.height!));
         });
 
         await tester.pumpAndSettle();
