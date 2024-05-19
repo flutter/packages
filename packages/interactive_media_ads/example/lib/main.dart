@@ -135,7 +135,7 @@ class _AdExampleWidgetState extends State<AdExampleWidget> {
       body: Center(
         child: SizedBox(
           width: 300,
-          child: _contentVideoController.value.isInitialized
+          child: !_contentVideoController.value.isInitialized
               ? Container()
               : AspectRatio(
                   aspectRatio: _contentVideoController.value.aspectRatio,

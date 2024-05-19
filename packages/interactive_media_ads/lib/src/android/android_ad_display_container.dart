@@ -157,7 +157,7 @@ final class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
     WeakReference<AndroidAdDisplayContainer> weakThis,
   ) {
     return weakThis.target!._androidParams._imaProxy.newVideoView(
-      onCompletion: (_, ima.MediaPlayer player) {
+      onCompletion: (_, __) {
         final AndroidAdDisplayContainer? container = weakThis.target;
         if (container != null) {
           weakThis.target?._resetPlayer();
@@ -180,7 +180,7 @@ final class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
         await player.start();
         container?._startAdTracking();
       },
-      onError: (_, ima.MediaPlayer player, int what, int extra) {
+      onError: (_, __, ___, ____) {
         final AndroidAdDisplayContainer? container = weakThis.target;
         if (container != null) {
           container._resetPlayer();
