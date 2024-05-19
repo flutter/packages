@@ -299,10 +299,7 @@ void main() {
         newFrameLayout: () => MockFrameLayout(),
         newVideoView: ({
           dynamic onError,
-          void Function(
-            ima.VideoView,
-            ima.MediaPlayer,
-          )? onPrepared,
+          dynamic onPrepared,
           dynamic onCompletion,
         }) {
           // VideoView.onPrepared returns void, but the implementation uses an
@@ -375,6 +372,147 @@ void main() {
       // at least one update.
       await Future<void>.delayed(const Duration(milliseconds: 300));
       verify(mockPlayerCallback.onAdProgress(mockAdMediaInfo, any));
+    });
+
+    test('pause ad', () async {
+      late final void Function(
+        ima.VideoAdPlayer,
+        ima.AdMediaInfo,
+        ima.AdPodInfo,
+      ) loadAdCallback;
+
+      late final Future<void> Function(
+        ima.VideoView,
+        ima.MediaPlayer,
+      ) onPreparedCallback;
+
+      late final Future<void> Function(
+        ima.VideoAdPlayer,
+        ima.AdMediaInfo,
+      ) pauseAdCallback;
+
+      final InteractiveMediaAdsProxy imaProxy = InteractiveMediaAdsProxy(
+        newFrameLayout: () => MockFrameLayout(),
+        newVideoView: ({
+          dynamic onError,
+          void Function(
+            ima.VideoView,
+            ima.MediaPlayer,
+          )? onPrepared,
+          dynamic onCompletion,
+        }) {
+          // VideoView.onPrepared returns void, but the implementation uses an
+          // async callback method.
+          onPreparedCallback = onPrepared! as Future<void> Function(
+            ima.VideoView,
+            ima.MediaPlayer,
+          );
+          final MockVideoView mockVideoView = MockVideoView();
+          when(mockVideoView.getCurrentPosition()).thenAnswer((_) async => 10);
+          return mockVideoView;
+        },
+        createAdDisplayContainerImaSdkFactory: (_, __) async {
+          return MockAdDisplayContainer();
+        },
+        newVideoAdPlayer: ({
+          required dynamic addCallback,
+          required void Function(
+            ima.VideoAdPlayer,
+            ima.AdMediaInfo,
+            ima.AdPodInfo,
+          ) loadAd,
+          required dynamic pauseAd,
+          required dynamic playAd,
+          required dynamic release,
+          required dynamic removeCallback,
+          required dynamic stopAd,
+        }) {
+          loadAdCallback = loadAd;
+          // VideoAdPlayer.pauseAd returns void, but the implementation uses an
+          // async callback method.
+          pauseAdCallback = pauseAd as Future<void> Function(
+            ima.VideoAdPlayer,
+            ima.AdMediaInfo,
+          );
+          return MockVideoAdPlayer();
+        },
+        newVideoProgressUpdate: ({
+          required int currentTimeMs,
+          required int durationMs,
+        }) {
+          return MockVideoProgressUpdate();
+        },
+      );
+
+      AndroidAdDisplayContainer(
+        AndroidAdDisplayContainerCreationParams(
+          onContainerAdded: (_) {},
+          imaProxy: imaProxy,
+        ),
+      );
+
+      final ima.AdMediaInfo mockAdMediaInfo = MockAdMediaInfo();
+      loadAdCallback(MockVideoAdPlayer(), mockAdMediaInfo, MockAdPodInfo());
+
+      final MockMediaPlayer mockMediaPlayer = MockMediaPlayer();
+      when(mockMediaPlayer.getDuration()).thenAnswer((_) async => 100);
+
+      await onPreparedCallback(MockVideoView(), mockMediaPlayer);
+
+      await pauseAdCallback(MockVideoAdPlayer(), mockAdMediaInfo);
+
+      verify(mockMediaPlayer.pause());
+    });
+
+    test('play ad', () async {
+      late final void Function(
+        ima.VideoAdPlayer,
+        ima.AdMediaInfo,
+      ) playAdCallback;
+
+      final MockVideoView mockVideoView = MockVideoView();
+      final InteractiveMediaAdsProxy imaProxy = InteractiveMediaAdsProxy(
+        newFrameLayout: () => MockFrameLayout(),
+        newVideoView: ({
+          dynamic onError,
+          dynamic onPrepared,
+          dynamic onCompletion,
+        }) {
+          return mockVideoView;
+        },
+        createAdDisplayContainerImaSdkFactory: (_, __) async {
+          return MockAdDisplayContainer();
+        },
+        newVideoAdPlayer: ({
+          required dynamic addCallback,
+          required dynamic loadAd,
+          required dynamic pauseAd,
+          required void Function(
+            ima.VideoAdPlayer,
+            ima.AdMediaInfo,
+          ) playAd,
+          required dynamic release,
+          required dynamic removeCallback,
+          required dynamic stopAd,
+        }) {
+          playAdCallback = playAd;
+          return MockVideoAdPlayer();
+        },
+      );
+
+      AndroidAdDisplayContainer(
+        AndroidAdDisplayContainerCreationParams(
+          onContainerAdded: (_) {},
+          imaProxy: imaProxy,
+        ),
+      );
+
+      const String videoUrl = 'url';
+      final ima.AdMediaInfo mockAdMediaInfo = MockAdMediaInfo();
+      when(mockAdMediaInfo.url).thenReturn(videoUrl);
+      playAdCallback(MockVideoAdPlayer(), mockAdMediaInfo);
+
+      verify(mockVideoView.setVideoUri(videoUrl));
     });
   });
 }
