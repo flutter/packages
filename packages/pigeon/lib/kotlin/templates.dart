@@ -274,7 +274,7 @@ String instanceManagerApiTemplate({
 private class $_instanceManagerApiName(val binaryMessenger: BinaryMessenger) {
   companion object {
     /** The codec used by $_instanceManagerApiName. */
-    private val codec: MessageCodec<Any?> by lazy {
+    val codec: MessageCodec<Any?> by lazy {
       StandardMessageCodec()
     }
 

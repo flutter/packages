@@ -630,7 +630,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
     );
     indent.writeln('@Suppress("UNCHECKED_CAST")');
     indent.writeScoped(
-      'abstract class $kotlinApiName(val pigeonRegistrar: ${classNamePrefix}ProxyApiRegistrar) {',
+      'abstract class $kotlinApiName(open val pigeonRegistrar: ${classNamePrefix}ProxyApiRegistrar) {',
       '}',
       () {
         final String fullKotlinClassName =
