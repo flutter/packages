@@ -307,7 +307,7 @@ const String seeAlsoWarning = 'See also: https://pub.dev/packages/pigeon';
 /// parameters.
 const String classNamePrefix = 'Pigeon';
 
-/// Prefix for apis generated for ProxyApi.
+/// Prefix for APIs generated for ProxyApi.
 ///
 /// Since ProxyApis are intended to wrap a class and will often share the name
 /// of said class, host APIs should prefix the API with this protected name.
@@ -500,7 +500,7 @@ Map<TypeDeclaration, List<int>> getReferencedTypes(
   return references.map;
 }
 
-/// Find the [TypeDeclaration] that has the highest api requirement and its
+/// Find the [TypeDeclaration] that has the highest API requirement and its
 /// version, [T].
 ///
 /// [T] depends on the language. For example, Android uses an int while iOS uses
