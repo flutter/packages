@@ -16,6 +16,7 @@ import 'ads_loader_test.mocks.dart';
 
 @GenerateNiceMocks(<MockSpec<Object>>[
   MockSpec<ima.AdDisplayContainer>(),
+  MockSpec<ima.AdError>(),
   MockSpec<ima.AdErrorEvent>(),
   MockSpec<ima.AdErrorListener>(),
   MockSpec<ima.AdsLoadedListener>(),
@@ -150,17 +151,79 @@ void main() {
         AndroidAdsLoaderCreationParams(
           container: container,
           onAdsLoaded: expectAsync1((_) {}),
-          onAdsLoadError: (AdsLoadErrorData data) {},
+          onAdsLoadError: (_) {},
           proxy: proxy,
         ),
       );
 
-      final MockAdsManagerLoadedEvent mockLoadedEvent = MockAdsManagerLoadedEvent();
+      final MockAdsManagerLoadedEvent mockLoadedEvent =
+          MockAdsManagerLoadedEvent();
       when(mockLoadedEvent.manager).thenReturn(MockAdsManager());
 
       await addEventListenerCompleter.future;
 
       onAdsManagerLoadedCallback(MockAdsLoadedListener(), mockLoadedEvent);
+    });
+
+    testWidgets('onAdError', (WidgetTester tester) async {
+      final AndroidAdDisplayContainer container =
+          await _pumpAdDisplayContainer(tester);
+
+      final MockImaSdkFactory mockSdkFactory = MockImaSdkFactory();
+      when(mockSdkFactory.createImaSdkSettings()).thenAnswer((_) async {
+        return MockImaSdkSettings();
+      });
+
+      final MockAdsLoader mockAdsLoader = MockAdsLoader();
+      final Completer<void> addErrorListenerCompleter = Completer<void>();
+      when(mockAdsLoader.addAdErrorListener(any)).thenAnswer((_) async {
+        addErrorListenerCompleter.complete();
+      });
+
+      when(mockSdkFactory.createAdsLoader(any, any)).thenAnswer((_) async {
+        return mockAdsLoader;
+      });
+
+      late final void Function(
+        ima.AdErrorListener,
+        ima.AdErrorEvent,
+      ) onAdErrorCallback;
+
+      final InteractiveMediaAdsProxy proxy = InteractiveMediaAdsProxy(
+        instanceImaSdkFactory: () => mockSdkFactory,
+        newAdsLoadedListener: ({required dynamic onAdsManagerLoaded}) {
+          return MockAdsLoadedListener();
+        },
+        newAdErrorListener: ({
+          required void Function(
+            ima.AdErrorListener,
+            ima.AdErrorEvent,
+          ) onAdError,
+        }) {
+          onAdErrorCallback = onAdError;
+          return MockAdErrorListener();
+        },
+      );
+
+      AndroidAdsLoader(
+        AndroidAdsLoaderCreationParams(
+          container: container,
+          onAdsLoaded: (_) {},
+          onAdsLoadError: expectAsync1((_) {}),
+          proxy: proxy,
+        ),
+      );
+
+      final MockAdErrorEvent mockErrorEvent = MockAdErrorEvent();
+      final MockAdError error = MockAdError();
+      when(error.errorType).thenReturn(ima.AdErrorType.load);
+      when(error.errorCode).thenReturn(ima.AdErrorCode.adsRequestNetworkError);
+      when(error.message).thenReturn('error message');
+      when(mockErrorEvent.error).thenReturn(error);
+
+      await addErrorListenerCompleter.future;
+
+      onAdErrorCallback(MockAdErrorListener(), mockErrorEvent);
     });
   });
 }
