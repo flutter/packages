@@ -285,7 +285,7 @@ class PigeonInstanceManager(private val finalizationListener: PigeonFinalization
 private class PigeonInstanceManagerApi(val binaryMessenger: BinaryMessenger) {
   companion object {
     /** The codec used by PigeonInstanceManagerApi. */
-    private val codec: MessageCodec<Any?> by lazy { StandardMessageCodec() }
+    val codec: MessageCodec<Any?> by lazy { StandardMessageCodec() }
 
     /**
      * Sets up an instance of `PigeonInstanceManagerApi` to handle messages from the
