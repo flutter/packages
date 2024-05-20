@@ -1,3 +1,7 @@
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 import 'dart:async';
 
 import 'package:flutter/services.dart';
@@ -215,11 +219,11 @@ void main() {
       );
 
       final MockAdErrorEvent mockErrorEvent = MockAdErrorEvent();
-      final MockAdError error = MockAdError();
-      when(error.errorType).thenReturn(ima.AdErrorType.load);
-      when(error.errorCode).thenReturn(ima.AdErrorCode.adsRequestNetworkError);
-      when(error.message).thenReturn('error message');
-      when(mockErrorEvent.error).thenReturn(error);
+      final MockAdError mockError = MockAdError();
+      when(mockError.errorType).thenReturn(ima.AdErrorType.load);
+      when(mockError.errorCode).thenReturn(ima.AdErrorCode.adsRequestNetworkError);
+      when(mockError.message).thenReturn('error message');
+      when(mockErrorEvent.error).thenReturn(mockError);
 
       await addErrorListenerCompleter.future;
 

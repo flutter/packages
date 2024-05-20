@@ -1,13 +1,12 @@
-import 'dart:async';
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
 
-import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:interactive_media_ads/src/android/android_ad_display_container.dart';
 import 'package:interactive_media_ads/src/android/interactive_media_ads.g.dart'
     as ima;
 import 'package:interactive_media_ads/src/android/interactive_media_ads_proxy.dart';
-import 'package:interactive_media_ads/src/android/platform_views_service_proxy.dart';
 import 'package:interactive_media_ads/src/platform_interface/platform_interface.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
@@ -48,10 +47,22 @@ void main() {
       verify(mockAdsManager.start());
     });
 
-    test('on add aiowejpfoij', () {
+    test('onAdEvent', () async {
       final MockAdsManager mockAdsManager = MockAdsManager();
+
+      late final void Function(
+        ima.AdEventListener,
+        ima.AdEvent,
+      ) onAdEventCallback;
+
       final InteractiveMediaAdsProxy proxy = InteractiveMediaAdsProxy(
-        newAdEventListener: ({required dynamic onAdEvent}) {
+        newAdEventListener: ({
+          required void Function(
+            ima.AdEventListener,
+            ima.AdEvent,
+          ) onAdEvent,
+        }) {
+          onAdEventCallback = onAdEvent;
           return MockAdEventListener();
         },
         newAdErrorListener: ({required dynamic onAdError}) {
@@ -63,9 +74,62 @@ void main() {
         mockAdsManager,
         proxy: proxy,
       );
-      adsManager.destroy();
+      await adsManager.setAdsManagerDelegate(
+        AndroidAdsManagerDelegate(
+          PlatformAdsManagerDelegateCreationParams(
+            onAdEvent: expectAsync1((_) {}),
+          ),
+        ),
+      );
 
-      verify(mockAdsManager.destroy());
+      final MockAdEvent mockAdEvent = MockAdEvent();
+      when(mockAdEvent.type).thenReturn(ima.AdEventType.allAdsCompleted);
+      onAdEventCallback(MockAdEventListener(), mockAdEvent);
+    });
+
+    test('onAdErrorEvent', () async {
+      final MockAdsManager mockAdsManager = MockAdsManager();
+
+      late final void Function(
+        ima.AdErrorListener,
+        ima.AdErrorEvent,
+      ) onAdErrorCallback;
+
+      final InteractiveMediaAdsProxy proxy = InteractiveMediaAdsProxy(
+        newAdEventListener: ({required dynamic onAdEvent}) {
+          return MockAdEventListener();
+        },
+        newAdErrorListener: ({
+          required void Function(
+            ima.AdErrorListener,
+            ima.AdErrorEvent,
+          ) onAdError,
+        }) {
+          onAdErrorCallback = onAdError;
+          return MockAdErrorListener();
+        },
+      );
+
+      final AndroidAdsManager adsManager = AndroidAdsManager(
+        mockAdsManager,
+        proxy: proxy,
+      );
+      await adsManager.setAdsManagerDelegate(
+        AndroidAdsManagerDelegate(
+          PlatformAdsManagerDelegateCreationParams(
+            onAdErrorEvent: expectAsync1((_) {}),
+          ),
+        ),
+      );
+
+      final MockAdErrorEvent mockErrorEvent = MockAdErrorEvent();
+      final MockAdError mockError = MockAdError();
+      when(mockError.errorType).thenReturn(ima.AdErrorType.load);
+      when(mockError.errorCode)
+          .thenReturn(ima.AdErrorCode.adsRequestNetworkError);
+      when(mockError.message).thenReturn('error message');
+      when(mockErrorEvent.error).thenReturn(mockError);
+      onAdErrorCallback(MockAdErrorListener(), mockErrorEvent);
     });
   });
 }
