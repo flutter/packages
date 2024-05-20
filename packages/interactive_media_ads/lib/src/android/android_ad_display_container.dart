@@ -46,7 +46,7 @@ final class AndroidAdDisplayContainerCreationParams
 }
 
 /// Android implementation of [PlatformAdDisplayContainer].
-final class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
+base class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
   /// Constructs an [AndroidAdDisplayContainer].
   AndroidAdDisplayContainer(super.params) : super.implementation() {
     final WeakReference<AndroidAdDisplayContainer> weakThis =
@@ -261,7 +261,7 @@ final class AndroidAdsLoaderCreationParams
 }
 
 /// Android implementation of [PlatformAdsLoader].
-final class AndroidAdsLoader extends PlatformAdsLoader {
+base class AndroidAdsLoader extends PlatformAdsLoader {
   /// Constructs an [AndroidAdsLoader].
   AndroidAdsLoader(super.params)
       : assert(params.container is AndroidAdDisplayContainer),
@@ -362,7 +362,7 @@ class AndroidAdsManager extends PlatformAdsManager {
   @visibleForTesting
   AndroidAdsManager(
     ima.AdsManager manager, {
-    @visibleForTesting InteractiveMediaAdsProxy? proxy,
+    InteractiveMediaAdsProxy? proxy,
   })  : _manager = manager,
         _proxy = proxy ?? const InteractiveMediaAdsProxy();
 
