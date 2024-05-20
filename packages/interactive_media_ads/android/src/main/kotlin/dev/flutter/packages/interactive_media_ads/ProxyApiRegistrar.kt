@@ -12,6 +12,8 @@ import io.flutter.plugin.common.BinaryMessenger
 open class ProxyApiRegistrar(binaryMessenger: BinaryMessenger, var context: Context) :
     PigeonProxyApiRegistrar(binaryMessenger) {
 
+  // Added to be overriden for tests. The test implementation calls `callback` immediately, instead
+  // of waiting for the main thread to run it.
   internal open fun runOnMainThread(callback: Runnable) {
     Handler(Looper.getMainLooper()).post { callback.run() }
   }

@@ -75,7 +75,7 @@ final class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
   // Handles ad playback callbacks from the IMA SDK.
   late final ima.VideoAdPlayer _videoAdPlayer;
 
-  late final ima.AdDisplayContainer _adDisplayContainer;
+  ima.AdDisplayContainer? _adDisplayContainer;
 
   // Currently loaded ad.
   ima.AdMediaInfo? _loadedAdMediaInfo;
@@ -265,6 +265,11 @@ final class AndroidAdsLoader extends PlatformAdsLoader {
   /// Constructs an [AndroidAdsLoader].
   AndroidAdsLoader(super.params)
       : assert(params.container is AndroidAdDisplayContainer),
+        assert(
+          (params.container as AndroidAdDisplayContainer)._adDisplayContainer !=
+              null,
+          'Ensure the AdDisplayContainer has been added to the Widget tree before creating an AdsLoader.',
+        ),
         super.implementation() {
     _adsLoaderFuture = _createAdsLoader();
   }
@@ -309,7 +314,7 @@ final class AndroidAdsLoader extends PlatformAdsLoader {
         .instanceImaSdkFactory()
         .createAdsLoader(
           settings,
-          (params.container as AndroidAdDisplayContainer)._adDisplayContainer,
+          (params.container as AndroidAdDisplayContainer)._adDisplayContainer!,
         );
 
     _addListeners(WeakReference<AndroidAdsLoader>(this), adsLoader);
