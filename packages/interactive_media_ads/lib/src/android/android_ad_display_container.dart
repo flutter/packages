@@ -301,21 +301,21 @@ final class AndroidAdsLoader extends PlatformAdsLoader {
     final ima.AdsLoader adsLoader = await _adsLoaderFuture;
 
     final ima.AdsRequest androidRequest = await _sdkFactory.createAdsRequest();
-    unawaited(androidRequest.setAdTagUrl(request.adTagUrl));
 
-    await adsLoader.requestAds(androidRequest);
+    await Future.wait(<Future<void>>[
+      androidRequest.setAdTagUrl(request.adTagUrl),
+      adsLoader.requestAds(androidRequest),
+    ]);
   }
 
   Future<ima.AdsLoader> _createAdsLoader() async {
     final ima.ImaSdkSettings settings =
         await _sdkFactory.createImaSdkSettings();
 
-    final ima.AdsLoader adsLoader = await _androidParams._proxy
-        .instanceImaSdkFactory()
-        .createAdsLoader(
-          settings,
-          (params.container as AndroidAdDisplayContainer)._adDisplayContainer!,
-        );
+    final ima.AdsLoader adsLoader = await _sdkFactory.createAdsLoader(
+      settings,
+      (params.container as AndroidAdDisplayContainer)._adDisplayContainer!,
+    );
 
     _addListeners(WeakReference<AndroidAdsLoader>(this), adsLoader);
 
@@ -331,7 +331,12 @@ final class AndroidAdsLoader extends PlatformAdsLoader {
     adsLoader.addAdsLoadedListener(proxy.newAdsLoadedListener(
       onAdsManagerLoaded: (_, ima.AdsManagerLoadedEvent event) {
         weakThis.target?.params.onAdsLoaded(
-          PlatformOnAdsLoadedData(manager: AndroidAdsManager(event.manager)),
+          PlatformOnAdsLoadedData(
+            manager: AndroidAdsManager(
+              event.manager,
+              proxy: weakThis.target?._androidParams._proxy,
+            ),
+          ),
         );
       },
     ));

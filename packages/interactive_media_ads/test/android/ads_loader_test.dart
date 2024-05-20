@@ -16,7 +16,16 @@ import 'ads_loader_test.mocks.dart';
 
 @GenerateNiceMocks(<MockSpec<Object>>[
   MockSpec<ima.AdDisplayContainer>(),
+  MockSpec<ima.AdErrorEvent>(),
+  MockSpec<ima.AdErrorListener>(),
+  MockSpec<ima.AdsLoadedListener>(),
+  MockSpec<ima.AdsManager>(),
+  MockSpec<ima.AdsManagerLoadedEvent>(),
+  MockSpec<ima.AdsLoader>(),
+  MockSpec<ima.AdsRequest>(),
   MockSpec<ima.FrameLayout>(),
+  MockSpec<ima.ImaSdkFactory>(),
+  MockSpec<ima.ImaSdkSettings>(),
   MockSpec<ima.VideoAdPlayer>(),
   MockSpec<ima.VideoAdPlayerCallback>(),
   MockSpec<ima.VideoView>(),
@@ -55,6 +64,103 @@ void main() {
 
       await loader.contentComplete();
       verify(mockAdPlayerCallback.onContentComplete());
+    });
+
+    testWidgets('requestAds', (WidgetTester tester) async {
+      final AndroidAdDisplayContainer container =
+          await _pumpAdDisplayContainer(tester);
+
+      final MockImaSdkFactory mockSdkFactory = MockImaSdkFactory();
+      when(mockSdkFactory.createImaSdkSettings()).thenAnswer((_) async {
+        return MockImaSdkSettings();
+      });
+
+      final MockAdsLoader mockAdsLoader = MockAdsLoader();
+      when(mockSdkFactory.createAdsLoader(any, any)).thenAnswer((_) async {
+        return mockAdsLoader;
+      });
+
+      final MockAdsRequest mockAdsRequest = MockAdsRequest();
+      when(mockSdkFactory.createAdsRequest()).thenAnswer((_) async {
+        return mockAdsRequest;
+      });
+
+      final InteractiveMediaAdsProxy proxy = InteractiveMediaAdsProxy(
+        instanceImaSdkFactory: () => mockSdkFactory,
+      );
+
+      final AndroidAdsLoader adsLoader = AndroidAdsLoader(
+        AndroidAdsLoaderCreationParams(
+          container: container,
+          onAdsLoaded: (PlatformOnAdsLoadedData data) {},
+          onAdsLoadError: (AdsLoadErrorData data) {},
+          proxy: proxy,
+        ),
+      );
+
+      await adsLoader.requestAds(AdsRequest(adTagUrl: 'url'));
+
+      verifyInOrder(<Future<void>>[
+        mockAdsRequest.setAdTagUrl('url'),
+        mockAdsLoader.requestAds(mockAdsRequest),
+      ]);
+    });
+
+    testWidgets('onAdsLoaded', (WidgetTester tester) async {
+      final AndroidAdDisplayContainer container =
+          await _pumpAdDisplayContainer(tester);
+
+      final MockImaSdkFactory mockSdkFactory = MockImaSdkFactory();
+      when(mockSdkFactory.createImaSdkSettings()).thenAnswer((_) async {
+        return MockImaSdkSettings();
+      });
+
+      final MockAdsLoader mockAdsLoader = MockAdsLoader();
+      final Completer<void> addEventListenerCompleter = Completer<void>();
+      when(mockAdsLoader.addAdsLoadedListener(any)).thenAnswer((_) async {
+        addEventListenerCompleter.complete();
+      });
+
+      when(mockSdkFactory.createAdsLoader(any, any)).thenAnswer((_) async {
+        return mockAdsLoader;
+      });
+
+      late final void Function(
+        ima.AdsLoadedListener,
+        ima.AdsManagerLoadedEvent,
+      ) onAdsManagerLoadedCallback;
+
+      final InteractiveMediaAdsProxy proxy = InteractiveMediaAdsProxy(
+        instanceImaSdkFactory: () => mockSdkFactory,
+        newAdsLoadedListener: ({
+          required void Function(
+            ima.AdsLoadedListener,
+            ima.AdsManagerLoadedEvent,
+          ) onAdsManagerLoaded,
+        }) {
+          onAdsManagerLoadedCallback = onAdsManagerLoaded;
+          return MockAdsLoadedListener();
+        },
+        newAdErrorListener: ({required dynamic onAdError}) {
+          return MockAdErrorListener();
+        },
+      );
+
+      AndroidAdsLoader(
+        AndroidAdsLoaderCreationParams(
+          container: container,
+          onAdsLoaded: expectAsync1((_) {}),
+          onAdsLoadError: (AdsLoadErrorData data) {},
+          proxy: proxy,
+        ),
+      );
+
+      final MockAdsManagerLoadedEvent mockLoadedEvent = MockAdsManagerLoadedEvent();
+      when(mockLoadedEvent.manager).thenReturn(MockAdsManager());
+
+      await addEventListenerCompleter.future;
+
+      onAdsManagerLoadedCallback(MockAdsLoadedListener(), mockLoadedEvent);
     });
   });
 }
