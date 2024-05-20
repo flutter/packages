@@ -22,17 +22,19 @@
 #if TARGET_OS_OSX
 - (NSAlert *)createAlert;
 #elif TARGET_OS_IOS
-- (UIAlertController *)createAlertControllerWithTitle:(nullable NSString *)title
-                                              message:(nullable NSString *)message
-                                       preferredStyle:(UIAlertControllerStyle)preferredStyle;
+- (UIAlertController *_Nonnull)createAlertControllerWithTitle:(nullable NSString *)title
+                                                      message:(nullable NSString *)message
+                                               preferredStyle:
+                                                   (UIAlertControllerStyle)preferredStyle;
 #endif
 
 @end
 
 @interface FLALocalAuthPlugin ()
 /// Returns an instance that uses the given factory to create LAContexts.
-- (instancetype)initWithContextFactory:(nonnull NSObject<FLADAuthContextFactory> *)authFactory
-                             registrar:(nonnull NSObject<FlutterPluginRegistrar> *)registrar
-                          alertFactory:(nonnull NSObject<FLADAlertFactory> *)alertFactory
+- (instancetype _Nonnull)
+    initWithContextFactory:(nonnull NSObject<FLADAuthContextFactory> *)authFactory
+                 registrar:(nonnull NSObject<FlutterPluginRegistrar> *)registrar
+              alertFactory:(nonnull NSObject<FLADAlertFactory> *)alertFactory
     NS_DESIGNATED_INITIALIZER;
 @end

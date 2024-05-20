@@ -66,6 +66,13 @@ static const NSTimeInterval kTimeout = 30.0;
 }
 #else
 
+- (UIAlertController *_Nonnull)createAlertControllerWithTitle:(nullable NSString *)title
+                                                      message:(nullable NSString *)message
+                                               preferredStyle:
+                                                   (UIAlertControllerStyle)preferredStyle {
+  return self.alertController;
+}
+
 - (instancetype)initWithUIAlertController:(UIAlertController *)alertController {
   self = [super init];
   if (self) {
