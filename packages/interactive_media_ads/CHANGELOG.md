@@ -1,4 +1,4 @@
-## NEXT
+## 0.0.2
 
 * Adds Android implementation.
 
