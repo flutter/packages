@@ -4,7 +4,7 @@
 
 #if TARGET_OS_OSX
 #import <FlutterMacOS/FlutterMacOS.h>
-#else
+#elif TARGET_OS_IOS
 #import <Flutter/Flutter.h>
 #endif
 
