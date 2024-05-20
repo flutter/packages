@@ -1779,4 +1779,124 @@ void main() {
     expect(code, contains(errorClassName));
     expect(code, isNot(contains('FlutterError')));
   });
+
+  test('do not generate duplicated entries in writeValue', () {
+    /*
+// Dart code for the pigeon file
+class Foo {
+  final int foo;
+
+  Foo({
+    required this.foo,
+  });
+}
+
+class Bar {
+  final Foo foo;
+  final Foo? foo2;
+
+  Bar({
+    required this.foo,
+    required this.foo2,
+  });
+}
+
+@HostApi()
+abstract class FooBar {
+  void fooBar(Bar bar);
+}
+*/
+
+    final Root root = Root(
+      apis: <Api>[
+        AstHostApi(
+          name: 'FooBar',
+          methods: <Method>[
+            Method(
+              name: 'fooBar',
+              location: ApiLocation.host,
+              returnType: const TypeDeclaration.voidDeclaration(),
+              parameters: <Parameter>[
+                Parameter(
+                  name: 'bar',
+                  type: const TypeDeclaration(
+                    baseName: 'Bar',
+                    isNullable: false,
+                  ),
+                ),
+              ],
+            )
+          ],
+        )
+      ],
+    classes: <Class>[
+      Class(
+        name: 'Foo',
+        fields: <NamedType>[
+          NamedType(
+            type: const TypeDeclaration(
+              baseName: 'int',
+              isNullable: false,
+            ),
+            name: 'foo',
+          ),
+        ],
+      ),
+      Class(
+        name: 'Bar',
+        fields: <NamedType>[
+          NamedType(
+            type: const TypeDeclaration(
+              baseName: 'Foo',
+              isNullable: false,
+            ),
+            name: 'foo',
+          ),
+          NamedType(
+            type: const TypeDeclaration(
+              baseName: 'Foo',
+              isNullable: true,
+            ),
+            name: 'foo2',
+          ),
+        ],
+      ),
+    ], enums: [],
+    );
+
+    final StringBuffer sink = StringBuffer();
+    const String errorClassName = 'FooError';
+    const KotlinOptions kotlinOptions =
+    KotlinOptions(errorClassName: errorClassName);
+    const KotlinGenerator generator = KotlinGenerator();
+    generator.generate(
+      kotlinOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
+
+    final String code = sink.toString();
+
+    // extract override fun writeValue block
+    final int blockStart = code.indexOf('override fun writeValue');
+    expect(blockStart, isNot(-1));
+    final int blockEnd = code.indexOf('super.writeValue', blockStart);
+    expect(blockEnd, isNot(-1));
+    final String writeValueBlock = code.substring(blockStart, blockEnd);
+
+    // Count the occurrence of 'is Foo' in the block
+    int count = 0;
+    int index = 0;
+    while (index != -1) {
+      index = writeValueBlock.indexOf('is Foo', index);
+      if (index != -1) {
+        count++;
+        index += 'is Foo'.length;
+      }
+    }
+
+    // There should be only one occurrence of 'is Foo' in the block
+    expect(count, 1);
+  });
 }
