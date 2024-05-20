@@ -69,9 +69,17 @@ typedef void (^FLADAuthCompletion)(FLADAuthResultDetails *_Nullable, FlutterErro
 
 /// A flutter plugin for local authentication.
 @interface FLALocalAuthPlugin ()
+
+/// Manages the last call state for sticky auth.
 @property(nonatomic, strong, nullable) FLAStickyAuthState *lastCallState;
+
+/// The factory to create LAContexts.
 @property(nonatomic, strong) NSObject<FLADAuthContextFactory> *authContextFactory;
+
+/// The factory to create alerts.
 @property(nonatomic, strong) NSObject<FLADAlertFactory> *alertFactory;
+
+/// The flutter plugin registrar.
 @property(nonatomic, strong) NSObject<FlutterPluginRegistrar> *registrar;
 @end
 
