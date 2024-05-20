@@ -56,8 +56,9 @@ void main() {
       final MockVideoAdPlayerCallback mockAdPlayerCallback =
           MockVideoAdPlayerCallback();
       final AndroidAdDisplayContainer container = await _pumpAdDisplayContainer(
-          tester,
-          mockAdPlayerCallback: mockAdPlayerCallback);
+        tester,
+        mockAdPlayerCallback: mockAdPlayerCallback,
+      );
 
       final AndroidAdsLoader loader = AndroidAdsLoader(
         AndroidAdsLoaderCreationParams(
@@ -221,7 +222,8 @@ void main() {
       final MockAdErrorEvent mockErrorEvent = MockAdErrorEvent();
       final MockAdError mockError = MockAdError();
       when(mockError.errorType).thenReturn(ima.AdErrorType.load);
-      when(mockError.errorCode).thenReturn(ima.AdErrorCode.adsRequestNetworkError);
+      when(mockError.errorCode)
+          .thenReturn(ima.AdErrorCode.adsRequestNetworkError);
       when(mockError.message).thenReturn('error message');
       when(mockErrorEvent.error).thenReturn(mockError);
 

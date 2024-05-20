@@ -27,8 +27,7 @@ class AndroidViewWidget extends StatelessWidget {
     this.displayWithHybridComposition = false,
     ima.PigeonInstanceManager? instanceManager,
     this.platformViewsServiceProxy = const PlatformViewsServiceProxy(),
-  }) : instanceManager = instanceManager ??
-            ima.PigeonInstanceManager.instance;
+  }) : instanceManager = instanceManager ?? ima.PigeonInstanceManager.instance;
 
   /// The reference to the Android native view that should be shown.
   final ima.View view;
