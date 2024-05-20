@@ -6,7 +6,7 @@ package dev.flutter.packages.interactive_media_ads
 
 import android.media.MediaPlayer
 
-class MediaPlayerProxyApi(pigeonRegistrar: PigeonProxyApiRegistrar) :
+class MediaPlayerProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) :
     PigeonApiMediaPlayer(pigeonRegistrar) {
   override fun getDuration(pigeon_instance: MediaPlayer): Long {
     return pigeon_instance.duration.toLong()

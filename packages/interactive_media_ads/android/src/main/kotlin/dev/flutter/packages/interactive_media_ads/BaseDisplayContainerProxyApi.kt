@@ -4,5 +4,5 @@
 
 package dev.flutter.packages.interactive_media_ads
 
-class BaseDisplayContainerProxyApi(pigeonRegistrar: PigeonProxyApiRegistrar) :
-    PigeonApiBaseDisplayContainer(pigeonRegistrar) {}
+class BaseDisplayContainerProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) :
+    PigeonApiBaseDisplayContainer(pigeonRegistrar)

@@ -8,11 +8,11 @@ import android.media.MediaPlayer
 import android.net.Uri
 import android.widget.VideoView
 
-class VideoViewProxyApi(pigeonRegistrar: PigeonProxyApiRegistrar) :
+class VideoViewProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) :
     PigeonApiVideoView(pigeonRegistrar) {
 
   override fun pigeon_defaultConstructor(): VideoView {
-    val instance = VideoView((pigeonRegistrar as ProxyApiRegistrar).context)
+    val instance = VideoView(pigeonRegistrar.context)
     instance.setOnPreparedListener { player: MediaPlayer -> onPrepared(instance, player) {} }
     instance.setOnErrorListener { player: MediaPlayer, what: Int, extra: Int ->
       onError(instance, player, what.toLong(), extra.toLong()) {}

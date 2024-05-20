@@ -9,7 +9,7 @@ import com.google.ads.interactivemedia.v3.api.player.AdMediaInfo
 import com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer
 import com.google.ads.interactivemedia.v3.api.player.VideoProgressUpdate
 
-class VideoAdPlayerProxyApi(pigeonRegistrar: PigeonProxyApiRegistrar) :
+class VideoAdPlayerProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) :
     PigeonApiVideoAdPlayer(pigeonRegistrar) {
   override fun pigeon_defaultConstructor(): VideoAdPlayer {
     return VideoAdPlayerImpl(this)
@@ -29,43 +29,31 @@ class VideoAdPlayerProxyApi(pigeonRegistrar: PigeonProxyApiRegistrar) :
     }
 
     override fun addCallback(callback: VideoAdPlayer.VideoAdPlayerCallback) {
-      (api.pigeonRegistrar as ProxyApiRegistrar).runOnMainThread {
-        api.addCallback(this, callbackArg = callback) {}
-      }
+      api.pigeonRegistrar.runOnMainThread { api.addCallback(this, callbackArg = callback) {} }
     }
 
     override fun loadAd(adMediaInfo: AdMediaInfo, adPodInfo: AdPodInfo) {
-      (api.pigeonRegistrar as ProxyApiRegistrar).runOnMainThread {
-        api.loadAd(this, adMediaInfo, adPodInfo) {}
-      }
+      api.pigeonRegistrar.runOnMainThread { api.loadAd(this, adMediaInfo, adPodInfo) {} }
     }
 
     override fun pauseAd(adMediaInfo: AdMediaInfo) {
-      (api.pigeonRegistrar as ProxyApiRegistrar).runOnMainThread {
-        api.pauseAd(this, adMediaInfo) {}
-      }
+      api.pigeonRegistrar.runOnMainThread { api.pauseAd(this, adMediaInfo) {} }
     }
 
     override fun playAd(adMediaInfo: AdMediaInfo) {
-      (api.pigeonRegistrar as ProxyApiRegistrar).runOnMainThread {
-        api.playAd(this, adMediaInfo) {}
-      }
+      api.pigeonRegistrar.runOnMainThread { api.playAd(this, adMediaInfo) {} }
     }
 
     override fun release() {
-      (api.pigeonRegistrar as ProxyApiRegistrar).runOnMainThread { api.release(this) {} }
+      api.pigeonRegistrar.runOnMainThread { api.release(this) {} }
     }
 
     override fun removeCallback(callback: VideoAdPlayer.VideoAdPlayerCallback) {
-      (api.pigeonRegistrar as ProxyApiRegistrar).runOnMainThread {
-        api.removeCallback(this, callbackArg = callback) {}
-      }
+      api.pigeonRegistrar.runOnMainThread { api.removeCallback(this, callbackArg = callback) {} }
     }
 
     override fun stopAd(adMediaInfo: AdMediaInfo) {
-      (api.pigeonRegistrar as ProxyApiRegistrar).runOnMainThread {
-        api.stopAd(this, adMediaInfo) {}
-      }
+      api.pigeonRegistrar.runOnMainThread { api.stopAd(this, adMediaInfo) {} }
     }
   }
 

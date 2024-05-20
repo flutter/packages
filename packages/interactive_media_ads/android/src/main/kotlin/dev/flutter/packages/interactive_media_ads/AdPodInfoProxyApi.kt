@@ -6,7 +6,7 @@ package dev.flutter.packages.interactive_media_ads
 
 import com.google.ads.interactivemedia.v3.api.AdPodInfo
 
-class AdPodInfoProxyApi(pigeonRegistrar: PigeonProxyApiRegistrar) :
+class AdPodInfoProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) :
     PigeonApiAdPodInfo(pigeonRegistrar) {
   override fun adPosition(pigeon_instance: AdPodInfo): Long {
     return pigeon_instance.adPosition.toLong()

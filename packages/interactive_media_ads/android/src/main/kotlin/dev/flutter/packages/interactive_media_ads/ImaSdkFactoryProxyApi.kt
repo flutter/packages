@@ -12,7 +12,7 @@ import com.google.ads.interactivemedia.v3.api.ImaSdkFactory
 import com.google.ads.interactivemedia.v3.api.ImaSdkSettings
 import com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer
 
-class ImaSdkFactoryProxyApi(pigeonRegistrar: PigeonProxyApiRegistrar) :
+class ImaSdkFactoryProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) :
     PigeonApiImaSdkFactory(pigeonRegistrar) {
   override fun instance(): ImaSdkFactory {
     return ImaSdkFactory.getInstance()
@@ -34,8 +34,7 @@ class ImaSdkFactoryProxyApi(pigeonRegistrar: PigeonProxyApiRegistrar) :
       settings: ImaSdkSettings,
       container: AdDisplayContainer
   ): AdsLoader {
-    return pigeon_instance.createAdsLoader(
-        (pigeonRegistrar as ProxyApiRegistrar).context, settings, container)
+    return pigeon_instance.createAdsLoader(pigeonRegistrar.context, settings, container)
   }
 
   override fun createAdsRequest(pigeon_instance: ImaSdkFactory): AdsRequest {

@@ -6,7 +6,7 @@ package dev.flutter.packages.interactive_media_ads
 
 import com.google.ads.interactivemedia.v3.api.AdsManager
 
-class AdsManagerProxyApi(pigeonRegistrar: PigeonProxyApiRegistrar) :
+class AdsManagerProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) :
     PigeonApiAdsManager(pigeonRegistrar) {
   override fun discardAdBreak(pigeon_instance: AdsManager) {
     pigeon_instance.discardAdBreak()

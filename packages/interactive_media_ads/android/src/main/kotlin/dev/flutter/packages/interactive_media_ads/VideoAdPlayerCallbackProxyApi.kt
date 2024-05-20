@@ -8,7 +8,7 @@ import com.google.ads.interactivemedia.v3.api.player.AdMediaInfo
 import com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer
 import com.google.ads.interactivemedia.v3.api.player.VideoProgressUpdate
 
-class VideoAdPlayerCallbackProxyApi(pigeonRegistrar: PigeonProxyApiRegistrar) :
+class VideoAdPlayerCallbackProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) :
     PigeonApiVideoAdPlayerCallback(pigeonRegistrar) {
   override fun onAdProgress(
       pigeon_instance: VideoAdPlayer.VideoAdPlayerCallback,

@@ -7,7 +7,7 @@ package dev.flutter.packages.interactive_media_ads
 import com.google.ads.interactivemedia.v3.api.AdsRequest
 import com.google.ads.interactivemedia.v3.api.player.ContentProgressProvider
 
-class AdsRequestProxyApi(pigeonRegistrar: PigeonProxyApiRegistrar) :
+class AdsRequestProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) :
     PigeonApiAdsRequest(pigeonRegistrar) {
   override fun setAdTagUrl(pigeon_instance: AdsRequest, adTagUrl: String) {
     pigeon_instance.adTagUrl = adTagUrl

@@ -6,7 +6,7 @@ package dev.flutter.packages.interactive_media_ads
 
 import com.google.ads.interactivemedia.v3.api.AdEvent
 
-class AdEventProxyApi(pigeonRegistrar: PigeonProxyApiRegistrar) :
+class AdEventProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) :
     PigeonApiAdEvent(pigeonRegistrar) {
   override fun type(pigeon_instance: AdEvent): AdEventType {
     return when (pigeon_instance.type) {

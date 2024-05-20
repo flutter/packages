@@ -8,7 +8,7 @@ import com.google.ads.interactivemedia.v3.api.AdErrorEvent
 import com.google.ads.interactivemedia.v3.api.AdsLoader
 import com.google.ads.interactivemedia.v3.api.AdsRequest
 
-class AdsLoaderProxyApi(pigeonRegistrar: PigeonProxyApiRegistrar) :
+class AdsLoaderProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) :
     PigeonApiAdsLoader(pigeonRegistrar) {
   override fun addAdErrorListener(
       pigeon_instance: AdsLoader,

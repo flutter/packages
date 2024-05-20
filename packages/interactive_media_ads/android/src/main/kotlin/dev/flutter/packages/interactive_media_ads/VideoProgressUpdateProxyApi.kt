@@ -6,7 +6,7 @@ package dev.flutter.packages.interactive_media_ads
 
 import com.google.ads.interactivemedia.v3.api.player.VideoProgressUpdate
 
-class VideoProgressUpdateProxyApi(pigeonRegistrar: PigeonProxyApiRegistrar) :
+class VideoProgressUpdateProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) :
     PigeonApiVideoProgressUpdate(pigeonRegistrar) {
   override fun pigeon_defaultConstructor(
       currentTimeMs: Long,

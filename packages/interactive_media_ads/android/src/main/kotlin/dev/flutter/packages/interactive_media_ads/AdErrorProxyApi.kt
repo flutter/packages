@@ -6,7 +6,7 @@ package dev.flutter.packages.interactive_media_ads
 
 import com.google.ads.interactivemedia.v3.api.AdError
 
-class AdErrorProxyApi(pigeonRegistrar: PigeonProxyApiRegistrar) :
+class AdErrorProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) :
     PigeonApiAdError(pigeonRegistrar) {
   override fun errorCode(pigeon_instance: AdError): AdErrorCode {
     return when (pigeon_instance.errorCode) {

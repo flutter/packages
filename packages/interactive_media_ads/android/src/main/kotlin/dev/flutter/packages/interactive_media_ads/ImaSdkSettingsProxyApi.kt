@@ -4,5 +4,5 @@
 
 package dev.flutter.packages.interactive_media_ads
 
-class ImaSdkSettingsProxyApi(pigeonRegistrar: PigeonProxyApiRegistrar) :
-    PigeonApiImaSdkSettings(pigeonRegistrar) {}
+class ImaSdkSettingsProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) :
+    PigeonApiImaSdkSettings(pigeonRegistrar)

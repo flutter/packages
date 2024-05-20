@@ -6,11 +6,11 @@ package dev.flutter.packages.interactive_media_ads
 
 import com.google.ads.interactivemedia.v3.api.AdEvent
 
-class AdEventListenerProxyApi(pigeonRegistrar: PigeonProxyApiRegistrar) :
+class AdEventListenerProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) :
     PigeonApiAdEventListener(pigeonRegistrar) {
   internal class AdEventListenerImpl(val api: AdEventListenerProxyApi) : AdEvent.AdEventListener {
     override fun onAdEvent(event: AdEvent) {
-      (api.pigeonRegistrar as ProxyApiRegistrar).runOnMainThread { api.onAdEvent(this, event) {} }
+      api.pigeonRegistrar.runOnMainThread { api.onAdEvent(this, event) {} }
     }
   }
 
