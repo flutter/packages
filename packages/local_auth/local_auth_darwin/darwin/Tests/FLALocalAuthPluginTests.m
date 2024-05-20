@@ -96,7 +96,7 @@ static const NSTimeInterval kTimeout = 30.0;
   StubAlertFactory *alertFactory;
 #if TARGET_OS_OSX
 
-    NSAlert* nsAlert = [[NSAlert alloc] init];
+  NSAlert *nsAlert = [[NSAlert alloc] init];
   alertFactory = [[StubAlertFactory alloc] initWithNSAlert:nsAlert];
 #else
   id mockUIAlertController = OCMClassMock([UIAlertController class]);
