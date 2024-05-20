@@ -28,6 +28,11 @@ typedef HtmlViewFactory = html.Element Function(int viewId);
 /// Factory that returns the link DOM element for each unique view id.
 HtmlViewFactory get linkViewFactory => LinkViewController._viewFactory;
 
+/// The function used to push routes to the Flutter framework.
+@visibleForTesting
+Future<ByteData> Function(String) pushRouteToFrameworkFunction =
+    (String routeName) => pushRouteNameToFramework(null, routeName);
+
 /// The delegate for building the [Link] widget on the web.
 ///
 /// It uses a platform view to render an anchor element in the DOM.
@@ -293,6 +298,10 @@ class LinkViewController extends PlatformViewController {
   }
 
   static void _onGlobalKeydown(html.KeyboardEvent event) {
+    handleGlobalKeydown(event: event);
+  }
+
+  static void handleGlobalKeydown({required html.KeyboardEvent event}) {
     // Why not use `event.target`?
     //
     // Because the target is usually <flutter-view> and not the <a> element, so
@@ -352,6 +361,13 @@ class LinkViewController extends PlatformViewController {
     }
   }
 
+  static void _onGlobalClick(html.MouseEvent event) {
+    handleGlobalClick(
+      event: event,
+      target: event.target as html.Element?,
+    );
+  }
+
   /// Global click handler that triggers on the `capture` phase. We use `capture`
   /// because some events may be consumed and prevent further propagation at the
   /// target. This may lead to issues (see: https://github.com/flutter/flutter/issues/143164)
@@ -359,13 +375,15 @@ class LinkViewController extends PlatformViewController {
   /// window (e.g. when button semantics obscure the platform view). We make sure
   /// to only trigger the link if a hit test was registered and remains valid at
   /// the time the click handler executes.
-  static void _onGlobalClick(html.MouseEvent event) {
-    final html.Element? targetElement = event.target as html.Element?;
-
+  @visibleForTesting
+  static void handleGlobalClick({
+    required html.MouseEvent event,
+    required html.Element? target,
+  }) {
     // We only want to handle clicks that land on *our* links, whether that's a
     // platform view link or a semantics link.
-    final int? viewIdFromTarget = _getViewIdFromLink(targetElement) ??
-        _getViewIdFromSemanticLink(targetElement);
+    final int? viewIdFromTarget = _getViewIdFromLink(target) ??
+        _getViewIdFromSemanticLink(target);
 
     if (viewIdFromTarget == null) {
       // The click target was not one of our links, so we don't want to
@@ -465,7 +483,7 @@ class LinkViewController extends PlatformViewController {
     // browser handle it.
     mouseEvent?.preventDefault();
     final String routeName = controller._uri.toString();
-    pushRouteNameToFramework(null, routeName);
+    pushRouteToFrameworkFunction(routeName);
   }
 
   Uri? _uri;
@@ -546,6 +564,14 @@ class LinkViewController extends PlatformViewController {
       _detachGlobalListeners();
     }
     await SystemChannels.platform_views.invokeMethod<void>('dispose', viewId);
+  }
+
+  @visibleForTesting
+  static Future<void> debugReset() async {
+    _triggerSignals.reset();
+    for (final LinkViewController instance in _instancesByViewId.values) {
+      await instance.dispose();
+    }
   }
 }
 
