@@ -1781,32 +1781,6 @@ void main() {
   });
 
   test('do not generate duplicated entries in writeValue', () {
-    /*
-// Dart code for the pigeon file
-class Foo {
-  final int foo;
-
-  Foo({
-    required this.foo,
-  });
-}
-
-class Bar {
-  final Foo foo;
-  final Foo? foo2;
-
-  Bar({
-    required this.foo,
-    required this.foo2,
-  });
-}
-
-@HostApi()
-abstract class FooBar {
-  void fooBar(Bar bar);
-}
-*/
-
     final Root root = Root(
       apis: <Api>[
         AstHostApi(
@@ -1829,45 +1803,46 @@ abstract class FooBar {
           ],
         )
       ],
-    classes: <Class>[
-      Class(
-        name: 'Foo',
-        fields: <NamedType>[
-          NamedType(
-            type: const TypeDeclaration(
-              baseName: 'int',
-              isNullable: false,
+      classes: <Class>[
+        Class(
+          name: 'Foo',
+          fields: <NamedType>[
+            NamedType(
+              type: const TypeDeclaration(
+                baseName: 'int',
+                isNullable: false,
+              ),
+              name: 'foo',
             ),
-            name: 'foo',
-          ),
-        ],
-      ),
-      Class(
-        name: 'Bar',
-        fields: <NamedType>[
-          NamedType(
-            type: const TypeDeclaration(
-              baseName: 'Foo',
-              isNullable: false,
+          ],
+        ),
+        Class(
+          name: 'Bar',
+          fields: <NamedType>[
+            NamedType(
+              type: const TypeDeclaration(
+                baseName: 'Foo',
+                isNullable: false,
+              ),
+              name: 'foo',
             ),
-            name: 'foo',
-          ),
-          NamedType(
-            type: const TypeDeclaration(
-              baseName: 'Foo',
-              isNullable: true,
+            NamedType(
+              type: const TypeDeclaration(
+                baseName: 'Foo',
+                isNullable: true,
+              ),
+              name: 'foo2',
             ),
-            name: 'foo2',
-          ),
-        ],
-      ),
-    ], enums: [],
+          ],
+        ),
+      ],
+      enums: <Enum>[],
     );
 
     final StringBuffer sink = StringBuffer();
     const String errorClassName = 'FooError';
     const KotlinOptions kotlinOptions =
-    KotlinOptions(errorClassName: errorClassName);
+        KotlinOptions(errorClassName: errorClassName);
     const KotlinGenerator generator = KotlinGenerator();
     generator.generate(
       kotlinOptions,
@@ -1878,7 +1853,7 @@ abstract class FooBar {
 
     final String code = sink.toString();
 
-    // extract override fun writeValue block
+    // Extract override fun writeValue block
     final int blockStart = code.indexOf('override fun writeValue');
     expect(blockStart, isNot(-1));
     final int blockEnd = code.indexOf('super.writeValue', blockStart);
