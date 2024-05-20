@@ -110,30 +110,31 @@ base class AndroidAdsLoader extends PlatformAdsLoader {
   ) {
     final InteractiveMediaAdsProxy proxy =
         weakThis.target!._androidParams._proxy;
-    adsLoader.addAdsLoadedListener(proxy.newAdsLoadedListener(
-      onAdsManagerLoaded: (_, ima.AdsManagerLoadedEvent event) {
-        weakThis.target?.params.onAdsLoaded(
-          PlatformOnAdsLoadedData(
-            manager: AndroidAdsManager(
-              event.manager,
-              proxy: weakThis.target?._androidParams._proxy,
+    adsLoader
+      ..addAdsLoadedListener(proxy.newAdsLoadedListener(
+        onAdsManagerLoaded: (_, ima.AdsManagerLoadedEvent event) {
+          weakThis.target?.params.onAdsLoaded(
+            PlatformOnAdsLoadedData(
+              manager: AndroidAdsManager(
+                event.manager,
+                proxy: weakThis.target?._androidParams._proxy,
+              ),
             ),
-          ),
-        );
-      },
-    ));
-    adsLoader.addAdErrorListener(proxy.newAdErrorListener(
-      onAdError: (_, ima.AdErrorEvent event) {
-        weakThis.target?.params.onAdsLoadError(
-          AdsLoadErrorData(
-            error: AdError(
-              type: event.error.errorType.asInterfaceErrorType(),
-              code: event.error.errorCode.asInterfaceErrorCode(),
-              message: event.error.message,
+          );
+        },
+      ))
+      ..addAdErrorListener(proxy.newAdErrorListener(
+        onAdError: (_, ima.AdErrorEvent event) {
+          weakThis.target?.params.onAdsLoadError(
+            AdsLoadErrorData(
+              error: AdError(
+                type: event.error.errorType.asInterfaceErrorType(),
+                code: event.error.errorCode.asInterfaceErrorCode(),
+                message: event.error.message,
+              ),
             ),
-          ),
-        );
-      },
-    ));
+          );
+        },
+      ));
   }
 }

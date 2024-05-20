@@ -69,7 +69,7 @@ base class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
   late final ima.VideoView _videoView;
   ima.MediaPlayer? _mediaPlayer;
 
-  /// Callbacks that must be called to update to the state of ad playback.
+  /// Callbacks that update the state of ad playback.
   @internal
   final Set<ima.VideoAdPlayerCallback> videoAdPlayerCallbacks =
       <ima.VideoAdPlayerCallback>{};
@@ -84,13 +84,14 @@ base class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
   // Currently loaded ad.
   ima.AdMediaInfo? _loadedAdMediaInfo;
 
-  // The saved ad position, used to resumed ad playback following an ad
+  // The saved ad position, used to resume ad playback following an ad
   // click-through.
   int _savedAdPosition = 0;
 
-  // Timer used to periodically update the IMA SDK the progress of the currently
-  // playing ad.
+  // Timer used to periodically update the IMA SDK of the progress of the
+  // currently playing ad.
   Timer? _adProgressTimer;
+
   int? _adDuration;
 
   late final AndroidAdDisplayContainerCreationParams _androidParams =
@@ -122,8 +123,8 @@ base class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
     _adDuration = null;
   }
 
-  // Starts periodically updating the IMA SDK the current progress of the
-  // currently playing ad.
+  // Starts periodically updating the IMA SDK the progress of the currently
+  // playing ad.
   void _startAdTracking() {
     _adProgressTimer = Timer.periodic(
       const Duration(milliseconds: _progressPollingMs),
@@ -150,8 +151,7 @@ base class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
     );
   }
 
-  // Stops periodically updating the IMA SDK the current progress of the
-  // currently playing ad.
+  // Stops updating the IMA SDK the progress of the currently playing ad.
   void _stopAdTracking() {
     _adProgressTimer?.cancel();
     _adProgressTimer = null;
