@@ -5,11 +5,10 @@
 import 'dart:async';
 
 import 'package:flutter/widgets.dart';
+import 'package:meta/meta.dart';
 
 import '../platform_interface/platform_interface.dart';
-import 'android_ads_manager.dart';
 import 'android_view_widget.dart';
-import 'enum_converter_extensions.dart';
 import 'interactive_media_ads.g.dart' as ima;
 import 'interactive_media_ads_proxy.dart';
 import 'platform_views_service_proxy.dart';
@@ -70,14 +69,17 @@ base class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
   late final ima.VideoView _videoView;
   ima.MediaPlayer? _mediaPlayer;
 
-  // Callbacks that must be called to update to the state of ad playback.
-  final Set<ima.VideoAdPlayerCallback> _videoAdPlayerCallbacks =
+  /// Callbacks that must be called to update to the state of ad playback.
+  @internal
+  final Set<ima.VideoAdPlayerCallback> videoAdPlayerCallbacks =
       <ima.VideoAdPlayerCallback>{};
 
   // Handles ad playback callbacks from the IMA SDK.
   late final ima.VideoAdPlayer _videoAdPlayer;
 
-  ima.AdDisplayContainer? _adDisplayContainer;
+  /// The native Android AdDisplayContainer.
+  @internal
+  ima.AdDisplayContainer? adDisplayContainer;
 
   // Currently loaded ad.
   ima.AdMediaInfo? _loadedAdMediaInfo;
@@ -104,7 +106,7 @@ base class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
       view: _frameLayout,
       platformViewsServiceProxy: _androidParams._platformViewsProxy,
       onPlatformViewCreated: () async {
-        _adDisplayContainer = await _androidParams._imaProxy
+        adDisplayContainer = await _androidParams._imaProxy
             .createAdDisplayContainerImaSdkFactory(
           _frameLayout,
           _videoAdPlayer,
@@ -134,7 +136,7 @@ base class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
         await Future.wait(
           <Future<void>>[
             _videoAdPlayer.setAdProgress(currentProgress),
-            ..._videoAdPlayerCallbacks.map(
+            ...videoAdPlayerCallbacks.map(
               (ima.VideoAdPlayerCallback callback) async {
                 await callback.onAdProgress(
                   _loadedAdMediaInfo!,
@@ -164,7 +166,7 @@ base class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
         if (container != null) {
           weakThis.target?._resetPlayer();
           for (final ima.VideoAdPlayerCallback callback
-              in container._videoAdPlayerCallbacks) {
+              in container.videoAdPlayerCallbacks) {
             callback.onEnded(container._loadedAdMediaInfo!);
           }
         }
@@ -187,7 +189,7 @@ base class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
         if (container != null) {
           container._resetPlayer();
           for (final ima.VideoAdPlayerCallback callback
-              in container._videoAdPlayerCallbacks) {
+              in container.videoAdPlayerCallbacks) {
             callback.onError(container._loadedAdMediaInfo!);
           }
         }
@@ -200,10 +202,10 @@ base class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
   ) {
     return weakThis.target!._androidParams._imaProxy.newVideoAdPlayer(
       addCallback: (_, ima.VideoAdPlayerCallback callback) {
-        weakThis.target?._videoAdPlayerCallbacks.add(callback);
+        weakThis.target?.videoAdPlayerCallbacks.add(callback);
       },
       removeCallback: (_, ima.VideoAdPlayerCallback callback) {
-        weakThis.target?._videoAdPlayerCallbacks.remove(callback);
+        weakThis.target?.videoAdPlayerCallbacks.remove(callback);
       },
       loadAd: (_, ima.AdMediaInfo adMediaInfo, __) {
         weakThis.target?._loadedAdMediaInfo = adMediaInfo;
@@ -231,135 +233,4 @@ base class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
       },
     );
   }
-}
-
-/// Android implementation of [PlatformAdsLoaderCreationParams].
-final class AndroidAdsLoaderCreationParams
-    extends PlatformAdsLoaderCreationParams {
-  /// Constructs a [AndroidAdsLoaderCreationParams].
-  const AndroidAdsLoaderCreationParams({
-    required super.container,
-    required super.onAdsLoaded,
-    required super.onAdsLoadError,
-    @visibleForTesting InteractiveMediaAdsProxy? proxy,
-  })  : _proxy = proxy ?? const InteractiveMediaAdsProxy(),
-        super();
-
-  /// Creates a [AndroidAdsLoaderCreationParams] from an instance of
-  /// [PlatformAdsLoaderCreationParams].
-  factory AndroidAdsLoaderCreationParams.fromPlatformAdsLoaderCreationParams(
-    PlatformAdsLoaderCreationParams params, {
-    @visibleForTesting InteractiveMediaAdsProxy? proxy,
-  }) {
-    return AndroidAdsLoaderCreationParams(
-      container: params.container,
-      onAdsLoaded: params.onAdsLoaded,
-      onAdsLoadError: params.onAdsLoadError,
-      proxy: proxy,
-    );
-  }
-
-  final InteractiveMediaAdsProxy _proxy;
-}
-
-/// Android implementation of [PlatformAdsLoader].
-base class AndroidAdsLoader extends PlatformAdsLoader {
-  /// Constructs an [AndroidAdsLoader].
-  AndroidAdsLoader(super.params)
-      : assert(params.container is AndroidAdDisplayContainer),
-        assert(
-          (params.container as AndroidAdDisplayContainer)._adDisplayContainer !=
-              null,
-          'Ensure the AdDisplayContainer has been added to the Widget tree before creating an AdsLoader.',
-        ),
-        super.implementation() {
-    _adsLoaderFuture = _createAdsLoader();
-  }
-
-  late final ima.ImaSdkFactory _sdkFactory =
-      _androidParams._proxy.instanceImaSdkFactory();
-  late Future<ima.AdsLoader> _adsLoaderFuture;
-
-  late final AndroidAdsLoaderCreationParams _androidParams =
-      params is AndroidAdsLoaderCreationParams
-          ? params as AndroidAdsLoaderCreationParams
-          : AndroidAdsLoaderCreationParams.fromPlatformAdsLoaderCreationParams(
-              params,
-            );
-
-  @override
-  Future<void> contentComplete() async {
-    final Set<ima.VideoAdPlayerCallback> callbacks =
-        (params.container as AndroidAdDisplayContainer)._videoAdPlayerCallbacks;
-    await Future.wait(
-      callbacks.map(
-        (ima.VideoAdPlayerCallback callback) => callback.onContentComplete(),
-      ),
-    );
-  }
-
-  @override
-  Future<void> requestAds(AdsRequest request) async {
-    final ima.AdsLoader adsLoader = await _adsLoaderFuture;
-
-    final ima.AdsRequest androidRequest = await _sdkFactory.createAdsRequest();
-
-    await Future.wait(<Future<void>>[
-      androidRequest.setAdTagUrl(request.adTagUrl),
-      adsLoader.requestAds(androidRequest),
-    ]);
-  }
-
-  Future<ima.AdsLoader> _createAdsLoader() async {
-    final ima.ImaSdkSettings settings =
-        await _sdkFactory.createImaSdkSettings();
-
-    final ima.AdsLoader adsLoader = await _sdkFactory.createAdsLoader(
-      settings,
-      (params.container as AndroidAdDisplayContainer)._adDisplayContainer!,
-    );
-
-    _addListeners(WeakReference<AndroidAdsLoader>(this), adsLoader);
-
-    return adsLoader;
-  }
-
-  static void _addListeners(
-    WeakReference<AndroidAdsLoader> weakThis,
-    ima.AdsLoader adsLoader,
-  ) {
-    final InteractiveMediaAdsProxy proxy =
-        weakThis.target!._androidParams._proxy;
-    adsLoader.addAdsLoadedListener(proxy.newAdsLoadedListener(
-      onAdsManagerLoaded: (_, ima.AdsManagerLoadedEvent event) {
-        weakThis.target?.params.onAdsLoaded(
-          PlatformOnAdsLoadedData(
-            manager: AndroidAdsManager(
-              event.manager,
-              proxy: weakThis.target?._androidParams._proxy,
-            ),
-          ),
-        );
-      },
-    ));
-    adsLoader.addAdErrorListener(proxy.newAdErrorListener(
-      onAdError: (_, ima.AdErrorEvent event) {
-        weakThis.target?.params.onAdsLoadError(
-          AdsLoadErrorData(
-            error: AdError(
-              type: event.error.errorType.asInterfaceErrorType(),
-              code: event.error.errorCode.asInterfaceErrorCode(),
-              message: event.error.message,
-            ),
-          ),
-        );
-      },
-    ));
-  }
-}
-
-/// Android implementation of [PlatformAdsManagerDelegate].
-final class AndroidAdsManagerDelegate extends PlatformAdsManagerDelegate {
-  /// Constructs an [AndroidAdsManagerDelegate].
-  AndroidAdsManagerDelegate(super.params) : super.implementation();
 }

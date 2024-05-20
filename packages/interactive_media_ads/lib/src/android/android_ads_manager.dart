@@ -4,7 +4,7 @@
 
 import 'dart:async';
 
-import 'package:flutter/widgets.dart';
+import 'package:meta/meta.dart';
 
 import '../platform_interface/platform_interface.dart';
 import 'enum_converter_extensions.dart';
@@ -14,7 +14,7 @@ import 'interactive_media_ads_proxy.dart';
 /// Android implementation of [PlatformAdsManager].
 class AndroidAdsManager extends PlatformAdsManager {
   /// Constructs an [AndroidAdsManager].
-  @protected
+  @internal
   AndroidAdsManager(
     ima.AdsManager manager, {
     InteractiveMediaAdsProxy? proxy,

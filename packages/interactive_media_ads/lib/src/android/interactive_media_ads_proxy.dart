@@ -88,25 +88,28 @@ class InteractiveMediaAdsProxy {
   }) newVideoAdPlayer;
 
   /// Constructs [AdsLoadedListener].
-  final AdsLoadedListener Function(
-      {required void Function(
-        AdsLoadedListener,
-        AdsManagerLoadedEvent,
-      ) onAdsManagerLoaded}) newAdsLoadedListener;
+  final AdsLoadedListener Function({
+    required void Function(
+      AdsLoadedListener,
+      AdsManagerLoadedEvent,
+    ) onAdsManagerLoaded,
+  }) newAdsLoadedListener;
 
   /// Constructs [AdErrorListener].
-  final AdErrorListener Function(
-      {required void Function(
-        AdErrorListener,
-        AdErrorEvent,
-      ) onAdError}) newAdErrorListener;
+  final AdErrorListener Function({
+    required void Function(
+      AdErrorListener,
+      AdErrorEvent,
+    ) onAdError,
+  }) newAdErrorListener;
 
   /// Constructs [AdEventListener].
-  final AdEventListener Function(
-      {required void Function(
-        AdEventListener,
-        AdEvent,
-      ) onAdEvent}) newAdEventListener;
+  final AdEventListener Function({
+    required void Function(
+      AdEventListener,
+      AdEvent,
+    ) onAdEvent,
+  }) newAdEventListener;
 
   /// Calls to [ImaSdkFactory.createAdDisplayContainer].
   final Future<AdDisplayContainer> Function(

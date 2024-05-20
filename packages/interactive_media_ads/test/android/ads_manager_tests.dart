@@ -3,7 +3,8 @@
 // found in the LICENSE file.
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:interactive_media_ads/src/android/android_ad_display_container.dart';
+import 'package:interactive_media_ads/src/android/android_ads_manager.dart';
+import 'package:interactive_media_ads/src/android/android_ads_manager_delegate.dart';
 import 'package:interactive_media_ads/src/android/interactive_media_ads.g.dart'
     as ima;
 import 'package:interactive_media_ads/src/android/interactive_media_ads_proxy.dart';

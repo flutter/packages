@@ -8,6 +8,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:interactive_media_ads/src/android/android_ad_display_container.dart';
+import 'package:interactive_media_ads/src/android/android_ads_loader.dart';
 import 'package:interactive_media_ads/src/android/interactive_media_ads.g.dart'
     as ima;
 import 'package:interactive_media_ads/src/android/interactive_media_ads_proxy.dart';
