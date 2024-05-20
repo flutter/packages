@@ -8,16 +8,61 @@
 
 typedef void (^FLADAuthCompletion)(FLADAuthResultDetails *_Nullable, FlutterError *_Nullable);
 
+/// A default auth context that wraps LAContext.
+// TODO(stuartmorgan): When converting to Swift, eliminate this class and use an extension to make
+// LAContext declare conformance to FLADAuthContext.
+@interface FLADefaultAuthContext : NSObject <FLADAuthContext>
+/// Returns a wrapper for the given LAContext.
+- (instancetype)initWithContext:(LAContext *)context NS_DESIGNATED_INITIALIZER;
+- (instancetype)init NS_UNAVAILABLE;
+
+/// The wrapped auth context.
+@property(nonatomic) LAContext *context;
+@end
+
+@implementation FLADefaultAuthContext
+- (instancetype)initWithContext:(LAContext *)context {
+  self = [super init];
+  if (self) {
+    _context = context;
+  }
+  return self;
+}
+
+#pragma mark FLADAuthContext implementation
+
+- (NSString *)localizedFallbackTitle {
+  return self.context.localizedFallbackTitle;
+}
+
+- (void)setLocalizedFallbackTitle:(NSString *)localizedFallbackTitle {
+  self.context.localizedFallbackTitle = localizedFallbackTitle;
+}
+
+- (LABiometryType)biometryType {
+  return self.context.biometryType;
+}
+
+- (BOOL)canEvaluatePolicy:(LAPolicy)policy error:(NSError *__autoreleasing *)error {
+  return [self.context canEvaluatePolicy:policy error:error];
+}
+
+- (void)evaluatePolicy:(LAPolicy)policy
+       localizedReason:(NSString *)localizedReason
+                 reply:(void (^)(BOOL success, NSError *__nullable error))reply {
+  [self.context evaluatePolicy:policy localizedReason:localizedReason reply:reply];
+}
+
+@end
+
 /// A default context factory that wraps standard LAContext allocation.
 @interface FLADefaultAuthContextFactory : NSObject <FLADAuthContextFactory>
 @end
 
 @implementation FLADefaultAuthContextFactory
 - (id<FLADAuthContext>)createAuthContext {
-  // This works because FLADAuthContext intentionally uses the same signatures as LAContext.
-  // TODO(stuartmorgan): When converting to Swift, explicitly add conformance via an LAContext
-  // extension.
-  return [[LAContext alloc] init];
+  // TODO(stuartmorgan): When converting to Swift, just return LAContext here.
+  return [[FLADefaultAuthContext alloc] initWithContext:[[LAContext alloc] init]];
 }
 @end
 
