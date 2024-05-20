@@ -7,7 +7,9 @@ import 'dart:async';
 import 'package:flutter/widgets.dart';
 
 import '../platform_interface/platform_interface.dart';
+import 'android_ads_manager.dart';
 import 'android_view_widget.dart';
+import 'enum_converter_extensions.dart';
 import 'interactive_media_ads.g.dart' as ima;
 import 'interactive_media_ads_proxy.dart';
 import 'platform_views_service_proxy.dart';
@@ -356,165 +358,8 @@ base class AndroidAdsLoader extends PlatformAdsLoader {
   }
 }
 
-/// Android implementation of [PlatformAdsManager].
-class AndroidAdsManager extends PlatformAdsManager {
-  /// Constructs an [AndroidAdsManager].
-  @visibleForTesting
-  AndroidAdsManager(
-    ima.AdsManager manager, {
-    InteractiveMediaAdsProxy? proxy,
-  })  : _manager = manager,
-        _proxy = proxy ?? const InteractiveMediaAdsProxy();
-
-  final ima.AdsManager _manager;
-  final InteractiveMediaAdsProxy _proxy;
-
-  PlatformAdsManagerDelegate? _managerDelegate;
-
-  @override
-  Future<void> destroy() {
-    return _manager.destroy();
-  }
-
-  @override
-  Future<void> init(AdsManagerInitParams params) {
-    return _manager.init();
-  }
-
-  @override
-  Future<void> setAdsManagerDelegate(
-    PlatformAdsManagerDelegate delegate,
-  ) async {
-    _managerDelegate = delegate;
-    _addListeners(WeakReference<AndroidAdsManager>(this));
-  }
-
-  @override
-  Future<void> start(AdsManagerStartParams params) {
-    return _manager.start();
-  }
-
-  static void _addListeners(WeakReference<AndroidAdsManager> weakThis) {
-    final InteractiveMediaAdsProxy proxy = weakThis.target!._proxy;
-    weakThis.target?._manager.addAdEventListener(
-      proxy.newAdEventListener(
-        onAdEvent: (_, ima.AdEvent event) {
-          late final AdEventType eventType;
-
-          switch (event.type) {
-            case ima.AdEventType.allAdsCompleted:
-              eventType = AdEventType.allAdsCompleted;
-            case ima.AdEventType.completed:
-              eventType = AdEventType.complete;
-            case ima.AdEventType.contentPauseRequested:
-              eventType = AdEventType.contentPauseRequested;
-            case ima.AdEventType.contentResumeRequested:
-              eventType = AdEventType.contentResumeRequested;
-            case ima.AdEventType.loaded:
-              eventType = AdEventType.loaded;
-            case ima.AdEventType.clicked:
-              eventType = AdEventType.clicked;
-            case ima.AdEventType.unknown:
-            case ima.AdEventType.adBreakReady:
-            case ima.AdEventType.adBreakEnded:
-            case ima.AdEventType.adBreakFetchError:
-            case ima.AdEventType.adBreakStarted:
-            case ima.AdEventType.adBuffering:
-            case ima.AdEventType.adPeriodEnded:
-            case ima.AdEventType.adPeriodStarted:
-            case ima.AdEventType.adProgress:
-            case ima.AdEventType.cuepointsChanged:
-            case ima.AdEventType.firstQuartile:
-            case ima.AdEventType.iconFallbackImageClosed:
-            case ima.AdEventType.iconTapped:
-            case ima.AdEventType.log:
-            case ima.AdEventType.midpoint:
-            case ima.AdEventType.paused:
-            case ima.AdEventType.resumed:
-            case ima.AdEventType.skippableStateChanged:
-            case ima.AdEventType.skipped:
-            case ima.AdEventType.started:
-            case ima.AdEventType.tapped:
-            case ima.AdEventType.thirdQuartile:
-              return;
-          }
-          weakThis.target?._managerDelegate?.params.onAdEvent
-              ?.call(AdEvent(type: eventType));
-        },
-      ),
-    );
-    weakThis.target?._manager.addAdErrorListener(
-      proxy.newAdErrorListener(
-        onAdError: (_, ima.AdErrorEvent event) {
-          weakThis.target?._managerDelegate?.params.onAdErrorEvent?.call(
-            AdErrorEvent(
-              error: AdError(
-                type: event.error.errorType.asInterfaceErrorType(),
-                code: event.error.errorCode.asInterfaceErrorCode(),
-                message: event.error.message,
-              ),
-            ),
-          );
-          weakThis.target?._manager.discardAdBreak();
-        },
-      ),
-    );
-  }
-}
-
 /// Android implementation of [PlatformAdsManagerDelegate].
 final class AndroidAdsManagerDelegate extends PlatformAdsManagerDelegate {
   /// Constructs an [AndroidAdsManagerDelegate].
   AndroidAdsManagerDelegate(super.params) : super.implementation();
-}
-
-extension on ima.AdErrorType {
-  AdErrorType asInterfaceErrorType() {
-    return switch (this) {
-      ima.AdErrorType.load => AdErrorType.loading,
-      ima.AdErrorType.play => AdErrorType.playing,
-      ima.AdErrorType.unknown => AdErrorType.unknown,
-    };
-  }
-}
-
-extension on ima.AdErrorCode {
-  AdErrorCode asInterfaceErrorCode() {
-    return switch (this) {
-      ima.AdErrorCode.adsPlayerWasNotProvided =>
-        AdErrorCode.adsPlayerNotProvided,
-      ima.AdErrorCode.adsRequestNetworkError =>
-        AdErrorCode.adsRequestNetworkError,
-      ima.AdErrorCode.companionAdLoadingFailed =>
-        AdErrorCode.companionAdLoadingFailed,
-      ima.AdErrorCode.failedToRequestAds => AdErrorCode.failedToRequestAds,
-      ima.AdErrorCode.internalError => AdErrorCode.internalError,
-      ima.AdErrorCode.invalidArguments => AdErrorCode.invalidArguments,
-      ima.AdErrorCode.overlayAdLoadingFailed =>
-        AdErrorCode.overlayAdLoadingFailed,
-      ima.AdErrorCode.overlayAdPlayingFailed =>
-        AdErrorCode.overlayAdPlayingFailed,
-      ima.AdErrorCode.playlistNoContentTracking =>
-        AdErrorCode.playlistNoContentTracking,
-      ima.AdErrorCode.unexpectedAdsLoadedEvent =>
-        AdErrorCode.unexpectedAdsLoadedEvent,
-      ima.AdErrorCode.unknownAdResponse => AdErrorCode.unknownAdResponse,
-      ima.AdErrorCode.unknownError => AdErrorCode.unknownError,
-      ima.AdErrorCode.vastAssetNotFound => AdErrorCode.vastAssetNotFound,
-      ima.AdErrorCode.vastEmptyResponse => AdErrorCode.vastEmptyResponse,
-      ima.AdErrorCode.vastLinearAssetMismatch =>
-        AdErrorCode.vastLinearAssetMismatch,
-      ima.AdErrorCode.vastLoadTimeout => AdErrorCode.vastLoadTimeout,
-      ima.AdErrorCode.vastMalformedResponse =>
-        AdErrorCode.vastMalformedResponse,
-      ima.AdErrorCode.vastMediaLoadTimeout => AdErrorCode.vastMediaLoadTimeout,
-      ima.AdErrorCode.vastNonlinearAssetMismatch =>
-        AdErrorCode.vastNonlinearAssetMismatch,
-      ima.AdErrorCode.vastNoAdsAfterWrapper =>
-        AdErrorCode.vastNoAdsAfterWrapper,
-      ima.AdErrorCode.vastTooManyRedirects => AdErrorCode.vastTooManyRedirects,
-      ima.AdErrorCode.vastTraffickingError => AdErrorCode.vastTraffickingError,
-      ima.AdErrorCode.videoPlayError => AdErrorCode.videoPlayError,
-    };
-  }
 }
