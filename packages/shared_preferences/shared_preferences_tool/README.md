@@ -2,13 +2,13 @@ A [DevTools extension](https://pub.dev/packages/devtools_extensions) for Flutter
 
 ## Features
 
-This package contains the source code for the package:shared_preferences DevTools extension. With this tool, you can:
+This package contains the source code for the `package:shared_preferences` DevTools extension. With this tool, you can:
 
-- List all keys stored in your app's SharedPreferences.
+- List all keys stored in your app's `SharedPreferences`.
 - Search for specific keys.
 - Edit or remove values directly, with changes reflected in your app instantly.
 
-It supports all data types available in SharedPreferences:
+It supports all data types available in `SharedPreferences`:
 
 - `String`
 - `int`
