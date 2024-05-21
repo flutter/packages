@@ -6,8 +6,6 @@
 @import XCTest;
 @import local_auth_darwin;
 
-#import <OCMock/OCMock.h>
-
 // Set a long timeout to avoid flake due to slow CI.
 static const NSTimeInterval kTimeout = 30.0;
 
@@ -15,13 +13,13 @@ static const NSTimeInterval kTimeout = 30.0;
  * A context factory that returns preset contexts.
  */
 @interface StubAuthContextFactory : NSObject <FLADAuthContextFactory>
-@property(copy, nonatomic) NSMutableArray *contexts;
-- (instancetype)initWithContexts:(NSArray *)contexts;
+@property(copy, nonatomic) NSMutableArray<id<FLADAuthContext>> *contexts;
+- (instancetype)initWithContexts:(NSArray<id<FLADAuthContext>> *)contexts;
 @end
 
 @implementation StubAuthContextFactory
 
-- (instancetype)initWithContexts:(NSArray *)contexts {
+- (instancetype)initWithContexts:(NSArray<id<FLADAuthContext>> *)contexts {
   self = [super init];
   if (self) {
     _contexts = [contexts mutableCopy];
@@ -29,11 +27,59 @@ static const NSTimeInterval kTimeout = 30.0;
   return self;
 }
 
-- (LAContext *)createAuthContext {
+- (id<FLADAuthContext>)createAuthContext {
   NSAssert(self.contexts.count > 0, @"Insufficient test contexts provided");
-  LAContext *context = [self.contexts firstObject];
+  id<FLADAuthContext> context = [self.contexts firstObject];
   [self.contexts removeObjectAtIndex:0];
   return context;
+}
+
+@end
+
+@interface StubAuthContext : NSObject <FLADAuthContext>
+/// Whether calls to this stub are expected to be for biometric authentication.
+///
+/// While this object could be set up to return different values for different policies, in
+/// practice only one policy is needed by any given test, so this just allows asserting that the
+/// code is calling with the intended policy.
+@property(nonatomic) BOOL expectBiometrics;
+/// The value to return from canEvaluatePolicy.
+@property(nonatomic) BOOL canEvaluateResponse;
+/// The error to return from canEvaluatePolicy.
+@property(nonatomic) NSError *canEvaluateError;
+/// The value to return from evaluatePolicy:error:.
+@property(nonatomic) BOOL evaluateResponse;
+/// The error to return from evaluatePolicy:error:.
+@property(nonatomic) NSError *evaluateError;
+
+// Overridden as read-write to allow stubbing.
+@property(nonatomic, readwrite) LABiometryType biometryType;
+@end
+
+@implementation StubAuthContext
+@synthesize localizedFallbackTitle;
+
+- (BOOL)canEvaluatePolicy:(LAPolicy)policy
+                    error:(NSError *__autoreleasing _Nullable *_Nullable)error {
+  XCTAssertEqual(policy, self.expectBiometrics ? LAPolicyDeviceOwnerAuthenticationWithBiometrics
+                                               : LAPolicyDeviceOwnerAuthentication);
+  if (error) {
+    *error = self.canEvaluateError;
+  }
+  return self.canEvaluateResponse;
+}
+
+- (void)evaluatePolicy:(LAPolicy)policy
+       localizedReason:(nonnull NSString *)localizedReason
+                 reply:(nonnull void (^)(BOOL, NSError *_Nullable))reply {
+  XCTAssertEqual(policy, self.expectBiometrics ? LAPolicyDeviceOwnerAuthenticationWithBiometrics
+                                               : LAPolicyDeviceOwnerAuthentication);
+  // evaluatePolicy:localizedReason:reply: calls back on an internal queue, which is not
+  // guaranteed to be on the main thread. Ensure that's handled correctly by calling back on
+  // a background thread.
+  dispatch_async(dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0), ^{
+    reply(self.evaluateResponse, self.evaluateError);
+  });
 }
 
 @end
@@ -50,27 +96,15 @@ static const NSTimeInterval kTimeout = 30.0;
 }
 
 - (void)testSuccessfullAuthWithBiometrics {
-  id mockAuthContext = OCMClassMock([LAContext class]);
+  StubAuthContext *stubAuthContext = [[StubAuthContext alloc] init];
   FLALocalAuthPlugin *plugin = [[FLALocalAuthPlugin alloc]
       initWithContextFactory:[[StubAuthContextFactory alloc]
-                                 initWithContexts:@[ mockAuthContext ]]];
+                                 initWithContexts:@[ stubAuthContext ]]];
 
-  const LAPolicy policy = LAPolicyDeviceOwnerAuthenticationWithBiometrics;
   FLADAuthStrings *strings = [self createAuthStrings];
-  OCMStub([mockAuthContext canEvaluatePolicy:policy error:[OCMArg setTo:nil]]).andReturn(YES);
-
-  // evaluatePolicy:localizedReason:reply: calls back on an internal queue, which is not
-  // guaranteed to be on the main thread. Ensure that's handled correctly by calling back on
-  // a background thread.
-  void (^backgroundThreadReplyCaller)(NSInvocation *) = ^(NSInvocation *invocation) {
-    void (^reply)(BOOL, NSError *);
-    [invocation getArgument:&reply atIndex:4];
-    dispatch_async(dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0), ^{
-      reply(YES, nil);
-    });
-  };
-  OCMStub([mockAuthContext evaluatePolicy:policy localizedReason:strings.reason reply:[OCMArg any]])
-      .andDo(backgroundThreadReplyCaller);
+  stubAuthContext.expectBiometrics = YES;
+  stubAuthContext.canEvaluateResponse = YES;
+  stubAuthContext.evaluateResponse = YES;
 
   XCTestExpectation *expectation = [self expectationWithDescription:@"Result is called"];
   [plugin authenticateWithOptions:[FLADAuthOptions makeWithBiometricOnly:YES
@@ -88,27 +122,14 @@ static const NSTimeInterval kTimeout = 30.0;
 }
 
 - (void)testSuccessfullAuthWithoutBiometrics {
-  id mockAuthContext = OCMClassMock([LAContext class]);
+  StubAuthContext *stubAuthContext = [[StubAuthContext alloc] init];
   FLALocalAuthPlugin *plugin = [[FLALocalAuthPlugin alloc]
       initWithContextFactory:[[StubAuthContextFactory alloc]
-                                 initWithContexts:@[ mockAuthContext ]]];
+                                 initWithContexts:@[ stubAuthContext ]]];
 
-  const LAPolicy policy = LAPolicyDeviceOwnerAuthentication;
   FLADAuthStrings *strings = [self createAuthStrings];
-  OCMStub([mockAuthContext canEvaluatePolicy:policy error:[OCMArg setTo:nil]]).andReturn(YES);
-
-  // evaluatePolicy:localizedReason:reply: calls back on an internal queue, which is not
-  // guaranteed to be on the main thread. Ensure that's handled correctly by calling back on
-  // a background thread.
-  void (^backgroundThreadReplyCaller)(NSInvocation *) = ^(NSInvocation *invocation) {
-    void (^reply)(BOOL, NSError *);
-    [invocation getArgument:&reply atIndex:4];
-    dispatch_async(dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0), ^{
-      reply(YES, nil);
-    });
-  };
-  OCMStub([mockAuthContext evaluatePolicy:policy localizedReason:strings.reason reply:[OCMArg any]])
-      .andDo(backgroundThreadReplyCaller);
+  stubAuthContext.canEvaluateResponse = YES;
+  stubAuthContext.evaluateResponse = YES;
 
   XCTestExpectation *expectation = [self expectationWithDescription:@"Result is called"];
   [plugin authenticateWithOptions:[FLADAuthOptions makeWithBiometricOnly:NO
@@ -126,27 +147,17 @@ static const NSTimeInterval kTimeout = 30.0;
 }
 
 - (void)testFailedAuthWithBiometrics {
-  id mockAuthContext = OCMClassMock([LAContext class]);
+  StubAuthContext *stubAuthContext = [[StubAuthContext alloc] init];
   FLALocalAuthPlugin *plugin = [[FLALocalAuthPlugin alloc]
       initWithContextFactory:[[StubAuthContextFactory alloc]
-                                 initWithContexts:@[ mockAuthContext ]]];
+                                 initWithContexts:@[ stubAuthContext ]]];
 
-  const LAPolicy policy = LAPolicyDeviceOwnerAuthenticationWithBiometrics;
   FLADAuthStrings *strings = [self createAuthStrings];
-  OCMStub([mockAuthContext canEvaluatePolicy:policy error:[OCMArg setTo:nil]]).andReturn(YES);
-
-  // evaluatePolicy:localizedReason:reply: calls back on an internal queue, which is not
-  // guaranteed to be on the main thread. Ensure that's handled correctly by calling back on
-  // a background thread.
-  void (^backgroundThreadReplyCaller)(NSInvocation *) = ^(NSInvocation *invocation) {
-    void (^reply)(BOOL, NSError *);
-    [invocation getArgument:&reply atIndex:4];
-    dispatch_async(dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0), ^{
-      reply(NO, [NSError errorWithDomain:@"error" code:LAErrorAuthenticationFailed userInfo:nil]);
-    });
-  };
-  OCMStub([mockAuthContext evaluatePolicy:policy localizedReason:strings.reason reply:[OCMArg any]])
-      .andDo(backgroundThreadReplyCaller);
+  stubAuthContext.expectBiometrics = YES;
+  stubAuthContext.canEvaluateResponse = YES;
+  stubAuthContext.evaluateError = [NSError errorWithDomain:@"error"
+                                                      code:LAErrorAuthenticationFailed
+                                                  userInfo:nil];
 
   XCTestExpectation *expectation = [self expectationWithDescription:@"Result is called"];
   [plugin authenticateWithOptions:[FLADAuthOptions makeWithBiometricOnly:YES
@@ -168,27 +179,14 @@ static const NSTimeInterval kTimeout = 30.0;
 }
 
 - (void)testFailedWithUnknownErrorCode {
-  id mockAuthContext = OCMClassMock([LAContext class]);
+  StubAuthContext *stubAuthContext = [[StubAuthContext alloc] init];
   FLALocalAuthPlugin *plugin = [[FLALocalAuthPlugin alloc]
       initWithContextFactory:[[StubAuthContextFactory alloc]
-                                 initWithContexts:@[ mockAuthContext ]]];
+                                 initWithContexts:@[ stubAuthContext ]]];
 
-  const LAPolicy policy = LAPolicyDeviceOwnerAuthentication;
   FLADAuthStrings *strings = [self createAuthStrings];
-  OCMStub([mockAuthContext canEvaluatePolicy:policy error:[OCMArg setTo:nil]]).andReturn(YES);
-
-  // evaluatePolicy:localizedReason:reply: calls back on an internal queue, which is not
-  // guaranteed to be on the main thread. Ensure that's handled correctly by calling back on
-  // a background thread.
-  void (^backgroundThreadReplyCaller)(NSInvocation *) = ^(NSInvocation *invocation) {
-    void (^reply)(BOOL, NSError *);
-    [invocation getArgument:&reply atIndex:4];
-    dispatch_async(dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0), ^{
-      reply(NO, [NSError errorWithDomain:@"error" code:99 userInfo:nil]);
-    });
-  };
-  OCMStub([mockAuthContext evaluatePolicy:policy localizedReason:strings.reason reply:[OCMArg any]])
-      .andDo(backgroundThreadReplyCaller);
+  stubAuthContext.canEvaluateResponse = YES;
+  stubAuthContext.evaluateError = [NSError errorWithDomain:@"error" code:99 userInfo:nil];
 
   XCTestExpectation *expectation = [self expectationWithDescription:@"Result is called"];
   [plugin authenticateWithOptions:[FLADAuthOptions makeWithBiometricOnly:NO
@@ -206,27 +204,16 @@ static const NSTimeInterval kTimeout = 30.0;
 }
 
 - (void)testSystemCancelledWithoutStickyAuth {
-  id mockAuthContext = OCMClassMock([LAContext class]);
+  StubAuthContext *stubAuthContext = [[StubAuthContext alloc] init];
   FLALocalAuthPlugin *plugin = [[FLALocalAuthPlugin alloc]
       initWithContextFactory:[[StubAuthContextFactory alloc]
-                                 initWithContexts:@[ mockAuthContext ]]];
+                                 initWithContexts:@[ stubAuthContext ]]];
 
-  const LAPolicy policy = LAPolicyDeviceOwnerAuthentication;
   FLADAuthStrings *strings = [self createAuthStrings];
-  OCMStub([mockAuthContext canEvaluatePolicy:policy error:[OCMArg setTo:nil]]).andReturn(YES);
-
-  // evaluatePolicy:localizedReason:reply: calls back on an internal queue, which is not
-  // guaranteed to be on the main thread. Ensure that's handled correctly by calling back on
-  // a background thread.
-  void (^backgroundThreadReplyCaller)(NSInvocation *) = ^(NSInvocation *invocation) {
-    void (^reply)(BOOL, NSError *);
-    [invocation getArgument:&reply atIndex:4];
-    dispatch_async(dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0), ^{
-      reply(NO, [NSError errorWithDomain:@"error" code:LAErrorSystemCancel userInfo:nil]);
-    });
-  };
-  OCMStub([mockAuthContext evaluatePolicy:policy localizedReason:strings.reason reply:[OCMArg any]])
-      .andDo(backgroundThreadReplyCaller);
+  stubAuthContext.canEvaluateResponse = YES;
+  stubAuthContext.evaluateError = [NSError errorWithDomain:@"error"
+                                                      code:LAErrorSystemCancel
+                                                  userInfo:nil];
 
   XCTestExpectation *expectation = [self expectationWithDescription:@"Result is called"];
   [plugin authenticateWithOptions:[FLADAuthOptions makeWithBiometricOnly:NO
@@ -244,27 +231,16 @@ static const NSTimeInterval kTimeout = 30.0;
 }
 
 - (void)testFailedAuthWithoutBiometrics {
-  id mockAuthContext = OCMClassMock([LAContext class]);
+  StubAuthContext *stubAuthContext = [[StubAuthContext alloc] init];
   FLALocalAuthPlugin *plugin = [[FLALocalAuthPlugin alloc]
       initWithContextFactory:[[StubAuthContextFactory alloc]
-                                 initWithContexts:@[ mockAuthContext ]]];
+                                 initWithContexts:@[ stubAuthContext ]]];
 
-  const LAPolicy policy = LAPolicyDeviceOwnerAuthentication;
   FLADAuthStrings *strings = [self createAuthStrings];
-  OCMStub([mockAuthContext canEvaluatePolicy:policy error:[OCMArg setTo:nil]]).andReturn(YES);
-
-  // evaluatePolicy:localizedReason:reply: calls back on an internal queue, which is not
-  // guaranteed to be on the main thread. Ensure that's handled correctly by calling back on
-  // a background thread.
-  void (^backgroundThreadReplyCaller)(NSInvocation *) = ^(NSInvocation *invocation) {
-    void (^reply)(BOOL, NSError *);
-    [invocation getArgument:&reply atIndex:4];
-    dispatch_async(dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0), ^{
-      reply(NO, [NSError errorWithDomain:@"error" code:LAErrorAuthenticationFailed userInfo:nil]);
-    });
-  };
-  OCMStub([mockAuthContext evaluatePolicy:policy localizedReason:strings.reason reply:[OCMArg any]])
-      .andDo(backgroundThreadReplyCaller);
+  stubAuthContext.canEvaluateResponse = YES;
+  stubAuthContext.evaluateError = [NSError errorWithDomain:@"error"
+                                                      code:LAErrorAuthenticationFailed
+                                                  userInfo:nil];
 
   XCTestExpectation *expectation = [self expectationWithDescription:@"Result is called"];
   [plugin authenticateWithOptions:[FLADAuthOptions makeWithBiometricOnly:NO
@@ -286,28 +262,15 @@ static const NSTimeInterval kTimeout = 30.0;
 }
 
 - (void)testLocalizedFallbackTitle {
-  id mockAuthContext = OCMClassMock([LAContext class]);
+  StubAuthContext *stubAuthContext = [[StubAuthContext alloc] init];
   FLALocalAuthPlugin *plugin = [[FLALocalAuthPlugin alloc]
       initWithContextFactory:[[StubAuthContextFactory alloc]
-                                 initWithContexts:@[ mockAuthContext ]]];
+                                 initWithContexts:@[ stubAuthContext ]]];
 
-  const LAPolicy policy = LAPolicyDeviceOwnerAuthentication;
   FLADAuthStrings *strings = [self createAuthStrings];
   strings.localizedFallbackTitle = @"a title";
-  OCMStub([mockAuthContext canEvaluatePolicy:policy error:[OCMArg setTo:nil]]).andReturn(YES);
-
-  // evaluatePolicy:localizedReason:reply: calls back on an internal queue, which is not
-  // guaranteed to be on the main thread. Ensure that's handled correctly by calling back on
-  // a background thread.
-  void (^backgroundThreadReplyCaller)(NSInvocation *) = ^(NSInvocation *invocation) {
-    void (^reply)(BOOL, NSError *);
-    [invocation getArgument:&reply atIndex:4];
-    dispatch_async(dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0), ^{
-      reply(YES, nil);
-    });
-  };
-  OCMStub([mockAuthContext evaluatePolicy:policy localizedReason:strings.reason reply:[OCMArg any]])
-      .andDo(backgroundThreadReplyCaller);
+  stubAuthContext.canEvaluateResponse = YES;
+  stubAuthContext.evaluateResponse = YES;
 
   XCTestExpectation *expectation = [self expectationWithDescription:@"Result is called"];
   [plugin authenticateWithOptions:[FLADAuthOptions makeWithBiometricOnly:NO
@@ -316,36 +279,23 @@ static const NSTimeInterval kTimeout = 30.0;
                           strings:strings
                        completion:^(FLADAuthResultDetails *_Nullable resultDetails,
                                     FlutterError *_Nullable error) {
-                         OCMVerify([mockAuthContext
-                             setLocalizedFallbackTitle:strings.localizedFallbackTitle]);
+                         XCTAssertEqual(stubAuthContext.localizedFallbackTitle,
+                                        strings.localizedFallbackTitle);
                          [expectation fulfill];
                        }];
   [self waitForExpectationsWithTimeout:kTimeout handler:nil];
 }
 
 - (void)testSkippedLocalizedFallbackTitle {
-  id mockAuthContext = OCMClassMock([LAContext class]);
+  StubAuthContext *stubAuthContext = [[StubAuthContext alloc] init];
   FLALocalAuthPlugin *plugin = [[FLALocalAuthPlugin alloc]
       initWithContextFactory:[[StubAuthContextFactory alloc]
-                                 initWithContexts:@[ mockAuthContext ]]];
+                                 initWithContexts:@[ stubAuthContext ]]];
 
-  const LAPolicy policy = LAPolicyDeviceOwnerAuthentication;
   FLADAuthStrings *strings = [self createAuthStrings];
   strings.localizedFallbackTitle = nil;
-  OCMStub([mockAuthContext canEvaluatePolicy:policy error:[OCMArg setTo:nil]]).andReturn(YES);
-
-  // evaluatePolicy:localizedReason:reply: calls back on an internal queue, which is not
-  // guaranteed to be on the main thread. Ensure that's handled correctly by calling back on
-  // a background thread.
-  void (^backgroundThreadReplyCaller)(NSInvocation *) = ^(NSInvocation *invocation) {
-    void (^reply)(BOOL, NSError *);
-    [invocation getArgument:&reply atIndex:4];
-    dispatch_async(dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0), ^{
-      reply(YES, nil);
-    });
-  };
-  OCMStub([mockAuthContext evaluatePolicy:policy localizedReason:strings.reason reply:[OCMArg any]])
-      .andDo(backgroundThreadReplyCaller);
+  stubAuthContext.canEvaluateResponse = YES;
+  stubAuthContext.evaluateResponse = YES;
 
   XCTestExpectation *expectation = [self expectationWithDescription:@"Result is called"];
   [plugin authenticateWithOptions:[FLADAuthOptions makeWithBiometricOnly:NO
@@ -354,20 +304,20 @@ static const NSTimeInterval kTimeout = 30.0;
                           strings:strings
                        completion:^(FLADAuthResultDetails *_Nullable resultDetails,
                                     FlutterError *_Nullable error) {
-                         OCMVerify([mockAuthContext setLocalizedFallbackTitle:nil]);
+                         XCTAssertNil(stubAuthContext.localizedFallbackTitle);
                          [expectation fulfill];
                        }];
   [self waitForExpectationsWithTimeout:kTimeout handler:nil];
 }
 
 - (void)testDeviceSupportsBiometrics_withEnrolledHardware {
-  id mockAuthContext = OCMClassMock([LAContext class]);
+  StubAuthContext *stubAuthContext = [[StubAuthContext alloc] init];
   FLALocalAuthPlugin *plugin = [[FLALocalAuthPlugin alloc]
       initWithContextFactory:[[StubAuthContextFactory alloc]
-                                 initWithContexts:@[ mockAuthContext ]]];
+                                 initWithContexts:@[ stubAuthContext ]]];
 
-  const LAPolicy policy = LAPolicyDeviceOwnerAuthenticationWithBiometrics;
-  OCMStub([mockAuthContext canEvaluatePolicy:policy error:[OCMArg setTo:nil]]).andReturn(YES);
+  stubAuthContext.expectBiometrics = YES;
+  stubAuthContext.canEvaluateResponse = YES;
 
   FlutterError *error;
   NSNumber *result = [plugin deviceCanSupportBiometricsWithError:&error];
@@ -376,25 +326,16 @@ static const NSTimeInterval kTimeout = 30.0;
 }
 
 - (void)testDeviceSupportsBiometrics_withNonEnrolledHardware {
-  id mockAuthContext = OCMClassMock([LAContext class]);
+  StubAuthContext *stubAuthContext = [[StubAuthContext alloc] init];
   FLALocalAuthPlugin *plugin = [[FLALocalAuthPlugin alloc]
       initWithContextFactory:[[StubAuthContextFactory alloc]
-                                 initWithContexts:@[ mockAuthContext ]]];
+                                 initWithContexts:@[ stubAuthContext ]]];
 
-  const LAPolicy policy = LAPolicyDeviceOwnerAuthenticationWithBiometrics;
-  void (^canEvaluatePolicyHandler)(NSInvocation *) = ^(NSInvocation *invocation) {
-    // Write error
-    NSError *__autoreleasing *authError;
-    [invocation getArgument:&authError atIndex:3];
-    *authError = [NSError errorWithDomain:@"error" code:LAErrorBiometryNotEnrolled userInfo:nil];
-    // Write return value
-    BOOL returnValue = NO;
-    NSValue *nsReturnValue = [NSValue valueWithBytes:&returnValue objCType:@encode(BOOL)];
-    [invocation setReturnValue:&nsReturnValue];
-  };
-  OCMStub([mockAuthContext canEvaluatePolicy:policy
-                                       error:(NSError * __autoreleasing *)[OCMArg anyPointer]])
-      .andDo(canEvaluatePolicyHandler);
+  stubAuthContext.expectBiometrics = YES;
+  stubAuthContext.canEvaluateResponse = NO;
+  stubAuthContext.canEvaluateError = [NSError errorWithDomain:@"error"
+                                                         code:LAErrorBiometryNotEnrolled
+                                                     userInfo:nil];
 
   FlutterError *error;
   NSNumber *result = [plugin deviceCanSupportBiometricsWithError:&error];
@@ -403,25 +344,14 @@ static const NSTimeInterval kTimeout = 30.0;
 }
 
 - (void)testDeviceSupportsBiometrics_withNoBiometricHardware {
-  id mockAuthContext = OCMClassMock([LAContext class]);
+  StubAuthContext *stubAuthContext = [[StubAuthContext alloc] init];
   FLALocalAuthPlugin *plugin = [[FLALocalAuthPlugin alloc]
       initWithContextFactory:[[StubAuthContextFactory alloc]
-                                 initWithContexts:@[ mockAuthContext ]]];
+                                 initWithContexts:@[ stubAuthContext ]]];
 
-  const LAPolicy policy = LAPolicyDeviceOwnerAuthenticationWithBiometrics;
-  void (^canEvaluatePolicyHandler)(NSInvocation *) = ^(NSInvocation *invocation) {
-    // Write error
-    NSError *__autoreleasing *authError;
-    [invocation getArgument:&authError atIndex:3];
-    *authError = [NSError errorWithDomain:@"error" code:0 userInfo:nil];
-    // Write return value
-    BOOL returnValue = NO;
-    NSValue *nsReturnValue = [NSValue valueWithBytes:&returnValue objCType:@encode(BOOL)];
-    [invocation setReturnValue:&nsReturnValue];
-  };
-  OCMStub([mockAuthContext canEvaluatePolicy:policy
-                                       error:(NSError * __autoreleasing *)[OCMArg anyPointer]])
-      .andDo(canEvaluatePolicyHandler);
+  stubAuthContext.expectBiometrics = YES;
+  stubAuthContext.canEvaluateResponse = NO;
+  stubAuthContext.canEvaluateError = [NSError errorWithDomain:@"error" code:0 userInfo:nil];
 
   FlutterError *error;
   NSNumber *result = [plugin deviceCanSupportBiometricsWithError:&error];
@@ -430,14 +360,14 @@ static const NSTimeInterval kTimeout = 30.0;
 }
 
 - (void)testGetEnrolledBiometricsWithFaceID {
-  id mockAuthContext = OCMClassMock([LAContext class]);
+  StubAuthContext *stubAuthContext = [[StubAuthContext alloc] init];
   FLALocalAuthPlugin *plugin = [[FLALocalAuthPlugin alloc]
       initWithContextFactory:[[StubAuthContextFactory alloc]
-                                 initWithContexts:@[ mockAuthContext ]]];
+                                 initWithContexts:@[ stubAuthContext ]]];
 
-  const LAPolicy policy = LAPolicyDeviceOwnerAuthenticationWithBiometrics;
-  OCMStub([mockAuthContext canEvaluatePolicy:policy error:[OCMArg setTo:nil]]).andReturn(YES);
-  OCMStub([mockAuthContext biometryType]).andReturn(LABiometryTypeFaceID);
+  stubAuthContext.expectBiometrics = YES;
+  stubAuthContext.canEvaluateResponse = YES;
+  stubAuthContext.biometryType = LABiometryTypeFaceID;
 
   FlutterError *error;
   NSArray<FLADAuthBiometricWrapper *> *result = [plugin getEnrolledBiometricsWithError:&error];
@@ -447,14 +377,14 @@ static const NSTimeInterval kTimeout = 30.0;
 }
 
 - (void)testGetEnrolledBiometricsWithTouchID {
-  id mockAuthContext = OCMClassMock([LAContext class]);
+  StubAuthContext *stubAuthContext = [[StubAuthContext alloc] init];
   FLALocalAuthPlugin *plugin = [[FLALocalAuthPlugin alloc]
       initWithContextFactory:[[StubAuthContextFactory alloc]
-                                 initWithContexts:@[ mockAuthContext ]]];
+                                 initWithContexts:@[ stubAuthContext ]]];
 
-  const LAPolicy policy = LAPolicyDeviceOwnerAuthenticationWithBiometrics;
-  OCMStub([mockAuthContext canEvaluatePolicy:policy error:[OCMArg setTo:nil]]).andReturn(YES);
-  OCMStub([mockAuthContext biometryType]).andReturn(LABiometryTypeTouchID);
+  stubAuthContext.expectBiometrics = YES;
+  stubAuthContext.canEvaluateResponse = YES;
+  stubAuthContext.biometryType = LABiometryTypeTouchID;
 
   FlutterError *error;
   NSArray<FLADAuthBiometricWrapper *> *result = [plugin getEnrolledBiometricsWithError:&error];
@@ -464,25 +394,16 @@ static const NSTimeInterval kTimeout = 30.0;
 }
 
 - (void)testGetEnrolledBiometricsWithoutEnrolledHardware {
-  id mockAuthContext = OCMClassMock([LAContext class]);
+  StubAuthContext *stubAuthContext = [[StubAuthContext alloc] init];
   FLALocalAuthPlugin *plugin = [[FLALocalAuthPlugin alloc]
       initWithContextFactory:[[StubAuthContextFactory alloc]
-                                 initWithContexts:@[ mockAuthContext ]]];
+                                 initWithContexts:@[ stubAuthContext ]]];
 
-  const LAPolicy policy = LAPolicyDeviceOwnerAuthenticationWithBiometrics;
-  void (^canEvaluatePolicyHandler)(NSInvocation *) = ^(NSInvocation *invocation) {
-    // Write error
-    NSError *__autoreleasing *authError;
-    [invocation getArgument:&authError atIndex:3];
-    *authError = [NSError errorWithDomain:@"error" code:LAErrorBiometryNotEnrolled userInfo:nil];
-    // Write return value
-    BOOL returnValue = NO;
-    NSValue *nsReturnValue = [NSValue valueWithBytes:&returnValue objCType:@encode(BOOL)];
-    [invocation setReturnValue:&nsReturnValue];
-  };
-  OCMStub([mockAuthContext canEvaluatePolicy:policy
-                                       error:(NSError * __autoreleasing *)[OCMArg anyPointer]])
-      .andDo(canEvaluatePolicyHandler);
+  stubAuthContext.expectBiometrics = YES;
+  stubAuthContext.canEvaluateResponse = NO;
+  stubAuthContext.canEvaluateError = [NSError errorWithDomain:@"error"
+                                                         code:LAErrorBiometryNotEnrolled
+                                                     userInfo:nil];
 
   FlutterError *error;
   NSArray<FLADAuthBiometricWrapper *> *result = [plugin getEnrolledBiometricsWithError:&error];
@@ -491,13 +412,11 @@ static const NSTimeInterval kTimeout = 30.0;
 }
 
 - (void)testIsDeviceSupportedHandlesSupported {
-  id mockAuthContext = OCMClassMock([LAContext class]);
-  OCMStub([mockAuthContext canEvaluatePolicy:LAPolicyDeviceOwnerAuthentication
-                                       error:[OCMArg setTo:nil]])
-      .andReturn(YES);
+  StubAuthContext *stubAuthContext = [[StubAuthContext alloc] init];
+  stubAuthContext.canEvaluateResponse = YES;
   FLALocalAuthPlugin *plugin = [[FLALocalAuthPlugin alloc]
       initWithContextFactory:[[StubAuthContextFactory alloc]
-                                 initWithContexts:@[ mockAuthContext ]]];
+                                 initWithContexts:@[ stubAuthContext ]]];
 
   FlutterError *error;
   NSNumber *result = [plugin isDeviceSupportedWithError:&error];
@@ -506,13 +425,11 @@ static const NSTimeInterval kTimeout = 30.0;
 }
 
 - (void)testIsDeviceSupportedHandlesUnsupported {
-  id mockAuthContext = OCMClassMock([LAContext class]);
-  OCMStub([mockAuthContext canEvaluatePolicy:LAPolicyDeviceOwnerAuthentication
-                                       error:[OCMArg setTo:nil]])
-      .andReturn(NO);
+  StubAuthContext *stubAuthContext = [[StubAuthContext alloc] init];
+  stubAuthContext.canEvaluateResponse = NO;
   FLALocalAuthPlugin *plugin = [[FLALocalAuthPlugin alloc]
       initWithContextFactory:[[StubAuthContextFactory alloc]
-                                 initWithContexts:@[ mockAuthContext ]]];
+                                 initWithContexts:@[ stubAuthContext ]]];
 
   FlutterError *error;
   NSNumber *result = [plugin isDeviceSupportedWithError:&error];
