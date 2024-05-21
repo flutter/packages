@@ -124,7 +124,9 @@ base class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
 
   // Starts periodically updating the IMA SDK the progress of the currently
   // playing ad.
-  void _startAdTracking() {
+  void _startAdProgressTracking() {
+    // Stop any previous ad tracking.
+    _stopAdProgressTracking();
     _adProgressTimer = Timer.periodic(
       const Duration(milliseconds: _progressPollingMs),
       (Timer timer) async {
@@ -151,7 +153,7 @@ base class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
   }
 
   // Stops updating the IMA SDK the progress of the currently playing ad.
-  void _stopAdTracking() {
+  void _stopAdProgressTracking() {
     _adProgressTimer?.cancel();
     _adProgressTimer = null;
   }
@@ -181,7 +183,7 @@ base class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
         }
 
         await player.start();
-        container?._startAdTracking();
+        container?._startAdProgressTracking();
       },
       onError: (_, __, ___, ____) {
         final AndroidAdDisplayContainer? container = weakThis.target;
@@ -217,7 +219,7 @@ base class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
           await container._mediaPlayer!.pause();
           container._savedAdPosition =
               await container._videoView.getCurrentPosition();
-          container._stopAdTracking();
+          container._stopAdProgressTracking();
         }
       },
       playAd: (_, ima.AdMediaInfo adMediaInfo) {
@@ -227,7 +229,7 @@ base class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
       stopAd: (_, __) {
         final AndroidAdDisplayContainer? container = weakThis.target;
         if (container != null) {
-          container._stopAdTracking();
+          container._stopAdProgressTracking();
           container._resetPlayer();
           container._loadedAdMediaInfo = null;
           container._adDuration = null;
