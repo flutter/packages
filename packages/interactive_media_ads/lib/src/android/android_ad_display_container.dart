@@ -120,7 +120,6 @@ base class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
   void _resetPlayer() {
     _mediaPlayer = null;
     _savedAdPosition = 0;
-    _adDuration = null;
   }
 
   // Starts periodically updating the IMA SDK the progress of the currently
@@ -192,6 +191,8 @@ base class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
               in container.videoAdPlayerCallbacks) {
             callback.onError(container._loadedAdMediaInfo!);
           }
+          container._loadedAdMediaInfo = null;
+          container._adDuration = null;
         }
       },
     );
@@ -229,6 +230,7 @@ base class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
           container._stopAdTracking();
           container._resetPlayer();
           container._loadedAdMediaInfo = null;
+          container._adDuration = null;
         }
       },
     );
