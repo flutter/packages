@@ -54,7 +54,7 @@ sealed class AsyncState<T> {
             other is AsyncStateData<T> && other.data == data,
           AsyncStateError<T>(
             error: final Object error,
-            stackTrace: final StackTrace? stackTrace
+            stackTrace: final StackTrace? stackTrace,
           ) =>
             other is AsyncStateError<T> &&
                 other.error == error &&
@@ -68,7 +68,7 @@ sealed class AsyncState<T> {
         AsyncStateData<T>(data: final T data) => data.hashCode,
         AsyncStateError<T>(
           error: final Object error,
-          stackTrace: final StackTrace? stackTrace
+          stackTrace: final StackTrace? stackTrace,
         ) =>
           error.hashCode ^ stackTrace.hashCode,
       };
@@ -80,7 +80,7 @@ sealed class AsyncState<T> {
       AsyncStateData<T>(data: final T data) => 'AsyncState.data($data)',
       AsyncStateError<T>(
         error: final Object error,
-        stackTrace: final StackTrace? stackTrace
+        stackTrace: final StackTrace? stackTrace,
       ) =>
         'AsyncState.error($error, $stackTrace)',
     };

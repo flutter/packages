@@ -97,11 +97,15 @@ class SelectedSharedPreferencesKey {
   }
 }
 
+abstract interface class _SharedPreferencesData<T> {
+  T get value;
+}
+
 @immutable
 
 /// A class that represents the data of a shared preference in the target
 /// debug session.
-sealed class SharedPreferencesData {
+sealed class SharedPreferencesData implements _SharedPreferencesData<Object> {
   const SharedPreferencesData();
 
   const factory SharedPreferencesData.string({
@@ -127,14 +131,11 @@ sealed class SharedPreferencesData {
   /// The string representation of the value.
   String get valueAsString {
     return switch (this) {
-      final SharedPreferencesDataString data => data.value,
-      final SharedPreferencesDataInt data => data.value.toString(),
-      final SharedPreferencesDataDouble data => data.value.toString(),
-      final SharedPreferencesDataBool data => data.value.toString(),
       final SharedPreferencesDataStringList data => '\n${<String>[
           for (final (int index, String str) in data.value.indexed)
             '$index -> $str',
-        ].join('\n')}'
+        ].join('\n')}',
+      _ => '$value',
     };
   }
 
@@ -150,6 +151,7 @@ sealed class SharedPreferencesData {
   }
 
   /// Changes the value of the shared preference to the new value.
+  ///
   /// This is just a in memory change and does not affect the actual shared
   /// preference value.
   SharedPreferencesData changeValue(String newValue) {
@@ -173,30 +175,15 @@ sealed class SharedPreferencesData {
     return identical(this, other) ||
         (other is SharedPreferencesData &&
             switch (this) {
-              final SharedPreferencesDataString data =>
-                other is SharedPreferencesDataString &&
-                    other.value == data.value,
-              final SharedPreferencesDataInt data =>
-                other is SharedPreferencesDataInt && other.value == data.value,
-              final SharedPreferencesDataDouble data =>
-                other is SharedPreferencesDataDouble &&
-                    other.value == data.value,
-              final SharedPreferencesDataBool data =>
-                other is SharedPreferencesDataBool && other.value == data.value,
               final SharedPreferencesDataStringList data =>
                 other is SharedPreferencesDataStringList &&
                     listEquals(other.value, data.value),
+              _ => other.value == value,
             });
   }
 
   @override
-  int get hashCode => switch (this) {
-        final SharedPreferencesDataString data => data.value.hashCode,
-        final SharedPreferencesDataInt data => data.value.hashCode,
-        final SharedPreferencesDataDouble data => data.value.hashCode,
-        final SharedPreferencesDataBool data => data.value.hashCode,
-        final SharedPreferencesDataStringList data => data.value.hashCode,
-      };
+  int get hashCode => value.hashCode;
 
   @override
   String toString() {
@@ -211,6 +198,7 @@ class SharedPreferencesDataString extends SharedPreferencesData {
   });
 
   /// The string value of the shared preference.
+  @override
   final String value;
 }
 
@@ -221,6 +209,7 @@ class SharedPreferencesDataInt extends SharedPreferencesData {
   });
 
   /// The integer value of the shared preference.
+  @override
   final int value;
 }
 
@@ -231,6 +220,7 @@ class SharedPreferencesDataDouble extends SharedPreferencesData {
   });
 
   /// The double value of the shared preference.
+  @override
   final double value;
 }
 
@@ -241,6 +231,7 @@ class SharedPreferencesDataBool extends SharedPreferencesData {
   });
 
   /// The boolean value of the shared preference.
+  @override
   final bool value;
 }
 
@@ -251,5 +242,6 @@ class SharedPreferencesDataStringList extends SharedPreferencesData {
   });
 
   /// The list of string values of the shared preference.
+  @override
   final List<String> value;
 }

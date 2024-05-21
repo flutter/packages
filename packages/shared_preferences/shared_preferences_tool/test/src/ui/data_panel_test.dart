@@ -324,7 +324,7 @@ void main() {
     );
 
     testWidgets(
-      'should show commit changes button on value changed',
+      'should show apply changes button on value changed',
       (WidgetTester tester) async {
         stubDataState(
           const SharedPreferencesData.string(value: 'value'),
@@ -335,7 +335,7 @@ void main() {
         await tester.enterText(find.byType(TextField), 'newValue');
         await tester.pumpAndSettle();
 
-        expect(find.text('Commit changes'), findsOneWidget);
+        expect(find.text('Apply changes'), findsOneWidget);
       },
     );
 
@@ -356,7 +356,7 @@ void main() {
           await tester.pumpAndSettle();
           await tester.enterText(find.byType(TextField).at(i), '$i');
           await tester.pumpAndSettle();
-          await tester.tap(find.text('Commit changes'));
+          await tester.tap(find.text('Apply changes'));
           await tester.pumpAndSettle();
         }
 

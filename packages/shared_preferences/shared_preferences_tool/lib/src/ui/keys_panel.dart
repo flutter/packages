@@ -57,83 +57,93 @@ class _KeysPanelState extends State<KeysPanel> {
             roundedTopBorder: false,
             includeTopBorder: false,
             tall: true,
-            title: Row(
-              children: <Widget>[
-                Text(
-                  'Stored Keys',
-                  style: Theme.of(context).textTheme.titleSmall,
+            actions: <Widget>[
+              if (searching) ...<Widget>[
+                const SizedBox(
+                  width: denseSpacing,
                 ),
-                if (searching) ...<Widget>[
-                  const SizedBox(
-                    width: denseSpacing,
+                Expanded(
+                  child: _SearchField(
+                    searchFocusNode: searchFocusNode,
+                    notifier: notifier,
+                    stopSearching: stopSearching,
                   ),
-                  Expanded(
-                    child: KeyboardListener(
-                      focusNode: searchFocusNode,
-                      onKeyEvent: (KeyEvent value) {
-                        if (value.logicalKey == LogicalKeyboardKey.escape) {
-                          stopSearching();
-                        }
-                      },
-                      child: TextField(
-                        autofocus: true,
-                        decoration: InputDecoration(
-                          contentPadding: const EdgeInsets.symmetric(
-                            horizontal: densePadding,
-                          ),
-                          hintText: 'Search',
-                          border: const OutlineInputBorder(),
-                          suffix: Tooltip(
-                            message: 'Stop searching',
-                            child: IconButton(
-                              icon: const Icon(
-                                Icons.close,
-                                size: 16,
-                              ),
-                              onPressed: stopSearching,
-                            ),
-                          ),
-                        ),
-                        onChanged: notifier.filter,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(
-                    width: denseSpacing,
-                  ),
-                ] else ...<Widget>[
-                  const Spacer(),
-                  Tooltip(
-                    message: 'Search',
-                    child: IconButton(
-                      icon: const Icon(
-                        Icons.search,
-                        size: 16,
-                      ),
-                      onPressed: _startSearching,
-                    ),
-                  ),
-                ],
+                ),
+              ] else ...<Widget>[
+                const Spacer(),
                 Tooltip(
-                  message: 'Refresh',
-                  child: IconButton(
-                    icon: const Icon(
-                      Icons.refresh,
-                      size: 16,
-                    ),
-                    onPressed: () {
-                      stopSearching();
-                      notifier.fetchAllKeys();
-                    },
+                  message: 'Search',
+                  child: DevToolsButton(
+                    icon: Icons.search,
+                    onPressed: _startSearching,
                   ),
                 ),
               ],
+              const SizedBox(
+                width: denseRowSpacing,
+              ),
+              Tooltip(
+                message: 'Refresh',
+                child: DevToolsButton(
+                  icon: Icons.refresh,
+                  onPressed: () {
+                    stopSearching();
+                    notifier.fetchAllKeys();
+                  },
+                ),
+              ),
+            ],
+            title: Text(
+              'Stored Keys',
+              style: Theme.of(context).textTheme.titleSmall,
             ),
           ),
           const Expanded(
             child: _StateMapper(),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _SearchField extends StatelessWidget {
+  const _SearchField({
+    required this.searchFocusNode,
+    required this.notifier,
+    required this.stopSearching,
+  });
+
+  final FocusNode searchFocusNode;
+  final SharedPreferencesStateNotifier notifier;
+  final VoidCallback stopSearching;
+
+  @override
+  Widget build(BuildContext context) {
+    return KeyboardListener(
+      focusNode: searchFocusNode,
+      onKeyEvent: (KeyEvent value) {
+        if (value.logicalKey == LogicalKeyboardKey.escape) {
+          stopSearching();
+        }
+      },
+      child: TextField(
+        autofocus: true,
+        decoration: InputDecoration(
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: densePadding,
+          ),
+          hintText: 'Search',
+          border: const OutlineInputBorder(),
+          suffix: Tooltip(
+            message: 'Stop searching',
+            child: DevToolsButton(
+              icon: Icons.close,
+              onPressed: stopSearching,
+            ),
+          ),
+        ),
+        onChanged: notifier.filter,
       ),
     );
   }

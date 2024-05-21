@@ -3,7 +3,6 @@
 // found in the LICENSE file.
 
 import 'package:devtools_app_shared/service.dart';
-
 import 'package:vm_service/vm_service.dart';
 
 import 'shared_preferences_state.dart';

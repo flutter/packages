@@ -32,18 +32,6 @@ class _DataPanelState extends State<DataPanel> {
     });
   }
 
-  void _showSnackBar(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-      ),
-    );
-  }
-
-  void _dismissDialog() {
-    Navigator.of(context).pop();
-  }
-
   @override
   Widget build(BuildContext context) {
     final SharedPreferencesStateNotifier notifier =
@@ -69,150 +57,239 @@ class _DataPanelState extends State<DataPanel> {
           ),
         final AsyncStateData<SharedPreferencesData> value => Column(
             children: <Widget>[
-              AreaPaneHeader(
-                roundedTopBorder: false,
-                includeTopBorder: false,
-                tall: true,
-                title: Row(
-                  children: <Widget>[
-                    Expanded(
-                      child: Text(
-                        selectedKey.key,
-                        style: Theme.of(context).textTheme.titleSmall,
-                      ),
-                    ),
-                    if (data.editing) ...<Widget>[
-                      TextButton(
-                        onPressed: () => notifier.stopEditing(),
-                        child: const Text('Cancel'),
-                      ),
-                      if (currentValue case final String currentValue?
-                          when currentValue != value.data.valueAsString &&
-                              (value.data is SharedPreferencesDataString ||
-                                  currentValue.isNotEmpty)) ...<Widget>[
-                        const SizedBox(width: defaultSpacing),
-                        TextButton(
-                          onPressed: () async {
-                            try {
-                              await notifier.changeValue(
-                                selectedKey.key,
-                                value.data.changeValue(currentValue),
-                              );
-                            } catch (error) {
-                              _showSnackBar('Error: $error');
-                            }
-                          },
-                          child: const Text('Commit changes'),
-                        ),
-                      ],
-                    ] else ...<Widget>[
-                      TextButton(
-                        onPressed: () => showDialog<void>(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return DevToolsDialog(
-                              title: const Text('Remove Key'),
-                              content: Text(
-                                'Are you sure you want to remove ${selectedKey.key}?',
-                              ),
-                              actions: <Widget>[
-                                const DialogCancelButton(),
-                                DialogTextButton(
-                                  child: const Text('REMOVE'),
-                                  onPressed: () async {
-                                    try {
-                                      await notifier.deleteKey(selectedKey);
-                                    } catch (error) {
-                                      _showSnackBar('Error: $error');
-                                    }
-                                    _dismissDialog();
-                                  },
-                                ),
-                              ],
-                            );
-                          },
-                        ),
-                        child: const Text('Remove'),
-                      ),
-                      TextButton(
-                        onPressed: () => notifier.startEditing(),
-                        child: const Text('Edit'),
-                      ),
-                    ],
-                  ],
-                ),
+              _Header(
+                editing: data.editing,
+                selectedKey: selectedKey,
+                notifier: notifier,
+                currentValue: currentValue,
+                data: value.data,
               ),
               Expanded(
-                child: SingleChildScrollView(
-                  child: Padding(
-                    padding: const EdgeInsets.all(largeSpacing),
-                    child: SelectionArea(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: <Widget>[
-                          Text('Type: ${value.data.prettyType}'),
-                          const SizedBox(height: denseSpacing),
-                          if (data.editing) ...<Widget>[
-                            const Text('Value:'),
-                            const SizedBox(height: denseSpacing),
-                            switch (value.data) {
-                              final SharedPreferencesDataBool state =>
-                                DropdownMenu<bool>(
-                                  initialSelection: state.value,
-                                  onSelected: (bool? value) {
-                                    _setCurrentValue(value.toString());
-                                  },
-                                  dropdownMenuEntries: const <DropdownMenuEntry<
-                                      bool>>[
-                                    DropdownMenuEntry<bool>(
-                                      label: 'true',
-                                      value: true,
-                                    ),
-                                    DropdownMenuEntry<bool>(
-                                      label: 'false',
-                                      value: false,
-                                    ),
-                                  ],
-                                ),
-                              final SharedPreferencesDataStringList state =>
-                                _EditStringList(
-                                  selectedKey: selectedKey.key,
-                                  initialData: state.value,
-                                  onChanged: _setCurrentValue,
-                                ),
-                              _ => TextFormField(
-                                  autofocus: true,
-                                  initialValue: value.data.valueAsString,
-                                  inputFormatters: switch (value.data) {
-                                    SharedPreferencesDataInt() =>
-                                      <TextInputFormatter>[
-                                        FilteringTextInputFormatter.allow(
-                                          RegExp(r'^-?\d*'),
-                                        ),
-                                      ],
-                                    SharedPreferencesDataDouble() =>
-                                      <TextInputFormatter>[
-                                        FilteringTextInputFormatter.allow(
-                                          RegExp(r'^-?\d*\.?\d*'),
-                                        ),
-                                      ],
-                                    _ => <TextInputFormatter>[],
-                                  },
-                                  onChanged: _setCurrentValue,
-                                )
-                            },
-                          ] else ...<Widget>[
-                            Text('Value: ${value.data.valueAsString}'),
-                          ],
-                        ],
-                      ),
-                    ),
-                  ),
+                child: _Content(
+                  editing: data.editing,
+                  selectedKey: selectedKey,
+                  notifier: notifier,
+                  data: value.data,
+                  setCurrentValue: _setCurrentValue,
                 ),
               ),
             ],
           ),
       },
+    );
+  }
+}
+
+class _Header extends StatelessWidget {
+  const _Header({
+    required this.editing,
+    required this.selectedKey,
+    required this.notifier,
+    required this.currentValue,
+    required this.data,
+  });
+
+  final bool editing;
+  final SelectedSharedPreferencesKey selectedKey;
+  final SharedPreferencesStateNotifier notifier;
+  final String? currentValue;
+  final SharedPreferencesData data;
+
+  @override
+  Widget build(BuildContext context) {
+    return AreaPaneHeader(
+      roundedTopBorder: false,
+      includeTopBorder: false,
+      tall: true,
+      title: Text(
+        selectedKey.key,
+        style: Theme.of(context).textTheme.titleSmall,
+      ),
+      actions: <Widget>[
+        if (editing) ...<Widget>[
+          DevToolsButton(
+            onPressed: () => notifier.stopEditing(),
+            label: 'Cancel',
+          ),
+          if (currentValue case final String currentValue?
+              when currentValue != data.valueAsString &&
+                  (data is SharedPreferencesDataString ||
+                      currentValue.isNotEmpty)) ...<Widget>[
+            const SizedBox(width: denseRowSpacing),
+            DevToolsButton(
+              onPressed: () async {
+                try {
+                  await notifier.changeValue(
+                    selectedKey.key,
+                    data.changeValue(currentValue),
+                  );
+                } catch (error) {
+                  if (context.mounted) {
+                    context.showSnackBar('Error: $error');
+                  }
+                }
+              },
+              label: 'Apply changes',
+            ),
+          ],
+        ] else ...<Widget>[
+          DevToolsButton(
+            onPressed: () => showDialog<void>(
+              context: context,
+              builder: (BuildContext context) {
+                return _ConfirmRemoveDialog(
+                  selectedKey: selectedKey,
+                  notifier: notifier,
+                );
+              },
+            ),
+            label: 'Remove',
+          ),
+          const SizedBox(width: denseRowSpacing),
+          DevToolsButton(
+            onPressed: () => notifier.startEditing(),
+            label: 'Edit',
+          ),
+        ],
+      ],
+    );
+  }
+}
+
+class _ConfirmRemoveDialog extends StatelessWidget {
+  const _ConfirmRemoveDialog({
+    required this.selectedKey,
+    required this.notifier,
+  });
+
+  final SelectedSharedPreferencesKey selectedKey;
+  final SharedPreferencesStateNotifier notifier;
+
+  @override
+  Widget build(BuildContext context) {
+    return DevToolsDialog(
+      title: const Text('Remove Key'),
+      content: Text(
+        'Are you sure you want to remove ${selectedKey.key}?',
+      ),
+      actions: <Widget>[
+        const DialogCancelButton(),
+        DialogTextButton(
+          child: const Text('REMOVE'),
+          onPressed: () async {
+            try {
+              await notifier.deleteKey(selectedKey);
+            } catch (error) {
+              if (context.mounted) {
+                context.showSnackBar('Error: $error');
+              }
+            }
+            if (context.mounted) {
+              Navigator.of(context).pop();
+            }
+          },
+        ),
+      ],
+    );
+  }
+}
+
+class _Content extends StatelessWidget {
+  const _Content({
+    required this.editing,
+    required this.selectedKey,
+    required this.notifier,
+    required this.data,
+    required this.setCurrentValue,
+  });
+
+  final bool editing;
+  final SelectedSharedPreferencesKey selectedKey;
+  final SharedPreferencesStateNotifier notifier;
+  final SharedPreferencesData data;
+  final ValueChanged<String> setCurrentValue;
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.all(largeSpacing),
+        child: SelectionArea(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              Text('Type: ${data.prettyType}'),
+              const SizedBox(height: denseSpacing),
+              if (editing) ...<Widget>[
+                const Text('Value:'),
+                const SizedBox(height: denseSpacing),
+                switch (data) {
+                  final SharedPreferencesDataBool state => _EditBoolean(
+                      initialValue: state.value,
+                      setCurrentValue: setCurrentValue,
+                    ),
+                  final SharedPreferencesDataStringList state =>
+                    _EditStringList(
+                      selectedKey: selectedKey.key,
+                      initialData: state.value,
+                      onChanged: setCurrentValue,
+                    ),
+                  _ => TextFormField(
+                      autofocus: true,
+                      initialValue: data.valueAsString,
+                      inputFormatters: switch (data) {
+                        SharedPreferencesDataInt() => <TextInputFormatter>[
+                            FilteringTextInputFormatter.allow(
+                              RegExp(r'^-?\d*'),
+                            ),
+                          ],
+                        SharedPreferencesDataDouble() => <TextInputFormatter>[
+                            FilteringTextInputFormatter.allow(
+                              RegExp(r'^-?\d*\.?\d*'),
+                            ),
+                          ],
+                        _ => <TextInputFormatter>[],
+                      },
+                      onChanged: setCurrentValue,
+                    )
+                },
+              ] else ...<Widget>[
+                Text('Value: ${data.valueAsString}'),
+              ],
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _EditBoolean extends StatelessWidget {
+  const _EditBoolean({
+    required this.setCurrentValue,
+    required this.initialValue,
+  });
+
+  final ValueChanged<String> setCurrentValue;
+  final bool initialValue;
+
+  @override
+  Widget build(BuildContext context) {
+    return DropdownMenu<bool>(
+      initialSelection: initialValue,
+      onSelected: (bool? value) {
+        setCurrentValue(value.toString());
+      },
+      dropdownMenuEntries: const <DropdownMenuEntry<bool>>[
+        DropdownMenuEntry<bool>(
+          label: 'true',
+          value: true,
+        ),
+        DropdownMenuEntry<bool>(
+          label: 'false',
+          value: false,
+        ),
+      ],
     );
   }
 }
@@ -240,6 +317,15 @@ class _EditStringListState extends State<_EditStringList> {
     setState(() {
       _currentList.insert(index, (_keyCounter++, ''));
     });
+    _updateValue();
+  }
+
+  void _updateValue() {
+    widget.onChanged(jsonEncode(
+      <String>[
+        for (final (_, String value) in _currentList) value,
+      ],
+    ));
   }
 
   @override
@@ -258,6 +344,7 @@ class _EditStringListState extends State<_EditStringList> {
       children: <Widget>[
         for (final (int index, (int keyValue, String str))
             in _currentList.indexed) ...<Widget>[
+          if (index > 0) const SizedBox(height: largeSpacing),
           _AddListElement(
             onPressed: () => _addElementAt(index),
           ),
@@ -273,29 +360,24 @@ class _EditStringListState extends State<_EditStringList> {
                       setState(() {
                         _currentList[index] = (keyValue, value);
                       });
-                      widget.onChanged(jsonEncode(
-                        <String>[
-                          for (final (_, String value) in _currentList) value,
-                        ],
-                      ));
+                      _updateValue();
                     },
                   ),
                 ),
-                IconButton(
-                  icon: const Icon(
-                    Icons.remove,
-                    size: 16,
-                  ),
+                DevToolsButton(
+                  icon: Icons.remove,
                   onPressed: () {
                     setState(() {
                       _currentList.removeAt(index);
                     });
+                    _updateValue();
                   },
                 )
               ],
             ),
           ),
         ],
+        const SizedBox(height: largeSpacing),
         _AddListElement(
           onPressed: () => _addElementAt(_currentList.length),
         ),
@@ -314,12 +396,19 @@ class _AddListElement extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: IconButton(
-        icon: const Icon(
-          Icons.add,
-          size: 16,
-        ),
+      child: DevToolsButton(
+        icon: Icons.add,
         onPressed: onPressed,
+      ),
+    );
+  }
+}
+
+extension on BuildContext {
+  void showSnackBar(String message) {
+    ScaffoldMessenger.of(this).showSnackBar(
+      SnackBar(
+        content: Text(message),
       ),
     );
   }

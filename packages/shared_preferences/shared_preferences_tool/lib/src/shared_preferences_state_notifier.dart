@@ -13,6 +13,7 @@ typedef _State = AsyncState<SharedPreferencesState>;
 /// A [ValueNotifier] that manages the state of the shared preferences tool.
 class SharedPreferencesStateNotifier extends ValueNotifier<_State> {
   /// Default constructor that takes an instance of [SharedPreferencesToolEval].
+  ///
   /// You don't need to call this constructor directly. Use [SharedPreferencesStateNotifierProvider] instead.
   SharedPreferencesStateNotifier(this._eval) : super(const _State.loading());
 
@@ -21,6 +22,7 @@ class SharedPreferencesStateNotifier extends ValueNotifier<_State> {
   List<String> _keys = <String>[];
 
   /// Retrieves all keys from the shared preferences of the target debug session.
+  ///
   /// If this is called when data already exists, it will update the list of keys.
   Future<void> fetchAllKeys() async {
     value = const _State.loading();

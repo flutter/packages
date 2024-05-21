@@ -12,6 +12,7 @@ import 'shared_preferences_tool_eval.dart';
 @visibleForTesting
 
 /// A class that provides a [SharedPreferencesStateNotifier] to its descendants.
+///
 /// Only used for testing. You can override the notifier with a mock when testing.
 class StateInheritedNotifier
     extends InheritedNotifier<SharedPreferencesStateNotifier> {
@@ -53,15 +54,15 @@ class _SharedPreferencesStateNotifierProviderState
 
   @override
   void initState() {
+    super.initState();
     final EvalOnDartLibrary eval = EvalOnDartLibrary(
       'package:shared_preferences/shared_preferences.dart',
       serviceManager.service!,
       serviceManager: serviceManager,
     );
-    final SharedPreferencesToolEval toolsEval = SharedPreferencesToolEval(eval);
-    _notifier = SharedPreferencesStateNotifier(toolsEval);
+    final SharedPreferencesToolEval toolEval = SharedPreferencesToolEval(eval);
+    _notifier = SharedPreferencesStateNotifier(toolEval);
     _notifier.fetchAllKeys();
-    super.initState();
   }
 
   @override

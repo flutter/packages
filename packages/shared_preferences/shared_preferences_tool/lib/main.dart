@@ -9,11 +9,11 @@ import 'src/shared_preferences_state_notifier_provider.dart';
 import 'src/ui/shared_preferences_body.dart';
 
 void main() {
-  runApp(const _SharedPreferencesTools());
+  runApp(const _SharedPreferencesTool());
 }
 
-class _SharedPreferencesTools extends StatelessWidget {
-  const _SharedPreferencesTools();
+class _SharedPreferencesTool extends StatelessWidget {
+  const _SharedPreferencesTool();
 
   @override
   Widget build(BuildContext context) {
