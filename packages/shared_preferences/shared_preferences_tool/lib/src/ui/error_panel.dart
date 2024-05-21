@@ -4,17 +4,21 @@
 
 import 'package:devtools_app_shared/ui.dart';
 import 'package:flutter/material.dart';
-import 'package:meta/meta.dart';
 
-@internal
+/// A panel that displays an error message and a stack trace.
 class ErrorPanel extends StatelessWidget {
+  /// Default constructor for [ErrorPanel].
   const ErrorPanel({
     super.key,
     required this.error,
     required this.stackTrace,
   });
 
+  /// The error message to display.
+  /// This will be displayed as a string.
   final Object error;
+
+  /// The stack trace to display.
   final StackTrace? stackTrace;
 
   @override

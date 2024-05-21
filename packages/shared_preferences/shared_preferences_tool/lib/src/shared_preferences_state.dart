@@ -5,23 +5,32 @@
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
-import 'package:meta/meta.dart';
 
 import 'async_state.dart';
 
-@internal
 @immutable
+
+/// A class that represents the state of the shared preferences tool.
 class SharedPreferencesState {
+  /// Default constructor for [SharedPreferencesState].
   const SharedPreferencesState({
     required this.allKeys,
     required this.selectedKey,
     this.editing = false,
   });
 
+  /// A list of all keys in the shared preferences of the target debug session.
   final List<String> allKeys;
+
+  /// The user selected key and its value in the shared preferences
+  /// of the target debug session.
   final SelectedSharedPreferencesKey? selectedKey;
+
+  /// Whether the user is editing the value of the selected key.
   final bool editing;
 
+  /// Creates a copy of this [SharedPreferencesState] but replacing the given
+  /// fields with the new values.
   SharedPreferencesState copyWith({
     List<String>? allKeys,
     SelectedSharedPreferencesKey? selectedKey,
@@ -53,16 +62,22 @@ class SharedPreferencesState {
   }
 }
 
-@internal
 @immutable
+
+/// A class that represents the selected key and its value in the shared
+/// preferences of the target debug session.
 class SelectedSharedPreferencesKey {
+  /// Default constructor for [SelectedSharedPreferencesKey].
   const SelectedSharedPreferencesKey({
     required this.key,
     required this.value,
   });
 
+  /// The user selected key
   final String key;
 
+  /// The value of the selected key in the shared preferences of the target
+  /// debug session.
   final AsyncState<SharedPreferencesData> value;
 
   @override
@@ -82,31 +97,34 @@ class SelectedSharedPreferencesKey {
   }
 }
 
-@internal
 @immutable
+
+/// A class that represents the data of a shared preference in the target
+/// debug session.
 sealed class SharedPreferencesData {
   const SharedPreferencesData();
 
   const factory SharedPreferencesData.string({
     required String value,
-  }) = SharedPreferencesDataString;
+  }) = SharedPreferencesDataString._;
 
   const factory SharedPreferencesData.int({
     required int value,
-  }) = SharedPreferencesDataInt;
+  }) = SharedPreferencesDataInt._;
 
   const factory SharedPreferencesData.double({
     required double value,
-  }) = SharedPreferencesDataDouble;
+  }) = SharedPreferencesDataDouble._;
 
   const factory SharedPreferencesData.bool({
     required bool value,
-  }) = SharedPreferencesDataBool;
+  }) = SharedPreferencesDataBool._;
 
   const factory SharedPreferencesData.stringList({
     required List<String> value,
-  }) = SharedPreferencesDataStringList;
+  }) = SharedPreferencesDataStringList._;
 
+  /// The string representation of the value.
   String get valueAsString {
     return switch (this) {
       final SharedPreferencesDataString data => data.value,
@@ -120,6 +138,7 @@ sealed class SharedPreferencesData {
     };
   }
 
+  /// The type of the value formatted in a pretty way.
   String get prettyType {
     return switch (this) {
       SharedPreferencesDataString() => 'String',
@@ -130,6 +149,9 @@ sealed class SharedPreferencesData {
     };
   }
 
+  /// Changes the value of the shared preference to the new value.
+  /// This is just a in memory change and does not affect the actual shared
+  /// preference value.
   SharedPreferencesData changeValue(String newValue) {
     return switch (this) {
       SharedPreferencesDataString() =>
@@ -182,47 +204,52 @@ sealed class SharedPreferencesData {
   }
 }
 
-@internal
+/// A class that represents a shared preference with a string value.
 class SharedPreferencesDataString extends SharedPreferencesData {
-  const SharedPreferencesDataString({
+  const SharedPreferencesDataString._({
     required this.value,
   });
 
+  /// The string value of the shared preference.
   final String value;
 }
 
-@internal
+/// A class that represents a shared preference with an integer value.
 class SharedPreferencesDataInt extends SharedPreferencesData {
-  const SharedPreferencesDataInt({
+  const SharedPreferencesDataInt._({
     required this.value,
   });
 
+  /// The integer value of the shared preference.
   final int value;
 }
 
-@internal
+/// A class that represents a shared preference with a double value.
 class SharedPreferencesDataDouble extends SharedPreferencesData {
-  const SharedPreferencesDataDouble({
+  const SharedPreferencesDataDouble._({
     required this.value,
   });
 
+  /// The double value of the shared preference.
   final double value;
 }
 
-@internal
+/// A class that represents a shared preference with a boolean value.
 class SharedPreferencesDataBool extends SharedPreferencesData {
-  const SharedPreferencesDataBool({
+  const SharedPreferencesDataBool._({
     required this.value,
   });
 
+  /// The boolean value of the shared preference.
   final bool value;
 }
 
-@internal
+/// A class that represents a shared preference with a list of string values.
 class SharedPreferencesDataStringList extends SharedPreferencesData {
-  const SharedPreferencesDataStringList({
+  const SharedPreferencesDataStringList._({
     required this.value,
   });
 
+  /// The list of string values of the shared preference.
   final List<String> value;
 }

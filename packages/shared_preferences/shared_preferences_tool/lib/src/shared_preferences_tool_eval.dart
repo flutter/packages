@@ -3,13 +3,19 @@
 // found in the LICENSE file.
 
 import 'package:devtools_app_shared/service.dart';
-import 'package:meta/meta.dart';
+
 import 'package:vm_service/vm_service.dart';
 
 import 'shared_preferences_state.dart';
 
-@internal
+/// A class that provides methods to interact with the shared preferences
+/// of the target debug session.
+///
+/// It abstracts the calls to [EvalOnDartLibrary].
 class SharedPreferencesToolEval {
+  /// Default constructor for [SharedPreferencesToolEval].
+  /// Do not call this constructor directly.
+  /// Use [SharedPreferencesStateNotifierProvider] instead.
   SharedPreferencesToolEval(this._eval);
 
   final EvalOnDartLibrary _eval;
@@ -19,6 +25,8 @@ class SharedPreferencesToolEval {
   Disposable? _changeValueDisposable;
   Disposable? _removeValueDisposable;
 
+  /// Fetches all keys in the shared preferences of the target debug session.
+  /// Returns a string list of all keys.
   Future<List<String>> fetchAllKeys() async {
     _allKeysDisposable?.dispose();
     _allKeysDisposable = Disposable();
@@ -35,6 +43,9 @@ class SharedPreferencesToolEval {
     ]);
   }
 
+  /// Fetches the value of the shared preference with the given [key].
+  /// Returns a [SharedPreferencesData] object that represents the value.
+  /// The type of the value is determined by the type of the shared preference.
   Future<SharedPreferencesData> fetchValue(String key) async {
     _valueDisposable?.dispose();
     _valueDisposable = Disposable();
@@ -70,6 +81,8 @@ class SharedPreferencesToolEval {
     };
   }
 
+  /// Changes the value of the key in the shared preferences of the target debug
+  /// session.
   Future<void> changeValue(String key, SharedPreferencesData value) async {
     _changeValueDisposable?.dispose();
     _changeValueDisposable = Disposable();
@@ -86,12 +99,14 @@ class SharedPreferencesToolEval {
     await _eval.prefsEval(method, _changeValueDisposable);
   }
 
+  /// Deletes the key from the shared preferences of the target debug session.
   Future<void> deleteKey(String key) async {
     _removeValueDisposable?.dispose();
     _removeValueDisposable = Disposable();
     await _eval.prefsEval("remove('$key')", _removeValueDisposable);
   }
 
+  /// Disposes all the disposables used in this class.
   void dispose() {
     _allKeysDisposable?.dispose();
     _valueDisposable?.dispose();

@@ -7,7 +7,6 @@ import 'dart:convert';
 import 'package:devtools_app_shared/ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:meta/meta.dart';
 
 import '../async_state.dart';
 import '../shared_preferences_state.dart';
@@ -15,16 +14,16 @@ import '../shared_preferences_state_notifier.dart';
 import '../shared_preferences_state_notifier_provider.dart';
 import 'error_panel.dart';
 
-@internal
+/// A panel that displays the data of the selected key.
 class DataPanel extends StatefulWidget {
+  /// Default constructor for [DataPanel].
   const DataPanel({super.key});
 
   @override
-  State<DataPanel> createState() => DataPanelState();
+  State<DataPanel> createState() => _DataPanelState();
 }
 
-@internal
-class DataPanelState extends State<DataPanel> {
+class _DataPanelState extends State<DataPanel> {
   String? currentValue;
 
   void _setCurrentValue(String value) {

@@ -4,13 +4,14 @@
 
 import 'package:devtools_app_shared/ui.dart';
 import 'package:flutter/material.dart';
-import 'package:meta/meta.dart';
 
 import 'data_panel.dart';
 import 'keys_panel.dart';
 
-@internal
+/// The main body of the shared preferences tool.
+/// It contains the [KeysPanel] and the [DataPanel].
 class SharedPreferencesBody extends StatelessWidget {
+  /// Default constructor for [SharedPreferencesBody].
   const SharedPreferencesBody({super.key});
 
   @override

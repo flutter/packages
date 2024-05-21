@@ -2,20 +2,32 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:meta/meta.dart';
+import 'package:flutter/foundation.dart';
 
-@internal
 @immutable
+
+/// A class that represents the state of an asynchronous operation.
+///
+/// It has three possible states:
+///
+/// 1. [AsyncState.loading] - The operation is in progress.
+/// 2. [AsyncState.data] - The operation has completed successfully with data.
+/// 3. [AsyncState.error] - The operation has completed with an error.
+///
+/// Since this is a sealed class we can check the state in a switch statement/expression.
+/// Check the [Switch statements](https://dart.dev/language/branches#switch-statements) documentation.
 sealed class AsyncState<T> {
   const AsyncState();
 
-  const factory AsyncState.loading() = AsyncStateLoading<T>;
+  const factory AsyncState.loading() = AsyncStateLoading<T>._;
 
-  const factory AsyncState.data(T data) = AsyncStateData<T>;
+  const factory AsyncState.data(T data) = AsyncStateData<T>._;
 
   const factory AsyncState.error(Object error, StackTrace? stackTrace) =
-      AsyncStateError<T>;
+      AsyncStateError<T>._;
 
+  /// Returns a [AsyncState] with the same type `T` but with the data transformed by the `onData` function.
+  /// If the current state is not [AsyncStateData], it returns the current state.
   AsyncState<T> whenData(
     T Function(T data) onData,
   ) {
@@ -25,6 +37,7 @@ sealed class AsyncState<T> {
     };
   }
 
+  /// Returns the data `T` if the current state is [AsyncStateData], otherwise returns `null`.
   T? get dataOrNull {
     return switch (this) {
       AsyncStateData<T>(data: final T data) => data,
@@ -74,22 +87,26 @@ sealed class AsyncState<T> {
   }
 }
 
-@internal
+/// A class that represents the state of an asynchronous operation that is in progress.
 class AsyncStateLoading<T> extends AsyncState<T> {
-  const AsyncStateLoading();
+  const AsyncStateLoading._();
 }
 
-@internal
+/// A class that represents the state of an asynchronous operation that has completed successfully with data.
 class AsyncStateData<T> extends AsyncState<T> {
-  const AsyncStateData(this.data);
+  const AsyncStateData._(this.data);
 
+  /// The data of the operation.
   final T data;
 }
 
-@internal
+/// A class that represents the state of an asynchronous operation that has completed with an error.
 class AsyncStateError<T> extends AsyncState<T> {
-  const AsyncStateError(this.error, this.stackTrace);
+  const AsyncStateError._(this.error, this.stackTrace);
 
+  /// The error of the operation.
   final Object error;
+
+  /// The stack trace of the error.
   final StackTrace? stackTrace;
 }

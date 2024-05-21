@@ -5,7 +5,6 @@
 import 'package:devtools_app_shared/ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:meta/meta.dart';
 
 import '../async_state.dart';
 import '../shared_preferences_state.dart';
@@ -13,16 +12,16 @@ import '../shared_preferences_state_notifier.dart';
 import '../shared_preferences_state_notifier_provider.dart';
 import 'error_panel.dart';
 
-@internal
+/// A panel that displays the keys stored in shared preferences.
 class KeysPanel extends StatefulWidget {
+  /// Default constructor for [KeysPanel].
   const KeysPanel({super.key});
 
   @override
-  State<KeysPanel> createState() => KeysPanelState();
+  State<KeysPanel> createState() => _KeysPanelState();
 }
 
-@internal
-class KeysPanelState extends State<KeysPanel> {
+class _KeysPanelState extends State<KeysPanel> {
   bool searching = false;
   final FocusNode searchFocusNode = FocusNode();
 
