@@ -1134,7 +1134,12 @@ class StatefulNavigationShell extends StatefulWidget {
       /// Recursively traverses the routes of the provided StackedShellBranch to
       /// find the first GoRoute, from which a full path will be derived.
       final GoRoute route = branch.defaultRoute!;
-      return _router.configuration.locationForRoute(route)!;
+      final List<String> parameters = <String>[];
+      patternToRegExp(route.path, parameters);
+      assert(parameters.isEmpty);
+      final String fullPath = _router.configuration.locationForRoute(route)!;
+      return patternToPath(
+          fullPath, shellRouteContext.routerState.pathParameters);
     }
   }
 
