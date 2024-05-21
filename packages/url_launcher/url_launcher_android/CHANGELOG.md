@@ -1,3 +1,7 @@
+## 6.3.2
+
+* Bumps androidx.annotation:annotation from 1.7.1 to 1.8.0.
+
 ## 6.3.1
 
 * Updates minSdkVersion to 19.
