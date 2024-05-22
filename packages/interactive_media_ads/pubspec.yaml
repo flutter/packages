@@ -2,7 +2,7 @@ name: interactive_media_ads
 description: A Flutter plugin for using the Interactive Media Ads SDKs on Android and iOS.
 repository: https://github.com/flutter/packages/tree/main/packages/interactive_media_ads
 issue_tracker: https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+label%3A%22p%3A+interactive_media_ads%22
-version: 0.0.1
+version: 0.0.1+2
 
 environment:
   sdk: ^3.2.3
