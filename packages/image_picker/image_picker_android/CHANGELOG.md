@@ -1,3 +1,7 @@
+## 0.8.12+2
+
+* Bumps androidx.annotation:annotation from 1.7.1 to 1.8.0.
+
 ## 0.8.12+1
 
 * Fixes another app crash case on Android 12+, and refactors getting of paths from intents.
