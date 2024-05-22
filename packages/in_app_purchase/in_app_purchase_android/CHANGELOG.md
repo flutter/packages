@@ -1,3 +1,7 @@
+## 0.3.6
+
+* Introduces new `ReplacementMode` for Android's billing client as `ProrationMode` is being deprecated.
+
 ## 0.3.5+2
 
 * Bumps androidx.annotation:annotation from 1.7.1 to 1.8.0.
