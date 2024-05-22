@@ -159,15 +159,14 @@ class LinkTriggerSignals {
   bool get isReadyToTrigger => _hasFollowLink && _hasDomEvent;
 
   int? get viewId {
-    assert(_isValid);
-
+    assert(isValid);
     return _viewIdFromFollowLink;
   }
 
   void registerFollowLink({required int viewId}) {
     _hasFollowLink = true;
     _viewIdFromFollowLink = viewId;
-    _update();
+    _didUpdate();
   }
 
   void registerDomEvent({
@@ -180,7 +179,7 @@ class LinkTriggerSignals {
     _hasDomEvent = true;
     _viewIdFromDomEvent = viewId;
     this.mouseEvent = mouseEvent;
-    _update();
+    _didUpdate();
   }
 
   bool _hasFollowLink = false;
@@ -193,7 +192,7 @@ class LinkTriggerSignals {
 
   // The signals state is considered invalid if the view IDs from the follow
   // link and the DOM event don't match.
-  bool get _isValid {
+  bool get isValid {
     if (_viewIdFromFollowLink == null || _viewIdFromDomEvent == null) {
       // We haven't received all view IDs yet, so we can't determine if the
       // signals are valid.
@@ -205,14 +204,9 @@ class LinkTriggerSignals {
 
   Timer? _resetTimer;
 
-  void _update() {
-    // When the state of signals is invalid, we reset the signals immediately.
-    if (_isValid) {
-      _resetTimer?.cancel();
-      _resetTimer = Timer(staleTimeout, reset);
-    } else {
-      reset();
-    }
+  void _didUpdate() {
+    _resetTimer?.cancel();
+    _resetTimer = Timer(staleTimeout, reset);
   }
 
   /// Reset all signals to their initial state.
@@ -394,12 +388,19 @@ class LinkViewController extends PlatformViewController {
       return;
     }
 
-    // TODO: preventDefault if there's a mismatch in view IDs.
-
     _triggerSignals.registerDomEvent(
       viewId: viewIdFromTarget,
       mouseEvent: event,
     );
+
+    if (!_triggerSignals.isValid) {
+      // The view ID from the target doesn't match the view ID from the follow
+      // link. Let's prevent the browser from navigating, and let's reset the
+      // signals so we start fresh on the next event.
+      event.preventDefault();
+      _triggerSignals.reset();
+      return;
+    }
 
     if (_triggerSignals.isReadyToTrigger) {
       _triggerLink();
@@ -412,8 +413,16 @@ class LinkViewController extends PlatformViewController {
   /// The [onClick] callback is invoked when the anchor element receives a
   /// `click` from the browser.
   static void onFollowLink(int viewId) {
-    // TODO: preventDefault on mouseEvent if there's a mismatch in view IDs.
     _triggerSignals.registerFollowLink(viewId: viewId);
+
+    if (!_triggerSignals.isValid) {
+      // The view ID from follow link doesn't match the view ID from the event
+      // target. Let's prevent the browser from navigating, and let's reset the
+      // signals so we start fresh on the next event.
+      _triggerSignals.mouseEvent?.preventDefault();
+      _triggerSignals.reset();
+      return;
+    }
 
     if (_triggerSignals.isReadyToTrigger) {
       _triggerLink();

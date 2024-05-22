@@ -361,6 +361,83 @@ void main() {
       // See https://github.com/flutter/flutter/issues/121161
       await tester.pumpAndSettle();
     });
+
+    testWidgets('click on mismatched link', (WidgetTester tester) async {
+      final Uri uri1 = Uri.parse('/foobar1');
+      final Uri uri2 = Uri.parse('/foobar2');
+      FollowLink? followLinkCallback1;
+      FollowLink? followLinkCallback2;
+
+      await tester.pumpWidget(MaterialApp(
+        routes: <String, WidgetBuilder>{
+          '/foobar1': (BuildContext context) => const Text('Internal route 1'),
+          '/foobar2': (BuildContext context) => const Text('Internal route 2'),
+        },
+        home: Column(
+          children: [
+            WebLinkDelegate(TestLinkInfo(
+              uri: uri1,
+              target: LinkTarget.blank,
+              builder: (BuildContext context, FollowLink? followLink) {
+                followLinkCallback1 = followLink;
+                return const SizedBox(width: 100, height: 100);
+              },
+            )),
+            WebLinkDelegate(TestLinkInfo(
+              uri: uri2,
+              target: LinkTarget.blank,
+              builder: (BuildContext context, FollowLink? followLink) {
+                followLinkCallback2 = followLink;
+                return const SizedBox(width: 100, height: 100);
+              },
+            )),
+          ],
+        ),
+      ));
+      // Platform view creation happens asynchronously.
+      await tester.pumpAndSettle();
+
+      expect(pushedRouteNames, isEmpty);
+      expect(testPlugin.launches, isEmpty);
+
+      final [
+        html.Element anchor1,
+        html.Element anchor2,
+        ...List<html.Element> rest,
+      ] = _findAllAnchors();
+      expect(rest, isEmpty);
+
+      await followLinkCallback2!();
+      // Click on mismatched link.
+      final html.Event event1 = _simulateClick(anchor1);
+
+      // The link shouldn't have been triggered.
+      expect(pushedRouteNames, isEmpty);
+      expect(testPlugin.launches, isEmpty);
+      expect(event1.defaultPrevented, isTrue);
+
+      // Click on mismatched link (in reverse order).
+      final html.Event event2 = _simulateClick(anchor2);
+      await followLinkCallback1!();
+
+      // The link shouldn't have been triggered.
+      expect(pushedRouteNames, isEmpty);
+      expect(testPlugin.launches, isEmpty);
+      expect(event2.defaultPrevented, isTrue);
+
+      await followLinkCallback2!();
+      // Click on the correct link.
+      final html.Event event = _simulateClick(anchor2);
+
+      // The link should've been triggered now.
+      expect(pushedRouteNames, <String>['/foobar2']);
+      expect(testPlugin.launches, isEmpty);
+      expect(event.defaultPrevented, isTrue);
+
+      // Needed when testing on on Chrome98 headless in CI.
+      // See https://github.com/flutter/flutter/issues/121161
+      await tester.pumpAndSettle();
+    });
   });
 
   group('Follows links (reversed order)', () {
