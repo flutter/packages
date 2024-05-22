@@ -8,13 +8,61 @@
 
 typedef void (^FLADAuthCompletion)(FLADAuthResultDetails *_Nullable, FlutterError *_Nullable);
 
+/// A default auth context that wraps LAContext.
+// TODO(stuartmorgan): When converting to Swift, eliminate this class and use an extension to make
+// LAContext declare conformance to FLADAuthContext.
+@interface FLADefaultAuthContext : NSObject <FLADAuthContext>
+/// Returns a wrapper for the given LAContext.
+- (instancetype)initWithContext:(LAContext *)context NS_DESIGNATED_INITIALIZER;
+- (instancetype)init NS_UNAVAILABLE;
+
+/// The wrapped auth context.
+@property(nonatomic) LAContext *context;
+@end
+
+@implementation FLADefaultAuthContext
+- (instancetype)initWithContext:(LAContext *)context {
+  self = [super init];
+  if (self) {
+    _context = context;
+  }
+  return self;
+}
+
+#pragma mark FLADAuthContext implementation
+
+- (NSString *)localizedFallbackTitle {
+  return self.context.localizedFallbackTitle;
+}
+
+- (void)setLocalizedFallbackTitle:(NSString *)localizedFallbackTitle {
+  self.context.localizedFallbackTitle = localizedFallbackTitle;
+}
+
+- (LABiometryType)biometryType {
+  return self.context.biometryType;
+}
+
+- (BOOL)canEvaluatePolicy:(LAPolicy)policy error:(NSError *__autoreleasing *)error {
+  return [self.context canEvaluatePolicy:policy error:error];
+}
+
+- (void)evaluatePolicy:(LAPolicy)policy
+       localizedReason:(NSString *)localizedReason
+                 reply:(void (^)(BOOL success, NSError *__nullable error))reply {
+  [self.context evaluatePolicy:policy localizedReason:localizedReason reply:reply];
+}
+
+@end
+
 /// A default context factory that wraps standard LAContext allocation.
 @interface FLADefaultAuthContextFactory : NSObject <FLADAuthContextFactory>
 @end
 
 @implementation FLADefaultAuthContextFactory
-- (LAContext *)createAuthContext {
-  return [[LAContext alloc] init];
+- (id<FLADAuthContext>)createAuthContext {
+  // TODO(stuartmorgan): When converting to Swift, just return LAContext here.
+  return [[FLADefaultAuthContext alloc] initWithContext:[[LAContext alloc] init]];
 }
 @end
 
@@ -77,7 +125,7 @@ typedef void (^FLADAuthCompletion)(FLADAuthResultDetails *_Nullable, FlutterErro
                         strings:(nonnull FLADAuthStrings *)strings
                      completion:(nonnull void (^)(FLADAuthResultDetails *_Nullable,
                                                   FlutterError *_Nullable))completion {
-  LAContext *context = [self.authContextFactory createAuthContext];
+  id<FLADAuthContext> context = [self.authContextFactory createAuthContext];
   NSError *authError = nil;
   self.lastCallState = nil;
   context.localizedFallbackTitle = strings.localizedFallbackTitle;
@@ -103,7 +151,7 @@ typedef void (^FLADAuthCompletion)(FLADAuthResultDetails *_Nullable, FlutterErro
 
 - (nullable NSNumber *)deviceCanSupportBiometricsWithError:
     (FlutterError *_Nullable __autoreleasing *_Nonnull)error {
-  LAContext *context = [self.authContextFactory createAuthContext];
+  id<FLADAuthContext> context = [self.authContextFactory createAuthContext];
   NSError *authError = nil;
   // Check if authentication with biometrics is possible.
   if ([context canEvaluatePolicy:LAPolicyDeviceOwnerAuthenticationWithBiometrics
@@ -124,7 +172,7 @@ typedef void (^FLADAuthCompletion)(FLADAuthResultDetails *_Nullable, FlutterErro
 
 - (nullable NSArray<FLADAuthBiometricWrapper *> *)getEnrolledBiometricsWithError:
     (FlutterError *_Nullable __autoreleasing *_Nonnull)error {
-  LAContext *context = [self.authContextFactory createAuthContext];
+  id<FLADAuthContext> context = [self.authContextFactory createAuthContext];
   NSError *authError = nil;
   NSMutableArray<FLADAuthBiometricWrapper *> *biometrics = [[NSMutableArray alloc] init];
   if ([context canEvaluatePolicy:LAPolicyDeviceOwnerAuthenticationWithBiometrics
@@ -143,7 +191,7 @@ typedef void (^FLADAuthCompletion)(FLADAuthResultDetails *_Nullable, FlutterErro
 
 - (nullable NSNumber *)isDeviceSupportedWithError:
     (FlutterError *_Nullable __autoreleasing *_Nonnull)error {
-  LAContext *context = [self.authContextFactory createAuthContext];
+  id<FLADAuthContext> context = [self.authContextFactory createAuthContext];
   return @([context canEvaluatePolicy:LAPolicyDeviceOwnerAuthentication error:NULL]);
 }
 
