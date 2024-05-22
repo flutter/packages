@@ -28,7 +28,7 @@ StreamSubscription<LogRecord>? _subscription;
 void setLogging({bool enabled = false}) {
   _subscription?.cancel();
   _enabled = enabled;
-  if (!enabled) {
+  if (!enabled || hierarchicalLoggingEnabled) {
     return;
   }
 
@@ -47,16 +47,28 @@ void setLogging({bool enabled = false}) {
         ),
       );
     } else {
-      developer.log(
-        e.message,
-        time: e.time,
-        sequenceNumber: e.sequenceNumber,
-        level: e.level.value,
-        name: e.loggerName,
-        zone: e.zone,
-        error: e.error,
-        stackTrace: e.stackTrace,
-      );
+      _developerLogFunction(e);
     }
   });
 }
+
+void _developerLog(LogRecord record) {
+  developer.log(
+    record.message,
+    time: record.time,
+    sequenceNumber: record.sequenceNumber,
+    level: record.level.value,
+    name: record.loggerName,
+    zone: record.zone,
+    error: record.error,
+    stackTrace: record.stackTrace,
+  );
+}
+
+/// A function that can be set during test to mock the developer log function.
+@visibleForTesting
+void Function(LogRecord)? testDeveloperLog;
+
+/// The function used to log messages.
+void Function(LogRecord) get _developerLogFunction =>
+    testDeveloperLog ?? _developerLog;

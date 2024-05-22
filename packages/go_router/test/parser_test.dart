@@ -27,6 +27,7 @@ void main() {
       redirectLimit: redirectLimit,
       redirect: redirect,
     );
+    addTearDown(router.dispose);
     await tester.pumpWidget(MaterialApp.router(
       routerConfig: router,
     ));
@@ -81,13 +82,54 @@ void main() {
   });
 
   testWidgets(
-      "GoRouteInformationParser can parse deeplink route and maintain uri's scheme and host",
+      "GoRouteInformationParser can parse deeplink root route and maintain uri's scheme, host, query and fragment",
+      (WidgetTester tester) async {
+    const String expectedScheme = 'https';
+    const String expectedHost = 'www.example.com';
+    const String expectedQuery = 'abc=def';
+    const String expectedFragment = 'abc';
+    const String expectedUriString =
+        '$expectedScheme://$expectedHost/?$expectedQuery#$expectedFragment';
+    final List<GoRoute> routes = <GoRoute>[
+      GoRoute(
+        path: '/',
+        builder: (_, __) => const Placeholder(),
+      ),
+    ];
+    final GoRouteInformationParser parser = await createParser(
+      tester,
+      routes: routes,
+      redirectLimit: 100,
+      redirect: (_, __) => null,
+    );
+
+    final BuildContext context = tester.element(find.byType(Router<Object>));
+
+    final RouteMatchList matchesObj =
+        await parser.parseRouteInformationWithDependencies(
+            createRouteInformation(expectedUriString), context);
+    final List<RouteMatchBase> matches = matchesObj.matches;
+    expect(matches.length, 1);
+    expect(matchesObj.uri.toString(), expectedUriString);
+    expect(matchesObj.uri.scheme, expectedScheme);
+    expect(matchesObj.uri.host, expectedHost);
+    expect(matchesObj.uri.query, expectedQuery);
+    expect(matchesObj.uri.fragment, expectedFragment);
+
+    expect(matches[0].matchedLocation, '/');
+    expect(matches[0].route, routes[0]);
+  });
+
+  testWidgets(
+      "GoRouteInformationParser can parse deeplink route with a path and maintain uri's scheme, host, query and fragment",
       (WidgetTester tester) async {
     const String expectedScheme = 'https';
     const String expectedHost = 'www.example.com';
     const String expectedPath = '/abc';
+    const String expectedQuery = 'abc=def';
+    const String expectedFragment = 'abc';
     const String expectedUriString =
-        '$expectedScheme://$expectedHost$expectedPath';
+        '$expectedScheme://$expectedHost$expectedPath?$expectedQuery#$expectedFragment';
     final List<GoRoute> routes = <GoRoute>[
       GoRoute(
         path: '/',
@@ -118,6 +160,8 @@ void main() {
     expect(matchesObj.uri.scheme, expectedScheme);
     expect(matchesObj.uri.host, expectedHost);
     expect(matchesObj.uri.path, expectedPath);
+    expect(matchesObj.uri.query, expectedQuery);
+    expect(matchesObj.uri.fragment, expectedFragment);
 
     expect(matches[0].matchedLocation, '/');
     expect(matches[0].route, routes[0]);

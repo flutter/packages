@@ -6,31 +6,28 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:camera_platform_interface/camera_platform_interface.dart';
-import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:stream_transform/stream_transform.dart';
 
+import 'messages.g.dart';
 import 'type_conversion.dart';
 import 'utils.dart';
 
-const MethodChannel _channel =
-    MethodChannel('plugins.flutter.io/camera_avfoundation');
-
 /// An iOS implementation of [CameraPlatform] based on AVFoundation.
 class AVFoundationCamera extends CameraPlatform {
+  /// Creates a new AVFoundation-based [CameraPlatform] implementation instance.
+  AVFoundationCamera({@visibleForTesting CameraApi? api})
+      : _hostApi = api ?? CameraApi();
+
   /// Registers this class as the default instance of [CameraPlatform].
   static void registerWith() {
     CameraPlatform.instance = AVFoundationCamera();
   }
 
-  final Map<int, MethodChannel> _channels = <int, MethodChannel>{};
-
-  /// The name of the channel that device events from the platform side are
-  /// sent on.
-  @visibleForTesting
-  static const String deviceEventChannelName =
-      'plugins.flutter.io/camera_avfoundation/fromPlatform';
+  /// Interface for calling host-side code.
+  final CameraApi _hostApi;
 
   /// The controller we need to broadcast the different events coming
   /// from handleMethodCall, specific to camera events.
@@ -43,20 +40,19 @@ class AVFoundationCamera extends CameraPlatform {
   final StreamController<CameraEvent> cameraEventStreamController =
       StreamController<CameraEvent>.broadcast();
 
-  /// The controller we need to broadcast the different events coming
-  /// from handleMethodCall, specific to general device events.
-  ///
-  /// It is a `broadcast` because multiple controllers will connect to
-  /// different stream views of this Controller.
-  late final StreamController<DeviceEvent> _deviceEventStreamController =
-      _createDeviceEventStreamController();
-
-  StreamController<DeviceEvent> _createDeviceEventStreamController() {
+  /// The handler for device-level messages that should be rebroadcast to
+  /// clients as [DeviceEvent]s.
+  @visibleForTesting
+  late final HostDeviceMessageHandler hostHandler = () {
     // Set up the method handler lazily.
-    const MethodChannel channel = MethodChannel(deviceEventChannelName);
-    channel.setMethodCallHandler(_handleDeviceMethodCall);
-    return StreamController<DeviceEvent>.broadcast();
-  }
+    return HostDeviceMessageHandler();
+  }();
+
+  /// The per-camera handlers for messages that should be rebroadcast to
+  /// clients as [CameraEvent]s.
+  @visibleForTesting
+  final Map<int, HostCameraMessageHandler> hostCameraHandlers =
+      <int, HostCameraMessageHandler>{};
 
   // The stream to receive frames from the native code.
   StreamSubscription<dynamic>? _platformImageStreamSubscription;
@@ -71,21 +67,11 @@ class AVFoundationCamera extends CameraPlatform {
   @override
   Future<List<CameraDescription>> availableCameras() async {
     try {
-      final List<Map<dynamic, dynamic>>? cameras = await _channel
-          .invokeListMethod<Map<dynamic, dynamic>>('availableCameras');
-
-      if (cameras == null) {
-        return <CameraDescription>[];
-      }
-
-      return cameras.map((Map<dynamic, dynamic> camera) {
-        return CameraDescription(
-          name: camera['name']! as String,
-          lensDirection:
-              parseCameraLensDirection(camera['lensFacing']! as String),
-          sensorOrientation: camera['sensorOrientation']! as int,
-        );
-      }).toList();
+      return (await _hostApi.getAvailableCameras())
+          // See comment in messages.dart for why this is safe.
+          .map((PlatformCameraDescription? c) => c!)
+          .map(cameraDescriptionFromPlatform)
+          .toList();
     } on PlatformException catch (e) {
       throw CameraException(e.code, e.message);
     }
@@ -96,18 +82,30 @@ class AVFoundationCamera extends CameraPlatform {
     CameraDescription cameraDescription,
     ResolutionPreset? resolutionPreset, {
     bool enableAudio = false,
-  }) async {
-    try {
-      final Map<String, dynamic>? reply = await _channel
-          .invokeMapMethod<String, dynamic>('create', <String, dynamic>{
-        'cameraName': cameraDescription.name,
-        'resolutionPreset': resolutionPreset != null
-            ? _serializeResolutionPreset(resolutionPreset)
-            : null,
-        'enableAudio': enableAudio,
-      });
+  }) =>
+      createCameraWithSettings(
+          cameraDescription,
+          MediaSettings(
+            resolutionPreset: resolutionPreset,
+            enableAudio: enableAudio,
+          ));
 
-      return reply!['cameraId']! as int;
+  @override
+  Future<int> createCameraWithSettings(
+    CameraDescription cameraDescription,
+    MediaSettings? mediaSettings,
+  ) async {
+    try {
+      return await _hostApi.create(
+          cameraDescription.name,
+          PlatformMediaSettings(
+            resolutionPreset:
+                _pigeonResolutionPreset(mediaSettings?.resolutionPreset),
+            framesPerSecond: mediaSettings?.fps,
+            videoBitrate: mediaSettings?.videoBitrate,
+            audioBitrate: mediaSettings?.audioBitrate,
+            enableAudio: mediaSettings?.enableAudio ?? true,
+          ));
     } on PlatformException catch (e) {
       throw CameraException(e.code, e.message);
     }
@@ -117,59 +115,37 @@ class AVFoundationCamera extends CameraPlatform {
   Future<void> initializeCamera(
     int cameraId, {
     ImageFormatGroup imageFormatGroup = ImageFormatGroup.unknown,
-  }) {
-    _channels.putIfAbsent(cameraId, () {
-      final MethodChannel channel = MethodChannel(
-          'plugins.flutter.io/camera_avfoundation/camera$cameraId');
-      channel.setMethodCallHandler(
-          (MethodCall call) => handleCameraMethodCall(call, cameraId));
-      return channel;
-    });
+  }) async {
+    hostCameraHandlers.putIfAbsent(cameraId,
+        () => HostCameraMessageHandler(cameraId, cameraEventStreamController));
 
     final Completer<void> completer = Completer<void>();
 
-    onCameraInitialized(cameraId).first.then((CameraInitializedEvent value) {
+    unawaited(onCameraInitialized(cameraId)
+        .first
+        .then((CameraInitializedEvent value) {
       completer.complete();
-    });
+    }));
 
-    _channel.invokeMapMethod<String, dynamic>(
-      'initialize',
-      <String, dynamic>{
-        'cameraId': cameraId,
-        'imageFormatGroup': imageFormatGroup.name(),
-      },
-    ).catchError(
-      // TODO(srawlins): This should return a value of the future's type. This
-      // will fail upcoming analysis checks with
-      // https://github.com/flutter/flutter/issues/105750.
-      // ignore: body_might_complete_normally_catch_error
-      (Object error, StackTrace stackTrace) {
-        if (error is! PlatformException) {
-          // ignore: only_throw_errors
-          throw error;
-        }
-        completer.completeError(
-          CameraException(error.code, error.message),
-          stackTrace,
-        );
-      },
-    );
+    try {
+      await _hostApi.initialize(cameraId, _pigeonImageFormat(imageFormatGroup));
+    } on PlatformException catch (e, s) {
+      completer.completeError(
+        CameraException(e.code, e.message),
+        s,
+      );
+    }
 
     return completer.future;
   }
 
   @override
   Future<void> dispose(int cameraId) async {
-    if (_channels.containsKey(cameraId)) {
-      final MethodChannel? cameraChannel = _channels[cameraId];
-      cameraChannel?.setMethodCallHandler(null);
-      _channels.remove(cameraId);
-    }
+    final HostCameraMessageHandler? handler =
+        hostCameraHandlers.remove(cameraId);
+    handler?.dispose();
 
-    await _channel.invokeMethod<void>(
-      'dispose',
-      <String, dynamic>{'cameraId': cameraId},
-    );
+    await _hostApi.dispose(cameraId);
   }
 
   @override
@@ -199,7 +175,7 @@ class AVFoundationCamera extends CameraPlatform {
 
   @override
   Stream<DeviceOrientationChangedEvent> onDeviceOrientationChanged() {
-    return _deviceEventStreamController.stream
+    return hostHandler.deviceEventStreamController.stream
         .whereType<DeviceOrientationChangedEvent>();
   }
 
@@ -208,43 +184,25 @@ class AVFoundationCamera extends CameraPlatform {
     int cameraId,
     DeviceOrientation orientation,
   ) async {
-    await _channel.invokeMethod<String>(
-      'lockCaptureOrientation',
-      <String, dynamic>{
-        'cameraId': cameraId,
-        'orientation': serializeDeviceOrientation(orientation)
-      },
-    );
+    await _hostApi
+        .lockCaptureOrientation(serializeDeviceOrientation(orientation));
   }
 
   @override
   Future<void> unlockCaptureOrientation(int cameraId) async {
-    await _channel.invokeMethod<String>(
-      'unlockCaptureOrientation',
-      <String, dynamic>{'cameraId': cameraId},
-    );
+    await _hostApi.unlockCaptureOrientation();
   }
 
   @override
   Future<XFile> takePicture(int cameraId) async {
-    final String? path = await _channel.invokeMethod<String>(
-      'takePicture',
-      <String, dynamic>{'cameraId': cameraId},
-    );
-
-    if (path == null) {
-      throw CameraException(
-        'INVALID_PATH',
-        'The platform "$defaultTargetPlatform" did not return a path while reporting success. The platform should always return a valid path or report an error.',
-      );
-    }
-
+    final String path = await _hostApi.takePicture();
     return XFile(path);
   }
 
   @override
-  Future<void> prepareForVideoRecording() =>
-      _channel.invokeMethod<void>('prepareForVideoRecording');
+  Future<void> prepareForVideoRecording() async {
+    await _hostApi.prepareForVideoRecording();
+  }
 
   @override
   Future<void> startVideoRecording(int cameraId,
@@ -255,14 +213,8 @@ class AVFoundationCamera extends CameraPlatform {
 
   @override
   Future<void> startVideoCapturing(VideoCaptureOptions options) async {
-    await _channel.invokeMethod<void>(
-      'startVideoRecording',
-      <String, dynamic>{
-        'cameraId': options.cameraId,
-        'maxVideoDuration': options.maxDuration?.inMilliseconds,
-        'enableStream': options.streamCallback != null,
-      },
-    );
+    // Max video duration is currently not supported.
+    await _hostApi.startVideoRecording(options.streamCallback != null);
 
     if (options.streamCallback != null) {
       _frameStreamController = _createStreamController();
@@ -273,33 +225,19 @@ class AVFoundationCamera extends CameraPlatform {
 
   @override
   Future<XFile> stopVideoRecording(int cameraId) async {
-    final String? path = await _channel.invokeMethod<String>(
-      'stopVideoRecording',
-      <String, dynamic>{'cameraId': cameraId},
-    );
-
-    if (path == null) {
-      throw CameraException(
-        'INVALID_PATH',
-        'The platform "$defaultTargetPlatform" did not return a path while reporting success. The platform should always return a valid path or report an error.',
-      );
-    }
-
+    final String path = await _hostApi.stopVideoRecording();
     return XFile(path);
   }
 
   @override
-  Future<void> pauseVideoRecording(int cameraId) => _channel.invokeMethod<void>(
-        'pauseVideoRecording',
-        <String, dynamic>{'cameraId': cameraId},
-      );
+  Future<void> pauseVideoRecording(int cameraId) async {
+    await _hostApi.pauseVideoRecording();
+  }
 
   @override
-  Future<void> resumeVideoRecording(int cameraId) =>
-      _channel.invokeMethod<void>(
-        'resumeVideoRecording',
-        <String, dynamic>{'cameraId': cameraId},
-      );
+  Future<void> resumeVideoRecording(int cameraId) async {
+    await _hostApi.resumeVideoRecording();
+  }
 
   @override
   Stream<CameraImageData> onStreamedFrameAvailable(int cameraId,
@@ -324,7 +262,7 @@ class AVFoundationCamera extends CameraPlatform {
   }
 
   Future<void> _startPlatformStream() async {
-    await _channel.invokeMethod<void>('startImageStream');
+    await _hostApi.startImageStream();
     _startStreamListener();
   }
 
@@ -334,7 +272,7 @@ class AVFoundationCamera extends CameraPlatform {
     _platformImageStreamSubscription =
         cameraEventChannel.receiveBroadcastStream().listen((dynamic imageData) {
       try {
-        _channel.invokeMethod<void>('receivedImageStreamData');
+        _hostApi.receivedImageStreamData();
       } on PlatformException catch (e) {
         throw CameraException(e.code, e.message);
       }
@@ -344,7 +282,7 @@ class AVFoundationCamera extends CameraPlatform {
   }
 
   FutureOr<void> _onFrameStreamCancel() async {
-    await _channel.invokeMethod<void>('stopImageStream');
+    await _hostApi.stopImageStream();
     await _platformImageStreamSubscription?.cancel();
     _platformImageStreamSubscription = null;
     _frameStreamController = null;
@@ -356,140 +294,75 @@ class AVFoundationCamera extends CameraPlatform {
   }
 
   @override
-  Future<void> setFlashMode(int cameraId, FlashMode mode) =>
-      _channel.invokeMethod<void>(
-        'setFlashMode',
-        <String, dynamic>{
-          'cameraId': cameraId,
-          'mode': _serializeFlashMode(mode),
-        },
-      );
+  Future<void> setFlashMode(int cameraId, FlashMode mode) async {
+    await _hostApi.setFlashMode(_pigeonFlashMode(mode));
+  }
 
   @override
-  Future<void> setExposureMode(int cameraId, ExposureMode mode) =>
-      _channel.invokeMethod<void>(
-        'setExposureMode',
-        <String, dynamic>{
-          'cameraId': cameraId,
-          'mode': serializeExposureMode(mode),
-        },
-      );
+  Future<void> setExposureMode(int cameraId, ExposureMode mode) async {
+    await _hostApi.setExposureMode(_pigeonExposureMode(mode));
+  }
 
   @override
-  Future<void> setExposurePoint(int cameraId, Point<double>? point) {
+  Future<void> setExposurePoint(int cameraId, Point<double>? point) async {
     assert(point == null || point.x >= 0 && point.x <= 1);
     assert(point == null || point.y >= 0 && point.y <= 1);
 
-    return _channel.invokeMethod<void>(
-      'setExposurePoint',
-      <String, dynamic>{
-        'cameraId': cameraId,
-        'reset': point == null,
-        'x': point?.x,
-        'y': point?.y,
-      },
-    );
+    await _hostApi.setExposurePoint(_pigeonPoint(point));
   }
 
   @override
   Future<double> getMinExposureOffset(int cameraId) async {
-    final double? minExposureOffset = await _channel.invokeMethod<double>(
-      'getMinExposureOffset',
-      <String, dynamic>{'cameraId': cameraId},
-    );
-
-    return minExposureOffset!;
+    return _hostApi.getMinExposureOffset();
   }
 
   @override
   Future<double> getMaxExposureOffset(int cameraId) async {
-    final double? maxExposureOffset = await _channel.invokeMethod<double>(
-      'getMaxExposureOffset',
-      <String, dynamic>{'cameraId': cameraId},
-    );
-
-    return maxExposureOffset!;
+    return _hostApi.getMaxExposureOffset();
   }
 
   @override
   Future<double> getExposureOffsetStepSize(int cameraId) async {
-    final double? stepSize = await _channel.invokeMethod<double>(
-      'getExposureOffsetStepSize',
-      <String, dynamic>{'cameraId': cameraId},
-    );
-
-    return stepSize!;
+    // iOS has no step size.
+    return 0;
   }
 
   @override
   Future<double> setExposureOffset(int cameraId, double offset) async {
-    final double? appliedOffset = await _channel.invokeMethod<double>(
-      'setExposureOffset',
-      <String, dynamic>{
-        'cameraId': cameraId,
-        'offset': offset,
-      },
-    );
-
-    return appliedOffset!;
+    await _hostApi.setExposureOffset(offset);
+    // The platform API allows for implementations that have to adjust the
+    // target offset and return the actual offset used, but there is never
+    // adjustment in this implementation.
+    return offset;
   }
 
   @override
-  Future<void> setFocusMode(int cameraId, FocusMode mode) =>
-      _channel.invokeMethod<void>(
-        'setFocusMode',
-        <String, dynamic>{
-          'cameraId': cameraId,
-          'mode': serializeFocusMode(mode),
-        },
-      );
+  Future<void> setFocusMode(int cameraId, FocusMode mode) async {
+    await _hostApi.setFocusMode(_pigeonFocusMode(mode));
+  }
 
   @override
-  Future<void> setFocusPoint(int cameraId, Point<double>? point) {
+  Future<void> setFocusPoint(int cameraId, Point<double>? point) async {
     assert(point == null || point.x >= 0 && point.x <= 1);
     assert(point == null || point.y >= 0 && point.y <= 1);
 
-    return _channel.invokeMethod<void>(
-      'setFocusPoint',
-      <String, dynamic>{
-        'cameraId': cameraId,
-        'reset': point == null,
-        'x': point?.x,
-        'y': point?.y,
-      },
-    );
+    await _hostApi.setFocusPoint(_pigeonPoint(point));
   }
 
   @override
   Future<double> getMaxZoomLevel(int cameraId) async {
-    final double? maxZoomLevel = await _channel.invokeMethod<double>(
-      'getMaxZoomLevel',
-      <String, dynamic>{'cameraId': cameraId},
-    );
-
-    return maxZoomLevel!;
+    return _hostApi.getMaxZoomLevel();
   }
 
   @override
   Future<double> getMinZoomLevel(int cameraId) async {
-    final double? minZoomLevel = await _channel.invokeMethod<double>(
-      'getMinZoomLevel',
-      <String, dynamic>{'cameraId': cameraId},
-    );
-
-    return minZoomLevel!;
+    return _hostApi.getMinZoomLevel();
   }
 
   @override
   Future<void> setZoomLevel(int cameraId, double zoom) async {
     try {
-      await _channel.invokeMethod<double>(
-        'setZoomLevel',
-        <String, dynamic>{
-          'cameraId': cameraId,
-          'zoom': zoom,
-        },
-      );
+      await _hostApi.setZoomLevel(zoom);
     } on PlatformException catch (e) {
       throw CameraException(e.code, e.message);
     }
@@ -497,40 +370,23 @@ class AVFoundationCamera extends CameraPlatform {
 
   @override
   Future<void> pausePreview(int cameraId) async {
-    await _channel.invokeMethod<double>(
-      'pausePreview',
-      <String, dynamic>{'cameraId': cameraId},
-    );
+    await _hostApi.pausePreview();
   }
 
   @override
   Future<void> resumePreview(int cameraId) async {
-    await _channel.invokeMethod<double>(
-      'resumePreview',
-      <String, dynamic>{'cameraId': cameraId},
-    );
+    await _hostApi.resumePreview();
   }
 
   @override
   Future<void> setDescriptionWhileRecording(
       CameraDescription description) async {
-    await _channel.invokeMethod<double>(
-      'setDescriptionWhileRecording',
-      <String, dynamic>{
-        'cameraName': description.name,
-      },
-    );
+    await _hostApi.updateDescriptionWhileRecording(description.name);
   }
 
   @override
-  Future<void> setImageFileFormat(int cameraId, ImageFileFormat format) {
-    return _channel.invokeMethod<void>(
-      'setImageFileFormat',
-      <String, dynamic>{
-        'cameraId': cameraId,
-        'fileFormat': format.name,
-      },
-    );
+  Future<void> setImageFileFormat(int cameraId, ImageFileFormat format) async {
+    await _hostApi.setImageFileFormat(_pigeonImageFileFormat(format));
   }
 
   @override
@@ -538,17 +394,51 @@ class AVFoundationCamera extends CameraPlatform {
     return Texture(textureId: cameraId);
   }
 
-  /// Returns the flash mode as a String.
-  String _serializeFlashMode(FlashMode flashMode) {
+  /// Returns an [FocusMode]'s Pigeon representation.
+  PlatformFocusMode _pigeonFocusMode(FocusMode mode) {
+    switch (mode) {
+      case FocusMode.locked:
+        return PlatformFocusMode.locked;
+      case FocusMode.auto:
+        return PlatformFocusMode.auto;
+    }
+    // The enum comes from a different package, which could get a new value at
+    // any time, so provide a fallback that ensures this won't break when used
+    // with a version that contains new values. This is deliberately outside
+    // the switch rather than a `default` so that the linter will flag the
+    // switch as needing an update.
+    // ignore: dead_code
+    return PlatformFocusMode.auto;
+  }
+
+  /// Returns an [ExposureMode]'s Pigeon representation.
+  PlatformExposureMode _pigeonExposureMode(ExposureMode mode) {
+    switch (mode) {
+      case ExposureMode.locked:
+        return PlatformExposureMode.locked;
+      case ExposureMode.auto:
+        return PlatformExposureMode.auto;
+    }
+    // The enum comes from a different package, which could get a new value at
+    // any time, so provide a fallback that ensures this won't break when used
+    // with a version that contains new values. This is deliberately outside
+    // the switch rather than a `default` so that the linter will flag the
+    // switch as needing an update.
+    // ignore: dead_code
+    return PlatformExposureMode.auto;
+  }
+
+  /// Returns a [FlashMode]'s Pigeon representation.
+  PlatformFlashMode _pigeonFlashMode(FlashMode flashMode) {
     switch (flashMode) {
       case FlashMode.off:
-        return 'off';
+        return PlatformFlashMode.off;
       case FlashMode.auto:
-        return 'auto';
+        return PlatformFlashMode.auto;
       case FlashMode.always:
-        return 'always';
+        return PlatformFlashMode.always;
       case FlashMode.torch:
-        return 'torch';
+        return PlatformFlashMode.torch;
     }
     // The enum comes from a different package, which could get a new value at
     // any time, so provide a fallback that ensures this won't break when used
@@ -556,24 +446,30 @@ class AVFoundationCamera extends CameraPlatform {
     // the switch rather than a `default` so that the linter will flag the
     // switch as needing an update.
     // ignore: dead_code
-    return 'off';
+    return PlatformFlashMode.off;
   }
 
-  /// Returns the resolution preset as a String.
-  String _serializeResolutionPreset(ResolutionPreset resolutionPreset) {
+  /// Returns a [ResolutionPreset]'s Pigeon representation.
+  PlatformResolutionPreset _pigeonResolutionPreset(
+      ResolutionPreset? resolutionPreset) {
+    if (resolutionPreset == null) {
+      // Provide a default if one isn't provided, since the native side needs
+      // to set something.
+      return PlatformResolutionPreset.high;
+    }
     switch (resolutionPreset) {
       case ResolutionPreset.max:
-        return 'max';
+        return PlatformResolutionPreset.max;
       case ResolutionPreset.ultraHigh:
-        return 'ultraHigh';
+        return PlatformResolutionPreset.ultraHigh;
       case ResolutionPreset.veryHigh:
-        return 'veryHigh';
+        return PlatformResolutionPreset.veryHigh;
       case ResolutionPreset.high:
-        return 'high';
+        return PlatformResolutionPreset.high;
       case ResolutionPreset.medium:
-        return 'medium';
+        return PlatformResolutionPreset.medium;
       case ResolutionPreset.low:
-        return 'low';
+        return PlatformResolutionPreset.low;
     }
     // The enum comes from a different package, which could get a new value at
     // any time, so provide a fallback that ensures this won't break when used
@@ -581,75 +477,121 @@ class AVFoundationCamera extends CameraPlatform {
     // the switch rather than a `default` so that the linter will flag the
     // switch as needing an update.
     // ignore: dead_code
-    return 'max';
+    return PlatformResolutionPreset.max;
   }
 
-  /// Converts messages received from the native platform into device events.
-  Future<dynamic> _handleDeviceMethodCall(MethodCall call) async {
-    switch (call.method) {
-      case 'orientation_changed':
-        final Map<String, Object?> arguments = _getArgumentDictionary(call);
-        _deviceEventStreamController.add(DeviceOrientationChangedEvent(
-            deserializeDeviceOrientation(arguments['orientation']! as String)));
-      default:
-        throw MissingPluginException();
+  /// Returns an [ImageFormatGroup]'s Pigeon representation.
+  PlatformImageFormatGroup _pigeonImageFormat(ImageFormatGroup format) {
+    switch (format) {
+      // "unknown" is used to indicate the default.
+      case ImageFormatGroup.unknown:
+      case ImageFormatGroup.bgra8888:
+        return PlatformImageFormatGroup.bgra8888;
+      case ImageFormatGroup.yuv420:
+        return PlatformImageFormatGroup.yuv420;
+      case ImageFormatGroup.jpeg:
+      case ImageFormatGroup.nv21:
+      // Fall through.
     }
+    // The enum comes from a different package, which could get a new value at
+    // any time, so provide a fallback that ensures this won't break when used
+    // with a version that contains new values. This is deliberately outside
+    // the switch rather than a `default` so that the linter will flag the
+    // switch as needing an update.
+    // TODO(stuartmorgan): Consider throwing an UnsupportedError, instead of
+    // doing fallback, when a specific unsupported format is requested. This
+    // would require a breaking change at this layer and the app-facing layer.
+    return PlatformImageFormatGroup.bgra8888;
   }
 
-  /// Converts messages received from the native platform into camera events.
-  ///
-  /// This is only exposed for test purposes. It shouldn't be used by clients of
-  /// the plugin as it may break or change at any time.
-  @visibleForTesting
-  Future<dynamic> handleCameraMethodCall(MethodCall call, int cameraId) async {
-    switch (call.method) {
-      case 'initialized':
-        final Map<String, Object?> arguments = _getArgumentDictionary(call);
-        cameraEventStreamController.add(CameraInitializedEvent(
-          cameraId,
-          arguments['previewWidth']! as double,
-          arguments['previewHeight']! as double,
-          deserializeExposureMode(arguments['exposureMode']! as String),
-          arguments['exposurePointSupported']! as bool,
-          deserializeFocusMode(arguments['focusMode']! as String),
-          arguments['focusPointSupported']! as bool,
-        ));
-      case 'resolution_changed':
-        final Map<String, Object?> arguments = _getArgumentDictionary(call);
-        cameraEventStreamController.add(CameraResolutionChangedEvent(
-          cameraId,
-          arguments['captureWidth']! as double,
-          arguments['captureHeight']! as double,
-        ));
-      case 'camera_closing':
-        cameraEventStreamController.add(CameraClosingEvent(
-          cameraId,
-        ));
-      case 'video_recorded':
-        final Map<String, Object?> arguments = _getArgumentDictionary(call);
-        cameraEventStreamController.add(VideoRecordedEvent(
-          cameraId,
-          XFile(arguments['path']! as String),
-          arguments['maxVideoDuration'] != null
-              ? Duration(milliseconds: arguments['maxVideoDuration']! as int)
-              : null,
-        ));
-      case 'error':
-        final Map<String, Object?> arguments = _getArgumentDictionary(call);
-        cameraEventStreamController.add(CameraErrorEvent(
-          cameraId,
-          arguments['description']! as String,
-        ));
-      default:
-        throw MissingPluginException();
+  /// Returns an [ImageFileFormat]'s Pigeon representation.
+  PlatformImageFileFormat _pigeonImageFileFormat(ImageFileFormat format) {
+    switch (format) {
+      case ImageFileFormat.heif:
+        return PlatformImageFileFormat.heif;
+      case ImageFileFormat.jpeg:
+        return PlatformImageFileFormat.jpeg;
     }
+    // The enum comes from a different package, which could get a new value at
+    // any time, so provide a fallback that ensures this won't break when used
+    // with a version that contains new values. This is deliberately outside
+    // the switch rather than a `default` so that the linter will flag the
+    // switch as needing an update.
+    // TODO(stuartmorgan): Consider throwing an UnsupportedError, instead of
+    // doing fallback, when a specific unsupported format is requested. This
+    // would require a breaking change at this layer and the app-facing layer.
+    // ignore: dead_code
+    return PlatformImageFileFormat.jpeg;
   }
 
-  /// Returns the arguments of [call] as typed string-keyed Map.
+  /// Returns a [Point]s Pigeon representation.
+  PlatformPoint? _pigeonPoint(Point<double>? point) {
+    if (point == null) {
+      return null;
+    }
+    return PlatformPoint(x: point.x, y: point.y);
+  }
+}
+
+/// Callback handler for device-level events from the platform host.
+@visibleForTesting
+class HostDeviceMessageHandler implements CameraGlobalEventApi {
+  /// Creates a new handler and registers it to listen to its platform channel.
+  HostDeviceMessageHandler() {
+    CameraGlobalEventApi.setUp(this);
+  }
+
+  /// The controller used to broadcast general device events coming from the
+  /// host platform.
   ///
-  /// This does not do any type validation, so is only safe to call if the
-  /// arguments are known to be a map.
-  Map<String, Object?> _getArgumentDictionary(MethodCall call) {
-    return (call.arguments as Map<Object?, Object?>).cast<String, Object?>();
+  /// It is a `broadcast` because multiple controllers will connect to
+  /// different stream views of this Controller.
+  final StreamController<DeviceEvent> deviceEventStreamController =
+      StreamController<DeviceEvent>.broadcast();
+
+  @override
+  void deviceOrientationChanged(PlatformDeviceOrientation orientation) {
+    deviceEventStreamController.add(DeviceOrientationChangedEvent(
+        deviceOrientationFromPlatform(orientation)));
+  }
+}
+
+/// Callback handler for camera-level events from the platform host.
+@visibleForTesting
+class HostCameraMessageHandler implements CameraEventApi {
+  /// Creates a new handler that listens for events from camera [cameraId], and
+  /// broadcasts them to [streamController].
+  HostCameraMessageHandler(this.cameraId, this.streamController) {
+    CameraEventApi.setUp(this, messageChannelSuffix: cameraId.toString());
+  }
+
+  /// Removes the handler for native messages.
+  void dispose() {
+    CameraEventApi.setUp(null, messageChannelSuffix: cameraId.toString());
+  }
+
+  /// The camera ID this handler listens for events from.
+  final int cameraId;
+
+  /// The controller used to broadcast camera events coming from the
+  /// host platform.
+  final StreamController<CameraEvent> streamController;
+
+  @override
+  void error(String message) {
+    streamController.add(CameraErrorEvent(cameraId, message));
+  }
+
+  @override
+  void initialized(PlatformCameraState initialState) {
+    streamController.add(CameraInitializedEvent(
+      cameraId,
+      initialState.previewSize.width,
+      initialState.previewSize.height,
+      exposureModeFromPlatform(initialState.exposureMode),
+      initialState.exposurePointSupported,
+      focusModeFromPlatform(initialState.focusMode),
+      initialState.focusPointSupported,
+    ));
   }
 }

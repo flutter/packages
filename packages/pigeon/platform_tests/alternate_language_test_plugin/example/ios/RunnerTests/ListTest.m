@@ -17,18 +17,18 @@
 @implementation ListTest
 
 - (void)testListInList {
-  TestMessage *top = [[TestMessage alloc] init];
-  TestMessage *inside = [[TestMessage alloc] init];
+  FLTTestMessage *top = [[FLTTestMessage alloc] init];
+  FLTTestMessage *inside = [[FLTTestMessage alloc] init];
   inside.testList = @[ @1, @2, @3 ];
   top.testList = @[ inside ];
   EchoBinaryMessenger *binaryMessenger =
-      [[EchoBinaryMessenger alloc] initWithCodec:FlutterSmallApiGetCodec()];
-  FlutterSmallApi *api = [[FlutterSmallApi alloc] initWithBinaryMessenger:binaryMessenger];
+      [[EchoBinaryMessenger alloc] initWithCodec:FLTFlutterSmallApiGetCodec()];
+  FLTFlutterSmallApi *api = [[FLTFlutterSmallApi alloc] initWithBinaryMessenger:binaryMessenger];
   XCTestExpectation *expectation = [self expectationWithDescription:@"callback"];
   [api echoWrappedList:top
-            completion:^(TestMessage *_Nonnull result, FlutterError *_Nullable err) {
+            completion:^(FLTTestMessage *_Nonnull result, FlutterError *_Nullable err) {
               XCTAssertEqual(1u, result.testList.count);
-              XCTAssertTrue([result.testList[0] isKindOfClass:[TestMessage class]]);
+              XCTAssertTrue([result.testList[0] isKindOfClass:[FLTTestMessage class]]);
               XCTAssertEqualObjects(inside.testList, [result.testList[0] testList]);
               [expectation fulfill];
             }];

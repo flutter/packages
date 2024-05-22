@@ -34,7 +34,7 @@ void main() {
       );
       Preview.detached(
         instanceManager: instanceManager,
-        initialTargetRotation: Surface.ROTATION_90,
+        initialTargetRotation: Surface.rotation90,
         resolutionSelector: MockResolutionSelector(),
       );
 
@@ -49,7 +49,7 @@ void main() {
       final InstanceManager instanceManager = InstanceManager(
         onWeakReferenceRemoved: (_) {},
       );
-      const int targetRotation = Surface.ROTATION_90;
+      const int targetRotation = Surface.rotation90;
       final MockResolutionSelector mockResolutionSelector =
           MockResolutionSelector();
       const int mockResolutionSelectorId = 24;
@@ -81,7 +81,7 @@ void main() {
       final InstanceManager instanceManager = InstanceManager(
         onWeakReferenceRemoved: (_) {},
       );
-      const int targetRotation = Surface.ROTATION_180;
+      const int targetRotation = Surface.rotation180;
       final Preview preview = Preview.detached(
         instanceManager: instanceManager,
       );

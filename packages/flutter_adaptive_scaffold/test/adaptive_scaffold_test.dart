@@ -257,9 +257,9 @@ void main() {
       ];
 
       await tester.pumpWidget(
-        const MaterialApp(
+        MaterialApp(
           home: MediaQuery(
-            data: MediaQueryData(size: Size(700, 900)),
+            data: const MediaQueryData(size: Size(700, 900)),
             child: AdaptiveScaffold(
               destinations: destinations,
             ),
@@ -501,6 +501,119 @@ void main() {
     },
   );
 
+  testWidgets(
+    'when drawer item tap, it shall close the already open drawer',
+    (WidgetTester tester) async {
+      //region Keys
+      const ValueKey<String> firstDestinationIconKey = ValueKey<String>(
+        'first-normal-icon',
+      );
+      const ValueKey<String> firstDestinationSelectedIconKey = ValueKey<String>(
+        'first-selected-icon',
+      );
+      const ValueKey<String> lastDestinationIconKey = ValueKey<String>(
+        'last-normal-icon',
+      );
+      const ValueKey<String> lastDestinationSelectedIconKey = ValueKey<String>(
+        'last-selected-icon',
+      );
+      //endregion
+
+      //region Finder for destinations as per its icon.
+      final Finder lastDestinationWithIcon = find.byKey(
+        lastDestinationIconKey,
+      );
+      final Finder lastDestinationWithSelectedIcon = find.byKey(
+        lastDestinationSelectedIconKey,
+      );
+      //endregion
+
+      const List<NavigationDestination> destinations = <NavigationDestination>[
+        NavigationDestination(
+          icon: Icon(
+            Icons.inbox_outlined,
+            key: firstDestinationIconKey,
+          ),
+          selectedIcon: Icon(
+            Icons.inbox,
+            key: firstDestinationSelectedIconKey,
+          ),
+          label: 'Inbox',
+        ),
+        NavigationDestination(
+          icon: Icon(
+            Icons.video_call_outlined,
+            key: lastDestinationIconKey,
+          ),
+          selectedIcon: Icon(
+            Icons.video_call,
+            key: lastDestinationSelectedIconKey,
+          ),
+          label: 'Video',
+        ),
+      ];
+      int selectedDestination = 0;
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: MediaQuery(
+            data: const MediaQueryData(size: Size(450, 900)),
+            child: StatefulBuilder(
+              builder: (
+                BuildContext context,
+                void Function(void Function()) setState,
+              ) {
+                return AdaptiveScaffold(
+                  destinations: destinations,
+                  selectedIndex: selectedDestination,
+                  smallBreakpoint: TestBreakpoint400(),
+                  drawerBreakpoint: TestBreakpoint400(),
+                  onSelectedIndexChange: (int value) {
+                    setState(() {
+                      selectedDestination = value;
+                    });
+                  },
+                );
+              },
+            ),
+          ),
+        ),
+      );
+
+      expect(selectedDestination, 0);
+      Finder fDrawer = find.byType(Drawer);
+      Finder fNavigationRail = find.descendant(
+        of: fDrawer,
+        matching: find.byType(NavigationRail),
+      );
+      expect(fDrawer, findsNothing);
+      expect(fNavigationRail, findsNothing);
+
+      final ScaffoldState state = tester.state(find.byType(Scaffold));
+      state.openDrawer();
+      await tester.pumpAndSettle(Durations.short4);
+      expect(state.isDrawerOpen, isTrue);
+
+      // Need to find again as Scaffold's state has been updated
+      fDrawer = find.byType(Drawer);
+      fNavigationRail = find.descendant(
+        of: fDrawer,
+        matching: find.byType(NavigationRail),
+      );
+      expect(fDrawer, findsOneWidget);
+      expect(fNavigationRail, findsOneWidget);
+
+      expect(lastDestinationWithIcon, findsOneWidget);
+      expect(lastDestinationWithSelectedIcon, findsNothing);
+
+      await tester.ensureVisible(lastDestinationWithIcon);
+      await tester.tap(lastDestinationWithIcon);
+      await tester.pumpAndSettle(Durations.short4);
+      expect(selectedDestination, 1);
+      expect(state.isDrawerOpen, isFalse);
+    },
+  );
+
   // This test checks whether AdaptiveScaffold.standardNavigationRail function
   // creates a NavigationRail widget as expected with groupAlignment provided,
   // and checks whether the NavigationRail's groupAlignment matches the expected value.
@@ -602,6 +715,33 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(appBar, findsOneWidget);
+    },
+  );
+
+  testWidgets(
+    'When only one destination passed, shall throw assertion error',
+    (WidgetTester tester) async {
+      const List<NavigationDestination> destinations = <NavigationDestination>[
+        NavigationDestination(
+          icon: Icon(Icons.inbox_outlined),
+          selectedIcon: Icon(Icons.inbox),
+          label: 'Inbox',
+        ),
+      ];
+
+      expect(
+        () => tester.pumpWidget(
+          MaterialApp(
+            home: MediaQuery(
+              data: const MediaQueryData(size: Size(700, 900)),
+              child: AdaptiveScaffold(
+                destinations: destinations,
+              ),
+            ),
+          ),
+        ),
+        throwsA(isA<AssertionError>()),
+      );
     },
   );
 }

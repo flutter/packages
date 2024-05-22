@@ -575,11 +575,7 @@ void main() {
     expect(code, contains('public static final class Outer'));
     expect(code, contains('public static final class Nested'));
     expect(code, contains('private @Nullable Nested nested;'));
-    expect(
-        code,
-        contains(
-            '(nested == null) ? null : Nested.fromList((ArrayList<Object>) nested)'));
-    expect(code, contains('add((nested == null) ? null : nested.toList());'));
+    expect(code, contains('add(nested);'));
   });
 
   test('gen one async Host Api', () {
@@ -1371,7 +1367,7 @@ void main() {
     expect(
         code,
         contains(RegExp(
-            r'new BasicMessageChannel<>\(\s*binaryMessenger, "dev.flutter.pigeon.test_package.Api.doit", getCodec\(\), taskQueue\)')));
+            r'new BasicMessageChannel<>\(\s*binaryMessenger, "dev.flutter.pigeon.test_package.Api.doit" \+ messageChannelSuffix, getCodec\(\), taskQueue\)')));
   });
 
   test('generated annotation', () {

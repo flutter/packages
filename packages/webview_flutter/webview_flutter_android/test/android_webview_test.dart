@@ -642,6 +642,37 @@ void main() {
         expect(result, <Object>[mockWebView, 'https://www.google.com']);
       });
 
+      test('onReceivedHttpError', () {
+        late final List<Object> result;
+        when(mockWebViewClient.onReceivedHttpError).thenReturn(
+          (
+            WebView webView,
+            WebResourceRequest request,
+            WebResourceResponse response,
+          ) {
+            result = <Object>[webView, request, response];
+          },
+        );
+
+        flutterApi.onReceivedHttpError(
+          mockWebViewClientInstanceId,
+          mockWebViewInstanceId,
+          WebResourceRequestData(
+            url: 'https://www.google.com',
+            isForMainFrame: true,
+            hasGesture: true,
+            method: 'GET',
+            isRedirect: false,
+            requestHeaders: <String?, String?>{},
+          ),
+          WebResourceResponseData(
+            statusCode: 401,
+          ),
+        );
+
+        expect(result, <Object>[mockWebView, isNotNull, isNotNull]);
+      });
+
       test('onReceivedRequestError', () {
         late final List<Object> result;
         when(mockWebViewClient.onReceivedRequestError).thenReturn(

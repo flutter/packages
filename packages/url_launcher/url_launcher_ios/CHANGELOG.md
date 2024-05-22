@@ -1,5 +1,10 @@
-## NEXT
+## 6.3.0
 
+* Adds Swift Package Manager compatibility.
+
+## 6.2.5
+
+* Adds explicit imports for UIKit.
 * Updates minimum iOS version to 12.0 and minimum Flutter version to 3.16.6.
 
 ## 6.2.4

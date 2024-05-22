@@ -4,12 +4,14 @@
 
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:in_app_purchase_platform_interface/in_app_purchase_platform_interface.dart';
 
 import '../billing_client_wrappers.dart';
 import '../in_app_purchase_android.dart';
+import 'billing_client_wrappers/billing_config_wrapper.dart';
 
 /// [IAPError.code] code for failed purchases.
 const String kPurchaseErrorCode = 'purchase_error';
@@ -28,7 +30,12 @@ const String kIAPSource = 'google_play';
 /// This translates various `BillingClient` calls and responses into the
 /// generic plugin API.
 class InAppPurchaseAndroidPlatform extends InAppPurchasePlatform {
-  InAppPurchaseAndroidPlatform._() {
+  /// Creates a new InAppPurchaseAndroidPlatform instance, and configures it
+  /// for use.
+  @visibleForTesting
+  InAppPurchaseAndroidPlatform(
+      {@visibleForTesting BillingClientManager? manager})
+      : billingClientManager = manager ?? BillingClientManager() {
     // Register [InAppPurchaseAndroidPlatformAddition].
     InAppPurchasePlatformAddition.instance =
         InAppPurchaseAndroidPlatformAddition(billingClientManager);
@@ -42,7 +49,7 @@ class InAppPurchaseAndroidPlatform extends InAppPurchasePlatform {
   static void registerPlatform() {
     // Register the platform instance with the plugin platform
     // interface.
-    InAppPurchasePlatform.instance = InAppPurchaseAndroidPlatform._();
+    InAppPurchasePlatform.instance = InAppPurchaseAndroidPlatform();
   }
 
   final StreamController<List<PurchaseDetails>> _purchaseUpdatedController =
@@ -56,7 +63,7 @@ class InAppPurchaseAndroidPlatform extends InAppPurchasePlatform {
   ///
   /// This field should not be used out of test code.
   @visibleForTesting
-  final BillingClientManager billingClientManager = BillingClientManager();
+  final BillingClientManager billingClientManager;
 
   static final Set<String> _productIdsToConsume = <String>{};
 
@@ -155,7 +162,8 @@ class InAppPurchaseAndroidPlatform extends InAppPurchasePlatform {
           oldProduct: changeSubscriptionParam?.oldPurchaseDetails.productID,
           purchaseToken: changeSubscriptionParam
               ?.oldPurchaseDetails.verificationData.serverVerificationData,
-          prorationMode: changeSubscriptionParam?.prorationMode),
+          prorationMode: changeSubscriptionParam?.prorationMode,
+          replacementMode: changeSubscriptionParam?.replacementMode),
     );
     return billingResultWrapper.responseCode == BillingResponse.ok;
   }
@@ -305,4 +313,19 @@ class InAppPurchaseAndroidPlatform extends InAppPurchasePlatform {
       ];
     }
   }
+
+  /// Returns Play billing country code based on ISO-3166-1 alpha2 format.
+  ///
+  /// See: https://developer.android.com/reference/com/android/billingclient/api/BillingConfig
+  /// See: https://unicode.org/cldr/charts/latest/supplemental/territory_containment_un_m_49.html
+  @override
+  Future<String> countryCode() async {
+    final BillingConfigWrapper billingConfig = await billingClientManager
+        .runWithClient((BillingClient client) => client.getBillingConfig());
+    return billingConfig.countryCode;
+  }
+
+  /// Use countryCode instead.
+  @Deprecated('Use countryCode')
+  Future<String> getCountryCode() => countryCode();
 }

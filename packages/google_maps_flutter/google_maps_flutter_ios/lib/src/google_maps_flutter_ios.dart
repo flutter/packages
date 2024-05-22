@@ -466,6 +466,12 @@ class GoogleMapsFlutterIOS extends GoogleMapsFlutterPlatform {
     return _channel(mapId).invokeMethod<Uint8List>('map#takeSnapshot');
   }
 
+  @override
+  Future<String?> getStyleError({required int mapId}) {
+    final MethodChannel channel = ensureChannelInitialized(mapId);
+    return channel.invokeMethod<String>('map#getStyleError');
+  }
+
   Widget _buildView(
     int creationId,
     PlatformViewCreatedCallback onPlatformViewCreated, {
@@ -618,6 +624,7 @@ Map<String, Object> _jsonForMapConfiguration(MapConfiguration config) {
     if (config.buildingsEnabled != null)
       'buildingsEnabled': config.buildingsEnabled!,
     if (config.cloudMapId != null) 'cloudMapId': config.cloudMapId!,
+    if (config.style != null) 'style': config.style!,
   };
 }
 

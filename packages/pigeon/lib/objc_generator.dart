@@ -305,6 +305,8 @@ class ObjcHeaderGenerator extends StructuredGenerator<ObjcOptions> {
     indent.writeln('@interface $apiName : NSObject');
     indent.writeln(
         '- (instancetype)initWithBinaryMessenger:(id<FlutterBinaryMessenger>)binaryMessenger;');
+    indent.writeln(
+        '- (instancetype)initWithBinaryMessenger:(id<FlutterBinaryMessenger>)binaryMessenger messageChannelSuffix:(nullable NSString *)messageChannelSuffix;');
     for (final Method func in api.methods) {
       final _ObjcType returnType = _objcTypeForDartType(
         generatorOptions.prefix, func.returnType,
@@ -359,7 +361,7 @@ class ObjcHeaderGenerator extends StructuredGenerator<ObjcOptions> {
       String? lastArgType;
       String? returnType;
       final String enumReturnType = _enumName(
-        returnTypeName.baseName,
+        func.returnType.baseName,
         suffix: ' *_Nullable',
         prefix: generatorOptions.prefix,
         box: true,
@@ -410,6 +412,9 @@ class ObjcHeaderGenerator extends StructuredGenerator<ObjcOptions> {
     indent.newln();
     indent.writeln(
         'extern void SetUp$apiName(id<FlutterBinaryMessenger> binaryMessenger, NSObject<$apiName> *_Nullable api);');
+    indent.newln();
+    indent.writeln(
+        'extern void SetUp${apiName}WithSuffix(id<FlutterBinaryMessenger> binaryMessenger, NSObject<$apiName> *_Nullable api, NSString *messageChannelSuffix);');
     indent.newln();
   }
 }
@@ -575,8 +580,7 @@ class ObjcSourceGenerator extends StructuredGenerator<ObjcOptions> {
       enumerate(getFieldsInSerializationOrder(classDefinition),
           (int index, final NamedType field) {
         final bool isEnumType = field.type.isEnum;
-        final String valueGetter =
-            _listGetter('list', field, index, generatorOptions.prefix);
+        final String valueGetter = 'GetNullableObjectAtIndex(list, $index)';
         final String? primitiveExtractionMethod =
             _nsnumberExtractionMethod(field.type);
         final String ivarValueExpression;
@@ -628,7 +632,7 @@ class ObjcSourceGenerator extends StructuredGenerator<ObjcOptions> {
     indent.newln();
     indent.writeln('@implementation $apiName');
     indent.newln();
-    _writeInitializer(indent);
+    _writeInitializers(indent);
     for (final Method func in api.methods) {
       _writeMethod(
         generatorOptions,
@@ -659,6 +663,14 @@ class ObjcSourceGenerator extends StructuredGenerator<ObjcOptions> {
     indent.write(
         'void SetUp$apiName(id<FlutterBinaryMessenger> binaryMessenger, NSObject<$apiName> *api) ');
     indent.addScoped('{', '}', () {
+      indent.writeln('SetUp${apiName}WithSuffix(binaryMessenger, api, @"");');
+    });
+    indent.newln();
+    indent.write(
+        'void SetUp${apiName}WithSuffix(id<FlutterBinaryMessenger> binaryMessenger, NSObject<$apiName> *api, NSString *messageChannelSuffix) ');
+    indent.addScoped('{', '}', () {
+      indent.writeln(
+          'messageChannelSuffix = messageChannelSuffix.length > 0 ? [NSString stringWithFormat: @".%@", messageChannelSuffix] : @"";');
       for (final Method func in api.methods) {
         addDocumentationComments(
             indent, func.documentationComments, _docCommentSpec);
@@ -715,7 +727,10 @@ class ObjcSourceGenerator extends StructuredGenerator<ObjcOptions> {
       _writeCreateConnectionError(indent);
       indent.newln();
     }
-    _writeGetNullableObjectAtIndex(indent);
+
+    if (hasHostApi || hasFlutterApi) {
+      _writeGetNullableObjectAtIndex(indent);
+    }
   }
 
   void _writeWrapError(Indent indent) {
@@ -765,7 +780,7 @@ static FlutterError *createConnectionError(NSString *channelName) {
         } else if (arg.type.isEnum) {
           indent.writeln('NSNumber *${argName}AsNumber = $valueGetter;');
           indent.writeln(
-              '${_enumName(arg.type.baseName, suffix: ' *', prefix: '', box: true)}$argName = ${argName}AsNumber == nil ? nil : [[${_enumName(arg.type.baseName, prefix: generatorOptions.prefix, box: true)} alloc] initWithValue:[${argName}AsNumber integerValue]];');
+              '${_enumName(arg.type.baseName, suffix: ' *', prefix: generatorOptions.prefix, box: true)}$argName = ${argName}AsNumber == nil ? nil : [[${_enumName(arg.type.baseName, prefix: generatorOptions.prefix, box: true)} alloc] initWithValue:[${argName}AsNumber integerValue]];');
         } else {
           indent.writeln('${objcArgType.beforeString}$argName = $valueGetter;');
         }
@@ -799,7 +814,7 @@ static FlutterError *createConnectionError(NSString *channelName) {
 
         if (func.returnType.isEnum) {
           returnTypeString =
-              '${_enumName(returnType.baseName, suffix: ' *_Nullable', prefix: generatorOptions.prefix, box: true)} enumValue';
+              '${_enumName(func.returnType.baseName, suffix: ' *_Nullable', prefix: generatorOptions.prefix, box: true)} enumValue';
         }
         if (func.parameters.isEmpty) {
           indent.writeScoped(
@@ -892,7 +907,7 @@ static FlutterError *createConnectionError(NSString *channelName) {
       indent.writeln('[[FlutterBasicMessageChannel alloc]');
       indent.nest(1, () {
         indent.writeln(
-            'initWithName:@"${makeChannelName(api, func, dartPackageName)}"');
+            'initWithName:[NSString stringWithFormat:@"%@%@", @"${makeChannelName(api, func, dartPackageName)}", messageChannelSuffix]');
         indent.writeln('binaryMessenger:binaryMessenger');
         indent.write('codec:');
         indent
@@ -1104,7 +1119,7 @@ static FlutterError *createConnectionError(NSString *channelName) {
     ));
     indent.addScoped(' {', '}', () {
       indent.writeln(
-          'NSString *channelName = @"${makeChannelName(api, func, dartPackageName)}";');
+          'NSString *channelName = [NSString stringWithFormat:@"%@%@", @"${makeChannelName(api, func, dartPackageName)}", _messageChannelSuffix];');
       indent.writeln('FlutterBasicMessageChannel *channel =');
       indent.nest(1, () {
         indent.writeln('[FlutterBasicMessageChannel');
@@ -1132,7 +1147,7 @@ static FlutterError *createConnectionError(NSString *channelName) {
               indent.writeln('completion(nil);');
             } else {
               if (func.returnType.isEnum) {
-                final String enumName = _enumName(returnType.baseName,
+                final String enumName = _enumName(func.returnType.baseName,
                     prefix: languageOptions.prefix, box: true);
                 indent.writeln('NSNumber *outputAsNumber = $nullCheck;');
                 indent.writeln(
@@ -1212,7 +1227,7 @@ String _callbackForType(
   if (type.isVoid) {
     return 'void (^)(FlutterError *_Nullable)';
   } else if (type.isEnum) {
-    return 'void (^)(${_enumName(objcType.baseName, suffix: ' *_Nullable', prefix: options.prefix, box: true)}, FlutterError *_Nullable)';
+    return 'void (^)(${_enumName(type.baseName, suffix: ' *_Nullable', prefix: options.prefix, box: true)}, FlutterError *_Nullable)';
   } else {
     return 'void (^)(${objcType.beforeString}_Nullable, FlutterError *_Nullable)';
   }
@@ -1484,22 +1499,8 @@ String _makeObjcSignature({
 /// provided [options].
 void generateObjcHeader(ObjcOptions options, Root root, Indent indent) {}
 
-String _listGetter(String list, NamedType field, int index, String? prefix) {
-  if (field.type.isClass) {
-    String className = field.type.baseName;
-    if (prefix != null) {
-      className = '$prefix$className';
-    }
-    return '[$className nullableFromList:(GetNullableObjectAtIndex($list, $index))]';
-  } else {
-    return 'GetNullableObjectAtIndex($list, $index)';
-  }
-}
-
 String _arrayValue(NamedType field) {
-  if (field.type.isClass) {
-    return '(self.${field.name} ? [self.${field.name} toList] : [NSNull null])';
-  } else if (field.type.isEnum) {
+  if (field.type.isEnum) {
     if (field.type.isNullable) {
       return '(self.${field.name} == nil ? [NSNull null] : [NSNumber numberWithInteger:self.${field.name}.value])';
     }
@@ -1523,17 +1524,27 @@ void _writeExtension(Indent indent, String apiName) {
   indent.writeln('@interface $apiName ()');
   indent.writeln(
       '@property(nonatomic, strong) NSObject<FlutterBinaryMessenger> *binaryMessenger;');
+  indent
+      .writeln('@property(nonatomic, strong) NSString *messageChannelSuffix;');
   indent.writeln('@end');
 }
 
-void _writeInitializer(Indent indent) {
+void _writeInitializers(Indent indent) {
   indent.write(
       '- (instancetype)initWithBinaryMessenger:(NSObject<FlutterBinaryMessenger> *)binaryMessenger ');
   indent.addScoped('{', '}', () {
-    indent.writeln('self = [super init];');
+    indent.writeln(
+        'return [self initWithBinaryMessenger:binaryMessenger messageChannelSuffix:@""];');
+  });
+  indent.write(
+      '- (instancetype)initWithBinaryMessenger:(NSObject<FlutterBinaryMessenger> *)binaryMessenger messageChannelSuffix:(nullable NSString*)messageChannelSuffix');
+  indent.addScoped('{', '}', () {
+    indent.writeln('self = [self init];');
     indent.write('if (self) ');
     indent.addScoped('{', '}', () {
       indent.writeln('_binaryMessenger = binaryMessenger;');
+      indent.writeln(
+          '_messageChannelSuffix = [messageChannelSuffix length] == 0 ? @"" : [NSString stringWithFormat: @".%@", messageChannelSuffix];');
     });
     indent.writeln('return self;');
   });

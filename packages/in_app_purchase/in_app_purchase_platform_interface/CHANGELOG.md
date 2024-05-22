@@ -1,3 +1,12 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.16/Dart 3.2.
+
+## 1.4.0
+
+* Adds `getCountryCode` API.
+* Updates minimum supported SDK version to Flutter 3.13/Dart 3.1.
+
 ## 1.3.7
 
 * Updates minimum required plugin_platform_interface version to 2.1.7.
@@ -35,7 +44,7 @@
 
 ## 1.3.0
 
-* Added new `PurchaseStatus` named `canceled` to distinguish between an error and user cancellation. 
+* Added new `PurchaseStatus` named `canceled` to distinguish between an error and user cancellation.
 
 ## 1.2.0
 

@@ -23,9 +23,6 @@ void main() {
 
   setUpAll(() {
     TestInAppPurchaseApi.setup(fakeStoreKitPlatform);
-    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-        .setMockMethodCallHandler(
-            SystemChannels.platform, fakeStoreKitPlatform.onMethodCall);
   });
 
   setUp(() {
@@ -571,6 +568,18 @@ void main() {
       expect(fakeStoreKitPlatform.queueIsActive, true);
       subscription2.cancel();
       expect(fakeStoreKitPlatform.queueIsActive, false);
+    });
+  });
+
+  group('billing configuration', () {
+    test('country_code', () async {
+      const String expectedCountryCode = 'CA';
+      fakeStoreKitPlatform.setStoreFrontInfo(
+          countryCode: expectedCountryCode, identifier: 'ABC');
+      final String countryCode = await iapStoreKitPlatform.countryCode();
+      expect(countryCode, expectedCountryCode);
+      // Ensure deprecated code keeps working until removed.
+      expect(await iapStoreKitPlatform.countryCode(), expectedCountryCode);
     });
   });
 }

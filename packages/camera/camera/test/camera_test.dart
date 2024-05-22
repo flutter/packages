@@ -111,6 +111,46 @@ void main() {
       expect(cameraController.value.isInitialized, isTrue);
     });
 
+    test('can be initialized with media settings', () async {
+      final CameraController cameraController = CameraController(
+        const CameraDescription(
+            name: 'cam',
+            lensDirection: CameraLensDirection.back,
+            sensorOrientation: 90),
+        ResolutionPreset.low,
+        fps: 15,
+        videoBitrate: 200000,
+        audioBitrate: 32000,
+        enableAudio: false,
+      );
+      await cameraController.initialize();
+
+      expect(cameraController.value.aspectRatio, 1);
+      expect(cameraController.value.previewSize, const Size(75, 75));
+      expect(cameraController.value.isInitialized, isTrue);
+      expect(cameraController.resolutionPreset, ResolutionPreset.low);
+      expect(cameraController.enableAudio, false);
+      expect(cameraController.mediaSettings.fps, 15);
+      expect(cameraController.mediaSettings.videoBitrate, 200000);
+      expect(cameraController.mediaSettings.audioBitrate, 32000);
+    });
+
+    test('default constructor initializes media settings', () async {
+      final CameraController cameraController = CameraController(
+          const CameraDescription(
+              name: 'cam',
+              lensDirection: CameraLensDirection.back,
+              sensorOrientation: 90),
+          ResolutionPreset.max);
+      await cameraController.initialize();
+
+      expect(cameraController.resolutionPreset, ResolutionPreset.max);
+      expect(cameraController.enableAudio, true);
+      expect(cameraController.mediaSettings.fps, isNull);
+      expect(cameraController.mediaSettings.videoBitrate, isNull);
+      expect(cameraController.mediaSettings.audioBitrate, isNull);
+    });
+
     test('can be disposed', () async {
       final CameraController cameraController = CameraController(
           const CameraDescription(
@@ -1430,14 +1470,19 @@ class MockCameraPlatform extends Mock
       Future<List<CameraDescription>>.value(mockAvailableCameras);
 
   @override
+  Future<int> createCameraWithSettings(
+          CameraDescription cameraDescription, MediaSettings? mediaSettings) =>
+      mockPlatformException
+          ? throw PlatformException(code: 'foo', message: 'bar')
+          : Future<int>.value(mockInitializeCamera);
+
+  @override
   Future<int> createCamera(
     CameraDescription description,
     ResolutionPreset? resolutionPreset, {
     bool enableAudio = false,
   }) =>
-      mockPlatformException
-          ? throw PlatformException(code: 'foo', message: 'bar')
-          : Future<int>.value(mockInitializeCamera);
+      createCameraWithSettings(description, null);
 
   @override
   Stream<CameraInitializedEvent> onCameraInitialized(int cameraId) =>

@@ -67,6 +67,11 @@
 @property(nonatomic, strong) FLTPolylinesController *polylinesController;
 @property(nonatomic, strong) FLTCirclesController *circlesController;
 @property(nonatomic, strong) FLTTileOverlaysController *tileOverlaysController;
+// The resulting error message, if any, from the last attempt to set the map style.
+// This is used to provide access to errors after the fact, since the map style is generally set at
+// creation time and there's no mechanism to return non-fatal error details during platform view
+// initialization.
+@property(nonatomic, copy) NSString *styleError;
 
 @end
 
@@ -78,29 +83,16 @@
                     registrar:(NSObject<FlutterPluginRegistrar> *)registrar {
   GMSCameraPosition *camera =
       [FLTGoogleMapJSONConversions cameraPostionFromDictionary:args[@"initialCameraPosition"]];
-  GMSMapView *mapView;
-  id mapID = nil;
+
+  GMSMapViewOptions *options = [[GMSMapViewOptions alloc] init];
+  options.frame = frame;
+  options.camera = camera;
   NSString *cloudMapId = args[@"options"][@"cloudMapId"];
-
   if (cloudMapId) {
-    Class mapIDClass = NSClassFromString(@"GMSMapID");
-    if (mapIDClass && [mapIDClass respondsToSelector:@selector(mapIDWithIdentifier:)]) {
-      mapID = [mapIDClass mapIDWithIdentifier:cloudMapId];
-    }
+    options.mapID = [GMSMapID mapIDWithIdentifier:cloudMapId];
   }
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-  // TODO(stuartmorgan): Switch to initWithOptions: once versions older than
-  // iOS 14 are no longer supported by the plugin, or there is a specific need
-  // for its functionality. Since it involves a newly-added class, call it
-  // dynamically is more trouble than it is currently worth.
-  if (mapID && [GMSMapView respondsToSelector:@selector(mapWithFrame:mapID:camera:)]) {
-    mapView = [GMSMapView mapWithFrame:frame mapID:mapID camera:camera];
-  } else {
-    mapView = [GMSMapView mapWithFrame:frame camera:camera];
-  }
-#pragma clang diagnostic pop
+  GMSMapView *mapView = [[GMSMapView alloc] initWithOptions:options];
 
   return [self initWithMapView:mapView viewIdentifier:viewId arguments:args registrar:registrar];
 }
@@ -400,13 +392,15 @@
     NSNumber *isBuildingsEnabled = @(self.mapView.buildingsEnabled);
     result(isBuildingsEnabled);
   } else if ([call.method isEqualToString:@"map#setStyle"]) {
-    NSString *mapStyle = [call arguments];
-    NSString *error = [self setMapStyle:mapStyle];
-    if (error == nil) {
+    id mapStyle = [call arguments];
+    self.styleError = [self setMapStyle:(mapStyle == [NSNull null] ? nil : mapStyle)];
+    if (self.styleError == nil) {
       result(@[ @(YES) ]);
     } else {
-      result(@[ @(NO), error ]);
+      result(@[ @(NO), self.styleError ]);
     }
+  } else if ([call.method isEqualToString:@"map#getStyleError"]) {
+    result(self.styleError);
   } else if ([call.method isEqualToString:@"map#getTileOverlayInfo"]) {
     NSString *rawTileOverlayId = call.arguments[@"tileOverlayId"];
     result([self.tileOverlaysController tileOverlayInfoWithIdentifier:rawTileOverlayId]);
@@ -506,7 +500,7 @@
 }
 
 - (NSString *)setMapStyle:(NSString *)mapStyle {
-  if (mapStyle == (id)[NSNull null] || mapStyle.length == 0) {
+  if (mapStyle.length == 0) {
     self.mapView.mapStyle = nil;
     return nil;
   }
@@ -657,6 +651,10 @@
   NSNumber *myLocationButtonEnabled = data[@"myLocationButtonEnabled"];
   if (myLocationButtonEnabled && myLocationButtonEnabled != (id)[NSNull null]) {
     [self setMyLocationButtonEnabled:[myLocationButtonEnabled boolValue]];
+  }
+  NSString *style = data[@"style"];
+  if (style) {
+    self.styleError = [self setMapStyle:style];
   }
 }
 

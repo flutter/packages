@@ -398,5 +398,65 @@ void defineTests() {
         );
       },
     );
+
+    testWidgets(
+      'deprecated textScaleFactor is converted to linear scaler',
+      (WidgetTester tester) async {
+        const double scaleFactor = 2.0;
+        final MarkdownStyleSheet style = MarkdownStyleSheet(
+          textScaleFactor: scaleFactor,
+        );
+
+        expect(style.textScaler, const TextScaler.linear(scaleFactor));
+        expect(style.textScaleFactor, scaleFactor);
+      },
+    );
+
+    testWidgets(
+      'deprecated textScaleFactor is null when a scaler is provided',
+      (WidgetTester tester) async {
+        const TextScaler scaler = TextScaler.linear(2.0);
+        final MarkdownStyleSheet style = MarkdownStyleSheet(
+          textScaler: scaler,
+        );
+
+        expect(style.textScaler, scaler);
+        expect(style.textScaleFactor, null);
+      },
+    );
+
+    testWidgets(
+      'copyWith textScaler overwrites both textScaler and textScaleFactor',
+      (WidgetTester tester) async {
+        final MarkdownStyleSheet original = MarkdownStyleSheet(
+          textScaleFactor: 2.0,
+        );
+
+        const TextScaler newScaler = TextScaler.linear(3.0);
+        final MarkdownStyleSheet copy = original.copyWith(
+          textScaler: newScaler,
+        );
+
+        expect(copy.textScaler, newScaler);
+        expect(copy.textScaleFactor, null);
+      },
+    );
+
+    testWidgets(
+      'copyWith textScaleFactor overwrites both textScaler and textScaleFactor',
+      (WidgetTester tester) async {
+        final MarkdownStyleSheet original = MarkdownStyleSheet(
+          textScaleFactor: 2.0,
+        );
+
+        const double newScaleFactor = 3.0;
+        final MarkdownStyleSheet copy = original.copyWith(
+          textScaleFactor: newScaleFactor,
+        );
+
+        expect(copy.textScaler, const TextScaler.linear(newScaleFactor));
+        expect(copy.textScaleFactor, newScaleFactor);
+      },
+    );
   });
 }

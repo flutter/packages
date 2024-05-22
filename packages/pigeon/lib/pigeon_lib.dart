@@ -177,6 +177,12 @@ class SwiftFunction {
   final String value;
 }
 
+/// Metadata to annotate data classes to be defined as class in Swift output.
+class SwiftClass {
+  /// Constructor.
+  const SwiftClass();
+}
+
 /// Type of TaskQueue which determines how handlers are dispatched for
 /// HostApi's.
 enum TaskQueueType {
@@ -388,7 +394,7 @@ class PigeonOptions {
       if (oneLanguage != null) 'oneLanguage': oneLanguage!,
       if (debugGenerators != null) 'debugGenerators': debugGenerators!,
       if (basePath != null) 'basePath': basePath!,
-      if (_dartPackageName != null) 'dartPackageName': _dartPackageName!,
+      if (_dartPackageName != null) 'dartPackageName': _dartPackageName,
     };
     return result;
   }
@@ -699,6 +705,7 @@ class SwiftGeneratorAdapter implements GeneratorAdapter {
           ? _lineReader(
               path.posix.join(options.basePath ?? '', options.copyrightHeader))
           : null,
+      errorClassName: swiftOptions.errorClassName,
     ));
     const SwiftGenerator generator = SwiftGenerator();
     generator.generate(
@@ -776,6 +783,7 @@ class KotlinGeneratorAdapter implements GeneratorAdapter {
         options.kotlinOptions ?? const KotlinOptions();
     kotlinOptions = kotlinOptions.merge(KotlinOptions(
       errorClassName: kotlinOptions.errorClassName ?? 'FlutterError',
+      includeErrorClass: kotlinOptions.includeErrorClass,
       copyrightHeader: options.copyrightHeader != null
           ? _lineReader(
               path.posix.join(options.basePath ?? '', options.copyrightHeader))
@@ -1029,10 +1037,10 @@ List<Error> _validateProxyApi(
     }
 
     // Validate this api isn't used as an interface and contains anything except
-    // Flutter methods.
-    final bool isValidInterfaceProxyApi = api.hostMethods.isEmpty &&
-        api.constructors.isEmpty &&
-        api.fields.isEmpty;
+    // Flutter methods, a static host method, attached methods.
+    final bool isValidInterfaceProxyApi = api.constructors.isEmpty &&
+        api.fields.where((ApiField field) => !field.isStatic).isEmpty &&
+        api.hostMethods.where((Method method) => !method.isStatic).isEmpty;
     if (!isValidInterfaceProxyApi) {
       final Iterable<String> interfaceNames = proxyApi.interfaces.map(
         (TypeDeclaration type) => type.baseName,
@@ -1549,6 +1557,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
       _currentClass = Class(
         name: node.name.lexeme,
         fields: <NamedType>[],
+        isSwiftClass: _hasMetadata(node.metadata, 'SwiftClass'),
         documentationComments:
             _documentationCommentsParser(node.documentationComment?.tokens),
       );

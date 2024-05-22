@@ -23,10 +23,10 @@ const String kNavigationExamplePage = '''
 <head><title>Navigation Delegate Example</title></head>
 <body>
 <p>
-The navigation delegate is set to block navigation to the youtube website.
+The navigation delegate is set to block navigation to the pub.dev website.
 </p>
 <ul>
-<ul><a href="https://www.youtube.com/">https://www.youtube.com/</a></ul>
+<ul><a href="https://pub.dev/">https://pub.dev/</a></ul>
 <ul><a href="https://www.google.com/">https://www.google.com/</a></ul>
 </ul>
 </body>
@@ -172,6 +172,11 @@ class _WebViewExampleState extends State<WebViewExample> {
           })
           ..setOnPageFinished((String url) {
             debugPrint('Page finished loading: $url');
+          })
+          ..setOnHttpError((HttpResponseError error) {
+            debugPrint(
+              'HTTP error occured on page: ${error.response?.statusCode}',
+            );
           })
           ..setOnWebResourceError((WebResourceError error) {
             debugPrint('''

@@ -74,7 +74,10 @@ Future<void> main() async {
 
     final int gcIdentifier = await gcCompleter.future;
     expect(gcIdentifier, 0);
-  }, timeout: const Timeout(Duration(seconds: 10)));
+  },
+      // TODO(bparrishMines): See https://github.com/flutter/flutter/issues/148345
+      skip: true,
+      timeout: const Timeout(Duration(seconds: 10)));
 
   testWidgets(
     'WKWebView is released by garbage collection',
@@ -987,6 +990,81 @@ Future<void> main() async {
       },
     );
 
+    testWidgets('onHttpError', (WidgetTester tester) async {
+      final Completer<HttpResponseError> errorCompleter =
+          Completer<HttpResponseError>();
+
+      final PlatformWebViewController controller = PlatformWebViewController(
+        const PlatformWebViewControllerCreationParams(),
+      );
+      unawaited(controller.setJavaScriptMode(JavaScriptMode.unrestricted));
+      final PlatformNavigationDelegate delegate = PlatformNavigationDelegate(
+        const PlatformNavigationDelegateCreationParams(),
+      );
+      unawaited(delegate.setOnHttpError((HttpResponseError error) {
+        errorCompleter.complete(error);
+      }));
+      unawaited(controller.setPlatformNavigationDelegate(delegate));
+      unawaited(controller.loadRequest(
+        LoadRequestParams(uri: Uri.parse('$prefixUrl/favicon.ico')),
+      ));
+
+      await tester.pumpWidget(Builder(
+        builder: (BuildContext context) {
+          return PlatformWebViewWidget(
+            PlatformWebViewWidgetCreationParams(controller: controller),
+          ).build(context);
+        },
+      ));
+
+      final HttpResponseError error = await errorCompleter.future;
+
+      expect(error, isNotNull);
+      expect(error.response?.statusCode, 404);
+    });
+
+    testWidgets('onHttpError is not called when no HTTP error is received',
+        (WidgetTester tester) async {
+      const String testPage = '''
+        <!DOCTYPE html><html>
+        </head>
+        <body>
+        </body>
+        </html>
+      ''';
+
+      final Completer<HttpResponseError> errorCompleter =
+          Completer<HttpResponseError>();
+      final Completer<void> pageFinishCompleter = Completer<void>();
+
+      final PlatformWebViewController controller = PlatformWebViewController(
+        const PlatformWebViewControllerCreationParams(),
+      );
+      unawaited(controller.setJavaScriptMode(JavaScriptMode.unrestricted));
+      final PlatformNavigationDelegate delegate = PlatformNavigationDelegate(
+        const PlatformNavigationDelegateCreationParams(),
+      );
+      unawaited(delegate.setOnHttpError((HttpResponseError error) {
+        errorCompleter.complete(error);
+      }));
+      unawaited(delegate.setOnPageFinished(
+        (_) => pageFinishCompleter.complete(),
+      ));
+      unawaited(controller.setPlatformNavigationDelegate(delegate));
+      unawaited(controller.loadHtmlString(testPage));
+
+      await tester.pumpWidget(Builder(
+        builder: (BuildContext context) {
+          return PlatformWebViewWidget(
+            PlatformWebViewWidgetCreationParams(controller: controller),
+          ).build(context);
+        },
+      ));
+
+      expect(errorCompleter.future, doesNotComplete);
+      await pageFinishCompleter.future;
+    });
+
     testWidgets('can block requests', (WidgetTester tester) async {
       Completer<void> pageLoaded = Completer<void>();
 
@@ -1446,6 +1524,64 @@ Future<void> main() async {
 
       await expectLater(
           debugMessageReceived.future, completion('debug:Debug message'));
+    });
+
+    testWidgets('can receive console log messages with cyclic object value',
+        (WidgetTester tester) async {
+      const String testPage = '''
+          <!DOCTYPE html>
+          <html>
+          <head>
+            <title>WebResourceError test</title>
+            <script type="text/javascript">
+            function onLoad() {
+              const obj1 = {
+                name: "obj1",
+              };
+              const obj2 = {
+                name: "obj2",
+                obj1: obj1,
+              };
+              const obj = {
+                obj1: obj1,
+                obj2: obj2,
+              };
+              obj.self = obj;
+              console.log(obj);
+            }
+          </script>
+          </head>
+          <body onload="onLoad();">
+          </html>
+         ''';
+
+      final Completer<String> debugMessageReceived = Completer<String>();
+      final PlatformWebViewController controller = PlatformWebViewController(
+        const PlatformWebViewControllerCreationParams(),
+      );
+      unawaited(controller.setJavaScriptMode(JavaScriptMode.unrestricted));
+
+      await controller
+          .setOnConsoleMessage((JavaScriptConsoleMessage consoleMessage) {
+        debugMessageReceived
+            .complete('${consoleMessage.level.name}:${consoleMessage.message}');
+      });
+
+      await controller.loadHtmlString(testPage);
+
+      await tester.pumpWidget(Builder(
+        builder: (BuildContext context) {
+          return PlatformWebViewWidget(
+            PlatformWebViewWidgetCreationParams(controller: controller),
+          ).build(context);
+        },
+      ));
+
+      await expectLater(
+        debugMessageReceived.future,
+        completion(
+            'log:{"obj1":{"name":"obj1"},"obj2":{"name":"obj2","obj1":{"name":"obj1"}}}'),
+      );
     });
   });
 }

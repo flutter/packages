@@ -341,9 +341,7 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
           in getFieldsInSerializationOrder(classDefinition)) {
         String toWriteValue = '';
         final String fieldName = field.name;
-        if (field.type.isClass) {
-          toWriteValue = '($fieldName == null) ? null : $fieldName.toList()';
-        } else if (field.type.isEnum) {
+        if (field.type.isEnum) {
           toWriteValue = '$fieldName == null ? null : $fieldName.index';
         } else {
           toWriteValue = field.name;
@@ -364,7 +362,7 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
   }) {
     indent.newln();
     indent.write(
-        'static @NonNull ${classDefinition.name} fromList(@NonNull ArrayList<Object> list) ');
+        'static @NonNull ${classDefinition.name} fromList(@NonNull ArrayList<Object> ${varNamePrefix}list) ');
     indent.addScoped('{', '}', () {
       const String result = 'pigeonResult';
       indent.writeln(
@@ -373,7 +371,8 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
           (int index, final NamedType field) {
         final String fieldVariable = field.name;
         final String setter = _makeSetter(field);
-        indent.writeln('Object $fieldVariable = list.get($index);');
+        indent.writeln(
+            'Object $fieldVariable = ${varNamePrefix}list.get($index);');
         if (field.type.isEnum) {
           indent.writeln(
               '$result.$setter(${_intToEnum(fieldVariable, field.type.baseName, field.type.isNullable)});');
@@ -426,11 +425,19 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
     indent.write('public static class ${api.name} ');
     indent.addScoped('{', '}', () {
       indent.writeln('private final @NonNull BinaryMessenger binaryMessenger;');
+      indent.writeln('private final String messageChannelSuffix;');
       indent.newln();
       indent.write(
           'public ${api.name}(@NonNull BinaryMessenger argBinaryMessenger) ');
       indent.addScoped('{', '}', () {
+        indent.writeln('this(argBinaryMessenger, "");');
+      });
+      indent.write(
+          'public ${api.name}(@NonNull BinaryMessenger argBinaryMessenger, @NonNull String messageChannelSuffix) ');
+      indent.addScoped('{', '}', () {
         indent.writeln('this.binaryMessenger = argBinaryMessenger;');
+        indent.writeln(
+            'this.messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;');
       });
       indent.newln();
       indent.writeln('/** Public interface for sending reply. */ ');
@@ -481,7 +488,7 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
         indent.addScoped('{', '}', () {
           const String channel = 'channel';
           indent.writeln(
-              'final String channelName = "${makeChannelName(api, func, dartPackageName)}";');
+              'final String channelName = "${makeChannelName(api, func, dartPackageName)}" + messageChannelSuffix;');
           indent.writeln('BasicMessageChannel<Object> $channel =');
           indent.nest(2, () {
             indent.writeln('new BasicMessageChannel<>(');
@@ -608,9 +615,16 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
 
       indent.writeln(
           '${_docCommentPrefix}Sets up an instance of `${api.name}` to handle messages through the `binaryMessenger`.$_docCommentSuffix');
+      indent.writeScoped(
+          'static void setUp(@NonNull BinaryMessenger binaryMessenger, @Nullable ${api.name} api) {',
+          '}', () {
+        indent.writeln('setUp(binaryMessenger, "", api);');
+      });
       indent.write(
-          'static void setUp(@NonNull BinaryMessenger binaryMessenger, @Nullable ${api.name} api) ');
+          'static void setUp(@NonNull BinaryMessenger binaryMessenger, @NonNull String messageChannelSuffix, @Nullable ${api.name} api) ');
       indent.addScoped('{', '}', () {
+        indent.writeln(
+            'messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;');
         for (final Method method in api.methods) {
           _writeMethodSetUp(
             generatorOptions,
@@ -687,7 +701,8 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
       indent.nest(2, () {
         indent.writeln('new BasicMessageChannel<>(');
         indent.nest(2, () {
-          indent.write('binaryMessenger, "$channelName", getCodec()');
+          indent.write(
+              'binaryMessenger, "$channelName" + messageChannelSuffix, getCodec()');
           if (taskQueue != null) {
             indent.addln(', $taskQueue);');
           } else {
@@ -1107,8 +1122,6 @@ String _castObject(NamedType field, String varName) {
       field, (TypeDeclaration x) => _javaTypeForBuiltinDartType(x));
   if (field.type.baseName == 'int') {
     return '($varName == null) ? null : (($varName instanceof Integer) ? (Integer) $varName : (${hostDatatype.datatype}) $varName)';
-  } else if (field.type.isClass) {
-    return '($varName == null) ? null : ${hostDatatype.datatype}.fromList((ArrayList<Object>) $varName)';
   } else {
     return _cast(varName, javaType: hostDatatype.datatype);
   }

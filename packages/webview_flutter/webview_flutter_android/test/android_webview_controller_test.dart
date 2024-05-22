@@ -140,6 +140,11 @@ void main() {
                     onPageFinished,
                 void Function(android_webview.WebView webView, String url)?
                     onPageStarted,
+                void Function(
+                        android_webview.WebView webView,
+                        android_webview.WebResourceRequest request,
+                        android_webview.WebResourceResponse response)?
+                    onReceivedHttpError,
                 @Deprecated('Only called on Android version < 23.')
                 void Function(
                   android_webview.WebView webView,

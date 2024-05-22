@@ -1,3 +1,15 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.16/Dart 3.2.
+
+## 6.2.6
+
+* Updates minimum iOS implementation version to include a privacy manifest.
+
+## 6.2.5
+
+* Removes use of deprecated `renderView` API.
+
 ## 6.2.4
 
 * Updates support matrix in README to indicate that iOS 11 is no longer supported.

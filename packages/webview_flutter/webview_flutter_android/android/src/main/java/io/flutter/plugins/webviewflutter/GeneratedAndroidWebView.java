@@ -317,6 +317,58 @@ public class GeneratedAndroidWebView {
   }
 
   /** Generated class from Pigeon that represents data sent in messages. */
+  public static final class WebResourceResponseData {
+    private @NonNull Long statusCode;
+
+    public @NonNull Long getStatusCode() {
+      return statusCode;
+    }
+
+    public void setStatusCode(@NonNull Long setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"statusCode\" is null.");
+      }
+      this.statusCode = setterArg;
+    }
+
+    /** Constructor is non-public to enforce null safety; use Builder. */
+    WebResourceResponseData() {}
+
+    public static final class Builder {
+
+      private @Nullable Long statusCode;
+
+      public @NonNull Builder setStatusCode(@NonNull Long setterArg) {
+        this.statusCode = setterArg;
+        return this;
+      }
+
+      public @NonNull WebResourceResponseData build() {
+        WebResourceResponseData pigeonReturn = new WebResourceResponseData();
+        pigeonReturn.setStatusCode(statusCode);
+        return pigeonReturn;
+      }
+    }
+
+    @NonNull
+    ArrayList<Object> toList() {
+      ArrayList<Object> toListResult = new ArrayList<Object>(1);
+      toListResult.add(statusCode);
+      return toListResult;
+    }
+
+    static @NonNull WebResourceResponseData fromList(@NonNull ArrayList<Object> list) {
+      WebResourceResponseData pigeonResult = new WebResourceResponseData();
+      Object statusCode = list.get(0);
+      pigeonResult.setStatusCode(
+          (statusCode == null)
+              ? null
+              : ((statusCode instanceof Integer) ? (Integer) statusCode : (Long) statusCode));
+      return pigeonResult;
+    }
+  }
+
+  /** Generated class from Pigeon that represents data sent in messages. */
   public static final class WebResourceErrorData {
     private @NonNull Long errorCode;
 
@@ -2388,6 +2440,8 @@ public class GeneratedAndroidWebView {
           return WebResourceErrorData.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 129:
           return WebResourceRequestData.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 130:
+          return WebResourceResponseData.fromList((ArrayList<Object>) readValue(buffer));
         default:
           return super.readValueOfType(type, buffer);
       }
@@ -2401,6 +2455,9 @@ public class GeneratedAndroidWebView {
       } else if (value instanceof WebResourceRequestData) {
         stream.write(129);
         writeValue(stream, ((WebResourceRequestData) value).toList());
+      } else if (value instanceof WebResourceResponseData) {
+        stream.write(130);
+        writeValue(stream, ((WebResourceResponseData) value).toList());
       } else {
         super.writeValue(stream, value);
       }
@@ -2452,6 +2509,23 @@ public class GeneratedAndroidWebView {
               getCodec());
       channel.send(
           new ArrayList<Object>(Arrays.asList(instanceIdArg, webViewInstanceIdArg, urlArg)),
+          channelReply -> callback.reply(null));
+    }
+
+    public void onReceivedHttpError(
+        @NonNull Long instanceIdArg,
+        @NonNull Long webViewInstanceIdArg,
+        @NonNull WebResourceRequestData requestArg,
+        @NonNull WebResourceResponseData responseArg,
+        @NonNull Reply<Void> callback) {
+      BasicMessageChannel<Object> channel =
+          new BasicMessageChannel<>(
+              binaryMessenger,
+              "dev.flutter.pigeon.webview_flutter_android.WebViewClientFlutterApi.onReceivedHttpError",
+              getCodec());
+      channel.send(
+          new ArrayList<Object>(
+              Arrays.asList(instanceIdArg, webViewInstanceIdArg, requestArg, responseArg)),
           channelReply -> callback.reply(null));
     }
 

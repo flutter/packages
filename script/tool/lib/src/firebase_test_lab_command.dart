@@ -360,8 +360,16 @@ class FirebaseTestLabCommand extends PackageLoopingCommand {
         .where((FileSystemEntity entity) => entity is File)
         .cast<File>()
         .any((File file) {
-      return file.basename.endsWith('.java') &&
-          file.readAsStringSync().contains('@RunWith(FlutterTestRunner.class)');
+      if (file.basename.endsWith('.java')) {
+        return file
+            .readAsStringSync()
+            .contains('@RunWith(FlutterTestRunner.class)');
+      } else if (file.basename.endsWith('.kt')) {
+        return file
+            .readAsStringSync()
+            .contains('@RunWith(FlutterTestRunner::class)');
+      }
+      return false;
     });
   }
 }

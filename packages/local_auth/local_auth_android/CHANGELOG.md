@@ -1,5 +1,11 @@
-## NEXT
+## 1.0.38
 
+* Updates minSdkVersion to 19.
+* Updates minimum supported SDK version to Flutter 3.16/Dart 3.2.
+
+## 1.0.37
+
+* Adds compatibility with `intl` 0.19.0.
 * Updates compileSdk version to 34.
 
 ## 1.0.36

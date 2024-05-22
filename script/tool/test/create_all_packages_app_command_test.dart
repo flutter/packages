@@ -108,6 +108,21 @@ dev_dependencies:
 ###
 ''');
 
+    // iOS
+    final Directory iOS = package.platformDirectory(FlutterPlatform.ios);
+    iOS.childDirectory('Runner.xcodeproj').childFile('project.pbxproj')
+      ..createSync(recursive: true)
+      ..writeAsStringSync('''
+    97C147041CF9000F007C117D /* Release */ = {
+      isa = XCBuildConfiguration;
+      buildSettings = {
+        GCC_WARN_UNUSED_VARIABLE = YES;
+        IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+      };
+      name = Release;
+    };
+''');
+
     // macOS
     final Directory macOS = package.platformDirectory(FlutterPlatform.macos);
     macOS.childDirectory('Runner.xcodeproj').childFile('project.pbxproj')
@@ -432,6 +447,24 @@ android {
           everyElement((String line) =>
               !line.contains('MACOSX_DEPLOYMENT_TARGET') ||
               line.contains('10.15')));
+    });
+
+    test('iOS deployment target is modified in pbxproj', () async {
+      writeFakeFlutterCreateOutput(testRoot);
+      createFakePlugin('plugina', packagesDir);
+
+      await runCapturingPrint(runner, <String>['create-all-packages-app']);
+      final List<String> pbxproj = command.app
+          .platformDirectory(FlutterPlatform.ios)
+          .childDirectory('Runner.xcodeproj')
+          .childFile('project.pbxproj')
+          .readAsLinesSync();
+
+      expect(
+          pbxproj,
+          everyElement((String line) =>
+              !line.contains('IPHONEOS_DEPLOYMENT_TARGET') ||
+              line.contains('14.0')));
     });
 
     test('calls flutter pub get', () async {

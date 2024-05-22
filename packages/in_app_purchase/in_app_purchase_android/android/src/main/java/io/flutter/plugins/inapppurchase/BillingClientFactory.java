@@ -7,7 +7,7 @@ package io.flutter.plugins.inapppurchase;
 import android.content.Context;
 import androidx.annotation.NonNull;
 import com.android.billingclient.api.BillingClient;
-import io.flutter.plugin.common.MethodChannel;
+import io.flutter.plugins.inapppurchase.Messages.PlatformBillingChoiceMode;
 
 /** Responsible for creating a {@link BillingClient} object. */
 interface BillingClientFactory {
@@ -16,11 +16,13 @@ interface BillingClientFactory {
    * Creates and returns a {@link BillingClient}.
    *
    * @param context The context used to create the {@link BillingClient}.
-   * @param channel The method channel used to create the {@link BillingClient}.
+   * @param callbackApi The callback API to be used by the {@link BillingClient}.
    * @param billingChoiceMode Enables the ability to offer alternative billing or Google Play
    *     billing.
    * @return The {@link BillingClient} object that is created.
    */
   BillingClient createBillingClient(
-      @NonNull Context context, @NonNull MethodChannel channel, int billingChoiceMode);
+      @NonNull Context context,
+      @NonNull Messages.InAppPurchaseCallbackApi callbackApi,
+      PlatformBillingChoiceMode billingChoiceMode);
 }

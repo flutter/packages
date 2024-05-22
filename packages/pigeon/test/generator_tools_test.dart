@@ -404,10 +404,8 @@ void main() {
       ),
     );
 
-    final List<AstProxyApi> apiChain = recursiveGetSuperClassApisChain(api);
-
     expect(
-      apiChain,
+      api.allSuperClasses().toList(),
       containsAllInOrder(<AstProxyApi>[
         superClassApi,
         superClassOfSuperClassApi,
@@ -478,10 +476,8 @@ void main() {
       },
     );
 
-    final Set<AstProxyApi> allInterfaces = recursiveFindAllInterfaceApis(api);
-
     expect(
-      allInterfaces,
+      api.apisOfInterfaces(),
       containsAll(<AstProxyApi>[
         interfaceApi,
         interfaceApi2,
@@ -523,9 +519,6 @@ void main() {
       TypeDeclaration(baseName: 'A', isNullable: false, associatedProxyApi: a),
     };
 
-    expect(
-      () => recursiveFindAllInterfaceApis(a),
-      throwsArgumentError,
-    );
+    expect(() => a.apisOfInterfaces(), throwsArgumentError);
   });
 }

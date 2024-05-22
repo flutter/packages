@@ -20,9 +20,11 @@ API_AVAILABLE(ios(11.2), macos(10.13.2))
 
 @interface SKProductStub : SKProduct
 - (instancetype)initWithMap:(NSDictionary *)map;
+- (instancetype)initWithProductID:(NSString *)productIdentifier;
 @end
 
 @interface SKProductRequestStub : SKProductsRequest
+@property(assign, nonatomic) BOOL returnError;
 - (instancetype)initWithProductIdentifiers:(NSSet<NSString *> *)productIdentifiers;
 - (instancetype)initWithFailureError:(NSError *)error;
 @end
@@ -31,7 +33,7 @@ API_AVAILABLE(ios(11.2), macos(10.13.2))
 - (instancetype)initWithMap:(NSDictionary *)map;
 @end
 
-@interface InAppPurchasePluginStub : InAppPurchasePlugin
+@interface SKRequestStub : SKRequest
 @end
 
 @interface SKPaymentQueueStub : SKPaymentQueue

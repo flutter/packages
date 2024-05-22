@@ -66,7 +66,7 @@ class CameraStateTypeData {
 /// If you need to add another type to support a type S to use a LiveData<S> in
 /// this plugin, ensure the following is done on the Dart side:
 ///
-///  * In `../lib/src/live_data.dart`, add new cases for S in
+///  * In `camera_android_camerax/lib/src/live_data.dart`, add new cases for S in
 ///    `_LiveDataHostApiImpl#getValueFromInstances` to get the current value of
 ///    type S from a LiveData<S> instance and in `LiveDataFlutterApiImpl#create`
 ///    to create the expected type of LiveData<S> when requested.
@@ -126,6 +126,15 @@ enum VideoResolutionFallbackRule {
   lowerQualityThan,
 }
 
+/// Video recording status.
+///
+/// See https://developer.android.com/reference/androidx/camera/video/VideoRecordEvent.
+enum VideoRecordEvent { start, finalize }
+
+class VideoRecordEventData {
+  late VideoRecordEvent value;
+}
+
 /// Convenience class for building [FocusMeteringAction]s with multiple metering
 /// points.
 class MeteringPointInfo {
@@ -148,7 +157,7 @@ class MeteringPointInfo {
 /// If you need to add another option to support, ensure the following is done
 /// on the Dart side:
 ///
-///  * In `../lib/src/capture_request_options.dart`, add new cases for this
+///  * In `camera_android_camerax/lib/src/capture_request_options.dart`, add new cases for this
 ///    option in `_CaptureRequestOptionsHostApiImpl#createFromInstances`
 ///    to create the expected Map entry of option key index and value to send to
 ///    the native side.
@@ -325,6 +334,8 @@ abstract class PendingRecordingHostApi {
 @FlutterApi()
 abstract class PendingRecordingFlutterApi {
   void create(int identifier);
+
+  void onVideoRecordingEvent(VideoRecordEventData event);
 }
 
 @HostApi(dartHostTestHandler: 'TestRecordingHostApi')
@@ -366,6 +377,7 @@ abstract class ResolutionSelectorHostApi {
   void create(
     int identifier,
     int? resolutionStrategyIdentifier,
+    int? resolutionSelectorIdentifier,
     int? aspectRatioStrategyIdentifier,
   );
 }
@@ -485,13 +497,13 @@ abstract class CameraControlHostApi {
   void setZoomRatio(int identifier, double ratio);
 
   @async
-  int startFocusAndMetering(int identifier, int focusMeteringActionId);
+  int? startFocusAndMetering(int identifier, int focusMeteringActionId);
 
   @async
   void cancelFocusAndMetering(int identifier);
 
   @async
-  int setExposureCompensationIndex(int identifier, int index);
+  int? setExposureCompensationIndex(int identifier, int index);
 }
 
 @FlutterApi()
@@ -501,7 +513,8 @@ abstract class CameraControlFlutterApi {
 
 @HostApi(dartHostTestHandler: 'TestFocusMeteringActionHostApi')
 abstract class FocusMeteringActionHostApi {
-  void create(int identifier, List<MeteringPointInfo> meteringPointInfos);
+  void create(int identifier, List<MeteringPointInfo> meteringPointInfos,
+      bool? disableAutoCancel);
 }
 
 @HostApi(dartHostTestHandler: 'TestFocusMeteringResultHostApi')
@@ -516,7 +529,8 @@ abstract class FocusMeteringResultFlutterApi {
 
 @HostApi(dartHostTestHandler: 'TestMeteringPointHostApi')
 abstract class MeteringPointHostApi {
-  void create(int identifier, double x, double y, double? size);
+  void create(
+      int identifier, double x, double y, double? size, int cameraInfoId);
 
   double getDefaultPointSize();
 }
@@ -533,4 +547,24 @@ abstract class Camera2CameraControlHostApi {
   @async
   void addCaptureRequestOptions(
       int identifier, int captureRequestOptionsIdentifier);
+}
+
+@HostApi(dartHostTestHandler: 'TestResolutionFilterHostApi')
+abstract class ResolutionFilterHostApi {
+  void createWithOnePreferredSize(
+      int identifier, ResolutionInfo preferredResolution);
+}
+
+@HostApi(dartHostTestHandler: 'TestCamera2CameraInfoHostApi')
+abstract class Camera2CameraInfoHostApi {
+  int createFrom(int cameraInfoIdentifier);
+
+  int getSupportedHardwareLevel(int identifier);
+
+  String getCameraId(int identifier);
+}
+
+@FlutterApi()
+abstract class Camera2CameraInfoFlutterApi {
+  void create(int identifier);
 }

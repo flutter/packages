@@ -23,10 +23,11 @@ packages/google_identity_services_web/**                 @ditman
 packages/google_maps_flutter/**                          @stuartmorgan
 packages/google_sign_in/**                               @stuartmorgan
 packages/image_picker/**                                 @tarrinneal
+packages/interactive_media_ads/**                        @bparrishMines
 packages/in_app_purchase/**                              @bparrishMines
 packages/local_auth/**                                   @stuartmorgan
 packages/metrics_center/**                               @keyonghan
-packages/multicast_dns/**                                @dnfield
+packages/multicast_dns/**                                @jmagman
 packages/palette_generator/**                            @gspencergoog
 packages/path_provider/**                                @stuartmorgan
 packages/pigeon/**                                       @tarrinneal
@@ -80,22 +81,26 @@ packages/video_player/video_player_android/**            @camsim99
 # Owned by ecosystem team for now during the wrapper evaluation.
 packages/webview_flutter/webview_flutter_android/**      @bparrishMines
 
-# - iOS
+# - Darwin
 packages/camera/camera_avfoundation/**                   @hellohuanlin
 packages/file_selector/file_selector_ios/**              @jmagman
-packages/google_maps_flutter/google_maps_flutter_ios/**  @hellohuanlin
-packages/google_sign_in/google_sign_in_ios/**            @vashworth
-packages/image_picker/image_picker_ios/**                @vashworth
+packages/file_selector/file_selector_macos/**            @jmagman
+packages/google_maps_flutter/google_maps_flutter_ios/**  @cbracken
+packages/google_sign_in/google_sign_in_ios/**            @vashworth @loic-sharma
+packages/image_picker/image_picker_ios/**                @vashworth @loic-sharma
+packages/image_picker/image_picker_macos/**              @jmagman
 packages/in_app_purchase/in_app_purchase_storekit/**     @louisehsu
 packages/ios_platform_images/**                          @jmagman
-packages/local_auth/local_auth_darwin/**                    @louisehsu
+packages/local_auth/local_auth_darwin/**                 @louisehsu
 packages/path_provider/path_provider_foundation/**       @jmagman
-packages/pointer_interceptor/pointer_interceptor_ios/**  @ditman
-packages/quick_actions/quick_actions_ios/**              @hellohuanlin
+packages/pigeon/**/ios/**/*                              @hellohuanlin @louisehsu
+packages/pointer_interceptor/pointer_interceptor_ios/**  @louisehsu
+packages/quick_actions/quick_actions_ios/**              @jmagman
 packages/shared_preferences/shared_preferences_foundation/**  @tarrinneal
 packages/url_launcher/url_launcher_ios/**                @jmagman
+packages/url_launcher/url_launcher_macos/**              @jmagman
 packages/video_player/video_player_avfoundation/**       @hellohuanlin
-packages/webview_flutter/webview_flutter_wkwebview/**    @hellohuanlin
+packages/webview_flutter/webview_flutter_wkwebview/**    @cbracken
 
 # - Linux
 packages/file_selector/file_selector_linux/**            @cbracken
@@ -103,11 +108,6 @@ packages/image_picker/image_picker_linux/**              @cbracken
 packages/path_provider/path_provider_linux/**            @cbracken
 packages/shared_preferences/shared_preferences_linux/**  @cbracken
 packages/url_launcher/url_launcher_linux/**              @cbracken
-
-# - macOS
-packages/file_selector/file_selector_macos/**            @cbracken
-packages/image_picker/image_picker_macos/**              @cbracken
-packages/url_launcher/url_launcher_macos/**              @cbracken
 
 # - Windows
 packages/camera/camera_windows/**                        @cbracken

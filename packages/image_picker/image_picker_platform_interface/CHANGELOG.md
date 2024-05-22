@@ -1,3 +1,12 @@
+## 2.10.0
+
+* Adds limit parameter to `MediaOptions` and `MultiImagePickerOptions`.
+
+## 2.9.4
+
+* Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
+* Removes a few deprecated API usages.
+
 ## 2.9.3
 
 * Updates minimum required plugin_platform_interface version to 2.1.7.

@@ -95,4 +95,13 @@ void main() {
         SkProductResponseWrapper.convertFromPigeon(msg);
     expect(convertedWrapper, productResponse);
   });
+
+  test('test SKerror pigeon converter', () {
+    final SKErrorMessage msg = SKErrorMessage(code: 99, domain: 'domain');
+    final SKError wrapper = SKError.convertFromPigeon(msg);
+
+    expect(wrapper.code, 99);
+    expect(wrapper.domain, 'domain');
+    expect(wrapper.userInfo, <String, Object>{});
+  });
 }

@@ -59,6 +59,29 @@ void main() {
       expect(callbackUrl, 'https://www.google.com');
     });
 
+    test('onHttpError from onReceivedHttpError', () {
+      final AndroidNavigationDelegate androidNavigationDelegate =
+          AndroidNavigationDelegate(_buildCreationParams());
+
+      late final HttpResponseError callbackError;
+      androidNavigationDelegate.setOnHttpError(
+          (HttpResponseError httpError) => callbackError = httpError);
+
+      CapturingWebViewClient.lastCreatedDelegate.onReceivedHttpError!(
+          android_webview.WebView.detached(),
+          android_webview.WebResourceRequest(
+            url: 'https://www.google.com',
+            isForMainFrame: false,
+            isRedirect: true,
+            hasGesture: true,
+            method: 'GET',
+            requestHeaders: <String, String>{'X-Mock': 'mocking'},
+          ),
+          android_webview.WebResourceResponse(statusCode: 401));
+
+      expect(callbackError.response?.statusCode, 401);
+    });
+
     test('onWebResourceError from onReceivedRequestError', () {
       final AndroidNavigationDelegate androidNavigationDelegate =
           AndroidNavigationDelegate(_buildCreationParams());
@@ -130,6 +153,66 @@ void main() {
         android_webview.WebResourceRequest(
           url: 'https://www.google.com',
           isForMainFrame: true,
+          isRedirect: true,
+          hasGesture: true,
+          method: 'GET',
+          requestHeaders: <String, String>{'X-Mock': 'mocking'},
+        ),
+      );
+
+      expect(callbackNavigationRequest, isNull);
+    });
+
+    test(
+        'onNavigationRequest from requestLoading should be called when request is for main frame',
+        () {
+      final AndroidNavigationDelegate androidNavigationDelegate =
+          AndroidNavigationDelegate(_buildCreationParams());
+
+      NavigationRequest? callbackNavigationRequest;
+      androidNavigationDelegate
+          .setOnNavigationRequest((NavigationRequest navigationRequest) {
+        callbackNavigationRequest = navigationRequest;
+        return NavigationDecision.prevent;
+      });
+
+      androidNavigationDelegate.setOnLoadRequest((_) async {});
+
+      CapturingWebViewClient.lastCreatedDelegate.requestLoading!(
+        android_webview.WebView.detached(),
+        android_webview.WebResourceRequest(
+          url: 'https://www.google.com',
+          isForMainFrame: true,
+          isRedirect: true,
+          hasGesture: true,
+          method: 'GET',
+          requestHeaders: <String, String>{'X-Mock': 'mocking'},
+        ),
+      );
+
+      expect(callbackNavigationRequest, isNotNull);
+    });
+
+    test(
+        'onNavigationRequest from requestLoading should not be called when request is not for main frame',
+        () {
+      final AndroidNavigationDelegate androidNavigationDelegate =
+          AndroidNavigationDelegate(_buildCreationParams());
+
+      NavigationRequest? callbackNavigationRequest;
+      androidNavigationDelegate
+          .setOnNavigationRequest((NavigationRequest navigationRequest) {
+        callbackNavigationRequest = navigationRequest;
+        return NavigationDecision.prevent;
+      });
+
+      androidNavigationDelegate.setOnLoadRequest((_) async {});
+
+      CapturingWebViewClient.lastCreatedDelegate.requestLoading!(
+        android_webview.WebView.detached(),
+        android_webview.WebResourceRequest(
+          url: 'https://www.google.com',
+          isForMainFrame: false,
           isRedirect: true,
           hasGesture: true,
           method: 'GET',
@@ -532,6 +615,7 @@ class CapturingWebViewClient extends android_webview.WebViewClient {
   CapturingWebViewClient({
     super.onPageFinished,
     super.onPageStarted,
+    super.onReceivedHttpError,
     super.onReceivedError,
     super.onReceivedHttpAuthRequest,
     super.onReceivedRequestError,
@@ -574,6 +658,7 @@ class CapturingWebChromeClient extends android_webview.WebChromeClient {
   }) : super.detached() {
     lastCreatedDelegate = this;
   }
+
   static CapturingWebChromeClient lastCreatedDelegate =
       CapturingWebChromeClient();
 }
@@ -587,6 +672,7 @@ class CapturingDownloadListener extends android_webview.DownloadListener {
   }) : super.detached() {
     lastCreatedListener = this;
   }
+
   static CapturingDownloadListener lastCreatedListener =
       CapturingDownloadListener(onDownloadStart: (_, __, ___, ____, _____) {});
 }

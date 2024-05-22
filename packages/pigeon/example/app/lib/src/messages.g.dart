@@ -97,16 +97,21 @@ class ExampleHostApi {
   /// Constructor for [ExampleHostApi].  The [binaryMessenger] named argument is
   /// available for dependency injection.  If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
-  ExampleHostApi({BinaryMessenger? binaryMessenger})
-      : __pigeon_binaryMessenger = binaryMessenger;
+  ExampleHostApi(
+      {BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
+      : __pigeon_binaryMessenger = binaryMessenger,
+        __pigeon_messageChannelSuffix =
+            messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
   final BinaryMessenger? __pigeon_binaryMessenger;
 
   static const MessageCodec<Object?> pigeonChannelCodec =
       _ExampleHostApiCodec();
 
+  final String __pigeon_messageChannelSuffix;
+
   Future<String> getHostLanguage() async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.getHostLanguage';
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.getHostLanguage$__pigeon_messageChannelSuffix';
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
@@ -134,8 +139,8 @@ class ExampleHostApi {
   }
 
   Future<int> add(int a, int b) async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.add';
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.add$__pigeon_messageChannelSuffix';
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
@@ -163,8 +168,8 @@ class ExampleHostApi {
   }
 
   Future<bool> sendMessage(MessageData message) async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.sendMessage';
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.sendMessage$__pigeon_messageChannelSuffix';
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
@@ -198,12 +203,17 @@ abstract class MessageFlutterApi {
 
   String flutterMethod(String? aString);
 
-  static void setup(MessageFlutterApi? api,
-      {BinaryMessenger? binaryMessenger}) {
+  static void setUp(
+    MessageFlutterApi? api, {
+    BinaryMessenger? binaryMessenger,
+    String messageChannelSuffix = '',
+  }) {
+    messageChannelSuffix =
+        messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
     {
       final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
               Object?>(
-          'dev.flutter.pigeon.pigeon_example_package.MessageFlutterApi.flutterMethod',
+          'dev.flutter.pigeon.pigeon_example_package.MessageFlutterApi.flutterMethod$messageChannelSuffix',
           pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
       if (api == null) {

@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:camera/camera.dart';
+import 'package:camera_platform_interface/camera_platform_interface.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -67,6 +68,15 @@ class FakeController extends ValueNotifier<CameraValue>
 
   @override
   ResolutionPreset get resolutionPreset => ResolutionPreset.low;
+
+  @override
+  MediaSettings get mediaSettings => const MediaSettings(
+        resolutionPreset: ResolutionPreset.low,
+        fps: 15,
+        videoBitrate: 200000,
+        audioBitrate: 32000,
+        enableAudio: true,
+      );
 
   @override
   Future<void> resumeVideoRecording() async {}
