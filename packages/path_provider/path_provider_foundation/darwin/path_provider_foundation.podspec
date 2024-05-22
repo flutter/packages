@@ -12,7 +12,7 @@ Pod::Spec.new do |s|
   s.license          = { :type => 'BSD', :file => '../LICENSE' }
   s.author           = { 'Flutter Dev Team' => 'flutter-dev@googlegroups.com' }
   s.source           = { :http => 'https://github.com/flutter/packages/tree/main/packages/path_provider/path_provider_foundation' }
-  s.source_files = 'Classes/**/*'
+  s.source_files = 'path_provider_foundation/Sources/path_provider_foundation/**/*.swift'
   s.ios.dependency 'Flutter'
   s.osx.dependency 'FlutterMacOS'
   s.ios.deployment_target = '12.0'
@@ -22,5 +22,5 @@ Pod::Spec.new do |s|
     'LD_RUNPATH_SEARCH_PATHS' => '/usr/lib/swift',
   }
   s.swift_version = '5.0'
-  s.resource_bundles = {'path_provider_foundation_privacy' => ['Resources/PrivacyInfo.xcprivacy']}
+  s.resource_bundles = {'path_provider_foundation_privacy' => ['path_provider_foundation/Sources/path_provider_foundation/Resources/PrivacyInfo.xcprivacy']}
 end

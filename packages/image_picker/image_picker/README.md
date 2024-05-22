@@ -95,9 +95,9 @@ responsibility to move it to a more permanent location.
 
 #### Android Photo Picker
 
-This package has optional
+On Android 13 and above this package uses the
 [Android Photo Picker](https://developer.android.com/training/data-storage/shared/photopicker)
-functionality.
+. On Android 12 and below use of Android Photo Picker is optional. 
 [Learn how to use it](https://pub.dev/packages/image_picker_android).
 
 #### Using `launchMode: singleInstance`

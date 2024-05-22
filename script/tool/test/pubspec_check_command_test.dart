@@ -1611,10 +1611,10 @@ ${_topicsSection()}
           output,
           containsAllInOrder(<Matcher>[
             contains(
-                'The following unexpected non-local dependencies were found:\n'
-                '  bad_dependency\n'
-                'Please see https://github.com/flutter/flutter/wiki/Contributing-to-Plugins-and-Packages#Dependencies '
-                'for more information and next steps.'),
+                '  The following unexpected non-local dependencies were found:\n'
+                '    bad_dependency\n'
+                '  Please see https://github.com/flutter/flutter/wiki/Contributing-to-Plugins-and-Packages#Dependencies\n'
+                '  for more information and next steps.'),
           ]),
         );
       });
@@ -1643,10 +1643,10 @@ ${_topicsSection()}
           output,
           containsAllInOrder(<Matcher>[
             contains(
-                'The following unexpected non-local dependencies were found:\n'
-                '  bad_dependency\n'
-                'Please see https://github.com/flutter/flutter/wiki/Contributing-to-Plugins-and-Packages#Dependencies '
-                'for more information and next steps.'),
+                '  The following unexpected non-local dependencies were found:\n'
+                '    bad_dependency\n'
+                '  Please see https://github.com/flutter/flutter/wiki/Contributing-to-Plugins-and-Packages#Dependencies\n'
+                '  for more information and next steps.'),
           ]),
         );
       });
@@ -1727,54 +1727,68 @@ ${_topicsSection()}
           output,
           containsAllInOrder(<Matcher>[
             contains(
-                'The following unexpected non-local dependencies were found:\n'
-                '  allow_pinned\n'
-                'Please see https://github.com/flutter/flutter/wiki/Contributing-to-Plugins-and-Packages#Dependencies '
-                'for more information and next steps.'),
+                '  The following unexpected non-local dependencies were found:\n'
+                '    allow_pinned\n'
+                '  Please see https://github.com/flutter/flutter/wiki/Contributing-to-Plugins-and-Packages#Dependencies\n'
+                '  for more information and next steps.'),
           ]),
         );
       });
 
-      test('fails when integration_test, flutter_test or test are used in non dev dependency',
-          () async {
-        final RepositoryPackage package =
-            createFakePackage('a_package', packagesDir, examples: <String>[]);
+      group('dev dependencies', () {
+        const List<String> packages = <String>[
+          'build_runner',
+          'integration_test',
+          'flutter_test',
+          'mockito',
+          'pigeon',
+          'test',
+        ];
+        for (final String dependency in packages) {
+          test('fails when $dependency is used in non dev dependency',
+              () async {
+            final RepositoryPackage package = createFakePackage(
+                'a_package', packagesDir,
+                examples: <String>[]);
 
-        package.pubspecFile.writeAsStringSync('''
+            final String version =
+                dependency == 'integration_test' || dependency == 'flutter_test'
+                    ? '{ sdk: flutter }'
+                    : '1.0.0';
+            package.pubspecFile.writeAsStringSync('''
 ${_headerSection('a_package')}
 ${_environmentSection()}
 ${_dependenciesSection(<String>[
-              'integration_test: \n    sdk: flutter',
-              'flutter_test: \n    sdk: flutter',
-              'test: 1.0.0'
-            ])}
+                  '$dependency: $version',
+                ])}
 ${_devDependenciesSection()}
 ${_topicsSection()}
 ''');
 
-        Error? commandError;
-        final List<String> output = await runCapturingPrint(runner, <String>[
-          'pubspec-check',
-        ], errorHandler: (Error e) {
-          commandError = e;
-        });
+            Error? commandError;
+            final List<String> output =
+                await runCapturingPrint(runner, <String>[
+              'pubspec-check',
+            ], errorHandler: (Error e) {
+              commandError = e;
+            });
 
-        expect(commandError, isA<ToolExit>());
-        expect(
-          output,
-          containsAllInOrder(<Matcher>[
-            contains(
-                'The following unexpected non-local dependencies were found:\n'
-                '  test\n'
-                '  integration_test\n'
-                '  flutter_test\n'
-                'Please see https://github.com/flutter/flutter/wiki/Contributing-to-Plugins-and-Packages#Dependencies '
-                'for more information and next steps.'),
-          ]),
-        );
+            expect(commandError, isA<ToolExit>());
+            expect(
+              output,
+              containsAllInOrder(<Matcher>[
+                contains(
+                    '  The following dev dependencies were found in the dependencies section:\n'
+                    '    $dependency\n'
+                    '  Please move them to dev_dependencies.'),
+              ]),
+            );
+          });
+        }
       });
 
-      test('passes when integration_test or flutter_test are used in non published package',
+      test(
+          'passes when integration_test or flutter_test are used in non published package',
           () async {
         final RepositoryPackage package =
             createFakePackage('a_package', packagesDir, examples: <String>[]);

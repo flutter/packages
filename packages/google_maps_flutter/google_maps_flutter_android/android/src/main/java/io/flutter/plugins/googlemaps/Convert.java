@@ -25,11 +25,13 @@ import com.google.android.gms.maps.model.PatternItem;
 import com.google.android.gms.maps.model.RoundCap;
 import com.google.android.gms.maps.model.SquareCap;
 import com.google.android.gms.maps.model.Tile;
+import com.google.maps.android.clustering.Cluster;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /** Conversions between JSON-like values and GoogleMaps data types. */
 class Convert {
@@ -160,7 +162,7 @@ class Convert {
     return data;
   }
 
-  static Object latlngBoundsToJson(LatLngBounds latLngBounds) {
+  static Object latLngBoundsToJson(LatLngBounds latLngBounds) {
     final Map<String, Object> arguments = new HashMap<>(2);
     arguments.put("southwest", latLngToJson(latLngBounds.southwest));
     arguments.put("northeast", latLngToJson(latLngBounds.northeast));
@@ -219,6 +221,44 @@ class Convert {
 
   static Object latLngToJson(LatLng latLng) {
     return Arrays.asList(latLng.latitude, latLng.longitude);
+  }
+
+  static Object clustersToJson(
+      String clusterManagerId, Set<? extends Cluster<MarkerBuilder>> clusters) {
+    List<Object> data = new ArrayList<>(clusters.size());
+    for (Cluster<MarkerBuilder> cluster : clusters) {
+      data.add(clusterToJson(clusterManagerId, cluster));
+    }
+    return data;
+  }
+
+  static Object clusterToJson(String clusterManagerId, Cluster<MarkerBuilder> cluster) {
+    int clusterSize = cluster.getSize();
+    LatLngBounds.Builder latLngBoundsBuilder = LatLngBounds.builder();
+
+    String[] markerIds = new String[clusterSize];
+    MarkerBuilder[] markerBuilders = cluster.getItems().toArray(new MarkerBuilder[clusterSize]);
+
+    // Loops though cluster items and reads markers position for the LatLngBounds builder
+    // and also builds list of marker ids on the cluster.
+    for (int i = 0; i < clusterSize; i++) {
+      MarkerBuilder markerBuilder = markerBuilders[i];
+      latLngBoundsBuilder.include(markerBuilder.getPosition());
+      markerIds[i] = markerBuilder.markerId();
+    }
+
+    Object position = latLngToJson(cluster.getPosition());
+    Object bounds = latLngBoundsToJson(latLngBoundsBuilder.build());
+
+    final Map<String, Object> data = new HashMap<>(4);
+
+    // For dart side implementation see parseCluster method at
+    // packages/google_maps_flutter/google_maps_flutter_android/lib/src/google_maps_flutter_android.dart
+    data.put("clusterManagerId", clusterManagerId);
+    data.put("position", position);
+    data.put("bounds", bounds);
+    data.put("markerIds", Arrays.asList(markerIds));
+    return data;
   }
 
   static LatLng toLatLng(Object o) {
@@ -383,8 +423,8 @@ class Convert {
     }
   }
 
-  /** Returns the dartMarkerId of the interpreted marker. */
-  static String interpretMarkerOptions(Object o, MarkerOptionsSink sink) {
+  /** Set the options in the given object to marker options sink. */
+  static void interpretMarkerOptions(Object o, MarkerOptionsSink sink) {
     final Map<?, ?> data = toMap(o);
     final Object alpha = data.get("alpha");
     if (alpha != null) {
@@ -431,12 +471,6 @@ class Convert {
     final Object zIndex = data.get("zIndex");
     if (zIndex != null) {
       sink.setZIndex(toFloat(zIndex));
-    }
-    final String markerId = (String) data.get("markerId");
-    if (markerId == null) {
-      throw new IllegalArgumentException("markerId was null");
-    } else {
-      return markerId;
     }
   }
 
