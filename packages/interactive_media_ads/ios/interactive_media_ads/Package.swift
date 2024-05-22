@@ -1,4 +1,5 @@
 // swift-tools-version: 5.9
+// The swift-tools-version declares the minimum version of Swift required to build this package.
 
 // Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
@@ -7,24 +8,20 @@
 import PackageDescription
 
 let package = Package(
-  name: "image_picker_ios",
+  name: "interactive_media_ads",
   platforms: [
     .iOS("12.0")
   ],
   products: [
-    .library(name: "image-picker-ios", targets: ["image_picker_ios"])
+    .library(name: "interactive-media-ads", targets: ["interactive_media_ads"])
   ],
   dependencies: [],
   targets: [
     .target(
-      name: "image_picker_ios",
+      name: "interactive_media_ads",
       dependencies: [],
-      exclude: ["include/ImagePickerPlugin.modulemap"],
       resources: [
         .process("Resources")
-      ],
-      cSettings: [
-        .headerSearchPath("include/image_picker_ios")
       ]
     )
   ]
