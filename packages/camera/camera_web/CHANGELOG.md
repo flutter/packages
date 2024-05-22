@@ -1,8 +1,7 @@
 ## 0.3.4
 
 - Supporting camera image stream on web.
-
-* Updates minimum supported SDK version to Flutter 3.16/Dart 3.2.
+- Updates minimum supported SDK version to Flutter 3.16/Dart 3.2.
 
 ## 0.3.3
 
