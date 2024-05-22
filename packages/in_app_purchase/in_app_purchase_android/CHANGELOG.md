@@ -1,6 +1,10 @@
-## 0.3.5+3
+## 0.3.6+1
 
 * Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+
+## 0.3.6
+
+* Introduces new `ReplacementMode` for Android's billing client as `ProrationMode` is being deprecated.
 
 ## 0.3.5+2
 
