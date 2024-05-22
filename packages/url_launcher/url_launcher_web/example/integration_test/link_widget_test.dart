@@ -289,7 +289,7 @@ void main() {
 
     testWidgets('click to navigate to external link',
         (WidgetTester tester) async {
-      final Uri uri = Uri.parse('https://google.com');
+      final Uri uri = Uri.parse('https://flutter.dev');
       FollowLink? followLinkCallback;
 
       await tester.pumpWidget(MaterialApp(
@@ -327,7 +327,7 @@ void main() {
 
     testWidgets('keydown to navigate to external link',
         (WidgetTester tester) async {
-      final Uri uri = Uri.parse('https://google.com');
+      final Uri uri = Uri.parse('https://flutter.dev');
       FollowLink? followLinkCallback;
 
       await tester.pumpWidget(MaterialApp(
@@ -354,7 +354,7 @@ void main() {
       // External links that are triggered by keyboard are handled by calling
       // `launchUrl`, and there's no change to the app's route name.
       expect(pushedRouteNames, isEmpty);
-      expect(testPlugin.launches, <String>['https://google.com']);
+      expect(testPlugin.launches, <String>['https://flutter.dev']);
       expect(event.defaultPrevented, isFalse);
 
       // Needed when testing on on Chrome98 headless in CI.
@@ -433,6 +433,197 @@ void main() {
       expect(pushedRouteNames, <String>['/foobar2']);
       expect(testPlugin.launches, isEmpty);
       expect(event.defaultPrevented, isTrue);
+
+      // Needed when testing on on Chrome98 headless in CI.
+      // See https://github.com/flutter/flutter/issues/121161
+      await tester.pumpAndSettle();
+    });
+
+    testWidgets('trigger signals are reset after a delay',
+        (WidgetTester tester) async {
+      final Uri uri = Uri.parse('/foobar');
+      FollowLink? followLinkCallback;
+
+      await tester.pumpWidget(MaterialApp(
+        routes: <String, WidgetBuilder>{
+          '/foobar': (BuildContext context) => const Text('Internal route'),
+        },
+        home: WebLinkDelegate(TestLinkInfo(
+          uri: uri,
+          target: LinkTarget.blank,
+          builder: (BuildContext context, FollowLink? followLink) {
+            followLinkCallback = followLink;
+            return const SizedBox(width: 100, height: 100);
+          },
+        )),
+      ));
+      // Platform view creation happens asynchronously.
+      await tester.pumpAndSettle();
+
+      expect(pushedRouteNames, isEmpty);
+      expect(testPlugin.launches, isEmpty);
+
+      final html.Element anchor = _findSingleAnchor();
+
+      // A large delay between signals should reset the previous signal.
+      await followLinkCallback!();
+      await Future<void>.delayed(const Duration(seconds: 1));
+      final html.Event event1 = _simulateClick(anchor);
+
+      // The link shouldn't have been triggered.
+      expect(pushedRouteNames, isEmpty);
+      expect(testPlugin.launches, isEmpty);
+      expect(event1.defaultPrevented, isFalse);
+
+      await Future<void>.delayed(const Duration(seconds: 1));
+
+      // Signals with large delay (in reverse order).
+      final html.Event event2 = _simulateClick(anchor);
+      await Future<void>.delayed(const Duration(seconds: 1));
+      await followLinkCallback!();
+
+      // The link shouldn't have been triggered.
+      expect(pushedRouteNames, isEmpty);
+      expect(testPlugin.launches, isEmpty);
+      expect(event2.defaultPrevented, isFalse);
+
+      await Future<void>.delayed(const Duration(seconds: 1));
+
+      // A small delay is okay.
+      await followLinkCallback!();
+      await Future<void>.delayed(const Duration(milliseconds: 100));
+      final html.Event event3 = _simulateClick(anchor);
+
+      // The link should've been triggered now.
+      expect(pushedRouteNames, <String>['/foobar']);
+      expect(testPlugin.launches, isEmpty);
+      expect(event3.defaultPrevented, isTrue);
+
+      // Needed when testing on on Chrome98 headless in CI.
+      // See https://github.com/flutter/flutter/issues/121161
+      await tester.pumpAndSettle();
+    });
+
+    testWidgets('ignores clicks on non-Flutter link',
+        (WidgetTester tester) async {
+      final Uri uri = Uri.parse('/foobar');
+      FollowLink? followLinkCallback;
+
+      await tester.pumpWidget(MaterialApp(
+        routes: <String, WidgetBuilder>{
+          '/foobar': (BuildContext context) => const Text('Internal route'),
+        },
+        home: WebLinkDelegate(TestLinkInfo(
+          uri: uri,
+          target: LinkTarget.blank,
+          builder: (BuildContext context, FollowLink? followLink) {
+            followLinkCallback = followLink;
+            return const SizedBox(width: 100, height: 100);
+          },
+        )),
+      ));
+      // Platform view creation happens asynchronously.
+      await tester.pumpAndSettle();
+
+      expect(pushedRouteNames, isEmpty);
+      expect(testPlugin.launches, isEmpty);
+
+      final html.Element nonFlutterAnchor = html.document.createElement('a');
+      nonFlutterAnchor.setAttribute('href', '/non-flutter');
+
+      await followLinkCallback!();
+      final html.Event event = _simulateClick(nonFlutterAnchor);
+
+      // The link shouldn't have been triggered.
+      expect(pushedRouteNames, isEmpty);
+      expect(testPlugin.launches, isEmpty);
+      expect(event.defaultPrevented, isFalse);
+
+      // Needed when testing on on Chrome98 headless in CI.
+      // See https://github.com/flutter/flutter/issues/121161
+      await tester.pumpAndSettle();
+    });
+
+    testWidgets('handles cmd+click correctly', (WidgetTester tester) async {
+      final Uri uri = Uri.parse('/foobar');
+      FollowLink? followLinkCallback;
+
+      await tester.pumpWidget(MaterialApp(
+        routes: <String, WidgetBuilder>{
+          '/foobar': (BuildContext context) => const Text('Internal route'),
+        },
+        home: WebLinkDelegate(TestLinkInfo(
+          uri: uri,
+          target: LinkTarget.blank,
+          builder: (BuildContext context, FollowLink? followLink) {
+            followLinkCallback = followLink;
+            return const SizedBox(width: 100, height: 100);
+          },
+        )),
+      ));
+      // Platform view creation happens asynchronously.
+      await tester.pumpAndSettle();
+
+      expect(pushedRouteNames, isEmpty);
+      expect(testPlugin.launches, isEmpty);
+
+      final html.Element anchor = _findSingleAnchor();
+
+      await followLinkCallback!();
+      final html.Event event = _simulateClick(anchor, metaKey: true);
+
+      // When a modifier key is present, we should let the browser handle the
+      // navigation. That means we do nothing on our side.
+      expect(pushedRouteNames, isEmpty);
+      expect(testPlugin.launches, isEmpty);
+      expect(event.defaultPrevented, isFalse);
+
+      // Needed when testing on on Chrome98 headless in CI.
+      // See https://github.com/flutter/flutter/issues/121161
+      await tester.pumpAndSettle();
+    });
+
+    testWidgets('ignores keydown when it is a modifier key',
+        (WidgetTester tester) async {
+      final Uri uri = Uri.parse('/foobar');
+      FollowLink? followLinkCallback;
+
+      await tester.pumpWidget(MaterialApp(
+        routes: <String, WidgetBuilder>{
+          '/foobar': (BuildContext context) => const Text('Internal route'),
+        },
+        home: WebLinkDelegate(TestLinkInfo(
+          uri: uri,
+          target: LinkTarget.blank,
+          builder: (BuildContext context, FollowLink? followLink) {
+            followLinkCallback = followLink;
+            return const SizedBox(width: 100, height: 100);
+          },
+        )),
+      ));
+      // Platform view creation happens asynchronously.
+      await tester.pumpAndSettle();
+
+      expect(pushedRouteNames, isEmpty);
+      expect(testPlugin.launches, isEmpty);
+
+      final html.Element anchor = _findSingleAnchor();
+
+      final html.KeyboardEvent event1 = _simulateKeydown(anchor, metaKey: true);
+      await followLinkCallback!();
+
+      // When the pressed key is a modifier key, we should ignore it.
+      expect(pushedRouteNames, isEmpty);
+      expect(testPlugin.launches, isEmpty);
+      expect(event1.defaultPrevented, isFalse);
+
+      // If later we receive another trigger, it should work.
+      final html.KeyboardEvent event2 = _simulateKeydown(anchor);
+
+      // Now the link should be triggered.
+      expect(pushedRouteNames, <String>['/foobar']);
+      expect(testPlugin.launches, isEmpty);
+      expect(event2.defaultPrevented, isFalse);
 
       // Needed when testing on on Chrome98 headless in CI.
       // See https://github.com/flutter/flutter/issues/121161
@@ -536,7 +727,7 @@ void main() {
 
     testWidgets('click to navigate to external link',
         (WidgetTester tester) async {
-      final Uri uri = Uri.parse('https://google.com');
+      final Uri uri = Uri.parse('https://flutter.dev');
       FollowLink? followLinkCallback;
 
       await tester.pumpWidget(MaterialApp(
@@ -574,7 +765,7 @@ void main() {
 
     testWidgets('keydown to navigate to external link',
         (WidgetTester tester) async {
-      final Uri uri = Uri.parse('https://google.com');
+      final Uri uri = Uri.parse('https://flutter.dev');
       FollowLink? followLinkCallback;
 
       await tester.pumpWidget(MaterialApp(
@@ -601,7 +792,7 @@ void main() {
       // External links that are triggered by keyboard are handled by calling
       // `launchUrl`, and there's no change to the app's route name.
       expect(pushedRouteNames, isEmpty);
-      expect(testPlugin.launches, <String>['https://google.com']);
+      expect(testPlugin.launches, <String>['https://flutter.dev']);
       expect(event.defaultPrevented, isFalse);
 
       // Needed when testing on on Chrome98 headless in CI.
@@ -641,23 +832,25 @@ html.Element _findSingleAnchor() {
   return _findAllAnchors().single;
 }
 
-html.MouseEvent _simulateClick(html.Element target) {
+html.MouseEvent _simulateClick(html.Element target, {bool? metaKey}) {
   final html.MouseEvent mouseEvent = html.MouseEvent(
     'click',
     html.MouseEventInit()
       ..bubbles = true
-      ..cancelable = true,
+      ..cancelable = true
+      ..metaKey = metaKey ?? false,
   );
   LinkViewController.handleGlobalClick(event: mouseEvent, target: target);
   return mouseEvent;
 }
 
-html.KeyboardEvent _simulateKeydown(html.Element target) {
+html.KeyboardEvent _simulateKeydown(html.Element target, {bool? metaKey}) {
   final html.KeyboardEvent keydownEvent = html.KeyboardEvent(
     'keydown',
     html.KeyboardEventInit()
       ..bubbles = true
-      ..cancelable = true,
+      ..cancelable = true
+      ..metaKey = metaKey ?? false,
   );
   LinkViewController.handleGlobalKeydown(event: keydownEvent);
   return keydownEvent;
