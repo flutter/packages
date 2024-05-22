@@ -8,10 +8,10 @@ import XCTest
 @testable import local_auth_darwin
 
 // Set a long timeout to avoid flake due to slow CI.
-let timeout: TimeInterval = 30.0
+private let timeout: TimeInterval = 30.0
 
 /// A context factory that returns preset contexts.
-class StubAuthContextFactory: NSObject, FLADAuthContextFactory {
+final class StubAuthContextFactory: NSObject, FLADAuthContextFactory {
   var contexts: [FLADAuthContext]
   init(contexts: [FLADAuthContext]) {
     self.contexts = contexts
@@ -19,13 +19,11 @@ class StubAuthContextFactory: NSObject, FLADAuthContextFactory {
 
   func createAuthContext() -> FLADAuthContext {
     XCTAssert(self.contexts.count > 0, "Insufficient test contexts provided")
-    let context = self.contexts.first!
-    contexts.remove(at: 0)
-    return context
+    return self.contexts.removeFirst()
   }
 }
 
-class StubAuthContext: NSObject, FLADAuthContext {
+final class StubAuthContext: NSObject, FLADAuthContext {
   /// Whether calls to this stub are expected to be for biometric authentication.
   ///
   /// While this object could be set up to return different values for different policies, in
@@ -40,7 +38,7 @@ class StubAuthContext: NSObject, FLADAuthContext {
   var evaluateError: NSError?
 
   // Overridden as read-write to allow stubbing.
-  var biometryType: LABiometryType = LABiometryType.none
+  var biometryType: LABiometryType = .none
   var localizedFallbackTitle: String?
 
   func canEvaluatePolicy(_ policy: LAPolicy) throws {
@@ -74,10 +72,6 @@ class StubAuthContext: NSObject, FLADAuthContext {
 // MARK: -
 
 class FLALocalAuthPluginTests: XCTestCase {
-
-  override func setUp() {
-    continueAfterFailure = false
-  }
 
   func testSuccessfullAuthWithBiometrics() throws {
     let stubAuthContext = StubAuthContext()
@@ -330,7 +324,7 @@ class FLALocalAuthPluginTests: XCTestCase {
       contextFactory: StubAuthContextFactory(contexts: [stubAuthContext]))
 
     stubAuthContext.expectBiometrics = true
-    stubAuthContext.biometryType = LABiometryType.faceID
+    stubAuthContext.biometryType = .faceID
 
     var error: FlutterError?
     let result = plugin.getEnrolledBiometricsWithError(&error)
@@ -345,7 +339,7 @@ class FLALocalAuthPluginTests: XCTestCase {
       contextFactory: StubAuthContextFactory(contexts: [stubAuthContext]))
 
     stubAuthContext.expectBiometrics = true
-    stubAuthContext.biometryType = LABiometryType.touchID
+    stubAuthContext.biometryType = .touchID
 
     var error: FlutterError?
     let result = plugin.getEnrolledBiometricsWithError(&error)
