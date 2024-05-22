@@ -716,6 +716,7 @@ Future<void> main() async {
       unawaited(controller.setJavaScriptMode(JavaScriptMode.unrestricted));
 
       final NavigationDelegate delegate = NavigationDelegate(
+        onPageFinished: pageFinishCompleter.complete,
         onHttpError: (HttpResponseError error) {
           errorCompleter.complete(error);
         },
