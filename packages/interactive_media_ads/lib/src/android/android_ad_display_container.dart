@@ -165,7 +165,8 @@ base class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
       onCompletion: (_, __) {
         final AndroidAdDisplayContainer? container = weakThis.target;
         if (container != null) {
-          weakThis.target?._resetPlayer();
+          container._resetPlayer();
+          container._stopAdProgressTracking();
           for (final ima.VideoAdPlayerCallback callback
               in container.videoAdPlayerCallbacks) {
             callback.onEnded(container._loadedAdMediaInfo!);
