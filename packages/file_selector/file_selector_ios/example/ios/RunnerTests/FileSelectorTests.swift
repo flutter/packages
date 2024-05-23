@@ -6,7 +6,7 @@ import XCTest
 
 @testable import file_selector_ios
 
-class TestViewPresenter: ViewPresenter {
+final class TestViewPresenter: ViewPresenter {
   public var presentedController: UIViewController?
 
   func present(

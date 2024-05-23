@@ -23,10 +23,7 @@ class PickerCompletionBridge: NSObject, UIDocumentPickerDelegate {
     _ controller: UIDocumentPickerViewController,
     didPickDocumentsAt urls: [URL]
   ) {
-    sendResult(
-      urls.map({ document in
-        document.path
-      }))
+    sendResult(urls.map({ $0.path }))
   }
 
   func documentPickerWasCancelled(_ controller: UIDocumentPickerViewController) {
@@ -62,10 +59,9 @@ public class FileSelectorPlugin: NSObject, FlutterPlugin, FileSelectorApi {
     let documentPicker =
       documentPickerViewControllerOverride
       ?? UIDocumentPickerViewController(
-        documentTypes: config.utis.map({ uti in
-          // See comment in messages.dart for why this is safe.
-          uti!
-        }), in: UIDocumentPickerMode.import)
+        // See comment in messages.dart for why this is safe.
+        documentTypes: config.utis as! [String],
+        in: .import)
     documentPicker.allowsMultipleSelection = config.allowMultiSelection
     documentPicker.delegate = completionBridge
 
