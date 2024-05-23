@@ -52,50 +52,79 @@ class _KeysPanelState extends State<KeysPanel> {
             roundedTopBorder: false,
             includeTopBorder: false,
             tall: true,
-            actions: <Widget>[
-              if (searching) ...<Widget>[
-                const SizedBox(
-                  width: denseSpacing,
+            title: Row(
+              children: <Widget>[
+                Text(
+                  'Stored Keys',
+                  style: Theme.of(context).textTheme.titleSmall,
                 ),
-                Expanded(
-                  child: _SearchField(
-                    searchFocusNode: searchFocusNode,
-                    stopSearching: stopSearching,
+                if (searching) ...<Widget>[
+                  const SizedBox(
+                    width: denseSpacing,
                   ),
-                ),
-              ] else ...<Widget>[
-                const Spacer(),
-                Tooltip(
-                  message: 'Search',
-                  child: DevToolsButton(
+                  Expanded(
+                    child: _SearchField(
+                      searchFocusNode: searchFocusNode,
+                      stopSearching: stopSearching,
+                    ),
+                  ),
+                ] else ...[
+                  const Spacer(),
+                  _ToolbarAction(
+                    tooltipMessage: 'Search',
                     icon: Icons.search,
                     onPressed: _startSearching,
                   ),
+                ],
+                const SizedBox(
+                  width: denseRowSpacing,
                 ),
-              ],
-              const SizedBox(
-                width: denseRowSpacing,
-              ),
-              Tooltip(
-                message: 'Refresh',
-                child: DevToolsButton(
+                _ToolbarAction(
+                  tooltipMessage: 'Refresh',
                   icon: Icons.refresh,
                   onPressed: () {
                     stopSearching();
                     context.sharedPreferencesStateNotifier.fetchAllKeys();
                   },
                 ),
-              ),
-            ],
-            title: Text(
-              'Stored Keys',
-              style: Theme.of(context).textTheme.titleSmall,
+              ],
             ),
           ),
           const Expanded(
             child: _StateMapper(),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _ToolbarAction extends StatelessWidget {
+  const _ToolbarAction({
+    required this.tooltipMessage,
+    required this.icon,
+    required this.onPressed,
+  });
+
+  final String tooltipMessage;
+  final IconData icon;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return DevToolsTooltip(
+      message: tooltipMessage,
+      child: TextButton(
+        style: TextButton.styleFrom(
+          padding: EdgeInsets.zero,
+          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+        ),
+        onPressed: onPressed,
+        child: Icon(
+          icon,
+          size: actionsIconSize,
+          color: Theme.of(context).colorScheme.onSurface,
+        ),
       ),
     );
   }
@@ -127,12 +156,10 @@ class _SearchField extends StatelessWidget {
           ),
           hintText: 'Search',
           border: const OutlineInputBorder(),
-          suffix: Tooltip(
-            message: 'Stop searching',
-            child: DevToolsButton(
-              icon: Icons.close,
-              onPressed: stopSearching,
-            ),
+          suffix: _ToolbarAction(
+            tooltipMessage: 'Stop searching',
+            icon: Icons.close,
+            onPressed: stopSearching,
           ),
         ),
         onChanged: (String newValue) {
