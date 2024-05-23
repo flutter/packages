@@ -654,7 +654,7 @@ class Camera {
       ..objectFit = 'cover';
   }
 
-  late final StreamController<CameraImageData> _cameraFrameStreamController =
+  final StreamController<CameraImageData> _cameraFrameStreamController =
       StreamController<CameraImageData>.broadcast();
 
   /// Returns a stream of camera frames.
