@@ -648,17 +648,50 @@ class Camera {
   Stream<CameraImageData> cameraFrameStream({
     CameraImageStreamOptions? options,
   }) {
-    final Stream<CameraImageData> stream = _cameraFrameStreamController.stream;
-    window!.requestAnimationFrame(_onAnimationFrame);
-    return stream;
+    ///Used to cancel the frame animationFrame
+    int? animationFrameId;
+
+    bool isRequestingFrames = true;
+
+    /// Requests animation frames in a loop as long as
+    /// the [isRequestingFrames] is set.
+    void requestFramesLoop() {
+      Future<void> requestNextFrame() async {
+        while (isRequestingFrames) {
+          await Future<void>(() {
+            final Completer<void> completer = Completer<void>();
+            window!.requestAnimationFrame((num frameId) {
+              animationFrameId = frameId.toInt();
+              if (isRequestingFrames) {
+                _addCameraImageDataEvent();
+              }
+              completer.complete();
+            });
+            return completer.future;
+          });
+        }
+      }
+
+      requestNextFrame();
+    }
+
+    _cameraFrameStreamController
+      ..onListen = () {
+        requestFramesLoop();
+      }
+      ..onCancel = () {
+        isRequestingFrames = false;
+        if (animationFrameId != null) {
+          window!.cancelAnimationFrame(animationFrameId!);
+        }
+      };
+
+    return _cameraFrameStreamController.stream;
   }
 
-  /// Called when a new animation frame is available.
-  Future<void> _onAnimationFrame([num? _]) async {
+  /// Used to trigger add event of camera image data in camera frame stream
+  void _addCameraImageDataEvent() {
     final CameraImageData image = _cameraService.takeFrame(videoElement);
     _cameraFrameStreamController.add(image);
-    if (_cameraFrameStreamController.hasListener) {
-      window!.requestAnimationFrame(_onAnimationFrame);
-    }
   }
 }
