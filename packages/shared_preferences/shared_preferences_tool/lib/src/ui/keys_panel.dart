@@ -7,9 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../async_state.dart';
-import '../shared_preferences_state.dart';
-import '../shared_preferences_state_notifier.dart';
-import '../shared_preferences_state_notifier_provider.dart';
+import '../shared_preferences_state_provider.dart';
 import 'error_panel.dart';
 
 /// A panel that displays the keys stored in shared preferences.
@@ -39,14 +37,11 @@ class _KeysPanelState extends State<KeysPanel> {
 
   @override
   Widget build(BuildContext context) {
-    final SharedPreferencesStateNotifier notifier =
-        SharedPreferencesStateNotifierProvider.of(context);
-
     void stopSearching() {
       setState(() {
         searching = false;
       });
-      notifier.filter('');
+      context.sharedPreferencesStateNotifier.filter('');
     }
 
     return RoundedOutlinedBorder(
@@ -65,7 +60,6 @@ class _KeysPanelState extends State<KeysPanel> {
                 Expanded(
                   child: _SearchField(
                     searchFocusNode: searchFocusNode,
-                    notifier: notifier,
                     stopSearching: stopSearching,
                   ),
                 ),
@@ -88,7 +82,7 @@ class _KeysPanelState extends State<KeysPanel> {
                   icon: Icons.refresh,
                   onPressed: () {
                     stopSearching();
-                    notifier.fetchAllKeys();
+                    context.sharedPreferencesStateNotifier.fetchAllKeys();
                   },
                 ),
               ),
@@ -110,12 +104,10 @@ class _KeysPanelState extends State<KeysPanel> {
 class _SearchField extends StatelessWidget {
   const _SearchField({
     required this.searchFocusNode,
-    required this.notifier,
     required this.stopSearching,
   });
 
   final FocusNode searchFocusNode;
-  final SharedPreferencesStateNotifier notifier;
   final VoidCallback stopSearching;
 
   @override
@@ -143,7 +135,9 @@ class _SearchField extends StatelessWidget {
             ),
           ),
         ),
-        onChanged: notifier.filter,
+        onChanged: (String newValue) {
+          context.sharedPreferencesStateNotifier.filter(newValue);
+        },
       ),
     );
   }
@@ -154,15 +148,15 @@ class _StateMapper extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return switch (SharedPreferencesStateNotifierProvider.of(context).value) {
-      final AsyncStateData<SharedPreferencesState> value => _KeysList(
-          keys: value.data.allKeys,
+    return switch (SharedPreferencesStateProvider.keysListStateOf(context)) {
+      final AsyncStateData<List<String>> value => _KeysList(
+          keys: value.data,
         ),
-      final AsyncStateError<SharedPreferencesState> value => ErrorPanel(
+      final AsyncStateError<List<String>> value => ErrorPanel(
           error: value.error,
           stackTrace: value.stackTrace,
         ),
-      AsyncStateLoading<SharedPreferencesState>() => const Center(
+      AsyncStateLoading<List<String>>() => const Center(
           child: CircularProgressIndicator(),
         ),
     };
@@ -213,17 +207,15 @@ class _KeyItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final SharedPreferencesStateNotifier notifier =
-        SharedPreferencesStateNotifierProvider.of(context);
     final bool isSelected =
-        notifier.value.dataOrNull?.selectedKey?.key == keyName;
+        SharedPreferencesStateProvider.selectedKeyOf(context) == keyName;
     final ColorScheme colorScheme = Theme.of(context).colorScheme;
     final Color? backgroundColor =
         isSelected ? colorScheme.selectedRowBackgroundColor : null;
 
     return InkWell(
       onTap: () {
-        notifier.selectKey(keyName);
+        context.sharedPreferencesStateNotifier.selectKey(keyName);
       },
       child: Container(
         color: backgroundColor,

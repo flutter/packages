@@ -9,7 +9,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:shared_preferences_tool/src/async_state.dart';
 import 'package:shared_preferences_tool/src/shared_preferences_state.dart';
-import 'package:shared_preferences_tool/src/shared_preferences_state_notifier_provider.dart';
+import 'package:shared_preferences_tool/src/shared_preferences_state_provider.dart';
 import 'package:shared_preferences_tool/src/ui/error_panel.dart';
 import 'package:shared_preferences_tool/src/ui/keys_panel.dart';
 
@@ -30,7 +30,7 @@ void main() {
       return tester.pumpWidget(
         DevToolsExtension(
           requiresRunningApplication: false,
-          child: StateInheritedNotifier(
+          child: InnerSharedPreferencesStateProvider(
             notifier: notifierMock,
             child: const KeysPanel(),
           ),

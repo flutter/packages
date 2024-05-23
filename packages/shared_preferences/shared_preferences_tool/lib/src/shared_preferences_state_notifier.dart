@@ -109,8 +109,8 @@ class SharedPreferencesStateNotifier extends ValueNotifier<_State> {
   }
 
   /// Deletes the selected key from the shared preferences of the target debug session.
-  Future<void> deleteKey(SelectedSharedPreferencesKey selectedKey) async {
-    await _eval.deleteKey(selectedKey.key);
+  Future<void> deleteKey(String selectedKey) async {
+    await _eval.deleteKey(selectedKey);
     await fetchAllKeys();
     stopEditing();
   }

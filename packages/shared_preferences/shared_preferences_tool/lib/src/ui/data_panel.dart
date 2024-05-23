@@ -11,7 +11,7 @@ import 'package:flutter/services.dart';
 import '../async_state.dart';
 import '../shared_preferences_state.dart';
 import '../shared_preferences_state_notifier.dart';
-import '../shared_preferences_state_notifier_provider.dart';
+import '../shared_preferences_state_provider.dart';
 import 'error_panel.dart';
 
 /// A panel that displays the data of the selected key.
@@ -34,42 +34,34 @@ class _DataPanelState extends State<DataPanel> {
 
   @override
   Widget build(BuildContext context) {
-    final SharedPreferencesStateNotifier notifier =
-        SharedPreferencesStateNotifierProvider.of(context);
-    final SharedPreferencesState? data = notifier.value.dataOrNull;
-    final SelectedSharedPreferencesKey? selectedKey = data?.selectedKey;
-
-    if (data == null || selectedKey == null) {
-      return const Center(
-        child: Text('Select a key to view its data.'),
-      );
-    }
+    final AsyncState<SharedPreferencesData?> selectedKeyData =
+        SharedPreferencesStateProvider.selectedKeyDataOf(context);
 
     return RoundedOutlinedBorder(
       clip: true,
-      child: switch (selectedKey.value) {
-        AsyncStateLoading<SharedPreferencesData>() => const Center(
+      child: switch (selectedKeyData) {
+        AsyncStateData<SharedPreferencesData?>(data: null) => const Center(
+            child: Text('Select a key to view its data.'),
+          ),
+        AsyncStateLoading<SharedPreferencesData?>() => const Center(
             child: CircularProgressIndicator(),
           ),
-        final AsyncStateError<SharedPreferencesData> value => ErrorPanel(
+        final AsyncStateError<SharedPreferencesData?> value => ErrorPanel(
             error: value.error,
             stackTrace: value.stackTrace,
           ),
-        final AsyncStateData<SharedPreferencesData> value => Column(
+        AsyncStateData<SharedPreferencesData?>(
+          data: final SharedPreferencesData data,
+        ) =>
+          Column(
             children: <Widget>[
               _Header(
-                editing: data.editing,
-                selectedKey: selectedKey,
-                notifier: notifier,
                 currentValue: currentValue,
-                data: value.data,
+                data: data,
               ),
               Expanded(
                 child: _Content(
-                  editing: data.editing,
-                  selectedKey: selectedKey,
-                  notifier: notifier,
-                  data: value.data,
+                  data: data,
                   setCurrentValue: _setCurrentValue,
                 ),
               ),
@@ -82,33 +74,35 @@ class _DataPanelState extends State<DataPanel> {
 
 class _Header extends StatelessWidget {
   const _Header({
-    required this.editing,
-    required this.selectedKey,
-    required this.notifier,
     required this.currentValue,
     required this.data,
   });
 
-  final bool editing;
-  final SelectedSharedPreferencesKey selectedKey;
-  final SharedPreferencesStateNotifier notifier;
   final String? currentValue;
   final SharedPreferencesData data;
 
   @override
   Widget build(BuildContext context) {
+    final bool editing = SharedPreferencesStateProvider.editingOf(context);
+    // it is safe to assume that the selected key is not null
+    // because the header is only shown when a key is selected
+    final String selectedKey =
+        SharedPreferencesStateProvider.requireSelectedKeyOf(context);
+
     return AreaPaneHeader(
       roundedTopBorder: false,
       includeTopBorder: false,
       tall: true,
       title: Text(
-        selectedKey.key,
+        selectedKey,
         style: Theme.of(context).textTheme.titleSmall,
       ),
       actions: <Widget>[
         if (editing) ...<Widget>[
           DevToolsButton(
-            onPressed: () => notifier.stopEditing(),
+            onPressed: () {
+              context.sharedPreferencesStateNotifier.stopEditing();
+            },
             label: 'Cancel',
           ),
           if (currentValue case final String currentValue?
@@ -119,8 +113,8 @@ class _Header extends StatelessWidget {
             DevToolsButton(
               onPressed: () async {
                 try {
-                  await notifier.changeValue(
-                    selectedKey.key,
+                  await context.sharedPreferencesStateNotifier.changeValue(
+                    selectedKey,
                     data.changeValue(currentValue),
                   );
                 } catch (error) {
@@ -134,20 +128,25 @@ class _Header extends StatelessWidget {
           ],
         ] else ...<Widget>[
           DevToolsButton(
-            onPressed: () => showDialog<void>(
-              context: context,
-              builder: (BuildContext context) {
-                return _ConfirmRemoveDialog(
+            onPressed: () {
+              // we need to get the notifier here because it is not present in
+              // the context when the dialog is built
+              final SharedPreferencesStateNotifier notifier =
+                  context.sharedPreferencesStateNotifier;
+              showDialog<void>(
+                context: context,
+                builder: (BuildContext context) => _ConfirmRemoveDialog(
                   selectedKey: selectedKey,
                   notifier: notifier,
-                );
-              },
-            ),
+                ),
+              );
+            },
             label: 'Remove',
           ),
           const SizedBox(width: denseRowSpacing),
           DevToolsButton(
-            onPressed: () => notifier.startEditing(),
+            onPressed: () =>
+                context.sharedPreferencesStateNotifier.startEditing(),
             label: 'Edit',
           ),
         ],
@@ -162,7 +161,7 @@ class _ConfirmRemoveDialog extends StatelessWidget {
     required this.notifier,
   });
 
-  final SelectedSharedPreferencesKey selectedKey;
+  final String selectedKey;
   final SharedPreferencesStateNotifier notifier;
 
   @override
@@ -170,7 +169,7 @@ class _ConfirmRemoveDialog extends StatelessWidget {
     return DevToolsDialog(
       title: const Text('Remove Key'),
       content: Text(
-        'Are you sure you want to remove ${selectedKey.key}?',
+        'Are you sure you want to remove $selectedKey?',
       ),
       actions: <Widget>[
         const DialogCancelButton(),
@@ -196,21 +195,17 @@ class _ConfirmRemoveDialog extends StatelessWidget {
 
 class _Content extends StatelessWidget {
   const _Content({
-    required this.editing,
-    required this.selectedKey,
-    required this.notifier,
     required this.data,
     required this.setCurrentValue,
   });
 
-  final bool editing;
-  final SelectedSharedPreferencesKey selectedKey;
-  final SharedPreferencesStateNotifier notifier;
   final SharedPreferencesData data;
   final ValueChanged<String> setCurrentValue;
 
   @override
   Widget build(BuildContext context) {
+    final bool editing = SharedPreferencesStateProvider.editingOf(context);
+
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.all(largeSpacing),
@@ -230,7 +225,6 @@ class _Content extends StatelessWidget {
                     ),
                   final SharedPreferencesDataStringList state =>
                     _EditStringList(
-                      selectedKey: selectedKey.key,
                       initialData: state.value,
                       onChanged: setCurrentValue,
                     ),
@@ -296,12 +290,10 @@ class _EditBoolean extends StatelessWidget {
 
 class _EditStringList extends StatefulWidget {
   const _EditStringList({
-    required this.selectedKey,
     required this.initialData,
     required this.onChanged,
   });
 
-  final String selectedKey;
   final List<String> initialData;
   final ValueChanged<String> onChanged;
 

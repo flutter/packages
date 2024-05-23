@@ -37,6 +37,48 @@ sealed class AsyncState<T> {
     };
   }
 
+  /// Returns a [AsyncState] with the value R transformed by the `onData` 
+  /// function. 
+  /// 
+  /// If the current state is [AsyncStateLoading] or [AsyncStateError], it
+  /// returns the current state, but with the type mapped.
+  /// If the current state is [AsyncStateData], it returns a new data state with
+  /// the data transformed by the `onData` function.
+  AsyncState<R> mapWhenData<R>(
+    R Function(T data) onData,
+  ) {
+    return switch (this) {
+      AsyncStateData<T>(data: final T data) => AsyncState<R>.data(onData(data)),
+      AsyncStateError<T>(
+        error: final Object error,
+        stackTrace: final StackTrace? stackTrace,
+      ) =>
+        AsyncState<R>.error(error, stackTrace),
+      AsyncState<T>() => AsyncState<R>.loading(),
+    };
+  }
+
+  /// Returns a [AsyncState] with the value R transformed by the `onData`
+  /// function.
+  /// 
+  /// If the current state is [AsyncStateLoading] or [AsyncStateError], it
+  /// returns the current state, but with the type mapped.
+  /// If the current state is [AsyncStateData], it returns the result of the
+  /// `onData` function.
+  AsyncState<R> flatMapWhenData<R>(
+    AsyncState<R> Function(T data) onData,
+  ) {
+    return switch (this) {
+      AsyncStateData<T>(data: final T data) => onData(data),
+      AsyncStateError<T>(
+        error: final Object error,
+        stackTrace: final StackTrace? stackTrace,
+      ) =>
+        AsyncState<R>.error(error, stackTrace),
+      AsyncState<T>() => AsyncState<R>.loading(),
+    };
+  }
+
   /// Returns the data `T` if the current state is [AsyncStateData], otherwise returns `null`.
   T? get dataOrNull {
     return switch (this) {

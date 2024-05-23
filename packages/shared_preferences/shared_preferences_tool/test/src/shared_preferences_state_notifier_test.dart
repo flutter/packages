@@ -158,7 +158,7 @@ void main() {
       await notifier.fetchAllKeys();
       await notifier.selectKey('key1');
 
-      await notifier.deleteKey(notifier.value.dataOrNull!.selectedKey!);
+      await notifier.deleteKey(notifier.value.dataOrNull!.selectedKey!.key);
 
       verify(evalMock.deleteKey('key1')).called(1);
     });

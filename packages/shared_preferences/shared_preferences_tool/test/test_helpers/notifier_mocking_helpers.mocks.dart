@@ -110,8 +110,7 @@ class MockSharedPreferencesStateNotifier extends _i1.Mock
       ) as _i6.Future<void>);
 
   @override
-  _i6.Future<void> deleteKey(_i4.SelectedSharedPreferencesKey? selectedKey) =>
-      (super.noSuchMethod(
+  _i6.Future<void> deleteKey(String? selectedKey) => (super.noSuchMethod(
         Invocation.method(
           #deleteKey,
           [selectedKey],

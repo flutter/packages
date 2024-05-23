@@ -4,7 +4,7 @@
 
 import 'package:devtools_extensions/devtools_extensions.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:shared_preferences_tool/src/shared_preferences_state_notifier_provider.dart';
+import 'package:shared_preferences_tool/src/shared_preferences_state_provider.dart';
 import 'package:shared_preferences_tool/src/ui/data_panel.dart';
 import 'package:shared_preferences_tool/src/ui/keys_panel.dart';
 import 'package:shared_preferences_tool/src/ui/shared_preferences_body.dart';
@@ -21,7 +21,7 @@ void main() {
       await tester.pumpWidget(
         DevToolsExtension(
           requiresRunningApplication: false,
-          child: StateInheritedNotifier(
+          child: InnerSharedPreferencesStateProvider(
             notifier: MockSharedPreferencesStateNotifier(),
             child: const SharedPreferencesBody(),
           ),
