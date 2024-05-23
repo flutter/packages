@@ -7,6 +7,7 @@ import 'dart:ui_web' as ui_web;
 
 import 'package:flutter/cupertino.dart';
 import 'package:web/web.dart' as html;
+import 'package:http/http.dart' as http;
 import 'package:webview_flutter_platform_interface/webview_flutter_platform_interface.dart';
 
 import 'content_type.dart';
@@ -86,7 +87,7 @@ class WebWebViewController extends PlatformWebViewController {
 
   /// Performs an AJAX request defined by [params].
   Future<void> _updateIFrameFromXhr(LoadRequestParams params) async {
-    final html.XMLHttpRequest httpReq =
+    final http.StreamedResponse httpReq =
         await _webWebViewParams.httpRequestFactory.request(
       params.uri.toString(),
       method: params.method.serialize(),
@@ -94,14 +95,15 @@ class WebWebViewController extends PlatformWebViewController {
       sendData: params.body,
     );
 
-    final String header =
-        httpReq.getResponseHeader('content-type') ?? 'text/html';
+    final String header = httpReq.headers['content-type'] ?? 'text/html';
     final ContentType contentType = ContentType.parse(header);
     final Encoding encoding = Encoding.getByName(contentType.charset) ?? utf8;
 
+    final http.Response response = await http.Response.fromStream(httpReq);
+
     // ignore: unsafe_html
     _webWebViewParams.iFrame.src = Uri.dataFromString(
-      httpReq.responseText,
+      response.body,
       mimeType: contentType.mimeType,
       encoding: encoding,
     ).toString();

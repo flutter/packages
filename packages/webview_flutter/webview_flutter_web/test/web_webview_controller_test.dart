@@ -3,11 +3,11 @@
 // found in the LICENSE file.
 
 import 'dart:convert';
-import 'dart:html';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:http/http.dart' as http;
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:webview_flutter_platform_interface/webview_flutter_platform_interface.dart';
@@ -16,7 +16,7 @@ import 'package:webview_flutter_web/webview_flutter_web.dart';
 import 'web_webview_controller_test.mocks.dart';
 
 @GenerateMocks(<Type>[], customMocks: <MockSpec<Object>>[
-  MockSpec<HttpRequest>(onMissingStub: OnMissingStub.returnDefault),
+  MockSpec<http.StreamedResponse>(onMissingStub: OnMissingStub.returnDefault),
   MockSpec<HttpRequestFactory>(onMissingStub: OnMissingStub.returnDefault),
 ])
 void main() {
@@ -105,17 +105,20 @@ void main() {
           httpRequestFactory: mockHttpRequestFactory,
         ));
 
-        final MockHttpRequest mockHttpRequest = MockHttpRequest();
-        when(mockHttpRequest.getResponseHeader('content-type'))
-            .thenReturn('text/plain');
-        when(mockHttpRequest.responseText).thenReturn('test data');
+        final MockStreamedResponse mockHttpRequest = MockStreamedResponse();
+        when(mockHttpRequest.headers['content-type']).thenReturn('text/plain');
+
+        final http.Response res =
+            await http.Response.fromStream(mockHttpRequest);
+        when(res.body).thenReturn('test data');
 
         when(mockHttpRequestFactory.request(
           any,
           method: anyNamed('method'),
           requestHeaders: anyNamed('requestHeaders'),
           sendData: anyNamed('sendData'),
-        )).thenAnswer((_) => Future<HttpRequest>.value(mockHttpRequest));
+        )).thenAnswer(
+            (_) => Future<http.StreamedResponse>.value(mockHttpRequest));
 
         await controller.loadRequest(LoadRequestParams(
           uri: Uri.parse('https://flutter.dev'),
@@ -147,10 +150,12 @@ void main() {
 
         final Encoding iso = Encoding.getByName('latin1')!;
 
-        final MockHttpRequest mockHttpRequest = MockHttpRequest();
-        when(mockHttpRequest.responseText)
-            .thenReturn(String.fromCharCodes(iso.encode('España')));
-        when(mockHttpRequest.getResponseHeader('content-type'))
+        final MockStreamedResponse mockHttpRequest = MockStreamedResponse();
+        final http.Response res =
+            await http.Response.fromStream(mockHttpRequest);
+
+        when(res.body).thenReturn(String.fromCharCodes(iso.encode('España')));
+        when(mockHttpRequest.headers['content-type'])
             .thenReturn('Text/HTmL; charset=latin1');
 
         when(mockHttpRequestFactory.request(
@@ -158,7 +163,8 @@ void main() {
           method: anyNamed('method'),
           requestHeaders: anyNamed('requestHeaders'),
           sendData: anyNamed('sendData'),
-        )).thenAnswer((_) => Future<HttpRequest>.value(mockHttpRequest));
+        )).thenAnswer(
+            (_) => Future<http.StreamedResponse>.value(mockHttpRequest));
 
         await controller.loadRequest(LoadRequestParams(
           uri: Uri.parse('https://flutter.dev'),
@@ -179,16 +185,19 @@ void main() {
           httpRequestFactory: mockHttpRequestFactory,
         ));
 
-        final MockHttpRequest mockHttpRequest = MockHttpRequest();
-        when(mockHttpRequest.getResponseHeader('content-type'))
-            .thenReturn('text/html');
-        when(mockHttpRequest.responseText).thenReturn('#');
+        final MockStreamedResponse mockHttpRequest = MockStreamedResponse();
+        when(mockHttpRequest.headers['content-type']).thenReturn('text/html');
+
+        final http.Response res =
+            await http.Response.fromStream(mockHttpRequest);
+        when(res.body).thenReturn('#');
         when(mockHttpRequestFactory.request(
           any,
           method: anyNamed('method'),
           requestHeaders: anyNamed('requestHeaders'),
           sendData: anyNamed('sendData'),
-        )).thenAnswer((_) => Future<HttpRequest>.value(mockHttpRequest));
+        )).thenAnswer(
+            (_) => Future<http.StreamedResponse>.value(mockHttpRequest));
 
         await controller.loadRequest(LoadRequestParams(
           uri: Uri.parse('https://flutter.dev'),

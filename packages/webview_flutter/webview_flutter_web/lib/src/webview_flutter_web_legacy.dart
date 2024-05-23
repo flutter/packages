@@ -10,7 +10,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_web_plugins/flutter_web_plugins.dart';
+import 'package:http/src/streamed_response.dart';
 import 'package:web/web.dart' as html;
+import 'package:http/http.dart' as http;
 // ignore: implementation_imports
 import 'package:webview_flutter_platform_interface/src/webview_flutter_platform_interface_legacy.dart';
 
@@ -46,8 +48,8 @@ class WebWebViewPlatform implements WebViewPlatform {
         if (onWebViewPlatformCreated == null) {
           return;
         }
-        final html.HTMLIFrameElement element =
-            html.document.getElementById('webview-$viewId')! as html.HTMLIFrameElement;
+        final html.HTMLIFrameElement element = html.document
+            .getElementById('webview-$viewId')! as html.HTMLIFrameElement;
 
         final String? initialUrl = creationParams.initialUrl;
         if (initialUrl != null) {
@@ -202,16 +204,18 @@ class WebWebViewPlatformController implements WebViewPlatformController {
     if (!request.uri.hasScheme) {
       throw ArgumentError('WebViewRequest#uri is required to have a scheme.');
     }
-    final html.XMLHttpRequest httpReq = await _httpRequestFactory.request(
+    final http.StreamedResponse httpReq = await _httpRequestFactory.request(
         request.uri.toString(),
         method: request.method.serialize(),
         requestHeaders: request.headers,
         sendData: request.body);
-    final String contentType =
-        httpReq.getResponseHeader('content-type') ?? 'text/html';
-    // ignore: unsafe_html
+
+    final String contentType = httpReq.headers['content-type'] ?? 'text/html';
+
+    final http.Response response = await http.Response.fromStream(httpReq);
+
     _element.src = Uri.dataFromString(
-      httpReq.responseText,
+      response.body,
       mimeType: contentType,
       encoding: utf8,
     ).toString();

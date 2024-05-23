@@ -1,7 +1,10 @@
 // Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
-import 'package:web/web.dart';
+import 'dart:typed_data';
+
+import 'package:http/browser_client.dart';
+import 'package:http/http.dart' as http;
 
 /// Factory class for creating [HttpRequest] instances.
 class HttpRequestFactory {
@@ -60,21 +63,33 @@ class HttpRequestFactory {
   /// when the file cannot be found.
   ///
   /// See also: [authorization headers](http://en.wikipedia.org/wiki/Basic_access_authentication).
-  Future<XMLHttpRequest> request(String url,
-      {String? method,
-      bool? withCredentials,
-      String? responseType,
-      String? mimeType,
-      Map<String, String>? requestHeaders,
-      dynamic sendData,
-      void Function(ProgressEvent e)? onProgress}) {
-    return HttpRequest.request(url,
-        method: method,
-        withCredentials: withCredentials,
-        responseType: responseType,
-        mimeType: mimeType,
-        requestHeaders: requestHeaders,
-        sendData: sendData,
-        onProgress: onProgress);
+  Future<http.StreamedResponse> request(
+    String url, {
+    String? method,
+    bool? withCredentials,
+    String? mimeType,
+    Map<String, String>? requestHeaders,
+    Uint8List? sendData,
+  }) {
+    final BrowserClient client = BrowserClient();
+    if (withCredentials != null) {
+      client.withCredentials = withCredentials;
+    }
+
+    final http.Request request = http.Request(method ?? 'GET', Uri.parse(url));
+
+    if (sendData != null) {
+      request.bodyBytes = sendData.toList();
+    }
+
+    if (mimeType != null) {
+      request.headers['content-type'] = mimeType;
+    }
+
+    if (requestHeaders != null) {
+      request.headers.addAll(requestHeaders);
+    }
+
+    return client.send(request);
   }
 }
