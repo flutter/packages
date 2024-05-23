@@ -648,45 +648,24 @@ class Camera {
   Stream<CameraImageData> cameraFrameStream({
     CameraImageStreamOptions? options,
   }) {
-    ///Used to cancel the frame animationFrame
-    int? animationFrameId;
-
-    bool isRequestingFrames = true;
-
-    /// Requests animation frames in a loop as long as
-    /// the [isRequestingFrames] is set.
-    void requestFramesLoop() {
-      Future<void> requestNextFrame() async {
-        while (isRequestingFrames) {
-          await Future<void>(() {
-            final Completer<void> completer = Completer<void>();
-            window!.requestAnimationFrame((num frameId) {
-              animationFrameId = frameId.toInt();
-              if (isRequestingFrames) {
-                _addCameraImageDataEvent();
-              }
-              completer.complete();
-            });
-            return completer.future;
-          });
-        }
-      }
-
-      requestNextFrame();
-    }
-
-    _cameraFrameStreamController
-      ..onListen = () {
-        requestFramesLoop();
-      }
-      ..onCancel = () {
-        isRequestingFrames = false;
-        if (animationFrameId != null) {
-          window!.cancelAnimationFrame(animationFrameId!);
-        }
-      };
+    _cameraFrameStreamController.onListen = () {
+      _triggerAnimationFramesLoop(_addCameraImageDataEvent);
+    };
 
     return _cameraFrameStreamController.stream;
+  }
+
+  /// Triggers animation frames in a loop as long as
+  /// [_cameraFrameStreamController.hasListener] and executes the callback
+  void _triggerAnimationFramesLoop(VoidCallback callback) {
+    Future<void> triggerNextAnimationFrame() async {
+      while (_cameraFrameStreamController.hasListener) {
+        await window!.animationFrame;
+        callback();
+      }
+    }
+
+    triggerNextAnimationFrame();
   }
 
   /// Used to trigger add event of camera image data in camera frame stream
