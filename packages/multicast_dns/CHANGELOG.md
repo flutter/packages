@@ -1,7 +1,7 @@
 ## NEXT
 
-* Updates minimum supported SDK version to Flutter 3.13/Dart 3.2.
-* Optimized Socket Binding: Consolidated to 0.0.0.0 for Simplicity and Efficiency
+* Updates minimum supported SDK version to Flutter 3.16/Dart 3.2.
+* Optimized Socket Binding: Always bind to 0.0.0.0 for simplicity and efficiency.
 
 ## 0.3.2+6
 
