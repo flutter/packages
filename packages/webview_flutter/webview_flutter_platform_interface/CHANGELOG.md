@@ -1,9 +1,6 @@
 ## 2.10.1
 
 * Adds `setOnWebViewRenderProcessTerminated` to `PlatformNavigationDelegate`.
-
-## NEXT
-
 * Updates minimum supported SDK version to Flutter 3.16/Dart 3.2.
 
 ## 2.10.0
