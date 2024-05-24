@@ -1,6 +1,10 @@
+## NEXT
+
+* Fixes some `package:web` tweaks.
+
 ## 2.3.0
 
-* Migrates package and tests to `package:web``.
+* Migrates package and tests to `package:web`.
 * Fixes infinite event loop caused by `seekTo` when the video ends.
 
 ## 2.2.0
