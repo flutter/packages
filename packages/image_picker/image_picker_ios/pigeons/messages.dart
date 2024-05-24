@@ -7,10 +7,12 @@ import 'package:pigeon/pigeon.dart';
 @ConfigurePigeon(PigeonOptions(
   dartOut: 'lib/src/messages.g.dart',
   dartTestOut: 'test/test_api.g.dart',
-  objcHeaderOut: 'ios/Classes/messages.g.h',
-  objcSourceOut: 'ios/Classes/messages.g.m',
+  objcHeaderOut:
+      'ios/image_picker_ios/Sources/image_picker_ios/include/image_picker_ios/messages.g.h',
+  objcSourceOut: 'ios/image_picker_ios/Sources/image_picker_ios/messages.g.m',
   objcOptions: ObjcOptions(
     prefix: 'FLT',
+    headerIncludePath: './include/image_picker_ios/messages.g.h',
   ),
   copyrightHeader: 'pigeons/copyright.txt',
 ))
@@ -26,12 +28,14 @@ class MediaSelectionOptions {
     this.imageQuality,
     required this.requestFullMetadata,
     required this.allowMultiple,
+    this.limit,
   });
 
   MaxSize maxSize;
   int? imageQuality;
   bool requestFullMetadata;
   bool allowMultiple;
+  int? limit;
 }
 
 // Corresponds to `CameraDevice` from the platform interface package.
@@ -53,9 +57,9 @@ abstract class ImagePickerApi {
   String? pickImage(SourceSpecification source, MaxSize maxSize,
       int? imageQuality, bool requestFullMetadata);
   @async
-  @ObjCSelector('pickMultiImageWithMaxSize:quality:fullMetadata:')
+  @ObjCSelector('pickMultiImageWithMaxSize:quality:fullMetadata:limit:')
   List<String?> pickMultiImage(
-      MaxSize maxSize, int? imageQuality, bool requestFullMetadata);
+      MaxSize maxSize, int? imageQuality, bool requestFullMetadata, int? limit);
   @async
   @ObjCSelector('pickVideoWithSource:maxDuration:')
   String? pickVideo(SourceSpecification source, int? maxDurationSeconds);

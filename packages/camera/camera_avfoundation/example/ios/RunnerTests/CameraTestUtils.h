@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 @import camera_avfoundation;
+@import camera_avfoundation.Test;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -13,7 +14,8 @@ NS_ASSUME_NONNULL_BEGIN
 /// dependency injection).
 /// @return an FLTCam object.
 extern FLTCam *_Nullable FLTCreateCamWithCaptureSessionQueueAndMediaSettings(
-    dispatch_queue_t _Nullable captureSessionQueue, FLTCamMediaSettings *_Nullable mediaSettings,
+    dispatch_queue_t _Nullable captureSessionQueue,
+    FCPPlatformMediaSettings *_Nullable mediaSettings,
     FLTCamMediaSettingsAVWrapper *_Nullable mediaSettingsAVWrapper);
 
 extern FLTCam *FLTCreateCamWithCaptureSessionQueue(dispatch_queue_t captureSessionQueue);
@@ -23,7 +25,7 @@ extern FLTCam *FLTCreateCamWithCaptureSessionQueue(dispatch_queue_t captureSessi
 /// @param resolutionPreset preset for camera's captureSession resolution
 /// @return an FLTCam object.
 extern FLTCam *FLTCreateCamWithVideoCaptureSession(AVCaptureSession *captureSession,
-                                                   NSString *resolutionPreset);
+                                                   FCPPlatformResolutionPreset resolutionPreset);
 
 /// Creates an `FLTCam` with a given captureSession and resolutionPreset.
 /// Allows to inject a capture device and a block to compute the video dimensions.
@@ -33,8 +35,8 @@ extern FLTCam *FLTCreateCamWithVideoCaptureSession(AVCaptureSession *captureSess
 /// @param videoDimensionsForFormat custom code to determine video dimensions
 /// @return an FLTCam object.
 extern FLTCam *FLTCreateCamWithVideoDimensionsForFormat(
-    AVCaptureSession *captureSession, NSString *resolutionPreset, AVCaptureDevice *captureDevice,
-    VideoDimensionsForFormat videoDimensionsForFormat);
+    AVCaptureSession *captureSession, FCPPlatformResolutionPreset resolutionPreset,
+    AVCaptureDevice *captureDevice, VideoDimensionsForFormat videoDimensionsForFormat);
 
 /// Creates a test sample buffer.
 /// @return a test sample buffer.

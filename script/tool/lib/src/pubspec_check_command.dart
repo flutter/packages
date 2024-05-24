@@ -200,7 +200,10 @@ class PubspecCheckCommand extends PackageLoopingCommand {
 
     final String? dependenciesError = _checkDependencies(pubspec);
     if (dependenciesError != null) {
-      printError('$indentation$dependenciesError');
+      printError(dependenciesError
+          .split('\n')
+          .map((String line) => '$indentation$line')
+          .join('\n'));
       passing = false;
     }
 
@@ -542,6 +545,7 @@ class PubspecCheckCommand extends PackageLoopingCommand {
   // there are any that aren't allowed.
   String? _checkDependencies(Pubspec pubspec) {
     final Set<String> badDependencies = <String>{};
+    final Set<String> misplacedDevDependencies = <String>{};
     // Shipped dependencies.
     for (final Map<String, Dependency> dependencies
         in <Map<String, Dependency>>[
@@ -556,24 +560,40 @@ class PubspecCheckCommand extends PackageLoopingCommand {
     }
 
     // Ensure that dev-only dependencies aren't in `dependencies`.
-    const Set<String> devOnlyDependencies = <String>{'integration_test', 'test', 'flutter_test'};
-    // Non-published packages like pidgeon subpackages are allowed to violate
+    const Set<String> devOnlyDependencies = <String>{
+      'build_runner',
+      'integration_test',
+      'flutter_test',
+      'mockito',
+      'pigeon',
+      'test',
+    };
+    // Non-published packages like pigeon subpackages are allowed to violate
     // the dev only dependencies rule.
     if (pubspec.publishTo != 'none') {
       pubspec.dependencies.forEach((String name, Dependency dependency) {
         if (devOnlyDependencies.contains(name)) {
-          badDependencies.add(name);
+          misplacedDevDependencies.add(name);
         }
       });
     }
 
-    if (badDependencies.isEmpty) {
-      return null;
-    }
-    return 'The following unexpected non-local dependencies were found:\n'
-        '${badDependencies.map((String name) => '  $name').join('\n')}\n'
-        'Please see https://github.com/flutter/flutter/wiki/Contributing-to-Plugins-and-Packages#Dependencies '
-        'for more information and next steps.';
+    final List<String> errors = <String>[
+      if (badDependencies.isNotEmpty)
+        '''
+The following unexpected non-local dependencies were found:
+${badDependencies.map((String name) => '  $name').join('\n')}
+Please see https://github.com/flutter/flutter/wiki/Contributing-to-Plugins-and-Packages#Dependencies
+for more information and next steps.
+''',
+      if (misplacedDevDependencies.isNotEmpty)
+        '''
+The following dev dependencies were found in the dependencies section:
+${misplacedDevDependencies.map((String name) => '  $name').join('\n')}
+Please move them to dev_dependencies.
+''',
+    ];
+    return errors.isEmpty ? null : errors.join('\n\n');
   }
 
   // Checks whether a given dependency is allowed.

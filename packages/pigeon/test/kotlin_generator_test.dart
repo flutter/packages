@@ -51,7 +51,7 @@ void main() {
     final String code = sink.toString();
     expect(code, contains('data class Foobar ('));
     expect(code, contains('val field1: Long? = null'));
-    expect(code, contains('fun fromList(list: List<Any?>): Foobar'));
+    expect(code, contains('fun fromList(__pigeon_list: List<Any?>): Foobar'));
     expect(code, contains('fun toList(): List<Any?>'));
   });
 
@@ -132,9 +132,10 @@ void main() {
     expect(code, contains('data class Bar ('));
     expect(code, contains('val field1: Foo,'));
     expect(code, contains('val field2: String'));
-    expect(code, contains('fun fromList(list: List<Any?>): Bar'));
-    expect(code, contains('val field1 = Foo.ofRaw(list[0] as Int)!!\n'));
-    expect(code, contains('val field2 = list[1] as String\n'));
+    expect(code, contains('fun fromList(__pigeon_list: List<Any?>): Bar'));
+    expect(
+        code, contains('val field1 = Foo.ofRaw(__pigeon_list[0] as Int)!!\n'));
+    expect(code, contains('val field2 = __pigeon_list[1] as String\n'));
     expect(code, contains('fun toList(): List<Any?>'));
   });
 
@@ -236,11 +237,10 @@ void main() {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val inputArg = args[0] as Input
-            var wrapped: List<Any?>
-            try {
-              wrapped = listOf<Any?>(api.doSomething(inputArg))
+            val wrapped: List<Any?> = try {
+              listOf<Any?>(api.doSomething(inputArg))
             } catch (exception: Throwable) {
-              wrapped = wrapError(exception)
+              wrapError(exception)
             }
             reply.reply(wrapped)
           }
@@ -390,7 +390,7 @@ void main() {
     expect(
         code,
         contains(
-            'val aInt = list[1].let { if (it is Int) it.toLong() else it as Long }'));
+            'val aInt = __pigeon_list[1].let { num -> if (num is Int) num.toLong() else num as Long }'));
     expect(code, contains('val aNullableBool: Boolean? = null'));
     expect(code, contains('val aNullableInt: Long? = null'));
     expect(code, contains('val aNullableDouble: Double? = null'));
@@ -402,7 +402,7 @@ void main() {
     expect(
         code,
         contains(
-            'val aNullableInt = list[9].let { if (it is Int) it.toLong() else it as Long? }'));
+            'val aNullableInt = __pigeon_list[9].let { num -> if (num is Int) num.toLong() else num as Long? }'));
   });
 
   test('gen one flutter api', () {
@@ -591,8 +591,8 @@ void main() {
     );
     final String code = sink.toString();
     expect(code, contains('fun doSomething(): Output'));
-    expect(code, contains('wrapped = listOf<Any?>(api.doSomething())'));
-    expect(code, contains('wrapped = wrapError(exception)'));
+    expect(code, contains('listOf<Any?>(api.doSomething())'));
+    expect(code, contains('wrapError(exception)'));
     expect(code, contains('reply(wrapped)'));
   });
 
@@ -732,10 +732,8 @@ void main() {
     expect(code, contains('data class Outer'));
     expect(code, contains('data class Nested'));
     expect(code, contains('val nested: Nested? = null'));
-    expect(code, contains('fun fromList(list: List<Any?>): Outer'));
-    expect(
-        code, contains('val nested: Nested? = (list[0] as List<Any?>?)?.let'));
-    expect(code, contains('Nested.fromList(it)'));
+    expect(code, contains('fun fromList(__pigeon_list: List<Any?>): Outer'));
+    expect(code, contains('val nested = __pigeon_list[0] as Nested?'));
     expect(code, contains('fun toList(): List<Any?>'));
   });
 
@@ -1091,7 +1089,7 @@ void main() {
     );
     final String code = sink.toString();
     expect(code, contains('fun doit(): List<Long?>'));
-    expect(code, contains('wrapped = listOf<Any?>(api.doit())'));
+    expect(code, contains('listOf<Any?>(api.doit())'));
     expect(code, contains('reply.reply(wrapped)'));
   });
 
@@ -1164,12 +1162,12 @@ void main() {
     expect(
         code,
         contains(
-            'val xArg = args[0].let { if (it is Int) it.toLong() else it as Long }'));
+            'val xArg = args[0].let { num -> if (num is Int) num.toLong() else num as Long }'));
     expect(
         code,
         contains(
-            'val yArg = args[1].let { if (it is Int) it.toLong() else it as Long }'));
-    expect(code, contains('wrapped = listOf<Any?>(api.add(xArg, yArg))'));
+            'val yArg = args[1].let { num -> if (num is Int) num.toLong() else num as Long }'));
+    expect(code, contains('listOf<Any?>(api.add(xArg, yArg))'));
     expect(code, contains('reply.reply(wrapped)'));
   });
 
@@ -1207,7 +1205,7 @@ void main() {
     expect(
       code,
       contains(
-          'val output = it[0].let { if (it is Int) it.toLong() else it as Long }'),
+          'val output = it[0].let { num -> if (num is Int) num.toLong() else num as Long }'),
     );
     expect(code, contains('callback(Result.success(output))'));
     expect(
@@ -1312,7 +1310,7 @@ void main() {
     expect(
         code,
         contains(
-            'val fooArg = args[0].let { if (it is Int) it.toLong() else it as Long? }'));
+            'val fooArg = args[0].let { num -> if (num is Int) num.toLong() else num as Long? }'));
   });
 
   test('nullable argument flutter', () {
