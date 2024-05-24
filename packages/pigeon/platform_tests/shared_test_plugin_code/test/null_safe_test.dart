@@ -135,7 +135,7 @@ void main() {
         MockNullableArgFlutterApi();
     when(mockFlutterApi.doit(null)).thenReturn(14);
 
-    NullableArgFlutterApi.setup(mockFlutterApi);
+    NullableArgFlutterApi.setUp(mockFlutterApi);
 
     final Completer<int> resultCompleter = Completer<int>();
     binding.defaultBinaryMessenger.handlePlatformMessage(
@@ -153,7 +153,7 @@ void main() {
     expect(resultCompleter.future, completion(14));
 
     // Removes message handlers from global default binary messenger.
-    NullableArgFlutterApi.setup(null);
+    NullableArgFlutterApi.setUp(null);
   });
 
   test('receive null collection parameters', () {
@@ -161,7 +161,7 @@ void main() {
         MockNullableCollectionArgFlutterApi();
     when(mockFlutterApi.doit(null)).thenReturn(<String?>['14']);
 
-    NullableCollectionArgFlutterApi.setup(mockFlutterApi);
+    NullableCollectionArgFlutterApi.setUp(mockFlutterApi);
 
     final Completer<List<String?>> resultCompleter = Completer<List<String?>>();
     binding.defaultBinaryMessenger.handlePlatformMessage(
@@ -181,7 +181,7 @@ void main() {
     expect(resultCompleter.future, completion(<String>['14']));
 
     // Removes message handlers from global default binary messenger.
-    NullableArgFlutterApi.setup(null);
+    NullableArgFlutterApi.setUp(null);
   });
 
   test('receive null return', () async {
@@ -217,7 +217,7 @@ void main() {
         MockNullableReturnFlutterApi();
     when(mockFlutterApi.doit()).thenReturn(null);
 
-    NullableReturnFlutterApi.setup(mockFlutterApi);
+    NullableReturnFlutterApi.setUp(mockFlutterApi);
 
     final Completer<int?> resultCompleter = Completer<int?>();
     unawaited(binding.defaultBinaryMessenger.handlePlatformMessage(
@@ -231,7 +231,7 @@ void main() {
     expect(resultCompleter.future, completion(null));
 
     // Removes message handlers from global default binary messenger.
-    NullableArgFlutterApi.setup(null);
+    NullableArgFlutterApi.setUp(null);
   });
 
   test('send null collection return', () async {
@@ -239,7 +239,7 @@ void main() {
         MockNullableCollectionReturnFlutterApi();
     when(mockFlutterApi.doit()).thenReturn(null);
 
-    NullableCollectionReturnFlutterApi.setup(mockFlutterApi);
+    NullableCollectionReturnFlutterApi.setUp(mockFlutterApi);
 
     final Completer<List<String?>?> resultCompleter =
         Completer<List<String?>?>();
@@ -255,6 +255,6 @@ void main() {
     expect(resultCompleter.future, completion(null));
 
     // Removes message handlers from global default binary messenger.
-    NullableArgFlutterApi.setup(null);
+    NullableArgFlutterApi.setUp(null);
   });
 }

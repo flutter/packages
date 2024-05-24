@@ -268,11 +268,20 @@ public class Messages {
     }
     /** Sets up an instance of `ExampleHostApi` to handle messages through the `binaryMessenger`. */
     static void setUp(@NonNull BinaryMessenger binaryMessenger, @Nullable ExampleHostApi api) {
+      setUp(binaryMessenger, "", api);
+    }
+
+    static void setUp(
+        @NonNull BinaryMessenger binaryMessenger,
+        @NonNull String messageChannelSuffix,
+        @Nullable ExampleHostApi api) {
+      messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
-                "dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.getHostLanguage",
+                "dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.getHostLanguage"
+                    + messageChannelSuffix,
                 getCodec());
         if (api != null) {
           channel.setMessageHandler(
@@ -295,7 +304,8 @@ public class Messages {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
-                "dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.add",
+                "dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.add"
+                    + messageChannelSuffix,
                 getCodec());
         if (api != null) {
           channel.setMessageHandler(
@@ -324,7 +334,8 @@ public class Messages {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
-                "dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.sendMessage",
+                "dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.sendMessage"
+                    + messageChannelSuffix,
                 getCodec());
         if (api != null) {
           channel.setMessageHandler(
@@ -356,9 +367,16 @@ public class Messages {
   /** Generated class from Pigeon that represents Flutter messages that can be called from Java. */
   public static class MessageFlutterApi {
     private final @NonNull BinaryMessenger binaryMessenger;
+    private final String messageChannelSuffix;
 
     public MessageFlutterApi(@NonNull BinaryMessenger argBinaryMessenger) {
+      this(argBinaryMessenger, "");
+    }
+
+    public MessageFlutterApi(
+        @NonNull BinaryMessenger argBinaryMessenger, @NonNull String messageChannelSuffix) {
       this.binaryMessenger = argBinaryMessenger;
+      this.messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;
     }
 
     /** Public interface for sending reply. */
@@ -369,7 +387,8 @@ public class Messages {
 
     public void flutterMethod(@Nullable String aStringArg, @NonNull Result<String> result) {
       final String channelName =
-          "dev.flutter.pigeon.pigeon_example_package.MessageFlutterApi.flutterMethod";
+          "dev.flutter.pigeon.pigeon_example_package.MessageFlutterApi.flutterMethod"
+              + messageChannelSuffix;
       BasicMessageChannel<Object> channel =
           new BasicMessageChannel<>(binaryMessenger, channelName, getCodec());
       channel.send(

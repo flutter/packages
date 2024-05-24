@@ -7,6 +7,8 @@
 #import "CoreTests.gen.h"
 
 @interface AlternateLanguageTestPlugin ()
+@property(nonatomic) FLTFlutterSmallApi *flutterSmallApiOne;
+@property(nonatomic) FLTFlutterSmallApi *flutterSmallApiTwo;
 @property(nonatomic) FLTFlutterIntegrationCoreApi *flutterAPI;
 @end
 
@@ -15,8 +17,16 @@
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar {
   AlternateLanguageTestPlugin *plugin = [[AlternateLanguageTestPlugin alloc] init];
   SetUpFLTHostIntegrationCoreApi([registrar messenger], plugin);
+  [AlternateLanguageTestAPIWithSuffix registerWithRegistrar:registrar suffix:@"suffixOne"];
+  [AlternateLanguageTestAPIWithSuffix registerWithRegistrar:registrar suffix:@"suffixTwo"];
   plugin.flutterAPI =
       [[FLTFlutterIntegrationCoreApi alloc] initWithBinaryMessenger:[registrar messenger]];
+  plugin.flutterSmallApiOne =
+      [[FLTFlutterSmallApi alloc] initWithBinaryMessenger:[registrar messenger]
+                                     messageChannelSuffix:@"suffixOne"];
+  plugin.flutterSmallApiTwo =
+      [[FLTFlutterSmallApi alloc] initWithBinaryMessenger:[registrar messenger]
+                                     messageChannelSuffix:@"suffixTwo"];
 }
 
 #pragma mark HostIntegrationCoreApi implementation
@@ -568,6 +578,55 @@
                          completion:^(FLTAnEnumBox *value, FlutterError *error) {
                            completion(value, error);
                          }];
+}
+
+- (void)callFlutterSmallApiEchoString:(nonnull NSString *)aString
+                           completion:(nonnull void (^)(NSString *_Nullable,
+                                                        FlutterError *_Nullable))completion {
+  [self.flutterSmallApiOne
+      echoString:aString
+      completion:^(NSString *valueOne, FlutterError *error) {
+        [self.flutterSmallApiTwo
+            echoString:aString
+            completion:^(NSString *valueTwo, FlutterError *error) {
+              if ([valueOne isEqualToString:valueTwo]) {
+                completion(valueTwo, error);
+              } else {
+                completion(
+                    nil,
+                    [FlutterError
+                        errorWithCode:@"Responses do not match"
+                              message:[NSString stringWithFormat:
+                                                    @"%@%@%@%@",
+                                                    @"Multi-instance responses were not matching: ",
+                                                    valueOne, @", ", valueTwo]
+                              details:nil]);
+              }
+            }];
+      }];
+}
+
+@end
+
+@interface AlternateLanguageTestAPIWithSuffix ()
+@end
+
+@implementation AlternateLanguageTestAPIWithSuffix
++ (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar
+                       suffix:(NSString *)suffix {
+  AlternateLanguageTestAPIWithSuffix *api = [[AlternateLanguageTestAPIWithSuffix alloc] init];
+  SetUpFLTHostSmallApiWithSuffix([registrar messenger], api, suffix);
+}
+
+#pragma mark HostSmallAPI implementation
+
+- (void)echoString:(nonnull NSString *)aString
+        completion:(nonnull void (^)(NSString *_Nullable, FlutterError *_Nullable))completion {
+  completion(aString, nil);
+}
+
+- (void)voidVoidWithCompletion:(nonnull void (^)(FlutterError *_Nullable))completion {
+  completion(nil);
 }
 
 @end

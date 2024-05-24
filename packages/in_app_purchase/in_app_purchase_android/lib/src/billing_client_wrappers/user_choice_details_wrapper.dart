@@ -19,7 +19,6 @@ part 'user_choice_details_wrapper.g.dart';
 @immutable
 class UserChoiceDetailsWrapper {
   /// Creates a purchase wrapper with the given purchase details.
-  @visibleForTesting
   const UserChoiceDetailsWrapper({
     required this.originalExternalTransactionId,
     required this.externalTransactionToken,
@@ -28,6 +27,8 @@ class UserChoiceDetailsWrapper {
 
   /// Factory for creating a [UserChoiceDetailsWrapper] from a [Map] with
   /// the user choice details.
+  @Deprecated('JSON serialization is not intended for public use, and will '
+      'be removed in a future version.')
   factory UserChoiceDetailsWrapper.fromJson(Map<String, dynamic> map) =>
       _$UserChoiceDetailsWrapperFromJson(map);
 
@@ -82,7 +83,6 @@ class UserChoiceDetailsWrapper {
 @immutable
 class UserChoiceDetailsProductWrapper {
   /// Creates a [UserChoiceDetailsProductWrapper] with the given record details.
-  @visibleForTesting
   const UserChoiceDetailsProductWrapper({
     required this.id,
     required this.offerToken,
@@ -90,6 +90,8 @@ class UserChoiceDetailsProductWrapper {
   });
 
   /// Factory for creating a [UserChoiceDetailsProductWrapper] from a [Map] with the record details.
+  @Deprecated('JSON serialization is not intended for public use, and will '
+      'be removed in a future version.')
   factory UserChoiceDetailsProductWrapper.fromJson(Map<String, dynamic> map) =>
       _$UserChoiceDetailsProductWrapperFromJson(map);
 
