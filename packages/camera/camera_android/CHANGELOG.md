@@ -1,4 +1,4 @@
-## NEXT
+## 0.10.10
 
 * Updates minimum supported SDK version to Flutter 3.22/Dart 3.2.
 * [Supports Impeller](https://docs.flutter.dev/release/breaking-changes/android-surface-plugins)
@@ -36,7 +36,7 @@
 
 ## 0.10.8+14
 
-* Fixes `pausePreview` null pointer error. `pausePreview` should not be called 
+* Fixes `pausePreview` null pointer error. `pausePreview` should not be called
   when camera is closed or not configured.
 * Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
 

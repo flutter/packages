@@ -395,8 +395,7 @@ final class MethodCallHandlerImpl implements MethodChannel.MethodCallHandler {
 
     TextureRegistry.SurfaceProducer surfaceProducer = textureRegistry.createSurfaceProducer();
     DartMessenger dartMessenger =
-        new DartMessenger(
-            messenger, surfaceProducer.id(), new Handler(Looper.getMainLooper()));
+        new DartMessenger(messenger, surfaceProducer.id(), new Handler(Looper.getMainLooper()));
     CameraProperties cameraProperties =
         new CameraPropertiesImpl(cameraName, CameraUtils.getCameraManager(activity));
     ResolutionPreset resolutionPreset = ResolutionPreset.valueOf(preset);
