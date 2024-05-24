@@ -10,9 +10,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_web_plugins/flutter_web_plugins.dart';
-import 'package:http/src/streamed_response.dart';
-import 'package:web/web.dart' as html;
 import 'package:http/http.dart' as http;
+import 'package:web/web.dart' as html;
 // ignore: implementation_imports
 import 'package:webview_flutter_platform_interface/src/webview_flutter_platform_interface_legacy.dart';
 
