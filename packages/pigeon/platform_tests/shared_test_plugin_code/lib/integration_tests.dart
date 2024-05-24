@@ -428,7 +428,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       expect(() async {
         await api.throwError();
       }, throwsA(isA<PlatformException>()));
-    }, skip: _linuxBringup);
+    });
 
     testWidgets('errors are returned from void methods correctly',
         (WidgetTester _) async {
@@ -437,7 +437,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       expect(() async {
         await api.throwErrorFromVoid();
       }, throwsA(isA<PlatformException>()));
-    }, skip: _linuxBringup);
+    });
 
     testWidgets('flutter errors are returned correctly',
         (WidgetTester _) async {
@@ -450,7 +450,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
               e.code == 'code' &&
               e.message == 'message' &&
               e.details == 'details'));
-    }, skip: _linuxBringup);
+    });
 
     testWidgets('nested objects can be sent correctly', (WidgetTester _) async {
       final HostIntegrationCoreApi api = HostIntegrationCoreApi();
