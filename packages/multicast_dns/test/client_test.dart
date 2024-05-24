@@ -131,7 +131,6 @@ void main() {
             ));
           }
 
-          // Returning the dummy list as a Future
           return Future.value(fakeInterfaces);
         }
 
