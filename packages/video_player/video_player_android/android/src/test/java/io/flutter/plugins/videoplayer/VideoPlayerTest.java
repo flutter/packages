@@ -13,7 +13,6 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 
-import android.graphics.SurfaceTexture;
 import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.PlaybackException;
@@ -59,8 +58,14 @@ public class VideoPlayerTest {
 
   @Test
   public void videoPlayer_buildsHttpDataSourceFactoryProperlyWhenHttpHeadersNull() {
-    VideoPlayer videoPlayer = new VideoPlayer(fakeExoPlayer, fakeEventChannel, fakeSurfaceProducer,
-        fakeVideoPlayerOptions, fakeEventSink, httpDataSourceFactorySpy);
+    VideoPlayer videoPlayer =
+        new VideoPlayer(
+            fakeExoPlayer,
+            fakeEventChannel,
+            fakeSurfaceProducer,
+            fakeVideoPlayerOptions,
+            fakeEventSink,
+            httpDataSourceFactorySpy);
 
     videoPlayer.buildHttpDataSourceFactory(new HashMap<>());
 
@@ -71,15 +76,22 @@ public class VideoPlayerTest {
 
   @Test
   public void
-  videoPlayer_buildsHttpDataSourceFactoryProperlyWhenHttpHeadersNonNullAndUserAgentSpecified() {
-    VideoPlayer videoPlayer = new VideoPlayer(fakeExoPlayer, fakeEventChannel, fakeSurfaceProducer,
-        fakeVideoPlayerOptions, fakeEventSink, httpDataSourceFactorySpy);
-    Map<String, String> httpHeaders = new HashMap<String, String>() {
-      {
-        put("header", "value");
-        put("User-Agent", "userAgent");
-      }
-    };
+      videoPlayer_buildsHttpDataSourceFactoryProperlyWhenHttpHeadersNonNullAndUserAgentSpecified() {
+    VideoPlayer videoPlayer =
+        new VideoPlayer(
+            fakeExoPlayer,
+            fakeEventChannel,
+            fakeSurfaceProducer,
+            fakeVideoPlayerOptions,
+            fakeEventSink,
+            httpDataSourceFactorySpy);
+    Map<String, String> httpHeaders =
+        new HashMap<String, String>() {
+          {
+            put("header", "value");
+            put("User-Agent", "userAgent");
+          }
+        };
 
     videoPlayer.buildHttpDataSourceFactory(httpHeaders);
 
@@ -90,12 +102,21 @@ public class VideoPlayerTest {
 
   @Test
   public void
-  videoPlayer_buildsHttpDataSourceFactoryProperlyWhenHttpHeadersNonNullAndUserAgentNotSpecified() {
-    VideoPlayer videoPlayer = new VideoPlayer(fakeExoPlayer, fakeEventChannel, fakeSurfaceProducer,
-        fakeVideoPlayerOptions, fakeEventSink, httpDataSourceFactorySpy);
-    Map<String, String> httpHeaders = new HashMap<String, String>() {
-      { put("header", "value"); }
-    };
+      videoPlayer_buildsHttpDataSourceFactoryProperlyWhenHttpHeadersNonNullAndUserAgentNotSpecified() {
+    VideoPlayer videoPlayer =
+        new VideoPlayer(
+            fakeExoPlayer,
+            fakeEventChannel,
+            fakeSurfaceProducer,
+            fakeVideoPlayerOptions,
+            fakeEventSink,
+            httpDataSourceFactorySpy);
+    Map<String, String> httpHeaders =
+        new HashMap<String, String>() {
+          {
+            put("header", "value");
+          }
+        };
 
     videoPlayer.buildHttpDataSourceFactory(httpHeaders);
 
@@ -106,8 +127,14 @@ public class VideoPlayerTest {
 
   @Test
   public void sendInitializedSendsExpectedEvent_90RotationDegrees() {
-    VideoPlayer videoPlayer = new VideoPlayer(fakeExoPlayer, fakeEventChannel, fakeSurfaceProducer,
-        fakeVideoPlayerOptions, fakeEventSink, httpDataSourceFactorySpy);
+    VideoPlayer videoPlayer =
+        new VideoPlayer(
+            fakeExoPlayer,
+            fakeEventChannel,
+            fakeSurfaceProducer,
+            fakeVideoPlayerOptions,
+            fakeEventSink,
+            httpDataSourceFactorySpy);
     Format testFormat =
         new Format.Builder().setWidth(100).setHeight(200).setRotationDegrees(90).build();
 
@@ -129,8 +156,14 @@ public class VideoPlayerTest {
 
   @Test
   public void sendInitializedSendsExpectedEvent_270RotationDegrees() {
-    VideoPlayer videoPlayer = new VideoPlayer(fakeExoPlayer, fakeEventChannel, fakeSurfaceProducer,
-        fakeVideoPlayerOptions, fakeEventSink, httpDataSourceFactorySpy);
+    VideoPlayer videoPlayer =
+        new VideoPlayer(
+            fakeExoPlayer,
+            fakeEventChannel,
+            fakeSurfaceProducer,
+            fakeVideoPlayerOptions,
+            fakeEventSink,
+            httpDataSourceFactorySpy);
     Format testFormat =
         new Format.Builder().setWidth(100).setHeight(200).setRotationDegrees(270).build();
 
@@ -152,8 +185,14 @@ public class VideoPlayerTest {
 
   @Test
   public void sendInitializedSendsExpectedEvent_0RotationDegrees() {
-    VideoPlayer videoPlayer = new VideoPlayer(fakeExoPlayer, fakeEventChannel, fakeSurfaceProducer,
-        fakeVideoPlayerOptions, fakeEventSink, httpDataSourceFactorySpy);
+    VideoPlayer videoPlayer =
+        new VideoPlayer(
+            fakeExoPlayer,
+            fakeEventChannel,
+            fakeSurfaceProducer,
+            fakeVideoPlayerOptions,
+            fakeEventSink,
+            httpDataSourceFactorySpy);
     Format testFormat =
         new Format.Builder().setWidth(100).setHeight(200).setRotationDegrees(0).build();
 
@@ -175,8 +214,14 @@ public class VideoPlayerTest {
 
   @Test
   public void sendInitializedSendsExpectedEvent_180RotationDegrees() {
-    VideoPlayer videoPlayer = new VideoPlayer(fakeExoPlayer, fakeEventChannel, fakeSurfaceProducer,
-        fakeVideoPlayerOptions, fakeEventSink, httpDataSourceFactorySpy);
+    VideoPlayer videoPlayer =
+        new VideoPlayer(
+            fakeExoPlayer,
+            fakeEventChannel,
+            fakeSurfaceProducer,
+            fakeVideoPlayerOptions,
+            fakeEventSink,
+            httpDataSourceFactorySpy);
     Format testFormat =
         new Format.Builder().setWidth(100).setHeight(200).setRotationDegrees(180).build();
 
@@ -198,16 +243,24 @@ public class VideoPlayerTest {
 
   @Test
   public void onIsPlayingChangedSendsExpectedEvent() {
-    VideoPlayer videoPlayer = new VideoPlayer(fakeExoPlayer, fakeEventChannel, fakeSurfaceProducer,
-        fakeVideoPlayerOptions, fakeEventSink, httpDataSourceFactorySpy);
+    VideoPlayer videoPlayer =
+        new VideoPlayer(
+            fakeExoPlayer,
+            fakeEventChannel,
+            fakeSurfaceProducer,
+            fakeVideoPlayerOptions,
+            fakeEventSink,
+            httpDataSourceFactorySpy);
 
-    doAnswer((Answer<Void>) invocation -> {
-      Map<String, Object> event = new HashMap<>();
-      event.put("event", "isPlayingStateUpdate");
-      event.put("isPlaying", (Boolean) invocation.getArguments()[0]);
-      fakeEventSink.success(event);
-      return null;
-    })
+    doAnswer(
+            (Answer<Void>)
+                invocation -> {
+                  Map<String, Object> event = new HashMap<>();
+                  event.put("event", "isPlayingStateUpdate");
+                  event.put("isPlaying", (Boolean) invocation.getArguments()[0]);
+                  fakeEventSink.success(event);
+                  return null;
+                })
         .when(fakeExoPlayer)
         .setPlayWhenReady(anyBoolean());
 
@@ -235,8 +288,14 @@ public class VideoPlayerTest {
         .when(fakeExoPlayer)
         .addListener(any());
 
-    VideoPlayer unused = new VideoPlayer(fakeExoPlayer, fakeEventChannel, fakeSurfaceProducer,
-        fakeVideoPlayerOptions, fakeEventSink, httpDataSourceFactorySpy);
+    VideoPlayer unused =
+        new VideoPlayer(
+            fakeExoPlayer,
+            fakeEventChannel,
+            fakeSurfaceProducer,
+            fakeVideoPlayerOptions,
+            fakeEventSink,
+            httpDataSourceFactorySpy);
 
     PlaybackException exception =
         new PlaybackException(null, null, PlaybackException.ERROR_CODE_BEHIND_LIVE_WINDOW);
