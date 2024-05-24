@@ -1,3 +1,8 @@
+## 3.13.2
+
+* Adds `decidePolicyForNavigationResponse` to internal WKNavigationDelegate to support the
+  `PlatformNavigationDelegate.onHttpError` callback.
+
 ## 3.13.1
 
 * Fixes `JSON.stringify()` cannot serialize cyclic structures.

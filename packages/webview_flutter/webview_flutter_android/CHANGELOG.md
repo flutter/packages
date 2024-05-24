@@ -1,3 +1,8 @@
+## 3.16.3
+
+* Adds onWebViewRenderProcessTerminated WebViewClient callback on Android to support
+  `PlatformNavigationDelegate.onWebViewRenderProcessTerminated`.
+
 ## 3.16.2
 
 * Bumps androidx.webkit:webkit from 1.7.0 to 1.10.0.
