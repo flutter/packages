@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:js_interop';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
@@ -9,11 +10,11 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
-import 'package:web/web.dart' as html;
 import 'package:webview_flutter_platform_interface/src/webview_flutter_platform_interface_legacy.dart';
 import 'package:webview_flutter_web/src/http_request_factory.dart';
 import 'package:webview_flutter_web/src/webview_flutter_web_legacy.dart';
 
+import 'mock_fake_iframe_element.dart';
 import 'webview_flutter_web_test.mocks.dart';
 
 @GenerateMocks(<Type>[
@@ -45,7 +46,11 @@ void main() {
   group('WebWebViewPlatformController', () {
     test('loadUrl sets url on iframe src attribute', () {
       // Setup
-      final html.HTMLIFrameElement mockElement = html.HTMLIFrameElement();
+      final FakeIFrameElement fakeElem = FakeIFrameElement();
+      final MockHTMLIFrameElement mockElement =
+          createJSInteropWrapper<FakeIFrameElement>(fakeElem)
+              as MockHTMLIFrameElement;
+
       final WebWebViewPlatformController controller =
           WebWebViewPlatformController(
         mockElement,
@@ -59,7 +64,11 @@ void main() {
     group('loadHtmlString', () {
       test('loadHtmlString loads html into iframe', () {
         // Setup
-        final html.HTMLIFrameElement mockElement = html.HTMLIFrameElement();
+        final FakeIFrameElement fakeElem = FakeIFrameElement();
+        final MockHTMLIFrameElement mockElement =
+            createJSInteropWrapper<FakeIFrameElement>(fakeElem)
+                as MockHTMLIFrameElement;
+
         final WebWebViewPlatformController controller =
             WebWebViewPlatformController(
           mockElement,
@@ -73,7 +82,11 @@ void main() {
 
       test('loadHtmlString escapes "#" correctly', () {
         // Setup
-        final html.HTMLIFrameElement mockElement = html.HTMLIFrameElement();
+        final FakeIFrameElement fakeElem = FakeIFrameElement();
+        final MockHTMLIFrameElement mockElement =
+            createJSInteropWrapper<FakeIFrameElement>(fakeElem)
+                as MockHTMLIFrameElement;
+
         final WebWebViewPlatformController controller =
             WebWebViewPlatformController(
           mockElement,
@@ -81,14 +94,18 @@ void main() {
         // Run
         controller.loadHtmlString('#');
         // Verify
-        verify(mockElement.src = argThat(contains('%23')) ?? '');
+        verify(mockElement.src = argThat(contains('%23')));
       });
     });
 
     group('loadRequest', () {
       test('loadRequest throws ArgumentError on missing scheme', () {
         // Setup
-        final html.HTMLIFrameElement mockElement = html.HTMLIFrameElement();
+        final FakeIFrameElement fakeElem = FakeIFrameElement();
+        final MockHTMLIFrameElement mockElement =
+            createJSInteropWrapper<FakeIFrameElement>(fakeElem)
+                as MockHTMLIFrameElement;
+
         final WebWebViewPlatformController controller =
             WebWebViewPlatformController(
           mockElement,
@@ -107,7 +124,11 @@ void main() {
       test('loadRequest makes request and loads response into iframe',
           () async {
         // Setup
-        final html.HTMLIFrameElement mockElement = html.HTMLIFrameElement();
+        final FakeIFrameElement fakeElem = FakeIFrameElement();
+        final MockHTMLIFrameElement mockElement =
+            createJSInteropWrapper<FakeIFrameElement>(fakeElem)
+                as MockHTMLIFrameElement;
+
         final WebWebViewPlatformController controller =
             WebWebViewPlatformController(
           mockElement,
@@ -147,7 +168,11 @@ void main() {
 
       test('loadRequest escapes "#" correctly', () async {
         // Setup
-        final html.HTMLIFrameElement mockElement = html.HTMLIFrameElement();
+        final FakeIFrameElement fakeElem = FakeIFrameElement();
+        final MockHTMLIFrameElement mockElement =
+            createJSInteropWrapper<FakeIFrameElement>(fakeElem)
+                as MockHTMLIFrameElement;
+
         final WebWebViewPlatformController controller =
             WebWebViewPlatformController(
           mockElement,
@@ -175,7 +200,7 @@ void main() {
               headers: <String, String>{'Foo': 'Bar'}),
         );
         // Verify
-        verify(mockElement.src = argThat(contains('%23')) ?? '');
+        verify(mockElement.src = argThat(contains('%23')));
       });
     });
   });
