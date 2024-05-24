@@ -42,7 +42,8 @@ class NavigationDelegate {
   /// `onHttpAuthRequest`: invoked when the web view is requesting authentication.
   /// {@endtemplate}
   NavigationDelegate({
-    FutureOr<NavigationDecision> Function(NavigationRequest request)? onNavigationRequest,
+    FutureOr<NavigationDecision> Function(NavigationRequest request)?
+        onNavigationRequest,
     void Function(String url)? onPageStarted,
     void Function(String url)? onPageFinished,
     void Function(int progress)? onProgress,
@@ -98,7 +99,8 @@ class NavigationDelegate {
   /// {@endtemplate}
   NavigationDelegate.fromPlatformCreationParams(
     PlatformNavigationDelegateCreationParams params, {
-    FutureOr<NavigationDecision> Function(NavigationRequest request)? onNavigationRequest,
+    FutureOr<NavigationDecision> Function(NavigationRequest request)?
+        onNavigationRequest,
     void Function(String url)? onPageStarted,
     void Function(String url)? onPageFinished,
     void Function(int progress)? onProgress,
@@ -154,7 +156,8 @@ class NavigationDelegate {
     if (onWebViewRenderProcessTerminated != null) {
       // onWebViewRenderProcessTerminated callback is available on Android only, see:
       // https://developer.android.com/reference/android/webkit/WebViewClient#onRenderProcessGone(android.webkit.WebView,%20android.webkit.RenderProcessGoneDetail)
-      platform.setOnWebViewRenderProcessTerminated(onWebViewRenderProcessTerminated!);
+      platform.setOnWebViewRenderProcessTerminated(
+          onWebViewRenderProcessTerminated!);
     }
     if (onUrlChange != null) {
       platform.setOnUrlChange(onUrlChange);

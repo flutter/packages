@@ -348,10 +348,11 @@ abstract class WebViewClientHostApi {
     bool value,
   );
 
-  void setSynchronousReturnValueForApplicationDidHandleWebViewRenderProcessCrash(
-      int instanceId,
-      bool value,
-      );
+  void
+      setSynchronousReturnValueForApplicationDidHandleWebViewRenderProcessCrash(
+    int instanceId,
+    bool value,
+  );
 }
 
 @FlutterApi()
@@ -385,7 +386,7 @@ abstract class WebViewClientFlutterApi {
   bool onRenderProcessGone(
     int instanceId,
     int webViewInstanceId,
-      RenderProcessGoneDetailData data,
+    RenderProcessGoneDetailData data,
   );
 
   void requestLoading(

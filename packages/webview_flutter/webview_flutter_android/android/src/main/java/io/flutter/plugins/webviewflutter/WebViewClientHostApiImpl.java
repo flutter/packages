@@ -87,10 +87,8 @@ public class WebViewClientHostApiImpl implements GeneratedAndroidWebView.WebView
     }
 
     @Override
-    public boolean onRenderProcessGone(@NonNull WebView view,
-                                        RenderProcessGoneDetail detail) {
-      flutterApi.onRenderProcessGone(
-              this, view, detail, reply -> {});
+    public boolean onRenderProcessGone(@NonNull WebView view, RenderProcessGoneDetail detail) {
+      flutterApi.onRenderProcessGone(this, view, detail, reply -> {});
       return applicationDidHandleWebViewRenderProcessCrash;
     }
 
@@ -320,17 +318,19 @@ public class WebViewClientHostApiImpl implements GeneratedAndroidWebView.WebView
 
   @Override
   public void setSynchronousReturnValueForApplicationDidHandleWebViewRenderProcessCrash(
-          @NonNull Long instanceId, @NonNull Boolean value) {
+      @NonNull Long instanceId, @NonNull Boolean value) {
     final WebViewClient webViewClient =
-            Objects.requireNonNull(instanceManager.getInstance(instanceId));
+        Objects.requireNonNull(instanceManager.getInstance(instanceId));
     if (webViewClient instanceof WebViewClientCompatImpl) {
-      ((WebViewClientCompatImpl) webViewClient).setReturnValueForApplicationDidHandleWebViewRenderProcessCrash(value);
+      ((WebViewClientCompatImpl) webViewClient)
+          .setReturnValueForApplicationDidHandleWebViewRenderProcessCrash(value);
     } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N
-            && webViewClient instanceof WebViewClientImpl) {
-      ((WebViewClientImpl) webViewClient).setReturnValueForApplicationDidHandleWebViewRenderProcessCrash(value);
+        && webViewClient instanceof WebViewClientImpl) {
+      ((WebViewClientImpl) webViewClient)
+          .setReturnValueForApplicationDidHandleWebViewRenderProcessCrash(value);
     } else {
       throw new IllegalStateException(
-              "This WebViewClient doesn't support setting the applicationDidHandleWebViewRenderProcessCrash.");
+          "This WebViewClient doesn't support setting the applicationDidHandleWebViewRenderProcessCrash.");
     }
   }
 }

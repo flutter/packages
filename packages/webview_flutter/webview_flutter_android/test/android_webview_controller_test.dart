@@ -145,10 +145,9 @@ void main() {
                         android_webview.WebResourceRequest request,
                         android_webview.WebResourceResponse response)?
                     onReceivedHttpError,
-                bool Function(
-                      android_webview.WebView webView,
-                      android_webview.ProcessTerminationDetails details)?
-                  onWebViewRenderProcessTerminated,
+                bool Function(android_webview.WebView webView,
+                        android_webview.ProcessTerminationDetails details)?
+                    onWebViewRenderProcessTerminated,
                 @Deprecated('Only called on Android version < 23.')
                 void Function(
                   android_webview.WebView webView,

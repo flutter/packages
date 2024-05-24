@@ -135,23 +135,25 @@ void main() {
       expect(callbackError.isForMainFrame, true);
     });
 
-    test('onWebViewRenderProcessTerminated crash was handled by calling app', () {
+    test('onWebViewRenderProcessTerminated crash was handled by calling app',
+        () {
       final Completer<bool> completer = Completer<bool>();
 
       final AndroidNavigationDelegate androidNavigationDelegate =
-      AndroidNavigationDelegate(_buildCreationParams());
+          AndroidNavigationDelegate(_buildCreationParams());
 
       late final bool crashWasHandledByCallingApp;
       late final ProcessTerminationDetails callbackDetails;
       androidNavigationDelegate.setOnWebViewRenderProcessTerminated(
-              (ProcessTerminationDetails details) {
-            callbackDetails = details;
-            crashWasHandledByCallingApp = true;
-            completer.complete(crashWasHandledByCallingApp);
-            return crashWasHandledByCallingApp;
-          });
+          (ProcessTerminationDetails details) {
+        callbackDetails = details;
+        crashWasHandledByCallingApp = true;
+        completer.complete(crashWasHandledByCallingApp);
+        return crashWasHandledByCallingApp;
+      });
 
-      CapturingWebViewClient.lastCreatedDelegate.onWebViewRenderProcessTerminated!(
+      CapturingWebViewClient
+          .lastCreatedDelegate.onWebViewRenderProcessTerminated!(
         android_webview.WebView.detached(),
         const android_webview.ProcessTerminationDetails(
           didCrash: true,
@@ -165,23 +167,26 @@ void main() {
       expect(completer.isCompleted, true);
     });
 
-    test('onWebViewRenderProcessTerminated crash was not handled by calling app', () {
+    test(
+        'onWebViewRenderProcessTerminated crash was not handled by calling app',
+        () {
       final Completer<bool> completer = Completer<bool>();
 
       final AndroidNavigationDelegate androidNavigationDelegate =
-      AndroidNavigationDelegate(_buildCreationParams());
+          AndroidNavigationDelegate(_buildCreationParams());
 
       late final bool crashWasHandledByCallingApp;
       late final ProcessTerminationDetails callbackDetails;
       androidNavigationDelegate.setOnWebViewRenderProcessTerminated(
-              (ProcessTerminationDetails details) {
-            callbackDetails = details;
-            crashWasHandledByCallingApp = false;
-            completer.complete(crashWasHandledByCallingApp);
-            return crashWasHandledByCallingApp;
-          });
+          (ProcessTerminationDetails details) {
+        callbackDetails = details;
+        crashWasHandledByCallingApp = false;
+        completer.complete(crashWasHandledByCallingApp);
+        return crashWasHandledByCallingApp;
+      });
 
-      CapturingWebViewClient.lastCreatedDelegate.onWebViewRenderProcessTerminated!(
+      CapturingWebViewClient
+          .lastCreatedDelegate.onWebViewRenderProcessTerminated!(
         android_webview.WebView.detached(),
         const android_webview.ProcessTerminationDetails(
           didCrash: true,
@@ -693,7 +698,8 @@ class CapturingWebViewClient extends android_webview.WebViewClient {
 
   bool synchronousReturnValueForShouldOverrideUrlLoading = false;
 
-  bool synchronousReturnValueForApplicationDidHandleWebViewRenderProcessCrash = false;
+  bool synchronousReturnValueForApplicationDidHandleWebViewRenderProcessCrash =
+      false;
 
   @override
   Future<void> setSynchronousReturnValueForShouldOverrideUrlLoading(
@@ -702,10 +708,12 @@ class CapturingWebViewClient extends android_webview.WebViewClient {
   }
 
   @override
-  Future<void> setSynchronousReturnValueForApplicationDidHandleWebViewRenderProcessCrash(
-      bool value,
-      ) async {
-    synchronousReturnValueForApplicationDidHandleWebViewRenderProcessCrash = value;
+  Future<void>
+      setSynchronousReturnValueForApplicationDidHandleWebViewRenderProcessCrash(
+    bool value,
+  ) async {
+    synchronousReturnValueForApplicationDidHandleWebViewRenderProcessCrash =
+        value;
   }
 }
 

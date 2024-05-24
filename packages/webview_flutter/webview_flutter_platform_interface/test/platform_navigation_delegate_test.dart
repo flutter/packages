@@ -132,16 +132,17 @@ void main() {
 
   test(
       'Default implementation of setOnWebViewRenderProcessTerminated should throw unimplemented error',
-          () {
-        final PlatformNavigationDelegate callbackDelegate =
+      () {
+    final PlatformNavigationDelegate callbackDelegate =
         ExtendsPlatformNavigationDelegate(
             const PlatformNavigationDelegateCreationParams());
 
-        expect(
-              () => callbackDelegate.setOnWebViewRenderProcessTerminated((ProcessTerminationDetails details) => false),
-          throwsUnimplementedError,
-        );
-      });
+    expect(
+      () => callbackDelegate.setOnWebViewRenderProcessTerminated(
+          (ProcessTerminationDetails details) => false),
+      throwsUnimplementedError,
+    );
+  });
 
   test(
       'Default implementation of setOnUrlChange should throw unimplemented error',

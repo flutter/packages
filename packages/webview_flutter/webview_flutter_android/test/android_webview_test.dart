@@ -708,10 +708,10 @@ void main() {
       test('onWebViewRenderProcessTerminated', () {
         late final List<Object> result;
         when(mockWebViewClient.onWebViewRenderProcessTerminated).thenReturn(
-              (
-              WebView webView,
-              ProcessTerminationDetails details,
-              ) {
+          (
+            WebView webView,
+            ProcessTerminationDetails details,
+          ) {
             result = <Object>[webView, details];
             return true;
           },
@@ -720,7 +720,10 @@ void main() {
         flutterApi.onRenderProcessGone(
           mockWebViewClientInstanceId,
           mockWebViewInstanceId,
-          RenderProcessGoneDetailData(didCrash: true, rendererPriorityAtExit: 1,),
+          RenderProcessGoneDetailData(
+            didCrash: true,
+            rendererPriorityAtExit: 1,
+          ),
         );
 
         expect(

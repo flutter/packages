@@ -79,13 +79,16 @@ void main() {
     test('onWebViewRenderProcessTerminated', () async {
       WebViewPlatform.instance = TestWebViewPlatform();
 
-      bool onWebViewRenderProcessTerminated(ProcessTerminationDetails details) => false;
+      bool onWebViewRenderProcessTerminated(
+              ProcessTerminationDetails details) =>
+          false;
 
       final NavigationDelegate delegate = NavigationDelegate(
         onWebViewRenderProcessTerminated: onWebViewRenderProcessTerminated,
       );
 
-      verify(delegate.platform.setOnWebViewRenderProcessTerminated(onWebViewRenderProcessTerminated));
+      verify(delegate.platform.setOnWebViewRenderProcessTerminated(
+          onWebViewRenderProcessTerminated));
     });
 
     test('onUrlChange', () async {
