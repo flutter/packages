@@ -203,7 +203,7 @@ class WebWebViewPlatformController implements WebViewPlatformController {
     if (!request.uri.hasScheme) {
       throw ArgumentError('WebViewRequest#uri is required to have a scheme.');
     }
-    final http.StreamedResponse httpReq = await _httpRequestFactory.request(
+    final http.Response httpReq = await _httpRequestFactory.request(
         request.uri.toString(),
         method: request.method.serialize(),
         requestHeaders: request.headers,
@@ -211,10 +211,8 @@ class WebWebViewPlatformController implements WebViewPlatformController {
 
     final String contentType = httpReq.headers['content-type'] ?? 'text/html';
 
-    final http.Response response = await http.Response.fromStream(httpReq);
-
     _element.src = Uri.dataFromString(
-      response.body,
+      httpReq.body,
       mimeType: contentType,
       encoding: utf8,
     ).toString();

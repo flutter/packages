@@ -63,14 +63,14 @@ class HttpRequestFactory {
   /// when the file cannot be found.
   ///
   /// See also: [authorization headers](http://en.wikipedia.org/wiki/Basic_access_authentication).
-  Future<http.StreamedResponse> request(
+  Future<http.Response> request(
     String url, {
     String? method,
     bool? withCredentials,
     String? mimeType,
     Map<String, String>? requestHeaders,
     Uint8List? sendData,
-  }) {
+  }) async {
     final BrowserClient client = BrowserClient();
     if (withCredentials != null) {
       client.withCredentials = withCredentials;
@@ -90,6 +90,12 @@ class HttpRequestFactory {
       request.headers.addAll(requestHeaders);
     }
 
-    return client.send(request);
+    try {
+      final http.StreamedResponse req = await client.send(request);
+
+      return http.Response.fromStream(req);
+    } finally {
+      client.close();
+    }
   }
 }

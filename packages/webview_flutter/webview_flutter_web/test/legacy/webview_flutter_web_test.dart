@@ -21,7 +21,7 @@ import 'webview_flutter_web_test.mocks.dart';
   CreationParams,
   WebViewPlatformCallbacksHandler,
   HttpRequestFactory,
-  http.StreamedResponse,
+  http.Response,
 ])
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -112,12 +112,10 @@ void main() {
             WebWebViewPlatformController(
           mockElement,
         );
-        final MockStreamedResponse mockHttpRequest = MockStreamedResponse();
+        final MockResponse mockHttpRequest = MockResponse();
         when(mockHttpRequest.headers['content-type']).thenReturn('text/plain');
 
-        final http.Response res =
-            await http.Response.fromStream(mockHttpRequest);
-        when(res.body).thenReturn('test data');
+        when(mockHttpRequest.body).thenReturn('test data');
         final MockHttpRequestFactory mockHttpRequestFactory =
             MockHttpRequestFactory();
         when(mockHttpRequestFactory.request(
@@ -125,8 +123,7 @@ void main() {
           method: anyNamed('method'),
           requestHeaders: anyNamed('requestHeaders'),
           sendData: anyNamed('sendData'),
-        )).thenAnswer(
-            (_) => Future<http.StreamedResponse>.value(mockHttpRequest));
+        )).thenAnswer((_) => Future<http.Response>.value(mockHttpRequest));
         controller.httpRequestFactory = mockHttpRequestFactory;
         // Run
         await controller.loadRequest(
@@ -154,12 +151,10 @@ void main() {
             WebWebViewPlatformController(
           mockElement,
         );
-        final MockStreamedResponse mockHttpRequest = MockStreamedResponse();
+        final MockResponse mockHttpRequest = MockResponse();
         when(mockHttpRequest.headers['content-type']).thenReturn('text/html');
 
-        final http.Response res =
-            await http.Response.fromStream(mockHttpRequest);
-        when(res.body).thenReturn('#');
+        when(mockHttpRequest.body).thenReturn('#');
         final MockHttpRequestFactory mockHttpRequestFactory =
             MockHttpRequestFactory();
         when(mockHttpRequestFactory.request(
@@ -167,8 +162,7 @@ void main() {
           method: anyNamed('method'),
           requestHeaders: anyNamed('requestHeaders'),
           sendData: anyNamed('sendData'),
-        )).thenAnswer(
-            (_) => Future<http.StreamedResponse>.value(mockHttpRequest));
+        )).thenAnswer((_) => Future<http.Response>.value(mockHttpRequest));
         controller.httpRequestFactory = mockHttpRequestFactory;
         // Run
         await controller.loadRequest(

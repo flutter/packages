@@ -78,9 +78,8 @@ class _FakeDiagnosticsNode_2 extends _i1.SmartFake
       super.toString();
 }
 
-class _FakeStreamedResponse_3 extends _i1.SmartFake
-    implements _i4.StreamedResponse {
-  _FakeStreamedResponse_3(
+class _FakeResponse_3 extends _i1.SmartFake implements _i4.Response {
+  _FakeResponse_3(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -341,7 +340,7 @@ class MockHttpRequestFactory extends _i1.Mock
   }
 
   @override
-  _i8.Future<_i4.StreamedResponse> request(
+  _i8.Future<_i4.Response> request(
     String? url, {
     String? method,
     bool? withCredentials,
@@ -361,8 +360,7 @@ class MockHttpRequestFactory extends _i1.Mock
             #sendData: sendData,
           },
         ),
-        returnValue:
-            _i8.Future<_i4.StreamedResponse>.value(_FakeStreamedResponse_3(
+        returnValue: _i8.Future<_i4.Response>.value(_FakeResponse_3(
           this,
           Invocation.method(
             #request,
@@ -376,25 +374,31 @@ class MockHttpRequestFactory extends _i1.Mock
             },
           ),
         )),
-      ) as _i8.Future<_i4.StreamedResponse>);
+      ) as _i8.Future<_i4.Response>);
 }
 
-/// A class which mocks [StreamedResponse].
+/// A class which mocks [Response].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockStreamedResponse extends _i1.Mock implements _i4.StreamedResponse {
-  MockStreamedResponse() {
+class MockResponse extends _i1.Mock implements _i4.Response {
+  MockResponse() {
     _i1.throwOnMissingStub(this);
   }
 
   @override
-  _i4.ByteStream get stream => (super.noSuchMethod(
-        Invocation.getter(#stream),
-        returnValue: _i11.dummyValue<_i4.ByteStream>(
+  _i10.Uint8List get bodyBytes => (super.noSuchMethod(
+        Invocation.getter(#bodyBytes),
+        returnValue: _i10.Uint8List(0),
+      ) as _i10.Uint8List);
+
+  @override
+  String get body => (super.noSuchMethod(
+        Invocation.getter(#body),
+        returnValue: _i11.dummyValue<String>(
           this,
-          Invocation.getter(#stream),
+          Invocation.getter(#body),
         ),
-      ) as _i4.ByteStream);
+      ) as String);
 
   @override
   int get statusCode => (super.noSuchMethod(

@@ -87,7 +87,7 @@ class WebWebViewController extends PlatformWebViewController {
 
   /// Performs an AJAX request defined by [params].
   Future<void> _updateIFrameFromXhr(LoadRequestParams params) async {
-    final http.StreamedResponse httpReq =
+    final http.Response httpReq =
         await _webWebViewParams.httpRequestFactory.request(
       params.uri.toString(),
       method: params.method.serialize(),
@@ -99,11 +99,9 @@ class WebWebViewController extends PlatformWebViewController {
     final ContentType contentType = ContentType.parse(header);
     final Encoding encoding = Encoding.getByName(contentType.charset) ?? utf8;
 
-    final http.Response response = await http.Response.fromStream(httpReq);
-
     // ignore: unsafe_html
     _webWebViewParams.iFrame.src = Uri.dataFromString(
-      response.body,
+      httpReq.body,
       mimeType: contentType.mimeType,
       encoding: encoding,
     ).toString();
