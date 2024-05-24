@@ -113,7 +113,8 @@ void main() {
           mockElement,
         );
         final MockResponse mockHttpRequest = MockResponse();
-        when(mockHttpRequest.headers['content-type']).thenReturn('text/plain');
+        when(mockHttpRequest.headers)
+            .thenReturn(<String, String>{'content-type': 'text/plain'});
 
         when(mockHttpRequest.body).thenReturn('test data');
         final MockHttpRequestFactory mockHttpRequestFactory =
@@ -152,7 +153,8 @@ void main() {
           mockElement,
         );
         final MockResponse mockHttpRequest = MockResponse();
-        when(mockHttpRequest.headers['content-type']).thenReturn('text/html');
+        when(mockHttpRequest.headers)
+            .thenReturn(<String, String>{'content-type': 'text/html'});
 
         when(mockHttpRequest.body).thenReturn('#');
         final MockHttpRequestFactory mockHttpRequestFactory =

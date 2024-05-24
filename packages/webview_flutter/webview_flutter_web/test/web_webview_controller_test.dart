@@ -106,7 +106,8 @@ void main() {
         ));
 
         final MockResponse mockHttpRequest = MockResponse();
-        when(mockHttpRequest.headers['content-type']).thenReturn('text/plain');
+        when(mockHttpRequest.headers)
+            .thenReturn(<String, String>{'content-type': 'text/plain'});
 
         when(mockHttpRequest.body).thenReturn('test data');
 
@@ -150,8 +151,8 @@ void main() {
 
         when(mockHttpRequest.body)
             .thenReturn(String.fromCharCodes(iso.encode('España')));
-        when(mockHttpRequest.headers['content-type'])
-            .thenReturn('Text/HTmL; charset=latin1');
+        when(mockHttpRequest.headers).thenReturn(
+            <String, String>{'content-type': 'Text/HTmL; charset=latin1'});
 
         when(mockHttpRequestFactory.request(
           any,
@@ -180,7 +181,8 @@ void main() {
         ));
 
         final MockResponse mockHttpRequest = MockResponse();
-        when(mockHttpRequest.headers['content-type']).thenReturn('text/html');
+        when(mockHttpRequest.headers)
+            .thenReturn(<String, String>{'content-type': 'text/html'});
 
         when(mockHttpRequest.body).thenReturn('#');
         when(mockHttpRequestFactory.request(
