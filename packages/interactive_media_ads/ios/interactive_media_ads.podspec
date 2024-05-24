@@ -14,7 +14,7 @@ Downloaded by pub (not CocoaPods).
   s.license          = { :type => 'BSD', :file => '../LICENSE' }
   s.author           = { 'Flutter Dev Team' => 'flutter-dev@googlegroups.com' }
   s.source           = { :http => 'https://github.com/flutter/packages/tree/main/packages/interactive_media_ads/interactive_media_ads' }
-  s.source_files = 'Classes/**/*'
+  s.source_files = 'interactive_media_ads/Sources/interactive_media_ads/**/*.swift'
   s.dependency 'Flutter'
   s.platform = :ios, '12.0'
 
@@ -25,5 +25,5 @@ Downloaded by pub (not CocoaPods).
     'LD_RUNPATH_SEARCH_PATHS' => '/usr/lib/swift',
   }
   s.swift_version = '5.0'
-  s.resource_bundles = {'interactive_media_ads_privacy' => ['Resources/PrivacyInfo.xcprivacy']}
+  s.resource_bundles = {'interactive_media_ads_privacy' => ['interactive_media_ads/Sources/interactive_media_ads/Resources/PrivacyInfo.xcprivacy']}
 end
