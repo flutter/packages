@@ -17,7 +17,6 @@ import 'package:webview_flutter_web/src/webview_flutter_web_legacy.dart';
 import 'webview_flutter_web_test.mocks.dart';
 
 @GenerateMocks(<Type>[
-  html.HTMLIFrameElement,
   BuildContext,
   CreationParams,
   WebViewPlatformCallbacksHandler,
