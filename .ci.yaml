@@ -961,30 +961,15 @@ targets:
         }
 
   ### iOS+macOS tasks ###
-  # TODO(stuartmorgan): Move this to ARM once google_maps_flutter has ARM
-  # support. `pod lint` makes a synthetic target that doesn't respect the
-  # pod's arch exclusions, so fails to build.
-  - name: Mac_x64 check_podspecs
-    recipe: packages/packages
-    timeout: 30
-    properties:
-      version_file: flutter_master.version
-      target_file: macos_repo_checks.yaml
-      dependencies: >
-        [
-          {"dependency": "swift_format", "version": "build_id:8797338980206841409"}
-        ]
-
   - name: Mac_arm64 macos_repo_checks
     recipe: packages/packages
-    bringup: true # New target
     timeout: 30
     properties:
       version_file: flutter_master.version
       target_file: macos_repo_checks.yaml
       dependencies: >
         [
-          {"dependency": "swift_format", "version": "build_id:8797338980206841409"}
+          {"dependency": "swift_format", "version": "build_id:8797338979890974865"}
         ]
 
   ### macOS desktop tasks ###
