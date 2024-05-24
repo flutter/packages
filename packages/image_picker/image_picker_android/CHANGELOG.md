@@ -1,4 +1,4 @@
-## NEXT
+## 0.8.12+2
 
 * Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
 
