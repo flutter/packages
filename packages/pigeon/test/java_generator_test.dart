@@ -1371,7 +1371,7 @@ void main() {
     expect(
         code,
         contains(RegExp(
-            r'new BasicMessageChannel<>\(\s*binaryMessenger, "dev.flutter.pigeon.test_package.Api.doit", getCodec\(\), taskQueue\)')));
+            r'new BasicMessageChannel<>\(\s*binaryMessenger, "dev.flutter.pigeon.test_package.Api.doit" \+ messageChannelSuffix, getCodec\(\), taskQueue\)')));
   });
 
   test('generated annotation', () {

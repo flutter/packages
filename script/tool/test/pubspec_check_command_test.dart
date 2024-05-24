@@ -1734,6 +1734,74 @@ ${_topicsSection()}
           ]),
         );
       });
+
+      test('fails when integration_test, flutter_test or test are used in non dev dependency',
+          () async {
+        final RepositoryPackage package =
+            createFakePackage('a_package', packagesDir, examples: <String>[]);
+
+        package.pubspecFile.writeAsStringSync('''
+${_headerSection('a_package')}
+${_environmentSection()}
+${_dependenciesSection(<String>[
+              'integration_test: \n    sdk: flutter',
+              'flutter_test: \n    sdk: flutter',
+              'test: 1.0.0'
+            ])}
+${_devDependenciesSection()}
+${_topicsSection()}
+''');
+
+        Error? commandError;
+        final List<String> output = await runCapturingPrint(runner, <String>[
+          'pubspec-check',
+        ], errorHandler: (Error e) {
+          commandError = e;
+        });
+
+        expect(commandError, isA<ToolExit>());
+        expect(
+          output,
+          containsAllInOrder(<Matcher>[
+            contains(
+                'The following unexpected non-local dependencies were found:\n'
+                '  test\n'
+                '  integration_test\n'
+                '  flutter_test\n'
+                'Please see https://github.com/flutter/flutter/wiki/Contributing-to-Plugins-and-Packages#Dependencies '
+                'for more information and next steps.'),
+          ]),
+        );
+      });
+
+      test('passes when integration_test or flutter_test are used in non published package',
+          () async {
+        final RepositoryPackage package =
+            createFakePackage('a_package', packagesDir, examples: <String>[]);
+
+        package.pubspecFile.writeAsStringSync('''
+${_headerSection('a_package', publishable: false)}
+${_environmentSection()}
+${_dependenciesSection(<String>[
+              'integration_test: \n    sdk: flutter',
+              'flutter_test: \n    sdk: flutter'
+            ])}
+${_devDependenciesSection()}
+${_topicsSection()}
+''');
+
+        final List<String> output = await runCapturingPrint(runner, <String>[
+          'pubspec-check',
+        ]);
+
+        expect(
+          output,
+          containsAllInOrder(<Matcher>[
+            contains('Running for a_package...'),
+            contains('Ran for'),
+          ]),
+        );
+      });
     });
   });
 

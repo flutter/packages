@@ -15,6 +15,7 @@
 #include <wrl/client.h>
 
 #include <memory>
+#include <optional>
 #include <string>
 
 #include "capture_controller_listener.h"
@@ -87,8 +88,8 @@ class CaptureController {
   // resolution_preset: Maximum capture resolution height.
   virtual bool InitCaptureDevice(TextureRegistrar* texture_registrar,
                                  const std::string& device_id,
-                                 bool record_audio,
-                                 ResolutionPreset resolution_preset) = 0;
+                                 ResolutionPreset resolution_preset,
+                                 const RecordSettings& record_settings) = 0;
 
   // Returns preview frame width
   virtual uint32_t GetPreviewWidth() const = 0;
@@ -136,8 +137,9 @@ class CaptureControllerImpl : public CaptureController,
 
   // CaptureController
   bool InitCaptureDevice(TextureRegistrar* texture_registrar,
-                         const std::string& device_id, bool record_audio,
-                         ResolutionPreset resolution_preset) override;
+                         const std::string& device_id,
+                         ResolutionPreset resolution_preset,
+                         const RecordSettings& record_settings) override;
   uint32_t GetPreviewWidth() const override { return preview_frame_width_; }
   uint32_t GetPreviewHeight() const override { return preview_frame_height_; }
   void StartPreview() override;
@@ -232,7 +234,7 @@ class CaptureControllerImpl : public CaptureController,
   void OnRecordStopped(CameraResult result, const std::string& error);
 
   bool media_foundation_started_ = false;
-  bool record_audio_ = false;
+
   uint32_t preview_frame_width_ = 0;
   uint32_t preview_frame_height_ = 0;
   UINT dx_device_reset_token_ = 0;
@@ -246,6 +248,7 @@ class CaptureControllerImpl : public CaptureController,
   CaptureEngineState capture_engine_state_ =
       CaptureEngineState::kNotInitialized;
   ResolutionPreset resolution_preset_ = ResolutionPreset::kMedium;
+  RecordSettings media_settings_;
   ComPtr<IMFCaptureEngine> capture_engine_;
   ComPtr<CaptureEngineListener> capture_engine_callback_handler_;
   ComPtr<IMFDXGIDeviceManager> dxgi_device_manager_;

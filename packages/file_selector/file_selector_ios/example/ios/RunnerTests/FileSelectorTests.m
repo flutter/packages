@@ -6,7 +6,19 @@
 @import file_selector_ios.Test;
 @import XCTest;
 
-#import <OCMock/OCMock.h>
+@interface TestPresenter : NSObject <FFSViewPresenter>
+@property(nonatomic) UIViewController *presentedController;
+@end
+
+@implementation TestPresenter
+- (void)presentViewController:(UIViewController *)viewControllerToPresent
+                     animated:(BOOL)animated
+                   completion:(void (^__nullable)(void))completion {
+  self.presentedController = viewControllerToPresent;
+}
+@end
+
+#pragma mark -
 
 @interface FileSelectorTests : XCTestCase
 
@@ -19,18 +31,16 @@
   UIDocumentPickerViewController *picker =
       [[UIDocumentPickerViewController alloc] initWithDocumentTypes:@[]
                                                              inMode:UIDocumentPickerModeImport];
-  id mockPresentingVC = OCMClassMock([UIViewController class]);
+  TestPresenter *presenter = [[TestPresenter alloc] init];
   plugin.documentPickerViewControllerOverride = picker;
-  plugin.presentingViewControllerOverride = mockPresentingVC;
+  plugin.viewPresenterOverride = presenter;
 
   [plugin openFileSelectorWithConfig:[FFSFileSelectorConfig makeWithUtis:@[] allowMultiSelection:NO]
                           completion:^(NSArray<NSString *> *paths, FlutterError *error){
                           }];
 
   XCTAssertEqualObjects(picker.delegate, plugin);
-  OCMVerify(times(1), [mockPresentingVC presentViewController:picker
-                                                     animated:[OCMArg any]
-                                                   completion:[OCMArg any]]);
+  XCTAssertEqualObjects(presenter.presentedController, picker);
 }
 
 - (void)testReturnsPickedFiles {

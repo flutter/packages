@@ -36,7 +36,7 @@ class RunnerTests: XCTestCase {
   func testEchoStringFromProtocol() throws {
     let api: FlutterApiFromProtocol = FlutterApiFromProtocol()
     let aString = "aString"
-    api.echo(aString) { response in
+    api.echo(string: aString) { response in
       switch response {
       case .success(let res):
         XCTAssertEqual(aString, res)
@@ -48,7 +48,8 @@ class RunnerTests: XCTestCase {
 }
 
 class FlutterApiFromProtocol: FlutterSmallApiProtocol {
-  func echo(_ aStringArg: String, completion: @escaping (Result<String, FlutterError>) -> Void) {
+  func echo(string aStringArg: String, completion: @escaping (Result<String, FlutterError>) -> Void)
+  {
     completion(.success(aStringArg))
   }
 

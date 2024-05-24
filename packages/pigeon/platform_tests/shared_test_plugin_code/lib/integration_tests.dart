@@ -1359,13 +1359,49 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
     });
   });
 
+  group('Host API with suffix', () {
+    testWidgets('echo string succeeds with suffix with multiple instances',
+        (_) async {
+      final HostSmallApi apiWithSuffixOne =
+          HostSmallApi(messageChannelSuffix: 'suffixOne');
+      final HostSmallApi apiWithSuffixTwo =
+          HostSmallApi(messageChannelSuffix: 'suffixTwo');
+      const String sentString = "I'm a computer";
+      final String echoStringOne = await apiWithSuffixOne.echo(sentString);
+      final String echoStringTwo = await apiWithSuffixTwo.echo(sentString);
+      expect(sentString, echoStringOne);
+      expect(sentString, echoStringTwo);
+    });
+
+    testWidgets('multiple instances will have different method channel names',
+        (_) async {
+      // The only way to get the channel name back is to throw an exception.
+      // These APIs have no corresponding APIs on the host platforms.
+      final HostSmallApi apiWithSuffixOne =
+          HostSmallApi(messageChannelSuffix: 'suffixWithNoHost');
+      final HostSmallApi apiWithSuffixTwo =
+          HostSmallApi(messageChannelSuffix: 'suffixWithoutHost');
+      const String sentString = "I'm a computer";
+      try {
+        await apiWithSuffixOne.echo(sentString);
+      } on PlatformException catch (e) {
+        expect(e.message, contains('suffixWithNoHost'));
+      }
+      try {
+        await apiWithSuffixTwo.echo(sentString);
+      } on PlatformException catch (e) {
+        expect(e.message, contains('suffixWithoutHost'));
+      }
+    });
+  });
+
   // These tests rely on the async Dart->host calls to work correctly, since
   // the host->Dart call is wrapped in a driving Dart->host call, so any test
   // added to this group should have coverage of the relevant arguments and
   // return value in the "Host async API tests" group.
   group('Flutter API tests', () {
     setUp(() {
-      FlutterIntegrationCoreApi.setup(_FlutterApiTestImplementation());
+      FlutterIntegrationCoreApi.setUp(_FlutterApiTestImplementation());
     });
 
     testWidgets('basic void->void call works', (WidgetTester _) async {
@@ -1742,6 +1778,28 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       expect(echoEnum, sentEnum);
     });
   });
+
+  group('Flutter API with suffix', () {
+    setUp(() {
+      FlutterSmallApi.setUp(
+        _SmallFlutterApi(),
+        messageChannelSuffix: 'suffixOne',
+      );
+      FlutterSmallApi.setUp(
+        _SmallFlutterApi(),
+        messageChannelSuffix: 'suffixTwo',
+      );
+    });
+
+    testWidgets('echo string succeeds with suffix with multiple instances',
+        (_) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+      const String sentObject = "I'm a computer";
+      final String echoObject =
+          await api.callFlutterSmallApiEchoString(sentObject);
+      expect(echoObject, sentObject);
+    });
+  });
 }
 
 class _FlutterApiTestImplementation implements FlutterIntegrationCoreApi {
@@ -1846,5 +1904,17 @@ class _FlutterApiTestImplementation implements FlutterIntegrationCoreApi {
   @override
   Future<String> echoAsyncString(String aString) async {
     return aString;
+  }
+}
+
+class _SmallFlutterApi implements FlutterSmallApi {
+  @override
+  String echoString(String aString) {
+    return aString;
+  }
+
+  @override
+  TestMessage echoWrappedList(TestMessage msg) {
+    return msg;
   }
 }
