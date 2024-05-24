@@ -3,20 +3,22 @@
 // Do not manually edit this file.
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'dart:async' as _i8;
-import 'dart:typed_data' as _i10;
+import 'dart:async' as _i9;
+import 'dart:typed_data' as _i11;
 
 import 'package:flutter/foundation.dart' as _i3;
-import 'package:flutter/src/widgets/notification_listener.dart' as _i5;
+import 'package:flutter/src/widgets/notification_listener.dart' as _i6;
 import 'package:flutter/widgets.dart' as _i2;
 import 'package:http/http.dart' as _i4;
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:mockito/src/dummies.dart' as _i11;
+import 'package:mockito/src/dummies.dart' as _i12;
 import 'package:webview_flutter_platform_interface/src/legacy/platform_interface/webview_platform_callbacks_handler.dart'
-    as _i7;
+    as _i8;
 import 'package:webview_flutter_platform_interface/src/legacy/types/types.dart'
-    as _i6;
-import 'package:webview_flutter_web/src/http_request_factory.dart' as _i9;
+    as _i7;
+import 'package:webview_flutter_web/src/http_request_factory.dart' as _i10;
+
+import 'mock_fake_iframe_element.dart' as _i5;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -86,6 +88,24 @@ class _FakeResponse_3 extends _i1.SmartFake implements _i4.Response {
           parent,
           parentInvocation,
         );
+}
+
+/// A class which mocks [FakeIFrameElement].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockFakeIFrameElement extends _i1.Mock implements _i5.FakeIFrameElement {
+  MockFakeIFrameElement() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  set src(String? _src) => super.noSuchMethod(
+        Invocation.setter(
+          #src,
+          _src,
+        ),
+        returnValueForMissingStub: null,
+      );
 }
 
 /// A class which mocks [BuildContext].
@@ -158,7 +178,7 @@ class MockBuildContext extends _i1.Mock implements _i2.BuildContext {
       );
 
   @override
-  void dispatchNotification(_i5.Notification? notification) =>
+  void dispatchNotification(_i6.Notification? notification) =>
       super.noSuchMethod(
         Invocation.method(
           #dispatchNotification,
@@ -241,7 +261,7 @@ class MockBuildContext extends _i1.Mock implements _i2.BuildContext {
 /// A class which mocks [CreationParams].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockCreationParams extends _i1.Mock implements _i6.CreationParams {
+class MockCreationParams extends _i1.Mock implements _i7.CreationParams {
   MockCreationParams() {
     _i1.throwOnMissingStub(this);
   }
@@ -253,31 +273,31 @@ class MockCreationParams extends _i1.Mock implements _i6.CreationParams {
       ) as Set<String>);
 
   @override
-  _i6.AutoMediaPlaybackPolicy get autoMediaPlaybackPolicy =>
+  _i7.AutoMediaPlaybackPolicy get autoMediaPlaybackPolicy =>
       (super.noSuchMethod(
         Invocation.getter(#autoMediaPlaybackPolicy),
         returnValue:
-            _i6.AutoMediaPlaybackPolicy.require_user_action_for_all_media_types,
-      ) as _i6.AutoMediaPlaybackPolicy);
+            _i7.AutoMediaPlaybackPolicy.require_user_action_for_all_media_types,
+      ) as _i7.AutoMediaPlaybackPolicy);
 
   @override
-  List<_i6.WebViewCookie> get cookies => (super.noSuchMethod(
+  List<_i7.WebViewCookie> get cookies => (super.noSuchMethod(
         Invocation.getter(#cookies),
-        returnValue: <_i6.WebViewCookie>[],
-      ) as List<_i6.WebViewCookie>);
+        returnValue: <_i7.WebViewCookie>[],
+      ) as List<_i7.WebViewCookie>);
 }
 
 /// A class which mocks [WebViewPlatformCallbacksHandler].
 ///
 /// See the documentation for Mockito's code generation for more information.
 class MockWebViewPlatformCallbacksHandler extends _i1.Mock
-    implements _i7.WebViewPlatformCallbacksHandler {
+    implements _i8.WebViewPlatformCallbacksHandler {
   MockWebViewPlatformCallbacksHandler() {
     _i1.throwOnMissingStub(this);
   }
 
   @override
-  _i8.FutureOr<bool> onNavigationRequest({
+  _i9.FutureOr<bool> onNavigationRequest({
     required String? url,
     required bool? isForMainFrame,
   }) =>
@@ -290,8 +310,8 @@ class MockWebViewPlatformCallbacksHandler extends _i1.Mock
             #isForMainFrame: isForMainFrame,
           },
         ),
-        returnValue: _i8.Future<bool>.value(false),
-      ) as _i8.FutureOr<bool>);
+        returnValue: _i9.Future<bool>.value(false),
+      ) as _i9.FutureOr<bool>);
 
   @override
   void onPageStarted(String? url) => super.noSuchMethod(
@@ -321,7 +341,7 @@ class MockWebViewPlatformCallbacksHandler extends _i1.Mock
       );
 
   @override
-  void onWebResourceError(_i6.WebResourceError? error) => super.noSuchMethod(
+  void onWebResourceError(_i7.WebResourceError? error) => super.noSuchMethod(
         Invocation.method(
           #onWebResourceError,
           [error],
@@ -334,19 +354,19 @@ class MockWebViewPlatformCallbacksHandler extends _i1.Mock
 ///
 /// See the documentation for Mockito's code generation for more information.
 class MockHttpRequestFactory extends _i1.Mock
-    implements _i9.HttpRequestFactory {
+    implements _i10.HttpRequestFactory {
   MockHttpRequestFactory() {
     _i1.throwOnMissingStub(this);
   }
 
   @override
-  _i8.Future<_i4.Response> request(
+  _i9.Future<_i4.Response> request(
     String? url, {
     String? method,
     bool? withCredentials,
     String? mimeType,
     Map<String, String>? requestHeaders,
-    _i10.Uint8List? sendData,
+    _i11.Uint8List? sendData,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -360,7 +380,7 @@ class MockHttpRequestFactory extends _i1.Mock
             #sendData: sendData,
           },
         ),
-        returnValue: _i8.Future<_i4.Response>.value(_FakeResponse_3(
+        returnValue: _i9.Future<_i4.Response>.value(_FakeResponse_3(
           this,
           Invocation.method(
             #request,
@@ -374,7 +394,7 @@ class MockHttpRequestFactory extends _i1.Mock
             },
           ),
         )),
-      ) as _i8.Future<_i4.Response>);
+      ) as _i9.Future<_i4.Response>);
 }
 
 /// A class which mocks [Response].
@@ -386,15 +406,15 @@ class MockResponse extends _i1.Mock implements _i4.Response {
   }
 
   @override
-  _i10.Uint8List get bodyBytes => (super.noSuchMethod(
+  _i11.Uint8List get bodyBytes => (super.noSuchMethod(
         Invocation.getter(#bodyBytes),
-        returnValue: _i10.Uint8List(0),
-      ) as _i10.Uint8List);
+        returnValue: _i11.Uint8List(0),
+      ) as _i11.Uint8List);
 
   @override
   String get body => (super.noSuchMethod(
         Invocation.getter(#body),
-        returnValue: _i11.dummyValue<String>(
+        returnValue: _i12.dummyValue<String>(
           this,
           Invocation.getter(#body),
         ),

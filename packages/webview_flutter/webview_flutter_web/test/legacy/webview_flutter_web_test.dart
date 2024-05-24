@@ -18,6 +18,7 @@ import 'mock_fake_iframe_element.dart';
 import 'webview_flutter_web_test.mocks.dart';
 
 @GenerateMocks(<Type>[
+  FakeIFrameElement,
   BuildContext,
   CreationParams,
   WebViewPlatformCallbacksHandler,
@@ -46,7 +47,7 @@ void main() {
   group('WebWebViewPlatformController', () {
     test('loadUrl sets url on iframe src attribute', () {
       // Setup
-      final FakeIFrameElement fakeElem = FakeIFrameElement();
+      final MockFakeIFrameElement fakeElem = MockFakeIFrameElement();
       final MockHTMLIFrameElement mockElement =
           createJSInteropWrapper<FakeIFrameElement>(fakeElem)
               as MockHTMLIFrameElement;
@@ -64,7 +65,7 @@ void main() {
     group('loadHtmlString', () {
       test('loadHtmlString loads html into iframe', () {
         // Setup
-        final FakeIFrameElement fakeElem = FakeIFrameElement();
+        final MockFakeIFrameElement fakeElem = MockFakeIFrameElement();
         final MockHTMLIFrameElement mockElement =
             createJSInteropWrapper<FakeIFrameElement>(fakeElem)
                 as MockHTMLIFrameElement;
@@ -82,7 +83,7 @@ void main() {
 
       test('loadHtmlString escapes "#" correctly', () {
         // Setup
-        final FakeIFrameElement fakeElem = FakeIFrameElement();
+        final MockFakeIFrameElement fakeElem = MockFakeIFrameElement();
         final MockHTMLIFrameElement mockElement =
             createJSInteropWrapper<FakeIFrameElement>(fakeElem)
                 as MockHTMLIFrameElement;
@@ -101,7 +102,7 @@ void main() {
     group('loadRequest', () {
       test('loadRequest throws ArgumentError on missing scheme', () {
         // Setup
-        final FakeIFrameElement fakeElem = FakeIFrameElement();
+        final MockFakeIFrameElement fakeElem = MockFakeIFrameElement();
         final MockHTMLIFrameElement mockElement =
             createJSInteropWrapper<FakeIFrameElement>(fakeElem)
                 as MockHTMLIFrameElement;
@@ -124,7 +125,7 @@ void main() {
       test('loadRequest makes request and loads response into iframe',
           () async {
         // Setup
-        final FakeIFrameElement fakeElem = FakeIFrameElement();
+        final MockFakeIFrameElement fakeElem = MockFakeIFrameElement();
         final MockHTMLIFrameElement mockElement =
             createJSInteropWrapper<FakeIFrameElement>(fakeElem)
                 as MockHTMLIFrameElement;
@@ -168,7 +169,7 @@ void main() {
 
       test('loadRequest escapes "#" correctly', () async {
         // Setup
-        final FakeIFrameElement fakeElem = FakeIFrameElement();
+        final MockFakeIFrameElement fakeElem = MockFakeIFrameElement();
         final MockHTMLIFrameElement mockElement =
             createJSInteropWrapper<FakeIFrameElement>(fakeElem)
                 as MockHTMLIFrameElement;
