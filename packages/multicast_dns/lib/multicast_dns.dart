@@ -149,6 +149,8 @@ class MDnsClient {
 
     _incomingIPv4?.close();
     _incomingIPv6?.close();
+    _incomingIPv4 = null;
+    _incomingIPv6 = null;
 
     _resolver.clearPendingRequests();
 
