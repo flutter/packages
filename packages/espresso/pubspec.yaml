@@ -3,11 +3,11 @@ description: Java classes for testing Flutter apps using Espresso.
   Allows driving Flutter widgets from a native Espresso test.
 repository: https://github.com/flutter/packages/tree/main/packages/espresso
 issue_tracker: https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+label%3A%22p%3A+espresso%22
-version: 0.3.0+7
+version: 0.3.0+8
 
 environment:
-  sdk: ^3.1.0
-  flutter: ">=3.13.0"
+  sdk: ^3.2.0
+  flutter: ">=3.16.0"
 
 flutter:
   plugin:

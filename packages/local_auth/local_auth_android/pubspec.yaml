@@ -2,11 +2,11 @@ name: local_auth_android
 description: Android implementation of the local_auth plugin.
 repository: https://github.com/flutter/packages/tree/main/packages/local_auth/local_auth_android
 issue_tracker: https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+label%3A%22p%3A+local_auth%22
-version: 1.0.37
+version: 1.0.38
 
 environment:
-  sdk: ^3.1.0
-  flutter: ">=3.13.0"
+  sdk: ^3.2.0
+  flutter: ">=3.16.0"
 
 flutter:
   plugin:

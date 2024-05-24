@@ -7,7 +7,6 @@
 @import XCTest;
 @import AVFoundation;
 #import <OCMock/OCMock.h>
-#import "MockFLTThreadSafeFlutterResult.h"
 
 @interface CameraPreviewPauseTests : XCTestCase
 @end
@@ -16,17 +15,15 @@
 
 - (void)testPausePreviewWithResult_shouldPausePreview {
   FLTCam *camera = [[FLTCam alloc] init];
-  MockFLTThreadSafeFlutterResult *resultObject = [[MockFLTThreadSafeFlutterResult alloc] init];
 
-  [camera pausePreviewWithResult:resultObject];
+  [camera pausePreview];
   XCTAssertTrue(camera.isPreviewPaused);
 }
 
 - (void)testResumePreviewWithResult_shouldResumePreview {
   FLTCam *camera = [[FLTCam alloc] init];
-  MockFLTThreadSafeFlutterResult *resultObject = [[MockFLTThreadSafeFlutterResult alloc] init];
 
-  [camera resumePreviewWithResult:resultObject];
+  [camera resumePreview];
   XCTAssertFalse(camera.isPreviewPaused);
 }
 

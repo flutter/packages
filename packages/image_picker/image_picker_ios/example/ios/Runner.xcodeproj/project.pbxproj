@@ -32,6 +32,7 @@
 		7865C5FD294157BC0010E17F /* icnsImage.icns in Resources */ = {isa = PBXBuildFile; fileRef = 7865C5FB294157BB0010E17F /* icnsImage.icns */; };
 		7865C5FF294252A60010E17F /* proRawImage.dng in Resources */ = {isa = PBXBuildFile; fileRef = 7865C5FE294252A60010E17F /* proRawImage.dng */; };
 		7865C600294252A60010E17F /* proRawImage.dng in Resources */ = {isa = PBXBuildFile; fileRef = 7865C5FE294252A60010E17F /* proRawImage.dng */; };
+		78CF8D862BC5E7070051231B /* OCMock in Frameworks */ = {isa = PBXBuildFile; productRef = 78CF8D852BC5E7070051231B /* OCMock */; };
 		86430DF9272D71E9002D9D6C /* gifImage.gif in Resources */ = {isa = PBXBuildFile; fileRef = 9FC8F0E8229FA49E00C8D58F /* gifImage.gif */; };
 		86E9A893272754860017E6E0 /* PickerSaveImageToPathOperationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 86E9A892272754860017E6E0 /* PickerSaveImageToPathOperationTests.m */; };
 		86E9A894272754A30017E6E0 /* webpImage.webp in Resources */ = {isa = PBXBuildFile; fileRef = 86E9A88F272747B90017E6E0 /* webpImage.webp */; };
@@ -129,6 +130,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				78CF8D862BC5E7070051231B /* OCMock in Frameworks */,
 				3A72BAD3FAE6E0FA9D80826B /* libPods-RunnerTests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -291,6 +293,9 @@
 				334733F82668136400DCC49E /* PBXTargetDependency */,
 			);
 			name = RunnerTests;
+			packageProductDependencies = (
+				78CF8D852BC5E7070051231B /* OCMock */,
+			);
 			productName = RunnerTests;
 			productReference = 334733F22668136400DCC49E /* RunnerTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
@@ -342,7 +347,7 @@
 			isa = PBXProject;
 			attributes = {
 				DefaultBuildSystemTypeForWorkspace = Original;
-				LastUpgradeCheck = 1430;
+				LastUpgradeCheck = 1510;
 				ORGANIZATIONNAME = "The Flutter Authors";
 				TargetAttributes = {
 					334733F12668136400DCC49E = {
@@ -374,6 +379,9 @@
 				Base,
 			);
 			mainGroup = 97C146E51CF9000F007C117D;
+			packageReferences = (
+				78CF8D842BC5E7070051231B /* XCRemoteSwiftPackageReference "ocmock" */,
+			);
 			productRefGroup = 97C146EF1CF9000F007C117D /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -879,6 +887,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		78CF8D842BC5E7070051231B /* XCRemoteSwiftPackageReference "ocmock" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/erikdoe/ocmock";
+			requirement = {
+				kind = revision;
+				revision = ef21a2ece3ee092f8ed175417718bdd9b8eb7c9a;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		78CF8D852BC5E7070051231B /* OCMock */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 78CF8D842BC5E7070051231B /* XCRemoteSwiftPackageReference "ocmock" */;
+			productName = OCMock;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 97C146E61CF9000F007C117D /* Project object */;
 }

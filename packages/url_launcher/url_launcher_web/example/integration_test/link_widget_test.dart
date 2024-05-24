@@ -6,11 +6,13 @@ import 'dart:js_interop';
 import 'dart:js_interop_unsafe';
 import 'dart:ui_web' as ui_web;
 
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:url_launcher_platform_interface/link.dart';
+import 'package:url_launcher_platform_interface/url_launcher_platform_interface.dart';
 import 'package:url_launcher_web/src/link.dart';
+import 'package:url_launcher_web/url_launcher_web.dart';
 import 'package:web/web.dart' as html;
 
 void main() {
@@ -171,6 +173,196 @@ void main() {
       await tester.pumpAndSettle();
     });
   });
+
+  group('Follows links', () {
+    late TestUrlLauncherPlugin testPlugin;
+    late UrlLauncherPlatform originalPlugin;
+
+    setUp(() {
+      originalPlugin = UrlLauncherPlatform.instance;
+      testPlugin = TestUrlLauncherPlugin();
+      UrlLauncherPlatform.instance = testPlugin;
+    });
+
+    tearDown(() {
+      UrlLauncherPlatform.instance = originalPlugin;
+    });
+
+    testWidgets('click to navigate to internal link',
+        (WidgetTester tester) async {
+      final TestNavigatorObserver observer = TestNavigatorObserver();
+      final Uri uri = Uri.parse('/foobar');
+      FollowLink? followLinkCallback;
+
+      await tester.pumpWidget(MaterialApp(
+        navigatorObservers: <NavigatorObserver>[observer],
+        routes: <String, WidgetBuilder>{
+          '/foobar': (BuildContext context) => const Text('Internal route'),
+        },
+        home: Directionality(
+          textDirection: TextDirection.ltr,
+          child: WebLinkDelegate(TestLinkInfo(
+            uri: uri,
+            target: LinkTarget.blank,
+            builder: (BuildContext context, FollowLink? followLink) {
+              followLinkCallback = followLink;
+              return const SizedBox(width: 100, height: 100);
+            },
+          )),
+        ),
+      ));
+      // Platform view creation happens asynchronously.
+      await tester.pumpAndSettle();
+
+      expect(observer.currentRouteName, '/');
+      expect(testPlugin.launches, isEmpty);
+
+      final html.Element anchor = _findSingleAnchor();
+
+      await followLinkCallback!();
+      _simulateClick(anchor);
+      await tester.pumpAndSettle();
+
+      // Internal links should navigate the app to the specified route. There
+      // should be no calls to `launchUrl`.
+      expect(observer.currentRouteName, '/foobar');
+      expect(testPlugin.launches, isEmpty);
+
+      // Needed when testing on on Chrome98 headless in CI.
+      // See https://github.com/flutter/flutter/issues/121161
+      await tester.pumpAndSettle();
+    });
+
+    testWidgets('keydown to navigate to internal link',
+        (WidgetTester tester) async {
+      final TestNavigatorObserver observer = TestNavigatorObserver();
+      final Uri uri = Uri.parse('/foobar');
+      FollowLink? followLinkCallback;
+
+      await tester.pumpWidget(MaterialApp(
+        navigatorObservers: <NavigatorObserver>[observer],
+        routes: <String, WidgetBuilder>{
+          '/foobar': (BuildContext context) => const Text('Internal route'),
+        },
+        home: Directionality(
+          textDirection: TextDirection.ltr,
+          child: WebLinkDelegate(TestLinkInfo(
+            uri: uri,
+            target: LinkTarget.blank,
+            builder: (BuildContext context, FollowLink? followLink) {
+              followLinkCallback = followLink;
+              return const SizedBox(width: 100, height: 100);
+            },
+          )),
+        ),
+      ));
+      // Platform view creation happens asynchronously.
+      await tester.pumpAndSettle();
+
+      expect(observer.currentRouteName, '/');
+      expect(testPlugin.launches, isEmpty);
+
+      final html.Element anchor = _findSingleAnchor();
+
+      await followLinkCallback!();
+      _simulateKeydown(anchor);
+      await tester.pumpAndSettle();
+
+      // Internal links should navigate the app to the specified route. There
+      // should be no calls to `launchUrl`.
+      expect(observer.currentRouteName, '/foobar');
+      expect(testPlugin.launches, isEmpty);
+
+      // Needed when testing on on Chrome98 headless in CI.
+      // See https://github.com/flutter/flutter/issues/121161
+      await tester.pumpAndSettle();
+    });
+
+    testWidgets('click to navigate to external link',
+        (WidgetTester tester) async {
+      final TestNavigatorObserver observer = TestNavigatorObserver();
+      final Uri uri = Uri.parse('https://google.com');
+      FollowLink? followLinkCallback;
+
+      await tester.pumpWidget(MaterialApp(
+        navigatorObservers: <NavigatorObserver>[observer],
+        home: Directionality(
+          textDirection: TextDirection.ltr,
+          child: WebLinkDelegate(TestLinkInfo(
+            uri: uri,
+            target: LinkTarget.blank,
+            builder: (BuildContext context, FollowLink? followLink) {
+              followLinkCallback = followLink;
+              return const SizedBox(width: 100, height: 100);
+            },
+          )),
+        ),
+      ));
+      // Platform view creation happens asynchronously.
+      await tester.pumpAndSettle();
+
+      expect(observer.currentRouteName, '/');
+      expect(testPlugin.launches, isEmpty);
+
+      final html.Element anchor = _findSingleAnchor();
+
+      await followLinkCallback!();
+      _simulateClick(anchor);
+      await tester.pumpAndSettle();
+
+      // External links that are triggered by a click are left to be handled by
+      // the browser, so there should be no change to the app's route name, and
+      // no calls to `launchUrl`.
+      expect(observer.currentRouteName, '/');
+      expect(testPlugin.launches, isEmpty);
+
+      // Needed when testing on on Chrome98 headless in CI.
+      // See https://github.com/flutter/flutter/issues/121161
+      await tester.pumpAndSettle();
+    });
+
+    testWidgets('keydown to navigate to external link',
+        (WidgetTester tester) async {
+      final TestNavigatorObserver observer = TestNavigatorObserver();
+      final Uri uri = Uri.parse('https://google.com');
+      FollowLink? followLinkCallback;
+
+      await tester.pumpWidget(MaterialApp(
+        navigatorObservers: <NavigatorObserver>[observer],
+        home: Directionality(
+          textDirection: TextDirection.ltr,
+          child: WebLinkDelegate(TestLinkInfo(
+            uri: uri,
+            target: LinkTarget.blank,
+            builder: (BuildContext context, FollowLink? followLink) {
+              followLinkCallback = followLink;
+              return const SizedBox(width: 100, height: 100);
+            },
+          )),
+        ),
+      ));
+      // Platform view creation happens asynchronously.
+      await tester.pumpAndSettle();
+
+      expect(observer.currentRouteName, '/');
+      expect(testPlugin.launches, isEmpty);
+
+      final html.Element anchor = _findSingleAnchor();
+
+      await followLinkCallback!();
+      _simulateKeydown(anchor);
+      await tester.pumpAndSettle();
+
+      // External links that are triggered by keyboard are handled by calling
+      // `launchUrl`, and there's no change to the app's route name.
+      expect(observer.currentRouteName, '/');
+      expect(testPlugin.launches, <String>['https://google.com']);
+
+      // Needed when testing on on Chrome98 headless in CI.
+      // See https://github.com/flutter/flutter/issues/121161
+      await tester.pumpAndSettle();
+    });
+  });
 }
 
 html.Element _findSingleAnchor() {
@@ -199,6 +391,33 @@ html.Element _findSingleAnchor() {
   return foundAnchors.single;
 }
 
+void _simulateClick(html.Element target) {
+  target.dispatchEvent(
+    html.MouseEvent(
+      'click',
+      html.MouseEventInit()..bubbles = true,
+    ),
+  );
+}
+
+void _simulateKeydown(html.Element target) {
+  target.dispatchEvent(
+    html.KeyboardEvent(
+      'keydown',
+      html.KeyboardEventInit()..bubbles = true,
+    ),
+  );
+}
+
+class TestNavigatorObserver extends NavigatorObserver {
+  String? currentRouteName;
+
+  @override
+  void didPush(Route<dynamic> route, Route<dynamic>? previousRoute) {
+    currentRouteName = route.settings.name;
+  }
+}
+
 class TestLinkInfo extends LinkInfo {
   TestLinkInfo({
     required this.uri,
@@ -217,4 +436,14 @@ class TestLinkInfo extends LinkInfo {
 
   @override
   bool get isDisabled => uri == null;
+}
+
+class TestUrlLauncherPlugin extends UrlLauncherPlugin {
+  final List<String> launches = <String>[];
+
+  @override
+  Future<bool> launchUrl(String url, LaunchOptions options) async {
+    launches.add(url);
+    return true;
+  }
 }

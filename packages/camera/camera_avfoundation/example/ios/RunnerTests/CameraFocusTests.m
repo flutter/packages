@@ -37,7 +37,7 @@
   [[_mockDevice reject] setFocusMode:AVCaptureFocusModeAutoFocus];
 
   // Run test
-  [_camera applyFocusMode:FLTFocusModeAuto onDevice:_mockDevice];
+  [_camera applyFocusMode:FCPPlatformFocusModeAuto onDevice:_mockDevice];
 
   // Expect setFocusMode:AVCaptureFocusModeContinuousAutoFocus
   OCMVerify([_mockDevice setFocusMode:AVCaptureFocusModeContinuousAutoFocus]);
@@ -54,7 +54,7 @@
   [[_mockDevice reject] setFocusMode:AVCaptureFocusModeContinuousAutoFocus];
 
   // Run test
-  [_camera applyFocusMode:FLTFocusModeAuto onDevice:_mockDevice];
+  [_camera applyFocusMode:FCPPlatformFocusModeAuto onDevice:_mockDevice];
 
   // Expect setFocusMode:AVCaptureFocusModeAutoFocus
   OCMVerify([_mockDevice setFocusMode:AVCaptureFocusModeAutoFocus]);
@@ -72,7 +72,7 @@
   [[_mockDevice reject] setFocusMode:AVCaptureFocusModeAutoFocus];
 
   // Run test
-  [_camera applyFocusMode:FLTFocusModeAuto onDevice:_mockDevice];
+  [_camera applyFocusMode:FCPPlatformFocusModeAuto onDevice:_mockDevice];
 }
 
 - (void)testLockedFocusWithModeSupported_ShouldSetModeAutoFocus {
@@ -85,7 +85,7 @@
   [[_mockDevice reject] setFocusMode:AVCaptureFocusModeContinuousAutoFocus];
 
   // Run test
-  [_camera applyFocusMode:FLTFocusModeLocked onDevice:_mockDevice];
+  [_camera applyFocusMode:FCPPlatformFocusModeLocked onDevice:_mockDevice];
 
   // Expect setFocusMode:AVCaptureFocusModeAutoFocus
   OCMVerify([_mockDevice setFocusMode:AVCaptureFocusModeAutoFocus]);
@@ -102,7 +102,7 @@
   [[_mockDevice reject] setFocusMode:AVCaptureFocusModeAutoFocus];
 
   // Run test
-  [_camera applyFocusMode:FLTFocusModeLocked onDevice:_mockDevice];
+  [_camera applyFocusMode:FCPPlatformFocusModeLocked onDevice:_mockDevice];
 }
 
 - (void)testSetFocusPointWithResult_SetsFocusPointOfInterest {
@@ -114,11 +114,9 @@
   [_camera setValue:_mockDevice forKey:@"captureDevice"];
 
   // Run test
-  [_camera setFocusPointWithResult:[[FLTThreadSafeFlutterResult alloc]
-                                       initWithResult:^(id _Nullable result){
-                                       }]
-                                 x:1
-                                 y:1];
+  [_camera setFocusPoint:[FCPPlatformPoint makeWithX:1 y:1]
+          withCompletion:^(FlutterError *_Nullable error){
+          }];
 
   // Verify the focus point of interest has been set
   OCMVerify([_mockDevice setFocusPointOfInterest:CGPointMake(1, 1)]);

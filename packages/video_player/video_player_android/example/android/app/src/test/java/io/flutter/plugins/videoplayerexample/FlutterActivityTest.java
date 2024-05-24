@@ -45,6 +45,6 @@ public class FlutterActivityTest {
 
     engine.destroy();
     verify(videoPlayerPlugin, times(1)).onDetachedFromEngine(pluginBindingCaptor.capture());
-    verify(videoPlayerPlugin, times(1)).initialize();
+    verify(videoPlayerPlugin, times(1)).onDestroy();
   }
 }
