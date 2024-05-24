@@ -21,7 +21,7 @@ let package = Package(
       name: "pointer_interceptor_ios",
       dependencies: [],
       resources: [
-        .process("PrivacyInfo.xcprivacy"),
+        .process("PrivacyInfo.xcprivacy")
       ]
     )
   ]
