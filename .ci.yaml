@@ -975,6 +975,18 @@ targets:
           {"dependency": "swift_format", "version": "build_id:8797338980206841409"}
         ]
 
+  - name: Mac_arm64 macos_repo_checks
+    recipe: packages/packages
+    bringup: true # New target
+    timeout: 30
+    properties:
+      version_file: flutter_master.version
+      target_file: macos_repo_checks.yaml
+      dependencies: >
+        [
+          {"dependency": "swift_format", "version": "build_id:8797338980206841409"}
+        ]
+
   ### macOS desktop tasks ###
   # macos-platform_tests builds all the packages on ARM, so this build is run
   # on Intel to give us build coverage of both host types.
