@@ -124,6 +124,9 @@ public class PreviewTest {
         .thenReturn(new Size(resolutionWidth, resolutionHeight));
     when(mockCameraXProxy.createSystemServicesFlutterApiImpl(mockBinaryMessenger))
         .thenReturn(mockSystemServicesFlutterApi);
+    when(mockTextureRegistry.createSurfaceProducer()).thenReturn(mockSurfaceProducer);
+    when(mockSurfaceProducer.id()).thenReturn(1);
+    when(mockSurfaceProducer.getSurface()).thenReturn(mockSurface);
 
     final ArgumentCaptor<Surface> surfaceCaptor = ArgumentCaptor.forClass(Surface.class);
     @SuppressWarnings("unchecked")
