@@ -1381,7 +1381,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       final String echoStringTwo = await apiWithSuffixTwo.echo(sentString);
       expect(sentString, echoStringOne);
       expect(sentString, echoStringTwo);
-    }, skip: _linuxBringup);
+    });
 
     testWidgets('multiple instances will have different method channel names',
         (_) async {
@@ -1402,8 +1402,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       } on PlatformException catch (e) {
         expect(e.message, contains('suffixWithoutHost'));
       }
-    }, skip: _linuxBringup);
-  });
+    });
+  }, skip: _linuxBringup);
 
   // These tests rely on the async Dart->host calls to work correctly, since
   // the host->Dart call is wrapped in a driving Dart->host call, so any test
@@ -1418,7 +1418,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       final HostIntegrationCoreApi api = HostIntegrationCoreApi();
 
       expect(api.callFlutterNoop(), completes);
-    }, skip: _linuxBringup);
+    });
 
     testWidgets('errors are returned from non void methods correctly',
         (WidgetTester _) async {
@@ -1427,7 +1427,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       expect(() async {
         await api.callFlutterThrowError();
       }, throwsA(isA<PlatformException>()));
-    }, skip: _linuxBringup);
+    });
 
     testWidgets('errors are returned from void methods correctly',
         (WidgetTester _) async {
@@ -1436,7 +1436,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       expect(() async {
         await api.callFlutterThrowErrorFromVoid();
       }, throwsA(isA<PlatformException>()));
-    }, skip: _linuxBringup);
+    });
 
     testWidgets('all datatypes serialize and deserialize correctly',
         (WidgetTester _) async {
@@ -1446,7 +1446,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
           await api.callFlutterEchoAllTypes(genericAllTypes);
 
       compareAllTypes(echoObject, genericAllTypes);
-    }, skip: _linuxBringup);
+    });
 
     testWidgets(
         'Arguments of multiple types serialize and deserialize correctly',
@@ -1462,7 +1462,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       expect(compositeObject.aNullableInt, aNullableInt);
       expect(compositeObject.aNullableBool, aNullableBool);
       expect(compositeObject.aNullableString, aNullableString);
-    }, skip: _linuxBringup);
+    });
 
     testWidgets(
         'Arguments of multiple null types serialize and deserialize correctly',
@@ -1474,7 +1474,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       expect(compositeObject.aNullableInt, null);
       expect(compositeObject.aNullableBool, null);
       expect(compositeObject.aNullableString, null);
-    }, skip: _linuxBringup);
+    });
 
     testWidgets(
         'Arguments of multiple types serialize and deserialize correctly (WithoutRecursion)',
@@ -1490,7 +1490,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       expect(compositeObject.aNullableInt, aNullableInt);
       expect(compositeObject.aNullableBool, aNullableBool);
       expect(compositeObject.aNullableString, aNullableString);
-    }, skip: _linuxBringup);
+    });
 
     testWidgets(
         'Arguments of multiple null types serialize and deserialize correctly (WithoutRecursion)',
@@ -1503,7 +1503,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       expect(compositeObject.aNullableInt, null);
       expect(compositeObject.aNullableBool, null);
       expect(compositeObject.aNullableString, null);
-    }, skip: _linuxBringup);
+    });
 
     testWidgets('booleans serialize and deserialize correctly',
         (WidgetTester _) async {
@@ -1513,7 +1513,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
         final bool echoObject = await api.callFlutterEchoBool(sentObject);
         expect(echoObject, sentObject);
       }
-    }, skip: _linuxBringup);
+    });
 
     testWidgets('ints serialize and deserialize correctly',
         (WidgetTester _) async {
@@ -1522,7 +1522,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       const int sentObject = _regularInt;
       final int echoObject = await api.callFlutterEchoInt(sentObject);
       expect(echoObject, sentObject);
-    }, skip: _linuxBringup);
+    });
 
     testWidgets('doubles serialize and deserialize correctly',
         (WidgetTester _) async {
@@ -1531,7 +1531,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       const double sentObject = 2.0694;
       final double echoObject = await api.callFlutterEchoDouble(sentObject);
       expect(echoObject, sentObject);
-    }, skip: _linuxBringup);
+    });
 
     testWidgets('strings serialize and deserialize correctly',
         (WidgetTester _) async {
@@ -1540,7 +1540,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       const String sentObject = 'Hello Dart!';
       final String echoObject = await api.callFlutterEchoString(sentObject);
       expect(echoObject, sentObject);
-    }, skip: _linuxBringup);
+    });
 
     testWidgets('Uint8Lists serialize and deserialize correctly',
         (WidgetTester _) async {
@@ -1562,7 +1562,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       final Uint8List echoObject =
           await api.callFlutterEchoUint8List(sentObject);
       expect(echoObject, sentObject);
-    }, skip: _linuxBringup);
+    });
 
     testWidgets('lists serialize and deserialize correctly',
         (WidgetTester _) async {
@@ -1572,7 +1572,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       final List<Object?> echoObject =
           await api.callFlutterEchoList(sentObject);
       expect(listEquals(echoObject, sentObject), true);
-    }, skip: _linuxBringup);
+    });
 
     testWidgets('maps serialize and deserialize correctly',
         (WidgetTester _) async {
@@ -1586,7 +1586,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       final Map<String?, Object?> echoObject =
           await api.callFlutterEchoMap(sentObject);
       expect(mapEquals(echoObject, sentObject), true);
-    }, skip: _linuxBringup);
+    });
 
     testWidgets('enums serialize and deserialize correctly',
         (WidgetTester _) async {
@@ -1595,7 +1595,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       const AnEnum sentEnum = AnEnum.three;
       final AnEnum echoEnum = await api.callFlutterEchoEnum(sentEnum);
       expect(echoEnum, sentEnum);
-    }, skip: _linuxBringup);
+    });
 
     testWidgets('multi word enums serialize and deserialize correctly',
         (WidgetTester _) async {
@@ -1604,7 +1604,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       const AnEnum sentEnum = AnEnum.fortyTwo;
       final AnEnum echoEnum = await api.callFlutterEchoEnum(sentEnum);
       expect(echoEnum, sentEnum);
-    }, skip: _linuxBringup);
+    });
 
     testWidgets('nullable booleans serialize and deserialize correctly',
         (WidgetTester _) async {
@@ -1615,7 +1615,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
             await api.callFlutterEchoNullableBool(sentObject);
         expect(echoObject, sentObject);
       }
-    }, skip: _linuxBringup);
+    });
 
     testWidgets('null booleans serialize and deserialize correctly',
         (WidgetTester _) async {
@@ -1625,7 +1625,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       final bool? echoObject =
           await api.callFlutterEchoNullableBool(sentObject);
       expect(echoObject, sentObject);
-    }, skip: _linuxBringup);
+    });
 
     testWidgets('nullable ints serialize and deserialize correctly',
         (WidgetTester _) async {
@@ -1634,7 +1634,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       const int sentObject = _regularInt;
       final int? echoObject = await api.callFlutterEchoNullableInt(sentObject);
       expect(echoObject, sentObject);
-    }, skip: _linuxBringup);
+    });
 
     testWidgets('nullable big ints serialize and deserialize correctly',
         (WidgetTester _) async {
@@ -1643,7 +1643,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       const int sentObject = _biggerThanBigInt;
       final int? echoObject = await api.callFlutterEchoNullableInt(sentObject);
       expect(echoObject, sentObject);
-    }, skip: _linuxBringup);
+    });
 
     testWidgets('null ints serialize and deserialize correctly',
         (WidgetTester _) async {
@@ -1651,7 +1651,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
       final int? echoObject = await api.callFlutterEchoNullableInt(null);
       expect(echoObject, null);
-    }, skip: _linuxBringup);
+    });
 
     testWidgets('nullable doubles serialize and deserialize correctly',
         (WidgetTester _) async {
@@ -1661,7 +1661,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       final double? echoObject =
           await api.callFlutterEchoNullableDouble(sentObject);
       expect(echoObject, sentObject);
-    }, skip: _linuxBringup);
+    });
 
     testWidgets('null doubles serialize and deserialize correctly',
         (WidgetTester _) async {
@@ -1669,7 +1669,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
       final double? echoObject = await api.callFlutterEchoNullableDouble(null);
       expect(echoObject, null);
-    }, skip: _linuxBringup);
+    });
 
     testWidgets('nullable strings serialize and deserialize correctly',
         (WidgetTester _) async {
@@ -1679,7 +1679,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       final String? echoObject =
           await api.callFlutterEchoNullableString(sentObject);
       expect(echoObject, sentObject);
-    }, skip: _linuxBringup);
+    });
 
     testWidgets('null strings serialize and deserialize correctly',
         (WidgetTester _) async {
@@ -1687,7 +1687,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
       final String? echoObject = await api.callFlutterEchoNullableString(null);
       expect(echoObject, null);
-    }, skip: _linuxBringup);
+    });
 
     testWidgets('nullable Uint8Lists serialize and deserialize correctly',
         (WidgetTester _) async {
@@ -1708,7 +1708,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       final Uint8List? echoObject =
           await api.callFlutterEchoNullableUint8List(sentObject);
       expect(echoObject, sentObject);
-    }, skip: _linuxBringup);
+    });
 
     testWidgets('null Uint8Lists serialize and deserialize correctly',
         (WidgetTester _) async {
@@ -1717,7 +1717,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       final Uint8List? echoObject =
           await api.callFlutterEchoNullableUint8List(null);
       expect(echoObject, null);
-    }, skip: _linuxBringup);
+    });
 
     testWidgets('nullable lists serialize and deserialize correctly',
         (WidgetTester _) async {
@@ -1727,7 +1727,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       final List<Object?>? echoObject =
           await api.callFlutterEchoNullableList(sentObject);
       expect(listEquals(echoObject, sentObject), true);
-    }, skip: _linuxBringup);
+    });
 
     testWidgets('null lists serialize and deserialize correctly',
         (WidgetTester _) async {
@@ -1736,7 +1736,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       final List<Object?>? echoObject =
           await api.callFlutterEchoNullableList(null);
       expect(listEquals(echoObject, null), true);
-    }, skip: _linuxBringup);
+    });
 
     testWidgets('nullable maps serialize and deserialize correctly',
         (WidgetTester _) async {
@@ -1750,7 +1750,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       final Map<String?, Object?>? echoObject =
           await api.callFlutterEchoNullableMap(sentObject);
       expect(mapEquals(echoObject, sentObject), true);
-    }, skip: _linuxBringup);
+    });
 
     testWidgets('null maps serialize and deserialize correctly',
         (WidgetTester _) async {
@@ -1759,7 +1759,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       final Map<String?, Object?>? echoObject =
           await api.callFlutterEchoNullableMap(null);
       expect(mapEquals(echoObject, null), true);
-    }, skip: _linuxBringup);
+    });
 
     testWidgets('nullable enums serialize and deserialize correctly',
         (WidgetTester _) async {
@@ -1768,7 +1768,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       const AnEnum sentEnum = AnEnum.three;
       final AnEnum? echoEnum = await api.callFlutterEchoNullableEnum(sentEnum);
       expect(echoEnum, sentEnum);
-    }, skip: _linuxBringup);
+    });
 
     testWidgets('multi word nullable enums serialize and deserialize correctly',
         (WidgetTester _) async {
@@ -1777,7 +1777,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       const AnEnum sentEnum = AnEnum.fourHundredTwentyTwo;
       final AnEnum? echoEnum = await api.callFlutterEchoNullableEnum(sentEnum);
       expect(echoEnum, sentEnum);
-    }, skip: _linuxBringup);
+    });
 
     testWidgets('null enums serialize and deserialize correctly',
         (WidgetTester _) async {
@@ -1786,8 +1786,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       const AnEnum? sentEnum = null;
       final AnEnum? echoEnum = await api.callFlutterEchoNullableEnum(sentEnum);
       expect(echoEnum, sentEnum);
-    }, skip: _linuxBringup);
-  });
+    });
+  }, skip: _linuxBringup);
 
   group('Flutter API with suffix', () {
     setUp(() {
@@ -1808,8 +1808,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       final String echoObject =
           await api.callFlutterSmallApiEchoString(sentObject);
       expect(echoObject, sentObject);
-    }, skip: _linuxBringup);
-  });
+    });
+  }, skip: _linuxBringup);
 }
 
 class _FlutterApiTestImplementation implements FlutterIntegrationCoreApi {
