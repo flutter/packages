@@ -68,7 +68,7 @@ class _KeysPanelState extends State<KeysPanel> {
                       stopSearching: stopSearching,
                     ),
                   ),
-                ] else ...[
+                ] else ...<Widget>[
                   const Spacer(),
                   _ToolbarAction(
                     tooltipMessage: 'Search',
