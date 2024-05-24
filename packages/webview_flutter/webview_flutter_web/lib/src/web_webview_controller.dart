@@ -6,8 +6,8 @@ import 'dart:convert';
 import 'dart:ui_web' as ui_web;
 
 import 'package:flutter/cupertino.dart';
-import 'package:web/web.dart' as html;
 import 'package:http/http.dart' as http;
+import 'package:web/web.dart' as html;
 import 'package:webview_flutter_platform_interface/webview_flutter_platform_interface.dart';
 
 import 'content_type.dart';
