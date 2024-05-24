@@ -304,7 +304,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       final HostIntegrationCoreApi api = HostIntegrationCoreApi();
 
       expect(api.noop(), completes);
-    }, skip: _linuxBringup);
+    });
 
     testWidgets('all datatypes serialize and deserialize correctly',
         (WidgetTester _) async {
