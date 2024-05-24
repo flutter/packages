@@ -158,7 +158,7 @@ class _SearchField extends StatelessWidget {
           hintText: 'Search',
           border: const OutlineInputBorder(),
           suffix: _ToolbarAction(
-            tooltipMessage: 'Stop search ing',
+            tooltipMessage: 'Stop searching',
             icon: Icons.close,
             onPressed: stopSearching,
           ),
