@@ -20,9 +20,9 @@ flutter:
 
 dependencies:
   camera_platform_interface: ^2.6.0
+  flutter_plugin_android_lifecycle: ^2.0.2
   flutter:
     sdk: flutter
-  flutter_plugin_android_lifecycle: ^2.0.2
   stream_transform: ^2.0.0
 
 dev_dependencies:
