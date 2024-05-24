@@ -46,6 +46,7 @@ class RouteInformationState<T> {
   RouteInformationState({
     this.extra,
     this.completer,
+    this.onReplaceCompleter,
     this.baseRouteMatchList,
     required this.type,
   })  : assert((type == NavigatingType.go || type == NavigatingType.restore) ==
@@ -61,6 +62,10 @@ class RouteInformationState<T> {
   /// This is only null if [type] is [NavigatingType.go] or
   /// [NavigatingType.restore].
   final Completer<T?>? completer;
+
+  /// The completer that needs to be completed when route is replaced.
+  /// [completer] is ignored when replacing routes.
+  final Completer<T?>? onReplaceCompleter;
 
   /// The base route match list to push on top to.
   ///
@@ -146,8 +151,12 @@ class GoRouteInformationProvider extends RouteInformationProvider
   }
 
   /// Pushes the `location` as a new route on top of `base`.
-  Future<T?> push<T>(String location,
-      {required RouteMatchList base, Object? extra}) {
+  Future<T?> push<T>(
+    String location, {
+    required RouteMatchList base,
+    Object? extra,
+    Completer<T?>? onReplaceCompleter,
+  }) {
     final Completer<T?> completer = Completer<T?>();
     _setValue(
       location,
@@ -156,6 +165,7 @@ class GoRouteInformationProvider extends RouteInformationProvider
         baseRouteMatchList: base,
         completer: completer,
         type: NavigatingType.push,
+        onReplaceCompleter: onReplaceCompleter,
       ),
     );
     return completer.future;
@@ -186,8 +196,12 @@ class GoRouteInformationProvider extends RouteInformationProvider
 
   /// Removes the top-most route match from `base` and pushes the `location` as a
   /// new route on top.
-  Future<T?> pushReplacement<T>(String location,
-      {required RouteMatchList base, Object? extra}) {
+  Future<T?> pushReplacement<T>(
+    String location, {
+    required RouteMatchList base,
+    Object? extra,
+    Completer<T?>? onReplaceCompleter,
+  }) {
     final Completer<T?> completer = Completer<T?>();
     _setValue(
       location,
@@ -196,14 +210,19 @@ class GoRouteInformationProvider extends RouteInformationProvider
         baseRouteMatchList: base,
         completer: completer,
         type: NavigatingType.pushReplacement,
+        onReplaceCompleter: onReplaceCompleter,
       ),
     );
     return completer.future;
   }
 
   /// Replaces the top-most route match from `base` with the `location`.
-  Future<T?> replace<T>(String location,
-      {required RouteMatchList base, Object? extra}) {
+  Future<T?> replace<T>(
+    String location, {
+    required RouteMatchList base,
+    Object? extra,
+    Completer<T?>? onReplaceCompleter,
+  }) {
     final Completer<T?> completer = Completer<T?>();
     _setValue(
       location,
@@ -212,6 +231,7 @@ class GoRouteInformationProvider extends RouteInformationProvider
         baseRouteMatchList: base,
         completer: completer,
         type: NavigatingType.replace,
+        onReplaceCompleter: onReplaceCompleter,
       ),
     );
     return completer.future;

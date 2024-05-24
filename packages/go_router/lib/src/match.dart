@@ -421,9 +421,12 @@ class ShellRouteMatch extends RouteMatchBase {
 /// The route match that represent route pushed through [GoRouter.push].
 class ImperativeRouteMatch extends RouteMatch {
   /// Constructor for [ImperativeRouteMatch].
-  ImperativeRouteMatch(
-      {required super.pageKey, required this.matches, required this.completer})
-      : super(
+  ImperativeRouteMatch({
+    required super.pageKey,
+    required this.matches,
+    required this.completer,
+    this.onReplaceCompleter,
+  }) : super(
           route: _getsLastRouteFromMatches(matches),
           matchedLocation: _getsMatchedLocationFromMatches(matches),
         );
@@ -449,6 +452,12 @@ class ImperativeRouteMatch extends RouteMatch {
   /// The completer for the future returned by [GoRouter.push].
   final Completer<Object?> completer;
 
+  /// The completer for the future when [GoRouter.pushReplacement]
+  /// [GoRouter.replace] replaces the current route.
+  ///
+  /// Completer from the method call is put into the void when route is replaced.
+  final Completer<Object?>? onReplaceCompleter;
+
   /// Called when the corresponding [Route] associated with this route match is
   /// completed.
   void complete([dynamic value]) {
@@ -466,11 +475,17 @@ class ImperativeRouteMatch extends RouteMatch {
     return other is ImperativeRouteMatch &&
         completer == other.completer &&
         matches == other.matches &&
+        onReplaceCompleter == other.onReplaceCompleter &&
         super == other;
   }
 
   @override
-  int get hashCode => Object.hash(super.hashCode, completer, matches.hashCode);
+  int get hashCode => Object.hash(
+        super.hashCode,
+        completer,
+        matches.hashCode,
+        onReplaceCompleter,
+      );
 }
 
 /// The list of [RouteMatchBase] objects.

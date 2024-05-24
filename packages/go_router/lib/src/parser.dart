@@ -125,6 +125,7 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
         baseRouteMatchList: state.baseRouteMatchList,
         completer: state.completer,
         type: state.type,
+        onReplaceCompleter: state.onReplaceCompleter,
       );
     });
   }
@@ -182,6 +183,7 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
     required RouteMatchList? baseRouteMatchList,
     required Completer<Object?>? completer,
     required NavigatingType type,
+    Completer<Object?>? onReplaceCompleter,
   }) {
     switch (type) {
       case NavigatingType.push:
@@ -190,24 +192,33 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
             pageKey: _getUniqueValueKey(),
             completer: completer!,
             matches: newMatchList,
+            onReplaceCompleter: onReplaceCompleter,
           ),
         );
       case NavigatingType.pushReplacement:
         final RouteMatch routeMatch = baseRouteMatchList!.last;
+        if (routeMatch is ImperativeRouteMatch) {
+          routeMatch.onReplaceCompleter?.complete();
+        }
         return baseRouteMatchList.remove(routeMatch).push(
               ImperativeRouteMatch(
                 pageKey: _getUniqueValueKey(),
                 completer: completer!,
                 matches: newMatchList,
+                onReplaceCompleter: onReplaceCompleter,
               ),
             );
       case NavigatingType.replace:
         final RouteMatch routeMatch = baseRouteMatchList!.last;
+        if (routeMatch is ImperativeRouteMatch) {
+          routeMatch.onReplaceCompleter?.complete();
+        }
         return baseRouteMatchList.remove(routeMatch).push(
               ImperativeRouteMatch(
                 pageKey: routeMatch.pageKey,
                 completer: completer!,
                 matches: newMatchList,
+                onReplaceCompleter: onReplaceCompleter,
               ),
             );
       case NavigatingType.go:

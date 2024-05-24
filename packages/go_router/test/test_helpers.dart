@@ -4,6 +4,7 @@
 
 // ignore_for_file: cascade_invocations, diagnostic_describe_all_properties
 
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
@@ -110,7 +111,11 @@ class GoRouterPushSpy extends GoRouter {
   Object? extra;
 
   @override
-  Future<T?> push<T extends Object?>(String location, {Object? extra}) {
+  Future<T?> push<T extends Object?>(
+    String location, {
+    Object? extra,
+    Completer<Object?>? onReplaceCompleter,
+  }) {
     myLocation = location;
     this.extra = extra;
     return Future<T?>.value(extra as T?);
@@ -134,6 +139,7 @@ class GoRouterPushNamedSpy extends GoRouter {
     Map<String, String> pathParameters = const <String, String>{},
     Map<String, dynamic> queryParameters = const <String, dynamic>{},
     Object? extra,
+    Completer<Object?>? onReplaceCompleter,
   }) {
     this.name = name;
     this.pathParameters = pathParameters;

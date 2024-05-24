@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:async';
+
 import 'package:flutter/widgets.dart';
 
 import '../router.dart';
@@ -46,8 +48,16 @@ extension GoRouterHelper on BuildContext {
   /// * [replace] which replaces the top-most page of the page stack but treats
   ///   it as the same page. The page key will be reused. This will preserve the
   ///   state and not run any page animation.
-  Future<T?> push<T extends Object?>(String location, {Object? extra}) =>
-      GoRouter.of(this).push<T>(location, extra: extra);
+  Future<T?> push<T extends Object?>(
+    String location, {
+    Object? extra,
+    Completer<T?>? onReplaceCompleter,
+  }) =>
+      GoRouter.of(this).push<T>(
+        location,
+        extra: extra,
+        onReplaceCompleter: onReplaceCompleter,
+      );
 
   /// Navigate to a named route onto the page stack.
   Future<T?> pushNamed<T extends Object?>(
@@ -55,12 +65,14 @@ extension GoRouterHelper on BuildContext {
     Map<String, String> pathParameters = const <String, String>{},
     Map<String, dynamic> queryParameters = const <String, dynamic>{},
     Object? extra,
+    Completer<T?>? onReplaceCompleter,
   }) =>
       GoRouter.of(this).pushNamed<T>(
         name,
         pathParameters: pathParameters,
         queryParameters: queryParameters,
         extra: extra,
+        onReplaceCompleter: onReplaceCompleter,
       );
 
   /// Returns `true` if there is more than 1 page on the stack.
@@ -79,8 +91,16 @@ extension GoRouterHelper on BuildContext {
   /// * [replace] which replaces the top-most page of the page stack but treats
   ///   it as the same page. The page key will be reused. This will preserve the
   ///   state and not run any page animation.
-  void pushReplacement(String location, {Object? extra}) =>
-      GoRouter.of(this).pushReplacement(location, extra: extra);
+  void pushReplacement(
+    String location, {
+    Object? extra,
+    Completer<Object?>? onReplaceCompleter,
+  }) =>
+      GoRouter.of(this).pushReplacement(
+        location,
+        extra: extra,
+        onReplaceCompleter: onReplaceCompleter,
+      );
 
   /// Replaces the top-most page of the page stack with the named route w/
   /// optional parameters, e.g. `name='person', pathParameters={'fid': 'f2', 'pid':
@@ -94,12 +114,14 @@ extension GoRouterHelper on BuildContext {
     Map<String, String> pathParameters = const <String, String>{},
     Map<String, dynamic> queryParameters = const <String, dynamic>{},
     Object? extra,
+    Completer<Object?>? onReplaceCompleter,
   }) =>
       GoRouter.of(this).pushReplacementNamed(
         name,
         pathParameters: pathParameters,
         queryParameters: queryParameters,
         extra: extra,
+        onReplaceCompleter: onReplaceCompleter,
       );
 
   /// Replaces the top-most page of the page stack with the given one but treats
@@ -112,8 +134,16 @@ extension GoRouterHelper on BuildContext {
   /// * [push] which pushes the given location onto the page stack.
   /// * [pushReplacement] which replaces the top-most page of the page stack but
   ///   always uses a new page key.
-  void replace(String location, {Object? extra}) =>
-      GoRouter.of(this).replace<Object?>(location, extra: extra);
+  void replace(
+    String location, {
+    Object? extra,
+    Completer<Object?>? onReplaceCompleter,
+  }) =>
+      GoRouter.of(this).replace<Object?>(
+        location,
+        extra: extra,
+        onReplaceCompleter: onReplaceCompleter,
+      );
 
   /// Replaces the top-most page with the named route and optional parameters,
   /// preserving the page key.
@@ -131,9 +161,13 @@ extension GoRouterHelper on BuildContext {
     Map<String, String> pathParameters = const <String, String>{},
     Map<String, dynamic> queryParameters = const <String, dynamic>{},
     Object? extra,
+    Completer<Object?>? onReplaceCompleter,
   }) =>
-      GoRouter.of(this).replaceNamed<Object?>(name,
-          pathParameters: pathParameters,
-          queryParameters: queryParameters,
-          extra: extra);
+      GoRouter.of(this).replaceNamed<Object?>(
+        name,
+        pathParameters: pathParameters,
+        queryParameters: queryParameters,
+        extra: extra,
+        onReplaceCompleter: onReplaceCompleter,
+      );
 }
