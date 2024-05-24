@@ -5,9 +5,7 @@
 package io.flutter.plugins.camerax;
 
 import android.app.Activity;
-import android.graphics.SurfaceTexture;
 import android.util.Size;
-import android.view.Surface;
 import androidx.annotation.NonNull;
 import androidx.camera.core.CameraSelector;
 import androidx.camera.core.ImageAnalysis;
@@ -16,8 +14,6 @@ import androidx.camera.core.Preview;
 import androidx.camera.video.Recorder;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugins.camerax.GeneratedCameraXLibrary.ResolutionInfo;
-import io.flutter.view.TextureRegistry;
-
 import java.io.File;
 
 /** Utility class used to create CameraX-related objects primarily for testing purposes. */

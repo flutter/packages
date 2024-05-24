@@ -4,7 +4,6 @@
 
 package io.flutter.plugins.camerax;
 
-import android.graphics.SurfaceTexture;
 import android.util.Size;
 import android.view.Surface;
 import androidx.annotation.NonNull;

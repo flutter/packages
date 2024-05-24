@@ -13,7 +13,6 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import android.graphics.SurfaceTexture;
 import android.util.Size;
 import android.view.Surface;
 import androidx.camera.core.Preview;
@@ -86,7 +85,8 @@ public class PreviewTest {
   public void setSurfaceProviderTest_createsSurfaceProviderAndReturnsTextureEntryId() {
     final PreviewHostApiImpl previewHostApi =
         spy(new PreviewHostApiImpl(mockBinaryMessenger, testInstanceManager, mockTextureRegistry));
-    final TextureRegistry.SurfaceProducer mockSurfaceProducer = mock(TextureRegistry.SurfaceProducer.class);
+    final TextureRegistry.SurfaceProducer mockSurfaceProducer =
+        mock(TextureRegistry.SurfaceProducer.class);
     final Long previewIdentifier = 5L;
     final Long surfaceProducerEntryId = 120L;
 
@@ -109,7 +109,8 @@ public class PreviewTest {
   public void createSurfaceProvider_createsExpectedPreviewSurfaceProvider() {
     final PreviewHostApiImpl previewHostApi =
         new PreviewHostApiImpl(mockBinaryMessenger, testInstanceManager, mockTextureRegistry);
-    final TextureRegistry.SurfaceProducer mockSurfaceProducer = mock(TextureRegistry.SurfaceProducer.class);
+    final TextureRegistry.SurfaceProducer mockSurfaceProducer =
+        mock(TextureRegistry.SurfaceProducer.class);
     final Surface mockSurface = mock(Surface.class);
     final SurfaceRequest mockSurfaceRequest = mock(SurfaceRequest.class);
     final SurfaceRequest.Result mockSurfaceRequestResult = mock(SurfaceRequest.Result.class);
