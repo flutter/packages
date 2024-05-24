@@ -212,32 +212,30 @@ public class WebViewClientFlutterApiImpl extends WebViewClientFlutterApi {
   }
 
   /**
-   * Passes arguments from {@link WebViewClient#onRenderProcessGone(WebView, RenderProcessGoneDetail)} to
-   * Dart.
+   * Passes arguments from {@link WebViewClient#onRenderProcessGone(WebView,
+   * RenderProcessGoneDetail)} to Dart.
    */
   public void onRenderProcessGone(
-          @NonNull WebViewClient webViewClient,
-          @NonNull WebView webView,
-          @NonNull RenderProcessGoneDetail details,
-          @NonNull Reply<Boolean> callback) {
+      @NonNull WebViewClient webViewClient,
+      @NonNull WebView webView,
+      @NonNull RenderProcessGoneDetail details,
+      @NonNull Reply<Boolean> callback) {
     webViewFlutterApi.create(webView, reply -> {});
 
-    GeneratedAndroidWebView.RenderProcessGoneDetailData detailsData = new GeneratedAndroidWebView.RenderProcessGoneDetailData();
+    GeneratedAndroidWebView.RenderProcessGoneDetailData detailsData =
+        new GeneratedAndroidWebView.RenderProcessGoneDetailData();
     if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
       GeneratedAndroidWebView.RenderProcessGoneDetailData.Builder requestData =
-              new GeneratedAndroidWebView.RenderProcessGoneDetailData.Builder()
-                      .setDidCrash(details.didCrash())
-                      .setRendererPriorityAtExit((long) details.rendererPriorityAtExit());
+          new GeneratedAndroidWebView.RenderProcessGoneDetailData.Builder()
+              .setDidCrash(details.didCrash())
+              .setRendererPriorityAtExit((long) details.rendererPriorityAtExit());
       detailsData = requestData.build();
     }
 
     final Long webViewIdentifier =
-            Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(webView));
+        Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(webView));
     onRenderProcessGone(
-            getIdentifierForClient(webViewClient),
-            webViewIdentifier,
-            detailsData,
-            callback);
+        getIdentifierForClient(webViewClient), webViewIdentifier, detailsData, callback);
   }
 
   /**

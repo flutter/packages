@@ -1357,7 +1357,8 @@ class AndroidNavigationDelegate extends PlatformNavigationDelegate {
         String description,
         String failingUrl,
       ) {
-        final WebResourceErrorCallback? callback = weakThis.target?._onWebResourceError;
+        final WebResourceErrorCallback? callback =
+            weakThis.target?._onWebResourceError;
         if (callback != null) {
           callback(AndroidWebResourceError._(
             errorCode: errorCode,
