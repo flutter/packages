@@ -118,6 +118,7 @@ public class PreviewTest {
         mock(SystemServicesFlutterApiImpl.class);
     final int resolutionWidth = 200;
     final int resolutionHeight = 500;
+    final Long surfaceProducerEntryId = 120L;
 
     previewHostApi.cameraXProxy = mockCameraXProxy;
     when(mockSurfaceRequest.getResolution())
@@ -125,7 +126,7 @@ public class PreviewTest {
     when(mockCameraXProxy.createSystemServicesFlutterApiImpl(mockBinaryMessenger))
         .thenReturn(mockSystemServicesFlutterApi);
     when(mockTextureRegistry.createSurfaceProducer()).thenReturn(mockSurfaceProducer);
-    when(mockSurfaceProducer.id()).thenReturn(1);
+    when(mockSurfaceProducer.id()).thenReturn(surfaceProducerEntryId);
     when(mockSurfaceProducer.getSurface()).thenReturn(mockSurface);
 
     final ArgumentCaptor<Surface> surfaceCaptor = ArgumentCaptor.forClass(Surface.class);
