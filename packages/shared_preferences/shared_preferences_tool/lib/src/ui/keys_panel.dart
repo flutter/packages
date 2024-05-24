@@ -99,6 +99,7 @@ class _KeysPanelState extends State<KeysPanel> {
   }
 }
 
+// TODO(adsonpleal): replace this with `ToolbarAction` once it's available in `devtools_app_shared`, https://github.com/flutter/devtools/issues/7793.
 class _ToolbarAction extends StatelessWidget {
   const _ToolbarAction({
     required this.tooltipMessage,
@@ -157,7 +158,7 @@ class _SearchField extends StatelessWidget {
           hintText: 'Search',
           border: const OutlineInputBorder(),
           suffix: _ToolbarAction(
-            tooltipMessage: 'Stop searching',
+            tooltipMessage: 'Stop search ing',
             icon: Icons.close,
             onPressed: stopSearching,
           ),

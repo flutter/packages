@@ -124,17 +124,18 @@ class InnerSharedPreferencesStateProvider extends StatelessWidget {
     return _StateInheritedWidget(
       notifier: notifier,
       child: ValueListenableBuilder<AsyncState<SharedPreferencesState>>(
-          valueListenable: notifier,
-          builder: (
-            BuildContext context,
-            AsyncState<SharedPreferencesState> value,
-            _,
-          ) {
-            return _SharedPreferencesStateInheritedModel(
-              state: value,
-              child: child,
-            );
-          }),
+        valueListenable: notifier,
+        builder: (
+          BuildContext context,
+          AsyncState<SharedPreferencesState> value,
+          _,
+        ) {
+          return _SharedPreferencesStateInheritedModel(
+            state: value,
+            child: child,
+          );
+        },
+      ),
     );
   }
 }

@@ -26,3 +26,27 @@ flutter run -d chrome --dart-define=use_simulated_environment=true
 ```
 
 For more information, see the [devtools_extensions](https://pub.dev/packages/devtools_extensions) package documentation.
+
+## Publishing this DevTools extension
+
+The Flutter web app in this package is built and distributed as part of.
+`package:shared_preferences`. If there are changes to this tool that are
+ready to publish as part of `shared_preferences`, then the publish
+workflow for `shared_preferences` should follow these steps prior to publishing.
+
+1. Build the DevTools extension and move the assets to `shared_preferences`.
+
+    ```sh
+    cd shared_preferences_tool;
+    flutter pub get;
+    dart run devtools_extensions build_and_copy --source=. --dest=../some_pkg/extension/devtools
+    ```
+
+2. Validate that `shared_preferences` is properly configured to distribute this extension.
+
+    ```sh
+    cd shared_preferences_tool;
+    dart run devtools_extensions validate --package=../shared_preferences
+    ```
+
+3. Publish `shared_preferences` as normal.
