@@ -22,7 +22,7 @@ struct _CoreTestsPigeonTestAllTypes {
   size_t a8_byte_array_length;
   double* a_float_array;
   size_t a_float_array_length;
-  FlValue* a_list;
+  FlValue* list;
   FlValue* a_map;
   CoreTestsPigeonTestAnEnum an_enum;
   gchar* a_string;
@@ -34,7 +34,7 @@ G_DEFINE_TYPE(CoreTestsPigeonTestAllTypes, core_tests_pigeon_test_all_types,
 
 static void core_tests_pigeon_test_all_types_dispose(GObject* object) {
   CoreTestsPigeonTestAllTypes* self = CORE_TESTS_PIGEON_TEST_ALL_TYPES(object);
-  g_clear_pointer(&self->a_list, fl_value_unref);
+  g_clear_pointer(&self->list, fl_value_unref);
   g_clear_pointer(&self->a_map, fl_value_unref);
   g_clear_pointer(&self->a_string, g_free);
   g_clear_pointer(&self->an_object, fl_value_unref);
@@ -55,7 +55,7 @@ CoreTestsPigeonTestAllTypes* core_tests_pigeon_test_all_types_new(
     const uint8_t* a_byte_array, size_t a_byte_array_length,
     const int32_t* a4_byte_array, size_t a4_byte_array_length,
     const int64_t* a8_byte_array, size_t a8_byte_array_length,
-    const double* a_float_array, size_t a_float_array_length, FlValue* a_list,
+    const double* a_float_array, size_t a_float_array_length, FlValue* list,
     FlValue* a_map, CoreTestsPigeonTestAnEnum an_enum, const gchar* a_string,
     FlValue* an_object) {
   CoreTestsPigeonTestAllTypes* self = CORE_TESTS_PIGEON_TEST_ALL_TYPES(
@@ -76,7 +76,7 @@ CoreTestsPigeonTestAllTypes* core_tests_pigeon_test_all_types_new(
   self->a_float_array = static_cast<double*>(
       g_memdup2(a_float_array, sizeof(double) * a_float_array_length));
   self->a_float_array_length = a_float_array_length;
-  self->a_list = fl_value_ref(a_list);
+  self->list = fl_value_ref(list);
   self->a_map = fl_value_ref(a_map);
   self->an_enum = an_enum;
   self->a_string = g_strdup(a_string);
@@ -136,10 +136,10 @@ const double* core_tests_pigeon_test_all_types_get_a_float_array(
   return self->a_float_array;
 }
 
-FlValue* core_tests_pigeon_test_all_types_get_a_list(
+FlValue* core_tests_pigeon_test_all_types_get_list(
     CoreTestsPigeonTestAllTypes* self) {
   g_return_val_if_fail(CORE_TESTS_PIGEON_TEST_IS_ALL_TYPES(self), nullptr);
-  return self->a_list;
+  return self->list;
 }
 
 FlValue* core_tests_pigeon_test_all_types_get_a_map(
@@ -186,7 +186,7 @@ static FlValue* core_tests_pigeon_test_all_types_to_list(
   fl_value_append_take(
       values,
       fl_value_new_float_list(self->a_float_array, self->a_float_array_length));
-  fl_value_append_take(values, fl_value_ref(self->a_list));
+  fl_value_append_take(values, fl_value_ref(self->list));
   fl_value_append_take(values, fl_value_ref(self->a_map));
   fl_value_append_take(values,
                        fl_value_new_int(static_cast<int64_t>(self->an_enum)));
@@ -218,7 +218,7 @@ core_tests_pigeon_test_all_types_new_from_list(FlValue* values) {
   const double* a_float_array = fl_value_get_float_list(value7);
   size_t a_float_array_length = fl_value_get_length(value7);
   FlValue* value8 = fl_value_get_list_value(values, 8);
-  FlValue* a_list = value8;
+  FlValue* list = value8;
   FlValue* value9 = fl_value_get_list_value(values, 9);
   FlValue* a_map = value9;
   FlValue* value10 = fl_value_get_list_value(values, 10);
@@ -231,7 +231,7 @@ core_tests_pigeon_test_all_types_new_from_list(FlValue* values) {
   return core_tests_pigeon_test_all_types_new(
       a_bool, an_int, an_int64, a_double, a_byte_array, a_byte_array_length,
       a4_byte_array, a4_byte_array_length, a8_byte_array, a8_byte_array_length,
-      a_float_array, a_float_array_length, a_list, a_map, an_enum, a_string,
+      a_float_array, a_float_array_length, list, a_map, an_enum, a_string,
       an_object);
 }
 
@@ -7805,9 +7805,9 @@ static void core_tests_pigeon_test_host_integration_core_api_echo_list_cb(
   }
 
   FlValue* value0 = fl_value_get_list_value(message_, 0);
-  FlValue* a_list = value0;
+  FlValue* list = value0;
   g_autoptr(CoreTestsPigeonTestHostIntegrationCoreApiEchoListResponse)
-      response = self->vtable->echo_list(self, a_list, self->user_data);
+      response = self->vtable->echo_list(self, list, self->user_data);
   if (response == nullptr) {
     g_warning("No response returned to %s.%s", "HostIntegrationCoreApi",
               "echoList");
@@ -8723,8 +8723,8 @@ static void core_tests_pigeon_test_host_integration_core_api_echo_async_list_cb(
   }
 
   FlValue* value0 = fl_value_get_list_value(message_, 0);
-  FlValue* a_list = value0;
-  self->vtable->echo_async_list(self, a_list, response_handle, self->user_data);
+  FlValue* list = value0;
+  self->vtable->echo_async_list(self, list, response_handle, self->user_data);
 }
 
 static void core_tests_pigeon_test_host_integration_core_api_echo_async_map_cb(
@@ -9003,8 +9003,8 @@ core_tests_pigeon_test_host_integration_core_api_echo_async_nullable_list_cb(
   }
 
   FlValue* value0 = fl_value_get_list_value(message_, 0);
-  FlValue* a_list = value0;
-  self->vtable->echo_async_nullable_list(self, a_list, response_handle,
+  FlValue* list = value0;
+  self->vtable->echo_async_nullable_list(self, list, response_handle,
                                          self->user_data);
 }
 
@@ -9309,9 +9309,9 @@ core_tests_pigeon_test_host_integration_core_api_call_flutter_echo_uint8_list_cb
   }
 
   FlValue* value0 = fl_value_get_list_value(message_, 0);
-  const uint8_t* a_list = fl_value_get_uint8_list(value0);
-  size_t a_list_length = fl_value_get_length(value0);
-  self->vtable->call_flutter_echo_uint8_list(self, a_list, a_list_length,
+  const uint8_t* list = fl_value_get_uint8_list(value0);
+  size_t list_length = fl_value_get_length(value0);
+  self->vtable->call_flutter_echo_uint8_list(self, list, list_length,
                                              response_handle, self->user_data);
 }
 
@@ -9328,8 +9328,8 @@ core_tests_pigeon_test_host_integration_core_api_call_flutter_echo_list_cb(
   }
 
   FlValue* value0 = fl_value_get_list_value(message_, 0);
-  FlValue* a_list = value0;
-  self->vtable->call_flutter_echo_list(self, a_list, response_handle,
+  FlValue* list = value0;
+  self->vtable->call_flutter_echo_list(self, list, response_handle,
                                        self->user_data);
 }
 
@@ -9470,10 +9470,10 @@ core_tests_pigeon_test_host_integration_core_api_call_flutter_echo_nullable_uint
   }
 
   FlValue* value0 = fl_value_get_list_value(message_, 0);
-  const uint8_t* a_list = fl_value_get_uint8_list(value0);
-  size_t a_list_length = fl_value_get_length(value0);
+  const uint8_t* list = fl_value_get_uint8_list(value0);
+  size_t list_length = fl_value_get_length(value0);
   self->vtable->call_flutter_echo_nullable_uint8_list(
-      self, a_list, a_list_length, response_handle, self->user_data);
+      self, list, list_length, response_handle, self->user_data);
 }
 
 static void
@@ -9489,8 +9489,8 @@ core_tests_pigeon_test_host_integration_core_api_call_flutter_echo_nullable_list
   }
 
   FlValue* value0 = fl_value_get_list_value(message_, 0);
-  FlValue* a_list = value0;
-  self->vtable->call_flutter_echo_nullable_list(self, a_list, response_handle,
+  FlValue* list = value0;
+  self->vtable->call_flutter_echo_nullable_list(self, list, response_handle,
                                                 self->user_data);
 }
 
@@ -12922,11 +12922,11 @@ gboolean core_tests_pigeon_test_flutter_integration_core_api_echo_string_finish(
 }
 
 void core_tests_pigeon_test_flutter_integration_core_api_echo_uint8_list(
-    CoreTestsPigeonTestFlutterIntegrationCoreApi* self, const uint8_t* a_list,
-    size_t a_list_length, GCancellable* cancellable,
-    GAsyncReadyCallback callback, gpointer user_data) {
+    CoreTestsPigeonTestFlutterIntegrationCoreApi* self, const uint8_t* list,
+    size_t list_length, GCancellable* cancellable, GAsyncReadyCallback callback,
+    gpointer user_data) {
   g_autoptr(FlValue) args = fl_value_new_list();
-  fl_value_append_take(args, fl_value_new_uint8_list(a_list, a_list_length));
+  fl_value_append_take(args, fl_value_new_uint8_list(list, list_length));
   fl_method_channel_invoke_method(self->channel, "echoUint8List", args,
                                   cancellable, callback, user_data);
 }
@@ -12954,11 +12954,11 @@ core_tests_pigeon_test_flutter_integration_core_api_echo_uint8_list_finish(
 }
 
 void core_tests_pigeon_test_flutter_integration_core_api_echo_list(
-    CoreTestsPigeonTestFlutterIntegrationCoreApi* self, FlValue* a_list,
+    CoreTestsPigeonTestFlutterIntegrationCoreApi* self, FlValue* list,
     GCancellable* cancellable, GAsyncReadyCallback callback,
     gpointer user_data) {
   g_autoptr(FlValue) args = fl_value_new_list();
-  fl_value_append_take(args, fl_value_ref(a_list));
+  fl_value_append_take(args, fl_value_ref(list));
   fl_method_channel_invoke_method(self->channel, "echoList", args, cancellable,
                                   callback, user_data);
 }
@@ -13180,13 +13180,13 @@ core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_string_finish(
 }
 
 void core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_uint8_list(
-    CoreTestsPigeonTestFlutterIntegrationCoreApi* self, const uint8_t* a_list,
-    size_t a_list_length, GCancellable* cancellable,
-    GAsyncReadyCallback callback, gpointer user_data) {
+    CoreTestsPigeonTestFlutterIntegrationCoreApi* self, const uint8_t* list,
+    size_t list_length, GCancellable* cancellable, GAsyncReadyCallback callback,
+    gpointer user_data) {
   g_autoptr(FlValue) args = fl_value_new_list();
-  fl_value_append_take(
-      args, a_list != nullptr ? fl_value_new_uint8_list(a_list, a_list_length)
-                              : fl_value_new_null());
+  fl_value_append_take(args, list != nullptr
+                                 ? fl_value_new_uint8_list(list, list_length)
+                                 : fl_value_new_null());
   fl_method_channel_invoke_method(self->channel, "echoNullableUint8List", args,
                                   cancellable, callback, user_data);
 }
@@ -13214,12 +13214,12 @@ core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_uint8_list_fin
 }
 
 void core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_list(
-    CoreTestsPigeonTestFlutterIntegrationCoreApi* self, FlValue* a_list,
+    CoreTestsPigeonTestFlutterIntegrationCoreApi* self, FlValue* list,
     GCancellable* cancellable, GAsyncReadyCallback callback,
     gpointer user_data) {
   g_autoptr(FlValue) args = fl_value_new_list();
   fl_value_append_take(
-      args, a_list != nullptr ? fl_value_ref(a_list) : fl_value_new_null());
+      args, list != nullptr ? fl_value_ref(list) : fl_value_new_null());
   fl_method_channel_invoke_method(self->channel, "echoNullableList", args,
                                   cancellable, callback, user_data);
 }

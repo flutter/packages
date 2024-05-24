@@ -1,3 +1,12 @@
+## 3.16.2
+
+* Bumps androidx.webkit:webkit from 1.7.0 to 1.10.0.
+* Updates minimum supported SDK version to Flutter 3.16/Dart 3.2.
+
+## 3.16.1
+
+* Fixes iframe navigation being handled in the main frame when `NavigationDelegate.onNavigationRequest` is present.
+
 ## 3.16.0
 
 * Adds onReceivedHttpError WebViewClient callback to support

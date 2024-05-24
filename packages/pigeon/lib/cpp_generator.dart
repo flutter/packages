@@ -787,8 +787,12 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
         final HostDatatype hostDatatype =
             getFieldHostDatatype(field, _shortBaseCppTypeForBuiltinDartType);
         final String encodableValue = _wrappedHostApiArgumentExpression(
-            root, _makeInstanceVariableName(field), field.type, hostDatatype,
-            preSerializeClasses: true);
+          root,
+          _makeInstanceVariableName(field),
+          field.type,
+          hostDatatype,
+          true,
+        );
         indent.writeln('list.push_back($encodableValue);');
       }
       indent.writeln('return list;');
@@ -815,11 +819,8 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
       } else {
         final HostDatatype hostDatatype =
             getFieldHostDatatype(field, _shortBaseCppTypeForBuiltinDartType);
-        if (!hostDatatype.isBuiltin &&
-            root.classes
-                .map((Class x) => x.name)
-                .contains(field.type.baseName)) {
-          return '${hostDatatype.datatype}::FromEncodableList(std::get<EncodableList>($encodable))';
+        if (field.type.isClass) {
+          return _classReferenceFromEncodableValue(hostDatatype, encodable);
         } else {
           return 'std::get<${hostDatatype.datatype}>($encodable)';
         }
@@ -960,8 +961,12 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
           indent.addScoped('EncodableValue(EncodableList{', '});', () {
             for (final _HostNamedType param in hostParameters) {
               final String encodedArgument = _wrappedHostApiArgumentExpression(
-                  root, param.name, param.originalType, param.hostType,
-                  preSerializeClasses: false);
+                root,
+                param.name,
+                param.originalType,
+                param.hostType,
+                false,
+              );
               indent.writeln('$encodedArgument,');
             }
           });
@@ -1452,27 +1457,20 @@ ${prefix}reply(EncodableValue(std::move(wrapped)));''';
 
   /// Returns the expression to create an EncodableValue from a host API argument
   /// with the given [variableName] and types.
-  ///
-  /// If [preSerializeClasses] is true, custom classes will be returned as
-  /// encodable lists rather than CustomEncodableValues; see
-  /// https://github.com/flutter/flutter/issues/119351 for why this is currently
-  /// needed.
-  String _wrappedHostApiArgumentExpression(Root root, String variableName,
-      TypeDeclaration dartType, HostDatatype hostType,
-      {required bool preSerializeClasses}) {
+  String _wrappedHostApiArgumentExpression(
+    Root root,
+    String variableName,
+    TypeDeclaration dartType,
+    HostDatatype hostType,
+    bool isNestedClass,
+  ) {
     final String encodableValue;
     if (!hostType.isBuiltin &&
         root.classes.any((Class c) => c.name == dartType.baseName)) {
-      if (preSerializeClasses) {
-        final String operator =
-            hostType.isNullable || _isPointerField(hostType) ? '->' : '.';
-        encodableValue =
-            'EncodableValue($variableName${operator}ToEncodableList())';
-      } else {
-        final String nonNullValue =
-            hostType.isNullable ? '*$variableName' : variableName;
-        encodableValue = 'CustomEncodableValue($nonNullValue)';
-      }
+      final String nonNullValue = hostType.isNullable || isNestedClass
+          ? '*$variableName'
+          : variableName;
+      encodableValue = 'CustomEncodableValue($nonNullValue)';
     } else if (!hostType.isBuiltin &&
         root.enums.any((Enum e) => e.name == dartType.baseName)) {
       final String nonNullValue =
@@ -1537,7 +1535,7 @@ ${prefix}reply(EncodableValue(std::move(wrapped)));''';
         }
       } else {
         indent.writeln(
-            'const auto* $argName = &(std::any_cast<const ${hostType.datatype}&>(std::get<CustomEncodableValue>($encodableArgName)));');
+            'const auto* $argName = &(${_classReferenceFromEncodableValue(hostType, encodableArgName)});');
       }
     } else {
       // Non-nullable arguments are either passed by value or reference, but the
@@ -1562,7 +1560,7 @@ ${prefix}reply(EncodableValue(std::move(wrapped)));''';
             'const ${hostType.datatype}& $argName = (${hostType.datatype})$encodableArgName.LongValue();');
       } else {
         indent.writeln(
-            'const auto& $argName = std::any_cast<const ${hostType.datatype}&>(std::get<CustomEncodableValue>($encodableArgName));');
+            'const auto& $argName = ${_classReferenceFromEncodableValue(hostType, encodableArgName)};');
       }
     }
   }
@@ -1572,6 +1570,13 @@ ${prefix}reply(EncodableValue(std::move(wrapped)));''';
   /// directives.
   String? _shortBaseCppTypeForBuiltinDartType(TypeDeclaration type) {
     return _baseCppTypeForBuiltinDartType(type, includeFlutterNamespace: false);
+  }
+
+  /// Returns the code to extract a `const {type.datatype}&` from an EncodableValue
+  /// variable [variableName] that contains an instance of [type].
+  String _classReferenceFromEncodableValue(
+      HostDatatype type, String variableName) {
+    return 'std::any_cast<const ${type.datatype}&>(std::get<CustomEncodableValue>($variableName))';
   }
 }
 

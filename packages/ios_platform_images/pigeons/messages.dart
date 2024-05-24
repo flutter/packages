@@ -6,7 +6,8 @@ import 'package:pigeon/pigeon.dart';
 
 @ConfigurePigeon(PigeonOptions(
   dartOut: 'lib/src/messages.g.dart',
-  swiftOut: 'ios/Classes/messages.g.swift',
+  swiftOut:
+      'ios/ios_platform_images/Sources/ios_platform_messages/messages.g.swift',
   copyrightHeader: 'pigeons/copyright.txt',
 ))
 

@@ -90,6 +90,11 @@ Future<int> generateTestPigeons({required String baseDir}) async {
         ? 'FlutterError'
         : '${pascalCaseName}Error';
 
+    final bool swiftErrorUseDefaultErrorName = input == 'core_tests';
+
+    final String? swiftErrorClassName =
+        swiftErrorUseDefaultErrorName ? null : '${pascalCaseName}Error';
+
     // Generate the default language test plugin output.
     int generateCode = await runPigeon(
       input: './pigeons/$input.dart',
@@ -107,6 +112,7 @@ Future<int> generateTestPigeons({required String baseDir}) async {
       swiftOut: skipLanguages.contains(GeneratorLanguage.swift)
           ? null
           : '$outputBase/ios/Classes/$pascalCaseName.gen.swift',
+      swiftErrorClassName: swiftErrorClassName,
       // Linux
       gobjectHeaderOut: skipLanguages.contains(GeneratorLanguage.gobject)
           ? null
@@ -136,6 +142,7 @@ Future<int> generateTestPigeons({required String baseDir}) async {
       swiftOut: skipLanguages.contains(GeneratorLanguage.swift)
           ? null
           : '$outputBase/macos/Classes/$pascalCaseName.gen.swift',
+      swiftErrorClassName: swiftErrorClassName,
       suppressVersion: true,
       dartPackageName: 'pigeon_integration_tests',
     );
@@ -197,6 +204,7 @@ Future<int> runPigeon({
   String? kotlinErrorClassName,
   bool kotlinIncludeErrorClass = true,
   String? swiftOut,
+  String? swiftErrorClassName,
   String? cppHeaderOut,
   String? cppSourceOut,
   String? cppNamespace,
@@ -251,7 +259,9 @@ Future<int> runPigeon({
     objcSourceOut: objcSourceOut,
     objcOptions: ObjcOptions(prefix: objcPrefix),
     swiftOut: swiftOut,
-    swiftOptions: const SwiftOptions(),
+    swiftOptions: SwiftOptions(
+      errorClassName: swiftErrorClassName,
+    ),
     basePath: basePath,
     dartPackageName: dartPackageName,
   ));

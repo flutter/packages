@@ -127,6 +127,7 @@ bool _isTestChange(List<String> pathComponents) {
       pathComponents.contains('androidTest') ||
       pathComponents.contains('RunnerTests') ||
       pathComponents.contains('RunnerUITests') ||
+      pathComponents.contains('Tests') ||
       pathComponents.last == 'dart_test.yaml' ||
       // Pigeon's custom platform tests.
       pathComponents.first == 'platform_tests';

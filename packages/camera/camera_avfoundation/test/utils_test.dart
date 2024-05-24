@@ -27,23 +27,29 @@ void main() {
 
     test('serializeDeviceOrientation() should serialize correctly', () {
       expect(serializeDeviceOrientation(DeviceOrientation.portraitUp),
-          'portraitUp');
+          PlatformDeviceOrientation.portraitUp);
       expect(serializeDeviceOrientation(DeviceOrientation.portraitDown),
-          'portraitDown');
+          PlatformDeviceOrientation.portraitDown);
       expect(serializeDeviceOrientation(DeviceOrientation.landscapeRight),
-          'landscapeRight');
+          PlatformDeviceOrientation.landscapeRight);
       expect(serializeDeviceOrientation(DeviceOrientation.landscapeLeft),
-          'landscapeLeft');
+          PlatformDeviceOrientation.landscapeLeft);
     });
 
-    test('deserializeDeviceOrientation() should deserialize correctly', () {
-      expect(deserializeDeviceOrientation('portraitUp'),
+    test('deviceOrientationFromPlatform() should convert correctly', () {
+      expect(
+          deviceOrientationFromPlatform(PlatformDeviceOrientation.portraitUp),
           DeviceOrientation.portraitUp);
-      expect(deserializeDeviceOrientation('portraitDown'),
+      expect(
+          deviceOrientationFromPlatform(PlatformDeviceOrientation.portraitDown),
           DeviceOrientation.portraitDown);
-      expect(deserializeDeviceOrientation('landscapeRight'),
+      expect(
+          deviceOrientationFromPlatform(
+              PlatformDeviceOrientation.landscapeRight),
           DeviceOrientation.landscapeRight);
-      expect(deserializeDeviceOrientation('landscapeLeft'),
+      expect(
+          deviceOrientationFromPlatform(
+              PlatformDeviceOrientation.landscapeLeft),
           DeviceOrientation.landscapeLeft);
     });
   });

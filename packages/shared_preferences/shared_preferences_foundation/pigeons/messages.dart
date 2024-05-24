@@ -7,7 +7,8 @@ import 'package:pigeon/pigeon.dart';
 @ConfigurePigeon(PigeonOptions(
   dartOut: 'lib/messages.g.dart',
   dartTestOut: 'test/test_api.g.dart',
-  swiftOut: 'darwin/Classes/messages.g.swift',
+  swiftOut:
+      'darwin/shared_preferences_foundation/Sources/shared_preferences_foundation/messages.g.swift',
   copyrightHeader: 'pigeons/copyright_header.txt',
 ))
 @HostApi(dartHostTestHandler: 'TestUserDefaultsApi')

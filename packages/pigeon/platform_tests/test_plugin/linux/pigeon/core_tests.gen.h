@@ -30,7 +30,7 @@ CoreTestsPigeonTestAllTypes* core_tests_pigeon_test_all_types_new(
     const uint8_t* a_byte_array, size_t a_byte_array_length,
     const int32_t* a4_byte_array, size_t a4_byte_array_length,
     const int64_t* a8_byte_array, size_t a8_byte_array_length,
-    const double* a_float_array, size_t a_float_array_length, FlValue* a_list,
+    const double* a_float_array, size_t a_float_array_length, FlValue* list,
     FlValue* a_map, CoreTestsPigeonTestAnEnum an_enum, const gchar* a_string,
     FlValue* an_object);
 
@@ -58,7 +58,7 @@ const int64_t* core_tests_pigeon_test_all_types_get_a8_byte_array(
 const double* core_tests_pigeon_test_all_types_get_a_float_array(
     CoreTestsPigeonTestAllTypes* self, size_t* length);
 
-FlValue* core_tests_pigeon_test_all_types_get_a_list(
+FlValue* core_tests_pigeon_test_all_types_get_list(
     CoreTestsPigeonTestAllTypes* self);
 
 FlValue* core_tests_pigeon_test_all_types_get_a_map(
@@ -804,7 +804,7 @@ typedef struct {
       CoreTestsPigeonTestHostIntegrationCoreApi* self, FlValue* an_object,
       gpointer user_data);
   CoreTestsPigeonTestHostIntegrationCoreApiEchoListResponse* (*echo_list)(
-      CoreTestsPigeonTestHostIntegrationCoreApi* self, FlValue* a_list,
+      CoreTestsPigeonTestHostIntegrationCoreApi* self, FlValue* list,
       gpointer user_data);
   CoreTestsPigeonTestHostIntegrationCoreApiEchoMapResponse* (*echo_map)(
       CoreTestsPigeonTestHostIntegrationCoreApi* self, FlValue* a_map,
@@ -918,7 +918,7 @@ typedef struct {
       CoreTestsPigeonTestHostIntegrationCoreApi* self, FlValue* an_object,
       FlBasicMessageChannelResponseHandle* response_handle, gpointer user_data);
   void (*echo_async_list)(CoreTestsPigeonTestHostIntegrationCoreApi* self,
-                          FlValue* a_list,
+                          FlValue* list,
                           FlBasicMessageChannelResponseHandle* response_handle,
                           gpointer user_data);
   void (*echo_async_map)(CoreTestsPigeonTestHostIntegrationCoreApi* self,
@@ -970,7 +970,7 @@ typedef struct {
       CoreTestsPigeonTestHostIntegrationCoreApi* self, FlValue* an_object,
       FlBasicMessageChannelResponseHandle* response_handle, gpointer user_data);
   void (*echo_async_nullable_list)(
-      CoreTestsPigeonTestHostIntegrationCoreApi* self, FlValue* a_list,
+      CoreTestsPigeonTestHostIntegrationCoreApi* self, FlValue* list,
       FlBasicMessageChannelResponseHandle* response_handle, gpointer user_data);
   void (*echo_async_nullable_map)(
       CoreTestsPigeonTestHostIntegrationCoreApi* self, FlValue* a_map,
@@ -1023,11 +1023,11 @@ typedef struct {
       CoreTestsPigeonTestHostIntegrationCoreApi* self, const gchar* a_string,
       FlBasicMessageChannelResponseHandle* response_handle, gpointer user_data);
   void (*call_flutter_echo_uint8_list)(
-      CoreTestsPigeonTestHostIntegrationCoreApi* self, const uint8_t* a_list,
-      size_t a_list_length,
-      FlBasicMessageChannelResponseHandle* response_handle, gpointer user_data);
+      CoreTestsPigeonTestHostIntegrationCoreApi* self, const uint8_t* list,
+      size_t list_length, FlBasicMessageChannelResponseHandle* response_handle,
+      gpointer user_data);
   void (*call_flutter_echo_list)(
-      CoreTestsPigeonTestHostIntegrationCoreApi* self, FlValue* a_list,
+      CoreTestsPigeonTestHostIntegrationCoreApi* self, FlValue* list,
       FlBasicMessageChannelResponseHandle* response_handle, gpointer user_data);
   void (*call_flutter_echo_map)(
       CoreTestsPigeonTestHostIntegrationCoreApi* self, FlValue* a_map,
@@ -1049,11 +1049,11 @@ typedef struct {
       CoreTestsPigeonTestHostIntegrationCoreApi* self, const gchar* a_string,
       FlBasicMessageChannelResponseHandle* response_handle, gpointer user_data);
   void (*call_flutter_echo_nullable_uint8_list)(
-      CoreTestsPigeonTestHostIntegrationCoreApi* self, const uint8_t* a_list,
-      size_t a_list_length,
-      FlBasicMessageChannelResponseHandle* response_handle, gpointer user_data);
+      CoreTestsPigeonTestHostIntegrationCoreApi* self, const uint8_t* list,
+      size_t list_length, FlBasicMessageChannelResponseHandle* response_handle,
+      gpointer user_data);
   void (*call_flutter_echo_nullable_list)(
-      CoreTestsPigeonTestHostIntegrationCoreApi* self, FlValue* a_list,
+      CoreTestsPigeonTestHostIntegrationCoreApi* self, FlValue* list,
       FlBasicMessageChannelResponseHandle* response_handle, gpointer user_data);
   void (*call_flutter_echo_nullable_map)(
       CoreTestsPigeonTestHostIntegrationCoreApi* self, FlValue* a_map,
@@ -1712,9 +1712,9 @@ gboolean core_tests_pigeon_test_flutter_integration_core_api_echo_string_finish(
 
 // Returns the passed byte list, to test serialization and deserialization.
 void core_tests_pigeon_test_flutter_integration_core_api_echo_uint8_list(
-    CoreTestsPigeonTestFlutterIntegrationCoreApi* self, const uint8_t* a_list,
-    size_t a_list_length, GCancellable* cancellable,
-    GAsyncReadyCallback callback, gpointer user_data);
+    CoreTestsPigeonTestFlutterIntegrationCoreApi* self, const uint8_t* list,
+    size_t list_length, GCancellable* cancellable, GAsyncReadyCallback callback,
+    gpointer user_data);
 
 gboolean
 core_tests_pigeon_test_flutter_integration_core_api_echo_uint8_list_finish(
@@ -1723,7 +1723,7 @@ core_tests_pigeon_test_flutter_integration_core_api_echo_uint8_list_finish(
 
 // Returns the passed list, to test serialization and deserialization.
 void core_tests_pigeon_test_flutter_integration_core_api_echo_list(
-    CoreTestsPigeonTestFlutterIntegrationCoreApi* self, FlValue* a_list,
+    CoreTestsPigeonTestFlutterIntegrationCoreApi* self, FlValue* list,
     GCancellable* cancellable, GAsyncReadyCallback callback,
     gpointer user_data);
 
@@ -1797,9 +1797,9 @@ core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_string_finish(
 
 // Returns the passed byte list, to test serialization and deserialization.
 void core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_uint8_list(
-    CoreTestsPigeonTestFlutterIntegrationCoreApi* self, const uint8_t* a_list,
-    size_t a_list_length, GCancellable* cancellable,
-    GAsyncReadyCallback callback, gpointer user_data);
+    CoreTestsPigeonTestFlutterIntegrationCoreApi* self, const uint8_t* list,
+    size_t list_length, GCancellable* cancellable, GAsyncReadyCallback callback,
+    gpointer user_data);
 
 gboolean
 core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_uint8_list_finish(
@@ -1808,7 +1808,7 @@ core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_uint8_list_fin
 
 // Returns the passed list, to test serialization and deserialization.
 void core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_list(
-    CoreTestsPigeonTestFlutterIntegrationCoreApi* self, FlValue* a_list,
+    CoreTestsPigeonTestFlutterIntegrationCoreApi* self, FlValue* list,
     GCancellable* cancellable, GAsyncReadyCallback callback,
     gpointer user_data);
 
