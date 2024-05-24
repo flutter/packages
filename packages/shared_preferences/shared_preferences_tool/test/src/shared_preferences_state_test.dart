@@ -16,8 +16,8 @@ void main() {
       expect(intData.valueAsString, '1');
 
       const SharedPreferencesData doubleData =
-          SharedPreferencesData.double(value: 1.0);
-      expect(doubleData.valueAsString, '1');
+          SharedPreferencesData.double(value: 1.1);
+      expect(doubleData.valueAsString, '1.1');
 
       const SharedPreferencesData boolData =
           SharedPreferencesData.bool(value: true);
