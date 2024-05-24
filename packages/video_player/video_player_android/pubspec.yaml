@@ -21,6 +21,7 @@ dependencies:
   flutter:
     sdk: flutter
   video_player_platform_interface: ">=6.1.0 <7.0.0"
+  flutter_plugin_android_lifecycle: ^2.0.1
 
 dev_dependencies:
   flutter_test:

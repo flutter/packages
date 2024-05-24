@@ -48,15 +48,15 @@ final class VideoPlayer {
 
   private ExoPlayer exoPlayer;
 
-  private Surface surface;
-
-  private final TextureRegistry.SurfaceProducer surfaceProducer;
+  private TextureRegistry.SurfaceProducer surfaceProducer;
 
   private QueuingEventSink eventSink;
 
   private final EventChannel eventChannel;
 
   private static final String USER_AGENT = "User-Agent";
+
+  private MediaSource mediaSource;
 
   @VisibleForTesting boolean isInitialized = false;
 
@@ -83,7 +83,7 @@ final class VideoPlayer {
     DataSource.Factory dataSourceFactory =
         new DefaultDataSource.Factory(context, httpDataSourceFactory);
 
-    MediaSource mediaSource = buildMediaSource(uri, dataSourceFactory, formatHint);
+    mediaSource = buildMediaSource(uri, dataSourceFactory, formatHint);
 
     exoPlayer.setMediaSource(mediaSource);
     exoPlayer.prepare();
@@ -169,6 +169,27 @@ final class VideoPlayer {
     }
   }
 
+  public void recreateSurface(Context context) {
+    ExoPlayer exoPlayer = new ExoPlayer.Builder(context).build();
+
+    exoPlayer.setMediaSource(mediaSource);
+    exoPlayer.prepare();
+
+    setUpVideoPlayer(exoPlayer, new QueuingEventSink());
+    exoPlayer.setVideoSurface(surfaceProducer.getSurface());
+  }
+
+  public void pauseSurface() {
+    eventChannel.setStreamHandler(null);
+    if (isInitialized) {
+      exoPlayer.stop();
+    }
+    if (exoPlayer != null) {
+      exoPlayer.release();
+    }
+    isInitialized = false;
+  }
+
   private void setUpVideoPlayer(ExoPlayer exoPlayer, QueuingEventSink eventSink) {
     this.exoPlayer = exoPlayer;
     this.eventSink = eventSink;
@@ -186,8 +207,7 @@ final class VideoPlayer {
           }
         });
 
-    surface = surfaceProducer.getSurface();
-    exoPlayer.setVideoSurface(surface);
+    exoPlayer.setVideoSurface(surfaceProducer.getSurface());
     setAudioAttributes(exoPlayer, options.mixWithOthers);
 
     exoPlayer.addListener(
@@ -336,9 +356,6 @@ final class VideoPlayer {
     }
     surfaceProducer.release();
     eventChannel.setStreamHandler(null);
-    if (surface != null) {
-      surface.release();
-    }
     if (exoPlayer != null) {
       exoPlayer.release();
     }
