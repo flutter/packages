@@ -48,8 +48,8 @@ class MDnsClient {
 
   bool _starting = false;
   bool _started = false;
-  final List<RawDatagramSocket> _sockets = <RawDatagramSocket>[];
-  final List<RawDatagramSocket> _toBeClosed = <RawDatagramSocket>[];
+  RawDatagramSocket? _incomingIPv4;
+  RawDatagramSocket? _incomingIPv6;
   final LookupResolver _resolver = LookupResolver();
   final ResourceRecordCache _cache = ResourceRecordCache();
   final RawDatagramSocketFactory _rawDatagramSocketFactory;
@@ -117,9 +117,9 @@ class MDnsClient {
 
     // Can't send to IPv6 any address.
     if (incoming.address != InternetAddress.anyIPv6) {
-      _sockets.add(incoming);
+      _incomingIPv4 = incoming;
     } else {
-      _toBeClosed.add(incoming);
+      _incomingIPv6 = incoming;
     }
 
     _mDnsAddress ??= incoming.address.type == InternetAddressType.IPv4
@@ -147,15 +147,8 @@ class MDnsClient {
       throw StateError('Cannot stop mDNS client while it is starting.');
     }
 
-    for (final RawDatagramSocket socket in _sockets) {
-      socket.close();
-    }
-    _sockets.clear();
-
-    for (final RawDatagramSocket socket in _toBeClosed) {
-      socket.close();
-    }
-    _toBeClosed.clear();
+    _incomingIPv4?.close();
+    _incomingIPv6?.close();
 
     _resolver.clearPendingRequests();
 
@@ -195,11 +188,12 @@ class MDnsClient {
     final Stream<T> results = _resolver.addPendingRequest<T>(
         query.resourceRecordType, query.fullyQualifiedName, timeout);
 
-    // Send the request on all interfaces.
-    final List<int> packet = query.encode();
-    for (final RawDatagramSocket socket in _sockets) {
-      socket.send(packet, _mDnsAddress!, selectedMDnsPort);
+    if (_incomingIPv4 == null) {
+      throw StateError('Unable to send packet on null socket.');
     }
+
+    // Send and listen on same "ANY" interface
+    _incomingIPv4?.send(query.encode(), _mDnsAddress!, selectedMDnsPort);
     return results;
   }
 
