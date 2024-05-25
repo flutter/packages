@@ -292,10 +292,10 @@ targets:
     timeout: 30
     properties:
       target_file: analyze_legacy.yaml
-      channel: "3.16.9"
+      channel: "3.22.0"
       env_variables: >-
         {
-          "CHANNEL": "3.16.9"
+          "CHANNEL": "3.22.0"
         }
 
   - name: Linux analyze_legacy N-2
@@ -303,10 +303,10 @@ targets:
     timeout: 30
     properties:
       target_file: analyze_legacy.yaml
-      channel: "3.13.9"
+      channel: "3.16.9"
       env_variables: >-
         {
-          "CHANNEL": "3.13.9"
+          "CHANNEL": "3.16.9"
         }
 
   - name: Linux_android custom_package_tests master
@@ -961,10 +961,7 @@ targets:
         }
 
   ### iOS+macOS tasks ###
-  # TODO(stuartmorgan): Move this to ARM once google_maps_flutter has ARM
-  # support. `pod lint` makes a synthetic target that doesn't respect the
-  # pod's arch exclusions, so fails to build.
-  - name: Mac_x64 check_podspecs
+  - name: Mac_arm64 macos_repo_checks
     recipe: packages/packages
     timeout: 30
     properties:
@@ -972,7 +969,7 @@ targets:
       target_file: macos_repo_checks.yaml
       dependencies: >
         [
-          {"dependency": "swift_format", "version": "build_id:8797338980206841409"}
+          {"dependency": "swift_format", "version": "build_id:8797338979890974865"}
         ]
 
   ### macOS desktop tasks ###

@@ -12,11 +12,11 @@
 #import <PhotosUI/PhotosUI.h>
 #import <UIKit/UIKit.h>
 
+#import "./include/image_picker_ios/messages.g.h"
 #import "FLTImagePickerImageUtil.h"
 #import "FLTImagePickerMetaDataUtil.h"
 #import "FLTImagePickerPhotoAssetUtil.h"
 #import "FLTPHPickerSaveImageToPathOperation.h"
-#import "messages.g.h"
 
 @implementation FLTImagePickerMethodCallContext
 - (instancetype)initWithResult:(nonnull FlutterResultAdapter)result {

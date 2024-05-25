@@ -357,7 +357,9 @@ Future<void> main() async {
           .runJavaScriptReturningResult('isFullScreen();') as bool;
       expect(fullScreen, false);
     });
-  });
+  },
+      // TODO(bparrishMines): Stop skipping once https://github.com/flutter/flutter/issues/148487 is resolved
+      skip: true);
 
   group('Audio playback policy', () {
     late String audioTestBase64;
@@ -668,6 +670,65 @@ Future<void> main() async {
           .timeout(const Duration(milliseconds: 500), onTimeout: () => '');
       final String? currentUrl = await controller.currentUrl();
       expect(currentUrl, isNot(contains('youtube.com')));
+    });
+
+    testWidgets('onHttpError', (WidgetTester tester) async {
+      final Completer<HttpResponseError> errorCompleter =
+          Completer<HttpResponseError>();
+
+      final WebViewController controller = WebViewController();
+      unawaited(controller.setJavaScriptMode(JavaScriptMode.unrestricted));
+
+      final NavigationDelegate delegate = NavigationDelegate(
+        onHttpError: (HttpResponseError error) {
+          errorCompleter.complete(error);
+        },
+      );
+      unawaited(controller.setNavigationDelegate(delegate));
+
+      unawaited(controller.loadRequest(
+        Uri.parse('$prefixUrl/favicon.ico'),
+      ));
+
+      await tester.pumpWidget(WebViewWidget(controller: controller));
+
+      final HttpResponseError error = await errorCompleter.future;
+
+      expect(error, isNotNull);
+      expect(error.response?.statusCode, 404);
+    });
+
+    testWidgets('onHttpError is not called when no HTTP error is received',
+        (WidgetTester tester) async {
+      const String testPage = '''
+        <!DOCTYPE html><html>
+        </head>
+        <body>
+        </body>
+        </html>
+      ''';
+
+      final Completer<HttpResponseError> errorCompleter =
+          Completer<HttpResponseError>();
+      final Completer<void> pageFinishCompleter = Completer<void>();
+
+      final WebViewController controller = WebViewController();
+      unawaited(controller.setJavaScriptMode(JavaScriptMode.unrestricted));
+
+      final NavigationDelegate delegate = NavigationDelegate(
+        onPageFinished: pageFinishCompleter.complete,
+        onHttpError: (HttpResponseError error) {
+          errorCompleter.complete(error);
+        },
+      );
+      unawaited(controller.setNavigationDelegate(delegate));
+
+      unawaited(controller.loadHtmlString(testPage));
+
+      await tester.pumpWidget(WebViewWidget(controller: controller));
+
+      expect(errorCompleter.future, doesNotComplete);
+      await pageFinishCompleter.future;
     });
 
     testWidgets('supports asynchronous decisions', (WidgetTester tester) async {

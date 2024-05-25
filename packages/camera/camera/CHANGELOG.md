@@ -1,3 +1,14 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.16/Dart 3.2.
+
+## 0.11.0
+
+* **Breaking Change** Changes the Android implementation of the camera plugin from `camera_android`
+  to `camera_android_camerax`, which has better support for a wider range of devices. The CameraX
+  implementation full feature parity with `camera_android` except for the limitations listed in
+  `README.md`. To continue using `camera_android`, follow [these instructions](https://pub.dev/packages/camera_android#usage).
+
 ## 0.10.6
 
 * Adds support to control video fps and bitrate. See `CameraController` constructor.
