@@ -16,7 +16,7 @@
 
 @implementation GoogleMapsPolylinesControllerTests
 
-- (FLTGoogleMapPolylineController *)setUpPolyLineControllerWithMockedMap {
+- (FLTGoogleMapPolylineController *)polylineControllerWithMockedMap {
   NSDictionary *polyline = @{
     @"points" : @[
       @[ @(52.4816), @(-3.1791) ], @[ @(54.043), @(-2.9925) ], @[ @(54.1396), @(-4.2739) ],
@@ -29,12 +29,6 @@
   PartiallyMockedMapView *mapView = [[PartiallyMockedMapView alloc]
       initWithFrame:frame
              camera:[[GMSCameraPosition alloc] initWithLatitude:0 longitude:0 zoom:0]];
-
-  id registrar = OCMProtocolMock(@protocol(FlutterPluginRegistrar));
-  id methodChannel = OCMClassMock([FlutterMethodChannel class]);
-  FLTPolylinesController *polylinesController = [[FLTPolylinesController alloc] init:methodChannel
-                                                                             mapView:mapView
-                                                                           registrar:registrar];
 
   GMSMutablePath *path = [FLTPolylinesController pathForPolyline:polyline];
   NSString *identifier = polyline[@"polylineId"];
@@ -54,7 +48,7 @@
 
   NSArray<NSNumber *> *lengths = @[ @10, @10 ];
 
-  FLTGoogleMapPolylineController *polylineController = [self setUpPolyLineControllerWithMockedMap];
+  FLTGoogleMapPolylineController *polylineController = [self polylineControllerWithMockedMap];
 
   XCTAssertNil(polylineController.polyline.spans);
 
