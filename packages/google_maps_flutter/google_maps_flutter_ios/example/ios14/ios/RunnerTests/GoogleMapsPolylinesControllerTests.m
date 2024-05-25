@@ -31,9 +31,13 @@
   };
 
   CGRect frame = CGRectMake(0, 0, 100, 100);
-  PartiallyMockedMapView *mapView = [[PartiallyMockedMapView alloc]
-      initWithFrame:frame
-             camera:[[GMSCameraPosition alloc] initWithLatitude:0 longitude:0 zoom:0]];
+  GMSCameraPosition *camera = [[GMSCameraPosition alloc] initWithLatitude:0 longitude:0 zoom:0];
+
+  GMSMapViewOptions *mapViewOptions = [[GMSMapViewOptions alloc] init];
+  mapViewOptions.frame = frame;
+  mapViewOptions.camera = camera;
+
+  PartiallyMockedMapView *mapView = [[PartiallyMockedMapView alloc] initWithOptions:mapViewOptions];
 
   GMSMutablePath *path = [FLTPolylinesController pathForPolyline:polyline];
   NSString *identifier = polyline[@"polylineId"];
