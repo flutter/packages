@@ -16,9 +16,9 @@
 ///
 /// Returns dict[key], or nil if dict[key] is NSNull.
 ///
-id GetValueOrNilFromDict(NSDictionary * dict, NSString *key) {
-    id value = dict[key];
-    return value == [NSNull null] ? nil : value;
+id GetValueOrNilFromDict(NSDictionary *dict, NSString *key) {
+  id value = dict[key];
+  return value == [NSNull null] ? nil : value;
 }
 
 @implementation FLTGoogleMapPolylineController
