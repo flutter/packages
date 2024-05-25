@@ -92,12 +92,12 @@ void main() {
       {
         'name': 'IPv4',
         'datagramSocketType': InternetAddress.anyIPv4,
-        'interfacePrefix': '2001:0db8:85a3:0000:0000:8a2e:7335:030'
+        'interfacePrefix': '192.168.2.'
       },
       {
         'name': 'IPv6',
         'datagramSocketType': InternetAddress.anyIPv6,
-        'interfacePrefix': '192.168.2.'
+        'interfacePrefix': '2001:0db8:85a3:0000:0000:8a2e:7335:030'
       }
     ];
 
