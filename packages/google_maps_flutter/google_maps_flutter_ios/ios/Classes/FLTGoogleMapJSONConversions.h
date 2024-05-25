@@ -26,7 +26,7 @@ NS_ASSUME_NONNULL_BEGIN
 + (nullable GMSCameraUpdate *)cameraUpdateFromChannelValue:(NSArray *)channelValue;
 
 ///
-///Return GMS strokestyle object array populated using the patterns and stroke colors passed in.
+/// Return GMS strokestyle object array populated using the patterns and stroke colors passed in.
 ///
 /// @param patterns An array of patterns for each stroke in the polyline.
 /// @param strokeColor An array of color for each stroke in the polyline.

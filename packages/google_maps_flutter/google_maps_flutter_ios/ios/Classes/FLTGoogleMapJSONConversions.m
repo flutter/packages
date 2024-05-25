@@ -145,7 +145,7 @@
 + (NSArray<GMSStrokeStyle *> *)strokeStylesFromPatterns:(NSArray<NSArray<NSObject *> *> *)patterns
                                             strokeColor:(UIColor *)strokeColor {
   NSMutableArray *strokeStyles = [[NSMutableArray alloc] initWithCapacity:[patterns count]];
-  for(NSArray *pattern in patterns) {
+  for (NSArray *pattern in patterns) {
     NSString *patternType = pattern[0];
     UIColor *color = [patternType isEqualToString:@"gap"] ? [UIColor clearColor] : strokeColor;
     [strokeStyles addObject:[GMSStrokeStyle solidColor:color]];

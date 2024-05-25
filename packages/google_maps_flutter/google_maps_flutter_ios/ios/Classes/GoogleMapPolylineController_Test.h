@@ -16,7 +16,7 @@
 @end
 
 ///
-///Internal APIs explosed for unit testing
+/// Internal APIs explosed for unit testing
 ///
 @interface FLTPolylinesController (Test)
 ///

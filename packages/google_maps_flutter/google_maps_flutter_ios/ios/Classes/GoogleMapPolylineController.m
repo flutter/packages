@@ -12,7 +12,6 @@
 
 @end
 
-
 ///
 /// Returns dict[key], or nil if dict[key] is NSNull.
 ///
@@ -129,7 +128,6 @@ static id GetValueOrNilFromDict(NSDictionary *dict, NSString *key) {
 
 @end
 ;
-
 
 @implementation FLTPolylinesController
 
