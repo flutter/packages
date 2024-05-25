@@ -8,7 +8,7 @@
 @import GoogleMaps;
 
 #import <OCMock/OCMock.h>
-#import "GoogleMapPolylineController_Test.h"
+#import <google_maps_flutter_ios/GoogleMapPolylineController_Test.h>
 #import "PartiallyMockedMapView.h"
 
 @interface GoogleMapsPolylinesControllerTests : XCTestCase
@@ -36,7 +36,7 @@
                                                                              mapView:mapView
                                                                            registrar:registrar];
 
-  GMSMutablePath *path = [polylinesController pathForPolyline:polyline];
+  GMSMutablePath *path = [FLTPolylinesController pathForPolyline:polyline];
   NSString *identifier = polyline[@"polylineId"];
 
   FLTGoogleMapPolylineController *polylineControllerWithMockedMap =

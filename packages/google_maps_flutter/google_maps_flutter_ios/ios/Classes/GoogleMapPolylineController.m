@@ -13,9 +13,9 @@
 @end
 
 
-/**
- * Returns dict[key], or nil if dict[key] is NSNull.
- */
+///
+/// Returns dict[key], or nil if dict[key] is NSNull.
+///
 id GetValueOrNilFromDict(NSDictionary * dict, NSString *key) {
     id value = dict[key];
     return value == [NSNull null] ? nil : value;

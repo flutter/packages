@@ -142,25 +142,23 @@
   return nil;
 }
 
-+ (NSArray<GMSStrokeStyle *> *)strokeStylesFromPatterns:(NSArray<NSArray *> *)patterns
++ (NSArray<GMSStrokeStyle *> *)strokeStylesFromPatterns:(NSArray<NSArray<NSObject *> *> *)patterns
                                             strokeColor:(UIColor *)strokeColor {
   NSMutableArray *strokeStyles = [[NSMutableArray alloc] initWithCapacity:[patterns count]];
-  for (unsigned int i = 0; i < [patterns count]; i++) {
-    NSString *patternType = patterns[i][0];
-
+  for(NSArray *pattern in patterns) {
+    NSString *patternType = pattern[0];
     UIColor* color = [patternType isEqualToString:@"gap"] ? [UIColor clearColor] : strokeColor;
-    strokeStyles[i] = [GMSStrokeStyle solidColor:color];
+    [strokeStyles addObject:[GMSStrokeStyle solidColor:color]];
   }
-    
 
   return strokeStyles;
 }
 
-+ (NSArray<NSNumber *> *)spanLengthsFromPatterns:(NSArray<NSArray *> *)patterns {
++ (NSArray<NSNumber *> *)spanLengthsFromPatterns:(NSArray<NSArray<NSObject *> *> *)patterns {
   NSMutableArray *lengths = [[NSMutableArray alloc] initWithCapacity:[patterns count]];
-  for (unsigned int i = 0; i < [patterns count]; i++) {
-    NSNumber *length = [patterns[i] count] > 1 ? patterns[i][1] : @0;
-    lengths[i]= length;
+  for (NSArray *pattern in patterns) {
+    NSNumber *length = [pattern count] > 1 ? pattern[1] : @0;
+    [lengths addObject:length];
   }
 
   return lengths;
