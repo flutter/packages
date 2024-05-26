@@ -365,28 +365,6 @@ class CameraService {
     }
   }
 
-  /// Maps a [Uint] to a [CameraImageData].
-  CameraImageData getCameraImageDataFromBytes(
-    Uint8List bytes, {
-    required int height,
-    required int width,
-  }) {
-    return CameraImageData(
-      format: const CameraImageFormat(
-        ImageFormatGroup.jpeg,
-        raw: '',
-      ),
-      planes: <CameraImagePlane>[
-        CameraImagePlane(
-          bytes: bytes,
-          bytesPerRow: 0,
-        ),
-      ],
-      height: height,
-      width: width,
-    );
-  }
-
   ///Used to check if browser has OffscreenCanvas capability
   bool hasPropertyOffScreenCanvas() {
     return jsUtil.hasProperty(window!, 'OffscreenCanvas');
@@ -433,10 +411,19 @@ class CameraService {
     }
     final ByteBuffer byteBuffer = imageData.data.buffer;
 
-    return getCameraImageDataFromBytes(
-      byteBuffer.asUint8List(),
-      height: imageData.height,
-      width: imageData.width,
+    return CameraImageData(
+      format: const CameraImageFormat(
+        ImageFormatGroup.jpeg,
+        raw: '',
+      ),
+      planes: <CameraImagePlane>[
+        CameraImagePlane(
+          bytes: byteBuffer.asUint8List(),
+          bytesPerRow: 0,
+        ),
+      ],
+      height: height,
+      width: width,
     );
   }
 }
