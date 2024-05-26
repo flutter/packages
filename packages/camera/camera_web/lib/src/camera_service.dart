@@ -387,8 +387,16 @@ class CameraService {
     );
   }
 
+  ///Used to check if browser has OffscreenCanvas capability
+  bool hasPropertyOffScreenCanvas() {
+    return jsUtil.hasProperty(window!, 'OffscreenCanvas');
+  }
+
   ///Returns frame at a specific time using video element
-  CameraImageData takeFrame(html.VideoElement videoElement) {
+  CameraImageData takeFrame(
+    html.VideoElement videoElement, {
+    bool canUseOffscreenCanvas = false,
+  }) {
     final List<String> widthPx = videoElement.style.width.split('px');
     final List<String> heightPx = videoElement.style.height.split('px');
     final String widthString =
@@ -403,8 +411,6 @@ class CameraService {
         'Computed dimensions are zero: width=$width, height=$height',
       );
     }
-    final bool canUseOffscreenCanvas =
-        jsUtil.hasProperty(window!, 'OffscreenCanvas');
     late html.ImageData imageData;
     if (canUseOffscreenCanvas) {
       final html.OffscreenCanvas canvas = html.OffscreenCanvas(width, height);
