@@ -392,6 +392,12 @@ class CameraService {
     return jsUtil.hasProperty(window!, 'OffscreenCanvas');
   }
 
+  ///Used in [takeFrame] if [canUseOffscreenCanvas] is false
+  html.CanvasElement? _canvasElement;
+
+  ///Used in [takeFrame] if [canUseOffscreenCanvas] is false
+  html.OffscreenCanvas? _offscreenCanvas;
+
   ///Returns frame at a specific time using video element
   CameraImageData takeFrame(
     html.VideoElement videoElement, {
@@ -406,18 +412,24 @@ class CameraService {
     }
     late html.ImageData imageData;
     if (canUseOffscreenCanvas) {
-      final html.OffscreenCanvas canvas = html.OffscreenCanvas(width, height);
-      final html.OffscreenCanvasRenderingContext2D context =
-          canvas.getContext('2d')! as html.OffscreenCanvasRenderingContext2D;
-      context.drawImage(videoElement, 0, 0, width, height);
+      if (_offscreenCanvas == null ||
+          _offscreenCanvas!.width != width ||
+          _offscreenCanvas!.height != height) {
+        _offscreenCanvas = html.OffscreenCanvas(width, height);
+      }
+      final html.OffscreenCanvasRenderingContext2D context = _offscreenCanvas!
+          .getContext('2d')! as html.OffscreenCanvasRenderingContext2D;
+      context.drawImage(videoElement, 0, 0);
       imageData = context.getImageData(0, 0, width, height);
     } else {
-      final html.CanvasElement canvas =
-          html.CanvasElement(width: width, height: height);
-      final html.CanvasRenderingContext2D context = canvas.context2D;
+      if (_canvasElement == null ||
+          _canvasElement!.width != width ||
+          _canvasElement!.height != height) {
+        _canvasElement = html.CanvasElement(width: width, height: height);
+      }
+      final html.CanvasRenderingContext2D context = _canvasElement!.context2D;
       context.drawImageScaled(videoElement, 0, 0, width, height);
       imageData = context.getImageData(0, 0, width, height);
-      canvas.remove();
     }
     final ByteBuffer byteBuffer = imageData.data.buffer;
 
