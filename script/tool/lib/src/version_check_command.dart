@@ -358,7 +358,7 @@ ${indentation}HTTP response: ${pubVersionFinderResponse.httpResponse.body}
           '${indentation}Breaking changes to platform interfaces are not '
           'allowed without explicit justification.\n'
           '${indentation}See '
-          'https://github.com/flutter/flutter/wiki/Contributing-to-Plugins-and-Packages '
+          'https://github.com/flutter/flutter/blob/master/docs/ecosystem/contributing/README.md '
           'for more information.');
       return _CurrentVersionState.invalidChange;
     }
