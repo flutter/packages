@@ -52,6 +52,10 @@ void main() {
           cameraId: any(named: 'cameraId'),
         ),
       ).thenAnswer((_) => Future<MediaStream>.value(mediaStream));
+
+      when(
+        () => cameraService.hasPropertyOffScreenCanvas(),
+      ).thenAnswer((_) => true);
     });
 
     setUpAll(() {
@@ -1735,7 +1739,10 @@ void main() {
           )..videoElement = videoElement;
 
           when(
-            () => cameraService.takeFrame(videoElement),
+            () => cameraService.takeFrame(
+              videoElement,
+              canUseOffscreenCanvas: camera.canUseOffscreenCanvas,
+            ),
           ).thenAnswer(
             (_) => CameraImageData(
               format: const CameraImageFormat(
@@ -1752,6 +1759,7 @@ void main() {
               width: 10,
             ),
           );
+
           final CameraImageData cameraImageData =
               await camera.cameraFrameStream().first;
           expect(

@@ -158,6 +158,10 @@ class Camera {
   final StreamController<VideoRecordedEvent> videoRecorderController =
       StreamController<VideoRecordedEvent>.broadcast();
 
+  /// Used to check if allowed to paint canvas off screen
+  @visibleForTesting
+  bool canUseOffscreenCanvas = false;
+
   /// Initializes the camera stream displayed in the [videoElement].
   /// Registers the camera view with [textureId] under [_getViewType] type.
   /// Emits the camera default video track on the [onEnded] stream when it ends.
@@ -195,6 +199,8 @@ class Camera {
         onEndedController.add(defaultVideoTrack);
       });
     }
+
+    canUseOffscreenCanvas = _cameraService.hasPropertyOffScreenCanvas();
   }
 
   /// Starts the camera stream.
@@ -686,7 +692,10 @@ class Camera {
 
   /// Used to trigger add event of camera image data in camera frame stream
   void _addCameraImageDataEvent() {
-    final CameraImageData image = _cameraService.takeFrame(videoElement);
+    final CameraImageData image = _cameraService.takeFrame(
+      videoElement,
+      canUseOffscreenCanvas: canUseOffscreenCanvas,
+    );
     _cameraFrameStreamController.add(image);
   }
 }

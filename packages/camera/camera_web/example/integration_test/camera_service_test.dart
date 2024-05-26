@@ -914,7 +914,36 @@ void main() {
       });
     });
 
-    group('takeFrame', () {
+    group('camera image stream', () {
+      setUp(
+        () {
+          cameraService.jsUtil = jsUtil;
+        },
+      );
+      testWidgets(
+        'returns true if broswer has OffscreenCanvas '
+        'otherwise false',
+        (WidgetTester widgetTester) async {
+          when(
+            () => jsUtil.hasProperty(window, 'OffscreenCanvas'),
+          ).thenReturn(true);
+          final bool hasOffScreenCanvas =
+              cameraService.hasPropertyOffScreenCanvas();
+          expect(
+            hasOffScreenCanvas,
+            true,
+          );
+          when(
+            () => jsUtil.hasProperty(window, 'OffscreenCanvas'),
+          ).thenReturn(false);
+          final bool hasNotOffScreenCanvas =
+              cameraService.hasPropertyOffScreenCanvas();
+          expect(
+            hasNotOffScreenCanvas,
+            false,
+          );
+        },
+      );
       testWidgets(
         'returns Camera Image of Size '
         'when videoElement is of Size',
@@ -927,8 +956,10 @@ void main() {
             })
             ..load();
           await completer.future;
-          final CameraImageData cameraImageData =
-              cameraService.takeFrame(videoElement);
+          final CameraImageData cameraImageData = cameraService.takeFrame(
+            videoElement,
+            canUseOffscreenCanvas: true,
+          );
           expect(
             size,
             Size(
