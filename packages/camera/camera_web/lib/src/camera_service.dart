@@ -397,15 +397,8 @@ class CameraService {
     html.VideoElement videoElement, {
     bool canUseOffscreenCanvas = false,
   }) {
-    final List<String> widthPx = videoElement.style.width.split('px');
-    final List<String> heightPx = videoElement.style.height.split('px');
-    final String widthString =
-        widthPx.isNotEmpty ? widthPx.first : '${videoElement.videoWidth}';
-    final String heightString =
-        heightPx.isNotEmpty ? heightPx.first : '${videoElement.videoHeight}';
-    final int width = int.tryParse(widthString) ?? videoElement.videoWidth;
-    final int height = int.tryParse(heightString) ?? videoElement.videoHeight;
-
+    final int width = videoElement.videoWidth;
+    final int height = videoElement.videoHeight;
     if (width == 0 || height == 0) {
       throw Exception(
         'Computed dimensions are zero: width=$width, height=$height',
