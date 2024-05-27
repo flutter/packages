@@ -697,7 +697,7 @@ A B C
           contains('Dart code block at line 3 is not managed by code-excerpt.'),
           // Ensure that the failure message links to instructions.
           contains(
-              'https://github.com/flutter/flutter/wiki/Contributing-to-Plugins-and-Packages'),
+              'https://github.com/flutter/flutter/blob/master/docs/ecosystem/contributing/README.md'),
           contains('Missing code-excerpt management for code block'),
         ]),
       );
