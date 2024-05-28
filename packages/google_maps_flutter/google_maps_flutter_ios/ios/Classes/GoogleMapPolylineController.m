@@ -12,9 +12,7 @@
 
 @end
 
-///
 /// Returns dict[key], or nil if dict[key] is NSNull.
-///
 static id GetValueOrNilFromDict(NSDictionary *dict, NSString *key) {
   id value = dict[key];
   return value == [NSNull null] ? nil : value;

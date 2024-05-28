@@ -12,12 +12,10 @@
                              mapView:(GMSMapView *)mapView;
 - (void)removePolyline;
 
-///
 /// Sets the pattern on polyline controller
 ///
 /// @param styles The styles for repeating pattern sections.
 /// @param lengths The lengths for repeating pattern sections.
-///
 - (void)setPattern:(NSArray<GMSStrokeStyle *> *)styles lengths:(NSArray<NSNumber *> *)lengths;
 @end
 

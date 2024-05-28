@@ -16,11 +16,9 @@
 
 @implementation GoogleMapsPolylinesControllerTests
 
-///
 /// Returns GoogleMapPolylineController object instantiated with a mocked map instance
 ///
 ///  @return An object of FLTGoogleMapPolylineController
-///
 - (FLTGoogleMapPolylineController *)polylineControllerWithMockedMap {
   NSDictionary<NSString *, id> *polyline = @{
     @"points" : @[
