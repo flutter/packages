@@ -11,12 +11,12 @@ import 'package:web/web.dart' as web;
 /// Adds a `controlsList` and `disablePictureInPicture` getters.
 extension NonStandardGettersOnVideoElement on web.HTMLVideoElement {
   external web.DOMTokenList? get controlsList;
-  external JSBoolean get disablePictureInPicture;
+  external bool get disablePictureInPicture;
 }
 
 /// Adds a `disableRemotePlayback` getter.
 extension NonStandardGettersOnMediaElement on web.HTMLMediaElement {
-  external JSBoolean get disableRemotePlayback;
+  external bool get disableRemotePlayback;
 }
 
 /// Defines JS interop to access static methods from `Object`.
