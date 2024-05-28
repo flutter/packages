@@ -1,6 +1,6 @@
 ## NEXT
 
-* Adds notes to `README.md` about allowing image streaming in the background on Android and the required
+* Adds notes to `README.md` about allowing image streaming in the background and the required
   `WRITE_EXTERNAL_STORAGE` permission specified in the plugin to allow writing photos and videos to
   files.
 
