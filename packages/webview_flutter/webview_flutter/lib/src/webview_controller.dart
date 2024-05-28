@@ -370,9 +370,40 @@ class WebViewController {
     return platform.setOnConsoleMessage(onConsoleMessage);
   }
 
+  /// Sets a callback that notifies the host application that the web page
+  /// wants to display a JavaScript alert() dialog.
+  Future<void> setOnJavaScriptAlertDialog(
+      Future<void> Function(JavaScriptAlertDialogRequest request)
+          onJavaScriptAlertDialog) async {
+    return platform.setOnJavaScriptAlertDialog(onJavaScriptAlertDialog);
+  }
+
+  /// Sets a callback that notifies the host application that the web page
+  /// wants to display a JavaScript confirm() dialog.
+  Future<void> setOnJavaScriptConfirmDialog(
+      Future<bool> Function(JavaScriptConfirmDialogRequest request)
+          onJavaScriptConfirmDialog) async {
+    return platform.setOnJavaScriptConfirmDialog(onJavaScriptConfirmDialog);
+  }
+
+  /// Sets a callback that notifies the host application that the web page
+  /// wants to display a JavaScript prompt() dialog.
+  Future<void> setOnJavaScriptTextInputDialog(
+      Future<String> Function(JavaScriptTextInputDialogRequest request)
+          onJavaScriptTextInputDialog) async {
+    return platform.setOnJavaScriptTextInputDialog(onJavaScriptTextInputDialog);
+  }
+
   /// Gets the value used for the HTTP `User-Agent:` request header.
   Future<String?> getUserAgent() {
     return platform.getUserAgent();
+  }
+
+  /// Sets a listener for scroll position changes.
+  Future<void> setOnScrollPositionChange(
+    void Function(ScrollPositionChange change)? onScrollPositionChange,
+  ) {
+    return platform.setOnScrollPositionChange(onScrollPositionChange);
   }
 }
 

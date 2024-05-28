@@ -107,7 +107,8 @@ class CreateAllPackagesAppCommand extends PackageCommand {
 
     await Future.wait(<Future<void>>[
       _updateAppGradle(),
-      _updateMacosPbxproj(),
+      _updateIOSPbxproj(),
+      _updateMacOSPbxproj(),
       // This step requires the native file generation triggered by
       // flutter pub get above, so can't currently be run on Windows.
       if (!platform.isWindows) _updateMacosPodfile(),
@@ -236,8 +237,7 @@ dependencies {}
       replacements: <String, List<String>>{
         // minSdkVersion 21 is required by camera_android.
         'minSdkVersion': <String>['minSdkVersion 21'],
-        // compileSdkVersion 33 is required by local_auth.
-        'compileSdkVersion': <String>['compileSdkVersion 33'],
+        'compileSdkVersion': <String>['compileSdk 34'],
       },
       additions: <String, List<String>>{
         'defaultConfig {': <String>['        multiDexEnabled true'],
@@ -405,7 +405,7 @@ dev_dependencies:${_pubspecMapString(pubspec.devDependencies)}
     );
   }
 
-  Future<void> _updateMacosPbxproj() async {
+  Future<void> _updateMacOSPbxproj() async {
     final File pbxprojFile = app
         .platformDirectory(FlutterPlatform.macos)
         .childDirectory('Runner.xcodeproj')
@@ -416,6 +416,22 @@ dev_dependencies:${_pubspecMapString(pubspec.devDependencies)}
         // macOS 10.15 is required by in_app_purchase.
         'MACOSX_DEPLOYMENT_TARGET': <String>[
           '				MACOSX_DEPLOYMENT_TARGET = 10.15;'
+        ],
+      },
+    );
+  }
+
+  Future<void> _updateIOSPbxproj() async {
+    final File pbxprojFile = app
+        .platformDirectory(FlutterPlatform.ios)
+        .childDirectory('Runner.xcodeproj')
+        .childFile('project.pbxproj');
+    _adjustFile(
+      pbxprojFile,
+      replacements: <String, List<String>>{
+        // iOS 14 is required by google_maps_fluter.
+        'IPHONEOS_DEPLOYMENT_TARGET': <String>[
+          '				IPHONEOS_DEPLOYMENT_TARGET = 14.0;'
         ],
       },
     );

@@ -25,7 +25,7 @@ import java.util.Objects;
 public class LiveDataHostApiImpl implements LiveDataHostApi {
   private final BinaryMessenger binaryMessenger;
   private final InstanceManager instanceManager;
-  private LifecycleOwner lifecycleOwner;
+  @Nullable private LifecycleOwner lifecycleOwner;
 
   /**
    * Constructs a {@link LiveDataHostApiImpl}.
@@ -40,7 +40,7 @@ public class LiveDataHostApiImpl implements LiveDataHostApi {
   }
 
   /** Sets {@link LifecycleOwner} used to observe the camera state if so requested. */
-  public void setLifecycleOwner(@NonNull LifecycleOwner lifecycleOwner) {
+  public void setLifecycleOwner(@Nullable LifecycleOwner lifecycleOwner) {
     this.lifecycleOwner = lifecycleOwner;
   }
 
@@ -51,6 +51,10 @@ public class LiveDataHostApiImpl implements LiveDataHostApi {
   @Override
   @SuppressWarnings("unchecked")
   public void observe(@NonNull Long identifier, @NonNull Long observerIdentifier) {
+    if (lifecycleOwner == null) {
+      throw new IllegalStateException("LifecycleOwner must be set to observe a LiveData instance.");
+    }
+
     getLiveDataInstance(identifier)
         .observe(
             lifecycleOwner,
@@ -60,6 +64,10 @@ public class LiveDataHostApiImpl implements LiveDataHostApi {
   /** Removes all observers of this instance that are tied to the {@link lifecycleOwner}. */
   @Override
   public void removeObservers(@NonNull Long identifier) {
+    if (lifecycleOwner == null) {
+      throw new IllegalStateException("LifecycleOwner must be set to remove LiveData observers.");
+    }
+
     getLiveDataInstance(identifier).removeObservers(lifecycleOwner);
   }
 

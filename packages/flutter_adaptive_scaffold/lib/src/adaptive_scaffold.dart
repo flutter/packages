@@ -95,6 +95,7 @@ class AdaptiveScaffold extends StatefulWidget {
     this.largeBreakpoint = Breakpoints.large,
     this.drawerBreakpoint = Breakpoints.smallDesktop,
     this.internalAnimations = true,
+    this.transitionDuration = const Duration(seconds: 1),
     this.bodyOrientation = Axis.horizontal,
     this.onSelectedIndexChange,
     this.useDrawer = true,
@@ -102,7 +103,10 @@ class AdaptiveScaffold extends StatefulWidget {
     this.navigationRailWidth = 72,
     this.extendedNavigationRailWidth = 192,
     this.appBarBreakpoint,
-  });
+  }) : assert(
+          destinations.length >= 2,
+          'At least two destinations are required',
+        );
 
   /// The destinations to be used in navigation items. These are converted to
   /// [NavigationRailDestination]s and [BottomNavigationBarItem]s and inserted
@@ -197,6 +201,11 @@ class AdaptiveScaffold extends StatefulWidget {
   ///
   /// Defaults to true.
   final bool internalAnimations;
+
+  /// Defines the duration of transition between layouts.
+  ///
+  /// Defaults to [Duration(seconds: 1)].
+  final Duration transitionDuration;
 
   /// The orientation of the body and secondaryBody. Either horizontal (side by
   /// side) or vertical (top to bottom).
@@ -496,12 +505,16 @@ class AdaptiveScaffold extends StatefulWidget {
 }
 
 class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
+  // Global scaffold key that will help to manage drawer state.
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
   @override
   Widget build(BuildContext context) {
     final NavigationRailThemeData navRailTheme =
         Theme.of(context).navigationRailTheme;
 
     return Scaffold(
+      key: _scaffoldKey,
       appBar: widget.drawerBreakpoint.isActive(context) && widget.useDrawer ||
               (widget.appBarBreakpoint?.isActive(context) ?? false)
           ? widget.appBar ?? AppBar()
@@ -517,11 +530,12 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
                     .map((NavigationDestination destination) =>
                         AdaptiveScaffold.toRailDestination(destination))
                     .toList(),
-                onDestinationSelected: widget.onSelectedIndexChange,
+                onDestinationSelected: _onDrawerDestinationSelected,
               ),
             )
           : null,
       body: AdaptiveLayout(
+        transitionDuration: widget.transitionDuration,
         bodyOrientation: widget.bodyOrientation,
         bodyRatio: widget.bodyRatio,
         internalAnimations: widget.internalAnimations,
@@ -662,6 +676,20 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
         ),
       ),
     );
+  }
+
+  void _onDrawerDestinationSelected(int index) {
+    if (widget.useDrawer) {
+      // If [useDrawer] is true, then retrieve the current state.
+      final ScaffoldState? scaffoldCurrentContext = _scaffoldKey.currentState;
+      if (scaffoldCurrentContext != null) {
+        if (scaffoldCurrentContext.isDrawerOpen) {
+          // If drawer is open, call [closeDrawer] to dismiss drawer as per material guidelines.
+          scaffoldCurrentContext.closeDrawer();
+        }
+      }
+    }
+    widget.onSelectedIndexChange?.call(index);
   }
 }
 

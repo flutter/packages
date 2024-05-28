@@ -196,6 +196,13 @@ class _CustomNavigatorState extends State<_CustomNavigator> {
     _pages = null;
   }
 
+  @override
+  void dispose() {
+    _controller?.dispose();
+    _registry.dispose();
+    super.dispose();
+  }
+
   void _updatePages(BuildContext context) {
     assert(_pages == null);
     final List<Page<Object?>> pages = <Page<Object?>>[];
@@ -385,6 +392,7 @@ class _CustomNavigatorState extends State<_CustomNavigator> {
       pathParameters: matchList.pathParameters,
       error: matchList.error,
       pageKey: ValueKey<String>('${matchList.uri}(error)'),
+      topRoute: matchList.lastOrNull?.route,
     );
   }
 

@@ -18,8 +18,7 @@ void main() {
 
     setUp(() {
       returnValue = '';
-      _ambiguate(TestDefaultBinaryMessengerBinding.instance)!
-          .defaultBinaryMessenger
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
           .setMockMethodCallHandler(picker.channel,
               (MethodCall methodCall) async {
         log.add(methodCall);
@@ -188,8 +187,7 @@ void main() {
       });
 
       test('handles a null image path response gracefully', () async {
-        _ambiguate(TestDefaultBinaryMessengerBinding.instance)!
-            .defaultBinaryMessenger
+        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
             .setMockMethodCallHandler(
                 picker.channel, (MethodCall methodCall) => null);
 
@@ -249,6 +247,7 @@ void main() {
               'maxHeight': null,
               'imageQuality': null,
               'requestFullMetadata': true,
+              'limit': null,
             }),
           ],
         );
@@ -289,42 +288,49 @@ void main() {
               'maxHeight': null,
               'imageQuality': null,
               'requestFullMetadata': true,
+              'limit': null,
             }),
             isMethodCall('pickMultiImage', arguments: <String, dynamic>{
               'maxWidth': 10.0,
               'maxHeight': null,
               'imageQuality': null,
               'requestFullMetadata': true,
+              'limit': null,
             }),
             isMethodCall('pickMultiImage', arguments: <String, dynamic>{
               'maxWidth': null,
               'maxHeight': 10.0,
               'imageQuality': null,
               'requestFullMetadata': true,
+              'limit': null,
             }),
             isMethodCall('pickMultiImage', arguments: <String, dynamic>{
               'maxWidth': 10.0,
               'maxHeight': 20.0,
               'imageQuality': null,
               'requestFullMetadata': true,
+              'limit': null,
             }),
             isMethodCall('pickMultiImage', arguments: <String, dynamic>{
               'maxWidth': 10.0,
               'maxHeight': null,
               'imageQuality': 70,
               'requestFullMetadata': true,
+              'limit': null,
             }),
             isMethodCall('pickMultiImage', arguments: <String, dynamic>{
               'maxWidth': null,
               'maxHeight': 10.0,
               'imageQuality': 70,
               'requestFullMetadata': true,
+              'limit': null,
             }),
             isMethodCall('pickMultiImage', arguments: <String, dynamic>{
               'maxWidth': 10.0,
               'maxHeight': 20.0,
               'imageQuality': 70,
               'requestFullMetadata': true,
+              'limit': null,
             }),
           ],
         );
@@ -357,8 +363,7 @@ void main() {
       });
 
       test('handles a null image path response gracefully', () async {
-        _ambiguate(TestDefaultBinaryMessengerBinding.instance)!
-            .defaultBinaryMessenger
+        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
             .setMockMethodCallHandler(
                 picker.channel, (MethodCall methodCall) => null);
 
@@ -431,8 +436,7 @@ void main() {
       });
 
       test('handles a null video path response gracefully', () async {
-        _ambiguate(TestDefaultBinaryMessengerBinding.instance)!
-            .defaultBinaryMessenger
+        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
             .setMockMethodCallHandler(
                 picker.channel, (MethodCall methodCall) => null);
 
@@ -476,8 +480,7 @@ void main() {
 
     group('#retrieveLostData', () {
       test('retrieveLostData get success response', () async {
-        _ambiguate(TestDefaultBinaryMessengerBinding.instance)!
-            .defaultBinaryMessenger
+        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
             .setMockMethodCallHandler(picker.channel,
                 (MethodCall methodCall) async {
           return <String, String>{
@@ -492,8 +495,7 @@ void main() {
       });
 
       test('retrieveLostData get error response', () async {
-        _ambiguate(TestDefaultBinaryMessengerBinding.instance)!
-            .defaultBinaryMessenger
+        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
             .setMockMethodCallHandler(picker.channel,
                 (MethodCall methodCall) async {
           return <String, String>{
@@ -510,8 +512,7 @@ void main() {
       });
 
       test('retrieveLostData get null response', () async {
-        _ambiguate(TestDefaultBinaryMessengerBinding.instance)!
-            .defaultBinaryMessenger
+        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
             .setMockMethodCallHandler(picker.channel,
                 (MethodCall methodCall) async {
           return null;
@@ -520,8 +521,7 @@ void main() {
       });
 
       test('retrieveLostData get both path and error should throw', () async {
-        _ambiguate(TestDefaultBinaryMessengerBinding.instance)!
-            .defaultBinaryMessenger
+        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
             .setMockMethodCallHandler(picker.channel,
                 (MethodCall methodCall) async {
           return <String, String>{
@@ -693,8 +693,7 @@ void main() {
       });
 
       test('handles a null image path response gracefully', () async {
-        _ambiguate(TestDefaultBinaryMessengerBinding.instance)!
-            .defaultBinaryMessenger
+        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
             .setMockMethodCallHandler(
                 picker.channel, (MethodCall methodCall) => null);
 
@@ -754,6 +753,7 @@ void main() {
               'maxHeight': null,
               'imageQuality': null,
               'requestFullMetadata': true,
+              'limit': null,
             }),
           ],
         );
@@ -794,42 +794,49 @@ void main() {
               'maxHeight': null,
               'imageQuality': null,
               'requestFullMetadata': true,
+              'limit': null,
             }),
             isMethodCall('pickMultiImage', arguments: <String, dynamic>{
               'maxWidth': 10.0,
               'maxHeight': null,
               'imageQuality': null,
               'requestFullMetadata': true,
+              'limit': null,
             }),
             isMethodCall('pickMultiImage', arguments: <String, dynamic>{
               'maxWidth': null,
               'maxHeight': 10.0,
               'imageQuality': null,
               'requestFullMetadata': true,
+              'limit': null,
             }),
             isMethodCall('pickMultiImage', arguments: <String, dynamic>{
               'maxWidth': 10.0,
               'maxHeight': 20.0,
               'imageQuality': null,
               'requestFullMetadata': true,
+              'limit': null,
             }),
             isMethodCall('pickMultiImage', arguments: <String, dynamic>{
               'maxWidth': 10.0,
               'maxHeight': null,
               'imageQuality': 70,
               'requestFullMetadata': true,
+              'limit': null,
             }),
             isMethodCall('pickMultiImage', arguments: <String, dynamic>{
               'maxWidth': null,
               'maxHeight': 10.0,
               'imageQuality': 70,
               'requestFullMetadata': true,
+              'limit': null,
             }),
             isMethodCall('pickMultiImage', arguments: <String, dynamic>{
               'maxWidth': 10.0,
               'maxHeight': 20.0,
               'imageQuality': 70,
               'requestFullMetadata': true,
+              'limit': null,
             }),
           ],
         );
@@ -862,8 +869,7 @@ void main() {
       });
 
       test('handles a null image path response gracefully', () async {
-        _ambiguate(TestDefaultBinaryMessengerBinding.instance)!
-            .defaultBinaryMessenger
+        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
             .setMockMethodCallHandler(
                 picker.channel, (MethodCall methodCall) => null);
 
@@ -875,7 +881,8 @@ void main() {
     group('#getMedia', () {
       test('calls the method correctly', () async {
         returnValue = <String>['0'];
-        await picker.getMedia(options: const MediaOptions(allowMultiple: true));
+        await picker.getMedia(
+            options: MediaOptions.createAndValidate(allowMultiple: true));
 
         expect(
           log,
@@ -885,6 +892,7 @@ void main() {
               'maxImageHeight': null,
               'imageQuality': null,
               'allowMultiple': true,
+              'limit': null,
             }),
           ],
         );
@@ -893,11 +901,12 @@ void main() {
       test('passes the selection options correctly', () async {
         // Default options
         returnValue = <String>['0'];
-        await picker.getMedia(options: const MediaOptions(allowMultiple: true));
+        await picker.getMedia(
+            options: MediaOptions.createAndValidate(allowMultiple: true));
         // Various image options
         returnValue = <String>['0'];
         await picker.getMedia(
-          options: MediaOptions(
+          options: MediaOptions.createAndValidate(
             allowMultiple: true,
             imageOptions: ImageOptions.createAndValidate(
               maxWidth: 10.0,
@@ -905,7 +914,7 @@ void main() {
           ),
         );
         await picker.getMedia(
-          options: MediaOptions(
+          options: MediaOptions.createAndValidate(
             allowMultiple: true,
             imageOptions: ImageOptions.createAndValidate(
               maxHeight: 10.0,
@@ -913,11 +922,20 @@ void main() {
           ),
         );
         await picker.getMedia(
-          options: MediaOptions(
+          options: MediaOptions.createAndValidate(
             allowMultiple: true,
             imageOptions: ImageOptions.createAndValidate(
               imageQuality: 70,
             ),
+          ),
+        );
+        await picker.getMedia(
+          options: MediaOptions.createAndValidate(
+            allowMultiple: true,
+            imageOptions: ImageOptions.createAndValidate(
+              imageQuality: 70,
+            ),
+            limit: 5,
           ),
         );
 
@@ -929,24 +947,35 @@ void main() {
               'maxImageHeight': null,
               'imageQuality': null,
               'allowMultiple': true,
+              'limit': null,
             }),
             isMethodCall('pickMedia', arguments: <String, dynamic>{
               'maxImageWidth': 10.0,
               'maxImageHeight': null,
               'imageQuality': null,
               'allowMultiple': true,
+              'limit': null,
             }),
             isMethodCall('pickMedia', arguments: <String, dynamic>{
               'maxImageWidth': null,
               'maxImageHeight': 10.0,
               'imageQuality': null,
               'allowMultiple': true,
+              'limit': null,
             }),
             isMethodCall('pickMedia', arguments: <String, dynamic>{
               'maxImageWidth': null,
               'maxImageHeight': null,
               'imageQuality': 70,
               'allowMultiple': true,
+              'limit': null,
+            }),
+            isMethodCall('pickMedia', arguments: <String, dynamic>{
+              'maxImageWidth': null,
+              'maxImageHeight': null,
+              'imageQuality': 70,
+              'allowMultiple': true,
+              'limit': 5,
             }),
           ],
         );
@@ -956,7 +985,7 @@ void main() {
         returnValue = <String>['0', '1'];
         expect(
           () => picker.getMedia(
-            options: MediaOptions(
+            options: MediaOptions.createAndValidate(
               allowMultiple: true,
               imageOptions: ImageOptions.createAndValidate(
                 maxWidth: -1.0,
@@ -968,7 +997,7 @@ void main() {
 
         expect(
           () => picker.getMedia(
-            options: MediaOptions(
+            options: MediaOptions.createAndValidate(
               allowMultiple: true,
               imageOptions: ImageOptions.createAndValidate(
                 maxHeight: -1.0,
@@ -983,7 +1012,7 @@ void main() {
         returnValue = <String>['0', '1'];
         expect(
           () => picker.getMedia(
-            options: MediaOptions(
+            options: MediaOptions.createAndValidate(
               allowMultiple: true,
               imageOptions: ImageOptions.createAndValidate(
                 imageQuality: -1,
@@ -995,7 +1024,7 @@ void main() {
 
         expect(
           () => picker.getMedia(
-            options: MediaOptions(
+            options: MediaOptions.createAndValidate(
               allowMultiple: true,
               imageOptions: ImageOptions.createAndValidate(
                 imageQuality: 101,
@@ -1006,14 +1035,44 @@ void main() {
         );
       });
 
+      test('does not accept a invalid limit argument', () {
+        returnValue = <String>['0', '1'];
+        expect(
+          () => picker.getMedia(
+            options:
+                MediaOptions.createAndValidate(allowMultiple: true, limit: -1),
+          ),
+          throwsArgumentError,
+        );
+
+        expect(
+          () => picker.getMedia(
+            options: MediaOptions.createAndValidate(
+              allowMultiple: true,
+              limit: 0,
+            ),
+          ),
+          throwsArgumentError,
+        );
+      });
+
+      test('does not accept a not null limit when allowMultiple is false', () {
+        expect(
+          () => picker.getMedia(
+            options:
+                MediaOptions.createAndValidate(allowMultiple: false, limit: 5),
+          ),
+          throwsArgumentError,
+        );
+      });
+
       test('handles a null path response gracefully', () async {
-        _ambiguate(TestDefaultBinaryMessengerBinding.instance)!
-            .defaultBinaryMessenger
+        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
             .setMockMethodCallHandler(
                 picker.channel, (MethodCall methodCall) => null);
         expect(
             await picker.getMedia(
-                options: const MediaOptions(allowMultiple: true)),
+                options: MediaOptions.createAndValidate(allowMultiple: true)),
             <XFile>[]);
       });
     });
@@ -1082,8 +1141,7 @@ void main() {
       });
 
       test('handles a null video path response gracefully', () async {
-        _ambiguate(TestDefaultBinaryMessengerBinding.instance)!
-            .defaultBinaryMessenger
+        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
             .setMockMethodCallHandler(
                 picker.channel, (MethodCall methodCall) => null);
 
@@ -1127,8 +1185,7 @@ void main() {
 
     group('#getLostData', () {
       test('getLostData get success response', () async {
-        _ambiguate(TestDefaultBinaryMessengerBinding.instance)!
-            .defaultBinaryMessenger
+        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
             .setMockMethodCallHandler(picker.channel,
                 (MethodCall methodCall) async {
           return <String, String>{
@@ -1143,8 +1200,7 @@ void main() {
       });
 
       test('getLostData should successfully retrieve multiple files', () async {
-        _ambiguate(TestDefaultBinaryMessengerBinding.instance)!
-            .defaultBinaryMessenger
+        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
             .setMockMethodCallHandler(picker.channel,
                 (MethodCall methodCall) async {
           return <String, dynamic>{
@@ -1162,8 +1218,7 @@ void main() {
       });
 
       test('getLostData get error response', () async {
-        _ambiguate(TestDefaultBinaryMessengerBinding.instance)!
-            .defaultBinaryMessenger
+        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
             .setMockMethodCallHandler(picker.channel,
                 (MethodCall methodCall) async {
           return <String, String>{
@@ -1180,8 +1235,7 @@ void main() {
       });
 
       test('getLostData get null response', () async {
-        _ambiguate(TestDefaultBinaryMessengerBinding.instance)!
-            .defaultBinaryMessenger
+        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
             .setMockMethodCallHandler(picker.channel,
                 (MethodCall methodCall) async {
           return null;
@@ -1190,8 +1244,7 @@ void main() {
       });
 
       test('getLostData get both path and error should throw', () async {
-        _ambiguate(TestDefaultBinaryMessengerBinding.instance)!
-            .defaultBinaryMessenger
+        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
             .setMockMethodCallHandler(picker.channel,
                 (MethodCall methodCall) async {
           return <String, String>{
@@ -1389,8 +1442,7 @@ void main() {
       });
 
       test('handles a null image path response gracefully', () async {
-        _ambiguate(TestDefaultBinaryMessengerBinding.instance)!
-            .defaultBinaryMessenger
+        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
             .setMockMethodCallHandler(
                 picker.channel, (MethodCall methodCall) => null);
 
@@ -1476,6 +1528,7 @@ void main() {
               'maxHeight': null,
               'imageQuality': null,
               'requestFullMetadata': true,
+              'limit': null,
             }),
           ],
         );
@@ -1528,6 +1581,16 @@ void main() {
             ),
           ),
         );
+        await picker.getMultiImageWithOptions(
+          options: const MultiImagePickerOptions(
+            imageOptions: ImageOptions(
+              maxWidth: 10.0,
+              maxHeight: 20.0,
+              imageQuality: 70,
+            ),
+            limit: 5,
+          ),
+        );
 
         expect(
           log,
@@ -1537,42 +1600,56 @@ void main() {
               'maxHeight': null,
               'imageQuality': null,
               'requestFullMetadata': true,
+              'limit': null,
             }),
             isMethodCall('pickMultiImage', arguments: <String, dynamic>{
               'maxWidth': 10.0,
               'maxHeight': null,
               'imageQuality': null,
               'requestFullMetadata': true,
+              'limit': null,
             }),
             isMethodCall('pickMultiImage', arguments: <String, dynamic>{
               'maxWidth': null,
               'maxHeight': 10.0,
               'imageQuality': null,
               'requestFullMetadata': true,
+              'limit': null,
             }),
             isMethodCall('pickMultiImage', arguments: <String, dynamic>{
               'maxWidth': 10.0,
               'maxHeight': 20.0,
               'imageQuality': null,
               'requestFullMetadata': true,
+              'limit': null,
             }),
             isMethodCall('pickMultiImage', arguments: <String, dynamic>{
               'maxWidth': 10.0,
               'maxHeight': null,
               'imageQuality': 70,
               'requestFullMetadata': true,
+              'limit': null,
             }),
             isMethodCall('pickMultiImage', arguments: <String, dynamic>{
               'maxWidth': null,
               'maxHeight': 10.0,
               'imageQuality': 70,
               'requestFullMetadata': true,
+              'limit': null,
             }),
             isMethodCall('pickMultiImage', arguments: <String, dynamic>{
               'maxWidth': 10.0,
               'maxHeight': 20.0,
               'imageQuality': 70,
               'requestFullMetadata': true,
+              'limit': null,
+            }),
+            isMethodCall('pickMultiImage', arguments: <String, dynamic>{
+              'maxWidth': 10.0,
+              'maxHeight': 20.0,
+              'imageQuality': 70,
+              'requestFullMetadata': true,
+              'limit': 5,
             }),
           ],
         );
@@ -1620,9 +1697,38 @@ void main() {
         );
       });
 
+      test('does not accept an invalid limit argument', () {
+        returnValue = <dynamic>['0', '1'];
+        expect(
+          () => picker.getMultiImageWithOptions(
+            options: MultiImagePickerOptions.createAndValidate(
+              limit: -1,
+            ),
+          ),
+          throwsArgumentError,
+        );
+
+        expect(
+          () => picker.getMultiImageWithOptions(
+            options: MultiImagePickerOptions.createAndValidate(
+              limit: 0,
+            ),
+          ),
+          throwsArgumentError,
+        );
+
+        expect(
+          () => picker.getMultiImageWithOptions(
+            options: MultiImagePickerOptions.createAndValidate(
+              limit: 1,
+            ),
+          ),
+          throwsArgumentError,
+        );
+      });
+
       test('handles a null image path response gracefully', () async {
-        _ambiguate(TestDefaultBinaryMessengerBinding.instance)!
-            .defaultBinaryMessenger
+        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
             .setMockMethodCallHandler(
                 picker.channel, (MethodCall methodCall) => null);
 
@@ -1642,6 +1748,7 @@ void main() {
               'maxHeight': null,
               'imageQuality': null,
               'requestFullMetadata': true,
+              'limit': null,
             }),
           ],
         );
@@ -1663,6 +1770,7 @@ void main() {
               'maxHeight': null,
               'imageQuality': null,
               'requestFullMetadata': false,
+              'limit': null,
             }),
           ],
         );
@@ -1670,9 +1778,3 @@ void main() {
     });
   });
 }
-
-/// This allows a value of type T or T? to be treated as a value of type T?.
-///
-/// We use this so that APIs that have become non-nullable can still be used
-/// with `!` and `?` on the stable branch.
-T? _ambiguate<T>(T? value) => value;

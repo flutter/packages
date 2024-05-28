@@ -1,5 +1,14 @@
-## NEXT
+## 5.7.6
 
+* Upgrades GoogleSignIn iOS SDK to 7.1.
+
+## 5.7.5
+
+* Pins GoogleSignIn to iOS SDK "7.0.0" while preparing the update to 7.1.
+
+## 5.7.4
+
+* Improves type handling in Objective-C code.
 * Updates minimum iOS version to 12.0 and minimum Flutter version to 3.16.6.
 
 ## 5.7.3

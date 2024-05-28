@@ -4,10 +4,16 @@
 
 export 'package:webview_flutter_platform_interface/webview_flutter_platform_interface.dart'
     show
+        HttpAuthRequest,
+        HttpResponseError,
+        HttpResponseErrorCallback,
+        JavaScriptAlertDialogRequest,
+        JavaScriptConfirmDialogRequest,
         JavaScriptConsoleMessage,
         JavaScriptLogLevel,
         JavaScriptMessage,
         JavaScriptMode,
+        JavaScriptTextInputDialogRequest,
         LoadRequestMethod,
         NavigationDecision,
         NavigationRequest,
@@ -19,11 +25,15 @@ export 'package:webview_flutter_platform_interface/webview_flutter_platform_inte
         PlatformWebViewPermissionRequest,
         PlatformWebViewWidgetCreationParams,
         ProgressCallback,
+        ScrollPositionChange,
         UrlChange,
         WebResourceError,
         WebResourceErrorCallback,
         WebResourceErrorType,
+        WebResourceRequest,
+        WebResourceResponse,
         WebViewCookie,
+        WebViewCredential,
         WebViewPermissionResourceType,
         WebViewPlatform;
 

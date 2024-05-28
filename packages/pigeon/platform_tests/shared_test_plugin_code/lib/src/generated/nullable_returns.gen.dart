@@ -34,16 +34,21 @@ class NullableReturnHostApi {
   /// Constructor for [NullableReturnHostApi].  The [binaryMessenger] named argument is
   /// available for dependency injection.  If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
-  NullableReturnHostApi({BinaryMessenger? binaryMessenger})
-      : __pigeon_binaryMessenger = binaryMessenger;
+  NullableReturnHostApi(
+      {BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
+      : __pigeon_binaryMessenger = binaryMessenger,
+        __pigeon_messageChannelSuffix =
+            messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
   final BinaryMessenger? __pigeon_binaryMessenger;
 
   static const MessageCodec<Object?> pigeonChannelCodec =
       StandardMessageCodec();
 
+  final String __pigeon_messageChannelSuffix;
+
   Future<int?> doit() async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.pigeon_integration_tests.NullableReturnHostApi.doit';
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NullableReturnHostApi.doit$__pigeon_messageChannelSuffix';
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
@@ -72,12 +77,17 @@ abstract class NullableReturnFlutterApi {
 
   int? doit();
 
-  static void setup(NullableReturnFlutterApi? api,
-      {BinaryMessenger? binaryMessenger}) {
+  static void setUp(
+    NullableReturnFlutterApi? api, {
+    BinaryMessenger? binaryMessenger,
+    String messageChannelSuffix = '',
+  }) {
+    messageChannelSuffix =
+        messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
     {
       final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
               Object?>(
-          'dev.flutter.pigeon.pigeon_integration_tests.NullableReturnFlutterApi.doit',
+          'dev.flutter.pigeon.pigeon_integration_tests.NullableReturnFlutterApi.doit$messageChannelSuffix',
           pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
@@ -103,16 +113,21 @@ class NullableArgHostApi {
   /// Constructor for [NullableArgHostApi].  The [binaryMessenger] named argument is
   /// available for dependency injection.  If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
-  NullableArgHostApi({BinaryMessenger? binaryMessenger})
-      : __pigeon_binaryMessenger = binaryMessenger;
+  NullableArgHostApi(
+      {BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
+      : __pigeon_binaryMessenger = binaryMessenger,
+        __pigeon_messageChannelSuffix =
+            messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
   final BinaryMessenger? __pigeon_binaryMessenger;
 
   static const MessageCodec<Object?> pigeonChannelCodec =
       StandardMessageCodec();
 
+  final String __pigeon_messageChannelSuffix;
+
   Future<int> doit(int? x) async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.pigeon_integration_tests.NullableArgHostApi.doit';
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NullableArgHostApi.doit$__pigeon_messageChannelSuffix';
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
@@ -146,12 +161,17 @@ abstract class NullableArgFlutterApi {
 
   int? doit(int? x);
 
-  static void setup(NullableArgFlutterApi? api,
-      {BinaryMessenger? binaryMessenger}) {
+  static void setUp(
+    NullableArgFlutterApi? api, {
+    BinaryMessenger? binaryMessenger,
+    String messageChannelSuffix = '',
+  }) {
+    messageChannelSuffix =
+        messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
     {
       final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
               Object?>(
-          'dev.flutter.pigeon.pigeon_integration_tests.NullableArgFlutterApi.doit',
+          'dev.flutter.pigeon.pigeon_integration_tests.NullableArgFlutterApi.doit$messageChannelSuffix',
           pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
@@ -181,16 +201,21 @@ class NullableCollectionReturnHostApi {
   /// Constructor for [NullableCollectionReturnHostApi].  The [binaryMessenger] named argument is
   /// available for dependency injection.  If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
-  NullableCollectionReturnHostApi({BinaryMessenger? binaryMessenger})
-      : __pigeon_binaryMessenger = binaryMessenger;
+  NullableCollectionReturnHostApi(
+      {BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
+      : __pigeon_binaryMessenger = binaryMessenger,
+        __pigeon_messageChannelSuffix =
+            messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
   final BinaryMessenger? __pigeon_binaryMessenger;
 
   static const MessageCodec<Object?> pigeonChannelCodec =
       StandardMessageCodec();
 
+  final String __pigeon_messageChannelSuffix;
+
   Future<List<String?>?> doit() async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.pigeon_integration_tests.NullableCollectionReturnHostApi.doit';
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NullableCollectionReturnHostApi.doit$__pigeon_messageChannelSuffix';
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
@@ -219,12 +244,17 @@ abstract class NullableCollectionReturnFlutterApi {
 
   List<String?>? doit();
 
-  static void setup(NullableCollectionReturnFlutterApi? api,
-      {BinaryMessenger? binaryMessenger}) {
+  static void setUp(
+    NullableCollectionReturnFlutterApi? api, {
+    BinaryMessenger? binaryMessenger,
+    String messageChannelSuffix = '',
+  }) {
+    messageChannelSuffix =
+        messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
     {
       final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
               Object?>(
-          'dev.flutter.pigeon.pigeon_integration_tests.NullableCollectionReturnFlutterApi.doit',
+          'dev.flutter.pigeon.pigeon_integration_tests.NullableCollectionReturnFlutterApi.doit$messageChannelSuffix',
           pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
@@ -250,16 +280,21 @@ class NullableCollectionArgHostApi {
   /// Constructor for [NullableCollectionArgHostApi].  The [binaryMessenger] named argument is
   /// available for dependency injection.  If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
-  NullableCollectionArgHostApi({BinaryMessenger? binaryMessenger})
-      : __pigeon_binaryMessenger = binaryMessenger;
+  NullableCollectionArgHostApi(
+      {BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
+      : __pigeon_binaryMessenger = binaryMessenger,
+        __pigeon_messageChannelSuffix =
+            messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
   final BinaryMessenger? __pigeon_binaryMessenger;
 
   static const MessageCodec<Object?> pigeonChannelCodec =
       StandardMessageCodec();
 
+  final String __pigeon_messageChannelSuffix;
+
   Future<List<String?>> doit(List<String?>? x) async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.pigeon_integration_tests.NullableCollectionArgHostApi.doit';
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NullableCollectionArgHostApi.doit$__pigeon_messageChannelSuffix';
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
@@ -293,12 +328,17 @@ abstract class NullableCollectionArgFlutterApi {
 
   List<String?> doit(List<String?>? x);
 
-  static void setup(NullableCollectionArgFlutterApi? api,
-      {BinaryMessenger? binaryMessenger}) {
+  static void setUp(
+    NullableCollectionArgFlutterApi? api, {
+    BinaryMessenger? binaryMessenger,
+    String messageChannelSuffix = '',
+  }) {
+    messageChannelSuffix =
+        messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
     {
       final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
               Object?>(
-          'dev.flutter.pigeon.pigeon_integration_tests.NullableCollectionArgFlutterApi.doit',
+          'dev.flutter.pigeon.pigeon_integration_tests.NullableCollectionArgFlutterApi.doit$messageChannelSuffix',
           pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
       if (api == null) {

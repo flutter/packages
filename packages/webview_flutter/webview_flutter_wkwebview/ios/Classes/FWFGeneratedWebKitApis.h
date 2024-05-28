@@ -130,6 +130,20 @@ typedef NS_ENUM(NSUInteger, FWFWKNavigationActionPolicyEnum) {
 - (instancetype)initWithValue:(FWFWKNavigationActionPolicyEnum)value;
 @end
 
+/// Mirror of WKNavigationResponsePolicy.
+///
+/// See https://developer.apple.com/documentation/webkit/wknavigationactionpolicy?language=objc.
+typedef NS_ENUM(NSUInteger, FWFWKNavigationResponsePolicyEnum) {
+  FWFWKNavigationResponsePolicyEnumAllow = 0,
+  FWFWKNavigationResponsePolicyEnumCancel = 1,
+};
+
+/// Wrapper for FWFWKNavigationResponsePolicyEnum to allow for nullability.
+@interface FWFWKNavigationResponsePolicyEnumBox : NSObject
+@property(nonatomic, assign) FWFWKNavigationResponsePolicyEnum value;
+- (instancetype)initWithValue:(FWFWKNavigationResponsePolicyEnum)value;
+@end
+
 /// Mirror of NSHTTPCookiePropertyKey.
 ///
 /// See https://developer.apple.com/documentation/foundation/nshttpcookiepropertykey.
@@ -341,8 +355,10 @@ typedef NS_ENUM(NSUInteger, FWFNSUrlCredentialPersistence) {
 @class FWFWKPermissionDecisionData;
 @class FWFWKMediaCaptureTypeData;
 @class FWFNSUrlRequestData;
+@class FWFNSHttpUrlResponseData;
 @class FWFWKUserScriptData;
 @class FWFWKNavigationActionData;
+@class FWFWKNavigationResponseData;
 @class FWFWKFrameInfoData;
 @class FWFNSErrorData;
 @class FWFWKScriptMessageData;
@@ -430,6 +446,16 @@ typedef NS_ENUM(NSUInteger, FWFNSUrlCredentialPersistence) {
 @property(nonatomic, copy) NSDictionary<NSString *, NSString *> *allHttpHeaderFields;
 @end
 
+/// Mirror of NSURLResponse.
+///
+/// See https://developer.apple.com/documentation/foundation/nshttpurlresponse?language=objc.
+@interface FWFNSHttpUrlResponseData : NSObject
+/// `init` unavailable to enforce nonnull fields, see the `make` class method.
+- (instancetype)init NS_UNAVAILABLE;
++ (instancetype)makeWithStatusCode:(NSInteger)statusCode;
+@property(nonatomic, assign) NSInteger statusCode;
+@end
+
 /// Mirror of WKUserScript.
 ///
 /// See https://developer.apple.com/documentation/webkit/wkuserscript?language=objc.
@@ -456,6 +482,18 @@ typedef NS_ENUM(NSUInteger, FWFNSUrlCredentialPersistence) {
 @property(nonatomic, strong) FWFNSUrlRequestData *request;
 @property(nonatomic, strong) FWFWKFrameInfoData *targetFrame;
 @property(nonatomic, assign) FWFWKNavigationType navigationType;
+@end
+
+/// Mirror of WKNavigationResponse.
+///
+/// See https://developer.apple.com/documentation/webkit/wknavigationresponse.
+@interface FWFWKNavigationResponseData : NSObject
+/// `init` unavailable to enforce nonnull fields, see the `make` class method.
+- (instancetype)init NS_UNAVAILABLE;
++ (instancetype)makeWithResponse:(FWFNSHttpUrlResponseData *)response
+                    forMainFrame:(BOOL)forMainFrame;
+@property(nonatomic, strong) FWFNSHttpUrlResponseData *response;
+@property(nonatomic, assign) BOOL forMainFrame;
 @end
 
 /// Mirror of WKFrameInfo.
@@ -603,6 +641,9 @@ NSObject<FlutterMessageCodec> *FWFUIScrollViewHostApiGetCodec(void);
                                                 toX:(double)x
                                                   y:(double)y
                                               error:(FlutterError *_Nullable *_Nonnull)error;
+- (void)setDelegateForScrollViewWithIdentifier:(NSInteger)identifier
+                uiScrollViewDelegateIdentifier:(nullable NSNumber *)uiScrollViewDelegateIdentifier
+                                         error:(FlutterError *_Nullable *_Nonnull)error;
 @end
 
 extern void SetUpFWFUIScrollViewHostApi(id<FlutterBinaryMessenger> binaryMessenger,
@@ -773,6 +814,15 @@ NSObject<FlutterMessageCodec> *FWFWKNavigationDelegateFlutterApiGetCodec(void);
                                                 (FWFWKNavigationActionData *)navigationAction
                                                   completion:
                                                       (void (^)(FWFWKNavigationActionPolicyEnumData
+                                                                    *_Nullable,
+                                                                FlutterError *_Nullable))completion;
+- (void)decidePolicyForNavigationResponseForDelegateWithIdentifier:(NSInteger)identifier
+                                                 webViewIdentifier:(NSInteger)webViewIdentifier
+                                                navigationResponse:(FWFWKNavigationResponseData *)
+                                                                       navigationResponse
+                                                        completion:
+                                                            (void (^)(
+                                                                FWFWKNavigationResponsePolicyEnumBox
                                                                     *_Nullable,
                                                                 FlutterError *_Nullable))completion;
 - (void)didFailNavigationForDelegateWithIdentifier:(NSInteger)identifier
@@ -1024,6 +1074,39 @@ NSObject<FlutterMessageCodec> *FWFNSUrlFlutterApiGetCodec(void);
 - (instancetype)initWithBinaryMessenger:(id<FlutterBinaryMessenger>)binaryMessenger;
 - (void)createWithIdentifier:(NSInteger)identifier
                   completion:(void (^)(FlutterError *_Nullable))completion;
+@end
+
+/// The codec used by FWFUIScrollViewDelegateHostApi.
+NSObject<FlutterMessageCodec> *FWFUIScrollViewDelegateHostApiGetCodec(void);
+
+/// Host API for `UIScrollViewDelegate`.
+///
+/// This class may handle instantiating and adding native object instances that
+/// are attached to a Dart instance or method calls on the associated native
+/// class or an instance of the class.
+///
+/// See https://developer.apple.com/documentation/uikit/uiscrollviewdelegate?language=objc.
+@protocol FWFUIScrollViewDelegateHostApi
+- (void)createWithIdentifier:(NSInteger)identifier error:(FlutterError *_Nullable *_Nonnull)error;
+@end
+
+extern void SetUpFWFUIScrollViewDelegateHostApi(
+    id<FlutterBinaryMessenger> binaryMessenger,
+    NSObject<FWFUIScrollViewDelegateHostApi> *_Nullable api);
+
+/// The codec used by FWFUIScrollViewDelegateFlutterApi.
+NSObject<FlutterMessageCodec> *FWFUIScrollViewDelegateFlutterApiGetCodec(void);
+
+/// Flutter API for `UIScrollViewDelegate`.
+///
+/// See https://developer.apple.com/documentation/uikit/uiscrollviewdelegate?language=objc.
+@interface FWFUIScrollViewDelegateFlutterApi : NSObject
+- (instancetype)initWithBinaryMessenger:(id<FlutterBinaryMessenger>)binaryMessenger;
+- (void)scrollViewDidScrollWithIdentifier:(NSInteger)identifier
+                   UIScrollViewIdentifier:(NSInteger)uiScrollViewIdentifier
+                                        x:(double)x
+                                        y:(double)y
+                               completion:(void (^)(FlutterError *_Nullable))completion;
 @end
 
 /// The codec used by FWFNSUrlCredentialHostApi.

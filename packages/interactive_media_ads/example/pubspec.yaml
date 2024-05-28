@@ -1,0 +1,25 @@
+name: interactive_media_ads_example
+description: "Demonstrates how to use the interactive_media_ads plugin."
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+
+environment:
+  sdk: ^3.2.3
+  flutter: ">=3.16.6"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_driver:
+    sdk: flutter
+  interactive_media_ads:
+    path: ../
+
+dev_dependencies:
+  espresso: ^0.2.0
+  flutter_test:
+    sdk: flutter
+  integration_test:
+    sdk: flutter
+
+flutter:
+  uses-material-design: true

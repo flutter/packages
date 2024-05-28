@@ -12,6 +12,7 @@ import android.view.KeyEvent;
 import android.webkit.HttpAuthHandler;
 import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
+import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import androidx.annotation.NonNull;
@@ -56,6 +57,14 @@ public class WebViewClientHostApiImpl implements GeneratedAndroidWebView.WebView
     }
 
     @Override
+    public void onReceivedHttpError(
+        @NonNull WebView view,
+        @NonNull WebResourceRequest request,
+        @NonNull WebResourceResponse response) {
+      flutterApi.onReceivedHttpError(this, view, request, response, reply -> {});
+    }
+
+    @Override
     public void onReceivedError(
         @NonNull WebView view,
         @NonNull WebResourceRequest request,
@@ -79,7 +88,10 @@ public class WebViewClientHostApiImpl implements GeneratedAndroidWebView.WebView
     public boolean shouldOverrideUrlLoading(
         @NonNull WebView view, @NonNull WebResourceRequest request) {
       flutterApi.requestLoading(this, view, request, reply -> {});
-      return returnValueForShouldOverrideUrlLoading;
+
+      // The client is only allowed to stop navigations that target the main frame because
+      // overridden URLs are passed to `loadUrl` and `loadUrl` cannot load a subframe.
+      return request.isForMainFrame() && returnValueForShouldOverrideUrlLoading;
     }
 
     // Legacy codepath for < 24; newer versions use the variant above.
@@ -140,6 +152,15 @@ public class WebViewClientHostApiImpl implements GeneratedAndroidWebView.WebView
       flutterApi.onPageFinished(this, view, url, reply -> {});
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    @Override
+    public void onReceivedHttpError(
+        @NonNull WebView view,
+        @NonNull WebResourceRequest request,
+        @NonNull WebResourceResponse response) {
+      flutterApi.onReceivedHttpError(this, view, request, response, reply -> {});
+    }
+
     // This method is only called when the WebViewFeature.RECEIVE_WEB_RESOURCE_ERROR feature is
     // enabled. The deprecated method is called when a device doesn't support this.
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
@@ -169,7 +190,10 @@ public class WebViewClientHostApiImpl implements GeneratedAndroidWebView.WebView
     public boolean shouldOverrideUrlLoading(
         @NonNull WebView view, @NonNull WebResourceRequest request) {
       flutterApi.requestLoading(this, view, request, reply -> {});
-      return returnValueForShouldOverrideUrlLoading;
+
+      // The client is only allowed to stop navigations that target the main frame because
+      // overridden URLs are passed to `loadUrl` and `loadUrl` cannot load a subframe.
+      return request.isForMainFrame() && returnValueForShouldOverrideUrlLoading;
     }
 
     // Legacy codepath for < Lollipop; newer versions use the variant above.

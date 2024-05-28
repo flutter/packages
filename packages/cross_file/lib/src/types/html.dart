@@ -8,7 +8,7 @@ import 'dart:js_interop';
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
-import 'package:web/helpers.dart';
+import 'package:web/web.dart';
 
 import '../web_helpers/web_helpers.dart';
 import 'base.dart';
@@ -66,9 +66,7 @@ class XFile extends XFileBase {
         super(path) {
     if (path == null) {
       _browserBlob = _createBlobFromBytes(bytes, mimeType);
-      // TODO(kevmoo): drop ignore when pkg:web constraint excludes v0.3
-      // ignore: unnecessary_cast
-      _path = URL.createObjectURL(_browserBlob! as JSObject);
+      _path = URL.createObjectURL(_browserBlob!);
     } else {
       _path = path;
     }
@@ -131,28 +129,30 @@ class XFile extends XFileBase {
 
     // Attempt to re-hydrate the blob from the `path` via a (local) HttpRequest.
     // Note that safari hangs if the Blob is >=4GB, so bail out in that case.
-    // TODO(kevmoo): Remove ignore and fix when the MIN Dart SDK is 3.3
-    // ignore: unnecessary_non_null_assertion
-    if (isSafari() && _length != null && _length! >= _fourGigabytes) {
+    if (isSafari() && _length != null && _length >= _fourGigabytes) {
       throw Exception('Safari cannot handle XFiles larger than 4GB.');
     }
 
+    final Completer<Blob> blobCompleter = Completer<Blob>();
+
     late XMLHttpRequest request;
-    try {
-      request = await HttpRequest.request(path, responseType: 'blob');
-    } on ProgressEvent catch (e) {
-      if (e.type == 'error') {
-        throw Exception(
-            'Could not load Blob from its URL. Has it been revoked?');
-      }
-      rethrow;
-    }
+    request = XMLHttpRequest()
+      ..open('get', path, true)
+      ..responseType = 'blob'
+      ..onLoad.listen((ProgressEvent e) {
+        assert(request.response != null,
+            'The Blob backing this XFile cannot be null!');
+        blobCompleter.complete(request.response! as Blob);
+      })
+      ..onError.listen((ProgressEvent e) {
+        if (e.type == 'error') {
+          blobCompleter.completeError(Exception(
+              'Could not load Blob from its URL. Has it been revoked?'));
+        }
+      })
+      ..send();
 
-    _browserBlob = request.response as Blob?;
-
-    assert(_browserBlob != null, 'The Blob backing this XFile cannot be null!');
-
-    return _browserBlob!;
+    return blobCompleter.future;
   }
 
   @override

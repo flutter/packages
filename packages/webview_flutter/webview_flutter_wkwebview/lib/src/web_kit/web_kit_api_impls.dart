@@ -10,6 +10,8 @@ import 'package:flutter/services.dart';
 import '../common/instance_manager.dart';
 import '../common/web_kit.g.dart';
 import '../foundation/foundation.dart';
+import '../ui_kit/ui_kit.dart';
+import '../ui_kit/ui_kit_api_impls.dart';
 import 'web_kit.dart';
 
 export '../common/web_kit.g.dart'
@@ -64,6 +66,14 @@ extension _WKNavigationActionPolicyConverter on WKNavigationActionPolicy {
       value: WKNavigationActionPolicyEnum.values.firstWhere(
         (WKNavigationActionPolicyEnum element) => element.name == name,
       ),
+    );
+  }
+}
+
+extension _WKNavigationResponsePolicyConverter on WKNavigationResponsePolicy {
+  WKNavigationResponsePolicyEnum toWKNavigationResponsePolicyEnumData() {
+    return WKNavigationResponsePolicyEnum.values.firstWhere(
+      (WKNavigationResponsePolicyEnum element) => element.name == name,
     );
   }
 }
@@ -151,6 +161,13 @@ extension _NavigationActionDataConverter on WKNavigationActionData {
   }
 }
 
+extension _NavigationResponseDataConverter on WKNavigationResponseData {
+  WKNavigationResponse toNavigationResponse() {
+    return WKNavigationResponse(
+        response: response.toNSUrlResponse(), forMainFrame: forMainFrame);
+  }
+}
+
 extension _WKFrameInfoDataConverter on WKFrameInfoData {
   WKFrameInfo toWKFrameInfo() {
     return WKFrameInfo(
@@ -168,6 +185,12 @@ extension _NSUrlRequestDataConverter on NSUrlRequestData {
       httpMethod: httpMethod,
       allHttpHeaderFields: allHttpHeaderFields.cast(),
     );
+  }
+}
+
+extension _NSUrlResponseDataConverter on NSHttpUrlResponseData {
+  NSHttpUrlResponse toNSUrlResponse() {
+    return NSHttpUrlResponse(statusCode: statusCode);
   }
 }
 
@@ -234,6 +257,9 @@ class WebKitFlutterApis {
         webViewConfiguration = WKWebViewConfigurationFlutterApiImpl(
           binaryMessenger: binaryMessenger,
           instanceManager: instanceManager,
+        ),
+        uiScrollViewDelegate = UIScrollViewDelegateFlutterApiImpl(
+          instanceManager: instanceManager,
         );
 
   static WebKitFlutterApis _instance = WebKitFlutterApis();
@@ -268,6 +294,10 @@ class WebKitFlutterApis {
   @visibleForTesting
   final WKWebViewConfigurationFlutterApiImpl webViewConfiguration;
 
+  /// Flutter Api for [UIScrollViewDelegate].
+  @visibleForTesting
+  final UIScrollViewDelegateFlutterApiImpl uiScrollViewDelegate;
+
   /// Ensures all the Flutter APIs have been set up to receive calls from native code.
   void ensureSetUp() {
     if (!_hasBeenSetUp) {
@@ -287,6 +317,8 @@ class WebKitFlutterApis {
         webViewConfiguration,
         binaryMessenger: _binaryMessenger,
       );
+      UIScrollViewDelegateFlutterApi.setup(uiScrollViewDelegate,
+          binaryMessenger: _binaryMessenger);
       _hasBeenSetUp = true;
     }
   }
@@ -894,6 +926,29 @@ class WKNavigationDelegateFlutterApiImpl
           as WKWebView,
       url,
     );
+  }
+
+  @override
+  Future<WKNavigationResponsePolicyEnum> decidePolicyForNavigationResponse(
+    int identifier,
+    int webViewIdentifier,
+    WKNavigationResponseData navigationResponse,
+  ) async {
+    final Future<WKNavigationResponsePolicy> Function(
+      WKWebView,
+      WKNavigationResponse navigationResponse,
+    )? function = _getDelegate(identifier).decidePolicyForNavigationResponse;
+
+    if (function == null) {
+      return WKNavigationResponsePolicyEnum.allow;
+    }
+
+    final WKNavigationResponsePolicy policy = await function(
+      instanceManager.getInstanceWithWeakReference(webViewIdentifier)!
+          as WKWebView,
+      navigationResponse.toNavigationResponse(),
+    );
+    return policy.toWKNavigationResponsePolicyEnumData();
   }
 
   @override

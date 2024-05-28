@@ -573,22 +573,6 @@ void main() {
           ]));
     });
 
-    test('skips generated Swift files', () async {
-      const List<String> files = <String>[
-        'macos/foo.gen.swift',
-        'macos/foo.g.swift',
-      ];
-      createFakePlugin(
-        'a_plugin',
-        packagesDir,
-        extraFiles: files,
-      );
-
-      await runCapturingPrint(runner, <String>['format', '--swift']);
-
-      expect(processRunner.recordedCalls, orderedEquals(<ProcessCall>[]));
-    });
-
     test('skips Swift if --no-swift flag is provided', () async {
       const List<String> files = <String>[
         'macos/foo.swift',
@@ -750,6 +734,52 @@ void main() {
                 ...getPackagesDirRelativePaths(plugin, javaFiles)
               ],
               packagesDir.path),
+        ]));
+  });
+
+  test('skips GeneratedPluginRegistrant.swift', () async {
+    const String sourceFile = 'macos/Classes/Foo.swift';
+    final RepositoryPackage plugin = createFakePlugin(
+      'a_plugin',
+      packagesDir,
+      extraFiles: <String>[
+        sourceFile,
+        'example/macos/Flutter/GeneratedPluginRegistrant.swift',
+      ],
+    );
+
+    await runCapturingPrint(runner, <String>[
+      'format',
+      '--swift',
+      '--swift-format-path=/path/to/swift-format'
+    ]);
+
+    expect(
+        processRunner.recordedCalls,
+        orderedEquals(<ProcessCall>[
+          const ProcessCall(
+            '/path/to/swift-format',
+            <String>['--version'],
+            null,
+          ),
+          ProcessCall(
+            '/path/to/swift-format',
+            <String>[
+              '-i',
+              ...getPackagesDirRelativePaths(plugin, <String>[sourceFile])
+            ],
+            packagesDir.path,
+          ),
+          ProcessCall(
+            '/path/to/swift-format',
+            <String>[
+              'lint',
+              '--parallel',
+              '--strict',
+              ...getPackagesDirRelativePaths(plugin, <String>[sourceFile]),
+            ],
+            packagesDir.path,
+          ),
         ]));
   });
 

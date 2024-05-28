@@ -3,8 +3,8 @@ description: Example of Google Sign-In plugin and googleapis.
 publish_to: none
 
 environment:
-  sdk: ">=3.0.0 <4.0.0"
-  flutter: ">=3.10.0"
+  sdk: ^3.2.0
+  flutter: ">=3.16.0"
 
 dependencies:
   extension_google_sign_in_as_googleapis_auth:

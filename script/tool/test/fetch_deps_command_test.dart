@@ -394,8 +394,9 @@ void main() {
               platformIOS: const PlatformDetails(PlatformSupport.inline)
             });
 
-        final Iterable<Directory> exampleDirs = plugin.getExamples().map(
-            (RepositoryPackage example) => example.directory);
+        final Iterable<Directory> exampleDirs = plugin
+            .getExamples()
+            .map((RepositoryPackage example) => example.directory);
 
         final List<String> output = await runCapturingPrint(
             runner, <String>['fetch-deps', '--no-dart', '--ios']);
@@ -406,6 +407,11 @@ void main() {
             const ProcessCall(
               'flutter',
               <String>['precache', '--ios'],
+              null,
+            ),
+            const ProcessCall(
+              'pod',
+              <String>['repo', 'update'],
               null,
             ),
             for (final Directory directory in exampleDirs)
@@ -432,10 +438,12 @@ void main() {
             });
 
         processRunner
-            .mockProcessesForExecutable[getFlutterCommand(mockPlatform)] =
-        <FakeProcessInfo>[
+                .mockProcessesForExecutable[getFlutterCommand(mockPlatform)] =
+            <FakeProcessInfo>[
           FakeProcessInfo(MockProcess(), <String>['precache']),
-          FakeProcessInfo(MockProcess(exitCode: 1), <String>['build', 'ios', '--config-only']),
+          FakeProcessInfo(MockProcess(), <String>['repo', 'update']),
+          FakeProcessInfo(MockProcess(exitCode: 1),
+              <String>['build', 'ios', '--config-only']),
         ];
 
         Error? commandError;
@@ -499,8 +507,9 @@ void main() {
               platformMacOS: const PlatformDetails(PlatformSupport.inline)
             });
 
-        final Iterable<Directory> exampleDirs = plugin.getExamples().map(
-                (RepositoryPackage example) => example.directory);
+        final Iterable<Directory> exampleDirs = plugin
+            .getExamples()
+            .map((RepositoryPackage example) => example.directory);
 
         final List<String> output = await runCapturingPrint(
             runner, <String>['fetch-deps', '--no-dart', '--macos']);
@@ -511,6 +520,11 @@ void main() {
             const ProcessCall(
               'flutter',
               <String>['precache', '--macos'],
+              null,
+            ),
+            const ProcessCall(
+              'pod',
+              <String>['repo', 'update'],
               null,
             ),
             for (final Directory directory in exampleDirs)
@@ -537,18 +551,20 @@ void main() {
             });
 
         processRunner
-            .mockProcessesForExecutable[getFlutterCommand(mockPlatform)] =
-        <FakeProcessInfo>[
+                .mockProcessesForExecutable[getFlutterCommand(mockPlatform)] =
+            <FakeProcessInfo>[
           FakeProcessInfo(MockProcess(), <String>['precache']),
-          FakeProcessInfo(MockProcess(exitCode: 1), <String>['build', 'macos', '--config-only']),
+          FakeProcessInfo(MockProcess(), <String>['repo', 'update']),
+          FakeProcessInfo(MockProcess(exitCode: 1),
+              <String>['build', 'macos', '--config-only']),
         ];
 
         Error? commandError;
         final List<String> output = await runCapturingPrint(
             runner, <String>['fetch-deps', '--no-dart', '--macos'],
             errorHandler: (Error e) {
-              commandError = e;
-            });
+          commandError = e;
+        });
 
         expect(commandError, isA<ToolExit>());
         expect(

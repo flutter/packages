@@ -1,5 +1,22 @@
-## NEXT
+## 4.8.0
 
+* Adds `onHttpError` callback to `NavigationDelegate` to catch HTTP error status codes.
+
+## 4.7.0
+
+* Adds support to track scroll position changes.
+* Updates minimum supported SDK version to Flutter 3.16.6/Dart 3.2.3.
+
+## 4.6.0
+
+* Adds support for custom handling of JavaScript dialogs. See
+  `WebViewController.setOnJavaScriptAlertDialog`, `WebViewController.setOnJavaScriptConfirmDialog`
+  and `WebViewController.setOnJavaScriptTextInputDialog`.
+* Updates minimum Dart version to 3.2.3 and minimum Flutter version to 3.16.6.
+
+## 4.5.0
+
+* Adds support for HTTP basic authentication. See `NavigationDelegate(onReceivedHttpAuthRequest)`.
 * Updates support matrix in README to indicate that iOS 11 is no longer supported.
 * Clients on versions of Flutter that still support iOS 11 can continue to use this
   package with iOS 11, but will not receive any further updates to the iOS implementation.

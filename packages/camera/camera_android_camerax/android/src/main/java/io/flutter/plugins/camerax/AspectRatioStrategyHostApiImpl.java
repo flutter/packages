@@ -19,7 +19,7 @@ public class AspectRatioStrategyHostApiImpl implements AspectRatioStrategyHostAp
   private final InstanceManager instanceManager;
   private final AspectRatioStrategyProxy proxy;
 
-  /** Proxy for constructors and static method of {@link AspectRatioStrategy}. */
+  /** Proxy for constructor of {@link AspectRatioStrategy}. */
   @VisibleForTesting
   public static class AspectRatioStrategyProxy {
     /** Creates an instance of {@link AspectRatioStrategy}. */
@@ -43,7 +43,7 @@ public class AspectRatioStrategyHostApiImpl implements AspectRatioStrategyHostAp
    * Constructs an {@link AspectRatioStrategyHostApiImpl}.
    *
    * @param instanceManager maintains instances stored to communicate with attached Dart objects
-   * @param proxy proxy for constructors and static method of {@link AspectRatioStrategy}
+   * @param proxy proxy for constructor of {@link AspectRatioStrategy}
    */
   @VisibleForTesting
   AspectRatioStrategyHostApiImpl(

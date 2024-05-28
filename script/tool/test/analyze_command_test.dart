@@ -273,6 +273,23 @@ void main() {
           ]));
     });
 
+    test('ignores analysis options in the plugin .symlinks directory',
+        () async {
+      final RepositoryPackage plugin = createFakePlugin('foo', packagesDir,
+          extraFiles: <String>['analysis_options.yaml']);
+      final RepositoryPackage includingPackage =
+          createFakePlugin('bar', packagesDir);
+      // Simulate the local state of having built 'bar' if it includes 'foo'.
+      includingPackage.directory
+          .childDirectory('example')
+          .childDirectory('ios')
+          .childLink('.symlinks')
+          .createSync(plugin.directory.path, recursive: true);
+
+      await runCapturingPrint(
+          runner, <String>['analyze', '--custom-analysis', 'foo']);
+    });
+
     test('takes an allow config file', () async {
       final RepositoryPackage plugin = createFakePlugin('foo', packagesDir,
           extraFiles: <String>['analysis_options.yaml']);

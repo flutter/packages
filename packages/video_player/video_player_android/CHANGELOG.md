@@ -1,3 +1,21 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.16/Dart 3.2.
+
+## 2.4.14
+
+* Calls `onDestroy` instead of `initialize` in onDetachedFromEngine.
+
+## 2.4.13
+
+* Updates minSdkVersion to 19.
+* Updates minimum supported SDK version to Flutter 3.16/Dart 3.2.
+
+## 2.4.12
+
+* Updates compileSdk version to 34.
+* Adds error handling for `BehindLiveWindowException`, which may occur upon live-video playback failure.
+
 ## 2.4.11
 
 * Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.

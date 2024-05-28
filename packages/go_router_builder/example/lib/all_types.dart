@@ -58,7 +58,7 @@ class BigIntRoute extends GoRouteData {
   Widget drawerTile(BuildContext context) => ListTile(
         title: const Text('BigIntRoute'),
         onTap: () => go(context),
-        selected: GoRouterState.of(context).uri.toString() == location,
+        selected: GoRouterState.of(context).uri.path == location,
       );
 }
 
@@ -84,7 +84,7 @@ class BoolRoute extends GoRouteData {
   Widget drawerTile(BuildContext context) => ListTile(
         title: const Text('BoolRoute'),
         onTap: () => go(context),
-        selected: GoRouterState.of(context).uri.toString() == location,
+        selected: GoRouterState.of(context).uri.path == location,
       );
 }
 
@@ -107,7 +107,7 @@ class DateTimeRoute extends GoRouteData {
   Widget drawerTile(BuildContext context) => ListTile(
         title: const Text('DateTimeRoute'),
         onTap: () => go(context),
-        selected: GoRouterState.of(context).uri.toString() == location,
+        selected: GoRouterState.of(context).uri.path == location,
       );
 }
 
@@ -133,7 +133,7 @@ class DoubleRoute extends GoRouteData {
   Widget drawerTile(BuildContext context) => ListTile(
         title: const Text('DoubleRoute'),
         onTap: () => go(context),
-        selected: GoRouterState.of(context).uri.toString() == location,
+        selected: GoRouterState.of(context).uri.path == location,
       );
 }
 
@@ -159,7 +159,7 @@ class IntRoute extends GoRouteData {
   Widget drawerTile(BuildContext context) => ListTile(
         title: const Text('IntRoute'),
         onTap: () => go(context),
-        selected: GoRouterState.of(context).uri.toString() == location,
+        selected: GoRouterState.of(context).uri.path == location,
       );
 }
 
@@ -185,7 +185,7 @@ class NumRoute extends GoRouteData {
   Widget drawerTile(BuildContext context) => ListTile(
         title: const Text('NumRoute'),
         onTap: () => go(context),
-        selected: GoRouterState.of(context).uri.toString() == location,
+        selected: GoRouterState.of(context).uri.path == location,
       );
 }
 
@@ -212,7 +212,7 @@ class EnumRoute extends GoRouteData {
   Widget drawerTile(BuildContext context) => ListTile(
         title: const Text('EnumRoute'),
         onTap: () => go(context),
-        selected: GoRouterState.of(context).uri.toString() == location,
+        selected: GoRouterState.of(context).uri.path == location,
       );
 }
 
@@ -239,7 +239,7 @@ class EnhancedEnumRoute extends GoRouteData {
   Widget drawerTile(BuildContext context) => ListTile(
         title: const Text('EnhancedEnumRoute'),
         onTap: () => go(context),
-        selected: GoRouterState.of(context).uri.toString() == location,
+        selected: GoRouterState.of(context).uri.path == location,
       );
 }
 
@@ -265,7 +265,7 @@ class StringRoute extends GoRouteData {
   Widget drawerTile(BuildContext context) => ListTile(
         title: const Text('StringRoute'),
         onTap: () => go(context),
-        selected: GoRouterState.of(context).uri.toString() == location,
+        selected: GoRouterState.of(context).uri.path == location,
       );
 }
 
@@ -288,7 +288,7 @@ class UriRoute extends GoRouteData {
   Widget drawerTile(BuildContext context) => ListTile(
         title: const Text('UriRoute'),
         onTap: () => go(context),
-        selected: GoRouterState.of(context).uri.toString() == location,
+        selected: GoRouterState.of(context).uri.path == location,
       );
 }
 
@@ -361,7 +361,7 @@ class IterableRoute extends GoRouteData {
   Widget drawerTile(BuildContext context) => ListTile(
         title: const Text('IterableRoute'),
         onTap: () => go(context),
-        selected: GoRouterState.of(context).uri.toString() == location,
+        selected: GoRouterState.of(context).uri.path == location,
       );
 }
 
@@ -430,7 +430,7 @@ class IterableRouteWithDefaultValues extends GoRouteData {
   Widget drawerTile(BuildContext context) => ListTile(
         title: const Text('IterableRouteWithDefaultValues'),
         onTap: () => go(context),
-        selected: GoRouterState.of(context).uri.toString() == location,
+        selected: GoRouterState.of(context).uri.path == location,
       );
 }
 
@@ -536,7 +536,9 @@ class BasePage<T> extends StatelessWidget {
               Text(
                 'Query param with default value: $queryParamWithDefaultValue',
               ),
-              SelectableText(GoRouterState.of(context).uri.toString()),
+              SelectableText(GoRouterState.of(context).uri.path),
+              SelectableText(
+                  GoRouterState.of(context).uri.queryParameters.toString()),
             ],
           ),
         ),

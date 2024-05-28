@@ -2,18 +2,34 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:async';
+
 import 'package:flutter/services.dart';
 import 'package:in_app_purchase_platform_interface/in_app_purchase_platform_interface.dart';
 
 import '../billing_client_wrappers.dart';
 import '../in_app_purchase_android.dart';
+import 'billing_client_wrappers/billing_config_wrapper.dart';
+import 'types/translator.dart';
 
 /// Contains InApp Purchase features that are only available on PlayStore.
 class InAppPurchaseAndroidPlatformAddition
     extends InAppPurchasePlatformAddition {
   /// Creates a [InAppPurchaseAndroidPlatformAddition] which uses the supplied
   /// `BillingClientManager` to provide Android specific features.
-  InAppPurchaseAndroidPlatformAddition(this._billingClientManager);
+  InAppPurchaseAndroidPlatformAddition(this._billingClientManager) {
+    _billingClientManager.userChoiceDetailsStream
+        .map(Translator.convertToUserChoiceDetails)
+        .listen(_userChoiceDetailsStreamController.add);
+  }
+
+  final StreamController<GooglePlayUserChoiceDetails>
+      _userChoiceDetailsStreamController =
+      StreamController<GooglePlayUserChoiceDetails>.broadcast();
+
+  /// [GooglePlayUserChoiceDetails] emits each time user selects alternative billing.
+  late final Stream<GooglePlayUserChoiceDetails> userChoiceDetailsStream =
+      _userChoiceDetailsStreamController.stream;
 
   /// Whether pending purchase is enabled.
   ///
@@ -145,5 +161,63 @@ class InAppPurchaseAndroidPlatformAddition
     return _billingClientManager.runWithClientNonRetryable(
       (BillingClient client) => client.isFeatureSupported(feature),
     );
+  }
+
+  /// Returns Play billing country code based on ISO-3166-1 alpha2 format.
+  ///
+  /// See: https://developer.android.com/reference/com/android/billingclient/api/BillingConfig
+  /// See: https://unicode.org/cldr/charts/latest/supplemental/territory_containment_un_m_49.html
+  @Deprecated('Use InAppPurchasePlatfrom.countryCode')
+  Future<String> getCountryCode() async {
+    final BillingConfigWrapper billingConfig = await _billingClientManager
+        .runWithClient((BillingClient client) => client.getBillingConfig());
+    return billingConfig.countryCode;
+  }
+
+  /// Returns if the caller can use alternative billing only without giving the
+  /// user a choice to use Play billing.
+  ///
+  /// See: https://developer.android.com/reference/com/android/billingclient/api/BillingClient#isAlternativeBillingOnlyAvailableAsync(com.android.billingclient.api.AlternativeBillingOnlyAvailabilityListener)
+  Future<BillingResultWrapper> isAlternativeBillingOnlyAvailable() async {
+    final BillingResultWrapper wrapper =
+        await _billingClientManager.runWithClient((BillingClient client) =>
+            client.isAlternativeBillingOnlyAvailable());
+    return wrapper;
+  }
+
+  /// Shows the alternative billing only information dialog on top of the calling app.
+  ///
+  /// See: https://developer.android.com/reference/com/android/billingclient/api/BillingClient#showAlternativeBillingOnlyInformationDialog(android.app.Activity,%20com.android.billingclient.api.AlternativeBillingOnlyInformationDialogListener)
+  Future<BillingResultWrapper>
+      showAlternativeBillingOnlyInformationDialog() async {
+    final BillingResultWrapper wrapper =
+        await _billingClientManager.runWithClient((BillingClient client) =>
+            client.showAlternativeBillingOnlyInformationDialog());
+    return wrapper;
+  }
+
+  /// The details used to report transactions made via alternative billing
+  /// without user choice to use Google Play billing.
+  ///
+  /// See: https://developer.android.com/reference/com/android/billingclient/api/AlternativeBillingOnlyReportingDetails
+  Future<AlternativeBillingOnlyReportingDetailsWrapper>
+      createAlternativeBillingOnlyReportingDetails() async {
+    final AlternativeBillingOnlyReportingDetailsWrapper wrapper =
+        await _billingClientManager.runWithClient((BillingClient client) =>
+            client.createAlternativeBillingOnlyReportingDetails());
+    return wrapper;
+  }
+
+  /// Disconnects, sets AlternativeBillingOnly to true, and reconnects to
+  /// the [BillingClient].
+  ///
+  /// [BillingChoiceMode.playBillingOnly] is the default state used.
+  /// [BillingChoiceMode.alternativeBillingOnly] will enable alternative billing only.
+  ///
+  /// Play apis have requirements for when this method can be called.
+  /// See: https://developer.android.com/google/play/billing/alternative/alternative-billing-without-user-choice-in-app
+  Future<void> setBillingChoice(BillingChoiceMode billingChoiceMode) {
+    return _billingClientManager
+        .reconnectWithBillingChoiceMode(billingChoiceMode);
   }
 }

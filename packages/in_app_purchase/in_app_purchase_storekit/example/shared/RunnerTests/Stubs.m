@@ -111,8 +111,13 @@
   for (NSString *identifier in self.identifers) {
     [productArray addObject:@{@"productIdentifier" : identifier}];
   }
-  SKProductsResponseStub *response =
-      [[SKProductsResponseStub alloc] initWithMap:@{@"products" : productArray}];
+  SKProductsResponseStub *response;
+  if (self.returnError) {
+    response = nil;
+  } else {
+    response = [[SKProductsResponseStub alloc] initWithMap:@{@"products" : productArray}];
+  }
+
   if (self.error) {
     [self.delegate request:self didFailWithError:self.error];
   } else {
@@ -135,26 +140,6 @@
     [self setValue:products forKey:@"products"];
   }
   return self;
-}
-
-@end
-
-@interface InAppPurchasePluginStub ()
-
-@end
-
-@implementation InAppPurchasePluginStub
-
-- (SKProductRequestStub *)getProductRequestWithIdentifiers:(NSSet *)identifiers {
-  return [[SKProductRequestStub alloc] initWithProductIdentifiers:identifiers];
-}
-
-- (SKProduct *)getProduct:(NSString *)productID {
-  return [[SKProductStub alloc] initWithProductID:productID];
-}
-
-- (SKReceiptRefreshRequestStub *)getRefreshReceiptRequest:(NSDictionary *)properties {
-  return [[SKReceiptRefreshRequestStub alloc] initWithReceiptProperties:properties];
 }
 
 @end

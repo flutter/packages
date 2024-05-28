@@ -136,7 +136,7 @@ instance, to customize Android and iOS:
 <?code-excerpt "readme_excerpts.dart (CustomMessages)"?>
 ```dart
 import 'package:local_auth_android/local_auth_android.dart';
-import 'package:local_auth_ios/local_auth_ios.dart';
+import 'package:local_auth_darwin/local_auth_darwin.dart';
 // ···
     final bool didAuthenticate = await auth.authenticate(
         localizedReason: 'Please authenticate to show account balance',
@@ -281,7 +281,7 @@ the Android theme directly in `android/app/src/main/AndroidManifest.xml`:
 		<activity
 			...
 			android:theme="@style/Theme.AppCompat.DayNight"
-			...	
+			...
 		>
 		</activity>
 	</application>

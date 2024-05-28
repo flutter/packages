@@ -30,7 +30,7 @@ const String misconfiguredJavaIntegrationTestErrorExplanation =
     'The following files use @RunWith(FlutterTestRunner.class) '
     'but not @DartIntegrationTest, which will cause hangs when run with '
     'this command. See '
-    'https://github.com/flutter/flutter/wiki/Plugin-Tests#enabling-android-ui-tests '
+    'https://github.com/flutter/flutter/blob/master/docs/ecosystem/testing/Plugin-Tests.md#enabling-android-ui-tests '
     'for instructions.';
 
 /// The command to run native tests for plugins:
@@ -481,7 +481,6 @@ this command.
       switch (exitCode) {
         case xcodebuildNoTestExitCode:
           _printNoExampleTestsMessage(example, platform);
-          break;
         case 0:
           printSuccess('Successfully ran $platform xctest for $exampleName');
           // If this is the first test, assume success until something fails.
@@ -491,7 +490,6 @@ this command.
           if (exampleHasUnitTests) {
             ranUnitTests = true;
           }
-          break;
         default:
           // Any failure means a failure overall.
           overallResult = RunState.failed;

@@ -14,6 +14,7 @@ import 'package:webview_flutter_platform_interface/webview_flutter_platform_inte
 import 'common/instance_manager.dart';
 import 'common/weak_reference_utils.dart';
 import 'foundation/foundation.dart';
+import 'ui_kit/ui_kit.dart';
 import 'web_kit/web_kit.dart';
 import 'webkit_proxy.dart';
 
@@ -305,6 +306,8 @@ class WebKitWebViewController extends PlatformWebViewController {
 
   late final WKUIDelegate _uiDelegate;
 
+  late final UIScrollViewDelegate? _uiScrollViewDelegate;
+
   final Map<String, WebKitJavaScriptChannelParams> _javaScriptChannelParams =
       <String, WebKitJavaScriptChannelParams>{};
 
@@ -320,6 +323,9 @@ class WebKitWebViewController extends PlatformWebViewController {
       _onJavaScriptConfirmDialog;
   Future<String> Function(JavaScriptTextInputDialogRequest request)?
       _onJavaScriptTextInputDialog;
+
+  void Function(ScrollPositionChange scrollPositionChange)?
+      _onScrollPositionChangeCallback;
 
   WebKitWebViewControllerCreationParams get _webKitParams =>
       params as WebKitWebViewControllerCreationParams;
@@ -624,21 +630,53 @@ class WebKitWebViewController extends PlatformWebViewController {
   }
 
   Future<void> _injectConsoleOverride() {
+    // Within overrideScript, a series of console output methods such as
+    // console.log will be rewritten to pass the output content to the Flutter
+    // end.
+    //
+    // These output contents will first be serialized through JSON.stringify(),
+    // but if the output content contains cyclic objects, it will encounter the
+    // following error.
+    // TypeError: JSON.stringify cannot serialize cyclic structures.
+    // See https://github.com/flutter/flutter/issues/144535.
+    //
+    // Considering this is just looking at the logs printed via console.log,
+    // the cyclic object is not important, so remove it.
+    // Therefore, the replacer parameter of JSON.stringify() is used and the
+    // removeCyclicObject method is passed in to solve the error.
     const WKUserScript overrideScript = WKUserScript(
       '''
-function log(type, args) {
-  var message =  Object.values(args)
-      .map(v => typeof(v) === "undefined" ? "undefined" : typeof(v) === "object" ? JSON.stringify(v) : v.toString())
-      .map(v => v.substring(0, 3000)) // Limit msg to 3000 chars
-      .join(", ");
+var _flutter_webview_plugin_overrides = _flutter_webview_plugin_overrides || {
+  removeCyclicObject: function() {
+    const traversalStack = [];
+    return function (k, v) {
+      if (typeof v !== "object" || v === null) { return v; }
+      const currentParentObj = this;
+      while (
+        traversalStack.length > 0 &&
+        traversalStack[traversalStack.length - 1] !== currentParentObj
+      ) {
+        traversalStack.pop();
+      }
+      if (traversalStack.includes(v)) { return; }
+      traversalStack.push(v);
+      return v;
+    };
+  },
+  log: function (type, args) {
+    var message =  Object.values(args)
+        .map(v => typeof(v) === "undefined" ? "undefined" : typeof(v) === "object" ? JSON.stringify(v, _flutter_webview_plugin_overrides.removeCyclicObject()) : v.toString())
+        .map(v => v.substring(0, 3000)) // Limit msg to 3000 chars
+        .join(", ");
 
-  var log = {
-    level: type,
-    message: message
-  };
+    var log = {
+      level: type,
+      message: message
+    };
 
-  window.webkit.messageHandlers.fltConsoleMessage.postMessage(JSON.stringify(log));
-}
+    window.webkit.messageHandlers.fltConsoleMessage.postMessage(JSON.stringify(log));
+  }
+};
 
 let originalLog = console.log;
 let originalInfo = console.info;
@@ -646,11 +684,11 @@ let originalWarn = console.warn;
 let originalError = console.error;
 let originalDebug = console.debug;
 
-console.log = function() { log("log", arguments); originalLog.apply(null, arguments) };
-console.info = function() { log("info", arguments); originalInfo.apply(null, arguments) };
-console.warn = function() { log("warning", arguments); originalWarn.apply(null, arguments) };
-console.error = function() { log("error", arguments); originalError.apply(null, arguments) };
-console.debug = function() { log("debug", arguments); originalDebug.apply(null, arguments) };
+console.log = function() { _flutter_webview_plugin_overrides.log("log", arguments); originalLog.apply(null, arguments) };
+console.info = function() { _flutter_webview_plugin_overrides.log("info", arguments); originalInfo.apply(null, arguments) };
+console.warn = function() { _flutter_webview_plugin_overrides.log("warning", arguments); originalWarn.apply(null, arguments) };
+console.error = function() { _flutter_webview_plugin_overrides.log("error", arguments); originalError.apply(null, arguments) };
+console.debug = function() { _flutter_webview_plugin_overrides.log("debug", arguments); originalDebug.apply(null, arguments) };
 
 window.addEventListener("error", function(e) {
   log("error", e.message + " at " + e.filename + ":" + e.lineno + ":" + e.colno);
@@ -700,6 +738,30 @@ window.addEventListener("error", function(e) {
     void Function(PlatformWebViewPermissionRequest request) onPermissionRequest,
   ) async {
     _onPermissionRequestCallback = onPermissionRequest;
+  }
+
+  @override
+  Future<void> setOnScrollPositionChange(
+      void Function(ScrollPositionChange scrollPositionChange)?
+          onScrollPositionChange) async {
+    _onScrollPositionChangeCallback = onScrollPositionChange;
+
+    if (onScrollPositionChange != null) {
+      final WeakReference<WebKitWebViewController> weakThis =
+          WeakReference<WebKitWebViewController>(this);
+      _uiScrollViewDelegate =
+          _webKitParams.webKitProxy.createUIScrollViewDelegate(
+        scrollViewDidScroll: (UIScrollView uiScrollView, double x, double y) {
+          weakThis.target?._onScrollPositionChangeCallback?.call(
+            ScrollPositionChange(x, y),
+          );
+        },
+      );
+      return _webView.scrollView.setDelegate(_uiScrollViewDelegate);
+    } else {
+      _uiScrollViewDelegate = null;
+      return _webView.scrollView.setDelegate(null);
+    }
   }
 
   /// Whether to enable tools for debugging the current WKWebView content.
@@ -956,6 +1018,22 @@ class WebKitNavigationDelegate extends PlatformNavigationDelegate {
           weakThis.target!._onPageStarted!(url ?? '');
         }
       },
+      decidePolicyForNavigationResponse:
+          (WKWebView webView, WKNavigationResponse response) async {
+        if (weakThis.target?._onHttpError != null &&
+            response.response.statusCode >= 400) {
+          weakThis.target!._onHttpError!(
+            HttpResponseError(
+              response: WebResourceResponse(
+                uri: null,
+                statusCode: response.response.statusCode,
+              ),
+            ),
+          );
+        }
+
+        return WKNavigationResponsePolicy.allow;
+      },
       decidePolicyForNavigationAction: (
         WKWebView webView,
         WKNavigationAction action,
@@ -1070,6 +1148,7 @@ class WebKitNavigationDelegate extends PlatformNavigationDelegate {
 
   PageEventCallback? _onPageFinished;
   PageEventCallback? _onPageStarted;
+  HttpResponseErrorCallback? _onHttpError;
   ProgressCallback? _onProgress;
   WebResourceErrorCallback? _onWebResourceError;
   NavigationRequestCallback? _onNavigationRequest;
@@ -1084,6 +1163,11 @@ class WebKitNavigationDelegate extends PlatformNavigationDelegate {
   @override
   Future<void> setOnPageStarted(PageEventCallback onPageStarted) async {
     _onPageStarted = onPageStarted;
+  }
+
+  @override
+  Future<void> setOnHttpError(HttpResponseErrorCallback onHttpError) async {
+    _onHttpError = onHttpError;
   }
 
   @override
