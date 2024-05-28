@@ -289,7 +289,7 @@
 }
 
 - (void)testLengthsFromPatterns {
-  NSArray *patterns = @[ @[ @"gap", @10 ], @[ @"dash", @6.4 ] ];
+  NSArray<NSArray<id> *> *patterns = @[ @[ @"gap", @10 ], @[ @"dash", @6.4 ] ];
 
   NSArray<NSNumber *> *spanLengths = [FLTGoogleMapJSONConversions spanLengthsFromPatterns:patterns];
 

@@ -22,7 +22,7 @@
 ///  @return An object of FLTGoogleMapPolylineController
 ///
 - (FLTGoogleMapPolylineController *)polylineControllerWithMockedMap {
-  NSDictionary *polyline = @{
+  NSDictionary<NSString*, id> *polyline = @{
     @"points" : @[
       @[ @(52.4816), @(-3.1791) ], @[ @(54.043), @(-2.9925) ], @[ @(54.1396), @(-4.2739) ],
       @[ @(53.4153), @(-4.0829) ]
@@ -68,7 +68,7 @@
 }
 
 - (void)testStrokeStylesFromPatterns {
-  NSArray *patterns = @[ @[ @"gap", @10 ], @[ @"dash", @10 ] ];
+  NSArray<NSArray<id> *> *patterns = @[ @[ @"gap", @10 ], @[ @"dash", @10 ] ];
   UIColor *strokeColor = [UIColor redColor];
 
   NSArray<GMSStrokeStyle *> *patternStrokeStyle =
