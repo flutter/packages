@@ -209,8 +209,10 @@ class GoRouteConfig extends RouteBaseConfig {
 
     RouteBaseConfig? config = this;
     while (config != null) {
-      if (config is GoRouteConfig) {
-        pathSegments.add(config.path);
+      if (config
+          case GoRouteConfig(:final String path) ||
+              GoRelativeRouteConfig(:final String path)) {
+        pathSegments.add(path);
       }
       config = config.parent;
     }
@@ -598,15 +600,6 @@ extension $_extensionName on $_className {
 
   void goRelative(BuildContext context) =>
       context.goRelative(location${_extraParam != null ? ', extra: $extraFieldName' : ''});
-
-  Future<T?> push<T>(BuildContext context) =>
-      context.push<T>(location${_extraParam != null ? ', extra: $extraFieldName' : ''});
-
-  void pushReplacement(BuildContext context) =>
-      context.pushReplacement(location${_extraParam != null ? ', extra: $extraFieldName' : ''});
-
-  void replace(BuildContext context) =>
-      context.replace(location${_extraParam != null ? ', extra: $extraFieldName' : ''});
 }
 ''';
 
