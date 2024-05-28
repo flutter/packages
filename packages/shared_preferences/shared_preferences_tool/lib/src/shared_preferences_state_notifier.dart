@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:devtools_app_shared/service.dart';
 import 'package:flutter/material.dart';
 
 import 'async_state.dart';
@@ -15,9 +16,13 @@ class SharedPreferencesStateNotifier extends ValueNotifier<_State> {
   /// Default constructor that takes an instance of [SharedPreferencesToolEval].
   ///
   /// You don't need to call this constructor directly. Use [SharedPreferencesStateNotifierProvider] instead.
-  SharedPreferencesStateNotifier(this._eval) : super(const _State.loading());
+  SharedPreferencesStateNotifier(
+    this._eval,
+    this._connectedApp,
+  ) : super(const _State.loading());
 
   final SharedPreferencesToolEval _eval;
+  final ConnectedApp? _connectedApp;
 
   List<String> _keys = <String>[];
 
@@ -27,10 +32,17 @@ class SharedPreferencesStateNotifier extends ValueNotifier<_State> {
   Future<void> fetchAllKeys() async {
     value = const _State.loading();
     try {
+      final bool isWebPlatform = await _connectedApp?.isDartWebApp ?? false;
+      if (isWebPlatform) {
+        value = const _State.data(SharedPreferencesState(
+          isWebPlatform: true,
+        ));
+        return;
+      }
+
       _keys = await _eval.fetchAllKeys();
       value = _State.data(SharedPreferencesState(
         allKeys: _keys,
-        selectedKey: null,
       ));
     } catch (error, stackTrace) {
       value = _State.error(error, stackTrace);

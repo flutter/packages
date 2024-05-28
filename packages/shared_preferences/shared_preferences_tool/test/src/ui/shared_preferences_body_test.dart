@@ -7,6 +7,9 @@ library;
 
 import 'package:devtools_extensions/devtools_extensions.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mockito/mockito.dart';
+import 'package:shared_preferences_tool/src/async_state.dart';
+import 'package:shared_preferences_tool/src/shared_preferences_state.dart';
 import 'package:shared_preferences_tool/src/shared_preferences_state_provider.dart';
 import 'package:shared_preferences_tool/src/ui/data_panel.dart';
 import 'package:shared_preferences_tool/src/ui/keys_panel.dart';
@@ -19,20 +22,54 @@ void main() {
   group('group name', () {
     setupDummies();
 
-    testWidgets('should show keys and data panels',
-        (WidgetTester tester) async {
-      await tester.pumpWidget(
-        DevToolsExtension(
-          requiresRunningApplication: false,
-          child: InnerSharedPreferencesStateProvider(
-            notifier: MockSharedPreferencesStateNotifier(),
-            child: const SharedPreferencesBody(),
+    testWidgets(
+      'should show keys and data panels',
+      (WidgetTester tester) async {
+        await tester.pumpWidget(
+          DevToolsExtension(
+            requiresRunningApplication: false,
+            child: InnerSharedPreferencesStateProvider(
+              notifier: MockSharedPreferencesStateNotifier(),
+              child: const SharedPreferencesBody(),
+            ),
           ),
-        ),
-      );
+        );
 
-      expect(find.byType(KeysPanel), findsOneWidget);
-      expect(find.byType(DataPanel), findsOneWidget);
-    });
+        expect(find.byType(KeysPanel), findsOneWidget);
+        expect(find.byType(DataPanel), findsOneWidget);
+      },
+    );
+
+    testWidgets(
+      'should show web unavailable message when running on web',
+      (WidgetTester tester) async {
+        final MockSharedPreferencesStateNotifier notifier =
+            MockSharedPreferencesStateNotifier();
+        when(notifier.value).thenReturn(
+          const AsyncState<SharedPreferencesState>.data(
+            SharedPreferencesState(
+              isWebPlatform: true,
+            ),
+          ),
+        );
+
+        await tester.pumpWidget(
+          DevToolsExtension(
+            requiresRunningApplication: false,
+            child: InnerSharedPreferencesStateProvider(
+              notifier: notifier,
+              child: const SharedPreferencesBody(),
+            ),
+          ),
+        );
+
+        expect(
+          find.textContaining(
+            'The shared preferences tool is not available for web',
+          ),
+          findsOneWidget,
+        );
+      },
+    );
   });
 }

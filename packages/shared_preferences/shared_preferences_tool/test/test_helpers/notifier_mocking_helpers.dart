@@ -24,10 +24,7 @@ void setupDummies() {
     );
     provideDummy(
       const AsyncState<SharedPreferencesState>.data(
-        SharedPreferencesState(
-          allKeys: <String>[],
-          selectedKey: null,
-        ),
+        SharedPreferencesState(),
       ),
     );
   });

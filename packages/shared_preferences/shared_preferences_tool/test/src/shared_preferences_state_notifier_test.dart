@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:devtools_app_shared/service.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
@@ -10,12 +11,16 @@ import 'package:shared_preferences_tool/src/shared_preferences_state.dart';
 import 'package:shared_preferences_tool/src/shared_preferences_state_notifier.dart';
 import 'package:shared_preferences_tool/src/shared_preferences_tool_eval.dart';
 
-@GenerateNiceMocks(<MockSpec<dynamic>>[MockSpec<SharedPreferencesToolEval>()])
+@GenerateNiceMocks(<MockSpec<dynamic>>[
+  MockSpec<SharedPreferencesToolEval>(),
+  MockSpec<ConnectedApp>()
+])
 import 'shared_preferences_state_notifier_test.mocks.dart';
 
 void main() {
   group('SharedPreferencesStateNotifier', () {
     late MockSharedPreferencesToolEval evalMock;
+    late MockConnectedApp connectedApp;
     late SharedPreferencesStateNotifier notifier;
 
     setUpAll(() {
@@ -24,7 +29,20 @@ void main() {
 
     setUp(() {
       evalMock = MockSharedPreferencesToolEval();
-      notifier = SharedPreferencesStateNotifier(evalMock);
+      connectedApp = MockConnectedApp();
+      when(connectedApp.isDartWebApp).thenAnswer((_) async => false);
+      notifier = SharedPreferencesStateNotifier(evalMock, connectedApp);
+    });
+
+    test('should set isWebPlatform value from connectedApp', () async {
+      for (final bool value in <bool>[true, false]) {
+        when(connectedApp.isDartWebApp).thenAnswer((_) async => value);
+        await notifier.fetchAllKeys();
+        expect(
+          notifier.value.dataOrNull!.isWebPlatform,
+          equals(value),
+        );
+      }
     });
 
     test('should start in the loading state', () {
@@ -46,7 +64,6 @@ void main() {
           const AsyncState<SharedPreferencesState>.data(
             SharedPreferencesState(
               allKeys: keys,
-              selectedKey: null,
             ),
           ),
         ),
@@ -92,7 +109,6 @@ void main() {
           const AsyncState<SharedPreferencesState>.data(
             SharedPreferencesState(
               allKeys: <String>['key1'],
-              selectedKey: null,
             ),
           ),
         ),
@@ -106,7 +122,6 @@ void main() {
           const AsyncState<SharedPreferencesState>.data(
             SharedPreferencesState(
               allKeys: keys,
-              selectedKey: null,
             ),
           ),
         ),
@@ -125,7 +140,6 @@ void main() {
           const AsyncState<SharedPreferencesState>.data(
             SharedPreferencesState(
               allKeys: keys,
-              selectedKey: null,
               editing: true,
             ),
           ),
@@ -140,7 +154,6 @@ void main() {
           const AsyncState<SharedPreferencesState>.data(
             SharedPreferencesState(
               allKeys: keys,
-              selectedKey: null,
               // ignore: avoid_redundant_argument_values
               editing: false,
             ),

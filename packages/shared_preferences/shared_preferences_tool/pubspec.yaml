@@ -12,6 +12,7 @@ dependencies:
   devtools_extensions: ^0.1.1
   flutter:
     sdk: flutter
+  url_launcher: ^6.2.6
   vm_service: ^14.2.1
 
 dev_dependencies:
