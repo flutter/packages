@@ -1,7 +1,11 @@
-## 14.1.4
+## 14.1.5
 
 - Adds `GoRouter.goRelative`
 - Adds `TypedRelativeGoRoute`
+
+## 14.1.4
+
+- Fixes a URL in `navigation.md`.
 
 ## 14.1.3
 
