@@ -25,8 +25,14 @@ Downloaded by pub (not CocoaPods).
   # Versions earlier than 8.4 can't be supported because that's the first version
   # that supports privacy manifests.
   s.dependency 'GoogleMaps', '>= 8.4', '< 9.0'
+  s.dependency 'Google-Maps-iOS-Utils', '4.1.0'
   s.static_framework = true
   s.platform = :ios, '14.0'
+  # Enabling Swift support for Google-Maps-iOS-Utils
+  s.swift_version = '5.0'
+  s.xcconfig = {
+    'LD_RUNPATH_SEARCH_PATHS' => '$(inherited) /usr/lib/swift',
+  }
   s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES' }
   s.resource_bundles = {'google_maps_flutter_ios_privacy' => ['Resources/PrivacyInfo.xcprivacy']}
 end

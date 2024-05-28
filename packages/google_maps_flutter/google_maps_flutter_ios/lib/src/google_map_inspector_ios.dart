@@ -6,6 +6,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart';
 
+import 'google_maps_flutter_ios.dart';
+
 /// An Android of implementation of [GoogleMapsInspectorPlatform].
 @visibleForTesting
 class GoogleMapsInspectorIOS extends GoogleMapsInspectorPlatform {
@@ -109,5 +111,24 @@ class GoogleMapsInspectorIOS extends GoogleMapsInspectorPlatform {
   Future<bool> isTrafficEnabled({required int mapId}) async {
     return (await _channelProvider(mapId)!
         .invokeMethod<bool>('map#isTrafficEnabled'))!;
+  }
+
+  @override
+  Future<List<Cluster>> getClusters({
+    required int mapId,
+    required ClusterManagerId clusterManagerId,
+  }) async {
+    final List<Object> data = (await _channelProvider(mapId)!
+        .invokeMethod<List<Object>>('clusterManager#getClusters',
+            <String, String>{'clusterManagerId': clusterManagerId.value}))!;
+    return data.map<Cluster>((Object clusterData) {
+      final Map<String, Object> clusterDataMap =
+          Map<String, Object>.from(clusterData as Map<Object, Object>);
+      return GoogleMapsFlutterIOS.parseCluster(
+          clusterDataMap['clusterManagerId']! as String,
+          clusterDataMap['position']!,
+          clusterDataMap['bounds']! as Map<Object?, Object?>,
+          clusterDataMap['markerIds']! as List<Object?>);
+    }).toList();
   }
 }

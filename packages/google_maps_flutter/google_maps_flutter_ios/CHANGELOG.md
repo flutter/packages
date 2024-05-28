@@ -1,3 +1,7 @@
+## 2.7.0
+
+* Adds support for marker clustering.
+
 ## 2.6.0
 
 * Updates the minimum allowed verison of the Google Maps SDK to 8.4, for privacy
