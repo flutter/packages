@@ -22,7 +22,7 @@
 ///  @return An object of FLTGoogleMapPolylineController
 ///
 - (FLTGoogleMapPolylineController *)polylineControllerWithMockedMap {
-  NSDictionary<NSString*, id> *polyline = @{
+  NSDictionary<NSString *, id> *polyline = @{
     @"points" : @[
       @[ @(52.4816), @(-3.1791) ], @[ @(54.043), @(-2.9925) ], @[ @(54.1396), @(-4.2739) ],
       @[ @(53.4153), @(-4.0829) ]
