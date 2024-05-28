@@ -133,11 +133,12 @@ void main() {
             ));
           }
 
+          // ignore: always_specify_types
           return Future.value(fakeInterfaces);
         }
 
         final InternetAddress listenAddress =
-            testCase['datagramSocketType'] as InternetAddress;
+            testCase['datagramSocketType']! as InternetAddress;
         await client.start(
             listenAddress: listenAddress,
             mDnsPort: 1234,
