@@ -1,4 +1,4 @@
-## NEXT
+## 2.3.1
 
 * Fixes some `package:web` tweaks.
 
