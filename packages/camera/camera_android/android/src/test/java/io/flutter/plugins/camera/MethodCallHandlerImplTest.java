@@ -16,14 +16,13 @@ import androidx.lifecycle.LifecycleObserver;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
-import io.flutter.plugins.camera.utils.TestUtils;
 import io.flutter.view.TextureRegistry;
 import org.junit.Before;
 import org.junit.Test;
 
 public class MethodCallHandlerImplTest {
 
-  MethodChannel.MethodCallHandler handler;
+  MethodCallHandlerImpl handler;
   MethodChannel.Result mockResult;
   Camera mockCamera;
 
@@ -38,7 +37,7 @@ public class MethodCallHandlerImplTest {
             mock(TextureRegistry.class));
     mockResult = mock(MethodChannel.Result.class);
     mockCamera = mock(Camera.class);
-    TestUtils.setPrivateField(handler, "camera", mockCamera);
+    handler.camera = mockCamera;
   }
 
   @Test

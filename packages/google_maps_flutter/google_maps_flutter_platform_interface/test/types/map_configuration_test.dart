@@ -33,6 +33,7 @@ void main() {
       indoorViewEnabled: false,
       trafficEnabled: false,
       buildingsEnabled: false,
+      style: 'diff base style',
     );
 
     test('only include changed fields', () async {
@@ -408,6 +409,23 @@ void main() {
       // The hash code should change.
       expect(empty.hashCode, isNot(diff.hashCode));
     });
+
+    test('handle style', () async {
+      const String aStlye = 'a style';
+      const MapConfiguration diff = MapConfiguration(style: aStlye);
+
+      const MapConfiguration empty = MapConfiguration();
+      final MapConfiguration updated = diffBase.applyDiff(diff);
+
+      // A diff applied to empty options should be the diff itself.
+      expect(empty.applyDiff(diff), diff);
+      // The diff from empty options should be the diff itself.
+      expect(diff.diffFrom(empty), diff);
+      // A diff applied to non-empty options should update that field.
+      expect(updated.style, aStlye);
+      // The hash code should change.
+      expect(empty.hashCode, isNot(diff.hashCode));
+    });
   });
 
   group('isEmpty', () {
@@ -538,6 +556,12 @@ void main() {
 
     test('is false with cloudMapId', () async {
       const MapConfiguration diff = MapConfiguration(cloudMapId: _kCloudMapId);
+
+      expect(diff.isEmpty, false);
+    });
+
+    test('is false with style', () async {
+      const MapConfiguration diff = MapConfiguration(style: 'a style');
 
       expect(diff.isEmpty, false);
     });

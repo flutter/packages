@@ -51,7 +51,7 @@ void main() {
     final String code = sink.toString();
     expect(code, contains('data class Foobar ('));
     expect(code, contains('val field1: Long? = null'));
-    expect(code, contains('fun fromList(list: List<Any?>): Foobar'));
+    expect(code, contains('fun fromList(__pigeon_list: List<Any?>): Foobar'));
     expect(code, contains('fun toList(): List<Any?>'));
   });
 
@@ -132,17 +132,19 @@ void main() {
     expect(code, contains('data class Bar ('));
     expect(code, contains('val field1: Foo,'));
     expect(code, contains('val field2: String'));
-    expect(code, contains('fun fromList(list: List<Any?>): Bar'));
-    expect(code, contains('val field1 = Foo.ofRaw(list[0] as Int)!!\n'));
-    expect(code, contains('val field2 = list[1] as String\n'));
+    expect(code, contains('fun fromList(__pigeon_list: List<Any?>): Bar'));
+    expect(
+        code, contains('val field1 = Foo.ofRaw(__pigeon_list[0] as Int)!!\n'));
+    expect(code, contains('val field2 = __pigeon_list[1] as String\n'));
     expect(code, contains('fun toList(): List<Any?>'));
   });
 
   test('primitive enum host', () {
     final Root root = Root(apis: <Api>[
-      Api(name: 'Bar', location: ApiLocation.host, methods: <Method>[
+      AstHostApi(name: 'Bar', methods: <Method>[
         Method(
             name: 'bar',
+            location: ApiLocation.host,
             returnType: const TypeDeclaration.voidDeclaration(),
             parameters: <Parameter>[
               Parameter(
@@ -176,9 +178,10 @@ void main() {
 
   test('gen one host api', () {
     final Root root = Root(apis: <Api>[
-      Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
+      AstHostApi(name: 'Api', methods: <Method>[
         Method(
           name: 'doSomething',
+          location: ApiLocation.host,
           parameters: <Parameter>[
             Parameter(
               type: TypeDeclaration(
@@ -234,11 +237,10 @@ void main() {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val inputArg = args[0] as Input
-            var wrapped: List<Any?>
-            try {
-              wrapped = listOf<Any?>(api.doSomething(inputArg))
+            val wrapped: List<Any?> = try {
+              listOf<Any?>(api.doSomething(inputArg))
             } catch (exception: Throwable) {
-              wrapped = wrapError(exception)
+              wrapError(exception)
             }
             reply.reply(wrapped)
           }
@@ -388,7 +390,7 @@ void main() {
     expect(
         code,
         contains(
-            'val aInt = list[1].let { if (it is Int) it.toLong() else it as Long }'));
+            'val aInt = __pigeon_list[1].let { num -> if (num is Int) num.toLong() else num as Long }'));
     expect(code, contains('val aNullableBool: Boolean? = null'));
     expect(code, contains('val aNullableInt: Long? = null'));
     expect(code, contains('val aNullableDouble: Double? = null'));
@@ -400,14 +402,15 @@ void main() {
     expect(
         code,
         contains(
-            'val aNullableInt = list[9].let { if (it is Int) it.toLong() else it as Long? }'));
+            'val aNullableInt = __pigeon_list[9].let { num -> if (num is Int) num.toLong() else num as Long? }'));
   });
 
   test('gen one flutter api', () {
     final Root root = Root(apis: <Api>[
-      Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
+      AstFlutterApi(name: 'Api', methods: <Method>[
         Method(
           name: 'doSomething',
+          location: ApiLocation.flutter,
           parameters: <Parameter>[
             Parameter(
               type: TypeDeclaration(
@@ -455,16 +458,19 @@ void main() {
       dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
-    expect(code,
-        contains('class Api(private val binaryMessenger: BinaryMessenger)'));
+    expect(
+        code,
+        contains(
+            'class Api(private val binaryMessenger: BinaryMessenger, private val messageChannelSuffix: String = "")'));
     expect(code, matches('fun doSomething.*Input.*Output'));
   });
 
   test('gen host void api', () {
     final Root root = Root(apis: <Api>[
-      Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
+      AstHostApi(name: 'Api', methods: <Method>[
         Method(
           name: 'doSomething',
+          location: ApiLocation.host,
           parameters: <Parameter>[
             Parameter(
               type: TypeDeclaration(
@@ -505,9 +511,10 @@ void main() {
 
   test('gen flutter void return api', () {
     final Root root = Root(apis: <Api>[
-      Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
+      AstFlutterApi(name: 'Api', methods: <Method>[
         Method(
           name: 'doSomething',
+          location: ApiLocation.flutter,
           parameters: <Parameter>[
             Parameter(
               type: TypeDeclaration(
@@ -550,9 +557,10 @@ void main() {
 
   test('gen host void argument api', () {
     final Root root = Root(apis: <Api>[
-      Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
+      AstHostApi(name: 'Api', methods: <Method>[
         Method(
           name: 'doSomething',
+          location: ApiLocation.host,
           parameters: <Parameter>[],
           returnType: TypeDeclaration(
             baseName: 'Output',
@@ -583,16 +591,17 @@ void main() {
     );
     final String code = sink.toString();
     expect(code, contains('fun doSomething(): Output'));
-    expect(code, contains('wrapped = listOf<Any?>(api.doSomething())'));
-    expect(code, contains('wrapped = wrapError(exception)'));
+    expect(code, contains('listOf<Any?>(api.doSomething())'));
+    expect(code, contains('wrapError(exception)'));
     expect(code, contains('reply(wrapped)'));
   });
 
   test('gen flutter void argument api', () {
     final Root root = Root(apis: <Api>[
-      Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
+      AstFlutterApi(name: 'Api', methods: <Method>[
         Method(
           name: 'doSomething',
+          location: ApiLocation.flutter,
           parameters: <Parameter>[],
           returnType: TypeDeclaration(
             baseName: 'Output',
@@ -723,18 +732,17 @@ void main() {
     expect(code, contains('data class Outer'));
     expect(code, contains('data class Nested'));
     expect(code, contains('val nested: Nested? = null'));
-    expect(code, contains('fun fromList(list: List<Any?>): Outer'));
-    expect(
-        code, contains('val nested: Nested? = (list[0] as List<Any?>?)?.let'));
-    expect(code, contains('Nested.fromList(it)'));
+    expect(code, contains('fun fromList(__pigeon_list: List<Any?>): Outer'));
+    expect(code, contains('val nested = __pigeon_list[0] as Nested?'));
     expect(code, contains('fun toList(): List<Any?>'));
   });
 
   test('gen one async Host Api', () {
     final Root root = Root(apis: <Api>[
-      Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
+      AstHostApi(name: 'Api', methods: <Method>[
         Method(
           name: 'doSomething',
+          location: ApiLocation.host,
           parameters: <Parameter>[
             Parameter(
               type: TypeDeclaration(
@@ -790,9 +798,10 @@ void main() {
 
   test('gen one async Flutter Api', () {
     final Root root = Root(apis: <Api>[
-      Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
+      AstFlutterApi(name: 'Api', methods: <Method>[
         Method(
           name: 'doSomething',
+          location: ApiLocation.flutter,
           parameters: <Parameter>[
             Parameter(
               type: TypeDeclaration(
@@ -847,10 +856,10 @@ void main() {
 
   test('gen one enum class', () {
     final Enum anEnum = Enum(
-      name: 'Enum1',
+      name: 'SampleEnum',
       members: <EnumMember>[
-        EnumMember(name: 'one'),
-        EnumMember(name: 'two'),
+        EnumMember(name: 'sampleVersion'),
+        EnumMember(name: 'sampleTest'),
       ],
     );
     final Class classDefinition = Class(
@@ -858,11 +867,11 @@ void main() {
       fields: <NamedType>[
         NamedType(
           type: TypeDeclaration(
-            baseName: 'Enum1',
+            baseName: 'SampleEnum',
             associatedEnum: emptyEnum,
             isNullable: true,
           ),
-          name: 'enum1',
+          name: 'sampleEnum',
         ),
       ],
     );
@@ -881,9 +890,9 @@ void main() {
       dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
-    expect(code, contains('enum class Enum1(val raw: Int)'));
-    expect(code, contains('ONE(0)'));
-    expect(code, contains('TWO(1)'));
+    expect(code, contains('enum class SampleEnum(val raw: Int)'));
+    expect(code, contains('SAMPLE_VERSION(0)'));
+    expect(code, contains('SAMPLE_TEST(1)'));
   });
 
   Iterable<String> makeIterable(String string) sync* {
@@ -979,9 +988,10 @@ void main() {
   test('host generics argument', () {
     final Root root = Root(
       apis: <Api>[
-        Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
+        AstHostApi(name: 'Api', methods: <Method>[
           Method(
               name: 'doit',
+              location: ApiLocation.host,
               returnType: const TypeDeclaration.voidDeclaration(),
               parameters: <Parameter>[
                 Parameter(
@@ -1015,9 +1025,10 @@ void main() {
   test('flutter generics argument', () {
     final Root root = Root(
       apis: <Api>[
-        Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
+        AstFlutterApi(name: 'Api', methods: <Method>[
           Method(
               name: 'doit',
+              location: ApiLocation.flutter,
               returnType: const TypeDeclaration.voidDeclaration(),
               parameters: <Parameter>[
                 Parameter(
@@ -1051,9 +1062,10 @@ void main() {
   test('host generics return', () {
     final Root root = Root(
       apis: <Api>[
-        Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
+        AstHostApi(name: 'Api', methods: <Method>[
           Method(
               name: 'doit',
+              location: ApiLocation.host,
               returnType: const TypeDeclaration(
                   baseName: 'List',
                   isNullable: false,
@@ -1077,16 +1089,17 @@ void main() {
     );
     final String code = sink.toString();
     expect(code, contains('fun doit(): List<Long?>'));
-    expect(code, contains('wrapped = listOf<Any?>(api.doit())'));
+    expect(code, contains('listOf<Any?>(api.doit())'));
     expect(code, contains('reply.reply(wrapped)'));
   });
 
   test('flutter generics return', () {
     final Root root = Root(
       apis: <Api>[
-        Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
+        AstFlutterApi(name: 'Api', methods: <Method>[
           Method(
               name: 'doit',
+              location: ApiLocation.flutter,
               returnType: const TypeDeclaration(
                   baseName: 'List',
                   isNullable: false,
@@ -1116,9 +1129,10 @@ void main() {
 
   test('host multiple args', () {
     final Root root = Root(apis: <Api>[
-      Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
+      AstHostApi(name: 'Api', methods: <Method>[
         Method(
           name: 'add',
+          location: ApiLocation.host,
           parameters: <Parameter>[
             Parameter(
                 name: 'x',
@@ -1148,20 +1162,21 @@ void main() {
     expect(
         code,
         contains(
-            'val xArg = args[0].let { if (it is Int) it.toLong() else it as Long }'));
+            'val xArg = args[0].let { num -> if (num is Int) num.toLong() else num as Long }'));
     expect(
         code,
         contains(
-            'val yArg = args[1].let { if (it is Int) it.toLong() else it as Long }'));
-    expect(code, contains('wrapped = listOf<Any?>(api.add(xArg, yArg))'));
+            'val yArg = args[1].let { num -> if (num is Int) num.toLong() else num as Long }'));
+    expect(code, contains('listOf<Any?>(api.add(xArg, yArg))'));
     expect(code, contains('reply.reply(wrapped)'));
   });
 
   test('flutter multiple args', () {
     final Root root = Root(apis: <Api>[
-      Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
+      AstFlutterApi(name: 'Api', methods: <Method>[
         Method(
           name: 'add',
+          location: ApiLocation.flutter,
           parameters: <Parameter>[
             Parameter(
                 name: 'x',
@@ -1190,7 +1205,7 @@ void main() {
     expect(
       code,
       contains(
-          'val output = it[0].let { if (it is Int) it.toLong() else it as Long }'),
+          'val output = it[0].let { num -> if (num is Int) num.toLong() else num as Long }'),
     );
     expect(code, contains('callback(Result.success(output))'));
     expect(
@@ -1203,9 +1218,10 @@ void main() {
   test('return nullable host', () {
     final Root root = Root(
       apis: <Api>[
-        Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
+        AstHostApi(name: 'Api', methods: <Method>[
           Method(
               name: 'doit',
+              location: ApiLocation.host,
               returnType: const TypeDeclaration(
                 baseName: 'int',
                 isNullable: true,
@@ -1232,9 +1248,10 @@ void main() {
   test('return nullable host async', () {
     final Root root = Root(
       apis: <Api>[
-        Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
+        AstHostApi(name: 'Api', methods: <Method>[
           Method(
               name: 'doit',
+              location: ApiLocation.host,
               returnType: const TypeDeclaration(
                 baseName: 'int',
                 isNullable: true,
@@ -1262,9 +1279,10 @@ void main() {
   test('nullable argument host', () {
     final Root root = Root(
       apis: <Api>[
-        Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
+        AstHostApi(name: 'Api', methods: <Method>[
           Method(
               name: 'doit',
+              location: ApiLocation.host,
               returnType: const TypeDeclaration.voidDeclaration(),
               parameters: <Parameter>[
                 Parameter(
@@ -1292,15 +1310,16 @@ void main() {
     expect(
         code,
         contains(
-            'val fooArg = args[0].let { if (it is Int) it.toLong() else it as Long? }'));
+            'val fooArg = args[0].let { num -> if (num is Int) num.toLong() else num as Long? }'));
   });
 
   test('nullable argument flutter', () {
     final Root root = Root(
       apis: <Api>[
-        Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
+        AstFlutterApi(name: 'Api', methods: <Method>[
           Method(
               name: 'doit',
+              location: ApiLocation.flutter,
               returnType: const TypeDeclaration.voidDeclaration(),
               parameters: <Parameter>[
                 Parameter(
@@ -1333,9 +1352,10 @@ void main() {
 
   test('nonnull fields', () {
     final Root root = Root(apis: <Api>[
-      Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
+      AstHostApi(name: 'Api', methods: <Method>[
         Method(
           name: 'doSomething',
+          location: ApiLocation.host,
           parameters: <Parameter>[
             Parameter(
               type: TypeDeclaration(
@@ -1389,13 +1409,13 @@ void main() {
 
     final Root root = Root(
       apis: <Api>[
-        Api(
+        AstFlutterApi(
           name: 'api',
-          location: ApiLocation.flutter,
           documentationComments: <String>[comments[count++]],
           methods: <Method>[
             Method(
               name: 'method',
+              location: ApiLocation.flutter,
               returnType: const TypeDeclaration.voidDeclaration(),
               documentationComments: <String>[comments[count++]],
               parameters: <Parameter>[
@@ -1470,12 +1490,12 @@ void main() {
   test("doesn't create codecs if no custom datatypes", () {
     final Root root = Root(
       apis: <Api>[
-        Api(
+        AstFlutterApi(
           name: 'Api',
-          location: ApiLocation.flutter,
           methods: <Method>[
             Method(
               name: 'method',
+              location: ApiLocation.flutter,
               returnType: const TypeDeclaration.voidDeclaration(),
               parameters: <Parameter>[
                 Parameter(
@@ -1509,9 +1529,10 @@ void main() {
 
   test('creates custom codecs if custom datatypes present', () {
     final Root root = Root(apis: <Api>[
-      Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
+      AstFlutterApi(name: 'Api', methods: <Method>[
         Method(
           name: 'doSomething',
+          location: ApiLocation.flutter,
           parameters: <Parameter>[
             Parameter(
                 type: TypeDeclaration(
@@ -1563,10 +1584,11 @@ void main() {
   test('creates api error class for custom errors', () {
     final Method method = Method(
         name: 'doSomething',
+        location: ApiLocation.host,
         returnType: const TypeDeclaration.voidDeclaration(),
         parameters: <Parameter>[]);
-    final Api api = Api(
-        name: 'SomeApi', location: ApiLocation.host, methods: <Method>[method]);
+    final AstHostApi api =
+        AstHostApi(name: 'SomeApi', methods: <Method>[method]);
     final Root root = Root(
       apis: <Api>[api],
       classes: <Class>[],
@@ -1593,12 +1615,12 @@ void main() {
   test('connection error contains channel name', () {
     final Root root = Root(
       apis: <Api>[
-        Api(
+        AstFlutterApi(
           name: 'Api',
-          location: ApiLocation.flutter,
           methods: <Method>[
             Method(
               name: 'method',
+              location: ApiLocation.flutter,
               returnType: const TypeDeclaration.voidDeclaration(),
               parameters: <Parameter>[
                 Parameter(
@@ -1639,12 +1661,12 @@ void main() {
   test('gen host uses default error class', () {
     final Root root = Root(
       apis: <Api>[
-        Api(
+        AstHostApi(
           name: 'Api',
-          location: ApiLocation.host,
           methods: <Method>[
             Method(
               name: 'method',
+              location: ApiLocation.host,
               returnType: const TypeDeclaration.voidDeclaration(),
               parameters: <Parameter>[
                 Parameter(
@@ -1678,12 +1700,12 @@ void main() {
   test('gen flutter uses default error class', () {
     final Root root = Root(
       apis: <Api>[
-        Api(
+        AstFlutterApi(
           name: 'Api',
-          location: ApiLocation.flutter,
           methods: <Method>[
             Method(
               name: 'method',
+              location: ApiLocation.flutter,
               returnType: const TypeDeclaration.voidDeclaration(),
               parameters: <Parameter>[
                 Parameter(
@@ -1717,12 +1739,12 @@ void main() {
   test('gen host uses error class', () {
     final Root root = Root(
       apis: <Api>[
-        Api(
+        AstHostApi(
           name: 'Api',
-          location: ApiLocation.host,
           methods: <Method>[
             Method(
               name: 'method',
+              location: ApiLocation.host,
               returnType: const TypeDeclaration.voidDeclaration(),
               parameters: <Parameter>[
                 Parameter(
@@ -1759,12 +1781,12 @@ void main() {
   test('gen flutter uses error class', () {
     final Root root = Root(
       apis: <Api>[
-        Api(
+        AstFlutterApi(
           name: 'Api',
-          location: ApiLocation.flutter,
           methods: <Method>[
             Method(
               name: 'method',
+              location: ApiLocation.flutter,
               returnType: const TypeDeclaration.voidDeclaration(),
               parameters: <Parameter>[
                 Parameter(

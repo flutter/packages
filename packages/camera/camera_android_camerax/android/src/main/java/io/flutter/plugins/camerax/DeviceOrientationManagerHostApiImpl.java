@@ -48,6 +48,11 @@ public class DeviceOrientationManagerHostApiImpl implements DeviceOrientationMan
   @Override
   public void startListeningForDeviceOrientationChange(
       @NonNull Boolean isFrontFacing, @NonNull Long sensorOrientation) {
+    if (activity == null) {
+      throw new IllegalStateException(
+          "Activity must be set to start listening for device orientation changes.");
+    }
+
     deviceOrientationManager =
         cameraXProxy.createDeviceOrientationManager(
             activity,

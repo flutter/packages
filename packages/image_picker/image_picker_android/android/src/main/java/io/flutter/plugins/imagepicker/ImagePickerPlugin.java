@@ -125,7 +125,7 @@ public class ImagePickerPlugin implements FlutterPlugin, ActivityAware, ImagePic
       this.messenger = messenger;
 
       delegate = constructDelegate(activity);
-      ImagePickerApi.setup(messenger, handler);
+      ImagePickerApi.setUp(messenger, handler);
       observer = new LifeCycleObserver(activity);
       if (registrar != null) {
         // V1 embedding setup for activity listeners.
@@ -159,7 +159,7 @@ public class ImagePickerPlugin implements FlutterPlugin, ActivityAware, ImagePic
         lifecycle = null;
       }
 
-      ImagePickerApi.setup(messenger, null);
+      ImagePickerApi.setUp(messenger, null);
 
       if (application != null) {
         application.unregisterActivityLifecycleCallbacks(observer);
@@ -317,7 +317,10 @@ public class ImagePickerPlugin implements FlutterPlugin, ActivityAware, ImagePic
 
     setCameraDevice(delegate, source);
     if (generalOptions.getAllowMultiple()) {
-      delegate.chooseMultiImageFromGallery(options, generalOptions.getUsePhotoPicker(), result);
+      int limit = ImagePickerUtils.getLimitFromOption(generalOptions);
+
+      delegate.chooseMultiImageFromGallery(
+          options, generalOptions.getUsePhotoPicker(), limit, result);
     } else {
       switch (source.getType()) {
         case GALLERY:

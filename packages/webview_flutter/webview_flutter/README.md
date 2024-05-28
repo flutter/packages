@@ -11,7 +11,7 @@ On Android the WebView widget is backed by a [WebView](https://developer.android
 
 |             | Android        | iOS   |
 |-------------|----------------|-------|
-| **Support** | SDK 19+ or 20+ | 11.0+ |
+| **Support** | SDK 19+ or 20+ | 12.0+ |
 
 ## Usage
 Add `webview_flutter` as a [dependency in your pubspec.yaml file](https://pub.dev/packages/webview_flutter/install).
@@ -32,6 +32,7 @@ controller = WebViewController()
       },
       onPageStarted: (String url) {},
       onPageFinished: (String url) {},
+      onHttpError: (HttpResponseError error) {},
       onWebResourceError: (WebResourceError error) {},
       onNavigationRequest: (NavigationRequest request) {
         if (request.url.startsWith('https://www.youtube.com/')) {

@@ -20,9 +20,11 @@ import java.util.concurrent.Executor;
 public class PendingRecordingHostApiImpl implements PendingRecordingHostApi {
   private final BinaryMessenger binaryMessenger;
   private final InstanceManager instanceManager;
-  private Context context;
+  @Nullable private Context context;
 
   @VisibleForTesting @NonNull public CameraXProxy cameraXProxy = new CameraXProxy();
+
+  @VisibleForTesting PendingRecordingFlutterApiImpl pendingRecordingFlutterApi;
 
   @VisibleForTesting SystemServicesFlutterApiImpl systemServicesFlutterApi;
 
@@ -37,6 +39,8 @@ public class PendingRecordingHostApiImpl implements PendingRecordingHostApi {
     this.context = context;
     systemServicesFlutterApi = cameraXProxy.createSystemServicesFlutterApiImpl(binaryMessenger);
     recordingFlutterApi = new RecordingFlutterApiImpl(binaryMessenger, instanceManager);
+    pendingRecordingFlutterApi =
+        new PendingRecordingFlutterApiImpl(binaryMessenger, instanceManager);
   }
 
   /** Sets the context, which is used to get the {@link Executor} needed to start the recording. */
@@ -63,16 +67,26 @@ public class PendingRecordingHostApiImpl implements PendingRecordingHostApi {
   @Nullable
   @VisibleForTesting
   public Executor getExecutor() {
+    if (context == null) {
+      throw new IllegalStateException("Context must be set to get an executor to start recording.");
+    }
+
     return ContextCompat.getMainExecutor(context);
   }
 
   /**
    * Handles {@link VideoRecordEvent}s that come in during video recording. Sends any errors
    * encountered using {@link SystemServicesFlutterApiImpl}.
+   *
+   * <p>Currently only sends {@link VideoRecordEvent.Start} and {@link VideoRecordEvent.Finalize}
+   * events to the Dart side.
    */
   @VisibleForTesting
   public void handleVideoRecordEvent(@NonNull VideoRecordEvent event) {
-    if (event instanceof VideoRecordEvent.Finalize) {
+    if (event instanceof VideoRecordEvent.Start) {
+      pendingRecordingFlutterApi.sendVideoRecordingStartedEvent(reply -> {});
+    } else if (event instanceof VideoRecordEvent.Finalize) {
+      pendingRecordingFlutterApi.sendVideoRecordingFinalizedEvent(reply -> {});
       VideoRecordEvent.Finalize castedEvent = (VideoRecordEvent.Finalize) event;
       if (castedEvent.hasError()) {
         String cameraErrorMessage;

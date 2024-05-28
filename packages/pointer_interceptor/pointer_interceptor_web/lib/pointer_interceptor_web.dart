@@ -18,7 +18,10 @@ class PointerInterceptorWeb extends PointerInterceptorPlatform {
 
   // Slightly modify the created `element` (for `debug` mode).
   void _onElementCreated(Object element) {
-    (element as web.HTMLElement).style.backgroundColor = 'rgba(255, 0, 0, .5)';
+    (element as web.HTMLElement)
+      ..style.width = '100%'
+      ..style.height = '100%'
+      ..style.backgroundColor = 'rgba(255, 0, 0, .5)';
   }
 
   @override

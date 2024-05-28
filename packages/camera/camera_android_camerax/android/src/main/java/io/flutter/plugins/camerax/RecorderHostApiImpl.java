@@ -23,7 +23,7 @@ import java.util.concurrent.Executor;
 public class RecorderHostApiImpl implements RecorderHostApi {
   private final BinaryMessenger binaryMessenger;
   private final InstanceManager instanceManager;
-  private Context context;
+  @Nullable private Context context;
 
   @NonNull @VisibleForTesting public CameraXProxy cameraXProxy = new CameraXProxy();
 
@@ -46,6 +46,10 @@ public class RecorderHostApiImpl implements RecorderHostApi {
       @Nullable Long aspectRatio,
       @Nullable Long bitRate,
       @Nullable Long qualitySelector) {
+    if (context == null) {
+      throw new IllegalStateException("Context must be set to create Recorder instance.");
+    }
+
     Recorder.Builder recorderBuilder = cameraXProxy.createRecorderBuilder();
     if (aspectRatio != null) {
       recorderBuilder.setAspectRatio(aspectRatio.intValue());
@@ -89,6 +93,10 @@ public class RecorderHostApiImpl implements RecorderHostApi {
   @NonNull
   @Override
   public Long prepareRecording(@NonNull Long identifier, @NonNull String path) {
+    if (context == null) {
+      throw new IllegalStateException("Context must be set to prepare recording.");
+    }
+
     Recorder recorder = getRecorderFromInstanceId(identifier);
     File temporaryCaptureFile = openTempFile(path);
     FileOutputOptions fileOutputOptions =

@@ -26,10 +26,10 @@ android {
     if (project.android.hasProperty("namespace")) {
         namespace 'com.example.espresso'
     }
-    compileSdkVersion 33
+    compileSdk 34
 
     defaultConfig {
-        minSdkVersion 16
+        minSdkVersion 19
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 

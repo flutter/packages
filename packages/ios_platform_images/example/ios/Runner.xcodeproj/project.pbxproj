@@ -10,7 +10,7 @@
 		0DE21BF72447752100097E3A /* textfile in Resources */ = {isa = PBXBuildFile; fileRef = 0DE21BF62447752100097E3A /* textfile */; };
 		101538FD877087FE0BE2EA00 /* Pods_Runner.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 70ED43CFA0E2E576A8AB8B24 /* Pods_Runner.framework */; };
 		1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */ = {isa = PBXBuildFile; fileRef = 1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */; };
-		3131C9A32ADEFDA9000703FA /* UIImage+ios_platform_imagesTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 3131C9A22ADEFDA8000703FA /* UIImage+ios_platform_imagesTests.m */; };
+		3131C9A32ADEFDA9000703FA /* BuildFile in Sources */ = {isa = PBXBuildFile; };
 		31DC4A212AA8CC9300781E88 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FD1CF9000F007C117D /* Assets.xcassets */; };
 		3B3967161E833CAA004F5970 /* AppFrameworkInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */; };
 		74858FAF1ED2DC5600515810 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74858FAE1ED2DC5600515810 /* AppDelegate.swift */; };
@@ -50,7 +50,7 @@
 		0EF1CD9A3A3064B5289EF22E /* Pods-Runner.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.release.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.release.xcconfig"; sourceTree = "<group>"; };
 		1498D2321E8E86230040F4C2 /* GeneratedPluginRegistrant.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GeneratedPluginRegistrant.h; sourceTree = "<group>"; };
 		1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GeneratedPluginRegistrant.m; sourceTree = "<group>"; };
-		33B0E32B2AB348FF0006F0C1 /* UIImage+ios_platform_imagesTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIImage+ios_platform_imagesTests.m"; sourceTree = "<group>"; };		3153765C2AAA95AD009694AF /* libios_platform_images.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libios_platform_images.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		3153765C2AAA95AD009694AF /* libios_platform_images.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libios_platform_images.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = AppFrameworkInfo.plist; path = Flutter/AppFrameworkInfo.plist; sourceTree = "<group>"; };
 		4B56C310C5932F84CD6C17AC /* Pods-Runner.profile.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.profile.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.profile.xcconfig"; sourceTree = "<group>"; };
 		70ED43CFA0E2E576A8AB8B24 /* Pods_Runner.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Runner.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -167,7 +167,6 @@
 		F76AC1BF266713D00040C8BC /* RunnerTests */ = {
 			isa = PBXGroup;
 			children = (
-				3131C9A22ADEFDA8000703FA /* UIImage+ios_platform_imagesTests.m */,
 				F76AC1C0266713D00040C8BC /* IosPlatformImagesTests.swift */,
 				F76AC1C2266713D00040C8BC /* Info.plist */,
 			);
@@ -342,10 +341,12 @@
 			);
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/integration_test/integration_test.framework",
 				"${BUILT_PRODUCTS_DIR}/ios_platform_images/ios_platform_images.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/integration_test.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ios_platform_images.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -391,7 +392,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3131C9A32ADEFDA9000703FA /* UIImage+ios_platform_imagesTests.m in Sources */,
+				3131C9A32ADEFDA9000703FA /* BuildFile in Sources */,
 				F76AC1C1266713D00040C8BC /* IosPlatformImagesTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -685,7 +686,7 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"${PODS_CONFIGURATION_BUILD_DIR}/ios_platform_images/ios_platform_images.framework/Headers\"",
-					$CONFIGURATION_TEMP_DIR/YourProject.build/DerivedSources,
+					"$CONFIGURATION_TEMP_DIR/YourProject.build/DerivedSources",
 				);
 				INFOPLIST_FILE = RunnerTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -712,7 +713,7 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"${PODS_CONFIGURATION_BUILD_DIR}/ios_platform_images/ios_platform_images.framework/Headers\"",
-					$CONFIGURATION_TEMP_DIR/YourProject.build/DerivedSources,
+					"$CONFIGURATION_TEMP_DIR/YourProject.build/DerivedSources",
 				);
 				INFOPLIST_FILE = RunnerTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -738,7 +739,7 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"${PODS_CONFIGURATION_BUILD_DIR}/ios_platform_images/ios_platform_images.framework/Headers\"",
-					$CONFIGURATION_TEMP_DIR/YourProject.build/DerivedSources,
+					"$CONFIGURATION_TEMP_DIR/YourProject.build/DerivedSources",
 				);
 				INFOPLIST_FILE = RunnerTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (

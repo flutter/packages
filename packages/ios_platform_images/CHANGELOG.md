@@ -1,3 +1,12 @@
+## 0.2.4
+
+* Updates minimum iOS version to 12.0 and minimum Flutter version to 3.16.6.
+* Adds Swift Package Manager compatibility.
+
+## 0.2.3+2
+
+* Adds privacy manifest.
+
 ## 0.2.3+1
 
 * Improves example code in README.

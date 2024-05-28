@@ -3,11 +3,11 @@ tasks:
     script: .ci/scripts/prepare_tool.sh
     infra_step: true # Note infra steps failing prevents "always" from running.
   - name: download Dart and Android deps
-    script: script/tool_runner.sh
+    script: .ci/scripts/tool_runner.sh
     infra_step: true
     args: ["fetch-deps", "--android", "--supporting-target-platforms-only"]
   - name: Firebase Test Lab
-    script: script/tool_runner.sh
+    script: .ci/scripts/tool_runner.sh
     args:
       - "firebase-test-lab"
       - "--device"

@@ -3,7 +3,8 @@
 // found in the LICENSE file.
 
 import 'dart:async';
-import 'dart:js_util';
+import 'dart:js_interop';
+import 'dart:js_interop_unsafe';
 import 'dart:ui_web' as ui_web;
 
 import 'package:flutter/foundation.dart';
@@ -12,7 +13,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:url_launcher_platform_interface/link.dart';
-import 'package:web/helpers.dart' as html;
+import 'package:url_launcher_platform_interface/url_launcher_platform_interface.dart';
+import 'package:web/web.dart' as html;
 
 /// The unique identifier for the view type to be used for link platform views.
 const String linkViewType = '__url_launcher::link';
@@ -97,6 +99,8 @@ class WebLinkDelegateState extends State<WebLinkDelegate> {
   }
 }
 
+final JSAny _useCapture = <String, Object>{'capture': true}.jsify()!;
+
 /// Controls link views.
 class LinkViewController extends PlatformViewController {
   /// Creates a [LinkViewController] instance with the unique [viewId].
@@ -105,10 +109,13 @@ class LinkViewController extends PlatformViewController {
       // This is the first controller being created, attach the global click
       // listener.
 
-      _clickSubscription =
-          const html.EventStreamProvider<html.MouseEvent>('click')
-              .forTarget(html.window)
-              .listen(_onGlobalClick);
+      // Why listen in the capture phase?
+      //
+      // To ensure we always receive the event even if the engine calls
+      // `stopPropagation`.
+      html.window
+          .addEventListener('keydown', _jsGlobalKeydownListener, _useCapture);
+      html.window.addEventListener('click', _jsGlobalClickListener);
     }
     _instances[viewId] = this;
   }
@@ -141,13 +148,70 @@ class LinkViewController extends PlatformViewController {
 
   static int? _hitTestedViewId;
 
-  static late StreamSubscription<html.MouseEvent> _clickSubscription;
+  static final JSFunction _jsGlobalKeydownListener = _onGlobalKeydown.toJS;
+  static final JSFunction _jsGlobalClickListener = _onGlobalClick.toJS;
+
+  static void _onGlobalKeydown(html.KeyboardEvent event) {
+    // Why not use `event.target`?
+    //
+    // Because the target is usually <flutter-view> and not the <a> element, so
+    // it's not very helpful. That's because focus management is handled by
+    // Flutter, and the browser doesn't always know which element is focused. In
+    // fact, in many cases, the focused widget is fully drawn on canvas and
+    // there's no corresponding HTML element to receive browser focus.
+
+    // Why not check for "Enter" or "Space" keys?
+    //
+    // Because we don't know (nor do we want to assume) which keys the app
+    // considers to be "trigger" keys. So we let the app do its thing, and if it
+    // decides to "trigger" the link, it will call `followLink`, which will set
+    // `_hitTestedViewId` to the ID of the triggered Link.
+
+    // Life of a keydown event:
+    //
+    // For simplicity, let's assume we are dealing with a Link widget setup with
+    // with a button widget like this:
+    //
+    // ```dart
+    // Link(
+    //   uri: Uri.parse('...'),
+    //   builder: (context, followLink) {
+    //     return ElevatedButton(
+    //       onPressed: followLink,
+    //       child: const Text('Press me'),
+    //     );
+    //   },
+    // );
+    // ```
+    //
+    // 1. The user navigates through the UI using the Tab key until they reach
+    //    the button in question.
+    // 2. The user presses the Enter key to trigger the link.
+    // 3. The framework receives the Enter keydown event:
+    //    - The event is dispatched to the button widget.
+    //    - The button widget calls `onPressed` and therefor `followLink`.
+    //    - `followLink` calls `LinkViewController.registerHitTest`.
+    //    - `LinkViewController.registerHitTest` sets `_hitTestedViewId`.
+    // 4. The `LinkViewController` also receives the keydown event:
+    //    - We check the value of `_hitTestedViewId`.
+    //    - If `_hitTestedViewId` is set, it means the app triggered the link.
+    //    - We navigate to the Link's URI.
+
+    // The keydown event is not directly associated with the target Link, so
+    // we need to look for the recently hit tested Link to handle the event.
+    if (_hitTestedViewId != null) {
+      _instances[_hitTestedViewId]?._onDomKeydown();
+    }
+    // After the keyboard event has been received, clean up the hit test state
+    // so we can start fresh on the next event.
+    unregisterHitTest();
+  }
 
   static void _onGlobalClick(html.MouseEvent event) {
     final int? viewId = getViewIdFromTarget(event);
     _instances[viewId]?._onDomClick(event);
     // After the DOM click event has been received, clean up the hit test state
-    // so we can start fresh on the next click.
+    // so we can start fresh on the next event.
     unregisterHitTest();
   }
 
@@ -172,7 +236,7 @@ class LinkViewController extends PlatformViewController {
 
   Future<void> _initialize() async {
     _element = html.document.createElement('a') as html.HTMLElement;
-    setProperty(_element, linkViewIdProperty, viewId);
+    _element[linkViewIdProperty] = viewId.toJS;
     _element.style
       ..opacity = '0'
       ..display = 'block'
@@ -191,6 +255,27 @@ class LinkViewController extends PlatformViewController {
     await SystemChannels.platform_views.invokeMethod<void>('create', args);
   }
 
+  void _onDomKeydown() {
+    assert(
+      _hitTestedViewId == viewId,
+      'Keydown event should only be handled by the hit tested Link',
+    );
+
+    if (_isExternalLink) {
+      // External links are not handled by the browser when triggered via a
+      // keydown, so we have to launch the url manually.
+      UrlLauncherPlatform.instance
+          .launchUrl(_uri.toString(), const LaunchOptions());
+      return;
+    }
+
+    // A uri that doesn't have a scheme is an internal route name. In this
+    // case, we push it via Flutter's navigation system instead of using
+    // `launchUrl`.
+    final String routeName = _uri.toString();
+    pushRouteNameToFramework(null, routeName);
+  }
+
   void _onDomClick(html.MouseEvent event) {
     final bool isHitTested = _hitTestedViewId == viewId;
     if (!isHitTested) {
@@ -201,7 +286,7 @@ class LinkViewController extends PlatformViewController {
       return;
     }
 
-    if (_uri != null && _uri!.hasScheme) {
+    if (_isExternalLink) {
       // External links will be handled by the browser, so we don't have to do
       // anything.
       return;
@@ -216,6 +301,7 @@ class LinkViewController extends PlatformViewController {
   }
 
   Uri? _uri;
+  bool get _isExternalLink => _uri != null && _uri!.hasScheme;
 
   /// Set the [Uri] value for this link.
   ///
@@ -273,7 +359,9 @@ class LinkViewController extends PlatformViewController {
     assert(_instances[viewId] == this);
     _instances.remove(viewId);
     if (_instances.isEmpty) {
-      await _clickSubscription.cancel();
+      html.window.removeEventListener('click', _jsGlobalClickListener);
+      html.window.removeEventListener(
+          'keydown', _jsGlobalKeydownListener, _useCapture);
     }
     await SystemChannels.platform_views.invokeMethod<void>('dispose', viewId);
   }
@@ -283,11 +371,7 @@ class LinkViewController extends PlatformViewController {
 int? getViewIdFromTarget(html.Event event) {
   final html.Element? linkElement = getLinkElementFromTarget(event);
   if (linkElement != null) {
-    // TODO(stuartmorgan): Remove this ignore (and change to getProperty<int>)
-    // once the templated version is available on stable. On master (2.8) this
-    // is already not necessary.
-    // ignore: return_of_invalid_type
-    return getProperty(linkElement, linkViewIdProperty);
+    return linkElement.getProperty<JSNumber>(linkViewIdProperty.toJS).toDartInt;
   }
   return null;
 }
@@ -316,5 +400,5 @@ html.Element? getLinkElementFromTarget(html.Event event) {
 bool isLinkElement(html.Element? element) {
   return element != null &&
       element.tagName == 'A' &&
-      hasProperty(element, linkViewIdProperty);
+      element.hasProperty(linkViewIdProperty.toJS).toDart;
 }

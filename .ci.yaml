@@ -18,6 +18,9 @@ platform_properties:
         [
           {"dependency": "curl", "version": "version:7.64.0"}
         ]
+  # The current android emulator config names can be found here:
+  # https://chromium.googlesource.com/chromium/src.git/+/HEAD/tools/android/avd/proto
+  # You may use those names for the android_virtual_device version.
   linux_android:
     properties:
       os: Ubuntu
@@ -27,7 +30,8 @@ platform_properties:
         [
           {"dependency": "android_sdk", "version": "version:33v6"},
           {"dependency": "open_jdk", "version": "version:17"},
-          {"dependency": "curl", "version": "version:7.64.0"}
+          {"dependency": "curl", "version": "version:7.64.0"},
+          {"dependency": "avd_cipd_version", "version": "build_id:8759428741582061553"}
         ]
   linux_android_legacy:
     properties:
@@ -39,7 +43,8 @@ platform_properties:
           {"dependency": "android_sdk", "version": "version:33v6"},
           {"dependency": "open_jdk", "version": "version:17"},
           {"dependency": "curl", "version": "version:7.64.0"},
-          {"dependency": "android_virtual_device", "version": "22"}
+          {"dependency": "android_virtual_device", "version": "generic_android22.textpb"},
+          {"dependency": "avd_cipd_version", "version": "build_id:8759428741582061553"}
         ]
   linux_desktop:
     properties:
@@ -85,12 +90,12 @@ platform_properties:
         [
           {"dependency": "ruby", "version": "ruby_3.1-pod_1.13"}
         ]
-      os: Mac-12|Mac-13
+      os: Mac-13
       device_type: none
       cpu: arm64
       $flutter/osx_sdk : >-
         {
-          "sdk_version": "14e300c"
+          "sdk_version": "15a240d"
         }
   mac_x64:
     properties:
@@ -98,29 +103,15 @@ platform_properties:
         [
           {"dependency": "ruby", "version": "ruby_3.1-pod_1.13"}
         ]
-      os: Mac-12|Mac-13
+      os: Mac-13
       device_type: none
       cpu: x86
       $flutter/osx_sdk : >-
         {
-          "sdk_version": "14e300c"
+          "sdk_version": "15a240d"
         }
 
 targets:
-  ### Linux-host general tasks ###
-  - name: Linux repo_tools_tests
-    recipe: packages/packages
-    timeout: 30
-    properties:
-      add_recipes_cq: "true"
-      target_file: repo_tools_tests.yaml
-      channel: master
-      version_file: flutter_master.version
-      env_variables: >-
-        {
-          "CHANNEL": "master"
-        }
-
   - name: Linux repo_checks
     recipe: packages/packages
     timeout: 30
@@ -159,7 +150,6 @@ targets:
     recipe: packages/packages
     timeout: 60
     properties:
-      add_recipes_cq: "true"
       target_file: dart_unit_tests.yaml
       channel: master
       version_file: flutter_master.version
@@ -217,7 +207,6 @@ targets:
     recipe: packages/packages
     timeout: 60
     properties:
-      add_recipes_cq: "true"
       target_file: web_dart_unit_tests.yaml
       channel: master
       version_file: flutter_master.version
@@ -260,7 +249,6 @@ targets:
     recipe: packages/packages
     timeout: 30
     properties:
-      add_recipes_cq: "true"
       target_file: analyze.yaml
       channel: master
       version_file: flutter_master.version
@@ -281,19 +269,10 @@ targets:
           "CHANNEL": "stable"
         }
 
-  - name: Linux analyze_downgraded master
-    recipe: packages/packages
-    timeout: 30
-    properties:
-      add_recipes_cq: "true"
-      target_file: analyze_downgraded.yaml
-      channel: master
-      version_file: flutter_master.version
-      env_variables: >-
-        {
-          "CHANNEL": "master"
-        }
-
+  # This is only run on stable since it's extremely likely that stable will
+  # resolve to packages that are older (or at least as old) than on master, so
+  # running a second copy with master is very unlikely to catch anything that
+  # this doesn't.
   - name: Linux analyze_downgraded stable
     recipe: packages/packages
     timeout: 30
@@ -313,10 +292,10 @@ targets:
     timeout: 30
     properties:
       target_file: analyze_legacy.yaml
-      channel: "3.13.9"
+      channel: "3.22.0"
       env_variables: >-
         {
-          "CHANNEL": "3.13.9"
+          "CHANNEL": "3.22.0"
         }
 
   - name: Linux analyze_legacy N-2
@@ -324,10 +303,10 @@ targets:
     timeout: 30
     properties:
       target_file: analyze_legacy.yaml
-      channel: "3.10.6"
+      channel: "3.16.9"
       env_variables: >-
         {
-          "CHANNEL": "3.10.6"
+          "CHANNEL": "3.16.9"
         }
 
   - name: Linux_android custom_package_tests master
@@ -340,12 +319,14 @@ targets:
       version_file: flutter_master.version
       target_file: linux_custom_package_tests.yaml
       # Pigeon tests need Andoid deps (thus the Linux_android base), emulator,
-      # and clang-format.
+      # and Linux desktop deps.
       # web_benchmarks needs Chrome.
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "34"},
+          {"dependency": "android_virtual_device", "version": "android_34_google_apis_x64.textpb"},
           {"dependency": "clang", "version": "git_revision:5d5aba78dbbee75508f01bcaa69aedb2ab79065a"},
+          {"dependency": "cmake", "version": "build_id:8787856497187628321"},
+          {"dependency": "ninja", "version": "version:1.9.0"},
           {"dependency": "chrome_and_driver", "version": "version:114.0"}
         ]
       channel: master
@@ -365,8 +346,10 @@ targets:
       # See comments on 'master' version above.
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "34"},
+          {"dependency": "android_virtual_device", "version": "android_34_google_apis_x64.textpb"},
           {"dependency": "clang", "version": "git_revision:5d5aba78dbbee75508f01bcaa69aedb2ab79065a"},
+          {"dependency": "cmake", "version": "build_id:8787856497187628321"},
+          {"dependency": "ninja", "version": "version:1.9.0"},
           {"dependency": "chrome_and_driver", "version": "version:114.0"}
         ]
       channel: stable
@@ -380,7 +363,6 @@ targets:
     recipe: packages/packages
     timeout: 30
     properties:
-      add_recipes_cq: "true"
       version_file: flutter_master.version
       target_file: android_build_all_packages.yaml
       channel: master
@@ -412,9 +394,6 @@ targets:
           "CHANNEL": "stable"
         }
 
-  # All of the Linux_android android_platform_tests shards have the same
-  # dependency list, despite some running on Android 33 AVDs versus 34.
-  # See https://github.com/flutter/flutter/issues/137082 for context.
   - name: Linux_android android_platform_tests_shard_1 master
     recipe: packages/packages
     timeout: 60
@@ -422,11 +401,10 @@ targets:
       target_file: android_platform_tests.yaml
       channel: master
       version_file: flutter_master.version
-      # set up for 34
       package_sharding: "--shardIndex 0 --shardCount 6"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "34"}
+          {"dependency": "android_virtual_device", "version": "android_34_google_apis_x64.textpb"}
         ]
       env_variables: >-
         {
@@ -441,11 +419,10 @@ targets:
       target_file: android_platform_tests.yaml
       channel: master
       version_file: flutter_master.version
-      # set up for 34
       package_sharding: "--shardIndex 1 --shardCount 6"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "34"}
+          {"dependency": "android_virtual_device", "version": "android_34_google_apis_x64.textpb"}
         ]
       env_variables: >-
         {
@@ -460,11 +437,10 @@ targets:
       target_file: android_platform_tests.yaml
       channel: master
       version_file: flutter_master.version
-      # set up for 34
       package_sharding: "--shardIndex 2 --shardCount 6"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "34"}
+          {"dependency": "android_virtual_device", "version": "android_34_google_apis_x64.textpb"}
         ]
       env_variables: >-
         {
@@ -479,11 +455,10 @@ targets:
       target_file: android_platform_tests.yaml
       channel: master
       version_file: flutter_master.version
-      # set up for 34
       package_sharding: "--shardIndex 3 --shardCount 6"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "34"}
+          {"dependency": "android_virtual_device", "version": "android_34_google_apis_x64.textpb"}
         ]
       env_variables: >-
         {
@@ -498,11 +473,10 @@ targets:
       target_file: android_platform_tests.yaml
       channel: master
       version_file: flutter_master.version
-      # set up for 34
       package_sharding: "--shardIndex 4 --shardCount 6"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "34"}
+          {"dependency": "android_virtual_device", "version": "android_34_google_apis_x64.textpb"}
         ]
       env_variables: >-
         {
@@ -517,54 +491,15 @@ targets:
       target_file: android_platform_tests.yaml
       channel: master
       version_file: flutter_master.version
-      # set up for 34
       package_sharding: "--shardIndex 5 --shardCount 6"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "34"}
+          {"dependency": "android_virtual_device", "version": "android_34_google_apis_x64.textpb"}
         ]
       env_variables: >-
         {
           "CHANNEL": "master",
           "PACKAGE_SHARDING": "--shardIndex 5 --shardCount 6"
-        }
-
-  - name: Linux_android android_platform_tests_api_33_shard_1 master
-    recipe: packages/packages
-    timeout: 60
-    properties:
-      target_file: android_platform_tests_api_33_avd.yaml
-      channel: master
-      version_file: flutter_master.version
-      # set up for 33
-      package_sharding: "--shardIndex 0 --shardCount 2"
-      dependencies: >-
-        [
-          {"dependency": "android_virtual_device", "version": "33"}
-        ]
-      env_variables: >-
-        {
-          "CHANNEL": "master",
-          "PACKAGE_SHARDING": "--shardIndex 0 --shardCount 2"
-        }
-
-  - name: Linux_android android_platform_tests_api_33_shard_2 master
-    recipe: packages/packages
-    timeout: 60
-    properties:
-      target_file: android_platform_tests_api_33_avd.yaml
-      channel: master
-      version_file: flutter_master.version
-      # set up for 33
-      package_sharding: "--shardIndex 1 --shardCount 2"
-      dependencies: >-
-        [
-          {"dependency": "android_virtual_device", "version": "33"}
-        ]
-      env_variables: >-
-        {
-          "CHANNEL": "master",
-          "PACKAGE_SHARDING": "--shardIndex 1 --shardCount 2"
         }
 
   - name: Linux_android android_platform_tests_shard_1 stable
@@ -578,7 +513,7 @@ targets:
       package_sharding: "--shardIndex 0 --shardCount 6"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "34"}
+          {"dependency": "android_virtual_device", "version": "android_34_google_apis_x64.textpb"}
         ]
       env_variables: >-
         {
@@ -597,7 +532,7 @@ targets:
       package_sharding: "--shardIndex 1 --shardCount 6"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "34"}
+          {"dependency": "android_virtual_device", "version": "android_34_google_apis_x64.textpb"}
         ]
       env_variables: >-
         {
@@ -616,7 +551,7 @@ targets:
       package_sharding: "--shardIndex 2 --shardCount 6"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "34"}
+          {"dependency": "android_virtual_device", "version": "android_34_google_apis_x64.textpb"}
         ]
       env_variables: >-
         {
@@ -635,7 +570,7 @@ targets:
       package_sharding: "--shardIndex 3 --shardCount 6"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "34"}
+          {"dependency": "android_virtual_device", "version": "android_34_google_apis_x64.textpb"}
         ]
       env_variables: >-
         {
@@ -654,7 +589,7 @@ targets:
       package_sharding: "--shardIndex 4 --shardCount 6"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "34"}
+          {"dependency": "android_virtual_device", "version": "android_34_google_apis_x64.textpb"}
         ]
       env_variables: >-
         {
@@ -673,48 +608,12 @@ targets:
       package_sharding: "--shardIndex 5 --shardCount 6"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "34"}
+          {"dependency": "android_virtual_device", "version": "android_34_google_apis_x64.textpb"}
         ]
       env_variables: >-
         {
           "CHANNEL": "stable",
           "PACKAGE_SHARDING": "--shardIndex 5 --shardCount 6"
-        }
-
-  - name: Linux_android android_platform_tests_api_33_shard_1 stable
-    recipe: packages/packages
-    timeout: 60
-    properties:
-      target_file: android_platform_tests_api_33_avd.yaml
-      channel: stable
-      version_file: flutter_stable.version
-      package_sharding: "--shardIndex 0 --shardCount 2"
-      dependencies: >-
-        [
-          {"dependency": "android_virtual_device", "version": "33"}
-        ]
-      env_variables: >-
-        {
-          "CHANNEL": "stable",
-          "PACKAGE_SHARDING": "--shardIndex 0 --shardCount 2"
-        }
-
-  - name: Linux_android android_platform_tests_api_33_shard_2 stable
-    recipe: packages/packages
-    timeout: 60
-    properties:
-      target_file: android_platform_tests_api_33_avd.yaml
-      channel: stable
-      version_file: flutter_stable.version
-      package_sharding: "--shardIndex 1 --shardCount 2"
-      dependencies: >-
-        [
-          {"dependency": "android_virtual_device", "version": "33"}
-        ]
-      env_variables: >-
-        {
-          "CHANNEL": "stable",
-          "PACKAGE_SHARDING": "--shardIndex 1 --shardCount 2"
         }
 
   - name: Linux_android_legacy android_platform_tests_legacy_api_shard_1 master
@@ -1062,16 +961,16 @@ targets:
         }
 
   ### iOS+macOS tasks ###
-  # TODO(stuartmorgan): Move this to ARM once google_maps_flutter has ARM
-  # support. `pod lint` makes a synthetic target that doesn't respect the
-  # pod's arch exclusions, so fails to build.
-  - name: Mac_x64 check_podspecs
+  - name: Mac_arm64 macos_repo_checks
     recipe: packages/packages
     timeout: 30
     properties:
-      add_recipes_cq: "true"
       version_file: flutter_master.version
-      target_file: macos_check_podspecs.yaml
+      target_file: macos_repo_checks.yaml
+      dependencies: >
+        [
+          {"dependency": "swift_format", "version": "build_id:8797338979890974865"}
+        ]
 
   ### macOS desktop tasks ###
   # macos-platform_tests builds all the packages on ARM, so this build is run
@@ -1080,7 +979,6 @@ targets:
     recipe: packages/packages
     timeout: 30
     properties:
-      add_recipes_cq: "true"
       version_file: flutter_master.version
       target_file: macos_build_all_packages.yaml
       channel: master
@@ -1135,7 +1033,6 @@ targets:
     recipe: packages/packages
     timeout: 60
     properties:
-      add_recipes_cq: "true"
       version_file: flutter_master.version
       target_file: macos_custom_package_tests.yaml
       channel: master
@@ -1143,12 +1040,15 @@ targets:
         {
           "CHANNEL": "master"
         }
+      dependencies: >
+        [
+          {"dependency": "swift_format", "version": "build_id:8797338979890974865"}
+        ]
 
   - name: Mac_arm64 custom_package_tests stable
     recipe: packages/packages
     timeout: 60
     properties:
-      add_recipes_cq: "true"
       version_file: flutter_stable.version
       target_file: macos_custom_package_tests.yaml
       channel: stable
@@ -1156,6 +1056,10 @@ targets:
         {
           "CHANNEL": "stable"
         }
+      dependencies: >
+        [
+          {"dependency": "swift_format", "version": "build_id:8797338979890974865"}
+        ]
 
   ### iOS tasks ###
   # ios_platform_tests builds all the packages on ARM, so this build is run
@@ -1165,7 +1069,6 @@ targets:
     timeout: 30
     properties:
       channel: master
-      add_recipes_cq: "true"
       version_file: flutter_master.version
       target_file: ios_build_all_packages.yaml
       env_variables: >-
@@ -1178,7 +1081,6 @@ targets:
     timeout: 30
     properties:
       channel: stable
-      add_recipes_cq: "true"
       version_file: flutter_stable.version
       target_file: ios_build_all_packages.yaml
       env_variables: >-
@@ -1206,7 +1108,6 @@ targets:
     timeout: 60
     properties:
       channel: master
-      add_recipes_cq: "true"
       version_file: flutter_master.version
       target_file: ios_platform_tests.yaml
       package_sharding: "--shardIndex 1 --shardCount 5"
@@ -1221,7 +1122,6 @@ targets:
     timeout: 60
     properties:
       channel: master
-      add_recipes_cq: "true"
       version_file: flutter_master.version
       target_file: ios_platform_tests.yaml
       package_sharding: "--shardIndex 2 --shardCount 5"
@@ -1236,7 +1136,6 @@ targets:
     timeout: 60
     properties:
       channel: master
-      add_recipes_cq: "true"
       version_file: flutter_master.version
       target_file: ios_platform_tests.yaml
       package_sharding: "--shardIndex 3 --shardCount 5"
@@ -1251,7 +1150,6 @@ targets:
     timeout: 60
     properties:
       channel: master
-      add_recipes_cq: "true"
       version_file: flutter_master.version
       target_file: ios_platform_tests.yaml
       package_sharding: "--shardIndex 4 --shardCount 5"
@@ -1342,7 +1240,6 @@ targets:
     recipe: packages/packages
     timeout: 60
     properties:
-      add_recipes_cq: "true"
       target_file: windows_custom_package_tests.yaml
       channel: master
       version_file: flutter_master.version
@@ -1406,7 +1303,6 @@ targets:
     recipe: packages/packages
     timeout: 60
     properties:
-      add_recipes_cq: "true"
       target_file: windows_build_and_platform_tests.yaml
       channel: master
       version_file: flutter_master.version
@@ -1425,7 +1321,6 @@ targets:
     recipe: packages/packages
     timeout: 60
     properties:
-      add_recipes_cq: "true"
       target_file: windows_build_and_platform_tests.yaml
       channel: stable
       version_file: flutter_stable.version
@@ -1444,7 +1339,6 @@ targets:
     recipe: packages/packages
     timeout: 60
     properties:
-      add_recipes_cq: "true"
       target_file: windows_build_and_platform_tests.yaml
       channel: stable
       version_file: flutter_stable.version
@@ -1463,7 +1357,6 @@ targets:
     recipe: packages/packages
     timeout: 30
     properties:
-      add_recipes_cq: "true"
       target_file: windows_build_all_packages.yaml
       channel: master
       version_file: flutter_master.version
@@ -1478,6 +1371,7 @@ targets:
 
   - name: Windows_arm64 windows-build_all_packages master
     recipe: packages/packages
+    presubmit: false
     timeout: 30
     bringup: true # https://github.com/flutter/flutter/issues/134083
     properties:
@@ -1512,10 +1406,10 @@ targets:
 
   - name: Windows_arm64 windows-build_all_packages stable
     recipe: packages/packages
+    presubmit: false
     timeout: 30
     bringup: true
     properties:
-      add_recipes_cq: "true"
       target_file: windows_build_all_packages.yaml
       channel: stable
       version_file: flutter_stable.version

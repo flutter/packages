@@ -5,10 +5,7 @@
 import 'package:args/command_runner.dart';
 import 'package:flutter_migrate/src/base/command.dart';
 
-export 'package:test_api/test_api.dart' // ignore: deprecated_member_use
-    hide
-        isInstanceOf,
-        test;
+export 'package:test/test.dart' hide isInstanceOf, test;
 
 CommandRunner<void> createTestCommandRunner([MigrateCommand? command]) {
   final CommandRunner<void> runner = TestCommandRunner();

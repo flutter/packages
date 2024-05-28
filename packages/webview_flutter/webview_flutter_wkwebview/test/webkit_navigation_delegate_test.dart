@@ -71,6 +71,60 @@ void main() {
       expect(callbackUrl, 'https://www.google.com');
     });
 
+    test('setOnHttpError from decidePolicyForNavigationResponse', () {
+      final WebKitNavigationDelegate webKitDelegate = WebKitNavigationDelegate(
+        const WebKitNavigationDelegateCreationParams(
+          webKitProxy: WebKitProxy(
+            createNavigationDelegate: CapturingNavigationDelegate.new,
+            createUIDelegate: CapturingUIDelegate.new,
+          ),
+        ),
+      );
+
+      late final HttpResponseError callbackError;
+      void onHttpError(HttpResponseError error) {
+        callbackError = error;
+      }
+
+      webKitDelegate.setOnHttpError(onHttpError);
+
+      CapturingNavigationDelegate
+          .lastCreatedDelegate.decidePolicyForNavigationResponse!(
+        WKWebView.detached(),
+        const WKNavigationResponse(
+            response: NSHttpUrlResponse(statusCode: 401), forMainFrame: true),
+      );
+
+      expect(callbackError.response?.statusCode, 401);
+    });
+
+    test('setOnHttpError is not called for error codes < 400', () {
+      final WebKitNavigationDelegate webKitDelegate = WebKitNavigationDelegate(
+        const WebKitNavigationDelegateCreationParams(
+          webKitProxy: WebKitProxy(
+            createNavigationDelegate: CapturingNavigationDelegate.new,
+            createUIDelegate: CapturingUIDelegate.new,
+          ),
+        ),
+      );
+
+      HttpResponseError? callbackError;
+      void onHttpError(HttpResponseError error) {
+        callbackError = error;
+      }
+
+      webKitDelegate.setOnHttpError(onHttpError);
+
+      CapturingNavigationDelegate
+          .lastCreatedDelegate.decidePolicyForNavigationResponse!(
+        WKWebView.detached(),
+        const WKNavigationResponse(
+            response: NSHttpUrlResponse(statusCode: 399), forMainFrame: true),
+      );
+
+      expect(callbackError, isNull);
+    });
+
     test('onWebResourceError from didFailNavigation', () {
       final WebKitNavigationDelegate webKitDelegate = WebKitNavigationDelegate(
         const WebKitNavigationDelegateCreationParams(
@@ -205,7 +259,9 @@ void main() {
           WKWebView.detached(),
           const WKNavigationAction(
             request: NSUrlRequest(url: 'https://www.google.com'),
-            targetFrame: WKFrameInfo(isMainFrame: false),
+            targetFrame: WKFrameInfo(
+                isMainFrame: false,
+                request: NSUrlRequest(url: 'https://google.com')),
             navigationType: WKNavigationType.linkActivated,
           ),
         ),
@@ -261,6 +317,7 @@ class CapturingNavigationDelegate extends WKNavigationDelegate {
   CapturingNavigationDelegate({
     super.didFinishNavigation,
     super.didStartProvisionalNavigation,
+    super.decidePolicyForNavigationResponse,
     super.didFailNavigation,
     super.didFailProvisionalNavigation,
     super.decidePolicyForNavigationAction,
@@ -278,6 +335,9 @@ class CapturingUIDelegate extends WKUIDelegate {
   CapturingUIDelegate({
     super.onCreateWebView,
     super.requestMediaCapturePermission,
+    super.runJavaScriptAlertDialog,
+    super.runJavaScriptConfirmDialog,
+    super.runJavaScriptTextInputDialog,
     super.instanceManager,
   }) : super.detached() {
     lastCreatedDelegate = this;

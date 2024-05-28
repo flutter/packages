@@ -22,6 +22,7 @@ void main() {
         ),
       ],
     );
+    addTearDown(router.dispose);
     await tester.pumpWidget(
       MaterialApp.router(
         routerConfig: router,
@@ -35,6 +36,7 @@ void main() {
       (WidgetTester tester) async {
     final ValueNotifier<bool> showHomeValueNotifier =
         ValueNotifier<bool>(false);
+    addTearDown(showHomeValueNotifier.dispose);
     await tester.pumpWidget(
       MaterialApp(
         home: ValueListenableBuilder<bool>(
@@ -83,6 +85,7 @@ void main() {
   testWidgets('NoTransitionPage does not apply any reverse transition',
       (WidgetTester tester) async {
     final ValueNotifier<bool> showHomeValueNotifier = ValueNotifier<bool>(true);
+    addTearDown(showHomeValueNotifier.dispose);
     await tester.pumpWidget(
       MaterialApp(
         home: ValueListenableBuilder<bool>(
@@ -139,6 +142,7 @@ void main() {
         ),
       ],
     );
+    addTearDown(router.dispose);
     await tester.pumpWidget(MaterialApp.router(routerConfig: router));
     expect(find.byKey(homeKey), findsOneWidget);
     router.push('/dismissible-modal');
@@ -176,6 +180,7 @@ void main() {
         ),
       ],
     );
+    addTearDown(router.dispose);
     await tester.pumpWidget(MaterialApp.router(routerConfig: router));
     expect(find.byKey(homeKey), findsOneWidget);
 

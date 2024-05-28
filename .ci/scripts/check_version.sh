@@ -10,7 +10,7 @@ set -e
 # missing version/CHANGELOG detection since PR-level overrides aren't available
 # in post-submit.
 if [[ $LUCI_PR == "" ]]; then
-  ./script/tool_runner.sh version-check --ignore-platform-interface-breaks
+  .ci/scripts/tool_runner.sh version-check --ignore-platform-interface-breaks
 else
-  ./script/tool_runner.sh version-check --check-for-missing-changes --pr-labels="$PR_OVERRIDE_LABELS"
+  .ci/scripts/tool_runner.sh version-check --check-for-missing-changes --pr-labels="$PR_OVERRIDE_LABELS"
 fi

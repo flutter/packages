@@ -75,6 +75,17 @@ class UIScrollViewHostApiImpl extends UIScrollViewHostApi {
       offset.y,
     );
   }
+
+  /// Calls [setDelegate] with the ids of the provided object instances.
+  Future<void> setDelegateForInstances(
+    UIScrollView instance,
+    UIScrollViewDelegate? delegate,
+  ) async {
+    return setDelegate(
+      instanceManager.getIdentifier(instance)!,
+      delegate != null ? instanceManager.getIdentifier(delegate) : null,
+    );
+  }
 }
 
 /// Host api implementation for [UIView].
@@ -112,5 +123,59 @@ class UIViewHostApiImpl extends UIViewHostApi {
     bool opaque,
   ) async {
     return setOpaque(instanceManager.getIdentifier(instance)!, opaque);
+  }
+}
+
+/// Flutter api implementation for [UIScrollViewDelegate].
+class UIScrollViewDelegateFlutterApiImpl
+    extends UIScrollViewDelegateFlutterApi {
+  /// Constructs a [UIScrollViewDelegateFlutterApiImpl].
+  UIScrollViewDelegateFlutterApiImpl({InstanceManager? instanceManager})
+      : instanceManager = instanceManager ?? NSObject.globalInstanceManager;
+
+  /// Maintains instances stored to communicate with native language objects.
+  final InstanceManager instanceManager;
+
+  UIScrollViewDelegate _getDelegate(int identifier) {
+    return instanceManager.getInstanceWithWeakReference(identifier)!;
+  }
+
+  @override
+  void scrollViewDidScroll(
+    int identifier,
+    int uiScrollViewIdentifier,
+    double x,
+    double y,
+  ) {
+    final void Function(UIScrollView, double, double)? callback =
+        _getDelegate(identifier).scrollViewDidScroll;
+    final UIScrollView? uiScrollView = instanceManager
+        .getInstanceWithWeakReference(uiScrollViewIdentifier) as UIScrollView?;
+    assert(uiScrollView != null);
+    callback?.call(uiScrollView!, x, y);
+  }
+}
+
+/// Host api implementation for [UIScrollViewDelegate].
+class UIScrollViewDelegateHostApiImpl extends UIScrollViewDelegateHostApi {
+  /// Constructs a [UIScrollViewDelegateHostApiImpl].
+  UIScrollViewDelegateHostApiImpl({
+    this.binaryMessenger,
+    InstanceManager? instanceManager,
+  })  : instanceManager = instanceManager ?? NSObject.globalInstanceManager,
+        super(binaryMessenger: binaryMessenger);
+
+  /// Sends binary data across the Flutter platform barrier.
+  ///
+  /// If it is null, the default BinaryMessenger will be used which routes to
+  /// the host platform.
+  final BinaryMessenger? binaryMessenger;
+
+  /// Maintains instances stored to communicate with Objective-C objects.
+  final InstanceManager instanceManager;
+
+  /// Calls [create] with the ids of the provided object instances.
+  Future<void> createForInstance(UIScrollViewDelegate instance) async {
+    return create(instanceManager.addDartCreatedInstance(instance));
   }
 }

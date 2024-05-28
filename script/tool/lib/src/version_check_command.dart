@@ -210,20 +210,16 @@ class VersionCheckCommand extends PackageLoopingCommand {
     switch (versionState) {
       case _CurrentVersionState.unchanged:
         versionChanged = false;
-        break;
       case _CurrentVersionState.validIncrease:
       case _CurrentVersionState.validRevert:
       case _CurrentVersionState.newPackage:
         versionChanged = true;
-        break;
       case _CurrentVersionState.invalidChange:
         versionChanged = true;
         errors.add('Disallowed version change.');
-        break;
       case _CurrentVersionState.unknown:
         versionChanged = false;
         errors.add('Unable to determine previous version.');
-        break;
     }
 
     if (!(await _validateChangelogVersion(package,
@@ -362,7 +358,7 @@ ${indentation}HTTP response: ${pubVersionFinderResponse.httpResponse.body}
           '${indentation}Breaking changes to platform interfaces are not '
           'allowed without explicit justification.\n'
           '${indentation}See '
-          'https://github.com/flutter/flutter/wiki/Contributing-to-Plugins-and-Packages '
+          'https://github.com/flutter/flutter/blob/master/docs/ecosystem/contributing/README.md '
           'for more information.');
       return _CurrentVersionState.invalidChange;
     }

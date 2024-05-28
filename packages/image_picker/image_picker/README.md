@@ -8,7 +8,7 @@ and taking new pictures with the camera.
 
 |             | Android | iOS     | Linux | macOS  | Web                             | Windows     |
 |-------------|---------|---------|-------|--------|---------------------------------|-------------|
-| **Support** | SDK 21+ | iOS 11+ | Any   | 10.14+ | [See `image_picker_for_web`](https://pub.dev/packages/image_picker_for_web#limitations-on-the-web-platform) | Windows 10+ |
+| **Support** | SDK 21+ | iOS 12+ | Any   | 10.14+ | [See `image_picker_for_web`](https://pub.dev/packages/image_picker_for_web#limitations-on-the-web-platform) | Windows 10+ |
 
 ## Installation
 
@@ -95,9 +95,9 @@ responsibility to move it to a more permanent location.
 
 #### Android Photo Picker
 
-This package has optional
+On Android 13 and above this package uses the
 [Android Photo Picker](https://developer.android.com/training/data-storage/shared/photopicker)
-functionality.
+. On Android 12 and below use of Android Photo Picker is optional. 
 [Learn how to use it](https://pub.dev/packages/image_picker_android).
 
 #### Using `launchMode: singleInstance`

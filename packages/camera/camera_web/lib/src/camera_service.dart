@@ -101,14 +101,14 @@ class CameraService {
           throw CameraWebException(
             cameraId,
             CameraErrorCode.unknown,
-            'An unknown error occured when fetching the camera stream.',
+            'An unknown error occurred when fetching the camera stream.',
           );
       }
     } catch (_) {
       throw CameraWebException(
         cameraId,
         CameraErrorCode.unknown,
-        'An unknown error occured when fetching the camera stream.',
+        'An unknown error occurred when fetching the camera stream.',
       );
     }
   }
@@ -224,7 +224,7 @@ class CameraService {
       // The method may not be supported on Firefox.
       // See: https://developer.mozilla.org/en-US/docs/Web/API/MediaStreamTrack/getCapabilities#browser_compatibility
       if (!jsUtil.hasProperty(videoTrack, 'getCapabilities')) {
-        // Return null if the video track capabilites are not supported.
+        // Return null if the video track capabilities are not supported.
         return null;
       }
 
@@ -305,6 +305,59 @@ class CameraService {
     // switch as needing an update.
     // ignore: dead_code
     return const Size(320, 240);
+  }
+
+  static const int _kiloBits = 1000;
+  static const int _megaBits = _kiloBits * _kiloBits;
+
+  /// Maps the given [resolutionPreset] to video bitrate.
+  int mapResolutionPresetToVideoBitrate(ResolutionPreset resolutionPreset) {
+    switch (resolutionPreset) {
+      case ResolutionPreset.max:
+      case ResolutionPreset.ultraHigh:
+        return 8 * _megaBits;
+      case ResolutionPreset.veryHigh:
+        return 4 * _megaBits;
+      case ResolutionPreset.high:
+        return 1 * _megaBits;
+      case ResolutionPreset.medium:
+        return 400 * _kiloBits;
+      case ResolutionPreset.low:
+        return 200 * _kiloBits;
+    }
+
+    // The enum comes from a different package, which could get a new value at
+    // any time, so provide a fallback that ensures this won't break when used
+    // with a version that contains new values. This is deliberately outside
+    // the switch rather than a `default` so that the linter will flag the
+    // switch as needing an update.
+    // ignore: dead_code
+    return 1 * _megaBits;
+  }
+
+  /// Maps the given [resolutionPreset] to audio bitrate.
+  int mapResolutionPresetToAudioBitrate(ResolutionPreset resolutionPreset) {
+    switch (resolutionPreset) {
+      case ResolutionPreset.max:
+      case ResolutionPreset.ultraHigh:
+        return 128 * _kiloBits;
+      case ResolutionPreset.veryHigh:
+        return 128 * _kiloBits;
+      case ResolutionPreset.high:
+        return 64 * _kiloBits;
+      case ResolutionPreset.medium:
+        return 48 * _kiloBits;
+      case ResolutionPreset.low:
+        return 32 * _kiloBits;
+    }
+
+    // The enum comes from a different package, which could get a new value at
+    // any time, so provide a fallback that ensures this won't break when used
+    // with a version that contains new values. This is deliberately outside
+    // the switch rather than a `default` so that the linter will flag the
+    // switch as needing an update.
+    // ignore: dead_code
+    return 64 * _kiloBits;
   }
 
   /// Maps the given [deviceOrientation] to [OrientationType].

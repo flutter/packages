@@ -11,6 +11,7 @@ namespace null_fields_pigeontest {
 
 namespace {
 
+using flutter::CustomEncodableValue;
 using flutter::EncodableList;
 using flutter::EncodableMap;
 using flutter::EncodableValue;
@@ -113,6 +114,8 @@ TEST_F(NullFieldsTest, RequestFromListWithNulls) {
 }
 
 TEST_F(NullFieldsTest, ReplyFromListWithValues) {
+  NullFieldsSearchRequest request(1);
+  request.set_query("hello");
   EncodableList list{
       EncodableValue("result"),
       EncodableValue("error"),
@@ -121,10 +124,7 @@ TEST_F(NullFieldsTest, ReplyFromListWithValues) {
           EncodableValue(2),
           EncodableValue(3),
       }),
-      EncodableValue(EncodableList{
-          EncodableValue("hello"),
-          EncodableValue(1),
-      }),
+      CustomEncodableValue(request),
       EncodableValue(0),
   };
   NullFieldsSearchReply reply = ReplyFromList(list);
@@ -194,10 +194,11 @@ TEST_F(NullFieldsTest, ReplyToMapWithValues) {
   EXPECT_EQ(indices[0].LongValue(), 1L);
   EXPECT_EQ(indices[1].LongValue(), 2L);
   EXPECT_EQ(indices[2].LongValue(), 3L);
-  const EncodableList& request_list =
-      *ExpectAndGetIndex<EncodableList>(list, 3);
-  EXPECT_EQ(*ExpectAndGetIndex<std::string>(request_list, 0), "hello");
-  EXPECT_EQ(*ExpectAndGetIndex<int64_t>(request_list, 1), 1);
+  const NullFieldsSearchRequest& request_from_list =
+      std::any_cast<const NullFieldsSearchRequest&>(
+          *ExpectAndGetIndex<CustomEncodableValue>(list, 3));
+  EXPECT_EQ(*request_from_list.query(), "hello");
+  EXPECT_EQ(request_from_list.identifier(), 1);
 }
 
 TEST_F(NullFieldsTest, ReplyToListWithNulls) {

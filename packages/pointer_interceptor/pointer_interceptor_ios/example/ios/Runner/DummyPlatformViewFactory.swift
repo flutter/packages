@@ -5,9 +5,7 @@
 import Flutter
 import UIKit
 
-/**
- * A  simple factory that creates a dummy platform view for testing.
- */
+/// A  simple factory that creates a dummy platform view for testing.
 public class DummyPlatformViewFactory: NSObject, FlutterPlatformViewFactory {
   private var messenger: FlutterBinaryMessenger
 
@@ -33,25 +31,21 @@ public class DummyPlatformViewFactory: NSObject, FlutterPlatformViewFactory {
   }
 }
 
-/**
- * A native view that will remove its tag if clicked.
- */
+/// A native view that will remove its tag if clicked.
 public class CustomView: UIView {
 
   override public func hitTest(
     _ point: CGPoint,
     with event: UIEvent?
   ) -> UIView? {
-    viewWithTag(1)?.removeFromSuperview();
+    viewWithTag(1)?.removeFromSuperview()
     return super.hitTest(point, with: event)
   }
 }
 
-/**
- * A flutter platform view that displays a simple native view.
- */
+/// A flutter platform view that displays a simple native view.
 class DummyPlatformView: NSObject, FlutterPlatformView {
-  private var _view: CustomView;
+  private var _view: CustomView
 
   init(
     frame: CGRect,
@@ -68,10 +62,10 @@ class DummyPlatformView: NSObject, FlutterPlatformView {
     return _view
   }
 
-  func createNativeView(view _view: CustomView){
+  func createNativeView(view _view: CustomView) {
     let nativeLabel = UILabel()
     _view.isUserInteractionEnabled = true
-    nativeLabel.tag = 1;
+    nativeLabel.tag = 1
     nativeLabel.text = "Not Clicked"
     nativeLabel.frame = CGRect(x: 0, y: 0, width: 180, height: 48.0)
     _view.addSubview(nativeLabel)

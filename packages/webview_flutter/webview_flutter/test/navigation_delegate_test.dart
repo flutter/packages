@@ -87,6 +87,30 @@ void main() {
 
       verify(delegate.platform.setOnUrlChange(onUrlChange));
     });
+
+    test('onHttpAuthRequest', () {
+      WebViewPlatform.instance = TestWebViewPlatform();
+
+      void onHttpAuthRequest(HttpAuthRequest request) {}
+
+      final NavigationDelegate delegate = NavigationDelegate(
+        onHttpAuthRequest: onHttpAuthRequest,
+      );
+
+      verify(delegate.platform.setOnHttpAuthRequest(onHttpAuthRequest));
+    });
+
+    test('onHttpError', () async {
+      WebViewPlatform.instance = TestWebViewPlatform();
+
+      void onHttpError(HttpResponseError error) {}
+
+      final NavigationDelegate delegate = NavigationDelegate(
+        onHttpError: onHttpError,
+      );
+
+      verify(delegate.platform.setOnHttpError(onHttpError));
+    });
   });
 }
 

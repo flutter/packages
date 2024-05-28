@@ -9,7 +9,9 @@ class MarkersController extends GeometryController {
   /// Initialize the cache. The [StreamController] comes from the [GoogleMapController], and is shared with other controllers.
   MarkersController({
     required StreamController<MapEvent<Object?>> stream,
+    required ClusterManagersController clusterManagersController,
   })  : _streamController = stream,
+        _clusterManagersController = clusterManagersController,
         _markerIdToController = <MarkerId, MarkerController>{};
 
   // A cache of [MarkerController]s indexed by their [MarkerId].
@@ -17,6 +19,8 @@ class MarkersController extends GeometryController {
 
   // The stream over which markers broadcast their events
   final StreamController<MapEvent<Object?>> _streamController;
+
+  final ClusterManagersController _clusterManagersController;
 
   /// Returns the cache of [MarkerController]s. Test only.
   @visibleForTesting
@@ -39,11 +43,12 @@ class MarkersController extends GeometryController {
       // Google Maps' JS SDK does not have a click event on the InfoWindow, so
       // we make one...
       if (infoWindowOptions.content != null &&
-          infoWindowOptions.content is HtmlElement) {
-        final HtmlElement content = infoWindowOptions.content! as HtmlElement;
-        content.onClick.listen((_) {
+          infoWindowOptions.content is HTMLElement) {
+        final HTMLElement content = infoWindowOptions.content! as HTMLElement;
+
+        content.onclick = (JSAny? _) {
           _onInfoWindowTap(marker.markerId);
-        });
+        }.toJS;
       }
     }
 
@@ -52,9 +57,19 @@ class MarkersController extends GeometryController {
 
     final gmaps.MarkerOptions markerOptions =
         _markerOptionsFromMarker(marker, currentMarker);
-    final gmaps.Marker gmMarker = gmaps.Marker(markerOptions)..map = googleMap;
+
+    final gmaps.Marker gmMarker = gmaps.Marker(markerOptions);
+
+    gmMarker.set('markerId', marker.markerId.value);
+
+    if (marker.clusterManagerId != null) {
+      _clusterManagersController.addItem(marker.clusterManagerId!, gmMarker);
+    } else {
+      gmMarker.map = googleMap;
+    }
     final MarkerController controller = MarkerController(
       marker: gmMarker,
+      clusterManagerId: marker.clusterManagerId,
       infoWindow: gmInfoWindow,
       consumeTapEvents: marker.consumeTapEvents,
       onTap: () {
@@ -83,16 +98,26 @@ class MarkersController extends GeometryController {
     final MarkerController? markerController =
         _markerIdToController[marker.markerId];
     if (markerController != null) {
-      final gmaps.MarkerOptions markerOptions = _markerOptionsFromMarker(
-        marker,
-        markerController.marker,
-      );
-      final gmaps.InfoWindowOptions? infoWindow =
-          _infoWindowOptionsFromMarker(marker);
-      markerController.update(
-        markerOptions,
-        newInfoWindowContent: infoWindow?.content as HtmlElement?,
-      );
+      final ClusterManagerId? oldClusterManagerId =
+          markerController.clusterManagerId;
+      final ClusterManagerId? newClusterManagerId = marker.clusterManagerId;
+
+      if (oldClusterManagerId != newClusterManagerId) {
+        // If clusterManagerId changes. Remove existing marker and create new one.
+        _removeMarker(marker.markerId);
+        _addMarker(marker);
+      } else {
+        final gmaps.MarkerOptions markerOptions = _markerOptionsFromMarker(
+          marker,
+          markerController.marker,
+        );
+        final gmaps.InfoWindowOptions? infoWindow =
+            _infoWindowOptionsFromMarker(marker);
+        markerController.update(
+          markerOptions,
+          newInfoWindowContent: infoWindow?.content as HTMLElement?,
+        );
+      }
     }
   }
 
@@ -103,6 +128,10 @@ class MarkersController extends GeometryController {
 
   void _removeMarker(MarkerId markerId) {
     final MarkerController? markerController = _markerIdToController[markerId];
+    if (markerController?.clusterManagerId != null) {
+      _clusterManagersController.removeItem(
+          markerController!.clusterManagerId!, markerController.marker);
+    }
     markerController?.remove();
     _markerIdToController.remove(markerId);
   }
@@ -150,7 +179,7 @@ class MarkersController extends GeometryController {
   void _onMarkerDragStart(MarkerId markerId, gmaps.LatLng latLng) {
     _streamController.add(MarkerDragStartEvent(
       mapId,
-      _gmLatLngToLatLng(latLng),
+      gmLatLngToLatLng(latLng),
       markerId,
     ));
   }
@@ -158,7 +187,7 @@ class MarkersController extends GeometryController {
   void _onMarkerDrag(MarkerId markerId, gmaps.LatLng latLng) {
     _streamController.add(MarkerDragEvent(
       mapId,
-      _gmLatLngToLatLng(latLng),
+      gmLatLngToLatLng(latLng),
       markerId,
     ));
   }
@@ -166,7 +195,7 @@ class MarkersController extends GeometryController {
   void _onMarkerDragEnd(MarkerId markerId, gmaps.LatLng latLng) {
     _streamController.add(MarkerDragEndEvent(
       mapId,
-      _gmLatLngToLatLng(latLng),
+      gmLatLngToLatLng(latLng),
       markerId,
     ));
   }

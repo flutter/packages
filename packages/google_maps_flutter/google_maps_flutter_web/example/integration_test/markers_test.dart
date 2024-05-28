@@ -4,7 +4,6 @@
 
 import 'dart:async';
 import 'dart:convert';
-import 'dart:html' as html;
 import 'dart:typed_data';
 import 'dart:ui';
 
@@ -12,8 +11,12 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:google_maps/google_maps.dart' as gmaps;
 import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart';
 import 'package:google_maps_flutter_web/google_maps_flutter_web.dart';
+import 'package:google_maps_flutter_web/src/marker_clustering.dart';
+// ignore: implementation_imports
+import 'package:google_maps_flutter_web/src/utils.dart';
 import 'package:http/http.dart' as http;
 import 'package:integration_test/integration_test.dart';
+import 'package:web/web.dart';
 
 import 'resources/icon_image_base64.dart';
 
@@ -23,12 +26,17 @@ void main() {
   group('MarkersController', () {
     late StreamController<MapEvent<Object?>> events;
     late MarkersController controller;
+    late ClusterManagersController clusterManagersController;
     late gmaps.GMap map;
 
     setUp(() {
       events = StreamController<MapEvent<Object?>>();
-      controller = MarkersController(stream: events);
-      map = gmaps.GMap(html.DivElement());
+
+      clusterManagersController = ClusterManagersController(stream: events);
+      controller = MarkersController(
+          stream: events, clusterManagersController: clusterManagersController);
+      map = gmaps.GMap(createDivElement());
+      clusterManagersController.bindToMap(123, map);
       controller.bindToMap(123, map);
     });
 
@@ -274,11 +282,11 @@ void main() {
       controller.addMarkers(markers);
 
       expect(controller.markers.length, 1);
-      final html.HtmlElement? content = controller.markers[const MarkerId('1')]
-          ?.infoWindow?.content as html.HtmlElement?;
-      expect(content?.innerHtml, contains('title for test'));
+      final HTMLElement? content = controller
+          .markers[const MarkerId('1')]?.infoWindow?.content as HTMLElement?;
+      expect(content?.innerHTML, contains('title for test'));
       expect(
-          content?.innerHtml,
+          content?.innerHTML,
           contains(
             '<a href="https://www.google.com">Go to Google &gt;&gt;&gt;</a>',
           ));
@@ -299,8 +307,8 @@ void main() {
       controller.addMarkers(markers);
 
       expect(controller.markers.length, 1);
-      final html.HtmlElement? content = controller.markers[const MarkerId('1')]
-          ?.infoWindow?.content as html.HtmlElement?;
+      final HTMLElement? content = controller
+          .markers[const MarkerId('1')]?.infoWindow?.content as HTMLElement?;
 
       content?.click();
 

@@ -8,7 +8,7 @@ A Flutter plugin for iOS, Android and Web allowing access to the device cameras.
 
 |                | Android | iOS       | Web                    |
 |----------------|---------|-----------|------------------------|
-| **Support**    | SDK 21+ | iOS 11.0+ | [See `camera_web `][1] |
+| **Support**    | SDK 21+ | iOS 12.0+ | [See `camera_web `][1] |
 
 ## Features
 
@@ -45,7 +45,10 @@ Change the minimum Android sdk version to 21 (or higher) in your `android/app/bu
 minSdkVersion 21
 ```
 
-It's important to note that the `MediaRecorder` class is not working properly on emulators, as stated in the documentation: https://developer.android.com/reference/android/media/MediaRecorder. Specifically, when recording a video with sound enabled and trying to play it back, the duration won't be correct and you will only see the first frame.
+The endorsed [`camera_android_camerax`][2] implementation of the camera plugin built with CameraX has
+better support for more devices than `camera_android`, but has some limitations; please see [this list][3]
+for more details. If you wish to use the [`camera_android`][4] implementation of the camera plugin
+built with Camera2 that lacks these limitations, please follow [these instructions][5].
 
 ### Web integration
 
@@ -167,3 +170,7 @@ class _CameraAppState extends State<CameraApp> {
 For a more elaborate usage example see [here](https://github.com/flutter/packages/tree/main/packages/camera/camera/example).
 
 [1]: https://pub.dev/packages/camera_web#limitations-on-the-web-platform
+[2]: https://pub.dev/packages/camera_android_camerax
+[3]: https://pub.dev/packages/camera_android_camerax#limitations
+[4]: https://pub.dev/packages/camera_android
+[5]: https://pub.dev/packages/camera_android#usage

@@ -313,7 +313,7 @@ abstract class AFlutterApi {
     expect(results.errors.length, equals(0));
     expect(results.root.apis.length, equals(1));
     expect(results.root.apis[0].name, equals('AFlutterApi'));
-    expect(results.root.apis[0].location, equals(ApiLocation.flutter));
+    expect(results.root.apis[0], isA<AstFlutterApi>());
   });
 
   test('void host api', () {
@@ -370,8 +370,10 @@ abstract class ApiWithMockDartClass {
     final ParseResults results = parseSource(code);
     expect(results.errors.length, equals(0));
     expect(results.root.apis.length, equals(1));
-    expect(results.root.apis[0].dartHostTestHandler,
-        equals('ApiWithMockDartClassMock'));
+    expect(
+      (results.root.apis[0] as AstHostApi).dartHostTestHandler,
+      equals('ApiWithMockDartClassMock'),
+    );
   });
 
   test('only visible from nesting', () {
@@ -1351,5 +1353,216 @@ abstract class Api {
     expect(results.errors.length, 1);
     expect(results.errors[0].message,
         contains('FlutterApi method parameters must not be optional'));
+  });
+
+  test('simple parse ProxyApi', () {
+    const String code = '''
+@ProxyApi()
+abstract class MyClass {
+  MyClass();
+  late String aField;
+  late void Function() aCallbackMethod;
+  void aMethod();
+}
+''';
+    final ParseResults parseResult = parseSource(code);
+    expect(parseResult.errors.length, equals(0));
+    final Root root = parseResult.root;
+    expect(root.apis.length, equals(1));
+
+    final AstProxyApi proxyApi = root.apis.single as AstProxyApi;
+    expect(proxyApi.name, equals('MyClass'));
+    expect(proxyApi.constructors.single.name, equals(''));
+    expect(proxyApi.methods.length, equals(2));
+
+    for (final Method method in proxyApi.methods) {
+      if (method.location == ApiLocation.host) {
+        expect(method.name, equals('aMethod'));
+      } else if (method.location == ApiLocation.flutter) {
+        expect(method.name, equals('aCallbackMethod'));
+      }
+    }
+  });
+
+  group('ProxyApi validation', () {
+    test('error with using data class', () {
+      const String code = '''
+class DataClass {
+  late int input;
+}
+
+@ProxyApi()
+abstract class MyClass {
+  MyClass(DataClass input);
+}
+''';
+      final ParseResults parseResult = parseSource(code);
+      expect(parseResult.errors.length, equals(1));
+      expect(
+        parseResult.errors.single.message,
+        contains('ProxyApis do not support data classes'),
+      );
+    });
+
+    test('super class must be proxy api', () {
+      const String code = '''
+class DataClass {
+  late int input;
+}
+
+@ProxyApi()
+abstract class MyClass extends DataClass {
+  void aMethod();
+}
+''';
+      final ParseResults parseResult = parseSource(code);
+      expect(parseResult.errors, isNotEmpty);
+      expect(
+        parseResult.errors[0].message,
+        contains('Super class of MyClass is not marked as a @ProxyApi'),
+      );
+    });
+
+    test('interface must be proxy api', () {
+      const String code = '''
+class DataClass {
+  late int input;
+}
+
+@ProxyApi()
+abstract class MyClass implements DataClass {
+  void aMethod();
+}
+''';
+      final ParseResults parseResult = parseSource(code);
+      expect(parseResult.errors, isNotEmpty);
+      expect(
+        parseResult.errors[0].message,
+        contains('Interface of MyClass is not marked as a @ProxyApi'),
+      );
+    });
+
+    test('unattached fields can not be inherited', () {
+      const String code = '''
+@ProxyApi()
+abstract class MyClass extends MyOtherClass { }
+
+@ProxyApi()
+abstract class MyOtherClass {
+  late int aField;
+}
+''';
+      final ParseResults parseResult = parseSource(code);
+      expect(parseResult.errors, isNotEmpty);
+      expect(
+        parseResult.errors[0].message,
+        contains(
+          'Unattached fields can not be inherited. Unattached field found for parent class: aField',
+        ),
+      );
+    });
+
+    test(
+        'api is not used as an attached field while having an unattached field',
+        () {
+      const String code = '''
+@ProxyApi()
+abstract class MyClass {
+  @attached
+  late MyOtherClass anAttachedField;
+}
+
+@ProxyApi()
+abstract class MyOtherClass {
+  late int aField;
+}
+''';
+      final ParseResults parseResult = parseSource(code);
+      expect(parseResult.errors, isNotEmpty);
+      expect(
+        parseResult.errors[0].message,
+        contains(
+          'ProxyApis with unattached fields can not be used as attached fields: anAttachedField',
+        ),
+      );
+    });
+
+    test(
+        'api is not used as an attached field while having a required Flutter method',
+        () {
+      const String code = '''
+@ProxyApi()
+abstract class MyClass {
+  @attached
+  late MyOtherClass anAttachedField;
+}
+
+@ProxyApi()
+abstract class MyOtherClass {
+  late void Function() aCallbackMethod;
+}
+''';
+      final ParseResults parseResult = parseSource(code);
+      expect(parseResult.errors, isNotEmpty);
+      expect(
+        parseResult.errors[0].message,
+        contains(
+          'ProxyApis with required callback methods can not be used as attached fields: anAttachedField',
+        ),
+      );
+    });
+
+    test('interfaces can only have callback methods', () {
+      const String code = '''
+@ProxyApi()
+abstract class MyClass implements MyOtherClass {
+}
+
+@ProxyApi()
+abstract class MyOtherClass {
+  MyOtherClass();
+}
+''';
+      final ParseResults parseResult = parseSource(code);
+      expect(parseResult.errors, isNotEmpty);
+      expect(
+        parseResult.errors[0].message,
+        contains(
+          'ProxyApis used as interfaces can only have callback methods: `MyClass` implements `MyOtherClass`',
+        ),
+      );
+    });
+
+    test('attached fields must be a ProxyApi', () {
+      const String code = '''
+@ProxyApi()
+abstract class MyClass {
+  @attached
+  late int aField;
+}
+''';
+      final ParseResults parseResult = parseSource(code);
+      expect(parseResult.errors, isNotEmpty);
+      expect(
+        parseResult.errors[0].message,
+        contains('Attached fields must be a ProxyApi: int'),
+      );
+    });
+
+    test('attached fields must not be nullable', () {
+      const String code = '''
+@ProxyApi()
+abstract class MyClass {
+  @attached
+  late MyClass? aField;
+}
+''';
+      final ParseResults parseResult = parseSource(code);
+      expect(parseResult.errors, isNotEmpty);
+      expect(
+        parseResult.errors[0].message,
+        contains('Attached fields must not be nullable: MyClass?'),
+      );
+    });
   });
 }

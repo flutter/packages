@@ -15,7 +15,7 @@ import 'java_object.dart';
 /// See https://developer.android.com/reference/androidx/camera/core/ZoomState.
 @immutable
 class ZoomState extends JavaObject {
-  /// Constructs a [CameraInfo] that is not automatically attached to a native object.
+  /// Constructs a [ZoomState] that is not automatically attached to a native object.
   ZoomState.detached(
       {super.binaryMessenger,
       super.instanceManager,

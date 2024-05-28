@@ -186,15 +186,15 @@ public class Messages {
       return toListResult;
     }
 
-    static @NonNull MessageData fromList(@NonNull ArrayList<Object> list) {
+    static @NonNull MessageData fromList(@NonNull ArrayList<Object> __pigeon_list) {
       MessageData pigeonResult = new MessageData();
-      Object name = list.get(0);
+      Object name = __pigeon_list.get(0);
       pigeonResult.setName((String) name);
-      Object description = list.get(1);
+      Object description = __pigeon_list.get(1);
       pigeonResult.setDescription((String) description);
-      Object code = list.get(2);
+      Object code = __pigeon_list.get(2);
       pigeonResult.setCode(Code.values()[(int) code]);
-      Object data = list.get(3);
+      Object data = __pigeon_list.get(3);
       pigeonResult.setData((Map<String, String>) data);
       return pigeonResult;
     }
@@ -268,11 +268,20 @@ public class Messages {
     }
     /** Sets up an instance of `ExampleHostApi` to handle messages through the `binaryMessenger`. */
     static void setUp(@NonNull BinaryMessenger binaryMessenger, @Nullable ExampleHostApi api) {
+      setUp(binaryMessenger, "", api);
+    }
+
+    static void setUp(
+        @NonNull BinaryMessenger binaryMessenger,
+        @NonNull String messageChannelSuffix,
+        @Nullable ExampleHostApi api) {
+      messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
-                "dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.getHostLanguage",
+                "dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.getHostLanguage"
+                    + messageChannelSuffix,
                 getCodec());
         if (api != null) {
           channel.setMessageHandler(
@@ -295,7 +304,8 @@ public class Messages {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
-                "dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.add",
+                "dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.add"
+                    + messageChannelSuffix,
                 getCodec());
         if (api != null) {
           channel.setMessageHandler(
@@ -324,7 +334,8 @@ public class Messages {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
-                "dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.sendMessage",
+                "dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.sendMessage"
+                    + messageChannelSuffix,
                 getCodec());
         if (api != null) {
           channel.setMessageHandler(
@@ -356,9 +367,16 @@ public class Messages {
   /** Generated class from Pigeon that represents Flutter messages that can be called from Java. */
   public static class MessageFlutterApi {
     private final @NonNull BinaryMessenger binaryMessenger;
+    private final String messageChannelSuffix;
 
     public MessageFlutterApi(@NonNull BinaryMessenger argBinaryMessenger) {
+      this(argBinaryMessenger, "");
+    }
+
+    public MessageFlutterApi(
+        @NonNull BinaryMessenger argBinaryMessenger, @NonNull String messageChannelSuffix) {
       this.binaryMessenger = argBinaryMessenger;
+      this.messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;
     }
 
     /** Public interface for sending reply. */
@@ -369,7 +387,8 @@ public class Messages {
 
     public void flutterMethod(@Nullable String aStringArg, @NonNull Result<String> result) {
       final String channelName =
-          "dev.flutter.pigeon.pigeon_example_package.MessageFlutterApi.flutterMethod";
+          "dev.flutter.pigeon.pigeon_example_package.MessageFlutterApi.flutterMethod"
+              + messageChannelSuffix;
       BasicMessageChannel<Object> channel =
           new BasicMessageChannel<>(binaryMessenger, channelName, getCodec());
       channel.send(

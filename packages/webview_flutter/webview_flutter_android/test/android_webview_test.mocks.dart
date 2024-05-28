@@ -510,6 +510,54 @@ class MockTestWebChromeClientHostApi extends _i1.Mock
         ),
         returnValueForMissingStub: null,
       );
+
+  @override
+  void setSynchronousReturnValueForOnJsAlert(
+    int? instanceId,
+    bool? value,
+  ) =>
+      super.noSuchMethod(
+        Invocation.method(
+          #setSynchronousReturnValueForOnJsAlert,
+          [
+            instanceId,
+            value,
+          ],
+        ),
+        returnValueForMissingStub: null,
+      );
+
+  @override
+  void setSynchronousReturnValueForOnJsConfirm(
+    int? instanceId,
+    bool? value,
+  ) =>
+      super.noSuchMethod(
+        Invocation.method(
+          #setSynchronousReturnValueForOnJsConfirm,
+          [
+            instanceId,
+            value,
+          ],
+        ),
+        returnValueForMissingStub: null,
+      );
+
+  @override
+  void setSynchronousReturnValueForOnJsPrompt(
+    int? instanceId,
+    bool? value,
+  ) =>
+      super.noSuchMethod(
+        Invocation.method(
+          #setSynchronousReturnValueForOnJsPrompt,
+          [
+            instanceId,
+            value,
+          ],
+        ),
+        returnValueForMissingStub: null,
+      );
 }
 
 /// A class which mocks [TestWebSettingsHostApi].
@@ -1279,6 +1327,39 @@ class MockWebChromeClient extends _i1.Mock implements _i2.WebChromeClient {
       (super.noSuchMethod(
         Invocation.method(
           #setSynchronousReturnValueForOnConsoleMessage,
+          [value],
+        ),
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
+
+  @override
+  _i5.Future<void> setSynchronousReturnValueForOnJsAlert(bool? value) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setSynchronousReturnValueForOnJsAlert,
+          [value],
+        ),
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
+
+  @override
+  _i5.Future<void> setSynchronousReturnValueForOnJsConfirm(bool? value) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setSynchronousReturnValueForOnJsConfirm,
+          [value],
+        ),
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
+
+  @override
+  _i5.Future<void> setSynchronousReturnValueForOnJsPrompt(bool? value) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setSynchronousReturnValueForOnJsPrompt,
           [value],
         ),
         returnValue: _i5.Future<void>.value(),

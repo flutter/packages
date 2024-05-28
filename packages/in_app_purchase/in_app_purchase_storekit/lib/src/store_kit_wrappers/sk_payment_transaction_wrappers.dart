@@ -5,6 +5,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:json_annotation/json_annotation.dart';
 
+import '../messages.g.dart';
 import 'enum_converters.dart';
 import 'sk_payment_queue_wrapper.dart';
 import 'sk_product_wrapper.dart';
@@ -90,7 +91,26 @@ enum SKPaymentTransactionStateWrapper {
 
   /// Indicates the transaction is in an unspecified state.
   @JsonValue(-1)
-  unspecified,
+  unspecified;
+
+  /// Converts [SKPaymentTransactionStateMessages] into the dart equivalent
+  static SKPaymentTransactionStateWrapper convertFromPigeon(
+      SKPaymentTransactionStateMessage msg) {
+    switch (msg) {
+      case SKPaymentTransactionStateMessage.purchased:
+        return SKPaymentTransactionStateWrapper.purchased;
+      case SKPaymentTransactionStateMessage.purchasing:
+        return SKPaymentTransactionStateWrapper.purchasing;
+      case SKPaymentTransactionStateMessage.failed:
+        return SKPaymentTransactionStateWrapper.failed;
+      case SKPaymentTransactionStateMessage.restored:
+        return SKPaymentTransactionStateWrapper.restored;
+      case SKPaymentTransactionStateMessage.deferred:
+        return SKPaymentTransactionStateWrapper.deferred;
+      case SKPaymentTransactionStateMessage.unspecified:
+        return SKPaymentTransactionStateWrapper.unspecified;
+    }
+  }
 }
 
 /// Created when a payment is added to the [SKPaymentQueueWrapper].
@@ -199,4 +219,20 @@ class SKPaymentTransactionWrapper {
         'transactionIdentifier': transactionIdentifier,
         'productIdentifier': payment.productIdentifier,
       };
+
+  /// Converts [SKPaymentTransactionMessages] into the dart equivalent
+  static SKPaymentTransactionWrapper convertFromPigeon(
+      SKPaymentTransactionMessage msg) {
+    return SKPaymentTransactionWrapper(
+        payment: SKPaymentWrapper.convertFromPigeon(msg.payment),
+        transactionState: SKPaymentTransactionStateWrapper.convertFromPigeon(
+            msg.transactionState),
+        originalTransaction: msg.originalTransaction == null
+            ? null
+            : convertFromPigeon(msg.originalTransaction!),
+        transactionTimeStamp: msg.transactionTimeStamp,
+        transactionIdentifier: msg.transactionIdentifier,
+        error:
+            msg.error == null ? null : SKError.convertFromPigeon(msg.error!));
+  }
 }

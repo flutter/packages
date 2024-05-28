@@ -123,7 +123,6 @@ abstract class PackageLoopingCommand extends PackageCommand {
     switch (packageLoopingType) {
       case PackageLoopingType.topLevelOnly:
         yield* getTargetPackages(filterExcluded: false);
-        break;
       case PackageLoopingType.includeExamples:
         await for (final PackageEnumerationEntry packageEntry
             in getTargetPackages(filterExcluded: false)) {
@@ -135,10 +134,8 @@ abstract class PackageLoopingCommand extends PackageCommand {
                   package,
                   excluded: packageEntry.excluded)));
         }
-        break;
       case PackageLoopingType.includeAllSubpackages:
         yield* getTargetPackagesAndSubpackages(filterExcluded: false);
-        break;
     }
   }
 

@@ -16,13 +16,29 @@ Future<int> runProcess(String command, List<String> arguments,
     mode:
         streamOutput ? ProcessStartMode.inheritStdio : ProcessStartMode.normal,
   );
+
+  if (streamOutput) {
+    return process.exitCode;
+  }
+
+  final List<int> stdoutBuffer = <int>[];
+  final List<int> stderrBuffer = <int>[];
+  final Future<void> stdoutFuture = process.stdout.forEach(stdoutBuffer.addAll);
+  final Future<void> stderrFuture = process.stderr.forEach(stderrBuffer.addAll);
   final int exitCode = await process.exitCode;
+  await Future.wait(<Future<void>>[
+    stdoutFuture,
+    stderrFuture,
+  ]);
+
   if (exitCode != 0 && logFailure) {
     // ignore: avoid_print
     print('$command $arguments failed:');
+    stdout.add(stdoutBuffer);
+    stderr.add(stderrBuffer);
     await Future.wait(<Future<void>>[
-      process.stdout.pipe(stdout),
-      process.stderr.pipe(stderr),
+      stdout.flush(),
+      stderr.flush(),
     ]);
   }
   return exitCode;

@@ -6,6 +6,7 @@ import 'dart:async';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
+import 'package:mockito/mockito.dart';
 import 'package:webview_flutter_android/src/android_proxy.dart';
 import 'package:webview_flutter_android/src/android_webview.dart'
     as android_webview;
@@ -15,7 +16,10 @@ import 'package:webview_flutter_platform_interface/webview_flutter_platform_inte
 import 'android_navigation_delegate_test.mocks.dart';
 import 'test_android_webview.g.dart';
 
-@GenerateMocks(<Type>[TestInstanceManagerHostApi])
+@GenerateMocks(<Type>[
+  TestInstanceManagerHostApi,
+  android_webview.HttpAuthHandler,
+])
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
@@ -53,6 +57,29 @@ void main() {
       );
 
       expect(callbackUrl, 'https://www.google.com');
+    });
+
+    test('onHttpError from onReceivedHttpError', () {
+      final AndroidNavigationDelegate androidNavigationDelegate =
+          AndroidNavigationDelegate(_buildCreationParams());
+
+      late final HttpResponseError callbackError;
+      androidNavigationDelegate.setOnHttpError(
+          (HttpResponseError httpError) => callbackError = httpError);
+
+      CapturingWebViewClient.lastCreatedDelegate.onReceivedHttpError!(
+          android_webview.WebView.detached(),
+          android_webview.WebResourceRequest(
+            url: 'https://www.google.com',
+            isForMainFrame: false,
+            isRedirect: true,
+            hasGesture: true,
+            method: 'GET',
+            requestHeaders: <String, String>{'X-Mock': 'mocking'},
+          ),
+          android_webview.WebResourceResponse(statusCode: 401));
+
+      expect(callbackError.response?.statusCode, 401);
     });
 
     test('onWebResourceError from onReceivedRequestError', () {
@@ -126,6 +153,66 @@ void main() {
         android_webview.WebResourceRequest(
           url: 'https://www.google.com',
           isForMainFrame: true,
+          isRedirect: true,
+          hasGesture: true,
+          method: 'GET',
+          requestHeaders: <String, String>{'X-Mock': 'mocking'},
+        ),
+      );
+
+      expect(callbackNavigationRequest, isNull);
+    });
+
+    test(
+        'onNavigationRequest from requestLoading should be called when request is for main frame',
+        () {
+      final AndroidNavigationDelegate androidNavigationDelegate =
+          AndroidNavigationDelegate(_buildCreationParams());
+
+      NavigationRequest? callbackNavigationRequest;
+      androidNavigationDelegate
+          .setOnNavigationRequest((NavigationRequest navigationRequest) {
+        callbackNavigationRequest = navigationRequest;
+        return NavigationDecision.prevent;
+      });
+
+      androidNavigationDelegate.setOnLoadRequest((_) async {});
+
+      CapturingWebViewClient.lastCreatedDelegate.requestLoading!(
+        android_webview.WebView.detached(),
+        android_webview.WebResourceRequest(
+          url: 'https://www.google.com',
+          isForMainFrame: true,
+          isRedirect: true,
+          hasGesture: true,
+          method: 'GET',
+          requestHeaders: <String, String>{'X-Mock': 'mocking'},
+        ),
+      );
+
+      expect(callbackNavigationRequest, isNotNull);
+    });
+
+    test(
+        'onNavigationRequest from requestLoading should not be called when request is not for main frame',
+        () {
+      final AndroidNavigationDelegate androidNavigationDelegate =
+          AndroidNavigationDelegate(_buildCreationParams());
+
+      NavigationRequest? callbackNavigationRequest;
+      androidNavigationDelegate
+          .setOnNavigationRequest((NavigationRequest navigationRequest) {
+        callbackNavigationRequest = navigationRequest;
+        return NavigationDecision.prevent;
+      });
+
+      androidNavigationDelegate.setOnLoadRequest((_) async {});
+
+      CapturingWebViewClient.lastCreatedDelegate.requestLoading!(
+        android_webview.WebView.detached(),
+        android_webview.WebResourceRequest(
+          url: 'https://www.google.com',
+          isForMainFrame: false,
           isRedirect: true,
           hasGesture: true,
           method: 'GET',
@@ -492,6 +579,21 @@ void main() {
       expect(callbackHost, expectedHost);
       expect(callbackRealm, expectedRealm);
     });
+
+    test('onReceivedHttpAuthRequest calls cancel by default', () {
+      AndroidNavigationDelegate(_buildCreationParams());
+
+      final MockHttpAuthHandler mockAuthHandler = MockHttpAuthHandler();
+
+      CapturingWebViewClient.lastCreatedDelegate.onReceivedHttpAuthRequest!(
+        android_webview.WebView.detached(),
+        mockAuthHandler,
+        'host',
+        'realm',
+      );
+
+      verify(mockAuthHandler.cancel());
+    });
   });
 }
 
@@ -513,6 +615,7 @@ class CapturingWebViewClient extends android_webview.WebViewClient {
   CapturingWebViewClient({
     super.onPageFinished,
     super.onPageStarted,
+    super.onReceivedHttpError,
     super.onReceivedError,
     super.onReceivedHttpAuthRequest,
     super.onReceivedRequestError,
@@ -547,11 +650,15 @@ class CapturingWebChromeClient extends android_webview.WebChromeClient {
     super.onHideCustomView,
     super.onPermissionRequest,
     super.onConsoleMessage,
+    super.onJsAlert,
+    super.onJsConfirm,
+    super.onJsPrompt,
     super.binaryMessenger,
     super.instanceManager,
   }) : super.detached() {
     lastCreatedDelegate = this;
   }
+
   static CapturingWebChromeClient lastCreatedDelegate =
       CapturingWebChromeClient();
 }
@@ -565,6 +672,7 @@ class CapturingDownloadListener extends android_webview.DownloadListener {
   }) : super.detached() {
     lastCreatedListener = this;
   }
+
   static CapturingDownloadListener lastCreatedListener =
       CapturingDownloadListener(onDownloadStart: (_, __, ___, ____, _____) {});
 }

@@ -32,6 +32,8 @@ void main() {
         return null;
       },
     );
+
+    addTearDown(router.dispose);
     final SimpleDependency dependency = SimpleDependency();
     addTearDown(() => dependency.dispose());
 

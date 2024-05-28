@@ -282,14 +282,15 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
                     IconButton(
                       icon: const Icon(Icons.exposure),
                       color: Colors.blue,
-                      onPressed:
-                          () {}, // TODO(camsim99): Add functionality back here.
+                      onPressed: controller != null
+                          ? onExposureModeButtonPressed
+                          : null,
                     ),
                     IconButton(
                       icon: const Icon(Icons.filter_center_focus),
                       color: Colors.blue,
                       onPressed:
-                          () {}, // TODO(camsim99): Add functionality back here.
+                          controller != null ? onFocusModeButtonPressed : null,
                     )
                   ]
                 : <Widget>[],
@@ -392,22 +393,32 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
                 children: <Widget>[
                   TextButton(
                     style: styleAuto,
-                    onPressed:
-                        () {}, // TODO(camsim99): Add functionality back here.
-                    onLongPress:
-                        () {}, // TODO(camsim99): Add functionality back here.,
+                    onPressed: controller != null
+                        ? () =>
+                            onSetExposureModeButtonPressed(ExposureMode.auto)
+                        : null,
+                    onLongPress: () {
+                      if (controller != null) {
+                        CameraPlatform.instance
+                            .setExposurePoint(controller!.cameraId, null);
+                        showInSnackBar('Resetting exposure point');
+                      }
+                    },
                     child: const Text('AUTO'),
                   ),
                   TextButton(
                     style: styleLocked,
-                    onPressed:
-                        () {}, // TODO(camsim99): Add functionality back here.
+                    onPressed: controller != null
+                        ? () =>
+                            onSetExposureModeButtonPressed(ExposureMode.locked)
+                        : null,
                     child: const Text('LOCKED'),
                   ),
                   TextButton(
                     style: styleLocked,
-                    onPressed:
-                        () {}, // TODO(camsim99): Add functionality back here.
+                    onPressed: controller != null
+                        ? () => controller!.setExposureOffset(0.0)
+                        : null,
                     child: const Text('RESET OFFSET'),
                   ),
                 ],
@@ -466,16 +477,23 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
                 children: <Widget>[
                   TextButton(
                     style: styleAuto,
-                    onPressed:
-                        () {}, // TODO(camsim99): Add functionality back here.
-                    onLongPress:
-                        () {}, // TODO(camsim99): Add functionality back here.
+                    onPressed: controller != null
+                        ? () => onSetFocusModeButtonPressed(FocusMode.auto)
+                        : null,
+                    onLongPress: () {
+                      if (controller != null) {
+                        CameraPlatform.instance
+                            .setFocusPoint(controller!.cameraId, null);
+                      }
+                      showInSnackBar('Resetting focus point');
+                    },
                     child: const Text('AUTO'),
                   ),
                   TextButton(
                     style: styleLocked,
-                    onPressed:
-                        () {}, // TODO(camsim99): Add functionality back here.
+                    onPressed: controller != null
+                        ? () => onSetFocusModeButtonPressed(FocusMode.locked)
+                        : null,
                     child: const Text('LOCKED'),
                   ),
                 ],
@@ -618,8 +636,12 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
 
     final CameraController cameraController = CameraController(
       cameraDescription,
-      kIsWeb ? ResolutionPreset.max : ResolutionPreset.medium,
-      enableAudio: enableAudio,
+      mediaSettings: const MediaSettings(
+        resolutionPreset: ResolutionPreset.low,
+        fps: 15,
+        videoBitrate: 200000,
+        audioBitrate: 32000,
+      ),
       imageFormatGroup: ImageFormatGroup.jpeg,
     );
 

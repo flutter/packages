@@ -7,7 +7,7 @@ command in this directory:
 flutter pub upgrade
 flutter pub run pigeon --input pigeons/messages.dart
 # git commit your changes so that your working environment is clean
-(cd ../../../; ./script/tool_runner.sh format --clang-format=clang-format-7)
+dart run ../../../script/tool/bin/flutter_plugin_tools.dart format --current-package
 ```
 
 If you update pigeon itself and want to test the changes here,
