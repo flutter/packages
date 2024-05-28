@@ -1,4 +1,5 @@
 ## 0.5.8
+
 * Fix warning when cloudMapId was passed
 
 ## 0.5.7
