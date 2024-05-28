@@ -58,7 +58,6 @@ class RouteBuilder {
     required this.observers,
     required this.onPopPageWithRouteMatch,
     this.requestFocus = true,
-    this.transitionDelegate,
   });
 
   /// Builder function for a go router with Navigator.
@@ -95,9 +94,6 @@ class RouteBuilder {
   /// If this method returns false, this builder aborts the pop.
   final PopPageWithRouteMatchCallback onPopPageWithRouteMatch;
 
-  /// Pass this down to [Navigator.transitionDelegate]
-  final TransitionDelegate<dynamic>? transitionDelegate;
-
   /// Builds the top-level Navigator for the given [RouteMatchList].
   Widget build(
     BuildContext context,
@@ -122,7 +118,6 @@ class RouteBuilder {
         configuration: configuration,
         errorBuilder: errorBuilder,
         errorPageBuilder: errorPageBuilder,
-        transitionDelegate: transitionDelegate,
       ),
     );
   }
@@ -140,7 +135,6 @@ class _CustomNavigator extends StatefulWidget {
     required this.configuration,
     required this.errorBuilder,
     required this.errorPageBuilder,
-    required this.transitionDelegate,
   });
 
   final GlobalKey<NavigatorState> navigatorKey;
@@ -158,7 +152,6 @@ class _CustomNavigator extends StatefulWidget {
   final String? navigatorRestorationId;
   final GoRouterWidgetBuilder? errorBuilder;
   final GoRouterPageBuilder? errorPageBuilder;
-  final TransitionDelegate<dynamic>? transitionDelegate;
 
   @override
   State<StatefulWidget> createState() => _CustomNavigatorState();
@@ -293,7 +286,6 @@ class _CustomNavigatorState extends State<_CustomNavigator> {
           // This is used to recursively build pages under this shell route.
           errorBuilder: widget.errorBuilder,
           errorPageBuilder: widget.errorPageBuilder,
-          transitionDelegate: widget.transitionDelegate,
         );
       },
     );
@@ -440,8 +432,6 @@ class _CustomNavigatorState extends State<_CustomNavigator> {
           pages: _pages!,
           observers: widget.observers,
           onPopPage: _handlePopPage,
-          transitionDelegate: widget.transitionDelegate ??
-              const DefaultTransitionDelegate<dynamic>(),
         ),
       ),
     );
