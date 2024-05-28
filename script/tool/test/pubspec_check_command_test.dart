@@ -1613,7 +1613,7 @@ ${_topicsSection()}
             contains(
                 '  The following unexpected non-local dependencies were found:\n'
                 '    bad_dependency\n'
-                '  Please see https://github.com/flutter/flutter/wiki/Contributing-to-Plugins-and-Packages#Dependencies\n'
+                '  Please see https://github.com/flutter/flutter/blob/master/docs/ecosystem/contributing/README.md#Dependencies\n'
                 '  for more information and next steps.'),
           ]),
         );
@@ -1645,7 +1645,7 @@ ${_topicsSection()}
             contains(
                 '  The following unexpected non-local dependencies were found:\n'
                 '    bad_dependency\n'
-                '  Please see https://github.com/flutter/flutter/wiki/Contributing-to-Plugins-and-Packages#Dependencies\n'
+                '  Please see https://github.com/flutter/flutter/blob/master/docs/ecosystem/contributing/README.md#Dependencies\n'
                 '  for more information and next steps.'),
           ]),
         );
@@ -1729,7 +1729,7 @@ ${_topicsSection()}
             contains(
                 '  The following unexpected non-local dependencies were found:\n'
                 '    allow_pinned\n'
-                '  Please see https://github.com/flutter/flutter/wiki/Contributing-to-Plugins-and-Packages#Dependencies\n'
+                '  Please see https://github.com/flutter/flutter/blob/master/docs/ecosystem/contributing/README.md#Dependencies\n'
                 '  for more information and next steps.'),
           ]),
         );

@@ -92,7 +92,7 @@ class UpdateExcerptsCommand extends PackageLoopingCommand {
         'the resulting changes.\n'
         '\n'
         '${indentation}For more information, see '
-        'https://github.com/flutter/flutter/wiki/Contributing-to-Plugins-and-Packages#readme-code',
+        'https://github.com/flutter/flutter/blob/master/docs/ecosystem/contributing/README.md#readme-code',
       );
       return PackageResult.fail();
     }
