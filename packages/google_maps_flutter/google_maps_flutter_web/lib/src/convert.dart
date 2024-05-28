@@ -80,7 +80,9 @@ gmaps.MapOptions _configurationAndStyleToGmapsOptions(
   options.fullscreenControl = false;
   options.streetViewControl = false;
 
-  options.styles = styles;
+  if ((configuration.cloudMapId ?? '').isEmpty) {
+    options.styles = styles;
+  }
 
   options.mapId = configuration.cloudMapId;
 

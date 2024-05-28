@@ -1,3 +1,6 @@
+## 0.5.5
+* Fix warning when cloudMapId was passed
+
 ## 0.5.4+3
 
 * Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
