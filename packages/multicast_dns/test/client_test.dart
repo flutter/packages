@@ -88,25 +88,25 @@ void main() {
   });
 
   group('Bind a single socket to ANY IPv4/6', () {
-    final testCases = [
-      {
+    final List<Map<String, Object>> testCases = <Map<String, Object>>[
+      <String, Object>{
         'name': 'IPv4',
         'datagramSocketType': InternetAddress.anyIPv4,
         'interfacePrefix': '192.168.2.'
       },
-      {
+      <String, Object>{
         'name': 'IPv6',
         'datagramSocketType': InternetAddress.anyIPv6,
         'interfacePrefix': '2001:0db8:85a3:0000:0000:8a2e:7335:030'
       }
     ];
 
-    for (final testCase in testCases) {
+    for (final Map<String, Object> testCase in testCases) {
       test('Bind a single socket to ANY ${testCase["name"]}', () async {
         final FakeRawDatagramSocket datagramSocket = FakeRawDatagramSocket();
 
         datagramSocket.address =
-            (testCase['datagramSocketType'] as InternetAddress);
+            testCase['datagramSocketType']! as InternetAddress;
 
         final List<dynamic> selectedInterfacesForSendingPackets = <dynamic>[];
         final MDnsClient client = MDnsClient(rawDatagramSocketFactory:
@@ -126,7 +126,9 @@ void main() {
           for (int i = 0; i < 10; i++) {
             fakeInterfaces.add(FakeNetworkInterface(
               'inetfake$i',
-              [InternetAddress("${testCase['interfacePrefix'] as String}$i")],
+              <InternetAddress>[
+                InternetAddress("${testCase['interfacePrefix']! as String}$i")
+              ],
               0,
             ));
           }
@@ -135,7 +137,7 @@ void main() {
         }
 
         final InternetAddress listenAddress =
-            (testCase['datagramSocketType'] as InternetAddress);
+            testCase['datagramSocketType'] as InternetAddress;
         await client.start(
             listenAddress: listenAddress,
             mDnsPort: 1234,
