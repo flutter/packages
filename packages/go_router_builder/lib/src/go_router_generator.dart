@@ -15,6 +15,7 @@ const String _routeDataUrl = 'package:go_router/src/route_data.dart';
 
 const Map<String, String> _annotations = <String, String>{
   'TypedGoRoute': 'GoRouteData',
+  'TypedRelativeRoute': 'GoRouteData',
   'TypedShellRoute': 'ShellRouteData',
   'TypedStatefulShellBranch': 'StatefulShellBranchData',
   'TypedStatefulShellRoute': 'StatefulShellRouteData',

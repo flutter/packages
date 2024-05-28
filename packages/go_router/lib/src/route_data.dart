@@ -365,6 +365,17 @@ class TypedGoRoute<T extends GoRouteData> extends TypedRoute<T> {
   final List<TypedRoute<RouteData>> routes;
 }
 
+/// A superclass for each typed go route descendant
+@Target(<TargetKind>{TargetKind.library, TargetKind.classType})
+class TypedRelativeGoRoute<T extends GoRouteData> extends TypedGoRoute<T> {
+  /// Default const constructor
+  const TypedRelativeGoRoute({
+    required super.path,
+    super.name,
+    super.routes = const <TypedRoute<RouteData>>[],
+  });
+}
+
 /// A superclass for each typed shell route descendant
 @Target(<TargetKind>{TargetKind.library, TargetKind.classType})
 class TypedShellRoute<T extends ShellRouteData> extends TypedRoute<T> {
