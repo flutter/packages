@@ -39,7 +39,7 @@ workflow for `shared_preferences` should follow these steps prior to publishing.
     ```sh
     cd shared_preferences_tool;
     flutter pub get;
-    dart run devtools_extensions build_and_copy --source=. --dest=../some_pkg/extension/devtools
+    dart run devtools_extensions build_and_copy --source=. --dest=../shared_preferences/extension/devtools
     ```
 
 2. Validate that `shared_preferences` is properly configured to distribute this extension.

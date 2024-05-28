@@ -227,6 +227,7 @@ class SharedPreferencesStateProvider extends StatefulWidget {
 
   /// Returns whether the target debug session is a web platform from the closest
   /// _SharedPreferencesStateInheritedModel ancestor.
+  ///
   /// Use of this method will cause the given [context] to rebuild whenever the
   /// platform changes.
   /// This will not cause a rebuild when any other part of the state changes.
