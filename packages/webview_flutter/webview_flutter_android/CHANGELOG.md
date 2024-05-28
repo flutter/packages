@@ -1,3 +1,8 @@
+## 3.16.4
+
+* Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+* Removes support for apps using the v1 Android embedding.
+
 ## 3.16.3
 
 * Bumps androidx.webkit:webkit from 1.10.0 to 1.11.0.
