@@ -11,11 +11,15 @@ import 'package:web/web.dart' as web;
 /// Adds a `controlsList` and `disablePictureInPicture` getters.
 extension NonStandardGettersOnVideoElement on web.HTMLVideoElement {
   external web.DOMTokenList? get controlsList;
+  // TODO(srujzs): This will be added in `package:web` 0.6.0. Remove this helper
+  // once it's available.
   external bool get disablePictureInPicture;
 }
 
 /// Adds a `disableRemotePlayback` getter.
 extension NonStandardGettersOnMediaElement on web.HTMLMediaElement {
+  // TODO(srujzs): This will be added in `package:web` 0.6.0. Remove this helper
+  // once it's available.
   external bool get disableRemotePlayback;
 }
 
