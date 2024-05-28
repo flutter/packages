@@ -1,7 +1,11 @@
-## 0.10.10
+## 0.10.9+4
 
-* Updates minimum supported SDK version to Flutter 3.22/Dart 3.2.
 * [Supports Impeller](https://docs.flutter.dev/release/breaking-changes/android-surface-plugins)
+
+## 0.10.9+3
+
+* Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+* Removes support for apps using the v1 Android embedding.
 
 ## 0.10.9+2
 
