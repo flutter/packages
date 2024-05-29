@@ -1,6 +1,6 @@
 ## 2.4.16
 
-* [Supports Impeller](https://docs.flutter.dev/release/breaking-changes/android-surface-plugins)
+* [Supports Impeller](https://docs.flutter.dev/release/breaking-changes/android-surface-plugins).
 
 ## 2.4.15
 
