@@ -1869,7 +1869,6 @@ void main() {
 
       final GoRouter router =
           await createRouter(routes, tester, initialLocation: '/home');
-      router.go('/');
 
       router.goRelative('family/$fid');
       await tester.pumpAndSettle();
