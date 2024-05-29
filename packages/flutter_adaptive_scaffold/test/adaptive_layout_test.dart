@@ -120,11 +120,13 @@ void main() {
   testWidgets(
       'slot layout properly switches between items with the appropriate animation',
       (WidgetTester tester) async {
-    await tester.pumpWidget(slot(300, 1000, tester));
+    await tester
+        .pumpWidget(slot(300, const Duration(milliseconds: 1000), tester));
     expect(begin, findsOneWidget);
     expect(end, findsNothing);
 
-    await tester.pumpWidget(slot(500, 1000, tester));
+    await tester
+        .pumpWidget(slot(500, const Duration(milliseconds: 1000), tester));
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 500));
     expect(tester.widget<SlideTransition>(slideOut('0')).position.value,
@@ -251,15 +253,15 @@ void main() {
     expect(begin, findsOneWidget);
     expect(end, findsNothing);
 
-    // expand in 1/5 second
+    // expand in 1/5 second.
     await tester.pumpWidget(slot(500, 200, tester));
 
-    // after 100ms, we expect both widgets to be present
+    // after 100ms, we expect both widgets to be present.
     await tester.pump(const Duration(milliseconds: 50));
     expect(begin, findsOneWidget);
     expect(end, findsOneWidget);
 
-    // After 1/5 second, all animations should be done
+    // After 1/5 second, all animations should be done.
     await tester.pump(const Duration(milliseconds: 200));
     expect(begin, findsNothing);
     expect(end, findsOneWidget);
@@ -435,7 +437,7 @@ AnimatedWidget leftInOut(Widget child, Animation<double> animation) {
   );
 }
 
-MediaQuery slot(double width, int durationMs, WidgetTester tester) {
+MediaQuery slot(double width, Duration duration, WidgetTester tester) {
   return MediaQuery(
     data: MediaQueryData.fromView(tester.view).copyWith(size: Size(width, 800)),
     child: Directionality(
@@ -445,14 +447,14 @@ MediaQuery slot(double width, int durationMs, WidgetTester tester) {
           TestBreakpoint0(): SlotLayout.from(
             inAnimation: leftOutIn,
             outAnimation: leftInOut,
-            duration: Duration(milliseconds: durationMs),
+            duration: duration,
             key: const Key('0'),
             builder: (_) => const SizedBox(width: 10, height: 10),
           ),
           TestBreakpoint400(): SlotLayout.from(
             inAnimation: leftOutIn,
             outAnimation: leftInOut,
-            duration: Duration(milliseconds: durationMs),
+            duration: duration,
             key: const Key('400'),
             builder: (_) => const SizedBox(width: 10, height: 10),
           ),

@@ -163,7 +163,7 @@ class SlotLayoutConfig extends StatelessWidget {
   ///   as the returned widget.
   final Widget Function(Widget, Animation<double>)? outAnimation;
 
-  /// The amount of time taken by the execution of the in and out animations
+  /// The amount of time taken by the execution of the in and out animations.
   final Duration? duration;
 
   /// An empty [SlotLayoutConfig] to be placed in a slot to indicate that the slot
