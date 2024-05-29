@@ -6,10 +6,6 @@ environment:
   sdk: ^3.3.0
   flutter: ">=3.19.0"
 
-flutter:
-  assets:
-    - assets/
-
 dependencies:
   flutter:
     sdk: flutter
@@ -28,6 +24,10 @@ dev_dependencies:
   integration_test:
     sdk: flutter
   mockito: 5.4.4
+
+flutter:
+  assets:
+    - assets/
 
 dependency_overrides:
   # Override the google_maps_flutter dependency on google_maps_flutter_web.
