@@ -393,11 +393,9 @@ final class MethodCallHandlerImpl implements MethodChannel.MethodCallHandler {
     Integer videoBitrate = call.argument("videoBitrate");
     Integer audioBitrate = call.argument("audioBitrate");
 
-    TextureRegistry.SurfaceTextureEntry flutterSurfaceTexture =
-        textureRegistry.createSurfaceTexture();
+    TextureRegistry.SurfaceProducer surfaceProducer = textureRegistry.createSurfaceProducer();
     DartMessenger dartMessenger =
-        new DartMessenger(
-            messenger, flutterSurfaceTexture.id(), new Handler(Looper.getMainLooper()));
+        new DartMessenger(messenger, surfaceProducer.id(), new Handler(Looper.getMainLooper()));
     CameraProperties cameraProperties =
         new CameraPropertiesImpl(cameraName, CameraUtils.getCameraManager(activity));
     ResolutionPreset resolutionPreset = ResolutionPreset.valueOf(preset);
@@ -405,7 +403,7 @@ final class MethodCallHandlerImpl implements MethodChannel.MethodCallHandler {
     camera =
         new Camera(
             activity,
-            flutterSurfaceTexture,
+            surfaceProducer,
             new CameraFeatureFactoryImpl(),
             dartMessenger,
             cameraProperties,
@@ -413,7 +411,7 @@ final class MethodCallHandlerImpl implements MethodChannel.MethodCallHandler {
                 resolutionPreset, enableAudio, fps, videoBitrate, audioBitrate));
 
     Map<String, Object> reply = new HashMap<>();
-    reply.put("cameraId", flutterSurfaceTexture.id());
+    reply.put("cameraId", surfaceProducer.id());
     result.success(reply);
   }
 

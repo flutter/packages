@@ -8,7 +8,6 @@ packages/animations/**                                   @goderbauer
 packages/camera/**                                       @bparrishMines
 packages/cross_file/**                                   @ditman
 packages/css_colors/**                                   @stuartmorgan
-packages/dynamic_layouts/**                              @Piinks
 packages/extension_google_sign_in_as_googleapis_auth/**  @ditman
 packages/file_selector/**                                @stuartmorgan
 packages/flutter_adaptive_scaffold/**                    @gspencergoog
