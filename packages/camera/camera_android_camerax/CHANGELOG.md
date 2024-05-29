@@ -1,6 +1,9 @@
-## NEXT
+## 0.6.5+3
 
 * Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+* Adds notes to `README.md` about allowing image streaming in the background and the required
+  `WRITE_EXTERNAL_STORAGE` permission specified in the plugin to allow writing photos and videos to
+  files.
 
 ## 0.6.5+2
 
