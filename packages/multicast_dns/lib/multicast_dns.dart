@@ -190,10 +190,6 @@ class MDnsClient {
     final Stream<T> results = _resolver.addPendingRequest<T>(
         query.resourceRecordType, query.fullyQualifiedName, timeout);
 
-    if (_incomingIPv4 == null) {
-      throw StateError('Unable to send packet on null socket.');
-    }
-
     // Send and listen on same "ANY" interface
     _incomingIPv4?.send(query.encode(), _mDnsAddress!, selectedMDnsPort);
     return results;
