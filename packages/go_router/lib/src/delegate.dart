@@ -126,23 +126,15 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
 
   /// Pop the Navigator's page stack until the predicate returns `true`.
   void popUntil(PopUntilPredicate predicate) {
-    bool hasStoppedPopping = false;
-    bool popUntilPredicate(GoRouterState state, Route<dynamic> route) {
-      if (predicate(state, route)) {
-        hasStoppedPopping = true;
-        return true;
-      }
-      return false;
-    }
-
-    while (!hasStoppedPopping) {
-      final bool couldBePopped = _popWithPredicate(popUntilPredicate);
-      if (!couldBePopped) {
-        break;
-      }
-    }
+    while (_popWithPredicate(predicate)) {}
   }
 
+  /// Methods repetitively called to pop the Navigator's page stack until the
+  /// predicate returns `true` or there is nothing to pop anymore.
+  ///
+  /// - Returns `true` if we should continue popping.
+  /// - Returns `false` if we should stop popping (when the predicate returns
+  ///   `true` or there is no route to pop anymore).
   bool _popWithPredicate(
     PopUntilPredicate predicate,
   ) {
@@ -159,18 +151,19 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
       walker = walker.matches.last;
     }
     int count = 0; // Only pop 1 page at the time.
+    bool predicateReturnedTrue = false;
     state?.popUntil((Route<dynamic> route) {
       if (count == 1 ||
-          predicate(
+          (predicateReturnedTrue |= predicate(
             walker.buildState(_configuration, currentConfiguration),
             route,
-          )) {
+          ))) {
         return true;
       }
       count++;
       return false;
     });
-    return state != null;
+    return state != null && !predicateReturnedTrue;
   }
 
   void _debugAssertMatchListNotEmpty() {
