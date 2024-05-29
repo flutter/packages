@@ -1,4 +1,4 @@
-## 14.1.3
+## 14.1.4
 
 - Adds `GoRouter.goRelative`
 - Adds `TypedRelativeGoRoute`
