@@ -246,13 +246,13 @@ void main() {
     expect(
       code,
       contains(
-        'nested?.encode(),',
+        'nested,',
       ),
     );
     expect(
-      code.replaceAll('\n', ' ').replaceAll('  ', ''),
+      code,
       contains(
-        'nested: result[0] != null ? Input.decode(result[0]! as List<Object?>) : null',
+        'nested: result[0] as Input?',
       ),
     );
   });
@@ -295,13 +295,13 @@ void main() {
     expect(
       code,
       contains(
-        'nested.encode(),',
+        'nested,',
       ),
     );
     expect(
-      code.replaceAll('\n', ' ').replaceAll('  ', ''),
+      code,
       contains(
-        'nested: Input.decode(result[0]! as List<Object?>)',
+        'nested: result[0]! as Input',
       ),
     );
   });

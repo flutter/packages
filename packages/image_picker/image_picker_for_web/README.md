@@ -76,22 +76,20 @@ The instance will also let you retrieve the bytes of the selected file across al
 
 If you want to use the path directly, your code would need look like this:
 
+<?code-excerpt "example/lib/readme_excerpts.dart (ImageFromPath)"?>
 ```dart
-...
 if (kIsWeb) {
-  Image.network(pickedFile.path);
+  image = Image.network(pickedFile.path);
 } else {
-  Image.file(File(pickedFile.path));
+  image = Image.file(File(pickedFile.path));
 }
-...
 ```
 
 Or, using bytes:
 
+<?code-excerpt "example/lib/readme_excerpts.dart (ImageFromBytes)"?>
 ```dart
-...
-Image.memory(await pickedFile.readAsBytes())
-...
+image = Image.memory(await pickedFile.readAsBytes());
 ```
 
 [1]: https://pub.dev/packages/image_picker

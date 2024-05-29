@@ -1,3 +1,13 @@
+## 0.10.9+3
+
+* Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+* Removes support for apps using the v1 Android embedding.
+
+## 0.10.9+2
+
+* Updates `README.md` to reflect the fact that the `camera_android_camerax` camera plugin implementation
+  is the endorsed Android implementation for `camera: ^0.11.0`.
+
 ## 0.10.9+1
 
 * Changes the visibility of a number of fields to `@VisibleForTesting` in order simplify testing.

@@ -230,11 +230,7 @@ class DartGenerator extends StructuredGenerator<DartOptions> {
         for (final NamedType field
             in getFieldsInSerializationOrder(classDefinition)) {
           final String conditional = field.type.isNullable ? '?' : '';
-          if (field.type.isClass) {
-            indent.writeln(
-              '${field.name}$conditional.encode(),',
-            );
-          } else if (field.type.isEnum) {
+          if (field.type.isEnum) {
             indent.writeln(
               '${field.name}$conditional.index,',
             );
@@ -260,18 +256,7 @@ class DartGenerator extends StructuredGenerator<DartOptions> {
       final String genericType = _makeGenericTypeArguments(field.type);
       final String castCall = _makeGenericCastCall(field.type);
       final String nullableTag = field.type.isNullable ? '?' : '';
-      if (field.type.isClass) {
-        final String nonNullValue =
-            '${field.type.baseName}.decode($resultAt! as List<Object?>)';
-        if (field.type.isNullable) {
-          indent.format('''
-$resultAt != null
-\t\t? $nonNullValue
-\t\t: null''', leadingSpace: false, trailingNewline: false);
-        } else {
-          indent.add(nonNullValue);
-        }
-      } else if (field.type.isEnum) {
+      if (field.type.isEnum) {
         final String nonNullValue =
             '${field.type.baseName}.values[$resultAt! as int]';
         if (field.type.isNullable) {
@@ -512,7 +497,7 @@ final BinaryMessenger? ${_varNamePrefix}binaryMessenger;
 
     // Each API has a private codec instance used by every host method,
     // constructor, or non-static field.
-    final String codecInstanceName = '${_varNamePrefix}codec${api.name}';
+    final String codecInstanceName = '${varNamePrefix}codec${api.name}';
 
     // AST class used by code_builder to generate the code.
     final cb.Class proxyApi = cb.Class(
@@ -795,15 +780,15 @@ PlatformException _createConnectionError(String channelName) {
     indent.writeln(
         "$constOrFinal String ${_varNamePrefix}channelName = '$channelName$channelSuffix';");
     indent.writeScoped(
-        'final BasicMessageChannel<Object?> ${_varNamePrefix}channel = BasicMessageChannel<Object?>(',
+        'final BasicMessageChannel<Object?> ${varNamePrefix}channel = BasicMessageChannel<Object?>(',
         ');', () {
-      indent.writeln('${_varNamePrefix}channelName,');
+      indent.writeln('${varNamePrefix}channelName,');
       indent.writeln('$_pigeonChannelCodec,');
-      indent.writeln('binaryMessenger: ${_varNamePrefix}binaryMessenger,');
+      indent.writeln('binaryMessenger: ${varNamePrefix}binaryMessenger,');
     });
     final String returnTypeName = _makeGenericTypeArguments(returnType);
     final String genericCastCall = _makeGenericCastCall(returnType);
-    const String accessor = '${_varNamePrefix}replyList[0]';
+    const String accessor = '${varNamePrefix}replyList[0]';
     // Avoid warnings from pointlessly casting to `Object?`.
     final String nullablyTypedAccessor = returnTypeName == 'Object'
         ? accessor
@@ -826,22 +811,22 @@ PlatformException _createConnectionError(String channelName) {
     returnStatement = '$returnStatement;';
 
     indent.format('''
-final List<Object?>? ${_varNamePrefix}replyList =
-\t\tawait ${_varNamePrefix}channel.send($sendArgument) as List<Object?>?;
-if (${_varNamePrefix}replyList == null) {
-\tthrow _createConnectionError(${_varNamePrefix}channelName);
-} else if (${_varNamePrefix}replyList.length > 1) {
+final List<Object?>? ${varNamePrefix}replyList =
+\t\tawait ${varNamePrefix}channel.send($sendArgument) as List<Object?>?;
+if (${varNamePrefix}replyList == null) {
+\tthrow _createConnectionError(${varNamePrefix}channelName);
+} else if (${varNamePrefix}replyList.length > 1) {
 \tthrow PlatformException(
-\t\tcode: ${_varNamePrefix}replyList[0]! as String,
-\t\tmessage: ${_varNamePrefix}replyList[1] as String?,
-\t\tdetails: ${_varNamePrefix}replyList[2],
+\t\tcode: ${varNamePrefix}replyList[0]! as String,
+\t\tmessage: ${varNamePrefix}replyList[1] as String?,
+\t\tdetails: ${varNamePrefix}replyList[2],
 \t);''');
     // On iOS we can return nil from functions to accommodate error
     // handling.  Returning a nil value and not returning an error is an
     // exception.
     if (!returnType.isNullable && !returnType.isVoid) {
       indent.format('''
-} else if (${_varNamePrefix}replyList[0] == null) {
+} else if (${varNamePrefix}replyList[0] == null) {
 \tthrow PlatformException(
 \t\tcode: 'null-error',
 \t\tmessage: 'Host platform returned null value for non-null return value.',
@@ -870,7 +855,7 @@ if (${_varNamePrefix}replyList == null) {
     indent.write('');
     indent.addScoped('{', '}', () {
       indent.writeln(
-        'final BasicMessageChannel<Object?> ${_varNamePrefix}channel = BasicMessageChannel<Object?>(',
+        'final BasicMessageChannel<Object?> ${varNamePrefix}channel = BasicMessageChannel<Object?>(',
       );
       indent.nest(2, () {
         final String channelSuffix =
@@ -881,8 +866,8 @@ if (${_varNamePrefix}replyList == null) {
         );
       });
       final String messageHandlerSetterWithOpeningParentheses = isMockHandler
-          ? '_testBinaryMessengerBinding!.defaultBinaryMessenger.setMockDecodedMessageHandler<Object?>(${_varNamePrefix}channel, '
-          : '${_varNamePrefix}channel.setMessageHandler(';
+          ? '_testBinaryMessengerBinding!.defaultBinaryMessenger.setMockDecodedMessageHandler<Object?>(${varNamePrefix}channel, '
+          : '${varNamePrefix}channel.setMessageHandler(';
       indent.write('if ($nullHandlerExpression) ');
       indent.addScoped('{', '}', () {
         indent.writeln('${messageHandlerSetterWithOpeningParentheses}null);');
@@ -1079,7 +1064,7 @@ if (${_varNamePrefix}replyList == null) {
                   channelName: channelName,
                   parameters: <Parameter>[
                     Parameter(
-                      name: '${_varNamePrefix}instanceIdentifier',
+                      name: '${varNamePrefix}instanceIdentifier',
                       type: const TypeDeclaration(
                         baseName: 'int',
                         isNullable: false,
@@ -1098,12 +1083,12 @@ if (${_varNamePrefix}replyList == null) {
 
                 builder.statements.addAll(<cb.Code>[
                   const cb.Code(
-                    'final int ${_varNamePrefix}instanceIdentifier = $_instanceManagerVarName.addDartCreatedInstance(this);',
+                    'final int ${varNamePrefix}instanceIdentifier = $_instanceManagerVarName.addDartCreatedInstance(this);',
                   ),
                   cb.Code('final $codecName $_pigeonChannelCodec =\n'
                       '    $codecInstanceName;'),
                   cb.Code(
-                    'final BinaryMessenger? ${_varNamePrefix}binaryMessenger = ${binaryMessengerParameter.name};',
+                    'final BinaryMessenger? ${varNamePrefix}binaryMessenger = ${binaryMessengerParameter.name};',
                   ),
                   const cb.Code('() async {'),
                   cb.Code(messageCallSink.toString()),
@@ -1356,7 +1341,7 @@ if (${_varNamePrefix}replyList == null) {
             field.documentationComments,
             _docCommentSpec,
           ))
-          ..assignment = cb.Code('$_varNamePrefix${field.name}()'),
+          ..assignment = cb.Code('$varNamePrefix${field.name}()'),
       );
     }
   }
@@ -1581,11 +1566,11 @@ if (${_varNamePrefix}replyList == null) {
       yield cb.Method(
         (cb.MethodBuilder builder) {
           final String type = _addGenericTypesNullable(field.type);
-          const String instanceName = '${_varNamePrefix}instance';
+          const String instanceName = '${varNamePrefix}instance';
           const String identifierInstanceName =
-              '${_varNamePrefix}instanceIdentifier';
+              '${varNamePrefix}instanceIdentifier';
           builder
-            ..name = '$_varNamePrefix${field.name}'
+            ..name = '$varNamePrefix${field.name}'
             ..static = field.isStatic
             ..returns = cb.refer(type)
             ..body = cb.Block(
@@ -1629,7 +1614,7 @@ if (${_varNamePrefix}replyList == null) {
                     cb.Code('final $codecName $_pigeonChannelCodec =\n'
                         '    $codecInstanceName;'),
                     const cb.Code(
-                      'final BinaryMessenger? ${_varNamePrefix}binaryMessenger = ${classMemberNamePrefix}binaryMessenger;',
+                      'final BinaryMessenger? ${varNamePrefix}binaryMessenger = ${classMemberNamePrefix}binaryMessenger;',
                     ),
                     const cb.Code(
                       'final int $identifierInstanceName = $_instanceManagerVarName.addDartCreatedInstance($instanceName);',
@@ -1642,7 +1627,7 @@ if (${_varNamePrefix}replyList == null) {
                       'final $codecName $_pigeonChannelCodec = $codecName($instanceManagerClassName.instance);',
                     ),
                     const cb.Code(
-                      'final BinaryMessenger ${_varNamePrefix}binaryMessenger = ServicesBinding.instance.defaultBinaryMessenger;',
+                      'final BinaryMessenger ${varNamePrefix}binaryMessenger = ServicesBinding.instance.defaultBinaryMessenger;',
                     ),
                     const cb.Code(
                       'final int $identifierInstanceName = $instanceManagerClassName.instance.addDartCreatedInstance($instanceName);',
@@ -1743,7 +1728,7 @@ if (${_varNamePrefix}replyList == null) {
                     'final $codecName $_pigeonChannelCodec = $codecName($_instanceManagerVarName ?? $instanceManagerClassName.instance);',
                   ),
                 const cb.Code(
-                  'final BinaryMessenger? ${_varNamePrefix}binaryMessenger = ${classMemberNamePrefix}binaryMessenger;',
+                  'final BinaryMessenger? ${varNamePrefix}binaryMessenger = ${classMemberNamePrefix}binaryMessenger;',
                 ),
                 cb.Code(messageCallSink.toString()),
               ]);

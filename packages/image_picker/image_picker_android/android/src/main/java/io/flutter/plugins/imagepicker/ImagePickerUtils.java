@@ -5,10 +5,13 @@
 package io.flutter.plugins.imagepicker;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Build;
+import android.provider.MediaStore;
+import androidx.activity.result.contract.ActivityResultContracts;
 import java.util.Arrays;
 
 final class ImagePickerUtils {
@@ -53,5 +56,33 @@ final class ImagePickerUtils {
   static boolean needRequestCameraPermission(Context context) {
     boolean greatOrEqualM = Build.VERSION.SDK_INT >= Build.VERSION_CODES.M;
     return greatOrEqualM && isPermissionPresentInManifest(context, Manifest.permission.CAMERA);
+  }
+
+  /**
+   * The system photo picker has a maximum limit of selectable items returned by
+   * [MediaStore.getPickImagesMaxLimit()] On devices supporting picker provided via
+   * [ACTION_SYSTEM_FALLBACK_PICK_IMAGES], the limit may be ignored if it's higher than the allowed
+   * limit. On devices not supporting the photo picker, the limit is ignored.
+   *
+   * @see MediaStore.EXTRA_PICK_IMAGES_MAX
+   */
+  @SuppressLint({"NewApi", "ClassVerificationFailure"})
+  static int getMaxItems() {
+    if (ActivityResultContracts.PickVisualMedia.isSystemPickerAvailable$activity_release()) {
+      return MediaStore.getPickImagesMaxLimit();
+    } else {
+      return Integer.MAX_VALUE;
+    }
+  }
+
+  static int getLimitFromOption(Messages.GeneralOptions generalOptions) {
+    Long limit = generalOptions.getLimit();
+    int effectiveLimit = getMaxItems();
+
+    if (limit != null && limit < effectiveLimit) {
+      effectiveLimit = Math.toIntExact(limit);
+    }
+
+    return effectiveLimit;
   }
 }

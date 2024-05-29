@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.16/Dart 3.2.
+
 ## 2.3.2
 
 * Replaces deprecated RouteInformation API usage.
