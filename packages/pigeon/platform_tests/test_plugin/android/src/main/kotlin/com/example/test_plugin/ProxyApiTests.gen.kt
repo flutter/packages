@@ -286,7 +286,7 @@ class PigeonInstanceManager(private val finalizationListener: PigeonFinalization
 private class PigeonInstanceManagerApi(val binaryMessenger: BinaryMessenger) {
   companion object {
     /** The codec used by PigeonInstanceManagerApi. */
-    private val codec: MessageCodec<Any?> by lazy { StandardMessageCodec() }
+    val codec: MessageCodec<Any?> by lazy { StandardMessageCodec() }
 
     /**
      * Sets up an instance of `PigeonInstanceManagerApi` to handle messages from the
@@ -304,10 +304,11 @@ private class PigeonInstanceManagerApi(val binaryMessenger: BinaryMessenger) {
                 codec)
         if (instanceManager != null) {
           channel.setMessageHandler { message, reply ->
-            val identifier = message as Number
+            val args = message as List<Any?>
+            val identifierArg = args[0].let { num -> if (num is Int) num.toLong() else num as Long }
             val wrapped: List<Any?> =
                 try {
-                  instanceManager.remove<Any?>(identifier.toLong())
+                  instanceManager.remove<Any?>(identifierArg)
                   listOf<Any?>(null)
                 } catch (exception: Throwable) {
                   wrapError(exception)
@@ -342,11 +343,11 @@ private class PigeonInstanceManagerApi(val binaryMessenger: BinaryMessenger) {
     }
   }
 
-  fun removeStrongReference(identifier: Long, callback: (Result<Unit>) -> Unit) {
+  fun removeStrongReference(identifierArg: Long, callback: (Result<Unit>) -> Unit) {
     val channelName =
         "dev.flutter.pigeon.pigeon_integration_tests.PigeonInstanceManagerApi.removeStrongReference"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
-    channel.send(identifier) {
+    channel.send(listOf(identifierArg)) {
       if (it is List<*>) {
         if (it.size > 1) {
           callback(
@@ -361,7 +362,6 @@ private class PigeonInstanceManagerApi(val binaryMessenger: BinaryMessenger) {
     }
   }
 }
-
 /**
  * Provides implementations for each ProxyApi implementation and provides access to resources needed
  * by any implementation.
@@ -474,7 +474,7 @@ enum class ProxyApiTestEnum(val raw: Int) {
  * integration tests.
  */
 @Suppress("UNCHECKED_CAST")
-abstract class PigeonApiProxyApiTestClass(val pigeonRegistrar: PigeonProxyApiRegistrar) {
+abstract class PigeonApiProxyApiTestClass(open val pigeonRegistrar: PigeonProxyApiRegistrar) {
   abstract fun pigeon_defaultConstructor(
       aBool: Boolean,
       anInt: Long,
@@ -3798,7 +3798,7 @@ abstract class PigeonApiProxyApiTestClass(val pigeonRegistrar: PigeonProxyApiReg
 }
 /** ProxyApi to serve as a super class to the core ProxyApi class. */
 @Suppress("UNCHECKED_CAST")
-abstract class PigeonApiProxyApiSuperClass(val pigeonRegistrar: PigeonProxyApiRegistrar) {
+abstract class PigeonApiProxyApiSuperClass(open val pigeonRegistrar: PigeonProxyApiRegistrar) {
   abstract fun pigeon_defaultConstructor(): com.example.test_plugin.ProxyApiSuperClass
 
   abstract fun aSuperMethod(pigeon_instance: com.example.test_plugin.ProxyApiSuperClass)
@@ -3892,7 +3892,7 @@ abstract class PigeonApiProxyApiSuperClass(val pigeonRegistrar: PigeonProxyApiRe
 }
 /** ProxyApi to serve as an interface to the core ProxyApi class. */
 @Suppress("UNCHECKED_CAST")
-abstract class PigeonApiProxyApiInterface(val pigeonRegistrar: PigeonProxyApiRegistrar) {
+abstract class PigeonApiProxyApiInterface(open val pigeonRegistrar: PigeonProxyApiRegistrar) {
   @Suppress("LocalVariableName", "FunctionName")
   /** Creates a Dart instance of ProxyApiInterface and attaches it to [pigeon_instanceArg]. */
   fun pigeon_newInstance(pigeon_instanceArg: ProxyApiInterface, callback: (Result<Unit>) -> Unit) {

@@ -510,10 +510,104 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
     Indent indent, {
     required String dartPackageName,
   }) {
-    indent.format(instanceManagerApiTemplate(
+    const String instanceManagerApiName = '${instanceManagerClassName}Api';
+
+    final String removeStrongReferenceName = makeChannelNameWithStrings(
+      apiName: instanceManagerApiName,
+      methodName: 'removeStrongReference',
       dartPackageName: dartPackageName,
-      errorClassName: _getErrorClassName(generatorOptions),
-    ));
+    );
+    final String clearName = makeChannelNameWithStrings(
+      apiName: instanceManagerApiName,
+      methodName: 'clear',
+      dartPackageName: dartPackageName,
+    );
+
+    indent.writeln('/**');
+    indent.writeln(
+        '* Generated API for managing the Dart and native `$instanceManagerClassName`s.');
+    indent.writeln('*/');
+    indent.writeScoped(
+      'private class $instanceManagerApiName(val binaryMessenger: BinaryMessenger) {',
+      '}',
+      () {
+        indent.writeScoped('companion object {', '}', () {
+          indent.writeln('/** The codec used by $instanceManagerApiName. */');
+          indent.writeScoped('val codec: MessageCodec<Any?> by lazy {', '}',
+              () {
+            indent.writeln('StandardMessageCodec()');
+          });
+          indent.newln();
+
+          indent.writeln('/**');
+          indent.writeln(
+              '* Sets up an instance of `$instanceManagerApiName` to handle messages from the');
+          indent.writeln('* `binaryMessenger`.');
+          indent.writeln('*/');
+          indent.writeScoped(
+            'fun setUpMessageHandlers(binaryMessenger: BinaryMessenger, instanceManager: $instanceManagerClassName?) {',
+            '}',
+            () {
+              const String setHandlerCondition = 'instanceManager != null';
+              _writeHostMethodMessageHandler(
+                indent,
+                name: 'removeStrongReference',
+                channelName: removeStrongReferenceName,
+                taskQueueType: TaskQueueType.serial,
+                parameters: <Parameter>[
+                  Parameter(
+                    name: 'identifier',
+                    type: const TypeDeclaration(
+                      baseName: 'int',
+                      isNullable: false,
+                    ),
+                  ),
+                ],
+                returnType: const TypeDeclaration.voidDeclaration(),
+                setHandlerCondition: setHandlerCondition,
+                onCreateCall: (
+                  List<String> safeArgNames, {
+                  required String apiVarName,
+                }) {
+                  return 'instanceManager.remove<Any?>(${safeArgNames.single})';
+                },
+              );
+              _writeHostMethodMessageHandler(
+                indent,
+                name: 'clear',
+                channelName: clearName,
+                taskQueueType: TaskQueueType.serial,
+                parameters: <Parameter>[],
+                returnType: const TypeDeclaration.voidDeclaration(),
+                setHandlerCondition: setHandlerCondition,
+                onCreateCall: (
+                  List<String> safeArgNames, {
+                  required String apiVarName,
+                }) {
+                  return 'instanceManager.clear()';
+                },
+              );
+            },
+          );
+        });
+        indent.newln();
+
+        _writeFlutterMethod(
+          indent,
+          generatorOptions: generatorOptions,
+          name: 'removeStrongReference',
+          parameters: <Parameter>[
+            Parameter(
+              name: 'identifier',
+              type: const TypeDeclaration(baseName: 'int', isNullable: false),
+            )
+          ],
+          returnType: const TypeDeclaration.voidDeclaration(),
+          channelName: removeStrongReferenceName,
+          dartPackageName: dartPackageName,
+        );
+      },
+    );
   }
 
   @override
@@ -903,6 +997,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
     required TaskQueueType taskQueueType,
     required List<Parameter> parameters,
     required TypeDeclaration returnType,
+    String setHandlerCondition = 'api != null',
     bool isAsynchronous = false,
     String Function(List<String> safeArgNames, {required String apiVarName})?
         onCreateCall,
@@ -926,7 +1021,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
         indent.addln(')');
       }
 
-      indent.write('if (api != null) ');
+      indent.write('if ($setHandlerCondition) ');
       indent.addScoped('{', '}', () {
         final String messageVarName = parameters.isNotEmpty ? 'message' : '_';
 
