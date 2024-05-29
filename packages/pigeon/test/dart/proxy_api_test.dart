@@ -157,7 +157,7 @@ void main() {
       expect(
         code,
         contains(
-          r'dev.flutter.pigeon.pigeon_integration_tests.PigeonInstanceManagerApi.removeStrongReference',
+          'dev.flutter.pigeon.$DEFAULT_PACKAGE_NAME.PigeonInstanceManagerApi.removeStrongReference',
         ),
       );
       expect(
@@ -171,7 +171,7 @@ void main() {
       expect(
         code,
         contains(
-          r'dev.flutter.pigeon.pigeon_integration_tests.PigeonInstanceManagerApi.clear',
+          'dev.flutter.pigeon.$DEFAULT_PACKAGE_NAME.PigeonInstanceManagerApi.clear',
         ),
       );
     });
