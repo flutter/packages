@@ -946,28 +946,29 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
         indent.writeln('let message: String? = nilOrValue(listResponse[1])');
         indent.writeln('let details: String? = nilOrValue(listResponse[2])');
         indent.writeln(
-            'completion(.failure(FlutterError(code: code, message: message, details: details)))');
+            'completion(.failure(${_getErrorClassName(generatorOptions)}(code: code, message: message, details: details)))');
       }, addTrailingNewline: false);
       if (!returnType.isNullable && !returnType.isVoid) {
         indent.addScoped('else if listResponse[0] == nil {', '} ', () {
           indent.writeln(
-              'completion(.failure(createConnectionError(withChannelName: channelName)))');
-          indent.writeln('return');
-        });
-        indent.writeScoped('if listResponse.count > 1 {', '} ', () {
-          indent.writeln('let code: String = listResponse[0] as! String');
-          indent.writeln('let message: String? = nilOrValue(listResponse[1])');
-          indent.writeln('let details: String? = nilOrValue(listResponse[2])');
-          indent.writeln(
-              'completion(.failure(${_getErrorClassName(generatorOptions)}(code: code, message: message, details: details)))');
+              'completion(.failure(${_getErrorClassName(generatorOptions)}(code: "null-error", message: "Flutter api returned null value for non-null return value.", details: "")))');
         }, addTrailingNewline: false);
-        if (!returnType.isNullable && !returnType.isVoid) {
-          indent.addScoped('else if listResponse[0] == nil {', '} ', () {
-            indent.writeln(
-                'completion(.failure(${_getErrorClassName(generatorOptions)}(code: "null-error", message: "Flutter api returned null value for non-null return value.", details: "")))');
-          }, addTrailingNewline: false);
-        }
       }
+      indent.addScoped('else {', '}', () {
+        if (returnType.isVoid) {
+          indent.writeln('completion(.success(Void()))');
+        } else {
+          final String fieldType = _swiftTypeForDartType(returnType);
+          _writeGenericCasting(
+            indent: indent,
+            value: 'listResponse[0]',
+            variableName: 'result',
+            fieldType: fieldType,
+            type: returnType,
+          );
+          indent.writeln('completion(.success(result))');
+        }
+      });
     });
   }
 
