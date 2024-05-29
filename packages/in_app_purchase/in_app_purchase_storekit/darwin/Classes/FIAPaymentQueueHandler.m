@@ -5,6 +5,7 @@
 #import "FIAPaymentQueueHandler.h"
 #import "FIAPPaymentQueueDelegate.h"
 #import "FIATransactionCache.h"
+#import "Mocks.h"
 
 @interface FIAPaymentQueueHandler ()
 
@@ -66,7 +67,7 @@
                   restoreCompletedTransactionsFinished:restoreCompletedTransactionsFinished
                                  shouldAddStorePayment:shouldAddStorePayment
                                       updatedDownloads:updatedDownloads
-                                      transactionCache:[[FIATransactionCache alloc] init]];
+                                      transactionCache:[[DefaultTransactionCache alloc] init]];
 }
 
 - (instancetype)initWithQueue:(nonnull SKPaymentQueue *)queue
@@ -77,7 +78,7 @@
         (nullable RestoreCompletedTransactionsFinished)restoreCompletedTransactionsFinished
                    shouldAddStorePayment:(nullable ShouldAddStorePayment)shouldAddStorePayment
                         updatedDownloads:(nullable UpdatedDownloads)updatedDownloads
-                        transactionCache:(nonnull FIATransactionCache *)transactionCache {
+                        transactionCache:(nonnull id<TransactionCache>)transactionCache {
   self = [super init];
   if (self) {
     _queue = queue;
@@ -238,3 +239,53 @@
 }
 
 @end
+
+
+
+@interface DefaultPaymentQueueHandler : NSObject<PaymentQueueHandler>
+- (instancetype)initWithHandler:(FIAPaymentQueueHandler*)handler NS_DESIGNATED_INITIALIZER;
+
+
+@property(nonatomic) FIAPaymentQueueHandler *handler;
+@end
+@interface TestPaymentQueueHandler : NSObject<PaymentQueueHandler>
+@end
+
+@implementation DefaultPaymentQueueHandler
+
+- (BOOL)addPayment:(SKPayment *)payment { 
+  return [self.handler addPayment:payment];
+}
+
+- (void)finishTransaction:(nonnull SKPaymentTransaction *)transaction { 
+  [self.handler finishTransaction:transaction];
+}
+
+- (NSArray<SKPaymentTransaction *> *)getUnfinishedTransactions { 
+  return [self.handler getUnfinishedTransactions];
+}
+
+- (void)presentCodeRedemptionSheet { 
+  [self.handler presentCodeRedemptionSheet];
+}
+
+- (void)restoreTransactions:(nullable NSString *)applicationName { 
+  [self.handler restoreTransactions:applicationName];
+}
+
+- (void)startObservingPaymentQueue { 
+  [self.handler startObservingPaymentQueue];
+}
+
+- (void)stopObservingPaymentQueue { 
+  [self.handler stopObservingPaymentQueue];
+}
+
+@synthesize delegate;
+
+@synthesize storefront;
+
+@end
+
+
+

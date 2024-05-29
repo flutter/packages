@@ -22,6 +22,7 @@
 		A5279298219369C600FF69E6 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A5279297219369C600FF69E6 /* StoreKit.framework */; };
 		A59001A721E69658004A3E5E /* InAppPurchasePluginTests.m in Sources */ = {isa = PBXBuildFile; fileRef = A59001A621E69658004A3E5E /* InAppPurchasePluginTests.m */; };
 		F22BF91C2BC9B40B00713878 /* SwiftStubs.swift in Sources */ = {isa = PBXBuildFile; fileRef = F22BF91B2BC9B40B00713878 /* SwiftStubs.swift */; };
+		F265234C2BFFE64B00DAAD62 /* Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = F265234B2BFFE64B00DAAD62 /* Tests.m */; };
 		F67646F82681D9A80048C2EA /* FIAPPaymentQueueDeleteTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F67646F72681D9A80048C2EA /* FIAPPaymentQueueDeleteTests.m */; };
 		F6995BDD27CF73000050EA78 /* FIATransactionCacheTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F6995BDC27CF73000050EA78 /* FIATransactionCacheTests.m */; };
 		F78AF3142342BC89008449C7 /* PaymentQueueTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F78AF3132342BC89008449C7 /* PaymentQueueTests.m */; };
@@ -81,6 +82,7 @@
 		E4F9651425A612301059769C /* Pods-Runner.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.debug.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.debug.xcconfig"; sourceTree = "<group>"; };
 		F22BF91A2BC9B40B00713878 /* RunnerTests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "RunnerTests-Bridging-Header.h"; sourceTree = "<group>"; };
 		F22BF91B2BC9B40B00713878 /* SwiftStubs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftStubs.swift; sourceTree = "<group>"; };
+		F265234B2BFFE64B00DAAD62 /* Tests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Tests.m; sourceTree = "<group>"; };
 		F67646F72681D9A80048C2EA /* FIAPPaymentQueueDeleteTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FIAPPaymentQueueDeleteTests.m; sourceTree = "<group>"; };
 		F6995BDC27CF73000050EA78 /* FIATransactionCacheTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FIATransactionCacheTests.m; sourceTree = "<group>"; };
 		F6E5D5F926131C4800C68BED /* Configuration.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; path = Configuration.storekit; sourceTree = "<group>"; };
@@ -198,6 +200,7 @@
 				F6995BDC27CF73000050EA78 /* FIATransactionCacheTests.m */,
 				F22BF91B2BC9B40B00713878 /* SwiftStubs.swift */,
 				F22BF91A2BC9B40B00713878 /* RunnerTests-Bridging-Header.h */,
+				F265234B2BFFE64B00DAAD62 /* Tests.m */,
 			);
 			path = RunnerTests;
 			sourceTree = "<group>";
@@ -347,10 +350,12 @@
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-resources.sh",
 				"${PODS_CONFIGURATION_BUILD_DIR}/in_app_purchase_storekit/in_app_purchase_storekit_privacy.bundle",
+				"${PODS_CONFIGURATION_BUILD_DIR}/shared_preferences_foundation/shared_preferences_foundation_privacy.bundle",
 			);
 			name = "[CP] Copy Pods Resources";
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/in_app_purchase_storekit_privacy.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/shared_preferences_foundation_privacy.bundle",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -436,6 +441,7 @@
 				F22BF91C2BC9B40B00713878 /* SwiftStubs.swift in Sources */,
 				F78AF3142342BC89008449C7 /* PaymentQueueTests.m in Sources */,
 				F67646F82681D9A80048C2EA /* FIAPPaymentQueueDeleteTests.m in Sources */,
+				F265234C2BFFE64B00DAAD62 /* Tests.m in Sources */,
 				6896B34621E9363700D37AEF /* ProductRequestHandlerTests.m in Sources */,
 				688DE35121F2A5A100EA2684 /* TranslatorTests.m in Sources */,
 				F6995BDD27CF73000050EA78 /* FIATransactionCacheTests.m in Sources */,

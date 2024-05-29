@@ -5,6 +5,7 @@
 #import <Foundation/Foundation.h>
 #import <StoreKit/StoreKit.h>
 #import "FIATransactionCache.h"
+#import "Mocks.h"
 
 @class SKPaymentTransaction;
 
@@ -45,7 +46,7 @@ typedef void (^UpdatedDownloads)(NSArray<SKDownload *> *downloads);
 ///                              App Store.
 /// @param updatedDownloads Callback method that is called each time the App
 ///                         Store indicates downloads are updated.
-- (instancetype)initWithQueue:(nonnull SKPaymentQueue *)queue
+- (instancetype)initWithQueue:(id<PaymentQueue>)queue
                      transactionsUpdated:(nullable TransactionsUpdated)transactionsUpdated
                       transactionRemoved:(nullable TransactionsRemoved)transactionsRemoved
                 restoreTransactionFailed:(nullable RestoreTransactionFailed)restoreTransactionFailed
@@ -94,7 +95,7 @@ typedef void (^UpdatedDownloads)(NSArray<SKDownload *> *downloads);
 /// @param transactionCache An empty [FIATransactionCache] instance that is
 ///                         responsible for keeping track of transactions that
 ///                         arrive when not actively observing transactions.
-- (instancetype)initWithQueue:(nonnull SKPaymentQueue *)queue
+- (instancetype)initWithQueue:(id<PaymentQueue>)queue
                      transactionsUpdated:(nullable TransactionsUpdated)transactionsUpdated
                       transactionRemoved:(nullable TransactionsRemoved)transactionsRemoved
                 restoreTransactionFailed:(nullable RestoreTransactionFailed)restoreTransactionFailed
@@ -102,7 +103,7 @@ typedef void (^UpdatedDownloads)(NSArray<SKDownload *> *downloads);
         (nullable RestoreCompletedTransactionsFinished)restoreCompletedTransactionsFinished
                    shouldAddStorePayment:(nullable ShouldAddStorePayment)shouldAddStorePayment
                         updatedDownloads:(nullable UpdatedDownloads)updatedDownloads
-                        transactionCache:(nonnull FIATransactionCache *)transactionCache;
+                        transactionCache:(nonnull id<TransactionCache>)transactionCache;
 // Can throw exceptions if the transaction type is purchasing, should always used in a @try block.
 - (void)finishTransaction:(nonnull SKPaymentTransaction *)transaction;
 - (void)restoreTransactions:(nullable NSString *)applicationName;

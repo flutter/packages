@@ -65,7 +65,7 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI {
     self.registrar = registrar
 
     self.paymentQueueHandler = FIAPaymentQueueHandler(
-      queue: SKPaymentQueue.default(),
+      queue: DefaultPaymentQueue(queue: SKPaymentQueue.default()),
       transactionsUpdated: { [weak self] transactions in
         self?.handleTransactionsUpdated(transactions)
       },
@@ -84,7 +84,7 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI {
       updatedDownloads: { [weak self] _ in
         self?.updatedDownloads()
       },
-      transactionCache: FIATransactionCache())
+      transactionCache: DefaultTransactionCache())
     #if os(iOS)
       let messenger = registrar.messenger()
     #endif
@@ -116,10 +116,11 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI {
   public func storefrontWithError(_ error: AutoreleasingUnsafeMutablePointer<FlutterError?>)
     -> SKStorefrontMessage?
   {
-    if #available(iOS 13.0, *), let storefront = getPaymentQueueHandler().storefront {
-      return FIAObjectTranslator.convertStorefront(toPigeon: storefront)
+    if #available(iOS 13.0, *) {
+      return FIAObjectTranslator.convertStorefront(toPigeon: getPaymentQueueHandler().storefront)
+    } else {
+      fatalError()
     }
-    return nil
   }
 
   public func startProductRequestProductIdentifiers(
