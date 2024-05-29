@@ -340,6 +340,15 @@ class GoRouter implements RouterConfig<RouteMatchList> {
     routeInformationProvider.go(location, extra: extra);
   }
 
+  /// Navigate to a URI location by appending [relativeLocation] to the current [GoRouterState.matchedLocation] w/ optional query parameters, e.g.
+  void goRelative(
+    String relativeLocation, {
+    Object? extra,
+  }) {
+    log('going relative to $relativeLocation');
+    routeInformationProvider.goRelative(relativeLocation, extra: extra);
+  }
+
   /// Restore the RouteMatchList
   void restore(RouteMatchList matchList) {
     log('restoring ${matchList.uri}');

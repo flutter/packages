@@ -172,6 +172,33 @@ class GoRouteInformationProvider extends RouteInformationProvider
     );
   }
 
+  /// Relatively go to [relativeLocation].
+  void goRelative(String relativeLocation, {Object? extra}) {
+    assert(
+      !relativeLocation.startsWith('/'),
+      "Relative locations must not start with a '/'.",
+    );
+
+    final Uri currentUri = value.uri;
+    Uri newUri = Uri.parse(
+      currentUri.path.endsWith('/')
+          ? '${currentUri.path}$relativeLocation'
+          : '${currentUri.path}/$relativeLocation',
+    );
+    newUri = newUri.replace(queryParameters: <String, dynamic>{
+      ...currentUri.queryParameters,
+      ...newUri.queryParameters,
+    });
+
+    _setValue(
+      newUri.toString(),
+      RouteInformationState<void>(
+        extra: extra,
+        type: NavigatingType.go,
+      ),
+    );
+  }
+
   /// Restores the current route matches with the `matchList`.
   void restore(String location, {required RouteMatchList matchList}) {
     _setValue(
