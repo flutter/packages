@@ -59,7 +59,12 @@ final class VideoPlayer {
 
   @VisibleForTesting boolean isInitialized = false;
 
+  // State that must be reset when the surface is re-created.
   private final VideoPlayerOptions options;
+  private long restoreVideoLocation = 0;
+  private int restoreRepeatMode = 0;
+  private float restoreVolume = 0;
+  private PlaybackParameters restorePlaybackParameters;
 
   private DefaultHttpDataSource.Factory httpDataSourceFactory = new DefaultHttpDataSource.Factory();
 
@@ -176,9 +181,22 @@ final class VideoPlayer {
 
     setUpVideoPlayer(exoPlayer, new QueuingEventSink());
     exoPlayer.setVideoSurface(surfaceProducer.getSurface());
+    exoPlayer.seekTo(restoreVideoLocation);
+    exoPlayer.setRepeatMode(restoreRepeatMode);
+    exoPlayer.setVolume(restoreVolume);
+    if (restorePlaybackParameters != null) {
+      exoPlayer.setPlaybackParameters(restorePlaybackParameters);
+    }
   }
 
   public void pauseSurface() {
+    if (!isInitialized) {
+      return;
+    }
+    restoreVideoLocation = exoPlayer.getCurrentPosition();
+    restoreRepeatMode = exoPlayer.getRepeatMode();
+    restoreVolume = exoPlayer.getVolume();
+    restorePlaybackParameters = exoPlayer.getPlaybackParameters();
     eventChannel.setStreamHandler(null);
     if (isInitialized) {
       exoPlayer.stop();
