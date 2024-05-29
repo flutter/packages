@@ -468,6 +468,8 @@ final BinaryMessenger? ${_varNamePrefix}binaryMessenger;
     Indent indent, {
     required String dartPackageName,
   }) {
+    const String apiName = '${instanceManagerClassName}Api';
+
     final cb.Parameter binaryMessengerParameter = cb.Parameter(
       (cb.ParameterBuilder builder) => builder
         ..name = 'binaryMessenger'
@@ -481,15 +483,6 @@ final BinaryMessenger? ${_varNamePrefix}binaryMessenger;
         ..type = cb.refer('BinaryMessenger?')
         ..modifier = cb.FieldModifier.final$,
     );
-
-    final cb.Parameter instanceManagerParameter = cb.Parameter(
-      (cb.ParameterBuilder builder) => builder
-        ..name = 'instanceManager'
-        ..named = true
-        ..type = cb.refer('$instanceManagerClassName?'),
-    );
-
-    const String apiName = '${instanceManagerClassName}Api';
 
     final String removeStrongReferenceName = makeChannelNameWithStrings(
       apiName: apiName,
@@ -548,7 +541,12 @@ final BinaryMessenger? ${_varNamePrefix}binaryMessenger;
                       ..defaultTo = const cb.Code('false'),
                   ),
                   binaryMessengerParameter,
-                  instanceManagerParameter,
+                  cb.Parameter(
+                    (cb.ParameterBuilder builder) => builder
+                      ..name = 'instanceManager'
+                      ..named = true
+                      ..type = cb.refer('$instanceManagerClassName?'),
+                  ),
                 ])
                 ..body = cb.Block.of(
                   cb.Block(
