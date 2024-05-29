@@ -20,6 +20,13 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)removeMarker;
 @end
 
+@interface FLTGoogleMapMarkerController (Test)
+- (UIImage *)extractIconFromData:(NSArray *)iconData
+                       registrar:(NSObject<FlutterPluginRegistrar> *)registrar
+                     screenScale:(CGFloat)screenScale;
+- (BOOL)isScalableWithScaleFactorFromSize:(CGSize)originalSize toSize:(CGSize)targetSize;
+@end
+
 @interface FLTMarkersController : NSObject
 - (instancetype)initWithMethodChannel:(FlutterMethodChannel *)methodChannel
                               mapView:(GMSMapView *)mapView
