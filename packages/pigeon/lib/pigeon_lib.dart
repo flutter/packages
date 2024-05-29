@@ -621,7 +621,7 @@ class ObjcGeneratorAdapter implements GeneratorAdapter {
       StringSink sink, PigeonOptions options, Root root, FileType fileType) {
     final ObjcOptions objcOptions = options.objcOptions ?? const ObjcOptions();
     final ObjcOptions objcOptionsWithHeader = objcOptions.merge(ObjcOptions(
-      localizedClassModifier: options.objcSourceOut
+      fileSpecificClassNameComponent: options.objcSourceOut
               ?.split('/')
               .lastOrNull
               ?.split('.')
@@ -707,7 +707,7 @@ class SwiftGeneratorAdapter implements GeneratorAdapter {
       StringSink sink, PigeonOptions options, Root root, FileType fileType) {
     SwiftOptions swiftOptions = options.swiftOptions ?? const SwiftOptions();
     swiftOptions = swiftOptions.merge(SwiftOptions(
-      localizedClassModifier:
+      fileSpecificClassNameComponent:
           options.swiftOut?.split('/').lastOrNull?.split('.').firstOrNull ?? '',
       copyrightHeader: options.copyrightHeader != null
           ? _lineReader(
@@ -792,7 +792,7 @@ class KotlinGeneratorAdapter implements GeneratorAdapter {
     kotlinOptions = kotlinOptions.merge(KotlinOptions(
       errorClassName: kotlinOptions.errorClassName ?? 'FlutterError',
       includeErrorClass: kotlinOptions.includeErrorClass,
-      localizedClassModifier:
+      fileSpecificClassNameComponent:
           options.kotlinOut?.split('/').lastOrNull?.split('.').firstOrNull ??
               '',
       copyrightHeader: options.copyrightHeader != null
@@ -2266,10 +2266,7 @@ ${_argParser.usage}''';
 
     if (options.objcHeaderOut != null) {
       options = options.merge(PigeonOptions(
-          objcOptions: (options.objcOptions ?? const ObjcOptions()).merge(
-              ObjcOptions(
-                  headerIncludePath: options.objcOptions?.headerIncludePath ??
-                      path.basename(options.objcHeaderOut!)))));
+          objcOptions: (options.objcOptions ?? const ObjcOptions())));
     }
 
     if (options.cppHeaderOut != null) {

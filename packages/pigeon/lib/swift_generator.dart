@@ -19,7 +19,7 @@ class SwiftOptions {
   /// Creates a [SwiftOptions] object
   const SwiftOptions({
     this.copyrightHeader,
-    this.localizedClassModifier,
+    this.fileSpecificClassNameComponent,
     this.errorClassName,
   });
 
@@ -27,7 +27,7 @@ class SwiftOptions {
   final Iterable<String>? copyrightHeader;
 
   /// A String to augment class names to avoid cross file collisions.
-  final String? localizedClassModifier;
+  final String? fileSpecificClassNameComponent;
 
   /// The name of the error class used for passing custom error parameters.
   final String? errorClassName;
@@ -37,7 +37,8 @@ class SwiftOptions {
   static SwiftOptions fromList(Map<String, Object> map) {
     return SwiftOptions(
       copyrightHeader: map['copyrightHeader'] as Iterable<String>?,
-      localizedClassModifier: map['localizedClassModifier'] as String?,
+      fileSpecificClassNameComponent:
+          map['fileSpecificClassNameComponent'] as String?,
       errorClassName: map['errorClassName'] as String?,
     );
   }
@@ -47,8 +48,8 @@ class SwiftOptions {
   Map<String, Object> toMap() {
     final Map<String, Object> result = <String, Object>{
       if (copyrightHeader != null) 'copyrightHeader': copyrightHeader!,
-      if (localizedClassModifier != null)
-        'localizedClassModifier': localizedClassModifier!,
+      if (fileSpecificClassNameComponent != null)
+        'fileSpecificClassNameComponent': fileSpecificClassNameComponent!,
       if (errorClassName != null) 'errorClassName': errorClassName!,
     };
     return result;
@@ -861,18 +862,22 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
 }
 
 /// Calculates the name of the codec that will be generated for [api].
-String _getCodecName(SwiftOptions options) =>
-    '${options.localizedClassModifier}PigeonCodec';
+String _getCodecName(SwiftOptions options) {
+  return '${options.fileSpecificClassNameComponent}PigeonCodec';
+}
 
-String _getErrorClassName(SwiftOptions generatorOptions) =>
-    generatorOptions.errorClassName ?? 'PigeonError';
+String _getErrorClassName(SwiftOptions generatorOptions) {
+  return generatorOptions.errorClassName ?? 'PigeonError';
+}
 
-String _getArgumentName(int count, NamedType argument) =>
-    argument.name.isEmpty ? 'arg$count' : argument.name;
+String _getArgumentName(int count, NamedType argument) {
+  return argument.name.isEmpty ? 'arg$count' : argument.name;
+}
 
 /// Returns an argument name that can be used in a context where it is possible to collide.
-String _getSafeArgumentName(int count, NamedType argument) =>
-    '${_getArgumentName(count, argument)}Arg';
+String _getSafeArgumentName(int count, NamedType argument) {
+  return '${_getArgumentName(count, argument)}Arg';
+}
 
 String _camelCase(String text) {
   final String pascal = text.split('_').map((String part) {
@@ -937,9 +942,6 @@ String _swiftTypeForDartType(TypeDeclaration type) {
 
 String _nullsafeSwiftTypeForDartType(TypeDeclaration type) {
   final String nullSafe = type.isNullable ? '?' : '';
-  if (type.baseName == 'Map') {
-    return '${_swiftTypeForBuiltinGenericDartType(type)}$nullSafe';
-  }
   return '${_swiftTypeForDartType(type)}$nullSafe';
 }
 

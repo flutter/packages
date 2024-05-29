@@ -9,9 +9,13 @@ import io.mockk.every
 import io.mockk.mockk
 import java.nio.ByteBuffer
 import java.util.ArrayList
-import junit.framework.TestCase
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
+import org.junit.Test
 
-internal class AllDatatypesTest : TestCase() {
+internal class AllDatatypesTest {
 
   fun compareAllTypes(firstTypes: AllTypes?, secondTypes: AllTypes?) {
     assertEquals(firstTypes == null, secondTypes == null)
@@ -63,6 +67,7 @@ internal class AllDatatypesTest : TestCase() {
     assertEquals(firstTypes.map, secondTypes.map)
   }
 
+  @Test
   fun testNullValues() {
     val everything = AllNullableTypes()
     val binaryMessenger = mockk<BinaryMessenger>()
@@ -90,6 +95,7 @@ internal class AllDatatypesTest : TestCase() {
     assertTrue(didCall)
   }
 
+  @Test
   fun testHasValues() {
     val everything =
         AllNullableTypes(
@@ -133,6 +139,7 @@ internal class AllDatatypesTest : TestCase() {
     assertTrue(didCall)
   }
 
+  @Test
   fun testIntegerToLong() {
     val everything = AllNullableTypes(aNullableInt = 123L)
     val list = everything.toList()

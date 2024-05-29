@@ -335,8 +335,8 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
           // TODO(gaaclarke): Find a way to be more precise with our
           // friendships.
           indent.writeln('friend class ${api.name};');
-          indent.writeln('friend class $_codecSerializerName;');
         }
+        indent.writeln('friend class $_codecSerializerName;');
         if (testFixtureClass != null) {
           indent.writeln('friend class $testFixtureClass;');
         }
@@ -909,7 +909,7 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
                 indent.writeln(
                     'const int64_t enum_arg_value = encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();');
                 indent.writeln(
-                    'return encodable_enum_arg.IsNull() ? CustomEncodableValue(std::nullopt) : CustomEncodableValue(static_cast<${customType.name}>(enum_arg_value));');
+                    'return encodable_enum_arg.IsNull() ? EncodableValue(std::nullopt) : CustomEncodableValue(static_cast<${customType.name}>(enum_arg_value));');
               });
             }
           });

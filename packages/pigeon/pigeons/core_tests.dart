@@ -28,6 +28,8 @@ class AllTypes {
     this.anObject = 0,
 
     // Lists
+    // This name is in a different format than the others to ensure that name
+    // collision with the work 'list' doesn't occur in the generated files.
     required this.list,
     required this.stringList,
     required this.intList,

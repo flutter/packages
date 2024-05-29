@@ -29,7 +29,7 @@ const String _pigeonChannelCodec = 'pigeonChannelCodec';
 const DocumentCommentSpecification _docCommentSpec =
     DocumentCommentSpecification(_docCommentPrefix);
 
-/// The standard codec for Flutter, used for any non custom codecs and extended for custom codecs.
+/// The custom codec used for all pigeon APIs.
 const String _pigeonCodec = '_PigeonCodec';
 
 /// Options that control how Dart code will be generated.

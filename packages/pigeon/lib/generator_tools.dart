@@ -701,22 +701,10 @@ class OutputFileOptions<T> {
 
 /// Converts strings to Upper Camel Case.
 String toUpperCamelCase(String text) {
-  String symbol = '';
-  String className = '';
-  if (text.contains(' ')) {
-    symbol = ' ';
-  } else if (text.contains('_')) {
-    symbol = '_';
-  } else if (text.contains('-')) {
-    symbol = '-';
-  }
-  if (symbol == ' ' || symbol == '_' || symbol == '-') {
-    final List<String> words = text.split(symbol);
-    for (final String word in words) {
-      className += word.substring(0, 1).toUpperCase() + word.substring(1);
-    }
-  } else {
-    className = text.substring(0, 1).toUpperCase() + text.substring(1);
-  }
-  return className;
+  final RegExp separatorPattern = RegExp(r'[ _-]');
+  return text.split(separatorPattern).map((String word) {
+    return word.isEmpty
+        ? ''
+        : word.substring(0, 1).toUpperCase() + word.substring(1);
+  }).join();
 }

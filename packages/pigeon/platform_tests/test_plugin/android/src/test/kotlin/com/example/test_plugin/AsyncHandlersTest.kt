@@ -10,10 +10,15 @@ import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
 import java.nio.ByteBuffer
-import junit.framework.TestCase
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
+import org.junit.Test
 
-internal class AsyncHandlersTest : TestCase() {
+internal class AsyncHandlersTest {
 
+  @Test
   fun testAsyncHost2Flutter() {
     val binaryMessenger = mockk<BinaryMessenger>()
     val api = FlutterIntegrationCoreApi(binaryMessenger)
@@ -47,6 +52,7 @@ internal class AsyncHandlersTest : TestCase() {
     }
   }
 
+  @Test
   fun testAsyncFlutter2HostEcho() {
     val binaryMessenger = mockk<BinaryMessenger>()
     val api = mockk<HostSmallApi>()
@@ -84,6 +90,7 @@ internal class AsyncHandlersTest : TestCase() {
     verify { api.echo(input, any()) }
   }
 
+  @Test
   fun testAsyncFlutter2HostVoidVoid() {
     val binaryMessenger = mockk<BinaryMessenger>()
     val api = mockk<HostSmallApi>()

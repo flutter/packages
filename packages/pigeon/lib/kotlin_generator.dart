@@ -35,7 +35,7 @@ class KotlinOptions {
     this.copyrightHeader,
     this.errorClassName,
     this.includeErrorClass = true,
-    this.localizedClassModifier,
+    this.fileSpecificClassNameComponent,
   });
 
   /// The package where the generated class will live.
@@ -54,7 +54,7 @@ class KotlinOptions {
   final bool includeErrorClass;
 
   /// A String to augment class names to avoid cross file collisions.
-  final String? localizedClassModifier;
+  final String? fileSpecificClassNameComponent;
 
   /// Creates a [KotlinOptions] from a Map representation where:
   /// `x = KotlinOptions.fromMap(x.toMap())`.
@@ -64,7 +64,8 @@ class KotlinOptions {
       copyrightHeader: map['copyrightHeader'] as Iterable<String>?,
       errorClassName: map['errorClassName'] as String?,
       includeErrorClass: map['includeErrorClass'] as bool? ?? true,
-      localizedClassModifier: map['localizedClassModifier'] as String?,
+      fileSpecificClassNameComponent:
+          map['fileSpecificClassNameComponent'] as String?,
     );
   }
 
@@ -76,8 +77,8 @@ class KotlinOptions {
       if (copyrightHeader != null) 'copyrightHeader': copyrightHeader!,
       if (errorClassName != null) 'errorClassName': errorClassName!,
       'includeErrorClass': includeErrorClass,
-      if (localizedClassModifier != null)
-        'localizedClassModifier': localizedClassModifier!,
+      if (fileSpecificClassNameComponent != null)
+        'fileSpecificClassNameComponent': fileSpecificClassNameComponent!,
     };
     return result;
   }
@@ -308,7 +309,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
   }) {
     final Iterable<EnumeratedType> enumeratedTypes = getEnumeratedTypes(root);
     indent.write(
-        'private object ${generatorOptions.localizedClassModifier}$_codecName : StandardMessageCodec() ');
+        'private object ${generatorOptions.fileSpecificClassNameComponent}$_codecName : StandardMessageCodec() ');
     indent.addScoped('{', '}', () {
       indent.write(
           'override fun readValueOfType(type: Byte, buffer: ByteBuffer): Any? ');
@@ -396,8 +397,8 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
         indent.writeln('/** The codec used by $apiName. */');
         indent.write('val codec: MessageCodec<Any?> by lazy ');
         indent.addScoped('{', '}', () {
-          indent
-              .writeln('${generatorOptions.localizedClassModifier}$_codecName');
+          indent.writeln(
+              '${generatorOptions.fileSpecificClassNameComponent}$_codecName');
         });
       });
 
@@ -460,8 +461,8 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
         indent.writeln('/** The codec used by $apiName. */');
         indent.write('val codec: MessageCodec<Any?> by lazy ');
         indent.addScoped('{', '}', () {
-          indent
-              .writeln('${generatorOptions.localizedClassModifier}$_codecName');
+          indent.writeln(
+              '${generatorOptions.fileSpecificClassNameComponent}$_codecName');
         });
         indent.writeln(
             '/** Sets up an instance of `$apiName` to handle messages through the `binaryMessenger`. */');

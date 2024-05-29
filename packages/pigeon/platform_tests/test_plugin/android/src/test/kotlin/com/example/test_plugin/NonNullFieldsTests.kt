@@ -4,10 +4,12 @@
 
 package com.example.test_plugin
 
-import junit.framework.TestCase
+import org.junit.Assert.assertEquals
+import org.junit.Test
 
-class NonNullFieldsTests : TestCase() {
+class NonNullFieldsTests {
 
+  @Test
   fun testMake() {
     val request = NonNullFieldSearchRequest("hello")
     assertEquals("hello", request.query)

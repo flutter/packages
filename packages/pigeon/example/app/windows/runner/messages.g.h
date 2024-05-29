@@ -89,7 +89,6 @@ class MessageData {
   static MessageData FromEncodableList(const flutter::EncodableList& list);
   flutter::EncodableList ToEncodableList() const;
   friend class ExampleHostApi;
-  friend class PigeonCodecSerializer;
   friend class MessageFlutterApi;
   friend class PigeonCodecSerializer;
   std::optional<std::string> name_;

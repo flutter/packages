@@ -78,9 +78,9 @@
       [[EchoBinaryMessenger alloc] initWithCodec:PrimitiveGetCodec()];
   PrimitiveFlutterApi *api = [[PrimitiveFlutterApi alloc] initWithBinaryMessenger:binaryMessenger];
   XCTestExpectation *expectation = [self expectationWithDescription:@"callback"];
-  NSArray *arg = @[ @"hello" ];
+  NSArray<id> *arg = @[ @"hello" ];
   [api aListValue:arg
-       completion:^(NSArray *_Nonnull result, FlutterError *_Nullable err) {
+       completion:^(NSArray<id> *_Nonnull result, FlutterError *_Nullable err) {
          XCTAssertEqualObjects(arg, result);
          [expectation fulfill];
        }];

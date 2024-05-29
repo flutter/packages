@@ -19,7 +19,7 @@
 - (void)testSimple {
   HandlerBinaryMessenger *binaryMessenger = [[HandlerBinaryMessenger alloc]
       initWithCodec:MultipleArityGetCodec()
-            handler:^id _Nullable(NSArray *_Nonnull args) {
+            handler:^id _Nullable(NSArray<id> *_Nonnull args) {
               return @[ @([args[0] intValue] - [args[1] intValue]) ];
             }];
   MultipleArityFlutterApi *api =

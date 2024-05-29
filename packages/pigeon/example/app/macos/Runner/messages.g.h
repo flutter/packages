@@ -40,7 +40,7 @@ typedef NS_ENUM(NSUInteger, PGNCode) {
 @end
 
 /// The codec used by all APIs.
-NSObject<FlutterMessageCodec> *PGNmessagesGetCodec(void);
+NSObject<FlutterMessageCodec> *PGNGetMessagesCodec(void);
 
 @protocol PGNExampleHostApi
 /// @return `nil` only when `error != nil`.

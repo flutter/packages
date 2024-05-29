@@ -66,7 +66,7 @@
 
   XCTestExpectation *expectation = [self expectationWithDescription:@"voidvoid callback"];
   binaryMessenger.handlers[channelName](nil, ^(NSData *data) {
-    NSArray *outputList = [binaryMessenger.codec decode:data];
+    NSArray<id> *outputList = [binaryMessenger.codec decode:data];
     XCTAssertEqualObjects(outputList[0], [NSNull null]);
     [expectation fulfill];
   });
@@ -86,7 +86,7 @@
 
   XCTestExpectation *expectation = [self expectationWithDescription:@"voidvoid callback"];
   binaryMessenger.handlers[channelName](nil, ^(NSData *data) {
-    NSArray *outputList = [binaryMessenger.codec decode:data];
+    NSArray<id> *outputList = [binaryMessenger.codec decode:data];
     XCTAssertNotNil(outputList);
     XCTAssertEqualObjects(outputList[0], mockHostSmallApi.voidVoidError.code);
     [expectation fulfill];
@@ -107,7 +107,7 @@
   NSData *inputEncoded = [binaryMessenger.codec encode:@[ value ]];
   XCTestExpectation *expectation = [self expectationWithDescription:@"echo callback"];
   binaryMessenger.handlers[channelName](inputEncoded, ^(NSData *data) {
-    NSArray *outputList = [binaryMessenger.codec decode:data];
+    NSArray<id> *outputList = [binaryMessenger.codec decode:data];
     NSString *output = outputList[0];
     XCTAssertEqualObjects(output, value);
     [expectation fulfill];
@@ -126,7 +126,7 @@
   NSData *inputEncoded = [binaryMessenger.codec encode:@[ @"Test" ]];
   XCTestExpectation *expectation = [self expectationWithDescription:@"echo callback"];
   binaryMessenger.handlers[channelName](inputEncoded, ^(NSData *data) {
-    NSArray *outputList = [binaryMessenger.codec decode:data];
+    NSArray<id> *outputList = [binaryMessenger.codec decode:data];
     XCTAssertNotNil(outputList);
     XCTAssertEqualObjects(outputList[0], @"hey");
     XCTAssertEqualObjects(outputList[1], @"ho");

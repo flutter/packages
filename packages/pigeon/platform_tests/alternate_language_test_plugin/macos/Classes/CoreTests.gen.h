@@ -49,7 +49,7 @@ typedef NS_ENUM(NSUInteger, AnEnum) {
                        anEnum:(AnEnum)anEnum
                       aString:(NSString *)aString
                      anObject:(id)anObject
-                         list:(NSArray *)list
+                         list:(NSArray<id> *)list
                    stringList:(NSArray<NSString *> *)stringList
                       intList:(NSArray<NSNumber *> *)intList
                    doubleList:(NSArray<NSNumber *> *)doubleList
@@ -66,7 +66,7 @@ typedef NS_ENUM(NSUInteger, AnEnum) {
 @property(nonatomic, assign) AnEnum anEnum;
 @property(nonatomic, copy) NSString *aString;
 @property(nonatomic, strong) id anObject;
-@property(nonatomic, copy) NSArray *list;
+@property(nonatomic, copy) NSArray<id> *list;
 @property(nonatomic, copy) NSArray<NSString *> *stringList;
 @property(nonatomic, copy) NSArray<NSNumber *> *intList;
 @property(nonatomic, copy) NSArray<NSNumber *> *doubleList;
@@ -92,7 +92,7 @@ typedef NS_ENUM(NSUInteger, AnEnum) {
                       aNullableString:(nullable NSString *)aNullableString
                       aNullableObject:(nullable id)aNullableObject
                      allNullableTypes:(nullable AllNullableTypes *)allNullableTypes
-                                 list:(nullable NSArray *)list
+                                 list:(nullable NSArray<id> *)list
                            stringList:(nullable NSArray<NSString *> *)stringList
                               intList:(nullable NSArray<NSNumber *> *)intList
                            doubleList:(nullable NSArray<NSNumber *> *)doubleList
@@ -114,7 +114,7 @@ typedef NS_ENUM(NSUInteger, AnEnum) {
 @property(nonatomic, copy, nullable) NSString *aNullableString;
 @property(nonatomic, strong, nullable) id aNullableObject;
 @property(nonatomic, strong, nullable) AllNullableTypes *allNullableTypes;
-@property(nonatomic, copy, nullable) NSArray *list;
+@property(nonatomic, copy, nullable) NSArray<id> *list;
 @property(nonatomic, copy, nullable) NSArray<NSString *> *stringList;
 @property(nonatomic, copy, nullable) NSArray<NSNumber *> *intList;
 @property(nonatomic, copy, nullable) NSArray<NSNumber *> *doubleList;
@@ -141,7 +141,7 @@ typedef NS_ENUM(NSUInteger, AnEnum) {
                         aNullableEnum:(nullable AnEnumBox *)aNullableEnum
                       aNullableString:(nullable NSString *)aNullableString
                       aNullableObject:(nullable id)aNullableObject
-                                 list:(nullable NSArray *)list
+                                 list:(nullable NSArray<id> *)list
                            stringList:(nullable NSArray<NSString *> *)stringList
                               intList:(nullable NSArray<NSNumber *> *)intList
                            doubleList:(nullable NSArray<NSNumber *> *)doubleList
@@ -162,7 +162,7 @@ typedef NS_ENUM(NSUInteger, AnEnum) {
 @property(nonatomic, strong, nullable) AnEnumBox *aNullableEnum;
 @property(nonatomic, copy, nullable) NSString *aNullableString;
 @property(nonatomic, strong, nullable) id aNullableObject;
-@property(nonatomic, copy, nullable) NSArray *list;
+@property(nonatomic, copy, nullable) NSArray<id> *list;
 @property(nonatomic, copy, nullable) NSArray<NSString *> *stringList;
 @property(nonatomic, copy, nullable) NSArray<NSNumber *> *intList;
 @property(nonatomic, copy, nullable) NSArray<NSNumber *> *doubleList;
@@ -190,12 +190,12 @@ typedef NS_ENUM(NSUInteger, AnEnum) {
 
 /// A data class containing a List, used in unit tests.
 @interface TestMessage : NSObject
-+ (instancetype)makeWithTestList:(nullable NSArray *)testList;
-@property(nonatomic, copy, nullable) NSArray *testList;
++ (instancetype)makeWithTestList:(nullable NSArray<id> *)testList;
+@property(nonatomic, copy, nullable) NSArray<id> *testList;
 @end
 
 /// The codec used by all APIs.
-NSObject<FlutterMessageCodec> *CoreTestsGetCodec(void);
+NSObject<FlutterMessageCodec> *GetCoreTestsCodec(void);
 
 /// The core interface that each host language plugin must implement in
 /// platform_test integration tests.

@@ -1868,8 +1868,8 @@ void main() {
       sink,
       dartPackageName: DEFAULT_PACKAGE_NAME,
     );
-    // final String code = sink.toString();
-    // expect(code, contains(' : public flutter::StandardCodecSerializer'));
+    final String code = sink.toString();
+    expect(code, contains(' : public flutter::StandardCodecSerializer'));
   });
 
   test('Does not send unwrapped EncodableLists', () {
