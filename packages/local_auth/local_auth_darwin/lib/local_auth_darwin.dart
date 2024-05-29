@@ -52,7 +52,7 @@ class LocalAuthDarwin extends LocalAuthPlatform {
             : _pigeonStringsFromiOSAuthMessages(localizedReason, authMessages));
     // TODO(stuartmorgan): Replace this with structured errors, coordinated
     // across all platform implementations, per
-    // https://github.com/flutter/flutter/wiki/Contributing-to-Plugins-and-Packages#platform-exception-handling
+    // https://github.com/flutter/flutter/blob/master/docs/ecosystem/contributing/README.md#platform-exception-handling
     // The PlatformExceptions thrown here are for compatibiilty with the
     // previous Objective-C implementation.
     switch (resultDetails.result) {
