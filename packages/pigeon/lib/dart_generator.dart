@@ -362,6 +362,7 @@ $resultAt != null
             name: func.name,
             parameters: func.parameters,
             returnType: func.returnType,
+            addSuffixVariable: true,
             channelName: channelNameFunc == null
                 ? makeChannelName(api, func, dartPackageName)
                 : channelNameFunc(func),
@@ -566,7 +567,6 @@ final BinaryMessenger? ${_varNamePrefix}binaryMessenger;
                         ],
                         returnType: const TypeDeclaration.voidDeclaration(),
                         channelName: removeStrongReferenceName,
-                        addSuffixVariable: true,
                         isMockHandler: false,
                         isAsynchronous: false,
                         nullHandlerExpression:
@@ -1051,7 +1051,7 @@ if (${varNamePrefix}replyList == null) {
       );
       indent.nest(2, () {
         final String channelSuffix =
-            addSuffixVariable ? '' : r'$messageChannelSuffix';
+            addSuffixVariable ? r'$messageChannelSuffix' : '';
         indent.writeln("'$channelName$channelSuffix', $_pigeonChannelCodec,");
         indent.writeln(
           'binaryMessenger: binaryMessenger);',
@@ -1643,7 +1643,6 @@ if (${varNamePrefix}replyList == null) {
               _writeFlutterMethodMessageHandler(
                 Indent(messageHandlerSink),
                 name: methodName,
-                addSuffixVariable: true,
                 parameters: <Parameter>[
                   Parameter(
                     name: '${classMemberNamePrefix}instanceIdentifier',
@@ -1699,7 +1698,6 @@ if (${varNamePrefix}replyList == null) {
               _writeFlutterMethodMessageHandler(
                 Indent(messageHandlerSink),
                 name: method.name,
-                addSuffixVariable: true,
                 parameters: <Parameter>[
                   Parameter(
                     name: '${classMemberNamePrefix}instance',
