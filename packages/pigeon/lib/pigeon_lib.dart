@@ -2266,7 +2266,10 @@ ${_argParser.usage}''';
 
     if (options.objcHeaderOut != null) {
       options = options.merge(PigeonOptions(
-          objcOptions: (options.objcOptions ?? const ObjcOptions())));
+          objcOptions: (options.objcOptions ?? const ObjcOptions()).merge(
+              ObjcOptions(
+                  headerIncludePath: options.objcOptions?.headerIncludePath ??
+                      path.basename(options.objcHeaderOut!)))));
     }
 
     if (options.cppHeaderOut != null) {
