@@ -240,11 +240,11 @@ class VideoPlayer {
       _videoElement.controls = true;
       final String controlsList = options.controls.controlsList;
       if (controlsList.isNotEmpty) {
-        _videoElement.controlsList = controlsList.toJS;
+        _videoElement.controlsList = controlsList;
       }
 
       if (!options.controls.allowPictureInPicture) {
-        _videoElement.disablePictureInPicture = true.toJS;
+        _videoElement.disablePictureInPicture = true;
       }
     }
 
@@ -254,7 +254,7 @@ class VideoPlayer {
     }
 
     if (!options.allowRemotePlayback) {
-      _videoElement.disableRemotePlayback = true.toJS;
+      _videoElement.disableRemotePlayback = true;
     }
   }
 
