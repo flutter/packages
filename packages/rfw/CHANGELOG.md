@@ -1,4 +1,4 @@
-## 1.0.27+1
+## 1.0.28
 
 * Updates documentation to WidgetStateProperty and ButtonBar.
 
