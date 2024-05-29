@@ -281,7 +281,7 @@ void main() {
             contains(
                 '  Breaking changes to platform interfaces are not allowed '
                 'without explicit justification.\n'
-                '  See https://github.com/flutter/flutter/wiki/Contributing-to-Plugins-and-Packages '
+                '  See https://github.com/flutter/flutter/blob/master/docs/ecosystem/contributing/README.md '
                 'for more information.'),
           ]));
       expect(
