@@ -95,7 +95,7 @@ class DetailsScreen extends StatelessWidget {
             onPressed: () {
               context.goRelative('settings');
             },
-            child: const Text('go to settings'),
+            child: const Text('Go to the Settings screen'),
           ),
         ],
       )),
