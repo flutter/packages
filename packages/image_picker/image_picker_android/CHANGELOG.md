@@ -1,3 +1,8 @@
+## 0.8.12+2
+
+* Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+* Removes support for apps using the v1 Android embedding.
+
 ## 0.8.12+1
 
 * Fixes another app crash case on Android 12+, and refactors getting of paths from intents.
