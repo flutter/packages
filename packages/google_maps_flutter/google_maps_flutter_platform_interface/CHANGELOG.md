@@ -1,3 +1,9 @@
+## 2.7.1
+
+* Undeprecates `BitmapDescriptor.fromAssetImage`.
+* Undeprecates `BitmapDescriptor.fromBytes`.
+* Fixes issues with deprecation in version 2.7.0.
+
 ## 2.7.0
 
 * Adds better support for marker size and scaling behaviour with `AssetMapBitmap` and `BytesMapBitmap`.
