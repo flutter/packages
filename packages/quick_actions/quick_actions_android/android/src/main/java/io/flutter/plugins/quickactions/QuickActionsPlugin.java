@@ -7,12 +7,12 @@ package io.flutter.plugins.quickactions;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.ShortcutManager;
 import android.os.Build;
 import android.util.Log;
 import androidx.annotation.ChecksSdkIntAtLeast;
 import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
+import androidx.core.content.pm.ShortcutManagerCompat;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.embedding.engine.plugins.activity.ActivityAware;
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
@@ -41,19 +41,6 @@ public class QuickActionsPlugin implements FlutterPlugin, ActivityAware, NewInte
   @VisibleForTesting
   QuickActionsPlugin(@NonNull AndroidSdkChecker capabilityChecker) {
     this.sdkChecker = capabilityChecker;
-  }
-
-  /**
-   * Plugin registration.
-   *
-   * <p>Must be called when the application is created.
-   */
-  @SuppressWarnings("deprecation")
-  public static void registerWith(
-      @NonNull io.flutter.plugin.common.PluginRegistry.Registrar registrar) {
-    QuickActions quickActions = new QuickActions(registrar.context());
-    quickActions.setActivity(registrar.activity());
-    Messages.AndroidQuickActionsApi.setup(registrar.messenger(), quickActions);
   }
 
   @Override
@@ -108,15 +95,13 @@ public class QuickActionsPlugin implements FlutterPlugin, ActivityAware, NewInte
     // Notify the Dart side if the launch intent has the intent extra relevant to quick actions.
     if (intent.hasExtra(QuickActions.EXTRA_ACTION) && activity != null) {
       Context context = activity.getApplicationContext();
-      ShortcutManager shortcutManager =
-          (ShortcutManager) context.getSystemService(Context.SHORTCUT_SERVICE);
       String shortcutId = intent.getStringExtra(QuickActions.EXTRA_ACTION);
       quickActionsFlutterApi.launchAction(
           shortcutId,
           value -> {
             // noop
           });
-      shortcutManager.reportShortcutUsed(shortcutId);
+      ShortcutManagerCompat.reportShortcutUsed(context, shortcutId);
     }
     return false;
   }

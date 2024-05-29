@@ -2462,6 +2462,94 @@ void main() {
       expect(
           router.routerDelegate.currentConfiguration.uri.toString(), '/other');
     });
+
+    testWidgets('redirect when go to a shell route',
+        (WidgetTester tester) async {
+      final List<RouteBase> routes = <RouteBase>[
+        ShellRoute(
+          redirect: (BuildContext context, GoRouterState state) => '/dummy',
+          builder: (BuildContext context, GoRouterState state, Widget child) =>
+              Scaffold(appBar: AppBar(), body: child),
+          routes: <RouteBase>[
+            GoRoute(
+              path: '/other',
+              builder: (BuildContext context, GoRouterState state) =>
+                  const DummyScreen(),
+            ),
+            GoRoute(
+              path: '/other2',
+              builder: (BuildContext context, GoRouterState state) =>
+                  const DummyScreen(),
+            ),
+          ],
+        ),
+        GoRoute(
+          path: '/dummy',
+          builder: (BuildContext context, GoRouterState state) =>
+              const DummyScreen(),
+        ),
+      ];
+
+      final GoRouter router = await createRouter(routes, tester);
+
+      for (final String shellRoute in <String>['/other', '/other2']) {
+        router.go(shellRoute);
+        await tester.pump();
+        expect(
+          router.routerDelegate.currentConfiguration.uri.toString(),
+          '/dummy',
+        );
+      }
+    });
+
+    testWidgets('redirect when go to a stateful shell route',
+        (WidgetTester tester) async {
+      final List<RouteBase> routes = <RouteBase>[
+        StatefulShellRoute.indexedStack(
+          redirect: (BuildContext context, GoRouterState state) => '/dummy',
+          builder: (BuildContext context, GoRouterState state,
+              StatefulNavigationShell navigationShell) {
+            return navigationShell;
+          },
+          branches: <StatefulShellBranch>[
+            StatefulShellBranch(
+              routes: <RouteBase>[
+                GoRoute(
+                  path: '/other',
+                  builder: (BuildContext context, GoRouterState state) =>
+                      const DummyScreen(),
+                ),
+              ],
+            ),
+            StatefulShellBranch(
+              routes: <RouteBase>[
+                GoRoute(
+                  path: '/other2',
+                  builder: (BuildContext context, GoRouterState state) =>
+                      const DummyScreen(),
+                ),
+              ],
+            ),
+          ],
+        ),
+        GoRoute(
+          path: '/dummy',
+          builder: (BuildContext context, GoRouterState state) =>
+              const DummyScreen(),
+        ),
+      ];
+
+      final GoRouter router = await createRouter(routes, tester);
+
+      for (final String shellRoute in <String>['/other', '/other2']) {
+        router.go(shellRoute);
+        await tester.pump();
+        expect(
+          router.routerDelegate.currentConfiguration.uri.toString(),
+          '/dummy',
+        );
+      }
+    });
   });
 
   group('initial location', () {
@@ -3866,6 +3954,50 @@ void main() {
       router.go('/a/detailA');
       await tester.pumpAndSettle();
       expect(statefulWidgetKey.currentState?.counter, equals(0));
+    });
+
+    testWidgets(
+        'Navigates to correct nested navigation tree in StatefulShellRoute '
+        'and maintains path parameters', (WidgetTester tester) async {
+      StatefulNavigationShell? routeState;
+
+      final List<RouteBase> routes = <RouteBase>[
+        GoRoute(
+            path: '/:id',
+            builder: (_, __) => const Placeholder(),
+            routes: <RouteBase>[
+              StatefulShellRoute.indexedStack(
+                builder: (BuildContext context, GoRouterState state,
+                    StatefulNavigationShell navigationShell) {
+                  routeState = navigationShell;
+                  return navigationShell;
+                },
+                branches: <StatefulShellBranch>[
+                  StatefulShellBranch(routes: <GoRoute>[
+                    GoRoute(
+                      path: 'a',
+                      builder: (BuildContext context, GoRouterState state) =>
+                          Text('a id is ${state.pathParameters['id']}'),
+                    ),
+                  ]),
+                  StatefulShellBranch(routes: <GoRoute>[
+                    GoRoute(
+                      path: 'b',
+                      builder: (BuildContext context, GoRouterState state) =>
+                          Text('b id is ${state.pathParameters['id']}'),
+                    ),
+                  ]),
+                ],
+              ),
+            ])
+      ];
+
+      await createRouter(routes, tester, initialLocation: '/123/a');
+      expect(find.text('a id is 123'), findsOneWidget);
+
+      routeState!.goBranch(1);
+      await tester.pumpAndSettle();
+      expect(find.text('b id is 123'), findsOneWidget);
     });
 
     testWidgets('Maintains state for nested StatefulShellRoute',

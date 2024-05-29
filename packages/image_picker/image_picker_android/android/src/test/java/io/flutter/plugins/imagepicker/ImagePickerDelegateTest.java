@@ -182,7 +182,6 @@ public class ImagePickerDelegateTest {
   @Test
   @Config(sdk = 30)
   public void chooseImageFromGallery_launchesChooseFromGalleryIntent() {
-
     ImagePickerDelegate delegate = createDelegate();
     delegate.chooseImageFromGallery(DEFAULT_IMAGE_OPTIONS, false, mockResult);
 
@@ -194,7 +193,6 @@ public class ImagePickerDelegateTest {
   @Test
   @Config(minSdk = 33)
   public void chooseImageFromGallery_withPhotoPicker_launchesChooseFromGalleryIntent() {
-
     ImagePickerDelegate delegate = createDelegate();
     delegate.chooseImageFromGallery(DEFAULT_IMAGE_OPTIONS, true, mockResult);
 
@@ -206,7 +204,6 @@ public class ImagePickerDelegateTest {
   @Test
   @Config(sdk = 30)
   public void chooseMultiImageFromGallery_launchesChooseFromGalleryIntent() {
-
     ImagePickerDelegate delegate = createDelegate();
     delegate.chooseMultiImageFromGallery(
         DEFAULT_IMAGE_OPTIONS, true, Integer.MAX_VALUE, mockResult);
@@ -220,7 +217,6 @@ public class ImagePickerDelegateTest {
   @Test
   @Config(minSdk = 33)
   public void chooseMultiImageFromGallery_withPhotoPicker_launchesChooseFromGalleryIntent() {
-
     ImagePickerDelegate delegate = createDelegate();
     delegate.chooseMultiImageFromGallery(
         DEFAULT_IMAGE_OPTIONS, false, Integer.MAX_VALUE, mockResult);
@@ -234,7 +230,6 @@ public class ImagePickerDelegateTest {
   @Test
   @Config(sdk = 30)
   public void chooseVideoFromGallery_launchesChooseFromGalleryIntent() {
-
     ImagePickerDelegate delegate = createDelegate();
     delegate.chooseVideoFromGallery(DEFAULT_VIDEO_OPTIONS, true, mockResult);
 
@@ -246,7 +241,6 @@ public class ImagePickerDelegateTest {
   @Test
   @Config(minSdk = 33)
   public void chooseVideoFromGallery_withPhotoPicker_launchesChooseFromGalleryIntent() {
-
     ImagePickerDelegate delegate = createDelegate();
     delegate.chooseVideoFromGallery(DEFAULT_VIDEO_OPTIONS, true, mockResult);
 
@@ -818,6 +812,55 @@ public class ImagePickerDelegateTest {
     boolean isHandled = delegate.onActivityResult(314, Activity.RESULT_OK, mockIntent);
 
     assertFalse(isHandled);
+  }
+
+  @Test
+  public void onActivityResult_whenImagePickedFromGallery_finishesWithErrorIfClipDataIsNull() {
+    when(mockIntent.getData()).thenReturn(null);
+    when(mockIntent.getClipData()).thenReturn(null);
+
+    Mockito.doAnswer(
+            invocation -> {
+              ((Runnable) invocation.getArgument(0)).run();
+              return null;
+            })
+        .when(mockExecutor)
+        .execute(any(Runnable.class));
+    ImagePickerDelegate delegate =
+        createDelegateWithPendingResultAndOptions(DEFAULT_IMAGE_OPTIONS, null);
+
+    delegate.onActivityResult(
+        ImagePickerDelegate.REQUEST_CODE_CHOOSE_MEDIA_FROM_GALLERY, Activity.RESULT_OK, mockIntent);
+
+    ArgumentCaptor<FlutterError> errorCaptor = ArgumentCaptor.forClass(FlutterError.class);
+    verify(mockResult).error(errorCaptor.capture());
+    assertEquals("no_valid_media_uri", errorCaptor.getValue().code);
+    assertEquals("Cannot find the selected media.", errorCaptor.getValue().getMessage());
+  }
+
+  @Test
+  public void onActivityResult_whenImagePickedFromGallery_finishesWithErrorIfClipDataUriIsNull() {
+    setupMockClipDataNullUri();
+    when(mockIntent.getData()).thenReturn(null);
+    when(mockIntent.getClipData()).thenReturn(null);
+
+    Mockito.doAnswer(
+            invocation -> {
+              ((Runnable) invocation.getArgument(0)).run();
+              return null;
+            })
+        .when(mockExecutor)
+        .execute(any(Runnable.class));
+    ImagePickerDelegate delegate =
+        createDelegateWithPendingResultAndOptions(DEFAULT_IMAGE_OPTIONS, null);
+
+    delegate.onActivityResult(
+        ImagePickerDelegate.REQUEST_CODE_CHOOSE_MEDIA_FROM_GALLERY, Activity.RESULT_OK, mockIntent);
+
+    ArgumentCaptor<FlutterError> errorCaptor = ArgumentCaptor.forClass(FlutterError.class);
+    verify(mockResult).error(errorCaptor.capture());
+    assertEquals("no_valid_media_uri", errorCaptor.getValue().code);
+    assertEquals("Cannot find the selected media.", errorCaptor.getValue().getMessage());
   }
 
   private ImagePickerDelegate createDelegate() {

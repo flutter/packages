@@ -1,5 +1,5 @@
 # The list of external dependencies that are allowed as unpinned dependencies.
-# See https://github.com/flutter/flutter/wiki/Contributing-to-Plugins-and-Packages#Dependencies
+# See https://github.com/flutter/flutter/blob/master/docs/ecosystem/contributing/README.md#Dependencies
 #
 # All entries here should have an explanation for why they are here, either
 # via being part of one of the default-allowed groups, or a specific reason.

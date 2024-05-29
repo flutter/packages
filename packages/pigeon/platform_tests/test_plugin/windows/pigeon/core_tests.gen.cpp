@@ -39,7 +39,7 @@ AllTypes::AllTypes(bool a_bool, int64_t an_int, int64_t an_int64,
                    const std::vector<int32_t>& a4_byte_array,
                    const std::vector<int64_t>& a8_byte_array,
                    const std::vector<double>& a_float_array,
-                   const EncodableList& a_list, const EncodableMap& a_map,
+                   const EncodableList& list, const EncodableMap& a_map,
                    const AnEnum& an_enum, const std::string& a_string,
                    const EncodableValue& an_object)
     : a_bool_(a_bool),
@@ -50,7 +50,7 @@ AllTypes::AllTypes(bool a_bool, int64_t an_int, int64_t an_int64,
       a4_byte_array_(a4_byte_array),
       a8_byte_array_(a8_byte_array),
       a_float_array_(a_float_array),
-      a_list_(a_list),
+      list_(list),
       a_map_(a_map),
       an_enum_(an_enum),
       a_string_(a_string),
@@ -104,11 +104,9 @@ void AllTypes::set_a_float_array(const std::vector<double>& value_arg) {
   a_float_array_ = value_arg;
 }
 
-const EncodableList& AllTypes::a_list() const { return a_list_; }
+const EncodableList& AllTypes::list() const { return list_; }
 
-void AllTypes::set_a_list(const EncodableList& value_arg) {
-  a_list_ = value_arg;
-}
+void AllTypes::set_list(const EncodableList& value_arg) { list_ = value_arg; }
 
 const EncodableMap& AllTypes::a_map() const { return a_map_; }
 
@@ -141,7 +139,7 @@ EncodableList AllTypes::ToEncodableList() const {
   list.push_back(EncodableValue(a4_byte_array_));
   list.push_back(EncodableValue(a8_byte_array_));
   list.push_back(EncodableValue(a_float_array_));
-  list.push_back(EncodableValue(a_list_));
+  list.push_back(EncodableValue(list_));
   list.push_back(EncodableValue(a_map_));
   list.push_back(EncodableValue((int)an_enum_));
   list.push_back(EncodableValue(a_string_));
@@ -605,7 +603,7 @@ EncodableList AllNullableTypes::ToEncodableList() const {
                                     : EncodableValue());
   list.push_back(a_nullable_object_ ? *a_nullable_object_ : EncodableValue());
   list.push_back(all_nullable_types_
-                     ? EncodableValue(all_nullable_types_->ToEncodableList())
+                     ? CustomEncodableValue(*all_nullable_types_)
                      : EncodableValue());
   return list;
 }
@@ -691,8 +689,8 @@ AllNullableTypes AllNullableTypes::FromEncodableList(
   }
   auto& encodable_all_nullable_types = list[16];
   if (!encodable_all_nullable_types.IsNull()) {
-    decoded.set_all_nullable_types(AllNullableTypes::FromEncodableList(
-        std::get<EncodableList>(encodable_all_nullable_types)));
+    decoded.set_all_nullable_types(std::any_cast<const AllNullableTypes&>(
+        std::get<CustomEncodableValue>(encodable_all_nullable_types)));
   }
   return decoded;
 }
@@ -1226,32 +1224,31 @@ void AllClassesWrapper::set_all_types(const AllTypes& value_arg) {
 EncodableList AllClassesWrapper::ToEncodableList() const {
   EncodableList list;
   list.reserve(3);
-  list.push_back(EncodableValue(all_nullable_types_->ToEncodableList()));
+  list.push_back(CustomEncodableValue(*all_nullable_types_));
   list.push_back(
       all_nullable_types_without_recursion_
-          ? EncodableValue(
-                all_nullable_types_without_recursion_->ToEncodableList())
+          ? CustomEncodableValue(*all_nullable_types_without_recursion_)
           : EncodableValue());
-  list.push_back(all_types_ ? EncodableValue(all_types_->ToEncodableList())
+  list.push_back(all_types_ ? CustomEncodableValue(*all_types_)
                             : EncodableValue());
   return list;
 }
 
 AllClassesWrapper AllClassesWrapper::FromEncodableList(
     const EncodableList& list) {
-  AllClassesWrapper decoded(
-      AllNullableTypes::FromEncodableList(std::get<EncodableList>(list[0])));
+  AllClassesWrapper decoded(std::any_cast<const AllNullableTypes&>(
+      std::get<CustomEncodableValue>(list[0])));
   auto& encodable_all_nullable_types_without_recursion = list[1];
   if (!encodable_all_nullable_types_without_recursion.IsNull()) {
     decoded.set_all_nullable_types_without_recursion(
-        AllNullableTypesWithoutRecursion::FromEncodableList(
-            std::get<EncodableList>(
+        std::any_cast<const AllNullableTypesWithoutRecursion&>(
+            std::get<CustomEncodableValue>(
                 encodable_all_nullable_types_without_recursion)));
   }
   auto& encodable_all_types = list[2];
   if (!encodable_all_types.IsNull()) {
-    decoded.set_all_types(AllTypes::FromEncodableList(
-        std::get<EncodableList>(encodable_all_types)));
+    decoded.set_all_types(std::any_cast<const AllTypes&>(
+        std::get<CustomEncodableValue>(encodable_all_types)));
   }
   return decoded;
 }
@@ -1763,14 +1760,14 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
                 const flutter::MessageReply<EncodableValue>& reply) {
             try {
               const auto& args = std::get<EncodableList>(message);
-              const auto& encodable_a_list_arg = args.at(0);
-              if (encodable_a_list_arg.IsNull()) {
-                reply(WrapError("a_list_arg unexpectedly null."));
+              const auto& encodable_list_arg = args.at(0);
+              if (encodable_list_arg.IsNull()) {
+                reply(WrapError("list_arg unexpectedly null."));
                 return;
               }
-              const auto& a_list_arg =
-                  std::get<EncodableList>(encodable_a_list_arg);
-              ErrorOr<EncodableList> output = api->EchoList(a_list_arg);
+              const auto& list_arg =
+                  std::get<EncodableList>(encodable_list_arg);
+              ErrorOr<EncodableList> output = api->EchoList(list_arg);
               if (output.has_error()) {
                 reply(WrapError(output.error()));
                 return;
@@ -2961,15 +2958,15 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
                 const flutter::MessageReply<EncodableValue>& reply) {
             try {
               const auto& args = std::get<EncodableList>(message);
-              const auto& encodable_a_list_arg = args.at(0);
-              if (encodable_a_list_arg.IsNull()) {
-                reply(WrapError("a_list_arg unexpectedly null."));
+              const auto& encodable_list_arg = args.at(0);
+              if (encodable_list_arg.IsNull()) {
+                reply(WrapError("list_arg unexpectedly null."));
                 return;
               }
-              const auto& a_list_arg =
-                  std::get<EncodableList>(encodable_a_list_arg);
+              const auto& list_arg =
+                  std::get<EncodableList>(encodable_list_arg);
               api->EchoAsyncList(
-                  a_list_arg, [reply](ErrorOr<EncodableList>&& output) {
+                  list_arg, [reply](ErrorOr<EncodableList>&& output) {
                     if (output.has_error()) {
                       reply(WrapError(output.error()));
                       return;
@@ -3551,11 +3548,11 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
                 const flutter::MessageReply<EncodableValue>& reply) {
             try {
               const auto& args = std::get<EncodableList>(message);
-              const auto& encodable_a_list_arg = args.at(0);
-              const auto* a_list_arg =
-                  std::get_if<EncodableList>(&encodable_a_list_arg);
+              const auto& encodable_list_arg = args.at(0);
+              const auto* list_arg =
+                  std::get_if<EncodableList>(&encodable_list_arg);
               api->EchoAsyncNullableList(
-                  a_list_arg,
+                  list_arg,
                   [reply](ErrorOr<std::optional<EncodableList>>&& output) {
                     if (output.has_error()) {
                       reply(WrapError(output.error()));
@@ -4153,15 +4150,15 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
                 const flutter::MessageReply<EncodableValue>& reply) {
             try {
               const auto& args = std::get<EncodableList>(message);
-              const auto& encodable_a_list_arg = args.at(0);
-              if (encodable_a_list_arg.IsNull()) {
-                reply(WrapError("a_list_arg unexpectedly null."));
+              const auto& encodable_list_arg = args.at(0);
+              if (encodable_list_arg.IsNull()) {
+                reply(WrapError("list_arg unexpectedly null."));
                 return;
               }
-              const auto& a_list_arg =
-                  std::get<std::vector<uint8_t>>(encodable_a_list_arg);
+              const auto& list_arg =
+                  std::get<std::vector<uint8_t>>(encodable_list_arg);
               api->CallFlutterEchoUint8List(
-                  a_list_arg, [reply](ErrorOr<std::vector<uint8_t>>&& output) {
+                  list_arg, [reply](ErrorOr<std::vector<uint8_t>>&& output) {
                     if (output.has_error()) {
                       reply(WrapError(output.error()));
                       return;
@@ -4191,15 +4188,15 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
                 const flutter::MessageReply<EncodableValue>& reply) {
             try {
               const auto& args = std::get<EncodableList>(message);
-              const auto& encodable_a_list_arg = args.at(0);
-              if (encodable_a_list_arg.IsNull()) {
-                reply(WrapError("a_list_arg unexpectedly null."));
+              const auto& encodable_list_arg = args.at(0);
+              if (encodable_list_arg.IsNull()) {
+                reply(WrapError("list_arg unexpectedly null."));
                 return;
               }
-              const auto& a_list_arg =
-                  std::get<EncodableList>(encodable_a_list_arg);
+              const auto& list_arg =
+                  std::get<EncodableList>(encodable_list_arg);
               api->CallFlutterEchoList(
-                  a_list_arg, [reply](ErrorOr<EncodableList>&& output) {
+                  list_arg, [reply](ErrorOr<EncodableList>&& output) {
                     if (output.has_error()) {
                       reply(WrapError(output.error()));
                       return;
@@ -4472,11 +4469,11 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
                 const flutter::MessageReply<EncodableValue>& reply) {
             try {
               const auto& args = std::get<EncodableList>(message);
-              const auto& encodable_a_list_arg = args.at(0);
-              const auto* a_list_arg =
-                  std::get_if<std::vector<uint8_t>>(&encodable_a_list_arg);
+              const auto& encodable_list_arg = args.at(0);
+              const auto* list_arg =
+                  std::get_if<std::vector<uint8_t>>(&encodable_list_arg);
               api->CallFlutterEchoNullableUint8List(
-                  a_list_arg,
+                  list_arg,
                   [reply](
                       ErrorOr<std::optional<std::vector<uint8_t>>>&& output) {
                     if (output.has_error()) {
@@ -4514,11 +4511,11 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
                 const flutter::MessageReply<EncodableValue>& reply) {
             try {
               const auto& args = std::get<EncodableList>(message);
-              const auto& encodable_a_list_arg = args.at(0);
-              const auto* a_list_arg =
-                  std::get_if<EncodableList>(&encodable_a_list_arg);
+              const auto& encodable_list_arg = args.at(0);
+              const auto* list_arg =
+                  std::get_if<EncodableList>(&encodable_list_arg);
               api->CallFlutterEchoNullableList(
-                  a_list_arg,
+                  list_arg,
                   [reply](ErrorOr<std::optional<EncodableList>>&& output) {
                     if (output.has_error()) {
                       reply(WrapError(output.error()));
@@ -5228,7 +5225,7 @@ void FlutterIntegrationCoreApi::EchoString(
 }
 
 void FlutterIntegrationCoreApi::EchoUint8List(
-    const std::vector<uint8_t>& a_list_arg,
+    const std::vector<uint8_t>& list_arg,
     std::function<void(const std::vector<uint8_t>&)>&& on_success,
     std::function<void(const FlutterError&)>&& on_error) {
   const std::string channel_name =
@@ -5237,7 +5234,7 @@ void FlutterIntegrationCoreApi::EchoUint8List(
       message_channel_suffix_;
   BasicMessageChannel<> channel(binary_messenger_, channel_name, &GetCodec());
   EncodableValue encoded_api_arguments = EncodableValue(EncodableList{
-      EncodableValue(a_list_arg),
+      EncodableValue(list_arg),
   });
   channel.Send(
       encoded_api_arguments, [channel_name, on_success = std::move(on_success),
@@ -5266,7 +5263,7 @@ void FlutterIntegrationCoreApi::EchoUint8List(
 }
 
 void FlutterIntegrationCoreApi::EchoList(
-    const EncodableList& a_list_arg,
+    const EncodableList& list_arg,
     std::function<void(const EncodableList&)>&& on_success,
     std::function<void(const FlutterError&)>&& on_error) {
   const std::string channel_name =
@@ -5275,7 +5272,7 @@ void FlutterIntegrationCoreApi::EchoList(
       message_channel_suffix_;
   BasicMessageChannel<> channel(binary_messenger_, channel_name, &GetCodec());
   EncodableValue encoded_api_arguments = EncodableValue(EncodableList{
-      EncodableValue(a_list_arg),
+      EncodableValue(list_arg),
   });
   channel.Send(
       encoded_api_arguments, [channel_name, on_success = std::move(on_success),
@@ -5531,7 +5528,7 @@ void FlutterIntegrationCoreApi::EchoNullableString(
 }
 
 void FlutterIntegrationCoreApi::EchoNullableUint8List(
-    const std::vector<uint8_t>* a_list_arg,
+    const std::vector<uint8_t>* list_arg,
     std::function<void(const std::vector<uint8_t>*)>&& on_success,
     std::function<void(const FlutterError&)>&& on_error) {
   const std::string channel_name =
@@ -5540,7 +5537,7 @@ void FlutterIntegrationCoreApi::EchoNullableUint8List(
       message_channel_suffix_;
   BasicMessageChannel<> channel(binary_messenger_, channel_name, &GetCodec());
   EncodableValue encoded_api_arguments = EncodableValue(EncodableList{
-      a_list_arg ? EncodableValue(*a_list_arg) : EncodableValue(),
+      list_arg ? EncodableValue(*list_arg) : EncodableValue(),
   });
   channel.Send(
       encoded_api_arguments, [channel_name, on_success = std::move(on_success),
@@ -5569,7 +5566,7 @@ void FlutterIntegrationCoreApi::EchoNullableUint8List(
 }
 
 void FlutterIntegrationCoreApi::EchoNullableList(
-    const EncodableList* a_list_arg,
+    const EncodableList* list_arg,
     std::function<void(const EncodableList*)>&& on_success,
     std::function<void(const FlutterError&)>&& on_error) {
   const std::string channel_name =
@@ -5578,7 +5575,7 @@ void FlutterIntegrationCoreApi::EchoNullableList(
       message_channel_suffix_;
   BasicMessageChannel<> channel(binary_messenger_, channel_name, &GetCodec());
   EncodableValue encoded_api_arguments = EncodableValue(EncodableList{
-      a_list_arg ? EncodableValue(*a_list_arg) : EncodableValue(),
+      list_arg ? EncodableValue(*list_arg) : EncodableValue(),
   });
   channel.Send(
       encoded_api_arguments, [channel_name, on_success = std::move(on_success),

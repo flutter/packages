@@ -1,3 +1,12 @@
+## 2.8.1
+
+* Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+* Removes support for apps using the v1 Android embedding.
+
+## 2.8.0
+
+* Adds support for marker clustering.
+
 ## 2.7.0
 
 * Adds support for `MapConfiguration.style`.

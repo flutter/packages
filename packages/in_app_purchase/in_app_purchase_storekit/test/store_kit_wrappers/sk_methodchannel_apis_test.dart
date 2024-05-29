@@ -239,7 +239,7 @@ class FakeStoreKitPlatform implements TestInAppPurchaseApi {
       <SKPaymentTransactionMessage>[dummyTransactionMessage];
 
   @override
-  void finishTransaction(Map<String?, String?> finishMap) {
+  void finishTransaction(Map<String?, Object?> finishMap) {
     transactionsFinished.add(Map<String, String>.from(finishMap));
   }
 

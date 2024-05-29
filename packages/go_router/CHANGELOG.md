@@ -1,6 +1,35 @@
-## 13.2.5
+## 14.1.4
 
-- Fixes an issue where route future does not complete when popping shell route.
+- Fixes a URL in `navigation.md`.
+
+## 14.1.3
+
+- Improves the logging of routes when `debugLogDiagnostics` is enabled or `debugKnownRoutes() is called. Explains the position of shell routes in the route tree. Prints the widget name of the routes it is building.
+
+## 14.1.2
+
+- Fixes issue that path parameters are not set when using the `goBranch`.
+
+## 14.1.1
+
+- Fixes correctness of the state provided in the `onExit`.
+
+## 14.1.0
+
+- Adds route redirect to ShellRoutes
+
+## 14.0.2
+
+- Fixes unwanted logs when `hierarchicalLoggingEnabled` was set to `true`.
+
+## 14.0.1
+
+- Updates the redirection documentation for clarity
+
+## 14.0.0
+
+- **BREAKING CHANGE**
+  - `GoRouteData`'s `onExit` now takes 2 parameters `BuildContext context, GoRouterState state`.
 
 ## 13.2.4
 
@@ -30,7 +59,7 @@
 
 ## 13.0.1
 
-* Fixes new lint warnings.
+- Fixes new lint warnings.
 
 ## 13.0.0
 
@@ -41,12 +70,12 @@
 
 ## 12.1.3
 
-* Fixes a typo in `navigation.md`.
+- Fixes a typo in `navigation.md`.
 
 ## 12.1.2
 
-* Fixes an incorrect use of `extends` for Dart 3 compatibility.
-* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+- Fixes an incorrect use of `extends` for Dart 3 compatibility.
+- Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
 
 ## 12.1.1
 
@@ -121,7 +150,7 @@
 
 ## 10.1.2
 
-* Adds pub topics to package metadata.
+- Adds pub topics to package metadata.
 
 ## 10.1.1
 
@@ -452,7 +481,7 @@
 
 - Fixes a bug where intermediate route redirect methods are not called.
 - GoRouter implements the RouterConfig interface, allowing you to call
-  MaterialApp.router(routerConfig: _myGoRouter) instead of passing
+  MaterialApp.router(routerConfig: \_myGoRouter) instead of passing
   the RouterDelegate, RouteInformationParser, and RouteInformationProvider
   fields.
 - **BREAKING CHANGE**

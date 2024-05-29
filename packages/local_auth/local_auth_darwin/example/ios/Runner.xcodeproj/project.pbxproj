@@ -3,13 +3,13 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 54;
+	objectVersion = 60;
 	objects = {
 
 /* Begin PBXBuildFile section */
 		0CCCD07A2CE24E13C9C1EEA4 /* libPods-Runner.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9D274A3F79473B1549B2BBD5 /* libPods-Runner.a */; };
 		1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */ = {isa = PBXBuildFile; fileRef = 1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */; };
-		3398D2E426164AD8005A052F /* FLALocalAuthPluginTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 3398D2E326164AD8005A052F /* FLALocalAuthPluginTests.m */; };
+		338A5F9D2BFBA45B00DF0C4E /* FLALocalAuthPluginTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 338A5F9C2BFBA45B00DF0C4E /* FLALocalAuthPluginTests.swift */; };
 		3B3967161E833CAA004F5970 /* AppFrameworkInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */; };
 		691CB38B382734AF80FBCA4C /* libPods-RunnerTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = ADBFA21B380E07A3A585383D /* libPods-RunnerTests.a */; };
 		978B8F6F1D3862AE00F588F7 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 7AFFD8EE1D35381100E5BB4D /* AppDelegate.m */; };
@@ -45,11 +45,11 @@
 /* Begin PBXFileReference section */
 		1498D2321E8E86230040F4C2 /* GeneratedPluginRegistrant.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GeneratedPluginRegistrant.h; sourceTree = "<group>"; };
 		1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GeneratedPluginRegistrant.m; sourceTree = "<group>"; };
+		338A5F9C2BFBA45B00DF0C4E /* FLALocalAuthPluginTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FLALocalAuthPluginTests.swift; path = ../../../darwin/Tests/FLALocalAuthPluginTests.swift; sourceTree = "<group>"; };
 		3398D2CD26163948005A052F /* RunnerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RunnerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		3398D2D126163948005A052F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		3398D2DC261649CD005A052F /* liblocal_auth.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = liblocal_auth.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		3398D2DF26164A03005A052F /* liblocal_auth.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = liblocal_auth.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		3398D2E326164AD8005A052F /* FLALocalAuthPluginTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FLALocalAuthPluginTests.m; path = ../../darwin/Tests/FLALocalAuthPluginTests.m; sourceTree = SOURCE_ROOT; };
 		3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = AppFrameworkInfo.plist; path = Flutter/AppFrameworkInfo.plist; sourceTree = "<group>"; };
 		658CDD04B21E4EA92F8EF229 /* Pods-Runner.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.release.xcconfig"; path = "Pods/Target Support Files/Pods-Runner/Pods-Runner.release.xcconfig"; sourceTree = "<group>"; };
 		7AFA3C8E1D35360C0083082E /* Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = Release.xcconfig; path = Flutter/Release.xcconfig; sourceTree = "<group>"; };
@@ -93,7 +93,7 @@
 		33BF11D226680B2E002967F3 /* RunnerTests */ = {
 			isa = PBXGroup;
 			children = (
-				3398D2E326164AD8005A052F /* FLALocalAuthPluginTests.m */,
+				338A5F9C2BFBA45B00DF0C4E /* FLALocalAuthPluginTests.swift */,
 				3398D2D126163948005A052F /* Info.plist */,
 			);
 			path = RunnerTests;
@@ -232,6 +232,7 @@
 				TargetAttributes = {
 					3398D2CC26163948005A052F = {
 						CreatedOnToolsVersion = 12.4;
+						LastSwiftMigration = 1510;
 						ProvisioningStyle = Automatic;
 						TestTargetID = 97C146ED1CF9000F007C117D;
 					};
@@ -377,7 +378,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3398D2E426164AD8005A052F /* FLALocalAuthPluginTests.m in Sources */,
+				338A5F9D2BFBA45B00DF0C4E /* FLALocalAuthPluginTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -428,6 +429,7 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
@@ -444,6 +446,8 @@
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.google.RunnerTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Runner.app/Runner";
 			};
@@ -456,6 +460,7 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
@@ -471,6 +476,7 @@
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.google.RunnerTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Runner.app/Runner";
 			};

@@ -341,9 +341,7 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
           in getFieldsInSerializationOrder(classDefinition)) {
         String toWriteValue = '';
         final String fieldName = field.name;
-        if (field.type.isClass) {
-          toWriteValue = '($fieldName == null) ? null : $fieldName.toList()';
-        } else if (field.type.isEnum) {
+        if (field.type.isEnum) {
           toWriteValue = '$fieldName == null ? null : $fieldName.index';
         } else {
           toWriteValue = field.name;
@@ -364,7 +362,7 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
   }) {
     indent.newln();
     indent.write(
-        'static @NonNull ${classDefinition.name} fromList(@NonNull ArrayList<Object> list) ');
+        'static @NonNull ${classDefinition.name} fromList(@NonNull ArrayList<Object> ${varNamePrefix}list) ');
     indent.addScoped('{', '}', () {
       const String result = 'pigeonResult';
       indent.writeln(
@@ -373,7 +371,8 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
           (int index, final NamedType field) {
         final String fieldVariable = field.name;
         final String setter = _makeSetter(field);
-        indent.writeln('Object $fieldVariable = list.get($index);');
+        indent.writeln(
+            'Object $fieldVariable = ${varNamePrefix}list.get($index);');
         if (field.type.isEnum) {
           indent.writeln(
               '$result.$setter(${_intToEnum(fieldVariable, field.type.baseName, field.type.isNullable)});');
@@ -1123,8 +1122,6 @@ String _castObject(NamedType field, String varName) {
       field, (TypeDeclaration x) => _javaTypeForBuiltinDartType(x));
   if (field.type.baseName == 'int') {
     return '($varName == null) ? null : (($varName instanceof Integer) ? (Integer) $varName : (${hostDatatype.datatype}) $varName)';
-  } else if (field.type.isClass) {
-    return '($varName == null) ? null : ${hostDatatype.datatype}.fromList((ArrayList<Object>) $varName)';
   } else {
     return _cast(varName, javaType: hostDatatype.datatype);
   }

@@ -525,7 +525,7 @@ class TypeDeclaration {
   @override
   String toString() {
     final String typeArgumentsStr =
-        typeArguments.isEmpty ? '' : 'typeArguments:$typeArguments';
+        typeArguments.isEmpty ? '' : ' typeArguments:$typeArguments';
     return '(TypeDeclaration baseName:$baseName isNullable:$isNullable$typeArgumentsStr isEnum:$isEnum isClass:$isClass isProxyApi:$isProxyApi)';
   }
 }

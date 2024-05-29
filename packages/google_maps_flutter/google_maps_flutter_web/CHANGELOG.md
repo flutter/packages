@@ -1,3 +1,7 @@
+## 0.5.7
+
+* Adds support for marker clustering.
+
 ## 0.5.6+2
 
 * Uses `TrustedTypes` from `web: ^0.5.1`.

@@ -172,20 +172,22 @@ gmaps.LatLng _latLngToGmLatLng(LatLng latLng) {
   return gmaps.LatLng(latLng.latitude, latLng.longitude);
 }
 
-LatLng _gmLatLngToLatLng(gmaps.LatLng latLng) {
+/// Converts [gmaps.LatLng] to [LatLng].
+LatLng gmLatLngToLatLng(gmaps.LatLng latLng) {
   return LatLng(latLng.lat.toDouble(), latLng.lng.toDouble());
 }
 
-LatLngBounds _gmLatLngBoundsTolatLngBounds(gmaps.LatLngBounds latLngBounds) {
+/// Converts a [gmaps.LatLngBounds] into a [LatLngBounds].
+LatLngBounds gmLatLngBoundsTolatLngBounds(gmaps.LatLngBounds latLngBounds) {
   return LatLngBounds(
-    southwest: _gmLatLngToLatLng(latLngBounds.southWest),
-    northeast: _gmLatLngToLatLng(latLngBounds.northEast),
+    southwest: gmLatLngToLatLng(latLngBounds.southWest),
+    northeast: gmLatLngToLatLng(latLngBounds.northEast),
   );
 }
 
 CameraPosition _gmViewportToCameraPosition(gmaps.GMap map) {
   return CameraPosition(
-    target: _gmLatLngToLatLng(map.center ?? _nullGmapsLatLng),
+    target: gmLatLngToLatLng(map.center ?? _nullGmapsLatLng),
     bearing: map.heading?.toDouble() ?? 0,
     tilt: map.tilt?.toDouble() ?? 0,
     zoom: map.zoom?.toDouble() ?? 0,
