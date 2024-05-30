@@ -63,6 +63,30 @@ class Span {
     this.foregroundDecoration,
   }) : padding = padding ?? const SpanPadding();
 
+  /// Create a clone of the current [Span] but with provided
+  /// parameters overridden.
+  Span copyWith({
+    SpanExtent? extent,
+    SpanPadding? padding,
+    Map<Type, GestureRecognizerFactory>? recognizerFactories,
+    PointerEnterEventListener? onEnter,
+    PointerExitEventListener? onExit,
+    MouseCursor? cursor,
+    SpanDecoration? backgroundDecoration,
+    SpanDecoration? foregroundDecoration,
+  }) {
+    return Span(
+      extent: extent ?? this.extent,
+      padding: padding ?? this.padding,
+      recognizerFactories: recognizerFactories ?? this.recognizerFactories,
+      onEnter: onEnter ?? this.onEnter,
+      onExit: onExit ?? this.onExit,
+      cursor: cursor ?? this.cursor,
+      backgroundDecoration: backgroundDecoration ?? this.backgroundDecoration,
+      foregroundDecoration: foregroundDecoration ?? this.foregroundDecoration,
+    );
+  }
+
   /// Defines the extent of the span.
   ///
   /// If the span represents a row, this is the height of the row. If it

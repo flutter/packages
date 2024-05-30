@@ -15,7 +15,9 @@ should add it to your `pubspec.yaml` as usual.
 
 ## Photo Picker
 
-This package has optional Android Photo Picker functionality.
+On Android 13 and above this packages uses the Android Photo Picker.
+
+On Android 12 and below this package has optional Android Photo Picker functionality.
 
 To use this feature, add the following code to your app before calling any `image_picker` APIs:
 

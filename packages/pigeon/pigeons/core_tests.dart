@@ -23,7 +23,7 @@ class AllTypes {
     required this.a4ByteArray,
     required this.a8ByteArray,
     required this.aFloatArray,
-    this.aList = const <Object?>[],
+    this.list = const <Object?>[],
     this.aMap = const <String?, Object?>{},
     this.anEnum = AnEnum.one,
     this.aString = '',
@@ -38,8 +38,10 @@ class AllTypes {
   Int32List a4ByteArray;
   Int64List a8ByteArray;
   Float64List aFloatArray;
+  // This name is in a different format than the others to ensure that name
+  // collision with the work 'list' doesn't occur in the generated files.
   // ignore: always_specify_types, strict_raw_type
-  List aList;
+  List list;
   // ignore: always_specify_types, strict_raw_type
   Map aMap;
   AnEnum anEnum;
@@ -204,7 +206,7 @@ abstract class HostIntegrationCoreApi {
   /// Returns the passed list, to test serialization and deserialization.
   @ObjCSelector('echoList:')
   @SwiftFunction('echo(_:)')
-  List<Object?> echoList(List<Object?> aList);
+  List<Object?> echoList(List<Object?> list);
 
   /// Returns the passed map, to test serialization and deserialization.
   @ObjCSelector('echoMap:')
@@ -375,7 +377,7 @@ abstract class HostIntegrationCoreApi {
   @async
   @ObjCSelector('echoAsyncList:')
   @SwiftFunction('echoAsync(_:)')
-  List<Object?> echoAsyncList(List<Object?> aList);
+  List<Object?> echoAsyncList(List<Object?> list);
 
   /// Returns the passed map, to test asynchronous serialization and deserialization.
   @async
@@ -462,7 +464,7 @@ abstract class HostIntegrationCoreApi {
   @async
   @ObjCSelector('echoAsyncNullableList:')
   @SwiftFunction('echoAsyncNullable(_:)')
-  List<Object?>? echoAsyncNullableList(List<Object?>? aList);
+  List<Object?>? echoAsyncNullableList(List<Object?>? list);
 
   /// Returns the passed map, to test asynchronous serialization and deserialization.
   @async
@@ -543,12 +545,12 @@ abstract class HostIntegrationCoreApi {
   @async
   @ObjCSelector('callFlutterEchoUint8List:')
   @SwiftFunction('callFlutterEcho(_:)')
-  Uint8List callFlutterEchoUint8List(Uint8List aList);
+  Uint8List callFlutterEchoUint8List(Uint8List list);
 
   @async
   @ObjCSelector('callFlutterEchoList:')
   @SwiftFunction('callFlutterEcho(_:)')
-  List<Object?> callFlutterEchoList(List<Object?> aList);
+  List<Object?> callFlutterEchoList(List<Object?> list);
 
   @async
   @ObjCSelector('callFlutterEchoMap:')
@@ -583,12 +585,12 @@ abstract class HostIntegrationCoreApi {
   @async
   @ObjCSelector('callFlutterEchoNullableUint8List:')
   @SwiftFunction('callFlutterEchoNullable(_:)')
-  Uint8List? callFlutterEchoNullableUint8List(Uint8List? aList);
+  Uint8List? callFlutterEchoNullableUint8List(Uint8List? list);
 
   @async
   @ObjCSelector('callFlutterEchoNullableList:')
   @SwiftFunction('callFlutterEchoNullable(_:)')
-  List<Object?>? callFlutterEchoNullableList(List<Object?>? aList);
+  List<Object?>? callFlutterEchoNullableList(List<Object?>? list);
 
   @async
   @ObjCSelector('callFlutterEchoNullableMap:')
@@ -679,12 +681,12 @@ abstract class FlutterIntegrationCoreApi {
   /// Returns the passed byte list, to test serialization and deserialization.
   @ObjCSelector('echoUint8List:')
   @SwiftFunction('echo(_:)')
-  Uint8List echoUint8List(Uint8List aList);
+  Uint8List echoUint8List(Uint8List list);
 
   /// Returns the passed list, to test serialization and deserialization.
   @ObjCSelector('echoList:')
   @SwiftFunction('echo(_:)')
-  List<Object?> echoList(List<Object?> aList);
+  List<Object?> echoList(List<Object?> list);
 
   /// Returns the passed map, to test serialization and deserialization.
   @ObjCSelector('echoMap:')
@@ -721,12 +723,12 @@ abstract class FlutterIntegrationCoreApi {
   /// Returns the passed byte list, to test serialization and deserialization.
   @ObjCSelector('echoNullableUint8List:')
   @SwiftFunction('echoNullable(_:)')
-  Uint8List? echoNullableUint8List(Uint8List? aList);
+  Uint8List? echoNullableUint8List(Uint8List? list);
 
   /// Returns the passed list, to test serialization and deserialization.
   @ObjCSelector('echoNullableList:')
   @SwiftFunction('echoNullable(_:)')
-  List<Object?>? echoNullableList(List<Object?>? aList);
+  List<Object?>? echoNullableList(List<Object?>? list);
 
   /// Returns the passed map, to test serialization and deserialization.
   @ObjCSelector('echoNullableMap:')

@@ -1,3 +1,8 @@
+## 6.1.24
+
+* Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+* Removes support for apps using the v1 Android embedding.
+
 ## 6.1.23
 
 * Updates minSdkVersion to 19.

@@ -1,3 +1,14 @@
+## 19.0.0
+
+* **Breaking Change** [swift] Removes `FlutterError` in favor of `PigeonError`.
+* Updates minimum supported SDK version to Flutter 3.16/Dart 3.2.
+
+## 18.0.1
+
+* Fixes unnecessary calls of `toList` and `fromList` when encoding/decoding data classes.
+* [kotlin] Changes to some code to make it more idiomatic.
+* Removes collisions with the word `list`.
+
 ## 18.0.0
 
 * Adds message channel suffix option to all APIs.

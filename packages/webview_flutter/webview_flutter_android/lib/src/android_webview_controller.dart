@@ -1464,7 +1464,11 @@ class AndroidNavigationDelegate extends PlatformNavigationDelegate {
     final LoadRequestCallback? onLoadRequest = _onLoadRequest;
     final NavigationRequestCallback? onNavigationRequest = _onNavigationRequest;
 
-    if (onNavigationRequest == null || onLoadRequest == null) {
+    // The client is only allowed to stop navigations that target the main frame because
+    // overridden URLs are passed to `loadUrl` and `loadUrl` cannot load a subframe.
+    if (!isForMainFrame ||
+        onNavigationRequest == null ||
+        onLoadRequest == null) {
       return;
     }
 
