@@ -25,7 +25,7 @@ internal class AllDatatypesTest {
     assertEquals(firstTypes.aBool, secondTypes.aBool)
     assertEquals(firstTypes.anInt, secondTypes.anInt)
     assertEquals(firstTypes.anInt64, secondTypes.anInt64)
-    assertEquals(firstTypes.aDouble, secondTypes.aDouble)
+    assertEquals(firstTypes.aDouble, secondTypes.aDouble, 0.0)
     assertEquals(firstTypes.aString, secondTypes.aString)
     assertTrue(firstTypes.aByteArray.contentEquals(secondTypes.aByteArray))
     assertTrue(firstTypes.a4ByteArray.contentEquals(secondTypes.a4ByteArray))

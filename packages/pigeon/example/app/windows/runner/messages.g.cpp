@@ -115,7 +115,7 @@ EncodableValue PigeonCodecSerializer::ReadValueOfType(
       const int64_t enum_arg_value =
           encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
       return encodable_enum_arg.IsNull()
-                 ? EncodableValue(std::nullopt)
+                 ? CustomEncodableValue(std::nullopt)
                  : CustomEncodableValue(static_cast<Code>(enum_arg_value));
     }
     default:

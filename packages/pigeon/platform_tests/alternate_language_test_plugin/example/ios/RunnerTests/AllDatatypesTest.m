@@ -19,7 +19,7 @@
 - (void)testAllNull {
   FLTAllNullableTypes *everything = [[FLTAllNullableTypes alloc] init];
   EchoBinaryMessenger *binaryMessenger =
-      [[EchoBinaryMessenger alloc] initWithCodec:FLTCoreTestsGetCodec()];
+      [[EchoBinaryMessenger alloc] initWithCodec:FLTGetCoreTestsCodec()];
   FLTFlutterIntegrationCoreApi *api =
       [[FLTFlutterIntegrationCoreApi alloc] initWithBinaryMessenger:binaryMessenger];
   XCTestExpectation *expectation = [self expectationWithDescription:@"callback"];
@@ -66,7 +66,7 @@
   everything.list = @[ @"string", @1 ];
   everything.map = @{@"hello" : @(1234), @"goodbye" : @"world"};
   EchoBinaryMessenger *binaryMessenger =
-      [[EchoBinaryMessenger alloc] initWithCodec:FLTCoreTestsGetCodec()];
+      [[EchoBinaryMessenger alloc] initWithCodec:FLTGetCoreTestsCodec()];
   FLTFlutterIntegrationCoreApi *api =
       [[FLTFlutterIntegrationCoreApi alloc] initWithBinaryMessenger:binaryMessenger];
   XCTestExpectation *expectation = [self expectationWithDescription:@"callback"];
