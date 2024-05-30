@@ -11,7 +11,7 @@
 //     copyrightHeader: 'pigeons/copyright.txt',
 //     dartOut: 'lib/src/android/interactive_media_ads.g.dart',
 //     kotlinOut:
-//         'android/src/main/kotlin/dev/flutter/packages/interactive_media_ads/GeneratedInteractiveMediaAdsLibrary.kt',
+//         'android/src/main/kotlin/dev/flutter/packages/interactive_media_ads/InteractiveMediaAdsLibrary.g.kt',
 //     kotlinOptions: KotlinOptions(
 //       package: 'dev.flutter.packages.interactive_media_ads',
 //     ),
