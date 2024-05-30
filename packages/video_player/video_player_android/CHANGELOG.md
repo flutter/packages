@@ -1,3 +1,7 @@
+## 2.4.16
+
+* [Supports Impeller](https://docs.flutter.dev/release/breaking-changes/android-surface-plugins).
+
 ## 2.4.15
 
 * Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.

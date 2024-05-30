@@ -1,6 +1,11 @@
-## 19.0.1
+## 20.0.0
 
 * Moves all codec logic to single custom codec per file.
+* **Breaking Change** Limits the number of total custom types to 126.
+
+## 19.0.1
+
+* [dart] Updates `PigeonInstanceMangerApi` to use the shared api channel code.
 
 ## 19.0.0
 
