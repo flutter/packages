@@ -637,14 +637,13 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
     final List<AstProxyApi> sortedApis = topologicalSort(
       allProxyApis,
       (AstProxyApi api) {
-        final List<AstProxyApi> edges = <AstProxyApi>[
+        return <AstProxyApi>[
           if (api.superClass?.associatedProxyApi != null)
             api.superClass!.associatedProxyApi!,
           ...api.interfaces.map(
             (TypeDeclaration interface) => interface.associatedProxyApi!,
           ),
         ];
-        return edges;
       },
     );
 
@@ -1197,6 +1196,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
     required Iterable<AstProxyApi> allProxyApis,
   }) {
     const String registrarName = '${classNamePrefix}ProxyApiRegistrar';
+    const String instanceManagerApiName = '${instanceManagerClassName}Api';
 
     indent.format(
       '/**\n'
@@ -1208,7 +1208,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
       'abstract class $registrarName(val binaryMessenger: BinaryMessenger) {',
       '}',
       () {
-        indent.writeln('val instanceManager: PigeonInstanceManager');
+        indent.writeln('val instanceManager: $instanceManagerClassName');
         indent.format(
           'private var _codec: StandardMessageCodec? = null\n'
           'val codec: StandardMessageCodec\n'
@@ -1221,10 +1221,10 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
         );
         indent.format(
           'init {\n'
-          '  val api = PigeonInstanceManagerApi(binaryMessenger)\n'
+          '  val api = $instanceManagerApiName(binaryMessenger)\n'
           '  instanceManager =\n'
-          '    PigeonInstanceManager.create(\n'
-          '      object : PigeonInstanceManager.PigeonFinalizationListener {\n'
+          '    $instanceManagerClassName.create(\n'
+          '      object : $instanceManagerClassName.PigeonFinalizationListener {\n'
           '        override fun onFinalize(identifier: Long) {\n'
           '          api.removeStrongReference(identifier) {\n'
           '            if (it.isFailure) {\n'
@@ -1258,7 +1258,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
 
         indent.writeScoped('fun setUp() {', '}', () {
           indent.writeln(
-            'PigeonInstanceManagerApi.setUpMessageHandlers(binaryMessenger, instanceManager)',
+            '$instanceManagerApiName.setUpMessageHandlers(binaryMessenger, instanceManager)',
           );
           for (final AstProxyApi api in allProxyApis) {
             final bool hasHostMessageCalls = api.constructors.isNotEmpty ||
@@ -1274,13 +1274,10 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
 
         indent.writeScoped('fun tearDown() {', '}', () {
           indent.writeln(
-            'PigeonInstanceManagerApi.setUpMessageHandlers(binaryMessenger, null)',
+            '$instanceManagerApiName.setUpMessageHandlers(binaryMessenger, null)',
           );
           for (final AstProxyApi api in allProxyApis) {
-            final bool hasHostMessageCalls = api.constructors.isNotEmpty ||
-                api.attachedFields.isNotEmpty ||
-                api.hostMethods.isNotEmpty;
-            if (hasHostMessageCalls) {
+            if (api.hasAnyHostMessageCalls()) {
               indent.writeln(
                 '$hostProxyApiPrefix${api.name}.setUpMessageHandlers(binaryMessenger, null)',
               );
