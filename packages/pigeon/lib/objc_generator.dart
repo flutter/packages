@@ -44,7 +44,7 @@ class ObjcOptions {
     final Iterable<dynamic>? copyrightHeader =
         map['copyrightHeader'] as Iterable<dynamic>?;
     return ObjcOptions(
-      headerIncludePath: map['header'] as String?,
+      headerIncludePath: map['headerIncludePath'] as String?,
       prefix: map['prefix'] as String?,
       copyrightHeader: copyrightHeader?.cast<String>(),
       fileSpecificClassNameComponent:
@@ -56,7 +56,7 @@ class ObjcOptions {
   /// `x = ObjcOptions.fromMap(x.toMap())`.
   Map<String, Object> toMap() {
     final Map<String, Object> result = <String, Object>{
-      if (headerIncludePath != null) 'header': headerIncludePath!,
+      if (headerIncludePath != null) 'headerIncludePath': headerIncludePath!,
       if (prefix != null) 'prefix': prefix!,
       if (copyrightHeader != null) 'copyrightHeader': copyrightHeader!,
       if (fileSpecificClassNameComponent != null)

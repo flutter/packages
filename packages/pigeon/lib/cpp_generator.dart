@@ -50,7 +50,7 @@ class CppOptions {
   /// `x = CppOptions.fromMap(x.toMap())`.
   static CppOptions fromMap(Map<String, Object> map) {
     return CppOptions(
-      headerIncludePath: map['header'] as String?,
+      headerIncludePath: map['headerIncludePath'] as String?,
       namespace: map['namespace'] as String?,
       copyrightHeader: map['copyrightHeader'] as Iterable<String>?,
       headerOutPath: map['cppHeaderOut'] as String?,
@@ -61,7 +61,7 @@ class CppOptions {
   /// `x = CppOptions.fromMap(x.toMap())`.
   Map<String, Object> toMap() {
     final Map<String, Object> result = <String, Object>{
-      if (headerIncludePath != null) 'header': headerIncludePath!,
+      if (headerIncludePath != null) 'headerIncludePath': headerIncludePath!,
       if (namespace != null) 'namespace': namespace!,
       if (copyrightHeader != null) 'copyrightHeader': copyrightHeader!,
     };
