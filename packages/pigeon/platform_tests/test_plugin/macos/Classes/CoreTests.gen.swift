@@ -546,7 +546,7 @@ private class CoreTestsPigeonCodecReaderWriter: FlutterStandardReaderWriter {
   }
 }
 
-class CoreTestsPigeonCodec: FlutterStandardMessageCodec {
+class CoreTestsPigeonCodec: FlutterStandardMessageCodec, @unchecked Sendable {
   static let shared = CoreTestsPigeonCodec(readerWriter: CoreTestsPigeonCodecReaderWriter())
 }
 
