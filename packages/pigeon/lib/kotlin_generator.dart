@@ -87,13 +87,10 @@ class KotlinOptions {
 /// ProxyApi.
 class KotlinProxyApiOptions {
   /// Construct a [KotlinProxyApiOptions].
-  const KotlinProxyApiOptions({
-    required this.fullClassName,
-    this.minAndroidApi,
-  });
+  const KotlinProxyApiOptions({this.fullClassName, this.minAndroidApi});
 
   /// The name of the full runtime Kotlin class name (including the package).
-  final String fullClassName;
+  final String? fullClassName;
 
   /// The minimum Android api version.
   ///

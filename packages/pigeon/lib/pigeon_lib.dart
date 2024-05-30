@@ -1551,7 +1551,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
             annotationMap['kotlinOptions'] as Map<String, Object?>?;
         if (kotlinOptionsMap != null) {
           kotlinOptions = KotlinProxyApiOptions(
-            fullClassName: kotlinOptionsMap['fullClassName']! as String,
+            fullClassName: kotlinOptionsMap['fullClassName'] as String?,
             minAndroidApi: kotlinOptionsMap['minAndroidApi'] as int?,
           );
         }
