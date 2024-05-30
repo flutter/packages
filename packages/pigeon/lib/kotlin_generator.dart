@@ -719,8 +719,13 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
       _docCommentSpec,
     );
     indent.writeln('@Suppress("UNCHECKED_CAST")');
+    // The API only needs to be abstract if there are methods to override.
+    final String classModifier =
+        api.hasAnyHostMessageCalls() || api.unattachedFields.isNotEmpty
+            ? 'abstract'
+            : 'open';
     indent.writeScoped(
-      'abstract class $kotlinApiName(open val pigeonRegistrar: ${classNamePrefix}ProxyApiRegistrar) {',
+      '$classModifier class $kotlinApiName(open val pigeonRegistrar: ${classNamePrefix}ProxyApiRegistrar) {',
       '}',
       () {
         final String fullKotlinClassName =
@@ -940,6 +945,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
     List<String> documentationComments = const <String>[],
     int? minApiRequirement,
     bool isAsynchronous = false,
+    bool isOpen = false,
     bool isAbstract = false,
     String Function(int index, NamedType type) getArgumentName =
         _getArgumentName,
@@ -972,16 +978,21 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
       );
     }
 
+    final String openKeyword = isOpen ? 'open ' : '';
     final String abstractKeyword = isAbstract ? 'abstract ' : '';
 
     if (isAsynchronous) {
       argSignature.add('callback: (Result<$resultType>) -> Unit');
-      indent.writeln('${abstractKeyword}fun $name(${argSignature.join(', ')})');
+      indent.writeln(
+        '$openKeyword${abstractKeyword}fun $name(${argSignature.join(', ')})',
+      );
     } else if (returnType.isVoid) {
-      indent.writeln('${abstractKeyword}fun $name(${argSignature.join(', ')})');
+      indent.writeln(
+        '$openKeyword${abstractKeyword}fun $name(${argSignature.join(', ')})',
+      );
     } else {
       indent.writeln(
-        '${abstractKeyword}fun $name(${argSignature.join(', ')}): $returnTypeString',
+        '$openKeyword${abstractKeyword}fun $name(${argSignature.join(', ')}): $returnTypeString',
       );
     }
   }
@@ -1242,7 +1253,10 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
           _writeMethodDeclaration(
             indent,
             name: 'get$hostProxyApiPrefix${api.name}',
-            isAbstract: true,
+            isAbstract:
+                api.hasAnyHostMessageCalls() || api.unattachedFields.isNotEmpty,
+            isOpen:
+                !api.hasAnyHostMessageCalls() && api.unattachedFields.isEmpty,
             documentationComments: <String>[
               'An implementation of [$hostProxyApiPrefix${api.name}] used to add a new Dart instance of',
               '`${api.name}` to the Dart `InstanceManager`.'
@@ -1253,6 +1267,14 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
             ),
             parameters: <Parameter>[],
           );
+
+          // Use the default API implementation if this API does not have any
+          // methods to implement.
+          if (!api.hasAnyHostMessageCalls() && api.unattachedFields.isEmpty) {
+            indent.writeScoped('{', '}', () {
+              indent.writeln('return $hostProxyApiPrefix${api.name}(this)');
+            });
+          }
           indent.newln();
         }
 

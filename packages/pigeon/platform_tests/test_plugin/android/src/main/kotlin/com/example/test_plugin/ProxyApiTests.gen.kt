@@ -410,7 +410,9 @@ abstract class PigeonProxyApiRegistrar(val binaryMessenger: BinaryMessenger) {
    * An implementation of [PigeonApiProxyApiInterface] used to add a new Dart instance of
    * `ProxyApiInterface` to the Dart `InstanceManager`.
    */
-  abstract fun getPigeonApiProxyApiInterface(): PigeonApiProxyApiInterface
+  open fun getPigeonApiProxyApiInterface(): PigeonApiProxyApiInterface {
+    return PigeonApiProxyApiInterface(this)
+  }
 
   fun setUp() {
     PigeonInstanceManagerApi.setUpMessageHandlers(binaryMessenger, instanceManager)
@@ -3892,7 +3894,7 @@ abstract class PigeonApiProxyApiSuperClass(open val pigeonRegistrar: PigeonProxy
 }
 /** ProxyApi to serve as an interface to the core ProxyApi class. */
 @Suppress("UNCHECKED_CAST")
-abstract class PigeonApiProxyApiInterface(open val pigeonRegistrar: PigeonProxyApiRegistrar) {
+open class PigeonApiProxyApiInterface(open val pigeonRegistrar: PigeonProxyApiRegistrar) {
   @Suppress("LocalVariableName", "FunctionName")
   /** Creates a Dart instance of ProxyApiInterface and attaches it to [pigeon_instanceArg]. */
   fun pigeon_newInstance(pigeon_instanceArg: ProxyApiInterface, callback: (Result<Unit>) -> Unit) {

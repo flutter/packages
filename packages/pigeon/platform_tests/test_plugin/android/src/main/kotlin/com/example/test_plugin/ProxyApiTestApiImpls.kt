@@ -21,10 +21,6 @@ class ProxyApiRegistrar(binaryMessenger: BinaryMessenger) :
   override fun getPigeonApiProxyApiSuperClass(): PigeonApiProxyApiSuperClass {
     return ProxyApiSuperClassApi(this)
   }
-
-  override fun getPigeonApiProxyApiInterface(): PigeonApiProxyApiInterface {
-    return ProxyApiInterfaceApi(this)
-  }
 }
 
 class ProxyApiTestClassApi(pigeonRegistrar: ProxyApiRegistrar) :
@@ -682,6 +678,3 @@ class ProxyApiSuperClassApi(pigeonRegistrar: ProxyApiRegistrar) :
 
   override fun aSuperMethod(pigeon_instance: ProxyApiSuperClass) {}
 }
-
-class ProxyApiInterfaceApi(pigeonRegistrar: ProxyApiRegistrar) :
-    PigeonApiProxyApiInterface(pigeonRegistrar)
