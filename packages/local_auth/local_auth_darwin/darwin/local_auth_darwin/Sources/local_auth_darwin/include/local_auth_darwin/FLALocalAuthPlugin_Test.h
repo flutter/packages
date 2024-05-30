@@ -28,7 +28,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// Protocol for a source of FLADAuthContext instances. Used to allow context injection in unit
 /// tests.
 @protocol FLADAuthContextFactory <NSObject>
-- (nonnull LAContext *)createAuthContext;
+- (nonnull NSObject<FLADAuthContext> *)createAuthContext;
 @end
 
 /// Protocol for a source of alert factory that wraps standard UIAlertController and NSAlert
