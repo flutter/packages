@@ -150,7 +150,7 @@ private class MessagesPigeonCodecReaderWriter: FlutterStandardReaderWriter {
   }
 }
 
-class MessagesPigeonCodec: FlutterStandardMessageCodec {
+class MessagesPigeonCodec: FlutterStandardMessageCodec, @unchecked Sendable {
   static let shared = MessagesPigeonCodec(readerWriter: MessagesPigeonCodecReaderWriter())
 }
 
