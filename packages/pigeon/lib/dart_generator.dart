@@ -491,7 +491,7 @@ final BinaryMessenger? ${_varNamePrefix}binaryMessenger;
       dartPackageName: dartPackageName,
     );
 
-    final cb.Class proxyApi = cb.Class(
+    final cb.Class instanceManagerApi = cb.Class(
       (cb.ClassBuilder builder) => builder
         ..name = '_$apiName'
         ..docs.add(
@@ -665,7 +665,9 @@ final BinaryMessenger? ${_varNamePrefix}binaryMessenger;
     );
 
     final cb.DartEmitter emitter = cb.DartEmitter(useNullSafetySyntax: true);
-    indent.format(DartFormatter().format('${proxyApi.accept(emitter)}'));
+    indent.format(
+      DartFormatter().format('${instanceManagerApi.accept(emitter)}'),
+    );
   }
 
   @override
