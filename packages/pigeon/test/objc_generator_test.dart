@@ -2119,7 +2119,7 @@ void main() {
         dartPackageName: DEFAULT_PACKAGE_NAME,
       );
       final String code = sink.toString();
-      expect(code, contains('NSArray *args = message;'));
+      expect(code, contains('NSArray<id> *args = message;'));
       expect(
           code,
           contains(
@@ -2191,7 +2191,7 @@ void main() {
         dartPackageName: DEFAULT_PACKAGE_NAME,
       );
       final String code = sink.toString();
-      expect(code, contains('NSArray *args = message;'));
+      expect(code, contains('NSArray<id> *args = message;'));
       expect(
           code,
           contains(
