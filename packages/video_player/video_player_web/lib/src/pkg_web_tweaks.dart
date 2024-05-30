@@ -2,16 +2,19 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'dart:js_interop';
 import 'package:web/web.dart' as web;
 
 /// Adds a "disablePictureInPicture" setter to [web.HTMLVideoElement]s.
 extension NonStandardSettersOnVideoElement on web.HTMLVideoElement {
-  external set disablePictureInPicture(JSBoolean disabled);
+  // TODO(srujzs): This will be added in `package:web` 0.6.0. Remove this helper
+  // once it's available.
+  external set disablePictureInPicture(bool disabled);
 }
 
 /// Adds a "disableRemotePlayback" and "controlsList" setters to [web.HTMLMediaElement]s.
 extension NonStandardSettersOnMediaElement on web.HTMLMediaElement {
-  external set disableRemotePlayback(JSBoolean disabled);
-  external set controlsList(JSString? controlsList);
+  // TODO(srujzs): This will be added in `package:web` 0.6.0. Remove this helper
+  // once it's available.
+  external set disableRemotePlayback(bool disabled);
+  external set controlsList(String? controlsList);
 }
