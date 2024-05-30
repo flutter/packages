@@ -13,7 +13,10 @@
 
 #import <OCMock/OCMock.h>
 
+// Only used in !OSX test code, and causes unused function error if not ifdef'd out.
+#if !TARGET_OS_OSX
 static bool feq(CGFloat a, CGFloat b) { return fabs(b - a) < FLT_EPSILON; }
+#endif
 
 @interface FWFWebViewHostApiTests : XCTestCase
 @end
