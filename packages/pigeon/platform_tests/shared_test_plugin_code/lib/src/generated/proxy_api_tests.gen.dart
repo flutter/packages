@@ -284,56 +284,67 @@ class PigeonInstanceManager {
 class _PigeonInstanceManagerApi {
   /// Constructor for [_PigeonInstanceManagerApi].
   _PigeonInstanceManagerApi({BinaryMessenger? binaryMessenger})
-      : _binaryMessenger = binaryMessenger;
+      : __pigeon_binaryMessenger = binaryMessenger;
 
-  final BinaryMessenger? _binaryMessenger;
+  final BinaryMessenger? __pigeon_binaryMessenger;
 
   static const MessageCodec<Object?> pigeonChannelCodec =
       StandardMessageCodec();
 
   static void setUpMessageHandlers({
+    bool pigeon_clearHandlers = false,
     BinaryMessenger? binaryMessenger,
     PigeonInstanceManager? instanceManager,
   }) {
-    const String channelName =
-        r'dev.flutter.pigeon.pigeon_integration_tests.PigeonInstanceManagerApi.removeStrongReference';
-    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-      channelName,
-      pigeonChannelCodec,
-      binaryMessenger: binaryMessenger,
-    );
-    channel.setMessageHandler((Object? message) async {
-      assert(
-        message != null,
-        'Argument for $channelName was null.',
-      );
-      final int? identifier = message as int?;
-      assert(
-        identifier != null,
-        r'Argument for $channelName, expected non-null int.',
-      );
-      (instanceManager ?? PigeonInstanceManager.instance).remove(identifier!);
-      return;
-    });
+    {
+      final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
+              Object?>(
+          'dev.flutter.pigeon.pigeon_integration_tests.PigeonInstanceManagerApi.removeStrongReference',
+          pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
+      if (pigeon_clearHandlers) {
+        __pigeon_channel.setMessageHandler(null);
+      } else {
+        __pigeon_channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.pigeon_integration_tests.PigeonInstanceManagerApi.removeStrongReference was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final int? arg_identifier = (args[0] as int?);
+          assert(arg_identifier != null,
+              'Argument for dev.flutter.pigeon.pigeon_integration_tests.PigeonInstanceManagerApi.removeStrongReference was null, expected non-null int.');
+          try {
+            (instanceManager ?? PigeonInstanceManager.instance)
+                .remove(arg_identifier!);
+            return wrapResponse(empty: true);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
+        });
+      }
+    }
   }
 
   Future<void> removeStrongReference(int identifier) async {
-    const String channelName =
-        r'dev.flutter.pigeon.pigeon_integration_tests.PigeonInstanceManagerApi.removeStrongReference';
-    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-      channelName,
+    const String __pigeon_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.PigeonInstanceManagerApi.removeStrongReference';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
       pigeonChannelCodec,
-      binaryMessenger: _binaryMessenger,
+      binaryMessenger: __pigeon_binaryMessenger,
     );
-    final List<Object?>? replyList =
-        await channel.send(identifier) as List<Object?>?;
-    if (replyList == null) {
-      throw _createConnectionError(channelName);
-    } else if (replyList.length > 1) {
+    final List<Object?>? __pigeon_replyList =
+        await __pigeon_channel.send(<Object?>[identifier]) as List<Object?>?;
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
       throw PlatformException(
-        code: replyList[0]! as String,
-        message: replyList[1] as String?,
-        details: replyList[2],
+        code: __pigeon_replyList[0]! as String,
+        message: __pigeon_replyList[1] as String?,
+        details: __pigeon_replyList[2],
       );
     } else {
       return;
@@ -344,21 +355,23 @@ class _PigeonInstanceManagerApi {
   ///
   /// This is typically called after a hot restart.
   Future<void> clear() async {
-    const String channelName =
-        r'dev.flutter.pigeon.pigeon_integration_tests.PigeonInstanceManagerApi.clear';
-    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-      channelName,
+    const String __pigeon_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.PigeonInstanceManagerApi.clear';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
       pigeonChannelCodec,
-      binaryMessenger: _binaryMessenger,
+      binaryMessenger: __pigeon_binaryMessenger,
     );
-    final List<Object?>? replyList = await channel.send(null) as List<Object?>?;
-    if (replyList == null) {
-      throw _createConnectionError(channelName);
-    } else if (replyList.length > 1) {
+    final List<Object?>? __pigeon_replyList =
+        await __pigeon_channel.send(null) as List<Object?>?;
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
       throw PlatformException(
-        code: replyList[0]! as String,
-        message: replyList[1] as String?,
-        details: replyList[2],
+        code: __pigeon_replyList[0]! as String,
+        message: __pigeon_replyList[1] as String?,
+        details: __pigeon_replyList[2],
       );
     } else {
       return;

@@ -50,6 +50,9 @@ better support for more devices than `camera_android`, but has some limitations;
 for more details. If you wish to use the [`camera_android`][4] implementation of the camera plugin
 built with Camera2 that lacks these limitations, please follow [these instructions][5].
 
+If you wish to allow image streaming while your app is in the background, there are additional steps required;
+please see [these instructions][6] for more details.
+
 ### Web integration
 
 For web integration details, see the
@@ -174,3 +177,4 @@ For a more elaborate usage example see [here](https://github.com/flutter/package
 [3]: https://pub.dev/packages/camera_android_camerax#limitations
 [4]: https://pub.dev/packages/camera_android
 [5]: https://pub.dev/packages/camera_android#usage
+[6]: https://pub.dev/packages/camera_android_camerax#allowing-image-streaming-in-the-background
