@@ -8,6 +8,12 @@ import com.google.ads.interactivemedia.v3.api.AdErrorEvent
 import com.google.ads.interactivemedia.v3.api.AdEvent
 import com.google.ads.interactivemedia.v3.api.BaseManager
 
+/**
+ * ProxyApi implementation for [BaseManager].
+ *
+ * <p>This class may handle instantiating native object instances that are attached to a Dart
+ * instance or handle method calls on the associated native class or an instance of that class.
+ */
 class BaseManagerProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) :
     PigeonApiBaseManager(pigeonRegistrar) {
   override fun addAdErrorListener(

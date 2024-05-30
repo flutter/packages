@@ -9,6 +9,12 @@ import com.google.ads.interactivemedia.v3.api.player.AdMediaInfo
 import com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer
 import com.google.ads.interactivemedia.v3.api.player.VideoProgressUpdate
 
+/**
+ * ProxyApi implementation for [VideoAdPlayer].
+ *
+ * <p>This class may handle instantiating native object instances that are attached to a Dart
+ * instance or handle method calls on the associated native class or an instance of that class.
+ */
 class VideoAdPlayerProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) :
     PigeonApiVideoAdPlayer(pigeonRegistrar) {
   override fun pigeon_defaultConstructor(): VideoAdPlayer {

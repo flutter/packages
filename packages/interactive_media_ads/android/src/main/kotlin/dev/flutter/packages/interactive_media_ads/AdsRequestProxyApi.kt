@@ -7,6 +7,12 @@ package dev.flutter.packages.interactive_media_ads
 import com.google.ads.interactivemedia.v3.api.AdsRequest
 import com.google.ads.interactivemedia.v3.api.player.ContentProgressProvider
 
+/**
+ * ProxyApi implementation for [AdsRequest].
+ *
+ * <p>This class may handle instantiating native object instances that are attached to a Dart
+ * instance or handle method calls on the associated native class or an instance of that class.
+ */
 class AdsRequestProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) :
     PigeonApiAdsRequest(pigeonRegistrar) {
   override fun setAdTagUrl(pigeon_instance: AdsRequest, adTagUrl: String) {

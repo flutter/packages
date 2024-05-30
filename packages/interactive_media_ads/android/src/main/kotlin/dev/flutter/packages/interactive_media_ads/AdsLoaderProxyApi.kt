@@ -8,6 +8,12 @@ import com.google.ads.interactivemedia.v3.api.AdErrorEvent
 import com.google.ads.interactivemedia.v3.api.AdsLoader
 import com.google.ads.interactivemedia.v3.api.AdsRequest
 
+/**
+ * ProxyApi implementation for [AdsLoader].
+ *
+ * <p>This class may handle instantiating native object instances that are attached to a Dart
+ * instance or handle method calls on the associated native class or an instance of that class.
+ */
 class AdsLoaderProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) :
     PigeonApiAdsLoader(pigeonRegistrar) {
   override fun addAdErrorListener(

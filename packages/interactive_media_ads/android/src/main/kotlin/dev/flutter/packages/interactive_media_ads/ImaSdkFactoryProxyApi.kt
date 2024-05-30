@@ -12,6 +12,12 @@ import com.google.ads.interactivemedia.v3.api.ImaSdkFactory
 import com.google.ads.interactivemedia.v3.api.ImaSdkSettings
 import com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer
 
+/**
+ * ProxyApi implementation for [ImaSdkFactory].
+ *
+ * <p>This class may handle instantiating native object instances that are attached to a Dart
+ * instance or handle method calls on the associated native class or an instance of that class.
+ */
 class ImaSdkFactoryProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) :
     PigeonApiImaSdkFactory(pigeonRegistrar) {
   override fun instance(): ImaSdkFactory {

@@ -6,6 +6,12 @@ package dev.flutter.packages.interactive_media_ads
 
 import com.google.ads.interactivemedia.v3.api.AdPodInfo
 
+/**
+ * ProxyApi implementation for [AdPodInfo].
+ *
+ * <p>This class may handle instantiating native object instances that are attached to a Dart
+ * instance or handle method calls on the associated native class or an instance of that class.
+ */
 class AdPodInfoProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) :
     PigeonApiAdPodInfo(pigeonRegistrar) {
   override fun adPosition(pigeon_instance: AdPodInfo): Long {

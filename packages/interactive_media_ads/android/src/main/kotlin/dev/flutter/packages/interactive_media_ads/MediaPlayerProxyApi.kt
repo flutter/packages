@@ -6,6 +6,12 @@ package dev.flutter.packages.interactive_media_ads
 
 import android.media.MediaPlayer
 
+/**
+ * ProxyApi implementation for [MediaPlayer].
+ *
+ * <p>This class may handle instantiating native object instances that are attached to a Dart
+ * instance or handle method calls on the associated native class or an instance of that class.
+ */
 class MediaPlayerProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) :
     PigeonApiMediaPlayer(pigeonRegistrar) {
   override fun getDuration(pigeon_instance: MediaPlayer): Long {

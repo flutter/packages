@@ -9,6 +9,10 @@ import android.os.Handler
 import android.os.Looper
 import io.flutter.plugin.common.BinaryMessenger
 
+/**
+ * Implementation of [PigeonProxyApiRegistrar] that provides each ProxyApi implementation and any
+ * additional resources needed by an implementation.
+ */
 open class ProxyApiRegistrar(binaryMessenger: BinaryMessenger, var context: Context) :
     PigeonProxyApiRegistrar(binaryMessenger) {
 
