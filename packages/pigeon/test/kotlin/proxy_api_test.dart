@@ -98,6 +98,14 @@ void main() {
       expect(code, contains(r'class PigeonInstanceManager'));
       expect(code, contains(r'class PigeonInstanceManagerApi'));
 
+      // API registrar
+      expect(
+        code,
+        contains(
+          'abstract class PigeonProxyApiRegistrar(val binaryMessenger: BinaryMessenger)',
+        ),
+      );
+
       // Codec and class
       expect(code, contains('class PigeonProxyApiBaseCodec'));
       expect(
