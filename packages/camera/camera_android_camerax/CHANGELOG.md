@@ -1,3 +1,7 @@
+## 0.7.0
+
+* Relands Impeller support and fixes camera oreintation preview logic.
+
 ## 0.6.5+5
 
 * Reverts changes to support Impeller.
