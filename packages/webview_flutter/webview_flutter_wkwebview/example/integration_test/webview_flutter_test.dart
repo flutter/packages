@@ -554,7 +554,9 @@ Future<void> main() async {
       final bool fullScreen = await controller
           .runJavaScriptReturningResult('isFullScreen();') as bool;
       expect(fullScreen, true);
-    });
+    },
+        // allowsInlineMediaPlayback has no effect on macOS.
+        skip: Platform.isMacOS);
   });
 
   group('Audio playback policy', () {
@@ -801,7 +803,9 @@ Future<void> main() async {
       expect(recordedPosition?.x, X_SCROLL * 2);
       expect(recordedPosition?.y, Y_SCROLL * 2);
     });
-  });
+  },
+      // Scroll position is currently not implemented for macOS.
+      skip: Platform.isMacOS);
 
   group('NavigationDelegate', () {
     const String blankPage = '<!DOCTYPE html><head></head><body></body></html>';
