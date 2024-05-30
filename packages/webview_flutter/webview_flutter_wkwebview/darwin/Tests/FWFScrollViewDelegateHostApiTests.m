@@ -2,6 +2,11 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+#include "TargetConditionals.h"
+
+// The scroll view delegate does not exist on macOS.
+#if !TARGET_OS_OSX
+
 @import Flutter;
 @import XCTest;
 @import webview_flutter_wkwebview;
@@ -80,3 +85,5 @@
                                                    completion:OCMOCK_ANY]);
 }
 @end
+
+#endif  // !TARGET_OS_OSX

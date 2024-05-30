@@ -2,9 +2,14 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-@import Flutter;
 @import XCTest;
 @import webview_flutter_wkwebview;
+
+#if TARGET_OS_OSX
+@import FlutterMacOS;
+#else
+@import Flutter;
+#endif
 
 #import <OCMock/OCMock.h>
 
@@ -56,11 +61,14 @@
 
   FlutterError *error;
   [hostAPI setAllowsInlineMediaPlaybackForConfigurationWithIdentifier:0 isAllowed:NO error:&error];
+  // setAllowsInlineMediaPlayback does not existing on macOS; the call above should no-op for macOS.
+#if !TARGET_OS_OSX
   OCMVerify([mockWebViewConfiguration setAllowsInlineMediaPlayback:NO]);
+#endif
   XCTAssertNil(error);
 }
 
-- (void)testSetLimitsNavigationsToAppBoundDomains API_AVAILABLE(ios(14.0)) {
+- (void)testSetLimitsNavigationsToAppBoundDomains API_AVAILABLE(ios(14.0), macos(11)) {
   WKWebViewConfiguration *mockWebViewConfiguration = OCMClassMock([WKWebViewConfiguration class]);
 
   FWFInstanceManager *instanceManager = [[FWFInstanceManager alloc] init];

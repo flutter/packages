@@ -2,10 +2,15 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-@import Flutter;
 @import XCTest;
 @import webview_flutter_wkwebview;
 @import webview_flutter_wkwebview.Test;
+
+#if TARGET_OS_OSX
+@import FlutterMacOS;
+#else
+@import Flutter;
+#endif
 
 #import <OCMock/OCMock.h>
 
@@ -75,8 +80,8 @@
       .ignoringNonObjectArgs();
 
   WKNavigationAction *mockNavigationAction = OCMClassMock([WKNavigationAction class]);
-  OCMStub([mockNavigationAction request])
-      .andReturn([NSURLRequest requestWithURL:[NSURL URLWithString:@"https://www.flutter.dev"]]);
+  NSURL *testURL = [NSURL URLWithString:@"https://www.flutter.dev"];
+  OCMStub([mockNavigationAction request]).andReturn([NSURLRequest requestWithURL:testURL]);
 
   WKFrameInfo *mockFrameInfo = OCMClassMock([WKFrameInfo class]);
   OCMStub([mockFrameInfo isMainFrame]).andReturn(YES);
@@ -98,7 +103,7 @@
                                     completion:OCMOCK_ANY]);
 }
 
-- (void)testRequestMediaCapturePermissionForOrigin API_AVAILABLE(ios(15.0)) {
+- (void)testRequestMediaCapturePermissionForOrigin API_AVAILABLE(ios(15.0), macos(12)) {
   FWFInstanceManager *instanceManager = [[FWFInstanceManager alloc] init];
 
   FWFUIDelegate *mockDelegate = [self mockDelegateWithManager:instanceManager identifier:0];

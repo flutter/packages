@@ -2,9 +2,14 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-@import Flutter;
 @import XCTest;
 @import webview_flutter_wkwebview;
+
+#if TARGET_OS_OSX
+@import FlutterMacOS;
+#else
+@import Flutter;
+#endif
 
 #import <OCMock/OCMock.h>
 
@@ -117,8 +122,8 @@
   [instanceManager addDartCreatedInstance:mockWebView withIdentifier:1];
 
   WKNavigationAction *mockNavigationAction = OCMClassMock([WKNavigationAction class]);
-  OCMStub([mockNavigationAction request])
-      .andReturn([NSURLRequest requestWithURL:[NSURL URLWithString:@"https://www.flutter.dev"]]);
+  NSURL *testURL = [NSURL URLWithString:@"https://www.flutter.dev"];
+  OCMStub([mockNavigationAction request]).andReturn([NSURLRequest requestWithURL:testURL]);
 
   WKFrameInfo *mockFrameInfo = OCMClassMock([WKFrameInfo class]);
   OCMStub([mockFrameInfo isMainFrame]).andReturn(YES);
@@ -258,10 +263,10 @@
   NSURLCredential *__block callbackCredential;
   [mockDelegate webView:mockWebView
       didReceiveAuthenticationChallenge:mockChallenge
-                      completionHandler:^(NSURLSessionAuthChallengeDisposition disposition,
-                                          NSURLCredential *credential) {
-                        callbackDisposition = disposition;
-                        callbackCredential = credential;
+                      completionHandler:^(NSURLSessionAuthChallengeDisposition dispositionArg,
+                                          NSURLCredential *credentialArg) {
+                        callbackDisposition = dispositionArg;
+                        callbackCredential = credentialArg;
                       }];
 
   XCTAssertEqual(callbackDisposition, NSURLSessionAuthChallengeCancelAuthenticationChallenge);

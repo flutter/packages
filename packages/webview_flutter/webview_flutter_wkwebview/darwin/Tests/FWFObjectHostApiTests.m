@@ -2,9 +2,14 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-@import Flutter;
 @import XCTest;
 @import webview_flutter_wkwebview;
+
+#if TARGET_OS_OSX
+@import FlutterMacOS;
+#else
+@import Flutter;
+#endif
 
 #import <OCMock/OCMock.h>
 
@@ -139,8 +144,10 @@
                                  return value[0].value == FWFNSKeyValueChangeKeyEnumOldValue;
                                }]
                              changeValues:[OCMArg checkWithBlock:^BOOL(id value) {
-                               FWFObjectOrIdentifier *object = (FWFObjectOrIdentifier *)value[0];
-                               return !object.isIdentifier && [@"key" isEqual:object.value];
+                               FWFObjectOrIdentifier *changeObject =
+                                   (FWFObjectOrIdentifier *)value[0];
+                               return !changeObject.isIdentifier &&
+                                      [@"key" isEqual:changeObject.value];
                              }]
                                completion:OCMOCK_ANY]);
 }
@@ -173,8 +180,10 @@
                                  return value[0].value == FWFNSKeyValueChangeKeyEnumOldValue;
                                }]
                              changeValues:[OCMArg checkWithBlock:^BOOL(id value) {
-                               FWFObjectOrIdentifier *object = (FWFObjectOrIdentifier *)value[0];
-                               return object.isIdentifier && [@(2) isEqual:object.value];
+                               FWFObjectOrIdentifier *changeObject =
+                                   (FWFObjectOrIdentifier *)value[0];
+                               return changeObject.isIdentifier &&
+                                      [@(2) isEqual:changeObject.value];
                              }]
                                completion:OCMOCK_ANY]);
 }

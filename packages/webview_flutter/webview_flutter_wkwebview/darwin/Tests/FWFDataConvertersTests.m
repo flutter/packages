@@ -2,9 +2,14 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-@import Flutter;
 @import XCTest;
 @import webview_flutter_wkwebview;
+
+#if TARGET_OS_OSX
+@import FlutterMacOS;
+#else
+@import Flutter;
+#endif
 
 #import <OCMock/OCMock.h>
 
@@ -61,8 +66,8 @@
 
   OCMStub([mockNavigationAction navigationType]).andReturn(WKNavigationTypeReload);
 
-  NSURLRequest *request =
-      [NSURLRequest requestWithURL:[NSURL URLWithString:@"https://www.flutter.dev/"]];
+  NSURL *testURL = [NSURL URLWithString:@"https://www.flutter.dev/"];
+  NSURLRequest *request = [NSURLRequest requestWithURL:testURL];
   OCMStub([mockNavigationAction request]).andReturn(request);
 
   WKFrameInfo *mockFrameInfo = OCMClassMock([WKFrameInfo class]);
@@ -76,8 +81,8 @@
 }
 
 - (void)testFWFNSUrlRequestDataFromNSURLRequest {
-  NSMutableURLRequest *request =
-      [NSMutableURLRequest requestWithURL:[NSURL URLWithString:@"https://www.flutter.dev/"]];
+  NSURL *testURL = [NSURL URLWithString:@"https://www.flutter.dev/"];
+  NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:testURL];
   request.HTTPMethod = @"POST";
   request.HTTPBody = [@"aString" dataUsingEncoding:NSUTF8StringEncoding];
   request.allHTTPHeaderFields = @{@"a" : @"field"};
@@ -137,7 +142,7 @@
   XCTAssertEqualObjects(data.protocol, @"protocol");
 }
 
-- (void)testFWFWKPermissionDecisionFromData API_AVAILABLE(ios(15.0)) {
+- (void)testFWFWKPermissionDecisionFromData API_AVAILABLE(ios(15.0), macos(12)) {
   XCTAssertEqual(FWFNativeWKPermissionDecisionFromData(
                      [FWFWKPermissionDecisionData makeWithValue:FWFWKPermissionDecisionDeny]),
                  WKPermissionDecisionDeny);
@@ -149,7 +154,7 @@
                  WKPermissionDecisionPrompt);
 }
 
-- (void)testFWFWKMediaCaptureTypeDataFromWKMediaCaptureType API_AVAILABLE(ios(15.0)) {
+- (void)testFWFWKMediaCaptureTypeDataFromWKMediaCaptureType API_AVAILABLE(ios(15.0), macos(12)) {
   XCTAssertEqual(
       FWFWKMediaCaptureTypeDataFromNativeWKMediaCaptureType(WKMediaCaptureTypeCamera).value,
       FWFWKMediaCaptureTypeCamera);

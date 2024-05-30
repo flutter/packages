@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#import <XCTest/XCTest.h>
+@import XCTest;
 
 @import webview_flutter_wkwebview;
 @import webview_flutter_wkwebview.Test;

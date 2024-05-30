@@ -2,8 +2,15 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+@import XCTest;
+
+#if TARGET_OS_OSX
+@import FlutterMacOS;
+#else
+@import Flutter;
+#endif
+
 #import <OCMock/OCMock.h>
-#import <XCTest/XCTest.h>
 
 @import webview_flutter_wkwebview;
 

@@ -2,9 +2,14 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-@import Flutter;
 @import XCTest;
 @import webview_flutter_wkwebview;
+
+#if TARGET_OS_OSX
+@import FlutterMacOS;
+#else
+@import Flutter;
+#endif
 
 #import <OCMock/OCMock.h>
 
@@ -78,8 +83,8 @@ static bool feq(CGFloat a, CGFloat b) { return fabs(b - a) < FLT_EPSILON; }
     XCTAssertEqualObjects(error.message, @"Failed instantiating an NSURLRequest.");
     XCTAssertEqualObjects(error.details, @"URL was: '%invalidUrl%'");
   } else {
-    NSMutableURLRequest *request =
-        [NSMutableURLRequest requestWithURL:[NSURL URLWithString:badURLString]];
+    NSURL *badURL = [NSURL URLWithString:badURLString];
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:badURL];
     OCMVerify([mockWebView loadRequest:request]);
   }
 }
@@ -252,9 +257,9 @@ static bool feq(CGFloat a, CGFloat b) { return fabs(b - a) < FLT_EPSILON; }
   [hostAPI loadAssetForWebViewWithIdentifier:0 assetKey:@"assets/index.html" error:&error];
 
   XCTAssertNil(error);
-  OCMVerify([mockWebView
-                  loadFileURL:[NSURL URLWithString:@"webview_flutter/myFolder/assets/index.html"]
-      allowingReadAccessToURL:[NSURL URLWithString:@"webview_flutter/myFolder/assets/"]]);
+  NSURL *fileURL = [NSURL URLWithString:@"webview_flutter/myFolder/assets/index.html"];
+  NSURL *directoryURL = [NSURL URLWithString:@"webview_flutter/myFolder/assets/"];
+  OCMVerify([mockWebView loadFileURL:fileURL allowingReadAccessToURL:directoryURL]);
 }
 
 - (void)testCanGoForward {
@@ -418,6 +423,8 @@ static bool feq(CGFloat a, CGFloat b) { return fabs(b - a) < FLT_EPSILON; }
   XCTAssertEqualObjects(errorData.userInfo, @{NSLocalizedDescriptionKey : @"description"});
 }
 
+// Content inset APIs don't exist on macOS.
+#if !TARGET_OS_OSX
 - (void)testWebViewContentInsetBehaviorShouldBeNever {
   FWFInstanceManager *instanceManager = [[FWFInstanceManager alloc] init];
   FWFWebViewHostApiImpl *hostAPI = [[FWFWebViewHostApiImpl alloc]
@@ -471,6 +478,7 @@ static bool feq(CGFloat a, CGFloat b) { return fabs(b - a) < FLT_EPSILON; }
   XCTAssertTrue(feq(webView.scrollView.contentInset.bottom, -insetToAdjust.bottom));
   XCTAssertTrue(CGRectEqualToRect(webView.frame, CGRectMake(0, 0, 300, 100)));
 }
+#endif  // !TARGET_OS_OSX
 
 - (void)testSetInspectable API_AVAILABLE(ios(16.4), macos(13.3)) {
   FWFWebView *mockWebView = OCMClassMock([FWFWebView class]);

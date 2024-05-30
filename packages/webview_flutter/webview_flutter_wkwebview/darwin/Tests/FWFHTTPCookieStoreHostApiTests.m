@@ -2,9 +2,14 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-@import Flutter;
 @import XCTest;
 @import webview_flutter_wkwebview;
+
+#if TARGET_OS_OSX
+@import FlutterMacOS;
+#else
+@import Flutter;
+#endif
 
 #import <OCMock/OCMock.h>
 
@@ -47,9 +52,8 @@
                                 completion:^(FlutterError *error) {
                                   blockError = error;
                                 }];
-  OCMVerify([mockHttpCookieStore
-              setCookie:[NSHTTPCookie cookieWithProperties:@{NSHTTPCookieName : @"hello"}]
-      completionHandler:OCMOCK_ANY]);
+  NSHTTPCookie *cookie = [NSHTTPCookie cookieWithProperties:@{NSHTTPCookieName : @"hello"}];
+  OCMVerify([mockHttpCookieStore setCookie:cookie completionHandler:OCMOCK_ANY]);
   XCTAssertNil(blockError);
 }
 @end

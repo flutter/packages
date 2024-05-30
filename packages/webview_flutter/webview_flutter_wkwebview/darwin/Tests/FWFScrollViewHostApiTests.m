@@ -2,6 +2,11 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+#import "TargetConditionals.h"
+
+// Scroll view APIs do not existing on macOS.
+#if !TARGET_OS_OSX
+
 @import Flutter;
 @import XCTest;
 @import webview_flutter_wkwebview;
@@ -79,3 +84,5 @@
   XCTAssertNil(error);
 }
 @end
+
+#endif  // !TARGET_OS_OSX
