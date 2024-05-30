@@ -103,7 +103,7 @@ void main() {
       expect(
         code,
         contains(
-          r'abstract class PigeonApiApi(val pigeonRegistrar: PigeonProxyApiRegistrar)',
+          r'abstract class PigeonApiApi(open val pigeonRegistrar: PigeonProxyApiRegistrar)',
         ),
       );
 
@@ -299,7 +299,7 @@ void main() {
         expect(
           code,
           contains(
-            'abstract class PigeonApiApi(val pigeonRegistrar: PigeonProxyApiRegistrar) ',
+            'abstract class PigeonApiApi(open val pigeonRegistrar: PigeonProxyApiRegistrar) ',
           ),
         );
         expect(
@@ -401,7 +401,7 @@ void main() {
         expect(
           code,
           contains(
-            'abstract class PigeonApiApi(val pigeonRegistrar: PigeonProxyApiRegistrar) ',
+            'abstract class PigeonApiApi(open val pigeonRegistrar: PigeonProxyApiRegistrar) ',
           ),
         );
         expect(
