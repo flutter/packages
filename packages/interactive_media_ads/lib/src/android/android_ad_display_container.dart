@@ -47,6 +47,17 @@ final class AndroidAdDisplayContainerCreationParams
 }
 
 /// Android implementation of [PlatformAdDisplayContainer].
+///
+/// This acts as the video player for the ad. To be a player for an ad from the
+/// IMA SDK:
+/// 1. The [ima.VideoView] must be in the View hierarchy until all ads have
+/// finished.
+/// 2. Must respond to callbacks from the [ima.VideoAdPlayer].
+/// 3. Must trigger methods for [ima.VideoAdPlayerCallback]s that provide ad
+/// playback information to the IMA SDK. [ima.VideoAdPlayerCallback]s are
+/// provided by [ima.VideoAdPlayer.addCallback].
+/// 4. Must create an [ima.AdDisplayContainer] with the `ViewGroup` that
+/// contains the `VideoView`.
 base class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
   /// Constructs an [AndroidAdDisplayContainer].
   AndroidAdDisplayContainer(super.params) : super.implementation() {
@@ -58,26 +69,41 @@ base class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
   }
 
   // The duration between each update to the IMA SDK of the progress of the
-  // currently playing ad.
+  // currently playing ad. This value matches the one used in the Android
+  // example.
+  // See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side#6.-create-the-videoadplayeradapter-class
   static const int _progressPollingMs = 250;
 
-  // ViewGroup used to create the `ima.AdDisplayContainer`.
+  // The `ViewGroup` used to create the native `ima.AdDisplayContainer`. The
+  // `View` that handles playing an ad is added as a child to this `ViewGroup`.
   late final ima.FrameLayout _frameLayout =
       _androidParams._imaProxy.newFrameLayout();
 
-  // Handles ad playback.
+  // Handles loading and displaying an ad.
   late final ima.VideoView _videoView;
+
+  // After an ad is loaded in the `VideoView`, this is used to control
+  // playback.
   ima.MediaPlayer? _mediaPlayer;
 
-  /// Callbacks that update the state of ad playback.
+  /// Methods that must be triggered to update the IMA SDK of the state of
+  /// playback of an ad.
   @internal
   final Set<ima.VideoAdPlayerCallback> videoAdPlayerCallbacks =
       <ima.VideoAdPlayerCallback>{};
 
-  // Handles ad playback callbacks from the IMA SDK.
+  // Handles ad playback callbacks from the IMA SDK. For a player to be used for
+  // ad playback, the callbacks in this class must be implemented. This also
+  // provides `VideoAdPlayerCallback`s that contain methods that must be
+  // triggered by the player.
   late final ima.VideoAdPlayer _videoAdPlayer;
 
   /// The native Android AdDisplayContainer.
+  ///
+  /// This holds the player for video ads.
+  ///
+  /// Created with the `ViewGroup` that contains the `View` that handles playing
+  /// an ad.
   @internal
   ima.AdDisplayContainer? adDisplayContainer;
 
@@ -117,13 +143,19 @@ base class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
     );
   }
 
-  void _resetPlayer() {
+  // Clears the current `MediaPlayer` and resets any saved position of an ad.
+  // This should be used when current ad that is loaded in the `VideoView` is
+  // complete, failed to load/play, or has been stopped.
+  void _clearMediaPlayer() {
     _mediaPlayer = null;
     _savedAdPosition = 0;
   }
 
   // Starts periodically updating the IMA SDK the progress of the currently
   // playing ad.
+  //
+  // Setting a timer to periodically update the IMA SDK is also done in the
+  // official Android example: https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side#8.-set-up-ad-tracking.
   void _startAdProgressTracking() {
     // Stop any previous ad tracking.
     _stopAdProgressTracking();
@@ -158,6 +190,9 @@ base class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
     _adProgressTimer = null;
   }
 
+  // This value is created in a static method because the callback methods for
+  // any wrapped classes must not reference the encapsulating object. This is to
+  // prevent a circular reference that prevents garbage collection.
   static ima.VideoView _setUpVideoView(
     WeakReference<AndroidAdDisplayContainer> weakThis,
   ) {
@@ -165,7 +200,7 @@ base class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
       onCompletion: (_, __) {
         final AndroidAdDisplayContainer? container = weakThis.target;
         if (container != null) {
-          container._resetPlayer();
+          container._clearMediaPlayer();
           container._stopAdProgressTracking();
           for (final ima.VideoAdPlayerCallback callback
               in container.videoAdPlayerCallbacks) {
@@ -189,7 +224,7 @@ base class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
       onError: (_, __, ___, ____) {
         final AndroidAdDisplayContainer? container = weakThis.target;
         if (container != null) {
-          container._resetPlayer();
+          container._clearMediaPlayer();
           for (final ima.VideoAdPlayerCallback callback
               in container.videoAdPlayerCallbacks) {
             callback.onError(container._loadedAdMediaInfo!);
@@ -201,6 +236,9 @@ base class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
     );
   }
 
+  // This value is created in a static method because the callback methods for
+  // any wrapped classes must not reference the encapsulating object. This is to
+  // prevent a circular reference that prevents garbage collection.
   static ima.VideoAdPlayer _setUpVideoAdPlayer(
     WeakReference<AndroidAdDisplayContainer> weakThis,
   ) {
@@ -231,7 +269,7 @@ base class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
         final AndroidAdDisplayContainer? container = weakThis.target;
         if (container != null) {
           container._stopAdProgressTracking();
-          container._resetPlayer();
+          container._clearMediaPlayer();
           container._loadedAdMediaInfo = null;
           container._adDuration = null;
         }

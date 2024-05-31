@@ -49,6 +49,9 @@ class AndroidAdsManager extends PlatformAdsManager {
     return _manager.start();
   }
 
+  // This value is created in a static method because the callback methods for
+  // any wrapped classes must not reference the encapsulating object. This is to
+  // prevent a circular reference that prevents garbage collection.
   static void _addListeners(WeakReference<AndroidAdsManager> weakThis) {
     final InteractiveMediaAdsProxy proxy = weakThis.target!._proxy;
     weakThis.target?._manager.addAdEventListener(

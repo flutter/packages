@@ -104,6 +104,9 @@ base class AndroidAdsLoader extends PlatformAdsLoader {
     return adsLoader;
   }
 
+  // This value is created in a static method because the callback methods for
+  // any wrapped classes must not reference the encapsulating object. This is to
+  // prevent a circular reference that prevents garbage collection.
   static void _addListeners(
     WeakReference<AndroidAdsLoader> weakThis,
     ima.AdsLoader adsLoader,

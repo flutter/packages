@@ -41,81 +41,41 @@ class InteractiveMediaAdsProxy {
 
   /// Constructs [VideoView].
   final VideoView Function({
-    required void Function(
-      VideoView,
-      MediaPlayer,
-      int,
-      int,
-    ) onError,
-    void Function(
-      VideoView,
-      MediaPlayer,
-    )? onPrepared,
-    void Function(
-      VideoView,
-      MediaPlayer,
-    )? onCompletion,
+    required void Function(VideoView, MediaPlayer, int, int) onError,
+    void Function(VideoView, MediaPlayer)? onPrepared,
+    void Function(VideoView, MediaPlayer)? onCompletion,
   }) newVideoView;
 
   /// Constructs [VideoAdPlayer].
   final VideoAdPlayer Function({
-    required void Function(
-      VideoAdPlayer,
-      VideoAdPlayerCallback,
-    ) addCallback,
-    required void Function(
-      VideoAdPlayer,
-      AdMediaInfo,
-      AdPodInfo,
-    ) loadAd,
-    required void Function(
-      VideoAdPlayer,
-      AdMediaInfo,
-    ) pauseAd,
-    required void Function(
-      VideoAdPlayer,
-      AdMediaInfo,
-    ) playAd,
+    required void Function(VideoAdPlayer, VideoAdPlayerCallback) addCallback,
+    required void Function(VideoAdPlayer, AdMediaInfo, AdPodInfo) loadAd,
+    required void Function(VideoAdPlayer, AdMediaInfo) pauseAd,
+    required void Function(VideoAdPlayer, AdMediaInfo) playAd,
     required void Function(VideoAdPlayer) release,
-    required void Function(
-      VideoAdPlayer,
-      VideoAdPlayerCallback,
-    ) removeCallback,
-    required void Function(
-      VideoAdPlayer,
-      AdMediaInfo,
-    ) stopAd,
+    required void Function(VideoAdPlayer, VideoAdPlayerCallback) removeCallback,
+    required void Function(VideoAdPlayer, AdMediaInfo) stopAd,
   }) newVideoAdPlayer;
 
   /// Constructs [AdsLoadedListener].
   final AdsLoadedListener Function({
-    required void Function(
-      AdsLoadedListener,
-      AdsManagerLoadedEvent,
-    ) onAdsManagerLoaded,
+    required void Function(AdsLoadedListener, AdsManagerLoadedEvent)
+        onAdsManagerLoaded,
   }) newAdsLoadedListener;
 
   /// Constructs [AdErrorListener].
   final AdErrorListener Function({
-    required void Function(
-      AdErrorListener,
-      AdErrorEvent,
-    ) onAdError,
+    required void Function(AdErrorListener, AdErrorEvent) onAdError,
   }) newAdErrorListener;
 
   /// Constructs [AdEventListener].
   final AdEventListener Function({
-    required void Function(
-      AdEventListener,
-      AdEvent,
-    ) onAdEvent,
+    required void Function(AdEventListener, AdEvent) onAdEvent,
   }) newAdEventListener;
 
   /// Calls to [ImaSdkFactory.createAdDisplayContainer].
-  final Future<AdDisplayContainer> Function(
-    ViewGroup,
-    VideoAdPlayer,
-  ) createAdDisplayContainerImaSdkFactory;
+  final Future<AdDisplayContainer> Function(ViewGroup, VideoAdPlayer)
+      createAdDisplayContainerImaSdkFactory;
 
   /// Calls to [ImaSdkFactory.instance].
   final ImaSdkFactory Function() instanceImaSdkFactory;
