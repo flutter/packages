@@ -512,12 +512,16 @@ class LinkViewController extends PlatformViewController {
     }
   }
 
+  late LinkTarget _target;
+  String get _htmlTargetAttribute => _getHtmlTargetAttribute(_target);
+
   /// Set the [LinkTarget] value for this link.
   void setTarget(LinkTarget target) {
-    _element.setAttribute('target', _getHtmlTarget(target));
+    _target = target;
+    _element.setAttribute('target', _htmlTargetAttribute);
   }
 
-  String _getHtmlTarget(LinkTarget target) {
+  String _getHtmlTargetAttribute(LinkTarget target) {
     switch (target) {
       case LinkTarget.defaultTarget:
       case LinkTarget.self:
@@ -537,18 +541,30 @@ class LinkViewController extends PlatformViewController {
   ///
   /// Returns null if [target] is not a semantics element for one of our Links.
   static int? _getViewIdFromSemanticLink(html.Element? target) {
-    // TODO: what if `target` IS the <a> semantic element?
-    if (target != null && _isWithinSemanticTree(target)) {
-      final html.Element? semanticLink = _getClosestSemanticLink(target);
-      if (semanticLink != null) {
-        // TODO: Find out the view ID of semantic link.
-        final String? semanticIdentifier = semanticLink.getAttribute('semantic-identifier');
-        if (semanticIdentifier != null) {
-          return _instancesBySemanticIdentifier[semanticIdentifier]?.viewId;
-        }
-      }
+    if (target == null) {
+      return null;
     }
-    return null;
+    if (!_isWithinSemanticTree(target)) {
+      return null;
+    }
+
+    final html.Element? semanticLink = _getClosestSemanticLink(target);
+    if (semanticLink == null) {
+      return null;
+    }
+
+    final String? semanticIdentifier = semanticLink.getAttribute('semantic-identifier');
+    if (semanticIdentifier == null) {
+      return null;
+    }
+
+    final LinkViewController? controller = _instancesBySemanticIdentifier[semanticIdentifier];
+    if (controller == null) {
+      return null;
+    }
+
+    semanticLink.setAttribute('target', controller._htmlTargetAttribute);
+    return controller.viewId;
   }
 
   @override
