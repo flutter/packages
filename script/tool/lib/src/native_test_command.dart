@@ -465,7 +465,7 @@ this command.
       _printRunningExampleTestsMessage(example, platform);
       final int exitCode = await _xcode.runXcodeBuild(
         example.directory,
-        actions: <String>['test'],
+        actions: <String>['clean', 'test'],
         workspace: '${platform.toLowerCase()}/Runner.xcworkspace',
         scheme: 'Runner',
         configuration: 'Debug',
