@@ -63,10 +63,17 @@ class VideoAdPlayerProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) :
     }
   }
 
+  /**
+   * Sets the internal `volume` variable that is returned in the [VideoAdPlayer.getVolume] callback.
+   */
   override fun setVolume(pigeon_instance: VideoAdPlayer, value: Long) {
     (pigeon_instance as VideoAdPlayerImpl).savedVolume = value.toInt()
   }
 
+  /**
+   * Sets the internal `adProgress` variable that is returned in the [VideoAdPlayer.getAdProgress]
+   * callback.
+   */
   override fun setAdProgress(pigeon_instance: VideoAdPlayer, progress: VideoProgressUpdate) {
     (pigeon_instance as VideoAdPlayerImpl).savedAdProgress = progress
   }
