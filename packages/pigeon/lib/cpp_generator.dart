@@ -909,7 +909,7 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
                 indent.writeln(
                     'const int64_t enum_arg_value = encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();');
                 indent.writeln(
-                    'return encodable_enum_arg.IsNull() ? EncodableValue(std::nullopt) : CustomEncodableValue(static_cast<${customType.name}>(enum_arg_value));');
+                    'return encodable_enum_arg.IsNull() ? CustomEncodableValue(std::nullopt) : CustomEncodableValue(static_cast<${customType.name}>(enum_arg_value));');
               });
             }
           });
