@@ -111,7 +111,7 @@ class XcodeAnalyzeCommand extends PackageLoopingCommand {
       print('Running $platform tests and analyzer for $examplePath...');
       final int exitCode = await _xcode.runXcodeBuild(
         example.directory,
-        actions: <String>['analyze'],
+        actions: <String>['clean', 'analyze'],
         workspace: '${platform.toLowerCase()}/Runner.xcworkspace',
         scheme: 'Runner',
         configuration: 'Debug',
