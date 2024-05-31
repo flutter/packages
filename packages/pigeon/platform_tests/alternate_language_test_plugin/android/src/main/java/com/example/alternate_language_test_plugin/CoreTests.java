@@ -752,6 +752,16 @@ public class CoreTests {
       this.boolList = setterArg;
     }
 
+    private @Nullable List<AllNullableTypes> nestedClassList;
+
+    public @Nullable List<AllNullableTypes> getNestedClassList() {
+      return nestedClassList;
+    }
+
+    public void setNestedClassList(@Nullable List<AllNullableTypes> setterArg) {
+      this.nestedClassList = setterArg;
+    }
+
     private @Nullable Map<Object, Object> map;
 
     public @Nullable Map<Object, Object> getMap() {
@@ -925,6 +935,14 @@ public class CoreTests {
         return this;
       }
 
+      private @Nullable List<AllNullableTypes> nestedClassList;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setNestedClassList(@Nullable List<AllNullableTypes> setterArg) {
+        this.nestedClassList = setterArg;
+        return this;
+      }
+
       private @Nullable Map<Object, Object> map;
 
       @CanIgnoreReturnValue
@@ -955,6 +973,7 @@ public class CoreTests {
         pigeonReturn.setIntList(intList);
         pigeonReturn.setDoubleList(doubleList);
         pigeonReturn.setBoolList(boolList);
+        pigeonReturn.setNestedClassList(nestedClassList);
         pigeonReturn.setMap(map);
         return pigeonReturn;
       }
@@ -962,7 +981,7 @@ public class CoreTests {
 
     @NonNull
     ArrayList<Object> toList() {
-      ArrayList<Object> toListResult = new ArrayList<Object>(21);
+      ArrayList<Object> toListResult = new ArrayList<Object>(22);
       toListResult.add(aNullableBool);
       toListResult.add(aNullableInt);
       toListResult.add(aNullableInt64);
@@ -983,6 +1002,7 @@ public class CoreTests {
       toListResult.add(intList);
       toListResult.add(doubleList);
       toListResult.add(boolList);
+      toListResult.add(nestedClassList);
       toListResult.add(map);
       return toListResult;
     }
@@ -1037,7 +1057,9 @@ public class CoreTests {
       pigeonResult.setDoubleList((List<Double>) doubleList);
       Object boolList = __pigeon_list.get(19);
       pigeonResult.setBoolList((List<Boolean>) boolList);
-      Object map = __pigeon_list.get(20);
+      Object nestedClassList = __pigeon_list.get(20);
+      pigeonResult.setNestedClassList((List<AllNullableTypes>) nestedClassList);
+      Object map = __pigeon_list.get(21);
       pigeonResult.setMap((Map<Object, Object>) map);
       return pigeonResult;
     }

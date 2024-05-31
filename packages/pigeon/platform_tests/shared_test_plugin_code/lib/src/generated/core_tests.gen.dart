@@ -163,6 +163,7 @@ class AllNullableTypes {
     this.intList,
     this.doubleList,
     this.boolList,
+    this.nestedClassList,
     this.map,
   });
 
@@ -206,6 +207,8 @@ class AllNullableTypes {
 
   List<bool?>? boolList;
 
+  List<AllNullableTypes?>? nestedClassList;
+
   Map<Object?, Object?>? map;
 
   Object encode() {
@@ -230,6 +233,7 @@ class AllNullableTypes {
       intList,
       doubleList,
       boolList,
+      nestedClassList,
       map,
     ];
   }
@@ -259,7 +263,9 @@ class AllNullableTypes {
       intList: (result[17] as List<Object?>?)?.cast<int?>(),
       doubleList: (result[18] as List<Object?>?)?.cast<double?>(),
       boolList: (result[19] as List<Object?>?)?.cast<bool?>(),
-      map: result[20] as Map<Object?, Object?>?,
+      nestedClassList:
+          (result[20] as List<Object?>?)?.cast<AllNullableTypes?>(),
+      map: result[21] as Map<Object?, Object?>?,
     );
   }
 }

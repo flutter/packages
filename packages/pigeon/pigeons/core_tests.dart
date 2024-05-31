@@ -91,6 +91,7 @@ class AllNullableTypes {
     this.intList,
     this.doubleList,
     this.boolList,
+    this.nestedClassList,
 
     //Maps
     this.map,
@@ -119,6 +120,7 @@ class AllNullableTypes {
   List<int?>? intList;
   List<double?>? doubleList;
   List<bool?>? boolList;
+  List<AllNullableTypes?>? nestedClassList;
 
   // Maps
   // ignore: strict_raw_type, always_specify_types

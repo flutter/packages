@@ -201,6 +201,7 @@ class AllNullableTypes {
       const flutter::EncodableList* int_list,
       const flutter::EncodableList* double_list,
       const flutter::EncodableList* bool_list,
+      const flutter::EncodableList* nested_class_list,
       const flutter::EncodableMap* map);
 
   ~AllNullableTypes() = default;
@@ -290,6 +291,10 @@ class AllNullableTypes {
   void set_bool_list(const flutter::EncodableList* value_arg);
   void set_bool_list(const flutter::EncodableList& value_arg);
 
+  const flutter::EncodableList* nested_class_list() const;
+  void set_nested_class_list(const flutter::EncodableList* value_arg);
+  void set_nested_class_list(const flutter::EncodableList& value_arg);
+
   const flutter::EncodableMap* map() const;
   void set_map(const flutter::EncodableMap* value_arg);
   void set_map(const flutter::EncodableMap& value_arg);
@@ -325,6 +330,7 @@ class AllNullableTypes {
   std::optional<flutter::EncodableList> int_list_;
   std::optional<flutter::EncodableList> double_list_;
   std::optional<flutter::EncodableList> bool_list_;
+  std::optional<flutter::EncodableList> nested_class_list_;
   std::optional<flutter::EncodableMap> map_;
 };
 

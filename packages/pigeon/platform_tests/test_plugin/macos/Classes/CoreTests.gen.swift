@@ -194,6 +194,7 @@ class AllNullableTypes {
     intList: [Int64?]? = nil,
     doubleList: [Double?]? = nil,
     boolList: [Bool?]? = nil,
+    nestedClassList: [AllNullableTypes?]? = nil,
     map: [AnyHashable: Any?]? = nil
   ) {
     self.aNullableBool = aNullableBool
@@ -216,6 +217,7 @@ class AllNullableTypes {
     self.intList = intList
     self.doubleList = doubleList
     self.boolList = boolList
+    self.nestedClassList = nestedClassList
     self.map = map
   }
   var aNullableBool: Bool?
@@ -238,6 +240,7 @@ class AllNullableTypes {
   var intList: [Int64?]?
   var doubleList: [Double?]?
   var boolList: [Bool?]?
+  var nestedClassList: [AllNullableTypes?]?
   var map: [AnyHashable: Any?]?
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
@@ -270,7 +273,8 @@ class AllNullableTypes {
     let intList: [Int64?]? = nilOrValue(__pigeon_list[17])
     let doubleList: [Double?]? = nilOrValue(__pigeon_list[18])
     let boolList: [Bool?]? = nilOrValue(__pigeon_list[19])
-    let map: [AnyHashable: Any?]? = nilOrValue(__pigeon_list[20])
+    let nestedClassList: [AllNullableTypes?]? = nilOrValue(__pigeon_list[20])
+    let map: [AnyHashable: Any?]? = nilOrValue(__pigeon_list[21])
 
     return AllNullableTypes(
       aNullableBool: aNullableBool,
@@ -293,6 +297,7 @@ class AllNullableTypes {
       intList: intList,
       doubleList: doubleList,
       boolList: boolList,
+      nestedClassList: nestedClassList,
       map: map
     )
   }
@@ -318,6 +323,7 @@ class AllNullableTypes {
       intList,
       doubleList,
       boolList,
+      nestedClassList,
       map,
     ]
   }

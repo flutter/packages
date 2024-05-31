@@ -188,6 +188,7 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
                               intList:(nullable NSArray<NSNumber *> *)intList
                            doubleList:(nullable NSArray<NSNumber *> *)doubleList
                              boolList:(nullable NSArray<NSNumber *> *)boolList
+                      nestedClassList:(nullable NSArray<AllNullableTypes *> *)nestedClassList
                                   map:(nullable NSDictionary *)map {
   AllNullableTypes *pigeonResult = [[AllNullableTypes alloc] init];
   pigeonResult.aNullableBool = aNullableBool;
@@ -210,6 +211,7 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
   pigeonResult.intList = intList;
   pigeonResult.doubleList = doubleList;
   pigeonResult.boolList = boolList;
+  pigeonResult.nestedClassList = nestedClassList;
   pigeonResult.map = map;
   return pigeonResult;
 }
@@ -235,7 +237,8 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
   pigeonResult.intList = GetNullableObjectAtIndex(list, 17);
   pigeonResult.doubleList = GetNullableObjectAtIndex(list, 18);
   pigeonResult.boolList = GetNullableObjectAtIndex(list, 19);
-  pigeonResult.map = GetNullableObjectAtIndex(list, 20);
+  pigeonResult.nestedClassList = GetNullableObjectAtIndex(list, 20);
+  pigeonResult.map = GetNullableObjectAtIndex(list, 21);
   return pigeonResult;
 }
 + (nullable AllNullableTypes *)nullableFromList:(NSArray<id> *)list {
@@ -263,6 +266,7 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
     self.intList ?: [NSNull null],
     self.doubleList ?: [NSNull null],
     self.boolList ?: [NSNull null],
+    self.nestedClassList ?: [NSNull null],
     self.map ?: [NSNull null],
   ];
 }

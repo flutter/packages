@@ -164,6 +164,7 @@ data class AllNullableTypes(
     val intList: List<Long?>? = null,
     val doubleList: List<Double?>? = null,
     val boolList: List<Boolean?>? = null,
+    val nestedClassList: List<AllNullableTypes?>? = null,
     val map: Map<Any, Any?>? = null
 ) {
   companion object {
@@ -191,7 +192,8 @@ data class AllNullableTypes(
       val intList = __pigeon_list[17] as List<Long?>?
       val doubleList = __pigeon_list[18] as List<Double?>?
       val boolList = __pigeon_list[19] as List<Boolean?>?
-      val map = __pigeon_list[20] as Map<Any, Any?>?
+      val nestedClassList = __pigeon_list[20] as List<AllNullableTypes?>?
+      val map = __pigeon_list[21] as Map<Any, Any?>?
       return AllNullableTypes(
           aNullableBool,
           aNullableInt,
@@ -213,6 +215,7 @@ data class AllNullableTypes(
           intList,
           doubleList,
           boolList,
+          nestedClassList,
           map)
     }
   }
@@ -239,6 +242,7 @@ data class AllNullableTypes(
         intList,
         doubleList,
         boolList,
+        nestedClassList,
         map,
     )
   }

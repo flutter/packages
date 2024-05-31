@@ -120,6 +120,14 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
         true);
     expect(listEquals(allNullableTypesOne.intList, allNullableTypesTwo.intList),
         true);
+    expect(allNullableTypesOne.nestedClassList?.length,
+        allNullableTypesTwo.nestedClassList?.length);
+    for (int i = 0;
+        i < (allNullableTypesOne.nestedClassList?.length ?? 0);
+        i++) {
+      compareAllNullableTypes(allNullableTypesOne.nestedClassList?[i],
+          allNullableTypesTwo.nestedClassList?[i]);
+    }
     expect(mapEquals(allNullableTypesOne.map, allNullableTypesTwo.map), true);
   }
 
@@ -295,6 +303,12 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
     map: map,
   );
 
+  final List<AllNullableTypes?> allNullableTypesList = <AllNullableTypes?>[
+    genericAllNullableTypes,
+    AllNullableTypes(),
+    null,
+  ];
+
   final AllNullableTypes recursiveAllNullableTypes = AllNullableTypes(
     aNullableBool: true,
     aNullableInt: _regularInt,
@@ -319,6 +333,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
     intList: intList,
     doubleList: doubleList,
     boolList: boolList,
+    nestedClassList: allNullableTypesList,
     map: map,
   );
 

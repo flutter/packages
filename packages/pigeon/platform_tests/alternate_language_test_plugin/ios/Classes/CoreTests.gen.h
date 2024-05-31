@@ -97,6 +97,7 @@ typedef NS_ENUM(NSUInteger, FLTAnEnum) {
                               intList:(nullable NSArray<NSNumber *> *)intList
                            doubleList:(nullable NSArray<NSNumber *> *)doubleList
                              boolList:(nullable NSArray<NSNumber *> *)boolList
+                      nestedClassList:(nullable NSArray<FLTAllNullableTypes *> *)nestedClassList
                                   map:(nullable NSDictionary *)map;
 @property(nonatomic, strong, nullable) NSNumber *aNullableBool;
 @property(nonatomic, strong, nullable) NSNumber *aNullableInt;
@@ -119,6 +120,7 @@ typedef NS_ENUM(NSUInteger, FLTAnEnum) {
 @property(nonatomic, copy, nullable) NSArray<NSNumber *> *intList;
 @property(nonatomic, copy, nullable) NSArray<NSNumber *> *doubleList;
 @property(nonatomic, copy, nullable) NSArray<NSNumber *> *boolList;
+@property(nonatomic, copy, nullable) NSArray<FLTAllNullableTypes *> *nestedClassList;
 @property(nonatomic, copy, nullable) NSDictionary *map;
 @end
 
