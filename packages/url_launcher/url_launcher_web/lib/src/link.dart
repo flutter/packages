@@ -73,12 +73,14 @@ int _nextSemanticsIdentifier = 0;
 /// pushes the route name to the framework.
 class WebLinkDelegateState extends State<WebLinkDelegate> {
   late LinkViewController _controller;
-  late final String _semanticIdentifier;
+
+  @visibleForTesting
+  late final String semanticIdentifier;
 
   @override
   void initState() {
     super.initState();
-    _semanticIdentifier = 'sem-id-${_nextSemanticsIdentifier++}';
+    semanticIdentifier = 'sem-id-${_nextSemanticsIdentifier++}';
   }
 
   @override
@@ -104,7 +106,7 @@ class WebLinkDelegateState extends State<WebLinkDelegate> {
       children: <Widget>[
         Semantics(
           link: true,
-          identifier: _semanticIdentifier,
+          identifier: semanticIdentifier,
           value: widget.link.uri?.getHref(),
           child: widget.link.builder(
             context,
@@ -117,7 +119,7 @@ class WebLinkDelegateState extends State<WebLinkDelegate> {
               child: PlatformViewLink(
                 viewType: linkViewType,
                 onCreatePlatformView: (PlatformViewCreationParams params) {
-                  _controller = LinkViewController.fromParams(params, _semanticIdentifier);
+                  _controller = LinkViewController.fromParams(params, semanticIdentifier);
                   return _controller
                     ..setUri(widget.link.uri)
                     ..setTarget(widget.link.target);

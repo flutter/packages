@@ -800,6 +800,338 @@ void main() {
       await tester.pumpAndSettle();
     });
   });
+
+  group('Link semantics', () {
+    late TestUrlLauncherPlugin testPlugin;
+    late UrlLauncherPlatform originalPlugin;
+
+    setUp(() {
+      originalPlugin = UrlLauncherPlatform.instance;
+      testPlugin = TestUrlLauncherPlugin();
+      UrlLauncherPlatform.instance = testPlugin;
+    });
+
+    tearDown(() {
+      UrlLauncherPlatform.instance = originalPlugin;
+    });
+
+    testWidgets('produces the correct semantics tree with a button',
+        (WidgetTester tester) async {
+      final SemanticsHandle semanticsHandle = tester.ensureSemantics();
+      final Key linkKey = UniqueKey();
+
+      await tester.pumpWidget(Directionality(
+        textDirection: TextDirection.ltr,
+        child: WebLinkDelegate(
+          key: linkKey,
+          TestLinkInfo(
+            uri: Uri.parse('https://foobar/example?q=1'),
+            target: LinkTarget.blank,
+            builder: (BuildContext context, FollowLink? followLink) {
+              return ElevatedButton(
+                onPressed: followLink,
+                child: const Text('Button Link Text'),
+              );
+            },
+          ),
+        ),
+      ));
+
+      final Finder linkFinder = find.byKey(linkKey);
+      final WebLinkDelegateState linkState = tester.state<WebLinkDelegateState>(linkFinder);
+      final String semanticIdentifier = linkState.semanticIdentifier;
+      expect(
+        tester.getSemantics(find.descendant(
+          of: linkFinder,
+          matching: find.byType(Semantics).first,
+        )),
+        matchesSemantics(
+          isLink: true,
+          identifier: 'sem-id-$semanticIdentifier',
+          value: 'https://foobar/example?q=1',
+          children: <Matcher>[
+            matchesSemantics(
+              hasTapAction: true,
+              hasEnabledState: true,
+              isEnabled: true,
+              isButton: true,
+              isFocusable: true,
+              label: 'Button Link Text',
+            ),
+          ],
+        ),
+      );
+
+      semanticsHandle.dispose();
+    });
+
+    testWidgets('produces the correct semantics tree with text',
+        (WidgetTester tester) async {
+      final SemanticsHandle semanticsHandle = tester.ensureSemantics();
+      final Key linkKey = UniqueKey();
+
+      await tester.pumpWidget(Directionality(
+        textDirection: TextDirection.ltr,
+        child: WebLinkDelegate(
+          key: linkKey,
+          TestLinkInfo(
+            uri: Uri.parse('https://foobar/example?q=1'),
+            target: LinkTarget.blank,
+            builder: (BuildContext context, FollowLink? followLink) {
+              return GestureDetector(
+                onTap: followLink,
+                child: const Text('Link Text'),
+              );
+            },
+          ),
+        ),
+      ));
+
+      final Finder linkFinder = find.byKey(linkKey);
+      final WebLinkDelegateState linkState = tester.state<WebLinkDelegateState>(linkFinder);
+      final String semanticIdentifier = linkState.semanticIdentifier;
+      expect(
+        tester.getSemantics(find.descendant(
+          of: linkFinder,
+          matching: find.byType(Semantics),
+        )),
+        matchesSemantics(
+          isLink: true,
+          hasTapAction: true,
+          identifier: 'sem-id-$semanticIdentifier',
+          value: 'https://foobar/example?q=1',
+          label: 'Link Text',
+        ),
+      );
+
+      semanticsHandle.dispose();
+    });
+
+    testWidgets('handles clicks on semantic link with a button',
+        (WidgetTester tester) async {
+      final Uri uri = Uri.parse('/foobar');
+      FollowLink? followLinkCallback;
+
+      await tester.pumpWidget(MaterialApp(
+        routes: <String, WidgetBuilder>{
+          '/foobar': (BuildContext context) => const Text('Internal route'),
+        },
+        home: WebLinkDelegate(TestLinkInfo(
+          uri: uri,
+          target: LinkTarget.blank,
+          builder: (BuildContext context, FollowLink? followLink) {
+            followLinkCallback = followLink;
+            return ElevatedButton(
+              onPressed: () {},
+              child: const Text('My Button Link'),
+            );
+          },
+        )),
+      ));
+      // Platform view creation happens asynchronously.
+      await tester.pumpAndSettle();
+
+      final WebLinkDelegateState linkState = tester.state<WebLinkDelegateState>(
+        find.byType(WebLinkDelegate),
+      );
+      final String semanticIdentifier = linkState.semanticIdentifier;
+
+      final html.Element semanticsHost = html.document.createElement('flt-semantics-host');
+      html.document.body!.append(semanticsHost);
+      final html.Element semanticsAnchor = html.document.createElement('a')
+        ..setAttribute('id', 'flt-semantic-node-99')
+        ..setAttribute('semantic-identifier', semanticIdentifier)
+        ..setAttribute('href', '/foobar');
+      semanticsHost.append(semanticsAnchor);
+      final html.Element semanticsContainer = html.document.createElement('flt-semantics-container');
+      semanticsAnchor.append(semanticsContainer);
+      final html.Element semanticsButton = html.document.createElement('flt-semantics')
+        ..setAttribute('role', 'button')
+        ..textContent = 'My Button Link';
+      semanticsContainer.append(semanticsButton);
+
+      expect(pushedRouteNames, isEmpty);
+      expect(testPlugin.launches, isEmpty);
+
+      await followLinkCallback!();
+      // Click on the button (child of the anchor).
+      final html.Event event1 = _simulateClick(semanticsButton);
+
+      expect(pushedRouteNames, <String>['/foobar']);
+      expect(testPlugin.launches, isEmpty);
+      expect(event1.defaultPrevented, isTrue);
+      pushedRouteNames.clear();
+
+      await followLinkCallback!();
+      // Click on the anchor itself.
+      final html.Event event2 = _simulateClick(semanticsAnchor);
+
+      expect(pushedRouteNames, <String>['/foobar']);
+      expect(testPlugin.launches, isEmpty);
+      expect(event2.defaultPrevented, isTrue);
+
+      // Needed when testing on on Chrome98 headless in CI.
+      // See https://github.com/flutter/flutter/issues/121161
+      await tester.pumpAndSettle();
+    });
+
+    testWidgets('handles clicks on semantic link with text',
+        (WidgetTester tester) async {
+      final Uri uri = Uri.parse('/foobar');
+      FollowLink? followLinkCallback;
+
+      await tester.pumpWidget(MaterialApp(
+        routes: <String, WidgetBuilder>{
+          '/foobar': (BuildContext context) => const Text('Internal route'),
+        },
+        home: WebLinkDelegate(TestLinkInfo(
+          uri: uri,
+          target: LinkTarget.blank,
+          builder: (BuildContext context, FollowLink? followLink) {
+            followLinkCallback = followLink;
+            return GestureDetector(
+              onTap: () {},
+              child: const Text('My Link'),
+            );
+          },
+        )),
+      ));
+      // Platform view creation happens asynchronously.
+      await tester.pumpAndSettle();
+
+      final WebLinkDelegateState linkState = tester.state<WebLinkDelegateState>(
+        find.byType(WebLinkDelegate),
+      );
+      final String semanticIdentifier = linkState.semanticIdentifier;
+
+      final html.Element semanticsHost = html.document.createElement('flt-semantics-host');
+      html.document.body!.append(semanticsHost);
+      final html.Element semanticsAnchor = html.document.createElement('a')
+        ..setAttribute('id', 'flt-semantic-node-99')
+        ..setAttribute('semantic-identifier', semanticIdentifier)
+        ..setAttribute('href', '/foobar')
+        ..textContent = 'My Text Link';
+      semanticsHost.append(semanticsAnchor);
+
+      expect(pushedRouteNames, isEmpty);
+      expect(testPlugin.launches, isEmpty);
+
+      await followLinkCallback!();
+      final html.Event event = _simulateClick(semanticsAnchor);
+
+      expect(pushedRouteNames, <String>['/foobar']);
+      expect(testPlugin.launches, isEmpty);
+      expect(event.defaultPrevented, isTrue);
+
+      // Needed when testing on on Chrome98 headless in CI.
+      // See https://github.com/flutter/flutter/issues/121161
+      await tester.pumpAndSettle();
+    });
+
+    // TODO(mdebbar): Remove this test after the engine PR [1] makes it to stable.
+    //                [1] https://github.com/flutter/engine/pull/52720
+    testWidgets('handles clicks on (old) semantic link with a button',
+        (WidgetTester tester) async {
+      final Uri uri = Uri.parse('/foobar');
+      FollowLink? followLinkCallback;
+
+      await tester.pumpWidget(MaterialApp(
+        routes: <String, WidgetBuilder>{
+          '/foobar': (BuildContext context) => const Text('Internal route'),
+        },
+        home: WebLinkDelegate(TestLinkInfo(
+          uri: uri,
+          target: LinkTarget.blank,
+          builder: (BuildContext context, FollowLink? followLink) {
+            followLinkCallback = followLink;
+            return const SizedBox(width: 100, height: 100);
+          },
+        )),
+      ));
+      // Platform view creation happens asynchronously.
+      await tester.pumpAndSettle();
+
+      final html.Element semanticsHost = html.document.createElement('flt-semantics-host');
+      html.document.body!.append(semanticsHost);
+      final html.Element semanticsAnchor = html.document.createElement('a')
+        ..setAttribute('id', 'flt-semantic-node-99')
+        ..setAttribute('href', '#');
+      semanticsHost.append(semanticsAnchor);
+      final html.Element semanticsContainer = html.document.createElement('flt-semantics-container');
+      semanticsAnchor.append(semanticsContainer);
+      final html.Element semanticsButton = html.document.createElement('flt-semantics')
+        ..setAttribute('role', 'button')
+        ..textContent = 'My Button';
+      semanticsContainer.append(semanticsButton);
+
+      expect(pushedRouteNames, isEmpty);
+      expect(testPlugin.launches, isEmpty);
+
+      await followLinkCallback!();
+      final html.Event event1 = _simulateClick(semanticsButton);
+
+      // Before the changes land in the web engine, this will not trigger the
+      // link properly.
+      expect(pushedRouteNames, <String>[]);
+      expect(testPlugin.launches, isEmpty);
+      expect(event1.defaultPrevented, isFalse);
+
+      // Needed when testing on on Chrome98 headless in CI.
+      // See https://github.com/flutter/flutter/issues/121161
+      await tester.pumpAndSettle();
+    });
+
+    // TODO(mdebbar): Remove this test after the engine PR [1] makes it to stable.
+    //                [1] https://github.com/flutter/engine/pull/52720
+    testWidgets('handles clicks on (old) semantic link with text',
+        (WidgetTester tester) async {
+      final Uri uri = Uri.parse('/foobar');
+      FollowLink? followLinkCallback;
+
+      await tester.pumpWidget(MaterialApp(
+        routes: <String, WidgetBuilder>{
+          '/foobar': (BuildContext context) => const Text('Internal route'),
+        },
+        home: WebLinkDelegate(TestLinkInfo(
+          uri: uri,
+          target: LinkTarget.blank,
+          builder: (BuildContext context, FollowLink? followLink) {
+            followLinkCallback = followLink;
+            return GestureDetector(
+              onTap: () {},
+              child: const Text('My Link'),
+            );
+          },
+        )),
+      ));
+      // Platform view creation happens asynchronously.
+      await tester.pumpAndSettle();
+
+      final html.Element semanticsHost = html.document.createElement('flt-semantics-host');
+      html.document.body!.append(semanticsHost);
+      final html.Element semanticsAnchor = html.document.createElement('a')
+        ..setAttribute('id', 'flt-semantic-node-99')
+        ..setAttribute('href', '#')
+        ..textContent = 'My Text Link';
+      semanticsHost.append(semanticsAnchor);
+
+      expect(pushedRouteNames, isEmpty);
+      expect(testPlugin.launches, isEmpty);
+
+      await followLinkCallback!();
+      final html.Event event = _simulateClick(semanticsAnchor);
+
+      // Before the changes land in the web engine, this will not trigger the
+      // link properly.
+      expect(pushedRouteNames, <String>[]);
+      expect(testPlugin.launches, isEmpty);
+      expect(event.defaultPrevented, isFalse);
+
+      // Needed when testing on on Chrome98 headless in CI.
+      // See https://github.com/flutter/flutter/issues/121161
+      await tester.pumpAndSettle();
+    });
+  });
 }
 
 List<html.Element> _findAllAnchors() {
