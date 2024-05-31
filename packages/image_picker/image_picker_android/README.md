@@ -33,7 +33,7 @@ import 'package:image_picker_platform_interface/image_picker_platform_interface.
   }
 ```
 
-In addition, `[ImagePickerAndroid.useAndroidPhotoPicker]` must be set to `true` to use the `limit` functionality. It is implemented based on [`ActivityResultContract`][3], so it can only be ensured to take effect on Android 13 or above. Otherwise, it depends on whether the corresponding system app supports it.
+In addition, `ImagePickerAndroid.useAndroidPhotoPicker` must be set to `true` to use the `limit` functionality. It is implemented based on [`ActivityResultContract`][3], so it can only be ensured to take effect on Android 13 or above. Otherwise, it depends on whether the corresponding system app supports it.
 
 [1]: https://pub.dev/packages/image_picker
 [2]: https://flutter.dev/docs/development/packages-and-plugins/developing-packages#endorsed-federated-plugin
