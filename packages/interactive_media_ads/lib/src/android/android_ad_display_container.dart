@@ -48,7 +48,7 @@ final class AndroidAdDisplayContainerCreationParams
 
 /// Android implementation of [PlatformAdDisplayContainer].
 ///
-/// This acts as the video player for the ad. To be a player for an ad from the
+/// This acts as the video player for an ad. To be a player for an ad from the
 /// IMA SDK:
 /// 1. The [ima.VideoView] must be in the View hierarchy until all ads have
 /// finished.
