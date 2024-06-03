@@ -53,6 +53,8 @@ class CameraValue {
     this.recordingOrientation,
     this.isPreviewPaused = false,
     this.previewPauseOrientation,
+    this.sensorOrientationDegrees,
+    this.sign,
   }) : _isRecordingPaused = isRecordingPaused;
 
   /// Creates a new camera controller state for an uninitialized controller.
@@ -143,6 +145,9 @@ class CameraValue {
   /// The orientation of the currently running video recording.
   final DeviceOrientation? recordingOrientation;
 
+  final int? sensorOrientationDegrees;
+  final int? sign;
+
   /// Creates a modified copy of the object.
   ///
   /// Explicitly specified fields get the specified value, all other fields get
@@ -165,6 +170,8 @@ class CameraValue {
     Optional<DeviceOrientation>? recordingOrientation,
     bool? isPreviewPaused,
     Optional<DeviceOrientation>? previewPauseOrientation,
+    int? sensorOrientationDegrees,
+    int? sign,
   }) {
     return CameraValue(
       isInitialized: isInitialized ?? this.isInitialized,
@@ -191,6 +198,9 @@ class CameraValue {
       previewPauseOrientation: previewPauseOrientation == null
           ? this.previewPauseOrientation
           : previewPauseOrientation.orNull,
+      sensorOrientationDegrees:
+          sensorOrientationDegrees ?? this.sensorOrientationDegrees,
+      sign: sign ?? this.sign,
     );
   }
 
@@ -321,6 +331,9 @@ class CameraController extends ValueNotifier<CameraValue> {
             (CameraInitializedEvent event) => event.exposurePointSupported),
         focusPointSupported: await initializeCompleter.future
             .then((CameraInitializedEvent event) => event.focusPointSupported),
+        sensorOrientationDegrees:
+            await CameraPlatform.instance.getSensorOrientation(),
+        sign: await CameraPlatform.instance.getSign(),
       );
     } on PlatformException catch (e) {
       throw CameraException(e.code, e.message);

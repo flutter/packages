@@ -21,6 +21,7 @@ class CameraPreview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print('CAMILLE: ${_getCorrectRotation()}');
     return controller.value.isInitialized
         ? ValueListenableBuilder<CameraValue>(
             valueListenable: controller,
@@ -32,6 +33,7 @@ class CameraPreview extends StatelessWidget {
                 child: Stack(
                   fit: StackFit.expand,
                   children: <Widget>[
+                    controller.buildPreview(),
                     _wrapInRotatedBox(child: controller.buildPreview()),
                     child ?? Container(),
                   ],
@@ -61,14 +63,23 @@ class CameraPreview extends StatelessWidget {
     ].contains(_getApplicableOrientation());
   }
 
+  // int _getQuarterTurns() {
+  //   final Map<DeviceOrientation, int> turns = <DeviceOrientation, int>{
+  //     DeviceOrientation.portraitUp: 0,
+  //     DeviceOrientation.landscapeRight: 1,
+  //     DeviceOrientation.portraitDown: 2,
+  //     DeviceOrientation.landscapeLeft: 3,
+  //   };
+  //   return turns[_getApplicableOrientation()]!;
+  // }
+
   int _getQuarterTurns() {
-    final Map<DeviceOrientation, int> turns = <DeviceOrientation, int>{
-      DeviceOrientation.portraitUp: 0,
-      DeviceOrientation.landscapeRight: 1,
-      DeviceOrientation.portraitDown: 2,
-      DeviceOrientation.landscapeLeft: 3,
-    };
-    return turns[_getApplicableOrientation()]!;
+    double correctRotation = _getCorrectRotation();
+    int turns = (correctRotation / 90).toInt();
+
+    print('CAMILLE: $turns');
+
+    return turns;
   }
 
   DeviceOrientation _getApplicableOrientation() {
@@ -77,5 +88,20 @@ class CameraPreview extends StatelessWidget {
         : (controller.value.previewPauseOrientation ??
             controller.value.lockedCaptureOrientation ??
             controller.value.deviceOrientation);
+  }
+
+  double _getCorrectRotation() {
+    DeviceOrientation deviceOrientationConstant = _getApplicableOrientation();
+    final Map<DeviceOrientation, int> deg = <DeviceOrientation, int>{
+      DeviceOrientation.portraitUp: 0,
+      DeviceOrientation.landscapeRight: 90,
+      DeviceOrientation.portraitDown: 180,
+      DeviceOrientation.landscapeLeft: 270,
+    };
+    int deviceOrientation = deg[deviceOrientationConstant]!;
+
+    int sensorOrientation = controller.value.sensorOrientationDegrees!;
+    int sign = controller.value.sign!;
+    return (sensorOrientation - deviceOrientation * sign + 360) % 360;
   }
 }

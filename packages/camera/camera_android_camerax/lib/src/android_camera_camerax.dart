@@ -233,6 +233,8 @@ class AndroidCameraCameraX extends CameraPlatform {
   static const String exposureCompensationNotSupported =
       'exposureCompensationNotSupported';
 
+  late bool cameraIsFrontFacing;
+
   /// Returns list of all available cameras and their descriptions.
   @override
   Future<List<CameraDescription>> availableCameras() async {
@@ -321,7 +323,7 @@ class AndroidCameraCameraX extends CameraPlatform {
     // Save CameraSelector that matches cameraDescription.
     final int cameraSelectorLensDirection =
         _getCameraSelectorLensDirection(cameraDescription.lensDirection);
-    final bool cameraIsFrontFacing =
+    cameraIsFrontFacing =
         cameraSelectorLensDirection == CameraSelector.lensFacingFront;
     cameraSelector = proxy.createCameraSelector(cameraSelectorLensDirection);
     // Start listening for device orientation changes preceding camera creation.
@@ -1433,5 +1435,15 @@ class AndroidCameraCameraX extends CameraPlatform {
     final FocusMeteringResult? result =
         await cameraControl.startFocusAndMetering(currentFocusMeteringAction!);
     return await result?.isFocusSuccessful() ?? false;
+  }
+
+  @override
+  Future<int> getSensorOrientation() async {
+    return cameraInfo!.getSensorRotationDegrees();
+  }
+
+  @override
+  int getSign() {
+    return cameraIsFrontFacing ? 1 : -1;
   }
 }
