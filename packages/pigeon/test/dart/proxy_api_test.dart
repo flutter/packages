@@ -126,6 +126,56 @@ void main() {
       expect(code, contains(r'Api pigeon_copy('));
     });
 
+    test('InstanceManagerApi', () {
+      final Root root = Root(apis: <Api>[
+        AstProxyApi(
+          name: 'Api',
+          constructors: <Constructor>[],
+          fields: <ApiField>[],
+          methods: <Method>[],
+        )
+      ], classes: <Class>[], enums: <Enum>[]);
+      final StringBuffer sink = StringBuffer();
+      const DartGenerator generator = DartGenerator();
+      generator.generate(
+        const DartOptions(),
+        root,
+        sink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
+      final String code = sink.toString();
+      final String collapsedCode = _collapseNewlineAndIndentation(code);
+
+      expect(code, contains(r'class _PigeonInstanceManagerApi'));
+
+      expect(
+        code,
+        contains(
+          'Future<void> removeStrongReference(int identifier)',
+        ),
+      );
+      expect(
+        code,
+        contains(
+          'dev.flutter.pigeon.$DEFAULT_PACKAGE_NAME.PigeonInstanceManagerApi.removeStrongReference',
+        ),
+      );
+      expect(
+        collapsedCode,
+        contains(
+          '(instanceManager ?? PigeonInstanceManager.instance) .remove(arg_identifier!);',
+        ),
+      );
+
+      expect(code, contains('Future<void> clear()'));
+      expect(
+        code,
+        contains(
+          'dev.flutter.pigeon.$DEFAULT_PACKAGE_NAME.PigeonInstanceManagerApi.clear',
+        ),
+      );
+    });
+
     group('inheritance', () {
       test('extends', () {
         final AstProxyApi api2 = AstProxyApi(
