@@ -58,12 +58,12 @@ class ProxyApiTestsError(
  *
  * <p>Added instances are added as a weak reference and a strong reference. When the strong
  * reference is removed with [remove] and the weak reference is deallocated, the
- * `finalizationListener` is made with the instance's identifier. However, if the strong reference
- * is removed and then the identifier is retrieved with the intention to pass the identifier to Dart
- * (e.g. calling [getIdentifierForStrongReference]), the strong reference to the instance is
- * recreated. The strong reference will then need to be removed manually again.
+ * `finalizationListener.onFinalize` is called with the instance's identifier. However, if the
+ * strong reference is removed and then the identifier is retrieved with the intention to pass the
+ * identifier to Dart (e.g. calling [getIdentifierForStrongReference]), the strong reference to the
+ * instance is recreated. The strong reference will then need to be removed manually again.
  */
-@Suppress("UNCHECKED_CAST", "MemberVisibilityCanBePrivate", "unused")
+@Suppress("UNCHECKED_CAST", "MemberVisibilityCanBePrivate")
 class PigeonInstanceManager(private val finalizationListener: PigeonFinalizationListener) {
   /** Interface for listening when a weak reference of an instance is removed from the manager. */
   interface PigeonFinalizationListener {
@@ -103,12 +103,9 @@ class PigeonInstanceManager(private val finalizationListener: PigeonFinalization
     private const val tag = "PigeonInstanceManager"
 
     /**
-     * Instantiate a new manager.
+     * Instantiate a new manager with a listener for garbage collected weak references.
      *
      * When the manager is no longer needed, [stopFinalizationListener] must be called.
-     *
-     * @param finalizationListener the listener for garbage collected weak references.
-     * @return a new `PigeonInstanceManager`.
      */
     fun create(finalizationListener: PigeonFinalizationListener): PigeonInstanceManager {
       return PigeonInstanceManager(finalizationListener)
@@ -116,13 +113,8 @@ class PigeonInstanceManager(private val finalizationListener: PigeonFinalization
   }
 
   /**
-   * Removes `identifier` and its associated strongly referenced instance, if present, from the
-   * manager.
-   *
-   * @param identifier the identifier paired to an instance.
-   * @param <T> the expected return type.
-   * @return the removed instance if the manager contains the given identifier, otherwise `null` if
-   *   the manager doesn't contain the value. </T>
+   * Removes `identifier` and return its associated strongly referenced instance, if present, from
+   * the manager.
    */
   fun <T> remove(identifier: Long): T? {
     logWarningIfFinalizationListenerHasStopped()
@@ -130,7 +122,7 @@ class PigeonInstanceManager(private val finalizationListener: PigeonFinalization
   }
 
   /**
-   * Retrieves the identifier paired with an instance.
+   * Retrieves the identifier paired with an instance, if present, otherwise `null`.
    *
    * If the manager contains a strong reference to `instance`, it will return the identifier
    * associated with `instance`. If the manager contains only a weak reference to `instance`, a new
@@ -139,10 +131,6 @@ class PigeonInstanceManager(private val finalizationListener: PigeonFinalization
    * If this method returns a nonnull identifier, this method also expects the Dart
    * `PigeonInstanceManager` to have, or recreate, a weak reference to the Dart instance the
    * identifier is associated with.
-   *
-   * @param instance an instance that may be stored in the manager.
-   * @return the identifier associated with `instance` if the manager contains the value, otherwise
-   *   `null` if the manager doesn't contain the value.
    */
   fun getIdentifierForStrongReference(instance: Any?): Long? {
     logWarningIfFinalizationListenerHasStopped()
@@ -160,9 +148,7 @@ class PigeonInstanceManager(private val finalizationListener: PigeonFinalization
    * two objects that are equivalent (e.g. the `equals` method returns true and their hashcodes are
    * equal) to both be added.
    *
-   * @param instance the instance to be stored.
-   * @param identifier the identifier to be paired with instance. This value must be >= 0 and
-   *   unique.
+   * [identifier] must be >= 0 and unique.
    */
   fun addDartCreatedInstance(instance: Any, identifier: Long) {
     logWarningIfFinalizationListenerHasStopped()
@@ -170,10 +156,9 @@ class PigeonInstanceManager(private val finalizationListener: PigeonFinalization
   }
 
   /**
-   * Adds a new instance that was instantiated from the host platform.
+   * Adds a new unique instance that was instantiated from the host platform.
    *
-   * @param instance the instance to be stored. This must be unique to all other added instances.
-   * @return the unique identifier (>= 0) stored with instance.
+   * [identifier] must be >= 0 and unique.
    */
   fun addHostCreatedInstance(instance: Any): Long {
     logWarningIfFinalizationListenerHasStopped()
@@ -185,26 +170,14 @@ class PigeonInstanceManager(private val finalizationListener: PigeonFinalization
     return identifier
   }
 
-  /**
-   * Retrieves the instance associated with identifier.
-   *
-   * @param identifier the identifier associated with an instance.
-   * @param <T> the expected return type.
-   * @return the instance associated with `identifier` if the manager contains the value, otherwise
-   *   `null` if the manager doesn't contain the value. </T>
-   */
+  /** Retrieves the instance associated with identifier, if present, otherwise `null`. */
   fun <T> getInstance(identifier: Long): T? {
     logWarningIfFinalizationListenerHasStopped()
     val instance = weakInstances[identifier] as java.lang.ref.WeakReference<T>?
     return instance?.get()
   }
 
-  /**
-   * Returns whether this manager contains the given `instance`.
-   *
-   * @param instance the instance whose presence in this manager is to be tested.
-   * @return whether this manager contains the given `instance`.
-   */
+  /** Returns whether this manager contains the given `instance`. */
   fun containsInstance(instance: Any?): Boolean {
     logWarningIfFinalizationListenerHasStopped()
     return identifiers.containsKey(instance)

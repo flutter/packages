@@ -16,12 +16,12 @@ const String instanceManagerTemplate = '''
  *
  * <p>Added instances are added as a weak reference and a strong reference. When the strong
  * reference is removed with [remove] and the weak reference is deallocated, the
- * `finalizationListener` is made with the instance's identifier. However, if the strong reference
- * is removed and then the identifier is retrieved with the intention to pass the identifier to Dart
- * (e.g. calling [getIdentifierForStrongReference]), the strong reference to the
- * instance is recreated. The strong reference will then need to be removed manually again.
+ * `finalizationListener.onFinalize` is called with the instance's identifier. However, if the strong
+ * reference is removed and then the identifier is retrieved with the intention to pass the identifier
+ * to Dart (e.g. calling [getIdentifierForStrongReference]), the strong reference to the instance
+ * is recreated. The strong reference will then need to be removed manually again.
  */
-@Suppress("UNCHECKED_CAST", "MemberVisibilityCanBePrivate", "unused")
+@Suppress("UNCHECKED_CAST", "MemberVisibilityCanBePrivate")
 class $instanceManagerClassName(private val finalizationListener: $_finalizationListenerClassName) {
   /** Interface for listening when a weak reference of an instance is removed from the manager.  */
   interface $_finalizationListenerClassName {
@@ -64,13 +64,10 @@ class $instanceManagerClassName(private val finalizationListener: $_finalization
     private const val tag = "$instanceManagerClassName"
 
     /**
-     * Instantiate a new manager.
-     *
+     * Instantiate a new manager with a listener for garbage collected weak
+     * references.
      *
      * When the manager is no longer needed, [stopFinalizationListener] must be called.
-     *
-     * @param finalizationListener the listener for garbage collected weak references.
-     * @return a new `$instanceManagerClassName`.
      */
     fun create(finalizationListener: $_finalizationListenerClassName): $instanceManagerClassName {
       return $instanceManagerClassName(finalizationListener)
@@ -78,21 +75,16 @@ class $instanceManagerClassName(private val finalizationListener: $_finalization
   }
 
   /**
-   * Removes `identifier` and its associated strongly referenced instance, if present, from the
-   * manager.
-   *
-   * @param identifier the identifier paired to an instance.
-   * @param <T> the expected return type.
-   * @return the removed instance if the manager contains the given identifier, otherwise `null` if
-   * the manager doesn't contain the value.
-  </T> */
+   * Removes `identifier` and return its associated strongly referenced instance, if present,
+   * from the manager.
+   */
   fun <T> remove(identifier: Long): T? {
     logWarningIfFinalizationListenerHasStopped()
     return strongInstances.remove(identifier) as T?
   }
 
   /**
-   * Retrieves the identifier paired with an instance.
+   * Retrieves the identifier paired with an instance, if present, otherwise `null`.
    *
    *
    * If the manager contains a strong reference to `instance`, it will return the identifier
@@ -103,10 +95,6 @@ class $instanceManagerClassName(private val finalizationListener: $_finalization
    * If this method returns a nonnull identifier, this method also expects the Dart
    * `$instanceManagerClassName` to have, or recreate, a weak reference to the Dart instance the
    * identifier is associated with.
-   *
-   * @param instance an instance that may be stored in the manager.
-   * @return the identifier associated with `instance` if the manager contains the value, otherwise
-   * `null` if the manager doesn't contain the value.
    */
   fun getIdentifierForStrongReference(instance: Any?): Long? {
     logWarningIfFinalizationListenerHasStopped()
@@ -120,14 +108,11 @@ class $instanceManagerClassName(private val finalizationListener: $_finalization
   /**
    * Adds a new instance that was instantiated from Dart.
    *
-   *
    * The same instance can be added multiple times, but each identifier must be unique. This
    * allows two objects that are equivalent (e.g. the `equals` method returns true and their
    * hashcodes are equal) to both be added.
    *
-   * @param instance the instance to be stored.
-   * @param identifier the identifier to be paired with instance. This value must be >= 0 and
-   * unique.
+   * [identifier] must be >= 0 and unique.
    */
   fun addDartCreatedInstance(instance: Any, identifier: Long) {
     logWarningIfFinalizationListenerHasStopped()
@@ -135,10 +120,9 @@ class $instanceManagerClassName(private val finalizationListener: $_finalization
   }
 
   /**
-   * Adds a new instance that was instantiated from the host platform.
+   * Adds a new unique instance that was instantiated from the host platform.
    *
-   * @param instance the instance to be stored. This must be unique to all other added instances.
-   * @return the unique identifier (>= 0) stored with instance.
+   * [identifier] must be >= 0 and unique.
    */
   fun addHostCreatedInstance(instance: Any): Long {
     logWarningIfFinalizationListenerHasStopped()
@@ -148,26 +132,14 @@ class $instanceManagerClassName(private val finalizationListener: $_finalization
     return identifier
   }
 
-  /**
-   * Retrieves the instance associated with identifier.
-   *
-   * @param identifier the identifier associated with an instance.
-   * @param <T> the expected return type.
-   * @return the instance associated with `identifier` if the manager contains the value, otherwise
-   * `null` if the manager doesn't contain the value.
-  </T> */
+  /** Retrieves the instance associated with identifier, if present, otherwise `null`. */
   fun <T> getInstance(identifier: Long): T? {
     logWarningIfFinalizationListenerHasStopped()
     val instance = weakInstances[identifier] as java.lang.ref.WeakReference<T>?
     return instance?.get()
   }
 
-  /**
-   * Returns whether this manager contains the given `instance`.
-   *
-   * @param instance the instance whose presence in this manager is to be tested.
-   * @return whether this manager contains the given `instance`.
-   */
+  /** Returns whether this manager contains the given `instance`. */
   fun containsInstance(instance: Any?): Boolean {
     logWarningIfFinalizationListenerHasStopped()
     return identifiers.containsKey(instance)
@@ -176,7 +148,6 @@ class $instanceManagerClassName(private val finalizationListener: $_finalization
   /**
    * Stop the periodic run of the [$_finalizationListenerClassName] for instances that have been garbage
    * collected.
-   *
    *
    * The InstanceManager can continue to be used, but the [$_finalizationListenerClassName] will no
    * longer be called and methods will log a warning.
@@ -188,7 +159,6 @@ class $instanceManagerClassName(private val finalizationListener: $_finalization
 
   /**
    * Removes all of the instances from this manager.
-   *
    *
    * The manager will be empty after this call returns.
    */
@@ -202,7 +172,6 @@ class $instanceManagerClassName(private val finalizationListener: $_finalization
   /**
    * Whether the [$_finalizationListenerClassName] is still being called for instances that are garbage
    * collected.
-   *
    *
    * See [stopFinalizationListener].
    */
