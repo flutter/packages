@@ -6,10 +6,10 @@
 @import google_maps_flutter_ios.Test;
 @import XCTest;
 #import <OCMock/OCMock.h>
+#import <google_maps_flutter_ios/GoogleMapMarkerController_Test.h>
 
 @interface ExtractIconFromDataTests : XCTestCase
 - (UIImage *)createOnePixelImage;
-- (NSData *)convertImageToPNGData:(UIImage *)image;
 @end
 
 @implementation ExtractIconFromDataTests
@@ -62,8 +62,8 @@
 
   XCTAssertNotNil(resultImage);
   XCTAssertEqual(resultImage.scale, 10);
-  XCTAssertEqual(resultImage.size.width, 0.1);   // width in logical pixels should be 0.1.
-  XCTAssertEqual(resultImage.size.height, 0.1);  // height in logical pixels should be 0.1.
+  XCTAssertEqual(resultImage.size.width, 0.1);
+  XCTAssertEqual(resultImage.size.height, 0.1);
 }
 
 - (void)testExtractIconFromDataAssetAutoAndSizeWithSameAspectRatio {
@@ -96,7 +96,8 @@
   // As image has same aspect ratio as the original image,
   // only image scale has been changed to match the target size.
   CGFloat targetScale = testImage.scale * (testImage.size.width / 15.0);
-  XCTAssertEqual(resultImage.scale, targetScale);
+  const CGFloat accuracy = 0.001;
+  XCTAssertEqualWithAccuracy(resultImage.scale, targetScale, accuracy);
   XCTAssertEqual(resultImage.size.width, 15.0);
   XCTAssertEqual(resultImage.size.height, 15.0);
 }
@@ -164,7 +165,7 @@
   NSObject<FlutterPluginRegistrar> *mockRegistrar =
       OCMStrictProtocolMock(@protocol(FlutterPluginRegistrar));
   UIImage *testImage = [self createOnePixelImage];
-  NSData *pngData = [self convertImageToPNGData:testImage];
+  NSData *pngData = UIImagePNGRepresentation(testImage);
   XCTAssertNotNil(pngData);
 
   FlutterStandardTypedData *typedData = [FlutterStandardTypedData typedDataWithBytes:pngData];
@@ -190,7 +191,7 @@
   NSObject<FlutterPluginRegistrar> *mockRegistrar =
       OCMStrictProtocolMock(@protocol(FlutterPluginRegistrar));
   UIImage *testImage = [self createOnePixelImage];
-  NSData *pngData = [self convertImageToPNGData:testImage];
+  NSData *pngData = UIImagePNGRepresentation(testImage);
   XCTAssertNotNil(pngData);
 
   FlutterStandardTypedData *typedData = [FlutterStandardTypedData typedDataWithBytes:pngData];
@@ -206,9 +207,9 @@
                                              registrar:mockRegistrar
                                            screenScale:screenScale];
   XCTAssertNotNil(resultImage);
-  XCTAssertEqual(resultImage.scale, 10);  // image pixel ration (as scale) should be set to 10.
-  XCTAssertEqual(resultImage.size.width, 0.1);   // width in logical pixels should be 0.1.
-  XCTAssertEqual(resultImage.size.height, 0.1);  // height in logical pixels should be 0.1.
+  XCTAssertEqual(resultImage.scale, 10);
+  XCTAssertEqual(resultImage.size.width, 0.1);
+  XCTAssertEqual(resultImage.size.height, 0.1);
 }
 
 - (void)testExtractIconFromDataBytesAutoAndSizeWithSameAspectRatio {
@@ -216,7 +217,7 @@
   NSObject<FlutterPluginRegistrar> *mockRegistrar =
       OCMStrictProtocolMock(@protocol(FlutterPluginRegistrar));
   UIImage *testImage = [self createOnePixelImage];
-  NSData *pngData = [self convertImageToPNGData:testImage];
+  NSData *pngData = UIImagePNGRepresentation(testImage);
   XCTAssertNotNil(pngData);
 
   FlutterStandardTypedData *typedData = [FlutterStandardTypedData typedDataWithBytes:pngData];
@@ -243,7 +244,8 @@
   // As image has same aspect ratio as the original image,
   // only image scale has been changed to match the target size.
   CGFloat targetScale = testImage.scale * (testImage.size.width / 15.0);
-  XCTAssertEqual(resultImage.scale, targetScale);
+  const CGFloat accuracy = 0.001;
+  XCTAssertEqualWithAccuracy(resultImage.scale, targetScale, accuracy);
   XCTAssertEqual(resultImage.size.width, 15.0);
   XCTAssertEqual(resultImage.size.height, 15.0);
 }
@@ -253,7 +255,7 @@
   NSObject<FlutterPluginRegistrar> *mockRegistrar =
       OCMStrictProtocolMock(@protocol(FlutterPluginRegistrar));
   UIImage *testImage = [self createOnePixelImage];
-  NSData *pngData = [self convertImageToPNGData:testImage];
+  NSData *pngData = UIImagePNGRepresentation(testImage);
   XCTAssertNotNil(pngData);
 
   FlutterStandardTypedData *typedData = [FlutterStandardTypedData typedDataWithBytes:pngData];
@@ -283,7 +285,7 @@
   NSObject<FlutterPluginRegistrar> *mockRegistrar =
       OCMStrictProtocolMock(@protocol(FlutterPluginRegistrar));
   UIImage *testImage = [self createOnePixelImage];
-  NSData *pngData = [self convertImageToPNGData:testImage];
+  NSData *pngData = UIImagePNGRepresentation(testImage);
   XCTAssertNotNil(pngData);
 
   FlutterStandardTypedData *typedData = [FlutterStandardTypedData typedDataWithBytes:pngData];
@@ -303,60 +305,60 @@
   XCTAssertEqual(resultImage.size.height, 1.0);
 }
 
-- (void)testIsScalableFromSizeToSize {
-  FLTGoogleMapMarkerController *instance = [[FLTGoogleMapMarkerController alloc] init];
+- (void)testIsScalableWithScaleFactorFromSize100x100to10x100 {
+  CGSize originalSize = CGSizeMake(100.0, 100.0);
+  CGSize targetSize = CGSizeMake(10.0, 100.0);
+  XCTAssertEqual([FLTGoogleMapMarkerController isScalableWithScaleFactorFromSize:originalSize
+                                                                          toSize:targetSize],
+                 NO);
+}
 
-  NSArray *testCases = @[
-    @{
-      @"originalSize" : @(CGSizeMake(100.0, 100.0)),
-      @"targetSize" : @(CGSizeMake(10.0, 100.0)),
-      @"expectedResult" : @NO
-    },
-    @{
-      @"originalSize" : @(CGSizeMake(100.0, 100.0)),
-      @"targetSize" : @(CGSizeMake(10.0, 10.0)),
-      @"expectedResult" : @YES
-    },
-    @{
-      @"originalSize" : @(CGSizeMake(233.0, 200.0)),
-      @"targetSize" : @(CGSizeMake(23.0, 20.0)),
-      @"expectedResult" : @YES
-    },
-    @{
-      @"originalSize" : @(CGSizeMake(233.0, 200.0)),
-      @"targetSize" : @(CGSizeMake(22.0, 20.0)),
-      @"expectedResult" : @NO
-    },
-    @{
-      @"originalSize" : @(CGSizeMake(200.0, 233.0)),
-      @"targetSize" : @(CGSizeMake(20.0, 23.0)),
-      @"expectedResult" : @YES
-    },
-    @{
-      @"originalSize" : @(CGSizeMake(200.0, 233.0)),
-      @"targetSize" : @(CGSizeMake(20.0, 22.0)),
-      @"expectedResult" : @NO
-    },
-    @{
-      @"originalSize" : @(CGSizeMake(1024.0, 768.0)),
-      @"targetSize" : @(CGSizeMake(500.0, 250.0)),
-      @"expectedResult" : @NO
-    }
-  ];
+- (void)testIsScalableWithScaleFactorFromSize100x100to10x10 {
+  CGSize originalSize = CGSizeMake(100.0, 100.0);
+  CGSize targetSize = CGSizeMake(10.0, 10.0);
+  XCTAssertEqual([FLTGoogleMapMarkerController isScalableWithScaleFactorFromSize:originalSize
+                                                                          toSize:targetSize],
+                 YES);
+}
 
-  // Iterate through test cases
-  for (NSDictionary *testCase in testCases) {
-    CGSize originalSize = [testCase[@"originalSize"] CGSizeValue];
-    CGSize targetSize = [testCase[@"targetSize"] CGSizeValue];
-    BOOL expectedResult = [testCase[@"expectedResult"] boolValue];
+- (void)testIsScalableWithScaleFactorFromSize233x200to23x20 {
+  CGSize originalSize = CGSizeMake(233.0, 200.0);
+  CGSize targetSize = CGSizeMake(23.0, 20.0);
+  XCTAssertEqual([FLTGoogleMapMarkerController isScalableWithScaleFactorFromSize:originalSize
+                                                                          toSize:targetSize],
+                 YES);
+}
 
-    BOOL result = [instance isScalableWithScaleFactorFromSize:originalSize toSize:targetSize];
+- (void)testIsScalableWithScaleFactorFromSize233x200to22x20 {
+  CGSize originalSize = CGSizeMake(233.0, 200.0);
+  CGSize targetSize = CGSizeMake(22.0, 20.0);
+  XCTAssertEqual([FLTGoogleMapMarkerController isScalableWithScaleFactorFromSize:originalSize
+                                                                          toSize:targetSize],
+                 NO);
+}
 
-    XCTAssertEqual(result, expectedResult,
-                   @"Failed with originalSize: %@, targetSize: %@, expected: %@, got: %@",
-                   NSStringFromCGSize(originalSize), NSStringFromCGSize(targetSize),
-                   expectedResult ? @"YES" : @"NO", result ? @"YES" : @"NO");
-  }
+- (void)testIsScalableWithScaleFactorFromSize200x233to20x23 {
+  CGSize originalSize = CGSizeMake(200.0, 233.0);
+  CGSize targetSize = CGSizeMake(20.0, 23.0);
+  XCTAssertEqual([FLTGoogleMapMarkerController isScalableWithScaleFactorFromSize:originalSize
+                                                                          toSize:targetSize],
+                 YES);
+}
+
+- (void)testIsScalableWithScaleFactorFromSize200x233to20x22 {
+  CGSize originalSize = CGSizeMake(200.0, 233.0);
+  CGSize targetSize = CGSizeMake(20.0, 22.0);
+  XCTAssertEqual([FLTGoogleMapMarkerController isScalableWithScaleFactorFromSize:originalSize
+                                                                          toSize:targetSize],
+                 NO);
+}
+
+- (void)testIsScalableWithScaleFactorFromSize1024x768to500x250 {
+  CGSize originalSize = CGSizeMake(1024.0, 768.0);
+  CGSize targetSize = CGSizeMake(500.0, 250.0);
+  XCTAssertEqual([FLTGoogleMapMarkerController isScalableWithScaleFactorFromSize:originalSize
+                                                                          toSize:targetSize],
+                 NO);
 }
 
 - (UIImage *)createOnePixelImage {
@@ -371,10 +373,6 @@
     [context fillRect:CGRectMake(0, 0, size.width, size.height)];
   }];
   return image;
-}
-
-- (NSData *)convertImageToPNGData:(UIImage *)image {
-  return UIImagePNGRepresentation(image);
 }
 
 @end

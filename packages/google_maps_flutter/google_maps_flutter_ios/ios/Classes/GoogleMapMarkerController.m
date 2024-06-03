@@ -152,10 +152,17 @@
   }
 }
 
+/// Extracts an icon image from the iconData array.
+///
+/// @param iconData An array containing the data for the icon image.
+/// @param registrar A Flutter plugin registrar.
+/// @param screenScale Screen scale factor for scaling bitmaps. Must be greater than 0.
+/// @return A UIImage object created from the icon data.
+/// @note Assert unless screenScale is greater than 0.
 - (UIImage *)extractIconFromData:(NSArray *)iconData
                        registrar:(NSObject<FlutterPluginRegistrar> *)registrar
                      screenScale:(CGFloat)screenScale {
-  NSAssert(screenScale > 0, @"Screen scale must be bigger than 0");
+  NSAssert(screenScale > 0, @"Screen scale must be greater than 0");
   UIImage *image;
   if ([iconData.firstObject isEqualToString:@"defaultMarker"]) {
     CGFloat hue = (iconData.count == 1) ? 0.0f : [iconData[1] doubleValue];
@@ -232,10 +239,13 @@
       CGFloat imagePixelRatio = [assetData[@"imagePixelRatio"] doubleValue];
 
       if (width || height) {
-        image = [self scaleImage:image withScale:screenScale];
-        image = [self scaleImage:image withWidth:width withHeight:height withScale:screenScale];
+        image = [FLTGoogleMapMarkerController scaledImage:image withScale:screenScale];
+        image = [FLTGoogleMapMarkerController scaledImage:image
+                                                withWidth:width
+                                                   height:height
+                                              screenScale:screenScale];
       } else {
-        image = [self scaleImage:image withScale:imagePixelRatio];
+        image = [FLTGoogleMapMarkerController scaledImage:image withScale:imagePixelRatio];
       }
     }
   } else if ([iconData[0] isEqualToString:@"bytes"]) {
@@ -261,10 +271,13 @@
 
         if (width || height) {
           // Before scaling the image, image must be in screenScale
-          image = [self scaleImage:image withScale:screenScale];
-          image = [self scaleImage:image withWidth:width withHeight:height withScale:screenScale];
+          image = [FLTGoogleMapMarkerController scaledImage:image withScale:screenScale];
+          image = [FLTGoogleMapMarkerController scaledImage:image
+                                                  withWidth:width
+                                                     height:height
+                                                screenScale:screenScale];
         } else {
-          image = [self scaleImage:image withScale:imagePixelRatio];
+          image = [FLTGoogleMapMarkerController scaledImage:image withScale:imagePixelRatio];
         }
       } else {
         // No scaling, load image from bytes without scale parameter.
@@ -305,7 +318,7 @@
 /// @param image The UIImage to scale.
 /// @param scale The factor by which to scale the image.
 /// @return UIImage Returns the scaled UIImage.
-- (UIImage *)scaleImage:(UIImage *)image withScale:(CGFloat)scale {
++ (UIImage *)scaledImage:(UIImage *)image withScale:(CGFloat)scale {
   if (fabs(scale - image.scale) > 1e-3) {
     return [UIImage imageWithCGImage:[image CGImage]
                                scale:scale
@@ -318,11 +331,11 @@
 /// closely matches the target size, indicated by a small epsilon-delta, the image's scale
 /// property is updated instead of resizing the image. If the aspect ratios differ beyond this
 /// threshold, the method redraws the image at the target size.
-
+///
 /// @param image The UIImage to scale.
 /// @param size The target CGSize to scale the image to.
 /// @return UIImage Returns the scaled UIImage.
-- (UIImage *)scaleImage:(UIImage *)image toSize:(CGSize)size {
++ (UIImage *)scaledImage:(UIImage *)image withSize:(CGSize)size {
   CGFloat originalPixelWidth = image.size.width * image.scale;
   CGFloat originalPixelHeight = image.size.height * image.scale;
 
@@ -341,11 +354,12 @@
 
   // Check if the aspect ratios are approximately equal.
   CGSize originalPixelSize = CGSizeMake(originalPixelWidth, originalPixelHeight);
-  if ([self isScalableWithScaleFactorFromSize:originalPixelSize toSize:size]) {
+  if ([FLTGoogleMapMarkerController isScalableWithScaleFactorFromSize:originalPixelSize
+                                                               toSize:size]) {
     // Scaled image has close to same aspect ratio,
     // updating image scale instead of resizing image.
     CGFloat factor = originalPixelWidth / size.width;
-    return [self scaleImage:image withScale:(image.scale * factor)];
+    return [FLTGoogleMapMarkerController scaledImage:image withScale:(image.scale * factor)];
   } else {
     // Aspect ratios differ significantly, resize the image.
     UIGraphicsImageRendererFormat *format = [UIGraphicsImageRendererFormat defaultFormat];
@@ -359,22 +373,22 @@
         }];
 
     // Return image with proper scaling.
-    return [self scaleImage:newImage withScale:image.scale];
+    return [FLTGoogleMapMarkerController scaledImage:newImage withScale:image.scale];
   }
 }
 
 /// Scales an input UIImage to a specified width and height preserving aspect ratio if both
 /// widht and height are not given..
-
+///
 /// @param image The UIImage to scale.
 /// @param width The target width to scale the image to.
 /// @param height The target height to scale the image to.
-/// @param scale The current screen scale..
+/// @param screenScale The current screen scale.
 /// @return UIImage Returns the scaled UIImage.
-- (UIImage *)scaleImage:(UIImage *)image
-              withWidth:(NSNumber *)width
-             withHeight:(NSNumber *)height
-              withScale:(CGFloat)scale {
++ (UIImage *)scaledImage:(UIImage *)image
+               withWidth:(NSNumber *)width
+                  height:(NSNumber *)height
+             screenScale:(CGFloat)screenScale {
   if (!width && !height) {
     return image;
   }
@@ -392,8 +406,9 @@
     targetWidth = round(targetHeight * aspectRatio);
   }
 
-  CGSize targetSize = CGSizeMake(round(targetWidth * scale), round(targetHeight * scale));
-  return [self scaleImage:image toSize:targetSize];
+  CGSize targetSize =
+      CGSizeMake(round(targetWidth * screenScale), round(targetHeight * screenScale));
+  return [FLTGoogleMapMarkerController scaledImage:image withSize:targetSize];
 }
 
 /// Checks if an image can be scaled from an original size to a target size using a scale factor
@@ -403,7 +418,7 @@
 /// @param targetSize The desired target size to scale the image to.
 /// @return A BOOL indicating whether the image can be scaled to the target size with scale
 /// factor.
-- (BOOL)isScalableWithScaleFactorFromSize:(CGSize)originalSize toSize:(CGSize)targetSize {
++ (BOOL)isScalableWithScaleFactorFromSize:(CGSize)originalSize toSize:(CGSize)targetSize {
   // Select the scaling factor based on the longer side to have good precision.
   CGFloat scaleFactor = (originalSize.width > originalSize.height)
                             ? (targetSize.width / originalSize.width)

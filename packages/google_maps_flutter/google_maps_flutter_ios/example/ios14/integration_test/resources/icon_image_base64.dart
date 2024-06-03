@@ -2,6 +2,27 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+/// This constant holds the base64-encoded data of a 16x16 PNG image of the
+/// Flutter logo.
+///
+/// See `icon_image.png` source in the same directory.
+///
+/// To create or update this image, follow these steps:
+/// 1. Create or update a 16x16 PNG image.
+/// 2. Convert the image to a base64 string using a script below.
+/// 3. Replace the existing base64 string below with the new one.
+///
+/// Example of converting an image to base64 in Dart:
+/// ```dart
+/// import 'dart:convert';
+/// import 'dart:io';
+///
+/// void main() async {
+///   final bytes = await File('icon_image.png').readAsBytes();
+///   final base64String = base64Encode(bytes);
+///   print(base64String);
+/// }
+/// ```
 const String iconImageBase64 =
     'iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAIRlWElmTU'
     '0AKgAAAAgABQESAAMAAAABAAEAAAEaAAUAAAABAAAASgEbAAUAAAABAAAAUgEoAAMAAAABAAIA'

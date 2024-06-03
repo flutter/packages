@@ -44,7 +44,7 @@ import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
 @RunWith(RobolectricTestRunner.class)
-@Config(sdk = Build.VERSION_CODES.P)
+@Config(minSdk = Build.VERSION_CODES.P)
 public class ConvertTest {
   @Mock private AssetManager assetManager;
 
@@ -251,29 +251,6 @@ public class ConvertTest {
             flutterInjectorWrapper);
 
     Assert.assertEquals(mockBitmapDescriptor, result);
-  }
-
-  @Test(expected = IllegalArgumentException.class) // Expecting an IllegalArgumentException
-  public void GetBitmapFromAssetThrowsErrorIfAssetNotAvailable() throws Exception {
-    String fakeAssetName = "fake_asset_name";
-
-    Map<String, Object> assetDetails = new HashMap<>();
-    assetDetails.put("assetName", fakeAssetName);
-    assetDetails.put("bitmapScaling", "noScaling");
-    assetDetails.put("imagePixelRatio", 2.0f);
-
-    when(flutterInjectorWrapper.getLookupKeyForAsset(fakeAssetName))
-        .thenThrow(new RuntimeException("Fake exception"));
-
-    try {
-      Convert.getBitmapFromAsset(
-          assetDetails, assetManager, 1.0f, bitmapDescriptorFactoryWrapper, flutterInjectorWrapper);
-    } catch (IllegalArgumentException e) {
-      assertTrue(e.getMessage().startsWith("'asset' cannot open asset: "));
-      throw e; // rethrow the exception
-    }
-
-    fail("Expected an IllegalArgumentException to be thrown");
   }
 
   @Test

@@ -50,23 +50,23 @@ class Convert {
         if (data.size() == 1) {
           return BitmapDescriptorFactory.defaultMarker();
         } else {
-          float hue = toFloat(data.get(1));
+          final float hue = toFloat(data.get(1));
           return BitmapDescriptorFactory.defaultMarker(hue);
         }
       case "fromAsset":
-        String assetPath = toString(data.get(1));
+        final String assetPath = toString(data.get(1));
         if (data.size() == 2) {
           return BitmapDescriptorFactory.fromAsset(
               FlutterInjector.instance().flutterLoader().getLookupKeyForAsset(assetPath));
         } else {
-          String assetPackage = toString(data.get(2));
+          final String assetPackage = toString(data.get(2));
           return BitmapDescriptorFactory.fromAsset(
               FlutterInjector.instance()
                   .flutterLoader()
                   .getLookupKeyForAsset(assetPath, assetPackage));
         }
       case "fromAssetImage":
-        String assetImagePath = toString(data.get(1));
+        final String assetImagePath = toString(data.get(1));
         if (data.size() == 3) {
           return BitmapDescriptorFactory.fromAsset(
               FlutterInjector.instance().flutterLoader().getLookupKeyForAsset(assetImagePath));
@@ -139,23 +139,32 @@ class Convert {
   public static BitmapDescriptor getBitmapFromBytes(
       Map<?, ?> byteData, float density, BitmapDescriptorFactoryWrapper bitmapDescriptorFactory) {
 
-    if (!byteData.containsKey("byteData")) {
-      throw new IllegalArgumentException("'bytes' requires 'byteData' key.");
+    final String byteDataKey = "byteData";
+    final String bitmapScalingKey = "bitmapScaling";
+    final String imagePixelRatioKey = "imagePixelRatio";
+
+    if (!byteData.containsKey(byteDataKey)) {
+      throw new IllegalArgumentException("'bytes' requires '" + byteDataKey + "' key.");
     }
-    if (!byteData.containsKey("bitmapScaling")) {
-      throw new IllegalArgumentException("'bytes' requires 'bitmapScaling' key.");
+    if (!byteData.containsKey(bitmapScalingKey)) {
+      throw new IllegalArgumentException("'bytes' requires '" + bitmapScalingKey + "' key.");
     }
-    if (!byteData.containsKey("imagePixelRatio")) {
-      throw new IllegalArgumentException("'bytes' requires 'imagePixelRatio' key.");
+    if (!byteData.containsKey(imagePixelRatioKey)) {
+      throw new IllegalArgumentException("'bytes' requires '" + imagePixelRatioKey + "' key.");
     }
 
     try {
-      Bitmap bitmap = toBitmap(byteData.get("byteData"));
-      String scalingMode = toString(byteData.get("bitmapScaling"));
+      Bitmap bitmap = toBitmap(byteData.get(byteDataKey));
+      String scalingMode = toString(byteData.get(bitmapScalingKey));
       switch (scalingMode) {
         case "auto":
-          Double width = byteData.containsKey("width") ? toDouble(byteData.get("width")) : null;
-          Double height = byteData.containsKey("height") ? toDouble(byteData.get("height")) : null;
+          final String widthKey = "width";
+          final String heightKey = "height";
+
+          final Double width =
+              byteData.containsKey(widthKey) ? toDouble(byteData.get(widthKey)) : null;
+          final Double height =
+              byteData.containsKey(heightKey) ? toDouble(byteData.get(heightKey)) : null;
 
           if (width != null || height != null) {
             int targetWidth = width != null ? toInt(width * density) : bitmap.getWidth();
@@ -174,7 +183,7 @@ class Convert {
                 toScaledBitmap(bitmap, targetWidth, targetHeight));
           } else {
             // Scale image using given scale ratio
-            final float scale = density / toFloat(byteData.get("imagePixelRatio"));
+            final float scale = density / toFloat(byteData.get(imagePixelRatioKey));
             return bitmapDescriptorFactory.fromBitmap(toScaledBitmap(bitmap, scale));
           }
         case "none":
@@ -216,31 +225,33 @@ class Convert {
       BitmapDescriptorFactoryWrapper bitmapDescriptorFactory,
       FlutterInjectorWrapper flutterInjector) {
 
-    if (!assetDetails.containsKey("assetName")) {
-      throw new IllegalArgumentException("'asset' requires 'assetName' key.");
+    final String assetNameKey = "assetName";
+    final String bitmapScalingKey = "bitmapScaling";
+    final String imagePixelRatioKey = "imagePixelRatio";
+
+    if (!assetDetails.containsKey(assetNameKey)) {
+      throw new IllegalArgumentException("'asset' requires '" + assetNameKey + "' key.");
     }
-    if (!assetDetails.containsKey("bitmapScaling")) {
-      throw new IllegalArgumentException("'asset' requires 'bitmapScaling' key.");
+    if (!assetDetails.containsKey(bitmapScalingKey)) {
+      throw new IllegalArgumentException("'asset' requires '" + bitmapScalingKey + "' key.");
     }
-    if (!assetDetails.containsKey("imagePixelRatio")) {
-      throw new IllegalArgumentException("'asset' requires 'imagePixelRatio' key.");
+    if (!assetDetails.containsKey(imagePixelRatioKey)) {
+      throw new IllegalArgumentException("'asset' requires '" + imagePixelRatioKey + "' key.");
     }
 
-    String assetName = toString(assetDetails.get("assetName"));
-    String assetKey;
-    try {
-      assetKey = flutterInjector.getLookupKeyForAsset(assetName);
-    } catch (Exception e) {
-      throw new IllegalArgumentException("'asset' cannot open asset: " + assetName);
-    }
+    final String assetName = toString(assetDetails.get(assetNameKey));
+    final String assetKey = flutterInjector.getLookupKeyForAsset(assetName);
 
-    String scalingMode = toString(assetDetails.get("bitmapScaling"));
+    String scalingMode = toString(assetDetails.get(bitmapScalingKey));
     switch (scalingMode) {
       case "auto":
-        Double width =
-            assetDetails.containsKey("width") ? toDouble(assetDetails.get("width")) : null;
-        Double height =
-            assetDetails.containsKey("height") ? toDouble(assetDetails.get("height")) : null;
+        final String widthKey = "width";
+        final String heightKey = "height";
+
+        final Double width =
+            assetDetails.containsKey(widthKey) ? toDouble(assetDetails.get(widthKey)) : null;
+        final Double height =
+            assetDetails.containsKey(heightKey) ? toDouble(assetDetails.get(heightKey)) : null;
         InputStream inputStream = null;
         try {
           inputStream = assetManager.open(assetKey);
@@ -263,11 +274,11 @@ class Convert {
                 toScaledBitmap(bitmap, targetWidth, targetHeight));
           } else {
             // Scale image using given scale.
-            final float scale = density / toFloat(assetDetails.get("imagePixelRatio"));
+            final float scale = density / toFloat(assetDetails.get(imagePixelRatioKey));
             return bitmapDescriptorFactory.fromBitmap(toScaledBitmap(bitmap, scale));
           }
         } catch (Exception e) {
-          throw new IllegalArgumentException("'asset' cannot open asset: " + assetName);
+          throw new IllegalArgumentException("'asset' cannot open asset: " + assetName, e);
         } finally {
           if (inputStream != null) {
             try {
@@ -524,9 +535,13 @@ class Convert {
   }
 
   private static Bitmap toScaledBitmap(Bitmap bitmap, float scale) {
-    if (Math.abs(scale - 1) > 0.001) {
-      return toScaledBitmap(
-          bitmap, (int) (bitmap.getWidth() * scale), (int) (bitmap.getHeight() * scale));
+    // Threshold to check if scaling is necessary.
+    final float scalingThreshold = 0.001f;
+
+    if (Math.abs(scale - 1) > scalingThreshold && scale > 0) {
+      final int newWidth = (int) (bitmap.getWidth() * scale);
+      final int newHeight = (int) (bitmap.getHeight() * scale);
+      return toScaledBitmap(bitmap, newWidth, newHeight);
     }
     return bitmap;
   }
