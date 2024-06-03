@@ -10,6 +10,7 @@ import android.os.Handler;
 import android.os.Looper;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.VisibleForTesting;
 import io.flutter.embedding.engine.systemchannels.PlatformChannel;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.EventChannel;
@@ -36,7 +37,7 @@ final class MethodCallHandlerImpl implements MethodChannel.MethodCallHandler {
   private final TextureRegistry textureRegistry;
   private final MethodChannel methodChannel;
   private final EventChannel imageStreamChannel;
-  private @Nullable Camera camera;
+  @VisibleForTesting @Nullable Camera camera;
 
   MethodCallHandlerImpl(
       Activity activity,
@@ -392,11 +393,9 @@ final class MethodCallHandlerImpl implements MethodChannel.MethodCallHandler {
     Integer videoBitrate = call.argument("videoBitrate");
     Integer audioBitrate = call.argument("audioBitrate");
 
-    TextureRegistry.SurfaceTextureEntry flutterSurfaceTexture =
-        textureRegistry.createSurfaceTexture();
+    TextureRegistry.SurfaceProducer surfaceProducer = textureRegistry.createSurfaceProducer();
     DartMessenger dartMessenger =
-        new DartMessenger(
-            messenger, flutterSurfaceTexture.id(), new Handler(Looper.getMainLooper()));
+        new DartMessenger(messenger, surfaceProducer.id(), new Handler(Looper.getMainLooper()));
     CameraProperties cameraProperties =
         new CameraPropertiesImpl(cameraName, CameraUtils.getCameraManager(activity));
     ResolutionPreset resolutionPreset = ResolutionPreset.valueOf(preset);
@@ -404,7 +403,7 @@ final class MethodCallHandlerImpl implements MethodChannel.MethodCallHandler {
     camera =
         new Camera(
             activity,
-            flutterSurfaceTexture,
+            surfaceProducer,
             new CameraFeatureFactoryImpl(),
             dartMessenger,
             cameraProperties,
@@ -412,7 +411,7 @@ final class MethodCallHandlerImpl implements MethodChannel.MethodCallHandler {
                 resolutionPreset, enableAudio, fps, videoBitrate, audioBitrate));
 
     Map<String, Object> reply = new HashMap<>();
-    reply.put("cameraId", flutterSurfaceTexture.id());
+    reply.put("cameraId", surfaceProducer.id());
     result.success(reply);
   }
 

@@ -85,7 +85,7 @@ class NullFieldsSearchReply {
       result,
       error,
       indices,
-      request?.encode(),
+      request,
       type?.index,
     ];
   }
@@ -96,9 +96,7 @@ class NullFieldsSearchReply {
       result: result[0] as String?,
       error: result[1] as String?,
       indices: (result[2] as List<Object?>?)?.cast<int?>(),
-      request: result[3] != null
-          ? NullFieldsSearchRequest.decode(result[3]! as List<Object?>)
-          : null,
+      request: result[3] as NullFieldsSearchRequest?,
       type: result[4] != null
           ? NullFieldsSearchReplyType.values[result[4]! as int]
           : null,

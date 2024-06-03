@@ -63,16 +63,17 @@ void main() {
   });
 
   test('test reply decode with values', () {
-    final NullFieldsSearchReply reply = NullFieldsSearchReply.decode(<dynamic>[
-      'result',
-      'error',
-      <int>[1, 2, 3],
-      <dynamic>[
-        'query',
-        1,
-      ],
-      NullFieldsSearchReplyType.success.index,
-    ]);
+    final NullFieldsSearchReply reply =
+        NullFieldsSearchReply.decode(NullFieldsSearchReply(
+      result: 'result',
+      error: 'error',
+      indices: <int>[1, 2, 3],
+      request: NullFieldsSearchRequest(
+        query: 'query',
+        identifier: 1,
+      ),
+      type: NullFieldsSearchReplyType.success,
+    ).encode());
 
     expect(reply.result, 'result');
     expect(reply.error, 'error');
@@ -118,11 +119,13 @@ void main() {
   });
 
   test('test reply encode with values', () {
+    final NullFieldsSearchRequest request =
+        NullFieldsSearchRequest(query: 'query', identifier: 1);
     final NullFieldsSearchReply reply = NullFieldsSearchReply(
       result: 'result',
       error: 'error',
       indices: <int>[1, 2, 3],
-      request: NullFieldsSearchRequest(query: 'query', identifier: 1),
+      request: request,
       type: NullFieldsSearchReplyType.success,
     );
 
@@ -130,10 +133,7 @@ void main() {
       'result',
       'error',
       <int>[1, 2, 3],
-      <Object?>[
-        'query',
-        1,
-      ],
+      request,
       NullFieldsSearchReplyType.success.index,
     ]);
   });

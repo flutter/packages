@@ -1,3 +1,7 @@
+## 6.3.0
+
+* Adds Swift Package Manager compatibility.
+
 ## 6.2.5
 
 * Adds explicit imports for UIKit.

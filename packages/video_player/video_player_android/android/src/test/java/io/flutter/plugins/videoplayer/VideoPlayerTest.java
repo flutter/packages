@@ -8,7 +8,6 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
@@ -38,7 +37,7 @@ import org.robolectric.RobolectricTestRunner;
 public class VideoPlayerTest {
   private ExoPlayer fakeExoPlayer;
   private EventChannel fakeEventChannel;
-  private TextureRegistry.SurfaceTextureEntry fakeSurfaceTextureEntry;
+  private TextureRegistry.SurfaceProducer fakeSurfaceProducer;
   private VideoPlayerOptions fakeVideoPlayerOptions;
   private QueuingEventSink fakeEventSink;
   private DefaultHttpDataSource.Factory httpDataSourceFactorySpy;
@@ -51,7 +50,7 @@ public class VideoPlayerTest {
 
     fakeExoPlayer = mock(ExoPlayer.class);
     fakeEventChannel = mock(EventChannel.class);
-    fakeSurfaceTextureEntry = mock(TextureRegistry.SurfaceTextureEntry.class);
+    fakeSurfaceProducer = mock(TextureRegistry.SurfaceProducer.class);
     fakeVideoPlayerOptions = mock(VideoPlayerOptions.class);
     fakeEventSink = mock(QueuingEventSink.class);
     httpDataSourceFactorySpy = spy(new DefaultHttpDataSource.Factory());
@@ -63,7 +62,7 @@ public class VideoPlayerTest {
         new VideoPlayer(
             fakeExoPlayer,
             fakeEventChannel,
-            fakeSurfaceTextureEntry,
+            fakeSurfaceProducer,
             fakeVideoPlayerOptions,
             fakeEventSink,
             httpDataSourceFactorySpy);
@@ -82,7 +81,7 @@ public class VideoPlayerTest {
         new VideoPlayer(
             fakeExoPlayer,
             fakeEventChannel,
-            fakeSurfaceTextureEntry,
+            fakeSurfaceProducer,
             fakeVideoPlayerOptions,
             fakeEventSink,
             httpDataSourceFactorySpy);
@@ -108,7 +107,7 @@ public class VideoPlayerTest {
         new VideoPlayer(
             fakeExoPlayer,
             fakeEventChannel,
-            fakeSurfaceTextureEntry,
+            fakeSurfaceProducer,
             fakeVideoPlayerOptions,
             fakeEventSink,
             httpDataSourceFactorySpy);
@@ -132,7 +131,7 @@ public class VideoPlayerTest {
         new VideoPlayer(
             fakeExoPlayer,
             fakeEventChannel,
-            fakeSurfaceTextureEntry,
+            fakeSurfaceProducer,
             fakeVideoPlayerOptions,
             fakeEventSink,
             httpDataSourceFactorySpy);
@@ -161,7 +160,7 @@ public class VideoPlayerTest {
         new VideoPlayer(
             fakeExoPlayer,
             fakeEventChannel,
-            fakeSurfaceTextureEntry,
+            fakeSurfaceProducer,
             fakeVideoPlayerOptions,
             fakeEventSink,
             httpDataSourceFactorySpy);
@@ -190,7 +189,7 @@ public class VideoPlayerTest {
         new VideoPlayer(
             fakeExoPlayer,
             fakeEventChannel,
-            fakeSurfaceTextureEntry,
+            fakeSurfaceProducer,
             fakeVideoPlayerOptions,
             fakeEventSink,
             httpDataSourceFactorySpy);
@@ -219,7 +218,7 @@ public class VideoPlayerTest {
         new VideoPlayer(
             fakeExoPlayer,
             fakeEventChannel,
-            fakeSurfaceTextureEntry,
+            fakeSurfaceProducer,
             fakeVideoPlayerOptions,
             fakeEventSink,
             httpDataSourceFactorySpy);
@@ -248,7 +247,7 @@ public class VideoPlayerTest {
         new VideoPlayer(
             fakeExoPlayer,
             fakeEventChannel,
-            fakeSurfaceTextureEntry,
+            fakeSurfaceProducer,
             fakeVideoPlayerOptions,
             fakeEventSink,
             httpDataSourceFactorySpy);
@@ -293,7 +292,7 @@ public class VideoPlayerTest {
         new VideoPlayer(
             fakeExoPlayer,
             fakeEventChannel,
-            fakeSurfaceTextureEntry,
+            fakeSurfaceProducer,
             fakeVideoPlayerOptions,
             fakeEventSink,
             httpDataSourceFactorySpy);

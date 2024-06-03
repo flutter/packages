@@ -575,11 +575,7 @@ void main() {
     expect(code, contains('public static final class Outer'));
     expect(code, contains('public static final class Nested'));
     expect(code, contains('private @Nullable Nested nested;'));
-    expect(
-        code,
-        contains(
-            '(nested == null) ? null : Nested.fromList((ArrayList<Object>) nested)'));
-    expect(code, contains('add((nested == null) ? null : nested.toList());'));
+    expect(code, contains('add(nested);'));
   });
 
   test('gen one async Host Api', () {

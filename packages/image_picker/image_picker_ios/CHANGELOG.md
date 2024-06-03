@@ -1,3 +1,27 @@
+## 0.8.12
+
+* Re-adds Swift Package Manager compatibility.
+
+## 0.8.11+2
+
+* Temporarily remove Swift Package Manager compatibility to resolve issues with Cocoapods builds.
+
+## 0.8.11+1
+
+* Makes all headers public with Swift Package Manager integration to keep inline with CocoaPods.
+
+## 0.8.11
+
+* Adds Swift Package Manager compatibility.
+
+## 0.8.10+1
+
+* Fixes a possible crash when calling a picker method UIGraphicsImageRenderer if imageToScale is nil.
+
+## 0.8.10
+
+* Adds limit parameter to `MediaOptions` and `MultiImagePickerOptions` that sets a limit to how many media or image items can be selected.
+
 ## 0.8.9+2
 
 * Updates minimum iOS version to 12.0 and minimum Flutter version to 3.16.6.

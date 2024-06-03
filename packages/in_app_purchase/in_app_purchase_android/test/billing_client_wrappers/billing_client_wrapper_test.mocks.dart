@@ -308,7 +308,7 @@ class MockInAppPurchaseApi extends _i1.Mock implements _i2.InAppPurchaseApi {
 
   @override
   _i3.Future<_i2.PlatformProductDetailsResponse> queryProductDetailsAsync(
-          List<_i2.PlatformProduct?>? products) =>
+          List<_i2.PlatformQueryProduct?>? products) =>
       (super.noSuchMethod(
         Invocation.method(
           #queryProductDetailsAsync,
