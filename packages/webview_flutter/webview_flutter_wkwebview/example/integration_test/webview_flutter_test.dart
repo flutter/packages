@@ -659,7 +659,10 @@ Future<void> main() async {
           await controller.runJavaScriptReturningResult('isPaused();') as bool;
       expect(isPaused, true);
     });
-  });
+  },
+      // OGG playback is not supported on macOS, so the test data would need
+      // to be changed to support macOS.
+      skip: Platform.isMacOS);
 
   testWidgets('getTitle', (WidgetTester tester) async {
     const String getTitleTest = '''
