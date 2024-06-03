@@ -75,12 +75,12 @@ class WebLinkDelegateState extends State<WebLinkDelegate> {
   late LinkViewController _controller;
 
   @visibleForTesting
-  late final String semanticIdentifier;
+  late final String semanticsIdentifier;
 
   @override
   void initState() {
     super.initState();
-    semanticIdentifier = 'sem-id-${_nextSemanticsIdentifier++}';
+    semanticsIdentifier = 'sem-id-${_nextSemanticsIdentifier++}';
   }
 
   @override
@@ -106,7 +106,7 @@ class WebLinkDelegateState extends State<WebLinkDelegate> {
       children: <Widget>[
         Semantics(
           link: true,
-          identifier: semanticIdentifier,
+          identifier: semanticsIdentifier,
           value: widget.link.uri?.getHref(),
           child: widget.link.builder(
             context,
@@ -119,7 +119,7 @@ class WebLinkDelegateState extends State<WebLinkDelegate> {
               child: PlatformViewLink(
                 viewType: linkViewType,
                 onCreatePlatformView: (PlatformViewCreationParams params) {
-                  _controller = LinkViewController.fromParams(params, semanticIdentifier);
+                  _controller = LinkViewController.fromParams(params, semanticsIdentifier);
                   return _controller
                     ..setUri(widget.link.uri)
                     ..setTarget(widget.link.target);
@@ -229,24 +229,24 @@ class LinkTriggerSignals {
 /// Controls link views.
 class LinkViewController extends PlatformViewController {
   /// Creates a [LinkViewController] instance with the unique [viewId].
-  LinkViewController(this.viewId, this._semanticIdentifier) {
+  LinkViewController(this.viewId, this._semanticsIdentifier) {
     if (_instancesByViewId.isEmpty) {
       // This is the first controller being created, attach the global click
       // listener.
       _attachGlobalListeners();
     }
     _instancesByViewId[viewId] = this;
-    _instancesBySemanticIdentifier[_semanticIdentifier] = this;
+    _instancesBySemanticsIdentifier[_semanticsIdentifier] = this;
   }
 
   /// Creates and initializes a [LinkViewController] instance with the given
   /// platform view [params].
   factory LinkViewController.fromParams(
     PlatformViewCreationParams params,
-    String semanticIdentifier,
+    String semanticsIdentifier,
   ) {
     final int viewId = params.id;
-    final LinkViewController controller = LinkViewController(viewId, semanticIdentifier);
+    final LinkViewController controller = LinkViewController(viewId, semanticsIdentifier);
     controller._initialize().then((_) {
       /// Because _initialize is async, it can happen that [LinkViewController.dispose]
       /// may get called before this `then` callback.
@@ -261,7 +261,7 @@ class LinkViewController extends PlatformViewController {
 
   static final Map<int, LinkViewController> _instancesByViewId =
       <int, LinkViewController>{};
-  static final Map<String, LinkViewController> _instancesBySemanticIdentifier =
+  static final Map<String, LinkViewController> _instancesBySemanticsIdentifier =
       <String, LinkViewController>{};
 
   static html.Element _viewFactory(int viewId) {
@@ -379,7 +379,7 @@ class LinkViewController extends PlatformViewController {
     // We only want to handle clicks that land on *our* links, whether that's a
     // platform view link or a semantics link.
     final int? viewIdFromTarget = _getViewIdFromLink(target) ??
-        _getViewIdFromSemanticLink(target);
+        _getViewIdFromSemanticsLink(target);
 
     if (viewIdFromTarget == null) {
       // The click target was not one of our links, so we don't want to
@@ -434,7 +434,7 @@ class LinkViewController extends PlatformViewController {
   @override
   final int viewId;
 
-  final String _semanticIdentifier;
+  final String _semanticsIdentifier;
 
   late html.HTMLElement _element;
 
@@ -540,30 +540,30 @@ class LinkViewController extends PlatformViewController {
   /// Finds the view ID in the Link's semantic element.
   ///
   /// Returns null if [target] is not a semantics element for one of our Links.
-  static int? _getViewIdFromSemanticLink(html.Element? target) {
+  static int? _getViewIdFromSemanticsLink(html.Element? target) {
     if (target == null) {
       return null;
     }
-    if (!_isWithinSemanticTree(target)) {
+    if (!_isWithinSemanticsTree(target)) {
       return null;
     }
 
-    final html.Element? semanticLink = _getClosestSemanticLink(target);
-    if (semanticLink == null) {
+    final html.Element? semanticsLink = _getClosestSemanticsLink(target);
+    if (semanticsLink == null) {
       return null;
     }
 
-    final String? semanticIdentifier = semanticLink.getAttribute('semantic-identifier');
-    if (semanticIdentifier == null) {
+    final String? semanticsIdentifier = semanticsLink.getAttribute('semantic-identifier');
+    if (semanticsIdentifier == null) {
       return null;
     }
 
-    final LinkViewController? controller = _instancesBySemanticIdentifier[semanticIdentifier];
+    final LinkViewController? controller = _instancesBySemanticsIdentifier[semanticsIdentifier];
     if (controller == null) {
       return null;
     }
 
-    semanticLink.setAttribute('target', controller._htmlTargetAttribute);
+    semanticsLink.setAttribute('target', controller._htmlTargetAttribute);
     return controller.viewId;
   }
 
@@ -582,10 +582,10 @@ class LinkViewController extends PlatformViewController {
   @override
   Future<void> dispose() async {
     assert(_instancesByViewId[viewId] == this);
-    assert(_instancesBySemanticIdentifier[_semanticIdentifier] == this);
+    assert(_instancesBySemanticsIdentifier[_semanticsIdentifier] == this);
 
     _instancesByViewId.remove(viewId);
-    _instancesBySemanticIdentifier.remove(_semanticIdentifier);
+    _instancesBySemanticsIdentifier.remove(_semanticsIdentifier);
 
     if (_instancesByViewId.isEmpty) {
       _detachGlobalListeners();
@@ -613,16 +613,16 @@ int? _getViewIdFromLink(html.Element? target) {
   return null;
 }
 
-/// Whether [element] is within the semantic tree of a Flutter View.
-bool _isWithinSemanticTree(html.Element element) {
+/// Whether [element] is within the semantics tree of a Flutter View.
+bool _isWithinSemanticsTree(html.Element element) {
   return element.closest('flt-semantics-host') != null;
 }
 
-/// Returns the closest semantic link ancestor of the given [element].
+/// Returns the closest semantics link ancestor of the given [element].
 ///
 /// If [element] itself is a link, it is returned.
-html.Element? _getClosestSemanticLink(html.Element element) {
-  assert(_isWithinSemanticTree(element));
+html.Element? _getClosestSemanticsLink(html.Element element) {
+  assert(_isWithinSemanticsTree(element));
   return element.closest('a[id^="flt-semantic-node-"]');
 }
 

@@ -839,7 +839,7 @@ void main() {
 
       final Finder linkFinder = find.byKey(linkKey);
       final WebLinkDelegateState linkState = tester.state<WebLinkDelegateState>(linkFinder);
-      final String semanticIdentifier = linkState.semanticIdentifier;
+      final String semanticsIdentifier = linkState.semanticsIdentifier;
       expect(
         tester.getSemantics(find.descendant(
           of: linkFinder,
@@ -847,7 +847,7 @@ void main() {
         )),
         matchesSemantics(
           isLink: true,
-          identifier: 'sem-id-$semanticIdentifier',
+          identifier: 'sem-id-$semanticsIdentifier',
           value: 'https://foobar/example?q=1',
           children: <Matcher>[
             matchesSemantics(
@@ -889,7 +889,7 @@ void main() {
 
       final Finder linkFinder = find.byKey(linkKey);
       final WebLinkDelegateState linkState = tester.state<WebLinkDelegateState>(linkFinder);
-      final String semanticIdentifier = linkState.semanticIdentifier;
+      final String semanticsIdentifier = linkState.semanticsIdentifier;
       expect(
         tester.getSemantics(find.descendant(
           of: linkFinder,
@@ -898,7 +898,7 @@ void main() {
         matchesSemantics(
           isLink: true,
           hasTapAction: true,
-          identifier: 'sem-id-$semanticIdentifier',
+          identifier: 'sem-id-$semanticsIdentifier',
           value: 'https://foobar/example?q=1',
           label: 'Link Text',
         ),
@@ -934,13 +934,13 @@ void main() {
       final WebLinkDelegateState linkState = tester.state<WebLinkDelegateState>(
         find.byType(WebLinkDelegate),
       );
-      final String semanticIdentifier = linkState.semanticIdentifier;
+      final String semanticsIdentifier = linkState.semanticsIdentifier;
 
       final html.Element semanticsHost = html.document.createElement('flt-semantics-host');
       html.document.body!.append(semanticsHost);
       final html.Element semanticsAnchor = html.document.createElement('a')
         ..setAttribute('id', 'flt-semantic-node-99')
-        ..setAttribute('semantic-identifier', semanticIdentifier)
+        ..setAttribute('semantic-identifier', semanticsIdentifier)
         ..setAttribute('href', '/foobar');
       semanticsHost.append(semanticsAnchor);
       final html.Element semanticsContainer = html.document.createElement('flt-semantics-container');
@@ -1002,13 +1002,13 @@ void main() {
       final WebLinkDelegateState linkState = tester.state<WebLinkDelegateState>(
         find.byType(WebLinkDelegate),
       );
-      final String semanticIdentifier = linkState.semanticIdentifier;
+      final String semanticsIdentifier = linkState.semanticsIdentifier;
 
       final html.Element semanticsHost = html.document.createElement('flt-semantics-host');
       html.document.body!.append(semanticsHost);
       final html.Element semanticsAnchor = html.document.createElement('a')
         ..setAttribute('id', 'flt-semantic-node-99')
-        ..setAttribute('semantic-identifier', semanticIdentifier)
+        ..setAttribute('semantic-identifier', semanticsIdentifier)
         ..setAttribute('href', '/foobar')
         ..textContent = 'My Text Link';
       semanticsHost.append(semanticsAnchor);
