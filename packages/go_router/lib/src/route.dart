@@ -62,8 +62,6 @@ typedef NavigatorBuilder = Widget Function(
     RouteMatchList matchList,
     List<NavigatorObserver>? observers,
     String? restorationScopeId);
-// typedef NavigatorBuilder = Widget Function(
-//     List<NavigatorObserver>? observers, String? restorationScopeId);
 
 /// Signature for function used in [RouteBase.onExit].
 ///
@@ -1052,10 +1050,9 @@ class StatefulShellBranch {
   /// (see [initialLocation]).
   ///
   /// *Note:* The primary purpose of branch preloading is to enhance the user
-  /// experience when switching branches, which might for instance involve
-  /// preparing the UI for animated transitions etc. Care must be taken to
-  /// **keep the preloading to an absolute minimum** to avoid any unnecessary
-  /// resource use.
+  /// experience when switching branches. As with all preloading, there is a
+  /// cost in terms of resource use. **Use sparingly** and only after a thorough
+  /// trade-off analysis.
   final bool preload;
 
   /// The default route of this branch, i.e. the first descendant [GoRoute].
@@ -1147,8 +1144,8 @@ class StatefulNavigationShell extends StatefulWidget {
   /// in the associated [StatefulShellRoute].
   ///
   /// The effective initial location is either the
-  /// [StackedShellBranch.initialLocation], if specified, or the location of the
-  /// [StackedShellBranch.defaultRoute].
+  /// [StatefulShellBranch.initialLocation], if specified, or the location of the
+  /// [StatefulShellBranch.defaultRoute].
   String _effectiveInitialBranchLocation(int index) {
     final StatefulShellRoute route =
         shellRouteContext.route as StatefulShellRoute;
@@ -1290,27 +1287,26 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell>
   void _preloadBranches() {
     for (int i = 0; i < route.branches.length; i++) {
       final StatefulShellBranch branch = route.branches[i];
-      if (i != widget.currentIndex &&
-          branch.preload &&
-          !_isBranchLoaded(branch)) {
+      if (i != currentIndex && branch.preload && !_isBranchLoaded(branch)) {
+        // Find the match for the current StatefulShellRoute in matchList
+        // returned by _effectiveInitialBranchLocation (the initial location
+        // should already have been validated by RouteConfiguration).
         final RouteMatchList matchList = _router.configuration
             .findMatch(widget._effectiveInitialBranchLocation(i));
-
         ShellRouteMatch? match;
         matchList.visitRouteMatches((RouteMatchBase e) {
-          if (e is ShellRouteMatch && e.route == widget.route) {
-            match = e;
-            return false;
-          }
-          return true;
+          match = e is ShellRouteMatch && e.route == route ? e : match;
+          return match == null;
         });
+        assert(match != null);
 
         final Widget navigator = widget.shellRouteContext.navigatorBuilder(
-            branch.navigatorKey,
-            match!,
-            matchList,
-            branch.observers,
-            branch.restorationScopeId);
+          branch.navigatorKey,
+          match!,
+          matchList,
+          branch.observers,
+          branch.restorationScopeId,
+        );
 
         _branchLocation(branch, false).value = matchList;
         _branchNavigators[branch.navigatorKey] = navigator;

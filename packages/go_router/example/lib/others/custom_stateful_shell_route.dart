@@ -88,7 +88,7 @@ class NestedTabNavigationExampleApp extends StatelessWidget {
           StatefulShellBranch(
             navigatorKey: _tabBNavigatorKey,
             // To enable preloading of the initial locations of branches, pass
-            // 'true' for the parameter preload.
+            // `true` for the parameter `preload` (`false` is default).
             preload: true,
             // StatefulShellBranch will automatically use the first descendant
             // GoRoute as the initial location of the branch. If another route
@@ -127,7 +127,7 @@ class NestedTabNavigationExampleApp extends StatelessWidget {
                   StatefulShellBranch(
                       navigatorKey: _tabB2NavigatorKey,
                       // To enable preloading for all nested branches, set
-                      // preload to 'true'.
+                      // `preload` to `true` (`false` is default).
                       preload: true,
                       routes: <GoRoute>[
                         GoRoute(
