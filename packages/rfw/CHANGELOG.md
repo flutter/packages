@@ -1,3 +1,7 @@
+## 1.0.28
+
+* Updates documentation to WidgetStateProperty and ButtonBar.
+
 ## 1.0.27
 * Adds support for `DecorationImage.filterQuality`.
 

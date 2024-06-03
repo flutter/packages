@@ -68,22 +68,6 @@ public class LocalAuthPlugin implements FlutterPlugin, ActivityAware, LocalAuthA
       };
 
   /**
-   * Registers a plugin with the v1 embedding api {@code io.flutter.plugin.common}.
-   *
-   * <p>Calling this will register the plugin with the passed registrar. However, plugins
-   * initialized this way won't react to changes in activity or context.
-   *
-   * @param registrar provides access to necessary plugin context.
-   */
-  @SuppressWarnings("deprecation")
-  public static void registerWith(@NonNull PluginRegistry.Registrar registrar) {
-    final LocalAuthPlugin plugin = new LocalAuthPlugin();
-    plugin.activity = registrar.activity();
-    LocalAuthApi.setup(registrar.messenger(), plugin);
-    registrar.addActivityResultListener(plugin.resultListener);
-  }
-
-  /**
    * Default constructor for LocalAuthPlugin.
    *
    * <p>Use this constructor when adding this plugin to an app with v2 embedding.
