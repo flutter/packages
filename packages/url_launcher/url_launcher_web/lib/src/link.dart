@@ -38,10 +38,12 @@ Future<ByteData> Function(String) pushRouteToFrameworkFunction =
 /// It uses a platform view to render an anchor element in the DOM.
 class WebLinkDelegate extends StatefulWidget {
   /// Creates a delegate for the given [link].
-  const WebLinkDelegate(this.link, {super.key});
+  const WebLinkDelegate(this.link, {super.key, this.semanticsIdentifier});
 
   /// Information about the link built by the app.
   final LinkInfo link;
+
+  final String? semanticsIdentifier;
 
   @override
   WebLinkDelegateState createState() => WebLinkDelegateState();
@@ -74,13 +76,13 @@ int _nextSemanticsIdentifier = 0;
 class WebLinkDelegateState extends State<WebLinkDelegate> {
   late LinkViewController _controller;
 
-  @visibleForTesting
-  late final String semanticsIdentifier;
+  late final String _semanticsIdentifier;
 
   @override
   void initState() {
     super.initState();
-    semanticsIdentifier = 'sem-id-${_nextSemanticsIdentifier++}';
+    _semanticsIdentifier =
+        widget.semanticsIdentifier ?? 'link-${_nextSemanticsIdentifier++}';
   }
 
   @override
@@ -106,7 +108,7 @@ class WebLinkDelegateState extends State<WebLinkDelegate> {
       children: <Widget>[
         Semantics(
           link: true,
-          identifier: semanticsIdentifier,
+          identifier: _semanticsIdentifier,
           value: widget.link.uri?.getHref(),
           child: widget.link.builder(
             context,
@@ -119,7 +121,7 @@ class WebLinkDelegateState extends State<WebLinkDelegate> {
               child: PlatformViewLink(
                 viewType: linkViewType,
                 onCreatePlatformView: (PlatformViewCreationParams params) {
-                  _controller = LinkViewController.fromParams(params, semanticsIdentifier);
+                  _controller = LinkViewController.fromParams(params, _semanticsIdentifier);
                   return _controller
                     ..setUri(widget.link.uri)
                     ..setTarget(widget.link.target);

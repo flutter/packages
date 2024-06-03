@@ -824,6 +824,7 @@ void main() {
         textDirection: TextDirection.ltr,
         child: WebLinkDelegate(
           key: linkKey,
+          semanticsIdentifier: 'test-link-12',
           TestLinkInfo(
             uri: Uri.parse('https://foobar/example?q=1'),
             target: LinkTarget.blank,
@@ -838,8 +839,6 @@ void main() {
       ));
 
       final Finder linkFinder = find.byKey(linkKey);
-      final WebLinkDelegateState linkState = tester.state<WebLinkDelegateState>(linkFinder);
-      final String semanticsIdentifier = linkState.semanticsIdentifier;
       expect(
         tester.getSemantics(find.descendant(
           of: linkFinder,
@@ -847,7 +846,7 @@ void main() {
         )),
         matchesSemantics(
           isLink: true,
-          identifier: 'sem-id-$semanticsIdentifier',
+          identifier: 'test-link-12',
           value: 'https://foobar/example?q=1',
           children: <Matcher>[
             matchesSemantics(
@@ -874,6 +873,7 @@ void main() {
         textDirection: TextDirection.ltr,
         child: WebLinkDelegate(
           key: linkKey,
+          semanticsIdentifier: 'test-link-43',
           TestLinkInfo(
             uri: Uri.parse('https://foobar/example?q=1'),
             target: LinkTarget.blank,
@@ -888,8 +888,6 @@ void main() {
       ));
 
       final Finder linkFinder = find.byKey(linkKey);
-      final WebLinkDelegateState linkState = tester.state<WebLinkDelegateState>(linkFinder);
-      final String semanticsIdentifier = linkState.semanticsIdentifier;
       expect(
         tester.getSemantics(find.descendant(
           of: linkFinder,
@@ -898,7 +896,7 @@ void main() {
         matchesSemantics(
           isLink: true,
           hasTapAction: true,
-          identifier: 'sem-id-$semanticsIdentifier',
+          identifier: 'test-link-43',
           value: 'https://foobar/example?q=1',
           label: 'Link Text',
         ),
@@ -916,31 +914,29 @@ void main() {
         routes: <String, WidgetBuilder>{
           '/foobar': (BuildContext context) => const Text('Internal route'),
         },
-        home: WebLinkDelegate(TestLinkInfo(
-          uri: uri,
-          target: LinkTarget.blank,
-          builder: (BuildContext context, FollowLink? followLink) {
-            followLinkCallback = followLink;
-            return ElevatedButton(
-              onPressed: () {},
-              child: const Text('My Button Link'),
-            );
-          },
-        )),
+        home: WebLinkDelegate(
+          semanticsIdentifier: 'test-link-27',
+          TestLinkInfo(
+            uri: uri,
+            target: LinkTarget.blank,
+            builder: (BuildContext context, FollowLink? followLink) {
+              followLinkCallback = followLink;
+              return ElevatedButton(
+                onPressed: () {},
+                child: const Text('My Button Link'),
+              );
+            },
+          ),
+        ),
       ));
       // Platform view creation happens asynchronously.
       await tester.pumpAndSettle();
-
-      final WebLinkDelegateState linkState = tester.state<WebLinkDelegateState>(
-        find.byType(WebLinkDelegate),
-      );
-      final String semanticsIdentifier = linkState.semanticsIdentifier;
 
       final html.Element semanticsHost = html.document.createElement('flt-semantics-host');
       html.document.body!.append(semanticsHost);
       final html.Element semanticsAnchor = html.document.createElement('a')
         ..setAttribute('id', 'flt-semantic-node-99')
-        ..setAttribute('semantic-identifier', semanticsIdentifier)
+        ..setAttribute('semantic-identifier', 'test-link-27')
         ..setAttribute('href', '/foobar');
       semanticsHost.append(semanticsAnchor);
       final html.Element semanticsContainer = html.document.createElement('flt-semantics-container');
@@ -984,31 +980,29 @@ void main() {
         routes: <String, WidgetBuilder>{
           '/foobar': (BuildContext context) => const Text('Internal route'),
         },
-        home: WebLinkDelegate(TestLinkInfo(
-          uri: uri,
-          target: LinkTarget.blank,
-          builder: (BuildContext context, FollowLink? followLink) {
-            followLinkCallback = followLink;
-            return GestureDetector(
-              onTap: () {},
-              child: const Text('My Link'),
-            );
-          },
-        )),
+        home: WebLinkDelegate(
+          semanticsIdentifier: 'test-link-71',
+          TestLinkInfo(
+            uri: uri,
+            target: LinkTarget.blank,
+            builder: (BuildContext context, FollowLink? followLink) {
+              followLinkCallback = followLink;
+              return GestureDetector(
+                onTap: () {},
+                child: const Text('My Link'),
+              );
+            },
+          ),
+        ),
       ));
       // Platform view creation happens asynchronously.
       await tester.pumpAndSettle();
-
-      final WebLinkDelegateState linkState = tester.state<WebLinkDelegateState>(
-        find.byType(WebLinkDelegate),
-      );
-      final String semanticsIdentifier = linkState.semanticsIdentifier;
 
       final html.Element semanticsHost = html.document.createElement('flt-semantics-host');
       html.document.body!.append(semanticsHost);
       final html.Element semanticsAnchor = html.document.createElement('a')
         ..setAttribute('id', 'flt-semantic-node-99')
-        ..setAttribute('semantic-identifier', semanticsIdentifier)
+        ..setAttribute('semantic-identifier', 'test-link-71')
         ..setAttribute('href', '/foobar')
         ..textContent = 'My Text Link';
       semanticsHost.append(semanticsAnchor);
