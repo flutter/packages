@@ -583,7 +583,7 @@ class PubspecCheckCommand extends PackageLoopingCommand {
         '''
 The following unexpected non-local dependencies were found:
 ${badDependencies.map((String name) => '  $name').join('\n')}
-Please see https://github.com/flutter/flutter/wiki/Contributing-to-Plugins-and-Packages#Dependencies
+Please see https://github.com/flutter/flutter/blob/master/docs/ecosystem/contributing/README.md#Dependencies
 for more information and next steps.
 ''',
       if (misplacedDevDependencies.isNotEmpty)
