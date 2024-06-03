@@ -96,6 +96,9 @@ enum AdErrorCode {
 
   /// There was an error playing the video ad.
   videoPlayError,
+
+  /// The error code is not recognized by this wrapper.
+  unknown,
 }
 
 /// Specifies when the error was encountered, during either ad loading or playback.

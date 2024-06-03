@@ -79,6 +79,7 @@ extension NativeAdErrorCodeConverter on ima.AdErrorCode {
       ima.AdErrorCode.vastTooManyRedirects => AdErrorCode.vastTooManyRedirects,
       ima.AdErrorCode.vastTraffickingError => AdErrorCode.vastTraffickingError,
       ima.AdErrorCode.videoPlayError => AdErrorCode.videoPlayError,
+      ima.AdErrorCode.unknown => AdErrorCode.unknownError,
     };
   }
 }

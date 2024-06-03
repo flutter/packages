@@ -39,6 +39,7 @@ class AdErrorProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) :
       AdError.AdErrorCode.INVALID_ARGUMENTS -> AdErrorCode.INVALID_ARGUMENTS
       AdError.AdErrorCode.PLAYLIST_NO_CONTENT_TRACKING -> AdErrorCode.PLAYLIST_NO_CONTENT_TRACKING
       AdError.AdErrorCode.UNEXPECTED_ADS_LOADED_EVENT -> AdErrorCode.UNEXPECTED_ADS_LOADED_EVENT
+      else -> AdErrorCode.UNKNOWN
     }
   }
 

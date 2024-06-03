@@ -303,10 +303,11 @@ private class PigeonInstanceManagerApi(val binaryMessenger: BinaryMessenger) {
                 codec)
         if (instanceManager != null) {
           channel.setMessageHandler { message, reply ->
-            val identifier = message as Number
+            val args = message as List<Any?>
+            val identifierArg = args[0].let { num -> if (num is Int) num.toLong() else num as Long }
             val wrapped: List<Any?> =
                 try {
-                  instanceManager.remove<Any?>(identifier.toLong())
+                  instanceManager.remove<Any?>(identifierArg)
                   listOf<Any?>(null)
                 } catch (exception: Throwable) {
                   wrapError(exception)
@@ -341,11 +342,11 @@ private class PigeonInstanceManagerApi(val binaryMessenger: BinaryMessenger) {
     }
   }
 
-  fun removeStrongReference(identifier: Long, callback: (Result<Unit>) -> Unit) {
+  fun removeStrongReference(identifierArg: Long, callback: (Result<Unit>) -> Unit) {
     val channelName =
         "dev.flutter.pigeon.interactive_media_ads.PigeonInstanceManagerApi.removeStrongReference"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
-    channel.send(identifier) {
+    channel.send(listOf(identifierArg)) {
       if (it is List<*>) {
         if (it.size > 1) {
           callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
@@ -358,7 +359,6 @@ private class PigeonInstanceManagerApi(val binaryMessenger: BinaryMessenger) {
     }
   }
 }
-
 /**
  * Provides implementations for each ProxyApi implementation and provides access to resources needed
  * by any implementation.
@@ -395,13 +395,17 @@ abstract class PigeonProxyApiRegistrar(val binaryMessenger: BinaryMessenger) {
    * An implementation of [PigeonApiBaseDisplayContainer] used to add a new Dart instance of
    * `BaseDisplayContainer` to the Dart `InstanceManager`.
    */
-  abstract fun getPigeonApiBaseDisplayContainer(): PigeonApiBaseDisplayContainer
+  open fun getPigeonApiBaseDisplayContainer(): PigeonApiBaseDisplayContainer {
+    return PigeonApiBaseDisplayContainer(this)
+  }
 
   /**
    * An implementation of [PigeonApiAdDisplayContainer] used to add a new Dart instance of
    * `AdDisplayContainer` to the Dart `InstanceManager`.
    */
-  abstract fun getPigeonApiAdDisplayContainer(): PigeonApiAdDisplayContainer
+  open fun getPigeonApiAdDisplayContainer(): PigeonApiAdDisplayContainer {
+    return PigeonApiAdDisplayContainer(this)
+  }
 
   /**
    * An implementation of [PigeonApiAdsLoader] used to add a new Dart instance of `AdsLoader` to the
@@ -437,7 +441,9 @@ abstract class PigeonProxyApiRegistrar(val binaryMessenger: BinaryMessenger) {
    * An implementation of [PigeonApiContentProgressProvider] used to add a new Dart instance of
    * `ContentProgressProvider` to the Dart `InstanceManager`.
    */
-  abstract fun getPigeonApiContentProgressProvider(): PigeonApiContentProgressProvider
+  open fun getPigeonApiContentProgressProvider(): PigeonApiContentProgressProvider {
+    return PigeonApiContentProgressProvider(this)
+  }
 
   /**
    * An implementation of [PigeonApiAdsManager] used to add a new Dart instance of `AdsManager` to
@@ -467,7 +473,9 @@ abstract class PigeonProxyApiRegistrar(val binaryMessenger: BinaryMessenger) {
    * An implementation of [PigeonApiImaSdkSettings] used to add a new Dart instance of
    * `ImaSdkSettings` to the Dart `InstanceManager`.
    */
-  abstract fun getPigeonApiImaSdkSettings(): PigeonApiImaSdkSettings
+  open fun getPigeonApiImaSdkSettings(): PigeonApiImaSdkSettings {
+    return PigeonApiImaSdkSettings(this)
+  }
 
   /**
    * An implementation of [PigeonApiVideoProgressUpdate] used to add a new Dart instance of
@@ -509,7 +517,9 @@ abstract class PigeonProxyApiRegistrar(val binaryMessenger: BinaryMessenger) {
    * An implementation of [PigeonApiView] used to add a new Dart instance of `View` to the Dart
    * `InstanceManager`.
    */
-  abstract fun getPigeonApiView(): PigeonApiView
+  open fun getPigeonApiView(): PigeonApiView {
+    return PigeonApiView(this)
+  }
 
   /**
    * An implementation of [PigeonApiMediaPlayer] used to add a new Dart instance of `MediaPlayer` to
@@ -732,7 +742,9 @@ enum class AdErrorCode(val raw: Int) {
    */
   VAST_TRAFFICKING_ERROR(21),
   /** There was an error playing the video ad. */
-  VIDEO_PLAY_ERROR(22);
+  VIDEO_PLAY_ERROR(22),
+  /** The error code is not recognized by this wrapper. */
+  UNKNOWN(23);
 
   companion object {
     fun ofRaw(raw: Int): AdErrorCode? {
@@ -842,7 +854,7 @@ enum class AdEventType(val raw: Int) {
  * https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/BaseDisplayContainer.html.
  */
 @Suppress("UNCHECKED_CAST")
-abstract class PigeonApiBaseDisplayContainer(open val pigeonRegistrar: PigeonProxyApiRegistrar) {
+open class PigeonApiBaseDisplayContainer(open val pigeonRegistrar: PigeonProxyApiRegistrar) {
   @Suppress("LocalVariableName", "FunctionName")
   /** Creates a Dart instance of BaseDisplayContainer and attaches it to [pigeon_instanceArg]. */
   fun pigeon_newInstance(
@@ -880,7 +892,7 @@ abstract class PigeonApiBaseDisplayContainer(open val pigeonRegistrar: PigeonPro
  * https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/AdDisplayContainer.
  */
 @Suppress("UNCHECKED_CAST")
-abstract class PigeonApiAdDisplayContainer(open val pigeonRegistrar: PigeonProxyApiRegistrar) {
+open class PigeonApiAdDisplayContainer(open val pigeonRegistrar: PigeonProxyApiRegistrar) {
   @Suppress("LocalVariableName", "FunctionName")
   /** Creates a Dart instance of AdDisplayContainer and attaches it to [pigeon_instanceArg]. */
   fun pigeon_newInstance(
@@ -1325,7 +1337,7 @@ abstract class PigeonApiAdsRequest(open val pigeonRegistrar: PigeonProxyApiRegis
  * https://developers.google.com/ad-manager/dynamic-ad-insertion/sdk/android/api/reference/com/google/ads/interactivemedia/v3/api/player/ContentProgressProvider.html.
  */
 @Suppress("UNCHECKED_CAST")
-abstract class PigeonApiContentProgressProvider(open val pigeonRegistrar: PigeonProxyApiRegistrar) {
+open class PigeonApiContentProgressProvider(open val pigeonRegistrar: PigeonProxyApiRegistrar) {
   @Suppress("LocalVariableName", "FunctionName")
   /** Creates a Dart instance of ContentProgressProvider and attaches it to [pigeon_instanceArg]. */
   fun pigeon_newInstance(
@@ -1872,7 +1884,7 @@ abstract class PigeonApiImaSdkFactory(open val pigeonRegistrar: PigeonProxyApiRe
  * https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/ImaSdkSettings.html.
  */
 @Suppress("UNCHECKED_CAST")
-abstract class PigeonApiImaSdkSettings(open val pigeonRegistrar: PigeonProxyApiRegistrar) {
+open class PigeonApiImaSdkSettings(open val pigeonRegistrar: PigeonProxyApiRegistrar) {
   @Suppress("LocalVariableName", "FunctionName")
   /** Creates a Dart instance of ImaSdkSettings and attaches it to [pigeon_instanceArg]. */
   fun pigeon_newInstance(
@@ -2484,7 +2496,7 @@ abstract class PigeonApiVideoView(open val pigeonRegistrar: PigeonProxyApiRegist
  * See https://developer.android.com/reference/android/view/View.
  */
 @Suppress("UNCHECKED_CAST")
-abstract class PigeonApiView(open val pigeonRegistrar: PigeonProxyApiRegistrar) {
+open class PigeonApiView(open val pigeonRegistrar: PigeonProxyApiRegistrar) {
   @Suppress("LocalVariableName", "FunctionName")
   /** Creates a Dart instance of View and attaches it to [pigeon_instanceArg]. */
   fun pigeon_newInstance(pigeon_instanceArg: android.view.View, callback: (Result<Unit>) -> Unit) {
