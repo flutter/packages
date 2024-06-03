@@ -18,7 +18,7 @@ InAppWebViewConfiguration convertWebViewConfiguration(
 }
 
 /// Converts an (app-facing) [BrowserConfiguration] to a (platform interface)
-/// [InApp].
+/// [InAppBrowserConfiguration].
 InAppBrowserConfiguration convertBrowserConfiguration(
     BrowserConfiguration config) {
   return InAppBrowserConfiguration(
