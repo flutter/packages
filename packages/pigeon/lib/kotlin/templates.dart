@@ -146,7 +146,7 @@ class $instanceManagerClassName(private val finalizationListener: $_finalization
   }
 
   /**
-   * Stop the periodic run of the [$_finalizationListenerClassName] for instances that have been garbage
+   * Stops the periodic run of the [$_finalizationListenerClassName] for instances that have been garbage
    * collected.
    *
    * The InstanceManager can continue to be used, but the [$_finalizationListenerClassName] will no
