@@ -1,3 +1,7 @@
+## 19.0.1
+
+* [dart] Updates `PigeonInstanceMangerApi` to use the shared api channel code.
+
 ## 19.0.0
 
 * **Breaking Change** [swift] Removes `FlutterError` in favor of `PigeonError`.
