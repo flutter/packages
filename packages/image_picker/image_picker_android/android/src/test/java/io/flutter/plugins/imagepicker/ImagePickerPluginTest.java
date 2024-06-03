@@ -305,14 +305,6 @@ public class ImagePickerPluginTest {
   }
 
   @Test
-  public void onRegister_whenActivityIsNull_shouldNotCrash() {
-    when(mockRegistrar.activity()).thenReturn(null);
-    ImagePickerPlugin.registerWith((mockRegistrar));
-    assertTrue(
-        "No exception thrown when ImagePickerPlugin.registerWith ran with activity = null", true);
-  }
-
-  @Test
   public void onConstructor_whenContextTypeIsActivity_shouldNotCrash() {
     new ImagePickerPlugin(mockImagePickerDelegate, mockActivity);
     assertTrue(

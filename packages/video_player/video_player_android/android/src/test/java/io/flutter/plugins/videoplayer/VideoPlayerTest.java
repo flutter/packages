@@ -13,7 +13,6 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 
-import android.graphics.SurfaceTexture;
 import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.PlaybackException;
@@ -38,8 +37,7 @@ import org.robolectric.RobolectricTestRunner;
 public class VideoPlayerTest {
   private ExoPlayer fakeExoPlayer;
   private EventChannel fakeEventChannel;
-  private TextureRegistry.SurfaceTextureEntry fakeSurfaceTextureEntry;
-  private SurfaceTexture fakeSurfaceTexture;
+  private TextureRegistry.SurfaceProducer fakeSurfaceProducer;
   private VideoPlayerOptions fakeVideoPlayerOptions;
   private QueuingEventSink fakeEventSink;
   private DefaultHttpDataSource.Factory httpDataSourceFactorySpy;
@@ -52,9 +50,7 @@ public class VideoPlayerTest {
 
     fakeExoPlayer = mock(ExoPlayer.class);
     fakeEventChannel = mock(EventChannel.class);
-    fakeSurfaceTextureEntry = mock(TextureRegistry.SurfaceTextureEntry.class);
-    fakeSurfaceTexture = mock(SurfaceTexture.class);
-    when(fakeSurfaceTextureEntry.surfaceTexture()).thenReturn(fakeSurfaceTexture);
+    fakeSurfaceProducer = mock(TextureRegistry.SurfaceProducer.class);
     fakeVideoPlayerOptions = mock(VideoPlayerOptions.class);
     fakeEventSink = mock(QueuingEventSink.class);
     httpDataSourceFactorySpy = spy(new DefaultHttpDataSource.Factory());
@@ -66,7 +62,7 @@ public class VideoPlayerTest {
         new VideoPlayer(
             fakeExoPlayer,
             fakeEventChannel,
-            fakeSurfaceTextureEntry,
+            fakeSurfaceProducer,
             fakeVideoPlayerOptions,
             fakeEventSink,
             httpDataSourceFactorySpy);
@@ -85,7 +81,7 @@ public class VideoPlayerTest {
         new VideoPlayer(
             fakeExoPlayer,
             fakeEventChannel,
-            fakeSurfaceTextureEntry,
+            fakeSurfaceProducer,
             fakeVideoPlayerOptions,
             fakeEventSink,
             httpDataSourceFactorySpy);
@@ -111,7 +107,7 @@ public class VideoPlayerTest {
         new VideoPlayer(
             fakeExoPlayer,
             fakeEventChannel,
-            fakeSurfaceTextureEntry,
+            fakeSurfaceProducer,
             fakeVideoPlayerOptions,
             fakeEventSink,
             httpDataSourceFactorySpy);
@@ -135,7 +131,7 @@ public class VideoPlayerTest {
         new VideoPlayer(
             fakeExoPlayer,
             fakeEventChannel,
-            fakeSurfaceTextureEntry,
+            fakeSurfaceProducer,
             fakeVideoPlayerOptions,
             fakeEventSink,
             httpDataSourceFactorySpy);
@@ -164,7 +160,7 @@ public class VideoPlayerTest {
         new VideoPlayer(
             fakeExoPlayer,
             fakeEventChannel,
-            fakeSurfaceTextureEntry,
+            fakeSurfaceProducer,
             fakeVideoPlayerOptions,
             fakeEventSink,
             httpDataSourceFactorySpy);
@@ -193,7 +189,7 @@ public class VideoPlayerTest {
         new VideoPlayer(
             fakeExoPlayer,
             fakeEventChannel,
-            fakeSurfaceTextureEntry,
+            fakeSurfaceProducer,
             fakeVideoPlayerOptions,
             fakeEventSink,
             httpDataSourceFactorySpy);
@@ -222,7 +218,7 @@ public class VideoPlayerTest {
         new VideoPlayer(
             fakeExoPlayer,
             fakeEventChannel,
-            fakeSurfaceTextureEntry,
+            fakeSurfaceProducer,
             fakeVideoPlayerOptions,
             fakeEventSink,
             httpDataSourceFactorySpy);
@@ -251,7 +247,7 @@ public class VideoPlayerTest {
         new VideoPlayer(
             fakeExoPlayer,
             fakeEventChannel,
-            fakeSurfaceTextureEntry,
+            fakeSurfaceProducer,
             fakeVideoPlayerOptions,
             fakeEventSink,
             httpDataSourceFactorySpy);
@@ -296,7 +292,7 @@ public class VideoPlayerTest {
         new VideoPlayer(
             fakeExoPlayer,
             fakeEventChannel,
-            fakeSurfaceTextureEntry,
+            fakeSurfaceProducer,
             fakeVideoPlayerOptions,
             fakeEventSink,
             httpDataSourceFactorySpy);
