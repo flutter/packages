@@ -152,13 +152,6 @@
   }
 }
 
-/// Extracts an icon image from the iconData array.
-///
-/// @param iconData An array containing the data for the icon image.
-/// @param registrar A Flutter plugin registrar.
-/// @param screenScale Screen scale factor for scaling bitmaps. Must be greater than 0.
-/// @return A UIImage object created from the icon data.
-/// @note Assert unless screenScale is greater than 0.
 - (UIImage *)extractIconFromData:(NSArray *)iconData
                        registrar:(NSObject<FlutterPluginRegistrar> *)registrar
                      screenScale:(CGFloat)screenScale {
@@ -319,7 +312,7 @@
 /// @param scale The factor by which to scale the image.
 /// @return UIImage Returns the scaled UIImage.
 + (UIImage *)scaledImage:(UIImage *)image withScale:(CGFloat)scale {
-  if (fabs(scale - image.scale) > 1e-3) {
+  if (fabs(scale - image.scale) > DBL_EPSILON) {
     return [UIImage imageWithCGImage:[image CGImage]
                                scale:scale
                          orientation:(image.imageOrientation)];
@@ -411,13 +404,6 @@
   return [FLTGoogleMapMarkerController scaledImage:image withSize:targetSize];
 }
 
-/// Checks if an image can be scaled from an original size to a target size using a scale factor
-/// while maintaining the aspect ratio.
-///
-/// @param originalSize The original size of the image.
-/// @param targetSize The desired target size to scale the image to.
-/// @return A BOOL indicating whether the image can be scaled to the target size with scale
-/// factor.
 + (BOOL)isScalableWithScaleFactorFromSize:(CGSize)originalSize toSize:(CGSize)targetSize {
   // Select the scaling factor based on the longer side to have good precision.
   CGFloat scaleFactor = (originalSize.width > originalSize.height)

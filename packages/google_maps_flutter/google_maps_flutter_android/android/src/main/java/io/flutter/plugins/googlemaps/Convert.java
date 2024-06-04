@@ -44,7 +44,7 @@ class Convert {
   private static BitmapDescriptor toBitmapDescriptor(
       Object o, AssetManager assetManager, float density) {
     final List<?> data = toList(o);
-    String descriptorType = toString(data.get(0));
+    final String descriptorType = toString(data.get(0));
     switch (descriptorType) {
       case "defaultMarker":
         if (data.size() == 1) {
