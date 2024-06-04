@@ -9,12 +9,12 @@ const String instanceManagerTemplate = '''
 /**
  * Maintains instances used to communicate with the corresponding objects in Dart.
  *
- * <p>Objects stored in this container are represented by an object in Dart that is also stored in
+ * Objects stored in this container are represented by an object in Dart that is also stored in
  * an InstanceManager with the same identifier.
  *
- * <p>When an instance is added with an identifier, either can be used to retrieve the other.
+ * When an instance is added with an identifier, either can be used to retrieve the other.
  *
- * <p>Added instances are added as a weak reference and a strong reference. When the strong
+ * Added instances are added as a weak reference and a strong reference. When the strong
  * reference is removed with [remove] and the weak reference is deallocated, the
  * `finalizationListener.onFinalize` is called with the instance's identifier. However, if the strong
  * reference is removed and then the identifier is retrieved with the intention to pass the identifier

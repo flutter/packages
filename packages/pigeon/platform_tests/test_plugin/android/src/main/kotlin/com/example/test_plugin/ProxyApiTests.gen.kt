@@ -51,13 +51,13 @@ class ProxyApiTestsError(
 /**
  * Maintains instances used to communicate with the corresponding objects in Dart.
  *
- * <p>Objects stored in this container are represented by an object in Dart that is also stored in
- * an InstanceManager with the same identifier.
+ * Objects stored in this container are represented by an object in Dart that is also stored in an
+ * InstanceManager with the same identifier.
  *
- * <p>When an instance is added with an identifier, either can be used to retrieve the other.
+ * When an instance is added with an identifier, either can be used to retrieve the other.
  *
- * <p>Added instances are added as a weak reference and a strong reference. When the strong
- * reference is removed with [remove] and the weak reference is deallocated, the
+ * Added instances are added as a weak reference and a strong reference. When the strong reference
+ * is removed with [remove] and the weak reference is deallocated, the
  * `finalizationListener.onFinalize` is called with the instance's identifier. However, if the
  * strong reference is removed and then the identifier is retrieved with the intention to pass the
  * identifier to Dart (e.g. calling [getIdentifierForStrongReference]), the strong reference to the
@@ -184,7 +184,7 @@ class PigeonInstanceManager(private val finalizationListener: PigeonFinalization
   }
 
   /**
-   * Stop the periodic run of the [PigeonFinalizationListener] for instances that have been garbage
+   * Stops the periodic run of the [PigeonFinalizationListener] for instances that have been garbage
    * collected.
    *
    * The InstanceManager can continue to be used, but the [PigeonFinalizationListener] will no
