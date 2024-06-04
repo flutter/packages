@@ -465,7 +465,9 @@ this command.
       _printRunningExampleTestsMessage(example, platform);
       final int exitCode = await _xcode.runXcodeBuild(
         example.directory,
-        actions: <String>['test'],
+        // Clean before testing to remove cached swiftmodules from previous
+        // runs, which can cause conflicts.
+        actions: <String>['clean', 'test'],
         workspace: '${platform.toLowerCase()}/Runner.xcworkspace',
         scheme: 'Runner',
         configuration: 'Debug',
