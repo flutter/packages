@@ -520,10 +520,11 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
       dartPackageName: dartPackageName,
     );
 
-    indent.writeln('/**');
-    indent.writeln(
-        '* Generated API for managing the Dart and native `$instanceManagerClassName`s.');
-    indent.writeln('*/');
+    indent.format(
+      '/**\n'
+      ' * Generated API for managing the Dart and native `$instanceManagerClassName`s.\n'
+      ' */',
+    );
     indent.writeScoped(
       'private class $instanceManagerApiName(val binaryMessenger: BinaryMessenger) {',
       '}',
@@ -536,11 +537,12 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
           });
           indent.newln();
 
-          indent.writeln('/**');
-          indent.writeln(
-              '* Sets up an instance of `$instanceManagerApiName` to handle messages from the');
-          indent.writeln('* `binaryMessenger`.');
-          indent.writeln('*/');
+          indent.format(
+            '/**\n'
+            ' * Sets up an instance of `$instanceManagerApiName` to handle messages from the\n'
+            ' * `binaryMessenger`.\n'
+            ' */',
+          );
           indent.writeScoped(
             'fun setUpMessageHandlers(binaryMessenger: BinaryMessenger, instanceManager: $instanceManagerClassName?) {',
             '}',
@@ -622,7 +624,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
 
     // Sort APIs where edges are an API's super class and interfaces.
     //
-    // This sorts the apis to have child classes be listed before their parent
+    // This sorts the APIs to have child classes be listed before their parent
     // classes. This prevents the scenario where a method might return the super
     // class of the actual class, so the incorrect Dart class gets created
     // because the 'value is <SuperClass>' was checked first in the codec. For
