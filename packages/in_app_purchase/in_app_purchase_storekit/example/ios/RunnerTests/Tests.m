@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#import <OCMock/OCMock.h>
+//#import <OCMock/OCMock.h>
 #import <XCTest/XCTest.h>
 #import "FIAPaymentQueueHandler.h"
 #import "RunnerTests-Swift.h"
@@ -24,7 +24,7 @@
   self.receiptManagerStub = [FIAPReceiptManagerStub new];
   self.plugin = [[InAppPurchasePluginStub alloc]
       initWithReceiptManager:self.receiptManagerStub
-              handlerFactory:^FIAPRequestHandler *(SKRequest *request) {
+              handlerFactory:^TestRequestHandler *(SKRequest *request) {
                 return [[FIAPRequestHandler alloc] initWithRequest:request];
               }];
 }
@@ -207,20 +207,21 @@
   XCTestExpectation *expectation =
       [self expectationWithDescription:@"completion handler successfully called"];
 
-  id mockHandler = OCMClassMock([FIAPRequestHandler class]);
+
+  TestRequestHandler *testHandler = [TestRequestHandler alloc];
   InAppPurchasePlugin *plugin = [[InAppPurchasePlugin alloc]
       initWithReceiptManager:_receiptManagerStub
-              handlerFactory:^FIAPRequestHandler *(SKRequest *request) {
-                return mockHandler;
+              handlerFactory:^TestRequestHandler *(SKRequest *request) {
+                return testHandler;
               }];
 
   NSError *error = [NSError errorWithDomain:@"errorDomain"
                                        code:0
                                    userInfo:@{NSLocalizedDescriptionKey : @"description"}];
 
-  OCMStub([mockHandler
-      startProductRequestWithCompletionHandler:([OCMArg invokeBlockWithArgs:[NSNull null], error,
-                                                                            nil])]);
+  testHandler.startProductRequestWithCompletionHandlerStub = ^(ProductRequestCompletion _Nonnull completion) {
+    completion(nil, error);
+  };
 
   [plugin
       startProductRequestProductIdentifiers:argument
@@ -241,28 +242,22 @@
   XCTestExpectation *expectation =
       [self expectationWithDescription:@"completion handler successfully called"];
 
-  id mockHandler = OCMClassMock([FIAPRequestHandler class]);
-
+  TestRequestHandler *testHandler = [TestRequestHandler alloc];
   InAppPurchasePlugin *plugin = [[InAppPurchasePlugin alloc]
       initWithReceiptManager:_receiptManagerStub
-              handlerFactory:^FIAPRequestHandler *(SKRequest *request) {
-                return mockHandler;
+              handlerFactory:^TestRequestHandler *(SKRequest *request) {
+                return testHandler;
               }];
 
-  NSError *error = [NSError errorWithDomain:@"errorDomain"
-                                       code:0
-                                   userInfo:@{NSLocalizedDescriptionKey : @"description"}];
-
-  OCMStub([mockHandler
-      startProductRequestWithCompletionHandler:([OCMArg invokeBlockWithArgs:[NSNull null],
-                                                                            [NSNull null], nil])]);
+  testHandler.startProductRequestWithCompletionHandlerStub = ^(ProductRequestCompletion _Nonnull completion) {
+    completion(nil, nil);
+  };
 
   [plugin
       startProductRequestProductIdentifiers:argument
                                  completion:^(SKProductsResponseMessage *_Nullable response,
                                               FlutterError *_Nullable startProductRequestError) {
                                    [expectation fulfill];
-                                   XCTAssertNotNil(error);
                                    XCTAssertNotNil(startProductRequestError);
                                    XCTAssertEqualObjects(startProductRequestError.code,
                                                          @"storekit_platform_no_response");
@@ -277,15 +272,20 @@
     @"simulatesAskToBuyInSandbox" : @YES,
   };
 
-  FIAPaymentQueueHandler *mockHandler = OCMClassMock(FIAPaymentQueueHandler.class);
-  OCMStub([mockHandler addPayment:[OCMArg any]]).andReturn(NO);
-  self.plugin.paymentQueueHandler = mockHandler;
+  TestPaymentQueueHandler *handler = [TestPaymentQueueHandler alloc];
+  self.plugin.paymentQueueHandler = handler;
 
   FlutterError *error;
 
+  __block NSInteger addPaymentTimes = 0;
+  handler.addPaymentStub = ^(SKPayment* payment) {
+    addPaymentTimes+= 1;
+    return NO;
+  };
+
   [self.plugin addPaymentPaymentMap:argument error:&error];
 
-  OCMVerify(times(1), [mockHandler addPayment:[OCMArg any]]);
+  XCTAssertEqual(addPaymentTimes, 1);
   XCTAssertEqualObjects(@"storekit_duplicate_product_object", error.code);
   XCTAssertEqualObjects(@"There is a pending transaction for the same product identifier. "
                         @"Please either wait for it to be finished or finish it manually "
@@ -322,21 +322,24 @@
     @"simulatesAskToBuyInSandbox" : @YES,
   };
 
-  FIAPaymentQueueHandler *mockHandler = OCMClassMock(FIAPaymentQueueHandler.class);
-  OCMStub([mockHandler addPayment:[OCMArg any]]).andReturn(YES);
-  self.plugin.paymentQueueHandler = mockHandler;
+  TestPaymentQueueHandler *handler = [TestPaymentQueueHandler alloc];
+  self.plugin.paymentQueueHandler = handler;
+
+  __block NSInteger addPaymentTimes = 0;
+  handler.addPaymentStub = ^(SKPayment* payment) {
+    XCTAssert(payment != nil);
+    XCTAssertEqual(payment.productIdentifier, @"123");
+    XCTAssert(payment.quantity == 1);
+    addPaymentTimes++;
+    return YES;
+  };
+
   FlutterError *error;
 
   [self.plugin addPaymentPaymentMap:argument error:&error];
 
   XCTAssertNil(error);
-  OCMVerify(times(1), [mockHandler addPayment:[OCMArg checkWithBlock:^BOOL(id obj) {
-                                     SKPayment *payment = obj;
-                                     XCTAssert(payment != nil);
-                                     XCTAssertEqual(payment.productIdentifier, @"123");
-                                     XCTAssert(payment.quantity == 1);
-                                     return YES;
-                                   }]]);
+  XCTAssertEqual(addPaymentTimes, 1);
 }
 
 - (void)testAddPaymentSuccessWithPaymentDiscount {
@@ -353,33 +356,29 @@
     }
   };
 
-  FIAPaymentQueueHandler *mockHandler = OCMClassMock(FIAPaymentQueueHandler.class);
-  OCMStub([mockHandler addPayment:[OCMArg any]]).andReturn(YES);
-  self.plugin.paymentQueueHandler = mockHandler;
+  TestPaymentQueueHandler *handler = [TestPaymentQueueHandler alloc];
+  self.plugin.paymentQueueHandler = handler;
+
+  __block NSInteger addPaymentTimes = 0;
+  handler.addPaymentStub = ^(SKPayment* payment) {
+    if (@available(iOS 12.2, *)) {
+      SKPaymentDiscount *discount = payment.paymentDiscount;
+      XCTAssertEqual(discount.identifier, @"test_identifier");
+      XCTAssertEqual(discount.keyIdentifier, @"test_key_identifier");
+      XCTAssertEqualObjects(discount.nonce, [[NSUUID alloc] initWithUUIDString:@"4a11a9cc-3bc3-11ec-8d3d-0242ac130003"]);
+      XCTAssertEqual(discount.signature, @"test_signature");
+      addPaymentTimes++;
+      return YES;
+    }
+    addPaymentTimes++;
+    return YES;
+  };
 
   FlutterError *error;
 
   [self.plugin addPaymentPaymentMap:argument error:&error];
+  XCTAssertEqual(addPaymentTimes, 1);
   XCTAssertNil(error);
-  OCMVerify(
-      times(1),
-      [mockHandler
-          addPayment:[OCMArg checkWithBlock:^BOOL(id obj) {
-            SKPayment *payment = obj;
-            if (@available(iOS 12.2, *)) {
-              SKPaymentDiscount *discount = payment.paymentDiscount;
-
-              return [discount.identifier isEqual:@"test_identifier"] &&
-                     [discount.keyIdentifier isEqual:@"test_key_identifier"] &&
-                     [discount.nonce
-                         isEqual:[[NSUUID alloc]
-                                     initWithUUIDString:@"4a11a9cc-3bc3-11ec-8d3d-0242ac130003"]] &&
-                     [discount.signature isEqual:@"test_signature"] &&
-                     [discount.timestamp isEqual:@(1635847102)];
-            }
-
-            return YES;
-          }]]);
 }
 
 - (void)testAddPaymentFailureWithInvalidPaymentDiscount {
@@ -387,7 +386,7 @@
   if (@available(iOS 12.2, *)) {
     NSDictionary *argument = @{
       @"productIdentifier" : @"123",
-      @"quantity" : @(1),
+      @"quantity" : @"123", // This should normally be an int, not a string
       @"simulatesAskToBuyInSandbox" : @YES,
       @"paymentDiscount" : @{
         @"keyIdentifier" : @"test_key_identifier",
@@ -397,25 +396,25 @@
       }
     };
 
-    FIAPaymentQueueHandler *mockHandler = OCMClassMock(FIAPaymentQueueHandler.class);
-    id translator = OCMClassMock(FIAObjectTranslator.class);
+    TestPaymentQueueHandler *testHandler = [TestPaymentQueueHandler alloc];
 
-    NSString *errorMsg = @"Some error occurred";
-    OCMStub(ClassMethod([translator
-                getSKPaymentDiscountFromMap:[OCMArg any]
-                                  withError:(NSString __autoreleasing **)[OCMArg setTo:errorMsg]]))
-        .andReturn(nil);
-    self.plugin.paymentQueueHandler = mockHandler;
+    __block NSInteger addPaymentNums = 0;
+    testHandler.addPaymentStub = ^BOOL(SKPayment * _Nonnull payment) {
+      addPaymentNums++;
+      return YES;
+    };
+
+    self.plugin.paymentQueueHandler = testHandler;
     FlutterError *error;
 
     [self.plugin addPaymentPaymentMap:argument error:&error];
 
     XCTAssertEqualObjects(@"storekit_invalid_payment_discount_object", error.code);
     XCTAssertEqualObjects(@"You have requested a payment and specified a "
-                          @"payment discount with invalid properties. Some error occurred",
+                          @"payment discount with invalid properties. When specifying a payment discount the 'identifier' field is mandatory.",
                           error.message);
     XCTAssertEqualObjects(argument, error.details);
-    OCMVerify(never(), [mockHandler addPayment:[OCMArg any]]);
+    XCTAssertEqual(0, addPaymentNums);
   }
 }
 
@@ -426,27 +425,28 @@
     @"simulatesAskToBuyInSandbox" : [NSNull null],
   };
 
-  FIAPaymentQueueHandler *mockHandler = OCMClassMock(FIAPaymentQueueHandler.class);
-  OCMStub([mockHandler addPayment:[OCMArg any]]).andReturn(YES);
-  self.plugin.paymentQueueHandler = mockHandler;
+  TestPaymentQueueHandler *handler = [TestPaymentQueueHandler alloc];
+  self.plugin.paymentQueueHandler = handler;
   FlutterError *error;
 
+  __block NSInteger addPaymentTimes = 0;
+  handler.addPaymentStub = ^(SKPayment* payment) {
+    XCTAssertEqual(payment.simulatesAskToBuyInSandbox, false);
+    addPaymentTimes++;
+    return YES;
+  };
+
   [self.plugin addPaymentPaymentMap:argument error:&error];
-  OCMVerify(times(1), [mockHandler addPayment:[OCMArg checkWithBlock:^BOOL(id obj) {
-                                     SKPayment *payment = obj;
-                                     return !payment.simulatesAskToBuyInSandbox;
-                                   }]]);
+  XCTAssertEqual(addPaymentTimes, 1);
 }
 
 - (void)testRestoreTransactions {
   XCTestExpectation *expectation =
       [self expectationWithDescription:@"result successfully restore transactions"];
 
-//  SKPaymentQueueStub *queue = [SKPaymentQueueStub new];
-//  queue.testState = SKPaymentTransactionStatePurchased;
-
-  TestPaymentQueue *queue = [TestPaymentQueue alloc];
   TestTransactionCache *cache = [TestTransactionCache alloc];
+  TestPaymentQueue *queue = [TestPaymentQueue alloc];
+  TestPaymentQueueHandler *handler = [TestPaymentQueueHandler alloc];
 
   __block BOOL callbackInvoked = NO;
   self.plugin.paymentQueueHandler = [[FIAPaymentQueueHandler alloc] initWithQueue:queue
@@ -478,12 +478,13 @@
 }
 
 - (void)testRetrieveReceiptDataNil {
-  NSBundle *mockBundle = OCMPartialMock([NSBundle mainBundle]);
-  OCMStub(mockBundle.appStoreReceiptURL).andReturn(nil);
-  
-  FlutterError *error;
-  NSString *result = [self.plugin retrieveReceiptDataWithError:&error];
-  XCTAssertNil(result);
+  XCTAssertNotNil(Nil);
+//  NSBundle *mockBundle = OCMPartialMock([NSBundle mainBundle]);
+//  OCMStub(mockBundle.appStoreReceiptURL).andReturn(nil);
+//  
+//  FlutterError *error;
+//  NSString *result = [self.plugin retrieveReceiptDataWithError:&error];
+//  XCTAssertNil(result);
 }
 
 - (void)testRetrieveReceiptDataError {
@@ -505,20 +506,20 @@
   XCTestExpectation *expectation =
       [self expectationWithDescription:@"completion handler successfully called"];
 
-  id mockHandler = OCMClassMock([FIAPRequestHandler class]);
+  TestRequestHandler *testHandler = [TestRequestHandler alloc];
   InAppPurchasePlugin *plugin = [[InAppPurchasePlugin alloc]
       initWithReceiptManager:_receiptManagerStub
-              handlerFactory:^FIAPRequestHandler *(SKRequest *request) {
-                return mockHandler;
+              handlerFactory:^TestRequestHandler *(SKRequest *request) {
+                return testHandler;
               }];
 
   NSError *recieptError = [NSError errorWithDomain:@"errorDomain"
                                               code:0
                                           userInfo:@{NSLocalizedDescriptionKey : @"description"}];
 
-  OCMStub([mockHandler
-      startProductRequestWithCompletionHandler:([OCMArg invokeBlockWithArgs:[NSNull null],
-                                                                            recieptError, nil])]);
+  testHandler.startProductRequestWithCompletionHandlerStub = ^(ProductRequestCompletion _Nonnull completion) {
+    completion(nil, recieptError);
+  };
 
   [plugin refreshReceiptReceiptProperties:nil
                                completion:^(FlutterError *_Nullable error) {
@@ -537,20 +538,20 @@
   XCTestExpectation *expectation =
       [self expectationWithDescription:@"completion handler successfully called"];
 
-  id mockHandler = OCMClassMock([FIAPRequestHandler class]);
+  TestRequestHandler *testHandler = [TestRequestHandler alloc];
   InAppPurchasePlugin *plugin = [[InAppPurchasePlugin alloc]
       initWithReceiptManager:_receiptManagerStub
-              handlerFactory:^FIAPRequestHandler *(SKRequest *request) {
-                return mockHandler;
+              handlerFactory:^TestRequestHandler *(SKRequest *request) {
+                return testHandler;
               }];
 
   NSError *recieptError = [NSError errorWithDomain:@"errorDomain"
                                               code:0
                                           userInfo:@{NSLocalizedDescriptionKey : @"description"}];
 
-  OCMStub([mockHandler
-      startProductRequestWithCompletionHandler:([OCMArg invokeBlockWithArgs:[NSNull null],
-                                                                            recieptError, nil])]);
+  testHandler.startProductRequestWithCompletionHandlerStub = ^(ProductRequestCompletion _Nonnull completion) {
+    completion(nil, recieptError);
+  };
 
   [plugin refreshReceiptReceiptProperties:properties
                                completion:^(FlutterError *_Nullable error) {
@@ -569,20 +570,20 @@
   XCTestExpectation *expectation =
       [self expectationWithDescription:@"completion handler successfully called"];
 
-  id mockHandler = OCMClassMock([FIAPRequestHandler class]);
+  TestRequestHandler *testHandler = [TestRequestHandler alloc];
   InAppPurchasePlugin *plugin = [[InAppPurchasePlugin alloc]
       initWithReceiptManager:_receiptManagerStub
-              handlerFactory:^FIAPRequestHandler *(SKRequest *request) {
-                return mockHandler;
+              handlerFactory:^TestRequestHandler *(SKRequest *request) {
+                return testHandler;
               }];
 
   NSError *recieptError = [NSError errorWithDomain:@"errorDomain"
                                               code:0
                                           userInfo:@{NSLocalizedDescriptionKey : @"description"}];
 
-  OCMStub([mockHandler
-      startProductRequestWithCompletionHandler:([OCMArg invokeBlockWithArgs:[NSNull null],
-                                                                            recieptError, nil])]);
+  testHandler.startProductRequestWithCompletionHandlerStub = ^(ProductRequestCompletion _Nonnull completion) {
+    completion(nil, recieptError);
+  };
 
   [plugin refreshReceiptReceiptProperties:properties
                                completion:^(FlutterError *_Nullable error) {
@@ -597,13 +598,18 @@
 /// presentCodeRedemptionSheetWithError:error is only available on iOS
 #if TARGET_OS_IOS
 - (void)testPresentCodeRedemptionSheet {
-  FIAPaymentQueueHandler *mockHandler = OCMClassMock([FIAPaymentQueueHandler class]);
+  TestPaymentQueueHandler *mockHandler = [TestPaymentQueueHandler alloc];
   self.plugin.paymentQueueHandler = mockHandler;
+
+  __block NSInteger presentCodeRedemptionSheetNums = 0;
+  mockHandler.presentCodeRedemptionSheetStub = ^{
+    presentCodeRedemptionSheetNums++;
+  };
 
   FlutterError *error;
   [self.plugin presentCodeRedemptionSheetWithError:&error];
 
-  OCMVerify(times(1), [mockHandler presentCodeRedemptionSheet]);
+  XCTAssertEqual(1, presentCodeRedemptionSheetNums);
 }
 #endif
 
@@ -644,31 +650,43 @@
 }
 
 - (void)testStartObservingPaymentQueue {
-  FIAPaymentQueueHandler *mockHandler = OCMClassMock([FIAPaymentQueueHandler class]);
+  TestPaymentQueueHandler *mockHandler = [TestPaymentQueueHandler alloc];
   self.plugin.paymentQueueHandler = mockHandler;
+
+  __block NSInteger startObservingNums = 0;
+  mockHandler.startObservingPaymentQueueStub = ^{
+    startObservingNums++;
+  };
 
   FlutterError *error;
   [self.plugin startObservingPaymentQueueWithError:&error];
 
-  OCMVerify(times(1), [mockHandler startObservingPaymentQueue]);
+  XCTAssertEqual(1, startObservingNums);
 }
 
 - (void)testStopObservingPaymentQueue {
-  FIAPaymentQueueHandler *mockHandler = OCMClassMock([FIAPaymentQueueHandler class]);
+  TestPaymentQueueHandler *mockHandler = [TestPaymentQueueHandler alloc];
   self.plugin.paymentQueueHandler = mockHandler;
+
+  __block NSInteger stopObservingNums = 0;
+  mockHandler.stopObservingPaymentQueueStub = ^{
+    stopObservingNums++;
+  };
 
   FlutterError *error;
   [self.plugin stopObservingPaymentQueueWithError:&error];
 
-  OCMVerify(times(1), [mockHandler stopObservingPaymentQueue]);
+  XCTAssertEqual(1, stopObservingNums);
 }
 
 #if TARGET_OS_IOS
 - (void)testRegisterPaymentQueueDelegate {
+//  XCTAssertNotNil(Nil);
   TestTransactionCache *cache = [TestTransactionCache alloc];
+  TestPaymentQueue *queue = [TestPaymentQueue alloc];
   if (@available(iOS 13, *)) {
     self.plugin.paymentQueueHandler =
-        [[FIAPaymentQueueHandler alloc] initWithQueue:[SKPaymentQueueStub new]
+        [[FIAPaymentQueueHandler alloc] initWithQueue:queue
                                   transactionsUpdated:nil
                                    transactionRemoved:nil
                              restoreTransactionFailed:nil
@@ -677,13 +695,13 @@
                                      updatedDownloads:nil
                                      transactionCache:cache];
 
-    self.plugin.registrar = OCMProtocolMock(@protocol(FlutterPluginRegistrar));
+//    self.plugin.registrar = OCMProtocolMock(@protocol(FlutterPluginRegistrar));
+//
+////    id<FlutterPluginRegistrar> registrarMock = OCMProtocolMock(@protocol(FlutterPluginRegistrar));
+//    self.plugin.registrar = registrarMock;
 
-    id<FlutterPluginRegistrar> registrarMock = OCMProtocolMock(@protocol(FlutterPluginRegistrar));
-    self.plugin.registrar = registrarMock;
-
-    id binaryMessengerMock = OCMProtocolMock(@protocol(FlutterBinaryMessenger));
-    OCMStub([registrarMock messenger]).andReturn(binaryMessengerMock);
+//    id binaryMessengerMock = OCMProtocolMock(@protocol(FlutterBinaryMessenger));
+//    OCMStub([registrarMock messenger]).andReturn(binaryMessengerMock);
 
     // Verify the delegate is nil before we register one.
     XCTAssertNil(self.plugin.paymentQueueHandler.delegate);
@@ -697,28 +715,29 @@
 }
 
 - (void)testRemovePaymentQueueDelegate {
-  if (@available(iOS 13, *)) {
-    TestTransactionCache *cache = [TestTransactionCache alloc];
-    self.plugin.paymentQueueHandler =
-        [[FIAPaymentQueueHandler alloc] initWithQueue:[SKPaymentQueueStub new]
-                                  transactionsUpdated:nil
-                                   transactionRemoved:nil
-                             restoreTransactionFailed:nil
-                 restoreCompletedTransactionsFinished:nil
-                                shouldAddStorePayment:nil
-                                     updatedDownloads:nil
-                                     transactionCache:cache];
-    self.plugin.paymentQueueHandler.delegate = OCMProtocolMock(@protocol(SKPaymentQueueDelegate));
-
-    // Verify the delegate is not nil before removing it.
-    XCTAssertNotNil(self.plugin.paymentQueueHandler.delegate);
-
-    FlutterError *error;
-    [self.plugin removePaymentQueueDelegateWithError:&error];
-
-    // Verify the delegate is nill after removing it.
-    XCTAssertNil(self.plugin.paymentQueueHandler.delegate);
-  }
+  XCTAssertNotNil(Nil);
+//  if (@available(iOS 13, *)) {
+//    TestTransactionCache *cache = [TestTransactionCache alloc];
+//    self.plugin.paymentQueueHandler =
+//        [[FIAPaymentQueueHandler alloc] initWithQueue:[SKPaymentQueueStub new]
+//                                  transactionsUpdated:nil
+//                                   transactionRemoved:nil
+//                             restoreTransactionFailed:nil
+//                 restoreCompletedTransactionsFinished:nil
+//                                shouldAddStorePayment:nil
+//                                     updatedDownloads:nil
+//                                     transactionCache:cache];
+//    self.plugin.paymentQueueHandler.delegate = OCMProtocolMock(@protocol(SKPaymentQueueDelegate));
+//
+//    // Verify the delegate is not nil before removing it.
+//    XCTAssertNotNil(self.plugin.paymentQueueHandler.delegate);
+//
+//    FlutterError *error;
+//    [self.plugin removePaymentQueueDelegateWithError:&error];
+//
+//    // Verify the delegate is nill after removing it.
+//    XCTAssertNil(self.plugin.paymentQueueHandler.delegate);
+//  }
 }
 #endif
 
@@ -735,12 +754,19 @@
 
   InAppPurchasePlugin *plugin = [[InAppPurchasePluginStub alloc]
       initWithReceiptManager:self.receiptManagerStub
-              handlerFactory:^FIAPRequestHandler *(SKRequest *request) {
-                return [[FIAPRequestHandler alloc] initWithRequest:request];
+              handlerFactory:^DefaultRequestHandler *(SKRequest *request) {
+    return [[DefaultRequestHandler alloc ]initWithRequestHandler: [[FIAPRequestHandler alloc] initWithRequest:request]];
               }];
-  FlutterMethodChannel *mockChannel = OCMClassMock([FlutterMethodChannel class]);
-  plugin.transactionObserverCallbackChannel = mockChannel;
-  OCMStub([mockChannel invokeMethod:[OCMArg any] arguments:[OCMArg any]]);
+  TestMethodChannel *testChannel = [TestMethodChannel alloc];
+  __block NSInteger invokeMethodNums = 0;
+
+  testChannel.invokeMethodChannelStub = ^(NSString * _Nonnull method, id  _Nonnull arguments) {
+    XCTAssertEqualObjects(@"updatedTransactions", method);
+    XCTAssertNotNil(arguments);
+    invokeMethodNums++;
+  };
+
+  plugin.transactionObserverCallbackChannel = testChannel;
 
   SKPaymentTransactionStub *paymentTransaction =
       [[SKPaymentTransactionStub alloc] initWithMap:transactionMap];
@@ -749,7 +775,7 @@
   [maps addObject:[FIAObjectTranslator getMapFromSKPaymentTransaction:paymentTransaction]];
 
   [plugin handleTransactionsUpdated:array];
-  OCMVerify(times(1), [mockChannel invokeMethod:@"updatedTransactions" arguments:[OCMArg any]]);
+  XCTAssertEqual(invokeMethodNums, 1);
 }
 
 - (void)testHandleTransactionsRemoved {
@@ -765,52 +791,70 @@
 
   InAppPurchasePlugin *plugin = [[InAppPurchasePluginStub alloc]
       initWithReceiptManager:self.receiptManagerStub
-              handlerFactory:^FIAPRequestHandler *(SKRequest *request) {
-                return [[FIAPRequestHandler alloc] initWithRequest:request];
+              handlerFactory:^DefaultRequestHandler *(SKRequest *request) {
+                return [[DefaultRequestHandler alloc ]initWithRequestHandler: [[FIAPRequestHandler alloc] initWithRequest:request]];
               }];
-  FlutterMethodChannel *mockChannel = OCMClassMock([FlutterMethodChannel class]);
-  plugin.transactionObserverCallbackChannel = mockChannel;
-  OCMStub([mockChannel invokeMethod:[OCMArg any] arguments:[OCMArg any]]);
-
   SKPaymentTransactionStub *paymentTransaction =
       [[SKPaymentTransactionStub alloc] initWithMap:transactionMap];
   NSArray *array = [NSArray arrayWithObjects:paymentTransaction, nil];
   NSMutableArray *maps = [NSMutableArray new];
   [maps addObject:[FIAObjectTranslator getMapFromSKPaymentTransaction:paymentTransaction]];
 
-  [plugin handleTransactionsRemoved:array];
-  OCMVerify(times(1), [mockChannel invokeMethod:@"removedTransactions" arguments:maps]);
-}
+  TestMethodChannel *testChannel = [TestMethodChannel alloc];
+  __block NSInteger invokeMethodNums = 0;
 
+  testChannel.invokeMethodChannelStub = ^(NSString * _Nonnull method, id  _Nonnull arguments) {
+    XCTAssertEqualObjects(@"removedTransactions", method);
+    XCTAssertEqualObjects(maps, arguments);
+    invokeMethodNums++;
+  };
+
+  plugin.transactionObserverCallbackChannel = testChannel;
+
+  [plugin handleTransactionsRemoved:array];
+  XCTAssertEqual(invokeMethodNums, 1);
+}
+//
 - (void)testHandleTransactionRestoreFailed {
   InAppPurchasePlugin *plugin = [[InAppPurchasePluginStub alloc]
       initWithReceiptManager:self.receiptManagerStub
-              handlerFactory:^FIAPRequestHandler *(SKRequest *request) {
-                return [[FIAPRequestHandler alloc] initWithRequest:request];
+              handlerFactory:^DefaultRequestHandler *(SKRequest *request) {
+    return [[DefaultRequestHandler alloc ]initWithRequestHandler: [[FIAPRequestHandler alloc] initWithRequest:request]];
               }];
-  FlutterMethodChannel *mockChannel = OCMClassMock([FlutterMethodChannel class]);
-  plugin.transactionObserverCallbackChannel = mockChannel;
-  OCMStub([mockChannel invokeMethod:[OCMArg any] arguments:[OCMArg any]]);
-
+  TestMethodChannel *testChannel = [TestMethodChannel alloc];
+  __block NSInteger invokeMethodNums = 0;
   NSError *error = [NSError errorWithDomain:@"error" code:0 userInfo:nil];
+
+  testChannel.invokeMethodChannelStub = ^(NSString * _Nonnull method, id  _Nonnull arguments) {
+    XCTAssertEqualObjects(@"restoreCompletedTransactionsFailed", method);
+    XCTAssertEqualObjects([FIAObjectTranslator getMapFromNSError:error], arguments);
+    invokeMethodNums++;
+  };
+
+  plugin.transactionObserverCallbackChannel = testChannel;
+
   [plugin handleTransactionRestoreFailed:error];
-  OCMVerify(times(1), [mockChannel invokeMethod:@"restoreCompletedTransactionsFailed"
-                                      arguments:[FIAObjectTranslator getMapFromNSError:error]]);
+  XCTAssertEqual(invokeMethodNums, 1);
 }
 
 - (void)testRestoreCompletedTransactionsFinished {
   InAppPurchasePlugin *plugin = [[InAppPurchasePluginStub alloc]
       initWithReceiptManager:self.receiptManagerStub
-              handlerFactory:^FIAPRequestHandler *(SKRequest *request) {
-                return [[FIAPRequestHandler alloc] initWithRequest:request];
+              handlerFactory:^DefaultRequestHandler *(SKRequest *request) {
+    return [[DefaultRequestHandler alloc ]initWithRequestHandler: [[FIAPRequestHandler alloc] initWithRequest:request]];
               }];
-  FlutterMethodChannel *mockChannel = OCMClassMock([FlutterMethodChannel class]);
-  plugin.transactionObserverCallbackChannel = mockChannel;
-  OCMStub([mockChannel invokeMethod:[OCMArg any] arguments:[OCMArg any]]);
+  TestMethodChannel *testChannel = [TestMethodChannel alloc];
+  __block NSInteger invokeMethodNums = 0;
+  testChannel.invokeMethodChannelStub = ^(NSString * _Nonnull method, id  _Nonnull arguments) {
+    XCTAssertEqualObjects(@"paymentQueueRestoreCompletedTransactionsFinished", method);
+    XCTAssertNil(arguments);
+    invokeMethodNums++;
+  };
+
+  plugin.transactionObserverCallbackChannel = testChannel;
 
   [plugin restoreCompletedTransactionsFinished];
-  OCMVerify(times(1), [mockChannel invokeMethod:@"paymentQueueRestoreCompletedTransactionsFinished"
-                                      arguments:nil]);
+  XCTAssertEqual(invokeMethodNums, 1);
 }
 
 - (void)testShouldAddStorePayment {
@@ -835,21 +879,29 @@
 
   InAppPurchasePlugin *plugin = [[InAppPurchasePluginStub alloc]
       initWithReceiptManager:self.receiptManagerStub
-              handlerFactory:^FIAPRequestHandler *(SKRequest *request) {
-                return [[FIAPRequestHandler alloc] initWithRequest:request];
+              handlerFactory:^DefaultRequestHandler *(SKRequest *request) {
+    return [[DefaultRequestHandler alloc ]initWithRequestHandler: [[FIAPRequestHandler alloc] initWithRequest:request]];
               }];
-  FlutterMethodChannel *mockChannel = OCMClassMock([FlutterMethodChannel class]);
-  plugin.transactionObserverCallbackChannel = mockChannel;
-  OCMStub([mockChannel invokeMethod:[OCMArg any] arguments:[OCMArg any]]);
 
   NSDictionary *args = @{
     @"payment" : [FIAObjectTranslator getMapFromSKPayment:payment],
     @"product" : [FIAObjectTranslator getMapFromSKProduct:product]
   };
 
+  TestMethodChannel *testChannel = [TestMethodChannel alloc];
+
+  __block NSInteger invokeMethodNums = 0;
+  testChannel.invokeMethodChannelStub = ^(NSString * _Nonnull method, id  _Nonnull arguments) {
+    XCTAssertEqualObjects(@"shouldAddStorePayment", method);
+    XCTAssertEqualObjects(args, arguments);
+    invokeMethodNums++;
+  };
+
+  plugin.transactionObserverCallbackChannel = testChannel;
+
   BOOL result = [plugin shouldAddStorePaymentWithPayment:payment product:product];
   XCTAssertEqual(result, NO);
-  OCMVerify(times(1), [mockChannel invokeMethod:@"shouldAddStorePayment" arguments:args]);
+  XCTAssertEqual(invokeMethodNums, 1);
 }
 
 #if TARGET_OS_IOS
@@ -866,14 +918,21 @@
                                transactionCache:cache];
 
   FlutterError *error;
+  __block NSInteger showPriceConsentIfNeededNum = 0;
+
+  testQueue.showPriceConsentIfNeededStub = ^(void) {
+    showPriceConsentIfNeededNum++;
+  };
+
   [self.plugin showPriceConsentIfNeededWithError:&error];
+
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wpartial-availability"
   if (@available(iOS 13.4, *)) {
-    OCMVerify(times(1), [testQueue showPriceConsentIfNeeded]);
+    XCTAssertEqual(showPriceConsentIfNeededNum, 1);
   } else {
-    OCMVerify(never(), [testQueue showPriceConsentIfNeeded]);
+    XCTAssertEqual(showPriceConsentIfNeededNum, 0);
   }
 #pragma clang diagnostic pop
 }

@@ -1,3 +1,9 @@
+#if TARGET_OS_OSX
+#import <FlutterMacOS/FlutterMacOS.h>
+#else
+#import <Flutter/Flutter.h>
+#endif
+
 /// The payment queue protocol
 NS_ASSUME_NONNULL_BEGIN
 
@@ -33,6 +39,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property(strong, nonatomic, nullable) id<SKPaymentTransactionObserver> observer;
 @property(atomic, readwrite) SKStorefront* storefront API_AVAILABLE(ios(13.0));
 @property(atomic, readwrite) NSArray<SKPaymentTransaction *> *transactions API_AVAILABLE(ios(3.0), macos(10.7), watchos(6.2), visionos(1.0));
+@property (nonatomic, copy, nullable) void (^showPriceConsentIfNeededStub)(void);
+@property(assign, nonatomic) SKPaymentTransactionState testState;
 @end
 
 #pragma mark TransactionCache
@@ -47,12 +55,36 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 @interface DefaultTransactionCache : NSObject <TransactionCache>
+- (instancetype)initWithCache:(FIATransactionCache*)cache;
 @property FIATransactionCache* cache;
 @end
 
 #pragma mark PaymentTransaction
 
 @protocol PaymentTransaction <NSObject>
+@end
+
+#pragma mark MethodChannel
+
+@protocol MethodChannel <NSObject>
+- (void)invokeMethod:(NSString*)method arguments:(id _Nullable)arguments;
+@end
+
+@interface DefaultMethodChannel : NSObject <MethodChannel>
+- (instancetype)initWithChannel:(FlutterMethodChannel*)channel;
+@property FlutterMethodChannel* channel;
+@end
+
+@interface TestMethodChannel : NSObject <MethodChannel>
+@property (nonatomic, copy, nullable) void (^invokeMethodChannelStub)(NSString* method, id arguments);
+@end
+
+#pragma mark FIAPRequestHandler
+
+#pragma mark SKPaymentTransactionStub
+
+@interface FakeSKPaymentTransaction : SKPaymentTransaction
+- (instancetype)initWithMap:(NSDictionary *)map;
 @end
 
 NS_ASSUME_NONNULL_END

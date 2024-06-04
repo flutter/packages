@@ -52,7 +52,7 @@
 
 @implementation FIAPaymentQueueHandler
 
-- (instancetype)initWithQueue:(nonnull SKPaymentQueue *)queue
+- (instancetype)initWithQueue:(nonnull id<PaymentQueue>)queue
                      transactionsUpdated:(nullable TransactionsUpdated)transactionsUpdated
                       transactionRemoved:(nullable TransactionsRemoved)transactionsRemoved
                 restoreTransactionFailed:(nullable RestoreTransactionFailed)restoreTransactionFailed
@@ -70,7 +70,7 @@
                                       transactionCache:[[DefaultTransactionCache alloc] init]];
 }
 
-- (instancetype)initWithQueue:(nonnull SKPaymentQueue *)queue
+- (instancetype)initWithQueue:(nonnull id<PaymentQueue>)queue
                      transactionsUpdated:(nullable TransactionsUpdated)transactionsUpdated
                       transactionRemoved:(nullable TransactionsRemoved)transactionsRemoved
                 restoreTransactionFailed:(nullable RestoreTransactionFailed)restoreTransactionFailed
@@ -234,58 +234,81 @@
   return self.queue.transactions;
 }
 
-- (SKStorefront *)storefront {
+- (SKStorefront *)storefront  API_AVAILABLE(ios(13.0)){
   return self.queue.storefront;
-}
-
-@end
-
-
-
-@interface DefaultPaymentQueueHandler : NSObject<PaymentQueueHandler>
-- (instancetype)initWithHandler:(FIAPaymentQueueHandler*)handler NS_DESIGNATED_INITIALIZER;
-
-
-@property(nonatomic) FIAPaymentQueueHandler *handler;
-@end
-@interface TestPaymentQueueHandler : NSObject<PaymentQueueHandler>
-@end
-
-@implementation DefaultPaymentQueueHandler
-
-- (BOOL)addPayment:(SKPayment *)payment { 
-  return [self.handler addPayment:payment];
-}
-
-- (void)finishTransaction:(nonnull SKPaymentTransaction *)transaction { 
-  [self.handler finishTransaction:transaction];
-}
-
-- (NSArray<SKPaymentTransaction *> *)getUnfinishedTransactions { 
-  return [self.handler getUnfinishedTransactions];
-}
-
-- (void)presentCodeRedemptionSheet { 
-  [self.handler presentCodeRedemptionSheet];
-}
-
-- (void)restoreTransactions:(nullable NSString *)applicationName { 
-  [self.handler restoreTransactions:applicationName];
-}
-
-- (void)startObservingPaymentQueue { 
-  [self.handler startObservingPaymentQueue];
-}
-
-- (void)stopObservingPaymentQueue { 
-  [self.handler stopObservingPaymentQueue];
 }
 
 @synthesize delegate;
 
+@end
+
+@implementation TestPaymentQueueHandler
+- (void)paymentQueue:(nonnull SKPaymentQueue *)queue updatedTransactions:(nonnull NSArray<SKPaymentTransaction *> *)transactions { 
+
+}
+
+#if TARGET_OS_IOS
+- (void)showPriceConsentIfNeeded {
+  if (self.showPriceConsentIfNeededStub) {
+    self.showPriceConsentIfNeededStub();
+  }
+}
+#endif
+
+- (BOOL)addPayment:(nonnull SKPayment *)payment {
+  if (self.addPaymentStub) {
+      return self.addPaymentStub(payment);
+  } else {
+    return _canAddPayment;
+  }
+}
+
+- (void)finishTransaction:(nonnull SKPaymentTransaction *)transaction { 
+
+}
+
+- (nonnull NSArray<SKPaymentTransaction *> *)getUnfinishedTransactions { 
+  return [NSArray array];
+}
+
+- (nonnull instancetype)initWithQueue:(nonnull id<PaymentQueue>)queue transactionsUpdated:(nullable TransactionsUpdated)transactionsUpdated transactionRemoved:(nullable TransactionsRemoved)transactionsRemoved restoreTransactionFailed:(nullable RestoreTransactionFailed)restoreTransactionFailed restoreCompletedTransactionsFinished:(nullable RestoreCompletedTransactionsFinished)restoreCompletedTransactionsFinished shouldAddStorePayment:(nullable ShouldAddStorePayment)shouldAddStorePayment updatedDownloads:(nullable UpdatedDownloads)updatedDownloads transactionCache:(nonnull id<TransactionCache>)transactionCache { 
+  return [TestPaymentQueueHandler alloc];
+}
+
+- (void)presentCodeRedemptionSheet { 
+  if (self.presentCodeRedemptionSheetStub) {
+    self.presentCodeRedemptionSheetStub();
+  }
+}
+
+- (void)restoreTransactions:(nullable NSString *)applicationName { 
+
+}
+
+- (void)startObservingPaymentQueue { 
+  if (self.startObservingPaymentQueueStub) {
+    self.startObservingPaymentQueueStub();
+  }
+}
+
+- (void)stopObservingPaymentQueue { 
+  if (self.stopObservingPaymentQueueStub) {
+    self.stopObservingPaymentQueueStub();
+  }
+}
+
+- (nonnull instancetype)initWithQueue:(nonnull id<PaymentQueue>)queue transactionsUpdated:(nullable TransactionsUpdated)transactionsUpdated transactionRemoved:(nullable TransactionsRemoved)transactionsRemoved restoreTransactionFailed:(nullable RestoreTransactionFailed)restoreTransactionFailed restoreCompletedTransactionsFinished:(nullable RestoreCompletedTransactionsFinished)restoreCompletedTransactionsFinished shouldAddStorePayment:(nullable ShouldAddStorePayment)shouldAddStorePayment updatedDownloads:(nullable UpdatedDownloads)updatedDownloads { 
+  return [TestPaymentQueueHandler alloc];
+}
+
+
 @synthesize storefront;
 
+@synthesize delegate;
+
 @end
+
+
 
 
 

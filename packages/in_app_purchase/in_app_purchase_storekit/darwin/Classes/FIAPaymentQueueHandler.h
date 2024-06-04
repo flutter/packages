@@ -18,8 +18,7 @@ typedef void (^RestoreCompletedTransactionsFinished)(void);
 typedef BOOL (^ShouldAddStorePayment)(SKPayment *payment, SKProduct *product);
 typedef void (^UpdatedDownloads)(NSArray<SKDownload *> *downloads);
 
-@interface FIAPaymentQueueHandler : NSObject <SKPaymentTransactionObserver>
-
+@protocol PaymentQueueHandler <NSObject, SKPaymentTransactionObserver>
 @property(NS_NONATOMIC_IOSONLY, weak, nullable) id<SKPaymentQueueDelegate> delegate API_AVAILABLE(
     ios(13.0), macos(10.15), watchos(6.2));
 @property(nonatomic, readonly, nullable)
@@ -130,6 +129,18 @@ typedef void (^UpdatedDownloads)(NSArray<SKDownload *> *downloads);
 // Otherwise the method has no effect.
 - (void)showPriceConsentIfNeeded API_AVAILABLE(ios(13.4))API_UNAVAILABLE(tvos, macos, watchos);
 
+@end
+
+@interface FIAPaymentQueueHandler : NSObject <SKPaymentTransactionObserver, PaymentQueueHandler>
+@end
+
+@interface TestPaymentQueueHandler : NSObject <SKPaymentTransactionObserver, PaymentQueueHandler>
+@property(nonatomic) BOOL canAddPayment;
+@property (nonatomic, copy, nullable) BOOL (^addPaymentStub)(SKPayment *payment);
+@property (nonatomic, copy, nullable) void (^showPriceConsentIfNeededStub)(void);
+@property (nonatomic, copy, nullable) void (^stopObservingPaymentQueueStub)(void);
+@property (nonatomic, copy, nullable) void (^startObservingPaymentQueueStub)(void);
+@property (nonatomic, copy, nullable) void (^presentCodeRedemptionSheetStub)(void);
 @end
 
 NS_ASSUME_NONNULL_END

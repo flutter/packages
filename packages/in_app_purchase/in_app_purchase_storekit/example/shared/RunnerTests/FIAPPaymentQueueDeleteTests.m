@@ -7,6 +7,7 @@
 #import "FIAObjectTranslator.h"
 #import "FIAPaymentQueueHandler.h"
 #import "Stubs.h"
+#import "Mocks.h"
 
 @import in_app_purchase_storekit;
 
@@ -35,7 +36,7 @@ API_UNAVAILABLE(tvos, macos, watchos)
     @"transactionTimeStamp" : @([NSDate date].timeIntervalSince1970),
     @"originalTransaction" : [NSNull null],
   };
-  self.transaction = [[SKPaymentTransactionStub alloc] initWithMap:transactionMap];
+  self.transaction = [[FakeSKPaymentTransaction alloc] initWithMap:transactionMap];
 
   NSDictionary *storefrontMap = @{
     @"countryCode" : @"USA",

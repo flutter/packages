@@ -73,21 +73,17 @@
 
 }
 
-- (void)addPayment:(SKPayment * _Nonnull)payment { 
-//  SKPaymentTransactionStub *transaction =
-//      [[SKPaymentTransactionStub alloc] initWithState:self.testState payment:payment];
-//  [self.observer paymentQueue:self updatedTransactions:@[ transaction ]];
+- (void)addPayment:(SKPayment * _Nonnull)payment {
 
 }
-
 
 - (void)addTransactionObserver:(nonnull id<SKPaymentTransactionObserver>)observer { 
   self.observer = observer;
 }
 
 
-- (void)restoreCompletedTransactions { 
-
+- (void)restoreCompletedTransactions {
+    [self.observer paymentQueueRestoreCompletedTransactionsFinished:(SKPaymentQueue*)self];
 }
 
 
@@ -103,10 +99,14 @@
 
 }
 - (void)showPriceConsentIfNeeded {
+  if (self.showPriceConsentIfNeededStub) {
+    self.showPriceConsentIfNeededStub();
+  }
 }
 
 - (void)restoreTransactions:(nullable NSString *)applicationName {
-
+//  [self.observer paymentQueueRestoreCompletedTransactionsFinished:self];
+  
 }
 
 - (void)startObservingPaymentQueue {
@@ -137,6 +137,14 @@
   return [self.cache getObjectsForKey:key];
 }
 
+- (nonnull instancetype)initWithCache:(nonnull FIATransactionCache *)cache {
+  self = [super init];
+  if (self) {
+    _cache = cache;
+  }
+  return self;
+}
+
 @end
 
 @implementation TestTransactionCache
@@ -150,6 +158,57 @@
 
 - (nonnull NSArray *)getObjectsForKey:(TransactionCacheKey)key {
   return [NSArray array];
+}
+@end
+
+#pragma mark MethodChannel implemetations
+@implementation DefaultMethodChannel
+- (void)invokeMethod:(nonnull NSString *)method arguments:(id _Nullable)arguments { 
+  [self.channel invokeMethod:method arguments:arguments];
+}
+
+- (instancetype)initWithChannel:(nonnull FlutterMethodChannel *)channel {
+  self = [super init];
+  if (self) {
+    _channel = channel;
+  }
+  return self;
+}
+
+@end
+
+@implementation TestMethodChannel
+- (void)invokeMethod:(nonnull NSString *)method arguments:(id _Nullable)arguments { 
+  if (self.invokeMethodChannelStub) {
+    self.invokeMethodChannelStub(method, arguments);
+  }
+}
+
+@end
+
+
+@implementation FakeSKPaymentTransaction {
+  SKPayment *_payment;
+}
+
+- (instancetype)initWithMap:(NSDictionary *)map {
+  self = [super init];
+  if (self) {
+    [self setValue:map[@"transactionIdentifier"] forKey:@"transactionIdentifier"];
+    [self setValue:map[@"transactionState"] forKey:@"transactionState"];
+    if (![map[@"originalTransaction"] isKindOfClass:[NSNull class]] &&
+        map[@"originalTransaction"]) {
+      [self setValue:[[FakeSKPaymentTransaction alloc] initWithMap:map[@"originalTransaction"]]
+              forKey:@"originalTransaction"];
+    }
+    [self setValue:[NSDate dateWithTimeIntervalSince1970:[map[@"transactionTimeStamp"] doubleValue]]
+            forKey:@"transactionDate"];
+  }
+  return self;
+}
+
+- (SKPayment *)payment {
+  return _payment;
 }
 
 @end
