@@ -1,3 +1,7 @@
+## 0.6.5+5
+
+* Reverts changes to support Impeller.
+
 ## 0.6.5+4
 
 * [Supports Impeller](https://docs.flutter.dev/release/breaking-changes/android-surface-plugins).
