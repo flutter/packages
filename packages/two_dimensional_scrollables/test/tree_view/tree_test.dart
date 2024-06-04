@@ -130,7 +130,7 @@ void main() {
           controller: controller,
           treeNodeBuilder: (
             BuildContext context,
-            TreeViewNode<Object?> node,
+            TreeViewNode<String> node,
             AnimationStyle toggleAnimationStyle,
           ) {
             returnedController ??= TreeViewController.of(context);
@@ -153,7 +153,7 @@ void main() {
           tree: simpleNodeSet,
           treeNodeBuilder: (
             BuildContext context,
-            TreeViewNode<Object?> node,
+            TreeViewNode<String> node,
             AnimationStyle toggleAnimationStyle,
           ) {
             returnedController ??= TreeViewController.maybeOf(context);
@@ -454,9 +454,9 @@ void main() {
         home: TreeView<String>(
           tree: simpleNodeSet,
           controller: controller,
-          onNodeToggle: (TreeViewNode<Object?> node) {
+          onNodeToggle: (TreeViewNode<String> node) {
             toggled = true;
-            toggledNode = node as TreeViewNode<String>;
+            toggledNode = node;
           },
         ),
       ));
@@ -476,13 +476,13 @@ void main() {
         home: TreeView<String>(
           tree: simpleNodeSet,
           controller: controller,
-          onNodeToggle: (TreeViewNode<Object?> node) {
+          onNodeToggle: (TreeViewNode<String> node) {
             toggled = true;
-            toggledNode = node as TreeViewNode<String>;
+            toggledNode = node;
           },
           treeNodeBuilder: (
             BuildContext context,
-            TreeViewNode<Object?> node,
+            TreeViewNode<String> node,
             AnimationStyle toggleAnimationStyle,
           ) {
             final Duration animationDuration = toggleAnimationStyle.duration ??
@@ -535,11 +535,11 @@ void main() {
           tree: simpleNodeSet,
           treeNodeBuilder: (
             BuildContext context,
-            TreeViewNode<Object?> node,
+            TreeViewNode<String> node,
             AnimationStyle toggleAnimationStyle,
           ) {
             style ??= toggleAnimationStyle;
-            return Text(node.content.toString());
+            return Text(node.content);
           },
         ),
       ));
@@ -558,11 +558,11 @@ void main() {
           toggleAnimationStyle: AnimationStyle.noAnimation,
           treeNodeBuilder: (
             BuildContext context,
-            TreeViewNode<Object?> node,
+            TreeViewNode<String> node,
             AnimationStyle toggleAnimationStyle,
           ) {
             style = toggleAnimationStyle;
-            return Text(node.content.toString());
+            return Text(node.content);
           },
         ),
       ));
@@ -580,11 +580,11 @@ void main() {
           ),
           treeNodeBuilder: (
             BuildContext context,
-            TreeViewNode<Object?> node,
+            TreeViewNode<String> node,
             AnimationStyle toggleAnimationStyle,
           ) {
             style ??= toggleAnimationStyle;
-            return Text(node.content.toString());
+            return Text(node.content);
           },
         ),
       ));
