@@ -1,6 +1,6 @@
 ## 1.3.1
 
-* Fixes an issue where biometrics are shown as unavailable rather than disabled when turned off in settings.
+* Adjusts implementation for improved testability, and removes use of OCMock.
 
 ## 1.3.0
 

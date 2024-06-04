@@ -41,6 +41,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property(atomic, readwrite) NSArray<SKPaymentTransaction *> *transactions API_AVAILABLE(ios(3.0), macos(10.7), watchos(6.2), visionos(1.0));
 @property (nonatomic, copy, nullable) void (^showPriceConsentIfNeededStub)(void);
 @property(assign, nonatomic) SKPaymentTransactionState testState;
+@property(nonatomic) SKPaymentQueue* realQueue;
 @end
 
 #pragma mark TransactionCache

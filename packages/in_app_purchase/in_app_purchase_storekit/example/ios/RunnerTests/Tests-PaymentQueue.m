@@ -2,7 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#import <OCMock/OCMock.h>
 #import <XCTest/XCTest.h>
 #import "Stubs.h"
 
@@ -480,19 +479,36 @@
       transactionCache:mockCache];
 
   [handler startObservingPaymentQueue];
-  [handler paymentQueue:queue updatedTransactions:@[ mockTransaction ]];
-  [handler paymentQueue:queue removedTransactions:@[ mockTransaction ]];
-  [handler paymentQueue:queue updatedDownloads:@[ mockDownload ]];
+  [handler paymentQueue:queue.realQueue updatedTransactions:@[ mockTransaction ]];
+  [handler paymentQueue:queue.realQueue removedTransactions:@[ mockTransaction ]];
+  [handler paymentQueue:queue.realQueue updatedDownloads:@[ mockDownload ]];
 
   [self waitForExpectations:@[
     updateTransactionsExpectation, removeTransactionsExpectation, updateDownloadsExpectation
   ]
                     timeout:5];
-  OCMVerify(never(), [mockCache addObjects:[OCMArg any]
-                                    forKey:TransactionCacheKeyUpdatedTransactions]);
-  OCMVerify(never(), [mockCache addObjects:[OCMArg any]
-                                    forKey:TransactionCacheKeyUpdatedDownloads]);
-  OCMVerify(never(), [mockCache addObjects:[OCMArg any]
-                                    forKey:TransactionCacheKeyRemovedTransactions]);
+
+  __block NSInteger TransactionCacheKeyUpdatedTransactionsInvoked = 0;
+  __block NSInteger TransactionCacheKeyUpdatedDownloadsInvoked = 0;
+  __block NSInteger TransactionCacheKeyRemovedTransactionsInvoked = 0;
+
+  mockCache.addObjectsStub = ^(NSArray * _Nonnull objects, TransactionCacheKey key) {
+    switch (key) {
+      case TransactionCacheKeyUpdatedTransactions:
+        TransactionCacheKeyUpdatedTransactionsInvoked++;
+        break;
+      case TransactionCacheKeyUpdatedDownloads:
+        TransactionCacheKeyUpdatedDownloadsInvoked++;
+        break;
+      case TransactionCacheKeyRemovedTransactions:
+        TransactionCacheKeyRemovedTransactionsInvoked++;
+        break;
+      default:
+        XCTFail("Invalid transaction state was invoked.");
+    }
+  };
+  XCTAssertEqual(0, TransactionCacheKeyUpdatedTransactionsInvoked);
+  XCTAssertEqual(0, TransactionCacheKeyUpdatedDownloadsInvoked);
+  XCTAssertEqual(0, TransactionCacheKeyRemovedTransactionsInvoked);
 }
 @end

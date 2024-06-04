@@ -70,13 +70,13 @@
 @implementation TestPaymentQueue
 
 - (void)finishTransaction:(SKPaymentTransaction *)transaction {
-  [self.observer paymentQueue:self removedTransactions:@[ transaction ]];
+  [self.observer paymentQueue:self.realQueue removedTransactions:@[ transaction ]];
 }
 
 - (void)addPayment:(SKPayment * _Nonnull)payment {
   FakeSKPaymentTransaction *transaction =
       [[FakeSKPaymentTransaction alloc] initWithState:self.testState payment:payment];
-  [self.observer paymentQueue:self updatedTransactions:@[ transaction ]];
+  [self.observer paymentQueue:self.realQueue updatedTransactions:@[ transaction ]];
 }
 
 - (void)addTransactionObserver:(nonnull id<SKPaymentTransactionObserver>)observer { 
@@ -87,7 +87,6 @@
 - (void)restoreCompletedTransactions {
     [self.observer paymentQueueRestoreCompletedTransactionsFinished:(SKPaymentQueue*)self];
 }
-
 
 - (void)restoreCompletedTransactionsWithApplicationUsername:(nullable NSString *)username { 
 
@@ -107,16 +106,12 @@
 }
 
 - (void)restoreTransactions:(nullable NSString *)applicationName {
-//  [self.observer paymentQueueRestoreCompletedTransactionsFinished:self];
-  
 }
 
 - (void)startObservingPaymentQueue {
-
 }
 
 - (void)stopObservingPaymentQueue {
-
 }
 
 - (void)removeTransactionObserver:(id<SKPaymentTransactionObserver>)observer {
