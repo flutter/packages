@@ -48,6 +48,13 @@ class SystemServices {
         SystemServicesHostApi(binaryMessenger: binaryMessenger);
     return api.getTempFilePath(prefix, suffix);
   }
+
+  static Future<bool> isUsingSurfaceTextureForPreview(
+      {BinaryMessenger? binaryMessenger}) {
+    final SystemServicesHostApi api =
+        SystemServicesHostApi(binaryMessenger: binaryMessenger);
+    return api.isUsingSurfaceTextureForPreview();
+  }
 }
 
 /// Host API implementation of [SystemServices].

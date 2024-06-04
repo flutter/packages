@@ -62,24 +62,24 @@ class CameraPreview extends StatelessWidget {
     ].contains(_getApplicableOrientation());
   }
 
-  // int _getQuarterTurns() {
-  //   final Map<DeviceOrientation, int> turns = <DeviceOrientation, int>{
-  //     DeviceOrientation.portraitUp: 0,
-  //     DeviceOrientation.landscapeRight: 1,
-  //     DeviceOrientation.portraitDown: 2,
-  //     DeviceOrientation.landscapeLeft: 3,
-  //   };
-  //   return turns[_getApplicableOrientation()]!;
-  // }
-
   int _getQuarterTurns() {
-    double correctRotation = _getCorrectRotation();
-    int turns = (correctRotation / 90).toInt();
-
-    print('CAMILLE: $turns');
-
-    return turns;
+    final Map<DeviceOrientation, int> turns = <DeviceOrientation, int>{
+      DeviceOrientation.portraitUp: 0,
+      DeviceOrientation.landscapeRight: 1,
+      DeviceOrientation.portraitDown: 2,
+      DeviceOrientation.landscapeLeft: 3,
+    };
+    return turns[_getApplicableOrientation()]!;
   }
+
+  // int _getQuarterTurns() {
+  //   double correctRotation = _getCorrectRotation();
+  //   int turns = (correctRotation / 90).toInt();
+
+  //   print('CAMILLE: $turns');
+
+  //   return turns;
+  // }
 
   DeviceOrientation _getApplicableOrientation() {
     return controller.value.isRecordingVideo
@@ -101,9 +101,9 @@ class CameraPreview extends StatelessWidget {
     int sensorOrientation = controller.value.sensorOrientationDegrees!;
     int sign = controller.value.sign!;
 
-    print('CAMILLE DEVICE ORIENTATION: $deviceOrientation');
-    print('CAMILLE SENSOR ORIENTATION: $sensorOrientation');
-    print('CAMILLE SIGN: $sign');
+    // print('CAMILLE DEVICE ORIENTATION: $deviceOrientation');
+    // print('CAMILLE SENSOR ORIENTATION: $sensorOrientation');
+    // print('CAMILLE SIGN: $sign');
     return (sensorOrientation - deviceOrientation * sign + 360) % 360;
   }
 }

@@ -52,8 +52,7 @@ public class DeviceOrientationManager {
    * Starts listening to the device's sensors or UI for orientation updates.
    *
    * <p>When orientation information is updated, the callback method of the {@link
-   * DeviceOrientationChangeCallback} is called with the new orientation. This latest value can also
-   * be retrieved through the {@link #getVideoOrientation()} accessor.
+   * DeviceOrientationChangeCallback} is called with the new orientation.
    *
    * <p>If the device's ACCELEROMETER_ROTATION setting is enabled the {@link
    * DeviceOrientationManager} will report orientation updates based on the sensor information. If

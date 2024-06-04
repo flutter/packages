@@ -10,7 +10,7 @@ import 'package:camera_platform_interface/camera_platform_interface.dart';
 import 'package:flutter/services.dart'
     show DeviceOrientation, PlatformException;
 import 'package:flutter/widgets.dart'
-    show Size, Texture, Widget, visibleForTesting;
+    show RotatedBox, Size, SizedBox, Texture, Widget, visibleForTesting;
 import 'package:stream_transform/stream_transform.dart';
 
 import 'analyzer.dart';
@@ -234,6 +234,9 @@ class AndroidCameraCameraX extends CameraPlatform {
       'exposureCompensationNotSupported';
 
   late bool cameraIsFrontFacing;
+  late bool isUsingSurfaceTextureForPreview;
+  final DeviceOrientation deviceOrientation = DeviceOrientation.portraitUp;
+  late int sensorOrientation;
 
   /// Returns list of all available cameras and their descriptions.
   @override
@@ -367,6 +370,13 @@ class AndroidCameraCameraX extends CameraPlatform {
     await _updateCameraInfoAndLiveCameraState(flutterSurfaceTextureId);
     previewInitiallyBound = true;
     _previewIsPaused = false;
+
+    isUsingSurfaceTextureForPreview =
+        await SystemServices.isUsingSurfaceTextureForPreview();
+    onDeviceOrientationChanged().listen((DeviceOrientationChangedEvent event) {
+      // deviceOrientation = event.orientation;
+    });
+    sensorOrientation = await getSensorOrientation();
 
     return flutterSurfaceTextureId;
   }
@@ -817,7 +827,29 @@ class AndroidCameraCameraX extends CameraPlatform {
         "Camera not found. Please call the 'create' method before calling 'buildPreview'",
       );
     }
-    return Texture(textureId: cameraId);
+
+    final Map<DeviceOrientation, int> deg = <DeviceOrientation, int>{
+      DeviceOrientation.portraitUp: 0,
+      DeviceOrientation.landscapeRight: 90,
+      DeviceOrientation.portraitDown: 180,
+      DeviceOrientation.landscapeLeft: 270,
+    };
+    int deviceOrientationDeg = deg[deviceOrientation]!;
+    int sign = getSign()!;
+    double rotation =
+        (sensorOrientation - deviceOrientationDeg * sign + 360) % 360;
+    int turns = (rotation / 90).toInt();
+
+    print('CAMILLE DEVICE ORIENTATION: $deviceOrientation');
+    print('CAMILLE SENSOR ORIENTATION: $sensorOrientation');
+    print('CAMILLE SIGN: $sign');
+    print('CAMILLE ROTATION: $rotation');
+
+    Widget widget =
+        RotatedBox(quarterTurns: turns, child: Texture(textureId: cameraId));
+    return isUsingSurfaceTextureForPreview
+        ? Texture(textureId: cameraId)
+        : widget;
   }
 
   /// Captures an image and returns the file where it was saved.

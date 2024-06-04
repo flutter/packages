@@ -1369,6 +1369,9 @@ public class GeneratedCameraXLibrary {
     @NonNull 
     String getTempFilePath(@NonNull String prefix, @NonNull String suffix);
 
+    @NonNull 
+    Boolean isUsingSurfaceTextureForPreview();
+
     /** The codec used by SystemServicesHostApi. */
     static @NonNull MessageCodec<Object> getCodec() {
       return SystemServicesHostApiCodec.INSTANCE;
@@ -1417,6 +1420,28 @@ public class GeneratedCameraXLibrary {
                 String suffixArg = (String) args.get(1);
                 try {
                   String output = api.getTempFilePath(prefixArg, suffixArg);
+                  wrapped.add(0, output);
+                }
+ catch (Throwable exception) {
+                  ArrayList<Object> wrappedError = wrapError(exception);
+                  wrapped = wrappedError;
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger, "dev.flutter.pigeon.SystemServicesHostApi.isUsingSurfaceTextureForPreview", getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                try {
+                  Boolean output = api.isUsingSurfaceTextureForPreview();
                   wrapped.add(0, output);
                 }
  catch (Throwable exception) {

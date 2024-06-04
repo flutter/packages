@@ -17,6 +17,8 @@ import io.flutter.plugins.camerax.GeneratedCameraXLibrary.SystemServicesHostApi;
 import java.io.File;
 import java.io.IOException;
 
+import android.os.Build;
+
 public class SystemServicesHostApiImpl implements SystemServicesHostApi {
   private final BinaryMessenger binaryMessenger;
   private final InstanceManager instanceManager;
@@ -102,5 +104,11 @@ public class SystemServicesHostApiImpl implements SystemServicesHostApi {
           "SystemServicesHostApiImpl.getTempFilePath encountered an exception: " + e.toString(),
           null);
     }
+  }
+
+  @Override
+  @NonNull
+  public Boolean isUsingSurfaceTextureForPreview() {
+    return Build.VERSION.SDK_INT <= 29;
   }
 }

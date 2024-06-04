@@ -260,6 +260,8 @@ abstract class SystemServicesHostApi {
   CameraPermissionsErrorData? requestCameraPermissions(bool enableAudio);
 
   String getTempFilePath(String prefix, String suffix);
+
+  bool isUsingSurfaceTextureForPreview();
 }
 
 @FlutterApi()
