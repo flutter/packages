@@ -106,40 +106,49 @@ class WebLinkDelegateState extends State<WebLinkDelegate> {
     return Stack(
       fit: StackFit.passthrough,
       children: <Widget>[
-        Semantics(
-          link: true,
-          identifier: _semanticsIdentifier,
-          value: widget.link.uri?.getHref(),
-          child: widget.link.builder(
-            context,
-            widget.link.isDisabled ? null : _followLink,
-          ),
-        ),
+        _buildChild(context),
         Positioned.fill(
-          child: ExcludeFocus(
-            child: ExcludeSemantics(
-              child: PlatformViewLink(
-                viewType: linkViewType,
-                onCreatePlatformView: (PlatformViewCreationParams params) {
-                  _controller = LinkViewController.fromParams(params, _semanticsIdentifier);
-                  return _controller
-                    ..setUri(widget.link.uri)
-                    ..setTarget(widget.link.target);
-                },
-                surfaceFactory:
-                    (BuildContext context, PlatformViewController controller) {
-                  return PlatformViewSurface(
-                    controller: controller,
-                    gestureRecognizers: const <Factory<
-                        OneSequenceGestureRecognizer>>{},
-                    hitTestBehavior: PlatformViewHitTestBehavior.transparent,
-                  );
-                },
-              ),
-            ),
-          ),
+          child: _buildPlatformView(context),
         ),
       ],
+    );
+  }
+
+  Widget _buildChild(BuildContext context) {
+    return Semantics(
+      link: true,
+      identifier: _semanticsIdentifier,
+      value: widget.link.uri?.getHref(),
+      child: widget.link.builder(
+        context,
+        widget.link.isDisabled ? null : _followLink,
+      ),
+    );
+  }
+
+  Widget _buildPlatformView(BuildContext context) {
+    return ExcludeFocus(
+      child: ExcludeSemantics(
+        child: PlatformViewLink(
+          viewType: linkViewType,
+          onCreatePlatformView: (PlatformViewCreationParams params) {
+            _controller =
+                LinkViewController.fromParams(params, _semanticsIdentifier);
+            return _controller
+              ..setUri(widget.link.uri)
+              ..setTarget(widget.link.target);
+          },
+          surfaceFactory:
+              (BuildContext context, PlatformViewController controller) {
+            return PlatformViewSurface(
+              controller: controller,
+              gestureRecognizers: const <Factory<
+                  OneSequenceGestureRecognizer>>{},
+              hitTestBehavior: PlatformViewHitTestBehavior.transparent,
+            );
+          },
+        ),
+      ),
     );
   }
 }
