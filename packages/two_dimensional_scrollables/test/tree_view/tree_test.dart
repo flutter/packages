@@ -693,6 +693,31 @@ void main() {
       expect(find.text('Child 2:1'), findsNothing);
       expect(find.text('Root 3'), findsOneWidget);
     });
+
+    test('should use the generic type for callbacks and builders', () {
+      Widget createTreeView() {
+        return TreeView<String>(
+          tree: simpleNodeSet,
+          treeNodeBuilder: (
+            BuildContext context,
+            TreeViewNode<String> node,
+            AnimationStyle animationStyle,
+          ) {
+            return TreeView.defaultTreeNodeBuilder(
+              context,
+              node,
+              animationStyle,
+            );
+          },
+          treeRowBuilder: (TreeViewNode<String> node) {
+            return TreeView.defaultTreeRowBuilder(node);
+          },
+          onNodeToggle: (TreeViewNode<String> node) {},
+        );
+      }
+
+      expect(createTreeView, returnsNormally);
+    });
   });
 
   group('TreeViewport', () {
