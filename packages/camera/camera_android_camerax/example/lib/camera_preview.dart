@@ -21,7 +21,6 @@ class CameraPreview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print('CAMILLE: ${_getCorrectRotation()}');
     return controller.value.isInitialized
         ? ValueListenableBuilder<CameraValue>(
             valueListenable: controller,
@@ -99,9 +98,12 @@ class CameraPreview extends StatelessWidget {
       DeviceOrientation.landscapeLeft: 270,
     };
     int deviceOrientation = deg[deviceOrientationConstant]!;
-
     int sensorOrientation = controller.value.sensorOrientationDegrees!;
     int sign = controller.value.sign!;
+
+    print('CAMILLE DEVICE ORIENTATION: $deviceOrientation');
+    print('CAMILLE SENSOR ORIENTATION: $sensorOrientation');
+    print('CAMILLE SIGN: $sign');
     return (sensorOrientation - deviceOrientation * sign + 360) % 360;
   }
 }

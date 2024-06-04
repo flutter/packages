@@ -1439,7 +1439,10 @@ class AndroidCameraCameraX extends CameraPlatform {
 
   @override
   Future<int> getSensorOrientation() async {
-    return cameraInfo!.getSensorRotationDegrees();
+    final Camera2CameraInfo camera2CameraInfo =
+        await proxy.getCamera2CameraInfo(cameraInfo!);
+    return camera2CameraInfo.getSensorOrientation();
+    // return cameraInfo!.getSensorRotationDegrees();
   }
 
   @override

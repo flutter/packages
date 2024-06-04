@@ -562,6 +562,8 @@ abstract class Camera2CameraInfoHostApi {
   int getSupportedHardwareLevel(int identifier);
 
   String getCameraId(int identifier);
+
+  int getSensorOrientation(int identifier);
 }
 
 @FlutterApi()

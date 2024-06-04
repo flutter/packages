@@ -49,6 +49,13 @@ public class Camera2CameraInfoHostApiImpl implements Camera2CameraInfoHostApi {
     public String getCameraId(@NonNull Camera2CameraInfo camera2CameraInfo) {
       return camera2CameraInfo.getCameraId();
     }
+
+    @NonNull
+    @OptIn(markerClass = ExperimentalCamera2Interop.class)
+    public Long getSensorOrientation(@NonNull Camera2CameraInfo camera2CameraInfo) {
+      return Long.valueOf(camera2CameraInfo.getCameraCharacteristic(
+          CameraCharacteristics.SENSOR_ORIENTATION));
+    }
   }
 
   /**
@@ -103,6 +110,12 @@ public class Camera2CameraInfoHostApiImpl implements Camera2CameraInfoHostApi {
   @NonNull
   public String getCameraId(@NonNull Long identifier) {
     return proxy.getCameraId(getCamera2CameraInfoInstance(identifier));
+  }
+
+  @Override
+  @NonNull
+  public Long getSensorOrientation(@NonNull Long identifier) {
+    return proxy.getSensorOrientation(getCamera2CameraInfoInstance(identifier));
   }
 
   private Camera2CameraInfo getCamera2CameraInfoInstance(@NonNull Long identifier) {
