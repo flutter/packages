@@ -117,9 +117,13 @@
 
 }
 
-@synthesize delegate;
+//- (void)setDelegate:(id<SKPaymentQueueDelegate>)delegate{
+//  self.delegate = delegate;
+//}
 
 @synthesize transactions;
+
+@synthesize delegate;
 
 @end
 
@@ -213,3 +217,64 @@
 
 @end
 
+@implementation FakePluginRegistrar
+
+- (void)addApplicationDelegate:(nonnull NSObject<FlutterPlugin> *)delegate { 
+
+}
+
+- (void)addMethodCallDelegate:(nonnull NSObject<FlutterPlugin> *)delegate channel:(nonnull FlutterMethodChannel *)channel { 
+
+}
+
+- (nonnull NSString *)lookupKeyForAsset:(nonnull NSString *)asset { 
+  return nil;
+}
+
+- (nonnull NSString *)lookupKeyForAsset:(nonnull NSString *)asset fromPackage:(nonnull NSString *)package { 
+  return nil;
+}
+
+- (nonnull NSObject<FlutterBinaryMessenger> *)messenger { 
+  return [FakeBinaryMessenger alloc];
+}
+
+- (void)publish:(nonnull NSObject *)value { 
+
+}
+
+- (void)registerViewFactory:(nonnull NSObject<FlutterPlatformViewFactory> *)factory withId:(nonnull NSString *)factoryId { 
+
+}
+
+- (void)registerViewFactory:(nonnull NSObject<FlutterPlatformViewFactory> *)factory withId:(nonnull NSString *)factoryId gestureRecognizersBlockingPolicy:(FlutterPlatformViewGestureRecognizersBlockingPolicy)gestureRecognizersBlockingPolicy { 
+  
+}
+
+- (nonnull NSObject<FlutterTextureRegistry> *)textures { 
+  return nil;
+}
+
+@end
+
+@implementation FakeBinaryMessenger
+- (void)cleanUpConnection:(FlutterBinaryMessengerConnection)connection {
+
+}
+
+- (void)sendOnChannel:(nonnull NSString *)channel message:(NSData * _Nullable)message {
+
+}
+
+- (void)sendOnChannel:(nonnull NSString *)channel message:(NSData * _Nullable)message binaryReply:(FlutterBinaryReply _Nullable)callback {
+
+}
+
+- (FlutterBinaryMessengerConnection)setMessageHandlerOnChannel:(nonnull NSString *)channel binaryMessageHandler:(FlutterBinaryMessageHandler _Nullable)handler {
+  return 0;
+}
+
+@end
+
+@implementation FakePaymentQueueDelegate
+@end

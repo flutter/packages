@@ -24,9 +24,10 @@
   self.receiptManagerStub = [FIAPReceiptManagerStub new];
   self.plugin = [[InAppPurchasePluginStub alloc]
       initWithReceiptManager:self.receiptManagerStub
-              handlerFactory:^TestRequestHandler *(SKRequest *request) {
-                return [[FIAPRequestHandler alloc] initWithRequest:request];
+              handlerFactory:^DefaultRequestHandler *(SKRequest *request) {
+    return [[DefaultRequestHandler alloc] initWithRequestHandler:[[FIAPRequestHandler alloc] initWithRequest:request]];
               }];
+
 }
 
 - (void)tearDown {
@@ -478,13 +479,11 @@
 }
 
 - (void)testRetrieveReceiptDataNil {
-  XCTAssertNotNil(Nil);
-//  NSBundle *mockBundle = OCMPartialMock([NSBundle mainBundle]);
-//  OCMStub(mockBundle.appStoreReceiptURL).andReturn(nil);
-//  
-//  FlutterError *error;
-//  NSString *result = [self.plugin retrieveReceiptDataWithError:&error];
-//  XCTAssertNil(result);
+  self.receiptManagerStub.returnNilURL = YES;
+
+  FlutterError *error;
+  NSString *result = [self.plugin retrieveReceiptDataWithError:&error];
+  XCTAssertNil(result);
 }
 
 - (void)testRetrieveReceiptDataError {
@@ -681,7 +680,6 @@
 
 #if TARGET_OS_IOS
 - (void)testRegisterPaymentQueueDelegate {
-//  XCTAssertNotNil(Nil);
   TestTransactionCache *cache = [TestTransactionCache alloc];
   TestPaymentQueue *queue = [TestPaymentQueue alloc];
   if (@available(iOS 13, *)) {
@@ -695,13 +693,7 @@
                                      updatedDownloads:nil
                                      transactionCache:cache];
 
-//    self.plugin.registrar = OCMProtocolMock(@protocol(FlutterPluginRegistrar));
-//
-////    id<FlutterPluginRegistrar> registrarMock = OCMProtocolMock(@protocol(FlutterPluginRegistrar));
-//    self.plugin.registrar = registrarMock;
-
-//    id binaryMessengerMock = OCMProtocolMock(@protocol(FlutterBinaryMessenger));
-//    OCMStub([registrarMock messenger]).andReturn(binaryMessengerMock);
+    self.plugin.registrar = [FakePluginRegistrar alloc];
 
     // Verify the delegate is nil before we register one.
     XCTAssertNil(self.plugin.paymentQueueHandler.delegate);
@@ -715,29 +707,35 @@
 }
 
 - (void)testRemovePaymentQueueDelegate {
-  XCTAssertNotNil(Nil);
-//  if (@available(iOS 13, *)) {
-//    TestTransactionCache *cache = [TestTransactionCache alloc];
-//    self.plugin.paymentQueueHandler =
-//        [[FIAPaymentQueueHandler alloc] initWithQueue:[SKPaymentQueueStub new]
-//                                  transactionsUpdated:nil
-//                                   transactionRemoved:nil
-//                             restoreTransactionFailed:nil
-//                 restoreCompletedTransactionsFinished:nil
-//                                shouldAddStorePayment:nil
-//                                     updatedDownloads:nil
-//                                     transactionCache:cache];
-//    self.plugin.paymentQueueHandler.delegate = OCMProtocolMock(@protocol(SKPaymentQueueDelegate));
-//
-//    // Verify the delegate is not nil before removing it.
-//    XCTAssertNotNil(self.plugin.paymentQueueHandler.delegate);
-//
-//    FlutterError *error;
-//    [self.plugin removePaymentQueueDelegateWithError:&error];
-//
-//    // Verify the delegate is nill after removing it.
-//    XCTAssertNil(self.plugin.paymentQueueHandler.delegate);
-//  }
+  if (@available(iOS 13, *)) {
+    TestTransactionCache *cache = [TestTransactionCache alloc];
+    TestPaymentQueue *queue = [TestPaymentQueue alloc];
+    self.plugin.paymentQueueHandler =
+        [[FIAPaymentQueueHandler alloc] initWithQueue:queue
+                                  transactionsUpdated:nil
+                                   transactionRemoved:nil
+                             restoreTransactionFailed:nil
+                 restoreCompletedTransactionsFinished:nil
+                                shouldAddStorePayment:nil
+                                     updatedDownloads:nil
+                                     transactionCache:cache];
+    
+    self.plugin.registrar = [FakePluginRegistrar alloc];
+
+    // Verify the delegate is nil before we register one.
+    XCTAssertNil(self.plugin.paymentQueueHandler.delegate);
+
+    FlutterError *error;
+    [self.plugin registerPaymentQueueDelegateWithError:&error];
+
+    // Verify the delegate is not nil before removing it.
+    XCTAssertNotNil(self.plugin.paymentQueueHandler.delegate);
+
+    [self.plugin removePaymentQueueDelegateWithError:&error];
+
+    // Verify the delegate is nill after removing it.
+    XCTAssertNil(self.plugin.paymentQueueHandler.delegate);
+  }
 }
 #endif
 

@@ -59,6 +59,7 @@ API_AVAILABLE(ios(11.2), macos(10.13.2))
 // Indicates whether getReceiptData of this stub is going to return an error.
 // Setting this to true will let getReceiptData give a basic NSError and return nil.
 @property(assign, nonatomic) BOOL returnError;
+@property(assign, nonatomic) BOOL returnNilURL;
 @end
 
 @interface SKReceiptRefreshRequestStub : SKReceiptRefreshRequest

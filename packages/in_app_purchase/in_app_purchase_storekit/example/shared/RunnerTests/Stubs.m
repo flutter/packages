@@ -271,6 +271,15 @@
   return [[NSData alloc] initWithBase64EncodedString:originalString options:kNilOptions];
 }
 
+- (NSURL *)getReceiptURL {
+  if (self.returnNilURL) {
+    return nil;
+  } else {
+    return [[NSBundle mainBundle] appStoreReceiptURL];
+  }
+}
+
+
 @end
 
 @implementation SKReceiptRefreshRequestStub {

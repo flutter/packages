@@ -87,4 +87,25 @@ NS_ASSUME_NONNULL_BEGIN
 - (instancetype)initWithMap:(NSDictionary *)map;
 @end
 
+@interface FakePluginRegistrar : NSObject <FlutterPluginRegistrar>
+@end
+
+@interface FakeBinaryMessenger : NSObject <FlutterBinaryMessenger>
+@end
+
+@interface FakePaymentQueueDelegate : NSObject <SKPaymentQueueDelegate>
+@end
+
+@protocol URLBundle <NSObject>
+@property NSBundle *bundle;
+- (NSURL*)appStoreURL;
+@end
+
+@interface DefaultBundle : NSObject<URLBundle>
+@end
+
+@interface TestBundle : NSObject <URLBundle>
+@end
+
 NS_ASSUME_NONNULL_END
+
