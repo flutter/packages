@@ -337,7 +337,7 @@ class LinkViewController extends PlatformViewController {
     // 2. The user presses the Enter key to trigger the link.
     // 3. The framework receives the Enter keydown event:
     //    - The event is dispatched to the button widget.
-    //    - The button widget calls `onPressed` and therefor `followLink`.
+    //    - The button widget calls `onPressed` and therefore `followLink`.
     //    - `followLink` calls `LinkViewController.registerHitTest`.
     //    - `LinkViewController.registerHitTest` sets `_hitTestedViewId`.
     // 4. The `LinkViewController` also receives the keydown event:
@@ -453,6 +453,9 @@ class LinkViewController extends PlatformViewController {
     // This is recommended on MDN:
     // - https://developer.mozilla.org/en-US/docs/Web/HTML/Element/a#attr-target
     _element.setAttribute('rel', 'noreferrer noopener');
+
+    _element.setAttribute('aria-hidden', 'true');
+    _element.setAttribute('tabIndex', '-1');
 
     final Map<String, dynamic> args = <String, dynamic>{
       'id': viewId,
