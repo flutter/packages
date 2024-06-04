@@ -4,6 +4,7 @@
 
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math';
 import 'dart:mirrors';
 
 import 'package:yaml/yaml.dart' as yaml;
@@ -76,11 +77,37 @@ class Indent {
   }
 
   /// Replaces the newlines and tabs of input and adds it to the stream.
-  void format(String input,
-      {bool leadingSpace = true, bool trailingNewline = true}) {
+  ///
+  /// [trimIndentation] flag finds the line with the fewest leading empty
+  /// spaces and trims the beginning of all lines by this number.
+  void format(
+    String input, {
+    bool leadingSpace = true,
+    bool trailingNewline = true,
+    bool trimIndentation = false,
+  }) {
     final List<String> lines = input.split('\n');
+
+    int? shortestIndentation;
+    if (trimIndentation) {
+      for (final String line in lines) {
+        if (line.trim().isNotEmpty) {
+          final int indentationLength = line.length - line.trimLeft().length;
+          shortestIndentation = shortestIndentation == null
+              ? indentationLength
+              : min(shortestIndentation, indentationLength);
+        }
+      }
+    }
+
     for (int i = 0; i < lines.length; ++i) {
-      final String line = lines[i];
+      late final String line;
+      if (trimIndentation && lines[i].trim().isNotEmpty) {
+        line = lines[i].substring(shortestIndentation!);
+      } else {
+        line = lines[i];
+      }
+
       if (i == 0 && !leadingSpace) {
         add(line.replaceAll('\t', tab));
       } else if (line.isNotEmpty) {
