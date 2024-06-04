@@ -1229,35 +1229,40 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
       '}',
       () {
         indent.writeln('val instanceManager: $instanceManagerClassName');
-        indent.format(
-          'private var _codec: StandardMessageCodec? = null\n'
-          'val codec: StandardMessageCodec\n'
-          '  get() {\n'
-          '    if (_codec == null) {\n '
-          '      _codec = PigeonProxyApiBaseCodec(this)\n'
-          '    }\n'
-          '    return _codec!!\n'
-          '  }\n',
-        );
-        indent.format(
-          'init {\n'
-          '  val api = $instanceManagerApiName(binaryMessenger)\n'
-          '  instanceManager =\n'
-          '    $instanceManagerClassName.create(\n'
-          '      object : $instanceManagerClassName.PigeonFinalizationListener {\n'
-          '        override fun onFinalize(identifier: Long) {\n'
-          '          api.removeStrongReference(identifier) {\n'
-          '            if (it.isFailure) {\n'
-          '              Log.e(\n'
-          '                "$registrarName",\n'
-          '                "Failed to remove Dart strong reference with identifier: \$identifier"\n'
-          '              )\n'
-          '            }\n'
-          '          }\n'
-          '        }\n'
-          '      })\n'
-          '}\n',
-        );
+        indent.writeln('private var _codec: StandardMessageCodec? = null');
+        indent.writeScoped('val codec: StandardMessageCodec', '', () {
+          indent.writeScoped('get() {', '}', () {
+            indent.writeScoped('if (_codec == null) {', '}', () {
+              indent.writeln('_codec = PigeonProxyApiBaseCodec(this)');
+            });
+            indent.writeln('return _codec!!');
+          });
+        });
+        indent.writeScoped('init {', '}', () {
+          indent.writeln('val api = $instanceManagerApiName(binaryMessenger)');
+          indent.writeScoped(
+              'instanceManager = $instanceManagerClassName.create(', ')', () {
+            indent.writeScoped(
+                'object : $instanceManagerClassName.PigeonFinalizationListener {',
+                '}', () {
+              indent.writeScoped(
+                  'override fun onFinalize(identifier: Long) {', '}', () {
+                indent.writeScoped(
+                    'api.removeStrongReference(identifier) {', '}', () {
+                  indent.writeScoped('if (it.isFailure) {', '}', () {
+                    indent.writeScoped('Log.e(', ')', () {
+                      indent.writeln('"$registrarName",');
+                      indent.writeln(
+                        r'"Failed to remove Dart strong reference with identifier: $identifier"',
+                      );
+                    });
+                  });
+                });
+              });
+            });
+          });
+        });
+        indent.newln();
         for (final AstProxyApi api in allProxyApis) {
           _writeMethodDeclaration(
             indent,

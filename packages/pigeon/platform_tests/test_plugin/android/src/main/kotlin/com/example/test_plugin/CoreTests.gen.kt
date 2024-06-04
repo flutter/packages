@@ -635,6 +635,7 @@ interface HostIntegrationCoreApi {
      * Sets up an instance of `HostIntegrationCoreApi` to handle messages through the
      * `binaryMessenger`.
      */
+    @JvmOverloads
     fun setUp(
         binaryMessenger: BinaryMessenger,
         api: HostIntegrationCoreApi?,
@@ -3327,6 +3328,7 @@ interface HostTrivialApi {
     /** The codec used by HostTrivialApi. */
     val codec: MessageCodec<Any?> by lazy { StandardMessageCodec() }
     /** Sets up an instance of `HostTrivialApi` to handle messages through the `binaryMessenger`. */
+    @JvmOverloads
     fun setUp(
         binaryMessenger: BinaryMessenger,
         api: HostTrivialApi?,
@@ -3372,6 +3374,7 @@ interface HostSmallApi {
     /** The codec used by HostSmallApi. */
     val codec: MessageCodec<Any?> by lazy { StandardMessageCodec() }
     /** Sets up an instance of `HostSmallApi` to handle messages through the `binaryMessenger`. */
+    @JvmOverloads
     fun setUp(
         binaryMessenger: BinaryMessenger,
         api: HostSmallApi?,
