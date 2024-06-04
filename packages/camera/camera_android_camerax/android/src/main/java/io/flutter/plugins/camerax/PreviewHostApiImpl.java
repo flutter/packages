@@ -80,8 +80,6 @@ public class PreviewHostApiImpl implements PreviewHostApi {
     return new Preview.SurfaceProvider() {
       @Override
       public void onSurfaceRequested(@NonNull SurfaceRequest request) {
-        request.setTransformationInfoListener(Executors.newSingleThreadExecutor(), getTransformationInfoListener());
-
         surfaceProducer.setSize(
             request.getResolution().getWidth(), request.getResolution().getHeight());
         Surface flutterSurface = surfaceProducer.getSurface();
@@ -112,16 +110,6 @@ public class PreviewHostApiImpl implements PreviewHostApi {
                   break;
               }
             });
-      }
-    };
-  }
-
-  private SurfaceRequest.TransformationInfoListener getTransformationInfoListener() {
-    return new SurfaceRequest.TransformationInfoListener() {
-      @Override
-      public void onTransformationInfoUpdate(SurfaceRequest.TransformationInfo transformationInfo) {
-        Log.e("CAMILLE DEBUG", "getRotationDegrees(): " + transformationInfo.getRotationDegrees());
-        Log.e("CAMILLE DEBUG", "hasCameraTransform():" + transformationInfo.hasCameraTransform());
       }
     };
   }
