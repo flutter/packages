@@ -69,12 +69,14 @@
 
 @implementation TestPaymentQueue
 
-- (void)finishTransaction:(nonnull SKPaymentTransaction *)transaction {
-
+- (void)finishTransaction:(SKPaymentTransaction *)transaction {
+  [self.observer paymentQueue:self removedTransactions:@[ transaction ]];
 }
 
 - (void)addPayment:(SKPayment * _Nonnull)payment {
-
+  FakeSKPaymentTransaction *transaction =
+      [[FakeSKPaymentTransaction alloc] initWithState:self.testState payment:payment];
+  [self.observer paymentQueue:self updatedTransactions:@[ transaction ]];
 }
 
 - (void)addTransactionObserver:(nonnull id<SKPaymentTransactionObserver>)observer { 
@@ -117,9 +119,9 @@
 
 }
 
-//- (void)setDelegate:(id<SKPaymentQueueDelegate>)delegate{
-//  self.delegate = delegate;
-//}
+- (void)removeTransactionObserver:(id<SKPaymentTransactionObserver>)observer {
+  self.observer = nil;
+}
 
 @synthesize transactions;
 
@@ -153,15 +155,22 @@
 
 @implementation TestTransactionCache
 - (void)addObjects:(nonnull NSArray *)objects forKey:(TransactionCacheKey)key {
-
+  if (self.addObjectsStub) {
+    self.addObjectsStub(objects, key);
+  }
 }
 
 - (void)clear {
-
+  if (self.clearStub) {
+    self.clearStub();
+  }
 }
 
 - (nonnull NSArray *)getObjectsForKey:(TransactionCacheKey)key {
-  return [NSArray array];
+  if (self.getObjectsForKeyStub) {
+    return self.getObjectsForKeyStub(key);
+  }
+  return @[];
 }
 @end
 
@@ -207,6 +216,20 @@
     }
     [self setValue:[NSDate dateWithTimeIntervalSince1970:[map[@"transactionTimeStamp"] doubleValue]]
             forKey:@"transactionDate"];
+  }
+  return self;
+}
+
+- (instancetype)initWithState:(SKPaymentTransactionState)state payment:(SKPayment *)payment {
+  self = [super init];
+  if (self) {
+    // Only purchased and restored transactions have transactionIdentifier:
+    // https://developer.apple.com/documentation/storekit/skpaymenttransaction/1411288-transactionidentifier?language=objc
+    if (state == SKPaymentTransactionStatePurchased || state == SKPaymentTransactionStateRestored) {
+      [self setValue:@"fakeID" forKey:@"transactionIdentifier"];
+    }
+    [self setValue:@(state) forKey:@"transactionState"];
+    _payment = payment;
   }
   return self;
 }
@@ -277,4 +300,7 @@
 @end
 
 @implementation FakePaymentQueueDelegate
+@end
+
+@implementation FakeSKDownload
 @end

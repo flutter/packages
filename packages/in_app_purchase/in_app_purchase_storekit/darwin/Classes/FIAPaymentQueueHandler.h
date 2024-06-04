@@ -23,41 +23,6 @@ typedef void (^UpdatedDownloads)(NSArray<SKDownload *> *downloads);
     ios(13.0), macos(10.15), watchos(6.2));
 @property(nonatomic, readonly, nullable)
     SKStorefront *storefront API_AVAILABLE(ios(13.0), macos(10.15), watchos(6.2));
-
-/// Creates a new FIAPaymentQueueHandler initialized with an empty
-/// FIATransactionCache.
-///
-/// @param queue The SKPaymentQueue instance connected to the App Store and
-///              responsible for processing transactions.
-/// @param transactionsUpdated Callback method that is called each time the App
-///                            Store indicates transactions are updated.
-/// @param transactionsRemoved Callback method that is called each time the App
-///                            Store indicates transactions are removed.
-/// @param restoreTransactionFailed Callback method that is called each time
-///                                 the App Store indicates transactions failed
-///                                 to restore.
-/// @param restoreCompletedTransactionsFinished Callback method that is called
-///                                             each time the App Store
-///                                             indicates restoring of
-///                                             transactions has finished.
-/// @param shouldAddStorePayment Callback method that is called each time an
-///                              in-app purchase has been initiated from the
-///                              App Store.
-/// @param updatedDownloads Callback method that is called each time the App
-///                         Store indicates downloads are updated.
-- (instancetype)initWithQueue:(id<PaymentQueue>)queue
-                     transactionsUpdated:(nullable TransactionsUpdated)transactionsUpdated
-                      transactionRemoved:(nullable TransactionsRemoved)transactionsRemoved
-                restoreTransactionFailed:(nullable RestoreTransactionFailed)restoreTransactionFailed
-    restoreCompletedTransactionsFinished:
-        (nullable RestoreCompletedTransactionsFinished)restoreCompletedTransactionsFinished
-                   shouldAddStorePayment:(nullable ShouldAddStorePayment)shouldAddStorePayment
-                        updatedDownloads:(nullable UpdatedDownloads)updatedDownloads
-    DEPRECATED_MSG_ATTRIBUTE(
-        "Use the "
-        "'initWithQueue:transactionsUpdated:transactionsRemoved:restoreTransactionsFinished:"
-        "shouldAddStorePayment:updatedDownloads:transactionCache:' message instead.");
-
 /// Creates a new FIAPaymentQueueHandler.
 ///
 /// The "transactionsUpdated", "transactionsRemoved" and "updatedDownloads"
