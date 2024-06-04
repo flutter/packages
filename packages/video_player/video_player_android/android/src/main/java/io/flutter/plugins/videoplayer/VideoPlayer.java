@@ -8,7 +8,6 @@ import static androidx.media3.common.Player.REPEAT_MODE_ALL;
 import static androidx.media3.common.Player.REPEAT_MODE_OFF;
 
 import android.content.Context;
-import android.net.Uri;
 import android.view.Surface;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -18,23 +17,17 @@ import androidx.media3.common.AudioAttributes;
 import androidx.media3.common.C;
 import androidx.media3.common.Format;
 import androidx.media3.common.MediaItem;
+import androidx.media3.common.MimeTypes;
 import androidx.media3.common.PlaybackException;
 import androidx.media3.common.PlaybackParameters;
 import androidx.media3.common.Player;
 import androidx.media3.common.Player.Listener;
 import androidx.media3.common.util.UnstableApi;
-import androidx.media3.common.util.Util;
 import androidx.media3.datasource.DataSource;
 import androidx.media3.datasource.DefaultDataSource;
 import androidx.media3.datasource.DefaultHttpDataSource;
 import androidx.media3.exoplayer.ExoPlayer;
-import androidx.media3.exoplayer.dash.DashMediaSource;
-import androidx.media3.exoplayer.dash.DefaultDashChunkSource;
-import androidx.media3.exoplayer.hls.HlsMediaSource;
-import androidx.media3.exoplayer.smoothstreaming.DefaultSsChunkSource;
-import androidx.media3.exoplayer.smoothstreaming.SsMediaSource;
-import androidx.media3.exoplayer.source.MediaSource;
-import androidx.media3.exoplayer.source.ProgressiveMediaSource;
+import androidx.media3.exoplayer.source.DefaultMediaSourceFactory;
 import io.flutter.plugin.common.EventChannel;
 import io.flutter.view.TextureRegistry;
 import java.util.Arrays;
@@ -79,16 +72,17 @@ final class VideoPlayer {
     this.textureEntry = textureEntry;
     this.options = options;
 
-    ExoPlayer exoPlayer = new ExoPlayer.Builder(context).build();
-    Uri uri = Uri.parse(dataSource);
+    MediaItem mediaItem =
+        new MediaItem.Builder()
+            .setUri(dataSource)
+            .setMimeType(mimeFromFormatHint(formatHint))
+            .build();
 
     buildHttpDataSourceFactory(httpHeaders);
-    DataSource.Factory dataSourceFactory =
-        new DefaultDataSource.Factory(context, httpDataSourceFactory);
 
-    MediaSource mediaSource = buildMediaSource(uri, dataSourceFactory, formatHint);
+    ExoPlayer exoPlayer = buildExoPlayer(context);
 
-    unstableSetMediaSource(exoPlayer, mediaSource);
+    exoPlayer.setMediaItem(mediaItem);
     exoPlayer.prepare();
 
     setUpVideoPlayer(exoPlayer, new QueuingEventSink());
@@ -123,31 +117,13 @@ final class VideoPlayer {
         httpDataSourceFactory, httpHeaders, userAgent, httpHeadersNotEmpty);
   }
 
-  private MediaSource buildMediaSource(
-      Uri uri, DataSource.Factory mediaDataSourceFactory, String formatHint) {
-    int type;
-    if (formatHint == null) {
-      type = Util.inferContentType(uri);
-    } else {
-      switch (formatHint) {
-        case FORMAT_SS:
-          type = C.CONTENT_TYPE_SS;
-          break;
-        case FORMAT_DASH:
-          type = C.CONTENT_TYPE_DASH;
-          break;
-        case FORMAT_HLS:
-          type = C.CONTENT_TYPE_HLS;
-          break;
-        case FORMAT_OTHER:
-          type = C.CONTENT_TYPE_OTHER;
-          break;
-        default:
-          type = -1;
-          break;
-      }
-    }
-    return unstableBuildMediaSource(uri, mediaDataSourceFactory, type);
+  @NonNull
+  private ExoPlayer buildExoPlayer(Context context) {
+    DataSource.Factory dataSourceFactory =
+        new DefaultDataSource.Factory(context, httpDataSourceFactory);
+    DefaultMediaSourceFactory mediaSourceFactory =
+        new DefaultMediaSourceFactory(context).setDataSourceFactory(dataSourceFactory);
+    return new ExoPlayer.Builder(context).setMediaSourceFactory(mediaSourceFactory).build();
   }
 
   private void setUpVideoPlayer(ExoPlayer exoPlayer, QueuingEventSink eventSink) {
@@ -325,10 +301,22 @@ final class VideoPlayer {
     }
   }
 
-  // TODO: migrate to stable API, see https://github.com/flutter/flutter/issues/147039
-  @OptIn(markerClass = UnstableApi.class)
-  private static void unstableSetMediaSource(ExoPlayer exoPlayer, MediaSource mediaSource) {
-    exoPlayer.setMediaSource(mediaSource);
+  @Nullable
+  private static String mimeFromFormatHint(@Nullable String formatHint) {
+    if (formatHint == null) {
+      return null;
+    }
+    switch (formatHint) {
+      case FORMAT_SS:
+        return MimeTypes.APPLICATION_SS;
+      case FORMAT_DASH:
+        return MimeTypes.APPLICATION_MPD;
+      case FORMAT_HLS:
+        return MimeTypes.APPLICATION_M3U8;
+      case FORMAT_OTHER:
+      default:
+        return null;
+    }
   }
 
   // TODO: migrate to stable API, see https://github.com/flutter/flutter/issues/147039
@@ -342,32 +330,6 @@ final class VideoPlayer {
 
     if (httpHeadersNotEmpty) {
       factory.setDefaultRequestProperties(httpHeaders);
-    }
-  }
-
-  // TODO: migrate to stable API, see https://github.com/flutter/flutter/issues/147039
-  @OptIn(markerClass = UnstableApi.class)
-  private static MediaSource unstableBuildMediaSource(
-      Uri uri, DataSource.Factory mediaDataSourceFactory, int type) {
-    switch (type) {
-      case C.CONTENT_TYPE_SS:
-        return new SsMediaSource.Factory(
-                new DefaultSsChunkSource.Factory(mediaDataSourceFactory), mediaDataSourceFactory)
-            .createMediaSource(MediaItem.fromUri(uri));
-      case C.CONTENT_TYPE_DASH:
-        return new DashMediaSource.Factory(
-                new DefaultDashChunkSource.Factory(mediaDataSourceFactory), mediaDataSourceFactory)
-            .createMediaSource(MediaItem.fromUri(uri));
-      case C.CONTENT_TYPE_HLS:
-        return new HlsMediaSource.Factory(mediaDataSourceFactory)
-            .createMediaSource(MediaItem.fromUri(uri));
-      case C.CONTENT_TYPE_OTHER:
-        return new ProgressiveMediaSource.Factory(mediaDataSourceFactory)
-            .createMediaSource(MediaItem.fromUri(uri));
-      default:
-        {
-          throw new IllegalStateException("Unsupported type: " + type);
-        }
     }
   }
 
