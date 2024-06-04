@@ -520,10 +520,12 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
       dartPackageName: dartPackageName,
     );
 
-    indent.format(
-      '/**\n'
-      ' * Generated API for managing the Dart and native `$instanceManagerClassName`s.\n'
-      ' */',
+    addDocumentationComments(
+      indent,
+      <String>[
+        'Generated API for managing the Dart and native `$instanceManagerClassName`s.',
+      ],
+      _docCommentSpec,
     );
     indent.writeScoped(
       'private class $instanceManagerApiName(val binaryMessenger: BinaryMessenger) {',
@@ -537,11 +539,13 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
           });
           indent.newln();
 
-          indent.format(
-            '/**\n'
-            ' * Sets up an instance of `$instanceManagerApiName` to handle messages from the\n'
-            ' * `binaryMessenger`.\n'
-            ' */',
+          addDocumentationComments(
+            indent,
+            <String>[
+              'Sets up an instance of `$instanceManagerApiName` to handle messages from the',
+              '`binaryMessenger`.',
+            ],
+            _docCommentSpec,
           );
           indent.writeScoped(
             'fun setUpMessageHandlers(binaryMessenger: BinaryMessenger, instanceManager: $instanceManagerClassName?) {',
@@ -1211,11 +1215,13 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
     const String registrarName = '${classNamePrefix}ProxyApiRegistrar';
     const String instanceManagerApiName = '${instanceManagerClassName}Api';
 
-    indent.format(
-      '/**\n'
-      ' * Provides implementations for each ProxyApi implementation and provides access to resources\n'
-      ' * needed by any implementation.\n'
-      ' */',
+    addDocumentationComments(
+      indent,
+      <String>[
+        'Provides implementations for each ProxyApi implementation and provides access to resources',
+        'needed by any implementation.',
+      ],
+      _docCommentSpec,
     );
     indent.writeScoped(
       'abstract class $registrarName(val binaryMessenger: BinaryMessenger) {',
