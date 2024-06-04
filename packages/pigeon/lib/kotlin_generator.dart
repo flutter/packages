@@ -1486,22 +1486,32 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
               final String className = typeWithRequirement
                       .type.associatedProxyApi!.kotlinOptions?.fullClassName ??
                   typeWithRequirement.type.baseName;
-              indent.format(
-                'val channel = BasicMessageChannel<Any?>(\n'
-                '  binaryMessenger,\n'
-                '  "$channelName",\n'
-                '  codec\n'
-                ')\n'
-                'if (api != null) {\n'
-                '  channel.setMessageHandler { _, reply ->\n'
-                '    reply.reply(wrapError(\n'
-                '      UnsupportedOperationException(\n'
-                '        "Call references class `$className`, which requires api version $apiRequirement.")))\n'
-                '  }\n'
-                '} else {\n'
-                '  channel.setMessageHandler(null)\n'
-                '}',
-              );
+              indent.writeScoped(
+                  'val channel = BasicMessageChannel<Any?>(', ')', () {
+                indent.writeln('binaryMessenger,');
+                indent.writeln('"$channelName",');
+                indent.writeln('codec');
+              });
+              indent.writeScoped('if (api != null) {', '}', () {
+                indent.writeScoped(
+                    'channel.setMessageHandler { _, reply ->', '}', () {
+                  indent.writeScoped(
+                    'reply.reply(wrapError(UnsupportedOperationException(',
+                    ')))',
+                    () {
+                      indent.writeln(
+                        '"Call references class `$className`, which requires api version $apiRequirement."',
+                      );
+                    },
+                  );
+                  indent.writeln(
+                    'reply.reply(wrapError(UnsupportedOperationException(',
+                  );
+                });
+              });
+              indent.writeScoped('} else {', '}', () {
+                indent.writeln('channel.setMessageHandler(null)');
+              });
             });
           } else {
             onWrite();

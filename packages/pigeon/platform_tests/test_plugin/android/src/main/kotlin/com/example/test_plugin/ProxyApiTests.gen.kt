@@ -366,6 +366,7 @@ abstract class PigeonProxyApiRegistrar(val binaryMessenger: BinaryMessenger) {
               }
             })
   }
+
   /**
    * An implementation of [PigeonApiProxyApiTestClass] used to add a new Dart instance of
    * `ProxyApiTestClass` to the Dart `InstanceManager`.
