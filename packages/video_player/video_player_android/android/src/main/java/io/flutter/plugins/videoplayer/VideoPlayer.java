@@ -15,13 +15,13 @@ import androidx.annotation.OptIn;
 import androidx.annotation.VisibleForTesting;
 import androidx.media3.common.AudioAttributes;
 import androidx.media3.common.C;
-import androidx.media3.common.Format;
 import androidx.media3.common.MediaItem;
 import androidx.media3.common.MimeTypes;
 import androidx.media3.common.PlaybackException;
 import androidx.media3.common.PlaybackParameters;
 import androidx.media3.common.Player;
 import androidx.media3.common.Player.Listener;
+import androidx.media3.common.VideoSize;
 import androidx.media3.common.util.UnstableApi;
 import androidx.media3.datasource.DataSource;
 import androidx.media3.datasource.DefaultDataSource;
@@ -261,15 +261,15 @@ final class VideoPlayer {
       event.put("event", "initialized");
       event.put("duration", exoPlayer.getDuration());
 
-      Format videoFormat = unstableGetVideoFormat(exoPlayer);
-      if (videoFormat != null) {
-        int width = videoFormat.width;
-        int height = videoFormat.height;
-        int rotationDegrees = unstableGetRotationDegrees(videoFormat);
+      VideoSize videoSize = exoPlayer.getVideoSize();
+      int width = videoSize.width;
+      int height = videoSize.height;
+      if (width != 0 && height != 0) {
+        int rotationDegrees = videoSize.unappliedRotationDegrees;
         // Switch the width/height if video was taken in portrait mode
         if (rotationDegrees == 90 || rotationDegrees == 270) {
-          width = videoFormat.height;
-          height = videoFormat.width;
+          width = videoSize.height;
+          height = videoSize.width;
         }
         event.put("width", width);
         event.put("height", height);
@@ -331,18 +331,5 @@ final class VideoPlayer {
     if (httpHeadersNotEmpty) {
       factory.setDefaultRequestProperties(httpHeaders);
     }
-  }
-
-  // TODO: migrate to stable API, see https://github.com/flutter/flutter/issues/147039
-  @OptIn(markerClass = UnstableApi.class)
-  @Nullable
-  private static Format unstableGetVideoFormat(ExoPlayer exoPlayer) {
-    return exoPlayer.getVideoFormat();
-  }
-
-  // TODO: migrate to stable API, see https://github.com/flutter/flutter/issues/147039
-  @OptIn(markerClass = UnstableApi.class)
-  private static int unstableGetRotationDegrees(Format videoFormat) {
-    return videoFormat.rotationDegrees;
   }
 }

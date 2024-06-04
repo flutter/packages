@@ -14,9 +14,9 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 
 import android.graphics.SurfaceTexture;
-import androidx.media3.common.Format;
 import androidx.media3.common.PlaybackException;
 import androidx.media3.common.Player;
+import androidx.media3.common.VideoSize;
 import androidx.media3.datasource.DefaultHttpDataSource;
 import androidx.media3.exoplayer.ExoPlayer;
 import io.flutter.plugin.common.EventChannel;
@@ -139,10 +139,9 @@ public class VideoPlayerTest {
             fakeVideoPlayerOptions,
             fakeEventSink,
             httpDataSourceFactorySpy);
-    Format testFormat =
-        new Format.Builder().setWidth(100).setHeight(200).setRotationDegrees(90).build();
+    VideoSize testVideoSize = new VideoSize(100, 200, 90, 1f);
 
-    when(fakeExoPlayer.getVideoFormat()).thenReturn(testFormat);
+    when(fakeExoPlayer.getVideoSize()).thenReturn(testVideoSize);
     when(fakeExoPlayer.getDuration()).thenReturn(10L);
 
     videoPlayer.isInitialized = true;
@@ -168,10 +167,9 @@ public class VideoPlayerTest {
             fakeVideoPlayerOptions,
             fakeEventSink,
             httpDataSourceFactorySpy);
-    Format testFormat =
-        new Format.Builder().setWidth(100).setHeight(200).setRotationDegrees(270).build();
+    VideoSize testVideoSize = new VideoSize(100, 200, 270, 1f);
 
-    when(fakeExoPlayer.getVideoFormat()).thenReturn(testFormat);
+    when(fakeExoPlayer.getVideoSize()).thenReturn(testVideoSize);
     when(fakeExoPlayer.getDuration()).thenReturn(10L);
 
     videoPlayer.isInitialized = true;
@@ -197,10 +195,9 @@ public class VideoPlayerTest {
             fakeVideoPlayerOptions,
             fakeEventSink,
             httpDataSourceFactorySpy);
-    Format testFormat =
-        new Format.Builder().setWidth(100).setHeight(200).setRotationDegrees(0).build();
+    VideoSize testVideoSize = new VideoSize(100, 200, 0, 1f);
 
-    when(fakeExoPlayer.getVideoFormat()).thenReturn(testFormat);
+    when(fakeExoPlayer.getVideoSize()).thenReturn(testVideoSize);
     when(fakeExoPlayer.getDuration()).thenReturn(10L);
 
     videoPlayer.isInitialized = true;
@@ -226,10 +223,9 @@ public class VideoPlayerTest {
             fakeVideoPlayerOptions,
             fakeEventSink,
             httpDataSourceFactorySpy);
-    Format testFormat =
-        new Format.Builder().setWidth(100).setHeight(200).setRotationDegrees(180).build();
+    VideoSize testVideoSize = new VideoSize(100, 200, 180, 1f);
 
-    when(fakeExoPlayer.getVideoFormat()).thenReturn(testFormat);
+    when(fakeExoPlayer.getVideoSize()).thenReturn(testVideoSize);
     when(fakeExoPlayer.getDuration()).thenReturn(10L);
 
     videoPlayer.isInitialized = true;
