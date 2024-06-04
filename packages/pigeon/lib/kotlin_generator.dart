@@ -1242,13 +1242,13 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
           '''
           val instanceManager: $instanceManagerClassName
           private var _codec: StandardMessageCodec? = null
-            val codec: StandardMessageCodec
-              get() {
-                if (_codec == null) {
-                  _codec = PigeonProxyApiBaseCodec(this)
-                }
-                return _codec!!
+          val codec: StandardMessageCodec
+            get() {
+              if (_codec == null) {
+                _codec = PigeonProxyApiBaseCodec(this)
               }
+              return _codec!!
+            }
 
           init {
             val api = $instanceManagerApiName(binaryMessenger)
@@ -1499,14 +1499,14 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
                   "$channelName",
                   codec
                 )
-                channel.setMessageHandler { _, reply ->
-                  if (api != null) {
+                if (api != null) {
+                  channel.setMessageHandler { _, reply ->
                     reply.reply(wrapError(UnsupportedOperationException(
                       "Call references class `$className`, which requires api version $apiRequirement."
                     )))
-                  } else {
-                    channel.setMessageHandler(null)
                   }
+                } else {
+                  channel.setMessageHandler(null)
                 }''',
                 trimIndentation: true,
               );
