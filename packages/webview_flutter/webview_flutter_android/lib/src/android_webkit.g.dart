@@ -133,7 +133,9 @@ class PigeonInstanceManager {
     );
     _PigeonInstanceManagerApi.setUpMessageHandlers(instanceManager: instanceManager);
     WebResourceRequest.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    WebResourceResponse.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
     WebResourceError.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    WebResourceErrorCompat.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
     WebViewPoint.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
     ConsoleMessage.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
     CookieManager.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
@@ -588,6 +590,86 @@ class WebResourceRequest extends PigeonProxyApiBaseClass {
   }
 }
 
+/// Encapsulates a resource response.
+///
+/// See https://developer.android.com/reference/android/webkit/WebResourceResponse.
+class WebResourceResponse extends PigeonProxyApiBaseClass {
+  /// Constructs [WebResourceResponse] without creating the associated native object.
+  ///
+  /// This should only be used by subclasses created by this library or to
+  /// create copies for an [PigeonInstanceManager].
+  @protected
+  WebResourceResponse.pigeon_detached({
+    super.pigeon_binaryMessenger,
+    super.pigeon_instanceManager,
+    required this.statusCode,
+  });
+
+  /// The resource response's status code.
+  final int statusCode;
+
+  static void pigeon_setUpMessageHandlers({
+    bool pigeon_clearHandlers = false,
+    BinaryMessenger? pigeon_binaryMessenger,
+    PigeonInstanceManager? pigeon_instanceManager,
+    WebResourceResponse Function(int statusCode)? pigeon_newInstance,
+  }) {
+    final _PigeonProxyApiBaseCodec pigeonChannelCodec =
+        _PigeonProxyApiBaseCodec(
+            pigeon_instanceManager ?? PigeonInstanceManager.instance);
+    final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
+    {
+      final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
+              Object?>(
+          'dev.flutter.pigeon.webview_flutter_android.WebResourceResponse.pigeon_newInstance',
+          pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
+      if (pigeon_clearHandlers) {
+        __pigeon_channel.setMessageHandler(null);
+      } else {
+        __pigeon_channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.webview_flutter_android.WebResourceResponse.pigeon_newInstance was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final int? arg_pigeon_instanceIdentifier = (args[0] as int?);
+          assert(arg_pigeon_instanceIdentifier != null,
+              'Argument for dev.flutter.pigeon.webview_flutter_android.WebResourceResponse.pigeon_newInstance was null, expected non-null int.');
+          final int? arg_statusCode = (args[1] as int?);
+          assert(arg_statusCode != null,
+              'Argument for dev.flutter.pigeon.webview_flutter_android.WebResourceResponse.pigeon_newInstance was null, expected non-null int.');
+          try {
+            (pigeon_instanceManager ?? PigeonInstanceManager.instance)
+                .addHostCreatedInstance(
+              pigeon_newInstance?.call(arg_statusCode!) ??
+                  WebResourceResponse.pigeon_detached(
+                    pigeon_binaryMessenger: pigeon_binaryMessenger,
+                    pigeon_instanceManager: pigeon_instanceManager,
+                    statusCode: arg_statusCode!,
+                  ),
+              arg_pigeon_instanceIdentifier!,
+            );
+            return wrapResponse(empty: true);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
+        });
+      }
+    }
+  }
+
+  @override
+  WebResourceResponse pigeon_copy() {
+    return WebResourceResponse.pigeon_detached(
+      pigeon_binaryMessenger: pigeon_binaryMessenger,
+      pigeon_instanceManager: pigeon_instanceManager,
+      statusCode: statusCode,
+    );
+  }
+}
+
 /// Encapsulates information about errors that occurred during loading of web
 /// resources.
 ///
@@ -673,6 +755,99 @@ class WebResourceError extends PigeonProxyApiBaseClass {
   @override
   WebResourceError pigeon_copy() {
     return WebResourceError.pigeon_detached(
+      pigeon_binaryMessenger: pigeon_binaryMessenger,
+      pigeon_instanceManager: pigeon_instanceManager,
+      errorCode: errorCode,
+      description: description,
+    );
+  }
+}
+
+/// Encapsulates information about errors that occurred during loading of web
+/// resources.
+///
+/// See https://developer.android.com/reference/androidx/webkit/WebResourceErrorCompat.
+class WebResourceErrorCompat extends PigeonProxyApiBaseClass {
+  /// Constructs [WebResourceErrorCompat] without creating the associated native object.
+  ///
+  /// This should only be used by subclasses created by this library or to
+  /// create copies for an [PigeonInstanceManager].
+  @protected
+  WebResourceErrorCompat.pigeon_detached({
+    super.pigeon_binaryMessenger,
+    super.pigeon_instanceManager,
+    required this.errorCode,
+    required this.description,
+  });
+
+  /// The error code of the error.
+  final int errorCode;
+
+  /// The string describing the error.
+  final String description;
+
+  static void pigeon_setUpMessageHandlers({
+    bool pigeon_clearHandlers = false,
+    BinaryMessenger? pigeon_binaryMessenger,
+    PigeonInstanceManager? pigeon_instanceManager,
+    WebResourceErrorCompat Function(
+      int errorCode,
+      String description,
+    )? pigeon_newInstance,
+  }) {
+    final _PigeonProxyApiBaseCodec pigeonChannelCodec =
+        _PigeonProxyApiBaseCodec(
+            pigeon_instanceManager ?? PigeonInstanceManager.instance);
+    final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
+    {
+      final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
+              Object?>(
+          'dev.flutter.pigeon.webview_flutter_android.WebResourceErrorCompat.pigeon_newInstance',
+          pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
+      if (pigeon_clearHandlers) {
+        __pigeon_channel.setMessageHandler(null);
+      } else {
+        __pigeon_channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.webview_flutter_android.WebResourceErrorCompat.pigeon_newInstance was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final int? arg_pigeon_instanceIdentifier = (args[0] as int?);
+          assert(arg_pigeon_instanceIdentifier != null,
+              'Argument for dev.flutter.pigeon.webview_flutter_android.WebResourceErrorCompat.pigeon_newInstance was null, expected non-null int.');
+          final int? arg_errorCode = (args[1] as int?);
+          assert(arg_errorCode != null,
+              'Argument for dev.flutter.pigeon.webview_flutter_android.WebResourceErrorCompat.pigeon_newInstance was null, expected non-null int.');
+          final String? arg_description = (args[2] as String?);
+          assert(arg_description != null,
+              'Argument for dev.flutter.pigeon.webview_flutter_android.WebResourceErrorCompat.pigeon_newInstance was null, expected non-null String.');
+          try {
+            (pigeon_instanceManager ?? PigeonInstanceManager.instance)
+                .addHostCreatedInstance(
+              pigeon_newInstance?.call(arg_errorCode!, arg_description!) ??
+                  WebResourceErrorCompat.pigeon_detached(
+                    pigeon_binaryMessenger: pigeon_binaryMessenger,
+                    pigeon_instanceManager: pigeon_instanceManager,
+                    errorCode: arg_errorCode!,
+                    description: arg_description!,
+                  ),
+              arg_pigeon_instanceIdentifier!,
+            );
+            return wrapResponse(empty: true);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
+        });
+      }
+    }
+  }
+
+  @override
+  WebResourceErrorCompat pigeon_copy() {
+    return WebResourceErrorCompat.pigeon_detached(
       pigeon_binaryMessenger: pigeon_binaryMessenger,
       pigeon_instanceManager: pigeon_instanceManager,
       errorCode: errorCode,
@@ -1139,7 +1314,8 @@ class WebView extends View {
   late final _PigeonProxyApiBaseCodec __pigeon_codecWebView =
       _PigeonProxyApiBaseCodec(pigeon_instanceManager);
 
-  /// Callback method.
+  /// This is called in response to an internal scroll in this view (i.e., the
+  /// view scrolled its own contents).
   ///
   /// For the associated Native object to be automatically garbage collected,
   /// it is required that the implementation of this `Function` doesn't have a
@@ -2516,7 +2692,9 @@ class WebViewClient extends PigeonProxyApiBaseClass {
     super.pigeon_instanceManager,
     this.onPageStarted,
     this.onPageFinished,
+    this.onReceivedHttpError,
     this.onReceivedRequestError,
+    this.onReceivedRequestErrorCompat,
     this.onReceivedError,
     this.requestLoading,
     this.urlLoading,
@@ -2563,7 +2741,9 @@ class WebViewClient extends PigeonProxyApiBaseClass {
     super.pigeon_instanceManager,
     this.onPageStarted,
     this.onPageFinished,
+    this.onReceivedHttpError,
     this.onReceivedRequestError,
+    this.onReceivedRequestErrorCompat,
     this.onReceivedError,
     this.requestLoading,
     this.urlLoading,
@@ -2624,6 +2804,33 @@ class WebViewClient extends PigeonProxyApiBaseClass {
     String url,
   )? onPageFinished;
 
+  /// Notify the host application that an HTTP error has been received from the
+  /// server while loading a resource.
+  ///
+  /// For the associated Native object to be automatically garbage collected,
+  /// it is required that the implementation of this `Function` doesn't have a
+  /// strong reference to the encapsulating class instance. When this `Function`
+  /// references a non-local variable, it is strongly recommended to access it
+  /// with a `WeakReference`:
+  ///
+  /// ```dart
+  /// final WeakReference weakMyVariable = WeakReference(myVariable);
+  /// final WebViewClient instance = WebViewClient(
+  ///  onReceivedHttpError: (WebViewClient pigeon_instance, ...) {
+  ///    print(weakMyVariable?.target);
+  ///  },
+  /// );
+  /// ```
+  ///
+  /// Alternatively, [PigeonInstanceManager.removeWeakReference] can be used to
+  /// release the associated Native object manually.
+  final void Function(
+    WebViewClient pigeon_instance,
+    WebView webView,
+    WebResourceRequest request,
+    WebResourceResponse response,
+  )? onReceivedHttpError;
+
   /// Report web resource loading error to the host application.
   ///
   /// For the associated Native object to be automatically garbage collected,
@@ -2649,6 +2856,32 @@ class WebViewClient extends PigeonProxyApiBaseClass {
     WebResourceRequest request,
     WebResourceError error,
   )? onReceivedRequestError;
+
+  /// Report web resource loading error to the host application.
+  ///
+  /// For the associated Native object to be automatically garbage collected,
+  /// it is required that the implementation of this `Function` doesn't have a
+  /// strong reference to the encapsulating class instance. When this `Function`
+  /// references a non-local variable, it is strongly recommended to access it
+  /// with a `WeakReference`:
+  ///
+  /// ```dart
+  /// final WeakReference weakMyVariable = WeakReference(myVariable);
+  /// final WebViewClient instance = WebViewClient(
+  ///  onReceivedRequestErrorCompat: (WebViewClient pigeon_instance, ...) {
+  ///    print(weakMyVariable?.target);
+  ///  },
+  /// );
+  /// ```
+  ///
+  /// Alternatively, [PigeonInstanceManager.removeWeakReference] can be used to
+  /// release the associated Native object manually.
+  final void Function(
+    WebViewClient pigeon_instance,
+    WebView webView,
+    WebResourceRequest request,
+    WebResourceErrorCompat error,
+  )? onReceivedRequestErrorCompat;
 
   /// Report an error to the host application.
   ///
@@ -2802,8 +3035,20 @@ class WebViewClient extends PigeonProxyApiBaseClass {
       WebViewClient pigeon_instance,
       WebView webView,
       WebResourceRequest request,
+      WebResourceResponse response,
+    )? onReceivedHttpError,
+    void Function(
+      WebViewClient pigeon_instance,
+      WebView webView,
+      WebResourceRequest request,
       WebResourceError error,
     )? onReceivedRequestError,
+    void Function(
+      WebViewClient pigeon_instance,
+      WebView webView,
+      WebResourceRequest request,
+      WebResourceErrorCompat error,
+    )? onReceivedRequestErrorCompat,
     void Function(
       WebViewClient pigeon_instance,
       WebView webView,
@@ -2953,6 +3198,49 @@ class WebViewClient extends PigeonProxyApiBaseClass {
     {
       final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
               Object?>(
+          'dev.flutter.pigeon.webview_flutter_android.WebViewClient.onReceivedHttpError',
+          pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
+      if (pigeon_clearHandlers) {
+        __pigeon_channel.setMessageHandler(null);
+      } else {
+        __pigeon_channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onReceivedHttpError was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final WebViewClient? arg_pigeon_instance =
+              (args[0] as WebViewClient?);
+          assert(arg_pigeon_instance != null,
+              'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onReceivedHttpError was null, expected non-null WebViewClient.');
+          final WebView? arg_webView = (args[1] as WebView?);
+          assert(arg_webView != null,
+              'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onReceivedHttpError was null, expected non-null WebView.');
+          final WebResourceRequest? arg_request =
+              (args[2] as WebResourceRequest?);
+          assert(arg_request != null,
+              'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onReceivedHttpError was null, expected non-null WebResourceRequest.');
+          final WebResourceResponse? arg_response =
+              (args[3] as WebResourceResponse?);
+          assert(arg_response != null,
+              'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onReceivedHttpError was null, expected non-null WebResourceResponse.');
+          try {
+            (onReceivedHttpError ?? arg_pigeon_instance!.onReceivedHttpError)
+                ?.call(arg_pigeon_instance!, arg_webView!, arg_request!,
+                    arg_response!);
+            return wrapResponse(empty: true);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
+        });
+      }
+    }
+
+    {
+      final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
+              Object?>(
           'dev.flutter.pigeon.webview_flutter_android.WebViewClient.onReceivedRequestError',
           pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
@@ -2980,6 +3268,50 @@ class WebViewClient extends PigeonProxyApiBaseClass {
           try {
             (onReceivedRequestError ??
                     arg_pigeon_instance!.onReceivedRequestError)
+                ?.call(arg_pigeon_instance!, arg_webView!, arg_request!,
+                    arg_error!);
+            return wrapResponse(empty: true);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
+        });
+      }
+    }
+
+    {
+      final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
+              Object?>(
+          'dev.flutter.pigeon.webview_flutter_android.WebViewClient.onReceivedRequestErrorCompat',
+          pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
+      if (pigeon_clearHandlers) {
+        __pigeon_channel.setMessageHandler(null);
+      } else {
+        __pigeon_channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onReceivedRequestErrorCompat was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final WebViewClient? arg_pigeon_instance =
+              (args[0] as WebViewClient?);
+          assert(arg_pigeon_instance != null,
+              'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onReceivedRequestErrorCompat was null, expected non-null WebViewClient.');
+          final WebView? arg_webView = (args[1] as WebView?);
+          assert(arg_webView != null,
+              'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onReceivedRequestErrorCompat was null, expected non-null WebView.');
+          final WebResourceRequest? arg_request =
+              (args[2] as WebResourceRequest?);
+          assert(arg_request != null,
+              'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onReceivedRequestErrorCompat was null, expected non-null WebResourceRequest.');
+          final WebResourceErrorCompat? arg_error =
+              (args[3] as WebResourceErrorCompat?);
+          assert(arg_error != null,
+              'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onReceivedRequestErrorCompat was null, expected non-null WebResourceErrorCompat.');
+          try {
+            (onReceivedRequestErrorCompat ??
+                    arg_pigeon_instance!.onReceivedRequestErrorCompat)
                 ?.call(arg_pigeon_instance!, arg_webView!, arg_request!,
                     arg_error!);
             return wrapResponse(empty: true);
@@ -3250,7 +3582,9 @@ class WebViewClient extends PigeonProxyApiBaseClass {
       pigeon_instanceManager: pigeon_instanceManager,
       onPageStarted: onPageStarted,
       onPageFinished: onPageFinished,
+      onReceivedHttpError: onReceivedHttpError,
       onReceivedRequestError: onReceivedRequestError,
+      onReceivedRequestErrorCompat: onReceivedRequestErrorCompat,
       onReceivedError: onReceivedError,
       requestLoading: requestLoading,
       urlLoading: urlLoading,

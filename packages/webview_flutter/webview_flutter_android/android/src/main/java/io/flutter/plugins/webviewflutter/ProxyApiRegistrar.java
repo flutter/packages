@@ -53,6 +53,12 @@ public class ProxyApiRegistrar extends PigeonProxyApiRegistrar {
 
   @NonNull
   @Override
+  public PigeonApiWebResourceErrorCompat getPigeonApiWebResourceErrorCompat() {
+    return new WebResourceErrorCompatProxyApi(this);
+  }
+
+  @NonNull
+  @Override
   public PigeonApiWebViewPoint getPigeonApiWebViewPoint() {
     return new WebViewPointProxyApi(this);
   }
@@ -84,13 +90,13 @@ public class ProxyApiRegistrar extends PigeonProxyApiRegistrar {
   @NonNull
   @Override
   public PigeonApiJavaScriptChannel getPigeonApiJavaScriptChannel() {
-    return null;
+    return new JavaScriptChannelProxyApi(this);
   }
 
   @NonNull
   @Override
   public PigeonApiWebViewClient getPigeonApiWebViewClient() {
-    return null;
+    return new WebViewClientProxyApi(this);
   }
 
   @NonNull
@@ -160,5 +166,11 @@ public class ProxyApiRegistrar extends PigeonProxyApiRegistrar {
 
   public void setContext(@NonNull Context context) {
     this.context = context;
+  }
+
+  @NonNull
+  @Override
+  public PigeonApiWebResourceResponse getPigeonApiWebResourceResponse() {
+    return null;
   }
 }

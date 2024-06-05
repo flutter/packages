@@ -4,7 +4,6 @@
 
 package io.flutter.plugins.webviewflutter;
 
-import android.annotation.SuppressLint;
 import android.os.Build;
 import android.webkit.HttpAuthHandler;
 import android.webkit.WebResourceError;
@@ -15,9 +14,9 @@ import android.webkit.WebViewClient;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.webkit.WebResourceErrorCompat;
-import io.flutter.plugin.common.BinaryMessenger;
+
 import io.flutter.plugins.webviewflutter.GeneratedAndroidWebView.WebViewClientFlutterApi;
-import java.util.HashMap;
+
 import java.util.Objects;
 
 /**
@@ -25,74 +24,12 @@ import java.util.Objects;
  *
  * <p>Passes arguments of callbacks methods from a {@link WebViewClient} to Dart.
  */
-public class WebViewClientFlutterApiImpl extends WebViewClientFlutterApi {
-  // To ease adding additional methods, this value is added prematurely.
-  @SuppressWarnings({"unused", "FieldCanBeLocal"})
-  private final BinaryMessenger binaryMessenger;
-
-  private final InstanceManager instanceManager;
-  private final WebViewFlutterApiImpl webViewFlutterApi;
-
-  @RequiresApi(api = Build.VERSION_CODES.M)
-  static GeneratedAndroidWebView.WebResourceErrorData createWebResourceErrorData(
-      WebResourceError error) {
-    return new GeneratedAndroidWebView.WebResourceErrorData.Builder()
-        .setErrorCode((long) error.getErrorCode())
-        .setDescription(error.getDescription().toString())
-        .build();
-  }
-
-  @SuppressLint("RequiresFeature")
-  static GeneratedAndroidWebView.WebResourceErrorData createWebResourceErrorData(
-      WebResourceErrorCompat error) {
-    return new GeneratedAndroidWebView.WebResourceErrorData.Builder()
-        .setErrorCode((long) error.getErrorCode())
-        .setDescription(error.getDescription().toString())
-        .build();
-  }
-
-  @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-  static GeneratedAndroidWebView.WebResourceRequestData createWebResourceRequestData(
-      WebResourceRequest request) {
-    final GeneratedAndroidWebView.WebResourceRequestData.Builder requestData =
-        new GeneratedAndroidWebView.WebResourceRequestData.Builder()
-            .setUrl(request.getUrl().toString())
-            .setIsForMainFrame(request.isForMainFrame())
-            .setHasGesture(request.hasGesture())
-            .setMethod(request.getMethod())
-            .setRequestHeaders(
-                request.getRequestHeaders() != null
-                    ? request.getRequestHeaders()
-                    : new HashMap<>());
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-      requestData.setIsRedirect(request.isRedirect());
-    }
-
-    return requestData.build();
-  }
-
-  @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-  static GeneratedAndroidWebView.WebResourceResponseData createWebResourceResponseData(
-      WebResourceResponse response) {
-    final GeneratedAndroidWebView.WebResourceResponseData.Builder responseData =
-        new GeneratedAndroidWebView.WebResourceResponseData.Builder()
-            .setStatusCode((long) response.getStatusCode());
-
-    return responseData.build();
-  }
-
+public class WebViewClientFlutterApiImpl extends PigeonApiWebViewClient {
   /**
    * Creates a Flutter api that sends messages to Dart.
-   *
-   * @param binaryMessenger handles sending messages to Dart
-   * @param instanceManager maintains instances stored to communicate with Dart objects
    */
-  public WebViewClientFlutterApiImpl(
-      @NonNull BinaryMessenger binaryMessenger, @NonNull InstanceManager instanceManager) {
-    super(binaryMessenger);
-    this.binaryMessenger = binaryMessenger;
-    this.instanceManager = instanceManager;
-    webViewFlutterApi = new WebViewFlutterApiImpl(binaryMessenger, instanceManager);
+  public WebViewClientFlutterApiImpl(@NonNull ProxyApiRegistrar pigeonRegistrar) {
+    super(pigeonRegistrar);
   }
 
   /** Passes arguments from {@link WebViewClient#onPageStarted} to Dart. */

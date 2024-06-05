@@ -369,10 +369,22 @@ abstract class PigeonProxyApiRegistrar(val binaryMessenger: BinaryMessenger) {
   abstract fun getPigeonApiWebResourceRequest(): PigeonApiWebResourceRequest
 
   /**
+   * An implementation of [PigeonApiWebResourceResponse] used to add a new Dart instance of
+   * `WebResourceResponse` to the Dart `InstanceManager`.
+   */
+  abstract fun getPigeonApiWebResourceResponse(): PigeonApiWebResourceResponse
+
+  /**
    * An implementation of [PigeonApiWebResourceError] used to add a new Dart instance of
    * `WebResourceError` to the Dart `InstanceManager`.
    */
   abstract fun getPigeonApiWebResourceError(): PigeonApiWebResourceError
+
+  /**
+   * An implementation of [PigeonApiWebResourceErrorCompat] used to add a new Dart instance of
+   * `WebResourceErrorCompat` to the Dart `InstanceManager`.
+   */
+  abstract fun getPigeonApiWebResourceErrorCompat(): PigeonApiWebResourceErrorCompat
 
   /**
    * An implementation of [PigeonApiWebViewPoint] used to add a new Dart instance of
@@ -526,8 +538,14 @@ private class PigeonProxyApiBaseCodec(val registrar: PigeonProxyApiRegistrar) : 
     if (android.os.Build.VERSION.SDK_INT >= 21 && value is android.webkit.WebResourceRequest) {
       registrar.getPigeonApiWebResourceRequest().pigeon_newInstance(value) { }
     }
+     else if (android.os.Build.VERSION.SDK_INT >= 23 && value is android.webkit.WebResourceResponse) {
+      registrar.getPigeonApiWebResourceResponse().pigeon_newInstance(value) { }
+    }
      else if (android.os.Build.VERSION.SDK_INT >= 23 && value is android.webkit.WebResourceError) {
       registrar.getPigeonApiWebResourceError().pigeon_newInstance(value) { }
+    }
+     else if (value is androidx.webkit.WebResourceErrorCompat) {
+      registrar.getPigeonApiWebResourceErrorCompat().pigeon_newInstance(value) { }
     }
      else if (value is WebViewPoint) {
       registrar.getPigeonApiWebViewPoint().pigeon_newInstance(value) { }
@@ -740,6 +758,46 @@ abstract class PigeonApiWebResourceRequest(open val pigeonRegistrar: PigeonProxy
 
 }
 /**
+ * Encapsulates a resource response.
+ *
+ * See https://developer.android.com/reference/android/webkit/WebResourceResponse.
+ */
+@Suppress("UNCHECKED_CAST")
+abstract class PigeonApiWebResourceResponse(open val pigeonRegistrar: PigeonProxyApiRegistrar) {
+  /** The resource response's status code. */
+  @androidx.annotation.RequiresApi(api = 23)
+  abstract fun statusCode(pigeon_instance: android.webkit.WebResourceResponse): Long
+
+  @Suppress("LocalVariableName", "FunctionName")
+  /**Creates a Dart instance of WebResourceResponse and attaches it to [pigeon_instanceArg]. */
+  @androidx.annotation.RequiresApi(api = 23)
+  fun pigeon_newInstance(pigeon_instanceArg: android.webkit.WebResourceResponse, callback: (Result<Unit>) -> Unit)
+{
+    if (pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) {
+      Result.success(Unit)
+      return
+    }
+    val pigeon_identifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
+    val statusCodeArg = statusCode(pigeon_instanceArg)
+    val binaryMessenger = pigeonRegistrar.binaryMessenger
+    val codec = pigeonRegistrar.codec
+    val channelName = "dev.flutter.pigeon.webview_flutter_android.WebResourceResponse.pigeon_newInstance"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(listOf(pigeon_identifierArg, statusCodeArg)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(Result.failure(AndroidWebKitError(it[0] as String, it[1] as String, it[2] as String?)))
+        } else {
+          callback(Result.success(Unit))
+        }
+      } else {
+        callback(Result.failure(createConnectionError(channelName)))
+      } 
+    }
+  }
+
+}
+/**
  * Encapsulates information about errors that occurred during loading of web
  * resources.
  *
@@ -770,6 +828,49 @@ abstract class PigeonApiWebResourceError(open val pigeonRegistrar: PigeonProxyAp
     val binaryMessenger = pigeonRegistrar.binaryMessenger
     val codec = pigeonRegistrar.codec
     val channelName = "dev.flutter.pigeon.webview_flutter_android.WebResourceError.pigeon_newInstance"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(listOf(pigeon_identifierArg, errorCodeArg, descriptionArg)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(Result.failure(AndroidWebKitError(it[0] as String, it[1] as String, it[2] as String?)))
+        } else {
+          callback(Result.success(Unit))
+        }
+      } else {
+        callback(Result.failure(createConnectionError(channelName)))
+      } 
+    }
+  }
+
+}
+/**
+ * Encapsulates information about errors that occurred during loading of web
+ * resources.
+ *
+ * See https://developer.android.com/reference/androidx/webkit/WebResourceErrorCompat.
+ */
+@Suppress("UNCHECKED_CAST")
+abstract class PigeonApiWebResourceErrorCompat(open val pigeonRegistrar: PigeonProxyApiRegistrar) {
+  /** The error code of the error. */
+  abstract fun errorCode(pigeon_instance: androidx.webkit.WebResourceErrorCompat): Long
+
+  /** The string describing the error. */
+  abstract fun description(pigeon_instance: androidx.webkit.WebResourceErrorCompat): String
+
+  @Suppress("LocalVariableName", "FunctionName")
+  /**Creates a Dart instance of WebResourceErrorCompat and attaches it to [pigeon_instanceArg]. */
+  fun pigeon_newInstance(pigeon_instanceArg: androidx.webkit.WebResourceErrorCompat, callback: (Result<Unit>) -> Unit)
+{
+    if (pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) {
+      Result.success(Unit)
+      return
+    }
+    val pigeon_identifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
+    val errorCodeArg = errorCode(pigeon_instanceArg)
+    val descriptionArg = description(pigeon_instanceArg)
+    val binaryMessenger = pigeonRegistrar.binaryMessenger
+    val codec = pigeonRegistrar.codec
+    val channelName = "dev.flutter.pigeon.webview_flutter_android.WebResourceErrorCompat.pigeon_newInstance"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(pigeon_identifierArg, errorCodeArg, descriptionArg)) {
       if (it is List<*>) {
@@ -1536,6 +1637,10 @@ abstract class PigeonApiWebView(open val pigeonRegistrar: PigeonProxyApiRegistra
     }
   }
 
+  /**
+   * This is called in response to an internal scroll in this view (i.e., the
+   * view scrolled its own contents).
+   */
   fun onScrollChanged(pigeon_instanceArg: android.webkit.WebView, leftArg: Long, topArg: Long, oldLeftArg: Long, oldTopArg: Long, callback: (Result<Unit>) -> Unit)
 {
     val binaryMessenger = pigeonRegistrar.binaryMessenger
@@ -2128,6 +2233,30 @@ abstract class PigeonApiWebViewClient(open val pigeonRegistrar: PigeonProxyApiRe
     }
   }
 
+  /**
+   * Notify the host application that an HTTP error has been received from the
+   * server while loading a resource.
+   */
+  @androidx.annotation.RequiresApi(api = 23)
+  fun onReceivedHttpError(pigeon_instanceArg: android.webkit.WebViewClient, webViewArg: android.webkit.WebView, requestArg: android.webkit.WebResourceRequest, responseArg: android.webkit.WebResourceResponse, callback: (Result<Unit>) -> Unit)
+{
+    val binaryMessenger = pigeonRegistrar.binaryMessenger
+    val codec = pigeonRegistrar.codec
+    val channelName = "dev.flutter.pigeon.webview_flutter_android.WebViewClient.onReceivedHttpError"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(listOf(pigeon_instanceArg, webViewArg, requestArg, responseArg)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(Result.failure(AndroidWebKitError(it[0] as String, it[1] as String, it[2] as String?)))
+        } else {
+          callback(Result.success(Unit))
+        }
+      } else {
+        callback(Result.failure(createConnectionError(channelName)))
+      } 
+    }
+  }
+
   /** Report web resource loading error to the host application. */
   @androidx.annotation.RequiresApi(api = 23)
   fun onReceivedRequestError(pigeon_instanceArg: android.webkit.WebViewClient, webViewArg: android.webkit.WebView, requestArg: android.webkit.WebResourceRequest, errorArg: android.webkit.WebResourceError, callback: (Result<Unit>) -> Unit)
@@ -2135,6 +2264,27 @@ abstract class PigeonApiWebViewClient(open val pigeonRegistrar: PigeonProxyApiRe
     val binaryMessenger = pigeonRegistrar.binaryMessenger
     val codec = pigeonRegistrar.codec
     val channelName = "dev.flutter.pigeon.webview_flutter_android.WebViewClient.onReceivedRequestError"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(listOf(pigeon_instanceArg, webViewArg, requestArg, errorArg)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(Result.failure(AndroidWebKitError(it[0] as String, it[1] as String, it[2] as String?)))
+        } else {
+          callback(Result.success(Unit))
+        }
+      } else {
+        callback(Result.failure(createConnectionError(channelName)))
+      } 
+    }
+  }
+
+  /** Report web resource loading error to the host application. */
+  @androidx.annotation.RequiresApi(api = 21)
+  fun onReceivedRequestErrorCompat(pigeon_instanceArg: android.webkit.WebViewClient, webViewArg: android.webkit.WebView, requestArg: android.webkit.WebResourceRequest, errorArg: androidx.webkit.WebResourceErrorCompat, callback: (Result<Unit>) -> Unit)
+{
+    val binaryMessenger = pigeonRegistrar.binaryMessenger
+    val codec = pigeonRegistrar.codec
+    val channelName = "dev.flutter.pigeon.webview_flutter_android.WebViewClient.onReceivedRequestErrorCompat"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(pigeon_instanceArg, webViewArg, requestArg, errorArg)) {
       if (it is List<*>) {

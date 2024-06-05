@@ -19,7 +19,7 @@ import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import androidx.annotation.NonNull;
-import io.flutter.plugins.webviewflutter.WebViewClientHostApiImpl.WebViewClientCreator;
+import io.flutter.plugins.webviewflutter.WebViewClientProxyApi.WebViewClientCreator;
 import java.util.HashMap;
 import org.junit.After;
 import org.junit.Before;
@@ -37,8 +37,8 @@ public class WebViewClientImplTest {
   @Mock public WebView mockWebView;
 
   InstanceManager instanceManager;
-  WebViewClientHostApiImpl hostApiImpl;
-  WebViewClientHostApiImpl.WebViewClientImpl webViewClient;
+  WebViewClientProxyApi hostApiImpl;
+  WebViewClientProxyApi.WebViewClientImpl webViewClient;
 
   @Before
   public void setUp() {
@@ -50,13 +50,13 @@ public class WebViewClientImplTest {
           @NonNull
           public WebViewClient createWebViewClient(
               @NonNull WebViewClientFlutterApiImpl flutterApi) {
-            webViewClient = new WebViewClientHostApiImpl.WebViewClientImpl(flutterApi);
+            webViewClient = new WebViewClientProxyApi.WebViewClientImpl(flutterApi);
             return webViewClient;
           }
         };
 
     hostApiImpl =
-        new WebViewClientHostApiImpl(instanceManager, webViewClientCreator, mockFlutterApi);
+        new WebViewClientProxyApi(instanceManager, webViewClientCreator, mockFlutterApi);
     hostApiImpl.create(1L);
   }
 

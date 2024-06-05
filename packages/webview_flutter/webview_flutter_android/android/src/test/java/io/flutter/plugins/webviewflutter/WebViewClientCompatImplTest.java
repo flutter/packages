@@ -19,8 +19,8 @@ import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import androidx.annotation.NonNull;
-import io.flutter.plugins.webviewflutter.WebViewClientHostApiImpl.WebViewClientCompatImpl;
-import io.flutter.plugins.webviewflutter.WebViewClientHostApiImpl.WebViewClientCreator;
+import io.flutter.plugins.webviewflutter.WebViewClientProxyApi.WebViewClientCompatImpl;
+import io.flutter.plugins.webviewflutter.WebViewClientProxyApi.WebViewClientCreator;
 import java.util.HashMap;
 import org.junit.After;
 import org.junit.Before;
@@ -38,7 +38,7 @@ public class WebViewClientCompatImplTest {
   @Mock public WebView mockWebView;
 
   InstanceManager instanceManager;
-  WebViewClientHostApiImpl hostApiImpl;
+  WebViewClientProxyApi hostApiImpl;
   WebViewClientCompatImpl webViewClient;
 
   @Before
@@ -57,7 +57,7 @@ public class WebViewClientCompatImplTest {
         };
 
     hostApiImpl =
-        new WebViewClientHostApiImpl(instanceManager, webViewClientCreator, mockFlutterApi);
+        new WebViewClientProxyApi(instanceManager, webViewClientCreator, mockFlutterApi);
     hostApiImpl.create(1L);
   }
 
@@ -159,9 +159,9 @@ public class WebViewClientCompatImplTest {
 
   @Test
   public void setReturnValueForShouldOverrideUrlLoading() {
-    WebViewClientHostApiImpl.WebViewClientCompatImpl mockWebViewClient = mock();
-    final WebViewClientHostApiImpl webViewClientHostApi =
-        new WebViewClientHostApiImpl(
+    WebViewClientProxyApi.WebViewClientCompatImpl mockWebViewClient = mock();
+    final WebViewClientProxyApi webViewClientHostApi =
+        new WebViewClientProxyApi(
             instanceManager,
             new WebViewClientCreator() {
               @NonNull

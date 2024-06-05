@@ -103,6 +103,20 @@ abstract class WebResourceRequest {
   late Map<String, String>? requestHeaders;
 }
 
+/// Encapsulates a resource response.
+///
+/// See https://developer.android.com/reference/android/webkit/WebResourceResponse.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'android.webkit.WebResourceResponse',
+    minAndroidApi: 23,
+  ),
+)
+abstract class WebResourceResponse {
+  /// The resource response's status code.
+  late int statusCode;
+}
+
 /// Encapsulates information about errors that occurred during loading of web
 /// resources.
 ///
@@ -114,6 +128,23 @@ abstract class WebResourceRequest {
   ),
 )
 abstract class WebResourceError {
+  /// The error code of the error.
+  late int errorCode;
+
+  /// The string describing the error.
+  late String description;
+}
+
+/// Encapsulates information about errors that occurred during loading of web
+/// resources.
+///
+/// See https://developer.android.com/reference/androidx/webkit/WebResourceErrorCompat.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'androidx.webkit.WebResourceErrorCompat',
+  ),
+)
+abstract class WebResourceErrorCompat {
   /// The error code of the error.
   late int errorCode;
 
@@ -179,6 +210,8 @@ abstract class CookieManager {
 abstract class WebView extends View {
   WebView();
 
+  /// This is called in response to an internal scroll in this view (i.e., the
+  /// view scrolled its own contents).
   late void Function(
     int left,
     int top,
@@ -351,12 +384,27 @@ abstract class WebViewClient {
   /// Notify the host application that a page has finished loading.
   late void Function(WebView webView, String url)? onPageFinished;
 
+  /// Notify the host application that an HTTP error has been received from the
+  /// server while loading a resource.
+  late void Function(
+    WebView webView,
+    WebResourceRequest request,
+    WebResourceResponse response,
+  )? onReceivedHttpError;
+
   /// Report web resource loading error to the host application.
   late void Function(
     WebView webView,
     WebResourceRequest request,
     WebResourceError error,
   )? onReceivedRequestError;
+
+  /// Report web resource loading error to the host application.
+  late void Function(
+    WebView webView,
+    WebResourceRequest request,
+    WebResourceErrorCompat error,
+  )? onReceivedRequestErrorCompat;
 
   /// Report an error to the host application.
   late void Function(
