@@ -11,7 +11,7 @@ import java.io.IOException;
 
 /** Provides access to the assets registered as part of the App bundle. */
 @SuppressWarnings({"deprecation", "DeprecatedIsStillUsed"})
-abstract class FlutterAssetManager {
+public abstract class FlutterAssetManager {
   final AssetManager assetManager;
 
   /**

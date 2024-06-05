@@ -538,7 +538,7 @@ private class PigeonProxyApiBaseCodec(val registrar: PigeonProxyApiRegistrar) :
       registrar.getPigeonApiWebResourceRequest().pigeon_newInstance(value) {}
     } else if (android.os.Build.VERSION.SDK_INT >= 23 && value is android.webkit.WebResourceError) {
       registrar.getPigeonApiWebResourceError().pigeon_newInstance(value) {}
-    } else if (value is io.flutter.plugins.webviewflutter.newGen.WebViewPoint) {
+    } else if (value is WebViewPoint) {
       registrar.getPigeonApiWebViewPoint().pigeon_newInstance(value) {}
     } else if (value is android.webkit.ConsoleMessage) {
       registrar.getPigeonApiConsoleMessage().pigeon_newInstance(value) {}
@@ -548,7 +548,7 @@ private class PigeonProxyApiBaseCodec(val registrar: PigeonProxyApiRegistrar) :
       registrar.getPigeonApiWebView().pigeon_newInstance(value) {}
     } else if (value is android.webkit.WebSettings) {
       registrar.getPigeonApiWebSettings().pigeon_newInstance(value) {}
-    } else if (value is io.flutter.plugins.webviewflutter.JavaScriptChannel) {
+    } else if (value is JavaScriptChannel) {
       registrar.getPigeonApiJavaScriptChannel().pigeon_newInstance(value) {}
     } else if (value is android.webkit.WebViewClient) {
       registrar.getPigeonApiWebViewClient().pigeon_newInstance(value) {}
@@ -808,16 +808,13 @@ abstract class PigeonApiWebResourceError(open val pigeonRegistrar: PigeonProxyAp
  */
 @Suppress("UNCHECKED_CAST")
 abstract class PigeonApiWebViewPoint(open val pigeonRegistrar: PigeonProxyApiRegistrar) {
-  abstract fun x(pigeon_instance: io.flutter.plugins.webviewflutter.newGen.WebViewPoint): Long
+  abstract fun x(pigeon_instance: WebViewPoint): Long
 
-  abstract fun y(pigeon_instance: io.flutter.plugins.webviewflutter.newGen.WebViewPoint): Long
+  abstract fun y(pigeon_instance: WebViewPoint): Long
 
   @Suppress("LocalVariableName", "FunctionName")
   /** Creates a Dart instance of WebViewPoint and attaches it to [pigeon_instanceArg]. */
-  fun pigeon_newInstance(
-      pigeon_instanceArg: io.flutter.plugins.webviewflutter.newGen.WebViewPoint,
-      callback: (Result<Unit>) -> Unit
-  ) {
+  fun pigeon_newInstance(pigeon_instanceArg: WebViewPoint, callback: (Result<Unit>) -> Unit) {
     if (pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) {
       Result.success(Unit)
       return
@@ -1144,7 +1141,7 @@ abstract class PigeonApiWebView(open val pigeonRegistrar: PigeonProxyApiRegistra
   /** Injects the supplied Java object into this WebView. */
   abstract fun addJavaScriptChannel(
       pigeon_instance: android.webkit.WebView,
-      channel: io.flutter.plugins.webviewflutter.JavaScriptChannel
+      channel: JavaScriptChannel
   )
 
   /** Removes a previously injected Java object from this WebView. */
@@ -1591,7 +1588,7 @@ abstract class PigeonApiWebView(open val pigeonRegistrar: PigeonProxyApiRegistra
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as android.webkit.WebView
-            val channelArg = args[1] as io.flutter.plugins.webviewflutter.JavaScriptChannel
+            val channelArg = args[1] as JavaScriptChannel
             val wrapped: List<Any?> =
                 try {
                   api.addJavaScriptChannel(pigeon_instanceArg, channelArg)
@@ -2199,9 +2196,7 @@ abstract class PigeonApiWebSettings(open val pigeonRegistrar: PigeonProxyApiRegi
  */
 @Suppress("UNCHECKED_CAST")
 abstract class PigeonApiJavaScriptChannel(open val pigeonRegistrar: PigeonProxyApiRegistrar) {
-  abstract fun pigeon_defaultConstructor(
-      channelName: String
-  ): io.flutter.plugins.webviewflutter.JavaScriptChannel
+  abstract fun pigeon_defaultConstructor(channelName: String): JavaScriptChannel
 
   companion object {
     @Suppress("LocalVariableName")
@@ -2238,10 +2233,7 @@ abstract class PigeonApiJavaScriptChannel(open val pigeonRegistrar: PigeonProxyA
 
   @Suppress("LocalVariableName", "FunctionName")
   /** Creates a Dart instance of JavaScriptChannel and attaches it to [pigeon_instanceArg]. */
-  fun pigeon_newInstance(
-      pigeon_instanceArg: io.flutter.plugins.webviewflutter.JavaScriptChannel,
-      callback: (Result<Unit>) -> Unit
-  ) {
+  fun pigeon_newInstance(pigeon_instanceArg: JavaScriptChannel, callback: (Result<Unit>) -> Unit) {
     if (pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) {
       Result.success(Unit)
       return
@@ -2252,7 +2244,7 @@ abstract class PigeonApiJavaScriptChannel(open val pigeonRegistrar: PigeonProxyA
 
   /** Handles callbacks messages from JavaScript. */
   fun postMessage(
-      pigeon_instanceArg: io.flutter.plugins.webviewflutter.JavaScriptChannel,
+      pigeon_instanceArg: JavaScriptChannel,
       messageArg: String,
       callback: (Result<Unit>) -> Unit
   ) {
@@ -3658,9 +3650,7 @@ abstract class PigeonApiView(open val pigeonRegistrar: PigeonProxyApiRegistrar) 
   abstract fun scrollBy(pigeon_instance: android.view.View, x: Long, y: Long)
 
   /** Return the scrolled position of this view. */
-  abstract fun getScrollPosition(
-      pigeon_instance: android.view.View
-  ): io.flutter.plugins.webviewflutter.newGen.WebViewPoint
+  abstract fun getScrollPosition(pigeon_instance: android.view.View): WebViewPoint
 
   companion object {
     @Suppress("LocalVariableName")

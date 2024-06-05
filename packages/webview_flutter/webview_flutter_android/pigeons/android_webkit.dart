@@ -124,11 +124,7 @@ abstract class WebResourceError {
 /// Represents a position on a web page.
 ///
 /// This is a custom class created for convenience of the wrapper.
-@ProxyApi(
-  kotlinOptions: KotlinProxyApiOptions(
-    fullClassName: 'io.flutter.plugins.webviewflutter.newGen.WebViewPoint',
-  ),
-)
+@ProxyApi()
 abstract class WebViewPoint {
   late int x;
   late int y;
@@ -322,11 +318,7 @@ abstract class WebSettings {
 ///
 /// This is a custom class for the wrapper that is annotated with
 /// [JavascriptInterface](https://developer.android.com/reference/android/webkit/JavascriptInterface).
-@ProxyApi(
-  kotlinOptions: KotlinProxyApiOptions(
-    fullClassName: 'io.flutter.plugins.webviewflutter.JavaScriptChannel',
-  ),
-)
+@ProxyApi()
 abstract class JavaScriptChannel {
   // ignore: avoid_unused_constructor_parameters
   JavaScriptChannel(String channelName);
