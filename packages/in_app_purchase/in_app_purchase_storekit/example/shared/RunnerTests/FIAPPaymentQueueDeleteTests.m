@@ -6,8 +6,8 @@
 #import <XCTest/XCTest.h>
 #import "FIAObjectTranslator.h"
 #import "FIAPaymentQueueHandler.h"
-#import "Stubs.h"
 #import "Mocks.h"
+#import "Stubs.h"
 
 @import in_app_purchase_storekit;
 

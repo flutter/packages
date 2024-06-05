@@ -55,7 +55,7 @@
 @end
 @implementation DefaultRequestHandler
 
-- (void)startProductRequestWithCompletionHandler:(nonnull ProductRequestCompletion)completion { 
+- (void)startProductRequestWithCompletionHandler:(nonnull ProductRequestCompletion)completion {
   [self.handler startProductRequestWithCompletionHandler:completion];
 }
 
@@ -71,8 +71,8 @@
 
 @implementation TestRequestHandler
 
-- (void)startProductRequestWithCompletionHandler:(nonnull ProductRequestCompletion)completion { 
-  if(_startProductRequestWithCompletionHandlerStub) {
+- (void)startProductRequestWithCompletionHandler:(nonnull ProductRequestCompletion)completion {
+  if (_startProductRequestWithCompletionHandlerStub) {
     _startProductRequestWithCompletionHandlerStub(completion);
   }
 }

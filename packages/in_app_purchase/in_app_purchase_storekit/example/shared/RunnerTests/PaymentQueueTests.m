@@ -242,7 +242,7 @@
   __block NSInteger TransactionCacheKeyUpdatedDownloadsInvoked = 0;
   __block NSInteger TransactionCacheKeyRemovedTransactionsInvoked = 0;
 
-  mockCache.getObjectsForKeyStub = ^NSArray * _Nonnull(TransactionCacheKey key) {
+  mockCache.getObjectsForKeyStub = ^NSArray *_Nonnull(TransactionCacheKey key) {
     switch (key) {
       case TransactionCacheKeyUpdatedTransactions:
         TransactionCacheKeyUpdatedTransactionsInvoked++;
@@ -291,7 +291,7 @@
   __block NSInteger TransactionCacheKeyUpdatedDownloadsInvoked = 0;
   __block NSInteger TransactionCacheKeyRemovedTransactionsInvoked = 0;
 
-  mockCache.getObjectsForKeyStub = ^NSArray * _Nonnull(TransactionCacheKey key) {
+  mockCache.getObjectsForKeyStub = ^NSArray *_Nonnull(TransactionCacheKey key) {
     switch (key) {
       case TransactionCacheKeyUpdatedTransactions:
         TransactionCacheKeyUpdatedTransactionsInvoked++;
@@ -355,7 +355,7 @@
   __block NSInteger TransactionCacheKeyUpdatedDownloadsInvoked = 0;
   __block NSInteger TransactionCacheKeyRemovedTransactionsInvoked = 0;
 
-  mockCache.getObjectsForKeyStub = ^NSArray * _Nonnull(TransactionCacheKey key) {
+  mockCache.getObjectsForKeyStub = ^NSArray *_Nonnull(TransactionCacheKey key) {
     switch (key) {
       case TransactionCacheKeyUpdatedTransactions:
         TransactionCacheKeyUpdatedTransactionsInvoked++;
@@ -419,7 +419,7 @@
   __block NSInteger TransactionCacheKeyUpdatedDownloadsInvoked = 0;
   __block NSInteger TransactionCacheKeyRemovedTransactionsInvoked = 0;
 
-  mockCache.addObjectsStub = ^(NSArray * _Nonnull objects, TransactionCacheKey key) {
+  mockCache.addObjectsStub = ^(NSArray *_Nonnull objects, TransactionCacheKey key) {
     switch (key) {
       case TransactionCacheKeyUpdatedTransactions:
         TransactionCacheKeyUpdatedTransactionsInvoked++;
@@ -434,7 +434,6 @@
         XCTFail("Invalid transaction state was invoked.");
     }
   };
-
 
   [handler addPayment:payment];
 
@@ -492,7 +491,7 @@
   __block NSInteger TransactionCacheKeyUpdatedDownloadsInvoked = 0;
   __block NSInteger TransactionCacheKeyRemovedTransactionsInvoked = 0;
 
-  mockCache.addObjectsStub = ^(NSArray * _Nonnull objects, TransactionCacheKey key) {
+  mockCache.addObjectsStub = ^(NSArray *_Nonnull objects, TransactionCacheKey key) {
     switch (key) {
       case TransactionCacheKeyUpdatedTransactions:
         TransactionCacheKeyUpdatedTransactionsInvoked++;

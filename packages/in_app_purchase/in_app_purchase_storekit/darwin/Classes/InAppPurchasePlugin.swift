@@ -94,7 +94,7 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI {
     #endif
     transactionObserverCallbackChannel = DefaultMethodChannel(
       channel: FlutterMethodChannel(
-        name: "plugins.flutter.io/in_app_purchase", 
+        name: "plugins.flutter.io/in_app_purchase",
         binaryMessenger: messenger)
     )
   }

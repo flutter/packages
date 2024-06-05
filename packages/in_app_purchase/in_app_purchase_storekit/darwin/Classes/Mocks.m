@@ -1,12 +1,12 @@
+#import "Mocks.h"
 #import <Foundation/Foundation.h>
 #import <StoreKit/StoreKit.h>
 #import "FIAPaymentQueueHandler.h"
-#import "Mocks.h"
 
 #pragma mark Payment Queue Implementations
 /// Real implementations
 @implementation DefaultPaymentQueue
-- (instancetype)initWithQueue:(SKPaymentQueue*)queue {
+- (instancetype)initWithQueue:(SKPaymentQueue *)queue {
   self = [super init];
   if (self) {
     _queue = queue;
@@ -16,48 +16,48 @@
 
 #pragma mark DefaultPaymentQueue implementation
 
-- (void)addPayment:(SKPayment * _Nonnull)payment {
+- (void)addPayment:(SKPayment *_Nonnull)payment {
   [self.queue addPayment:payment];
 }
 
-
-- (void)finishTransaction:(nonnull SKPaymentTransaction *)transaction { 
+- (void)finishTransaction:(nonnull SKPaymentTransaction *)transaction {
   [self.queue finishTransaction:transaction];
 }
 
-- (void)addTransactionObserver:(nonnull id<SKPaymentTransactionObserver>)observer { 
+- (void)addTransactionObserver:(nonnull id<SKPaymentTransactionObserver>)observer {
   [self.queue addTransactionObserver:observer];
 }
 
-- (void)restoreCompletedTransactions { 
+- (void)restoreCompletedTransactions {
   [self.queue restoreCompletedTransactions];
 }
 
-- (void)restoreCompletedTransactionsWithApplicationUsername:(nullable NSString *)username { 
+- (void)restoreCompletedTransactionsWithApplicationUsername:(nullable NSString *)username {
   [self.queue restoreCompletedTransactionsWithApplicationUsername:username];
 }
 
-
-- (id<SKPaymentQueueDelegate>) delegate API_AVAILABLE(ios(13.0), macos(10.15), watchos(6.2), visionos(1.0)) {
+- (id<SKPaymentQueueDelegate>)delegate API_AVAILABLE(ios(13.0), macos(10.15), watchos(6.2),
+                                                     visionos(1.0)) {
   return self.queue.delegate;
 }
 
-- (NSArray<SKPaymentTransaction *>*) transactions API_AVAILABLE(ios(3.0), macos(10.7), watchos(6.2), visionos(1.0)) {
+- (NSArray<SKPaymentTransaction *> *)transactions API_AVAILABLE(ios(3.0), macos(10.7), watchos(6.2),
+                                                                visionos(1.0)) {
   return self.queue.transactions;
 }
 
-- (SKStorefront *)storefront  API_AVAILABLE(ios(13.0)){
+- (SKStorefront *)storefront API_AVAILABLE(ios(13.0)) {
   return self.queue.storefront;
 }
 
-- (void)presentCodeRedemptionSheet API_AVAILABLE(ios(14.0), visionos(1.0)) API_UNAVAILABLE(tvos, macos, watchos) {
+- (void)presentCodeRedemptionSheet API_AVAILABLE(ios(14.0), visionos(1.0))
+    API_UNAVAILABLE(tvos, macos, watchos) {
   [self.queue presentCodeRedemptionSheet];
 }
-- (void)showPriceConsentIfNeeded API_AVAILABLE(ios(13.4), visionos(1.0)) API_UNAVAILABLE(tvos, macos, watchos) {
+- (void)showPriceConsentIfNeeded API_AVAILABLE(ios(13.4), visionos(1.0))
+    API_UNAVAILABLE(tvos, macos, watchos) {
   [self.queue showPriceConsentIfNeeded];
 }
-
-
 
 @synthesize storefront;
 
@@ -73,31 +73,28 @@
   [self.observer paymentQueue:self.realQueue removedTransactions:@[ transaction ]];
 }
 
-- (void)addPayment:(SKPayment * _Nonnull)payment {
+- (void)addPayment:(SKPayment *_Nonnull)payment {
   FakeSKPaymentTransaction *transaction =
       [[FakeSKPaymentTransaction alloc] initWithState:self.testState payment:payment];
   [self.observer paymentQueue:self.realQueue updatedTransactions:@[ transaction ]];
 }
 
-- (void)addTransactionObserver:(nonnull id<SKPaymentTransactionObserver>)observer { 
+- (void)addTransactionObserver:(nonnull id<SKPaymentTransactionObserver>)observer {
   self.observer = observer;
 }
 
-
 - (void)restoreCompletedTransactions {
-    [self.observer paymentQueueRestoreCompletedTransactionsFinished:(SKPaymentQueue*)self];
+  [self.observer paymentQueueRestoreCompletedTransactionsFinished:(SKPaymentQueue *)self];
 }
 
-- (void)restoreCompletedTransactionsWithApplicationUsername:(nullable NSString *)username { 
-
+- (void)restoreCompletedTransactionsWithApplicationUsername:(nullable NSString *)username {
 }
 
-- (NSArray<SKPaymentTransaction *> * _Nonnull)getUnfinishedTransactions {
+- (NSArray<SKPaymentTransaction *> *_Nonnull)getUnfinishedTransactions {
   return [NSArray array];
 }
 
 - (void)presentCodeRedemptionSheet {
-
 }
 - (void)showPriceConsentIfNeeded {
   if (self.showPriceConsentIfNeededStub) {
@@ -171,7 +168,7 @@
 
 #pragma mark MethodChannel implemetations
 @implementation DefaultMethodChannel
-- (void)invokeMethod:(nonnull NSString *)method arguments:(id _Nullable)arguments { 
+- (void)invokeMethod:(nonnull NSString *)method arguments:(id _Nullable)arguments {
   [self.channel invokeMethod:method arguments:arguments];
 }
 
@@ -186,14 +183,13 @@
 @end
 
 @implementation TestMethodChannel
-- (void)invokeMethod:(nonnull NSString *)method arguments:(id _Nullable)arguments { 
+- (void)invokeMethod:(nonnull NSString *)method arguments:(id _Nullable)arguments {
   if (self.invokeMethodChannelStub) {
     self.invokeMethodChannelStub(method, arguments);
   }
 }
 
 @end
-
 
 @implementation FakeSKPaymentTransaction {
   SKPayment *_payment;
@@ -237,39 +233,40 @@
 
 @implementation FakePluginRegistrar
 
-- (void)addApplicationDelegate:(nonnull NSObject<FlutterPlugin> *)delegate { 
-
+- (void)addApplicationDelegate:(nonnull NSObject<FlutterPlugin> *)delegate {
 }
 
-- (void)addMethodCallDelegate:(nonnull NSObject<FlutterPlugin> *)delegate channel:(nonnull FlutterMethodChannel *)channel { 
-
+- (void)addMethodCallDelegate:(nonnull NSObject<FlutterPlugin> *)delegate
+                      channel:(nonnull FlutterMethodChannel *)channel {
 }
 
-- (nonnull NSString *)lookupKeyForAsset:(nonnull NSString *)asset { 
+- (nonnull NSString *)lookupKeyForAsset:(nonnull NSString *)asset {
   return nil;
 }
 
-- (nonnull NSString *)lookupKeyForAsset:(nonnull NSString *)asset fromPackage:(nonnull NSString *)package { 
+- (nonnull NSString *)lookupKeyForAsset:(nonnull NSString *)asset
+                            fromPackage:(nonnull NSString *)package {
   return nil;
 }
 
-- (nonnull NSObject<FlutterBinaryMessenger> *)messenger { 
+- (nonnull NSObject<FlutterBinaryMessenger> *)messenger {
   return [FakeBinaryMessenger alloc];
 }
 
-- (void)publish:(nonnull NSObject *)value { 
-
+- (void)publish:(nonnull NSObject *)value {
 }
 
-- (void)registerViewFactory:(nonnull NSObject<FlutterPlatformViewFactory> *)factory withId:(nonnull NSString *)factoryId { 
-
+- (void)registerViewFactory:(nonnull NSObject<FlutterPlatformViewFactory> *)factory
+                     withId:(nonnull NSString *)factoryId {
 }
 
-- (void)registerViewFactory:(nonnull NSObject<FlutterPlatformViewFactory> *)factory withId:(nonnull NSString *)factoryId gestureRecognizersBlockingPolicy:(FlutterPlatformViewGestureRecognizersBlockingPolicy)gestureRecognizersBlockingPolicy { 
-  
+- (void)registerViewFactory:(nonnull NSObject<FlutterPlatformViewFactory> *)factory
+                              withId:(nonnull NSString *)factoryId
+    gestureRecognizersBlockingPolicy:
+        (FlutterPlatformViewGestureRecognizersBlockingPolicy)gestureRecognizersBlockingPolicy {
 }
 
-- (nonnull NSObject<FlutterTextureRegistry> *)textures { 
+- (nonnull NSObject<FlutterTextureRegistry> *)textures {
   return nil;
 }
 
@@ -277,18 +274,19 @@
 
 @implementation FakeBinaryMessenger
 - (void)cleanUpConnection:(FlutterBinaryMessengerConnection)connection {
-
 }
 
-- (void)sendOnChannel:(nonnull NSString *)channel message:(NSData * _Nullable)message {
-
+- (void)sendOnChannel:(nonnull NSString *)channel message:(NSData *_Nullable)message {
 }
 
-- (void)sendOnChannel:(nonnull NSString *)channel message:(NSData * _Nullable)message binaryReply:(FlutterBinaryReply _Nullable)callback {
-
+- (void)sendOnChannel:(nonnull NSString *)channel
+              message:(NSData *_Nullable)message
+          binaryReply:(FlutterBinaryReply _Nullable)callback {
 }
 
-- (FlutterBinaryMessengerConnection)setMessageHandlerOnChannel:(nonnull NSString *)channel binaryMessageHandler:(FlutterBinaryMessageHandler _Nullable)handler {
+- (FlutterBinaryMessengerConnection)setMessageHandlerOnChannel:(nonnull NSString *)channel
+                                          binaryMessageHandler:
+                                              (FlutterBinaryMessageHandler _Nullable)handler {
   return 0;
 }
 

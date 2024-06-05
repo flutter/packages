@@ -23,13 +23,14 @@ typedef void (^ProductRequestCompletion)(SKProductsResponse *_Nullable response,
 
 @end
 
-@interface DefaultRequestHandler : NSObject<RequestHandler>
-- (instancetype)initWithRequestHandler:(FIAPRequestHandler*)handler;
+@interface DefaultRequestHandler : NSObject <RequestHandler>
+- (instancetype)initWithRequestHandler:(FIAPRequestHandler *)handler;
 @property FIAPRequestHandler *handler;
 @end
 
-@interface TestRequestHandler : NSObject<RequestHandler>
-@property (nonatomic, copy, nullable) void (^startProductRequestWithCompletionHandlerStub)(ProductRequestCompletion);
+@interface TestRequestHandler : NSObject <RequestHandler>
+@property(nonatomic, copy, nullable) void (^startProductRequestWithCompletionHandlerStub)
+    (ProductRequestCompletion);
 @end
 
 NS_ASSUME_NONNULL_END

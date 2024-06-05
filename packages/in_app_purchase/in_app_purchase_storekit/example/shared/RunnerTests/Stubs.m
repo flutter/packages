@@ -279,7 +279,6 @@
   }
 }
 
-
 @end
 
 @implementation SKReceiptRefreshRequestStub {

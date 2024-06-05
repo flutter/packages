@@ -101,11 +101,11 @@ typedef void (^UpdatedDownloads)(NSArray<SKDownload *> *downloads);
 
 @interface TestPaymentQueueHandler : NSObject <SKPaymentTransactionObserver, PaymentQueueHandler>
 @property(nonatomic) BOOL canAddPayment;
-@property (nonatomic, copy, nullable) BOOL (^addPaymentStub)(SKPayment *payment);
-@property (nonatomic, copy, nullable) void (^showPriceConsentIfNeededStub)(void);
-@property (nonatomic, copy, nullable) void (^stopObservingPaymentQueueStub)(void);
-@property (nonatomic, copy, nullable) void (^startObservingPaymentQueueStub)(void);
-@property (nonatomic, copy, nullable) void (^presentCodeRedemptionSheetStub)(void);
+@property(nonatomic, copy, nullable) BOOL (^addPaymentStub)(SKPayment *payment);
+@property(nonatomic, copy, nullable) void (^showPriceConsentIfNeededStub)(void);
+@property(nonatomic, copy, nullable) void (^stopObservingPaymentQueueStub)(void);
+@property(nonatomic, copy, nullable) void (^startObservingPaymentQueueStub)(void);
+@property(nonatomic, copy, nullable) void (^presentCodeRedemptionSheetStub)(void);
 @end
 
 NS_ASSUME_NONNULL_END
