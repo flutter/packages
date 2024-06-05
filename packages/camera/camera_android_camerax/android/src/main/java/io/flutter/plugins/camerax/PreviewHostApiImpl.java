@@ -18,8 +18,6 @@ import io.flutter.view.TextureRegistry;
 import java.util.Objects;
 import java.util.concurrent.Executors;
 
-import android.util.Log;
-
 public class PreviewHostApiImpl implements PreviewHostApi {
   final BinaryMessenger binaryMessenger;
   private final InstanceManager instanceManager;

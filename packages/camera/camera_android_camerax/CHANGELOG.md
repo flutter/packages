@@ -1,3 +1,10 @@
+## 0.6.6
+
+* Adds logic to support building a camera preview with Android `Surface`s not backed by a `SurfaceTexture`
+  to which CameraX cannot not automatically apply the transformation required to achieve the correct rotation.
+* Re-lands support for Impeller.
+* Updates example app's minimum supported SDK version to Flutter 3.22/Dart 3.4.
+
 ## 0.6.5+5
 
 * Reverts changes to support Impeller.

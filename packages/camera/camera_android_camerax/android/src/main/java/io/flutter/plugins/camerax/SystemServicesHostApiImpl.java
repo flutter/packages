@@ -6,6 +6,7 @@ package io.flutter.plugins.camerax;
 
 import android.app.Activity;
 import android.content.Context;
+import android.os.Build;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
@@ -16,8 +17,6 @@ import io.flutter.plugins.camerax.GeneratedCameraXLibrary.Result;
 import io.flutter.plugins.camerax.GeneratedCameraXLibrary.SystemServicesHostApi;
 import java.io.File;
 import java.io.IOException;
-
-import android.os.Build;
 
 public class SystemServicesHostApiImpl implements SystemServicesHostApi {
   private final BinaryMessenger binaryMessenger;
@@ -106,6 +105,13 @@ public class SystemServicesHostApiImpl implements SystemServicesHostApi {
     }
   }
 
+  /**
+   * Returns whether or not a {@code SurfaceTexture} backs the {@code Surface} provided to CameraX
+   * to build the camera preview.
+   *
+   * <p>This is determined by the engine, who uses {@code SurfaceTexture}s on Android SDKs 29 and
+   * below.
+   */
   @Override
   @NonNull
   public Boolean isUsingSurfaceTextureForPreview() {

@@ -85,4 +85,17 @@ void main() {
       verify(mockApi.getTempFilePath(testPrefix, testSuffix));
     });
   });
+
+  test('isUsingSurfaceTextureForPreview returns expected answer', () async {
+    final MockTestSystemServicesHostApi mockApi =
+        MockTestSystemServicesHostApi();
+    TestSystemServicesHostApi.setup(mockApi);
+    const bool isUsingSurfaceTextureForPreview = true;
+
+    when(mockApi.isUsingSurfaceTextureForPreview())
+        .thenReturn(isUsingSurfaceTextureForPreview);
+
+    expect(await SystemServices.isUsingSurfaceTextureForPreview(), isTrue);
+    verify(mockApi.isUsingSurfaceTextureForPreview());
+  });
 }

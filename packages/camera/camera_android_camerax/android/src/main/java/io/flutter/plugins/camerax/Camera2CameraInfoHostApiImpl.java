@@ -50,8 +50,8 @@ public class Camera2CameraInfoHostApiImpl implements Camera2CameraInfoHostApi {
 
     @NonNull
     public Long getSensorOrientation(@NonNull Camera2CameraInfo camera2CameraInfo) {
-      return Long.valueOf(camera2CameraInfo.getCameraCharacteristic(
-          CameraCharacteristics.SENSOR_ORIENTATION));
+      return Long.valueOf(
+          camera2CameraInfo.getCameraCharacteristic(CameraCharacteristics.SENSOR_ORIENTATION));
     }
   }
 

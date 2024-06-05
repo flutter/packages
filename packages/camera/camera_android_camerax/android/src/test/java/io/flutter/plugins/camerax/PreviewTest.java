@@ -87,7 +87,6 @@ public class PreviewTest {
         spy(new PreviewHostApiImpl(mockBinaryMessenger, testInstanceManager, mockTextureRegistry));
     final TextureRegistry.SurfaceProducer mockSurfaceProducer =
         mock(TextureRegistry.SurfaceProducer.class);
-    final SurfaceTexture mockSurfaceTexture = mock(SurfaceTexture.class);
     final Long previewIdentifier = 5L;
     final Long surfaceProducerEntryId = 120L;
 
@@ -126,9 +125,6 @@ public class PreviewTest {
         .thenReturn(new Size(resolutionWidth, resolutionHeight));
     when(mockCameraXProxy.createSystemServicesFlutterApiImpl(mockBinaryMessenger))
         .thenReturn(mockSystemServicesFlutterApi);
-
-    when(mockTextureRegistry.createSurfaceProducer()).thenReturn(mockSurfaceProducer);
-    when(mockSurfaceProducer.id()).thenReturn(surfaceProducerEntryId);
     when(mockSurfaceProducer.getSurface()).thenReturn(mockSurface);
 
     final ArgumentCaptor<Surface> surfaceCaptor = ArgumentCaptor.forClass(Surface.class);
@@ -197,7 +193,7 @@ public class PreviewTest {
     previewHostApi.flutterSurfaceProducer = mockSurfaceProducer;
 
     previewHostApi.releaseFlutterSurfaceTexture();
-    verify(flutterSurfaceProducer).release();
+    verify(mockSurfaceProducer).release();
   }
 
   @Test

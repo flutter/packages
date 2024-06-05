@@ -108,8 +108,9 @@ public class DeviceOrientationManagerHostApiImpl implements DeviceOrientationMan
     return Long.valueOf(defaultRotation);
   }
 
+  /** Gets current UI orientation based on the current device orientation and rotation. */
   @Override
-   @NonNull
+  @NonNull
   public String getUiOrientation() {
     return serializeDeviceOrientation(deviceOrientationManager.getUIOrientation());
   }
