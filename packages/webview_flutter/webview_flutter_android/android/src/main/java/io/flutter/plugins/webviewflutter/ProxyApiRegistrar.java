@@ -1,12 +1,22 @@
 package io.flutter.plugins.webviewflutter;
 
+import android.os.Build;
+
+import androidx.annotation.ChecksSdkIntAtLeast;
 import androidx.annotation.NonNull;
+import androidx.annotation.VisibleForTesting;
 
 import io.flutter.plugin.common.BinaryMessenger;
 
 public class ProxyApiRegistrar extends PigeonProxyApiRegistrar {
   public ProxyApiRegistrar(@NonNull BinaryMessenger binaryMessenger) {
     super(binaryMessenger);
+  }
+
+  // Interface for an injectable SDK version checker.
+  @ChecksSdkIntAtLeast(parameter = 0)
+  boolean sdkIsAtLeast(int version) {
+    return Build.VERSION.SDK_INT >= version;
   }
 
   @NonNull
@@ -36,7 +46,7 @@ public class ProxyApiRegistrar extends PigeonProxyApiRegistrar {
   @NonNull
   @Override
   public PigeonApiCookieManager getPigeonApiCookieManager() {
-    return null;
+    return new CookieManagerProxyApi(this);
   }
 
   @NonNull
