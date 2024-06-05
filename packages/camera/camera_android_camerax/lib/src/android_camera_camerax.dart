@@ -10,7 +10,7 @@ import 'package:camera_platform_interface/camera_platform_interface.dart';
 import 'package:flutter/services.dart'
     show DeviceOrientation, PlatformException;
 import 'package:flutter/widgets.dart'
-    show RotatedBox, Size, SizedBox, Texture, Widget, visibleForTesting;
+    show RotatedBox, Size, Texture, Widget, visibleForTesting;
 import 'package:stream_transform/stream_transform.dart';
 
 import 'analyzer.dart';
@@ -235,8 +235,10 @@ class AndroidCameraCameraX extends CameraPlatform {
 
   late bool cameraIsFrontFacing;
   late bool isUsingSurfaceTextureForPreview;
-  final DeviceOrientation deviceOrientation = DeviceOrientation.portraitUp;
+  late final DeviceOrientation deviceOrientation;
   late int sensorOrientation;
+  DeviceOrientation? currentDeviceOrientation;
+  // late DeviceOrientation uiOrientation;
 
   /// Returns list of all available cameras and their descriptions.
   @override
@@ -374,9 +376,10 @@ class AndroidCameraCameraX extends CameraPlatform {
     isUsingSurfaceTextureForPreview =
         await SystemServices.isUsingSurfaceTextureForPreview();
     onDeviceOrientationChanged().listen((DeviceOrientationChangedEvent event) {
-      // deviceOrientation = event.orientation;
+      currentDeviceOrientation = event.orientation;
     });
     sensorOrientation = await getSensorOrientation();
+    deviceOrientation = await DeviceOrientationManager.getUiOrientation();
 
     return flutterSurfaceTextureId;
   }
@@ -835,11 +838,19 @@ class AndroidCameraCameraX extends CameraPlatform {
       DeviceOrientation.landscapeLeft: 270,
     };
     int deviceOrientationDeg = deg[deviceOrientation]!;
-    int sign = getSign()!;
+    int sign = getSign();
+
+    if (sign == 1 &&
+        (currentDeviceOrientation == DeviceOrientation.landscapeLeft ||
+            currentDeviceOrientation == DeviceOrientation.landscapeRight)) {
+      deviceOrientationDeg += 180;
+    }
+
     double rotation =
-        (sensorOrientation - deviceOrientationDeg * sign + 360) % 360;
+        (sensorOrientation + deviceOrientationDeg * sign + 360) % 360;
     int turns = (rotation / 90).toInt();
 
+    // print('CAMILLE UI ORIENTATION: $uiOrientation');
     print('CAMILLE DEVICE ORIENTATION: $deviceOrientation');
     print('CAMILLE SENSOR ORIENTATION: $sensorOrientation');
     print('CAMILLE SIGN: $sign');
@@ -850,6 +861,8 @@ class AndroidCameraCameraX extends CameraPlatform {
     return isUsingSurfaceTextureForPreview
         ? Texture(textureId: cameraId)
         : widget;
+
+    // return Texture(textureId: cameraId);
   }
 
   /// Captures an image and returns the file where it was saved.
