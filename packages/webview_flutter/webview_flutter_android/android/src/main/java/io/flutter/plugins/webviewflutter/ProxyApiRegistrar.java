@@ -1,7 +1,10 @@
 package io.flutter.plugins.webviewflutter;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Build;
+import android.os.Handler;
+import android.os.Looper;
 
 import androidx.annotation.ChecksSdkIntAtLeast;
 import androidx.annotation.NonNull;
@@ -22,6 +25,16 @@ public class ProxyApiRegistrar extends PigeonProxyApiRegistrar {
   @ChecksSdkIntAtLeast(parameter = 0)
   boolean sdkIsAtLeast(int version) {
     return Build.VERSION.SDK_INT >= version;
+  }
+
+  // Added to be overridden for tests. The test implementation calls `callback` immediately, instead
+  // of waiting for the main thread to run it.
+  void runOnMainThread(Runnable runnable) {
+    if (context instanceof Activity) {
+      ((Activity) context).runOnUiThread(runnable);
+    } else {
+      new Handler(Looper.getMainLooper()).post(runnable);
+    }
   }
 
   @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
@@ -65,7 +78,7 @@ public class ProxyApiRegistrar extends PigeonProxyApiRegistrar {
   @NonNull
   @Override
   public PigeonApiWebSettings getPigeonApiWebSettings() {
-    return null;
+    return new WebSettingsProxyApi(this);
   }
 
   @NonNull

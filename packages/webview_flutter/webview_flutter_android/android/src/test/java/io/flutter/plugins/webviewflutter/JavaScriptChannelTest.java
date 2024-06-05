@@ -10,7 +10,7 @@ import static org.mockito.Mockito.verify;
 
 import android.os.Handler;
 import android.os.Looper;
-import io.flutter.plugins.webviewflutter.JavaScriptChannelHostApiImpl.JavaScriptChannelCreator;
+import io.flutter.plugins.webviewflutter.JavaScriptChannelProxyApi.JavaScriptChannelCreator;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;

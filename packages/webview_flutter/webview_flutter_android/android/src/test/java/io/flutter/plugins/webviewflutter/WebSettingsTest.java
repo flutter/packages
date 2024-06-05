@@ -12,7 +12,7 @@ import static org.mockito.Mockito.when;
 
 import android.webkit.WebSettings;
 import android.webkit.WebView;
-import io.flutter.plugins.webviewflutter.WebSettingsHostApiImpl.WebSettingsCreator;
+import io.flutter.plugins.webviewflutter.WebSettingsProxyApi.WebSettingsCreator;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;

@@ -40,7 +40,7 @@ public class WebViewFlutterPlugin implements FlutterPlugin, ActivityAware {
 
   private FlutterPluginBinding pluginBinding;
   private WebViewHostApiImpl webViewHostApi;
-  private JavaScriptChannelHostApiImpl javaScriptChannelHostApi;
+  private JavaScriptChannelProxyApi javaScriptChannelHostApi;
 
   /**
    * Add an instance of this to {@link io.flutter.embedding.engine.plugins.PluginRegistry} to
@@ -71,9 +71,9 @@ public class WebViewFlutterPlugin implements FlutterPlugin, ActivityAware {
         new WebViewHostApiImpl(
             instanceManager, binaryMessenger, new WebViewHostApiImpl.WebViewProxy(), context);
     javaScriptChannelHostApi =
-        new JavaScriptChannelHostApiImpl(
+        new JavaScriptChannelProxyApi(
             instanceManager,
-            new JavaScriptChannelHostApiImpl.JavaScriptChannelCreator(),
+            new JavaScriptChannelProxyApi.JavaScriptChannelCreator(),
             new JavaScriptChannelFlutterApiImpl(binaryMessenger, instanceManager),
             new Handler(context.getMainLooper()));
 
@@ -100,8 +100,8 @@ public class WebViewFlutterPlugin implements FlutterPlugin, ActivityAware {
             new DownloadListenerFlutterApiImpl(binaryMessenger, instanceManager)));
     WebSettingsHostApi.setup(
         binaryMessenger,
-        new WebSettingsHostApiImpl(
-            instanceManager, new WebSettingsHostApiImpl.WebSettingsCreator()));
+        new WebSettingsProxyApi(
+            instanceManager, new WebSettingsProxyApi.WebSettingsCreator()));
     FlutterAssetManagerHostApi.setup(
         binaryMessenger, new FlutterAssetManagerHostApiImpl(flutterAssetManager));
 //    CookieManagerHostApi.setup(

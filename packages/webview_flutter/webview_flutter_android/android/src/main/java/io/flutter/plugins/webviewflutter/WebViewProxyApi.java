@@ -120,9 +120,7 @@ public class WebViewProxyApi extends PigeonApiWebView {
     protected void onScrollChanged(int left, int top, int oldLeft, int oldTop) {
       super.onScrollChanged(left, top, oldLeft, oldTop);
       api.onScrollChanged(
-          this, (long) left, (long) top, (long) oldLeft, (long) oldTop, reply -> {
-            return null;
-          });
+          this, (long) left, (long) top, (long) oldLeft, (long) oldTop, reply -> null);
     }
   }
 
