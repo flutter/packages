@@ -447,7 +447,6 @@
 
   TestTransactionCache *cache = [TestTransactionCache alloc];
   TestPaymentQueue *queue = [TestPaymentQueue alloc];
-  TestPaymentQueueHandler *handler = [TestPaymentQueueHandler alloc];
 
   __block BOOL callbackInvoked = NO;
   self.plugin.paymentQueueHandler = [[FIAPaymentQueueHandler alloc] initWithQueue:queue

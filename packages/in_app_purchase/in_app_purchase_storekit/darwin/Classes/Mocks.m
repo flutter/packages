@@ -49,15 +49,19 @@
 - (SKStorefront *)storefront API_AVAILABLE(ios(13.0)) {
   return self.queue.storefront;
 }
-
+#if TARGET_OS_IOS
 - (void)presentCodeRedemptionSheet API_AVAILABLE(ios(14.0), visionos(1.0))
     API_UNAVAILABLE(tvos, macos, watchos) {
   [self.queue presentCodeRedemptionSheet];
 }
+#endif
+
+#if TARGET_OS_IOS
 - (void)showPriceConsentIfNeeded API_AVAILABLE(ios(13.4), visionos(1.0))
     API_UNAVAILABLE(tvos, macos, watchos) {
   [self.queue showPriceConsentIfNeeded];
 }
+#endif
 
 @synthesize storefront;
 
@@ -93,14 +97,18 @@
 - (NSArray<SKPaymentTransaction *> *_Nonnull)getUnfinishedTransactions {
   return [NSArray array];
 }
-
+#if TARGET_OS_IOS
 - (void)presentCodeRedemptionSheet {
 }
+#endif
+
+#if TARGET_OS_IOS
 - (void)showPriceConsentIfNeeded {
   if (self.showPriceConsentIfNeededStub) {
     self.showPriceConsentIfNeededStub();
   }
 }
+#endif
 
 - (void)restoreTransactions:(nullable NSString *)applicationName {
 }

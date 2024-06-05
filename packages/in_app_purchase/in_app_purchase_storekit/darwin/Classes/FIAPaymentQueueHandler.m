@@ -171,7 +171,7 @@
 #endif
 
 #if TARGET_OS_IOS
-- (void)showPriceConsentIfNeeded API_AVAILABLE(ios(13.4)){
+- (void)showPriceConsentIfNeeded API_AVAILABLE(ios(13.4)) {
   [self.queue showPriceConsentIfNeeded];
 }
 #endif
@@ -282,11 +282,13 @@
   return [TestPaymentQueueHandler alloc];
 }
 
+#if TARGET_OS_IOS
 - (void)presentCodeRedemptionSheet {
   if (self.presentCodeRedemptionSheetStub) {
     self.presentCodeRedemptionSheetStub();
   }
 }
+#endif
 
 - (void)restoreTransactions:(nullable NSString *)applicationName {
 }
