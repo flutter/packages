@@ -54,6 +54,7 @@ class Camera2CameraInfo extends JavaObject {
   /// this instances pertains.
   Future<String> getCameraId() => _api.getCameraIdFromInstance(this);
 
+  /// Retrieves the orientation of the camera sensor.
   Future<int> getSensorOrientation() =>
       _api.getSensorOrientationFromInstance(this);
 }
