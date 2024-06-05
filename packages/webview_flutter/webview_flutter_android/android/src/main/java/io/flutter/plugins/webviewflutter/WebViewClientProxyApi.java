@@ -43,12 +43,14 @@ public class WebViewClientProxyApi extends PigeonApiWebViewClient {
 
     @Override
     public void onPageStarted(@NonNull WebView view, @NonNull String url, @NonNull Bitmap favicon) {
-      api.onPageStarted(this, view, url, reply -> null);
+      api.getPigeonRegistrar()
+          .runOnMainThread(() -> api.onPageStarted(this, view, url, reply -> null));
     }
 
     @Override
     public void onPageFinished(@NonNull WebView view, @NonNull String url) {
-      api.onPageFinished(this, view, url, reply -> null);
+      api.getPigeonRegistrar()
+          .runOnMainThread(() -> api.onPageFinished(this, view, url, reply -> null));
     }
 
     @Override
@@ -56,7 +58,9 @@ public class WebViewClientProxyApi extends PigeonApiWebViewClient {
         @NonNull WebView view,
         @NonNull WebResourceRequest request,
         @NonNull WebResourceResponse response) {
-      api.onReceivedHttpError(this, view, request, response, reply -> null);
+      api.getPigeonRegistrar()
+          .runOnMainThread(
+              () -> api.onReceivedHttpError(this, view, request, response, reply -> null));
     }
 
     @Override
@@ -64,7 +68,9 @@ public class WebViewClientProxyApi extends PigeonApiWebViewClient {
         @NonNull WebView view,
         @NonNull WebResourceRequest request,
         @NonNull WebResourceError error) {
-      api.onReceivedRequestError(this, view, request, error, reply -> null);
+      api.getPigeonRegistrar()
+          .runOnMainThread(
+              () -> api.onReceivedRequestError(this, view, request, error, reply -> null));
     }
 
     // Legacy codepath for < 23; newer versions use the variant above.
@@ -75,14 +81,18 @@ public class WebViewClientProxyApi extends PigeonApiWebViewClient {
         int errorCode,
         @NonNull String description,
         @NonNull String failingUrl) {
-      api.onReceivedError(
-          this, view, (long) errorCode, description, failingUrl, reply -> null);
+      api.getPigeonRegistrar()
+          .runOnMainThread(
+              () ->
+                  api.onReceivedError(
+                      this, view, (long) errorCode, description, failingUrl, reply -> null));
     }
 
     @Override
     public boolean shouldOverrideUrlLoading(
         @NonNull WebView view, @NonNull WebResourceRequest request) {
-      api.requestLoading(this, view, request, reply -> null);
+      api.getPigeonRegistrar()
+          .runOnMainThread(() -> api.requestLoading(this, view, request, reply -> null));
 
       // The client is only allowed to stop navigations that target the main frame because
       // overridden URLs are passed to `loadUrl` and `loadUrl` cannot load a subframe.
@@ -93,14 +103,17 @@ public class WebViewClientProxyApi extends PigeonApiWebViewClient {
     @SuppressWarnings("deprecation")
     @Override
     public boolean shouldOverrideUrlLoading(@NonNull WebView view, @NonNull String url) {
-      api.urlLoading(this, view, url, reply -> null);
+      api.getPigeonRegistrar()
+          .runOnMainThread(() -> api.urlLoading(this, view, url, reply -> null));
       return returnValueForShouldOverrideUrlLoading;
     }
 
     @Override
     public void doUpdateVisitedHistory(
         @NonNull WebView view, @NonNull String url, boolean isReload) {
-      api.doUpdateVisitedHistory(this, view, url, isReload, reply -> null);
+      api.getPigeonRegistrar()
+          .runOnMainThread(
+              () -> api.doUpdateVisitedHistory(this, view, url, isReload, reply -> null));
     }
 
     @Override
@@ -109,7 +122,9 @@ public class WebViewClientProxyApi extends PigeonApiWebViewClient {
         @NonNull HttpAuthHandler handler,
         @NonNull String host,
         @NonNull String realm) {
-      api.onReceivedHttpAuthRequest(this, view, handler, host, realm, reply -> null);
+      api.getPigeonRegistrar()
+          .runOnMainThread(
+              () -> api.onReceivedHttpAuthRequest(this, view, handler, host, realm, reply -> null));
     }
 
     @Override
@@ -139,12 +154,14 @@ public class WebViewClientProxyApi extends PigeonApiWebViewClient {
 
     @Override
     public void onPageStarted(@NonNull WebView view, @NonNull String url, @NonNull Bitmap favicon) {
-      api.onPageStarted(this, view, url, reply -> null);
+      api.getPigeonRegistrar()
+          .runOnMainThread(() -> api.onPageStarted(this, view, url, reply -> null));
     }
 
     @Override
     public void onPageFinished(@NonNull WebView view, @NonNull String url) {
-      api.onPageFinished(this, view, url, reply -> null);
+      api.getPigeonRegistrar()
+          .runOnMainThread(() -> api.onPageFinished(this, view, url, reply -> null));
     }
 
     @RequiresApi(api = Build.VERSION_CODES.M)
@@ -153,7 +170,9 @@ public class WebViewClientProxyApi extends PigeonApiWebViewClient {
         @NonNull WebView view,
         @NonNull WebResourceRequest request,
         @NonNull WebResourceResponse response) {
-      api.onReceivedHttpError(this, view, request, response, reply -> null);
+      api.getPigeonRegistrar()
+          .runOnMainThread(
+              () -> api.onReceivedHttpError(this, view, request, response, reply -> null));
     }
 
     // This method is only called when the WebViewFeature.RECEIVE_WEB_RESOURCE_ERROR feature is
@@ -165,7 +184,9 @@ public class WebViewClientProxyApi extends PigeonApiWebViewClient {
         @NonNull WebView view,
         @NonNull WebResourceRequest request,
         @NonNull WebResourceErrorCompat error) {
-      api.onReceivedRequestErrorCompat(this, view, request, error, reply -> null);
+      api.getPigeonRegistrar()
+          .runOnMainThread(
+              () -> api.onReceivedRequestErrorCompat(this, view, request, error, reply -> null));
     }
 
     // Legacy codepath for versions that don't support the variant above.
@@ -176,15 +197,19 @@ public class WebViewClientProxyApi extends PigeonApiWebViewClient {
         int errorCode,
         @NonNull String description,
         @NonNull String failingUrl) {
-      api.onReceivedError(
-          this, view, (long) errorCode, description, failingUrl, reply -> null);
+      api.getPigeonRegistrar()
+          .runOnMainThread(
+              () ->
+                  api.onReceivedError(
+                      this, view, (long) errorCode, description, failingUrl, reply -> null));
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     @Override
     public boolean shouldOverrideUrlLoading(
         @NonNull WebView view, @NonNull WebResourceRequest request) {
-      api.requestLoading(this, view, request, reply -> null);
+      api.getPigeonRegistrar()
+          .runOnMainThread(() -> api.requestLoading(this, view, request, reply -> null));
 
       // The client is only allowed to stop navigations that target the main frame because
       // overridden URLs are passed to `loadUrl` and `loadUrl` cannot load a subframe.
@@ -195,14 +220,17 @@ public class WebViewClientProxyApi extends PigeonApiWebViewClient {
     @SuppressWarnings("deprecation")
     @Override
     public boolean shouldOverrideUrlLoading(@NonNull WebView view, @NonNull String url) {
-      api.urlLoading(this, view, url, reply -> null);
+      api.getPigeonRegistrar()
+          .runOnMainThread(() -> api.urlLoading(this, view, url, reply -> null));
       return returnValueForShouldOverrideUrlLoading;
     }
 
     @Override
     public void doUpdateVisitedHistory(
         @NonNull WebView view, @NonNull String url, boolean isReload) {
-      api.doUpdateVisitedHistory(this, view, url, isReload, reply -> null);
+      api.getPigeonRegistrar()
+          .runOnMainThread(
+              () -> api.doUpdateVisitedHistory(this, view, url, isReload, reply -> null));
     }
 
     // Handles an HTTP authentication request.
@@ -212,7 +240,9 @@ public class WebViewClientProxyApi extends PigeonApiWebViewClient {
     @Override
     public void onReceivedHttpAuthRequest(
         @NonNull WebView view, HttpAuthHandler handler, String host, String realm) {
-      api.onReceivedHttpAuthRequest(this, view, handler, host, realm, reply -> null);
+      api.getPigeonRegistrar()
+          .runOnMainThread(
+              () -> api.onReceivedHttpAuthRequest(this, view, handler, host, realm, reply -> null));
     }
 
     @Override
@@ -228,9 +258,7 @@ public class WebViewClientProxyApi extends PigeonApiWebViewClient {
     }
   }
 
-  /**
-   * Creates a host API that handles creating {@link WebViewClient}s.
-   */
+  /** Creates a host API that handles creating {@link WebViewClient}s. */
   public WebViewClientProxyApi(@NonNull ProxyApiRegistrar pigeonRegistrar) {
     super(pigeonRegistrar);
   }

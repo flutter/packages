@@ -36,12 +36,15 @@ public class CookieManagerProxyApi extends PigeonApiCookieManager {
   }
 
   @Override
-  public void setCookie(@NonNull CookieManager pigeon_instance, @NonNull String url, @NonNull String value) {
+  public void setCookie(
+      @NonNull CookieManager pigeon_instance, @NonNull String url, @NonNull String value) {
     pigeon_instance.setCookie(url, value);
   }
 
   @Override
-  public void removeAllCookies(@NonNull CookieManager pigeon_instance, @NonNull Function1<? super Result<Boolean>, Unit> callback) {
+  public void removeAllCookies(
+      @NonNull CookieManager pigeon_instance,
+      @NonNull Function1<? super Result<Boolean>, Unit> callback) {
     if (getPigeonRegistrar().sdkIsAtLeast(Build.VERSION_CODES.LOLLIPOP)) {
       pigeon_instance.removeAllCookies(aBoolean -> ResultCompat.success(aBoolean, callback));
     } else {
@@ -50,7 +53,8 @@ public class CookieManagerProxyApi extends PigeonApiCookieManager {
   }
 
   @Override
-  public void setAcceptThirdPartyCookies(@NonNull CookieManager pigeon_instance, @NonNull WebView webView, boolean accept) {
+  public void setAcceptThirdPartyCookies(
+      @NonNull CookieManager pigeon_instance, @NonNull WebView webView, boolean accept) {
     if (getPigeonRegistrar().sdkIsAtLeast(Build.VERSION_CODES.LOLLIPOP)) {
       pigeon_instance.setAcceptThirdPartyCookies(webView, accept);
     } else {

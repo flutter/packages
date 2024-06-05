@@ -4,9 +4,7 @@
 
 package io.flutter.plugins.webviewflutter;
 
-import android.os.Handler;
 import androidx.annotation.NonNull;
-import io.flutter.plugins.webviewflutter.GeneratedAndroidWebView.JavaScriptChannelHostApi;
 
 /**
  * Host api implementation for {@link JavaScriptChannel}.
@@ -15,9 +13,7 @@ import io.flutter.plugins.webviewflutter.GeneratedAndroidWebView.JavaScriptChann
  */
 public class JavaScriptChannelProxyApi extends PigeonApiJavaScriptChannel {
 
-  /**
-   * Creates a host API that handles creating {@link JavaScriptChannel}s.
-   */
+  /** Creates a host API that handles creating {@link JavaScriptChannel}s. */
   public JavaScriptChannelProxyApi(@NonNull ProxyApiRegistrar pigeonRegistrar) {
     super(pigeonRegistrar);
   }

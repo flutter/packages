@@ -2,7 +2,6 @@ package io.flutter.plugins.webviewflutter;
 
 import android.os.Build;
 import android.webkit.WebResourceResponse;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 

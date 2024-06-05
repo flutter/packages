@@ -14,7 +14,6 @@ import io.flutter.embedding.engine.plugins.activity.ActivityAware;
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.platform.PlatformViewRegistry;
-import io.flutter.plugins.webviewflutter.GeneratedAndroidWebView.CookieManagerHostApi;
 import io.flutter.plugins.webviewflutter.GeneratedAndroidWebView.CustomViewCallbackHostApi;
 import io.flutter.plugins.webviewflutter.GeneratedAndroidWebView.DownloadListenerHostApi;
 import io.flutter.plugins.webviewflutter.GeneratedAndroidWebView.FlutterAssetManagerHostApi;
@@ -94,18 +93,17 @@ public class WebViewFlutterPlugin implements FlutterPlugin, ActivityAware {
             new WebChromeClientFlutterApiImpl(binaryMessenger, instanceManager)));
     DownloadListenerHostApi.setup(
         binaryMessenger,
-        new DownloadListenerHostApiImpl(
+        new DownloadListenerProxyApi(
             instanceManager,
-            new DownloadListenerHostApiImpl.DownloadListenerCreator(),
+            new DownloadListenerProxyApi.DownloadListenerCreator(),
             new DownloadListenerFlutterApiImpl(binaryMessenger, instanceManager)));
     WebSettingsHostApi.setup(
         binaryMessenger,
-        new WebSettingsProxyApi(
-            instanceManager, new WebSettingsProxyApi.WebSettingsCreator()));
+        new WebSettingsProxyApi(instanceManager, new WebSettingsProxyApi.WebSettingsCreator()));
     FlutterAssetManagerHostApi.setup(
         binaryMessenger, new FlutterAssetManagerHostApiImpl(flutterAssetManager));
-//    CookieManagerHostApi.setup(
-//        binaryMessenger, new CookieManagerHostApiImpl(binaryMessenger, instanceManager));
+    //    CookieManagerHostApi.setup(
+    //        binaryMessenger, new CookieManagerHostApiImpl(binaryMessenger, instanceManager));
     WebStorageHostApi.setup(
         binaryMessenger,
         new WebStorageHostApiImpl(instanceManager, new WebStorageHostApiImpl.WebStorageCreator()));

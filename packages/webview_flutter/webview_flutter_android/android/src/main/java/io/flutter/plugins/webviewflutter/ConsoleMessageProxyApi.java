@@ -1,7 +1,6 @@
 package io.flutter.plugins.webviewflutter;
 
 import android.webkit.ConsoleMessage;
-
 import androidx.annotation.NonNull;
 
 public class ConsoleMessageProxyApi extends PigeonApiConsoleMessage {

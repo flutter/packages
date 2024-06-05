@@ -14,9 +14,6 @@ import android.webkit.WebViewClient;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.webkit.WebResourceErrorCompat;
-
-import io.flutter.plugins.webviewflutter.GeneratedAndroidWebView.WebViewClientFlutterApi;
-
 import java.util.Objects;
 
 /**
@@ -25,9 +22,7 @@ import java.util.Objects;
  * <p>Passes arguments of callbacks methods from a {@link WebViewClient} to Dart.
  */
 public class WebViewClientFlutterApiImpl extends PigeonApiWebViewClient {
-  /**
-   * Creates a Flutter api that sends messages to Dart.
-   */
+  /** Creates a Flutter api that sends messages to Dart. */
   public WebViewClientFlutterApiImpl(@NonNull ProxyApiRegistrar pigeonRegistrar) {
     super(pigeonRegistrar);
   }

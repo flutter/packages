@@ -14,8 +14,7 @@ import androidx.annotation.Nullable;
  * <p>Handles creating {@link WebSettings}s that intercommunicate with a paired Dart object.
  */
 public class WebSettingsProxyApi extends PigeonApiWebSettings {
-  public WebSettingsProxyApi(
-      @NonNull ProxyApiRegistrar pigeonRegistrar) {
+  public WebSettingsProxyApi(@NonNull ProxyApiRegistrar pigeonRegistrar) {
     super(pigeonRegistrar);
   }
 
@@ -41,7 +40,8 @@ public class WebSettingsProxyApi extends PigeonApiWebSettings {
   }
 
   @Override
-  public void setUserAgentString(@NonNull WebSettings pigeon_instance, @Nullable String userAgentString) {
+  public void setUserAgentString(
+      @NonNull WebSettings pigeon_instance, @Nullable String userAgentString) {
     pigeon_instance.setUserAgentString(userAgentString);
   }
 

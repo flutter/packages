@@ -55,8 +55,7 @@ public class WebViewClientImplTest {
           }
         };
 
-    hostApiImpl =
-        new WebViewClientProxyApi(instanceManager, webViewClientCreator, mockFlutterApi);
+    hostApiImpl = new WebViewClientProxyApi(instanceManager, webViewClientCreator, mockFlutterApi);
     hostApiImpl.create(1L);
   }
 

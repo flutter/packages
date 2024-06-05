@@ -5,16 +5,13 @@ import android.content.Context;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
-
 import androidx.annotation.ChecksSdkIntAtLeast;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
-
 import io.flutter.plugin.common.BinaryMessenger;
 
 public class ProxyApiRegistrar extends PigeonProxyApiRegistrar {
-  @NonNull
-  private Context context;
+  @NonNull private Context context;
 
   public ProxyApiRegistrar(@NonNull BinaryMessenger binaryMessenger, @NonNull Context context) {
     super(binaryMessenger);
@@ -102,7 +99,7 @@ public class ProxyApiRegistrar extends PigeonProxyApiRegistrar {
   @NonNull
   @Override
   public PigeonApiDownloadListener getPigeonApiDownloadListener() {
-    return null;
+    return new DownloadListenerProxyApi(this);
   }
 
   @NonNull

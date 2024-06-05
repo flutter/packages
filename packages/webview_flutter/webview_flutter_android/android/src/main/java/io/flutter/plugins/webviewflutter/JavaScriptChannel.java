@@ -18,9 +18,7 @@ public class JavaScriptChannel {
   final String javaScriptChannelName;
   private final JavaScriptChannelProxyApi api;
 
-  /**
-   * Creates a {@link JavaScriptChannel} that passes arguments of callback methods to Dart.
-   */
+  /** Creates a {@link JavaScriptChannel} that passes arguments of callback methods to Dart. */
   public JavaScriptChannel(@NonNull String channelName, @NonNull JavaScriptChannelProxyApi api) {
     this.javaScriptChannelName = channelName;
     this.api = api;
@@ -30,8 +28,10 @@ public class JavaScriptChannel {
   @SuppressWarnings("unused")
   @JavascriptInterface
   public void postMessage(@NonNull final String message) {
-    api.getPigeonRegistrar().runOnMainThread(() -> {
-      api.postMessage(JavaScriptChannel.this, message, reply -> null);
-    });
+    api.getPigeonRegistrar()
+        .runOnMainThread(
+            () -> {
+              api.postMessage(JavaScriptChannel.this, message, reply -> null);
+            });
   }
 }

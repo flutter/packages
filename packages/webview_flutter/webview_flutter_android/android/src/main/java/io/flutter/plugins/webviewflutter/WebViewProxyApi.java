@@ -15,17 +15,14 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
 import io.flutter.embedding.android.FlutterView;
 import io.flutter.plugin.platform.PlatformView;
+import java.util.Map;
 import kotlin.Result;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
-
-import java.util.Map;
 
 /**
  * Host api implementation for {@link WebView}.
@@ -119,13 +116,15 @@ public class WebViewProxyApi extends PigeonApiWebView {
     @Override
     protected void onScrollChanged(int left, int top, int oldLeft, int oldTop) {
       super.onScrollChanged(left, top, oldLeft, oldTop);
-      api.onScrollChanged(
-          this, (long) left, (long) top, (long) oldLeft, (long) oldTop, reply -> null);
+      api.getPigeonRegistrar()
+          .runOnMainThread(
+              () ->
+                  api.onScrollChanged(
+                      this, (long) left, (long) top, (long) oldLeft, (long) oldTop, reply -> null));
     }
   }
 
-  public WebViewProxyApi(
-      @NonNull ProxyApiRegistrar pigeonRegistrar) {
+  public WebViewProxyApi(@NonNull ProxyApiRegistrar pigeonRegistrar) {
     super(pigeonRegistrar);
   }
 
@@ -134,7 +133,8 @@ public class WebViewProxyApi extends PigeonApiWebView {
   public WebView pigeon_defaultConstructor() {
     DisplayListenerProxy displayListenerProxy = new DisplayListenerProxy();
     DisplayManager displayManager =
-        (DisplayManager) getPigeonRegistrar().getContext().getSystemService(Context.DISPLAY_SERVICE);
+        (DisplayManager)
+            getPigeonRegistrar().getContext().getSystemService(Context.DISPLAY_SERVICE);
     displayListenerProxy.onPreWebViewInitialization(displayManager);
 
     final WebView webView = new WebViewPlatformView(this);
@@ -217,10 +217,12 @@ public class WebViewProxyApi extends PigeonApiWebView {
   }
 
   @Override
-  public void evaluateJavascript(@NonNull WebView pigeon_instance,
-                                 @NonNull String javascriptString,
-                                 @NonNull Function1<? super Result<String>, Unit> callback) {
-    pigeon_instance.evaluateJavascript(javascriptString, result -> ResultCompat.success(result, callback));
+  public void evaluateJavascript(
+      @NonNull WebView pigeon_instance,
+      @NonNull String javascriptString,
+      @NonNull Function1<? super Result<String>, Unit> callback) {
+    pigeon_instance.evaluateJavascript(
+        javascriptString, result -> ResultCompat.success(result, callback));
   }
 
   @Nullable
@@ -247,18 +249,19 @@ public class WebViewProxyApi extends PigeonApiWebView {
   }
 
   @Override
-  public void removeJavaScriptChannel(
-      @NonNull WebView pigeon_instance, @NonNull String channel) {
+  public void removeJavaScriptChannel(@NonNull WebView pigeon_instance, @NonNull String channel) {
     pigeon_instance.removeJavascriptInterface(channel);
   }
 
   @Override
-  public void setDownloadListener(@NonNull WebView pigeon_instance, @Nullable DownloadListener listener) {
+  public void setDownloadListener(
+      @NonNull WebView pigeon_instance, @Nullable DownloadListener listener) {
     pigeon_instance.setDownloadListener(listener);
   }
 
   @Override
-  public void setWebChromeClient(@NonNull WebView pigeon_instance, @Nullable WebChromeClient client) {
+  public void setWebChromeClient(
+      @NonNull WebView pigeon_instance, @Nullable WebChromeClient client) {
     pigeon_instance.setWebChromeClient(client);
   }
 

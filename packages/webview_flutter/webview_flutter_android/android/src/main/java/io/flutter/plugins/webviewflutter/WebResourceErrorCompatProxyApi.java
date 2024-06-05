@@ -1,7 +1,6 @@
 package io.flutter.plugins.webviewflutter;
 
 import android.annotation.SuppressLint;
-
 import androidx.annotation.NonNull;
 import androidx.webkit.WebResourceErrorCompat;
 

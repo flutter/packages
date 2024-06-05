@@ -2,11 +2,9 @@ package io.flutter.plugins.webviewflutter;
 
 import android.os.Build;
 import android.webkit.WebResourceRequest;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
-
 import java.util.Map;
 
 @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
