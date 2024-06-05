@@ -285,9 +285,6 @@
 
 }
 
-
-@synthesize view;
-
 @end
 #endif
 
