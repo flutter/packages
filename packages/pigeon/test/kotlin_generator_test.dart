@@ -231,6 +231,10 @@ void main() {
     final String code = sink.toString();
     expect(code, contains('interface Api'));
     expect(code, contains('fun doSomething(input: Input): Output'));
+    expect(code, contains('''
+    @JvmOverloads
+    fun setUp(binaryMessenger: BinaryMessenger, api: Api?, messageChannelSuffix: String = "") {
+    '''));
     expect(code, contains('channel.setMessageHandler'));
     expect(code, contains('''
         if (api != null) {

@@ -362,6 +362,7 @@ $resultAt != null
             name: func.name,
             parameters: func.parameters,
             returnType: func.returnType,
+            addSuffixVariable: true,
             channelName: channelNameFunc == null
                 ? makeChannelName(api, func, dartPackageName)
                 : channelNameFunc(func),
@@ -468,11 +469,204 @@ final BinaryMessenger? ${_varNamePrefix}binaryMessenger;
     Indent indent, {
     required String dartPackageName,
   }) {
+    const String apiName = '${instanceManagerClassName}Api';
+
+    final cb.Parameter binaryMessengerParameter = cb.Parameter(
+      (cb.ParameterBuilder builder) => builder
+        ..name = 'binaryMessenger'
+        ..type = cb.refer('BinaryMessenger?')
+        ..named = true,
+    );
+
+    final cb.Field binaryMessengerField = cb.Field(
+      (cb.FieldBuilder builder) => builder
+        ..name = '${varNamePrefix}binaryMessenger'
+        ..type = cb.refer('BinaryMessenger?')
+        ..modifier = cb.FieldModifier.final$,
+    );
+
+    final String removeStrongReferenceName = makeChannelNameWithStrings(
+      apiName: apiName,
+      methodName: 'removeStrongReference',
+      dartPackageName: dartPackageName,
+    );
+
+    final cb.Class instanceManagerApi = cb.Class(
+      (cb.ClassBuilder builder) => builder
+        ..name = '_$apiName'
+        ..docs.add(
+          '/// Generated API for managing the Dart and native `$instanceManagerClassName`s.',
+        )
+        ..constructors.add(
+          cb.Constructor(
+            (cb.ConstructorBuilder builder) {
+              builder
+                ..docs.add('/// Constructor for [_$apiName].')
+                ..optionalParameters.add(binaryMessengerParameter)
+                ..initializers.add(
+                  cb.Code(
+                    '${binaryMessengerField.name} = ${binaryMessengerParameter.name}',
+                  ),
+                );
+            },
+          ),
+        )
+        ..fields.addAll(
+          <cb.Field>[
+            binaryMessengerField,
+            cb.Field(
+              (cb.FieldBuilder builder) {
+                builder
+                  ..name = _pigeonChannelCodec
+                  ..type = cb.refer('MessageCodec<Object?>')
+                  ..static = true
+                  ..modifier = cb.FieldModifier.constant
+                  ..assignment = const cb.Code('StandardMessageCodec()');
+              },
+            )
+          ],
+        )
+        ..methods.add(
+          cb.Method(
+            (cb.MethodBuilder builder) {
+              builder
+                ..name = 'setUpMessageHandlers'
+                ..static = true
+                ..returns = cb.refer('void')
+                ..optionalParameters.addAll(<cb.Parameter>[
+                  cb.Parameter(
+                    (cb.ParameterBuilder builder) => builder
+                      ..name = '${classMemberNamePrefix}clearHandlers'
+                      ..type = cb.refer('bool')
+                      ..named = true
+                      ..defaultTo = const cb.Code('false'),
+                  ),
+                  binaryMessengerParameter,
+                  cb.Parameter(
+                    (cb.ParameterBuilder builder) => builder
+                      ..name = 'instanceManager'
+                      ..named = true
+                      ..type = cb.refer('$instanceManagerClassName?'),
+                  ),
+                ])
+                ..body = cb.Block.of(
+                  cb.Block(
+                    (cb.BlockBuilder builder) {
+                      final StringBuffer messageHandlerSink = StringBuffer();
+                      _writeFlutterMethodMessageHandler(
+                        Indent(messageHandlerSink),
+                        name: 'removeStrongReferenceName',
+                        parameters: <Parameter>[
+                          Parameter(
+                            name: 'identifier',
+                            type: const TypeDeclaration(
+                              baseName: 'int',
+                              isNullable: false,
+                            ),
+                          )
+                        ],
+                        returnType: const TypeDeclaration.voidDeclaration(),
+                        channelName: removeStrongReferenceName,
+                        isMockHandler: false,
+                        isAsynchronous: false,
+                        nullHandlerExpression:
+                            '${classMemberNamePrefix}clearHandlers',
+                        onCreateApiCall: (
+                          String methodName,
+                          Iterable<Parameter> parameters,
+                          Iterable<String> safeArgumentNames,
+                        ) {
+                          return '(instanceManager ?? $instanceManagerClassName.instance).remove(${safeArgumentNames.single})';
+                        },
+                      );
+                      builder.statements.add(
+                        cb.Code(messageHandlerSink.toString()),
+                      );
+                    },
+                  ).statements,
+                );
+            },
+          ),
+        )
+        ..methods.addAll(
+          <cb.Method>[
+            cb.Method(
+              (cb.MethodBuilder builder) {
+                builder
+                  ..name = 'removeStrongReference'
+                  ..returns = cb.refer('Future<void>')
+                  ..modifier = cb.MethodModifier.async
+                  ..requiredParameters.add(
+                    cb.Parameter(
+                      (cb.ParameterBuilder builder) => builder
+                        ..name = 'identifier'
+                        ..type = cb.refer('int'),
+                    ),
+                  )
+                  ..body = cb.Block(
+                    (cb.BlockBuilder builder) {
+                      final StringBuffer messageCallSink = StringBuffer();
+                      _writeHostMethodMessageCall(
+                        Indent(messageCallSink),
+                        addSuffixVariable: false,
+                        channelName: removeStrongReferenceName,
+                        parameters: <Parameter>[
+                          Parameter(
+                            name: 'identifier',
+                            type: const TypeDeclaration(
+                              baseName: 'int',
+                              isNullable: false,
+                            ),
+                          ),
+                        ],
+                        returnType: const TypeDeclaration.voidDeclaration(),
+                      );
+                      builder.statements.addAll(<cb.Code>[
+                        cb.Code(messageCallSink.toString()),
+                      ]);
+                    },
+                  );
+              },
+            ),
+            cb.Method(
+              (cb.MethodBuilder builder) {
+                builder
+                  ..name = 'clear'
+                  ..returns = cb.refer('Future<void>')
+                  ..modifier = cb.MethodModifier.async
+                  ..docs.addAll(<String>[
+                    '/// Clear the native `$instanceManagerClassName`.',
+                    '///',
+                    '/// This is typically called after a hot restart.',
+                  ])
+                  ..body = cb.Block(
+                    (cb.BlockBuilder builder) {
+                      final StringBuffer messageCallSink = StringBuffer();
+                      _writeHostMethodMessageCall(
+                        Indent(messageCallSink),
+                        addSuffixVariable: false,
+                        channelName: makeChannelNameWithStrings(
+                          apiName: apiName,
+                          methodName: 'clear',
+                          dartPackageName: dartPackageName,
+                        ),
+                        parameters: <Parameter>[],
+                        returnType: const TypeDeclaration.voidDeclaration(),
+                      );
+                      builder.statements.addAll(<cb.Code>[
+                        cb.Code(messageCallSink.toString()),
+                      ]);
+                    },
+                  );
+              },
+            ),
+          ],
+        ),
+    );
+
+    final cb.DartEmitter emitter = cb.DartEmitter(useNullSafetySyntax: true);
     indent.format(
-      instanceManagerApiTemplate(
-        dartPackageName: dartPackageName,
-        pigeonChannelCodecVarName: _pigeonChannelCodec,
-      ),
+      DartFormatter().format('${instanceManagerApi.accept(emitter)}'),
     );
   }
 
@@ -859,7 +1053,7 @@ if (${varNamePrefix}replyList == null) {
       );
       indent.nest(2, () {
         final String channelSuffix =
-            addSuffixVariable ? '' : r'$messageChannelSuffix';
+            addSuffixVariable ? r'$messageChannelSuffix' : '';
         indent.writeln("'$channelName$channelSuffix', $_pigeonChannelCodec,");
         indent.writeln(
           'binaryMessenger: binaryMessenger);',
@@ -1451,7 +1645,6 @@ if (${varNamePrefix}replyList == null) {
               _writeFlutterMethodMessageHandler(
                 Indent(messageHandlerSink),
                 name: methodName,
-                addSuffixVariable: true,
                 parameters: <Parameter>[
                   Parameter(
                     name: '${classMemberNamePrefix}instanceIdentifier',
@@ -1507,7 +1700,6 @@ if (${varNamePrefix}replyList == null) {
               _writeFlutterMethodMessageHandler(
                 Indent(messageHandlerSink),
                 name: method.name,
-                addSuffixVariable: true,
                 parameters: <Parameter>[
                   Parameter(
                     name: '${classMemberNamePrefix}instance',

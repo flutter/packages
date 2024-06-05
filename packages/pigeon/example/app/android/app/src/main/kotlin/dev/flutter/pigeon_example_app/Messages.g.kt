@@ -118,6 +118,7 @@ interface ExampleHostApi {
     /** The codec used by ExampleHostApi. */
     val codec: MessageCodec<Any?> by lazy { ExampleHostApiCodec }
     /** Sets up an instance of `ExampleHostApi` to handle messages through the `binaryMessenger`. */
+    @JvmOverloads
     fun setUp(
         binaryMessenger: BinaryMessenger,
         api: ExampleHostApi?,

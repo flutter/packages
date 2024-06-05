@@ -1,3 +1,7 @@
+## 0.5.8
+
+* Adds support for BitmapDescriptor classes `AssetMapBitmap` and `BytesMapBitmap`.
+
 ## 0.5.7
 
 * Adds support for marker clustering.

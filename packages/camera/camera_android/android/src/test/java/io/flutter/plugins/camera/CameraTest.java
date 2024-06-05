@@ -32,7 +32,6 @@ import io.flutter.embedding.engine.systemchannels.PlatformChannel;
 import io.flutter.plugin.common.EventChannel;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugins.camera.features.CameraFeatureFactory;
-import io.flutter.plugins.camera.features.CameraFeatures;
 import io.flutter.plugins.camera.features.Point;
 import io.flutter.plugins.camera.features.autofocus.AutoFocusFeature;
 import io.flutter.plugins.camera.features.autofocus.FocusMode;
@@ -123,7 +122,6 @@ public class CameraTest {
 
   @Before
   public void before() {
-
     mockRangeConstruction = new RangeConstruction();
     mockCameraProperties = mock(CameraProperties.class);
     mockDartMessenger = mock(DartMessenger.class);
@@ -135,8 +133,8 @@ public class CameraTest {
     mockHandler = mock(Handler.class);
 
     final Activity mockActivity = mock(Activity.class);
-    final TextureRegistry.SurfaceTextureEntry mockFlutterTexture =
-        mock(TextureRegistry.SurfaceTextureEntry.class);
+    final TextureRegistry.SurfaceProducer mockSurfaceProducer =
+        mock(TextureRegistry.SurfaceProducer.class);
     final String cameraName = "1";
     final ResolutionPreset resolutionPreset = ResolutionPreset.high;
     final boolean enableAudio = false;
@@ -163,7 +161,7 @@ public class CameraTest {
     camera =
         new Camera(
             mockActivity,
-            mockFlutterTexture,
+            mockSurfaceProducer,
             mockCameraFeatureFactory,
             mockDartMessenger,
             mockCameraProperties,
@@ -195,8 +193,8 @@ public class CameraTest {
   @Test
   public void shouldCreateCameraPluginAndSetAllFeatures() {
     final Activity mockActivity = mock(Activity.class);
-    final TextureRegistry.SurfaceTextureEntry mockFlutterTexture =
-        mock(TextureRegistry.SurfaceTextureEntry.class);
+    final TextureRegistry.SurfaceProducer mockSurfaceProducer =
+        mock(TextureRegistry.SurfaceProducer.class);
     final CameraFeatureFactory spyMockCameraFeatureFactory = spy(mockCameraFeatureFactory);
     final String cameraName = "1";
     final ResolutionPreset resolutionPreset = ResolutionPreset.high;
@@ -210,7 +208,7 @@ public class CameraTest {
     Camera camera =
         new Camera(
             mockActivity,
-            mockFlutterTexture,
+            mockSurfaceProducer,
             spyMockCameraFeatureFactory,
             mockDartMessenger,
             mockCameraProperties,
@@ -681,7 +679,6 @@ public class CameraTest {
     VideoRenderer mockVideoRenderer = mock(VideoRenderer.class);
     ArrayList<CaptureRequest.Builder> mockRequestBuilders = new ArrayList<>();
     mockRequestBuilders.add(mock(CaptureRequest.Builder.class));
-    SurfaceTexture mockSurfaceTexture = mock(SurfaceTexture.class);
     Size mockSize = mock(Size.class);
     camera.recordingVideo = true;
     camera.videoRenderer = mockVideoRenderer;
@@ -690,10 +687,8 @@ public class CameraTest {
     ImageReader mockPictureImageReader = mock(ImageReader.class);
     camera.pictureImageReader = mockPictureImageReader;
 
-    TextureRegistry.SurfaceTextureEntry cameraFlutterTexture = camera.flutterTexture;
     ResolutionFeature resolutionFeature = mockCameraFeatureFactory.mockResolutionFeature;
 
-    when(cameraFlutterTexture.surfaceTexture()).thenReturn(mockSurfaceTexture);
     when(resolutionFeature.getPreviewSize()).thenReturn(mockSize);
 
     camera.startPreview();
@@ -706,7 +701,6 @@ public class CameraTest {
       throws InterruptedException, CameraAccessException {
     ArrayList<CaptureRequest.Builder> mockRequestBuilders = new ArrayList<>();
     mockRequestBuilders.add(mock(CaptureRequest.Builder.class));
-    SurfaceTexture mockSurfaceTexture = mock(SurfaceTexture.class);
     Size mockSize = mock(Size.class);
     ImageReader mockImageReader = mock(ImageReader.class);
     camera.recordingVideo = false;
@@ -714,10 +708,8 @@ public class CameraTest {
     CameraDeviceWrapper fakeCamera = new FakeCameraDeviceWrapper(mockRequestBuilders);
     camera.cameraDevice = fakeCamera;
 
-    TextureRegistry.SurfaceTextureEntry cameraFlutterTexture = camera.flutterTexture;
     ResolutionFeature resolutionFeature = mockCameraFeatureFactory.mockResolutionFeature;
 
-    when(cameraFlutterTexture.surfaceTexture()).thenReturn(mockSurfaceTexture);
     when(resolutionFeature.getPreviewSize()).thenReturn(mockSize);
     when(mockImageReader.getSurface()).thenReturn(mock(Surface.class));
 
@@ -731,7 +723,6 @@ public class CameraTest {
     VideoRenderer mockVideoRenderer = mock(VideoRenderer.class);
     ArrayList<CaptureRequest.Builder> mockRequestBuilders = new ArrayList<>();
     mockRequestBuilders.add(mock(CaptureRequest.Builder.class));
-    SurfaceTexture mockSurfaceTexture = mock(SurfaceTexture.class);
     Size mockSize = mock(Size.class);
     camera.recordingVideo = true;
     camera.videoRenderer = mockVideoRenderer;
@@ -741,10 +732,8 @@ public class CameraTest {
     ImageReader mockPictureImageReader = mock(ImageReader.class);
     camera.pictureImageReader = mockPictureImageReader;
 
-    TextureRegistry.SurfaceTextureEntry cameraFlutterTexture = camera.flutterTexture;
     ResolutionFeature resolutionFeature = mockCameraFeatureFactory.mockResolutionFeature;
 
-    when(cameraFlutterTexture.surfaceTexture()).thenReturn(mockSurfaceTexture);
     when(resolutionFeature.getPreviewSize()).thenReturn(mockSize);
     when(mockCameraProperties.getLensFacing()).thenReturn(CameraMetadata.LENS_FACING_FRONT);
 
@@ -767,10 +756,8 @@ public class CameraTest {
     camera.cameraDevice = fakeCamera;
     camera.imageStreamReader = mockImageStreamReader;
 
-    TextureRegistry.SurfaceTextureEntry cameraFlutterTexture = camera.flutterTexture;
     ResolutionFeature resolutionFeature = mockCameraFeatureFactory.mockResolutionFeature;
 
-    when(cameraFlutterTexture.surfaceTexture()).thenReturn(mockSurfaceTexture);
     when(resolutionFeature.getPreviewSize()).thenReturn(mockSize);
 
     camera.startPreviewWithImageStream(mock(EventChannel.class));
@@ -887,7 +874,6 @@ public class CameraTest {
     Camera cameraSpy = spy(camera);
     ArrayList<CaptureRequest.Builder> mockRequestBuilders = new ArrayList<>();
     mockRequestBuilders.add(mock(CaptureRequest.Builder.class));
-    SurfaceTexture mockSurfaceTexture = mock(SurfaceTexture.class);
     Size mockSize = mock(Size.class);
     MediaRecorder mockMediaRecorder = mock(MediaRecorder.class);
     ImageReader mockPictureImageReader = mock(ImageReader.class);
@@ -898,10 +884,8 @@ public class CameraTest {
     cameraSpy.cameraDevice = fakeCamera;
     MethodChannel.Result mockResult = mock(MethodChannel.Result.class);
 
-    TextureRegistry.SurfaceTextureEntry cameraFlutterTexture = cameraSpy.flutterTexture;
     ResolutionFeature resolutionFeature = mockCameraFeatureFactory.mockResolutionFeature;
 
-    when(cameraFlutterTexture.surfaceTexture()).thenReturn(mockSurfaceTexture);
     when(resolutionFeature.getPreviewSize()).thenReturn(mockSize);
     doNothing().when(cameraSpy).prepareRecording(mockResult);
 
@@ -1089,7 +1073,8 @@ public class CameraTest {
     camera.onConverged();
     // A picture should be taken.
     verify(mockCaptureSession, times(1)).capture(any(), any(), any());
-    // The session shuold not be aborted as part of this flow, as this breaks capture on some
+    // The session shuold not be aborted as part of this flow, as this breaks
+    // capture on some
     // devices, and causes delays on others.
     verify(mockCaptureSession, never()).abortCaptures();
   }
@@ -1097,19 +1082,14 @@ public class CameraTest {
   @Test
   public void createCaptureSession_doesNotCloseCaptureSession() throws CameraAccessException {
     Surface mockSurface = mock(Surface.class);
-    SurfaceTexture mockSurfaceTexture = mock(SurfaceTexture.class);
-    ResolutionFeature mockResolutionFeature = mock(ResolutionFeature.class);
     Size mockSize = mock(Size.class);
     ArrayList<CaptureRequest.Builder> mockRequestBuilders = new ArrayList<>();
     mockRequestBuilders.add(mock(CaptureRequest.Builder.class));
     CameraDeviceWrapper fakeCamera = new FakeCameraDeviceWrapper(mockRequestBuilders);
     camera.cameraDevice = fakeCamera;
 
-    TextureRegistry.SurfaceTextureEntry cameraFlutterTexture = camera.flutterTexture;
-    CameraFeatures cameraFeatures = camera.cameraFeatures;
     ResolutionFeature resolutionFeature = mockCameraFeatureFactory.mockResolutionFeature;
 
-    when(cameraFlutterTexture.surfaceTexture()).thenReturn(mockSurfaceTexture);
     when(resolutionFeature.getPreviewSize()).thenReturn(mockSize);
 
     camera.createCaptureSession(CameraDevice.TEMPLATE_PREVIEW, mockSurface);
@@ -1122,8 +1102,6 @@ public class CameraTest {
       throws CameraAccessException {
     Surface mockSurface = mock(Surface.class);
     Surface mockSecondarySurface = mock(Surface.class);
-    SurfaceTexture mockSurfaceTexture = mock(SurfaceTexture.class);
-    ResolutionFeature mockResolutionFeature = mock(ResolutionFeature.class);
     Size mockSize = mock(Size.class);
     ArrayList<CaptureRequest.Builder> mockRequestBuilders = new ArrayList<>();
     mockRequestBuilders.add(mock(CaptureRequest.Builder.class));
@@ -1133,11 +1111,8 @@ public class CameraTest {
     camera.pictureImageReader = mockPictureImageReader;
     CaptureRequest.Builder mockPreviewRequestBuilder = mock(CaptureRequest.Builder.class);
 
-    TextureRegistry.SurfaceTextureEntry cameraFlutterTexture = camera.flutterTexture;
-    CameraFeatures cameraFeatures = camera.cameraFeatures;
     ResolutionFeature resolutionFeature = mockCameraFeatureFactory.mockResolutionFeature;
 
-    when(cameraFlutterTexture.surfaceTexture()).thenReturn(mockSurfaceTexture);
     when(resolutionFeature.getPreviewSize()).thenReturn(mockSize);
     when(fakeCamera.createCaptureRequest(anyInt())).thenReturn(mockPreviewRequestBuilder);
     when(mockPictureImageReader.getSurface()).thenReturn(mockSurface);
@@ -1174,19 +1149,18 @@ public class CameraTest {
   @Test
   public void startVideoRecording_shouldApplySettingsToMediaRecorder()
       throws InterruptedException, IOException, CameraAccessException {
-
     final Activity mockActivity = mock(Activity.class);
-    final TextureRegistry.SurfaceTextureEntry mockFlutterTexture =
-        mock(TextureRegistry.SurfaceTextureEntry.class);
+    final TextureRegistry.SurfaceProducer mockSurfaceProducer =
+        mock(TextureRegistry.SurfaceProducer.class);
     final String cameraName = "1";
     final ResolutionPreset resolutionPreset = ResolutionPreset.high;
     final boolean enableAudio = true;
 
-    //region These parameters should be set in android MediaRecorder.
+    // region These parameters should be set in android MediaRecorder.
     final int fps = 15;
     final int videoBitrate = 200000;
     final int audioBitrate = 32000;
-    //endregion
+    // endregion
 
     when(mockCameraProperties.getCameraName()).thenReturn(cameraName);
 
@@ -1209,7 +1183,6 @@ public class CameraTest {
     try (final MockedStatic<File> mockFile = mockStatic(File.class);
         final MockedConstruction<MediaRecorder> mockMediaRecorder =
             Mockito.mockConstruction(MediaRecorder.class)) {
-
       assertNotNull(mockMediaRecorder);
 
       mockFile
@@ -1222,7 +1195,7 @@ public class CameraTest {
           spy(
               new Camera(
                   mockActivity,
-                  mockFlutterTexture,
+                  mockSurfaceProducer,
                   mockCameraFeatureFactory,
                   mockDartMessenger,
                   mockCameraProperties,
@@ -1255,19 +1228,15 @@ public class CameraTest {
       camera.cameraDevice = fakeCamera;
       MethodChannel.Result mockResult = mock(MethodChannel.Result.class);
 
-      TextureRegistry.SurfaceTextureEntry cameraFlutterTexture = camera.flutterTexture;
-
       ResolutionFeature resolutionFeature = mockCameraFeatureFactory.mockResolutionFeature;
-
-      assertNotNull(cameraFlutterTexture);
-      when(cameraFlutterTexture.surfaceTexture()).thenReturn(mockSurfaceTexture);
 
       assertNotNull(resolutionFeature);
       when(resolutionFeature.getPreviewSize()).thenReturn(mockSize);
 
       camera.startVideoRecording(mockResult, null);
 
-      //region Check that FPS parameter affects AE range at which the camera captures frames.
+      // region Check that FPS parameter affects AE range at which the camera captures
+      // frames.
       assertEquals(camera.cameraFeatures.getFpsRange().getValue().getLower(), Integer.valueOf(fps));
       assertEquals(camera.cameraFeatures.getFpsRange().getValue().getUpper(), Integer.valueOf(fps));
 
@@ -1276,15 +1245,15 @@ public class CameraTest {
               eq(CaptureRequest.CONTROL_AE_TARGET_FPS_RANGE),
               argThat(
                   (Range<Integer> range) -> range.getLower() == fps && range.getUpper() == fps));
-      //endregion
+      // endregion
 
       final MediaRecorder recorder = camera.mediaRecorder;
 
-      //region Check that parameters affects movies, written by MediaRecorder.
+      // region Check that parameters affects movies, written by MediaRecorder.
       verify(recorder).setVideoFrameRate(fps);
       verify(recorder).setAudioEncodingBitRate(audioBitrate);
       verify(recorder).setVideoEncodingBitRate(videoBitrate);
-      //endregion
+      // endregion
     }
   }
 
