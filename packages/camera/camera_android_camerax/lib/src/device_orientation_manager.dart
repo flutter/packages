@@ -67,6 +67,8 @@ class DeviceOrientationManager {
     return api.getDefaultDisplayRotation();
   }
 
+  /// Retrieves the current UI orientation based on the current device
+  /// orientation and screen rotation.
   static Future<DeviceOrientation> getUiOrientation(
       {BinaryMessenger? binaryMessenger}) async {
     final DeviceOrientationManagerHostApi api =

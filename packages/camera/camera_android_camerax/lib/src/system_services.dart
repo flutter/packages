@@ -49,6 +49,13 @@ class SystemServices {
     return api.getTempFilePath(prefix, suffix);
   }
 
+  /// Returns whether or not the Android Surface used to display the camera
+  /// preview is backed by a SurfaceTexture.
+  ///
+  /// This is used to determine the correct rotation of the camera preview
+  /// because Surfaces not backed by a SurfaceTexture are not transformed by
+  /// CameraX to the expected rotation based on that of the device and must
+  /// be corrected by the plugin.
   static Future<bool> isUsingSurfaceTextureForPreview(
       {BinaryMessenger? binaryMessenger}) {
     final SystemServicesHostApi api =
