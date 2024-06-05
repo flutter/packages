@@ -179,6 +179,13 @@ abstract class CookieManager {
 abstract class WebView extends View {
   WebView();
 
+  late void Function(
+    int left,
+    int top,
+    int oldLeft,
+    int oldTop,
+  )? onScrollChanged;
+
   /// The WebSettings object used to control the settings for this WebView.
   @attached
   late WebSettings settings;

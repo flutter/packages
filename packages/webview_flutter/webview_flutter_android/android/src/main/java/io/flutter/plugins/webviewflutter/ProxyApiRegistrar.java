@@ -1,5 +1,6 @@
 package io.flutter.plugins.webviewflutter;
 
+import android.content.Context;
 import android.os.Build;
 
 import androidx.annotation.ChecksSdkIntAtLeast;
@@ -9,8 +10,12 @@ import androidx.annotation.RequiresApi;
 import io.flutter.plugin.common.BinaryMessenger;
 
 public class ProxyApiRegistrar extends PigeonProxyApiRegistrar {
-  public ProxyApiRegistrar(@NonNull BinaryMessenger binaryMessenger) {
+  @NonNull
+  private Context context;
+
+  public ProxyApiRegistrar(@NonNull BinaryMessenger binaryMessenger, @NonNull Context context) {
     super(binaryMessenger);
+    this.context = context;
   }
 
   // Interface for an injectable SDK version checker.
@@ -54,7 +59,7 @@ public class ProxyApiRegistrar extends PigeonProxyApiRegistrar {
   @NonNull
   @Override
   public PigeonApiWebView getPigeonApiWebView() {
-    return null;
+    return new WebViewProxyApi(this);
   }
 
   @NonNull
@@ -133,5 +138,14 @@ public class ProxyApiRegistrar extends PigeonProxyApiRegistrar {
   @Override
   public PigeonApiHttpAuthHandler getPigeonApiHttpAuthHandler() {
     return null;
+  }
+
+  @NonNull
+  public Context getContext() {
+    return context;
+  }
+
+  public void setContext(@NonNull Context context) {
+    this.context = context;
   }
 }
