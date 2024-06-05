@@ -86,14 +86,19 @@ enum ConsoleMessageLevel {
 abstract class WebResourceRequest {
   /// The URL for which the resource request was made.
   late String url;
+
   /// Whether the request was made in order to fetch the main frame's document.
   late bool isForMainFrame;
+
   /// Whether the request was a result of a server-side redirect.
   late bool? isRedirect;
+
   /// Whether a gesture (such as a click) was associated with the request.
   late bool hasGesture;
+
   /// The method associated with the request, for example "GET".
   late String method;
+
   /// The headers associated with the request.
   late Map<String, String>? requestHeaders;
 }
@@ -329,7 +334,6 @@ abstract class JavaScriptChannel {
   /// Handles callbacks messages from JavaScript.
   late void Function(String message) postMessage;
 }
-
 
 /// Receives various notifications and requests from a `WebView`.
 ///
@@ -569,10 +573,13 @@ abstract class WebStorage {
 abstract class FileChooserParams {
   /// Preference for a live media captured value (e.g. Camera, Microphone).
   late bool isCaptureEnabled;
+
   /// An array of acceptable MIME types.
   late List<String> acceptTypes;
+
   /// File chooser mode.
   late FileChooserMode mode;
+
   /// File name of a default selection if specified, or null.
   late String? filenameHint;
 }
