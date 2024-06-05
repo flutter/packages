@@ -5,25 +5,9 @@
 #import <Flutter/Flutter.h>
 #import <LocalAuthentication/LocalAuthentication.h>
 
-NS_ASSUME_NONNULL_BEGIN
-
-/// Protocol for interacting with LAContext instances, abstracted to allow using mock/fake instances
-/// in unit tests.
-@protocol FLADAuthContext <NSObject>
-@required
-@property(nonatomic, nullable, copy) NSString *localizedFallbackTitle;
-@property(nonatomic, readonly) LABiometryType biometryType;
-- (BOOL)canEvaluatePolicy:(LAPolicy)policy error:(NSError *__autoreleasing *)error;
-- (void)evaluatePolicy:(LAPolicy)policy
-       localizedReason:(NSString *)localizedReason
-                 reply:(void (^)(BOOL success, NSError *__nullable error))reply;
-@end
-
-/// Protocol for a source of FLADAuthContext instances. Used to allow context injection in unit
-/// tests.
+/// Protocol for a source of LAContext instances. Used to allow context injection in unit tests.
 @protocol FLADAuthContextFactory <NSObject>
-@required
-- (id<FLADAuthContext>)createAuthContext;
+- (LAContext *)createAuthContext;
 @end
 
 @interface FLALocalAuthPlugin ()
@@ -31,5 +15,3 @@ NS_ASSUME_NONNULL_BEGIN
 - (instancetype)initWithContextFactory:(NSObject<FLADAuthContextFactory> *)factory
     NS_DESIGNATED_INITIALIZER;
 @end
-
-NS_ASSUME_NONNULL_END
