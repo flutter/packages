@@ -1,3 +1,7 @@
+## 1.0.29
+
+* Adds support for the `Slider` Material widget.
+
 ## 1.0.28
 
 * Updates documentation to WidgetStateProperty and ButtonBar.
