@@ -4,7 +4,7 @@ import android.os.Build;
 
 import androidx.annotation.ChecksSdkIntAtLeast;
 import androidx.annotation.NonNull;
-import androidx.annotation.VisibleForTesting;
+import androidx.annotation.RequiresApi;
 
 import io.flutter.plugin.common.BinaryMessenger;
 
@@ -19,12 +19,14 @@ public class ProxyApiRegistrar extends PigeonProxyApiRegistrar {
     return Build.VERSION.SDK_INT >= version;
   }
 
+  @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
   @NonNull
   @Override
   public PigeonApiWebResourceRequest getPigeonApiWebResourceRequest() {
     return new WebResourceRequestProxyApi(this);
   }
 
+  @RequiresApi(api = Build.VERSION_CODES.M)
   @NonNull
   @Override
   public PigeonApiWebResourceError getPigeonApiWebResourceError() {
