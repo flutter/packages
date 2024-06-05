@@ -2,6 +2,11 @@
 #import <Foundation/Foundation.h>
 #import <StoreKit/StoreKit.h>
 #import "FIAPaymentQueueHandler.h"
+#if TARGET_OS_OSX
+#import <FlutterMacOS/FlutterMacOS.h>
+#else
+#import <Flutter/Flutter.h>
+#endif
 
 #pragma mark Payment Queue Implementations
 /// Real implementations
@@ -239,6 +244,10 @@
 
 @end
 
+
+/// This mock is only used in iOS tests
+#if TARGET_OS_IOS
+
 @implementation FakePluginRegistrar
 
 - (void)addApplicationDelegate:(nonnull NSObject<FlutterPlugin> *)delegate {
@@ -268,17 +277,19 @@
                      withId:(nonnull NSString *)factoryId {
 }
 
-- (void)registerViewFactory:(nonnull NSObject<FlutterPlatformViewFactory> *)factory
-                              withId:(nonnull NSString *)factoryId
-    gestureRecognizersBlockingPolicy:
-        (FlutterPlatformViewGestureRecognizersBlockingPolicy)gestureRecognizersBlockingPolicy {
-}
-
 - (nonnull NSObject<FlutterTextureRegistry> *)textures {
   return nil;
 }
 
+- (void)registerViewFactory:(nonnull NSObject<FlutterPlatformViewFactory> *)factory withId:(nonnull NSString *)factoryId gestureRecognizersBlockingPolicy:(FlutterPlatformViewGestureRecognizersBlockingPolicy)gestureRecognizersBlockingPolicy { 
+
+}
+
+
+@synthesize view;
+
 @end
+#endif
 
 @implementation FakeBinaryMessenger
 - (void)cleanUpConnection:(FlutterBinaryMessengerConnection)connection {

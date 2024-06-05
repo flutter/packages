@@ -103,8 +103,11 @@ NS_ASSUME_NONNULL_BEGIN
 - (instancetype)initWithState:(SKPaymentTransactionState)state payment:(SKPayment *)payment;
 @end
 
+#if TARGET_OS_IOS
 @interface FakePluginRegistrar : NSObject <FlutterPluginRegistrar>
+@property view;
 @end
+#endif
 
 @interface FakeBinaryMessenger : NSObject <FlutterBinaryMessenger>
 @end
