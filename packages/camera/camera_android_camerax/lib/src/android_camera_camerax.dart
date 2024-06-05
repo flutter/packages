@@ -233,12 +233,24 @@ class AndroidCameraCameraX extends CameraPlatform {
   static const String exposureCompensationNotSupported =
       'exposureCompensationNotSupported';
 
+  /// Whether or not the created camera is front facing.
   late bool cameraIsFrontFacing;
+
+  /// Whether or not the Surface used to create the camera preview is backed
+  /// by a SurfaceTexture.
   late bool isUsingSurfaceTextureForPreview;
-  late final DeviceOrientation deviceOrientation;
+
+  /// The initial orientation of the device.
+  ///
+  /// The camera preview will use this orientation as the natural orientation
+  /// to correct its rotation with respect to, if necessary.
+  late final DeviceOrientation naturalOrientation;
+
+  /// The camera sensor orientation.
   late int sensorOrientation;
+
+  /// The current orientation of the device.
   DeviceOrientation? currentDeviceOrientation;
-  // late DeviceOrientation uiOrientation;
 
   /// Returns list of all available cameras and their descriptions.
   @override
@@ -373,13 +385,15 @@ class AndroidCameraCameraX extends CameraPlatform {
     previewInitiallyBound = true;
     _previewIsPaused = false;
 
+    // Retrieve info required for correcting the rotation of the camera preview
+    // if necessary.
     isUsingSurfaceTextureForPreview =
         await SystemServices.isUsingSurfaceTextureForPreview();
+    sensorOrientation = await getSensorOrientation();
+    naturalOrientation = await DeviceOrientationManager.getUiOrientation();
     onDeviceOrientationChanged().listen((DeviceOrientationChangedEvent event) {
       currentDeviceOrientation = event.orientation;
     });
-    sensorOrientation = await getSensorOrientation();
-    deviceOrientation = await DeviceOrientationManager.getUiOrientation();
 
     return flutterSurfaceTextureId;
   }
@@ -831,38 +845,48 @@ class AndroidCameraCameraX extends CameraPlatform {
       );
     }
 
-    final Map<DeviceOrientation, int> deg = <DeviceOrientation, int>{
+    final Widget cameraPreview = Texture(textureId: cameraId);
+
+    if (isUsingSurfaceTextureForPreview) {
+      // If the camera preview is backed by a SurfaceTexture, the transformation
+      // needed to correctly rotate the preview has already been applied.
+      return cameraPreview;
+    }
+
+    // Fix for the rotation of the camera preview not backed by a SurfaceTexture
+    // with respect to the naturalOrientation of the device:
+
+    final Map<DeviceOrientation, int> degreesForDeviceOrientation =
+        <DeviceOrientation, int>{
       DeviceOrientation.portraitUp: 0,
       DeviceOrientation.landscapeRight: 90,
       DeviceOrientation.portraitDown: 180,
       DeviceOrientation.landscapeLeft: 270,
     };
-    int deviceOrientationDeg = deg[deviceOrientation]!;
-    int sign = getSign();
+    int deviceOrientationDegrees =
+        degreesForDeviceOrientation[naturalOrientation]!;
+    final int signForCameraDirection = cameraIsFrontFacing ? 1 : -1;
 
-    if (sign == 1 &&
+    if (signForCameraDirection == 1 &&
         (currentDeviceOrientation == DeviceOrientation.landscapeLeft ||
             currentDeviceOrientation == DeviceOrientation.landscapeRight)) {
-      deviceOrientationDeg += 180;
+      // For front-facing cameras, the image buffer is rotated counterclockwise,
+      // so we determine the rotation needed to correct the camera preview with
+      // respect to the naturalOrientation of the device based on the inverse of
+      // naturalOrientation.
+      deviceOrientationDegrees += 180;
     }
 
-    double rotation =
-        (sensorOrientation + deviceOrientationDeg * sign + 360) % 360;
-    int turns = (rotation / 90).toInt();
+    // See https://developer.android.com/media/camera/camera2/camera-preview#orientation_calculation
+    // for more context on this formula.
+    final double rotation = (sensorOrientation +
+            deviceOrientationDegrees * signForCameraDirection +
+            360) %
+        360;
+    final int quarterTurnsToCorrectPreview = (rotation / 90).toInt();
 
-    // print('CAMILLE UI ORIENTATION: $uiOrientation');
-    print('CAMILLE DEVICE ORIENTATION: $deviceOrientation');
-    print('CAMILLE SENSOR ORIENTATION: $sensorOrientation');
-    print('CAMILLE SIGN: $sign');
-    print('CAMILLE ROTATION: $rotation');
-
-    Widget widget =
-        RotatedBox(quarterTurns: turns, child: Texture(textureId: cameraId));
-    return isUsingSurfaceTextureForPreview
-        ? Texture(textureId: cameraId)
-        : widget;
-
-    // return Texture(textureId: cameraId);
+    return RotatedBox(
+        quarterTurns: quarterTurnsToCorrectPreview, child: cameraPreview);
   }
 
   /// Captures an image and returns the file where it was saved.
@@ -1480,18 +1504,5 @@ class AndroidCameraCameraX extends CameraPlatform {
     final FocusMeteringResult? result =
         await cameraControl.startFocusAndMetering(currentFocusMeteringAction!);
     return await result?.isFocusSuccessful() ?? false;
-  }
-
-  @override
-  Future<int> getSensorOrientation() async {
-    final Camera2CameraInfo camera2CameraInfo =
-        await proxy.getCamera2CameraInfo(cameraInfo!);
-    return camera2CameraInfo.getSensorOrientation();
-    // return cameraInfo!.getSensorRotationDegrees();
-  }
-
-  @override
-  int getSign() {
-    return cameraIsFrontFacing ? 1 : -1;
   }
 }
