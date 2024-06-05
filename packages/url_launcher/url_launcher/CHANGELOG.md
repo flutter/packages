@@ -1,5 +1,7 @@
-## NEXT
+## 6.3.0
 
+* Adds `BrowserConfiguration` parameter, to configure in-app browser views, such as Android Custom Tabs or SFSafariViewController.
+* Adds `showTitle` to `BrowserConfiguration`, to allow showing webpage titles in in-app browser views.
 * Updates minimum supported SDK version to Flutter 3.16/Dart 3.2.
 
 ## 6.2.6

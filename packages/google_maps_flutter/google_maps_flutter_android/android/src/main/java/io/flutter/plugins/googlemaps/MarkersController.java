@@ -4,6 +4,7 @@
 
 package io.flutter.plugins.googlemaps;
 
+import android.content.res.AssetManager;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -21,14 +22,21 @@ class MarkersController {
   private final MethodChannel methodChannel;
   private MarkerManager.Collection markerCollection;
   private final ClusterManagersController clusterManagersController;
+  private final AssetManager assetManager;
+  private final float density;
 
   MarkersController(
-      MethodChannel methodChannel, ClusterManagersController clusterManagersController) {
+      MethodChannel methodChannel,
+      ClusterManagersController clusterManagersController,
+      AssetManager assetManager,
+      float density) {
     this.markerIdToMarkerBuilder = new HashMap<>();
     this.markerIdToController = new HashMap<>();
     this.googleMapsMarkerIdToDartMarkerId = new HashMap<>();
     this.methodChannel = methodChannel;
     this.clusterManagersController = clusterManagersController;
+    this.assetManager = assetManager;
+    this.density = density;
   }
 
   void setCollection(MarkerManager.Collection markerCollection) {
@@ -192,7 +200,7 @@ class MarkersController {
     }
     String clusterManagerId = getClusterManagerId(marker);
     MarkerBuilder markerBuilder = new MarkerBuilder(markerId, clusterManagerId);
-    Convert.interpretMarkerOptions(marker, markerBuilder);
+    Convert.interpretMarkerOptions(marker, markerBuilder, assetManager, density);
     addMarker(markerBuilder);
   }
 
@@ -251,12 +259,12 @@ class MarkersController {
     }
 
     // Update marker builder.
-    Convert.interpretMarkerOptions(marker, markerBuilder);
+    Convert.interpretMarkerOptions(marker, markerBuilder, assetManager, density);
 
     // Update existing marker on map.
     MarkerController markerController = markerIdToController.get(markerId);
     if (markerController != null) {
-      Convert.interpretMarkerOptions(marker, markerController);
+      Convert.interpretMarkerOptions(marker, markerController, assetManager, density);
     }
   }
 

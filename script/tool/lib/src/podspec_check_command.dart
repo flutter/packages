@@ -181,6 +181,12 @@ class PodspecCheckCommand extends PackageLoopingCommand {
       if (relativePath.startsWith('example/')) {
         return false;
       }
+      // Ignore test code.
+      if (relativePath.contains('/Tests/') ||
+          relativePath.contains('/RunnerTests/') ||
+          relativePath.contains('/RunnerUITests/')) {
+        return false;
+      }
       final String filePath = entity.path;
       return filePath != iosSwiftPackageManifestPath &&
           filePath != darwinSwiftPackageManifestPath &&
