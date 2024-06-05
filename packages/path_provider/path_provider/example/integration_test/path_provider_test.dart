@@ -22,7 +22,7 @@ void main() {
       // because the path changes from an app specific directory to
       // ~/Documents, which requires additional permissions to access on macOS.
       // Instead, validate that a non-empty path was returned.
-      expect(result, isNotEmpty);
+      expect(result.path, isNotEmpty);
     } else {
       _verifySampleFile(result, 'applicationDocuments');
     }
