@@ -430,6 +430,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
         });
         indent.writeln(
             '/** Sets up an instance of `$apiName` to handle messages through the `binaryMessenger`. */');
+        indent.writeln('@JvmOverloads');
         indent.write(
             'fun setUp(binaryMessenger: BinaryMessenger, api: $apiName?, messageChannelSuffix: String = "") ');
         indent.addScoped('{', '}', () {

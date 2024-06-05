@@ -1,3 +1,12 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+
+## 0.5.1+2
+
+* Bumps androidx.annotation:annotation from 1.7.1 to 1.8.0.
+* Updates minimum supported SDK version to Flutter 3.16/Dart 3.2.
+
 ## 0.5.1+1
 
 * Updates `LICENSE` file to cover licensed code used in `FileUtils.java`.

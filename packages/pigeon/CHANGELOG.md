@@ -1,3 +1,16 @@
+## 19.0.2
+
+* [kotlin] Adds the `@JvmOverloads` to the `HostApi` setUp method. This prevents the calling Java code from having to provide an empty `String` as Kotlin provides it by default  
+
+## 19.0.1
+
+* [dart] Updates `PigeonInstanceMangerApi` to use the shared api channel code.
+
+## 19.0.0
+
+* **Breaking Change** [swift] Removes `FlutterError` in favor of `PigeonError`.
+* Updates minimum supported SDK version to Flutter 3.16/Dart 3.2.
+
 ## 18.0.1
 
 * Fixes unnecessary calls of `toList` and `fromList` when encoding/decoding data classes.

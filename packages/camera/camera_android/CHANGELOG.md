@@ -1,3 +1,12 @@
+## 0.10.9+4
+
+* [Supports Impeller](https://docs.flutter.dev/release/breaking-changes/android-surface-plugins).
+
+## 0.10.9+3
+
+* Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+* Removes support for apps using the v1 Android embedding.
+
 ## 0.10.9+2
 
 * Updates `README.md` to reflect the fact that the `camera_android_camerax` camera plugin implementation
@@ -31,7 +40,7 @@
 
 ## 0.10.8+14
 
-* Fixes `pausePreview` null pointer error. `pausePreview` should not be called 
+* Fixes `pausePreview` null pointer error. `pausePreview` should not be called
   when camera is closed or not configured.
 * Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
 
