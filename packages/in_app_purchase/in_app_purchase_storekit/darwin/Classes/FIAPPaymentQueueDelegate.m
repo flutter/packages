@@ -4,16 +4,17 @@
 
 #import "FIAPPaymentQueueDelegate.h"
 #import "FIAObjectTranslator.h"
+#import "Mocks.h"
 
 @interface FIAPPaymentQueueDelegate ()
 
-@property(strong, nonatomic, readonly) FlutterMethodChannel *callbackChannel;
+@property(strong, nonatomic, readonly) id<MethodChannel> callbackChannel;
 
 @end
 
 @implementation FIAPPaymentQueueDelegate
 
-- (id)initWithMethodChannel:(FlutterMethodChannel *)methodChannel {
+- (id)initWithMethodChannel:(id<MethodChannel>)methodChannel {
   self = [super init];
   if (self) {
     _callbackChannel = methodChannel;

@@ -14,7 +14,7 @@ import StoreKit
 public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI {
   private let receiptManager: FIAPReceiptManager
   private var productsCache: NSMutableDictionary = [:]
-  private var paymentQueueDelegateCallbackChannel: FlutterMethodChannel?
+  private var paymentQueueDelegateCallbackChannel: MethodChannel?
   // note - the type should be FIAPPaymentQueueDelegate, but this is only available >= iOS 13,
   // FIAPPaymentQueueDelegate only gets set/used in registerPaymentQueueDelegateWithError or removePaymentQueueDelegateWithError, which both are ios13+ only
   private var paymentQueueDelegate: Any?
@@ -322,9 +322,11 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI {
         guard let messenger = registrar?.messenger() else {
           fatalError("registrar.messenger can not be nil.")
         }
-        paymentQueueDelegateCallbackChannel = FlutterMethodChannel(
-          name: "plugins.flutter.io/in_app_purchase_payment_queue_delegate",
-          binaryMessenger: messenger)
+        paymentQueueDelegateCallbackChannel = DefaultMethodChannel(
+          channel: FlutterMethodChannel(
+            name: "plugins.flutter.io/in_app_purchase_payment_queue_delegate",
+            binaryMessenger: messenger)
+        )
 
         guard let unwrappedChannel = paymentQueueDelegateCallbackChannel else {
           fatalError("registrar.messenger can not be nil.")

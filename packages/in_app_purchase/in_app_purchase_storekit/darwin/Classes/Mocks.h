@@ -82,6 +82,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 @protocol MethodChannel <NSObject>
 - (void)invokeMethod:(NSString *)method arguments:(id _Nullable)arguments;
+- (void)invokeMethod:(NSString *)method
+           arguments:(id _Nullable)arguments
+              result:(FlutterResult _Nullable)callback;
 @end
 
 @interface DefaultMethodChannel : NSObject <MethodChannel>
@@ -92,6 +95,9 @@ NS_ASSUME_NONNULL_BEGIN
 @interface TestMethodChannel : NSObject <MethodChannel>
 @property(nonatomic, copy, nullable) void (^invokeMethodChannelStub)(NSString *method, id arguments)
     ;
+@property(nonatomic, copy, nullable) void (^invokeMethodChannelWithResultsStub)
+    (NSString *method, id arguments, FlutterResult _Nullable);
+
 @end
 
 #pragma mark FIAPRequestHandler

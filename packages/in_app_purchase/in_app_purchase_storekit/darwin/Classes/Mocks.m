@@ -185,6 +185,12 @@
   [self.channel invokeMethod:method arguments:arguments];
 }
 
+- (void)invokeMethod:(nonnull NSString *)method
+           arguments:(id _Nullable)arguments
+              result:(FlutterResult _Nullable)callback {
+  [self.channel invokeMethod:method arguments:arguments result:callback];
+}
+
 - (instancetype)initWithChannel:(nonnull FlutterMethodChannel *)channel {
   self = [super init];
   if (self) {
@@ -199,6 +205,14 @@
 - (void)invokeMethod:(nonnull NSString *)method arguments:(id _Nullable)arguments {
   if (self.invokeMethodChannelStub) {
     self.invokeMethodChannelStub(method, arguments);
+  }
+}
+
+- (void)invokeMethod:(nonnull NSString *)method
+           arguments:(id _Nullable)arguments
+              result:(FlutterResult _Nullable)callback {
+  if (self.invokeMethodChannelWithResultsStub) {
+    self.invokeMethodChannelWithResultsStub(method, arguments, callback);
   }
 }
 
@@ -244,7 +258,6 @@
 
 @end
 
-
 /// This mock is only used in iOS tests
 #if TARGET_OS_IOS
 
@@ -281,8 +294,10 @@
   return nil;
 }
 
-- (void)registerViewFactory:(nonnull NSObject<FlutterPlatformViewFactory> *)factory withId:(nonnull NSString *)factoryId gestureRecognizersBlockingPolicy:(FlutterPlatformViewGestureRecognizersBlockingPolicy)gestureRecognizersBlockingPolicy { 
-
+- (void)registerViewFactory:(nonnull NSObject<FlutterPlatformViewFactory> *)factory
+                              withId:(nonnull NSString *)factoryId
+    gestureRecognizersBlockingPolicy:
+        (FlutterPlatformViewGestureRecognizersBlockingPolicy)gestureRecognizersBlockingPolicy {
 }
 
 @end

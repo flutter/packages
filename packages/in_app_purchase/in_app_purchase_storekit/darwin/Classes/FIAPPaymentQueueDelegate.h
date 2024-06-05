@@ -9,13 +9,14 @@
 #endif
 #import <Foundation/Foundation.h>
 #import <StoreKit/StoreKit.h>
+#import "Mocks.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 API_AVAILABLE(ios(13))
 API_UNAVAILABLE(tvos, macos, watchos)
 @interface FIAPPaymentQueueDelegate : NSObject <SKPaymentQueueDelegate>
-- (id)initWithMethodChannel:(FlutterMethodChannel *)methodChannel;
+- (id)initWithMethodChannel:(id<MethodChannel>)methodChannel;
 @end
 
 NS_ASSUME_NONNULL_END

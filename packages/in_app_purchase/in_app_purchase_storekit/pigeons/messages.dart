@@ -230,7 +230,6 @@ abstract class InAppPurchaseAPI {
 
   List<SKPaymentTransactionMessage> transactions();
 
-  // IOS 13.0+ Only
   SKStorefrontMessage storefront();
 
   void addPayment(Map<String, Object?> paymentMap);
