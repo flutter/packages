@@ -3,6 +3,8 @@
 #else
 #import <Flutter/Flutter.h>
 #endif
+#import <StoreKit/StoreKit.h>
+#import "FIATransactionCache.h"
 
 /// The payment queue protocol
 NS_ASSUME_NONNULL_BEGIN

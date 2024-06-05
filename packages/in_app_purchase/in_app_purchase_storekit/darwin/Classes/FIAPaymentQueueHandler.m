@@ -171,7 +171,7 @@
 #endif
 
 #if TARGET_OS_IOS
-- (void)showPriceConsentIfNeeded {
+- (void)showPriceConsentIfNeeded API_AVAILABLE(ios(13.4)){
   [self.queue showPriceConsentIfNeeded];
 }
 #endif
