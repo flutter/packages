@@ -105,7 +105,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 #if TARGET_OS_IOS
 @interface FakePluginRegistrar : NSObject <FlutterPluginRegistrar>
-@property view;
 @end
 #endif
 
