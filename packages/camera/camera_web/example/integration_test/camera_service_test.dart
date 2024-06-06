@@ -9,7 +9,6 @@ import 'package:camera_platform_interface/camera_platform_interface.dart';
 // ignore_for_file: implementation_imports
 import 'package:camera_web/src/camera.dart';
 import 'package:camera_web/src/camera_service.dart';
-import 'package:camera_web/src/shims/dart_js_util.dart';
 import 'package:camera_web/src/types/types.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -29,20 +28,11 @@ void main() {
     late Navigator navigator;
     late MediaDevices mediaDevices;
     late CameraService cameraService;
-    late JsUtil jsUtil;
 
     setUp(() async {
       mediaDevices = MockMediaDevices().wrapper;
       navigator = MockNavigator(mediaDevices: mediaDevices).wrapper;
       window = MockWindow(navigator: navigator).wrapper;
-      jsUtil = MockJsUtil();
-
-      // Mock JsUtil to return the real getProperty from dart:js_util.
-      when<dynamic>(() => jsUtil.getProperty(any(), any())).thenAnswer(
-        (Invocation invocation) =>
-            (invocation.positionalArguments[0] as JSObject)
-                .getProperty(invocation.positionalArguments[1] as JSAny),
-      );
 
       cameraService = CameraService()..window = window;
     });

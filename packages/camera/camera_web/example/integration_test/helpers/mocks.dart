@@ -11,41 +11,35 @@ import 'dart:ui';
 // ignore_for_file: implementation_imports
 import 'package:camera_web/src/camera.dart';
 import 'package:camera_web/src/camera_service.dart';
-import 'package:camera_web/src/shims/dart_js_util.dart';
 import 'package:camera_web/src/types/types.dart';
 import 'package:cross_file/cross_file.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:web/web.dart' as web;
 
 @JSExport()
-class JSInteropWrapper<T extends JSObject> {
-  T get wrapper => createJSInteropWrapper(this) as T;
-}
-
-@JSExport()
-class MockWindow extends JSInteropWrapper<web.Window> {
+class MockWindow {
   late web.Navigator navigator;
 }
 
-@JSExport()
-class MockScreen extends JSInteropWrapper<web.Screen> {}
+// @JSExport()
+class MockScreen {}
+
+// @JSExport()
+class MockScreenOrientation {}
+
+// @JSExport()
+class MockDocument {}
+
+// @JSExport()
+class MockElement {}
 
 @JSExport()
-class MockScreenOrientation extends JSInteropWrapper<web.ScreenOrientation> {}
-
-@JSExport()
-class MockDocument extends JSInteropWrapper<web.Document> {}
-
-@JSExport()
-class MockElement extends JSInteropWrapper<web.Element> {}
-
-@JSExport()
-class MockNavigator extends JSInteropWrapper<web.Navigator> {
+class MockNavigator {
   late web.MediaDevices mediaDevices;
 }
 
 @JSExport()
-class MockMediaDevices extends JSInteropWrapper<web.MediaDevices> {
+class MockMediaDevices {
   late JSPromise<web.MediaStream> Function([
     web.MediaStreamConstraints? constraints,
   ]) getUserMedia;
@@ -53,26 +47,24 @@ class MockMediaDevices extends JSInteropWrapper<web.MediaDevices> {
 
 class MockCameraService extends Mock implements CameraService {}
 
-@JSExport()
-class MockMediaStreamTrack extends JSInteropWrapper<web.MediaStreamTrack> {}
+// @JSExport()
+class MockMediaStreamTrack {}
 
 class MockCamera extends Mock implements Camera {}
 
 class MockCameraOptions extends Mock implements CameraOptions {}
 
-@JSExport()
-class MockVideoElement extends JSInteropWrapper<web.HTMLVideoElement> {}
+// @JSExport()
+class MockVideoElement {}
 
 class MockXFile extends Mock implements XFile {}
 
-class MockJsUtil extends Mock implements JsUtil {}
-
-@JSExport()
-class MockMediaRecorder extends JSInteropWrapper<web.MediaRecorder> {}
+// @JSExport()
+class MockMediaRecorder {}
 
 /// A fake [MediaStream] that returns the provided [_videoTracks].
 @JSExport()
-class FakeMediaStream extends JSInteropWrapper<web.MediaStream> {
+class FakeMediaStream {
   FakeMediaStream(this._videoTracks);
 
   final List<web.MediaStreamTrack> _videoTracks;
@@ -82,7 +74,7 @@ class FakeMediaStream extends JSInteropWrapper<web.MediaStream> {
 
 /// A fake [MediaDeviceInfo] that returns the provided [_deviceId], [_label] and [_kind].
 @JSExport()
-class FakeMediaDeviceInfo extends JSInteropWrapper<web.MediaDeviceInfo> {
+class FakeMediaDeviceInfo {
   FakeMediaDeviceInfo(this.deviceId, this.label, this.kind);
 
   final String deviceId;
@@ -92,7 +84,7 @@ class FakeMediaDeviceInfo extends JSInteropWrapper<web.MediaDeviceInfo> {
 
 /// A fake [MediaError] that returns the provided error [_code] and [_message].
 @JSExport()
-class FakeMediaError extends JSInteropWrapper<web.MediaError> {
+class FakeMediaError {
   FakeMediaError(
     this.code, [
     this.message = '',
@@ -104,7 +96,7 @@ class FakeMediaError extends JSInteropWrapper<web.MediaError> {
 
 /// A fake [DomException] that returns the provided error [_name] and [_message].
 @JSExport()
-class FakeDomException extends JSInteropWrapper<web.DOMException> {
+class FakeDomException {
   FakeDomException(
     this.name, [
     this.message = '',
@@ -135,7 +127,7 @@ class FakeElementStream<T extends web.Event> extends Fake
 
 /// A fake [BlobEvent] that returns the provided blob [data].
 @JSExport()
-class FakeBlobEvent extends JSInteropWrapper<web.BlobEvent> {
+class FakeBlobEvent {
   FakeBlobEvent(this.data);
 
   final web.Blob? data;
@@ -143,7 +135,7 @@ class FakeBlobEvent extends JSInteropWrapper<web.BlobEvent> {
 
 /// A fake [DomException] that returns the provided error [_name] and [_message].
 @JSExport()
-class FakeErrorEvent extends JSInteropWrapper<web.ErrorEvent> {
+class FakeErrorEvent {
   FakeErrorEvent(
     this.type, [
     this.message = '',

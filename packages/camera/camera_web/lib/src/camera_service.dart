@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'dart:js_interop';
+import 'dart:js_interop_unsafe';
 
 import 'package:camera_platform_interface/camera_platform_interface.dart';
 import 'package:flutter/foundation.dart';
@@ -10,7 +11,6 @@ import 'package:flutter/services.dart';
 import 'package:web/web.dart' as web;
 
 import 'camera.dart';
-import 'shims/dart_js_util.dart';
 import 'types/types.dart';
 
 /// A service to fetch, map camera settings and
@@ -19,10 +19,6 @@ class CameraService {
   /// The current browser window used to access media devices.
   @visibleForTesting
   web.Window window = web.window;
-
-  /// The utility to manipulate JavaScript interop objects.
-  @visibleForTesting
-  JsUtil jsUtil = JsUtil();
 
   /// Returns a media stream associated with the camera device
   /// with [cameraId] and constrained by [options].
@@ -137,9 +133,6 @@ class CameraService {
       final web.MediaSettingsRange zoomLevelCapability =
           defaultVideoTrack.getCapabilities().zoom;
 
-      // The zoom level capability is a nested JS object, therefore
-      // we need to access its properties with the js_util library.
-      // See: https://api.dart.dev/stable/2.13.4/dart-js_util/getProperty.html
       final num minimumZoomLevel = zoomLevelCapability.min;
       final num maximumZoomLevel = zoomLevelCapability.max;
 
@@ -191,7 +184,7 @@ class CameraService {
       //
       // The method may not be supported on Firefox.
       // See: https://developer.mozilla.org/en-US/docs/Web/API/MediaStreamTrack/getCapabilities#browser_compatibility
-      if (!jsUtil.hasProperty(videoTrack, 'getCapabilities'.toJS)) {
+      if (!videoTrack.has('getCapabilities')) {
         // Return null if the video track capabilities are not supported.
         return null;
       }

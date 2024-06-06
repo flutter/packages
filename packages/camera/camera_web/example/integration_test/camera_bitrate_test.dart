@@ -60,9 +60,11 @@ void main() {
       final MockNavigator mockNavigator = MockNavigator();
       final MockMediaDevices mockMediaDevices = MockMediaDevices();
 
-      final Window window = mockWindow.wrapper;
-      final Navigator navigator = mockNavigator.wrapper;
-      final MediaDevices mediaDevices = mockMediaDevices.wrapper;
+      final Window window = createJSInteropWrapper(mockWindow) as Window;
+      final Navigator navigator =
+          createJSInteropWrapper(mockNavigator) as Navigator;
+      final MediaDevices mediaDevices =
+          createJSInteropWrapper(mockMediaDevices) as MediaDevices;
 
       mockWindow.navigator = navigator;
       mockNavigator.mediaDevices = mediaDevices;
