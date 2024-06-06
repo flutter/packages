@@ -695,28 +695,28 @@ void main() {
     });
 
     test('should use the generic type for callbacks and builders', () {
-      Widget createTreeView() {
-        return TreeView<String>(
-          tree: simpleNodeSet,
-          treeNodeBuilder: (
-            BuildContext context,
-            TreeViewNode<String> node,
-            AnimationStyle animationStyle,
-          ) {
-            return TreeView.defaultTreeNodeBuilder(
-              context,
-              node,
-              animationStyle,
-            );
-          },
-          treeRowBuilder: (TreeViewNode<String> node) {
-            return TreeView.defaultTreeRowBuilder(node);
-          },
-          onNodeToggle: (TreeViewNode<String> node) {},
-        );
-      }
+      final TreeView<String> treeView = TreeView<String>(
+        tree: simpleNodeSet,
+        treeNodeBuilder: (
+          BuildContext context,
+          TreeViewNode<String> node,
+          AnimationStyle animationStyle,
+        ) {
+          return TreeView.defaultTreeNodeBuilder(
+            context,
+            node,
+            animationStyle,
+          );
+        },
+        treeRowBuilder: (TreeViewNode<String> node) {
+          return TreeView.defaultTreeRowBuilder(node);
+        },
+        onNodeToggle: (TreeViewNode<String> node) {},
+      );
 
-      expect(createTreeView, returnsNormally);
+      expect(treeView.onNodeToggle, isA<TreeViewNodeCallback<String>>());
+      expect(treeView.treeNodeBuilder, isA<TreeViewNodeBuilder<String>>());
+      expect(treeView.treeRowBuilder, isA<TreeViewRowBuilder<String>>());
     });
   });
 
