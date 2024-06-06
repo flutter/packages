@@ -56,12 +56,16 @@ void main() {
     bool isVideoTypeSupported(String type) => type == supportedVideoType;
 
     Future<int> recordVideo(int videoBitrate) async {
-      final MediaDevices mediaDevices = MockMediaDevices().wrapper;
-      final Navigator navigator = MockNavigator().wrapper;
-      final Window window = MockWindow().wrapper;
+      final MockWindow mockWindow = MockWindow();
+      final MockNavigator mockNavigator = MockNavigator();
+      final MockMediaDevices mockMediaDevices = MockMediaDevices();
 
-      (window as MockWindow).navigator = navigator;
-      (navigator as MockNavigator).mediaDevices = mediaDevices;
+      final Window window = mockWindow.wrapper;
+      final Navigator navigator = mockNavigator.wrapper;
+      final MediaDevices mediaDevices = mockMediaDevices.wrapper;
+
+      mockWindow.navigator = navigator;
+      mockNavigator.mediaDevices = mediaDevices;
 
       final HTMLCanvasElement canvasElement = HTMLCanvasElement()
         ..width = videoSize.width.toInt()

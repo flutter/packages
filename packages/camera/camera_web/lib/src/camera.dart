@@ -122,7 +122,7 @@ class Camera {
   /// Whether the video of the given type is supported.
   @visibleForTesting
   bool Function(String) isVideoTypeSupported =
-      web.MediaRecorder.isTypeSupported;
+      (String type) => web.MediaRecorder.isTypeSupported(type);
 
   /// The list of consecutive video data files recorded with [mediaRecorder].
   final List<web.Blob> _videoData = <web.Blob>[];

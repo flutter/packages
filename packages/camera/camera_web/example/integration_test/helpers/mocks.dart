@@ -17,6 +17,7 @@ import 'package:cross_file/cross_file.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:web/web.dart' as web;
 
+@JSExport()
 class JSInteropWrapper<T extends JSObject> {
   T get wrapper => createJSInteropWrapper(this) as T;
 }
