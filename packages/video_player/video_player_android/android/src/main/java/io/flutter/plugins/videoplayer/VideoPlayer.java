@@ -9,6 +9,7 @@ import static com.google.android.exoplayer2.Player.REPEAT_MODE_OFF;
 
 import android.content.Context;
 import android.net.Uri;
+import android.view.Surface;
 import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
 import com.google.android.exoplayer2.C;
@@ -47,7 +48,9 @@ final class VideoPlayer {
 
   private ExoPlayer exoPlayer;
 
-  private TextureRegistry.SurfaceProducer surfaceProducer;
+  private Surface surface;
+
+  private final TextureRegistry.SurfaceTextureEntry textureEntry;
 
   private QueuingEventSink eventSink;
 
@@ -55,29 +58,22 @@ final class VideoPlayer {
 
   private static final String USER_AGENT = "User-Agent";
 
-  private MediaSource mediaSource;
-
   @VisibleForTesting boolean isInitialized = false;
 
-  // State that must be reset when the surface is re-created.
   private final VideoPlayerOptions options;
-  private long restoreVideoLocation = 0;
-  private int restoreRepeatMode = 0;
-  private float restoreVolume = 0;
-  private PlaybackParameters restorePlaybackParameters;
 
   private DefaultHttpDataSource.Factory httpDataSourceFactory = new DefaultHttpDataSource.Factory();
 
   VideoPlayer(
       Context context,
       EventChannel eventChannel,
-      TextureRegistry.SurfaceProducer surfaceProducer,
+      TextureRegistry.SurfaceTextureEntry textureEntry,
       String dataSource,
       String formatHint,
       @NonNull Map<String, String> httpHeaders,
       VideoPlayerOptions options) {
     this.eventChannel = eventChannel;
-    this.surfaceProducer = surfaceProducer;
+    this.textureEntry = textureEntry;
     this.options = options;
 
     ExoPlayer exoPlayer = new ExoPlayer.Builder(context).build();
@@ -87,7 +83,7 @@ final class VideoPlayer {
     DataSource.Factory dataSourceFactory =
         new DefaultDataSource.Factory(context, httpDataSourceFactory);
 
-    mediaSource = buildMediaSource(uri, dataSourceFactory, formatHint);
+    MediaSource mediaSource = buildMediaSource(uri, dataSourceFactory, formatHint);
 
     exoPlayer.setMediaSource(mediaSource);
     exoPlayer.prepare();
@@ -100,12 +96,12 @@ final class VideoPlayer {
   VideoPlayer(
       ExoPlayer exoPlayer,
       EventChannel eventChannel,
-      TextureRegistry.SurfaceProducer surfaceProducer,
+      TextureRegistry.SurfaceTextureEntry textureEntry,
       VideoPlayerOptions options,
       QueuingEventSink eventSink,
       DefaultHttpDataSource.Factory httpDataSourceFactory) {
     this.eventChannel = eventChannel;
-    this.surfaceProducer = surfaceProducer;
+    this.textureEntry = textureEntry;
     this.options = options;
     this.httpDataSourceFactory = httpDataSourceFactory;
 
@@ -173,40 +169,6 @@ final class VideoPlayer {
     }
   }
 
-  public void recreateSurface(Context context) {
-    ExoPlayer exoPlayer = new ExoPlayer.Builder(context).build();
-
-    exoPlayer.setMediaSource(mediaSource);
-    exoPlayer.prepare();
-
-    setUpVideoPlayer(exoPlayer, new QueuingEventSink());
-    exoPlayer.setVideoSurface(surfaceProducer.getSurface());
-    exoPlayer.seekTo(restoreVideoLocation);
-    exoPlayer.setRepeatMode(restoreRepeatMode);
-    exoPlayer.setVolume(restoreVolume);
-    if (restorePlaybackParameters != null) {
-      exoPlayer.setPlaybackParameters(restorePlaybackParameters);
-    }
-  }
-
-  public void pauseSurface() {
-    if (!isInitialized) {
-      return;
-    }
-    restoreVideoLocation = exoPlayer.getCurrentPosition();
-    restoreRepeatMode = exoPlayer.getRepeatMode();
-    restoreVolume = exoPlayer.getVolume();
-    restorePlaybackParameters = exoPlayer.getPlaybackParameters();
-    eventChannel.setStreamHandler(null);
-    if (isInitialized) {
-      exoPlayer.stop();
-    }
-    if (exoPlayer != null) {
-      exoPlayer.release();
-    }
-    isInitialized = false;
-  }
-
   private void setUpVideoPlayer(ExoPlayer exoPlayer, QueuingEventSink eventSink) {
     this.exoPlayer = exoPlayer;
     this.eventSink = eventSink;
@@ -224,7 +186,8 @@ final class VideoPlayer {
           }
         });
 
-    exoPlayer.setVideoSurface(surfaceProducer.getSurface());
+    surface = new Surface(textureEntry.surfaceTexture());
+    exoPlayer.setVideoSurface(surface);
     setAudioAttributes(exoPlayer, options.mixWithOthers);
 
     exoPlayer.addListener(
@@ -371,8 +334,11 @@ final class VideoPlayer {
     if (isInitialized) {
       exoPlayer.stop();
     }
-    surfaceProducer.release();
+    textureEntry.release();
     eventChannel.setStreamHandler(null);
+    if (surface != null) {
+      surface.release();
+    }
     if (exoPlayer != null) {
       exoPlayer.release();
     }
