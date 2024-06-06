@@ -262,9 +262,9 @@ Future<int> _runMacOSSwiftUnitTests() async {
 
   return runXcodeBuild(
     '$examplePath/macos',
-    'macos',
-    configuration: 'Debug',
     extraArguments: <String>[
+      '-configuration',
+      'Debug',
       'test',
     ],
   );
@@ -301,7 +301,6 @@ Future<int> _runIOSPluginUnitTests(String testPluginPath) async {
   await _createSimulator(deviceName, deviceType, deviceRuntime);
   return runXcodeBuild(
     '$examplePath/ios',
-    'ios',
     sdk: 'iphonesimulator',
     destination: 'platform=iOS Simulator,name=$deviceName,OS=$deviceOS',
     extraArguments: <String>['test'],

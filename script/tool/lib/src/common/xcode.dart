@@ -175,17 +175,13 @@ class Xcode {
   /// file with sandboxing disabled. See
   /// https://developer.apple.com/documentation/security/app_sandbox/accessing_files_from_the_macos_app_sandbox.
   File? _createDisabledSandboxEntitlementFile(
-    Directory macosDirectory,
+    Directory macOSDirectory,
     String configuration,
   ) {
-    String entitlementDefaultFileName;
-    if (configuration == 'Release') {
-      entitlementDefaultFileName = 'Release';
-    } else {
-      entitlementDefaultFileName = 'DebugProfile';
-    }
+    final String entitlementDefaultFileName =
+        configuration == 'Release' ? 'Release' : 'DebugProfile';
 
-    final File entitlementFile = macosDirectory
+    final File entitlementFile = macOSDirectory
         .childDirectory('Runner')
         .childFile('$entitlementDefaultFileName.entitlements');
 
@@ -196,7 +192,7 @@ class Xcode {
 
     final String originalEntitlementFileContents =
         entitlementFile.readAsStringSync();
-    final File disabledSandboxEntitlementFile = macosDirectory
+    final File disabledSandboxEntitlementFile = macOSDirectory
         .fileSystem.systemTempDirectory
         .createTempSync('flutter_disable_sandbox_entitlement.')
         .childFile(
