@@ -257,6 +257,10 @@ class AndroidCameraCameraX extends CameraPlatform {
   @visibleForTesting
   DeviceOrientation? currentDeviceOrientation;
 
+  /// Subscription for listening to changes in device orientation.
+  StreamSubscription<DeviceOrientationChangedEvent>?
+      _subscriptionForDeviceOrientationChanges;
+
   /// Returns list of all available cameras and their descriptions.
   @override
   Future<List<CameraDescription>> availableCameras() async {
@@ -392,13 +396,21 @@ class AndroidCameraCameraX extends CameraPlatform {
 
     // Retrieve info required for correcting the rotation of the camera preview
     // if necessary.
-    isUsingSurfaceTextureForPreview =
-        await SystemServices.isUsingSurfaceTextureForPreview();
+
     final Camera2CameraInfo camera2CameraInfo =
         await proxy.getCamera2CameraInfo(cameraInfo!);
-    sensorOrientation = await proxy.getSensorOrientation(camera2CameraInfo);
-    naturalOrientation ??= await proxy.getUiOrientation();
-    onDeviceOrientationChanged().listen((DeviceOrientationChangedEvent event) {
+    await Future.wait(<Future<Object>>[
+      SystemServices.isUsingSurfaceTextureForPreview()
+          .then((bool value) => isUsingSurfaceTextureForPreview = value),
+      proxy
+          .getSensorOrientation(camera2CameraInfo)
+          .then((int value) => sensorOrientation = value),
+      proxy
+          .getUiOrientation()
+          .then((DeviceOrientation value) => naturalOrientation ??= value),
+    ]);
+    _subscriptionForDeviceOrientationChanges = onDeviceOrientationChanged()
+        .listen((DeviceOrientationChangedEvent event) {
       currentDeviceOrientation = event.orientation;
     });
 
@@ -461,6 +473,7 @@ class AndroidCameraCameraX extends CameraPlatform {
     await liveCameraState?.removeObservers();
     processCameraProvider?.unbindAll();
     await imageAnalysis?.clearAnalyzer();
+    await _subscriptionForDeviceOrientationChanges?.cancel();
   }
 
   /// The camera has been initialized.
