@@ -24,15 +24,22 @@ void main() {
   group('CameraService', () {
     const int cameraId = 1;
 
+    late MockWindow mockWindow;
+    late MockNavigator mockNavigator;
+    late MockMediaDevices mockMediaDevices;
     late Window window;
     late Navigator navigator;
     late MediaDevices mediaDevices;
     late CameraService cameraService;
 
     setUp(() async {
-      mediaDevices = MockMediaDevices().wrapper;
-      navigator = MockNavigator(mediaDevices: mediaDevices).wrapper;
-      window = MockWindow(navigator: navigator).wrapper;
+      mockWindow = MockWindow();
+      mockNavigator = MockNavigator();
+      mockMediaDevices = MockMediaDevices();
+
+      window = createJSInteropWrapper(mockWindow) as Window;
+      navigator = createJSInteropWrapper(mockNavigator) as Navigator;
+      mediaDevices = createJSInteropWrapper(mockMediaDevices) as MediaDevices;
 
       cameraService = CameraService()..window = window;
     });
@@ -41,8 +48,15 @@ void main() {
       testWidgets(
           'calls MediaDevices.getUserMedia '
           'with provided options', (WidgetTester tester) async {
-        when(() => mediaDevices.getUserMedia(any()))
-            .thenAnswer((_) async => FakeMediaStream(<MediaStreamTrack>[]));
+        late final MediaStreamConstraints? capturedConstraints;
+        mockMediaDevices.getUserMedia =
+            ([MediaStreamConstraints? constraints]) {
+          capturedConstraints = constraints;
+          final MediaStream stream =
+              createJSInteropWrapper(FakeMediaStream(<MediaStreamTrack>[]))
+                  as MediaStream;
+          return Future<MediaStream>.value(stream).toJS;
+        };
 
         final CameraOptions options = CameraOptions(
           video: VideoConstraints(
@@ -53,9 +67,8 @@ void main() {
 
         await cameraService.getMediaStreamForOptions(options);
 
-        verify(
-          () => mediaDevices.getUserMedia(options.toJson()),
-        ).called(1);
+        expect(capturedConstraints?.video, options.video.toJson());
+        expect(capturedConstraints?.audio, options.audio.toJson());
       });
 
       group('throws CameraWebException', () {
@@ -348,36 +361,32 @@ void main() {
 
     group('getZoomLevelCapabilityForCamera', () {
       late Camera camera;
+      late MockMediaStreamTrack mockVideoTrack;
       late List<MediaStreamTrack> videoTracks;
 
       setUp(() {
         camera = MockCamera();
+        mockVideoTrack = MockMediaStreamTrack();
         videoTracks = <MediaStreamTrack>[
-          MockMediaStreamTrack().wrapper,
-          MockMediaStreamTrack().wrapper,
+          createJSInteropWrapper(mockVideoTrack) as MediaStreamTrack,
+          createJSInteropWrapper(MockMediaStreamTrack()) as MediaStreamTrack,
         ];
 
         when(() => camera.textureId).thenReturn(0);
-        when(() => camera.stream)
-            .thenReturn(FakeMediaStream(videoTracks).wrapper);
-
-        cameraService.jsUtil = jsUtil;
+        when(() => camera.stream).thenReturn(
+          createJSInteropWrapper(FakeMediaStream(videoTracks)) as MediaStream,
+        );
       });
 
       testWidgets(
           'returns the zoom level capability '
           'based on the first video track', (WidgetTester tester) async {
-        when(mediaDevices.getSupportedConstraints)
-            .thenReturn(<dynamic, dynamic>{
-          'zoom': true,
-        });
+        mockMediaDevices.getSupportedConstraints =
+            () => MediaTrackSupportedConstraints(zoom: true);
 
-        when(videoTracks.first.getCapabilities).thenReturn(<dynamic, dynamic>{
-          'zoom': js_util.jsify(<dynamic, dynamic>{
-            'min': 100,
-            'max': 400,
-            'step': 2,
-          }),
+        mockVideoTrack.getCapabilities = () => MediaTrackCapabilities(
+              zoom: MediaSettingsRange(min: 100, max: 400, step: 2),
+            );
         });
 
         final ZoomLevelCapability zoomLevelCapability =
@@ -392,8 +401,6 @@ void main() {
         testWidgets(
             'with zoomLevelNotSupported error '
             'when there are no media devices', (WidgetTester tester) async {
-          when(() => navigator.mediaDevices).thenReturn(null);
-
           expect(
             () => cameraService.getZoomLevelCapabilityForCamera(camera),
             throwsA(

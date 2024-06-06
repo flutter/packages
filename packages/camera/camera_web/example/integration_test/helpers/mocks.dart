@@ -43,12 +43,16 @@ class MockMediaDevices {
   late JSPromise<web.MediaStream> Function([
     web.MediaStreamConstraints? constraints,
   ]) getUserMedia;
+
+  late web.MediaTrackSupportedConstraints Function() getSupportedConstraints;
 }
 
 class MockCameraService extends Mock implements CameraService {}
 
-// @JSExport()
-class MockMediaStreamTrack {}
+@JSExport()
+class MockMediaStreamTrack {
+  late web.MediaTrackCapabilities Function() getCapabilities;
+}
 
 class MockCamera extends Mock implements Camera {}
 
