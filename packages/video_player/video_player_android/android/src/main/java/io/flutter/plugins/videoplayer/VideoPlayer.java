@@ -58,7 +58,7 @@ final class VideoPlayer {
 
   private final VideoPlayerOptions options;
 
-  private DefaultHttpDataSource.Factory httpDataSourceFactory = new DefaultHttpDataSource.Factory();
+  private final DefaultHttpDataSource.Factory httpDataSourceFactory;
 
   VideoPlayer(
       Context context,
@@ -78,9 +78,10 @@ final class VideoPlayer {
             .setMimeType(mimeFromFormatHint(formatHint))
             .build();
 
-    buildHttpDataSourceFactory(httpHeaders);
+    httpDataSourceFactory = new DefaultHttpDataSource.Factory();
+    configureHttpDataSourceFactory(httpHeaders);
 
-    ExoPlayer exoPlayer = buildExoPlayer(context);
+    ExoPlayer exoPlayer = buildExoPlayer(context, httpDataSourceFactory);
 
     exoPlayer.setMediaItem(mediaItem);
     exoPlayer.prepare();
@@ -106,7 +107,7 @@ final class VideoPlayer {
   }
 
   @VisibleForTesting
-  public void buildHttpDataSourceFactory(@NonNull Map<String, String> httpHeaders) {
+  public void configureHttpDataSourceFactory(@NonNull Map<String, String> httpHeaders) {
     final boolean httpHeadersNotEmpty = !httpHeaders.isEmpty();
     final String userAgent =
         httpHeadersNotEmpty && httpHeaders.containsKey(USER_AGENT)
@@ -115,15 +116,6 @@ final class VideoPlayer {
 
     unstableUpdateDataSourceFactory(
         httpDataSourceFactory, httpHeaders, userAgent, httpHeadersNotEmpty);
-  }
-
-  @NonNull
-  private ExoPlayer buildExoPlayer(Context context) {
-    DataSource.Factory dataSourceFactory =
-        new DefaultDataSource.Factory(context, httpDataSourceFactory);
-    DefaultMediaSourceFactory mediaSourceFactory =
-        new DefaultMediaSourceFactory(context).setDataSourceFactory(dataSourceFactory);
-    return new ExoPlayer.Builder(context).setMediaSourceFactory(mediaSourceFactory).build();
   }
 
   private void setUpVideoPlayer(ExoPlayer exoPlayer, QueuingEventSink eventSink) {
@@ -299,6 +291,16 @@ final class VideoPlayer {
     if (exoPlayer != null) {
       exoPlayer.release();
     }
+  }
+
+  @NonNull
+  private static ExoPlayer buildExoPlayer(
+      Context context, DataSource.Factory baseDataSourceFactory) {
+    DataSource.Factory dataSourceFactory =
+        new DefaultDataSource.Factory(context, baseDataSourceFactory);
+    DefaultMediaSourceFactory mediaSourceFactory =
+        new DefaultMediaSourceFactory(context).setDataSourceFactory(dataSourceFactory);
+    return new ExoPlayer.Builder(context).setMediaSourceFactory(mediaSourceFactory).build();
   }
 
   @Nullable

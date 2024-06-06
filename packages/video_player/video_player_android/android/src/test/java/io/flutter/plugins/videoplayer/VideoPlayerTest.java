@@ -71,7 +71,7 @@ public class VideoPlayerTest {
             fakeEventSink,
             httpDataSourceFactorySpy);
 
-    videoPlayer.buildHttpDataSourceFactory(new HashMap<>());
+    videoPlayer.configureHttpDataSourceFactory(new HashMap<>());
 
     verify(httpDataSourceFactorySpy).setUserAgent("ExoPlayer");
     verify(httpDataSourceFactorySpy).setAllowCrossProtocolRedirects(true);
@@ -97,7 +97,7 @@ public class VideoPlayerTest {
           }
         };
 
-    videoPlayer.buildHttpDataSourceFactory(httpHeaders);
+    videoPlayer.configureHttpDataSourceFactory(httpHeaders);
 
     verify(httpDataSourceFactorySpy).setUserAgent("userAgent");
     verify(httpDataSourceFactorySpy).setAllowCrossProtocolRedirects(true);
@@ -122,7 +122,7 @@ public class VideoPlayerTest {
           }
         };
 
-    videoPlayer.buildHttpDataSourceFactory(httpHeaders);
+    videoPlayer.configureHttpDataSourceFactory(httpHeaders);
 
     verify(httpDataSourceFactorySpy).setUserAgent("ExoPlayer");
     verify(httpDataSourceFactorySpy).setAllowCrossProtocolRedirects(true);
