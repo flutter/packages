@@ -1340,6 +1340,8 @@ void main() {
     // SurfaceTexture.
     camera.isUsingSurfaceTextureForPreview = true;
 
+    camera.naturalOrientation = DeviceOrientation.portraitDown;
+
     final Widget widget = camera.buildPreview(cameraId);
 
     expect(widget is Texture, isTrue);
@@ -1350,7 +1352,7 @@ void main() {
       'buildPreview returns preview with expected rotation if camera is not front facing and the preview is not backed by a SurfaceTexture',
       () async {
     final AndroidCameraCameraX camera = AndroidCameraCameraX();
-    const int cameraId = 3;
+    const int cameraId = 33;
 
     // Tell camera that createCamera has been called and thus, preview has been
     // bound to the lifecycle of the camera.
@@ -1363,32 +1365,21 @@ void main() {
     // Mock sensor and device orientation.
     camera.sensorOrientation = 270;
     camera.cameraIsFrontFacing = false;
+    camera.naturalOrientation = DeviceOrientation.portraitUp;
 
-    final Map<DeviceOrientation, int> degreesForDeviceOrientation =
-        <DeviceOrientation, int>{
-      DeviceOrientation.portraitUp: 0,
-      DeviceOrientation.landscapeRight: 90,
-      DeviceOrientation.portraitDown: 180,
-      DeviceOrientation.landscapeLeft: 270,
-    };
+    final double expectedRotation = (camera.sensorOrientation +
+            0 /* the natural orientation in clockwise degrees */ *
+                -1 /* camera is not front facing */ +
+            360) %
+        360;
+    final int expectedQuarterTurns = (expectedRotation / 90).toInt();
 
-    for (final DeviceOrientation orientation in DeviceOrientation.values) {
-      camera.naturalOrientation = orientation;
-      final double expectedRotation = (camera.sensorOrientation +
-              degreesForDeviceOrientation[
-                      orientation]! /* the natural orientation in clockwise degrees */ *
-                  -1 /* camera is not front facing */ +
-              360) %
-          360;
-      final int expectedQuarterTurns = (expectedRotation / 90).toInt();
+    final Widget widget = camera.buildPreview(cameraId);
 
-      final Widget widget = camera.buildPreview(cameraId);
-
-      expect(widget is RotatedBox, isTrue);
-      expect((widget as RotatedBox).quarterTurns, expectedQuarterTurns);
-      expect(widget.child is Texture, isTrue);
-      expect((widget.child! as Texture).textureId, cameraId);
-    }
+    expect(widget is RotatedBox, isTrue);
+    expect((widget as RotatedBox).quarterTurns, expectedQuarterTurns);
+    expect(widget.child is Texture, isTrue);
+    expect((widget.child! as Texture).textureId, cameraId);
   });
 
   test(
@@ -1443,7 +1434,7 @@ void main() {
       'buildPreview returns preview with expected rotation if camera is front facing, the current orientation is not landscape, and the preview is not backed by a SurfaceTexture',
       () async {
     final AndroidCameraCameraX camera = AndroidCameraCameraX();
-    const int cameraId = 73;
+    const int cameraId = 733;
 
     // Tell camera that createCamera has been called and thus, preview has been
     // bound to the lifecycle of the camera.

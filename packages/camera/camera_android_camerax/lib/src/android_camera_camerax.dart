@@ -853,16 +853,6 @@ class AndroidCameraCameraX extends CameraPlatform {
     }
 
     final Widget cameraPreview = Texture(textureId: cameraId);
-
-    if (isUsingSurfaceTextureForPreview) {
-      // If the camera preview is backed by a SurfaceTexture, the transformation
-      // needed to correctly rotate the preview has already been applied.
-      return cameraPreview;
-    }
-
-    // Fix for the rotation of the camera preview not backed by a SurfaceTexture
-    // with respect to the naturalOrientation of the device:
-
     final Map<DeviceOrientation, int> degreesForDeviceOrientation =
         <DeviceOrientation, int>{
       DeviceOrientation.portraitUp: 0,
@@ -872,6 +862,27 @@ class AndroidCameraCameraX extends CameraPlatform {
     };
     int deviceOrientationDegrees =
         degreesForDeviceOrientation[naturalOrientation]!;
+
+    if (isUsingSurfaceTextureForPreview) {
+      // If the camera preview is backed by a SurfaceTexture, the transformation
+      // needed to correctly rotate the preview has already been applied.
+      // However, we may need to correct the camera preview rotation if the
+      // device is naturally landscape-oriented.
+      if (naturalOrientation == DeviceOrientation.landscapeLeft ||
+          naturalOrientation == DeviceOrientation.landscapeRight) {
+        // TODO(camsim99): Test this on a landscape-oriented device.
+        final int quarterTurnsToCorrectForLandscape =
+            deviceOrientationDegrees ~/ 4;
+        return RotatedBox(
+            quarterTurns: quarterTurnsToCorrectForLandscape,
+            child: cameraPreview);
+      }
+      return cameraPreview;
+    }
+
+    // Fix for the rotation of the camera preview not backed by a SurfaceTexture
+    // with respect to the naturalOrientation of the device:
+
     final int signForCameraDirection = cameraIsFrontFacing ? 1 : -1;
 
     if (signForCameraDirection == 1 &&
@@ -890,7 +901,15 @@ class AndroidCameraCameraX extends CameraPlatform {
             deviceOrientationDegrees * signForCameraDirection +
             360) %
         360;
-    final int quarterTurnsToCorrectPreview = (rotation / 90).toInt();
+    int quarterTurnsToCorrectPreview = rotation ~/ 90;
+
+    if (naturalOrientation == DeviceOrientation.landscapeLeft ||
+        naturalOrientation == DeviceOrientation.landscapeRight) {
+      // TODO(camsim99): Test this on a landscape-oriented device.
+      quarterTurnsToCorrectPreview += deviceOrientationDegrees ~/ 4;
+      return RotatedBox(
+          quarterTurns: quarterTurnsToCorrectPreview, child: cameraPreview);
+    }
 
     return RotatedBox(
         quarterTurns: quarterTurnsToCorrectPreview, child: cameraPreview);
