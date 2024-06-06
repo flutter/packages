@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'dart:async';
+import 'dart:js_interop';
 // import 'dart:html';
 import 'dart:ui';
 
@@ -25,6 +26,10 @@ void main() {
   group('Camera', () {
     const int textureId = 1;
 
+    late MockWindow mockWindow;
+    late MockNavigator mockNavigator;
+    late MockMediaDevices mockMediaDevices;
+
     late Window window;
     late Navigator navigator;
     late MediaDevices mediaDevices;
@@ -33,16 +38,20 @@ void main() {
     late CameraService cameraService;
 
     setUp(() {
-      window = MockWindow();
-      navigator = MockNavigator();
-      mediaDevices = MockMediaDevices();
+      mockWindow = MockWindow();
+      mockNavigator = MockNavigator();
+      mockMediaDevices = MockMediaDevices();
 
-      when(() => window.navigator).thenReturn(navigator);
-      when(() => navigator.mediaDevices).thenReturn(mediaDevices);
+      window = createJSInteropWrapper(mockWindow) as Window;
+      navigator = createJSInteropWrapper(mockNavigator) as Navigator;
+      mediaDevices = createJSInteropWrapper(mockMediaDevices) as MediaDevices;
+
+      mockWindow.navigator = navigator;
+      mockNavigator.mediaDevices = mediaDevices;
 
       cameraService = MockCameraService();
 
-      final VideoElement videoElement =
+      final HTMLVideoElement videoElement =
           getVideoElementWithBlankStream(const Size(10, 10));
       mediaStream = videoElement.captureStream();
 
@@ -111,7 +120,8 @@ void main() {
         expect(camera.videoElement.autoplay, isFalse);
         expect(camera.videoElement.muted, isTrue);
         expect(camera.videoElement.srcObject, mediaStream);
-        expect(camera.videoElement.attributes.keys, contains('playsinline'));
+        expect(camera.videoElement.attributes.getNamedItem('playsinline'),
+            isNotNull);
 
         expect(
             camera.videoElement.style.transformOrigin, equals('center center'));
@@ -305,25 +315,24 @@ void main() {
           'enables the torch mode '
           'when taking a picture', () {
         late List<MediaStreamTrack> videoTracks;
+        late MockMediaStreamTrack mockVideoTrack;
         late MediaStream videoStream;
-        late VideoElement videoElement;
+        late HTMLVideoElement videoElement;
 
         setUp(() {
+          mockVideoTrack = MockMediaStreamTrack();
           videoTracks = <MediaStreamTrack>[
-            MockMediaStreamTrack(),
-            MockMediaStreamTrack()
+            createJSInteropWrapper(mockVideoTrack) as MediaStreamTrack,
+            createJSInteropWrapper(MockMediaStreamTrack()) as MediaStreamTrack,
           ];
-          videoStream = FakeMediaStream(videoTracks);
+          videoStream = createJSInteropWrapper(FakeMediaStream(videoTracks))
+              as MediaStream;
 
           videoElement = getVideoElementWithBlankStream(const Size(100, 100))
             ..muted = true;
 
-          when(() => videoTracks.first.applyConstraints(any()))
-              .thenAnswer((_) async => <dynamic, dynamic>{});
-
-          when(videoTracks.first.getCapabilities).thenReturn(<dynamic, dynamic>{
-            'torch': true,
-          });
+          mockVideoTrack.getCapabilities =
+              () => MediaTrackCapabilities(torch: <JSBoolean>[true.toJS].toJS);
         });
 
         testWidgets('if the flash mode is auto', (WidgetTester tester) async {
@@ -340,25 +349,20 @@ void main() {
 
           final XFile _ = await camera.takePicture();
 
-          verify(
-            () => videoTracks.first.applyConstraints(<dynamic, dynamic>{
-              'advanced': <dynamic>[
-                <dynamic, dynamic>{
-                  'torch': true,
-                }
-              ]
-            }),
-          ).called(1);
+          final List<MediaTrackConstraints> capturedConstraints =
+              <MediaTrackConstraints>[];
+          mockVideoTrack.applyConstraints = ([
+            MediaTrackConstraints? constraints,
+          ]) {
+            if (constraints != null) {
+              capturedConstraints.add(constraints);
+            }
+            return Future<JSAny?>.value().toJS;
+          };
 
-          verify(
-            () => videoTracks.first.applyConstraints(<dynamic, dynamic>{
-              'advanced': <dynamic>[
-                <dynamic, dynamic>{
-                  'torch': false,
-                }
-              ]
-            }),
-          ).called(1);
+          expect(capturedConstraints.length, 2);
+          expect(capturedConstraints[0].torch, true);
+          expect(capturedConstraints[1].torch, false);
         });
 
         testWidgets('if the flash mode is always', (WidgetTester tester) async {
@@ -375,25 +379,20 @@ void main() {
 
           final XFile _ = await camera.takePicture();
 
-          verify(
-            () => videoTracks.first.applyConstraints(<dynamic, dynamic>{
-              'advanced': <dynamic>[
-                <dynamic, dynamic>{
-                  'torch': true,
-                }
-              ]
-            }),
-          ).called(1);
+          final List<MediaTrackConstraints> capturedConstraints =
+              <MediaTrackConstraints>[];
+          mockVideoTrack.applyConstraints = ([
+            MediaTrackConstraints? constraints,
+          ]) {
+            if (constraints != null) {
+              capturedConstraints.add(constraints);
+            }
+            return Future<JSAny?>.value().toJS;
+          };
 
-          verify(
-            () => videoTracks.first.applyConstraints(<dynamic, dynamic>{
-              'advanced': <dynamic>[
-                <dynamic, dynamic>{
-                  'torch': false,
-                }
-              ]
-            }),
-          ).called(1);
+          expect(capturedConstraints.length, 2);
+          expect(capturedConstraints[0].torch, true);
+          expect(capturedConstraints[1].torch, false);
         });
       });
     });
@@ -405,7 +404,7 @@ void main() {
           (WidgetTester tester) async {
         const Size videoSize = Size(1280, 720);
 
-        final VideoElement videoElement =
+        final HTMLVideoElement videoElement =
             getVideoElementWithBlankStream(videoSize);
         mediaStream = videoElement.captureStream();
 
@@ -426,7 +425,7 @@ void main() {
           'returns Size.zero '
           'if the camera is missing video tracks', (WidgetTester tester) async {
         // Create a video stream with no video tracks.
-        final VideoElement videoElement = VideoElement();
+        final HTMLVideoElement videoElement = HTMLVideoElement();
         mediaStream = videoElement.captureStream();
 
         final Camera camera = Camera(

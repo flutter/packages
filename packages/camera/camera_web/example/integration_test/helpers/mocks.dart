@@ -54,6 +54,8 @@ class MockCameraService extends Mock implements CameraService {}
 class MockMediaStreamTrack {
   late web.MediaTrackCapabilities Function() getCapabilities;
   late web.MediaTrackSettings Function() getSettings;
+  late JSPromise<JSAny?> Function([web.MediaTrackConstraints? constraints])
+      applyConstraints;
 }
 
 class MockCamera extends Mock implements Camera {}
