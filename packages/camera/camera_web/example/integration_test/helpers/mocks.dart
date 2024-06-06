@@ -53,6 +53,7 @@ class MockCameraService extends Mock implements CameraService {}
 @JSExport()
 class MockMediaStreamTrack {
   late web.MediaTrackCapabilities Function() getCapabilities;
+  late web.MediaTrackSettings Function() getSettings;
 }
 
 class MockCamera extends Mock implements Camera {}
@@ -98,18 +99,6 @@ class FakeMediaError {
   ]);
 
   final int code;
-  final String message;
-}
-
-/// A fake [DomException] that returns the provided error [_name] and [_message].
-@JSExport()
-class FakeDomException {
-  FakeDomException(
-    this.name, [
-    this.message = '',
-  ]);
-
-  final String name;
   final String message;
 }
 

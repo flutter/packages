@@ -3,7 +3,6 @@
 // found in the LICENSE file.
 
 import 'dart:js_interop';
-import 'dart:js_interop_unsafe';
 
 import 'package:camera_platform_interface/camera_platform_interface.dart';
 import 'package:flutter/foundation.dart';
@@ -20,6 +19,7 @@ class CameraService {
   /// The current browser window used to access media devices.
   @visibleForTesting
   web.Window window = web.window;
+
   /// The utility to manipulate JavaScript interop objects.
   @visibleForTesting
   JsUtil jsUtil = JsUtil();
@@ -188,7 +188,7 @@ class CameraService {
       //
       // The method may not be supported on Firefox.
       // See: https://developer.mozilla.org/en-US/docs/Web/API/MediaStreamTrack/getCapabilities#browser_compatibility
-      if (!videoTrack.has('getCapabilities')) {
+      if (!jsUtil.hasProperty(videoTrack, 'getCapabilities'.toJS)) {
         // Return null if the video track capabilities are not supported.
         return null;
       }
