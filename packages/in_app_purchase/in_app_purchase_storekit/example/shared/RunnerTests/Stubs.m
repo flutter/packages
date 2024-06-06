@@ -317,5 +317,52 @@
   }
   return self;
 }
+@end
+
+@implementation SKDownloadStub
+@end
+
+/// This mock is only used in iOS tests
+#if TARGET_OS_IOS
+
+@implementation FlutterPluginRegistrarStub
+
+- (void)addApplicationDelegate:(nonnull NSObject<FlutterPlugin> *)delegate {
+}
+
+- (void)addMethodCallDelegate:(nonnull NSObject<FlutterPlugin> *)delegate
+                      channel:(nonnull FlutterMethodChannel *)channel {
+}
+
+- (nonnull NSString *)lookupKeyForAsset:(nonnull NSString *)asset {
+  return nil;
+}
+
+- (nonnull NSString *)lookupKeyForAsset:(nonnull NSString *)asset
+                            fromPackage:(nonnull NSString *)package {
+  return nil;
+}
+
+- (nonnull NSObject<FlutterBinaryMessenger> *)messenger {
+  return [FakeBinaryMessenger alloc];
+}
+
+- (void)publish:(nonnull NSObject *)value {
+}
+
+- (void)registerViewFactory:(nonnull NSObject<FlutterPlatformViewFactory> *)factory
+                     withId:(nonnull NSString *)factoryId {
+}
+
+- (nonnull NSObject<FlutterTextureRegistry> *)textures {
+  return nil;
+}
+
+- (void)registerViewFactory:(nonnull NSObject<FlutterPlatformViewFactory> *)factory
+                              withId:(nonnull NSString *)factoryId
+    gestureRecognizersBlockingPolicy:
+        (FlutterPlatformViewGestureRecognizersBlockingPolicy)gestureRecognizersBlockingPolicy {
+}
 
 @end
+#endif

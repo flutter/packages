@@ -5,7 +5,6 @@
 #import "FIAPaymentQueueHandler.h"
 #import "FIAPPaymentQueueDelegate.h"
 #import "FIATransactionCache.h"
-#import "Mocks.h"
 
 @interface FIAPaymentQueueHandler ()
 

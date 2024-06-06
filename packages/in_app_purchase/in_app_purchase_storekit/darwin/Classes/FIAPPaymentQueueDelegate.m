@@ -4,7 +4,6 @@
 
 #import "FIAPPaymentQueueDelegate.h"
 #import "FIAObjectTranslator.h"
-#import "Mocks.h"
 
 @interface FIAPPaymentQueueDelegate ()
 

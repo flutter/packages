@@ -692,7 +692,7 @@
                                                                    updatedDownloads:nil
                                                                    transactionCache:cache];
 
-    self.plugin.registrar = [FakePluginRegistrar alloc];
+    self.plugin.registrar = [FlutterPluginRegistrarStub alloc];
 
     // Verify the delegate is nil before we register one.
     XCTAssertNil(self.plugin.paymentQueueHandler.delegate);
@@ -718,7 +718,7 @@
                                                                    updatedDownloads:nil
                                                                    transactionCache:cache];
 
-    self.plugin.registrar = [FakePluginRegistrar alloc];
+    self.plugin.registrar = [FlutterPluginRegistrarStub alloc];
 
     // Verify the delegate is nil before we register one.
     XCTAssertNil(self.plugin.paymentQueueHandler.delegate);

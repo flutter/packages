@@ -32,7 +32,7 @@ API_UNAVAILABLE(tvos, macos, watchos)
     @"transactionTimeStamp" : @([NSDate date].timeIntervalSince1970),
     @"originalTransaction" : [NSNull null],
   };
-  self.transaction = [[FakeSKPaymentTransaction alloc] initWithMap:transactionMap];
+  self.transaction = [[SKPaymentTransactionStub alloc] initWithMap:transactionMap];
 
   NSDictionary *storefrontMap = @{
     @"countryCode" : @"USA",

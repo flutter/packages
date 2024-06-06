@@ -5,7 +5,7 @@
 #import <Foundation/Foundation.h>
 #import <StoreKit/StoreKit.h>
 #import "FIATransactionCache.h"
-#import "Mocks.h"
+#import "FIAProtocols.h"
 
 @class SKPaymentTransaction;
 

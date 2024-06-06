@@ -4,6 +4,7 @@
 
 #import <XCTest/XCTest.h>
 #import "Stubs.h"
+#import "Mocks.h"
 
 @import in_app_purchase_storekit;
 
@@ -327,8 +328,8 @@
   XCTestExpectation *updateDownloadsExpectation =
       [self expectationWithDescription:
                 @"downloadsUpdated callback should be called with one transaction."];
-  SKPaymentTransaction *mockTransaction = [FakeSKPaymentTransaction alloc];
-  FakeSKDownload *mockDownload = [[FakeSKDownload alloc] init];
+  SKPaymentTransaction *mockTransaction = [SKPaymentTransactionStub alloc];
+  SKDownloadStub *mockDownload = [[SKDownloadStub alloc] init];
   TestTransactionCache *mockCache = [[TestTransactionCache alloc] init];
   FIAPaymentQueueHandler *handler =
       [[FIAPaymentQueueHandler alloc] initWithQueue:[[TestPaymentQueue alloc] init]
@@ -452,8 +453,8 @@
   XCTestExpectation *updateDownloadsExpectation =
       [self expectationWithDescription:
                 @"downloadsUpdated callback should be called with one transaction."];
-  SKPaymentTransaction *mockTransaction = [[FakeSKPaymentTransaction alloc] init];
-  SKDownload *mockDownload = [[FakeSKDownload alloc] init];
+  SKPaymentTransaction *mockTransaction = [[SKPaymentTransactionStub alloc] init];
+  SKDownload *mockDownload = [[SKDownloadStub alloc] init];
   TestPaymentQueue *queue = [[TestPaymentQueue alloc] init];
   queue.testState = SKPaymentTransactionStatePurchased;
   TestTransactionCache *mockCache = [[TestTransactionCache alloc] init];
@@ -478,9 +479,9 @@
       transactionCache:mockCache];
 
   [handler startObservingPaymentQueue];
-  [handler paymentQueue:queue.realQueue updatedTransactions:@[ mockTransaction ]];
-  [handler paymentQueue:queue.realQueue removedTransactions:@[ mockTransaction ]];
-  [handler paymentQueue:queue.realQueue updatedDownloads:@[ mockDownload ]];
+  [handler paymentQueue:[[SKPaymentQueueStub alloc] init] updatedTransactions:@[ mockTransaction ]];
+  [handler paymentQueue:[[SKPaymentQueueStub alloc] init] removedTransactions:@[ mockTransaction ]];
+  [handler paymentQueue:[[SKPaymentQueueStub alloc] init] updatedDownloads:@[ mockDownload ]];
 
   [self waitForExpectations:@[
     updateTransactionsExpectation, removeTransactionsExpectation, updateDownloadsExpectation

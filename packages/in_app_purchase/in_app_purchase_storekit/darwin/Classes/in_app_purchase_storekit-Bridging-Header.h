@@ -8,5 +8,5 @@
 #import "FIAPRequestHandler.h"
 #import "FIAPaymentQueueHandler.h"
 #import "FIATransactionCache.h"
-#import "Mocks.h"
+#import "FIAProtocols.h"
 #import "messages.g.h"

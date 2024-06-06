@@ -9,7 +9,7 @@
 #endif
 #import <Foundation/Foundation.h>
 #import <StoreKit/StoreKit.h>
-#import "Mocks.h"
+#import "FIAProtocols.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
