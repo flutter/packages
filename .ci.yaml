@@ -1021,8 +1021,6 @@ targets:
     presubmit: false
     timeout: 60
     properties:
-      # TODO(vashworth): Remove os property once https://github.com/flutter/flutter/pull/149618 lands in stable and stable version is updated.
-      os: Mac-13
       channel: stable
       version_file: flutter_stable.version
       target_file: macos_platform_tests.yaml
@@ -1051,8 +1049,6 @@ targets:
     recipe: packages/packages
     timeout: 60
     properties:
-      # TODO(vashworth): Remove os property once https://github.com/flutter/flutter/pull/149618 lands in stable and stable version is updated.
-      os: Mac-13
       version_file: flutter_stable.version
       target_file: macos_custom_package_tests.yaml
       channel: stable
