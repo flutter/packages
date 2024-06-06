@@ -103,7 +103,7 @@ class MessageSearchReply {
     return <Object?>[
       result,
       error,
-      state?.index,
+      state,
     ];
   }
 
@@ -112,9 +112,7 @@ class MessageSearchReply {
     return MessageSearchReply(
       result: result[0] as String?,
       error: result[1] as String?,
-      state: result[2] != null
-          ? MessageRequestState.values[result[2]! as int]
-          : null,
+      state: result[2] as MessageRequestState?,
     );
   }
 }
@@ -142,16 +140,22 @@ class MessageNested {
   }
 }
 
-class _MessageApiCodec extends StandardMessageCodec {
-  const _MessageApiCodec();
+class _PigeonCodec extends StandardMessageCodec {
+  const _PigeonCodec();
   @override
   void writeValue(WriteBuffer buffer, Object? value) {
-    if (value is MessageSearchReply) {
-      buffer.putUint8(128);
-      writeValue(buffer, value.encode());
-    } else if (value is MessageSearchRequest) {
+    if (value is MessageSearchRequest) {
       buffer.putUint8(129);
       writeValue(buffer, value.encode());
+    } else if (value is MessageSearchReply) {
+      buffer.putUint8(130);
+      writeValue(buffer, value.encode());
+    } else if (value is MessageNested) {
+      buffer.putUint8(131);
+      writeValue(buffer, value.encode());
+    } else if (value is MessageRequestState) {
+      buffer.putUint8(132);
+      writeValue(buffer, value.index);
     } else {
       super.writeValue(buffer, value);
     }
@@ -160,10 +164,15 @@ class _MessageApiCodec extends StandardMessageCodec {
   @override
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
-      case 128:
-        return MessageSearchReply.decode(readValue(buffer)!);
       case 129:
         return MessageSearchRequest.decode(readValue(buffer)!);
+      case 130:
+        return MessageSearchReply.decode(readValue(buffer)!);
+      case 131:
+        return MessageNested.decode(readValue(buffer)!);
+      case 132:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : MessageRequestState.values[value];
       default:
         return super.readValueOfType(type, buffer);
     }
@@ -184,7 +193,7 @@ class MessageApi {
             messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
   final BinaryMessenger? __pigeon_binaryMessenger;
 
-  static const MessageCodec<Object?> pigeonChannelCodec = _MessageApiCodec();
+  static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
 
   final String __pigeon_messageChannelSuffix;
 
@@ -246,39 +255,6 @@ class MessageApi {
   }
 }
 
-class _MessageNestedApiCodec extends StandardMessageCodec {
-  const _MessageNestedApiCodec();
-  @override
-  void writeValue(WriteBuffer buffer, Object? value) {
-    if (value is MessageNested) {
-      buffer.putUint8(128);
-      writeValue(buffer, value.encode());
-    } else if (value is MessageSearchReply) {
-      buffer.putUint8(129);
-      writeValue(buffer, value.encode());
-    } else if (value is MessageSearchRequest) {
-      buffer.putUint8(130);
-      writeValue(buffer, value.encode());
-    } else {
-      super.writeValue(buffer, value);
-    }
-  }
-
-  @override
-  Object? readValueOfType(int type, ReadBuffer buffer) {
-    switch (type) {
-      case 128:
-        return MessageNested.decode(readValue(buffer)!);
-      case 129:
-        return MessageSearchReply.decode(readValue(buffer)!);
-      case 130:
-        return MessageSearchRequest.decode(readValue(buffer)!);
-      default:
-        return super.readValueOfType(type, buffer);
-    }
-  }
-}
-
 /// This comment is to test api documentation comments.
 class MessageNestedApi {
   /// Constructor for [MessageNestedApi].  The [binaryMessenger] named argument is
@@ -291,8 +267,7 @@ class MessageNestedApi {
             messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
   final BinaryMessenger? __pigeon_binaryMessenger;
 
-  static const MessageCodec<Object?> pigeonChannelCodec =
-      _MessageNestedApiCodec();
+  static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
 
   final String __pigeon_messageChannelSuffix;
 
@@ -329,38 +304,9 @@ class MessageNestedApi {
   }
 }
 
-class _MessageFlutterSearchApiCodec extends StandardMessageCodec {
-  const _MessageFlutterSearchApiCodec();
-  @override
-  void writeValue(WriteBuffer buffer, Object? value) {
-    if (value is MessageSearchReply) {
-      buffer.putUint8(128);
-      writeValue(buffer, value.encode());
-    } else if (value is MessageSearchRequest) {
-      buffer.putUint8(129);
-      writeValue(buffer, value.encode());
-    } else {
-      super.writeValue(buffer, value);
-    }
-  }
-
-  @override
-  Object? readValueOfType(int type, ReadBuffer buffer) {
-    switch (type) {
-      case 128:
-        return MessageSearchReply.decode(readValue(buffer)!);
-      case 129:
-        return MessageSearchRequest.decode(readValue(buffer)!);
-      default:
-        return super.readValueOfType(type, buffer);
-    }
-  }
-}
-
 /// This comment is to test api documentation comments.
 abstract class MessageFlutterSearchApi {
-  static const MessageCodec<Object?> pigeonChannelCodec =
-      _MessageFlutterSearchApiCodec();
+  static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
 
   /// This comment is to test method documentation comments.
   MessageSearchReply search(MessageSearchRequest request);

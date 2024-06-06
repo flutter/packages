@@ -181,7 +181,7 @@ public class Messages {
       ArrayList<Object> toListResult = new ArrayList<Object>(4);
       toListResult.add(name);
       toListResult.add(description);
-      toListResult.add(code == null ? null : code.index);
+      toListResult.add(code);
       toListResult.add(data);
       return toListResult;
     }
@@ -193,10 +193,42 @@ public class Messages {
       Object description = __pigeon_list.get(1);
       pigeonResult.setDescription((String) description);
       Object code = __pigeon_list.get(2);
-      pigeonResult.setCode(Code.values()[(int) code]);
+      pigeonResult.setCode((Code) code);
       Object data = __pigeon_list.get(3);
       pigeonResult.setData((Map<String, String>) data);
       return pigeonResult;
+    }
+  }
+
+  private static class PigeonCodec extends StandardMessageCodec {
+    public static final PigeonCodec INSTANCE = new PigeonCodec();
+
+    private PigeonCodec() {}
+
+    @Override
+    protected Object readValueOfType(byte type, @NonNull ByteBuffer buffer) {
+      switch (type) {
+        case (byte) 129:
+          return MessageData.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 130:
+          Object value = readValue(buffer);
+          return value == null ? null : Code.values()[(int) value];
+        default:
+          return super.readValueOfType(type, buffer);
+      }
+    }
+
+    @Override
+    protected void writeValue(@NonNull ByteArrayOutputStream stream, Object value) {
+      if (value instanceof MessageData) {
+        stream.write(129);
+        writeValue(stream, ((MessageData) value).toList());
+      } else if (value instanceof Code) {
+        stream.write(130);
+        writeValue(stream, value == null ? null : ((Code) value).index);
+      } else {
+        super.writeValue(stream, value);
+      }
     }
   }
 
@@ -224,33 +256,6 @@ public class Messages {
     /** Failure case callback method for handling errors. */
     void error(@NonNull Throwable error);
   }
-
-  private static class ExampleHostApiCodec extends StandardMessageCodec {
-    public static final ExampleHostApiCodec INSTANCE = new ExampleHostApiCodec();
-
-    private ExampleHostApiCodec() {}
-
-    @Override
-    protected Object readValueOfType(byte type, @NonNull ByteBuffer buffer) {
-      switch (type) {
-        case (byte) 128:
-          return MessageData.fromList((ArrayList<Object>) readValue(buffer));
-        default:
-          return super.readValueOfType(type, buffer);
-      }
-    }
-
-    @Override
-    protected void writeValue(@NonNull ByteArrayOutputStream stream, Object value) {
-      if (value instanceof MessageData) {
-        stream.write(128);
-        writeValue(stream, ((MessageData) value).toList());
-      } else {
-        super.writeValue(stream, value);
-      }
-    }
-  }
-
   /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
   public interface ExampleHostApi {
 
@@ -264,7 +269,7 @@ public class Messages {
 
     /** The codec used by ExampleHostApi. */
     static @NonNull MessageCodec<Object> getCodec() {
-      return ExampleHostApiCodec.INSTANCE;
+      return PigeonCodec.INSTANCE;
     }
     /** Sets up an instance of `ExampleHostApi` to handle messages through the `binaryMessenger`. */
     static void setUp(@NonNull BinaryMessenger binaryMessenger, @Nullable ExampleHostApi api) {
@@ -382,7 +387,7 @@ public class Messages {
     /** Public interface for sending reply. */
     /** The codec used by MessageFlutterApi. */
     static @NonNull MessageCodec<Object> getCodec() {
-      return new StandardMessageCodec();
+      return PigeonCodec.INSTANCE;
     }
 
     public void flutterMethod(@Nullable String aStringArg, @NonNull Result<String> result) {
