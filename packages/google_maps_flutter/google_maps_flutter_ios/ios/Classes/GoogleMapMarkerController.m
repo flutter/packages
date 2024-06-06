@@ -91,7 +91,8 @@
 }
 
 - (void)interpretMarkerOptions:(NSDictionary *)data
-                     registrar:(NSObject<FlutterPluginRegistrar> *)registrar {
+                     registrar:(NSObject<FlutterPluginRegistrar> *)registrar
+                   screenScale:(CGFloat)screenScale {
   NSNumber *alpha = data[@"alpha"];
   if (alpha && alpha != (id)[NSNull null]) {
     [self setAlpha:[alpha floatValue]];
@@ -106,7 +107,7 @@
   }
   NSArray *icon = data[@"icon"];
   if (icon && icon != (id)[NSNull null]) {
-    UIImage *image = [self extractIconFromData:icon registrar:registrar];
+    UIImage *image = [self extractIconFromData:icon registrar:registrar screenScale:screenScale];
     [self setIcon:image];
   }
   NSNumber *flat = data[@"flat"];
@@ -152,7 +153,9 @@
 }
 
 - (UIImage *)extractIconFromData:(NSArray *)iconData
-                       registrar:(NSObject<FlutterPluginRegistrar> *)registrar {
+                       registrar:(NSObject<FlutterPluginRegistrar> *)registrar
+                     screenScale:(CGFloat)screenScale {
+  NSAssert(screenScale > 0, @"Screen scale must be greater than 0");
   UIImage *image;
   if ([iconData.firstObject isEqualToString:@"defaultMarker"]) {
     CGFloat hue = (iconData.count == 1) ? 0.0f : [iconData[1] doubleValue];
@@ -161,6 +164,8 @@
                                                        brightness:0.7
                                                             alpha:1.0]];
   } else if ([iconData.firstObject isEqualToString:@"fromAsset"]) {
+    // Deprecated: This message handling for 'fromAsset' has been replaced by 'asset'.
+    // Refer to the flutter google_maps_flutter_platform_interface package for details.
     if (iconData.count == 2) {
       image = [UIImage imageNamed:[registrar lookupKeyForAsset:iconData[1]]];
     } else {
@@ -168,6 +173,8 @@
                                                    fromPackage:iconData[2]]];
     }
   } else if ([iconData.firstObject isEqualToString:@"fromAssetImage"]) {
+    // Deprecated: This message handling for 'fromAssetImage' has been replaced by 'asset'.
+    // Refer to the flutter google_maps_flutter_platform_interface package for details.
     if (iconData.count == 3) {
       image = [UIImage imageNamed:[registrar lookupKeyForAsset:iconData[1]]];
       id scaleParam = iconData[2];
@@ -182,11 +189,13 @@
       @throw exception;
     }
   } else if ([iconData[0] isEqualToString:@"fromBytes"]) {
+    // Deprecated: This message handling for 'fromBytes' has been replaced by 'bytes'.
+    // Refer to the flutter google_maps_flutter_platform_interface package for details.
     if (iconData.count == 2) {
       @try {
         FlutterStandardTypedData *byteData = iconData[1];
-        CGFloat screenScale = [[UIScreen mainScreen] scale];
-        image = [UIImage imageWithData:[byteData data] scale:screenScale];
+        CGFloat mainScreenScale = [[UIScreen mainScreen] scale];
+        image = [UIImage imageWithData:[byteData data] scale:mainScreenScale];
       } @catch (NSException *exception) {
         @throw [NSException exceptionWithName:@"InvalidByteDescriptor"
                                        reason:@"Unable to interpret bytes as a valid image."
@@ -201,11 +210,86 @@
                                                      userInfo:nil];
       @throw exception;
     }
+  } else if ([iconData.firstObject isEqualToString:@"asset"]) {
+    NSDictionary *assetData = iconData[1];
+    if (![assetData isKindOfClass:[NSDictionary class]]) {
+      NSException *exception =
+          [NSException exceptionWithName:@"InvalidByteDescriptor"
+                                  reason:@"Unable to interpret asset, expected a dictionary as the "
+                                         @"second parameter."
+                                userInfo:nil];
+      @throw exception;
+    }
+
+    NSString *assetName = assetData[@"assetName"];
+    NSString *scalingMode = assetData[@"bitmapScaling"];
+
+    image = [UIImage imageNamed:[registrar lookupKeyForAsset:assetName]];
+
+    if ([scalingMode isEqualToString:@"auto"]) {
+      NSNumber *width = assetData[@"width"];
+      NSNumber *height = assetData[@"height"];
+      CGFloat imagePixelRatio = [assetData[@"imagePixelRatio"] doubleValue];
+
+      if (width || height) {
+        image = [FLTGoogleMapMarkerController scaledImage:image withScale:screenScale];
+        image = [FLTGoogleMapMarkerController scaledImage:image
+                                                withWidth:width
+                                                   height:height
+                                              screenScale:screenScale];
+      } else {
+        image = [FLTGoogleMapMarkerController scaledImage:image withScale:imagePixelRatio];
+      }
+    }
+  } else if ([iconData[0] isEqualToString:@"bytes"]) {
+    NSDictionary *byteData = iconData[1];
+    if (![byteData isKindOfClass:[NSDictionary class]]) {
+      NSException *exception =
+          [NSException exceptionWithName:@"InvalidByteDescriptor"
+                                  reason:@"Unable to interpret bytes, expected a dictionary as the "
+                                         @"second parameter."
+                                userInfo:nil];
+      @throw exception;
+    }
+
+    FlutterStandardTypedData *bytes = byteData[@"byteData"];
+    NSString *scalingMode = byteData[@"bitmapScaling"];
+
+    @try {
+      image = [UIImage imageWithData:[bytes data] scale:screenScale];
+      if ([scalingMode isEqualToString:@"auto"]) {
+        NSNumber *width = byteData[@"width"];
+        NSNumber *height = byteData[@"height"];
+        CGFloat imagePixelRatio = [byteData[@"imagePixelRatio"] doubleValue];
+
+        if (width || height) {
+          // Before scaling the image, image must be in screenScale
+          image = [FLTGoogleMapMarkerController scaledImage:image withScale:screenScale];
+          image = [FLTGoogleMapMarkerController scaledImage:image
+                                                  withWidth:width
+                                                     height:height
+                                                screenScale:screenScale];
+        } else {
+          image = [FLTGoogleMapMarkerController scaledImage:image withScale:imagePixelRatio];
+        }
+      } else {
+        // No scaling, load image from bytes without scale parameter.
+        image = [UIImage imageWithData:[bytes data]];
+      }
+    } @catch (NSException *exception) {
+      @throw [NSException exceptionWithName:@"InvalidByteDescriptor"
+                                     reason:@"Unable to interpret bytes as a valid image."
+                                   userInfo:nil];
+    }
   }
 
   return image;
 }
 
+/// This method is deprecated within the context of `BitmapDescriptor.fromBytes` handling in the
+/// flutter google_maps_flutter_platform_interface package which has been replaced by 'bytes'
+/// message handling. It will be removed when the deprecated image bitmap description type
+/// 'fromBytes' is removed from the platform interface.
 - (UIImage *)scaleImage:(UIImage *)image by:(id)scaleParam {
   double scale = 1.0;
   if ([scaleParam isKindOfClass:[NSNumber class]]) {
@@ -217,6 +301,127 @@
                          orientation:(image.imageOrientation)];
   }
   return image;
+}
+
+/// Creates a scaled version of the provided UIImage based on a specified scale factor. If the
+/// scale factor differs from the image's current scale by more than a small epsilon-delta (to
+/// account for minor floating-point inaccuracies), a new UIImage object is created with the
+/// specified scale. Otherwise, the original image is returned.
+///
+/// @param image The UIImage to scale.
+/// @param scale The factor by which to scale the image.
+/// @return UIImage Returns the scaled UIImage.
++ (UIImage *)scaledImage:(UIImage *)image withScale:(CGFloat)scale {
+  if (fabs(scale - image.scale) > DBL_EPSILON) {
+    return [UIImage imageWithCGImage:[image CGImage]
+                               scale:scale
+                         orientation:(image.imageOrientation)];
+  }
+  return image;
+}
+
+/// Scales an input UIImage to a specified size. If the aspect ratio of the input image
+/// closely matches the target size, indicated by a small epsilon-delta, the image's scale
+/// property is updated instead of resizing the image. If the aspect ratios differ beyond this
+/// threshold, the method redraws the image at the target size.
+///
+/// @param image The UIImage to scale.
+/// @param size The target CGSize to scale the image to.
+/// @return UIImage Returns the scaled UIImage.
++ (UIImage *)scaledImage:(UIImage *)image withSize:(CGSize)size {
+  CGFloat originalPixelWidth = image.size.width * image.scale;
+  CGFloat originalPixelHeight = image.size.height * image.scale;
+
+  // Return original image if either original image size or target size is so small that
+  // image cannot be resized or displayed.
+  if (originalPixelWidth <= 0 || originalPixelHeight <= 0 || size.width <= 0 || size.height <= 0) {
+    return image;
+  }
+
+  // Check if the image's size, accounting for scale, matches the target size.
+  if (fabs(originalPixelWidth - size.width) <= DBL_EPSILON &&
+      fabs(originalPixelHeight - size.height) <= DBL_EPSILON) {
+    // No need for resizing, return the original image
+    return image;
+  }
+
+  // Check if the aspect ratios are approximately equal.
+  CGSize originalPixelSize = CGSizeMake(originalPixelWidth, originalPixelHeight);
+  if ([FLTGoogleMapMarkerController isScalableWithScaleFactorFromSize:originalPixelSize
+                                                               toSize:size]) {
+    // Scaled image has close to same aspect ratio,
+    // updating image scale instead of resizing image.
+    CGFloat factor = originalPixelWidth / size.width;
+    return [FLTGoogleMapMarkerController scaledImage:image withScale:(image.scale * factor)];
+  } else {
+    // Aspect ratios differ significantly, resize the image.
+    UIGraphicsImageRendererFormat *format = [UIGraphicsImageRendererFormat defaultFormat];
+    format.scale = 1.0;
+    format.opaque = NO;
+    UIGraphicsImageRenderer *renderer = [[UIGraphicsImageRenderer alloc] initWithSize:size
+                                                                               format:format];
+    UIImage *newImage =
+        [renderer imageWithActions:^(UIGraphicsImageRendererContext *_Nonnull context) {
+          [image drawInRect:CGRectMake(0, 0, size.width, size.height)];
+        }];
+
+    // Return image with proper scaling.
+    return [FLTGoogleMapMarkerController scaledImage:newImage withScale:image.scale];
+  }
+}
+
+/// Scales an input UIImage to a specified width and height preserving aspect ratio if both
+/// widht and height are not given..
+///
+/// @param image The UIImage to scale.
+/// @param width The target width to scale the image to.
+/// @param height The target height to scale the image to.
+/// @param screenScale The current screen scale.
+/// @return UIImage Returns the scaled UIImage.
++ (UIImage *)scaledImage:(UIImage *)image
+               withWidth:(NSNumber *)width
+                  height:(NSNumber *)height
+             screenScale:(CGFloat)screenScale {
+  if (!width && !height) {
+    return image;
+  }
+
+  CGFloat targetWidth = width ? width.doubleValue : image.size.width;
+  CGFloat targetHeight = height ? height.doubleValue : image.size.height;
+
+  if (width && !height) {
+    // Calculate height based on aspect ratio if only width is provided.
+    double aspectRatio = image.size.height / image.size.width;
+    targetHeight = round(targetWidth * aspectRatio);
+  } else if (!width && height) {
+    // Calculate width based on aspect ratio if only height is provided.
+    double aspectRatio = image.size.width / image.size.height;
+    targetWidth = round(targetHeight * aspectRatio);
+  }
+
+  CGSize targetSize =
+      CGSizeMake(round(targetWidth * screenScale), round(targetHeight * screenScale));
+  return [FLTGoogleMapMarkerController scaledImage:image withSize:targetSize];
+}
+
++ (BOOL)isScalableWithScaleFactorFromSize:(CGSize)originalSize toSize:(CGSize)targetSize {
+  // Select the scaling factor based on the longer side to have good precision.
+  CGFloat scaleFactor = (originalSize.width > originalSize.height)
+                            ? (targetSize.width / originalSize.width)
+                            : (targetSize.height / originalSize.height);
+
+  // Calculate the scaled dimensions.
+  CGFloat scaledWidth = originalSize.width * scaleFactor;
+  CGFloat scaledHeight = originalSize.height * scaleFactor;
+
+  // Check if the scaled dimensions are within a one-pixel
+  // threshold of the target dimensions.
+  BOOL widthWithinThreshold = fabs(scaledWidth - targetSize.width) <= 1.0;
+  BOOL heightWithinThreshold = fabs(scaledHeight - targetSize.height) <= 1.0;
+
+  // The image is considered scalable with scale factor
+  // if both dimensions are within the threshold.
+  return widthWithinThreshold && heightWithinThreshold;
 }
 
 @end
@@ -253,7 +458,9 @@
         [[FLTGoogleMapMarkerController alloc] initMarkerWithPosition:position
                                                           identifier:identifier
                                                              mapView:self.mapView];
-    [controller interpretMarkerOptions:marker registrar:self.registrar];
+    [controller interpretMarkerOptions:marker
+                             registrar:self.registrar
+                           screenScale:[self getScreenScale]];
     self.markerIdentifierToController[identifier] = controller;
   }
 }
@@ -265,7 +472,9 @@
     if (!controller) {
       continue;
     }
-    [controller interpretMarkerOptions:marker registrar:self.registrar];
+    [controller interpretMarkerOptions:marker
+                             registrar:self.registrar
+                           screenScale:[self getScreenScale]];
   }
 }
 
@@ -377,6 +586,16 @@
                                message:@"isInfoWindowShown called with invalid markerId"
                                details:nil]);
   }
+}
+
+- (CGFloat)getScreenScale {
+  // TODO(jokerttu): This method is called on marker creation, which, for initial markers, is done
+  // before the view is added to the view hierarchy. This means that the traitCollection values may
+  // not be matching the right display where the map is finally shown. The solution should be
+  // revisited after the proper way to fetch the display scale is resolved for platform views. This
+  // should be done under the context of the following issue:
+  // https://github.com/flutter/flutter/issues/125496.
+  return self.mapView.traitCollection.displayScale;
 }
 
 + (CLLocationCoordinate2D)getPosition:(NSDictionary *)marker {
