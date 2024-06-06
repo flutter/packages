@@ -14,9 +14,14 @@ import io.flutter.plugin.common.BinaryMessenger;
 public class ProxyApiRegistrar extends PigeonProxyApiRegistrar {
   @NonNull private Context context;
 
-  public ProxyApiRegistrar(@NonNull BinaryMessenger binaryMessenger, @NonNull Context context) {
+  @NonNull private final FlutterAssetManager flutterAssetManager;
+
+  public ProxyApiRegistrar(@NonNull BinaryMessenger binaryMessenger,
+                           @NonNull Context context,
+                           @NonNull FlutterAssetManager flutterAssetManager) {
     super(binaryMessenger);
     this.context = context;
+    this.flutterAssetManager = flutterAssetManager;
   }
 
   // Interface for an injectable SDK version checker.
@@ -84,6 +89,13 @@ public class ProxyApiRegistrar extends PigeonProxyApiRegistrar {
     return new CookieManagerProxyApi(this);
   }
 
+  @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+  @NonNull
+  @Override
+  public PigeonApiWebResourceResponse getPigeonApiWebResourceResponse() {
+    return new WebResourceResponseProxyApi(this);
+  }
+
   @NonNull
   @Override
   public PigeonApiWebView getPigeonApiWebView() {
@@ -123,31 +135,33 @@ public class ProxyApiRegistrar extends PigeonProxyApiRegistrar {
   @NonNull
   @Override
   public PigeonApiFlutterAssetManager getPigeonApiFlutterAssetManager() {
-    return null;
+    return new FlutterAssetManagerProxyApi(this);
   }
 
   @NonNull
   @Override
   public PigeonApiWebStorage getPigeonApiWebStorage() {
-    return null;
+    return new WebStorageProxyApi(this);
   }
 
+  @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
   @NonNull
   @Override
   public PigeonApiFileChooserParams getPigeonApiFileChooserParams() {
-    return null;
+    return new FileChooserParamsProxyApi(this);
   }
 
+  @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
   @NonNull
   @Override
   public PigeonApiPermissionRequest getPigeonApiPermissionRequest() {
-    return null;
+    return new PermissionRequestProxyApi(this);
   }
 
   @NonNull
   @Override
   public PigeonApiCustomViewCallback getPigeonApiCustomViewCallback() {
-    return null;
+    return new CustomViewCallbackProxyApi(this);
   }
 
   @NonNull
@@ -178,8 +192,7 @@ public class ProxyApiRegistrar extends PigeonProxyApiRegistrar {
   }
 
   @NonNull
-  @Override
-  public PigeonApiWebResourceResponse getPigeonApiWebResourceResponse() {
-    return null;
+  public FlutterAssetManager getFlutterAssetManager() {
+    return flutterAssetManager;
   }
 }

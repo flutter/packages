@@ -8,8 +8,7 @@
 import 'dart:async';
 import 'dart:typed_data' show Float64List, Int32List, Int64List, Uint8List;
 
-import 'package:flutter/foundation.dart'
-    show ReadBuffer, WriteBuffer, immutable, protected;
+import 'package:flutter/foundation.dart' show ReadBuffer, WriteBuffer, immutable, protected;
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart' show WidgetsFlutterBinding;
 
@@ -20,8 +19,7 @@ PlatformException _createConnectionError(String channelName) {
   );
 }
 
-List<Object?> wrapResponse(
-    {Object? result, PlatformException? error, bool empty = false}) {
+List<Object?> wrapResponse({Object? result, PlatformException? error, bool empty = false}) {
   if (empty) {
     return <Object?>[];
   }
@@ -30,7 +28,6 @@ List<Object?> wrapResponse(
   }
   return <Object?>[error.code, error.message, error.details];
 }
-
 /// An immutable object that serves as the base class for all ProxyApis and
 /// can provide functional copies of itself.
 ///
@@ -116,8 +113,7 @@ class PigeonInstanceManager {
   final Expando<int> _identifiers = Expando<int>();
   final Map<int, WeakReference<PigeonProxyApiBaseClass>> _weakInstances =
       <int, WeakReference<PigeonProxyApiBaseClass>>{};
-  final Map<int, PigeonProxyApiBaseClass> _strongInstances =
-      <int, PigeonProxyApiBaseClass>{};
+  final Map<int, PigeonProxyApiBaseClass> _strongInstances = <int, PigeonProxyApiBaseClass>{};
   late final Finalizer<int> _finalizer;
   int _nextIdentifier = 0;
 
@@ -135,49 +131,28 @@ class PigeonInstanceManager {
         api.removeStrongReference(identifier);
       },
     );
-    _PigeonInstanceManagerApi.setUpMessageHandlers(
-        instanceManager: instanceManager);
-    WebResourceRequest.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    WebResourceResponse.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    WebResourceError.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    WebResourceErrorCompat.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    WebViewPoint.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    ConsoleMessage.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    CookieManager.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    WebView.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    WebSettings.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    JavaScriptChannel.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    WebViewClient.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    DownloadListener.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    WebChromeClient.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    FlutterAssetManager.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    WebStorage.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    FileChooserParams.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    PermissionRequest.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    CustomViewCallback.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
+    _PigeonInstanceManagerApi.setUpMessageHandlers(instanceManager: instanceManager);
+    WebResourceRequest.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    WebResourceResponse.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    WebResourceError.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    WebResourceErrorCompat.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    WebViewPoint.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    ConsoleMessage.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    CookieManager.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    WebView.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    WebSettings.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    JavaScriptChannel.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    WebViewClient.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    DownloadListener.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    WebChromeClient.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    FlutterAssetManager.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    WebStorage.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    FileChooserParams.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    PermissionRequest.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    CustomViewCallback.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
     View.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
-    GeolocationPermissionsCallback.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    HttpAuthHandler.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
+    GeolocationPermissionsCallback.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    HttpAuthHandler.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
     return instanceManager;
   }
 
@@ -241,19 +216,15 @@ class PigeonInstanceManager {
   ///
   /// This method also expects the host `InstanceManager` to have a strong
   /// reference to the instance the identifier is associated with.
-  T? getInstanceWithWeakReference<T extends PigeonProxyApiBaseClass>(
-      int identifier) {
-    final PigeonProxyApiBaseClass? weakInstance =
-        _weakInstances[identifier]?.target;
+  T? getInstanceWithWeakReference<T extends PigeonProxyApiBaseClass>(int identifier) {
+    final PigeonProxyApiBaseClass? weakInstance = _weakInstances[identifier]?.target;
 
     if (weakInstance == null) {
-      final PigeonProxyApiBaseClass? strongInstance =
-          _strongInstances[identifier];
+      final PigeonProxyApiBaseClass? strongInstance = _strongInstances[identifier];
       if (strongInstance != null) {
         final PigeonProxyApiBaseClass copy = strongInstance.pigeon_copy();
         _identifiers[copy] = identifier;
-        _weakInstances[identifier] =
-            WeakReference<PigeonProxyApiBaseClass>(copy);
+        _weakInstances[identifier] = WeakReference<PigeonProxyApiBaseClass>(copy);
         _finalizer.attach(copy, identifier, detach: copy);
         return copy as T;
       }
@@ -277,20 +248,17 @@ class PigeonInstanceManager {
   /// added.
   ///
   /// Returns unique identifier of the [instance] added.
-  void addHostCreatedInstance(
-      PigeonProxyApiBaseClass instance, int identifier) {
+  void addHostCreatedInstance(PigeonProxyApiBaseClass instance, int identifier) {
     _addInstanceWithIdentifier(instance, identifier);
   }
 
-  void _addInstanceWithIdentifier(
-      PigeonProxyApiBaseClass instance, int identifier) {
+  void _addInstanceWithIdentifier(PigeonProxyApiBaseClass instance, int identifier) {
     assert(!containsIdentifier(identifier));
     assert(getIdentifier(instance) == null);
     assert(identifier >= 0);
 
     _identifiers[instance] = identifier;
-    _weakInstances[identifier] =
-        WeakReference<PigeonProxyApiBaseClass>(instance);
+    _weakInstances[identifier] = WeakReference<PigeonProxyApiBaseClass>(instance);
     _finalizer.attach(instance, identifier, detach: instance);
 
     final PigeonProxyApiBaseClass copy = instance.pigeon_copy();
@@ -414,29 +382,29 @@ class _PigeonInstanceManagerApi {
 }
 
 class _PigeonProxyApiBaseCodec extends StandardMessageCodec {
-  const _PigeonProxyApiBaseCodec(this.instanceManager);
-  final PigeonInstanceManager instanceManager;
-  @override
-  void writeValue(WriteBuffer buffer, Object? value) {
-    if (value is PigeonProxyApiBaseClass) {
-      buffer.putUint8(128);
-      writeValue(buffer, instanceManager.getIdentifier(value));
-    } else {
-      super.writeValue(buffer, value);
-    }
-  }
-
-  @override
-  Object? readValueOfType(int type, ReadBuffer buffer) {
-    switch (type) {
-      case 128:
-        return instanceManager
-            .getInstanceWithWeakReference(readValue(buffer)! as int);
-      default:
-        return super.readValueOfType(type, buffer);
-    }
-  }
+ const _PigeonProxyApiBaseCodec(this.instanceManager);
+ final PigeonInstanceManager instanceManager;
+ @override
+ void writeValue(WriteBuffer buffer, Object? value) {
+   if (value is PigeonProxyApiBaseClass) {
+     buffer.putUint8(128);
+     writeValue(buffer, instanceManager.getIdentifier(value));
+   } else {
+     super.writeValue(buffer, value);
+   }
+ }
+ @override
+ Object? readValueOfType(int type, ReadBuffer buffer) {
+   switch (type) {
+     case 128:
+       return instanceManager
+           .getInstanceWithWeakReference(readValue(buffer)! as int);
+     default:
+       return super.readValueOfType(type, buffer);
+   }
+ }
 }
+
 
 /// Mode of how to select files for a file chooser.
 ///
@@ -447,16 +415,19 @@ enum FileChooserMode {
   ///
   /// See https://developer.android.com/reference/android/webkit/WebChromeClient.FileChooserParams#MODE_OPEN.
   open,
-
   /// Similar to [open] but allows multiple files to be selected.
   ///
   /// See https://developer.android.com/reference/android/webkit/WebChromeClient.FileChooserParams#MODE_OPEN_MULTIPLE.
   openMultiple,
-
   /// Allows picking a nonexistent file and saving it.
   ///
   /// See https://developer.android.com/reference/android/webkit/WebChromeClient.FileChooserParams#MODE_SAVE.
   save,
+  /// Indicates a `FileChooserMode` with an unknown mode.
+  ///
+  /// This does not represent an actual value provided by the platform and only
+  /// indicates a value was provided that isn't currently supported.
+  unknown,
 }
 
 /// Indicates the type of message logged to the console.
@@ -467,34 +438,28 @@ enum ConsoleMessageLevel {
   ///
   /// See https://developer.android.com/reference/android/webkit/ConsoleMessage.MessageLevel#DEBUG.
   debug,
-
   /// Indicates a message is provided as an error.
   ///
   /// See https://developer.android.com/reference/android/webkit/ConsoleMessage.MessageLevel#ERROR.
   error,
-
   /// Indicates a message is provided as a basic log message.
   ///
   /// See https://developer.android.com/reference/android/webkit/ConsoleMessage.MessageLevel#LOG.
   log,
-
   /// Indicates a message is provided as a tip.
   ///
   /// See https://developer.android.com/reference/android/webkit/ConsoleMessage.MessageLevel#TIP.
   tip,
-
   /// Indicates a message is provided as a warning.
   ///
   /// See https://developer.android.com/reference/android/webkit/ConsoleMessage.MessageLevel#WARNING.
   warning,
-
   /// Indicates a message with an unknown level.
   ///
   /// This does not represent an actual value provided by the platform and only
   /// indicates a value was provided that isn't currently supported.
   unknown,
 }
-
 /// Encompasses parameters to the `WebViewClient.shouldInterceptRequest` method.
 ///
 /// See https://developer.android.com/reference/android/webkit/WebResourceRequest.
@@ -6044,3 +6009,4 @@ class HttpAuthHandler extends PigeonProxyApiBaseClass {
     );
   }
 }
+

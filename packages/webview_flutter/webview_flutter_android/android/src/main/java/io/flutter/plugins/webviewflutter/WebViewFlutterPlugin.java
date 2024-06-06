@@ -101,22 +101,22 @@ public class WebViewFlutterPlugin implements FlutterPlugin, ActivityAware {
         binaryMessenger,
         new WebSettingsProxyApi(instanceManager, new WebSettingsProxyApi.WebSettingsCreator()));
     FlutterAssetManagerHostApi.setup(
-        binaryMessenger, new FlutterAssetManagerHostApiImpl(flutterAssetManager));
+        binaryMessenger, new FlutterAssetManagerProxyApi(flutterAssetManager));
     //    CookieManagerHostApi.setup(
     //        binaryMessenger, new CookieManagerHostApiImpl(binaryMessenger, instanceManager));
     WebStorageHostApi.setup(
         binaryMessenger,
-        new WebStorageHostApiImpl(instanceManager, new WebStorageHostApiImpl.WebStorageCreator()));
+        new WebStorageProxyApi(instanceManager, new WebStorageProxyApi.WebStorageCreator()));
 
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
       PermissionRequestHostApi.setup(
-          binaryMessenger, new PermissionRequestHostApiImpl(binaryMessenger, instanceManager));
+          binaryMessenger, new PermissionRequestProxyApi(binaryMessenger, instanceManager));
     }
     GeolocationPermissionsCallbackHostApi.setup(
         binaryMessenger,
         new GeolocationPermissionsCallbackHostApiImpl(binaryMessenger, instanceManager));
     CustomViewCallbackHostApi.setup(
-        binaryMessenger, new CustomViewCallbackHostApiImpl(binaryMessenger, instanceManager));
+        binaryMessenger, new CustomViewCallbackProxyApi(binaryMessenger, instanceManager));
     HttpAuthHandlerHostApi.setup(
         binaryMessenger, new HttpAuthHandlerHostApiImpl(binaryMessenger, instanceManager));
   }

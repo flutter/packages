@@ -10,7 +10,6 @@ import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import java.io.IOException;
 
 /** Provides access to the assets registered as part of the App bundle. */
-@SuppressWarnings({"deprecation", "DeprecatedIsStillUsed"})
 public abstract class FlutterAssetManager {
   final AssetManager assetManager;
 
