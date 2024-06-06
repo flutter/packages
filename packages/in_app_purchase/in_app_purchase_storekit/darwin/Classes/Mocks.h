@@ -9,7 +9,7 @@
 /// The payment queue protocol
 NS_ASSUME_NONNULL_BEGIN
 
-#pragma mark Payment Queue Interfaces
+#pragma mark Payment Queue
 
 @protocol PaymentQueue <NSObject>
 - (void)finishTransaction:(nonnull SKPaymentTransaction *)transaction;
@@ -73,11 +73,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property FIATransactionCache *cache;
 @end
 
-#pragma mark PaymentTransaction
-
-@protocol PaymentTransaction <NSObject>
-@end
-
 #pragma mark MethodChannel
 
 @protocol MethodChannel <NSObject>
@@ -100,25 +95,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-#pragma mark FIAPRequestHandler
-
-#pragma mark SKPaymentTransactionStub
-
-@interface FakeSKPaymentTransaction : SKPaymentTransaction
-- (instancetype)initWithMap:(NSDictionary *)map;
-- (instancetype)initWithState:(SKPaymentTransactionState)state payment:(SKPayment *)payment;
-@end
-
-#if TARGET_OS_IOS
-@interface FakePluginRegistrar : NSObject <FlutterPluginRegistrar>
-@end
-#endif
-
-@interface FakeBinaryMessenger : NSObject <FlutterBinaryMessenger>
-@end
-
-@interface FakePaymentQueueDelegate : NSObject <SKPaymentQueueDelegate>
-@end
+#pragma mark NSBundle
 
 @protocol URLBundle <NSObject>
 @property NSBundle *bundle;
@@ -131,7 +108,35 @@ NS_ASSUME_NONNULL_BEGIN
 @interface TestBundle : NSObject <URLBundle>
 @end
 
+#pragma mark Stubs
+
+#pragma mark SKPaymentTransaction
+
+@interface FakeSKPaymentTransaction : SKPaymentTransaction
+- (instancetype)initWithMap:(NSDictionary *)map;
+- (instancetype)initWithState:(SKPaymentTransactionState)state payment:(SKPayment *)payment;
+@end
+
+#pragma mark FlutterBinaryMessenger
+
+@interface FakeBinaryMessenger : NSObject <FlutterBinaryMessenger>
+@end
+
+#pragma mark PaymentQueueDelegate
+
+@interface FakePaymentQueueDelegate : NSObject <SKPaymentQueueDelegate>
+@end
+
+#pragma mark SKDownload
+
 @interface FakeSKDownload : SKDownload
 @end
+
+#pragma mark FlutterPluginRegistrar
+
+#if TARGET_OS_IOS
+@interface FakePluginRegistrar : NSObject <FlutterPluginRegistrar>
+@end
+#endif
 
 NS_ASSUME_NONNULL_END
