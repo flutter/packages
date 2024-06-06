@@ -106,7 +106,7 @@ abstract class WebResourceRequest {
   late String method;
 
   /// The headers associated with the request.
-  late Map<String, String>? requestHeaders;
+  late Map<String, String> requestHeaders;
 }
 
 /// Encapsulates a resource response.

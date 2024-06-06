@@ -518,7 +518,7 @@ class WebResourceRequest extends PigeonProxyApiBaseClass {
     this.isRedirect,
     required this.hasGesture,
     required this.method,
-    this.requestHeaders,
+    required this.requestHeaders,
   });
 
   /// The URL for which the resource request was made.
@@ -537,7 +537,7 @@ class WebResourceRequest extends PigeonProxyApiBaseClass {
   final String method;
 
   /// The headers associated with the request.
-  final Map<String?, String?>? requestHeaders;
+  final Map<String?, String?> requestHeaders;
 
   static void pigeon_setUpMessageHandlers({
     bool pigeon_clearHandlers = false,
@@ -549,7 +549,7 @@ class WebResourceRequest extends PigeonProxyApiBaseClass {
       bool? isRedirect,
       bool hasGesture,
       String method,
-      Map<String?, String?>? requestHeaders,
+      Map<String?, String?> requestHeaders,
     )? pigeon_newInstance,
   }) {
     final _PigeonProxyApiBaseCodec pigeonChannelCodec =
@@ -587,6 +587,8 @@ class WebResourceRequest extends PigeonProxyApiBaseClass {
               'Argument for dev.flutter.pigeon.webview_flutter_android.WebResourceRequest.pigeon_newInstance was null, expected non-null String.');
           final Map<String?, String?>? arg_requestHeaders =
               (args[6] as Map<Object?, Object?>?)?.cast<String?, String?>();
+          assert(arg_requestHeaders != null,
+              'Argument for dev.flutter.pigeon.webview_flutter_android.WebResourceRequest.pigeon_newInstance was null, expected non-null Map<String?, String?>.');
           try {
             (pigeon_instanceManager ?? PigeonInstanceManager.instance)
                 .addHostCreatedInstance(
@@ -596,7 +598,7 @@ class WebResourceRequest extends PigeonProxyApiBaseClass {
                       arg_isRedirect,
                       arg_hasGesture!,
                       arg_method!,
-                      arg_requestHeaders) ??
+                      arg_requestHeaders!) ??
                   WebResourceRequest.pigeon_detached(
                     pigeon_binaryMessenger: pigeon_binaryMessenger,
                     pigeon_instanceManager: pigeon_instanceManager,
@@ -605,7 +607,7 @@ class WebResourceRequest extends PigeonProxyApiBaseClass {
                     isRedirect: arg_isRedirect,
                     hasGesture: arg_hasGesture!,
                     method: arg_method!,
-                    requestHeaders: arg_requestHeaders,
+                    requestHeaders: arg_requestHeaders!,
                   ),
               arg_pigeon_instanceIdentifier!,
             );
