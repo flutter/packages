@@ -510,7 +510,7 @@ void main() {
                   // Spacer
                   const SizedBox(width: 8.0),
                   // Content
-                  Text(node.content.toString()),
+                  Text(node.content),
                 ]),
               ),
             );
