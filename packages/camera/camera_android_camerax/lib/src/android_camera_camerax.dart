@@ -234,7 +234,7 @@ class AndroidCameraCameraX extends CameraPlatform {
       'exposureCompensationNotSupported';
 
   /// Whether or not the created camera is front facing.
-  late bool _cameraIsFrontFacing;
+  late bool cameraIsFrontFacing;
 
   /// Whether or not the Surface used to create the camera preview is backed
   /// by a SurfaceTexture.
@@ -245,13 +245,16 @@ class AndroidCameraCameraX extends CameraPlatform {
   ///
   /// The camera preview will use this orientation as the natural orientation
   /// to correct its rotation with respect to, if necessary.
-  DeviceOrientation? _naturalOrientation;
+  @visibleForTesting
+  DeviceOrientation? naturalOrientation;
 
   /// The camera sensor orientation.
-  late int _sensorOrientation;
+  @visibleForTesting
+  late int sensorOrientation;
 
   /// The current orientation of the device.
-  DeviceOrientation? _currentDeviceOrientation;
+  @visibleForTesting // TODO: add test for setting
+  DeviceOrientation? currentDeviceOrientation;
 
   /// Returns list of all available cameras and their descriptions.
   @override
@@ -341,12 +344,12 @@ class AndroidCameraCameraX extends CameraPlatform {
     // Save CameraSelector that matches cameraDescription.
     final int cameraSelectorLensDirection =
         _getCameraSelectorLensDirection(cameraDescription.lensDirection);
-    _cameraIsFrontFacing =
+    cameraIsFrontFacing =
         cameraSelectorLensDirection == CameraSelector.lensFacingFront;
     cameraSelector = proxy.createCameraSelector(cameraSelectorLensDirection);
     // Start listening for device orientation changes preceding camera creation.
     proxy.startListeningForDeviceOrientationChange(
-        _cameraIsFrontFacing, cameraDescription.sensorOrientation);
+        cameraIsFrontFacing, cameraDescription.sensorOrientation);
     // Determine ResolutionSelector and QualitySelector based on
     // resolutionPreset for camera UseCases.
     final ResolutionSelector? presetResolutionSelector =
@@ -393,10 +396,10 @@ class AndroidCameraCameraX extends CameraPlatform {
         await SystemServices.isUsingSurfaceTextureForPreview();
     final Camera2CameraInfo camera2CameraInfo =
         await proxy.getCamera2CameraInfo(cameraInfo!);
-    _sensorOrientation = await camera2CameraInfo.getSensorOrientation();
-    _naturalOrientation ??= await proxy.getUiOrientation();
+    sensorOrientation = await proxy.getSensorOrientation(camera2CameraInfo);
+    naturalOrientation ??= await proxy.getUiOrientation();
     onDeviceOrientationChanged().listen((DeviceOrientationChangedEvent event) {
-      _currentDeviceOrientation = event.orientation;
+      currentDeviceOrientation = event.orientation;
     });
 
     return flutterSurfaceTextureId;
@@ -868,12 +871,12 @@ class AndroidCameraCameraX extends CameraPlatform {
       DeviceOrientation.landscapeLeft: 270,
     };
     int deviceOrientationDegrees =
-        degreesForDeviceOrientation[_naturalOrientation]!;
-    final int signForCameraDirection = _cameraIsFrontFacing ? 1 : -1;
+        degreesForDeviceOrientation[naturalOrientation]!;
+    final int signForCameraDirection = cameraIsFrontFacing ? 1 : -1;
 
     if (signForCameraDirection == 1 &&
-        (_currentDeviceOrientation == DeviceOrientation.landscapeLeft ||
-            _currentDeviceOrientation == DeviceOrientation.landscapeRight)) {
+        (currentDeviceOrientation == DeviceOrientation.landscapeLeft ||
+            currentDeviceOrientation == DeviceOrientation.landscapeRight)) {
       // For front-facing cameras, the image buffer is rotated counterclockwise,
       // so we determine the rotation needed to correct the camera preview with
       // respect to the naturalOrientation of the device based on the inverse of
@@ -883,7 +886,7 @@ class AndroidCameraCameraX extends CameraPlatform {
 
     // See https://developer.android.com/media/camera/camera2/camera-preview#orientation_calculation
     // for more context on this formula.
-    final double rotation = (_sensorOrientation +
+    final double rotation = (sensorOrientation +
             deviceOrientationDegrees * signForCameraDirection +
             360) %
         360;
