@@ -44,11 +44,6 @@ final Class emptyClass = Class(name: 'className', fields: <NamedType>[
   )
 ]);
 
-final Enum emptyEnum = Enum(
-  name: 'enumName',
-  members: <EnumMember>[EnumMember(name: 'enumMemberName')],
-);
-
 void main() {
   test('test merge maps', () {
     final Map<String, Object> source = <String, Object>{
@@ -77,144 +72,26 @@ void main() {
     expect(_equalMaps(expected, mergeMaps(source, modification)), isTrue);
   });
 
-  test('get codec classes from argument type arguments', () {
-    final AstFlutterApi api = AstFlutterApi(name: 'Api', methods: <Method>[
-      Method(
-        name: 'doSomething',
-        location: ApiLocation.flutter,
-        parameters: <Parameter>[
-          Parameter(
-            type: TypeDeclaration(
-              baseName: 'List',
-              isNullable: false,
-              typeArguments: <TypeDeclaration>[
-                TypeDeclaration(
-                  baseName: 'Input',
-                  isNullable: true,
-                  associatedClass: emptyClass,
-                )
-              ],
-            ),
-            name: '',
-          )
-        ],
-        returnType: TypeDeclaration(
-          baseName: 'Output',
-          isNullable: false,
-          associatedClass: emptyClass,
-        ),
-        isAsynchronous: true,
-      )
-    ]);
-    final Root root =
-        Root(classes: <Class>[], apis: <Api>[api], enums: <Enum>[]);
-    final List<EnumeratedClass> classes = getCodecClasses(api, root).toList();
-    expect(classes.length, 2);
-    expect(
-        classes
-            .where((EnumeratedClass element) => element.name == 'Input')
-            .length,
-        1);
-    expect(
-        classes
-            .where((EnumeratedClass element) => element.name == 'Output')
-            .length,
-        1);
-  });
-
-  test('get codec classes from return value type arguments', () {
-    final AstFlutterApi api = AstFlutterApi(name: 'Api', methods: <Method>[
-      Method(
-        name: 'doSomething',
-        location: ApiLocation.flutter,
-        parameters: <Parameter>[
-          Parameter(
-            type: TypeDeclaration(
-              baseName: 'Output',
-              isNullable: false,
-              associatedClass: emptyClass,
-            ),
-            name: '',
-          )
-        ],
-        returnType: TypeDeclaration(
-          baseName: 'List',
-          isNullable: false,
-          typeArguments: <TypeDeclaration>[
-            TypeDeclaration(
-              baseName: 'Input',
+  test('get codec types from all classes and enums', () {
+    final Root root = Root(classes: <Class>[
+      Class(name: 'name', fields: <NamedType>[
+        NamedType(
+            name: 'name',
+            type: const TypeDeclaration(
+              baseName: 'name',
               isNullable: true,
-              associatedClass: emptyClass,
-            )
-          ],
-        ),
-        isAsynchronous: true,
-      )
+            ))
+      ])
+    ], apis: <Api>[], enums: <Enum>[
+      Enum(name: 'enum', members: <EnumMember>[
+        EnumMember(name: 'enumMember'),
+      ])
     ]);
-    final Root root =
-        Root(classes: <Class>[], apis: <Api>[api], enums: <Enum>[]);
-    final List<EnumeratedClass> classes = getCodecClasses(api, root).toList();
-    expect(classes.length, 2);
-    expect(
-        classes
-            .where((EnumeratedClass element) => element.name == 'Input')
-            .length,
-        1);
-    expect(
-        classes
-            .where((EnumeratedClass element) => element.name == 'Output')
-            .length,
-        1);
+    final List<EnumeratedType> types = getEnumeratedTypes(root).toList();
+    expect(types.length, 2);
   });
 
-  test('get codec classes from all arguments', () {
-    final AstFlutterApi api = AstFlutterApi(name: 'Api', methods: <Method>[
-      Method(
-        name: 'doSomething',
-        location: ApiLocation.flutter,
-        parameters: <Parameter>[
-          Parameter(
-            type: TypeDeclaration(
-              baseName: 'Foo',
-              isNullable: false,
-              associatedClass: emptyClass,
-            ),
-            name: '',
-          ),
-          Parameter(
-            type: TypeDeclaration(
-              baseName: 'Bar',
-              isNullable: false,
-              associatedEnum: emptyEnum,
-            ),
-            name: '',
-          ),
-        ],
-        returnType: const TypeDeclaration(
-          baseName: 'List',
-          isNullable: false,
-          typeArguments: <TypeDeclaration>[TypeDeclaration.voidDeclaration()],
-        ),
-        isAsynchronous: true,
-      )
-    ]);
-    final Root root =
-        Root(classes: <Class>[], apis: <Api>[api], enums: <Enum>[]);
-    final List<EnumeratedClass> classes = getCodecClasses(api, root).toList();
-    expect(classes.length, 2);
-    expect(
-        classes
-            .where((EnumeratedClass element) => element.name == 'Foo')
-            .length,
-        1);
-    expect(
-        classes
-            .where((EnumeratedClass element) => element.name == 'Bar')
-            .length,
-        1);
-  });
-
-  test('getCodecClasses: nested type arguments', () {
+  test('getEnumeratedTypes:ed type arguments', () {
     final Root root = Root(apis: <Api>[
       AstFlutterApi(name: 'Api', methods: <Method>[
         Method(
@@ -256,22 +133,17 @@ void main() {
             ))
       ])
     ], enums: <Enum>[]);
-    final List<EnumeratedClass> classes =
-        getCodecClasses(root.apis[0], root).toList();
+    final List<EnumeratedType> classes = getEnumeratedTypes(root).toList();
     expect(classes.length, 2);
     expect(
-        classes
-            .where((EnumeratedClass element) => element.name == 'Foo')
-            .length,
+        classes.where((EnumeratedType element) => element.name == 'Foo').length,
         1);
     expect(
-        classes
-            .where((EnumeratedClass element) => element.name == 'Bar')
-            .length,
+        classes.where((EnumeratedType element) => element.name == 'Bar').length,
         1);
   });
 
-  test('getCodecClasses: with Object', () {
+  test('getEnumeratedTypes: Object', () {
     final Root root = Root(apis: <Api>[
       AstFlutterApi(
         name: 'Api1',
@@ -300,17 +172,14 @@ void main() {
             type: const TypeDeclaration(baseName: 'int', isNullable: true)),
       ]),
     ], enums: <Enum>[]);
-    final List<EnumeratedClass> classes =
-        getCodecClasses(root.apis[0], root).toList();
+    final List<EnumeratedType> classes = getEnumeratedTypes(root).toList();
     expect(classes.length, 1);
     expect(
-        classes
-            .where((EnumeratedClass element) => element.name == 'Foo')
-            .length,
+        classes.where((EnumeratedType element) => element.name == 'Foo').length,
         1);
   });
 
-  test('getCodecClasses: unique entries', () {
+  test('getEnumeratedTypes:ue entries', () {
     final Root root = Root(apis: <Api>[
       AstFlutterApi(
         name: 'Api1',
@@ -357,13 +226,10 @@ void main() {
             type: const TypeDeclaration(baseName: 'int', isNullable: true)),
       ]),
     ], enums: <Enum>[]);
-    final List<EnumeratedClass> classes =
-        getCodecClasses(root.apis[0], root).toList();
+    final List<EnumeratedType> classes = getEnumeratedTypes(root).toList();
     expect(classes.length, 1);
     expect(
-        classes
-            .where((EnumeratedClass element) => element.name == 'Foo')
-            .length,
+        classes.where((EnumeratedType element) => element.name == 'Foo').length,
         1);
   });
 

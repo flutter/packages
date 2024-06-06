@@ -99,6 +99,9 @@ Future<int> generateTestPigeons({required String baseDir}) async {
     int generateCode = await runPigeon(
       input: './pigeons/$input.dart',
       dartOut: '$sharedDartOutputBase/lib/src/generated/$input.gen.dart',
+      dartTestOut: input == 'message'
+          ? '$sharedDartOutputBase/test/test_message.gen.dart'
+          : null,
       dartPackageName: 'pigeon_integration_tests',
       suppressVersion: true,
       // Android

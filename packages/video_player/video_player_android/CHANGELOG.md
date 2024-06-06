@@ -1,6 +1,15 @@
-## NEXT
+## 2.4.17
 
-* Updates minimum supported SDK version to Flutter 3.16/Dart 3.2.
+* Revert Impeller support.
+
+## 2.4.16
+
+* [Supports Impeller](https://docs.flutter.dev/release/breaking-changes/android-surface-plugins).
+
+## 2.4.15
+
+* Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+* Removes support for apps using the v1 Android embedding.
 
 ## 2.4.14
 

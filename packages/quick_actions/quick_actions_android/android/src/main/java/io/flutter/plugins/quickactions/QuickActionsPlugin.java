@@ -43,19 +43,6 @@ public class QuickActionsPlugin implements FlutterPlugin, ActivityAware, NewInte
     this.sdkChecker = capabilityChecker;
   }
 
-  /**
-   * Plugin registration.
-   *
-   * <p>Must be called when the application is created.
-   */
-  @SuppressWarnings("deprecation")
-  public static void registerWith(
-      @NonNull io.flutter.plugin.common.PluginRegistry.Registrar registrar) {
-    QuickActions quickActions = new QuickActions(registrar.context());
-    quickActions.setActivity(registrar.activity());
-    Messages.AndroidQuickActionsApi.setup(registrar.messenger(), quickActions);
-  }
-
   @Override
   public void onAttachedToEngine(@NonNull FlutterPluginBinding binding) {
     this.quickActions = new QuickActions(binding.getApplicationContext());
