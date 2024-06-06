@@ -123,8 +123,8 @@ public class DeviceOrientationManager {
    */
   // Configuration.ORIENTATION_SQUARE is deprecated.
   @SuppressWarnings("deprecation")
-  @VisibleForTesting
-  PlatformChannel.DeviceOrientation getUIOrientation() {
+  @NonNull
+  public PlatformChannel.DeviceOrientation getUIOrientation() {
     final int rotation = getDefaultRotation();
     final int orientation = activity.getResources().getConfiguration().orientation;
 

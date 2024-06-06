@@ -1362,22 +1362,33 @@ void main() {
 
     // Mock sensor and device orientation.
     camera.sensorOrientation = 270;
-    camera.naturalOrientation = DeviceOrientation.landscapeLeft;
     camera.cameraIsFrontFacing = false;
 
-    final double expectedRotation = (camera.sensorOrientation +
-            270 /* the natural orientation in clockwise degrees */ *
-                -1 /* camera is not front facing */ +
-            360) %
-        360;
-    final int expectedQuarterTurns = (expectedRotation / 90).toInt();
+    final Map<DeviceOrientation, int> degreesForDeviceOrientation =
+        <DeviceOrientation, int>{
+      DeviceOrientation.portraitUp: 0,
+      DeviceOrientation.landscapeRight: 90,
+      DeviceOrientation.portraitDown: 180,
+      DeviceOrientation.landscapeLeft: 270,
+    };
 
-    final Widget widget = camera.buildPreview(cameraId);
+    for (final DeviceOrientation orientation in DeviceOrientation.values) {
+      camera.naturalOrientation = orientation;
+      final double expectedRotation = (camera.sensorOrientation +
+              degreesForDeviceOrientation[
+                      orientation]! /* the natural orientation in clockwise degrees */ *
+                  -1 /* camera is not front facing */ +
+              360) %
+          360;
+      final int expectedQuarterTurns = (expectedRotation / 90).toInt();
 
-    expect(widget is RotatedBox, isTrue);
-    expect((widget as RotatedBox).quarterTurns, expectedQuarterTurns);
-    expect(widget.child is Texture, isTrue);
-    expect((widget.child! as Texture).textureId, cameraId);
+      final Widget widget = camera.buildPreview(cameraId);
+
+      expect(widget is RotatedBox, isTrue);
+      expect((widget as RotatedBox).quarterTurns, expectedQuarterTurns);
+      expect(widget.child is Texture, isTrue);
+      expect((widget.child! as Texture).textureId, cameraId);
+    }
   });
 
   test(

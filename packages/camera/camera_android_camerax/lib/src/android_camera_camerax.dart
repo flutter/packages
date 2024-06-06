@@ -234,6 +234,7 @@ class AndroidCameraCameraX extends CameraPlatform {
       'exposureCompensationNotSupported';
 
   /// Whether or not the created camera is front facing.
+  @visibleForTesting
   late bool cameraIsFrontFacing;
 
   /// Whether or not the Surface used to create the camera preview is backed
@@ -385,7 +386,6 @@ class AndroidCameraCameraX extends CameraPlatform {
     // instead of here.
     camera = await processCameraProvider!.bindToLifecycle(
         cameraSelector!, <UseCase>[preview!, imageCapture!, imageAnalysis!]);
-    cameraInfo = await camera!.getCameraInfo();
     await _updateCameraInfoAndLiveCameraState(flutterSurfaceTextureId);
     previewInitiallyBound = true;
     _previewIsPaused = false;
