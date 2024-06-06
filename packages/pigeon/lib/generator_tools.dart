@@ -13,7 +13,7 @@ import 'ast.dart';
 /// The current version of pigeon.
 ///
 /// This must match the version in pubspec.yaml.
-const String pigeonVersion = '20.0.0';
+const String pigeonVersion = '20.0.1';
 
 /// Prefix for all local variables in methods.
 ///
