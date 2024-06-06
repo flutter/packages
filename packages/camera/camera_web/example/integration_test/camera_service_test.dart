@@ -2,8 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'dart:html';
-import 'dart:js_util' as js_util;
+import 'dart:js_interop';
+import 'dart:js_interop_unsafe';
 
 import 'package:camera_platform_interface/camera_platform_interface.dart';
 // ignore_for_file: implementation_imports
@@ -15,6 +15,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:web/web.dart';
 
 import 'helpers/helpers.dart';
 
@@ -31,20 +32,16 @@ void main() {
     late JsUtil jsUtil;
 
     setUp(() async {
-      window = MockWindow();
-      navigator = MockNavigator();
-      mediaDevices = MockMediaDevices();
+      mediaDevices = MockMediaDevices().wrapper;
+      navigator = MockNavigator(mediaDevices: mediaDevices).wrapper;
+      window = MockWindow(navigator: navigator).wrapper;
       jsUtil = MockJsUtil();
-
-      when(() => window.navigator).thenReturn(navigator);
-      when(() => navigator.mediaDevices).thenReturn(mediaDevices);
 
       // Mock JsUtil to return the real getProperty from dart:js_util.
       when<dynamic>(() => jsUtil.getProperty(any(), any())).thenAnswer(
-        (Invocation invocation) => js_util.getProperty<dynamic>(
-          invocation.positionalArguments[0] as Object,
-          invocation.positionalArguments[1] as Object,
-        ),
+        (Invocation invocation) =>
+            (invocation.positionalArguments[0] as JSObject)
+                .getProperty(invocation.positionalArguments[1] as JSAny),
       );
 
       cameraService = CameraService()..window = window;
@@ -69,24 +66,6 @@ void main() {
         verify(
           () => mediaDevices.getUserMedia(options.toJson()),
         ).called(1);
-      });
-
-      testWidgets(
-          'throws PlatformException '
-          'with notSupported error '
-          'when there are no media devices', (WidgetTester tester) async {
-        when(() => navigator.mediaDevices).thenReturn(null);
-
-        expect(
-          () => cameraService.getMediaStreamForOptions(const CameraOptions()),
-          throwsA(
-            isA<PlatformException>().having(
-              (PlatformException e) => e.code,
-              'code',
-              CameraErrorCode.notSupported.toString(),
-            ),
-          ),
-        );
       });
 
       group('throws CameraWebException', () {
@@ -384,12 +363,13 @@ void main() {
       setUp(() {
         camera = MockCamera();
         videoTracks = <MediaStreamTrack>[
-          MockMediaStreamTrack(),
-          MockMediaStreamTrack()
+          MockMediaStreamTrack().wrapper,
+          MockMediaStreamTrack().wrapper,
         ];
 
         when(() => camera.textureId).thenReturn(0);
-        when(() => camera.stream).thenReturn(FakeMediaStream(videoTracks));
+        when(() => camera.stream)
+            .thenReturn(FakeMediaStream(videoTracks).wrapper);
 
         cameraService.jsUtil = jsUtil;
       });

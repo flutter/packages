@@ -5,7 +5,7 @@
 // ignore_for_file: avoid_implementing_value_types
 
 import 'dart:async';
-import 'dart:html';
+import 'dart:js_interop';
 import 'dart:ui';
 
 // ignore_for_file: implementation_imports
@@ -15,102 +15,107 @@ import 'package:camera_web/src/shims/dart_js_util.dart';
 import 'package:camera_web/src/types/types.dart';
 import 'package:cross_file/cross_file.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:web/web.dart' as web;
 
-class MockWindow extends Mock implements Window {}
+class JSInteropWrapper<T extends JSObject> {
+  T get wrapper => createJSInteropWrapper(this) as T;
+}
 
-class MockScreen extends Mock implements Screen {}
+@JSExport()
+class MockWindow extends JSInteropWrapper<web.Window> {
+  late web.Navigator navigator;
+}
 
-class MockScreenOrientation extends Mock implements ScreenOrientation {}
+@JSExport()
+class MockScreen extends JSInteropWrapper<web.Screen> {}
 
-class MockDocument extends Mock implements Document {}
+@JSExport()
+class MockScreenOrientation extends JSInteropWrapper<web.ScreenOrientation> {}
 
-class MockElement extends Mock implements Element {}
+@JSExport()
+class MockDocument extends JSInteropWrapper<web.Document> {}
 
-class MockNavigator extends Mock implements Navigator {}
+@JSExport()
+class MockElement extends JSInteropWrapper<web.Element> {}
 
-class MockMediaDevices extends Mock implements MediaDevices {}
+@JSExport()
+class MockNavigator extends JSInteropWrapper<web.Navigator> {
+  late web.MediaDevices mediaDevices;
+}
+
+@JSExport()
+class MockMediaDevices extends JSInteropWrapper<web.MediaDevices> {
+  late JSPromise<web.MediaStream> Function([
+    web.MediaStreamConstraints? constraints,
+  ]) getUserMedia;
+}
 
 class MockCameraService extends Mock implements CameraService {}
 
-class MockMediaStreamTrack extends Mock implements MediaStreamTrack {}
+@JSExport()
+class MockMediaStreamTrack extends JSInteropWrapper<web.MediaStreamTrack> {}
 
 class MockCamera extends Mock implements Camera {}
 
 class MockCameraOptions extends Mock implements CameraOptions {}
 
-class MockVideoElement extends Mock implements VideoElement {}
+@JSExport()
+class MockVideoElement extends JSInteropWrapper<web.HTMLVideoElement> {}
 
 class MockXFile extends Mock implements XFile {}
 
 class MockJsUtil extends Mock implements JsUtil {}
 
-class MockMediaRecorder extends Mock implements MediaRecorder {}
+@JSExport()
+class MockMediaRecorder extends JSInteropWrapper<web.MediaRecorder> {}
 
 /// A fake [MediaStream] that returns the provided [_videoTracks].
-class FakeMediaStream extends Fake implements MediaStream {
+@JSExport()
+class FakeMediaStream extends JSInteropWrapper<web.MediaStream> {
   FakeMediaStream(this._videoTracks);
 
-  final List<MediaStreamTrack> _videoTracks;
+  final List<web.MediaStreamTrack> _videoTracks;
 
-  @override
-  List<MediaStreamTrack> getVideoTracks() => _videoTracks;
+  List<web.MediaStreamTrack> getVideoTracks() => _videoTracks;
 }
 
 /// A fake [MediaDeviceInfo] that returns the provided [_deviceId], [_label] and [_kind].
-class FakeMediaDeviceInfo extends Fake implements MediaDeviceInfo {
-  FakeMediaDeviceInfo(this._deviceId, this._label, this._kind);
+@JSExport()
+class FakeMediaDeviceInfo extends JSInteropWrapper<web.MediaDeviceInfo> {
+  FakeMediaDeviceInfo(this.deviceId, this.label, this.kind);
 
-  final String _deviceId;
-  final String _label;
-  final String _kind;
-
-  @override
-  String? get deviceId => _deviceId;
-
-  @override
-  String? get label => _label;
-
-  @override
-  String? get kind => _kind;
+  final String deviceId;
+  final String label;
+  final String kind;
 }
 
 /// A fake [MediaError] that returns the provided error [_code] and [_message].
-class FakeMediaError extends Fake implements MediaError {
+@JSExport()
+class FakeMediaError extends JSInteropWrapper<web.MediaError> {
   FakeMediaError(
-    this._code, [
-    String message = '',
-  ]) : _message = message;
+    this.code, [
+    this.message = '',
+  ]);
 
-  final int _code;
-  final String _message;
-
-  @override
-  int get code => _code;
-
-  @override
-  String? get message => _message;
+  final int code;
+  final String message;
 }
 
 /// A fake [DomException] that returns the provided error [_name] and [_message].
-class FakeDomException extends Fake implements DomException {
+@JSExport()
+class FakeDomException extends JSInteropWrapper<web.DOMException> {
   FakeDomException(
-    this._name, [
-    String? message,
-  ]) : _message = message;
+    this.name, [
+    this.message = '',
+  ]);
 
-  final String _name;
-  final String? _message;
-
-  @override
-  String get name => _name;
-
-  @override
-  String? get message => _message;
+  final String name;
+  final String message;
 }
 
 /// A fake [ElementStream] that listens to the provided [_stream] on [listen].
-class FakeElementStream<T extends Event> extends Fake
-    implements ElementStream<T> {
+class FakeElementStream<T extends web.Event> extends Fake
+    implements web.ElementStream<T> {
   FakeElementStream(this._stream);
 
   final Stream<T> _stream;
@@ -128,31 +133,23 @@ class FakeElementStream<T extends Event> extends Fake
 }
 
 /// A fake [BlobEvent] that returns the provided blob [data].
-class FakeBlobEvent extends Fake implements BlobEvent {
-  FakeBlobEvent(this._blob);
+@JSExport()
+class FakeBlobEvent extends JSInteropWrapper<web.BlobEvent> {
+  FakeBlobEvent(this.data);
 
-  final Blob? _blob;
-
-  @override
-  Blob? get data => _blob;
+  final web.Blob? data;
 }
 
 /// A fake [DomException] that returns the provided error [_name] and [_message].
-class FakeErrorEvent extends Fake implements ErrorEvent {
+@JSExport()
+class FakeErrorEvent extends JSInteropWrapper<web.ErrorEvent> {
   FakeErrorEvent(
-    String type, [
-    String? message,
-  ])  : _type = type,
-        _message = message;
+    this.type, [
+    this.message = '',
+  ]);
 
-  final String _type;
-  final String? _message;
-
-  @override
-  String get type => _type;
-
-  @override
-  String? get message => _message;
+  final String type;
+  final String message;
 }
 
 /// Returns a video element with a blank stream of size [videoSize].
@@ -162,13 +159,13 @@ class FakeErrorEvent extends Fake implements ErrorEvent {
 /// final videoElement = getVideoElementWithBlankStream(Size(100, 100));
 /// final videoStream = videoElement.captureStream();
 /// ```
-VideoElement getVideoElementWithBlankStream(Size videoSize) {
-  final CanvasElement canvasElement = CanvasElement(
-    width: videoSize.width.toInt(),
-    height: videoSize.height.toInt(),
-  )..context2D.fillRect(0, 0, videoSize.width, videoSize.height);
+web.HTMLVideoElement getVideoElementWithBlankStream(Size videoSize) {
+  final web.HTMLCanvasElement canvasElement = web.HTMLCanvasElement()
+    ..width = videoSize.width.toInt()
+    ..height = videoSize.height.toInt()
+    ..context2D.fillRect(0, 0, videoSize.width, videoSize.height);
 
-  final VideoElement videoElement = VideoElement()
+  final web.HTMLVideoElement videoElement = web.HTMLVideoElement()
     ..srcObject = canvasElement.captureStream();
 
   return videoElement;

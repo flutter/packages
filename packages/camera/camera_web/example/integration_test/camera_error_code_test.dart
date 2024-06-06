@@ -2,12 +2,11 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'dart:html';
-
 // ignore: implementation_imports
 import 'package:camera_web/src/types/types.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
+import 'package:web/web.dart';
 
 import 'helpers/helpers.dart';
 
@@ -132,7 +131,7 @@ void main() {
         testWidgets('with aborted error code', (WidgetTester tester) async {
           expect(
             CameraErrorCode.fromMediaError(
-              FakeMediaError(MediaError.MEDIA_ERR_ABORTED),
+              FakeMediaError(MediaError.MEDIA_ERR_ABORTED).wrapper,
             ).toString(),
             equals('mediaErrorAborted'),
           );
@@ -141,7 +140,7 @@ void main() {
         testWidgets('with network error code', (WidgetTester tester) async {
           expect(
             CameraErrorCode.fromMediaError(
-              FakeMediaError(MediaError.MEDIA_ERR_NETWORK),
+              FakeMediaError(MediaError.MEDIA_ERR_NETWORK).wrapper,
             ).toString(),
             equals('mediaErrorNetwork'),
           );
@@ -150,7 +149,7 @@ void main() {
         testWidgets('with decode error code', (WidgetTester tester) async {
           expect(
             CameraErrorCode.fromMediaError(
-              FakeMediaError(MediaError.MEDIA_ERR_DECODE),
+              FakeMediaError(MediaError.MEDIA_ERR_DECODE).wrapper,
             ).toString(),
             equals('mediaErrorDecode'),
           );
@@ -160,7 +159,7 @@ void main() {
             (WidgetTester tester) async {
           expect(
             CameraErrorCode.fromMediaError(
-              FakeMediaError(MediaError.MEDIA_ERR_SRC_NOT_SUPPORTED),
+              FakeMediaError(MediaError.MEDIA_ERR_SRC_NOT_SUPPORTED).wrapper,
             ).toString(),
             equals('mediaErrorSourceNotSupported'),
           );
@@ -169,7 +168,7 @@ void main() {
         testWidgets('with unknown error code', (WidgetTester tester) async {
           expect(
             CameraErrorCode.fromMediaError(
-              FakeMediaError(5),
+              FakeMediaError(5).wrapper,
             ).toString(),
             equals('mediaErrorUnknown'),
           );

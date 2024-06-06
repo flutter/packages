@@ -3,7 +3,7 @@
 // found in the LICENSE file.
 
 import 'dart:async';
-import 'dart:html';
+// import 'dart:html';
 import 'dart:ui';
 
 import 'package:async/async.dart';
@@ -15,6 +15,7 @@ import 'package:camera_web/src/types/types.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:web/web.dart';
 
 import 'helpers/helpers.dart';
 
