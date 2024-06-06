@@ -114,11 +114,11 @@ public class WebViewFlutterPlugin implements FlutterPlugin, ActivityAware {
     }
     GeolocationPermissionsCallbackHostApi.setup(
         binaryMessenger,
-        new GeolocationPermissionsCallbackHostApiImpl(binaryMessenger, instanceManager));
+        new GeolocationPermissionsCallbackProxyApi(binaryMessenger, instanceManager));
     CustomViewCallbackHostApi.setup(
         binaryMessenger, new CustomViewCallbackProxyApi(binaryMessenger, instanceManager));
     HttpAuthHandlerHostApi.setup(
-        binaryMessenger, new HttpAuthHandlerHostApiImpl(binaryMessenger, instanceManager));
+        binaryMessenger, new HttpAuthHandlerProxyApi(binaryMessenger, instanceManager));
   }
 
   @Override

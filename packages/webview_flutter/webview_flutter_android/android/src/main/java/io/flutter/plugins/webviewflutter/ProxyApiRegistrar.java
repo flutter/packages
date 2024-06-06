@@ -167,19 +167,19 @@ public class ProxyApiRegistrar extends PigeonProxyApiRegistrar {
   @NonNull
   @Override
   public PigeonApiView getPigeonApiView() {
-    return null;
+    return new ViewProxyApi(this);
   }
 
   @NonNull
   @Override
   public PigeonApiGeolocationPermissionsCallback getPigeonApiGeolocationPermissionsCallback() {
-    return null;
+    return new GeolocationPermissionsCallbackProxyApi(this);
   }
 
   @NonNull
   @Override
   public PigeonApiHttpAuthHandler getPigeonApiHttpAuthHandler() {
-    return null;
+    return new HttpAuthHandlerProxyApi(this);
   }
 
   @NonNull
