@@ -860,7 +860,7 @@ class AndroidCameraCameraX extends CameraPlatform {
       DeviceOrientation.portraitDown: 180,
       DeviceOrientation.landscapeLeft: 270,
     };
-    int deviceOrientationDegrees =
+    int naturalDeviceOrientationDegrees =
         degreesForDeviceOrientation[naturalOrientation]!;
 
     if (isUsingSurfaceTextureForPreview) {
@@ -872,7 +872,7 @@ class AndroidCameraCameraX extends CameraPlatform {
           naturalOrientation == DeviceOrientation.landscapeRight) {
         // TODO(camsim99): Test this on a landscape-oriented device.
         final int quarterTurnsToCorrectForLandscape =
-            deviceOrientationDegrees ~/ 4;
+            (-naturalDeviceOrientationDegrees + 360) ~/ 4;
         return RotatedBox(
             quarterTurns: quarterTurnsToCorrectForLandscape,
             child: cameraPreview);
@@ -892,13 +892,13 @@ class AndroidCameraCameraX extends CameraPlatform {
       // so we determine the rotation needed to correct the camera preview with
       // respect to the naturalOrientation of the device based on the inverse of
       // naturalOrientation.
-      deviceOrientationDegrees += 180;
+      naturalDeviceOrientationDegrees += 180;
     }
 
     // See https://developer.android.com/media/camera/camera2/camera-preview#orientation_calculation
     // for more context on this formula.
     final double rotation = (sensorOrientation +
-            deviceOrientationDegrees * signForCameraDirection +
+            naturalDeviceOrientationDegrees * signForCameraDirection +
             360) %
         360;
     int quarterTurnsToCorrectPreview = rotation ~/ 90;
@@ -906,7 +906,8 @@ class AndroidCameraCameraX extends CameraPlatform {
     if (naturalOrientation == DeviceOrientation.landscapeLeft ||
         naturalOrientation == DeviceOrientation.landscapeRight) {
       // TODO(camsim99): Test this on a landscape-oriented device.
-      quarterTurnsToCorrectPreview += deviceOrientationDegrees ~/ 4;
+      quarterTurnsToCorrectPreview +=
+          (-naturalDeviceOrientationDegrees + 360) ~/ 4;
       return RotatedBox(
           quarterTurns: quarterTurnsToCorrectPreview, child: cameraPreview);
     }
