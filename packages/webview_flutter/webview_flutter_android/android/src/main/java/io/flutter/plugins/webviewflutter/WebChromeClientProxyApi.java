@@ -4,7 +4,6 @@
 
 package io.flutter.plugins.webviewflutter;
 
-import android.content.Context;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Message;
@@ -23,7 +22,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.annotation.VisibleForTesting;
-import io.flutter.plugins.webviewflutter.GeneratedAndroidWebView.WebChromeClientHostApi;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -31,17 +30,14 @@ import java.util.Objects;
  *
  * <p>Handles creating {@link WebChromeClient}s that intercommunicate with a paired Dart object.
  */
-public class WebChromeClientHostApiImpl implements WebChromeClientHostApi {
-  private final InstanceManager instanceManager;
-  private final WebChromeClientCreator webChromeClientCreator;
-  private final WebChromeClientFlutterApiImpl flutterApi;
-  private Context context;
-
+public class WebChromeClientProxyApi extends PigeonApiWebChromeClient {
   /**
    * Implementation of {@link WebChromeClient} that passes arguments of callback methods to Dart.
    */
   public static class WebChromeClientImpl extends SecureWebChromeClient {
-    private final WebChromeClientFlutterApiImpl flutterApi;
+    private static final String TAG = "WebChromeClientImpl";
+
+    private final WebChromeClientProxyApi api;
     private boolean returnValueForOnShowFileChooser = false;
     private boolean returnValueForOnConsoleMessage = false;
 
@@ -49,38 +45,34 @@ public class WebChromeClientHostApiImpl implements WebChromeClientHostApi {
     private boolean returnValueForOnJsConfirm = false;
     private boolean returnValueForOnJsPrompt = false;
 
-    /**
-     * Creates a {@link WebChromeClient} that passes arguments of callbacks methods to Dart.
-     *
-     * @param flutterApi handles sending messages to Dart
-     */
-    public WebChromeClientImpl(@NonNull WebChromeClientFlutterApiImpl flutterApi) {
-      this.flutterApi = flutterApi;
+    /** Creates a {@link WebChromeClient} that passes arguments of callbacks methods to Dart. */
+    public WebChromeClientImpl(@NonNull WebChromeClientProxyApi api) {
+      this.api = api;
     }
 
     @Override
     public void onProgressChanged(@NonNull WebView view, int progress) {
-      flutterApi.onProgressChanged(this, view, (long) progress, reply -> {});
+      api.onProgressChanged(this, view, (long) progress, reply -> null);
     }
 
     @Override
     public void onShowCustomView(View view, WebChromeClient.CustomViewCallback callback) {
-      flutterApi.onShowCustomView(this, view, callback, reply -> {});
+      api.onShowCustomView(this, view, callback, reply -> null);
     }
 
     @Override
     public void onHideCustomView() {
-      flutterApi.onHideCustomView(this, reply -> {});
+      api.onHideCustomView(this, reply -> null);
     }
 
     public void onGeolocationPermissionsShowPrompt(
         @NonNull String origin, @NonNull GeolocationPermissions.Callback callback) {
-      flutterApi.onGeolocationPermissionsShowPrompt(this, origin, callback, reply -> {});
+      api.onGeolocationPermissionsShowPrompt(this, origin, callback, reply -> null);
     }
 
     @Override
     public void onGeolocationPermissionsHidePrompt() {
-      flutterApi.onGeolocationPermissionsHidePrompt(this, reply -> {});
+      api.onGeolocationPermissionsHidePrompt(this, reply -> null);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
@@ -91,20 +83,32 @@ public class WebChromeClientHostApiImpl implements WebChromeClientHostApi {
         @NonNull ValueCallback<Uri[]> filePathCallback,
         @NonNull FileChooserParams fileChooserParams) {
       final boolean currentReturnValueForOnShowFileChooser = returnValueForOnShowFileChooser;
-      flutterApi.onShowFileChooser(
+      api.onShowFileChooser(
           this,
           webView,
           fileChooserParams,
           reply -> {
+            final ResultCompat<List<String>> result = new ResultCompat<>(reply);
+
+            if (result.isFailure()) {
+              api.getPigeonRegistrar()
+                  .logError(TAG, Objects.requireNonNull(result.exceptionOrNull()));
+              return null;
+            }
+
+            final List<String> value = Objects.requireNonNull(result.getOrNull());
+
             // The returned list of file paths can only be passed to `filePathCallback` if the
             // `onShowFileChooser` method returned true.
             if (currentReturnValueForOnShowFileChooser) {
-              final Uri[] filePaths = new Uri[reply.size()];
-              for (int i = 0; i < reply.size(); i++) {
-                filePaths[i] = Uri.parse(reply.get(i));
+              final Uri[] filePaths = new Uri[value.size()];
+              for (int i = 0; i < value.size(); i++) {
+                filePaths[i] = Uri.parse(value.get(i));
               }
               filePathCallback.onReceiveValue(filePaths);
             }
+
+            return null;
           });
       return currentReturnValueForOnShowFileChooser;
     }
@@ -112,12 +116,12 @@ public class WebChromeClientHostApiImpl implements WebChromeClientHostApi {
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     public void onPermissionRequest(@NonNull PermissionRequest request) {
-      flutterApi.onPermissionRequest(this, request, reply -> {});
+      api.onPermissionRequest(this, request, reply -> null);
     }
 
     @Override
     public boolean onConsoleMessage(ConsoleMessage consoleMessage) {
-      flutterApi.onConsoleMessage(this, consoleMessage, reply -> {});
+      api.onConsoleMessage(this, consoleMessage, reply -> null);
       return returnValueForOnConsoleMessage;
     }
 
@@ -146,12 +150,22 @@ public class WebChromeClientHostApiImpl implements WebChromeClientHostApi {
     @Override
     public boolean onJsAlert(WebView view, String url, String message, JsResult result) {
       if (returnValueForOnJsAlert) {
-        flutterApi.onJsAlert(
+        api.onJsAlert(
             this,
+            view,
             url,
             message,
             reply -> {
+              final ResultCompat<Void> messageResult = new ResultCompat<>(reply);
+
+              if (messageResult.isFailure()) {
+                api.getPigeonRegistrar()
+                    .logError(TAG, Objects.requireNonNull(messageResult.exceptionOrNull()));
+                return null;
+              }
+
               result.confirm();
+              return null;
             });
         return true;
       } else {
@@ -162,16 +176,27 @@ public class WebChromeClientHostApiImpl implements WebChromeClientHostApi {
     @Override
     public boolean onJsConfirm(WebView view, String url, String message, JsResult result) {
       if (returnValueForOnJsConfirm) {
-        flutterApi.onJsConfirm(
+        api.onJsConfirm(
             this,
+            view,
             url,
             message,
             reply -> {
-              if (reply) {
+              final ResultCompat<Boolean> messageResult = new ResultCompat<>(reply);
+
+              if (messageResult.isFailure()) {
+                api.getPigeonRegistrar()
+                    .logError(TAG, Objects.requireNonNull(messageResult.exceptionOrNull()));
+                return null;
+              }
+
+              if (Boolean.TRUE.equals(messageResult.getOrNull())) {
                 result.confirm();
               } else {
                 result.cancel();
               }
+
+              return null;
             });
         return true;
       } else {
@@ -183,18 +208,30 @@ public class WebChromeClientHostApiImpl implements WebChromeClientHostApi {
     public boolean onJsPrompt(
         WebView view, String url, String message, String defaultValue, JsPromptResult result) {
       if (returnValueForOnJsPrompt) {
-        flutterApi.onJsPrompt(
+        api.onJsPrompt(
             this,
+            view,
             url,
             message,
             defaultValue,
             reply -> {
-              @Nullable String inputMessage = reply;
+              final ResultCompat<String> messageResult = new ResultCompat<>(reply);
+
+              if (messageResult.isFailure()) {
+                api.getPigeonRegistrar()
+                    .logError(TAG, Objects.requireNonNull(messageResult.exceptionOrNull()));
+                return null;
+              }
+
+              @Nullable final String inputMessage = messageResult.getOrNull();
+
               if (inputMessage != null) {
                 result.confirm(inputMessage);
               } else {
                 result.cancel();
               }
+
+              return null;
             });
         return true;
       } else {
@@ -291,81 +328,50 @@ public class WebChromeClientHostApiImpl implements WebChromeClientHostApi {
     }
   }
 
-  /** Handles creating {@link WebChromeClient}s for a {@link WebChromeClientHostApiImpl}. */
-  public static class WebChromeClientCreator {
-    /**
-     * Creates a {@link WebChromeClientHostApiImpl.WebChromeClientImpl}.
-     *
-     * @param flutterApi handles sending messages to Dart
-     * @return the created {@link WebChromeClientHostApiImpl.WebChromeClientImpl}
-     */
-    @NonNull
-    public WebChromeClientImpl createWebChromeClient(
-        @NonNull WebChromeClientFlutterApiImpl flutterApi) {
-      return new WebChromeClientImpl(flutterApi);
-    }
+  /** Creates a host API that handles creating {@link WebChromeClient}s. */
+  public WebChromeClientProxyApi(@NonNull ProxyApiRegistrar pigeonRegistrar) {
+    super(pigeonRegistrar);
   }
 
-  /**
-   * Creates a host API that handles creating {@link WebChromeClient}s.
-   *
-   * @param instanceManager maintains instances stored to communicate with Dart objects
-   * @param webChromeClientCreator handles creating {@link WebChromeClient}s
-   * @param flutterApi handles sending messages to Dart
-   */
-  public WebChromeClientHostApiImpl(
-      @NonNull InstanceManager instanceManager,
-      @NonNull WebChromeClientCreator webChromeClientCreator,
-      @NonNull WebChromeClientFlutterApiImpl flutterApi) {
-    this.instanceManager = instanceManager;
-    this.webChromeClientCreator = webChromeClientCreator;
-    this.flutterApi = flutterApi;
-  }
-
+  @NonNull
   @Override
-  public void create(@NonNull Long instanceId) {
-    final WebChromeClient webChromeClient =
-        webChromeClientCreator.createWebChromeClient(flutterApi);
-    instanceManager.addDartCreatedInstance(webChromeClient, instanceId);
+  public WebChromeClientImpl pigeon_defaultConstructor() {
+    return new WebChromeClientImpl(this);
   }
 
   @Override
   public void setSynchronousReturnValueForOnShowFileChooser(
-      @NonNull Long instanceId, @NonNull Boolean value) {
-    final WebChromeClientImpl webChromeClient =
-        Objects.requireNonNull(instanceManager.getInstance(instanceId));
-    webChromeClient.setReturnValueForOnShowFileChooser(value);
+      @NonNull WebChromeClientImpl pigeon_instance, boolean value) {
+    pigeon_instance.setReturnValueForOnShowFileChooser(value);
   }
 
   @Override
   public void setSynchronousReturnValueForOnConsoleMessage(
-      @NonNull Long instanceId, @NonNull Boolean value) {
-    final WebChromeClientImpl webChromeClient =
-        Objects.requireNonNull(instanceManager.getInstance(instanceId));
-    webChromeClient.setReturnValueForOnConsoleMessage(value);
+      @NonNull WebChromeClientImpl pigeon_instance, boolean value) {
+    pigeon_instance.setReturnValueForOnConsoleMessage(value);
   }
 
   @Override
   public void setSynchronousReturnValueForOnJsAlert(
-      @NonNull Long instanceId, @NonNull Boolean value) {
-    final WebChromeClientImpl webChromeClient =
-        Objects.requireNonNull(instanceManager.getInstance(instanceId));
-    webChromeClient.setReturnValueForOnJsAlert(value);
+      @NonNull WebChromeClientImpl pigeon_instance, boolean value) {
+    pigeon_instance.setReturnValueForOnJsAlert(value);
   }
 
   @Override
   public void setSynchronousReturnValueForOnJsConfirm(
-      @NonNull Long instanceId, @NonNull Boolean value) {
-    final WebChromeClientImpl webChromeClient =
-        Objects.requireNonNull(instanceManager.getInstance(instanceId));
-    webChromeClient.setReturnValueForOnJsConfirm(value);
+      @NonNull WebChromeClientImpl pigeon_instance, boolean value) {
+    pigeon_instance.setReturnValueForOnJsConfirm(value);
   }
 
   @Override
   public void setSynchronousReturnValueForOnJsPrompt(
-      @NonNull Long instanceId, @NonNull Boolean value) {
-    final WebChromeClientImpl webChromeClient =
-        Objects.requireNonNull(instanceManager.getInstance(instanceId));
-    webChromeClient.setReturnValueForOnJsPrompt(value);
+      @NonNull WebChromeClientImpl pigeon_instance, boolean value) {
+    pigeon_instance.setReturnValueForOnJsPrompt(value);
+  }
+
+  @NonNull
+  @Override
+  public ProxyApiRegistrar getPigeonRegistrar() {
+    return (ProxyApiRegistrar) super.getPigeonRegistrar();
   }
 }

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import androidx.annotation.ChecksSdkIntAtLeast;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
@@ -32,6 +33,17 @@ public class ProxyApiRegistrar extends PigeonProxyApiRegistrar {
     } else {
       new Handler(Looper.getMainLooper()).post(runnable);
     }
+  }
+
+  // For logging exception received from Host -> Dart message calls.
+  void logError(String tag, Throwable exception) {
+    Log.e(
+        tag,
+        String.format(
+            "%s, Message: %s, Stacktrace: %s",
+            exception.getClass().getSimpleName(),
+            exception.getMessage(),
+            Log.getStackTraceString(exception)));
   }
 
   @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
@@ -105,7 +117,7 @@ public class ProxyApiRegistrar extends PigeonProxyApiRegistrar {
   @NonNull
   @Override
   public PigeonApiWebChromeClient getPigeonApiWebChromeClient() {
-    return null;
+    return new WebChromeClientProxyApi(this);
   }
 
   @NonNull

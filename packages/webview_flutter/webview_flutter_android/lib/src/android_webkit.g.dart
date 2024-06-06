@@ -3848,6 +3848,9 @@ class WebChromeClient extends PigeonProxyApiBaseClass {
     this.onGeolocationPermissionsShowPrompt,
     this.onGeolocationPermissionsHidePrompt,
     this.onConsoleMessage,
+    this.onJsAlert,
+    this.onJsConfirm,
+    this.onJsPrompt,
   }) {
     final int __pigeon_instanceIdentifier =
         pigeon_instanceManager.addDartCreatedInstance(this);
@@ -3895,6 +3898,9 @@ class WebChromeClient extends PigeonProxyApiBaseClass {
     this.onGeolocationPermissionsShowPrompt,
     this.onGeolocationPermissionsHidePrompt,
     this.onConsoleMessage,
+    this.onJsAlert,
+    this.onJsConfirm,
+    this.onJsPrompt,
   });
 
   late final _PigeonProxyApiBaseCodec __pigeon_codecWebChromeClient =
@@ -4098,6 +4104,88 @@ class WebChromeClient extends PigeonProxyApiBaseClass {
     ConsoleMessage message,
   )? onConsoleMessage;
 
+  /// Notify the host application that the web page wants to display a
+  /// JavaScript `alert()` dialog.
+  ///
+  /// For the associated Native object to be automatically garbage collected,
+  /// it is required that the implementation of this `Function` doesn't have a
+  /// strong reference to the encapsulating class instance. When this `Function`
+  /// references a non-local variable, it is strongly recommended to access it
+  /// with a `WeakReference`:
+  ///
+  /// ```dart
+  /// final WeakReference weakMyVariable = WeakReference(myVariable);
+  /// final WebChromeClient instance = WebChromeClient(
+  ///  onJsAlert: (WebChromeClient pigeon_instance, ...) {
+  ///    print(weakMyVariable?.target);
+  ///  },
+  /// );
+  /// ```
+  ///
+  /// Alternatively, [PigeonInstanceManager.removeWeakReference] can be used to
+  /// release the associated Native object manually.
+  final Future<void> Function(
+    WebChromeClient pigeon_instance,
+    WebView webView,
+    String url,
+    String message,
+  )? onJsAlert;
+
+  /// Notify the host application that the web page wants to display a
+  /// JavaScript `confirm()` dialog.
+  ///
+  /// For the associated Native object to be automatically garbage collected,
+  /// it is required that the implementation of this `Function` doesn't have a
+  /// strong reference to the encapsulating class instance. When this `Function`
+  /// references a non-local variable, it is strongly recommended to access it
+  /// with a `WeakReference`:
+  ///
+  /// ```dart
+  /// final WeakReference weakMyVariable = WeakReference(myVariable);
+  /// final WebChromeClient instance = WebChromeClient(
+  ///  onJsConfirm: (WebChromeClient pigeon_instance, ...) {
+  ///    print(weakMyVariable?.target);
+  ///  },
+  /// );
+  /// ```
+  ///
+  /// Alternatively, [PigeonInstanceManager.removeWeakReference] can be used to
+  /// release the associated Native object manually.
+  final Future<bool> Function(
+    WebChromeClient pigeon_instance,
+    WebView webView,
+    String url,
+    String message,
+  )? onJsConfirm;
+
+  /// Notify the host application that the web page wants to display a
+  /// JavaScript `prompt()` dialog.
+  ///
+  /// For the associated Native object to be automatically garbage collected,
+  /// it is required that the implementation of this `Function` doesn't have a
+  /// strong reference to the encapsulating class instance. When this `Function`
+  /// references a non-local variable, it is strongly recommended to access it
+  /// with a `WeakReference`:
+  ///
+  /// ```dart
+  /// final WeakReference weakMyVariable = WeakReference(myVariable);
+  /// final WebChromeClient instance = WebChromeClient(
+  ///  onJsPrompt: (WebChromeClient pigeon_instance, ...) {
+  ///    print(weakMyVariable?.target);
+  ///  },
+  /// );
+  /// ```
+  ///
+  /// Alternatively, [PigeonInstanceManager.removeWeakReference] can be used to
+  /// release the associated Native object manually.
+  final Future<String?> Function(
+    WebChromeClient pigeon_instance,
+    WebView webView,
+    String url,
+    String message,
+    String defaultValue,
+  )? onJsPrompt;
+
   static void pigeon_setUpMessageHandlers({
     bool pigeon_clearHandlers = false,
     BinaryMessenger? pigeon_binaryMessenger,
@@ -4134,6 +4222,25 @@ class WebChromeClient extends PigeonProxyApiBaseClass {
       WebChromeClient pigeon_instance,
       ConsoleMessage message,
     )? onConsoleMessage,
+    Future<void> Function(
+      WebChromeClient pigeon_instance,
+      WebView webView,
+      String url,
+      String message,
+    )? onJsAlert,
+    Future<bool> Function(
+      WebChromeClient pigeon_instance,
+      WebView webView,
+      String url,
+      String message,
+    )? onJsConfirm,
+    Future<String?> Function(
+      WebChromeClient pigeon_instance,
+      WebView webView,
+      String url,
+      String message,
+      String defaultValue,
+    )? onJsPrompt,
   }) {
     final _PigeonProxyApiBaseCodec pigeonChannelCodec =
         _PigeonProxyApiBaseCodec(
@@ -4459,6 +4566,135 @@ class WebChromeClient extends PigeonProxyApiBaseClass {
         });
       }
     }
+
+    {
+      final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
+              Object?>(
+          'dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onJsAlert',
+          pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
+      if (pigeon_clearHandlers) {
+        __pigeon_channel.setMessageHandler(null);
+      } else {
+        __pigeon_channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onJsAlert was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final WebChromeClient? arg_pigeon_instance =
+              (args[0] as WebChromeClient?);
+          assert(arg_pigeon_instance != null,
+              'Argument for dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onJsAlert was null, expected non-null WebChromeClient.');
+          final WebView? arg_webView = (args[1] as WebView?);
+          assert(arg_webView != null,
+              'Argument for dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onJsAlert was null, expected non-null WebView.');
+          final String? arg_url = (args[2] as String?);
+          assert(arg_url != null,
+              'Argument for dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onJsAlert was null, expected non-null String.');
+          final String? arg_message = (args[3] as String?);
+          assert(arg_message != null,
+              'Argument for dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onJsAlert was null, expected non-null String.');
+          try {
+            await (onJsAlert ?? arg_pigeon_instance!.onJsAlert)?.call(
+                arg_pigeon_instance!, arg_webView!, arg_url!, arg_message!);
+            return wrapResponse(empty: true);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
+        });
+      }
+    }
+
+    {
+      final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
+              Object?>(
+          'dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onJsConfirm',
+          pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
+      if (pigeon_clearHandlers) {
+        __pigeon_channel.setMessageHandler(null);
+      } else {
+        __pigeon_channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onJsConfirm was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final WebChromeClient? arg_pigeon_instance =
+              (args[0] as WebChromeClient?);
+          assert(arg_pigeon_instance != null,
+              'Argument for dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onJsConfirm was null, expected non-null WebChromeClient.');
+          final WebView? arg_webView = (args[1] as WebView?);
+          assert(arg_webView != null,
+              'Argument for dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onJsConfirm was null, expected non-null WebView.');
+          final String? arg_url = (args[2] as String?);
+          assert(arg_url != null,
+              'Argument for dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onJsConfirm was null, expected non-null String.');
+          final String? arg_message = (args[3] as String?);
+          assert(arg_message != null,
+              'Argument for dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onJsConfirm was null, expected non-null String.');
+          try {
+            final bool? output =
+                await (onJsConfirm ?? arg_pigeon_instance!.onJsConfirm)?.call(
+                    arg_pigeon_instance!, arg_webView!, arg_url!, arg_message!);
+            return wrapResponse(result: output);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
+        });
+      }
+    }
+
+    {
+      final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
+              Object?>(
+          'dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onJsPrompt',
+          pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
+      if (pigeon_clearHandlers) {
+        __pigeon_channel.setMessageHandler(null);
+      } else {
+        __pigeon_channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onJsPrompt was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final WebChromeClient? arg_pigeon_instance =
+              (args[0] as WebChromeClient?);
+          assert(arg_pigeon_instance != null,
+              'Argument for dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onJsPrompt was null, expected non-null WebChromeClient.');
+          final WebView? arg_webView = (args[1] as WebView?);
+          assert(arg_webView != null,
+              'Argument for dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onJsPrompt was null, expected non-null WebView.');
+          final String? arg_url = (args[2] as String?);
+          assert(arg_url != null,
+              'Argument for dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onJsPrompt was null, expected non-null String.');
+          final String? arg_message = (args[3] as String?);
+          assert(arg_message != null,
+              'Argument for dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onJsPrompt was null, expected non-null String.');
+          final String? arg_defaultValue = (args[4] as String?);
+          assert(arg_defaultValue != null,
+              'Argument for dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onJsPrompt was null, expected non-null String.');
+          try {
+            final String? output =
+                await (onJsPrompt ?? arg_pigeon_instance!.onJsPrompt)?.call(
+                    arg_pigeon_instance!,
+                    arg_webView!,
+                    arg_url!,
+                    arg_message!,
+                    arg_defaultValue!);
+            return wrapResponse(result: output);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
+        });
+      }
+    }
   }
 
   /// Sets the required synchronous return value for the Java method,
@@ -4543,6 +4779,126 @@ class WebChromeClient extends PigeonProxyApiBaseClass {
     }
   }
 
+  /// Sets the required synchronous return value for the Java method,
+  /// `WebChromeClient.onJsAlert(...)`.
+  ///
+  /// The Java method, `WebChromeClient.onJsAlert(...)`, requires a boolean to
+  /// be returned and this method sets the returned value for all calls to the
+  /// Java method.
+  ///
+  /// Setting this to true indicates that the client is handling all console
+  /// messages.
+  ///
+  /// Requires `onJsAlert` to be nonnull.
+  ///
+  /// Defaults to false.
+  Future<void> setSynchronousReturnValueForOnJsAlert(bool value) async {
+    final _PigeonProxyApiBaseCodec pigeonChannelCodec =
+        __pigeon_codecWebChromeClient;
+    final BinaryMessenger? __pigeon_binaryMessenger = pigeon_binaryMessenger;
+    const String __pigeon_channelName =
+        'dev.flutter.pigeon.webview_flutter_android.WebChromeClient.setSynchronousReturnValueForOnJsAlert';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: __pigeon_binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        await __pigeon_channel.send(<Object?>[this, value]) as List<Object?>?;
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: __pigeon_replyList[0]! as String,
+        message: __pigeon_replyList[1] as String?,
+        details: __pigeon_replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  /// Sets the required synchronous return value for the Java method,
+  /// `WebChromeClient.onJsConfirm(...)`.
+  ///
+  /// The Java method, `WebChromeClient.onJsConfirm(...)`, requires a boolean to
+  /// be returned and this method sets the returned value for all calls to the
+  /// Java method.
+  ///
+  /// Setting this to true indicates that the client is handling all console
+  /// messages.
+  ///
+  /// Requires `onJsConfirm` to be nonnull.
+  ///
+  /// Defaults to false.
+  Future<void> setSynchronousReturnValueForOnJsConfirm(bool value) async {
+    final _PigeonProxyApiBaseCodec pigeonChannelCodec =
+        __pigeon_codecWebChromeClient;
+    final BinaryMessenger? __pigeon_binaryMessenger = pigeon_binaryMessenger;
+    const String __pigeon_channelName =
+        'dev.flutter.pigeon.webview_flutter_android.WebChromeClient.setSynchronousReturnValueForOnJsConfirm';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: __pigeon_binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        await __pigeon_channel.send(<Object?>[this, value]) as List<Object?>?;
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: __pigeon_replyList[0]! as String,
+        message: __pigeon_replyList[1] as String?,
+        details: __pigeon_replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  /// Sets the required synchronous return value for the Java method,
+  /// `WebChromeClient.onJsPrompt(...)`.
+  ///
+  /// The Java method, `WebChromeClient.onJsPrompt(...)`, requires a boolean to
+  /// be returned and this method sets the returned value for all calls to the
+  /// Java method.
+  ///
+  /// Setting this to true indicates that the client is handling all console
+  /// messages.
+  ///
+  /// Requires `onJsPrompt` to be nonnull.
+  ///
+  /// Defaults to false.
+  Future<void> setSynchronousReturnValueForOnJsPrompt(bool value) async {
+    final _PigeonProxyApiBaseCodec pigeonChannelCodec =
+        __pigeon_codecWebChromeClient;
+    final BinaryMessenger? __pigeon_binaryMessenger = pigeon_binaryMessenger;
+    const String __pigeon_channelName =
+        'dev.flutter.pigeon.webview_flutter_android.WebChromeClient.setSynchronousReturnValueForOnJsPrompt';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: __pigeon_binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        await __pigeon_channel.send(<Object?>[this, value]) as List<Object?>?;
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: __pigeon_replyList[0]! as String,
+        message: __pigeon_replyList[1] as String?,
+        details: __pigeon_replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
   @override
   WebChromeClient pigeon_copy() {
     return WebChromeClient.pigeon_detached(
@@ -4556,6 +4912,9 @@ class WebChromeClient extends PigeonProxyApiBaseClass {
       onGeolocationPermissionsShowPrompt: onGeolocationPermissionsShowPrompt,
       onGeolocationPermissionsHidePrompt: onGeolocationPermissionsHidePrompt,
       onConsoleMessage: onConsoleMessage,
+      onJsAlert: onJsAlert,
+      onJsConfirm: onJsConfirm,
+      onJsPrompt: onJsPrompt,
     );
   }
 }

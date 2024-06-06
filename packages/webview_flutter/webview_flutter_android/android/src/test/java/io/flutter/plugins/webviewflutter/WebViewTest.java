@@ -277,9 +277,9 @@ public class WebViewTest {
   public void defaultWebChromeClientIsSecureWebChromeClient() {
     final WebViewPlatformView webView = new WebViewPlatformView(mockContext, null, null);
     assertTrue(
-        webView.getWebChromeClient() instanceof WebChromeClientHostApiImpl.SecureWebChromeClient);
+        webView.getWebChromeClient() instanceof WebChromeClientProxyApi.SecureWebChromeClient);
     assertFalse(
-        webView.getWebChromeClient() instanceof WebChromeClientHostApiImpl.WebChromeClientImpl);
+        webView.getWebChromeClient() instanceof WebChromeClientProxyApi.WebChromeClientImpl);
   }
 
   @Test

@@ -571,7 +571,8 @@ private class PigeonProxyApiBaseCodec(val registrar: PigeonProxyApiRegistrar) :
       registrar.getPigeonApiWebViewClient().pigeon_newInstance(value) {}
     } else if (value is android.webkit.DownloadListener) {
       registrar.getPigeonApiDownloadListener().pigeon_newInstance(value) {}
-    } else if (value is android.webkit.WebChromeClient) {
+    } else if (value
+        is io.flutter.plugins.webviewflutter.WebChromeClientProxyApi.WebChromeClientImpl) {
       registrar.getPigeonApiWebChromeClient().pigeon_newInstance(value) {}
     } else if (value is io.flutter.plugins.webviewflutter.FlutterAssetManager) {
       registrar.getPigeonApiFlutterAssetManager().pigeon_newInstance(value) {}
@@ -1268,7 +1269,7 @@ abstract class PigeonApiWebView(open val pigeonRegistrar: PigeonProxyApiRegistra
   /** Sets the chrome handler. */
   abstract fun setWebChromeClient(
       pigeon_instance: android.webkit.WebView,
-      client: android.webkit.WebChromeClient?
+      client: io.flutter.plugins.webviewflutter.WebChromeClientProxyApi.WebChromeClientImpl?
   )
 
   /** Sets the background color for this view. */
@@ -1769,7 +1770,10 @@ abstract class PigeonApiWebView(open val pigeonRegistrar: PigeonProxyApiRegistra
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as android.webkit.WebView
-            val clientArg = args[1] as android.webkit.WebChromeClient?
+            val clientArg =
+                args[1]
+                    as
+                    io.flutter.plugins.webviewflutter.WebChromeClientProxyApi.WebChromeClientImpl?
             val wrapped: List<Any?> =
                 try {
                   api.setWebChromeClient(pigeon_instanceArg, clientArg)
@@ -2924,7 +2928,8 @@ abstract class PigeonApiDownloadListener(open val pigeonRegistrar: PigeonProxyAp
  */
 @Suppress("UNCHECKED_CAST")
 abstract class PigeonApiWebChromeClient(open val pigeonRegistrar: PigeonProxyApiRegistrar) {
-  abstract fun pigeon_defaultConstructor(): android.webkit.WebChromeClient
+  abstract fun pigeon_defaultConstructor():
+      io.flutter.plugins.webviewflutter.WebChromeClientProxyApi.WebChromeClientImpl
 
   /**
    * Sets the required synchronous return value for the Java method,
@@ -2943,7 +2948,8 @@ abstract class PigeonApiWebChromeClient(open val pigeonRegistrar: PigeonProxyApi
    * Defaults to false.
    */
   abstract fun setSynchronousReturnValueForOnShowFileChooser(
-      pigeon_instance: android.webkit.WebChromeClient,
+      pigeon_instance:
+          io.flutter.plugins.webviewflutter.WebChromeClientProxyApi.WebChromeClientImpl,
       value: Boolean
   )
 
@@ -2961,7 +2967,65 @@ abstract class PigeonApiWebChromeClient(open val pigeonRegistrar: PigeonProxyApi
    * Defaults to false.
    */
   abstract fun setSynchronousReturnValueForOnConsoleMessage(
-      pigeon_instance: android.webkit.WebChromeClient,
+      pigeon_instance:
+          io.flutter.plugins.webviewflutter.WebChromeClientProxyApi.WebChromeClientImpl,
+      value: Boolean
+  )
+
+  /**
+   * Sets the required synchronous return value for the Java method,
+   * `WebChromeClient.onJsAlert(...)`.
+   *
+   * The Java method, `WebChromeClient.onJsAlert(...)`, requires a boolean to be returned and this
+   * method sets the returned value for all calls to the Java method.
+   *
+   * Setting this to true indicates that the client is handling all console messages.
+   *
+   * Requires `onJsAlert` to be nonnull.
+   *
+   * Defaults to false.
+   */
+  abstract fun setSynchronousReturnValueForOnJsAlert(
+      pigeon_instance:
+          io.flutter.plugins.webviewflutter.WebChromeClientProxyApi.WebChromeClientImpl,
+      value: Boolean
+  )
+
+  /**
+   * Sets the required synchronous return value for the Java method,
+   * `WebChromeClient.onJsConfirm(...)`.
+   *
+   * The Java method, `WebChromeClient.onJsConfirm(...)`, requires a boolean to be returned and this
+   * method sets the returned value for all calls to the Java method.
+   *
+   * Setting this to true indicates that the client is handling all console messages.
+   *
+   * Requires `onJsConfirm` to be nonnull.
+   *
+   * Defaults to false.
+   */
+  abstract fun setSynchronousReturnValueForOnJsConfirm(
+      pigeon_instance:
+          io.flutter.plugins.webviewflutter.WebChromeClientProxyApi.WebChromeClientImpl,
+      value: Boolean
+  )
+
+  /**
+   * Sets the required synchronous return value for the Java method,
+   * `WebChromeClient.onJsPrompt(...)`.
+   *
+   * The Java method, `WebChromeClient.onJsPrompt(...)`, requires a boolean to be returned and this
+   * method sets the returned value for all calls to the Java method.
+   *
+   * Setting this to true indicates that the client is handling all console messages.
+   *
+   * Requires `onJsPrompt` to be nonnull.
+   *
+   * Defaults to false.
+   */
+  abstract fun setSynchronousReturnValueForOnJsPrompt(
+      pigeon_instance:
+          io.flutter.plugins.webviewflutter.WebChromeClientProxyApi.WebChromeClientImpl,
       value: Boolean
   )
 
@@ -3003,7 +3067,9 @@ abstract class PigeonApiWebChromeClient(open val pigeonRegistrar: PigeonProxyApi
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val pigeon_instanceArg = args[0] as android.webkit.WebChromeClient
+            val pigeon_instanceArg =
+                args[0]
+                    as io.flutter.plugins.webviewflutter.WebChromeClientProxyApi.WebChromeClientImpl
             val valueArg = args[1] as Boolean
             val wrapped: List<Any?> =
                 try {
@@ -3027,11 +3093,91 @@ abstract class PigeonApiWebChromeClient(open val pigeonRegistrar: PigeonProxyApi
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val pigeon_instanceArg = args[0] as android.webkit.WebChromeClient
+            val pigeon_instanceArg =
+                args[0]
+                    as io.flutter.plugins.webviewflutter.WebChromeClientProxyApi.WebChromeClientImpl
             val valueArg = args[1] as Boolean
             val wrapped: List<Any?> =
                 try {
                   api.setSynchronousReturnValueForOnConsoleMessage(pigeon_instanceArg, valueArg)
+                  listOf<Any?>(null)
+                } catch (exception: Throwable) {
+                  wrapError(exception)
+                }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.webview_flutter_android.WebChromeClient.setSynchronousReturnValueForOnJsAlert",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg =
+                args[0]
+                    as io.flutter.plugins.webviewflutter.WebChromeClientProxyApi.WebChromeClientImpl
+            val valueArg = args[1] as Boolean
+            val wrapped: List<Any?> =
+                try {
+                  api.setSynchronousReturnValueForOnJsAlert(pigeon_instanceArg, valueArg)
+                  listOf<Any?>(null)
+                } catch (exception: Throwable) {
+                  wrapError(exception)
+                }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.webview_flutter_android.WebChromeClient.setSynchronousReturnValueForOnJsConfirm",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg =
+                args[0]
+                    as io.flutter.plugins.webviewflutter.WebChromeClientProxyApi.WebChromeClientImpl
+            val valueArg = args[1] as Boolean
+            val wrapped: List<Any?> =
+                try {
+                  api.setSynchronousReturnValueForOnJsConfirm(pigeon_instanceArg, valueArg)
+                  listOf<Any?>(null)
+                } catch (exception: Throwable) {
+                  wrapError(exception)
+                }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.webview_flutter_android.WebChromeClient.setSynchronousReturnValueForOnJsPrompt",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg =
+                args[0]
+                    as io.flutter.plugins.webviewflutter.WebChromeClientProxyApi.WebChromeClientImpl
+            val valueArg = args[1] as Boolean
+            val wrapped: List<Any?> =
+                try {
+                  api.setSynchronousReturnValueForOnJsPrompt(pigeon_instanceArg, valueArg)
                   listOf<Any?>(null)
                 } catch (exception: Throwable) {
                   wrapError(exception)
@@ -3048,7 +3194,8 @@ abstract class PigeonApiWebChromeClient(open val pigeonRegistrar: PigeonProxyApi
   @Suppress("LocalVariableName", "FunctionName")
   /** Creates a Dart instance of WebChromeClient and attaches it to [pigeon_instanceArg]. */
   fun pigeon_newInstance(
-      pigeon_instanceArg: android.webkit.WebChromeClient,
+      pigeon_instanceArg:
+          io.flutter.plugins.webviewflutter.WebChromeClientProxyApi.WebChromeClientImpl,
       callback: (Result<Unit>) -> Unit
   ) {
     if (pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) {
@@ -3079,7 +3226,8 @@ abstract class PigeonApiWebChromeClient(open val pigeonRegistrar: PigeonProxyApi
 
   /** Tell the host application the current progress of loading a page. */
   fun onProgressChanged(
-      pigeon_instanceArg: android.webkit.WebChromeClient,
+      pigeon_instanceArg:
+          io.flutter.plugins.webviewflutter.WebChromeClientProxyApi.WebChromeClientImpl,
       webViewArg: android.webkit.WebView,
       progressArg: Long,
       callback: (Result<Unit>) -> Unit
@@ -3106,7 +3254,8 @@ abstract class PigeonApiWebChromeClient(open val pigeonRegistrar: PigeonProxyApi
   /** Tell the client to show a file chooser. */
   @androidx.annotation.RequiresApi(api = 21)
   fun onShowFileChooser(
-      pigeon_instanceArg: android.webkit.WebChromeClient,
+      pigeon_instanceArg:
+          io.flutter.plugins.webviewflutter.WebChromeClientProxyApi.WebChromeClientImpl,
       webViewArg: android.webkit.WebView,
       paramsArg: android.webkit.WebChromeClient.FileChooserParams,
       callback: (Result<List<String>>) -> Unit
@@ -3144,7 +3293,8 @@ abstract class PigeonApiWebChromeClient(open val pigeonRegistrar: PigeonProxyApi
    */
   @androidx.annotation.RequiresApi(api = 21)
   fun onPermissionRequest(
-      pigeon_instanceArg: android.webkit.WebChromeClient,
+      pigeon_instanceArg:
+          io.flutter.plugins.webviewflutter.WebChromeClientProxyApi.WebChromeClientImpl,
       requestArg: android.webkit.PermissionRequest,
       callback: (Result<Unit>) -> Unit
   ) {
@@ -3170,7 +3320,8 @@ abstract class PigeonApiWebChromeClient(open val pigeonRegistrar: PigeonProxyApi
 
   /** Callback to Dart function `WebChromeClient.onShowCustomView`. */
   fun onShowCustomView(
-      pigeon_instanceArg: android.webkit.WebChromeClient,
+      pigeon_instanceArg:
+          io.flutter.plugins.webviewflutter.WebChromeClientProxyApi.WebChromeClientImpl,
       viewArg: android.view.View,
       callbackArg: android.webkit.WebChromeClient.CustomViewCallback,
       callback: (Result<Unit>) -> Unit
@@ -3196,7 +3347,8 @@ abstract class PigeonApiWebChromeClient(open val pigeonRegistrar: PigeonProxyApi
 
   /** Notify the host application that the current page has entered full screen mode. */
   fun onHideCustomView(
-      pigeon_instanceArg: android.webkit.WebChromeClient,
+      pigeon_instanceArg:
+          io.flutter.plugins.webviewflutter.WebChromeClientProxyApi.WebChromeClientImpl,
       callback: (Result<Unit>) -> Unit
   ) {
     val binaryMessenger = pigeonRegistrar.binaryMessenger
@@ -3223,7 +3375,8 @@ abstract class PigeonApiWebChromeClient(open val pigeonRegistrar: PigeonProxyApi
    * Geolocation API, but no permission state is currently set for that origin.
    */
   fun onGeolocationPermissionsShowPrompt(
-      pigeon_instanceArg: android.webkit.WebChromeClient,
+      pigeon_instanceArg:
+          io.flutter.plugins.webviewflutter.WebChromeClientProxyApi.WebChromeClientImpl,
       originArg: String,
       callbackArg: android.webkit.GeolocationPermissions.Callback,
       callback: (Result<Unit>) -> Unit
@@ -3253,7 +3406,8 @@ abstract class PigeonApiWebChromeClient(open val pigeonRegistrar: PigeonProxyApi
    * call to `onGeolocationPermissionsShowPrompt` has been canceled.
    */
   fun onGeolocationPermissionsHidePrompt(
-      pigeon_instanceArg: android.webkit.WebChromeClient,
+      pigeon_instanceArg:
+          io.flutter.plugins.webviewflutter.WebChromeClientProxyApi.WebChromeClientImpl,
       callback: (Result<Unit>) -> Unit
   ) {
     val binaryMessenger = pigeonRegistrar.binaryMessenger
@@ -3278,7 +3432,8 @@ abstract class PigeonApiWebChromeClient(open val pigeonRegistrar: PigeonProxyApi
 
   /** Report a JavaScript console message to the host application. */
   fun onConsoleMessage(
-      pigeon_instanceArg: android.webkit.WebChromeClient,
+      pigeon_instanceArg:
+          io.flutter.plugins.webviewflutter.WebChromeClientProxyApi.WebChromeClientImpl,
       messageArg: android.webkit.ConsoleMessage,
       callback: (Result<Unit>) -> Unit
   ) {
@@ -3294,6 +3449,106 @@ abstract class PigeonApiWebChromeClient(open val pigeonRegistrar: PigeonProxyApi
                   AndroidWebKitError(it[0] as String, it[1] as String, it[2] as String?)))
         } else {
           callback(Result.success(Unit))
+        }
+      } else {
+        callback(Result.failure(createConnectionError(channelName)))
+      }
+    }
+  }
+
+  /**
+   * Notify the host application that the web page wants to display a JavaScript `alert()` dialog.
+   */
+  fun onJsAlert(
+      pigeon_instanceArg:
+          io.flutter.plugins.webviewflutter.WebChromeClientProxyApi.WebChromeClientImpl,
+      webViewArg: android.webkit.WebView,
+      urlArg: String,
+      messageArg: String,
+      callback: (Result<Unit>) -> Unit
+  ) {
+    val binaryMessenger = pigeonRegistrar.binaryMessenger
+    val codec = pigeonRegistrar.codec
+    val channelName = "dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onJsAlert"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(listOf(pigeon_instanceArg, webViewArg, urlArg, messageArg)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(
+              Result.failure(
+                  AndroidWebKitError(it[0] as String, it[1] as String, it[2] as String?)))
+        } else {
+          callback(Result.success(Unit))
+        }
+      } else {
+        callback(Result.failure(createConnectionError(channelName)))
+      }
+    }
+  }
+
+  /**
+   * Notify the host application that the web page wants to display a JavaScript `confirm()` dialog.
+   */
+  fun onJsConfirm(
+      pigeon_instanceArg:
+          io.flutter.plugins.webviewflutter.WebChromeClientProxyApi.WebChromeClientImpl,
+      webViewArg: android.webkit.WebView,
+      urlArg: String,
+      messageArg: String,
+      callback: (Result<Boolean>) -> Unit
+  ) {
+    val binaryMessenger = pigeonRegistrar.binaryMessenger
+    val codec = pigeonRegistrar.codec
+    val channelName = "dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onJsConfirm"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(listOf(pigeon_instanceArg, webViewArg, urlArg, messageArg)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(
+              Result.failure(
+                  AndroidWebKitError(it[0] as String, it[1] as String, it[2] as String?)))
+        } else if (it[0] == null) {
+          callback(
+              Result.failure(
+                  AndroidWebKitError(
+                      "null-error",
+                      "Flutter api returned null value for non-null return value.",
+                      "")))
+        } else {
+          val output = it[0] as Boolean
+          callback(Result.success(output))
+        }
+      } else {
+        callback(Result.failure(createConnectionError(channelName)))
+      }
+    }
+  }
+
+  /**
+   * Notify the host application that the web page wants to display a JavaScript `prompt()` dialog.
+   */
+  fun onJsPrompt(
+      pigeon_instanceArg:
+          io.flutter.plugins.webviewflutter.WebChromeClientProxyApi.WebChromeClientImpl,
+      webViewArg: android.webkit.WebView,
+      urlArg: String,
+      messageArg: String,
+      defaultValueArg: String,
+      callback: (Result<String?>) -> Unit
+  ) {
+    val binaryMessenger = pigeonRegistrar.binaryMessenger
+    val codec = pigeonRegistrar.codec
+    val channelName = "dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onJsPrompt"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(listOf(pigeon_instanceArg, webViewArg, urlArg, messageArg, defaultValueArg)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(
+              Result.failure(
+                  AndroidWebKitError(it[0] as String, it[1] as String, it[2] as String?)))
+        } else {
+          val output = it[0] as String?
+          callback(Result.success(output))
         }
       } else {
         callback(Result.failure(createConnectionError(channelName)))

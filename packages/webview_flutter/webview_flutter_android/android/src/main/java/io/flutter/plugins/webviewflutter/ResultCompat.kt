@@ -6,7 +6,10 @@ package io.flutter.plugins.webviewflutter
  * It is intended to solve the problem of being unable to obtain [kotlin.Result] in Java.
  */
 @Suppress("UNCHECKED_CAST")
-class ResultCompat {
+class ResultCompat<T>(private val result: Result<T>) {
+  val isSuccess = result.isSuccess
+  val isFailure = result.isFailure
+
   companion object {
     @JvmStatic
     fun <T> success(value: T, callback: Any) {
@@ -18,5 +21,13 @@ class ResultCompat {
     fun failureBoolean(throwable: Throwable, callback: (Result<Boolean>) -> Unit) {
       callback(Result.failure(throwable))
     }
+  }
+
+  fun exceptionOrNull(): Throwable? {
+    return result.exceptionOrNull()
+  }
+
+  fun getOrNull(): T? {
+    return result.getOrNull()
   }
 }

@@ -483,7 +483,8 @@ abstract class DownloadListener {
 /// See https://developer.android.com/reference/android/webkit/WebChromeClient.
 @ProxyApi(
   kotlinOptions: KotlinProxyApiOptions(
-    fullClassName: 'android.webkit.WebChromeClient',
+    fullClassName:
+        'io.flutter.plugins.webviewflutter.WebChromeClientProxyApi.WebChromeClientImpl',
   ),
 )
 abstract class WebChromeClient {
@@ -530,6 +531,26 @@ abstract class WebChromeClient {
   /// Report a JavaScript console message to the host application.
   late void Function(ConsoleMessage message)? onConsoleMessage;
 
+  /// Notify the host application that the web page wants to display a
+  /// JavaScript `alert()` dialog.
+  @async
+  late void Function(WebView webView, String url, String message)? onJsAlert;
+
+  /// Notify the host application that the web page wants to display a
+  /// JavaScript `confirm()` dialog.
+  @async
+  late bool Function(WebView webView, String url, String message)? onJsConfirm;
+
+  /// Notify the host application that the web page wants to display a
+  /// JavaScript `prompt()` dialog.
+  @async
+  late String? Function(
+    WebView webView,
+    String url,
+    String message,
+    String defaultValue,
+  )? onJsPrompt;
+
   /// Sets the required synchronous return value for the Java method,
   /// `WebChromeClient.onShowFileChooser(...)`.
   ///
@@ -561,6 +582,51 @@ abstract class WebChromeClient {
   ///
   /// Defaults to false.
   void setSynchronousReturnValueForOnConsoleMessage(bool value);
+
+  /// Sets the required synchronous return value for the Java method,
+  /// `WebChromeClient.onJsAlert(...)`.
+  ///
+  /// The Java method, `WebChromeClient.onJsAlert(...)`, requires a boolean to
+  /// be returned and this method sets the returned value for all calls to the
+  /// Java method.
+  ///
+  /// Setting this to true indicates that the client is handling all console
+  /// messages.
+  ///
+  /// Requires `onJsAlert` to be nonnull.
+  ///
+  /// Defaults to false.
+  void setSynchronousReturnValueForOnJsAlert(bool value);
+
+  /// Sets the required synchronous return value for the Java method,
+  /// `WebChromeClient.onJsConfirm(...)`.
+  ///
+  /// The Java method, `WebChromeClient.onJsConfirm(...)`, requires a boolean to
+  /// be returned and this method sets the returned value for all calls to the
+  /// Java method.
+  ///
+  /// Setting this to true indicates that the client is handling all console
+  /// messages.
+  ///
+  /// Requires `onJsConfirm` to be nonnull.
+  ///
+  /// Defaults to false.
+  void setSynchronousReturnValueForOnJsConfirm(bool value);
+
+  /// Sets the required synchronous return value for the Java method,
+  /// `WebChromeClient.onJsPrompt(...)`.
+  ///
+  /// The Java method, `WebChromeClient.onJsPrompt(...)`, requires a boolean to
+  /// be returned and this method sets the returned value for all calls to the
+  /// Java method.
+  ///
+  /// Setting this to true indicates that the client is handling all console
+  /// messages.
+  ///
+  /// Requires `onJsPrompt` to be nonnull.
+  ///
+  /// Defaults to false.
+  void setSynchronousReturnValueForOnJsPrompt(bool value);
 }
 
 /// Provides access to the assets registered as part of the App bundle.

@@ -37,13 +37,13 @@ public class WebViewProxyApi extends PigeonApiWebView {
 
     private WebViewClient currentWebViewClient;
 
-    private WebChromeClientHostApiImpl.SecureWebChromeClient currentWebChromeClient;
+    private WebChromeClientProxyApi.SecureWebChromeClient currentWebChromeClient;
 
     WebViewPlatformView(@NonNull WebViewProxyApi api) {
       super(api.getPigeonRegistrar().getContext());
       this.api = api;
       currentWebViewClient = new WebViewClient();
-      currentWebChromeClient = new WebChromeClientHostApiImpl.SecureWebChromeClient();
+      currentWebChromeClient = new WebChromeClientProxyApi.SecureWebChromeClient();
 
       setWebViewClient(currentWebViewClient);
       setWebChromeClient(currentWebChromeClient);
@@ -97,10 +97,10 @@ public class WebViewProxyApi extends PigeonApiWebView {
     @Override
     public void setWebChromeClient(@Nullable WebChromeClient client) {
       super.setWebChromeClient(client);
-      if (!(client instanceof WebChromeClientHostApiImpl.SecureWebChromeClient)) {
+      if (!(client instanceof WebChromeClientProxyApi.SecureWebChromeClient)) {
         throw new AssertionError("Client must be a SecureWebChromeClient.");
       }
-      currentWebChromeClient = (WebChromeClientHostApiImpl.SecureWebChromeClient) client;
+      currentWebChromeClient = (WebChromeClientProxyApi.SecureWebChromeClient) client;
       currentWebChromeClient.setWebViewClient(currentWebViewClient);
     }
 
@@ -261,7 +261,8 @@ public class WebViewProxyApi extends PigeonApiWebView {
 
   @Override
   public void setWebChromeClient(
-      @NonNull WebView pigeon_instance, @Nullable WebChromeClient client) {
+      @NonNull WebView pigeon_instance,
+      @Nullable WebChromeClientProxyApi.WebChromeClientImpl client) {
     pigeon_instance.setWebChromeClient(client);
   }
 
