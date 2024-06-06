@@ -13,9 +13,9 @@ import 'android_webkit.g.dart';
 ///
 /// By default each function calls the default constructor of the WebView class
 /// it intends to return.
-class InteractiveMediaAdsProxy {
-  /// Constructs an [InteractiveMediaAdsProxy].
-  const InteractiveMediaAdsProxy({
+class AndroidWebViewProxy {
+  /// Constructs an [AndroidWebViewProxy].
+  const AndroidWebViewProxy({
     this.newWebView = WebView.new,
     this.newJavaScriptChannel = JavaScriptChannel.new,
     this.newWebViewClient = WebViewClient.new,
