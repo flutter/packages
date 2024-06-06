@@ -9,6 +9,7 @@ import 'package:camera_platform_interface/camera_platform_interface.dart';
 // ignore_for_file: implementation_imports
 import 'package:camera_web/src/camera.dart';
 import 'package:camera_web/src/camera_service.dart';
+import 'package:camera_web/src/shims/dart_js_util.dart';
 import 'package:camera_web/src/types/types.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -31,6 +32,7 @@ void main() {
     late Navigator navigator;
     late MediaDevices mediaDevices;
     late CameraService cameraService;
+    late JsUtil jsUtil;
 
     setUp(() async {
       mockWindow = MockWindow();
@@ -40,6 +42,8 @@ void main() {
       window = createJSInteropWrapper(mockWindow) as Window;
       navigator = createJSInteropWrapper(mockNavigator) as Navigator;
       mediaDevices = createJSInteropWrapper(mockMediaDevices) as MediaDevices;
+
+      jsUtil = MockJsUtil();
 
       cameraService = CameraService()..window = window;
     });

@@ -11,6 +11,7 @@ import 'package:flutter/services.dart';
 import 'package:web/web.dart' as web;
 
 import 'camera.dart';
+import 'shims/dart_js_util.dart';
 import 'types/types.dart';
 
 /// A service to fetch, map camera settings and
@@ -19,6 +20,9 @@ class CameraService {
   /// The current browser window used to access media devices.
   @visibleForTesting
   web.Window window = web.window;
+  /// The utility to manipulate JavaScript interop objects.
+  @visibleForTesting
+  JsUtil jsUtil = JsUtil();
 
   /// Returns a media stream associated with the camera device
   /// with [cameraId] and constrained by [options].

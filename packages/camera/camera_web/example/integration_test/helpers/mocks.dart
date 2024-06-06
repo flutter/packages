@@ -11,6 +11,7 @@ import 'dart:ui';
 // ignore_for_file: implementation_imports
 import 'package:camera_web/src/camera.dart';
 import 'package:camera_web/src/camera_service.dart';
+import 'package:camera_web/src/shims/dart_js_util.dart';
 import 'package:camera_web/src/types/types.dart';
 import 'package:cross_file/cross_file.dart';
 import 'package:mocktail/mocktail.dart';
@@ -62,6 +63,8 @@ class MockCameraOptions extends Mock implements CameraOptions {}
 class MockVideoElement {}
 
 class MockXFile extends Mock implements XFile {}
+
+class MockJsUtil extends Mock implements JsUtil {}
 
 // @JSExport()
 class MockMediaRecorder {}
