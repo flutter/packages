@@ -1,3 +1,7 @@
+## 2.4.17
+
+* Revert Impeller support.
+
 ## 2.4.16
 
 * [Supports Impeller](https://docs.flutter.dev/release/breaking-changes/android-surface-plugins).
