@@ -727,7 +727,7 @@ abstract class PigeonApiWebResourceRequest(open val pigeonRegistrar: PigeonProxy
   @androidx.annotation.RequiresApi(api = 21)
   abstract fun requestHeaders(
       pigeon_instance: android.webkit.WebResourceRequest
-  ): Map<String, String>
+  ): Map<String, String>?
 
   @Suppress("LocalVariableName", "FunctionName")
   /** Creates a Dart instance of WebResourceRequest and attaches it to [pigeon_instanceArg]. */

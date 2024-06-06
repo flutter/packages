@@ -1382,11 +1382,12 @@ class AndroidNavigationDelegate extends PlatformNavigationDelegate {
       ) {
         weakThis.target?._handleNavigation(
           request.url,
-          headers: request.requestHeaders.map<String, String>(
-            (String? key, String? value) {
-              return MapEntry<String, String>(key!, value!);
-            },
-          ),
+          headers: request.requestHeaders?.map<String, String>(
+                (String? key, String? value) {
+                  return MapEntry<String, String>(key!, value!);
+                },
+              ) ??
+              <String, String>{},
           isForMainFrame: request.isForMainFrame,
         );
       },

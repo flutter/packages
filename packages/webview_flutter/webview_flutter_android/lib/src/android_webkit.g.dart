@@ -438,6 +438,195 @@ class _PigeonProxyApiBaseCodec extends StandardMessageCodec {
   }
 }
 
+/// Handles constructing objects and calling static methods for the Android
+/// Interactive Media Ads native library.
+///
+/// This class provides dependency injection for the implementations of the
+/// platform interface classes. Improving the ease of unit testing and/or
+/// overriding the underlying Android classes.
+///
+/// By default each function calls the default constructor of the class it
+/// intends to return.
+class InteractiveMediaAdsProxy {
+  /// Constructs an [InteractiveMediaAdsProxy].
+  const InteractiveMediaAdsProxy({
+    this.newWebView = WebView.new,
+    this.newJavaScriptChannel = JavaScriptChannel.new,
+    this.newWebViewClient = WebViewClient.new,
+    this.newDownloadListener = DownloadListener.new,
+    this.newWebChromeClient = WebChromeClient.new,
+    this.setWebContentsDebuggingEnabledWebView =
+        WebView.setWebContentsDebuggingEnabled,
+    this.instanceCookieManager = _instanceCookieManager,
+    this.instanceFlutterAssetManager = _instanceFlutterAssetManager,
+    this.instanceWebStorage = _instanceWebStorage,
+  });
+
+  /// Constructs [WebView].
+  final WebView Function(
+      {void Function(
+        WebView,
+        int,
+        int,
+        int,
+        int,
+      )? onScrollChanged}) newWebView;
+
+  /// Constructs [JavaScriptChannel].
+  final JavaScriptChannel Function({
+    required String channelName,
+    required void Function(
+      JavaScriptChannel,
+      String,
+    ) postMessage,
+  }) newJavaScriptChannel;
+
+  /// Constructs [WebViewClient].
+  final WebViewClient Function({
+    void Function(
+      WebViewClient,
+      WebView,
+      String,
+    )? onPageStarted,
+    void Function(
+      WebViewClient,
+      WebView,
+      String,
+    )? onPageFinished,
+    void Function(
+      WebViewClient,
+      WebView,
+      WebResourceRequest,
+      WebResourceResponse,
+    )? onReceivedHttpError,
+    void Function(
+      WebViewClient,
+      WebView,
+      WebResourceRequest,
+      WebResourceError,
+    )? onReceivedRequestError,
+    void Function(
+      WebViewClient,
+      WebView,
+      WebResourceRequest,
+      WebResourceErrorCompat,
+    )? onReceivedRequestErrorCompat,
+    void Function(
+      WebViewClient,
+      WebView,
+      int,
+      String,
+      String,
+    )? onReceivedError,
+    void Function(
+      WebViewClient,
+      WebView,
+      WebResourceRequest,
+    )? requestLoading,
+    void Function(
+      WebViewClient,
+      WebView,
+      String,
+    )? urlLoading,
+    void Function(
+      WebViewClient,
+      WebView,
+      String,
+      bool,
+    )? doUpdateVisitedHistory,
+    void Function(
+      WebViewClient,
+      WebView,
+      HttpAuthHandler,
+      String,
+      String,
+    )? onReceivedHttpAuthRequest,
+  }) newWebViewClient;
+
+  /// Constructs [DownloadListener].
+  final DownloadListener Function(
+      {void Function(
+        DownloadListener,
+        String,
+        String,
+        String,
+        String,
+        int,
+      )? onDownloadStart}) newDownloadListener;
+
+  /// Constructs [WebChromeClient].
+  final WebChromeClient Function({
+    void Function(
+      WebChromeClient,
+      WebView,
+      int,
+    )? onProgressChanged,
+    Future<List<String?>> Function(
+      WebChromeClient,
+      WebView,
+      FileChooserParams,
+    )? onShowFileChooser,
+    void Function(
+      WebChromeClient,
+      PermissionRequest,
+    )? onPermissionRequest,
+    void Function(
+      WebChromeClient,
+      View,
+      CustomViewCallback,
+    )? onShowCustomView,
+    void Function(WebChromeClient)? onHideCustomView,
+    void Function(
+      WebChromeClient,
+      String,
+      GeolocationPermissionsCallback,
+    )? onGeolocationPermissionsShowPrompt,
+    void Function(WebChromeClient)? onGeolocationPermissionsHidePrompt,
+    void Function(
+      WebChromeClient,
+      ConsoleMessage,
+    )? onConsoleMessage,
+    Future<void> Function(
+      WebChromeClient,
+      WebView,
+      String,
+      String,
+    )? onJsAlert,
+    Future<bool> Function(
+      WebChromeClient,
+      WebView,
+      String,
+      String,
+    )? onJsConfirm,
+    Future<String?> Function(
+      WebChromeClient,
+      WebView,
+      String,
+      String,
+      String,
+    )? onJsPrompt,
+  }) newWebChromeClient;
+
+  /// Calls to [WebView.setWebContentsDebuggingEnabled].
+  final Future<void> Function(bool) setWebContentsDebuggingEnabledWebView;
+
+  /// Calls to [CookieManager.instance].
+  final CookieManager Function() instanceCookieManager;
+
+  /// Calls to [FlutterAssetManager.instance].
+  final FlutterAssetManager Function() instanceFlutterAssetManager;
+
+  /// Calls to [WebStorage.instance].
+  final WebStorage Function() instanceWebStorage;
+
+  static CookieManager _instanceCookieManager() => CookieManager.instance;
+
+  static FlutterAssetManager _instanceFlutterAssetManager() =>
+      FlutterAssetManager.instance;
+
+  static WebStorage _instanceWebStorage() => WebStorage.instance;
+}
+
 /// Mode of how to select files for a file chooser.
 ///
 /// See https://developer.android.com/reference/android/webkit/WebChromeClient.FileChooserParams.
@@ -518,7 +707,7 @@ class WebResourceRequest extends PigeonProxyApiBaseClass {
     this.isRedirect,
     required this.hasGesture,
     required this.method,
-    required this.requestHeaders,
+    this.requestHeaders,
   });
 
   /// The URL for which the resource request was made.
@@ -537,7 +726,7 @@ class WebResourceRequest extends PigeonProxyApiBaseClass {
   final String method;
 
   /// The headers associated with the request.
-  final Map<String?, String?> requestHeaders;
+  final Map<String?, String?>? requestHeaders;
 
   static void pigeon_setUpMessageHandlers({
     bool pigeon_clearHandlers = false,
@@ -549,7 +738,7 @@ class WebResourceRequest extends PigeonProxyApiBaseClass {
       bool? isRedirect,
       bool hasGesture,
       String method,
-      Map<String?, String?> requestHeaders,
+      Map<String?, String?>? requestHeaders,
     )? pigeon_newInstance,
   }) {
     final _PigeonProxyApiBaseCodec pigeonChannelCodec =
@@ -587,8 +776,6 @@ class WebResourceRequest extends PigeonProxyApiBaseClass {
               'Argument for dev.flutter.pigeon.webview_flutter_android.WebResourceRequest.pigeon_newInstance was null, expected non-null String.');
           final Map<String?, String?>? arg_requestHeaders =
               (args[6] as Map<Object?, Object?>?)?.cast<String?, String?>();
-          assert(arg_requestHeaders != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebResourceRequest.pigeon_newInstance was null, expected non-null Map<String?, String?>.');
           try {
             (pigeon_instanceManager ?? PigeonInstanceManager.instance)
                 .addHostCreatedInstance(
@@ -598,7 +785,7 @@ class WebResourceRequest extends PigeonProxyApiBaseClass {
                       arg_isRedirect,
                       arg_hasGesture!,
                       arg_method!,
-                      arg_requestHeaders!) ??
+                      arg_requestHeaders) ??
                   WebResourceRequest.pigeon_detached(
                     pigeon_binaryMessenger: pigeon_binaryMessenger,
                     pigeon_instanceManager: pigeon_instanceManager,
@@ -607,7 +794,7 @@ class WebResourceRequest extends PigeonProxyApiBaseClass {
                     isRedirect: arg_isRedirect,
                     hasGesture: arg_hasGesture!,
                     method: arg_method!,
-                    requestHeaders: arg_requestHeaders!,
+                    requestHeaders: arg_requestHeaders,
                   ),
               arg_pigeon_instanceIdentifier!,
             );

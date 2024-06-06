@@ -9,7 +9,7 @@ import 'package:pigeon/pigeon.dart';
     copyrightHeader: 'pigeons/copyright.txt',
     dartOut: 'lib/src/android_webkit.g.dart',
     kotlinOut:
-        'android/src/main/java/io/flutter/plugins/webviewflutter/AndroidWebkitLibrary.kt',
+        'android/src/main/java/io/flutter/plugins/webviewflutter/AndroidWebkitLibrary.g.kt',
     kotlinOptions: KotlinOptions(
       package: 'io.flutter.plugins.webviewflutter',
       errorClassName: 'AndroidWebKitError',
@@ -106,7 +106,7 @@ abstract class WebResourceRequest {
   late String method;
 
   /// The headers associated with the request.
-  late Map<String, String> requestHeaders;
+  late Map<String, String>? requestHeaders;
 }
 
 /// Encapsulates a resource response.
