@@ -95,6 +95,13 @@ abstract class StructuredGenerator<T> extends Generator<T> {
       dartPackageName: dartPackageName,
     );
 
+    writeGeneralCodec(
+      generatorOptions,
+      root,
+      indent,
+      dartPackageName: dartPackageName,
+    );
+
     writeApis(
       generatorOptions,
       root,
@@ -204,6 +211,14 @@ abstract class StructuredGenerator<T> extends Generator<T> {
       );
     }
   }
+
+  /// Writes the custom codec to [indent].
+  void writeGeneralCodec(
+    T generatorOptions,
+    Root root,
+    Indent indent, {
+    required String dartPackageName,
+  });
 
   /// Writes a single data class to [indent].
   void writeDataClass(
