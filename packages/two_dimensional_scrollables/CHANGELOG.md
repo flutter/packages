@@ -1,4 +1,4 @@
-## 0.3.0+1
+## 0.3.1
 
 * Adds generics to the callbacks and builders of TreeView.
 
