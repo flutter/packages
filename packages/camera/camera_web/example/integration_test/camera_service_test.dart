@@ -387,7 +387,6 @@ void main() {
         mockVideoTrack.getCapabilities = () => MediaTrackCapabilities(
               zoom: MediaSettingsRange(min: 100, max: 400, step: 2),
             );
-        });
 
         final ZoomLevelCapability zoomLevelCapability =
             cameraService.getZoomLevelCapabilityForCamera(camera);
@@ -423,18 +422,12 @@ void main() {
             'with zoomLevelNotSupported error '
             'when the zoom level is not supported '
             'in the browser', (WidgetTester tester) async {
-          when(mediaDevices.getSupportedConstraints)
-              .thenReturn(<dynamic, dynamic>{
-            'zoom': false,
-          });
+          mockMediaDevices.getSupportedConstraints =
+              () => MediaTrackSupportedConstraints(zoom: false);
 
-          when(videoTracks.first.getCapabilities).thenReturn(<dynamic, dynamic>{
-            'zoom': <dynamic, dynamic>{
-              'min': 100,
-              'max': 400,
-              'step': 2,
-            },
-          });
+          mockVideoTrack.getCapabilities = () => MediaTrackCapabilities(
+                zoom: MediaSettingsRange(min: 100, max: 400, step: 2),
+              );
 
           expect(
             () => cameraService.getZoomLevelCapabilityForCamera(camera),
@@ -458,13 +451,10 @@ void main() {
             'with zoomLevelNotSupported error '
             'when the zoom level is not supported '
             'by the camera', (WidgetTester tester) async {
-          when(mediaDevices.getSupportedConstraints)
-              .thenReturn(<dynamic, dynamic>{
-            'zoom': true,
-          });
+          mockMediaDevices.getSupportedConstraints =
+              () => MediaTrackSupportedConstraints(zoom: true);
 
-          when(videoTracks.first.getCapabilities)
-              .thenReturn(<dynamic, dynamic>{});
+          mockVideoTrack.getCapabilities = () => MediaTrackCapabilities();
 
           expect(
             () => cameraService.getZoomLevelCapabilityForCamera(camera),
@@ -488,14 +478,14 @@ void main() {
             'with notStarted error '
             'when the camera stream has not been initialized',
             (WidgetTester tester) async {
-          when(mediaDevices.getSupportedConstraints)
-              .thenReturn(<dynamic, dynamic>{
-            'zoom': true,
-          });
+          mockMediaDevices.getSupportedConstraints =
+              () => MediaTrackSupportedConstraints(zoom: true);
 
           // Create a camera stream with no video tracks.
-          when(() => camera.stream)
-              .thenReturn(FakeMediaStream(<MediaStreamTrack>[]));
+          when(() => camera.stream).thenReturn(
+            createJSInteropWrapper(FakeMediaStream(<MediaStreamTrack>[]))
+                as MediaStream,
+          );
 
           expect(
             () => cameraService.getZoomLevelCapabilityForCamera(camera),
@@ -518,19 +508,14 @@ void main() {
     });
 
     group('getFacingModeForVideoTrack', () {
-      setUp(() {
-        cameraService.jsUtil = jsUtil;
-      });
-
       testWidgets(
           'throws PlatformException '
           'with notSupported error '
           'when there are no media devices', (WidgetTester tester) async {
-        when(() => navigator.mediaDevices).thenReturn(null);
-
         expect(
-          () =>
-              cameraService.getFacingModeForVideoTrack(MockMediaStreamTrack()),
+          () => cameraService.getFacingModeForVideoTrack(
+            createJSInteropWrapper(MockMediaStreamTrack()) as MediaStreamTrack,
+          ),
           throwsA(
             isA<PlatformException>().having(
               (PlatformException e) => e.code,
@@ -544,13 +529,12 @@ void main() {
       testWidgets(
           'returns null '
           'when the facing mode is not supported', (WidgetTester tester) async {
-        when(mediaDevices.getSupportedConstraints)
-            .thenReturn(<dynamic, dynamic>{
-          'facingMode': false,
-        });
+        mockMediaDevices.getSupportedConstraints =
+            () => MediaTrackSupportedConstraints(facingMode: false);
 
-        final String? facingMode =
-            cameraService.getFacingModeForVideoTrack(MockMediaStreamTrack());
+        final String? facingMode = cameraService.getFacingModeForVideoTrack(
+          createJSInteropWrapper(MockMediaStreamTrack()) as MediaStreamTrack,
+        );
 
         expect(facingMode, isNull);
       });
