@@ -1,4 +1,4 @@
-## 14.1.5
+## 14.2.0
 
 - Added proper `redirect` handling for `ShellRoute.$route` and `StatefulShellRoute.$route` for proper redirection handling in case of code generation.
 
