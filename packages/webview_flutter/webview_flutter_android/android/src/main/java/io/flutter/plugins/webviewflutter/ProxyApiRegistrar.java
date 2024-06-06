@@ -16,9 +16,10 @@ public class ProxyApiRegistrar extends PigeonProxyApiRegistrar {
 
   @NonNull private final FlutterAssetManager flutterAssetManager;
 
-  public ProxyApiRegistrar(@NonNull BinaryMessenger binaryMessenger,
-                           @NonNull Context context,
-                           @NonNull FlutterAssetManager flutterAssetManager) {
+  public ProxyApiRegistrar(
+      @NonNull BinaryMessenger binaryMessenger,
+      @NonNull Context context,
+      @NonNull FlutterAssetManager flutterAssetManager) {
     super(binaryMessenger);
     this.context = context;
     this.flutterAssetManager = flutterAssetManager;

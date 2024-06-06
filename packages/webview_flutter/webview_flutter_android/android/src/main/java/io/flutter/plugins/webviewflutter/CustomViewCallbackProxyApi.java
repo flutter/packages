@@ -14,9 +14,7 @@ import androidx.annotation.NonNull;
  * Dart instance or handle method calls on the associated native class or an instance of the class.
  */
 public class CustomViewCallbackProxyApi extends PigeonApiCustomViewCallback {
-  /**
-   * Constructs a {@link CustomViewCallbackProxyApi}.
-   */
+  /** Constructs a {@link CustomViewCallbackProxyApi}. */
   public CustomViewCallbackProxyApi(@NonNull ProxyApiRegistrar pigeonRegistrar) {
     super(pigeonRegistrar);
   }

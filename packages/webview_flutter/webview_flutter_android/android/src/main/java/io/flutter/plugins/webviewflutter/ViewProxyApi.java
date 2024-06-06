@@ -14,9 +14,7 @@ import androidx.annotation.NonNull;
  * arguments of callbacks methods to a Dart instance.
  */
 public class ViewProxyApi extends PigeonApiView {
-  /**
-   * Constructs a {@link ViewProxyApi}.
-   */
+  /** Constructs a {@link ViewProxyApi}. */
   public ViewProxyApi(@NonNull ProxyApiRegistrar pigeonRegistrar) {
     super(pigeonRegistrar);
   }

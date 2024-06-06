@@ -13,9 +13,9 @@ import io.flutter.plugin.platform.PlatformView;
 import io.flutter.plugin.platform.PlatformViewFactory;
 
 class FlutterViewFactory extends PlatformViewFactory {
-  private final InstanceManager instanceManager;
+  private final PigeonInstanceManager instanceManager;
 
-  FlutterViewFactory(InstanceManager instanceManager) {
+  FlutterViewFactory(PigeonInstanceManager instanceManager) {
     super(StandardMessageCodec.INSTANCE);
     this.instanceManager = instanceManager;
   }

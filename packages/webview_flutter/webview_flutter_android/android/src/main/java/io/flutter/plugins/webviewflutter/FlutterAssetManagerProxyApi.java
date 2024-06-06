@@ -46,7 +46,8 @@ public class FlutterAssetManagerProxyApi extends PigeonApiFlutterAssetManager {
 
   @NonNull
   @Override
-  public String getAssetFilePathByName(@NonNull FlutterAssetManager pigeon_instance, @NonNull String name) {
+  public String getAssetFilePathByName(
+      @NonNull FlutterAssetManager pigeon_instance, @NonNull String name) {
     return pigeon_instance.getAssetFilePathByName(name);
   }
 

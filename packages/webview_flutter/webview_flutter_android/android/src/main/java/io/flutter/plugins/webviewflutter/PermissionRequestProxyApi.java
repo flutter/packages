@@ -8,10 +8,8 @@ import android.os.Build;
 import android.webkit.PermissionRequest;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
-
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * Host API implementation for `PermissionRequest`.
@@ -21,9 +19,7 @@ import java.util.Objects;
  */
 @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
 public class PermissionRequestProxyApi extends PigeonApiPermissionRequest {
-  /**
-   * Constructs a {@link PermissionRequestProxyApi}.
-   */
+  /** Constructs a {@link PermissionRequestProxyApi}. */
   public PermissionRequestProxyApi(@NonNull ProxyApiRegistrar pigeonRegistrar) {
     super(pigeonRegistrar);
   }

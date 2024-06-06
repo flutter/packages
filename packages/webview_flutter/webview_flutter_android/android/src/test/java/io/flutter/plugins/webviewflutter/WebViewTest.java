@@ -24,7 +24,6 @@ import android.webkit.WebViewClient;
 import androidx.annotation.NonNull;
 import io.flutter.embedding.android.FlutterView;
 import io.flutter.plugin.common.BinaryMessenger;
-import io.flutter.plugins.webviewflutter.GeneratedAndroidWebView.WebViewFlutterApi;
 import io.flutter.plugins.webviewflutter.WebViewHostApiImpl.WebViewPlatformView;
 import java.util.HashMap;
 import java.util.Objects;

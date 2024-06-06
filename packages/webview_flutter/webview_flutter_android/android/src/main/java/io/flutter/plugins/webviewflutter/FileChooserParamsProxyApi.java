@@ -20,9 +20,7 @@ import java.util.List;
  */
 @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
 public class FileChooserParamsProxyApi extends PigeonApiFileChooserParams {
-  /**
-   * Creates a Flutter api that sends messages to Dart.
-   */
+  /** Creates a Flutter api that sends messages to Dart. */
   public FileChooserParamsProxyApi(@NonNull ProxyApiRegistrar pigeonRegistrar) {
     super(pigeonRegistrar);
   }

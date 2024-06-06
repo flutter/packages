@@ -13,9 +13,7 @@ import androidx.annotation.NonNull;
  * <p>Handles creating {@link HttpAuthHandler}s that intercommunicate with a paired Dart object.
  */
 public class HttpAuthHandlerProxyApi extends PigeonApiHttpAuthHandler {
-  /**
-   * Constructs a {@link HttpAuthHandlerProxyApi}.
-   */
+  /** Constructs a {@link HttpAuthHandlerProxyApi}. */
   public HttpAuthHandlerProxyApi(@NonNull ProxyApiRegistrar pigeonRegistrar) {
     super(pigeonRegistrar);
   }
@@ -32,7 +30,9 @@ public class HttpAuthHandlerProxyApi extends PigeonApiHttpAuthHandler {
 
   @Override
   public void proceed(
-      @NonNull HttpAuthHandler pigeon_instance, @NonNull String username, @NonNull String password) {
+      @NonNull HttpAuthHandler pigeon_instance,
+      @NonNull String username,
+      @NonNull String password) {
     pigeon_instance.proceed(username, password);
   }
 }

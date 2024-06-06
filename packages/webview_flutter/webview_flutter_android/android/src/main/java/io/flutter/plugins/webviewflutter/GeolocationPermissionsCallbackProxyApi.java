@@ -13,10 +13,9 @@ import androidx.annotation.NonNull;
  * <p>This class may handle instantiating and adding native object instances that are attached to a
  * Dart instance or handle method calls on the associated native class or an instance of the class.
  */
-public class GeolocationPermissionsCallbackProxyApi extends PigeonApiGeolocationPermissionsCallback {
-  /**
-   * Constructs a {@link GeolocationPermissionsCallbackProxyApi}.
-   */
+public class GeolocationPermissionsCallbackProxyApi
+    extends PigeonApiGeolocationPermissionsCallback {
+  /** Constructs a {@link GeolocationPermissionsCallbackProxyApi}. */
   public GeolocationPermissionsCallbackProxyApi(@NonNull ProxyApiRegistrar pigeonRegistrar) {
     super(pigeonRegistrar);
   }
@@ -25,8 +24,8 @@ public class GeolocationPermissionsCallbackProxyApi extends PigeonApiGeolocation
   public void invoke(
       @NonNull GeolocationPermissions.Callback pigeon_instance,
       @NonNull String origin,
-       boolean allow,
-       boolean retain) {
+      boolean allow,
+      boolean retain) {
     pigeon_instance.invoke(origin, allow, retain);
   }
 }

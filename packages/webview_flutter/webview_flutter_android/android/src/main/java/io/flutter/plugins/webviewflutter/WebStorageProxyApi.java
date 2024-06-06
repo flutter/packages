@@ -13,9 +13,7 @@ import androidx.annotation.NonNull;
  * <p>Handles creating {@link WebStorage}s that intercommunicate with a paired Dart object.
  */
 public class WebStorageProxyApi extends PigeonApiWebStorage {
-  /**
-   * Creates a host API that handles creating {@link WebStorage} and invoke its methods.
-   */
+  /** Creates a host API that handles creating {@link WebStorage} and invoke its methods. */
   public WebStorageProxyApi(@NonNull ProxyApiRegistrar pigeonRegistrar) {
     super(pigeonRegistrar);
   }

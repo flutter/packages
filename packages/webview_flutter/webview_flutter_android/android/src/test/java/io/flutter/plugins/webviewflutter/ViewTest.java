@@ -10,7 +10,6 @@ import static org.mockito.Mockito.verify;
 
 import android.view.View;
 import io.flutter.plugin.common.BinaryMessenger;
-import io.flutter.plugins.webviewflutter.GeneratedAndroidWebView.ViewFlutterApi;
 import java.util.Objects;
 import org.junit.After;
 import org.junit.Before;
