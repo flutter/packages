@@ -933,6 +933,8 @@ void main() {
     const bool enableAudio = true;
     const ResolutionPreset testResolutionPreset = ResolutionPreset.veryHigh;
     const DeviceOrientation testUiOrientation = DeviceOrientation.portraitDown;
+    const DeviceOrientation testCurrentOrientation =
+        DeviceOrientation.portraitUp;
 
     // Mock/Detached objects for (typically attached) objects created by
     // createCamera.
@@ -944,7 +946,9 @@ void main() {
         MockTestSystemServicesHostApi();
     TestSystemServicesHostApi.setup(mockSystemServicesApi);
 
-    // TODO: rename method
+    // The proxy needed for this test is the same as testing resolution
+    // presets except for mocking the retrievall of the sensor and current
+    // UI orientation.
     camera.proxy =
         getProxyForTestingResolutionPreset(mockProcessCameraProvider);
     camera.proxy.getSensorOrientation =
@@ -961,8 +965,18 @@ void main() {
     await camera.createCamera(testCameraDescription, testResolutionPreset,
         enableAudio: enableAudio);
 
+    const DeviceOrientationChangedEvent testEvent =
+        DeviceOrientationChangedEvent(testCurrentOrientation);
+
+    DeviceOrientationManager.deviceOrientationChangedStreamController
+        .add(testEvent);
+
+    // Wait for currentDeviceOrientation to update.
+    await Future<void>.value();
+
     expect(camera.naturalOrientation, testUiOrientation);
     expect(camera.sensorOrientation, testSensorOrientation);
+    expect(camera.currentDeviceOrientation, testCurrentOrientation);
   });
 
   test(

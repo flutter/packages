@@ -253,7 +253,7 @@ class AndroidCameraCameraX extends CameraPlatform {
   late int sensorOrientation;
 
   /// The current orientation of the device.
-  @visibleForTesting // TODO: add test for setting
+  @visibleForTesting
   DeviceOrientation? currentDeviceOrientation;
 
   /// Returns list of all available cameras and their descriptions.
