@@ -322,6 +322,25 @@
 @implementation SKDownloadStub
 @end
 
+@implementation FlutterBinaryMessengerStub
+- (void)cleanUpConnection:(FlutterBinaryMessengerConnection)connection {
+}
+
+- (void)sendOnChannel:(nonnull NSString *)channel message:(NSData *_Nullable)message {
+}
+
+- (void)sendOnChannel:(nonnull NSString *)channel
+              message:(NSData *_Nullable)message
+          binaryReply:(FlutterBinaryReply _Nullable)callback {
+}
+
+- (FlutterBinaryMessengerConnection)setMessageHandlerOnChannel:(nonnull NSString *)channel
+                                          binaryMessageHandler:
+                                              (FlutterBinaryMessageHandler _Nullable)handler {
+  return 0;
+}
+@end
+
 /// This mock is only used in iOS tests
 #if TARGET_OS_IOS
 
@@ -344,7 +363,7 @@
 }
 
 - (nonnull NSObject<FlutterBinaryMessenger> *)messenger {
-  return [FakeBinaryMessenger alloc];
+  return [FlutterBinaryMessengerStub alloc];
 }
 
 - (void)publish:(nonnull NSObject *)value {

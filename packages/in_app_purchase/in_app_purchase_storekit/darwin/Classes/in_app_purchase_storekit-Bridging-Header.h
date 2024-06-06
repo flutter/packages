@@ -7,6 +7,6 @@
 #import "FIAPReceiptManager.h"
 #import "FIAPRequestHandler.h"
 #import "FIAPaymentQueueHandler.h"
-#import "FIATransactionCache.h"
 #import "FIAProtocols.h"
+#import "FIATransactionCache.h"
 #import "messages.g.h"

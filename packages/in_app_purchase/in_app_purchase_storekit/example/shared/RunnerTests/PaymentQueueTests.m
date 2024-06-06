@@ -3,8 +3,8 @@
 // found in the LICENSE file.
 
 #import <XCTest/XCTest.h>
-#import "Stubs.h"
 #import "Mocks.h"
+#import "Stubs.h"
 
 @import in_app_purchase_storekit;
 
