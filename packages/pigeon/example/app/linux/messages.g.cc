@@ -106,51 +106,60 @@ pigeon_example_package_message_data_new_from_list(FlValue* values) {
   return pigeon_example_package_message_data_new(name, description, code, data);
 }
 
-G_DECLARE_FINAL_TYPE(PigeonExamplePackageExampleHostApiCodec,
-                     pigeon_example_package_example_host_api_codec,
-                     PIGEON_EXAMPLE_PACKAGE, EXAMPLE_HOST_API_CODEC,
-                     FlStandardMessageCodec)
+G_DECLARE_FINAL_TYPE(PigeonMessageCodec, pigeon_message_codec, PIGEON,
+                     MESSAGE_CODEC, FlStandardMessageCodec)
 
-struct _PigeonExamplePackageExampleHostApiCodec {
+struct _PigeonMessageCodec {
   FlStandardMessageCodec parent_instance;
 };
 
-G_DEFINE_TYPE(PigeonExamplePackageExampleHostApiCodec,
-              pigeon_example_package_example_host_api_codec,
+G_DEFINE_TYPE(PigeonMessageCodec, pigeon_message_codec,
               fl_standard_message_codec_get_type())
 
-static gboolean
-pigeon_example_package_example_host_api_write_pigeon_example_package_message_data(
+static gboolean pigeon_message_codec_write_pigeon_example_package_message_data(
     FlStandardMessageCodec* codec, GByteArray* buffer,
     PigeonExamplePackageMessageData* value, GError** error) {
-  uint8_t type = 128;
+  uint8_t type = 129;
   g_byte_array_append(buffer, &type, sizeof(uint8_t));
   g_autoptr(FlValue) values =
       pigeon_example_package_message_data_to_list(value);
   return fl_standard_message_codec_write_value(codec, buffer, values, error);
 }
 
-static gboolean pigeon_example_package_example_host_api_write_value(
+static gboolean pigeon_message_codec_write_pigeon_example_package_code(
     FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
     GError** error) {
+  uint8_t type = 130;
+  g_byte_array_append(buffer, &type, sizeof(uint8_t));
+  return fl_standard_message_codec_write_value(codec, buffer, value, error);
+}
+
+static gboolean pigeon_message_codec_write_value(FlStandardMessageCodec* codec,
+                                                 GByteArray* buffer,
+                                                 FlValue* value,
+                                                 GError** error) {
   if (fl_value_get_type(value) == FL_VALUE_TYPE_CUSTOM) {
     switch (fl_value_get_custom_type(value)) {
-      case 128:
-        return pigeon_example_package_example_host_api_write_pigeon_example_package_message_data(
+      case 129:
+        return pigeon_message_codec_write_pigeon_example_package_message_data(
             codec, buffer,
             PIGEON_EXAMPLE_PACKAGE_MESSAGE_DATA(
                 fl_value_get_custom_value_object(value)),
             error);
+      case 130:
+        return pigeon_message_codec_write_pigeon_example_package_code(
+            codec, buffer,
+            reinterpret_cast<FlValue*>(
+                const_cast<gpointer>(fl_value_get_custom_value(value))),
+            error);
     }
   }
 
-  return FL_STANDARD_MESSAGE_CODEC_CLASS(
-             pigeon_example_package_example_host_api_codec_parent_class)
+  return FL_STANDARD_MESSAGE_CODEC_CLASS(pigeon_message_codec_parent_class)
       ->write_value(codec, buffer, value, error);
 }
 
-static FlValue*
-pigeon_example_package_example_host_api_read_pigeon_example_package_message_data(
+static FlValue* pigeon_message_codec_read_pigeon_example_package_message_data(
     FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
     GError** error) {
   g_autoptr(FlValue) values =
@@ -167,39 +176,45 @@ pigeon_example_package_example_host_api_read_pigeon_example_package_message_data
     return nullptr;
   }
 
-  return fl_value_new_custom_object_take(128, G_OBJECT(value));
+  return fl_value_new_custom_object_take(129, G_OBJECT(value));
 }
 
-static FlValue* pigeon_example_package_example_host_api_read_value_of_type(
+static FlValue* pigeon_message_codec_read_pigeon_example_package_code(
+    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
+    GError** error) {
+  return fl_value_new_custom(
+      130, fl_standard_message_codec_read_value(codec, buffer, offset, error),
+      (GDestroyNotify)fl_value_unref);
+}
+
+static FlValue* pigeon_message_codec_read_value_of_type(
     FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset, int type,
     GError** error) {
   switch (type) {
-    case 128:
-      return pigeon_example_package_example_host_api_read_pigeon_example_package_message_data(
+    case 129:
+      return pigeon_message_codec_read_pigeon_example_package_message_data(
+          codec, buffer, offset, error);
+    case 130:
+      return pigeon_message_codec_read_pigeon_example_package_code(
           codec, buffer, offset, error);
     default:
-      return FL_STANDARD_MESSAGE_CODEC_CLASS(
-                 pigeon_example_package_example_host_api_codec_parent_class)
+      return FL_STANDARD_MESSAGE_CODEC_CLASS(pigeon_message_codec_parent_class)
           ->read_value_of_type(codec, buffer, offset, type, error);
   }
 }
 
-static void pigeon_example_package_example_host_api_codec_init(
-    PigeonExamplePackageExampleHostApiCodec* self) {}
+static void pigeon_message_codec_init(PigeonMessageCodec* self) {}
 
-static void pigeon_example_package_example_host_api_codec_class_init(
-    PigeonExamplePackageExampleHostApiCodecClass* klass) {
+static void pigeon_message_codec_class_init(PigeonMessageCodecClass* klass) {
   FL_STANDARD_MESSAGE_CODEC_CLASS(klass)->write_value =
-      pigeon_example_package_example_host_api_write_value;
+      pigeon_message_codec_write_value;
   FL_STANDARD_MESSAGE_CODEC_CLASS(klass)->read_value_of_type =
-      pigeon_example_package_example_host_api_read_value_of_type;
+      pigeon_message_codec_read_value_of_type;
 }
 
-static PigeonExamplePackageExampleHostApiCodec*
-pigeon_example_package_example_host_api_codec_new() {
-  PigeonExamplePackageExampleHostApiCodec* self =
-      PIGEON_EXAMPLE_PACKAGE_EXAMPLE_HOST_API_CODEC(g_object_new(
-          pigeon_example_package_example_host_api_codec_get_type(), nullptr));
+static PigeonMessageCodec* pigeon_message_codec_new() {
+  PigeonMessageCodec* self = PIGEON_MESSAGE_CODEC(
+      g_object_new(pigeon_message_codec_get_type(), nullptr));
   return self;
 }
 
@@ -504,8 +519,7 @@ PigeonExamplePackageExampleHostApi* pigeon_example_package_example_host_api_new(
   self->user_data = user_data;
   self->user_data_free_func = user_data_free_func;
 
-  g_autoptr(PigeonExamplePackageExampleHostApiCodec) codec =
-      pigeon_example_package_example_host_api_codec_new();
+  g_autoptr(PigeonMessageCodec) codec = pigeon_message_codec_new();
   self->get_host_language_channel =
       fl_basic_message_channel_new(messenger,
                                    "dev.flutter.pigeon.pigeon_example_package."
@@ -596,7 +610,10 @@ pigeon_example_package_message_flutter_api_new(FlBinaryMessenger* messenger) {
   PigeonExamplePackageMessageFlutterApi* self =
       PIGEON_EXAMPLE_PACKAGE_MESSAGE_FLUTTER_API(g_object_new(
           pigeon_example_package_message_flutter_api_get_type(), nullptr));
-  g_autoptr(FlStandardMethodCodec) codec = fl_standard_method_codec_new();
+  g_autoptr(PigeonMessageCodec) message_codec = pigeon_message_codec_new();
+  g_autoptr(FlStandardMethodCodec) codec =
+      fl_standard_method_codec_new_with_message_codec(
+          FL_STANDARD_MESSAGE_CODEC(message_codec));
   self->channel = fl_method_channel_new(messenger, "MessageFlutterApi",
                                         FL_METHOD_CODEC(codec));
   return self;
