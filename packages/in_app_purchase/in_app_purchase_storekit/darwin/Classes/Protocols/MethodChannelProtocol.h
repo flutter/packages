@@ -5,8 +5,9 @@
 #endif
 
 NS_ASSUME_NONNULL_BEGIN
-
 @protocol MethodChannel <NSObject>
+//Invokes the specified Flutter method with the specified arguments, expecting
+//an asynchronous result.
 - (void)invokeMethod:(NSString *)method arguments:(id _Nullable)arguments;
 - (void)invokeMethod:(NSString *)method
            arguments:(id _Nullable)arguments

@@ -26,6 +26,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic, copy, nullable) void (^startObservingPaymentQueueStub)(void);
 @property(nonatomic, copy, nullable) void (^stopObservingPaymentQueueStub)(void);
 @property(nonatomic, copy, nullable) void (^presentCodeRedemptionSheetStub)(void);
+@property(nonatomic, copy, nullable) NSArray<SKPaymentTransaction *>* (^getUnfinishedTransactionsStub)(void);
 
 @end
 

@@ -319,6 +319,7 @@
 }
 @end
 
+// This FlutterBinaryMessenger is a protocol, so to make a stub it has to be implemented.
 @implementation FlutterBinaryMessengerStub
 - (void)cleanUpConnection:(FlutterBinaryMessengerConnection)connection {
 }
@@ -341,6 +342,7 @@
 /// This mock is only used in iOS tests
 #if TARGET_OS_IOS
 
+// This FlutterPluginRegistrar is a protocol, so to make a stub it has to be implemented.
 @implementation FlutterPluginRegistrarStub
 
 - (void)addApplicationDelegate:(nonnull NSObject<FlutterPlugin> *)delegate {
@@ -360,7 +362,7 @@
 }
 
 - (nonnull NSObject<FlutterBinaryMessenger> *)messenger {
-  return [FlutterBinaryMessengerStub alloc];
+  return [[FlutterBinaryMessengerStub alloc] init];
 }
 
 - (void)publish:(nonnull NSObject *)value {

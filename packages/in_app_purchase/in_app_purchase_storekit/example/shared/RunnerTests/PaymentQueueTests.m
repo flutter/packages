@@ -45,7 +45,7 @@
 - (void)testTransactionPurchased {
   XCTestExpectation *expectation =
       [self expectationWithDescription:@"expect to get purchased transcation."];
-  TestPaymentQueue *queue = [TestPaymentQueue alloc];
+  TestPaymentQueue *queue = [[TestPaymentQueue alloc] init];
   queue.testState = SKPaymentTransactionStatePurchased;
   __block SKPaymentTransactionStub *tran;
   FIAPaymentQueueHandler *handler = [[FIAPaymentQueueHandler alloc] initWithQueue:queue
@@ -74,7 +74,7 @@
 - (void)testTransactionFailed {
   XCTestExpectation *expectation =
       [self expectationWithDescription:@"expect to get failed transcation."];
-  TestPaymentQueue *queue = [TestPaymentQueue alloc];
+  TestPaymentQueue *queue = [[TestPaymentQueue alloc] init];
   queue.testState = SKPaymentTransactionStateFailed;
   __block SKPaymentTransactionStub *tran;
   FIAPaymentQueueHandler *handler = [[FIAPaymentQueueHandler alloc] initWithQueue:queue
@@ -104,7 +104,7 @@
 - (void)testTransactionRestored {
   XCTestExpectation *expectation =
       [self expectationWithDescription:@"expect to get restored transcation."];
-  TestPaymentQueue *queue = [TestPaymentQueue alloc];
+  TestPaymentQueue *queue = [[TestPaymentQueue alloc] init];
   queue.testState = SKPaymentTransactionStateRestored;
   __block SKPaymentTransactionStub *tran;
   FIAPaymentQueueHandler *handler = [[FIAPaymentQueueHandler alloc] initWithQueue:queue
@@ -134,7 +134,7 @@
 - (void)testTransactionPurchasing {
   XCTestExpectation *expectation =
       [self expectationWithDescription:@"expect to get purchasing transcation."];
-  TestPaymentQueue *queue = [TestPaymentQueue alloc];
+  TestPaymentQueue *queue = [[TestPaymentQueue alloc] init];
   queue.testState = SKPaymentTransactionStatePurchasing;
   __block SKPaymentTransactionStub *tran;
   FIAPaymentQueueHandler *handler = [[FIAPaymentQueueHandler alloc] initWithQueue:queue
@@ -164,7 +164,7 @@
 - (void)testTransactionDeferred {
   XCTestExpectation *expectation =
       [self expectationWithDescription:@"expect to get deffered transcation."];
-  TestPaymentQueue *queue = [TestPaymentQueue alloc];
+  TestPaymentQueue *queue = [[TestPaymentQueue alloc] init];
   queue.testState = SKPaymentTransactionStateDeferred;
   __block SKPaymentTransactionStub *tran;
   FIAPaymentQueueHandler *handler = [[FIAPaymentQueueHandler alloc] initWithQueue:queue
@@ -193,7 +193,7 @@
 - (void)testFinishTransaction {
   XCTestExpectation *expectation =
       [self expectationWithDescription:@"handler.transactions should be empty."];
-  TestPaymentQueue *queue = [TestPaymentQueue alloc];
+  TestPaymentQueue *queue = [[TestPaymentQueue alloc] init];
   queue.testState = SKPaymentTransactionStateDeferred;
   __block FIAPaymentQueueHandler *handler = [[FIAPaymentQueueHandler alloc] initWithQueue:queue
       transactionsUpdated:^(NSArray<SKPaymentTransaction *> *_Nonnull transactions) {
@@ -328,7 +328,7 @@
   XCTestExpectation *updateDownloadsExpectation =
       [self expectationWithDescription:
                 @"downloadsUpdated callback should be called with one transaction."];
-  SKPaymentTransaction *mockTransaction = [SKPaymentTransactionStub alloc];
+  SKPaymentTransaction *mockTransaction = [[SKPaymentTransactionStub alloc] init];
   SKDownload *mockDownload = [[SKDownload alloc] init];
   TestTransactionCache *mockCache = [[TestTransactionCache alloc] init];
   FIAPaymentQueueHandler *handler =
@@ -395,7 +395,7 @@
 
 - (void)testTransactionsShouldBeCachedWhenNotObserving {
   TestPaymentQueue *queue = [[TestPaymentQueue alloc] init];
-  TestTransactionCache *mockCache = [TestTransactionCache alloc];
+  TestTransactionCache *mockCache = [[TestTransactionCache alloc] init];
   FIAPaymentQueueHandler *handler = [[FIAPaymentQueueHandler alloc] initWithQueue:queue
       transactionsUpdated:^(NSArray<SKPaymentTransaction *> *_Nonnull transactions) {
         XCTFail("transactionsUpdated callback should not be called when cache is empty.");

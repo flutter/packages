@@ -4,13 +4,14 @@
 
 #import <Foundation/Foundation.h>
 #import <StoreKit/StoreKit.h>
+#import <RequestHandlerProtocol.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
 typedef void (^ProductRequestCompletion)(SKProductsResponse *_Nullable response,
                                          NSError *_Nullable errror);
 
-@interface FIAPRequestHandler : NSObject
+@interface FIAPRequestHandler : NSObject <RequestHandler>
 
 - (instancetype)initWithRequest:(SKRequest *)request;
 - (void)startProductRequestWithCompletionHandler:(ProductRequestCompletion)completion;

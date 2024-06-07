@@ -14,8 +14,6 @@
 #import <Flutter/Flutter.h>
 #endif
 
-#pragma mark Test Implementations
-
 @implementation TestPaymentQueue
 
 - (void)finishTransaction:(SKPaymentTransaction *)transaction {
@@ -41,7 +39,11 @@
 }
 
 - (NSArray<SKPaymentTransaction *> *_Nonnull)getUnfinishedTransactions {
-  return [NSArray array];
+  if (self.getUnfinishedTransactionsStub) {
+    return self.getUnfinishedTransactionsStub();
+  } else {
+    return [NSArray array];
+  }
 }
 
 #if TARGET_OS_IOS
@@ -173,7 +175,7 @@
                    shouldAddStorePayment:(nullable ShouldAddStorePayment)shouldAddStorePayment
                         updatedDownloads:(nullable UpdatedDownloads)updatedDownloads
                         transactionCache:(nonnull id<TransactionCache>)transactionCache {
-  return [TestPaymentQueueHandler alloc];
+  return [[TestPaymentQueueHandler alloc] init];
 }
 
 #if TARGET_OS_IOS
@@ -210,7 +212,7 @@
         (nullable RestoreCompletedTransactionsFinished)restoreCompletedTransactionsFinished
                    shouldAddStorePayment:(nullable ShouldAddStorePayment)shouldAddStorePayment
                         updatedDownloads:(nullable UpdatedDownloads)updatedDownloads {
-  return [TestPaymentQueueHandler alloc];
+  return [[TestPaymentQueueHandler alloc] init];
 }
 
 @synthesize storefront;
