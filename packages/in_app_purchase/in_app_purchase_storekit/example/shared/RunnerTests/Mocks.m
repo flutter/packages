@@ -43,8 +43,12 @@
 - (NSArray<SKPaymentTransaction *> *_Nonnull)getUnfinishedTransactions {
   return [NSArray array];
 }
+
 #if TARGET_OS_IOS
 - (void)presentCodeRedemptionSheet {
+  if (self.presentCodeRedemptionSheetStub) {
+    self.presentCodeRedemptionSheetStub();
+  }
 }
 #endif
 
@@ -57,12 +61,21 @@
 #endif
 
 - (void)restoreTransactions:(nullable NSString *)applicationName {
+  if (self.restoreTransactionsStub) {
+    self.restoreTransactionsStub(applicationName);
+  }
 }
 
 - (void)startObservingPaymentQueue {
+  if (self.startObservingPaymentQueueStub) {
+    self.startObservingPaymentQueueStub();
+  }
 }
 
 - (void)stopObservingPaymentQueue {
+  if (self.stopObservingPaymentQueueStub) {
+    self.stopObservingPaymentQueueStub();
+  }
 }
 
 - (void)removeTransactionObserver:(id<SKPaymentTransactionObserver>)observer {
@@ -116,6 +129,9 @@
 @implementation TestPaymentQueueHandler
 - (void)paymentQueue:(nonnull SKPaymentQueue *)queue
     updatedTransactions:(nonnull NSArray<SKPaymentTransaction *> *)transactions {
+  if (self.paymentQueueUpdatedTransactionsStub) {
+    self.paymentQueueUpdatedTransactionsStub(queue, transactions);
+  }
 }
 
 #if TARGET_OS_IOS
@@ -135,10 +151,17 @@
 }
 
 - (void)finishTransaction:(nonnull SKPaymentTransaction *)transaction {
+  if (self.finishTransactionStub) {
+    self.finishTransactionStub(transaction);
+  }
 }
 
 - (nonnull NSArray<SKPaymentTransaction *> *)getUnfinishedTransactions {
-  return [NSArray array];
+  if (self.getUnfinishedTransactionsStub) {
+    return self.getUnfinishedTransactionsStub();
+  } else {
+    return [NSArray array];
+  }
 }
 
 - (nonnull instancetype)initWithQueue:(nonnull id<PaymentQueue>)queue
@@ -162,6 +185,9 @@
 #endif
 
 - (void)restoreTransactions:(nullable NSString *)applicationName {
+  if (self.restoreTransactions) {
+    self.restoreTransactions(applicationName);
+  }
 }
 
 - (void)startObservingPaymentQueue {
@@ -186,9 +212,6 @@
                         updatedDownloads:(nullable UpdatedDownloads)updatedDownloads {
   return [TestPaymentQueueHandler alloc];
 }
-
-
-//@synthesize delegate;
 
 @synthesize storefront;
 

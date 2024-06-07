@@ -22,6 +22,11 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic) SKPaymentQueue *realQueue;
 
 @property(nonatomic, copy, nullable) void (^showPriceConsentIfNeededStub)(void);
+@property(nonatomic, copy, nullable) void (^restoreTransactionsStub)(NSString *);
+@property(nonatomic, copy, nullable) void (^startObservingPaymentQueueStub)(void);
+@property(nonatomic, copy, nullable) void (^stopObservingPaymentQueueStub)(void);
+@property(nonatomic, copy, nullable) void (^presentCodeRedemptionSheetStub)(void);
+
 @end
 
 #pragma mark TransactionCache
@@ -50,5 +55,9 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic, copy, nullable) void (^stopObservingPaymentQueueStub)(void);
 @property(nonatomic, copy, nullable) void (^startObservingPaymentQueueStub)(void);
 @property(nonatomic, copy, nullable) void (^presentCodeRedemptionSheetStub)(void);
+@property(nonatomic, copy, nullable) void (^restoreTransactions)(NSString*);
+@property(nonatomic, copy, nullable) NSArray<SKPaymentTransaction *>* (^getUnfinishedTransactionsStub)(void);
+@property(nonatomic, copy, nullable) void (^finishTransactionStub)(SKPaymentTransaction *);
+@property(nonatomic, copy, nullable) void (^paymentQueueUpdatedTransactionsStub)(SKPaymentQueue*, NSArray<SKPaymentTransaction *>*);
 @end
 NS_ASSUME_NONNULL_END
