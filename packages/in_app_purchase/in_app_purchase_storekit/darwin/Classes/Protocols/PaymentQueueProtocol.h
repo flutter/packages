@@ -1,14 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
-#if TARGET_OS_OSX
-#import <FlutterMacOS/FlutterMacOS.h>
-#else
-#import <Flutter/Flutter.h>
-#endif
 #import <StoreKit/StoreKit.h>
-#import "FIATransactionCache.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -38,37 +28,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// The wrapped queue context.
 @property(nonatomic) SKPaymentQueue *queue;
-@end
-
-@protocol TransactionCache <NSObject>
-- (void)addObjects:(NSArray *)objects forKey:(TransactionCacheKey)key;
-- (NSArray *)getObjectsForKey:(TransactionCacheKey)key;
-- (void)clear;
-@end
-
-@interface DefaultTransactionCache : NSObject <TransactionCache>
-- (instancetype)initWithCache:(FIATransactionCache *)cache;
-@property FIATransactionCache *cache;
-@end
-
-@protocol MethodChannel <NSObject>
-- (void)invokeMethod:(NSString *)method arguments:(id _Nullable)arguments;
-- (void)invokeMethod:(NSString *)method
-           arguments:(id _Nullable)arguments
-              result:(FlutterResult _Nullable)callback;
-@end
-
-@interface DefaultMethodChannel : NSObject <MethodChannel>
-- (instancetype)initWithChannel:(FlutterMethodChannel *)channel;
-@property FlutterMethodChannel *channel;
-@end
-
-@protocol URLBundle <NSObject>
-@property NSBundle *bundle;
-- (NSURL *)appStoreURL;
-@end
-
-@interface DefaultBundle : NSObject <URLBundle>
 @end
 
 NS_ASSUME_NONNULL_END

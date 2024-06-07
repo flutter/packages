@@ -9,7 +9,7 @@
 #endif
 #import <Foundation/Foundation.h>
 #import <StoreKit/StoreKit.h>
-#import "FIAProtocols.h"
+#import "MethodChannelProtocol.h"
 
 NS_ASSUME_NONNULL_BEGIN
 

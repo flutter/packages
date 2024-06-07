@@ -45,8 +45,8 @@
       @"countryCode" : @"USA",
       @"identifier" : @"unique_identifier",
     };
-    TestPaymentQueue *queue = [TestPaymentQueue alloc];
-    TestTransactionCache *cache = [TestTransactionCache alloc];
+    TestPaymentQueue *queue = [[TestPaymentQueue alloc] init];
+    TestTransactionCache *cache = [[TestTransactionCache alloc] init];
 
     queue.storefront = [[SKStorefrontStub alloc] initWithMap:storefrontMap];
 
@@ -72,8 +72,8 @@
 
 - (void)testPaymentQueueStorefrontReturnsNil {
   if (@available(iOS 13, macOS 10.15, *)) {
-    TestPaymentQueue *queue = [TestPaymentQueue alloc];
-    TestTransactionCache *cache = [TestTransactionCache alloc];
+    TestPaymentQueue *queue = [[TestPaymentQueue alloc] init];
+    TestTransactionCache *cache = [[TestTransactionCache alloc] init];
 
     self.plugin.paymentQueueHandler = [[FIAPaymentQueueHandler alloc] initWithQueue:queue
                                                                 transactionsUpdated:nil
@@ -132,10 +132,10 @@
       [[SKPaymentTransactionStub alloc] initWithMap:transactionMap];
   NSArray *array = @[ paymentTransaction ];
 
-  TestPaymentQueue *queue = [TestPaymentQueue alloc];
+  TestPaymentQueue *queue = [[TestPaymentQueue alloc] init];
   queue.transactions = array;
 
-  TestTransactionCache *cache = [TestTransactionCache alloc];
+  TestTransactionCache *cache = [[TestTransactionCache alloc] init];
 
   self.plugin.paymentQueueHandler = [[FIAPaymentQueueHandler alloc] initWithQueue:queue
                                                               transactionsUpdated:nil
@@ -178,10 +178,10 @@
   SKPaymentTransactionStub *paymentTransaction =
       [[SKPaymentTransactionStub alloc] initWithMap:transactionMap];
 
-  TestPaymentQueue *queue = [TestPaymentQueue alloc];
+  TestPaymentQueue *queue = [[TestPaymentQueue alloc] init];
   queue.transactions = @[ paymentTransaction ];
 
-  TestTransactionCache *cache = [TestTransactionCache alloc];
+  TestTransactionCache *cache = [[TestTransactionCache alloc] init];
 
   self.plugin.paymentQueueHandler = [[FIAPaymentQueueHandler alloc] initWithQueue:queue
                                                               transactionsUpdated:nil
@@ -204,7 +204,7 @@
   XCTestExpectation *expectation =
       [self expectationWithDescription:@"completion handler successfully called"];
 
-  TestRequestHandler *testHandler = [TestRequestHandler alloc];
+  TestRequestHandler *testHandler = [[TestRequestHandler alloc] init];
   InAppPurchasePlugin *plugin = [[InAppPurchasePlugin alloc]
       initWithReceiptManager:_receiptManagerStub
               handlerFactory:^TestRequestHandler *(SKRequest *request) {
@@ -239,7 +239,7 @@
   XCTestExpectation *expectation =
       [self expectationWithDescription:@"completion handler successfully called"];
 
-  TestRequestHandler *testHandler = [TestRequestHandler alloc];
+  TestRequestHandler *testHandler = [[TestRequestHandler alloc] init];
   InAppPurchasePlugin *plugin = [[InAppPurchasePlugin alloc]
       initWithReceiptManager:_receiptManagerStub
               handlerFactory:^TestRequestHandler *(SKRequest *request) {
@@ -270,7 +270,7 @@
     @"simulatesAskToBuyInSandbox" : @YES,
   };
 
-  TestPaymentQueueHandler *handler = [TestPaymentQueueHandler alloc];
+  TestPaymentQueueHandler *handler = [[TestPaymentQueueHandler alloc] init];
   self.plugin.paymentQueueHandler = handler;
 
   FlutterError *error;
@@ -320,7 +320,7 @@
     @"simulatesAskToBuyInSandbox" : @YES,
   };
 
-  TestPaymentQueueHandler *handler = [TestPaymentQueueHandler alloc];
+  TestPaymentQueueHandler *handler = [[TestPaymentQueueHandler alloc] init];
   self.plugin.paymentQueueHandler = handler;
 
   __block NSInteger addPaymentTimes = 0;
@@ -354,7 +354,7 @@
     }
   };
 
-  TestPaymentQueueHandler *handler = [TestPaymentQueueHandler alloc];
+  TestPaymentQueueHandler *handler = [[TestPaymentQueueHandler alloc] init];
   self.plugin.paymentQueueHandler = handler;
 
   __block NSInteger addPaymentTimes = 0;
@@ -396,7 +396,7 @@
       }
     };
 
-    TestPaymentQueueHandler *testHandler = [TestPaymentQueueHandler alloc];
+    TestPaymentQueueHandler *testHandler = [[TestPaymentQueueHandler alloc] init];
 
     __block NSInteger addPaymentNums = 0;
     testHandler.addPaymentStub = ^BOOL(SKPayment *_Nonnull payment) {
@@ -426,7 +426,7 @@
     @"simulatesAskToBuyInSandbox" : [NSNull null],
   };
 
-  TestPaymentQueueHandler *handler = [TestPaymentQueueHandler alloc];
+  TestPaymentQueueHandler *handler = [[TestPaymentQueueHandler alloc] init];
   self.plugin.paymentQueueHandler = handler;
   FlutterError *error;
 
@@ -445,8 +445,8 @@
   XCTestExpectation *expectation =
       [self expectationWithDescription:@"result successfully restore transactions"];
 
-  TestTransactionCache *cache = [TestTransactionCache alloc];
-  TestPaymentQueue *queue = [TestPaymentQueue alloc];
+  TestTransactionCache *cache = [[TestTransactionCache alloc] init];
+  TestPaymentQueue *queue = [[TestPaymentQueue alloc] init];
 
   __block BOOL callbackInvoked = NO;
   self.plugin.paymentQueueHandler = [[FIAPaymentQueueHandler alloc] initWithQueue:queue
@@ -504,7 +504,7 @@
   XCTestExpectation *expectation =
       [self expectationWithDescription:@"completion handler successfully called"];
 
-  TestRequestHandler *testHandler = [TestRequestHandler alloc];
+  TestRequestHandler *testHandler = [[TestRequestHandler alloc] init];
   InAppPurchasePlugin *plugin = [[InAppPurchasePlugin alloc]
       initWithReceiptManager:_receiptManagerStub
               handlerFactory:^TestRequestHandler *(SKRequest *request) {
@@ -537,7 +537,7 @@
   XCTestExpectation *expectation =
       [self expectationWithDescription:@"completion handler successfully called"];
 
-  TestRequestHandler *testHandler = [TestRequestHandler alloc];
+  TestRequestHandler *testHandler = [[TestRequestHandler alloc] init];
   InAppPurchasePlugin *plugin = [[InAppPurchasePlugin alloc]
       initWithReceiptManager:_receiptManagerStub
               handlerFactory:^TestRequestHandler *(SKRequest *request) {
@@ -570,7 +570,7 @@
   XCTestExpectation *expectation =
       [self expectationWithDescription:@"completion handler successfully called"];
 
-  TestRequestHandler *testHandler = [TestRequestHandler alloc];
+  TestRequestHandler *testHandler = [[TestRequestHandler alloc] init];
   InAppPurchasePlugin *plugin = [[InAppPurchasePlugin alloc]
       initWithReceiptManager:_receiptManagerStub
               handlerFactory:^TestRequestHandler *(SKRequest *request) {
@@ -599,7 +599,7 @@
 /// presentCodeRedemptionSheetWithError:error is only available on iOS
 #if TARGET_OS_IOS
 - (void)testPresentCodeRedemptionSheet {
-  TestPaymentQueueHandler *mockHandler = [TestPaymentQueueHandler alloc];
+  TestPaymentQueueHandler *mockHandler = [[TestPaymentQueueHandler alloc] init];
   self.plugin.paymentQueueHandler = mockHandler;
 
   __block NSInteger presentCodeRedemptionSheetNums = 0;
@@ -615,8 +615,8 @@
 #endif
 
 - (void)testGetPendingTransactions {
-  TestPaymentQueue *queue = [TestPaymentQueue alloc];
-  TestTransactionCache *cache = [TestTransactionCache alloc];
+  TestPaymentQueue *queue = [[TestPaymentQueue alloc] init];
+  TestTransactionCache *cache = [[TestTransactionCache alloc] init];
   NSDictionary *transactionMap = @{
     @"transactionIdentifier" : [NSNull null],
     @"transactionState" : @(SKPaymentTransactionStatePurchasing),
@@ -649,7 +649,7 @@
 }
 
 - (void)testStartObservingPaymentQueue {
-  TestPaymentQueueHandler *mockHandler = [TestPaymentQueueHandler alloc];
+  TestPaymentQueueHandler *mockHandler = [[TestPaymentQueueHandler alloc] init];
   self.plugin.paymentQueueHandler = mockHandler;
 
   __block NSInteger startObservingNums = 0;
@@ -664,7 +664,7 @@
 }
 
 - (void)testStopObservingPaymentQueue {
-  TestPaymentQueueHandler *mockHandler = [TestPaymentQueueHandler alloc];
+  TestPaymentQueueHandler *mockHandler = [[TestPaymentQueueHandler alloc] init];
   self.plugin.paymentQueueHandler = mockHandler;
 
   __block NSInteger stopObservingNums = 0;
@@ -680,8 +680,8 @@
 
 #if TARGET_OS_IOS
 - (void)testRegisterPaymentQueueDelegate {
-  TestTransactionCache *cache = [TestTransactionCache alloc];
-  TestPaymentQueue *queue = [TestPaymentQueue alloc];
+  TestTransactionCache *cache = [[TestTransactionCache alloc] init];
+  TestPaymentQueue *queue = [[TestPaymentQueue alloc] init];
   if (@available(iOS 13, *)) {
     self.plugin.paymentQueueHandler = [[FIAPaymentQueueHandler alloc] initWithQueue:queue
                                                                 transactionsUpdated:nil
@@ -707,8 +707,8 @@
 
 - (void)testRemovePaymentQueueDelegate {
   if (@available(iOS 13, *)) {
-    TestTransactionCache *cache = [TestTransactionCache alloc];
-    TestPaymentQueue *queue = [TestPaymentQueue alloc];
+    TestTransactionCache *cache = [[TestTransactionCache alloc] init];
+    TestPaymentQueue *queue = [[TestPaymentQueue alloc] init];
     self.plugin.paymentQueueHandler = [[FIAPaymentQueueHandler alloc] initWithQueue:queue
                                                                 transactionsUpdated:nil
                                                                  transactionRemoved:nil
@@ -754,7 +754,7 @@
                 return [[DefaultRequestHandler alloc]
                     initWithRequestHandler:[[FIAPRequestHandler alloc] initWithRequest:request]];
               }];
-  TestMethodChannel *testChannel = [TestMethodChannel alloc];
+  TestMethodChannel *testChannel = [[TestMethodChannel alloc] init];
   __block NSInteger invokeMethodNums = 0;
 
   testChannel.invokeMethodChannelStub = ^(NSString *_Nonnull method, id _Nonnull arguments) {
@@ -798,7 +798,7 @@
   NSMutableArray *maps = [NSMutableArray new];
   [maps addObject:[FIAObjectTranslator getMapFromSKPaymentTransaction:paymentTransaction]];
 
-  TestMethodChannel *testChannel = [TestMethodChannel alloc];
+  TestMethodChannel *testChannel = [[TestMethodChannel alloc] init];
   __block NSInteger invokeMethodNums = 0;
 
   testChannel.invokeMethodChannelStub = ^(NSString *_Nonnull method, id _Nonnull arguments) {
@@ -820,7 +820,7 @@
                 return [[DefaultRequestHandler alloc]
                     initWithRequestHandler:[[FIAPRequestHandler alloc] initWithRequest:request]];
               }];
-  TestMethodChannel *testChannel = [TestMethodChannel alloc];
+  TestMethodChannel *testChannel = [[TestMethodChannel alloc] init];
   __block NSInteger invokeMethodNums = 0;
   NSError *error = [NSError errorWithDomain:@"error" code:0 userInfo:nil];
 
@@ -843,7 +843,7 @@
                 return [[DefaultRequestHandler alloc]
                     initWithRequestHandler:[[FIAPRequestHandler alloc] initWithRequest:request]];
               }];
-  TestMethodChannel *testChannel = [TestMethodChannel alloc];
+  TestMethodChannel *testChannel = [[TestMethodChannel alloc] init];
   __block NSInteger invokeMethodNums = 0;
   testChannel.invokeMethodChannelStub = ^(NSString *_Nonnull method, id _Nonnull arguments) {
     XCTAssertEqualObjects(@"paymentQueueRestoreCompletedTransactionsFinished", method);
@@ -889,7 +889,7 @@
     @"product" : [FIAObjectTranslator getMapFromSKProduct:product]
   };
 
-  TestMethodChannel *testChannel = [TestMethodChannel alloc];
+  TestMethodChannel *testChannel = [[TestMethodChannel alloc] init];
 
   __block NSInteger invokeMethodNums = 0;
   testChannel.invokeMethodChannelStub = ^(NSString *_Nonnull method, id _Nonnull arguments) {
@@ -907,8 +907,8 @@
 
 #if TARGET_OS_IOS
 - (void)testShowPriceConsentIfNeeded {
-  TestTransactionCache *cache = [TestTransactionCache alloc];
-  TestPaymentQueue *testQueue = [TestPaymentQueue alloc];
+  TestTransactionCache *cache = [[TestTransactionCache alloc] init];
+  TestPaymentQueue *testQueue = [[TestPaymentQueue alloc] init];
   self.plugin.paymentQueueHandler = [[FIAPaymentQueueHandler alloc] initWithQueue:testQueue
                                                               transactionsUpdated:nil
                                                                transactionRemoved:nil

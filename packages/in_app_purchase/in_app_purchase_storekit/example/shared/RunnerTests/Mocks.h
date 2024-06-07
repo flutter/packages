@@ -3,8 +3,11 @@
 // found in the LICENSE file.
 
 #import <StoreKit/StoreKit.h>
-#import "FIAProtocols.h"
 #import "FIATransactionCache.h"
+#import "MethodChannelProtocol.h"
+#import "PaymentQueueProtocol.h"
+#import "TransactionCacheProtocol.h"
+#import "PaymentQueueHandlerProtocol.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -40,8 +43,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-@interface TestBundle : NSObject <URLBundle>
+@interface TestPaymentQueueHandler : NSObject <SKPaymentTransactionObserver, PaymentQueueHandler>
+@property(nonatomic) BOOL canAddPayment;
+@property(nonatomic, copy, nullable) BOOL (^addPaymentStub)(SKPayment *payment);
+@property(nonatomic, copy, nullable) void (^showPriceConsentIfNeededStub)(void);
+@property(nonatomic, copy, nullable) void (^stopObservingPaymentQueueStub)(void);
+@property(nonatomic, copy, nullable) void (^startObservingPaymentQueueStub)(void);
+@property(nonatomic, copy, nullable) void (^presentCodeRedemptionSheetStub)(void);
 @end
-
-#pragma mark Stubs
 NS_ASSUME_NONNULL_END

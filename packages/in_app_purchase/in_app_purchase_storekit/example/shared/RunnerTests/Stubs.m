@@ -319,9 +319,6 @@
 }
 @end
 
-@implementation SKDownloadStub
-@end
-
 @implementation FlutterBinaryMessengerStub
 - (void)cleanUpConnection:(FlutterBinaryMessengerConnection)connection {
 }

@@ -71,9 +71,6 @@ API_AVAILABLE(ios(13.0), macos(10.15))
 - (instancetype)initWithMap:(NSDictionary *)map;
 @end
 
-@interface SKDownloadStub : SKDownload
-@end
-
 #if TARGET_OS_IOS
 @interface FlutterPluginRegistrarStub : NSObject <FlutterPluginRegistrar>
 @end

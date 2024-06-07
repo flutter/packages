@@ -18,7 +18,8 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI {
   // note - the type should be FIAPPaymentQueueDelegate, but this is only available >= iOS 13,
   // FIAPPaymentQueueDelegate only gets set/used in registerPaymentQueueDelegateWithError or removePaymentQueueDelegateWithError, which both are ios13+ only
   private var paymentQueueDelegate: Any?
-  // Sets do not accept protocols
+  // Swift sets do not accept protocols, only concrete implementations
+  // TODO(louisehsu): Change it back to a set when removing obj-c dependancies from this file via type erasure
   private var requestHandlers = NSHashTable<RequestHandler>()
   private var handlerFactory: ((SKRequest) -> RequestHandler)
   // TODO(louisehsu): Once tests are migrated to swift, we can use @testable import, and make theses vars private again and remove all instances of @objc
@@ -120,11 +121,10 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI {
   public func storefrontWithError(_ error: AutoreleasingUnsafeMutablePointer<FlutterError?>)
     -> SKStorefrontMessage?
   {
-    if #available(iOS 13.0, *) {
-      return FIAObjectTranslator.convertStorefront(toPigeon: getPaymentQueueHandler().storefront)
-    } else {
-      fatalError()
+    if #available(iOS 13.0, *), let storefront = getPaymentQueueHandler().storefront {
+      return FIAObjectTranslator.convertStorefront(toPigeon: storefront)
     }
+    return nil
   }
 
   public func startProductRequestProductIdentifiers(

@@ -1,8 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
-#import "FIAProtocols.h"
+#import "PaymentQueueProtocol.h"
 
 /// Default implementations of FIAProtocols
 @implementation DefaultPaymentQueue
@@ -66,49 +62,5 @@
 @synthesize delegate;
 
 @synthesize transactions;
-
-@end
-
-@implementation DefaultMethodChannel
-- (void)invokeMethod:(nonnull NSString *)method arguments:(id _Nullable)arguments {
-  [self.channel invokeMethod:method arguments:arguments];
-}
-
-- (void)invokeMethod:(nonnull NSString *)method
-           arguments:(id _Nullable)arguments
-              result:(FlutterResult _Nullable)callback {
-  [self.channel invokeMethod:method arguments:arguments result:callback];
-}
-
-- (instancetype)initWithChannel:(nonnull FlutterMethodChannel *)channel {
-  self = [super init];
-  if (self) {
-    _channel = channel;
-  }
-  return self;
-}
-
-@end
-
-@implementation DefaultTransactionCache
-- (void)addObjects:(nonnull NSArray *)objects forKey:(TransactionCacheKey)key {
-  [self.cache addObjects:objects forKey:key];
-}
-
-- (void)clear {
-  [self.cache clear];
-}
-
-- (nonnull NSArray *)getObjectsForKey:(TransactionCacheKey)key {
-  return [self.cache getObjectsForKey:key];
-}
-
-- (nonnull instancetype)initWithCache:(nonnull FIATransactionCache *)cache {
-  self = [super init];
-  if (self) {
-    _cache = cache;
-  }
-  return self;
-}
 
 @end

@@ -329,7 +329,7 @@
       [self expectationWithDescription:
                 @"downloadsUpdated callback should be called with one transaction."];
   SKPaymentTransaction *mockTransaction = [SKPaymentTransactionStub alloc];
-  SKDownloadStub *mockDownload = [[SKDownloadStub alloc] init];
+  SKDownload *mockDownload = [[SKDownload alloc] init];
   TestTransactionCache *mockCache = [[TestTransactionCache alloc] init];
   FIAPaymentQueueHandler *handler =
       [[FIAPaymentQueueHandler alloc] initWithQueue:[[TestPaymentQueue alloc] init]
@@ -454,7 +454,7 @@
       [self expectationWithDescription:
                 @"downloadsUpdated callback should be called with one transaction."];
   SKPaymentTransaction *mockTransaction = [[SKPaymentTransactionStub alloc] init];
-  SKDownload *mockDownload = [[SKDownloadStub alloc] init];
+  SKDownload *mockDownload = [[SKDownload alloc] init];
   TestPaymentQueue *queue = [[TestPaymentQueue alloc] init];
   queue.testState = SKPaymentTransactionStatePurchased;
   TestTransactionCache *mockCache = [[TestTransactionCache alloc] init];
