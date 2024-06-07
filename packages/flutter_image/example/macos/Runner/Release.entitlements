@@ -5,6 +5,7 @@
 	<key>com.apple.security.network.client</key>
 	<true/>
 	<key>com.apple.security.app-sandbox</key>
-	<true/>
+	<!-- TODO(vashworth): Re-enable sandboxing once https://github.com/flutter/flutter/pull/149618 lands in stable and stable version is updated. -->
+	<false/>
 </dict>
 </plist>
