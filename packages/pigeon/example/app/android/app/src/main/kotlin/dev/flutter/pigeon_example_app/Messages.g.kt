@@ -69,27 +69,30 @@ data class MessageData(
     fun fromList(__pigeon_list: List<Any?>): MessageData {
       val name = __pigeon_list[0] as String?
       val description = __pigeon_list[1] as String?
-      val code = Code.ofRaw(__pigeon_list[2] as Int)!!
+      val code = __pigeon_list[2] as Code
       val data = __pigeon_list[3] as Map<String?, String?>
       return MessageData(name, description, code, data)
     }
   }
 
   fun toList(): List<Any?> {
-    return listOf<Any?>(
+    return listOf(
         name,
         description,
-        code.raw,
+        code,
         data,
     )
   }
 }
 
-private object ExampleHostApiCodec : StandardMessageCodec() {
+private object MessagesPigeonCodec : StandardMessageCodec() {
   override fun readValueOfType(type: Byte, buffer: ByteBuffer): Any? {
     return when (type) {
-      128.toByte() -> {
+      129.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let { MessageData.fromList(it) }
+      }
+      130.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { Code.ofRaw(it) }
       }
       else -> super.readValueOfType(type, buffer)
     }
@@ -98,8 +101,12 @@ private object ExampleHostApiCodec : StandardMessageCodec() {
   override fun writeValue(stream: ByteArrayOutputStream, value: Any?) {
     when (value) {
       is MessageData -> {
-        stream.write(128)
+        stream.write(129)
         writeValue(stream, value.toList())
+      }
+      is Code -> {
+        stream.write(130)
+        writeValue(stream, value.raw)
       }
       else -> super.writeValue(stream, value)
     }
@@ -116,7 +123,7 @@ interface ExampleHostApi {
 
   companion object {
     /** The codec used by ExampleHostApi. */
-    val codec: MessageCodec<Any?> by lazy { ExampleHostApiCodec }
+    val codec: MessageCodec<Any?> by lazy { MessagesPigeonCodec }
     /** Sets up an instance of `ExampleHostApi` to handle messages through the `binaryMessenger`. */
     @JvmOverloads
     fun setUp(
@@ -136,7 +143,7 @@ interface ExampleHostApi {
           channel.setMessageHandler { _, reply ->
             val wrapped: List<Any?> =
                 try {
-                  listOf<Any?>(api.getHostLanguage())
+                  listOf(api.getHostLanguage())
                 } catch (exception: Throwable) {
                   wrapError(exception)
                 }
@@ -159,7 +166,7 @@ interface ExampleHostApi {
             val bArg = args[1].let { num -> if (num is Int) num.toLong() else num as Long }
             val wrapped: List<Any?> =
                 try {
-                  listOf<Any?>(api.add(aArg, bArg))
+                  listOf(api.add(aArg, bArg))
                 } catch (exception: Throwable) {
                   wrapError(exception)
                 }
@@ -203,7 +210,7 @@ class MessageFlutterApi(
 ) {
   companion object {
     /** The codec used by MessageFlutterApi. */
-    val codec: MessageCodec<Any?> by lazy { StandardMessageCodec() }
+    val codec: MessageCodec<Any?> by lazy { MessagesPigeonCodec }
   }
 
   fun flutterMethod(aStringArg: String?, callback: (Result<String>) -> Unit) {

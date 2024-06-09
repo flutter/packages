@@ -26,7 +26,7 @@ const DocumentCommentSpecification _docCommentSpec =
 );
 
 /// The standard codec for Flutter, used for any non custom codecs and extended for custom codecs.
-const String _standardMessageCodec = 'StandardMessageCodec';
+const String _codecName = 'PigeonCodec';
 
 /// Options that control how Java code will be generated.
 class JavaOptions {
@@ -339,14 +339,7 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
           'ArrayList<Object> toListResult = new ArrayList<Object>(${classDefinition.fields.length});');
       for (final NamedType field
           in getFieldsInSerializationOrder(classDefinition)) {
-        String toWriteValue = '';
-        final String fieldName = field.name;
-        if (field.type.isEnum) {
-          toWriteValue = '$fieldName == null ? null : $fieldName.index';
-        } else {
-          toWriteValue = field.name;
-        }
-        indent.writeln('toListResult.add($toWriteValue);');
+        indent.writeln('toListResult.add(${field.name});');
       }
       indent.writeln('return toListResult;');
     });
@@ -373,16 +366,84 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
         final String setter = _makeSetter(field);
         indent.writeln(
             'Object $fieldVariable = ${varNamePrefix}list.get($index);');
-        if (field.type.isEnum) {
-          indent.writeln(
-              '$result.$setter(${_intToEnum(fieldVariable, field.type.baseName, field.type.isNullable)});');
-        } else {
-          indent.writeln(
-              '$result.$setter(${_castObject(field, fieldVariable)});');
-        }
+        indent
+            .writeln('$result.$setter(${_castObject(field, fieldVariable)});');
       });
       indent.writeln('return $result;');
     });
+  }
+
+  @override
+  void writeGeneralCodec(
+    JavaOptions generatorOptions,
+    Root root,
+    Indent indent, {
+    required String dartPackageName,
+  }) {
+    final Iterable<EnumeratedType> enumeratedTypes = getEnumeratedTypes(root);
+    indent.newln();
+    indent.write(
+        'private static class $_codecName extends StandardMessageCodec ');
+    indent.addScoped('{', '}', () {
+      indent.writeln(
+          'public static final $_codecName INSTANCE = new $_codecName();');
+      indent.newln();
+      indent.writeln('private $_codecName() {}');
+      indent.newln();
+      indent.writeln('@Override');
+      indent.write(
+          'protected Object readValueOfType(byte type, @NonNull ByteBuffer buffer) ');
+      indent.addScoped('{', '}', () {
+        indent.write('switch (type) ');
+        indent.addScoped('{', '}', () {
+          for (final EnumeratedType customType in enumeratedTypes) {
+            indent.writeln('case (byte) ${customType.enumeration}:');
+            indent.nest(1, () {
+              if (customType.type == CustomTypes.customClass) {
+                indent.writeln(
+                    'return ${customType.name}.fromList((ArrayList<Object>) readValue(buffer));');
+              } else if (customType.type == CustomTypes.customEnum) {
+                indent.writeln('Object value = readValue(buffer);');
+                indent.writeln(
+                    'return ${_intToEnum('value', customType.name, true)};');
+              }
+            });
+          }
+          indent.writeln('default:');
+          indent.nest(1, () {
+            indent.writeln('return super.readValueOfType(type, buffer);');
+          });
+        });
+      });
+      indent.newln();
+      indent.writeln('@Override');
+      indent.write(
+          'protected void writeValue(@NonNull ByteArrayOutputStream stream, Object value) ');
+      indent.addScoped('{', '}', () {
+        bool firstClass = true;
+        for (final EnumeratedType customType in enumeratedTypes) {
+          if (firstClass) {
+            indent.write('');
+            firstClass = false;
+          }
+          indent.add('if (value instanceof ${customType.name}) ');
+          indent.addScoped('{', '} else ', () {
+            indent.writeln('stream.write(${customType.enumeration});');
+            if (customType.type == CustomTypes.customClass) {
+              indent.writeln(
+                  'writeValue(stream, ((${customType.name}) value).toList());');
+            } else {
+              indent.writeln(
+                  'writeValue(stream, value == null ? null : ((${customType.name}) value).index);');
+            }
+          }, addTrailingNewline: false);
+        }
+        indent.addScoped('{', '}', () {
+          indent.writeln('super.writeValue(stream, value);');
+        });
+      });
+    });
+    indent.newln();
   }
 
   /// Writes the code for a flutter [Api], [api].
@@ -402,20 +463,11 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
     AstFlutterApi api, {
     required String dartPackageName,
   }) {
-    /// Returns an argument name that can be used in a context where it is possible to collide
-    /// and append `.index` to enums.
-    String getEnumSafeArgumentExpression(int count, NamedType argument) {
-      if (argument.type.isEnum) {
-        return argument.type.isNullable
-            ? '${_getArgumentName(count, argument)}Arg == null ? null : ${_getArgumentName(count, argument)}Arg.index'
-            : '${_getArgumentName(count, argument)}Arg.index';
-      }
+    /// Returns an argument name that can be used in a context where it is possible to collide.
+    String getSafeArgumentExpression(int count, NamedType argument) {
       return '${_getArgumentName(count, argument)}Arg';
     }
 
-    if (getCodecClasses(api, root).isNotEmpty) {
-      _writeCodec(indent, api, root);
-    }
     const List<String> generatedMessages = <String>[
       ' Generated class from Pigeon that represents Flutter messages that can be called from Java.'
     ];
@@ -441,16 +493,10 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
       });
       indent.newln();
       indent.writeln('/** Public interface for sending reply. */ ');
-      final String codecName = _getCodecName(api);
       indent.writeln('/** The codec used by ${api.name}. */');
       indent.write('static @NonNull MessageCodec<Object> getCodec() ');
       indent.addScoped('{', '}', () {
-        indent.write('return ');
-        if (getCodecClasses(api, root).isNotEmpty) {
-          indent.addln('$codecName.INSTANCE;');
-        } else {
-          indent.addln('new $_standardMessageCodec();');
-        }
+        indent.writeln('return $_codecName.INSTANCE;');
       });
 
       for (final Method func in api.methods) {
@@ -471,7 +517,7 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
           final Iterable<String> argNames =
               indexMap(func.parameters, _getSafeArgumentName);
           final Iterable<String> enumSafeArgNames =
-              indexMap(func.parameters, getEnumSafeArgumentExpression);
+              indexMap(func.parameters, getSafeArgumentExpression);
           if (func.parameters.length == 1) {
             sendArgument =
                 'new ArrayList<Object>(Collections.singletonList(${enumSafeArgNames.first}))';
@@ -526,14 +572,6 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
                     if (func.returnType.baseName == 'int') {
                       outputExpression =
                           'listReply.get(0) == null ? null : ((Number) listReply.get(0)).longValue();';
-                    } else if (func.returnType.isEnum) {
-                      if (func.returnType.isNullable) {
-                        outputExpression =
-                            'listReply.get(0) == null ? null : $returnType.values()[(int) listReply.get(0)];';
-                      } else {
-                        outputExpression =
-                            '$returnType.values()[(int) listReply.get(0)];';
-                      }
                     } else {
                       outputExpression =
                           '${_cast('listReply.get(0)', javaType: returnType)};';
@@ -586,9 +624,6 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
     AstHostApi api, {
     required String dartPackageName,
   }) {
-    if (getCodecClasses(api, root).isNotEmpty) {
-      _writeCodec(indent, api, root);
-    }
     const List<String> generatedMessages = <String>[
       ' Generated interface from Pigeon that represents a handler of messages from Flutter.'
     ];
@@ -601,16 +636,10 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
         _writeInterfaceMethod(generatorOptions, root, indent, api, method);
       }
       indent.newln();
-      final String codecName = _getCodecName(api);
       indent.writeln('/** The codec used by ${api.name}. */');
       indent.write('static @NonNull MessageCodec<Object> getCodec() ');
       indent.addScoped('{', '}', () {
-        indent.write('return ');
-        if (getCodecClasses(api, root).isNotEmpty) {
-          indent.addln('$codecName.INSTANCE;');
-        } else {
-          indent.addln('new $_standardMessageCodec();');
-        }
+        indent.writeln('return $_codecName.INSTANCE;');
       });
 
       indent.writeln(
@@ -716,7 +745,6 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
         indent.nest(2, () {
           indent.write('(message, reply) -> ');
           indent.addScoped('{', '});', () {
-            String enumTag = '';
             final String returnType = method.returnType.isVoid
                 ? 'Void'
                 : _javaTypeForDartType(method.returnType);
@@ -738,10 +766,7 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
                     ? '($argName == null) ? null : $argName.longValue()'
                     : argName;
                 String accessor = 'args.get($index)';
-                if (arg.type.isEnum) {
-                  accessor = _intToEnum(
-                      accessor, arg.type.baseName, arg.type.isNullable);
-                } else if (argType != 'Object') {
+                if (argType != 'Object') {
                   accessor = _cast(accessor, javaType: argType);
                 }
                 indent.writeln('$argType $argName = $accessor;');
@@ -751,16 +776,11 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
             if (method.isAsynchronous) {
               final String resultValue =
                   method.returnType.isVoid ? 'null' : 'result';
-              if (method.returnType.isEnum) {
-                enumTag = method.returnType.isNullable
-                    ? ' == null ? null : $resultValue.index'
-                    : '.index';
-              }
               final String resultType = _getResultType(method.returnType);
               final String resultParam =
                   method.returnType.isVoid ? '' : '$returnType result';
               final String addResultArg =
-                  method.returnType.isVoid ? 'null' : '$resultValue$enumTag';
+                  method.returnType.isVoid ? 'null' : resultValue;
               const String resultName = 'resultCallback';
               indent.format('''
 $resultType $resultName =
@@ -789,13 +809,8 @@ $resultType $resultName =
                   indent.writeln('$call;');
                   indent.writeln('wrapped.add(0, null);');
                 } else {
-                  if (method.returnType.isEnum) {
-                    enumTag = method.returnType.isNullable
-                        ? ' == null ? null : output.index'
-                        : '.index';
-                  }
                   indent.writeln('$returnType output = $call;');
-                  indent.writeln('wrapped.add(0, output$enumTag);');
+                  indent.writeln('wrapped.add(0, output);');
                 }
               });
               indent.add(' catch (Throwable exception) ');
@@ -817,67 +832,6 @@ $resultType $resultName =
         indent.writeln('channel.setMessageHandler(null);');
       });
     });
-  }
-
-  /// Writes the codec class that will be used by [api].
-  /// Example:
-  /// private static class FooCodec extends StandardMessageCodec {...}
-  void _writeCodec(Indent indent, Api api, Root root) {
-    assert(getCodecClasses(api, root).isNotEmpty);
-    final Iterable<EnumeratedClass> codecClasses = getCodecClasses(api, root);
-    final String codecName = _getCodecName(api);
-    indent.newln();
-    indent.write(
-        'private static class $codecName extends $_standardMessageCodec ');
-    indent.addScoped('{', '}', () {
-      indent.writeln(
-          'public static final $codecName INSTANCE = new $codecName();');
-      indent.newln();
-      indent.writeln('private $codecName() {}');
-      indent.newln();
-      indent.writeln('@Override');
-      indent.write(
-          'protected Object readValueOfType(byte type, @NonNull ByteBuffer buffer) ');
-      indent.addScoped('{', '}', () {
-        indent.write('switch (type) ');
-        indent.addScoped('{', '}', () {
-          for (final EnumeratedClass customClass in codecClasses) {
-            indent.writeln('case (byte) ${customClass.enumeration}:');
-            indent.nest(1, () {
-              indent.writeln(
-                  'return ${customClass.name}.fromList((ArrayList<Object>) readValue(buffer));');
-            });
-          }
-          indent.writeln('default:');
-          indent.nest(1, () {
-            indent.writeln('return super.readValueOfType(type, buffer);');
-          });
-        });
-      });
-      indent.newln();
-      indent.writeln('@Override');
-      indent.write(
-          'protected void writeValue(@NonNull ByteArrayOutputStream stream, Object value) ');
-      indent.addScoped('{', '}', () {
-        bool firstClass = true;
-        for (final EnumeratedClass customClass in codecClasses) {
-          if (firstClass) {
-            indent.write('');
-            firstClass = false;
-          }
-          indent.add('if (value instanceof ${customClass.name}) ');
-          indent.addScoped('{', '} else ', () {
-            indent.writeln('stream.write(${customClass.enumeration});');
-            indent.writeln(
-                'writeValue(stream, ((${customClass.name}) value).toList());');
-          }, addTrailingNewline: false);
-        }
-        indent.addScoped('{', '}', () {
-          indent.writeln('super.writeValue(stream, value);');
-        });
-      });
-    });
-    indent.newln();
   }
 
   void _writeResultInterfaces(Indent indent) {
@@ -1025,9 +979,6 @@ protected static ArrayList<Object> wrapError(@NonNull Throwable exception) {
     indent.addln('}');
   }
 }
-
-/// Calculates the name of the codec that will be generated for [api].
-String _getCodecName(Api api) => '${api.name}Codec';
 
 /// Converts an expression that evaluates to an nullable int to an expression
 /// that evaluates to a nullable enum.
