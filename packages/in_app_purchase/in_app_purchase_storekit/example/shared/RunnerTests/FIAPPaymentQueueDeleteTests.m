@@ -53,7 +53,7 @@ API_UNAVAILABLE(tvos, macos, watchos)
           XCTAssertEqualObjects(arguments,
                                 [FIAObjectTranslator getMapFromSKStorefront:self.storefront
                                                     andSKPaymentTransaction:self.transaction]);
-          result([NSNumber numberWithBool:NO]);
+          result(@NO);
         };
 
     FIAPPaymentQueueDelegate *delegate =
@@ -100,7 +100,7 @@ API_UNAVAILABLE(tvos, macos, watchos)
         ^(NSString *_Nonnull method, id _Nonnull arguments, FlutterResult _Nullable result) {
           XCTAssertEqualObjects(method, @"shouldShowPriceConsent");
           XCTAssertNil(arguments);
-          result([NSNumber numberWithBool:NO]);
+          result(@NO);
         };
 
     BOOL shouldShow =

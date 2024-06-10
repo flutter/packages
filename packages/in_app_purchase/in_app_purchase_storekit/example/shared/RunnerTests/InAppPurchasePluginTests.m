@@ -384,38 +384,39 @@
 - (void)testAddPaymentFailureWithInvalidPaymentDiscount {
   // Support for payment discount is only available on iOS 12.2 and higher.
   if (@available(iOS 12.2, *)) {
-    NSDictionary *argument = @{
+    NSDictionary *invalidDiscount = @{
       @"productIdentifier" : @"123",
-      @"quantity" : @"123",  // This should normally be an int, not a string
+      @"quantity" : @(1),
       @"simulatesAskToBuyInSandbox" : @YES,
       @"paymentDiscount" : @{
+        /// This payment discount is missing the field `identifier`, and is thus malformed
         @"keyIdentifier" : @"test_key_identifier",
         @"nonce" : @"4a11a9cc-3bc3-11ec-8d3d-0242ac130003",
-        @"signature" : @"test_signature",
+        @"signature" : @YES,
         @"timestamp" : @(1635847102),
       }
     };
 
     TestPaymentQueueHandler *testHandler = [[TestPaymentQueueHandler alloc] init];
 
-    __block NSInteger addPaymentNums = 0;
+    __block NSInteger addPaymentCount = 0;
     testHandler.addPaymentStub = ^BOOL(SKPayment *_Nonnull payment) {
-      addPaymentNums++;
+      addPaymentCount++;
       return YES;
     };
 
     self.plugin.paymentQueueHandler = testHandler;
     FlutterError *error;
 
-    [self.plugin addPaymentPaymentMap:argument error:&error];
+    [self.plugin addPaymentPaymentMap:invalidDiscount error:&error];
 
     XCTAssertEqualObjects(@"storekit_invalid_payment_discount_object", error.code);
     XCTAssertEqualObjects(@"You have requested a payment and specified a "
                           @"payment discount with invalid properties. When specifying a payment "
                           @"discount the 'identifier' field is mandatory.",
                           error.message);
-    XCTAssertEqualObjects(argument, error.details);
-    XCTAssertEqual(0, addPaymentNums);
+    XCTAssertEqualObjects(invalidDiscount, error.details);
+    XCTAssertEqual(0, addPaymentCount);
   }
 }
 
@@ -602,15 +603,15 @@
   TestPaymentQueueHandler *mockHandler = [[TestPaymentQueueHandler alloc] init];
   self.plugin.paymentQueueHandler = mockHandler;
 
-  __block NSInteger presentCodeRedemptionSheetNums = 0;
+  __block NSInteger presentCodeRedemptionSheetCount = 0;
   mockHandler.presentCodeRedemptionSheetStub = ^{
-    presentCodeRedemptionSheetNums++;
+    presentCodeRedemptionSheetCount++;
   };
 
   FlutterError *error;
   [self.plugin presentCodeRedemptionSheetWithError:&error];
 
-  XCTAssertEqual(1, presentCodeRedemptionSheetNums);
+  XCTAssertEqual(1, presentCodeRedemptionSheetCount);
 }
 #endif
 
@@ -652,30 +653,30 @@
   TestPaymentQueueHandler *mockHandler = [[TestPaymentQueueHandler alloc] init];
   self.plugin.paymentQueueHandler = mockHandler;
 
-  __block NSInteger startObservingNums = 0;
+  __block NSInteger startObservingCount = 0;
   mockHandler.startObservingPaymentQueueStub = ^{
-    startObservingNums++;
+    startObservingCount++;
   };
 
   FlutterError *error;
   [self.plugin startObservingPaymentQueueWithError:&error];
 
-  XCTAssertEqual(1, startObservingNums);
+  XCTAssertEqual(1, startObservingCount);
 }
 
 - (void)testStopObservingPaymentQueue {
   TestPaymentQueueHandler *mockHandler = [[TestPaymentQueueHandler alloc] init];
   self.plugin.paymentQueueHandler = mockHandler;
 
-  __block NSInteger stopObservingNums = 0;
+  __block NSInteger stopObservingCount = 0;
   mockHandler.stopObservingPaymentQueueStub = ^{
-    stopObservingNums++;
+    stopObservingCount++;
   };
 
   FlutterError *error;
   [self.plugin stopObservingPaymentQueueWithError:&error];
 
-  XCTAssertEqual(1, stopObservingNums);
+  XCTAssertEqual(1, stopObservingCount);
 }
 
 #if TARGET_OS_IOS
@@ -755,12 +756,12 @@
                     initWithRequestHandler:[[FIAPRequestHandler alloc] initWithRequest:request]];
               }];
   TestMethodChannel *testChannel = [[TestMethodChannel alloc] init];
-  __block NSInteger invokeMethodNums = 0;
+  __block NSInteger invokeMethodCount = 0;
 
   testChannel.invokeMethodChannelStub = ^(NSString *_Nonnull method, id _Nonnull arguments) {
     XCTAssertEqualObjects(@"updatedTransactions", method);
     XCTAssertNotNil(arguments);
-    invokeMethodNums++;
+    invokeMethodCount++;
   };
 
   plugin.transactionObserverCallbackChannel = testChannel;
@@ -772,7 +773,7 @@
   [maps addObject:[FIAObjectTranslator getMapFromSKPaymentTransaction:paymentTransaction]];
 
   [plugin handleTransactionsUpdated:array];
-  XCTAssertEqual(invokeMethodNums, 1);
+  XCTAssertEqual(invokeMethodCount, 1);
 }
 
 - (void)testHandleTransactionsRemoved {
@@ -799,18 +800,18 @@
   [maps addObject:[FIAObjectTranslator getMapFromSKPaymentTransaction:paymentTransaction]];
 
   TestMethodChannel *testChannel = [[TestMethodChannel alloc] init];
-  __block NSInteger invokeMethodNums = 0;
+  __block NSInteger invokeMethodCount = 0;
 
   testChannel.invokeMethodChannelStub = ^(NSString *_Nonnull method, id _Nonnull arguments) {
     XCTAssertEqualObjects(@"removedTransactions", method);
     XCTAssertEqualObjects(maps, arguments);
-    invokeMethodNums++;
+    invokeMethodCount++;
   };
 
   plugin.transactionObserverCallbackChannel = testChannel;
 
   [plugin handleTransactionsRemoved:array];
-  XCTAssertEqual(invokeMethodNums, 1);
+  XCTAssertEqual(invokeMethodCount, 1);
 }
 //
 - (void)testHandleTransactionRestoreFailed {
@@ -821,19 +822,19 @@
                     initWithRequestHandler:[[FIAPRequestHandler alloc] initWithRequest:request]];
               }];
   TestMethodChannel *testChannel = [[TestMethodChannel alloc] init];
-  __block NSInteger invokeMethodNums = 0;
+  __block NSInteger invokeMethodCount = 0;
   NSError *error = [NSError errorWithDomain:@"error" code:0 userInfo:nil];
 
   testChannel.invokeMethodChannelStub = ^(NSString *_Nonnull method, id _Nonnull arguments) {
     XCTAssertEqualObjects(@"restoreCompletedTransactionsFailed", method);
     XCTAssertEqualObjects([FIAObjectTranslator getMapFromNSError:error], arguments);
-    invokeMethodNums++;
+    invokeMethodCount++;
   };
 
   plugin.transactionObserverCallbackChannel = testChannel;
 
   [plugin handleTransactionRestoreFailed:error];
-  XCTAssertEqual(invokeMethodNums, 1);
+  XCTAssertEqual(invokeMethodCount, 1);
 }
 
 - (void)testRestoreCompletedTransactionsFinished {
@@ -844,17 +845,17 @@
                     initWithRequestHandler:[[FIAPRequestHandler alloc] initWithRequest:request]];
               }];
   TestMethodChannel *testChannel = [[TestMethodChannel alloc] init];
-  __block NSInteger invokeMethodNums = 0;
+  __block NSInteger invokeMethodCount = 0;
   testChannel.invokeMethodChannelStub = ^(NSString *_Nonnull method, id _Nonnull arguments) {
     XCTAssertEqualObjects(@"paymentQueueRestoreCompletedTransactionsFinished", method);
     XCTAssertNil(arguments);
-    invokeMethodNums++;
+    invokeMethodCount++;
   };
 
   plugin.transactionObserverCallbackChannel = testChannel;
 
   [plugin restoreCompletedTransactionsFinished];
-  XCTAssertEqual(invokeMethodNums, 1);
+  XCTAssertEqual(invokeMethodCount, 1);
 }
 
 - (void)testShouldAddStorePayment {
@@ -891,18 +892,18 @@
 
   TestMethodChannel *testChannel = [[TestMethodChannel alloc] init];
 
-  __block NSInteger invokeMethodNums = 0;
+  __block NSInteger invokeMethodCount = 0;
   testChannel.invokeMethodChannelStub = ^(NSString *_Nonnull method, id _Nonnull arguments) {
     XCTAssertEqualObjects(@"shouldAddStorePayment", method);
     XCTAssertEqualObjects(args, arguments);
-    invokeMethodNums++;
+    invokeMethodCount++;
   };
 
   plugin.transactionObserverCallbackChannel = testChannel;
 
   BOOL result = [plugin shouldAddStorePaymentWithPayment:payment product:product];
   XCTAssertEqual(result, NO);
-  XCTAssertEqual(invokeMethodNums, 1);
+  XCTAssertEqual(invokeMethodCount, 1);
 }
 
 #if TARGET_OS_IOS
