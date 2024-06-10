@@ -746,7 +746,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     // The underlying native implementation on some platforms sometimes reports
     // a position slightly past the reported max duration. Clamp to the duration
     // to insulate clients from this behavior.
-    if (position.compareTo(value.duration) > 0) {
+    if (position > value.duration) {
       position = value.duration;
     }
     value = value.copyWith(
