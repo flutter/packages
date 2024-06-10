@@ -623,8 +623,8 @@ class GObjectSourceGenerator extends StructuredGenerator<GObjectOptions> {
     required String dartPackageName,
   }) {
     final String module = _getModule(generatorOptions, dartPackageName);
-    final String codecModule = 'Pigeon';
-    final String codecClassName = 'MessageCodec';
+    const String codecModule = 'Pigeon';
+    const String codecClassName = 'MessageCodec';
 
     final Iterable<EnumeratedType> customTypes = getEnumeratedTypes(root);
 
@@ -785,7 +785,6 @@ class GObjectSourceGenerator extends StructuredGenerator<GObjectOptions> {
     final String module = _getModule(generatorOptions, dartPackageName);
     final String className = _getClassName(module, api.name);
     final String methodPrefix = _getMethodPrefix(module, api.name);
-    final String codecName = '${api.name}Codec';
 
     indent.newln();
     _writeObjectStruct(indent, module, api.name, () {
@@ -923,8 +922,6 @@ class GObjectSourceGenerator extends StructuredGenerator<GObjectOptions> {
 
     final String methodPrefix = _getMethodPrefix(module, api.name);
     final String vtableName = _getVTableName(module, api.name);
-
-    final String codecName = '${api.name}Codec';
 
     for (final Method method in api.methods) {
       final String responseName = _getResponseName(api.name, method.name);
