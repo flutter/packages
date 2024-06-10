@@ -8,6 +8,7 @@
 #import "PaymentQueueProtocol.h"
 #import "TransactionCacheProtocol.h"
 #import "PaymentQueueHandlerProtocol.h"
+#import "RequestHandlerProtocol.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -60,5 +61,10 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic, copy, nullable) NSArray<SKPaymentTransaction *>* (^getUnfinishedTransactionsStub)(void);
 @property(nonatomic, copy, nullable) void (^finishTransactionStub)(SKPaymentTransaction *);
 @property(nonatomic, copy, nullable) void (^paymentQueueUpdatedTransactionsStub)(SKPaymentQueue*, NSArray<SKPaymentTransaction *>*);
+@end
+
+@interface TestRequestHandler : NSObject <RequestHandler>
+@property(nonatomic, copy, nullable) void (^startProductRequestWithCompletionHandlerStub)
+    (ProductRequestCompletion);
 @end
 NS_ASSUME_NONNULL_END

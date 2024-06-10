@@ -8,13 +8,15 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-typedef void (^ProductRequestCompletion)(SKProductsResponse *_Nullable response,
-                                         NSError *_Nullable errror);
-
 @interface FIAPRequestHandler : NSObject <RequestHandler>
 
 - (instancetype)initWithRequest:(SKRequest *)request;
 - (void)startProductRequestWithCompletionHandler:(ProductRequestCompletion)completion;
 
+@end
+
+@interface DefaultRequestHandler : NSObject <RequestHandler>
+- (instancetype)initWithRequestHandler:(FIAPRequestHandler *)handler;
+@property FIAPRequestHandler *handler;
 @end
 NS_ASSUME_NONNULL_END

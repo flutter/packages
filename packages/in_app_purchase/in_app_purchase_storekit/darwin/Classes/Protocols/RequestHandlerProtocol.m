@@ -1,8 +1,8 @@
 #import <Foundation/Foundation.h>
 #import "RequestHandlerProtocol.h"
+#import "FIAPRequestHandler.h"
 
 @implementation DefaultRequestHandler
-
 - (void)startProductRequestWithCompletionHandler:(nonnull ProductRequestCompletion)completion {
   [self.handler startProductRequestWithCompletionHandler:completion];
 }
@@ -14,15 +14,4 @@
   }
   return self;
 }
-
-@end
-
-@implementation TestRequestHandler
-
-- (void)startProductRequestWithCompletionHandler:(nonnull ProductRequestCompletion)completion {
-  if (_startProductRequestWithCompletionHandlerStub) {
-    _startProductRequestWithCompletionHandlerStub(completion);
-  }
-}
-
 @end

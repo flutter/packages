@@ -5,7 +5,6 @@
 #import "Mocks.h"
 #import <Foundation/Foundation.h>
 #import <StoreKit/StoreKit.h>
-#import "FIAPaymentQueueHandler.h"
 #import "Stubs.h"
 
 #if TARGET_OS_OSX
@@ -219,5 +218,13 @@
 
 @synthesize delegate;
 
+@end
+
+@implementation TestRequestHandler
+- (void)startProductRequestWithCompletionHandler:(nonnull ProductRequestCompletion)completion { 
+  if (self.startProductRequestWithCompletionHandlerStub) {
+    self.startProductRequestWithCompletionHandlerStub(completion);
+  }
+}
 @end
 
