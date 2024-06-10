@@ -87,29 +87,28 @@ public class WebChromeClientProxyApi extends PigeonApiWebChromeClient {
           this,
           webView,
           fileChooserParams,
-          reply -> {
-            final ResultCompat<List<String>> result = new ResultCompat<>(reply);
+          ResultCompat.asCompatCallback(
+              reply -> {
+                if (reply.isFailure()) {
+                  api.getPigeonRegistrar()
+                      .logError(TAG, Objects.requireNonNull(reply.exceptionOrNull()));
+                  return null;
+                }
 
-            if (result.isFailure()) {
-              api.getPigeonRegistrar()
-                  .logError(TAG, Objects.requireNonNull(result.exceptionOrNull()));
-              return null;
-            }
+                final List<String> value = Objects.requireNonNull(reply.getOrNull());
 
-            final List<String> value = Objects.requireNonNull(result.getOrNull());
+                // The returned list of file paths can only be passed to `filePathCallback` if the
+                // `onShowFileChooser` method returned true.
+                if (currentReturnValueForOnShowFileChooser) {
+                  final Uri[] filePaths = new Uri[value.size()];
+                  for (int i = 0; i < value.size(); i++) {
+                    filePaths[i] = Uri.parse(value.get(i));
+                  }
+                  filePathCallback.onReceiveValue(filePaths);
+                }
 
-            // The returned list of file paths can only be passed to `filePathCallback` if the
-            // `onShowFileChooser` method returned true.
-            if (currentReturnValueForOnShowFileChooser) {
-              final Uri[] filePaths = new Uri[value.size()];
-              for (int i = 0; i < value.size(); i++) {
-                filePaths[i] = Uri.parse(value.get(i));
-              }
-              filePathCallback.onReceiveValue(filePaths);
-            }
-
-            return null;
-          });
+                return null;
+              }));
       return currentReturnValueForOnShowFileChooser;
     }
 
@@ -155,18 +154,17 @@ public class WebChromeClientProxyApi extends PigeonApiWebChromeClient {
             view,
             url,
             message,
-            reply -> {
-              final ResultCompat<Void> messageResult = new ResultCompat<>(reply);
+            ResultCompat.asCompatCallback(
+                reply -> {
+                  if (reply.isFailure()) {
+                    api.getPigeonRegistrar()
+                        .logError(TAG, Objects.requireNonNull(reply.exceptionOrNull()));
+                    return null;
+                  }
 
-              if (messageResult.isFailure()) {
-                api.getPigeonRegistrar()
-                    .logError(TAG, Objects.requireNonNull(messageResult.exceptionOrNull()));
-                return null;
-              }
-
-              result.confirm();
-              return null;
-            });
+                  result.confirm();
+                  return null;
+                }));
         return true;
       } else {
         return false;
@@ -181,23 +179,22 @@ public class WebChromeClientProxyApi extends PigeonApiWebChromeClient {
             view,
             url,
             message,
-            reply -> {
-              final ResultCompat<Boolean> messageResult = new ResultCompat<>(reply);
+            ResultCompat.asCompatCallback(
+                reply -> {
+                  if (reply.isFailure()) {
+                    api.getPigeonRegistrar()
+                        .logError(TAG, Objects.requireNonNull(reply.exceptionOrNull()));
+                    return null;
+                  }
 
-              if (messageResult.isFailure()) {
-                api.getPigeonRegistrar()
-                    .logError(TAG, Objects.requireNonNull(messageResult.exceptionOrNull()));
-                return null;
-              }
+                  if (Boolean.TRUE.equals(reply.getOrNull())) {
+                    result.confirm();
+                  } else {
+                    result.cancel();
+                  }
 
-              if (Boolean.TRUE.equals(messageResult.getOrNull())) {
-                result.confirm();
-              } else {
-                result.cancel();
-              }
-
-              return null;
-            });
+                  return null;
+                }));
         return true;
       } else {
         return false;
@@ -214,25 +211,24 @@ public class WebChromeClientProxyApi extends PigeonApiWebChromeClient {
             url,
             message,
             defaultValue,
-            reply -> {
-              final ResultCompat<String> messageResult = new ResultCompat<>(reply);
+            ResultCompat.asCompatCallback(
+                reply -> {
+                  if (reply.isFailure()) {
+                    api.getPigeonRegistrar()
+                        .logError(TAG, Objects.requireNonNull(reply.exceptionOrNull()));
+                    return null;
+                  }
 
-              if (messageResult.isFailure()) {
-                api.getPigeonRegistrar()
-                    .logError(TAG, Objects.requireNonNull(messageResult.exceptionOrNull()));
-                return null;
-              }
+                  @Nullable final String inputMessage = reply.getOrNull();
 
-              @Nullable final String inputMessage = messageResult.getOrNull();
+                  if (inputMessage != null) {
+                    result.confirm(inputMessage);
+                  } else {
+                    result.cancel();
+                  }
 
-              if (inputMessage != null) {
-                result.confirm(inputMessage);
-              } else {
-                result.cancel();
-              }
-
-              return null;
-            });
+                  return null;
+                }));
         return true;
       } else {
         return false;
