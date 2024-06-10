@@ -1,3 +1,7 @@
+## 0.7.2
+
+* Adds `height` & `width` to `imageBuilder`.
+
 ## 0.7.1
 
 * Allows for choosing a custom font feature to create superscript in footnotes when the font does not support the `supr` font feature.
