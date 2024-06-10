@@ -1,5 +1,6 @@
-## NEXT
+## 2.8.7
 
+* Ensures that `value.position` never reports a value larger than `value.duration`.
 * Updates minimum supported SDK version to Flutter 3.16/Dart 3.2.
 
 ## 2.8.6
