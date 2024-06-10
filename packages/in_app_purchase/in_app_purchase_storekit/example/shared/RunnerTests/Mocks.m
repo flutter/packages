@@ -221,10 +221,9 @@
 @end
 
 @implementation TestRequestHandler
-- (void)startProductRequestWithCompletionHandler:(nonnull ProductRequestCompletion)completion { 
+- (void)startProductRequestWithCompletionHandler:(nonnull ProductRequestCompletion)completion {
   if (self.startProductRequestWithCompletionHandlerStub) {
     self.startProductRequestWithCompletionHandlerStub(completion);
   }
 }
 @end
-

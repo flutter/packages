@@ -14,8 +14,8 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 @interface DefaultTransactionCache : NSObject <TransactionCache>
+@property(strong, nonatomic) FIATransactionCache *cache;
 - (instancetype)initWithCache:(FIATransactionCache *)cache;
-@property FIATransactionCache *cache;
 @end
 
 NS_ASSUME_NONNULL_END

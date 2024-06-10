@@ -5,10 +5,10 @@
 #import <StoreKit/StoreKit.h>
 #import "FIATransactionCache.h"
 #import "MethodChannelProtocol.h"
-#import "PaymentQueueProtocol.h"
-#import "TransactionCacheProtocol.h"
 #import "PaymentQueueHandlerProtocol.h"
+#import "PaymentQueueProtocol.h"
 #import "RequestHandlerProtocol.h"
+#import "TransactionCacheProtocol.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -27,7 +27,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic, copy, nullable) void (^startObservingPaymentQueueStub)(void);
 @property(nonatomic, copy, nullable) void (^stopObservingPaymentQueueStub)(void);
 @property(nonatomic, copy, nullable) void (^presentCodeRedemptionSheetStub)(void);
-@property(nonatomic, copy, nullable) NSArray<SKPaymentTransaction *>* (^getUnfinishedTransactionsStub)(void);
+@property(nonatomic, copy, nullable)
+    NSArray<SKPaymentTransaction *> * (^getUnfinishedTransactionsStub)(void);
 
 @end
 
@@ -57,10 +58,12 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic, copy, nullable) void (^stopObservingPaymentQueueStub)(void);
 @property(nonatomic, copy, nullable) void (^startObservingPaymentQueueStub)(void);
 @property(nonatomic, copy, nullable) void (^presentCodeRedemptionSheetStub)(void);
-@property(nonatomic, copy, nullable) void (^restoreTransactions)(NSString*);
-@property(nonatomic, copy, nullable) NSArray<SKPaymentTransaction *>* (^getUnfinishedTransactionsStub)(void);
+@property(nonatomic, copy, nullable) void (^restoreTransactions)(NSString *);
+@property(nonatomic, copy, nullable)
+    NSArray<SKPaymentTransaction *> * (^getUnfinishedTransactionsStub)(void);
 @property(nonatomic, copy, nullable) void (^finishTransactionStub)(SKPaymentTransaction *);
-@property(nonatomic, copy, nullable) void (^paymentQueueUpdatedTransactionsStub)(SKPaymentQueue*, NSArray<SKPaymentTransaction *>*);
+@property(nonatomic, copy, nullable) void (^paymentQueueUpdatedTransactionsStub)
+    (SKPaymentQueue *, NSArray<SKPaymentTransaction *> *);
 @end
 
 @interface TestRequestHandler : NSObject <RequestHandler>

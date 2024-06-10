@@ -1,6 +1,6 @@
 ## 0.3.17
 
-* Remove OCMock from tests.
+* Removes OCMock from tests.
 
 ## 0.3.16
 

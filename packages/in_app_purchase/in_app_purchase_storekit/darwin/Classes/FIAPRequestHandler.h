@@ -3,8 +3,8 @@
 // found in the LICENSE file.
 
 #import <Foundation/Foundation.h>
-#import <StoreKit/StoreKit.h>
 #import <RequestHandlerProtocol.h>
+#import <StoreKit/StoreKit.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -16,7 +16,7 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 @interface DefaultRequestHandler : NSObject <RequestHandler>
-- (instancetype)initWithRequestHandler:(FIAPRequestHandler *)handler;
 @property FIAPRequestHandler *handler;
+- (instancetype)initWithRequestHandler:(FIAPRequestHandler *)handler;
 @end
 NS_ASSUME_NONNULL_END
