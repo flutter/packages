@@ -150,7 +150,7 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
       }
       walker = walker.matches.last;
     }
-    int count = 0; // Only pop 1 page at the time.
+    int count = 0; // Only pop 1 page at a time.
     bool predicateReturnedTrue = false;
     state?.popUntil((Route<dynamic> route) {
       if (count == 1 ||

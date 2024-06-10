@@ -5062,6 +5062,362 @@ void main() {
           expect(find.text('Home'), findsOne);
         },
       );
+
+      testWidgets(
+        'It should pop the 3 last routes, with 2 routes that were pushed',
+        (WidgetTester tester) async {
+          final GoRouter router = GoRouter(
+            initialLocation: '/a/b',
+            routes: <GoRoute>[
+              GoRoute(
+                path: '/',
+                builder: (BuildContext context, _) {
+                  return const Scaffold(
+                    body: Text('Home'),
+                  );
+                },
+                routes: <RouteBase>[
+                  GoRoute(
+                    path: 'a',
+                    builder: (_, __) => const Text('A Screen'),
+                    routes: <RouteBase>[
+                      GoRoute(
+                        path: 'b',
+                        builder: (_, __) => const Text('B Screen'),
+                        routes: <RouteBase>[
+                          GoRoute(
+                            path: 'c',
+                            builder: (_, __) => const Text('C Screen'),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ],
+          );
+
+          await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+
+          expect(router.canPop(), isTrue);
+          expect(find.text('B Screen'), findsOne);
+
+          unawaited(router.push('/a'));
+          await tester.pumpAndSettle();
+          expect(find.text('A Screen'), findsOne);
+
+          unawaited(router.push('/a/b/c'));
+          await tester.pumpAndSettle();
+          expect(find.text('C Screen'), findsOne);
+
+          final List<String> pathCheckedInPopUntil = <String>[];
+          int count = 3;
+          router.popUntil(
+            (GoRouterState state, Route<dynamic> route) {
+              pathCheckedInPopUntil.add(state.uri.toString());
+              return 0 == count--;
+            },
+          );
+          await tester.pumpAndSettle();
+          // The stack should be `['/', '/a']`.
+          expect(router.canPop(), isTrue);
+          expect(find.text('A Screen'), findsOne);
+
+          expect(
+            pathCheckedInPopUntil,
+            const <String>['/a/b/c', '/a', '/a/b', '/a'],
+          );
+        },
+      );
+
+      testWidgets(
+        'It should pop the 4 routes, with routes from the navigation API',
+        (WidgetTester tester) async {
+          final GlobalKey<NavigatorState> navigatorKey =
+              GlobalKey<NavigatorState>();
+          final GoRouter router = GoRouter(
+            navigatorKey: navigatorKey,
+            initialLocation: '/a/b',
+            routes: <GoRoute>[
+              GoRoute(
+                path: '/',
+                builder: (BuildContext context, _) {
+                  return const Scaffold(
+                    body: Text('Home'),
+                  );
+                },
+                routes: <RouteBase>[
+                  GoRoute(
+                    path: 'a',
+                    builder: (_, __) => const Text('A Screen'),
+                    routes: <RouteBase>[
+                      GoRoute(
+                        path: 'b',
+                        builder: (_, __) => const Text('B Screen'),
+                        routes: <RouteBase>[
+                          GoRoute(
+                            path: 'c',
+                            builder: (_, __) => const Text('C Screen'),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ],
+          );
+
+          await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+
+          expect(router.canPop(), isTrue);
+          expect(find.text('B Screen'), findsOne);
+
+          unawaited(router.push('/a'));
+          await tester.pumpAndSettle();
+          expect(find.text('A Screen'), findsOne);
+
+          unawaited(navigatorKey.currentState!.push(
+            MaterialPageRoute<void>(
+              builder: (BuildContext context) {
+                return const SizedBox();
+              },
+            ),
+          ));
+
+          unawaited(router.push('/a/b/c'));
+          await tester.pumpAndSettle();
+          expect(find.text('C Screen'), findsOne);
+
+          final List<String> pathCheckedInPopUntil = <String>[];
+          int count = 4;
+          router.popUntil(
+            (GoRouterState state, Route<dynamic> route) {
+              pathCheckedInPopUntil.add(state.uri.toString());
+              return 0 == count--;
+            },
+          );
+          await tester.pumpAndSettle();
+          // The stack should be `['/', '/a']`.
+          expect(router.canPop(), isTrue);
+          expect(find.text('A Screen'), findsOne);
+
+          expect(
+            pathCheckedInPopUntil,
+            const <String>['/a/b/c', '/a', '/a', '/a/b', '/a'],
+          );
+        },
+      );
+
+      testWidgets(
+        'It should 2 pop routes that where pushed on top of the MaterialPageRoute',
+        (WidgetTester tester) async {
+          final GlobalKey<NavigatorState> navigatorKey =
+              GlobalKey<NavigatorState>();
+          final GoRouter router = GoRouter(
+            navigatorKey: navigatorKey,
+            initialLocation: '/a/b',
+            routes: <GoRoute>[
+              GoRoute(
+                path: '/',
+                builder: (BuildContext context, _) {
+                  return const Scaffold(
+                    body: Text('Home'),
+                  );
+                },
+                routes: <RouteBase>[
+                  GoRoute(
+                    path: 'a',
+                    builder: (_, __) => const Text('A Screen'),
+                    routes: <RouteBase>[
+                      GoRoute(
+                        path: 'b',
+                        builder: (_, __) => const Text('B Screen'),
+                        routes: <RouteBase>[
+                          GoRoute(
+                            path: 'c',
+                            builder: (_, __) => const Text('C Screen'),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ],
+          );
+
+          await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+
+          expect(router.canPop(), isTrue);
+          expect(find.text('B Screen'), findsOne);
+
+          const Key key = Key('key');
+          unawaited(navigatorKey.currentState!.push(
+            MaterialPageRoute<void>(
+              builder: (BuildContext context) {
+                return const SizedBox(
+                  key: key,
+                );
+              },
+            ),
+          ));
+
+          unawaited(router.push('/a'));
+          await tester.pumpAndSettle();
+          expect(find.text('A Screen'), findsOne);
+
+          unawaited(router.push('/a/b/c'));
+          await tester.pumpAndSettle();
+          expect(find.text('C Screen'), findsOne);
+
+          final List<String> pathCheckedInPopUntil = <String>[];
+          int count = 2;
+          router.popUntil(
+            (GoRouterState state, Route<dynamic> route) {
+              pathCheckedInPopUntil.add(state.uri.toString());
+              return 0 == count--;
+            },
+          );
+          await tester.pumpAndSettle();
+          // The stack should be `['/', '/a', MaterialPageRoute]`.
+          expect(router.canPop(), isTrue);
+          expect(find.byKey(key), findsOne);
+
+          expect(
+            pathCheckedInPopUntil,
+            const <String>['/a/b/c', '/a', '/a/b'],
+          );
+        },
+      );
+
+      group('ShellRoute', () {
+        testWidgets(
+          'It should pop the last 2 routes that are under the ShellRoute',
+          (WidgetTester tester) async {
+            final GoRouter router = GoRouter(
+              initialLocation: '/a/b/c',
+              routes: <GoRoute>[
+                GoRoute(
+                  path: '/',
+                  builder: (BuildContext context, _) {
+                    return const Scaffold(
+                      body: Text('Home'),
+                    );
+                  },
+                  routes: <RouteBase>[
+                    ShellRoute(
+                      builder: (BuildContext context, GoRouterState state,
+                              Widget child) =>
+                          child,
+                      routes: <RouteBase>[
+                        GoRoute(
+                          path: 'a',
+                          builder: (_, __) => const Text('A Screen'),
+                          routes: <RouteBase>[
+                            GoRoute(
+                              path: 'b',
+                              builder: (_, __) => const Text('B Screen'),
+                              routes: <RouteBase>[
+                                GoRoute(
+                                  path: 'c',
+                                  builder: (_, __) => const Text('C Screen'),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ],
+            );
+
+            await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+
+            expect(router.canPop(), isTrue);
+            expect(find.text('C Screen'), findsOne);
+            expect(find.text('B Screen'), findsNothing);
+            expect(find.text('A Screen'), findsNothing);
+            expect(find.text('Home'), findsNothing);
+
+            router.popUntil(
+              (GoRouterState state, Route<dynamic> route) {
+                return state.path == 'a';
+              },
+            );
+            await tester.pumpAndSettle();
+            expect(find.text('C Screen'), findsNothing);
+            expect(find.text('B Screen'), findsNothing);
+            expect(find.text('A Screen'), findsOne);
+            expect(find.text('Home'), findsNothing);
+          },
+        );
+        testWidgets(
+          'It should pop the last 2 routes and the ShellRoute with it',
+          (WidgetTester tester) async {
+            final GoRouter router = GoRouter(
+              initialLocation: '/a/b/c',
+              routes: <GoRoute>[
+                GoRoute(
+                  path: '/',
+                  builder: (BuildContext context, _) {
+                    return const Scaffold(
+                      body: Text('Home'),
+                    );
+                  },
+                  routes: <RouteBase>[
+                    GoRoute(
+                      path: 'a',
+                      builder: (_, __) => const Text('A Screen'),
+                      routes: <RouteBase>[
+                        ShellRoute(
+                          builder: (BuildContext context, GoRouterState state,
+                                  Widget child) =>
+                              child,
+                          routes: <RouteBase>[
+                            GoRoute(
+                              path: 'b',
+                              builder: (_, __) => const Text('B Screen'),
+                              routes: <RouteBase>[
+                                GoRoute(
+                                  path: 'c',
+                                  builder: (_, __) => const Text('C Screen'),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ],
+            );
+
+            await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+
+            expect(router.canPop(), isTrue);
+            expect(find.text('C Screen'), findsOne);
+            expect(find.text('B Screen'), findsNothing);
+            expect(find.text('A Screen'), findsNothing);
+            expect(find.text('Home'), findsNothing);
+
+            router.popUntil(
+              (GoRouterState state, Route<dynamic> route) {
+                return state.path == 'a';
+              },
+            );
+            await tester.pumpAndSettle();
+            expect(find.text('C Screen'), findsNothing);
+            expect(find.text('B Screen'), findsNothing);
+            expect(find.text('A Screen'), findsOne);
+            expect(find.text('Home'), findsNothing);
+          },
+        );
+      });
     });
   });
 
