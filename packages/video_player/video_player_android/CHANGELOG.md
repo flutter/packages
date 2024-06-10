@@ -1,3 +1,7 @@
+## 2.5.0
+
+* Migrates ExoPlayer to Media3-ExoPlayer 1.3.1.
+
 ## 2.4.17
 
 * Revert Impeller support.

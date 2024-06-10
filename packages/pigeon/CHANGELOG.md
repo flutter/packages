@@ -2,6 +2,10 @@
 
 * Adds GObject (Linux) support.
 
+## 20.0.1
+
+* [cpp] Fixes handling of null class arguments.
+
 ## 20.0.0
 
 * Moves all codec logic to single custom codec per file.
