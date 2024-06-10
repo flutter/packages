@@ -212,8 +212,9 @@ create_nested_nullable_string(CoreTestsPigeonTestHostIntegrationCoreApi* api,
   g_autoptr(CoreTestsPigeonTestAllNullableTypes) types =
       core_tests_pigeon_test_all_nullable_types_new(
           nullptr, nullptr, nullptr, nullptr, nullptr, 0, nullptr, 0, nullptr,
-          0, nullptr, 0, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
-          nullable_string, nullptr, nullptr);
+          0, nullptr, 0, nullptr, nullptr, nullptr, nullptr, nullable_string,
+          nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+          nullptr, nullptr);
   g_autoptr(CoreTestsPigeonTestAllClassesWrapper) wrapper =
       core_tests_pigeon_test_all_classes_wrapper_new(types, nullptr, nullptr);
   return core_tests_pigeon_test_host_integration_core_api_create_nested_nullable_string_response_new(
@@ -229,7 +230,8 @@ send_multiple_nullable_types(CoreTestsPigeonTestHostIntegrationCoreApi* api,
       core_tests_pigeon_test_all_nullable_types_new(
           a_nullable_bool, a_nullable_int, nullptr, nullptr, nullptr, 0,
           nullptr, 0, nullptr, 0, nullptr, 0, nullptr, nullptr, nullptr,
-          nullptr, nullptr, nullptr, a_nullable_string, nullptr, nullptr);
+          nullptr, a_nullable_string, nullptr, nullptr, nullptr, nullptr,
+          nullptr, nullptr, nullptr, nullptr, nullptr);
   return core_tests_pigeon_test_host_integration_core_api_send_multiple_nullable_types_response_new(
       types);
 }
@@ -243,7 +245,8 @@ send_multiple_nullable_types_without_recursion(
       core_tests_pigeon_test_all_nullable_types_without_recursion_new(
           a_nullable_bool, a_nullable_int, nullptr, nullptr, nullptr, 0,
           nullptr, 0, nullptr, 0, nullptr, 0, nullptr, nullptr, nullptr,
-          nullptr, nullptr, nullptr, a_nullable_string, nullptr);
+          nullptr, a_nullable_string, nullptr, nullptr, nullptr, nullptr,
+          nullptr, nullptr, nullptr);
   return core_tests_pigeon_test_host_integration_core_api_send_multiple_nullable_types_without_recursion_response_new(
       types);
 }
