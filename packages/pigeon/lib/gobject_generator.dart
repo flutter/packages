@@ -1509,7 +1509,7 @@ String _referenceValue(String module, TypeDeclaration type, String variableName,
 
 int _getTypeEnumeration(Root root, TypeDeclaration type) {
   return getEnumeratedTypes(root)
-      .firstWhere((t) =>
+      .firstWhere((EnumeratedType t) =>
           t.associatedClass == type.associatedClass ||
           t.associatedEnum == type.associatedEnum)
       .enumeration;
@@ -1523,7 +1523,7 @@ String _makeFlValue(
     {String? lengthVariableName}) {
   final String value;
   if (type.isClass) {
-    var enumeration = _getTypeEnumeration(root, type);
+    final int enumeration = _getTypeEnumeration(root, type);
     value = 'fl_value_new_custom_object($enumeration, G_OBJECT($variableName))';
   } else if (type.isEnum) {
     value = type.isNullable
