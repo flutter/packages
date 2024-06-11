@@ -13,6 +13,9 @@ const String _commentPrefix = '//';
 const DocumentCommentSpecification _docCommentSpec =
     DocumentCommentSpecification(_commentPrefix);
 
+/// Name for codec class.
+const String _codecBaseName = 'MessageCodec';
+
 /// Options that control how GObject code will be generated.
 class GObjectOptions {
   /// Creates a [GObjectOptions] object
@@ -623,21 +626,21 @@ class GObjectSourceGenerator extends StructuredGenerator<GObjectOptions> {
     required String dartPackageName,
   }) {
     final String module = _getModule(generatorOptions, dartPackageName);
-    const String codecModule = 'Pigeon';
-    const String codecClassName = 'MessageCodec';
+    final String codecClassName = _getClassName(module, _codecBaseName);
+    final String codecMethodPrefix = _getMethodPrefix(module, _codecBaseName);
 
     final Iterable<EnumeratedType> customTypes = getEnumeratedTypes(root);
 
     indent.newln();
-    _writeDeclareFinalType(indent, codecModule, codecClassName,
+    _writeDeclareFinalType(indent, module, _codecBaseName,
         parentClassName: 'FlStandardMessageCodec');
 
     indent.newln();
-    _writeObjectStruct(indent, codecModule, codecClassName, () {},
+    _writeObjectStruct(indent, module, _codecBaseName, () {},
         parentClassName: 'FlStandardMessageCodec');
 
     indent.newln();
-    _writeDefineType(indent, codecModule, codecClassName,
+    _writeDefineType(indent, module, _codecBaseName,
         parentType: 'fl_standard_message_codec_get_type()');
 
     for (final EnumeratedType customType in customTypes) {
@@ -649,7 +652,7 @@ class GObjectSourceGenerator extends StructuredGenerator<GObjectOptions> {
           ? '$customTypeName*'
           : 'FlValue*';
       indent.writeScoped(
-          'static gboolean pigeon_message_codec_write_$snakeCustomTypeName(FlStandardMessageCodec* codec, GByteArray* buffer, $valueType value, GError** error) {',
+          'static gboolean ${codecMethodPrefix}_write_$snakeCustomTypeName(FlStandardMessageCodec* codec, GByteArray* buffer, $valueType value, GError** error) {',
           '}', () {
         indent.writeln('uint8_t type = ${customType.enumeration};');
         indent.writeln('g_byte_array_append(buffer, &type, sizeof(uint8_t));');
@@ -667,7 +670,7 @@ class GObjectSourceGenerator extends StructuredGenerator<GObjectOptions> {
 
     indent.newln();
     indent.writeScoped(
-        'static gboolean pigeon_message_codec_write_value(FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value, GError** error) {',
+        'static gboolean ${codecMethodPrefix}_write_value(FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value, GError** error) {',
         '}', () {
       indent.writeScoped(
           'if (fl_value_get_type(value) == FL_VALUE_TYPE_CUSTOM) {', '}', () {
@@ -684,10 +687,10 @@ class GObjectSourceGenerator extends StructuredGenerator<GObjectOptions> {
                   _getClassCastMacro(module, customType.name);
               if (customType.type == CustomTypes.customClass) {
                 indent.writeln(
-                    'return pigeon_message_codec_write_$snakeCustomTypeName(codec, buffer, $castMacro(fl_value_get_custom_value_object(value)), error);');
+                    'return ${codecMethodPrefix}_write_$snakeCustomTypeName(codec, buffer, $castMacro(fl_value_get_custom_value_object(value)), error);');
               } else if (customType.type == CustomTypes.customEnum) {
                 indent.writeln(
-                    'return pigeon_message_codec_write_$snakeCustomTypeName(codec, buffer, reinterpret_cast<FlValue*>(const_cast<gpointer>(fl_value_get_custom_value(value))), error);');
+                    'return ${codecMethodPrefix}_write_$snakeCustomTypeName(codec, buffer, reinterpret_cast<FlValue*>(const_cast<gpointer>(fl_value_get_custom_value(value))), error);');
               }
             });
           }
@@ -696,7 +699,7 @@ class GObjectSourceGenerator extends StructuredGenerator<GObjectOptions> {
 
       indent.newln();
       indent.writeln(
-          'return FL_STANDARD_MESSAGE_CODEC_CLASS(pigeon_message_codec_parent_class)->write_value(codec, buffer, value, error);');
+          'return FL_STANDARD_MESSAGE_CODEC_CLASS(${codecMethodPrefix}_parent_class)->write_value(codec, buffer, value, error);');
     });
 
     for (final EnumeratedType customType in customTypes) {
@@ -705,7 +708,7 @@ class GObjectSourceGenerator extends StructuredGenerator<GObjectOptions> {
           _snakeCaseFromCamelCase(customTypeName);
       indent.newln();
       indent.writeScoped(
-          'static FlValue* pigeon_message_codec_read_$snakeCustomTypeName(FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset, GError** error) {',
+          'static FlValue* ${codecMethodPrefix}_read_$snakeCustomTypeName(FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset, GError** error) {',
           '}', () {
         if (customType.type == CustomTypes.customClass) {
           indent.writeln(
@@ -733,7 +736,7 @@ class GObjectSourceGenerator extends StructuredGenerator<GObjectOptions> {
 
     indent.newln();
     indent.writeScoped(
-        'static FlValue* pigeon_message_codec_read_value_of_type(FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset, int type, GError** error) {',
+        'static FlValue* ${codecMethodPrefix}_read_value_of_type(FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset, int type, GError** error) {',
         '}', () {
       indent.writeScoped('switch (type) {', '}', () {
         for (final EnumeratedType customType in customTypes) {
@@ -743,33 +746,33 @@ class GObjectSourceGenerator extends StructuredGenerator<GObjectOptions> {
           indent.writeln('case ${customType.enumeration}:');
           indent.nest(1, () {
             indent.writeln(
-                'return pigeon_message_codec_read_$snakeCustomTypeName(codec, buffer, offset, error);');
+                'return ${codecMethodPrefix}_read_$snakeCustomTypeName(codec, buffer, offset, error);');
           });
         }
 
         indent.writeln('default:');
         indent.nest(1, () {
           indent.writeln(
-              'return FL_STANDARD_MESSAGE_CODEC_CLASS(pigeon_message_codec_parent_class)->read_value_of_type(codec, buffer, offset, type, error);');
+              'return FL_STANDARD_MESSAGE_CODEC_CLASS(${codecMethodPrefix}_parent_class)->read_value_of_type(codec, buffer, offset, type, error);');
         });
       });
     });
 
     indent.newln();
-    _writeInit(indent, codecModule, codecClassName, () {});
+    _writeInit(indent, module, _codecBaseName, () {});
 
     indent.newln();
-    _writeClassInit(indent, codecModule, codecClassName, () {
+    _writeClassInit(indent, module, _codecBaseName, () {
       indent.writeln(
-          'FL_STANDARD_MESSAGE_CODEC_CLASS(klass)->write_value = pigeon_message_codec_write_value;');
+          'FL_STANDARD_MESSAGE_CODEC_CLASS(klass)->write_value = ${codecMethodPrefix}_write_value;');
       indent.writeln(
-          'FL_STANDARD_MESSAGE_CODEC_CLASS(klass)->read_value_of_type = pigeon_message_codec_read_value_of_type;');
+          'FL_STANDARD_MESSAGE_CODEC_CLASS(klass)->read_value_of_type = ${codecMethodPrefix}_read_value_of_type;');
     }, hasDispose: false);
 
     indent.newln();
     indent.writeScoped(
-        'static PigeonMessageCodec* pigeon_message_codec_new() {', '}', () {
-      _writeObjectNew(indent, codecModule, codecClassName);
+        'static $codecClassName* ${codecMethodPrefix}_new() {', '}', () {
+      _writeObjectNew(indent, module, _codecBaseName);
       indent.writeln('return self;');
     });
   }
@@ -785,6 +788,8 @@ class GObjectSourceGenerator extends StructuredGenerator<GObjectOptions> {
     final String module = _getModule(generatorOptions, dartPackageName);
     final String className = _getClassName(module, api.name);
     final String methodPrefix = _getMethodPrefix(module, api.name);
+    final String codecClassName = _getClassName(module, _codecBaseName);
+    final String codecMethodPrefix = _getMethodPrefix(module, _codecBaseName);
 
     indent.newln();
     _writeObjectStruct(indent, module, api.name, () {
@@ -812,7 +817,7 @@ class GObjectSourceGenerator extends StructuredGenerator<GObjectOptions> {
         () {
       _writeObjectNew(indent, module, api.name);
       indent.writeln(
-          'g_autoptr(PigeonMessageCodec) message_codec = pigeon_message_codec_new();');
+          'g_autoptr($codecClassName) message_codec = ${codecMethodPrefix}_new();');
       indent.writeln(
           'g_autoptr(FlStandardMethodCodec) codec = fl_standard_method_codec_new_with_message_codec(FL_STANDARD_MESSAGE_CODEC(message_codec));');
       indent.writeln(
@@ -922,6 +927,9 @@ class GObjectSourceGenerator extends StructuredGenerator<GObjectOptions> {
 
     final String methodPrefix = _getMethodPrefix(module, api.name);
     final String vtableName = _getVTableName(module, api.name);
+
+    final String codecClassName = _getClassName(module, _codecBaseName);
+    final String codecMethodPrefix = _getMethodPrefix(module, _codecBaseName);
 
     for (final Method method in api.methods) {
       final String responseName = _getResponseName(api.name, method.name);
@@ -1117,7 +1125,7 @@ class GObjectSourceGenerator extends StructuredGenerator<GObjectOptions> {
 
       indent.newln();
       indent.writeln(
-          'g_autoptr(PigeonMessageCodec) codec = pigeon_message_codec_new();');
+          'g_autoptr($codecClassName) codec = ${codecMethodPrefix}_new();');
       for (final Method method in api.methods) {
         final String methodName = _getMethodName(method.name);
         final String channelName =
