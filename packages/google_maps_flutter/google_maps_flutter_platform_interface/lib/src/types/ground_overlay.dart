@@ -40,31 +40,12 @@ class GroundOverlay implements MapsObject<GroundOverlay> {
     this.onTap,
     this.visible = true,
     this.bitmap,
-    this.bounds,
     this.width,
     this.height,
     this.bearing = 0.0,
     this.anchor = Offset.zero,
     this.opacity = 1.0,
-  })  : assert(
-            (height != null &&
-                    width != null &&
-                    location != null &&
-                    bounds == null) ||
-                (height == null &&
-                    width == null &&
-                    location == null &&
-                    bounds != null) ||
-                (height == null &&
-                    width != null &&
-                    location != null &&
-                    bounds == null) ||
-                (height == null &&
-                    width == null &&
-                    location == null &&
-                    bounds == null),
-            'Only one of the three types of positioning is allowed, please refer '
-            'to the https://developers.google.com/maps/documentation/android-sdk/groundoverlay#add_an_overlay'),
+  })  : bounds = null,
         assert(0.0 <= opacity && opacity <= 1.0);
 
   /// Creates an immutable representation of a [GroundOverlay] to draw on [GoogleMap]
@@ -165,7 +146,6 @@ class GroundOverlay implements MapsObject<GroundOverlay> {
         bearing: bearingParam ?? bearing,
         anchor: anchorParam ?? anchor,
         height: heightParam ?? height,
-        bounds: boundsParam ?? bounds,
         zIndex: zIndexParam ?? zIndex,
         width: widthParam ?? width,
         onTap: onTapParam ?? onTap);

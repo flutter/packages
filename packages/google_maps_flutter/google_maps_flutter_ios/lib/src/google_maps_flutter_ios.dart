@@ -154,6 +154,11 @@ class GoogleMapsFlutterIOS extends GoogleMapsFlutterPlatform {
   }
 
   @override
+  Stream<GroundOverlayTapEvent> onGroundOverlayTap({required int mapId}) {
+    return _events(mapId).whereType<GroundOverlayTapEvent>();
+  }
+
+  @override
   Stream<MapTapEvent> onTap({required int mapId}) {
     return _events(mapId).whereType<MapTapEvent>();
   }
@@ -351,6 +356,17 @@ class GoogleMapsFlutterIOS extends GoogleMapsFlutterPlatform {
   }
 
   @override
+  Future<void> updateGroundOverlays(
+    GroundOverlayUpdates groundOverlayUpdates, {
+    required int mapId,
+  }) {
+    return _channel(mapId).invokeMethod<void>(
+      'groundOverlays#update',
+      groundOverlayUpdates.toJson(),
+    );
+  }
+
+  @override
   Future<void> clearTileCache(
     TileOverlayId tileOverlayId, {
     required int mapId,
@@ -494,6 +510,8 @@ class GoogleMapsFlutterIOS extends GoogleMapsFlutterPlatform {
       'polylinesToAdd': serializePolylineSet(mapObjects.polylines),
       'circlesToAdd': serializeCircleSet(mapObjects.circles),
       'tileOverlaysToAdd': serializeTileOverlaySet(mapObjects.tileOverlays),
+      'groundOverlaysToAdd':
+          serializeGroundOverlaySet(mapObjects.groundOverlays),
     };
 
     return UiKitView(

@@ -82,7 +82,7 @@ class GroundOverlayBodyState extends State<GroundOverlayBody> {
         Center(
           child: SizedBox(
             width: 350.0,
-            height: 300.0,
+            height: 500.0,
             child: GoogleMap(
               initialCameraPosition: const CameraPosition(
                 target: LatLng(59.935460, 30.325177),
