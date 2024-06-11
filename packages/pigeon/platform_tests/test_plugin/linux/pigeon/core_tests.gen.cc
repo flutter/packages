@@ -73,17 +73,20 @@ CoreTestsPigeonTestAllTypes* core_tests_pigeon_test_all_types_new(
   self->an_int = an_int;
   self->an_int64 = an_int64;
   self->a_double = a_double;
-  self->a_byte_array =
-      static_cast<uint8_t*>(g_memdup(a_byte_array, a_byte_array_length));
+  self->a_byte_array = static_cast<uint8_t*>(
+      memcpy(malloc(a_byte_array_length), a_byte_array, a_byte_array_length));
   self->a_byte_array_length = a_byte_array_length;
   self->a4_byte_array = static_cast<int32_t*>(
-      g_memdup(a4_byte_array, sizeof(int32_t) * a4_byte_array_length));
+      memcpy(malloc(sizeof(int32_t) * a4_byte_array_length), a4_byte_array,
+             sizeof(int32_t) * a4_byte_array_length));
   self->a4_byte_array_length = a4_byte_array_length;
   self->a8_byte_array = static_cast<int64_t*>(
-      g_memdup(a8_byte_array, sizeof(int64_t) * a8_byte_array_length));
+      memcpy(malloc(sizeof(int64_t) * a8_byte_array_length), a8_byte_array,
+             sizeof(int64_t) * a8_byte_array_length));
   self->a8_byte_array_length = a8_byte_array_length;
   self->a_float_array = static_cast<double*>(
-      g_memdup(a_float_array, sizeof(double) * a_float_array_length));
+      memcpy(malloc(sizeof(double) * a_float_array_length), a_float_array,
+             sizeof(double) * a_float_array_length));
   self->a_float_array_length = a_float_array_length;
   self->an_enum = an_enum;
   self->a_string = g_strdup(a_string);
@@ -395,15 +398,19 @@ core_tests_pigeon_test_all_nullable_types_new(
     self->a_nullable_double = nullptr;
   }
   self->a_nullable_byte_array = static_cast<uint8_t*>(
-      g_memdup(a_nullable_byte_array, a_nullable_byte_array_length));
+      memcpy(malloc(a_nullable_byte_array_length), a_nullable_byte_array,
+             a_nullable_byte_array_length));
   self->a_nullable_byte_array_length = a_nullable_byte_array_length;
-  self->a_nullable4_byte_array = static_cast<int32_t*>(g_memdup(
+  self->a_nullable4_byte_array = static_cast<int32_t*>(memcpy(
+      malloc(sizeof(int32_t) * a_nullable4_byte_array_length),
       a_nullable4_byte_array, sizeof(int32_t) * a_nullable4_byte_array_length));
   self->a_nullable4_byte_array_length = a_nullable4_byte_array_length;
-  self->a_nullable8_byte_array = static_cast<int64_t*>(g_memdup(
+  self->a_nullable8_byte_array = static_cast<int64_t*>(memcpy(
+      malloc(sizeof(int64_t) * a_nullable8_byte_array_length),
       a_nullable8_byte_array, sizeof(int64_t) * a_nullable8_byte_array_length));
   self->a_nullable8_byte_array_length = a_nullable8_byte_array_length;
-  self->a_nullable_float_array = static_cast<double*>(g_memdup(
+  self->a_nullable_float_array = static_cast<double*>(memcpy(
+      malloc(sizeof(double) * a_nullable_float_array_length),
       a_nullable_float_array, sizeof(double) * a_nullable_float_array_length));
   self->a_nullable_float_array_length = a_nullable_float_array_length;
   self->nullable_nested_list = fl_value_ref(nullable_nested_list);
@@ -910,15 +917,19 @@ core_tests_pigeon_test_all_nullable_types_without_recursion_new(
     self->a_nullable_double = nullptr;
   }
   self->a_nullable_byte_array = static_cast<uint8_t*>(
-      g_memdup(a_nullable_byte_array, a_nullable_byte_array_length));
+      memcpy(malloc(a_nullable_byte_array_length), a_nullable_byte_array,
+             a_nullable_byte_array_length));
   self->a_nullable_byte_array_length = a_nullable_byte_array_length;
-  self->a_nullable4_byte_array = static_cast<int32_t*>(g_memdup(
+  self->a_nullable4_byte_array = static_cast<int32_t*>(memcpy(
+      malloc(sizeof(int32_t) * a_nullable4_byte_array_length),
       a_nullable4_byte_array, sizeof(int32_t) * a_nullable4_byte_array_length));
   self->a_nullable4_byte_array_length = a_nullable4_byte_array_length;
-  self->a_nullable8_byte_array = static_cast<int64_t*>(g_memdup(
+  self->a_nullable8_byte_array = static_cast<int64_t*>(memcpy(
+      malloc(sizeof(int64_t) * a_nullable8_byte_array_length),
       a_nullable8_byte_array, sizeof(int64_t) * a_nullable8_byte_array_length));
   self->a_nullable8_byte_array_length = a_nullable8_byte_array_length;
-  self->a_nullable_float_array = static_cast<double*>(g_memdup(
+  self->a_nullable_float_array = static_cast<double*>(memcpy(
+      malloc(sizeof(double) * a_nullable_float_array_length),
       a_nullable_float_array, sizeof(double) * a_nullable_float_array_length));
   self->a_nullable_float_array_length = a_nullable_float_array_length;
   self->nullable_nested_list = fl_value_ref(nullable_nested_list);
@@ -12909,8 +12920,9 @@ core_tests_pigeon_test_flutter_integration_core_api_echo_uint8_list_finish(
     return FALSE;
   }
 
-  *return_value = static_cast<uint8_t*>(
-      g_memdup(fl_value_get_uint8_list(r), fl_value_get_length(r)));
+  *return_value = static_cast<uint8_t*>(memcpy(malloc(fl_value_get_length(r)),
+                                               fl_value_get_uint8_list(r),
+                                               fl_value_get_length(r)));
   *return_value_length = fl_value_get_length(r);
 
   return TRUE;
@@ -13169,8 +13181,9 @@ core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_uint8_list_fin
     return FALSE;
   }
 
-  *return_value = static_cast<uint8_t*>(
-      g_memdup(fl_value_get_uint8_list(r), fl_value_get_length(r)));
+  *return_value = static_cast<uint8_t*>(memcpy(malloc(fl_value_get_length(r)),
+                                               fl_value_get_uint8_list(r),
+                                               fl_value_get_length(r)));
   *return_value_length = fl_value_get_length(r);
 
   return TRUE;
