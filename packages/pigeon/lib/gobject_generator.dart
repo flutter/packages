@@ -1526,9 +1526,9 @@ String _makeFlValue(
     final int enumeration = _getTypeEnumeration(root, type);
     value = 'fl_value_new_custom_object($enumeration, G_OBJECT($variableName))';
   } else if (type.isEnum) {
-    value = type.isNullable
-        ? 'fl_value_new_int(static_cast<int64_t>(*$variableName))'
-        : 'fl_value_new_int(static_cast<int64_t>($variableName))';
+    final int enumeration = _getTypeEnumeration(root, type);
+    value =
+        'fl_value_new_custom($enumeration, fl_value_new_int(${type.isNullable ? '*$variableName' : '$variableName'}), (GDestroyNotify)fl_value_unref)';
   } else if (_isFlValueWrappedType(type)) {
     value = 'fl_value_ref($variableName)';
   } else if (type.baseName == 'void') {
@@ -1575,7 +1575,7 @@ String _fromFlValue(String module, TypeDeclaration type, String variableName) {
     return '$castMacro(fl_value_get_custom_value_object($variableName))';
   } else if (type.isEnum) {
     final String enumName = _getClassName(module, type.baseName);
-    return 'static_cast<$enumName>(fl_value_get_int($variableName))';
+    return 'static_cast<$enumName>(fl_value_get_int(reinterpret_cast<FlValue*>(const_cast<gpointer>(fl_value_get_custom_value($variableName)))))';
   } else if (_isFlValueWrappedType(type)) {
     return variableName;
   } else if (type.baseName == 'bool') {
