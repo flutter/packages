@@ -472,7 +472,7 @@ class GoogleMapController
           result.success(null);
           break;
         }
-        case "groundOverlays#update":
+      case "groundOverlays#update":
         {
           List<Object> groundOverlaysToAdd = call.argument("groundOverlaysToAdd");
           groundOverlaysController.addGroundOverlays(groundOverlaysToAdd);

@@ -589,7 +589,7 @@
     [self.circlesController didTapCircleWithIdentifier:overlayId];
   } else if ([self.groundOverlaysController hasGroundOverlayWithIdentifier:overlayId]) {
     [self.groundOverlaysController didTapGroundOverlayWithIdentifier:overlayId];
-  } 
+  }
 }
 
 - (void)mapView:(GMSMapView *)mapView didTapAtCoordinate:(CLLocationCoordinate2D)coordinate {

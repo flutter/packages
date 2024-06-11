@@ -9,8 +9,8 @@
 // Defines ground overlay UI options writable from Flutter.
 @protocol FLTGoogleMapGroundOverlayOptionsSink
 - (void)setBearing:(CLLocationDirection)bearing;
-- (void)setBitmapDescriptor:(UIImage*)bd;
-- (void)setBounds:(GMSCoordinateBounds*)bounds;
+- (void)setBitmapDescriptor:(UIImage *)bd;
+- (void)setBounds:(GMSCoordinateBounds *)bounds;
 - (void)setConsumeTapEvents:(BOOL)consume;
 - (void)setLocation:(CLLocationCoordinate2D)location width:(CGFloat)width height:(CGFloat)height;
 - (void)setOpacity:(float)opacity;
@@ -20,27 +20,27 @@
 
 // Defines ground overlay controllable by Flutter.
 @interface FLTGoogleMapGroundOverlayController : NSObject <FLTGoogleMapGroundOverlayOptionsSink>
-@property(atomic, readonly) NSString* groundOverlayId;
+@property(atomic, readonly) NSString *groundOverlayId;
 - (instancetype)initGroundOverlayWithPosition:(CLLocationCoordinate2D)position
-                                         icon:(UIImage*)icon
-                              groundOverlayId:(NSString*)groundOverlayId
-                                      mapView:(GMSMapView*)mapView;
-- (instancetype)initGroundOverlayWithBounds:(GMSCoordinateBounds*)bounds
-                                       icon:(UIImage*)icon
-                            groundOverlayId:(NSString*)groundOverlayId
-                                    mapView:(GMSMapView*)mapView;
+                                         icon:(UIImage *)icon
+                              groundOverlayId:(NSString *)groundOverlayId
+                                      mapView:(GMSMapView *)mapView;
+- (instancetype)initGroundOverlayWithBounds:(GMSCoordinateBounds *)bounds
+                                       icon:(UIImage *)icon
+                            groundOverlayId:(NSString *)groundOverlayId
+                                    mapView:(GMSMapView *)mapView;
 - (BOOL)consumeTapEvents;
 - (void)removeGroundOverlay;
 @end
 
 @interface FLTGroundOverlaysController : NSObject
-- (instancetype)init:(FlutterMethodChannel*)methodChannel
-             mapView:(GMSMapView*)mapView
-           registrar:(NSObject<FlutterPluginRegistrar>*)registrar;
-- (void)addGroundOverlays:(NSArray*)groundOverlaysToAdd;
-- (void)changeGroundOverlays:(NSArray*)groundOverlaysToChange;
-- (void)removeGroundOverlayWithIdentifiers:(NSArray*)groundOverlayIdsToRemove;
-- (void)onGroundOverlayTap:(NSString*)groundOverlayId;
-- (bool)hasGroundOverlayWithIdentifier:(NSString*)groundOverlayId;
+- (instancetype)init:(FlutterMethodChannel *)methodChannel
+             mapView:(GMSMapView *)mapView
+           registrar:(NSObject<FlutterPluginRegistrar> *)registrar;
+- (void)addGroundOverlays:(NSArray *)groundOverlaysToAdd;
+- (void)changeGroundOverlays:(NSArray *)groundOverlaysToChange;
+- (void)removeGroundOverlayWithIdentifiers:(NSArray *)groundOverlayIdsToRemove;
+- (void)onGroundOverlayTap:(NSString *)groundOverlayId;
+- (bool)hasGroundOverlayWithIdentifier:(NSString *)groundOverlayId;
 - (void)didTapGroundOverlayWithIdentifier:(NSString *)identifier;
 @end
