@@ -518,7 +518,7 @@ class GObjectSourceGenerator extends StructuredGenerator<GObjectOptions> {
       _writeObjectNew(indent, module, classDefinition.name);
       for (final NamedType field in classDefinition.fields) {
         final String fieldName = _getFieldName(field.name);
-        final String value = _referenceValue(field.type, fieldName,
+        final String value = _referenceValue(module, field.type, fieldName,
             lengthVariableName: '${fieldName}_length');
 
         if (_isNullablePrimitiveType(field.type)) {
@@ -896,7 +896,7 @@ class GObjectSourceGenerator extends StructuredGenerator<GObjectOptions> {
             });
           } else {
             indent.writeln(
-                '*return_value = ${_referenceValue(method.returnType, returnValue, lengthVariableName: 'fl_value_get_length(r)')};');
+                '*return_value = ${_referenceValue(module, method.returnType, returnValue, lengthVariableName: 'fl_value_get_length(r)')};');
           }
           if (_isNumericListType(method.returnType)) {
             indent.writeln('*return_value_length = fl_value_get_length(r);');
@@ -1109,7 +1109,8 @@ class GObjectSourceGenerator extends StructuredGenerator<GObjectOptions> {
         '$className* ${methodPrefix}_new(FlBinaryMessenger* messenger, const $vtableName* vtable, gpointer user_data, GDestroyNotify user_data_free_func) {',
         '}', () {
       _writeObjectNew(indent, module, api.name);
-      indent.writeln('self->messenger = g_object_ref(messenger);');
+      indent.writeln(
+          'self->messenger = FL_BINARY_MESSENGER(g_object_ref(messenger));');
       indent.writeln('self->vtable = vtable;');
       indent.writeln('self->user_data = user_data;');
       indent.writeln('self->user_data_free_func = user_data_free_func;');
@@ -1474,10 +1475,11 @@ String _getDefaultValue(String module, TypeDeclaration type,
 // Returns code to copy the native data type stored in [variableName].
 //
 // [lengthVariableName] must be provided for the typed numeric *List types.
-String _referenceValue(TypeDeclaration type, String variableName,
+String _referenceValue(String module, TypeDeclaration type, String variableName,
     {String? lengthVariableName}) {
   if (type.isClass) {
-    return 'g_object_ref($variableName)';
+    final String castMacro = _getClassCastMacro(module, type.baseName);
+    return '$castMacro(g_object_ref($variableName))';
   } else if (_isFlValueWrappedType(type)) {
     return 'fl_value_ref($variableName)';
   } else if (type.baseName == 'String') {
