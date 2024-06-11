@@ -402,7 +402,7 @@ abstract class PigeonProxyApiRegistrar(val binaryMessenger: BinaryMessenger) {
 }
 
 private class PigeonProxyApiBaseCodec(val registrar: PigeonProxyApiRegistrar) :
-    StandardMessageCodec() {
+    ProxyApiTestsPigeonCodec() {
   override fun readValueOfType(type: Byte, buffer: ByteBuffer): Any? {
     return when (type) {
       128.toByte() -> {
@@ -444,7 +444,7 @@ enum class ProxyApiTestEnum(val raw: Int) {
   }
 }
 
-private object ProxyApiTestsPigeonCodec : StandardMessageCodec() {
+private open class ProxyApiTestsPigeonCodec : StandardMessageCodec() {
   override fun readValueOfType(type: Byte, buffer: ByteBuffer): Any? {
     return when (type) {
       129.toByte() -> {

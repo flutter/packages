@@ -451,9 +451,12 @@ const List<String> validTypes = <String>[
   'Object',
 ];
 
+/// The dedicated key for accessing an InstanceManager in ProxyApi base codecs.
+const int proxyApiCodecInstanceManagerKey = 128;
+
 /// Custom codecs' custom types are enumerated from 255 down to this number to
 /// avoid collisions with the StandardMessageCodec.
-const int _minimumCodecFieldKey = 129;
+const int _minimumCodecFieldKey = proxyApiCodecInstanceManagerKey + 1;
 
 Iterable<TypeDeclaration> _getTypeArguments(TypeDeclaration type) sync* {
   for (final TypeDeclaration typeArg in type.typeArguments) {
@@ -577,13 +580,6 @@ Map<TypeDeclaration, List<int>> getReferencedTypes(
     type: typeWithHighestRequirement,
     version: onGetApiRequirement(typeWithHighestRequirement)!,
   );
-}
-
-/// Returns true if the concrete type cannot be determined at compile-time.
-bool _isConcreteTypeAmbiguous(TypeDeclaration type) {
-  return (type.baseName == 'List' && type.typeArguments.isEmpty) ||
-      (type.baseName == 'Map' && type.typeArguments.isEmpty) ||
-      type.baseName == 'Object';
 }
 
 /// All custom definable data types.

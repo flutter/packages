@@ -268,7 +268,7 @@ class $_proxyApiCodecName extends _PigeonCodec {
  @override
  void writeValue(WriteBuffer buffer, Object? value) {
    if (value is $proxyApiBaseClassName) {
-     buffer.putUint8(128);
+     buffer.putUint8($proxyApiCodecInstanceManagerKey);
      writeValue(buffer, instanceManager.getIdentifier(value));
    } else {
      super.writeValue(buffer, value);
@@ -277,7 +277,7 @@ class $_proxyApiCodecName extends _PigeonCodec {
  @override
  Object? readValueOfType(int type, ReadBuffer buffer) {
    switch (type) {
-     case 128:
+     case $proxyApiCodecInstanceManagerKey:
        return instanceManager
            .getInstanceWithWeakReference(readValue(buffer)! as int);
      default:

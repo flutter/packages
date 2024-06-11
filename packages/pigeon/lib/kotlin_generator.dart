@@ -329,7 +329,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
   }) {
     final Iterable<EnumeratedType> enumeratedTypes = getEnumeratedTypes(root);
     indent.write(
-        'private object ${generatorOptions.fileSpecificClassNameComponent}$_codecName : StandardMessageCodec() ');
+        'private open class ${generatorOptions.fileSpecificClassNameComponent}$_codecName : StandardMessageCodec() ');
     indent.addScoped('{', '}', () {
       indent.write(
           'override fun readValueOfType(type: Byte, buffer: ByteBuffer): Any? ');
@@ -418,7 +418,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
         indent.write('val codec: MessageCodec<Any?> by lazy ');
         indent.addScoped('{', '}', () {
           indent.writeln(
-              '${generatorOptions.fileSpecificClassNameComponent}$_codecName');
+              '${generatorOptions.fileSpecificClassNameComponent}$_codecName()');
         });
       });
 
@@ -500,7 +500,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
         indent.write('val codec: MessageCodec<Any?> by lazy ');
         indent.addScoped('{', '}', () {
           indent.writeln(
-              '${generatorOptions.fileSpecificClassNameComponent}$_codecName');
+              '${generatorOptions.fileSpecificClassNameComponent}$_codecName()');
         });
         indent.writeln(
             '/** Sets up an instance of `$apiName` to handle messages through the `binaryMessenger`. */');
@@ -695,14 +695,15 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
     );
 
     indent.writeScoped(
-      'private class $codecName(val registrar: PigeonProxyApiRegistrar) : StandardMessageCodec() {',
+      'private class $codecName(val registrar: PigeonProxyApiRegistrar) : '
+          '${generatorOptions.fileSpecificClassNameComponent}$_codecName() {',
       '}',
       () {
         indent.format(
           '''
           override fun readValueOfType(type: Byte, buffer: ByteBuffer): Any? {
             return when (type) {
-              128.toByte() -> {
+              $proxyApiCodecInstanceManagerKey.toByte() -> {
                 return registrar.instanceManager.getInstance(
                     readValue(buffer).let { if (it is Int) it.toLong() else it as Long })
               }
@@ -743,7 +744,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
               '''
               when {
                 registrar.instanceManager.containsInstance(value) -> {
-                  stream.write(128)
+                  stream.write($proxyApiCodecInstanceManagerKey)
                   writeValue(stream, registrar.instanceManager.getIdentifierForStrongReference(value))
                 }
                 else -> super.writeValue(stream, value)
