@@ -1528,7 +1528,7 @@ String _makeFlValue(
   } else if (type.isEnum) {
     final int enumeration = _getTypeEnumeration(root, type);
     value =
-        'fl_value_new_custom($enumeration, fl_value_new_int(${type.isNullable ? '*$variableName' : '$variableName'}), (GDestroyNotify)fl_value_unref)';
+        'fl_value_new_custom($enumeration, fl_value_new_int(${type.isNullable ? '*$variableName' : variableName}), (GDestroyNotify)fl_value_unref)';
   } else if (_isFlValueWrappedType(type)) {
     value = 'fl_value_ref($variableName)';
   } else if (type.baseName == 'void') {
