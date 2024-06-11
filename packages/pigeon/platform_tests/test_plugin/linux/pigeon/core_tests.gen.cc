@@ -74,16 +74,16 @@ CoreTestsPigeonTestAllTypes* core_tests_pigeon_test_all_types_new(
   self->an_int64 = an_int64;
   self->a_double = a_double;
   self->a_byte_array =
-      static_cast<uint8_t*>(g_memdup2(a_byte_array, a_byte_array_length));
+      static_cast<uint8_t*>(g_memdup(a_byte_array, a_byte_array_length));
   self->a_byte_array_length = a_byte_array_length;
   self->a4_byte_array = static_cast<int32_t*>(
-      g_memdup2(a4_byte_array, sizeof(int32_t) * a4_byte_array_length));
+      g_memdup(a4_byte_array, sizeof(int32_t) * a4_byte_array_length));
   self->a4_byte_array_length = a4_byte_array_length;
   self->a8_byte_array = static_cast<int64_t*>(
-      g_memdup2(a8_byte_array, sizeof(int64_t) * a8_byte_array_length));
+      g_memdup(a8_byte_array, sizeof(int64_t) * a8_byte_array_length));
   self->a8_byte_array_length = a8_byte_array_length;
   self->a_float_array = static_cast<double*>(
-      g_memdup2(a_float_array, sizeof(double) * a_float_array_length));
+      g_memdup(a_float_array, sizeof(double) * a_float_array_length));
   self->a_float_array_length = a_float_array_length;
   self->an_enum = an_enum;
   self->a_string = g_strdup(a_string);
@@ -395,15 +395,15 @@ core_tests_pigeon_test_all_nullable_types_new(
     self->a_nullable_double = nullptr;
   }
   self->a_nullable_byte_array = static_cast<uint8_t*>(
-      g_memdup2(a_nullable_byte_array, a_nullable_byte_array_length));
+      g_memdup(a_nullable_byte_array, a_nullable_byte_array_length));
   self->a_nullable_byte_array_length = a_nullable_byte_array_length;
-  self->a_nullable4_byte_array = static_cast<int32_t*>(g_memdup2(
+  self->a_nullable4_byte_array = static_cast<int32_t*>(g_memdup(
       a_nullable4_byte_array, sizeof(int32_t) * a_nullable4_byte_array_length));
   self->a_nullable4_byte_array_length = a_nullable4_byte_array_length;
-  self->a_nullable8_byte_array = static_cast<int64_t*>(g_memdup2(
+  self->a_nullable8_byte_array = static_cast<int64_t*>(g_memdup(
       a_nullable8_byte_array, sizeof(int64_t) * a_nullable8_byte_array_length));
   self->a_nullable8_byte_array_length = a_nullable8_byte_array_length;
-  self->a_nullable_float_array = static_cast<double*>(g_memdup2(
+  self->a_nullable_float_array = static_cast<double*>(g_memdup(
       a_nullable_float_array, sizeof(double) * a_nullable_float_array_length));
   self->a_nullable_float_array_length = a_nullable_float_array_length;
   self->nullable_nested_list = fl_value_ref(nullable_nested_list);
@@ -419,7 +419,8 @@ core_tests_pigeon_test_all_nullable_types_new(
   }
   self->a_nullable_string = g_strdup(a_nullable_string);
   self->a_nullable_object = fl_value_ref(a_nullable_object);
-  self->all_nullable_types = g_object_ref(all_nullable_types);
+  self->all_nullable_types = CORE_TESTS_PIGEON_TEST_ALL_NULLABLE_TYPES(
+      g_object_ref(all_nullable_types));
   self->list = fl_value_ref(list);
   self->string_list = fl_value_ref(string_list);
   self->int_list = fl_value_ref(int_list);
@@ -908,15 +909,15 @@ core_tests_pigeon_test_all_nullable_types_without_recursion_new(
     self->a_nullable_double = nullptr;
   }
   self->a_nullable_byte_array = static_cast<uint8_t*>(
-      g_memdup2(a_nullable_byte_array, a_nullable_byte_array_length));
+      g_memdup(a_nullable_byte_array, a_nullable_byte_array_length));
   self->a_nullable_byte_array_length = a_nullable_byte_array_length;
-  self->a_nullable4_byte_array = static_cast<int32_t*>(g_memdup2(
+  self->a_nullable4_byte_array = static_cast<int32_t*>(g_memdup(
       a_nullable4_byte_array, sizeof(int32_t) * a_nullable4_byte_array_length));
   self->a_nullable4_byte_array_length = a_nullable4_byte_array_length;
-  self->a_nullable8_byte_array = static_cast<int64_t*>(g_memdup2(
+  self->a_nullable8_byte_array = static_cast<int64_t*>(g_memdup(
       a_nullable8_byte_array, sizeof(int64_t) * a_nullable8_byte_array_length));
   self->a_nullable8_byte_array_length = a_nullable8_byte_array_length;
-  self->a_nullable_float_array = static_cast<double*>(g_memdup2(
+  self->a_nullable_float_array = static_cast<double*>(g_memdup(
       a_nullable_float_array, sizeof(double) * a_nullable_float_array_length));
   self->a_nullable_float_array_length = a_nullable_float_array_length;
   self->nullable_nested_list = fl_value_ref(nullable_nested_list);
@@ -1353,10 +1354,12 @@ core_tests_pigeon_test_all_classes_wrapper_new(
   CoreTestsPigeonTestAllClassesWrapper* self =
       CORE_TESTS_PIGEON_TEST_ALL_CLASSES_WRAPPER(g_object_new(
           core_tests_pigeon_test_all_classes_wrapper_get_type(), nullptr));
-  self->all_nullable_types = g_object_ref(all_nullable_types);
+  self->all_nullable_types = CORE_TESTS_PIGEON_TEST_ALL_NULLABLE_TYPES(
+      g_object_ref(all_nullable_types));
   self->all_nullable_types_without_recursion =
-      g_object_ref(all_nullable_types_without_recursion);
-  self->all_types = g_object_ref(all_types);
+      CORE_TESTS_PIGEON_TEST_ALL_NULLABLE_TYPES_WITHOUT_RECURSION(
+          g_object_ref(all_nullable_types_without_recursion));
+  self->all_types = CORE_TESTS_PIGEON_TEST_ALL_TYPES(g_object_ref(all_types));
   return self;
 }
 
@@ -9883,7 +9886,7 @@ core_tests_pigeon_test_host_integration_core_api_new(
       CORE_TESTS_PIGEON_TEST_HOST_INTEGRATION_CORE_API(g_object_new(
           core_tests_pigeon_test_host_integration_core_api_get_type(),
           nullptr));
-  self->messenger = g_object_ref(messenger);
+  self->messenger = FL_BINARY_MESSENGER(g_object_ref(messenger));
   self->vtable = vtable;
   self->user_data = user_data;
   self->user_data_free_func = user_data_free_func;
@@ -12585,8 +12588,8 @@ core_tests_pigeon_test_flutter_integration_core_api_echo_all_types_finish(
     return FALSE;
   }
 
-  *return_value = g_object_ref(
-      CORE_TESTS_PIGEON_TEST_ALL_TYPES(fl_value_get_custom_value_object(r)));
+  *return_value = CORE_TESTS_PIGEON_TEST_ALL_TYPES(g_object_ref(
+      CORE_TESTS_PIGEON_TEST_ALL_TYPES(fl_value_get_custom_value_object(r))));
 
   return TRUE;
 }
@@ -12619,8 +12622,9 @@ core_tests_pigeon_test_flutter_integration_core_api_echo_all_nullable_types_fini
     return FALSE;
   }
 
-  *return_value = g_object_ref(CORE_TESTS_PIGEON_TEST_ALL_NULLABLE_TYPES(
-      fl_value_get_custom_value_object(r)));
+  *return_value = CORE_TESTS_PIGEON_TEST_ALL_NULLABLE_TYPES(
+      g_object_ref(CORE_TESTS_PIGEON_TEST_ALL_NULLABLE_TYPES(
+          fl_value_get_custom_value_object(r))));
 
   return TRUE;
 }
@@ -12659,8 +12663,9 @@ core_tests_pigeon_test_flutter_integration_core_api_send_multiple_nullable_types
     return FALSE;
   }
 
-  *return_value = g_object_ref(CORE_TESTS_PIGEON_TEST_ALL_NULLABLE_TYPES(
-      fl_value_get_custom_value_object(r)));
+  *return_value = CORE_TESTS_PIGEON_TEST_ALL_NULLABLE_TYPES(
+      g_object_ref(CORE_TESTS_PIGEON_TEST_ALL_NULLABLE_TYPES(
+          fl_value_get_custom_value_object(r))));
 
   return TRUE;
 }
@@ -12696,9 +12701,9 @@ core_tests_pigeon_test_flutter_integration_core_api_echo_all_nullable_types_with
     return FALSE;
   }
 
-  *return_value =
+  *return_value = CORE_TESTS_PIGEON_TEST_ALL_NULLABLE_TYPES_WITHOUT_RECURSION(
       g_object_ref(CORE_TESTS_PIGEON_TEST_ALL_NULLABLE_TYPES_WITHOUT_RECURSION(
-          fl_value_get_custom_value_object(r)));
+          fl_value_get_custom_value_object(r))));
 
   return TRUE;
 }
@@ -12739,9 +12744,9 @@ core_tests_pigeon_test_flutter_integration_core_api_send_multiple_nullable_types
     return FALSE;
   }
 
-  *return_value =
+  *return_value = CORE_TESTS_PIGEON_TEST_ALL_NULLABLE_TYPES_WITHOUT_RECURSION(
       g_object_ref(CORE_TESTS_PIGEON_TEST_ALL_NULLABLE_TYPES_WITHOUT_RECURSION(
-          fl_value_get_custom_value_object(r)));
+          fl_value_get_custom_value_object(r))));
 
   return TRUE;
 }
@@ -12888,7 +12893,7 @@ core_tests_pigeon_test_flutter_integration_core_api_echo_uint8_list_finish(
   }
 
   *return_value = static_cast<uint8_t*>(
-      g_memdup2(fl_value_get_uint8_list(r), fl_value_get_length(r)));
+      g_memdup(fl_value_get_uint8_list(r), fl_value_get_length(r)));
   *return_value_length = fl_value_get_length(r);
 
   return TRUE;
@@ -13148,7 +13153,7 @@ core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_uint8_list_fin
   }
 
   *return_value = static_cast<uint8_t*>(
-      g_memdup2(fl_value_get_uint8_list(r), fl_value_get_length(r)));
+      g_memdup(fl_value_get_uint8_list(r), fl_value_get_length(r)));
   *return_value_length = fl_value_get_length(r);
 
   return TRUE;
@@ -13435,7 +13440,7 @@ CoreTestsPigeonTestHostTrivialApi* core_tests_pigeon_test_host_trivial_api_new(
   CoreTestsPigeonTestHostTrivialApi* self =
       CORE_TESTS_PIGEON_TEST_HOST_TRIVIAL_API(g_object_new(
           core_tests_pigeon_test_host_trivial_api_get_type(), nullptr));
-  self->messenger = g_object_ref(messenger);
+  self->messenger = FL_BINARY_MESSENGER(g_object_ref(messenger));
   self->vtable = vtable;
   self->user_data = user_data;
   self->user_data_free_func = user_data_free_func;
@@ -13644,7 +13649,7 @@ CoreTestsPigeonTestHostSmallApi* core_tests_pigeon_test_host_small_api_new(
     GDestroyNotify user_data_free_func) {
   CoreTestsPigeonTestHostSmallApi* self = CORE_TESTS_PIGEON_TEST_HOST_SMALL_API(
       g_object_new(core_tests_pigeon_test_host_small_api_get_type(), nullptr));
-  self->messenger = g_object_ref(messenger);
+  self->messenger = FL_BINARY_MESSENGER(g_object_ref(messenger));
   self->vtable = vtable;
   self->user_data = user_data;
   self->user_data_free_func = user_data_free_func;
@@ -13789,8 +13794,9 @@ gboolean core_tests_pigeon_test_flutter_small_api_echo_wrapped_list_finish(
     return FALSE;
   }
 
-  *return_value = g_object_ref(
-      CORE_TESTS_PIGEON_TEST_TEST_MESSAGE(fl_value_get_custom_value_object(r)));
+  *return_value = CORE_TESTS_PIGEON_TEST_TEST_MESSAGE(
+      g_object_ref(CORE_TESTS_PIGEON_TEST_TEST_MESSAGE(
+          fl_value_get_custom_value_object(r))));
 
   return TRUE;
 }
