@@ -1483,17 +1483,21 @@ core_tests_pigeon_test_test_message_new_from_list(FlValue* values) {
   return core_tests_pigeon_test_test_message_new(test_list);
 }
 
-G_DECLARE_FINAL_TYPE(PigeonMessageCodec, pigeon_message_codec, PIGEON,
-                     MESSAGE_CODEC, FlStandardMessageCodec)
+G_DECLARE_FINAL_TYPE(CoreTestsPigeonTestMessageCodec,
+                     core_tests_pigeon_test_message_codec,
+                     CORE_TESTS_PIGEON_TEST, MESSAGE_CODEC,
+                     FlStandardMessageCodec)
 
-struct _PigeonMessageCodec {
+struct _CoreTestsPigeonTestMessageCodec {
   FlStandardMessageCodec parent_instance;
 };
 
-G_DEFINE_TYPE(PigeonMessageCodec, pigeon_message_codec,
+G_DEFINE_TYPE(CoreTestsPigeonTestMessageCodec,
+              core_tests_pigeon_test_message_codec,
               fl_standard_message_codec_get_type())
 
-static gboolean pigeon_message_codec_write_core_tests_pigeon_test_all_types(
+static gboolean
+core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_all_types(
     FlStandardMessageCodec* codec, GByteArray* buffer,
     CoreTestsPigeonTestAllTypes* value, GError** error) {
   uint8_t type = 129;
@@ -1503,7 +1507,7 @@ static gboolean pigeon_message_codec_write_core_tests_pigeon_test_all_types(
 }
 
 static gboolean
-pigeon_message_codec_write_core_tests_pigeon_test_all_nullable_types(
+core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_all_nullable_types(
     FlStandardMessageCodec* codec, GByteArray* buffer,
     CoreTestsPigeonTestAllNullableTypes* value, GError** error) {
   uint8_t type = 130;
@@ -1514,7 +1518,7 @@ pigeon_message_codec_write_core_tests_pigeon_test_all_nullable_types(
 }
 
 static gboolean
-pigeon_message_codec_write_core_tests_pigeon_test_all_nullable_types_without_recursion(
+core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_all_nullable_types_without_recursion(
     FlStandardMessageCodec* codec, GByteArray* buffer,
     CoreTestsPigeonTestAllNullableTypesWithoutRecursion* value,
     GError** error) {
@@ -1527,7 +1531,7 @@ pigeon_message_codec_write_core_tests_pigeon_test_all_nullable_types_without_rec
 }
 
 static gboolean
-pigeon_message_codec_write_core_tests_pigeon_test_all_classes_wrapper(
+core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_all_classes_wrapper(
     FlStandardMessageCodec* codec, GByteArray* buffer,
     CoreTestsPigeonTestAllClassesWrapper* value, GError** error) {
   uint8_t type = 132;
@@ -1537,7 +1541,8 @@ pigeon_message_codec_write_core_tests_pigeon_test_all_classes_wrapper(
   return fl_standard_message_codec_write_value(codec, buffer, values, error);
 }
 
-static gboolean pigeon_message_codec_write_core_tests_pigeon_test_test_message(
+static gboolean
+core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_test_message(
     FlStandardMessageCodec* codec, GByteArray* buffer,
     CoreTestsPigeonTestTestMessage* value, GError** error) {
   uint8_t type = 133;
@@ -1547,7 +1552,8 @@ static gboolean pigeon_message_codec_write_core_tests_pigeon_test_test_message(
   return fl_standard_message_codec_write_value(codec, buffer, values, error);
 }
 
-static gboolean pigeon_message_codec_write_core_tests_pigeon_test_an_enum(
+static gboolean
+core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_an_enum(
     FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
     GError** error) {
   uint8_t type = 134;
@@ -1555,44 +1561,43 @@ static gboolean pigeon_message_codec_write_core_tests_pigeon_test_an_enum(
   return fl_standard_message_codec_write_value(codec, buffer, value, error);
 }
 
-static gboolean pigeon_message_codec_write_value(FlStandardMessageCodec* codec,
-                                                 GByteArray* buffer,
-                                                 FlValue* value,
-                                                 GError** error) {
+static gboolean core_tests_pigeon_test_message_codec_write_value(
+    FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
+    GError** error) {
   if (fl_value_get_type(value) == FL_VALUE_TYPE_CUSTOM) {
     switch (fl_value_get_custom_type(value)) {
       case 129:
-        return pigeon_message_codec_write_core_tests_pigeon_test_all_types(
+        return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_all_types(
             codec, buffer,
             CORE_TESTS_PIGEON_TEST_ALL_TYPES(
                 fl_value_get_custom_value_object(value)),
             error);
       case 130:
-        return pigeon_message_codec_write_core_tests_pigeon_test_all_nullable_types(
+        return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_all_nullable_types(
             codec, buffer,
             CORE_TESTS_PIGEON_TEST_ALL_NULLABLE_TYPES(
                 fl_value_get_custom_value_object(value)),
             error);
       case 131:
-        return pigeon_message_codec_write_core_tests_pigeon_test_all_nullable_types_without_recursion(
+        return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_all_nullable_types_without_recursion(
             codec, buffer,
             CORE_TESTS_PIGEON_TEST_ALL_NULLABLE_TYPES_WITHOUT_RECURSION(
                 fl_value_get_custom_value_object(value)),
             error);
       case 132:
-        return pigeon_message_codec_write_core_tests_pigeon_test_all_classes_wrapper(
+        return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_all_classes_wrapper(
             codec, buffer,
             CORE_TESTS_PIGEON_TEST_ALL_CLASSES_WRAPPER(
                 fl_value_get_custom_value_object(value)),
             error);
       case 133:
-        return pigeon_message_codec_write_core_tests_pigeon_test_test_message(
+        return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_test_message(
             codec, buffer,
             CORE_TESTS_PIGEON_TEST_TEST_MESSAGE(
                 fl_value_get_custom_value_object(value)),
             error);
       case 134:
-        return pigeon_message_codec_write_core_tests_pigeon_test_an_enum(
+        return core_tests_pigeon_test_message_codec_write_core_tests_pigeon_test_an_enum(
             codec, buffer,
             reinterpret_cast<FlValue*>(
                 const_cast<gpointer>(fl_value_get_custom_value(value))),
@@ -1600,11 +1605,13 @@ static gboolean pigeon_message_codec_write_value(FlStandardMessageCodec* codec,
     }
   }
 
-  return FL_STANDARD_MESSAGE_CODEC_CLASS(pigeon_message_codec_parent_class)
+  return FL_STANDARD_MESSAGE_CODEC_CLASS(
+             core_tests_pigeon_test_message_codec_parent_class)
       ->write_value(codec, buffer, value, error);
 }
 
-static FlValue* pigeon_message_codec_read_core_tests_pigeon_test_all_types(
+static FlValue*
+core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_all_types(
     FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
     GError** error) {
   g_autoptr(FlValue) values =
@@ -1625,7 +1632,7 @@ static FlValue* pigeon_message_codec_read_core_tests_pigeon_test_all_types(
 }
 
 static FlValue*
-pigeon_message_codec_read_core_tests_pigeon_test_all_nullable_types(
+core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_all_nullable_types(
     FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
     GError** error) {
   g_autoptr(FlValue) values =
@@ -1646,7 +1653,7 @@ pigeon_message_codec_read_core_tests_pigeon_test_all_nullable_types(
 }
 
 static FlValue*
-pigeon_message_codec_read_core_tests_pigeon_test_all_nullable_types_without_recursion(
+core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_all_nullable_types_without_recursion(
     FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
     GError** error) {
   g_autoptr(FlValue) values =
@@ -1668,7 +1675,7 @@ pigeon_message_codec_read_core_tests_pigeon_test_all_nullable_types_without_recu
 }
 
 static FlValue*
-pigeon_message_codec_read_core_tests_pigeon_test_all_classes_wrapper(
+core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_all_classes_wrapper(
     FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
     GError** error) {
   g_autoptr(FlValue) values =
@@ -1688,7 +1695,8 @@ pigeon_message_codec_read_core_tests_pigeon_test_all_classes_wrapper(
   return fl_value_new_custom_object_take(132, G_OBJECT(value));
 }
 
-static FlValue* pigeon_message_codec_read_core_tests_pigeon_test_test_message(
+static FlValue*
+core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_test_message(
     FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
     GError** error) {
   g_autoptr(FlValue) values =
@@ -1708,7 +1716,8 @@ static FlValue* pigeon_message_codec_read_core_tests_pigeon_test_test_message(
   return fl_value_new_custom_object_take(133, G_OBJECT(value));
 }
 
-static FlValue* pigeon_message_codec_read_core_tests_pigeon_test_an_enum(
+static FlValue*
+core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_an_enum(
     FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
     GError** error) {
   return fl_value_new_custom(
@@ -1716,46 +1725,50 @@ static FlValue* pigeon_message_codec_read_core_tests_pigeon_test_an_enum(
       (GDestroyNotify)fl_value_unref);
 }
 
-static FlValue* pigeon_message_codec_read_value_of_type(
+static FlValue* core_tests_pigeon_test_message_codec_read_value_of_type(
     FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset, int type,
     GError** error) {
   switch (type) {
     case 129:
-      return pigeon_message_codec_read_core_tests_pigeon_test_all_types(
+      return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_all_types(
           codec, buffer, offset, error);
     case 130:
-      return pigeon_message_codec_read_core_tests_pigeon_test_all_nullable_types(
+      return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_all_nullable_types(
           codec, buffer, offset, error);
     case 131:
-      return pigeon_message_codec_read_core_tests_pigeon_test_all_nullable_types_without_recursion(
+      return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_all_nullable_types_without_recursion(
           codec, buffer, offset, error);
     case 132:
-      return pigeon_message_codec_read_core_tests_pigeon_test_all_classes_wrapper(
+      return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_all_classes_wrapper(
           codec, buffer, offset, error);
     case 133:
-      return pigeon_message_codec_read_core_tests_pigeon_test_test_message(
+      return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_test_message(
           codec, buffer, offset, error);
     case 134:
-      return pigeon_message_codec_read_core_tests_pigeon_test_an_enum(
+      return core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_an_enum(
           codec, buffer, offset, error);
     default:
-      return FL_STANDARD_MESSAGE_CODEC_CLASS(pigeon_message_codec_parent_class)
+      return FL_STANDARD_MESSAGE_CODEC_CLASS(
+                 core_tests_pigeon_test_message_codec_parent_class)
           ->read_value_of_type(codec, buffer, offset, type, error);
   }
 }
 
-static void pigeon_message_codec_init(PigeonMessageCodec* self) {}
+static void core_tests_pigeon_test_message_codec_init(
+    CoreTestsPigeonTestMessageCodec* self) {}
 
-static void pigeon_message_codec_class_init(PigeonMessageCodecClass* klass) {
+static void core_tests_pigeon_test_message_codec_class_init(
+    CoreTestsPigeonTestMessageCodecClass* klass) {
   FL_STANDARD_MESSAGE_CODEC_CLASS(klass)->write_value =
-      pigeon_message_codec_write_value;
+      core_tests_pigeon_test_message_codec_write_value;
   FL_STANDARD_MESSAGE_CODEC_CLASS(klass)->read_value_of_type =
-      pigeon_message_codec_read_value_of_type;
+      core_tests_pigeon_test_message_codec_read_value_of_type;
 }
 
-static PigeonMessageCodec* pigeon_message_codec_new() {
-  PigeonMessageCodec* self = PIGEON_MESSAGE_CODEC(
-      g_object_new(pigeon_message_codec_get_type(), nullptr));
+static CoreTestsPigeonTestMessageCodec*
+core_tests_pigeon_test_message_codec_new() {
+  CoreTestsPigeonTestMessageCodec* self = CORE_TESTS_PIGEON_TEST_MESSAGE_CODEC(
+      g_object_new(core_tests_pigeon_test_message_codec_get_type(), nullptr));
   return self;
 }
 
@@ -9891,7 +9904,8 @@ core_tests_pigeon_test_host_integration_core_api_new(
   self->user_data = user_data;
   self->user_data_free_func = user_data_free_func;
 
-  g_autoptr(PigeonMessageCodec) codec = pigeon_message_codec_new();
+  g_autoptr(CoreTestsPigeonTestMessageCodec) codec =
+      core_tests_pigeon_test_message_codec_new();
   self->noop_channel = fl_basic_message_channel_new(
       messenger,
       "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.noop",
@@ -12472,7 +12486,8 @@ core_tests_pigeon_test_flutter_integration_core_api_new(
       CORE_TESTS_PIGEON_TEST_FLUTTER_INTEGRATION_CORE_API(g_object_new(
           core_tests_pigeon_test_flutter_integration_core_api_get_type(),
           nullptr));
-  g_autoptr(PigeonMessageCodec) message_codec = pigeon_message_codec_new();
+  g_autoptr(CoreTestsPigeonTestMessageCodec) message_codec =
+      core_tests_pigeon_test_message_codec_new();
   g_autoptr(FlStandardMethodCodec) codec =
       fl_standard_method_codec_new_with_message_codec(
           FL_STANDARD_MESSAGE_CODEC(message_codec));
@@ -13445,7 +13460,8 @@ CoreTestsPigeonTestHostTrivialApi* core_tests_pigeon_test_host_trivial_api_new(
   self->user_data = user_data;
   self->user_data_free_func = user_data_free_func;
 
-  g_autoptr(PigeonMessageCodec) codec = pigeon_message_codec_new();
+  g_autoptr(CoreTestsPigeonTestMessageCodec) codec =
+      core_tests_pigeon_test_message_codec_new();
   self->noop_channel = fl_basic_message_channel_new(
       messenger,
       "dev.flutter.pigeon.pigeon_integration_tests.HostTrivialApi.noop",
@@ -13654,7 +13670,8 @@ CoreTestsPigeonTestHostSmallApi* core_tests_pigeon_test_host_small_api_new(
   self->user_data = user_data;
   self->user_data_free_func = user_data_free_func;
 
-  g_autoptr(PigeonMessageCodec) codec = pigeon_message_codec_new();
+  g_autoptr(CoreTestsPigeonTestMessageCodec) codec =
+      core_tests_pigeon_test_message_codec_new();
   self->echo_channel = fl_basic_message_channel_new(
       messenger,
       "dev.flutter.pigeon.pigeon_integration_tests.HostSmallApi.echo",
@@ -13761,7 +13778,8 @@ core_tests_pigeon_test_flutter_small_api_new(FlBinaryMessenger* messenger) {
   CoreTestsPigeonTestFlutterSmallApi* self =
       CORE_TESTS_PIGEON_TEST_FLUTTER_SMALL_API(g_object_new(
           core_tests_pigeon_test_flutter_small_api_get_type(), nullptr));
-  g_autoptr(PigeonMessageCodec) message_codec = pigeon_message_codec_new();
+  g_autoptr(CoreTestsPigeonTestMessageCodec) message_codec =
+      core_tests_pigeon_test_message_codec_new();
   g_autoptr(FlStandardMethodCodec) codec =
       fl_standard_method_codec_new_with_message_codec(
           FL_STANDARD_MESSAGE_CODEC(message_codec));
