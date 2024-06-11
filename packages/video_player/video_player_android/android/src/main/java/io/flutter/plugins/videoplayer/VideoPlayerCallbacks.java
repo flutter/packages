@@ -11,11 +11,18 @@ import androidx.annotation.Nullable;
  * order to assert results.
  */
 interface VideoPlayerCallbacks {
-    void onInitialized(int width, int height, long durationInMs, @Nullable Integer rotationCorrectionInDegrees);
-    void onBufferingStart();
-    void onBufferingUpdate(long bufferedPosition);
-    void onBufferingEnd();
-    void onCompleted();
-    void onError(@NonNull String code, @Nullable String message, @Nullable Object details);
-    void onIsPlayingStateUpdate(boolean isPlaying);
+  void onInitialized(
+      int width, int height, long durationInMs, @Nullable Integer rotationCorrectionInDegrees);
+
+  void onBufferingStart();
+
+  void onBufferingUpdate(long bufferedPosition);
+
+  void onBufferingEnd();
+
+  void onCompleted();
+
+  void onError(@NonNull String code, @Nullable String message, @Nullable Object details);
+
+  void onIsPlayingStateUpdate(boolean isPlaying);
 }
