@@ -987,8 +987,9 @@ class GObjectSourceGenerator extends StructuredGenerator<GObjectOptions> {
         indent.writeln(
             'fl_value_append_take(self->value, fl_value_new_string(code));');
         indent.writeln(
-            'fl_value_append_take(self->value, fl_value_new_string(message));');
-        indent.writeln('fl_value_append(self->value, details);');
+            'fl_value_append_take(self->value, fl_value_new_string(message != nullptr ? message : ""));');
+        indent.writeln(
+            'fl_value_append_take(self->value, details != nullptr ? fl_value_ref(details) : fl_value_new_null());');
         indent.writeln('return self;');
       });
     }

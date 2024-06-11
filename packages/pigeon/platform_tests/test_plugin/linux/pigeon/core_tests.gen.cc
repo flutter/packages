@@ -1842,8 +1842,10 @@ core_tests_pigeon_test_host_integration_core_api_noop_response_new_error(
           nullptr));
   self->value = fl_value_new_list();
   fl_value_append_take(self->value, fl_value_new_string(code));
-  fl_value_append_take(self->value, fl_value_new_string(message));
-  fl_value_append(self->value, details);
+  fl_value_append_take(self->value,
+                       fl_value_new_string(message != nullptr ? message : ""));
+  fl_value_append_take(self->value, details != nullptr ? fl_value_ref(details)
+                                                       : fl_value_new_null());
   return self;
 }
 
@@ -1905,8 +1907,10 @@ core_tests_pigeon_test_host_integration_core_api_echo_all_types_response_new_err
               nullptr));
   self->value = fl_value_new_list();
   fl_value_append_take(self->value, fl_value_new_string(code));
-  fl_value_append_take(self->value, fl_value_new_string(message));
-  fl_value_append(self->value, details);
+  fl_value_append_take(self->value,
+                       fl_value_new_string(message != nullptr ? message : ""));
+  fl_value_append_take(self->value, details != nullptr ? fl_value_ref(details)
+                                                       : fl_value_new_null());
   return self;
 }
 
@@ -1969,8 +1973,10 @@ core_tests_pigeon_test_host_integration_core_api_throw_error_response_new_error(
               nullptr));
   self->value = fl_value_new_list();
   fl_value_append_take(self->value, fl_value_new_string(code));
-  fl_value_append_take(self->value, fl_value_new_string(message));
-  fl_value_append(self->value, details);
+  fl_value_append_take(self->value,
+                       fl_value_new_string(message != nullptr ? message : ""));
+  fl_value_append_take(self->value, details != nullptr ? fl_value_ref(details)
+                                                       : fl_value_new_null());
   return self;
 }
 
@@ -2032,8 +2038,10 @@ core_tests_pigeon_test_host_integration_core_api_throw_error_from_void_response_
               nullptr));
   self->value = fl_value_new_list();
   fl_value_append_take(self->value, fl_value_new_string(code));
-  fl_value_append_take(self->value, fl_value_new_string(message));
-  fl_value_append(self->value, details);
+  fl_value_append_take(self->value,
+                       fl_value_new_string(message != nullptr ? message : ""));
+  fl_value_append_take(self->value, details != nullptr ? fl_value_ref(details)
+                                                       : fl_value_new_null());
   return self;
 }
 
@@ -2097,8 +2105,10 @@ core_tests_pigeon_test_host_integration_core_api_throw_flutter_error_response_ne
               nullptr));
   self->value = fl_value_new_list();
   fl_value_append_take(self->value, fl_value_new_string(code));
-  fl_value_append_take(self->value, fl_value_new_string(message));
-  fl_value_append(self->value, details);
+  fl_value_append_take(self->value,
+                       fl_value_new_string(message != nullptr ? message : ""));
+  fl_value_append_take(self->value, details != nullptr ? fl_value_ref(details)
+                                                       : fl_value_new_null());
   return self;
 }
 
@@ -2157,8 +2167,10 @@ core_tests_pigeon_test_host_integration_core_api_echo_int_response_new_error(
           nullptr));
   self->value = fl_value_new_list();
   fl_value_append_take(self->value, fl_value_new_string(code));
-  fl_value_append_take(self->value, fl_value_new_string(message));
-  fl_value_append(self->value, details);
+  fl_value_append_take(self->value,
+                       fl_value_new_string(message != nullptr ? message : ""));
+  fl_value_append_take(self->value, details != nullptr ? fl_value_ref(details)
+                                                       : fl_value_new_null());
   return self;
 }
 
@@ -2219,8 +2231,10 @@ core_tests_pigeon_test_host_integration_core_api_echo_double_response_new_error(
               nullptr));
   self->value = fl_value_new_list();
   fl_value_append_take(self->value, fl_value_new_string(code));
-  fl_value_append_take(self->value, fl_value_new_string(message));
-  fl_value_append(self->value, details);
+  fl_value_append_take(self->value,
+                       fl_value_new_string(message != nullptr ? message : ""));
+  fl_value_append_take(self->value, details != nullptr ? fl_value_ref(details)
+                                                       : fl_value_new_null());
   return self;
 }
 
@@ -2279,8 +2293,10 @@ core_tests_pigeon_test_host_integration_core_api_echo_bool_response_new_error(
           nullptr));
   self->value = fl_value_new_list();
   fl_value_append_take(self->value, fl_value_new_string(code));
-  fl_value_append_take(self->value, fl_value_new_string(message));
-  fl_value_append(self->value, details);
+  fl_value_append_take(self->value,
+                       fl_value_new_string(message != nullptr ? message : ""));
+  fl_value_append_take(self->value, details != nullptr ? fl_value_ref(details)
+                                                       : fl_value_new_null());
   return self;
 }
 
@@ -2341,8 +2357,10 @@ core_tests_pigeon_test_host_integration_core_api_echo_string_response_new_error(
               nullptr));
   self->value = fl_value_new_list();
   fl_value_append_take(self->value, fl_value_new_string(code));
-  fl_value_append_take(self->value, fl_value_new_string(message));
-  fl_value_append(self->value, details);
+  fl_value_append_take(self->value,
+                       fl_value_new_string(message != nullptr ? message : ""));
+  fl_value_append_take(self->value, details != nullptr ? fl_value_ref(details)
+                                                       : fl_value_new_null());
   return self;
 }
 
@@ -2405,8 +2423,10 @@ core_tests_pigeon_test_host_integration_core_api_echo_uint8_list_response_new_er
               nullptr));
   self->value = fl_value_new_list();
   fl_value_append_take(self->value, fl_value_new_string(code));
-  fl_value_append_take(self->value, fl_value_new_string(message));
-  fl_value_append(self->value, details);
+  fl_value_append_take(self->value,
+                       fl_value_new_string(message != nullptr ? message : ""));
+  fl_value_append_take(self->value, details != nullptr ? fl_value_ref(details)
+                                                       : fl_value_new_null());
   return self;
 }
 
@@ -2467,8 +2487,10 @@ core_tests_pigeon_test_host_integration_core_api_echo_object_response_new_error(
               nullptr));
   self->value = fl_value_new_list();
   fl_value_append_take(self->value, fl_value_new_string(code));
-  fl_value_append_take(self->value, fl_value_new_string(message));
-  fl_value_append(self->value, details);
+  fl_value_append_take(self->value,
+                       fl_value_new_string(message != nullptr ? message : ""));
+  fl_value_append_take(self->value, details != nullptr ? fl_value_ref(details)
+                                                       : fl_value_new_null());
   return self;
 }
 
@@ -2527,8 +2549,10 @@ core_tests_pigeon_test_host_integration_core_api_echo_list_response_new_error(
           nullptr));
   self->value = fl_value_new_list();
   fl_value_append_take(self->value, fl_value_new_string(code));
-  fl_value_append_take(self->value, fl_value_new_string(message));
-  fl_value_append(self->value, details);
+  fl_value_append_take(self->value,
+                       fl_value_new_string(message != nullptr ? message : ""));
+  fl_value_append_take(self->value, details != nullptr ? fl_value_ref(details)
+                                                       : fl_value_new_null());
   return self;
 }
 
@@ -2587,8 +2611,10 @@ core_tests_pigeon_test_host_integration_core_api_echo_map_response_new_error(
           nullptr));
   self->value = fl_value_new_list();
   fl_value_append_take(self->value, fl_value_new_string(code));
-  fl_value_append_take(self->value, fl_value_new_string(message));
-  fl_value_append(self->value, details);
+  fl_value_append_take(self->value,
+                       fl_value_new_string(message != nullptr ? message : ""));
+  fl_value_append_take(self->value, details != nullptr ? fl_value_ref(details)
+                                                       : fl_value_new_null());
   return self;
 }
 
@@ -2651,8 +2677,10 @@ core_tests_pigeon_test_host_integration_core_api_echo_class_wrapper_response_new
               nullptr));
   self->value = fl_value_new_list();
   fl_value_append_take(self->value, fl_value_new_string(code));
-  fl_value_append_take(self->value, fl_value_new_string(message));
-  fl_value_append(self->value, details);
+  fl_value_append_take(self->value,
+                       fl_value_new_string(message != nullptr ? message : ""));
+  fl_value_append_take(self->value, details != nullptr ? fl_value_ref(details)
+                                                       : fl_value_new_null());
   return self;
 }
 
@@ -2713,8 +2741,10 @@ core_tests_pigeon_test_host_integration_core_api_echo_enum_response_new_error(
           nullptr));
   self->value = fl_value_new_list();
   fl_value_append_take(self->value, fl_value_new_string(code));
-  fl_value_append_take(self->value, fl_value_new_string(message));
-  fl_value_append(self->value, details);
+  fl_value_append_take(self->value,
+                       fl_value_new_string(message != nullptr ? message : ""));
+  fl_value_append_take(self->value, details != nullptr ? fl_value_ref(details)
+                                                       : fl_value_new_null());
   return self;
 }
 
@@ -2778,8 +2808,10 @@ core_tests_pigeon_test_host_integration_core_api_echo_named_default_string_respo
               nullptr));
   self->value = fl_value_new_list();
   fl_value_append_take(self->value, fl_value_new_string(code));
-  fl_value_append_take(self->value, fl_value_new_string(message));
-  fl_value_append(self->value, details);
+  fl_value_append_take(self->value,
+                       fl_value_new_string(message != nullptr ? message : ""));
+  fl_value_append_take(self->value, details != nullptr ? fl_value_ref(details)
+                                                       : fl_value_new_null());
   return self;
 }
 
@@ -2843,8 +2875,10 @@ core_tests_pigeon_test_host_integration_core_api_echo_optional_default_double_re
               nullptr));
   self->value = fl_value_new_list();
   fl_value_append_take(self->value, fl_value_new_string(code));
-  fl_value_append_take(self->value, fl_value_new_string(message));
-  fl_value_append(self->value, details);
+  fl_value_append_take(self->value,
+                       fl_value_new_string(message != nullptr ? message : ""));
+  fl_value_append_take(self->value, details != nullptr ? fl_value_ref(details)
+                                                       : fl_value_new_null());
   return self;
 }
 
@@ -2906,8 +2940,10 @@ core_tests_pigeon_test_host_integration_core_api_echo_required_int_response_new_
               nullptr));
   self->value = fl_value_new_list();
   fl_value_append_take(self->value, fl_value_new_string(code));
-  fl_value_append_take(self->value, fl_value_new_string(message));
-  fl_value_append(self->value, details);
+  fl_value_append_take(self->value,
+                       fl_value_new_string(message != nullptr ? message : ""));
+  fl_value_append_take(self->value, details != nullptr ? fl_value_ref(details)
+                                                       : fl_value_new_null());
   return self;
 }
 
@@ -2973,8 +3009,10 @@ core_tests_pigeon_test_host_integration_core_api_echo_all_nullable_types_respons
               nullptr));
   self->value = fl_value_new_list();
   fl_value_append_take(self->value, fl_value_new_string(code));
-  fl_value_append_take(self->value, fl_value_new_string(message));
-  fl_value_append(self->value, details);
+  fl_value_append_take(self->value,
+                       fl_value_new_string(message != nullptr ? message : ""));
+  fl_value_append_take(self->value, details != nullptr ? fl_value_ref(details)
+                                                       : fl_value_new_null());
   return self;
 }
 
@@ -3042,8 +3080,10 @@ core_tests_pigeon_test_host_integration_core_api_echo_all_nullable_types_without
               nullptr));
   self->value = fl_value_new_list();
   fl_value_append_take(self->value, fl_value_new_string(code));
-  fl_value_append_take(self->value, fl_value_new_string(message));
-  fl_value_append(self->value, details);
+  fl_value_append_take(self->value,
+                       fl_value_new_string(message != nullptr ? message : ""));
+  fl_value_append_take(self->value, details != nullptr ? fl_value_ref(details)
+                                                       : fl_value_new_null());
   return self;
 }
 
@@ -3110,8 +3150,10 @@ core_tests_pigeon_test_host_integration_core_api_extract_nested_nullable_string_
               nullptr));
   self->value = fl_value_new_list();
   fl_value_append_take(self->value, fl_value_new_string(code));
-  fl_value_append_take(self->value, fl_value_new_string(message));
-  fl_value_append(self->value, details);
+  fl_value_append_take(self->value,
+                       fl_value_new_string(message != nullptr ? message : ""));
+  fl_value_append_take(self->value, details != nullptr ? fl_value_ref(details)
+                                                       : fl_value_new_null());
   return self;
 }
 
@@ -3176,8 +3218,10 @@ core_tests_pigeon_test_host_integration_core_api_create_nested_nullable_string_r
               nullptr));
   self->value = fl_value_new_list();
   fl_value_append_take(self->value, fl_value_new_string(code));
-  fl_value_append_take(self->value, fl_value_new_string(message));
-  fl_value_append(self->value, details);
+  fl_value_append_take(self->value,
+                       fl_value_new_string(message != nullptr ? message : ""));
+  fl_value_append_take(self->value, details != nullptr ? fl_value_ref(details)
+                                                       : fl_value_new_null());
   return self;
 }
 
@@ -3242,8 +3286,10 @@ core_tests_pigeon_test_host_integration_core_api_send_multiple_nullable_types_re
               nullptr));
   self->value = fl_value_new_list();
   fl_value_append_take(self->value, fl_value_new_string(code));
-  fl_value_append_take(self->value, fl_value_new_string(message));
-  fl_value_append(self->value, details);
+  fl_value_append_take(self->value,
+                       fl_value_new_string(message != nullptr ? message : ""));
+  fl_value_append_take(self->value, details != nullptr ? fl_value_ref(details)
+                                                       : fl_value_new_null());
   return self;
 }
 
@@ -3309,8 +3355,10 @@ core_tests_pigeon_test_host_integration_core_api_send_multiple_nullable_types_wi
               nullptr));
   self->value = fl_value_new_list();
   fl_value_append_take(self->value, fl_value_new_string(code));
-  fl_value_append_take(self->value, fl_value_new_string(message));
-  fl_value_append(self->value, details);
+  fl_value_append_take(self->value,
+                       fl_value_new_string(message != nullptr ? message : ""));
+  fl_value_append_take(self->value, details != nullptr ? fl_value_ref(details)
+                                                       : fl_value_new_null());
   return self;
 }
 
@@ -3374,8 +3422,10 @@ core_tests_pigeon_test_host_integration_core_api_echo_nullable_int_response_new_
               nullptr));
   self->value = fl_value_new_list();
   fl_value_append_take(self->value, fl_value_new_string(code));
-  fl_value_append_take(self->value, fl_value_new_string(message));
-  fl_value_append(self->value, details);
+  fl_value_append_take(self->value,
+                       fl_value_new_string(message != nullptr ? message : ""));
+  fl_value_append_take(self->value, details != nullptr ? fl_value_ref(details)
+                                                       : fl_value_new_null());
   return self;
 }
 
@@ -3440,8 +3490,10 @@ core_tests_pigeon_test_host_integration_core_api_echo_nullable_double_response_n
               nullptr));
   self->value = fl_value_new_list();
   fl_value_append_take(self->value, fl_value_new_string(code));
-  fl_value_append_take(self->value, fl_value_new_string(message));
-  fl_value_append(self->value, details);
+  fl_value_append_take(self->value,
+                       fl_value_new_string(message != nullptr ? message : ""));
+  fl_value_append_take(self->value, details != nullptr ? fl_value_ref(details)
+                                                       : fl_value_new_null());
   return self;
 }
 
@@ -3505,8 +3557,10 @@ core_tests_pigeon_test_host_integration_core_api_echo_nullable_bool_response_new
               nullptr));
   self->value = fl_value_new_list();
   fl_value_append_take(self->value, fl_value_new_string(code));
-  fl_value_append_take(self->value, fl_value_new_string(message));
-  fl_value_append(self->value, details);
+  fl_value_append_take(self->value,
+                       fl_value_new_string(message != nullptr ? message : ""));
+  fl_value_append_take(self->value, details != nullptr ? fl_value_ref(details)
+                                                       : fl_value_new_null());
   return self;
 }
 
@@ -3571,8 +3625,10 @@ core_tests_pigeon_test_host_integration_core_api_echo_nullable_string_response_n
               nullptr));
   self->value = fl_value_new_list();
   fl_value_append_take(self->value, fl_value_new_string(code));
-  fl_value_append_take(self->value, fl_value_new_string(message));
-  fl_value_append(self->value, details);
+  fl_value_append_take(self->value,
+                       fl_value_new_string(message != nullptr ? message : ""));
+  fl_value_append_take(self->value, details != nullptr ? fl_value_ref(details)
+                                                       : fl_value_new_null());
   return self;
 }
 
@@ -3638,8 +3694,10 @@ core_tests_pigeon_test_host_integration_core_api_echo_nullable_uint8_list_respon
               nullptr));
   self->value = fl_value_new_list();
   fl_value_append_take(self->value, fl_value_new_string(code));
-  fl_value_append_take(self->value, fl_value_new_string(message));
-  fl_value_append(self->value, details);
+  fl_value_append_take(self->value,
+                       fl_value_new_string(message != nullptr ? message : ""));
+  fl_value_append_take(self->value, details != nullptr ? fl_value_ref(details)
+                                                       : fl_value_new_null());
   return self;
 }
 
@@ -3704,8 +3762,10 @@ core_tests_pigeon_test_host_integration_core_api_echo_nullable_object_response_n
               nullptr));
   self->value = fl_value_new_list();
   fl_value_append_take(self->value, fl_value_new_string(code));
-  fl_value_append_take(self->value, fl_value_new_string(message));
-  fl_value_append(self->value, details);
+  fl_value_append_take(self->value,
+                       fl_value_new_string(message != nullptr ? message : ""));
+  fl_value_append_take(self->value, details != nullptr ? fl_value_ref(details)
+                                                       : fl_value_new_null());
   return self;
 }
 
@@ -3769,8 +3829,10 @@ core_tests_pigeon_test_host_integration_core_api_echo_nullable_list_response_new
               nullptr));
   self->value = fl_value_new_list();
   fl_value_append_take(self->value, fl_value_new_string(code));
-  fl_value_append_take(self->value, fl_value_new_string(message));
-  fl_value_append(self->value, details);
+  fl_value_append_take(self->value,
+                       fl_value_new_string(message != nullptr ? message : ""));
+  fl_value_append_take(self->value, details != nullptr ? fl_value_ref(details)
+                                                       : fl_value_new_null());
   return self;
 }
 
@@ -3834,8 +3896,10 @@ core_tests_pigeon_test_host_integration_core_api_echo_nullable_map_response_new_
               nullptr));
   self->value = fl_value_new_list();
   fl_value_append_take(self->value, fl_value_new_string(code));
-  fl_value_append_take(self->value, fl_value_new_string(message));
-  fl_value_append(self->value, details);
+  fl_value_append_take(self->value,
+                       fl_value_new_string(message != nullptr ? message : ""));
+  fl_value_append_take(self->value, details != nullptr ? fl_value_ref(details)
+                                                       : fl_value_new_null());
   return self;
 }
 
@@ -3902,8 +3966,10 @@ core_tests_pigeon_test_host_integration_core_api_echo_nullable_enum_response_new
               nullptr));
   self->value = fl_value_new_list();
   fl_value_append_take(self->value, fl_value_new_string(code));
-  fl_value_append_take(self->value, fl_value_new_string(message));
-  fl_value_append(self->value, details);
+  fl_value_append_take(self->value,
+                       fl_value_new_string(message != nullptr ? message : ""));
+  fl_value_append_take(self->value, details != nullptr ? fl_value_ref(details)
+                                                       : fl_value_new_null());
   return self;
 }
 
@@ -3969,8 +4035,10 @@ core_tests_pigeon_test_host_integration_core_api_echo_optional_nullable_int_resp
               nullptr));
   self->value = fl_value_new_list();
   fl_value_append_take(self->value, fl_value_new_string(code));
-  fl_value_append_take(self->value, fl_value_new_string(message));
-  fl_value_append(self->value, details);
+  fl_value_append_take(self->value,
+                       fl_value_new_string(message != nullptr ? message : ""));
+  fl_value_append_take(self->value, details != nullptr ? fl_value_ref(details)
+                                                       : fl_value_new_null());
   return self;
 }
 
@@ -4036,8 +4104,10 @@ core_tests_pigeon_test_host_integration_core_api_echo_named_nullable_string_resp
               nullptr));
   self->value = fl_value_new_list();
   fl_value_append_take(self->value, fl_value_new_string(code));
-  fl_value_append_take(self->value, fl_value_new_string(message));
-  fl_value_append(self->value, details);
+  fl_value_append_take(self->value,
+                       fl_value_new_string(message != nullptr ? message : ""));
+  fl_value_append_take(self->value, details != nullptr ? fl_value_ref(details)
+                                                       : fl_value_new_null());
   return self;
 }
 
@@ -4101,8 +4171,10 @@ core_tests_pigeon_test_host_integration_core_api_noop_async_response_new_error(
           nullptr));
   self->value = fl_value_new_list();
   fl_value_append_take(self->value, fl_value_new_string(code));
-  fl_value_append_take(self->value, fl_value_new_string(message));
-  fl_value_append(self->value, details);
+  fl_value_append_take(self->value,
+                       fl_value_new_string(message != nullptr ? message : ""));
+  fl_value_append_take(self->value, details != nullptr ? fl_value_ref(details)
+                                                       : fl_value_new_null());
   return self;
 }
 
@@ -4169,8 +4241,10 @@ core_tests_pigeon_test_host_integration_core_api_echo_async_int_response_new_err
               nullptr));
   self->value = fl_value_new_list();
   fl_value_append_take(self->value, fl_value_new_string(code));
-  fl_value_append_take(self->value, fl_value_new_string(message));
-  fl_value_append(self->value, details);
+  fl_value_append_take(self->value,
+                       fl_value_new_string(message != nullptr ? message : ""));
+  fl_value_append_take(self->value, details != nullptr ? fl_value_ref(details)
+                                                       : fl_value_new_null());
   return self;
 }
 
@@ -4238,8 +4312,10 @@ core_tests_pigeon_test_host_integration_core_api_echo_async_double_response_new_
               nullptr));
   self->value = fl_value_new_list();
   fl_value_append_take(self->value, fl_value_new_string(code));
-  fl_value_append_take(self->value, fl_value_new_string(message));
-  fl_value_append(self->value, details);
+  fl_value_append_take(self->value,
+                       fl_value_new_string(message != nullptr ? message : ""));
+  fl_value_append_take(self->value, details != nullptr ? fl_value_ref(details)
+                                                       : fl_value_new_null());
   return self;
 }
 
@@ -4307,8 +4383,10 @@ core_tests_pigeon_test_host_integration_core_api_echo_async_bool_response_new_er
               nullptr));
   self->value = fl_value_new_list();
   fl_value_append_take(self->value, fl_value_new_string(code));
-  fl_value_append_take(self->value, fl_value_new_string(message));
-  fl_value_append(self->value, details);
+  fl_value_append_take(self->value,
+                       fl_value_new_string(message != nullptr ? message : ""));
+  fl_value_append_take(self->value, details != nullptr ? fl_value_ref(details)
+                                                       : fl_value_new_null());
   return self;
 }
 
@@ -4376,8 +4454,10 @@ core_tests_pigeon_test_host_integration_core_api_echo_async_string_response_new_
               nullptr));
   self->value = fl_value_new_list();
   fl_value_append_take(self->value, fl_value_new_string(code));
-  fl_value_append_take(self->value, fl_value_new_string(message));
-  fl_value_append(self->value, details);
+  fl_value_append_take(self->value,
+                       fl_value_new_string(message != nullptr ? message : ""));
+  fl_value_append_take(self->value, details != nullptr ? fl_value_ref(details)
+                                                       : fl_value_new_null());
   return self;
 }
 
@@ -4447,8 +4527,10 @@ core_tests_pigeon_test_host_integration_core_api_echo_async_uint8_list_response_
               nullptr));
   self->value = fl_value_new_list();
   fl_value_append_take(self->value, fl_value_new_string(code));
-  fl_value_append_take(self->value, fl_value_new_string(message));
-  fl_value_append(self->value, details);
+  fl_value_append_take(self->value,
+                       fl_value_new_string(message != nullptr ? message : ""));
+  fl_value_append_take(self->value, details != nullptr ? fl_value_ref(details)
+                                                       : fl_value_new_null());
   return self;
 }
 
@@ -4516,8 +4598,10 @@ core_tests_pigeon_test_host_integration_core_api_echo_async_object_response_new_
               nullptr));
   self->value = fl_value_new_list();
   fl_value_append_take(self->value, fl_value_new_string(code));
-  fl_value_append_take(self->value, fl_value_new_string(message));
-  fl_value_append(self->value, details);
+  fl_value_append_take(self->value,
+                       fl_value_new_string(message != nullptr ? message : ""));
+  fl_value_append_take(self->value, details != nullptr ? fl_value_ref(details)
+                                                       : fl_value_new_null());
   return self;
 }
 
@@ -4585,8 +4669,10 @@ core_tests_pigeon_test_host_integration_core_api_echo_async_list_response_new_er
               nullptr));
   self->value = fl_value_new_list();
   fl_value_append_take(self->value, fl_value_new_string(code));
-  fl_value_append_take(self->value, fl_value_new_string(message));
-  fl_value_append(self->value, details);
+  fl_value_append_take(self->value,
+                       fl_value_new_string(message != nullptr ? message : ""));
+  fl_value_append_take(self->value, details != nullptr ? fl_value_ref(details)
+                                                       : fl_value_new_null());
   return self;
 }
 
@@ -4653,8 +4739,10 @@ core_tests_pigeon_test_host_integration_core_api_echo_async_map_response_new_err
               nullptr));
   self->value = fl_value_new_list();
   fl_value_append_take(self->value, fl_value_new_string(code));
-  fl_value_append_take(self->value, fl_value_new_string(message));
-  fl_value_append(self->value, details);
+  fl_value_append_take(self->value,
+                       fl_value_new_string(message != nullptr ? message : ""));
+  fl_value_append_take(self->value, details != nullptr ? fl_value_ref(details)
+                                                       : fl_value_new_null());
   return self;
 }
 
@@ -4724,8 +4812,10 @@ core_tests_pigeon_test_host_integration_core_api_echo_async_enum_response_new_er
               nullptr));
   self->value = fl_value_new_list();
   fl_value_append_take(self->value, fl_value_new_string(code));
-  fl_value_append_take(self->value, fl_value_new_string(message));
-  fl_value_append(self->value, details);
+  fl_value_append_take(self->value,
+                       fl_value_new_string(message != nullptr ? message : ""));
+  fl_value_append_take(self->value, details != nullptr ? fl_value_ref(details)
+                                                       : fl_value_new_null());
   return self;
 }
 
@@ -4795,8 +4885,10 @@ core_tests_pigeon_test_host_integration_core_api_throw_async_error_response_new_
               nullptr));
   self->value = fl_value_new_list();
   fl_value_append_take(self->value, fl_value_new_string(code));
-  fl_value_append_take(self->value, fl_value_new_string(message));
-  fl_value_append(self->value, details);
+  fl_value_append_take(self->value,
+                       fl_value_new_string(message != nullptr ? message : ""));
+  fl_value_append_take(self->value, details != nullptr ? fl_value_ref(details)
+                                                       : fl_value_new_null());
   return self;
 }
 
@@ -4865,8 +4957,10 @@ core_tests_pigeon_test_host_integration_core_api_throw_async_error_from_void_res
               nullptr));
   self->value = fl_value_new_list();
   fl_value_append_take(self->value, fl_value_new_string(code));
-  fl_value_append_take(self->value, fl_value_new_string(message));
-  fl_value_append(self->value, details);
+  fl_value_append_take(self->value,
+                       fl_value_new_string(message != nullptr ? message : ""));
+  fl_value_append_take(self->value, details != nullptr ? fl_value_ref(details)
+                                                       : fl_value_new_null());
   return self;
 }
 
@@ -4938,8 +5032,10 @@ core_tests_pigeon_test_host_integration_core_api_throw_async_flutter_error_respo
               nullptr));
   self->value = fl_value_new_list();
   fl_value_append_take(self->value, fl_value_new_string(code));
-  fl_value_append_take(self->value, fl_value_new_string(message));
-  fl_value_append(self->value, details);
+  fl_value_append_take(self->value,
+                       fl_value_new_string(message != nullptr ? message : ""));
+  fl_value_append_take(self->value, details != nullptr ? fl_value_ref(details)
+                                                       : fl_value_new_null());
   return self;
 }
 
@@ -5008,8 +5104,10 @@ core_tests_pigeon_test_host_integration_core_api_echo_async_all_types_response_n
               nullptr));
   self->value = fl_value_new_list();
   fl_value_append_take(self->value, fl_value_new_string(code));
-  fl_value_append_take(self->value, fl_value_new_string(message));
-  fl_value_append(self->value, details);
+  fl_value_append_take(self->value,
+                       fl_value_new_string(message != nullptr ? message : ""));
+  fl_value_append_take(self->value, details != nullptr ? fl_value_ref(details)
+                                                       : fl_value_new_null());
   return self;
 }
 
@@ -5084,8 +5182,10 @@ core_tests_pigeon_test_host_integration_core_api_echo_async_nullable_all_nullabl
               nullptr));
   self->value = fl_value_new_list();
   fl_value_append_take(self->value, fl_value_new_string(code));
-  fl_value_append_take(self->value, fl_value_new_string(message));
-  fl_value_append(self->value, details);
+  fl_value_append_take(self->value,
+                       fl_value_new_string(message != nullptr ? message : ""));
+  fl_value_append_take(self->value, details != nullptr ? fl_value_ref(details)
+                                                       : fl_value_new_null());
   return self;
 }
 
@@ -5160,8 +5260,10 @@ core_tests_pigeon_test_host_integration_core_api_echo_async_nullable_all_nullabl
               nullptr));
   self->value = fl_value_new_list();
   fl_value_append_take(self->value, fl_value_new_string(code));
-  fl_value_append_take(self->value, fl_value_new_string(message));
-  fl_value_append(self->value, details);
+  fl_value_append_take(self->value,
+                       fl_value_new_string(message != nullptr ? message : ""));
+  fl_value_append_take(self->value, details != nullptr ? fl_value_ref(details)
+                                                       : fl_value_new_null());
   return self;
 }
 
@@ -5232,8 +5334,10 @@ core_tests_pigeon_test_host_integration_core_api_echo_async_nullable_int_respons
               nullptr));
   self->value = fl_value_new_list();
   fl_value_append_take(self->value, fl_value_new_string(code));
-  fl_value_append_take(self->value, fl_value_new_string(message));
-  fl_value_append(self->value, details);
+  fl_value_append_take(self->value,
+                       fl_value_new_string(message != nullptr ? message : ""));
+  fl_value_append_take(self->value, details != nullptr ? fl_value_ref(details)
+                                                       : fl_value_new_null());
   return self;
 }
 
@@ -5305,8 +5409,10 @@ core_tests_pigeon_test_host_integration_core_api_echo_async_nullable_double_resp
               nullptr));
   self->value = fl_value_new_list();
   fl_value_append_take(self->value, fl_value_new_string(code));
-  fl_value_append_take(self->value, fl_value_new_string(message));
-  fl_value_append(self->value, details);
+  fl_value_append_take(self->value,
+                       fl_value_new_string(message != nullptr ? message : ""));
+  fl_value_append_take(self->value, details != nullptr ? fl_value_ref(details)
+                                                       : fl_value_new_null());
   return self;
 }
 
@@ -5377,8 +5483,10 @@ core_tests_pigeon_test_host_integration_core_api_echo_async_nullable_bool_respon
               nullptr));
   self->value = fl_value_new_list();
   fl_value_append_take(self->value, fl_value_new_string(code));
-  fl_value_append_take(self->value, fl_value_new_string(message));
-  fl_value_append(self->value, details);
+  fl_value_append_take(self->value,
+                       fl_value_new_string(message != nullptr ? message : ""));
+  fl_value_append_take(self->value, details != nullptr ? fl_value_ref(details)
+                                                       : fl_value_new_null());
   return self;
 }
 
@@ -5450,8 +5558,10 @@ core_tests_pigeon_test_host_integration_core_api_echo_async_nullable_string_resp
               nullptr));
   self->value = fl_value_new_list();
   fl_value_append_take(self->value, fl_value_new_string(code));
-  fl_value_append_take(self->value, fl_value_new_string(message));
-  fl_value_append(self->value, details);
+  fl_value_append_take(self->value,
+                       fl_value_new_string(message != nullptr ? message : ""));
+  fl_value_append_take(self->value, details != nullptr ? fl_value_ref(details)
+                                                       : fl_value_new_null());
   return self;
 }
 
@@ -5524,8 +5634,10 @@ core_tests_pigeon_test_host_integration_core_api_echo_async_nullable_uint8_list_
               nullptr));
   self->value = fl_value_new_list();
   fl_value_append_take(self->value, fl_value_new_string(code));
-  fl_value_append_take(self->value, fl_value_new_string(message));
-  fl_value_append(self->value, details);
+  fl_value_append_take(self->value,
+                       fl_value_new_string(message != nullptr ? message : ""));
+  fl_value_append_take(self->value, details != nullptr ? fl_value_ref(details)
+                                                       : fl_value_new_null());
   return self;
 }
 
@@ -5597,8 +5709,10 @@ core_tests_pigeon_test_host_integration_core_api_echo_async_nullable_object_resp
               nullptr));
   self->value = fl_value_new_list();
   fl_value_append_take(self->value, fl_value_new_string(code));
-  fl_value_append_take(self->value, fl_value_new_string(message));
-  fl_value_append(self->value, details);
+  fl_value_append_take(self->value,
+                       fl_value_new_string(message != nullptr ? message : ""));
+  fl_value_append_take(self->value, details != nullptr ? fl_value_ref(details)
+                                                       : fl_value_new_null());
   return self;
 }
 
@@ -5669,8 +5783,10 @@ core_tests_pigeon_test_host_integration_core_api_echo_async_nullable_list_respon
               nullptr));
   self->value = fl_value_new_list();
   fl_value_append_take(self->value, fl_value_new_string(code));
-  fl_value_append_take(self->value, fl_value_new_string(message));
-  fl_value_append(self->value, details);
+  fl_value_append_take(self->value,
+                       fl_value_new_string(message != nullptr ? message : ""));
+  fl_value_append_take(self->value, details != nullptr ? fl_value_ref(details)
+                                                       : fl_value_new_null());
   return self;
 }
 
@@ -5741,8 +5857,10 @@ core_tests_pigeon_test_host_integration_core_api_echo_async_nullable_map_respons
               nullptr));
   self->value = fl_value_new_list();
   fl_value_append_take(self->value, fl_value_new_string(code));
-  fl_value_append_take(self->value, fl_value_new_string(message));
-  fl_value_append(self->value, details);
+  fl_value_append_take(self->value,
+                       fl_value_new_string(message != nullptr ? message : ""));
+  fl_value_append_take(self->value, details != nullptr ? fl_value_ref(details)
+                                                       : fl_value_new_null());
   return self;
 }
 
@@ -5816,8 +5934,10 @@ core_tests_pigeon_test_host_integration_core_api_echo_async_nullable_enum_respon
               nullptr));
   self->value = fl_value_new_list();
   fl_value_append_take(self->value, fl_value_new_string(code));
-  fl_value_append_take(self->value, fl_value_new_string(message));
-  fl_value_append(self->value, details);
+  fl_value_append_take(self->value,
+                       fl_value_new_string(message != nullptr ? message : ""));
+  fl_value_append_take(self->value, details != nullptr ? fl_value_ref(details)
+                                                       : fl_value_new_null());
   return self;
 }
 
@@ -5884,8 +6004,10 @@ core_tests_pigeon_test_host_integration_core_api_call_flutter_noop_response_new_
               nullptr));
   self->value = fl_value_new_list();
   fl_value_append_take(self->value, fl_value_new_string(code));
-  fl_value_append_take(self->value, fl_value_new_string(message));
-  fl_value_append(self->value, details);
+  fl_value_append_take(self->value,
+                       fl_value_new_string(message != nullptr ? message : ""));
+  fl_value_append_take(self->value, details != nullptr ? fl_value_ref(details)
+                                                       : fl_value_new_null());
   return self;
 }
 
@@ -5956,8 +6078,10 @@ core_tests_pigeon_test_host_integration_core_api_call_flutter_throw_error_respon
               nullptr));
   self->value = fl_value_new_list();
   fl_value_append_take(self->value, fl_value_new_string(code));
-  fl_value_append_take(self->value, fl_value_new_string(message));
-  fl_value_append(self->value, details);
+  fl_value_append_take(self->value,
+                       fl_value_new_string(message != nullptr ? message : ""));
+  fl_value_append_take(self->value, details != nullptr ? fl_value_ref(details)
+                                                       : fl_value_new_null());
   return self;
 }
 
@@ -6028,8 +6152,10 @@ core_tests_pigeon_test_host_integration_core_api_call_flutter_throw_error_from_v
               nullptr));
   self->value = fl_value_new_list();
   fl_value_append_take(self->value, fl_value_new_string(code));
-  fl_value_append_take(self->value, fl_value_new_string(message));
-  fl_value_append(self->value, details);
+  fl_value_append_take(self->value,
+                       fl_value_new_string(message != nullptr ? message : ""));
+  fl_value_append_take(self->value, details != nullptr ? fl_value_ref(details)
+                                                       : fl_value_new_null());
   return self;
 }
 
@@ -6100,8 +6226,10 @@ core_tests_pigeon_test_host_integration_core_api_call_flutter_echo_all_types_res
               nullptr));
   self->value = fl_value_new_list();
   fl_value_append_take(self->value, fl_value_new_string(code));
-  fl_value_append_take(self->value, fl_value_new_string(message));
-  fl_value_append(self->value, details);
+  fl_value_append_take(self->value,
+                       fl_value_new_string(message != nullptr ? message : ""));
+  fl_value_append_take(self->value, details != nullptr ? fl_value_ref(details)
+                                                       : fl_value_new_null());
   return self;
 }
 
@@ -6176,8 +6304,10 @@ core_tests_pigeon_test_host_integration_core_api_call_flutter_echo_all_nullable_
               nullptr));
   self->value = fl_value_new_list();
   fl_value_append_take(self->value, fl_value_new_string(code));
-  fl_value_append_take(self->value, fl_value_new_string(message));
-  fl_value_append(self->value, details);
+  fl_value_append_take(self->value,
+                       fl_value_new_string(message != nullptr ? message : ""));
+  fl_value_append_take(self->value, details != nullptr ? fl_value_ref(details)
+                                                       : fl_value_new_null());
   return self;
 }
 
@@ -6250,8 +6380,10 @@ core_tests_pigeon_test_host_integration_core_api_call_flutter_send_multiple_null
               nullptr));
   self->value = fl_value_new_list();
   fl_value_append_take(self->value, fl_value_new_string(code));
-  fl_value_append_take(self->value, fl_value_new_string(message));
-  fl_value_append(self->value, details);
+  fl_value_append_take(self->value,
+                       fl_value_new_string(message != nullptr ? message : ""));
+  fl_value_append_take(self->value, details != nullptr ? fl_value_ref(details)
+                                                       : fl_value_new_null());
   return self;
 }
 
@@ -6326,8 +6458,10 @@ core_tests_pigeon_test_host_integration_core_api_call_flutter_echo_all_nullable_
               nullptr));
   self->value = fl_value_new_list();
   fl_value_append_take(self->value, fl_value_new_string(code));
-  fl_value_append_take(self->value, fl_value_new_string(message));
-  fl_value_append(self->value, details);
+  fl_value_append_take(self->value,
+                       fl_value_new_string(message != nullptr ? message : ""));
+  fl_value_append_take(self->value, details != nullptr ? fl_value_ref(details)
+                                                       : fl_value_new_null());
   return self;
 }
 
@@ -6400,8 +6534,10 @@ core_tests_pigeon_test_host_integration_core_api_call_flutter_send_multiple_null
               nullptr));
   self->value = fl_value_new_list();
   fl_value_append_take(self->value, fl_value_new_string(code));
-  fl_value_append_take(self->value, fl_value_new_string(message));
-  fl_value_append(self->value, details);
+  fl_value_append_take(self->value,
+                       fl_value_new_string(message != nullptr ? message : ""));
+  fl_value_append_take(self->value, details != nullptr ? fl_value_ref(details)
+                                                       : fl_value_new_null());
   return self;
 }
 
@@ -6470,8 +6606,10 @@ core_tests_pigeon_test_host_integration_core_api_call_flutter_echo_bool_response
               nullptr));
   self->value = fl_value_new_list();
   fl_value_append_take(self->value, fl_value_new_string(code));
-  fl_value_append_take(self->value, fl_value_new_string(message));
-  fl_value_append(self->value, details);
+  fl_value_append_take(self->value,
+                       fl_value_new_string(message != nullptr ? message : ""));
+  fl_value_append_take(self->value, details != nullptr ? fl_value_ref(details)
+                                                       : fl_value_new_null());
   return self;
 }
 
@@ -6540,8 +6678,10 @@ core_tests_pigeon_test_host_integration_core_api_call_flutter_echo_int_response_
               nullptr));
   self->value = fl_value_new_list();
   fl_value_append_take(self->value, fl_value_new_string(code));
-  fl_value_append_take(self->value, fl_value_new_string(message));
-  fl_value_append(self->value, details);
+  fl_value_append_take(self->value,
+                       fl_value_new_string(message != nullptr ? message : ""));
+  fl_value_append_take(self->value, details != nullptr ? fl_value_ref(details)
+                                                       : fl_value_new_null());
   return self;
 }
 
@@ -6610,8 +6750,10 @@ core_tests_pigeon_test_host_integration_core_api_call_flutter_echo_double_respon
               nullptr));
   self->value = fl_value_new_list();
   fl_value_append_take(self->value, fl_value_new_string(code));
-  fl_value_append_take(self->value, fl_value_new_string(message));
-  fl_value_append(self->value, details);
+  fl_value_append_take(self->value,
+                       fl_value_new_string(message != nullptr ? message : ""));
+  fl_value_append_take(self->value, details != nullptr ? fl_value_ref(details)
+                                                       : fl_value_new_null());
   return self;
 }
 
@@ -6680,8 +6822,10 @@ core_tests_pigeon_test_host_integration_core_api_call_flutter_echo_string_respon
               nullptr));
   self->value = fl_value_new_list();
   fl_value_append_take(self->value, fl_value_new_string(code));
-  fl_value_append_take(self->value, fl_value_new_string(message));
-  fl_value_append(self->value, details);
+  fl_value_append_take(self->value,
+                       fl_value_new_string(message != nullptr ? message : ""));
+  fl_value_append_take(self->value, details != nullptr ? fl_value_ref(details)
+                                                       : fl_value_new_null());
   return self;
 }
 
@@ -6752,8 +6896,10 @@ core_tests_pigeon_test_host_integration_core_api_call_flutter_echo_uint8_list_re
               nullptr));
   self->value = fl_value_new_list();
   fl_value_append_take(self->value, fl_value_new_string(code));
-  fl_value_append_take(self->value, fl_value_new_string(message));
-  fl_value_append(self->value, details);
+  fl_value_append_take(self->value,
+                       fl_value_new_string(message != nullptr ? message : ""));
+  fl_value_append_take(self->value, details != nullptr ? fl_value_ref(details)
+                                                       : fl_value_new_null());
   return self;
 }
 
@@ -6822,8 +6968,10 @@ core_tests_pigeon_test_host_integration_core_api_call_flutter_echo_list_response
               nullptr));
   self->value = fl_value_new_list();
   fl_value_append_take(self->value, fl_value_new_string(code));
-  fl_value_append_take(self->value, fl_value_new_string(message));
-  fl_value_append(self->value, details);
+  fl_value_append_take(self->value,
+                       fl_value_new_string(message != nullptr ? message : ""));
+  fl_value_append_take(self->value, details != nullptr ? fl_value_ref(details)
+                                                       : fl_value_new_null());
   return self;
 }
 
@@ -6892,8 +7040,10 @@ core_tests_pigeon_test_host_integration_core_api_call_flutter_echo_map_response_
               nullptr));
   self->value = fl_value_new_list();
   fl_value_append_take(self->value, fl_value_new_string(code));
-  fl_value_append_take(self->value, fl_value_new_string(message));
-  fl_value_append(self->value, details);
+  fl_value_append_take(self->value,
+                       fl_value_new_string(message != nullptr ? message : ""));
+  fl_value_append_take(self->value, details != nullptr ? fl_value_ref(details)
+                                                       : fl_value_new_null());
   return self;
 }
 
@@ -6964,8 +7114,10 @@ core_tests_pigeon_test_host_integration_core_api_call_flutter_echo_enum_response
               nullptr));
   self->value = fl_value_new_list();
   fl_value_append_take(self->value, fl_value_new_string(code));
-  fl_value_append_take(self->value, fl_value_new_string(message));
-  fl_value_append(self->value, details);
+  fl_value_append_take(self->value,
+                       fl_value_new_string(message != nullptr ? message : ""));
+  fl_value_append_take(self->value, details != nullptr ? fl_value_ref(details)
+                                                       : fl_value_new_null());
   return self;
 }
 
@@ -7038,8 +7190,10 @@ core_tests_pigeon_test_host_integration_core_api_call_flutter_echo_nullable_bool
               nullptr));
   self->value = fl_value_new_list();
   fl_value_append_take(self->value, fl_value_new_string(code));
-  fl_value_append_take(self->value, fl_value_new_string(message));
-  fl_value_append(self->value, details);
+  fl_value_append_take(self->value,
+                       fl_value_new_string(message != nullptr ? message : ""));
+  fl_value_append_take(self->value, details != nullptr ? fl_value_ref(details)
+                                                       : fl_value_new_null());
   return self;
 }
 
@@ -7111,8 +7265,10 @@ core_tests_pigeon_test_host_integration_core_api_call_flutter_echo_nullable_int_
               nullptr));
   self->value = fl_value_new_list();
   fl_value_append_take(self->value, fl_value_new_string(code));
-  fl_value_append_take(self->value, fl_value_new_string(message));
-  fl_value_append(self->value, details);
+  fl_value_append_take(self->value,
+                       fl_value_new_string(message != nullptr ? message : ""));
+  fl_value_append_take(self->value, details != nullptr ? fl_value_ref(details)
+                                                       : fl_value_new_null());
   return self;
 }
 
@@ -7186,8 +7342,10 @@ core_tests_pigeon_test_host_integration_core_api_call_flutter_echo_nullable_doub
               nullptr));
   self->value = fl_value_new_list();
   fl_value_append_take(self->value, fl_value_new_string(code));
-  fl_value_append_take(self->value, fl_value_new_string(message));
-  fl_value_append(self->value, details);
+  fl_value_append_take(self->value,
+                       fl_value_new_string(message != nullptr ? message : ""));
+  fl_value_append_take(self->value, details != nullptr ? fl_value_ref(details)
+                                                       : fl_value_new_null());
   return self;
 }
 
@@ -7261,8 +7419,10 @@ core_tests_pigeon_test_host_integration_core_api_call_flutter_echo_nullable_stri
               nullptr));
   self->value = fl_value_new_list();
   fl_value_append_take(self->value, fl_value_new_string(code));
-  fl_value_append_take(self->value, fl_value_new_string(message));
-  fl_value_append(self->value, details);
+  fl_value_append_take(self->value,
+                       fl_value_new_string(message != nullptr ? message : ""));
+  fl_value_append_take(self->value, details != nullptr ? fl_value_ref(details)
+                                                       : fl_value_new_null());
   return self;
 }
 
@@ -7337,8 +7497,10 @@ core_tests_pigeon_test_host_integration_core_api_call_flutter_echo_nullable_uint
               nullptr));
   self->value = fl_value_new_list();
   fl_value_append_take(self->value, fl_value_new_string(code));
-  fl_value_append_take(self->value, fl_value_new_string(message));
-  fl_value_append(self->value, details);
+  fl_value_append_take(self->value,
+                       fl_value_new_string(message != nullptr ? message : ""));
+  fl_value_append_take(self->value, details != nullptr ? fl_value_ref(details)
+                                                       : fl_value_new_null());
   return self;
 }
 
@@ -7411,8 +7573,10 @@ core_tests_pigeon_test_host_integration_core_api_call_flutter_echo_nullable_list
               nullptr));
   self->value = fl_value_new_list();
   fl_value_append_take(self->value, fl_value_new_string(code));
-  fl_value_append_take(self->value, fl_value_new_string(message));
-  fl_value_append(self->value, details);
+  fl_value_append_take(self->value,
+                       fl_value_new_string(message != nullptr ? message : ""));
+  fl_value_append_take(self->value, details != nullptr ? fl_value_ref(details)
+                                                       : fl_value_new_null());
   return self;
 }
 
@@ -7484,8 +7648,10 @@ core_tests_pigeon_test_host_integration_core_api_call_flutter_echo_nullable_map_
               nullptr));
   self->value = fl_value_new_list();
   fl_value_append_take(self->value, fl_value_new_string(code));
-  fl_value_append_take(self->value, fl_value_new_string(message));
-  fl_value_append(self->value, details);
+  fl_value_append_take(self->value,
+                       fl_value_new_string(message != nullptr ? message : ""));
+  fl_value_append_take(self->value, details != nullptr ? fl_value_ref(details)
+                                                       : fl_value_new_null());
   return self;
 }
 
@@ -7561,8 +7727,10 @@ core_tests_pigeon_test_host_integration_core_api_call_flutter_echo_nullable_enum
               nullptr));
   self->value = fl_value_new_list();
   fl_value_append_take(self->value, fl_value_new_string(code));
-  fl_value_append_take(self->value, fl_value_new_string(message));
-  fl_value_append(self->value, details);
+  fl_value_append_take(self->value,
+                       fl_value_new_string(message != nullptr ? message : ""));
+  fl_value_append_take(self->value, details != nullptr ? fl_value_ref(details)
+                                                       : fl_value_new_null());
   return self;
 }
 
@@ -7634,8 +7802,10 @@ core_tests_pigeon_test_host_integration_core_api_call_flutter_small_api_echo_str
               nullptr));
   self->value = fl_value_new_list();
   fl_value_append_take(self->value, fl_value_new_string(code));
-  fl_value_append_take(self->value, fl_value_new_string(message));
-  fl_value_append(self->value, details);
+  fl_value_append_take(self->value,
+                       fl_value_new_string(message != nullptr ? message : ""));
+  fl_value_append_take(self->value, details != nullptr ? fl_value_ref(details)
+                                                       : fl_value_new_null());
   return self;
 }
 
@@ -13423,8 +13593,10 @@ core_tests_pigeon_test_host_trivial_api_noop_response_new_error(
           nullptr));
   self->value = fl_value_new_list();
   fl_value_append_take(self->value, fl_value_new_string(code));
-  fl_value_append_take(self->value, fl_value_new_string(message));
-  fl_value_append(self->value, details);
+  fl_value_append_take(self->value,
+                       fl_value_new_string(message != nullptr ? message : ""));
+  fl_value_append_take(self->value, details != nullptr ? fl_value_ref(details)
+                                                       : fl_value_new_null());
   return self;
 }
 
@@ -13570,8 +13742,10 @@ core_tests_pigeon_test_host_small_api_echo_response_new_error(
           nullptr));
   self->value = fl_value_new_list();
   fl_value_append_take(self->value, fl_value_new_string(code));
-  fl_value_append_take(self->value, fl_value_new_string(message));
-  fl_value_append(self->value, details);
+  fl_value_append_take(self->value,
+                       fl_value_new_string(message != nullptr ? message : ""));
+  fl_value_append_take(self->value, details != nullptr ? fl_value_ref(details)
+                                                       : fl_value_new_null());
   return self;
 }
 
@@ -13629,8 +13803,10 @@ core_tests_pigeon_test_host_small_api_void_void_response_new_error(
           nullptr));
   self->value = fl_value_new_list();
   fl_value_append_take(self->value, fl_value_new_string(code));
-  fl_value_append_take(self->value, fl_value_new_string(message));
-  fl_value_append(self->value, details);
+  fl_value_append_take(self->value,
+                       fl_value_new_string(message != nullptr ? message : ""));
+  fl_value_append_take(self->value, details != nullptr ? fl_value_ref(details)
+                                                       : fl_value_new_null());
   return self;
 }
 
