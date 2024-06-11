@@ -1485,15 +1485,15 @@ String _referenceValue(String module, TypeDeclaration type, String variableName,
   } else if (type.baseName == 'String') {
     return 'g_strdup($variableName)';
   } else if (type.baseName == 'Uint8List') {
-    return 'static_cast<uint8_t*>(g_memdup2($variableName, $lengthVariableName))';
+    return 'static_cast<uint8_t*>(g_memdup($variableName, $lengthVariableName))';
   } else if (type.baseName == 'Int32List') {
-    return 'static_cast<int32_t*>(g_memdup2($variableName, sizeof(int32_t) * $lengthVariableName))';
+    return 'static_cast<int32_t*>(g_memdup($variableName, sizeof(int32_t) * $lengthVariableName))';
   } else if (type.baseName == 'Int64List') {
-    return 'static_cast<int64_t*>(g_memdup2($variableName, sizeof(int64_t) * $lengthVariableName))';
+    return 'static_cast<int64_t*>(g_memdup($variableName, sizeof(int64_t) * $lengthVariableName))';
   } else if (type.baseName == 'Float32List') {
-    return 'static_cast<float*>(g_memdup2($variableName, sizeof(float) * $lengthVariableName))';
+    return 'static_cast<float*>(g_memdup($variableName, sizeof(float) * $lengthVariableName))';
   } else if (type.baseName == 'Float64List') {
-    return 'static_cast<double*>(g_memdup2($variableName, sizeof(double) * $lengthVariableName))';
+    return 'static_cast<double*>(g_memdup($variableName, sizeof(double) * $lengthVariableName))';
   } else {
     return variableName;
   }
