@@ -37,8 +37,9 @@ typedef struct {
 static CallbackData* callback_data_new(
     TestPlugin* self, FlBasicMessageChannelResponseHandle* response_handle) {
   CallbackData* data = g_new0(CallbackData, 1);
-  data->self = g_object_ref(self);
-  data->response_handle = g_object_ref(response_handle);
+  data->self = TEST_PLUGIN(g_object_ref(self));
+  data->response_handle =
+      FL_BASIC_MESSAGE_CHANNEL_RESPONSE_HANDLE(g_object_ref(response_handle));
   return data;
 }
 
