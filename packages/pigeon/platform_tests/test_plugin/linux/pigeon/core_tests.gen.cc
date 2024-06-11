@@ -223,8 +223,8 @@ static FlValue* core_tests_pigeon_test_all_types_to_list(
   fl_value_append_take(
       values,
       fl_value_new_float_list(self->a_float_array, self->a_float_array_length));
-  fl_value_append_take(values,
-                       fl_value_new_int(static_cast<int64_t>(self->an_enum)));
+  fl_value_append_take(
+      values, fl_value_new_custom(0, self->an_enum, (GDestroyNotify)g_free));
   fl_value_append_take(values, fl_value_new_string(self->a_string));
   fl_value_append_take(values, fl_value_ref(self->an_object));
   fl_value_append_take(values, fl_value_ref(self->list));
@@ -643,11 +643,11 @@ static FlValue* core_tests_pigeon_test_all_nullable_types_to_list(
                        self->nullable_map_with_object != nullptr
                            ? fl_value_ref(self->nullable_map_with_object)
                            : fl_value_new_null());
-  fl_value_append_take(
-      values,
-      self->a_nullable_enum != nullptr
-          ? fl_value_new_int(static_cast<int64_t>(*self->a_nullable_enum))
-          : fl_value_new_null());
+  fl_value_append_take(values,
+                       self->a_nullable_enum != nullptr
+                           ? fl_value_new_custom(0, self->a_nullable_enum,
+                                                 (GDestroyNotify)g_free)
+                           : fl_value_new_null());
   fl_value_append_take(values,
                        self->a_nullable_string != nullptr
                            ? fl_value_new_string(self->a_nullable_string)
@@ -655,10 +655,11 @@ static FlValue* core_tests_pigeon_test_all_nullable_types_to_list(
   fl_value_append_take(values, self->a_nullable_object != nullptr
                                    ? fl_value_ref(self->a_nullable_object)
                                    : fl_value_new_null());
-  fl_value_append_take(values, self->all_nullable_types != nullptr
-                                   ? fl_value_new_custom_object(
-                                         0, G_OBJECT(self->all_nullable_types))
-                                   : fl_value_new_null());
+  fl_value_append_take(
+      values,
+      self->all_nullable_types != nullptr
+          ? fl_value_new_custom_object(129, G_OBJECT(self->all_nullable_types))
+          : fl_value_new_null());
   fl_value_append_take(values, self->list != nullptr ? fl_value_ref(self->list)
                                                      : fl_value_new_null());
   fl_value_append_take(values, self->string_list != nullptr
@@ -1172,11 +1173,11 @@ core_tests_pigeon_test_all_nullable_types_without_recursion_to_list(
                        self->nullable_map_with_object != nullptr
                            ? fl_value_ref(self->nullable_map_with_object)
                            : fl_value_new_null());
-  fl_value_append_take(
-      values,
-      self->a_nullable_enum != nullptr
-          ? fl_value_new_int(static_cast<int64_t>(*self->a_nullable_enum))
-          : fl_value_new_null());
+  fl_value_append_take(values,
+                       self->a_nullable_enum != nullptr
+                           ? fl_value_new_custom(0, self->a_nullable_enum,
+                                                 (GDestroyNotify)g_free)
+                           : fl_value_new_null());
   fl_value_append_take(values,
                        self->a_nullable_string != nullptr
                            ? fl_value_new_string(self->a_nullable_string)
@@ -1391,15 +1392,16 @@ static FlValue* core_tests_pigeon_test_all_classes_wrapper_to_list(
     CoreTestsPigeonTestAllClassesWrapper* self) {
   FlValue* values = fl_value_new_list();
   fl_value_append_take(values, fl_value_new_custom_object(
-                                   0, G_OBJECT(self->all_nullable_types)));
+                                   129, G_OBJECT(self->all_nullable_types)));
   fl_value_append_take(
-      values, self->all_nullable_types_without_recursion != nullptr
-                  ? fl_value_new_custom_object(
-                        0, G_OBJECT(self->all_nullable_types_without_recursion))
-                  : fl_value_new_null());
+      values,
+      self->all_nullable_types_without_recursion != nullptr
+          ? fl_value_new_custom_object(
+                129, G_OBJECT(self->all_nullable_types_without_recursion))
+          : fl_value_new_null());
   fl_value_append_take(
       values, self->all_types != nullptr
-                  ? fl_value_new_custom_object(0, G_OBJECT(self->all_types))
+                  ? fl_value_new_custom_object(129, G_OBJECT(self->all_types))
                   : fl_value_new_null());
   return values;
 }
@@ -1872,7 +1874,7 @@ core_tests_pigeon_test_host_integration_core_api_echo_all_types_response_new(
               nullptr));
   self->value = fl_value_new_list();
   fl_value_append_take(self->value,
-                       fl_value_new_custom_object(0, G_OBJECT(return_value)));
+                       fl_value_new_custom_object(129, G_OBJECT(return_value)));
   return self;
 }
 
@@ -2618,7 +2620,7 @@ core_tests_pigeon_test_host_integration_core_api_echo_class_wrapper_response_new
               nullptr));
   self->value = fl_value_new_list();
   fl_value_append_take(self->value,
-                       fl_value_new_custom_object(0, G_OBJECT(return_value)));
+                       fl_value_new_custom_object(129, G_OBJECT(return_value)));
   return self;
 }
 
@@ -2679,8 +2681,9 @@ core_tests_pigeon_test_host_integration_core_api_echo_enum_response_new(
           core_tests_pigeon_test_host_integration_core_api_echo_enum_response_get_type(),
           nullptr));
   self->value = fl_value_new_list();
-  fl_value_append_take(self->value,
-                       fl_value_new_int(static_cast<int64_t>(return_value)));
+  fl_value_append_take(
+      self->value,
+      fl_value_new_custom(0, return_value, (GDestroyNotify)g_free));
   return self;
 }
 
@@ -2938,7 +2941,7 @@ core_tests_pigeon_test_host_integration_core_api_echo_all_nullable_types_respons
   self->value = fl_value_new_list();
   fl_value_append_take(
       self->value, return_value != nullptr
-                       ? fl_value_new_custom_object(0, G_OBJECT(return_value))
+                       ? fl_value_new_custom_object(129, G_OBJECT(return_value))
                        : fl_value_new_null());
   return self;
 }
@@ -3007,7 +3010,7 @@ core_tests_pigeon_test_host_integration_core_api_echo_all_nullable_types_without
   self->value = fl_value_new_list();
   fl_value_append_take(
       self->value, return_value != nullptr
-                       ? fl_value_new_custom_object(0, G_OBJECT(return_value))
+                       ? fl_value_new_custom_object(129, G_OBJECT(return_value))
                        : fl_value_new_null());
   return self;
 }
@@ -3142,7 +3145,7 @@ core_tests_pigeon_test_host_integration_core_api_create_nested_nullable_string_r
               nullptr));
   self->value = fl_value_new_list();
   fl_value_append_take(self->value,
-                       fl_value_new_custom_object(0, G_OBJECT(return_value)));
+                       fl_value_new_custom_object(129, G_OBJECT(return_value)));
   return self;
 }
 
@@ -3208,7 +3211,7 @@ core_tests_pigeon_test_host_integration_core_api_send_multiple_nullable_types_re
               nullptr));
   self->value = fl_value_new_list();
   fl_value_append_take(self->value,
-                       fl_value_new_custom_object(0, G_OBJECT(return_value)));
+                       fl_value_new_custom_object(129, G_OBJECT(return_value)));
   return self;
 }
 
@@ -3275,7 +3278,7 @@ core_tests_pigeon_test_host_integration_core_api_send_multiple_nullable_types_wi
               nullptr));
   self->value = fl_value_new_list();
   fl_value_append_take(self->value,
-                       fl_value_new_custom_object(0, G_OBJECT(return_value)));
+                       fl_value_new_custom_object(129, G_OBJECT(return_value)));
   return self;
 }
 
@@ -3864,9 +3867,10 @@ core_tests_pigeon_test_host_integration_core_api_echo_nullable_enum_response_new
               nullptr));
   self->value = fl_value_new_list();
   fl_value_append_take(
-      self->value, return_value != nullptr
-                       ? fl_value_new_int(static_cast<int64_t>(*return_value))
-                       : fl_value_new_null());
+      self->value,
+      return_value != nullptr
+          ? fl_value_new_custom(0, return_value, (GDestroyNotify)g_free)
+          : fl_value_new_null());
   return self;
 }
 
@@ -4686,8 +4690,9 @@ core_tests_pigeon_test_host_integration_core_api_echo_async_enum_response_new(
               core_tests_pigeon_test_host_integration_core_api_echo_async_enum_response_get_type(),
               nullptr));
   self->value = fl_value_new_list();
-  fl_value_append_take(self->value,
-                       fl_value_new_int(static_cast<int64_t>(return_value)));
+  fl_value_append_take(
+      self->value,
+      fl_value_new_custom(0, return_value, (GDestroyNotify)g_free));
   return self;
 }
 
@@ -4971,7 +4976,7 @@ core_tests_pigeon_test_host_integration_core_api_echo_async_all_types_response_n
               nullptr));
   self->value = fl_value_new_list();
   fl_value_append_take(self->value,
-                       fl_value_new_custom_object(0, G_OBJECT(return_value)));
+                       fl_value_new_custom_object(129, G_OBJECT(return_value)));
   return self;
 }
 
@@ -5046,7 +5051,7 @@ core_tests_pigeon_test_host_integration_core_api_echo_async_nullable_all_nullabl
   self->value = fl_value_new_list();
   fl_value_append_take(
       self->value, return_value != nullptr
-                       ? fl_value_new_custom_object(0, G_OBJECT(return_value))
+                       ? fl_value_new_custom_object(129, G_OBJECT(return_value))
                        : fl_value_new_null());
   return self;
 }
@@ -5122,7 +5127,7 @@ core_tests_pigeon_test_host_integration_core_api_echo_async_nullable_all_nullabl
   self->value = fl_value_new_list();
   fl_value_append_take(
       self->value, return_value != nullptr
-                       ? fl_value_new_custom_object(0, G_OBJECT(return_value))
+                       ? fl_value_new_custom_object(129, G_OBJECT(return_value))
                        : fl_value_new_null());
   return self;
 }
@@ -5775,9 +5780,10 @@ core_tests_pigeon_test_host_integration_core_api_echo_async_nullable_enum_respon
               nullptr));
   self->value = fl_value_new_list();
   fl_value_append_take(
-      self->value, return_value != nullptr
-                       ? fl_value_new_int(static_cast<int64_t>(*return_value))
-                       : fl_value_new_null());
+      self->value,
+      return_value != nullptr
+          ? fl_value_new_custom(0, return_value, (GDestroyNotify)g_free)
+          : fl_value_new_null());
   return self;
 }
 
@@ -6061,7 +6067,7 @@ core_tests_pigeon_test_host_integration_core_api_call_flutter_echo_all_types_res
               nullptr));
   self->value = fl_value_new_list();
   fl_value_append_take(self->value,
-                       fl_value_new_custom_object(0, G_OBJECT(return_value)));
+                       fl_value_new_custom_object(129, G_OBJECT(return_value)));
   return self;
 }
 
@@ -6136,7 +6142,7 @@ core_tests_pigeon_test_host_integration_core_api_call_flutter_echo_all_nullable_
   self->value = fl_value_new_list();
   fl_value_append_take(
       self->value, return_value != nullptr
-                       ? fl_value_new_custom_object(0, G_OBJECT(return_value))
+                       ? fl_value_new_custom_object(129, G_OBJECT(return_value))
                        : fl_value_new_null());
   return self;
 }
@@ -6211,7 +6217,7 @@ core_tests_pigeon_test_host_integration_core_api_call_flutter_send_multiple_null
               nullptr));
   self->value = fl_value_new_list();
   fl_value_append_take(self->value,
-                       fl_value_new_custom_object(0, G_OBJECT(return_value)));
+                       fl_value_new_custom_object(129, G_OBJECT(return_value)));
   return self;
 }
 
@@ -6286,7 +6292,7 @@ core_tests_pigeon_test_host_integration_core_api_call_flutter_echo_all_nullable_
   self->value = fl_value_new_list();
   fl_value_append_take(
       self->value, return_value != nullptr
-                       ? fl_value_new_custom_object(0, G_OBJECT(return_value))
+                       ? fl_value_new_custom_object(129, G_OBJECT(return_value))
                        : fl_value_new_null());
   return self;
 }
@@ -6361,7 +6367,7 @@ core_tests_pigeon_test_host_integration_core_api_call_flutter_send_multiple_null
               nullptr));
   self->value = fl_value_new_list();
   fl_value_append_take(self->value,
-                       fl_value_new_custom_object(0, G_OBJECT(return_value)));
+                       fl_value_new_custom_object(129, G_OBJECT(return_value)));
   return self;
 }
 
@@ -6923,8 +6929,9 @@ core_tests_pigeon_test_host_integration_core_api_call_flutter_echo_enum_response
               core_tests_pigeon_test_host_integration_core_api_call_flutter_echo_enum_response_get_type(),
               nullptr));
   self->value = fl_value_new_list();
-  fl_value_append_take(self->value,
-                       fl_value_new_int(static_cast<int64_t>(return_value)));
+  fl_value_append_take(
+      self->value,
+      fl_value_new_custom(0, return_value, (GDestroyNotify)g_free));
   return self;
 }
 
@@ -7517,9 +7524,10 @@ core_tests_pigeon_test_host_integration_core_api_call_flutter_echo_nullable_enum
               nullptr));
   self->value = fl_value_new_list();
   fl_value_append_take(
-      self->value, return_value != nullptr
-                       ? fl_value_new_int(static_cast<int64_t>(*return_value))
-                       : fl_value_new_null());
+      self->value,
+      return_value != nullptr
+          ? fl_value_new_custom(0, return_value, (GDestroyNotify)g_free)
+          : fl_value_new_null());
   return self;
 }
 
@@ -12583,7 +12591,7 @@ void core_tests_pigeon_test_flutter_integration_core_api_echo_all_types(
     GAsyncReadyCallback callback, gpointer user_data) {
   g_autoptr(FlValue) args = fl_value_new_list();
   fl_value_append_take(args,
-                       fl_value_new_custom_object(0, G_OBJECT(everything)));
+                       fl_value_new_custom_object(129, G_OBJECT(everything)));
   fl_method_channel_invoke_method(self->channel, "echoAllTypes", args,
                                   cancellable, callback, user_data);
 }
@@ -12614,10 +12622,10 @@ void core_tests_pigeon_test_flutter_integration_core_api_echo_all_nullable_types
     CoreTestsPigeonTestAllNullableTypes* everything, GCancellable* cancellable,
     GAsyncReadyCallback callback, gpointer user_data) {
   g_autoptr(FlValue) args = fl_value_new_list();
-  fl_value_append_take(args,
-                       everything != nullptr
-                           ? fl_value_new_custom_object(0, G_OBJECT(everything))
-                           : fl_value_new_null());
+  fl_value_append_take(
+      args, everything != nullptr
+                ? fl_value_new_custom_object(129, G_OBJECT(everything))
+                : fl_value_new_null());
   fl_method_channel_invoke_method(self->channel, "echoAllNullableTypes", args,
                                   cancellable, callback, user_data);
 }
@@ -12691,10 +12699,10 @@ void core_tests_pigeon_test_flutter_integration_core_api_echo_all_nullable_types
     GCancellable* cancellable, GAsyncReadyCallback callback,
     gpointer user_data) {
   g_autoptr(FlValue) args = fl_value_new_list();
-  fl_value_append_take(args,
-                       everything != nullptr
-                           ? fl_value_new_custom_object(0, G_OBJECT(everything))
-                           : fl_value_new_null());
+  fl_value_append_take(
+      args, everything != nullptr
+                ? fl_value_new_custom_object(129, G_OBJECT(everything))
+                : fl_value_new_null());
   fl_method_channel_invoke_method(self->channel,
                                   "echoAllNullableTypesWithoutRecursion", args,
                                   cancellable, callback, user_data);
@@ -12977,7 +12985,8 @@ void core_tests_pigeon_test_flutter_integration_core_api_echo_enum(
     CoreTestsPigeonTestAnEnum an_enum, GCancellable* cancellable,
     GAsyncReadyCallback callback, gpointer user_data) {
   g_autoptr(FlValue) args = fl_value_new_list();
-  fl_value_append_take(args, fl_value_new_int(static_cast<int64_t>(an_enum)));
+  fl_value_append_take(args,
+                       fl_value_new_custom(0, an_enum, (GDestroyNotify)g_free));
   fl_method_channel_invoke_method(self->channel, "echoEnum", args, cancellable,
                                   callback, user_data);
 }
@@ -13241,10 +13250,10 @@ void core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_enum(
     CoreTestsPigeonTestAnEnum* an_enum, GCancellable* cancellable,
     GAsyncReadyCallback callback, gpointer user_data) {
   g_autoptr(FlValue) args = fl_value_new_list();
-  fl_value_append_take(args,
-                       an_enum != nullptr
-                           ? fl_value_new_int(static_cast<int64_t>(*an_enum))
-                           : fl_value_new_null());
+  fl_value_append_take(
+      args, an_enum != nullptr
+                ? fl_value_new_custom(0, an_enum, (GDestroyNotify)g_free)
+                : fl_value_new_null());
   fl_method_channel_invoke_method(self->channel, "echoNullableEnum", args,
                                   cancellable, callback, user_data);
 }
@@ -13793,7 +13802,7 @@ void core_tests_pigeon_test_flutter_small_api_echo_wrapped_list(
     CoreTestsPigeonTestTestMessage* msg, GCancellable* cancellable,
     GAsyncReadyCallback callback, gpointer user_data) {
   g_autoptr(FlValue) args = fl_value_new_list();
-  fl_value_append_take(args, fl_value_new_custom_object(0, G_OBJECT(msg)));
+  fl_value_append_take(args, fl_value_new_custom_object(129, G_OBJECT(msg)));
   fl_method_channel_invoke_method(self->channel, "echoWrappedList", args,
                                   cancellable, callback, user_data);
 }

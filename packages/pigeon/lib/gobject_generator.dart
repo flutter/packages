@@ -573,7 +573,7 @@ class GObjectSourceGenerator extends StructuredGenerator<GObjectOptions> {
       for (final NamedType field in classDefinition.fields) {
         final String fieldName = _getFieldName(field.name);
         indent.writeln(
-            'fl_value_append_take(values, ${_makeFlValue(module, field.type, 'self->$fieldName', lengthVariableName: 'self->${fieldName}_length')});');
+            'fl_value_append_take(values, ${_makeFlValue(root, module, field.type, 'self->$fieldName', lengthVariableName: 'self->${fieldName}_length')});');
       }
       indent.writeln('return values;');
     });
@@ -848,7 +848,7 @@ class GObjectSourceGenerator extends StructuredGenerator<GObjectOptions> {
         indent.writeln('g_autoptr(FlValue) args = fl_value_new_list();');
         for (final Parameter param in method.parameters) {
           final String name = _snakeCaseFromCamelCase(param.name);
-          final String value = _makeFlValue(module, param.type, name,
+          final String value = _makeFlValue(root, module, param.type, name,
               lengthVariableName: '${name}_length');
           indent.writeln('fl_value_append_take(args, $value);');
         }
@@ -974,7 +974,7 @@ class GObjectSourceGenerator extends StructuredGenerator<GObjectOptions> {
         _writeObjectNew(indent, module, responseName);
         indent.writeln('self->value = fl_value_new_list();');
         indent.writeln(
-            "fl_value_append_take(self->value, ${_makeFlValue(module, method.returnType, 'return_value', lengthVariableName: 'return_value_length')});");
+            "fl_value_append_take(self->value, ${_makeFlValue(root, module, method.returnType, 'return_value', lengthVariableName: 'return_value_length')});");
         indent.writeln('return self;');
       });
 
@@ -1507,14 +1507,24 @@ String _referenceValue(String module, TypeDeclaration type, String variableName,
   }
 }
 
+int _getTypeEnumeration(Root root, TypeDeclaration type) {
+  return getEnumeratedTypes(root)
+      .firstWhere((t) =>
+          t.associatedClass == type.associatedClass ||
+          t.associatedEnum == type.associatedEnum)
+      .enumeration;
+}
+
 // Returns code to convert the native data type stored in [variableName] to a FlValue.
 //
 // [lengthVariableName] must be provided for the typed numeric *List types.
-String _makeFlValue(String module, TypeDeclaration type, String variableName,
+String _makeFlValue(
+    Root root, String module, TypeDeclaration type, String variableName,
     {String? lengthVariableName}) {
   final String value;
   if (type.isClass) {
-    value = 'fl_value_new_custom_object(0, G_OBJECT($variableName))';
+    var enumeration = _getTypeEnumeration(root, type);
+    value = 'fl_value_new_custom_object($enumeration, G_OBJECT($variableName))';
   } else if (type.isEnum) {
     value = type.isNullable
         ? 'fl_value_new_int(static_cast<int64_t>(*$variableName))'
