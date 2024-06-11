@@ -22,11 +22,15 @@ struct _CoreTestsPigeonTestAllTypes {
   size_t a8_byte_array_length;
   double* a_float_array;
   size_t a_float_array_length;
-  FlValue* list;
-  FlValue* a_map;
   CoreTestsPigeonTestAnEnum an_enum;
   gchar* a_string;
   FlValue* an_object;
+  FlValue* list;
+  FlValue* string_list;
+  FlValue* int_list;
+  FlValue* double_list;
+  FlValue* bool_list;
+  FlValue* map;
 };
 
 G_DEFINE_TYPE(CoreTestsPigeonTestAllTypes, core_tests_pigeon_test_all_types,
@@ -34,10 +38,14 @@ G_DEFINE_TYPE(CoreTestsPigeonTestAllTypes, core_tests_pigeon_test_all_types,
 
 static void core_tests_pigeon_test_all_types_dispose(GObject* object) {
   CoreTestsPigeonTestAllTypes* self = CORE_TESTS_PIGEON_TEST_ALL_TYPES(object);
-  g_clear_pointer(&self->list, fl_value_unref);
-  g_clear_pointer(&self->a_map, fl_value_unref);
   g_clear_pointer(&self->a_string, g_free);
   g_clear_pointer(&self->an_object, fl_value_unref);
+  g_clear_pointer(&self->list, fl_value_unref);
+  g_clear_pointer(&self->string_list, fl_value_unref);
+  g_clear_pointer(&self->int_list, fl_value_unref);
+  g_clear_pointer(&self->double_list, fl_value_unref);
+  g_clear_pointer(&self->bool_list, fl_value_unref);
+  g_clear_pointer(&self->map, fl_value_unref);
   G_OBJECT_CLASS(core_tests_pigeon_test_all_types_parent_class)
       ->dispose(object);
 }
@@ -55,9 +63,10 @@ CoreTestsPigeonTestAllTypes* core_tests_pigeon_test_all_types_new(
     const uint8_t* a_byte_array, size_t a_byte_array_length,
     const int32_t* a4_byte_array, size_t a4_byte_array_length,
     const int64_t* a8_byte_array, size_t a8_byte_array_length,
-    const double* a_float_array, size_t a_float_array_length, FlValue* list,
-    FlValue* a_map, CoreTestsPigeonTestAnEnum an_enum, const gchar* a_string,
-    FlValue* an_object) {
+    const double* a_float_array, size_t a_float_array_length,
+    CoreTestsPigeonTestAnEnum an_enum, const gchar* a_string,
+    FlValue* an_object, FlValue* list, FlValue* string_list, FlValue* int_list,
+    FlValue* double_list, FlValue* bool_list, FlValue* map) {
   CoreTestsPigeonTestAllTypes* self = CORE_TESTS_PIGEON_TEST_ALL_TYPES(
       g_object_new(core_tests_pigeon_test_all_types_get_type(), nullptr));
   self->a_bool = a_bool;
@@ -76,11 +85,15 @@ CoreTestsPigeonTestAllTypes* core_tests_pigeon_test_all_types_new(
   self->a_float_array = static_cast<double*>(
       g_memdup2(a_float_array, sizeof(double) * a_float_array_length));
   self->a_float_array_length = a_float_array_length;
-  self->list = fl_value_ref(list);
-  self->a_map = fl_value_ref(a_map);
   self->an_enum = an_enum;
   self->a_string = g_strdup(a_string);
   self->an_object = fl_value_ref(an_object);
+  self->list = fl_value_ref(list);
+  self->string_list = fl_value_ref(string_list);
+  self->int_list = fl_value_ref(int_list);
+  self->double_list = fl_value_ref(double_list);
+  self->bool_list = fl_value_ref(bool_list);
+  self->map = fl_value_ref(map);
   return self;
 }
 
@@ -136,18 +149,6 @@ const double* core_tests_pigeon_test_all_types_get_a_float_array(
   return self->a_float_array;
 }
 
-FlValue* core_tests_pigeon_test_all_types_get_list(
-    CoreTestsPigeonTestAllTypes* self) {
-  g_return_val_if_fail(CORE_TESTS_PIGEON_TEST_IS_ALL_TYPES(self), nullptr);
-  return self->list;
-}
-
-FlValue* core_tests_pigeon_test_all_types_get_a_map(
-    CoreTestsPigeonTestAllTypes* self) {
-  g_return_val_if_fail(CORE_TESTS_PIGEON_TEST_IS_ALL_TYPES(self), nullptr);
-  return self->a_map;
-}
-
 CoreTestsPigeonTestAnEnum core_tests_pigeon_test_all_types_get_an_enum(
     CoreTestsPigeonTestAllTypes* self) {
   g_return_val_if_fail(CORE_TESTS_PIGEON_TEST_IS_ALL_TYPES(self),
@@ -165,6 +166,42 @@ FlValue* core_tests_pigeon_test_all_types_get_an_object(
     CoreTestsPigeonTestAllTypes* self) {
   g_return_val_if_fail(CORE_TESTS_PIGEON_TEST_IS_ALL_TYPES(self), nullptr);
   return self->an_object;
+}
+
+FlValue* core_tests_pigeon_test_all_types_get_list(
+    CoreTestsPigeonTestAllTypes* self) {
+  g_return_val_if_fail(CORE_TESTS_PIGEON_TEST_IS_ALL_TYPES(self), nullptr);
+  return self->list;
+}
+
+FlValue* core_tests_pigeon_test_all_types_get_string_list(
+    CoreTestsPigeonTestAllTypes* self) {
+  g_return_val_if_fail(CORE_TESTS_PIGEON_TEST_IS_ALL_TYPES(self), nullptr);
+  return self->string_list;
+}
+
+FlValue* core_tests_pigeon_test_all_types_get_int_list(
+    CoreTestsPigeonTestAllTypes* self) {
+  g_return_val_if_fail(CORE_TESTS_PIGEON_TEST_IS_ALL_TYPES(self), nullptr);
+  return self->int_list;
+}
+
+FlValue* core_tests_pigeon_test_all_types_get_double_list(
+    CoreTestsPigeonTestAllTypes* self) {
+  g_return_val_if_fail(CORE_TESTS_PIGEON_TEST_IS_ALL_TYPES(self), nullptr);
+  return self->double_list;
+}
+
+FlValue* core_tests_pigeon_test_all_types_get_bool_list(
+    CoreTestsPigeonTestAllTypes* self) {
+  g_return_val_if_fail(CORE_TESTS_PIGEON_TEST_IS_ALL_TYPES(self), nullptr);
+  return self->bool_list;
+}
+
+FlValue* core_tests_pigeon_test_all_types_get_map(
+    CoreTestsPigeonTestAllTypes* self) {
+  g_return_val_if_fail(CORE_TESTS_PIGEON_TEST_IS_ALL_TYPES(self), nullptr);
+  return self->map;
 }
 
 static FlValue* core_tests_pigeon_test_all_types_to_list(
@@ -186,12 +223,16 @@ static FlValue* core_tests_pigeon_test_all_types_to_list(
   fl_value_append_take(
       values,
       fl_value_new_float_list(self->a_float_array, self->a_float_array_length));
-  fl_value_append_take(values, fl_value_ref(self->list));
-  fl_value_append_take(values, fl_value_ref(self->a_map));
   fl_value_append_take(values,
                        fl_value_new_int(static_cast<int64_t>(self->an_enum)));
   fl_value_append_take(values, fl_value_new_string(self->a_string));
   fl_value_append_take(values, fl_value_ref(self->an_object));
+  fl_value_append_take(values, fl_value_ref(self->list));
+  fl_value_append_take(values, fl_value_ref(self->string_list));
+  fl_value_append_take(values, fl_value_ref(self->int_list));
+  fl_value_append_take(values, fl_value_ref(self->double_list));
+  fl_value_append_take(values, fl_value_ref(self->bool_list));
+  fl_value_append_take(values, fl_value_ref(self->map));
   return values;
 }
 
@@ -218,21 +259,29 @@ core_tests_pigeon_test_all_types_new_from_list(FlValue* values) {
   const double* a_float_array = fl_value_get_float_list(value7);
   size_t a_float_array_length = fl_value_get_length(value7);
   FlValue* value8 = fl_value_get_list_value(values, 8);
-  FlValue* list = value8;
-  FlValue* value9 = fl_value_get_list_value(values, 9);
-  FlValue* a_map = value9;
-  FlValue* value10 = fl_value_get_list_value(values, 10);
   CoreTestsPigeonTestAnEnum an_enum =
-      static_cast<CoreTestsPigeonTestAnEnum>(fl_value_get_int(value10));
+      static_cast<CoreTestsPigeonTestAnEnum>(fl_value_get_int(value8));
+  FlValue* value9 = fl_value_get_list_value(values, 9);
+  const gchar* a_string = fl_value_get_string(value9);
+  FlValue* value10 = fl_value_get_list_value(values, 10);
+  FlValue* an_object = value10;
   FlValue* value11 = fl_value_get_list_value(values, 11);
-  const gchar* a_string = fl_value_get_string(value11);
+  FlValue* list = value11;
   FlValue* value12 = fl_value_get_list_value(values, 12);
-  FlValue* an_object = value12;
+  FlValue* string_list = value12;
+  FlValue* value13 = fl_value_get_list_value(values, 13);
+  FlValue* int_list = value13;
+  FlValue* value14 = fl_value_get_list_value(values, 14);
+  FlValue* double_list = value14;
+  FlValue* value15 = fl_value_get_list_value(values, 15);
+  FlValue* bool_list = value15;
+  FlValue* value16 = fl_value_get_list_value(values, 16);
+  FlValue* map = value16;
   return core_tests_pigeon_test_all_types_new(
       a_bool, an_int, an_int64, a_double, a_byte_array, a_byte_array_length,
       a4_byte_array, a4_byte_array_length, a8_byte_array, a8_byte_array_length,
-      a_float_array, a_float_array_length, list, a_map, an_enum, a_string,
-      an_object);
+      a_float_array, a_float_array_length, an_enum, a_string, an_object, list,
+      string_list, int_list, double_list, bool_list, map);
 }
 
 struct _CoreTestsPigeonTestAllNullableTypes {
@@ -250,8 +299,6 @@ struct _CoreTestsPigeonTestAllNullableTypes {
   size_t a_nullable8_byte_array_length;
   double* a_nullable_float_array;
   size_t a_nullable_float_array_length;
-  FlValue* a_nullable_list;
-  FlValue* a_nullable_map;
   FlValue* nullable_nested_list;
   FlValue* nullable_map_with_annotations;
   FlValue* nullable_map_with_object;
@@ -259,6 +306,13 @@ struct _CoreTestsPigeonTestAllNullableTypes {
   gchar* a_nullable_string;
   FlValue* a_nullable_object;
   CoreTestsPigeonTestAllNullableTypes* all_nullable_types;
+  FlValue* list;
+  FlValue* string_list;
+  FlValue* int_list;
+  FlValue* double_list;
+  FlValue* bool_list;
+  FlValue* nested_class_list;
+  FlValue* map;
 };
 
 G_DEFINE_TYPE(CoreTestsPigeonTestAllNullableTypes,
@@ -271,8 +325,6 @@ static void core_tests_pigeon_test_all_nullable_types_dispose(GObject* object) {
   g_clear_pointer(&self->a_nullable_int, g_free);
   g_clear_pointer(&self->a_nullable_int64, g_free);
   g_clear_pointer(&self->a_nullable_double, g_free);
-  g_clear_pointer(&self->a_nullable_list, fl_value_unref);
-  g_clear_pointer(&self->a_nullable_map, fl_value_unref);
   g_clear_pointer(&self->nullable_nested_list, fl_value_unref);
   g_clear_pointer(&self->nullable_map_with_annotations, fl_value_unref);
   g_clear_pointer(&self->nullable_map_with_object, fl_value_unref);
@@ -280,6 +332,13 @@ static void core_tests_pigeon_test_all_nullable_types_dispose(GObject* object) {
   g_clear_pointer(&self->a_nullable_string, g_free);
   g_clear_pointer(&self->a_nullable_object, fl_value_unref);
   g_clear_object(&self->all_nullable_types);
+  g_clear_pointer(&self->list, fl_value_unref);
+  g_clear_pointer(&self->string_list, fl_value_unref);
+  g_clear_pointer(&self->int_list, fl_value_unref);
+  g_clear_pointer(&self->double_list, fl_value_unref);
+  g_clear_pointer(&self->bool_list, fl_value_unref);
+  g_clear_pointer(&self->nested_class_list, fl_value_unref);
+  g_clear_pointer(&self->map, fl_value_unref);
   G_OBJECT_CLASS(core_tests_pigeon_test_all_nullable_types_parent_class)
       ->dispose(object);
 }
@@ -301,12 +360,13 @@ core_tests_pigeon_test_all_nullable_types_new(
     const int32_t* a_nullable4_byte_array, size_t a_nullable4_byte_array_length,
     const int64_t* a_nullable8_byte_array, size_t a_nullable8_byte_array_length,
     const double* a_nullable_float_array, size_t a_nullable_float_array_length,
-    FlValue* a_nullable_list, FlValue* a_nullable_map,
     FlValue* nullable_nested_list, FlValue* nullable_map_with_annotations,
     FlValue* nullable_map_with_object,
     CoreTestsPigeonTestAnEnum* a_nullable_enum, const gchar* a_nullable_string,
     FlValue* a_nullable_object,
-    CoreTestsPigeonTestAllNullableTypes* all_nullable_types) {
+    CoreTestsPigeonTestAllNullableTypes* all_nullable_types, FlValue* list,
+    FlValue* string_list, FlValue* int_list, FlValue* double_list,
+    FlValue* bool_list, FlValue* nested_class_list, FlValue* map) {
   CoreTestsPigeonTestAllNullableTypes* self =
       CORE_TESTS_PIGEON_TEST_ALL_NULLABLE_TYPES(g_object_new(
           core_tests_pigeon_test_all_nullable_types_get_type(), nullptr));
@@ -346,8 +406,6 @@ core_tests_pigeon_test_all_nullable_types_new(
   self->a_nullable_float_array = static_cast<double*>(g_memdup2(
       a_nullable_float_array, sizeof(double) * a_nullable_float_array_length));
   self->a_nullable_float_array_length = a_nullable_float_array_length;
-  self->a_nullable_list = fl_value_ref(a_nullable_list);
-  self->a_nullable_map = fl_value_ref(a_nullable_map);
   self->nullable_nested_list = fl_value_ref(nullable_nested_list);
   self->nullable_map_with_annotations =
       fl_value_ref(nullable_map_with_annotations);
@@ -362,6 +420,13 @@ core_tests_pigeon_test_all_nullable_types_new(
   self->a_nullable_string = g_strdup(a_nullable_string);
   self->a_nullable_object = fl_value_ref(a_nullable_object);
   self->all_nullable_types = g_object_ref(all_nullable_types);
+  self->list = fl_value_ref(list);
+  self->string_list = fl_value_ref(string_list);
+  self->int_list = fl_value_ref(int_list);
+  self->double_list = fl_value_ref(double_list);
+  self->bool_list = fl_value_ref(bool_list);
+  self->nested_class_list = fl_value_ref(nested_class_list);
+  self->map = fl_value_ref(map);
   return self;
 }
 
@@ -429,20 +494,6 @@ core_tests_pigeon_test_all_nullable_types_get_a_nullable_float_array(
   return self->a_nullable_float_array;
 }
 
-FlValue* core_tests_pigeon_test_all_nullable_types_get_a_nullable_list(
-    CoreTestsPigeonTestAllNullableTypes* self) {
-  g_return_val_if_fail(CORE_TESTS_PIGEON_TEST_IS_ALL_NULLABLE_TYPES(self),
-                       nullptr);
-  return self->a_nullable_list;
-}
-
-FlValue* core_tests_pigeon_test_all_nullable_types_get_a_nullable_map(
-    CoreTestsPigeonTestAllNullableTypes* self) {
-  g_return_val_if_fail(CORE_TESTS_PIGEON_TEST_IS_ALL_NULLABLE_TYPES(self),
-                       nullptr);
-  return self->a_nullable_map;
-}
-
 FlValue* core_tests_pigeon_test_all_nullable_types_get_nullable_nested_list(
     CoreTestsPigeonTestAllNullableTypes* self) {
   g_return_val_if_fail(CORE_TESTS_PIGEON_TEST_IS_ALL_NULLABLE_TYPES(self),
@@ -495,6 +546,55 @@ core_tests_pigeon_test_all_nullable_types_get_all_nullable_types(
   return self->all_nullable_types;
 }
 
+FlValue* core_tests_pigeon_test_all_nullable_types_get_list(
+    CoreTestsPigeonTestAllNullableTypes* self) {
+  g_return_val_if_fail(CORE_TESTS_PIGEON_TEST_IS_ALL_NULLABLE_TYPES(self),
+                       nullptr);
+  return self->list;
+}
+
+FlValue* core_tests_pigeon_test_all_nullable_types_get_string_list(
+    CoreTestsPigeonTestAllNullableTypes* self) {
+  g_return_val_if_fail(CORE_TESTS_PIGEON_TEST_IS_ALL_NULLABLE_TYPES(self),
+                       nullptr);
+  return self->string_list;
+}
+
+FlValue* core_tests_pigeon_test_all_nullable_types_get_int_list(
+    CoreTestsPigeonTestAllNullableTypes* self) {
+  g_return_val_if_fail(CORE_TESTS_PIGEON_TEST_IS_ALL_NULLABLE_TYPES(self),
+                       nullptr);
+  return self->int_list;
+}
+
+FlValue* core_tests_pigeon_test_all_nullable_types_get_double_list(
+    CoreTestsPigeonTestAllNullableTypes* self) {
+  g_return_val_if_fail(CORE_TESTS_PIGEON_TEST_IS_ALL_NULLABLE_TYPES(self),
+                       nullptr);
+  return self->double_list;
+}
+
+FlValue* core_tests_pigeon_test_all_nullable_types_get_bool_list(
+    CoreTestsPigeonTestAllNullableTypes* self) {
+  g_return_val_if_fail(CORE_TESTS_PIGEON_TEST_IS_ALL_NULLABLE_TYPES(self),
+                       nullptr);
+  return self->bool_list;
+}
+
+FlValue* core_tests_pigeon_test_all_nullable_types_get_nested_class_list(
+    CoreTestsPigeonTestAllNullableTypes* self) {
+  g_return_val_if_fail(CORE_TESTS_PIGEON_TEST_IS_ALL_NULLABLE_TYPES(self),
+                       nullptr);
+  return self->nested_class_list;
+}
+
+FlValue* core_tests_pigeon_test_all_nullable_types_get_map(
+    CoreTestsPigeonTestAllNullableTypes* self) {
+  g_return_val_if_fail(CORE_TESTS_PIGEON_TEST_IS_ALL_NULLABLE_TYPES(self),
+                       nullptr);
+  return self->map;
+}
+
 static FlValue* core_tests_pigeon_test_all_nullable_types_to_list(
     CoreTestsPigeonTestAllNullableTypes* self) {
   FlValue* values = fl_value_new_list();
@@ -531,12 +631,6 @@ static FlValue* core_tests_pigeon_test_all_nullable_types_to_list(
                   ? fl_value_new_float_list(self->a_nullable_float_array,
                                             self->a_nullable_float_array_length)
                   : fl_value_new_null());
-  fl_value_append_take(values, self->a_nullable_list != nullptr
-                                   ? fl_value_ref(self->a_nullable_list)
-                                   : fl_value_new_null());
-  fl_value_append_take(values, self->a_nullable_map != nullptr
-                                   ? fl_value_ref(self->a_nullable_map)
-                                   : fl_value_new_null());
   fl_value_append_take(values, self->nullable_nested_list != nullptr
                                    ? fl_value_ref(self->nullable_nested_list)
                                    : fl_value_new_null());
@@ -564,6 +658,25 @@ static FlValue* core_tests_pigeon_test_all_nullable_types_to_list(
                                    ? fl_value_new_custom_object(
                                          0, G_OBJECT(self->all_nullable_types))
                                    : fl_value_new_null());
+  fl_value_append_take(values, self->list != nullptr ? fl_value_ref(self->list)
+                                                     : fl_value_new_null());
+  fl_value_append_take(values, self->string_list != nullptr
+                                   ? fl_value_ref(self->string_list)
+                                   : fl_value_new_null());
+  fl_value_append_take(values, self->int_list != nullptr
+                                   ? fl_value_ref(self->int_list)
+                                   : fl_value_new_null());
+  fl_value_append_take(values, self->double_list != nullptr
+                                   ? fl_value_ref(self->double_list)
+                                   : fl_value_new_null());
+  fl_value_append_take(values, self->bool_list != nullptr
+                                   ? fl_value_ref(self->bool_list)
+                                   : fl_value_new_null());
+  fl_value_append_take(values, self->nested_class_list != nullptr
+                                   ? fl_value_ref(self->nested_class_list)
+                                   : fl_value_new_null());
+  fl_value_append_take(values, self->map != nullptr ? fl_value_ref(self->map)
+                                                    : fl_value_new_null());
   return values;
 }
 
@@ -622,51 +735,67 @@ core_tests_pigeon_test_all_nullable_types_new_from_list(FlValue* values) {
           : fl_value_get_float_list(value7);
   size_t a_nullable_float_array_length = fl_value_get_length(value7);
   FlValue* value8 = fl_value_get_list_value(values, 8);
-  FlValue* a_nullable_list =
+  FlValue* nullable_nested_list =
       fl_value_get_type(value8) == FL_VALUE_TYPE_NULL ? nullptr : value8;
   FlValue* value9 = fl_value_get_list_value(values, 9);
-  FlValue* a_nullable_map =
+  FlValue* nullable_map_with_annotations =
       fl_value_get_type(value9) == FL_VALUE_TYPE_NULL ? nullptr : value9;
   FlValue* value10 = fl_value_get_list_value(values, 10);
-  FlValue* nullable_nested_list =
+  FlValue* nullable_map_with_object =
       fl_value_get_type(value10) == FL_VALUE_TYPE_NULL ? nullptr : value10;
   FlValue* value11 = fl_value_get_list_value(values, 11);
-  FlValue* nullable_map_with_annotations =
-      fl_value_get_type(value11) == FL_VALUE_TYPE_NULL ? nullptr : value11;
-  FlValue* value12 = fl_value_get_list_value(values, 12);
-  FlValue* nullable_map_with_object =
-      fl_value_get_type(value12) == FL_VALUE_TYPE_NULL ? nullptr : value12;
-  FlValue* value13 = fl_value_get_list_value(values, 13);
   CoreTestsPigeonTestAnEnum* a_nullable_enum = nullptr;
   CoreTestsPigeonTestAnEnum a_nullable_enum_value;
-  if (fl_value_get_type(value13) != FL_VALUE_TYPE_NULL) {
+  if (fl_value_get_type(value11) != FL_VALUE_TYPE_NULL) {
     a_nullable_enum_value =
-        static_cast<CoreTestsPigeonTestAnEnum>(fl_value_get_int(value13));
+        static_cast<CoreTestsPigeonTestAnEnum>(fl_value_get_int(value11));
     a_nullable_enum = &a_nullable_enum_value;
   }
-  FlValue* value14 = fl_value_get_list_value(values, 14);
+  FlValue* value12 = fl_value_get_list_value(values, 12);
   const gchar* a_nullable_string =
+      fl_value_get_type(value12) == FL_VALUE_TYPE_NULL
+          ? nullptr
+          : fl_value_get_string(value12);
+  FlValue* value13 = fl_value_get_list_value(values, 13);
+  FlValue* a_nullable_object =
+      fl_value_get_type(value13) == FL_VALUE_TYPE_NULL ? nullptr : value13;
+  FlValue* value14 = fl_value_get_list_value(values, 14);
+  CoreTestsPigeonTestAllNullableTypes* all_nullable_types =
       fl_value_get_type(value14) == FL_VALUE_TYPE_NULL
           ? nullptr
-          : fl_value_get_string(value14);
+          : CORE_TESTS_PIGEON_TEST_ALL_NULLABLE_TYPES(
+                fl_value_get_custom_value_object(value14));
   FlValue* value15 = fl_value_get_list_value(values, 15);
-  FlValue* a_nullable_object =
+  FlValue* list =
       fl_value_get_type(value15) == FL_VALUE_TYPE_NULL ? nullptr : value15;
   FlValue* value16 = fl_value_get_list_value(values, 16);
-  CoreTestsPigeonTestAllNullableTypes* all_nullable_types =
-      fl_value_get_type(value16) == FL_VALUE_TYPE_NULL
-          ? nullptr
-          : CORE_TESTS_PIGEON_TEST_ALL_NULLABLE_TYPES(
-                fl_value_get_custom_value_object(value16));
+  FlValue* string_list =
+      fl_value_get_type(value16) == FL_VALUE_TYPE_NULL ? nullptr : value16;
+  FlValue* value17 = fl_value_get_list_value(values, 17);
+  FlValue* int_list =
+      fl_value_get_type(value17) == FL_VALUE_TYPE_NULL ? nullptr : value17;
+  FlValue* value18 = fl_value_get_list_value(values, 18);
+  FlValue* double_list =
+      fl_value_get_type(value18) == FL_VALUE_TYPE_NULL ? nullptr : value18;
+  FlValue* value19 = fl_value_get_list_value(values, 19);
+  FlValue* bool_list =
+      fl_value_get_type(value19) == FL_VALUE_TYPE_NULL ? nullptr : value19;
+  FlValue* value20 = fl_value_get_list_value(values, 20);
+  FlValue* nested_class_list =
+      fl_value_get_type(value20) == FL_VALUE_TYPE_NULL ? nullptr : value20;
+  FlValue* value21 = fl_value_get_list_value(values, 21);
+  FlValue* map =
+      fl_value_get_type(value21) == FL_VALUE_TYPE_NULL ? nullptr : value21;
   return core_tests_pigeon_test_all_nullable_types_new(
       a_nullable_bool, a_nullable_int, a_nullable_int64, a_nullable_double,
       a_nullable_byte_array, a_nullable_byte_array_length,
       a_nullable4_byte_array, a_nullable4_byte_array_length,
       a_nullable8_byte_array, a_nullable8_byte_array_length,
-      a_nullable_float_array, a_nullable_float_array_length, a_nullable_list,
-      a_nullable_map, nullable_nested_list, nullable_map_with_annotations,
+      a_nullable_float_array, a_nullable_float_array_length,
+      nullable_nested_list, nullable_map_with_annotations,
       nullable_map_with_object, a_nullable_enum, a_nullable_string,
-      a_nullable_object, all_nullable_types);
+      a_nullable_object, all_nullable_types, list, string_list, int_list,
+      double_list, bool_list, nested_class_list, map);
 }
 
 struct _CoreTestsPigeonTestAllNullableTypesWithoutRecursion {
@@ -684,14 +813,18 @@ struct _CoreTestsPigeonTestAllNullableTypesWithoutRecursion {
   size_t a_nullable8_byte_array_length;
   double* a_nullable_float_array;
   size_t a_nullable_float_array_length;
-  FlValue* a_nullable_list;
-  FlValue* a_nullable_map;
   FlValue* nullable_nested_list;
   FlValue* nullable_map_with_annotations;
   FlValue* nullable_map_with_object;
   CoreTestsPigeonTestAnEnum* a_nullable_enum;
   gchar* a_nullable_string;
   FlValue* a_nullable_object;
+  FlValue* list;
+  FlValue* string_list;
+  FlValue* int_list;
+  FlValue* double_list;
+  FlValue* bool_list;
+  FlValue* map;
 };
 
 G_DEFINE_TYPE(CoreTestsPigeonTestAllNullableTypesWithoutRecursion,
@@ -706,14 +839,18 @@ static void core_tests_pigeon_test_all_nullable_types_without_recursion_dispose(
   g_clear_pointer(&self->a_nullable_int, g_free);
   g_clear_pointer(&self->a_nullable_int64, g_free);
   g_clear_pointer(&self->a_nullable_double, g_free);
-  g_clear_pointer(&self->a_nullable_list, fl_value_unref);
-  g_clear_pointer(&self->a_nullable_map, fl_value_unref);
   g_clear_pointer(&self->nullable_nested_list, fl_value_unref);
   g_clear_pointer(&self->nullable_map_with_annotations, fl_value_unref);
   g_clear_pointer(&self->nullable_map_with_object, fl_value_unref);
   g_clear_pointer(&self->a_nullable_enum, g_free);
   g_clear_pointer(&self->a_nullable_string, g_free);
   g_clear_pointer(&self->a_nullable_object, fl_value_unref);
+  g_clear_pointer(&self->list, fl_value_unref);
+  g_clear_pointer(&self->string_list, fl_value_unref);
+  g_clear_pointer(&self->int_list, fl_value_unref);
+  g_clear_pointer(&self->double_list, fl_value_unref);
+  g_clear_pointer(&self->bool_list, fl_value_unref);
+  g_clear_pointer(&self->map, fl_value_unref);
   G_OBJECT_CLASS(
       core_tests_pigeon_test_all_nullable_types_without_recursion_parent_class)
       ->dispose(object);
@@ -737,11 +874,11 @@ core_tests_pigeon_test_all_nullable_types_without_recursion_new(
     const int32_t* a_nullable4_byte_array, size_t a_nullable4_byte_array_length,
     const int64_t* a_nullable8_byte_array, size_t a_nullable8_byte_array_length,
     const double* a_nullable_float_array, size_t a_nullable_float_array_length,
-    FlValue* a_nullable_list, FlValue* a_nullable_map,
     FlValue* nullable_nested_list, FlValue* nullable_map_with_annotations,
     FlValue* nullable_map_with_object,
     CoreTestsPigeonTestAnEnum* a_nullable_enum, const gchar* a_nullable_string,
-    FlValue* a_nullable_object) {
+    FlValue* a_nullable_object, FlValue* list, FlValue* string_list,
+    FlValue* int_list, FlValue* double_list, FlValue* bool_list, FlValue* map) {
   CoreTestsPigeonTestAllNullableTypesWithoutRecursion* self =
       CORE_TESTS_PIGEON_TEST_ALL_NULLABLE_TYPES_WITHOUT_RECURSION(g_object_new(
           core_tests_pigeon_test_all_nullable_types_without_recursion_get_type(),
@@ -782,8 +919,6 @@ core_tests_pigeon_test_all_nullable_types_without_recursion_new(
   self->a_nullable_float_array = static_cast<double*>(g_memdup2(
       a_nullable_float_array, sizeof(double) * a_nullable_float_array_length));
   self->a_nullable_float_array_length = a_nullable_float_array_length;
-  self->a_nullable_list = fl_value_ref(a_nullable_list);
-  self->a_nullable_map = fl_value_ref(a_nullable_map);
   self->nullable_nested_list = fl_value_ref(nullable_nested_list);
   self->nullable_map_with_annotations =
       fl_value_ref(nullable_map_with_annotations);
@@ -797,6 +932,12 @@ core_tests_pigeon_test_all_nullable_types_without_recursion_new(
   }
   self->a_nullable_string = g_strdup(a_nullable_string);
   self->a_nullable_object = fl_value_ref(a_nullable_object);
+  self->list = fl_value_ref(list);
+  self->string_list = fl_value_ref(string_list);
+  self->int_list = fl_value_ref(int_list);
+  self->double_list = fl_value_ref(double_list);
+  self->bool_list = fl_value_ref(bool_list);
+  self->map = fl_value_ref(map);
   return self;
 }
 
@@ -877,24 +1018,6 @@ core_tests_pigeon_test_all_nullable_types_without_recursion_get_a_nullable_float
 }
 
 FlValue*
-core_tests_pigeon_test_all_nullable_types_without_recursion_get_a_nullable_list(
-    CoreTestsPigeonTestAllNullableTypesWithoutRecursion* self) {
-  g_return_val_if_fail(
-      CORE_TESTS_PIGEON_TEST_IS_ALL_NULLABLE_TYPES_WITHOUT_RECURSION(self),
-      nullptr);
-  return self->a_nullable_list;
-}
-
-FlValue*
-core_tests_pigeon_test_all_nullable_types_without_recursion_get_a_nullable_map(
-    CoreTestsPigeonTestAllNullableTypesWithoutRecursion* self) {
-  g_return_val_if_fail(
-      CORE_TESTS_PIGEON_TEST_IS_ALL_NULLABLE_TYPES_WITHOUT_RECURSION(self),
-      nullptr);
-  return self->a_nullable_map;
-}
-
-FlValue*
 core_tests_pigeon_test_all_nullable_types_without_recursion_get_nullable_nested_list(
     CoreTestsPigeonTestAllNullableTypesWithoutRecursion* self) {
   g_return_val_if_fail(
@@ -948,6 +1071,58 @@ core_tests_pigeon_test_all_nullable_types_without_recursion_get_a_nullable_objec
   return self->a_nullable_object;
 }
 
+FlValue* core_tests_pigeon_test_all_nullable_types_without_recursion_get_list(
+    CoreTestsPigeonTestAllNullableTypesWithoutRecursion* self) {
+  g_return_val_if_fail(
+      CORE_TESTS_PIGEON_TEST_IS_ALL_NULLABLE_TYPES_WITHOUT_RECURSION(self),
+      nullptr);
+  return self->list;
+}
+
+FlValue*
+core_tests_pigeon_test_all_nullable_types_without_recursion_get_string_list(
+    CoreTestsPigeonTestAllNullableTypesWithoutRecursion* self) {
+  g_return_val_if_fail(
+      CORE_TESTS_PIGEON_TEST_IS_ALL_NULLABLE_TYPES_WITHOUT_RECURSION(self),
+      nullptr);
+  return self->string_list;
+}
+
+FlValue*
+core_tests_pigeon_test_all_nullable_types_without_recursion_get_int_list(
+    CoreTestsPigeonTestAllNullableTypesWithoutRecursion* self) {
+  g_return_val_if_fail(
+      CORE_TESTS_PIGEON_TEST_IS_ALL_NULLABLE_TYPES_WITHOUT_RECURSION(self),
+      nullptr);
+  return self->int_list;
+}
+
+FlValue*
+core_tests_pigeon_test_all_nullable_types_without_recursion_get_double_list(
+    CoreTestsPigeonTestAllNullableTypesWithoutRecursion* self) {
+  g_return_val_if_fail(
+      CORE_TESTS_PIGEON_TEST_IS_ALL_NULLABLE_TYPES_WITHOUT_RECURSION(self),
+      nullptr);
+  return self->double_list;
+}
+
+FlValue*
+core_tests_pigeon_test_all_nullable_types_without_recursion_get_bool_list(
+    CoreTestsPigeonTestAllNullableTypesWithoutRecursion* self) {
+  g_return_val_if_fail(
+      CORE_TESTS_PIGEON_TEST_IS_ALL_NULLABLE_TYPES_WITHOUT_RECURSION(self),
+      nullptr);
+  return self->bool_list;
+}
+
+FlValue* core_tests_pigeon_test_all_nullable_types_without_recursion_get_map(
+    CoreTestsPigeonTestAllNullableTypesWithoutRecursion* self) {
+  g_return_val_if_fail(
+      CORE_TESTS_PIGEON_TEST_IS_ALL_NULLABLE_TYPES_WITHOUT_RECURSION(self),
+      nullptr);
+  return self->map;
+}
+
 static FlValue*
 core_tests_pigeon_test_all_nullable_types_without_recursion_to_list(
     CoreTestsPigeonTestAllNullableTypesWithoutRecursion* self) {
@@ -985,12 +1160,6 @@ core_tests_pigeon_test_all_nullable_types_without_recursion_to_list(
                   ? fl_value_new_float_list(self->a_nullable_float_array,
                                             self->a_nullable_float_array_length)
                   : fl_value_new_null());
-  fl_value_append_take(values, self->a_nullable_list != nullptr
-                                   ? fl_value_ref(self->a_nullable_list)
-                                   : fl_value_new_null());
-  fl_value_append_take(values, self->a_nullable_map != nullptr
-                                   ? fl_value_ref(self->a_nullable_map)
-                                   : fl_value_new_null());
   fl_value_append_take(values, self->nullable_nested_list != nullptr
                                    ? fl_value_ref(self->nullable_nested_list)
                                    : fl_value_new_null());
@@ -1014,6 +1183,22 @@ core_tests_pigeon_test_all_nullable_types_without_recursion_to_list(
   fl_value_append_take(values, self->a_nullable_object != nullptr
                                    ? fl_value_ref(self->a_nullable_object)
                                    : fl_value_new_null());
+  fl_value_append_take(values, self->list != nullptr ? fl_value_ref(self->list)
+                                                     : fl_value_new_null());
+  fl_value_append_take(values, self->string_list != nullptr
+                                   ? fl_value_ref(self->string_list)
+                                   : fl_value_new_null());
+  fl_value_append_take(values, self->int_list != nullptr
+                                   ? fl_value_ref(self->int_list)
+                                   : fl_value_new_null());
+  fl_value_append_take(values, self->double_list != nullptr
+                                   ? fl_value_ref(self->double_list)
+                                   : fl_value_new_null());
+  fl_value_append_take(values, self->bool_list != nullptr
+                                   ? fl_value_ref(self->bool_list)
+                                   : fl_value_new_null());
+  fl_value_append_take(values, self->map != nullptr ? fl_value_ref(self->map)
+                                                    : fl_value_new_null());
   return values;
 }
 
@@ -1073,45 +1258,58 @@ core_tests_pigeon_test_all_nullable_types_without_recursion_new_from_list(
           : fl_value_get_float_list(value7);
   size_t a_nullable_float_array_length = fl_value_get_length(value7);
   FlValue* value8 = fl_value_get_list_value(values, 8);
-  FlValue* a_nullable_list =
+  FlValue* nullable_nested_list =
       fl_value_get_type(value8) == FL_VALUE_TYPE_NULL ? nullptr : value8;
   FlValue* value9 = fl_value_get_list_value(values, 9);
-  FlValue* a_nullable_map =
+  FlValue* nullable_map_with_annotations =
       fl_value_get_type(value9) == FL_VALUE_TYPE_NULL ? nullptr : value9;
   FlValue* value10 = fl_value_get_list_value(values, 10);
-  FlValue* nullable_nested_list =
+  FlValue* nullable_map_with_object =
       fl_value_get_type(value10) == FL_VALUE_TYPE_NULL ? nullptr : value10;
   FlValue* value11 = fl_value_get_list_value(values, 11);
-  FlValue* nullable_map_with_annotations =
-      fl_value_get_type(value11) == FL_VALUE_TYPE_NULL ? nullptr : value11;
-  FlValue* value12 = fl_value_get_list_value(values, 12);
-  FlValue* nullable_map_with_object =
-      fl_value_get_type(value12) == FL_VALUE_TYPE_NULL ? nullptr : value12;
-  FlValue* value13 = fl_value_get_list_value(values, 13);
   CoreTestsPigeonTestAnEnum* a_nullable_enum = nullptr;
   CoreTestsPigeonTestAnEnum a_nullable_enum_value;
-  if (fl_value_get_type(value13) != FL_VALUE_TYPE_NULL) {
+  if (fl_value_get_type(value11) != FL_VALUE_TYPE_NULL) {
     a_nullable_enum_value =
-        static_cast<CoreTestsPigeonTestAnEnum>(fl_value_get_int(value13));
+        static_cast<CoreTestsPigeonTestAnEnum>(fl_value_get_int(value11));
     a_nullable_enum = &a_nullable_enum_value;
   }
-  FlValue* value14 = fl_value_get_list_value(values, 14);
+  FlValue* value12 = fl_value_get_list_value(values, 12);
   const gchar* a_nullable_string =
-      fl_value_get_type(value14) == FL_VALUE_TYPE_NULL
+      fl_value_get_type(value12) == FL_VALUE_TYPE_NULL
           ? nullptr
-          : fl_value_get_string(value14);
-  FlValue* value15 = fl_value_get_list_value(values, 15);
+          : fl_value_get_string(value12);
+  FlValue* value13 = fl_value_get_list_value(values, 13);
   FlValue* a_nullable_object =
+      fl_value_get_type(value13) == FL_VALUE_TYPE_NULL ? nullptr : value13;
+  FlValue* value14 = fl_value_get_list_value(values, 14);
+  FlValue* list =
+      fl_value_get_type(value14) == FL_VALUE_TYPE_NULL ? nullptr : value14;
+  FlValue* value15 = fl_value_get_list_value(values, 15);
+  FlValue* string_list =
       fl_value_get_type(value15) == FL_VALUE_TYPE_NULL ? nullptr : value15;
+  FlValue* value16 = fl_value_get_list_value(values, 16);
+  FlValue* int_list =
+      fl_value_get_type(value16) == FL_VALUE_TYPE_NULL ? nullptr : value16;
+  FlValue* value17 = fl_value_get_list_value(values, 17);
+  FlValue* double_list =
+      fl_value_get_type(value17) == FL_VALUE_TYPE_NULL ? nullptr : value17;
+  FlValue* value18 = fl_value_get_list_value(values, 18);
+  FlValue* bool_list =
+      fl_value_get_type(value18) == FL_VALUE_TYPE_NULL ? nullptr : value18;
+  FlValue* value19 = fl_value_get_list_value(values, 19);
+  FlValue* map =
+      fl_value_get_type(value19) == FL_VALUE_TYPE_NULL ? nullptr : value19;
   return core_tests_pigeon_test_all_nullable_types_without_recursion_new(
       a_nullable_bool, a_nullable_int, a_nullable_int64, a_nullable_double,
       a_nullable_byte_array, a_nullable_byte_array_length,
       a_nullable4_byte_array, a_nullable4_byte_array_length,
       a_nullable8_byte_array, a_nullable8_byte_array_length,
-      a_nullable_float_array, a_nullable_float_array_length, a_nullable_list,
-      a_nullable_map, nullable_nested_list, nullable_map_with_annotations,
+      a_nullable_float_array, a_nullable_float_array_length,
+      nullable_nested_list, nullable_map_with_annotations,
       nullable_map_with_object, a_nullable_enum, a_nullable_string,
-      a_nullable_object);
+      a_nullable_object, list, string_list, int_list, double_list, bool_list,
+      map);
 }
 
 struct _CoreTestsPigeonTestAllClassesWrapper {
@@ -1282,35 +1480,30 @@ core_tests_pigeon_test_test_message_new_from_list(FlValue* values) {
   return core_tests_pigeon_test_test_message_new(test_list);
 }
 
-G_DECLARE_FINAL_TYPE(CoreTestsPigeonTestHostIntegrationCoreApiCodec,
-                     core_tests_pigeon_test_host_integration_core_api_codec,
-                     CORE_TESTS_PIGEON_TEST, HOST_INTEGRATION_CORE_API_CODEC,
-                     FlStandardMessageCodec)
+G_DECLARE_FINAL_TYPE(PigeonMessageCodec, pigeon_message_codec, PIGEON,
+                     MESSAGE_CODEC, FlStandardMessageCodec)
 
-struct _CoreTestsPigeonTestHostIntegrationCoreApiCodec {
+struct _PigeonMessageCodec {
   FlStandardMessageCodec parent_instance;
 };
 
-G_DEFINE_TYPE(CoreTestsPigeonTestHostIntegrationCoreApiCodec,
-              core_tests_pigeon_test_host_integration_core_api_codec,
+G_DEFINE_TYPE(PigeonMessageCodec, pigeon_message_codec,
               fl_standard_message_codec_get_type())
 
-static gboolean
-core_tests_pigeon_test_host_integration_core_api_write_core_tests_pigeon_test_all_classes_wrapper(
+static gboolean pigeon_message_codec_write_core_tests_pigeon_test_all_types(
     FlStandardMessageCodec* codec, GByteArray* buffer,
-    CoreTestsPigeonTestAllClassesWrapper* value, GError** error) {
-  uint8_t type = 128;
+    CoreTestsPigeonTestAllTypes* value, GError** error) {
+  uint8_t type = 129;
   g_byte_array_append(buffer, &type, sizeof(uint8_t));
-  g_autoptr(FlValue) values =
-      core_tests_pigeon_test_all_classes_wrapper_to_list(value);
+  g_autoptr(FlValue) values = core_tests_pigeon_test_all_types_to_list(value);
   return fl_standard_message_codec_write_value(codec, buffer, values, error);
 }
 
 static gboolean
-core_tests_pigeon_test_host_integration_core_api_write_core_tests_pigeon_test_all_nullable_types(
+pigeon_message_codec_write_core_tests_pigeon_test_all_nullable_types(
     FlStandardMessageCodec* codec, GByteArray* buffer,
     CoreTestsPigeonTestAllNullableTypes* value, GError** error) {
-  uint8_t type = 129;
+  uint8_t type = 130;
   g_byte_array_append(buffer, &type, sizeof(uint8_t));
   g_autoptr(FlValue) values =
       core_tests_pigeon_test_all_nullable_types_to_list(value);
@@ -1318,11 +1511,11 @@ core_tests_pigeon_test_host_integration_core_api_write_core_tests_pigeon_test_al
 }
 
 static gboolean
-core_tests_pigeon_test_host_integration_core_api_write_core_tests_pigeon_test_all_nullable_types_without_recursion(
+pigeon_message_codec_write_core_tests_pigeon_test_all_nullable_types_without_recursion(
     FlStandardMessageCodec* codec, GByteArray* buffer,
     CoreTestsPigeonTestAllNullableTypesWithoutRecursion* value,
     GError** error) {
-  uint8_t type = 130;
+  uint8_t type = 131;
   g_byte_array_append(buffer, &type, sizeof(uint8_t));
   g_autoptr(FlValue) values =
       core_tests_pigeon_test_all_nullable_types_without_recursion_to_list(
@@ -1331,71 +1524,84 @@ core_tests_pigeon_test_host_integration_core_api_write_core_tests_pigeon_test_al
 }
 
 static gboolean
-core_tests_pigeon_test_host_integration_core_api_write_core_tests_pigeon_test_all_types(
+pigeon_message_codec_write_core_tests_pigeon_test_all_classes_wrapper(
     FlStandardMessageCodec* codec, GByteArray* buffer,
-    CoreTestsPigeonTestAllTypes* value, GError** error) {
-  uint8_t type = 131;
+    CoreTestsPigeonTestAllClassesWrapper* value, GError** error) {
+  uint8_t type = 132;
   g_byte_array_append(buffer, &type, sizeof(uint8_t));
-  g_autoptr(FlValue) values = core_tests_pigeon_test_all_types_to_list(value);
+  g_autoptr(FlValue) values =
+      core_tests_pigeon_test_all_classes_wrapper_to_list(value);
   return fl_standard_message_codec_write_value(codec, buffer, values, error);
 }
 
-static gboolean
-core_tests_pigeon_test_host_integration_core_api_write_core_tests_pigeon_test_test_message(
+static gboolean pigeon_message_codec_write_core_tests_pigeon_test_test_message(
     FlStandardMessageCodec* codec, GByteArray* buffer,
     CoreTestsPigeonTestTestMessage* value, GError** error) {
-  uint8_t type = 132;
+  uint8_t type = 133;
   g_byte_array_append(buffer, &type, sizeof(uint8_t));
   g_autoptr(FlValue) values =
       core_tests_pigeon_test_test_message_to_list(value);
   return fl_standard_message_codec_write_value(codec, buffer, values, error);
 }
 
-static gboolean core_tests_pigeon_test_host_integration_core_api_write_value(
+static gboolean pigeon_message_codec_write_core_tests_pigeon_test_an_enum(
     FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
     GError** error) {
+  uint8_t type = 134;
+  g_byte_array_append(buffer, &type, sizeof(uint8_t));
+  return fl_standard_message_codec_write_value(codec, buffer, value, error);
+}
+
+static gboolean pigeon_message_codec_write_value(FlStandardMessageCodec* codec,
+                                                 GByteArray* buffer,
+                                                 FlValue* value,
+                                                 GError** error) {
   if (fl_value_get_type(value) == FL_VALUE_TYPE_CUSTOM) {
     switch (fl_value_get_custom_type(value)) {
-      case 128:
-        return core_tests_pigeon_test_host_integration_core_api_write_core_tests_pigeon_test_all_classes_wrapper(
-            codec, buffer,
-            CORE_TESTS_PIGEON_TEST_ALL_CLASSES_WRAPPER(
-                fl_value_get_custom_value_object(value)),
-            error);
       case 129:
-        return core_tests_pigeon_test_host_integration_core_api_write_core_tests_pigeon_test_all_nullable_types(
-            codec, buffer,
-            CORE_TESTS_PIGEON_TEST_ALL_NULLABLE_TYPES(
-                fl_value_get_custom_value_object(value)),
-            error);
-      case 130:
-        return core_tests_pigeon_test_host_integration_core_api_write_core_tests_pigeon_test_all_nullable_types_without_recursion(
-            codec, buffer,
-            CORE_TESTS_PIGEON_TEST_ALL_NULLABLE_TYPES_WITHOUT_RECURSION(
-                fl_value_get_custom_value_object(value)),
-            error);
-      case 131:
-        return core_tests_pigeon_test_host_integration_core_api_write_core_tests_pigeon_test_all_types(
+        return pigeon_message_codec_write_core_tests_pigeon_test_all_types(
             codec, buffer,
             CORE_TESTS_PIGEON_TEST_ALL_TYPES(
                 fl_value_get_custom_value_object(value)),
             error);
+      case 130:
+        return pigeon_message_codec_write_core_tests_pigeon_test_all_nullable_types(
+            codec, buffer,
+            CORE_TESTS_PIGEON_TEST_ALL_NULLABLE_TYPES(
+                fl_value_get_custom_value_object(value)),
+            error);
+      case 131:
+        return pigeon_message_codec_write_core_tests_pigeon_test_all_nullable_types_without_recursion(
+            codec, buffer,
+            CORE_TESTS_PIGEON_TEST_ALL_NULLABLE_TYPES_WITHOUT_RECURSION(
+                fl_value_get_custom_value_object(value)),
+            error);
       case 132:
-        return core_tests_pigeon_test_host_integration_core_api_write_core_tests_pigeon_test_test_message(
+        return pigeon_message_codec_write_core_tests_pigeon_test_all_classes_wrapper(
+            codec, buffer,
+            CORE_TESTS_PIGEON_TEST_ALL_CLASSES_WRAPPER(
+                fl_value_get_custom_value_object(value)),
+            error);
+      case 133:
+        return pigeon_message_codec_write_core_tests_pigeon_test_test_message(
             codec, buffer,
             CORE_TESTS_PIGEON_TEST_TEST_MESSAGE(
                 fl_value_get_custom_value_object(value)),
             error);
+      case 134:
+        return pigeon_message_codec_write_core_tests_pigeon_test_an_enum(
+            codec, buffer,
+            reinterpret_cast<FlValue*>(
+                const_cast<gpointer>(fl_value_get_custom_value(value))),
+            error);
     }
   }
 
-  return FL_STANDARD_MESSAGE_CODEC_CLASS(
-             core_tests_pigeon_test_host_integration_core_api_codec_parent_class)
+  return FL_STANDARD_MESSAGE_CODEC_CLASS(pigeon_message_codec_parent_class)
       ->write_value(codec, buffer, value, error);
 }
 
-static FlValue*
-core_tests_pigeon_test_host_integration_core_api_read_core_tests_pigeon_test_all_classes_wrapper(
+static FlValue* pigeon_message_codec_read_core_tests_pigeon_test_all_types(
     FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
     GError** error) {
   g_autoptr(FlValue) values =
@@ -1404,19 +1610,19 @@ core_tests_pigeon_test_host_integration_core_api_read_core_tests_pigeon_test_all
     return nullptr;
   }
 
-  g_autoptr(CoreTestsPigeonTestAllClassesWrapper) value =
-      core_tests_pigeon_test_all_classes_wrapper_new_from_list(values);
+  g_autoptr(CoreTestsPigeonTestAllTypes) value =
+      core_tests_pigeon_test_all_types_new_from_list(values);
   if (value == nullptr) {
     g_set_error(error, FL_MESSAGE_CODEC_ERROR, FL_MESSAGE_CODEC_ERROR_FAILED,
                 "Invalid data received for MessageData");
     return nullptr;
   }
 
-  return fl_value_new_custom_object_take(128, G_OBJECT(value));
+  return fl_value_new_custom_object_take(129, G_OBJECT(value));
 }
 
 static FlValue*
-core_tests_pigeon_test_host_integration_core_api_read_core_tests_pigeon_test_all_nullable_types(
+pigeon_message_codec_read_core_tests_pigeon_test_all_nullable_types(
     FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
     GError** error) {
   g_autoptr(FlValue) values =
@@ -1433,11 +1639,11 @@ core_tests_pigeon_test_host_integration_core_api_read_core_tests_pigeon_test_all
     return nullptr;
   }
 
-  return fl_value_new_custom_object_take(129, G_OBJECT(value));
+  return fl_value_new_custom_object_take(130, G_OBJECT(value));
 }
 
 static FlValue*
-core_tests_pigeon_test_host_integration_core_api_read_core_tests_pigeon_test_all_nullable_types_without_recursion(
+pigeon_message_codec_read_core_tests_pigeon_test_all_nullable_types_without_recursion(
     FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
     GError** error) {
   g_autoptr(FlValue) values =
@@ -1455,11 +1661,11 @@ core_tests_pigeon_test_host_integration_core_api_read_core_tests_pigeon_test_all
     return nullptr;
   }
 
-  return fl_value_new_custom_object_take(130, G_OBJECT(value));
+  return fl_value_new_custom_object_take(131, G_OBJECT(value));
 }
 
 static FlValue*
-core_tests_pigeon_test_host_integration_core_api_read_core_tests_pigeon_test_all_types(
+pigeon_message_codec_read_core_tests_pigeon_test_all_classes_wrapper(
     FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
     GError** error) {
   g_autoptr(FlValue) values =
@@ -1468,19 +1674,18 @@ core_tests_pigeon_test_host_integration_core_api_read_core_tests_pigeon_test_all
     return nullptr;
   }
 
-  g_autoptr(CoreTestsPigeonTestAllTypes) value =
-      core_tests_pigeon_test_all_types_new_from_list(values);
+  g_autoptr(CoreTestsPigeonTestAllClassesWrapper) value =
+      core_tests_pigeon_test_all_classes_wrapper_new_from_list(values);
   if (value == nullptr) {
     g_set_error(error, FL_MESSAGE_CODEC_ERROR, FL_MESSAGE_CODEC_ERROR_FAILED,
                 "Invalid data received for MessageData");
     return nullptr;
   }
 
-  return fl_value_new_custom_object_take(131, G_OBJECT(value));
+  return fl_value_new_custom_object_take(132, G_OBJECT(value));
 }
 
-static FlValue*
-core_tests_pigeon_test_host_integration_core_api_read_core_tests_pigeon_test_test_message(
+static FlValue* pigeon_message_codec_read_core_tests_pigeon_test_test_message(
     FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
     GError** error) {
   g_autoptr(FlValue) values =
@@ -1497,53 +1702,57 @@ core_tests_pigeon_test_host_integration_core_api_read_core_tests_pigeon_test_tes
     return nullptr;
   }
 
-  return fl_value_new_custom_object_take(132, G_OBJECT(value));
+  return fl_value_new_custom_object_take(133, G_OBJECT(value));
 }
 
-static FlValue*
-core_tests_pigeon_test_host_integration_core_api_read_value_of_type(
+static FlValue* pigeon_message_codec_read_core_tests_pigeon_test_an_enum(
+    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
+    GError** error) {
+  return fl_value_new_custom(
+      134, fl_standard_message_codec_read_value(codec, buffer, offset, error),
+      (GDestroyNotify)fl_value_unref);
+}
+
+static FlValue* pigeon_message_codec_read_value_of_type(
     FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset, int type,
     GError** error) {
   switch (type) {
-    case 128:
-      return core_tests_pigeon_test_host_integration_core_api_read_core_tests_pigeon_test_all_classes_wrapper(
-          codec, buffer, offset, error);
     case 129:
-      return core_tests_pigeon_test_host_integration_core_api_read_core_tests_pigeon_test_all_nullable_types(
+      return pigeon_message_codec_read_core_tests_pigeon_test_all_types(
           codec, buffer, offset, error);
     case 130:
-      return core_tests_pigeon_test_host_integration_core_api_read_core_tests_pigeon_test_all_nullable_types_without_recursion(
+      return pigeon_message_codec_read_core_tests_pigeon_test_all_nullable_types(
           codec, buffer, offset, error);
     case 131:
-      return core_tests_pigeon_test_host_integration_core_api_read_core_tests_pigeon_test_all_types(
+      return pigeon_message_codec_read_core_tests_pigeon_test_all_nullable_types_without_recursion(
           codec, buffer, offset, error);
     case 132:
-      return core_tests_pigeon_test_host_integration_core_api_read_core_tests_pigeon_test_test_message(
+      return pigeon_message_codec_read_core_tests_pigeon_test_all_classes_wrapper(
+          codec, buffer, offset, error);
+    case 133:
+      return pigeon_message_codec_read_core_tests_pigeon_test_test_message(
+          codec, buffer, offset, error);
+    case 134:
+      return pigeon_message_codec_read_core_tests_pigeon_test_an_enum(
           codec, buffer, offset, error);
     default:
-      return FL_STANDARD_MESSAGE_CODEC_CLASS(
-                 core_tests_pigeon_test_host_integration_core_api_codec_parent_class)
+      return FL_STANDARD_MESSAGE_CODEC_CLASS(pigeon_message_codec_parent_class)
           ->read_value_of_type(codec, buffer, offset, type, error);
   }
 }
 
-static void core_tests_pigeon_test_host_integration_core_api_codec_init(
-    CoreTestsPigeonTestHostIntegrationCoreApiCodec* self) {}
+static void pigeon_message_codec_init(PigeonMessageCodec* self) {}
 
-static void core_tests_pigeon_test_host_integration_core_api_codec_class_init(
-    CoreTestsPigeonTestHostIntegrationCoreApiCodecClass* klass) {
+static void pigeon_message_codec_class_init(PigeonMessageCodecClass* klass) {
   FL_STANDARD_MESSAGE_CODEC_CLASS(klass)->write_value =
-      core_tests_pigeon_test_host_integration_core_api_write_value;
+      pigeon_message_codec_write_value;
   FL_STANDARD_MESSAGE_CODEC_CLASS(klass)->read_value_of_type =
-      core_tests_pigeon_test_host_integration_core_api_read_value_of_type;
+      pigeon_message_codec_read_value_of_type;
 }
 
-static CoreTestsPigeonTestHostIntegrationCoreApiCodec*
-core_tests_pigeon_test_host_integration_core_api_codec_new() {
-  CoreTestsPigeonTestHostIntegrationCoreApiCodec* self =
-      CORE_TESTS_PIGEON_TEST_HOST_INTEGRATION_CORE_API_CODEC(g_object_new(
-          core_tests_pigeon_test_host_integration_core_api_codec_get_type(),
-          nullptr));
+static PigeonMessageCodec* pigeon_message_codec_new() {
+  PigeonMessageCodec* self = PIGEON_MESSAGE_CODEC(
+      g_object_new(pigeon_message_codec_get_type(), nullptr));
   return self;
 }
 
@@ -9679,8 +9888,7 @@ core_tests_pigeon_test_host_integration_core_api_new(
   self->user_data = user_data;
   self->user_data_free_func = user_data_free_func;
 
-  g_autoptr(CoreTestsPigeonTestHostIntegrationCoreApiCodec) codec =
-      core_tests_pigeon_test_host_integration_core_api_codec_new();
+  g_autoptr(PigeonMessageCodec) codec = pigeon_message_codec_new();
   self->noop_channel = fl_basic_message_channel_new(
       messenger,
       "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.noop",
@@ -12225,272 +12433,6 @@ void core_tests_pigeon_test_host_integration_core_api_respond_error_call_flutter
   }
 }
 
-G_DECLARE_FINAL_TYPE(CoreTestsPigeonTestFlutterIntegrationCoreApiCodec,
-                     core_tests_pigeon_test_flutter_integration_core_api_codec,
-                     CORE_TESTS_PIGEON_TEST, FLUTTER_INTEGRATION_CORE_API_CODEC,
-                     FlStandardMessageCodec)
-
-struct _CoreTestsPigeonTestFlutterIntegrationCoreApiCodec {
-  FlStandardMessageCodec parent_instance;
-};
-
-G_DEFINE_TYPE(CoreTestsPigeonTestFlutterIntegrationCoreApiCodec,
-              core_tests_pigeon_test_flutter_integration_core_api_codec,
-              fl_standard_message_codec_get_type())
-
-static gboolean
-core_tests_pigeon_test_flutter_integration_core_api_write_core_tests_pigeon_test_all_classes_wrapper(
-    FlStandardMessageCodec* codec, GByteArray* buffer,
-    CoreTestsPigeonTestAllClassesWrapper* value, GError** error) {
-  uint8_t type = 128;
-  g_byte_array_append(buffer, &type, sizeof(uint8_t));
-  g_autoptr(FlValue) values =
-      core_tests_pigeon_test_all_classes_wrapper_to_list(value);
-  return fl_standard_message_codec_write_value(codec, buffer, values, error);
-}
-
-static gboolean
-core_tests_pigeon_test_flutter_integration_core_api_write_core_tests_pigeon_test_all_nullable_types(
-    FlStandardMessageCodec* codec, GByteArray* buffer,
-    CoreTestsPigeonTestAllNullableTypes* value, GError** error) {
-  uint8_t type = 129;
-  g_byte_array_append(buffer, &type, sizeof(uint8_t));
-  g_autoptr(FlValue) values =
-      core_tests_pigeon_test_all_nullable_types_to_list(value);
-  return fl_standard_message_codec_write_value(codec, buffer, values, error);
-}
-
-static gboolean
-core_tests_pigeon_test_flutter_integration_core_api_write_core_tests_pigeon_test_all_nullable_types_without_recursion(
-    FlStandardMessageCodec* codec, GByteArray* buffer,
-    CoreTestsPigeonTestAllNullableTypesWithoutRecursion* value,
-    GError** error) {
-  uint8_t type = 130;
-  g_byte_array_append(buffer, &type, sizeof(uint8_t));
-  g_autoptr(FlValue) values =
-      core_tests_pigeon_test_all_nullable_types_without_recursion_to_list(
-          value);
-  return fl_standard_message_codec_write_value(codec, buffer, values, error);
-}
-
-static gboolean
-core_tests_pigeon_test_flutter_integration_core_api_write_core_tests_pigeon_test_all_types(
-    FlStandardMessageCodec* codec, GByteArray* buffer,
-    CoreTestsPigeonTestAllTypes* value, GError** error) {
-  uint8_t type = 131;
-  g_byte_array_append(buffer, &type, sizeof(uint8_t));
-  g_autoptr(FlValue) values = core_tests_pigeon_test_all_types_to_list(value);
-  return fl_standard_message_codec_write_value(codec, buffer, values, error);
-}
-
-static gboolean
-core_tests_pigeon_test_flutter_integration_core_api_write_core_tests_pigeon_test_test_message(
-    FlStandardMessageCodec* codec, GByteArray* buffer,
-    CoreTestsPigeonTestTestMessage* value, GError** error) {
-  uint8_t type = 132;
-  g_byte_array_append(buffer, &type, sizeof(uint8_t));
-  g_autoptr(FlValue) values =
-      core_tests_pigeon_test_test_message_to_list(value);
-  return fl_standard_message_codec_write_value(codec, buffer, values, error);
-}
-
-static gboolean core_tests_pigeon_test_flutter_integration_core_api_write_value(
-    FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
-    GError** error) {
-  if (fl_value_get_type(value) == FL_VALUE_TYPE_CUSTOM) {
-    switch (fl_value_get_custom_type(value)) {
-      case 128:
-        return core_tests_pigeon_test_flutter_integration_core_api_write_core_tests_pigeon_test_all_classes_wrapper(
-            codec, buffer,
-            CORE_TESTS_PIGEON_TEST_ALL_CLASSES_WRAPPER(
-                fl_value_get_custom_value_object(value)),
-            error);
-      case 129:
-        return core_tests_pigeon_test_flutter_integration_core_api_write_core_tests_pigeon_test_all_nullable_types(
-            codec, buffer,
-            CORE_TESTS_PIGEON_TEST_ALL_NULLABLE_TYPES(
-                fl_value_get_custom_value_object(value)),
-            error);
-      case 130:
-        return core_tests_pigeon_test_flutter_integration_core_api_write_core_tests_pigeon_test_all_nullable_types_without_recursion(
-            codec, buffer,
-            CORE_TESTS_PIGEON_TEST_ALL_NULLABLE_TYPES_WITHOUT_RECURSION(
-                fl_value_get_custom_value_object(value)),
-            error);
-      case 131:
-        return core_tests_pigeon_test_flutter_integration_core_api_write_core_tests_pigeon_test_all_types(
-            codec, buffer,
-            CORE_TESTS_PIGEON_TEST_ALL_TYPES(
-                fl_value_get_custom_value_object(value)),
-            error);
-      case 132:
-        return core_tests_pigeon_test_flutter_integration_core_api_write_core_tests_pigeon_test_test_message(
-            codec, buffer,
-            CORE_TESTS_PIGEON_TEST_TEST_MESSAGE(
-                fl_value_get_custom_value_object(value)),
-            error);
-    }
-  }
-
-  return FL_STANDARD_MESSAGE_CODEC_CLASS(
-             core_tests_pigeon_test_flutter_integration_core_api_codec_parent_class)
-      ->write_value(codec, buffer, value, error);
-}
-
-static FlValue*
-core_tests_pigeon_test_flutter_integration_core_api_read_core_tests_pigeon_test_all_classes_wrapper(
-    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
-    GError** error) {
-  g_autoptr(FlValue) values =
-      fl_standard_message_codec_read_value(codec, buffer, offset, error);
-  if (values == nullptr) {
-    return nullptr;
-  }
-
-  g_autoptr(CoreTestsPigeonTestAllClassesWrapper) value =
-      core_tests_pigeon_test_all_classes_wrapper_new_from_list(values);
-  if (value == nullptr) {
-    g_set_error(error, FL_MESSAGE_CODEC_ERROR, FL_MESSAGE_CODEC_ERROR_FAILED,
-                "Invalid data received for MessageData");
-    return nullptr;
-  }
-
-  return fl_value_new_custom_object_take(128, G_OBJECT(value));
-}
-
-static FlValue*
-core_tests_pigeon_test_flutter_integration_core_api_read_core_tests_pigeon_test_all_nullable_types(
-    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
-    GError** error) {
-  g_autoptr(FlValue) values =
-      fl_standard_message_codec_read_value(codec, buffer, offset, error);
-  if (values == nullptr) {
-    return nullptr;
-  }
-
-  g_autoptr(CoreTestsPigeonTestAllNullableTypes) value =
-      core_tests_pigeon_test_all_nullable_types_new_from_list(values);
-  if (value == nullptr) {
-    g_set_error(error, FL_MESSAGE_CODEC_ERROR, FL_MESSAGE_CODEC_ERROR_FAILED,
-                "Invalid data received for MessageData");
-    return nullptr;
-  }
-
-  return fl_value_new_custom_object_take(129, G_OBJECT(value));
-}
-
-static FlValue*
-core_tests_pigeon_test_flutter_integration_core_api_read_core_tests_pigeon_test_all_nullable_types_without_recursion(
-    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
-    GError** error) {
-  g_autoptr(FlValue) values =
-      fl_standard_message_codec_read_value(codec, buffer, offset, error);
-  if (values == nullptr) {
-    return nullptr;
-  }
-
-  g_autoptr(CoreTestsPigeonTestAllNullableTypesWithoutRecursion) value =
-      core_tests_pigeon_test_all_nullable_types_without_recursion_new_from_list(
-          values);
-  if (value == nullptr) {
-    g_set_error(error, FL_MESSAGE_CODEC_ERROR, FL_MESSAGE_CODEC_ERROR_FAILED,
-                "Invalid data received for MessageData");
-    return nullptr;
-  }
-
-  return fl_value_new_custom_object_take(130, G_OBJECT(value));
-}
-
-static FlValue*
-core_tests_pigeon_test_flutter_integration_core_api_read_core_tests_pigeon_test_all_types(
-    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
-    GError** error) {
-  g_autoptr(FlValue) values =
-      fl_standard_message_codec_read_value(codec, buffer, offset, error);
-  if (values == nullptr) {
-    return nullptr;
-  }
-
-  g_autoptr(CoreTestsPigeonTestAllTypes) value =
-      core_tests_pigeon_test_all_types_new_from_list(values);
-  if (value == nullptr) {
-    g_set_error(error, FL_MESSAGE_CODEC_ERROR, FL_MESSAGE_CODEC_ERROR_FAILED,
-                "Invalid data received for MessageData");
-    return nullptr;
-  }
-
-  return fl_value_new_custom_object_take(131, G_OBJECT(value));
-}
-
-static FlValue*
-core_tests_pigeon_test_flutter_integration_core_api_read_core_tests_pigeon_test_test_message(
-    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
-    GError** error) {
-  g_autoptr(FlValue) values =
-      fl_standard_message_codec_read_value(codec, buffer, offset, error);
-  if (values == nullptr) {
-    return nullptr;
-  }
-
-  g_autoptr(CoreTestsPigeonTestTestMessage) value =
-      core_tests_pigeon_test_test_message_new_from_list(values);
-  if (value == nullptr) {
-    g_set_error(error, FL_MESSAGE_CODEC_ERROR, FL_MESSAGE_CODEC_ERROR_FAILED,
-                "Invalid data received for MessageData");
-    return nullptr;
-  }
-
-  return fl_value_new_custom_object_take(132, G_OBJECT(value));
-}
-
-static FlValue*
-core_tests_pigeon_test_flutter_integration_core_api_read_value_of_type(
-    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset, int type,
-    GError** error) {
-  switch (type) {
-    case 128:
-      return core_tests_pigeon_test_flutter_integration_core_api_read_core_tests_pigeon_test_all_classes_wrapper(
-          codec, buffer, offset, error);
-    case 129:
-      return core_tests_pigeon_test_flutter_integration_core_api_read_core_tests_pigeon_test_all_nullable_types(
-          codec, buffer, offset, error);
-    case 130:
-      return core_tests_pigeon_test_flutter_integration_core_api_read_core_tests_pigeon_test_all_nullable_types_without_recursion(
-          codec, buffer, offset, error);
-    case 131:
-      return core_tests_pigeon_test_flutter_integration_core_api_read_core_tests_pigeon_test_all_types(
-          codec, buffer, offset, error);
-    case 132:
-      return core_tests_pigeon_test_flutter_integration_core_api_read_core_tests_pigeon_test_test_message(
-          codec, buffer, offset, error);
-    default:
-      return FL_STANDARD_MESSAGE_CODEC_CLASS(
-                 core_tests_pigeon_test_flutter_integration_core_api_codec_parent_class)
-          ->read_value_of_type(codec, buffer, offset, type, error);
-  }
-}
-
-static void core_tests_pigeon_test_flutter_integration_core_api_codec_init(
-    CoreTestsPigeonTestFlutterIntegrationCoreApiCodec* self) {}
-
-static void
-core_tests_pigeon_test_flutter_integration_core_api_codec_class_init(
-    CoreTestsPigeonTestFlutterIntegrationCoreApiCodecClass* klass) {
-  FL_STANDARD_MESSAGE_CODEC_CLASS(klass)->write_value =
-      core_tests_pigeon_test_flutter_integration_core_api_write_value;
-  FL_STANDARD_MESSAGE_CODEC_CLASS(klass)->read_value_of_type =
-      core_tests_pigeon_test_flutter_integration_core_api_read_value_of_type;
-}
-
-static CoreTestsPigeonTestFlutterIntegrationCoreApiCodec*
-core_tests_pigeon_test_flutter_integration_core_api_codec_new() {
-  CoreTestsPigeonTestFlutterIntegrationCoreApiCodec* self =
-      CORE_TESTS_PIGEON_TEST_FLUTTER_INTEGRATION_CORE_API_CODEC(g_object_new(
-          core_tests_pigeon_test_flutter_integration_core_api_codec_get_type(),
-          nullptr));
-  return self;
-}
-
 struct _CoreTestsPigeonTestFlutterIntegrationCoreApi {
   GObject parent_instance;
 
@@ -12527,8 +12469,7 @@ core_tests_pigeon_test_flutter_integration_core_api_new(
       CORE_TESTS_PIGEON_TEST_FLUTTER_INTEGRATION_CORE_API(g_object_new(
           core_tests_pigeon_test_flutter_integration_core_api_get_type(),
           nullptr));
-  g_autoptr(CoreTestsPigeonTestFlutterIntegrationCoreApiCodec) message_codec =
-      core_tests_pigeon_test_flutter_integration_core_api_codec_new();
+  g_autoptr(PigeonMessageCodec) message_codec = pigeon_message_codec_new();
   g_autoptr(FlStandardMethodCodec) codec =
       fl_standard_method_codec_new_with_message_codec(
           FL_STANDARD_MESSAGE_CODEC(message_codec));
@@ -13499,7 +13440,7 @@ CoreTestsPigeonTestHostTrivialApi* core_tests_pigeon_test_host_trivial_api_new(
   self->user_data = user_data;
   self->user_data_free_func = user_data_free_func;
 
-  g_autoptr(FlStandardMessageCodec) codec = fl_standard_message_codec_new();
+  g_autoptr(PigeonMessageCodec) codec = pigeon_message_codec_new();
   self->noop_channel = fl_basic_message_channel_new(
       messenger,
       "dev.flutter.pigeon.pigeon_integration_tests.HostTrivialApi.noop",
@@ -13708,7 +13649,7 @@ CoreTestsPigeonTestHostSmallApi* core_tests_pigeon_test_host_small_api_new(
   self->user_data = user_data;
   self->user_data_free_func = user_data_free_func;
 
-  g_autoptr(FlStandardMessageCodec) codec = fl_standard_message_codec_new();
+  g_autoptr(PigeonMessageCodec) codec = pigeon_message_codec_new();
   self->echo_channel = fl_basic_message_channel_new(
       messenger,
       "dev.flutter.pigeon.pigeon_integration_tests.HostSmallApi.echo",
@@ -13784,103 +13725,6 @@ void core_tests_pigeon_test_host_small_api_respond_error_void_void(
   }
 }
 
-G_DECLARE_FINAL_TYPE(CoreTestsPigeonTestFlutterSmallApiCodec,
-                     core_tests_pigeon_test_flutter_small_api_codec,
-                     CORE_TESTS_PIGEON_TEST, FLUTTER_SMALL_API_CODEC,
-                     FlStandardMessageCodec)
-
-struct _CoreTestsPigeonTestFlutterSmallApiCodec {
-  FlStandardMessageCodec parent_instance;
-};
-
-G_DEFINE_TYPE(CoreTestsPigeonTestFlutterSmallApiCodec,
-              core_tests_pigeon_test_flutter_small_api_codec,
-              fl_standard_message_codec_get_type())
-
-static gboolean
-core_tests_pigeon_test_flutter_small_api_write_core_tests_pigeon_test_test_message(
-    FlStandardMessageCodec* codec, GByteArray* buffer,
-    CoreTestsPigeonTestTestMessage* value, GError** error) {
-  uint8_t type = 128;
-  g_byte_array_append(buffer, &type, sizeof(uint8_t));
-  g_autoptr(FlValue) values =
-      core_tests_pigeon_test_test_message_to_list(value);
-  return fl_standard_message_codec_write_value(codec, buffer, values, error);
-}
-
-static gboolean core_tests_pigeon_test_flutter_small_api_write_value(
-    FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value,
-    GError** error) {
-  if (fl_value_get_type(value) == FL_VALUE_TYPE_CUSTOM) {
-    switch (fl_value_get_custom_type(value)) {
-      case 128:
-        return core_tests_pigeon_test_flutter_small_api_write_core_tests_pigeon_test_test_message(
-            codec, buffer,
-            CORE_TESTS_PIGEON_TEST_TEST_MESSAGE(
-                fl_value_get_custom_value_object(value)),
-            error);
-    }
-  }
-
-  return FL_STANDARD_MESSAGE_CODEC_CLASS(
-             core_tests_pigeon_test_flutter_small_api_codec_parent_class)
-      ->write_value(codec, buffer, value, error);
-}
-
-static FlValue*
-core_tests_pigeon_test_flutter_small_api_read_core_tests_pigeon_test_test_message(
-    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset,
-    GError** error) {
-  g_autoptr(FlValue) values =
-      fl_standard_message_codec_read_value(codec, buffer, offset, error);
-  if (values == nullptr) {
-    return nullptr;
-  }
-
-  g_autoptr(CoreTestsPigeonTestTestMessage) value =
-      core_tests_pigeon_test_test_message_new_from_list(values);
-  if (value == nullptr) {
-    g_set_error(error, FL_MESSAGE_CODEC_ERROR, FL_MESSAGE_CODEC_ERROR_FAILED,
-                "Invalid data received for MessageData");
-    return nullptr;
-  }
-
-  return fl_value_new_custom_object_take(128, G_OBJECT(value));
-}
-
-static FlValue* core_tests_pigeon_test_flutter_small_api_read_value_of_type(
-    FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset, int type,
-    GError** error) {
-  switch (type) {
-    case 128:
-      return core_tests_pigeon_test_flutter_small_api_read_core_tests_pigeon_test_test_message(
-          codec, buffer, offset, error);
-    default:
-      return FL_STANDARD_MESSAGE_CODEC_CLASS(
-                 core_tests_pigeon_test_flutter_small_api_codec_parent_class)
-          ->read_value_of_type(codec, buffer, offset, type, error);
-  }
-}
-
-static void core_tests_pigeon_test_flutter_small_api_codec_init(
-    CoreTestsPigeonTestFlutterSmallApiCodec* self) {}
-
-static void core_tests_pigeon_test_flutter_small_api_codec_class_init(
-    CoreTestsPigeonTestFlutterSmallApiCodecClass* klass) {
-  FL_STANDARD_MESSAGE_CODEC_CLASS(klass)->write_value =
-      core_tests_pigeon_test_flutter_small_api_write_value;
-  FL_STANDARD_MESSAGE_CODEC_CLASS(klass)->read_value_of_type =
-      core_tests_pigeon_test_flutter_small_api_read_value_of_type;
-}
-
-static CoreTestsPigeonTestFlutterSmallApiCodec*
-core_tests_pigeon_test_flutter_small_api_codec_new() {
-  CoreTestsPigeonTestFlutterSmallApiCodec* self =
-      CORE_TESTS_PIGEON_TEST_FLUTTER_SMALL_API_CODEC(g_object_new(
-          core_tests_pigeon_test_flutter_small_api_codec_get_type(), nullptr));
-  return self;
-}
-
 struct _CoreTestsPigeonTestFlutterSmallApi {
   GObject parent_instance;
 
@@ -13912,8 +13756,7 @@ core_tests_pigeon_test_flutter_small_api_new(FlBinaryMessenger* messenger) {
   CoreTestsPigeonTestFlutterSmallApi* self =
       CORE_TESTS_PIGEON_TEST_FLUTTER_SMALL_API(g_object_new(
           core_tests_pigeon_test_flutter_small_api_get_type(), nullptr));
-  g_autoptr(CoreTestsPigeonTestFlutterSmallApiCodec) message_codec =
-      core_tests_pigeon_test_flutter_small_api_codec_new();
+  g_autoptr(PigeonMessageCodec) message_codec = pigeon_message_codec_new();
   g_autoptr(FlStandardMethodCodec) codec =
       fl_standard_method_codec_new_with_message_codec(
           FL_STANDARD_MESSAGE_CODEC(message_codec));

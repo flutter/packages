@@ -514,7 +514,7 @@ PigeonExamplePackageExampleHostApi* pigeon_example_package_example_host_api_new(
   PigeonExamplePackageExampleHostApi* self =
       PIGEON_EXAMPLE_PACKAGE_EXAMPLE_HOST_API(g_object_new(
           pigeon_example_package_example_host_api_get_type(), nullptr));
-  self->messenger = g_object_ref(messenger);
+  self->messenger = FL_BINARY_MESSENGER(g_object_ref(messenger));
   self->vtable = vtable;
   self->user_data = user_data;
   self->user_data_free_func = user_data_free_func;

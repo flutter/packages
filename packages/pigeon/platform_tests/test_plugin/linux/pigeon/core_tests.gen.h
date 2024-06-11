@@ -30,9 +30,10 @@ CoreTestsPigeonTestAllTypes* core_tests_pigeon_test_all_types_new(
     const uint8_t* a_byte_array, size_t a_byte_array_length,
     const int32_t* a4_byte_array, size_t a4_byte_array_length,
     const int64_t* a8_byte_array, size_t a8_byte_array_length,
-    const double* a_float_array, size_t a_float_array_length, FlValue* list,
-    FlValue* a_map, CoreTestsPigeonTestAnEnum an_enum, const gchar* a_string,
-    FlValue* an_object);
+    const double* a_float_array, size_t a_float_array_length,
+    CoreTestsPigeonTestAnEnum an_enum, const gchar* a_string,
+    FlValue* an_object, FlValue* list, FlValue* string_list, FlValue* int_list,
+    FlValue* double_list, FlValue* bool_list, FlValue* map);
 
 gboolean core_tests_pigeon_test_all_types_get_a_bool(
     CoreTestsPigeonTestAllTypes* self);
@@ -58,12 +59,6 @@ const int64_t* core_tests_pigeon_test_all_types_get_a8_byte_array(
 const double* core_tests_pigeon_test_all_types_get_a_float_array(
     CoreTestsPigeonTestAllTypes* self, size_t* length);
 
-FlValue* core_tests_pigeon_test_all_types_get_list(
-    CoreTestsPigeonTestAllTypes* self);
-
-FlValue* core_tests_pigeon_test_all_types_get_a_map(
-    CoreTestsPigeonTestAllTypes* self);
-
 CoreTestsPigeonTestAnEnum core_tests_pigeon_test_all_types_get_an_enum(
     CoreTestsPigeonTestAllTypes* self);
 
@@ -71,6 +66,24 @@ const gchar* core_tests_pigeon_test_all_types_get_a_string(
     CoreTestsPigeonTestAllTypes* self);
 
 FlValue* core_tests_pigeon_test_all_types_get_an_object(
+    CoreTestsPigeonTestAllTypes* self);
+
+FlValue* core_tests_pigeon_test_all_types_get_list(
+    CoreTestsPigeonTestAllTypes* self);
+
+FlValue* core_tests_pigeon_test_all_types_get_string_list(
+    CoreTestsPigeonTestAllTypes* self);
+
+FlValue* core_tests_pigeon_test_all_types_get_int_list(
+    CoreTestsPigeonTestAllTypes* self);
+
+FlValue* core_tests_pigeon_test_all_types_get_double_list(
+    CoreTestsPigeonTestAllTypes* self);
+
+FlValue* core_tests_pigeon_test_all_types_get_bool_list(
+    CoreTestsPigeonTestAllTypes* self);
+
+FlValue* core_tests_pigeon_test_all_types_get_map(
     CoreTestsPigeonTestAllTypes* self);
 
 // A class containing all supported nullable types.
@@ -86,12 +99,13 @@ core_tests_pigeon_test_all_nullable_types_new(
     const int32_t* a_nullable4_byte_array, size_t a_nullable4_byte_array_length,
     const int64_t* a_nullable8_byte_array, size_t a_nullable8_byte_array_length,
     const double* a_nullable_float_array, size_t a_nullable_float_array_length,
-    FlValue* a_nullable_list, FlValue* a_nullable_map,
     FlValue* nullable_nested_list, FlValue* nullable_map_with_annotations,
     FlValue* nullable_map_with_object,
     CoreTestsPigeonTestAnEnum* a_nullable_enum, const gchar* a_nullable_string,
     FlValue* a_nullable_object,
-    CoreTestsPigeonTestAllNullableTypes* all_nullable_types);
+    CoreTestsPigeonTestAllNullableTypes* all_nullable_types, FlValue* list,
+    FlValue* string_list, FlValue* int_list, FlValue* double_list,
+    FlValue* bool_list, FlValue* nested_class_list, FlValue* map);
 
 gboolean* core_tests_pigeon_test_all_nullable_types_get_a_nullable_bool(
     CoreTestsPigeonTestAllNullableTypes* self);
@@ -121,12 +135,6 @@ const double*
 core_tests_pigeon_test_all_nullable_types_get_a_nullable_float_array(
     CoreTestsPigeonTestAllNullableTypes* self, size_t* length);
 
-FlValue* core_tests_pigeon_test_all_nullable_types_get_a_nullable_list(
-    CoreTestsPigeonTestAllNullableTypes* self);
-
-FlValue* core_tests_pigeon_test_all_nullable_types_get_a_nullable_map(
-    CoreTestsPigeonTestAllNullableTypes* self);
-
 FlValue* core_tests_pigeon_test_all_nullable_types_get_nullable_nested_list(
     CoreTestsPigeonTestAllNullableTypes* self);
 
@@ -151,6 +159,27 @@ CoreTestsPigeonTestAllNullableTypes*
 core_tests_pigeon_test_all_nullable_types_get_all_nullable_types(
     CoreTestsPigeonTestAllNullableTypes* self);
 
+FlValue* core_tests_pigeon_test_all_nullable_types_get_list(
+    CoreTestsPigeonTestAllNullableTypes* self);
+
+FlValue* core_tests_pigeon_test_all_nullable_types_get_string_list(
+    CoreTestsPigeonTestAllNullableTypes* self);
+
+FlValue* core_tests_pigeon_test_all_nullable_types_get_int_list(
+    CoreTestsPigeonTestAllNullableTypes* self);
+
+FlValue* core_tests_pigeon_test_all_nullable_types_get_double_list(
+    CoreTestsPigeonTestAllNullableTypes* self);
+
+FlValue* core_tests_pigeon_test_all_nullable_types_get_bool_list(
+    CoreTestsPigeonTestAllNullableTypes* self);
+
+FlValue* core_tests_pigeon_test_all_nullable_types_get_nested_class_list(
+    CoreTestsPigeonTestAllNullableTypes* self);
+
+FlValue* core_tests_pigeon_test_all_nullable_types_get_map(
+    CoreTestsPigeonTestAllNullableTypes* self);
+
 // The primary purpose for this class is to ensure coverage of Swift structs
 // with nullable items, as the primary [AllNullableTypes] class is being used to
 // test Swift classes.
@@ -167,11 +196,11 @@ core_tests_pigeon_test_all_nullable_types_without_recursion_new(
     const int32_t* a_nullable4_byte_array, size_t a_nullable4_byte_array_length,
     const int64_t* a_nullable8_byte_array, size_t a_nullable8_byte_array_length,
     const double* a_nullable_float_array, size_t a_nullable_float_array_length,
-    FlValue* a_nullable_list, FlValue* a_nullable_map,
     FlValue* nullable_nested_list, FlValue* nullable_map_with_annotations,
     FlValue* nullable_map_with_object,
     CoreTestsPigeonTestAnEnum* a_nullable_enum, const gchar* a_nullable_string,
-    FlValue* a_nullable_object);
+    FlValue* a_nullable_object, FlValue* list, FlValue* string_list,
+    FlValue* int_list, FlValue* double_list, FlValue* bool_list, FlValue* map);
 
 gboolean*
 core_tests_pigeon_test_all_nullable_types_without_recursion_get_a_nullable_bool(
@@ -206,14 +235,6 @@ core_tests_pigeon_test_all_nullable_types_without_recursion_get_a_nullable_float
     CoreTestsPigeonTestAllNullableTypesWithoutRecursion* self, size_t* length);
 
 FlValue*
-core_tests_pigeon_test_all_nullable_types_without_recursion_get_a_nullable_list(
-    CoreTestsPigeonTestAllNullableTypesWithoutRecursion* self);
-
-FlValue*
-core_tests_pigeon_test_all_nullable_types_without_recursion_get_a_nullable_map(
-    CoreTestsPigeonTestAllNullableTypesWithoutRecursion* self);
-
-FlValue*
 core_tests_pigeon_test_all_nullable_types_without_recursion_get_nullable_nested_list(
     CoreTestsPigeonTestAllNullableTypesWithoutRecursion* self);
 
@@ -235,6 +256,28 @@ core_tests_pigeon_test_all_nullable_types_without_recursion_get_a_nullable_strin
 
 FlValue*
 core_tests_pigeon_test_all_nullable_types_without_recursion_get_a_nullable_object(
+    CoreTestsPigeonTestAllNullableTypesWithoutRecursion* self);
+
+FlValue* core_tests_pigeon_test_all_nullable_types_without_recursion_get_list(
+    CoreTestsPigeonTestAllNullableTypesWithoutRecursion* self);
+
+FlValue*
+core_tests_pigeon_test_all_nullable_types_without_recursion_get_string_list(
+    CoreTestsPigeonTestAllNullableTypesWithoutRecursion* self);
+
+FlValue*
+core_tests_pigeon_test_all_nullable_types_without_recursion_get_int_list(
+    CoreTestsPigeonTestAllNullableTypesWithoutRecursion* self);
+
+FlValue*
+core_tests_pigeon_test_all_nullable_types_without_recursion_get_double_list(
+    CoreTestsPigeonTestAllNullableTypesWithoutRecursion* self);
+
+FlValue*
+core_tests_pigeon_test_all_nullable_types_without_recursion_get_bool_list(
+    CoreTestsPigeonTestAllNullableTypesWithoutRecursion* self);
+
+FlValue* core_tests_pigeon_test_all_nullable_types_without_recursion_get_map(
     CoreTestsPigeonTestAllNullableTypesWithoutRecursion* self);
 
 // A class for testing nested class handling.
