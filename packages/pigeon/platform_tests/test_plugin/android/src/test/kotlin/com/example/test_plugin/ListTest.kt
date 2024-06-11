@@ -9,10 +9,12 @@ import io.mockk.every
 import io.mockk.mockk
 import java.nio.ByteBuffer
 import java.util.ArrayList
-import junit.framework.TestCase
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
-class ListTest : TestCase() {
+class ListTest {
+
   @Test
   fun testListInList() {
     val binaryMessenger = mockk<BinaryMessenger>()

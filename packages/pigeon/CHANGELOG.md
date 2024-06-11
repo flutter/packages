@@ -1,6 +1,19 @@
-## 19.1.0
+## 20.1.0
 
 * [kotlin] Adds implementation for `@ProxyApi`.
+
+## 20.0.1
+
+* [cpp] Fixes handling of null class arguments.
+
+## 20.0.0
+
+* Moves all codec logic to single custom codec per file.
+* **Breaking Change** Limits the number of total custom types to 126.
+  * If more than 126 custom types are needed, consider breaking up your definition files.
+* Fixes bug that prevented collection subtypes from being added properly.
+* [swift] Adds `@unchecked Sendable` to codec method.
+* [objc] [cpp] Fixes bug that prevented setting custom header import path.
 
 ## 19.0.2
 

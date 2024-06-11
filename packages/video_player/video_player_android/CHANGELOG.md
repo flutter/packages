@@ -1,3 +1,11 @@
+## 2.5.0
+
+* Migrates ExoPlayer to Media3-ExoPlayer 1.3.1.
+
+## 2.4.17
+
+* Revert Impeller support.
+
 ## 2.4.16
 
 * [Supports Impeller](https://docs.flutter.dev/release/breaking-changes/android-surface-plugins).

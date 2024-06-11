@@ -1,3 +1,7 @@
+## 2.7.0
+
+* Adds support for BitmapDescriptor classes `AssetMapBitmap` and `BytesMapBitmap`.
+
 ## 2.6.1
 
 * Adds support for patterns in polylines.

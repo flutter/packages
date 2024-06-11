@@ -282,7 +282,7 @@ private class PigeonInstanceManagerApi(val binaryMessenger: BinaryMessenger) {
             val wrapped: List<Any?> =
                 try {
                   instanceManager.remove<Any?>(identifierArg)
-                  listOf<Any?>(null)
+                  listOf(null)
                 } catch (exception: Throwable) {
                   wrapError(exception)
                 }
@@ -303,7 +303,7 @@ private class PigeonInstanceManagerApi(val binaryMessenger: BinaryMessenger) {
             val wrapped: List<Any?> =
                 try {
                   instanceManager.clear()
-                  listOf<Any?>(null)
+                  listOf(null)
                 } catch (exception: Throwable) {
                   wrapError(exception)
                 }
@@ -443,6 +443,28 @@ enum class ProxyApiTestEnum(val raw: Int) {
     }
   }
 }
+
+private object ProxyApiTestsPigeonCodec : StandardMessageCodec() {
+  override fun readValueOfType(type: Byte, buffer: ByteBuffer): Any? {
+    return when (type) {
+      129.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { ProxyApiTestEnum.ofRaw(it) }
+      }
+      else -> super.readValueOfType(type, buffer)
+    }
+  }
+
+  override fun writeValue(stream: ByteArrayOutputStream, value: Any?) {
+    when (value) {
+      is ProxyApiTestEnum -> {
+        stream.write(129)
+        writeValue(stream, value.raw)
+      }
+      else -> super.writeValue(stream, value)
+    }
+  }
+}
+
 /**
  * The core ProxyApi test class that each supported host language must implement in platform_tests
  * integration tests.
@@ -968,7 +990,7 @@ abstract class PigeonApiProxyApiTestClass(open val pigeonRegistrar: PigeonProxyA
             val aUint8ListArg = args[5] as ByteArray
             val aListArg = args[6] as List<Any?>
             val aMapArg = args[7] as Map<String?, Any?>
-            val anEnumArg = ProxyApiTestEnum.ofRaw(args[8] as Int)!!
+            val anEnumArg = args[8] as ProxyApiTestEnum
             val aProxyApiArg = args[9] as com.example.test_plugin.ProxyApiSuperClass
             val aNullableBoolArg = args[10] as Boolean?
             val aNullableIntArg =
@@ -978,8 +1000,7 @@ abstract class PigeonApiProxyApiTestClass(open val pigeonRegistrar: PigeonProxyA
             val aNullableUint8ListArg = args[14] as ByteArray?
             val aNullableListArg = args[15] as List<Any?>?
             val aNullableMapArg = args[16] as Map<String?, Any?>?
-            val aNullableEnumArg =
-                if (args[17] == null) null else ProxyApiTestEnum.ofRaw(args[17] as Int)
+            val aNullableEnumArg = args[17] as ProxyApiTestEnum?
             val aNullableProxyApiArg = args[18] as com.example.test_plugin.ProxyApiSuperClass?
             val boolParamArg = args[19] as Boolean
             val intParamArg = args[20].let { num -> if (num is Int) num.toLong() else num as Long }
@@ -988,7 +1009,7 @@ abstract class PigeonApiProxyApiTestClass(open val pigeonRegistrar: PigeonProxyA
             val aUint8ListParamArg = args[23] as ByteArray
             val listParamArg = args[24] as List<Any?>
             val mapParamArg = args[25] as Map<String?, Any?>
-            val enumParamArg = ProxyApiTestEnum.ofRaw(args[26] as Int)!!
+            val enumParamArg = args[26] as ProxyApiTestEnum
             val proxyApiParamArg = args[27] as com.example.test_plugin.ProxyApiSuperClass
             val nullableBoolParamArg = args[28] as Boolean?
             val nullableIntParamArg =
@@ -998,8 +1019,7 @@ abstract class PigeonApiProxyApiTestClass(open val pigeonRegistrar: PigeonProxyA
             val nullableUint8ListParamArg = args[32] as ByteArray?
             val nullableListParamArg = args[33] as List<Any?>?
             val nullableMapParamArg = args[34] as Map<String?, Any?>?
-            val nullableEnumParamArg =
-                if (args[35] == null) null else ProxyApiTestEnum.ofRaw(args[35] as Int)
+            val nullableEnumParamArg = args[35] as ProxyApiTestEnum?
             val nullableProxyApiParamArg = args[36] as com.example.test_plugin.ProxyApiSuperClass?
             val wrapped: List<Any?> =
                 try {
@@ -1042,7 +1062,7 @@ abstract class PigeonApiProxyApiTestClass(open val pigeonRegistrar: PigeonProxyA
                           nullableEnumParamArg,
                           nullableProxyApiParamArg),
                       pigeon_identifierArg)
-                  listOf<Any?>(null)
+                  listOf(null)
                 } catch (exception: Throwable) {
                   wrapError(exception)
                 }
@@ -1068,7 +1088,7 @@ abstract class PigeonApiProxyApiTestClass(open val pigeonRegistrar: PigeonProxyA
                 try {
                   api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
                       api.attachedField(pigeon_instanceArg), pigeon_identifierArg)
-                  listOf<Any?>(null)
+                  listOf(null)
                 } catch (exception: Throwable) {
                   wrapError(exception)
                 }
@@ -1093,7 +1113,7 @@ abstract class PigeonApiProxyApiTestClass(open val pigeonRegistrar: PigeonProxyA
                 try {
                   api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
                       api.staticAttachedField(), pigeon_identifierArg)
-                  listOf<Any?>(null)
+                  listOf(null)
                 } catch (exception: Throwable) {
                   wrapError(exception)
                 }
@@ -1116,7 +1136,7 @@ abstract class PigeonApiProxyApiTestClass(open val pigeonRegistrar: PigeonProxyA
             val wrapped: List<Any?> =
                 try {
                   api.noop(pigeon_instanceArg)
-                  listOf<Any?>(null)
+                  listOf(null)
                 } catch (exception: Throwable) {
                   wrapError(exception)
                 }
@@ -1138,7 +1158,7 @@ abstract class PigeonApiProxyApiTestClass(open val pigeonRegistrar: PigeonProxyA
             val pigeon_instanceArg = args[0] as ProxyApiTestClass
             val wrapped: List<Any?> =
                 try {
-                  listOf<Any?>(api.throwError(pigeon_instanceArg))
+                  listOf(api.throwError(pigeon_instanceArg))
                 } catch (exception: Throwable) {
                   wrapError(exception)
                 }
@@ -1161,7 +1181,7 @@ abstract class PigeonApiProxyApiTestClass(open val pigeonRegistrar: PigeonProxyA
             val wrapped: List<Any?> =
                 try {
                   api.throwErrorFromVoid(pigeon_instanceArg)
-                  listOf<Any?>(null)
+                  listOf(null)
                 } catch (exception: Throwable) {
                   wrapError(exception)
                 }
@@ -1183,7 +1203,7 @@ abstract class PigeonApiProxyApiTestClass(open val pigeonRegistrar: PigeonProxyA
             val pigeon_instanceArg = args[0] as ProxyApiTestClass
             val wrapped: List<Any?> =
                 try {
-                  listOf<Any?>(api.throwFlutterError(pigeon_instanceArg))
+                  listOf(api.throwFlutterError(pigeon_instanceArg))
                 } catch (exception: Throwable) {
                   wrapError(exception)
                 }
@@ -1206,7 +1226,7 @@ abstract class PigeonApiProxyApiTestClass(open val pigeonRegistrar: PigeonProxyA
             val anIntArg = args[1].let { num -> if (num is Int) num.toLong() else num as Long }
             val wrapped: List<Any?> =
                 try {
-                  listOf<Any?>(api.echoInt(pigeon_instanceArg, anIntArg))
+                  listOf(api.echoInt(pigeon_instanceArg, anIntArg))
                 } catch (exception: Throwable) {
                   wrapError(exception)
                 }
@@ -1229,7 +1249,7 @@ abstract class PigeonApiProxyApiTestClass(open val pigeonRegistrar: PigeonProxyA
             val aDoubleArg = args[1] as Double
             val wrapped: List<Any?> =
                 try {
-                  listOf<Any?>(api.echoDouble(pigeon_instanceArg, aDoubleArg))
+                  listOf(api.echoDouble(pigeon_instanceArg, aDoubleArg))
                 } catch (exception: Throwable) {
                   wrapError(exception)
                 }
@@ -1252,7 +1272,7 @@ abstract class PigeonApiProxyApiTestClass(open val pigeonRegistrar: PigeonProxyA
             val aBoolArg = args[1] as Boolean
             val wrapped: List<Any?> =
                 try {
-                  listOf<Any?>(api.echoBool(pigeon_instanceArg, aBoolArg))
+                  listOf(api.echoBool(pigeon_instanceArg, aBoolArg))
                 } catch (exception: Throwable) {
                   wrapError(exception)
                 }
@@ -1275,7 +1295,7 @@ abstract class PigeonApiProxyApiTestClass(open val pigeonRegistrar: PigeonProxyA
             val aStringArg = args[1] as String
             val wrapped: List<Any?> =
                 try {
-                  listOf<Any?>(api.echoString(pigeon_instanceArg, aStringArg))
+                  listOf(api.echoString(pigeon_instanceArg, aStringArg))
                 } catch (exception: Throwable) {
                   wrapError(exception)
                 }
@@ -1298,7 +1318,7 @@ abstract class PigeonApiProxyApiTestClass(open val pigeonRegistrar: PigeonProxyA
             val aUint8ListArg = args[1] as ByteArray
             val wrapped: List<Any?> =
                 try {
-                  listOf<Any?>(api.echoUint8List(pigeon_instanceArg, aUint8ListArg))
+                  listOf(api.echoUint8List(pigeon_instanceArg, aUint8ListArg))
                 } catch (exception: Throwable) {
                   wrapError(exception)
                 }
@@ -1321,7 +1341,7 @@ abstract class PigeonApiProxyApiTestClass(open val pigeonRegistrar: PigeonProxyA
             val anObjectArg = args[1] as Any
             val wrapped: List<Any?> =
                 try {
-                  listOf<Any?>(api.echoObject(pigeon_instanceArg, anObjectArg))
+                  listOf(api.echoObject(pigeon_instanceArg, anObjectArg))
                 } catch (exception: Throwable) {
                   wrapError(exception)
                 }
@@ -1344,7 +1364,7 @@ abstract class PigeonApiProxyApiTestClass(open val pigeonRegistrar: PigeonProxyA
             val aListArg = args[1] as List<Any?>
             val wrapped: List<Any?> =
                 try {
-                  listOf<Any?>(api.echoList(pigeon_instanceArg, aListArg))
+                  listOf(api.echoList(pigeon_instanceArg, aListArg))
                 } catch (exception: Throwable) {
                   wrapError(exception)
                 }
@@ -1367,7 +1387,7 @@ abstract class PigeonApiProxyApiTestClass(open val pigeonRegistrar: PigeonProxyA
             val aListArg = args[1] as List<ProxyApiTestClass>
             val wrapped: List<Any?> =
                 try {
-                  listOf<Any?>(api.echoProxyApiList(pigeon_instanceArg, aListArg))
+                  listOf(api.echoProxyApiList(pigeon_instanceArg, aListArg))
                 } catch (exception: Throwable) {
                   wrapError(exception)
                 }
@@ -1390,7 +1410,7 @@ abstract class PigeonApiProxyApiTestClass(open val pigeonRegistrar: PigeonProxyA
             val aMapArg = args[1] as Map<String?, Any?>
             val wrapped: List<Any?> =
                 try {
-                  listOf<Any?>(api.echoMap(pigeon_instanceArg, aMapArg))
+                  listOf(api.echoMap(pigeon_instanceArg, aMapArg))
                 } catch (exception: Throwable) {
                   wrapError(exception)
                 }
@@ -1413,7 +1433,7 @@ abstract class PigeonApiProxyApiTestClass(open val pigeonRegistrar: PigeonProxyA
             val aMapArg = args[1] as Map<String, ProxyApiTestClass>
             val wrapped: List<Any?> =
                 try {
-                  listOf<Any?>(api.echoProxyApiMap(pigeon_instanceArg, aMapArg))
+                  listOf(api.echoProxyApiMap(pigeon_instanceArg, aMapArg))
                 } catch (exception: Throwable) {
                   wrapError(exception)
                 }
@@ -1433,10 +1453,10 @@ abstract class PigeonApiProxyApiTestClass(open val pigeonRegistrar: PigeonProxyA
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as ProxyApiTestClass
-            val anEnumArg = ProxyApiTestEnum.ofRaw(args[1] as Int)!!
+            val anEnumArg = args[1] as ProxyApiTestEnum
             val wrapped: List<Any?> =
                 try {
-                  listOf<Any?>(api.echoEnum(pigeon_instanceArg, anEnumArg).raw)
+                  listOf(api.echoEnum(pigeon_instanceArg, anEnumArg))
                 } catch (exception: Throwable) {
                   wrapError(exception)
                 }
@@ -1459,7 +1479,7 @@ abstract class PigeonApiProxyApiTestClass(open val pigeonRegistrar: PigeonProxyA
             val aProxyApiArg = args[1] as com.example.test_plugin.ProxyApiSuperClass
             val wrapped: List<Any?> =
                 try {
-                  listOf<Any?>(api.echoProxyApi(pigeon_instanceArg, aProxyApiArg))
+                  listOf(api.echoProxyApi(pigeon_instanceArg, aProxyApiArg))
                 } catch (exception: Throwable) {
                   wrapError(exception)
                 }
@@ -1483,7 +1503,7 @@ abstract class PigeonApiProxyApiTestClass(open val pigeonRegistrar: PigeonProxyA
                 args[1].let { num -> if (num is Int) num.toLong() else num as Long? }
             val wrapped: List<Any?> =
                 try {
-                  listOf<Any?>(api.echoNullableInt(pigeon_instanceArg, aNullableIntArg))
+                  listOf(api.echoNullableInt(pigeon_instanceArg, aNullableIntArg))
                 } catch (exception: Throwable) {
                   wrapError(exception)
                 }
@@ -1506,7 +1526,7 @@ abstract class PigeonApiProxyApiTestClass(open val pigeonRegistrar: PigeonProxyA
             val aNullableDoubleArg = args[1] as Double?
             val wrapped: List<Any?> =
                 try {
-                  listOf<Any?>(api.echoNullableDouble(pigeon_instanceArg, aNullableDoubleArg))
+                  listOf(api.echoNullableDouble(pigeon_instanceArg, aNullableDoubleArg))
                 } catch (exception: Throwable) {
                   wrapError(exception)
                 }
@@ -1529,7 +1549,7 @@ abstract class PigeonApiProxyApiTestClass(open val pigeonRegistrar: PigeonProxyA
             val aNullableBoolArg = args[1] as Boolean?
             val wrapped: List<Any?> =
                 try {
-                  listOf<Any?>(api.echoNullableBool(pigeon_instanceArg, aNullableBoolArg))
+                  listOf(api.echoNullableBool(pigeon_instanceArg, aNullableBoolArg))
                 } catch (exception: Throwable) {
                   wrapError(exception)
                 }
@@ -1552,7 +1572,7 @@ abstract class PigeonApiProxyApiTestClass(open val pigeonRegistrar: PigeonProxyA
             val aNullableStringArg = args[1] as String?
             val wrapped: List<Any?> =
                 try {
-                  listOf<Any?>(api.echoNullableString(pigeon_instanceArg, aNullableStringArg))
+                  listOf(api.echoNullableString(pigeon_instanceArg, aNullableStringArg))
                 } catch (exception: Throwable) {
                   wrapError(exception)
                 }
@@ -1575,7 +1595,7 @@ abstract class PigeonApiProxyApiTestClass(open val pigeonRegistrar: PigeonProxyA
             val aNullableUint8ListArg = args[1] as ByteArray?
             val wrapped: List<Any?> =
                 try {
-                  listOf<Any?>(api.echoNullableUint8List(pigeon_instanceArg, aNullableUint8ListArg))
+                  listOf(api.echoNullableUint8List(pigeon_instanceArg, aNullableUint8ListArg))
                 } catch (exception: Throwable) {
                   wrapError(exception)
                 }
@@ -1598,7 +1618,7 @@ abstract class PigeonApiProxyApiTestClass(open val pigeonRegistrar: PigeonProxyA
             val aNullableObjectArg = args[1]
             val wrapped: List<Any?> =
                 try {
-                  listOf<Any?>(api.echoNullableObject(pigeon_instanceArg, aNullableObjectArg))
+                  listOf(api.echoNullableObject(pigeon_instanceArg, aNullableObjectArg))
                 } catch (exception: Throwable) {
                   wrapError(exception)
                 }
@@ -1621,7 +1641,7 @@ abstract class PigeonApiProxyApiTestClass(open val pigeonRegistrar: PigeonProxyA
             val aNullableListArg = args[1] as List<Any?>?
             val wrapped: List<Any?> =
                 try {
-                  listOf<Any?>(api.echoNullableList(pigeon_instanceArg, aNullableListArg))
+                  listOf(api.echoNullableList(pigeon_instanceArg, aNullableListArg))
                 } catch (exception: Throwable) {
                   wrapError(exception)
                 }
@@ -1644,7 +1664,7 @@ abstract class PigeonApiProxyApiTestClass(open val pigeonRegistrar: PigeonProxyA
             val aNullableMapArg = args[1] as Map<String?, Any?>?
             val wrapped: List<Any?> =
                 try {
-                  listOf<Any?>(api.echoNullableMap(pigeon_instanceArg, aNullableMapArg))
+                  listOf(api.echoNullableMap(pigeon_instanceArg, aNullableMapArg))
                 } catch (exception: Throwable) {
                   wrapError(exception)
                 }
@@ -1664,11 +1684,10 @@ abstract class PigeonApiProxyApiTestClass(open val pigeonRegistrar: PigeonProxyA
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as ProxyApiTestClass
-            val aNullableEnumArg =
-                if (args[1] == null) null else ProxyApiTestEnum.ofRaw(args[1] as Int)
+            val aNullableEnumArg = args[1] as ProxyApiTestEnum?
             val wrapped: List<Any?> =
                 try {
-                  listOf<Any?>(api.echoNullableEnum(pigeon_instanceArg, aNullableEnumArg)?.raw)
+                  listOf(api.echoNullableEnum(pigeon_instanceArg, aNullableEnumArg))
                 } catch (exception: Throwable) {
                   wrapError(exception)
                 }
@@ -1691,7 +1710,7 @@ abstract class PigeonApiProxyApiTestClass(open val pigeonRegistrar: PigeonProxyA
             val aNullableProxyApiArg = args[1] as com.example.test_plugin.ProxyApiSuperClass?
             val wrapped: List<Any?> =
                 try {
-                  listOf<Any?>(api.echoNullableProxyApi(pigeon_instanceArg, aNullableProxyApiArg))
+                  listOf(api.echoNullableProxyApi(pigeon_instanceArg, aNullableProxyApiArg))
                 } catch (exception: Throwable) {
                   wrapError(exception)
                 }
@@ -1934,14 +1953,14 @@ abstract class PigeonApiProxyApiTestClass(open val pigeonRegistrar: PigeonProxyA
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as ProxyApiTestClass
-            val anEnumArg = ProxyApiTestEnum.ofRaw(args[1] as Int)!!
+            val anEnumArg = args[1] as ProxyApiTestEnum
             api.echoAsyncEnum(pigeon_instanceArg, anEnumArg) { result: Result<ProxyApiTestEnum> ->
               val error = result.exceptionOrNull()
               if (error != null) {
                 reply.reply(wrapError(error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(wrapResult(data!!.raw))
+                reply.reply(wrapResult(data))
               }
             }
           }
@@ -2232,7 +2251,7 @@ abstract class PigeonApiProxyApiTestClass(open val pigeonRegistrar: PigeonProxyA
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as ProxyApiTestClass
-            val anEnumArg = if (args[1] == null) null else ProxyApiTestEnum.ofRaw(args[1] as Int)
+            val anEnumArg = args[1] as ProxyApiTestEnum?
             api.echoAsyncNullableEnum(pigeon_instanceArg, anEnumArg) {
                 result: Result<ProxyApiTestEnum?> ->
               val error = result.exceptionOrNull()
@@ -2240,7 +2259,7 @@ abstract class PigeonApiProxyApiTestClass(open val pigeonRegistrar: PigeonProxyA
                 reply.reply(wrapError(error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(wrapResult(data?.raw))
+                reply.reply(wrapResult(data))
               }
             }
           }
@@ -2259,7 +2278,7 @@ abstract class PigeonApiProxyApiTestClass(open val pigeonRegistrar: PigeonProxyA
             val wrapped: List<Any?> =
                 try {
                   api.staticNoop()
-                  listOf<Any?>(null)
+                  listOf(null)
                 } catch (exception: Throwable) {
                   wrapError(exception)
                 }
@@ -2281,7 +2300,7 @@ abstract class PigeonApiProxyApiTestClass(open val pigeonRegistrar: PigeonProxyA
             val aStringArg = args[0] as String
             val wrapped: List<Any?> =
                 try {
-                  listOf<Any?>(api.echoStaticString(aStringArg))
+                  listOf(api.echoStaticString(aStringArg))
                 } catch (exception: Throwable) {
                   wrapError(exception)
                 }
@@ -2299,7 +2318,7 @@ abstract class PigeonApiProxyApiTestClass(open val pigeonRegistrar: PigeonProxyA
                 codec)
         if (api != null) {
           channel.setMessageHandler { _, reply ->
-            api.staticAsyncNoop() { result: Result<Unit> ->
+            api.staticAsyncNoop { result: Result<Unit> ->
               val error = result.exceptionOrNull()
               if (error != null) {
                 reply.reply(wrapError(error))
@@ -2621,7 +2640,7 @@ abstract class PigeonApiProxyApiTestClass(open val pigeonRegistrar: PigeonProxyA
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as ProxyApiTestClass
-            val anEnumArg = ProxyApiTestEnum.ofRaw(args[1] as Int)!!
+            val anEnumArg = args[1] as ProxyApiTestEnum
             api.callFlutterEchoEnum(pigeon_instanceArg, anEnumArg) {
                 result: Result<ProxyApiTestEnum> ->
               val error = result.exceptionOrNull()
@@ -2629,7 +2648,7 @@ abstract class PigeonApiProxyApiTestClass(open val pigeonRegistrar: PigeonProxyA
                 reply.reply(wrapError(error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(wrapResult(data!!.raw))
+                reply.reply(wrapResult(data))
               }
             }
           }
@@ -2854,7 +2873,7 @@ abstract class PigeonApiProxyApiTestClass(open val pigeonRegistrar: PigeonProxyA
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as ProxyApiTestClass
-            val anEnumArg = if (args[1] == null) null else ProxyApiTestEnum.ofRaw(args[1] as Int)
+            val anEnumArg = args[1] as ProxyApiTestEnum?
             api.callFlutterEchoNullableEnum(pigeon_instanceArg, anEnumArg) {
                 result: Result<ProxyApiTestEnum?> ->
               val error = result.exceptionOrNull()
@@ -2862,7 +2881,7 @@ abstract class PigeonApiProxyApiTestClass(open val pigeonRegistrar: PigeonProxyA
                 reply.reply(wrapError(error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(wrapResult(data?.raw))
+                reply.reply(wrapResult(data))
               }
             }
           }
@@ -2990,7 +3009,7 @@ abstract class PigeonApiProxyApiTestClass(open val pigeonRegistrar: PigeonProxyA
             aUint8ListArg,
             aListArg,
             aMapArg,
-            anEnumArg.raw,
+            anEnumArg,
             aProxyApiArg,
             aNullableBoolArg,
             aNullableIntArg,
@@ -2999,7 +3018,7 @@ abstract class PigeonApiProxyApiTestClass(open val pigeonRegistrar: PigeonProxyA
             aNullableUint8ListArg,
             aNullableListArg,
             aNullableMapArg,
-            aNullableEnumArg?.raw,
+            aNullableEnumArg,
             aNullableProxyApiArg)) {
           if (it is List<*>) {
             if (it.size > 1) {
@@ -3399,7 +3418,7 @@ abstract class PigeonApiProxyApiTestClass(open val pigeonRegistrar: PigeonProxyA
     val channelName =
         "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoEnum"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
-    channel.send(listOf(pigeon_instanceArg, anEnumArg.raw)) {
+    channel.send(listOf(pigeon_instanceArg, anEnumArg)) {
       if (it is List<*>) {
         if (it.size > 1) {
           callback(
@@ -3413,7 +3432,7 @@ abstract class PigeonApiProxyApiTestClass(open val pigeonRegistrar: PigeonProxyA
                       "Flutter api returned null value for non-null return value.",
                       "")))
         } else {
-          val output = ProxyApiTestEnum.ofRaw(it[0] as Int)!!
+          val output = it[0] as ProxyApiTestEnum
           callback(Result.success(output))
         }
       } else {
@@ -3656,14 +3675,14 @@ abstract class PigeonApiProxyApiTestClass(open val pigeonRegistrar: PigeonProxyA
     val channelName =
         "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoNullableEnum"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
-    channel.send(listOf(pigeon_instanceArg, anEnumArg?.raw)) {
+    channel.send(listOf(pigeon_instanceArg, anEnumArg)) {
       if (it is List<*>) {
         if (it.size > 1) {
           callback(
               Result.failure(
                   ProxyApiTestsError(it[0] as String, it[1] as String, it[2] as String?)))
         } else {
-          val output = (it[0] as Int?)?.let { num -> ProxyApiTestEnum.ofRaw(num) }
+          val output = it[0] as ProxyApiTestEnum?
           callback(Result.success(output))
         }
       } else {
@@ -3796,7 +3815,7 @@ abstract class PigeonApiProxyApiSuperClass(open val pigeonRegistrar: PigeonProxy
                 try {
                   api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
                       api.pigeon_defaultConstructor(), pigeon_identifierArg)
-                  listOf<Any?>(null)
+                  listOf(null)
                 } catch (exception: Throwable) {
                   wrapError(exception)
                 }
@@ -3819,7 +3838,7 @@ abstract class PigeonApiProxyApiSuperClass(open val pigeonRegistrar: PigeonProxy
             val wrapped: List<Any?> =
                 try {
                   api.aSuperMethod(pigeon_instanceArg)
-                  listOf<Any?>(null)
+                  listOf(null)
                 } catch (exception: Throwable) {
                   wrapError(exception)
                 }

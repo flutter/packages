@@ -464,12 +464,13 @@ class GoogleMapController {
   }
 
   /// Applies [MarkerUpdates] to the currently managed markers.
-  void updateMarkers(MarkerUpdates updates) {
+  Future<void> updateMarkers(MarkerUpdates updates) async {
     assert(
         _markersController != null, 'Cannot update markers after dispose().');
-    _markersController?.addMarkers(updates.markersToAdd);
-    _markersController?.changeMarkers(updates.markersToChange);
+    await _markersController?.addMarkers(updates.markersToAdd);
+    await _markersController?.changeMarkers(updates.markersToChange);
     _markersController?.removeMarkers(updates.markerIdsToRemove);
+    _cleanUpBitmapConversionCaches();
   }
 
   /// Applies [ClusterManagerUpdates] to the currently managed cluster managers.

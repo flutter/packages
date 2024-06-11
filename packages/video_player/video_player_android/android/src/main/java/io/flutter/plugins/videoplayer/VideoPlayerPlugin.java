@@ -8,16 +8,9 @@ import android.content.Context;
 import android.os.Build;
 import android.util.LongSparseArray;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.lifecycle.DefaultLifecycleObserver;
-import androidx.lifecycle.Lifecycle;
-import androidx.lifecycle.LifecycleOwner;
 import io.flutter.FlutterInjector;
 import io.flutter.Log;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
-import io.flutter.embedding.engine.plugins.activity.ActivityAware;
-import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
-import io.flutter.embedding.engine.plugins.lifecycle.FlutterLifecycleAdapter;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.EventChannel;
 import io.flutter.plugins.videoplayer.Messages.AndroidVideoPlayerApi;
@@ -36,13 +29,11 @@ import java.util.Map;
 import javax.net.ssl.HttpsURLConnection;
 
 /** Android platform implementation of the VideoPlayerPlugin. */
-public class VideoPlayerPlugin
-    implements FlutterPlugin, AndroidVideoPlayerApi, DefaultLifecycleObserver, ActivityAware {
+public class VideoPlayerPlugin implements FlutterPlugin, AndroidVideoPlayerApi {
   private static final String TAG = "VideoPlayerPlugin";
   private final LongSparseArray<VideoPlayer> videoPlayers = new LongSparseArray<>();
   private FlutterState flutterState;
   private final VideoPlayerOptions options = new VideoPlayerOptions();
-  @Nullable Lifecycle lifecycle;
 
   /** Register this with the v2 embedding for the plugin to respond to lifecycle callbacks. */
   public VideoPlayerPlugin() {}
@@ -92,7 +83,7 @@ public class VideoPlayerPlugin
     }
     flutterState.stopListening(binding.getBinaryMessenger());
     flutterState = null;
-    performDestroy();
+    onDestroy();
   }
 
   private void disposeAllPlayers() {
@@ -102,7 +93,7 @@ public class VideoPlayerPlugin
     videoPlayers.clear();
   }
 
-  public void performDestroy() {
+  public void onDestroy() {
     // The whole FlutterView is being destroyed. Here we release resources acquired for all
     // instances
     // of VideoPlayer. Once https://github.com/flutter/flutter/issues/19358 is resolved this may
@@ -116,7 +107,8 @@ public class VideoPlayerPlugin
   }
 
   public @NonNull TextureMessage create(@NonNull CreateMessage arg) {
-    TextureRegistry.SurfaceProducer handle = flutterState.textureRegistry.createSurfaceProducer();
+    TextureRegistry.SurfaceTextureEntry handle =
+        flutterState.textureRegistry.createSurfaceTexture();
     EventChannel eventChannel =
         new EventChannel(
             flutterState.binaryMessenger, "flutter.io/videoPlayer/videoEvents" + handle.id());
@@ -152,6 +144,7 @@ public class VideoPlayerPlugin
               options);
     }
     videoPlayers.put(handle.id(), player);
+
     return new TextureMessage.Builder().setTextureId(handle.id()).build();
   }
 
@@ -205,62 +198,6 @@ public class VideoPlayerPlugin
   @Override
   public void setMixWithOthers(@NonNull MixWithOthersMessage arg) {
     options.mixWithOthers = arg.getMixWithOthers();
-  }
-
-  // Activity Aware
-
-  @Override
-  public void onAttachedToActivity(@NonNull ActivityPluginBinding binding) {
-    lifecycle = FlutterLifecycleAdapter.getActivityLifecycle(binding);
-    lifecycle.addObserver(this);
-  }
-
-  @Override
-  public void onDetachedFromActivity() {}
-
-  @Override
-  public void onReattachedToActivityForConfigChanges(@NonNull ActivityPluginBinding binding) {
-    onAttachedToActivity(binding);
-  }
-
-  @Override
-  public void onDetachedFromActivityForConfigChanges() {
-    onDetachedFromActivity();
-  }
-
-  // DefaultLifecycleObserver
-  @Override
-  public void onResume(@NonNull LifecycleOwner owner) {
-    recreateAllSurfaces();
-  }
-
-  @Override
-  public void onPause(@NonNull LifecycleOwner owner) {
-    destroyAllSurfaces();
-  }
-
-  @Override
-  public void onStop(@NonNull LifecycleOwner owner) {
-    destroyAllSurfaces();
-  }
-
-  @Override
-  public void onDestroy(@NonNull LifecycleOwner owner) {
-    if (lifecycle != null) {
-      lifecycle.removeObserver(this);
-    }
-  }
-
-  private void destroyAllSurfaces() {
-    for (int i = 0; i < videoPlayers.size(); i++) {
-      videoPlayers.valueAt(i).pauseSurface();
-    }
-  }
-
-  private void recreateAllSurfaces() {
-    for (int i = 0; i < videoPlayers.size(); i++) {
-      videoPlayers.valueAt(i).recreateSurface(flutterState.applicationContext);
-    }
   }
 
   private interface KeyForAssetFn {
