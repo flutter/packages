@@ -1,3 +1,7 @@
+## 0.7.2
+
+* Multiple code blocks within a single markdown will now use separate ScrollControllers.
+
 ## 0.7.1
 
 * Allows for choosing a custom font feature to create superscript in footnotes when the font does not support the `supr` font feature.
