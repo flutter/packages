@@ -879,8 +879,7 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
         ? 'nil'
         : '[${enumSafeArgNames.join(', ')}] as [Any?]';
     const String channel = 'channel';
-    indent.writeln(
-        'let channelName: String = "$channelName\\(messageChannelSuffix)"');
+    indent.writeln('let channelName: String = "$channelName"');
     indent.writeln(
         'let $channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)');
     indent.write('$channel.sendMessage($sendArgument) ');
@@ -945,7 +944,7 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
     final String varChannelName = '${name}Channel';
     addDocumentationComments(indent, documentationComments, _docCommentSpec);
     indent.writeln(
-        'let $varChannelName = FlutterBasicMessageChannel(name: "$channelName\\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)');
+        'let $varChannelName = FlutterBasicMessageChannel(name: "$channelName", binaryMessenger: binaryMessenger, codec: codec)');
     indent.write('if let api = api ');
     indent.addScoped('{', '}', () {
       indent.write('$varChannelName.setMessageHandler ');

@@ -496,6 +496,47 @@ enum ProxyApiTestEnum: Int {
   case two = 1
   case three = 2
 }
+private class ProxyApiTestsPigeonCodecReader: FlutterStandardReader {
+  override func readValue(ofType type: UInt8) -> Any? {
+    switch type {
+    case 129:
+      var enumResult: ProxyApiTestEnum? = nil
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
+      if let enumResultAsInt = enumResultAsInt {
+        enumResult = ProxyApiTestEnum(rawValue: enumResultAsInt)
+      }
+      return enumResult
+    default:
+      return super.readValue(ofType: type)
+    }
+  }
+}
+
+private class ProxyApiTestsPigeonCodecWriter: FlutterStandardWriter {
+  override func writeValue(_ value: Any) {
+    if let value = value as? ProxyApiTestEnum {
+      super.writeByte(129)
+      super.writeValue(value.rawValue)
+    } else {
+      super.writeValue(value)
+    }
+  }
+}
+
+private class ProxyApiTestsPigeonCodecReaderWriter: FlutterStandardReaderWriter {
+  override func reader(with data: Data) -> FlutterStandardReader {
+    return ProxyApiTestsPigeonCodecReader(data: data)
+  }
+
+  override func writer(with data: NSMutableData) -> FlutterStandardWriter {
+    return ProxyApiTestsPigeonCodecWriter(data: data)
+  }
+}
+
+class ProxyApiTestsPigeonCodec: FlutterStandardMessageCodec, @unchecked Sendable {
+  static let shared = ProxyApiTestsPigeonCodec(readerWriter: ProxyApiTestsPigeonCodecReaderWriter())
+}
+
 protocol PigeonDelegateProxyApiTestClass {
   func pigeonDefaultConstructor(
     pigeonApi: PigeonApiProxyApiTestClass, aBool: Bool, anInt: Int64, aDouble: Double,
@@ -880,7 +921,7 @@ final class PigeonApiProxyApiTestClass {
         let aUint8ListArg = args[5] as! FlutterStandardTypedData
         let aListArg = args[6] as! [Any?]
         let aMapArg = args[7] as! [String?: Any?]
-        let anEnumArg = ProxyApiTestEnum(rawValue: args[8] as! Int)!
+        let anEnumArg = args[8] as! ProxyApiTestEnum
         let aProxyApiArg = args[9] as! ProxyApiSuperClass
         let aNullableBoolArg: Bool? = nilOrValue(args[10])
         let aNullableIntArg: Int64? =
@@ -891,8 +932,7 @@ final class PigeonApiProxyApiTestClass {
         let aNullableUint8ListArg: FlutterStandardTypedData? = nilOrValue(args[14])
         let aNullableListArg: [Any?]? = nilOrValue(args[15])
         let aNullableMapArg: [String?: Any?]? = nilOrValue(args[16])
-        let aNullableEnumArg: ProxyApiTestEnum? =
-          isNullish(args[17]) ? nil : ProxyApiTestEnum(rawValue: args[17] as! Int)!
+        let aNullableEnumArg: ProxyApiTestEnum? = nilOrValue(args[17])
         let aNullableProxyApiArg: ProxyApiSuperClass? = nilOrValue(args[18])
         let boolParamArg = args[19] as! Bool
         let intParamArg = args[20] is Int64 ? args[20] as! Int64 : Int64(args[20] as! Int32)
@@ -901,7 +941,7 @@ final class PigeonApiProxyApiTestClass {
         let aUint8ListParamArg = args[23] as! FlutterStandardTypedData
         let listParamArg = args[24] as! [Any?]
         let mapParamArg = args[25] as! [String?: Any?]
-        let enumParamArg = ProxyApiTestEnum(rawValue: args[26] as! Int)!
+        let enumParamArg = args[26] as! ProxyApiTestEnum
         let proxyApiParamArg = args[27] as! ProxyApiSuperClass
         let nullableBoolParamArg: Bool? = nilOrValue(args[28])
         let nullableIntParamArg: Int64? =
@@ -912,8 +952,7 @@ final class PigeonApiProxyApiTestClass {
         let nullableUint8ListParamArg: FlutterStandardTypedData? = nilOrValue(args[32])
         let nullableListParamArg: [Any?]? = nilOrValue(args[33])
         let nullableMapParamArg: [String?: Any?]? = nilOrValue(args[34])
-        let nullableEnumParamArg: ProxyApiTestEnum? =
-          isNullish(args[35]) ? nil : ProxyApiTestEnum(rawValue: args[35] as! Int)!
+        let nullableEnumParamArg: ProxyApiTestEnum? = nilOrValue(args[35])
         let nullableProxyApiParamArg: ProxyApiSuperClass? = nilOrValue(args[36])
         do {
           api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
@@ -1251,11 +1290,11 @@ final class PigeonApiProxyApiTestClass {
       echoEnumChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
-        let anEnumArg = ProxyApiTestEnum(rawValue: args[1] as! Int)!
+        let anEnumArg = args[1] as! ProxyApiTestEnum
         do {
           let result = try api.pigeonDelegate.echoEnum(
             pigeonApi: api, pigeonInstance: pigeonInstanceArg, anEnum: anEnumArg)
-          reply(wrapResult(result.rawValue))
+          reply(wrapResult(result))
         } catch {
           reply(wrapError(error))
         }
@@ -1444,12 +1483,11 @@ final class PigeonApiProxyApiTestClass {
       echoNullableEnumChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
-        let aNullableEnumArg: ProxyApiTestEnum? =
-          isNullish(args[1]) ? nil : ProxyApiTestEnum(rawValue: args[1] as! Int)!
+        let aNullableEnumArg: ProxyApiTestEnum? = nilOrValue(args[1])
         do {
           let result = try api.pigeonDelegate.echoNullableEnum(
             pigeonApi: api, pigeonInstance: pigeonInstanceArg, aNullableEnum: aNullableEnumArg)
-          reply(wrapResult(result?.rawValue))
+          reply(wrapResult(result))
         } catch {
           reply(wrapError(error))
         }
@@ -1679,13 +1717,13 @@ final class PigeonApiProxyApiTestClass {
       echoAsyncEnumChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
-        let anEnumArg = ProxyApiTestEnum(rawValue: args[1] as! Int)!
+        let anEnumArg = args[1] as! ProxyApiTestEnum
         api.pigeonDelegate.echoAsyncEnum(
           pigeonApi: api, pigeonInstance: pigeonInstanceArg, anEnum: anEnumArg
         ) { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res.rawValue))
+            reply(wrapResult(res))
           case .failure(let error):
             reply(wrapError(error))
           }
@@ -1941,14 +1979,13 @@ final class PigeonApiProxyApiTestClass {
       echoAsyncNullableEnumChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
-        let anEnumArg: ProxyApiTestEnum? =
-          isNullish(args[1]) ? nil : ProxyApiTestEnum(rawValue: args[1] as! Int)!
+        let anEnumArg: ProxyApiTestEnum? = nilOrValue(args[1])
         api.pigeonDelegate.echoAsyncNullableEnum(
           pigeonApi: api, pigeonInstance: pigeonInstanceArg, anEnum: anEnumArg
         ) { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res?.rawValue))
+            reply(wrapResult(res))
           case .failure(let error):
             reply(wrapError(error))
           }
@@ -2276,13 +2313,13 @@ final class PigeonApiProxyApiTestClass {
       callFlutterEchoEnumChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
-        let anEnumArg = ProxyApiTestEnum(rawValue: args[1] as! Int)!
+        let anEnumArg = args[1] as! ProxyApiTestEnum
         api.pigeonDelegate.callFlutterEchoEnum(
           pigeonApi: api, pigeonInstance: pigeonInstanceArg, anEnum: anEnumArg
         ) { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res.rawValue))
+            reply(wrapResult(res))
           case .failure(let error):
             reply(wrapError(error))
           }
@@ -2484,14 +2521,13 @@ final class PigeonApiProxyApiTestClass {
       callFlutterEchoNullableEnumChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
-        let anEnumArg: ProxyApiTestEnum? =
-          isNullish(args[1]) ? nil : ProxyApiTestEnum(rawValue: args[1] as! Int)!
+        let anEnumArg: ProxyApiTestEnum? = nilOrValue(args[1])
         api.pigeonDelegate.callFlutterEchoNullableEnum(
           pigeonApi: api, pigeonInstance: pigeonInstanceArg, anEnum: anEnumArg
         ) { result in
           switch result {
           case .success(let res):
-            reply(wrapResult(res?.rawValue))
+            reply(wrapResult(res))
           case .failure(let error):
             reply(wrapError(error))
           }
@@ -2616,9 +2652,9 @@ final class PigeonApiProxyApiTestClass {
     channel.sendMessage(
       [
         pigeonIdentifierArg, aBoolArg, anIntArg, aDoubleArg, aStringArg, aUint8ListArg, aListArg,
-        aMapArg, anEnumArg.rawValue, aProxyApiArg, aNullableBoolArg, aNullableIntArg,
-        aNullableDoubleArg, aNullableStringArg, aNullableUint8ListArg, aNullableListArg,
-        aNullableMapArg, aNullableEnumArg?.rawValue, aNullableProxyApiArg,
+        aMapArg, anEnumArg, aProxyApiArg, aNullableBoolArg, aNullableIntArg, aNullableDoubleArg,
+        aNullableStringArg, aNullableUint8ListArg, aNullableListArg, aNullableMapArg,
+        aNullableEnumArg, aNullableProxyApiArg,
       ] as [Any?]
     ) { response in
       guard let listResponse = response as? [Any?] else {
@@ -3039,7 +3075,7 @@ final class PigeonApiProxyApiTestClass {
       "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoEnum"
     let channel = FlutterBasicMessageChannel(
       name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-    channel.sendMessage([pigeonInstanceArg, anEnumArg.rawValue] as [Any?]) { response in
+    channel.sendMessage([pigeonInstanceArg, anEnumArg] as [Any?]) { response in
       guard let listResponse = response as? [Any?] else {
         completion(.failure(createConnectionError(withChannelName: channelName)))
         return
@@ -3056,7 +3092,7 @@ final class PigeonApiProxyApiTestClass {
               code: "null-error",
               message: "Flutter api returned null value for non-null return value.", details: "")))
       } else {
-        let result = ProxyApiTestEnum(rawValue: listResponse[0] as! Int)!
+        let result = listResponse[0] as! ProxyApiTestEnum
         completion(.success(result))
       }
     }
@@ -3307,7 +3343,7 @@ final class PigeonApiProxyApiTestClass {
       "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoNullableEnum"
     let channel = FlutterBasicMessageChannel(
       name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-    channel.sendMessage([pigeonInstanceArg, anEnumArg?.rawValue] as [Any?]) { response in
+    channel.sendMessage([pigeonInstanceArg, anEnumArg] as [Any?]) { response in
       guard let listResponse = response as? [Any?] else {
         completion(.failure(createConnectionError(withChannelName: channelName)))
         return
@@ -3318,8 +3354,7 @@ final class PigeonApiProxyApiTestClass {
         let details: String? = nilOrValue(listResponse[2])
         completion(.failure(ProxyApiTestsError(code: code, message: message, details: details)))
       } else {
-        let result: ProxyApiTestEnum? =
-          isNullish(listResponse[0]) ? nil : ProxyApiTestEnum(rawValue: listResponse[0] as! Int)!
+        let result: ProxyApiTestEnum? = nilOrValue(listResponse[0])
         completion(.success(result))
       }
     }
