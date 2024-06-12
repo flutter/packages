@@ -28,7 +28,7 @@ dev_dependencies:
   build_runner: ^2.4.9
   flutter_test:
     sdk: flutter
-  pigeon: ^18.0.0
+  pigeon: ^20.0.0
 
 topics:
   - camera
