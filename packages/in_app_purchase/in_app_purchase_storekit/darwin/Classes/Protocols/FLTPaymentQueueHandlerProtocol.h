@@ -1,7 +1,7 @@
 #import <StoreKit/StoreKit.h>
 #import "FIATransactionCache.h"
-#import "PaymentQueueProtocol.h"
-#import "TransactionCacheProtocol.h"
+#import "FLTPaymentQueueProtocol.h"
+#import "FLTTransactionCacheProtocol.h"
 
 NS_ASSUME_NONNULL_BEGIN
 typedef void (^TransactionsUpdated)(NSArray<SKPaymentTransaction *> *transactions);
@@ -11,7 +11,8 @@ typedef void (^RestoreCompletedTransactionsFinished)(void);
 typedef BOOL (^ShouldAddStorePayment)(SKPayment *payment, SKProduct *product);
 typedef void (^UpdatedDownloads)(NSArray<SKDownload *> *downloads);
 
-@protocol PaymentQueueHandler <NSObject, SKPaymentTransactionObserver>
+/// A protocol that conforms to SKPaymentTransactionObserver and handles SKPaymentQueue methods
+@protocol FLTPaymentQueueHandlerProtocol <NSObject, SKPaymentTransactionObserver>
 @property(NS_NONATOMIC_IOSONLY, weak, nullable) id<SKPaymentQueueDelegate> delegate API_AVAILABLE(
     ios(13.0), macos(10.15), watchos(6.2));
 @property(nonatomic, readonly, nullable)
@@ -52,7 +53,7 @@ typedef void (^UpdatedDownloads)(NSArray<SKDownload *> *downloads);
 /// @param transactionCache An empty [FIATransactionCache] instance that is
 ///                         responsible for keeping track of transactions that
 ///                         arrive when not actively observing transactions.
-- (instancetype)initWithQueue:(id<PaymentQueue>)queue
+- (instancetype)initWithQueue:(id<FLTPaymentQueueProtocol>)queue
                      transactionsUpdated:(nullable TransactionsUpdated)transactionsUpdated
                       transactionRemoved:(nullable TransactionsRemoved)transactionsRemoved
                 restoreTransactionFailed:(nullable RestoreTransactionFailed)restoreTransactionFailed
@@ -60,7 +61,7 @@ typedef void (^UpdatedDownloads)(NSArray<SKDownload *> *downloads);
         (nullable RestoreCompletedTransactionsFinished)restoreCompletedTransactionsFinished
                    shouldAddStorePayment:(nullable ShouldAddStorePayment)shouldAddStorePayment
                         updatedDownloads:(nullable UpdatedDownloads)updatedDownloads
-                        transactionCache:(nonnull id<TransactionCache>)transactionCache;
+                        transactionCache:(nonnull id<FLTTransactionCacheProtocol>)transactionCache;
 // Can throw exceptions if the transaction type is purchasing, should always used in a @try block.
 - (void)finishTransaction:(nonnull SKPaymentTransaction *)transaction;
 - (void)restoreTransactions:(nullable NSString *)applicationName;

@@ -1,7 +1,10 @@
-#import "PaymentQueueProtocol.h"
+#import "FLTPaymentQueueProtocol.h"
 
-/// Default implementations of FIAProtocols
 @implementation DefaultPaymentQueue
+@synthesize storefront;
+@synthesize delegate;
+@synthesize transactions;
+
 - (instancetype)initWithQueue:(SKPaymentQueue *)queue {
   self = [super init];
   if (self) {
@@ -56,11 +59,5 @@
   [self.queue showPriceConsentIfNeeded];
 }
 #endif
-
-@synthesize storefront;
-
-@synthesize delegate;
-
-@synthesize transactions;
 
 @end

@@ -61,7 +61,7 @@
         return YES;
       }
       updatedDownloads:nil
-      transactionCache:[TestTransactionCache alloc]];
+      transactionCache:[[TestTransactionCache alloc] init]];
   SKPayment *payment =
       [SKPayment paymentWithProduct:[[SKProductStub alloc] initWithMap:self.productResponseMap]];
   [handler startObservingPaymentQueue];
@@ -90,7 +90,7 @@
         return YES;
       }
       updatedDownloads:nil
-      transactionCache:[TestTransactionCache alloc]];
+      transactionCache:[[TestTransactionCache alloc] init]];
 
   SKPayment *payment =
       [SKPayment paymentWithProduct:[[SKProductStub alloc] initWithMap:self.productResponseMap]];
@@ -120,7 +120,7 @@
         return YES;
       }
       updatedDownloads:nil
-      transactionCache:[TestTransactionCache alloc]];
+      transactionCache:[[TestTransactionCache alloc] init]];
 
   SKPayment *payment =
       [SKPayment paymentWithProduct:[[SKProductStub alloc] initWithMap:self.productResponseMap]];
@@ -150,7 +150,7 @@
         return YES;
       }
       updatedDownloads:nil
-      transactionCache:[TestTransactionCache alloc]];
+      transactionCache:[[TestTransactionCache alloc] init]];
 
   SKPayment *payment =
       [SKPayment paymentWithProduct:[[SKProductStub alloc] initWithMap:self.productResponseMap]];
@@ -180,7 +180,7 @@
         return YES;
       }
       updatedDownloads:nil
-      transactionCache:[TestTransactionCache alloc]];
+      transactionCache:[[TestTransactionCache alloc] init]];
   SKPayment *payment =
       [SKPayment paymentWithProduct:[[SKProductStub alloc] initWithMap:self.productResponseMap]];
   [handler startObservingPaymentQueue];
@@ -211,7 +211,7 @@
         return YES;
       }
       updatedDownloads:nil
-      transactionCache:[TestTransactionCache alloc]];
+      transactionCache:[[TestTransactionCache alloc] init]];
   SKPayment *payment =
       [SKPayment paymentWithProduct:[[SKProductStub alloc] initWithMap:self.productResponseMap]];
   [handler startObservingPaymentQueue];

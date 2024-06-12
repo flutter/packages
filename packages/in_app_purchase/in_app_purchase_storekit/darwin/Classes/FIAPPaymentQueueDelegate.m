@@ -7,13 +7,13 @@
 
 @interface FIAPPaymentQueueDelegate ()
 
-@property(strong, nonatomic, readonly) id<MethodChannel> callbackChannel;
+@property(strong, nonatomic, readonly) id<FLTMethodChannelProtocol> callbackChannel;
 
 @end
 
 @implementation FIAPPaymentQueueDelegate
 
-- (id)initWithMethodChannel:(id<MethodChannel>)methodChannel {
+- (id)initWithMethodChannel:(id<FLTMethodChannelProtocol>)methodChannel {
   self = [super init];
   if (self) {
     _callbackChannel = methodChannel;

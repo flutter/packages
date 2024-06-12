@@ -5,15 +5,16 @@
 #import <Foundation/Foundation.h>
 #import <StoreKit/StoreKit.h>
 #import "FIATransactionCache.h"
-#import "PaymentQueueHandlerProtocol.h"
-#import "PaymentQueueProtocol.h"
-#import "TransactionCacheProtocol.h"
+#import "FLTPaymentQueueHandlerProtocol.h"
+#import "FLTPaymentQueueProtocol.h"
+#import "FLTTransactionCacheProtocol.h"
 
 @class SKPaymentTransaction;
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface FIAPaymentQueueHandler : NSObject <SKPaymentTransactionObserver, PaymentQueueHandler>
+@interface FIAPaymentQueueHandler
+    : NSObject <SKPaymentTransactionObserver, FLTPaymentQueueHandlerProtocol>
 @end
 
 NS_ASSUME_NONNULL_END

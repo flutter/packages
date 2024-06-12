@@ -271,7 +271,7 @@
   return [[NSData alloc] initWithBase64EncodedString:originalString options:kNilOptions];
 }
 
-- (NSURL *)getReceiptURL {
+- (NSURL *)recieptURL {
   if (self.returnNilURL) {
     return nil;
   } else {

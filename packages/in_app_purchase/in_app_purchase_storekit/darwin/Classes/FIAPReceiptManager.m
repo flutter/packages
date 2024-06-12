@@ -14,13 +14,13 @@
 // Gets the receipt file data from the location of the url. Can be nil if
 // there is an error. This interface is defined so it can be stubbed for testing.
 - (NSData *)getReceiptData:(NSURL *)url error:(NSError **)error;
-- (NSURL *)getReceiptURL;
+@property(strong, nonatomic) NSURL *recieptURL;
 @end
 
 @implementation FIAPReceiptManager
 
 - (NSString *)retrieveReceiptWithError:(FlutterError **)flutterError {
-  NSURL *receiptURL = [self getReceiptURL];
+  NSURL *receiptURL = [self recieptURL];
   if (!receiptURL) {
     return nil;
   }
@@ -43,7 +43,7 @@
   return [NSData dataWithContentsOfURL:url options:NSDataReadingMappedIfSafe error:error];
 }
 
-- (NSURL *)getReceiptURL {
+- (NSURL *)recieptURL {
   return [[NSBundle mainBundle] appStoreReceiptURL];
 }
 

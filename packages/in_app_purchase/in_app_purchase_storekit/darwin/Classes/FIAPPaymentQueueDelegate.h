@@ -9,14 +9,14 @@
 #endif
 #import <Foundation/Foundation.h>
 #import <StoreKit/StoreKit.h>
-#import "MethodChannelProtocol.h"
+#import "FLTMethodChannelProtocol.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 API_AVAILABLE(ios(13))
 API_UNAVAILABLE(tvos, macos, watchos)
 @interface FIAPPaymentQueueDelegate : NSObject <SKPaymentQueueDelegate>
-- (id)initWithMethodChannel:(id<MethodChannel>)methodChannel;
+- (id)initWithMethodChannel:(id<FLTMethodChannelProtocol>)methodChannel;
 @end
 
 NS_ASSUME_NONNULL_END

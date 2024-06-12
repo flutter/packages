@@ -1,4 +1,4 @@
-#import "MethodChannelProtocol.h"
+#import "FLTMethodChannelProtocol.h"
 
 @implementation DefaultMethodChannel
 - (void)invokeMethod:(nonnull NSString *)method arguments:(id _Nullable)arguments {

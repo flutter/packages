@@ -2,7 +2,8 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@protocol PaymentQueue <NSObject>
+/// A protocol that wraps SKPaymentQueue
+@protocol FLTPaymentQueueProtocol <NSObject>
 @property(strong, nonatomic) SKStorefront *storefront API_AVAILABLE(ios(13.0));
 @property(strong, nonatomic) NSArray<SKPaymentTransaction *> *transactions API_AVAILABLE(
     ios(3.0), macos(10.7), watchos(6.2), visionos(1.0));
@@ -34,7 +35,7 @@ NS_ASSUME_NONNULL_BEGIN
     API_UNAVAILABLE(tvos, macos, watchos);
 @end
 
-@interface DefaultPaymentQueue : NSObject <PaymentQueue>
+@interface DefaultPaymentQueue : NSObject <FLTPaymentQueueProtocol>
 /// The wrapped queue context.
 @property(strong, nonatomic) SKPaymentQueue *queue;
 /// Returns a wrapper for the given SKPaymentQueue.

@@ -15,6 +15,9 @@
 
 @implementation TestPaymentQueue
 
+@synthesize transactions;
+@synthesize delegate;
+
 - (void)finishTransaction:(SKPaymentTransaction *)transaction {
   [self.observer paymentQueue:self.realQueue removedTransactions:@[ transaction ]];
 }
@@ -82,11 +85,6 @@
 - (void)removeTransactionObserver:(id<SKPaymentTransactionObserver>)observer {
   self.observer = nil;
 }
-
-@synthesize transactions;
-
-@synthesize delegate;
-
 @end
 
 @implementation TestMethodChannel
@@ -128,6 +126,10 @@
 @end
 
 @implementation TestPaymentQueueHandler
+
+@synthesize storefront;
+@synthesize delegate;
+
 - (void)paymentQueue:(nonnull SKPaymentQueue *)queue
     updatedTransactions:(nonnull NSArray<SKPaymentTransaction *> *)transactions {
   if (self.paymentQueueUpdatedTransactionsStub) {
@@ -165,7 +167,7 @@
   }
 }
 
-- (nonnull instancetype)initWithQueue:(nonnull id<PaymentQueue>)queue
+- (nonnull instancetype)initWithQueue:(nonnull id<FLTPaymentQueueProtocol>)queue
                      transactionsUpdated:(nullable TransactionsUpdated)transactionsUpdated
                       transactionRemoved:(nullable TransactionsRemoved)transactionsRemoved
                 restoreTransactionFailed:(nullable RestoreTransactionFailed)restoreTransactionFailed
@@ -173,7 +175,7 @@
         (nullable RestoreCompletedTransactionsFinished)restoreCompletedTransactionsFinished
                    shouldAddStorePayment:(nullable ShouldAddStorePayment)shouldAddStorePayment
                         updatedDownloads:(nullable UpdatedDownloads)updatedDownloads
-                        transactionCache:(nonnull id<TransactionCache>)transactionCache {
+                        transactionCache:(nonnull id<FLTTransactionCacheProtocol>)transactionCache {
   return [[TestPaymentQueueHandler alloc] init];
 }
 
@@ -203,7 +205,7 @@
   }
 }
 
-- (nonnull instancetype)initWithQueue:(nonnull id<PaymentQueue>)queue
+- (nonnull instancetype)initWithQueue:(nonnull id<FLTPaymentQueueProtocol>)queue
                      transactionsUpdated:(nullable TransactionsUpdated)transactionsUpdated
                       transactionRemoved:(nullable TransactionsRemoved)transactionsRemoved
                 restoreTransactionFailed:(nullable RestoreTransactionFailed)restoreTransactionFailed
@@ -213,10 +215,6 @@
                         updatedDownloads:(nullable UpdatedDownloads)updatedDownloads {
   return [[TestPaymentQueueHandler alloc] init];
 }
-
-@synthesize storefront;
-
-@synthesize delegate;
 
 @end
 

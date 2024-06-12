@@ -4,15 +4,15 @@
 
 #import <StoreKit/StoreKit.h>
 #import "FIATransactionCache.h"
-#import "MethodChannelProtocol.h"
-#import "PaymentQueueHandlerProtocol.h"
-#import "PaymentQueueProtocol.h"
-#import "RequestHandlerProtocol.h"
-#import "TransactionCacheProtocol.h"
+#import "FLTMethodChannelProtocol.h"
+#import "FLTPaymentQueueHandlerProtocol.h"
+#import "FLTPaymentQueueProtocol.h"
+#import "FLTRequestHandlerProtocol.h"
+#import "FLTTransactionCacheProtocol.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface TestPaymentQueue : NSObject <PaymentQueue>
+@interface TestPaymentQueue : NSObject <FLTPaymentQueueProtocol>
 /// Returns a wrapper for the given SKPaymentQueue.
 @property(assign, nonatomic) SKPaymentTransactionState paymentState;
 @property(strong, nonatomic, nullable) id<SKPaymentTransactionObserver> observer;
@@ -34,7 +34,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark TransactionCache
 
-@interface TestTransactionCache : NSObject <TransactionCache>
+@interface TestTransactionCache : NSObject <FLTTransactionCacheProtocol>
 @property(nonatomic, copy, nullable) NSArray * (^getObjectsForKeyStub)(TransactionCacheKey key);
 @property(nonatomic, copy, nullable) void (^clearStub)(void);
 @property(nonatomic, copy, nullable) void (^addObjectsStub)(NSArray *, TransactionCacheKey);
@@ -43,7 +43,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark MethodChannel
 
-@interface TestMethodChannel : NSObject <MethodChannel>
+@interface TestMethodChannel : NSObject <FLTMethodChannelProtocol>
 @property(nonatomic, copy, nullable) void (^invokeMethodChannelStub)(NSString *method, id arguments)
     ;
 @property(nonatomic, copy, nullable) void (^invokeMethodChannelWithResultsStub)
@@ -51,7 +51,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-@interface TestPaymentQueueHandler : NSObject <SKPaymentTransactionObserver, PaymentQueueHandler>
+@interface TestPaymentQueueHandler
+    : NSObject <SKPaymentTransactionObserver, FLTPaymentQueueHandlerProtocol>
 @property(nonatomic) BOOL canAddPayment;
 @property(nonatomic, copy, nullable) BOOL (^addPaymentStub)(SKPayment *payment);
 @property(nonatomic, copy, nullable) void (^showPriceConsentIfNeededStub)(void);
@@ -66,7 +67,7 @@ NS_ASSUME_NONNULL_BEGIN
     (SKPaymentQueue *, NSArray<SKPaymentTransaction *> *);
 @end
 
-@interface TestRequestHandler : NSObject <RequestHandler>
+@interface TestRequestHandler : NSObject <FLTRequestHandlerProtocol>
 @property(nonatomic, copy, nullable) void (^startProductRequestWithCompletionHandlerStub)
     (ProductRequestCompletion);
 @end

@@ -14,23 +14,23 @@ import StoreKit
 public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI {
   private let receiptManager: FIAPReceiptManager
   private var productsCache: NSMutableDictionary = [:]
-  private var paymentQueueDelegateCallbackChannel: MethodChannel?
+  private var paymentQueueDelegateCallbackChannel: FLTMethodChannelProtocol?
   // note - the type should be FIAPPaymentQueueDelegate, but this is only available >= iOS 13,
   // FIAPPaymentQueueDelegate only gets set/used in registerPaymentQueueDelegateWithError or removePaymentQueueDelegateWithError, which both are ios13+ only
   private var paymentQueueDelegate: Any?
   // Swift sets do not accept protocols, only concrete implementations
   // TODO(louisehsu): Change it back to a set when removing obj-c dependancies from this file via type erasure
-  private var requestHandlers = NSHashTable<RequestHandler>()
-  private var handlerFactory: ((SKRequest) -> RequestHandler)
+  private var requestHandlers = NSHashTable<FLTRequestHandlerProtocol>()
+  private var handlerFactory: ((SKRequest) -> FLTRequestHandlerProtocol)
   // TODO(louisehsu): Once tests are migrated to swift, we can use @testable import, and make theses vars private again and remove all instances of @objc
   @objc
   public var registrar: FlutterPluginRegistrar?
   // This property is optional, as it requires self to exist to be initialized.
   @objc
-  public var paymentQueueHandler: PaymentQueueHandler?
+  public var paymentQueueHandler: FLTPaymentQueueHandlerProtocol?
   // This property is optional, as it needs to be set during plugin registration, and can't be directly initialized.
   @objc
-  public var transactionObserverCallbackChannel: MethodChannel?
+  public var transactionObserverCallbackChannel: FLTMethodChannelProtocol?
 
   public static func register(with registrar: FlutterPluginRegistrar) {
     #if os(iOS)
@@ -52,7 +52,7 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI {
   // This init is used for tests
   public init(
     receiptManager: FIAPReceiptManager,
-    handlerFactory: @escaping (SKRequest) -> RequestHandler = {
+    handlerFactory: @escaping (SKRequest) -> FLTRequestHandlerProtocol = {
       DefaultRequestHandler(requestHandler: FIAPRequestHandler(request: $0))
     }
   ) {
@@ -426,7 +426,7 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI {
     return value is NSNull ? nil : value
   }
 
-  private func getPaymentQueueHandler() -> PaymentQueueHandler {
+  private func getPaymentQueueHandler() -> FLTPaymentQueueHandlerProtocol {
     guard let paymentQueueHandler = self.paymentQueueHandler else {
       fatalError(
         "paymentQueueHandler can't be nil. Please ensure you're using init(registrar: FlutterPluginRegistrar)"

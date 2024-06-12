@@ -1,4 +1,4 @@
-#import "TransactionCacheProtocol.h"
+#import "FLTTransactionCacheProtocol.h"
 
 @implementation DefaultTransactionCache
 - (void)addObjects:(nonnull NSArray *)objects forKey:(TransactionCacheKey)key {

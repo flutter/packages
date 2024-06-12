@@ -50,8 +50,9 @@
 @end
 
 @implementation FIAPaymentQueueHandler
+@synthesize delegate;
 
-- (instancetype)initWithQueue:(nonnull id<PaymentQueue>)queue
+- (instancetype)initWithQueue:(nonnull id<FLTPaymentQueueProtocol>)queue
                      transactionsUpdated:(nullable TransactionsUpdated)transactionsUpdated
                       transactionRemoved:(nullable TransactionsRemoved)transactionsRemoved
                 restoreTransactionFailed:(nullable RestoreTransactionFailed)restoreTransactionFailed
@@ -69,7 +70,7 @@
                                       transactionCache:[[DefaultTransactionCache alloc] init]];
 }
 
-- (instancetype)initWithQueue:(nonnull id<PaymentQueue>)queue
+- (instancetype)initWithQueue:(nonnull id<FLTPaymentQueueProtocol>)queue
                      transactionsUpdated:(nullable TransactionsUpdated)transactionsUpdated
                       transactionRemoved:(nullable TransactionsRemoved)transactionsRemoved
                 restoreTransactionFailed:(nullable RestoreTransactionFailed)restoreTransactionFailed
@@ -77,7 +78,7 @@
         (nullable RestoreCompletedTransactionsFinished)restoreCompletedTransactionsFinished
                    shouldAddStorePayment:(nullable ShouldAddStorePayment)shouldAddStorePayment
                         updatedDownloads:(nullable UpdatedDownloads)updatedDownloads
-                        transactionCache:(nonnull id<TransactionCache>)transactionCache {
+                        transactionCache:(nonnull id<FLTTransactionCacheProtocol>)transactionCache {
   self = [super init];
   if (self) {
     _queue = queue;
@@ -236,7 +237,5 @@
 - (SKStorefront *)storefront API_AVAILABLE(ios(13.0)) {
   return self.queue.storefront;
 }
-
-@synthesize delegate;
 
 @end
