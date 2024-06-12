@@ -77,8 +77,9 @@ bool CameraImpl::AddPendingVoidResult(
 }
 
 bool CameraImpl::AddPendingIntResult(
-    PendingResultType type, std::function<void(ErrorOr<int64_t> reply)> result) {
-    assert(result);
+    PendingResultType type,
+    std::function<void(ErrorOr<int64_t> reply)> result) {
+  assert(result);
   return AddPendingResult(type, result);
 }
 
@@ -96,14 +97,15 @@ bool CameraImpl::AddPendingSizeResult(
   return AddPendingResult(type, result);
 }
 
-bool CameraImpl::AddPendingResult(PendingResultType type, CameraImpl::AsyncResult result) {
+bool CameraImpl::AddPendingResult(PendingResultType type,
+                                  CameraImpl::AsyncResult result) {
   auto it = pending_results_.find(type);
   if (it != pending_results_.end()) {
-    std::visit([](auto&& r) {
-          r(FlutterError( "Duplicate request",
-                           "Method handler already called"));
+    std::visit(
+        [](auto&& r) {
+          r(FlutterError("Duplicate request", "Method handler already called"));
         },
-               result);
+        result);
     return false;
   }
 
@@ -117,7 +119,8 @@ CameraImpl::GetPendingVoidResultByType(PendingResultType type) {
   if (!result) {
     return nullptr;
   }
-  return std::get<std::function<void(std::optional<FlutterError>)>>(result.value());
+  return std::get<std::function<void(std::optional<FlutterError>)>>(
+      result.value());
 }
 
 std::function<void(ErrorOr<int64_t> reply)>
@@ -166,8 +169,11 @@ bool CameraImpl::HasPendingResultByType(PendingResultType type) const {
 void CameraImpl::SendErrorForPendingResults(const std::string& error_code,
                                             const std::string& description) {
   for (const auto& pending_result : pending_results_) {
-    std::visit([&error_code, &description](auto&& result) { result(FlutterError(error_code, description)); },
-               pending_result.second);
+    std::visit(
+        [&error_code, &description](auto&& result) {
+          result(FlutterError(error_code, description));
+        },
+        pending_result.second);
   }
   pending_results_.clear();
 }
@@ -214,7 +220,8 @@ void CameraImpl::OnStartPreviewSucceeded(int32_t width, int32_t height) {
   auto pending_result =
       GetPendingSizeResultByType(PendingResultType::kInitialize);
   if (pending_result) {
-    pending_result(PlatformSize(static_cast<double>(width), static_cast<double>(height)));
+    pending_result(
+        PlatformSize(static_cast<double>(width), static_cast<double>(height)));
   }
 };
 

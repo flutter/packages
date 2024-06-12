@@ -33,7 +33,10 @@ CameraResult GetCameraResult(HRESULT hr) {
 
 CaptureControllerImpl::CaptureControllerImpl(
     CaptureControllerListener* listener)
-    : capture_controller_listener_(listener), media_settings_(PlatformMediaSettings(PlatformResolutionPreset::max, true)), CaptureController(){};
+    : capture_controller_listener_(listener),
+      media_settings_(
+          PlatformMediaSettings(PlatformResolutionPreset::max, true)),
+      CaptureController(){};
 
 CaptureControllerImpl::~CaptureControllerImpl() {
   ResetCaptureController();
