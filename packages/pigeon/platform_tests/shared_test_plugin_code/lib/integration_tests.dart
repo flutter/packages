@@ -8,7 +8,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 
 import 'generated.dart';
-import 'src/generated/core_tests.gen.dart';
 
 const int _biggerThanBigInt = 3000000000;
 const int _regularInt = 42;
