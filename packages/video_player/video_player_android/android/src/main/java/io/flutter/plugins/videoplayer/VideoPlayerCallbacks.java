@@ -15,8 +15,7 @@ import androidx.annotation.Nullable;
  * order to assert results.
  */
 interface VideoPlayerCallbacks {
-  void onInitialized(
-      int width, int height, long durationInMs, @Nullable Integer rotationCorrectionInDegrees);
+  void onInitialized(int width, int height, long durationInMs, int rotationCorrectionInDegrees);
 
   void onBufferingStart();
 

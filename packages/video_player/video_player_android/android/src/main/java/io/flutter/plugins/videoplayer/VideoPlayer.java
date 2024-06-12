@@ -110,8 +110,6 @@ final class VideoPlayer {
         httpDataSourceFactory, httpHeaders, userAgent, httpHeadersNotEmpty);
   }
 
-
-
   private void setUpVideoPlayer(ExoPlayer exoPlayer) {
     this.exoPlayer = exoPlayer;
 
@@ -225,7 +223,7 @@ final class VideoPlayer {
       return;
     }
     VideoSize videoSize = exoPlayer.getVideoSize();
-    @Nullable Integer rotationCorrection = null;
+    int rotationCorrection = 0;
     int width = videoSize.width;
     int height = videoSize.height;
     if (width != 0 && height != 0) {
