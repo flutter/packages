@@ -179,6 +179,7 @@ class CameraImpl : public Camera {
   // A generic type for any pending asyncronous result.
   using AsyncResult =
       std::variant<std::function<void(std::optional<FlutterError> reply)>,
+                   std::function<void(ErrorOr<int64_t> reply)>,
                    std::function<void(ErrorOr<std::string> reply)>,
                    std::function<void(ErrorOr<PlatformSize> reply)>>;
 
@@ -233,7 +234,7 @@ class CameraImpl : public Camera {
   //
   // This should not be used directly in most code, it's just a helper for the
   // typed versions in the public interface.
-  bool AddPendingResult(PendingResultType type, AsyncResult);
+  bool AddPendingResult(PendingResultType type, AsyncResult result);
 
   std::map<PendingResultType, AsyncResult> pending_results_;
   std::unique_ptr<CaptureController> capture_controller_;

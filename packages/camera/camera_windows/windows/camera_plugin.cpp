@@ -20,6 +20,7 @@
 
 #include "capture_device_info.h"
 #include "com_heap_ptr.h"
+#include "messages.g.h"
 #include "string_utils.h"
 
 namespace camera_windows {
@@ -28,9 +29,6 @@ using flutter::EncodableMap;
 using flutter::EncodableValue;
 
 namespace {
-
-// Channel events
-constexpr char kChannelName[] = "plugins.flutter.io/camera_windows";
 
 const std::string kPictureCaptureExtension = "jpeg";
 const std::string kVideoCaptureExtension = "mp4";
@@ -121,17 +119,10 @@ std::optional<std::string> GetFilePathForVideo() {
 // static
 void CameraPlugin::RegisterWithRegistrar(
     flutter::PluginRegistrarWindows* registrar) {
-  auto channel = std::make_unique<flutter::MethodChannel<>>(
-      registrar->messenger(), kChannelName,
-      &flutter::StandardMethodCodec::GetInstance());
-
   std::unique_ptr<CameraPlugin> plugin = std::make_unique<CameraPlugin>(
       registrar->texture_registrar(), registrar->messenger());
 
-  channel->SetMethodCallHandler(
-      [plugin_pointer = plugin.get()](const auto& call, auto result) {
-        plugin_pointer->HandleMethodCall(call, std::move(result));
-      });
+  CameraApi::SetUp(registrar->messenger(), plugin.get());
 
   registrar->AddPlugin(std::move(plugin));
 }
@@ -193,14 +184,10 @@ ErrorOr<flutter::EncodableList> CameraPlugin::GetAvailableCameras() {
     auto device_info = GetDeviceInfo(devices[i]);
     auto deviceName = device_info->GetUniqueDeviceName();
 
-    devices_list.push_back(EncodableMap({
-        {EncodableValue("name"), EncodableValue(deviceName)},
-        {EncodableValue("lensFacing"), EncodableValue("front")},
-        {EncodableValue("sensorOrientation"), EncodableValue(0)},
-    }));
+    devices_list.push_back(EncodableValue(deviceName));
   }
 
-  result->Success(std::move(EncodableValue(devices_list)));
+  return devices_list;
 }
 
 bool CameraPlugin::EnumerateVideoCaptureDeviceSources(IMFActivate*** devices,
@@ -247,7 +234,7 @@ void CameraPlugin::Create(const std::string& camera_name,
 void CameraPlugin::Initialize(
     int64_t camera_id,
     std::function<void(ErrorOr<PlatformSize> reply)> result) {
-  auto camera = GetCameraByCameraId(*camera_id);
+  auto camera = GetCameraByCameraId(camera_id);
   if (!camera) {
     return result(FlutterError("camera_error", "Camera not created"));
   }
@@ -268,7 +255,7 @@ void CameraPlugin::Initialize(
 void CameraPlugin::PausePreview(
     int64_t camera_id,
     std::function<void(std::optional<FlutterError> reply)> result) {
-  auto camera = GetCameraByCameraId(*camera_id);
+  auto camera = GetCameraByCameraId(camera_id);
   if (!camera) {
     return result(FlutterError("camera_error", "Camera not created"));
   }
@@ -289,7 +276,7 @@ void CameraPlugin::PausePreview(
 void CameraPlugin::ResumePreview(
     int64_t camera_id,
     std::function<void(std::optional<FlutterError> reply)> result) {
-  auto camera = GetCameraByCameraId(*camera_id);
+  auto camera = GetCameraByCameraId(camera_id);
   if (!camera) {
     return result(FlutterError("camera_error", "Camera not created"));
   }
@@ -310,7 +297,7 @@ void CameraPlugin::ResumePreview(
 void CameraPlugin::StartVideoRecording(
     int64_t camera_id, const PlatformVideoCaptureOptions& options,
     std::function<void(std::optional<FlutterError> reply)> result) {
-  auto camera = GetCameraByCameraId(*camera_id);
+  auto camera = GetCameraByCameraId(camera_id);
   if (!camera) {
     return result(FlutterError("camera_error", "Camera not created"));
   }
@@ -321,8 +308,8 @@ void CameraPlugin::StartVideoRecording(
   }
 
   int64_t max_video_duration_ms = -1;
-  auto requested_max_video_duration_ms =
-      std::get_if<std::int32_t>(ValueOrNull(args, kMaxVideoDurationKey));
+  const int64_t* requested_max_video_duration_ms =
+      options.max_duration_milliseconds();
 
   if (requested_max_video_duration_ms != nullptr) {
     max_video_duration_ms = *requested_max_video_duration_ms;
@@ -344,7 +331,7 @@ void CameraPlugin::StartVideoRecording(
 
 void CameraPlugin::StopVideoRecording(
     int64_t camera_id, std::function<void(ErrorOr<std::string> reply)> result) {
-  auto camera = GetCameraByCameraId(*camera_id);
+  auto camera = GetCameraByCameraId(camera_id);
   if (!camera) {
     return result(FlutterError("camera_error", "Camera not created"));
   }
@@ -364,7 +351,7 @@ void CameraPlugin::StopVideoRecording(
 
 void CameraPlugin::TakePicture(
     int64_t camera_id, std::function<void(ErrorOr<std::string> reply)> result) {
-  auto camera = GetCameraByCameraId(*camera_id);
+  auto camera = GetCameraByCameraId(camera_id);
   if (!camera) {
     return result(FlutterError("camera_error", "Camera not created"));
   }
@@ -389,7 +376,7 @@ void CameraPlugin::TakePicture(
 }
 
 std::optional<FlutterError> CameraPlugin::Dispose(int64_t camera_id) {
-  DisposeCameraByCameraId(*camera_id);
+  DisposeCameraByCameraId(camera_id);
   return std::nullopt;
 }
 

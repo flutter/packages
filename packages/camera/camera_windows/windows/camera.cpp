@@ -72,33 +72,38 @@ bool CameraImpl::InitCamera(
 bool CameraImpl::AddPendingVoidResult(
     PendingResultType type,
     std::function<void(std::optional<FlutterError> reply)> result) {
-  AddPendingResult(type, result);
+  assert(result);
+  return AddPendingResult(type, result);
 }
 
 bool CameraImpl::AddPendingIntResult(
-    PendingResultType type,
-    std::function<void(ErrorOr<int64_t> reply)> result) {
-  AddPendingResult(type, result);
+    PendingResultType type, std::function<void(ErrorOr<int64_t> reply)> result) {
+    assert(result);
+  return AddPendingResult(type, result);
 }
 
 bool CameraImpl::AddPendingStringResult(
     PendingResultType type,
     std::function<void(ErrorOr<std::string> reply)> result) {
-  AddPendingResult(type, result);
+  assert(result);
+  return AddPendingResult(type, result);
 }
 
 bool CameraImpl::AddPendingSizeResult(
     PendingResultType type,
     std::function<void(ErrorOr<PlatformSize> reply)> result) {
-  AddPendingResult(type, result);
+  assert(result);
+  return AddPendingResult(type, result);
 }
 
-bool CameraImpl::AddPendingResult(PendingResultType type, AsyncResult) {
-  assert(result);
-
+bool CameraImpl::AddPendingResult(PendingResultType type, CameraImpl::AsyncResult result) {
   auto it = pending_results_.find(type);
   if (it != pending_results_.end()) {
-    result->Error("Duplicate request", "Method handler already called");
+    std::visit([](auto&& r) {
+          r(FlutterError( "Duplicate request",
+                           "Method handler already called"));
+        },
+               result);
     return false;
   }
 
@@ -112,7 +117,7 @@ CameraImpl::GetPendingVoidResultByType(PendingResultType type) {
   if (!result) {
     return nullptr;
   }
-  return std::get<std::function<void(std::optional<FlutterError>)>>(result);
+  return std::get<std::function<void(std::optional<FlutterError>)>>(result.value());
 }
 
 std::function<void(ErrorOr<int64_t> reply)>
@@ -121,7 +126,7 @@ CameraImpl::GetPendingIntResultByType(PendingResultType type) {
   if (!result) {
     return nullptr;
   }
-  return std::get<std::function<void(ErrorOr<int64_t>)>>(result);
+  return std::get<std::function<void(ErrorOr<int64_t>)>>(result.value());
 }
 
 std::function<void(ErrorOr<std::string> reply)>
@@ -130,7 +135,7 @@ CameraImpl::GetPendingStringResultByType(PendingResultType type) {
   if (!result) {
     return nullptr;
   }
-  return std::get<std::function<void(ErrorOr<std::string>)>>(result);
+  return std::get<std::function<void(ErrorOr<std::string>)>>(result.value());
 }
 
 std::function<void(ErrorOr<PlatformSize> reply)>
@@ -139,32 +144,31 @@ CameraImpl::GetPendingSizeResultByType(PendingResultType type) {
   if (!result) {
     return nullptr;
   }
-  return std::get<std::function<void(ErrorOr<PlatformSize>)>>(result);
+  return std::get<std::function<void(ErrorOr<PlatformSize>)>>(result.value());
 }
 
-std::optional<AsyncResult> CameraImpl::GetPendingResultByType(
+std::optional<CameraImpl::AsyncResult> CameraImpl::GetPendingResultByType(
     PendingResultType type) {
   auto it = pending_results_.find(type);
   if (it == pending_results_.end()) {
     return std::nullopt;
   }
-  auto result = std::move(it->second);
+  CameraImpl::AsyncResult result = std::move(it->second);
   pending_results_.erase(it);
   return result;
 }
 
 bool CameraImpl::HasPendingResultByType(PendingResultType type) const {
   auto it = pending_results_.find(type);
-  if (it == pending_results_.end()) {
-    return false;
-  }
-  return it->second != nullptr;
+  return it != pending_results_.end();
 }
 
 void CameraImpl::SendErrorForPendingResults(const std::string& error_code,
                                             const std::string& description) {
-  std::visit([](auto&& arg) { arg(FlutterError(error_code, description)); },
-             pending_results_);
+  for (const auto& pending_result : pending_results_) {
+    std::visit([&error_code, &description](auto&& result) { result(FlutterError(error_code, description)); },
+               pending_result.second);
+  }
   pending_results_.clear();
 }
 
@@ -210,7 +214,7 @@ void CameraImpl::OnStartPreviewSucceeded(int32_t width, int32_t height) {
   auto pending_result =
       GetPendingSizeResultByType(PendingResultType::kInitialize);
   if (pending_result) {
-    pending_result(static_cast<double>(width), static_cast<double>(height));
+    pending_result(PlatformSize(static_cast<double>(width), static_cast<double>(height)));
   }
 };
 
@@ -246,7 +250,7 @@ void CameraImpl::OnPausePreviewSucceeded() {
   auto pending_result =
       GetPendingVoidResultByType(PendingResultType::kPausePreview);
   if (pending_result) {
-    pending_result();
+    pending_result(std::nullopt);
   }
 }
 
@@ -264,7 +268,7 @@ void CameraImpl::OnStartRecordSucceeded() {
   auto pending_result =
       GetPendingVoidResultByType(PendingResultType::kStartRecord);
   if (pending_result) {
-    pending_result();
+    pending_result(std::nullopt);
   }
 };
 

@@ -33,7 +33,7 @@ CameraResult GetCameraResult(HRESULT hr) {
 
 CaptureControllerImpl::CaptureControllerImpl(
     CaptureControllerListener* listener)
-    : capture_controller_listener_(listener), CaptureController(){};
+    : capture_controller_listener_(listener), media_settings_(PlatformMediaSettings(PlatformResolutionPreset::max, true)), CaptureController(){};
 
 CaptureControllerImpl::~CaptureControllerImpl() {
   ResetCaptureController();
@@ -381,28 +381,21 @@ void CaptureControllerImpl::TakePicture(const std::string& file_path) {
 }
 
 uint32_t CaptureControllerImpl::GetMaxPreviewHeight() const {
-  switch (resolution_preset_) {
-    case ResolutionPreset::kLow:
+  switch (media_settings_.resolution_preset()) {
+    case PlatformResolutionPreset::low:
       return 240;
-      break;
-    case ResolutionPreset::kMedium:
+    case PlatformResolutionPreset::medium:
       return 480;
-      break;
-    case ResolutionPreset::kHigh:
+    case PlatformResolutionPreset::high:
       return 720;
-      break;
-    case ResolutionPreset::kVeryHigh:
+    case PlatformResolutionPreset::veryHigh:
       return 1080;
-      break;
-    case ResolutionPreset::kUltraHigh:
+    case PlatformResolutionPreset::ultraHigh:
       return 2160;
-      break;
-    case ResolutionPreset::kMax:
-    case ResolutionPreset::kAuto:
+    case PlatformResolutionPreset::max:
     default:
       // no limit.
       return 0xffffffff;
-      break;
   }
 }
 
