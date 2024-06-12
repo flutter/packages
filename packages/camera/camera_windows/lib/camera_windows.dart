@@ -47,7 +47,7 @@ class CameraWindows extends CameraPlatform {
   @override
   Future<List<CameraDescription>> availableCameras() async {
     try {
-      final List<String?> cameras = await _hostApi.availableCameras();
+      final List<String?> cameras = await _hostApi.getAvailableCameras();
 
       return cameras.map((String? cameraName) {
         return CameraDescription(

@@ -49,7 +49,7 @@ class CameraPlugin : public flutter::Plugin,
   CameraPlugin& operator=(const CameraPlugin&) = delete;
 
   // CameraApi:
-  ErrorOr<flutter::EncodableList> AvailableCameras() override;
+  ErrorOr<flutter::EncodableList> GetAvailableCameras() override;
   void Create(const std::string& camera_name,
               const PlatformMediaSettings& settings,
               std::function<void(ErrorOr<int64_t> reply)> result) override;

@@ -182,7 +182,7 @@ class CameraApi {
   CameraApi& operator=(const CameraApi&) = delete;
   virtual ~CameraApi() {}
   // Returns the names of all of the available capture devices.
-  virtual ErrorOr<flutter::EncodableList> AvailableCameras() = 0;
+  virtual ErrorOr<flutter::EncodableList> GetAvailableCameras() = 0;
   // Creates a camera instance for the given device name and settings.
   virtual void Create(const std::string& camera_name,
                       const PlatformMediaSettings& settings,

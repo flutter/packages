@@ -37,9 +37,9 @@ class _FakePlatformSize_0 extends _i1.SmartFake implements _i2.PlatformSize {
 /// See the documentation for Mockito's code generation for more information.
 class MockCameraApi extends _i1.Mock implements _i2.CameraApi {
   @override
-  _i3.Future<List<String?>> availableCameras() => (super.noSuchMethod(
+  _i3.Future<List<String?>> getAvailableCameras() => (super.noSuchMethod(
         Invocation.method(
-          #availableCameras,
+          #getAvailableCameras,
           [],
         ),
         returnValue: _i3.Future<List<String?>>.value(<String?>[]),

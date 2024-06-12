@@ -178,7 +178,7 @@ void CameraPlugin::DisposeCameraByCameraId(int64_t camera_id) {
   }
 }
 
-ErrorOr<flutter::EncodableList> CameraPlugin::AvailableCameras() {
+ErrorOr<flutter::EncodableList> CameraPlugin::GetAvailableCameras() {
   // Enumerate devices.
   ComHeapPtr<IMFActivate*> devices;
   UINT32 count = 0;

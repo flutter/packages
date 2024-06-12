@@ -50,7 +50,7 @@ class PlatformVideoCaptureOptions {
 @HostApi()
 abstract class CameraApi {
   /// Returns the names of all of the available capture devices.
-  List<String> availableCameras();
+  List<String> getAvailableCameras();
 
   /// Creates a camera instance for the given device name and settings.
   @async

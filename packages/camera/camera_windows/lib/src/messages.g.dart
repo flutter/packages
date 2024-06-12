@@ -172,9 +172,9 @@ class CameraApi {
   final String __pigeon_messageChannelSuffix;
 
   /// Returns the names of all of the available capture devices.
-  Future<List<String?>> availableCameras() async {
+  Future<List<String?>> getAvailableCameras() async {
     final String __pigeon_channelName =
-        'dev.flutter.pigeon.camera_windows.CameraApi.availableCameras$__pigeon_messageChannelSuffix';
+        'dev.flutter.pigeon.camera_windows.CameraApi.getAvailableCameras$__pigeon_messageChannelSuffix';
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,

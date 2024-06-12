@@ -297,7 +297,7 @@ void main() {
           'Test 1',
           'Test 2',
         ];
-        when(mockApi.availableCameras()).thenAnswer((_) async => returnData);
+        when(mockApi.getAvailableCameras()).thenAnswer((_) async => returnData);
 
         // Act
         final List<CameraDescription> cameras = await plugin.availableCameras();
@@ -319,7 +319,7 @@ void main() {
         // Arrange
         const String code = 'TESTING_ERROR_CODE';
         const String message = 'Mock error message used during testing.';
-        when(mockApi.availableCameras()).thenAnswer(
+        when(mockApi.getAvailableCameras()).thenAnswer(
             (_) async => throw PlatformException(code: code, message: message));
 
         // Act

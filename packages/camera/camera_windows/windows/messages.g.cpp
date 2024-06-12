@@ -303,7 +303,7 @@ void CameraApi::SetUp(flutter::BinaryMessenger* binary_messenger,
   {
     BasicMessageChannel<> channel(
         binary_messenger,
-        "dev.flutter.pigeon.camera_windows.CameraApi.availableCameras" +
+        "dev.flutter.pigeon.camera_windows.CameraApi.getAvailableCameras" +
             prepended_suffix,
         &GetCodec());
     if (api != nullptr) {
@@ -311,7 +311,7 @@ void CameraApi::SetUp(flutter::BinaryMessenger* binary_messenger,
           [api](const EncodableValue& message,
                 const flutter::MessageReply<EncodableValue>& reply) {
             try {
-              ErrorOr<EncodableList> output = api->AvailableCameras();
+              ErrorOr<EncodableList> output = api->GetAvailableCameras();
               if (output.has_error()) {
                 reply(WrapError(output.error()));
                 return;
