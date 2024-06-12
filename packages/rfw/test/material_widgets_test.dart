@@ -566,7 +566,9 @@ void main() {
     await expectLater(
       find.byType(RemoteWidget),
       matchesGoldenFile('goldens/material_test.material_properties.png'),
-      skip: !runGoldens,
+      // TODO(bparrishMines): Unskip once golden file is updated. See
+      // https://github.com/flutter/flutter/issues/150127
+      skip: !runGoldens || true,
     );
 
     runtime.update(testName, parseLibraryFile('''
@@ -585,10 +587,7 @@ void main() {
 
     expect(tester.widget<Material>(find.byType(Material)).clipBehavior,
         Clip.antiAlias);
-  },
-      // TODO(bparrishMines): Unskip once golden file is updated. See
-      // https://github.com/flutter/flutter/issues/150127
-      skip: true);
+  });
 
   testWidgets('Slider properties', (WidgetTester tester) async {
     final Runtime runtime = setupRuntime();
