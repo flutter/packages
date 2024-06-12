@@ -46,6 +46,7 @@
 - meta
 - mime
 - path
+- platform
 - pub_semver
 - shelf
 - shelf_static
