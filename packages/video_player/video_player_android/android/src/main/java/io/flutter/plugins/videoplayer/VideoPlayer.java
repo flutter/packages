@@ -110,12 +110,17 @@ final class VideoPlayer {
         httpDataSourceFactory, httpHeaders, userAgent, httpHeadersNotEmpty);
   }
 
+
+
   private void setUpVideoPlayer(ExoPlayer exoPlayer) {
     this.exoPlayer = exoPlayer;
 
     surface = new Surface(textureEntry.surfaceTexture());
     exoPlayer.setVideoSurface(surface);
     setAudioAttributes(exoPlayer, options.mixWithOthers);
+
+    // Avoids synthetic accessor.
+    VideoPlayerCallbacks events = this.events;
 
     exoPlayer.addListener(
         new Listener() {
