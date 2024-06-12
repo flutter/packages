@@ -86,7 +86,7 @@ void main() {
       final StringBuffer sink = StringBuffer();
       const KotlinGenerator generator = KotlinGenerator();
       generator.generate(
-        const KotlinOptions(),
+        const KotlinOptions(fileSpecificClassNameComponent: 'MyFile'),
         root,
         sink,
         dartPackageName: DEFAULT_PACKAGE_NAME,
@@ -106,8 +106,10 @@ void main() {
         ),
       );
 
-      // Codec and class
-      expect(code, contains('class PigeonProxyApiBaseCodec'));
+      // Codec
+      expect(code, contains('private class PigeonProxyApiBaseCodec(val registrar: PigeonProxyApiRegistrar) : MyFilePigeonCodec()'));
+
+      // Proxy API class
       expect(
         code,
         contains(
@@ -535,8 +537,8 @@ void main() {
           collapsedCode,
           contains(
             'channel.send(listOf(pigeon_identifierArg, validTypeArg, '
-            'enumTypeArg.raw, proxyApiTypeArg, nullableValidTypeArg, '
-            'nullableEnumTypeArg?.raw, nullableProxyApiTypeArg))',
+            'enumTypeArg, proxyApiTypeArg, nullableValidTypeArg, '
+            'nullableEnumTypeArg, nullableProxyApiTypeArg))',
           ),
         );
         expect(
@@ -904,8 +906,8 @@ void main() {
         expect(
           collapsedCode,
           contains(
-            r'channel.send(listOf(pigeon_instanceArg, validTypeArg, enumTypeArg.raw, '
-            r'proxyApiTypeArg, nullableValidTypeArg, nullableEnumTypeArg?.raw, '
+            r'channel.send(listOf(pigeon_instanceArg, validTypeArg, enumTypeArg, '
+            r'proxyApiTypeArg, nullableValidTypeArg, nullableEnumTypeArg, '
             r'nullableProxyApiTypeArg))',
           ),
         );
