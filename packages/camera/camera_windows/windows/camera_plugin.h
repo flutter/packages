@@ -48,15 +48,11 @@ class CameraPlugin : public flutter::Plugin,
   CameraPlugin(const CameraPlugin&) = delete;
   CameraPlugin& operator=(const CameraPlugin&) = delete;
 
-  // Called when a method is called on plugin channel.
-  void HandleMethodCall(const flutter::MethodCall<>& method_call,
-                        std::unique_ptr<MethodResult<>> result);
-
   // CameraApi:
   ErrorOr<flutter::EncodableList> AvailableCameras() override;
   void Create(const std::string& camera_name,
               const PlatformMediaSettings& settings,
-              std::function<void(ErrorOr<std::string> reply)> result) override;
+              std::function<void(ErrorOr<int64_t> reply)> result) override;
   void Initialize(
       int64_t camera_id,
       std::function<void(ErrorOr<PlatformSize> reply)> result) override;

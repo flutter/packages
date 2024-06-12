@@ -168,12 +168,23 @@ PlatformSize PlatformSize::FromEncodableList(const EncodableList& list) {
 
 // PlatformVideoCaptureOptions
 
-PlatformVideoCaptureOptions::PlatformVideoCaptureOptions(
-    int64_t max_duration_milliseconds)
-    : max_duration_milliseconds_(max_duration_milliseconds) {}
+PlatformVideoCaptureOptions::PlatformVideoCaptureOptions() {}
 
-int64_t PlatformVideoCaptureOptions::max_duration_milliseconds() const {
-  return max_duration_milliseconds_;
+PlatformVideoCaptureOptions::PlatformVideoCaptureOptions(
+    const int64_t* max_duration_milliseconds)
+    : max_duration_milliseconds_(
+          max_duration_milliseconds
+              ? std::optional<int64_t>(*max_duration_milliseconds)
+              : std::nullopt) {}
+
+const int64_t* PlatformVideoCaptureOptions::max_duration_milliseconds() const {
+  return max_duration_milliseconds_ ? &(*max_duration_milliseconds_) : nullptr;
+}
+
+void PlatformVideoCaptureOptions::set_max_duration_milliseconds(
+    const int64_t* value_arg) {
+  max_duration_milliseconds_ =
+      value_arg ? std::optional<int64_t>(*value_arg) : std::nullopt;
 }
 
 void PlatformVideoCaptureOptions::set_max_duration_milliseconds(
@@ -184,13 +195,20 @@ void PlatformVideoCaptureOptions::set_max_duration_milliseconds(
 EncodableList PlatformVideoCaptureOptions::ToEncodableList() const {
   EncodableList list;
   list.reserve(1);
-  list.push_back(EncodableValue(max_duration_milliseconds_));
+  list.push_back(max_duration_milliseconds_
+                     ? EncodableValue(*max_duration_milliseconds_)
+                     : EncodableValue());
   return list;
 }
 
 PlatformVideoCaptureOptions PlatformVideoCaptureOptions::FromEncodableList(
     const EncodableList& list) {
-  PlatformVideoCaptureOptions decoded(list[0].LongValue());
+  PlatformVideoCaptureOptions decoded;
+  auto& encodable_max_duration_milliseconds = list[0];
+  if (!encodable_max_duration_milliseconds.IsNull()) {
+    decoded.set_max_duration_milliseconds(
+        encodable_max_duration_milliseconds.LongValue());
+  }
   return decoded;
 }
 
@@ -336,7 +354,7 @@ void CameraApi::SetUp(flutter::BinaryMessenger* binary_messenger,
                   std::any_cast<const PlatformMediaSettings&>(
                       std::get<CustomEncodableValue>(encodable_settings_arg));
               api->Create(camera_name_arg, settings_arg,
-                          [reply](ErrorOr<std::string>&& output) {
+                          [reply](ErrorOr<int64_t>&& output) {
                             if (output.has_error()) {
                               reply(WrapError(output.error()));
                               return;

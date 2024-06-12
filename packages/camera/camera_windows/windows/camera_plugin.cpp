@@ -32,82 +32,8 @@ namespace {
 // Channel events
 constexpr char kChannelName[] = "plugins.flutter.io/camera_windows";
 
-constexpr char kAvailableCamerasMethod[] = "availableCameras";
-constexpr char kCreateMethod[] = "create";
-constexpr char kInitializeMethod[] = "initialize";
-constexpr char kTakePictureMethod[] = "takePicture";
-constexpr char kStartVideoRecordingMethod[] = "startVideoRecording";
-constexpr char kStopVideoRecordingMethod[] = "stopVideoRecording";
-constexpr char kPausePreview[] = "pausePreview";
-constexpr char kResumePreview[] = "resumePreview";
-constexpr char kDisposeMethod[] = "dispose";
-
-constexpr char kCameraNameKey[] = "cameraName";
-constexpr char kResolutionPresetKey[] = "resolutionPreset";
-constexpr char kFpsKey[] = "fps";
-constexpr char kVideoBitrateKey[] = "videoBitrate";
-constexpr char kAudioBitrateKey[] = "audioBitrate";
-constexpr char kEnableAudioKey[] = "enableAudio";
-
-constexpr char kCameraIdKey[] = "cameraId";
-constexpr char kMaxVideoDurationKey[] = "maxVideoDuration";
-
-constexpr char kResolutionPresetValueLow[] = "low";
-constexpr char kResolutionPresetValueMedium[] = "medium";
-constexpr char kResolutionPresetValueHigh[] = "high";
-constexpr char kResolutionPresetValueVeryHigh[] = "veryHigh";
-constexpr char kResolutionPresetValueUltraHigh[] = "ultraHigh";
-constexpr char kResolutionPresetValueMax[] = "max";
-
 const std::string kPictureCaptureExtension = "jpeg";
 const std::string kVideoCaptureExtension = "mp4";
-
-// Looks for |key| in |map|, returning the associated value if it is present, or
-// a nullptr if not.
-const EncodableValue* ValueOrNull(const EncodableMap& map, const char* key) {
-  auto it = map.find(EncodableValue(key));
-  if (it == map.end()) {
-    return nullptr;
-  }
-  return &(it->second);
-}
-
-// Looks for |key| in |map|, returning the associated int64 value if it is
-// present, or std::nullopt if not.
-std::optional<int64_t> GetInt64ValueOrNull(const EncodableMap& map,
-                                           const char* key) {
-  auto value = ValueOrNull(map, key);
-  if (!value) {
-    return std::nullopt;
-  }
-
-  if (std::holds_alternative<int32_t>(*value)) {
-    return static_cast<int64_t>(std::get<int32_t>(*value));
-  }
-  auto val64 = std::get_if<int64_t>(value);
-  if (!val64) {
-    return std::nullopt;
-  }
-  return *val64;
-}
-
-// Parses resolution preset argument to enum value.
-ResolutionPreset ParseResolutionPreset(const std::string& resolution_preset) {
-  if (resolution_preset.compare(kResolutionPresetValueLow) == 0) {
-    return ResolutionPreset::kLow;
-  } else if (resolution_preset.compare(kResolutionPresetValueMedium) == 0) {
-    return ResolutionPreset::kMedium;
-  } else if (resolution_preset.compare(kResolutionPresetValueHigh) == 0) {
-    return ResolutionPreset::kHigh;
-  } else if (resolution_preset.compare(kResolutionPresetValueVeryHigh) == 0) {
-    return ResolutionPreset::kVeryHigh;
-  } else if (resolution_preset.compare(kResolutionPresetValueUltraHigh) == 0) {
-    return ResolutionPreset::kUltraHigh;
-  } else if (resolution_preset.compare(kResolutionPresetValueMax) == 0) {
-    return ResolutionPreset::kMax;
-  }
-  return ResolutionPreset::kAuto;
-}
 
 // Builds CaptureDeviceInfo object from given device holding device name and id.
 std::unique_ptr<CaptureDeviceInfo> GetDeviceInfo(IMFActivate* device) {
@@ -225,66 +151,6 @@ CameraPlugin::CameraPlugin(flutter::TextureRegistrar* texture_registrar,
 
 CameraPlugin::~CameraPlugin() {}
 
-void CameraPlugin::HandleMethodCall(
-    const flutter::MethodCall<>& method_call,
-    std::unique_ptr<flutter::MethodResult<>> result) {
-  const std::string& method_name = method_call.method_name();
-
-  if (method_name.compare(kAvailableCamerasMethod) == 0) {
-    return AvailableCamerasMethodHandler(std::move(result));
-  } else if (method_name.compare(kCreateMethod) == 0) {
-    const auto* arguments =
-        std::get_if<flutter::EncodableMap>(method_call.arguments());
-    assert(arguments);
-
-    return CreateMethodHandler(*arguments, std::move(result));
-  } else if (method_name.compare(kInitializeMethod) == 0) {
-    const auto* arguments =
-        std::get_if<flutter::EncodableMap>(method_call.arguments());
-    assert(arguments);
-
-    return this->InitializeMethodHandler(*arguments, std::move(result));
-  } else if (method_name.compare(kTakePictureMethod) == 0) {
-    const auto* arguments =
-        std::get_if<flutter::EncodableMap>(method_call.arguments());
-    assert(arguments);
-
-    return TakePictureMethodHandler(*arguments, std::move(result));
-  } else if (method_name.compare(kStartVideoRecordingMethod) == 0) {
-    const auto* arguments =
-        std::get_if<flutter::EncodableMap>(method_call.arguments());
-    assert(arguments);
-
-    return StartVideoRecordingMethodHandler(*arguments, std::move(result));
-  } else if (method_name.compare(kStopVideoRecordingMethod) == 0) {
-    const auto* arguments =
-        std::get_if<flutter::EncodableMap>(method_call.arguments());
-    assert(arguments);
-
-    return StopVideoRecordingMethodHandler(*arguments, std::move(result));
-  } else if (method_name.compare(kPausePreview) == 0) {
-    const auto* arguments =
-        std::get_if<flutter::EncodableMap>(method_call.arguments());
-    assert(arguments);
-
-    return PausePreviewMethodHandler(*arguments, std::move(result));
-  } else if (method_name.compare(kResumePreview) == 0) {
-    const auto* arguments =
-        std::get_if<flutter::EncodableMap>(method_call.arguments());
-    assert(arguments);
-
-    return ResumePreviewMethodHandler(*arguments, std::move(result));
-  } else if (method_name.compare(kDisposeMethod) == 0) {
-    const auto* arguments =
-        std::get_if<flutter::EncodableMap>(method_call.arguments());
-    assert(arguments);
-
-    return DisposeMethodHandler(*arguments, std::move(result));
-  } else {
-    result->NotImplemented();
-  }
-}
-
 Camera* CameraPlugin::GetCameraByDeviceId(std::string& device_id) {
   for (auto it = begin(cameras_); it != end(cameras_); ++it) {
     if ((*it)->HasDeviceId(device_id)) {
@@ -343,9 +209,9 @@ bool CameraPlugin::EnumerateVideoCaptureDeviceSources(IMFActivate*** devices,
                                                                    count);
 }
 
-void CameraPlugin::Create(
-    const std::string& camera_name, const PlatformMediaSettings& settings,
-    std::function<void(ErrorOr<std::string> reply)> result) {
+void CameraPlugin::Create(const std::string& camera_name,
+                          const PlatformMediaSettings& settings,
+                          std::function<void(ErrorOr<int64_t> reply)> result) {
   auto device_info = std::make_unique<CaptureDeviceInfo>();
   if (!device_info->ParseDeviceInfoFromCameraName(camera_name)) {
     return result(FlutterError("camera_error",
@@ -368,8 +234,8 @@ void CameraPlugin::Create(
         FlutterError("camera_error", "Pending camera creation request exists"));
   }
 
-  if (camera->AddPendingStringResult(PendingResultType::kCreateCamera,
-                                     std::move(result))) {
+  if (camera->AddPendingIntResult(PendingResultType::kCreateCamera,
+                                  std::move(result))) {
     bool initialized =
         camera->InitCamera(texture_registrar_, messenger_, settings);
     if (initialized) {

@@ -98,10 +98,10 @@ class PlatformSize {
 
 class PlatformVideoCaptureOptions {
   PlatformVideoCaptureOptions({
-    required this.maxDurationMilliseconds,
+    this.maxDurationMilliseconds,
   });
 
-  int maxDurationMilliseconds;
+  int? maxDurationMilliseconds;
 
   Object encode() {
     return <Object?>[
@@ -112,7 +112,7 @@ class PlatformVideoCaptureOptions {
   static PlatformVideoCaptureOptions decode(Object result) {
     result as List<Object?>;
     return PlatformVideoCaptureOptions(
-      maxDurationMilliseconds: result[0]! as int,
+      maxDurationMilliseconds: result[0] as int?,
     );
   }
 }
@@ -202,8 +202,7 @@ class CameraApi {
   }
 
   /// Creates a camera instance for the given device name and settings.
-  Future<String> create(
-      String cameraName, PlatformMediaSettings settings) async {
+  Future<int> create(String cameraName, PlatformMediaSettings settings) async {
     final String __pigeon_channelName =
         'dev.flutter.pigeon.camera_windows.CameraApi.create$__pigeon_messageChannelSuffix';
     final BasicMessageChannel<Object?> __pigeon_channel =
@@ -228,7 +227,7 @@ class CameraApi {
         message: 'Host platform returned null value for non-null return value.',
       );
     } else {
-      return (__pigeon_replyList[0] as String?)!;
+      return (__pigeon_replyList[0] as int?)!;
     }
   }
 

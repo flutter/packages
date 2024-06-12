@@ -138,10 +138,15 @@ class PlatformSize {
 // Generated class from Pigeon that represents data sent in messages.
 class PlatformVideoCaptureOptions {
  public:
-  // Constructs an object setting all fields.
-  explicit PlatformVideoCaptureOptions(int64_t max_duration_milliseconds);
+  // Constructs an object setting all non-nullable fields.
+  PlatformVideoCaptureOptions();
 
-  int64_t max_duration_milliseconds() const;
+  // Constructs an object setting all fields.
+  explicit PlatformVideoCaptureOptions(
+      const int64_t* max_duration_milliseconds);
+
+  const int64_t* max_duration_milliseconds() const;
+  void set_max_duration_milliseconds(const int64_t* value_arg);
   void set_max_duration_milliseconds(int64_t value_arg);
 
  private:
@@ -150,7 +155,7 @@ class PlatformVideoCaptureOptions {
   flutter::EncodableList ToEncodableList() const;
   friend class CameraApi;
   friend class PigeonCodecSerializer;
-  int64_t max_duration_milliseconds_;
+  std::optional<int64_t> max_duration_milliseconds_;
 };
 
 class PigeonCodecSerializer : public flutter::StandardCodecSerializer {
@@ -179,9 +184,9 @@ class CameraApi {
   // Returns the names of all of the available capture devices.
   virtual ErrorOr<flutter::EncodableList> AvailableCameras() = 0;
   // Creates a camera instance for the given device name and settings.
-  virtual void Create(
-      const std::string& camera_name, const PlatformMediaSettings& settings,
-      std::function<void(ErrorOr<std::string> reply)> result) = 0;
+  virtual void Create(const std::string& camera_name,
+                      const PlatformMediaSettings& settings,
+                      std::function<void(ErrorOr<int64_t> reply)> result) = 0;
   // Initializes a camera, and returns the size of its preview.
   virtual void Initialize(
       int64_t camera_id,

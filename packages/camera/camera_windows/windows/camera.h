@@ -61,6 +61,13 @@ class Camera : public CaptureControllerListener {
   // Adds a pending result for a string return.
   //
   // Returns an error result if the result has already been added.
+  virtual bool AddPendingIntResult(
+      PendingResultType type,
+      std::function<void(ErrorOr<int64_t> reply)> result) = 0;
+
+  // Adds a pending result for a string return.
+  //
+  // Returns an error result if the result has already been added.
   virtual bool AddPendingStringResult(
       PendingResultType type,
       std::function<void(ErrorOr<std::string> reply)> result) = 0;
@@ -139,6 +146,9 @@ class CameraImpl : public Camera {
   bool AddPendingVoidResult(
       PendingResultType type,
       std::function<void(std::optional<FlutterError> reply)> result) override;
+  bool AddPendingIntResult(
+      PendingResultType type,
+      std::function<void(ErrorOr<int64_t> reply)> result) override;
   bool AddPendingStringResult(
       PendingResultType type,
       std::function<void(ErrorOr<std::string> reply)> result) override;
@@ -192,6 +202,12 @@ class CameraImpl : public Camera {
   // Returns an empty function if type is not present.
   std::function<void(std::optional<FlutterError> reply)>
   GetPendingVoidResultByType(PendingResultType type);
+
+  // Finds pending int result by type.
+  //
+  // Returns an empty function if type is not present.
+  std::function<void(ErrorOr<int64_t> reply)> GetPendingIntResultByType(
+      PendingResultType type);
 
   // Finds pending string result by type.
   //

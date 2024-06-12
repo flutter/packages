@@ -44,7 +44,7 @@ class PlatformSize {
 class PlatformVideoCaptureOptions {
   PlatformVideoCaptureOptions({required this.maxDurationMilliseconds});
 
-  final int maxDurationMilliseconds;
+  final int? maxDurationMilliseconds;
 }
 
 @HostApi()
@@ -54,7 +54,7 @@ abstract class CameraApi {
 
   /// Creates a camera instance for the given device name and settings.
   @async
-  String create(String cameraName, PlatformMediaSettings settings);
+  int create(String cameraName, PlatformMediaSettings settings);
 
   /// Initializes a camera, and returns the size of its preview.
   @async

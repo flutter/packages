@@ -75,6 +75,12 @@ bool CameraImpl::AddPendingVoidResult(
   AddPendingResult(type, result);
 }
 
+bool CameraImpl::AddPendingIntResult(
+    PendingResultType type,
+    std::function<void(ErrorOr<int64_t> reply)> result) {
+  AddPendingResult(type, result);
+}
+
 bool CameraImpl::AddPendingStringResult(
     PendingResultType type,
     std::function<void(ErrorOr<std::string> reply)> result) {
@@ -107,6 +113,15 @@ CameraImpl::GetPendingVoidResultByType(PendingResultType type) {
     return nullptr;
   }
   return std::get<std::function<void(std::optional<FlutterError>)>>(result);
+}
+
+std::function<void(ErrorOr<int64_t> reply)>
+CameraImpl::GetPendingIntResultByType(PendingResultType type) {
+  std::optional<AsyncResult> result = GetPendingResultByType(type);
+  if (!result) {
+    return nullptr;
+  }
+  return std::get<std::function<void(ErrorOr<int64_t>)>>(result);
 }
 
 std::function<void(ErrorOr<std::string> reply)>
@@ -175,126 +190,127 @@ void CameraImpl::OnCreateCaptureEngineSucceeded(int64_t texture_id) {
   // Use texture id as camera id
   camera_id_ = texture_id;
   auto pending_result =
-      GetPendingResultByType(PendingResultType::kCreateCamera);
+      GetPendingIntResultByType(PendingResultType::kCreateCamera);
   if (pending_result) {
-    pending_result->Success(EncodableMap(
-        {{EncodableValue("cameraId"), EncodableValue(texture_id)}}));
+    pending_result(texture_id);
   }
 }
 
 void CameraImpl::OnCreateCaptureEngineFailed(CameraResult result,
                                              const std::string& error) {
   auto pending_result =
-      GetPendingResultByType(PendingResultType::kCreateCamera);
+      GetPendingIntResultByType(PendingResultType::kCreateCamera);
   if (pending_result) {
     std::string error_code = GetErrorCode(result);
-    pending_result->Error(error_code, error);
+    pending_result(FlutterError(error_code, error));
   }
 }
 
 void CameraImpl::OnStartPreviewSucceeded(int32_t width, int32_t height) {
-  auto pending_result = GetPendingResultByType(PendingResultType::kInitialize);
+  auto pending_result =
+      GetPendingSizeResultByType(PendingResultType::kInitialize);
   if (pending_result) {
-    pending_result->Success(EncodableValue(EncodableMap({
-        {EncodableValue("previewWidth"),
-         EncodableValue(static_cast<float>(width))},
-        {EncodableValue("previewHeight"),
-         EncodableValue(static_cast<float>(height))},
-    })));
+    pending_result(static_cast<double>(width), static_cast<double>(height));
   }
 };
 
 void CameraImpl::OnStartPreviewFailed(CameraResult result,
                                       const std::string& error) {
-  auto pending_result = GetPendingResultByType(PendingResultType::kInitialize);
+  auto pending_result =
+      GetPendingSizeResultByType(PendingResultType::kInitialize);
   if (pending_result) {
     std::string error_code = GetErrorCode(result);
-    pending_result->Error(error_code, error);
+    pending_result(FlutterError(error_code, error));
   }
 };
 
 void CameraImpl::OnResumePreviewSucceeded() {
   auto pending_result =
-      GetPendingResultByType(PendingResultType::kResumePreview);
+      GetPendingVoidResultByType(PendingResultType::kResumePreview);
   if (pending_result) {
-    pending_result->Success();
+    pending_result(std::nullopt);
   }
 }
 
 void CameraImpl::OnResumePreviewFailed(CameraResult result,
                                        const std::string& error) {
   auto pending_result =
-      GetPendingResultByType(PendingResultType::kResumePreview);
+      GetPendingVoidResultByType(PendingResultType::kResumePreview);
   if (pending_result) {
     std::string error_code = GetErrorCode(result);
-    pending_result->Error(error_code, error);
+    pending_result(FlutterError(error_code, error));
   }
 }
 
 void CameraImpl::OnPausePreviewSucceeded() {
   auto pending_result =
-      GetPendingResultByType(PendingResultType::kPausePreview);
+      GetPendingVoidResultByType(PendingResultType::kPausePreview);
   if (pending_result) {
-    pending_result->Success();
+    pending_result();
   }
 }
 
 void CameraImpl::OnPausePreviewFailed(CameraResult result,
                                       const std::string& error) {
   auto pending_result =
-      GetPendingResultByType(PendingResultType::kPausePreview);
+      GetPendingVoidResultByType(PendingResultType::kPausePreview);
   if (pending_result) {
     std::string error_code = GetErrorCode(result);
-    pending_result->Error(error_code, error);
+    pending_result(FlutterError(error_code, error));
   }
 }
 
 void CameraImpl::OnStartRecordSucceeded() {
-  auto pending_result = GetPendingResultByType(PendingResultType::kStartRecord);
+  auto pending_result =
+      GetPendingVoidResultByType(PendingResultType::kStartRecord);
   if (pending_result) {
-    pending_result->Success();
+    pending_result();
   }
 };
 
 void CameraImpl::OnStartRecordFailed(CameraResult result,
                                      const std::string& error) {
-  auto pending_result = GetPendingResultByType(PendingResultType::kStartRecord);
+  auto pending_result =
+      GetPendingVoidResultByType(PendingResultType::kStartRecord);
   if (pending_result) {
     std::string error_code = GetErrorCode(result);
-    pending_result->Error(error_code, error);
+    pending_result(FlutterError(error_code, error));
   }
 };
 
 void CameraImpl::OnStopRecordSucceeded(const std::string& file_path) {
-  auto pending_result = GetPendingResultByType(PendingResultType::kStopRecord);
+  auto pending_result =
+      GetPendingStringResultByType(PendingResultType::kStopRecord);
   if (pending_result) {
-    pending_result->Success(EncodableValue(file_path));
+    pending_result(file_path);
   }
 };
 
 void CameraImpl::OnStopRecordFailed(CameraResult result,
                                     const std::string& error) {
-  auto pending_result = GetPendingResultByType(PendingResultType::kStopRecord);
+  auto pending_result =
+      GetPendingStringResultByType(PendingResultType::kStopRecord);
   if (pending_result) {
     std::string error_code = GetErrorCode(result);
-    pending_result->Error(error_code, error);
+    pending_result(FlutterError(error_code, error));
   }
 };
 
 void CameraImpl::OnTakePictureSucceeded(const std::string& file_path) {
-  auto pending_result = GetPendingResultByType(PendingResultType::kTakePicture);
+  auto pending_result =
+      GetPendingStringResultByType(PendingResultType::kTakePicture);
   if (pending_result) {
-    pending_result->Success(EncodableValue(file_path));
+    pending_result(file_path);
   }
 };
 
 void CameraImpl::OnTakePictureFailed(CameraResult result,
                                      const std::string& error) {
   auto pending_take_picture_result =
-      GetPendingResultByType(PendingResultType::kTakePicture);
+      GetPendingStringResultByType(PendingResultType::kTakePicture);
   if (pending_take_picture_result) {
     std::string error_code = GetErrorCode(result);
-    pending_take_picture_result->Error(error_code, error);
+    pending_take_picture_result(FlutterError(error_code, error));
   }
 };
 
