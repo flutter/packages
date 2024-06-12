@@ -211,8 +211,8 @@ public class VideoPlayerTest {
     Map<String, Object> expected = new HashMap<>();
     expected.put("event", "initialized");
     expected.put("duration", 10L);
-    expected.put("width", 200);
-    expected.put("height", 100);
+    expected.put("width", 100);
+    expected.put("height", 200);
 
     assertEquals(expected, actual);
   }
@@ -240,8 +240,8 @@ public class VideoPlayerTest {
     Map<String, Object> expected = new HashMap<>();
     expected.put("event", "initialized");
     expected.put("duration", 10L);
-    expected.put("width", 200);
-    expected.put("height", 100);
+    expected.put("width", 100);
+    expected.put("height", 200);
     expected.put("rotationCorrection", 180);
 
     assertEquals(expected, actual);
