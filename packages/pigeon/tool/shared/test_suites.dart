@@ -27,7 +27,7 @@ class TestInfo {
   const TestInfo({required this.function, this.description});
 
   /// The function to run the test suite.
-  final Future<int> Function() function;
+  final Future<int> Function({bool ciMode}) function;
 
   /// A user-facing description of the test suite.
   final String? description;
@@ -113,16 +113,16 @@ const Map<String, TestInfo> testSuites = <String, TestInfo>{
       description: 'Tests running pigeon with various command-line options.'),
 };
 
-Future<int> _runAndroidJavaUnitTests() async {
+Future<int> _runAndroidJavaUnitTests({bool ciMode = false}) async {
   return _runAndroidUnitTests(_alternateLanguageTestPluginRelativePath);
 }
 
-Future<int> _runAndroidJavaIntegrationTests() async {
+Future<int> _runAndroidJavaIntegrationTests({bool ciMode = false}) async {
   return _runMobileIntegrationTests(
       'Android', _alternateLanguageTestPluginRelativePath);
 }
 
-Future<int> _runAndroidJavaLint() async {
+Future<int> _runAndroidJavaLint({bool ciMode = false}) async {
   const String examplePath =
       './$_alternateLanguageTestPluginRelativePath/example';
   const String androidProjectPath = '$examplePath/android';
@@ -139,7 +139,7 @@ Future<int> _runAndroidJavaLint() async {
       androidProjectPath, 'alternate_language_test_plugin:lintDebug');
 }
 
-Future<int> _runAndroidKotlinUnitTests() async {
+Future<int> _runAndroidKotlinUnitTests({bool ciMode = false}) async {
   return _runAndroidUnitTests(_testPluginRelativePath);
 }
 
@@ -157,7 +157,7 @@ Future<int> _runAndroidUnitTests(String testPluginPath) async {
   return runGradleBuild(androidProjectPath, 'testDebugUnitTest');
 }
 
-Future<int> _runAndroidKotlinIntegrationTests() async {
+Future<int> _runAndroidKotlinIntegrationTests({bool ciMode = false}) async {
   return _runMobileIntegrationTests('Android', _testPluginRelativePath);
 }
 
@@ -178,7 +178,7 @@ Future<int> _runMobileIntegrationTests(
   );
 }
 
-Future<int> _runDartUnitTests() async {
+Future<int> _runDartUnitTests({bool ciMode = false}) async {
   int exitCode = await runProcess('dart', <String>['analyze', 'bin']);
   if (exitCode != 0) {
     return exitCode;
@@ -204,7 +204,7 @@ Future<int> _analyzeFlutterUnitTests(String flutterUnitTestsPath) async {
   }
 
   final int analyzeCode =
-      await runFlutterCommand(flutterUnitTestsPath, 'analyze');
+      await runFlutterCommand(flutterUnitTestsPath, 'analyze', <String>[]);
   if (analyzeCode != 0) {
     return analyzeCode;
   }
@@ -215,14 +215,15 @@ Future<int> _analyzeFlutterUnitTests(String flutterUnitTestsPath) async {
   return 0;
 }
 
-Future<int> _runFlutterUnitTests() async {
+Future<int> _runFlutterUnitTests({bool ciMode = false}) async {
   const String flutterUnitTestsPath = 'platform_tests/shared_test_plugin_code';
   final int analyzeCode = await _analyzeFlutterUnitTests(flutterUnitTestsPath);
   if (analyzeCode != 0) {
     return analyzeCode;
   }
 
-  final int testCode = await runFlutterCommand(flutterUnitTestsPath, 'test');
+  final int testCode =
+      await runFlutterCommand(flutterUnitTestsPath, 'test', <String>[]);
   if (testCode != 0) {
     return testCode;
   }
@@ -230,11 +231,11 @@ Future<int> _runFlutterUnitTests() async {
   return 0;
 }
 
-Future<int> _runIOSObjCUnitTests() async {
+Future<int> _runIOSObjCUnitTests({bool ciMode = false}) async {
   return _runIOSPluginUnitTests(_alternateLanguageTestPluginRelativePath);
 }
 
-Future<int> _runIOSObjCIntegrationTests() async {
+Future<int> _runIOSObjCIntegrationTests({bool ciMode = false}) async {
   final String? device = await getDeviceForPlatform('ios');
   if (device == null) {
     print('No iOS device available. Attach an iOS device or start '
@@ -251,7 +252,7 @@ Future<int> _runIOSObjCIntegrationTests() async {
   );
 }
 
-Future<int> _runMacOSObjCIntegrationTests() async {
+Future<int> _runMacOSObjCIntegrationTests({bool ciMode = false}) async {
   const String examplePath =
       './$_alternateLanguageTestPluginRelativePath/example';
   return runFlutterCommand(
@@ -261,7 +262,7 @@ Future<int> _runMacOSObjCIntegrationTests() async {
   );
 }
 
-Future<int> _runMacOSSwiftUnitTests() async {
+Future<int> _runMacOSSwiftUnitTests({bool ciMode = false}) async {
   const String examplePath = './$_testPluginRelativePath/example';
   final int compileCode = await runFlutterBuild(examplePath, 'macos');
   if (compileCode != 0) {
@@ -278,7 +279,7 @@ Future<int> _runMacOSSwiftUnitTests() async {
   );
 }
 
-Future<int> _runMacOSSwiftIntegrationTests() async {
+Future<int> _runMacOSSwiftIntegrationTests({bool ciMode = false}) async {
   const String examplePath = './$_testPluginRelativePath/example';
   return runFlutterCommand(
     examplePath,
@@ -287,7 +288,7 @@ Future<int> _runMacOSSwiftIntegrationTests() async {
   );
 }
 
-Future<int> _runIOSSwiftUnitTests() async {
+Future<int> _runIOSSwiftUnitTests({bool ciMode = false}) async {
   return _runIOSPluginUnitTests(_testPluginRelativePath);
 }
 
@@ -353,11 +354,11 @@ Future<int> _deleteSimulator(String deviceName) async {
   );
 }
 
-Future<int> _runIOSSwiftIntegrationTests() async {
+Future<int> _runIOSSwiftIntegrationTests({bool ciMode = false}) async {
   return _runMobileIntegrationTests('iOS', _testPluginRelativePath);
 }
 
-Future<int> _runLinuxUnitTests() async {
+Future<int> _runLinuxUnitTests({bool ciMode = false}) async {
   const String examplePath = './$_testPluginRelativePath/example';
   final int compileCode = await runFlutterBuild(examplePath, 'linux');
   if (compileCode != 0) {
@@ -376,16 +377,21 @@ Future<int> _runLinuxUnitTests() async {
   }
 }
 
-Future<int> _runLinuxIntegrationTests() async {
+Future<int> _runLinuxIntegrationTests({bool ciMode = false}) async {
   const String examplePath = './$_testPluginRelativePath/example';
   return runFlutterCommand(
     examplePath,
     'test',
     <String>[_integrationTestFileRelativePath, '-d', 'linux'],
+    // To avoid having all custom tests in the repo run under xvfb, xvfb-run is
+    // done here rather than at the CI config level. Ideally, Pigeon tests
+    // should be incorporated into the repo tooling's standard runs, at which
+    // point this won't be necessary.
+    wrapperCommand: ciMode ? 'xvfb-run' : null,
   );
 }
 
-Future<int> _runWindowsUnitTests() async {
+Future<int> _runWindowsUnitTests({bool ciMode = false}) async {
   const String examplePath = './$_testPluginRelativePath/example';
   final int compileCode = await runFlutterBuild(examplePath, 'windows');
   if (compileCode != 0) {
@@ -413,7 +419,7 @@ Future<int> _runWindowsUnitTests() async {
   }
 }
 
-Future<int> _runWindowsIntegrationTests() async {
+Future<int> _runWindowsIntegrationTests({bool ciMode = false}) async {
   const String examplePath = './$_testPluginRelativePath/example';
   return runFlutterCommand(
     examplePath,
@@ -422,7 +428,7 @@ Future<int> _runWindowsIntegrationTests() async {
   );
 }
 
-Future<int> _runCommandLineTests() async {
+Future<int> _runCommandLineTests({bool ciMode = false}) async {
   final Directory tempDir = Directory.systemTemp.createTempSync('pigeon');
   final String tempOutput = p.join(tempDir.path, 'pigeon_output');
   const String pigeonScript = 'bin/pigeon.dart';
