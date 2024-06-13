@@ -1079,12 +1079,12 @@ void main() {
     await createRouter(routes, tester,
         initialLocation: '/a/b', navigatorKey: rootNavigatorKey);
     expect(find.text('Screen B'), findsOneWidget);
-
+    print('update 1');
     // The first pop should not exit the app.
     await tester.runAsync(() async {
       await verify(() => simulateAndroidBackButton(tester), <Object>[]);
     });
-
+    print('update 2');
     // The second pop should exit the app.
     await tester.runAsync(() async {
       await verify(() => simulateAndroidBackButton(tester), <Object>[
