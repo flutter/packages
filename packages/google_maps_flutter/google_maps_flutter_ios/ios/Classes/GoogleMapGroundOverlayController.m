@@ -1,6 +1,6 @@
-// // Copyright 2019 The Chromium Authors. All rights reserved.
-// // Use of this source code is governed by a BSD-style license that can be
-// // found in the LICENSE file.
+// Copyright 2024 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
 
 #import "GoogleMapGroundOverlayController.h"
 #import "FLTGoogleMapJSONConversions.h"
@@ -77,8 +77,8 @@ static UIImage *ExtractBitmapDescriptor(NSObject<FlutterPluginRegistrar> *regist
   self.groundOverlay.bounds = bounds;
 }
 
-- (void)setLocation:(CLLocationCoordinate2D)location width:(CGFloat)width height:(CGFloat)height {
-  self.groundOverlay.position = location;
+- (void)setPosition:(CLLocationCoordinate2D)position width:(CGFloat)width height:(CGFloat)height {
+  self.groundOverlay.position = position;
 }
 
 - (void)setBitmapDescriptor:(UIImage *)bd {
@@ -118,28 +118,6 @@ static void InterpretGroundOverlayOptions(NSDictionary *data,
     float transparencyFloat = [transparency floatValue];
     float opacity = 1 - transparencyFloat;
     [sink setOpacity:opacity];
-  }
-
-  NSNumber *width = data[@"width"];
-  NSNumber *height = data[@"height"];
-  NSArray *location = data[@"location"];
-  if (location) {
-    if (height != nil) {
-      [sink setLocation:[FLTGoogleMapJSONConversions locationFromLatLong:location]
-                  width:width.doubleValue
-                 height:height.doubleValue];
-    } else {
-      if (width != nil) {
-        [sink setLocation:[FLTGoogleMapJSONConversions locationFromLatLong:location]
-                    width:width.doubleValue
-                   height:150];
-      }
-    }
-  }
-
-  NSArray *bounds = data[@"bounds"];
-  if (bounds) {
-    [sink setBounds:[FLTGoogleMapJSONConversions coordinateBoundsFromLatLongs:bounds]];
   }
 
   NSNumber *bearing = data[@"bearing"];
@@ -242,21 +220,21 @@ static UIImage *ExtractBitmapDescriptor(NSObject<FlutterPluginRegistrar> *regist
 
 - (void)addGroundOverlays:(NSArray *)groundOverlaysToAdd {
   for (NSDictionary *groundOverlay in groundOverlaysToAdd) {
-    GMSCoordinateBounds *bounds = [FLTGroundOverlaysController getBounds:groundOverlay];
     UIImage *icon = [FLTGroundOverlaysController getImage:groundOverlay registrar:_registrar];
     NSString *groundOverlayId = [FLTGroundOverlaysController getGroundOverlayId:groundOverlay];
 
-    if (bounds) {
-      CLLocationCoordinate2D location =
-          [FLTGoogleMapJSONConversions locationFromLatLong:groundOverlay[@"location"]];
+    if (groundOverlay[@"bounds"] == nil) {
+      CLLocationCoordinate2D position =
+          [FLTGoogleMapJSONConversions locationFromLatLong:groundOverlay[@"position"]];
       FLTGoogleMapGroundOverlayController *controller =
-          [[FLTGoogleMapGroundOverlayController alloc] initGroundOverlayWithPosition:location
+          [[FLTGoogleMapGroundOverlayController alloc] initGroundOverlayWithPosition:position
                                                                                 icon:icon
                                                                      groundOverlayId:groundOverlayId
                                                                              mapView:_mapView];
       InterpretGroundOverlayOptions(groundOverlay, controller, _registrar);
       _groundOverlayIdToController[groundOverlayId] = controller;
     } else {
+      GMSCoordinateBounds *bounds = [FLTGroundOverlaysController getBounds:groundOverlay];
       FLTGoogleMapGroundOverlayController *controller =
           [[FLTGoogleMapGroundOverlayController alloc] initGroundOverlayWithBounds:bounds
                                                                               icon:icon

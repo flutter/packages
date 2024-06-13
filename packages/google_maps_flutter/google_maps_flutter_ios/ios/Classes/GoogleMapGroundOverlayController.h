@@ -1,6 +1,6 @@
-// // Copyright 2024 The Flutter Authors. All rights reserved.
-// // Use of this source code is governed by a BSD-style license that can be
-// // found in the LICENSE file.
+// Copyright 2024 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
 
 #import <Flutter/Flutter.h>
 #import <GoogleMaps/GoogleMaps.h>
@@ -12,7 +12,7 @@
 - (void)setBitmapDescriptor:(UIImage *)bd;
 - (void)setBounds:(GMSCoordinateBounds *)bounds;
 - (void)setConsumeTapEvents:(BOOL)consume;
-- (void)setLocation:(CLLocationCoordinate2D)location width:(CGFloat)width height:(CGFloat)height;
+- (void)setPosition:(CLLocationCoordinate2D)position width:(CGFloat)width height:(CGFloat)height;
 - (void)setOpacity:(float)opacity;
 - (void)setVisible:(BOOL)visible;
 - (void)setZIndex:(int)zIndex;

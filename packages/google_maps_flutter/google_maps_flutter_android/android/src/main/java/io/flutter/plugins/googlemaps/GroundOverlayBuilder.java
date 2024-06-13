@@ -1,3 +1,7 @@
+// Copyright 2024 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 package io.flutter.plugins.googlemaps;
 
 import com.google.android.gms.maps.model.BitmapDescriptor;
@@ -38,12 +42,12 @@ class GroundOverlayBuilder implements GroundOverlayOptionsSink {
   }
 
   @Override
-  public void setLocation(Object location, Object width, Object height, Object bounds) {
+  public void setPosition(Object position, Object width, Object height, Object bounds) {
     if (height != null) {
-      groundOverlayOptions.position((LatLng) location, (float) width, (float) height);
+      groundOverlayOptions.position((LatLng) position, (float) width, (float) height);
     } else {
       if (width != null) {
-        groundOverlayOptions.position((LatLng) location, (float) width);
+        groundOverlayOptions.position((LatLng) position, (float) width);
       } else {
         groundOverlayOptions.positionFromBounds((LatLngBounds) bounds);
       }

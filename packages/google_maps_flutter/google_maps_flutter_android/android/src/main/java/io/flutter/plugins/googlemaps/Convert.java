@@ -870,7 +870,8 @@ class Convert {
     }
   }
 
-  static String interpretGroundOverlayOptions(Object o, GroundOverlayOptionsSink sink) {
+  static String interpretGroundOverlayOptions(
+      Object o, GroundOverlayOptionsSink sink, AssetManager assetManager, float density) {
     final Map<?, ?> data = toMap(o);
     final Object consumeTapEvents = data.get("consumeTapEvents");
     if (consumeTapEvents != null) {
@@ -883,15 +884,15 @@ class Convert {
 
     final Object width = data.get("width");
     final Object height = data.get("height");
-    final Object location = data.get("location");
+    final Object position = data.get("position");
     final Object bounds = data.get("bounds");
     if (height != null) {
-      sink.setLocation(toLatLng(location), toFloat(width), toFloat(height), null);
+      sink.setPosition(toLatLng(position), toFloat(width), toFloat(height), null);
     } else {
       if (width != null) {
-        sink.setLocation(toLatLng(location), toFloat(width), null, null);
+        sink.setPosition(toLatLng(position), toFloat(width), null, null);
       } else {
-        sink.setLocation(null, null, null, toLatLngBounds(bounds));
+        sink.setPosition(null, null, null, toLatLngBounds(bounds));
       }
     }
 
@@ -910,7 +911,7 @@ class Convert {
 
     final Object bitmap = data.get("bitmap");
     if (bitmap != null) {
-      sink.setBitmapDescriptor(toBitmapDescriptor(bitmap));
+      sink.setBitmapDescriptor(toBitmapDescriptor(bitmap, assetManager, density));
     }
     final String groundOverlayId = (String) data.get("groundOverlayId");
     if (groundOverlayId == null) {

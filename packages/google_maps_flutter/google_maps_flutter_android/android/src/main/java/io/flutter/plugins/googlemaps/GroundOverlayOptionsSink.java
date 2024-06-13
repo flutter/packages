@@ -1,3 +1,7 @@
+// Copyright 2024 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 package io.flutter.plugins.googlemaps;
 
 import com.google.android.gms.maps.model.BitmapDescriptor;
@@ -9,7 +13,7 @@ interface GroundOverlayOptionsSink {
 
   void setZIndex(float zIndex);
 
-  void setLocation(Object location, Object width, Object height, Object bounds);
+  void setPosition(Object position, Object width, Object height, Object bounds);
 
   void setBitmapDescriptor(BitmapDescriptor bd);
 
