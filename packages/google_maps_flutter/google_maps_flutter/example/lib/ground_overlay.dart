@@ -65,13 +65,21 @@ class GroundOverlayBodyState extends State<GroundOverlayBody> {
   Widget build(BuildContext context) {
     final Set<GroundOverlay> overlays = <GroundOverlay>{
       if (_overlayImage != null)
-        GroundOverlay(
+        GroundOverlay.fromPosition(
           groundOverlayId: const GroundOverlayId('ground_overlay_1'),
           bitmap: _overlayImage,
-          location: const LatLng(59.935460, 30.325177),
+          position: const LatLng(59.935460, 30.325177),
           width: 200,
           bearing: _bearing,
           opacity: _opacity,
+        ),
+      if (_overlayImage != null)
+        GroundOverlay.fromBounds(
+          LatLngBounds(
+              southwest: const LatLng(59.945460, 30.335177),
+              northeast: const LatLng(59.946460, 30.336177)),
+          groundOverlayId: const GroundOverlayId('ground_overlay_3'),
+          bitmap: _overlayImage,
         ),
     };
     return Column(
