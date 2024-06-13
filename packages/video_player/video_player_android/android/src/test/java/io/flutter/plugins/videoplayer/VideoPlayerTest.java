@@ -314,19 +314,21 @@ public class VideoPlayerTest {
   public void otherErrorsReportVideoErrorWithErrorString() {
     List<Player.Listener> listeners = new LinkedList<>();
     doAnswer(invocation -> listeners.add(invocation.getArgument(0)))
-            .when(fakeExoPlayer)
-            .addListener(any());
+        .when(fakeExoPlayer)
+        .addListener(any());
 
     @SuppressWarnings("unused")
     VideoPlayer unused =
-            new VideoPlayer(
-                    fakeExoPlayer,
-                    VideoPlayerEventCallbacks.withSink(fakeEventSink),
-                    fakeSurfaceTextureEntry,
-                    fakeVideoPlayerOptions,
-                    httpDataSourceFactorySpy);
+        new VideoPlayer(
+            fakeExoPlayer,
+            VideoPlayerEventCallbacks.withSink(fakeEventSink),
+            fakeSurfaceTextureEntry,
+            fakeVideoPlayerOptions,
+            httpDataSourceFactorySpy);
 
-    PlaybackException exception = new PlaybackException("You did bad kid", null, PlaybackException.ERROR_CODE_DECODING_FAILED);
+    PlaybackException exception =
+        new PlaybackException(
+            "You did bad kid", null, PlaybackException.ERROR_CODE_DECODING_FAILED);
     listeners.forEach(listener -> listener.onPlayerError(exception));
 
     verify(fakeEventSink).error(eq("VideoError"), contains("You did bad kid"), any());
