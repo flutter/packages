@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -130,22 +131,31 @@ public class VideoPlayerTest {
     verify(httpDataSourceFactorySpy).setDefaultRequestProperties(httpHeaders);
   }
 
+  private Player.Listener initVideoPlayerAndGetListener() {
+    ArgumentCaptor<Player.Listener> listenerCaptor = ArgumentCaptor.forClass(Player.Listener.class);
+    doNothing().when(fakeExoPlayer).addListener(listenerCaptor.capture());
+
+    // Create a video player that will invoke fakeEventSink as a result of Player.Listener calls.
+    new VideoPlayer(
+        fakeExoPlayer,
+        VideoPlayerEventCallbacks.withSink(fakeEventSink),
+        fakeSurfaceTextureEntry,
+        fakeVideoPlayerOptions,
+        httpDataSourceFactorySpy);
+
+    return Objects.requireNonNull(listenerCaptor.getValue());
+  }
+
   @Test
   public void sendInitializedSendsExpectedEvent_90RotationDegrees() {
-    VideoPlayer videoPlayer =
-        new VideoPlayer(
-            fakeExoPlayer,
-            VideoPlayerEventCallbacks.withSink(fakeEventSink),
-            fakeSurfaceTextureEntry,
-            fakeVideoPlayerOptions,
-            httpDataSourceFactorySpy);
+    Player.Listener listener = initVideoPlayerAndGetListener();
     VideoSize testVideoSize = new VideoSize(100, 200, 90, 1f);
 
     when(fakeExoPlayer.getVideoSize()).thenReturn(testVideoSize);
     when(fakeExoPlayer.getDuration()).thenReturn(10L);
 
-    videoPlayer.isInitialized = true;
-    videoPlayer.sendInitialized();
+    // Send Player.STATE_READY to trigger the "initialized" event.
+    listener.onPlaybackStateChanged(Player.STATE_READY);
 
     verify(fakeEventSink).success(eventCaptor.capture());
     HashMap<String, Object> actual = eventCaptor.getValue();
@@ -161,20 +171,14 @@ public class VideoPlayerTest {
 
   @Test
   public void sendInitializedSendsExpectedEvent_270RotationDegrees() {
-    VideoPlayer videoPlayer =
-        new VideoPlayer(
-            fakeExoPlayer,
-            VideoPlayerEventCallbacks.withSink(fakeEventSink),
-            fakeSurfaceTextureEntry,
-            fakeVideoPlayerOptions,
-            httpDataSourceFactorySpy);
+    Player.Listener listener = initVideoPlayerAndGetListener();
     VideoSize testVideoSize = new VideoSize(100, 200, 270, 1f);
 
     when(fakeExoPlayer.getVideoSize()).thenReturn(testVideoSize);
     when(fakeExoPlayer.getDuration()).thenReturn(10L);
 
-    videoPlayer.isInitialized = true;
-    videoPlayer.sendInitialized();
+    // Send Player.STATE_READY to trigger the "initialized" event.
+    listener.onPlaybackStateChanged(Player.STATE_READY);
 
     verify(fakeEventSink).success(eventCaptor.capture());
     HashMap<String, Object> actual = eventCaptor.getValue();
@@ -190,20 +194,14 @@ public class VideoPlayerTest {
 
   @Test
   public void sendInitializedSendsExpectedEvent_0RotationDegrees() {
-    VideoPlayer videoPlayer =
-        new VideoPlayer(
-            fakeExoPlayer,
-            VideoPlayerEventCallbacks.withSink(fakeEventSink),
-            fakeSurfaceTextureEntry,
-            fakeVideoPlayerOptions,
-            httpDataSourceFactorySpy);
+    Player.Listener listener = initVideoPlayerAndGetListener();
     VideoSize testVideoSize = new VideoSize(100, 200, 0, 1f);
 
     when(fakeExoPlayer.getVideoSize()).thenReturn(testVideoSize);
     when(fakeExoPlayer.getDuration()).thenReturn(10L);
 
-    videoPlayer.isInitialized = true;
-    videoPlayer.sendInitialized();
+    // Send Player.STATE_READY to trigger the "initialized" event.
+    listener.onPlaybackStateChanged(Player.STATE_READY);
 
     verify(fakeEventSink).success(eventCaptor.capture());
     HashMap<String, Object> actual = eventCaptor.getValue();
@@ -219,20 +217,14 @@ public class VideoPlayerTest {
 
   @Test
   public void sendInitializedSendsExpectedEvent_180RotationDegrees() {
-    VideoPlayer videoPlayer =
-        new VideoPlayer(
-            fakeExoPlayer,
-            VideoPlayerEventCallbacks.withSink(fakeEventSink),
-            fakeSurfaceTextureEntry,
-            fakeVideoPlayerOptions,
-            httpDataSourceFactorySpy);
+    Player.Listener listener = initVideoPlayerAndGetListener();
     VideoSize testVideoSize = new VideoSize(100, 200, 180, 1f);
 
     when(fakeExoPlayer.getVideoSize()).thenReturn(testVideoSize);
     when(fakeExoPlayer.getDuration()).thenReturn(10L);
 
-    videoPlayer.isInitialized = true;
-    videoPlayer.sendInitialized();
+    // Send Player.STATE_READY to trigger the "initialized" event.
+    listener.onPlaybackStateChanged(Player.STATE_READY);
 
     verify(fakeEventSink).success(eventCaptor.capture());
     HashMap<String, Object> actual = eventCaptor.getValue();
