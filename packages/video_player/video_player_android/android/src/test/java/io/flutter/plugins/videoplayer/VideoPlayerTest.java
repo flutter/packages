@@ -21,6 +21,9 @@ import androidx.media3.common.VideoSize;
 import androidx.media3.datasource.DefaultHttpDataSource;
 import androidx.media3.exoplayer.ExoPlayer;
 import io.flutter.view.TextureRegistry;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -161,7 +164,9 @@ public class VideoPlayerTest {
 
     Map<String, Object> expected = new HashMap<>();
     expected.put("event", "bufferingUpdate");
-    expected.put("values", Collections.singletonList(10L));
+
+    List<? extends Number> range = Arrays.asList(0, 10L);
+    expected.put("values", Collections.singletonList(range));
 
     // We received potentially multiple events, find the one that is a "bufferingUpdate".
     for (Map<String, Object> event : events) {
