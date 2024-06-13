@@ -527,8 +527,8 @@ void main() {
           collapsedCode,
           contains(
             'channel.send(listOf(pigeon_identifierArg, validTypeArg, '
-            'enumTypeArg.raw, proxyApiTypeArg, nullableValidTypeArg, '
-            'nullableEnumTypeArg?.raw, nullableProxyApiTypeArg))',
+            'enumTypeArg, proxyApiTypeArg, nullableValidTypeArg, '
+            'nullableEnumTypeArg, nullableProxyApiTypeArg))',
           ),
         );
         expect(
@@ -896,8 +896,8 @@ void main() {
         expect(
           collapsedCode,
           contains(
-            r'channel.send(listOf(pigeon_instanceArg, validTypeArg, enumTypeArg.raw, '
-            r'proxyApiTypeArg, nullableValidTypeArg, nullableEnumTypeArg?.raw, '
+            r'channel.send(listOf(pigeon_instanceArg, validTypeArg, enumTypeArg, '
+            r'proxyApiTypeArg, nullableValidTypeArg, nullableEnumTypeArg, '
             r'nullableProxyApiTypeArg))',
           ),
         );
