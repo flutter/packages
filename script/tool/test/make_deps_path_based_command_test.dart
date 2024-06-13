@@ -122,7 +122,7 @@ ${devDependencies.map((String dep) => '  $dep: $constraint').join('\n')}
         packageA.pubspecFile.readAsLinesSync(),
         containsAllInOrder(<String>[
           '# FOR TESTING AND INITIAL REVIEW ONLY. DO NOT MERGE.',
-          '# See https://github.com/flutter/flutter/wiki/Contributing-to-Plugins-and-Packages#changing-federated-plugins',
+          '# See https://github.com/flutter/flutter/blob/master/docs/ecosystem/contributing/README.md#changing-federated-plugins',
           'dependency_overrides:',
         ]));
   });

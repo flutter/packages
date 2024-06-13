@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
@@ -12,6 +13,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:google_maps_flutter_android/google_maps_flutter_android.dart';
 import 'package:google_maps_flutter_example/example_google_map.dart';
 import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart';
+
+import 'resources/icon_image_base64.dart';
 
 const LatLng _kInitialMapCenter = LatLng(0, 0);
 const double _kInitialZoomLevel = 5;
@@ -967,19 +970,6 @@ void googleMapsTests() {
     expect(iwVisibleStatus, false);
   });
 
-  testWidgets('fromAssetImage', (WidgetTester tester) async {
-    const double pixelRatio = 2;
-    const ImageConfiguration imageConfiguration =
-        ImageConfiguration(devicePixelRatio: pixelRatio);
-    final BitmapDescriptor mip = await BitmapDescriptor.fromAssetImage(
-        imageConfiguration, 'red_square.png');
-    final BitmapDescriptor scaled = await BitmapDescriptor.fromAssetImage(
-        imageConfiguration, 'red_square.png',
-        mipmaps: false);
-    expect((mip.toJson() as List<dynamic>)[2], 1);
-    expect((scaled.toJson() as List<dynamic>)[2], 2);
-  });
-
   testWidgets('testTakeSnapshot', (WidgetTester tester) async {
     final Completer<ExampleGoogleMapController> controllerCompleter =
         Completer<ExampleGoogleMapController>();
@@ -1345,6 +1335,112 @@ void googleMapsTests() {
         await controllerCompleter.future;
     final String? error = await controller.getStyleError();
     expect(error, isNull);
+  });
+
+  testWidgets('markerWithAssetMapBitmap', (WidgetTester tester) async {
+    final Set<Marker> markers = <Marker>{
+      Marker(
+          markerId: const MarkerId('1'),
+          icon: AssetMapBitmap(
+            'assets/red_square.png',
+            imagePixelRatio: 1.0,
+          )),
+    };
+    await tester.pumpWidget(Directionality(
+      textDirection: TextDirection.ltr,
+      child: ExampleGoogleMap(
+        initialCameraPosition: const CameraPosition(target: LatLng(10.0, 15.0)),
+        markers: markers,
+      ),
+    ));
+  });
+
+  testWidgets('markerWithAssetMapBitmapCreate', (WidgetTester tester) async {
+    final ImageConfiguration imageConfiguration = ImageConfiguration(
+      devicePixelRatio: tester.view.devicePixelRatio,
+    );
+    final Set<Marker> markers = <Marker>{
+      Marker(
+          markerId: const MarkerId('1'),
+          icon: await AssetMapBitmap.create(
+            imageConfiguration,
+            'assets/red_square.png',
+          )),
+    };
+    await tester.pumpWidget(Directionality(
+      textDirection: TextDirection.ltr,
+      child: ExampleGoogleMap(
+        initialCameraPosition: const CameraPosition(target: LatLng(10.0, 15.0)),
+        markers: markers,
+      ),
+    ));
+  });
+
+  testWidgets('markerWithBytesMapBitmap', (WidgetTester tester) async {
+    final Uint8List bytes = const Base64Decoder().convert(iconImageBase64);
+    final Set<Marker> markers = <Marker>{
+      Marker(
+        markerId: const MarkerId('1'),
+        icon: BytesMapBitmap(
+          bytes,
+          imagePixelRatio: tester.view.devicePixelRatio,
+        ),
+      ),
+    };
+    await tester.pumpWidget(Directionality(
+      textDirection: TextDirection.ltr,
+      child: ExampleGoogleMap(
+        initialCameraPosition: const CameraPosition(target: LatLng(10.0, 15.0)),
+        markers: markers,
+      ),
+    ));
+  });
+
+  testWidgets('markerWithLegacyAsset', (WidgetTester tester) async {
+    tester.view.devicePixelRatio = 2.0;
+    final ImageConfiguration imageConfiguration = ImageConfiguration(
+      devicePixelRatio: tester.view.devicePixelRatio,
+      size: const Size(100, 100),
+    );
+    final Set<Marker> markers = <Marker>{
+      Marker(
+          markerId: const MarkerId('1'),
+          icon: await BitmapDescriptor.fromAssetImage(
+            imageConfiguration,
+            'assets/red_square.png',
+          )),
+    };
+    await tester.pumpWidget(Directionality(
+      textDirection: TextDirection.ltr,
+      child: ExampleGoogleMap(
+        initialCameraPosition: const CameraPosition(target: LatLng(10.0, 15.0)),
+        markers: markers,
+      ),
+    ));
+
+    await tester.pumpAndSettle();
+  });
+
+  testWidgets('markerWithLegacyBytes', (WidgetTester tester) async {
+    tester.view.devicePixelRatio = 2.0;
+    final Uint8List bytes = const Base64Decoder().convert(iconImageBase64);
+    final Set<Marker> markers = <Marker>{
+      Marker(
+          markerId: const MarkerId('1'),
+          icon: BitmapDescriptor.fromBytes(
+            bytes,
+            size: const Size(100, 100),
+          )),
+    };
+    await tester.pumpWidget(Directionality(
+      textDirection: TextDirection.ltr,
+      child: ExampleGoogleMap(
+        initialCameraPosition: const CameraPosition(target: LatLng(10.0, 15.0)),
+        markers: markers,
+      ),
+    ));
+
+    await tester.pumpAndSettle();
   });
 }
 
