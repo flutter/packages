@@ -7,6 +7,7 @@
 
 @interface FIAPPaymentQueueDelegate ()
 
+// The designated Flutter method channel that handles if a transaction should be continued
 @property(strong, nonatomic, readonly) id<FLTMethodChannelProtocol> callbackChannel;
 
 @end

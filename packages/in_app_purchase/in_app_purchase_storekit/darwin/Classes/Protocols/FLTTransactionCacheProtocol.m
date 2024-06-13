@@ -1,6 +1,7 @@
 #import "FLTTransactionCacheProtocol.h"
 
 @interface DefaultTransactionCache ()
+// The wrapped FIATransactionCache
 @property(strong, nonatomic) FIATransactionCache *cache;
 @end
 

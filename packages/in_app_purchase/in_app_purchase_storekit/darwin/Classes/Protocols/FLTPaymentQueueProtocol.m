@@ -1,6 +1,7 @@
 #import "FLTPaymentQueueProtocol.h"
 
 @interface DefaultPaymentQueue ()
+// The wrapped SKPaymentQueue
 @property(strong, nonatomic) SKPaymentQueue *queue;
 @end
 

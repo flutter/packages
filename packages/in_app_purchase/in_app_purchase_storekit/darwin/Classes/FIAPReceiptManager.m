@@ -14,6 +14,8 @@
 // Gets the receipt file data from the location of the url. Can be nil if
 // there is an error. This interface is defined so it can be stubbed for testing.
 - (NSData *)getReceiptData:(NSURL *)url error:(NSError **)error;
+// Gets the app store receipt url. Can be nil if
+// there is an error. This property is defined so it can be stubbed for testing.
 @property(strong, nonatomic, readonly) NSURL *receiptURL;
 @end
 
