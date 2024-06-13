@@ -125,14 +125,14 @@ class GoRouterState {
       }
       final RouteSettings settings = route.settings;
       if (settings is Page<Object?>) {
-        scope = context.dependOnInheritedWidgetOfExactType<
-            GoRouterStateRegistryScope>();
+        scope = context
+            .dependOnInheritedWidgetOfExactType<GoRouterStateRegistryScope>();
         if (scope == null) {
           throw _noGoRouterStateError;
         }
         final GoRouterState? state = scope.notifier!
             ._createPageRouteAssociation(
-            route.settings as Page<Object?>, route);
+                route.settings as Page<Object?>, route);
         if (state != null) {
           return state;
         }
@@ -146,9 +146,10 @@ class GoRouterState {
   }
 
   static GoError get _noGoRouterStateError => GoError(
-      'There is no GoRouterState above the current context. '
-          'This method should only be called under the sub tree of a '
-          'RouteBase.builder.',);
+        'There is no GoRouterState above the current context. '
+        'This method should only be called under the sub tree of a '
+        'RouteBase.builder.',
+      );
 
   /// Get a location from route name and parameters.
   /// This is useful for redirecting to a named location.
