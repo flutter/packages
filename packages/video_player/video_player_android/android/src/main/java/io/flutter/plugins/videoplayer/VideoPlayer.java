@@ -28,12 +28,7 @@ import androidx.media3.datasource.DefaultDataSource;
 import androidx.media3.datasource.DefaultHttpDataSource;
 import androidx.media3.exoplayer.ExoPlayer;
 import androidx.media3.exoplayer.source.DefaultMediaSourceFactory;
-import io.flutter.plugin.common.EventChannel;
 import io.flutter.view.TextureRegistry;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 final class VideoPlayer {
@@ -48,9 +43,7 @@ final class VideoPlayer {
 
   private final TextureRegistry.SurfaceTextureEntry textureEntry;
 
-  private QueuingEventSink eventSink;
-
-  private final EventChannel eventChannel;
+  private final VideoPlayerCallbacks videoPlayerEvents;
 
   private static final String USER_AGENT = "User-Agent";
 
@@ -62,13 +55,13 @@ final class VideoPlayer {
 
   VideoPlayer(
       Context context,
-      EventChannel eventChannel,
+      VideoPlayerCallbacks events,
       TextureRegistry.SurfaceTextureEntry textureEntry,
       String dataSource,
       String formatHint,
       @NonNull Map<String, String> httpHeaders,
       VideoPlayerOptions options) {
-    this.eventChannel = eventChannel;
+    this.videoPlayerEvents = events;
     this.textureEntry = textureEntry;
     this.options = options;
 
@@ -86,24 +79,23 @@ final class VideoPlayer {
     exoPlayer.setMediaItem(mediaItem);
     exoPlayer.prepare();
 
-    setUpVideoPlayer(exoPlayer, new QueuingEventSink());
+    setUpVideoPlayer(exoPlayer);
   }
 
   // Constructor used to directly test members of this class.
   @VisibleForTesting
   VideoPlayer(
       ExoPlayer exoPlayer,
-      EventChannel eventChannel,
+      VideoPlayerCallbacks events,
       TextureRegistry.SurfaceTextureEntry textureEntry,
       VideoPlayerOptions options,
-      QueuingEventSink eventSink,
       DefaultHttpDataSource.Factory httpDataSourceFactory) {
-    this.eventChannel = eventChannel;
+    this.videoPlayerEvents = events;
     this.textureEntry = textureEntry;
     this.options = options;
     this.httpDataSourceFactory = httpDataSourceFactory;
 
-    setUpVideoPlayer(exoPlayer, eventSink);
+    setUpVideoPlayer(exoPlayer);
   }
 
   @VisibleForTesting
@@ -118,37 +110,29 @@ final class VideoPlayer {
         httpDataSourceFactory, httpHeaders, userAgent, httpHeadersNotEmpty);
   }
 
-  private void setUpVideoPlayer(ExoPlayer exoPlayer, QueuingEventSink eventSink) {
+  private void setUpVideoPlayer(ExoPlayer exoPlayer) {
     this.exoPlayer = exoPlayer;
-    this.eventSink = eventSink;
-
-    eventChannel.setStreamHandler(
-        new EventChannel.StreamHandler() {
-          @Override
-          public void onListen(Object o, EventChannel.EventSink sink) {
-            eventSink.setDelegate(sink);
-          }
-
-          @Override
-          public void onCancel(Object o) {
-            eventSink.setDelegate(null);
-          }
-        });
 
     surface = new Surface(textureEntry.surfaceTexture());
     exoPlayer.setVideoSurface(surface);
     setAudioAttributes(exoPlayer, options.mixWithOthers);
+
+    // Avoids synthetic accessor.
+    VideoPlayerCallbacks events = this.videoPlayerEvents;
 
     exoPlayer.addListener(
         new Listener() {
           private boolean isBuffering = false;
 
           public void setBuffering(boolean buffering) {
-            if (isBuffering != buffering) {
-              isBuffering = buffering;
-              Map<String, Object> event = new HashMap<>();
-              event.put("event", isBuffering ? "bufferingStart" : "bufferingEnd");
-              eventSink.success(event);
+            if (isBuffering == buffering) {
+              return;
+            }
+            isBuffering = buffering;
+            if (buffering) {
+              events.onBufferingStart();
+            } else {
+              events.onBufferingEnd();
             }
           }
 
@@ -163,11 +147,8 @@ final class VideoPlayer {
                 sendInitialized();
               }
             } else if (playbackState == Player.STATE_ENDED) {
-              Map<String, Object> event = new HashMap<>();
-              event.put("event", "completed");
-              eventSink.success(event);
+              events.onCompleted();
             }
-
             if (playbackState != Player.STATE_BUFFERING) {
               setBuffering(false);
             }
@@ -180,30 +161,20 @@ final class VideoPlayer {
               // See https://exoplayer.dev/live-streaming.html#behindlivewindowexception-and-error_code_behind_live_window
               exoPlayer.seekToDefaultPosition();
               exoPlayer.prepare();
-            } else if (eventSink != null) {
-              eventSink.error("VideoError", "Video player had error " + error, null);
+            } else {
+              events.onError("VideoError", "Video player had error " + error, null);
             }
           }
 
           @Override
           public void onIsPlayingChanged(boolean isPlaying) {
-            if (eventSink != null) {
-              Map<String, Object> event = new HashMap<>();
-              event.put("event", "isPlayingStateUpdate");
-              event.put("isPlaying", isPlaying);
-              eventSink.success(event);
-            }
+            events.onIsPlayingStateUpdate(isPlaying);
           }
         });
   }
 
   void sendBufferingUpdate() {
-    Map<String, Object> event = new HashMap<>();
-    event.put("event", "bufferingUpdate");
-    List<? extends Number> range = Arrays.asList(0, exoPlayer.getBufferedPosition());
-    // iOS supports a list of buffered ranges, so here is a list with a single range.
-    event.put("values", Collections.singletonList(range));
-    eventSink.success(event);
+    videoPlayerEvents.onBufferingUpdate(exoPlayer.getBufferedPosition());
   }
 
   private static void setAudioAttributes(ExoPlayer exoPlayer, boolean isMixMode) {
@@ -248,35 +219,29 @@ final class VideoPlayer {
   @SuppressWarnings("SuspiciousNameCombination")
   @VisibleForTesting
   void sendInitialized() {
-    if (isInitialized) {
-      Map<String, Object> event = new HashMap<>();
-      event.put("event", "initialized");
-      event.put("duration", exoPlayer.getDuration());
-
-      VideoSize videoSize = exoPlayer.getVideoSize();
-      int width = videoSize.width;
-      int height = videoSize.height;
-      if (width != 0 && height != 0) {
-        int rotationDegrees = videoSize.unappliedRotationDegrees;
-        // Switch the width/height if video was taken in portrait mode
-        if (rotationDegrees == 90 || rotationDegrees == 270) {
-          width = videoSize.height;
-          height = videoSize.width;
-        }
-        event.put("width", width);
-        event.put("height", height);
-
-        // Rotating the video with ExoPlayer does not seem to be possible with a Surface,
-        // so inform the Flutter code that the widget needs to be rotated to prevent
-        // upside-down playback for videos with rotationDegrees of 180 (other orientations work
-        // correctly without correction).
-        if (rotationDegrees == 180) {
-          event.put("rotationCorrection", rotationDegrees);
-        }
-      }
-
-      eventSink.success(event);
+    if (!isInitialized) {
+      return;
     }
+    VideoSize videoSize = exoPlayer.getVideoSize();
+    int rotationCorrection = 0;
+    int width = videoSize.width;
+    int height = videoSize.height;
+    if (width != 0 && height != 0) {
+      int rotationDegrees = videoSize.unappliedRotationDegrees;
+      // Switch the width/height if video was taken in portrait mode
+      if (rotationDegrees == 90 || rotationDegrees == 270) {
+        width = videoSize.height;
+        height = videoSize.width;
+      }
+      // Rotating the video with ExoPlayer does not seem to be possible with a Surface,
+      // so inform the Flutter code that the widget needs to be rotated to prevent
+      // upside-down playback for videos with rotationDegrees of 180 (other orientations work
+      // correctly without correction).
+      if (rotationDegrees == 180) {
+        rotationCorrection = rotationDegrees;
+      }
+    }
+    videoPlayerEvents.onInitialized(width, height, exoPlayer.getDuration(), rotationCorrection);
   }
 
   void dispose() {
@@ -284,7 +249,6 @@ final class VideoPlayer {
       exoPlayer.stop();
     }
     textureEntry.release();
-    eventChannel.setStreamHandler(null);
     if (surface != null) {
       surface.release();
     }
