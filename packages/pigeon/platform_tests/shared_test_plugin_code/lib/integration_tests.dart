@@ -1488,7 +1488,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
         expect(e.message, contains('suffixWithoutHost'));
       }
     });
-  }, skip: _linuxBringup);
+  });
 
   // These tests rely on the async Dart->host calls to work correctly, since
   // the host->Dart call is wrapped in a driving Dart->host call, so any test
