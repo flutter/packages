@@ -537,11 +537,25 @@ class GObjectSourceGenerator extends StructuredGenerator<GObjectOptions> {
           indent.writeScoped('else {', '}', () {
             indent.writeln('self->$fieldName = nullptr;');
           });
+        } else if (field.type.isNullable) {
+          indent.writeScoped('if ($fieldName != nullptr) {', '}', () {
+            indent.writeln('self->$fieldName = $value;');
+            if (_isNumericListType(field.type)) {
+              indent
+                  .writeln('self->${fieldName}_length = ${fieldName}_length;');
+            }
+          });
+          indent.writeScoped('else {', '}', () {
+            indent.writeln('self->$fieldName = nullptr;');
+            if (_isNumericListType(field.type)) {
+              indent.writeln('self->${fieldName}_length = 0;');
+            }
+          });
         } else {
           indent.writeln('self->$fieldName = $value;');
-        }
-        if (_isNumericListType(field.type)) {
-          indent.writeln('self->${fieldName}_length = ${fieldName}_length;');
+          if (_isNumericListType(field.type)) {
+            indent.writeln('self->${fieldName}_length = ${fieldName}_length;');
+          }
         }
       }
       indent.writeln('return self;');

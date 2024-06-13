@@ -399,26 +399,61 @@ core_tests_pigeon_test_all_nullable_types_new(
   } else {
     self->a_nullable_double = nullptr;
   }
-  self->a_nullable_byte_array = static_cast<uint8_t*>(
-      memcpy(malloc(a_nullable_byte_array_length), a_nullable_byte_array,
-             a_nullable_byte_array_length));
-  self->a_nullable_byte_array_length = a_nullable_byte_array_length;
-  self->a_nullable4_byte_array = static_cast<int32_t*>(memcpy(
-      malloc(sizeof(int32_t) * a_nullable4_byte_array_length),
-      a_nullable4_byte_array, sizeof(int32_t) * a_nullable4_byte_array_length));
-  self->a_nullable4_byte_array_length = a_nullable4_byte_array_length;
-  self->a_nullable8_byte_array = static_cast<int64_t*>(memcpy(
-      malloc(sizeof(int64_t) * a_nullable8_byte_array_length),
-      a_nullable8_byte_array, sizeof(int64_t) * a_nullable8_byte_array_length));
-  self->a_nullable8_byte_array_length = a_nullable8_byte_array_length;
-  self->a_nullable_float_array = static_cast<double*>(memcpy(
-      malloc(sizeof(double) * a_nullable_float_array_length),
-      a_nullable_float_array, sizeof(double) * a_nullable_float_array_length));
-  self->a_nullable_float_array_length = a_nullable_float_array_length;
-  self->nullable_nested_list = fl_value_ref(nullable_nested_list);
-  self->nullable_map_with_annotations =
-      fl_value_ref(nullable_map_with_annotations);
-  self->nullable_map_with_object = fl_value_ref(nullable_map_with_object);
+  if (a_nullable_byte_array != nullptr) {
+    self->a_nullable_byte_array = static_cast<uint8_t*>(
+        memcpy(malloc(a_nullable_byte_array_length), a_nullable_byte_array,
+               a_nullable_byte_array_length));
+    self->a_nullable_byte_array_length = a_nullable_byte_array_length;
+  } else {
+    self->a_nullable_byte_array = nullptr;
+    self->a_nullable_byte_array_length = 0;
+  }
+  if (a_nullable4_byte_array != nullptr) {
+    self->a_nullable4_byte_array = static_cast<int32_t*>(
+        memcpy(malloc(sizeof(int32_t) * a_nullable4_byte_array_length),
+               a_nullable4_byte_array,
+               sizeof(int32_t) * a_nullable4_byte_array_length));
+    self->a_nullable4_byte_array_length = a_nullable4_byte_array_length;
+  } else {
+    self->a_nullable4_byte_array = nullptr;
+    self->a_nullable4_byte_array_length = 0;
+  }
+  if (a_nullable8_byte_array != nullptr) {
+    self->a_nullable8_byte_array = static_cast<int64_t*>(
+        memcpy(malloc(sizeof(int64_t) * a_nullable8_byte_array_length),
+               a_nullable8_byte_array,
+               sizeof(int64_t) * a_nullable8_byte_array_length));
+    self->a_nullable8_byte_array_length = a_nullable8_byte_array_length;
+  } else {
+    self->a_nullable8_byte_array = nullptr;
+    self->a_nullable8_byte_array_length = 0;
+  }
+  if (a_nullable_float_array != nullptr) {
+    self->a_nullable_float_array = static_cast<double*>(
+        memcpy(malloc(sizeof(double) * a_nullable_float_array_length),
+               a_nullable_float_array,
+               sizeof(double) * a_nullable_float_array_length));
+    self->a_nullable_float_array_length = a_nullable_float_array_length;
+  } else {
+    self->a_nullable_float_array = nullptr;
+    self->a_nullable_float_array_length = 0;
+  }
+  if (nullable_nested_list != nullptr) {
+    self->nullable_nested_list = fl_value_ref(nullable_nested_list);
+  } else {
+    self->nullable_nested_list = nullptr;
+  }
+  if (nullable_map_with_annotations != nullptr) {
+    self->nullable_map_with_annotations =
+        fl_value_ref(nullable_map_with_annotations);
+  } else {
+    self->nullable_map_with_annotations = nullptr;
+  }
+  if (nullable_map_with_object != nullptr) {
+    self->nullable_map_with_object = fl_value_ref(nullable_map_with_object);
+  } else {
+    self->nullable_map_with_object = nullptr;
+  }
   if (a_nullable_enum != nullptr) {
     self->a_nullable_enum = static_cast<CoreTestsPigeonTestAnEnum*>(
         malloc(sizeof(CoreTestsPigeonTestAnEnum)));
@@ -426,17 +461,57 @@ core_tests_pigeon_test_all_nullable_types_new(
   } else {
     self->a_nullable_enum = nullptr;
   }
-  self->a_nullable_string = g_strdup(a_nullable_string);
-  self->a_nullable_object = fl_value_ref(a_nullable_object);
-  self->all_nullable_types = CORE_TESTS_PIGEON_TEST_ALL_NULLABLE_TYPES(
-      g_object_ref(all_nullable_types));
-  self->list = fl_value_ref(list);
-  self->string_list = fl_value_ref(string_list);
-  self->int_list = fl_value_ref(int_list);
-  self->double_list = fl_value_ref(double_list);
-  self->bool_list = fl_value_ref(bool_list);
-  self->nested_class_list = fl_value_ref(nested_class_list);
-  self->map = fl_value_ref(map);
+  if (a_nullable_string != nullptr) {
+    self->a_nullable_string = g_strdup(a_nullable_string);
+  } else {
+    self->a_nullable_string = nullptr;
+  }
+  if (a_nullable_object != nullptr) {
+    self->a_nullable_object = fl_value_ref(a_nullable_object);
+  } else {
+    self->a_nullable_object = nullptr;
+  }
+  if (all_nullable_types != nullptr) {
+    self->all_nullable_types = CORE_TESTS_PIGEON_TEST_ALL_NULLABLE_TYPES(
+        g_object_ref(all_nullable_types));
+  } else {
+    self->all_nullable_types = nullptr;
+  }
+  if (list != nullptr) {
+    self->list = fl_value_ref(list);
+  } else {
+    self->list = nullptr;
+  }
+  if (string_list != nullptr) {
+    self->string_list = fl_value_ref(string_list);
+  } else {
+    self->string_list = nullptr;
+  }
+  if (int_list != nullptr) {
+    self->int_list = fl_value_ref(int_list);
+  } else {
+    self->int_list = nullptr;
+  }
+  if (double_list != nullptr) {
+    self->double_list = fl_value_ref(double_list);
+  } else {
+    self->double_list = nullptr;
+  }
+  if (bool_list != nullptr) {
+    self->bool_list = fl_value_ref(bool_list);
+  } else {
+    self->bool_list = nullptr;
+  }
+  if (nested_class_list != nullptr) {
+    self->nested_class_list = fl_value_ref(nested_class_list);
+  } else {
+    self->nested_class_list = nullptr;
+  }
+  if (map != nullptr) {
+    self->map = fl_value_ref(map);
+  } else {
+    self->map = nullptr;
+  }
   return self;
 }
 
@@ -946,26 +1021,61 @@ core_tests_pigeon_test_all_nullable_types_without_recursion_new(
   } else {
     self->a_nullable_double = nullptr;
   }
-  self->a_nullable_byte_array = static_cast<uint8_t*>(
-      memcpy(malloc(a_nullable_byte_array_length), a_nullable_byte_array,
-             a_nullable_byte_array_length));
-  self->a_nullable_byte_array_length = a_nullable_byte_array_length;
-  self->a_nullable4_byte_array = static_cast<int32_t*>(memcpy(
-      malloc(sizeof(int32_t) * a_nullable4_byte_array_length),
-      a_nullable4_byte_array, sizeof(int32_t) * a_nullable4_byte_array_length));
-  self->a_nullable4_byte_array_length = a_nullable4_byte_array_length;
-  self->a_nullable8_byte_array = static_cast<int64_t*>(memcpy(
-      malloc(sizeof(int64_t) * a_nullable8_byte_array_length),
-      a_nullable8_byte_array, sizeof(int64_t) * a_nullable8_byte_array_length));
-  self->a_nullable8_byte_array_length = a_nullable8_byte_array_length;
-  self->a_nullable_float_array = static_cast<double*>(memcpy(
-      malloc(sizeof(double) * a_nullable_float_array_length),
-      a_nullable_float_array, sizeof(double) * a_nullable_float_array_length));
-  self->a_nullable_float_array_length = a_nullable_float_array_length;
-  self->nullable_nested_list = fl_value_ref(nullable_nested_list);
-  self->nullable_map_with_annotations =
-      fl_value_ref(nullable_map_with_annotations);
-  self->nullable_map_with_object = fl_value_ref(nullable_map_with_object);
+  if (a_nullable_byte_array != nullptr) {
+    self->a_nullable_byte_array = static_cast<uint8_t*>(
+        memcpy(malloc(a_nullable_byte_array_length), a_nullable_byte_array,
+               a_nullable_byte_array_length));
+    self->a_nullable_byte_array_length = a_nullable_byte_array_length;
+  } else {
+    self->a_nullable_byte_array = nullptr;
+    self->a_nullable_byte_array_length = 0;
+  }
+  if (a_nullable4_byte_array != nullptr) {
+    self->a_nullable4_byte_array = static_cast<int32_t*>(
+        memcpy(malloc(sizeof(int32_t) * a_nullable4_byte_array_length),
+               a_nullable4_byte_array,
+               sizeof(int32_t) * a_nullable4_byte_array_length));
+    self->a_nullable4_byte_array_length = a_nullable4_byte_array_length;
+  } else {
+    self->a_nullable4_byte_array = nullptr;
+    self->a_nullable4_byte_array_length = 0;
+  }
+  if (a_nullable8_byte_array != nullptr) {
+    self->a_nullable8_byte_array = static_cast<int64_t*>(
+        memcpy(malloc(sizeof(int64_t) * a_nullable8_byte_array_length),
+               a_nullable8_byte_array,
+               sizeof(int64_t) * a_nullable8_byte_array_length));
+    self->a_nullable8_byte_array_length = a_nullable8_byte_array_length;
+  } else {
+    self->a_nullable8_byte_array = nullptr;
+    self->a_nullable8_byte_array_length = 0;
+  }
+  if (a_nullable_float_array != nullptr) {
+    self->a_nullable_float_array = static_cast<double*>(
+        memcpy(malloc(sizeof(double) * a_nullable_float_array_length),
+               a_nullable_float_array,
+               sizeof(double) * a_nullable_float_array_length));
+    self->a_nullable_float_array_length = a_nullable_float_array_length;
+  } else {
+    self->a_nullable_float_array = nullptr;
+    self->a_nullable_float_array_length = 0;
+  }
+  if (nullable_nested_list != nullptr) {
+    self->nullable_nested_list = fl_value_ref(nullable_nested_list);
+  } else {
+    self->nullable_nested_list = nullptr;
+  }
+  if (nullable_map_with_annotations != nullptr) {
+    self->nullable_map_with_annotations =
+        fl_value_ref(nullable_map_with_annotations);
+  } else {
+    self->nullable_map_with_annotations = nullptr;
+  }
+  if (nullable_map_with_object != nullptr) {
+    self->nullable_map_with_object = fl_value_ref(nullable_map_with_object);
+  } else {
+    self->nullable_map_with_object = nullptr;
+  }
   if (a_nullable_enum != nullptr) {
     self->a_nullable_enum = static_cast<CoreTestsPigeonTestAnEnum*>(
         malloc(sizeof(CoreTestsPigeonTestAnEnum)));
@@ -973,14 +1083,46 @@ core_tests_pigeon_test_all_nullable_types_without_recursion_new(
   } else {
     self->a_nullable_enum = nullptr;
   }
-  self->a_nullable_string = g_strdup(a_nullable_string);
-  self->a_nullable_object = fl_value_ref(a_nullable_object);
-  self->list = fl_value_ref(list);
-  self->string_list = fl_value_ref(string_list);
-  self->int_list = fl_value_ref(int_list);
-  self->double_list = fl_value_ref(double_list);
-  self->bool_list = fl_value_ref(bool_list);
-  self->map = fl_value_ref(map);
+  if (a_nullable_string != nullptr) {
+    self->a_nullable_string = g_strdup(a_nullable_string);
+  } else {
+    self->a_nullable_string = nullptr;
+  }
+  if (a_nullable_object != nullptr) {
+    self->a_nullable_object = fl_value_ref(a_nullable_object);
+  } else {
+    self->a_nullable_object = nullptr;
+  }
+  if (list != nullptr) {
+    self->list = fl_value_ref(list);
+  } else {
+    self->list = nullptr;
+  }
+  if (string_list != nullptr) {
+    self->string_list = fl_value_ref(string_list);
+  } else {
+    self->string_list = nullptr;
+  }
+  if (int_list != nullptr) {
+    self->int_list = fl_value_ref(int_list);
+  } else {
+    self->int_list = nullptr;
+  }
+  if (double_list != nullptr) {
+    self->double_list = fl_value_ref(double_list);
+  } else {
+    self->double_list = nullptr;
+  }
+  if (bool_list != nullptr) {
+    self->bool_list = fl_value_ref(bool_list);
+  } else {
+    self->bool_list = nullptr;
+  }
+  if (map != nullptr) {
+    self->map = fl_value_ref(map);
+  } else {
+    self->map = nullptr;
+  }
   return self;
 }
 
@@ -1424,10 +1566,18 @@ core_tests_pigeon_test_all_classes_wrapper_new(
           core_tests_pigeon_test_all_classes_wrapper_get_type(), nullptr));
   self->all_nullable_types = CORE_TESTS_PIGEON_TEST_ALL_NULLABLE_TYPES(
       g_object_ref(all_nullable_types));
-  self->all_nullable_types_without_recursion =
-      CORE_TESTS_PIGEON_TEST_ALL_NULLABLE_TYPES_WITHOUT_RECURSION(
-          g_object_ref(all_nullable_types_without_recursion));
-  self->all_types = CORE_TESTS_PIGEON_TEST_ALL_TYPES(g_object_ref(all_types));
+  if (all_nullable_types_without_recursion != nullptr) {
+    self->all_nullable_types_without_recursion =
+        CORE_TESTS_PIGEON_TEST_ALL_NULLABLE_TYPES_WITHOUT_RECURSION(
+            g_object_ref(all_nullable_types_without_recursion));
+  } else {
+    self->all_nullable_types_without_recursion = nullptr;
+  }
+  if (all_types != nullptr) {
+    self->all_types = CORE_TESTS_PIGEON_TEST_ALL_TYPES(g_object_ref(all_types));
+  } else {
+    self->all_types = nullptr;
+  }
   return self;
 }
 
@@ -1526,7 +1676,11 @@ CoreTestsPigeonTestTestMessage* core_tests_pigeon_test_test_message_new(
     FlValue* test_list) {
   CoreTestsPigeonTestTestMessage* self = CORE_TESTS_PIGEON_TEST_TEST_MESSAGE(
       g_object_new(core_tests_pigeon_test_test_message_get_type(), nullptr));
-  self->test_list = fl_value_ref(test_list);
+  if (test_list != nullptr) {
+    self->test_list = fl_value_ref(test_list);
+  } else {
+    self->test_list = nullptr;
+  }
   return self;
 }
 
