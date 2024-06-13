@@ -50,22 +50,14 @@ public class GoogleSignInTest {
   @Mock GoogleSignInClient mockClient;
   @Mock Task<GoogleSignInAccount> mockSignInTask;
 
-  @SuppressWarnings("deprecation")
-  @Mock
-  PluginRegistry.Registrar mockRegistrar;
-
   private GoogleSignInPlugin.Delegate plugin;
   private AutoCloseable mockCloseable;
 
   @Before
   public void setUp() {
     mockCloseable = MockitoAnnotations.openMocks(this);
-    when(mockRegistrar.messenger()).thenReturn(mockMessenger);
-    when(mockRegistrar.context()).thenReturn(mockContext);
-    when(mockRegistrar.activity()).thenReturn(mockActivity);
     when(mockContext.getResources()).thenReturn(mockResources);
-    plugin = new GoogleSignInPlugin.Delegate(mockRegistrar.context(), mockGoogleSignIn);
-    plugin.setUpRegistrar(mockRegistrar);
+    plugin = new GoogleSignInPlugin.Delegate(mockContext, mockGoogleSignIn);
   }
 
   @After
@@ -116,7 +108,6 @@ public class GoogleSignInTest {
     Scope requestedScope = new Scope("requestedScope");
     ArgumentCaptor<PluginRegistry.ActivityResultListener> captor =
         ArgumentCaptor.forClass(PluginRegistry.ActivityResultListener.class);
-    verify(mockRegistrar).addActivityResultListener(captor.capture());
     PluginRegistry.ActivityResultListener listener = captor.getValue();
 
     when(mockGoogleSignIn.getLastSignedInAccount(mockContext)).thenReturn(account);
@@ -137,7 +128,6 @@ public class GoogleSignInTest {
     Scope requestedScope = new Scope("requestedScope");
     ArgumentCaptor<PluginRegistry.ActivityResultListener> captor =
         ArgumentCaptor.forClass(PluginRegistry.ActivityResultListener.class);
-    verify(mockRegistrar).addActivityResultListener(captor.capture());
     PluginRegistry.ActivityResultListener listener = captor.getValue();
 
     when(mockGoogleSignIn.getLastSignedInAccount(mockContext)).thenReturn(account);
@@ -157,7 +147,6 @@ public class GoogleSignInTest {
     Scope requestedScope = new Scope("requestedScope");
     ArgumentCaptor<PluginRegistry.ActivityResultListener> captor =
         ArgumentCaptor.forClass(PluginRegistry.ActivityResultListener.class);
-    verify(mockRegistrar).addActivityResultListener(captor.capture());
     PluginRegistry.ActivityResultListener listener = captor.getValue();
 
     when(mockGoogleSignIn.getLastSignedInAccount(mockContext)).thenReturn(account);
@@ -179,7 +168,6 @@ public class GoogleSignInTest {
     List<String> requestedScopes = Collections.singletonList("requestedScope");
     ArgumentCaptor<PluginRegistry.ActivityResultListener> captor =
         ArgumentCaptor.forClass(PluginRegistry.ActivityResultListener.class);
-    verify(mockRegistrar).addActivityResultListener(captor.capture());
     PluginRegistry.ActivityResultListener listener = captor.getValue();
 
     when(mockGoogleSignIn.getLastSignedInAccount(mockContext)).thenReturn(null);
