@@ -607,7 +607,10 @@ class SwiftGenerator extends StructuredGenerator<SwiftOptions> {
         root.apis.whereType<AstProxyApi>();
 
     _writeProxyApiRegistrar(indent, allProxyApis: allProxyApis);
-    indent.writeln(proxyApiReaderWriterTemplate(allProxyApis: allProxyApis));
+    indent.writeln(proxyApiReaderWriterTemplate(
+      allProxyApis: allProxyApis,
+      codecName: _getCodecName(generatorOptions),
+    ));
   }
 
   @override
@@ -1586,7 +1589,7 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
       ],
       returnType: const TypeDeclaration.voidDeclaration(),
       isAsynchronous: true,
-      errorTypeName: 'FlutterError',
+      errorTypeName: _getErrorClassName(generatorOptions),
     );
     indent.writeScoped('$methodSignature {', '}', () {
       indent.writeScoped(
@@ -1677,7 +1680,7 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
         ],
         returnType: method.returnType,
         isAsynchronous: true,
-        errorTypeName: 'FlutterError',
+        errorTypeName: _getErrorClassName(generatorOptions),
         getParameterName: _getSafeArgumentName,
       );
 

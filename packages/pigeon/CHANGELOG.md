@@ -1,6 +1,6 @@
 ## 20.1.0
 
-* [swift] Adds skeleton implementation for `@ProxyApi`.
+* [swift] Adds implementation for `@ProxyApi`.
 
 ## 20.0.1
 

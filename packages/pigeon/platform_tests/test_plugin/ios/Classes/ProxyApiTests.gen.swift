@@ -332,7 +332,7 @@ private class PigeonInstanceManagerApi {
 
   /// Send a messaage to the Dart `InstanceManager` to remove the strong reference of the instance associated with `identifier`.
   func removeStrongReference(
-    withIdentifier identifier: Int64, completion: @escaping (Result<Void, FlutterError>) -> Void
+    withIdentifier identifier: Int64, completion: @escaping (Result<Void, ProxyApiTestsError>) -> Void
   ) {
     let channelName: String =
       "dev.flutter.pigeon.pigeon_integration_tests.PigeonInstanceManagerApi.removeStrongReference"
@@ -347,7 +347,7 @@ private class PigeonInstanceManagerApi {
         let code: String = listResponse[0] as! String
         let message: String? = nilOrValue(listResponse[1])
         let details: String? = nilOrValue(listResponse[2])
-        completion(.failure(FlutterError(code: code, message: message, details: details)))
+        completion(.failure(ProxyApiTestsError(code: code, message: message, details: details)))
       } else {
         completion(.success(Void()))
       }
@@ -422,7 +422,7 @@ open class PigeonProxyApiRegistrar {
 private class PigeonProxyApiCodecReaderWriter: FlutterStandardReaderWriter {
   unowned let pigeonRegistrar: PigeonProxyApiRegistrar
 
-  private class PigeonProxyApiCodecReader: FlutterStandardReader {
+  private class PigeonProxyApiCodecReader: ProxyApiTestsPigeonCodecReader {
     unowned let pigeonRegistrar: PigeonProxyApiRegistrar
 
     init(data: Data, pigeonRegistrar: PigeonProxyApiRegistrar) {
@@ -443,7 +443,7 @@ private class PigeonProxyApiCodecReaderWriter: FlutterStandardReaderWriter {
     }
   }
 
-  private class PigeonProxyApiCodecWriter: FlutterStandardWriter {
+  private class PigeonProxyApiCodecWriter: ProxyApiTestsPigeonCodecWriter {
     unowned let pigeonRegistrar: PigeonProxyApiRegistrar
 
     init(data: NSMutableData, pigeonRegistrar: PigeonProxyApiRegistrar) {
@@ -2606,7 +2606,8 @@ final class PigeonApiProxyApiTestClass {
 
   ///Creates a Dart instance of ProxyApiTestClass and attaches it to [pigeonInstance].
   func pigeonNewInstance(
-    pigeonInstance: ProxyApiTestClass, completion: @escaping (Result<Void, FlutterError>) -> Void
+    pigeonInstance: ProxyApiTestClass,
+    completion: @escaping (Result<Void, ProxyApiTestsError>) -> Void
   ) {
     if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {
       completion(.success(Void()))
@@ -2675,7 +2676,7 @@ final class PigeonApiProxyApiTestClass {
   /// test basic calling.
   func flutterNoop(
     pigeonInstance pigeonInstanceArg: ProxyApiTestClass,
-    completion: @escaping (Result<Void, FlutterError>) -> Void
+    completion: @escaping (Result<Void, ProxyApiTestsError>) -> Void
   ) {
     let binaryMessenger = pigeonRegistrar.binaryMessenger
     let codec = pigeonRegistrar.codec
@@ -2702,7 +2703,7 @@ final class PigeonApiProxyApiTestClass {
   /// Responds with an error from an async function returning a value.
   func flutterThrowError(
     pigeonInstance pigeonInstanceArg: ProxyApiTestClass,
-    completion: @escaping (Result<Any?, FlutterError>) -> Void
+    completion: @escaping (Result<Any?, ProxyApiTestsError>) -> Void
   ) {
     let binaryMessenger = pigeonRegistrar.binaryMessenger
     let codec = pigeonRegistrar.codec
@@ -2730,7 +2731,7 @@ final class PigeonApiProxyApiTestClass {
   /// Responds with an error from an async void function.
   func flutterThrowErrorFromVoid(
     pigeonInstance pigeonInstanceArg: ProxyApiTestClass,
-    completion: @escaping (Result<Void, FlutterError>) -> Void
+    completion: @escaping (Result<Void, ProxyApiTestsError>) -> Void
   ) {
     let binaryMessenger = pigeonRegistrar.binaryMessenger
     let codec = pigeonRegistrar.codec
@@ -2757,7 +2758,7 @@ final class PigeonApiProxyApiTestClass {
   /// Returns the passed boolean, to test serialization and deserialization.
   func flutterEchoBool(
     pigeonInstance pigeonInstanceArg: ProxyApiTestClass, aBool aBoolArg: Bool,
-    completion: @escaping (Result<Bool, FlutterError>) -> Void
+    completion: @escaping (Result<Bool, ProxyApiTestsError>) -> Void
   ) {
     let binaryMessenger = pigeonRegistrar.binaryMessenger
     let codec = pigeonRegistrar.codec
@@ -2791,7 +2792,7 @@ final class PigeonApiProxyApiTestClass {
   /// Returns the passed int, to test serialization and deserialization.
   func flutterEchoInt(
     pigeonInstance pigeonInstanceArg: ProxyApiTestClass, anInt anIntArg: Int64,
-    completion: @escaping (Result<Int64, FlutterError>) -> Void
+    completion: @escaping (Result<Int64, ProxyApiTestsError>) -> Void
   ) {
     let binaryMessenger = pigeonRegistrar.binaryMessenger
     let codec = pigeonRegistrar.codec
@@ -2826,7 +2827,7 @@ final class PigeonApiProxyApiTestClass {
   /// Returns the passed double, to test serialization and deserialization.
   func flutterEchoDouble(
     pigeonInstance pigeonInstanceArg: ProxyApiTestClass, aDouble aDoubleArg: Double,
-    completion: @escaping (Result<Double, FlutterError>) -> Void
+    completion: @escaping (Result<Double, ProxyApiTestsError>) -> Void
   ) {
     let binaryMessenger = pigeonRegistrar.binaryMessenger
     let codec = pigeonRegistrar.codec
@@ -2860,7 +2861,7 @@ final class PigeonApiProxyApiTestClass {
   /// Returns the passed string, to test serialization and deserialization.
   func flutterEchoString(
     pigeonInstance pigeonInstanceArg: ProxyApiTestClass, aString aStringArg: String,
-    completion: @escaping (Result<String, FlutterError>) -> Void
+    completion: @escaping (Result<String, ProxyApiTestsError>) -> Void
   ) {
     let binaryMessenger = pigeonRegistrar.binaryMessenger
     let codec = pigeonRegistrar.codec
@@ -2894,7 +2895,7 @@ final class PigeonApiProxyApiTestClass {
   /// Returns the passed byte list, to test serialization and deserialization.
   func flutterEchoUint8List(
     pigeonInstance pigeonInstanceArg: ProxyApiTestClass, aList aListArg: FlutterStandardTypedData,
-    completion: @escaping (Result<FlutterStandardTypedData, FlutterError>) -> Void
+    completion: @escaping (Result<FlutterStandardTypedData, ProxyApiTestsError>) -> Void
   ) {
     let binaryMessenger = pigeonRegistrar.binaryMessenger
     let codec = pigeonRegistrar.codec
@@ -2928,7 +2929,7 @@ final class PigeonApiProxyApiTestClass {
   /// Returns the passed list, to test serialization and deserialization.
   func flutterEchoList(
     pigeonInstance pigeonInstanceArg: ProxyApiTestClass, aList aListArg: [Any?],
-    completion: @escaping (Result<[Any?], FlutterError>) -> Void
+    completion: @escaping (Result<[Any?], ProxyApiTestsError>) -> Void
   ) {
     let binaryMessenger = pigeonRegistrar.binaryMessenger
     let codec = pigeonRegistrar.codec
@@ -2963,7 +2964,7 @@ final class PigeonApiProxyApiTestClass {
   /// deserialization.
   func flutterEchoProxyApiList(
     pigeonInstance pigeonInstanceArg: ProxyApiTestClass, aList aListArg: [ProxyApiTestClass?],
-    completion: @escaping (Result<[ProxyApiTestClass?], FlutterError>) -> Void
+    completion: @escaping (Result<[ProxyApiTestClass?], ProxyApiTestsError>) -> Void
   ) {
     let binaryMessenger = pigeonRegistrar.binaryMessenger
     let codec = pigeonRegistrar.codec
@@ -2997,7 +2998,7 @@ final class PigeonApiProxyApiTestClass {
   /// Returns the passed map, to test serialization and deserialization.
   func flutterEchoMap(
     pigeonInstance pigeonInstanceArg: ProxyApiTestClass, aMap aMapArg: [String?: Any?],
-    completion: @escaping (Result<[String?: Any?], FlutterError>) -> Void
+    completion: @escaping (Result<[String?: Any?], ProxyApiTestsError>) -> Void
   ) {
     let binaryMessenger = pigeonRegistrar.binaryMessenger
     let codec = pigeonRegistrar.codec
@@ -3033,7 +3034,7 @@ final class PigeonApiProxyApiTestClass {
   func flutterEchoProxyApiMap(
     pigeonInstance pigeonInstanceArg: ProxyApiTestClass,
     aMap aMapArg: [String?: ProxyApiTestClass?],
-    completion: @escaping (Result<[String?: ProxyApiTestClass?], FlutterError>) -> Void
+    completion: @escaping (Result<[String?: ProxyApiTestClass?], ProxyApiTestsError>) -> Void
   ) {
     let binaryMessenger = pigeonRegistrar.binaryMessenger
     let codec = pigeonRegistrar.codec
@@ -3067,7 +3068,7 @@ final class PigeonApiProxyApiTestClass {
   /// Returns the passed enum to test serialization and deserialization.
   func flutterEchoEnum(
     pigeonInstance pigeonInstanceArg: ProxyApiTestClass, anEnum anEnumArg: ProxyApiTestEnum,
-    completion: @escaping (Result<ProxyApiTestEnum, FlutterError>) -> Void
+    completion: @escaping (Result<ProxyApiTestEnum, ProxyApiTestsError>) -> Void
   ) {
     let binaryMessenger = pigeonRegistrar.binaryMessenger
     let codec = pigeonRegistrar.codec
@@ -3101,7 +3102,7 @@ final class PigeonApiProxyApiTestClass {
   /// Returns the passed ProxyApi to test serialization and deserialization.
   func flutterEchoProxyApi(
     pigeonInstance pigeonInstanceArg: ProxyApiTestClass, aProxyApi aProxyApiArg: ProxyApiSuperClass,
-    completion: @escaping (Result<ProxyApiSuperClass, FlutterError>) -> Void
+    completion: @escaping (Result<ProxyApiSuperClass, ProxyApiTestsError>) -> Void
   ) {
     let binaryMessenger = pigeonRegistrar.binaryMessenger
     let codec = pigeonRegistrar.codec
@@ -3135,7 +3136,7 @@ final class PigeonApiProxyApiTestClass {
   /// Returns the passed boolean, to test serialization and deserialization.
   func flutterEchoNullableBool(
     pigeonInstance pigeonInstanceArg: ProxyApiTestClass, aBool aBoolArg: Bool?,
-    completion: @escaping (Result<Bool?, FlutterError>) -> Void
+    completion: @escaping (Result<Bool?, ProxyApiTestsError>) -> Void
   ) {
     let binaryMessenger = pigeonRegistrar.binaryMessenger
     let codec = pigeonRegistrar.codec
@@ -3163,7 +3164,7 @@ final class PigeonApiProxyApiTestClass {
   /// Returns the passed int, to test serialization and deserialization.
   func flutterEchoNullableInt(
     pigeonInstance pigeonInstanceArg: ProxyApiTestClass, anInt anIntArg: Int64?,
-    completion: @escaping (Result<Int64?, FlutterError>) -> Void
+    completion: @escaping (Result<Int64?, ProxyApiTestsError>) -> Void
   ) {
     let binaryMessenger = pigeonRegistrar.binaryMessenger
     let codec = pigeonRegistrar.codec
@@ -3195,7 +3196,7 @@ final class PigeonApiProxyApiTestClass {
   /// Returns the passed double, to test serialization and deserialization.
   func flutterEchoNullableDouble(
     pigeonInstance pigeonInstanceArg: ProxyApiTestClass, aDouble aDoubleArg: Double?,
-    completion: @escaping (Result<Double?, FlutterError>) -> Void
+    completion: @escaping (Result<Double?, ProxyApiTestsError>) -> Void
   ) {
     let binaryMessenger = pigeonRegistrar.binaryMessenger
     let codec = pigeonRegistrar.codec
@@ -3223,7 +3224,7 @@ final class PigeonApiProxyApiTestClass {
   /// Returns the passed string, to test serialization and deserialization.
   func flutterEchoNullableString(
     pigeonInstance pigeonInstanceArg: ProxyApiTestClass, aString aStringArg: String?,
-    completion: @escaping (Result<String?, FlutterError>) -> Void
+    completion: @escaping (Result<String?, ProxyApiTestsError>) -> Void
   ) {
     let binaryMessenger = pigeonRegistrar.binaryMessenger
     let codec = pigeonRegistrar.codec
@@ -3251,7 +3252,7 @@ final class PigeonApiProxyApiTestClass {
   /// Returns the passed byte list, to test serialization and deserialization.
   func flutterEchoNullableUint8List(
     pigeonInstance pigeonInstanceArg: ProxyApiTestClass, aList aListArg: FlutterStandardTypedData?,
-    completion: @escaping (Result<FlutterStandardTypedData?, FlutterError>) -> Void
+    completion: @escaping (Result<FlutterStandardTypedData?, ProxyApiTestsError>) -> Void
   ) {
     let binaryMessenger = pigeonRegistrar.binaryMessenger
     let codec = pigeonRegistrar.codec
@@ -3279,7 +3280,7 @@ final class PigeonApiProxyApiTestClass {
   /// Returns the passed list, to test serialization and deserialization.
   func flutterEchoNullableList(
     pigeonInstance pigeonInstanceArg: ProxyApiTestClass, aList aListArg: [Any?]?,
-    completion: @escaping (Result<[Any?]?, FlutterError>) -> Void
+    completion: @escaping (Result<[Any?]?, ProxyApiTestsError>) -> Void
   ) {
     let binaryMessenger = pigeonRegistrar.binaryMessenger
     let codec = pigeonRegistrar.codec
@@ -3307,7 +3308,7 @@ final class PigeonApiProxyApiTestClass {
   /// Returns the passed map, to test serialization and deserialization.
   func flutterEchoNullableMap(
     pigeonInstance pigeonInstanceArg: ProxyApiTestClass, aMap aMapArg: [String?: Any?]?,
-    completion: @escaping (Result<[String?: Any?]?, FlutterError>) -> Void
+    completion: @escaping (Result<[String?: Any?]?, ProxyApiTestsError>) -> Void
   ) {
     let binaryMessenger = pigeonRegistrar.binaryMessenger
     let codec = pigeonRegistrar.codec
@@ -3335,7 +3336,7 @@ final class PigeonApiProxyApiTestClass {
   /// Returns the passed enum to test serialization and deserialization.
   func flutterEchoNullableEnum(
     pigeonInstance pigeonInstanceArg: ProxyApiTestClass, anEnum anEnumArg: ProxyApiTestEnum?,
-    completion: @escaping (Result<ProxyApiTestEnum?, FlutterError>) -> Void
+    completion: @escaping (Result<ProxyApiTestEnum?, ProxyApiTestsError>) -> Void
   ) {
     let binaryMessenger = pigeonRegistrar.binaryMessenger
     let codec = pigeonRegistrar.codec
@@ -3364,7 +3365,7 @@ final class PigeonApiProxyApiTestClass {
   func flutterEchoNullableProxyApi(
     pigeonInstance pigeonInstanceArg: ProxyApiTestClass,
     aProxyApi aProxyApiArg: ProxyApiSuperClass?,
-    completion: @escaping (Result<ProxyApiSuperClass?, FlutterError>) -> Void
+    completion: @escaping (Result<ProxyApiSuperClass?, ProxyApiTestsError>) -> Void
   ) {
     let binaryMessenger = pigeonRegistrar.binaryMessenger
     let codec = pigeonRegistrar.codec
@@ -3393,7 +3394,7 @@ final class PigeonApiProxyApiTestClass {
   /// test basic asynchronous calling.
   func flutterNoopAsync(
     pigeonInstance pigeonInstanceArg: ProxyApiTestClass,
-    completion: @escaping (Result<Void, FlutterError>) -> Void
+    completion: @escaping (Result<Void, ProxyApiTestsError>) -> Void
   ) {
     let binaryMessenger = pigeonRegistrar.binaryMessenger
     let codec = pigeonRegistrar.codec
@@ -3420,7 +3421,7 @@ final class PigeonApiProxyApiTestClass {
   /// Returns the passed in generic Object asynchronously.
   func flutterEchoAsyncString(
     pigeonInstance pigeonInstanceArg: ProxyApiTestClass, aString aStringArg: String,
-    completion: @escaping (Result<String, FlutterError>) -> Void
+    completion: @escaping (Result<String, ProxyApiTestsError>) -> Void
   ) {
     let binaryMessenger = pigeonRegistrar.binaryMessenger
     let codec = pigeonRegistrar.codec
@@ -3513,7 +3514,8 @@ final class PigeonApiProxyApiSuperClass {
 
   ///Creates a Dart instance of ProxyApiSuperClass and attaches it to [pigeonInstance].
   func pigeonNewInstance(
-    pigeonInstance: ProxyApiSuperClass, completion: @escaping (Result<Void, FlutterError>) -> Void
+    pigeonInstance: ProxyApiSuperClass,
+    completion: @escaping (Result<Void, ProxyApiTestsError>) -> Void
   ) {
     if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {
       completion(.success(Void()))
@@ -3554,7 +3556,8 @@ final class PigeonApiProxyApiInterface {
   }
   ///Creates a Dart instance of ProxyApiInterface and attaches it to [pigeonInstance].
   func pigeonNewInstance(
-    pigeonInstance: ProxyApiInterface, completion: @escaping (Result<Void, FlutterError>) -> Void
+    pigeonInstance: ProxyApiInterface,
+    completion: @escaping (Result<Void, ProxyApiTestsError>) -> Void
   ) {
     if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {
       completion(.success(Void()))
@@ -3585,7 +3588,7 @@ final class PigeonApiProxyApiInterface {
   }
   func anInterfaceMethod(
     pigeonInstance pigeonInstanceArg: ProxyApiInterface,
-    completion: @escaping (Result<Void, FlutterError>) -> Void
+    completion: @escaping (Result<Void, ProxyApiTestsError>) -> Void
   ) {
     let binaryMessenger = pigeonRegistrar.binaryMessenger
     let codec = pigeonRegistrar.codec
