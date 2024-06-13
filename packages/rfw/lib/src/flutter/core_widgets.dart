@@ -8,9 +8,6 @@
 
 // This file is hand-formatted.
 
-// ignore: unnecessary_import, see https://github.com/flutter/flutter/pull/138881
-import 'dart:ui' show FontFeature;
-
 import 'package:flutter/gestures.dart' show DragStartBehavior;
 import 'package:flutter/material.dart' show Icons;
 import 'package:flutter/widgets.dart';
@@ -64,29 +61,51 @@ import 'runtime.dart';
 ///
 /// For each, every parameter is implemented using the same name. Parameters
 /// that take structured types are represented using maps, with each named
-/// parameter of that type's default constructor represented by a key, with the
-/// following notable caveats and exceptions:
+/// parameter of that type's default constructor represented by a key.
+///
+/// For example, a [TextStyle] argument of a [Text] widget would look like this:
+///
+/// ```rfwtxt
+/// Text(
+///   text: 'hello',
+///   style: {
+///     fontSize: 12.0,
+///     fontFamily: 'Arial',
+///     color: 0xFF009900, // green; see discussion below
+///   },
+/// )
+/// ```
+///
+/// Decoders are documented in more detail in [ArgumentDecoders].
+///
+/// The following notable caveats and exceptions apply:
 ///
 ///  * Enums are represented as strings with the unqualified name of the value.
 ///    For example, [MainAxisAlignment.start] is represented as the string
-///    `"start"`.
+///    `"start"`. See [ArgumentDecoders.enumValue].
 ///
 ///  * Types that have multiple subclasses (or multiple very unrelated
-///    constructors, like [ColorFilter]) are represented as maps where the `type`
-///    key specifies the type. Typically these have an extension mechanism.
+///    constructors, like [ColorFilter]) are represented as maps where the
+///    `type` key specifies the type. Typically these have an extension
+///    mechanism. Examples include [ArgumentDecoders.colorFilter],
+///    [ArgumentDecoders.decoration], [ArgumentDecoders.gradient],
+///    [ArgumentDecoders.gridDelegate], [ArgumentDecoders.maskFilter],
+///    [ArgumentDecoders.shapeBorder], and [ArgumentDecoders.shader].
 ///
 ///  * Matrices are represented as **column-major** flattened arrays. [Matrix4]
-///    values must have exactly 16 doubles in the array.
+///    values must have exactly 16 doubles in the array. See
+///    [ArgumentDecoders.matrix] and [ArgumentDecoders.colorMatrix].
 ///
 ///  * [AlignmentGeometry] values can be represented either as `{x: ..., y:
 ///    ...}` for a non-directional variant or `{start: ..., y: ...}` for a
-///    directional variant.
+///    directional variant. See [ArgumentDecoders.alignment].
 ///
 ///  * [BoxBorder] instances are defined as arrays of [BorderSide] maps. If the
 ///    array has length 1, then that value is used for all four sides. Two
 ///    values become the horizontal and vertical sides respectively. Three
 ///    values become the start, top-and-bottom, and end respectively. Four
-///    values become the start, top, end, and bottom respectively.
+///    values become the start, top, end, and bottom respectively. See
+///    [ArgumentDecoders.border].
 ///
 ///  * [BorderRadiusGeometry] values work similarly to [BoxBorder], as an array
 ///    of [Radius] values. If the array has one value, it's used for all corners.
@@ -94,11 +113,12 @@ import 'runtime.dart';
 ///    corners and the second the `topEnd` and `bottomEnd`. With three, the
 ///    values are used for `topStart`, `topEnd`-and-`bottomEnd`, and
 ///    `bottomStart` respectively. Four values map to the `topStart`, `topEnd`,
-///    `bottomStart`, and `bottomEnd` respectively.
+///    `bottomStart`, and `bottomEnd` respectively. See
+///    [ArgumentDecoders.borderRadius].
 ///
 ///  * [Color] values are represented as integers. The hex literal values are
 ///    most convenient for this, the alpha, red, green, and blue channels map to
-///    the 32 bit hex integer as 0xAARRGGBB.
+///    the 32 bit hex integer as 0xAARRGGBB. See [ArgumentDecoders.color].
 ///
 ///  * [ColorFilter] is represented as a map with a `type` key that matches the
 ///    constructor name (e.g. `linearToSrgbGamma`). The `matrix` version uses
@@ -106,14 +126,17 @@ import 'runtime.dart';
 ///    version expects a `color` key for the color (defaults to black) and a
 ///    `blendMode` key for the blend mode (defaults to [BlendMode.srcOver]).
 ///    Other types are looked up in [ArgumentDecoders.colorFilterDecoders].
+///    See [ArgumentDecoders.colorFilter].
 ///
 ///  * [Curve] values are represented as a string giving the kind of curve from
 ///    the predefined [Curves], e.g. `easeInOutCubicEmphasized`. More types may
-///    be added using [ArgumentDecoders.curveDecoders].
+///    be added using [ArgumentDecoders.curveDecoders]. See
+///    [ArgumentDecoders.curve].
 ///
 ///  * The types supported for [Decoration] are `box` for [BoxDecoration],
 ///    `flutterLogo` for [FlutterLogoDecoration], and `shape` for
 ///    [ShapeDecoration]. More types can be added with [decorationDecoders].
+///    See [ArgumentDecoders.decoration].
 ///
 ///  * [DecorationImage] expects a `source` key that gives either an absolute
 ///    URL (to use a [NetworkImage]) or the name of an asset in the client
@@ -122,15 +145,17 @@ import 'runtime.dart';
 ///    [DecorationImage.onError] is supported as an event handler with arguments
 ///    giving the stringified exception and stack trace. Values can be added to
 ///    [ArgumentDecoders.imageProviderDecoders] to override the behavior described here.
+///    See [ArgumentDecoders.decorationImage].
 ///
 ///  * [Duration] is represented by an integer giving milliseconds.
+///    See [ArgumentDecoders.duration].
 ///
 ///  * [EdgeInsetsGeometry] values work like [BoxBorder], with each value in the
-///    array being a double rather than a map.
+///    array being a double rather than a map. See [ArgumentDecoders.edgeInsets].
 ///
 ///  * [FontFeature] values are a map with a `feature` key and a `value` key.
 ///    The `value` defaults to 1. (Technically the `feature` defaults to `NONE`,
-///    too, but that's hardly useful.)
+///    too, but that's hardly useful.) See [ArgumentDecoders.fontFeature].
 ///
 ///  * The [dart:ui.Gradient] and [painting.Gradient] types are both represented
 ///    as a map with a type that is either `linear` (for [LinearGradient]),
@@ -138,12 +163,14 @@ import 'runtime.dart';
 ///    the conventions from the [painting.Gradient] version. The `transform`
 ///    property on these objects is not currently supported. New gradient types
 ///    can be implemented using [ArgumentDecoders.gradientDecoders].
+///    See [ArgumentDecoders.gradient].
 ///
 ///  * The [GridDelegate] type is represented as a map with a `type` key that is
 ///    either `fixedCrossAxisCount` for
 ///    [SliverGridDelegateWithFixedCrossAxisCount] or `maxCrossAxisExtent` for
 ///    [SliverGridDelegateWithMaxCrossAxisExtent]. New delegate types can be
 ///    supported using [ArgumentDecoders.gridDelegateDecoders].
+///    See [ArgumentDecoders.gridDelegate].
 ///
 ///  * [IconData] is represented as a map with an `icon` key giving the
 ///    [IconData.codePoint] (and corresponding keys for the other parameters of
@@ -152,18 +179,18 @@ import 'runtime.dart';
 ///    example, [Icons.flutter_dash] is `IconData(0xe2a0, fontFamily:
 ///    'MaterialIcons')` so it would be represented here as `{ icon: 0xE2A0,
 ///    fontFamily: "MaterialIcons" }`. (The client must have the font as a
-///    defined asset.)
+///    defined asset.) See [ArgumentDecoders.iconData].
 ///
 ///  * [Locale] values are defined as a string in the form `languageCode`,
 ///    `languageCode-countryCode`, or
 ///    `languageCode-scriptCode-countryCode-ignoredSubtags`. The string is split
-///    on hyphens.
+///    on hyphens. See [ArgumentDecoders.locale].
 ///
 ///  * [MaskFilter] is represented as a map with a `type` key that must be
 ///    `blur`; only [MaskFilter.blur] is supported. (The other keys must be
-///    `style`, the [BlurStyle], and `sigma`.)
+///    `style`, the [BlurStyle], and `sigma`.) See [ArgumentDecoders.maskFilter].
 ///
-///  * [Offset]s are a map with an `x` key and a `y` key.
+///  * [Offset]s are a map with an `x` key and a `y` key. See [ArgumentDecoders.offset].
 ///
 ///  * [Paint] objects are represented as maps; each property of [Paint] is a
 ///    key as if there was a constructor that could set all of [Paint]'s
@@ -171,13 +198,14 @@ import 'runtime.dart';
 ///    supported, though since [Paint] is only used as part of
 ///    [painting.TextStyle.background] and [painting.TextStyle.foreground], in
 ///    practice some of the properties are ignored since they would be no-ops
-///    (e.g. `invertColors`).
+///    (e.g. `invertColors`). See [ArgumentDecoders.paint].
 ///
 ///  * [Radius] is represented as a map with an `x` value and optionally a `y`
 ///    value; if the `y` value is absent, the `x` value is used for both.
+///    See [ArgumentDecoders.radius].
 ///
 ///  * [Rect] values are represented as an array with four doubles, giving the
-///    x, y, width, and height respectively.
+///    x, y, width, and height respectively. See [ArgumentDecoders.rect].
 ///
 ///  * [ShapeBorder] values are represented as either maps with a `type` _or_ as
 ///    an array of [ShapeBorder] values. In the array case, the values are
@@ -188,22 +216,25 @@ import 'runtime.dart';
 ///    `stadium` ([StadiumBorder]). In the case of `box`, there must be a
 ///    `sides` key whose value is an array that is interpreted as per
 ///    [BoxBorder] above. Support for new types can be added using the
-///    [ArgumentDecoders.shapeBorderDecoders] map.
+///    [ArgumentDecoders.shapeBorderDecoders] map. See
+///    [ArgumentDecoders.shapeBorder].
 ///
 ///  * [Shader] values are a map with a `type` that is either `linear`,
 ///    `radial`, or `sweep`; in each case, the data is interpreted as per the
 ///    [Gradient] case above, except that the gradient is specifically applied
 ///    to a [Rect] given by the `rect` key and a [TextDirection] given by the
 ///    `textDirection` key. New shader types can be added using
-///    [ArgumentDecoders.shaderDecoders].
+///    [ArgumentDecoders.shaderDecoders]. See [ArgumentDecoders.shader].
 ///
 ///  * [TextDecoration] is represented either as an array of [TextDecoration]
 ///    values (combined via [TextDecoration.combine]) or a string which matches
 ///    the name of one of the [TextDecoration] constants (e.g. `underline`).
+///    See [ArgumentDecoders.textDecoration].
 ///
 ///  * [VisualDensity] is either represented as a string which matches one of the
 ///    predefined values (`adaptivePlatformDensity`, `comfortable`, etc), or as
 ///    a map with keys `horizontal` and `vertical` to define a custom density.
+///    See [ArgumentDecoders.visualDensity].
 ///
 /// Some of the widgets have special considerations:
 ///
