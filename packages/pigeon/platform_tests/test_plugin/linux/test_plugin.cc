@@ -1334,11 +1334,16 @@ static CoreTestsPigeonTestHostIntegrationCoreApiVTable host_core_api_vtable = {
 
 static void echo(CoreTestsPigeonTestHostSmallApi* api, const gchar* a_string,
                  FlBasicMessageChannelResponseHandle* response_handle,
-                 gpointer user_data) {}
+                 gpointer user_data) {
+  core_tests_pigeon_test_host_small_api_respond_echo(api, response_handle,
+                                                     a_string);
+}
 
 static void void_void(CoreTestsPigeonTestHostSmallApi* api,
                       FlBasicMessageChannelResponseHandle* response_handle,
-                      gpointer user_data) {}
+                      gpointer user_data) {
+  core_tests_pigeon_test_host_small_api_respond_void_void(api, response_handle);
+}
 
 static CoreTestsPigeonTestHostSmallApiVTable host_small_api_vtable = {
     .echo = echo, .void_void = void_void};
