@@ -128,7 +128,8 @@ class GoogleMapController
     this.polylinesController = new PolylinesController(methodChannel, assetManager, density);
     this.circlesController = new CirclesController(methodChannel, density);
     this.tileOverlaysController = new TileOverlaysController(methodChannel);
-    this.groundOverlaysController = new GroundOverlaysController(methodChannel);
+    this.groundOverlaysController =
+        new GroundOverlaysController(methodChannel, assetManager, density);
   }
 
   // Constructor for testing purposes only
@@ -144,7 +145,8 @@ class GoogleMapController
       PolygonsController polygonsController,
       PolylinesController polylinesController,
       CirclesController circlesController,
-      TileOverlaysController tileOverlaysController) {
+      TileOverlaysController tileOverlaysController,
+      GroundOverlaysController groundOverlaysController) {
     this.id = id;
     this.context = context;
     this.methodChannel = methodChannel;
@@ -158,6 +160,7 @@ class GoogleMapController
     this.polylinesController = polylinesController;
     this.circlesController = circlesController;
     this.tileOverlaysController = tileOverlaysController;
+    this.groundOverlaysController = groundOverlaysController;
   }
 
   @Override

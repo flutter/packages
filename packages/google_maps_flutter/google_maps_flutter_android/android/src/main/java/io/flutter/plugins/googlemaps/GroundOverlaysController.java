@@ -1,5 +1,10 @@
+// Copyright 2024 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 package io.flutter.plugins.googlemaps;
 
+import android.content.res.AssetManager;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.GroundOverlay;
 import com.google.android.gms.maps.model.GroundOverlayOptions;
@@ -14,11 +19,15 @@ class GroundOverlaysController {
   private final Map<String, GroundOverlayController> groundOverlayIdToController;
   private final Map<String, String> googleMapsGroundOverlayIdToDartOverlayId;
   private MethodChannel methodChannel;
+  private final AssetManager assetManager;
+  private final float density;
 
-  GroundOverlaysController(MethodChannel methodChannel) {
+  GroundOverlaysController(MethodChannel methodChannel, AssetManager assetManager, float density) {
     this.methodChannel = methodChannel;
     this.groundOverlayIdToController = new HashMap<>();
     this.googleMapsGroundOverlayIdToDartOverlayId = new HashMap<>();
+    this.assetManager = assetManager;
+    this.density = density;
   }
 
   void setGoogleMap(GoogleMap googleMap) {
@@ -40,7 +49,8 @@ class GroundOverlaysController {
 
     GroundOverlayBuilder groundOverlayBuilder = new GroundOverlayBuilder();
     String groundOverlayId =
-        Convert.interpretGroundOverlayOptions(groundOverlay, groundOverlayBuilder);
+        Convert.interpretGroundOverlayOptions(
+            groundOverlay, groundOverlayBuilder, assetManager, density);
     GroundOverlayOptions options = groundOverlayBuilder.build();
     addGroundOverlay(groundOverlayId, options, groundOverlayBuilder.consumeTapEvents());
   }
@@ -84,7 +94,8 @@ class GroundOverlaysController {
     GroundOverlayController groundOverlayController =
         groundOverlayIdToController.get(groundOverlayId);
     if (groundOverlayController != null) {
-      Convert.interpretGroundOverlayOptions(groundOverlay, groundOverlayController);
+      Convert.interpretGroundOverlayOptions(
+          groundOverlay, groundOverlayController, assetManager, density);
     }
   }
 
