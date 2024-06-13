@@ -129,14 +129,15 @@ static void my_application_activate(GApplication* application) {
   FlBinaryMessenger* messenger =
       fl_engine_get_binary_messenger(fl_view_get_engine(view));
   self->example_host_api = pigeon_example_package_example_host_api_new(
-      messenger, &example_host_api_vtable, self, nullptr);
+      messenger, nullptr, &example_host_api_vtable, self, nullptr);
 
   fl_register_plugins(FL_PLUGIN_REGISTRY(view));
 
   gtk_widget_grab_focus(GTK_WIDGET(view));
 
   // #docregion flutter-method
-  self->flutter_api = pigeon_example_package_message_flutter_api_new(messenger);
+  self->flutter_api =
+      pigeon_example_package_message_flutter_api_new(messenger, nullptr);
   pigeon_example_package_message_flutter_api_flutter_method(
       self->flutter_api, "hello", nullptr, flutter_method_cb, self);
   // #enddocregion flutter-method

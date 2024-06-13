@@ -1112,7 +1112,7 @@ typedef struct {
 
 CoreTestsPigeonTestHostIntegrationCoreApi*
 core_tests_pigeon_test_host_integration_core_api_new(
-    FlBinaryMessenger* messenger,
+    FlBinaryMessenger* messenger, const gchar* suffix,
     const CoreTestsPigeonTestHostIntegrationCoreApiVTable* vtable,
     gpointer user_data, GDestroyNotify user_data_free_func);
 
@@ -1615,7 +1615,7 @@ G_DECLARE_FINAL_TYPE(CoreTestsPigeonTestFlutterIntegrationCoreApi,
 
 CoreTestsPigeonTestFlutterIntegrationCoreApi*
 core_tests_pigeon_test_flutter_integration_core_api_new(
-    FlBinaryMessenger* messenger);
+    FlBinaryMessenger* messenger, const gchar* suffix);
 
 // A no-op function taking no arguments and returning no value, to sanity
 // test basic calling.
@@ -1926,7 +1926,7 @@ typedef struct {
 } CoreTestsPigeonTestHostTrivialApiVTable;
 
 CoreTestsPigeonTestHostTrivialApi* core_tests_pigeon_test_host_trivial_api_new(
-    FlBinaryMessenger* messenger,
+    FlBinaryMessenger* messenger, const gchar* suffix,
     const CoreTestsPigeonTestHostTrivialApiVTable* vtable, gpointer user_data,
     GDestroyNotify user_data_free_func);
 
@@ -1944,7 +1944,7 @@ typedef struct {
 } CoreTestsPigeonTestHostSmallApiVTable;
 
 CoreTestsPigeonTestHostSmallApi* core_tests_pigeon_test_host_small_api_new(
-    FlBinaryMessenger* messenger,
+    FlBinaryMessenger* messenger, const gchar* suffix,
     const CoreTestsPigeonTestHostSmallApiVTable* vtable, gpointer user_data,
     GDestroyNotify user_data_free_func);
 
@@ -1973,7 +1973,8 @@ G_DECLARE_FINAL_TYPE(CoreTestsPigeonTestFlutterSmallApi,
                      CORE_TESTS_PIGEON_TEST, FLUTTER_SMALL_API, GObject)
 
 CoreTestsPigeonTestFlutterSmallApi*
-core_tests_pigeon_test_flutter_small_api_new(FlBinaryMessenger* messenger);
+core_tests_pigeon_test_flutter_small_api_new(FlBinaryMessenger* messenger,
+                                             const gchar* suffix);
 
 void core_tests_pigeon_test_flutter_small_api_echo_wrapped_list(
     CoreTestsPigeonTestFlutterSmallApi* self,

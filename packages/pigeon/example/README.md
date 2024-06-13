@@ -343,7 +343,8 @@ static void flutter_method_cb(GObject* object, GAsyncResult* result,
 
 <?code-excerpt "linux/my_application.cc (flutter-method)"?>
 ```c++
-self->flutter_api = pigeon_example_package_message_flutter_api_new(messenger);
+self->flutter_api =
+    pigeon_example_package_message_flutter_api_new(messenger, nullptr);
 pigeon_example_package_message_flutter_api_flutter_method(
     self->flutter_api, "hello", nullptr, flutter_method_cb, self);
 ```

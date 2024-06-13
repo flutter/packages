@@ -80,7 +80,7 @@ typedef struct {
 } PigeonExamplePackageExampleHostApiVTable;
 
 PigeonExamplePackageExampleHostApi* pigeon_example_package_example_host_api_new(
-    FlBinaryMessenger* messenger,
+    FlBinaryMessenger* messenger, const gchar* suffix,
     const PigeonExamplePackageExampleHostApiVTable* vtable, gpointer user_data,
     GDestroyNotify user_data_free_func);
 
@@ -99,7 +99,8 @@ G_DECLARE_FINAL_TYPE(PigeonExamplePackageMessageFlutterApi,
                      PIGEON_EXAMPLE_PACKAGE, MESSAGE_FLUTTER_API, GObject)
 
 PigeonExamplePackageMessageFlutterApi*
-pigeon_example_package_message_flutter_api_new(FlBinaryMessenger* messenger);
+pigeon_example_package_message_flutter_api_new(FlBinaryMessenger* messenger,
+                                               const gchar* suffix);
 
 void pigeon_example_package_message_flutter_api_flutter_method(
     PigeonExamplePackageMessageFlutterApi* self, const gchar* a_string,

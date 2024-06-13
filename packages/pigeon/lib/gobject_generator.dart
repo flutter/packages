@@ -250,7 +250,7 @@ class GObjectHeaderGenerator extends StructuredGenerator<GObjectOptions> {
 
     indent.newln();
     indent.writeln(
-        '$className* ${methodPrefix}_new(FlBinaryMessenger* messenger);');
+        '$className* ${methodPrefix}_new(FlBinaryMessenger* messenger, const gchar* suffix);');
 
     for (final Method method in api.methods) {
       final String methodName = _getMethodName(method.name);
@@ -316,7 +316,7 @@ class GObjectHeaderGenerator extends StructuredGenerator<GObjectOptions> {
 
     indent.newln();
     indent.writeln(
-        '$className* ${methodPrefix}_new(FlBinaryMessenger* messenger, const $vtableName* vtable, gpointer user_data, GDestroyNotify user_data_free_func);');
+        '$className* ${methodPrefix}_new(FlBinaryMessenger* messenger, const gchar *suffix, const $vtableName* vtable, gpointer user_data, GDestroyNotify user_data_free_func);');
 
     for (final Method method
         in api.methods.where((Method method) => method.isAsynchronous)) {
@@ -821,6 +821,7 @@ class GObjectSourceGenerator extends StructuredGenerator<GObjectOptions> {
     indent.newln();
     _writeObjectStruct(indent, module, api.name, () {
       indent.writeln('FlMethodChannel* channel;');
+      indent.writeln('gchar *suffix;');
     });
 
     indent.newln();
@@ -829,6 +830,7 @@ class GObjectSourceGenerator extends StructuredGenerator<GObjectOptions> {
     indent.newln();
     _writeDispose(indent, module, api.name, () {
       _writeCastSelf(indent, module, api.name, 'object');
+      indent.writeln('g_clear_pointer(&self->suffix, g_free);');
       indent.writeln('g_clear_object(&self->channel);');
     });
 
@@ -840,9 +842,10 @@ class GObjectSourceGenerator extends StructuredGenerator<GObjectOptions> {
 
     indent.newln();
     indent.writeScoped(
-        '$className* ${methodPrefix}_new(FlBinaryMessenger* messenger) {', '}',
-        () {
+        '$className* ${methodPrefix}_new(FlBinaryMessenger* messenger, const gchar* suffix) {',
+        '}', () {
       _writeObjectNew(indent, module, api.name);
+      indent.writeln('self->suffix = g_strdup(suffix);');
       indent.writeln(
           'g_autoptr($codecClassName) message_codec = ${codecMethodPrefix}_new();');
       indent.writeln(
@@ -1025,6 +1028,7 @@ class GObjectSourceGenerator extends StructuredGenerator<GObjectOptions> {
     _writeObjectStruct(indent, module, api.name, () {
       indent.writeln('FlBinaryMessenger* messenger;');
       indent.writeln('const ${className}VTable* vtable;');
+      indent.writeln('gchar* suffix;');
       indent.writeln('gpointer user_data;');
       indent.writeln('GDestroyNotify user_data_free_func;');
 
@@ -1122,6 +1126,7 @@ class GObjectSourceGenerator extends StructuredGenerator<GObjectOptions> {
     _writeDispose(indent, module, api.name, () {
       _writeCastSelf(indent, module, api.name, 'object');
       indent.writeln('g_clear_object(&self->messenger);');
+      indent.writeln('g_clear_pointer(&self->suffix, g_free);');
       indent.writeScoped('if (self->user_data != nullptr) {', '}', () {
         indent.writeln('self->user_data_free_func(self->user_data);');
       });
@@ -1142,11 +1147,12 @@ class GObjectSourceGenerator extends StructuredGenerator<GObjectOptions> {
 
     indent.newln();
     indent.writeScoped(
-        '$className* ${methodPrefix}_new(FlBinaryMessenger* messenger, const $vtableName* vtable, gpointer user_data, GDestroyNotify user_data_free_func) {',
+        '$className* ${methodPrefix}_new(FlBinaryMessenger* messenger, const gchar* suffix, const $vtableName* vtable, gpointer user_data, GDestroyNotify user_data_free_func) {',
         '}', () {
       _writeObjectNew(indent, module, api.name);
       indent.writeln(
           'self->messenger = FL_BINARY_MESSENGER(g_object_ref(messenger));');
+      indent.writeln('self->suffix = g_strdup(suffix);');
       indent.writeln('self->vtable = vtable;');
       indent.writeln('self->user_data = user_data;');
       indent.writeln('self->user_data_free_func = user_data_free_func;');
@@ -1159,7 +1165,9 @@ class GObjectSourceGenerator extends StructuredGenerator<GObjectOptions> {
         final String channelName =
             makeChannelName(api, method, dartPackageName);
         indent.writeln(
-            'self->${methodName}_channel = fl_basic_message_channel_new(messenger, "$channelName", FL_MESSAGE_CODEC(codec));');
+            'g_autofree gchar* ${methodName}_channel_name = self->suffix != nullptr ? g_strdup_printf("$channelName.%s", self->suffix) : g_strdup("$channelName");');
+        indent.writeln(
+            'self->${methodName}_channel = fl_basic_message_channel_new(messenger, ${methodName}_channel_name, FL_MESSAGE_CODEC(codec));');
         indent.writeln(
             'fl_basic_message_channel_set_message_handler(self->${methodName}_channel, ${methodPrefix}_${methodName}_cb, self, nullptr);');
       }

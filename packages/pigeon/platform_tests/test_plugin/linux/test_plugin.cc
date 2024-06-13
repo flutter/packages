@@ -1403,19 +1403,21 @@ static TestPlugin* test_plugin_new(FlBinaryMessenger* messenger) {
   TestPlugin* self = TEST_PLUGIN(g_object_new(test_plugin_get_type(), nullptr));
 
   self->host_core_api = core_tests_pigeon_test_host_integration_core_api_new(
-      messenger, &host_core_api_vtable, g_object_ref(self), g_object_unref);
+      messenger, nullptr, &host_core_api_vtable, g_object_ref(self),
+      g_object_unref);
   self->host_small_api_one = core_tests_pigeon_test_host_small_api_new(
-      messenger, &host_small_api_vtable, g_object_ref(self),
-      g_object_unref);  // FIXME: Suffix "suffixOne"
+      messenger, "suffixOne", &host_small_api_vtable, g_object_ref(self),
+      g_object_unref);
   self->host_small_api_two = core_tests_pigeon_test_host_small_api_new(
-      messenger, &host_small_api_vtable, g_object_ref(self),
-      g_object_unref);  // FIXME: Suffix "suffixTwo"
+      messenger, "suffixTwo", &host_small_api_vtable, g_object_ref(self),
+      g_object_unref);
   self->flutter_core_api =
-      core_tests_pigeon_test_flutter_integration_core_api_new(messenger);
-  self->flutter_small_api_one = core_tests_pigeon_test_flutter_small_api_new(
-      messenger);  // FIXME: Suffix "suffixOne"
-  self->flutter_small_api_two = core_tests_pigeon_test_flutter_small_api_new(
-      messenger);  // FIXME: Suffix "suffixTwo"
+      core_tests_pigeon_test_flutter_integration_core_api_new(messenger,
+                                                              nullptr);
+  self->flutter_small_api_one =
+      core_tests_pigeon_test_flutter_small_api_new(messenger, "suffixOne");
+  self->flutter_small_api_two =
+      core_tests_pigeon_test_flutter_small_api_new(messenger, "suffixTwo");
 
   return self;
 }
