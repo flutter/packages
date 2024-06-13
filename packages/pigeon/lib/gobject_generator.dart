@@ -42,10 +42,12 @@ class GObjectOptions {
   /// Creates a [GObjectOptions] from a Map representation where:
   /// `x = GObjectOptions.fromMap(x.toMap())`.
   static GObjectOptions fromMap(Map<String, Object> map) {
+    final Iterable<dynamic>? copyrightHeader =
+        map['copyrightHeader'] as Iterable<dynamic>?;
     return GObjectOptions(
       headerIncludePath: map['header'] as String?,
       module: map['module'] as String?,
-      copyrightHeader: map['copyrightHeader'] as Iterable<String>?,
+      copyrightHeader: copyrightHeader?.cast<String>(),
       headerOutPath: map['gobjectHeaderOut'] as String?,
     );
   }
