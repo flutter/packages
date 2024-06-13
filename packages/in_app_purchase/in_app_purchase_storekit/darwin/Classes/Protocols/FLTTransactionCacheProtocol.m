@@ -1,5 +1,9 @@
 #import "FLTTransactionCacheProtocol.h"
 
+@interface DefaultTransactionCache ()
+@property(strong, nonatomic) FIATransactionCache *cache;
+@end
+
 @implementation DefaultTransactionCache
 - (void)addObjects:(nonnull NSArray *)objects forKey:(TransactionCacheKey)key {
   [self.cache addObjects:objects forKey:key];

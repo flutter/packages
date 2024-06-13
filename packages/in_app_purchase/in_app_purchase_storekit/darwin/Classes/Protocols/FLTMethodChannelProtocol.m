@@ -1,5 +1,9 @@
 #import "FLTMethodChannelProtocol.h"
 
+@interface DefaultMethodChannel ()
+@property(strong, nonatomic) FlutterMethodChannel *channel;
+@end
+
 @implementation DefaultMethodChannel
 - (void)invokeMethod:(nonnull NSString *)method arguments:(id _Nullable)arguments {
   [self.channel invokeMethod:method arguments:arguments];
@@ -18,4 +22,5 @@
   }
   return self;
 }
+
 @end

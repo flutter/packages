@@ -149,7 +149,7 @@
   if (self.addPaymentStub) {
     return self.addPaymentStub(payment);
   } else {
-    return _canAddPayment;
+    return NO;
   }
 }
 

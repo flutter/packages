@@ -4,10 +4,13 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// A protocol that wraps SKPaymentQueue
 @protocol FLTPaymentQueueProtocol <NSObject>
+// An object containing the location and unique identifier of an Apple App Store storefront.
 @property(strong, nonatomic) SKStorefront *storefront API_AVAILABLE(ios(13.0));
+// A list of SKPaymentTransactions, which each represents a single transaction
 @property(strong, nonatomic) NSArray<SKPaymentTransaction *> *transactions API_AVAILABLE(
     ios(3.0), macos(10.7), watchos(6.2), visionos(1.0));
-@property(NS_NONATOMIC_IOSONLY, weak, nullable) id<SKPaymentQueueDelegate> delegate API_AVAILABLE(
+// An object that provides information needed to complete transactions.
+@property(nonatomic, weak, nullable) id<SKPaymentQueueDelegate> delegate API_AVAILABLE(
     ios(13.0), macos(10.15), watchos(6.2), visionos(1.0));
 // Remove a finished (i.e. failed or completed) transaction from the queue.  Attempting to finish a
 // purchasing transaction will throw an exception.
@@ -22,6 +25,8 @@ NS_ASSUME_NONNULL_BEGIN
 // Will add completed transactions for the current user back to the queue to be re-completed.
 - (void)restoreCompletedTransactions API_AVAILABLE(ios(3.0), macos(10.7), watchos(6.2),
                                                    visionos(1.0));
+// Will add completed transactions for the current user back to the queue to be re-completed. This
+// version requires an identifier to the user's account.
 - (void)restoreCompletedTransactionsWithApplicationUsername:(nullable NSString *)username
     API_AVAILABLE(ios(7.0), macos(10.9), watchos(6.2), visionos(1.0));
 // Call this method to have StoreKit present a sheet enabling the user to redeem codes provided by
@@ -35,10 +40,9 @@ NS_ASSUME_NONNULL_BEGIN
     API_UNAVAILABLE(tvos, macos, watchos);
 @end
 
+// The default PaymentQueue that wraps SKPaymentQueue
 @interface DefaultPaymentQueue : NSObject <FLTPaymentQueueProtocol>
-/// The wrapped queue context.
-@property(strong, nonatomic) SKPaymentQueue *queue;
-/// Returns a wrapper for the given SKPaymentQueue.
+// Initialize this wrapper with an SKPaymentQueue
 - (instancetype)initWithQueue:(SKPaymentQueue *)queue NS_DESIGNATED_INITIALIZER;
 - (instancetype)init NS_UNAVAILABLE;
 @end

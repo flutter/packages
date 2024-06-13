@@ -1,5 +1,9 @@
 #import "FLTPaymentQueueProtocol.h"
 
+@interface DefaultPaymentQueue ()
+@property(strong, nonatomic) SKPaymentQueue *queue;
+@end
+
 @implementation DefaultPaymentQueue
 @synthesize storefront;
 @synthesize delegate;

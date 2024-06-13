@@ -2,6 +2,10 @@
 #import <Foundation/Foundation.h>
 #import "FIAPRequestHandler.h"
 
+@interface DefaultRequestHandler ()
+@property(strong, nonatomic) FIAPRequestHandler *handler;
+@end
+
 @implementation DefaultRequestHandler
 - (void)startProductRequestWithCompletionHandler:(nonnull ProductRequestCompletion)completion {
   [self.handler startProductRequestWithCompletionHandler:completion];

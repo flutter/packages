@@ -15,8 +15,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
+// The default request handler that wraps FIAPRequestHandler
 @interface DefaultRequestHandler : NSObject <FLTRequestHandlerProtocol>
-@property(strong, nonatomic) FIAPRequestHandler *handler;
 - (instancetype)initWithRequestHandler:(FIAPRequestHandler *)handler;
 @end
 NS_ASSUME_NONNULL_END

@@ -22,8 +22,9 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)clear;
 @end
 
+// The default method channel that wraps FIATransactionCache
 @interface DefaultTransactionCache : NSObject <FLTTransactionCacheProtocol>
-@property(strong, nonatomic) FIATransactionCache *cache;
+// Initialize this wrapper with an FIATransactionCache
 - (instancetype)initWithCache:(FIATransactionCache *)cache;
 @end
 
