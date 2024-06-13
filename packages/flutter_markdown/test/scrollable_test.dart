@@ -35,6 +35,34 @@ void defineTests() {
     );
 
     testWidgets(
+      'two code blocks use different scroll controllers',
+      (WidgetTester tester) async {
+        const String data =
+            "```\nvoid main() {\n  print('Hello World!');\n}\n```"
+            '\n'
+            "```\nvoid main() {\n  print('Hello World!');\n}\n```";
+
+        await tester.pumpWidget(
+          boilerplate(
+            const MediaQuery(
+              data: MediaQueryData(),
+              child: MarkdownBody(data: data),
+            ),
+          ),
+        );
+
+        final Iterable<Widget> widgets = tester.allWidgets;
+        final Iterable<SingleChildScrollView> scrollViews =
+            widgets.whereType<SingleChildScrollView>();
+        expect(scrollViews, hasLength(2));
+        expect(scrollViews.first.controller, isNotNull);
+        expect(scrollViews.last.controller, isNotNull);
+        expect(scrollViews.first.controller,
+            isNot(equals(scrollViews.last.controller)));
+      },
+    );
+
+    testWidgets(
       'controller',
       (WidgetTester tester) async {
         final ScrollController controller = ScrollController(
