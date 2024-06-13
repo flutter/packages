@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -162,10 +164,13 @@ class MockGoRouter extends GoRouter {
   late String latestPushedName;
 
   @override
-  Future<T?> pushNamed<T extends Object?>(String name,
-      {Map<String, String> pathParameters = const <String, String>{},
-      Map<String, dynamic> queryParameters = const <String, dynamic>{},
-      Object? extra}) {
+  Future<T?> pushNamed<T extends Object?>(
+    String name, {
+    Map<String, String> pathParameters = const <String, String>{},
+    Map<String, dynamic> queryParameters = const <String, dynamic>{},
+    Object? extra,
+    Completer<Object?>? onReplaceCompleter,
+  }) {
     latestPushedName = name;
     return Future<T?>.value();
   }

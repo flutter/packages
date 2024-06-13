@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
@@ -355,6 +357,27 @@ void main() {
         );
       },
     );
+
+    testWidgets('It should complete onReplaceCompleter when replacing the page',
+        (WidgetTester tester) async {
+      final GoRouter goRouter = await createGoRouter(tester);
+
+      goRouter.push('/page-0');
+      await tester.pumpAndSettle();
+
+      final Completer<Object?> completer = Completer<Object?>();
+      goRouter.push(
+        '/page-1',
+        onReplaceCompleter: completer,
+      );
+      await tester.pumpAndSettle();
+
+      goRouter.pushReplacement('/page-2');
+      await tester.pumpAndSettle();
+
+      expect(goRouter.routerDelegate.currentConfiguration.matches.length, 3);
+      expect(completer.isCompleted, true);
+    });
   });
 
   group('pushReplacementNamed', () {
@@ -412,6 +435,50 @@ void main() {
         );
       },
     );
+
+    testWidgets('It should complete onReplaceCompleter when replacing the page',
+        (WidgetTester tester) async {
+      final GoRouter goRouter = GoRouter(
+        initialLocation: '/',
+        routes: <GoRoute>[
+          GoRoute(path: '/', builder: (_, __) => const SizedBox()),
+          GoRoute(
+              path: '/page-0',
+              name: 'page0',
+              builder: (_, __) => const SizedBox()),
+          GoRoute(
+              path: '/page-1',
+              name: 'page1',
+              builder: (_, __) => const SizedBox()),
+          GoRoute(
+              path: '/page-2',
+              name: 'page2',
+              builder: (_, __) => const SizedBox()),
+        ],
+      );
+      addTearDown(goRouter.dispose);
+      await tester.pumpWidget(
+        MaterialApp.router(
+          routerConfig: goRouter,
+        ),
+      );
+
+      goRouter.push('/page-0');
+      await tester.pumpAndSettle();
+
+      final Completer<Object?> completer = Completer<Object?>();
+      goRouter.push(
+        '/page-1',
+        onReplaceCompleter: completer,
+      );
+      await tester.pumpAndSettle();
+
+      goRouter.pushReplacementNamed('page2');
+      await tester.pumpAndSettle();
+
+      expect(goRouter.routerDelegate.currentConfiguration.matches.length, 3);
+      expect(completer.isCompleted, true);
+    });
   });
 
   group('replace', () {
@@ -516,6 +583,27 @@ void main() {
         );
       },
     );
+
+    testWidgets('It should complete onReplaceCompleter when replacing the page',
+        (WidgetTester tester) async {
+      final GoRouter goRouter = await createGoRouter(tester);
+
+      goRouter.push('/page-0');
+      await tester.pumpAndSettle();
+
+      final Completer<Object?> completer = Completer<Object?>();
+      goRouter.push(
+        '/page-1',
+        onReplaceCompleter: completer,
+      );
+      await tester.pumpAndSettle();
+
+      goRouter.replace<void>('/page-2');
+      await tester.pumpAndSettle();
+
+      expect(goRouter.routerDelegate.currentConfiguration.matches.length, 3);
+      expect(completer.isCompleted, true);
+    });
   });
 
   group('replaceNamed', () {

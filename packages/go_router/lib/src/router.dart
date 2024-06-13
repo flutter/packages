@@ -373,12 +373,17 @@ class GoRouter implements RouterConfig<RouteMatchList> {
   /// * [replace] which replaces the top-most page of the page stack but treats
   ///   it as the same page. The page key will be reused. This will preserve the
   ///   state and not run any page animation.
-  Future<T?> push<T extends Object?>(String location, {Object? extra}) async {
+  Future<T?> push<T extends Object?>(
+    String location, {
+    Object? extra,
+    Completer<T?>? onReplaceCompleter,
+  }) async {
     log('pushing $location');
     return routeInformationProvider.push<T>(
       location,
       base: routerDelegate.currentConfiguration,
       extra: extra,
+      onReplaceCompleter: onReplaceCompleter,
     );
   }
 
@@ -389,11 +394,13 @@ class GoRouter implements RouterConfig<RouteMatchList> {
     Map<String, String> pathParameters = const <String, String>{},
     Map<String, dynamic> queryParameters = const <String, dynamic>{},
     Object? extra,
+    Completer<T?>? onReplaceCompleter,
   }) =>
       push<T>(
         namedLocation(name,
             pathParameters: pathParameters, queryParameters: queryParameters),
         extra: extra,
+        onReplaceCompleter: onReplaceCompleter,
       );
 
   /// Replaces the top-most page of the page stack with the given URL location
@@ -405,13 +412,17 @@ class GoRouter implements RouterConfig<RouteMatchList> {
   /// * [replace] which replaces the top-most page of the page stack but treats
   ///   it as the same page. The page key will be reused. This will preserve the
   ///   state and not run any page animation.
-  Future<T?> pushReplacement<T extends Object?>(String location,
-      {Object? extra}) {
+  Future<T?> pushReplacement<T extends Object?>(
+    String location, {
+    Object? extra,
+    Completer<T?>? onReplaceCompleter,
+  }) {
     log('pushReplacement $location');
     return routeInformationProvider.pushReplacement<T>(
       location,
       base: routerDelegate.currentConfiguration,
       extra: extra,
+      onReplaceCompleter: onReplaceCompleter,
     );
   }
 
@@ -427,11 +438,13 @@ class GoRouter implements RouterConfig<RouteMatchList> {
     Map<String, String> pathParameters = const <String, String>{},
     Map<String, dynamic> queryParameters = const <String, dynamic>{},
     Object? extra,
+    Completer<T?>? onReplaceCompleter,
   }) {
     return pushReplacement<T>(
       namedLocation(name,
           pathParameters: pathParameters, queryParameters: queryParameters),
       extra: extra,
+      onReplaceCompleter: onReplaceCompleter,
     );
   }
 
@@ -445,12 +458,17 @@ class GoRouter implements RouterConfig<RouteMatchList> {
   /// * [push] which pushes the given location onto the page stack.
   /// * [pushReplacement] which replaces the top-most page of the page stack but
   ///   always uses a new page key.
-  Future<T?> replace<T>(String location, {Object? extra}) {
+  Future<T?> replace<T>(
+    String location, {
+    Object? extra,
+    Completer<T?>? onReplaceCompleter,
+  }) {
     log('replace $location');
     return routeInformationProvider.replace<T>(
       location,
       base: routerDelegate.currentConfiguration,
       extra: extra,
+      onReplaceCompleter: onReplaceCompleter,
     );
   }
 
@@ -470,11 +488,13 @@ class GoRouter implements RouterConfig<RouteMatchList> {
     Map<String, String> pathParameters = const <String, String>{},
     Map<String, dynamic> queryParameters = const <String, dynamic>{},
     Object? extra,
+    Completer<T?>? onReplaceCompleter,
   }) {
     return replace(
       namedLocation(name,
           pathParameters: pathParameters, queryParameters: queryParameters),
       extra: extra,
+      onReplaceCompleter: onReplaceCompleter,
     );
   }
 
