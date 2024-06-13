@@ -1,6 +1,6 @@
 ## 0.12.4+1
 
-* Fixed README.md typo
+* Fixes README.md typo.
 
 ## 0.12.4
 
