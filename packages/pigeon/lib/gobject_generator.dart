@@ -1513,8 +1513,8 @@ String _referenceValue(String module, TypeDeclaration type, String variableName,
 int _getTypeEnumeration(Root root, TypeDeclaration type) {
   return getEnumeratedTypes(root)
       .firstWhere((EnumeratedType t) =>
-          t.associatedClass == type.associatedClass ||
-          t.associatedEnum == type.associatedEnum)
+          (type.isClass && t.associatedClass == type.associatedClass) ||
+          (type.isEnum && t.associatedEnum == type.associatedEnum))
       .enumeration;
 }
 
