@@ -213,7 +213,7 @@ class GObjectHeaderGenerator extends StructuredGenerator<GObjectOptions> {
           indent, field.documentationComments, _docCommentSpec);
       final List<String> getterArgs = <String>[
         '$className* self',
-        if (_isNumericListType(field.type)) 'size_t *length'
+        if (_isNumericListType(field.type)) 'size_t* length'
       ];
       indent.writeln(
           '$returnType ${methodPrefix}_get_$fieldName(${getterArgs.join(', ')});');
@@ -552,7 +552,7 @@ class GObjectSourceGenerator extends StructuredGenerator<GObjectOptions> {
       indent.newln();
       final List<String> getterArgs = <String>[
         '$className* self',
-        if (_isNumericListType(field.type)) 'size_t *length'
+        if (_isNumericListType(field.type)) 'size_t* length'
       ];
       indent.writeScoped(
           '$returnType ${methodPrefix}_get_$fieldName(${getterArgs.join(', ')}) {',
