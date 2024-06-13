@@ -1872,7 +1872,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       final AnEnum? echoEnum = await api.callFlutterEchoNullableEnum(sentEnum);
       expect(echoEnum, sentEnum);
     });
-  }, skip: _linuxBringup);
+  });
 
   group('Flutter API with suffix', () {
     setUp(() {

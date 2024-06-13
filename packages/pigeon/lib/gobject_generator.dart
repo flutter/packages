@@ -820,7 +820,7 @@ class GObjectSourceGenerator extends StructuredGenerator<GObjectOptions> {
 
     indent.newln();
     _writeObjectStruct(indent, module, api.name, () {
-      indent.writeln('FlMethodChannel* channel;');
+      indent.writeln('FlBinaryMessenger* messenger;');
       indent.writeln('gchar *suffix;');
     });
 
@@ -830,8 +830,8 @@ class GObjectSourceGenerator extends StructuredGenerator<GObjectOptions> {
     indent.newln();
     _writeDispose(indent, module, api.name, () {
       _writeCastSelf(indent, module, api.name, 'object');
+      indent.writeln('g_clear_object(&self->messenger);');
       indent.writeln('g_clear_pointer(&self->suffix, g_free);');
-      indent.writeln('g_clear_object(&self->channel);');
     });
 
     indent.newln();
@@ -845,18 +845,23 @@ class GObjectSourceGenerator extends StructuredGenerator<GObjectOptions> {
         '$className* ${methodPrefix}_new(FlBinaryMessenger* messenger, const gchar* suffix) {',
         '}', () {
       _writeObjectNew(indent, module, api.name);
-      indent.writeln('self->suffix = g_strdup(suffix);');
       indent.writeln(
-          'g_autoptr($codecClassName) message_codec = ${codecMethodPrefix}_new();');
+          'self->messenger = FL_BINARY_MESSENGER(g_object_ref(messenger));');
       indent.writeln(
-          'g_autoptr(FlStandardMethodCodec) codec = fl_standard_method_codec_new_with_message_codec(FL_STANDARD_MESSAGE_CODEC(message_codec));');
-      indent.writeln(
-          'self->channel = fl_method_channel_new(messenger, "${api.name}", FL_METHOD_CODEC(codec));');
+          'self->suffix = suffix != nullptr ? g_strdup_printf(".%s", suffix) : g_strdup("");');
       indent.writeln('return self;');
     });
 
     for (final Method method in api.methods) {
       final String methodName = _getMethodName(method.name);
+
+      indent.newln();
+      indent.writeScoped(
+          'static void ${methodPrefix}_${methodName}_cb(GObject* object, GAsyncResult* result, gpointer user_data) {',
+          '}', () {
+        indent.writeln('GTask* task = G_TASK(user_data);');
+        indent.writeln('g_task_return_pointer(task, result, g_object_unref);');
+      });
 
       final List<String> asyncArgs = <String>['$className* self'];
       for (final Parameter param in method.parameters) {
@@ -882,8 +887,19 @@ class GObjectSourceGenerator extends StructuredGenerator<GObjectOptions> {
               lengthVariableName: '${name}_length');
           indent.writeln('fl_value_append_take(args, $value);');
         }
+        final String channelName =
+            makeChannelName(api, method, dartPackageName);
         indent.writeln(
-            'fl_method_channel_invoke_method(self->channel, "${method.name}", args, cancellable, callback, user_data);');
+            'g_autofree gchar* channel_name = g_strdup_printf("$channelName%s", self->suffix);');
+        indent.writeln(
+            'g_autoptr($codecClassName) codec = ${codecMethodPrefix}_new();');
+        indent.writeln(
+            'FlBasicMessageChannel* channel = fl_basic_message_channel_new(self->messenger, channel_name, FL_MESSAGE_CODEC(codec));');
+        indent.writeln(
+            'GTask* task = g_task_new(self, cancellable, callback, user_data);');
+        indent.writeln('g_task_set_task_data(task, channel, g_object_unref);');
+        indent.writeln(
+            'fl_basic_message_channel_send(channel, args, cancellable, ${methodPrefix}_${methodName}_cb, task);');
       });
 
       final String returnType =
@@ -900,41 +916,66 @@ class GObjectSourceGenerator extends StructuredGenerator<GObjectOptions> {
       indent.writeScoped(
           "gboolean ${methodPrefix}_${methodName}_finish(${finishArgs.join(', ')}) {",
           '}', () {
+        indent.writeln('g_autoptr(GTask) task = G_TASK(result);');
         indent.writeln(
-            'g_autoptr(FlMethodResponse) response = fl_method_channel_invoke_method_finish(self->channel, result, error);');
+            'GAsyncResult* r = G_ASYNC_RESULT(g_task_propagate_pointer(task, nullptr));');
+        indent.writeln(
+            'FlBasicMessageChannel* channel = FL_BASIC_MESSAGE_CHANNEL(g_task_get_task_data(task));');
+        indent.writeln(
+            'g_autoptr(FlValue) response = fl_basic_message_channel_send_finish(channel, r, error);');
         indent.writeScoped('if (response == nullptr) {', '}', () {
           indent.writeln('return FALSE;');
         });
-
-        indent.newln();
-        indent.writeln(
-            'g_autoptr(FlValue) r = fl_method_response_get_result(response, error);');
-        indent.writeScoped('if (r == nullptr) {', '}', () {
+        indent.writeScoped('if (fl_value_get_length(response) > 1) {', '}', () {
+          indent.writeln('// FIXME: Set error');
           indent.writeln('return FALSE;');
         });
-
         if (returnType != 'void') {
           indent.newln();
+          indent.writeln('FlValue* rv = fl_value_get_list_value(response, 0);');
           final String returnValue =
-              _fromFlValue(module, method.returnType, 'r');
+              _fromFlValue(module, method.returnType, 'rv');
           if (_isNullablePrimitiveType(method.returnType)) {
             final String primitiveType =
                 _getType(module, method.returnType, primitive: true);
             indent.writeScoped(
-                'if (fl_value_get_type(r) != FL_VALUE_TYPE_NULL) {', '}', () {
+                'if (fl_value_get_type(rv) != FL_VALUE_TYPE_NULL) {', '}', () {
               indent.writeln(
                   '*return_value = static_cast<$primitiveType*>(malloc(sizeof($primitiveType)));');
               indent.writeln('**return_value = $returnValue;');
+              if (_isNumericListType(method.returnType)) {
+                indent
+                    .writeln('*return_value_length = fl_value_get_length(rv);');
+              }
             });
             indent.writeScoped('else {', '}', () {
               indent.writeln('*return_value = nullptr;');
+              if (_isNumericListType(method.returnType)) {
+                indent.writeln('*return_value_length = 0;');
+              }
+            });
+          } else if (method.returnType.isNullable) {
+            indent.writeScoped(
+                'if (fl_value_get_type(rv) != FL_VALUE_TYPE_NULL) {', '}', () {
+              indent.writeln(
+                  '*return_value = ${_referenceValue(module, method.returnType, returnValue, lengthVariableName: 'fl_value_get_length(rv)')};');
+              if (_isNumericListType(method.returnType)) {
+                indent
+                    .writeln('*return_value_length = fl_value_get_length(rv);');
+              }
+            });
+            indent.writeScoped('else {', '}', () {
+              indent.writeln('*return_value = nullptr;');
+              if (_isNumericListType(method.returnType)) {
+                indent.writeln('*return_value_length = 0;');
+              }
             });
           } else {
             indent.writeln(
-                '*return_value = ${_referenceValue(module, method.returnType, returnValue, lengthVariableName: 'fl_value_get_length(r)')};');
-          }
-          if (_isNumericListType(method.returnType)) {
-            indent.writeln('*return_value_length = fl_value_get_length(r);');
+                '*return_value = ${_referenceValue(module, method.returnType, returnValue, lengthVariableName: 'fl_value_get_length(rv)')};');
+            if (_isNumericListType(method.returnType)) {
+              indent.writeln('*return_value_length = fl_value_get_length(rv);');
+            }
           }
         }
 
@@ -1152,7 +1193,8 @@ class GObjectSourceGenerator extends StructuredGenerator<GObjectOptions> {
       _writeObjectNew(indent, module, api.name);
       indent.writeln(
           'self->messenger = FL_BINARY_MESSENGER(g_object_ref(messenger));');
-      indent.writeln('self->suffix = g_strdup(suffix);');
+      indent.writeln(
+          'self->suffix = suffix != nullptr ? g_strdup_printf(".%s", suffix) : g_strdup("");');
       indent.writeln('self->vtable = vtable;');
       indent.writeln('self->user_data = user_data;');
       indent.writeln('self->user_data_free_func = user_data_free_func;');
@@ -1165,7 +1207,7 @@ class GObjectSourceGenerator extends StructuredGenerator<GObjectOptions> {
         final String channelName =
             makeChannelName(api, method, dartPackageName);
         indent.writeln(
-            'g_autofree gchar* ${methodName}_channel_name = self->suffix != nullptr ? g_strdup_printf("$channelName.%s", self->suffix) : g_strdup("$channelName");');
+            'g_autofree gchar* ${methodName}_channel_name = g_strdup_printf("$channelName%s", self->suffix);');
         indent.writeln(
             'self->${methodName}_channel = fl_basic_message_channel_new(messenger, ${methodName}_channel_name, FL_MESSAGE_CODEC(codec));');
         indent.writeln(

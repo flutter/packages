@@ -10313,240 +10313,167 @@ core_tests_pigeon_test_host_integration_core_api_new(
           core_tests_pigeon_test_host_integration_core_api_get_type(),
           nullptr));
   self->messenger = FL_BINARY_MESSENGER(g_object_ref(messenger));
-  self->suffix = g_strdup(suffix);
+  self->suffix =
+      suffix != nullptr ? g_strdup_printf(".%s", suffix) : g_strdup("");
   self->vtable = vtable;
   self->user_data = user_data;
   self->user_data_free_func = user_data_free_func;
 
   g_autoptr(CoreTestsPigeonTestMessageCodec) codec =
       core_tests_pigeon_test_message_codec_new();
-  g_autofree gchar* noop_channel_name =
-      self->suffix != nullptr ? g_strdup_printf(
-                                    "dev.flutter.pigeon.pigeon_integration_"
-                                    "tests.HostIntegrationCoreApi.noop.%s",
-                                    self->suffix)
-                              : g_strdup(
-                                    "dev.flutter.pigeon.pigeon_integration_"
-                                    "tests.HostIntegrationCoreApi.noop");
+  g_autofree gchar* noop_channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.noop%"
+      "s",
+      self->suffix);
   self->noop_channel = fl_basic_message_channel_new(
       messenger, noop_channel_name, FL_MESSAGE_CODEC(codec));
   fl_basic_message_channel_set_message_handler(
       self->noop_channel,
       core_tests_pigeon_test_host_integration_core_api_noop_cb, self, nullptr);
-  g_autofree gchar* echo_all_types_channel_name =
-      self->suffix != nullptr
-          ? g_strdup_printf(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.echoAllTypes.%s",
-                self->suffix)
-          : g_strdup(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.echoAllTypes");
+  g_autofree gchar* echo_all_types_channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+      "echoAllTypes%s",
+      self->suffix);
   self->echo_all_types_channel = fl_basic_message_channel_new(
       messenger, echo_all_types_channel_name, FL_MESSAGE_CODEC(codec));
   fl_basic_message_channel_set_message_handler(
       self->echo_all_types_channel,
       core_tests_pigeon_test_host_integration_core_api_echo_all_types_cb, self,
       nullptr);
-  g_autofree gchar* throw_error_channel_name =
-      self->suffix != nullptr
-          ? g_strdup_printf(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.throwError.%s",
-                self->suffix)
-          : g_strdup(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.throwError");
+  g_autofree gchar* throw_error_channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+      "throwError%s",
+      self->suffix);
   self->throw_error_channel = fl_basic_message_channel_new(
       messenger, throw_error_channel_name, FL_MESSAGE_CODEC(codec));
   fl_basic_message_channel_set_message_handler(
       self->throw_error_channel,
       core_tests_pigeon_test_host_integration_core_api_throw_error_cb, self,
       nullptr);
-  g_autofree gchar* throw_error_from_void_channel_name =
-      self->suffix != nullptr
-          ? g_strdup_printf(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.throwErrorFromVoid.%s",
-                self->suffix)
-          : g_strdup(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.throwErrorFromVoid");
+  g_autofree gchar* throw_error_from_void_channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+      "throwErrorFromVoid%s",
+      self->suffix);
   self->throw_error_from_void_channel = fl_basic_message_channel_new(
       messenger, throw_error_from_void_channel_name, FL_MESSAGE_CODEC(codec));
   fl_basic_message_channel_set_message_handler(
       self->throw_error_from_void_channel,
       core_tests_pigeon_test_host_integration_core_api_throw_error_from_void_cb,
       self, nullptr);
-  g_autofree gchar* throw_flutter_error_channel_name =
-      self->suffix != nullptr
-          ? g_strdup_printf(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.throwFlutterError.%s",
-                self->suffix)
-          : g_strdup(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.throwFlutterError");
+  g_autofree gchar* throw_flutter_error_channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+      "throwFlutterError%s",
+      self->suffix);
   self->throw_flutter_error_channel = fl_basic_message_channel_new(
       messenger, throw_flutter_error_channel_name, FL_MESSAGE_CODEC(codec));
   fl_basic_message_channel_set_message_handler(
       self->throw_flutter_error_channel,
       core_tests_pigeon_test_host_integration_core_api_throw_flutter_error_cb,
       self, nullptr);
-  g_autofree gchar* echo_int_channel_name =
-      self->suffix != nullptr ? g_strdup_printf(
-                                    "dev.flutter.pigeon.pigeon_integration_"
-                                    "tests.HostIntegrationCoreApi.echoInt.%s",
-                                    self->suffix)
-                              : g_strdup(
-                                    "dev.flutter.pigeon.pigeon_integration_"
-                                    "tests.HostIntegrationCoreApi.echoInt");
+  g_autofree gchar* echo_int_channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+      "echoInt%s",
+      self->suffix);
   self->echo_int_channel = fl_basic_message_channel_new(
       messenger, echo_int_channel_name, FL_MESSAGE_CODEC(codec));
   fl_basic_message_channel_set_message_handler(
       self->echo_int_channel,
       core_tests_pigeon_test_host_integration_core_api_echo_int_cb, self,
       nullptr);
-  g_autofree gchar* echo_double_channel_name =
-      self->suffix != nullptr
-          ? g_strdup_printf(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.echoDouble.%s",
-                self->suffix)
-          : g_strdup(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.echoDouble");
+  g_autofree gchar* echo_double_channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+      "echoDouble%s",
+      self->suffix);
   self->echo_double_channel = fl_basic_message_channel_new(
       messenger, echo_double_channel_name, FL_MESSAGE_CODEC(codec));
   fl_basic_message_channel_set_message_handler(
       self->echo_double_channel,
       core_tests_pigeon_test_host_integration_core_api_echo_double_cb, self,
       nullptr);
-  g_autofree gchar* echo_bool_channel_name =
-      self->suffix != nullptr ? g_strdup_printf(
-                                    "dev.flutter.pigeon.pigeon_integration_"
-                                    "tests.HostIntegrationCoreApi.echoBool.%s",
-                                    self->suffix)
-                              : g_strdup(
-                                    "dev.flutter.pigeon.pigeon_integration_"
-                                    "tests.HostIntegrationCoreApi.echoBool");
+  g_autofree gchar* echo_bool_channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+      "echoBool%s",
+      self->suffix);
   self->echo_bool_channel = fl_basic_message_channel_new(
       messenger, echo_bool_channel_name, FL_MESSAGE_CODEC(codec));
   fl_basic_message_channel_set_message_handler(
       self->echo_bool_channel,
       core_tests_pigeon_test_host_integration_core_api_echo_bool_cb, self,
       nullptr);
-  g_autofree gchar* echo_string_channel_name =
-      self->suffix != nullptr
-          ? g_strdup_printf(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.echoString.%s",
-                self->suffix)
-          : g_strdup(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.echoString");
+  g_autofree gchar* echo_string_channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+      "echoString%s",
+      self->suffix);
   self->echo_string_channel = fl_basic_message_channel_new(
       messenger, echo_string_channel_name, FL_MESSAGE_CODEC(codec));
   fl_basic_message_channel_set_message_handler(
       self->echo_string_channel,
       core_tests_pigeon_test_host_integration_core_api_echo_string_cb, self,
       nullptr);
-  g_autofree gchar* echo_uint8_list_channel_name =
-      self->suffix != nullptr
-          ? g_strdup_printf(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.echoUint8List.%s",
-                self->suffix)
-          : g_strdup(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.echoUint8List");
+  g_autofree gchar* echo_uint8_list_channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+      "echoUint8List%s",
+      self->suffix);
   self->echo_uint8_list_channel = fl_basic_message_channel_new(
       messenger, echo_uint8_list_channel_name, FL_MESSAGE_CODEC(codec));
   fl_basic_message_channel_set_message_handler(
       self->echo_uint8_list_channel,
       core_tests_pigeon_test_host_integration_core_api_echo_uint8_list_cb, self,
       nullptr);
-  g_autofree gchar* echo_object_channel_name =
-      self->suffix != nullptr
-          ? g_strdup_printf(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.echoObject.%s",
-                self->suffix)
-          : g_strdup(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.echoObject");
+  g_autofree gchar* echo_object_channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+      "echoObject%s",
+      self->suffix);
   self->echo_object_channel = fl_basic_message_channel_new(
       messenger, echo_object_channel_name, FL_MESSAGE_CODEC(codec));
   fl_basic_message_channel_set_message_handler(
       self->echo_object_channel,
       core_tests_pigeon_test_host_integration_core_api_echo_object_cb, self,
       nullptr);
-  g_autofree gchar* echo_list_channel_name =
-      self->suffix != nullptr ? g_strdup_printf(
-                                    "dev.flutter.pigeon.pigeon_integration_"
-                                    "tests.HostIntegrationCoreApi.echoList.%s",
-                                    self->suffix)
-                              : g_strdup(
-                                    "dev.flutter.pigeon.pigeon_integration_"
-                                    "tests.HostIntegrationCoreApi.echoList");
+  g_autofree gchar* echo_list_channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+      "echoList%s",
+      self->suffix);
   self->echo_list_channel = fl_basic_message_channel_new(
       messenger, echo_list_channel_name, FL_MESSAGE_CODEC(codec));
   fl_basic_message_channel_set_message_handler(
       self->echo_list_channel,
       core_tests_pigeon_test_host_integration_core_api_echo_list_cb, self,
       nullptr);
-  g_autofree gchar* echo_map_channel_name =
-      self->suffix != nullptr ? g_strdup_printf(
-                                    "dev.flutter.pigeon.pigeon_integration_"
-                                    "tests.HostIntegrationCoreApi.echoMap.%s",
-                                    self->suffix)
-                              : g_strdup(
-                                    "dev.flutter.pigeon.pigeon_integration_"
-                                    "tests.HostIntegrationCoreApi.echoMap");
+  g_autofree gchar* echo_map_channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+      "echoMap%s",
+      self->suffix);
   self->echo_map_channel = fl_basic_message_channel_new(
       messenger, echo_map_channel_name, FL_MESSAGE_CODEC(codec));
   fl_basic_message_channel_set_message_handler(
       self->echo_map_channel,
       core_tests_pigeon_test_host_integration_core_api_echo_map_cb, self,
       nullptr);
-  g_autofree gchar* echo_class_wrapper_channel_name =
-      self->suffix != nullptr
-          ? g_strdup_printf(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.echoClassWrapper.%s",
-                self->suffix)
-          : g_strdup(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.echoClassWrapper");
+  g_autofree gchar* echo_class_wrapper_channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+      "echoClassWrapper%s",
+      self->suffix);
   self->echo_class_wrapper_channel = fl_basic_message_channel_new(
       messenger, echo_class_wrapper_channel_name, FL_MESSAGE_CODEC(codec));
   fl_basic_message_channel_set_message_handler(
       self->echo_class_wrapper_channel,
       core_tests_pigeon_test_host_integration_core_api_echo_class_wrapper_cb,
       self, nullptr);
-  g_autofree gchar* echo_enum_channel_name =
-      self->suffix != nullptr ? g_strdup_printf(
-                                    "dev.flutter.pigeon.pigeon_integration_"
-                                    "tests.HostIntegrationCoreApi.echoEnum.%s",
-                                    self->suffix)
-                              : g_strdup(
-                                    "dev.flutter.pigeon.pigeon_integration_"
-                                    "tests.HostIntegrationCoreApi.echoEnum");
+  g_autofree gchar* echo_enum_channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+      "echoEnum%s",
+      self->suffix);
   self->echo_enum_channel = fl_basic_message_channel_new(
       messenger, echo_enum_channel_name, FL_MESSAGE_CODEC(codec));
   fl_basic_message_channel_set_message_handler(
       self->echo_enum_channel,
       core_tests_pigeon_test_host_integration_core_api_echo_enum_cb, self,
       nullptr);
-  g_autofree gchar* echo_named_default_string_channel_name =
-      self->suffix != nullptr
-          ? g_strdup_printf(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.echoNamedDefaultString.%s",
-                self->suffix)
-          : g_strdup(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.echoNamedDefaultString");
+  g_autofree gchar* echo_named_default_string_channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+      "echoNamedDefaultString%s",
+      self->suffix);
   self->echo_named_default_string_channel = fl_basic_message_channel_new(
       messenger, echo_named_default_string_channel_name,
       FL_MESSAGE_CODEC(codec));
@@ -10554,15 +10481,10 @@ core_tests_pigeon_test_host_integration_core_api_new(
       self->echo_named_default_string_channel,
       core_tests_pigeon_test_host_integration_core_api_echo_named_default_string_cb,
       self, nullptr);
-  g_autofree gchar* echo_optional_default_double_channel_name =
-      self->suffix != nullptr
-          ? g_strdup_printf(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.echoOptionalDefaultDouble.%s",
-                self->suffix)
-          : g_strdup(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.echoOptionalDefaultDouble");
+  g_autofree gchar* echo_optional_default_double_channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+      "echoOptionalDefaultDouble%s",
+      self->suffix);
   self->echo_optional_default_double_channel = fl_basic_message_channel_new(
       messenger, echo_optional_default_double_channel_name,
       FL_MESSAGE_CODEC(codec));
@@ -10570,30 +10492,20 @@ core_tests_pigeon_test_host_integration_core_api_new(
       self->echo_optional_default_double_channel,
       core_tests_pigeon_test_host_integration_core_api_echo_optional_default_double_cb,
       self, nullptr);
-  g_autofree gchar* echo_required_int_channel_name =
-      self->suffix != nullptr
-          ? g_strdup_printf(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.echoRequiredInt.%s",
-                self->suffix)
-          : g_strdup(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.echoRequiredInt");
+  g_autofree gchar* echo_required_int_channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+      "echoRequiredInt%s",
+      self->suffix);
   self->echo_required_int_channel = fl_basic_message_channel_new(
       messenger, echo_required_int_channel_name, FL_MESSAGE_CODEC(codec));
   fl_basic_message_channel_set_message_handler(
       self->echo_required_int_channel,
       core_tests_pigeon_test_host_integration_core_api_echo_required_int_cb,
       self, nullptr);
-  g_autofree gchar* echo_all_nullable_types_channel_name =
-      self->suffix != nullptr
-          ? g_strdup_printf(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.echoAllNullableTypes.%s",
-                self->suffix)
-          : g_strdup(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.echoAllNullableTypes");
+  g_autofree gchar* echo_all_nullable_types_channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+      "echoAllNullableTypes%s",
+      self->suffix);
   self->echo_all_nullable_types_channel = fl_basic_message_channel_new(
       messenger, echo_all_nullable_types_channel_name, FL_MESSAGE_CODEC(codec));
   fl_basic_message_channel_set_message_handler(
@@ -10601,15 +10513,10 @@ core_tests_pigeon_test_host_integration_core_api_new(
       core_tests_pigeon_test_host_integration_core_api_echo_all_nullable_types_cb,
       self, nullptr);
   g_autofree gchar* echo_all_nullable_types_without_recursion_channel_name =
-      self->suffix != nullptr
-          ? g_strdup_printf(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.echoAllNullableTypesWithoutRecursion.%"
-                "s",
-                self->suffix)
-          : g_strdup(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.echoAllNullableTypesWithoutRecursion");
+      g_strdup_printf(
+          "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+          "echoAllNullableTypesWithoutRecursion%s",
+          self->suffix);
   self->echo_all_nullable_types_without_recursion_channel =
       fl_basic_message_channel_new(
           messenger, echo_all_nullable_types_without_recursion_channel_name,
@@ -10619,14 +10526,10 @@ core_tests_pigeon_test_host_integration_core_api_new(
       core_tests_pigeon_test_host_integration_core_api_echo_all_nullable_types_without_recursion_cb,
       self, nullptr);
   g_autofree gchar* extract_nested_nullable_string_channel_name =
-      self->suffix != nullptr
-          ? g_strdup_printf(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.extractNestedNullableString.%s",
-                self->suffix)
-          : g_strdup(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.extractNestedNullableString");
+      g_strdup_printf(
+          "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+          "extractNestedNullableString%s",
+          self->suffix);
   self->extract_nested_nullable_string_channel = fl_basic_message_channel_new(
       messenger, extract_nested_nullable_string_channel_name,
       FL_MESSAGE_CODEC(codec));
@@ -10635,14 +10538,10 @@ core_tests_pigeon_test_host_integration_core_api_new(
       core_tests_pigeon_test_host_integration_core_api_extract_nested_nullable_string_cb,
       self, nullptr);
   g_autofree gchar* create_nested_nullable_string_channel_name =
-      self->suffix != nullptr
-          ? g_strdup_printf(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.createNestedNullableString.%s",
-                self->suffix)
-          : g_strdup(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.createNestedNullableString");
+      g_strdup_printf(
+          "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+          "createNestedNullableString%s",
+          self->suffix);
   self->create_nested_nullable_string_channel = fl_basic_message_channel_new(
       messenger, create_nested_nullable_string_channel_name,
       FL_MESSAGE_CODEC(codec));
@@ -10650,15 +10549,10 @@ core_tests_pigeon_test_host_integration_core_api_new(
       self->create_nested_nullable_string_channel,
       core_tests_pigeon_test_host_integration_core_api_create_nested_nullable_string_cb,
       self, nullptr);
-  g_autofree gchar* send_multiple_nullable_types_channel_name =
-      self->suffix != nullptr
-          ? g_strdup_printf(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.sendMultipleNullableTypes.%s",
-                self->suffix)
-          : g_strdup(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.sendMultipleNullableTypes");
+  g_autofree gchar* send_multiple_nullable_types_channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+      "sendMultipleNullableTypes%s",
+      self->suffix);
   self->send_multiple_nullable_types_channel = fl_basic_message_channel_new(
       messenger, send_multiple_nullable_types_channel_name,
       FL_MESSAGE_CODEC(codec));
@@ -10668,16 +10562,11 @@ core_tests_pigeon_test_host_integration_core_api_new(
       self, nullptr);
   g_autofree gchar*
       send_multiple_nullable_types_without_recursion_channel_name =
-          self->suffix != nullptr
-              ? g_strdup_printf(
-                    "dev.flutter.pigeon.pigeon_integration_tests."
-                    "HostIntegrationCoreApi."
-                    "sendMultipleNullableTypesWithoutRecursion.%s",
-                    self->suffix)
-              : g_strdup(
-                    "dev.flutter.pigeon.pigeon_integration_tests."
-                    "HostIntegrationCoreApi."
-                    "sendMultipleNullableTypesWithoutRecursion");
+          g_strdup_printf(
+              "dev.flutter.pigeon.pigeon_integration_tests."
+              "HostIntegrationCoreApi."
+              "sendMultipleNullableTypesWithoutRecursion%s",
+              self->suffix);
   self->send_multiple_nullable_types_without_recursion_channel =
       fl_basic_message_channel_new(
           messenger,
@@ -10687,75 +10576,50 @@ core_tests_pigeon_test_host_integration_core_api_new(
       self->send_multiple_nullable_types_without_recursion_channel,
       core_tests_pigeon_test_host_integration_core_api_send_multiple_nullable_types_without_recursion_cb,
       self, nullptr);
-  g_autofree gchar* echo_nullable_int_channel_name =
-      self->suffix != nullptr
-          ? g_strdup_printf(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.echoNullableInt.%s",
-                self->suffix)
-          : g_strdup(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.echoNullableInt");
+  g_autofree gchar* echo_nullable_int_channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+      "echoNullableInt%s",
+      self->suffix);
   self->echo_nullable_int_channel = fl_basic_message_channel_new(
       messenger, echo_nullable_int_channel_name, FL_MESSAGE_CODEC(codec));
   fl_basic_message_channel_set_message_handler(
       self->echo_nullable_int_channel,
       core_tests_pigeon_test_host_integration_core_api_echo_nullable_int_cb,
       self, nullptr);
-  g_autofree gchar* echo_nullable_double_channel_name =
-      self->suffix != nullptr
-          ? g_strdup_printf(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.echoNullableDouble.%s",
-                self->suffix)
-          : g_strdup(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.echoNullableDouble");
+  g_autofree gchar* echo_nullable_double_channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+      "echoNullableDouble%s",
+      self->suffix);
   self->echo_nullable_double_channel = fl_basic_message_channel_new(
       messenger, echo_nullable_double_channel_name, FL_MESSAGE_CODEC(codec));
   fl_basic_message_channel_set_message_handler(
       self->echo_nullable_double_channel,
       core_tests_pigeon_test_host_integration_core_api_echo_nullable_double_cb,
       self, nullptr);
-  g_autofree gchar* echo_nullable_bool_channel_name =
-      self->suffix != nullptr
-          ? g_strdup_printf(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.echoNullableBool.%s",
-                self->suffix)
-          : g_strdup(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.echoNullableBool");
+  g_autofree gchar* echo_nullable_bool_channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+      "echoNullableBool%s",
+      self->suffix);
   self->echo_nullable_bool_channel = fl_basic_message_channel_new(
       messenger, echo_nullable_bool_channel_name, FL_MESSAGE_CODEC(codec));
   fl_basic_message_channel_set_message_handler(
       self->echo_nullable_bool_channel,
       core_tests_pigeon_test_host_integration_core_api_echo_nullable_bool_cb,
       self, nullptr);
-  g_autofree gchar* echo_nullable_string_channel_name =
-      self->suffix != nullptr
-          ? g_strdup_printf(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.echoNullableString.%s",
-                self->suffix)
-          : g_strdup(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.echoNullableString");
+  g_autofree gchar* echo_nullable_string_channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+      "echoNullableString%s",
+      self->suffix);
   self->echo_nullable_string_channel = fl_basic_message_channel_new(
       messenger, echo_nullable_string_channel_name, FL_MESSAGE_CODEC(codec));
   fl_basic_message_channel_set_message_handler(
       self->echo_nullable_string_channel,
       core_tests_pigeon_test_host_integration_core_api_echo_nullable_string_cb,
       self, nullptr);
-  g_autofree gchar* echo_nullable_uint8_list_channel_name =
-      self->suffix != nullptr
-          ? g_strdup_printf(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.echoNullableUint8List.%s",
-                self->suffix)
-          : g_strdup(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.echoNullableUint8List");
+  g_autofree gchar* echo_nullable_uint8_list_channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+      "echoNullableUint8List%s",
+      self->suffix);
   self->echo_nullable_uint8_list_channel = fl_basic_message_channel_new(
       messenger, echo_nullable_uint8_list_channel_name,
       FL_MESSAGE_CODEC(codec));
@@ -10763,75 +10627,50 @@ core_tests_pigeon_test_host_integration_core_api_new(
       self->echo_nullable_uint8_list_channel,
       core_tests_pigeon_test_host_integration_core_api_echo_nullable_uint8_list_cb,
       self, nullptr);
-  g_autofree gchar* echo_nullable_object_channel_name =
-      self->suffix != nullptr
-          ? g_strdup_printf(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.echoNullableObject.%s",
-                self->suffix)
-          : g_strdup(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.echoNullableObject");
+  g_autofree gchar* echo_nullable_object_channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+      "echoNullableObject%s",
+      self->suffix);
   self->echo_nullable_object_channel = fl_basic_message_channel_new(
       messenger, echo_nullable_object_channel_name, FL_MESSAGE_CODEC(codec));
   fl_basic_message_channel_set_message_handler(
       self->echo_nullable_object_channel,
       core_tests_pigeon_test_host_integration_core_api_echo_nullable_object_cb,
       self, nullptr);
-  g_autofree gchar* echo_nullable_list_channel_name =
-      self->suffix != nullptr
-          ? g_strdup_printf(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.echoNullableList.%s",
-                self->suffix)
-          : g_strdup(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.echoNullableList");
+  g_autofree gchar* echo_nullable_list_channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+      "echoNullableList%s",
+      self->suffix);
   self->echo_nullable_list_channel = fl_basic_message_channel_new(
       messenger, echo_nullable_list_channel_name, FL_MESSAGE_CODEC(codec));
   fl_basic_message_channel_set_message_handler(
       self->echo_nullable_list_channel,
       core_tests_pigeon_test_host_integration_core_api_echo_nullable_list_cb,
       self, nullptr);
-  g_autofree gchar* echo_nullable_map_channel_name =
-      self->suffix != nullptr
-          ? g_strdup_printf(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.echoNullableMap.%s",
-                self->suffix)
-          : g_strdup(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.echoNullableMap");
+  g_autofree gchar* echo_nullable_map_channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+      "echoNullableMap%s",
+      self->suffix);
   self->echo_nullable_map_channel = fl_basic_message_channel_new(
       messenger, echo_nullable_map_channel_name, FL_MESSAGE_CODEC(codec));
   fl_basic_message_channel_set_message_handler(
       self->echo_nullable_map_channel,
       core_tests_pigeon_test_host_integration_core_api_echo_nullable_map_cb,
       self, nullptr);
-  g_autofree gchar* echo_nullable_enum_channel_name =
-      self->suffix != nullptr
-          ? g_strdup_printf(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.echoNullableEnum.%s",
-                self->suffix)
-          : g_strdup(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.echoNullableEnum");
+  g_autofree gchar* echo_nullable_enum_channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+      "echoNullableEnum%s",
+      self->suffix);
   self->echo_nullable_enum_channel = fl_basic_message_channel_new(
       messenger, echo_nullable_enum_channel_name, FL_MESSAGE_CODEC(codec));
   fl_basic_message_channel_set_message_handler(
       self->echo_nullable_enum_channel,
       core_tests_pigeon_test_host_integration_core_api_echo_nullable_enum_cb,
       self, nullptr);
-  g_autofree gchar* echo_optional_nullable_int_channel_name =
-      self->suffix != nullptr
-          ? g_strdup_printf(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.echoOptionalNullableInt.%s",
-                self->suffix)
-          : g_strdup(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.echoOptionalNullableInt");
+  g_autofree gchar* echo_optional_nullable_int_channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+      "echoOptionalNullableInt%s",
+      self->suffix);
   self->echo_optional_nullable_int_channel = fl_basic_message_channel_new(
       messenger, echo_optional_nullable_int_channel_name,
       FL_MESSAGE_CODEC(codec));
@@ -10839,15 +10678,10 @@ core_tests_pigeon_test_host_integration_core_api_new(
       self->echo_optional_nullable_int_channel,
       core_tests_pigeon_test_host_integration_core_api_echo_optional_nullable_int_cb,
       self, nullptr);
-  g_autofree gchar* echo_named_nullable_string_channel_name =
-      self->suffix != nullptr
-          ? g_strdup_printf(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.echoNamedNullableString.%s",
-                self->suffix)
-          : g_strdup(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.echoNamedNullableString");
+  g_autofree gchar* echo_named_nullable_string_channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+      "echoNamedNullableString%s",
+      self->suffix);
   self->echo_named_nullable_string_channel = fl_basic_message_channel_new(
       messenger, echo_named_nullable_string_channel_name,
       FL_MESSAGE_CODEC(codec));
@@ -10855,179 +10689,120 @@ core_tests_pigeon_test_host_integration_core_api_new(
       self->echo_named_nullable_string_channel,
       core_tests_pigeon_test_host_integration_core_api_echo_named_nullable_string_cb,
       self, nullptr);
-  g_autofree gchar* noop_async_channel_name =
-      self->suffix != nullptr ? g_strdup_printf(
-                                    "dev.flutter.pigeon.pigeon_integration_"
-                                    "tests.HostIntegrationCoreApi.noopAsync.%s",
-                                    self->suffix)
-                              : g_strdup(
-                                    "dev.flutter.pigeon.pigeon_integration_"
-                                    "tests.HostIntegrationCoreApi.noopAsync");
+  g_autofree gchar* noop_async_channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+      "noopAsync%s",
+      self->suffix);
   self->noop_async_channel = fl_basic_message_channel_new(
       messenger, noop_async_channel_name, FL_MESSAGE_CODEC(codec));
   fl_basic_message_channel_set_message_handler(
       self->noop_async_channel,
       core_tests_pigeon_test_host_integration_core_api_noop_async_cb, self,
       nullptr);
-  g_autofree gchar* echo_async_int_channel_name =
-      self->suffix != nullptr
-          ? g_strdup_printf(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.echoAsyncInt.%s",
-                self->suffix)
-          : g_strdup(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.echoAsyncInt");
+  g_autofree gchar* echo_async_int_channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+      "echoAsyncInt%s",
+      self->suffix);
   self->echo_async_int_channel = fl_basic_message_channel_new(
       messenger, echo_async_int_channel_name, FL_MESSAGE_CODEC(codec));
   fl_basic_message_channel_set_message_handler(
       self->echo_async_int_channel,
       core_tests_pigeon_test_host_integration_core_api_echo_async_int_cb, self,
       nullptr);
-  g_autofree gchar* echo_async_double_channel_name =
-      self->suffix != nullptr
-          ? g_strdup_printf(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.echoAsyncDouble.%s",
-                self->suffix)
-          : g_strdup(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.echoAsyncDouble");
+  g_autofree gchar* echo_async_double_channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+      "echoAsyncDouble%s",
+      self->suffix);
   self->echo_async_double_channel = fl_basic_message_channel_new(
       messenger, echo_async_double_channel_name, FL_MESSAGE_CODEC(codec));
   fl_basic_message_channel_set_message_handler(
       self->echo_async_double_channel,
       core_tests_pigeon_test_host_integration_core_api_echo_async_double_cb,
       self, nullptr);
-  g_autofree gchar* echo_async_bool_channel_name =
-      self->suffix != nullptr
-          ? g_strdup_printf(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.echoAsyncBool.%s",
-                self->suffix)
-          : g_strdup(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.echoAsyncBool");
+  g_autofree gchar* echo_async_bool_channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+      "echoAsyncBool%s",
+      self->suffix);
   self->echo_async_bool_channel = fl_basic_message_channel_new(
       messenger, echo_async_bool_channel_name, FL_MESSAGE_CODEC(codec));
   fl_basic_message_channel_set_message_handler(
       self->echo_async_bool_channel,
       core_tests_pigeon_test_host_integration_core_api_echo_async_bool_cb, self,
       nullptr);
-  g_autofree gchar* echo_async_string_channel_name =
-      self->suffix != nullptr
-          ? g_strdup_printf(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.echoAsyncString.%s",
-                self->suffix)
-          : g_strdup(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.echoAsyncString");
+  g_autofree gchar* echo_async_string_channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+      "echoAsyncString%s",
+      self->suffix);
   self->echo_async_string_channel = fl_basic_message_channel_new(
       messenger, echo_async_string_channel_name, FL_MESSAGE_CODEC(codec));
   fl_basic_message_channel_set_message_handler(
       self->echo_async_string_channel,
       core_tests_pigeon_test_host_integration_core_api_echo_async_string_cb,
       self, nullptr);
-  g_autofree gchar* echo_async_uint8_list_channel_name =
-      self->suffix != nullptr
-          ? g_strdup_printf(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.echoAsyncUint8List.%s",
-                self->suffix)
-          : g_strdup(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.echoAsyncUint8List");
+  g_autofree gchar* echo_async_uint8_list_channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+      "echoAsyncUint8List%s",
+      self->suffix);
   self->echo_async_uint8_list_channel = fl_basic_message_channel_new(
       messenger, echo_async_uint8_list_channel_name, FL_MESSAGE_CODEC(codec));
   fl_basic_message_channel_set_message_handler(
       self->echo_async_uint8_list_channel,
       core_tests_pigeon_test_host_integration_core_api_echo_async_uint8_list_cb,
       self, nullptr);
-  g_autofree gchar* echo_async_object_channel_name =
-      self->suffix != nullptr
-          ? g_strdup_printf(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.echoAsyncObject.%s",
-                self->suffix)
-          : g_strdup(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.echoAsyncObject");
+  g_autofree gchar* echo_async_object_channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+      "echoAsyncObject%s",
+      self->suffix);
   self->echo_async_object_channel = fl_basic_message_channel_new(
       messenger, echo_async_object_channel_name, FL_MESSAGE_CODEC(codec));
   fl_basic_message_channel_set_message_handler(
       self->echo_async_object_channel,
       core_tests_pigeon_test_host_integration_core_api_echo_async_object_cb,
       self, nullptr);
-  g_autofree gchar* echo_async_list_channel_name =
-      self->suffix != nullptr
-          ? g_strdup_printf(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.echoAsyncList.%s",
-                self->suffix)
-          : g_strdup(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.echoAsyncList");
+  g_autofree gchar* echo_async_list_channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+      "echoAsyncList%s",
+      self->suffix);
   self->echo_async_list_channel = fl_basic_message_channel_new(
       messenger, echo_async_list_channel_name, FL_MESSAGE_CODEC(codec));
   fl_basic_message_channel_set_message_handler(
       self->echo_async_list_channel,
       core_tests_pigeon_test_host_integration_core_api_echo_async_list_cb, self,
       nullptr);
-  g_autofree gchar* echo_async_map_channel_name =
-      self->suffix != nullptr
-          ? g_strdup_printf(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.echoAsyncMap.%s",
-                self->suffix)
-          : g_strdup(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.echoAsyncMap");
+  g_autofree gchar* echo_async_map_channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+      "echoAsyncMap%s",
+      self->suffix);
   self->echo_async_map_channel = fl_basic_message_channel_new(
       messenger, echo_async_map_channel_name, FL_MESSAGE_CODEC(codec));
   fl_basic_message_channel_set_message_handler(
       self->echo_async_map_channel,
       core_tests_pigeon_test_host_integration_core_api_echo_async_map_cb, self,
       nullptr);
-  g_autofree gchar* echo_async_enum_channel_name =
-      self->suffix != nullptr
-          ? g_strdup_printf(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.echoAsyncEnum.%s",
-                self->suffix)
-          : g_strdup(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.echoAsyncEnum");
+  g_autofree gchar* echo_async_enum_channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+      "echoAsyncEnum%s",
+      self->suffix);
   self->echo_async_enum_channel = fl_basic_message_channel_new(
       messenger, echo_async_enum_channel_name, FL_MESSAGE_CODEC(codec));
   fl_basic_message_channel_set_message_handler(
       self->echo_async_enum_channel,
       core_tests_pigeon_test_host_integration_core_api_echo_async_enum_cb, self,
       nullptr);
-  g_autofree gchar* throw_async_error_channel_name =
-      self->suffix != nullptr
-          ? g_strdup_printf(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.throwAsyncError.%s",
-                self->suffix)
-          : g_strdup(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.throwAsyncError");
+  g_autofree gchar* throw_async_error_channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+      "throwAsyncError%s",
+      self->suffix);
   self->throw_async_error_channel = fl_basic_message_channel_new(
       messenger, throw_async_error_channel_name, FL_MESSAGE_CODEC(codec));
   fl_basic_message_channel_set_message_handler(
       self->throw_async_error_channel,
       core_tests_pigeon_test_host_integration_core_api_throw_async_error_cb,
       self, nullptr);
-  g_autofree gchar* throw_async_error_from_void_channel_name =
-      self->suffix != nullptr
-          ? g_strdup_printf(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.throwAsyncErrorFromVoid.%s",
-                self->suffix)
-          : g_strdup(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.throwAsyncErrorFromVoid");
+  g_autofree gchar* throw_async_error_from_void_channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+      "throwAsyncErrorFromVoid%s",
+      self->suffix);
   self->throw_async_error_from_void_channel = fl_basic_message_channel_new(
       messenger, throw_async_error_from_void_channel_name,
       FL_MESSAGE_CODEC(codec));
@@ -11035,15 +10810,10 @@ core_tests_pigeon_test_host_integration_core_api_new(
       self->throw_async_error_from_void_channel,
       core_tests_pigeon_test_host_integration_core_api_throw_async_error_from_void_cb,
       self, nullptr);
-  g_autofree gchar* throw_async_flutter_error_channel_name =
-      self->suffix != nullptr
-          ? g_strdup_printf(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.throwAsyncFlutterError.%s",
-                self->suffix)
-          : g_strdup(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.throwAsyncFlutterError");
+  g_autofree gchar* throw_async_flutter_error_channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+      "throwAsyncFlutterError%s",
+      self->suffix);
   self->throw_async_flutter_error_channel = fl_basic_message_channel_new(
       messenger, throw_async_flutter_error_channel_name,
       FL_MESSAGE_CODEC(codec));
@@ -11051,15 +10821,10 @@ core_tests_pigeon_test_host_integration_core_api_new(
       self->throw_async_flutter_error_channel,
       core_tests_pigeon_test_host_integration_core_api_throw_async_flutter_error_cb,
       self, nullptr);
-  g_autofree gchar* echo_async_all_types_channel_name =
-      self->suffix != nullptr
-          ? g_strdup_printf(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.echoAsyncAllTypes.%s",
-                self->suffix)
-          : g_strdup(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.echoAsyncAllTypes");
+  g_autofree gchar* echo_async_all_types_channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+      "echoAsyncAllTypes%s",
+      self->suffix);
   self->echo_async_all_types_channel = fl_basic_message_channel_new(
       messenger, echo_async_all_types_channel_name, FL_MESSAGE_CODEC(codec));
   fl_basic_message_channel_set_message_handler(
@@ -11067,14 +10832,10 @@ core_tests_pigeon_test_host_integration_core_api_new(
       core_tests_pigeon_test_host_integration_core_api_echo_async_all_types_cb,
       self, nullptr);
   g_autofree gchar* echo_async_nullable_all_nullable_types_channel_name =
-      self->suffix != nullptr
-          ? g_strdup_printf(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.echoAsyncNullableAllNullableTypes.%s",
-                self->suffix)
-          : g_strdup(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.echoAsyncNullableAllNullableTypes");
+      g_strdup_printf(
+          "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+          "echoAsyncNullableAllNullableTypes%s",
+          self->suffix);
   self->echo_async_nullable_all_nullable_types_channel =
       fl_basic_message_channel_new(
           messenger, echo_async_nullable_all_nullable_types_channel_name,
@@ -11085,16 +10846,11 @@ core_tests_pigeon_test_host_integration_core_api_new(
       self, nullptr);
   g_autofree gchar*
       echo_async_nullable_all_nullable_types_without_recursion_channel_name =
-          self->suffix != nullptr
-              ? g_strdup_printf(
-                    "dev.flutter.pigeon.pigeon_integration_tests."
-                    "HostIntegrationCoreApi."
-                    "echoAsyncNullableAllNullableTypesWithoutRecursion.%s",
-                    self->suffix)
-              : g_strdup(
-                    "dev.flutter.pigeon.pigeon_integration_tests."
-                    "HostIntegrationCoreApi."
-                    "echoAsyncNullableAllNullableTypesWithoutRecursion");
+          g_strdup_printf(
+              "dev.flutter.pigeon.pigeon_integration_tests."
+              "HostIntegrationCoreApi."
+              "echoAsyncNullableAllNullableTypesWithoutRecursion%s",
+              self->suffix);
   self->echo_async_nullable_all_nullable_types_without_recursion_channel =
       fl_basic_message_channel_new(
           messenger,
@@ -11104,30 +10860,20 @@ core_tests_pigeon_test_host_integration_core_api_new(
       self->echo_async_nullable_all_nullable_types_without_recursion_channel,
       core_tests_pigeon_test_host_integration_core_api_echo_async_nullable_all_nullable_types_without_recursion_cb,
       self, nullptr);
-  g_autofree gchar* echo_async_nullable_int_channel_name =
-      self->suffix != nullptr
-          ? g_strdup_printf(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.echoAsyncNullableInt.%s",
-                self->suffix)
-          : g_strdup(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.echoAsyncNullableInt");
+  g_autofree gchar* echo_async_nullable_int_channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+      "echoAsyncNullableInt%s",
+      self->suffix);
   self->echo_async_nullable_int_channel = fl_basic_message_channel_new(
       messenger, echo_async_nullable_int_channel_name, FL_MESSAGE_CODEC(codec));
   fl_basic_message_channel_set_message_handler(
       self->echo_async_nullable_int_channel,
       core_tests_pigeon_test_host_integration_core_api_echo_async_nullable_int_cb,
       self, nullptr);
-  g_autofree gchar* echo_async_nullable_double_channel_name =
-      self->suffix != nullptr
-          ? g_strdup_printf(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.echoAsyncNullableDouble.%s",
-                self->suffix)
-          : g_strdup(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.echoAsyncNullableDouble");
+  g_autofree gchar* echo_async_nullable_double_channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+      "echoAsyncNullableDouble%s",
+      self->suffix);
   self->echo_async_nullable_double_channel = fl_basic_message_channel_new(
       messenger, echo_async_nullable_double_channel_name,
       FL_MESSAGE_CODEC(codec));
@@ -11135,15 +10881,10 @@ core_tests_pigeon_test_host_integration_core_api_new(
       self->echo_async_nullable_double_channel,
       core_tests_pigeon_test_host_integration_core_api_echo_async_nullable_double_cb,
       self, nullptr);
-  g_autofree gchar* echo_async_nullable_bool_channel_name =
-      self->suffix != nullptr
-          ? g_strdup_printf(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.echoAsyncNullableBool.%s",
-                self->suffix)
-          : g_strdup(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.echoAsyncNullableBool");
+  g_autofree gchar* echo_async_nullable_bool_channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+      "echoAsyncNullableBool%s",
+      self->suffix);
   self->echo_async_nullable_bool_channel = fl_basic_message_channel_new(
       messenger, echo_async_nullable_bool_channel_name,
       FL_MESSAGE_CODEC(codec));
@@ -11151,15 +10892,10 @@ core_tests_pigeon_test_host_integration_core_api_new(
       self->echo_async_nullable_bool_channel,
       core_tests_pigeon_test_host_integration_core_api_echo_async_nullable_bool_cb,
       self, nullptr);
-  g_autofree gchar* echo_async_nullable_string_channel_name =
-      self->suffix != nullptr
-          ? g_strdup_printf(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.echoAsyncNullableString.%s",
-                self->suffix)
-          : g_strdup(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.echoAsyncNullableString");
+  g_autofree gchar* echo_async_nullable_string_channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+      "echoAsyncNullableString%s",
+      self->suffix);
   self->echo_async_nullable_string_channel = fl_basic_message_channel_new(
       messenger, echo_async_nullable_string_channel_name,
       FL_MESSAGE_CODEC(codec));
@@ -11168,14 +10904,10 @@ core_tests_pigeon_test_host_integration_core_api_new(
       core_tests_pigeon_test_host_integration_core_api_echo_async_nullable_string_cb,
       self, nullptr);
   g_autofree gchar* echo_async_nullable_uint8_list_channel_name =
-      self->suffix != nullptr
-          ? g_strdup_printf(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.echoAsyncNullableUint8List.%s",
-                self->suffix)
-          : g_strdup(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.echoAsyncNullableUint8List");
+      g_strdup_printf(
+          "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+          "echoAsyncNullableUint8List%s",
+          self->suffix);
   self->echo_async_nullable_uint8_list_channel = fl_basic_message_channel_new(
       messenger, echo_async_nullable_uint8_list_channel_name,
       FL_MESSAGE_CODEC(codec));
@@ -11183,15 +10915,10 @@ core_tests_pigeon_test_host_integration_core_api_new(
       self->echo_async_nullable_uint8_list_channel,
       core_tests_pigeon_test_host_integration_core_api_echo_async_nullable_uint8_list_cb,
       self, nullptr);
-  g_autofree gchar* echo_async_nullable_object_channel_name =
-      self->suffix != nullptr
-          ? g_strdup_printf(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.echoAsyncNullableObject.%s",
-                self->suffix)
-          : g_strdup(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.echoAsyncNullableObject");
+  g_autofree gchar* echo_async_nullable_object_channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+      "echoAsyncNullableObject%s",
+      self->suffix);
   self->echo_async_nullable_object_channel = fl_basic_message_channel_new(
       messenger, echo_async_nullable_object_channel_name,
       FL_MESSAGE_CODEC(codec));
@@ -11199,15 +10926,10 @@ core_tests_pigeon_test_host_integration_core_api_new(
       self->echo_async_nullable_object_channel,
       core_tests_pigeon_test_host_integration_core_api_echo_async_nullable_object_cb,
       self, nullptr);
-  g_autofree gchar* echo_async_nullable_list_channel_name =
-      self->suffix != nullptr
-          ? g_strdup_printf(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.echoAsyncNullableList.%s",
-                self->suffix)
-          : g_strdup(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.echoAsyncNullableList");
+  g_autofree gchar* echo_async_nullable_list_channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+      "echoAsyncNullableList%s",
+      self->suffix);
   self->echo_async_nullable_list_channel = fl_basic_message_channel_new(
       messenger, echo_async_nullable_list_channel_name,
       FL_MESSAGE_CODEC(codec));
@@ -11215,30 +10937,20 @@ core_tests_pigeon_test_host_integration_core_api_new(
       self->echo_async_nullable_list_channel,
       core_tests_pigeon_test_host_integration_core_api_echo_async_nullable_list_cb,
       self, nullptr);
-  g_autofree gchar* echo_async_nullable_map_channel_name =
-      self->suffix != nullptr
-          ? g_strdup_printf(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.echoAsyncNullableMap.%s",
-                self->suffix)
-          : g_strdup(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.echoAsyncNullableMap");
+  g_autofree gchar* echo_async_nullable_map_channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+      "echoAsyncNullableMap%s",
+      self->suffix);
   self->echo_async_nullable_map_channel = fl_basic_message_channel_new(
       messenger, echo_async_nullable_map_channel_name, FL_MESSAGE_CODEC(codec));
   fl_basic_message_channel_set_message_handler(
       self->echo_async_nullable_map_channel,
       core_tests_pigeon_test_host_integration_core_api_echo_async_nullable_map_cb,
       self, nullptr);
-  g_autofree gchar* echo_async_nullable_enum_channel_name =
-      self->suffix != nullptr
-          ? g_strdup_printf(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.echoAsyncNullableEnum.%s",
-                self->suffix)
-          : g_strdup(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.echoAsyncNullableEnum");
+  g_autofree gchar* echo_async_nullable_enum_channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+      "echoAsyncNullableEnum%s",
+      self->suffix);
   self->echo_async_nullable_enum_channel = fl_basic_message_channel_new(
       messenger, echo_async_nullable_enum_channel_name,
       FL_MESSAGE_CODEC(codec));
@@ -11246,30 +10958,20 @@ core_tests_pigeon_test_host_integration_core_api_new(
       self->echo_async_nullable_enum_channel,
       core_tests_pigeon_test_host_integration_core_api_echo_async_nullable_enum_cb,
       self, nullptr);
-  g_autofree gchar* call_flutter_noop_channel_name =
-      self->suffix != nullptr
-          ? g_strdup_printf(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.callFlutterNoop.%s",
-                self->suffix)
-          : g_strdup(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.callFlutterNoop");
+  g_autofree gchar* call_flutter_noop_channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+      "callFlutterNoop%s",
+      self->suffix);
   self->call_flutter_noop_channel = fl_basic_message_channel_new(
       messenger, call_flutter_noop_channel_name, FL_MESSAGE_CODEC(codec));
   fl_basic_message_channel_set_message_handler(
       self->call_flutter_noop_channel,
       core_tests_pigeon_test_host_integration_core_api_call_flutter_noop_cb,
       self, nullptr);
-  g_autofree gchar* call_flutter_throw_error_channel_name =
-      self->suffix != nullptr
-          ? g_strdup_printf(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.callFlutterThrowError.%s",
-                self->suffix)
-          : g_strdup(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.callFlutterThrowError");
+  g_autofree gchar* call_flutter_throw_error_channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+      "callFlutterThrowError%s",
+      self->suffix);
   self->call_flutter_throw_error_channel = fl_basic_message_channel_new(
       messenger, call_flutter_throw_error_channel_name,
       FL_MESSAGE_CODEC(codec));
@@ -11278,14 +10980,10 @@ core_tests_pigeon_test_host_integration_core_api_new(
       core_tests_pigeon_test_host_integration_core_api_call_flutter_throw_error_cb,
       self, nullptr);
   g_autofree gchar* call_flutter_throw_error_from_void_channel_name =
-      self->suffix != nullptr
-          ? g_strdup_printf(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.callFlutterThrowErrorFromVoid.%s",
-                self->suffix)
-          : g_strdup(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.callFlutterThrowErrorFromVoid");
+      g_strdup_printf(
+          "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+          "callFlutterThrowErrorFromVoid%s",
+          self->suffix);
   self->call_flutter_throw_error_from_void_channel =
       fl_basic_message_channel_new(
           messenger, call_flutter_throw_error_from_void_channel_name,
@@ -11294,15 +10992,10 @@ core_tests_pigeon_test_host_integration_core_api_new(
       self->call_flutter_throw_error_from_void_channel,
       core_tests_pigeon_test_host_integration_core_api_call_flutter_throw_error_from_void_cb,
       self, nullptr);
-  g_autofree gchar* call_flutter_echo_all_types_channel_name =
-      self->suffix != nullptr
-          ? g_strdup_printf(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.callFlutterEchoAllTypes.%s",
-                self->suffix)
-          : g_strdup(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.callFlutterEchoAllTypes");
+  g_autofree gchar* call_flutter_echo_all_types_channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+      "callFlutterEchoAllTypes%s",
+      self->suffix);
   self->call_flutter_echo_all_types_channel = fl_basic_message_channel_new(
       messenger, call_flutter_echo_all_types_channel_name,
       FL_MESSAGE_CODEC(codec));
@@ -11311,14 +11004,10 @@ core_tests_pigeon_test_host_integration_core_api_new(
       core_tests_pigeon_test_host_integration_core_api_call_flutter_echo_all_types_cb,
       self, nullptr);
   g_autofree gchar* call_flutter_echo_all_nullable_types_channel_name =
-      self->suffix != nullptr
-          ? g_strdup_printf(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.callFlutterEchoAllNullableTypes.%s",
-                self->suffix)
-          : g_strdup(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.callFlutterEchoAllNullableTypes");
+      g_strdup_printf(
+          "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+          "callFlutterEchoAllNullableTypes%s",
+          self->suffix);
   self->call_flutter_echo_all_nullable_types_channel =
       fl_basic_message_channel_new(
           messenger, call_flutter_echo_all_nullable_types_channel_name,
@@ -11328,15 +11017,10 @@ core_tests_pigeon_test_host_integration_core_api_new(
       core_tests_pigeon_test_host_integration_core_api_call_flutter_echo_all_nullable_types_cb,
       self, nullptr);
   g_autofree gchar* call_flutter_send_multiple_nullable_types_channel_name =
-      self->suffix != nullptr
-          ? g_strdup_printf(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.callFlutterSendMultipleNullableTypes.%"
-                "s",
-                self->suffix)
-          : g_strdup(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.callFlutterSendMultipleNullableTypes");
+      g_strdup_printf(
+          "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+          "callFlutterSendMultipleNullableTypes%s",
+          self->suffix);
   self->call_flutter_send_multiple_nullable_types_channel =
       fl_basic_message_channel_new(
           messenger, call_flutter_send_multiple_nullable_types_channel_name,
@@ -11347,16 +11031,11 @@ core_tests_pigeon_test_host_integration_core_api_new(
       self, nullptr);
   g_autofree gchar*
       call_flutter_echo_all_nullable_types_without_recursion_channel_name =
-          self->suffix != nullptr
-              ? g_strdup_printf(
-                    "dev.flutter.pigeon.pigeon_integration_tests."
-                    "HostIntegrationCoreApi."
-                    "callFlutterEchoAllNullableTypesWithoutRecursion.%s",
-                    self->suffix)
-              : g_strdup(
-                    "dev.flutter.pigeon.pigeon_integration_tests."
-                    "HostIntegrationCoreApi."
-                    "callFlutterEchoAllNullableTypesWithoutRecursion");
+          g_strdup_printf(
+              "dev.flutter.pigeon.pigeon_integration_tests."
+              "HostIntegrationCoreApi."
+              "callFlutterEchoAllNullableTypesWithoutRecursion%s",
+              self->suffix);
   self->call_flutter_echo_all_nullable_types_without_recursion_channel =
       fl_basic_message_channel_new(
           messenger,
@@ -11368,16 +11047,11 @@ core_tests_pigeon_test_host_integration_core_api_new(
       self, nullptr);
   g_autofree gchar*
       call_flutter_send_multiple_nullable_types_without_recursion_channel_name =
-          self->suffix != nullptr
-              ? g_strdup_printf(
-                    "dev.flutter.pigeon.pigeon_integration_tests."
-                    "HostIntegrationCoreApi."
-                    "callFlutterSendMultipleNullableTypesWithoutRecursion.%s",
-                    self->suffix)
-              : g_strdup(
-                    "dev.flutter.pigeon.pigeon_integration_tests."
-                    "HostIntegrationCoreApi."
-                    "callFlutterSendMultipleNullableTypesWithoutRecursion");
+          g_strdup_printf(
+              "dev.flutter.pigeon.pigeon_integration_tests."
+              "HostIntegrationCoreApi."
+              "callFlutterSendMultipleNullableTypesWithoutRecursion%s",
+              self->suffix);
   self->call_flutter_send_multiple_nullable_types_without_recursion_channel =
       fl_basic_message_channel_new(
           messenger,
@@ -11387,45 +11061,30 @@ core_tests_pigeon_test_host_integration_core_api_new(
       self->call_flutter_send_multiple_nullable_types_without_recursion_channel,
       core_tests_pigeon_test_host_integration_core_api_call_flutter_send_multiple_nullable_types_without_recursion_cb,
       self, nullptr);
-  g_autofree gchar* call_flutter_echo_bool_channel_name =
-      self->suffix != nullptr
-          ? g_strdup_printf(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.callFlutterEchoBool.%s",
-                self->suffix)
-          : g_strdup(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.callFlutterEchoBool");
+  g_autofree gchar* call_flutter_echo_bool_channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+      "callFlutterEchoBool%s",
+      self->suffix);
   self->call_flutter_echo_bool_channel = fl_basic_message_channel_new(
       messenger, call_flutter_echo_bool_channel_name, FL_MESSAGE_CODEC(codec));
   fl_basic_message_channel_set_message_handler(
       self->call_flutter_echo_bool_channel,
       core_tests_pigeon_test_host_integration_core_api_call_flutter_echo_bool_cb,
       self, nullptr);
-  g_autofree gchar* call_flutter_echo_int_channel_name =
-      self->suffix != nullptr
-          ? g_strdup_printf(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.callFlutterEchoInt.%s",
-                self->suffix)
-          : g_strdup(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.callFlutterEchoInt");
+  g_autofree gchar* call_flutter_echo_int_channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+      "callFlutterEchoInt%s",
+      self->suffix);
   self->call_flutter_echo_int_channel = fl_basic_message_channel_new(
       messenger, call_flutter_echo_int_channel_name, FL_MESSAGE_CODEC(codec));
   fl_basic_message_channel_set_message_handler(
       self->call_flutter_echo_int_channel,
       core_tests_pigeon_test_host_integration_core_api_call_flutter_echo_int_cb,
       self, nullptr);
-  g_autofree gchar* call_flutter_echo_double_channel_name =
-      self->suffix != nullptr
-          ? g_strdup_printf(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.callFlutterEchoDouble.%s",
-                self->suffix)
-          : g_strdup(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.callFlutterEchoDouble");
+  g_autofree gchar* call_flutter_echo_double_channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+      "callFlutterEchoDouble%s",
+      self->suffix);
   self->call_flutter_echo_double_channel = fl_basic_message_channel_new(
       messenger, call_flutter_echo_double_channel_name,
       FL_MESSAGE_CODEC(codec));
@@ -11433,15 +11092,10 @@ core_tests_pigeon_test_host_integration_core_api_new(
       self->call_flutter_echo_double_channel,
       core_tests_pigeon_test_host_integration_core_api_call_flutter_echo_double_cb,
       self, nullptr);
-  g_autofree gchar* call_flutter_echo_string_channel_name =
-      self->suffix != nullptr
-          ? g_strdup_printf(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.callFlutterEchoString.%s",
-                self->suffix)
-          : g_strdup(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.callFlutterEchoString");
+  g_autofree gchar* call_flutter_echo_string_channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+      "callFlutterEchoString%s",
+      self->suffix);
   self->call_flutter_echo_string_channel = fl_basic_message_channel_new(
       messenger, call_flutter_echo_string_channel_name,
       FL_MESSAGE_CODEC(codec));
@@ -11449,15 +11103,10 @@ core_tests_pigeon_test_host_integration_core_api_new(
       self->call_flutter_echo_string_channel,
       core_tests_pigeon_test_host_integration_core_api_call_flutter_echo_string_cb,
       self, nullptr);
-  g_autofree gchar* call_flutter_echo_uint8_list_channel_name =
-      self->suffix != nullptr
-          ? g_strdup_printf(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.callFlutterEchoUint8List.%s",
-                self->suffix)
-          : g_strdup(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.callFlutterEchoUint8List");
+  g_autofree gchar* call_flutter_echo_uint8_list_channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+      "callFlutterEchoUint8List%s",
+      self->suffix);
   self->call_flutter_echo_uint8_list_channel = fl_basic_message_channel_new(
       messenger, call_flutter_echo_uint8_list_channel_name,
       FL_MESSAGE_CODEC(codec));
@@ -11465,45 +11114,30 @@ core_tests_pigeon_test_host_integration_core_api_new(
       self->call_flutter_echo_uint8_list_channel,
       core_tests_pigeon_test_host_integration_core_api_call_flutter_echo_uint8_list_cb,
       self, nullptr);
-  g_autofree gchar* call_flutter_echo_list_channel_name =
-      self->suffix != nullptr
-          ? g_strdup_printf(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.callFlutterEchoList.%s",
-                self->suffix)
-          : g_strdup(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.callFlutterEchoList");
+  g_autofree gchar* call_flutter_echo_list_channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+      "callFlutterEchoList%s",
+      self->suffix);
   self->call_flutter_echo_list_channel = fl_basic_message_channel_new(
       messenger, call_flutter_echo_list_channel_name, FL_MESSAGE_CODEC(codec));
   fl_basic_message_channel_set_message_handler(
       self->call_flutter_echo_list_channel,
       core_tests_pigeon_test_host_integration_core_api_call_flutter_echo_list_cb,
       self, nullptr);
-  g_autofree gchar* call_flutter_echo_map_channel_name =
-      self->suffix != nullptr
-          ? g_strdup_printf(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.callFlutterEchoMap.%s",
-                self->suffix)
-          : g_strdup(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.callFlutterEchoMap");
+  g_autofree gchar* call_flutter_echo_map_channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+      "callFlutterEchoMap%s",
+      self->suffix);
   self->call_flutter_echo_map_channel = fl_basic_message_channel_new(
       messenger, call_flutter_echo_map_channel_name, FL_MESSAGE_CODEC(codec));
   fl_basic_message_channel_set_message_handler(
       self->call_flutter_echo_map_channel,
       core_tests_pigeon_test_host_integration_core_api_call_flutter_echo_map_cb,
       self, nullptr);
-  g_autofree gchar* call_flutter_echo_enum_channel_name =
-      self->suffix != nullptr
-          ? g_strdup_printf(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.callFlutterEchoEnum.%s",
-                self->suffix)
-          : g_strdup(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.callFlutterEchoEnum");
+  g_autofree gchar* call_flutter_echo_enum_channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+      "callFlutterEchoEnum%s",
+      self->suffix);
   self->call_flutter_echo_enum_channel = fl_basic_message_channel_new(
       messenger, call_flutter_echo_enum_channel_name, FL_MESSAGE_CODEC(codec));
   fl_basic_message_channel_set_message_handler(
@@ -11511,14 +11145,10 @@ core_tests_pigeon_test_host_integration_core_api_new(
       core_tests_pigeon_test_host_integration_core_api_call_flutter_echo_enum_cb,
       self, nullptr);
   g_autofree gchar* call_flutter_echo_nullable_bool_channel_name =
-      self->suffix != nullptr
-          ? g_strdup_printf(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.callFlutterEchoNullableBool.%s",
-                self->suffix)
-          : g_strdup(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.callFlutterEchoNullableBool");
+      g_strdup_printf(
+          "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+          "callFlutterEchoNullableBool%s",
+          self->suffix);
   self->call_flutter_echo_nullable_bool_channel = fl_basic_message_channel_new(
       messenger, call_flutter_echo_nullable_bool_channel_name,
       FL_MESSAGE_CODEC(codec));
@@ -11527,14 +11157,10 @@ core_tests_pigeon_test_host_integration_core_api_new(
       core_tests_pigeon_test_host_integration_core_api_call_flutter_echo_nullable_bool_cb,
       self, nullptr);
   g_autofree gchar* call_flutter_echo_nullable_int_channel_name =
-      self->suffix != nullptr
-          ? g_strdup_printf(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.callFlutterEchoNullableInt.%s",
-                self->suffix)
-          : g_strdup(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.callFlutterEchoNullableInt");
+      g_strdup_printf(
+          "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+          "callFlutterEchoNullableInt%s",
+          self->suffix);
   self->call_flutter_echo_nullable_int_channel = fl_basic_message_channel_new(
       messenger, call_flutter_echo_nullable_int_channel_name,
       FL_MESSAGE_CODEC(codec));
@@ -11543,14 +11169,10 @@ core_tests_pigeon_test_host_integration_core_api_new(
       core_tests_pigeon_test_host_integration_core_api_call_flutter_echo_nullable_int_cb,
       self, nullptr);
   g_autofree gchar* call_flutter_echo_nullable_double_channel_name =
-      self->suffix != nullptr
-          ? g_strdup_printf(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.callFlutterEchoNullableDouble.%s",
-                self->suffix)
-          : g_strdup(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.callFlutterEchoNullableDouble");
+      g_strdup_printf(
+          "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+          "callFlutterEchoNullableDouble%s",
+          self->suffix);
   self->call_flutter_echo_nullable_double_channel =
       fl_basic_message_channel_new(
           messenger, call_flutter_echo_nullable_double_channel_name,
@@ -11560,14 +11182,10 @@ core_tests_pigeon_test_host_integration_core_api_new(
       core_tests_pigeon_test_host_integration_core_api_call_flutter_echo_nullable_double_cb,
       self, nullptr);
   g_autofree gchar* call_flutter_echo_nullable_string_channel_name =
-      self->suffix != nullptr
-          ? g_strdup_printf(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.callFlutterEchoNullableString.%s",
-                self->suffix)
-          : g_strdup(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.callFlutterEchoNullableString");
+      g_strdup_printf(
+          "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+          "callFlutterEchoNullableString%s",
+          self->suffix);
   self->call_flutter_echo_nullable_string_channel =
       fl_basic_message_channel_new(
           messenger, call_flutter_echo_nullable_string_channel_name,
@@ -11577,14 +11195,10 @@ core_tests_pigeon_test_host_integration_core_api_new(
       core_tests_pigeon_test_host_integration_core_api_call_flutter_echo_nullable_string_cb,
       self, nullptr);
   g_autofree gchar* call_flutter_echo_nullable_uint8_list_channel_name =
-      self->suffix != nullptr
-          ? g_strdup_printf(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.callFlutterEchoNullableUint8List.%s",
-                self->suffix)
-          : g_strdup(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.callFlutterEchoNullableUint8List");
+      g_strdup_printf(
+          "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+          "callFlutterEchoNullableUint8List%s",
+          self->suffix);
   self->call_flutter_echo_nullable_uint8_list_channel =
       fl_basic_message_channel_new(
           messenger, call_flutter_echo_nullable_uint8_list_channel_name,
@@ -11594,14 +11208,10 @@ core_tests_pigeon_test_host_integration_core_api_new(
       core_tests_pigeon_test_host_integration_core_api_call_flutter_echo_nullable_uint8_list_cb,
       self, nullptr);
   g_autofree gchar* call_flutter_echo_nullable_list_channel_name =
-      self->suffix != nullptr
-          ? g_strdup_printf(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.callFlutterEchoNullableList.%s",
-                self->suffix)
-          : g_strdup(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.callFlutterEchoNullableList");
+      g_strdup_printf(
+          "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+          "callFlutterEchoNullableList%s",
+          self->suffix);
   self->call_flutter_echo_nullable_list_channel = fl_basic_message_channel_new(
       messenger, call_flutter_echo_nullable_list_channel_name,
       FL_MESSAGE_CODEC(codec));
@@ -11610,14 +11220,10 @@ core_tests_pigeon_test_host_integration_core_api_new(
       core_tests_pigeon_test_host_integration_core_api_call_flutter_echo_nullable_list_cb,
       self, nullptr);
   g_autofree gchar* call_flutter_echo_nullable_map_channel_name =
-      self->suffix != nullptr
-          ? g_strdup_printf(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.callFlutterEchoNullableMap.%s",
-                self->suffix)
-          : g_strdup(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.callFlutterEchoNullableMap");
+      g_strdup_printf(
+          "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+          "callFlutterEchoNullableMap%s",
+          self->suffix);
   self->call_flutter_echo_nullable_map_channel = fl_basic_message_channel_new(
       messenger, call_flutter_echo_nullable_map_channel_name,
       FL_MESSAGE_CODEC(codec));
@@ -11626,14 +11232,10 @@ core_tests_pigeon_test_host_integration_core_api_new(
       core_tests_pigeon_test_host_integration_core_api_call_flutter_echo_nullable_map_cb,
       self, nullptr);
   g_autofree gchar* call_flutter_echo_nullable_enum_channel_name =
-      self->suffix != nullptr
-          ? g_strdup_printf(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.callFlutterEchoNullableEnum.%s",
-                self->suffix)
-          : g_strdup(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.callFlutterEchoNullableEnum");
+      g_strdup_printf(
+          "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+          "callFlutterEchoNullableEnum%s",
+          self->suffix);
   self->call_flutter_echo_nullable_enum_channel = fl_basic_message_channel_new(
       messenger, call_flutter_echo_nullable_enum_channel_name,
       FL_MESSAGE_CODEC(codec));
@@ -11642,14 +11244,10 @@ core_tests_pigeon_test_host_integration_core_api_new(
       core_tests_pigeon_test_host_integration_core_api_call_flutter_echo_nullable_enum_cb,
       self, nullptr);
   g_autofree gchar* call_flutter_small_api_echo_string_channel_name =
-      self->suffix != nullptr
-          ? g_strdup_printf(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.callFlutterSmallApiEchoString.%s",
-                self->suffix)
-          : g_strdup(
-                "dev.flutter.pigeon.pigeon_integration_tests."
-                "HostIntegrationCoreApi.callFlutterSmallApiEchoString");
+      g_strdup_printf(
+          "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+          "callFlutterSmallApiEchoString%s",
+          self->suffix);
   self->call_flutter_small_api_echo_string_channel =
       fl_basic_message_channel_new(
           messenger, call_flutter_small_api_echo_string_channel_name,
@@ -13429,7 +13027,7 @@ void core_tests_pigeon_test_host_integration_core_api_respond_error_call_flutter
 struct _CoreTestsPigeonTestFlutterIntegrationCoreApi {
   GObject parent_instance;
 
-  FlMethodChannel* channel;
+  FlBinaryMessenger* messenger;
   gchar* suffix;
 };
 
@@ -13441,8 +13039,8 @@ static void core_tests_pigeon_test_flutter_integration_core_api_dispose(
     GObject* object) {
   CoreTestsPigeonTestFlutterIntegrationCoreApi* self =
       CORE_TESTS_PIGEON_TEST_FLUTTER_INTEGRATION_CORE_API(object);
+  g_clear_object(&self->messenger);
   g_clear_pointer(&self->suffix, g_free);
-  g_clear_object(&self->channel);
   G_OBJECT_CLASS(
       core_tests_pigeon_test_flutter_integration_core_api_parent_class)
       ->dispose(object);
@@ -13464,15 +13062,16 @@ core_tests_pigeon_test_flutter_integration_core_api_new(
       CORE_TESTS_PIGEON_TEST_FLUTTER_INTEGRATION_CORE_API(g_object_new(
           core_tests_pigeon_test_flutter_integration_core_api_get_type(),
           nullptr));
-  self->suffix = g_strdup(suffix);
-  g_autoptr(CoreTestsPigeonTestMessageCodec) message_codec =
-      core_tests_pigeon_test_message_codec_new();
-  g_autoptr(FlStandardMethodCodec) codec =
-      fl_standard_method_codec_new_with_message_codec(
-          FL_STANDARD_MESSAGE_CODEC(message_codec));
-  self->channel = fl_method_channel_new(messenger, "FlutterIntegrationCoreApi",
-                                        FL_METHOD_CODEC(codec));
+  self->messenger = FL_BINARY_MESSENGER(g_object_ref(messenger));
+  self->suffix =
+      suffix != nullptr ? g_strdup_printf(".%s", suffix) : g_strdup("");
   return self;
+}
+
+static void core_tests_pigeon_test_flutter_integration_core_api_noop_cb(
+    GObject* object, GAsyncResult* result, gpointer user_data) {
+  GTask* task = G_TASK(user_data);
+  g_task_return_pointer(task, result, g_object_unref);
 }
 
 void core_tests_pigeon_test_flutter_integration_core_api_noop(
@@ -13480,25 +13079,45 @@ void core_tests_pigeon_test_flutter_integration_core_api_noop(
     GCancellable* cancellable, GAsyncReadyCallback callback,
     gpointer user_data) {
   g_autoptr(FlValue) args = fl_value_new_list();
-  fl_method_channel_invoke_method(self->channel, "noop", args, cancellable,
-                                  callback, user_data);
+  g_autofree gchar* channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi."
+      "noop%s",
+      self->suffix);
+  g_autoptr(CoreTestsPigeonTestMessageCodec) codec =
+      core_tests_pigeon_test_message_codec_new();
+  FlBasicMessageChannel* channel = fl_basic_message_channel_new(
+      self->messenger, channel_name, FL_MESSAGE_CODEC(codec));
+  GTask* task = g_task_new(self, cancellable, callback, user_data);
+  g_task_set_task_data(task, channel, g_object_unref);
+  fl_basic_message_channel_send(
+      channel, args, cancellable,
+      core_tests_pigeon_test_flutter_integration_core_api_noop_cb, task);
 }
 
 gboolean core_tests_pigeon_test_flutter_integration_core_api_noop_finish(
     CoreTestsPigeonTestFlutterIntegrationCoreApi* self, GAsyncResult* result,
     GError** error) {
-  g_autoptr(FlMethodResponse) response =
-      fl_method_channel_invoke_method_finish(self->channel, result, error);
+  g_autoptr(GTask) task = G_TASK(result);
+  GAsyncResult* r = G_ASYNC_RESULT(g_task_propagate_pointer(task, nullptr));
+  FlBasicMessageChannel* channel =
+      FL_BASIC_MESSAGE_CHANNEL(g_task_get_task_data(task));
+  g_autoptr(FlValue) response =
+      fl_basic_message_channel_send_finish(channel, r, error);
   if (response == nullptr) {
     return FALSE;
   }
-
-  g_autoptr(FlValue) r = fl_method_response_get_result(response, error);
-  if (r == nullptr) {
+  if (fl_value_get_length(response) > 1) {
+    // FIXME: Set error
     return FALSE;
   }
 
   return TRUE;
+}
+
+static void core_tests_pigeon_test_flutter_integration_core_api_throw_error_cb(
+    GObject* object, GAsyncResult* result, gpointer user_data) {
+  GTask* task = G_TASK(user_data);
+  g_task_return_pointer(task, result, g_object_unref);
 }
 
 void core_tests_pigeon_test_flutter_integration_core_api_throw_error(
@@ -13506,27 +13125,53 @@ void core_tests_pigeon_test_flutter_integration_core_api_throw_error(
     GCancellable* cancellable, GAsyncReadyCallback callback,
     gpointer user_data) {
   g_autoptr(FlValue) args = fl_value_new_list();
-  fl_method_channel_invoke_method(self->channel, "throwError", args,
-                                  cancellable, callback, user_data);
+  g_autofree gchar* channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi."
+      "throwError%s",
+      self->suffix);
+  g_autoptr(CoreTestsPigeonTestMessageCodec) codec =
+      core_tests_pigeon_test_message_codec_new();
+  FlBasicMessageChannel* channel = fl_basic_message_channel_new(
+      self->messenger, channel_name, FL_MESSAGE_CODEC(codec));
+  GTask* task = g_task_new(self, cancellable, callback, user_data);
+  g_task_set_task_data(task, channel, g_object_unref);
+  fl_basic_message_channel_send(
+      channel, args, cancellable,
+      core_tests_pigeon_test_flutter_integration_core_api_throw_error_cb, task);
 }
 
 gboolean core_tests_pigeon_test_flutter_integration_core_api_throw_error_finish(
     CoreTestsPigeonTestFlutterIntegrationCoreApi* self, GAsyncResult* result,
     FlValue** return_value, GError** error) {
-  g_autoptr(FlMethodResponse) response =
-      fl_method_channel_invoke_method_finish(self->channel, result, error);
+  g_autoptr(GTask) task = G_TASK(result);
+  GAsyncResult* r = G_ASYNC_RESULT(g_task_propagate_pointer(task, nullptr));
+  FlBasicMessageChannel* channel =
+      FL_BASIC_MESSAGE_CHANNEL(g_task_get_task_data(task));
+  g_autoptr(FlValue) response =
+      fl_basic_message_channel_send_finish(channel, r, error);
   if (response == nullptr) {
     return FALSE;
   }
-
-  g_autoptr(FlValue) r = fl_method_response_get_result(response, error);
-  if (r == nullptr) {
+  if (fl_value_get_length(response) > 1) {
+    // FIXME: Set error
     return FALSE;
   }
 
-  *return_value = fl_value_ref(r);
+  FlValue* rv = fl_value_get_list_value(response, 0);
+  if (fl_value_get_type(rv) != FL_VALUE_TYPE_NULL) {
+    *return_value = fl_value_ref(rv);
+  } else {
+    *return_value = nullptr;
+  }
 
   return TRUE;
+}
+
+static void
+core_tests_pigeon_test_flutter_integration_core_api_throw_error_from_void_cb(
+    GObject* object, GAsyncResult* result, gpointer user_data) {
+  GTask* task = G_TASK(user_data);
+  g_task_return_pointer(task, result, g_object_unref);
 }
 
 void core_tests_pigeon_test_flutter_integration_core_api_throw_error_from_void(
@@ -13534,26 +13179,48 @@ void core_tests_pigeon_test_flutter_integration_core_api_throw_error_from_void(
     GCancellable* cancellable, GAsyncReadyCallback callback,
     gpointer user_data) {
   g_autoptr(FlValue) args = fl_value_new_list();
-  fl_method_channel_invoke_method(self->channel, "throwErrorFromVoid", args,
-                                  cancellable, callback, user_data);
+  g_autofree gchar* channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi."
+      "throwErrorFromVoid%s",
+      self->suffix);
+  g_autoptr(CoreTestsPigeonTestMessageCodec) codec =
+      core_tests_pigeon_test_message_codec_new();
+  FlBasicMessageChannel* channel = fl_basic_message_channel_new(
+      self->messenger, channel_name, FL_MESSAGE_CODEC(codec));
+  GTask* task = g_task_new(self, cancellable, callback, user_data);
+  g_task_set_task_data(task, channel, g_object_unref);
+  fl_basic_message_channel_send(
+      channel, args, cancellable,
+      core_tests_pigeon_test_flutter_integration_core_api_throw_error_from_void_cb,
+      task);
 }
 
 gboolean
 core_tests_pigeon_test_flutter_integration_core_api_throw_error_from_void_finish(
     CoreTestsPigeonTestFlutterIntegrationCoreApi* self, GAsyncResult* result,
     GError** error) {
-  g_autoptr(FlMethodResponse) response =
-      fl_method_channel_invoke_method_finish(self->channel, result, error);
+  g_autoptr(GTask) task = G_TASK(result);
+  GAsyncResult* r = G_ASYNC_RESULT(g_task_propagate_pointer(task, nullptr));
+  FlBasicMessageChannel* channel =
+      FL_BASIC_MESSAGE_CHANNEL(g_task_get_task_data(task));
+  g_autoptr(FlValue) response =
+      fl_basic_message_channel_send_finish(channel, r, error);
   if (response == nullptr) {
     return FALSE;
   }
-
-  g_autoptr(FlValue) r = fl_method_response_get_result(response, error);
-  if (r == nullptr) {
+  if (fl_value_get_length(response) > 1) {
+    // FIXME: Set error
     return FALSE;
   }
 
   return TRUE;
+}
+
+static void
+core_tests_pigeon_test_flutter_integration_core_api_echo_all_types_cb(
+    GObject* object, GAsyncResult* result, gpointer user_data) {
+  GTask* task = G_TASK(user_data);
+  g_task_return_pointer(task, result, g_object_unref);
 }
 
 void core_tests_pigeon_test_flutter_integration_core_api_echo_all_types(
@@ -13563,29 +13230,52 @@ void core_tests_pigeon_test_flutter_integration_core_api_echo_all_types(
   g_autoptr(FlValue) args = fl_value_new_list();
   fl_value_append_take(args,
                        fl_value_new_custom_object(129, G_OBJECT(everything)));
-  fl_method_channel_invoke_method(self->channel, "echoAllTypes", args,
-                                  cancellable, callback, user_data);
+  g_autofree gchar* channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi."
+      "echoAllTypes%s",
+      self->suffix);
+  g_autoptr(CoreTestsPigeonTestMessageCodec) codec =
+      core_tests_pigeon_test_message_codec_new();
+  FlBasicMessageChannel* channel = fl_basic_message_channel_new(
+      self->messenger, channel_name, FL_MESSAGE_CODEC(codec));
+  GTask* task = g_task_new(self, cancellable, callback, user_data);
+  g_task_set_task_data(task, channel, g_object_unref);
+  fl_basic_message_channel_send(
+      channel, args, cancellable,
+      core_tests_pigeon_test_flutter_integration_core_api_echo_all_types_cb,
+      task);
 }
 
 gboolean
 core_tests_pigeon_test_flutter_integration_core_api_echo_all_types_finish(
     CoreTestsPigeonTestFlutterIntegrationCoreApi* self, GAsyncResult* result,
     CoreTestsPigeonTestAllTypes** return_value, GError** error) {
-  g_autoptr(FlMethodResponse) response =
-      fl_method_channel_invoke_method_finish(self->channel, result, error);
+  g_autoptr(GTask) task = G_TASK(result);
+  GAsyncResult* r = G_ASYNC_RESULT(g_task_propagate_pointer(task, nullptr));
+  FlBasicMessageChannel* channel =
+      FL_BASIC_MESSAGE_CHANNEL(g_task_get_task_data(task));
+  g_autoptr(FlValue) response =
+      fl_basic_message_channel_send_finish(channel, r, error);
   if (response == nullptr) {
     return FALSE;
   }
-
-  g_autoptr(FlValue) r = fl_method_response_get_result(response, error);
-  if (r == nullptr) {
+  if (fl_value_get_length(response) > 1) {
+    // FIXME: Set error
     return FALSE;
   }
 
+  FlValue* rv = fl_value_get_list_value(response, 0);
   *return_value = CORE_TESTS_PIGEON_TEST_ALL_TYPES(g_object_ref(
-      CORE_TESTS_PIGEON_TEST_ALL_TYPES(fl_value_get_custom_value_object(r))));
+      CORE_TESTS_PIGEON_TEST_ALL_TYPES(fl_value_get_custom_value_object(rv))));
 
   return TRUE;
+}
+
+static void
+core_tests_pigeon_test_flutter_integration_core_api_echo_all_nullable_types_cb(
+    GObject* object, GAsyncResult* result, gpointer user_data) {
+  GTask* task = G_TASK(user_data);
+  g_task_return_pointer(task, result, g_object_unref);
 }
 
 void core_tests_pigeon_test_flutter_integration_core_api_echo_all_nullable_types(
@@ -13597,30 +13287,57 @@ void core_tests_pigeon_test_flutter_integration_core_api_echo_all_nullable_types
       args, everything != nullptr
                 ? fl_value_new_custom_object(130, G_OBJECT(everything))
                 : fl_value_new_null());
-  fl_method_channel_invoke_method(self->channel, "echoAllNullableTypes", args,
-                                  cancellable, callback, user_data);
+  g_autofree gchar* channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi."
+      "echoAllNullableTypes%s",
+      self->suffix);
+  g_autoptr(CoreTestsPigeonTestMessageCodec) codec =
+      core_tests_pigeon_test_message_codec_new();
+  FlBasicMessageChannel* channel = fl_basic_message_channel_new(
+      self->messenger, channel_name, FL_MESSAGE_CODEC(codec));
+  GTask* task = g_task_new(self, cancellable, callback, user_data);
+  g_task_set_task_data(task, channel, g_object_unref);
+  fl_basic_message_channel_send(
+      channel, args, cancellable,
+      core_tests_pigeon_test_flutter_integration_core_api_echo_all_nullable_types_cb,
+      task);
 }
 
 gboolean
 core_tests_pigeon_test_flutter_integration_core_api_echo_all_nullable_types_finish(
     CoreTestsPigeonTestFlutterIntegrationCoreApi* self, GAsyncResult* result,
     CoreTestsPigeonTestAllNullableTypes** return_value, GError** error) {
-  g_autoptr(FlMethodResponse) response =
-      fl_method_channel_invoke_method_finish(self->channel, result, error);
+  g_autoptr(GTask) task = G_TASK(result);
+  GAsyncResult* r = G_ASYNC_RESULT(g_task_propagate_pointer(task, nullptr));
+  FlBasicMessageChannel* channel =
+      FL_BASIC_MESSAGE_CHANNEL(g_task_get_task_data(task));
+  g_autoptr(FlValue) response =
+      fl_basic_message_channel_send_finish(channel, r, error);
   if (response == nullptr) {
     return FALSE;
   }
-
-  g_autoptr(FlValue) r = fl_method_response_get_result(response, error);
-  if (r == nullptr) {
+  if (fl_value_get_length(response) > 1) {
+    // FIXME: Set error
     return FALSE;
   }
 
-  *return_value = CORE_TESTS_PIGEON_TEST_ALL_NULLABLE_TYPES(
-      g_object_ref(CORE_TESTS_PIGEON_TEST_ALL_NULLABLE_TYPES(
-          fl_value_get_custom_value_object(r))));
+  FlValue* rv = fl_value_get_list_value(response, 0);
+  if (fl_value_get_type(rv) != FL_VALUE_TYPE_NULL) {
+    *return_value = CORE_TESTS_PIGEON_TEST_ALL_NULLABLE_TYPES(
+        g_object_ref(CORE_TESTS_PIGEON_TEST_ALL_NULLABLE_TYPES(
+            fl_value_get_custom_value_object(rv))));
+  } else {
+    *return_value = nullptr;
+  }
 
   return TRUE;
+}
+
+static void
+core_tests_pigeon_test_flutter_integration_core_api_send_multiple_nullable_types_cb(
+    GObject* object, GAsyncResult* result, gpointer user_data) {
+  GTask* task = G_TASK(user_data);
+  g_task_return_pointer(task, result, g_object_unref);
 }
 
 void core_tests_pigeon_test_flutter_integration_core_api_send_multiple_nullable_types(
@@ -13638,30 +13355,53 @@ void core_tests_pigeon_test_flutter_integration_core_api_send_multiple_nullable_
   fl_value_append_take(args, a_nullable_string != nullptr
                                  ? fl_value_new_string(a_nullable_string)
                                  : fl_value_new_null());
-  fl_method_channel_invoke_method(self->channel, "sendMultipleNullableTypes",
-                                  args, cancellable, callback, user_data);
+  g_autofree gchar* channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi."
+      "sendMultipleNullableTypes%s",
+      self->suffix);
+  g_autoptr(CoreTestsPigeonTestMessageCodec) codec =
+      core_tests_pigeon_test_message_codec_new();
+  FlBasicMessageChannel* channel = fl_basic_message_channel_new(
+      self->messenger, channel_name, FL_MESSAGE_CODEC(codec));
+  GTask* task = g_task_new(self, cancellable, callback, user_data);
+  g_task_set_task_data(task, channel, g_object_unref);
+  fl_basic_message_channel_send(
+      channel, args, cancellable,
+      core_tests_pigeon_test_flutter_integration_core_api_send_multiple_nullable_types_cb,
+      task);
 }
 
 gboolean
 core_tests_pigeon_test_flutter_integration_core_api_send_multiple_nullable_types_finish(
     CoreTestsPigeonTestFlutterIntegrationCoreApi* self, GAsyncResult* result,
     CoreTestsPigeonTestAllNullableTypes** return_value, GError** error) {
-  g_autoptr(FlMethodResponse) response =
-      fl_method_channel_invoke_method_finish(self->channel, result, error);
+  g_autoptr(GTask) task = G_TASK(result);
+  GAsyncResult* r = G_ASYNC_RESULT(g_task_propagate_pointer(task, nullptr));
+  FlBasicMessageChannel* channel =
+      FL_BASIC_MESSAGE_CHANNEL(g_task_get_task_data(task));
+  g_autoptr(FlValue) response =
+      fl_basic_message_channel_send_finish(channel, r, error);
   if (response == nullptr) {
     return FALSE;
   }
-
-  g_autoptr(FlValue) r = fl_method_response_get_result(response, error);
-  if (r == nullptr) {
+  if (fl_value_get_length(response) > 1) {
+    // FIXME: Set error
     return FALSE;
   }
 
+  FlValue* rv = fl_value_get_list_value(response, 0);
   *return_value = CORE_TESTS_PIGEON_TEST_ALL_NULLABLE_TYPES(
       g_object_ref(CORE_TESTS_PIGEON_TEST_ALL_NULLABLE_TYPES(
-          fl_value_get_custom_value_object(r))));
+          fl_value_get_custom_value_object(rv))));
 
   return TRUE;
+}
+
+static void
+core_tests_pigeon_test_flutter_integration_core_api_echo_all_nullable_types_without_recursion_cb(
+    GObject* object, GAsyncResult* result, gpointer user_data) {
+  GTask* task = G_TASK(user_data);
+  g_task_return_pointer(task, result, g_object_unref);
 }
 
 void core_tests_pigeon_test_flutter_integration_core_api_echo_all_nullable_types_without_recursion(
@@ -13674,9 +13414,20 @@ void core_tests_pigeon_test_flutter_integration_core_api_echo_all_nullable_types
       args, everything != nullptr
                 ? fl_value_new_custom_object(131, G_OBJECT(everything))
                 : fl_value_new_null());
-  fl_method_channel_invoke_method(self->channel,
-                                  "echoAllNullableTypesWithoutRecursion", args,
-                                  cancellable, callback, user_data);
+  g_autofree gchar* channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi."
+      "echoAllNullableTypesWithoutRecursion%s",
+      self->suffix);
+  g_autoptr(CoreTestsPigeonTestMessageCodec) codec =
+      core_tests_pigeon_test_message_codec_new();
+  FlBasicMessageChannel* channel = fl_basic_message_channel_new(
+      self->messenger, channel_name, FL_MESSAGE_CODEC(codec));
+  GTask* task = g_task_new(self, cancellable, callback, user_data);
+  g_task_set_task_data(task, channel, g_object_unref);
+  fl_basic_message_channel_send(
+      channel, args, cancellable,
+      core_tests_pigeon_test_flutter_integration_core_api_echo_all_nullable_types_without_recursion_cb,
+      task);
 }
 
 gboolean
@@ -13684,22 +13435,38 @@ core_tests_pigeon_test_flutter_integration_core_api_echo_all_nullable_types_with
     CoreTestsPigeonTestFlutterIntegrationCoreApi* self, GAsyncResult* result,
     CoreTestsPigeonTestAllNullableTypesWithoutRecursion** return_value,
     GError** error) {
-  g_autoptr(FlMethodResponse) response =
-      fl_method_channel_invoke_method_finish(self->channel, result, error);
+  g_autoptr(GTask) task = G_TASK(result);
+  GAsyncResult* r = G_ASYNC_RESULT(g_task_propagate_pointer(task, nullptr));
+  FlBasicMessageChannel* channel =
+      FL_BASIC_MESSAGE_CHANNEL(g_task_get_task_data(task));
+  g_autoptr(FlValue) response =
+      fl_basic_message_channel_send_finish(channel, r, error);
   if (response == nullptr) {
     return FALSE;
   }
-
-  g_autoptr(FlValue) r = fl_method_response_get_result(response, error);
-  if (r == nullptr) {
+  if (fl_value_get_length(response) > 1) {
+    // FIXME: Set error
     return FALSE;
   }
 
-  *return_value = CORE_TESTS_PIGEON_TEST_ALL_NULLABLE_TYPES_WITHOUT_RECURSION(
-      g_object_ref(CORE_TESTS_PIGEON_TEST_ALL_NULLABLE_TYPES_WITHOUT_RECURSION(
-          fl_value_get_custom_value_object(r))));
+  FlValue* rv = fl_value_get_list_value(response, 0);
+  if (fl_value_get_type(rv) != FL_VALUE_TYPE_NULL) {
+    *return_value = CORE_TESTS_PIGEON_TEST_ALL_NULLABLE_TYPES_WITHOUT_RECURSION(
+        g_object_ref(
+            CORE_TESTS_PIGEON_TEST_ALL_NULLABLE_TYPES_WITHOUT_RECURSION(
+                fl_value_get_custom_value_object(rv))));
+  } else {
+    *return_value = nullptr;
+  }
 
   return TRUE;
+}
+
+static void
+core_tests_pigeon_test_flutter_integration_core_api_send_multiple_nullable_types_without_recursion_cb(
+    GObject* object, GAsyncResult* result, gpointer user_data) {
+  GTask* task = G_TASK(user_data);
+  g_task_return_pointer(task, result, g_object_unref);
 }
 
 void core_tests_pigeon_test_flutter_integration_core_api_send_multiple_nullable_types_without_recursion(
@@ -13717,9 +13484,20 @@ void core_tests_pigeon_test_flutter_integration_core_api_send_multiple_nullable_
   fl_value_append_take(args, a_nullable_string != nullptr
                                  ? fl_value_new_string(a_nullable_string)
                                  : fl_value_new_null());
-  fl_method_channel_invoke_method(self->channel,
-                                  "sendMultipleNullableTypesWithoutRecursion",
-                                  args, cancellable, callback, user_data);
+  g_autofree gchar* channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi."
+      "sendMultipleNullableTypesWithoutRecursion%s",
+      self->suffix);
+  g_autoptr(CoreTestsPigeonTestMessageCodec) codec =
+      core_tests_pigeon_test_message_codec_new();
+  FlBasicMessageChannel* channel = fl_basic_message_channel_new(
+      self->messenger, channel_name, FL_MESSAGE_CODEC(codec));
+  GTask* task = g_task_new(self, cancellable, callback, user_data);
+  g_task_set_task_data(task, channel, g_object_unref);
+  fl_basic_message_channel_send(
+      channel, args, cancellable,
+      core_tests_pigeon_test_flutter_integration_core_api_send_multiple_nullable_types_without_recursion_cb,
+      task);
 }
 
 gboolean
@@ -13727,22 +13505,32 @@ core_tests_pigeon_test_flutter_integration_core_api_send_multiple_nullable_types
     CoreTestsPigeonTestFlutterIntegrationCoreApi* self, GAsyncResult* result,
     CoreTestsPigeonTestAllNullableTypesWithoutRecursion** return_value,
     GError** error) {
-  g_autoptr(FlMethodResponse) response =
-      fl_method_channel_invoke_method_finish(self->channel, result, error);
+  g_autoptr(GTask) task = G_TASK(result);
+  GAsyncResult* r = G_ASYNC_RESULT(g_task_propagate_pointer(task, nullptr));
+  FlBasicMessageChannel* channel =
+      FL_BASIC_MESSAGE_CHANNEL(g_task_get_task_data(task));
+  g_autoptr(FlValue) response =
+      fl_basic_message_channel_send_finish(channel, r, error);
   if (response == nullptr) {
     return FALSE;
   }
-
-  g_autoptr(FlValue) r = fl_method_response_get_result(response, error);
-  if (r == nullptr) {
+  if (fl_value_get_length(response) > 1) {
+    // FIXME: Set error
     return FALSE;
   }
 
+  FlValue* rv = fl_value_get_list_value(response, 0);
   *return_value = CORE_TESTS_PIGEON_TEST_ALL_NULLABLE_TYPES_WITHOUT_RECURSION(
       g_object_ref(CORE_TESTS_PIGEON_TEST_ALL_NULLABLE_TYPES_WITHOUT_RECURSION(
-          fl_value_get_custom_value_object(r))));
+          fl_value_get_custom_value_object(rv))));
 
   return TRUE;
+}
+
+static void core_tests_pigeon_test_flutter_integration_core_api_echo_bool_cb(
+    GObject* object, GAsyncResult* result, gpointer user_data) {
+  GTask* task = G_TASK(user_data);
+  g_task_return_pointer(task, result, g_object_unref);
 }
 
 void core_tests_pigeon_test_flutter_integration_core_api_echo_bool(
@@ -13751,27 +13539,48 @@ void core_tests_pigeon_test_flutter_integration_core_api_echo_bool(
     gpointer user_data) {
   g_autoptr(FlValue) args = fl_value_new_list();
   fl_value_append_take(args, fl_value_new_bool(a_bool));
-  fl_method_channel_invoke_method(self->channel, "echoBool", args, cancellable,
-                                  callback, user_data);
+  g_autofree gchar* channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi."
+      "echoBool%s",
+      self->suffix);
+  g_autoptr(CoreTestsPigeonTestMessageCodec) codec =
+      core_tests_pigeon_test_message_codec_new();
+  FlBasicMessageChannel* channel = fl_basic_message_channel_new(
+      self->messenger, channel_name, FL_MESSAGE_CODEC(codec));
+  GTask* task = g_task_new(self, cancellable, callback, user_data);
+  g_task_set_task_data(task, channel, g_object_unref);
+  fl_basic_message_channel_send(
+      channel, args, cancellable,
+      core_tests_pigeon_test_flutter_integration_core_api_echo_bool_cb, task);
 }
 
 gboolean core_tests_pigeon_test_flutter_integration_core_api_echo_bool_finish(
     CoreTestsPigeonTestFlutterIntegrationCoreApi* self, GAsyncResult* result,
     gboolean* return_value, GError** error) {
-  g_autoptr(FlMethodResponse) response =
-      fl_method_channel_invoke_method_finish(self->channel, result, error);
+  g_autoptr(GTask) task = G_TASK(result);
+  GAsyncResult* r = G_ASYNC_RESULT(g_task_propagate_pointer(task, nullptr));
+  FlBasicMessageChannel* channel =
+      FL_BASIC_MESSAGE_CHANNEL(g_task_get_task_data(task));
+  g_autoptr(FlValue) response =
+      fl_basic_message_channel_send_finish(channel, r, error);
   if (response == nullptr) {
     return FALSE;
   }
-
-  g_autoptr(FlValue) r = fl_method_response_get_result(response, error);
-  if (r == nullptr) {
+  if (fl_value_get_length(response) > 1) {
+    // FIXME: Set error
     return FALSE;
   }
 
-  *return_value = fl_value_get_bool(r);
+  FlValue* rv = fl_value_get_list_value(response, 0);
+  *return_value = fl_value_get_bool(rv);
 
   return TRUE;
+}
+
+static void core_tests_pigeon_test_flutter_integration_core_api_echo_int_cb(
+    GObject* object, GAsyncResult* result, gpointer user_data) {
+  GTask* task = G_TASK(user_data);
+  g_task_return_pointer(task, result, g_object_unref);
 }
 
 void core_tests_pigeon_test_flutter_integration_core_api_echo_int(
@@ -13780,27 +13589,48 @@ void core_tests_pigeon_test_flutter_integration_core_api_echo_int(
     gpointer user_data) {
   g_autoptr(FlValue) args = fl_value_new_list();
   fl_value_append_take(args, fl_value_new_int(an_int));
-  fl_method_channel_invoke_method(self->channel, "echoInt", args, cancellable,
-                                  callback, user_data);
+  g_autofree gchar* channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi."
+      "echoInt%s",
+      self->suffix);
+  g_autoptr(CoreTestsPigeonTestMessageCodec) codec =
+      core_tests_pigeon_test_message_codec_new();
+  FlBasicMessageChannel* channel = fl_basic_message_channel_new(
+      self->messenger, channel_name, FL_MESSAGE_CODEC(codec));
+  GTask* task = g_task_new(self, cancellable, callback, user_data);
+  g_task_set_task_data(task, channel, g_object_unref);
+  fl_basic_message_channel_send(
+      channel, args, cancellable,
+      core_tests_pigeon_test_flutter_integration_core_api_echo_int_cb, task);
 }
 
 gboolean core_tests_pigeon_test_flutter_integration_core_api_echo_int_finish(
     CoreTestsPigeonTestFlutterIntegrationCoreApi* self, GAsyncResult* result,
     int64_t* return_value, GError** error) {
-  g_autoptr(FlMethodResponse) response =
-      fl_method_channel_invoke_method_finish(self->channel, result, error);
+  g_autoptr(GTask) task = G_TASK(result);
+  GAsyncResult* r = G_ASYNC_RESULT(g_task_propagate_pointer(task, nullptr));
+  FlBasicMessageChannel* channel =
+      FL_BASIC_MESSAGE_CHANNEL(g_task_get_task_data(task));
+  g_autoptr(FlValue) response =
+      fl_basic_message_channel_send_finish(channel, r, error);
   if (response == nullptr) {
     return FALSE;
   }
-
-  g_autoptr(FlValue) r = fl_method_response_get_result(response, error);
-  if (r == nullptr) {
+  if (fl_value_get_length(response) > 1) {
+    // FIXME: Set error
     return FALSE;
   }
 
-  *return_value = fl_value_get_int(r);
+  FlValue* rv = fl_value_get_list_value(response, 0);
+  *return_value = fl_value_get_int(rv);
 
   return TRUE;
+}
+
+static void core_tests_pigeon_test_flutter_integration_core_api_echo_double_cb(
+    GObject* object, GAsyncResult* result, gpointer user_data) {
+  GTask* task = G_TASK(user_data);
+  g_task_return_pointer(task, result, g_object_unref);
 }
 
 void core_tests_pigeon_test_flutter_integration_core_api_echo_double(
@@ -13809,27 +13639,48 @@ void core_tests_pigeon_test_flutter_integration_core_api_echo_double(
     gpointer user_data) {
   g_autoptr(FlValue) args = fl_value_new_list();
   fl_value_append_take(args, fl_value_new_float(a_double));
-  fl_method_channel_invoke_method(self->channel, "echoDouble", args,
-                                  cancellable, callback, user_data);
+  g_autofree gchar* channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi."
+      "echoDouble%s",
+      self->suffix);
+  g_autoptr(CoreTestsPigeonTestMessageCodec) codec =
+      core_tests_pigeon_test_message_codec_new();
+  FlBasicMessageChannel* channel = fl_basic_message_channel_new(
+      self->messenger, channel_name, FL_MESSAGE_CODEC(codec));
+  GTask* task = g_task_new(self, cancellable, callback, user_data);
+  g_task_set_task_data(task, channel, g_object_unref);
+  fl_basic_message_channel_send(
+      channel, args, cancellable,
+      core_tests_pigeon_test_flutter_integration_core_api_echo_double_cb, task);
 }
 
 gboolean core_tests_pigeon_test_flutter_integration_core_api_echo_double_finish(
     CoreTestsPigeonTestFlutterIntegrationCoreApi* self, GAsyncResult* result,
     double* return_value, GError** error) {
-  g_autoptr(FlMethodResponse) response =
-      fl_method_channel_invoke_method_finish(self->channel, result, error);
+  g_autoptr(GTask) task = G_TASK(result);
+  GAsyncResult* r = G_ASYNC_RESULT(g_task_propagate_pointer(task, nullptr));
+  FlBasicMessageChannel* channel =
+      FL_BASIC_MESSAGE_CHANNEL(g_task_get_task_data(task));
+  g_autoptr(FlValue) response =
+      fl_basic_message_channel_send_finish(channel, r, error);
   if (response == nullptr) {
     return FALSE;
   }
-
-  g_autoptr(FlValue) r = fl_method_response_get_result(response, error);
-  if (r == nullptr) {
+  if (fl_value_get_length(response) > 1) {
+    // FIXME: Set error
     return FALSE;
   }
 
-  *return_value = fl_value_get_float(r);
+  FlValue* rv = fl_value_get_list_value(response, 0);
+  *return_value = fl_value_get_float(rv);
 
   return TRUE;
+}
+
+static void core_tests_pigeon_test_flutter_integration_core_api_echo_string_cb(
+    GObject* object, GAsyncResult* result, gpointer user_data) {
+  GTask* task = G_TASK(user_data);
+  g_task_return_pointer(task, result, g_object_unref);
 }
 
 void core_tests_pigeon_test_flutter_integration_core_api_echo_string(
@@ -13838,27 +13689,49 @@ void core_tests_pigeon_test_flutter_integration_core_api_echo_string(
     gpointer user_data) {
   g_autoptr(FlValue) args = fl_value_new_list();
   fl_value_append_take(args, fl_value_new_string(a_string));
-  fl_method_channel_invoke_method(self->channel, "echoString", args,
-                                  cancellable, callback, user_data);
+  g_autofree gchar* channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi."
+      "echoString%s",
+      self->suffix);
+  g_autoptr(CoreTestsPigeonTestMessageCodec) codec =
+      core_tests_pigeon_test_message_codec_new();
+  FlBasicMessageChannel* channel = fl_basic_message_channel_new(
+      self->messenger, channel_name, FL_MESSAGE_CODEC(codec));
+  GTask* task = g_task_new(self, cancellable, callback, user_data);
+  g_task_set_task_data(task, channel, g_object_unref);
+  fl_basic_message_channel_send(
+      channel, args, cancellable,
+      core_tests_pigeon_test_flutter_integration_core_api_echo_string_cb, task);
 }
 
 gboolean core_tests_pigeon_test_flutter_integration_core_api_echo_string_finish(
     CoreTestsPigeonTestFlutterIntegrationCoreApi* self, GAsyncResult* result,
     gchar** return_value, GError** error) {
-  g_autoptr(FlMethodResponse) response =
-      fl_method_channel_invoke_method_finish(self->channel, result, error);
+  g_autoptr(GTask) task = G_TASK(result);
+  GAsyncResult* r = G_ASYNC_RESULT(g_task_propagate_pointer(task, nullptr));
+  FlBasicMessageChannel* channel =
+      FL_BASIC_MESSAGE_CHANNEL(g_task_get_task_data(task));
+  g_autoptr(FlValue) response =
+      fl_basic_message_channel_send_finish(channel, r, error);
   if (response == nullptr) {
     return FALSE;
   }
-
-  g_autoptr(FlValue) r = fl_method_response_get_result(response, error);
-  if (r == nullptr) {
+  if (fl_value_get_length(response) > 1) {
+    // FIXME: Set error
     return FALSE;
   }
 
-  *return_value = g_strdup(fl_value_get_string(r));
+  FlValue* rv = fl_value_get_list_value(response, 0);
+  *return_value = g_strdup(fl_value_get_string(rv));
 
   return TRUE;
+}
+
+static void
+core_tests_pigeon_test_flutter_integration_core_api_echo_uint8_list_cb(
+    GObject* object, GAsyncResult* result, gpointer user_data) {
+  GTask* task = G_TASK(user_data);
+  g_task_return_pointer(task, result, g_object_unref);
 }
 
 void core_tests_pigeon_test_flutter_integration_core_api_echo_uint8_list(
@@ -13867,31 +13740,53 @@ void core_tests_pigeon_test_flutter_integration_core_api_echo_uint8_list(
     gpointer user_data) {
   g_autoptr(FlValue) args = fl_value_new_list();
   fl_value_append_take(args, fl_value_new_uint8_list(list, list_length));
-  fl_method_channel_invoke_method(self->channel, "echoUint8List", args,
-                                  cancellable, callback, user_data);
+  g_autofree gchar* channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi."
+      "echoUint8List%s",
+      self->suffix);
+  g_autoptr(CoreTestsPigeonTestMessageCodec) codec =
+      core_tests_pigeon_test_message_codec_new();
+  FlBasicMessageChannel* channel = fl_basic_message_channel_new(
+      self->messenger, channel_name, FL_MESSAGE_CODEC(codec));
+  GTask* task = g_task_new(self, cancellable, callback, user_data);
+  g_task_set_task_data(task, channel, g_object_unref);
+  fl_basic_message_channel_send(
+      channel, args, cancellable,
+      core_tests_pigeon_test_flutter_integration_core_api_echo_uint8_list_cb,
+      task);
 }
 
 gboolean
 core_tests_pigeon_test_flutter_integration_core_api_echo_uint8_list_finish(
     CoreTestsPigeonTestFlutterIntegrationCoreApi* self, GAsyncResult* result,
     uint8_t** return_value, size_t* return_value_length, GError** error) {
-  g_autoptr(FlMethodResponse) response =
-      fl_method_channel_invoke_method_finish(self->channel, result, error);
+  g_autoptr(GTask) task = G_TASK(result);
+  GAsyncResult* r = G_ASYNC_RESULT(g_task_propagate_pointer(task, nullptr));
+  FlBasicMessageChannel* channel =
+      FL_BASIC_MESSAGE_CHANNEL(g_task_get_task_data(task));
+  g_autoptr(FlValue) response =
+      fl_basic_message_channel_send_finish(channel, r, error);
   if (response == nullptr) {
     return FALSE;
   }
-
-  g_autoptr(FlValue) r = fl_method_response_get_result(response, error);
-  if (r == nullptr) {
+  if (fl_value_get_length(response) > 1) {
+    // FIXME: Set error
     return FALSE;
   }
 
-  *return_value = static_cast<uint8_t*>(memcpy(malloc(fl_value_get_length(r)),
-                                               fl_value_get_uint8_list(r),
-                                               fl_value_get_length(r)));
-  *return_value_length = fl_value_get_length(r);
+  FlValue* rv = fl_value_get_list_value(response, 0);
+  *return_value = static_cast<uint8_t*>(memcpy(malloc(fl_value_get_length(rv)),
+                                               fl_value_get_uint8_list(rv),
+                                               fl_value_get_length(rv)));
+  *return_value_length = fl_value_get_length(rv);
 
   return TRUE;
+}
+
+static void core_tests_pigeon_test_flutter_integration_core_api_echo_list_cb(
+    GObject* object, GAsyncResult* result, gpointer user_data) {
+  GTask* task = G_TASK(user_data);
+  g_task_return_pointer(task, result, g_object_unref);
 }
 
 void core_tests_pigeon_test_flutter_integration_core_api_echo_list(
@@ -13900,27 +13795,48 @@ void core_tests_pigeon_test_flutter_integration_core_api_echo_list(
     gpointer user_data) {
   g_autoptr(FlValue) args = fl_value_new_list();
   fl_value_append_take(args, fl_value_ref(list));
-  fl_method_channel_invoke_method(self->channel, "echoList", args, cancellable,
-                                  callback, user_data);
+  g_autofree gchar* channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi."
+      "echoList%s",
+      self->suffix);
+  g_autoptr(CoreTestsPigeonTestMessageCodec) codec =
+      core_tests_pigeon_test_message_codec_new();
+  FlBasicMessageChannel* channel = fl_basic_message_channel_new(
+      self->messenger, channel_name, FL_MESSAGE_CODEC(codec));
+  GTask* task = g_task_new(self, cancellable, callback, user_data);
+  g_task_set_task_data(task, channel, g_object_unref);
+  fl_basic_message_channel_send(
+      channel, args, cancellable,
+      core_tests_pigeon_test_flutter_integration_core_api_echo_list_cb, task);
 }
 
 gboolean core_tests_pigeon_test_flutter_integration_core_api_echo_list_finish(
     CoreTestsPigeonTestFlutterIntegrationCoreApi* self, GAsyncResult* result,
     FlValue** return_value, GError** error) {
-  g_autoptr(FlMethodResponse) response =
-      fl_method_channel_invoke_method_finish(self->channel, result, error);
+  g_autoptr(GTask) task = G_TASK(result);
+  GAsyncResult* r = G_ASYNC_RESULT(g_task_propagate_pointer(task, nullptr));
+  FlBasicMessageChannel* channel =
+      FL_BASIC_MESSAGE_CHANNEL(g_task_get_task_data(task));
+  g_autoptr(FlValue) response =
+      fl_basic_message_channel_send_finish(channel, r, error);
   if (response == nullptr) {
     return FALSE;
   }
-
-  g_autoptr(FlValue) r = fl_method_response_get_result(response, error);
-  if (r == nullptr) {
+  if (fl_value_get_length(response) > 1) {
+    // FIXME: Set error
     return FALSE;
   }
 
-  *return_value = fl_value_ref(r);
+  FlValue* rv = fl_value_get_list_value(response, 0);
+  *return_value = fl_value_ref(rv);
 
   return TRUE;
+}
+
+static void core_tests_pigeon_test_flutter_integration_core_api_echo_map_cb(
+    GObject* object, GAsyncResult* result, gpointer user_data) {
+  GTask* task = G_TASK(user_data);
+  g_task_return_pointer(task, result, g_object_unref);
 }
 
 void core_tests_pigeon_test_flutter_integration_core_api_echo_map(
@@ -13929,27 +13845,48 @@ void core_tests_pigeon_test_flutter_integration_core_api_echo_map(
     gpointer user_data) {
   g_autoptr(FlValue) args = fl_value_new_list();
   fl_value_append_take(args, fl_value_ref(a_map));
-  fl_method_channel_invoke_method(self->channel, "echoMap", args, cancellable,
-                                  callback, user_data);
+  g_autofree gchar* channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi."
+      "echoMap%s",
+      self->suffix);
+  g_autoptr(CoreTestsPigeonTestMessageCodec) codec =
+      core_tests_pigeon_test_message_codec_new();
+  FlBasicMessageChannel* channel = fl_basic_message_channel_new(
+      self->messenger, channel_name, FL_MESSAGE_CODEC(codec));
+  GTask* task = g_task_new(self, cancellable, callback, user_data);
+  g_task_set_task_data(task, channel, g_object_unref);
+  fl_basic_message_channel_send(
+      channel, args, cancellable,
+      core_tests_pigeon_test_flutter_integration_core_api_echo_map_cb, task);
 }
 
 gboolean core_tests_pigeon_test_flutter_integration_core_api_echo_map_finish(
     CoreTestsPigeonTestFlutterIntegrationCoreApi* self, GAsyncResult* result,
     FlValue** return_value, GError** error) {
-  g_autoptr(FlMethodResponse) response =
-      fl_method_channel_invoke_method_finish(self->channel, result, error);
+  g_autoptr(GTask) task = G_TASK(result);
+  GAsyncResult* r = G_ASYNC_RESULT(g_task_propagate_pointer(task, nullptr));
+  FlBasicMessageChannel* channel =
+      FL_BASIC_MESSAGE_CHANNEL(g_task_get_task_data(task));
+  g_autoptr(FlValue) response =
+      fl_basic_message_channel_send_finish(channel, r, error);
   if (response == nullptr) {
     return FALSE;
   }
-
-  g_autoptr(FlValue) r = fl_method_response_get_result(response, error);
-  if (r == nullptr) {
+  if (fl_value_get_length(response) > 1) {
+    // FIXME: Set error
     return FALSE;
   }
 
-  *return_value = fl_value_ref(r);
+  FlValue* rv = fl_value_get_list_value(response, 0);
+  *return_value = fl_value_ref(rv);
 
   return TRUE;
+}
+
+static void core_tests_pigeon_test_flutter_integration_core_api_echo_enum_cb(
+    GObject* object, GAsyncResult* result, gpointer user_data) {
+  GTask* task = G_TASK(user_data);
+  g_task_return_pointer(task, result, g_object_unref);
 }
 
 void core_tests_pigeon_test_flutter_integration_core_api_echo_enum(
@@ -13960,29 +13897,51 @@ void core_tests_pigeon_test_flutter_integration_core_api_echo_enum(
   fl_value_append_take(args,
                        fl_value_new_custom(134, fl_value_new_int(an_enum),
                                            (GDestroyNotify)fl_value_unref));
-  fl_method_channel_invoke_method(self->channel, "echoEnum", args, cancellable,
-                                  callback, user_data);
+  g_autofree gchar* channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi."
+      "echoEnum%s",
+      self->suffix);
+  g_autoptr(CoreTestsPigeonTestMessageCodec) codec =
+      core_tests_pigeon_test_message_codec_new();
+  FlBasicMessageChannel* channel = fl_basic_message_channel_new(
+      self->messenger, channel_name, FL_MESSAGE_CODEC(codec));
+  GTask* task = g_task_new(self, cancellable, callback, user_data);
+  g_task_set_task_data(task, channel, g_object_unref);
+  fl_basic_message_channel_send(
+      channel, args, cancellable,
+      core_tests_pigeon_test_flutter_integration_core_api_echo_enum_cb, task);
 }
 
 gboolean core_tests_pigeon_test_flutter_integration_core_api_echo_enum_finish(
     CoreTestsPigeonTestFlutterIntegrationCoreApi* self, GAsyncResult* result,
     CoreTestsPigeonTestAnEnum* return_value, GError** error) {
-  g_autoptr(FlMethodResponse) response =
-      fl_method_channel_invoke_method_finish(self->channel, result, error);
+  g_autoptr(GTask) task = G_TASK(result);
+  GAsyncResult* r = G_ASYNC_RESULT(g_task_propagate_pointer(task, nullptr));
+  FlBasicMessageChannel* channel =
+      FL_BASIC_MESSAGE_CHANNEL(g_task_get_task_data(task));
+  g_autoptr(FlValue) response =
+      fl_basic_message_channel_send_finish(channel, r, error);
   if (response == nullptr) {
     return FALSE;
   }
-
-  g_autoptr(FlValue) r = fl_method_response_get_result(response, error);
-  if (r == nullptr) {
+  if (fl_value_get_length(response) > 1) {
+    // FIXME: Set error
     return FALSE;
   }
 
+  FlValue* rv = fl_value_get_list_value(response, 0);
   *return_value = static_cast<CoreTestsPigeonTestAnEnum>(
       fl_value_get_int(reinterpret_cast<FlValue*>(
-          const_cast<gpointer>(fl_value_get_custom_value(r)))));
+          const_cast<gpointer>(fl_value_get_custom_value(rv)))));
 
   return TRUE;
+}
+
+static void
+core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_bool_cb(
+    GObject* object, GAsyncResult* result, gpointer user_data) {
+  GTask* task = G_TASK(user_data);
+  g_task_return_pointer(task, result, g_object_unref);
 }
 
 void core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_bool(
@@ -13992,33 +13951,56 @@ void core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_bool(
   g_autoptr(FlValue) args = fl_value_new_list();
   fl_value_append_take(args, a_bool != nullptr ? fl_value_new_bool(*a_bool)
                                                : fl_value_new_null());
-  fl_method_channel_invoke_method(self->channel, "echoNullableBool", args,
-                                  cancellable, callback, user_data);
+  g_autofree gchar* channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi."
+      "echoNullableBool%s",
+      self->suffix);
+  g_autoptr(CoreTestsPigeonTestMessageCodec) codec =
+      core_tests_pigeon_test_message_codec_new();
+  FlBasicMessageChannel* channel = fl_basic_message_channel_new(
+      self->messenger, channel_name, FL_MESSAGE_CODEC(codec));
+  GTask* task = g_task_new(self, cancellable, callback, user_data);
+  g_task_set_task_data(task, channel, g_object_unref);
+  fl_basic_message_channel_send(
+      channel, args, cancellable,
+      core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_bool_cb,
+      task);
 }
 
 gboolean
 core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_bool_finish(
     CoreTestsPigeonTestFlutterIntegrationCoreApi* self, GAsyncResult* result,
     gboolean** return_value, GError** error) {
-  g_autoptr(FlMethodResponse) response =
-      fl_method_channel_invoke_method_finish(self->channel, result, error);
+  g_autoptr(GTask) task = G_TASK(result);
+  GAsyncResult* r = G_ASYNC_RESULT(g_task_propagate_pointer(task, nullptr));
+  FlBasicMessageChannel* channel =
+      FL_BASIC_MESSAGE_CHANNEL(g_task_get_task_data(task));
+  g_autoptr(FlValue) response =
+      fl_basic_message_channel_send_finish(channel, r, error);
   if (response == nullptr) {
     return FALSE;
   }
-
-  g_autoptr(FlValue) r = fl_method_response_get_result(response, error);
-  if (r == nullptr) {
+  if (fl_value_get_length(response) > 1) {
+    // FIXME: Set error
     return FALSE;
   }
 
-  if (fl_value_get_type(r) != FL_VALUE_TYPE_NULL) {
+  FlValue* rv = fl_value_get_list_value(response, 0);
+  if (fl_value_get_type(rv) != FL_VALUE_TYPE_NULL) {
     *return_value = static_cast<gboolean*>(malloc(sizeof(gboolean)));
-    **return_value = fl_value_get_bool(r);
+    **return_value = fl_value_get_bool(rv);
   } else {
     *return_value = nullptr;
   }
 
   return TRUE;
+}
+
+static void
+core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_int_cb(
+    GObject* object, GAsyncResult* result, gpointer user_data) {
+  GTask* task = G_TASK(user_data);
+  g_task_return_pointer(task, result, g_object_unref);
 }
 
 void core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_int(
@@ -14028,33 +14010,56 @@ void core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_int(
   g_autoptr(FlValue) args = fl_value_new_list();
   fl_value_append_take(args, an_int != nullptr ? fl_value_new_int(*an_int)
                                                : fl_value_new_null());
-  fl_method_channel_invoke_method(self->channel, "echoNullableInt", args,
-                                  cancellable, callback, user_data);
+  g_autofree gchar* channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi."
+      "echoNullableInt%s",
+      self->suffix);
+  g_autoptr(CoreTestsPigeonTestMessageCodec) codec =
+      core_tests_pigeon_test_message_codec_new();
+  FlBasicMessageChannel* channel = fl_basic_message_channel_new(
+      self->messenger, channel_name, FL_MESSAGE_CODEC(codec));
+  GTask* task = g_task_new(self, cancellable, callback, user_data);
+  g_task_set_task_data(task, channel, g_object_unref);
+  fl_basic_message_channel_send(
+      channel, args, cancellable,
+      core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_int_cb,
+      task);
 }
 
 gboolean
 core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_int_finish(
     CoreTestsPigeonTestFlutterIntegrationCoreApi* self, GAsyncResult* result,
     int64_t** return_value, GError** error) {
-  g_autoptr(FlMethodResponse) response =
-      fl_method_channel_invoke_method_finish(self->channel, result, error);
+  g_autoptr(GTask) task = G_TASK(result);
+  GAsyncResult* r = G_ASYNC_RESULT(g_task_propagate_pointer(task, nullptr));
+  FlBasicMessageChannel* channel =
+      FL_BASIC_MESSAGE_CHANNEL(g_task_get_task_data(task));
+  g_autoptr(FlValue) response =
+      fl_basic_message_channel_send_finish(channel, r, error);
   if (response == nullptr) {
     return FALSE;
   }
-
-  g_autoptr(FlValue) r = fl_method_response_get_result(response, error);
-  if (r == nullptr) {
+  if (fl_value_get_length(response) > 1) {
+    // FIXME: Set error
     return FALSE;
   }
 
-  if (fl_value_get_type(r) != FL_VALUE_TYPE_NULL) {
+  FlValue* rv = fl_value_get_list_value(response, 0);
+  if (fl_value_get_type(rv) != FL_VALUE_TYPE_NULL) {
     *return_value = static_cast<int64_t*>(malloc(sizeof(int64_t)));
-    **return_value = fl_value_get_int(r);
+    **return_value = fl_value_get_int(rv);
   } else {
     *return_value = nullptr;
   }
 
   return TRUE;
+}
+
+static void
+core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_double_cb(
+    GObject* object, GAsyncResult* result, gpointer user_data) {
+  GTask* task = G_TASK(user_data);
+  g_task_return_pointer(task, result, g_object_unref);
 }
 
 void core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_double(
@@ -14064,33 +14069,56 @@ void core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_double(
   g_autoptr(FlValue) args = fl_value_new_list();
   fl_value_append_take(args, a_double != nullptr ? fl_value_new_float(*a_double)
                                                  : fl_value_new_null());
-  fl_method_channel_invoke_method(self->channel, "echoNullableDouble", args,
-                                  cancellable, callback, user_data);
+  g_autofree gchar* channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi."
+      "echoNullableDouble%s",
+      self->suffix);
+  g_autoptr(CoreTestsPigeonTestMessageCodec) codec =
+      core_tests_pigeon_test_message_codec_new();
+  FlBasicMessageChannel* channel = fl_basic_message_channel_new(
+      self->messenger, channel_name, FL_MESSAGE_CODEC(codec));
+  GTask* task = g_task_new(self, cancellable, callback, user_data);
+  g_task_set_task_data(task, channel, g_object_unref);
+  fl_basic_message_channel_send(
+      channel, args, cancellable,
+      core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_double_cb,
+      task);
 }
 
 gboolean
 core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_double_finish(
     CoreTestsPigeonTestFlutterIntegrationCoreApi* self, GAsyncResult* result,
     double** return_value, GError** error) {
-  g_autoptr(FlMethodResponse) response =
-      fl_method_channel_invoke_method_finish(self->channel, result, error);
+  g_autoptr(GTask) task = G_TASK(result);
+  GAsyncResult* r = G_ASYNC_RESULT(g_task_propagate_pointer(task, nullptr));
+  FlBasicMessageChannel* channel =
+      FL_BASIC_MESSAGE_CHANNEL(g_task_get_task_data(task));
+  g_autoptr(FlValue) response =
+      fl_basic_message_channel_send_finish(channel, r, error);
   if (response == nullptr) {
     return FALSE;
   }
-
-  g_autoptr(FlValue) r = fl_method_response_get_result(response, error);
-  if (r == nullptr) {
+  if (fl_value_get_length(response) > 1) {
+    // FIXME: Set error
     return FALSE;
   }
 
-  if (fl_value_get_type(r) != FL_VALUE_TYPE_NULL) {
+  FlValue* rv = fl_value_get_list_value(response, 0);
+  if (fl_value_get_type(rv) != FL_VALUE_TYPE_NULL) {
     *return_value = static_cast<double*>(malloc(sizeof(double)));
-    **return_value = fl_value_get_float(r);
+    **return_value = fl_value_get_float(rv);
   } else {
     *return_value = nullptr;
   }
 
   return TRUE;
+}
+
+static void
+core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_string_cb(
+    GObject* object, GAsyncResult* result, gpointer user_data) {
+  GTask* task = G_TASK(user_data);
+  g_task_return_pointer(task, result, g_object_unref);
 }
 
 void core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_string(
@@ -14100,28 +14128,55 @@ void core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_string(
   g_autoptr(FlValue) args = fl_value_new_list();
   fl_value_append_take(args, a_string != nullptr ? fl_value_new_string(a_string)
                                                  : fl_value_new_null());
-  fl_method_channel_invoke_method(self->channel, "echoNullableString", args,
-                                  cancellable, callback, user_data);
+  g_autofree gchar* channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi."
+      "echoNullableString%s",
+      self->suffix);
+  g_autoptr(CoreTestsPigeonTestMessageCodec) codec =
+      core_tests_pigeon_test_message_codec_new();
+  FlBasicMessageChannel* channel = fl_basic_message_channel_new(
+      self->messenger, channel_name, FL_MESSAGE_CODEC(codec));
+  GTask* task = g_task_new(self, cancellable, callback, user_data);
+  g_task_set_task_data(task, channel, g_object_unref);
+  fl_basic_message_channel_send(
+      channel, args, cancellable,
+      core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_string_cb,
+      task);
 }
 
 gboolean
 core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_string_finish(
     CoreTestsPigeonTestFlutterIntegrationCoreApi* self, GAsyncResult* result,
     gchar** return_value, GError** error) {
-  g_autoptr(FlMethodResponse) response =
-      fl_method_channel_invoke_method_finish(self->channel, result, error);
+  g_autoptr(GTask) task = G_TASK(result);
+  GAsyncResult* r = G_ASYNC_RESULT(g_task_propagate_pointer(task, nullptr));
+  FlBasicMessageChannel* channel =
+      FL_BASIC_MESSAGE_CHANNEL(g_task_get_task_data(task));
+  g_autoptr(FlValue) response =
+      fl_basic_message_channel_send_finish(channel, r, error);
   if (response == nullptr) {
     return FALSE;
   }
-
-  g_autoptr(FlValue) r = fl_method_response_get_result(response, error);
-  if (r == nullptr) {
+  if (fl_value_get_length(response) > 1) {
+    // FIXME: Set error
     return FALSE;
   }
 
-  *return_value = g_strdup(fl_value_get_string(r));
+  FlValue* rv = fl_value_get_list_value(response, 0);
+  if (fl_value_get_type(rv) != FL_VALUE_TYPE_NULL) {
+    *return_value = g_strdup(fl_value_get_string(rv));
+  } else {
+    *return_value = nullptr;
+  }
 
   return TRUE;
+}
+
+static void
+core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_uint8_list_cb(
+    GObject* object, GAsyncResult* result, gpointer user_data) {
+  GTask* task = G_TASK(user_data);
+  g_task_return_pointer(task, result, g_object_unref);
 }
 
 void core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_uint8_list(
@@ -14132,31 +14187,59 @@ void core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_uint8_lis
   fl_value_append_take(args, list != nullptr
                                  ? fl_value_new_uint8_list(list, list_length)
                                  : fl_value_new_null());
-  fl_method_channel_invoke_method(self->channel, "echoNullableUint8List", args,
-                                  cancellable, callback, user_data);
+  g_autofree gchar* channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi."
+      "echoNullableUint8List%s",
+      self->suffix);
+  g_autoptr(CoreTestsPigeonTestMessageCodec) codec =
+      core_tests_pigeon_test_message_codec_new();
+  FlBasicMessageChannel* channel = fl_basic_message_channel_new(
+      self->messenger, channel_name, FL_MESSAGE_CODEC(codec));
+  GTask* task = g_task_new(self, cancellable, callback, user_data);
+  g_task_set_task_data(task, channel, g_object_unref);
+  fl_basic_message_channel_send(
+      channel, args, cancellable,
+      core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_uint8_list_cb,
+      task);
 }
 
 gboolean
 core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_uint8_list_finish(
     CoreTestsPigeonTestFlutterIntegrationCoreApi* self, GAsyncResult* result,
     uint8_t** return_value, size_t* return_value_length, GError** error) {
-  g_autoptr(FlMethodResponse) response =
-      fl_method_channel_invoke_method_finish(self->channel, result, error);
+  g_autoptr(GTask) task = G_TASK(result);
+  GAsyncResult* r = G_ASYNC_RESULT(g_task_propagate_pointer(task, nullptr));
+  FlBasicMessageChannel* channel =
+      FL_BASIC_MESSAGE_CHANNEL(g_task_get_task_data(task));
+  g_autoptr(FlValue) response =
+      fl_basic_message_channel_send_finish(channel, r, error);
   if (response == nullptr) {
     return FALSE;
   }
-
-  g_autoptr(FlValue) r = fl_method_response_get_result(response, error);
-  if (r == nullptr) {
+  if (fl_value_get_length(response) > 1) {
+    // FIXME: Set error
     return FALSE;
   }
 
-  *return_value = static_cast<uint8_t*>(memcpy(malloc(fl_value_get_length(r)),
-                                               fl_value_get_uint8_list(r),
-                                               fl_value_get_length(r)));
-  *return_value_length = fl_value_get_length(r);
+  FlValue* rv = fl_value_get_list_value(response, 0);
+  if (fl_value_get_type(rv) != FL_VALUE_TYPE_NULL) {
+    *return_value = static_cast<uint8_t*>(
+        memcpy(malloc(fl_value_get_length(rv)), fl_value_get_uint8_list(rv),
+               fl_value_get_length(rv)));
+    *return_value_length = fl_value_get_length(rv);
+  } else {
+    *return_value = nullptr;
+    *return_value_length = 0;
+  }
 
   return TRUE;
+}
+
+static void
+core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_list_cb(
+    GObject* object, GAsyncResult* result, gpointer user_data) {
+  GTask* task = G_TASK(user_data);
+  g_task_return_pointer(task, result, g_object_unref);
 }
 
 void core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_list(
@@ -14166,28 +14249,55 @@ void core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_list(
   g_autoptr(FlValue) args = fl_value_new_list();
   fl_value_append_take(
       args, list != nullptr ? fl_value_ref(list) : fl_value_new_null());
-  fl_method_channel_invoke_method(self->channel, "echoNullableList", args,
-                                  cancellable, callback, user_data);
+  g_autofree gchar* channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi."
+      "echoNullableList%s",
+      self->suffix);
+  g_autoptr(CoreTestsPigeonTestMessageCodec) codec =
+      core_tests_pigeon_test_message_codec_new();
+  FlBasicMessageChannel* channel = fl_basic_message_channel_new(
+      self->messenger, channel_name, FL_MESSAGE_CODEC(codec));
+  GTask* task = g_task_new(self, cancellable, callback, user_data);
+  g_task_set_task_data(task, channel, g_object_unref);
+  fl_basic_message_channel_send(
+      channel, args, cancellable,
+      core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_list_cb,
+      task);
 }
 
 gboolean
 core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_list_finish(
     CoreTestsPigeonTestFlutterIntegrationCoreApi* self, GAsyncResult* result,
     FlValue** return_value, GError** error) {
-  g_autoptr(FlMethodResponse) response =
-      fl_method_channel_invoke_method_finish(self->channel, result, error);
+  g_autoptr(GTask) task = G_TASK(result);
+  GAsyncResult* r = G_ASYNC_RESULT(g_task_propagate_pointer(task, nullptr));
+  FlBasicMessageChannel* channel =
+      FL_BASIC_MESSAGE_CHANNEL(g_task_get_task_data(task));
+  g_autoptr(FlValue) response =
+      fl_basic_message_channel_send_finish(channel, r, error);
   if (response == nullptr) {
     return FALSE;
   }
-
-  g_autoptr(FlValue) r = fl_method_response_get_result(response, error);
-  if (r == nullptr) {
+  if (fl_value_get_length(response) > 1) {
+    // FIXME: Set error
     return FALSE;
   }
 
-  *return_value = fl_value_ref(r);
+  FlValue* rv = fl_value_get_list_value(response, 0);
+  if (fl_value_get_type(rv) != FL_VALUE_TYPE_NULL) {
+    *return_value = fl_value_ref(rv);
+  } else {
+    *return_value = nullptr;
+  }
 
   return TRUE;
+}
+
+static void
+core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_map_cb(
+    GObject* object, GAsyncResult* result, gpointer user_data) {
+  GTask* task = G_TASK(user_data);
+  g_task_return_pointer(task, result, g_object_unref);
 }
 
 void core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_map(
@@ -14197,28 +14307,55 @@ void core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_map(
   g_autoptr(FlValue) args = fl_value_new_list();
   fl_value_append_take(
       args, a_map != nullptr ? fl_value_ref(a_map) : fl_value_new_null());
-  fl_method_channel_invoke_method(self->channel, "echoNullableMap", args,
-                                  cancellable, callback, user_data);
+  g_autofree gchar* channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi."
+      "echoNullableMap%s",
+      self->suffix);
+  g_autoptr(CoreTestsPigeonTestMessageCodec) codec =
+      core_tests_pigeon_test_message_codec_new();
+  FlBasicMessageChannel* channel = fl_basic_message_channel_new(
+      self->messenger, channel_name, FL_MESSAGE_CODEC(codec));
+  GTask* task = g_task_new(self, cancellable, callback, user_data);
+  g_task_set_task_data(task, channel, g_object_unref);
+  fl_basic_message_channel_send(
+      channel, args, cancellable,
+      core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_map_cb,
+      task);
 }
 
 gboolean
 core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_map_finish(
     CoreTestsPigeonTestFlutterIntegrationCoreApi* self, GAsyncResult* result,
     FlValue** return_value, GError** error) {
-  g_autoptr(FlMethodResponse) response =
-      fl_method_channel_invoke_method_finish(self->channel, result, error);
+  g_autoptr(GTask) task = G_TASK(result);
+  GAsyncResult* r = G_ASYNC_RESULT(g_task_propagate_pointer(task, nullptr));
+  FlBasicMessageChannel* channel =
+      FL_BASIC_MESSAGE_CHANNEL(g_task_get_task_data(task));
+  g_autoptr(FlValue) response =
+      fl_basic_message_channel_send_finish(channel, r, error);
   if (response == nullptr) {
     return FALSE;
   }
-
-  g_autoptr(FlValue) r = fl_method_response_get_result(response, error);
-  if (r == nullptr) {
+  if (fl_value_get_length(response) > 1) {
+    // FIXME: Set error
     return FALSE;
   }
 
-  *return_value = fl_value_ref(r);
+  FlValue* rv = fl_value_get_list_value(response, 0);
+  if (fl_value_get_type(rv) != FL_VALUE_TYPE_NULL) {
+    *return_value = fl_value_ref(rv);
+  } else {
+    *return_value = nullptr;
+  }
 
   return TRUE;
+}
+
+static void
+core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_enum_cb(
+    GObject* object, GAsyncResult* result, gpointer user_data) {
+  GTask* task = G_TASK(user_data);
+  g_task_return_pointer(task, result, g_object_unref);
 }
 
 void core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_enum(
@@ -14231,31 +14368,47 @@ void core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_enum(
                 ? fl_value_new_custom(134, fl_value_new_int(*an_enum),
                                       (GDestroyNotify)fl_value_unref)
                 : fl_value_new_null());
-  fl_method_channel_invoke_method(self->channel, "echoNullableEnum", args,
-                                  cancellable, callback, user_data);
+  g_autofree gchar* channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi."
+      "echoNullableEnum%s",
+      self->suffix);
+  g_autoptr(CoreTestsPigeonTestMessageCodec) codec =
+      core_tests_pigeon_test_message_codec_new();
+  FlBasicMessageChannel* channel = fl_basic_message_channel_new(
+      self->messenger, channel_name, FL_MESSAGE_CODEC(codec));
+  GTask* task = g_task_new(self, cancellable, callback, user_data);
+  g_task_set_task_data(task, channel, g_object_unref);
+  fl_basic_message_channel_send(
+      channel, args, cancellable,
+      core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_enum_cb,
+      task);
 }
 
 gboolean
 core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_enum_finish(
     CoreTestsPigeonTestFlutterIntegrationCoreApi* self, GAsyncResult* result,
     CoreTestsPigeonTestAnEnum** return_value, GError** error) {
-  g_autoptr(FlMethodResponse) response =
-      fl_method_channel_invoke_method_finish(self->channel, result, error);
+  g_autoptr(GTask) task = G_TASK(result);
+  GAsyncResult* r = G_ASYNC_RESULT(g_task_propagate_pointer(task, nullptr));
+  FlBasicMessageChannel* channel =
+      FL_BASIC_MESSAGE_CHANNEL(g_task_get_task_data(task));
+  g_autoptr(FlValue) response =
+      fl_basic_message_channel_send_finish(channel, r, error);
   if (response == nullptr) {
     return FALSE;
   }
-
-  g_autoptr(FlValue) r = fl_method_response_get_result(response, error);
-  if (r == nullptr) {
+  if (fl_value_get_length(response) > 1) {
+    // FIXME: Set error
     return FALSE;
   }
 
-  if (fl_value_get_type(r) != FL_VALUE_TYPE_NULL) {
+  FlValue* rv = fl_value_get_list_value(response, 0);
+  if (fl_value_get_type(rv) != FL_VALUE_TYPE_NULL) {
     *return_value = static_cast<CoreTestsPigeonTestAnEnum*>(
         malloc(sizeof(CoreTestsPigeonTestAnEnum)));
     **return_value = static_cast<CoreTestsPigeonTestAnEnum>(
         fl_value_get_int(reinterpret_cast<FlValue*>(
-            const_cast<gpointer>(fl_value_get_custom_value(r)))));
+            const_cast<gpointer>(fl_value_get_custom_value(rv)))));
   } else {
     *return_value = nullptr;
   }
@@ -14263,30 +14416,57 @@ core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_enum_finish(
   return TRUE;
 }
 
+static void core_tests_pigeon_test_flutter_integration_core_api_noop_async_cb(
+    GObject* object, GAsyncResult* result, gpointer user_data) {
+  GTask* task = G_TASK(user_data);
+  g_task_return_pointer(task, result, g_object_unref);
+}
+
 void core_tests_pigeon_test_flutter_integration_core_api_noop_async(
     CoreTestsPigeonTestFlutterIntegrationCoreApi* self,
     GCancellable* cancellable, GAsyncReadyCallback callback,
     gpointer user_data) {
   g_autoptr(FlValue) args = fl_value_new_list();
-  fl_method_channel_invoke_method(self->channel, "noopAsync", args, cancellable,
-                                  callback, user_data);
+  g_autofree gchar* channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi."
+      "noopAsync%s",
+      self->suffix);
+  g_autoptr(CoreTestsPigeonTestMessageCodec) codec =
+      core_tests_pigeon_test_message_codec_new();
+  FlBasicMessageChannel* channel = fl_basic_message_channel_new(
+      self->messenger, channel_name, FL_MESSAGE_CODEC(codec));
+  GTask* task = g_task_new(self, cancellable, callback, user_data);
+  g_task_set_task_data(task, channel, g_object_unref);
+  fl_basic_message_channel_send(
+      channel, args, cancellable,
+      core_tests_pigeon_test_flutter_integration_core_api_noop_async_cb, task);
 }
 
 gboolean core_tests_pigeon_test_flutter_integration_core_api_noop_async_finish(
     CoreTestsPigeonTestFlutterIntegrationCoreApi* self, GAsyncResult* result,
     GError** error) {
-  g_autoptr(FlMethodResponse) response =
-      fl_method_channel_invoke_method_finish(self->channel, result, error);
+  g_autoptr(GTask) task = G_TASK(result);
+  GAsyncResult* r = G_ASYNC_RESULT(g_task_propagate_pointer(task, nullptr));
+  FlBasicMessageChannel* channel =
+      FL_BASIC_MESSAGE_CHANNEL(g_task_get_task_data(task));
+  g_autoptr(FlValue) response =
+      fl_basic_message_channel_send_finish(channel, r, error);
   if (response == nullptr) {
     return FALSE;
   }
-
-  g_autoptr(FlValue) r = fl_method_response_get_result(response, error);
-  if (r == nullptr) {
+  if (fl_value_get_length(response) > 1) {
+    // FIXME: Set error
     return FALSE;
   }
 
   return TRUE;
+}
+
+static void
+core_tests_pigeon_test_flutter_integration_core_api_echo_async_string_cb(
+    GObject* object, GAsyncResult* result, gpointer user_data) {
+  GTask* task = G_TASK(user_data);
+  g_task_return_pointer(task, result, g_object_unref);
 }
 
 void core_tests_pigeon_test_flutter_integration_core_api_echo_async_string(
@@ -14295,26 +14475,42 @@ void core_tests_pigeon_test_flutter_integration_core_api_echo_async_string(
     gpointer user_data) {
   g_autoptr(FlValue) args = fl_value_new_list();
   fl_value_append_take(args, fl_value_new_string(a_string));
-  fl_method_channel_invoke_method(self->channel, "echoAsyncString", args,
-                                  cancellable, callback, user_data);
+  g_autofree gchar* channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi."
+      "echoAsyncString%s",
+      self->suffix);
+  g_autoptr(CoreTestsPigeonTestMessageCodec) codec =
+      core_tests_pigeon_test_message_codec_new();
+  FlBasicMessageChannel* channel = fl_basic_message_channel_new(
+      self->messenger, channel_name, FL_MESSAGE_CODEC(codec));
+  GTask* task = g_task_new(self, cancellable, callback, user_data);
+  g_task_set_task_data(task, channel, g_object_unref);
+  fl_basic_message_channel_send(
+      channel, args, cancellable,
+      core_tests_pigeon_test_flutter_integration_core_api_echo_async_string_cb,
+      task);
 }
 
 gboolean
 core_tests_pigeon_test_flutter_integration_core_api_echo_async_string_finish(
     CoreTestsPigeonTestFlutterIntegrationCoreApi* self, GAsyncResult* result,
     gchar** return_value, GError** error) {
-  g_autoptr(FlMethodResponse) response =
-      fl_method_channel_invoke_method_finish(self->channel, result, error);
+  g_autoptr(GTask) task = G_TASK(result);
+  GAsyncResult* r = G_ASYNC_RESULT(g_task_propagate_pointer(task, nullptr));
+  FlBasicMessageChannel* channel =
+      FL_BASIC_MESSAGE_CHANNEL(g_task_get_task_data(task));
+  g_autoptr(FlValue) response =
+      fl_basic_message_channel_send_finish(channel, r, error);
   if (response == nullptr) {
     return FALSE;
   }
-
-  g_autoptr(FlValue) r = fl_method_response_get_result(response, error);
-  if (r == nullptr) {
+  if (fl_value_get_length(response) > 1) {
+    // FIXME: Set error
     return FALSE;
   }
 
-  *return_value = g_strdup(fl_value_get_string(r));
+  FlValue* rv = fl_value_get_list_value(response, 0);
+  *return_value = g_strdup(fl_value_get_string(rv));
 
   return TRUE;
 }
@@ -14447,21 +14643,17 @@ CoreTestsPigeonTestHostTrivialApi* core_tests_pigeon_test_host_trivial_api_new(
       CORE_TESTS_PIGEON_TEST_HOST_TRIVIAL_API(g_object_new(
           core_tests_pigeon_test_host_trivial_api_get_type(), nullptr));
   self->messenger = FL_BINARY_MESSENGER(g_object_ref(messenger));
-  self->suffix = g_strdup(suffix);
+  self->suffix =
+      suffix != nullptr ? g_strdup_printf(".%s", suffix) : g_strdup("");
   self->vtable = vtable;
   self->user_data = user_data;
   self->user_data_free_func = user_data_free_func;
 
   g_autoptr(CoreTestsPigeonTestMessageCodec) codec =
       core_tests_pigeon_test_message_codec_new();
-  g_autofree gchar* noop_channel_name =
-      self->suffix != nullptr ? g_strdup_printf(
-                                    "dev.flutter.pigeon.pigeon_integration_"
-                                    "tests.HostTrivialApi.noop.%s",
-                                    self->suffix)
-                              : g_strdup(
-                                    "dev.flutter.pigeon.pigeon_integration_"
-                                    "tests.HostTrivialApi.noop");
+  g_autofree gchar* noop_channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.HostTrivialApi.noop%s",
+      self->suffix);
   self->noop_channel = fl_basic_message_channel_new(
       messenger, noop_channel_name, FL_MESSAGE_CODEC(codec));
   fl_basic_message_channel_set_message_handler(
@@ -14670,34 +14862,25 @@ CoreTestsPigeonTestHostSmallApi* core_tests_pigeon_test_host_small_api_new(
   CoreTestsPigeonTestHostSmallApi* self = CORE_TESTS_PIGEON_TEST_HOST_SMALL_API(
       g_object_new(core_tests_pigeon_test_host_small_api_get_type(), nullptr));
   self->messenger = FL_BINARY_MESSENGER(g_object_ref(messenger));
-  self->suffix = g_strdup(suffix);
+  self->suffix =
+      suffix != nullptr ? g_strdup_printf(".%s", suffix) : g_strdup("");
   self->vtable = vtable;
   self->user_data = user_data;
   self->user_data_free_func = user_data_free_func;
 
   g_autoptr(CoreTestsPigeonTestMessageCodec) codec =
       core_tests_pigeon_test_message_codec_new();
-  g_autofree gchar* echo_channel_name =
-      self->suffix != nullptr ? g_strdup_printf(
-                                    "dev.flutter.pigeon.pigeon_integration_"
-                                    "tests.HostSmallApi.echo.%s",
-                                    self->suffix)
-                              : g_strdup(
-                                    "dev.flutter.pigeon.pigeon_integration_"
-                                    "tests.HostSmallApi.echo");
+  g_autofree gchar* echo_channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.HostSmallApi.echo%s",
+      self->suffix);
   self->echo_channel = fl_basic_message_channel_new(
       messenger, echo_channel_name, FL_MESSAGE_CODEC(codec));
   fl_basic_message_channel_set_message_handler(
       self->echo_channel, core_tests_pigeon_test_host_small_api_echo_cb, self,
       nullptr);
-  g_autofree gchar* void_void_channel_name =
-      self->suffix != nullptr ? g_strdup_printf(
-                                    "dev.flutter.pigeon.pigeon_integration_"
-                                    "tests.HostSmallApi.voidVoid.%s",
-                                    self->suffix)
-                              : g_strdup(
-                                    "dev.flutter.pigeon.pigeon_integration_"
-                                    "tests.HostSmallApi.voidVoid");
+  g_autofree gchar* void_void_channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.HostSmallApi.voidVoid%s",
+      self->suffix);
   self->void_void_channel = fl_basic_message_channel_new(
       messenger, void_void_channel_name, FL_MESSAGE_CODEC(codec));
   fl_basic_message_channel_set_message_handler(
@@ -14767,7 +14950,7 @@ void core_tests_pigeon_test_host_small_api_respond_error_void_void(
 struct _CoreTestsPigeonTestFlutterSmallApi {
   GObject parent_instance;
 
-  FlMethodChannel* channel;
+  FlBinaryMessenger* messenger;
   gchar* suffix;
 };
 
@@ -14777,8 +14960,8 @@ G_DEFINE_TYPE(CoreTestsPigeonTestFlutterSmallApi,
 static void core_tests_pigeon_test_flutter_small_api_dispose(GObject* object) {
   CoreTestsPigeonTestFlutterSmallApi* self =
       CORE_TESTS_PIGEON_TEST_FLUTTER_SMALL_API(object);
+  g_clear_object(&self->messenger);
   g_clear_pointer(&self->suffix, g_free);
-  g_clear_object(&self->channel);
   G_OBJECT_CLASS(core_tests_pigeon_test_flutter_small_api_parent_class)
       ->dispose(object);
 }
@@ -14798,15 +14981,16 @@ core_tests_pigeon_test_flutter_small_api_new(FlBinaryMessenger* messenger,
   CoreTestsPigeonTestFlutterSmallApi* self =
       CORE_TESTS_PIGEON_TEST_FLUTTER_SMALL_API(g_object_new(
           core_tests_pigeon_test_flutter_small_api_get_type(), nullptr));
-  self->suffix = g_strdup(suffix);
-  g_autoptr(CoreTestsPigeonTestMessageCodec) message_codec =
-      core_tests_pigeon_test_message_codec_new();
-  g_autoptr(FlStandardMethodCodec) codec =
-      fl_standard_method_codec_new_with_message_codec(
-          FL_STANDARD_MESSAGE_CODEC(message_codec));
-  self->channel = fl_method_channel_new(messenger, "FlutterSmallApi",
-                                        FL_METHOD_CODEC(codec));
+  self->messenger = FL_BINARY_MESSENGER(g_object_ref(messenger));
+  self->suffix =
+      suffix != nullptr ? g_strdup_printf(".%s", suffix) : g_strdup("");
   return self;
+}
+
+static void core_tests_pigeon_test_flutter_small_api_echo_wrapped_list_cb(
+    GObject* object, GAsyncResult* result, gpointer user_data) {
+  GTask* task = G_TASK(user_data);
+  g_task_return_pointer(task, result, g_object_unref);
 }
 
 void core_tests_pigeon_test_flutter_small_api_echo_wrapped_list(
@@ -14815,29 +14999,50 @@ void core_tests_pigeon_test_flutter_small_api_echo_wrapped_list(
     GAsyncReadyCallback callback, gpointer user_data) {
   g_autoptr(FlValue) args = fl_value_new_list();
   fl_value_append_take(args, fl_value_new_custom_object(133, G_OBJECT(msg)));
-  fl_method_channel_invoke_method(self->channel, "echoWrappedList", args,
-                                  cancellable, callback, user_data);
+  g_autofree gchar* channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.FlutterSmallApi."
+      "echoWrappedList%s",
+      self->suffix);
+  g_autoptr(CoreTestsPigeonTestMessageCodec) codec =
+      core_tests_pigeon_test_message_codec_new();
+  FlBasicMessageChannel* channel = fl_basic_message_channel_new(
+      self->messenger, channel_name, FL_MESSAGE_CODEC(codec));
+  GTask* task = g_task_new(self, cancellable, callback, user_data);
+  g_task_set_task_data(task, channel, g_object_unref);
+  fl_basic_message_channel_send(
+      channel, args, cancellable,
+      core_tests_pigeon_test_flutter_small_api_echo_wrapped_list_cb, task);
 }
 
 gboolean core_tests_pigeon_test_flutter_small_api_echo_wrapped_list_finish(
     CoreTestsPigeonTestFlutterSmallApi* self, GAsyncResult* result,
     CoreTestsPigeonTestTestMessage** return_value, GError** error) {
-  g_autoptr(FlMethodResponse) response =
-      fl_method_channel_invoke_method_finish(self->channel, result, error);
+  g_autoptr(GTask) task = G_TASK(result);
+  GAsyncResult* r = G_ASYNC_RESULT(g_task_propagate_pointer(task, nullptr));
+  FlBasicMessageChannel* channel =
+      FL_BASIC_MESSAGE_CHANNEL(g_task_get_task_data(task));
+  g_autoptr(FlValue) response =
+      fl_basic_message_channel_send_finish(channel, r, error);
   if (response == nullptr) {
     return FALSE;
   }
-
-  g_autoptr(FlValue) r = fl_method_response_get_result(response, error);
-  if (r == nullptr) {
+  if (fl_value_get_length(response) > 1) {
+    // FIXME: Set error
     return FALSE;
   }
 
+  FlValue* rv = fl_value_get_list_value(response, 0);
   *return_value = CORE_TESTS_PIGEON_TEST_TEST_MESSAGE(
       g_object_ref(CORE_TESTS_PIGEON_TEST_TEST_MESSAGE(
-          fl_value_get_custom_value_object(r))));
+          fl_value_get_custom_value_object(rv))));
 
   return TRUE;
+}
+
+static void core_tests_pigeon_test_flutter_small_api_echo_string_cb(
+    GObject* object, GAsyncResult* result, gpointer user_data) {
+  GTask* task = G_TASK(user_data);
+  g_task_return_pointer(task, result, g_object_unref);
 }
 
 void core_tests_pigeon_test_flutter_small_api_echo_string(
@@ -14846,25 +15051,40 @@ void core_tests_pigeon_test_flutter_small_api_echo_string(
     gpointer user_data) {
   g_autoptr(FlValue) args = fl_value_new_list();
   fl_value_append_take(args, fl_value_new_string(a_string));
-  fl_method_channel_invoke_method(self->channel, "echoString", args,
-                                  cancellable, callback, user_data);
+  g_autofree gchar* channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_integration_tests.FlutterSmallApi.echoString%"
+      "s",
+      self->suffix);
+  g_autoptr(CoreTestsPigeonTestMessageCodec) codec =
+      core_tests_pigeon_test_message_codec_new();
+  FlBasicMessageChannel* channel = fl_basic_message_channel_new(
+      self->messenger, channel_name, FL_MESSAGE_CODEC(codec));
+  GTask* task = g_task_new(self, cancellable, callback, user_data);
+  g_task_set_task_data(task, channel, g_object_unref);
+  fl_basic_message_channel_send(
+      channel, args, cancellable,
+      core_tests_pigeon_test_flutter_small_api_echo_string_cb, task);
 }
 
 gboolean core_tests_pigeon_test_flutter_small_api_echo_string_finish(
     CoreTestsPigeonTestFlutterSmallApi* self, GAsyncResult* result,
     gchar** return_value, GError** error) {
-  g_autoptr(FlMethodResponse) response =
-      fl_method_channel_invoke_method_finish(self->channel, result, error);
+  g_autoptr(GTask) task = G_TASK(result);
+  GAsyncResult* r = G_ASYNC_RESULT(g_task_propagate_pointer(task, nullptr));
+  FlBasicMessageChannel* channel =
+      FL_BASIC_MESSAGE_CHANNEL(g_task_get_task_data(task));
+  g_autoptr(FlValue) response =
+      fl_basic_message_channel_send_finish(channel, r, error);
   if (response == nullptr) {
     return FALSE;
   }
-
-  g_autoptr(FlValue) r = fl_method_response_get_result(response, error);
-  if (r == nullptr) {
+  if (fl_value_get_length(response) > 1) {
+    // FIXME: Set error
     return FALSE;
   }
 
-  *return_value = g_strdup(fl_value_get_string(r));
+  FlValue* rv = fl_value_get_list_value(response, 0);
+  *return_value = g_strdup(fl_value_get_string(rv));
 
   return TRUE;
 }
