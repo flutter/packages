@@ -188,8 +188,6 @@ void main() {
     testWidgets(
         'GoRouterState look up should be resilient when there is a nested navigator.',
         (WidgetTester tester) async {
-      final UniqueKey key = UniqueKey();
-      final GlobalKey<NavigatorState> nav = GlobalKey<NavigatorState>();
       final List<GoRoute> routes = <GoRoute>[
         GoRoute(
           path: '/',
