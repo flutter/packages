@@ -17,11 +17,7 @@ import androidx.media3.common.AudioAttributes;
 import androidx.media3.common.C;
 import androidx.media3.common.MediaItem;
 import androidx.media3.common.MimeTypes;
-import androidx.media3.common.PlaybackException;
 import androidx.media3.common.PlaybackParameters;
-import androidx.media3.common.Player;
-import androidx.media3.common.Player.Listener;
-import androidx.media3.common.VideoSize;
 import androidx.media3.common.util.UnstableApi;
 import androidx.media3.datasource.DataSource;
 import androidx.media3.datasource.DefaultDataSource;
@@ -46,8 +42,6 @@ final class VideoPlayer {
   private final VideoPlayerCallbacks videoPlayerEvents;
 
   private static final String USER_AGENT = "User-Agent";
-
-  @VisibleForTesting boolean isInitialized = false;
 
   private final VideoPlayerOptions options;
 
@@ -116,61 +110,7 @@ final class VideoPlayer {
     surface = new Surface(textureEntry.surfaceTexture());
     exoPlayer.setVideoSurface(surface);
     setAudioAttributes(exoPlayer, options.mixWithOthers);
-
-    // Avoids synthetic accessor.
-    VideoPlayerCallbacks events = this.videoPlayerEvents;
-
-    exoPlayer.addListener(
-        new Listener() {
-          private boolean isBuffering = false;
-
-          public void setBuffering(boolean buffering) {
-            if (isBuffering == buffering) {
-              return;
-            }
-            isBuffering = buffering;
-            if (buffering) {
-              events.onBufferingStart();
-            } else {
-              events.onBufferingEnd();
-            }
-          }
-
-          @Override
-          public void onPlaybackStateChanged(final int playbackState) {
-            if (playbackState == Player.STATE_BUFFERING) {
-              setBuffering(true);
-              sendBufferingUpdate();
-            } else if (playbackState == Player.STATE_READY) {
-              if (!isInitialized) {
-                isInitialized = true;
-                sendInitialized();
-              }
-            } else if (playbackState == Player.STATE_ENDED) {
-              events.onCompleted();
-            }
-            if (playbackState != Player.STATE_BUFFERING) {
-              setBuffering(false);
-            }
-          }
-
-          @Override
-          public void onPlayerError(@NonNull final PlaybackException error) {
-            setBuffering(false);
-            if (error.errorCode == PlaybackException.ERROR_CODE_BEHIND_LIVE_WINDOW) {
-              // See https://exoplayer.dev/live-streaming.html#behindlivewindowexception-and-error_code_behind_live_window
-              exoPlayer.seekToDefaultPosition();
-              exoPlayer.prepare();
-            } else {
-              events.onError("VideoError", "Video player had error " + error, null);
-            }
-          }
-
-          @Override
-          public void onIsPlayingChanged(boolean isPlaying) {
-            events.onIsPlayingStateUpdate(isPlaying);
-          }
-        });
+    exoPlayer.addListener(new ExoPlayerEventListener(exoPlayer, videoPlayerEvents));
   }
 
   void sendBufferingUpdate() {
@@ -216,38 +156,7 @@ final class VideoPlayer {
     return exoPlayer.getCurrentPosition();
   }
 
-  @SuppressWarnings("SuspiciousNameCombination")
-  @VisibleForTesting
-  void sendInitialized() {
-    if (!isInitialized) {
-      return;
-    }
-    VideoSize videoSize = exoPlayer.getVideoSize();
-    int rotationCorrection = 0;
-    int width = videoSize.width;
-    int height = videoSize.height;
-    if (width != 0 && height != 0) {
-      int rotationDegrees = videoSize.unappliedRotationDegrees;
-      // Switch the width/height if video was taken in portrait mode
-      if (rotationDegrees == 90 || rotationDegrees == 270) {
-        width = videoSize.height;
-        height = videoSize.width;
-      }
-      // Rotating the video with ExoPlayer does not seem to be possible with a Surface,
-      // so inform the Flutter code that the widget needs to be rotated to prevent
-      // upside-down playback for videos with rotationDegrees of 180 (other orientations work
-      // correctly without correction).
-      if (rotationDegrees == 180) {
-        rotationCorrection = rotationDegrees;
-      }
-    }
-    videoPlayerEvents.onInitialized(width, height, exoPlayer.getDuration(), rotationCorrection);
-  }
-
   void dispose() {
-    if (isInitialized) {
-      exoPlayer.stop();
-    }
     textureEntry.release();
     if (surface != null) {
       surface.release();
