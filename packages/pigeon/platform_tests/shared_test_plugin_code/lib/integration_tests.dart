@@ -540,7 +540,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       final String? receivedString =
           await api.extractNestedNullableString(sentObject);
       expect(receivedString, sentObject.allNullableTypes.aNullableString);
-    }, skip: _linuxBringup);
+    });
 
     testWidgets('nested objects can be received correctly',
         (WidgetTester _) async {
@@ -1079,7 +1079,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       final AllTypes echoObject = await api.echoAsyncAllTypes(genericAllTypes);
 
       compareAllTypes(echoObject, genericAllTypes);
-    }, skip: _linuxBringup);
+    });
 
     testWidgets(
         'all nullable async datatypes serialize and deserialize correctly',
