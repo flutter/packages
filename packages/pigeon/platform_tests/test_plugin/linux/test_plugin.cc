@@ -18,11 +18,13 @@ struct _TestPlugin {
 
   CoreTestsPigeonTestHostIntegrationCoreApi* host_core_api;
 
-  CoreTestsPigeonTestHostSmallApi* host_small_api;
+  CoreTestsPigeonTestHostSmallApi* host_small_api_one;
+  CoreTestsPigeonTestHostSmallApi* host_small_api_two;
 
   CoreTestsPigeonTestFlutterIntegrationCoreApi* flutter_core_api;
 
-  CoreTestsPigeonTestFlutterSmallApi* flutter_small_api;
+  CoreTestsPigeonTestFlutterSmallApi* flutter_small_api_one;
+  CoreTestsPigeonTestFlutterSmallApi* flutter_small_api_two;
 
   GCancellable* cancellable;
 };
@@ -1231,8 +1233,9 @@ static void call_flutter_small_api_echo_string(
     FlBasicMessageChannelResponseHandle* response_handle, gpointer user_data) {
   TestPlugin* self = TEST_PLUGIN(user_data);
 
+  // FIXME: Them call flutter_small_api_two
   core_tests_pigeon_test_flutter_small_api_echo_string(
-      self->flutter_small_api, a_string, self->cancellable,
+      self->flutter_small_api_one, a_string, self->cancellable,
       small_api_echo_string_cb, callback_data_new(self, response_handle));
 }
 
@@ -1378,9 +1381,11 @@ static void test_plugin_dispose(GObject* object) {
   g_cancellable_cancel(self->cancellable);
 
   g_clear_object(&self->host_core_api);
-  g_clear_object(&self->host_small_api);
+  g_clear_object(&self->host_small_api_one);
+  g_clear_object(&self->host_small_api_two);
   g_clear_object(&self->flutter_core_api);
-  g_clear_object(&self->flutter_small_api);
+  g_clear_object(&self->flutter_small_api_one);
+  g_clear_object(&self->flutter_small_api_two);
   g_clear_object(&self->cancellable);
 
   G_OBJECT_CLASS(test_plugin_parent_class)->dispose(object);
@@ -1399,12 +1404,18 @@ static TestPlugin* test_plugin_new(FlBinaryMessenger* messenger) {
 
   self->host_core_api = core_tests_pigeon_test_host_integration_core_api_new(
       messenger, &host_core_api_vtable, g_object_ref(self), g_object_unref);
-  self->host_small_api = core_tests_pigeon_test_host_small_api_new(
-      messenger, &host_small_api_vtable, g_object_ref(self), g_object_unref);
+  self->host_small_api_one = core_tests_pigeon_test_host_small_api_new(
+      messenger, &host_small_api_vtable, g_object_ref(self),
+      g_object_unref);  // FIXME: Suffix "suffixOne"
+  self->host_small_api_two = core_tests_pigeon_test_host_small_api_new(
+      messenger, &host_small_api_vtable, g_object_ref(self),
+      g_object_unref);  // FIXME: Suffix "suffixTwo"
   self->flutter_core_api =
       core_tests_pigeon_test_flutter_integration_core_api_new(messenger);
-  self->flutter_small_api =
-      core_tests_pigeon_test_flutter_small_api_new(messenger);
+  self->flutter_small_api_one = core_tests_pigeon_test_flutter_small_api_new(
+      messenger);  // FIXME: Suffix "suffixOne"
+  self->flutter_small_api_two = core_tests_pigeon_test_flutter_small_api_new(
+      messenger);  // FIXME: Suffix "suffixTwo"
 
   return self;
 }
