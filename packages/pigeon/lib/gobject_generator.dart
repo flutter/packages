@@ -728,7 +728,7 @@ class GObjectSourceGenerator extends StructuredGenerator<GObjectOptions> {
           });
           indent.newln();
           indent.writeln(
-              'return fl_value_new_custom_object_take(${customType.enumeration}, G_OBJECT(value));');
+              'return fl_value_new_custom_object(${customType.enumeration}, G_OBJECT(value));');
         } else if (customType.type == CustomTypes.customEnum) {
           indent.writeln(
               'return fl_value_new_custom(${customType.enumeration}, fl_standard_message_codec_read_value(codec, buffer, offset, error), (GDestroyNotify)fl_value_unref);');

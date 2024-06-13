@@ -1647,7 +1647,7 @@ core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_all_types(
     return nullptr;
   }
 
-  return fl_value_new_custom_object_take(129, G_OBJECT(value));
+  return fl_value_new_custom_object(129, G_OBJECT(value));
 }
 
 static FlValue*
@@ -1668,7 +1668,7 @@ core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_all_nullable_ty
     return nullptr;
   }
 
-  return fl_value_new_custom_object_take(130, G_OBJECT(value));
+  return fl_value_new_custom_object(130, G_OBJECT(value));
 }
 
 static FlValue*
@@ -1690,7 +1690,7 @@ core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_all_nullable_ty
     return nullptr;
   }
 
-  return fl_value_new_custom_object_take(131, G_OBJECT(value));
+  return fl_value_new_custom_object(131, G_OBJECT(value));
 }
 
 static FlValue*
@@ -1711,7 +1711,7 @@ core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_all_classes_wra
     return nullptr;
   }
 
-  return fl_value_new_custom_object_take(132, G_OBJECT(value));
+  return fl_value_new_custom_object(132, G_OBJECT(value));
 }
 
 static FlValue*
@@ -1732,7 +1732,7 @@ core_tests_pigeon_test_message_codec_read_core_tests_pigeon_test_test_message(
     return nullptr;
   }
 
-  return fl_value_new_custom_object_take(133, G_OBJECT(value));
+  return fl_value_new_custom_object(133, G_OBJECT(value));
 }
 
 static FlValue*

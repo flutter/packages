@@ -388,7 +388,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
       final AllTypes echoObject = await api.echoAllTypes(genericAllTypes);
       compareAllTypes(echoObject, genericAllTypes);
-    }, skip: _linuxBringup);
+    });
 
     testWidgets('all nullable datatypes serialize and deserialize correctly',
         (WidgetTester _) async {
