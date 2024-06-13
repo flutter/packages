@@ -13,6 +13,8 @@ import androidx.annotation.Nullable;
  * <p>In the actual plugin, this will always be {@link VideoPlayerEventCallbacks}, which creates the
  * expected events to send back through the plugin channel. In tests methods can be overridden in
  * order to assert results.
+ *
+ * <p>See {@link androidx.media3.common.Player.Listener} for details.
  */
 interface VideoPlayerCallbacks {
   void onInitialized(int width, int height, long durationInMs, int rotationCorrectionInDegrees);

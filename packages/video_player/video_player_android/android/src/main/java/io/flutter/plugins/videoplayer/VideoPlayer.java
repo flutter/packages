@@ -43,7 +43,7 @@ final class VideoPlayer {
 
   private final TextureRegistry.SurfaceTextureEntry textureEntry;
 
-  private final VideoPlayerCallbacks events;
+  private final VideoPlayerCallbacks videoPlayerEvents;
 
   private static final String USER_AGENT = "User-Agent";
 
@@ -61,7 +61,7 @@ final class VideoPlayer {
       String formatHint,
       @NonNull Map<String, String> httpHeaders,
       VideoPlayerOptions options) {
-    this.events = events;
+    this.videoPlayerEvents = events;
     this.textureEntry = textureEntry;
     this.options = options;
 
@@ -90,7 +90,7 @@ final class VideoPlayer {
       TextureRegistry.SurfaceTextureEntry textureEntry,
       VideoPlayerOptions options,
       DefaultHttpDataSource.Factory httpDataSourceFactory) {
-    this.events = events;
+    this.videoPlayerEvents = events;
     this.textureEntry = textureEntry;
     this.options = options;
     this.httpDataSourceFactory = httpDataSourceFactory;
@@ -118,7 +118,7 @@ final class VideoPlayer {
     setAudioAttributes(exoPlayer, options.mixWithOthers);
 
     // Avoids synthetic accessor.
-    VideoPlayerCallbacks events = this.events;
+    VideoPlayerCallbacks events = this.videoPlayerEvents;
 
     exoPlayer.addListener(
         new Listener() {
@@ -162,7 +162,7 @@ final class VideoPlayer {
               exoPlayer.seekToDefaultPosition();
               exoPlayer.prepare();
             } else {
-              events.onError("VideoPlayer", "Video player had error " + error, null);
+              events.onError("VideoError", "Video player had error " + error, null);
             }
           }
 
@@ -174,7 +174,7 @@ final class VideoPlayer {
   }
 
   void sendBufferingUpdate() {
-    events.onBufferingUpdate(exoPlayer.getBufferedPosition());
+    videoPlayerEvents.onBufferingUpdate(exoPlayer.getBufferedPosition());
   }
 
   private static void setAudioAttributes(ExoPlayer exoPlayer, boolean isMixMode) {
@@ -241,7 +241,7 @@ final class VideoPlayer {
         rotationCorrection = rotationDegrees;
       }
     }
-    events.onInitialized(width, height, exoPlayer.getDuration(), rotationCorrection);
+    videoPlayerEvents.onInitialized(width, height, exoPlayer.getDuration(), rotationCorrection);
   }
 
   void dispose() {
