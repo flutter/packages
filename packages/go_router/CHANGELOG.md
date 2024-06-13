@@ -1,3 +1,7 @@
+## 14.2.0
+
+- Adds preload support to StatefulShellRoute, configurable via `preload` parameter on StatefulShellBranch.
+
 ## 14.1.4
 
 - Fixes a URL in `navigation.md`.
@@ -38,6 +42,10 @@
 ## 13.2.3
 
 - Fixes an issue where deep links without path caused an exception
+
+## 13.3.0
+
+- Adds preload support to StatefulShellRoute, configurable via `preload` parameter on StatefulShellBranch.
 
 ## 13.2.2
 
