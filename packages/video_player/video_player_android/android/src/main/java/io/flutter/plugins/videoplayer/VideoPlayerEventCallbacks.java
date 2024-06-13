@@ -66,6 +66,7 @@ final class VideoPlayerEventCallbacks implements VideoPlayerCallbacks {
   public void onBufferingUpdate(long bufferedPosition) {
     // iOS supports a list of buffered ranges, so we send as a list with a single range.
     Map<String, Object> event = new HashMap<>();
+    event.put("event", "bufferingUpdate");
     event.put("values", Collections.singletonList(bufferedPosition));
     eventSink.success(event);
   }

@@ -5,6 +5,7 @@
 package io.flutter.plugins.videoplayer;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.Mockito.*;
@@ -20,6 +21,7 @@ import androidx.media3.common.VideoSize;
 import androidx.media3.datasource.DefaultHttpDataSource;
 import androidx.media3.exoplayer.ExoPlayer;
 import io.flutter.view.TextureRegistry;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -144,6 +146,32 @@ public class VideoPlayerTest {
         httpDataSourceFactorySpy);
 
     return Objects.requireNonNull(listenerCaptor.getValue());
+  }
+
+  @Test
+  public void onPlaybackStateBufferingSendBufferedPositionUpdate() {
+    Player.Listener listener = initVideoPlayerAndGetListener();
+    when(fakeExoPlayer.getBufferedPosition()).thenReturn(10L);
+
+    // Send Player.STATE_BUFFERING to trigger the "bufferingUpdate" event.
+    listener.onPlaybackStateChanged(Player.STATE_BUFFERING);
+
+    verify(fakeEventSink, atLeast(1)).success(eventCaptor.capture());
+    List<HashMap<String, Object>> events = eventCaptor.getAllValues();
+
+    Map<String, Object> expected = new HashMap<>();
+    expected.put("event", "bufferingUpdate");
+    expected.put("values", Collections.singletonList(10L));
+
+    // We received potentially multiple events, find the one that is a "bufferingUpdate".
+    for (Map<String, Object> event : events) {
+      if (event.get("event") == "bufferingUpdate") {
+        assertEquals(expected, event);
+        return;
+      }
+    }
+
+    fail("No 'bufferingUpdate' event found: " + events);
   }
 
   @Test

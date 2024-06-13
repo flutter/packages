@@ -28,7 +28,6 @@ final class ExoPlayerEventListener implements Player.Listener {
     isBuffering = buffering;
     if (buffering) {
       events.onBufferingStart();
-      events.onBufferingUpdate(exoPlayer.getBufferedPosition());
     } else {
       events.onBufferingEnd();
     }
@@ -67,6 +66,7 @@ final class ExoPlayerEventListener implements Player.Listener {
     switch (playbackState) {
       case Player.STATE_BUFFERING:
         setBuffering(true);
+        events.onBufferingUpdate(exoPlayer.getBufferedPosition());
         break;
       case Player.STATE_READY:
         sendInitialized();
