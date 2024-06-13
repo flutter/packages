@@ -592,6 +592,7 @@ class GObjectSourceGenerator extends StructuredGenerator<GObjectOptions> {
         String fieldValue = _fromFlValue(module, field.type, 'value$i');
         indent
             .writeln('FlValue *value$i = fl_value_get_list_value(values, $i);');
+        args.add(fieldName);
         if (_isNullablePrimitiveType(field.type)) {
           indent.writeln('$fieldType $fieldName = nullptr;');
           indent.writeln(
@@ -602,18 +603,28 @@ class GObjectSourceGenerator extends StructuredGenerator<GObjectOptions> {
             indent.writeln('${fieldName}_value = $fieldValue;');
             indent.writeln('$fieldName = &${fieldName}_value;');
           });
-        } else {
-          if (field.type.isNullable) {
-            fieldValue =
-                'fl_value_get_type(value$i) == FL_VALUE_TYPE_NULL ? nullptr : $fieldValue';
+        } else if (field.type.isNullable) {
+          indent.writeln('$fieldType $fieldName = nullptr;');
+          if (_isNumericListType(field.type)) {
+            indent.writeln('size_t ${fieldName}_length = 0;');
+            args.add('${fieldName}_length');
           }
+          indent.writeScoped(
+              'if (fl_value_get_type(value$i) != FL_VALUE_TYPE_NULL) {', '}',
+              () {
+            indent.writeln('$fieldName = $fieldValue;');
+            if (_isNumericListType(field.type)) {
+              indent.writeln(
+                  '${fieldName}_length = fl_value_get_length(value$i);');
+            }
+          });
+        } else {
           indent.writeln('$fieldType $fieldName = $fieldValue;');
-        }
-        args.add(fieldName);
-        if (_isNumericListType(field.type)) {
-          indent.writeln(
-              'size_t ${fieldName}_length = fl_value_get_length(value$i);');
-          args.add('${fieldName}_length');
+          if (_isNumericListType(field.type)) {
+            indent.writeln(
+                'size_t ${fieldName}_length = fl_value_get_length(value$i);');
+            args.add('${fieldName}_length');
+          }
         }
       }
       indent.writeln('return ${methodPrefix}_new(${args.join(', ')});');

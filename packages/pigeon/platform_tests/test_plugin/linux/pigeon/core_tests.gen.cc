@@ -723,38 +723,48 @@ core_tests_pigeon_test_all_nullable_types_new_from_list(FlValue* values) {
     a_nullable_double = &a_nullable_double_value;
   }
   FlValue* value4 = fl_value_get_list_value(values, 4);
-  const uint8_t* a_nullable_byte_array =
-      fl_value_get_type(value4) == FL_VALUE_TYPE_NULL
-          ? nullptr
-          : fl_value_get_uint8_list(value4);
-  size_t a_nullable_byte_array_length = fl_value_get_length(value4);
+  const uint8_t* a_nullable_byte_array = nullptr;
+  size_t a_nullable_byte_array_length = 0;
+  if (fl_value_get_type(value4) != FL_VALUE_TYPE_NULL) {
+    a_nullable_byte_array = fl_value_get_uint8_list(value4);
+    a_nullable_byte_array_length = fl_value_get_length(value4);
+  }
   FlValue* value5 = fl_value_get_list_value(values, 5);
-  const int32_t* a_nullable4_byte_array =
-      fl_value_get_type(value5) == FL_VALUE_TYPE_NULL
-          ? nullptr
-          : fl_value_get_int32_list(value5);
-  size_t a_nullable4_byte_array_length = fl_value_get_length(value5);
+  const int32_t* a_nullable4_byte_array = nullptr;
+  size_t a_nullable4_byte_array_length = 0;
+  if (fl_value_get_type(value5) != FL_VALUE_TYPE_NULL) {
+    a_nullable4_byte_array = fl_value_get_int32_list(value5);
+    a_nullable4_byte_array_length = fl_value_get_length(value5);
+  }
   FlValue* value6 = fl_value_get_list_value(values, 6);
-  const int64_t* a_nullable8_byte_array =
-      fl_value_get_type(value6) == FL_VALUE_TYPE_NULL
-          ? nullptr
-          : fl_value_get_int64_list(value6);
-  size_t a_nullable8_byte_array_length = fl_value_get_length(value6);
+  const int64_t* a_nullable8_byte_array = nullptr;
+  size_t a_nullable8_byte_array_length = 0;
+  if (fl_value_get_type(value6) != FL_VALUE_TYPE_NULL) {
+    a_nullable8_byte_array = fl_value_get_int64_list(value6);
+    a_nullable8_byte_array_length = fl_value_get_length(value6);
+  }
   FlValue* value7 = fl_value_get_list_value(values, 7);
-  const double* a_nullable_float_array =
-      fl_value_get_type(value7) == FL_VALUE_TYPE_NULL
-          ? nullptr
-          : fl_value_get_float_list(value7);
-  size_t a_nullable_float_array_length = fl_value_get_length(value7);
+  const double* a_nullable_float_array = nullptr;
+  size_t a_nullable_float_array_length = 0;
+  if (fl_value_get_type(value7) != FL_VALUE_TYPE_NULL) {
+    a_nullable_float_array = fl_value_get_float_list(value7);
+    a_nullable_float_array_length = fl_value_get_length(value7);
+  }
   FlValue* value8 = fl_value_get_list_value(values, 8);
-  FlValue* nullable_nested_list =
-      fl_value_get_type(value8) == FL_VALUE_TYPE_NULL ? nullptr : value8;
+  FlValue* nullable_nested_list = nullptr;
+  if (fl_value_get_type(value8) != FL_VALUE_TYPE_NULL) {
+    nullable_nested_list = value8;
+  }
   FlValue* value9 = fl_value_get_list_value(values, 9);
-  FlValue* nullable_map_with_annotations =
-      fl_value_get_type(value9) == FL_VALUE_TYPE_NULL ? nullptr : value9;
+  FlValue* nullable_map_with_annotations = nullptr;
+  if (fl_value_get_type(value9) != FL_VALUE_TYPE_NULL) {
+    nullable_map_with_annotations = value9;
+  }
   FlValue* value10 = fl_value_get_list_value(values, 10);
-  FlValue* nullable_map_with_object =
-      fl_value_get_type(value10) == FL_VALUE_TYPE_NULL ? nullptr : value10;
+  FlValue* nullable_map_with_object = nullptr;
+  if (fl_value_get_type(value10) != FL_VALUE_TYPE_NULL) {
+    nullable_map_with_object = value10;
+  }
   FlValue* value11 = fl_value_get_list_value(values, 11);
   CoreTestsPigeonTestAnEnum* a_nullable_enum = nullptr;
   CoreTestsPigeonTestAnEnum a_nullable_enum_value;
@@ -765,40 +775,56 @@ core_tests_pigeon_test_all_nullable_types_new_from_list(FlValue* values) {
     a_nullable_enum = &a_nullable_enum_value;
   }
   FlValue* value12 = fl_value_get_list_value(values, 12);
-  const gchar* a_nullable_string =
-      fl_value_get_type(value12) == FL_VALUE_TYPE_NULL
-          ? nullptr
-          : fl_value_get_string(value12);
+  const gchar* a_nullable_string = nullptr;
+  if (fl_value_get_type(value12) != FL_VALUE_TYPE_NULL) {
+    a_nullable_string = fl_value_get_string(value12);
+  }
   FlValue* value13 = fl_value_get_list_value(values, 13);
-  FlValue* a_nullable_object =
-      fl_value_get_type(value13) == FL_VALUE_TYPE_NULL ? nullptr : value13;
+  FlValue* a_nullable_object = nullptr;
+  if (fl_value_get_type(value13) != FL_VALUE_TYPE_NULL) {
+    a_nullable_object = value13;
+  }
   FlValue* value14 = fl_value_get_list_value(values, 14);
-  CoreTestsPigeonTestAllNullableTypes* all_nullable_types =
-      fl_value_get_type(value14) == FL_VALUE_TYPE_NULL
-          ? nullptr
-          : CORE_TESTS_PIGEON_TEST_ALL_NULLABLE_TYPES(
-                fl_value_get_custom_value_object(value14));
+  CoreTestsPigeonTestAllNullableTypes* all_nullable_types = nullptr;
+  if (fl_value_get_type(value14) != FL_VALUE_TYPE_NULL) {
+    all_nullable_types = CORE_TESTS_PIGEON_TEST_ALL_NULLABLE_TYPES(
+        fl_value_get_custom_value_object(value14));
+  }
   FlValue* value15 = fl_value_get_list_value(values, 15);
-  FlValue* list =
-      fl_value_get_type(value15) == FL_VALUE_TYPE_NULL ? nullptr : value15;
+  FlValue* list = nullptr;
+  if (fl_value_get_type(value15) != FL_VALUE_TYPE_NULL) {
+    list = value15;
+  }
   FlValue* value16 = fl_value_get_list_value(values, 16);
-  FlValue* string_list =
-      fl_value_get_type(value16) == FL_VALUE_TYPE_NULL ? nullptr : value16;
+  FlValue* string_list = nullptr;
+  if (fl_value_get_type(value16) != FL_VALUE_TYPE_NULL) {
+    string_list = value16;
+  }
   FlValue* value17 = fl_value_get_list_value(values, 17);
-  FlValue* int_list =
-      fl_value_get_type(value17) == FL_VALUE_TYPE_NULL ? nullptr : value17;
+  FlValue* int_list = nullptr;
+  if (fl_value_get_type(value17) != FL_VALUE_TYPE_NULL) {
+    int_list = value17;
+  }
   FlValue* value18 = fl_value_get_list_value(values, 18);
-  FlValue* double_list =
-      fl_value_get_type(value18) == FL_VALUE_TYPE_NULL ? nullptr : value18;
+  FlValue* double_list = nullptr;
+  if (fl_value_get_type(value18) != FL_VALUE_TYPE_NULL) {
+    double_list = value18;
+  }
   FlValue* value19 = fl_value_get_list_value(values, 19);
-  FlValue* bool_list =
-      fl_value_get_type(value19) == FL_VALUE_TYPE_NULL ? nullptr : value19;
+  FlValue* bool_list = nullptr;
+  if (fl_value_get_type(value19) != FL_VALUE_TYPE_NULL) {
+    bool_list = value19;
+  }
   FlValue* value20 = fl_value_get_list_value(values, 20);
-  FlValue* nested_class_list =
-      fl_value_get_type(value20) == FL_VALUE_TYPE_NULL ? nullptr : value20;
+  FlValue* nested_class_list = nullptr;
+  if (fl_value_get_type(value20) != FL_VALUE_TYPE_NULL) {
+    nested_class_list = value20;
+  }
   FlValue* value21 = fl_value_get_list_value(values, 21);
-  FlValue* map =
-      fl_value_get_type(value21) == FL_VALUE_TYPE_NULL ? nullptr : value21;
+  FlValue* map = nullptr;
+  if (fl_value_get_type(value21) != FL_VALUE_TYPE_NULL) {
+    map = value21;
+  }
   return core_tests_pigeon_test_all_nullable_types_new(
       a_nullable_bool, a_nullable_int, a_nullable_int64, a_nullable_double,
       a_nullable_byte_array, a_nullable_byte_array_length,
@@ -1252,38 +1278,48 @@ core_tests_pigeon_test_all_nullable_types_without_recursion_new_from_list(
     a_nullable_double = &a_nullable_double_value;
   }
   FlValue* value4 = fl_value_get_list_value(values, 4);
-  const uint8_t* a_nullable_byte_array =
-      fl_value_get_type(value4) == FL_VALUE_TYPE_NULL
-          ? nullptr
-          : fl_value_get_uint8_list(value4);
-  size_t a_nullable_byte_array_length = fl_value_get_length(value4);
+  const uint8_t* a_nullable_byte_array = nullptr;
+  size_t a_nullable_byte_array_length = 0;
+  if (fl_value_get_type(value4) != FL_VALUE_TYPE_NULL) {
+    a_nullable_byte_array = fl_value_get_uint8_list(value4);
+    a_nullable_byte_array_length = fl_value_get_length(value4);
+  }
   FlValue* value5 = fl_value_get_list_value(values, 5);
-  const int32_t* a_nullable4_byte_array =
-      fl_value_get_type(value5) == FL_VALUE_TYPE_NULL
-          ? nullptr
-          : fl_value_get_int32_list(value5);
-  size_t a_nullable4_byte_array_length = fl_value_get_length(value5);
+  const int32_t* a_nullable4_byte_array = nullptr;
+  size_t a_nullable4_byte_array_length = 0;
+  if (fl_value_get_type(value5) != FL_VALUE_TYPE_NULL) {
+    a_nullable4_byte_array = fl_value_get_int32_list(value5);
+    a_nullable4_byte_array_length = fl_value_get_length(value5);
+  }
   FlValue* value6 = fl_value_get_list_value(values, 6);
-  const int64_t* a_nullable8_byte_array =
-      fl_value_get_type(value6) == FL_VALUE_TYPE_NULL
-          ? nullptr
-          : fl_value_get_int64_list(value6);
-  size_t a_nullable8_byte_array_length = fl_value_get_length(value6);
+  const int64_t* a_nullable8_byte_array = nullptr;
+  size_t a_nullable8_byte_array_length = 0;
+  if (fl_value_get_type(value6) != FL_VALUE_TYPE_NULL) {
+    a_nullable8_byte_array = fl_value_get_int64_list(value6);
+    a_nullable8_byte_array_length = fl_value_get_length(value6);
+  }
   FlValue* value7 = fl_value_get_list_value(values, 7);
-  const double* a_nullable_float_array =
-      fl_value_get_type(value7) == FL_VALUE_TYPE_NULL
-          ? nullptr
-          : fl_value_get_float_list(value7);
-  size_t a_nullable_float_array_length = fl_value_get_length(value7);
+  const double* a_nullable_float_array = nullptr;
+  size_t a_nullable_float_array_length = 0;
+  if (fl_value_get_type(value7) != FL_VALUE_TYPE_NULL) {
+    a_nullable_float_array = fl_value_get_float_list(value7);
+    a_nullable_float_array_length = fl_value_get_length(value7);
+  }
   FlValue* value8 = fl_value_get_list_value(values, 8);
-  FlValue* nullable_nested_list =
-      fl_value_get_type(value8) == FL_VALUE_TYPE_NULL ? nullptr : value8;
+  FlValue* nullable_nested_list = nullptr;
+  if (fl_value_get_type(value8) != FL_VALUE_TYPE_NULL) {
+    nullable_nested_list = value8;
+  }
   FlValue* value9 = fl_value_get_list_value(values, 9);
-  FlValue* nullable_map_with_annotations =
-      fl_value_get_type(value9) == FL_VALUE_TYPE_NULL ? nullptr : value9;
+  FlValue* nullable_map_with_annotations = nullptr;
+  if (fl_value_get_type(value9) != FL_VALUE_TYPE_NULL) {
+    nullable_map_with_annotations = value9;
+  }
   FlValue* value10 = fl_value_get_list_value(values, 10);
-  FlValue* nullable_map_with_object =
-      fl_value_get_type(value10) == FL_VALUE_TYPE_NULL ? nullptr : value10;
+  FlValue* nullable_map_with_object = nullptr;
+  if (fl_value_get_type(value10) != FL_VALUE_TYPE_NULL) {
+    nullable_map_with_object = value10;
+  }
   FlValue* value11 = fl_value_get_list_value(values, 11);
   CoreTestsPigeonTestAnEnum* a_nullable_enum = nullptr;
   CoreTestsPigeonTestAnEnum a_nullable_enum_value;
@@ -1294,31 +1330,45 @@ core_tests_pigeon_test_all_nullable_types_without_recursion_new_from_list(
     a_nullable_enum = &a_nullable_enum_value;
   }
   FlValue* value12 = fl_value_get_list_value(values, 12);
-  const gchar* a_nullable_string =
-      fl_value_get_type(value12) == FL_VALUE_TYPE_NULL
-          ? nullptr
-          : fl_value_get_string(value12);
+  const gchar* a_nullable_string = nullptr;
+  if (fl_value_get_type(value12) != FL_VALUE_TYPE_NULL) {
+    a_nullable_string = fl_value_get_string(value12);
+  }
   FlValue* value13 = fl_value_get_list_value(values, 13);
-  FlValue* a_nullable_object =
-      fl_value_get_type(value13) == FL_VALUE_TYPE_NULL ? nullptr : value13;
+  FlValue* a_nullable_object = nullptr;
+  if (fl_value_get_type(value13) != FL_VALUE_TYPE_NULL) {
+    a_nullable_object = value13;
+  }
   FlValue* value14 = fl_value_get_list_value(values, 14);
-  FlValue* list =
-      fl_value_get_type(value14) == FL_VALUE_TYPE_NULL ? nullptr : value14;
+  FlValue* list = nullptr;
+  if (fl_value_get_type(value14) != FL_VALUE_TYPE_NULL) {
+    list = value14;
+  }
   FlValue* value15 = fl_value_get_list_value(values, 15);
-  FlValue* string_list =
-      fl_value_get_type(value15) == FL_VALUE_TYPE_NULL ? nullptr : value15;
+  FlValue* string_list = nullptr;
+  if (fl_value_get_type(value15) != FL_VALUE_TYPE_NULL) {
+    string_list = value15;
+  }
   FlValue* value16 = fl_value_get_list_value(values, 16);
-  FlValue* int_list =
-      fl_value_get_type(value16) == FL_VALUE_TYPE_NULL ? nullptr : value16;
+  FlValue* int_list = nullptr;
+  if (fl_value_get_type(value16) != FL_VALUE_TYPE_NULL) {
+    int_list = value16;
+  }
   FlValue* value17 = fl_value_get_list_value(values, 17);
-  FlValue* double_list =
-      fl_value_get_type(value17) == FL_VALUE_TYPE_NULL ? nullptr : value17;
+  FlValue* double_list = nullptr;
+  if (fl_value_get_type(value17) != FL_VALUE_TYPE_NULL) {
+    double_list = value17;
+  }
   FlValue* value18 = fl_value_get_list_value(values, 18);
-  FlValue* bool_list =
-      fl_value_get_type(value18) == FL_VALUE_TYPE_NULL ? nullptr : value18;
+  FlValue* bool_list = nullptr;
+  if (fl_value_get_type(value18) != FL_VALUE_TYPE_NULL) {
+    bool_list = value18;
+  }
   FlValue* value19 = fl_value_get_list_value(values, 19);
-  FlValue* map =
-      fl_value_get_type(value19) == FL_VALUE_TYPE_NULL ? nullptr : value19;
+  FlValue* map = nullptr;
+  if (fl_value_get_type(value19) != FL_VALUE_TYPE_NULL) {
+    map = value19;
+  }
   return core_tests_pigeon_test_all_nullable_types_without_recursion_new(
       a_nullable_bool, a_nullable_int, a_nullable_int64, a_nullable_double,
       a_nullable_byte_array, a_nullable_byte_array_length,
@@ -1431,17 +1481,18 @@ core_tests_pigeon_test_all_classes_wrapper_new_from_list(FlValue* values) {
           fl_value_get_custom_value_object(value0));
   FlValue* value1 = fl_value_get_list_value(values, 1);
   CoreTestsPigeonTestAllNullableTypesWithoutRecursion*
-      all_nullable_types_without_recursion =
-          fl_value_get_type(value1) == FL_VALUE_TYPE_NULL
-              ? nullptr
-              : CORE_TESTS_PIGEON_TEST_ALL_NULLABLE_TYPES_WITHOUT_RECURSION(
-                    fl_value_get_custom_value_object(value1));
+      all_nullable_types_without_recursion = nullptr;
+  if (fl_value_get_type(value1) != FL_VALUE_TYPE_NULL) {
+    all_nullable_types_without_recursion =
+        CORE_TESTS_PIGEON_TEST_ALL_NULLABLE_TYPES_WITHOUT_RECURSION(
+            fl_value_get_custom_value_object(value1));
+  }
   FlValue* value2 = fl_value_get_list_value(values, 2);
-  CoreTestsPigeonTestAllTypes* all_types =
-      fl_value_get_type(value2) == FL_VALUE_TYPE_NULL
-          ? nullptr
-          : CORE_TESTS_PIGEON_TEST_ALL_TYPES(
-                fl_value_get_custom_value_object(value2));
+  CoreTestsPigeonTestAllTypes* all_types = nullptr;
+  if (fl_value_get_type(value2) != FL_VALUE_TYPE_NULL) {
+    all_types = CORE_TESTS_PIGEON_TEST_ALL_TYPES(
+        fl_value_get_custom_value_object(value2));
+  }
   return core_tests_pigeon_test_all_classes_wrapper_new(
       all_nullable_types, all_nullable_types_without_recursion, all_types);
 }
@@ -1497,8 +1548,10 @@ static FlValue* core_tests_pigeon_test_test_message_to_list(
 static CoreTestsPigeonTestTestMessage*
 core_tests_pigeon_test_test_message_new_from_list(FlValue* values) {
   FlValue* value0 = fl_value_get_list_value(values, 0);
-  FlValue* test_list =
-      fl_value_get_type(value0) == FL_VALUE_TYPE_NULL ? nullptr : value0;
+  FlValue* test_list = nullptr;
+  if (fl_value_get_type(value0) != FL_VALUE_TYPE_NULL) {
+    test_list = value0;
+  }
   return core_tests_pigeon_test_test_message_new(test_list);
 }
 
