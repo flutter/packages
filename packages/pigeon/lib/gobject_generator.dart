@@ -603,7 +603,7 @@ class GObjectSourceGenerator extends StructuredGenerator<GObjectOptions> {
         final NamedType field = classDefinition.fields[i];
         final String fieldName = _getFieldName(field.name);
         final String fieldType = _getType(module, field.type);
-        String fieldValue = _fromFlValue(module, field.type, 'value$i');
+        final String fieldValue = _fromFlValue(module, field.type, 'value$i');
         indent
             .writeln('FlValue *value$i = fl_value_get_list_value(values, $i);');
         args.add(fieldName);
