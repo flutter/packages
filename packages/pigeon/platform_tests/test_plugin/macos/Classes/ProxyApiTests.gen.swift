@@ -181,7 +181,7 @@ final class PigeonInstanceManager {
   ///   - instanceIdentifier: the identifier paired to an instance.
   /// - Returns: removed instance if the manager contains the given identifier, otherwise `nil` if
   ///   the manager doesn't contain the value
-  func removeInstance<T: AnyObject>(withIdentifier instanceIdentifier: Int64) -> T? {
+  func removeInstance<T: AnyObject>(withIdentifier instanceIdentifier: Int64) throws -> T? {
     var instance: AnyObject? = nil
     lockQueue.sync {
       instance = strongInstances.object(forKey: NSNumber(value: instanceIdentifier))
@@ -256,7 +256,7 @@ final class PigeonInstanceManager {
   /// Removes all of the instances from this manager.
   ///
   /// The manager will be empty after this call returns.
-  func removeAllObjects() {
+  func removeAllObjects() throws {
     lockQueue.sync {
       identifiers.removeAllObjects()
       weakInstances.removeAllObjects()
@@ -291,7 +291,7 @@ final class PigeonInstanceManager {
 
 private class PigeonInstanceManagerApi {
   /// The codec used for serializing messages.
-  static let codec = FlutterStandardMessageCodec.sharedInstance()
+  let codec = FlutterStandardMessageCodec.sharedInstance()
 
   /// Handles sending and receiving messages with Dart.
   unowned let binaryMessenger: FlutterBinaryMessenger
@@ -304,15 +304,21 @@ private class PigeonInstanceManagerApi {
   static func setUpMessageHandlers(
     binaryMessenger: FlutterBinaryMessenger, instanceManager: PigeonInstanceManager?
   ) {
+    let codec = FlutterStandardMessageCodec.sharedInstance()
     let removeStrongReferenceChannel = FlutterBasicMessageChannel(
       name:
         "dev.flutter.pigeon.pigeon_integration_tests.PigeonInstanceManagerApi.removeStrongReference",
       binaryMessenger: binaryMessenger, codec: codec)
     if let instanceManager = instanceManager {
       removeStrongReferenceChannel.setMessageHandler { message, reply in
-        let identifier = message is Int64 ? message as! Int64 : Int64(message as! Int32)
-        let _: AnyObject? = instanceManager.removeInstance(withIdentifier: identifier)
-        reply(wrapResult(nil))
+        let args = message as! [Any?]
+        let identifierArg = args[0] is Int64 ? args[0] as! Int64 : Int64(args[0] as! Int32)
+        do {
+          let _: AnyObject? = try instanceManager.removeInstance(withIdentifier: identifierArg)
+          reply(wrapResult(nil))
+        } catch {
+          reply(wrapError(error))
+        }
       }
     } else {
       removeStrongReferenceChannel.setMessageHandler(nil)
@@ -322,23 +328,28 @@ private class PigeonInstanceManagerApi {
       binaryMessenger: binaryMessenger, codec: codec)
     if let instanceManager = instanceManager {
       clearChannel.setMessageHandler { _, reply in
-        instanceManager.removeAllObjects()
-        reply(wrapResult(nil))
+        do {
+          try instanceManager.removeAllObjects()
+          reply(wrapResult(nil))
+        } catch {
+          reply(wrapError(error))
+        }
       }
     } else {
       clearChannel.setMessageHandler(nil)
     }
   }
 
-  /// Send a messaage to the Dart `InstanceManager` to remove the strong reference of the instance associated with `identifier`.
+  /// Sends a message to the Dart `InstanceManager` to remove the strong reference of the instance associated with `identifier`.
   func removeStrongReference(
-    withIdentifier identifier: Int64, completion: @escaping (Result<Void, FlutterError>) -> Void
+    identifier identifierArg: Int64,
+    completion: @escaping (Result<Void, ProxyApiTestsError>) -> Void
   ) {
     let channelName: String =
       "dev.flutter.pigeon.pigeon_integration_tests.PigeonInstanceManagerApi.removeStrongReference"
     let channel = FlutterBasicMessageChannel(
-      name: channelName, binaryMessenger: binaryMessenger, codec: PigeonInstanceManagerApi.codec)
-    channel.sendMessage(identifier) { response in
+      name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+    channel.sendMessage([identifierArg] as [Any?]) { response in
       guard let listResponse = response as? [Any?] else {
         completion(.failure(createConnectionError(withChannelName: channelName)))
         return
@@ -347,14 +358,13 @@ private class PigeonInstanceManagerApi {
         let code: String = listResponse[0] as! String
         let message: String? = nilOrValue(listResponse[1])
         let details: String? = nilOrValue(listResponse[2])
-        completion(.failure(FlutterError(code: code, message: message, details: details)))
+        completion(.failure(ProxyApiTestsError(code: code, message: message, details: details)))
       } else {
         completion(.success(Void()))
       }
     }
   }
 }
-
 protocol PigeonProxyApiDelegate {
   /// An implementation of [PigeonApiProxyApiTestClass] used to add a new Dart instance of
   /// `ProxyApiTestClass` to the Dart `InstanceManager` and make calls to Dart.
@@ -390,7 +400,7 @@ open class PigeonProxyApiRegistrar {
     }
 
     public func onDeinit(identifier: Int64) {
-      api.removeStrongReference(withIdentifier: identifier) {
+      api.removeStrongReference(identifier: identifier) {
         _ in
       }
     }

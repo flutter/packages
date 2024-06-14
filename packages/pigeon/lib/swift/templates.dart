@@ -133,7 +133,7 @@ final class $instanceManagerClassName {
   ///   - instanceIdentifier: the identifier paired to an instance.
   /// - Returns: removed instance if the manager contains the given identifier, otherwise `nil` if
   ///   the manager doesn't contain the value
-  func removeInstance<T: AnyObject>(withIdentifier instanceIdentifier: Int64) -> T? {
+  func removeInstance<T: AnyObject>(withIdentifier instanceIdentifier: Int64) throws -> T? {
     var instance: AnyObject? = nil
     lockQueue.sync {
       instance = strongInstances.object(forKey: NSNumber(value: instanceIdentifier))
@@ -208,7 +208,7 @@ final class $instanceManagerClassName {
   /// Removes all of the instances from this manager.
   ///
   /// The manager will be empty after this call returns.
-  func removeAllObjects() {
+  func removeAllObjects() throws {
     lockQueue.sync {
       identifiers.removeAllObjects()
       weakInstances.removeAllObjects()
@@ -241,87 +241,6 @@ final class $instanceManagerClassName {
   }
 }
 ''';
-
-/// Creates the `InstanceManagerApi` with the passed string values.
-String instanceManagerApiTemplate({required String dartPackageName}) {
-  final String removeStrongReferenceName = makeChannelNameWithStrings(
-    apiName: _instanceManagerApiName,
-    methodName: 'removeStrongReference',
-    dartPackageName: dartPackageName,
-  );
-  final String clearName = makeChannelNameWithStrings(
-    apiName: _instanceManagerApiName,
-    methodName: 'clear',
-    dartPackageName: dartPackageName,
-  );
-  return '''
-private class $_instanceManagerApiName {
-  /// The codec used for serializing messages.
-  static let codec = FlutterStandardMessageCodec.sharedInstance()
-
-  /// Handles sending and receiving messages with Dart.
-  unowned let binaryMessenger: FlutterBinaryMessenger
-
-  init(binaryMessenger: FlutterBinaryMessenger) {
-    self.binaryMessenger = binaryMessenger
-  }
-
-  /// Sets up an instance of `$_instanceManagerApiName` to handle messages through the `binaryMessenger`.
-  static func setUpMessageHandlers(
-    binaryMessenger: FlutterBinaryMessenger, instanceManager: $instanceManagerClassName?
-  ) {
-    let removeStrongReferenceChannel = FlutterBasicMessageChannel(
-      name:
-        "$removeStrongReferenceName",
-      binaryMessenger: binaryMessenger, codec: codec)
-    if let instanceManager = instanceManager {
-      removeStrongReferenceChannel.setMessageHandler { message, reply in
-        let identifier = message is Int64 ? message as! Int64 : Int64(message as! Int32)
-        let _: AnyObject? = instanceManager.removeInstance(withIdentifier: identifier)
-        reply(wrapResult(nil))
-      }
-    } else {
-      removeStrongReferenceChannel.setMessageHandler(nil)
-    }
-    let clearChannel = FlutterBasicMessageChannel(
-      name: "$clearName",
-      binaryMessenger: binaryMessenger, codec: codec)
-    if let instanceManager = instanceManager {
-      clearChannel.setMessageHandler { _, reply in
-        instanceManager.removeAllObjects()
-        reply(wrapResult(nil))
-      }
-    } else {
-      clearChannel.setMessageHandler(nil)
-    }
-  }
-
-  /// Send a messaage to the Dart `InstanceManager` to remove the strong reference of the instance associated with `identifier`.
-  func removeStrongReference(
-    withIdentifier identifier: Int64, completion: @escaping (Result<Void, FlutterError>) -> Void
-  ) {
-    let channelName: String =
-      "$removeStrongReferenceName"
-    let channel = FlutterBasicMessageChannel(
-      name: channelName, binaryMessenger: binaryMessenger, codec: $_instanceManagerApiName.codec)
-    channel.sendMessage(identifier) { response in
-      guard let listResponse = response as? [Any?] else {
-        completion(.failure(createConnectionError(withChannelName: channelName)))
-        return
-      }
-      if listResponse.count > 1 {
-        let code: String = listResponse[0] as! String
-        let message: String? = nilOrValue(listResponse[1])
-        let details: String? = nilOrValue(listResponse[2])
-        completion(.failure(FlutterError(code: code, message: message, details: details)))
-      } else {
-        completion(.success(Void()))
-      }
-    }
-  }
-}
-''';
-}
 
 /// Creates the Swift `ReaderWriter` for handling ProxyApis.
 String proxyApiReaderWriterTemplate({
@@ -404,7 +323,5 @@ private class $proxyApiReaderWriterName: FlutterStandardReaderWriter {
 }  
 ''';
 }
-
-const String _instanceManagerApiName = '${instanceManagerClassName}Api';
 
 const String _instanceManagerFinalizerName = '${classNamePrefix}Finalizer';

@@ -812,19 +812,19 @@ class ProxyApiDelegate: PigeonProxyApiDelegate {
       func throwError(pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass)
         throws -> Any?
       {
-        throw FlutterError(code: "code", message: "message", details: "details")
+        throw ProxyApiTestsError(code: "code", message: "message", details: "details")
       }
 
       func throwErrorFromVoid(
         pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass
       ) throws {
-        throw FlutterError(code: "code", message: "message", details: "details")
+        throw ProxyApiTestsError(code: "code", message: "message", details: "details")
       }
 
       func throwFlutterError(
         pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass
       ) throws -> Any? {
-        throw FlutterError(code: "code", message: "message", details: "details")
+        throw ProxyApiTestsError(code: "code", message: "message", details: "details")
       }
 
       func echoInt(
@@ -1050,21 +1050,24 @@ class ProxyApiDelegate: PigeonProxyApiDelegate {
         pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
         completion: @escaping (Result<Any?, Error>) -> Void
       ) {
-        completion(.failure(FlutterError(code: "code", message: "message", details: "details")))
+        completion(
+          .failure(ProxyApiTestsError(code: "code", message: "message", details: "details")))
       }
 
       func throwAsyncErrorFromVoid(
         pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
         completion: @escaping (Result<Void, Error>) -> Void
       ) {
-        completion(.failure(FlutterError(code: "code", message: "message", details: "details")))
+        completion(
+          .failure(ProxyApiTestsError(code: "code", message: "message", details: "details")))
       }
 
       func throwAsyncFlutterError(
         pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
         completion: @escaping (Result<Any?, Error>) -> Void
       ) {
-        completion(.failure(FlutterError(code: "code", message: "message", details: "details")))
+        completion(
+          .failure(ProxyApiTestsError(code: "code", message: "message", details: "details")))
       }
 
       func echoAsyncNullableInt(

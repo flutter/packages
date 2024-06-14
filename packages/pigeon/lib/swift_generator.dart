@@ -592,9 +592,128 @@ class SwiftGenerator extends StructuredGenerator<SwiftOptions> {
     Indent indent, {
     required String dartPackageName,
   }) {
-    indent.format(instanceManagerApiTemplate(
+    const String instanceManagerApiName = '${instanceManagerClassName}Api';
+
+    final String removeStrongReferenceName = makeChannelNameWithStrings(
+      apiName: instanceManagerApiName,
+      methodName: 'removeStrongReference',
       dartPackageName: dartPackageName,
-    ));
+    );
+
+    indent.writeScoped('private class $instanceManagerApiName {', '}', () {
+      addDocumentationComments(
+        indent,
+        <String>[' The codec used for serializing messages.'],
+        _docCommentSpec,
+      );
+      indent.writeln(
+        'let codec = FlutterStandardMessageCodec.sharedInstance()',
+      );
+      indent.newln();
+
+      addDocumentationComments(
+        indent,
+        <String>[' Handles sending and receiving messages with Dart.'],
+        _docCommentSpec,
+      );
+      indent.writeln('unowned let binaryMessenger: FlutterBinaryMessenger');
+      indent.newln();
+
+      indent.writeScoped(
+        'init(binaryMessenger: FlutterBinaryMessenger) {',
+        '}',
+        () {
+          indent.writeln('self.binaryMessenger = binaryMessenger');
+        },
+      );
+      indent.newln();
+
+      addDocumentationComments(
+        indent,
+        <String>[
+          ' Sets up an instance of `$instanceManagerApiName` to handle messages through the `binaryMessenger`.',
+        ],
+        _docCommentSpec,
+      );
+      indent.writeScoped(
+        'static func setUpMessageHandlers(binaryMessenger: FlutterBinaryMessenger, instanceManager: $instanceManagerClassName?) {',
+        '}',
+        () {
+          indent.writeln(
+            'let codec = FlutterStandardMessageCodec.sharedInstance()',
+          );
+          const String setHandlerCondition =
+              'let instanceManager = instanceManager';
+          _writeHostMethodMessageHandler(
+            indent,
+            name: 'removeStrongReference',
+            channelName: removeStrongReferenceName,
+            parameters: <Parameter>[
+              Parameter(
+                name: 'identifier',
+                type: const TypeDeclaration(
+                  baseName: 'int',
+                  isNullable: false,
+                ),
+              ),
+            ],
+            returnType: const TypeDeclaration.voidDeclaration(),
+            swiftFunction: 'method(withIdentifier:)',
+            setHandlerCondition: setHandlerCondition,
+            isAsynchronous: false,
+            onCreateCall: (
+              List<String> safeArgNames, {
+              required String apiVarName,
+            }) {
+              return 'let _: AnyObject? = try instanceManager.removeInstance(${safeArgNames.single})';
+            },
+          );
+          _writeHostMethodMessageHandler(
+            indent,
+            name: 'clear',
+            channelName: makeChannelNameWithStrings(
+              apiName: instanceManagerApiName,
+              methodName: 'clear',
+              dartPackageName: dartPackageName,
+            ),
+            parameters: <Parameter>[],
+            returnType: const TypeDeclaration.voidDeclaration(),
+            setHandlerCondition: setHandlerCondition,
+            swiftFunction: null,
+            isAsynchronous: false,
+            onCreateCall: (
+              List<String> safeArgNames, {
+              required String apiVarName,
+            }) {
+              return 'try instanceManager.removeAllObjects()';
+            },
+          );
+        },
+      );
+      indent.newln();
+
+      addDocumentationComments(
+        indent,
+        <String>[
+          ' Sends a message to the Dart `InstanceManager` to remove the strong reference of the instance associated with `identifier`.',
+        ],
+        _docCommentSpec,
+      );
+      _writeFlutterMethod(
+        indent,
+        generatorOptions: generatorOptions,
+        name: 'removeStrongReference',
+        parameters: <Parameter>[
+          Parameter(
+            name: 'identifier',
+            type: const TypeDeclaration(baseName: 'int', isNullable: false),
+          )
+        ],
+        returnType: const TypeDeclaration.voidDeclaration(),
+        channelName: removeStrongReferenceName,
+        swiftFunction: null,
+      );
+    });
   }
 
   @override
@@ -933,6 +1052,7 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
     required TypeDeclaration returnType,
     required bool isAsynchronous,
     required String? swiftFunction,
+    String setHandlerCondition = 'let api = api',
     List<String> documentationComments = const <String>[],
     String Function(List<String> safeArgNames, {required String apiVarName})?
         onCreateCall,
@@ -948,7 +1068,7 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
     addDocumentationComments(indent, documentationComments, _docCommentSpec);
     indent.writeln(
         'let $varChannelName = FlutterBasicMessageChannel(name: "$channelName", binaryMessenger: binaryMessenger, codec: codec)');
-    indent.write('if let api = api ');
+    indent.write('if $setHandlerCondition ');
     indent.addScoped('{', '}', () {
       indent.write('$varChannelName.setMessageHandler ');
       final String messageVarName = parameters.isNotEmpty ? 'message' : '_';
@@ -1073,7 +1193,7 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
         '  }\n'
         '\n'
         '  public func onDeinit(identifier: Int64) {\n'
-        '    api.removeStrongReference(withIdentifier: identifier) {\n'
+        '    api.removeStrongReference(identifier: identifier) {\n'
         '      _ in\n'
         '    }\n'
         '  }\n'
