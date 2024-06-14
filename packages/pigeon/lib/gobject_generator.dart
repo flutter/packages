@@ -7,7 +7,7 @@ import 'generator.dart';
 import 'generator_tools.dart';
 
 /// General comment opening token.
-const String _commentPrefix = '//';
+const String _commentPrefix = ' *';
 
 /// Documentation comment spec.
 const DocumentCommentSpecification _docCommentSpec =
@@ -118,8 +118,8 @@ class GObjectHeaderGenerator extends StructuredGenerator<GObjectOptions> {
     if (generatorOptions.copyrightHeader != null) {
       addLines(indent, generatorOptions.copyrightHeader!, linePrefix: '// ');
     }
-    indent.writeln('$_commentPrefix ${getGeneratedCodeWarning()}');
-    indent.writeln('$_commentPrefix $seeAlsoWarning');
+    indent.writeln('// ${getGeneratedCodeWarning()}');
+    indent.writeln('// $seeAlsoWarning');
   }
 
   @override
@@ -161,15 +161,25 @@ class GObjectHeaderGenerator extends StructuredGenerator<GObjectOptions> {
     final String enumName = _getClassName(module, anEnum.name);
 
     indent.newln();
+    indent.writeln('/**');
+    indent.writeln(' * $enumName:');
+    for (int i = 0; i < anEnum.members.length; i++) {
+      final EnumMember member = anEnum.members[i];
+      final String itemName =
+          _getEnumValue(dartPackageName, anEnum.name, member.name);
+      indent.writeln(' * $itemName:');
+      addDocumentationComments(
+          indent, member.documentationComments, _docCommentSpec);
+    }
+    indent.writeln(' *');
     addDocumentationComments(
         indent, anEnum.documentationComments, _docCommentSpec);
+    indent.writeln(' */');
     indent.writeScoped('typedef enum {', '} $enumName;', () {
       for (int i = 0; i < anEnum.members.length; i++) {
         final EnumMember member = anEnum.members[i];
         final String itemName =
             _getEnumValue(dartPackageName, anEnum.name, member.name);
-        addDocumentationComments(
-            indent, member.documentationComments, _docCommentSpec);
         indent.writeln(
             '$itemName = $i${i == anEnum.members.length - 1 ? '' : ','}');
       }
@@ -189,8 +199,14 @@ class GObjectHeaderGenerator extends StructuredGenerator<GObjectOptions> {
     final String methodPrefix = _getMethodPrefix(module, classDefinition.name);
 
     indent.newln();
+    indent.writeln('/**');
+    indent.writeln(' * $className:');
+    indent.writeln(' *');
     addDocumentationComments(
         indent, classDefinition.documentationComments, _docCommentSpec);
+    indent.writeln(' */');
+
+    indent.newln();
     _writeDeclareFinalType(indent, module, classDefinition.name);
 
     indent.newln();
@@ -203,6 +219,20 @@ class GObjectHeaderGenerator extends StructuredGenerator<GObjectOptions> {
         constructorArgs.add('size_t ${fieldName}_length');
       }
     }
+    indent.writeln('/**');
+    indent.writeln(' * ${methodPrefix}_new:');
+    for (final NamedType field in classDefinition.fields) {
+      final String fieldName = _getFieldName(field.name);
+      indent.writeln(' * $fieldName: field in this object.');
+      if (_isNumericListType(field.type)) {
+        indent.writeln(' * ${fieldName}_length: length of @$fieldName.');
+      }
+    }
+    indent.writeln(' *');
+    indent.writeln(' * Creates a new #${classDefinition.name} object.');
+    indent.writeln(' *');
+    indent.writeln(' * Returns: a new #$className');
+    indent.writeln(' */');
     indent.writeln(
         "$className* ${methodPrefix}_new(${constructorArgs.join(', ')});");
 
@@ -211,10 +241,26 @@ class GObjectHeaderGenerator extends StructuredGenerator<GObjectOptions> {
       final String returnType = _getType(module, field.type);
 
       indent.newln();
-      addDocumentationComments(
-          indent, field.documentationComments, _docCommentSpec);
+      indent.writeln('/**');
+      indent.writeln(' * ${methodPrefix}_get_$fieldName');
+      indent.writeln(' * @object: a #$className.');
+      if (_isNumericListType(field.type)) {
+        indent
+            .writeln(' * @length: location to write the length of this value.');
+      }
+      indent.writeln(' *');
+      if (field.documentationComments.isNotEmpty) {
+        addDocumentationComments(
+            indent, field.documentationComments, _docCommentSpec);
+      } else {
+        indent.writeln(
+            ' * Gets the value of the ${field.name} field of @object.');
+      }
+      indent.writeln(' *');
+      indent.writeln(' * Returns: the field value.');
+      indent.writeln(' */');
       final List<String> getterArgs = <String>[
-        '$className* self',
+        '$className* object',
         if (_isNumericListType(field.type)) 'size_t* length'
       ];
       indent.writeln(
@@ -242,20 +288,35 @@ class GObjectHeaderGenerator extends StructuredGenerator<GObjectOptions> {
     final String className = _getClassName(module, api.name);
 
     final String methodPrefix = _getMethodPrefix(module, api.name);
-
     indent.newln();
+    indent.writeln('/**');
+    indent.writeln(' * $className:');
+    indent.writeln(' *');
     addDocumentationComments(
         indent, api.documentationComments, _docCommentSpec);
+    indent.writeln(' */');
+
+    indent.newln();
     _writeDeclareFinalType(indent, module, api.name);
 
     indent.newln();
+    indent.writeln('/**');
+    indent.writeln(' * ${methodPrefix}_new:');
+    indent.writeln(' * @messenger: an #FlBinaryMessenger.');
+    indent.writeln(
+        ' * @suffix: (allow-none): a suffix to add to the API or %NULL for none.');
+    indent.writeln(' *');
+    indent.writeln(' * Creates a new object to access the ${api.name} API.');
+    indent.writeln(' *');
+    indent.writeln(' * Returns: a new #$className');
+    indent.writeln(' */');
     indent.writeln(
         '$className* ${methodPrefix}_new(FlBinaryMessenger* messenger, const gchar* suffix);');
 
     for (final Method method in api.methods) {
       final String methodName = _getMethodName(method.name);
 
-      final List<String> asyncArgs = <String>['$className* self'];
+      final List<String> asyncArgs = <String>['$className* api'];
       for (final Parameter param in method.parameters) {
         final String paramName = _snakeCaseFromCamelCase(param.name);
         asyncArgs.add('${_getType(module, param.type)} $paramName');
@@ -269,15 +330,34 @@ class GObjectHeaderGenerator extends StructuredGenerator<GObjectOptions> {
         'gpointer user_data'
       ]);
       indent.newln();
+      indent.writeln('/**');
+      indent.writeln(' * ${methodPrefix}_$methodName:');
+      indent.writeln(' * @api: a #$className.');
+      for (final Parameter param in method.parameters) {
+        final String paramName = _snakeCaseFromCamelCase(param.name);
+        indent.writeln(
+            ' * @$paramName: ${param.type.isNullable ? '(allow-none): ' : ''}parameter for this method.');
+        if (_isNumericListType(param.type)) {
+          indent.writeln(' * @${paramName}_length: length of $paramName.');
+        }
+      }
+      indent
+          .writeln(' * @cancellable: (allow-none): a #GCancellable or %NULL.');
+      indent.writeln(
+          ' * @callback: (scope async): (allow-none): a #GAsyncReadyCallback to call when the call is complete or %NULL to ignore the response.');
+      indent
+          .writeln(' * @user_data: (closure): user data to pass to @callback.');
+      indent.writeln(' *');
       addDocumentationComments(
           indent, method.documentationComments, _docCommentSpec);
+      indent.writeln(' */');
       indent.writeln(
           "void ${methodPrefix}_$methodName(${asyncArgs.join(', ')});");
 
       final String returnType =
           _getType(module, method.returnType, isOutput: true);
       final List<String> finishArgs = <String>[
-        '$className* self',
+        '$className* api',
         'GAsyncResult* result',
         if (returnType != 'void') '$returnType* return_value',
         if (_isNumericListType(method.returnType))
@@ -285,6 +365,25 @@ class GObjectHeaderGenerator extends StructuredGenerator<GObjectOptions> {
         'GError** error'
       ];
       indent.newln();
+      indent.writeln('/**');
+      indent.writeln(' * ${methodPrefix}_${methodName}_finish:');
+      indent.writeln(' * @api: a #className.');
+      indent.writeln(' * @result: a #GAsyncResult.');
+      if (returnType != 'void') {
+        indent.writeln(
+            ' * @return_value: location to write the value returned by this method.');
+      }
+      if (_isNumericListType(method.returnType)) {
+        indent.writeln(
+            ' * @return_value_length: location to write length of @return_value.');
+      }
+      indent.writeln(
+          ' * @error: (allow-none): #GError location to store the error occurring, or %NULL to ignore.');
+      indent.writeln(' *');
+      indent.writeln(' * Completes a ${methodPrefix}_$methodName() call.');
+      indent.writeln(' *');
+      indent.writeln(' * Returns: %TRUE on success.');
+      indent.writeln(' */');
       indent.writeln(
           "gboolean ${methodPrefix}_${methodName}_finish(${finishArgs.join(', ')});");
     }
@@ -315,8 +414,24 @@ class GObjectHeaderGenerator extends StructuredGenerator<GObjectOptions> {
     _writeApiVTable(indent, module, api);
 
     indent.newln();
+    indent.writeln('/**');
+    indent.writeln(' * ${methodPrefix}_new:');
+    indent.writeln(' *');
+    indent.writeln(' * @messenger: an #FlBinaryMessenger.');
     indent.writeln(
-        '$className* ${methodPrefix}_new(FlBinaryMessenger* messenger, const gchar *suffix, const $vtableName* vtable, gpointer user_data, GDestroyNotify user_data_free_func);');
+        ' * @suffix: (allow-none): a suffix to add to the API or %NULL for none.');
+    indent.writeln(' * @vtable: implementations of the methods in this API.');
+    indent.writeln(
+        ' * @user_data: (closure): user data to pass to the functions in @vtable.');
+    indent.writeln(
+        ' * @user_data_free_func: (allow-none): a function which gets called to free @user_data, or %NULL.');
+    indent.writeln(' *');
+    indent.writeln(' * Creates an object to implement the ${api.name} API.');
+    indent.writeln(' *');
+    indent.writeln(' * Returns: a new #$className');
+    indent.writeln(' */');
+    indent.writeln(
+        '$className* ${methodPrefix}_new(FlBinaryMessenger* messenger, const gchar* suffix, const $vtableName* vtable, gpointer user_data, GDestroyNotify user_data_free_func);');
 
     for (final Method method
         in api.methods.where((Method method) => method.isAsynchronous)) {
@@ -340,10 +455,28 @@ class GObjectHeaderGenerator extends StructuredGenerator<GObjectOptions> {
       if (returnType != 'void') '$returnType return_value',
       if (_isNumericListType(method.returnType)) 'size_t return_value_length'
     ];
+    indent.writeln('/**');
+    indent.writeln(' * ${responseMethodPrefix}_new:');
+    indent.writeln(' *');
+    indent.writeln(' * Creates a new response to ${api.name}.${method.name}.');
+    indent.writeln(' *');
+    indent.writeln(' * Returns: a new #$responseClassName');
+    indent.writeln(' */');
     indent.writeln(
         '$responseClassName* ${responseMethodPrefix}_new(${constructorArgs.join(', ')});');
 
     indent.newln();
+    indent.writeln('/**');
+    indent.writeln(' * ${responseMethodPrefix}_new_error:');
+    indent.writeln(' * @code: error code.');
+    indent.writeln(' * @message: error message.');
+    indent.writeln(' * @details: (allow-none): error details or %NULL.');
+    indent.writeln(' *');
+    indent.writeln(
+        ' * Creates a new error response to ${api.name}.${method.name}.');
+    indent.writeln(' *');
+    indent.writeln(' * Returns: a new #$responseClassName');
+    indent.writeln(' */');
     indent.writeln(
         '$responseClassName* ${responseMethodPrefix}_new_error(const gchar* code, const gchar* message, FlValue* details);');
   }
@@ -353,13 +486,19 @@ class GObjectHeaderGenerator extends StructuredGenerator<GObjectOptions> {
     final String className = _getClassName(module, api.name);
     final String vtableName = _getVTableName(module, api.name);
 
+    indent.writeln('/**');
+    indent.writeln(' * $vtableName:');
+    indent.writeln(' *');
+    indent.writeln(
+        ' * Table of functions exposed by ${api.name} to be implemented by the API provider.');
+    indent.writeln(' */');
     indent.writeScoped('typedef struct {', '} $vtableName;', () {
       for (final Method method in api.methods) {
         final String methodName = _getMethodName(method.name);
         final String responseName = _getResponseName(api.name, method.name);
         final String responseClassName = _getClassName(module, responseName);
 
-        final List<String> methodArgs = <String>['$className* self'];
+        final List<String> methodArgs = <String>['$className* api'];
         for (final Parameter param in method.parameters) {
           final String name = _snakeCaseFromCamelCase(param.name);
           methodArgs.add('${_getType(module, param.type)} $name');
@@ -389,22 +528,49 @@ class GObjectHeaderGenerator extends StructuredGenerator<GObjectOptions> {
 
     indent.newln();
     final List<String> respondArgs = <String>[
-      '$className* self',
+      '$className* api',
       'FlBasicMessageChannelResponseHandle* response_handle',
       if (returnType != 'void') '$returnType return_value',
       if (_isNumericListType(method.returnType)) 'size_t return_value_length'
     ];
+    indent.writeln('/**');
+    indent.writeln(' * ${methodPrefix}_respond_$methodName:');
+    indent.writeln(' * @api: a #$className.');
+    indent.writeln(
+        ' * @response_handle: a #FlBasicMessageChannelResponseHandle.');
+    if (returnType != 'void') {
+      indent.writeln(
+          ' * @return_value: location to write the value returned by this method.');
+    }
+    if (_isNumericListType(method.returnType)) {
+      indent.writeln(
+          ' * @return_value_length: location to write length of @return_value.');
+    }
+    indent.writeln(' *');
+    indent.writeln(' * Responds to ${api.name}.${method.name}. ');
+    indent.writeln(' */');
     indent.writeln(
         "void ${methodPrefix}_respond_$methodName(${respondArgs.join(', ')});");
 
     indent.newln();
     final List<String> respondErrorArgs = <String>[
-      '$className* self',
+      '$className* api',
       'FlBasicMessageChannelResponseHandle* response_handle',
       'const gchar* code',
       'const gchar* message',
       'FlValue* details'
     ];
+    indent.writeln('/**');
+    indent.writeln(' * ${methodPrefix}_respond_error_$methodName:');
+    indent.writeln(' * @api: a #$className.');
+    indent.writeln(
+        ' * @response_handle: a #FlBasicMessageChannelResponseHandle.');
+    indent.writeln(' * @code: error code.');
+    indent.writeln(' * @message: error message.');
+    indent.writeln(' * @details: (allow-none): error details or %NULL.');
+    indent.writeln(' *');
+    indent.writeln(' * Responds with an error to ${api.name}.${method.name}. ');
+    indent.writeln(' */');
     indent.writeln(
         "void ${methodPrefix}_respond_error_$methodName(${respondErrorArgs.join(', ')});");
   }
@@ -440,8 +606,8 @@ class GObjectSourceGenerator extends StructuredGenerator<GObjectOptions> {
     if (generatorOptions.copyrightHeader != null) {
       addLines(indent, generatorOptions.copyrightHeader!, linePrefix: '// ');
     }
-    indent.writeln('$_commentPrefix ${getGeneratedCodeWarning()}');
-    indent.writeln('$_commentPrefix $seeAlsoWarning');
+    indent.writeln('// ${getGeneratedCodeWarning()}');
+    indent.writeln('// $seeAlsoWarning');
   }
 
   @override
