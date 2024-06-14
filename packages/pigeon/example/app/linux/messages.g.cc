@@ -546,48 +546,35 @@ PigeonExamplePackageExampleHostApi* pigeon_example_package_example_host_api_new(
       PIGEON_EXAMPLE_PACKAGE_EXAMPLE_HOST_API(g_object_new(
           pigeon_example_package_example_host_api_get_type(), nullptr));
   self->messenger = FL_BINARY_MESSENGER(g_object_ref(messenger));
-  self->suffix = g_strdup(suffix);
+  self->suffix =
+      suffix != nullptr ? g_strdup_printf(".%s", suffix) : g_strdup("");
   self->vtable = vtable;
   self->user_data = user_data;
   self->user_data_free_func = user_data_free_func;
 
   g_autoptr(PigeonExamplePackageMessageCodec) codec =
       pigeon_example_package_message_codec_new();
-  g_autofree gchar* get_host_language_channel_name =
-      self->suffix != nullptr ? g_strdup_printf(
-                                    "dev.flutter.pigeon.pigeon_example_package."
-                                    "ExampleHostApi.getHostLanguage.%s",
-                                    self->suffix)
-                              : g_strdup(
-                                    "dev.flutter.pigeon.pigeon_example_package."
-                                    "ExampleHostApi.getHostLanguage");
+  g_autofree gchar* get_host_language_channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_example_package.ExampleHostApi."
+      "getHostLanguage%s",
+      self->suffix);
   self->get_host_language_channel = fl_basic_message_channel_new(
       messenger, get_host_language_channel_name, FL_MESSAGE_CODEC(codec));
   fl_basic_message_channel_set_message_handler(
       self->get_host_language_channel,
       pigeon_example_package_example_host_api_get_host_language_cb, self,
       nullptr);
-  g_autofree gchar* add_channel_name =
-      self->suffix != nullptr
-          ? g_strdup_printf(
-                "dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.add.%"
-                "s",
-                self->suffix)
-          : g_strdup(
-                "dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.add");
+  g_autofree gchar* add_channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.add%s",
+      self->suffix);
   self->add_channel = fl_basic_message_channel_new(messenger, add_channel_name,
                                                    FL_MESSAGE_CODEC(codec));
   fl_basic_message_channel_set_message_handler(
       self->add_channel, pigeon_example_package_example_host_api_add_cb, self,
       nullptr);
-  g_autofree gchar* send_message_channel_name =
-      self->suffix != nullptr ? g_strdup_printf(
-                                    "dev.flutter.pigeon.pigeon_example_package."
-                                    "ExampleHostApi.sendMessage.%s",
-                                    self->suffix)
-                              : g_strdup(
-                                    "dev.flutter.pigeon.pigeon_example_package."
-                                    "ExampleHostApi.sendMessage");
+  g_autofree gchar* send_message_channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.sendMessage%s",
+      self->suffix);
   self->send_message_channel = fl_basic_message_channel_new(
       messenger, send_message_channel_name, FL_MESSAGE_CODEC(codec));
   fl_basic_message_channel_set_message_handler(
@@ -632,7 +619,7 @@ void pigeon_example_package_example_host_api_respond_error_send_message(
 struct _PigeonExamplePackageMessageFlutterApi {
   GObject parent_instance;
 
-  FlMethodChannel* channel;
+  FlBinaryMessenger* messenger;
   gchar* suffix;
 };
 
@@ -643,8 +630,8 @@ static void pigeon_example_package_message_flutter_api_dispose(
     GObject* object) {
   PigeonExamplePackageMessageFlutterApi* self =
       PIGEON_EXAMPLE_PACKAGE_MESSAGE_FLUTTER_API(object);
+  g_clear_object(&self->messenger);
   g_clear_pointer(&self->suffix, g_free);
-  g_clear_object(&self->channel);
   G_OBJECT_CLASS(pigeon_example_package_message_flutter_api_parent_class)
       ->dispose(object);
 }
@@ -664,15 +651,16 @@ pigeon_example_package_message_flutter_api_new(FlBinaryMessenger* messenger,
   PigeonExamplePackageMessageFlutterApi* self =
       PIGEON_EXAMPLE_PACKAGE_MESSAGE_FLUTTER_API(g_object_new(
           pigeon_example_package_message_flutter_api_get_type(), nullptr));
-  self->suffix = g_strdup(suffix);
-  g_autoptr(PigeonExamplePackageMessageCodec) message_codec =
-      pigeon_example_package_message_codec_new();
-  g_autoptr(FlStandardMethodCodec) codec =
-      fl_standard_method_codec_new_with_message_codec(
-          FL_STANDARD_MESSAGE_CODEC(message_codec));
-  self->channel = fl_method_channel_new(messenger, "MessageFlutterApi",
-                                        FL_METHOD_CODEC(codec));
+  self->messenger = FL_BINARY_MESSENGER(g_object_ref(messenger));
+  self->suffix =
+      suffix != nullptr ? g_strdup_printf(".%s", suffix) : g_strdup("");
   return self;
+}
+
+static void pigeon_example_package_message_flutter_api_flutter_method_cb(
+    GObject* object, GAsyncResult* result, gpointer user_data) {
+  GTask* task = G_TASK(user_data);
+  g_task_return_pointer(task, result, g_object_unref);
 }
 
 void pigeon_example_package_message_flutter_api_flutter_method(
@@ -682,25 +670,40 @@ void pigeon_example_package_message_flutter_api_flutter_method(
   g_autoptr(FlValue) args = fl_value_new_list();
   fl_value_append_take(args, a_string != nullptr ? fl_value_new_string(a_string)
                                                  : fl_value_new_null());
-  fl_method_channel_invoke_method(self->channel, "flutterMethod", args,
-                                  cancellable, callback, user_data);
+  g_autofree gchar* channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_example_package.MessageFlutterApi."
+      "flutterMethod%s",
+      self->suffix);
+  g_autoptr(PigeonExamplePackageMessageCodec) codec =
+      pigeon_example_package_message_codec_new();
+  FlBasicMessageChannel* channel = fl_basic_message_channel_new(
+      self->messenger, channel_name, FL_MESSAGE_CODEC(codec));
+  GTask* task = g_task_new(self, cancellable, callback, user_data);
+  g_task_set_task_data(task, channel, g_object_unref);
+  fl_basic_message_channel_send(
+      channel, args, cancellable,
+      pigeon_example_package_message_flutter_api_flutter_method_cb, task);
 }
 
 gboolean pigeon_example_package_message_flutter_api_flutter_method_finish(
     PigeonExamplePackageMessageFlutterApi* self, GAsyncResult* result,
     gchar** return_value, GError** error) {
-  g_autoptr(FlMethodResponse) response =
-      fl_method_channel_invoke_method_finish(self->channel, result, error);
+  g_autoptr(GTask) task = G_TASK(result);
+  GAsyncResult* r = G_ASYNC_RESULT(g_task_propagate_pointer(task, nullptr));
+  FlBasicMessageChannel* channel =
+      FL_BASIC_MESSAGE_CHANNEL(g_task_get_task_data(task));
+  g_autoptr(FlValue) response =
+      fl_basic_message_channel_send_finish(channel, r, error);
   if (response == nullptr) {
     return FALSE;
   }
-
-  g_autoptr(FlValue) r = fl_method_response_get_result(response, error);
-  if (r == nullptr) {
+  if (fl_value_get_length(response) > 1) {
+    // FIXME: Set error
     return FALSE;
   }
 
-  *return_value = g_strdup(fl_value_get_string(r));
+  FlValue* rv = fl_value_get_list_value(response, 0);
+  *return_value = g_strdup(fl_value_get_string(rv));
 
   return TRUE;
 }
