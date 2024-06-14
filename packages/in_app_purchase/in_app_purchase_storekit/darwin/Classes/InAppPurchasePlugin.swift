@@ -329,7 +329,7 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI {
         )
 
         guard let unwrappedChannel = paymentQueueDelegateCallbackChannel else {
-          fatalError("registrar.messenger can not be nil.")
+          fatalError("paymentQueueDelegateCallbackChannel can not be nil.")
         }
         paymentQueueDelegate = FIAPPaymentQueueDelegate(
           methodChannel: unwrappedChannel)

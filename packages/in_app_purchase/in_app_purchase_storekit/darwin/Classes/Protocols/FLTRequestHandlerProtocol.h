@@ -9,6 +9,7 @@ typedef void (^ProductRequestCompletion)(SKProductsResponse *_Nullable response,
                                          NSError *_Nullable errror);
 /// A protocol that wraps SKRequest.
 @protocol FLTRequestHandlerProtocol <NSObject>
+
 // Wrapper for SKRequest's start
 // https://developer.apple.com/documentation/storekit/skrequest/1385534-start
 - (void)startProductRequestWithCompletionHandler:(ProductRequestCompletion)completion;

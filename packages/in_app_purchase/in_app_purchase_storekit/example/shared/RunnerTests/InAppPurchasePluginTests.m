@@ -764,6 +764,7 @@
     invokeMethodCount++;
   };
 
+  // (TODO: louisehsu) Change this to inject the channel, like requestHandler
   plugin.transactionObserverCallbackChannel = testChannel;
 
   SKPaymentTransactionStub *paymentTransaction =
@@ -808,6 +809,7 @@
     invokeMethodCount++;
   };
 
+  // (TODO: louisehsu) Change this to inject the channel, like requestHandler
   plugin.transactionObserverCallbackChannel = testChannel;
 
   [plugin handleTransactionsRemoved:array];
@@ -831,6 +833,7 @@
     invokeMethodCount++;
   };
 
+  // (TODO: louisehsu) Change this to inject the channel, like requestHandler
   plugin.transactionObserverCallbackChannel = testChannel;
 
   [plugin handleTransactionRestoreFailed:error];
@@ -852,6 +855,7 @@
     invokeMethodCount++;
   };
 
+  // (TODO: louisehsu) Change this to inject the channel, like requestHandler
   plugin.transactionObserverCallbackChannel = testChannel;
 
   [plugin restoreCompletedTransactionsFinished];
@@ -899,6 +903,7 @@
     invokeMethodCount++;
   };
 
+  // (TODO: louisehsu) Change this to inject the channel, like requestHandler
   plugin.transactionObserverCallbackChannel = testChannel;
 
   BOOL result = [plugin shouldAddStorePaymentWithPayment:payment product:product];

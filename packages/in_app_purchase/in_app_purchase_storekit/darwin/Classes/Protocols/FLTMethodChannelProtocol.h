@@ -15,6 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
 // Invokes the specified Flutter method with the specified arguments, expecting
 // an asynchronous result.
 - (void)invokeMethod:(NSString *)method arguments:(id _Nullable)arguments;
+
 // Invokes the specified Flutter method with the specified arguments and specified callback
 - (void)invokeMethod:(NSString *)method
            arguments:(id _Nullable)arguments
@@ -24,6 +25,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 // The default method channel that wraps FlutterMethodChannel
 @interface DefaultMethodChannel : NSObject <FLTMethodChannelProtocol>
+
 // Initialize this wrapper with a FlutterMethodChannel
 - (instancetype)initWithChannel:(FlutterMethodChannel *)channel;
 @end

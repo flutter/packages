@@ -70,8 +70,14 @@ typedef void (^UpdatedDownloads)(NSArray<SKDownload *> *downloads);
                         transactionCache:(nonnull id<FLTTransactionCacheProtocol>)transactionCache;
 // Can throw exceptions if the transaction type is purchasing, should always used in a @try block.
 - (void)finishTransaction:(nonnull SKPaymentTransaction *)transaction;
+
+// Attempt to restore transactions. Require app store receipt url.
 - (void)restoreTransactions:(nullable NSString *)applicationName;
+
+//
 - (void)presentCodeRedemptionSheet API_UNAVAILABLE(tvos, macos, watchos);
+
+// Return all transactions that are not marked as complete.
 - (NSArray<SKPaymentTransaction *> *)getUnfinishedTransactions;
 
 // This method needs to be called before any other methods.
