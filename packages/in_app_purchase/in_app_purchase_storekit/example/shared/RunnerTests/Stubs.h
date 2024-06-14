@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+///  (TODO: louiseshsu) Rewrite the stubs in this file to use protocols and merge with Mocks
 #import <Foundation/Foundation.h>
 #import <StoreKit/StoreKit.h>
 
