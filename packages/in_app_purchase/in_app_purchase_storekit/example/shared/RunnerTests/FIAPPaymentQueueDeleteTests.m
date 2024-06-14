@@ -32,13 +32,13 @@ API_UNAVAILABLE(tvos, macos, watchos)
     @"transactionTimeStamp" : @([NSDate date].timeIntervalSince1970),
     @"originalTransaction" : [NSNull null],
   };
-  self.transaction = [[SKPaymentTransactionStub alloc] initWithMap:transactionMap];
+  self.transaction = [[TestSKPaymentTransaction alloc] initWithMap:transactionMap];
 
   NSDictionary *storefrontMap = @{
     @"countryCode" : @"USA",
     @"identifier" : @"unique_identifier",
   };
-  self.storefront = [[SKStorefrontStub alloc] initWithMap:storefrontMap];
+  self.storefront = [[TestSKStorefront alloc] initWithMap:storefrontMap];
 }
 
 - (void)tearDown {
@@ -59,7 +59,7 @@ API_UNAVAILABLE(tvos, macos, watchos)
     FIAPPaymentQueueDelegate *delegate =
         [[FIAPPaymentQueueDelegate alloc] initWithMethodChannel:mockChannel];
 
-    BOOL shouldContinue = [delegate paymentQueue:[[SKPaymentQueueStub alloc] init]
+    BOOL shouldContinue = [delegate paymentQueue:[[TestSKPaymentQueue alloc] init]
                        shouldContinueTransaction:self.transaction
                                     inStorefront:self.storefront];
 
@@ -81,7 +81,7 @@ API_UNAVAILABLE(tvos, macos, watchos)
                                                     andSKPaymentTransaction:self.transaction]);
         };
 
-    BOOL shouldContinue = [delegate paymentQueue:[[SKPaymentQueueStub alloc] init]
+    BOOL shouldContinue = [delegate paymentQueue:[[TestSKPaymentQueue alloc] init]
                        shouldContinueTransaction:self.transaction
                                     inStorefront:self.storefront];
 
@@ -104,7 +104,7 @@ API_UNAVAILABLE(tvos, macos, watchos)
         };
 
     BOOL shouldShow =
-        [delegate paymentQueueShouldShowPriceConsent:[[SKPaymentQueueStub alloc] init]];
+        [delegate paymentQueueShouldShowPriceConsent:[[TestSKPaymentQueue alloc] init]];
 
     XCTAssertFalse(shouldShow);
   }
@@ -125,7 +125,7 @@ API_UNAVAILABLE(tvos, macos, watchos)
         };
 
     BOOL shouldShow =
-        [delegate paymentQueueShouldShowPriceConsent:[[SKPaymentQueueStub alloc] init]];
+        [delegate paymentQueueShouldShowPriceConsent:[[TestSKPaymentQueue alloc] init]];
 
     XCTAssertTrue(shouldShow);
   }

@@ -23,8 +23,8 @@
 }
 
 - (void)addPayment:(SKPayment *_Nonnull)payment {
-  SKPaymentTransactionStub *transaction =
-      [[SKPaymentTransactionStub alloc] initWithState:self.testState payment:payment];
+  TestSKPaymentTransaction *transaction =
+      [[TestSKPaymentTransaction alloc] initWithState:self.testState payment:payment];
   [self.observer paymentQueue:self.realQueue updatedTransactions:@[ transaction ]];
 }
 

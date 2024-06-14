@@ -10,53 +10,53 @@
 
 NS_ASSUME_NONNULL_BEGIN
 API_AVAILABLE(ios(11.2), macos(10.13.2))
-@interface SKProductSubscriptionPeriodStub : SKProductSubscriptionPeriod
+@interface TestSKProductSubscriptionPeriod : SKProductSubscriptionPeriod
 - (instancetype)initWithMap:(NSDictionary *)map;
 @end
 
 API_AVAILABLE(ios(11.2), macos(10.13.2))
-@interface SKProductDiscountStub : SKProductDiscount
+@interface TestSKProductDiscount : SKProductDiscount
 - (instancetype)initWithMap:(NSDictionary *)map;
 @end
 
-@interface SKProductStub : SKProduct
+@interface TestSKProduct : SKProduct
 - (instancetype)initWithMap:(NSDictionary *)map;
 - (instancetype)initWithProductID:(NSString *)productIdentifier;
 @end
 
-@interface SKProductRequestStub : SKProductsRequest
+@interface TestSKProductRequest : SKProductsRequest
 @property(assign, nonatomic) BOOL returnError;
 - (instancetype)initWithProductIdentifiers:(NSSet<NSString *> *)productIdentifiers;
 - (instancetype)initWithFailureError:(NSError *)error;
 @end
 
-@interface SKProductsResponseStub : SKProductsResponse
+@interface TestSKProductsResponse : SKProductsResponse
 - (instancetype)initWithMap:(NSDictionary *)map;
 @end
 
-@interface SKRequestStub : SKRequest
+@interface TestSKRequest : SKRequest
 @end
 
-@interface SKPaymentQueueStub : SKPaymentQueue
+@interface TestSKPaymentQueue : SKPaymentQueue
 @property(assign, nonatomic) SKPaymentTransactionState testState;
 @property(strong, nonatomic, nullable) id<SKPaymentTransactionObserver> observer;
 @end
 
-@interface SKPaymentTransactionStub : SKPaymentTransaction
+@interface TestSKPaymentTransaction : SKPaymentTransaction
 - (instancetype)initWithMap:(NSDictionary *)map;
 - (instancetype)initWithState:(SKPaymentTransactionState)state;
 - (instancetype)initWithState:(SKPaymentTransactionState)state payment:(SKPayment *)payment;
 @end
 
-@interface SKMutablePaymentStub : SKMutablePayment
+@interface TestSKMutablePayment : SKMutablePayment
 - (instancetype)initWithMap:(NSDictionary *)map;
 @end
 
-@interface NSErrorStub : NSError
+@interface TestNSError : NSError
 - (instancetype)initWithMap:(NSDictionary *)map;
 @end
 
-@interface FIAPReceiptManagerStub : FIAPReceiptManager
+@interface TestFIAPReceiptManager : FIAPReceiptManager
 // Indicates whether getReceiptData of this stub is going to return an error.
 // Setting this to true will let getReceiptData give a basic NSError and return nil.
 @property(assign, nonatomic) BOOL returnError;
@@ -64,21 +64,21 @@ API_AVAILABLE(ios(11.2), macos(10.13.2))
 @property(assign, nonatomic) BOOL returnNilURL;
 @end
 
-@interface SKReceiptRefreshRequestStub : SKReceiptRefreshRequest
+@interface TestSKReceiptRefreshRequest : SKReceiptRefreshRequest
 - (instancetype)initWithFailureError:(NSError *)error;
 @end
 
 API_AVAILABLE(ios(13.0), macos(10.15))
-@interface SKStorefrontStub : SKStorefront
+@interface TestSKStorefront : SKStorefront
 - (instancetype)initWithMap:(NSDictionary *)map;
 @end
 
 #if TARGET_OS_IOS
-@interface FlutterPluginRegistrarStub : NSObject <FlutterPluginRegistrar>
+@interface TestFlutterPluginRegistrar : NSObject <FlutterPluginRegistrar>
 @end
 #endif
 
-@interface FlutterBinaryMessengerStub : NSObject <FlutterBinaryMessenger>
+@interface TestFlutterBinaryMessenger : NSObject <FlutterBinaryMessenger>
 @end
 
 NS_ASSUME_NONNULL_END

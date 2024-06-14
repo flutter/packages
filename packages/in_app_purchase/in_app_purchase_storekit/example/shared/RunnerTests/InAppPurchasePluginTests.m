@@ -12,7 +12,7 @@
 
 @interface InAppPurchasePluginTest : XCTestCase
 
-@property(strong, nonatomic) FIAPReceiptManagerStub *receiptManagerStub;
+@property(strong, nonatomic) TestFIAPReceiptManager *receiptManagerStub;
 @property(strong, nonatomic) InAppPurchasePlugin *plugin;
 
 @end
@@ -20,7 +20,7 @@
 @implementation InAppPurchasePluginTest
 
 - (void)setUp {
-  self.receiptManagerStub = [FIAPReceiptManagerStub new];
+  self.receiptManagerStub = [TestFIAPReceiptManager new];
   self.plugin = [[InAppPurchasePluginStub alloc]
       initWithReceiptManager:self.receiptManagerStub
               handlerFactory:^DefaultRequestHandler *(SKRequest *request) {
@@ -48,7 +48,7 @@
     TestPaymentQueue *queue = [[TestPaymentQueue alloc] init];
     TestTransactionCache *cache = [[TestTransactionCache alloc] init];
 
-    queue.storefront = [[SKStorefrontStub alloc] initWithMap:storefrontMap];
+    queue.storefront = [[TestSKStorefront alloc] initWithMap:storefrontMap];
 
     self.plugin.paymentQueueHandler = [[FIAPaymentQueueHandler alloc] initWithQueue:queue
                                                                 transactionsUpdated:nil
@@ -128,8 +128,8 @@
     @"transactionTimeStamp" : @([NSDate date].timeIntervalSince1970),
   };
 
-  SKPaymentTransactionStub *paymentTransaction =
-      [[SKPaymentTransactionStub alloc] initWithMap:transactionMap];
+  TestSKPaymentTransaction *paymentTransaction =
+      [[TestSKPaymentTransaction alloc] initWithMap:transactionMap];
   NSArray *array = @[ paymentTransaction ];
 
   TestPaymentQueue *queue = [[TestPaymentQueue alloc] init];
@@ -175,8 +175,8 @@
     @"transactionTimeStamp" : @([NSDate date].timeIntervalSince1970),
   };
 
-  SKPaymentTransactionStub *paymentTransaction =
-      [[SKPaymentTransactionStub alloc] initWithMap:transactionMap];
+  TestSKPaymentTransaction *paymentTransaction =
+      [[TestSKPaymentTransaction alloc] initWithMap:transactionMap];
 
   TestPaymentQueue *queue = [[TestPaymentQueue alloc] init];
   queue.transactions = @[ paymentTransaction ];
@@ -628,7 +628,7 @@
     @"transactionTimeStamp" : @([NSDate date].timeIntervalSince1970),
     @"originalTransaction" : [NSNull null],
   };
-  queue.transactions = @[ [[SKPaymentTransactionStub alloc] initWithMap:transactionMap] ];
+  queue.transactions = @[ [[TestSKPaymentTransaction alloc] initWithMap:transactionMap] ];
   self.plugin.paymentQueueHandler = [[FIAPaymentQueueHandler alloc] initWithQueue:queue
                                                               transactionsUpdated:nil
                                                                transactionRemoved:nil
@@ -638,8 +638,8 @@
                                                                  updatedDownloads:nil
                                                                  transactionCache:cache];
   FlutterError *error;
-  SKPaymentTransactionStub *original =
-      [[SKPaymentTransactionStub alloc] initWithMap:transactionMap];
+  TestSKPaymentTransaction *original =
+      [[TestSKPaymentTransaction alloc] initWithMap:transactionMap];
 
   SKPaymentTransactionMessage *originalPigeon =
       [FIAObjectTranslator convertTransactionToPigeon:original];
@@ -693,7 +693,7 @@
                                                                    updatedDownloads:nil
                                                                    transactionCache:cache];
 
-    self.plugin.registrar = [[FlutterPluginRegistrarStub alloc] init];
+    self.plugin.registrar = [[TestFlutterPluginRegistrar alloc] init];
 
     // Verify the delegate is nil before we register one.
     XCTAssertNil(self.plugin.paymentQueueHandler.delegate);
@@ -719,7 +719,7 @@
                                                                    updatedDownloads:nil
                                                                    transactionCache:cache];
 
-    self.plugin.registrar = [[FlutterPluginRegistrarStub alloc] init];
+    self.plugin.registrar = [[TestFlutterPluginRegistrar alloc] init];
 
     // Verify the delegate is nil before we register one.
     XCTAssertNil(self.plugin.paymentQueueHandler.delegate);
@@ -767,8 +767,8 @@
   // (TODO: louisehsu) Change this to inject the channel, like requestHandler
   plugin.transactionObserverCallbackChannel = testChannel;
 
-  SKPaymentTransactionStub *paymentTransaction =
-      [[SKPaymentTransactionStub alloc] initWithMap:transactionMap];
+  TestSKPaymentTransaction *paymentTransaction =
+      [[TestSKPaymentTransaction alloc] initWithMap:transactionMap];
   NSArray *array = [NSArray arrayWithObjects:paymentTransaction, nil];
   NSMutableArray *maps = [NSMutableArray new];
   [maps addObject:[FIAObjectTranslator getMapFromSKPaymentTransaction:paymentTransaction]];
@@ -794,8 +794,8 @@
                 return [[DefaultRequestHandler alloc]
                     initWithRequestHandler:[[FIAPRequestHandler alloc] initWithRequest:request]];
               }];
-  SKPaymentTransactionStub *paymentTransaction =
-      [[SKPaymentTransactionStub alloc] initWithMap:transactionMap];
+  TestSKPaymentTransaction *paymentTransaction =
+      [[TestSKPaymentTransaction alloc] initWithMap:transactionMap];
   NSArray *array = [NSArray arrayWithObjects:paymentTransaction, nil];
   NSMutableArray *maps = [NSMutableArray new];
   [maps addObject:[FIAObjectTranslator getMapFromSKPaymentTransaction:paymentTransaction]];
@@ -880,7 +880,7 @@
   };
 
   SKMutablePayment *payment = [FIAObjectTranslator getSKMutablePaymentFromMap:paymentMap];
-  SKProductStub *product = [[SKProductStub alloc] initWithMap:productMap];
+  TestSKProduct *product = [[TestSKProduct alloc] initWithMap:productMap];
 
   InAppPurchasePlugin *plugin = [[InAppPurchasePluginStub alloc]
       initWithReceiptManager:self.receiptManagerStub
