@@ -36,7 +36,7 @@ final class InstanceManagerTests: XCTestCase {
 
     instanceManager.addDartCreatedInstance(object, withIdentifier: 0)
 
-    XCTAssertEqual(instanceManager.removeInstance(withIdentifier: 0), object)
+    XCTAssertEqual(try! instanceManager.removeInstance(withIdentifier: 0), object)
     XCTAssertEqual(instanceManager.strongInstanceCount, 0)
   }
 
@@ -56,7 +56,7 @@ final class InstanceManagerTests: XCTestCase {
     let object = NSObject()
 
     instanceManager.addDartCreatedInstance(object, withIdentifier: 0)
-    instanceManager.removeAllObjects()
+    try? instanceManager.removeAllObjects()
 
     XCTAssertEqual(instanceManager.strongInstanceCount, 0)
     XCTAssertEqual(instanceManager.weakInstanceCount, 0)
