@@ -583,6 +583,7 @@ class SwiftGenerator extends StructuredGenerator<SwiftOptions> {
     indent.format(instanceManagerFinalizerTemplate);
     indent.newln();
     indent.format(instanceManagerTemplate);
+    indent.newln();
   }
 
   @override
@@ -728,7 +729,7 @@ class SwiftGenerator extends StructuredGenerator<SwiftOptions> {
     _writeProxyApiRegistrar(indent, allProxyApis: allProxyApis);
     indent.writeln(proxyApiReaderWriterTemplate(
       allProxyApis: allProxyApis,
-      codecName: _getCodecName(generatorOptions),
+      generalCodecName: _getCodecName(generatorOptions),
     ));
   }
 

@@ -245,7 +245,7 @@ final class $instanceManagerClassName {
 /// Creates the Swift `ReaderWriter` for handling ProxyApis.
 String proxyApiReaderWriterTemplate({
   required Iterable<AstProxyApi> allProxyApis,
-  required String codecName,
+  required String generalCodecName,
 }) {
   final String classChecker = allProxyApis.map<String>((AstProxyApi api) {
     final String className = api.swiftOptions?.name ?? api.name;
@@ -266,7 +266,7 @@ String proxyApiReaderWriterTemplate({
 private class $proxyApiReaderWriterName: FlutterStandardReaderWriter {
   unowned let pigeonRegistrar: $proxyApiRegistrarName
   
-  private class ${classNamePrefix}ProxyApiCodecReader: ${codecName}Reader {
+  private class ${classNamePrefix}ProxyApiCodecReader: ${generalCodecName}Reader {
     unowned let pigeonRegistrar: $proxyApiRegistrarName
 
     init(data: Data, pigeonRegistrar: $proxyApiRegistrarName) {
@@ -287,7 +287,7 @@ private class $proxyApiReaderWriterName: FlutterStandardReaderWriter {
     }
   }
   
-  private class ${classNamePrefix}ProxyApiCodecWriter: ${codecName}Writer {
+  private class ${classNamePrefix}ProxyApiCodecWriter: ${generalCodecName}Writer {
     unowned let pigeonRegistrar: $proxyApiRegistrarName
 
     init(data: NSMutableData, pigeonRegistrar: $proxyApiRegistrarName) {
