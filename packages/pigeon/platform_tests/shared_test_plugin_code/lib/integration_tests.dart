@@ -16,11 +16,6 @@ const int _biggerThanBigInt = 3000000000;
 const int _regularInt = 42;
 const double _doublePi = 3.14159;
 
-/// Tests that haven't yet been made to work on Linux.
-// TODO(stuartmorgan): Remove this before landing; this is only for the WIP
-// development.
-final bool _linuxBringup = Platform.isLinux;
-
 /// Possible host languages that test can target.
 enum TargetGenerator {
   /// The Windows C++ generator.
@@ -1894,7 +1889,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
           await api.callFlutterSmallApiEchoString(sentObject);
       expect(echoObject, sentObject);
     });
-  }, skip: _linuxBringup);
+  });
 }
 
 class _FlutterApiTestImplementation implements FlutterIntegrationCoreApi {

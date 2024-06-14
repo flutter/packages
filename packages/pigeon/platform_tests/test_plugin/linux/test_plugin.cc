@@ -1210,8 +1210,8 @@ static void call_flutter_echo_nullable_enum(
       callback_data_new(self, response_handle));
 }
 
-static void small_api_echo_string_cb(GObject* object, GAsyncResult* result,
-                                     gpointer user_data) {
+static void small_api_two_echo_string_cb(GObject* object, GAsyncResult* result,
+                                         gpointer user_data) {
   g_autoptr(CallbackData) data = static_cast<CallbackData*>(user_data);
 
   g_autofree gchar* return_value = nullptr;
@@ -1228,15 +1228,34 @@ static void small_api_echo_string_cb(GObject* object, GAsyncResult* result,
       data->self->host_core_api, data->response_handle, return_value);
 }
 
+static void small_api_one_echo_string_cb(GObject* object, GAsyncResult* result,
+                                         gpointer user_data) {
+  g_autoptr(CallbackData) data = static_cast<CallbackData*>(user_data);
+  TestPlugin* self = data->self;
+
+  g_autofree gchar* return_value = nullptr;
+  g_autoptr(GError) error = nullptr;
+  if (!core_tests_pigeon_test_flutter_small_api_echo_string_finish(
+          CORE_TESTS_PIGEON_TEST_FLUTTER_SMALL_API(object), result,
+          &return_value, &error)) {
+    core_tests_pigeon_test_host_integration_core_api_respond_error_call_flutter_small_api_echo_string(
+        data->self->host_core_api, data->response_handle, "", "", nullptr);
+    return;
+  }
+
+  core_tests_pigeon_test_flutter_small_api_echo_string(
+      self->flutter_small_api_two, return_value, self->cancellable,
+      small_api_two_echo_string_cb, g_steal_pointer(&data));
+}
+
 static void call_flutter_small_api_echo_string(
     CoreTestsPigeonTestHostIntegrationCoreApi* api, const gchar* a_string,
     FlBasicMessageChannelResponseHandle* response_handle, gpointer user_data) {
   TestPlugin* self = TEST_PLUGIN(user_data);
 
-  // FIXME: Them call flutter_small_api_two
   core_tests_pigeon_test_flutter_small_api_echo_string(
       self->flutter_small_api_one, a_string, self->cancellable,
-      small_api_echo_string_cb, callback_data_new(self, response_handle));
+      small_api_one_echo_string_cb, callback_data_new(self, response_handle));
 }
 
 static CoreTestsPigeonTestHostIntegrationCoreApiVTable host_core_api_vtable = {
