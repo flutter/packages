@@ -6,7 +6,7 @@ import 'package:collection/collection.dart' show ListEquality;
 import 'package:meta/meta.dart';
 
 import 'pigeon_lib.dart';
-import 'swift_generator.dart';
+import 'swift_generator.dart' show SwiftProxyApiOptions;
 
 typedef _ListEquals = bool Function(List<Object?>, List<Object?>);
 
@@ -270,6 +270,16 @@ class AstProxyApi extends Api {
         .followedBy(flutterMethodsFromInterfaces())
         .every((Method method) => !method.isRequired);
   }
+
+  /// Whether the API has any message calls from Dart to host.
+  bool hasAnyHostMessageCalls() =>
+      constructors.isNotEmpty ||
+      attachedFields.isNotEmpty ||
+      hostMethods.isNotEmpty;
+
+  /// Whether the API has any message calls from host to Dart.
+  bool hasAnyFlutterMessageCalls() =>
+      hasCallbackConstructor() || flutterMethods.isNotEmpty;
 
   // Recursively search for all the interfaces apis from a list of names of
   // interfaces.

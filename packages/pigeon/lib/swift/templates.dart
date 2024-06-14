@@ -276,7 +276,7 @@ private class $proxyApiReaderWriterName: FlutterStandardReaderWriter {
 
     override func readValue(ofType type: UInt8) -> Any? {
       switch type {
-      case 128:
+      case $proxyApiCodecInstanceManagerKey:
         let identifier = self.readValue()
         let instance: AnyObject? = pigeonRegistrar.instanceManager.instance(
           forIdentifier: identifier is Int64 ? identifier as! Int64 : Int64(identifier as! Int32))
@@ -300,7 +300,7 @@ private class $proxyApiReaderWriterName: FlutterStandardReaderWriter {
 
       if let instance = value as AnyObject?, pigeonRegistrar.instanceManager.containsInstance(instance)
       {
-        super.writeByte(128)
+        super.writeByte($proxyApiCodecInstanceManagerKey)
         super.writeValue(
           pigeonRegistrar.instanceManager.identifierWithStrongReference(forInstance: instance)!)
       } else {
