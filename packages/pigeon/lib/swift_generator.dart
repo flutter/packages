@@ -790,9 +790,7 @@ class SwiftGenerator extends StructuredGenerator<SwiftOptions> {
         },
       );
 
-      if (api.constructors.isNotEmpty ||
-          api.attachedFields.isNotEmpty ||
-          api.hostMethods.isNotEmpty) {
+      if (api.hasAnyHostMessageCalls()) {
         _writeProxyApiMessageHandlerMethod(
           indent,
           api,
@@ -1158,9 +1156,13 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
     indent.writeScoped('protocol $delegateName {', '}', () {
       for (final AstProxyApi api in allProxyApis) {
         final String hostApiName = '$hostProxyApiPrefix${api.name}';
-        indent.format(
-          '/// An implementation of [$hostApiName] used to add a new Dart instance of\n'
-          '/// `${api.name}` to the Dart `InstanceManager` and make calls to Dart.',
+        addDocumentationComments(
+          indent,
+          <String>[
+            ' An implementation of [$hostApiName] used to add a new Dart instance of',
+            ' `${api.name}` to the Dart `InstanceManager` and make calls to Dart.'
+          ],
+          _docCommentSpec,
         );
         indent.writeln(
           'func pigeonApi${api.name}(_ registrar: $proxyApiRegistrarName) -> $hostApiName',
@@ -1175,41 +1177,47 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
 
       indent.writeln('private var _codec: FlutterStandardMessageCodec?');
       indent.format(
-        'var codec: FlutterStandardMessageCodec {\n'
-        '  if _codec == nil {\n'
-        '    _codec = FlutterStandardMessageCodec(\n'
-        '      readerWriter: $proxyApiReaderWriterName(pigeonRegistrar: self))\n'
-        '  }\n'
-        '  return _codec!\n'
-        '}',
+        '''
+        var codec: FlutterStandardMessageCodec {
+          if _codec == nil {
+            _codec = FlutterStandardMessageCodec(
+              readerWriter: $proxyApiReaderWriterName(pigeonRegistrar: self))
+          }
+          return _codec!
+        }''',
+        trimIndentation: true,
       );
       indent.newln();
 
       indent.format(
-        'private class InstanceManagerApiFinalizerDelegate: $instanceManagerFinalizerDelegateName {\n'
-        '  let api: ${instanceManagerClassName}Api\n'
-        '\n'
-        '  init(_ api: ${instanceManagerClassName}Api) {\n'
-        '    self.api = api\n'
-        '  }\n'
-        '\n'
-        '  public func onDeinit(identifier: Int64) {\n'
-        '    api.removeStrongReference(identifier: identifier) {\n'
-        '      _ in\n'
-        '    }\n'
-        '  }\n'
-        '}',
+        '''
+        private class InstanceManagerApiFinalizerDelegate: $instanceManagerFinalizerDelegateName {
+          let api: ${instanceManagerClassName}Api
+
+          init(_ api: ${instanceManagerClassName}Api) {
+            self.api = api
+          }
+
+          public func onDeinit(identifier: Int64) {
+            api.removeStrongReference(identifier: identifier) {
+              _ in
+            }
+          }
+        }''',
+        trimIndentation: true,
       );
       indent.newln();
 
       indent.format(
-        'init(binaryMessenger: FlutterBinaryMessenger, apiDelegate: $delegateName) {\n'
-        '  self.binaryMessenger = binaryMessenger\n'
-        '  self.apiDelegate = apiDelegate\n'
-        '  self.instanceManager = $instanceManagerClassName(\n'
-        '    finalizerDelegate: InstanceManagerApiFinalizerDelegate(\n'
-        '      ${instanceManagerClassName}Api(binaryMessenger: binaryMessenger)))\n'
-        '}',
+        '''
+        init(binaryMessenger: FlutterBinaryMessenger, apiDelegate: $delegateName) {
+          self.binaryMessenger = binaryMessenger
+          self.apiDelegate = apiDelegate
+          self.instanceManager = $instanceManagerClassName(
+            finalizerDelegate: InstanceManagerApiFinalizerDelegate(
+              ${instanceManagerClassName}Api(binaryMessenger: binaryMessenger)))
+        }''',
+        trimIndentation: true,
       );
       indent.newln();
 
@@ -1475,11 +1483,13 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
       '}',
       () {
         indent.format(
-          'let codec: FlutterStandardMessageCodec =\n'
-          '  api != nil\n'
-          '  ? FlutterStandardMessageCodec(\n'
-          '    readerWriter: $proxyApiReaderWriterName(pigeonRegistrar: api!.pigeonRegistrar))\n'
-          '  : FlutterStandardMessageCodec.sharedInstance()',
+          '''
+          let codec: FlutterStandardMessageCodec =
+            api != nil
+            ? FlutterStandardMessageCodec(
+              readerWriter: $proxyApiReaderWriterName(pigeonRegistrar: api!.pigeonRegistrar))
+            : FlutterStandardMessageCodec.sharedInstance()''',
+          trimIndentation: true,
         );
         void writeWithApiCheckIfNecessary(
           List<TypeDeclaration> types, {
@@ -1503,19 +1513,21 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
                   typeWithRequirement.type.baseName;
               final String varChannelName = '${methodName}Channel';
               indent.format(
-                'let $varChannelName = FlutterBasicMessageChannel(\n'
-                '  name: "$channelName",\n'
-                '  binaryMessenger: binaryMessenger, codec: codec)\n'
-                'if let api = api {\n'
-                '  $varChannelName.setMessageHandler { message, reply in\n'
-                '    reply(wrapError(FlutterError(code: "PigeonUnsupportedOperationError",\n'
-                '                                 message: "Call references class `$className`, which requires version $apiRequirement.",\n'
-                '                                 details: nil\n'
-                '                                )))\n'
-                '  }\n'
-                '} else {\n'
-                '  $varChannelName.setMessageHandler(nil)\n'
-                '}',
+                '''
+                let $varChannelName = FlutterBasicMessageChannel(
+                  name: "$channelName",
+                  binaryMessenger: binaryMessenger, codec: codec)
+                if let api = api {
+                  $varChannelName.setMessageHandler { message, reply in
+                    reply(wrapError(FlutterError(code: "PigeonUnsupportedOperationError",
+                                                 message: "Call references class `$className`, which requires version $apiRequirement.",
+                                                 details: nil
+                                                )))
+                  }
+                } else {
+                  $varChannelName.setMessageHandler(nil)
+                }''',
+                trimIndentation: true,
               );
             });
           } else {
