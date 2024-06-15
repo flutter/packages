@@ -118,12 +118,13 @@ void main() {
           return datagramSocket;
         });
 
+        const int numberOfFakeInterfaces = 10;
         Future<Iterable<NetworkInterface>> fakeNetworkInterfacesFactory(
             InternetAddressType type) async {
           final List<NetworkInterface> fakeInterfaces = <NetworkInterface>[];
 
           // Generate "fake" interfaces
-          for (int i = 0; i < 10; i++) {
+          for (int i = 0; i < numberOfFakeInterfaces; i++) {
             fakeInterfaces.add(FakeNetworkInterface(
               'inetfake$i',
               <InternetAddress>[
@@ -144,7 +145,15 @@ void main() {
             mDnsPort: 1234,
             interfacesFactory: fakeNetworkInterfacesFactory);
         client.stop();
-        expect(selectedInterfacesForSendingPackets.length, 1);
+
+        if (testCase['datagramSocketType'] == InternetAddress.anyIPv4) {
+          expect(selectedInterfacesForSendingPackets.length, 1);
+        } else {
+          // + 1 because of unspecified address (::)
+          expect(selectedInterfacesForSendingPackets.length,
+              numberOfFakeInterfaces + 1);
+        }
+
         expect(selectedInterfacesForSendingPackets[0], listenAddress.address);
       });
     }
@@ -179,6 +188,10 @@ class FakeRawDatagramSocket extends Fake implements RawDatagramSocket {
 
   @override
   void joinMulticast(InternetAddress group, [NetworkInterface? interface]) {
+    // nothing to do here
+  }
+  @override
+  void setRawOption(RawSocketOption option) {
     // nothing to do here
   }
 }

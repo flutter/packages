@@ -49,7 +49,7 @@ class MDnsClient {
   bool _starting = false;
   bool _started = false;
   RawDatagramSocket? _incomingIPv4;
-  RawDatagramSocket? _incomingIPv6;
+  final List<RawDatagramSocket> _ipv6InterfaceSockets = <RawDatagramSocket>[];
   final LookupResolver _resolver = LookupResolver();
   final ResourceRecordCache _cache = ResourceRecordCache();
   final RawDatagramSocketFactory _rawDatagramSocketFactory;
@@ -119,7 +119,7 @@ class MDnsClient {
     if (incoming.address != InternetAddress.anyIPv6) {
       _incomingIPv4 = incoming;
     } else {
-      _incomingIPv6 = incoming;
+      _ipv6InterfaceSockets.add(incoming);
     }
 
     _mDnsAddress ??= incoming.address.type == InternetAddressType.IPv4
@@ -130,6 +130,25 @@ class MDnsClient {
         (await interfacesFactory(listenAddress.type)).toList();
 
     for (final NetworkInterface interface in interfaces) {
+      final InternetAddress targetAddress = interface.addresses[0];
+
+      // Ensure that we're using this address/interface for multicast.
+      if (targetAddress.type == InternetAddressType.IPv6) {
+        final RawDatagramSocket socket = await _rawDatagramSocketFactory(
+          targetAddress,
+          selectedMDnsPort,
+          reuseAddress: true,
+          reusePort: true,
+          ttl: 255,
+        );
+        _ipv6InterfaceSockets.add(socket);
+        socket.setRawOption(RawSocketOption.fromInt(
+          RawSocketOption.levelIPv6,
+          RawSocketOption.IPv6MulticastInterface,
+          interface.index,
+        ));
+      }
+
       // Join multicast on this interface.
       incoming.joinMulticast(_mDnsAddress!, interface);
     }
@@ -148,9 +167,12 @@ class MDnsClient {
     }
 
     _incomingIPv4?.close();
-    _incomingIPv6?.close();
     _incomingIPv4 = null;
-    _incomingIPv6 = null;
+
+    for (final RawDatagramSocket socket in _ipv6InterfaceSockets) {
+      socket.close();
+    }
+    _ipv6InterfaceSockets.clear();
 
     _resolver.clearPendingRequests();
 
