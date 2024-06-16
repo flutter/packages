@@ -87,7 +87,7 @@ void main() {
     await client.lookup(ResourceRecordQuery.serverPointer('_')).toList();
   });
 
-  group('Bind a single socket to ANY IPv4/6', () {
+  group('Bind a single socket to ANY IPv4 and more than one when IPv6', () {
     final List<Map<String, Object>> testCases = <Map<String, Object>>[
       <String, Object>{
         'name': 'IPv4',
@@ -140,6 +140,7 @@ void main() {
 
         final InternetAddress listenAddress =
             testCase['datagramSocketType']! as InternetAddress;
+
         await client.start(
             listenAddress: listenAddress,
             mDnsPort: 1234,
@@ -153,7 +154,6 @@ void main() {
           expect(selectedInterfacesForSendingPackets.length,
               numberOfFakeInterfaces + 1);
         }
-
         expect(selectedInterfacesForSendingPackets[0], listenAddress.address);
       });
     }

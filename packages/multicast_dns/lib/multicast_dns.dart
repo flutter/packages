@@ -212,8 +212,17 @@ class MDnsClient {
     final Stream<T> results = _resolver.addPendingRequest<T>(
         query.resourceRecordType, query.fullyQualifiedName, timeout);
 
-    // Send and listen on same "ANY" interface
-    _incomingIPv4?.send(query.encode(), _mDnsAddress!, selectedMDnsPort);
+    final List<int> packet = query.encode();
+
+    if (_mDnsAddress?.type == InternetAddressType.IPv4) {
+      // Send and listen on same "ANY" interface
+      _incomingIPv4?.send(packet, _mDnsAddress!, selectedMDnsPort);
+    } else {
+      for (final RawDatagramSocket socket in _ipv6InterfaceSockets) {
+        socket.send(packet, _mDnsAddress!, selectedMDnsPort);
+      }
+    }
+
     return results;
   }
 
