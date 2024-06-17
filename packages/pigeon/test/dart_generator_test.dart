@@ -532,8 +532,10 @@ void main() {
       dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
-    expect(code, contains('enum1?.index,'));
-    expect(code, contains('? Enum.values[result[0]! as int]'));
+    expect(code, contains('return value == null ? null : Enum.values[value];'));
+    expect(code, contains('writeValue(buffer, value.index);'));
+    expect(code,
+        contains('final EnumClass? arg_enumClass = (args[0] as EnumClass?);'));
     expect(code, contains('EnumClass doSomething(EnumClass enumClass);'));
   });
 
@@ -571,7 +573,7 @@ void main() {
     final String code = sink.toString();
     expect(code, contains('enum Foo {'));
     expect(code, contains('Future<void> bar(Foo? foo) async'));
-    expect(code, contains('__pigeon_channel.send(<Object?>[foo?.index])'));
+    expect(code, contains('__pigeon_channel.send(<Object?>[foo])'));
   });
 
   test('flutter non-nullable enum argument with enum class', () {
@@ -624,8 +626,9 @@ void main() {
       dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
-    expect(code, contains('enum1.index,'));
-    expect(code, contains('enum1: Enum.values[result[0]! as int]'));
+    expect(code, contains('writeValue(buffer, value.index)'));
+    expect(code, contains('return value == null ? null : Enum.values[value];'));
+    expect(code, contains('enum1: result[0]! as Enum,'));
   });
 
   test('host void argument', () {
@@ -1600,46 +1603,7 @@ name: foobar
     expect(code, contains('/// ///'));
   });
 
-  test("doesn't create codecs if no custom datatypes", () {
-    final Root root = Root(
-      apis: <Api>[
-        AstFlutterApi(
-          name: 'Api',
-          methods: <Method>[
-            Method(
-              name: 'method',
-              location: ApiLocation.flutter,
-              returnType: const TypeDeclaration.voidDeclaration(),
-              parameters: <Parameter>[
-                Parameter(
-                  name: 'field',
-                  type: const TypeDeclaration(
-                    baseName: 'int',
-                    isNullable: true,
-                  ),
-                ),
-              ],
-            )
-          ],
-        )
-      ],
-      classes: <Class>[],
-      enums: <Enum>[],
-    );
-    final StringBuffer sink = StringBuffer();
-    const DartGenerator generator = DartGenerator();
-    generator.generate(
-      const DartOptions(),
-      root,
-      sink,
-      dartPackageName: DEFAULT_PACKAGE_NAME,
-    );
-    final String code = sink.toString();
-    expect(code, isNot(contains('extends StandardMessageCodec')));
-    expect(code, contains('StandardMessageCodec'));
-  });
-
-  test('creates custom codecs if custom datatypes present', () {
+  test('creates custom codecs', () {
     final Root root = Root(apis: <Api>[
       AstFlutterApi(name: 'Api', methods: <Method>[
         Method(
@@ -1740,10 +1704,10 @@ name: foobar
     );
 
     final String testCode = sink.toString();
-    expect(
-        testCode,
-        contains(
-            'final Enum? arg_anEnum = args[0] == null ? null : Enum.values[args[0]! as int]'));
+    expect(testCode, contains('final Enum? arg_anEnum = (args[0] as Enum?);'));
+    expect(testCode,
+        contains('return value == null ? null : Enum.values[value];'));
+    expect(testCode, contains('writeValue(buffer, value.index);'));
   });
 
   test('connection error contains channel name', () {

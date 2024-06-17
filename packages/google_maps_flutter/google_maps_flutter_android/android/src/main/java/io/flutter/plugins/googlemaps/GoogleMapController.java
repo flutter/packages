@@ -8,6 +8,7 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.graphics.SurfaceTexture;
@@ -115,11 +116,13 @@ class GoogleMapController
     methodChannel =
         new MethodChannel(binaryMessenger, "plugins.flutter.dev/google_maps_android_" + id);
     methodChannel.setMethodCallHandler(this);
+    AssetManager assetManager = context.getAssets();
     this.lifecycleProvider = lifecycleProvider;
     this.clusterManagersController = new ClusterManagersController(methodChannel, context);
-    this.markersController = new MarkersController(methodChannel, clusterManagersController);
+    this.markersController =
+        new MarkersController(methodChannel, clusterManagersController, assetManager, density);
     this.polygonsController = new PolygonsController(methodChannel, density);
-    this.polylinesController = new PolylinesController(methodChannel, density);
+    this.polylinesController = new PolylinesController(methodChannel, assetManager, density);
     this.circlesController = new CirclesController(methodChannel, density);
     this.tileOverlaysController = new TileOverlaysController(methodChannel);
   }

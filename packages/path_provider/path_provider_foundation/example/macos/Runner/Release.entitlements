@@ -3,7 +3,8 @@
 <plist version="1.0">
 <dict>
 	<key>com.apple.security.app-sandbox</key>
-	<true/>
+	<!-- TODO(vashworth): Re-enable sandboxing once https://github.com/flutter/flutter/pull/149618 lands in stable and stable version is updated. -->
+	<false/>
 	<key>com.apple.security.files.downloads.read-write</key>
 	<true/>
 </dict>
