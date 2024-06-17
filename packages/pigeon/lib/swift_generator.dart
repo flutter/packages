@@ -1721,7 +1721,10 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
     );
 
     final String? availableAnnotation = _tryGetAvailabilityAnnotation(
-      api.unattachedFields.map((ApiField field) => field.type),
+      <TypeDeclaration>[
+        apiAsTypeDeclaration,
+        ...api.unattachedFields.map((ApiField field) => field.type),
+      ],
     );
     if (availableAnnotation != null) {
       indent.writeln('@$availableAnnotation');

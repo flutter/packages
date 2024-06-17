@@ -473,4 +473,8 @@ abstract class ProxyApiInterface {
   minIosApi: '15.0.0',
   minMacosApi: '10.0.0',
 ))
-abstract class ClassWithApiRequirement {}
+abstract class ClassWithApiRequirement {
+  ClassWithApiRequirement();
+
+  void aMethod();
+}

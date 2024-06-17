@@ -1546,4 +1546,27 @@ class ProxyApiDelegate: PigeonProxyApiDelegate {
     return PigeonApiProxyApiInterface(
       pigeonRegistrar: registrar, delegate: ProxyApiInterfaceDelegate())
   }
+
+  func pigeonApiClassWithApiRequirement(_ registrar: PigeonProxyApiRegistrar)
+    -> PigeonApiClassWithApiRequirement
+  {
+    class ClassWithApiRequirementDelegate: PigeonDelegateClassWithApiRequirement {
+      @available(iOS 15, *)
+      func pigeonDefaultConstructor(pigeonApi: PigeonApiClassWithApiRequirement) throws
+        -> ClassWithApiRequirement
+      {
+        return ClassWithApiRequirement()
+      }
+
+      @available(iOS 15, *)
+      func aMethod(
+        pigeonApi: PigeonApiClassWithApiRequirement, pigeonInstance: ClassWithApiRequirement
+      ) throws {
+
+      }
+    }
+
+    return PigeonApiClassWithApiRequirement(
+      pigeonRegistrar: registrar, delegate: ClassWithApiRequirementDelegate())
+  }
 }

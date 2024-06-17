@@ -425,12 +425,16 @@ open class PigeonProxyApiRegistrar {
       binaryMessenger: binaryMessenger, api: apiDelegate.pigeonApiProxyApiTestClass(self))
     PigeonApiProxyApiSuperClass.setUpMessageHandlers(
       binaryMessenger: binaryMessenger, api: apiDelegate.pigeonApiProxyApiSuperClass(self))
+    PigeonApiClassWithApiRequirement.setUpMessageHandlers(
+      binaryMessenger: binaryMessenger, api: apiDelegate.pigeonApiClassWithApiRequirement(self))
   }
   func tearDown() {
     PigeonInstanceManagerApi.setUpMessageHandlers(
       binaryMessenger: binaryMessenger, instanceManager: nil)
     PigeonApiProxyApiTestClass.setUpMessageHandlers(binaryMessenger: binaryMessenger, api: nil)
     PigeonApiProxyApiSuperClass.setUpMessageHandlers(binaryMessenger: binaryMessenger, api: nil)
+    PigeonApiClassWithApiRequirement.setUpMessageHandlers(
+      binaryMessenger: binaryMessenger, api: nil)
   }
 }
 private class PigeonProxyApiCodecReaderWriter: FlutterStandardReaderWriter {
@@ -3635,6 +3639,12 @@ final class PigeonApiProxyApiInterface {
 
 }
 protocol PigeonDelegateClassWithApiRequirement {
+  @available(iOS 15.0.0, macOS 10.0.0, *)
+  func pigeonDefaultConstructor(pigeonApi: PigeonApiClassWithApiRequirement) throws
+    -> ClassWithApiRequirement
+  @available(iOS 15.0.0, macOS 10.0.0, *)
+  func aMethod(pigeonApi: PigeonApiClassWithApiRequirement, pigeonInstance: ClassWithApiRequirement)
+    throws
 }
 final class PigeonApiClassWithApiRequirement {
   unowned let pigeonRegistrar: PigeonProxyApiRegistrar
@@ -3643,7 +3653,95 @@ final class PigeonApiClassWithApiRequirement {
     self.pigeonRegistrar = pigeonRegistrar
     self.pigeonDelegate = delegate
   }
+  static func setUpMessageHandlers(
+    binaryMessenger: FlutterBinaryMessenger, api: PigeonApiClassWithApiRequirement?
+  ) {
+    let codec: FlutterStandardMessageCodec =
+      api != nil
+      ? FlutterStandardMessageCodec(
+        readerWriter: PigeonProxyApiCodecReaderWriter(pigeonRegistrar: api!.pigeonRegistrar))
+      : FlutterStandardMessageCodec.sharedInstance()
+    if #available(iOS 15.0.0, macOS 10.0.0, *) {
+      let pigeonDefaultConstructorChannel = FlutterBasicMessageChannel(
+        name:
+          "dev.flutter.pigeon.pigeon_integration_tests.ClassWithApiRequirement.pigeon_defaultConstructor",
+        binaryMessenger: binaryMessenger, codec: codec)
+      if let api = api {
+        pigeonDefaultConstructorChannel.setMessageHandler { message, reply in
+          let args = message as! [Any?]
+          let pigeonIdentifierArg = args[0] is Int64 ? args[0] as! Int64 : Int64(args[0] as! Int32)
+          do {
+            api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
+              try api.pigeonDelegate.pigeonDefaultConstructor(pigeonApi: api),
+              withIdentifier: pigeonIdentifierArg)
+            reply(wrapResult(nil))
+          } catch {
+            reply(wrapError(error))
+          }
+        }
+      } else {
+        pigeonDefaultConstructorChannel.setMessageHandler(nil)
+      }
+    } else {
+      let pigeonDefaultConstructorChannel = FlutterBasicMessageChannel(
+        name:
+          "dev.flutter.pigeon.pigeon_integration_tests.ClassWithApiRequirement.pigeon_defaultConstructor",
+        binaryMessenger: binaryMessenger, codec: codec)
+      if let api = api {
+        pigeonDefaultConstructorChannel.setMessageHandler { message, reply in
+          reply(
+            wrapError(
+              FlutterError(
+                code: "PigeonUnsupportedOperationError",
+                message:
+                  "Call to pigeonDefaultConstructor requires @available(iOS 15.0.0, macOS 10.0.0, *).",
+                details: nil
+              )))
+        }
+      } else {
+        pigeonDefaultConstructorChannel.setMessageHandler(nil)
+      }
+    }
+    if #available(iOS 15.0.0, macOS 10.0.0, *) {
+      let aMethodChannel = FlutterBasicMessageChannel(
+        name: "dev.flutter.pigeon.pigeon_integration_tests.ClassWithApiRequirement.aMethod",
+        binaryMessenger: binaryMessenger, codec: codec)
+      if let api = api {
+        aMethodChannel.setMessageHandler { message, reply in
+          let args = message as! [Any?]
+          let pigeonInstanceArg = args[0] as! ClassWithApiRequirement
+          do {
+            try api.pigeonDelegate.aMethod(pigeonApi: api, pigeonInstance: pigeonInstanceArg)
+            reply(wrapResult(nil))
+          } catch {
+            reply(wrapError(error))
+          }
+        }
+      } else {
+        aMethodChannel.setMessageHandler(nil)
+      }
+    } else {
+      let aMethodChannel = FlutterBasicMessageChannel(
+        name: "dev.flutter.pigeon.pigeon_integration_tests.ClassWithApiRequirement.aMethod",
+        binaryMessenger: binaryMessenger, codec: codec)
+      if let api = api {
+        aMethodChannel.setMessageHandler { message, reply in
+          reply(
+            wrapError(
+              FlutterError(
+                code: "PigeonUnsupportedOperationError",
+                message: "Call to aMethod requires @available(iOS 15.0.0, macOS 10.0.0, *).",
+                details: nil
+              )))
+        }
+      } else {
+        aMethodChannel.setMessageHandler(nil)
+      }
+    }
+  }
+
   ///Creates a Dart instance of ClassWithApiRequirement and attaches it to [pigeonInstance].
+  @available(iOS 15.0.0, macOS 10.0.0, *)
   func pigeonNewInstance(
     pigeonInstance: ClassWithApiRequirement,
     completion: @escaping (Result<Void, ProxyApiTestsError>) -> Void
