@@ -1,3 +1,7 @@
+## 0.3.1
+
+* Adds generics to the callbacks and builders of TreeView.
+
 ## 0.3.0
 
 * Adds new TreeView widget and associated classes.
