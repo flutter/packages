@@ -12,16 +12,16 @@ import 'tree_span.dart';
 ///
 /// Used by the [TreeViewDelegateMixin.buildRow] to configure rows in the
 /// [TreeView].
-typedef TreeViewRowBuilder = TreeRow Function(TreeViewNode<Object?> node);
+typedef TreeViewRowBuilder<T> = TreeRow Function(TreeViewNode<T> node);
 
 /// Signature for a function that creates a [Widget] to represent the given
 /// [TreeViewNode] in the [TreeView].
 ///
 /// Used by [TreeView.treeRowBuilder] to build rows on demand for the
 /// tree.
-typedef TreeViewNodeBuilder = Widget Function(
+typedef TreeViewNodeBuilder<T> = Widget Function(
   BuildContext context,
-  TreeViewNode<Object?> node,
+  TreeViewNode<T> node,
   AnimationStyle toggleAnimationStyle,
 );
 
