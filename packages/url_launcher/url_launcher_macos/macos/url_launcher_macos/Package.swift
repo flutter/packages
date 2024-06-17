@@ -22,6 +22,9 @@ let package = Package(
       dependencies: [],
       resources: [
         .process("Resources")
+      ],
+      swiftSettings: [
+        .enableExperimentalFeature("StrictConcurrency")
       ]
     )
   ]

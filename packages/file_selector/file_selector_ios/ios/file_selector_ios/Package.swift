@@ -25,6 +25,9 @@ let package = Package(
       ],
       cSettings: [
         .headerSearchPath("include/file_selector_ios")
+      ],
+      swiftSettings: [
+        .enableExperimentalFeature("StrictConcurrency")
       ]
     )
   ]
