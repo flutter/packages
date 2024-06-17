@@ -220,6 +220,72 @@ void pigeon_example_package_example_host_api_respond_error_send_message(
     FlBasicMessageChannelResponseHandle* response_handle, const gchar* code,
     const gchar* message, FlValue* details);
 
+G_DECLARE_FINAL_TYPE(
+    PigeonExamplePackageMessageFlutterApiFlutterMethodResponse,
+    pigeon_example_package_message_flutter_api_flutter_method_response,
+    PIGEON_EXAMPLE_PACKAGE, MESSAGE_FLUTTER_API_FLUTTER_METHOD_RESPONSE,
+    GObject)
+
+/**
+ * pigeon_example_package_message_flutter_api_flutter_method_response_is_error:
+ * @response: a #PigeonExamplePackageMessageFlutterApiFlutterMethodResponse.
+ *
+ * Checks if a response to MessageFlutterApi.flutterMethod is an error.
+ *
+ * Returns: a %TRUE if this response is an error.
+ */
+gboolean
+pigeon_example_package_message_flutter_api_flutter_method_response_is_error(
+    PigeonExamplePackageMessageFlutterApiFlutterMethodResponse* response);
+
+/**
+ * pigeon_example_package_message_flutter_api_flutter_method_response_get_error_code:
+ * @response: a #PigeonExamplePackageMessageFlutterApiFlutterMethodResponse.
+ *
+ * Get the error code for this response.
+ *
+ * Returns: an error code or %NULL if not an error.
+ */
+const gchar*
+pigeon_example_package_message_flutter_api_flutter_method_response_get_error_code(
+    PigeonExamplePackageMessageFlutterApiFlutterMethodResponse* response);
+
+/**
+ * pigeon_example_package_message_flutter_api_flutter_method_response_get_error_message:
+ * @response: a #PigeonExamplePackageMessageFlutterApiFlutterMethodResponse.
+ *
+ * Get the error message for this response.
+ *
+ * Returns: an error message.
+ */
+const gchar*
+pigeon_example_package_message_flutter_api_flutter_method_response_get_error_message(
+    PigeonExamplePackageMessageFlutterApiFlutterMethodResponse* response);
+
+/**
+ * pigeon_example_package_message_flutter_api_flutter_method_response_get_error_details:
+ * @response: a #PigeonExamplePackageMessageFlutterApiFlutterMethodResponse.
+ *
+ * Get the error details for this response.
+ *
+ * Returns: (allow-none): an error details or %NULL.
+ */
+FlValue*
+pigeon_example_package_message_flutter_api_flutter_method_response_get_error_details(
+    PigeonExamplePackageMessageFlutterApiFlutterMethodResponse* response);
+
+/**
+ * pigeon_example_package_message_flutter_api_flutter_method_response_get_return_value:
+ * @response: a #PigeonExamplePackageMessageFlutterApiFlutterMethodResponse.
+ *
+ * Get the return value for this response.
+ *
+ * Returns: a return value.
+ */
+const gchar*
+pigeon_example_package_message_flutter_api_flutter_method_response_get_return_value(
+    PigeonExamplePackageMessageFlutterApiFlutterMethodResponse* response);
+
 /**
  * PigeonExamplePackageMessageFlutterApi:
  *
@@ -261,17 +327,18 @@ void pigeon_example_package_message_flutter_api_flutter_method(
  * pigeon_example_package_message_flutter_api_flutter_method_finish:
  * @api: a #className.
  * @result: a #GAsyncResult.
- * @return_value: location to write the value returned by this method.
  * @error: (allow-none): #GError location to store the error occurring, or %NULL
  * to ignore.
  *
  * Completes a pigeon_example_package_message_flutter_api_flutter_method() call.
  *
- * Returns: %TRUE on success.
+ * Returns: a #PigeonExamplePackageMessageFlutterApiFlutterMethodResponse or
+ * %NULL on error.
  */
-gboolean pigeon_example_package_message_flutter_api_flutter_method_finish(
+PigeonExamplePackageMessageFlutterApiFlutterMethodResponse*
+pigeon_example_package_message_flutter_api_flutter_method_finish(
     PigeonExamplePackageMessageFlutterApi* api, GAsyncResult* result,
-    gchar** return_value, GError** error);
+    GError** error);
 
 G_END_DECLS
 

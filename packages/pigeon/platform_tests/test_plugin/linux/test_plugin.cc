@@ -211,7 +211,6 @@ static CoreTestsPigeonTestHostIntegrationCoreApiCreateNestedNullableStringRespon
 create_nested_nullable_string(CoreTestsPigeonTestHostIntegrationCoreApi* api,
                               const gchar* nullable_string,
                               gpointer user_data) {
-  // FIXME: Make new_full?
   g_autoptr(CoreTestsPigeonTestAllNullableTypes) types =
       core_tests_pigeon_test_all_nullable_types_new(
           nullptr, nullptr, nullptr, nullptr, nullptr, 0, nullptr, 0, nullptr,
@@ -524,11 +523,26 @@ static void noop_cb(GObject* object, GAsyncResult* result, gpointer user_data) {
   g_autoptr(CallbackData) data = static_cast<CallbackData*>(user_data);
 
   g_autoptr(GError) error = nullptr;
-  if (!core_tests_pigeon_test_flutter_integration_core_api_noop_finish(
+  g_autoptr(CoreTestsPigeonTestFlutterIntegrationCoreApiNoopResponse) response =
+      core_tests_pigeon_test_flutter_integration_core_api_noop_finish(
           CORE_TESTS_PIGEON_TEST_FLUTTER_INTEGRATION_CORE_API(object), result,
-          &error)) {
+          &error);
+  if (response == nullptr) {
     core_tests_pigeon_test_host_integration_core_api_respond_error_call_flutter_noop(
-        data->self->host_core_api, data->response_handle, "", "", nullptr);
+        data->self->host_core_api, data->response_handle, "Internal Error",
+        error->message, nullptr);
+    return;
+  }
+  if (core_tests_pigeon_test_flutter_integration_core_api_noop_response_is_error(
+          response)) {
+    core_tests_pigeon_test_host_integration_core_api_respond_error_call_flutter_echo_bool(
+        data->self->host_core_api, data->response_handle,
+        core_tests_pigeon_test_flutter_integration_core_api_noop_response_get_error_code(
+            response),
+        core_tests_pigeon_test_flutter_integration_core_api_noop_response_get_error_message(
+            response),
+        core_tests_pigeon_test_flutter_integration_core_api_noop_response_get_error_details(
+            response));
     return;
   }
 
@@ -550,18 +564,35 @@ static void throw_error_cb(GObject* object, GAsyncResult* result,
                            gpointer user_data) {
   g_autoptr(CallbackData) data = static_cast<CallbackData*>(user_data);
 
-  g_autoptr(FlValue) return_value = nullptr;
   g_autoptr(GError) error = nullptr;
-  if (!core_tests_pigeon_test_flutter_integration_core_api_throw_error_finish(
+  g_autoptr(
+      CoreTestsPigeonTestFlutterIntegrationCoreApiThrowErrorResponse) response =
+      core_tests_pigeon_test_flutter_integration_core_api_throw_error_finish(
           CORE_TESTS_PIGEON_TEST_FLUTTER_INTEGRATION_CORE_API(object), result,
-          &return_value, &error)) {
+          &error);
+  if (response == nullptr) {
     core_tests_pigeon_test_host_integration_core_api_respond_error_call_flutter_throw_error(
-        data->self->host_core_api, data->response_handle, "", "", nullptr);
+        data->self->host_core_api, data->response_handle, "Internal Error",
+        error->message, nullptr);
+    return;
+  }
+  if (core_tests_pigeon_test_flutter_integration_core_api_throw_error_response_is_error(
+          response)) {
+    core_tests_pigeon_test_host_integration_core_api_respond_error_call_flutter_echo_bool(
+        data->self->host_core_api, data->response_handle,
+        core_tests_pigeon_test_flutter_integration_core_api_throw_error_response_get_error_code(
+            response),
+        core_tests_pigeon_test_flutter_integration_core_api_throw_error_response_get_error_message(
+            response),
+        core_tests_pigeon_test_flutter_integration_core_api_throw_error_response_get_error_details(
+            response));
     return;
   }
 
   core_tests_pigeon_test_host_integration_core_api_respond_call_flutter_throw_error(
-      data->self->host_core_api, data->response_handle, return_value);
+      data->self->host_core_api, data->response_handle,
+      core_tests_pigeon_test_flutter_integration_core_api_throw_error_response_get_return_value(
+          response));
 }
 
 static void call_flutter_throw_error(
@@ -579,11 +610,28 @@ static void throw_error_from_void_cb(GObject* object, GAsyncResult* result,
   g_autoptr(CallbackData) data = static_cast<CallbackData*>(user_data);
 
   g_autoptr(GError) error = nullptr;
-  if (!core_tests_pigeon_test_flutter_integration_core_api_throw_error_from_void_finish(
-          CORE_TESTS_PIGEON_TEST_FLUTTER_INTEGRATION_CORE_API(object), result,
-          &error)) {
+  g_autoptr(
+      CoreTestsPigeonTestFlutterIntegrationCoreApiThrowErrorFromVoidResponse)
+      response =
+          core_tests_pigeon_test_flutter_integration_core_api_throw_error_from_void_finish(
+              CORE_TESTS_PIGEON_TEST_FLUTTER_INTEGRATION_CORE_API(object),
+              result, &error);
+  if (response == nullptr) {
     core_tests_pigeon_test_host_integration_core_api_respond_error_call_flutter_throw_error_from_void(
-        data->self->host_core_api, data->response_handle, "", "", nullptr);
+        data->self->host_core_api, data->response_handle, "Internal Error",
+        error->message, nullptr);
+    return;
+  }
+  if (core_tests_pigeon_test_flutter_integration_core_api_throw_error_from_void_response_is_error(
+          response)) {
+    core_tests_pigeon_test_host_integration_core_api_respond_error_call_flutter_echo_bool(
+        data->self->host_core_api, data->response_handle,
+        core_tests_pigeon_test_flutter_integration_core_api_throw_error_from_void_response_get_error_code(
+            response),
+        core_tests_pigeon_test_flutter_integration_core_api_throw_error_from_void_response_get_error_message(
+            response),
+        core_tests_pigeon_test_flutter_integration_core_api_throw_error_from_void_response_get_error_details(
+            response));
     return;
   }
 
@@ -605,18 +653,35 @@ static void echo_all_types_cb(GObject* object, GAsyncResult* result,
                               gpointer user_data) {
   g_autoptr(CallbackData) data = static_cast<CallbackData*>(user_data);
 
-  g_autoptr(CoreTestsPigeonTestAllTypes) return_value = nullptr;
   g_autoptr(GError) error = nullptr;
-  if (!core_tests_pigeon_test_flutter_integration_core_api_echo_all_types_finish(
+  g_autoptr(
+      CoreTestsPigeonTestFlutterIntegrationCoreApiEchoAllTypesResponse) response =
+      core_tests_pigeon_test_flutter_integration_core_api_echo_all_types_finish(
           CORE_TESTS_PIGEON_TEST_FLUTTER_INTEGRATION_CORE_API(object), result,
-          &return_value, &error)) {
+          &error);
+  if (response == nullptr) {
     core_tests_pigeon_test_host_integration_core_api_respond_error_call_flutter_echo_all_types(
-        data->self->host_core_api, data->response_handle, "", "", nullptr);
+        data->self->host_core_api, data->response_handle, "Internal Error",
+        error->message, nullptr);
+    return;
+  }
+  if (core_tests_pigeon_test_flutter_integration_core_api_echo_all_types_response_is_error(
+          response)) {
+    core_tests_pigeon_test_host_integration_core_api_respond_error_call_flutter_echo_bool(
+        data->self->host_core_api, data->response_handle,
+        core_tests_pigeon_test_flutter_integration_core_api_echo_all_types_response_get_error_code(
+            response),
+        core_tests_pigeon_test_flutter_integration_core_api_echo_all_types_response_get_error_message(
+            response),
+        core_tests_pigeon_test_flutter_integration_core_api_echo_all_types_response_get_error_details(
+            response));
     return;
   }
 
   core_tests_pigeon_test_host_integration_core_api_respond_call_flutter_echo_all_types(
-      data->self->host_core_api, data->response_handle, return_value);
+      data->self->host_core_api, data->response_handle,
+      core_tests_pigeon_test_flutter_integration_core_api_echo_all_types_response_get_return_value(
+          response));
 }
 
 static void call_flutter_echo_all_types(
@@ -634,18 +699,36 @@ static void echo_all_nullable_types_cb(GObject* object, GAsyncResult* result,
                                        gpointer user_data) {
   g_autoptr(CallbackData) data = static_cast<CallbackData*>(user_data);
 
-  g_autoptr(CoreTestsPigeonTestAllNullableTypes) return_value = nullptr;
   g_autoptr(GError) error = nullptr;
-  if (!core_tests_pigeon_test_flutter_integration_core_api_echo_all_nullable_types_finish(
-          CORE_TESTS_PIGEON_TEST_FLUTTER_INTEGRATION_CORE_API(object), result,
-          &return_value, &error)) {
+  g_autoptr(
+      CoreTestsPigeonTestFlutterIntegrationCoreApiEchoAllNullableTypesResponse)
+      response =
+          core_tests_pigeon_test_flutter_integration_core_api_echo_all_nullable_types_finish(
+              CORE_TESTS_PIGEON_TEST_FLUTTER_INTEGRATION_CORE_API(object),
+              result, &error);
+  if (response == nullptr) {
     core_tests_pigeon_test_host_integration_core_api_respond_error_call_flutter_echo_all_nullable_types(
-        data->self->host_core_api, data->response_handle, "", "", nullptr);
+        data->self->host_core_api, data->response_handle, "Internal Error",
+        error->message, nullptr);
+    return;
+  }
+  if (core_tests_pigeon_test_flutter_integration_core_api_echo_all_nullable_types_response_is_error(
+          response)) {
+    core_tests_pigeon_test_host_integration_core_api_respond_error_call_flutter_echo_bool(
+        data->self->host_core_api, data->response_handle,
+        core_tests_pigeon_test_flutter_integration_core_api_echo_all_nullable_types_response_get_error_code(
+            response),
+        core_tests_pigeon_test_flutter_integration_core_api_echo_all_nullable_types_response_get_error_message(
+            response),
+        core_tests_pigeon_test_flutter_integration_core_api_echo_all_nullable_types_response_get_error_details(
+            response));
     return;
   }
 
   core_tests_pigeon_test_host_integration_core_api_respond_call_flutter_echo_all_nullable_types(
-      data->self->host_core_api, data->response_handle, return_value);
+      data->self->host_core_api, data->response_handle,
+      core_tests_pigeon_test_flutter_integration_core_api_echo_all_nullable_types_response_get_return_value(
+          response));
 }
 
 static void call_flutter_echo_all_nullable_types(
@@ -664,18 +747,36 @@ static void send_multiple_nullable_types_cb(GObject* object,
                                             gpointer user_data) {
   g_autoptr(CallbackData) data = static_cast<CallbackData*>(user_data);
 
-  g_autoptr(CoreTestsPigeonTestAllNullableTypes) return_value = nullptr;
   g_autoptr(GError) error = nullptr;
-  if (!core_tests_pigeon_test_flutter_integration_core_api_send_multiple_nullable_types_finish(
-          CORE_TESTS_PIGEON_TEST_FLUTTER_INTEGRATION_CORE_API(object), result,
-          &return_value, &error)) {
+  g_autoptr(
+      CoreTestsPigeonTestFlutterIntegrationCoreApiSendMultipleNullableTypesResponse)
+      response =
+          core_tests_pigeon_test_flutter_integration_core_api_send_multiple_nullable_types_finish(
+              CORE_TESTS_PIGEON_TEST_FLUTTER_INTEGRATION_CORE_API(object),
+              result, &error);
+  if (response == nullptr) {
     core_tests_pigeon_test_host_integration_core_api_respond_error_call_flutter_send_multiple_nullable_types(
-        data->self->host_core_api, data->response_handle, "", "", nullptr);
+        data->self->host_core_api, data->response_handle, "Internal Error",
+        error->message, nullptr);
+    return;
+  }
+  if (core_tests_pigeon_test_flutter_integration_core_api_send_multiple_nullable_types_response_is_error(
+          response)) {
+    core_tests_pigeon_test_host_integration_core_api_respond_error_call_flutter_echo_bool(
+        data->self->host_core_api, data->response_handle,
+        core_tests_pigeon_test_flutter_integration_core_api_send_multiple_nullable_types_response_get_error_code(
+            response),
+        core_tests_pigeon_test_flutter_integration_core_api_send_multiple_nullable_types_response_get_error_message(
+            response),
+        core_tests_pigeon_test_flutter_integration_core_api_send_multiple_nullable_types_response_get_error_details(
+            response));
     return;
   }
 
   core_tests_pigeon_test_host_integration_core_api_respond_call_flutter_send_multiple_nullable_types(
-      data->self->host_core_api, data->response_handle, return_value);
+      data->self->host_core_api, data->response_handle,
+      core_tests_pigeon_test_flutter_integration_core_api_send_multiple_nullable_types_response_get_return_value(
+          response));
 }
 
 static void call_flutter_send_multiple_nullable_types(
@@ -695,19 +796,36 @@ static void echo_all_nullable_types_without_recursion_cb(GObject* object,
                                                          gpointer user_data) {
   g_autoptr(CallbackData) data = static_cast<CallbackData*>(user_data);
 
-  g_autoptr(CoreTestsPigeonTestAllNullableTypesWithoutRecursion) return_value =
-      nullptr;
   g_autoptr(GError) error = nullptr;
-  if (!core_tests_pigeon_test_flutter_integration_core_api_echo_all_nullable_types_without_recursion_finish(
-          CORE_TESTS_PIGEON_TEST_FLUTTER_INTEGRATION_CORE_API(object), result,
-          &return_value, &error)) {
+  g_autoptr(
+      CoreTestsPigeonTestFlutterIntegrationCoreApiEchoAllNullableTypesWithoutRecursionResponse)
+      response =
+          core_tests_pigeon_test_flutter_integration_core_api_echo_all_nullable_types_without_recursion_finish(
+              CORE_TESTS_PIGEON_TEST_FLUTTER_INTEGRATION_CORE_API(object),
+              result, &error);
+  if (response == nullptr) {
     core_tests_pigeon_test_host_integration_core_api_respond_error_call_flutter_echo_all_nullable_types_without_recursion(
-        data->self->host_core_api, data->response_handle, "", "", nullptr);
+        data->self->host_core_api, data->response_handle, "Internal Error",
+        error->message, nullptr);
+    return;
+  }
+  if (core_tests_pigeon_test_flutter_integration_core_api_echo_all_nullable_types_without_recursion_response_is_error(
+          response)) {
+    core_tests_pigeon_test_host_integration_core_api_respond_error_call_flutter_echo_bool(
+        data->self->host_core_api, data->response_handle,
+        core_tests_pigeon_test_flutter_integration_core_api_echo_all_nullable_types_without_recursion_response_get_error_code(
+            response),
+        core_tests_pigeon_test_flutter_integration_core_api_echo_all_nullable_types_without_recursion_response_get_error_message(
+            response),
+        core_tests_pigeon_test_flutter_integration_core_api_echo_all_nullable_types_without_recursion_response_get_error_details(
+            response));
     return;
   }
 
   core_tests_pigeon_test_host_integration_core_api_respond_call_flutter_echo_all_nullable_types_without_recursion(
-      data->self->host_core_api, data->response_handle, return_value);
+      data->self->host_core_api, data->response_handle,
+      core_tests_pigeon_test_flutter_integration_core_api_echo_all_nullable_types_without_recursion_response_get_return_value(
+          response));
 }
 
 static void call_flutter_echo_all_nullable_types_without_recursion(
@@ -726,19 +844,36 @@ static void send_multiple_nullable_types_without_recursion_cb(
     GObject* object, GAsyncResult* result, gpointer user_data) {
   g_autoptr(CallbackData) data = static_cast<CallbackData*>(user_data);
 
-  g_autoptr(CoreTestsPigeonTestAllNullableTypesWithoutRecursion) return_value =
-      nullptr;
   g_autoptr(GError) error = nullptr;
-  if (!core_tests_pigeon_test_flutter_integration_core_api_send_multiple_nullable_types_without_recursion_finish(
-          CORE_TESTS_PIGEON_TEST_FLUTTER_INTEGRATION_CORE_API(object), result,
-          &return_value, &error)) {
+  g_autoptr(
+      CoreTestsPigeonTestFlutterIntegrationCoreApiSendMultipleNullableTypesWithoutRecursionResponse)
+      response =
+          core_tests_pigeon_test_flutter_integration_core_api_send_multiple_nullable_types_without_recursion_finish(
+              CORE_TESTS_PIGEON_TEST_FLUTTER_INTEGRATION_CORE_API(object),
+              result, &error);
+  if (response == nullptr) {
     core_tests_pigeon_test_host_integration_core_api_respond_error_call_flutter_send_multiple_nullable_types_without_recursion(
-        data->self->host_core_api, data->response_handle, "", "", nullptr);
+        data->self->host_core_api, data->response_handle, "Internal Error",
+        error->message, nullptr);
+    return;
+  }
+  if (core_tests_pigeon_test_flutter_integration_core_api_send_multiple_nullable_types_without_recursion_response_is_error(
+          response)) {
+    core_tests_pigeon_test_host_integration_core_api_respond_error_call_flutter_echo_bool(
+        data->self->host_core_api, data->response_handle,
+        core_tests_pigeon_test_flutter_integration_core_api_send_multiple_nullable_types_without_recursion_response_get_error_code(
+            response),
+        core_tests_pigeon_test_flutter_integration_core_api_send_multiple_nullable_types_without_recursion_response_get_error_message(
+            response),
+        core_tests_pigeon_test_flutter_integration_core_api_send_multiple_nullable_types_without_recursion_response_get_error_details(
+            response));
     return;
   }
 
   core_tests_pigeon_test_host_integration_core_api_respond_call_flutter_send_multiple_nullable_types_without_recursion(
-      data->self->host_core_api, data->response_handle, return_value);
+      data->self->host_core_api, data->response_handle,
+      core_tests_pigeon_test_flutter_integration_core_api_send_multiple_nullable_types_without_recursion_response_get_return_value(
+          response));
 }
 
 static void call_flutter_send_multiple_nullable_types_without_recursion(
@@ -758,18 +893,35 @@ static void echo_bool_cb(GObject* object, GAsyncResult* result,
                          gpointer user_data) {
   g_autoptr(CallbackData) data = static_cast<CallbackData*>(user_data);
 
-  gboolean return_value;
   g_autoptr(GError) error = nullptr;
-  if (!core_tests_pigeon_test_flutter_integration_core_api_echo_bool_finish(
-          CORE_TESTS_PIGEON_TEST_FLUTTER_INTEGRATION_CORE_API(object), result,
-          &return_value, &error)) {
+  g_autoptr(CoreTestsPigeonTestFlutterIntegrationCoreApiEchoBoolResponse)
+      response =
+          core_tests_pigeon_test_flutter_integration_core_api_echo_bool_finish(
+              CORE_TESTS_PIGEON_TEST_FLUTTER_INTEGRATION_CORE_API(object),
+              result, &error);
+  if (response == nullptr) {
     core_tests_pigeon_test_host_integration_core_api_respond_error_call_flutter_echo_bool(
-        data->self->host_core_api, data->response_handle, "", "", nullptr);
+        data->self->host_core_api, data->response_handle, "Internal Error",
+        error->message, nullptr);
+    return;
+  }
+  if (core_tests_pigeon_test_flutter_integration_core_api_echo_bool_response_is_error(
+          response)) {
+    core_tests_pigeon_test_host_integration_core_api_respond_error_call_flutter_echo_bool(
+        data->self->host_core_api, data->response_handle,
+        core_tests_pigeon_test_flutter_integration_core_api_echo_bool_response_get_error_code(
+            response),
+        core_tests_pigeon_test_flutter_integration_core_api_echo_bool_response_get_error_message(
+            response),
+        core_tests_pigeon_test_flutter_integration_core_api_echo_bool_response_get_error_details(
+            response));
     return;
   }
 
   core_tests_pigeon_test_host_integration_core_api_respond_call_flutter_echo_bool(
-      data->self->host_core_api, data->response_handle, return_value);
+      data->self->host_core_api, data->response_handle,
+      core_tests_pigeon_test_flutter_integration_core_api_echo_bool_response_get_return_value(
+          response));
 }
 
 static void call_flutter_echo_bool(
@@ -786,18 +938,35 @@ static void echo_int_cb(GObject* object, GAsyncResult* result,
                         gpointer user_data) {
   g_autoptr(CallbackData) data = static_cast<CallbackData*>(user_data);
 
-  int64_t return_value;
   g_autoptr(GError) error = nullptr;
-  if (!core_tests_pigeon_test_flutter_integration_core_api_echo_int_finish(
-          CORE_TESTS_PIGEON_TEST_FLUTTER_INTEGRATION_CORE_API(object), result,
-          &return_value, &error)) {
+  g_autoptr(CoreTestsPigeonTestFlutterIntegrationCoreApiEchoIntResponse)
+      response =
+          core_tests_pigeon_test_flutter_integration_core_api_echo_int_finish(
+              CORE_TESTS_PIGEON_TEST_FLUTTER_INTEGRATION_CORE_API(object),
+              result, &error);
+  if (response == nullptr) {
     core_tests_pigeon_test_host_integration_core_api_respond_error_call_flutter_echo_int(
-        data->self->host_core_api, data->response_handle, "", "", nullptr);
+        data->self->host_core_api, data->response_handle, "Internal Error",
+        error->message, nullptr);
+    return;
+  }
+  if (core_tests_pigeon_test_flutter_integration_core_api_echo_int_response_is_error(
+          response)) {
+    core_tests_pigeon_test_host_integration_core_api_respond_error_call_flutter_echo_bool(
+        data->self->host_core_api, data->response_handle,
+        core_tests_pigeon_test_flutter_integration_core_api_echo_int_response_get_error_code(
+            response),
+        core_tests_pigeon_test_flutter_integration_core_api_echo_int_response_get_error_message(
+            response),
+        core_tests_pigeon_test_flutter_integration_core_api_echo_int_response_get_error_details(
+            response));
     return;
   }
 
   core_tests_pigeon_test_host_integration_core_api_respond_call_flutter_echo_int(
-      data->self->host_core_api, data->response_handle, return_value);
+      data->self->host_core_api, data->response_handle,
+      core_tests_pigeon_test_flutter_integration_core_api_echo_int_response_get_return_value(
+          response));
 }
 
 static void call_flutter_echo_int(
@@ -814,18 +983,35 @@ static void echo_double_cb(GObject* object, GAsyncResult* result,
                            gpointer user_data) {
   g_autoptr(CallbackData) data = static_cast<CallbackData*>(user_data);
 
-  double return_value;
   g_autoptr(GError) error = nullptr;
-  if (!core_tests_pigeon_test_flutter_integration_core_api_echo_double_finish(
+  g_autoptr(
+      CoreTestsPigeonTestFlutterIntegrationCoreApiEchoDoubleResponse) response =
+      core_tests_pigeon_test_flutter_integration_core_api_echo_double_finish(
           CORE_TESTS_PIGEON_TEST_FLUTTER_INTEGRATION_CORE_API(object), result,
-          &return_value, &error)) {
+          &error);
+  if (response == nullptr) {
     core_tests_pigeon_test_host_integration_core_api_respond_error_call_flutter_echo_double(
-        data->self->host_core_api, data->response_handle, "", "", nullptr);
+        data->self->host_core_api, data->response_handle, "Internal Error",
+        error->message, nullptr);
+    return;
+  }
+  if (core_tests_pigeon_test_flutter_integration_core_api_echo_double_response_is_error(
+          response)) {
+    core_tests_pigeon_test_host_integration_core_api_respond_error_call_flutter_echo_bool(
+        data->self->host_core_api, data->response_handle,
+        core_tests_pigeon_test_flutter_integration_core_api_echo_double_response_get_error_code(
+            response),
+        core_tests_pigeon_test_flutter_integration_core_api_echo_double_response_get_error_message(
+            response),
+        core_tests_pigeon_test_flutter_integration_core_api_echo_double_response_get_error_details(
+            response));
     return;
   }
 
   core_tests_pigeon_test_host_integration_core_api_respond_call_flutter_echo_double(
-      data->self->host_core_api, data->response_handle, return_value);
+      data->self->host_core_api, data->response_handle,
+      core_tests_pigeon_test_flutter_integration_core_api_echo_double_response_get_return_value(
+          response));
 }
 
 static void call_flutter_echo_double(
@@ -842,18 +1028,35 @@ static void echo_string_cb(GObject* object, GAsyncResult* result,
                            gpointer user_data) {
   g_autoptr(CallbackData) data = static_cast<CallbackData*>(user_data);
 
-  g_autofree gchar* return_value = nullptr;
   g_autoptr(GError) error = nullptr;
-  if (!core_tests_pigeon_test_flutter_integration_core_api_echo_string_finish(
+  g_autoptr(
+      CoreTestsPigeonTestFlutterIntegrationCoreApiEchoStringResponse) response =
+      core_tests_pigeon_test_flutter_integration_core_api_echo_string_finish(
           CORE_TESTS_PIGEON_TEST_FLUTTER_INTEGRATION_CORE_API(object), result,
-          &return_value, &error)) {
+          &error);
+  if (response == nullptr) {
     core_tests_pigeon_test_host_integration_core_api_respond_error_call_flutter_echo_string(
-        data->self->host_core_api, data->response_handle, "", "", nullptr);
+        data->self->host_core_api, data->response_handle, "Internal Error",
+        error->message, nullptr);
+    return;
+  }
+  if (core_tests_pigeon_test_flutter_integration_core_api_echo_string_response_is_error(
+          response)) {
+    core_tests_pigeon_test_host_integration_core_api_respond_error_call_flutter_echo_bool(
+        data->self->host_core_api, data->response_handle,
+        core_tests_pigeon_test_flutter_integration_core_api_echo_string_response_get_error_code(
+            response),
+        core_tests_pigeon_test_flutter_integration_core_api_echo_string_response_get_error_message(
+            response),
+        core_tests_pigeon_test_flutter_integration_core_api_echo_string_response_get_error_details(
+            response));
     return;
   }
 
   core_tests_pigeon_test_host_integration_core_api_respond_call_flutter_echo_string(
-      data->self->host_core_api, data->response_handle, return_value);
+      data->self->host_core_api, data->response_handle,
+      core_tests_pigeon_test_flutter_integration_core_api_echo_string_response_get_return_value(
+          response));
 }
 
 static void call_flutter_echo_string(
@@ -870,17 +1073,35 @@ static void echo_uint8_list_cb(GObject* object, GAsyncResult* result,
                                gpointer user_data) {
   g_autoptr(CallbackData) data = static_cast<CallbackData*>(user_data);
 
-  g_autofree uint8_t* return_value = nullptr;
-  size_t return_value_length;
   g_autoptr(GError) error = nullptr;
-  if (!core_tests_pigeon_test_flutter_integration_core_api_echo_uint8_list_finish(
+  g_autoptr(
+      CoreTestsPigeonTestFlutterIntegrationCoreApiEchoUint8ListResponse) response =
+      core_tests_pigeon_test_flutter_integration_core_api_echo_uint8_list_finish(
           CORE_TESTS_PIGEON_TEST_FLUTTER_INTEGRATION_CORE_API(object), result,
-          &return_value, &return_value_length, &error)) {
+          &error);
+  if (response == nullptr) {
     core_tests_pigeon_test_host_integration_core_api_respond_error_call_flutter_echo_uint8_list(
-        data->self->host_core_api, data->response_handle, "", "", nullptr);
+        data->self->host_core_api, data->response_handle, "Internal Error",
+        error->message, nullptr);
+    return;
+  }
+  if (core_tests_pigeon_test_flutter_integration_core_api_echo_uint8_list_response_is_error(
+          response)) {
+    core_tests_pigeon_test_host_integration_core_api_respond_error_call_flutter_echo_bool(
+        data->self->host_core_api, data->response_handle,
+        core_tests_pigeon_test_flutter_integration_core_api_echo_uint8_list_response_get_error_code(
+            response),
+        core_tests_pigeon_test_flutter_integration_core_api_echo_uint8_list_response_get_error_message(
+            response),
+        core_tests_pigeon_test_flutter_integration_core_api_echo_uint8_list_response_get_error_details(
+            response));
     return;
   }
 
+  size_t return_value_length;
+  const uint8_t* return_value =
+      core_tests_pigeon_test_flutter_integration_core_api_echo_uint8_list_response_get_return_value(
+          response, &return_value_length);
   core_tests_pigeon_test_host_integration_core_api_respond_call_flutter_echo_uint8_list(
       data->self->host_core_api, data->response_handle, return_value,
       return_value_length);
@@ -901,18 +1122,35 @@ static void echo_list_cb(GObject* object, GAsyncResult* result,
                          gpointer user_data) {
   g_autoptr(CallbackData) data = static_cast<CallbackData*>(user_data);
 
-  g_autoptr(FlValue) return_value = nullptr;
   g_autoptr(GError) error = nullptr;
-  if (!core_tests_pigeon_test_flutter_integration_core_api_echo_list_finish(
-          CORE_TESTS_PIGEON_TEST_FLUTTER_INTEGRATION_CORE_API(object), result,
-          &return_value, &error)) {
+  g_autoptr(CoreTestsPigeonTestFlutterIntegrationCoreApiEchoListResponse)
+      response =
+          core_tests_pigeon_test_flutter_integration_core_api_echo_list_finish(
+              CORE_TESTS_PIGEON_TEST_FLUTTER_INTEGRATION_CORE_API(object),
+              result, &error);
+  if (response == nullptr) {
     core_tests_pigeon_test_host_integration_core_api_respond_error_call_flutter_echo_list(
-        data->self->host_core_api, data->response_handle, "", "", nullptr);
+        data->self->host_core_api, data->response_handle, "Internal Error",
+        error->message, nullptr);
+    return;
+  }
+  if (core_tests_pigeon_test_flutter_integration_core_api_echo_list_response_is_error(
+          response)) {
+    core_tests_pigeon_test_host_integration_core_api_respond_error_call_flutter_echo_bool(
+        data->self->host_core_api, data->response_handle,
+        core_tests_pigeon_test_flutter_integration_core_api_echo_list_response_get_error_code(
+            response),
+        core_tests_pigeon_test_flutter_integration_core_api_echo_list_response_get_error_message(
+            response),
+        core_tests_pigeon_test_flutter_integration_core_api_echo_list_response_get_error_details(
+            response));
     return;
   }
 
   core_tests_pigeon_test_host_integration_core_api_respond_call_flutter_echo_list(
-      data->self->host_core_api, data->response_handle, return_value);
+      data->self->host_core_api, data->response_handle,
+      core_tests_pigeon_test_flutter_integration_core_api_echo_list_response_get_return_value(
+          response));
 }
 
 static void call_flutter_echo_list(
@@ -929,18 +1167,35 @@ static void echo_map_cb(GObject* object, GAsyncResult* result,
                         gpointer user_data) {
   g_autoptr(CallbackData) data = static_cast<CallbackData*>(user_data);
 
-  g_autoptr(FlValue) return_value = nullptr;
   g_autoptr(GError) error = nullptr;
-  if (!core_tests_pigeon_test_flutter_integration_core_api_echo_map_finish(
-          CORE_TESTS_PIGEON_TEST_FLUTTER_INTEGRATION_CORE_API(object), result,
-          &return_value, &error)) {
+  g_autoptr(CoreTestsPigeonTestFlutterIntegrationCoreApiEchoMapResponse)
+      response =
+          core_tests_pigeon_test_flutter_integration_core_api_echo_map_finish(
+              CORE_TESTS_PIGEON_TEST_FLUTTER_INTEGRATION_CORE_API(object),
+              result, &error);
+  if (response == nullptr) {
     core_tests_pigeon_test_host_integration_core_api_respond_error_call_flutter_echo_map(
-        data->self->host_core_api, data->response_handle, "", "", nullptr);
+        data->self->host_core_api, data->response_handle, "Internal Error",
+        error->message, nullptr);
+    return;
+  }
+  if (core_tests_pigeon_test_flutter_integration_core_api_echo_map_response_is_error(
+          response)) {
+    core_tests_pigeon_test_host_integration_core_api_respond_error_call_flutter_echo_bool(
+        data->self->host_core_api, data->response_handle,
+        core_tests_pigeon_test_flutter_integration_core_api_echo_map_response_get_error_code(
+            response),
+        core_tests_pigeon_test_flutter_integration_core_api_echo_map_response_get_error_message(
+            response),
+        core_tests_pigeon_test_flutter_integration_core_api_echo_map_response_get_error_details(
+            response));
     return;
   }
 
   core_tests_pigeon_test_host_integration_core_api_respond_call_flutter_echo_map(
-      data->self->host_core_api, data->response_handle, return_value);
+      data->self->host_core_api, data->response_handle,
+      core_tests_pigeon_test_flutter_integration_core_api_echo_map_response_get_return_value(
+          response));
 }
 
 static void call_flutter_echo_map(
@@ -957,18 +1212,35 @@ static void echo_enum_cb(GObject* object, GAsyncResult* result,
                          gpointer user_data) {
   g_autoptr(CallbackData) data = static_cast<CallbackData*>(user_data);
 
-  CoreTestsPigeonTestAnEnum return_value;
   g_autoptr(GError) error = nullptr;
-  if (!core_tests_pigeon_test_flutter_integration_core_api_echo_enum_finish(
-          CORE_TESTS_PIGEON_TEST_FLUTTER_INTEGRATION_CORE_API(object), result,
-          &return_value, &error)) {
+  g_autoptr(CoreTestsPigeonTestFlutterIntegrationCoreApiEchoEnumResponse)
+      response =
+          core_tests_pigeon_test_flutter_integration_core_api_echo_enum_finish(
+              CORE_TESTS_PIGEON_TEST_FLUTTER_INTEGRATION_CORE_API(object),
+              result, &error);
+  if (response == nullptr) {
     core_tests_pigeon_test_host_integration_core_api_respond_error_call_flutter_echo_enum(
-        data->self->host_core_api, data->response_handle, "", "", nullptr);
+        data->self->host_core_api, data->response_handle, "Internal Error",
+        error->message, nullptr);
+    return;
+  }
+  if (core_tests_pigeon_test_flutter_integration_core_api_echo_enum_response_is_error(
+          response)) {
+    core_tests_pigeon_test_host_integration_core_api_respond_error_call_flutter_echo_bool(
+        data->self->host_core_api, data->response_handle,
+        core_tests_pigeon_test_flutter_integration_core_api_echo_enum_response_get_error_code(
+            response),
+        core_tests_pigeon_test_flutter_integration_core_api_echo_enum_response_get_error_message(
+            response),
+        core_tests_pigeon_test_flutter_integration_core_api_echo_enum_response_get_error_details(
+            response));
     return;
   }
 
   core_tests_pigeon_test_host_integration_core_api_respond_call_flutter_echo_enum(
-      data->self->host_core_api, data->response_handle, return_value);
+      data->self->host_core_api, data->response_handle,
+      core_tests_pigeon_test_flutter_integration_core_api_echo_enum_response_get_return_value(
+          response));
 }
 
 static void call_flutter_echo_enum(
@@ -986,18 +1258,36 @@ static void echo_nullable_bool_cb(GObject* object, GAsyncResult* result,
                                   gpointer user_data) {
   g_autoptr(CallbackData) data = static_cast<CallbackData*>(user_data);
 
-  g_autofree gboolean* return_value = nullptr;
   g_autoptr(GError) error = nullptr;
-  if (!core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_bool_finish(
-          CORE_TESTS_PIGEON_TEST_FLUTTER_INTEGRATION_CORE_API(object), result,
-          &return_value, &error)) {
+  g_autoptr(
+      CoreTestsPigeonTestFlutterIntegrationCoreApiEchoNullableBoolResponse)
+      response =
+          core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_bool_finish(
+              CORE_TESTS_PIGEON_TEST_FLUTTER_INTEGRATION_CORE_API(object),
+              result, &error);
+  if (response == nullptr) {
     core_tests_pigeon_test_host_integration_core_api_respond_error_call_flutter_echo_nullable_bool(
-        data->self->host_core_api, data->response_handle, "", "", nullptr);
+        data->self->host_core_api, data->response_handle, "Internal Error",
+        error->message, nullptr);
+    return;
+  }
+  if (core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_bool_response_is_error(
+          response)) {
+    core_tests_pigeon_test_host_integration_core_api_respond_error_call_flutter_echo_bool(
+        data->self->host_core_api, data->response_handle,
+        core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_bool_response_get_error_code(
+            response),
+        core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_bool_response_get_error_message(
+            response),
+        core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_bool_response_get_error_details(
+            response));
     return;
   }
 
   core_tests_pigeon_test_host_integration_core_api_respond_call_flutter_echo_nullable_bool(
-      data->self->host_core_api, data->response_handle, return_value);
+      data->self->host_core_api, data->response_handle,
+      core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_bool_response_get_return_value(
+          response));
 }
 
 static void call_flutter_echo_nullable_bool(
@@ -1014,18 +1304,35 @@ static void echo_nullable_int_cb(GObject* object, GAsyncResult* result,
                                  gpointer user_data) {
   g_autoptr(CallbackData) data = static_cast<CallbackData*>(user_data);
 
-  g_autofree int64_t* return_value = nullptr;
   g_autoptr(GError) error = nullptr;
-  if (!core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_int_finish(
-          CORE_TESTS_PIGEON_TEST_FLUTTER_INTEGRATION_CORE_API(object), result,
-          &return_value, &error)) {
+  g_autoptr(CoreTestsPigeonTestFlutterIntegrationCoreApiEchoNullableIntResponse)
+      response =
+          core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_int_finish(
+              CORE_TESTS_PIGEON_TEST_FLUTTER_INTEGRATION_CORE_API(object),
+              result, &error);
+  if (response == nullptr) {
     core_tests_pigeon_test_host_integration_core_api_respond_error_call_flutter_echo_nullable_int(
-        data->self->host_core_api, data->response_handle, "", "", nullptr);
+        data->self->host_core_api, data->response_handle, "Internal Error",
+        error->message, nullptr);
+    return;
+  }
+  if (core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_int_response_is_error(
+          response)) {
+    core_tests_pigeon_test_host_integration_core_api_respond_error_call_flutter_echo_bool(
+        data->self->host_core_api, data->response_handle,
+        core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_int_response_get_error_code(
+            response),
+        core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_int_response_get_error_message(
+            response),
+        core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_int_response_get_error_details(
+            response));
     return;
   }
 
   core_tests_pigeon_test_host_integration_core_api_respond_call_flutter_echo_nullable_int(
-      data->self->host_core_api, data->response_handle, return_value);
+      data->self->host_core_api, data->response_handle,
+      core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_int_response_get_return_value(
+          response));
 }
 
 static void call_flutter_echo_nullable_int(
@@ -1042,18 +1349,36 @@ static void echo_nullable_double_cb(GObject* object, GAsyncResult* result,
                                     gpointer user_data) {
   g_autoptr(CallbackData) data = static_cast<CallbackData*>(user_data);
 
-  g_autofree double* return_value = nullptr;
   g_autoptr(GError) error = nullptr;
-  if (!core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_double_finish(
-          CORE_TESTS_PIGEON_TEST_FLUTTER_INTEGRATION_CORE_API(object), result,
-          &return_value, &error)) {
+  g_autoptr(
+      CoreTestsPigeonTestFlutterIntegrationCoreApiEchoNullableDoubleResponse)
+      response =
+          core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_double_finish(
+              CORE_TESTS_PIGEON_TEST_FLUTTER_INTEGRATION_CORE_API(object),
+              result, &error);
+  if (response == nullptr) {
     core_tests_pigeon_test_host_integration_core_api_respond_error_call_flutter_echo_nullable_double(
-        data->self->host_core_api, data->response_handle, "", "", nullptr);
+        data->self->host_core_api, data->response_handle, "Internal Error",
+        error->message, nullptr);
+    return;
+  }
+  if (core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_double_response_is_error(
+          response)) {
+    core_tests_pigeon_test_host_integration_core_api_respond_error_call_flutter_echo_bool(
+        data->self->host_core_api, data->response_handle,
+        core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_double_response_get_error_code(
+            response),
+        core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_double_response_get_error_message(
+            response),
+        core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_double_response_get_error_details(
+            response));
     return;
   }
 
   core_tests_pigeon_test_host_integration_core_api_respond_call_flutter_echo_nullable_double(
-      data->self->host_core_api, data->response_handle, return_value);
+      data->self->host_core_api, data->response_handle,
+      core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_double_response_get_return_value(
+          response));
 }
 
 static void call_flutter_echo_nullable_double(
@@ -1070,18 +1395,36 @@ static void echo_nullable_string_cb(GObject* object, GAsyncResult* result,
                                     gpointer user_data) {
   g_autoptr(CallbackData) data = static_cast<CallbackData*>(user_data);
 
-  g_autofree gchar* return_value = nullptr;
   g_autoptr(GError) error = nullptr;
-  if (!core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_string_finish(
-          CORE_TESTS_PIGEON_TEST_FLUTTER_INTEGRATION_CORE_API(object), result,
-          &return_value, &error)) {
+  g_autoptr(
+      CoreTestsPigeonTestFlutterIntegrationCoreApiEchoNullableStringResponse)
+      response =
+          core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_string_finish(
+              CORE_TESTS_PIGEON_TEST_FLUTTER_INTEGRATION_CORE_API(object),
+              result, &error);
+  if (response == nullptr) {
     core_tests_pigeon_test_host_integration_core_api_respond_error_call_flutter_echo_nullable_string(
-        data->self->host_core_api, data->response_handle, "", "", nullptr);
+        data->self->host_core_api, data->response_handle, "Internal Error",
+        error->message, nullptr);
+    return;
+  }
+  if (core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_string_response_is_error(
+          response)) {
+    core_tests_pigeon_test_host_integration_core_api_respond_error_call_flutter_echo_bool(
+        data->self->host_core_api, data->response_handle,
+        core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_string_response_get_error_code(
+            response),
+        core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_string_response_get_error_message(
+            response),
+        core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_string_response_get_error_details(
+            response));
     return;
   }
 
   core_tests_pigeon_test_host_integration_core_api_respond_call_flutter_echo_nullable_string(
-      data->self->host_core_api, data->response_handle, return_value);
+      data->self->host_core_api, data->response_handle,
+      core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_string_response_get_return_value(
+          response));
 }
 
 static void call_flutter_echo_nullable_string(
@@ -1098,17 +1441,36 @@ static void echo_nullable_uint8_list_cb(GObject* object, GAsyncResult* result,
                                         gpointer user_data) {
   g_autoptr(CallbackData) data = static_cast<CallbackData*>(user_data);
 
-  g_autofree uint8_t* return_value = nullptr;
-  size_t return_value_length;
   g_autoptr(GError) error = nullptr;
-  if (!core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_uint8_list_finish(
-          CORE_TESTS_PIGEON_TEST_FLUTTER_INTEGRATION_CORE_API(object), result,
-          &return_value, &return_value_length, &error)) {
+  g_autoptr(
+      CoreTestsPigeonTestFlutterIntegrationCoreApiEchoNullableUint8ListResponse)
+      response =
+          core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_uint8_list_finish(
+              CORE_TESTS_PIGEON_TEST_FLUTTER_INTEGRATION_CORE_API(object),
+              result, &error);
+  if (response == nullptr) {
     core_tests_pigeon_test_host_integration_core_api_respond_error_call_flutter_echo_nullable_uint8_list(
-        data->self->host_core_api, data->response_handle, "", "", nullptr);
+        data->self->host_core_api, data->response_handle, "Internal Error",
+        error->message, nullptr);
+    return;
+  }
+  if (core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_uint8_list_response_is_error(
+          response)) {
+    core_tests_pigeon_test_host_integration_core_api_respond_error_call_flutter_echo_bool(
+        data->self->host_core_api, data->response_handle,
+        core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_uint8_list_response_get_error_code(
+            response),
+        core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_uint8_list_response_get_error_message(
+            response),
+        core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_uint8_list_response_get_error_details(
+            response));
     return;
   }
 
+  size_t return_value_length;
+  const uint8_t* return_value =
+      core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_uint8_list_response_get_return_value(
+          response, &return_value_length);
   core_tests_pigeon_test_host_integration_core_api_respond_call_flutter_echo_nullable_uint8_list(
       data->self->host_core_api, data->response_handle, return_value,
       return_value_length);
@@ -1129,18 +1491,36 @@ static void echo_nullable_list_cb(GObject* object, GAsyncResult* result,
                                   gpointer user_data) {
   g_autoptr(CallbackData) data = static_cast<CallbackData*>(user_data);
 
-  g_autoptr(FlValue) return_value = nullptr;
   g_autoptr(GError) error = nullptr;
-  if (!core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_list_finish(
-          CORE_TESTS_PIGEON_TEST_FLUTTER_INTEGRATION_CORE_API(object), result,
-          &return_value, &error)) {
+  g_autoptr(
+      CoreTestsPigeonTestFlutterIntegrationCoreApiEchoNullableListResponse)
+      response =
+          core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_list_finish(
+              CORE_TESTS_PIGEON_TEST_FLUTTER_INTEGRATION_CORE_API(object),
+              result, &error);
+  if (response == nullptr) {
     core_tests_pigeon_test_host_integration_core_api_respond_error_call_flutter_echo_nullable_list(
-        data->self->host_core_api, data->response_handle, "", "", nullptr);
+        data->self->host_core_api, data->response_handle, "Internal Error",
+        error->message, nullptr);
+    return;
+  }
+  if (core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_list_response_is_error(
+          response)) {
+    core_tests_pigeon_test_host_integration_core_api_respond_error_call_flutter_echo_bool(
+        data->self->host_core_api, data->response_handle,
+        core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_list_response_get_error_code(
+            response),
+        core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_list_response_get_error_message(
+            response),
+        core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_list_response_get_error_details(
+            response));
     return;
   }
 
   core_tests_pigeon_test_host_integration_core_api_respond_call_flutter_echo_nullable_list(
-      data->self->host_core_api, data->response_handle, return_value);
+      data->self->host_core_api, data->response_handle,
+      core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_list_response_get_return_value(
+          response));
 }
 
 static void call_flutter_echo_nullable_list(
@@ -1157,18 +1537,35 @@ static void echo_nullable_map_cb(GObject* object, GAsyncResult* result,
                                  gpointer user_data) {
   g_autoptr(CallbackData) data = static_cast<CallbackData*>(user_data);
 
-  g_autoptr(FlValue) return_value = nullptr;
   g_autoptr(GError) error = nullptr;
-  if (!core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_map_finish(
-          CORE_TESTS_PIGEON_TEST_FLUTTER_INTEGRATION_CORE_API(object), result,
-          &return_value, &error)) {
+  g_autoptr(CoreTestsPigeonTestFlutterIntegrationCoreApiEchoNullableMapResponse)
+      response =
+          core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_map_finish(
+              CORE_TESTS_PIGEON_TEST_FLUTTER_INTEGRATION_CORE_API(object),
+              result, &error);
+  if (response == nullptr) {
     core_tests_pigeon_test_host_integration_core_api_respond_error_call_flutter_echo_nullable_map(
-        data->self->host_core_api, data->response_handle, "", "", nullptr);
+        data->self->host_core_api, data->response_handle, "Internal Error",
+        error->message, nullptr);
+    return;
+  }
+  if (core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_map_response_is_error(
+          response)) {
+    core_tests_pigeon_test_host_integration_core_api_respond_error_call_flutter_echo_bool(
+        data->self->host_core_api, data->response_handle,
+        core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_map_response_get_error_code(
+            response),
+        core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_map_response_get_error_message(
+            response),
+        core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_map_response_get_error_details(
+            response));
     return;
   }
 
   core_tests_pigeon_test_host_integration_core_api_respond_call_flutter_echo_nullable_map(
-      data->self->host_core_api, data->response_handle, return_value);
+      data->self->host_core_api, data->response_handle,
+      core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_map_response_get_return_value(
+          response));
 }
 
 static void call_flutter_echo_nullable_map(
@@ -1185,18 +1582,36 @@ static void echo_nullable_enum_cb(GObject* object, GAsyncResult* result,
                                   gpointer user_data) {
   g_autoptr(CallbackData) data = static_cast<CallbackData*>(user_data);
 
-  g_autofree CoreTestsPigeonTestAnEnum* return_value = nullptr;
   g_autoptr(GError) error = nullptr;
-  if (!core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_enum_finish(
-          CORE_TESTS_PIGEON_TEST_FLUTTER_INTEGRATION_CORE_API(object), result,
-          &return_value, &error)) {
+  g_autoptr(
+      CoreTestsPigeonTestFlutterIntegrationCoreApiEchoNullableEnumResponse)
+      response =
+          core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_enum_finish(
+              CORE_TESTS_PIGEON_TEST_FLUTTER_INTEGRATION_CORE_API(object),
+              result, &error);
+  if (response == nullptr) {
     core_tests_pigeon_test_host_integration_core_api_respond_error_call_flutter_echo_nullable_enum(
-        data->self->host_core_api, data->response_handle, "", "", nullptr);
+        data->self->host_core_api, data->response_handle, "Internal Error",
+        error->message, nullptr);
+    return;
+  }
+  if (core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_enum_response_is_error(
+          response)) {
+    core_tests_pigeon_test_host_integration_core_api_respond_error_call_flutter_echo_bool(
+        data->self->host_core_api, data->response_handle,
+        core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_enum_response_get_error_code(
+            response),
+        core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_enum_response_get_error_message(
+            response),
+        core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_enum_response_get_error_details(
+            response));
     return;
   }
 
   core_tests_pigeon_test_host_integration_core_api_respond_call_flutter_echo_nullable_enum(
-      data->self->host_core_api, data->response_handle, return_value);
+      data->self->host_core_api, data->response_handle,
+      core_tests_pigeon_test_flutter_integration_core_api_echo_nullable_enum_response_get_return_value(
+          response));
 }
 
 static void call_flutter_echo_nullable_enum(
@@ -1214,18 +1629,33 @@ static void small_api_two_echo_string_cb(GObject* object, GAsyncResult* result,
                                          gpointer user_data) {
   g_autoptr(CallbackData) data = static_cast<CallbackData*>(user_data);
 
-  g_autofree gchar* return_value = nullptr;
   g_autoptr(GError) error = nullptr;
-  if (!core_tests_pigeon_test_flutter_small_api_echo_string_finish(
-          CORE_TESTS_PIGEON_TEST_FLUTTER_SMALL_API(object), result,
-          &return_value, &error)) {
+  g_autoptr(CoreTestsPigeonTestFlutterSmallApiEchoStringResponse) response =
+      core_tests_pigeon_test_flutter_small_api_echo_string_finish(
+          CORE_TESTS_PIGEON_TEST_FLUTTER_SMALL_API(object), result, &error);
+  if (response == nullptr) {
     core_tests_pigeon_test_host_integration_core_api_respond_error_call_flutter_small_api_echo_string(
-        data->self->host_core_api, data->response_handle, "", "", nullptr);
+        data->self->host_core_api, data->response_handle, "Internal Error",
+        error->message, nullptr);
+    return;
+  }
+  if (core_tests_pigeon_test_flutter_small_api_echo_string_response_is_error(
+          response)) {
+    core_tests_pigeon_test_host_integration_core_api_respond_error_call_flutter_echo_bool(
+        data->self->host_core_api, data->response_handle,
+        core_tests_pigeon_test_flutter_small_api_echo_string_response_get_error_code(
+            response),
+        core_tests_pigeon_test_flutter_small_api_echo_string_response_get_error_message(
+            response),
+        core_tests_pigeon_test_flutter_small_api_echo_string_response_get_error_details(
+            response));
     return;
   }
 
   core_tests_pigeon_test_host_integration_core_api_respond_call_flutter_small_api_echo_string(
-      data->self->host_core_api, data->response_handle, return_value);
+      data->self->host_core_api, data->response_handle,
+      core_tests_pigeon_test_flutter_small_api_echo_string_response_get_return_value(
+          response));
 }
 
 static void small_api_one_echo_string_cb(GObject* object, GAsyncResult* result,
@@ -1233,19 +1663,34 @@ static void small_api_one_echo_string_cb(GObject* object, GAsyncResult* result,
   g_autoptr(CallbackData) data = static_cast<CallbackData*>(user_data);
   TestPlugin* self = data->self;
 
-  g_autofree gchar* return_value = nullptr;
   g_autoptr(GError) error = nullptr;
-  if (!core_tests_pigeon_test_flutter_small_api_echo_string_finish(
-          CORE_TESTS_PIGEON_TEST_FLUTTER_SMALL_API(object), result,
-          &return_value, &error)) {
+  g_autoptr(CoreTestsPigeonTestFlutterSmallApiEchoStringResponse) response =
+      core_tests_pigeon_test_flutter_small_api_echo_string_finish(
+          CORE_TESTS_PIGEON_TEST_FLUTTER_SMALL_API(object), result, &error);
+  if (response == nullptr) {
     core_tests_pigeon_test_host_integration_core_api_respond_error_call_flutter_small_api_echo_string(
-        data->self->host_core_api, data->response_handle, "", "", nullptr);
+        data->self->host_core_api, data->response_handle, "Internal Error",
+        error->message, nullptr);
+    return;
+  }
+  if (core_tests_pigeon_test_flutter_small_api_echo_string_response_is_error(
+          response)) {
+    core_tests_pigeon_test_host_integration_core_api_respond_error_call_flutter_echo_bool(
+        data->self->host_core_api, data->response_handle,
+        core_tests_pigeon_test_flutter_small_api_echo_string_response_get_error_code(
+            response),
+        core_tests_pigeon_test_flutter_small_api_echo_string_response_get_error_message(
+            response),
+        core_tests_pigeon_test_flutter_small_api_echo_string_response_get_error_details(
+            response));
     return;
   }
 
   core_tests_pigeon_test_flutter_small_api_echo_string(
-      self->flutter_small_api_two, return_value, self->cancellable,
-      small_api_two_echo_string_cb, g_steal_pointer(&data));
+      self->flutter_small_api_two,
+      core_tests_pigeon_test_flutter_small_api_echo_string_response_get_return_value(
+          response),
+      self->cancellable, small_api_two_echo_string_cb, g_steal_pointer(&data));
 }
 
 static void call_flutter_small_api_echo_string(

@@ -657,6 +657,120 @@ pigeon_example_package_message_flutter_api_new(FlBinaryMessenger* messenger,
   return self;
 }
 
+struct _PigeonExamplePackageMessageFlutterApiFlutterMethodResponse {
+  GObject parent_instance;
+
+  FlValue* error;
+  FlValue* return_value;
+};
+
+G_DEFINE_TYPE(
+    PigeonExamplePackageMessageFlutterApiFlutterMethodResponse,
+    pigeon_example_package_message_flutter_api_flutter_method_response,
+    G_TYPE_OBJECT)
+
+static void
+pigeon_example_package_message_flutter_api_flutter_method_response_dispose(
+    GObject* object) {
+  PigeonExamplePackageMessageFlutterApiFlutterMethodResponse* self =
+      PIGEON_EXAMPLE_PACKAGE_MESSAGE_FLUTTER_API_FLUTTER_METHOD_RESPONSE(
+          object);
+  g_clear_pointer(&self->error, fl_value_unref);
+  g_clear_pointer(&self->return_value, fl_value_unref);
+  G_OBJECT_CLASS(
+      pigeon_example_package_message_flutter_api_flutter_method_response_parent_class)
+      ->dispose(object);
+}
+
+static void
+pigeon_example_package_message_flutter_api_flutter_method_response_init(
+    PigeonExamplePackageMessageFlutterApiFlutterMethodResponse* self) {}
+
+static void
+pigeon_example_package_message_flutter_api_flutter_method_response_class_init(
+    PigeonExamplePackageMessageFlutterApiFlutterMethodResponseClass* klass) {
+  G_OBJECT_CLASS(klass)->dispose =
+      pigeon_example_package_message_flutter_api_flutter_method_response_dispose;
+}
+
+static PigeonExamplePackageMessageFlutterApiFlutterMethodResponse*
+pigeon_example_package_message_flutter_api_flutter_method_response_new(
+    FlValue* response) {
+  PigeonExamplePackageMessageFlutterApiFlutterMethodResponse* self =
+      PIGEON_EXAMPLE_PACKAGE_MESSAGE_FLUTTER_API_FLUTTER_METHOD_RESPONSE(g_object_new(
+          pigeon_example_package_message_flutter_api_flutter_method_response_get_type(),
+          nullptr));
+  if (fl_value_get_length(response) > 1) {
+    self->error = fl_value_ref(response);
+  } else {
+    FlValue* value = fl_value_get_list_value(response, 0);
+    self->return_value = fl_value_ref(value);
+  }
+  return self;
+}
+
+gboolean
+pigeon_example_package_message_flutter_api_flutter_method_response_is_error(
+    PigeonExamplePackageMessageFlutterApiFlutterMethodResponse* self) {
+  g_return_val_if_fail(
+      PIGEON_EXAMPLE_PACKAGE_IS_MESSAGE_FLUTTER_API_FLUTTER_METHOD_RESPONSE(
+          self),
+      FALSE);
+  return self->error != nullptr;
+}
+
+const gchar*
+pigeon_example_package_message_flutter_api_flutter_method_response_get_error_code(
+    PigeonExamplePackageMessageFlutterApiFlutterMethodResponse* self) {
+  g_return_val_if_fail(
+      PIGEON_EXAMPLE_PACKAGE_IS_MESSAGE_FLUTTER_API_FLUTTER_METHOD_RESPONSE(
+          self),
+      nullptr);
+  g_assert(
+      pigeon_example_package_message_flutter_api_flutter_method_response_is_error(
+          self));
+  return fl_value_get_string(fl_value_get_list_value(self->error, 0));
+}
+
+const gchar*
+pigeon_example_package_message_flutter_api_flutter_method_response_get_error_message(
+    PigeonExamplePackageMessageFlutterApiFlutterMethodResponse* self) {
+  g_return_val_if_fail(
+      PIGEON_EXAMPLE_PACKAGE_IS_MESSAGE_FLUTTER_API_FLUTTER_METHOD_RESPONSE(
+          self),
+      nullptr);
+  g_assert(
+      pigeon_example_package_message_flutter_api_flutter_method_response_is_error(
+          self));
+  return fl_value_get_string(fl_value_get_list_value(self->error, 1));
+}
+
+FlValue*
+pigeon_example_package_message_flutter_api_flutter_method_response_get_error_details(
+    PigeonExamplePackageMessageFlutterApiFlutterMethodResponse* self) {
+  g_return_val_if_fail(
+      PIGEON_EXAMPLE_PACKAGE_IS_MESSAGE_FLUTTER_API_FLUTTER_METHOD_RESPONSE(
+          self),
+      nullptr);
+  g_assert(
+      pigeon_example_package_message_flutter_api_flutter_method_response_is_error(
+          self));
+  return fl_value_get_list_value(self->error, 2);
+}
+
+const gchar*
+pigeon_example_package_message_flutter_api_flutter_method_response_get_return_value(
+    PigeonExamplePackageMessageFlutterApiFlutterMethodResponse* self) {
+  g_return_val_if_fail(
+      PIGEON_EXAMPLE_PACKAGE_IS_MESSAGE_FLUTTER_API_FLUTTER_METHOD_RESPONSE(
+          self),
+      nullptr);
+  g_assert(
+      !pigeon_example_package_message_flutter_api_flutter_method_response_is_error(
+          self));
+  return fl_value_get_string(self->return_value);
+}
+
 static void pigeon_example_package_message_flutter_api_flutter_method_cb(
     GObject* object, GAsyncResult* result, gpointer user_data) {
   GTask* task = G_TASK(user_data);
@@ -685,9 +799,10 @@ void pigeon_example_package_message_flutter_api_flutter_method(
       pigeon_example_package_message_flutter_api_flutter_method_cb, task);
 }
 
-gboolean pigeon_example_package_message_flutter_api_flutter_method_finish(
+PigeonExamplePackageMessageFlutterApiFlutterMethodResponse*
+pigeon_example_package_message_flutter_api_flutter_method_finish(
     PigeonExamplePackageMessageFlutterApi* self, GAsyncResult* result,
-    gchar** return_value, GError** error) {
+    GError** error) {
   g_autoptr(GTask) task = G_TASK(result);
   GAsyncResult* r = G_ASYNC_RESULT(g_task_propagate_pointer(task, nullptr));
   FlBasicMessageChannel* channel =
@@ -695,15 +810,8 @@ gboolean pigeon_example_package_message_flutter_api_flutter_method_finish(
   g_autoptr(FlValue) response =
       fl_basic_message_channel_send_finish(channel, r, error);
   if (response == nullptr) {
-    return FALSE;
+    return nullptr;
   }
-  if (fl_value_get_length(response) > 1) {
-    // FIXME: Set error
-    return FALSE;
-  }
-
-  FlValue* rv = fl_value_get_list_value(response, 0);
-  *return_value = g_strdup(fl_value_get_string(rv));
-
-  return TRUE;
+  return pigeon_example_package_message_flutter_api_flutter_method_response_new(
+      response);
 }

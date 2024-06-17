@@ -287,6 +287,10 @@ class GObjectHeaderGenerator extends StructuredGenerator<GObjectOptions> {
     final String module = _getModule(generatorOptions, dartPackageName);
     final String className = _getClassName(module, api.name);
 
+    for (final Method method in api.methods) {
+      _writeFlutterApiRespondClass(indent, module, api, method);
+    }
+
     final String methodPrefix = _getMethodPrefix(module, api.name);
     indent.newln();
     indent.writeln('/**');
@@ -315,6 +319,8 @@ class GObjectHeaderGenerator extends StructuredGenerator<GObjectOptions> {
 
     for (final Method method in api.methods) {
       final String methodName = _getMethodName(method.name);
+      final String responseName = _getResponseName(api.name, method.name);
+      final String responseClassName = _getClassName(module, responseName);
 
       final List<String> asyncArgs = <String>['$className* api'];
       for (final Parameter param in method.parameters) {
@@ -354,14 +360,9 @@ class GObjectHeaderGenerator extends StructuredGenerator<GObjectOptions> {
       indent.writeln(
           "void ${methodPrefix}_$methodName(${asyncArgs.join(', ')});");
 
-      final String returnType =
-          _getType(module, method.returnType, isOutput: true);
       final List<String> finishArgs = <String>[
         '$className* api',
         'GAsyncResult* result',
-        if (returnType != 'void') '$returnType* return_value',
-        if (_isNumericListType(method.returnType))
-          'size_t* return_value_length',
         'GError** error'
       ];
       indent.newln();
@@ -369,23 +370,102 @@ class GObjectHeaderGenerator extends StructuredGenerator<GObjectOptions> {
       indent.writeln(' * ${methodPrefix}_${methodName}_finish:');
       indent.writeln(' * @api: a #className.');
       indent.writeln(' * @result: a #GAsyncResult.');
-      if (returnType != 'void') {
-        indent.writeln(
-            ' * @return_value: location to write the value returned by this method.');
-      }
-      if (_isNumericListType(method.returnType)) {
-        indent.writeln(
-            ' * @return_value_length: location to write length of @return_value.');
-      }
       indent.writeln(
           ' * @error: (allow-none): #GError location to store the error occurring, or %NULL to ignore.');
       indent.writeln(' *');
       indent.writeln(' * Completes a ${methodPrefix}_$methodName() call.');
       indent.writeln(' *');
-      indent.writeln(' * Returns: %TRUE on success.');
+      indent.writeln(' * Returns: a #$responseClassName or %NULL on error.');
       indent.writeln(' */');
       indent.writeln(
-          "gboolean ${methodPrefix}_${methodName}_finish(${finishArgs.join(', ')});");
+          "$responseClassName* ${methodPrefix}_${methodName}_finish(${finishArgs.join(', ')});");
+    }
+  }
+
+  // Write the API response classes.
+  void _writeFlutterApiRespondClass(
+      Indent indent, String module, Api api, Method method) {
+    final String responseName = _getResponseName(api.name, method.name);
+    final String responseClassName = _getClassName(module, responseName);
+    final String responseMethodPrefix = _getMethodPrefix(module, responseName);
+    final String primitiveType =
+        _getType(module, method.returnType, primitive: true);
+
+    indent.newln();
+    _writeDeclareFinalType(indent, module, responseName);
+
+    indent.newln();
+    indent.writeln('/**');
+    indent.writeln(' * ${responseMethodPrefix}_is_error:');
+    indent.writeln(' * @response: a #$responseClassName.');
+    indent.writeln(' *');
+    indent.writeln(
+        ' * Checks if a response to ${api.name}.${method.name} is an error.');
+    indent.writeln(' *');
+    indent.writeln(' * Returns: a %TRUE if this response is an error.');
+    indent.writeln(' */');
+    indent.writeln(
+        'gboolean ${responseMethodPrefix}_is_error($responseClassName* response);');
+
+    indent.newln();
+    indent.writeln('/**');
+    indent.writeln(' * ${responseMethodPrefix}_get_error_code:');
+    indent.writeln(' * @response: a #$responseClassName.');
+    indent.writeln(' *');
+    indent.writeln(' * Get the error code for this response.');
+    indent.writeln(' *');
+    indent.writeln(' * Returns: an error code or %NULL if not an error.');
+    indent.writeln(' */');
+    indent.writeln(
+        'const gchar* ${responseMethodPrefix}_get_error_code($responseClassName* response);');
+
+    indent.newln();
+    indent.writeln('/**');
+    indent.writeln(' * ${responseMethodPrefix}_get_error_message:');
+    indent.writeln(' * @response: a #$responseClassName.');
+    indent.writeln(' *');
+    indent.writeln(' * Get the error message for this response.');
+    indent.writeln(' *');
+    indent.writeln(' * Returns: an error message.');
+    indent.writeln(' */');
+    indent.writeln(
+        'const gchar* ${responseMethodPrefix}_get_error_message($responseClassName* response);');
+
+    indent.newln();
+    indent.writeln('/**');
+    indent.writeln(' * ${responseMethodPrefix}_get_error_details:');
+    indent.writeln(' * @response: a #$responseClassName.');
+    indent.writeln(' *');
+    indent.writeln(' * Get the error details for this response.');
+    indent.writeln(' *');
+    indent.writeln(' * Returns: (allow-none): an error details or %NULL.');
+    indent.writeln(' */');
+    indent.writeln(
+        'FlValue* ${responseMethodPrefix}_get_error_details($responseClassName* response);');
+
+    if (!method.returnType.isVoid) {
+      indent.newln();
+      indent.writeln('/**');
+      indent.writeln(' * ${responseMethodPrefix}_get_return_value:');
+      indent.writeln(' * @response: a #$responseClassName.');
+      if (_isNumericListType(method.returnType)) {
+        indent.writeln(
+            ' * @return_value_length: (allow-none): location to write length of the return value or %NULL to ignore.');
+      }
+      indent.writeln(' *');
+      indent.writeln(' * Get the return value for this response.');
+      indent.writeln(' *');
+      if (method.returnType.isNullable) {
+        indent.writeln(' * Returns: (allow-none): a return value or %NULL.');
+      } else {
+        indent.writeln(' * Returns: a return value.');
+      }
+      indent.writeln(' */');
+      final String returnType = _isNullablePrimitiveType(method.returnType)
+          ? '$primitiveType*'
+          : primitiveType;
+      indent.writeln(
+          '$returnType ${responseMethodPrefix}_get_return_value($responseClassName* response${_isNumericListType(method.returnType) ? ', size_t* return_value_length' : ''});');
     }
   }
 
@@ -404,7 +484,7 @@ class GObjectHeaderGenerator extends StructuredGenerator<GObjectOptions> {
 
     for (final Method method
         in api.methods.where((Method method) => !method.isAsynchronous)) {
-      _writeApiRespondClass(indent, module, api, method);
+      _writeHostApiRespondClass(indent, module, api, method);
     }
 
     indent.newln();
@@ -435,12 +515,12 @@ class GObjectHeaderGenerator extends StructuredGenerator<GObjectOptions> {
 
     for (final Method method
         in api.methods.where((Method method) => method.isAsynchronous)) {
-      _writeApiRespondFunctionPrototype(indent, module, api, method);
+      _writeHostApiRespondFunctionPrototype(indent, module, api, method);
     }
   }
 
   // Write the API response classes.
-  void _writeApiRespondClass(
+  void _writeHostApiRespondClass(
       Indent indent, String module, Api api, Method method) {
     final String responseName = _getResponseName(api.name, method.name);
     final String responseClassName = _getClassName(module, responseName);
@@ -519,7 +599,7 @@ class GObjectHeaderGenerator extends StructuredGenerator<GObjectOptions> {
   }
 
   // Write the function prototype for an API method response.
-  void _writeApiRespondFunctionPrototype(
+  void _writeHostApiRespondFunctionPrototype(
       Indent indent, String module, Api api, Method method) {
     final String className = _getClassName(module, api.name);
     final String methodPrefix = _getMethodPrefix(module, api.name);
@@ -544,7 +624,7 @@ class GObjectHeaderGenerator extends StructuredGenerator<GObjectOptions> {
     }
     if (_isNumericListType(method.returnType)) {
       indent.writeln(
-          ' * @return_value_length: location to write length of @return_value.');
+          ' * @return_value_length: (allow-none): location to write length of @return_value or %NULL to ignore.');
     }
     indent.writeln(' *');
     indent.writeln(' * Responds to ${api.name}.${method.name}. ');
@@ -771,7 +851,7 @@ class GObjectSourceGenerator extends StructuredGenerator<GObjectOptions> {
         final String fieldType = _getType(module, field.type);
         final String fieldValue = _fromFlValue(module, field.type, 'value$i');
         indent
-            .writeln('FlValue *value$i = fl_value_get_list_value(values, $i);');
+            .writeln('FlValue* value$i = fl_value_get_list_value(values, $i);');
         args.add(fieldName);
         if (_isNullablePrimitiveType(field.type)) {
           indent.writeln('$fieldType $fieldName = nullptr;');
@@ -1020,6 +1100,143 @@ class GObjectSourceGenerator extends StructuredGenerator<GObjectOptions> {
 
     for (final Method method in api.methods) {
       final String methodName = _getMethodName(method.name);
+      final String responseName = _getResponseName(api.name, method.name);
+      final String responseClassName = _getClassName(module, responseName);
+      final String responseMethodPrefix =
+          _getMethodPrefix(module, responseName);
+      final String testResponseMacro =
+          '${_snakeCaseFromCamelCase(module)}_IS_${_snakeCaseFromCamelCase(responseName)}'
+              .toUpperCase();
+
+      indent.newln();
+      _writeObjectStruct(indent, module, responseName, () {
+        indent.writeln('FlValue* error;');
+        if (!method.returnType.isVoid) {
+          indent.writeln('FlValue* return_value;');
+          if (_isNullablePrimitiveType(method.returnType)) {
+            final String primitiveType =
+                _getType(module, method.returnType, primitive: true);
+            indent.writeln('$primitiveType return_value_;');
+          }
+        }
+      });
+
+      indent.newln();
+      _writeDefineType(indent, module, responseName);
+
+      indent.newln();
+      _writeDispose(indent, module, responseName, () {
+        _writeCastSelf(indent, module, responseName, 'object');
+        indent.writeln('g_clear_pointer(&self->error, fl_value_unref);');
+        if (!method.returnType.isVoid) {
+          indent
+              .writeln('g_clear_pointer(&self->return_value, fl_value_unref);');
+        }
+      });
+
+      indent.newln();
+      _writeInit(indent, module, responseName, () {});
+
+      indent.newln();
+      _writeClassInit(indent, module, responseName, () {});
+
+      indent.newln();
+      indent.writeScoped(
+          'static $responseClassName* ${responseMethodPrefix}_new(FlValue* response) {',
+          '}', () {
+        _writeObjectNew(indent, module, responseName);
+        indent.writeScoped('if (fl_value_get_length(response) > 1) {', '}', () {
+          indent.writeln('self->error = fl_value_ref(response);');
+        });
+        if (!method.returnType.isVoid) {
+          indent.writeScoped('else {', '}', () {
+            indent.writeln(
+                'FlValue* value = fl_value_get_list_value(response, 0);');
+            indent.writeln('self->return_value = fl_value_ref(value);');
+          });
+        }
+        indent.writeln('return self;');
+      });
+
+      indent.newln();
+      indent.writeScoped(
+          'gboolean ${responseMethodPrefix}_is_error($responseClassName* self) {',
+          '}', () {
+        indent
+            .writeln('g_return_val_if_fail($testResponseMacro(self), FALSE);');
+        indent.writeln('return self->error != nullptr;');
+      });
+
+      indent.newln();
+      indent.writeScoped(
+          'const gchar* ${responseMethodPrefix}_get_error_code($responseClassName* self) {',
+          '}', () {
+        indent.writeln(
+            'g_return_val_if_fail($testResponseMacro(self), nullptr);');
+        indent.writeln('g_assert(${responseMethodPrefix}_is_error(self));');
+        indent.writeln(
+            'return fl_value_get_string(fl_value_get_list_value(self->error, 0));');
+      });
+
+      indent.newln();
+      indent.writeScoped(
+          'const gchar* ${responseMethodPrefix}_get_error_message($responseClassName* self) {',
+          '}', () {
+        indent.writeln(
+            'g_return_val_if_fail($testResponseMacro(self), nullptr);');
+        indent.writeln('g_assert(${responseMethodPrefix}_is_error(self));');
+        indent.writeln(
+            'return fl_value_get_string(fl_value_get_list_value(self->error, 1));');
+      });
+
+      indent.newln();
+      indent.writeScoped(
+          'FlValue* ${responseMethodPrefix}_get_error_details($responseClassName* self) {',
+          '}', () {
+        indent.writeln(
+            'g_return_val_if_fail($testResponseMacro(self), nullptr);');
+        indent.writeln('g_assert(${responseMethodPrefix}_is_error(self));');
+        indent.writeln('return fl_value_get_list_value(self->error, 2);');
+      });
+
+      if (!method.returnType.isVoid) {
+        final String primitiveType =
+            _getType(module, method.returnType, primitive: true);
+
+        indent.newln();
+        final String returnType = _isNullablePrimitiveType(method.returnType)
+            ? '$primitiveType*'
+            : primitiveType;
+        indent.writeScoped(
+            '$returnType ${responseMethodPrefix}_get_return_value($responseClassName* self${_isNumericListType(method.returnType) ? ', size_t* return_value_length' : ''}) {',
+            '}', () {
+          indent.writeln(
+              'g_return_val_if_fail($testResponseMacro(self), ${_getDefaultValue(module, method.returnType)});');
+          indent.writeln('g_assert(!${responseMethodPrefix}_is_error(self));');
+          if (method.returnType.isNullable) {
+            indent.writeScoped(
+                'if (fl_value_get_type(self->return_value) == FL_VALUE_TYPE_NULL) {',
+                '}', () {
+              indent.writeln('return nullptr;');
+            });
+          }
+          if (_isNumericListType(method.returnType)) {
+            indent.writeScoped('if (return_value_length != nullptr) {', '}',
+                () {
+              indent.writeln(
+                  '*return_value_length = fl_value_get_length(self->return_value);');
+            });
+          }
+          if (_isNullablePrimitiveType(method.returnType)) {
+            indent.writeln(
+                'self->return_value_ = ${_fromFlValue(module, method.returnType, 'self->return_value')};');
+            indent.writeln('return &self->return_value_;');
+          } else {
+            indent.writeln(
+                'return ${_fromFlValue(module, method.returnType, 'self->return_value')};');
+          }
+        });
+      }
 
       indent.newln();
       indent.writeScoped(
@@ -1068,19 +1285,14 @@ class GObjectSourceGenerator extends StructuredGenerator<GObjectOptions> {
             'fl_basic_message_channel_send(channel, args, cancellable, ${methodPrefix}_${methodName}_cb, task);');
       });
 
-      final String returnType =
-          _getType(module, method.returnType, isOutput: true);
       final List<String> finishArgs = <String>[
         '$className* self',
         'GAsyncResult* result',
-        if (returnType != 'void') '$returnType* return_value',
-        if (_isNumericListType(method.returnType))
-          'size_t* return_value_length',
         'GError** error',
       ];
       indent.newln();
       indent.writeScoped(
-          "gboolean ${methodPrefix}_${methodName}_finish(${finishArgs.join(', ')}) {",
+          "$responseClassName* ${methodPrefix}_${methodName}_finish(${finishArgs.join(', ')}) {",
           '}', () {
         indent.writeln('g_autoptr(GTask) task = G_TASK(result);');
         indent.writeln(
@@ -1089,64 +1301,10 @@ class GObjectSourceGenerator extends StructuredGenerator<GObjectOptions> {
             'FlBasicMessageChannel* channel = FL_BASIC_MESSAGE_CHANNEL(g_task_get_task_data(task));');
         indent.writeln(
             'g_autoptr(FlValue) response = fl_basic_message_channel_send_finish(channel, r, error);');
-        indent.writeScoped('if (response == nullptr) {', '}', () {
-          indent.writeln('return FALSE;');
+        indent.writeScoped('if (response == nullptr) { ', '}', () {
+          indent.writeln('return nullptr;');
         });
-        indent.writeScoped('if (fl_value_get_length(response) > 1) {', '}', () {
-          indent.writeln('// FIXME: Set error');
-          indent.writeln('return FALSE;');
-        });
-        if (returnType != 'void') {
-          indent.newln();
-          indent.writeln('FlValue* rv = fl_value_get_list_value(response, 0);');
-          final String returnValue =
-              _fromFlValue(module, method.returnType, 'rv');
-          if (_isNullablePrimitiveType(method.returnType)) {
-            final String primitiveType =
-                _getType(module, method.returnType, primitive: true);
-            indent.writeScoped(
-                'if (fl_value_get_type(rv) != FL_VALUE_TYPE_NULL) {', '}', () {
-              indent.writeln(
-                  '*return_value = static_cast<$primitiveType*>(malloc(sizeof($primitiveType)));');
-              indent.writeln('**return_value = $returnValue;');
-              if (_isNumericListType(method.returnType)) {
-                indent
-                    .writeln('*return_value_length = fl_value_get_length(rv);');
-              }
-            });
-            indent.writeScoped('else {', '}', () {
-              indent.writeln('*return_value = nullptr;');
-              if (_isNumericListType(method.returnType)) {
-                indent.writeln('*return_value_length = 0;');
-              }
-            });
-          } else if (method.returnType.isNullable) {
-            indent.writeScoped(
-                'if (fl_value_get_type(rv) != FL_VALUE_TYPE_NULL) {', '}', () {
-              indent.writeln(
-                  '*return_value = ${_referenceValue(module, method.returnType, returnValue, lengthVariableName: 'fl_value_get_length(rv)')};');
-              if (_isNumericListType(method.returnType)) {
-                indent
-                    .writeln('*return_value_length = fl_value_get_length(rv);');
-              }
-            });
-            indent.writeScoped('else {', '}', () {
-              indent.writeln('*return_value = nullptr;');
-              if (_isNumericListType(method.returnType)) {
-                indent.writeln('*return_value_length = 0;');
-              }
-            });
-          } else {
-            indent.writeln(
-                '*return_value = ${_referenceValue(module, method.returnType, returnValue, lengthVariableName: 'fl_value_get_length(rv)')};');
-            if (_isNumericListType(method.returnType)) {
-              indent.writeln('*return_value_length = fl_value_get_length(rv);');
-            }
-          }
-        }
-
-        indent.newln();
-        indent.writeln('return TRUE;');
+        indent.writeln('return ${responseMethodPrefix}_new(response);');
       });
     }
   }
