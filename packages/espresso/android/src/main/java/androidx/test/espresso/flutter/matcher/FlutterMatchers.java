@@ -99,8 +99,7 @@ public final class FlutterMatchers {
     @SuppressWarnings("deprecation")
     @Override
     public boolean matchesSafely(View flutterView) {
-      return flutterView instanceof FlutterView
-          || (flutterView instanceof io.flutter.view.FlutterView);
+      return flutterView instanceof FlutterView;
     }
   }
 }
