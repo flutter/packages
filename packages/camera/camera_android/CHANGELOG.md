@@ -1,6 +1,7 @@
-## NEXT
+## 0.10.9+3
 
 * Updates minimum supported SDK version to Flutter 3.16/Dart 3.2.
+* Updates annotations lib to 1.8.0.
 
 ## 0.10.9+2
 
