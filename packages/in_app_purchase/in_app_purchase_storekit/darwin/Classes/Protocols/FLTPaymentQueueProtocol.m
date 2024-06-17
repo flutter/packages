@@ -5,7 +5,7 @@
 #import "FLTPaymentQueueProtocol.h"
 
 @interface DefaultPaymentQueue ()
-// The wrapped SKPaymentQueue
+/// The wrapped SKPaymentQueue
 @property(strong, nonatomic) SKPaymentQueue *queue;
 @end
 
@@ -55,6 +55,7 @@
 - (SKStorefront *)storefront API_AVAILABLE(ios(13.0)) {
   return self.queue.storefront;
 }
+
 #if TARGET_OS_IOS
 - (void)presentCodeRedemptionSheet API_AVAILABLE(ios(14.0), visionos(1.0))
     API_UNAVAILABLE(tvos, macos, watchos) {

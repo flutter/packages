@@ -5,7 +5,7 @@
 #import "FLTMethodChannelProtocol.h"
 
 @interface DefaultMethodChannel ()
-// The wrapped FlutterMethodChannel
+/// The wrapped FlutterMethodChannel
 @property(strong, nonatomic) FlutterMethodChannel *channel;
 @end
 

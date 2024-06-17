@@ -70,12 +70,4 @@ API_AVAILABLE(ios(13.0), macos(10.15))
 - (instancetype)initWithMap:(NSDictionary *)map;
 @end
 
-#if TARGET_OS_IOS
-@interface FlutterPluginRegistrarStub : NSObject <FlutterPluginRegistrar>
-@end
-#endif
-
-@interface FlutterBinaryMessengerStub : NSObject <FlutterBinaryMessenger>
-@end
-
 NS_ASSUME_NONNULL_END

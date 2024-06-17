@@ -7,7 +7,7 @@
 #import "FIAPRequestHandler.h"
 
 @interface DefaultRequestHandler ()
-// The wrapped FIAPRequestHandler
+/// The wrapped FIAPRequestHandler
 @property(strong, nonatomic) FIAPRequestHandler *handler;
 @end
 

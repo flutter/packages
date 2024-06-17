@@ -330,7 +330,7 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI {
           fatalError("paymentQueueDelegateCallbackChannel can not be nil.")
         }
         paymentQueueDelegate = FIAPPaymentQueueDelegate(
-          methodChannel: unwrappedChannel)
+          methodChannel: DefaultMethodChannel(channel: unwrappedChannel))
 
         getPaymentQueueHandler().delegate = paymentQueueDelegate as? SKPaymentQueueDelegate
       }

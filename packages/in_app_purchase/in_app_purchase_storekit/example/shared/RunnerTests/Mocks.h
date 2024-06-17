@@ -88,4 +88,30 @@ NS_ASSUME_NONNULL_BEGIN
     (ProductRequestCompletion);
 
 @end
+
+#if TARGET_OS_IOS
+@interface FlutterPluginRegistrarStub : NSObject <FlutterPluginRegistrar>
+
+// Stubs
+@property(nonatomic, copy, nullable) void (^addApplicationDelegateStub)(NSObject<FlutterPlugin> *);
+@property(nonatomic, copy, nullable) void (^addMethodCallDelegateStub)(NSObject<FlutterPlugin> *, FlutterMethodChannel *);
+@property(nonatomic, copy, nullable) NSString * (^lookupKeyForAssetStub)(NSString *);
+@property(nonatomic, copy, nullable) NSString * (^lookupKeyForAssetFromPackageStub)(NSString *, NSString *);
+@property(nonatomic, copy, nullable) NSObject<FlutterBinaryMessenger> * (^messengerStub)(void);
+@property(nonatomic, copy, nullable) void (^publishStub)(NSObject *);
+@property(nonatomic, copy, nullable) void (^registerViewFactoryStub)(NSObject<FlutterPlatformViewFactory> *, NSString *);
+@property(nonatomic, copy, nullable) NSObject<FlutterTextureRegistry> * (^texturesStub)(void);
+@property(nonatomic, copy, nullable) void (^registerViewFactoryWithGestureRecognizersBlockingPolicyStub)(NSObject<FlutterPlatformViewFactory> *, NSString *, FlutterPlatformViewGestureRecognizersBlockingPolicy);
+@end
+#endif
+
+@interface FlutterBinaryMessengerStub : NSObject <FlutterBinaryMessenger>
+
+// Stubs
+@property(nonatomic, copy, nullable) void (^cleanUpConnectionStub)(FlutterBinaryMessengerConnection);
+@property(nonatomic, copy, nullable) void (^sendOnChannelMessageStub)(NSString *, NSData *);
+@property(nonatomic, copy, nullable) void (^sendOnChannelMessageBinaryReplyStub)(NSString *, NSData *, FlutterBinaryReply);
+@property(nonatomic, copy, nullable) FlutterBinaryMessengerConnection (^setMessageHandlerOnChannelBinaryMessageHandlerStub)(NSString *, FlutterBinaryMessageHandler);
+@end
+
 NS_ASSUME_NONNULL_END

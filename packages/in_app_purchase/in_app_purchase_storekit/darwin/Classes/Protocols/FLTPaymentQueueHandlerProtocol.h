@@ -23,6 +23,7 @@ typedef void (^UpdatedDownloads)(NSArray<SKDownload *> *downloads);
 /// An object containing the location and unique identifier of an Apple App Store storefront.
 @property(nonatomic, readonly, nullable)
     SKStorefront *storefront API_AVAILABLE(ios(13.0), macos(10.15), watchos(6.2));
+
 /// Creates a new FIAPaymentQueueHandler.
 ///
 /// The "transactionsUpdated", "transactionsRemoved" and "updatedDownloads"
@@ -68,6 +69,7 @@ typedef void (^UpdatedDownloads)(NSArray<SKDownload *> *downloads);
                    shouldAddStorePayment:(nullable ShouldAddStorePayment)shouldAddStorePayment
                         updatedDownloads:(nullable UpdatedDownloads)updatedDownloads
                         transactionCache:(nonnull id<FLTTransactionCacheProtocol>)transactionCache;
+
 /// Can throw exceptions if the transaction type is purchasing, should always used in a @try block.
 - (void)finishTransaction:(nonnull SKPaymentTransaction *)transaction;
 
