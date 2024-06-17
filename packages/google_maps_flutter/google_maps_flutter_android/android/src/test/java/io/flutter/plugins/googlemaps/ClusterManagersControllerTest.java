@@ -14,6 +14,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
 
 import android.content.Context;
+import android.content.res.AssetManager;
 import android.os.Build;
 import androidx.test.core.app.ApplicationProvider;
 import com.google.android.gms.maps.GoogleMap;
@@ -34,6 +35,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
@@ -46,10 +48,14 @@ public class ClusterManagersControllerTest {
   private GoogleMap googleMap;
   private MarkerManager markerManager;
   private MarkerManager.Collection markerCollection;
+  private AssetManager assetManager;
+  private final float density = 1;
 
   @Before
   public void setUp() {
+    MockitoAnnotations.openMocks(this);
     context = ApplicationProvider.getApplicationContext();
+    assetManager = context.getAssets();
     methodChannel =
         spy(new MethodChannel(mock(BinaryMessenger.class), "no-name", mock(MethodCodec.class)));
     controller = spy(new ClusterManagersController(methodChannel, context));
@@ -93,8 +99,8 @@ public class ClusterManagersControllerTest {
     final Map<String, Object> markerData2 =
         createMarkerData(markerId2, location2, clusterManagerId);
 
-    Convert.interpretMarkerOptions(markerData1, markerBuilder1);
-    Convert.interpretMarkerOptions(markerData2, markerBuilder2);
+    Convert.interpretMarkerOptions(markerData1, markerBuilder1, assetManager, density);
+    Convert.interpretMarkerOptions(markerData2, markerBuilder2, assetManager, density);
 
     controller.addItem(markerBuilder1);
     controller.addItem(markerBuilder2);
