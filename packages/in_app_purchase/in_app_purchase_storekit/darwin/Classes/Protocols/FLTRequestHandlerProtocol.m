@@ -8,7 +8,7 @@
 
 @interface DefaultRequestHandler ()
 /// The wrapped FIAPRequestHandler
-@property(strong, nonatomic) FIAPRequestHandler *handler;
+@property(nonatomic, strong) FIAPRequestHandler *handler;
 @end
 
 @implementation DefaultRequestHandler

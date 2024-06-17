@@ -14,8 +14,8 @@ API_AVAILABLE(ios(13.0))
 API_UNAVAILABLE(tvos, macos, watchos)
 @interface FIAPPaymentQueueDelegateTests : XCTestCase
 
-@property(strong, nonatomic) SKPaymentTransaction *transaction;
-@property(strong, nonatomic) SKStorefront *storefront;
+@property(nonatomic, strong) SKPaymentTransaction *transaction;
+@property(nonatomic, strong) SKStorefront *storefront;
 
 @end
 

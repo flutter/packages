@@ -9,35 +9,34 @@
 @interface FIAPaymentQueueHandler ()
 
 /// The SKPaymentQueue instance connected to the App Store and responsible for processing
-/// transactions.
-@property(strong, nonatomic) SKPaymentQueue *queue;
+/// transactions.expand_more
+@property(nonatomic, strong) SKPaymentQueue *queue;
 
 /// Callback method that is called each time the App Store indicates transactions are updated.
-@property(nullable, copy, nonatomic) TransactionsUpdated transactionsUpdated;
+@property(nonatomic, nullable, copy) TransactionsUpdated transactionsUpdated;
 
 /// Callback method that is called each time the App Store indicates transactions are removed.
-@property(nullable, copy, nonatomic) TransactionsRemoved transactionsRemoved;
+@property(nonatomic, nullable, copy) TransactionsRemoved transactionsRemoved;
 
 /// Callback method that is called each time the App Store indicates transactions failed to restore.
-@property(nullable, copy, nonatomic) RestoreTransactionFailed restoreTransactionFailed;
+@property(nonatomic, nullable, copy) RestoreTransactionFailed restoreTransactionFailed;
 
-/// Callback method that is called each time the App Store indicates restoring of transactions has
+/// Callback method that is called each time the App Store indicates restoring of transactions hasexpand_more
 /// finished.
-@property(nullable, copy, nonatomic)
-    RestoreCompletedTransactionsFinished paymentQueueRestoreCompletedTransactionsFinished;
+@property(nonatomic, nullable, copy) RestoreCompletedTransactionsFinished paymentQueueRestoreCompletedTransactionsFinished;
 
-/// Callback method that is called each time an in-app purchase has been initiated from the App
+/// Callback method that is called each time an in-app purchase has been initiatedexpand_more from the App
 /// Store.
-@property(nullable, copy, nonatomic) ShouldAddStorePayment shouldAddStorePayment;
+@property(nonatomic, nullable, copy) ShouldAddStorePayment shouldAddStorePayment;
 
-/// Callback method that is called each time the App Store indicates downloads are updated.
-@property(nullable, copy, nonatomic) UpdatedDownloads updatedDownloads;
+/// Callback method that is called each time the App Store indicates downloads areexpand_more updated.
+@property(nonatomic, nullable, copy) UpdatedDownloads updatedDownloads;
 
 /// The transaction cache responsible for caching transactions.
 ///
 /// Keeps track of transactions that arrive when the Flutter client is not
-/// actively observing for transactions.
-@property(strong, nonatomic, nonnull) FIATransactionCache *transactionCache;
+/// actively observing for transactions.expand_more
+@property(nonatomic, strong, nonnull) FIATransactionCache *transactionCache;
 
 /// Indicates if the Flutter client is observing transactions.
 ///

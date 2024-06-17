@@ -6,7 +6,7 @@
 
 @interface DefaultMethodChannel ()
 /// The wrapped FlutterMethodChannel
-@property(strong, nonatomic) FlutterMethodChannel *channel;
+@property(nonatomic, strong) FlutterMethodChannel *channel;
 @end
 
 @implementation DefaultMethodChannel

@@ -12,8 +12,8 @@
 
 @interface InAppPurchasePluginTest : XCTestCase
 
-@property(strong, nonatomic) FIAPReceiptManagerStub *receiptManagerStub;
-@property(strong, nonatomic) InAppPurchasePlugin *plugin;
+@property(nonatomic, strong) FIAPReceiptManagerStub *receiptManagerStub;
+@property(nonatomic, strong) InAppPurchasePlugin *plugin;
 
 @end
 

@@ -6,7 +6,7 @@
 
 @interface DefaultPaymentQueue ()
 /// The wrapped SKPaymentQueue
-@property(strong, nonatomic) SKPaymentQueue *queue;
+@property(nonatomic, strong) SKPaymentQueue *queue;
 @end
 
 @implementation DefaultPaymentQueue

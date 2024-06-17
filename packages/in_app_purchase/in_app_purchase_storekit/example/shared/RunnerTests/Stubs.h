@@ -25,7 +25,7 @@ API_AVAILABLE(ios(11.2), macos(10.13.2))
 @end
 
 @interface SKProductRequestStub : SKProductsRequest
-@property(assign, nonatomic) BOOL returnError;
+@property(nonatomic, assign) BOOL returnError;
 - (instancetype)initWithProductIdentifiers:(NSSet<NSString *> *)productIdentifiers;
 - (instancetype)initWithFailureError:(NSError *)error;
 @end
@@ -35,8 +35,8 @@ API_AVAILABLE(ios(11.2), macos(10.13.2))
 @end
 
 @interface SKPaymentQueueStub : SKPaymentQueue
-@property(assign, nonatomic) SKPaymentTransactionState testState;
-@property(strong, nonatomic, nullable) id<SKPaymentTransactionObserver> observer;
+@property(nonatomic, assign) SKPaymentTransactionState testState;
+@property(nonatomic, strong, nullable) id<SKPaymentTransactionObserver> observer;
 @end
 
 @interface SKPaymentTransactionStub : SKPaymentTransaction
@@ -56,9 +56,9 @@ API_AVAILABLE(ios(11.2), macos(10.13.2))
 @interface FIAPReceiptManagerStub : FIAPReceiptManager
 // Indicates whether getReceiptData of this stub is going to return an error.
 // Setting this to true will let getReceiptData give a basic NSError and return nil.
-@property(assign, nonatomic) BOOL returnError;
+@property(nonatomic, assign) BOOL returnError;
 // Indicates whether the receipt url will be nil.
-@property(assign, nonatomic) BOOL returnNilURL;
+@property(nonatomic, assign) BOOL returnNilURL;
 @end
 
 @interface SKReceiptRefreshRequestStub : SKReceiptRefreshRequest

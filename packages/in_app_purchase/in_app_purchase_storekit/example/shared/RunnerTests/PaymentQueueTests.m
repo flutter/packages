@@ -10,10 +10,10 @@
 
 @interface PaymentQueueTest : XCTestCase
 
-@property(strong, nonatomic) NSDictionary *periodMap;
-@property(strong, nonatomic) NSDictionary *discountMap;
-@property(strong, nonatomic) NSDictionary *productMap;
-@property(strong, nonatomic) NSDictionary *productResponseMap;
+@property(nonatomic, strong) NSDictionary *periodMap;
+@property(nonatomic, strong) NSDictionary *discountMap;
+@property(nonatomic, strong) NSDictionary *productMap;
+@property(nonatomic, strong) NSDictionary *productResponseMap;
 
 @end
 

@@ -6,7 +6,7 @@
 
 @interface DefaultTransactionCache ()
 /// The wrapped FIATransactionCache
-@property(strong, nonatomic) FIATransactionCache *cache;
+@property(nonatomic, strong) FIATransactionCache *cache;
 @end
 
 @implementation DefaultTransactionCache

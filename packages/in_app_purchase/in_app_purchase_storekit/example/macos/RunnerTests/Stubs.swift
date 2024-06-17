@@ -11,14 +11,14 @@ class InAppPurchasePluginStub: InAppPurchasePlugin {
   override func getProductRequest(withIdentifiers productIdentifiers: Set<String>)
     -> SKProductsRequest
   {
-    return TestSKProductRequest.init(productIdentifiers: productIdentifiers)
+    return SKProductRequestStub.init(productIdentifiers: productIdentifiers)
   }
 
   override func getProduct(productID: String) -> SKProduct? {
     if productID == "" {
       return nil
     }
-    return TestSKProduct.init(productID: productID)
+    return SKProductStub.init(productID: productID)
   }
   override func getRefreshReceiptRequest(properties: [String: Any]?) -> SKReceiptRefreshRequest {
     return SKReceiptRefreshRequest(receiptProperties: properties)

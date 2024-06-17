@@ -87,8 +87,8 @@
 
 @interface SKProductRequestStub ()
 
-@property(strong, nonatomic) NSSet *identifers;
-@property(strong, nonatomic) NSError *error;
+@property(nonatomic, strong) NSSet *identifers;
+@property(nonatomic, strong) NSError *error;
 
 @end
 

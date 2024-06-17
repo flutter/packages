@@ -10,10 +10,10 @@ NS_ASSUME_NONNULL_BEGIN
 @protocol FLTPaymentQueueProtocol <NSObject>
 
 /// An object containing the location and unique identifier of an Apple App Store storefront.
-@property(strong, nonatomic) SKStorefront *storefront API_AVAILABLE(ios(13.0));
+@property(nonatomic, strong) SKStorefront *storefront API_AVAILABLE(ios(13.0));
 
 /// A list of SKPaymentTransactions, which each represents a single transaction
-@property(strong, nonatomic) NSArray<SKPaymentTransaction *> *transactions API_AVAILABLE(
+@property(nonatomic, strong) NSArray<SKPaymentTransaction *> *transactions API_AVAILABLE(
     ios(3.0), macos(10.7), watchos(6.2), visionos(1.0));
 
 /// An object that provides information needed to complete transactions.
