@@ -57,6 +57,33 @@
 
 @end
 
+#pragma mark -
+
+/// Implementation of the Pigeon maps inspector API.
+///
+/// This is a separate object from the maps controller because the Pigeon API registration keeps a
+/// strong reference to the implementor, but as the FlutterPlatformView, the lifetime of the
+/// FLTGoogleMapController instance is what needs to trigger Pigeon unregistration, so can't be
+/// the target of the registration.
+@interface FGMMapInspector : NSObject<FGMMapsInspectorApi>
+- (instancetype)initWithMapController:(nonnull FLTGoogleMapController *)controller
+                            messenger:(NSObject<FlutterBinaryMessenger> *)messenger
+                         pigeonSuffix:(NSString *)suffix;
+@end
+
+/// Private declarations.
+// This is separate in case the above is made public in the future (e.g., for unit testing).
+@interface FGMMapInspector()
+/// The map controller this inspector corresponds to.
+@property(nonatomic, weak) FLTGoogleMapController *controller;
+/// The messenger this instance was registered with by Pigeon.
+@property(nonatomic, copy) NSObject<FlutterBinaryMessenger> *messenger;
+/// The suffix this instance was registered under with Pigeon.
+@property(nonatomic, copy) NSString *pigeonSuffix;
+@end
+
+#pragma mark -
+
 @interface FLTGoogleMapController ()
 
 @property(nonatomic, strong) GMSMapView *mapView;
@@ -73,6 +100,8 @@
 // creation time and there's no mechanism to return non-fatal error details during platform view
 // initialization.
 @property(nonatomic, copy) NSString *styleError;
+// The inspector API implementation, separate to avoid lifetime extension.
+@property(nonatomic, strong) FGMMapInspector *inspector;
 
 @end
 
@@ -115,9 +144,7 @@
                                            binaryMessenger:registrar.messenger];
     __weak __typeof__(self) weakSelf = self;
     [_channel setMethodCallHandler:^(FlutterMethodCall *call, FlutterResult result) {
-      if (weakSelf) {
-        [weakSelf onMethodCall:call result:result];
-      }
+      [weakSelf onMethodCall:call result:result];
     }];
     _mapView.delegate = weakSelf;
     _mapView.paddingAdjustmentBehavior = kGMSMapViewPaddingAdjustmentBehaviorNever;
@@ -159,8 +186,18 @@
     }
 
     [_mapView addObserver:self forKeyPath:@"frame" options:0 context:nil];
+
+    NSString *suffix = [NSString stringWithFormat:@"%lld", viewId];
+    _inspector = [[FGMMapInspector alloc] initWithMapController:self messenger:registrar.messenger pigeonSuffix:suffix];
+    SetUpFGMMapsInspectorApiWithSuffix(registrar.messenger, _inspector, suffix);
   }
   return self;
+}
+
+- (void)dealloc {
+  // Unregister the API implementations so that they can be released; the registration created an
+  // owning reference.
+  SetUpFGMMapsInspectorApiWithSuffix(_inspector.messenger, nil, _inspector.pigeonSuffix);
 }
 
 - (UIView *)view {
@@ -623,37 +660,53 @@
   }
 }
 
-#pragma mark GMSMapsInspectorApi
+@end
+
+#pragma mark -
+
+@implementation FGMMapInspector
+
+- (instancetype)initWithMapController:(nonnull FLTGoogleMapController *)controller
+                            messenger:(NSObject<FlutterBinaryMessenger> *)messenger
+                         pigeonSuffix:(NSString *)suffix {
+  self = [super init];
+  if (self) {
+    _controller = controller;
+    _messenger = messenger;
+    _pigeonSuffix = suffix;
+  }
+  return self;
+}
 
 - (nullable NSNumber *)areBuildingsEnabledWithError:
     (FlutterError *_Nullable __autoreleasing *_Nonnull)error {
-  return @(self.mapView.buildingsEnabled);
+  return @(self.controller.mapView.buildingsEnabled);
 }
 
 - (nullable NSNumber *)areRotateGesturesEnabledWithError:
     (FlutterError *_Nullable __autoreleasing *_Nonnull)error {
-  return @(self.mapView.settings.rotateGestures);
+  return @(self.controller.mapView.settings.rotateGestures);
 }
 
 - (nullable NSNumber *)areScrollGesturesEnabledWithError:
     (FlutterError *_Nullable __autoreleasing *_Nonnull)error {
-  return @(self.mapView.settings.scrollGestures);
+  return @(self.controller.mapView.settings.scrollGestures);
 }
 
 - (nullable NSNumber *)areTiltGesturesEnabledWithError:
     (FlutterError *_Nullable __autoreleasing *_Nonnull)error {
-  return @(self.mapView.settings.tiltGestures);
+  return @(self.controller.mapView.settings.tiltGestures);
 }
 
 - (nullable NSNumber *)areZoomGesturesEnabledWithError:
     (FlutterError *_Nullable __autoreleasing *_Nonnull)error {
-  return @(self.mapView.settings.zoomGestures);
+  return @(self.controller.mapView.settings.zoomGestures);
 }
 
 - (nullable FGMPlatformTileLayer *)
     getInfoForTileOverlayWithIdentifier:(nonnull NSString *)tileOverlayId
                                   error:(FlutterError *_Nullable __autoreleasing *_Nonnull)error {
-  GMSTileLayer *layer = [self.tileOverlaysController tileOverlayWithIdentifier:tileOverlayId].layer;
+  GMSTileLayer *layer = [self.controller.tileOverlaysController tileOverlayWithIdentifier:tileOverlayId].layer;
   if (!layer) {
     return nil;
   }
@@ -665,22 +718,22 @@
 
 - (nullable NSNumber *)isCompassEnabledWithError:
     (FlutterError *_Nullable __autoreleasing *_Nonnull)error {
-  return @(self.mapView.settings.compassButton);
+  return @(self.controller.mapView.settings.compassButton);
 }
 
 - (nullable NSNumber *)isMyLocationButtonEnabledWithError:
     (FlutterError *_Nullable __autoreleasing *_Nonnull)error {
-  return @(self.mapView.settings.myLocationButton);
+  return @(self.controller.mapView.settings.myLocationButton);
 }
 
 - (nullable NSNumber *)isTrafficEnabledWithError:
     (FlutterError *_Nullable __autoreleasing *_Nonnull)error {
-  return @(self.mapView.trafficEnabled);
+  return @(self.controller.mapView.trafficEnabled);
 }
 
 - (nullable FGMPlatformZoomRange *)zoomRange:
     (FlutterError *_Nullable __autoreleasing *_Nonnull)error {
-  return [FGMPlatformZoomRange makeWithMin:self.mapView.minZoom max:self.mapView.maxZoom];
+  return [FGMPlatformZoomRange makeWithMin:self.controller.mapView.minZoom max:self.controller.mapView.maxZoom];
 }
 
 @end
