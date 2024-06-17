@@ -13,19 +13,20 @@
 NS_ASSUME_NONNULL_BEGIN
 
 // An interface representing a stubbed DefaultPaymentQueue
-@interface TestPaymentQueue : NSObject <FLTPaymentQueueProtocol>
+@interface PaymentQueueStub : NSObject <FLTPaymentQueueProtocol>
+
 // FLTPaymentQueueProtocol properties
-@property(assign, nonatomic) SKPaymentTransactionState paymentState;
-@property(strong, nonatomic, nullable) id<SKPaymentTransactionObserver> observer;
-@property(strong, nonatomic, readwrite) SKStorefront *storefront API_AVAILABLE(ios(13.0));
-@property(strong, nonatomic, readwrite) NSArray<SKPaymentTransaction *> *transactions API_AVAILABLE(
+@property(nonatomic, assign) SKPaymentTransactionState paymentState;
+@property(nonatomic, strong, nullable) id<SKPaymentTransactionObserver> observer;
+@property(nonatomic, strong, readwrite) SKStorefront *storefront API_AVAILABLE(ios(13.0));
+@property(nonatomic, strong, readwrite) NSArray<SKPaymentTransaction *> *transactions API_AVAILABLE(
     ios(3.0), macos(10.7), watchos(6.2), visionos(1.0));
 
 // Test Properties
-@property(assign, nonatomic)
+@property(nonatomic, assign)
     SKPaymentTransactionState testState;  // Set this property to set a test Transaction state, then
                                           // call addPayment to add it to the queue.
-@property(strong, nonatomic, nonnull)
+@property(nonatomic, strong, nonnull)
     SKPaymentQueue *realQueue;  // This is a reference to the real SKPaymentQueue
 
 // Stubs
@@ -39,10 +40,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-#pragma mark TransactionCache
-
 // An interface representing a stubbed DefaultTransactionCache
-@interface TestTransactionCache : NSObject <FLTTransactionCacheProtocol>
+@interface TransactionCacheStub : NSObject <FLTTransactionCacheProtocol>
 
 // Stubs
 @property(nonatomic, copy, nullable) NSArray * (^getObjectsForKeyStub)(TransactionCacheKey key);
@@ -51,10 +50,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-#pragma mark MethodChannel
-
 // An interface representing a stubbed DefaultMethodChannel
-@interface TestMethodChannel : NSObject <FLTMethodChannelProtocol>
+@interface MethodChannelStub : NSObject <FLTMethodChannelProtocol>
 
 // Stubs
 @property(nonatomic, copy, nullable) void (^invokeMethodChannelStub)(NSString *method, id arguments)
@@ -65,7 +62,7 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 // An interface representing a stubbed DefaultPaymentQueueHandler
-@interface TestPaymentQueueHandler
+@interface PaymentQueueHandlerStub
     : NSObject <SKPaymentTransactionObserver, FLTPaymentQueueHandlerProtocol>
 
 // Stubs
@@ -84,7 +81,7 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 // An interface representing a stubbed DefaultRequestHandler
-@interface TestRequestHandler : NSObject <FLTRequestHandlerProtocol>
+@interface RequestHandlerStub : NSObject <FLTRequestHandlerProtocol>
 
 // Stubs
 @property(nonatomic, copy, nullable) void (^startProductRequestWithCompletionHandlerStub)

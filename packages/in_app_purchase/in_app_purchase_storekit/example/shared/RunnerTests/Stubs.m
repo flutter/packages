@@ -4,7 +4,7 @@
 
 #import "Stubs.h"
 
-@implementation TestSKProductSubscriptionPeriod
+@implementation SKProductSubscriptionPeriodStub
 
 - (instancetype)initWithMap:(NSDictionary *)map {
   self = [super init];
@@ -17,7 +17,7 @@
 
 @end
 
-@implementation TestSKProductDiscount
+@implementation SKProductDiscountStub
 
 - (instancetype)initWithMap:(NSDictionary *)map {
   self = [super init];
@@ -27,8 +27,8 @@
     NSLocale *locale = NSLocale.systemLocale;
     [self setValue:locale ?: [NSNull null] forKey:@"priceLocale"];
     [self setValue:map[@"numberOfPeriods"] ?: @(0) forKey:@"numberOfPeriods"];
-    TestSKProductSubscriptionPeriod *subscriptionPeriodSub =
-        [[TestSKProductSubscriptionPeriod alloc] initWithMap:map[@"subscriptionPeriod"]];
+    SKProductSubscriptionPeriodStub *subscriptionPeriodSub =
+        [[SKProductSubscriptionPeriodStub alloc] initWithMap:map[@"subscriptionPeriod"]];
     [self setValue:subscriptionPeriodSub forKey:@"subscriptionPeriod"];
     [self setValue:map[@"paymentMode"] ?: @(0) forKey:@"paymentMode"];
     if (@available(iOS 12.2, *)) {
@@ -41,7 +41,7 @@
 
 @end
 
-@implementation TestSKProduct
+@implementation SKProductStub
 
 - (instancetype)initWithMap:(NSDictionary *)map {
   self = [super init];
@@ -55,18 +55,18 @@
     NSLocale *locale = NSLocale.systemLocale;
     [self setValue:locale ?: [NSNull null] forKey:@"priceLocale"];
     [self setValue:map[@"downloadContentLengths"] ?: @(0) forKey:@"downloadContentLengths"];
-    TestSKProductSubscriptionPeriod *period =
-        [[TestSKProductSubscriptionPeriod alloc] initWithMap:map[@"subscriptionPeriod"]];
+    SKProductSubscriptionPeriodStub *period =
+        [[SKProductSubscriptionPeriodStub alloc] initWithMap:map[@"subscriptionPeriod"]];
     [self setValue:period ?: [NSNull null] forKey:@"subscriptionPeriod"];
-    TestSKProductDiscount *discount =
-        [[TestSKProductDiscount alloc] initWithMap:map[@"introductoryPrice"]];
+    SKProductDiscountStub *discount =
+        [[SKProductDiscountStub alloc] initWithMap:map[@"introductoryPrice"]];
     [self setValue:discount ?: [NSNull null] forKey:@"introductoryPrice"];
     [self setValue:map[@"subscriptionGroupIdentifier"] ?: [NSNull null]
             forKey:@"subscriptionGroupIdentifier"];
     if (@available(iOS 12.2, *)) {
       NSMutableArray *discounts = [[NSMutableArray alloc] init];
       for (NSDictionary *discountMap in map[@"discounts"]) {
-        [discounts addObject:[[TestSKProductDiscount alloc] initWithMap:discountMap]];
+        [discounts addObject:[[SKProductDiscountStub alloc] initWithMap:discountMap]];
       }
 
       [self setValue:discounts forKey:@"discounts"];
@@ -85,14 +85,14 @@
 
 @end
 
-@interface TestSKProductRequest ()
+@interface SKProductRequestStub ()
 
 @property(strong, nonatomic) NSSet *identifers;
 @property(strong, nonatomic) NSError *error;
 
 @end
 
-@implementation TestSKProductRequest
+@implementation SKProductRequestStub
 
 - (instancetype)initWithProductIdentifiers:(NSSet<NSString *> *)productIdentifiers {
   self = [super initWithProductIdentifiers:productIdentifiers];
@@ -111,11 +111,11 @@
   for (NSString *identifier in self.identifers) {
     [productArray addObject:@{@"productIdentifier" : identifier}];
   }
-  TestSKProductsResponse *response;
+  SKProductsResponseStub *response;
   if (self.returnError) {
     response = nil;
   } else {
-    response = [[TestSKProductsResponse alloc] initWithMap:@{@"products" : productArray}];
+    response = [[SKProductsResponseStub alloc] initWithMap:@{@"products" : productArray}];
   }
 
   if (self.error) {
@@ -127,14 +127,14 @@
 
 @end
 
-@implementation TestSKProductsResponse
+@implementation SKProductsResponseStub
 
 - (instancetype)initWithMap:(NSDictionary *)map {
   self = [super init];
   if (self) {
     NSMutableArray *products = [NSMutableArray new];
     for (NSDictionary *productMap in map[@"products"]) {
-      TestSKProduct *product = [[TestSKProduct alloc] initWithMap:productMap];
+      SKProductStub *product = [[SKProductStub alloc] initWithMap:productMap];
       [products addObject:product];
     }
     [self setValue:products forKey:@"products"];
@@ -144,11 +144,11 @@
 
 @end
 
-@interface TestSKPaymentQueue ()
+@interface SKPaymentQueueStub ()
 
 @end
 
-@implementation TestSKPaymentQueue
+@implementation SKPaymentQueueStub
 
 - (void)addTransactionObserver:(id<SKPaymentTransactionObserver>)observer {
   self.observer = observer;
@@ -159,8 +159,8 @@
 }
 
 - (void)addPayment:(SKPayment *)payment {
-  TestSKPaymentTransaction *transaction =
-      [[TestSKPaymentTransaction alloc] initWithState:self.testState payment:payment];
+  SKPaymentTransactionStub *transaction =
+      [[SKPaymentTransactionStub alloc] initWithState:self.testState payment:payment];
   [self.observer paymentQueue:self updatedTransactions:@[ transaction ]];
 }
 
@@ -179,7 +179,7 @@
 
 @end
 
-@implementation TestSKPaymentTransaction {
+@implementation SKPaymentTransactionStub {
   SKPayment *_payment;
 }
 
@@ -198,10 +198,10 @@
     [self setValue:map[@"transactionState"] forKey:@"transactionState"];
     if (![map[@"originalTransaction"] isKindOfClass:[NSNull class]] &&
         map[@"originalTransaction"]) {
-      [self setValue:[[TestSKPaymentTransaction alloc] initWithMap:map[@"originalTransaction"]]
+      [self setValue:[[SKPaymentTransactionStub alloc] initWithMap:map[@"originalTransaction"]]
               forKey:@"originalTransaction"];
     }
-    [self setValue:map[@"error"] ? [[TestNSError alloc] initWithMap:map[@"error"]] : [NSNull null]
+    [self setValue:map[@"error"] ? [[NSErrorStub alloc] initWithMap:map[@"error"]] : [NSNull null]
             forKey:@"error"];
     [self setValue:[NSDate dateWithTimeIntervalSince1970:[map[@"transactionTimeStamp"] doubleValue]]
             forKey:@"transactionDate"];
@@ -242,7 +242,7 @@
 
 @end
 
-@implementation TestNSError
+@implementation NSErrorStub
 
 - (instancetype)initWithMap:(NSDictionary *)map {
   return [self initWithDomain:[map objectForKey:@"domain"]
@@ -252,7 +252,7 @@
 
 @end
 
-@implementation TestFIAPReceiptManager : FIAPReceiptManager
+@implementation FIAPReceiptManagerStub : FIAPReceiptManager
 
 - (NSData *)getReceiptData:(NSURL *)url error:(NSError **)error {
   if (self.returnError) {
@@ -281,7 +281,7 @@
 
 @end
 
-@implementation TestSKReceiptRefreshRequest {
+@implementation SKReceiptRefreshRequestStub {
   NSError *_error;
 }
 
@@ -306,7 +306,7 @@
 
 @end
 
-@implementation TestSKStorefront
+@implementation SKStorefrontStub
 
 - (instancetype)initWithMap:(NSDictionary *)map {
   self = [super init];
@@ -320,7 +320,7 @@
 @end
 
 // This FlutterBinaryMessenger is a protocol, so to make a stub it has to be implemented.
-@implementation TestFlutterBinaryMessenger
+@implementation FlutterBinaryMessengerStub
 - (void)cleanUpConnection:(FlutterBinaryMessengerConnection)connection {
 }
 
@@ -343,7 +343,7 @@
 #if TARGET_OS_IOS
 
 // This FlutterPluginRegistrar is a protocol, so to make a stub it has to be implemented.
-@implementation TestFlutterPluginRegistrar
+@implementation FlutterPluginRegistrarStub
 
 - (void)addApplicationDelegate:(nonnull NSObject<FlutterPlugin> *)delegate {
 }
@@ -362,7 +362,7 @@
 }
 
 - (nonnull NSObject<FlutterBinaryMessenger> *)messenger {
-  return [[TestFlutterBinaryMessenger alloc] init];
+  return [[FlutterBinaryMessengerStub alloc] init];
 }
 
 - (void)publish:(nonnull NSObject *)value {

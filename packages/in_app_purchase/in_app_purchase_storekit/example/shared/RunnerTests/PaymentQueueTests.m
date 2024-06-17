@@ -45,13 +45,13 @@
 - (void)testTransactionPurchased {
   XCTestExpectation *expectation =
       [self expectationWithDescription:@"expect to get purchased transcation."];
-  TestPaymentQueue *queue = [[TestPaymentQueue alloc] init];
+  PaymentQueueStub *queue = [[PaymentQueueStub alloc] init];
   queue.testState = SKPaymentTransactionStatePurchased;
-  __block TestSKPaymentTransaction *tran;
+  __block SKPaymentTransactionStub *tran;
   FIAPaymentQueueHandler *handler = [[FIAPaymentQueueHandler alloc] initWithQueue:queue
       transactionsUpdated:^(NSArray<SKPaymentTransaction *> *_Nonnull transactions) {
         SKPaymentTransaction *transaction = transactions[0];
-        tran = (TestSKPaymentTransaction *)transaction;
+        tran = (SKPaymentTransactionStub *)transaction;
         [expectation fulfill];
       }
       transactionRemoved:nil
@@ -61,9 +61,9 @@
         return YES;
       }
       updatedDownloads:nil
-      transactionCache:[[TestTransactionCache alloc] init]];
+      transactionCache:[[TransactionCacheStub alloc] init]];
   SKPayment *payment =
-      [SKPayment paymentWithProduct:[[TestSKProduct alloc] initWithMap:self.productResponseMap]];
+      [SKPayment paymentWithProduct:[[SKProductStub alloc] initWithMap:self.productResponseMap]];
   [handler startObservingPaymentQueue];
   [handler addPayment:payment];
   [self waitForExpectations:@[ expectation ] timeout:5];
@@ -74,13 +74,13 @@
 - (void)testTransactionFailed {
   XCTestExpectation *expectation =
       [self expectationWithDescription:@"expect to get failed transcation."];
-  TestPaymentQueue *queue = [[TestPaymentQueue alloc] init];
+  PaymentQueueStub *queue = [[PaymentQueueStub alloc] init];
   queue.testState = SKPaymentTransactionStateFailed;
-  __block TestSKPaymentTransaction *tran;
+  __block SKPaymentTransactionStub *tran;
   FIAPaymentQueueHandler *handler = [[FIAPaymentQueueHandler alloc] initWithQueue:queue
       transactionsUpdated:^(NSArray<SKPaymentTransaction *> *_Nonnull transactions) {
         SKPaymentTransaction *transaction = transactions[0];
-        tran = (TestSKPaymentTransaction *)transaction;
+        tran = (SKPaymentTransactionStub *)transaction;
         [expectation fulfill];
       }
       transactionRemoved:nil
@@ -90,10 +90,10 @@
         return YES;
       }
       updatedDownloads:nil
-      transactionCache:[[TestTransactionCache alloc] init]];
+      transactionCache:[[TransactionCacheStub alloc] init]];
 
   SKPayment *payment =
-      [SKPayment paymentWithProduct:[[TestSKProduct alloc] initWithMap:self.productResponseMap]];
+      [SKPayment paymentWithProduct:[[SKProductStub alloc] initWithMap:self.productResponseMap]];
   [handler startObservingPaymentQueue];
   [handler addPayment:payment];
   [self waitForExpectations:@[ expectation ] timeout:5];
@@ -104,13 +104,13 @@
 - (void)testTransactionRestored {
   XCTestExpectation *expectation =
       [self expectationWithDescription:@"expect to get restored transcation."];
-  TestPaymentQueue *queue = [[TestPaymentQueue alloc] init];
+  PaymentQueueStub *queue = [[PaymentQueueStub alloc] init];
   queue.testState = SKPaymentTransactionStateRestored;
-  __block TestSKPaymentTransaction *tran;
+  __block SKPaymentTransactionStub *tran;
   FIAPaymentQueueHandler *handler = [[FIAPaymentQueueHandler alloc] initWithQueue:queue
       transactionsUpdated:^(NSArray<SKPaymentTransaction *> *_Nonnull transactions) {
         SKPaymentTransaction *transaction = transactions[0];
-        tran = (TestSKPaymentTransaction *)transaction;
+        tran = (SKPaymentTransactionStub *)transaction;
         [expectation fulfill];
       }
       transactionRemoved:nil
@@ -120,10 +120,10 @@
         return YES;
       }
       updatedDownloads:nil
-      transactionCache:[[TestTransactionCache alloc] init]];
+      transactionCache:[[TransactionCacheStub alloc] init]];
 
   SKPayment *payment =
-      [SKPayment paymentWithProduct:[[TestSKProduct alloc] initWithMap:self.productResponseMap]];
+      [SKPayment paymentWithProduct:[[SKProductStub alloc] initWithMap:self.productResponseMap]];
   [handler startObservingPaymentQueue];
   [handler addPayment:payment];
   [self waitForExpectations:@[ expectation ] timeout:5];
@@ -134,13 +134,13 @@
 - (void)testTransactionPurchasing {
   XCTestExpectation *expectation =
       [self expectationWithDescription:@"expect to get purchasing transcation."];
-  TestPaymentQueue *queue = [[TestPaymentQueue alloc] init];
+  PaymentQueueStub *queue = [[PaymentQueueStub alloc] init];
   queue.testState = SKPaymentTransactionStatePurchasing;
-  __block TestSKPaymentTransaction *tran;
+  __block SKPaymentTransactionStub *tran;
   FIAPaymentQueueHandler *handler = [[FIAPaymentQueueHandler alloc] initWithQueue:queue
       transactionsUpdated:^(NSArray<SKPaymentTransaction *> *_Nonnull transactions) {
         SKPaymentTransaction *transaction = transactions[0];
-        tran = (TestSKPaymentTransaction *)transaction;
+        tran = (SKPaymentTransactionStub *)transaction;
         [expectation fulfill];
       }
       transactionRemoved:nil
@@ -150,10 +150,10 @@
         return YES;
       }
       updatedDownloads:nil
-      transactionCache:[[TestTransactionCache alloc] init]];
+      transactionCache:[[TransactionCacheStub alloc] init]];
 
   SKPayment *payment =
-      [SKPayment paymentWithProduct:[[TestSKProduct alloc] initWithMap:self.productResponseMap]];
+      [SKPayment paymentWithProduct:[[SKProductStub alloc] initWithMap:self.productResponseMap]];
   [handler startObservingPaymentQueue];
   [handler addPayment:payment];
   [self waitForExpectations:@[ expectation ] timeout:5];
@@ -164,13 +164,13 @@
 - (void)testTransactionDeferred {
   XCTestExpectation *expectation =
       [self expectationWithDescription:@"expect to get deffered transcation."];
-  TestPaymentQueue *queue = [[TestPaymentQueue alloc] init];
+  PaymentQueueStub *queue = [[PaymentQueueStub alloc] init];
   queue.testState = SKPaymentTransactionStateDeferred;
-  __block TestSKPaymentTransaction *tran;
+  __block SKPaymentTransactionStub *tran;
   FIAPaymentQueueHandler *handler = [[FIAPaymentQueueHandler alloc] initWithQueue:queue
       transactionsUpdated:^(NSArray<SKPaymentTransaction *> *_Nonnull transactions) {
         SKPaymentTransaction *transaction = transactions[0];
-        tran = (TestSKPaymentTransaction *)transaction;
+        tran = (SKPaymentTransactionStub *)transaction;
         [expectation fulfill];
       }
       transactionRemoved:nil
@@ -180,9 +180,9 @@
         return YES;
       }
       updatedDownloads:nil
-      transactionCache:[[TestTransactionCache alloc] init]];
+      transactionCache:[[TransactionCacheStub alloc] init]];
   SKPayment *payment =
-      [SKPayment paymentWithProduct:[[TestSKProduct alloc] initWithMap:self.productResponseMap]];
+      [SKPayment paymentWithProduct:[[SKProductStub alloc] initWithMap:self.productResponseMap]];
   [handler startObservingPaymentQueue];
   [handler addPayment:payment];
   [self waitForExpectations:@[ expectation ] timeout:5];
@@ -193,7 +193,7 @@
 - (void)testFinishTransaction {
   XCTestExpectation *expectation =
       [self expectationWithDescription:@"handler.transactions should be empty."];
-  TestPaymentQueue *queue = [[TestPaymentQueue alloc] init];
+  PaymentQueueStub *queue = [[PaymentQueueStub alloc] init];
   queue.testState = SKPaymentTransactionStateDeferred;
   __block FIAPaymentQueueHandler *handler = [[FIAPaymentQueueHandler alloc] initWithQueue:queue
       transactionsUpdated:^(NSArray<SKPaymentTransaction *> *_Nonnull transactions) {
@@ -211,18 +211,18 @@
         return YES;
       }
       updatedDownloads:nil
-      transactionCache:[[TestTransactionCache alloc] init]];
+      transactionCache:[[TransactionCacheStub alloc] init]];
   SKPayment *payment =
-      [SKPayment paymentWithProduct:[[TestSKProduct alloc] initWithMap:self.productResponseMap]];
+      [SKPayment paymentWithProduct:[[SKProductStub alloc] initWithMap:self.productResponseMap]];
   [handler startObservingPaymentQueue];
   [handler addPayment:payment];
   [self waitForExpectations:@[ expectation ] timeout:5];
 }
 
 - (void)testStartObservingPaymentQueueShouldNotProcessTransactionsWhenCacheIsEmpty {
-  TestTransactionCache *mockCache = [[TestTransactionCache alloc] init];
+  TransactionCacheStub *mockCache = [[TransactionCacheStub alloc] init];
   FIAPaymentQueueHandler *handler =
-      [[FIAPaymentQueueHandler alloc] initWithQueue:[[TestPaymentQueue alloc] init]
+      [[FIAPaymentQueueHandler alloc] initWithQueue:[[PaymentQueueStub alloc] init]
           transactionsUpdated:^(NSArray<SKPaymentTransaction *> *_Nonnull transactions) {
             XCTFail("transactionsUpdated callback should not be called when cache is empty.");
           }
@@ -269,9 +269,9 @@
 
 - (void)
     testStartObservingPaymentQueueShouldNotProcessTransactionsWhenCacheContainsEmptyTransactionArrays {
-  TestTransactionCache *mockCache = [[TestTransactionCache alloc] init];
+  TransactionCacheStub *mockCache = [[TransactionCacheStub alloc] init];
   FIAPaymentQueueHandler *handler =
-      [[FIAPaymentQueueHandler alloc] initWithQueue:[[TestPaymentQueue alloc] init]
+      [[FIAPaymentQueueHandler alloc] initWithQueue:[[PaymentQueueStub alloc] init]
           transactionsUpdated:^(NSArray<SKPaymentTransaction *> *_Nonnull transactions) {
             XCTFail("transactionsUpdated callback should not be called when cache is empty.");
           }
@@ -328,11 +328,11 @@
   XCTestExpectation *updateDownloadsExpectation =
       [self expectationWithDescription:
                 @"downloadsUpdated callback should be called with one transaction."];
-  SKPaymentTransaction *mockTransaction = [[TestSKPaymentTransaction alloc] init];
+  SKPaymentTransaction *mockTransaction = [[SKPaymentTransactionStub alloc] init];
   SKDownload *mockDownload = [[SKDownload alloc] init];
-  TestTransactionCache *mockCache = [[TestTransactionCache alloc] init];
+  TransactionCacheStub *mockCache = [[TransactionCacheStub alloc] init];
   FIAPaymentQueueHandler *handler =
-      [[FIAPaymentQueueHandler alloc] initWithQueue:[[TestPaymentQueue alloc] init]
+      [[FIAPaymentQueueHandler alloc] initWithQueue:[[PaymentQueueStub alloc] init]
           transactionsUpdated:^(NSArray<SKPaymentTransaction *> *_Nonnull transactions) {
             XCTAssertEqualObjects(transactions, @[ mockTransaction ]);
             [updateTransactionsExpectation fulfill];
@@ -394,8 +394,8 @@
 }
 
 - (void)testTransactionsShouldBeCachedWhenNotObserving {
-  TestPaymentQueue *queue = [[TestPaymentQueue alloc] init];
-  TestTransactionCache *mockCache = [[TestTransactionCache alloc] init];
+  PaymentQueueStub *queue = [[PaymentQueueStub alloc] init];
+  TransactionCacheStub *mockCache = [[TransactionCacheStub alloc] init];
   FIAPaymentQueueHandler *handler = [[FIAPaymentQueueHandler alloc] initWithQueue:queue
       transactionsUpdated:^(NSArray<SKPaymentTransaction *> *_Nonnull transactions) {
         XCTFail("transactionsUpdated callback should not be called when cache is empty.");
@@ -414,7 +414,7 @@
       transactionCache:mockCache];
 
   SKPayment *payment =
-      [SKPayment paymentWithProduct:[[TestSKProduct alloc] initWithMap:self.productResponseMap]];
+      [SKPayment paymentWithProduct:[[SKProductStub alloc] initWithMap:self.productResponseMap]];
 
   __block NSInteger TransactionCacheKeyUpdatedTransactionsInvoked = 0;
   __block NSInteger TransactionCacheKeyUpdatedDownloadsInvoked = 0;
@@ -453,11 +453,11 @@
   XCTestExpectation *updateDownloadsExpectation =
       [self expectationWithDescription:
                 @"downloadsUpdated callback should be called with one transaction."];
-  SKPaymentTransaction *mockTransaction = [[TestSKPaymentTransaction alloc] init];
+  SKPaymentTransaction *mockTransaction = [[SKPaymentTransactionStub alloc] init];
   SKDownload *mockDownload = [[SKDownload alloc] init];
-  TestPaymentQueue *queue = [[TestPaymentQueue alloc] init];
+  PaymentQueueStub *queue = [[PaymentQueueStub alloc] init];
   queue.testState = SKPaymentTransactionStatePurchased;
-  TestTransactionCache *mockCache = [[TestTransactionCache alloc] init];
+  TransactionCacheStub *mockCache = [[TransactionCacheStub alloc] init];
   FIAPaymentQueueHandler *handler = [[FIAPaymentQueueHandler alloc] initWithQueue:queue
       transactionsUpdated:^(NSArray<SKPaymentTransaction *> *_Nonnull transactions) {
         XCTAssertEqualObjects(transactions, @[ mockTransaction ]);
@@ -479,9 +479,9 @@
       transactionCache:mockCache];
 
   [handler startObservingPaymentQueue];
-  [handler paymentQueue:[[TestSKPaymentQueue alloc] init] updatedTransactions:@[ mockTransaction ]];
-  [handler paymentQueue:[[TestSKPaymentQueue alloc] init] removedTransactions:@[ mockTransaction ]];
-  [handler paymentQueue:[[TestSKPaymentQueue alloc] init] updatedDownloads:@[ mockDownload ]];
+  [handler paymentQueue:[[SKPaymentQueueStub alloc] init] updatedTransactions:@[ mockTransaction ]];
+  [handler paymentQueue:[[SKPaymentQueueStub alloc] init] removedTransactions:@[ mockTransaction ]];
+  [handler paymentQueue:[[SKPaymentQueueStub alloc] init] updatedDownloads:@[ mockDownload ]];
 
   [self waitForExpectations:@[
     updateTransactionsExpectation, removeTransactionsExpectation, updateDownloadsExpectation

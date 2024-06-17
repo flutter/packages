@@ -60,6 +60,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 // Initialize this wrapper with an SKPaymentQueue
 - (instancetype)initWithQueue:(SKPaymentQueue *)queue NS_DESIGNATED_INITIALIZER;
+
 - (instancetype)init NS_UNAVAILABLE;
 @end
 

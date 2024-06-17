@@ -32,13 +32,13 @@ API_UNAVAILABLE(tvos, macos, watchos)
     @"transactionTimeStamp" : @([NSDate date].timeIntervalSince1970),
     @"originalTransaction" : [NSNull null],
   };
-  self.transaction = [[TestSKPaymentTransaction alloc] initWithMap:transactionMap];
+  self.transaction = [[SKPaymentTransactionStub alloc] initWithMap:transactionMap];
 
   NSDictionary *storefrontMap = @{
     @"countryCode" : @"USA",
     @"identifier" : @"unique_identifier",
   };
-  self.storefront = [[TestSKStorefront alloc] initWithMap:storefrontMap];
+  self.storefront = [[SKStorefrontStub alloc] initWithMap:storefrontMap];
 }
 
 - (void)tearDown {
@@ -46,8 +46,8 @@ API_UNAVAILABLE(tvos, macos, watchos)
 
 - (void)testShouldContinueTransaction {
   if (@available(iOS 13.0, *)) {
-    TestMethodChannel *mockChannel = [[TestMethodChannel alloc] init];
-    mockChannel.invokeMethodChannelWithResultsStub =
+    MethodChannelStub *testChannel = [[MethodChannelStub alloc] init];
+    testChannel.invokeMethodChannelWithResultsStub =
         ^(NSString *_Nonnull method, id _Nonnull arguments, FlutterResult _Nullable result) {
           XCTAssertEqualObjects(method, @"shouldContinueTransaction");
           XCTAssertEqualObjects(arguments,
@@ -57,9 +57,9 @@ API_UNAVAILABLE(tvos, macos, watchos)
         };
 
     FIAPPaymentQueueDelegate *delegate =
-        [[FIAPPaymentQueueDelegate alloc] initWithMethodChannel:mockChannel];
+        [[FIAPPaymentQueueDelegate alloc] initWithMethodChannel:testChannel];
 
-    BOOL shouldContinue = [delegate paymentQueue:[[TestSKPaymentQueue alloc] init]
+    BOOL shouldContinue = [delegate paymentQueue:[[SKPaymentQueueStub alloc] init]
                        shouldContinueTransaction:self.transaction
                                     inStorefront:self.storefront];
 
@@ -69,11 +69,11 @@ API_UNAVAILABLE(tvos, macos, watchos)
 
 - (void)testShouldContinueTransaction_should_default_to_yes {
   if (@available(iOS 13.0, *)) {
-    TestMethodChannel *mockChannel = [[TestMethodChannel alloc] init];
+    MethodChannelStub *testChannel = [[MethodChannelStub alloc] init];
     FIAPPaymentQueueDelegate *delegate =
-        [[FIAPPaymentQueueDelegate alloc] initWithMethodChannel:mockChannel];
+        [[FIAPPaymentQueueDelegate alloc] initWithMethodChannel:testChannel];
 
-    mockChannel.invokeMethodChannelWithResultsStub =
+    testChannel.invokeMethodChannelWithResultsStub =
         ^(NSString *_Nonnull method, id _Nonnull arguments, FlutterResult _Nullable result) {
           XCTAssertEqualObjects(method, @"shouldContinueTransaction");
           XCTAssertEqualObjects(arguments,
@@ -81,7 +81,7 @@ API_UNAVAILABLE(tvos, macos, watchos)
                                                     andSKPaymentTransaction:self.transaction]);
         };
 
-    BOOL shouldContinue = [delegate paymentQueue:[[TestSKPaymentQueue alloc] init]
+    BOOL shouldContinue = [delegate paymentQueue:[[SKPaymentQueueStub alloc] init]
                        shouldContinueTransaction:self.transaction
                                     inStorefront:self.storefront];
 
@@ -92,11 +92,11 @@ API_UNAVAILABLE(tvos, macos, watchos)
 #if TARGET_OS_IOS
 - (void)testShouldShowPriceConsentIfNeeded {
   if (@available(iOS 13.4, *)) {
-    TestMethodChannel *mockChannel = [[TestMethodChannel alloc] init];
+    MethodChannelStub *testChannel = [[MethodChannelStub alloc] init];
     FIAPPaymentQueueDelegate *delegate =
-        [[FIAPPaymentQueueDelegate alloc] initWithMethodChannel:mockChannel];
+        [[FIAPPaymentQueueDelegate alloc] initWithMethodChannel:testChannel];
 
-    mockChannel.invokeMethodChannelWithResultsStub =
+    testChannel.invokeMethodChannelWithResultsStub =
         ^(NSString *_Nonnull method, id _Nonnull arguments, FlutterResult _Nullable result) {
           XCTAssertEqualObjects(method, @"shouldShowPriceConsent");
           XCTAssertNil(arguments);
@@ -104,7 +104,7 @@ API_UNAVAILABLE(tvos, macos, watchos)
         };
 
     BOOL shouldShow =
-        [delegate paymentQueueShouldShowPriceConsent:[[TestSKPaymentQueue alloc] init]];
+        [delegate paymentQueueShouldShowPriceConsent:[[SKPaymentQueueStub alloc] init]];
 
     XCTAssertFalse(shouldShow);
   }
@@ -114,18 +114,18 @@ API_UNAVAILABLE(tvos, macos, watchos)
 #if TARGET_OS_IOS
 - (void)testShouldShowPriceConsentIfNeeded_should_default_to_yes {
   if (@available(iOS 13.4, *)) {
-    TestMethodChannel *mockChannel = [[TestMethodChannel alloc] init];
+    MethodChannelStub *testChannel = [[MethodChannelStub alloc] init];
     FIAPPaymentQueueDelegate *delegate =
-        [[FIAPPaymentQueueDelegate alloc] initWithMethodChannel:mockChannel];
+        [[FIAPPaymentQueueDelegate alloc] initWithMethodChannel:testChannel];
 
-    mockChannel.invokeMethodChannelWithResultsStub =
+    testChannel.invokeMethodChannelWithResultsStub =
         ^(NSString *_Nonnull method, id _Nonnull arguments, FlutterResult _Nullable result) {
           XCTAssertEqualObjects(method, @"shouldShowPriceConsent");
           XCTAssertNil(arguments);
         };
 
     BOOL shouldShow =
-        [delegate paymentQueueShouldShowPriceConsent:[[TestSKPaymentQueue alloc] init]];
+        [delegate paymentQueueShouldShowPriceConsent:[[SKPaymentQueueStub alloc] init]];
 
     XCTAssertTrue(shouldShow);
   }

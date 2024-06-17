@@ -13,7 +13,7 @@
 #import <Flutter/Flutter.h>
 #endif
 
-@implementation TestPaymentQueue
+@implementation PaymentQueueStub
 
 @synthesize transactions;
 @synthesize delegate;
@@ -23,8 +23,8 @@
 }
 
 - (void)addPayment:(SKPayment *_Nonnull)payment {
-  TestSKPaymentTransaction *transaction =
-      [[TestSKPaymentTransaction alloc] initWithState:self.testState payment:payment];
+  SKPaymentTransactionStub *transaction =
+      [[SKPaymentTransactionStub alloc] initWithState:self.testState payment:payment];
   [self.observer paymentQueue:self.realQueue updatedTransactions:@[ transaction ]];
 }
 
@@ -44,7 +44,7 @@
   if (self.getUnfinishedTransactionsStub) {
     return self.getUnfinishedTransactionsStub();
   } else {
-    return [NSArray array];
+    return @[];
   }
 }
 
@@ -87,7 +87,7 @@
 }
 @end
 
-@implementation TestMethodChannel
+@implementation MethodChannelStub
 - (void)invokeMethod:(nonnull NSString *)method arguments:(id _Nullable)arguments {
   if (self.invokeMethodChannelStub) {
     self.invokeMethodChannelStub(method, arguments);
@@ -104,7 +104,7 @@
 
 @end
 
-@implementation TestTransactionCache
+@implementation TransactionCacheStub
 - (void)addObjects:(nonnull NSArray *)objects forKey:(TransactionCacheKey)key {
   if (self.addObjectsStub) {
     self.addObjectsStub(objects, key);
@@ -125,7 +125,7 @@
 }
 @end
 
-@implementation TestPaymentQueueHandler
+@implementation PaymentQueueHandlerStub
 
 @synthesize storefront;
 @synthesize delegate;
@@ -163,7 +163,7 @@
   if (self.getUnfinishedTransactionsStub) {
     return self.getUnfinishedTransactionsStub();
   } else {
-    return [NSArray array];
+    return @[];
   }
 }
 
@@ -176,7 +176,7 @@
                    shouldAddStorePayment:(nullable ShouldAddStorePayment)shouldAddStorePayment
                         updatedDownloads:(nullable UpdatedDownloads)updatedDownloads
                         transactionCache:(nonnull id<FLTTransactionCacheProtocol>)transactionCache {
-  return [[TestPaymentQueueHandler alloc] init];
+  return [[PaymentQueueHandlerStub alloc] init];
 }
 
 #if TARGET_OS_IOS
@@ -213,12 +213,12 @@
         (nullable RestoreCompletedTransactionsFinished)restoreCompletedTransactionsFinished
                    shouldAddStorePayment:(nullable ShouldAddStorePayment)shouldAddStorePayment
                         updatedDownloads:(nullable UpdatedDownloads)updatedDownloads {
-  return [[TestPaymentQueueHandler alloc] init];
+  return [[PaymentQueueHandlerStub alloc] init];
 }
 
 @end
 
-@implementation TestRequestHandler
+@implementation RequestHandlerStub
 - (void)startProductRequestWithCompletionHandler:(nonnull ProductRequestCompletion)completion {
   if (self.startProductRequestWithCompletionHandlerStub) {
     self.startProductRequestWithCompletionHandlerStub(completion);

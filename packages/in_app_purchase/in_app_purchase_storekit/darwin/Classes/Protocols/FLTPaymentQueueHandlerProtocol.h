@@ -17,10 +17,10 @@ typedef void (^UpdatedDownloads)(NSArray<SKDownload *> *downloads);
 
 /// A protocol that conforms to SKPaymentTransactionObserver and handles SKPaymentQueue methods
 @protocol FLTPaymentQueueHandlerProtocol <NSObject, SKPaymentTransactionObserver>
-// An object that provides information needed to complete transactions.
+/// An object that provides information needed to complete transactions.
 @property(nonatomic, weak, nullable) id<SKPaymentQueueDelegate> delegate API_AVAILABLE(
     ios(13.0), macos(10.15), watchos(6.2));
-// An object containing the location and unique identifier of an Apple App Store storefront.
+/// An object containing the location and unique identifier of an Apple App Store storefront.
 @property(nonatomic, readonly, nullable)
     SKStorefront *storefront API_AVAILABLE(ios(13.0), macos(10.15), watchos(6.2));
 /// Creates a new FIAPaymentQueueHandler.
@@ -68,36 +68,37 @@ typedef void (^UpdatedDownloads)(NSArray<SKDownload *> *downloads);
                    shouldAddStorePayment:(nullable ShouldAddStorePayment)shouldAddStorePayment
                         updatedDownloads:(nullable UpdatedDownloads)updatedDownloads
                         transactionCache:(nonnull id<FLTTransactionCacheProtocol>)transactionCache;
-// Can throw exceptions if the transaction type is purchasing, should always used in a @try block.
+/// Can throw exceptions if the transaction type is purchasing, should always used in a @try block.
 - (void)finishTransaction:(nonnull SKPaymentTransaction *)transaction;
 
-// Attempt to restore transactions. Require app store receipt url.
+/// Attempt to restore transactions. Require app store receipt url.
 - (void)restoreTransactions:(nullable NSString *)applicationName;
 
-//
+///
 - (void)presentCodeRedemptionSheet API_UNAVAILABLE(tvos, macos, watchos);
 
-// Return all transactions that are not marked as complete.
+/// Return all transactions that are not marked as complete.
 - (NSArray<SKPaymentTransaction *> *)getUnfinishedTransactions;
 
-// This method needs to be called before any other methods.
+/// This method needs to be called before any other methods.
 - (void)startObservingPaymentQueue;
-// Call this method when the Flutter app is no longer listening
+
+/// Call this method when the Flutter app is no longer listening
 - (void)stopObservingPaymentQueue;
 
-// Appends a payment to the SKPaymentQueue.
-//
-// @param payment Payment object to be added to the payment queue.
-// @return whether "addPayment" was successful.
+/// Appends a payment to the SKPaymentQueue.
+///
+/// @param payment Payment object to be added to the payment queue.
+/// @return whether "addPayment" was successful.
 - (BOOL)addPayment:(SKPayment *)payment;
 
-// Displays the price consent sheet.
-//
-// The price consent sheet is only displayed when the following
-// is true:
-// - You have increased the price of the subscription in App Store Connect.
-// - The subscriber has not yet responded to a price consent query.
-// Otherwise the method has no effect.
+/// Displays the price consent sheet.
+///
+/// The price consent sheet is only displayed when the following
+/// is true:
+/// - You have increased the price of the subscription in App Store Connect.
+/// - The subscriber has not yet responded to a price consent query.
+/// Otherwise the method has no effect.
 - (void)showPriceConsentIfNeeded API_AVAILABLE(ios(13.4))API_UNAVAILABLE(tvos, macos, watchos);
 
 @end

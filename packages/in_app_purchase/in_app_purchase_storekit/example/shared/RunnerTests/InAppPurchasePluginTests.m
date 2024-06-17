@@ -12,7 +12,7 @@
 
 @interface InAppPurchasePluginTest : XCTestCase
 
-@property(strong, nonatomic) TestFIAPReceiptManager *receiptManagerStub;
+@property(strong, nonatomic) FIAPReceiptManagerStub *receiptManagerStub;
 @property(strong, nonatomic) InAppPurchasePlugin *plugin;
 
 @end
@@ -20,7 +20,7 @@
 @implementation InAppPurchasePluginTest
 
 - (void)setUp {
-  self.receiptManagerStub = [TestFIAPReceiptManager new];
+  self.receiptManagerStub = [FIAPReceiptManagerStub new];
   self.plugin = [[InAppPurchasePluginStub alloc]
       initWithReceiptManager:self.receiptManagerStub
               handlerFactory:^DefaultRequestHandler *(SKRequest *request) {
@@ -45,12 +45,12 @@
       @"countryCode" : @"USA",
       @"identifier" : @"unique_identifier",
     };
-    TestPaymentQueue *queue = [[TestPaymentQueue alloc] init];
-    TestTransactionCache *cache = [[TestTransactionCache alloc] init];
+    PaymentQueueStub *queueStub = [[PaymentQueueStub alloc] init];
+    TransactionCacheStub *cache = [[TransactionCacheStub alloc] init];
 
-    queue.storefront = [[TestSKStorefront alloc] initWithMap:storefrontMap];
+    queueStub.storefront = [[SKStorefrontStub alloc] initWithMap:storefrontMap];
 
-    self.plugin.paymentQueueHandler = [[FIAPaymentQueueHandler alloc] initWithQueue:queue
+    self.plugin.paymentQueueHandler = [[FIAPaymentQueueHandler alloc] initWithQueue:queueStub
                                                                 transactionsUpdated:nil
                                                                  transactionRemoved:nil
                                                            restoreTransactionFailed:nil
@@ -72,10 +72,10 @@
 
 - (void)testPaymentQueueStorefrontReturnsNil {
   if (@available(iOS 13, macOS 10.15, *)) {
-    TestPaymentQueue *queue = [[TestPaymentQueue alloc] init];
-    TestTransactionCache *cache = [[TestTransactionCache alloc] init];
+    PaymentQueueStub *queueStub = [[PaymentQueueStub alloc] init];
+    TransactionCacheStub *cache = [[TransactionCacheStub alloc] init];
 
-    self.plugin.paymentQueueHandler = [[FIAPaymentQueueHandler alloc] initWithQueue:queue
+    self.plugin.paymentQueueHandler = [[FIAPaymentQueueHandler alloc] initWithQueue:queueStub
                                                                 transactionsUpdated:nil
                                                                  transactionRemoved:nil
                                                            restoreTransactionFailed:nil
@@ -128,14 +128,14 @@
     @"transactionTimeStamp" : @([NSDate date].timeIntervalSince1970),
   };
 
-  TestSKPaymentTransaction *paymentTransaction =
-      [[TestSKPaymentTransaction alloc] initWithMap:transactionMap];
-  NSArray *array = @[ paymentTransaction ];
+  SKPaymentTransactionStub *paymentTransactionStub =
+      [[SKPaymentTransactionStub alloc] initWithMap:transactionMap];
+  NSArray *array = @[ paymentTransactionStub ];
 
-  TestPaymentQueue *queue = [[TestPaymentQueue alloc] init];
+  PaymentQueueStub *queue = [[PaymentQueueStub alloc] init];
   queue.transactions = array;
 
-  TestTransactionCache *cache = [[TestTransactionCache alloc] init];
+  TransactionCacheStub *cache = [[TransactionCacheStub alloc] init];
 
   self.plugin.paymentQueueHandler = [[FIAPaymentQueueHandler alloc] initWithQueue:queue
                                                               transactionsUpdated:nil
@@ -175,15 +175,15 @@
     @"transactionTimeStamp" : @([NSDate date].timeIntervalSince1970),
   };
 
-  TestSKPaymentTransaction *paymentTransaction =
-      [[TestSKPaymentTransaction alloc] initWithMap:transactionMap];
+  SKPaymentTransactionStub *paymentTransactionStub =
+      [[SKPaymentTransactionStub alloc] initWithMap:transactionMap];
 
-  TestPaymentQueue *queue = [[TestPaymentQueue alloc] init];
-  queue.transactions = @[ paymentTransaction ];
+  PaymentQueueStub *queueStub = [[PaymentQueueStub alloc] init];
+  queueStub.transactions = @[ paymentTransactionStub ];
 
-  TestTransactionCache *cache = [[TestTransactionCache alloc] init];
+  TransactionCacheStub *cache = [[TransactionCacheStub alloc] init];
 
-  self.plugin.paymentQueueHandler = [[FIAPaymentQueueHandler alloc] initWithQueue:queue
+  self.plugin.paymentQueueHandler = [[FIAPaymentQueueHandler alloc] initWithQueue:queueStub
                                                               transactionsUpdated:nil
                                                                transactionRemoved:nil
                                                          restoreTransactionFailed:nil
@@ -204,18 +204,18 @@
   XCTestExpectation *expectation =
       [self expectationWithDescription:@"completion handler successfully called"];
 
-  TestRequestHandler *testHandler = [[TestRequestHandler alloc] init];
+  RequestHandlerStub *handlerStub = [[RequestHandlerStub alloc] init];
   InAppPurchasePlugin *plugin = [[InAppPurchasePlugin alloc]
       initWithReceiptManager:_receiptManagerStub
-              handlerFactory:^TestRequestHandler *(SKRequest *request) {
-                return testHandler;
+              handlerFactory:^RequestHandlerStub *(SKRequest *request) {
+                return handlerStub;
               }];
 
   NSError *error = [NSError errorWithDomain:@"errorDomain"
                                        code:0
                                    userInfo:@{NSLocalizedDescriptionKey : @"description"}];
 
-  testHandler.startProductRequestWithCompletionHandlerStub =
+  handlerStub.startProductRequestWithCompletionHandlerStub =
       ^(ProductRequestCompletion _Nonnull completion) {
         completion(nil, error);
       };
@@ -239,14 +239,14 @@
   XCTestExpectation *expectation =
       [self expectationWithDescription:@"completion handler successfully called"];
 
-  TestRequestHandler *testHandler = [[TestRequestHandler alloc] init];
+  RequestHandlerStub *handlerStub = [[RequestHandlerStub alloc] init];
   InAppPurchasePlugin *plugin = [[InAppPurchasePlugin alloc]
       initWithReceiptManager:_receiptManagerStub
-              handlerFactory:^TestRequestHandler *(SKRequest *request) {
-                return testHandler;
+              handlerFactory:^RequestHandlerStub *(SKRequest *request) {
+                return handlerStub;
               }];
 
-  testHandler.startProductRequestWithCompletionHandlerStub =
+  handlerStub.startProductRequestWithCompletionHandlerStub =
       ^(ProductRequestCompletion _Nonnull completion) {
         completion(nil, nil);
       };
@@ -270,20 +270,20 @@
     @"simulatesAskToBuyInSandbox" : @YES,
   };
 
-  TestPaymentQueueHandler *handler = [[TestPaymentQueueHandler alloc] init];
-  self.plugin.paymentQueueHandler = handler;
+  PaymentQueueHandlerStub *handlerStub = [[PaymentQueueHandlerStub alloc] init];
+  self.plugin.paymentQueueHandler = handlerStub;
 
   FlutterError *error;
 
-  __block NSInteger addPaymentTimes = 0;
-  handler.addPaymentStub = ^(SKPayment *payment) {
-    addPaymentTimes += 1;
+  __block NSInteger addPaymentInvokeCount = 0;
+  handlerStub.addPaymentStub = ^(SKPayment *payment) {
+    addPaymentInvokeCount += 1;
     return NO;
   };
 
   [self.plugin addPaymentPaymentMap:argument error:&error];
 
-  XCTAssertEqual(addPaymentTimes, 1);
+  XCTAssertEqual(addPaymentInvokeCount, 1);
   XCTAssertEqualObjects(@"storekit_duplicate_product_object", error.code);
   XCTAssertEqualObjects(@"There is a pending transaction for the same product identifier. "
                         @"Please either wait for it to be finished or finish it manually "
@@ -320,15 +320,15 @@
     @"simulatesAskToBuyInSandbox" : @YES,
   };
 
-  TestPaymentQueueHandler *handler = [[TestPaymentQueueHandler alloc] init];
-  self.plugin.paymentQueueHandler = handler;
+  PaymentQueueHandlerStub *handlerStub = [[PaymentQueueHandlerStub alloc] init];
+  self.plugin.paymentQueueHandler = handlerStub;
 
-  __block NSInteger addPaymentTimes = 0;
-  handler.addPaymentStub = ^(SKPayment *payment) {
+  __block NSInteger addPaymentInvokeCount = 0;
+  handlerStub.addPaymentStub = ^(SKPayment *payment) {
     XCTAssert(payment != nil);
     XCTAssertEqual(payment.productIdentifier, @"123");
     XCTAssert(payment.quantity == 1);
-    addPaymentTimes++;
+    addPaymentInvokeCount++;
     return YES;
   };
 
@@ -337,7 +337,7 @@
   [self.plugin addPaymentPaymentMap:argument error:&error];
 
   XCTAssertNil(error);
-  XCTAssertEqual(addPaymentTimes, 1);
+  XCTAssertEqual(addPaymentInvokeCount, 1);
 }
 
 - (void)testAddPaymentSuccessWithPaymentDiscount {
@@ -354,11 +354,11 @@
     }
   };
 
-  TestPaymentQueueHandler *handler = [[TestPaymentQueueHandler alloc] init];
-  self.plugin.paymentQueueHandler = handler;
+  PaymentQueueHandlerStub *handlerStub = [[PaymentQueueHandlerStub alloc] init];
+  self.plugin.paymentQueueHandler = handlerStub;
 
-  __block NSInteger addPaymentTimes = 0;
-  handler.addPaymentStub = ^(SKPayment *payment) {
+  __block NSInteger addPaymentInvokeCount = 0;
+  handlerStub.addPaymentStub = ^(SKPayment *payment) {
     if (@available(iOS 12.2, *)) {
       SKPaymentDiscount *discount = payment.paymentDiscount;
       XCTAssertEqual(discount.identifier, @"test_identifier");
@@ -367,17 +367,17 @@
           discount.nonce,
           [[NSUUID alloc] initWithUUIDString:@"4a11a9cc-3bc3-11ec-8d3d-0242ac130003"]);
       XCTAssertEqual(discount.signature, @"test_signature");
-      addPaymentTimes++;
+      addPaymentInvokeCount++;
       return YES;
     }
-    addPaymentTimes++;
+    addPaymentInvokeCount++;
     return YES;
   };
 
   FlutterError *error;
 
   [self.plugin addPaymentPaymentMap:argument error:&error];
-  XCTAssertEqual(addPaymentTimes, 1);
+  XCTAssertEqual(addPaymentInvokeCount, 1);
   XCTAssertNil(error);
 }
 
@@ -392,20 +392,20 @@
         /// This payment discount is missing the field `identifier`, and is thus malformed
         @"keyIdentifier" : @"test_key_identifier",
         @"nonce" : @"4a11a9cc-3bc3-11ec-8d3d-0242ac130003",
-        @"signature" : @YES,
+        @"signature" : @"test_signature",
         @"timestamp" : @(1635847102),
       }
     };
 
-    TestPaymentQueueHandler *testHandler = [[TestPaymentQueueHandler alloc] init];
+    PaymentQueueHandlerStub *handlerStub = [[PaymentQueueHandlerStub alloc] init];
 
     __block NSInteger addPaymentCount = 0;
-    testHandler.addPaymentStub = ^BOOL(SKPayment *_Nonnull payment) {
+    handlerStub.addPaymentStub = ^BOOL(SKPayment *_Nonnull payment) {
       addPaymentCount++;
       return YES;
     };
 
-    self.plugin.paymentQueueHandler = testHandler;
+    self.plugin.paymentQueueHandler = handlerStub;
     FlutterError *error;
 
     [self.plugin addPaymentPaymentMap:invalidDiscount error:&error];
@@ -427,30 +427,30 @@
     @"simulatesAskToBuyInSandbox" : [NSNull null],
   };
 
-  TestPaymentQueueHandler *handler = [[TestPaymentQueueHandler alloc] init];
-  self.plugin.paymentQueueHandler = handler;
+  PaymentQueueHandlerStub *handlerStub = [[PaymentQueueHandlerStub alloc] init];
+  self.plugin.paymentQueueHandler = handlerStub;
   FlutterError *error;
 
-  __block NSInteger addPaymentTimes = 0;
-  handler.addPaymentStub = ^(SKPayment *payment) {
+  __block NSInteger addPaymentInvokeCount = 0;
+  handlerStub.addPaymentStub = ^(SKPayment *payment) {
     XCTAssertEqual(payment.simulatesAskToBuyInSandbox, false);
-    addPaymentTimes++;
+    addPaymentInvokeCount++;
     return YES;
   };
 
   [self.plugin addPaymentPaymentMap:argument error:&error];
-  XCTAssertEqual(addPaymentTimes, 1);
+  XCTAssertEqual(addPaymentInvokeCount, 1);
 }
 
 - (void)testRestoreTransactions {
   XCTestExpectation *expectation =
       [self expectationWithDescription:@"result successfully restore transactions"];
 
-  TestTransactionCache *cache = [[TestTransactionCache alloc] init];
-  TestPaymentQueue *queue = [[TestPaymentQueue alloc] init];
+  TransactionCacheStub *cacheStub = [[TransactionCacheStub alloc] init];
+  PaymentQueueStub *queueStub = [[PaymentQueueStub alloc] init];
 
   __block BOOL callbackInvoked = NO;
-  self.plugin.paymentQueueHandler = [[FIAPaymentQueueHandler alloc] initWithQueue:queue
+  self.plugin.paymentQueueHandler = [[FIAPaymentQueueHandler alloc] initWithQueue:queueStub
       transactionsUpdated:^(NSArray<SKPaymentTransaction *> *_Nonnull transactions) {
       }
       transactionRemoved:nil
@@ -461,8 +461,8 @@
       }
       shouldAddStorePayment:nil
       updatedDownloads:nil
-      transactionCache:cache];
-  [queue addTransactionObserver:self.plugin.paymentQueueHandler];
+      transactionCache:cacheStub];
+  [queueStub addTransactionObserver:self.plugin.paymentQueueHandler];
 
   FlutterError *error;
   [self.plugin restoreTransactionsApplicationUserName:nil error:&error];
@@ -505,18 +505,18 @@
   XCTestExpectation *expectation =
       [self expectationWithDescription:@"completion handler successfully called"];
 
-  TestRequestHandler *testHandler = [[TestRequestHandler alloc] init];
+  RequestHandlerStub *handlerStub = [[RequestHandlerStub alloc] init];
   InAppPurchasePlugin *plugin = [[InAppPurchasePlugin alloc]
       initWithReceiptManager:_receiptManagerStub
-              handlerFactory:^TestRequestHandler *(SKRequest *request) {
-                return testHandler;
+              handlerFactory:^RequestHandlerStub *(SKRequest *request) {
+                return handlerStub;
               }];
 
   NSError *recieptError = [NSError errorWithDomain:@"errorDomain"
                                               code:0
                                           userInfo:@{NSLocalizedDescriptionKey : @"description"}];
 
-  testHandler.startProductRequestWithCompletionHandlerStub =
+  handlerStub.startProductRequestWithCompletionHandlerStub =
       ^(ProductRequestCompletion _Nonnull completion) {
         completion(nil, recieptError);
       };
@@ -538,18 +538,18 @@
   XCTestExpectation *expectation =
       [self expectationWithDescription:@"completion handler successfully called"];
 
-  TestRequestHandler *testHandler = [[TestRequestHandler alloc] init];
+  RequestHandlerStub *handlerStub = [[RequestHandlerStub alloc] init];
   InAppPurchasePlugin *plugin = [[InAppPurchasePlugin alloc]
       initWithReceiptManager:_receiptManagerStub
-              handlerFactory:^TestRequestHandler *(SKRequest *request) {
-                return testHandler;
+              handlerFactory:^RequestHandlerStub *(SKRequest *request) {
+                return handlerStub;
               }];
 
   NSError *recieptError = [NSError errorWithDomain:@"errorDomain"
                                               code:0
                                           userInfo:@{NSLocalizedDescriptionKey : @"description"}];
 
-  testHandler.startProductRequestWithCompletionHandlerStub =
+  handlerStub.startProductRequestWithCompletionHandlerStub =
       ^(ProductRequestCompletion _Nonnull completion) {
         completion(nil, recieptError);
       };
@@ -571,18 +571,18 @@
   XCTestExpectation *expectation =
       [self expectationWithDescription:@"completion handler successfully called"];
 
-  TestRequestHandler *testHandler = [[TestRequestHandler alloc] init];
+  RequestHandlerStub *handlerStub = [[RequestHandlerStub alloc] init];
   InAppPurchasePlugin *plugin = [[InAppPurchasePlugin alloc]
       initWithReceiptManager:_receiptManagerStub
-              handlerFactory:^TestRequestHandler *(SKRequest *request) {
-                return testHandler;
+              handlerFactory:^RequestHandlerStub *(SKRequest *request) {
+                return handlerStub;
               }];
 
   NSError *recieptError = [NSError errorWithDomain:@"errorDomain"
                                               code:0
                                           userInfo:@{NSLocalizedDescriptionKey : @"description"}];
 
-  testHandler.startProductRequestWithCompletionHandlerStub =
+  handlerStub.startProductRequestWithCompletionHandlerStub =
       ^(ProductRequestCompletion _Nonnull completion) {
         completion(nil, recieptError);
       };
@@ -600,11 +600,11 @@
 /// presentCodeRedemptionSheetWithError:error is only available on iOS
 #if TARGET_OS_IOS
 - (void)testPresentCodeRedemptionSheet {
-  TestPaymentQueueHandler *mockHandler = [[TestPaymentQueueHandler alloc] init];
-  self.plugin.paymentQueueHandler = mockHandler;
+  PaymentQueueHandlerStub *handlerStub = [[PaymentQueueHandlerStub alloc] init];
+  self.plugin.paymentQueueHandler = handlerStub;
 
   __block NSInteger presentCodeRedemptionSheetCount = 0;
-  mockHandler.presentCodeRedemptionSheetStub = ^{
+  handlerStub.presentCodeRedemptionSheetStub = ^{
     presentCodeRedemptionSheetCount++;
   };
 
@@ -616,8 +616,8 @@
 #endif
 
 - (void)testGetPendingTransactions {
-  TestPaymentQueue *queue = [[TestPaymentQueue alloc] init];
-  TestTransactionCache *cache = [[TestTransactionCache alloc] init];
+  PaymentQueueStub *queueStub = [[PaymentQueueStub alloc] init];
+  TransactionCacheStub *cacheStub = [[TransactionCacheStub alloc] init];
   NSDictionary *transactionMap = @{
     @"transactionIdentifier" : [NSNull null],
     @"transactionState" : @(SKPaymentTransactionStatePurchasing),
@@ -628,18 +628,18 @@
     @"transactionTimeStamp" : @([NSDate date].timeIntervalSince1970),
     @"originalTransaction" : [NSNull null],
   };
-  queue.transactions = @[ [[TestSKPaymentTransaction alloc] initWithMap:transactionMap] ];
-  self.plugin.paymentQueueHandler = [[FIAPaymentQueueHandler alloc] initWithQueue:queue
+  queueStub.transactions = @[ [[SKPaymentTransactionStub alloc] initWithMap:transactionMap] ];
+  self.plugin.paymentQueueHandler = [[FIAPaymentQueueHandler alloc] initWithQueue:queueStub
                                                               transactionsUpdated:nil
                                                                transactionRemoved:nil
                                                          restoreTransactionFailed:nil
                                              restoreCompletedTransactionsFinished:nil
                                                             shouldAddStorePayment:nil
                                                                  updatedDownloads:nil
-                                                                 transactionCache:cache];
+                                                                 transactionCache:cacheStub];
   FlutterError *error;
-  TestSKPaymentTransaction *original =
-      [[TestSKPaymentTransaction alloc] initWithMap:transactionMap];
+  SKPaymentTransactionStub *original =
+      [[SKPaymentTransactionStub alloc] initWithMap:transactionMap];
 
   SKPaymentTransactionMessage *originalPigeon =
       [FIAObjectTranslator convertTransactionToPigeon:original];
@@ -650,11 +650,11 @@
 }
 
 - (void)testStartObservingPaymentQueue {
-  TestPaymentQueueHandler *mockHandler = [[TestPaymentQueueHandler alloc] init];
-  self.plugin.paymentQueueHandler = mockHandler;
+  PaymentQueueHandlerStub *handlerStub = [[PaymentQueueHandlerStub alloc] init];
+  self.plugin.paymentQueueHandler = handlerStub;
 
   __block NSInteger startObservingCount = 0;
-  mockHandler.startObservingPaymentQueueStub = ^{
+  handlerStub.startObservingPaymentQueueStub = ^{
     startObservingCount++;
   };
 
@@ -665,11 +665,11 @@
 }
 
 - (void)testStopObservingPaymentQueue {
-  TestPaymentQueueHandler *mockHandler = [[TestPaymentQueueHandler alloc] init];
-  self.plugin.paymentQueueHandler = mockHandler;
+  PaymentQueueHandlerStub *handlerStub = [[PaymentQueueHandlerStub alloc] init];
+  self.plugin.paymentQueueHandler = handlerStub;
 
   __block NSInteger stopObservingCount = 0;
-  mockHandler.stopObservingPaymentQueueStub = ^{
+  handlerStub.stopObservingPaymentQueueStub = ^{
     stopObservingCount++;
   };
 
@@ -681,19 +681,19 @@
 
 #if TARGET_OS_IOS
 - (void)testRegisterPaymentQueueDelegate {
-  TestTransactionCache *cache = [[TestTransactionCache alloc] init];
-  TestPaymentQueue *queue = [[TestPaymentQueue alloc] init];
+  TransactionCacheStub *cacheStub = [[TransactionCacheStub alloc] init];
+  PaymentQueueStub *queueStub = [[PaymentQueueStub alloc] init];
   if (@available(iOS 13, *)) {
-    self.plugin.paymentQueueHandler = [[FIAPaymentQueueHandler alloc] initWithQueue:queue
+    self.plugin.paymentQueueHandler = [[FIAPaymentQueueHandler alloc] initWithQueue:queueStub
                                                                 transactionsUpdated:nil
                                                                  transactionRemoved:nil
                                                            restoreTransactionFailed:nil
                                                restoreCompletedTransactionsFinished:nil
                                                               shouldAddStorePayment:nil
                                                                    updatedDownloads:nil
-                                                                   transactionCache:cache];
+                                                                   transactionCache:cacheStub];
 
-    self.plugin.registrar = [[TestFlutterPluginRegistrar alloc] init];
+    self.plugin.registrar = [[FlutterPluginRegistrarStub alloc] init];
 
     // Verify the delegate is nil before we register one.
     XCTAssertNil(self.plugin.paymentQueueHandler.delegate);
@@ -708,18 +708,18 @@
 
 - (void)testRemovePaymentQueueDelegate {
   if (@available(iOS 13, *)) {
-    TestTransactionCache *cache = [[TestTransactionCache alloc] init];
-    TestPaymentQueue *queue = [[TestPaymentQueue alloc] init];
-    self.plugin.paymentQueueHandler = [[FIAPaymentQueueHandler alloc] initWithQueue:queue
+    TransactionCacheStub *cacheStub = [[TransactionCacheStub alloc] init];
+    PaymentQueueStub *queueStub = [[PaymentQueueStub alloc] init];
+    self.plugin.paymentQueueHandler = [[FIAPaymentQueueHandler alloc] initWithQueue:queueStub
                                                                 transactionsUpdated:nil
                                                                  transactionRemoved:nil
                                                            restoreTransactionFailed:nil
                                                restoreCompletedTransactionsFinished:nil
                                                               shouldAddStorePayment:nil
                                                                    updatedDownloads:nil
-                                                                   transactionCache:cache];
+                                                                   transactionCache:cacheStub];
 
-    self.plugin.registrar = [[TestFlutterPluginRegistrar alloc] init];
+    self.plugin.registrar = [[FlutterPluginRegistrarStub alloc] init];
 
     // Verify the delegate is nil before we register one.
     XCTAssertNil(self.plugin.paymentQueueHandler.delegate);
@@ -755,23 +755,23 @@
                 return [[DefaultRequestHandler alloc]
                     initWithRequestHandler:[[FIAPRequestHandler alloc] initWithRequest:request]];
               }];
-  TestMethodChannel *testChannel = [[TestMethodChannel alloc] init];
+  MethodChannelStub *channelStub = [[MethodChannelStub alloc] init];
   __block NSInteger invokeMethodCount = 0;
 
-  testChannel.invokeMethodChannelStub = ^(NSString *_Nonnull method, id _Nonnull arguments) {
+  channelStub.invokeMethodChannelStub = ^(NSString *_Nonnull method, id _Nonnull arguments) {
     XCTAssertEqualObjects(@"updatedTransactions", method);
     XCTAssertNotNil(arguments);
     invokeMethodCount++;
   };
 
   // (TODO: louisehsu) Change this to inject the channel, like requestHandler
-  plugin.transactionObserverCallbackChannel = testChannel;
+  plugin.transactionObserverCallbackChannel = channelStub;
 
-  TestSKPaymentTransaction *paymentTransaction =
-      [[TestSKPaymentTransaction alloc] initWithMap:transactionMap];
-  NSArray *array = [NSArray arrayWithObjects:paymentTransaction, nil];
+  SKPaymentTransactionStub *paymentTransactionStub =
+      [[SKPaymentTransactionStub alloc] initWithMap:transactionMap];
+  NSArray *array = [NSArray arrayWithObjects:paymentTransactionStub, nil];
   NSMutableArray *maps = [NSMutableArray new];
-  [maps addObject:[FIAObjectTranslator getMapFromSKPaymentTransaction:paymentTransaction]];
+  [maps addObject:[FIAObjectTranslator getMapFromSKPaymentTransaction:paymentTransactionStub]];
 
   [plugin handleTransactionsUpdated:array];
   XCTAssertEqual(invokeMethodCount, 1);
@@ -794,28 +794,28 @@
                 return [[DefaultRequestHandler alloc]
                     initWithRequestHandler:[[FIAPRequestHandler alloc] initWithRequest:request]];
               }];
-  TestSKPaymentTransaction *paymentTransaction =
-      [[TestSKPaymentTransaction alloc] initWithMap:transactionMap];
-  NSArray *array = [NSArray arrayWithObjects:paymentTransaction, nil];
+  SKPaymentTransactionStub *paymentTransactionStub =
+      [[SKPaymentTransactionStub alloc] initWithMap:transactionMap];
+  NSArray *array = [NSArray arrayWithObjects:paymentTransactionStub, nil];
   NSMutableArray *maps = [NSMutableArray new];
-  [maps addObject:[FIAObjectTranslator getMapFromSKPaymentTransaction:paymentTransaction]];
+  [maps addObject:[FIAObjectTranslator getMapFromSKPaymentTransaction:paymentTransactionStub]];
 
-  TestMethodChannel *testChannel = [[TestMethodChannel alloc] init];
+  MethodChannelStub *channelStub = [[MethodChannelStub alloc] init];
   __block NSInteger invokeMethodCount = 0;
 
-  testChannel.invokeMethodChannelStub = ^(NSString *_Nonnull method, id _Nonnull arguments) {
+  channelStub.invokeMethodChannelStub = ^(NSString *_Nonnull method, id _Nonnull arguments) {
     XCTAssertEqualObjects(@"removedTransactions", method);
     XCTAssertEqualObjects(maps, arguments);
     invokeMethodCount++;
   };
 
   // (TODO: louisehsu) Change this to inject the channel, like requestHandler
-  plugin.transactionObserverCallbackChannel = testChannel;
+  plugin.transactionObserverCallbackChannel = channelStub;
 
   [plugin handleTransactionsRemoved:array];
   XCTAssertEqual(invokeMethodCount, 1);
 }
-//
+
 - (void)testHandleTransactionRestoreFailed {
   InAppPurchasePlugin *plugin = [[InAppPurchasePluginStub alloc]
       initWithReceiptManager:self.receiptManagerStub
@@ -823,18 +823,18 @@
                 return [[DefaultRequestHandler alloc]
                     initWithRequestHandler:[[FIAPRequestHandler alloc] initWithRequest:request]];
               }];
-  TestMethodChannel *testChannel = [[TestMethodChannel alloc] init];
+  MethodChannelStub *channelStub = [[MethodChannelStub alloc] init];
   __block NSInteger invokeMethodCount = 0;
   NSError *error = [NSError errorWithDomain:@"error" code:0 userInfo:nil];
 
-  testChannel.invokeMethodChannelStub = ^(NSString *_Nonnull method, id _Nonnull arguments) {
+  channelStub.invokeMethodChannelStub = ^(NSString *_Nonnull method, id _Nonnull arguments) {
     XCTAssertEqualObjects(@"restoreCompletedTransactionsFailed", method);
     XCTAssertEqualObjects([FIAObjectTranslator getMapFromNSError:error], arguments);
     invokeMethodCount++;
   };
 
   // (TODO: louisehsu) Change this to inject the channel, like requestHandler
-  plugin.transactionObserverCallbackChannel = testChannel;
+  plugin.transactionObserverCallbackChannel = channelStub;
 
   [plugin handleTransactionRestoreFailed:error];
   XCTAssertEqual(invokeMethodCount, 1);
@@ -847,16 +847,16 @@
                 return [[DefaultRequestHandler alloc]
                     initWithRequestHandler:[[FIAPRequestHandler alloc] initWithRequest:request]];
               }];
-  TestMethodChannel *testChannel = [[TestMethodChannel alloc] init];
+  MethodChannelStub *channelStub = [[MethodChannelStub alloc] init];
   __block NSInteger invokeMethodCount = 0;
-  testChannel.invokeMethodChannelStub = ^(NSString *_Nonnull method, id _Nonnull arguments) {
+  channelStub.invokeMethodChannelStub = ^(NSString *_Nonnull method, id _Nonnull arguments) {
     XCTAssertEqualObjects(@"paymentQueueRestoreCompletedTransactionsFinished", method);
     XCTAssertNil(arguments);
     invokeMethodCount++;
   };
 
   // (TODO: louisehsu) Change this to inject the channel, like requestHandler
-  plugin.transactionObserverCallbackChannel = testChannel;
+  plugin.transactionObserverCallbackChannel = channelStub;
 
   [plugin restoreCompletedTransactionsFinished];
   XCTAssertEqual(invokeMethodCount, 1);
@@ -880,7 +880,7 @@
   };
 
   SKMutablePayment *payment = [FIAObjectTranslator getSKMutablePaymentFromMap:paymentMap];
-  TestSKProduct *product = [[TestSKProduct alloc] initWithMap:productMap];
+  SKProductStub *productStub = [[SKProductStub alloc] initWithMap:productMap];
 
   InAppPurchasePlugin *plugin = [[InAppPurchasePluginStub alloc]
       initWithReceiptManager:self.receiptManagerStub
@@ -891,44 +891,44 @@
 
   NSDictionary *args = @{
     @"payment" : [FIAObjectTranslator getMapFromSKPayment:payment],
-    @"product" : [FIAObjectTranslator getMapFromSKProduct:product]
+    @"product" : [FIAObjectTranslator getMapFromSKProduct:productStub]
   };
 
-  TestMethodChannel *testChannel = [[TestMethodChannel alloc] init];
+  MethodChannelStub *channelStub = [[MethodChannelStub alloc] init];
 
   __block NSInteger invokeMethodCount = 0;
-  testChannel.invokeMethodChannelStub = ^(NSString *_Nonnull method, id _Nonnull arguments) {
+  channelStub.invokeMethodChannelStub = ^(NSString *_Nonnull method, id _Nonnull arguments) {
     XCTAssertEqualObjects(@"shouldAddStorePayment", method);
     XCTAssertEqualObjects(args, arguments);
     invokeMethodCount++;
   };
 
   // (TODO: louisehsu) Change this to inject the channel, like requestHandler
-  plugin.transactionObserverCallbackChannel = testChannel;
+  plugin.transactionObserverCallbackChannel = channelStub;
 
-  BOOL result = [plugin shouldAddStorePaymentWithPayment:payment product:product];
+  BOOL result = [plugin shouldAddStorePaymentWithPayment:payment product:productStub];
   XCTAssertEqual(result, NO);
   XCTAssertEqual(invokeMethodCount, 1);
 }
 
 #if TARGET_OS_IOS
 - (void)testShowPriceConsentIfNeeded {
-  TestTransactionCache *cache = [[TestTransactionCache alloc] init];
-  TestPaymentQueue *testQueue = [[TestPaymentQueue alloc] init];
-  self.plugin.paymentQueueHandler = [[FIAPaymentQueueHandler alloc] initWithQueue:testQueue
+  TransactionCacheStub *cacheStub = [[TransactionCacheStub alloc] init];
+  PaymentQueueStub *queueStub = [[PaymentQueueStub alloc] init];
+  self.plugin.paymentQueueHandler = [[FIAPaymentQueueHandler alloc] initWithQueue:queueStub
                                                               transactionsUpdated:nil
                                                                transactionRemoved:nil
                                                          restoreTransactionFailed:nil
                                              restoreCompletedTransactionsFinished:nil
                                                             shouldAddStorePayment:nil
                                                                  updatedDownloads:nil
-                                                                 transactionCache:cache];
+                                                                 transactionCache:cacheStub];
 
   FlutterError *error;
-  __block NSInteger showPriceConsentIfNeededNum = 0;
+  __block NSInteger showPriceConsentIfNeededCount = 0;
 
-  testQueue.showPriceConsentIfNeededStub = ^(void) {
-    showPriceConsentIfNeededNum++;
+  queueStub.showPriceConsentIfNeededStub = ^(void) {
+    showPriceConsentIfNeededCount++;
   };
 
   [self.plugin showPriceConsentIfNeededWithError:&error];
@@ -936,9 +936,9 @@
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wpartial-availability"
   if (@available(iOS 13.4, *)) {
-    XCTAssertEqual(showPriceConsentIfNeededNum, 1);
+    XCTAssertEqual(showPriceConsentIfNeededCount, 1);
   } else {
-    XCTAssertEqual(showPriceConsentIfNeededNum, 0);
+    XCTAssertEqual(showPriceConsentIfNeededCount, 0);
   }
 #pragma clang diagnostic pop
 }

@@ -16,8 +16,8 @@
 @implementation RequestHandlerTest
 
 - (void)testRequestHandlerWithProductRequestSuccess {
-  TestSKProductRequest *request =
-      [[TestSKProductRequest alloc] initWithProductIdentifiers:[NSSet setWithArray:@[ @"123" ]]];
+  SKProductRequestStub *request =
+      [[SKProductRequestStub alloc] initWithProductIdentifiers:[NSSet setWithArray:@[ @"123" ]]];
   FIAPRequestHandler *handler = [[FIAPRequestHandler alloc] initWithRequest:request];
   XCTestExpectation *expectation =
       [self expectationWithDescription:@"expect to get response with 1 product"];
@@ -35,7 +35,7 @@
 }
 
 - (void)testRequestHandlerWithProductRequestFailure {
-  TestSKProductRequest *request = [[TestSKProductRequest alloc]
+  SKProductRequestStub *request = [[SKProductRequestStub alloc]
       initWithFailureError:[NSError errorWithDomain:@"test" code:123 userInfo:@{}]];
   FIAPRequestHandler *handler = [[FIAPRequestHandler alloc] initWithRequest:request];
   XCTestExpectation *expectation =
@@ -54,8 +54,8 @@
 }
 
 - (void)testRequestHandlerWithRefreshReceiptSuccess {
-  TestSKReceiptRefreshRequest *request =
-      [[TestSKReceiptRefreshRequest alloc] initWithReceiptProperties:nil];
+  SKReceiptRefreshRequestStub *request =
+      [[SKReceiptRefreshRequestStub alloc] initWithReceiptProperties:nil];
   FIAPRequestHandler *handler = [[FIAPRequestHandler alloc] initWithRequest:request];
   XCTestExpectation *expectation = [self expectationWithDescription:@"expect no error"];
   __block NSError *e;
@@ -69,7 +69,7 @@
 }
 
 - (void)testRequestHandlerWithRefreshReceiptFailure {
-  TestSKReceiptRefreshRequest *request = [[TestSKReceiptRefreshRequest alloc]
+  SKReceiptRefreshRequestStub *request = [[SKReceiptRefreshRequestStub alloc]
       initWithFailureError:[NSError errorWithDomain:@"test" code:123 userInfo:@{}]];
   FIAPRequestHandler *handler = [[FIAPRequestHandler alloc] initWithRequest:request];
   XCTestExpectation *expectation = [self expectationWithDescription:@"expect error"];

@@ -117,27 +117,27 @@
 }
 
 - (void)testSKProductSubscriptionPeriodStubToMap {
-  TestSKProductSubscriptionPeriod *period =
-      [[TestSKProductSubscriptionPeriod alloc] initWithMap:self.periodMap];
+  SKProductSubscriptionPeriodStub *period =
+      [[SKProductSubscriptionPeriodStub alloc] initWithMap:self.periodMap];
   NSDictionary *map = [FIAObjectTranslator getMapFromSKProductSubscriptionPeriod:period];
   XCTAssertEqualObjects(map, self.periodMap);
 }
 
 - (void)testSKProductDiscountStubToMap {
-  TestSKProductDiscount *discount = [[TestSKProductDiscount alloc] initWithMap:self.discountMap];
+  SKProductDiscountStub *discount = [[SKProductDiscountStub alloc] initWithMap:self.discountMap];
   NSDictionary *map = [FIAObjectTranslator getMapFromSKProductDiscount:discount];
   XCTAssertEqualObjects(map, self.discountMap);
 }
 
 - (void)testProductToMap {
-  TestSKProduct *product = [[TestSKProduct alloc] initWithMap:self.productMap];
+  SKProductStub *product = [[SKProductStub alloc] initWithMap:self.productMap];
   NSDictionary *map = [FIAObjectTranslator getMapFromSKProduct:product];
   XCTAssertEqualObjects(map, self.productMap);
 }
 
 - (void)testProductResponseToMap {
-  TestSKProductsResponse *response =
-      [[TestSKProductsResponse alloc] initWithMap:self.productResponseMap];
+  SKProductsResponseStub *response =
+      [[SKProductsResponseStub alloc] initWithMap:self.productResponseMap];
   NSDictionary *map = [FIAObjectTranslator getMapFromSKProductsResponse:response];
   XCTAssertEqualObjects(map, self.productResponseMap);
 }
@@ -150,14 +150,14 @@
 
 - (void)testPaymentTransactionToMap {
   // payment is not KVC, cannot test payment field.
-  TestSKPaymentTransaction *paymentTransaction =
-      [[TestSKPaymentTransaction alloc] initWithMap:self.transactionMap];
+  SKPaymentTransactionStub *paymentTransaction =
+      [[SKPaymentTransactionStub alloc] initWithMap:self.transactionMap];
   NSDictionary *map = [FIAObjectTranslator getMapFromSKPaymentTransaction:paymentTransaction];
   XCTAssertEqualObjects(map, self.transactionMap);
 }
 
 - (void)testError {
-  TestNSError *error = [[TestNSError alloc] initWithMap:self.errorMap];
+  NSErrorStub *error = [[NSErrorStub alloc] initWithMap:self.errorMap];
   NSDictionary *map = [FIAObjectTranslator getMapFromNSError:error];
   XCTAssertEqualObjects(map, self.errorMap);
 }
@@ -241,7 +241,7 @@
 
 - (void)testSKStorefrontToMap {
   if (@available(iOS 13.0, *)) {
-    SKStorefront *storefront = [[TestSKStorefront alloc] initWithMap:self.storefrontMap];
+    SKStorefront *storefront = [[SKStorefrontStub alloc] initWithMap:self.storefrontMap];
     NSDictionary *map = [FIAObjectTranslator getMapFromSKStorefront:storefront];
     XCTAssertEqualObjects(map, self.storefrontMap);
   }
@@ -249,9 +249,9 @@
 
 - (void)testSKStorefrontAndSKPaymentTransactionToMap {
   if (@available(iOS 13.0, *)) {
-    SKStorefront *storefront = [[TestSKStorefront alloc] initWithMap:self.storefrontMap];
+    SKStorefront *storefront = [[SKStorefrontStub alloc] initWithMap:self.storefrontMap];
     SKPaymentTransaction *transaction =
-        [[TestSKPaymentTransaction alloc] initWithMap:self.transactionMap];
+        [[SKPaymentTransactionStub alloc] initWithMap:self.transactionMap];
     NSDictionary *map = [FIAObjectTranslator getMapFromSKStorefront:storefront
                                             andSKPaymentTransaction:transaction];
     XCTAssertEqualObjects(map, self.storefrontAndPaymentTransactionMap);
@@ -298,8 +298,8 @@
 
 - (void)testGetMapFromSKProductDiscountMissingIdentifier {
   if (@available(iOS 12.2, *)) {
-    TestSKProductDiscount *discount =
-        [[TestSKProductDiscount alloc] initWithMap:self.discountMissingIdentifierMap];
+    SKProductDiscountStub *discount =
+        [[SKProductDiscountStub alloc] initWithMap:self.discountMissingIdentifierMap];
     NSDictionary *map = [FIAObjectTranslator getMapFromSKProductDiscount:discount];
     XCTAssertEqualObjects(map, self.discountMissingIdentifierMap);
   }
@@ -465,8 +465,8 @@
 }
 
 - (void)testSKPaymentTransactionConvertToPigeon {
-  TestSKPaymentTransaction *paymentTransaction =
-      [[TestSKPaymentTransaction alloc] initWithMap:self.transactionMap];
+  SKPaymentTransactionStub *paymentTransaction =
+      [[SKPaymentTransactionStub alloc] initWithMap:self.transactionMap];
 
   SKPaymentTransactionMessage *msg =
       [FIAObjectTranslator convertTransactionToPigeon:paymentTransaction];
@@ -479,8 +479,8 @@
 }
 
 - (void)testSKProductResponseCovertToPigeon {
-  TestSKProductsResponse *response =
-      [[TestSKProductsResponse alloc] initWithMap:self.productResponseMap];
+  SKProductsResponseStub *response =
+      [[SKProductsResponseStub alloc] initWithMap:self.productResponseMap];
   SKProductsResponseMessage *responseMsg =
       [FIAObjectTranslator convertProductsResponseToPigeon:response];
 

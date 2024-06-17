@@ -10,6 +10,7 @@
 @end
 
 @implementation DefaultMethodChannel
+
 - (instancetype)initWithChannel:(nonnull FlutterMethodChannel *)channel {
   self = [super init];
   if (self) {
