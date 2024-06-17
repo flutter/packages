@@ -56,6 +56,7 @@ class Xcode {
       ...extraFlags,
       if (disabledSandboxEntitlementFile != null)
         'CODE_SIGN_ENTITLEMENTS=${disabledSandboxEntitlementFile.path}',
+      'SWIFT_STRICT_CONCURRENCY=YES', // Test Swift 6 strict concurrency https://github.com/flutter/flutter/issues/150388
     ];
     final String completeTestCommand = '$_xcRunCommand ${args.join(' ')}';
     if (log) {
