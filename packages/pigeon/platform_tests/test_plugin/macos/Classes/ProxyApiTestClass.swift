@@ -9,3 +9,6 @@ class ProxyApiTestClass: ProxyApiSuperClass, ProxyApiInterface {}
 open class ProxyApiSuperClass {}
 
 protocol ProxyApiInterface {}
+
+@available(macOS 10, *)
+class ClassWithApiRequirement {}

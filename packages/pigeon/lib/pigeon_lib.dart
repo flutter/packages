@@ -1571,38 +1571,32 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
             annotationMap['swiftOptions'] as Map<String, Object?>?;
         if (swiftOptionsMap != null) {
           swiftOptions = SwiftProxyApiOptions(
-            name: swiftOptionsMap['name']! as String?,
+            name: swiftOptionsMap['name'] as String?,
             import: swiftOptionsMap['import'] as String?,
             minIosApi: swiftOptionsMap['minIosApi'] as String?,
             minMacosApi: swiftOptionsMap['minMacosApi'] as String?,
           );
         }
 
-        if (swiftOptions?.minIosApi != null) {
+        void tryParseApiRequirement(String? version) {
+          if (version == null) {
+            return;
+          }
           try {
-            Version.parse(swiftOptions!.minIosApi!);
+            Version.parse(version);
           } on FormatException catch (error) {
             _errors.add(
               Error(
-                message: 'Could not parse version: ${error.message}',
+                message:
+                    'Could not parse version: ${error.message}. Please use semantic versioning format: "1.2.3".',
                 lineNumber: _calculateLineNumber(source, node.offset),
               ),
             );
           }
         }
 
-        if (swiftOptions?.minMacosApi != null) {
-          try {
-            Version.parse(swiftOptions!.minMacosApi!);
-          } on FormatException catch (error) {
-            _errors.add(
-              Error(
-                message: 'Could not parse version: ${error.message}',
-                lineNumber: _calculateLineNumber(source, node.offset),
-              ),
-            );
-          }
-        }
+        tryParseApiRequirement(swiftOptions?.minIosApi);
+        tryParseApiRequirement(swiftOptions?.minMacosApi);
 
         _currentApi = AstProxyApi(
           name: node.name.lexeme,

@@ -467,3 +467,10 @@ abstract class ProxyApiSuperClass {
 abstract class ProxyApiInterface {
   late void Function()? anInterfaceMethod;
 }
+
+@ProxyApi(
+    swiftOptions: SwiftProxyApiOptions(
+  minIosApi: '15.0.0',
+  minMacosApi: '10.0.0',
+))
+abstract class ClassWithApiRequirement {}

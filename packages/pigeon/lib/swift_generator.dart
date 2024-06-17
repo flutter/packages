@@ -737,6 +737,15 @@ class SwiftGenerator extends StructuredGenerator<SwiftOptions> {
     indent.writeln(proxyApiReaderWriterTemplate(
       allProxyApis: allProxyApis,
       generalCodecName: _getCodecName(generatorOptions),
+      onTryGetAvailabilityAnnotation: (AstProxyApi api) {
+        return _tryGetAvailabilityAnnotation(<TypeDeclaration>[
+          TypeDeclaration(
+            baseName: api.name,
+            isNullable: false,
+            associatedProxyApi: api,
+          ),
+        ]);
+      },
     ));
   }
 

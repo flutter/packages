@@ -4,6 +4,7 @@
 
 import '../ast.dart';
 import '../generator_tools.dart';
+import '../pigeon.dart';
 
 /// Name of delegate that handles the callback when an object is deallocated
 /// in an `InstanceManager`.
@@ -246,15 +247,13 @@ final class $instanceManagerClassName {
 String proxyApiReaderWriterTemplate({
   required Iterable<AstProxyApi> allProxyApis,
   required String generalCodecName,
+  required String? Function(AstProxyApi) onTryGetAvailabilityAnnotation,
 }) {
   final String classChecker = allProxyApis.map<String>((AstProxyApi api) {
     final String className = api.swiftOptions?.name ?? api.name;
-    String versionCheck = '';
-    if (api.swiftOptions?.minIosApi != null) {
-      versionCheck = '#available(iOS ${api.swiftOptions!.minIosApi!}, *), ';
-    }
+    final String? availability = onTryGetAvailabilityAnnotation(api);
     return '''
-      if ${versionCheck}let instance = value as? $className {
+      if ${availability != null ? '#$availability, ' : ''}let instance = value as? $className {
         pigeonRegistrar.apiDelegate.pigeonApi${api.name}(pigeonRegistrar).pigeonNewInstance(
           pigeonInstance: instance
         ) { _ in }

@@ -378,6 +378,10 @@ protocol PigeonProxyApiDelegate {
   /// `ProxyApiInterface` to the Dart `InstanceManager` and make calls to Dart.
   func pigeonApiProxyApiInterface(_ registrar: PigeonProxyApiRegistrar)
     -> PigeonApiProxyApiInterface
+  /// An implementation of [PigeonApiClassWithApiRequirement] used to add a new Dart instance of
+  /// `ClassWithApiRequirement` to the Dart `InstanceManager` and make calls to Dart.
+  func pigeonApiClassWithApiRequirement(_ registrar: PigeonProxyApiRegistrar)
+    -> PigeonApiClassWithApiRequirement
 }
 open class PigeonProxyApiRegistrar {
   let binaryMessenger: FlutterBinaryMessenger
@@ -474,6 +478,13 @@ private class PigeonProxyApiCodecReaderWriter: FlutterStandardReaderWriter {
         pigeonRegistrar.apiDelegate.pigeonApiProxyApiInterface(pigeonRegistrar).pigeonNewInstance(
           pigeonInstance: instance
         ) { _ in }
+      } else if #available(iOS 15.0.0, macOS 10.0.0, *),
+        let instance = value as? ClassWithApiRequirement
+      {
+        pigeonRegistrar.apiDelegate.pigeonApiClassWithApiRequirement(pigeonRegistrar)
+          .pigeonNewInstance(
+            pigeonInstance: instance
+          ) { _ in }
       }
 
       if let instance = value as AnyObject?,
@@ -3622,4 +3633,46 @@ final class PigeonApiProxyApiInterface {
     }
   }
 
+}
+protocol PigeonDelegateClassWithApiRequirement {
+}
+final class PigeonApiClassWithApiRequirement {
+  unowned let pigeonRegistrar: PigeonProxyApiRegistrar
+  let pigeonDelegate: PigeonDelegateClassWithApiRequirement
+  init(pigeonRegistrar: PigeonProxyApiRegistrar, delegate: PigeonDelegateClassWithApiRequirement) {
+    self.pigeonRegistrar = pigeonRegistrar
+    self.pigeonDelegate = delegate
+  }
+  ///Creates a Dart instance of ClassWithApiRequirement and attaches it to [pigeonInstance].
+  func pigeonNewInstance(
+    pigeonInstance: ClassWithApiRequirement,
+    completion: @escaping (Result<Void, ProxyApiTestsError>) -> Void
+  ) {
+    if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {
+      completion(.success(Void()))
+      return
+    }
+    let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(
+      pigeonInstance as AnyObject)
+    let binaryMessenger = pigeonRegistrar.binaryMessenger
+    let codec = pigeonRegistrar.codec
+    let channelName: String =
+      "dev.flutter.pigeon.pigeon_integration_tests.ClassWithApiRequirement.pigeon_newInstance"
+    let channel = FlutterBasicMessageChannel(
+      name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+    channel.sendMessage([pigeonIdentifierArg] as [Any?]) { response in
+      guard let listResponse = response as? [Any?] else {
+        completion(.failure(createConnectionError(withChannelName: channelName)))
+        return
+      }
+      if listResponse.count > 1 {
+        let code: String = listResponse[0] as! String
+        let message: String? = nilOrValue(listResponse[1])
+        let details: String? = nilOrValue(listResponse[2])
+        completion(.failure(ProxyApiTestsError(code: code, message: message, details: details)))
+      } else {
+        completion(.success(Void()))
+      }
+    }
+  }
 }
