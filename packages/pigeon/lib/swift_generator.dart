@@ -74,6 +74,7 @@ class SwiftProxyApiOptions {
     this.name,
     this.import,
     this.minIosApi,
+    this.minMacosApi,
   });
 
   /// The name of the Swift class.
@@ -90,6 +91,12 @@ class SwiftProxyApiOptions {
   /// This adds `@available` annotations on top of any constructor, field, or
   /// method that references this element.
   final String? minIosApi;
+
+  /// The API version requirement for macOS.
+  ///
+  /// This adds `@available` annotations on top of any constructor, field, or
+  /// method that references this element.
+  final String? minMacosApi;
 }
 
 /// Class that manages all Swift code generation.
@@ -1268,14 +1275,14 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
         _docCommentSpec,
       );
 
-      final Version? versionRequirement =
-          _findHighestIosVersionRequirement(<TypeDeclaration>[
+      final String? availableAnnotation =
+          _tryGetAvailabilityAnnotation(<TypeDeclaration>[
         apiAsTypeDeclaration,
         ...api.unattachedFields.map((ApiField field) => field.type),
         ...constructor.parameters.map((Parameter parameter) => parameter.type),
-      ])?.version;
-      if (versionRequirement != null) {
-        indent.writeln('@available(iOS $versionRequirement, *))');
+      ]);
+      if (availableAnnotation != null) {
+        indent.writeln('@$availableAnnotation');
       }
 
       final String methodSignature = _getMethodSignature(
@@ -1315,13 +1322,13 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
         _docCommentSpec,
       );
 
-      final Version? versionRequirement =
-          _findHighestIosVersionRequirement(<TypeDeclaration>[
+      final String? availableAnnotation =
+          _tryGetAvailabilityAnnotation(<TypeDeclaration>[
         apiAsTypeDeclaration,
         field.type,
-      ])?.version;
-      if (versionRequirement != null) {
-        indent.writeln('@available(iOS $versionRequirement, *))');
+      ]);
+      if (availableAnnotation != null) {
+        indent.writeln('@$availableAnnotation');
       }
 
       final String methodSignature = _getMethodSignature(
@@ -1360,13 +1367,13 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
         _docCommentSpec,
       );
 
-      final Version? versionRequirement =
-          _findHighestIosVersionRequirement(<TypeDeclaration>[
+      final String? availableAnnotation =
+          _tryGetAvailabilityAnnotation(<TypeDeclaration>[
         apiAsTypeDeclaration,
         field.type,
-      ])?.version;
-      if (versionRequirement != null) {
-        indent.writeln('@available(iOS $versionRequirement, *))');
+      ]);
+      if (availableAnnotation != null) {
+        indent.writeln('@$availableAnnotation');
       }
 
       final String methodSignature = _getMethodSignature(
@@ -1405,14 +1412,14 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
         _docCommentSpec,
       );
 
-      final Version? versionRequirement =
-          _findHighestIosVersionRequirement(<TypeDeclaration>[
+      final String? availableAnnotation =
+          _tryGetAvailabilityAnnotation(<TypeDeclaration>[
         if (!method.isStatic) apiAsTypeDeclaration,
         method.returnType,
         ...method.parameters.map((Parameter p) => p.type),
-      ])?.version;
-      if (versionRequirement != null) {
-        indent.writeln('@available(iOS $versionRequirement, *))');
+      ]);
+      if (availableAnnotation != null) {
+        indent.writeln('@$availableAnnotation');
       }
 
       final String methodSignature = _getMethodSignature(
@@ -1497,20 +1504,16 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
           required String channelName,
           required void Function() onWrite,
         }) {
-          final ({TypeDeclaration type, Version version})? typeWithRequirement =
-              _findHighestIosVersionRequirement(types);
-          if (typeWithRequirement != null) {
-            final Version apiRequirement = typeWithRequirement.version;
+          final String? availableAnnotation =
+              _tryGetAvailabilityAnnotation(types);
+          if (availableAnnotation != null) {
             indent.writeScoped(
-              'if #available(iOS $apiRequirement, *) {',
+              'if #$availableAnnotation {',
               '}',
               onWrite,
               addTrailingNewline: false,
             );
             indent.writeScoped(' else {', '}', () {
-              final String className = typeWithRequirement
-                      .type.associatedProxyApi!.swiftOptions?.name ??
-                  typeWithRequirement.type.baseName;
               final String varChannelName = '${methodName}Channel';
               indent.format(
                 '''
@@ -1520,7 +1523,7 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
                 if let api = api {
                   $varChannelName.setMessageHandler { message, reply in
                     reply(wrapError(FlutterError(code: "PigeonUnsupportedOperationError",
-                                                 message: "Call references class `$className`, which requires version $apiRequirement.",
+                                                 message: "Call to $methodName requires @$availableAnnotation.",
                                                  details: nil
                                                 )))
                   }
@@ -1708,11 +1711,11 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
       _docCommentSpec,
     );
 
-    final Version? versionRequirement = _findHighestIosVersionRequirement(
+    final String? availableAnnotation = _tryGetAvailabilityAnnotation(
       api.unattachedFields.map((ApiField field) => field.type),
-    )?.version;
-    if (versionRequirement != null) {
-      indent.writeln('@available(iOS $versionRequirement, *))');
+    );
+    if (availableAnnotation != null) {
+      indent.writeln('@$availableAnnotation');
     }
 
     final String methodSignature = _getMethodSignature(
@@ -1794,15 +1797,14 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
         _docCommentSpec,
       );
 
-      final Version? versionRequirement = _findHighestIosVersionRequirement(
-        <TypeDeclaration>[
-          apiAsTypeDeclaration,
-          ...method.parameters.map((Parameter parameter) => parameter.type),
-          method.returnType,
-        ],
-      )?.version;
-      if (versionRequirement != null) {
-        indent.writeln('@available(iOS $versionRequirement, *))');
+      final String? availableAnnotation =
+          _tryGetAvailabilityAnnotation(<TypeDeclaration>[
+        apiAsTypeDeclaration,
+        ...method.parameters.map((Parameter parameter) => parameter.type),
+        method.returnType,
+      ]);
+      if (availableAnnotation != null) {
+        indent.writeln('@$availableAnnotation');
       }
 
       final String methodSignature = _getMethodSignature(
@@ -1864,10 +1866,13 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
   }
 }
 
-({TypeDeclaration type, Version version})? _findHighestIosVersionRequirement(
+typedef _VersionRequirement = ({TypeDeclaration type, Version version});
+({_VersionRequirement? ios, _VersionRequirement? macos})
+    _findHighestVersionRequirement(
   Iterable<TypeDeclaration> types,
 ) {
-  return findHighestApiRequirement<Version>(
+  final _VersionRequirement? iosApiRequirement =
+      findHighestApiRequirement<Version>(
     types,
     onGetApiRequirement: (TypeDeclaration type) {
       final String? apiRequirement =
@@ -1880,6 +1885,43 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
     },
     onCompare: (Version one, Version two) => one.compareTo(two),
   );
+
+  final _VersionRequirement? macosApiRequirement =
+      findHighestApiRequirement<Version>(
+    types,
+    onGetApiRequirement: (TypeDeclaration type) {
+      final String? apiRequirement =
+          type.associatedProxyApi?.swiftOptions?.minMacosApi;
+      if (apiRequirement != null) {
+        return Version.parse(apiRequirement);
+      }
+
+      return null;
+    },
+    onCompare: (Version one, Version two) => one.compareTo(two),
+  );
+
+  return (ios: iosApiRequirement, macos: macosApiRequirement);
+}
+
+/// Finds the highest api requirement for each supported platform and creates
+/// the `available(platform version , platform version ..., *)` annotation.
+///
+/// Returns `null` if there is not api requirement in [types].
+String? _tryGetAvailabilityAnnotation(Iterable<TypeDeclaration> types) {
+  final ({
+    _VersionRequirement? ios,
+    _VersionRequirement? macos
+  }) versionRequirement = _findHighestVersionRequirement(types);
+
+  final List<String> apis = <String>[
+    if (versionRequirement.ios != null)
+      'iOS ${versionRequirement.ios!.version}',
+    if (versionRequirement.macos != null)
+      'macOS ${versionRequirement.macos!.version}',
+  ];
+
+  return apis.isNotEmpty ? 'available(${apis.join(', ')}, *)' : null;
 }
 
 /// Calculates the name of the codec that will be generated for [api].

@@ -1574,12 +1574,26 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
             name: swiftOptionsMap['name']! as String?,
             import: swiftOptionsMap['import'] as String?,
             minIosApi: swiftOptionsMap['minIosApi'] as String?,
+            minMacosApi: swiftOptionsMap['minMacosApi'] as String?,
           );
         }
 
         if (swiftOptions?.minIosApi != null) {
           try {
             Version.parse(swiftOptions!.minIosApi!);
+          } on FormatException catch (error) {
+            _errors.add(
+              Error(
+                message: 'Could not parse version: ${error.message}',
+                lineNumber: _calculateLineNumber(source, node.offset),
+              ),
+            );
+          }
+        }
+
+        if (swiftOptions?.minMacosApi != null) {
+          try {
+            Version.parse(swiftOptions!.minMacosApi!);
           } on FormatException catch (error) {
             _errors.add(
               Error(
