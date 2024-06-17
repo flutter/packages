@@ -2261,9 +2261,11 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
               const auto& args = std::get<EncodableList>(message);
               const auto& encodable_everything_arg = args.at(0);
               const auto* everything_arg =
-                  &(std::any_cast<const AllNullableTypes&>(
-                      std::get<CustomEncodableValue>(
-                          encodable_everything_arg)));
+                  encodable_everything_arg.IsNull()
+                      ? nullptr
+                      : &(std::any_cast<const AllNullableTypes&>(
+                            std::get<CustomEncodableValue>(
+                                encodable_everything_arg)));
               ErrorOr<std::optional<AllNullableTypes>> output =
                   api->EchoAllNullableTypes(everything_arg);
               if (output.has_error()) {
@@ -2295,35 +2297,38 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
             prepended_suffix,
         &GetCodec());
     if (api != nullptr) {
-      channel.SetMessageHandler(
-          [api](const EncodableValue& message,
-                const flutter::MessageReply<EncodableValue>& reply) {
-            try {
-              const auto& args = std::get<EncodableList>(message);
-              const auto& encodable_everything_arg = args.at(0);
-              const auto* everything_arg =
-                  &(std::any_cast<const AllNullableTypesWithoutRecursion&>(
-                      std::get<CustomEncodableValue>(
-                          encodable_everything_arg)));
-              ErrorOr<std::optional<AllNullableTypesWithoutRecursion>> output =
-                  api->EchoAllNullableTypesWithoutRecursion(everything_arg);
-              if (output.has_error()) {
-                reply(WrapError(output.error()));
-                return;
-              }
-              EncodableList wrapped;
-              auto output_optional = std::move(output).TakeValue();
-              if (output_optional) {
-                wrapped.push_back(
-                    CustomEncodableValue(std::move(output_optional).value()));
-              } else {
-                wrapped.push_back(EncodableValue());
-              }
-              reply(EncodableValue(std::move(wrapped)));
-            } catch (const std::exception& exception) {
-              reply(WrapError(exception.what()));
-            }
-          });
+      channel.SetMessageHandler([api](
+                                    const EncodableValue& message,
+                                    const flutter::MessageReply<EncodableValue>&
+                                        reply) {
+        try {
+          const auto& args = std::get<EncodableList>(message);
+          const auto& encodable_everything_arg = args.at(0);
+          const auto* everything_arg =
+              encodable_everything_arg.IsNull()
+                  ? nullptr
+                  : &(std::any_cast<const AllNullableTypesWithoutRecursion&>(
+                        std::get<CustomEncodableValue>(
+                            encodable_everything_arg)));
+          ErrorOr<std::optional<AllNullableTypesWithoutRecursion>> output =
+              api->EchoAllNullableTypesWithoutRecursion(everything_arg);
+          if (output.has_error()) {
+            reply(WrapError(output.error()));
+            return;
+          }
+          EncodableList wrapped;
+          auto output_optional = std::move(output).TakeValue();
+          if (output_optional) {
+            wrapped.push_back(
+                CustomEncodableValue(std::move(output_optional).value()));
+          } else {
+            wrapped.push_back(EncodableValue());
+          }
+          reply(EncodableValue(std::move(wrapped)));
+        } catch (const std::exception& exception) {
+          reply(WrapError(exception.what()));
+        }
+      });
     } else {
       channel.SetMessageHandler(nullptr);
     }
@@ -3459,9 +3464,11 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
               const auto& args = std::get<EncodableList>(message);
               const auto& encodable_everything_arg = args.at(0);
               const auto* everything_arg =
-                  &(std::any_cast<const AllNullableTypes&>(
-                      std::get<CustomEncodableValue>(
-                          encodable_everything_arg)));
+                  encodable_everything_arg.IsNull()
+                      ? nullptr
+                      : &(std::any_cast<const AllNullableTypes&>(
+                            std::get<CustomEncodableValue>(
+                                encodable_everything_arg)));
               api->EchoAsyncNullableAllNullableTypes(
                   everything_arg,
                   [reply](ErrorOr<std::optional<AllNullableTypes>>&& output) {
@@ -3495,39 +3502,41 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
             prepended_suffix,
         &GetCodec());
     if (api != nullptr) {
-      channel.SetMessageHandler(
-          [api](const EncodableValue& message,
-                const flutter::MessageReply<EncodableValue>& reply) {
-            try {
-              const auto& args = std::get<EncodableList>(message);
-              const auto& encodable_everything_arg = args.at(0);
-              const auto* everything_arg =
-                  &(std::any_cast<const AllNullableTypesWithoutRecursion&>(
-                      std::get<CustomEncodableValue>(
-                          encodable_everything_arg)));
-              api->EchoAsyncNullableAllNullableTypesWithoutRecursion(
-                  everything_arg,
-                  [reply](
-                      ErrorOr<std::optional<AllNullableTypesWithoutRecursion>>&&
+      channel.SetMessageHandler([api](
+                                    const EncodableValue& message,
+                                    const flutter::MessageReply<EncodableValue>&
+                                        reply) {
+        try {
+          const auto& args = std::get<EncodableList>(message);
+          const auto& encodable_everything_arg = args.at(0);
+          const auto* everything_arg =
+              encodable_everything_arg.IsNull()
+                  ? nullptr
+                  : &(std::any_cast<const AllNullableTypesWithoutRecursion&>(
+                        std::get<CustomEncodableValue>(
+                            encodable_everything_arg)));
+          api->EchoAsyncNullableAllNullableTypesWithoutRecursion(
+              everything_arg,
+              [reply](ErrorOr<std::optional<AllNullableTypesWithoutRecursion>>&&
                           output) {
-                    if (output.has_error()) {
-                      reply(WrapError(output.error()));
-                      return;
-                    }
-                    EncodableList wrapped;
-                    auto output_optional = std::move(output).TakeValue();
-                    if (output_optional) {
-                      wrapped.push_back(CustomEncodableValue(
-                          std::move(output_optional).value()));
-                    } else {
-                      wrapped.push_back(EncodableValue());
-                    }
-                    reply(EncodableValue(std::move(wrapped)));
-                  });
-            } catch (const std::exception& exception) {
-              reply(WrapError(exception.what()));
-            }
-          });
+                if (output.has_error()) {
+                  reply(WrapError(output.error()));
+                  return;
+                }
+                EncodableList wrapped;
+                auto output_optional = std::move(output).TakeValue();
+                if (output_optional) {
+                  wrapped.push_back(
+                      CustomEncodableValue(std::move(output_optional).value()));
+                } else {
+                  wrapped.push_back(EncodableValue());
+                }
+                reply(EncodableValue(std::move(wrapped)));
+              });
+        } catch (const std::exception& exception) {
+          reply(WrapError(exception.what()));
+        }
+      });
     } else {
       channel.SetMessageHandler(nullptr);
     }
@@ -4057,9 +4066,11 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
               const auto& args = std::get<EncodableList>(message);
               const auto& encodable_everything_arg = args.at(0);
               const auto* everything_arg =
-                  &(std::any_cast<const AllNullableTypes&>(
-                      std::get<CustomEncodableValue>(
-                          encodable_everything_arg)));
+                  encodable_everything_arg.IsNull()
+                      ? nullptr
+                      : &(std::any_cast<const AllNullableTypes&>(
+                            std::get<CustomEncodableValue>(
+                                encodable_everything_arg)));
               api->CallFlutterEchoAllNullableTypes(
                   everything_arg,
                   [reply](ErrorOr<std::optional<AllNullableTypes>>&& output) {
@@ -4142,39 +4153,41 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
             prepended_suffix,
         &GetCodec());
     if (api != nullptr) {
-      channel.SetMessageHandler(
-          [api](const EncodableValue& message,
-                const flutter::MessageReply<EncodableValue>& reply) {
-            try {
-              const auto& args = std::get<EncodableList>(message);
-              const auto& encodable_everything_arg = args.at(0);
-              const auto* everything_arg =
-                  &(std::any_cast<const AllNullableTypesWithoutRecursion&>(
-                      std::get<CustomEncodableValue>(
-                          encodable_everything_arg)));
-              api->CallFlutterEchoAllNullableTypesWithoutRecursion(
-                  everything_arg,
-                  [reply](
-                      ErrorOr<std::optional<AllNullableTypesWithoutRecursion>>&&
+      channel.SetMessageHandler([api](
+                                    const EncodableValue& message,
+                                    const flutter::MessageReply<EncodableValue>&
+                                        reply) {
+        try {
+          const auto& args = std::get<EncodableList>(message);
+          const auto& encodable_everything_arg = args.at(0);
+          const auto* everything_arg =
+              encodable_everything_arg.IsNull()
+                  ? nullptr
+                  : &(std::any_cast<const AllNullableTypesWithoutRecursion&>(
+                        std::get<CustomEncodableValue>(
+                            encodable_everything_arg)));
+          api->CallFlutterEchoAllNullableTypesWithoutRecursion(
+              everything_arg,
+              [reply](ErrorOr<std::optional<AllNullableTypesWithoutRecursion>>&&
                           output) {
-                    if (output.has_error()) {
-                      reply(WrapError(output.error()));
-                      return;
-                    }
-                    EncodableList wrapped;
-                    auto output_optional = std::move(output).TakeValue();
-                    if (output_optional) {
-                      wrapped.push_back(CustomEncodableValue(
-                          std::move(output_optional).value()));
-                    } else {
-                      wrapped.push_back(EncodableValue());
-                    }
-                    reply(EncodableValue(std::move(wrapped)));
-                  });
-            } catch (const std::exception& exception) {
-              reply(WrapError(exception.what()));
-            }
-          });
+                if (output.has_error()) {
+                  reply(WrapError(output.error()));
+                  return;
+                }
+                EncodableList wrapped;
+                auto output_optional = std::move(output).TakeValue();
+                if (output_optional) {
+                  wrapped.push_back(
+                      CustomEncodableValue(std::move(output_optional).value()));
+                } else {
+                  wrapped.push_back(EncodableValue());
+                }
+                reply(EncodableValue(std::move(wrapped)));
+              });
+        } catch (const std::exception& exception) {
+          reply(WrapError(exception.what()));
+        }
+      });
     } else {
       channel.SetMessageHandler(nullptr);
     }
@@ -5108,8 +5121,12 @@ void FlutterIntegrationCoreApi::EchoAllNullableTypes(
                              std::get<std::string>(list_return_value->at(1)),
                              list_return_value->at(2)));
           } else {
-            const auto* return_value = &(std::any_cast<const AllNullableTypes&>(
-                std::get<CustomEncodableValue>(list_return_value->at(0))));
+            const auto* return_value =
+                list_return_value->at(0).IsNull()
+                    ? nullptr
+                    : &(std::any_cast<const AllNullableTypes&>(
+                          std::get<CustomEncodableValue>(
+                              list_return_value->at(0))));
             on_success(return_value);
           }
         } else {
@@ -5191,8 +5208,11 @@ void FlutterIntegrationCoreApi::EchoAllNullableTypesWithoutRecursion(
                              list_return_value->at(2)));
           } else {
             const auto* return_value =
-                &(std::any_cast<const AllNullableTypesWithoutRecursion&>(
-                    std::get<CustomEncodableValue>(list_return_value->at(0))));
+                list_return_value->at(0).IsNull()
+                    ? nullptr
+                    : &(std::any_cast<const AllNullableTypesWithoutRecursion&>(
+                          std::get<CustomEncodableValue>(
+                              list_return_value->at(0))));
             on_success(return_value);
           }
         } else {

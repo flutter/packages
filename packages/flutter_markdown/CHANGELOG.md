@@ -1,6 +1,10 @@
-## 0.7.2
+## 0.7.3
 
 * Fixes issue when `onSelectionChanged` is not set
+
+## 0.7.2
+
+* Multiple code blocks within a single markdown will now use separate ScrollControllers.
 
 ## 0.7.1
 
