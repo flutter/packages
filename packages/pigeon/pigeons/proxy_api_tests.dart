@@ -471,3 +471,12 @@ abstract class ProxyApiSuperClass {
 abstract class ProxyApiInterface {
   late void Function()? anInterfaceMethod;
 }
+
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(minAndroidApi: 25),
+)
+abstract class ClassWithApiRequirement {
+  ClassWithApiRequirement();
+
+  void aMethod();
+}

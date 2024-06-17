@@ -386,18 +386,27 @@ abstract class PigeonProxyApiRegistrar(val binaryMessenger: BinaryMessenger) {
     return PigeonApiProxyApiInterface(this)
   }
 
+  /**
+   * An implementation of [PigeonApiClassWithApiRequirement] used to add a new Dart instance of
+   * `ClassWithApiRequirement` to the Dart `InstanceManager`.
+   */
+  abstract fun getPigeonApiClassWithApiRequirement(): PigeonApiClassWithApiRequirement
+
   fun setUp() {
     PigeonInstanceManagerApi.setUpMessageHandlers(binaryMessenger, instanceManager)
     PigeonApiProxyApiTestClass.setUpMessageHandlers(
         binaryMessenger, getPigeonApiProxyApiTestClass())
     PigeonApiProxyApiSuperClass.setUpMessageHandlers(
         binaryMessenger, getPigeonApiProxyApiSuperClass())
+    PigeonApiClassWithApiRequirement.setUpMessageHandlers(
+        binaryMessenger, getPigeonApiClassWithApiRequirement())
   }
 
   fun tearDown() {
     PigeonInstanceManagerApi.setUpMessageHandlers(binaryMessenger, null)
     PigeonApiProxyApiTestClass.setUpMessageHandlers(binaryMessenger, null)
     PigeonApiProxyApiSuperClass.setUpMessageHandlers(binaryMessenger, null)
+    PigeonApiClassWithApiRequirement.setUpMessageHandlers(binaryMessenger, null)
   }
 }
 
@@ -420,6 +429,8 @@ private class PigeonProxyApiBaseCodec(val registrar: PigeonProxyApiRegistrar) :
       registrar.getPigeonApiProxyApiSuperClass().pigeon_newInstance(value) {}
     } else if (value is ProxyApiInterface) {
       registrar.getPigeonApiProxyApiInterface().pigeon_newInstance(value) {}
+    } else if (android.os.Build.VERSION.SDK_INT >= 25 && value is ClassWithApiRequirement) {
+      registrar.getPigeonApiClassWithApiRequirement().pigeon_newInstance(value) {}
     }
 
     when {
@@ -3922,6 +3933,142 @@ open class PigeonApiProxyApiInterface(open val pigeonRegistrar: PigeonProxyApiRe
         "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiInterface.anInterfaceMethod"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(pigeon_instanceArg)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(
+              Result.failure(
+                  ProxyApiTestsError(it[0] as String, it[1] as String, it[2] as String?)))
+        } else {
+          callback(Result.success(Unit))
+        }
+      } else {
+        callback(Result.failure(createConnectionError(channelName)))
+      }
+    }
+  }
+}
+
+@Suppress("UNCHECKED_CAST")
+abstract class PigeonApiClassWithApiRequirement(open val pigeonRegistrar: PigeonProxyApiRegistrar) {
+  @androidx.annotation.RequiresApi(api = 25)
+  abstract fun pigeon_defaultConstructor(): ClassWithApiRequirement
+
+  @androidx.annotation.RequiresApi(api = 25)
+  abstract fun aMethod(pigeon_instance: ClassWithApiRequirement)
+
+  companion object {
+    @Suppress("LocalVariableName")
+    fun setUpMessageHandlers(
+        binaryMessenger: BinaryMessenger,
+        api: PigeonApiClassWithApiRequirement?
+    ) {
+      val codec = api?.pigeonRegistrar?.codec ?: StandardMessageCodec()
+      if (android.os.Build.VERSION.SDK_INT >= 25) {
+        run {
+          val channel =
+              BasicMessageChannel<Any?>(
+                  binaryMessenger,
+                  "dev.flutter.pigeon.pigeon_integration_tests.ClassWithApiRequirement.pigeon_defaultConstructor",
+                  codec)
+          if (api != null) {
+            channel.setMessageHandler { message, reply ->
+              val args = message as List<Any?>
+              val pigeon_identifierArg =
+                  args[0].let { num -> if (num is Int) num.toLong() else num as Long }
+              val wrapped: List<Any?> =
+                  try {
+                    api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
+                        api.pigeon_defaultConstructor(), pigeon_identifierArg)
+                    listOf(null)
+                  } catch (exception: Throwable) {
+                    wrapError(exception)
+                  }
+              reply.reply(wrapped)
+            }
+          } else {
+            channel.setMessageHandler(null)
+          }
+        }
+      } else {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.ClassWithApiRequirement.pigeon_defaultConstructor",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { _, reply ->
+            reply.reply(
+                wrapError(
+                    UnsupportedOperationException(
+                        "Call references class `ClassWithApiRequirement`, which requires api version 25.")))
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      if (android.os.Build.VERSION.SDK_INT >= 25) {
+        run {
+          val channel =
+              BasicMessageChannel<Any?>(
+                  binaryMessenger,
+                  "dev.flutter.pigeon.pigeon_integration_tests.ClassWithApiRequirement.aMethod",
+                  codec)
+          if (api != null) {
+            channel.setMessageHandler { message, reply ->
+              val args = message as List<Any?>
+              val pigeon_instanceArg = args[0] as ClassWithApiRequirement
+              val wrapped: List<Any?> =
+                  try {
+                    api.aMethod(pigeon_instanceArg)
+                    listOf(null)
+                  } catch (exception: Throwable) {
+                    wrapError(exception)
+                  }
+              reply.reply(wrapped)
+            }
+          } else {
+            channel.setMessageHandler(null)
+          }
+        }
+      } else {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.ClassWithApiRequirement.aMethod",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { _, reply ->
+            reply.reply(
+                wrapError(
+                    UnsupportedOperationException(
+                        "Call references class `ClassWithApiRequirement`, which requires api version 25.")))
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+    }
+  }
+
+  @Suppress("LocalVariableName", "FunctionName")
+  /** Creates a Dart instance of ClassWithApiRequirement and attaches it to [pigeon_instanceArg]. */
+  @androidx.annotation.RequiresApi(api = 25)
+  fun pigeon_newInstance(
+      pigeon_instanceArg: ClassWithApiRequirement,
+      callback: (Result<Unit>) -> Unit
+  ) {
+    if (pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) {
+      Result.success(Unit)
+      return
+    }
+    val pigeon_identifierArg =
+        pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
+    val binaryMessenger = pigeonRegistrar.binaryMessenger
+    val codec = pigeonRegistrar.codec
+    val channelName =
+        "dev.flutter.pigeon.pigeon_integration_tests.ClassWithApiRequirement.pigeon_newInstance"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(listOf(pigeon_identifierArg)) {
       if (it is List<*>) {
         if (it.size > 1) {
           callback(

@@ -4,6 +4,7 @@
 
 package com.example.test_plugin
 
+import androidx.annotation.RequiresApi
 import io.flutter.plugin.common.BinaryMessenger
 
 class ProxyApiTestClass : ProxyApiSuperClass(), ProxyApiInterface
@@ -11,6 +12,8 @@ class ProxyApiTestClass : ProxyApiSuperClass(), ProxyApiInterface
 open class ProxyApiSuperClass
 
 interface ProxyApiInterface
+
+@RequiresApi(25) class ClassWithApiRequirement
 
 class ProxyApiRegistrar(binaryMessenger: BinaryMessenger) :
     PigeonProxyApiRegistrar(binaryMessenger) {
@@ -21,9 +24,13 @@ class ProxyApiRegistrar(binaryMessenger: BinaryMessenger) :
   override fun getPigeonApiProxyApiSuperClass(): PigeonApiProxyApiSuperClass {
     return ProxyApiSuperClassApi(this)
   }
+
+  override fun getPigeonApiClassWithApiRequirement(): PigeonApiClassWithApiRequirement {
+    return ClassWithApiRequirementApi(this)
+  }
 }
 
-class ProxyApiTestClassApi(pigeonRegistrar: ProxyApiRegistrar) :
+class ProxyApiTestClassApi(override val pigeonRegistrar: ProxyApiRegistrar) :
     PigeonApiProxyApiTestClass(pigeonRegistrar) {
 
   override fun pigeon_defaultConstructor(
@@ -670,11 +677,23 @@ class ProxyApiTestClassApi(pigeonRegistrar: ProxyApiRegistrar) :
   }
 }
 
-class ProxyApiSuperClassApi(pigeonRegistrar: ProxyApiRegistrar) :
+class ProxyApiSuperClassApi(override val pigeonRegistrar: ProxyApiRegistrar) :
     PigeonApiProxyApiSuperClass(pigeonRegistrar) {
   override fun pigeon_defaultConstructor(): ProxyApiSuperClass {
     return ProxyApiSuperClass()
   }
 
   override fun aSuperMethod(pigeon_instance: ProxyApiSuperClass) {}
+}
+
+class ClassWithApiRequirementApi(override val pigeonRegistrar: ProxyApiRegistrar) :
+    PigeonApiClassWithApiRequirement(pigeonRegistrar) {
+  @RequiresApi(25)
+  override fun pigeon_defaultConstructor(): ClassWithApiRequirement {
+    return ClassWithApiRequirement()
+  }
+
+  override fun aMethod(pigeon_instance: ClassWithApiRequirement) {
+    // Do nothing
+  }
 }
