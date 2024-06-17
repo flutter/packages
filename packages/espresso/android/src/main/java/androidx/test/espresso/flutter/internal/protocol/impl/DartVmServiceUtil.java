@@ -7,7 +7,6 @@ package androidx.test.espresso.flutter.internal.protocol.impl;
 import static com.google.common.base.Strings.isNullOrEmpty;
 
 import android.util.Log;
-
 import io.flutter.embedding.android.FlutterView;
 import io.flutter.embedding.engine.FlutterEngine;
 import io.flutter.embedding.engine.dart.DartExecutor;
@@ -15,7 +14,6 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-
 import javax.annotation.Nonnull;
 
 /** Util class for dealing with Dart VM service protocols. */
@@ -78,8 +76,8 @@ public final class DartVmServiceUtil {
     FlutterEngine flutterEngine = flutterView.getAttachedFlutterEngine();
     if (flutterEngine == null) {
       throw new FlutterProtocolException(
-              String.format(
-                      "No Flutter engine attached to the Flutter view [id: %d].", flutterView.getId()));
+          String.format(
+              "No Flutter engine attached to the Flutter view [id: %d].", flutterView.getId()));
     }
     return flutterEngine.getDartExecutor();
   }

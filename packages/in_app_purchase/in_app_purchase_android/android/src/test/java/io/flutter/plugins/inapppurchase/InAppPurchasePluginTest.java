@@ -14,7 +14,6 @@ import android.content.Intent;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
 import io.flutter.plugin.common.BinaryMessenger;
-import io.flutter.plugin.common.PluginRegistry;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

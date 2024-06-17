@@ -38,10 +38,9 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import javax.annotation.Nonnull;
 import okhttp3.OkHttpClient;
 import org.hamcrest.Matcher;
-
-import javax.annotation.Nonnull;
 
 /**
  * A {@code ViewAction} which performs an action on the given {@code FlutterView}.
@@ -103,7 +102,7 @@ public final class FlutterViewAction<T> implements ViewAction {
     checkNotNull(view, "The Flutter View instance cannot be null.");
     if (!(view instanceof FlutterView)) {
       throw new FlutterProtocolException(
-              String.format("This is not a Flutter View instance [id: %d].", view.getId()));
+          String.format("This is not a Flutter View instance [id: %d].", view.getId()));
     }
     FlutterView flutterView = (FlutterView) view;
     // There could be a gap between when the Flutter view is available in the view hierarchy and the
@@ -178,7 +177,8 @@ public final class FlutterViewAction<T> implements ViewAction {
     return resultFuture.get(timeout, unit);
   }
 
-  private static void loopUntilFlutterViewRendered(@Nonnull FlutterView flutterView, UiController uiController) {
+  private static void loopUntilFlutterViewRendered(
+      @Nonnull FlutterView flutterView, UiController uiController) {
     FlutterViewRenderedIdlingResource idlingResource =
         new FlutterViewRenderedIdlingResource(flutterView);
     try {
