@@ -10,6 +10,7 @@
 #import "FIATransactionCache.h"
 #import "FLTMethodChannelProtocol.h"
 #import "FLTPaymentQueueProtocol.h"
+#import "FLTPaymentQueueHandlerProtocol.h"
 #import "FLTRequestHandlerProtocol.h"
 #import "FLTTransactionCacheProtocol.h"
 #import "messages.g.h"
