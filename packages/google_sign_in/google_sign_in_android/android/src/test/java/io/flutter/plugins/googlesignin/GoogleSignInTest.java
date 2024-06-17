@@ -22,6 +22,8 @@ import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.tasks.Task;
+
+import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.PluginRegistry;
 import io.flutter.plugins.googlesignin.Messages.FlutterError;
@@ -93,6 +95,7 @@ public class GoogleSignInTest {
   @Test
   public void requestScopes_RequestsPermissionIfNotGranted() {
     Scope requestedScope = new Scope("requestedScope");
+    plugin.setActivity(mockActivity);
     when(mockGoogleSignIn.getLastSignedInAccount(mockContext)).thenReturn(account);
     when(account.getGrantedScopes()).thenReturn(Collections.singleton(requestedScope));
     when(mockGoogleSignIn.hasPermissions(account, requestedScope)).thenReturn(false);
@@ -106,16 +109,13 @@ public class GoogleSignInTest {
   @Test
   public void requestScopes_ReturnsFalseIfPermissionDenied() {
     Scope requestedScope = new Scope("requestedScope");
-    ArgumentCaptor<PluginRegistry.ActivityResultListener> captor =
-        ArgumentCaptor.forClass(PluginRegistry.ActivityResultListener.class);
-    PluginRegistry.ActivityResultListener listener = captor.getValue();
 
     when(mockGoogleSignIn.getLastSignedInAccount(mockContext)).thenReturn(account);
     when(account.getGrantedScopes()).thenReturn(Collections.singleton(requestedScope));
     when(mockGoogleSignIn.hasPermissions(account, requestedScope)).thenReturn(false);
 
     plugin.requestScopes(Collections.singletonList("requestedScope"), boolResult);
-    listener.onActivityResult(
+    plugin.onActivityResult(
         GoogleSignInPlugin.Delegate.REQUEST_CODE_REQUEST_SCOPE,
         Activity.RESULT_CANCELED,
         new Intent());
@@ -126,16 +126,13 @@ public class GoogleSignInTest {
   @Test
   public void requestScopes_ReturnsTrueIfPermissionGranted() {
     Scope requestedScope = new Scope("requestedScope");
-    ArgumentCaptor<PluginRegistry.ActivityResultListener> captor =
-        ArgumentCaptor.forClass(PluginRegistry.ActivityResultListener.class);
-    PluginRegistry.ActivityResultListener listener = captor.getValue();
 
     when(mockGoogleSignIn.getLastSignedInAccount(mockContext)).thenReturn(account);
     when(account.getGrantedScopes()).thenReturn(Collections.singleton(requestedScope));
     when(mockGoogleSignIn.hasPermissions(account, requestedScope)).thenReturn(false);
 
     plugin.requestScopes(Collections.singletonList("requestedScope"), boolResult);
-    listener.onActivityResult(
+    plugin.onActivityResult(
         GoogleSignInPlugin.Delegate.REQUEST_CODE_REQUEST_SCOPE, Activity.RESULT_OK, new Intent());
 
     verify(boolResult).success(true);
@@ -145,19 +142,16 @@ public class GoogleSignInTest {
   public void requestScopes_mayBeCalledRepeatedly_ifAlreadyGranted() {
     List<String> requestedScopes = Collections.singletonList("requestedScope");
     Scope requestedScope = new Scope("requestedScope");
-    ArgumentCaptor<PluginRegistry.ActivityResultListener> captor =
-        ArgumentCaptor.forClass(PluginRegistry.ActivityResultListener.class);
-    PluginRegistry.ActivityResultListener listener = captor.getValue();
 
     when(mockGoogleSignIn.getLastSignedInAccount(mockContext)).thenReturn(account);
     when(account.getGrantedScopes()).thenReturn(Collections.singleton(requestedScope));
     when(mockGoogleSignIn.hasPermissions(account, requestedScope)).thenReturn(false);
 
     plugin.requestScopes(requestedScopes, boolResult);
-    listener.onActivityResult(
+    plugin.onActivityResult(
         GoogleSignInPlugin.Delegate.REQUEST_CODE_REQUEST_SCOPE, Activity.RESULT_OK, new Intent());
     plugin.requestScopes(requestedScopes, boolResult);
-    listener.onActivityResult(
+    plugin.onActivityResult(
         GoogleSignInPlugin.Delegate.REQUEST_CODE_REQUEST_SCOPE, Activity.RESULT_OK, new Intent());
 
     verify(boolResult, times(2)).success(true);
@@ -166,17 +160,14 @@ public class GoogleSignInTest {
   @Test
   public void requestScopes_mayBeCalledRepeatedly_ifNotSignedIn() {
     List<String> requestedScopes = Collections.singletonList("requestedScope");
-    ArgumentCaptor<PluginRegistry.ActivityResultListener> captor =
-        ArgumentCaptor.forClass(PluginRegistry.ActivityResultListener.class);
-    PluginRegistry.ActivityResultListener listener = captor.getValue();
 
     when(mockGoogleSignIn.getLastSignedInAccount(mockContext)).thenReturn(null);
 
     plugin.requestScopes(requestedScopes, boolResult);
-    listener.onActivityResult(
+    plugin.onActivityResult(
         GoogleSignInPlugin.Delegate.REQUEST_CODE_REQUEST_SCOPE, Activity.RESULT_OK, new Intent());
     plugin.requestScopes(requestedScopes, boolResult);
-    listener.onActivityResult(
+    plugin.onActivityResult(
         GoogleSignInPlugin.Delegate.REQUEST_CODE_REQUEST_SCOPE, Activity.RESULT_OK, new Intent());
 
     ArgumentCaptor<Throwable> resultCaptor = ArgumentCaptor.forClass(Throwable.class);

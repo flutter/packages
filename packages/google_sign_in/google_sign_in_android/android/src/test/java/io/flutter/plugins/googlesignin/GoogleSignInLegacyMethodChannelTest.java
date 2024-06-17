@@ -22,6 +22,8 @@ import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.tasks.Task;
+
+import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
@@ -48,6 +50,7 @@ public class GoogleSignInLegacyMethodChannelTest {
   @Mock GoogleSignInAccount account;
   @Mock GoogleSignInClient mockClient;
   @Mock Task<GoogleSignInAccount> mockSignInTask;
+  @Mock ActivityPluginBinding mockActivityPluginBinding;
 
   private GoogleSignInPlugin plugin;
   private AutoCloseable mockCloseable;
@@ -56,8 +59,10 @@ public class GoogleSignInLegacyMethodChannelTest {
   public void setUp() {
     mockCloseable = MockitoAnnotations.openMocks(this);
     when(mockContext.getResources()).thenReturn(mockResources);
+    when(mockActivityPluginBinding.getActivity()).thenReturn(mockActivity);
     plugin = new GoogleSignInPlugin();
     plugin.initInstance(mockMessenger, mockContext, mockGoogleSignIn);
+    plugin.onAttachedToActivity(mockActivityPluginBinding);
   }
 
   @After
@@ -116,6 +121,7 @@ public class GoogleSignInLegacyMethodChannelTest {
 
     ArgumentCaptor<PluginRegistry.ActivityResultListener> captor =
         ArgumentCaptor.forClass(PluginRegistry.ActivityResultListener.class);
+    verify(mockActivityPluginBinding).addActivityResultListener(captor.capture());
     PluginRegistry.ActivityResultListener listener = captor.getValue();
 
     when(mockGoogleSignIn.getLastSignedInAccount(mockContext)).thenReturn(account);
@@ -140,6 +146,7 @@ public class GoogleSignInLegacyMethodChannelTest {
 
     ArgumentCaptor<PluginRegistry.ActivityResultListener> captor =
         ArgumentCaptor.forClass(PluginRegistry.ActivityResultListener.class);
+    verify(mockActivityPluginBinding).addActivityResultListener(captor.capture());
     PluginRegistry.ActivityResultListener listener = captor.getValue();
 
     when(mockGoogleSignIn.getLastSignedInAccount(mockContext)).thenReturn(account);
@@ -162,6 +169,7 @@ public class GoogleSignInLegacyMethodChannelTest {
 
     ArgumentCaptor<PluginRegistry.ActivityResultListener> captor =
         ArgumentCaptor.forClass(PluginRegistry.ActivityResultListener.class);
+    verify(mockActivityPluginBinding).addActivityResultListener(captor.capture());
     PluginRegistry.ActivityResultListener listener = captor.getValue();
 
     when(mockGoogleSignIn.getLastSignedInAccount(mockContext)).thenReturn(account);
@@ -187,6 +195,7 @@ public class GoogleSignInLegacyMethodChannelTest {
 
     ArgumentCaptor<PluginRegistry.ActivityResultListener> captor =
         ArgumentCaptor.forClass(PluginRegistry.ActivityResultListener.class);
+    verify(mockActivityPluginBinding).addActivityResultListener(captor.capture());
     PluginRegistry.ActivityResultListener listener = captor.getValue();
 
     when(mockGoogleSignIn.getLastSignedInAccount(mockContext)).thenReturn(null);
