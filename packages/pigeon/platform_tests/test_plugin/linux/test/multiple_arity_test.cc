@@ -23,7 +23,9 @@ static void subtract_reply_cb(FlValue* reply, gpointer user_data) {
 }
 
 TEST(MultipleArity, HostSimple) {
-  g_autoptr(FakeHostMessenger) messenger = fake_host_messenger_new();
+  g_autoptr(FlStandardMessageCodec) codec = fl_standard_message_codec_new();
+  g_autoptr(FakeHostMessenger) messenger =
+      fake_host_messenger_new(FL_MESSAGE_CODEC(codec));
   g_autoptr(MultipleArityPigeonTestMultipleArityHostApi) api =
       multiple_arity_pigeon_test_multiple_arity_host_api_new(
           FL_BINARY_MESSENGER(messenger), nullptr, &vtable, nullptr, nullptr);

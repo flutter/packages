@@ -23,7 +23,9 @@ static void arg_doit_reply_cb(FlValue* reply, gpointer user_data) {
 }
 
 TEST(NullableReturns, HostNullableArgNull) {
-  g_autoptr(FakeHostMessenger) messenger = fake_host_messenger_new();
+  g_autoptr(FlStandardMessageCodec) codec = fl_standard_message_codec_new();
+  g_autoptr(FakeHostMessenger) messenger =
+      fake_host_messenger_new(FL_MESSAGE_CODEC(codec));
   g_autoptr(NullableReturnsPigeonTestNullableArgHostApi) api =
       nullable_returns_pigeon_test_nullable_arg_host_api_new(
           FL_BINARY_MESSENGER(messenger), nullptr, &arg_vtable, nullptr,
@@ -41,7 +43,9 @@ TEST(NullableReturns, HostNullableArgNull) {
 }
 
 TEST(NullableReturns, HostNullableArgNonNull) {
-  g_autoptr(FakeHostMessenger) messenger = fake_host_messenger_new();
+  g_autoptr(FlStandardMessageCodec) codec = fl_standard_message_codec_new();
+  g_autoptr(FakeHostMessenger) messenger =
+      fake_host_messenger_new(FL_MESSAGE_CODEC(codec));
   g_autoptr(NullableReturnsPigeonTestNullableArgHostApi) api =
       nullable_returns_pigeon_test_nullable_arg_host_api_new(
           FL_BINARY_MESSENGER(messenger), nullptr, &arg_vtable, nullptr,
@@ -85,7 +89,9 @@ static void return_doit_reply_cb(FlValue* reply, gpointer user_data) {
 }
 
 TEST(NullableReturns, HostNullableReturnNull) {
-  g_autoptr(FakeHostMessenger) messenger = fake_host_messenger_new();
+  g_autoptr(FlStandardMessageCodec) codec = fl_standard_message_codec_new();
+  g_autoptr(FakeHostMessenger) messenger =
+      fake_host_messenger_new(FL_MESSAGE_CODEC(codec));
   g_autoptr(NullableReturnsPigeonTestNullableReturnHostApi) api =
       nullable_returns_pigeon_test_nullable_return_host_api_new(
           FL_BINARY_MESSENGER(messenger), nullptr, &return_null_vtable, nullptr,
@@ -106,7 +112,9 @@ TEST(NullableReturns, HostNullableReturnNull) {
 }
 
 TEST(NullableReturns, HostNullableReturnNonNull) {
-  g_autoptr(FakeHostMessenger) messenger = fake_host_messenger_new();
+  g_autoptr(FlStandardMessageCodec) codec = fl_standard_message_codec_new();
+  g_autoptr(FakeHostMessenger) messenger =
+      fake_host_messenger_new(FL_MESSAGE_CODEC(codec));
   g_autoptr(NullableReturnsPigeonTestNullableReturnHostApi) api =
       nullable_returns_pigeon_test_nullable_return_host_api_new(
           FL_BINARY_MESSENGER(messenger), nullptr, &return_nonnull_vtable,

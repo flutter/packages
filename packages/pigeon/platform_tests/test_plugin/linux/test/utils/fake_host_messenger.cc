@@ -145,14 +145,17 @@ static void fake_host_messenger_binary_messenger_iface_init(
 }
 
 static void fake_host_messenger_init(FakeHostMessenger* self) {
-  self->codec = FL_MESSAGE_CODEC(fl_standard_message_codec_new());
   self->message_handlers = g_hash_table_new_full(g_str_hash, g_str_equal,
                                                  g_free, message_handler_free);
 }
 
-FakeHostMessenger* fake_host_messenger_new() {
-  return FAKE_HOST_MESSENGER(
+FakeHostMessenger* fake_host_messenger_new(FlMessageCodec* codec) {
+  FakeHostMessenger* self = FAKE_HOST_MESSENGER(
       g_object_new(fake_host_messenger_get_type(), nullptr));
+
+  self->codec = FL_MESSAGE_CODEC(g_object_ref(codec));
+
+  return self;
 }
 
 void fake_host_messenger_send_host_message(

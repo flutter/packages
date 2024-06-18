@@ -14,7 +14,7 @@ typedef void (*FakeHostMessengerReplyHandler)(FlValue* reply,
 G_DECLARE_FINAL_TYPE(FakeHostMessenger, fake_host_messenger, FAKE,
                      HOST_MESSENGER, GObject)
 
-FakeHostMessenger* fake_host_messenger_new();
+FakeHostMessenger* fake_host_messenger_new(FlMessageCodec* codec);
 
 // Calls the registered handler for the given channel, and calls reply_handler
 // with the response.

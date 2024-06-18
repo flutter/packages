@@ -99,6 +99,7 @@ add_executable(${TEST_RUNNER}
   test/non_null_fields_test.cc
   test/nullable_returns_test.cc
   test/null_fields_test.cc
+  test/primitive_test.cc
   # Test utilities.
   test/utils/fake_host_messenger.cc
   test/utils/fake_host_messenger.h
