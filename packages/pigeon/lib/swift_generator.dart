@@ -75,6 +75,8 @@ class SwiftProxyApiOptions {
     this.import,
     this.minIosApi,
     this.minMacosApi,
+    this.supportsIos = true,
+    this.supportsMacos = true,
   });
 
   /// The name of the Swift class.
@@ -97,6 +99,19 @@ class SwiftProxyApiOptions {
   /// This adds `@available` annotations on top of any constructor, field, or
   /// method that references this element.
   final String? minMacosApi;
+
+  /// Whether this ProxyApi class compiles on iOS.
+  ///
+  /// This adds `#` annotations on top of any constructor, field, or
+  /// method that references this element.
+  ///
+  /// Defaults to true.
+  final bool supportsIos;
+
+  /// Whether this ProxyApi class compiles on macOS.
+  ///
+  /// Defaults to true.
+  final bool supportsMacos;
 }
 
 /// Class that manages all Swift code generation.
@@ -734,19 +749,31 @@ class SwiftGenerator extends StructuredGenerator<SwiftOptions> {
         root.apis.whereType<AstProxyApi>();
 
     _writeProxyApiRegistrar(indent, allProxyApis: allProxyApis);
-    indent.writeln(proxyApiReaderWriterTemplate(
-      allProxyApis: allProxyApis,
-      generalCodecName: _getCodecName(generatorOptions),
-      onTryGetAvailabilityAnnotation: (AstProxyApi api) {
-        return _tryGetAvailabilityAnnotation(<TypeDeclaration>[
-          TypeDeclaration(
-            baseName: api.name,
-            isNullable: false,
-            associatedProxyApi: api,
-          ),
-        ]);
-      },
-    ));
+    indent.format(
+      proxyApiReaderWriterTemplate(
+        allProxyApis: allProxyApis,
+        generalCodecName: _getCodecName(generatorOptions),
+        onTryGetAvailabilityAnnotation: (AstProxyApi api) {
+          return _tryGetAvailabilityAnnotation(<TypeDeclaration>[
+            TypeDeclaration(
+              baseName: api.name,
+              isNullable: false,
+              associatedProxyApi: api,
+            ),
+          ]);
+        },
+        onTryGetUnsupportedPlatformsCondition: (AstProxyApi api) {
+          return _tryGetUnsupportedPlatformsCondition(<TypeDeclaration>[
+            TypeDeclaration(
+              baseName: api.name,
+              isNullable: false,
+              associatedProxyApi: api,
+            ),
+          ]);
+        },
+      ),
+      trimIndentation: true,
+    );
   }
 
   @override
@@ -1296,6 +1323,18 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
     required TypeDeclaration apiAsTypeDeclaration,
   }) {
     for (final Constructor constructor in api.constructors) {
+      final List<TypeDeclaration> allReferencedTypes = <TypeDeclaration>[
+        apiAsTypeDeclaration,
+        ...api.unattachedFields.map((ApiField field) => field.type),
+        ...constructor.parameters.map((Parameter parameter) => parameter.type),
+      ];
+
+      final String? unsupportedPlatforms =
+          _tryGetUnsupportedPlatformsCondition(allReferencedTypes);
+      if (unsupportedPlatforms != null) {
+        indent.writeln('#if $unsupportedPlatforms');
+      }
+
       addDocumentationComments(
         indent,
         constructor.documentationComments,
@@ -1303,11 +1342,7 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
       );
 
       final String? availableAnnotation =
-          _tryGetAvailabilityAnnotation(<TypeDeclaration>[
-        apiAsTypeDeclaration,
-        ...api.unattachedFields.map((ApiField field) => field.type),
-        ...constructor.parameters.map((Parameter parameter) => parameter.type),
-      ]);
+          _tryGetAvailabilityAnnotation(allReferencedTypes);
       if (availableAnnotation != null) {
         indent.writeln('@$availableAnnotation');
       }
@@ -1333,6 +1368,10 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
         errorTypeName: '',
       );
       indent.writeln(methodSignature);
+
+      if (unsupportedPlatforms != null) {
+        indent.writeln('#endif');
+      }
     }
   }
 
@@ -1343,6 +1382,17 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
     required TypeDeclaration apiAsTypeDeclaration,
   }) {
     for (final ApiField field in api.attachedFields) {
+      final List<TypeDeclaration> allReferencedTypes = <TypeDeclaration>[
+        apiAsTypeDeclaration,
+        field.type,
+      ];
+
+      final String? unsupportedPlatforms =
+          _tryGetUnsupportedPlatformsCondition(allReferencedTypes);
+      if (unsupportedPlatforms != null) {
+        indent.writeln('#if $unsupportedPlatforms');
+      }
+
       addDocumentationComments(
         indent,
         field.documentationComments,
@@ -1350,10 +1400,7 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
       );
 
       final String? availableAnnotation =
-          _tryGetAvailabilityAnnotation(<TypeDeclaration>[
-        apiAsTypeDeclaration,
-        field.type,
-      ]);
+          _tryGetAvailabilityAnnotation(allReferencedTypes);
       if (availableAnnotation != null) {
         indent.writeln('@$availableAnnotation');
       }
@@ -1378,6 +1425,10 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
         errorTypeName: '',
       );
       indent.writeln(methodSignature);
+
+      if (unsupportedPlatforms != null) {
+        indent.writeln('#endif');
+      }
     }
   }
 
@@ -1388,6 +1439,17 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
     required TypeDeclaration apiAsTypeDeclaration,
   }) {
     for (final ApiField field in api.unattachedFields) {
+      final List<TypeDeclaration> allReferencedTypes = <TypeDeclaration>[
+        apiAsTypeDeclaration,
+        field.type,
+      ];
+
+      final String? unsupportedPlatforms =
+          _tryGetUnsupportedPlatformsCondition(allReferencedTypes);
+      if (unsupportedPlatforms != null) {
+        indent.writeln('#if $unsupportedPlatforms');
+      }
+
       addDocumentationComments(
         indent,
         field.documentationComments,
@@ -1395,10 +1457,7 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
       );
 
       final String? availableAnnotation =
-          _tryGetAvailabilityAnnotation(<TypeDeclaration>[
-        apiAsTypeDeclaration,
-        field.type,
-      ]);
+          _tryGetAvailabilityAnnotation(allReferencedTypes);
       if (availableAnnotation != null) {
         indent.writeln('@$availableAnnotation');
       }
@@ -1422,6 +1481,10 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
         errorTypeName: '',
       );
       indent.writeln(methodSignature);
+
+      if (unsupportedPlatforms != null) {
+        indent.writeln('#endif');
+      }
     }
   }
 
@@ -1433,6 +1496,18 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
     required TypeDeclaration apiAsTypeDeclaration,
   }) {
     for (final Method method in api.hostMethods) {
+      final List<TypeDeclaration> allReferencedTypes = <TypeDeclaration>[
+        if (!method.isStatic) apiAsTypeDeclaration,
+        method.returnType,
+        ...method.parameters.map((Parameter p) => p.type),
+      ];
+
+      final String? unsupportedPlatforms =
+          _tryGetUnsupportedPlatformsCondition(allReferencedTypes);
+      if (unsupportedPlatforms != null) {
+        indent.writeln('#if $unsupportedPlatforms');
+      }
+
       addDocumentationComments(
         indent,
         method.documentationComments,
@@ -1440,11 +1515,7 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
       );
 
       final String? availableAnnotation =
-          _tryGetAvailabilityAnnotation(<TypeDeclaration>[
-        if (!method.isStatic) apiAsTypeDeclaration,
-        method.returnType,
-        ...method.parameters.map((Parameter p) => p.type),
-      ]);
+          _tryGetAvailabilityAnnotation(allReferencedTypes);
       if (availableAnnotation != null) {
         indent.writeln('@$availableAnnotation');
       }
@@ -1471,6 +1542,10 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
         errorTypeName: 'Error',
       );
       indent.writeln(methodSignature);
+
+      if (unsupportedPlatforms != null) {
+        indent.writeln('#endif');
+      }
     }
   }
 
@@ -1531,6 +1606,12 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
           required String channelName,
           required void Function() onWrite,
         }) {
+          final String? unsupportedPlatforms =
+              _tryGetUnsupportedPlatformsCondition(types);
+          if (unsupportedPlatforms != null) {
+            indent.writeln('#if $unsupportedPlatforms');
+          }
+
           final String? availableAnnotation =
               _tryGetAvailabilityAnnotation(types);
           if (availableAnnotation != null) {
@@ -1562,6 +1643,10 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
             });
           } else {
             onWrite();
+          }
+
+          if (unsupportedPlatforms != null) {
+            indent.writeln('#endif');
           }
         }
 
@@ -1730,6 +1815,17 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
     required String newInstanceMethodName,
     required String dartPackageName,
   }) {
+    final List<TypeDeclaration> allReferencedTypes = <TypeDeclaration>[
+      apiAsTypeDeclaration,
+      ...api.unattachedFields.map((ApiField field) => field.type),
+    ];
+
+    final String? unsupportedPlatforms =
+        _tryGetUnsupportedPlatformsCondition(allReferencedTypes);
+    if (unsupportedPlatforms != null) {
+      indent.writeln('#if $unsupportedPlatforms');
+    }
+
     addDocumentationComments(
       indent,
       <String>[
@@ -1739,10 +1835,7 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
     );
 
     final String? availableAnnotation = _tryGetAvailabilityAnnotation(
-      <TypeDeclaration>[
-        apiAsTypeDeclaration,
-        ...api.unattachedFields.map((ApiField field) => field.type),
-      ],
+      allReferencedTypes,
     );
     if (availableAnnotation != null) {
       indent.writeln('@$availableAnnotation');
@@ -1810,6 +1903,10 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
         );
       }
     });
+
+    if (unsupportedPlatforms != null) {
+      indent.writeln('#endif');
+    }
   }
 
   // Writes the Flutter methods that call back to Dart.
@@ -1821,6 +1918,18 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
     required String dartPackageName,
   }) {
     for (final Method method in api.flutterMethods) {
+      final List<TypeDeclaration> allReferencedTypes = <TypeDeclaration>[
+        apiAsTypeDeclaration,
+        ...method.parameters.map((Parameter parameter) => parameter.type),
+        method.returnType,
+      ];
+
+      final String? unsupportedPlatforms =
+          _tryGetUnsupportedPlatformsCondition(allReferencedTypes);
+      if (unsupportedPlatforms != null) {
+        indent.writeln('#if $unsupportedPlatforms');
+      }
+
       addDocumentationComments(
         indent,
         method.documentationComments,
@@ -1828,11 +1937,7 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
       );
 
       final String? availableAnnotation =
-          _tryGetAvailabilityAnnotation(<TypeDeclaration>[
-        apiAsTypeDeclaration,
-        ...method.parameters.map((Parameter parameter) => parameter.type),
-        method.returnType,
-      ]);
+          _tryGetAvailabilityAnnotation(allReferencedTypes);
       if (availableAnnotation != null) {
         indent.writeln('@$availableAnnotation');
       }
@@ -1864,6 +1969,9 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
           channelName: makeChannelName(api, method, dartPackageName),
         );
       });
+      if (unsupportedPlatforms != null) {
+        indent.writeln('#endif');
+      }
       indent.newln();
     }
   }
@@ -1952,6 +2060,36 @@ String? _tryGetAvailabilityAnnotation(Iterable<TypeDeclaration> types) {
   ];
 
   return apis.isNotEmpty ? 'available(${apis.join(', ')}, *)' : null;
+}
+
+/// Recursively iterates
+String? _tryGetUnsupportedPlatformsCondition(Iterable<TypeDeclaration> types) {
+  Iterable<TypeDeclaration> addAllRecursive(TypeDeclaration type) sync* {
+    yield type;
+    if (type.typeArguments.isNotEmpty) {
+      for (final TypeDeclaration typeArg in type.typeArguments) {
+        yield* addAllRecursive(typeArg);
+      }
+    }
+  }
+
+  final Iterable<TypeDeclaration> allReferencedTypes =
+      types.expand(addAllRecursive);
+
+  final List<String> unsupportedPlatforms = <String>[
+    if (!allReferencedTypes.every((TypeDeclaration type) {
+      return type.associatedProxyApi?.swiftOptions?.supportsIos ?? true;
+    }))
+      '!os(iOS)',
+    if (!allReferencedTypes.every((TypeDeclaration type) {
+      return type.associatedProxyApi?.swiftOptions?.supportsMacos ?? true;
+    }))
+      '!os(macOS)',
+  ];
+
+  return unsupportedPlatforms.isNotEmpty
+      ? unsupportedPlatforms.join(' || ')
+      : null;
 }
 
 /// Calculates the name of the codec that will be generated for [api].

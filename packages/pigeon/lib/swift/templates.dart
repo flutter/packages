@@ -247,18 +247,23 @@ String proxyApiReaderWriterTemplate({
   required Iterable<AstProxyApi> allProxyApis,
   required String generalCodecName,
   required String? Function(AstProxyApi) onTryGetAvailabilityAnnotation,
+  required String? Function(AstProxyApi) onTryGetUnsupportedPlatformsCondition,
 }) {
   final String classChecker = allProxyApis.map<String>((AstProxyApi api) {
     final String className = api.swiftOptions?.name ?? api.name;
     final String? availability = onTryGetAvailabilityAnnotation(api);
+    final String? unsupportedPlatforms =
+        onTryGetUnsupportedPlatformsCondition(api);
     return '''
+      ${unsupportedPlatforms != null ? '#if $unsupportedPlatforms' : ''}
       if ${availability != null ? '#$availability, ' : ''}let instance = value as? $className {
         pigeonRegistrar.apiDelegate.pigeonApi${api.name}(pigeonRegistrar).pigeonNewInstance(
           pigeonInstance: instance
         ) { _ in }
       }
+      ${unsupportedPlatforms != null ? '#endif' : ''}
     ''';
-  }).join(' else ');
+  }).join('\n');
 
   return '''
 private class $proxyApiReaderWriterName: FlutterStandardReaderWriter {

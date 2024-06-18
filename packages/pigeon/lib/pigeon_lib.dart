@@ -1575,6 +1575,8 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
             import: swiftOptionsMap['import'] as String?,
             minIosApi: swiftOptionsMap['minIosApi'] as String?,
             minMacosApi: swiftOptionsMap['minMacosApi'] as String?,
+            supportsIos: swiftOptionsMap['supportsIos'] as bool? ?? true,
+            supportsMacos: swiftOptionsMap['supportsMacos'] as bool? ?? true,
           );
         }
 

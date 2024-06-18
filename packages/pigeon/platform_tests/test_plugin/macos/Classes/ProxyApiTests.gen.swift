@@ -480,21 +480,26 @@ private class PigeonProxyApiCodecReaderWriter: FlutterStandardReaderWriter {
     }
 
     override func writeValue(_ value: Any) {
+
       if let instance = value as? ProxyApiTestClass {
         pigeonRegistrar.apiDelegate.pigeonApiProxyApiTestClass(pigeonRegistrar).pigeonNewInstance(
           pigeonInstance: instance
         ) { _ in }
-      } else if let instance = value as? ProxyApiSuperClass {
+      }
+
+      if let instance = value as? ProxyApiSuperClass {
         pigeonRegistrar.apiDelegate.pigeonApiProxyApiSuperClass(pigeonRegistrar).pigeonNewInstance(
           pigeonInstance: instance
         ) { _ in }
-      } else if let instance = value as? ProxyApiInterface {
+      }
+
+      if let instance = value as? ProxyApiInterface {
         pigeonRegistrar.apiDelegate.pigeonApiProxyApiInterface(pigeonRegistrar).pigeonNewInstance(
           pigeonInstance: instance
         ) { _ in }
-      } else if #available(iOS 15.0.0, macOS 10.0.0, *),
-        let instance = value as? ClassWithApiRequirement
-      {
+      }
+
+      if #available(iOS 15.0.0, macOS 10.0.0, *), let instance = value as? ClassWithApiRequirement {
         pigeonRegistrar.apiDelegate.pigeonApiClassWithApiRequirement(pigeonRegistrar)
           .pigeonNewInstance(
             pigeonInstance: instance
