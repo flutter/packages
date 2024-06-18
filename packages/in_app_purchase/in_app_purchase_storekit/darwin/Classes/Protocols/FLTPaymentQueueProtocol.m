@@ -10,6 +10,7 @@
 @end
 
 @implementation DefaultPaymentQueue
+
 @synthesize storefront;
 @synthesize delegate;
 @synthesize transactions;

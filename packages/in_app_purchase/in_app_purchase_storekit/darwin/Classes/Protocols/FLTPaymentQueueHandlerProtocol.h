@@ -76,7 +76,7 @@ typedef void (^UpdatedDownloads)(NSArray<SKDownload *> *downloads);
 /// Attempt to restore transactions. Require app store receipt url.
 - (void)restoreTransactions:(nullable NSString *)applicationName;
 
-///
+/// Displays a sheet that enables users to redeem subscription offer codes.
 - (void)presentCodeRedemptionSheet API_UNAVAILABLE(tvos, macos, watchos);
 
 /// Return all transactions that are not marked as complete.

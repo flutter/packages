@@ -9,7 +9,7 @@
 @interface FIAPaymentQueueHandler ()
 
 /// The SKPaymentQueue instance connected to the App Store and responsible for processing
-/// transactions.expand_more
+/// transactions.
 @property(nonatomic, strong) SKPaymentQueue *queue;
 
 /// Callback method that is called each time the App Store indicates transactions are updated.
@@ -21,21 +21,21 @@
 /// Callback method that is called each time the App Store indicates transactions failed to restore.
 @property(nonatomic, nullable, copy) RestoreTransactionFailed restoreTransactionFailed;
 
-/// Callback method that is called each time the App Store indicates restoring of transactions hasexpand_more
+/// Callback method that is called each time the App Store indicates restoring of transactions has
 /// finished.
 @property(nonatomic, nullable, copy) RestoreCompletedTransactionsFinished paymentQueueRestoreCompletedTransactionsFinished;
 
-/// Callback method that is called each time an in-app purchase has been initiatedexpand_more from the App
+/// Callback method that is called each time an in-app purchase has been initiated from the App
 /// Store.
 @property(nonatomic, nullable, copy) ShouldAddStorePayment shouldAddStorePayment;
 
-/// Callback method that is called each time the App Store indicates downloads areexpand_more updated.
+/// Callback method that is called each time the App Store indicates downloads are updated.
 @property(nonatomic, nullable, copy) UpdatedDownloads updatedDownloads;
 
 /// The transaction cache responsible for caching transactions.
 ///
 /// Keeps track of transactions that arrive when the Flutter client is not
-/// actively observing for transactions.expand_more
+/// actively observing for transactions.
 @property(nonatomic, strong, nonnull) FIATransactionCache *transactionCache;
 
 /// Indicates if the Flutter client is observing transactions.
@@ -49,6 +49,7 @@
 @end
 
 @implementation FIAPaymentQueueHandler
+
 @synthesize delegate;
 
 - (instancetype)initWithQueue:(nonnull id<FLTPaymentQueueProtocol>)queue

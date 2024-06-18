@@ -219,6 +219,7 @@
 @end
 
 @implementation RequestHandlerStub
+
 - (void)startProductRequestWithCompletionHandler:(nonnull ProductRequestCompletion)completion {
   if (self.startProductRequestWithCompletionHandlerStub) {
     self.startProductRequestWithCompletionHandlerStub(completion);

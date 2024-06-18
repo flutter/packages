@@ -12,6 +12,7 @@
 @end
 
 @implementation DefaultRequestHandler
+
 - (void)startProductRequestWithCompletionHandler:(nonnull ProductRequestCompletion)completion {
   [self.handler startProductRequestWithCompletionHandler:completion];
 }
