@@ -323,8 +323,8 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI {
           fatalError("registrar.messenger can not be nil.")
         }
         paymentQueueDelegateCallbackChannel = FlutterMethodChannel(
-            name: "plugins.flutter.io/in_app_purchase_payment_queue_delegate",
-            binaryMessenger: messenger);
+          name: "plugins.flutter.io/in_app_purchase_payment_queue_delegate",
+          binaryMessenger: messenger)
 
         guard let unwrappedChannel = paymentQueueDelegateCallbackChannel else {
           fatalError("paymentQueueDelegateCallbackChannel can not be nil.")

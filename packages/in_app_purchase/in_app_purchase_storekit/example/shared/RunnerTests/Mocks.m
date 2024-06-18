@@ -240,95 +240,95 @@
 }
 
 - (void)addMethodCallDelegate:(nonnull NSObject<FlutterPlugin> *)delegate
-                       channel:(nonnull FlutterMethodChannel *)channel {
-    if (self.addMethodCallDelegateStub) {
-        self.addMethodCallDelegateStub(delegate, channel);
-    }
+                      channel:(nonnull FlutterMethodChannel *)channel {
+  if (self.addMethodCallDelegateStub) {
+    self.addMethodCallDelegateStub(delegate, channel);
+  }
 }
 
 - (nonnull NSString *)lookupKeyForAsset:(nonnull NSString *)asset {
-    if (self.lookupKeyForAssetStub) {
-        return self.lookupKeyForAssetStub(asset);
-    }
-    return nil;
+  if (self.lookupKeyForAssetStub) {
+    return self.lookupKeyForAssetStub(asset);
+  }
+  return nil;
 }
 
 - (nonnull NSString *)lookupKeyForAsset:(nonnull NSString *)asset
-                           fromPackage:(nonnull NSString *)package {
-    if (self.lookupKeyForAssetFromPackageStub) {
-        return self.lookupKeyForAssetFromPackageStub(asset, package);
-    }
-    return nil;
+                            fromPackage:(nonnull NSString *)package {
+  if (self.lookupKeyForAssetFromPackageStub) {
+    return self.lookupKeyForAssetFromPackageStub(asset, package);
+  }
+  return nil;
 }
 
 - (nonnull NSObject<FlutterBinaryMessenger> *)messenger {
-    if (self.messengerStub) {
-        return self.messengerStub();
-    }
-    return [[FlutterBinaryMessengerStub alloc] init]; // Or default behavior
+  if (self.messengerStub) {
+    return self.messengerStub();
+  }
+  return [[FlutterBinaryMessengerStub alloc] init];  // Or default behavior
 }
 
 - (void)publish:(nonnull NSObject *)value {
-    if (self.publishStub) {
-        self.publishStub(value);
-    }
+  if (self.publishStub) {
+    self.publishStub(value);
+  }
 }
 
 - (void)registerViewFactory:(nonnull NSObject<FlutterPlatformViewFactory> *)factory
-                    withId:(nonnull NSString *)factoryId {
-    if (self.registerViewFactoryStub) {
-        self.registerViewFactoryStub(factory, factoryId);
-    }
+                     withId:(nonnull NSString *)factoryId {
+  if (self.registerViewFactoryStub) {
+    self.registerViewFactoryStub(factory, factoryId);
+  }
 }
 
 - (nonnull NSObject<FlutterTextureRegistry> *)textures {
-    if (self.texturesStub) {
-        return self.texturesStub();
-    }
-    return nil;
+  if (self.texturesStub) {
+    return self.texturesStub();
+  }
+  return nil;
 }
 
 - (void)registerViewFactory:(nonnull NSObject<FlutterPlatformViewFactory> *)factory
-                    withId:(nonnull NSString *)factoryId
-   gestureRecognizersBlockingPolicy:
-       (FlutterPlatformViewGestureRecognizersBlockingPolicy)gestureRecognizersBlockingPolicy {
-    if (self.registerViewFactoryWithGestureRecognizersBlockingPolicyStub) {
-        self.registerViewFactoryWithGestureRecognizersBlockingPolicyStub(factory, factoryId, gestureRecognizersBlockingPolicy);
-    }
+                              withId:(nonnull NSString *)factoryId
+    gestureRecognizersBlockingPolicy:
+        (FlutterPlatformViewGestureRecognizersBlockingPolicy)gestureRecognizersBlockingPolicy {
+  if (self.registerViewFactoryWithGestureRecognizersBlockingPolicyStub) {
+    self.registerViewFactoryWithGestureRecognizersBlockingPolicyStub(
+        factory, factoryId, gestureRecognizersBlockingPolicy);
+  }
 }
 
 @end
 
-
 // This FlutterBinaryMessenger is a protocol, so to make a stub it has to be implemented.
 @implementation FlutterBinaryMessengerStub
 - (void)cleanUpConnection:(FlutterBinaryMessengerConnection)connection {
-    if (self.cleanUpConnectionStub) {
-        self.cleanUpConnectionStub(connection);
-    }
+  if (self.cleanUpConnectionStub) {
+    self.cleanUpConnectionStub(connection);
+  }
 }
 
 - (void)sendOnChannel:(nonnull NSString *)channel message:(NSData *_Nullable)message {
-    if (self.sendOnChannelMessageStub) {
-        self.sendOnChannelMessageStub(channel, message);
-    }
+  if (self.sendOnChannelMessageStub) {
+    self.sendOnChannelMessageStub(channel, message);
+  }
 }
 
 - (void)sendOnChannel:(nonnull NSString *)channel
               message:(NSData *_Nullable)message
           binaryReply:(FlutterBinaryReply _Nullable)callback {
-    if (self.sendOnChannelMessageBinaryReplyStub) {
-        self.sendOnChannelMessageBinaryReplyStub(channel, message, callback);
-    }
+  if (self.sendOnChannelMessageBinaryReplyStub) {
+    self.sendOnChannelMessageBinaryReplyStub(channel, message, callback);
+  }
 }
 
 - (FlutterBinaryMessengerConnection)setMessageHandlerOnChannel:(nonnull NSString *)channel
-                                         binaryMessageHandler:
-                                             (FlutterBinaryMessageHandler _Nullable)handler {
-    if (self.setMessageHandlerOnChannelBinaryMessageHandlerStub) {
-        return self.setMessageHandlerOnChannelBinaryMessageHandlerStub(channel, handler);
-    }
-    return 0;
+                                          binaryMessageHandler:
+                                              (FlutterBinaryMessageHandler _Nullable)handler {
+  if (self.setMessageHandlerOnChannelBinaryMessageHandlerStub) {
+    return self.setMessageHandlerOnChannelBinaryMessageHandlerStub(channel, handler);
+  }
+  return 0;
 }
 @end
 

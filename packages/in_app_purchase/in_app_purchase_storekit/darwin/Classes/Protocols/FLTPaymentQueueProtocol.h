@@ -47,9 +47,10 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)presentCodeRedemptionSheet API_AVAILABLE(ios(14.0), visionos(1.0))
     API_UNAVAILABLE(tvos, macos, watchos);
 
-/// If StoreKit has called your SKPaymentQueueDelegate's "paymentQueueShouldShowPriceConsent:" method
-/// and you returned NO, you can use this method to show the price consent UI at a later time that is
-/// more appropriate for your app. If there is no pending price consent, this method will do nothing.
+/// If StoreKit has called your SKPaymentQueueDelegate's "paymentQueueShouldShowPriceConsent:"
+/// method and you returned NO, you can use this method to show the price consent UI at a later time
+/// that is more appropriate for your app. If there is no pending price consent, this method will do
+/// nothing.
 - (void)showPriceConsentIfNeeded API_AVAILABLE(ios(13.4), visionos(1.0))
     API_UNAVAILABLE(tvos, macos, watchos);
 

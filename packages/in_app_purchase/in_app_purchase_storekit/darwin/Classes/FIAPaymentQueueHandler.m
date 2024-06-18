@@ -23,7 +23,8 @@
 
 /// Callback method that is called each time the App Store indicates restoring of transactions has
 /// finished.
-@property(nonatomic, nullable, copy) RestoreCompletedTransactionsFinished paymentQueueRestoreCompletedTransactionsFinished;
+@property(nonatomic, nullable, copy)
+    RestoreCompletedTransactionsFinished paymentQueueRestoreCompletedTransactionsFinished;
 
 /// Callback method that is called each time an in-app purchase has been initiated from the App
 /// Store.
