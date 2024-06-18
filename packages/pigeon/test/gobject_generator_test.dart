@@ -165,11 +165,11 @@ void main() {
       expect(
           code,
           contains(
-              'gboolean test_package_input_get_input_field(TestPackageInput* api);'));
+              'gboolean test_package_input_get_input_field(TestPackageInput* object);'));
       expect(
           code,
           contains(
-              'gboolean test_package_output_get_output_field(TestPackageOutput* api);'));
+              'gboolean test_package_output_get_output_field(TestPackageOutput* object);'));
     }
     {
       final StringBuffer sink = StringBuffer();
