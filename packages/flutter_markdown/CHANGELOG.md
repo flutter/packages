@@ -1,6 +1,6 @@
 ## 0.7.3
 
-* Fixes issue when `onSelectionChanged` is not set
+* Fixes a crash caused by text selection when `selectable` is true and `onSelectionChanged` is null.
 
 ## 0.7.2
 
