@@ -1,5 +1,6 @@
 ## NEXT
-* Fully-qualifies types in Equatable extension test.
+
+* Fully-qualifies types in Equatable extension Swift test.
 
 ## 20.0.1
 
