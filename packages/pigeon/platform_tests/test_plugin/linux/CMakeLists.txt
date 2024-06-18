@@ -95,8 +95,13 @@ FetchContent_MakeAvailable(googletest)
 # sources directly into the test binary rather than using the shared library.
 add_executable(${TEST_RUNNER}
   # Tests.
+  test/multiple_arity_test.cc
   test/non_null_fields_test.cc
+  test/nullable_returns_test.cc
   test/null_fields_test.cc
+  # Test utilities.
+  test/utils/fake_host_messenger.cc
+  test/utils/fake_host_messenger.h
   ${PLUGIN_SOURCES}
 )
 apply_standard_settings(${TEST_RUNNER})
