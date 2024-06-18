@@ -7,9 +7,9 @@ precision highp float;
 
 #include <flutter/runtime_effect.glsl>
 
-layout(location = 0) uniform vec2 uPixels;
-layout(location = 1) uniform vec2 uSize;
-layout(location = 2) uniform sampler2D uTexture;
+uniform vec2 uPixels;
+uniform vec2 uSize;
+uniform sampler2D uTexture;
 
 out vec4 fragColor;
 
