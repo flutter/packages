@@ -125,7 +125,7 @@ extension on EvalOnDartLibrary {
   /// caller is disposed.
   ///
   /// This method is actually a workaround for the asyncEval method, which is
-  /// not working for web targets.
+  /// not working for web targets, check this issue https://github.com/flutter/devtools/issues/7766.
   Future<InstanceRef> prefsEval(String method, Disposable? isAlive) async {
     // Create a empty list in memory to hold the shared preferences instance.
     // It could've been anything that can handle values passed by reference.
@@ -158,7 +158,7 @@ extension on EvalOnDartLibrary {
       }
       final Instance holderInstance =
           await safeGetInstance(prefsHolderRef, isAlive);
-      final dynamic prefsInstance = holderInstance.elements?.firstOrNull;
+      final Object? prefsInstance = holderInstance.elements?.firstOrNull;
       prefsRef = prefsInstance != null ? prefsInstance as InstanceRef : null;
       if (prefsRef == null) {
         await Future<void>.delayed(const Duration(milliseconds: 50));
