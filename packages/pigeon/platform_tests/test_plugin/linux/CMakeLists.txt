@@ -94,8 +94,9 @@ FetchContent_MakeAvailable(googletest)
 # The plugin's exported API is not very useful for unit testing, so build the
 # sources directly into the test binary rather than using the shared library.
 add_executable(${TEST_RUNNER}
-  # TODO(stuartmorgan): Add real tests.
-  test/test_plugin_test.cc
+  # Tests.
+  test/non_null_fields_test.cc
+  test/null_fields_test.cc
   ${PLUGIN_SOURCES}
 )
 apply_standard_settings(${TEST_RUNNER})
