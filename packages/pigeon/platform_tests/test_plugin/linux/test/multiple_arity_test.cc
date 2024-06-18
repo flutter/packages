@@ -29,6 +29,7 @@ TEST(MultipleArity, HostSimple) {
   g_autoptr(MultipleArityPigeonTestMultipleArityHostApi) api =
       multiple_arity_pigeon_test_multiple_arity_host_api_new(
           FL_BINARY_MESSENGER(messenger), nullptr, &vtable, nullptr, nullptr);
+  (void)api;  // unused variable
 
   int64_t result = 0;
   g_autoptr(FlValue) message = fl_value_new_list();

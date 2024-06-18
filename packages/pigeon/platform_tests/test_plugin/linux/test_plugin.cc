@@ -1865,9 +1865,11 @@ static TestPlugin* test_plugin_new(FlBinaryMessenger* messenger) {
 void test_plugin_register_with_registrar(FlPluginRegistrar* registrar) {
   g_autoptr(TestPlugin) plugin =
       test_plugin_new(fl_plugin_registrar_get_messenger(registrar));
+  (void)plugin;  // unused variable
 
   g_autoptr(FlStandardMethodCodec) codec = fl_standard_method_codec_new();
   g_autoptr(FlMethodChannel) channel =
       fl_method_channel_new(fl_plugin_registrar_get_messenger(registrar),
                             "test_plugin", FL_METHOD_CODEC(codec));
+  (void)channel;  // unused variable
 }

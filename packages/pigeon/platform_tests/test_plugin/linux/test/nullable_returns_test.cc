@@ -30,6 +30,7 @@ TEST(NullableReturns, HostNullableArgNull) {
       nullable_returns_pigeon_test_nullable_arg_host_api_new(
           FL_BINARY_MESSENGER(messenger), nullptr, &arg_vtable, nullptr,
           nullptr);
+  (void)api;  // unused variable
 
   int64_t result = 0;
   g_autoptr(FlValue) message = fl_value_new_list();
@@ -50,6 +51,7 @@ TEST(NullableReturns, HostNullableArgNonNull) {
       nullable_returns_pigeon_test_nullable_arg_host_api_new(
           FL_BINARY_MESSENGER(messenger), nullptr, &arg_vtable, nullptr,
           nullptr);
+  (void)api;  // unused variable
 
   int64_t result = 0;
   g_autoptr(FlValue) message = fl_value_new_list();
@@ -96,6 +98,7 @@ TEST(NullableReturns, HostNullableReturnNull) {
       nullable_returns_pigeon_test_nullable_return_host_api_new(
           FL_BINARY_MESSENGER(messenger), nullptr, &return_null_vtable, nullptr,
           nullptr);
+  (void)api;  // unused variable
 
   // Initialize to a non-null value to ensure that it's actually set to null,
   // rather than just never set.
@@ -119,6 +122,7 @@ TEST(NullableReturns, HostNullableReturnNonNull) {
       nullable_returns_pigeon_test_nullable_return_host_api_new(
           FL_BINARY_MESSENGER(messenger), nullptr, &return_nonnull_vtable,
           nullptr, nullptr);
+  (void)api;  // unused variable
 
   int64_t* result = nullptr;
   g_autoptr(FlValue) message = fl_value_new_list();

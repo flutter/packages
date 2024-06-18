@@ -87,6 +87,7 @@ TEST(Primitive, HostInt) {
   g_autoptr(PrimitivePigeonTestPrimitiveHostApi) api =
       primitive_pigeon_test_primitive_host_api_new(
           FL_BINARY_MESSENGER(messenger), nullptr, &vtable, nullptr, nullptr);
+  (void)api;  // unused variable
 
   int64_t result = 0;
   g_autoptr(FlValue) message = fl_value_new_list();
@@ -111,6 +112,7 @@ TEST(Primitive, HostBool) {
   g_autoptr(PrimitivePigeonTestPrimitiveHostApi) api =
       primitive_pigeon_test_primitive_host_api_new(
           FL_BINARY_MESSENGER(messenger), nullptr, &vtable, nullptr, nullptr);
+  (void)api;  // unused variable
 
   bool result = false;
   g_autoptr(FlValue) message = fl_value_new_list();
@@ -135,6 +137,7 @@ TEST(Primitive, HostDouble) {
   g_autoptr(PrimitivePigeonTestPrimitiveHostApi) api =
       primitive_pigeon_test_primitive_host_api_new(
           FL_BINARY_MESSENGER(messenger), nullptr, &vtable, nullptr, nullptr);
+  (void)api;  // unused variable
 
   double result = 0.0;
   g_autoptr(FlValue) message = fl_value_new_list();
@@ -159,6 +162,7 @@ TEST(Primitive, HostString) {
   g_autoptr(PrimitivePigeonTestPrimitiveHostApi) api =
       primitive_pigeon_test_primitive_host_api_new(
           FL_BINARY_MESSENGER(messenger), nullptr, &vtable, nullptr, nullptr);
+  (void)api;  // unused variable
 
   g_autofree gchar* result = nullptr;
   g_autoptr(FlValue) message = fl_value_new_list();
@@ -183,6 +187,7 @@ TEST(Primitive, HostList) {
   g_autoptr(PrimitivePigeonTestPrimitiveHostApi) api =
       primitive_pigeon_test_primitive_host_api_new(
           FL_BINARY_MESSENGER(messenger), nullptr, &vtable, nullptr, nullptr);
+  (void)api;  // unused variable
 
   g_autoptr(FlValue) result = nullptr;
   g_autoptr(FlValue) message = fl_value_new_list();
@@ -212,6 +217,7 @@ TEST(Primitive, HostMap) {
   g_autoptr(PrimitivePigeonTestPrimitiveHostApi) api =
       primitive_pigeon_test_primitive_host_api_new(
           FL_BINARY_MESSENGER(messenger), nullptr, &vtable, nullptr, nullptr);
+  (void)api;  // unused variable
 
   g_autoptr(FlValue) result = nullptr;
   g_autoptr(FlValue) message = fl_value_new_list();
