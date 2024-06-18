@@ -1,4 +1,4 @@
-## NEXT
+## 20.1.0
 
 * [swift] Fully-qualifies types in Equatable extension test.
 * Adds GObject (Linux) support.
