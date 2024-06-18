@@ -4,7 +4,6 @@
 
 import '../ast.dart';
 import '../generator_tools.dart';
-import '../pigeon.dart';
 
 /// Name of delegate that handles the callback when an object is deallocated
 /// in an `InstanceManager`.
