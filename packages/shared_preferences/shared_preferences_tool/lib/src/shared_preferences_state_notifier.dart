@@ -29,14 +29,6 @@ class SharedPreferencesStateNotifier extends ValueNotifier<_State> {
   Future<void> fetchAllKeys() async {
     value = const _State.loading();
     try {
-      // final bool isWebPlatform = await _connectedApp?.isDartWebApp ?? false;
-      // if (isWebPlatform) {
-      //   value = const _State.data(SharedPreferencesState(
-      //     isWebPlatform: true,
-      //   ));
-      //   return;
-      // }
-
       _keys = await _eval.fetchAllKeys();
       value = _State.data(SharedPreferencesState(
         allKeys: _keys,
