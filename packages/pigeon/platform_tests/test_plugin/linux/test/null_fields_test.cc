@@ -18,15 +18,17 @@ TEST(NullFields, BuildWithValues) {
       null_fields_pigeon_test_null_fields_search_reply_new(
           "result", "error", indicies, request, &type);
 
-  EXPECT_EQ(null_fields_pigeon_test_null_fields_search_reply_get_result(reply),
-            "result");
-  EXPECT_EQ(null_fields_pigeon_test_null_fields_search_reply_get_error(reply),
-            "error");
+  EXPECT_STREQ(
+      null_fields_pigeon_test_null_fields_search_reply_get_result(reply),
+      "result");
+  EXPECT_STREQ(
+      null_fields_pigeon_test_null_fields_search_reply_get_error(reply),
+      "error");
   EXPECT_EQ(
       fl_value_get_length(
           null_fields_pigeon_test_null_fields_search_reply_get_indices(reply)),
       3);
-  EXPECT_EQ(
+  EXPECT_STREQ(
       null_fields_pigeon_test_null_fields_search_request_get_query(
           null_fields_pigeon_test_null_fields_search_reply_get_request(reply)),
       "hello");

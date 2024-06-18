@@ -10,7 +10,8 @@ TEST(NonNullFields, Build) {
   g_autoptr(NonNullFieldsPigeonTestNonNullFieldSearchRequest) request =
       non_null_fields_pigeon_test_non_null_field_search_request_new("hello");
 
-  EXPECT_EQ(non_null_fields_pigeon_test_non_null_field_search_request_get_query(
-                request),
-            "hello");
+  EXPECT_STREQ(
+      non_null_fields_pigeon_test_non_null_field_search_request_get_query(
+          request),
+      "hello");
 }
