@@ -95,8 +95,7 @@ public final class FlutterMatchers {
     public void describeTo(Description description) {
       description.appendText("is a FlutterView");
     }
-
-    @SuppressWarnings("deprecation")
+    
     @Override
     public boolean matchesSafely(View flutterView) {
       return flutterView instanceof FlutterView;
