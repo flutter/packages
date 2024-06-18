@@ -3687,7 +3687,7 @@ final class PigeonApiClassWithApiRequirement {
         name:
           "dev.flutter.pigeon.pigeon_integration_tests.ClassWithApiRequirement.pigeon_defaultConstructor",
         binaryMessenger: binaryMessenger, codec: codec)
-      if let api = api {
+      if api != nil {
         pigeonDefaultConstructorChannel.setMessageHandler { message, reply in
           reply(
             wrapError(
@@ -3724,7 +3724,7 @@ final class PigeonApiClassWithApiRequirement {
       let aMethodChannel = FlutterBasicMessageChannel(
         name: "dev.flutter.pigeon.pigeon_integration_tests.ClassWithApiRequirement.aMethod",
         binaryMessenger: binaryMessenger, codec: codec)
-      if let api = api {
+      if api != nil {
         aMethodChannel.setMessageHandler { message, reply in
           reply(
             wrapError(

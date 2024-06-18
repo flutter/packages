@@ -1529,7 +1529,7 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
                 let $varChannelName = FlutterBasicMessageChannel(
                   name: "$channelName",
                   binaryMessenger: binaryMessenger, codec: codec)
-                if let api = api {
+                if api != nil {
                   $varChannelName.setMessageHandler { message, reply in
                     reply(wrapError(FlutterError(code: "PigeonUnsupportedOperationError",
                                                  message: "Call to $methodName requires @$availableAnnotation.",
