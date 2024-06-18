@@ -71,8 +71,6 @@ public final class DartVmServiceUtil {
 
   /** Gets the Dart executor for the given {@code flutterView}. */
   public static DartExecutor getDartExecutor(@Nonnull FlutterView flutterView) {
-    // TODO(gmackall): getAttachedFlutterEngine() is marked as @visibleForTesting - determine if
-    // this method should change its behavior, or if that annotation should be removed.
     FlutterEngine flutterEngine = flutterView.getAttachedFlutterEngine();
     if (flutterEngine == null) {
       throw new FlutterProtocolException(
