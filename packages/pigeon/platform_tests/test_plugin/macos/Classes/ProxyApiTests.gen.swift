@@ -383,6 +383,16 @@ protocol PigeonProxyApiDelegate {
   func pigeonApiClassWithApiRequirement(_ registrar: PigeonProxyApiRegistrar)
     -> PigeonApiClassWithApiRequirement
 }
+
+extension PigeonProxyApiDelegate {
+  func pigeonApiProxyApiInterface(_ registrar: PigeonProxyApiRegistrar)
+    -> PigeonApiProxyApiInterface
+  {
+    return PigeonApiProxyApiInterface(
+      pigeonRegistrar: registrar, delegate: PigeonDelegateProxyApiInterface())
+  }
+}
+
 open class PigeonProxyApiRegistrar {
   let binaryMessenger: FlutterBinaryMessenger
   let apiDelegate: PigeonProxyApiDelegate
@@ -3570,7 +3580,7 @@ final class PigeonApiProxyApiSuperClass {
     }
   }
 }
-protocol PigeonDelegateProxyApiInterface {
+open class PigeonDelegateProxyApiInterface {
 }
 final class PigeonApiProxyApiInterface {
   unowned let pigeonRegistrar: PigeonProxyApiRegistrar

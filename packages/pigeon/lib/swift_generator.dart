@@ -764,7 +764,9 @@ class SwiftGenerator extends StructuredGenerator<SwiftOptions> {
     );
 
     final String swiftApiDelegateName = '${classNamePrefix}Delegate${api.name}';
-    indent.writeScoped('protocol $swiftApiDelegateName {', '}', () {
+    final String type =
+        api.hasAnyHostMessageCalls() ? 'protocol' : 'open class';
+    indent.writeScoped('$type $swiftApiDelegateName {', '}', () {
       _writeProxyApiConstructorDelegateMethods(
         indent,
         api,
@@ -1185,6 +1187,27 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
         );
       }
     });
+    indent.newln();
+
+    final Iterable<AstProxyApi> apisWithoutHostMessageCalls =
+        allProxyApis.where((AstProxyApi api) => !api.hasAnyHostMessageCalls());
+    if (apisWithoutHostMessageCalls.isNotEmpty) {
+      indent.writeScoped('extension $delegateName {', '}', () {
+        for (final AstProxyApi api in apisWithoutHostMessageCalls) {
+          final String hostApiName = '$hostProxyApiPrefix${api.name}';
+          final String swiftApiDelegateName =
+              '${classNamePrefix}Delegate${api.name}';
+          indent.format(
+            '''
+            func pigeonApi${api.name}(_ registrar: $proxyApiRegistrarName) -> $hostApiName {
+              return $hostApiName(pigeonRegistrar: registrar, delegate: $swiftApiDelegateName())
+            }''',
+            trimIndentation: true,
+          );
+        }
+      });
+      indent.newln();
+    }
 
     indent.writeScoped('open class $proxyApiRegistrarName {', '}', () {
       indent.writeln('let binaryMessenger: FlutterBinaryMessenger');
@@ -1237,17 +1260,12 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
       );
       indent.newln();
 
-      bool apiHasHostMessageCalls(AstProxyApi api) =>
-          api.constructors.isNotEmpty ||
-          api.attachedFields.isNotEmpty ||
-          api.hostMethods.isNotEmpty;
-
       indent.writeScoped('func setUp() {', '}', () {
         indent.writeln(
           '${instanceManagerClassName}Api.setUpMessageHandlers(binaryMessenger: binaryMessenger, instanceManager: instanceManager)',
         );
         for (final AstProxyApi api in allProxyApis) {
-          if (apiHasHostMessageCalls(api)) {
+          if (api.hasAnyHostMessageCalls()) {
             indent.writeln(
               '$hostProxyApiPrefix${api.name}.setUpMessageHandlers(binaryMessenger: binaryMessenger, api: apiDelegate.pigeonApi${api.name}(self))',
             );
@@ -1260,7 +1278,7 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
           '${instanceManagerClassName}Api.setUpMessageHandlers(binaryMessenger: binaryMessenger, instanceManager: nil)',
         );
         for (final AstProxyApi api in allProxyApis) {
-          if (apiHasHostMessageCalls(api)) {
+          if (api.hasAnyHostMessageCalls()) {
             indent.writeln(
               '$hostProxyApiPrefix${api.name}.setUpMessageHandlers(binaryMessenger: binaryMessenger, api: nil)',
             );

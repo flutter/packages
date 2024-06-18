@@ -1539,14 +1539,6 @@ class ProxyApiDelegate: PigeonProxyApiDelegate {
       pigeonRegistrar: registrar, delegate: ProxyApiSuperClassDelegate())
   }
 
-  func pigeonApiProxyApiInterface(_ registrar: PigeonProxyApiRegistrar)
-    -> PigeonApiProxyApiInterface
-  {
-    class ProxyApiInterfaceDelegate: PigeonDelegateProxyApiInterface {}
-    return PigeonApiProxyApiInterface(
-      pigeonRegistrar: registrar, delegate: ProxyApiInterfaceDelegate())
-  }
-
   func pigeonApiClassWithApiRequirement(_ registrar: PigeonProxyApiRegistrar)
     -> PigeonApiClassWithApiRequirement
   {
