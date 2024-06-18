@@ -20,7 +20,6 @@ import 'shared_preferences_state_notifier_test.mocks.dart';
 void main() {
   group('SharedPreferencesStateNotifier', () {
     late MockSharedPreferencesToolEval evalMock;
-    late MockConnectedApp connectedApp;
     late SharedPreferencesStateNotifier notifier;
 
     setUpAll(() {
@@ -29,20 +28,7 @@ void main() {
 
     setUp(() {
       evalMock = MockSharedPreferencesToolEval();
-      connectedApp = MockConnectedApp();
-      when(connectedApp.isDartWebApp).thenAnswer((_) async => false);
-      notifier = SharedPreferencesStateNotifier(evalMock, connectedApp);
-    });
-
-    test('should set isWebPlatform value from connectedApp', () async {
-      for (final bool value in <bool>[true, false]) {
-        when(connectedApp.isDartWebApp).thenAnswer((_) async => value);
-        await notifier.fetchAllKeys();
-        expect(
-          notifier.value.dataOrNull!.isWebPlatform,
-          equals(value),
-        );
-      }
+      notifier = SharedPreferencesStateNotifier(evalMock);
     });
 
     test('should start in the loading state', () {

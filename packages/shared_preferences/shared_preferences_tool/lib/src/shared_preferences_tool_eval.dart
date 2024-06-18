@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+// ignore_for_file: missing_whitespace_between_adjacent_strings
+
 import 'package:devtools_app_shared/service.dart';
 import 'package:vm_service/vm_service.dart';
 
@@ -116,10 +118,59 @@ class SharedPreferencesToolEval {
 }
 
 extension on EvalOnDartLibrary {
+  /// Evaluates the given [method] on the shared preferences instance.
+  ///
+  /// Returns the [InstanceRef] of the result.
+  /// The [isAlive] parameter is used to dispose the evaluation if the
+  /// caller is disposed.
+  ///
+  /// This method is actually a workaround for the asyncEval method, which is
+  /// not working for web targets.
   Future<InstanceRef> prefsEval(String method, Disposable? isAlive) async {
-    return (await asyncEval(
-      '(await SharedPreferences.getInstance()).$method',
+    // Create a empty list in memory to hold the shared preferences instance.
+    // It could've been anything that can handle values passed by reference.
+    final InstanceRef prefsHolderRef = await safeEval(
+      '[]',
       isAlive: isAlive,
+    );
+
+    // Add the shared preferences instance to the list once the future completes
+    await eval(
+      'SharedPreferences.getInstance().then(prefsHolder.add);',
+      scope: <String, String>{
+        'prefsHolder': prefsHolderRef.id!,
+      },
+      isAlive: isAlive,
+    );
+
+    InstanceRef? prefsRef;
+    // The maximum number of retries to get the shared preferences instance.
+    // Means a max of 1 second of waiting.
+    const int maxRetries = 20;
+    int retryCount = 0;
+
+    // Wait until the shared preferences instance is added to the list.
+    while (prefsRef == null) {
+      retryCount++;
+      // A break condition to avoid infinite loop.
+      if (retryCount > maxRetries) {
+        throw StateError('Failed to get shared preferences instance.');
+      }
+      final Instance holderInstance =
+          await safeGetInstance(prefsHolderRef, isAlive);
+      final dynamic prefsInstance = holderInstance.elements?.firstOrNull;
+      prefsRef = prefsInstance != null ? prefsInstance as InstanceRef : null;
+      if (prefsRef == null) {
+        await Future<void>.delayed(const Duration(milliseconds: 50));
+      }
+    }
+
+    return (await eval(
+      'prefs.$method',
+      isAlive: isAlive,
+      scope: <String, String>{
+        'prefs': prefsRef.id!,
+      },
     ))!;
   }
 

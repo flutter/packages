@@ -35,7 +35,6 @@ enum _StateInheritedModelAspect {
   selectedKey,
   selectedKeyData,
   editing,
-  isWebPlatform,
 }
 
 /// An inherited model that provides a [SharedPreferencesState] to its descendants.
@@ -74,8 +73,6 @@ class _SharedPreferencesStateInheritedModel
           state.selectedKeyDataState != oldWidget.state.selectedKeyDataState,
         _StateInheritedModelAspect.editing =>
           state.editingState != oldWidget.state.editingState,
-        _StateInheritedModelAspect.isWebPlatform =>
-          state.isWebPlatform != oldWidget.state.isWebPlatform,
       },
     );
   }
@@ -101,8 +98,6 @@ extension on AsyncState<SharedPreferencesState> {
       );
 
   bool get editingState => dataOrNull?.editing ?? false;
-
-  bool get isWebPlatform => dataOrNull?.isWebPlatform ?? false;
 }
 
 @visibleForTesting
@@ -225,22 +220,6 @@ class SharedPreferencesStateProvider extends StatefulWidget {
         .editingState;
   }
 
-  /// Returns whether the target debug session is a web platform from the closest
-  /// _SharedPreferencesStateInheritedModel ancestor.
-  ///
-  /// Use of this method will cause the given [context] to rebuild whenever the
-  /// platform changes.
-  /// This will not cause a rebuild when any other part of the state changes.
-  static bool isWebPlatformOf(BuildContext context) {
-    return context
-        .dependOnInheritedWidgetOfExactType<
-            _SharedPreferencesStateInheritedModel>(
-          aspect: _StateInheritedModelAspect.isWebPlatform,
-        )!
-        .state
-        .isWebPlatform;
-  }
-
   /// The required child widget.
   final Widget child;
 
@@ -262,10 +241,7 @@ class _SharedPreferencesStateProviderState
       serviceManager: serviceManager,
     );
     final SharedPreferencesToolEval toolEval = SharedPreferencesToolEval(eval);
-    _notifier = SharedPreferencesStateNotifier(
-      toolEval,
-      serviceManager.connectedApp,
-    );
+    _notifier = SharedPreferencesStateNotifier(toolEval);
     _notifier.fetchAllKeys();
   }
 

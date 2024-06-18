@@ -17,7 +17,6 @@ class SharedPreferencesState {
     this.allKeys = const <String>[],
     this.selectedKey,
     this.editing = false,
-    this.isWebPlatform = false,
   });
 
   /// A list of all keys in the shared preferences of the target debug session.
@@ -29,9 +28,6 @@ class SharedPreferencesState {
 
   /// Whether the user is editing the value of the selected key.
   final bool editing;
-
-  /// Whether the current target debug session's platform is web or not.
-  final bool isWebPlatform;
 
   /// Creates a copy of this [SharedPreferencesState] but replacing the given
   /// fields with the new values.
