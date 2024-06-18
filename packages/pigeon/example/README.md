@@ -328,16 +328,20 @@ void TestPlugin::CallFlutterMethod(
 ```c++
 static void flutter_method_cb(GObject* object, GAsyncResult* result,
                               gpointer user_data) {
-  g_autofree gchar* return_value = nullptr;
   g_autoptr(GError) error = nullptr;
-  if (!pigeon_example_package_message_flutter_api_flutter_method_finish(
-          PIGEON_EXAMPLE_PACKAGE_MESSAGE_FLUTTER_API(object), result,
-          &return_value, &error)) {
+  g_autoptr(
+      PigeonExamplePackageMessageFlutterApiFlutterMethodResponse) response =
+      pigeon_example_package_message_flutter_api_flutter_method_finish(
+          PIGEON_EXAMPLE_PACKAGE_MESSAGE_FLUTTER_API(object), result, &error);
+  if (response == nullptr) {
     g_warning("Failed to call Flutter method: %s", error->message);
     return;
   }
 
-  g_printerr("Got result from Flutter method: %s\n", return_value);
+  g_printerr(
+      "Got result from Flutter method: %s\n",
+      pigeon_example_package_message_flutter_api_flutter_method_response_get_return_value(
+          response));
 }
 ```
 
