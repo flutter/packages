@@ -1,3 +1,7 @@
+## 14.2.1
+- Allows going to a path relatively by prefixing `./`
+- Adds `TypedRelativeGoRoute`
+
 ## 14.2.0
 
 - Added proper `redirect` handling for `ShellRoute.$route` and `StatefulShellRoute.$route` for proper redirection handling in case of code generation.
