@@ -1809,7 +1809,7 @@ void main() {
       ];
 
       final GoRouter router = await createRouter(routes, tester);
-      router.goRelative('login');
+      router.go('./login');
       await tester.pumpAndSettle();
       expect(find.byType(LoginScreen), findsOneWidget);
     });
@@ -1832,7 +1832,7 @@ void main() {
 
       final GoRouter router = await createRouter(routes, tester);
       router.go('/home');
-      router.goRelative('login');
+      router.go('./login');
       await tester.pumpAndSettle();
       expect(find.byType(LoginScreen), findsOneWidget);
     });
@@ -1870,11 +1870,11 @@ void main() {
       final GoRouter router =
           await createRouter(routes, tester, initialLocation: '/home');
 
-      router.goRelative('family/$fid');
+      router.go('./family/$fid');
       await tester.pumpAndSettle();
       expect(find.byType(FamilyScreen), findsOneWidget);
 
-      router.goRelative('person/$pid');
+      router.go('./person/$pid');
       await tester.pumpAndSettle();
       expect(find.byType(PersonScreen), findsOneWidget);
     });
@@ -1911,11 +1911,11 @@ void main() {
       final GoRouter router =
           await createRouter(routes, tester, initialLocation: '/home');
 
-      router.goRelative('family?fid=$fid');
+      router.go('./family?fid=$fid');
       await tester.pumpAndSettle();
       expect(find.byType(FamilyScreen), findsOneWidget);
 
-      router.goRelative('person?pid=$pid');
+      router.go('./person?pid=$pid');
       await tester.pumpAndSettle();
       expect(find.byType(PersonScreen), findsOneWidget);
     });
@@ -1952,7 +1952,7 @@ void main() {
         errorBuilder: (BuildContext context, GoRouterState state) =>
             TestErrorScreen(state.error!),
       );
-      router.goRelative('family/person/$pid');
+      router.go('./family/person/$pid');
       await tester.pumpAndSettle();
       expect(find.byType(TestErrorScreen), findsOneWidget);
 
@@ -2023,7 +2023,7 @@ void main() {
       final GoRouter router =
           await createRouter(routes, tester, initialLocation: '/home');
       final String loc = 'page1/${Uri.encodeComponent(param1)}';
-      router.goRelative(loc);
+      router.go('./$loc');
 
       await tester.pumpAndSettle();
       expect(find.byType(DummyScreen), findsOneWidget);
@@ -2054,10 +2054,11 @@ void main() {
       final GoRouter router =
           await createRouter(routes, tester, initialLocation: '/home');
 
-      router.goRelative(Uri(
+      final String loc = Uri(
         path: 'page1',
         queryParameters: <String, dynamic>{'param1': param1},
-      ).toString());
+      ).toString();
+      router.go('./$loc');
 
       await tester.pumpAndSettle();
       expect(find.byType(DummyScreen), findsOneWidget);

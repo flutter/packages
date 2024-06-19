@@ -24,13 +24,6 @@ extension GoRouterHelper on BuildContext {
   void go(String location, {Object? extra}) =>
       GoRouter.of(this).go(location, extra: extra);
 
-  /// Navigate relative to a location.
-  void goRelative(String location, {Object? extra}) =>
-      GoRouter.of(this).goRelative(
-        location,
-        extra: extra,
-      );
-
   /// Navigate to a named route.
   void goNamed(
     String name, {
