@@ -122,12 +122,19 @@ String concatenatePaths(String parentPath, String childPath) {
 ///
 /// e.g: pathA = /a?fid=f1, pathB = c/d?pid=p2,  concatenatePaths(pathA, pathB) = /a/c/d?fid=1&pid=2.
 Uri concatenateUris(Uri parentUri, Uri childUri) {
+  // Merge query parameters from both Uris. We don't return an empty map to prevent trailing '?'.
+  final Map<String, dynamic>? newParameters =
+      parentUri.queryParameters.isNotEmpty &&
+              childUri.queryParameters.isNotEmpty
+          ? <String, dynamic>{
+              ...parentUri.queryParameters,
+              ...childUri.queryParameters,
+            }
+          : null;
+
   final Uri newUri = parentUri.replace(
     path: concatenatePaths(parentUri.path, childUri.path),
-    queryParameters: <String, dynamic>{
-      ...parentUri.queryParameters,
-      ...childUri.queryParameters,
-    },
+    queryParameters: newParameters,
   );
 
   return newUri;

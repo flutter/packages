@@ -92,4 +92,37 @@ void main() {
     verifyThrows('/', '');
     verifyThrows('', '');
   });
+
+  test('concatenateUris', () {
+    void verify(String pathA, String pathB, String expected) {
+      final String result =
+          concatenateUris(Uri.parse(pathA), Uri.parse(pathB)).toString();
+      expect(result, expected);
+    }
+
+    verify('/a', 'b/c', '/a/b/c');
+    verify('/', 'b', '/b');
+    verify('/a?fid=f1', 'b/c?pid=p2', '/a/b/c?fid=f1&pid=p2');
+  });
+
+  test('canonicalUri', () {
+    void verify(String path, String expected) =>
+        expect(canonicalUri(path), expected);
+    verify('/a', '/a');
+    verify('/a/', '/a');
+    verify('/', '/');
+    verify('/a/b/', '/a/b');
+    verify('https://www.example.com/', 'https://www.example.com/');
+    verify('https://www.example.com/a', 'https://www.example.com/a');
+    verify('https://www.example.com/a/', 'https://www.example.com/a');
+    verify('https://www.example.com/a/b/', 'https://www.example.com/a/b');
+    verify('https://www.example.com/?', 'https://www.example.com/');
+    verify('https://www.example.com/?a=b', 'https://www.example.com/?a=b');
+    verify('https://www.example.com/?a=/', 'https://www.example.com/?a=/');
+    verify('https://www.example.com/a/?b=c', 'https://www.example.com/a?b=c');
+    verify('https://www.example.com/#a/', 'https://www.example.com/#a/');
+
+    expect(() => canonicalUri('::::'), throwsA(isA<FormatException>()));
+    expect(() => canonicalUri(''), throwsA(anything));
+  });
 }
