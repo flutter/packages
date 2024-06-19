@@ -127,6 +127,10 @@ typedef NS_ENUM(NSInteger, ImagePickerClassType) { UIImagePickerClassType, PHPic
   imagePickerController.delegate = self;
   if (context.includeVideo) {
     imagePickerController.mediaTypes = @[ (NSString *)kUTTypeImage, (NSString *)kUTTypeMovie ];
+    imagePickerController.videoQuality = UIImagePickerControllerQualityTypeHigh;
+    if (@available(iOS 11, *)) {
+       imagePickerController.videoExportPreset = AVAssetExportPresetPassthrough;
+    }
 
   } else {
     imagePickerController.mediaTypes = @[ (NSString *)kUTTypeImage ];
@@ -262,6 +266,9 @@ typedef NS_ENUM(NSInteger, ImagePickerClassType) { UIImagePickerClassType, PHPic
     (NSString *)kUTTypeMPEG4
   ];
   imagePickerController.videoQuality = UIImagePickerControllerQualityTypeHigh;
+  if (@available(iOS 11, *)) {
+     imagePickerController.videoExportPreset = AVAssetExportPresetPassthrough;
+  }
 
   if (maxDurationSeconds) {
     NSTimeInterval max = [maxDurationSeconds doubleValue];
