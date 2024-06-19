@@ -1,3 +1,7 @@
+## 14.2.8
+
+- Allows going to a path relatively by prefixing `./`
+
 ## 14.2.7
 
 - Fixes issue so that the parseRouteInformationWithContext can handle non-http Uris.
