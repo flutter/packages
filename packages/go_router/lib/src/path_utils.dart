@@ -124,7 +124,7 @@ String concatenatePaths(String parentPath, String childPath) {
 Uri concatenateUris(Uri parentUri, Uri childUri) {
   // Merge query parameters from both Uris. We don't return an empty map to prevent trailing '?'.
   final Map<String, dynamic>? newParameters =
-      parentUri.queryParameters.isNotEmpty &&
+      parentUri.queryParameters.isNotEmpty ||
               childUri.queryParameters.isNotEmpty
           ? <String, dynamic>{
               ...parentUri.queryParameters,
