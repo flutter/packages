@@ -1,3 +1,7 @@
+## 2.8.0
+
+* Add ground overlay support for Android and iOS.
+
 ## 2.7.1
 
 * Undeprecates `BitmapDescriptor.fromAssetImage`.

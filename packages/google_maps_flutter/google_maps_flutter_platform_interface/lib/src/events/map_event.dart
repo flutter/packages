@@ -176,3 +176,12 @@ class ClusterTapEvent extends MapEvent<Cluster> {
   /// cluster icon managed by [ClusterManager].
   ClusterTapEvent(super.mapId, super.cluster);
 }
+
+/// An event fired when a [GroundOverlay] is tapped.
+class GroundOverlayTapEvent extends MapEvent<GroundOverlayId> {
+  /// Build GroundOverlayTap Event triggered from the map represented by `mapId`.
+  ///
+  /// The `value` of this event is a [GroundOverlayId] object that represents
+  /// the tapped GroundOverlay
+  GroundOverlayTapEvent(super.mapId, super.groundOverlayId);
+}
