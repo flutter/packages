@@ -63,7 +63,7 @@ class HomeScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             ElevatedButton(
-              onPressed: () => context.goRelative('details'),
+              onPressed: () => context.go('./details'),
               child: const Text('Go to the Details screen'),
             ),
           ],
@@ -93,7 +93,7 @@ class DetailsScreen extends StatelessWidget {
           ),
           TextButton(
             onPressed: () {
-              context.goRelative('settings');
+              context.go('./settings');
             },
             child: const Text('Go to the Settings screen'),
           ),
