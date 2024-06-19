@@ -102,6 +102,10 @@ void main() {
 
     verify('/a', 'b/c', '/a/b/c');
     verify('/', 'b', '/b');
+
+    // Test with parameters
+    verify('/a?fid=f1', 'b/c', '/a/b/c?fid=f1');
+    verify('/a', 'b/c?pid=p2', '/a/b/c?pid=p2');
     verify('/a?fid=f1', 'b/c?pid=p2', '/a/b/c?fid=f1&pid=p2');
   });
 
