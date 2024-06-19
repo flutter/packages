@@ -118,6 +118,56 @@ String concatenatePaths(String parentPath, String childPath) {
   return '${parentPath == '/' ? '' : parentPath}/$childPath';
 }
 
+/// Concatenates two Uri. It will [concatenatePaths] the parent's and the child's paths , then merges their query parameters.
+///
+/// e.g: pathA = /a?fid=f1, pathB = c/d?pid=p2,  concatenatePaths(pathA, pathB) = /a/c/d?fid=1&pid=2.
+Uri concatenateUris(Uri parentUri, Uri childUri) {
+  final Uri newUri = parentUri.replace(
+    path: concatenatePaths(parentUri.path, childUri.path),
+    queryParameters: <String, dynamic>{
+      ...parentUri.queryParameters,
+      ...childUri.queryParameters,
+    },
+  );
+
+  return newUri;
+}
+
+/// Normalizes the location string.
+String canonicalUri(String loc) {
+  if (loc.isEmpty) {
+    throw GoException('Location cannot be empty.');
+  }
+  String canon = Uri.parse(loc).toString();
+  canon = canon.endsWith('?') ? canon.substring(0, canon.length - 1) : canon;
+  final Uri uri = Uri.parse(canon);
+
+  // remove trailing slash except for when you shouldn't, e.g.
+  // /profile/ => /profile
+  // / => /
+  // /login?from=/ => /login?from=/
+  canon = uri.path.endsWith('/') &&
+          uri.path != '/' &&
+          !uri.hasQuery &&
+          !uri.hasFragment
+      ? canon.substring(0, canon.length - 1)
+      : canon;
+
+  // replace '/?', except for first occurrence, from path only
+  // /login/?from=/ => /login?from=/
+  // /?from=/ => /?from=/
+  final int pathStartIndex = uri.host.isNotEmpty
+      ? uri.toString().indexOf(uri.host) + uri.host.length
+      : uri.hasScheme
+          ? uri.toString().indexOf(uri.scheme) + uri.scheme.length
+          : 0;
+  if (pathStartIndex < canon.length) {
+    canon = canon.replaceFirst('/?', '?', pathStartIndex + 1);
+  }
+
+  return canon;
+}
+
 /// Builds an absolute path for the provided route.
 String? fullPathForRoute(
     RouteBase targetRoute, String parentFullpath, List<RouteBase> routes) {
