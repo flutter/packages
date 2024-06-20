@@ -19,7 +19,12 @@ A Flutter plugin for iOS, Android and Web allowing access to the device cameras.
 
 ## Installation
 
-First, add `camera` as a [dependency in your pubspec.yaml file](https://flutter.dev/using-packages/).
+First, add `camera` as a
+dependency in your `pubspec.yaml` file:
+
+```bash
+flutter pub add camera
+```
 
 ### iOS
 

@@ -8,7 +8,11 @@ find colors for a user interface.
 ## Usage
 
 To use this package, add `palette_generator` as a
-[dependency in your pubspec.yaml file](https://flutter.io/platform-plugins/).
+dependency in your `pubspec.yaml` file:
+
+```bash
+flutter pub add palette_generator
+```
 
 ## Example
 

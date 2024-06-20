@@ -13,7 +13,11 @@ and taking new pictures with the camera.
 ## Installation
 
 First, add `image_picker` as a
-[dependency in your pubspec.yaml file](https://flutter.dev/docs/development/platform-integration/platform-channels).
+dependency in your `pubspec.yaml` file:
+
+```bash
+flutter pub add image_picker
+```
 
 ### iOS
 
@@ -158,7 +162,8 @@ encourage the community to build packages that implement
 
 Since the macOS implementation uses `file_selector`, you will need to
 add a filesystem access
-[entitlement](https://docs.flutter.dev/platform-integration/macos/building#entitlements-and-the-app-sandbox):
+[entitlement](https://flutter.dev/to/macos-entitlements):
+
 ```xml
   <key>com.apple.security.files.user-selected.read-only</key>
   <true/>

@@ -13,7 +13,12 @@ Not all methods are supported on all platforms.
 
 ## Usage
 
-To use this plugin, add `path_provider` as a [dependency in your pubspec.yaml file](https://flutter.dev/docs/development/platform-integration/platform-channels).
+To use this plugin, add `path_provider` as a
+dependency in your `pubspec.yaml` file:
+
+```bash
+flutter pub add path_provider
+```
 
 ## Example
 <?code-excerpt "readme_excerpts.dart (Example)"?>

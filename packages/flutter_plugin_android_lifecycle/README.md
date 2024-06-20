@@ -15,7 +15,12 @@ major version of the Android `Lifecycle` API they expect.
 
 ## Installation
 
-Add `flutter_plugin_android_lifecycle` as a [dependency in your pubspec.yaml file](https://flutter.dev/using-packages/).
+Add `flutter_plugin_android_lifecycle` as a
+dependency in your `pubspec.yaml` file:
+
+```bash
+flutter pub add flutter_plugin_android_lifecycle
+```
 
 ## Example
 

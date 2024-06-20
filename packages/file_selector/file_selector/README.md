@@ -12,7 +12,12 @@ A Flutter plugin that manages files and interactions with file dialogs.
 
 ## Usage
 
-To use this plugin, add `file_selector` as a [dependency in your pubspec.yaml file](https://flutter.dev/platform-plugins/).
+To use this plugin, add `file_selector` as a
+dependency in your `pubspec.yaml` file:
+
+```bash
+flutter pub add file_selector
+```
 
 ### macOS
 

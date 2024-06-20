@@ -12,7 +12,12 @@ A Flutter plugin for launching a URL.
 
 ## Usage
 
-To use this plugin, add `url_launcher` as a [dependency in your pubspec.yaml file](https://flutter.dev/platform-plugins/).
+To use this plugin, add `url_launcher` as a
+dependency in your `pubspec.yaml` file:
+
+```bash
+flutter pub add url_launcher
+```
 
 ### Example
 
