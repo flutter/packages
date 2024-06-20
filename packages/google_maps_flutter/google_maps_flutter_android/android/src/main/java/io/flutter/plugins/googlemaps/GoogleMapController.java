@@ -49,6 +49,7 @@ import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.platform.PlatformView;
+import io.flutter.plugins.googlemaps.Messages.MapsApi;
 import io.flutter.plugins.googlemaps.Messages.MapsInspectorApi;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
@@ -67,6 +68,7 @@ class GoogleMapController
         DefaultLifecycleObserver,
         GoogleMapListener,
         GoogleMapOptionsSink,
+        Messages.MapsApi,
         MapsInspectorApi,
         MethodChannel.MethodCallHandler,
         OnMapReadyCallback,
@@ -88,7 +90,7 @@ class GoogleMapController
   private boolean buildingsEnabled = true;
   private boolean disposed = false;
   @VisibleForTesting final float density;
-  private MethodChannel.Result mapReadyResult;
+  private @Nullable Messages.VoidResult mapReadyResult;
   private final Context context;
   private final LifecycleProvider lifecycleProvider;
   private final MarkersController markersController;
@@ -125,6 +127,7 @@ class GoogleMapController
     methodChannel =
         new MethodChannel(binaryMessenger, "plugins.flutter.dev/google_maps_android_" + id);
     methodChannel.setMethodCallHandler(this);
+    MapsApi.setUp(binaryMessenger, Integer.toString(id), this);
     MapsInspectorApi.setUp(binaryMessenger, Integer.toString(id), this);
     AssetManager assetManager = context.getAssets();
     this.lifecycleProvider = lifecycleProvider;
@@ -203,7 +206,7 @@ class GoogleMapController
     this.googleMap.setBuildingsEnabled(this.buildingsEnabled);
     installInvalidator();
     if (mapReadyResult != null) {
-      mapReadyResult.success(null);
+      mapReadyResult.success();
       mapReadyResult = null;
     }
     setGoogleMapListener(this);
@@ -308,13 +311,6 @@ class GoogleMapController
   @Override
   public void onMethodCall(MethodCall call, @NonNull MethodChannel.Result result) {
     switch (call.method) {
-      case "map#waitForMap":
-        if (googleMap != null) {
-          result.success(null);
-          return;
-        }
-        mapReadyResult = result;
-        break;
       case "map#update":
         {
           Convert.interpretGoogleMapOptions(call.argument("options"), this);
@@ -602,6 +598,7 @@ class GoogleMapController
     }
     disposed = true;
     methodChannel.setMethodCallHandler(null);
+    MapsApi.setUp(binaryMessenger, Integer.toString(id), null);
     MapsInspectorApi.setUp(binaryMessenger, Integer.toString(id), null);
     setGoogleMapListener(null);
     setMarkerCollectionListener(null);
@@ -1016,6 +1013,17 @@ class GoogleMapController
     return set;
   }
 
+  /** MapsApi implementation */
+  @Override
+  public void waitForMap(@NonNull Messages.VoidResult result) {
+    if (googleMap == null) {
+      mapReadyResult = result;
+    } else {
+      result.success();
+    }
+  }
+
+  /** MapsInspectorApi implementation */
   @Override
   public @NonNull Boolean areBuildingsEnabled() {
     return googleMap.isBuildingsEnabled();

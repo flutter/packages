@@ -68,6 +68,16 @@ class PlatformZoomRange {
   final double max;
 }
 
+/// Interface for non-test interactions with the native SDK.
+///
+/// For test-only state queries, see [MapsInspectorApi].
+@HostApi()
+abstract class MapsApi {
+  /// Returns once the map instance is available.
+  @async
+  void waitForMap();
+}
+
 /// Inspector API only intended for use in integration tests.
 @HostApi()
 abstract class MapsInspectorApi {

@@ -68,6 +68,8 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
   // Every method call passes the int mapId
   final Map<int, MethodChannel> _channels = <int, MethodChannel>{};
 
+  final Map<int, MapsApi> _hostMaps = <int, MapsApi>{};
+
   /// Accesses the MethodChannel associated to the passed mapId.
   MethodChannel _channel(int mapId) {
     final MethodChannel? channel = _channels[mapId];
@@ -75,6 +77,15 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
       throw UnknownMapIDError(mapId);
     }
     return channel;
+  }
+
+  /// Accesses the MapsApi associated to the passed mapId.
+  MapsApi _hostApi(int mapId) {
+    final MapsApi? api = _hostMaps[mapId];
+    if (api == null) {
+      throw UnknownMapIDError(mapId);
+    }
+    return api;
   }
 
   // Keep a collection of mapId to a map of TileOverlays.
@@ -94,10 +105,23 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
     return channel;
   }
 
+  /// Returns the API instance for [mapId], creating it if it doesn't already
+  /// exist.
+  @visibleForTesting
+  MapsApi ensureApiInitialized(int mapId) {
+    MapsApi? api = _hostMaps[mapId];
+    if (api == null) {
+      api = MapsApi(messageChannelSuffix: mapId.toString());
+      _hostMaps[mapId] = api;
+    }
+    return api;
+  }
+
   @override
   Future<void> init(int mapId) {
-    final MethodChannel channel = ensureChannelInitialized(mapId);
-    return channel.invokeMethod<void>('map#waitForMap');
+    ensureChannelInitialized(mapId);
+    final MapsApi hostApi = ensureApiInitialized(mapId);
+    return hostApi.waitForMap();
   }
 
   @override
