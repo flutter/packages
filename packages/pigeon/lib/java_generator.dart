@@ -439,17 +439,20 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
     }
 
     void writeDecodeLogic(EnumeratedType customType) {
-      indent.writeln('case (byte) ${customType.enumeration}:');
-      indent.nest(1, () {
-        if (customType.type == CustomTypes.customClass) {
+      indent.write('case (byte) ${customType.enumeration}:');
+      if (customType.type == CustomTypes.customClass) {
+        indent.newln();
+        indent.nest(1, () {
           indent.writeln(
               'return ${customType.name}.fromList((ArrayList<Object>) readValue(buffer));');
-        } else if (customType.type == CustomTypes.customEnum) {
-          indent.writeln('value = readValue(buffer);');
+        });
+      } else if (customType.type == CustomTypes.customEnum) {
+        indent.addScoped(' {', '}', () {
+          indent.writeln('Object value = readValue(buffer);');
           indent
               .writeln('return ${_intToEnum('value', customType.name, true)};');
-        }
-      });
+        });
+      }
     }
 
     final EnumeratedType overflowClass = EnumeratedType(
@@ -477,7 +480,6 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
       indent.writeScoped(
           'protected Object readValueOfType(byte type, @NonNull ByteBuffer buffer) {',
           '}', () {
-        indent.writeln('Object value;');
         indent.writeScoped('switch (type) {', '}', () {
           for (final EnumeratedType customType in enumeratedTypes) {
             if (customType.enumeration < maximumCodecFieldKey) {

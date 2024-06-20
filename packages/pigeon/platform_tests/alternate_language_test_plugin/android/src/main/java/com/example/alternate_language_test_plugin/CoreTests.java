@@ -3072,386 +3072,637 @@ public class CoreTests {
 
     @Override
     protected Object readValueOfType(byte type, @NonNull ByteBuffer buffer) {
-      Object value;
       switch (type) {
         case (byte) 129:
-          value = readValue(buffer);
-          return value == null ? null : AAA.values()[(int) value];
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : AAA.values()[(int) value];
+          }
         case (byte) 130:
-          value = readValue(buffer);
-          return value == null ? null : AAB.values()[(int) value];
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : AAB.values()[(int) value];
+          }
         case (byte) 131:
-          value = readValue(buffer);
-          return value == null ? null : AAC.values()[(int) value];
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : AAC.values()[(int) value];
+          }
         case (byte) 132:
-          value = readValue(buffer);
-          return value == null ? null : AAD.values()[(int) value];
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : AAD.values()[(int) value];
+          }
         case (byte) 133:
-          value = readValue(buffer);
-          return value == null ? null : AAE.values()[(int) value];
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : AAE.values()[(int) value];
+          }
         case (byte) 134:
-          value = readValue(buffer);
-          return value == null ? null : AAF.values()[(int) value];
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : AAF.values()[(int) value];
+          }
         case (byte) 135:
-          value = readValue(buffer);
-          return value == null ? null : AAG.values()[(int) value];
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : AAG.values()[(int) value];
+          }
         case (byte) 136:
-          value = readValue(buffer);
-          return value == null ? null : AAH.values()[(int) value];
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : AAH.values()[(int) value];
+          }
         case (byte) 137:
-          value = readValue(buffer);
-          return value == null ? null : AAI.values()[(int) value];
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : AAI.values()[(int) value];
+          }
         case (byte) 138:
-          value = readValue(buffer);
-          return value == null ? null : AAJ.values()[(int) value];
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : AAJ.values()[(int) value];
+          }
         case (byte) 139:
-          value = readValue(buffer);
-          return value == null ? null : AAK.values()[(int) value];
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : AAK.values()[(int) value];
+          }
         case (byte) 140:
-          value = readValue(buffer);
-          return value == null ? null : AAL.values()[(int) value];
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : AAL.values()[(int) value];
+          }
         case (byte) 141:
-          value = readValue(buffer);
-          return value == null ? null : AAM.values()[(int) value];
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : AAM.values()[(int) value];
+          }
         case (byte) 142:
-          value = readValue(buffer);
-          return value == null ? null : AAN.values()[(int) value];
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : AAN.values()[(int) value];
+          }
         case (byte) 143:
-          value = readValue(buffer);
-          return value == null ? null : AAO.values()[(int) value];
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : AAO.values()[(int) value];
+          }
         case (byte) 144:
-          value = readValue(buffer);
-          return value == null ? null : AAP.values()[(int) value];
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : AAP.values()[(int) value];
+          }
         case (byte) 145:
-          value = readValue(buffer);
-          return value == null ? null : AAQ.values()[(int) value];
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : AAQ.values()[(int) value];
+          }
         case (byte) 146:
-          value = readValue(buffer);
-          return value == null ? null : AAR.values()[(int) value];
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : AAR.values()[(int) value];
+          }
         case (byte) 147:
-          value = readValue(buffer);
-          return value == null ? null : AAS.values()[(int) value];
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : AAS.values()[(int) value];
+          }
         case (byte) 148:
-          value = readValue(buffer);
-          return value == null ? null : AAT.values()[(int) value];
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : AAT.values()[(int) value];
+          }
         case (byte) 149:
-          value = readValue(buffer);
-          return value == null ? null : AAU.values()[(int) value];
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : AAU.values()[(int) value];
+          }
         case (byte) 150:
-          value = readValue(buffer);
-          return value == null ? null : AAV.values()[(int) value];
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : AAV.values()[(int) value];
+          }
         case (byte) 151:
-          value = readValue(buffer);
-          return value == null ? null : AAW.values()[(int) value];
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : AAW.values()[(int) value];
+          }
         case (byte) 152:
-          value = readValue(buffer);
-          return value == null ? null : AAX.values()[(int) value];
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : AAX.values()[(int) value];
+          }
         case (byte) 153:
-          value = readValue(buffer);
-          return value == null ? null : AAY.values()[(int) value];
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : AAY.values()[(int) value];
+          }
         case (byte) 154:
-          value = readValue(buffer);
-          return value == null ? null : AAZ.values()[(int) value];
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : AAZ.values()[(int) value];
+          }
         case (byte) 155:
-          value = readValue(buffer);
-          return value == null ? null : AAAA.values()[(int) value];
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : AAAA.values()[(int) value];
+          }
         case (byte) 156:
-          value = readValue(buffer);
-          return value == null ? null : AAAB.values()[(int) value];
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : AAAB.values()[(int) value];
+          }
         case (byte) 157:
-          value = readValue(buffer);
-          return value == null ? null : AAAC.values()[(int) value];
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : AAAC.values()[(int) value];
+          }
         case (byte) 158:
-          value = readValue(buffer);
-          return value == null ? null : AAAD.values()[(int) value];
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : AAAD.values()[(int) value];
+          }
         case (byte) 159:
-          value = readValue(buffer);
-          return value == null ? null : AAAE.values()[(int) value];
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : AAAE.values()[(int) value];
+          }
         case (byte) 160:
-          value = readValue(buffer);
-          return value == null ? null : AAAF.values()[(int) value];
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : AAAF.values()[(int) value];
+          }
         case (byte) 161:
-          value = readValue(buffer);
-          return value == null ? null : AAAG.values()[(int) value];
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : AAAG.values()[(int) value];
+          }
         case (byte) 162:
-          value = readValue(buffer);
-          return value == null ? null : AAAH.values()[(int) value];
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : AAAH.values()[(int) value];
+          }
         case (byte) 163:
-          value = readValue(buffer);
-          return value == null ? null : AAAI.values()[(int) value];
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : AAAI.values()[(int) value];
+          }
         case (byte) 164:
-          value = readValue(buffer);
-          return value == null ? null : AAAJ.values()[(int) value];
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : AAAJ.values()[(int) value];
+          }
         case (byte) 165:
-          value = readValue(buffer);
-          return value == null ? null : AAAK.values()[(int) value];
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : AAAK.values()[(int) value];
+          }
         case (byte) 166:
-          value = readValue(buffer);
-          return value == null ? null : AAAL.values()[(int) value];
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : AAAL.values()[(int) value];
+          }
         case (byte) 167:
-          value = readValue(buffer);
-          return value == null ? null : AAAM.values()[(int) value];
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : AAAM.values()[(int) value];
+          }
         case (byte) 168:
-          value = readValue(buffer);
-          return value == null ? null : AAAN.values()[(int) value];
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : AAAN.values()[(int) value];
+          }
         case (byte) 169:
-          value = readValue(buffer);
-          return value == null ? null : AAAO.values()[(int) value];
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : AAAO.values()[(int) value];
+          }
         case (byte) 170:
-          value = readValue(buffer);
-          return value == null ? null : AAAP.values()[(int) value];
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : AAAP.values()[(int) value];
+          }
         case (byte) 171:
-          value = readValue(buffer);
-          return value == null ? null : AAAQ.values()[(int) value];
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : AAAQ.values()[(int) value];
+          }
         case (byte) 172:
-          value = readValue(buffer);
-          return value == null ? null : AAAR.values()[(int) value];
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : AAAR.values()[(int) value];
+          }
         case (byte) 173:
-          value = readValue(buffer);
-          return value == null ? null : AAAS.values()[(int) value];
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : AAAS.values()[(int) value];
+          }
         case (byte) 174:
-          value = readValue(buffer);
-          return value == null ? null : AAAT.values()[(int) value];
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : AAAT.values()[(int) value];
+          }
         case (byte) 175:
-          value = readValue(buffer);
-          return value == null ? null : AAAU.values()[(int) value];
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : AAAU.values()[(int) value];
+          }
         case (byte) 176:
-          value = readValue(buffer);
-          return value == null ? null : AAAV.values()[(int) value];
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : AAAV.values()[(int) value];
+          }
         case (byte) 177:
-          value = readValue(buffer);
-          return value == null ? null : AAAW.values()[(int) value];
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : AAAW.values()[(int) value];
+          }
         case (byte) 178:
-          value = readValue(buffer);
-          return value == null ? null : AAAX.values()[(int) value];
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : AAAX.values()[(int) value];
+          }
         case (byte) 179:
-          value = readValue(buffer);
-          return value == null ? null : AAAY.values()[(int) value];
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : AAAY.values()[(int) value];
+          }
         case (byte) 180:
-          value = readValue(buffer);
-          return value == null ? null : AAAZ.values()[(int) value];
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : AAAZ.values()[(int) value];
+          }
         case (byte) 181:
-          value = readValue(buffer);
-          return value == null ? null : AABA.values()[(int) value];
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : AABA.values()[(int) value];
+          }
         case (byte) 182:
-          value = readValue(buffer);
-          return value == null ? null : AABB.values()[(int) value];
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : AABB.values()[(int) value];
+          }
         case (byte) 183:
-          value = readValue(buffer);
-          return value == null ? null : AABC.values()[(int) value];
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : AABC.values()[(int) value];
+          }
         case (byte) 184:
-          value = readValue(buffer);
-          return value == null ? null : AABD.values()[(int) value];
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : AABD.values()[(int) value];
+          }
         case (byte) 185:
-          value = readValue(buffer);
-          return value == null ? null : AABE.values()[(int) value];
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : AABE.values()[(int) value];
+          }
         case (byte) 186:
-          value = readValue(buffer);
-          return value == null ? null : AABF.values()[(int) value];
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : AABF.values()[(int) value];
+          }
         case (byte) 187:
-          value = readValue(buffer);
-          return value == null ? null : AABG.values()[(int) value];
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : AABG.values()[(int) value];
+          }
         case (byte) 188:
-          value = readValue(buffer);
-          return value == null ? null : AABH.values()[(int) value];
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : AABH.values()[(int) value];
+          }
         case (byte) 189:
-          value = readValue(buffer);
-          return value == null ? null : AABI.values()[(int) value];
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : AABI.values()[(int) value];
+          }
         case (byte) 190:
-          value = readValue(buffer);
-          return value == null ? null : AABJ.values()[(int) value];
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : AABJ.values()[(int) value];
+          }
         case (byte) 191:
-          value = readValue(buffer);
-          return value == null ? null : AABK.values()[(int) value];
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : AABK.values()[(int) value];
+          }
         case (byte) 192:
-          value = readValue(buffer);
-          return value == null ? null : AABL.values()[(int) value];
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : AABL.values()[(int) value];
+          }
         case (byte) 193:
-          value = readValue(buffer);
-          return value == null ? null : AABM.values()[(int) value];
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : AABM.values()[(int) value];
+          }
         case (byte) 194:
-          value = readValue(buffer);
-          return value == null ? null : AABN.values()[(int) value];
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : AABN.values()[(int) value];
+          }
         case (byte) 195:
-          value = readValue(buffer);
-          return value == null ? null : AABO.values()[(int) value];
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : AABO.values()[(int) value];
+          }
         case (byte) 196:
-          value = readValue(buffer);
-          return value == null ? null : AABP.values()[(int) value];
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : AABP.values()[(int) value];
+          }
         case (byte) 197:
-          value = readValue(buffer);
-          return value == null ? null : AABQ.values()[(int) value];
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : AABQ.values()[(int) value];
+          }
         case (byte) 198:
-          value = readValue(buffer);
-          return value == null ? null : AABR.values()[(int) value];
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : AABR.values()[(int) value];
+          }
         case (byte) 199:
-          value = readValue(buffer);
-          return value == null ? null : AABS.values()[(int) value];
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : AABS.values()[(int) value];
+          }
         case (byte) 200:
-          value = readValue(buffer);
-          return value == null ? null : AABT.values()[(int) value];
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : AABT.values()[(int) value];
+          }
         case (byte) 201:
-          value = readValue(buffer);
-          return value == null ? null : AABU.values()[(int) value];
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : AABU.values()[(int) value];
+          }
         case (byte) 202:
-          value = readValue(buffer);
-          return value == null ? null : AABV.values()[(int) value];
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : AABV.values()[(int) value];
+          }
         case (byte) 203:
-          value = readValue(buffer);
-          return value == null ? null : AABW.values()[(int) value];
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : AABW.values()[(int) value];
+          }
         case (byte) 204:
-          value = readValue(buffer);
-          return value == null ? null : AABX.values()[(int) value];
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : AABX.values()[(int) value];
+          }
         case (byte) 205:
-          value = readValue(buffer);
-          return value == null ? null : AABY.values()[(int) value];
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : AABY.values()[(int) value];
+          }
         case (byte) 206:
-          value = readValue(buffer);
-          return value == null ? null : AABZ.values()[(int) value];
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : AABZ.values()[(int) value];
+          }
         case (byte) 207:
-          value = readValue(buffer);
-          return value == null ? null : AACA.values()[(int) value];
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : AACA.values()[(int) value];
+          }
         case (byte) 208:
-          value = readValue(buffer);
-          return value == null ? null : AACB.values()[(int) value];
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : AACB.values()[(int) value];
+          }
         case (byte) 209:
-          value = readValue(buffer);
-          return value == null ? null : AACC.values()[(int) value];
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : AACC.values()[(int) value];
+          }
         case (byte) 210:
-          value = readValue(buffer);
-          return value == null ? null : AACD.values()[(int) value];
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : AACD.values()[(int) value];
+          }
         case (byte) 211:
-          value = readValue(buffer);
-          return value == null ? null : AACE.values()[(int) value];
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : AACE.values()[(int) value];
+          }
         case (byte) 212:
-          value = readValue(buffer);
-          return value == null ? null : AACF.values()[(int) value];
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : AACF.values()[(int) value];
+          }
         case (byte) 213:
-          value = readValue(buffer);
-          return value == null ? null : AACG.values()[(int) value];
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : AACG.values()[(int) value];
+          }
         case (byte) 214:
-          value = readValue(buffer);
-          return value == null ? null : AACH.values()[(int) value];
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : AACH.values()[(int) value];
+          }
         case (byte) 215:
-          value = readValue(buffer);
-          return value == null ? null : AACI.values()[(int) value];
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : AACI.values()[(int) value];
+          }
         case (byte) 216:
-          value = readValue(buffer);
-          return value == null ? null : AACJ.values()[(int) value];
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : AACJ.values()[(int) value];
+          }
         case (byte) 217:
-          value = readValue(buffer);
-          return value == null ? null : AACK.values()[(int) value];
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : AACK.values()[(int) value];
+          }
         case (byte) 218:
-          value = readValue(buffer);
-          return value == null ? null : AACL.values()[(int) value];
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : AACL.values()[(int) value];
+          }
         case (byte) 219:
-          value = readValue(buffer);
-          return value == null ? null : AACM.values()[(int) value];
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : AACM.values()[(int) value];
+          }
         case (byte) 220:
-          value = readValue(buffer);
-          return value == null ? null : AACN.values()[(int) value];
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : AACN.values()[(int) value];
+          }
         case (byte) 221:
-          value = readValue(buffer);
-          return value == null ? null : AACO.values()[(int) value];
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : AACO.values()[(int) value];
+          }
         case (byte) 222:
-          value = readValue(buffer);
-          return value == null ? null : AACP.values()[(int) value];
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : AACP.values()[(int) value];
+          }
         case (byte) 223:
-          value = readValue(buffer);
-          return value == null ? null : AACQ.values()[(int) value];
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : AACQ.values()[(int) value];
+          }
         case (byte) 224:
-          value = readValue(buffer);
-          return value == null ? null : AACR.values()[(int) value];
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : AACR.values()[(int) value];
+          }
         case (byte) 225:
-          value = readValue(buffer);
-          return value == null ? null : AACS.values()[(int) value];
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : AACS.values()[(int) value];
+          }
         case (byte) 226:
-          value = readValue(buffer);
-          return value == null ? null : AACT.values()[(int) value];
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : AACT.values()[(int) value];
+          }
         case (byte) 227:
-          value = readValue(buffer);
-          return value == null ? null : AACU.values()[(int) value];
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : AACU.values()[(int) value];
+          }
         case (byte) 228:
-          value = readValue(buffer);
-          return value == null ? null : AACV.values()[(int) value];
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : AACV.values()[(int) value];
+          }
         case (byte) 229:
-          value = readValue(buffer);
-          return value == null ? null : AACW.values()[(int) value];
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : AACW.values()[(int) value];
+          }
         case (byte) 230:
-          value = readValue(buffer);
-          return value == null ? null : AACX.values()[(int) value];
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : AACX.values()[(int) value];
+          }
         case (byte) 231:
-          value = readValue(buffer);
-          return value == null ? null : AACY.values()[(int) value];
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : AACY.values()[(int) value];
+          }
         case (byte) 232:
-          value = readValue(buffer);
-          return value == null ? null : AACZ.values()[(int) value];
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : AACZ.values()[(int) value];
+          }
         case (byte) 233:
-          value = readValue(buffer);
-          return value == null ? null : AADA.values()[(int) value];
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : AADA.values()[(int) value];
+          }
         case (byte) 234:
-          value = readValue(buffer);
-          return value == null ? null : AADB.values()[(int) value];
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : AADB.values()[(int) value];
+          }
         case (byte) 235:
-          value = readValue(buffer);
-          return value == null ? null : AADC.values()[(int) value];
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : AADC.values()[(int) value];
+          }
         case (byte) 236:
-          value = readValue(buffer);
-          return value == null ? null : AADD.values()[(int) value];
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : AADD.values()[(int) value];
+          }
         case (byte) 237:
-          value = readValue(buffer);
-          return value == null ? null : AADE.values()[(int) value];
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : AADE.values()[(int) value];
+          }
         case (byte) 238:
-          value = readValue(buffer);
-          return value == null ? null : AADF.values()[(int) value];
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : AADF.values()[(int) value];
+          }
         case (byte) 239:
-          value = readValue(buffer);
-          return value == null ? null : AADG.values()[(int) value];
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : AADG.values()[(int) value];
+          }
         case (byte) 240:
-          value = readValue(buffer);
-          return value == null ? null : AADH.values()[(int) value];
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : AADH.values()[(int) value];
+          }
         case (byte) 241:
-          value = readValue(buffer);
-          return value == null ? null : AADI.values()[(int) value];
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : AADI.values()[(int) value];
+          }
         case (byte) 242:
-          value = readValue(buffer);
-          return value == null ? null : AADJ.values()[(int) value];
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : AADJ.values()[(int) value];
+          }
         case (byte) 243:
-          value = readValue(buffer);
-          return value == null ? null : AADK.values()[(int) value];
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : AADK.values()[(int) value];
+          }
         case (byte) 244:
-          value = readValue(buffer);
-          return value == null ? null : AADL.values()[(int) value];
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : AADL.values()[(int) value];
+          }
         case (byte) 245:
-          value = readValue(buffer);
-          return value == null ? null : AADM.values()[(int) value];
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : AADM.values()[(int) value];
+          }
         case (byte) 246:
-          value = readValue(buffer);
-          return value == null ? null : AADN.values()[(int) value];
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : AADN.values()[(int) value];
+          }
         case (byte) 247:
-          value = readValue(buffer);
-          return value == null ? null : AADO.values()[(int) value];
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : AADO.values()[(int) value];
+          }
         case (byte) 248:
-          value = readValue(buffer);
-          return value == null ? null : AADP.values()[(int) value];
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : AADP.values()[(int) value];
+          }
         case (byte) 249:
-          value = readValue(buffer);
-          return value == null ? null : AADQ.values()[(int) value];
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : AADQ.values()[(int) value];
+          }
         case (byte) 250:
-          value = readValue(buffer);
-          return value == null ? null : AADR.values()[(int) value];
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : AADR.values()[(int) value];
+          }
         case (byte) 251:
-          value = readValue(buffer);
-          return value == null ? null : AADS.values()[(int) value];
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : AADS.values()[(int) value];
+          }
         case (byte) 252:
-          value = readValue(buffer);
-          return value == null ? null : AADT.values()[(int) value];
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : AADT.values()[(int) value];
+          }
         case (byte) 253:
-          value = readValue(buffer);
-          return value == null ? null : AADU.values()[(int) value];
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : AADU.values()[(int) value];
+          }
         case (byte) 254:
-          value = readValue(buffer);
-          return value == null ? null : AADV.values()[(int) value];
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : AADV.values()[(int) value];
+          }
         case (byte) 255:
           return __pigeon_CodecOverflow.fromList((ArrayList<Object>) readValue(buffer));
         default:

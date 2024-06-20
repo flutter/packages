@@ -210,8 +210,10 @@ public class Messages {
       Object value;
       switch (type) {
         case (byte) 129:
-          value = readValue(buffer);
-          return value == null ? null : Code.values()[(int) value];
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : Code.values()[(int) value];
+          }
         case (byte) 130:
           return MessageData.fromList((ArrayList<Object>) readValue(buffer));
         default:
@@ -402,9 +404,7 @@ public class Messages {
               if (listReply.size() > 1) {
                 result.error(
                     new FlutterError(
-                        (String) listReply.get(0),
-                        (String) listReply.get(1),
-                        (String) listReply.get(2)));
+                        (String) listReply.get(0), (String) listReply.get(1), listReply.get(2)));
               } else if (listReply.get(0) == null) {
                 result.error(
                     new FlutterError(
