@@ -20,6 +20,7 @@ flutter:
 dependencies:
   flutter:
     sdk: flutter
+  meta: ^1.10.0
 
 dev_dependencies:
   build_runner: ^2.1.4
@@ -29,7 +30,7 @@ dev_dependencies:
   pigeon:
     git:
       url: git@github.com:bparrishMines/packages.git
-      ref: pigeon_wrapper_swift
+      ref: pigeon_helper
       path: packages/pigeon
 
 

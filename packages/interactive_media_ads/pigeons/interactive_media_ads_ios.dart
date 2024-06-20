@@ -208,7 +208,7 @@ enum AdEventType {
 abstract class IMAAdDisplayContainer {
   IMAAdDisplayContainer(
     UIView adContainer,
-    UIViewController adContainerViewController,
+    UIViewController? adContainerViewController,
   );
 }
 
@@ -243,12 +243,20 @@ abstract class UIView {
 /// See. https://developer.apple.com/documentation/uikit/uiviewcontroller.
 @ProxyApi()
 abstract class UIViewController {
+  UIViewController();
+
+  /// Retrieves the view that the controller manages.
+  ///
+  /// For convenience this is an `final` attached field despite this being
+  /// settable. Since this is not a part of the IMA SDK this is slightly changed
+  /// for convenience. Note that this wrapper should not add the ability to set
+  /// this property as it should not be needed anyways.
+  @attached
+  late final UIView view;
+
   /// Adds the specified view controller as a child of the current view
   /// controller.
   void addChild(UIViewController childController);
-
-  /// Retrieves the view that the controller manages.
-  UIView getView();
 
   /// Called after the view controller is added or removed from a container view
   /// controller.
@@ -386,6 +394,8 @@ abstract class IMAAdsManager {
 /// See https://developers.google.com/interactive-media-ads/docs/sdks/ios/client-side/reference/Protocols/IMAAdsManagerDelegate.html.
 @ProxyApi()
 abstract class IMAAdsManagerDelegate {
+  IMAAdsManagerDelegate();
+
   /// Called when there is an IMAAdEvent.
   late final void Function(
     IMAAdsManager adsManager,
