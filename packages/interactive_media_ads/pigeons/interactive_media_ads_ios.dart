@@ -216,27 +216,7 @@ abstract class IMAAdDisplayContainer {
 ///
 /// See https://developer.apple.com/documentation/uikit/uiview.
 @ProxyApi(swiftOptions: SwiftProxyApiOptions(import: 'UIKit'))
-abstract class UIView {
-  // /// The view’s background color.
-  // ///
-  // /// This converts Dart `Color.value` to the native `UIColor`.
-  // void setBackgroundColor(int? color);
-  //
-  // /// The frame rectangle, which describes the view’s location and size in its
-  // /// superview’s coordinate system.
-  // CGRect getFrame();
-  //
-  // /// The bounds rectangle, which describes the view’s location and size in its
-  // /// own coordinate system.
-  // CGRect getBounds();
-  //
-  // /// Adds a view to the end of the receiver’s list of subviews.
-  // void insertSubviewAt(UIView view, int index);
-  //
-  // /// Unlinks the view from its superview and its window, and removes it from
-  // /// the responder chain.
-  // void removeFromSuperview();
-}
+abstract class UIView {}
 
 /// An object that manages a view hierarchy for your UIKit app.
 ///
@@ -432,31 +412,3 @@ abstract class IMAAdEvent {
 abstract class IMAAdsRenderingSettings {
   IMAAdsRenderingSettings();
 }
-
-// /// An object that provides the interface to control the player’s transport
-// /// behavior.
-// ///
-// /// See https://developer.apple.com/documentation/avfoundation/avplayer/.
-// @ProxyApi(swiftOptions: SwiftProxyApiOptions(import: 'AVKit'))
-// abstract class AVPlayer {
-//   AVPlayer(String url);
-// }
-//
-// /// A view controller that displays content from a player and presents a native
-// /// user interface to control playback.
-// ///
-// /// See https://developer.apple.com/documentation/avkit/avplayerviewcontroller.
-// @ProxyApi()
-// abstract class AVPlayerViewController extends UIViewController {
-//   AVPlayerViewController();
-//
-//   /// The player object that provides the media content for the view controller
-//   /// to display.
-//   void setPlayer(AVPlayer? player);
-// }
-//
-// /// A structure that contains the location and dimensions of a rectangle.
-// ///
-// /// See https://developer.apple.com/documentation/corefoundation/cgrect.
-// @ProxyApi()
-// abstract class CGRect {}

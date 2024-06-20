@@ -52,7 +52,7 @@ base class IosAdsLoader extends PlatformAdsLoader {
           'Ensure the AdDisplayContainer has been added to the Widget tree before creating an AdsLoader.',
         ),
         super.implementation() {
-    _adsLoader = ima.IMAAdsLoader();
+    _adsLoader = _iosParams._proxy.newIMAAdsLoader();
     _adsLoader.setDelegate(_delegate);
   }
 

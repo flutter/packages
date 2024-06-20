@@ -46,11 +46,8 @@ class InteractiveMediaAdsProxy {
 
   /// Constructs [IMAAdsLoaderDelegate].
   final IMAAdsLoaderDelegate Function({
-    required void Function(
-      IMAAdsLoaderDelegate,
-      IMAAdsLoader,
-      IMAAdsLoadedData,
-    ) adLoaderLoadedWith,
+    required void Function(IMAAdsLoaderDelegate, IMAAdsLoader, IMAAdsLoadedData)
+        adLoaderLoadedWith,
     required void Function(
       IMAAdsLoaderDelegate,
       IMAAdsLoader,
@@ -60,24 +57,14 @@ class InteractiveMediaAdsProxy {
 
   /// Constructs [IMAAdsManagerDelegate].
   final IMAAdsManagerDelegate Function({
-    required void Function(
-      IMAAdsManagerDelegate,
-      IMAAdsManager,
-      IMAAdEvent,
-    ) didReceiveAdEvent,
-    required void Function(
-      IMAAdsManagerDelegate,
-      IMAAdsManager,
-      IMAAdError,
-    ) didReceiveAdError,
-    required void Function(
-      IMAAdsManagerDelegate,
-      IMAAdsManager,
-    ) didRequestContentPause,
-    required void Function(
-      IMAAdsManagerDelegate,
-      IMAAdsManager,
-    ) didRequestContentResume,
+    required void Function(IMAAdsManagerDelegate, IMAAdsManager, IMAAdEvent)
+        didReceiveAdEvent,
+    required void Function(IMAAdsManagerDelegate, IMAAdsManager, IMAAdError)
+        didReceiveAdError,
+    required void Function(IMAAdsManagerDelegate, IMAAdsManager)
+        didRequestContentPause,
+    required void Function(IMAAdsManagerDelegate, IMAAdsManager)
+        didRequestContentResume,
   }) newIMAAdsManagerDelegate;
 
   /// Constructs [IMAAdsRenderingSettings].
