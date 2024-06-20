@@ -51,7 +51,9 @@ class RouteInformationState<T> {
     this.completer,
     this.baseRouteMatchList,
     required this.type,
-  })  : assert((type == NavigatingType.go || type == NavigatingType.restore) ==
+  })  : assert((type == NavigatingType.go ||
+                type == NavigatingType.restore ||
+                type == NavigatingType.pop) ==
             (completer == null)),
         assert((type != NavigatingType.go) == (baseRouteMatchList != null));
 
