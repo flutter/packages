@@ -65,7 +65,7 @@
 /// strong reference to the implementor, but as the FlutterPlatformView, the lifetime of the
 /// FLTGoogleMapController instance is what needs to trigger Pigeon unregistration, so can't be
 /// the target of the registration.
-@interface FGMMapInspector : NSObject<FGMMapsInspectorApi>
+@interface FGMMapInspector : NSObject <FGMMapsInspectorApi>
 - (instancetype)initWithMapController:(nonnull FLTGoogleMapController *)controller
                             messenger:(NSObject<FlutterBinaryMessenger> *)messenger
                          pigeonSuffix:(NSString *)suffix;
@@ -73,7 +73,7 @@
 
 /// Private declarations.
 // This is separate in case the above is made public in the future (e.g., for unit testing).
-@interface FGMMapInspector()
+@interface FGMMapInspector ()
 /// The map controller this inspector corresponds to.
 @property(nonatomic, weak) FLTGoogleMapController *controller;
 /// The messenger this instance was registered with by Pigeon.
@@ -188,7 +188,9 @@
     [_mapView addObserver:self forKeyPath:@"frame" options:0 context:nil];
 
     NSString *suffix = [NSString stringWithFormat:@"%lld", viewId];
-    _inspector = [[FGMMapInspector alloc] initWithMapController:self messenger:registrar.messenger pigeonSuffix:suffix];
+    _inspector = [[FGMMapInspector alloc] initWithMapController:self
+                                                      messenger:registrar.messenger
+                                                   pigeonSuffix:suffix];
     SetUpFGMMapsInspectorApiWithSuffix(registrar.messenger, _inspector, suffix);
   }
   return self;
@@ -706,7 +708,8 @@
 - (nullable FGMPlatformTileLayer *)
     getInfoForTileOverlayWithIdentifier:(nonnull NSString *)tileOverlayId
                                   error:(FlutterError *_Nullable __autoreleasing *_Nonnull)error {
-  GMSTileLayer *layer = [self.controller.tileOverlaysController tileOverlayWithIdentifier:tileOverlayId].layer;
+  GMSTileLayer *layer =
+      [self.controller.tileOverlaysController tileOverlayWithIdentifier:tileOverlayId].layer;
   if (!layer) {
     return nil;
   }
@@ -733,7 +736,8 @@
 
 - (nullable FGMPlatformZoomRange *)zoomRange:
     (FlutterError *_Nullable __autoreleasing *_Nonnull)error {
-  return [FGMPlatformZoomRange makeWithMin:self.controller.mapView.minZoom max:self.controller.mapView.maxZoom];
+  return [FGMPlatformZoomRange makeWithMin:self.controller.mapView.minZoom
+                                       max:self.controller.mapView.maxZoom];
 }
 
 @end
