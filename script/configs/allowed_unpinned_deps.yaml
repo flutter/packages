@@ -45,6 +45,7 @@
 - meta
 - mime
 - path
+- platform
 - shelf
 - shelf_static
 - source_gen

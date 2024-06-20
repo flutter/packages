@@ -1,6 +1,13 @@
 ## 20.1.0
 
 * Removes restriction on number of custom types.
+* [java] Fixes bug with multiple enums.
+* [java] Removes `Object` from generics.
+* [swift] Fully-qualifies types in Equatable extension test.
+
+## 20.0.1
+
+* [cpp] Fixes handling of null class arguments.
 
 ## 20.0.0
 

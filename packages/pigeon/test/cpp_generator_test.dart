@@ -1194,7 +1194,7 @@ void main() {
       expect(
           code,
           contains(
-              'const auto* an_object_arg = &(std::any_cast<const ParameterObject&>(std::get<CustomEncodableValue>(encodable_an_object_arg)));'));
+              'const auto* an_object_arg = encodable_an_object_arg.IsNull() ? nullptr : &(std::any_cast<const ParameterObject&>(std::get<CustomEncodableValue>(encodable_an_object_arg)));'));
       // "Object" requires no extraction at all since it has to use
       // EncodableValue directly.
       expect(

@@ -1529,7 +1529,7 @@ if (!$encodableArgName.IsNull()) {
 }''');
       } else {
         indent.writeln(
-            'const auto* $argName = &(${_classReferenceFromEncodableValue(hostType, encodableArgName)});');
+            'const auto* $argName = $encodableArgName.IsNull() ? nullptr : &(${_classReferenceFromEncodableValue(hostType, encodableArgName)});');
       }
     } else {
       // Non-nullable arguments are either passed by value or reference, but the

@@ -25,7 +25,7 @@ packages/image_picker/**                                 @tarrinneal
 packages/interactive_media_ads/**                        @bparrishMines
 packages/in_app_purchase/**                              @bparrishMines
 packages/local_auth/**                                   @stuartmorgan
-packages/metrics_center/**                               @keyonghan
+packages/metrics_center/**                               @christopherfujino
 packages/multicast_dns/**                                @jmagman
 packages/palette_generator/**                            @gspencergoog
 packages/path_provider/**                                @stuartmorgan
@@ -85,8 +85,8 @@ packages/camera/camera_avfoundation/**                   @hellohuanlin
 packages/file_selector/file_selector_ios/**              @jmagman
 packages/file_selector/file_selector_macos/**            @jmagman
 packages/google_maps_flutter/google_maps_flutter_ios/**  @cbracken
-packages/google_sign_in/google_sign_in_ios/**            @vashworth @loic-sharma
-packages/image_picker/image_picker_ios/**                @vashworth @loic-sharma
+packages/google_sign_in/google_sign_in_ios/**            @loic-sharma
+packages/image_picker/image_picker_ios/**                @loic-sharma
 packages/image_picker/image_picker_macos/**              @jmagman
 packages/in_app_purchase/in_app_purchase_storekit/**     @louisehsu
 packages/ios_platform_images/**                          @jmagman

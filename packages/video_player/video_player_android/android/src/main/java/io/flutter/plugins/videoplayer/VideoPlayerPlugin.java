@@ -125,7 +125,7 @@ public class VideoPlayerPlugin implements FlutterPlugin, AndroidVideoPlayerApi {
       player =
           new VideoPlayer(
               flutterState.applicationContext,
-              eventChannel,
+              VideoPlayerEventCallbacks.bindTo(eventChannel),
               handle,
               "asset:///" + assetLookupKey,
               null,
@@ -136,7 +136,7 @@ public class VideoPlayerPlugin implements FlutterPlugin, AndroidVideoPlayerApi {
       player =
           new VideoPlayer(
               flutterState.applicationContext,
-              eventChannel,
+              VideoPlayerEventCallbacks.bindTo(eventChannel),
               handle,
               arg.getUri(),
               arg.getFormatHint(),

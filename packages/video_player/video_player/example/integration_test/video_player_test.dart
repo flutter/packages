@@ -194,9 +194,11 @@ void main() {
 
     testWidgets('test video player view with local asset',
         (WidgetTester tester) async {
+      final Completer<void> loaded = Completer<void>();
       Future<bool> started() async {
         await controller.initialize();
         await controller.play();
+        loaded.complete();
         return true;
       }
 
@@ -221,12 +223,12 @@ void main() {
         ),
       ));
 
+      await loaded.future;
       await tester.pumpAndSettle();
       expect(controller.value.isPlaying, true);
     },
-        skip: kIsWeb || // Web does not support local assets.
-            // Extremely flaky on iOS: https://github.com/flutter/flutter/issues/86915
-            defaultTargetPlatform == TargetPlatform.iOS);
+        // Web does not support local assets.
+        skip: kIsWeb);
   });
 
   group('file-based videos', () {

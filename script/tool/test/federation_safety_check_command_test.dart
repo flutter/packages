@@ -262,6 +262,89 @@ index abc123..def456 100644
     );
   });
 
+  test('fails with specific text for combo PRs using the recommended tooling',
+      () async {
+    final Directory pluginGroupDir = packagesDir.childDirectory('foo');
+    final RepositoryPackage appFacing = createFakePlugin('foo', pluginGroupDir);
+    final RepositoryPackage implementation =
+        createFakePlugin('foo_bar', pluginGroupDir);
+    final RepositoryPackage platformInterface =
+        createFakePlugin('foo_platform_interface', pluginGroupDir);
+
+    void addFakeTempPubspecOverrides(RepositoryPackage package) {
+      final String contents = package.pubspecFile.readAsStringSync();
+      package.pubspecFile.writeAsStringSync('''
+$contents
+
+# FOR TESTING AND INITIAL REVIEW ONLY. $kDoNotLandWarning.
+dependency_overrides:
+  foo_platform_interface:
+    path: ../../../foo/foo_platform_interface
+''');
+    }
+
+    addFakeTempPubspecOverrides(appFacing.getExamples().first);
+    addFakeTempPubspecOverrides(implementation.getExamples().first);
+
+    const String appFacingChanges = '''
+diff --git a/packages/foo/foo/lib/foo.dart b/packages/foo/foo/lib/foo.dart
+index abc123..def456 100644
+--- a/packages/foo/foo/lib/foo.dart
++++ b/packages/foo/foo/lib/foo.dart
+@@ -51,6 +51,9 @@ Future<bool> launchUrl(
+   return true;
+ }
+
++// This is a new method
++bool foo() => true;
++
+ // This in an existing method
+ void aMethod() {
+   // Do things.
+''';
+
+    final String changedFileOutput = <File>[
+      appFacing.libDirectory.childFile('foo.dart'),
+      implementation.libDirectory.childFile('foo.dart'),
+      platformInterface.pubspecFile,
+      platformInterface.libDirectory.childFile('foo.dart'),
+    ].map((File file) => file.path).join('\n');
+    processRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
+      FakeProcessInfo(MockProcess(stdout: changedFileOutput)),
+      FakeProcessInfo(MockProcess(stdout: appFacingChanges),
+          <String>['', 'HEAD', '--', '/packages/foo/foo/lib/foo.dart']),
+      // The others diffs don't need to be specified, since empty diff is also
+      // treated as a non-comment change.
+    ];
+
+    Error? commandError;
+    final List<String> output = await runCapturingPrint(
+        runner, <String>['federation-safety-check'], errorHandler: (Error e) {
+      commandError = e;
+    });
+
+    expect(commandError, isA<ToolExit>());
+    expect(
+      output,
+      containsAllInOrder(<Matcher>[
+        contains('Running for foo/foo...'),
+        contains('"DO NOT MERGE" found in pubspec.yaml, so this is assumed to '
+            'be the initial combination PR for a federated change, following '
+            'the standard repository procedure. This failure is expected, in '
+            'order to prevent accidentally landing the temporary overrides, '
+            'and will automatically be resolved when the temporary overrides '
+            'are replaced by dependency version bumps later in the process.'),
+        contains('Running for foo_bar...'),
+        contains('"DO NOT MERGE" found in pubspec.yaml'),
+        contains('The following packages had errors:'),
+        contains('foo/foo:\n'
+            '    Unresolved combo PR.'),
+        contains('foo_bar:\n'
+            '    Unresolved combo PR.'),
+      ]),
+    );
+  });
+
   test('ignores test-only changes to interface packages', () async {
     final Directory pluginGroupDir = packagesDir.childDirectory('foo');
     final RepositoryPackage appFacing = createFakePlugin('foo', pluginGroupDir);

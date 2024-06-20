@@ -5,6 +5,7 @@
 package io.flutter.plugins.videoplayer;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.Mockito.*;
@@ -14,17 +15,20 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 
 import android.graphics.SurfaceTexture;
-import com.google.android.exoplayer2.ExoPlayer;
-import com.google.android.exoplayer2.Format;
-import com.google.android.exoplayer2.PlaybackException;
-import com.google.android.exoplayer2.Player;
-import com.google.android.exoplayer2.upstream.DefaultHttpDataSource;
-import io.flutter.plugin.common.EventChannel;
+import androidx.media3.common.PlaybackException;
+import androidx.media3.common.Player;
+import androidx.media3.common.VideoSize;
+import androidx.media3.datasource.DefaultHttpDataSource;
+import androidx.media3.exoplayer.ExoPlayer;
 import io.flutter.view.TextureRegistry;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -37,27 +41,31 @@ import org.robolectric.RobolectricTestRunner;
 @RunWith(RobolectricTestRunner.class)
 public class VideoPlayerTest {
   private ExoPlayer fakeExoPlayer;
-  private EventChannel fakeEventChannel;
   private TextureRegistry.SurfaceTextureEntry fakeSurfaceTextureEntry;
-  private SurfaceTexture fakeSurfaceTexture;
   private VideoPlayerOptions fakeVideoPlayerOptions;
   private QueuingEventSink fakeEventSink;
   private DefaultHttpDataSource.Factory httpDataSourceFactorySpy;
 
   @Captor private ArgumentCaptor<HashMap<String, Object>> eventCaptor;
 
+  private AutoCloseable mocks;
+
   @Before
   public void before() {
-    MockitoAnnotations.openMocks(this);
+    mocks = MockitoAnnotations.openMocks(this);
 
     fakeExoPlayer = mock(ExoPlayer.class);
-    fakeEventChannel = mock(EventChannel.class);
     fakeSurfaceTextureEntry = mock(TextureRegistry.SurfaceTextureEntry.class);
-    fakeSurfaceTexture = mock(SurfaceTexture.class);
+    SurfaceTexture fakeSurfaceTexture = mock(SurfaceTexture.class);
     when(fakeSurfaceTextureEntry.surfaceTexture()).thenReturn(fakeSurfaceTexture);
     fakeVideoPlayerOptions = mock(VideoPlayerOptions.class);
     fakeEventSink = mock(QueuingEventSink.class);
     httpDataSourceFactorySpy = spy(new DefaultHttpDataSource.Factory());
+  }
+
+  @After
+  public void after() throws Exception {
+    mocks.close();
   }
 
   @Test
@@ -65,13 +73,12 @@ public class VideoPlayerTest {
     VideoPlayer videoPlayer =
         new VideoPlayer(
             fakeExoPlayer,
-            fakeEventChannel,
+            VideoPlayerEventCallbacks.withSink(fakeEventSink),
             fakeSurfaceTextureEntry,
             fakeVideoPlayerOptions,
-            fakeEventSink,
             httpDataSourceFactorySpy);
 
-    videoPlayer.buildHttpDataSourceFactory(new HashMap<>());
+    videoPlayer.configureHttpDataSourceFactory(new HashMap<>());
 
     verify(httpDataSourceFactorySpy).setUserAgent("ExoPlayer");
     verify(httpDataSourceFactorySpy).setAllowCrossProtocolRedirects(true);
@@ -84,10 +91,9 @@ public class VideoPlayerTest {
     VideoPlayer videoPlayer =
         new VideoPlayer(
             fakeExoPlayer,
-            fakeEventChannel,
+            VideoPlayerEventCallbacks.withSink(fakeEventSink),
             fakeSurfaceTextureEntry,
             fakeVideoPlayerOptions,
-            fakeEventSink,
             httpDataSourceFactorySpy);
     Map<String, String> httpHeaders =
         new HashMap<String, String>() {
@@ -97,7 +103,7 @@ public class VideoPlayerTest {
           }
         };
 
-    videoPlayer.buildHttpDataSourceFactory(httpHeaders);
+    videoPlayer.configureHttpDataSourceFactory(httpHeaders);
 
     verify(httpDataSourceFactorySpy).setUserAgent("userAgent");
     verify(httpDataSourceFactorySpy).setAllowCrossProtocolRedirects(true);
@@ -110,10 +116,9 @@ public class VideoPlayerTest {
     VideoPlayer videoPlayer =
         new VideoPlayer(
             fakeExoPlayer,
-            fakeEventChannel,
+            VideoPlayerEventCallbacks.withSink(fakeEventSink),
             fakeSurfaceTextureEntry,
             fakeVideoPlayerOptions,
-            fakeEventSink,
             httpDataSourceFactorySpy);
     Map<String, String> httpHeaders =
         new HashMap<String, String>() {
@@ -122,127 +127,147 @@ public class VideoPlayerTest {
           }
         };
 
-    videoPlayer.buildHttpDataSourceFactory(httpHeaders);
+    videoPlayer.configureHttpDataSourceFactory(httpHeaders);
 
     verify(httpDataSourceFactorySpy).setUserAgent("ExoPlayer");
     verify(httpDataSourceFactorySpy).setAllowCrossProtocolRedirects(true);
     verify(httpDataSourceFactorySpy).setDefaultRequestProperties(httpHeaders);
   }
 
+  private Player.Listener initVideoPlayerAndGetListener() {
+    ArgumentCaptor<Player.Listener> listenerCaptor = ArgumentCaptor.forClass(Player.Listener.class);
+    doNothing().when(fakeExoPlayer).addListener(listenerCaptor.capture());
+
+    // Create a video player that will invoke fakeEventSink as a result of Player.Listener calls.
+    new VideoPlayer(
+        fakeExoPlayer,
+        VideoPlayerEventCallbacks.withSink(fakeEventSink),
+        fakeSurfaceTextureEntry,
+        fakeVideoPlayerOptions,
+        httpDataSourceFactorySpy);
+
+    return Objects.requireNonNull(listenerCaptor.getValue());
+  }
+
+  @Test
+  public void onPlaybackStateBufferingSendBufferedPositionUpdate() {
+    Player.Listener listener = initVideoPlayerAndGetListener();
+    when(fakeExoPlayer.getBufferedPosition()).thenReturn(10L);
+
+    // Send Player.STATE_BUFFERING to trigger the "bufferingUpdate" event.
+    listener.onPlaybackStateChanged(Player.STATE_BUFFERING);
+
+    verify(fakeEventSink, atLeast(1)).success(eventCaptor.capture());
+    List<HashMap<String, Object>> events = eventCaptor.getAllValues();
+
+    Map<String, Object> expected = new HashMap<>();
+    expected.put("event", "bufferingUpdate");
+
+    List<? extends Number> range = Arrays.asList(0, 10L);
+    expected.put("values", Collections.singletonList(range));
+
+    // We received potentially multiple events, find the one that is a "bufferingUpdate".
+    for (Map<String, Object> event : events) {
+      if (event.get("event") == "bufferingUpdate") {
+        assertEquals(expected, event);
+        return;
+      }
+    }
+
+    fail("No 'bufferingUpdate' event found: " + events);
+  }
+
   @Test
   public void sendInitializedSendsExpectedEvent_90RotationDegrees() {
-    VideoPlayer videoPlayer =
-        new VideoPlayer(
-            fakeExoPlayer,
-            fakeEventChannel,
-            fakeSurfaceTextureEntry,
-            fakeVideoPlayerOptions,
-            fakeEventSink,
-            httpDataSourceFactorySpy);
-    Format testFormat =
-        new Format.Builder().setWidth(100).setHeight(200).setRotationDegrees(90).build();
+    Player.Listener listener = initVideoPlayerAndGetListener();
+    VideoSize testVideoSize = new VideoSize(100, 200, 90, 1f);
 
-    when(fakeExoPlayer.getVideoFormat()).thenReturn(testFormat);
+    when(fakeExoPlayer.getVideoSize()).thenReturn(testVideoSize);
     when(fakeExoPlayer.getDuration()).thenReturn(10L);
 
-    videoPlayer.isInitialized = true;
-    videoPlayer.sendInitialized();
+    // Send Player.STATE_READY to trigger the "initialized" event.
+    listener.onPlaybackStateChanged(Player.STATE_READY);
 
     verify(fakeEventSink).success(eventCaptor.capture());
-    HashMap<String, Object> event = eventCaptor.getValue();
+    HashMap<String, Object> actual = eventCaptor.getValue();
 
-    assertEquals(event.get("event"), "initialized");
-    assertEquals(event.get("duration"), 10L);
-    assertEquals(event.get("width"), 200);
-    assertEquals(event.get("height"), 100);
-    assertEquals(event.get("rotationCorrection"), null);
+    Map<String, Object> expected = new HashMap<>();
+    expected.put("event", "initialized");
+    expected.put("duration", 10L);
+    expected.put("width", 200);
+    expected.put("height", 100);
+
+    assertEquals(expected, actual);
   }
 
   @Test
   public void sendInitializedSendsExpectedEvent_270RotationDegrees() {
-    VideoPlayer videoPlayer =
-        new VideoPlayer(
-            fakeExoPlayer,
-            fakeEventChannel,
-            fakeSurfaceTextureEntry,
-            fakeVideoPlayerOptions,
-            fakeEventSink,
-            httpDataSourceFactorySpy);
-    Format testFormat =
-        new Format.Builder().setWidth(100).setHeight(200).setRotationDegrees(270).build();
+    Player.Listener listener = initVideoPlayerAndGetListener();
+    VideoSize testVideoSize = new VideoSize(100, 200, 270, 1f);
 
-    when(fakeExoPlayer.getVideoFormat()).thenReturn(testFormat);
+    when(fakeExoPlayer.getVideoSize()).thenReturn(testVideoSize);
     when(fakeExoPlayer.getDuration()).thenReturn(10L);
 
-    videoPlayer.isInitialized = true;
-    videoPlayer.sendInitialized();
+    // Send Player.STATE_READY to trigger the "initialized" event.
+    listener.onPlaybackStateChanged(Player.STATE_READY);
 
     verify(fakeEventSink).success(eventCaptor.capture());
-    HashMap<String, Object> event = eventCaptor.getValue();
+    HashMap<String, Object> actual = eventCaptor.getValue();
 
-    assertEquals(event.get("event"), "initialized");
-    assertEquals(event.get("duration"), 10L);
-    assertEquals(event.get("width"), 200);
-    assertEquals(event.get("height"), 100);
-    assertEquals(event.get("rotationCorrection"), null);
+    Map<String, Object> expected = new HashMap<>();
+    expected.put("event", "initialized");
+    expected.put("duration", 10L);
+    expected.put("width", 200);
+    expected.put("height", 100);
+
+    assertEquals(expected, actual);
   }
 
   @Test
   public void sendInitializedSendsExpectedEvent_0RotationDegrees() {
-    VideoPlayer videoPlayer =
-        new VideoPlayer(
-            fakeExoPlayer,
-            fakeEventChannel,
-            fakeSurfaceTextureEntry,
-            fakeVideoPlayerOptions,
-            fakeEventSink,
-            httpDataSourceFactorySpy);
-    Format testFormat =
-        new Format.Builder().setWidth(100).setHeight(200).setRotationDegrees(0).build();
+    Player.Listener listener = initVideoPlayerAndGetListener();
+    VideoSize testVideoSize = new VideoSize(100, 200, 0, 1f);
 
-    when(fakeExoPlayer.getVideoFormat()).thenReturn(testFormat);
+    when(fakeExoPlayer.getVideoSize()).thenReturn(testVideoSize);
     when(fakeExoPlayer.getDuration()).thenReturn(10L);
 
-    videoPlayer.isInitialized = true;
-    videoPlayer.sendInitialized();
+    // Send Player.STATE_READY to trigger the "initialized" event.
+    listener.onPlaybackStateChanged(Player.STATE_READY);
 
     verify(fakeEventSink).success(eventCaptor.capture());
-    HashMap<String, Object> event = eventCaptor.getValue();
+    HashMap<String, Object> actual = eventCaptor.getValue();
 
-    assertEquals(event.get("event"), "initialized");
-    assertEquals(event.get("duration"), 10L);
-    assertEquals(event.get("width"), 100);
-    assertEquals(event.get("height"), 200);
-    assertEquals(event.get("rotationCorrection"), null);
+    Map<String, Object> expected = new HashMap<>();
+    expected.put("event", "initialized");
+    expected.put("duration", 10L);
+    expected.put("width", 100);
+    expected.put("height", 200);
+
+    assertEquals(expected, actual);
   }
 
   @Test
   public void sendInitializedSendsExpectedEvent_180RotationDegrees() {
-    VideoPlayer videoPlayer =
-        new VideoPlayer(
-            fakeExoPlayer,
-            fakeEventChannel,
-            fakeSurfaceTextureEntry,
-            fakeVideoPlayerOptions,
-            fakeEventSink,
-            httpDataSourceFactorySpy);
-    Format testFormat =
-        new Format.Builder().setWidth(100).setHeight(200).setRotationDegrees(180).build();
+    Player.Listener listener = initVideoPlayerAndGetListener();
+    VideoSize testVideoSize = new VideoSize(100, 200, 180, 1f);
 
-    when(fakeExoPlayer.getVideoFormat()).thenReturn(testFormat);
+    when(fakeExoPlayer.getVideoSize()).thenReturn(testVideoSize);
     when(fakeExoPlayer.getDuration()).thenReturn(10L);
 
-    videoPlayer.isInitialized = true;
-    videoPlayer.sendInitialized();
+    // Send Player.STATE_READY to trigger the "initialized" event.
+    listener.onPlaybackStateChanged(Player.STATE_READY);
 
     verify(fakeEventSink).success(eventCaptor.capture());
-    HashMap<String, Object> event = eventCaptor.getValue();
+    HashMap<String, Object> actual = eventCaptor.getValue();
 
-    assertEquals(event.get("event"), "initialized");
-    assertEquals(event.get("duration"), 10L);
-    assertEquals(event.get("width"), 100);
-    assertEquals(event.get("height"), 200);
-    assertEquals(event.get("rotationCorrection"), 180);
+    Map<String, Object> expected = new HashMap<>();
+    expected.put("event", "initialized");
+    expected.put("duration", 10L);
+    expected.put("width", 100);
+    expected.put("height", 200);
+    expected.put("rotationCorrection", 180);
+
+    assertEquals(expected, actual);
   }
 
   @Test
@@ -250,10 +275,9 @@ public class VideoPlayerTest {
     VideoPlayer videoPlayer =
         new VideoPlayer(
             fakeExoPlayer,
-            fakeEventChannel,
+            VideoPlayerEventCallbacks.withSink(fakeEventSink),
             fakeSurfaceTextureEntry,
             fakeVideoPlayerOptions,
-            fakeEventSink,
             httpDataSourceFactorySpy);
 
     doAnswer(
@@ -261,7 +285,7 @@ public class VideoPlayerTest {
                 invocation -> {
                   Map<String, Object> event = new HashMap<>();
                   event.put("event", "isPlayingStateUpdate");
-                  event.put("isPlaying", (Boolean) invocation.getArguments()[0]);
+                  event.put("isPlaying", invocation.getArguments()[0]);
                   fakeEventSink.success(event);
                   return null;
                 })
@@ -292,13 +316,13 @@ public class VideoPlayerTest {
         .when(fakeExoPlayer)
         .addListener(any());
 
+    @SuppressWarnings("unused")
     VideoPlayer unused =
         new VideoPlayer(
             fakeExoPlayer,
-            fakeEventChannel,
+            VideoPlayerEventCallbacks.withSink(fakeEventSink),
             fakeSurfaceTextureEntry,
             fakeVideoPlayerOptions,
-            fakeEventSink,
             httpDataSourceFactorySpy);
 
     PlaybackException exception =
@@ -307,5 +331,29 @@ public class VideoPlayerTest {
 
     verify(fakeExoPlayer).seekToDefaultPosition();
     verify(fakeExoPlayer).prepare();
+  }
+
+  @Test
+  public void otherErrorsReportVideoErrorWithErrorString() {
+    List<Player.Listener> listeners = new LinkedList<>();
+    doAnswer(invocation -> listeners.add(invocation.getArgument(0)))
+        .when(fakeExoPlayer)
+        .addListener(any());
+
+    @SuppressWarnings("unused")
+    VideoPlayer unused =
+        new VideoPlayer(
+            fakeExoPlayer,
+            VideoPlayerEventCallbacks.withSink(fakeEventSink),
+            fakeSurfaceTextureEntry,
+            fakeVideoPlayerOptions,
+            httpDataSourceFactorySpy);
+
+    PlaybackException exception =
+        new PlaybackException(
+            "You did bad kid", null, PlaybackException.ERROR_CODE_DECODING_FAILED);
+    listeners.forEach(listener -> listener.onPlayerError(exception));
+
+    verify(fakeEventSink).error(eq("VideoError"), contains("You did bad kid"), any());
   }
 }
