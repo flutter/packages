@@ -1026,37 +1026,37 @@ class GoogleMapController
   /** MapsInspectorApi implementation */
   @Override
   public @NonNull Boolean areBuildingsEnabled() {
-    return googleMap.isBuildingsEnabled();
+    return Objects.requireNonNull(googleMap).isBuildingsEnabled();
   }
 
   @Override
   public @NonNull Boolean areRotateGesturesEnabled() {
-    return googleMap.getUiSettings().isRotateGesturesEnabled();
+    return Objects.requireNonNull(googleMap).getUiSettings().isRotateGesturesEnabled();
   }
 
   @Override
   public @NonNull Boolean areZoomControlsEnabled() {
-    return googleMap.getUiSettings().isZoomControlsEnabled();
+    return Objects.requireNonNull(googleMap).getUiSettings().isZoomControlsEnabled();
   }
 
   @Override
   public @NonNull Boolean areScrollGesturesEnabled() {
-    return googleMap.getUiSettings().isScrollGesturesEnabled();
+    return Objects.requireNonNull(googleMap).getUiSettings().isScrollGesturesEnabled();
   }
 
   @Override
   public @NonNull Boolean areTiltGesturesEnabled() {
-    return googleMap.getUiSettings().isTiltGesturesEnabled();
+    return Objects.requireNonNull(googleMap).getUiSettings().isTiltGesturesEnabled();
   }
 
   @Override
   public @NonNull Boolean areZoomGesturesEnabled() {
-    return googleMap.getUiSettings().isZoomGesturesEnabled();
+    return Objects.requireNonNull(googleMap).getUiSettings().isZoomGesturesEnabled();
   }
 
   @Override
   public @NonNull Boolean isCompassEnabled() {
-    return googleMap.getUiSettings().isCompassEnabled();
+    return Objects.requireNonNull(googleMap).getUiSettings().isCompassEnabled();
   }
 
   @Override
@@ -1066,17 +1066,17 @@ class GoogleMapController
 
   @Override
   public @NonNull Boolean isMapToolbarEnabled() {
-    return googleMap.getUiSettings().isMapToolbarEnabled();
+    return Objects.requireNonNull(googleMap).getUiSettings().isMapToolbarEnabled();
   }
 
   @Override
   public @NonNull Boolean isMyLocationButtonEnabled() {
-    return googleMap.getUiSettings().isMyLocationButtonEnabled();
+    return Objects.requireNonNull(googleMap).getUiSettings().isMyLocationButtonEnabled();
   }
 
   @Override
   public @NonNull Boolean isTrafficEnabled() {
-    return googleMap.isTrafficEnabled();
+    return Objects.requireNonNull(googleMap).isTrafficEnabled();
   }
 
   @Override
@@ -1096,8 +1096,8 @@ class GoogleMapController
   @Override
   public @NonNull Messages.PlatformZoomRange getZoomRange() {
     return new Messages.PlatformZoomRange.Builder()
-        .setMin((double) googleMap.getMinZoomLevel())
-        .setMax((double) googleMap.getMaxZoomLevel())
+        .setMin((double) Objects.requireNonNull(googleMap).getMinZoomLevel())
+        .setMax((double) Objects.requireNonNull(googleMap).getMaxZoomLevel())
         .build();
   }
 
