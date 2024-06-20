@@ -223,11 +223,12 @@ class GoRouteInformationProvider extends RouteInformationProvider
   /// Save the pop state to value when remove top-most route.
   void popSave<T>(String location, {required RouteMatchList base}) {
     _value = RouteInformation(
-        uri: Uri.parse(location),
-        state: RouteInformationState<T>(
-          baseRouteMatchList: base,
-          type: NavigatingType.pop,
-        ));
+      uri: Uri.parse(location),
+      state: RouteInformationState<T>(
+        baseRouteMatchList: base,
+        type: NavigatingType.pop,
+      ),
+    );
   }
 
   RouteInformation _valueInEngine;
