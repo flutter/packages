@@ -77,6 +77,16 @@ abstract class MapsApi {
   @async
   void waitForMap();
 
+  /// Show the info window for the marker with the given ID.
+  void showInfoWindow(String markerId);
+
+  /// Hide the info window for the marker with the given ID.
+  void hideInfoWindow(String markerId);
+
+  /// Returns true if the marker with the given ID is currently displaying its
+  /// info window.
+  bool isInfoWindowShown(String markerId);
+
   /// Sets the style to the given map style string, where an empty string
   /// indicates that the style should be cleared.
   ///

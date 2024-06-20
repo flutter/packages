@@ -639,6 +639,13 @@ public class Messages {
   public interface MapsApi {
     /** Returns once the map instance is available. */
     void waitForMap(@NonNull VoidResult result);
+    /** Show the info window for the marker with the given ID. */
+    void showInfoWindow(@NonNull String markerId);
+    /** Hide the info window for the marker with the given ID. */
+    void hideInfoWindow(@NonNull String markerId);
+    /** Returns true if the marker with the given ID is currently displaying its info window. */
+    @NonNull
+    Boolean isInfoWindowShown(@NonNull String markerId);
     /**
      * Sets the style to the given map style string, where an empty string indicates that the style
      * should be cleared.
@@ -696,6 +703,84 @@ public class Messages {
                     };
 
                 api.waitForMap(resultCallback);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.google_maps_flutter_android.MapsApi.showInfoWindow"
+                    + messageChannelSuffix,
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                String markerIdArg = (String) args.get(0);
+                try {
+                  api.showInfoWindow(markerIdArg);
+                  wrapped.add(0, null);
+                } catch (Throwable exception) {
+                  ArrayList<Object> wrappedError = wrapError(exception);
+                  wrapped = wrappedError;
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.google_maps_flutter_android.MapsApi.hideInfoWindow"
+                    + messageChannelSuffix,
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                String markerIdArg = (String) args.get(0);
+                try {
+                  api.hideInfoWindow(markerIdArg);
+                  wrapped.add(0, null);
+                } catch (Throwable exception) {
+                  ArrayList<Object> wrappedError = wrapError(exception);
+                  wrapped = wrappedError;
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.google_maps_flutter_android.MapsApi.isInfoWindowShown"
+                    + messageChannelSuffix,
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                String markerIdArg = (String) args.get(0);
+                try {
+                  Boolean output = api.isInfoWindowShown(markerIdArg);
+                  wrapped.add(0, output);
+                } catch (Throwable exception) {
+                  ArrayList<Object> wrappedError = wrapError(exception);
+                  wrapped = wrappedError;
+                }
+                reply.reply(wrapped);
               });
         } else {
           channel.setMessageHandler(null);

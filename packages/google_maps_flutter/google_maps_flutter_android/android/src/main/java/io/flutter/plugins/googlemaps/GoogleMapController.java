@@ -403,24 +403,6 @@ class GoogleMapController
           result.success(null);
           break;
         }
-      case "markers#showInfoWindow":
-        {
-          Object markerId = call.argument("markerId");
-          markersController.showMarkerInfoWindow((String) markerId, result);
-          break;
-        }
-      case "markers#hideInfoWindow":
-        {
-          Object markerId = call.argument("markerId");
-          markersController.hideMarkerInfoWindow((String) markerId, result);
-          break;
-        }
-      case "markers#isInfoWindowShown":
-        {
-          Object markerId = call.argument("markerId");
-          markersController.isInfoWindowShown((String) markerId, result);
-          break;
-        }
       case "clusterManagers#update":
         {
           List<Object> clusterManagersToAdd = call.argument("clusterManagersToAdd");
@@ -1001,6 +983,22 @@ class GoogleMapController
     } else {
       result.success();
     }
+  }
+
+  @Override
+  public void showInfoWindow(@NonNull String markerId) {
+    markersController.showMarkerInfoWindow(markerId);
+  }
+
+  @Override
+  public void hideInfoWindow(@NonNull String markerId) {
+    markersController.hideMarkerInfoWindow(markerId);
+  }
+
+  @NonNull
+  @Override
+  public Boolean isInfoWindowShown(@NonNull String markerId) {
+    return markersController.isInfoWindowShown(markerId);
   }
 
   @Override

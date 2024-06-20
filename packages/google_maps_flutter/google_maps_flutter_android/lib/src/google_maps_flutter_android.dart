@@ -498,8 +498,7 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
     MarkerId markerId, {
     required int mapId,
   }) {
-    return _channel(mapId).invokeMethod<void>(
-        'markers#showInfoWindow', <String, String>{'markerId': markerId.value});
+    return _hostApi(mapId).showInfoWindow(markerId.value);
   }
 
   @override
@@ -507,18 +506,15 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
     MarkerId markerId, {
     required int mapId,
   }) {
-    return _channel(mapId).invokeMethod<void>(
-        'markers#hideInfoWindow', <String, String>{'markerId': markerId.value});
+    return _hostApi(mapId).hideInfoWindow(markerId.value);
   }
 
   @override
   Future<bool> isMarkerInfoWindowShown(
     MarkerId markerId, {
     required int mapId,
-  }) async {
-    return (await _channel(mapId).invokeMethod<bool>(
-        'markers#isInfoWindowShown',
-        <String, String>{'markerId': markerId.value}))!;
+  }) {
+    return _hostApi(mapId).isInfoWindowShown(markerId.value);
   }
 
   @override
