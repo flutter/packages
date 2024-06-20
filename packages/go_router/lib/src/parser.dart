@@ -22,9 +22,9 @@ import 'router.dart';
 /// The returned [RouteMatchList] is used as parsed result for the
 /// [GoRouterDelegate].
 typedef ParserExceptionHandler = RouteMatchList Function(
-    BuildContext context,
-    RouteMatchList routeMatchList,
-    );
+  BuildContext context,
+  RouteMatchList routeMatchList,
+);
 
 /// Converts between incoming URLs and a [RouteMatchList] using [RouteMatcher].
 /// Also performs redirection using [RouteRedirector].
@@ -57,9 +57,9 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
   /// Called by the [Router]. The
   @override
   Future<RouteMatchList> parseRouteInformationWithDependencies(
-      RouteInformation routeInformation,
-      BuildContext context,
-      ) {
+    RouteInformation routeInformation,
+    BuildContext context,
+  ) {
     assert(routeInformation.state != null);
     final Object state = routeInformation.state!;
 
@@ -68,7 +68,7 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
       // restoration. In this case, the route match list is already stored in
       // the state.
       final RouteMatchList matchList =
-      _routeMatchListCodec.decode(state as Map<Object?, Object?>);
+          _routeMatchListCodec.decode(state as Map<Object?, Object?>);
       return debugParserFuture = _redirect(context, matchList)
           .then<RouteMatchList>((RouteMatchList value) {
         if (value.isError && onParserException != null) {
@@ -116,7 +116,7 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
       assert(() {
         if (matchList.isNotEmpty) {
           assert(!matchList.last.route.redirectOnly,
-          'A redirect-only route must redirect to location different from itself.\n The offending route: ${matchList.last.route}');
+              'A redirect-only route must redirect to location different from itself.\n The offending route: ${matchList.last.route}');
         }
         return true;
       }());
@@ -178,11 +178,11 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
   }
 
   RouteMatchList _updateRouteMatchList(
-      RouteMatchList newMatchList, {
-        required RouteMatchList? baseRouteMatchList,
-        required Completer<Object?>? completer,
-        required NavigatingType type,
-      }) {
+    RouteMatchList newMatchList, {
+    required RouteMatchList? baseRouteMatchList,
+    required Completer<Object?>? completer,
+    required NavigatingType type,
+  }) {
     switch (type) {
       case NavigatingType.push:
         return baseRouteMatchList!.push(
@@ -195,25 +195,25 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
       case NavigatingType.pushReplacement:
         final RouteMatch routeMatch = baseRouteMatchList!.last;
         return baseRouteMatchList.remove(routeMatch).push(
-          ImperativeRouteMatch(
-            pageKey: _getUniqueValueKey(),
-            completer: completer!,
-            matches: newMatchList,
-          ),
-        );
+              ImperativeRouteMatch(
+                pageKey: _getUniqueValueKey(),
+                completer: completer!,
+                matches: newMatchList,
+              ),
+            );
       case NavigatingType.replace:
         final RouteMatch routeMatch = baseRouteMatchList!.last;
         return baseRouteMatchList.remove(routeMatch).push(
-          ImperativeRouteMatch(
-            pageKey: routeMatch.pageKey,
-            completer: completer!,
-            matches: newMatchList,
-          ),
-        );
+              ImperativeRouteMatch(
+                pageKey: routeMatch.pageKey,
+                completer: completer!,
+                matches: newMatchList,
+              ),
+            );
       case NavigatingType.go:
         return newMatchList;
       case NavigatingType.restore:
-      // Still need to consider redirection.
+        // Still need to consider redirection.
         return baseRouteMatchList!.uri.toString() != newMatchList.uri.toString()
             ? newMatchList
             : baseRouteMatchList;
