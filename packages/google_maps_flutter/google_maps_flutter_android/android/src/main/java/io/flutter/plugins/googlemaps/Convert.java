@@ -36,7 +36,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /** Conversions between JSON-like values and GoogleMaps data types. */
 class Convert {
@@ -377,6 +376,13 @@ class Convert {
     return arguments;
   }
 
+  static Messages.PlatformLatLngBounds latLngBoundsToPigeon(LatLngBounds latLngBounds) {
+    return new Messages.PlatformLatLngBounds.Builder()
+        .setNortheast(latLngToPigeon(latLngBounds.northeast))
+        .setSouthwest(latLngToPigeon(latLngBounds.southwest))
+        .build();
+  }
+
   static Object markerIdToJson(String markerId) {
     if (markerId == null) {
       return null;
@@ -431,13 +437,11 @@ class Convert {
     return Arrays.asList(latLng.latitude, latLng.longitude);
   }
 
-  static Object clustersToJson(
-      String clusterManagerId, Set<? extends Cluster<MarkerBuilder>> clusters) {
-    List<Object> data = new ArrayList<>(clusters.size());
-    for (Cluster<MarkerBuilder> cluster : clusters) {
-      data.add(clusterToJson(clusterManagerId, cluster));
-    }
-    return data;
+  static Messages.PlatformLatLng latLngToPigeon(LatLng latLng) {
+    return new Messages.PlatformLatLng.Builder()
+        .setLat(latLng.latitude)
+        .setLng(latLng.longitude)
+        .build();
   }
 
   static Object clusterToJson(String clusterManagerId, Cluster<MarkerBuilder> cluster) {
@@ -468,6 +472,27 @@ class Convert {
     data.put("bounds", bounds);
     data.put("markerIds", Arrays.asList(markerIds));
     return data;
+  }
+
+  static Messages.PlatformCluster clusterToPigeon(
+      String clusterManagerId, Cluster<MarkerBuilder> cluster) {
+    int clusterSize = cluster.getSize();
+    String[] markerIds = new String[clusterSize];
+    MarkerBuilder[] markerBuilders = cluster.getItems().toArray(new MarkerBuilder[clusterSize]);
+
+    LatLngBounds.Builder latLngBoundsBuilder = LatLngBounds.builder();
+    for (int i = 0; i < clusterSize; i++) {
+      MarkerBuilder markerBuilder = markerBuilders[i];
+      latLngBoundsBuilder.include(markerBuilder.getPosition());
+      markerIds[i] = markerBuilder.markerId();
+    }
+
+    return new Messages.PlatformCluster.Builder()
+        .setClusterManagerId(clusterManagerId)
+        .setPosition(latLngToPigeon(cluster.getPosition()))
+        .setBounds(latLngBoundsToPigeon(latLngBoundsBuilder.build()))
+        .setMarkerIds(Arrays.asList(markerIds))
+        .build();
   }
 
   static LatLng toLatLng(Object o) {
