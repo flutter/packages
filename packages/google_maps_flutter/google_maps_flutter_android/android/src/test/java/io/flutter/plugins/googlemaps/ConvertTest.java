@@ -19,7 +19,6 @@ import android.os.Build;
 import android.util.Base64;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.maps.android.clustering.Cluster;
 import com.google.maps.android.clustering.algo.StaticCluster;
 import io.flutter.plugins.googlemaps.Convert.BitmapDescriptorFactoryWrapper;
 import io.flutter.plugins.googlemaps.Convert.FlutterInjectorWrapper;
@@ -28,10 +27,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -84,7 +81,7 @@ public class ConvertTest {
   }
 
   @Test
-  public void ConvertClustersToJsonReturnsCorrectData() {
+  public void ConvertClusterToJsonReturnsCorrectData() {
     String clusterManagerId = "cm_1";
     LatLng clusterPosition = new LatLng(43.00, -87.90);
     LatLng markerPosition1 = new LatLng(43.05, -87.95);
@@ -100,17 +97,8 @@ public class ConvertTest {
     marker2.setPosition(markerPosition2);
     cluster.add(marker2);
 
-    Set<Cluster<MarkerBuilder>> clusters = new HashSet<>();
-    clusters.add(cluster);
-
-    Object result = Convert.clustersToJson(clusterManagerId, clusters);
-
-    Assert.assertTrue(result instanceof List);
-
-    List<?> data = (List<?>) result;
-    Assert.assertEquals(1, data.size());
-
-    Map<?, ?> clusterData = (Map<?, ?>) data.get(0);
+    Object result = Convert.clusterToJson(clusterManagerId, cluster);
+    Map<?, ?> clusterData = (Map<?, ?>) result;
     Assert.assertEquals(clusterManagerId, clusterData.get("clusterManagerId"));
 
     List<?> position = (List<?>) clusterData.get("position");
