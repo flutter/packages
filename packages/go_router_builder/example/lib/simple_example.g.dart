@@ -43,7 +43,7 @@ extension $HomeRouteExtension on HomeRoute {
 
 extension $FamilyRouteExtension on FamilyRoute {
   static FamilyRoute _fromState(GoRouterState state) => FamilyRoute(
-        state.pathParameters['familyId']!,
+        state.pathParameters['familyId'] ?? '',
       );
 
   String get location => GoRouteData.$location(
