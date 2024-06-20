@@ -312,7 +312,7 @@ abstract class IMAAdsRequest {
   IMAAdsRequest(
     String adTagUrl,
     IMAAdDisplayContainer adDisplayContainer,
-    IMAContentPlayhead contentPlayhead,
+    IMAContentPlayhead? contentPlayhead,
   );
 }
 
@@ -377,10 +377,10 @@ abstract class IMAAdError {
 @ProxyApi()
 abstract class IMAAdsManager {
   /// The `IMAAdsManagerDelegate` to notify with events during ad playback.
-  void setDelegate(IMAAdsManagerDelegate delegate);
+  void setDelegate(IMAAdsManagerDelegate? delegate);
 
   /// Initializes and loads the ad.
-  void initialize(IMAAdsRenderingSettings adsRenderingSettings);
+  void initialize(IMAAdsRenderingSettings? adsRenderingSettings);
 
   /// Starts advertisement playback.
   void start();

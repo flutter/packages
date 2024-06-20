@@ -7,7 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:meta/meta.dart';
 
 import '../platform_interface/platform_interface.dart';
-import 'interactive_media_ads.g.dart' as ima;
+import 'interactive_media_ads.g.dart';
 import 'interactive_media_ads_proxy.dart';
 
 /// Implementation of [PlatformAdDisplayContainerCreationParams] for iOS.
@@ -45,7 +45,7 @@ base class IosAdDisplayContainer extends PlatformAdDisplayContainer {
   }
 
   // The `UIViewController` used to create the native `IMAAdDisplayContainer`.
-  late final ima.UIViewController _controller;
+  late final UIViewController _controller;
 
   /// The native iOS AdDisplayContainer.
   ///
@@ -53,7 +53,7 @@ base class IosAdDisplayContainer extends PlatformAdDisplayContainer {
   ///
   /// Created with the `View` that handles playing an ad.
   @internal
-  late final ima.IMAAdDisplayContainer adDisplayContainer;
+  late final IMAAdDisplayContainer? adDisplayContainer;
 
   late final IosAdDisplayContainerCreationParams _iosParams =
       params is IosAdDisplayContainerCreationParams

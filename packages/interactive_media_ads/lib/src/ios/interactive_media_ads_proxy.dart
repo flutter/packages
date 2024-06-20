@@ -27,8 +27,8 @@ class InteractiveMediaAdsProxy {
 
   /// Constructs [IMAAdDisplayContainer].
   final IMAAdDisplayContainer Function({
-  required UIView adContainer,
-  UIViewController? adContainerViewController,
+    required UIView adContainer,
+    UIViewController? adContainerViewController,
   }) newIMAAdDisplayContainer;
 
   /// Constructs [UIViewController].
@@ -39,45 +39,45 @@ class InteractiveMediaAdsProxy {
 
   /// Constructs [IMAAdsRequest].
   final IMAAdsRequest Function({
-  required String adTagUrl,
-  required IMAAdDisplayContainer adDisplayContainer,
-  required IMAContentPlayhead contentPlayhead,
+    required String adTagUrl,
+    required IMAAdDisplayContainer adDisplayContainer,
+    IMAContentPlayhead? contentPlayhead,
   }) newIMAAdsRequest;
 
   /// Constructs [IMAAdsLoaderDelegate].
   final IMAAdsLoaderDelegate Function({
-  required void Function(
+    required void Function(
       IMAAdsLoaderDelegate,
       IMAAdsLoader,
       IMAAdsLoadedData,
-      ) adLoaderLoadedWith,
-  required void Function(
+    ) adLoaderLoadedWith,
+    required void Function(
       IMAAdsLoaderDelegate,
       IMAAdsLoader,
       IMAAdLoadingErrorData,
-      ) adsLoaderFailedWithErrorData,
+    ) adsLoaderFailedWithErrorData,
   }) newIMAAdsLoaderDelegate;
 
   /// Constructs [IMAAdsManagerDelegate].
   final IMAAdsManagerDelegate Function({
-  required void Function(
+    required void Function(
       IMAAdsManagerDelegate,
       IMAAdsManager,
       IMAAdEvent,
-      ) didReceiveAdEvent,
-  required void Function(
+    ) didReceiveAdEvent,
+    required void Function(
       IMAAdsManagerDelegate,
       IMAAdsManager,
       IMAAdError,
-      ) didReceiveAdError,
-  required void Function(
+    ) didReceiveAdError,
+    required void Function(
       IMAAdsManagerDelegate,
       IMAAdsManager,
-      ) didRequestContentPause,
-  required void Function(
+    ) didRequestContentPause,
+    required void Function(
       IMAAdsManagerDelegate,
       IMAAdsManager,
-      ) didRequestContentResume,
+    ) didRequestContentResume,
   }) newIMAAdsManagerDelegate;
 
   /// Constructs [IMAAdsRenderingSettings].
