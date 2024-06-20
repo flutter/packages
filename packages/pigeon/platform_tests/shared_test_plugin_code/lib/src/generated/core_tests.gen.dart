@@ -30,6 +30,526 @@ List<Object?> wrapResponse(
   return <Object?>[error.code, error.message, error.details];
 }
 
+enum AAA {
+  one,
+}
+
+enum AAB {
+  one,
+}
+
+enum AAC {
+  one,
+}
+
+enum AAD {
+  one,
+}
+
+enum AAE {
+  one,
+}
+
+enum AAF {
+  one,
+}
+
+enum AAG {
+  one,
+}
+
+enum AAH {
+  one,
+}
+
+enum AAI {
+  one,
+}
+
+enum AAJ {
+  one,
+}
+
+enum AAK {
+  one,
+}
+
+enum AAL {
+  one,
+}
+
+enum AAM {
+  one,
+}
+
+enum AAN {
+  one,
+}
+
+enum AAO {
+  one,
+}
+
+enum AAP {
+  one,
+}
+
+enum AAQ {
+  one,
+}
+
+enum AAR {
+  one,
+}
+
+enum AAS {
+  one,
+}
+
+enum AAT {
+  one,
+}
+
+enum AAU {
+  one,
+}
+
+enum AAV {
+  one,
+}
+
+enum AAW {
+  one,
+}
+
+enum AAX {
+  one,
+}
+
+enum AAY {
+  one,
+}
+
+enum AAZ {
+  one,
+}
+
+enum AAAA {
+  one,
+}
+
+enum AAAB {
+  one,
+}
+
+enum AAAC {
+  one,
+}
+
+enum AAAD {
+  one,
+}
+
+enum AAAE {
+  one,
+}
+
+enum AAAF {
+  one,
+}
+
+enum AAAG {
+  one,
+}
+
+enum AAAH {
+  one,
+}
+
+enum AAAI {
+  one,
+}
+
+enum AAAJ {
+  one,
+}
+
+enum AAAK {
+  one,
+}
+
+enum AAAL {
+  one,
+}
+
+enum AAAM {
+  one,
+}
+
+enum AAAN {
+  one,
+}
+
+enum AAAO {
+  one,
+}
+
+enum AAAP {
+  one,
+}
+
+enum AAAQ {
+  one,
+}
+
+enum AAAR {
+  one,
+}
+
+enum AAAS {
+  one,
+}
+
+enum AAAT {
+  one,
+}
+
+enum AAAU {
+  one,
+}
+
+enum AAAV {
+  one,
+}
+
+enum AAAW {
+  one,
+}
+
+enum AAAX {
+  one,
+}
+
+enum AAAY {
+  one,
+}
+
+enum AAAZ {
+  one,
+}
+
+enum AABA {
+  one,
+}
+
+enum AABB {
+  one,
+}
+
+enum AABC {
+  one,
+}
+
+enum AABD {
+  one,
+}
+
+enum AABE {
+  one,
+}
+
+enum AABF {
+  one,
+}
+
+enum AABG {
+  one,
+}
+
+enum AABH {
+  one,
+}
+
+enum AABI {
+  one,
+}
+
+enum AABJ {
+  one,
+}
+
+enum AABK {
+  one,
+}
+
+enum AABL {
+  one,
+}
+
+enum AABM {
+  one,
+}
+
+enum AABN {
+  one,
+}
+
+enum AABO {
+  one,
+}
+
+enum AABP {
+  one,
+}
+
+enum AABQ {
+  one,
+}
+
+enum AABR {
+  one,
+}
+
+enum AABS {
+  one,
+}
+
+enum AABT {
+  one,
+}
+
+enum AABU {
+  one,
+}
+
+enum AABV {
+  one,
+}
+
+enum AABW {
+  one,
+}
+
+enum AABX {
+  one,
+}
+
+enum AABY {
+  one,
+}
+
+enum AABZ {
+  one,
+}
+
+enum AACA {
+  one,
+}
+
+enum AACB {
+  one,
+}
+
+enum AACC {
+  one,
+}
+
+enum AACD {
+  one,
+}
+
+enum AACE {
+  one,
+}
+
+enum AACF {
+  one,
+}
+
+enum AACG {
+  one,
+}
+
+enum AACH {
+  one,
+}
+
+enum AACI {
+  one,
+}
+
+enum AACJ {
+  one,
+}
+
+enum AACK {
+  one,
+}
+
+enum AACL {
+  one,
+}
+
+enum AACM {
+  one,
+}
+
+enum AACN {
+  one,
+}
+
+enum AACO {
+  one,
+}
+
+enum AACP {
+  one,
+}
+
+enum AACQ {
+  one,
+}
+
+enum AACR {
+  one,
+}
+
+enum AACS {
+  one,
+}
+
+enum AACT {
+  one,
+}
+
+enum AACU {
+  one,
+}
+
+enum AACV {
+  one,
+}
+
+enum AACW {
+  one,
+}
+
+enum AACX {
+  one,
+}
+
+enum AACY {
+  one,
+}
+
+enum AACZ {
+  one,
+}
+
+enum AADA {
+  one,
+}
+
+enum AADB {
+  one,
+}
+
+enum AADC {
+  one,
+}
+
+enum AADD {
+  one,
+}
+
+enum AADE {
+  one,
+}
+
+enum AADF {
+  one,
+}
+
+enum AADG {
+  one,
+}
+
+enum AADH {
+  one,
+}
+
+enum AADI {
+  one,
+}
+
+enum AADJ {
+  one,
+}
+
+enum AADK {
+  one,
+}
+
+enum AADL {
+  one,
+}
+
+enum AADM {
+  one,
+}
+
+enum AADN {
+  one,
+}
+
+enum AADO {
+  one,
+}
+
+enum AADP {
+  one,
+}
+
+enum AADQ {
+  one,
+}
+
+enum AADR {
+  one,
+}
+
+enum AADS {
+  one,
+}
+
+enum AADT {
+  one,
+}
+
+enum AADU {
+  one,
+}
+
+enum AADV {
+  one,
+}
+
+enum AADW {
+  one,
+}
+
+enum AADX {
+  one,
+}
+
+enum AADY {
+  one,
+}
+
+enum AADZ {
+  one,
+}
+
 enum AnEnum {
   one,
   two,
@@ -450,28 +970,497 @@ class TestMessage {
   }
 }
 
+// ignore: camel_case_types
+class __pigeon_CodecOverflow {
+  __pigeon_CodecOverflow({required this.type, required this.wrapped});
+
+  int type;
+  Object? wrapped;
+
+  Object encode() {
+    return <Object?>[type, wrapped];
+  }
+
+  static __pigeon_CodecOverflow decode(Object result) {
+    result as List<Object?>;
+    return __pigeon_CodecOverflow(
+      type: result[0]! as int,
+      wrapped: result[1],
+    );
+  }
+
+  Object? unwrap() {
+    if (wrapped == null) {
+      return null;
+    }
+
+    switch (type) {
+      case 0:
+        return AADW.values[wrapped! as int];
+
+      case 1:
+        return AADX.values[wrapped! as int];
+
+      case 2:
+        return AADY.values[wrapped! as int];
+
+      case 3:
+        return AADZ.values[wrapped! as int];
+
+      case 4:
+        return AnEnum.values[wrapped! as int];
+
+      case 5:
+        return AllTypes.decode(wrapped!);
+
+      case 6:
+        return AllNullableTypes.decode(wrapped!);
+
+      case 7:
+        return AllNullableTypesWithoutRecursion.decode(wrapped!);
+
+      case 8:
+        return AllClassesWrapper.decode(wrapped!);
+
+      case 9:
+        return TestMessage.decode(wrapped!);
+    }
+    return null;
+  }
+}
+
 class _PigeonCodec extends StandardMessageCodec {
   const _PigeonCodec();
   @override
   void writeValue(WriteBuffer buffer, Object? value) {
-    if (value is AllTypes) {
+    if (value is AAA) {
       buffer.putUint8(129);
-      writeValue(buffer, value.encode());
-    } else if (value is AllNullableTypes) {
+      writeValue(buffer, value.index);
+    } else if (value is AAB) {
       buffer.putUint8(130);
-      writeValue(buffer, value.encode());
-    } else if (value is AllNullableTypesWithoutRecursion) {
+      writeValue(buffer, value.index);
+    } else if (value is AAC) {
       buffer.putUint8(131);
-      writeValue(buffer, value.encode());
-    } else if (value is AllClassesWrapper) {
+      writeValue(buffer, value.index);
+    } else if (value is AAD) {
       buffer.putUint8(132);
-      writeValue(buffer, value.encode());
-    } else if (value is TestMessage) {
+      writeValue(buffer, value.index);
+    } else if (value is AAE) {
       buffer.putUint8(133);
-      writeValue(buffer, value.encode());
-    } else if (value is AnEnum) {
+      writeValue(buffer, value.index);
+    } else if (value is AAF) {
       buffer.putUint8(134);
       writeValue(buffer, value.index);
+    } else if (value is AAG) {
+      buffer.putUint8(135);
+      writeValue(buffer, value.index);
+    } else if (value is AAH) {
+      buffer.putUint8(136);
+      writeValue(buffer, value.index);
+    } else if (value is AAI) {
+      buffer.putUint8(137);
+      writeValue(buffer, value.index);
+    } else if (value is AAJ) {
+      buffer.putUint8(138);
+      writeValue(buffer, value.index);
+    } else if (value is AAK) {
+      buffer.putUint8(139);
+      writeValue(buffer, value.index);
+    } else if (value is AAL) {
+      buffer.putUint8(140);
+      writeValue(buffer, value.index);
+    } else if (value is AAM) {
+      buffer.putUint8(141);
+      writeValue(buffer, value.index);
+    } else if (value is AAN) {
+      buffer.putUint8(142);
+      writeValue(buffer, value.index);
+    } else if (value is AAO) {
+      buffer.putUint8(143);
+      writeValue(buffer, value.index);
+    } else if (value is AAP) {
+      buffer.putUint8(144);
+      writeValue(buffer, value.index);
+    } else if (value is AAQ) {
+      buffer.putUint8(145);
+      writeValue(buffer, value.index);
+    } else if (value is AAR) {
+      buffer.putUint8(146);
+      writeValue(buffer, value.index);
+    } else if (value is AAS) {
+      buffer.putUint8(147);
+      writeValue(buffer, value.index);
+    } else if (value is AAT) {
+      buffer.putUint8(148);
+      writeValue(buffer, value.index);
+    } else if (value is AAU) {
+      buffer.putUint8(149);
+      writeValue(buffer, value.index);
+    } else if (value is AAV) {
+      buffer.putUint8(150);
+      writeValue(buffer, value.index);
+    } else if (value is AAW) {
+      buffer.putUint8(151);
+      writeValue(buffer, value.index);
+    } else if (value is AAX) {
+      buffer.putUint8(152);
+      writeValue(buffer, value.index);
+    } else if (value is AAY) {
+      buffer.putUint8(153);
+      writeValue(buffer, value.index);
+    } else if (value is AAZ) {
+      buffer.putUint8(154);
+      writeValue(buffer, value.index);
+    } else if (value is AAAA) {
+      buffer.putUint8(155);
+      writeValue(buffer, value.index);
+    } else if (value is AAAB) {
+      buffer.putUint8(156);
+      writeValue(buffer, value.index);
+    } else if (value is AAAC) {
+      buffer.putUint8(157);
+      writeValue(buffer, value.index);
+    } else if (value is AAAD) {
+      buffer.putUint8(158);
+      writeValue(buffer, value.index);
+    } else if (value is AAAE) {
+      buffer.putUint8(159);
+      writeValue(buffer, value.index);
+    } else if (value is AAAF) {
+      buffer.putUint8(160);
+      writeValue(buffer, value.index);
+    } else if (value is AAAG) {
+      buffer.putUint8(161);
+      writeValue(buffer, value.index);
+    } else if (value is AAAH) {
+      buffer.putUint8(162);
+      writeValue(buffer, value.index);
+    } else if (value is AAAI) {
+      buffer.putUint8(163);
+      writeValue(buffer, value.index);
+    } else if (value is AAAJ) {
+      buffer.putUint8(164);
+      writeValue(buffer, value.index);
+    } else if (value is AAAK) {
+      buffer.putUint8(165);
+      writeValue(buffer, value.index);
+    } else if (value is AAAL) {
+      buffer.putUint8(166);
+      writeValue(buffer, value.index);
+    } else if (value is AAAM) {
+      buffer.putUint8(167);
+      writeValue(buffer, value.index);
+    } else if (value is AAAN) {
+      buffer.putUint8(168);
+      writeValue(buffer, value.index);
+    } else if (value is AAAO) {
+      buffer.putUint8(169);
+      writeValue(buffer, value.index);
+    } else if (value is AAAP) {
+      buffer.putUint8(170);
+      writeValue(buffer, value.index);
+    } else if (value is AAAQ) {
+      buffer.putUint8(171);
+      writeValue(buffer, value.index);
+    } else if (value is AAAR) {
+      buffer.putUint8(172);
+      writeValue(buffer, value.index);
+    } else if (value is AAAS) {
+      buffer.putUint8(173);
+      writeValue(buffer, value.index);
+    } else if (value is AAAT) {
+      buffer.putUint8(174);
+      writeValue(buffer, value.index);
+    } else if (value is AAAU) {
+      buffer.putUint8(175);
+      writeValue(buffer, value.index);
+    } else if (value is AAAV) {
+      buffer.putUint8(176);
+      writeValue(buffer, value.index);
+    } else if (value is AAAW) {
+      buffer.putUint8(177);
+      writeValue(buffer, value.index);
+    } else if (value is AAAX) {
+      buffer.putUint8(178);
+      writeValue(buffer, value.index);
+    } else if (value is AAAY) {
+      buffer.putUint8(179);
+      writeValue(buffer, value.index);
+    } else if (value is AAAZ) {
+      buffer.putUint8(180);
+      writeValue(buffer, value.index);
+    } else if (value is AABA) {
+      buffer.putUint8(181);
+      writeValue(buffer, value.index);
+    } else if (value is AABB) {
+      buffer.putUint8(182);
+      writeValue(buffer, value.index);
+    } else if (value is AABC) {
+      buffer.putUint8(183);
+      writeValue(buffer, value.index);
+    } else if (value is AABD) {
+      buffer.putUint8(184);
+      writeValue(buffer, value.index);
+    } else if (value is AABE) {
+      buffer.putUint8(185);
+      writeValue(buffer, value.index);
+    } else if (value is AABF) {
+      buffer.putUint8(186);
+      writeValue(buffer, value.index);
+    } else if (value is AABG) {
+      buffer.putUint8(187);
+      writeValue(buffer, value.index);
+    } else if (value is AABH) {
+      buffer.putUint8(188);
+      writeValue(buffer, value.index);
+    } else if (value is AABI) {
+      buffer.putUint8(189);
+      writeValue(buffer, value.index);
+    } else if (value is AABJ) {
+      buffer.putUint8(190);
+      writeValue(buffer, value.index);
+    } else if (value is AABK) {
+      buffer.putUint8(191);
+      writeValue(buffer, value.index);
+    } else if (value is AABL) {
+      buffer.putUint8(192);
+      writeValue(buffer, value.index);
+    } else if (value is AABM) {
+      buffer.putUint8(193);
+      writeValue(buffer, value.index);
+    } else if (value is AABN) {
+      buffer.putUint8(194);
+      writeValue(buffer, value.index);
+    } else if (value is AABO) {
+      buffer.putUint8(195);
+      writeValue(buffer, value.index);
+    } else if (value is AABP) {
+      buffer.putUint8(196);
+      writeValue(buffer, value.index);
+    } else if (value is AABQ) {
+      buffer.putUint8(197);
+      writeValue(buffer, value.index);
+    } else if (value is AABR) {
+      buffer.putUint8(198);
+      writeValue(buffer, value.index);
+    } else if (value is AABS) {
+      buffer.putUint8(199);
+      writeValue(buffer, value.index);
+    } else if (value is AABT) {
+      buffer.putUint8(200);
+      writeValue(buffer, value.index);
+    } else if (value is AABU) {
+      buffer.putUint8(201);
+      writeValue(buffer, value.index);
+    } else if (value is AABV) {
+      buffer.putUint8(202);
+      writeValue(buffer, value.index);
+    } else if (value is AABW) {
+      buffer.putUint8(203);
+      writeValue(buffer, value.index);
+    } else if (value is AABX) {
+      buffer.putUint8(204);
+      writeValue(buffer, value.index);
+    } else if (value is AABY) {
+      buffer.putUint8(205);
+      writeValue(buffer, value.index);
+    } else if (value is AABZ) {
+      buffer.putUint8(206);
+      writeValue(buffer, value.index);
+    } else if (value is AACA) {
+      buffer.putUint8(207);
+      writeValue(buffer, value.index);
+    } else if (value is AACB) {
+      buffer.putUint8(208);
+      writeValue(buffer, value.index);
+    } else if (value is AACC) {
+      buffer.putUint8(209);
+      writeValue(buffer, value.index);
+    } else if (value is AACD) {
+      buffer.putUint8(210);
+      writeValue(buffer, value.index);
+    } else if (value is AACE) {
+      buffer.putUint8(211);
+      writeValue(buffer, value.index);
+    } else if (value is AACF) {
+      buffer.putUint8(212);
+      writeValue(buffer, value.index);
+    } else if (value is AACG) {
+      buffer.putUint8(213);
+      writeValue(buffer, value.index);
+    } else if (value is AACH) {
+      buffer.putUint8(214);
+      writeValue(buffer, value.index);
+    } else if (value is AACI) {
+      buffer.putUint8(215);
+      writeValue(buffer, value.index);
+    } else if (value is AACJ) {
+      buffer.putUint8(216);
+      writeValue(buffer, value.index);
+    } else if (value is AACK) {
+      buffer.putUint8(217);
+      writeValue(buffer, value.index);
+    } else if (value is AACL) {
+      buffer.putUint8(218);
+      writeValue(buffer, value.index);
+    } else if (value is AACM) {
+      buffer.putUint8(219);
+      writeValue(buffer, value.index);
+    } else if (value is AACN) {
+      buffer.putUint8(220);
+      writeValue(buffer, value.index);
+    } else if (value is AACO) {
+      buffer.putUint8(221);
+      writeValue(buffer, value.index);
+    } else if (value is AACP) {
+      buffer.putUint8(222);
+      writeValue(buffer, value.index);
+    } else if (value is AACQ) {
+      buffer.putUint8(223);
+      writeValue(buffer, value.index);
+    } else if (value is AACR) {
+      buffer.putUint8(224);
+      writeValue(buffer, value.index);
+    } else if (value is AACS) {
+      buffer.putUint8(225);
+      writeValue(buffer, value.index);
+    } else if (value is AACT) {
+      buffer.putUint8(226);
+      writeValue(buffer, value.index);
+    } else if (value is AACU) {
+      buffer.putUint8(227);
+      writeValue(buffer, value.index);
+    } else if (value is AACV) {
+      buffer.putUint8(228);
+      writeValue(buffer, value.index);
+    } else if (value is AACW) {
+      buffer.putUint8(229);
+      writeValue(buffer, value.index);
+    } else if (value is AACX) {
+      buffer.putUint8(230);
+      writeValue(buffer, value.index);
+    } else if (value is AACY) {
+      buffer.putUint8(231);
+      writeValue(buffer, value.index);
+    } else if (value is AACZ) {
+      buffer.putUint8(232);
+      writeValue(buffer, value.index);
+    } else if (value is AADA) {
+      buffer.putUint8(233);
+      writeValue(buffer, value.index);
+    } else if (value is AADB) {
+      buffer.putUint8(234);
+      writeValue(buffer, value.index);
+    } else if (value is AADC) {
+      buffer.putUint8(235);
+      writeValue(buffer, value.index);
+    } else if (value is AADD) {
+      buffer.putUint8(236);
+      writeValue(buffer, value.index);
+    } else if (value is AADE) {
+      buffer.putUint8(237);
+      writeValue(buffer, value.index);
+    } else if (value is AADF) {
+      buffer.putUint8(238);
+      writeValue(buffer, value.index);
+    } else if (value is AADG) {
+      buffer.putUint8(239);
+      writeValue(buffer, value.index);
+    } else if (value is AADH) {
+      buffer.putUint8(240);
+      writeValue(buffer, value.index);
+    } else if (value is AADI) {
+      buffer.putUint8(241);
+      writeValue(buffer, value.index);
+    } else if (value is AADJ) {
+      buffer.putUint8(242);
+      writeValue(buffer, value.index);
+    } else if (value is AADK) {
+      buffer.putUint8(243);
+      writeValue(buffer, value.index);
+    } else if (value is AADL) {
+      buffer.putUint8(244);
+      writeValue(buffer, value.index);
+    } else if (value is AADM) {
+      buffer.putUint8(245);
+      writeValue(buffer, value.index);
+    } else if (value is AADN) {
+      buffer.putUint8(246);
+      writeValue(buffer, value.index);
+    } else if (value is AADO) {
+      buffer.putUint8(247);
+      writeValue(buffer, value.index);
+    } else if (value is AADP) {
+      buffer.putUint8(248);
+      writeValue(buffer, value.index);
+    } else if (value is AADQ) {
+      buffer.putUint8(249);
+      writeValue(buffer, value.index);
+    } else if (value is AADR) {
+      buffer.putUint8(250);
+      writeValue(buffer, value.index);
+    } else if (value is AADS) {
+      buffer.putUint8(251);
+      writeValue(buffer, value.index);
+    } else if (value is AADT) {
+      buffer.putUint8(252);
+      writeValue(buffer, value.index);
+    } else if (value is AADU) {
+      buffer.putUint8(253);
+      writeValue(buffer, value.index);
+    } else if (value is AADV) {
+      buffer.putUint8(254);
+      writeValue(buffer, value.index);
+    } else if (value is AADW) {
+      final __pigeon_CodecOverflow wrap =
+          __pigeon_CodecOverflow(type: 0, wrapped: value.index);
+      buffer.putUint8(255);
+      writeValue(buffer, wrap.encode());
+    } else if (value is AADX) {
+      final __pigeon_CodecOverflow wrap =
+          __pigeon_CodecOverflow(type: 1, wrapped: value.index);
+      buffer.putUint8(255);
+      writeValue(buffer, wrap.encode());
+    } else if (value is AADY) {
+      final __pigeon_CodecOverflow wrap =
+          __pigeon_CodecOverflow(type: 2, wrapped: value.index);
+      buffer.putUint8(255);
+      writeValue(buffer, wrap.encode());
+    } else if (value is AADZ) {
+      final __pigeon_CodecOverflow wrap =
+          __pigeon_CodecOverflow(type: 3, wrapped: value.index);
+      buffer.putUint8(255);
+      writeValue(buffer, wrap.encode());
+    } else if (value is AnEnum) {
+      final __pigeon_CodecOverflow wrap =
+          __pigeon_CodecOverflow(type: 4, wrapped: value.index);
+      buffer.putUint8(255);
+      writeValue(buffer, wrap.encode());
+    } else if (value is AllTypes) {
+      final __pigeon_CodecOverflow wrap =
+          __pigeon_CodecOverflow(type: 5, wrapped: value.encode());
+      buffer.putUint8(255);
+      writeValue(buffer, wrap.encode());
+    } else if (value is AllNullableTypes) {
+      final __pigeon_CodecOverflow wrap =
+          __pigeon_CodecOverflow(type: 6, wrapped: value.encode());
+      buffer.putUint8(255);
+      writeValue(buffer, wrap.encode());
+    } else if (value is AllNullableTypesWithoutRecursion) {
+      final __pigeon_CodecOverflow wrap =
+          __pigeon_CodecOverflow(type: 7, wrapped: value.encode());
+      buffer.putUint8(255);
+      writeValue(buffer, wrap.encode());
+    } else if (value is AllClassesWrapper) {
+      final __pigeon_CodecOverflow wrap =
+          __pigeon_CodecOverflow(type: 8, wrapped: value.encode());
+      buffer.putUint8(255);
+      writeValue(buffer, wrap.encode());
+    } else if (value is TestMessage) {
+      final __pigeon_CodecOverflow wrap =
+          __pigeon_CodecOverflow(type: 9, wrapped: value.encode());
+      buffer.putUint8(255);
+      writeValue(buffer, wrap.encode());
     } else {
       super.writeValue(buffer, value);
     }
@@ -481,18 +1470,387 @@ class _PigeonCodec extends StandardMessageCodec {
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
       case 129:
-        return AllTypes.decode(readValue(buffer)!);
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : AAA.values[value];
       case 130:
-        return AllNullableTypes.decode(readValue(buffer)!);
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : AAB.values[value];
       case 131:
-        return AllNullableTypesWithoutRecursion.decode(readValue(buffer)!);
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : AAC.values[value];
       case 132:
-        return AllClassesWrapper.decode(readValue(buffer)!);
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : AAD.values[value];
       case 133:
-        return TestMessage.decode(readValue(buffer)!);
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : AAE.values[value];
       case 134:
         final int? value = readValue(buffer) as int?;
-        return value == null ? null : AnEnum.values[value];
+        return value == null ? null : AAF.values[value];
+      case 135:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : AAG.values[value];
+      case 136:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : AAH.values[value];
+      case 137:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : AAI.values[value];
+      case 138:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : AAJ.values[value];
+      case 139:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : AAK.values[value];
+      case 140:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : AAL.values[value];
+      case 141:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : AAM.values[value];
+      case 142:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : AAN.values[value];
+      case 143:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : AAO.values[value];
+      case 144:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : AAP.values[value];
+      case 145:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : AAQ.values[value];
+      case 146:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : AAR.values[value];
+      case 147:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : AAS.values[value];
+      case 148:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : AAT.values[value];
+      case 149:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : AAU.values[value];
+      case 150:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : AAV.values[value];
+      case 151:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : AAW.values[value];
+      case 152:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : AAX.values[value];
+      case 153:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : AAY.values[value];
+      case 154:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : AAZ.values[value];
+      case 155:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : AAAA.values[value];
+      case 156:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : AAAB.values[value];
+      case 157:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : AAAC.values[value];
+      case 158:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : AAAD.values[value];
+      case 159:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : AAAE.values[value];
+      case 160:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : AAAF.values[value];
+      case 161:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : AAAG.values[value];
+      case 162:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : AAAH.values[value];
+      case 163:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : AAAI.values[value];
+      case 164:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : AAAJ.values[value];
+      case 165:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : AAAK.values[value];
+      case 166:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : AAAL.values[value];
+      case 167:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : AAAM.values[value];
+      case 168:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : AAAN.values[value];
+      case 169:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : AAAO.values[value];
+      case 170:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : AAAP.values[value];
+      case 171:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : AAAQ.values[value];
+      case 172:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : AAAR.values[value];
+      case 173:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : AAAS.values[value];
+      case 174:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : AAAT.values[value];
+      case 175:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : AAAU.values[value];
+      case 176:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : AAAV.values[value];
+      case 177:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : AAAW.values[value];
+      case 178:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : AAAX.values[value];
+      case 179:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : AAAY.values[value];
+      case 180:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : AAAZ.values[value];
+      case 181:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : AABA.values[value];
+      case 182:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : AABB.values[value];
+      case 183:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : AABC.values[value];
+      case 184:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : AABD.values[value];
+      case 185:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : AABE.values[value];
+      case 186:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : AABF.values[value];
+      case 187:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : AABG.values[value];
+      case 188:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : AABH.values[value];
+      case 189:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : AABI.values[value];
+      case 190:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : AABJ.values[value];
+      case 191:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : AABK.values[value];
+      case 192:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : AABL.values[value];
+      case 193:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : AABM.values[value];
+      case 194:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : AABN.values[value];
+      case 195:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : AABO.values[value];
+      case 196:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : AABP.values[value];
+      case 197:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : AABQ.values[value];
+      case 198:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : AABR.values[value];
+      case 199:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : AABS.values[value];
+      case 200:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : AABT.values[value];
+      case 201:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : AABU.values[value];
+      case 202:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : AABV.values[value];
+      case 203:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : AABW.values[value];
+      case 204:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : AABX.values[value];
+      case 205:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : AABY.values[value];
+      case 206:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : AABZ.values[value];
+      case 207:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : AACA.values[value];
+      case 208:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : AACB.values[value];
+      case 209:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : AACC.values[value];
+      case 210:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : AACD.values[value];
+      case 211:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : AACE.values[value];
+      case 212:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : AACF.values[value];
+      case 213:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : AACG.values[value];
+      case 214:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : AACH.values[value];
+      case 215:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : AACI.values[value];
+      case 216:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : AACJ.values[value];
+      case 217:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : AACK.values[value];
+      case 218:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : AACL.values[value];
+      case 219:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : AACM.values[value];
+      case 220:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : AACN.values[value];
+      case 221:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : AACO.values[value];
+      case 222:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : AACP.values[value];
+      case 223:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : AACQ.values[value];
+      case 224:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : AACR.values[value];
+      case 225:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : AACS.values[value];
+      case 226:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : AACT.values[value];
+      case 227:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : AACU.values[value];
+      case 228:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : AACV.values[value];
+      case 229:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : AACW.values[value];
+      case 230:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : AACX.values[value];
+      case 231:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : AACY.values[value];
+      case 232:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : AACZ.values[value];
+      case 233:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : AADA.values[value];
+      case 234:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : AADB.values[value];
+      case 235:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : AADC.values[value];
+      case 236:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : AADD.values[value];
+      case 237:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : AADE.values[value];
+      case 238:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : AADF.values[value];
+      case 239:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : AADG.values[value];
+      case 240:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : AADH.values[value];
+      case 241:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : AADI.values[value];
+      case 242:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : AADJ.values[value];
+      case 243:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : AADK.values[value];
+      case 244:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : AADL.values[value];
+      case 245:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : AADM.values[value];
+      case 246:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : AADN.values[value];
+      case 247:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : AADO.values[value];
+      case 248:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : AADP.values[value];
+      case 249:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : AADQ.values[value];
+      case 250:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : AADR.values[value];
+      case 251:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : AADS.values[value];
+      case 252:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : AADT.values[value];
+      case 253:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : AADU.values[value];
+      case 254:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : AADV.values[value];
+      case 255:
+        final __pigeon_CodecOverflow wrapper =
+            __pigeon_CodecOverflow.decode(readValue(buffer)!);
+        return wrapper.unwrap();
       default:
         return super.readValueOfType(type, buffer);
     }

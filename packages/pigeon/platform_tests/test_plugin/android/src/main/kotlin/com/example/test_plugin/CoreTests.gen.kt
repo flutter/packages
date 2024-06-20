@@ -36,6 +36,1306 @@ private fun createConnectionError(channelName: String): FlutterError {
       "channel-error", "Unable to establish connection on channel: '$channelName'.", "")
 }
 
+enum class AAA(val raw: Int) {
+  ONE(0);
+
+  companion object {
+    fun ofRaw(raw: Int): AAA? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class AAB(val raw: Int) {
+  ONE(0);
+
+  companion object {
+    fun ofRaw(raw: Int): AAB? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class AAC(val raw: Int) {
+  ONE(0);
+
+  companion object {
+    fun ofRaw(raw: Int): AAC? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class AAD(val raw: Int) {
+  ONE(0);
+
+  companion object {
+    fun ofRaw(raw: Int): AAD? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class AAE(val raw: Int) {
+  ONE(0);
+
+  companion object {
+    fun ofRaw(raw: Int): AAE? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class AAF(val raw: Int) {
+  ONE(0);
+
+  companion object {
+    fun ofRaw(raw: Int): AAF? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class AAG(val raw: Int) {
+  ONE(0);
+
+  companion object {
+    fun ofRaw(raw: Int): AAG? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class AAH(val raw: Int) {
+  ONE(0);
+
+  companion object {
+    fun ofRaw(raw: Int): AAH? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class AAI(val raw: Int) {
+  ONE(0);
+
+  companion object {
+    fun ofRaw(raw: Int): AAI? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class AAJ(val raw: Int) {
+  ONE(0);
+
+  companion object {
+    fun ofRaw(raw: Int): AAJ? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class AAK(val raw: Int) {
+  ONE(0);
+
+  companion object {
+    fun ofRaw(raw: Int): AAK? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class AAL(val raw: Int) {
+  ONE(0);
+
+  companion object {
+    fun ofRaw(raw: Int): AAL? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class AAM(val raw: Int) {
+  ONE(0);
+
+  companion object {
+    fun ofRaw(raw: Int): AAM? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class AAN(val raw: Int) {
+  ONE(0);
+
+  companion object {
+    fun ofRaw(raw: Int): AAN? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class AAO(val raw: Int) {
+  ONE(0);
+
+  companion object {
+    fun ofRaw(raw: Int): AAO? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class AAP(val raw: Int) {
+  ONE(0);
+
+  companion object {
+    fun ofRaw(raw: Int): AAP? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class AAQ(val raw: Int) {
+  ONE(0);
+
+  companion object {
+    fun ofRaw(raw: Int): AAQ? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class AAR(val raw: Int) {
+  ONE(0);
+
+  companion object {
+    fun ofRaw(raw: Int): AAR? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class AAS(val raw: Int) {
+  ONE(0);
+
+  companion object {
+    fun ofRaw(raw: Int): AAS? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class AAT(val raw: Int) {
+  ONE(0);
+
+  companion object {
+    fun ofRaw(raw: Int): AAT? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class AAU(val raw: Int) {
+  ONE(0);
+
+  companion object {
+    fun ofRaw(raw: Int): AAU? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class AAV(val raw: Int) {
+  ONE(0);
+
+  companion object {
+    fun ofRaw(raw: Int): AAV? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class AAW(val raw: Int) {
+  ONE(0);
+
+  companion object {
+    fun ofRaw(raw: Int): AAW? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class AAX(val raw: Int) {
+  ONE(0);
+
+  companion object {
+    fun ofRaw(raw: Int): AAX? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class AAY(val raw: Int) {
+  ONE(0);
+
+  companion object {
+    fun ofRaw(raw: Int): AAY? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class AAZ(val raw: Int) {
+  ONE(0);
+
+  companion object {
+    fun ofRaw(raw: Int): AAZ? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class AAAA(val raw: Int) {
+  ONE(0);
+
+  companion object {
+    fun ofRaw(raw: Int): AAAA? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class AAAB(val raw: Int) {
+  ONE(0);
+
+  companion object {
+    fun ofRaw(raw: Int): AAAB? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class AAAC(val raw: Int) {
+  ONE(0);
+
+  companion object {
+    fun ofRaw(raw: Int): AAAC? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class AAAD(val raw: Int) {
+  ONE(0);
+
+  companion object {
+    fun ofRaw(raw: Int): AAAD? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class AAAE(val raw: Int) {
+  ONE(0);
+
+  companion object {
+    fun ofRaw(raw: Int): AAAE? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class AAAF(val raw: Int) {
+  ONE(0);
+
+  companion object {
+    fun ofRaw(raw: Int): AAAF? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class AAAG(val raw: Int) {
+  ONE(0);
+
+  companion object {
+    fun ofRaw(raw: Int): AAAG? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class AAAH(val raw: Int) {
+  ONE(0);
+
+  companion object {
+    fun ofRaw(raw: Int): AAAH? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class AAAI(val raw: Int) {
+  ONE(0);
+
+  companion object {
+    fun ofRaw(raw: Int): AAAI? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class AAAJ(val raw: Int) {
+  ONE(0);
+
+  companion object {
+    fun ofRaw(raw: Int): AAAJ? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class AAAK(val raw: Int) {
+  ONE(0);
+
+  companion object {
+    fun ofRaw(raw: Int): AAAK? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class AAAL(val raw: Int) {
+  ONE(0);
+
+  companion object {
+    fun ofRaw(raw: Int): AAAL? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class AAAM(val raw: Int) {
+  ONE(0);
+
+  companion object {
+    fun ofRaw(raw: Int): AAAM? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class AAAN(val raw: Int) {
+  ONE(0);
+
+  companion object {
+    fun ofRaw(raw: Int): AAAN? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class AAAO(val raw: Int) {
+  ONE(0);
+
+  companion object {
+    fun ofRaw(raw: Int): AAAO? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class AAAP(val raw: Int) {
+  ONE(0);
+
+  companion object {
+    fun ofRaw(raw: Int): AAAP? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class AAAQ(val raw: Int) {
+  ONE(0);
+
+  companion object {
+    fun ofRaw(raw: Int): AAAQ? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class AAAR(val raw: Int) {
+  ONE(0);
+
+  companion object {
+    fun ofRaw(raw: Int): AAAR? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class AAAS(val raw: Int) {
+  ONE(0);
+
+  companion object {
+    fun ofRaw(raw: Int): AAAS? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class AAAT(val raw: Int) {
+  ONE(0);
+
+  companion object {
+    fun ofRaw(raw: Int): AAAT? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class AAAU(val raw: Int) {
+  ONE(0);
+
+  companion object {
+    fun ofRaw(raw: Int): AAAU? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class AAAV(val raw: Int) {
+  ONE(0);
+
+  companion object {
+    fun ofRaw(raw: Int): AAAV? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class AAAW(val raw: Int) {
+  ONE(0);
+
+  companion object {
+    fun ofRaw(raw: Int): AAAW? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class AAAX(val raw: Int) {
+  ONE(0);
+
+  companion object {
+    fun ofRaw(raw: Int): AAAX? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class AAAY(val raw: Int) {
+  ONE(0);
+
+  companion object {
+    fun ofRaw(raw: Int): AAAY? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class AAAZ(val raw: Int) {
+  ONE(0);
+
+  companion object {
+    fun ofRaw(raw: Int): AAAZ? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class AABA(val raw: Int) {
+  ONE(0);
+
+  companion object {
+    fun ofRaw(raw: Int): AABA? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class AABB(val raw: Int) {
+  ONE(0);
+
+  companion object {
+    fun ofRaw(raw: Int): AABB? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class AABC(val raw: Int) {
+  ONE(0);
+
+  companion object {
+    fun ofRaw(raw: Int): AABC? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class AABD(val raw: Int) {
+  ONE(0);
+
+  companion object {
+    fun ofRaw(raw: Int): AABD? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class AABE(val raw: Int) {
+  ONE(0);
+
+  companion object {
+    fun ofRaw(raw: Int): AABE? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class AABF(val raw: Int) {
+  ONE(0);
+
+  companion object {
+    fun ofRaw(raw: Int): AABF? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class AABG(val raw: Int) {
+  ONE(0);
+
+  companion object {
+    fun ofRaw(raw: Int): AABG? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class AABH(val raw: Int) {
+  ONE(0);
+
+  companion object {
+    fun ofRaw(raw: Int): AABH? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class AABI(val raw: Int) {
+  ONE(0);
+
+  companion object {
+    fun ofRaw(raw: Int): AABI? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class AABJ(val raw: Int) {
+  ONE(0);
+
+  companion object {
+    fun ofRaw(raw: Int): AABJ? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class AABK(val raw: Int) {
+  ONE(0);
+
+  companion object {
+    fun ofRaw(raw: Int): AABK? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class AABL(val raw: Int) {
+  ONE(0);
+
+  companion object {
+    fun ofRaw(raw: Int): AABL? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class AABM(val raw: Int) {
+  ONE(0);
+
+  companion object {
+    fun ofRaw(raw: Int): AABM? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class AABN(val raw: Int) {
+  ONE(0);
+
+  companion object {
+    fun ofRaw(raw: Int): AABN? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class AABO(val raw: Int) {
+  ONE(0);
+
+  companion object {
+    fun ofRaw(raw: Int): AABO? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class AABP(val raw: Int) {
+  ONE(0);
+
+  companion object {
+    fun ofRaw(raw: Int): AABP? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class AABQ(val raw: Int) {
+  ONE(0);
+
+  companion object {
+    fun ofRaw(raw: Int): AABQ? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class AABR(val raw: Int) {
+  ONE(0);
+
+  companion object {
+    fun ofRaw(raw: Int): AABR? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class AABS(val raw: Int) {
+  ONE(0);
+
+  companion object {
+    fun ofRaw(raw: Int): AABS? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class AABT(val raw: Int) {
+  ONE(0);
+
+  companion object {
+    fun ofRaw(raw: Int): AABT? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class AABU(val raw: Int) {
+  ONE(0);
+
+  companion object {
+    fun ofRaw(raw: Int): AABU? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class AABV(val raw: Int) {
+  ONE(0);
+
+  companion object {
+    fun ofRaw(raw: Int): AABV? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class AABW(val raw: Int) {
+  ONE(0);
+
+  companion object {
+    fun ofRaw(raw: Int): AABW? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class AABX(val raw: Int) {
+  ONE(0);
+
+  companion object {
+    fun ofRaw(raw: Int): AABX? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class AABY(val raw: Int) {
+  ONE(0);
+
+  companion object {
+    fun ofRaw(raw: Int): AABY? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class AABZ(val raw: Int) {
+  ONE(0);
+
+  companion object {
+    fun ofRaw(raw: Int): AABZ? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class AACA(val raw: Int) {
+  ONE(0);
+
+  companion object {
+    fun ofRaw(raw: Int): AACA? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class AACB(val raw: Int) {
+  ONE(0);
+
+  companion object {
+    fun ofRaw(raw: Int): AACB? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class AACC(val raw: Int) {
+  ONE(0);
+
+  companion object {
+    fun ofRaw(raw: Int): AACC? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class AACD(val raw: Int) {
+  ONE(0);
+
+  companion object {
+    fun ofRaw(raw: Int): AACD? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class AACE(val raw: Int) {
+  ONE(0);
+
+  companion object {
+    fun ofRaw(raw: Int): AACE? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class AACF(val raw: Int) {
+  ONE(0);
+
+  companion object {
+    fun ofRaw(raw: Int): AACF? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class AACG(val raw: Int) {
+  ONE(0);
+
+  companion object {
+    fun ofRaw(raw: Int): AACG? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class AACH(val raw: Int) {
+  ONE(0);
+
+  companion object {
+    fun ofRaw(raw: Int): AACH? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class AACI(val raw: Int) {
+  ONE(0);
+
+  companion object {
+    fun ofRaw(raw: Int): AACI? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class AACJ(val raw: Int) {
+  ONE(0);
+
+  companion object {
+    fun ofRaw(raw: Int): AACJ? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class AACK(val raw: Int) {
+  ONE(0);
+
+  companion object {
+    fun ofRaw(raw: Int): AACK? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class AACL(val raw: Int) {
+  ONE(0);
+
+  companion object {
+    fun ofRaw(raw: Int): AACL? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class AACM(val raw: Int) {
+  ONE(0);
+
+  companion object {
+    fun ofRaw(raw: Int): AACM? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class AACN(val raw: Int) {
+  ONE(0);
+
+  companion object {
+    fun ofRaw(raw: Int): AACN? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class AACO(val raw: Int) {
+  ONE(0);
+
+  companion object {
+    fun ofRaw(raw: Int): AACO? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class AACP(val raw: Int) {
+  ONE(0);
+
+  companion object {
+    fun ofRaw(raw: Int): AACP? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class AACQ(val raw: Int) {
+  ONE(0);
+
+  companion object {
+    fun ofRaw(raw: Int): AACQ? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class AACR(val raw: Int) {
+  ONE(0);
+
+  companion object {
+    fun ofRaw(raw: Int): AACR? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class AACS(val raw: Int) {
+  ONE(0);
+
+  companion object {
+    fun ofRaw(raw: Int): AACS? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class AACT(val raw: Int) {
+  ONE(0);
+
+  companion object {
+    fun ofRaw(raw: Int): AACT? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class AACU(val raw: Int) {
+  ONE(0);
+
+  companion object {
+    fun ofRaw(raw: Int): AACU? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class AACV(val raw: Int) {
+  ONE(0);
+
+  companion object {
+    fun ofRaw(raw: Int): AACV? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class AACW(val raw: Int) {
+  ONE(0);
+
+  companion object {
+    fun ofRaw(raw: Int): AACW? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class AACX(val raw: Int) {
+  ONE(0);
+
+  companion object {
+    fun ofRaw(raw: Int): AACX? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class AACY(val raw: Int) {
+  ONE(0);
+
+  companion object {
+    fun ofRaw(raw: Int): AACY? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class AACZ(val raw: Int) {
+  ONE(0);
+
+  companion object {
+    fun ofRaw(raw: Int): AACZ? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class AADA(val raw: Int) {
+  ONE(0);
+
+  companion object {
+    fun ofRaw(raw: Int): AADA? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class AADB(val raw: Int) {
+  ONE(0);
+
+  companion object {
+    fun ofRaw(raw: Int): AADB? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class AADC(val raw: Int) {
+  ONE(0);
+
+  companion object {
+    fun ofRaw(raw: Int): AADC? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class AADD(val raw: Int) {
+  ONE(0);
+
+  companion object {
+    fun ofRaw(raw: Int): AADD? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class AADE(val raw: Int) {
+  ONE(0);
+
+  companion object {
+    fun ofRaw(raw: Int): AADE? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class AADF(val raw: Int) {
+  ONE(0);
+
+  companion object {
+    fun ofRaw(raw: Int): AADF? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class AADG(val raw: Int) {
+  ONE(0);
+
+  companion object {
+    fun ofRaw(raw: Int): AADG? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class AADH(val raw: Int) {
+  ONE(0);
+
+  companion object {
+    fun ofRaw(raw: Int): AADH? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class AADI(val raw: Int) {
+  ONE(0);
+
+  companion object {
+    fun ofRaw(raw: Int): AADI? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class AADJ(val raw: Int) {
+  ONE(0);
+
+  companion object {
+    fun ofRaw(raw: Int): AADJ? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class AADK(val raw: Int) {
+  ONE(0);
+
+  companion object {
+    fun ofRaw(raw: Int): AADK? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class AADL(val raw: Int) {
+  ONE(0);
+
+  companion object {
+    fun ofRaw(raw: Int): AADL? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class AADM(val raw: Int) {
+  ONE(0);
+
+  companion object {
+    fun ofRaw(raw: Int): AADM? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class AADN(val raw: Int) {
+  ONE(0);
+
+  companion object {
+    fun ofRaw(raw: Int): AADN? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class AADO(val raw: Int) {
+  ONE(0);
+
+  companion object {
+    fun ofRaw(raw: Int): AADO? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class AADP(val raw: Int) {
+  ONE(0);
+
+  companion object {
+    fun ofRaw(raw: Int): AADP? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class AADQ(val raw: Int) {
+  ONE(0);
+
+  companion object {
+    fun ofRaw(raw: Int): AADQ? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class AADR(val raw: Int) {
+  ONE(0);
+
+  companion object {
+    fun ofRaw(raw: Int): AADR? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class AADS(val raw: Int) {
+  ONE(0);
+
+  companion object {
+    fun ofRaw(raw: Int): AADS? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class AADT(val raw: Int) {
+  ONE(0);
+
+  companion object {
+    fun ofRaw(raw: Int): AADT? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class AADU(val raw: Int) {
+  ONE(0);
+
+  companion object {
+    fun ofRaw(raw: Int): AADU? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class AADV(val raw: Int) {
+  ONE(0);
+
+  companion object {
+    fun ofRaw(raw: Int): AADV? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class AADW(val raw: Int) {
+  ONE(0);
+
+  companion object {
+    fun ofRaw(raw: Int): AADW? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class AADX(val raw: Int) {
+  ONE(0);
+
+  companion object {
+    fun ofRaw(raw: Int): AADX? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class AADY(val raw: Int) {
+  ONE(0);
+
+  companion object {
+    fun ofRaw(raw: Int): AADY? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class AADZ(val raw: Int) {
+  ONE(0);
+
+  companion object {
+    fun ofRaw(raw: Int): AADZ? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
 enum class AnEnum(val raw: Int) {
   ONE(0),
   TWO(1),
@@ -390,7 +1690,6 @@ data class AllClassesWrapper(
  * Generated class from Pigeon that represents data sent in messages.
  */
 data class TestMessage(val testList: List<Any?>? = null) {
-
   companion object {
     @Suppress("LocalVariableName")
     fun fromList(__pigeon_list: List<Any?>): TestMessage {
@@ -406,28 +1705,453 @@ data class TestMessage(val testList: List<Any?>? = null) {
   }
 }
 
+@Suppress("ClassName")
+data class CoreTests__pigeon_CodecOverflow(val type: Int, val wrapped: Any? = null) {
+  fun toList(): List<Any?> {
+    return listOf(
+        type,
+        wrapped,
+    )
+  }
+
+  companion object {
+    @Suppress("LocalVariableName")
+    fun fromList(__pigeon_list: List<Any?>): Any? {
+      val wrapper =
+          CoreTests__pigeon_CodecOverflow(
+              type = __pigeon_list[0] as Int,
+              wrapped = __pigeon_list[1],
+          )
+      return wrapper.unwrap()
+    }
+  }
+
+  fun unwrap(): Any? {
+    if (wrapped == null) {
+      return null
+    }
+
+    when (type) {
+      0 -> {
+        return AADW.ofRaw(wrapped as Int)
+      }
+      1 -> {
+        return AADX.ofRaw(wrapped as Int)
+      }
+      2 -> {
+        return AADY.ofRaw(wrapped as Int)
+      }
+      3 -> {
+        return AADZ.ofRaw(wrapped as Int)
+      }
+      4 -> {
+        return AnEnum.ofRaw(wrapped as Int)
+      }
+      5 -> {
+        return AllTypes.fromList(wrapped as List<Any?>)
+      }
+      6 -> {
+        return AllNullableTypes.fromList(wrapped as List<Any?>)
+      }
+      7 -> {
+        return AllNullableTypesWithoutRecursion.fromList(wrapped as List<Any?>)
+      }
+      8 -> {
+        return AllClassesWrapper.fromList(wrapped as List<Any?>)
+      }
+      9 -> {
+        return TestMessage.fromList(wrapped as List<Any?>)
+      }
+    }
+    return null
+  }
+}
+
 private object CoreTestsPigeonCodec : StandardMessageCodec() {
   override fun readValueOfType(type: Byte, buffer: ByteBuffer): Any? {
     return when (type) {
       129.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let { AllTypes.fromList(it) }
+        return (readValue(buffer) as Int?)?.let { AAA.ofRaw(it) }
       }
       130.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let { AllNullableTypes.fromList(it) }
+        return (readValue(buffer) as Int?)?.let { AAB.ofRaw(it) }
       }
       131.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let {
-          AllNullableTypesWithoutRecursion.fromList(it)
-        }
+        return (readValue(buffer) as Int?)?.let { AAC.ofRaw(it) }
       }
       132.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let { AllClassesWrapper.fromList(it) }
+        return (readValue(buffer) as Int?)?.let { AAD.ofRaw(it) }
       }
       133.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let { TestMessage.fromList(it) }
+        return (readValue(buffer) as Int?)?.let { AAE.ofRaw(it) }
       }
       134.toByte() -> {
-        return (readValue(buffer) as Int?)?.let { AnEnum.ofRaw(it) }
+        return (readValue(buffer) as Int?)?.let { AAF.ofRaw(it) }
+      }
+      135.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { AAG.ofRaw(it) }
+      }
+      136.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { AAH.ofRaw(it) }
+      }
+      137.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { AAI.ofRaw(it) }
+      }
+      138.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { AAJ.ofRaw(it) }
+      }
+      139.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { AAK.ofRaw(it) }
+      }
+      140.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { AAL.ofRaw(it) }
+      }
+      141.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { AAM.ofRaw(it) }
+      }
+      142.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { AAN.ofRaw(it) }
+      }
+      143.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { AAO.ofRaw(it) }
+      }
+      144.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { AAP.ofRaw(it) }
+      }
+      145.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { AAQ.ofRaw(it) }
+      }
+      146.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { AAR.ofRaw(it) }
+      }
+      147.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { AAS.ofRaw(it) }
+      }
+      148.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { AAT.ofRaw(it) }
+      }
+      149.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { AAU.ofRaw(it) }
+      }
+      150.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { AAV.ofRaw(it) }
+      }
+      151.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { AAW.ofRaw(it) }
+      }
+      152.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { AAX.ofRaw(it) }
+      }
+      153.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { AAY.ofRaw(it) }
+      }
+      154.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { AAZ.ofRaw(it) }
+      }
+      155.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { AAAA.ofRaw(it) }
+      }
+      156.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { AAAB.ofRaw(it) }
+      }
+      157.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { AAAC.ofRaw(it) }
+      }
+      158.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { AAAD.ofRaw(it) }
+      }
+      159.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { AAAE.ofRaw(it) }
+      }
+      160.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { AAAF.ofRaw(it) }
+      }
+      161.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { AAAG.ofRaw(it) }
+      }
+      162.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { AAAH.ofRaw(it) }
+      }
+      163.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { AAAI.ofRaw(it) }
+      }
+      164.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { AAAJ.ofRaw(it) }
+      }
+      165.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { AAAK.ofRaw(it) }
+      }
+      166.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { AAAL.ofRaw(it) }
+      }
+      167.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { AAAM.ofRaw(it) }
+      }
+      168.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { AAAN.ofRaw(it) }
+      }
+      169.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { AAAO.ofRaw(it) }
+      }
+      170.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { AAAP.ofRaw(it) }
+      }
+      171.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { AAAQ.ofRaw(it) }
+      }
+      172.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { AAAR.ofRaw(it) }
+      }
+      173.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { AAAS.ofRaw(it) }
+      }
+      174.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { AAAT.ofRaw(it) }
+      }
+      175.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { AAAU.ofRaw(it) }
+      }
+      176.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { AAAV.ofRaw(it) }
+      }
+      177.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { AAAW.ofRaw(it) }
+      }
+      178.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { AAAX.ofRaw(it) }
+      }
+      179.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { AAAY.ofRaw(it) }
+      }
+      180.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { AAAZ.ofRaw(it) }
+      }
+      181.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { AABA.ofRaw(it) }
+      }
+      182.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { AABB.ofRaw(it) }
+      }
+      183.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { AABC.ofRaw(it) }
+      }
+      184.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { AABD.ofRaw(it) }
+      }
+      185.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { AABE.ofRaw(it) }
+      }
+      186.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { AABF.ofRaw(it) }
+      }
+      187.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { AABG.ofRaw(it) }
+      }
+      188.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { AABH.ofRaw(it) }
+      }
+      189.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { AABI.ofRaw(it) }
+      }
+      190.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { AABJ.ofRaw(it) }
+      }
+      191.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { AABK.ofRaw(it) }
+      }
+      192.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { AABL.ofRaw(it) }
+      }
+      193.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { AABM.ofRaw(it) }
+      }
+      194.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { AABN.ofRaw(it) }
+      }
+      195.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { AABO.ofRaw(it) }
+      }
+      196.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { AABP.ofRaw(it) }
+      }
+      197.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { AABQ.ofRaw(it) }
+      }
+      198.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { AABR.ofRaw(it) }
+      }
+      199.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { AABS.ofRaw(it) }
+      }
+      200.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { AABT.ofRaw(it) }
+      }
+      201.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { AABU.ofRaw(it) }
+      }
+      202.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { AABV.ofRaw(it) }
+      }
+      203.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { AABW.ofRaw(it) }
+      }
+      204.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { AABX.ofRaw(it) }
+      }
+      205.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { AABY.ofRaw(it) }
+      }
+      206.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { AABZ.ofRaw(it) }
+      }
+      207.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { AACA.ofRaw(it) }
+      }
+      208.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { AACB.ofRaw(it) }
+      }
+      209.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { AACC.ofRaw(it) }
+      }
+      210.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { AACD.ofRaw(it) }
+      }
+      211.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { AACE.ofRaw(it) }
+      }
+      212.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { AACF.ofRaw(it) }
+      }
+      213.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { AACG.ofRaw(it) }
+      }
+      214.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { AACH.ofRaw(it) }
+      }
+      215.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { AACI.ofRaw(it) }
+      }
+      216.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { AACJ.ofRaw(it) }
+      }
+      217.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { AACK.ofRaw(it) }
+      }
+      218.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { AACL.ofRaw(it) }
+      }
+      219.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { AACM.ofRaw(it) }
+      }
+      220.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { AACN.ofRaw(it) }
+      }
+      221.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { AACO.ofRaw(it) }
+      }
+      222.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { AACP.ofRaw(it) }
+      }
+      223.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { AACQ.ofRaw(it) }
+      }
+      224.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { AACR.ofRaw(it) }
+      }
+      225.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { AACS.ofRaw(it) }
+      }
+      226.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { AACT.ofRaw(it) }
+      }
+      227.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { AACU.ofRaw(it) }
+      }
+      228.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { AACV.ofRaw(it) }
+      }
+      229.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { AACW.ofRaw(it) }
+      }
+      230.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { AACX.ofRaw(it) }
+      }
+      231.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { AACY.ofRaw(it) }
+      }
+      232.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { AACZ.ofRaw(it) }
+      }
+      233.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { AADA.ofRaw(it) }
+      }
+      234.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { AADB.ofRaw(it) }
+      }
+      235.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { AADC.ofRaw(it) }
+      }
+      236.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { AADD.ofRaw(it) }
+      }
+      237.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { AADE.ofRaw(it) }
+      }
+      238.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { AADF.ofRaw(it) }
+      }
+      239.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { AADG.ofRaw(it) }
+      }
+      240.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { AADH.ofRaw(it) }
+      }
+      241.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { AADI.ofRaw(it) }
+      }
+      242.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { AADJ.ofRaw(it) }
+      }
+      243.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { AADK.ofRaw(it) }
+      }
+      244.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { AADL.ofRaw(it) }
+      }
+      245.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { AADM.ofRaw(it) }
+      }
+      246.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { AADN.ofRaw(it) }
+      }
+      247.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { AADO.ofRaw(it) }
+      }
+      248.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { AADP.ofRaw(it) }
+      }
+      249.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { AADQ.ofRaw(it) }
+      }
+      250.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { AADR.ofRaw(it) }
+      }
+      251.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { AADS.ofRaw(it) }
+      }
+      252.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { AADT.ofRaw(it) }
+      }
+      253.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { AADU.ofRaw(it) }
+      }
+      254.toByte() -> {
+        return (readValue(buffer) as Int?)?.let { AADV.ofRaw(it) }
+      }
+      255.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let {
+          CoreTests__pigeon_CodecOverflow.fromList(it)
+        }
       }
       else -> super.readValueOfType(type, buffer)
     }
@@ -435,29 +2159,559 @@ private object CoreTestsPigeonCodec : StandardMessageCodec() {
 
   override fun writeValue(stream: ByteArrayOutputStream, value: Any?) {
     when (value) {
-      is AllTypes -> {
+      is AAA -> {
         stream.write(129)
-        writeValue(stream, value.toList())
+        writeValue(stream, value.raw)
       }
-      is AllNullableTypes -> {
+      is AAB -> {
         stream.write(130)
-        writeValue(stream, value.toList())
+        writeValue(stream, value.raw)
       }
-      is AllNullableTypesWithoutRecursion -> {
+      is AAC -> {
         stream.write(131)
-        writeValue(stream, value.toList())
+        writeValue(stream, value.raw)
       }
-      is AllClassesWrapper -> {
+      is AAD -> {
         stream.write(132)
-        writeValue(stream, value.toList())
+        writeValue(stream, value.raw)
       }
-      is TestMessage -> {
+      is AAE -> {
         stream.write(133)
-        writeValue(stream, value.toList())
+        writeValue(stream, value.raw)
       }
-      is AnEnum -> {
+      is AAF -> {
         stream.write(134)
         writeValue(stream, value.raw)
+      }
+      is AAG -> {
+        stream.write(135)
+        writeValue(stream, value.raw)
+      }
+      is AAH -> {
+        stream.write(136)
+        writeValue(stream, value.raw)
+      }
+      is AAI -> {
+        stream.write(137)
+        writeValue(stream, value.raw)
+      }
+      is AAJ -> {
+        stream.write(138)
+        writeValue(stream, value.raw)
+      }
+      is AAK -> {
+        stream.write(139)
+        writeValue(stream, value.raw)
+      }
+      is AAL -> {
+        stream.write(140)
+        writeValue(stream, value.raw)
+      }
+      is AAM -> {
+        stream.write(141)
+        writeValue(stream, value.raw)
+      }
+      is AAN -> {
+        stream.write(142)
+        writeValue(stream, value.raw)
+      }
+      is AAO -> {
+        stream.write(143)
+        writeValue(stream, value.raw)
+      }
+      is AAP -> {
+        stream.write(144)
+        writeValue(stream, value.raw)
+      }
+      is AAQ -> {
+        stream.write(145)
+        writeValue(stream, value.raw)
+      }
+      is AAR -> {
+        stream.write(146)
+        writeValue(stream, value.raw)
+      }
+      is AAS -> {
+        stream.write(147)
+        writeValue(stream, value.raw)
+      }
+      is AAT -> {
+        stream.write(148)
+        writeValue(stream, value.raw)
+      }
+      is AAU -> {
+        stream.write(149)
+        writeValue(stream, value.raw)
+      }
+      is AAV -> {
+        stream.write(150)
+        writeValue(stream, value.raw)
+      }
+      is AAW -> {
+        stream.write(151)
+        writeValue(stream, value.raw)
+      }
+      is AAX -> {
+        stream.write(152)
+        writeValue(stream, value.raw)
+      }
+      is AAY -> {
+        stream.write(153)
+        writeValue(stream, value.raw)
+      }
+      is AAZ -> {
+        stream.write(154)
+        writeValue(stream, value.raw)
+      }
+      is AAAA -> {
+        stream.write(155)
+        writeValue(stream, value.raw)
+      }
+      is AAAB -> {
+        stream.write(156)
+        writeValue(stream, value.raw)
+      }
+      is AAAC -> {
+        stream.write(157)
+        writeValue(stream, value.raw)
+      }
+      is AAAD -> {
+        stream.write(158)
+        writeValue(stream, value.raw)
+      }
+      is AAAE -> {
+        stream.write(159)
+        writeValue(stream, value.raw)
+      }
+      is AAAF -> {
+        stream.write(160)
+        writeValue(stream, value.raw)
+      }
+      is AAAG -> {
+        stream.write(161)
+        writeValue(stream, value.raw)
+      }
+      is AAAH -> {
+        stream.write(162)
+        writeValue(stream, value.raw)
+      }
+      is AAAI -> {
+        stream.write(163)
+        writeValue(stream, value.raw)
+      }
+      is AAAJ -> {
+        stream.write(164)
+        writeValue(stream, value.raw)
+      }
+      is AAAK -> {
+        stream.write(165)
+        writeValue(stream, value.raw)
+      }
+      is AAAL -> {
+        stream.write(166)
+        writeValue(stream, value.raw)
+      }
+      is AAAM -> {
+        stream.write(167)
+        writeValue(stream, value.raw)
+      }
+      is AAAN -> {
+        stream.write(168)
+        writeValue(stream, value.raw)
+      }
+      is AAAO -> {
+        stream.write(169)
+        writeValue(stream, value.raw)
+      }
+      is AAAP -> {
+        stream.write(170)
+        writeValue(stream, value.raw)
+      }
+      is AAAQ -> {
+        stream.write(171)
+        writeValue(stream, value.raw)
+      }
+      is AAAR -> {
+        stream.write(172)
+        writeValue(stream, value.raw)
+      }
+      is AAAS -> {
+        stream.write(173)
+        writeValue(stream, value.raw)
+      }
+      is AAAT -> {
+        stream.write(174)
+        writeValue(stream, value.raw)
+      }
+      is AAAU -> {
+        stream.write(175)
+        writeValue(stream, value.raw)
+      }
+      is AAAV -> {
+        stream.write(176)
+        writeValue(stream, value.raw)
+      }
+      is AAAW -> {
+        stream.write(177)
+        writeValue(stream, value.raw)
+      }
+      is AAAX -> {
+        stream.write(178)
+        writeValue(stream, value.raw)
+      }
+      is AAAY -> {
+        stream.write(179)
+        writeValue(stream, value.raw)
+      }
+      is AAAZ -> {
+        stream.write(180)
+        writeValue(stream, value.raw)
+      }
+      is AABA -> {
+        stream.write(181)
+        writeValue(stream, value.raw)
+      }
+      is AABB -> {
+        stream.write(182)
+        writeValue(stream, value.raw)
+      }
+      is AABC -> {
+        stream.write(183)
+        writeValue(stream, value.raw)
+      }
+      is AABD -> {
+        stream.write(184)
+        writeValue(stream, value.raw)
+      }
+      is AABE -> {
+        stream.write(185)
+        writeValue(stream, value.raw)
+      }
+      is AABF -> {
+        stream.write(186)
+        writeValue(stream, value.raw)
+      }
+      is AABG -> {
+        stream.write(187)
+        writeValue(stream, value.raw)
+      }
+      is AABH -> {
+        stream.write(188)
+        writeValue(stream, value.raw)
+      }
+      is AABI -> {
+        stream.write(189)
+        writeValue(stream, value.raw)
+      }
+      is AABJ -> {
+        stream.write(190)
+        writeValue(stream, value.raw)
+      }
+      is AABK -> {
+        stream.write(191)
+        writeValue(stream, value.raw)
+      }
+      is AABL -> {
+        stream.write(192)
+        writeValue(stream, value.raw)
+      }
+      is AABM -> {
+        stream.write(193)
+        writeValue(stream, value.raw)
+      }
+      is AABN -> {
+        stream.write(194)
+        writeValue(stream, value.raw)
+      }
+      is AABO -> {
+        stream.write(195)
+        writeValue(stream, value.raw)
+      }
+      is AABP -> {
+        stream.write(196)
+        writeValue(stream, value.raw)
+      }
+      is AABQ -> {
+        stream.write(197)
+        writeValue(stream, value.raw)
+      }
+      is AABR -> {
+        stream.write(198)
+        writeValue(stream, value.raw)
+      }
+      is AABS -> {
+        stream.write(199)
+        writeValue(stream, value.raw)
+      }
+      is AABT -> {
+        stream.write(200)
+        writeValue(stream, value.raw)
+      }
+      is AABU -> {
+        stream.write(201)
+        writeValue(stream, value.raw)
+      }
+      is AABV -> {
+        stream.write(202)
+        writeValue(stream, value.raw)
+      }
+      is AABW -> {
+        stream.write(203)
+        writeValue(stream, value.raw)
+      }
+      is AABX -> {
+        stream.write(204)
+        writeValue(stream, value.raw)
+      }
+      is AABY -> {
+        stream.write(205)
+        writeValue(stream, value.raw)
+      }
+      is AABZ -> {
+        stream.write(206)
+        writeValue(stream, value.raw)
+      }
+      is AACA -> {
+        stream.write(207)
+        writeValue(stream, value.raw)
+      }
+      is AACB -> {
+        stream.write(208)
+        writeValue(stream, value.raw)
+      }
+      is AACC -> {
+        stream.write(209)
+        writeValue(stream, value.raw)
+      }
+      is AACD -> {
+        stream.write(210)
+        writeValue(stream, value.raw)
+      }
+      is AACE -> {
+        stream.write(211)
+        writeValue(stream, value.raw)
+      }
+      is AACF -> {
+        stream.write(212)
+        writeValue(stream, value.raw)
+      }
+      is AACG -> {
+        stream.write(213)
+        writeValue(stream, value.raw)
+      }
+      is AACH -> {
+        stream.write(214)
+        writeValue(stream, value.raw)
+      }
+      is AACI -> {
+        stream.write(215)
+        writeValue(stream, value.raw)
+      }
+      is AACJ -> {
+        stream.write(216)
+        writeValue(stream, value.raw)
+      }
+      is AACK -> {
+        stream.write(217)
+        writeValue(stream, value.raw)
+      }
+      is AACL -> {
+        stream.write(218)
+        writeValue(stream, value.raw)
+      }
+      is AACM -> {
+        stream.write(219)
+        writeValue(stream, value.raw)
+      }
+      is AACN -> {
+        stream.write(220)
+        writeValue(stream, value.raw)
+      }
+      is AACO -> {
+        stream.write(221)
+        writeValue(stream, value.raw)
+      }
+      is AACP -> {
+        stream.write(222)
+        writeValue(stream, value.raw)
+      }
+      is AACQ -> {
+        stream.write(223)
+        writeValue(stream, value.raw)
+      }
+      is AACR -> {
+        stream.write(224)
+        writeValue(stream, value.raw)
+      }
+      is AACS -> {
+        stream.write(225)
+        writeValue(stream, value.raw)
+      }
+      is AACT -> {
+        stream.write(226)
+        writeValue(stream, value.raw)
+      }
+      is AACU -> {
+        stream.write(227)
+        writeValue(stream, value.raw)
+      }
+      is AACV -> {
+        stream.write(228)
+        writeValue(stream, value.raw)
+      }
+      is AACW -> {
+        stream.write(229)
+        writeValue(stream, value.raw)
+      }
+      is AACX -> {
+        stream.write(230)
+        writeValue(stream, value.raw)
+      }
+      is AACY -> {
+        stream.write(231)
+        writeValue(stream, value.raw)
+      }
+      is AACZ -> {
+        stream.write(232)
+        writeValue(stream, value.raw)
+      }
+      is AADA -> {
+        stream.write(233)
+        writeValue(stream, value.raw)
+      }
+      is AADB -> {
+        stream.write(234)
+        writeValue(stream, value.raw)
+      }
+      is AADC -> {
+        stream.write(235)
+        writeValue(stream, value.raw)
+      }
+      is AADD -> {
+        stream.write(236)
+        writeValue(stream, value.raw)
+      }
+      is AADE -> {
+        stream.write(237)
+        writeValue(stream, value.raw)
+      }
+      is AADF -> {
+        stream.write(238)
+        writeValue(stream, value.raw)
+      }
+      is AADG -> {
+        stream.write(239)
+        writeValue(stream, value.raw)
+      }
+      is AADH -> {
+        stream.write(240)
+        writeValue(stream, value.raw)
+      }
+      is AADI -> {
+        stream.write(241)
+        writeValue(stream, value.raw)
+      }
+      is AADJ -> {
+        stream.write(242)
+        writeValue(stream, value.raw)
+      }
+      is AADK -> {
+        stream.write(243)
+        writeValue(stream, value.raw)
+      }
+      is AADL -> {
+        stream.write(244)
+        writeValue(stream, value.raw)
+      }
+      is AADM -> {
+        stream.write(245)
+        writeValue(stream, value.raw)
+      }
+      is AADN -> {
+        stream.write(246)
+        writeValue(stream, value.raw)
+      }
+      is AADO -> {
+        stream.write(247)
+        writeValue(stream, value.raw)
+      }
+      is AADP -> {
+        stream.write(248)
+        writeValue(stream, value.raw)
+      }
+      is AADQ -> {
+        stream.write(249)
+        writeValue(stream, value.raw)
+      }
+      is AADR -> {
+        stream.write(250)
+        writeValue(stream, value.raw)
+      }
+      is AADS -> {
+        stream.write(251)
+        writeValue(stream, value.raw)
+      }
+      is AADT -> {
+        stream.write(252)
+        writeValue(stream, value.raw)
+      }
+      is AADU -> {
+        stream.write(253)
+        writeValue(stream, value.raw)
+      }
+      is AADV -> {
+        stream.write(254)
+        writeValue(stream, value.raw)
+      }
+      is AADW -> {
+        val wrap = CoreTests__pigeon_CodecOverflow(type = 0, wrapped = value.raw)
+        stream.write(255)
+        writeValue(stream, wrap.toList())
+      }
+      is AADX -> {
+        val wrap = CoreTests__pigeon_CodecOverflow(type = 1, wrapped = value.raw)
+        stream.write(255)
+        writeValue(stream, wrap.toList())
+      }
+      is AADY -> {
+        val wrap = CoreTests__pigeon_CodecOverflow(type = 2, wrapped = value.raw)
+        stream.write(255)
+        writeValue(stream, wrap.toList())
+      }
+      is AADZ -> {
+        val wrap = CoreTests__pigeon_CodecOverflow(type = 3, wrapped = value.raw)
+        stream.write(255)
+        writeValue(stream, wrap.toList())
+      }
+      is AnEnum -> {
+        val wrap = CoreTests__pigeon_CodecOverflow(type = 4, wrapped = value.raw)
+        stream.write(255)
+        writeValue(stream, wrap.toList())
+      }
+      is AllTypes -> {
+        val wrap = CoreTests__pigeon_CodecOverflow(type = 5, wrapped = value.toList())
+        stream.write(255)
+        writeValue(stream, wrap.toList())
+      }
+      is AllNullableTypes -> {
+        val wrap = CoreTests__pigeon_CodecOverflow(type = 6, wrapped = value.toList())
+        stream.write(255)
+        writeValue(stream, wrap.toList())
+      }
+      is AllNullableTypesWithoutRecursion -> {
+        val wrap = CoreTests__pigeon_CodecOverflow(type = 7, wrapped = value.toList())
+        stream.write(255)
+        writeValue(stream, wrap.toList())
+      }
+      is AllClassesWrapper -> {
+        val wrap = CoreTests__pigeon_CodecOverflow(type = 8, wrapped = value.toList())
+        stream.write(255)
+        writeValue(stream, wrap.toList())
+      }
+      is TestMessage -> {
+        val wrap = CoreTests__pigeon_CodecOverflow(type = 9, wrapped = value.toList())
+        stream.write(255)
+        writeValue(stream, wrap.toList())
       }
       else -> super.writeValue(stream, value)
     }

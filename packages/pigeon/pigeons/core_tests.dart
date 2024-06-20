@@ -4,12 +4,14 @@
 
 import 'package:pigeon/pigeon.dart';
 
-enum AnEnum {
-  one,
-  two,
-  three,
-  fortyTwo,
-  fourHundredTwentyTwo,
+class SimpleClass {
+  SimpleClass({
+    this.aString,
+    this.aBool = true,
+  });
+
+  String? aString;
+  bool aBool;
 }
 
 /// A class containing all supported types.
@@ -857,4 +859,274 @@ abstract class FlutterSmallApi {
 class TestMessage {
   // ignore: always_specify_types, strict_raw_type
   List? testList;
+}
+
+// additional enums to get above codec limit.
+
+enum AAA { one }
+
+enum AAB { one }
+
+enum AAC { one }
+
+enum AAD { one }
+
+enum AAE { one }
+
+enum AAF { one }
+
+enum AAG { one }
+
+enum AAH { one }
+
+enum AAI { one }
+
+enum AAJ { one }
+
+enum AAK { one }
+
+enum AAL { one }
+
+enum AAM { one }
+
+enum AAN { one }
+
+enum AAO { one }
+
+enum AAP { one }
+
+enum AAQ { one }
+
+enum AAR { one }
+
+enum AAS { one }
+
+enum AAT { one }
+
+enum AAU { one }
+
+enum AAV { one }
+
+enum AAW { one }
+
+enum AAX { one }
+
+enum AAY { one }
+
+enum AAZ { one }
+
+enum AAAA { one }
+
+enum AAAB { one }
+
+enum AAAC { one }
+
+enum AAAD { one }
+
+enum AAAE { one }
+
+enum AAAF { one }
+
+enum AAAG { one }
+
+enum AAAH { one }
+
+enum AAAI { one }
+
+enum AAAJ { one }
+
+enum AAAK { one }
+
+enum AAAL { one }
+
+enum AAAM { one }
+
+enum AAAN { one }
+
+enum AAAO { one }
+
+enum AAAP { one }
+
+enum AAAQ { one }
+
+enum AAAR { one }
+
+enum AAAS { one }
+
+enum AAAT { one }
+
+enum AAAU { one }
+
+enum AAAV { one }
+
+enum AAAW { one }
+
+enum AAAX { one }
+
+enum AAAY { one }
+
+enum AAAZ { one }
+
+enum AABA { one }
+
+enum AABB { one }
+
+enum AABC { one }
+
+enum AABD { one }
+
+enum AABE { one }
+
+enum AABF { one }
+
+enum AABG { one }
+
+enum AABH { one }
+
+enum AABI { one }
+
+enum AABJ { one }
+
+enum AABK { one }
+
+enum AABL { one }
+
+enum AABM { one }
+
+enum AABN { one }
+
+enum AABO { one }
+
+enum AABP { one }
+
+enum AABQ { one }
+
+enum AABR { one }
+
+enum AABS { one }
+
+enum AABT { one }
+
+enum AABU { one }
+
+enum AABV { one }
+
+enum AABW { one }
+
+enum AABX { one }
+
+enum AABY { one }
+
+enum AABZ { one }
+
+enum AACA { one }
+
+enum AACB { one }
+
+enum AACC { one }
+
+enum AACD { one }
+
+enum AACE { one }
+
+enum AACF { one }
+
+enum AACG { one }
+
+enum AACH { one }
+
+enum AACI { one }
+
+enum AACJ { one }
+
+enum AACK { one }
+
+enum AACL { one }
+
+enum AACM { one }
+
+enum AACN { one }
+
+enum AACO { one }
+
+enum AACP { one }
+
+enum AACQ { one }
+
+enum AACR { one }
+
+enum AACS { one }
+
+enum AACT { one }
+
+enum AACU { one }
+
+enum AACV { one }
+
+enum AACW { one }
+
+enum AACX { one }
+
+enum AACY { one }
+
+enum AACZ { one }
+
+enum AADA { one }
+
+enum AADB { one }
+
+enum AADC { one }
+
+enum AADD { one }
+
+enum AADE { one }
+
+enum AADF { one }
+
+enum AADG { one }
+
+enum AADH { one }
+
+enum AADI { one }
+
+enum AADJ { one }
+
+enum AADK { one }
+
+enum AADL { one }
+
+enum AADM { one }
+
+enum AADN { one }
+
+enum AADO { one }
+
+enum AADP { one }
+
+enum AADQ { one }
+
+enum AADR { one }
+
+enum AADS { one }
+
+enum AADT { one }
+
+enum AADU { one }
+
+enum AADV { one }
+
+enum AADW { one }
+
+enum AADX { one }
+
+enum AADY { one }
+
+enum AADZ { one }
+
+enum AnEnum {
+  one,
+  two,
+  three,
+  fortyTwo,
+  fourHundredTwentyTwo,
 }

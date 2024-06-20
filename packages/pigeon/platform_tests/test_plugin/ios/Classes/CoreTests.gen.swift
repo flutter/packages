@@ -74,6 +74,526 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
   return value as! T?
 }
 
+enum AAA: Int {
+  case one = 0
+}
+
+enum AAB: Int {
+  case one = 0
+}
+
+enum AAC: Int {
+  case one = 0
+}
+
+enum AAD: Int {
+  case one = 0
+}
+
+enum AAE: Int {
+  case one = 0
+}
+
+enum AAF: Int {
+  case one = 0
+}
+
+enum AAG: Int {
+  case one = 0
+}
+
+enum AAH: Int {
+  case one = 0
+}
+
+enum AAI: Int {
+  case one = 0
+}
+
+enum AAJ: Int {
+  case one = 0
+}
+
+enum AAK: Int {
+  case one = 0
+}
+
+enum AAL: Int {
+  case one = 0
+}
+
+enum AAM: Int {
+  case one = 0
+}
+
+enum AAN: Int {
+  case one = 0
+}
+
+enum AAO: Int {
+  case one = 0
+}
+
+enum AAP: Int {
+  case one = 0
+}
+
+enum AAQ: Int {
+  case one = 0
+}
+
+enum AAR: Int {
+  case one = 0
+}
+
+enum AAS: Int {
+  case one = 0
+}
+
+enum AAT: Int {
+  case one = 0
+}
+
+enum AAU: Int {
+  case one = 0
+}
+
+enum AAV: Int {
+  case one = 0
+}
+
+enum AAW: Int {
+  case one = 0
+}
+
+enum AAX: Int {
+  case one = 0
+}
+
+enum AAY: Int {
+  case one = 0
+}
+
+enum AAZ: Int {
+  case one = 0
+}
+
+enum AAAA: Int {
+  case one = 0
+}
+
+enum AAAB: Int {
+  case one = 0
+}
+
+enum AAAC: Int {
+  case one = 0
+}
+
+enum AAAD: Int {
+  case one = 0
+}
+
+enum AAAE: Int {
+  case one = 0
+}
+
+enum AAAF: Int {
+  case one = 0
+}
+
+enum AAAG: Int {
+  case one = 0
+}
+
+enum AAAH: Int {
+  case one = 0
+}
+
+enum AAAI: Int {
+  case one = 0
+}
+
+enum AAAJ: Int {
+  case one = 0
+}
+
+enum AAAK: Int {
+  case one = 0
+}
+
+enum AAAL: Int {
+  case one = 0
+}
+
+enum AAAM: Int {
+  case one = 0
+}
+
+enum AAAN: Int {
+  case one = 0
+}
+
+enum AAAO: Int {
+  case one = 0
+}
+
+enum AAAP: Int {
+  case one = 0
+}
+
+enum AAAQ: Int {
+  case one = 0
+}
+
+enum AAAR: Int {
+  case one = 0
+}
+
+enum AAAS: Int {
+  case one = 0
+}
+
+enum AAAT: Int {
+  case one = 0
+}
+
+enum AAAU: Int {
+  case one = 0
+}
+
+enum AAAV: Int {
+  case one = 0
+}
+
+enum AAAW: Int {
+  case one = 0
+}
+
+enum AAAX: Int {
+  case one = 0
+}
+
+enum AAAY: Int {
+  case one = 0
+}
+
+enum AAAZ: Int {
+  case one = 0
+}
+
+enum AABA: Int {
+  case one = 0
+}
+
+enum AABB: Int {
+  case one = 0
+}
+
+enum AABC: Int {
+  case one = 0
+}
+
+enum AABD: Int {
+  case one = 0
+}
+
+enum AABE: Int {
+  case one = 0
+}
+
+enum AABF: Int {
+  case one = 0
+}
+
+enum AABG: Int {
+  case one = 0
+}
+
+enum AABH: Int {
+  case one = 0
+}
+
+enum AABI: Int {
+  case one = 0
+}
+
+enum AABJ: Int {
+  case one = 0
+}
+
+enum AABK: Int {
+  case one = 0
+}
+
+enum AABL: Int {
+  case one = 0
+}
+
+enum AABM: Int {
+  case one = 0
+}
+
+enum AABN: Int {
+  case one = 0
+}
+
+enum AABO: Int {
+  case one = 0
+}
+
+enum AABP: Int {
+  case one = 0
+}
+
+enum AABQ: Int {
+  case one = 0
+}
+
+enum AABR: Int {
+  case one = 0
+}
+
+enum AABS: Int {
+  case one = 0
+}
+
+enum AABT: Int {
+  case one = 0
+}
+
+enum AABU: Int {
+  case one = 0
+}
+
+enum AABV: Int {
+  case one = 0
+}
+
+enum AABW: Int {
+  case one = 0
+}
+
+enum AABX: Int {
+  case one = 0
+}
+
+enum AABY: Int {
+  case one = 0
+}
+
+enum AABZ: Int {
+  case one = 0
+}
+
+enum AACA: Int {
+  case one = 0
+}
+
+enum AACB: Int {
+  case one = 0
+}
+
+enum AACC: Int {
+  case one = 0
+}
+
+enum AACD: Int {
+  case one = 0
+}
+
+enum AACE: Int {
+  case one = 0
+}
+
+enum AACF: Int {
+  case one = 0
+}
+
+enum AACG: Int {
+  case one = 0
+}
+
+enum AACH: Int {
+  case one = 0
+}
+
+enum AACI: Int {
+  case one = 0
+}
+
+enum AACJ: Int {
+  case one = 0
+}
+
+enum AACK: Int {
+  case one = 0
+}
+
+enum AACL: Int {
+  case one = 0
+}
+
+enum AACM: Int {
+  case one = 0
+}
+
+enum AACN: Int {
+  case one = 0
+}
+
+enum AACO: Int {
+  case one = 0
+}
+
+enum AACP: Int {
+  case one = 0
+}
+
+enum AACQ: Int {
+  case one = 0
+}
+
+enum AACR: Int {
+  case one = 0
+}
+
+enum AACS: Int {
+  case one = 0
+}
+
+enum AACT: Int {
+  case one = 0
+}
+
+enum AACU: Int {
+  case one = 0
+}
+
+enum AACV: Int {
+  case one = 0
+}
+
+enum AACW: Int {
+  case one = 0
+}
+
+enum AACX: Int {
+  case one = 0
+}
+
+enum AACY: Int {
+  case one = 0
+}
+
+enum AACZ: Int {
+  case one = 0
+}
+
+enum AADA: Int {
+  case one = 0
+}
+
+enum AADB: Int {
+  case one = 0
+}
+
+enum AADC: Int {
+  case one = 0
+}
+
+enum AADD: Int {
+  case one = 0
+}
+
+enum AADE: Int {
+  case one = 0
+}
+
+enum AADF: Int {
+  case one = 0
+}
+
+enum AADG: Int {
+  case one = 0
+}
+
+enum AADH: Int {
+  case one = 0
+}
+
+enum AADI: Int {
+  case one = 0
+}
+
+enum AADJ: Int {
+  case one = 0
+}
+
+enum AADK: Int {
+  case one = 0
+}
+
+enum AADL: Int {
+  case one = 0
+}
+
+enum AADM: Int {
+  case one = 0
+}
+
+enum AADN: Int {
+  case one = 0
+}
+
+enum AADO: Int {
+  case one = 0
+}
+
+enum AADP: Int {
+  case one = 0
+}
+
+enum AADQ: Int {
+  case one = 0
+}
+
+enum AADR: Int {
+  case one = 0
+}
+
+enum AADS: Int {
+  case one = 0
+}
+
+enum AADT: Int {
+  case one = 0
+}
+
+enum AADU: Int {
+  case one = 0
+}
+
+enum AADV: Int {
+  case one = 0
+}
+
+enum AADW: Int {
+  case one = 0
+}
+
+enum AADX: Int {
+  case one = 0
+}
+
+enum AADY: Int {
+  case one = 0
+}
+
+enum AADZ: Int {
+  case one = 0
+}
+
 enum AnEnum: Int {
   case one = 0
   case two = 1
@@ -490,26 +1010,950 @@ struct TestMessage {
     ]
   }
 }
+
+// swift-format-ignore: TypeNamesShouldBeCapitalized
+struct __pigeon_CodecOverflow {
+  var type: Int
+  var wrapped: Any? = nil
+
+  func toList() -> [Any?] {
+    return [
+      type,
+      wrapped,
+    ]
+  }
+  // swift-format-ignore: AlwaysUseLowerCamelCase
+  static func fromList(_ __pigeon_list: [Any?]) -> Any? {
+    let type = __pigeon_list[0] as! Int
+    let wrapped: Any? = __pigeon_list[1]
+
+    let wrapper = __pigeon_CodecOverflow(
+      type: type,
+      wrapped: wrapped
+    )
+
+    return wrapper.unwrap()
+  }
+
+  func unwrap() -> Any? {
+    if wrapped == nil {
+      return nil
+    }
+
+    switch type {
+    case 0:
+      return AADW(rawValue: wrapped as! Int)
+    case 1:
+      return AADX(rawValue: wrapped as! Int)
+    case 2:
+      return AADY(rawValue: wrapped as! Int)
+    case 3:
+      return AADZ(rawValue: wrapped as! Int)
+    case 4:
+      return AnEnum(rawValue: wrapped as! Int)
+    case 5:
+      return AllTypes.fromList(wrapped as! [Any?])
+    case 6:
+      return AllNullableTypes.fromList(wrapped as! [Any?])
+    case 7:
+      return AllNullableTypesWithoutRecursion.fromList(wrapped as! [Any?])
+    case 8:
+      return AllClassesWrapper.fromList(wrapped as! [Any?])
+    case 9:
+      return TestMessage.fromList(wrapped as! [Any?])
+    default:
+      return nil
+    }
+  }
+}
+
 private class CoreTestsPigeonCodecReader: FlutterStandardReader {
   override func readValue(ofType type: UInt8) -> Any? {
     switch type {
     case 129:
-      return AllTypes.fromList(self.readValue() as! [Any?])
-    case 130:
-      return AllNullableTypes.fromList(self.readValue() as! [Any?])
-    case 131:
-      return AllNullableTypesWithoutRecursion.fromList(self.readValue() as! [Any?])
-    case 132:
-      return AllClassesWrapper.fromList(self.readValue() as! [Any?])
-    case 133:
-      return TestMessage.fromList(self.readValue() as! [Any?])
-    case 134:
-      var enumResult: AnEnum? = nil
+      var enumResult: AAA? = nil
       let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
       if let enumResultAsInt = enumResultAsInt {
-        enumResult = AnEnum(rawValue: enumResultAsInt)
+        enumResult = AAA(rawValue: enumResultAsInt)
       }
       return enumResult
+    case 130:
+      var enumResult: AAB? = nil
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
+      if let enumResultAsInt = enumResultAsInt {
+        enumResult = AAB(rawValue: enumResultAsInt)
+      }
+      return enumResult
+    case 131:
+      var enumResult: AAC? = nil
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
+      if let enumResultAsInt = enumResultAsInt {
+        enumResult = AAC(rawValue: enumResultAsInt)
+      }
+      return enumResult
+    case 132:
+      var enumResult: AAD? = nil
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
+      if let enumResultAsInt = enumResultAsInt {
+        enumResult = AAD(rawValue: enumResultAsInt)
+      }
+      return enumResult
+    case 133:
+      var enumResult: AAE? = nil
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
+      if let enumResultAsInt = enumResultAsInt {
+        enumResult = AAE(rawValue: enumResultAsInt)
+      }
+      return enumResult
+    case 134:
+      var enumResult: AAF? = nil
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
+      if let enumResultAsInt = enumResultAsInt {
+        enumResult = AAF(rawValue: enumResultAsInt)
+      }
+      return enumResult
+    case 135:
+      var enumResult: AAG? = nil
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
+      if let enumResultAsInt = enumResultAsInt {
+        enumResult = AAG(rawValue: enumResultAsInt)
+      }
+      return enumResult
+    case 136:
+      var enumResult: AAH? = nil
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
+      if let enumResultAsInt = enumResultAsInt {
+        enumResult = AAH(rawValue: enumResultAsInt)
+      }
+      return enumResult
+    case 137:
+      var enumResult: AAI? = nil
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
+      if let enumResultAsInt = enumResultAsInt {
+        enumResult = AAI(rawValue: enumResultAsInt)
+      }
+      return enumResult
+    case 138:
+      var enumResult: AAJ? = nil
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
+      if let enumResultAsInt = enumResultAsInt {
+        enumResult = AAJ(rawValue: enumResultAsInt)
+      }
+      return enumResult
+    case 139:
+      var enumResult: AAK? = nil
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
+      if let enumResultAsInt = enumResultAsInt {
+        enumResult = AAK(rawValue: enumResultAsInt)
+      }
+      return enumResult
+    case 140:
+      var enumResult: AAL? = nil
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
+      if let enumResultAsInt = enumResultAsInt {
+        enumResult = AAL(rawValue: enumResultAsInt)
+      }
+      return enumResult
+    case 141:
+      var enumResult: AAM? = nil
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
+      if let enumResultAsInt = enumResultAsInt {
+        enumResult = AAM(rawValue: enumResultAsInt)
+      }
+      return enumResult
+    case 142:
+      var enumResult: AAN? = nil
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
+      if let enumResultAsInt = enumResultAsInt {
+        enumResult = AAN(rawValue: enumResultAsInt)
+      }
+      return enumResult
+    case 143:
+      var enumResult: AAO? = nil
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
+      if let enumResultAsInt = enumResultAsInt {
+        enumResult = AAO(rawValue: enumResultAsInt)
+      }
+      return enumResult
+    case 144:
+      var enumResult: AAP? = nil
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
+      if let enumResultAsInt = enumResultAsInt {
+        enumResult = AAP(rawValue: enumResultAsInt)
+      }
+      return enumResult
+    case 145:
+      var enumResult: AAQ? = nil
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
+      if let enumResultAsInt = enumResultAsInt {
+        enumResult = AAQ(rawValue: enumResultAsInt)
+      }
+      return enumResult
+    case 146:
+      var enumResult: AAR? = nil
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
+      if let enumResultAsInt = enumResultAsInt {
+        enumResult = AAR(rawValue: enumResultAsInt)
+      }
+      return enumResult
+    case 147:
+      var enumResult: AAS? = nil
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
+      if let enumResultAsInt = enumResultAsInt {
+        enumResult = AAS(rawValue: enumResultAsInt)
+      }
+      return enumResult
+    case 148:
+      var enumResult: AAT? = nil
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
+      if let enumResultAsInt = enumResultAsInt {
+        enumResult = AAT(rawValue: enumResultAsInt)
+      }
+      return enumResult
+    case 149:
+      var enumResult: AAU? = nil
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
+      if let enumResultAsInt = enumResultAsInt {
+        enumResult = AAU(rawValue: enumResultAsInt)
+      }
+      return enumResult
+    case 150:
+      var enumResult: AAV? = nil
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
+      if let enumResultAsInt = enumResultAsInt {
+        enumResult = AAV(rawValue: enumResultAsInt)
+      }
+      return enumResult
+    case 151:
+      var enumResult: AAW? = nil
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
+      if let enumResultAsInt = enumResultAsInt {
+        enumResult = AAW(rawValue: enumResultAsInt)
+      }
+      return enumResult
+    case 152:
+      var enumResult: AAX? = nil
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
+      if let enumResultAsInt = enumResultAsInt {
+        enumResult = AAX(rawValue: enumResultAsInt)
+      }
+      return enumResult
+    case 153:
+      var enumResult: AAY? = nil
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
+      if let enumResultAsInt = enumResultAsInt {
+        enumResult = AAY(rawValue: enumResultAsInt)
+      }
+      return enumResult
+    case 154:
+      var enumResult: AAZ? = nil
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
+      if let enumResultAsInt = enumResultAsInt {
+        enumResult = AAZ(rawValue: enumResultAsInt)
+      }
+      return enumResult
+    case 155:
+      var enumResult: AAAA? = nil
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
+      if let enumResultAsInt = enumResultAsInt {
+        enumResult = AAAA(rawValue: enumResultAsInt)
+      }
+      return enumResult
+    case 156:
+      var enumResult: AAAB? = nil
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
+      if let enumResultAsInt = enumResultAsInt {
+        enumResult = AAAB(rawValue: enumResultAsInt)
+      }
+      return enumResult
+    case 157:
+      var enumResult: AAAC? = nil
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
+      if let enumResultAsInt = enumResultAsInt {
+        enumResult = AAAC(rawValue: enumResultAsInt)
+      }
+      return enumResult
+    case 158:
+      var enumResult: AAAD? = nil
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
+      if let enumResultAsInt = enumResultAsInt {
+        enumResult = AAAD(rawValue: enumResultAsInt)
+      }
+      return enumResult
+    case 159:
+      var enumResult: AAAE? = nil
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
+      if let enumResultAsInt = enumResultAsInt {
+        enumResult = AAAE(rawValue: enumResultAsInt)
+      }
+      return enumResult
+    case 160:
+      var enumResult: AAAF? = nil
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
+      if let enumResultAsInt = enumResultAsInt {
+        enumResult = AAAF(rawValue: enumResultAsInt)
+      }
+      return enumResult
+    case 161:
+      var enumResult: AAAG? = nil
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
+      if let enumResultAsInt = enumResultAsInt {
+        enumResult = AAAG(rawValue: enumResultAsInt)
+      }
+      return enumResult
+    case 162:
+      var enumResult: AAAH? = nil
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
+      if let enumResultAsInt = enumResultAsInt {
+        enumResult = AAAH(rawValue: enumResultAsInt)
+      }
+      return enumResult
+    case 163:
+      var enumResult: AAAI? = nil
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
+      if let enumResultAsInt = enumResultAsInt {
+        enumResult = AAAI(rawValue: enumResultAsInt)
+      }
+      return enumResult
+    case 164:
+      var enumResult: AAAJ? = nil
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
+      if let enumResultAsInt = enumResultAsInt {
+        enumResult = AAAJ(rawValue: enumResultAsInt)
+      }
+      return enumResult
+    case 165:
+      var enumResult: AAAK? = nil
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
+      if let enumResultAsInt = enumResultAsInt {
+        enumResult = AAAK(rawValue: enumResultAsInt)
+      }
+      return enumResult
+    case 166:
+      var enumResult: AAAL? = nil
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
+      if let enumResultAsInt = enumResultAsInt {
+        enumResult = AAAL(rawValue: enumResultAsInt)
+      }
+      return enumResult
+    case 167:
+      var enumResult: AAAM? = nil
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
+      if let enumResultAsInt = enumResultAsInt {
+        enumResult = AAAM(rawValue: enumResultAsInt)
+      }
+      return enumResult
+    case 168:
+      var enumResult: AAAN? = nil
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
+      if let enumResultAsInt = enumResultAsInt {
+        enumResult = AAAN(rawValue: enumResultAsInt)
+      }
+      return enumResult
+    case 169:
+      var enumResult: AAAO? = nil
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
+      if let enumResultAsInt = enumResultAsInt {
+        enumResult = AAAO(rawValue: enumResultAsInt)
+      }
+      return enumResult
+    case 170:
+      var enumResult: AAAP? = nil
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
+      if let enumResultAsInt = enumResultAsInt {
+        enumResult = AAAP(rawValue: enumResultAsInt)
+      }
+      return enumResult
+    case 171:
+      var enumResult: AAAQ? = nil
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
+      if let enumResultAsInt = enumResultAsInt {
+        enumResult = AAAQ(rawValue: enumResultAsInt)
+      }
+      return enumResult
+    case 172:
+      var enumResult: AAAR? = nil
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
+      if let enumResultAsInt = enumResultAsInt {
+        enumResult = AAAR(rawValue: enumResultAsInt)
+      }
+      return enumResult
+    case 173:
+      var enumResult: AAAS? = nil
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
+      if let enumResultAsInt = enumResultAsInt {
+        enumResult = AAAS(rawValue: enumResultAsInt)
+      }
+      return enumResult
+    case 174:
+      var enumResult: AAAT? = nil
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
+      if let enumResultAsInt = enumResultAsInt {
+        enumResult = AAAT(rawValue: enumResultAsInt)
+      }
+      return enumResult
+    case 175:
+      var enumResult: AAAU? = nil
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
+      if let enumResultAsInt = enumResultAsInt {
+        enumResult = AAAU(rawValue: enumResultAsInt)
+      }
+      return enumResult
+    case 176:
+      var enumResult: AAAV? = nil
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
+      if let enumResultAsInt = enumResultAsInt {
+        enumResult = AAAV(rawValue: enumResultAsInt)
+      }
+      return enumResult
+    case 177:
+      var enumResult: AAAW? = nil
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
+      if let enumResultAsInt = enumResultAsInt {
+        enumResult = AAAW(rawValue: enumResultAsInt)
+      }
+      return enumResult
+    case 178:
+      var enumResult: AAAX? = nil
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
+      if let enumResultAsInt = enumResultAsInt {
+        enumResult = AAAX(rawValue: enumResultAsInt)
+      }
+      return enumResult
+    case 179:
+      var enumResult: AAAY? = nil
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
+      if let enumResultAsInt = enumResultAsInt {
+        enumResult = AAAY(rawValue: enumResultAsInt)
+      }
+      return enumResult
+    case 180:
+      var enumResult: AAAZ? = nil
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
+      if let enumResultAsInt = enumResultAsInt {
+        enumResult = AAAZ(rawValue: enumResultAsInt)
+      }
+      return enumResult
+    case 181:
+      var enumResult: AABA? = nil
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
+      if let enumResultAsInt = enumResultAsInt {
+        enumResult = AABA(rawValue: enumResultAsInt)
+      }
+      return enumResult
+    case 182:
+      var enumResult: AABB? = nil
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
+      if let enumResultAsInt = enumResultAsInt {
+        enumResult = AABB(rawValue: enumResultAsInt)
+      }
+      return enumResult
+    case 183:
+      var enumResult: AABC? = nil
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
+      if let enumResultAsInt = enumResultAsInt {
+        enumResult = AABC(rawValue: enumResultAsInt)
+      }
+      return enumResult
+    case 184:
+      var enumResult: AABD? = nil
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
+      if let enumResultAsInt = enumResultAsInt {
+        enumResult = AABD(rawValue: enumResultAsInt)
+      }
+      return enumResult
+    case 185:
+      var enumResult: AABE? = nil
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
+      if let enumResultAsInt = enumResultAsInt {
+        enumResult = AABE(rawValue: enumResultAsInt)
+      }
+      return enumResult
+    case 186:
+      var enumResult: AABF? = nil
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
+      if let enumResultAsInt = enumResultAsInt {
+        enumResult = AABF(rawValue: enumResultAsInt)
+      }
+      return enumResult
+    case 187:
+      var enumResult: AABG? = nil
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
+      if let enumResultAsInt = enumResultAsInt {
+        enumResult = AABG(rawValue: enumResultAsInt)
+      }
+      return enumResult
+    case 188:
+      var enumResult: AABH? = nil
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
+      if let enumResultAsInt = enumResultAsInt {
+        enumResult = AABH(rawValue: enumResultAsInt)
+      }
+      return enumResult
+    case 189:
+      var enumResult: AABI? = nil
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
+      if let enumResultAsInt = enumResultAsInt {
+        enumResult = AABI(rawValue: enumResultAsInt)
+      }
+      return enumResult
+    case 190:
+      var enumResult: AABJ? = nil
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
+      if let enumResultAsInt = enumResultAsInt {
+        enumResult = AABJ(rawValue: enumResultAsInt)
+      }
+      return enumResult
+    case 191:
+      var enumResult: AABK? = nil
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
+      if let enumResultAsInt = enumResultAsInt {
+        enumResult = AABK(rawValue: enumResultAsInt)
+      }
+      return enumResult
+    case 192:
+      var enumResult: AABL? = nil
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
+      if let enumResultAsInt = enumResultAsInt {
+        enumResult = AABL(rawValue: enumResultAsInt)
+      }
+      return enumResult
+    case 193:
+      var enumResult: AABM? = nil
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
+      if let enumResultAsInt = enumResultAsInt {
+        enumResult = AABM(rawValue: enumResultAsInt)
+      }
+      return enumResult
+    case 194:
+      var enumResult: AABN? = nil
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
+      if let enumResultAsInt = enumResultAsInt {
+        enumResult = AABN(rawValue: enumResultAsInt)
+      }
+      return enumResult
+    case 195:
+      var enumResult: AABO? = nil
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
+      if let enumResultAsInt = enumResultAsInt {
+        enumResult = AABO(rawValue: enumResultAsInt)
+      }
+      return enumResult
+    case 196:
+      var enumResult: AABP? = nil
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
+      if let enumResultAsInt = enumResultAsInt {
+        enumResult = AABP(rawValue: enumResultAsInt)
+      }
+      return enumResult
+    case 197:
+      var enumResult: AABQ? = nil
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
+      if let enumResultAsInt = enumResultAsInt {
+        enumResult = AABQ(rawValue: enumResultAsInt)
+      }
+      return enumResult
+    case 198:
+      var enumResult: AABR? = nil
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
+      if let enumResultAsInt = enumResultAsInt {
+        enumResult = AABR(rawValue: enumResultAsInt)
+      }
+      return enumResult
+    case 199:
+      var enumResult: AABS? = nil
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
+      if let enumResultAsInt = enumResultAsInt {
+        enumResult = AABS(rawValue: enumResultAsInt)
+      }
+      return enumResult
+    case 200:
+      var enumResult: AABT? = nil
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
+      if let enumResultAsInt = enumResultAsInt {
+        enumResult = AABT(rawValue: enumResultAsInt)
+      }
+      return enumResult
+    case 201:
+      var enumResult: AABU? = nil
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
+      if let enumResultAsInt = enumResultAsInt {
+        enumResult = AABU(rawValue: enumResultAsInt)
+      }
+      return enumResult
+    case 202:
+      var enumResult: AABV? = nil
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
+      if let enumResultAsInt = enumResultAsInt {
+        enumResult = AABV(rawValue: enumResultAsInt)
+      }
+      return enumResult
+    case 203:
+      var enumResult: AABW? = nil
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
+      if let enumResultAsInt = enumResultAsInt {
+        enumResult = AABW(rawValue: enumResultAsInt)
+      }
+      return enumResult
+    case 204:
+      var enumResult: AABX? = nil
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
+      if let enumResultAsInt = enumResultAsInt {
+        enumResult = AABX(rawValue: enumResultAsInt)
+      }
+      return enumResult
+    case 205:
+      var enumResult: AABY? = nil
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
+      if let enumResultAsInt = enumResultAsInt {
+        enumResult = AABY(rawValue: enumResultAsInt)
+      }
+      return enumResult
+    case 206:
+      var enumResult: AABZ? = nil
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
+      if let enumResultAsInt = enumResultAsInt {
+        enumResult = AABZ(rawValue: enumResultAsInt)
+      }
+      return enumResult
+    case 207:
+      var enumResult: AACA? = nil
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
+      if let enumResultAsInt = enumResultAsInt {
+        enumResult = AACA(rawValue: enumResultAsInt)
+      }
+      return enumResult
+    case 208:
+      var enumResult: AACB? = nil
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
+      if let enumResultAsInt = enumResultAsInt {
+        enumResult = AACB(rawValue: enumResultAsInt)
+      }
+      return enumResult
+    case 209:
+      var enumResult: AACC? = nil
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
+      if let enumResultAsInt = enumResultAsInt {
+        enumResult = AACC(rawValue: enumResultAsInt)
+      }
+      return enumResult
+    case 210:
+      var enumResult: AACD? = nil
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
+      if let enumResultAsInt = enumResultAsInt {
+        enumResult = AACD(rawValue: enumResultAsInt)
+      }
+      return enumResult
+    case 211:
+      var enumResult: AACE? = nil
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
+      if let enumResultAsInt = enumResultAsInt {
+        enumResult = AACE(rawValue: enumResultAsInt)
+      }
+      return enumResult
+    case 212:
+      var enumResult: AACF? = nil
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
+      if let enumResultAsInt = enumResultAsInt {
+        enumResult = AACF(rawValue: enumResultAsInt)
+      }
+      return enumResult
+    case 213:
+      var enumResult: AACG? = nil
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
+      if let enumResultAsInt = enumResultAsInt {
+        enumResult = AACG(rawValue: enumResultAsInt)
+      }
+      return enumResult
+    case 214:
+      var enumResult: AACH? = nil
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
+      if let enumResultAsInt = enumResultAsInt {
+        enumResult = AACH(rawValue: enumResultAsInt)
+      }
+      return enumResult
+    case 215:
+      var enumResult: AACI? = nil
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
+      if let enumResultAsInt = enumResultAsInt {
+        enumResult = AACI(rawValue: enumResultAsInt)
+      }
+      return enumResult
+    case 216:
+      var enumResult: AACJ? = nil
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
+      if let enumResultAsInt = enumResultAsInt {
+        enumResult = AACJ(rawValue: enumResultAsInt)
+      }
+      return enumResult
+    case 217:
+      var enumResult: AACK? = nil
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
+      if let enumResultAsInt = enumResultAsInt {
+        enumResult = AACK(rawValue: enumResultAsInt)
+      }
+      return enumResult
+    case 218:
+      var enumResult: AACL? = nil
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
+      if let enumResultAsInt = enumResultAsInt {
+        enumResult = AACL(rawValue: enumResultAsInt)
+      }
+      return enumResult
+    case 219:
+      var enumResult: AACM? = nil
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
+      if let enumResultAsInt = enumResultAsInt {
+        enumResult = AACM(rawValue: enumResultAsInt)
+      }
+      return enumResult
+    case 220:
+      var enumResult: AACN? = nil
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
+      if let enumResultAsInt = enumResultAsInt {
+        enumResult = AACN(rawValue: enumResultAsInt)
+      }
+      return enumResult
+    case 221:
+      var enumResult: AACO? = nil
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
+      if let enumResultAsInt = enumResultAsInt {
+        enumResult = AACO(rawValue: enumResultAsInt)
+      }
+      return enumResult
+    case 222:
+      var enumResult: AACP? = nil
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
+      if let enumResultAsInt = enumResultAsInt {
+        enumResult = AACP(rawValue: enumResultAsInt)
+      }
+      return enumResult
+    case 223:
+      var enumResult: AACQ? = nil
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
+      if let enumResultAsInt = enumResultAsInt {
+        enumResult = AACQ(rawValue: enumResultAsInt)
+      }
+      return enumResult
+    case 224:
+      var enumResult: AACR? = nil
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
+      if let enumResultAsInt = enumResultAsInt {
+        enumResult = AACR(rawValue: enumResultAsInt)
+      }
+      return enumResult
+    case 225:
+      var enumResult: AACS? = nil
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
+      if let enumResultAsInt = enumResultAsInt {
+        enumResult = AACS(rawValue: enumResultAsInt)
+      }
+      return enumResult
+    case 226:
+      var enumResult: AACT? = nil
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
+      if let enumResultAsInt = enumResultAsInt {
+        enumResult = AACT(rawValue: enumResultAsInt)
+      }
+      return enumResult
+    case 227:
+      var enumResult: AACU? = nil
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
+      if let enumResultAsInt = enumResultAsInt {
+        enumResult = AACU(rawValue: enumResultAsInt)
+      }
+      return enumResult
+    case 228:
+      var enumResult: AACV? = nil
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
+      if let enumResultAsInt = enumResultAsInt {
+        enumResult = AACV(rawValue: enumResultAsInt)
+      }
+      return enumResult
+    case 229:
+      var enumResult: AACW? = nil
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
+      if let enumResultAsInt = enumResultAsInt {
+        enumResult = AACW(rawValue: enumResultAsInt)
+      }
+      return enumResult
+    case 230:
+      var enumResult: AACX? = nil
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
+      if let enumResultAsInt = enumResultAsInt {
+        enumResult = AACX(rawValue: enumResultAsInt)
+      }
+      return enumResult
+    case 231:
+      var enumResult: AACY? = nil
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
+      if let enumResultAsInt = enumResultAsInt {
+        enumResult = AACY(rawValue: enumResultAsInt)
+      }
+      return enumResult
+    case 232:
+      var enumResult: AACZ? = nil
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
+      if let enumResultAsInt = enumResultAsInt {
+        enumResult = AACZ(rawValue: enumResultAsInt)
+      }
+      return enumResult
+    case 233:
+      var enumResult: AADA? = nil
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
+      if let enumResultAsInt = enumResultAsInt {
+        enumResult = AADA(rawValue: enumResultAsInt)
+      }
+      return enumResult
+    case 234:
+      var enumResult: AADB? = nil
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
+      if let enumResultAsInt = enumResultAsInt {
+        enumResult = AADB(rawValue: enumResultAsInt)
+      }
+      return enumResult
+    case 235:
+      var enumResult: AADC? = nil
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
+      if let enumResultAsInt = enumResultAsInt {
+        enumResult = AADC(rawValue: enumResultAsInt)
+      }
+      return enumResult
+    case 236:
+      var enumResult: AADD? = nil
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
+      if let enumResultAsInt = enumResultAsInt {
+        enumResult = AADD(rawValue: enumResultAsInt)
+      }
+      return enumResult
+    case 237:
+      var enumResult: AADE? = nil
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
+      if let enumResultAsInt = enumResultAsInt {
+        enumResult = AADE(rawValue: enumResultAsInt)
+      }
+      return enumResult
+    case 238:
+      var enumResult: AADF? = nil
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
+      if let enumResultAsInt = enumResultAsInt {
+        enumResult = AADF(rawValue: enumResultAsInt)
+      }
+      return enumResult
+    case 239:
+      var enumResult: AADG? = nil
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
+      if let enumResultAsInt = enumResultAsInt {
+        enumResult = AADG(rawValue: enumResultAsInt)
+      }
+      return enumResult
+    case 240:
+      var enumResult: AADH? = nil
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
+      if let enumResultAsInt = enumResultAsInt {
+        enumResult = AADH(rawValue: enumResultAsInt)
+      }
+      return enumResult
+    case 241:
+      var enumResult: AADI? = nil
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
+      if let enumResultAsInt = enumResultAsInt {
+        enumResult = AADI(rawValue: enumResultAsInt)
+      }
+      return enumResult
+    case 242:
+      var enumResult: AADJ? = nil
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
+      if let enumResultAsInt = enumResultAsInt {
+        enumResult = AADJ(rawValue: enumResultAsInt)
+      }
+      return enumResult
+    case 243:
+      var enumResult: AADK? = nil
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
+      if let enumResultAsInt = enumResultAsInt {
+        enumResult = AADK(rawValue: enumResultAsInt)
+      }
+      return enumResult
+    case 244:
+      var enumResult: AADL? = nil
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
+      if let enumResultAsInt = enumResultAsInt {
+        enumResult = AADL(rawValue: enumResultAsInt)
+      }
+      return enumResult
+    case 245:
+      var enumResult: AADM? = nil
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
+      if let enumResultAsInt = enumResultAsInt {
+        enumResult = AADM(rawValue: enumResultAsInt)
+      }
+      return enumResult
+    case 246:
+      var enumResult: AADN? = nil
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
+      if let enumResultAsInt = enumResultAsInt {
+        enumResult = AADN(rawValue: enumResultAsInt)
+      }
+      return enumResult
+    case 247:
+      var enumResult: AADO? = nil
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
+      if let enumResultAsInt = enumResultAsInt {
+        enumResult = AADO(rawValue: enumResultAsInt)
+      }
+      return enumResult
+    case 248:
+      var enumResult: AADP? = nil
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
+      if let enumResultAsInt = enumResultAsInt {
+        enumResult = AADP(rawValue: enumResultAsInt)
+      }
+      return enumResult
+    case 249:
+      var enumResult: AADQ? = nil
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
+      if let enumResultAsInt = enumResultAsInt {
+        enumResult = AADQ(rawValue: enumResultAsInt)
+      }
+      return enumResult
+    case 250:
+      var enumResult: AADR? = nil
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
+      if let enumResultAsInt = enumResultAsInt {
+        enumResult = AADR(rawValue: enumResultAsInt)
+      }
+      return enumResult
+    case 251:
+      var enumResult: AADS? = nil
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
+      if let enumResultAsInt = enumResultAsInt {
+        enumResult = AADS(rawValue: enumResultAsInt)
+      }
+      return enumResult
+    case 252:
+      var enumResult: AADT? = nil
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
+      if let enumResultAsInt = enumResultAsInt {
+        enumResult = AADT(rawValue: enumResultAsInt)
+      }
+      return enumResult
+    case 253:
+      var enumResult: AADU? = nil
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
+      if let enumResultAsInt = enumResultAsInt {
+        enumResult = AADU(rawValue: enumResultAsInt)
+      }
+      return enumResult
+    case 254:
+      var enumResult: AADV? = nil
+      let enumResultAsInt: Int? = nilOrValue(self.readValue() as? Int)
+      if let enumResultAsInt = enumResultAsInt {
+        enumResult = AADV(rawValue: enumResultAsInt)
+      }
+      return enumResult
+    case 255:
+      return __pigeon_CodecOverflow.fromList(self.readValue() as! [Any?])
     default:
       return super.readValue(ofType: type)
     }
@@ -518,24 +1962,424 @@ private class CoreTestsPigeonCodecReader: FlutterStandardReader {
 
 private class CoreTestsPigeonCodecWriter: FlutterStandardWriter {
   override func writeValue(_ value: Any) {
-    if let value = value as? AllTypes {
+    if let value = value as? AAA {
       super.writeByte(129)
-      super.writeValue(value.toList())
-    } else if let value = value as? AllNullableTypes {
+      super.writeValue(value.rawValue)
+    } else if let value = value as? AAB {
       super.writeByte(130)
-      super.writeValue(value.toList())
-    } else if let value = value as? AllNullableTypesWithoutRecursion {
+      super.writeValue(value.rawValue)
+    } else if let value = value as? AAC {
       super.writeByte(131)
-      super.writeValue(value.toList())
-    } else if let value = value as? AllClassesWrapper {
+      super.writeValue(value.rawValue)
+    } else if let value = value as? AAD {
       super.writeByte(132)
-      super.writeValue(value.toList())
-    } else if let value = value as? TestMessage {
+      super.writeValue(value.rawValue)
+    } else if let value = value as? AAE {
       super.writeByte(133)
-      super.writeValue(value.toList())
-    } else if let value = value as? AnEnum {
+      super.writeValue(value.rawValue)
+    } else if let value = value as? AAF {
       super.writeByte(134)
       super.writeValue(value.rawValue)
+    } else if let value = value as? AAG {
+      super.writeByte(135)
+      super.writeValue(value.rawValue)
+    } else if let value = value as? AAH {
+      super.writeByte(136)
+      super.writeValue(value.rawValue)
+    } else if let value = value as? AAI {
+      super.writeByte(137)
+      super.writeValue(value.rawValue)
+    } else if let value = value as? AAJ {
+      super.writeByte(138)
+      super.writeValue(value.rawValue)
+    } else if let value = value as? AAK {
+      super.writeByte(139)
+      super.writeValue(value.rawValue)
+    } else if let value = value as? AAL {
+      super.writeByte(140)
+      super.writeValue(value.rawValue)
+    } else if let value = value as? AAM {
+      super.writeByte(141)
+      super.writeValue(value.rawValue)
+    } else if let value = value as? AAN {
+      super.writeByte(142)
+      super.writeValue(value.rawValue)
+    } else if let value = value as? AAO {
+      super.writeByte(143)
+      super.writeValue(value.rawValue)
+    } else if let value = value as? AAP {
+      super.writeByte(144)
+      super.writeValue(value.rawValue)
+    } else if let value = value as? AAQ {
+      super.writeByte(145)
+      super.writeValue(value.rawValue)
+    } else if let value = value as? AAR {
+      super.writeByte(146)
+      super.writeValue(value.rawValue)
+    } else if let value = value as? AAS {
+      super.writeByte(147)
+      super.writeValue(value.rawValue)
+    } else if let value = value as? AAT {
+      super.writeByte(148)
+      super.writeValue(value.rawValue)
+    } else if let value = value as? AAU {
+      super.writeByte(149)
+      super.writeValue(value.rawValue)
+    } else if let value = value as? AAV {
+      super.writeByte(150)
+      super.writeValue(value.rawValue)
+    } else if let value = value as? AAW {
+      super.writeByte(151)
+      super.writeValue(value.rawValue)
+    } else if let value = value as? AAX {
+      super.writeByte(152)
+      super.writeValue(value.rawValue)
+    } else if let value = value as? AAY {
+      super.writeByte(153)
+      super.writeValue(value.rawValue)
+    } else if let value = value as? AAZ {
+      super.writeByte(154)
+      super.writeValue(value.rawValue)
+    } else if let value = value as? AAAA {
+      super.writeByte(155)
+      super.writeValue(value.rawValue)
+    } else if let value = value as? AAAB {
+      super.writeByte(156)
+      super.writeValue(value.rawValue)
+    } else if let value = value as? AAAC {
+      super.writeByte(157)
+      super.writeValue(value.rawValue)
+    } else if let value = value as? AAAD {
+      super.writeByte(158)
+      super.writeValue(value.rawValue)
+    } else if let value = value as? AAAE {
+      super.writeByte(159)
+      super.writeValue(value.rawValue)
+    } else if let value = value as? AAAF {
+      super.writeByte(160)
+      super.writeValue(value.rawValue)
+    } else if let value = value as? AAAG {
+      super.writeByte(161)
+      super.writeValue(value.rawValue)
+    } else if let value = value as? AAAH {
+      super.writeByte(162)
+      super.writeValue(value.rawValue)
+    } else if let value = value as? AAAI {
+      super.writeByte(163)
+      super.writeValue(value.rawValue)
+    } else if let value = value as? AAAJ {
+      super.writeByte(164)
+      super.writeValue(value.rawValue)
+    } else if let value = value as? AAAK {
+      super.writeByte(165)
+      super.writeValue(value.rawValue)
+    } else if let value = value as? AAAL {
+      super.writeByte(166)
+      super.writeValue(value.rawValue)
+    } else if let value = value as? AAAM {
+      super.writeByte(167)
+      super.writeValue(value.rawValue)
+    } else if let value = value as? AAAN {
+      super.writeByte(168)
+      super.writeValue(value.rawValue)
+    } else if let value = value as? AAAO {
+      super.writeByte(169)
+      super.writeValue(value.rawValue)
+    } else if let value = value as? AAAP {
+      super.writeByte(170)
+      super.writeValue(value.rawValue)
+    } else if let value = value as? AAAQ {
+      super.writeByte(171)
+      super.writeValue(value.rawValue)
+    } else if let value = value as? AAAR {
+      super.writeByte(172)
+      super.writeValue(value.rawValue)
+    } else if let value = value as? AAAS {
+      super.writeByte(173)
+      super.writeValue(value.rawValue)
+    } else if let value = value as? AAAT {
+      super.writeByte(174)
+      super.writeValue(value.rawValue)
+    } else if let value = value as? AAAU {
+      super.writeByte(175)
+      super.writeValue(value.rawValue)
+    } else if let value = value as? AAAV {
+      super.writeByte(176)
+      super.writeValue(value.rawValue)
+    } else if let value = value as? AAAW {
+      super.writeByte(177)
+      super.writeValue(value.rawValue)
+    } else if let value = value as? AAAX {
+      super.writeByte(178)
+      super.writeValue(value.rawValue)
+    } else if let value = value as? AAAY {
+      super.writeByte(179)
+      super.writeValue(value.rawValue)
+    } else if let value = value as? AAAZ {
+      super.writeByte(180)
+      super.writeValue(value.rawValue)
+    } else if let value = value as? AABA {
+      super.writeByte(181)
+      super.writeValue(value.rawValue)
+    } else if let value = value as? AABB {
+      super.writeByte(182)
+      super.writeValue(value.rawValue)
+    } else if let value = value as? AABC {
+      super.writeByte(183)
+      super.writeValue(value.rawValue)
+    } else if let value = value as? AABD {
+      super.writeByte(184)
+      super.writeValue(value.rawValue)
+    } else if let value = value as? AABE {
+      super.writeByte(185)
+      super.writeValue(value.rawValue)
+    } else if let value = value as? AABF {
+      super.writeByte(186)
+      super.writeValue(value.rawValue)
+    } else if let value = value as? AABG {
+      super.writeByte(187)
+      super.writeValue(value.rawValue)
+    } else if let value = value as? AABH {
+      super.writeByte(188)
+      super.writeValue(value.rawValue)
+    } else if let value = value as? AABI {
+      super.writeByte(189)
+      super.writeValue(value.rawValue)
+    } else if let value = value as? AABJ {
+      super.writeByte(190)
+      super.writeValue(value.rawValue)
+    } else if let value = value as? AABK {
+      super.writeByte(191)
+      super.writeValue(value.rawValue)
+    } else if let value = value as? AABL {
+      super.writeByte(192)
+      super.writeValue(value.rawValue)
+    } else if let value = value as? AABM {
+      super.writeByte(193)
+      super.writeValue(value.rawValue)
+    } else if let value = value as? AABN {
+      super.writeByte(194)
+      super.writeValue(value.rawValue)
+    } else if let value = value as? AABO {
+      super.writeByte(195)
+      super.writeValue(value.rawValue)
+    } else if let value = value as? AABP {
+      super.writeByte(196)
+      super.writeValue(value.rawValue)
+    } else if let value = value as? AABQ {
+      super.writeByte(197)
+      super.writeValue(value.rawValue)
+    } else if let value = value as? AABR {
+      super.writeByte(198)
+      super.writeValue(value.rawValue)
+    } else if let value = value as? AABS {
+      super.writeByte(199)
+      super.writeValue(value.rawValue)
+    } else if let value = value as? AABT {
+      super.writeByte(200)
+      super.writeValue(value.rawValue)
+    } else if let value = value as? AABU {
+      super.writeByte(201)
+      super.writeValue(value.rawValue)
+    } else if let value = value as? AABV {
+      super.writeByte(202)
+      super.writeValue(value.rawValue)
+    } else if let value = value as? AABW {
+      super.writeByte(203)
+      super.writeValue(value.rawValue)
+    } else if let value = value as? AABX {
+      super.writeByte(204)
+      super.writeValue(value.rawValue)
+    } else if let value = value as? AABY {
+      super.writeByte(205)
+      super.writeValue(value.rawValue)
+    } else if let value = value as? AABZ {
+      super.writeByte(206)
+      super.writeValue(value.rawValue)
+    } else if let value = value as? AACA {
+      super.writeByte(207)
+      super.writeValue(value.rawValue)
+    } else if let value = value as? AACB {
+      super.writeByte(208)
+      super.writeValue(value.rawValue)
+    } else if let value = value as? AACC {
+      super.writeByte(209)
+      super.writeValue(value.rawValue)
+    } else if let value = value as? AACD {
+      super.writeByte(210)
+      super.writeValue(value.rawValue)
+    } else if let value = value as? AACE {
+      super.writeByte(211)
+      super.writeValue(value.rawValue)
+    } else if let value = value as? AACF {
+      super.writeByte(212)
+      super.writeValue(value.rawValue)
+    } else if let value = value as? AACG {
+      super.writeByte(213)
+      super.writeValue(value.rawValue)
+    } else if let value = value as? AACH {
+      super.writeByte(214)
+      super.writeValue(value.rawValue)
+    } else if let value = value as? AACI {
+      super.writeByte(215)
+      super.writeValue(value.rawValue)
+    } else if let value = value as? AACJ {
+      super.writeByte(216)
+      super.writeValue(value.rawValue)
+    } else if let value = value as? AACK {
+      super.writeByte(217)
+      super.writeValue(value.rawValue)
+    } else if let value = value as? AACL {
+      super.writeByte(218)
+      super.writeValue(value.rawValue)
+    } else if let value = value as? AACM {
+      super.writeByte(219)
+      super.writeValue(value.rawValue)
+    } else if let value = value as? AACN {
+      super.writeByte(220)
+      super.writeValue(value.rawValue)
+    } else if let value = value as? AACO {
+      super.writeByte(221)
+      super.writeValue(value.rawValue)
+    } else if let value = value as? AACP {
+      super.writeByte(222)
+      super.writeValue(value.rawValue)
+    } else if let value = value as? AACQ {
+      super.writeByte(223)
+      super.writeValue(value.rawValue)
+    } else if let value = value as? AACR {
+      super.writeByte(224)
+      super.writeValue(value.rawValue)
+    } else if let value = value as? AACS {
+      super.writeByte(225)
+      super.writeValue(value.rawValue)
+    } else if let value = value as? AACT {
+      super.writeByte(226)
+      super.writeValue(value.rawValue)
+    } else if let value = value as? AACU {
+      super.writeByte(227)
+      super.writeValue(value.rawValue)
+    } else if let value = value as? AACV {
+      super.writeByte(228)
+      super.writeValue(value.rawValue)
+    } else if let value = value as? AACW {
+      super.writeByte(229)
+      super.writeValue(value.rawValue)
+    } else if let value = value as? AACX {
+      super.writeByte(230)
+      super.writeValue(value.rawValue)
+    } else if let value = value as? AACY {
+      super.writeByte(231)
+      super.writeValue(value.rawValue)
+    } else if let value = value as? AACZ {
+      super.writeByte(232)
+      super.writeValue(value.rawValue)
+    } else if let value = value as? AADA {
+      super.writeByte(233)
+      super.writeValue(value.rawValue)
+    } else if let value = value as? AADB {
+      super.writeByte(234)
+      super.writeValue(value.rawValue)
+    } else if let value = value as? AADC {
+      super.writeByte(235)
+      super.writeValue(value.rawValue)
+    } else if let value = value as? AADD {
+      super.writeByte(236)
+      super.writeValue(value.rawValue)
+    } else if let value = value as? AADE {
+      super.writeByte(237)
+      super.writeValue(value.rawValue)
+    } else if let value = value as? AADF {
+      super.writeByte(238)
+      super.writeValue(value.rawValue)
+    } else if let value = value as? AADG {
+      super.writeByte(239)
+      super.writeValue(value.rawValue)
+    } else if let value = value as? AADH {
+      super.writeByte(240)
+      super.writeValue(value.rawValue)
+    } else if let value = value as? AADI {
+      super.writeByte(241)
+      super.writeValue(value.rawValue)
+    } else if let value = value as? AADJ {
+      super.writeByte(242)
+      super.writeValue(value.rawValue)
+    } else if let value = value as? AADK {
+      super.writeByte(243)
+      super.writeValue(value.rawValue)
+    } else if let value = value as? AADL {
+      super.writeByte(244)
+      super.writeValue(value.rawValue)
+    } else if let value = value as? AADM {
+      super.writeByte(245)
+      super.writeValue(value.rawValue)
+    } else if let value = value as? AADN {
+      super.writeByte(246)
+      super.writeValue(value.rawValue)
+    } else if let value = value as? AADO {
+      super.writeByte(247)
+      super.writeValue(value.rawValue)
+    } else if let value = value as? AADP {
+      super.writeByte(248)
+      super.writeValue(value.rawValue)
+    } else if let value = value as? AADQ {
+      super.writeByte(249)
+      super.writeValue(value.rawValue)
+    } else if let value = value as? AADR {
+      super.writeByte(250)
+      super.writeValue(value.rawValue)
+    } else if let value = value as? AADS {
+      super.writeByte(251)
+      super.writeValue(value.rawValue)
+    } else if let value = value as? AADT {
+      super.writeByte(252)
+      super.writeValue(value.rawValue)
+    } else if let value = value as? AADU {
+      super.writeByte(253)
+      super.writeValue(value.rawValue)
+    } else if let value = value as? AADV {
+      super.writeByte(254)
+      super.writeValue(value.rawValue)
+    } else if let value = value as? AADW {
+      let wrap = __pigeon_CodecOverflow(type: 0, wrapped: value.rawValue)
+      super.writeByte(255)
+      super.writeValue(wrap.toList())
+    } else if let value = value as? AADX {
+      let wrap = __pigeon_CodecOverflow(type: 1, wrapped: value.rawValue)
+      super.writeByte(255)
+      super.writeValue(wrap.toList())
+    } else if let value = value as? AADY {
+      let wrap = __pigeon_CodecOverflow(type: 2, wrapped: value.rawValue)
+      super.writeByte(255)
+      super.writeValue(wrap.toList())
+    } else if let value = value as? AADZ {
+      let wrap = __pigeon_CodecOverflow(type: 3, wrapped: value.rawValue)
+      super.writeByte(255)
+      super.writeValue(wrap.toList())
+    } else if let value = value as? AnEnum {
+      let wrap = __pigeon_CodecOverflow(type: 4, wrapped: value.rawValue)
+      super.writeByte(255)
+      super.writeValue(wrap.toList())
+    } else if let value = value as? AllTypes {
+      let wrap = __pigeon_CodecOverflow(type: 5, wrapped: value.toList())
+      super.writeByte(255)
+      super.writeValue(wrap.toList())
+    } else if let value = value as? AllNullableTypes {
+      let wrap = __pigeon_CodecOverflow(type: 6, wrapped: value.toList())
+      super.writeByte(255)
+      super.writeValue(wrap.toList())
+    } else if let value = value as? AllNullableTypesWithoutRecursion {
+      let wrap = __pigeon_CodecOverflow(type: 7, wrapped: value.toList())
+      super.writeByte(255)
+      super.writeValue(wrap.toList())
+    } else if let value = value as? AllClassesWrapper {
+      let wrap = __pigeon_CodecOverflow(type: 8, wrapped: value.toList())
+      super.writeByte(255)
+      super.writeValue(wrap.toList())
+    } else if let value = value as? TestMessage {
+      let wrap = __pigeon_CodecOverflow(type: 9, wrapped: value.toList())
+      super.writeByte(255)
+      super.writeValue(wrap.toList())
     } else {
       super.writeValue(value)
     }

@@ -14,6 +14,1306 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+typedef NS_ENUM(NSUInteger, FLTAAA) {
+  FLTAAAOne = 0,
+};
+
+/// Wrapper for FLTAAA to allow for nullability.
+@interface FLTAAABox : NSObject
+@property(nonatomic, assign) FLTAAA value;
+- (instancetype)initWithValue:(FLTAAA)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FLTAAB) {
+  FLTAABOne = 0,
+};
+
+/// Wrapper for FLTAAB to allow for nullability.
+@interface FLTAABBox : NSObject
+@property(nonatomic, assign) FLTAAB value;
+- (instancetype)initWithValue:(FLTAAB)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FLTAAC) {
+  FLTAACOne = 0,
+};
+
+/// Wrapper for FLTAAC to allow for nullability.
+@interface FLTAACBox : NSObject
+@property(nonatomic, assign) FLTAAC value;
+- (instancetype)initWithValue:(FLTAAC)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FLTAAD) {
+  FLTAADOne = 0,
+};
+
+/// Wrapper for FLTAAD to allow for nullability.
+@interface FLTAADBox : NSObject
+@property(nonatomic, assign) FLTAAD value;
+- (instancetype)initWithValue:(FLTAAD)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FLTAAE) {
+  FLTAAEOne = 0,
+};
+
+/// Wrapper for FLTAAE to allow for nullability.
+@interface FLTAAEBox : NSObject
+@property(nonatomic, assign) FLTAAE value;
+- (instancetype)initWithValue:(FLTAAE)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FLTAAF) {
+  FLTAAFOne = 0,
+};
+
+/// Wrapper for FLTAAF to allow for nullability.
+@interface FLTAAFBox : NSObject
+@property(nonatomic, assign) FLTAAF value;
+- (instancetype)initWithValue:(FLTAAF)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FLTAAG) {
+  FLTAAGOne = 0,
+};
+
+/// Wrapper for FLTAAG to allow for nullability.
+@interface FLTAAGBox : NSObject
+@property(nonatomic, assign) FLTAAG value;
+- (instancetype)initWithValue:(FLTAAG)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FLTAAH) {
+  FLTAAHOne = 0,
+};
+
+/// Wrapper for FLTAAH to allow for nullability.
+@interface FLTAAHBox : NSObject
+@property(nonatomic, assign) FLTAAH value;
+- (instancetype)initWithValue:(FLTAAH)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FLTAAI) {
+  FLTAAIOne = 0,
+};
+
+/// Wrapper for FLTAAI to allow for nullability.
+@interface FLTAAIBox : NSObject
+@property(nonatomic, assign) FLTAAI value;
+- (instancetype)initWithValue:(FLTAAI)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FLTAAJ) {
+  FLTAAJOne = 0,
+};
+
+/// Wrapper for FLTAAJ to allow for nullability.
+@interface FLTAAJBox : NSObject
+@property(nonatomic, assign) FLTAAJ value;
+- (instancetype)initWithValue:(FLTAAJ)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FLTAAK) {
+  FLTAAKOne = 0,
+};
+
+/// Wrapper for FLTAAK to allow for nullability.
+@interface FLTAAKBox : NSObject
+@property(nonatomic, assign) FLTAAK value;
+- (instancetype)initWithValue:(FLTAAK)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FLTAAL) {
+  FLTAALOne = 0,
+};
+
+/// Wrapper for FLTAAL to allow for nullability.
+@interface FLTAALBox : NSObject
+@property(nonatomic, assign) FLTAAL value;
+- (instancetype)initWithValue:(FLTAAL)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FLTAAM) {
+  FLTAAMOne = 0,
+};
+
+/// Wrapper for FLTAAM to allow for nullability.
+@interface FLTAAMBox : NSObject
+@property(nonatomic, assign) FLTAAM value;
+- (instancetype)initWithValue:(FLTAAM)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FLTAAN) {
+  FLTAANOne = 0,
+};
+
+/// Wrapper for FLTAAN to allow for nullability.
+@interface FLTAANBox : NSObject
+@property(nonatomic, assign) FLTAAN value;
+- (instancetype)initWithValue:(FLTAAN)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FLTAAO) {
+  FLTAAOOne = 0,
+};
+
+/// Wrapper for FLTAAO to allow for nullability.
+@interface FLTAAOBox : NSObject
+@property(nonatomic, assign) FLTAAO value;
+- (instancetype)initWithValue:(FLTAAO)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FLTAAP) {
+  FLTAAPOne = 0,
+};
+
+/// Wrapper for FLTAAP to allow for nullability.
+@interface FLTAAPBox : NSObject
+@property(nonatomic, assign) FLTAAP value;
+- (instancetype)initWithValue:(FLTAAP)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FLTAAQ) {
+  FLTAAQOne = 0,
+};
+
+/// Wrapper for FLTAAQ to allow for nullability.
+@interface FLTAAQBox : NSObject
+@property(nonatomic, assign) FLTAAQ value;
+- (instancetype)initWithValue:(FLTAAQ)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FLTAAR) {
+  FLTAAROne = 0,
+};
+
+/// Wrapper for FLTAAR to allow for nullability.
+@interface FLTAARBox : NSObject
+@property(nonatomic, assign) FLTAAR value;
+- (instancetype)initWithValue:(FLTAAR)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FLTAAS) {
+  FLTAASOne = 0,
+};
+
+/// Wrapper for FLTAAS to allow for nullability.
+@interface FLTAASBox : NSObject
+@property(nonatomic, assign) FLTAAS value;
+- (instancetype)initWithValue:(FLTAAS)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FLTAAT) {
+  FLTAATOne = 0,
+};
+
+/// Wrapper for FLTAAT to allow for nullability.
+@interface FLTAATBox : NSObject
+@property(nonatomic, assign) FLTAAT value;
+- (instancetype)initWithValue:(FLTAAT)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FLTAAU) {
+  FLTAAUOne = 0,
+};
+
+/// Wrapper for FLTAAU to allow for nullability.
+@interface FLTAAUBox : NSObject
+@property(nonatomic, assign) FLTAAU value;
+- (instancetype)initWithValue:(FLTAAU)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FLTAAV) {
+  FLTAAVOne = 0,
+};
+
+/// Wrapper for FLTAAV to allow for nullability.
+@interface FLTAAVBox : NSObject
+@property(nonatomic, assign) FLTAAV value;
+- (instancetype)initWithValue:(FLTAAV)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FLTAAW) {
+  FLTAAWOne = 0,
+};
+
+/// Wrapper for FLTAAW to allow for nullability.
+@interface FLTAAWBox : NSObject
+@property(nonatomic, assign) FLTAAW value;
+- (instancetype)initWithValue:(FLTAAW)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FLTAAX) {
+  FLTAAXOne = 0,
+};
+
+/// Wrapper for FLTAAX to allow for nullability.
+@interface FLTAAXBox : NSObject
+@property(nonatomic, assign) FLTAAX value;
+- (instancetype)initWithValue:(FLTAAX)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FLTAAY) {
+  FLTAAYOne = 0,
+};
+
+/// Wrapper for FLTAAY to allow for nullability.
+@interface FLTAAYBox : NSObject
+@property(nonatomic, assign) FLTAAY value;
+- (instancetype)initWithValue:(FLTAAY)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FLTAAZ) {
+  FLTAAZOne = 0,
+};
+
+/// Wrapper for FLTAAZ to allow for nullability.
+@interface FLTAAZBox : NSObject
+@property(nonatomic, assign) FLTAAZ value;
+- (instancetype)initWithValue:(FLTAAZ)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FLTAAAA) {
+  FLTAAAAOne = 0,
+};
+
+/// Wrapper for FLTAAAA to allow for nullability.
+@interface FLTAAAABox : NSObject
+@property(nonatomic, assign) FLTAAAA value;
+- (instancetype)initWithValue:(FLTAAAA)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FLTAAAB) {
+  FLTAAABOne = 0,
+};
+
+/// Wrapper for FLTAAAB to allow for nullability.
+@interface FLTAAABBox : NSObject
+@property(nonatomic, assign) FLTAAAB value;
+- (instancetype)initWithValue:(FLTAAAB)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FLTAAAC) {
+  FLTAAACOne = 0,
+};
+
+/// Wrapper for FLTAAAC to allow for nullability.
+@interface FLTAAACBox : NSObject
+@property(nonatomic, assign) FLTAAAC value;
+- (instancetype)initWithValue:(FLTAAAC)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FLTAAAD) {
+  FLTAAADOne = 0,
+};
+
+/// Wrapper for FLTAAAD to allow for nullability.
+@interface FLTAAADBox : NSObject
+@property(nonatomic, assign) FLTAAAD value;
+- (instancetype)initWithValue:(FLTAAAD)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FLTAAAE) {
+  FLTAAAEOne = 0,
+};
+
+/// Wrapper for FLTAAAE to allow for nullability.
+@interface FLTAAAEBox : NSObject
+@property(nonatomic, assign) FLTAAAE value;
+- (instancetype)initWithValue:(FLTAAAE)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FLTAAAF) {
+  FLTAAAFOne = 0,
+};
+
+/// Wrapper for FLTAAAF to allow for nullability.
+@interface FLTAAAFBox : NSObject
+@property(nonatomic, assign) FLTAAAF value;
+- (instancetype)initWithValue:(FLTAAAF)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FLTAAAG) {
+  FLTAAAGOne = 0,
+};
+
+/// Wrapper for FLTAAAG to allow for nullability.
+@interface FLTAAAGBox : NSObject
+@property(nonatomic, assign) FLTAAAG value;
+- (instancetype)initWithValue:(FLTAAAG)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FLTAAAH) {
+  FLTAAAHOne = 0,
+};
+
+/// Wrapper for FLTAAAH to allow for nullability.
+@interface FLTAAAHBox : NSObject
+@property(nonatomic, assign) FLTAAAH value;
+- (instancetype)initWithValue:(FLTAAAH)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FLTAAAI) {
+  FLTAAAIOne = 0,
+};
+
+/// Wrapper for FLTAAAI to allow for nullability.
+@interface FLTAAAIBox : NSObject
+@property(nonatomic, assign) FLTAAAI value;
+- (instancetype)initWithValue:(FLTAAAI)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FLTAAAJ) {
+  FLTAAAJOne = 0,
+};
+
+/// Wrapper for FLTAAAJ to allow for nullability.
+@interface FLTAAAJBox : NSObject
+@property(nonatomic, assign) FLTAAAJ value;
+- (instancetype)initWithValue:(FLTAAAJ)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FLTAAAK) {
+  FLTAAAKOne = 0,
+};
+
+/// Wrapper for FLTAAAK to allow for nullability.
+@interface FLTAAAKBox : NSObject
+@property(nonatomic, assign) FLTAAAK value;
+- (instancetype)initWithValue:(FLTAAAK)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FLTAAAL) {
+  FLTAAALOne = 0,
+};
+
+/// Wrapper for FLTAAAL to allow for nullability.
+@interface FLTAAALBox : NSObject
+@property(nonatomic, assign) FLTAAAL value;
+- (instancetype)initWithValue:(FLTAAAL)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FLTAAAM) {
+  FLTAAAMOne = 0,
+};
+
+/// Wrapper for FLTAAAM to allow for nullability.
+@interface FLTAAAMBox : NSObject
+@property(nonatomic, assign) FLTAAAM value;
+- (instancetype)initWithValue:(FLTAAAM)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FLTAAAN) {
+  FLTAAANOne = 0,
+};
+
+/// Wrapper for FLTAAAN to allow for nullability.
+@interface FLTAAANBox : NSObject
+@property(nonatomic, assign) FLTAAAN value;
+- (instancetype)initWithValue:(FLTAAAN)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FLTAAAO) {
+  FLTAAAOOne = 0,
+};
+
+/// Wrapper for FLTAAAO to allow for nullability.
+@interface FLTAAAOBox : NSObject
+@property(nonatomic, assign) FLTAAAO value;
+- (instancetype)initWithValue:(FLTAAAO)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FLTAAAP) {
+  FLTAAAPOne = 0,
+};
+
+/// Wrapper for FLTAAAP to allow for nullability.
+@interface FLTAAAPBox : NSObject
+@property(nonatomic, assign) FLTAAAP value;
+- (instancetype)initWithValue:(FLTAAAP)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FLTAAAQ) {
+  FLTAAAQOne = 0,
+};
+
+/// Wrapper for FLTAAAQ to allow for nullability.
+@interface FLTAAAQBox : NSObject
+@property(nonatomic, assign) FLTAAAQ value;
+- (instancetype)initWithValue:(FLTAAAQ)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FLTAAAR) {
+  FLTAAAROne = 0,
+};
+
+/// Wrapper for FLTAAAR to allow for nullability.
+@interface FLTAAARBox : NSObject
+@property(nonatomic, assign) FLTAAAR value;
+- (instancetype)initWithValue:(FLTAAAR)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FLTAAAS) {
+  FLTAAASOne = 0,
+};
+
+/// Wrapper for FLTAAAS to allow for nullability.
+@interface FLTAAASBox : NSObject
+@property(nonatomic, assign) FLTAAAS value;
+- (instancetype)initWithValue:(FLTAAAS)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FLTAAAT) {
+  FLTAAATOne = 0,
+};
+
+/// Wrapper for FLTAAAT to allow for nullability.
+@interface FLTAAATBox : NSObject
+@property(nonatomic, assign) FLTAAAT value;
+- (instancetype)initWithValue:(FLTAAAT)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FLTAAAU) {
+  FLTAAAUOne = 0,
+};
+
+/// Wrapper for FLTAAAU to allow for nullability.
+@interface FLTAAAUBox : NSObject
+@property(nonatomic, assign) FLTAAAU value;
+- (instancetype)initWithValue:(FLTAAAU)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FLTAAAV) {
+  FLTAAAVOne = 0,
+};
+
+/// Wrapper for FLTAAAV to allow for nullability.
+@interface FLTAAAVBox : NSObject
+@property(nonatomic, assign) FLTAAAV value;
+- (instancetype)initWithValue:(FLTAAAV)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FLTAAAW) {
+  FLTAAAWOne = 0,
+};
+
+/// Wrapper for FLTAAAW to allow for nullability.
+@interface FLTAAAWBox : NSObject
+@property(nonatomic, assign) FLTAAAW value;
+- (instancetype)initWithValue:(FLTAAAW)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FLTAAAX) {
+  FLTAAAXOne = 0,
+};
+
+/// Wrapper for FLTAAAX to allow for nullability.
+@interface FLTAAAXBox : NSObject
+@property(nonatomic, assign) FLTAAAX value;
+- (instancetype)initWithValue:(FLTAAAX)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FLTAAAY) {
+  FLTAAAYOne = 0,
+};
+
+/// Wrapper for FLTAAAY to allow for nullability.
+@interface FLTAAAYBox : NSObject
+@property(nonatomic, assign) FLTAAAY value;
+- (instancetype)initWithValue:(FLTAAAY)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FLTAAAZ) {
+  FLTAAAZOne = 0,
+};
+
+/// Wrapper for FLTAAAZ to allow for nullability.
+@interface FLTAAAZBox : NSObject
+@property(nonatomic, assign) FLTAAAZ value;
+- (instancetype)initWithValue:(FLTAAAZ)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FLTAABA) {
+  FLTAABAOne = 0,
+};
+
+/// Wrapper for FLTAABA to allow for nullability.
+@interface FLTAABABox : NSObject
+@property(nonatomic, assign) FLTAABA value;
+- (instancetype)initWithValue:(FLTAABA)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FLTAABB) {
+  FLTAABBOne = 0,
+};
+
+/// Wrapper for FLTAABB to allow for nullability.
+@interface FLTAABBBox : NSObject
+@property(nonatomic, assign) FLTAABB value;
+- (instancetype)initWithValue:(FLTAABB)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FLTAABC) {
+  FLTAABCOne = 0,
+};
+
+/// Wrapper for FLTAABC to allow for nullability.
+@interface FLTAABCBox : NSObject
+@property(nonatomic, assign) FLTAABC value;
+- (instancetype)initWithValue:(FLTAABC)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FLTAABD) {
+  FLTAABDOne = 0,
+};
+
+/// Wrapper for FLTAABD to allow for nullability.
+@interface FLTAABDBox : NSObject
+@property(nonatomic, assign) FLTAABD value;
+- (instancetype)initWithValue:(FLTAABD)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FLTAABE) {
+  FLTAABEOne = 0,
+};
+
+/// Wrapper for FLTAABE to allow for nullability.
+@interface FLTAABEBox : NSObject
+@property(nonatomic, assign) FLTAABE value;
+- (instancetype)initWithValue:(FLTAABE)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FLTAABF) {
+  FLTAABFOne = 0,
+};
+
+/// Wrapper for FLTAABF to allow for nullability.
+@interface FLTAABFBox : NSObject
+@property(nonatomic, assign) FLTAABF value;
+- (instancetype)initWithValue:(FLTAABF)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FLTAABG) {
+  FLTAABGOne = 0,
+};
+
+/// Wrapper for FLTAABG to allow for nullability.
+@interface FLTAABGBox : NSObject
+@property(nonatomic, assign) FLTAABG value;
+- (instancetype)initWithValue:(FLTAABG)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FLTAABH) {
+  FLTAABHOne = 0,
+};
+
+/// Wrapper for FLTAABH to allow for nullability.
+@interface FLTAABHBox : NSObject
+@property(nonatomic, assign) FLTAABH value;
+- (instancetype)initWithValue:(FLTAABH)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FLTAABI) {
+  FLTAABIOne = 0,
+};
+
+/// Wrapper for FLTAABI to allow for nullability.
+@interface FLTAABIBox : NSObject
+@property(nonatomic, assign) FLTAABI value;
+- (instancetype)initWithValue:(FLTAABI)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FLTAABJ) {
+  FLTAABJOne = 0,
+};
+
+/// Wrapper for FLTAABJ to allow for nullability.
+@interface FLTAABJBox : NSObject
+@property(nonatomic, assign) FLTAABJ value;
+- (instancetype)initWithValue:(FLTAABJ)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FLTAABK) {
+  FLTAABKOne = 0,
+};
+
+/// Wrapper for FLTAABK to allow for nullability.
+@interface FLTAABKBox : NSObject
+@property(nonatomic, assign) FLTAABK value;
+- (instancetype)initWithValue:(FLTAABK)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FLTAABL) {
+  FLTAABLOne = 0,
+};
+
+/// Wrapper for FLTAABL to allow for nullability.
+@interface FLTAABLBox : NSObject
+@property(nonatomic, assign) FLTAABL value;
+- (instancetype)initWithValue:(FLTAABL)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FLTAABM) {
+  FLTAABMOne = 0,
+};
+
+/// Wrapper for FLTAABM to allow for nullability.
+@interface FLTAABMBox : NSObject
+@property(nonatomic, assign) FLTAABM value;
+- (instancetype)initWithValue:(FLTAABM)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FLTAABN) {
+  FLTAABNOne = 0,
+};
+
+/// Wrapper for FLTAABN to allow for nullability.
+@interface FLTAABNBox : NSObject
+@property(nonatomic, assign) FLTAABN value;
+- (instancetype)initWithValue:(FLTAABN)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FLTAABO) {
+  FLTAABOOne = 0,
+};
+
+/// Wrapper for FLTAABO to allow for nullability.
+@interface FLTAABOBox : NSObject
+@property(nonatomic, assign) FLTAABO value;
+- (instancetype)initWithValue:(FLTAABO)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FLTAABP) {
+  FLTAABPOne = 0,
+};
+
+/// Wrapper for FLTAABP to allow for nullability.
+@interface FLTAABPBox : NSObject
+@property(nonatomic, assign) FLTAABP value;
+- (instancetype)initWithValue:(FLTAABP)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FLTAABQ) {
+  FLTAABQOne = 0,
+};
+
+/// Wrapper for FLTAABQ to allow for nullability.
+@interface FLTAABQBox : NSObject
+@property(nonatomic, assign) FLTAABQ value;
+- (instancetype)initWithValue:(FLTAABQ)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FLTAABR) {
+  FLTAABROne = 0,
+};
+
+/// Wrapper for FLTAABR to allow for nullability.
+@interface FLTAABRBox : NSObject
+@property(nonatomic, assign) FLTAABR value;
+- (instancetype)initWithValue:(FLTAABR)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FLTAABS) {
+  FLTAABSOne = 0,
+};
+
+/// Wrapper for FLTAABS to allow for nullability.
+@interface FLTAABSBox : NSObject
+@property(nonatomic, assign) FLTAABS value;
+- (instancetype)initWithValue:(FLTAABS)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FLTAABT) {
+  FLTAABTOne = 0,
+};
+
+/// Wrapper for FLTAABT to allow for nullability.
+@interface FLTAABTBox : NSObject
+@property(nonatomic, assign) FLTAABT value;
+- (instancetype)initWithValue:(FLTAABT)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FLTAABU) {
+  FLTAABUOne = 0,
+};
+
+/// Wrapper for FLTAABU to allow for nullability.
+@interface FLTAABUBox : NSObject
+@property(nonatomic, assign) FLTAABU value;
+- (instancetype)initWithValue:(FLTAABU)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FLTAABV) {
+  FLTAABVOne = 0,
+};
+
+/// Wrapper for FLTAABV to allow for nullability.
+@interface FLTAABVBox : NSObject
+@property(nonatomic, assign) FLTAABV value;
+- (instancetype)initWithValue:(FLTAABV)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FLTAABW) {
+  FLTAABWOne = 0,
+};
+
+/// Wrapper for FLTAABW to allow for nullability.
+@interface FLTAABWBox : NSObject
+@property(nonatomic, assign) FLTAABW value;
+- (instancetype)initWithValue:(FLTAABW)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FLTAABX) {
+  FLTAABXOne = 0,
+};
+
+/// Wrapper for FLTAABX to allow for nullability.
+@interface FLTAABXBox : NSObject
+@property(nonatomic, assign) FLTAABX value;
+- (instancetype)initWithValue:(FLTAABX)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FLTAABY) {
+  FLTAABYOne = 0,
+};
+
+/// Wrapper for FLTAABY to allow for nullability.
+@interface FLTAABYBox : NSObject
+@property(nonatomic, assign) FLTAABY value;
+- (instancetype)initWithValue:(FLTAABY)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FLTAABZ) {
+  FLTAABZOne = 0,
+};
+
+/// Wrapper for FLTAABZ to allow for nullability.
+@interface FLTAABZBox : NSObject
+@property(nonatomic, assign) FLTAABZ value;
+- (instancetype)initWithValue:(FLTAABZ)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FLTAACA) {
+  FLTAACAOne = 0,
+};
+
+/// Wrapper for FLTAACA to allow for nullability.
+@interface FLTAACABox : NSObject
+@property(nonatomic, assign) FLTAACA value;
+- (instancetype)initWithValue:(FLTAACA)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FLTAACB) {
+  FLTAACBOne = 0,
+};
+
+/// Wrapper for FLTAACB to allow for nullability.
+@interface FLTAACBBox : NSObject
+@property(nonatomic, assign) FLTAACB value;
+- (instancetype)initWithValue:(FLTAACB)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FLTAACC) {
+  FLTAACCOne = 0,
+};
+
+/// Wrapper for FLTAACC to allow for nullability.
+@interface FLTAACCBox : NSObject
+@property(nonatomic, assign) FLTAACC value;
+- (instancetype)initWithValue:(FLTAACC)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FLTAACD) {
+  FLTAACDOne = 0,
+};
+
+/// Wrapper for FLTAACD to allow for nullability.
+@interface FLTAACDBox : NSObject
+@property(nonatomic, assign) FLTAACD value;
+- (instancetype)initWithValue:(FLTAACD)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FLTAACE) {
+  FLTAACEOne = 0,
+};
+
+/// Wrapper for FLTAACE to allow for nullability.
+@interface FLTAACEBox : NSObject
+@property(nonatomic, assign) FLTAACE value;
+- (instancetype)initWithValue:(FLTAACE)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FLTAACF) {
+  FLTAACFOne = 0,
+};
+
+/// Wrapper for FLTAACF to allow for nullability.
+@interface FLTAACFBox : NSObject
+@property(nonatomic, assign) FLTAACF value;
+- (instancetype)initWithValue:(FLTAACF)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FLTAACG) {
+  FLTAACGOne = 0,
+};
+
+/// Wrapper for FLTAACG to allow for nullability.
+@interface FLTAACGBox : NSObject
+@property(nonatomic, assign) FLTAACG value;
+- (instancetype)initWithValue:(FLTAACG)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FLTAACH) {
+  FLTAACHOne = 0,
+};
+
+/// Wrapper for FLTAACH to allow for nullability.
+@interface FLTAACHBox : NSObject
+@property(nonatomic, assign) FLTAACH value;
+- (instancetype)initWithValue:(FLTAACH)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FLTAACI) {
+  FLTAACIOne = 0,
+};
+
+/// Wrapper for FLTAACI to allow for nullability.
+@interface FLTAACIBox : NSObject
+@property(nonatomic, assign) FLTAACI value;
+- (instancetype)initWithValue:(FLTAACI)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FLTAACJ) {
+  FLTAACJOne = 0,
+};
+
+/// Wrapper for FLTAACJ to allow for nullability.
+@interface FLTAACJBox : NSObject
+@property(nonatomic, assign) FLTAACJ value;
+- (instancetype)initWithValue:(FLTAACJ)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FLTAACK) {
+  FLTAACKOne = 0,
+};
+
+/// Wrapper for FLTAACK to allow for nullability.
+@interface FLTAACKBox : NSObject
+@property(nonatomic, assign) FLTAACK value;
+- (instancetype)initWithValue:(FLTAACK)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FLTAACL) {
+  FLTAACLOne = 0,
+};
+
+/// Wrapper for FLTAACL to allow for nullability.
+@interface FLTAACLBox : NSObject
+@property(nonatomic, assign) FLTAACL value;
+- (instancetype)initWithValue:(FLTAACL)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FLTAACM) {
+  FLTAACMOne = 0,
+};
+
+/// Wrapper for FLTAACM to allow for nullability.
+@interface FLTAACMBox : NSObject
+@property(nonatomic, assign) FLTAACM value;
+- (instancetype)initWithValue:(FLTAACM)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FLTAACN) {
+  FLTAACNOne = 0,
+};
+
+/// Wrapper for FLTAACN to allow for nullability.
+@interface FLTAACNBox : NSObject
+@property(nonatomic, assign) FLTAACN value;
+- (instancetype)initWithValue:(FLTAACN)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FLTAACO) {
+  FLTAACOOne = 0,
+};
+
+/// Wrapper for FLTAACO to allow for nullability.
+@interface FLTAACOBox : NSObject
+@property(nonatomic, assign) FLTAACO value;
+- (instancetype)initWithValue:(FLTAACO)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FLTAACP) {
+  FLTAACPOne = 0,
+};
+
+/// Wrapper for FLTAACP to allow for nullability.
+@interface FLTAACPBox : NSObject
+@property(nonatomic, assign) FLTAACP value;
+- (instancetype)initWithValue:(FLTAACP)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FLTAACQ) {
+  FLTAACQOne = 0,
+};
+
+/// Wrapper for FLTAACQ to allow for nullability.
+@interface FLTAACQBox : NSObject
+@property(nonatomic, assign) FLTAACQ value;
+- (instancetype)initWithValue:(FLTAACQ)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FLTAACR) {
+  FLTAACROne = 0,
+};
+
+/// Wrapper for FLTAACR to allow for nullability.
+@interface FLTAACRBox : NSObject
+@property(nonatomic, assign) FLTAACR value;
+- (instancetype)initWithValue:(FLTAACR)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FLTAACS) {
+  FLTAACSOne = 0,
+};
+
+/// Wrapper for FLTAACS to allow for nullability.
+@interface FLTAACSBox : NSObject
+@property(nonatomic, assign) FLTAACS value;
+- (instancetype)initWithValue:(FLTAACS)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FLTAACT) {
+  FLTAACTOne = 0,
+};
+
+/// Wrapper for FLTAACT to allow for nullability.
+@interface FLTAACTBox : NSObject
+@property(nonatomic, assign) FLTAACT value;
+- (instancetype)initWithValue:(FLTAACT)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FLTAACU) {
+  FLTAACUOne = 0,
+};
+
+/// Wrapper for FLTAACU to allow for nullability.
+@interface FLTAACUBox : NSObject
+@property(nonatomic, assign) FLTAACU value;
+- (instancetype)initWithValue:(FLTAACU)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FLTAACV) {
+  FLTAACVOne = 0,
+};
+
+/// Wrapper for FLTAACV to allow for nullability.
+@interface FLTAACVBox : NSObject
+@property(nonatomic, assign) FLTAACV value;
+- (instancetype)initWithValue:(FLTAACV)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FLTAACW) {
+  FLTAACWOne = 0,
+};
+
+/// Wrapper for FLTAACW to allow for nullability.
+@interface FLTAACWBox : NSObject
+@property(nonatomic, assign) FLTAACW value;
+- (instancetype)initWithValue:(FLTAACW)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FLTAACX) {
+  FLTAACXOne = 0,
+};
+
+/// Wrapper for FLTAACX to allow for nullability.
+@interface FLTAACXBox : NSObject
+@property(nonatomic, assign) FLTAACX value;
+- (instancetype)initWithValue:(FLTAACX)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FLTAACY) {
+  FLTAACYOne = 0,
+};
+
+/// Wrapper for FLTAACY to allow for nullability.
+@interface FLTAACYBox : NSObject
+@property(nonatomic, assign) FLTAACY value;
+- (instancetype)initWithValue:(FLTAACY)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FLTAACZ) {
+  FLTAACZOne = 0,
+};
+
+/// Wrapper for FLTAACZ to allow for nullability.
+@interface FLTAACZBox : NSObject
+@property(nonatomic, assign) FLTAACZ value;
+- (instancetype)initWithValue:(FLTAACZ)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FLTAADA) {
+  FLTAADAOne = 0,
+};
+
+/// Wrapper for FLTAADA to allow for nullability.
+@interface FLTAADABox : NSObject
+@property(nonatomic, assign) FLTAADA value;
+- (instancetype)initWithValue:(FLTAADA)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FLTAADB) {
+  FLTAADBOne = 0,
+};
+
+/// Wrapper for FLTAADB to allow for nullability.
+@interface FLTAADBBox : NSObject
+@property(nonatomic, assign) FLTAADB value;
+- (instancetype)initWithValue:(FLTAADB)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FLTAADC) {
+  FLTAADCOne = 0,
+};
+
+/// Wrapper for FLTAADC to allow for nullability.
+@interface FLTAADCBox : NSObject
+@property(nonatomic, assign) FLTAADC value;
+- (instancetype)initWithValue:(FLTAADC)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FLTAADD) {
+  FLTAADDOne = 0,
+};
+
+/// Wrapper for FLTAADD to allow for nullability.
+@interface FLTAADDBox : NSObject
+@property(nonatomic, assign) FLTAADD value;
+- (instancetype)initWithValue:(FLTAADD)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FLTAADE) {
+  FLTAADEOne = 0,
+};
+
+/// Wrapper for FLTAADE to allow for nullability.
+@interface FLTAADEBox : NSObject
+@property(nonatomic, assign) FLTAADE value;
+- (instancetype)initWithValue:(FLTAADE)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FLTAADF) {
+  FLTAADFOne = 0,
+};
+
+/// Wrapper for FLTAADF to allow for nullability.
+@interface FLTAADFBox : NSObject
+@property(nonatomic, assign) FLTAADF value;
+- (instancetype)initWithValue:(FLTAADF)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FLTAADG) {
+  FLTAADGOne = 0,
+};
+
+/// Wrapper for FLTAADG to allow for nullability.
+@interface FLTAADGBox : NSObject
+@property(nonatomic, assign) FLTAADG value;
+- (instancetype)initWithValue:(FLTAADG)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FLTAADH) {
+  FLTAADHOne = 0,
+};
+
+/// Wrapper for FLTAADH to allow for nullability.
+@interface FLTAADHBox : NSObject
+@property(nonatomic, assign) FLTAADH value;
+- (instancetype)initWithValue:(FLTAADH)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FLTAADI) {
+  FLTAADIOne = 0,
+};
+
+/// Wrapper for FLTAADI to allow for nullability.
+@interface FLTAADIBox : NSObject
+@property(nonatomic, assign) FLTAADI value;
+- (instancetype)initWithValue:(FLTAADI)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FLTAADJ) {
+  FLTAADJOne = 0,
+};
+
+/// Wrapper for FLTAADJ to allow for nullability.
+@interface FLTAADJBox : NSObject
+@property(nonatomic, assign) FLTAADJ value;
+- (instancetype)initWithValue:(FLTAADJ)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FLTAADK) {
+  FLTAADKOne = 0,
+};
+
+/// Wrapper for FLTAADK to allow for nullability.
+@interface FLTAADKBox : NSObject
+@property(nonatomic, assign) FLTAADK value;
+- (instancetype)initWithValue:(FLTAADK)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FLTAADL) {
+  FLTAADLOne = 0,
+};
+
+/// Wrapper for FLTAADL to allow for nullability.
+@interface FLTAADLBox : NSObject
+@property(nonatomic, assign) FLTAADL value;
+- (instancetype)initWithValue:(FLTAADL)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FLTAADM) {
+  FLTAADMOne = 0,
+};
+
+/// Wrapper for FLTAADM to allow for nullability.
+@interface FLTAADMBox : NSObject
+@property(nonatomic, assign) FLTAADM value;
+- (instancetype)initWithValue:(FLTAADM)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FLTAADN) {
+  FLTAADNOne = 0,
+};
+
+/// Wrapper for FLTAADN to allow for nullability.
+@interface FLTAADNBox : NSObject
+@property(nonatomic, assign) FLTAADN value;
+- (instancetype)initWithValue:(FLTAADN)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FLTAADO) {
+  FLTAADOOne = 0,
+};
+
+/// Wrapper for FLTAADO to allow for nullability.
+@interface FLTAADOBox : NSObject
+@property(nonatomic, assign) FLTAADO value;
+- (instancetype)initWithValue:(FLTAADO)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FLTAADP) {
+  FLTAADPOne = 0,
+};
+
+/// Wrapper for FLTAADP to allow for nullability.
+@interface FLTAADPBox : NSObject
+@property(nonatomic, assign) FLTAADP value;
+- (instancetype)initWithValue:(FLTAADP)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FLTAADQ) {
+  FLTAADQOne = 0,
+};
+
+/// Wrapper for FLTAADQ to allow for nullability.
+@interface FLTAADQBox : NSObject
+@property(nonatomic, assign) FLTAADQ value;
+- (instancetype)initWithValue:(FLTAADQ)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FLTAADR) {
+  FLTAADROne = 0,
+};
+
+/// Wrapper for FLTAADR to allow for nullability.
+@interface FLTAADRBox : NSObject
+@property(nonatomic, assign) FLTAADR value;
+- (instancetype)initWithValue:(FLTAADR)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FLTAADS) {
+  FLTAADSOne = 0,
+};
+
+/// Wrapper for FLTAADS to allow for nullability.
+@interface FLTAADSBox : NSObject
+@property(nonatomic, assign) FLTAADS value;
+- (instancetype)initWithValue:(FLTAADS)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FLTAADT) {
+  FLTAADTOne = 0,
+};
+
+/// Wrapper for FLTAADT to allow for nullability.
+@interface FLTAADTBox : NSObject
+@property(nonatomic, assign) FLTAADT value;
+- (instancetype)initWithValue:(FLTAADT)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FLTAADU) {
+  FLTAADUOne = 0,
+};
+
+/// Wrapper for FLTAADU to allow for nullability.
+@interface FLTAADUBox : NSObject
+@property(nonatomic, assign) FLTAADU value;
+- (instancetype)initWithValue:(FLTAADU)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FLTAADV) {
+  FLTAADVOne = 0,
+};
+
+/// Wrapper for FLTAADV to allow for nullability.
+@interface FLTAADVBox : NSObject
+@property(nonatomic, assign) FLTAADV value;
+- (instancetype)initWithValue:(FLTAADV)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FLTAADW) {
+  FLTAADWOne = 0,
+};
+
+/// Wrapper for FLTAADW to allow for nullability.
+@interface FLTAADWBox : NSObject
+@property(nonatomic, assign) FLTAADW value;
+- (instancetype)initWithValue:(FLTAADW)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FLTAADX) {
+  FLTAADXOne = 0,
+};
+
+/// Wrapper for FLTAADX to allow for nullability.
+@interface FLTAADXBox : NSObject
+@property(nonatomic, assign) FLTAADX value;
+- (instancetype)initWithValue:(FLTAADX)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FLTAADY) {
+  FLTAADYOne = 0,
+};
+
+/// Wrapper for FLTAADY to allow for nullability.
+@interface FLTAADYBox : NSObject
+@property(nonatomic, assign) FLTAADY value;
+- (instancetype)initWithValue:(FLTAADY)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FLTAADZ) {
+  FLTAADZOne = 0,
+};
+
+/// Wrapper for FLTAADZ to allow for nullability.
+@interface FLTAADZBox : NSObject
+@property(nonatomic, assign) FLTAADZ value;
+- (instancetype)initWithValue:(FLTAADZ)value;
+@end
+
 typedef NS_ENUM(NSUInteger, FLTAnEnum) {
   FLTAnEnumOne = 0,
   FLTAnEnumTwo = 1,
@@ -194,6 +1494,14 @@ typedef NS_ENUM(NSUInteger, FLTAnEnum) {
 @interface FLTTestMessage : NSObject
 + (instancetype)makeWithTestList:(nullable NSArray<id> *)testList;
 @property(nonatomic, copy, nullable) NSArray<id> *testList;
+@end
+
+@interface FLT__pigeon_CodecOverflow : NSObject
+/// `init` unavailable to enforce nonnull fields, see the `make` class method.
+- (instancetype)init NS_UNAVAILABLE;
++ (instancetype)makeWithType:(NSInteger)type wrapped:(nullable id)wrapped;
+@property(nonatomic, assign) NSInteger type;
+@property(nonatomic, strong, nullable) id wrapped;
 @end
 
 /// The codec used by all APIs.

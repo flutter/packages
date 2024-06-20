@@ -1,3 +1,7 @@
+## 20.1.0
+
+* Removes restriction on number of custom types.
+
 ## 20.0.0
 
 * Moves all codec logic to single custom codec per file.

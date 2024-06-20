@@ -1528,23 +1528,1047 @@ PigeonCodecSerializer::PigeonCodecSerializer() {}
 EncodableValue PigeonCodecSerializer::ReadValueOfType(
     uint8_t type, flutter::ByteStreamReader* stream) const {
   switch (type) {
-    case 129:
-      return CustomEncodableValue(AllTypes::FromEncodableList(
-          std::get<EncodableList>(ReadValue(stream))));
-    case 130:
-      return CustomEncodableValue(AllNullableTypes::FromEncodableList(
-          std::get<EncodableList>(ReadValue(stream))));
-    case 131:
-      return CustomEncodableValue(
-          AllNullableTypesWithoutRecursion::FromEncodableList(
-              std::get<EncodableList>(ReadValue(stream))));
-    case 132:
-      return CustomEncodableValue(AllClassesWrapper::FromEncodableList(
-          std::get<EncodableList>(ReadValue(stream))));
-    case 133:
-      return CustomEncodableValue(TestMessage::FromEncodableList(
-          std::get<EncodableList>(ReadValue(stream))));
+    case 129: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(static_cast<AAA>(enum_arg_value));
+    }
+    case 130: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(static_cast<AAB>(enum_arg_value));
+    }
+    case 131: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(static_cast<AAC>(enum_arg_value));
+    }
+    case 132: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(static_cast<AAD>(enum_arg_value));
+    }
+    case 133: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(static_cast<AAE>(enum_arg_value));
+    }
     case 134: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(static_cast<AAF>(enum_arg_value));
+    }
+    case 135: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(static_cast<AAG>(enum_arg_value));
+    }
+    case 136: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(static_cast<AAH>(enum_arg_value));
+    }
+    case 137: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(static_cast<AAI>(enum_arg_value));
+    }
+    case 138: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(static_cast<AAJ>(enum_arg_value));
+    }
+    case 139: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(static_cast<AAK>(enum_arg_value));
+    }
+    case 140: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(static_cast<AAL>(enum_arg_value));
+    }
+    case 141: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(static_cast<AAM>(enum_arg_value));
+    }
+    case 142: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(static_cast<AAN>(enum_arg_value));
+    }
+    case 143: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(static_cast<AAO>(enum_arg_value));
+    }
+    case 144: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(static_cast<AAP>(enum_arg_value));
+    }
+    case 145: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(static_cast<AAQ>(enum_arg_value));
+    }
+    case 146: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(static_cast<AAR>(enum_arg_value));
+    }
+    case 147: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(static_cast<AAS>(enum_arg_value));
+    }
+    case 148: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(static_cast<AAT>(enum_arg_value));
+    }
+    case 149: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(static_cast<AAU>(enum_arg_value));
+    }
+    case 150: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(static_cast<AAV>(enum_arg_value));
+    }
+    case 151: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(static_cast<AAW>(enum_arg_value));
+    }
+    case 152: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(static_cast<AAX>(enum_arg_value));
+    }
+    case 153: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(static_cast<AAY>(enum_arg_value));
+    }
+    case 154: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(static_cast<AAZ>(enum_arg_value));
+    }
+    case 155: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(static_cast<AAAA>(enum_arg_value));
+    }
+    case 156: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(static_cast<AAAB>(enum_arg_value));
+    }
+    case 157: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(static_cast<AAAC>(enum_arg_value));
+    }
+    case 158: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(static_cast<AAAD>(enum_arg_value));
+    }
+    case 159: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(static_cast<AAAE>(enum_arg_value));
+    }
+    case 160: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(static_cast<AAAF>(enum_arg_value));
+    }
+    case 161: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(static_cast<AAAG>(enum_arg_value));
+    }
+    case 162: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(static_cast<AAAH>(enum_arg_value));
+    }
+    case 163: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(static_cast<AAAI>(enum_arg_value));
+    }
+    case 164: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(static_cast<AAAJ>(enum_arg_value));
+    }
+    case 165: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(static_cast<AAAK>(enum_arg_value));
+    }
+    case 166: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(static_cast<AAAL>(enum_arg_value));
+    }
+    case 167: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(static_cast<AAAM>(enum_arg_value));
+    }
+    case 168: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(static_cast<AAAN>(enum_arg_value));
+    }
+    case 169: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(static_cast<AAAO>(enum_arg_value));
+    }
+    case 170: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(static_cast<AAAP>(enum_arg_value));
+    }
+    case 171: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(static_cast<AAAQ>(enum_arg_value));
+    }
+    case 172: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(static_cast<AAAR>(enum_arg_value));
+    }
+    case 173: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(static_cast<AAAS>(enum_arg_value));
+    }
+    case 174: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(static_cast<AAAT>(enum_arg_value));
+    }
+    case 175: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(static_cast<AAAU>(enum_arg_value));
+    }
+    case 176: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(static_cast<AAAV>(enum_arg_value));
+    }
+    case 177: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(static_cast<AAAW>(enum_arg_value));
+    }
+    case 178: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(static_cast<AAAX>(enum_arg_value));
+    }
+    case 179: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(static_cast<AAAY>(enum_arg_value));
+    }
+    case 180: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(static_cast<AAAZ>(enum_arg_value));
+    }
+    case 181: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(static_cast<AABA>(enum_arg_value));
+    }
+    case 182: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(static_cast<AABB>(enum_arg_value));
+    }
+    case 183: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(static_cast<AABC>(enum_arg_value));
+    }
+    case 184: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(static_cast<AABD>(enum_arg_value));
+    }
+    case 185: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(static_cast<AABE>(enum_arg_value));
+    }
+    case 186: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(static_cast<AABF>(enum_arg_value));
+    }
+    case 187: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(static_cast<AABG>(enum_arg_value));
+    }
+    case 188: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(static_cast<AABH>(enum_arg_value));
+    }
+    case 189: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(static_cast<AABI>(enum_arg_value));
+    }
+    case 190: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(static_cast<AABJ>(enum_arg_value));
+    }
+    case 191: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(static_cast<AABK>(enum_arg_value));
+    }
+    case 192: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(static_cast<AABL>(enum_arg_value));
+    }
+    case 193: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(static_cast<AABM>(enum_arg_value));
+    }
+    case 194: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(static_cast<AABN>(enum_arg_value));
+    }
+    case 195: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(static_cast<AABO>(enum_arg_value));
+    }
+    case 196: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(static_cast<AABP>(enum_arg_value));
+    }
+    case 197: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(static_cast<AABQ>(enum_arg_value));
+    }
+    case 198: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(static_cast<AABR>(enum_arg_value));
+    }
+    case 199: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(static_cast<AABS>(enum_arg_value));
+    }
+    case 200: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(static_cast<AABT>(enum_arg_value));
+    }
+    case 201: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(static_cast<AABU>(enum_arg_value));
+    }
+    case 202: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(static_cast<AABV>(enum_arg_value));
+    }
+    case 203: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(static_cast<AABW>(enum_arg_value));
+    }
+    case 204: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(static_cast<AABX>(enum_arg_value));
+    }
+    case 205: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(static_cast<AABY>(enum_arg_value));
+    }
+    case 206: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(static_cast<AABZ>(enum_arg_value));
+    }
+    case 207: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(static_cast<AACA>(enum_arg_value));
+    }
+    case 208: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(static_cast<AACB>(enum_arg_value));
+    }
+    case 209: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(static_cast<AACC>(enum_arg_value));
+    }
+    case 210: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(static_cast<AACD>(enum_arg_value));
+    }
+    case 211: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(static_cast<AACE>(enum_arg_value));
+    }
+    case 212: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(static_cast<AACF>(enum_arg_value));
+    }
+    case 213: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(static_cast<AACG>(enum_arg_value));
+    }
+    case 214: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(static_cast<AACH>(enum_arg_value));
+    }
+    case 215: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(static_cast<AACI>(enum_arg_value));
+    }
+    case 216: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(static_cast<AACJ>(enum_arg_value));
+    }
+    case 217: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(static_cast<AACK>(enum_arg_value));
+    }
+    case 218: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(static_cast<AACL>(enum_arg_value));
+    }
+    case 219: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(static_cast<AACM>(enum_arg_value));
+    }
+    case 220: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(static_cast<AACN>(enum_arg_value));
+    }
+    case 221: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(static_cast<AACO>(enum_arg_value));
+    }
+    case 222: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(static_cast<AACP>(enum_arg_value));
+    }
+    case 223: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(static_cast<AACQ>(enum_arg_value));
+    }
+    case 224: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(static_cast<AACR>(enum_arg_value));
+    }
+    case 225: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(static_cast<AACS>(enum_arg_value));
+    }
+    case 226: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(static_cast<AACT>(enum_arg_value));
+    }
+    case 227: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(static_cast<AACU>(enum_arg_value));
+    }
+    case 228: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(static_cast<AACV>(enum_arg_value));
+    }
+    case 229: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(static_cast<AACW>(enum_arg_value));
+    }
+    case 230: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(static_cast<AACX>(enum_arg_value));
+    }
+    case 231: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(static_cast<AACY>(enum_arg_value));
+    }
+    case 232: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(static_cast<AACZ>(enum_arg_value));
+    }
+    case 233: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(static_cast<AADA>(enum_arg_value));
+    }
+    case 234: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(static_cast<AADB>(enum_arg_value));
+    }
+    case 235: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(static_cast<AADC>(enum_arg_value));
+    }
+    case 236: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(static_cast<AADD>(enum_arg_value));
+    }
+    case 237: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(static_cast<AADE>(enum_arg_value));
+    }
+    case 238: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(static_cast<AADF>(enum_arg_value));
+    }
+    case 239: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(static_cast<AADG>(enum_arg_value));
+    }
+    case 240: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(static_cast<AADH>(enum_arg_value));
+    }
+    case 241: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(static_cast<AADI>(enum_arg_value));
+    }
+    case 242: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(static_cast<AADJ>(enum_arg_value));
+    }
+    case 243: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(static_cast<AADK>(enum_arg_value));
+    }
+    case 244: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(static_cast<AADL>(enum_arg_value));
+    }
+    case 245: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(static_cast<AADM>(enum_arg_value));
+    }
+    case 246: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(static_cast<AADN>(enum_arg_value));
+    }
+    case 247: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(static_cast<AADO>(enum_arg_value));
+    }
+    case 248: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(static_cast<AADP>(enum_arg_value));
+    }
+    case 249: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(static_cast<AADQ>(enum_arg_value));
+    }
+    case 250: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(static_cast<AADR>(enum_arg_value));
+    }
+    case 251: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(static_cast<AADS>(enum_arg_value));
+    }
+    case 252: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(static_cast<AADT>(enum_arg_value));
+    }
+    case 253: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(static_cast<AADU>(enum_arg_value));
+    }
+    case 254: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(static_cast<AADV>(enum_arg_value));
+    }
+    case 255: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(static_cast<AADW>(enum_arg_value));
+    }
+    case 256: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(static_cast<AADX>(enum_arg_value));
+    }
+    case 257: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(static_cast<AADY>(enum_arg_value));
+    }
+    case 258: {
+      const auto& encodable_enum_arg = ReadValue(stream);
+      const int64_t enum_arg_value =
+          encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
+      return encodable_enum_arg.IsNull()
+                 ? EncodableValue()
+                 : CustomEncodableValue(static_cast<AADZ>(enum_arg_value));
+    }
+    case 259: {
       const auto& encodable_enum_arg = ReadValue(stream);
       const int64_t enum_arg_value =
           encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
@@ -1552,6 +2576,22 @@ EncodableValue PigeonCodecSerializer::ReadValueOfType(
                  ? EncodableValue()
                  : CustomEncodableValue(static_cast<AnEnum>(enum_arg_value));
     }
+    case 260:
+      return CustomEncodableValue(AllTypes::FromEncodableList(
+          std::get<EncodableList>(ReadValue(stream))));
+    case 261:
+      return CustomEncodableValue(AllNullableTypes::FromEncodableList(
+          std::get<EncodableList>(ReadValue(stream))));
+    case 262:
+      return CustomEncodableValue(
+          AllNullableTypesWithoutRecursion::FromEncodableList(
+              std::get<EncodableList>(ReadValue(stream))));
+    case 263:
+      return CustomEncodableValue(AllClassesWrapper::FromEncodableList(
+          std::get<EncodableList>(ReadValue(stream))));
+    case 264:
+      return CustomEncodableValue(TestMessage::FromEncodableList(
+          std::get<EncodableList>(ReadValue(stream))));
     default:
       return flutter::StandardCodecSerializer::ReadValueOfType(type, stream);
   }
@@ -1561,15 +2601,932 @@ void PigeonCodecSerializer::WriteValue(
     const EncodableValue& value, flutter::ByteStreamWriter* stream) const {
   if (const CustomEncodableValue* custom_value =
           std::get_if<CustomEncodableValue>(&value)) {
-    if (custom_value->type() == typeid(AllTypes)) {
+    if (custom_value->type() == typeid(AAA)) {
       stream->WriteByte(129);
+      WriteValue(
+          EncodableValue(static_cast<int>(std::any_cast<AAA>(*custom_value))),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AAB)) {
+      stream->WriteByte(130);
+      WriteValue(
+          EncodableValue(static_cast<int>(std::any_cast<AAB>(*custom_value))),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AAC)) {
+      stream->WriteByte(131);
+      WriteValue(
+          EncodableValue(static_cast<int>(std::any_cast<AAC>(*custom_value))),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AAD)) {
+      stream->WriteByte(132);
+      WriteValue(
+          EncodableValue(static_cast<int>(std::any_cast<AAD>(*custom_value))),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AAE)) {
+      stream->WriteByte(133);
+      WriteValue(
+          EncodableValue(static_cast<int>(std::any_cast<AAE>(*custom_value))),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AAF)) {
+      stream->WriteByte(134);
+      WriteValue(
+          EncodableValue(static_cast<int>(std::any_cast<AAF>(*custom_value))),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AAG)) {
+      stream->WriteByte(135);
+      WriteValue(
+          EncodableValue(static_cast<int>(std::any_cast<AAG>(*custom_value))),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AAH)) {
+      stream->WriteByte(136);
+      WriteValue(
+          EncodableValue(static_cast<int>(std::any_cast<AAH>(*custom_value))),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AAI)) {
+      stream->WriteByte(137);
+      WriteValue(
+          EncodableValue(static_cast<int>(std::any_cast<AAI>(*custom_value))),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AAJ)) {
+      stream->WriteByte(138);
+      WriteValue(
+          EncodableValue(static_cast<int>(std::any_cast<AAJ>(*custom_value))),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AAK)) {
+      stream->WriteByte(139);
+      WriteValue(
+          EncodableValue(static_cast<int>(std::any_cast<AAK>(*custom_value))),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AAL)) {
+      stream->WriteByte(140);
+      WriteValue(
+          EncodableValue(static_cast<int>(std::any_cast<AAL>(*custom_value))),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AAM)) {
+      stream->WriteByte(141);
+      WriteValue(
+          EncodableValue(static_cast<int>(std::any_cast<AAM>(*custom_value))),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AAN)) {
+      stream->WriteByte(142);
+      WriteValue(
+          EncodableValue(static_cast<int>(std::any_cast<AAN>(*custom_value))),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AAO)) {
+      stream->WriteByte(143);
+      WriteValue(
+          EncodableValue(static_cast<int>(std::any_cast<AAO>(*custom_value))),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AAP)) {
+      stream->WriteByte(144);
+      WriteValue(
+          EncodableValue(static_cast<int>(std::any_cast<AAP>(*custom_value))),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AAQ)) {
+      stream->WriteByte(145);
+      WriteValue(
+          EncodableValue(static_cast<int>(std::any_cast<AAQ>(*custom_value))),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AAR)) {
+      stream->WriteByte(146);
+      WriteValue(
+          EncodableValue(static_cast<int>(std::any_cast<AAR>(*custom_value))),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AAS)) {
+      stream->WriteByte(147);
+      WriteValue(
+          EncodableValue(static_cast<int>(std::any_cast<AAS>(*custom_value))),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AAT)) {
+      stream->WriteByte(148);
+      WriteValue(
+          EncodableValue(static_cast<int>(std::any_cast<AAT>(*custom_value))),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AAU)) {
+      stream->WriteByte(149);
+      WriteValue(
+          EncodableValue(static_cast<int>(std::any_cast<AAU>(*custom_value))),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AAV)) {
+      stream->WriteByte(150);
+      WriteValue(
+          EncodableValue(static_cast<int>(std::any_cast<AAV>(*custom_value))),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AAW)) {
+      stream->WriteByte(151);
+      WriteValue(
+          EncodableValue(static_cast<int>(std::any_cast<AAW>(*custom_value))),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AAX)) {
+      stream->WriteByte(152);
+      WriteValue(
+          EncodableValue(static_cast<int>(std::any_cast<AAX>(*custom_value))),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AAY)) {
+      stream->WriteByte(153);
+      WriteValue(
+          EncodableValue(static_cast<int>(std::any_cast<AAY>(*custom_value))),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AAZ)) {
+      stream->WriteByte(154);
+      WriteValue(
+          EncodableValue(static_cast<int>(std::any_cast<AAZ>(*custom_value))),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AAAA)) {
+      stream->WriteByte(155);
+      WriteValue(
+          EncodableValue(static_cast<int>(std::any_cast<AAAA>(*custom_value))),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AAAB)) {
+      stream->WriteByte(156);
+      WriteValue(
+          EncodableValue(static_cast<int>(std::any_cast<AAAB>(*custom_value))),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AAAC)) {
+      stream->WriteByte(157);
+      WriteValue(
+          EncodableValue(static_cast<int>(std::any_cast<AAAC>(*custom_value))),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AAAD)) {
+      stream->WriteByte(158);
+      WriteValue(
+          EncodableValue(static_cast<int>(std::any_cast<AAAD>(*custom_value))),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AAAE)) {
+      stream->WriteByte(159);
+      WriteValue(
+          EncodableValue(static_cast<int>(std::any_cast<AAAE>(*custom_value))),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AAAF)) {
+      stream->WriteByte(160);
+      WriteValue(
+          EncodableValue(static_cast<int>(std::any_cast<AAAF>(*custom_value))),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AAAG)) {
+      stream->WriteByte(161);
+      WriteValue(
+          EncodableValue(static_cast<int>(std::any_cast<AAAG>(*custom_value))),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AAAH)) {
+      stream->WriteByte(162);
+      WriteValue(
+          EncodableValue(static_cast<int>(std::any_cast<AAAH>(*custom_value))),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AAAI)) {
+      stream->WriteByte(163);
+      WriteValue(
+          EncodableValue(static_cast<int>(std::any_cast<AAAI>(*custom_value))),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AAAJ)) {
+      stream->WriteByte(164);
+      WriteValue(
+          EncodableValue(static_cast<int>(std::any_cast<AAAJ>(*custom_value))),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AAAK)) {
+      stream->WriteByte(165);
+      WriteValue(
+          EncodableValue(static_cast<int>(std::any_cast<AAAK>(*custom_value))),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AAAL)) {
+      stream->WriteByte(166);
+      WriteValue(
+          EncodableValue(static_cast<int>(std::any_cast<AAAL>(*custom_value))),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AAAM)) {
+      stream->WriteByte(167);
+      WriteValue(
+          EncodableValue(static_cast<int>(std::any_cast<AAAM>(*custom_value))),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AAAN)) {
+      stream->WriteByte(168);
+      WriteValue(
+          EncodableValue(static_cast<int>(std::any_cast<AAAN>(*custom_value))),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AAAO)) {
+      stream->WriteByte(169);
+      WriteValue(
+          EncodableValue(static_cast<int>(std::any_cast<AAAO>(*custom_value))),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AAAP)) {
+      stream->WriteByte(170);
+      WriteValue(
+          EncodableValue(static_cast<int>(std::any_cast<AAAP>(*custom_value))),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AAAQ)) {
+      stream->WriteByte(171);
+      WriteValue(
+          EncodableValue(static_cast<int>(std::any_cast<AAAQ>(*custom_value))),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AAAR)) {
+      stream->WriteByte(172);
+      WriteValue(
+          EncodableValue(static_cast<int>(std::any_cast<AAAR>(*custom_value))),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AAAS)) {
+      stream->WriteByte(173);
+      WriteValue(
+          EncodableValue(static_cast<int>(std::any_cast<AAAS>(*custom_value))),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AAAT)) {
+      stream->WriteByte(174);
+      WriteValue(
+          EncodableValue(static_cast<int>(std::any_cast<AAAT>(*custom_value))),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AAAU)) {
+      stream->WriteByte(175);
+      WriteValue(
+          EncodableValue(static_cast<int>(std::any_cast<AAAU>(*custom_value))),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AAAV)) {
+      stream->WriteByte(176);
+      WriteValue(
+          EncodableValue(static_cast<int>(std::any_cast<AAAV>(*custom_value))),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AAAW)) {
+      stream->WriteByte(177);
+      WriteValue(
+          EncodableValue(static_cast<int>(std::any_cast<AAAW>(*custom_value))),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AAAX)) {
+      stream->WriteByte(178);
+      WriteValue(
+          EncodableValue(static_cast<int>(std::any_cast<AAAX>(*custom_value))),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AAAY)) {
+      stream->WriteByte(179);
+      WriteValue(
+          EncodableValue(static_cast<int>(std::any_cast<AAAY>(*custom_value))),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AAAZ)) {
+      stream->WriteByte(180);
+      WriteValue(
+          EncodableValue(static_cast<int>(std::any_cast<AAAZ>(*custom_value))),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AABA)) {
+      stream->WriteByte(181);
+      WriteValue(
+          EncodableValue(static_cast<int>(std::any_cast<AABA>(*custom_value))),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AABB)) {
+      stream->WriteByte(182);
+      WriteValue(
+          EncodableValue(static_cast<int>(std::any_cast<AABB>(*custom_value))),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AABC)) {
+      stream->WriteByte(183);
+      WriteValue(
+          EncodableValue(static_cast<int>(std::any_cast<AABC>(*custom_value))),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AABD)) {
+      stream->WriteByte(184);
+      WriteValue(
+          EncodableValue(static_cast<int>(std::any_cast<AABD>(*custom_value))),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AABE)) {
+      stream->WriteByte(185);
+      WriteValue(
+          EncodableValue(static_cast<int>(std::any_cast<AABE>(*custom_value))),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AABF)) {
+      stream->WriteByte(186);
+      WriteValue(
+          EncodableValue(static_cast<int>(std::any_cast<AABF>(*custom_value))),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AABG)) {
+      stream->WriteByte(187);
+      WriteValue(
+          EncodableValue(static_cast<int>(std::any_cast<AABG>(*custom_value))),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AABH)) {
+      stream->WriteByte(188);
+      WriteValue(
+          EncodableValue(static_cast<int>(std::any_cast<AABH>(*custom_value))),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AABI)) {
+      stream->WriteByte(189);
+      WriteValue(
+          EncodableValue(static_cast<int>(std::any_cast<AABI>(*custom_value))),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AABJ)) {
+      stream->WriteByte(190);
+      WriteValue(
+          EncodableValue(static_cast<int>(std::any_cast<AABJ>(*custom_value))),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AABK)) {
+      stream->WriteByte(191);
+      WriteValue(
+          EncodableValue(static_cast<int>(std::any_cast<AABK>(*custom_value))),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AABL)) {
+      stream->WriteByte(192);
+      WriteValue(
+          EncodableValue(static_cast<int>(std::any_cast<AABL>(*custom_value))),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AABM)) {
+      stream->WriteByte(193);
+      WriteValue(
+          EncodableValue(static_cast<int>(std::any_cast<AABM>(*custom_value))),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AABN)) {
+      stream->WriteByte(194);
+      WriteValue(
+          EncodableValue(static_cast<int>(std::any_cast<AABN>(*custom_value))),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AABO)) {
+      stream->WriteByte(195);
+      WriteValue(
+          EncodableValue(static_cast<int>(std::any_cast<AABO>(*custom_value))),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AABP)) {
+      stream->WriteByte(196);
+      WriteValue(
+          EncodableValue(static_cast<int>(std::any_cast<AABP>(*custom_value))),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AABQ)) {
+      stream->WriteByte(197);
+      WriteValue(
+          EncodableValue(static_cast<int>(std::any_cast<AABQ>(*custom_value))),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AABR)) {
+      stream->WriteByte(198);
+      WriteValue(
+          EncodableValue(static_cast<int>(std::any_cast<AABR>(*custom_value))),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AABS)) {
+      stream->WriteByte(199);
+      WriteValue(
+          EncodableValue(static_cast<int>(std::any_cast<AABS>(*custom_value))),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AABT)) {
+      stream->WriteByte(200);
+      WriteValue(
+          EncodableValue(static_cast<int>(std::any_cast<AABT>(*custom_value))),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AABU)) {
+      stream->WriteByte(201);
+      WriteValue(
+          EncodableValue(static_cast<int>(std::any_cast<AABU>(*custom_value))),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AABV)) {
+      stream->WriteByte(202);
+      WriteValue(
+          EncodableValue(static_cast<int>(std::any_cast<AABV>(*custom_value))),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AABW)) {
+      stream->WriteByte(203);
+      WriteValue(
+          EncodableValue(static_cast<int>(std::any_cast<AABW>(*custom_value))),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AABX)) {
+      stream->WriteByte(204);
+      WriteValue(
+          EncodableValue(static_cast<int>(std::any_cast<AABX>(*custom_value))),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AABY)) {
+      stream->WriteByte(205);
+      WriteValue(
+          EncodableValue(static_cast<int>(std::any_cast<AABY>(*custom_value))),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AABZ)) {
+      stream->WriteByte(206);
+      WriteValue(
+          EncodableValue(static_cast<int>(std::any_cast<AABZ>(*custom_value))),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AACA)) {
+      stream->WriteByte(207);
+      WriteValue(
+          EncodableValue(static_cast<int>(std::any_cast<AACA>(*custom_value))),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AACB)) {
+      stream->WriteByte(208);
+      WriteValue(
+          EncodableValue(static_cast<int>(std::any_cast<AACB>(*custom_value))),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AACC)) {
+      stream->WriteByte(209);
+      WriteValue(
+          EncodableValue(static_cast<int>(std::any_cast<AACC>(*custom_value))),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AACD)) {
+      stream->WriteByte(210);
+      WriteValue(
+          EncodableValue(static_cast<int>(std::any_cast<AACD>(*custom_value))),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AACE)) {
+      stream->WriteByte(211);
+      WriteValue(
+          EncodableValue(static_cast<int>(std::any_cast<AACE>(*custom_value))),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AACF)) {
+      stream->WriteByte(212);
+      WriteValue(
+          EncodableValue(static_cast<int>(std::any_cast<AACF>(*custom_value))),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AACG)) {
+      stream->WriteByte(213);
+      WriteValue(
+          EncodableValue(static_cast<int>(std::any_cast<AACG>(*custom_value))),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AACH)) {
+      stream->WriteByte(214);
+      WriteValue(
+          EncodableValue(static_cast<int>(std::any_cast<AACH>(*custom_value))),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AACI)) {
+      stream->WriteByte(215);
+      WriteValue(
+          EncodableValue(static_cast<int>(std::any_cast<AACI>(*custom_value))),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AACJ)) {
+      stream->WriteByte(216);
+      WriteValue(
+          EncodableValue(static_cast<int>(std::any_cast<AACJ>(*custom_value))),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AACK)) {
+      stream->WriteByte(217);
+      WriteValue(
+          EncodableValue(static_cast<int>(std::any_cast<AACK>(*custom_value))),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AACL)) {
+      stream->WriteByte(218);
+      WriteValue(
+          EncodableValue(static_cast<int>(std::any_cast<AACL>(*custom_value))),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AACM)) {
+      stream->WriteByte(219);
+      WriteValue(
+          EncodableValue(static_cast<int>(std::any_cast<AACM>(*custom_value))),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AACN)) {
+      stream->WriteByte(220);
+      WriteValue(
+          EncodableValue(static_cast<int>(std::any_cast<AACN>(*custom_value))),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AACO)) {
+      stream->WriteByte(221);
+      WriteValue(
+          EncodableValue(static_cast<int>(std::any_cast<AACO>(*custom_value))),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AACP)) {
+      stream->WriteByte(222);
+      WriteValue(
+          EncodableValue(static_cast<int>(std::any_cast<AACP>(*custom_value))),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AACQ)) {
+      stream->WriteByte(223);
+      WriteValue(
+          EncodableValue(static_cast<int>(std::any_cast<AACQ>(*custom_value))),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AACR)) {
+      stream->WriteByte(224);
+      WriteValue(
+          EncodableValue(static_cast<int>(std::any_cast<AACR>(*custom_value))),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AACS)) {
+      stream->WriteByte(225);
+      WriteValue(
+          EncodableValue(static_cast<int>(std::any_cast<AACS>(*custom_value))),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AACT)) {
+      stream->WriteByte(226);
+      WriteValue(
+          EncodableValue(static_cast<int>(std::any_cast<AACT>(*custom_value))),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AACU)) {
+      stream->WriteByte(227);
+      WriteValue(
+          EncodableValue(static_cast<int>(std::any_cast<AACU>(*custom_value))),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AACV)) {
+      stream->WriteByte(228);
+      WriteValue(
+          EncodableValue(static_cast<int>(std::any_cast<AACV>(*custom_value))),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AACW)) {
+      stream->WriteByte(229);
+      WriteValue(
+          EncodableValue(static_cast<int>(std::any_cast<AACW>(*custom_value))),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AACX)) {
+      stream->WriteByte(230);
+      WriteValue(
+          EncodableValue(static_cast<int>(std::any_cast<AACX>(*custom_value))),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AACY)) {
+      stream->WriteByte(231);
+      WriteValue(
+          EncodableValue(static_cast<int>(std::any_cast<AACY>(*custom_value))),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AACZ)) {
+      stream->WriteByte(232);
+      WriteValue(
+          EncodableValue(static_cast<int>(std::any_cast<AACZ>(*custom_value))),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AADA)) {
+      stream->WriteByte(233);
+      WriteValue(
+          EncodableValue(static_cast<int>(std::any_cast<AADA>(*custom_value))),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AADB)) {
+      stream->WriteByte(234);
+      WriteValue(
+          EncodableValue(static_cast<int>(std::any_cast<AADB>(*custom_value))),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AADC)) {
+      stream->WriteByte(235);
+      WriteValue(
+          EncodableValue(static_cast<int>(std::any_cast<AADC>(*custom_value))),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AADD)) {
+      stream->WriteByte(236);
+      WriteValue(
+          EncodableValue(static_cast<int>(std::any_cast<AADD>(*custom_value))),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AADE)) {
+      stream->WriteByte(237);
+      WriteValue(
+          EncodableValue(static_cast<int>(std::any_cast<AADE>(*custom_value))),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AADF)) {
+      stream->WriteByte(238);
+      WriteValue(
+          EncodableValue(static_cast<int>(std::any_cast<AADF>(*custom_value))),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AADG)) {
+      stream->WriteByte(239);
+      WriteValue(
+          EncodableValue(static_cast<int>(std::any_cast<AADG>(*custom_value))),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AADH)) {
+      stream->WriteByte(240);
+      WriteValue(
+          EncodableValue(static_cast<int>(std::any_cast<AADH>(*custom_value))),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AADI)) {
+      stream->WriteByte(241);
+      WriteValue(
+          EncodableValue(static_cast<int>(std::any_cast<AADI>(*custom_value))),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AADJ)) {
+      stream->WriteByte(242);
+      WriteValue(
+          EncodableValue(static_cast<int>(std::any_cast<AADJ>(*custom_value))),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AADK)) {
+      stream->WriteByte(243);
+      WriteValue(
+          EncodableValue(static_cast<int>(std::any_cast<AADK>(*custom_value))),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AADL)) {
+      stream->WriteByte(244);
+      WriteValue(
+          EncodableValue(static_cast<int>(std::any_cast<AADL>(*custom_value))),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AADM)) {
+      stream->WriteByte(245);
+      WriteValue(
+          EncodableValue(static_cast<int>(std::any_cast<AADM>(*custom_value))),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AADN)) {
+      stream->WriteByte(246);
+      WriteValue(
+          EncodableValue(static_cast<int>(std::any_cast<AADN>(*custom_value))),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AADO)) {
+      stream->WriteByte(247);
+      WriteValue(
+          EncodableValue(static_cast<int>(std::any_cast<AADO>(*custom_value))),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AADP)) {
+      stream->WriteByte(248);
+      WriteValue(
+          EncodableValue(static_cast<int>(std::any_cast<AADP>(*custom_value))),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AADQ)) {
+      stream->WriteByte(249);
+      WriteValue(
+          EncodableValue(static_cast<int>(std::any_cast<AADQ>(*custom_value))),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AADR)) {
+      stream->WriteByte(250);
+      WriteValue(
+          EncodableValue(static_cast<int>(std::any_cast<AADR>(*custom_value))),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AADS)) {
+      stream->WriteByte(251);
+      WriteValue(
+          EncodableValue(static_cast<int>(std::any_cast<AADS>(*custom_value))),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AADT)) {
+      stream->WriteByte(252);
+      WriteValue(
+          EncodableValue(static_cast<int>(std::any_cast<AADT>(*custom_value))),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AADU)) {
+      stream->WriteByte(253);
+      WriteValue(
+          EncodableValue(static_cast<int>(std::any_cast<AADU>(*custom_value))),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AADV)) {
+      stream->WriteByte(254);
+      WriteValue(
+          EncodableValue(static_cast<int>(std::any_cast<AADV>(*custom_value))),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AADW)) {
+      stream->WriteByte(255);
+      WriteValue(
+          EncodableValue(static_cast<int>(std::any_cast<AADW>(*custom_value))),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AADX)) {
+      stream->WriteByte(256);
+      WriteValue(
+          EncodableValue(static_cast<int>(std::any_cast<AADX>(*custom_value))),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AADY)) {
+      stream->WriteByte(257);
+      WriteValue(
+          EncodableValue(static_cast<int>(std::any_cast<AADY>(*custom_value))),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AADZ)) {
+      stream->WriteByte(258);
+      WriteValue(
+          EncodableValue(static_cast<int>(std::any_cast<AADZ>(*custom_value))),
+          stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AnEnum)) {
+      stream->WriteByte(259);
+      WriteValue(EncodableValue(
+                     static_cast<int>(std::any_cast<AnEnum>(*custom_value))),
+                 stream);
+      return;
+    }
+    if (custom_value->type() == typeid(AllTypes)) {
+      stream->WriteByte(260);
       WriteValue(EncodableValue(
                      std::any_cast<AllTypes>(*custom_value).ToEncodableList()),
                  stream);
       return;
     }
     if (custom_value->type() == typeid(AllNullableTypes)) {
-      stream->WriteByte(130);
+      stream->WriteByte(261);
       WriteValue(
           EncodableValue(
               std::any_cast<AllNullableTypes>(*custom_value).ToEncodableList()),
@@ -1577,7 +3534,7 @@ void PigeonCodecSerializer::WriteValue(
       return;
     }
     if (custom_value->type() == typeid(AllNullableTypesWithoutRecursion)) {
-      stream->WriteByte(131);
+      stream->WriteByte(262);
       WriteValue(EncodableValue(std::any_cast<AllNullableTypesWithoutRecursion>(
                                     *custom_value)
                                     .ToEncodableList()),
@@ -1585,25 +3542,18 @@ void PigeonCodecSerializer::WriteValue(
       return;
     }
     if (custom_value->type() == typeid(AllClassesWrapper)) {
-      stream->WriteByte(132);
+      stream->WriteByte(263);
       WriteValue(EncodableValue(std::any_cast<AllClassesWrapper>(*custom_value)
                                     .ToEncodableList()),
                  stream);
       return;
     }
     if (custom_value->type() == typeid(TestMessage)) {
-      stream->WriteByte(133);
+      stream->WriteByte(264);
       WriteValue(
           EncodableValue(
               std::any_cast<TestMessage>(*custom_value).ToEncodableList()),
           stream);
-      return;
-    }
-    if (custom_value->type() == typeid(AnEnum)) {
-      stream->WriteByte(134);
-      WriteValue(EncodableValue(
-                     static_cast<int>(std::any_cast<AnEnum>(*custom_value))),
-                 stream);
       return;
     }
   }
