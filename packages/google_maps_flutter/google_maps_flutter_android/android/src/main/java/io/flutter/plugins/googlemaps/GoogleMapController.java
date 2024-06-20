@@ -109,7 +109,7 @@ class GoogleMapController
   private List<Map<String, ?>> initialTileOverlays;
   // Null except between initialization and onMapReady.
   private @Nullable String initialMapStyle;
-  private @Nullable String lastStyleError;
+  private boolean lastSetStyleSucceeded;
   @VisibleForTesting List<Float> initialPadding;
 
   GoogleMapController(
@@ -470,24 +470,6 @@ class GoogleMapController
       case "map#getZoomLevel":
         {
           result.success(googleMap.getCameraPosition().zoom);
-          break;
-        }
-      case "map#setStyle":
-        {
-          Object arg = call.arguments;
-          final String style = arg instanceof String ? (String) arg : null;
-          final boolean mapStyleSet = updateMapStyle(style);
-          ArrayList<Object> mapStyleResult = new ArrayList<>(2);
-          mapStyleResult.add(mapStyleSet);
-          if (!mapStyleSet) {
-            mapStyleResult.add(lastStyleError);
-          }
-          result.success(mapStyleResult);
-          break;
-        }
-      case "map#getStyleError":
-        {
-          result.success(lastStyleError);
           break;
         }
       case "tileOverlays#update":
@@ -1007,10 +989,8 @@ class GoogleMapController
     // Dart passes an empty string to indicate that the style should be cleared.
     final MapStyleOptions mapStyleOptions =
         style == null || style.isEmpty() ? null : new MapStyleOptions(style);
-    final boolean set = Objects.requireNonNull(googleMap).setMapStyle(mapStyleOptions);
-    lastStyleError =
-        set ? null : "Unable to set the map style. Please check console logs for errors.";
-    return set;
+    lastSetStyleSucceeded = Objects.requireNonNull(googleMap).setMapStyle(mapStyleOptions);
+    return lastSetStyleSucceeded;
   }
 
   /** MapsApi implementation */
@@ -1021,6 +1001,16 @@ class GoogleMapController
     } else {
       result.success();
     }
+  }
+
+  @Override
+  public @NonNull Boolean setStyle(@NonNull String style) {
+    return updateMapStyle(style);
+  }
+
+  @Override
+  public @NonNull Boolean didLastStyleSucceed() {
+    return lastSetStyleSucceeded;
   }
 
   /** MapsInspectorApi implementation */

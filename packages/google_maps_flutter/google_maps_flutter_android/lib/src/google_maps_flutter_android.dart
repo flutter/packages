@@ -452,11 +452,9 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
     String? mapStyle, {
     required int mapId,
   }) async {
-    final List<dynamic> successAndError = (await _channel(mapId)
-        .invokeMethod<List<dynamic>>('map#setStyle', mapStyle))!;
-    final bool success = successAndError[0] as bool;
+    final bool success = await _hostApi(mapId).setStyle(mapStyle ?? '');
     if (!success) {
-      throw MapStyleException(successAndError[1] as String);
+      throw const MapStyleException(_setStyleFailureMessage);
     }
   }
 
@@ -538,8 +536,10 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
   }
 
   @override
-  Future<String?> getStyleError({required int mapId}) {
-    return _channel(mapId).invokeMethod<String>('map#getStyleError');
+  Future<String?> getStyleError({required int mapId}) async {
+    return (await _hostApi(mapId).didLastStyleSucceed())
+        ? null
+        : _setStyleFailureMessage;
   }
 
   /// Set [GoogleMapsFlutterPlatform] to use [AndroidViewSurface] to build the
@@ -882,3 +882,9 @@ class AndroidMapRendererException implements Exception {
   @override
   String toString() => 'AndroidMapRendererException($message)';
 }
+
+/// The error message to use for style failures. Unlike iOS, Android does not
+/// provide an API to get style failure information, it's just logged to the
+/// console, so there's no platform call needed.
+const String _setStyleFailureMessage =
+    'Unable to set the map style. Please check console logs for errors.';

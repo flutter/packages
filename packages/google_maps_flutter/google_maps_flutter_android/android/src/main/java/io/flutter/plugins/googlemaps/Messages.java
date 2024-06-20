@@ -639,6 +639,23 @@ public class Messages {
   public interface MapsApi {
     /** Returns once the map instance is available. */
     void waitForMap(@NonNull VoidResult result);
+    /**
+     * Sets the style to the given map style string, where an empty string indicates that the style
+     * should be cleared.
+     *
+     * <p>Returns false if there was an error setting the style, such as an invalid style string.
+     */
+    @NonNull
+    Boolean setStyle(@NonNull String style);
+    /**
+     * Returns true if the last attempt to set a style, either via initial map style or setMapStyle,
+     * succeeded.
+     *
+     * <p>This allows checking asynchronously for initial style failures, as there is no way to
+     * return failures from map initialization.
+     */
+    @NonNull
+    Boolean didLastStyleSucceed();
 
     /** The codec used by MapsApi. */
     static @NonNull MessageCodec<Object> getCodec() {
@@ -679,6 +696,56 @@ public class Messages {
                     };
 
                 api.waitForMap(resultCallback);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.google_maps_flutter_android.MapsApi.setStyle"
+                    + messageChannelSuffix,
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                String styleArg = (String) args.get(0);
+                try {
+                  Boolean output = api.setStyle(styleArg);
+                  wrapped.add(0, output);
+                } catch (Throwable exception) {
+                  ArrayList<Object> wrappedError = wrapError(exception);
+                  wrapped = wrappedError;
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.google_maps_flutter_android.MapsApi.didLastStyleSucceed"
+                    + messageChannelSuffix,
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                try {
+                  Boolean output = api.didLastStyleSucceed();
+                  wrapped.add(0, output);
+                } catch (Throwable exception) {
+                  ArrayList<Object> wrappedError = wrapError(exception);
+                  wrapped = wrappedError;
+                }
+                reply.reply(wrapped);
               });
         } else {
           channel.setMessageHandler(null);

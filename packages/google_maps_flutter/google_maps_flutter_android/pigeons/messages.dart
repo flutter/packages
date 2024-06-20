@@ -76,6 +76,20 @@ abstract class MapsApi {
   /// Returns once the map instance is available.
   @async
   void waitForMap();
+
+  /// Sets the style to the given map style string, where an empty string
+  /// indicates that the style should be cleared.
+  ///
+  /// Returns false if there was an error setting the style, such as an invalid
+  /// style string.
+  bool setStyle(String style);
+
+  /// Returns true if the last attempt to set a style, either via initial map
+  /// style or setMapStyle, succeeded.
+  ///
+  /// This allows checking asynchronously for initial style failures, as there
+  /// is no way to return failures from map initialization.
+  bool didLastStyleSucceed();
 }
 
 /// Inspector API only intended for use in integration tests.
