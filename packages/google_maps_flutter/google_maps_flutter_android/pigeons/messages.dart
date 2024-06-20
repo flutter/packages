@@ -82,9 +82,7 @@ abstract class MapsInspectorApi {
   bool isMapToolbarEnabled();
   bool isMyLocationButtonEnabled();
   bool isTrafficEnabled();
-  @ObjCSelector('getInfoForTileOverlayWithIdentifier:')
   PlatformTileLayer? getTileOverlayInfo(String tileOverlayId);
-  @ObjCSelector('zoomRange')
   PlatformZoomRange getZoomRange();
   // TODO(stuartmorgan): Make the generic type non-nullable once supported.
   // https://github.com/flutter/flutter/issues/97848
