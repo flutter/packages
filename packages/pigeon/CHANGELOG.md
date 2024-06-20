@@ -1,3 +1,7 @@
+## NEXT
+
+* [swift] Fully-qualifies types in Equatable extension test.
+
 ## 20.0.1
 
 * [cpp] Fixes handling of null class arguments.

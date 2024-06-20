@@ -12,7 +12,7 @@ class MockEnumApi2Host: EnumApi2Host {
   }
 }
 
-extension DataWithEnum: Equatable {
+extension test_plugin.DataWithEnum: Swift.Equatable {
   public static func == (lhs: DataWithEnum, rhs: DataWithEnum) -> Bool {
     lhs.state == rhs.state
   }
