@@ -1,3 +1,7 @@
+## 0.1.3
+
+* Remove unecessary location decorations for pixelation shader.
+
 ## 0.1.2
 
 * Ensure constructed ui.Picture objects are disposed after usage.
