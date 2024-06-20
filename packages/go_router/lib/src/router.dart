@@ -487,7 +487,12 @@ class GoRouter implements RouterConfig<RouteMatchList> {
       log('popping ${routerDelegate.currentConfiguration.uri}');
       return true;
     }());
+
     routerDelegate.pop<T>(result);
+    routeInformationProvider.popSave<T>(
+      routerDelegate.currentConfiguration.uri.toString(),
+      base: routerDelegate.currentConfiguration,
+    );
   }
 
   /// Refresh the route.
