@@ -113,7 +113,8 @@ class MarkersController {
   boolean isInfoWindowShown(String markerId) {
     MarkerController markerController = markerIdToController.get(markerId);
     if (markerController == null) {
-      throw new Messages.FlutterError("Invalid markerId", "isInfoWindowShown called with invalid markerId", null);
+      throw new Messages.FlutterError(
+          "Invalid markerId", "isInfoWindowShown called with invalid markerId", null);
     }
     return markerController.isInfoWindowShown();
   }

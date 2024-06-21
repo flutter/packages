@@ -13,10 +13,10 @@ import 'package:pigeon/pigeon.dart';
 
 /// Pigeon equivalent of LatLng.
 class PlatformLatLng {
-  PlatformLatLng({required this.lat, required this.lng});
+  PlatformLatLng({required this.latitude, required this.longitude});
 
-  final double lat;
-  final double lng;
+  final double latitude;
+  final double longitude;
 }
 
 /// Pigeon equivalent of LatLngBounds.
@@ -43,6 +43,14 @@ class PlatformCluster {
   // https://github.com/flutter/flutter/issues/97848
   // The consuming code treats the entries as non-nullable.
   final List<String?> markerIds;
+}
+
+/// Pigeon representation of an x,y coordinate.
+class PlatformPoint {
+  PlatformPoint({required this.x, required this.y});
+
+  final int x;
+  final int y;
 }
 
 /// Pigeon equivalent of native TileOverlay properties.
@@ -76,6 +84,18 @@ abstract class MapsApi {
   /// Returns once the map instance is available.
   @async
   void waitForMap();
+
+  /// Gets the screen coordinate for the given map location.
+  PlatformPoint getScreenCoordinate(PlatformLatLng latLng);
+
+  /// Gets the map location for the given screen coordinate.
+  PlatformLatLng getLatLng(PlatformPoint screenCoordinate);
+
+  /// Gets the map region currently displayed on the map.
+  PlatformLatLngBounds getVisibleRegion();
+
+  /// Gets the current map zoom level.
+  double getZoomLevel();
 
   /// Show the info window for the marker with the given ID.
   void showInfoWindow(String markerId);

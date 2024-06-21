@@ -70,30 +70,30 @@ public class Messages {
    * <p>Generated class from Pigeon that represents data sent in messages.
    */
   public static final class PlatformLatLng {
-    private @NonNull Double lat;
+    private @NonNull Double latitude;
 
-    public @NonNull Double getLat() {
-      return lat;
+    public @NonNull Double getLatitude() {
+      return latitude;
     }
 
-    public void setLat(@NonNull Double setterArg) {
+    public void setLatitude(@NonNull Double setterArg) {
       if (setterArg == null) {
-        throw new IllegalStateException("Nonnull field \"lat\" is null.");
+        throw new IllegalStateException("Nonnull field \"latitude\" is null.");
       }
-      this.lat = setterArg;
+      this.latitude = setterArg;
     }
 
-    private @NonNull Double lng;
+    private @NonNull Double longitude;
 
-    public @NonNull Double getLng() {
-      return lng;
+    public @NonNull Double getLongitude() {
+      return longitude;
     }
 
-    public void setLng(@NonNull Double setterArg) {
+    public void setLongitude(@NonNull Double setterArg) {
       if (setterArg == null) {
-        throw new IllegalStateException("Nonnull field \"lng\" is null.");
+        throw new IllegalStateException("Nonnull field \"longitude\" is null.");
       }
-      this.lng = setterArg;
+      this.longitude = setterArg;
     }
 
     /** Constructor is non-public to enforce null safety; use Builder. */
@@ -101,26 +101,26 @@ public class Messages {
 
     public static final class Builder {
 
-      private @Nullable Double lat;
+      private @Nullable Double latitude;
 
       @CanIgnoreReturnValue
-      public @NonNull Builder setLat(@NonNull Double setterArg) {
-        this.lat = setterArg;
+      public @NonNull Builder setLatitude(@NonNull Double setterArg) {
+        this.latitude = setterArg;
         return this;
       }
 
-      private @Nullable Double lng;
+      private @Nullable Double longitude;
 
       @CanIgnoreReturnValue
-      public @NonNull Builder setLng(@NonNull Double setterArg) {
-        this.lng = setterArg;
+      public @NonNull Builder setLongitude(@NonNull Double setterArg) {
+        this.longitude = setterArg;
         return this;
       }
 
       public @NonNull PlatformLatLng build() {
         PlatformLatLng pigeonReturn = new PlatformLatLng();
-        pigeonReturn.setLat(lat);
-        pigeonReturn.setLng(lng);
+        pigeonReturn.setLatitude(latitude);
+        pigeonReturn.setLongitude(longitude);
         return pigeonReturn;
       }
     }
@@ -128,17 +128,17 @@ public class Messages {
     @NonNull
     ArrayList<Object> toList() {
       ArrayList<Object> toListResult = new ArrayList<Object>(2);
-      toListResult.add(lat);
-      toListResult.add(lng);
+      toListResult.add(latitude);
+      toListResult.add(longitude);
       return toListResult;
     }
 
     static @NonNull PlatformLatLng fromList(@NonNull ArrayList<Object> __pigeon_list) {
       PlatformLatLng pigeonResult = new PlatformLatLng();
-      Object lat = __pigeon_list.get(0);
-      pigeonResult.setLat((Double) lat);
-      Object lng = __pigeon_list.get(1);
-      pigeonResult.setLng((Double) lng);
+      Object latitude = __pigeon_list.get(0);
+      pigeonResult.setLatitude((Double) latitude);
+      Object longitude = __pigeon_list.get(1);
+      pigeonResult.setLongitude((Double) longitude);
       return pigeonResult;
     }
   }
@@ -347,6 +347,85 @@ public class Messages {
       pigeonResult.setBounds((PlatformLatLngBounds) bounds);
       Object markerIds = __pigeon_list.get(3);
       pigeonResult.setMarkerIds((List<String>) markerIds);
+      return pigeonResult;
+    }
+  }
+
+  /**
+   * Pigeon representation of an x,y coordinate.
+   *
+   * <p>Generated class from Pigeon that represents data sent in messages.
+   */
+  public static final class PlatformPoint {
+    private @NonNull Long x;
+
+    public @NonNull Long getX() {
+      return x;
+    }
+
+    public void setX(@NonNull Long setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"x\" is null.");
+      }
+      this.x = setterArg;
+    }
+
+    private @NonNull Long y;
+
+    public @NonNull Long getY() {
+      return y;
+    }
+
+    public void setY(@NonNull Long setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"y\" is null.");
+      }
+      this.y = setterArg;
+    }
+
+    /** Constructor is non-public to enforce null safety; use Builder. */
+    PlatformPoint() {}
+
+    public static final class Builder {
+
+      private @Nullable Long x;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setX(@NonNull Long setterArg) {
+        this.x = setterArg;
+        return this;
+      }
+
+      private @Nullable Long y;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setY(@NonNull Long setterArg) {
+        this.y = setterArg;
+        return this;
+      }
+
+      public @NonNull PlatformPoint build() {
+        PlatformPoint pigeonReturn = new PlatformPoint();
+        pigeonReturn.setX(x);
+        pigeonReturn.setY(y);
+        return pigeonReturn;
+      }
+    }
+
+    @NonNull
+    ArrayList<Object> toList() {
+      ArrayList<Object> toListResult = new ArrayList<Object>(2);
+      toListResult.add(x);
+      toListResult.add(y);
+      return toListResult;
+    }
+
+    static @NonNull PlatformPoint fromList(@NonNull ArrayList<Object> __pigeon_list) {
+      PlatformPoint pigeonResult = new PlatformPoint();
+      Object x = __pigeon_list.get(0);
+      pigeonResult.setX((x == null) ? null : ((x instanceof Integer) ? (Integer) x : (Long) x));
+      Object y = __pigeon_list.get(1);
+      pigeonResult.setY((y == null) ? null : ((y instanceof Integer) ? (Integer) y : (Long) y));
       return pigeonResult;
     }
   }
@@ -574,8 +653,10 @@ public class Messages {
         case (byte) 131:
           return PlatformCluster.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 132:
-          return PlatformTileLayer.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformPoint.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 133:
+          return PlatformTileLayer.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 134:
           return PlatformZoomRange.fromList((ArrayList<Object>) readValue(buffer));
         default:
           return super.readValueOfType(type, buffer);
@@ -593,11 +674,14 @@ public class Messages {
       } else if (value instanceof PlatformCluster) {
         stream.write(131);
         writeValue(stream, ((PlatformCluster) value).toList());
-      } else if (value instanceof PlatformTileLayer) {
+      } else if (value instanceof PlatformPoint) {
         stream.write(132);
+        writeValue(stream, ((PlatformPoint) value).toList());
+      } else if (value instanceof PlatformTileLayer) {
+        stream.write(133);
         writeValue(stream, ((PlatformTileLayer) value).toList());
       } else if (value instanceof PlatformZoomRange) {
-        stream.write(133);
+        stream.write(134);
         writeValue(stream, ((PlatformZoomRange) value).toList());
       } else {
         super.writeValue(stream, value);
@@ -639,6 +723,18 @@ public class Messages {
   public interface MapsApi {
     /** Returns once the map instance is available. */
     void waitForMap(@NonNull VoidResult result);
+    /** Gets the screen coordinate for the given map location. */
+    @NonNull
+    PlatformPoint getScreenCoordinate(@NonNull PlatformLatLng latLng);
+    /** Gets the map location for the given screen coordinate. */
+    @NonNull
+    PlatformLatLng getLatLng(@NonNull PlatformPoint screenCoordinate);
+    /** Gets the map region currently displayed on the map. */
+    @NonNull
+    PlatformLatLngBounds getVisibleRegion();
+    /** Gets the current map zoom level. */
+    @NonNull
+    Double getZoomLevel();
     /** Show the info window for the marker with the given ID. */
     void showInfoWindow(@NonNull String markerId);
     /** Hide the info window for the marker with the given ID. */
@@ -703,6 +799,106 @@ public class Messages {
                     };
 
                 api.waitForMap(resultCallback);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.google_maps_flutter_android.MapsApi.getScreenCoordinate"
+                    + messageChannelSuffix,
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                PlatformLatLng latLngArg = (PlatformLatLng) args.get(0);
+                try {
+                  PlatformPoint output = api.getScreenCoordinate(latLngArg);
+                  wrapped.add(0, output);
+                } catch (Throwable exception) {
+                  ArrayList<Object> wrappedError = wrapError(exception);
+                  wrapped = wrappedError;
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.google_maps_flutter_android.MapsApi.getLatLng"
+                    + messageChannelSuffix,
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                PlatformPoint screenCoordinateArg = (PlatformPoint) args.get(0);
+                try {
+                  PlatformLatLng output = api.getLatLng(screenCoordinateArg);
+                  wrapped.add(0, output);
+                } catch (Throwable exception) {
+                  ArrayList<Object> wrappedError = wrapError(exception);
+                  wrapped = wrappedError;
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.google_maps_flutter_android.MapsApi.getVisibleRegion"
+                    + messageChannelSuffix,
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                try {
+                  PlatformLatLngBounds output = api.getVisibleRegion();
+                  wrapped.add(0, output);
+                } catch (Throwable exception) {
+                  ArrayList<Object> wrappedError = wrapError(exception);
+                  wrapped = wrappedError;
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.google_maps_flutter_android.MapsApi.getZoomLevel"
+                    + messageChannelSuffix,
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                try {
+                  Double output = api.getZoomLevel();
+                  wrapped.add(0, output);
+                } catch (Throwable exception) {
+                  ArrayList<Object> wrappedError = wrapError(exception);
+                  wrapped = wrappedError;
+                }
+                reply.reply(wrapped);
               });
         } else {
           channel.setMessageHandler(null);

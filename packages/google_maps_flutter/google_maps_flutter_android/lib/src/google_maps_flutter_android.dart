@@ -462,12 +462,8 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
   Future<LatLngBounds> getVisibleRegion({
     required int mapId,
   }) async {
-    final Map<String, dynamic> latLngBounds = (await _channel(mapId)
-        .invokeMapMethod<String, dynamic>('map#getVisibleRegion'))!;
-    final LatLng southwest = LatLng.fromJson(latLngBounds['southwest'])!;
-    final LatLng northeast = LatLng.fromJson(latLngBounds['northeast'])!;
-
-    return LatLngBounds(northeast: northeast, southwest: southwest);
+    return _latLngBoundsFromPlatformLatLngBounds(
+        await _hostApi(mapId).getVisibleRegion());
   }
 
   @override
@@ -475,11 +471,8 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
     LatLng latLng, {
     required int mapId,
   }) async {
-    final Map<String, int> point = (await _channel(mapId)
-        .invokeMapMethod<String, int>(
-            'map#getScreenCoordinate', latLng.toJson()))!;
-
-    return ScreenCoordinate(x: point['x']!, y: point['y']!);
+    return _screenCoordinateFromPlatformPoint(await _hostApi(mapId)
+        .getScreenCoordinate(_platformLatLngFromLatLng(latLng)));
   }
 
   @override
@@ -487,10 +480,8 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
     ScreenCoordinate screenCoordinate, {
     required int mapId,
   }) async {
-    final List<dynamic> latLng = (await _channel(mapId)
-        .invokeMethod<List<dynamic>>(
-            'map#getLatLng', screenCoordinate.toJson()))!;
-    return LatLng(latLng[0] as double, latLng[1] as double);
+    return _latLngFromPlatformLatLng(await _hostApi(mapId)
+        .getLatLng(_platformPointFromScreenCoordinate(screenCoordinate)));
   }
 
   @override
@@ -520,8 +511,8 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
   @override
   Future<double> getZoomLevel({
     required int mapId,
-  }) async {
-    return (await _channel(mapId).invokeMethod<double>('map#getZoomLevel'))!;
+  }) {
+    return _hostApi(mapId).getZoomLevel();
   }
 
   @override
@@ -790,7 +781,22 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
   }
 
   static LatLng _latLngFromPlatformLatLng(PlatformLatLng latLng) {
-    return LatLng(latLng.lat, latLng.lng);
+    return LatLng(latLng.latitude, latLng.longitude);
+  }
+
+  static PlatformLatLng _platformLatLngFromLatLng(LatLng latLng) {
+    return PlatformLatLng(
+        latitude: latLng.latitude, longitude: latLng.longitude);
+  }
+
+  static ScreenCoordinate _screenCoordinateFromPlatformPoint(
+      PlatformPoint point) {
+    return ScreenCoordinate(x: point.x, y: point.y);
+  }
+
+  static PlatformPoint _platformPointFromScreenCoordinate(
+      ScreenCoordinate coordinate) {
+    return PlatformPoint(x: coordinate.x, y: coordinate.y);
   }
 
   static LatLngBounds _latLngBoundsFromPlatformLatLngBounds(

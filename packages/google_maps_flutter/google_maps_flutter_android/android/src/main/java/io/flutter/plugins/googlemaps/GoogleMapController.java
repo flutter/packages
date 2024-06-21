@@ -49,6 +49,7 @@ import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.platform.PlatformView;
+import io.flutter.plugins.googlemaps.Messages.FlutterError;
 import io.flutter.plugins.googlemaps.Messages.MapsApi;
 import io.flutter.plugins.googlemaps.Messages.MapsInspectorApi;
 import java.io.ByteArrayOutputStream;
@@ -68,7 +69,7 @@ class GoogleMapController
         DefaultLifecycleObserver,
         GoogleMapListener,
         GoogleMapOptionsSink,
-        Messages.MapsApi,
+        MapsApi,
         MapsInspectorApi,
         MethodChannel.MethodCallHandler,
         OnMapReadyCallback,
@@ -317,45 +318,6 @@ class GoogleMapController
           result.success(Convert.cameraPositionToJson(getCameraPosition()));
           break;
         }
-      case "map#getVisibleRegion":
-        {
-          if (googleMap != null) {
-            LatLngBounds latLngBounds = googleMap.getProjection().getVisibleRegion().latLngBounds;
-            result.success(Convert.latLngBoundsToJson(latLngBounds));
-          } else {
-            result.error(
-                "GoogleMap uninitialized",
-                "getVisibleRegion called prior to map initialization",
-                null);
-          }
-          break;
-        }
-      case "map#getScreenCoordinate":
-        {
-          if (googleMap != null) {
-            LatLng latLng = Convert.toLatLng(call.arguments);
-            Point screenLocation = googleMap.getProjection().toScreenLocation(latLng);
-            result.success(Convert.pointToJson(screenLocation));
-          } else {
-            result.error(
-                "GoogleMap uninitialized",
-                "getScreenCoordinate called prior to map initialization",
-                null);
-          }
-          break;
-        }
-      case "map#getLatLng":
-        {
-          if (googleMap != null) {
-            Point point = Convert.toPoint(call.arguments);
-            LatLng latLng = googleMap.getProjection().fromScreenLocation(point);
-            result.success(Convert.latLngToJson(latLng));
-          } else {
-            result.error(
-                "GoogleMap uninitialized", "getLatLng called prior to map initialization", null);
-          }
-          break;
-        }
       case "map#takeSnapshot":
         {
           if (googleMap != null) {
@@ -447,11 +409,6 @@ class GoogleMapController
           List<Object> circleIdsToRemove = call.argument("circleIdsToRemove");
           circlesController.removeCircles(circleIdsToRemove);
           result.success(null);
-          break;
-        }
-      case "map#getZoomLevel":
-        {
-          result.success(googleMap.getCameraPosition().zoom);
           break;
         }
       case "tileOverlays#update":
@@ -983,6 +940,51 @@ class GoogleMapController
     } else {
       result.success();
     }
+  }
+
+  @Override
+  public @NonNull Messages.PlatformPoint getScreenCoordinate(
+      @NonNull Messages.PlatformLatLng latLng) {
+    if (googleMap == null) {
+      throw new FlutterError(
+          "GoogleMap uninitialized",
+          "getScreenCoordinate called prior to map initialization",
+          null);
+    }
+    Point screenLocation =
+        googleMap.getProjection().toScreenLocation(Convert.latLngFromPigeon(latLng));
+    return Convert.pointToPigeon(screenLocation);
+  }
+
+  @Override
+  public @NonNull Messages.PlatformLatLng getLatLng(
+      @NonNull Messages.PlatformPoint screenCoordinate) {
+    if (googleMap == null) {
+      throw new FlutterError(
+          "GoogleMap uninitialized", "getLatLng called prior to map initialization", null);
+    }
+    LatLng latLng =
+        googleMap.getProjection().fromScreenLocation(Convert.pointFromPigeon(screenCoordinate));
+    return Convert.latLngToPigeon(latLng);
+  }
+
+  @Override
+  public @NonNull Messages.PlatformLatLngBounds getVisibleRegion() {
+    if (googleMap == null) {
+      throw new FlutterError(
+          "GoogleMap uninitialized", "getVisibleRegion called prior to map initialization", null);
+    }
+    LatLngBounds latLngBounds = googleMap.getProjection().getVisibleRegion().latLngBounds;
+    return Convert.latLngBoundsToPigeon(latLngBounds);
+  }
+
+  @Override
+  public @NonNull Double getZoomLevel() {
+    if (googleMap == null) {
+      throw new FlutterError(
+          "GoogleMap uninitialized", "getZoomLevel called prior to map initialization", null);
+    }
+    return (double) googleMap.getCameraPosition().zoom;
   }
 
   @Override
