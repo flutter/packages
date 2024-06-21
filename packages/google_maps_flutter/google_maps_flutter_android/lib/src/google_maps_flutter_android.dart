@@ -19,6 +19,11 @@ import 'utils/cluster_manager_utils.dart';
 // TODO(stuartmorgan): Remove the dependency on platform interface toJson
 // methods. Channel serialization details should all be package-internal.
 
+/// The non-test implementation of `_apiProvider`.
+MapsApi _productionApiProvider(int mapId) {
+  return MapsApi(messageChannelSuffix: mapId.toString());
+}
+
 /// Error thrown when an unknown map ID is provided to a method channel API.
 class UnknownMapIDError extends Error {
   /// Creates an assertion error with the provided [mapId] and optional
@@ -55,6 +60,11 @@ enum AndroidMapRenderer {
 
 /// An implementation of [GoogleMapsFlutterPlatform] for Android.
 class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
+  /// Creates a new Android maps implementation instance.
+  GoogleMapsFlutterAndroid({
+    @visibleForTesting MapsApi Function(int mapId)? apiProvider,
+  }) : _apiProvider = apiProvider ?? _productionApiProvider;
+
   /// Registers the Android implementation of GoogleMapsFlutterPlatform.
   static void registerWith() {
     GoogleMapsFlutterPlatform.instance = GoogleMapsFlutterAndroid();
@@ -69,6 +79,9 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
   final Map<int, MethodChannel> _channels = <int, MethodChannel>{};
 
   final Map<int, MapsApi> _hostMaps = <int, MapsApi>{};
+
+  // A method to create MapsApi instances, which can be overridden for testing.
+  final MapsApi Function(int mapId) _apiProvider;
 
   /// Accesses the MethodChannel associated to the passed mapId.
   MethodChannel _channel(int mapId) {
@@ -111,8 +124,8 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
   MapsApi ensureApiInitialized(int mapId) {
     MapsApi? api = _hostMaps[mapId];
     if (api == null) {
-      api = MapsApi(messageChannelSuffix: mapId.toString());
-      _hostMaps[mapId] = api;
+      api = _apiProvider(mapId);
+      _hostMaps[mapId] ??= api;
     }
     return api;
   }
