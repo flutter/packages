@@ -13,6 +13,7 @@ import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platf
 import 'package:stream_transform/stream_transform.dart';
 
 import 'google_map_inspector_android.dart';
+import 'messages.g.dart';
 import 'utils/cluster_manager_utils.dart';
 
 // TODO(stuartmorgan): Remove the dependency on platform interface toJson
@@ -719,8 +720,9 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
   @override
   @visibleForTesting
   void enableDebugInspection() {
-    GoogleMapsInspectorPlatform.instance =
-        GoogleMapsInspectorAndroid((int mapId) => _channel(mapId));
+    GoogleMapsInspectorPlatform.instance = GoogleMapsInspectorAndroid(
+        (int mapId) =>
+            MapsInspectorApi(messageChannelSuffix: mapId.toString()));
   }
 
   /// Parses cluster data from dynamic json objects and returns [Cluster] object.
@@ -753,6 +755,29 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
       position: position,
       bounds: bounds,
     );
+  }
+
+  /// Converts a Pigeon [PlatformCluster] to the corresponding [Cluster].
+  static Cluster clusterFromPlatformCluster(PlatformCluster cluster) {
+    return Cluster(
+        ClusterManagerId(cluster.clusterManagerId),
+        cluster.markerIds
+            // See comment in messages.dart for why the force unwrap is okay.
+            .map((String? markerId) => MarkerId(markerId!))
+            .toList(),
+        position: _latLngFromPlatformLatLng(cluster.position),
+        bounds: _latLngBoundsFromPlatformLatLngBounds(cluster.bounds));
+  }
+
+  static LatLng _latLngFromPlatformLatLng(PlatformLatLng latLng) {
+    return LatLng(latLng.lat, latLng.lng);
+  }
+
+  static LatLngBounds _latLngBoundsFromPlatformLatLngBounds(
+      PlatformLatLngBounds bounds) {
+    return LatLngBounds(
+        southwest: _latLngFromPlatformLatLng(bounds.southwest),
+        northeast: _latLngFromPlatformLatLng(bounds.northeast));
   }
 }
 
