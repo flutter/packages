@@ -2,9 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+#import "Stubs.h"
 #import <Foundation/Foundation.h>
 #import <StoreKit/StoreKit.h>
-#import "Stubs.h"
 
 #if TARGET_OS_OSX
 #import <FlutterMacOS/FlutterMacOS.h>
@@ -647,4 +647,3 @@
 @end
 
 #endif
-
