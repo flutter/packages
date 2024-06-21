@@ -120,7 +120,8 @@ class BenchmarkServer {
         if (compilationOptions.useWasm) ...<String>[
           '--wasm',
           '--no-strip-wasm',
-        ] else '--web-renderer=${compilationOptions.renderer.name}',
+        ] else
+          '--web-renderer=${compilationOptions.renderer.name}',
         '--dart-define=FLUTTER_WEB_ENABLE_PROFILING=true',
         if (!treeShakeIcons) '--no-tree-shake-icons',
         '--profile',
