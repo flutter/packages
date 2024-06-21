@@ -233,18 +233,6 @@ abstract class UIViewController {
   /// this property as it should not be needed anyways.
   @attached
   late final UIView view;
-
-  /// Adds the specified view controller as a child of the current view
-  /// controller.
-  void addChild(UIViewController childController);
-
-  /// Called after the view controller is added or removed from a container view
-  /// controller.
-  void didMove(UIViewController? parent);
-
-  /// Called just before the view controller is added or removed from a
-  /// container view controller.
-  void willMove(UIViewController? parent);
 }
 
 /// Defines an interface for a class that tracks video content progress and
@@ -253,6 +241,8 @@ abstract class UIViewController {
 /// See https://developers.google.com/ad-manager/dynamic-ad-insertion/sdk/ios/reference/Protocols/IMAContentPlayhead.
 @ProxyApi()
 abstract class IMAContentPlayhead {
+  IMAContentPlayhead();
+
   /// Reflects the current playback time in seconds for the content.
   void setCurrentTime(double timeInterval);
 }
@@ -385,7 +375,7 @@ abstract class IMAAdsManagerDelegate {
   /// Called when there was an error playing the ad.
   late final void Function(
     IMAAdsManager adsManager,
-    IMAAdError event,
+    IMAAdError error,
   ) didReceiveAdError;
 
   /// Called when an ad is ready to play.

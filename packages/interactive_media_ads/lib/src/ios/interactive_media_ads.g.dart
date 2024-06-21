@@ -974,93 +974,6 @@ class UIViewController extends PigeonProxyApiBaseClass {
     return __pigeon_instance;
   }
 
-  /// Adds the specified view controller as a child of the current view
-  /// controller.
-  Future<void> addChild(UIViewController childController) async {
-    final _PigeonProxyApiBaseCodec pigeonChannelCodec =
-        __pigeon_codecUIViewController;
-    final BinaryMessenger? __pigeon_binaryMessenger = pigeon_binaryMessenger;
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.interactive_media_ads.UIViewController.addChild';
-    final BasicMessageChannel<Object?> __pigeon_channel =
-        BasicMessageChannel<Object?>(
-      __pigeon_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: __pigeon_binaryMessenger,
-    );
-    final List<Object?>? __pigeon_replyList = await __pigeon_channel
-        .send(<Object?>[this, childController]) as List<Object?>?;
-    if (__pigeon_replyList == null) {
-      throw _createConnectionError(__pigeon_channelName);
-    } else if (__pigeon_replyList.length > 1) {
-      throw PlatformException(
-        code: __pigeon_replyList[0]! as String,
-        message: __pigeon_replyList[1] as String?,
-        details: __pigeon_replyList[2],
-      );
-    } else {
-      return;
-    }
-  }
-
-  /// Called after the view controller is added or removed from a container view
-  /// controller.
-  Future<void> didMove(UIViewController? parent) async {
-    final _PigeonProxyApiBaseCodec pigeonChannelCodec =
-        __pigeon_codecUIViewController;
-    final BinaryMessenger? __pigeon_binaryMessenger = pigeon_binaryMessenger;
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.interactive_media_ads.UIViewController.didMove';
-    final BasicMessageChannel<Object?> __pigeon_channel =
-        BasicMessageChannel<Object?>(
-      __pigeon_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: __pigeon_binaryMessenger,
-    );
-    final List<Object?>? __pigeon_replyList =
-        await __pigeon_channel.send(<Object?>[this, parent]) as List<Object?>?;
-    if (__pigeon_replyList == null) {
-      throw _createConnectionError(__pigeon_channelName);
-    } else if (__pigeon_replyList.length > 1) {
-      throw PlatformException(
-        code: __pigeon_replyList[0]! as String,
-        message: __pigeon_replyList[1] as String?,
-        details: __pigeon_replyList[2],
-      );
-    } else {
-      return;
-    }
-  }
-
-  /// Called just before the view controller is added or removed from a
-  /// container view controller.
-  Future<void> willMove(UIViewController? parent) async {
-    final _PigeonProxyApiBaseCodec pigeonChannelCodec =
-        __pigeon_codecUIViewController;
-    final BinaryMessenger? __pigeon_binaryMessenger = pigeon_binaryMessenger;
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.interactive_media_ads.UIViewController.willMove';
-    final BasicMessageChannel<Object?> __pigeon_channel =
-        BasicMessageChannel<Object?>(
-      __pigeon_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: __pigeon_binaryMessenger,
-    );
-    final List<Object?>? __pigeon_replyList =
-        await __pigeon_channel.send(<Object?>[this, parent]) as List<Object?>?;
-    if (__pigeon_replyList == null) {
-      throw _createConnectionError(__pigeon_channelName);
-    } else if (__pigeon_replyList.length > 1) {
-      throw PlatformException(
-        code: __pigeon_replyList[0]! as String,
-        message: __pigeon_replyList[1] as String?,
-        details: __pigeon_replyList[2],
-      );
-    } else {
-      return;
-    }
-  }
-
   @override
   UIViewController pigeon_copy() {
     return UIViewController.pigeon_detached(
@@ -1075,6 +988,40 @@ class UIViewController extends PigeonProxyApiBaseClass {
 ///
 /// See https://developers.google.com/ad-manager/dynamic-ad-insertion/sdk/ios/reference/Protocols/IMAContentPlayhead.
 class IMAContentPlayhead extends PigeonProxyApiBaseClass {
+  IMAContentPlayhead({
+    super.pigeon_binaryMessenger,
+    super.pigeon_instanceManager,
+  }) {
+    final int __pigeon_instanceIdentifier =
+        pigeon_instanceManager.addDartCreatedInstance(this);
+    final _PigeonProxyApiBaseCodec pigeonChannelCodec =
+        __pigeon_codecIMAContentPlayhead;
+    final BinaryMessenger? __pigeon_binaryMessenger = pigeon_binaryMessenger;
+    () async {
+      const String __pigeon_channelName =
+          'dev.flutter.pigeon.interactive_media_ads.IMAContentPlayhead.pigeon_defaultConstructor';
+      final BasicMessageChannel<Object?> __pigeon_channel =
+          BasicMessageChannel<Object?>(
+        __pigeon_channelName,
+        pigeonChannelCodec,
+        binaryMessenger: __pigeon_binaryMessenger,
+      );
+      final List<Object?>? __pigeon_replyList = await __pigeon_channel
+          .send(<Object?>[__pigeon_instanceIdentifier]) as List<Object?>?;
+      if (__pigeon_replyList == null) {
+        throw _createConnectionError(__pigeon_channelName);
+      } else if (__pigeon_replyList.length > 1) {
+        throw PlatformException(
+          code: __pigeon_replyList[0]! as String,
+          message: __pigeon_replyList[1] as String?,
+          details: __pigeon_replyList[2],
+        );
+      } else {
+        return;
+      }
+    }();
+  }
+
   /// Constructs [IMAContentPlayhead] without creating the associated native object.
   ///
   /// This should only be used by subclasses created by this library or to
@@ -2323,7 +2270,7 @@ class IMAAdsManagerDelegate extends PigeonProxyApiBaseClass {
   final void Function(
     IMAAdsManagerDelegate pigeon_instance,
     IMAAdsManager adsManager,
-    IMAAdError event,
+    IMAAdError error,
   ) didReceiveAdError;
 
   /// Called when an ad is ready to play.
@@ -2386,7 +2333,7 @@ class IMAAdsManagerDelegate extends PigeonProxyApiBaseClass {
     void Function(
       IMAAdsManagerDelegate pigeon_instance,
       IMAAdsManager adsManager,
-      IMAAdError event,
+      IMAAdError error,
     )? didReceiveAdError,
     void Function(
       IMAAdsManagerDelegate pigeon_instance,
@@ -2458,12 +2405,12 @@ class IMAAdsManagerDelegate extends PigeonProxyApiBaseClass {
           final IMAAdsManager? arg_adsManager = (args[1] as IMAAdsManager?);
           assert(arg_adsManager != null,
               'Argument for dev.flutter.pigeon.interactive_media_ads.IMAAdsManagerDelegate.didReceiveAdError was null, expected non-null IMAAdsManager.');
-          final IMAAdError? arg_event = (args[2] as IMAAdError?);
-          assert(arg_event != null,
+          final IMAAdError? arg_error = (args[2] as IMAAdError?);
+          assert(arg_error != null,
               'Argument for dev.flutter.pigeon.interactive_media_ads.IMAAdsManagerDelegate.didReceiveAdError was null, expected non-null IMAAdError.');
           try {
             (didReceiveAdError ?? arg_pigeon_instance!.didReceiveAdError)
-                .call(arg_pigeon_instance!, arg_adsManager!, arg_event!);
+                .call(arg_pigeon_instance!, arg_adsManager!, arg_error!);
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
