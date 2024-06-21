@@ -426,23 +426,6 @@ extension PigeonProxyApiDelegate {
   func pigeonApiIMASettings(_ registrar: PigeonProxyApiRegistrar) -> PigeonApiIMASettings {
     return PigeonApiIMASettings(pigeonRegistrar: registrar, delegate: PigeonDelegateIMASettings())
   }
-  func pigeonApiIMAAdsLoadedData(_ registrar: PigeonProxyApiRegistrar) -> PigeonApiIMAAdsLoadedData
-  {
-    return PigeonApiIMAAdsLoadedData(
-      pigeonRegistrar: registrar, delegate: PigeonDelegateIMAAdsLoadedData())
-  }
-  func pigeonApiIMAAdLoadingErrorData(_ registrar: PigeonProxyApiRegistrar)
-    -> PigeonApiIMAAdLoadingErrorData
-  {
-    return PigeonApiIMAAdLoadingErrorData(
-      pigeonRegistrar: registrar, delegate: PigeonDelegateIMAAdLoadingErrorData())
-  }
-  func pigeonApiIMAAdError(_ registrar: PigeonProxyApiRegistrar) -> PigeonApiIMAAdError {
-    return PigeonApiIMAAdError(pigeonRegistrar: registrar, delegate: PigeonDelegateIMAAdError())
-  }
-  func pigeonApiIMAAdEvent(_ registrar: PigeonProxyApiRegistrar) -> PigeonApiIMAAdEvent {
-    return PigeonApiIMAAdEvent(pigeonRegistrar: registrar, delegate: PigeonDelegateIMAAdEvent())
-  }
 }
 
 open class PigeonProxyApiRegistrar {
@@ -1600,7 +1583,7 @@ final class PigeonApiIMAAdsLoaderDelegate {
   }
 
 }
-open class PigeonDelegateIMAAdsLoadedData {
+protocol PigeonDelegateIMAAdsLoadedData {
   /// The ads manager instance created by the ads loader.
   ///
   /// Will be null when using dynamic ad insertion.
@@ -1648,7 +1631,7 @@ final class PigeonApiIMAAdsLoadedData {
     }
   }
 }
-open class PigeonDelegateIMAAdLoadingErrorData {
+protocol PigeonDelegateIMAAdLoadingErrorData {
   /// The ad error that occurred while loading the ad.
   func adError(pigeonApi: PigeonApiIMAAdLoadingErrorData, pigeonInstance: IMAAdLoadingErrorData)
     throws -> IMAAdError
@@ -1693,7 +1676,7 @@ final class PigeonApiIMAAdLoadingErrorData {
     }
   }
 }
-open class PigeonDelegateIMAAdError {
+protocol PigeonDelegateIMAAdError {
   /// The type of error that occurred during ad loading or ad playing.
   func type(pigeonApi: PigeonApiIMAAdError, pigeonInstance: IMAAdError) throws -> AdErrorType
   /// The error code for obtaining more specific information about the error.
@@ -2045,7 +2028,7 @@ final class PigeonApiIMAAdsManagerDelegate {
   }
 
 }
-open class PigeonDelegateIMAAdEvent {
+protocol PigeonDelegateIMAAdEvent {
   /// Type of the event.
   func type(pigeonApi: PigeonApiIMAAdEvent, pigeonInstance: IMAAdEvent) throws -> AdEventType
   /// Stringified type of the event.
