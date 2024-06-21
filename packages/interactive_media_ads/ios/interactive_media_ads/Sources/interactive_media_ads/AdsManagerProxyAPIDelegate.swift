@@ -10,7 +10,7 @@ import GoogleInteractiveMediaAds
 
 class AdsManagerProxyAPIDelegate: PigeonDelegateIMAAdsManager {
   func setDelegate(pigeonApi: PigeonApiIMAAdsManager, pigeonInstance: IMAAdsManager, delegate: IMAAdsManagerDelegate?) throws {
-    pigeonInstance.delegate = delegate as! AdsManagerDelegateImpl
+    pigeonInstance.delegate = delegate as? AdsManagerDelegateImpl
   }
   
   func initialize(pigeonApi: PigeonApiIMAAdsManager, pigeonInstance: IMAAdsManager, adsRenderingSettings: IMAAdsRenderingSettings?) throws {

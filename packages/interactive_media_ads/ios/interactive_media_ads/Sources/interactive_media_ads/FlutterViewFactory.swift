@@ -37,4 +37,8 @@ class FlutterViewFactory: NSObject, FlutterPlatformViewFactory {
       return PlatformViewImpl(uiView: instance as! UIView)
     }
   }
+  
+  func createArgsCodec() -> FlutterMessageCodec & NSObjectProtocol {
+    return FlutterStandardMessageCodec.sharedInstance()
+  }
 }

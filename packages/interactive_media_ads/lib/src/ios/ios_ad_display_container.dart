@@ -69,8 +69,11 @@ base class IosAdDisplayContainer extends PlatformAdDisplayContainer {
       onPlatformViewCreated: (_) async {
         adDisplayContainer = _iosParams._imaProxy.newIMAAdDisplayContainer(
           adContainer: _controller.view,
-          adContainerViewController: null,
+          adContainerViewController: _controller,
         );
+        print('waiting');
+        await Future.delayed(Duration(seconds: 5));
+        print('going');
         params.onContainerAdded(this);
       },
       creationParams:
