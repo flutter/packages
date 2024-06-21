@@ -16,6 +16,7 @@ flutter:
         pluginClass: InteractiveMediaAdsPlugin
       ios:
         pluginClass: InteractiveMediaAdsPlugin
+        dartPluginClass: IosInteractiveMediaAds
 
 dependencies:
   flutter:
