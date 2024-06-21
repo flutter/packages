@@ -1,6 +1,7 @@
 ## NEXT
 
 * Updates minimum supported SDK version to Flutter 3.16/Dart 3.2.
+* Support for running benchmarks with the wasm compilation target.
 
 ## 1.2.2
 
