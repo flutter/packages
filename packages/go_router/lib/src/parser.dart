@@ -218,8 +218,8 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
             ? newMatchList
             : baseRouteMatchList;
       case NavigatingType.pop:
-        final RouteMatch routeMatch = baseRouteMatchList!.last;
-        return baseRouteMatchList.remove(routeMatch);
+        // Will not do anything.
+        return baseRouteMatchList!;
     }
   }
 
