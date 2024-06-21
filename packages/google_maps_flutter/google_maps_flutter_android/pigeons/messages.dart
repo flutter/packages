@@ -120,6 +120,10 @@ abstract class MapsApi {
   /// This allows checking asynchronously for initial style failures, as there
   /// is no way to return failures from map initialization.
   bool didLastStyleSucceed();
+
+  /// Takes a snapshot of the map and returns its image data.
+  @async
+  Uint8List takeSnapshot();
 }
 
 /// Inspector API only intended for use in integration tests.

@@ -4,6 +4,7 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'dart:async' as _i3;
+import 'dart:typed_data' as _i4;
 
 import 'package:google_maps_flutter_android/src/messages.g.dart' as _i2;
 import 'package:mockito/mockito.dart' as _i1;
@@ -201,4 +202,15 @@ class MockMapsApi extends _i1.Mock implements _i2.MapsApi {
         returnValue: _i3.Future<bool>.value(false),
         returnValueForMissingStub: _i3.Future<bool>.value(false),
       ) as _i3.Future<bool>);
+
+  @override
+  _i3.Future<_i4.Uint8List> takeSnapshot() => (super.noSuchMethod(
+        Invocation.method(
+          #takeSnapshot,
+          [],
+        ),
+        returnValue: _i3.Future<_i4.Uint8List>.value(_i4.Uint8List(0)),
+        returnValueForMissingStub:
+            _i3.Future<_i4.Uint8List>.value(_i4.Uint8List(0)),
+      ) as _i3.Future<_i4.Uint8List>);
 }

@@ -532,7 +532,7 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
   Future<Uint8List?> takeSnapshot({
     required int mapId,
   }) {
-    return _channel(mapId).invokeMethod<Uint8List>('map#takeSnapshot');
+    return _hostApi(mapId).takeSnapshot();
   }
 
   @override

@@ -28,7 +28,6 @@ import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleOwner;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.GoogleMap.SnapshotReadyCallback;
 import com.google.android.gms.maps.GoogleMapOptions;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -316,26 +315,6 @@ class GoogleMapController
         {
           Convert.interpretGoogleMapOptions(call.argument("options"), this);
           result.success(Convert.cameraPositionToJson(getCameraPosition()));
-          break;
-        }
-      case "map#takeSnapshot":
-        {
-          if (googleMap != null) {
-            final MethodChannel.Result _result = result;
-            googleMap.snapshot(
-                new SnapshotReadyCallback() {
-                  @Override
-                  public void onSnapshotReady(Bitmap bitmap) {
-                    ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
-                    byte[] byteArray = stream.toByteArray();
-                    bitmap.recycle();
-                    _result.success(byteArray);
-                  }
-                });
-          } else {
-            result.error("GoogleMap uninitialized", "takeSnapshot", null);
-          }
           break;
         }
       case "camera#move":
@@ -1011,6 +990,26 @@ class GoogleMapController
   @Override
   public @NonNull Boolean didLastStyleSucceed() {
     return lastSetStyleSucceeded;
+  }
+
+  @Override
+  public void takeSnapshot(@NonNull Messages.Result<byte[]> result) {
+    if (googleMap == null) {
+      result.error(new FlutterError("GoogleMap uninitialized", "takeSnapshot", null));
+    } else {
+      googleMap.snapshot(
+          bitmap -> {
+            if (bitmap == null) {
+              result.error(new FlutterError("Snapshot failure", "Unable to take snapshot", null));
+            } else {
+              ByteArrayOutputStream stream = new ByteArrayOutputStream();
+              bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+              byte[] byteArray = stream.toByteArray();
+              bitmap.recycle();
+              result.success(byteArray);
+            }
+          });
+    }
   }
 
   /** MapsInspectorApi implementation */

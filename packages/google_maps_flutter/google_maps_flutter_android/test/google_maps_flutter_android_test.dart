@@ -161,6 +161,17 @@ void main() {
         true);
   });
 
+  test('takeSnapshot calls through', () async {
+    const int mapId = 1;
+    final (GoogleMapsFlutterAndroid maps, MockMapsApi api) =
+        setUpMockMap(mapId: mapId);
+
+    final Uint8List fakeSnapshot = Uint8List(10);
+    when(api.takeSnapshot()).thenAnswer((_) async => fakeSnapshot);
+
+    expect(await maps.takeSnapshot(mapId: mapId), fakeSnapshot);
+  });
+
   test('markers send drag event to correct streams', () async {
     const int mapId = 1;
     final Map<dynamic, dynamic> jsonMarkerDragStartEvent = <dynamic, dynamic>{

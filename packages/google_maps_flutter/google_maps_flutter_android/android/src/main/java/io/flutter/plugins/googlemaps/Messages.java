@@ -759,6 +759,8 @@ public class Messages {
      */
     @NonNull
     Boolean didLastStyleSucceed();
+    /** Takes a snapshot of the map and returns its image data. */
+    void takeSnapshot(@NonNull Result<byte[]> result);
 
     /** The codec used by MapsApi. */
     static @NonNull MessageCodec<Object> getCodec() {
@@ -1027,6 +1029,36 @@ public class Messages {
                   wrapped = wrappedError;
                 }
                 reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.google_maps_flutter_android.MapsApi.takeSnapshot"
+                    + messageChannelSuffix,
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                Result<byte[]> resultCallback =
+                    new Result<byte[]>() {
+                      public void success(byte[] result) {
+                        wrapped.add(0, result);
+                        reply.reply(wrapped);
+                      }
+
+                      public void error(Throwable error) {
+                        ArrayList<Object> wrappedError = wrapError(error);
+                        reply.reply(wrappedError);
+                      }
+                    };
+
+                api.takeSnapshot(resultCallback);
               });
         } else {
           channel.setMessageHandler(null);
