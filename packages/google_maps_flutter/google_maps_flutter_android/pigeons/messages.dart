@@ -11,6 +11,21 @@ import 'package:pigeon/pigeon.dart';
   copyrightHeader: 'pigeons/copyright.txt',
 ))
 
+/// Pigeon representation of a CameraUpdate.
+class PlatformCameraUpdate {
+  PlatformCameraUpdate(this.json);
+
+  /// The update data, as JSON. This should only be set from
+  /// CameraUpdate.toJson, and the native code must intepret it according to the
+  /// internal implementation details of the CameraUpdate class.
+  // TODO(stuartmorgan): Update the google_maps_platform_interface CameraUpdate
+  //  class to provide a structured representation of an update. Currently it
+  //  uses JSON as its only state, so there is no way to preserve structure.
+  //  This wrapper class exists as a placeholder for now to at least provide
+  //  type safety in the top-level call's arguments.
+  final Object json;
+}
+
 /// Pigeon equivalent of LatLng.
 class PlatformLatLng {
   PlatformLatLng({required this.latitude, required this.longitude});
@@ -93,6 +108,13 @@ abstract class MapsApi {
 
   /// Gets the map region currently displayed on the map.
   PlatformLatLngBounds getVisibleRegion();
+
+  /// Moves the camera according to [cameraUpdate] immediately, with no
+  /// animation.
+  void moveCamera(PlatformCameraUpdate cameraUpdate);
+
+  /// Moves the camera according to [cameraUpdate], animating the update.
+  void animateCamera(PlatformCameraUpdate cameraUpdate);
 
   /// Gets the current map zoom level.
   double getZoomLevel();

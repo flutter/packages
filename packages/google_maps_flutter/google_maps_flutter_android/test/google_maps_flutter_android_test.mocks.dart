@@ -144,6 +144,28 @@ class MockMapsApi extends _i1.Mock implements _i2.MapsApi {
       ) as _i3.Future<_i2.PlatformLatLngBounds>);
 
   @override
+  _i3.Future<void> moveCamera(_i2.PlatformCameraUpdate? cameraUpdate) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #moveCamera,
+          [cameraUpdate],
+        ),
+        returnValue: _i3.Future<void>.value(),
+        returnValueForMissingStub: _i3.Future<void>.value(),
+      ) as _i3.Future<void>);
+
+  @override
+  _i3.Future<void> animateCamera(_i2.PlatformCameraUpdate? cameraUpdate) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #animateCamera,
+          [cameraUpdate],
+        ),
+        returnValue: _i3.Future<void>.value(),
+        returnValueForMissingStub: _i3.Future<void>.value(),
+      ) as _i3.Future<void>);
+
+  @override
   _i3.Future<double> getZoomLevel() => (super.noSuchMethod(
         Invocation.method(
           #getZoomLevel,

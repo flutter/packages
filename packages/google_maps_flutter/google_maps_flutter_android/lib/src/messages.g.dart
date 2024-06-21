@@ -18,6 +18,31 @@ PlatformException _createConnectionError(String channelName) {
   );
 }
 
+/// Pigeon representation of a CameraUpdate.
+class PlatformCameraUpdate {
+  PlatformCameraUpdate({
+    required this.json,
+  });
+
+  /// The update data, as JSON. This should only be set from
+  /// CameraUpdate.toJson, and the native code must intepret it according to the
+  /// internal implementation details of the CameraUpdate class.
+  Object json;
+
+  Object encode() {
+    return <Object?>[
+      json,
+    ];
+  }
+
+  static PlatformCameraUpdate decode(Object result) {
+    result as List<Object?>;
+    return PlatformCameraUpdate(
+      json: result[0]!,
+    );
+  }
+}
+
 /// Pigeon equivalent of LatLng.
 class PlatformLatLng {
   PlatformLatLng({
@@ -204,23 +229,26 @@ class _PigeonCodec extends StandardMessageCodec {
   const _PigeonCodec();
   @override
   void writeValue(WriteBuffer buffer, Object? value) {
-    if (value is PlatformLatLng) {
+    if (value is PlatformCameraUpdate) {
       buffer.putUint8(129);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformLatLngBounds) {
+    } else if (value is PlatformLatLng) {
       buffer.putUint8(130);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformCluster) {
+    } else if (value is PlatformLatLngBounds) {
       buffer.putUint8(131);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformPoint) {
+    } else if (value is PlatformCluster) {
       buffer.putUint8(132);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformTileLayer) {
+    } else if (value is PlatformPoint) {
       buffer.putUint8(133);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformZoomRange) {
+    } else if (value is PlatformTileLayer) {
       buffer.putUint8(134);
+      writeValue(buffer, value.encode());
+    } else if (value is PlatformZoomRange) {
+      buffer.putUint8(135);
       writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
@@ -231,16 +259,18 @@ class _PigeonCodec extends StandardMessageCodec {
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
       case 129:
-        return PlatformLatLng.decode(readValue(buffer)!);
+        return PlatformCameraUpdate.decode(readValue(buffer)!);
       case 130:
-        return PlatformLatLngBounds.decode(readValue(buffer)!);
+        return PlatformLatLng.decode(readValue(buffer)!);
       case 131:
-        return PlatformCluster.decode(readValue(buffer)!);
+        return PlatformLatLngBounds.decode(readValue(buffer)!);
       case 132:
-        return PlatformPoint.decode(readValue(buffer)!);
+        return PlatformCluster.decode(readValue(buffer)!);
       case 133:
-        return PlatformTileLayer.decode(readValue(buffer)!);
+        return PlatformPoint.decode(readValue(buffer)!);
       case 134:
+        return PlatformTileLayer.decode(readValue(buffer)!);
+      case 135:
         return PlatformZoomRange.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
@@ -377,6 +407,57 @@ class MapsApi {
       );
     } else {
       return (__pigeon_replyList[0] as PlatformLatLngBounds?)!;
+    }
+  }
+
+  /// Moves the camera according to [cameraUpdate] immediately, with no
+  /// animation.
+  Future<void> moveCamera(PlatformCameraUpdate cameraUpdate) async {
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.google_maps_flutter_android.MapsApi.moveCamera$__pigeon_messageChannelSuffix';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: __pigeon_binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        await __pigeon_channel.send(<Object?>[cameraUpdate]) as List<Object?>?;
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: __pigeon_replyList[0]! as String,
+        message: __pigeon_replyList[1] as String?,
+        details: __pigeon_replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  /// Moves the camera according to [cameraUpdate], animating the update.
+  Future<void> animateCamera(PlatformCameraUpdate cameraUpdate) async {
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.google_maps_flutter_android.MapsApi.animateCamera$__pigeon_messageChannelSuffix';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: __pigeon_binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        await __pigeon_channel.send(<Object?>[cameraUpdate]) as List<Object?>?;
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: __pigeon_replyList[0]! as String,
+        message: __pigeon_replyList[1] as String?,
+        details: __pigeon_replyList[2],
+      );
+    } else {
+      return;
     }
   }
 

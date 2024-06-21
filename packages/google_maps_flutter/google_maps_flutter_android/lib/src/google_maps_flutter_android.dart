@@ -441,10 +441,8 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
     CameraUpdate cameraUpdate, {
     required int mapId,
   }) {
-    return _channel(mapId)
-        .invokeMethod<void>('camera#animate', <String, Object>{
-      'cameraUpdate': cameraUpdate.toJson(),
-    });
+    return _hostApi(mapId)
+        .animateCamera(PlatformCameraUpdate(json: cameraUpdate.toJson()));
   }
 
   @override
@@ -452,9 +450,8 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
     CameraUpdate cameraUpdate, {
     required int mapId,
   }) {
-    return _channel(mapId).invokeMethod<void>('camera#move', <String, dynamic>{
-      'cameraUpdate': cameraUpdate.toJson(),
-    });
+    return _hostApi(mapId)
+        .moveCamera(PlatformCameraUpdate(json: cameraUpdate.toJson()));
   }
 
   @override

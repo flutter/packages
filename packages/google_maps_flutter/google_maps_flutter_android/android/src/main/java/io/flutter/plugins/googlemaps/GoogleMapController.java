@@ -26,7 +26,6 @@ import androidx.annotation.VisibleForTesting;
 import androidx.lifecycle.DefaultLifecycleObserver;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleOwner;
-import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMapOptions;
 import com.google.android.gms.maps.MapView;
@@ -186,14 +185,6 @@ class GoogleMapController
     mapView.getMapAsync(this);
   }
 
-  private void moveCamera(CameraUpdate cameraUpdate) {
-    googleMap.moveCamera(cameraUpdate);
-  }
-
-  private void animateCamera(CameraUpdate cameraUpdate) {
-    googleMap.animateCamera(cameraUpdate);
-  }
-
   private CameraPosition getCameraPosition() {
     return trackCameraPosition ? googleMap.getCameraPosition() : null;
   }
@@ -315,22 +306,6 @@ class GoogleMapController
         {
           Convert.interpretGoogleMapOptions(call.argument("options"), this);
           result.success(Convert.cameraPositionToJson(getCameraPosition()));
-          break;
-        }
-      case "camera#move":
-        {
-          final CameraUpdate cameraUpdate =
-              Convert.toCameraUpdate(call.argument("cameraUpdate"), density);
-          moveCamera(cameraUpdate);
-          result.success(null);
-          break;
-        }
-      case "camera#animate":
-        {
-          final CameraUpdate cameraUpdate =
-              Convert.toCameraUpdate(call.argument("cameraUpdate"), density);
-          animateCamera(cameraUpdate);
-          result.success(null);
           break;
         }
       case "markers#update":
@@ -948,6 +923,24 @@ class GoogleMapController
     }
     LatLngBounds latLngBounds = googleMap.getProjection().getVisibleRegion().latLngBounds;
     return Convert.latLngBoundsToPigeon(latLngBounds);
+  }
+
+  @Override
+  public void moveCamera(@NonNull Messages.PlatformCameraUpdate cameraUpdate) {
+    if (googleMap == null) {
+      throw new FlutterError(
+          "GoogleMap uninitialized", "moveCamera called prior to map initialization", null);
+    }
+    googleMap.moveCamera(Convert.toCameraUpdate(cameraUpdate.getJson(), density));
+  }
+
+  @Override
+  public void animateCamera(@NonNull Messages.PlatformCameraUpdate cameraUpdate) {
+    if (googleMap == null) {
+      throw new FlutterError(
+          "GoogleMap uninitialized", "animateCamera called prior to map initialization", null);
+    }
+    googleMap.animateCamera(Convert.toCameraUpdate(cameraUpdate.getJson(), density));
   }
 
   @Override

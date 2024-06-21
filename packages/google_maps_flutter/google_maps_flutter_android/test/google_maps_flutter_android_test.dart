@@ -113,6 +113,35 @@ void main() {
     expect(bounds, expectedBounds);
   });
 
+  test('moveCamera calls through', () async {
+    const int mapId = 1;
+    final (GoogleMapsFlutterAndroid maps, MockMapsApi api) =
+        setUpMockMap(mapId: mapId);
+
+    final CameraUpdate update = CameraUpdate.scrollBy(10, 20);
+    await maps.moveCamera(update, mapId: mapId);
+
+    final VerificationResult verification = verify(api.moveCamera(captureAny));
+    final PlatformCameraUpdate passedUpdate =
+        verification.captured[0] as PlatformCameraUpdate;
+    expect(passedUpdate.json, update.toJson());
+  });
+
+  test('animateCamera calls through', () async {
+    const int mapId = 1;
+    final (GoogleMapsFlutterAndroid maps, MockMapsApi api) =
+        setUpMockMap(mapId: mapId);
+
+    final CameraUpdate update = CameraUpdate.scrollBy(10, 20);
+    await maps.animateCamera(update, mapId: mapId);
+
+    final VerificationResult verification =
+        verify(api.animateCamera(captureAny));
+    final PlatformCameraUpdate passedUpdate =
+        verification.captured[0] as PlatformCameraUpdate;
+    expect(passedUpdate.json, update.toJson());
+  });
+
   test('getZoomLevel passes values correctly', () async {
     const int mapId = 1;
     final (GoogleMapsFlutterAndroid maps, MockMapsApi api) =

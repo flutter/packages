@@ -65,6 +65,65 @@ public class Messages {
   @interface CanIgnoreReturnValue {}
 
   /**
+   * Pigeon representation of a CameraUpdate.
+   *
+   * <p>Generated class from Pigeon that represents data sent in messages.
+   */
+  public static final class PlatformCameraUpdate {
+    /**
+     * The update data, as JSON. This should only be set from CameraUpdate.toJson, and the native
+     * code must intepret it according to the internal implementation details of the CameraUpdate
+     * class.
+     */
+    private @NonNull Object json;
+
+    public @NonNull Object getJson() {
+      return json;
+    }
+
+    public void setJson(@NonNull Object setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"json\" is null.");
+      }
+      this.json = setterArg;
+    }
+
+    /** Constructor is non-public to enforce null safety; use Builder. */
+    PlatformCameraUpdate() {}
+
+    public static final class Builder {
+
+      private @Nullable Object json;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setJson(@NonNull Object setterArg) {
+        this.json = setterArg;
+        return this;
+      }
+
+      public @NonNull PlatformCameraUpdate build() {
+        PlatformCameraUpdate pigeonReturn = new PlatformCameraUpdate();
+        pigeonReturn.setJson(json);
+        return pigeonReturn;
+      }
+    }
+
+    @NonNull
+    ArrayList<Object> toList() {
+      ArrayList<Object> toListResult = new ArrayList<Object>(1);
+      toListResult.add(json);
+      return toListResult;
+    }
+
+    static @NonNull PlatformCameraUpdate fromList(@NonNull ArrayList<Object> __pigeon_list) {
+      PlatformCameraUpdate pigeonResult = new PlatformCameraUpdate();
+      Object json = __pigeon_list.get(0);
+      pigeonResult.setJson(json);
+      return pigeonResult;
+    }
+  }
+
+  /**
    * Pigeon equivalent of LatLng.
    *
    * <p>Generated class from Pigeon that represents data sent in messages.
@@ -647,16 +706,18 @@ public class Messages {
     protected Object readValueOfType(byte type, @NonNull ByteBuffer buffer) {
       switch (type) {
         case (byte) 129:
-          return PlatformLatLng.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformCameraUpdate.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 130:
-          return PlatformLatLngBounds.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformLatLng.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 131:
-          return PlatformCluster.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformLatLngBounds.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 132:
-          return PlatformPoint.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformCluster.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 133:
-          return PlatformTileLayer.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformPoint.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 134:
+          return PlatformTileLayer.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 135:
           return PlatformZoomRange.fromList((ArrayList<Object>) readValue(buffer));
         default:
           return super.readValueOfType(type, buffer);
@@ -665,23 +726,26 @@ public class Messages {
 
     @Override
     protected void writeValue(@NonNull ByteArrayOutputStream stream, Object value) {
-      if (value instanceof PlatformLatLng) {
+      if (value instanceof PlatformCameraUpdate) {
         stream.write(129);
+        writeValue(stream, ((PlatformCameraUpdate) value).toList());
+      } else if (value instanceof PlatformLatLng) {
+        stream.write(130);
         writeValue(stream, ((PlatformLatLng) value).toList());
       } else if (value instanceof PlatformLatLngBounds) {
-        stream.write(130);
+        stream.write(131);
         writeValue(stream, ((PlatformLatLngBounds) value).toList());
       } else if (value instanceof PlatformCluster) {
-        stream.write(131);
+        stream.write(132);
         writeValue(stream, ((PlatformCluster) value).toList());
       } else if (value instanceof PlatformPoint) {
-        stream.write(132);
+        stream.write(133);
         writeValue(stream, ((PlatformPoint) value).toList());
       } else if (value instanceof PlatformTileLayer) {
-        stream.write(133);
+        stream.write(134);
         writeValue(stream, ((PlatformTileLayer) value).toList());
       } else if (value instanceof PlatformZoomRange) {
-        stream.write(134);
+        stream.write(135);
         writeValue(stream, ((PlatformZoomRange) value).toList());
       } else {
         super.writeValue(stream, value);
@@ -732,6 +796,10 @@ public class Messages {
     /** Gets the map region currently displayed on the map. */
     @NonNull
     PlatformLatLngBounds getVisibleRegion();
+    /** Moves the camera according to [cameraUpdate] immediately, with no animation. */
+    void moveCamera(@NonNull PlatformCameraUpdate cameraUpdate);
+    /** Moves the camera according to [cameraUpdate], animating the update. */
+    void animateCamera(@NonNull PlatformCameraUpdate cameraUpdate);
     /** Gets the current map zoom level. */
     @NonNull
     Double getZoomLevel();
@@ -874,6 +942,58 @@ public class Messages {
                 try {
                   PlatformLatLngBounds output = api.getVisibleRegion();
                   wrapped.add(0, output);
+                } catch (Throwable exception) {
+                  ArrayList<Object> wrappedError = wrapError(exception);
+                  wrapped = wrappedError;
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.google_maps_flutter_android.MapsApi.moveCamera"
+                    + messageChannelSuffix,
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                PlatformCameraUpdate cameraUpdateArg = (PlatformCameraUpdate) args.get(0);
+                try {
+                  api.moveCamera(cameraUpdateArg);
+                  wrapped.add(0, null);
+                } catch (Throwable exception) {
+                  ArrayList<Object> wrappedError = wrapError(exception);
+                  wrapped = wrappedError;
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.google_maps_flutter_android.MapsApi.animateCamera"
+                    + messageChannelSuffix,
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                PlatformCameraUpdate cameraUpdateArg = (PlatformCameraUpdate) args.get(0);
+                try {
+                  api.animateCamera(cameraUpdateArg);
+                  wrapped.add(0, null);
                 } catch (Throwable exception) {
                   ArrayList<Object> wrappedError = wrapError(exception);
                   wrapped = wrappedError;
