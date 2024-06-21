@@ -3,7 +3,6 @@
 // found in the LICENSE file.
 
 #import <XCTest/XCTest.h>
-#import "Mocks.h"
 #import "Stubs.h"
 
 @import in_app_purchase_storekit;
@@ -220,7 +219,7 @@
 }
 
 - (void)testStartObservingPaymentQueueShouldNotProcessTransactionsWhenCacheIsEmpty {
-  TransactionCacheStub *mockCache = [[TransactionCacheStub alloc] init];
+  TransactionCacheStub *cacheStub = [[TransactionCacheStub alloc] init];
   FIAPaymentQueueHandler *handler =
       [[FIAPaymentQueueHandler alloc] initWithQueue:[[PaymentQueueStub alloc] init]
           transactionsUpdated:^(NSArray<SKPaymentTransaction *> *_Nonnull transactions) {
@@ -237,13 +236,13 @@
           updatedDownloads:^(NSArray<SKDownload *> *_Nonnull downloads) {
             XCTFail("updatedDownloads callback should not be called when cache is empty.");
           }
-          transactionCache:mockCache];
+          transactionCache:cacheStub];
 
   __block NSInteger TransactionCacheKeyUpdatedTransactionsInvoked = 0;
   __block NSInteger TransactionCacheKeyUpdatedDownloadsInvoked = 0;
   __block NSInteger TransactionCacheKeyRemovedTransactionsInvoked = 0;
 
-  mockCache.getObjectsForKeyStub = ^NSArray *_Nonnull(TransactionCacheKey key) {
+  cacheStub.getObjectsForKeyStub = ^NSArray *_Nonnull(TransactionCacheKey key) {
     switch (key) {
       case TransactionCacheKeyUpdatedTransactions:
         TransactionCacheKeyUpdatedTransactionsInvoked++;
@@ -269,7 +268,7 @@
 
 - (void)
     testStartObservingPaymentQueueShouldNotProcessTransactionsWhenCacheContainsEmptyTransactionArrays {
-  TransactionCacheStub *mockCache = [[TransactionCacheStub alloc] init];
+  TransactionCacheStub *cacheStub = [[TransactionCacheStub alloc] init];
   FIAPaymentQueueHandler *handler =
       [[FIAPaymentQueueHandler alloc] initWithQueue:[[PaymentQueueStub alloc] init]
           transactionsUpdated:^(NSArray<SKPaymentTransaction *> *_Nonnull transactions) {
@@ -286,13 +285,13 @@
           updatedDownloads:^(NSArray<SKDownload *> *_Nonnull downloads) {
             XCTFail("updatedDownloads callback should not be called when cache is empty.");
           }
-          transactionCache:mockCache];
+          transactionCache:cacheStub];
 
   __block NSInteger TransactionCacheKeyUpdatedTransactionsInvoked = 0;
   __block NSInteger TransactionCacheKeyUpdatedDownloadsInvoked = 0;
   __block NSInteger TransactionCacheKeyRemovedTransactionsInvoked = 0;
 
-  mockCache.getObjectsForKeyStub = ^NSArray *_Nonnull(TransactionCacheKey key) {
+  cacheStub.getObjectsForKeyStub = ^NSArray *_Nonnull(TransactionCacheKey key) {
     switch (key) {
       case TransactionCacheKeyUpdatedTransactions:
         TransactionCacheKeyUpdatedTransactionsInvoked++;
@@ -328,17 +327,17 @@
   XCTestExpectation *updateDownloadsExpectation =
       [self expectationWithDescription:
                 @"downloadsUpdated callback should be called with one transaction."];
-  SKPaymentTransaction *mockTransaction = [[SKPaymentTransactionStub alloc] init];
-  SKDownload *mockDownload = [[SKDownload alloc] init];
-  TransactionCacheStub *mockCache = [[TransactionCacheStub alloc] init];
+  SKPaymentTransaction *transactionStub = [[SKPaymentTransactionStub alloc] init];
+  SKDownload *downloadStub = [[SKDownload alloc] init];
+  TransactionCacheStub *cacheStub = [[TransactionCacheStub alloc] init];
   FIAPaymentQueueHandler *handler =
       [[FIAPaymentQueueHandler alloc] initWithQueue:[[PaymentQueueStub alloc] init]
           transactionsUpdated:^(NSArray<SKPaymentTransaction *> *_Nonnull transactions) {
-            XCTAssertEqualObjects(transactions, @[ mockTransaction ]);
+            XCTAssertEqualObjects(transactions, @[ transactionStub ]);
             [updateTransactionsExpectation fulfill];
           }
           transactionRemoved:^(NSArray<SKPaymentTransaction *> *_Nonnull transactions) {
-            XCTAssertEqualObjects(transactions, @[ mockTransaction ]);
+            XCTAssertEqualObjects(transactions, @[ transactionStub ]);
             [removeTransactionsExpectation fulfill];
           }
           restoreTransactionFailed:nil
@@ -347,28 +346,28 @@
             return YES;
           }
           updatedDownloads:^(NSArray<SKDownload *> *_Nonnull downloads) {
-            XCTAssertEqualObjects(downloads, @[ mockDownload ]);
+            XCTAssertEqualObjects(downloads, @[ downloadStub ]);
             [updateDownloadsExpectation fulfill];
           }
-          transactionCache:mockCache];
+          transactionCache:cacheStub];
 
   __block NSInteger TransactionCacheKeyUpdatedTransactionsInvoked = 0;
   __block NSInteger TransactionCacheKeyUpdatedDownloadsInvoked = 0;
   __block NSInteger TransactionCacheKeyRemovedTransactionsInvoked = 0;
 
-  mockCache.getObjectsForKeyStub = ^NSArray *_Nonnull(TransactionCacheKey key) {
+  cacheStub.getObjectsForKeyStub = ^NSArray *_Nonnull(TransactionCacheKey key) {
     switch (key) {
       case TransactionCacheKeyUpdatedTransactions:
         TransactionCacheKeyUpdatedTransactionsInvoked++;
-        return @[ mockTransaction ];
+        return @[ transactionStub ];
         break;
       case TransactionCacheKeyUpdatedDownloads:
         TransactionCacheKeyUpdatedDownloadsInvoked++;
-        return @[ mockDownload ];
+        return @[ downloadStub ];
         break;
       case TransactionCacheKeyRemovedTransactions:
         TransactionCacheKeyRemovedTransactionsInvoked++;
-        return @[ mockTransaction ];
+        return @[ transactionStub ];
         break;
       default:
         XCTFail("Invalid transaction state was invoked.");
@@ -376,7 +375,7 @@
   };
 
   __block NSInteger clearInvoked = 0;
-  mockCache.clearStub = ^{
+  cacheStub.clearStub = ^{
     clearInvoked++;
   };
 
@@ -395,7 +394,7 @@
 
 - (void)testTransactionsShouldBeCachedWhenNotObserving {
   PaymentQueueStub *queue = [[PaymentQueueStub alloc] init];
-  TransactionCacheStub *mockCache = [[TransactionCacheStub alloc] init];
+  TransactionCacheStub *cacheStub = [[TransactionCacheStub alloc] init];
   FIAPaymentQueueHandler *handler = [[FIAPaymentQueueHandler alloc] initWithQueue:queue
       transactionsUpdated:^(NSArray<SKPaymentTransaction *> *_Nonnull transactions) {
         XCTFail("transactionsUpdated callback should not be called when cache is empty.");
@@ -411,7 +410,7 @@
       updatedDownloads:^(NSArray<SKDownload *> *_Nonnull downloads) {
         XCTFail("updatedDownloads callback should not be called when cache is empty.");
       }
-      transactionCache:mockCache];
+      transactionCache:cacheStub];
 
   SKPayment *payment =
       [SKPayment paymentWithProduct:[[SKProductStub alloc] initWithMap:self.productResponseMap]];
@@ -420,7 +419,7 @@
   __block NSInteger TransactionCacheKeyUpdatedDownloadsInvoked = 0;
   __block NSInteger TransactionCacheKeyRemovedTransactionsInvoked = 0;
 
-  mockCache.addObjectsStub = ^(NSArray *_Nonnull objects, TransactionCacheKey key) {
+  cacheStub.addObjectsStub = ^(NSArray *_Nonnull objects, TransactionCacheKey key) {
     switch (key) {
       case TransactionCacheKeyUpdatedTransactions:
         TransactionCacheKeyUpdatedTransactionsInvoked++;
@@ -453,18 +452,18 @@
   XCTestExpectation *updateDownloadsExpectation =
       [self expectationWithDescription:
                 @"downloadsUpdated callback should be called with one transaction."];
-  SKPaymentTransaction *mockTransaction = [[SKPaymentTransactionStub alloc] init];
-  SKDownload *mockDownload = [[SKDownload alloc] init];
+  SKPaymentTransaction *transactionStub = [[SKPaymentTransactionStub alloc] init];
+  SKDownload *downloadStub = [[SKDownload alloc] init];
   PaymentQueueStub *queue = [[PaymentQueueStub alloc] init];
   queue.testState = SKPaymentTransactionStatePurchased;
-  TransactionCacheStub *mockCache = [[TransactionCacheStub alloc] init];
+  TransactionCacheStub *cacheStub = [[TransactionCacheStub alloc] init];
   FIAPaymentQueueHandler *handler = [[FIAPaymentQueueHandler alloc] initWithQueue:queue
       transactionsUpdated:^(NSArray<SKPaymentTransaction *> *_Nonnull transactions) {
-        XCTAssertEqualObjects(transactions, @[ mockTransaction ]);
+        XCTAssertEqualObjects(transactions, @[ transactionStub ]);
         [updateTransactionsExpectation fulfill];
       }
       transactionRemoved:^(NSArray<SKPaymentTransaction *> *_Nonnull transactions) {
-        XCTAssertEqualObjects(transactions, @[ mockTransaction ]);
+        XCTAssertEqualObjects(transactions, @[ transactionStub ]);
         [removeTransactionsExpectation fulfill];
       }
       restoreTransactionFailed:nil
@@ -473,15 +472,15 @@
         return YES;
       }
       updatedDownloads:^(NSArray<SKDownload *> *_Nonnull downloads) {
-        XCTAssertEqualObjects(downloads, @[ mockDownload ]);
+        XCTAssertEqualObjects(downloads, @[ downloadStub ]);
         [updateDownloadsExpectation fulfill];
       }
-      transactionCache:mockCache];
+      transactionCache:cacheStub];
 
   [handler startObservingPaymentQueue];
-  [handler paymentQueue:[[SKPaymentQueueStub alloc] init] updatedTransactions:@[ mockTransaction ]];
-  [handler paymentQueue:[[SKPaymentQueueStub alloc] init] removedTransactions:@[ mockTransaction ]];
-  [handler paymentQueue:[[SKPaymentQueueStub alloc] init] updatedDownloads:@[ mockDownload ]];
+  [handler paymentQueue:[[SKPaymentQueueStub alloc] init] updatedTransactions:@[ transactionStub ]];
+  [handler paymentQueue:[[SKPaymentQueueStub alloc] init] removedTransactions:@[ transactionStub ]];
+  [handler paymentQueue:[[SKPaymentQueueStub alloc] init] updatedDownloads:@[ downloadStub ]];
 
   [self waitForExpectations:@[
     updateTransactionsExpectation, removeTransactionsExpectation, updateDownloadsExpectation
@@ -492,7 +491,7 @@
   __block NSInteger TransactionCacheKeyUpdatedDownloadsInvoked = 0;
   __block NSInteger TransactionCacheKeyRemovedTransactionsInvoked = 0;
 
-  mockCache.addObjectsStub = ^(NSArray *_Nonnull objects, TransactionCacheKey key) {
+  cacheStub.addObjectsStub = ^(NSArray *_Nonnull objects, TransactionCacheKey key) {
     switch (key) {
       case TransactionCacheKeyUpdatedTransactions:
         TransactionCacheKeyUpdatedTransactionsInvoked++;

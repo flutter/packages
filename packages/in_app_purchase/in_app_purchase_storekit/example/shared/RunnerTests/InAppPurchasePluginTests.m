@@ -4,7 +4,6 @@
 
 #import <XCTest/XCTest.h>
 #import "FIAPaymentQueueHandler.h"
-#import "Mocks.h"
 #import "RunnerTests-Swift.h"
 #import "Stubs.h"
 
