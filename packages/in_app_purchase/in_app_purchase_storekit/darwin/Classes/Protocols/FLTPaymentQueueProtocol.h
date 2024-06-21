@@ -62,6 +62,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// Initialize this wrapper with an SKPaymentQueue
 - (instancetype)initWithQueue:(SKPaymentQueue *)queue NS_DESIGNATED_INITIALIZER;
 
+/// The default initializer is unavailable, as it this must be initlai
 - (instancetype)init NS_UNAVAILABLE;
 @end
 
