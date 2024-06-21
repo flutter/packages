@@ -775,9 +775,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
     indent.writeln('@Suppress("UNCHECKED_CAST")');
     // The API only needs to be abstract if there are methods to override.
     final String classModifier =
-        api.hasAnyHostMessageCalls() || api.unattachedFields.isNotEmpty
-            ? 'abstract'
-            : 'open';
+        api.hasMethodsRequiringImplementation() ? 'abstract' : 'open';
     indent.writeScoped(
       '$classModifier class $kotlinApiName(open val pigeonRegistrar: ${classNamePrefix}ProxyApiRegistrar) {',
       '}',
@@ -1264,7 +1262,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
 
           // Use the default API implementation if this API does not have any
           // methods to implement.
-          if (!api.hasAnyHostMessageCalls() && api.unattachedFields.isEmpty) {
+          if (!api.hasMethodsRequiringImplementation()) {
             indent.writeScoped('{', '}', () {
               indent.writeln('return $hostProxyApiPrefix${api.name}(this)');
             });

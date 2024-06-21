@@ -280,6 +280,11 @@ class AstProxyApi extends Api {
   bool hasAnyFlutterMessageCalls() =>
       hasCallbackConstructor() || flutterMethods.isNotEmpty;
 
+  /// Whether the host proxy API class will have methods that need to be
+  /// implemented.
+  bool hasMethodsRequiringImplementation() =>
+      hasAnyHostMessageCalls() || unattachedFields.isNotEmpty;
+
   // Recursively search for all the interfaces apis from a list of names of
   // interfaces.
   //
