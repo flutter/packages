@@ -13,12 +13,15 @@ class ContentPlayheadImpl: NSObject, IMAContentPlayhead {
 }
 
 class ContentPlayheadProxyAPIDelegate: PigeonDelegateIMAContentPlayhead {
-  func pigeonDefaultConstructor(pigeonApi: PigeonApiIMAContentPlayhead) throws -> IMAContentPlayhead {
+  func pigeonDefaultConstructor(pigeonApi: PigeonApiIMAContentPlayhead) throws -> IMAContentPlayhead
+  {
     return ContentPlayheadImpl()
   }
-  
+
   // This is not an actual, but added so it can handle the sync callback.
-  func setCurrentTime(pigeonApi: PigeonApiIMAContentPlayhead, pigeonInstance: IMAContentPlayhead, timeInterval: Double) throws {
+  func setCurrentTime(
+    pigeonApi: PigeonApiIMAContentPlayhead, pigeonInstance: IMAContentPlayhead, timeInterval: Double
+  ) throws {
     (pigeonInstance as! ContentPlayheadImpl).currentTime = timeInterval
   }
 }

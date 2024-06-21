@@ -11,8 +11,9 @@ class ViewControllerProxyAPIDelegate: PigeonDelegateUIViewController {
   func pigeonDefaultConstructor(pigeonApi: PigeonApiUIViewController) throws -> UIViewController {
     return UIViewController()
   }
-  
-  func view(pigeonApi: PigeonApiUIViewController, pigeonInstance: UIViewController) throws -> UIView {
+
+  func view(pigeonApi: PigeonApiUIViewController, pigeonInstance: UIViewController) throws -> UIView
+  {
     return pigeonInstance.view
   }
 }

@@ -9,7 +9,9 @@ import Foundation
 import GoogleInteractiveMediaAds
 
 class AdsRenderingSettingsProxyAPIDelegate: PigeonDelegateIMAAdsRenderingSettings {
-  func pigeonDefaultConstructor(pigeonApi: PigeonApiIMAAdsRenderingSettings) throws -> IMAAdsRenderingSettings {
+  func pigeonDefaultConstructor(pigeonApi: PigeonApiIMAAdsRenderingSettings) throws
+    -> IMAAdsRenderingSettings
+  {
     return IMAAdsRenderingSettings()
   }
 }

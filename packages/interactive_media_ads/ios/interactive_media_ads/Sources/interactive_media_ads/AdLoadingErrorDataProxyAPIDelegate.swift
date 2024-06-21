@@ -9,7 +9,9 @@ import Foundation
 import GoogleInteractiveMediaAds
 
 class AdLoadingErrorDataProxyAPIDelegate: PigeonDelegateIMAAdLoadingErrorData {
-  func adError(pigeonApi: PigeonApiIMAAdLoadingErrorData, pigeonInstance: IMAAdLoadingErrorData) throws -> IMAAdError {
+  func adError(pigeonApi: PigeonApiIMAAdLoadingErrorData, pigeonInstance: IMAAdLoadingErrorData)
+    throws -> IMAAdError
+  {
     return pigeonInstance.adError
   }
 }

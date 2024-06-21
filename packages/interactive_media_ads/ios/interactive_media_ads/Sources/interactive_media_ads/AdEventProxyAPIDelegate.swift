@@ -63,7 +63,7 @@ class AdEventProxyAPIDelegate: PigeonDelegateIMAAdEvent {
       return .unknown
     }
   }
-  
+
   func typeString(pigeonApi: PigeonApiIMAAdEvent, pigeonInstance: IMAAdEvent) throws -> String {
     return pigeonInstance.typeString
   }

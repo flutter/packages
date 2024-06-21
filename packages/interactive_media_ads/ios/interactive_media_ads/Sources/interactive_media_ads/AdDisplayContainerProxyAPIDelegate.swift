@@ -9,7 +9,11 @@ import Foundation
 import GoogleInteractiveMediaAds
 
 class AdDisplayContainerProxyAPIDelegate: PigeonDelegateIMAAdDisplayContainer {
-  func pigeonDefaultConstructor(pigeonApi: PigeonApiIMAAdDisplayContainer, adContainer: UIView, adContainerViewController: UIViewController?) throws -> IMAAdDisplayContainer {
-    return IMAAdDisplayContainer(adContainer: adContainer, viewController: adContainerViewController)
+  func pigeonDefaultConstructor(
+    pigeonApi: PigeonApiIMAAdDisplayContainer, adContainer: UIView,
+    adContainerViewController: UIViewController?
+  ) throws -> IMAAdDisplayContainer {
+    return IMAAdDisplayContainer(
+      adContainer: adContainer, viewController: adContainerViewController)
   }
 }

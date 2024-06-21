@@ -9,7 +9,9 @@ import Foundation
 import GoogleInteractiveMediaAds
 
 class AdsLoadedDataProxyAPIDelegate: PigeonDelegateIMAAdsLoadedData {
-  func adsManager(pigeonApi: PigeonApiIMAAdsLoadedData, pigeonInstance: IMAAdsLoadedData) throws -> IMAAdsManager? {
+  func adsManager(pigeonApi: PigeonApiIMAAdsLoadedData, pigeonInstance: IMAAdsLoadedData) throws
+    -> IMAAdsManager?
+  {
     return pigeonInstance.adsManager
   }
 }

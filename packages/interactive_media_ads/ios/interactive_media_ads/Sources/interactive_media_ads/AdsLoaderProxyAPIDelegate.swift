@@ -9,19 +9,25 @@ import Foundation
 import GoogleInteractiveMediaAds
 
 class AdsLoaderProxyAPIDelegate: PigeonDelegateIMAAdsLoader {
-  func pigeonDefaultConstructor(pigeonApi: PigeonApiIMAAdsLoader, settings: IMASettings?) throws -> IMAAdsLoader {
+  func pigeonDefaultConstructor(pigeonApi: PigeonApiIMAAdsLoader, settings: IMASettings?) throws
+    -> IMAAdsLoader
+  {
     return IMAAdsLoader(settings: settings)
   }
-  
+
   func contentComplete(pigeonApi: PigeonApiIMAAdsLoader, pigeonInstance: IMAAdsLoader) throws {
     pigeonInstance.contentComplete()
   }
-  
-  func requestAds(pigeonApi: PigeonApiIMAAdsLoader, pigeonInstance: IMAAdsLoader, request: IMAAdsRequest) throws {
+
+  func requestAds(
+    pigeonApi: PigeonApiIMAAdsLoader, pigeonInstance: IMAAdsLoader, request: IMAAdsRequest
+  ) throws {
     pigeonInstance.requestAds(with: request)
   }
-  
-  func setDelegate(pigeonApi: PigeonApiIMAAdsLoader, pigeonInstance: IMAAdsLoader, delegate: IMAAdsLoaderDelegate?) throws {
+
+  func setDelegate(
+    pigeonApi: PigeonApiIMAAdsLoader, pigeonInstance: IMAAdsLoader, delegate: IMAAdsLoaderDelegate?
+  ) throws {
     pigeonInstance.delegate = delegate
   }
 }

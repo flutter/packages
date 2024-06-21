@@ -21,7 +21,7 @@ class AdErrorProxyAPIDelegate: PigeonDelegateIMAAdError {
       return .unknown
     }
   }
-  
+
   func code(pigeonApi: PigeonApiIMAAdError, pigeonInstance: IMAAdError) throws -> AdErrorCode {
     switch pigeonInstance.code {
     case .VAST_MALFORMED_RESPONSE:
@@ -76,7 +76,7 @@ class AdErrorProxyAPIDelegate: PigeonDelegateIMAAdError {
       return .unknownError
     }
   }
-  
+
   func message(pigeonApi: PigeonApiIMAAdError, pigeonInstance: IMAAdError) throws -> String? {
     return pigeonInstance.message
   }
