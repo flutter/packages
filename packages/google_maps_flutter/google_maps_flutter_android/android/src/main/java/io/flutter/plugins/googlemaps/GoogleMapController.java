@@ -401,13 +401,6 @@ class GoogleMapController
           result.success(null);
           break;
         }
-      case "tileOverlays#clearTileCache":
-        {
-          String tileOverlayId = call.argument("tileOverlayId");
-          tileOverlaysController.clearTileCache(tileOverlayId);
-          result.success(null);
-          break;
-        }
       default:
         result.notImplemented();
     }
@@ -990,6 +983,11 @@ class GoogleMapController
   @Override
   public @NonNull Boolean didLastStyleSucceed() {
     return lastSetStyleSucceeded;
+  }
+
+  @Override
+  public void clearTileCache(@NonNull String tileOverlayId) {
+    tileOverlaysController.clearTileCache(tileOverlayId);
   }
 
   @Override

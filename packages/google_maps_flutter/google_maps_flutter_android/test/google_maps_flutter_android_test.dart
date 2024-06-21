@@ -172,6 +172,17 @@ void main() {
     expect(await maps.takeSnapshot(mapId: mapId), fakeSnapshot);
   });
 
+  test('clearTileCache calls through', () async {
+    const int mapId = 1;
+    final (GoogleMapsFlutterAndroid maps, MockMapsApi api) =
+        setUpMockMap(mapId: mapId);
+
+    const String tileOverlayId = 'overlay';
+    await maps.clearTileCache(const TileOverlayId(tileOverlayId), mapId: mapId);
+
+    verify(api.clearTileCache(tileOverlayId));
+  });
+
   test('markers send drag event to correct streams', () async {
     const int mapId = 1;
     final Map<dynamic, dynamic> jsonMarkerDragStartEvent = <dynamic, dynamic>{

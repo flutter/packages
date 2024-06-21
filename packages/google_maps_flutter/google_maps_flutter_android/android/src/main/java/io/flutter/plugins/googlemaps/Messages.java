@@ -759,6 +759,8 @@ public class Messages {
      */
     @NonNull
     Boolean didLastStyleSucceed();
+    /** Clears the cache of tiles previously requseted from the tile provider. */
+    void clearTileCache(@NonNull String tileOverlayId);
     /** Takes a snapshot of the map and returns its image data. */
     void takeSnapshot(@NonNull Result<byte[]> result);
 
@@ -1024,6 +1026,32 @@ public class Messages {
                 try {
                   Boolean output = api.didLastStyleSucceed();
                   wrapped.add(0, output);
+                } catch (Throwable exception) {
+                  ArrayList<Object> wrappedError = wrapError(exception);
+                  wrapped = wrappedError;
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.google_maps_flutter_android.MapsApi.clearTileCache"
+                    + messageChannelSuffix,
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                String tileOverlayIdArg = (String) args.get(0);
+                try {
+                  api.clearTileCache(tileOverlayIdArg);
+                  wrapped.add(0, null);
                 } catch (Throwable exception) {
                   ArrayList<Object> wrappedError = wrapError(exception);
                   wrapped = wrappedError;

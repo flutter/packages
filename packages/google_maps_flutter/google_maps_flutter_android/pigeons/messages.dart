@@ -121,6 +121,9 @@ abstract class MapsApi {
   /// is no way to return failures from map initialization.
   bool didLastStyleSucceed();
 
+  /// Clears the cache of tiles previously requseted from the tile provider.
+  void clearTileCache(String tileOverlayId);
+
   /// Takes a snapshot of the map and returns its image data.
   @async
   Uint8List takeSnapshot();

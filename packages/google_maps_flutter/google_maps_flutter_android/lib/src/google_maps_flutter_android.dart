@@ -433,10 +433,7 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
     TileOverlayId tileOverlayId, {
     required int mapId,
   }) {
-    return _channel(mapId)
-        .invokeMethod<void>('tileOverlays#clearTileCache', <String, Object>{
-      'tileOverlayId': tileOverlayId.value,
-    });
+    return _hostApi(mapId).clearTileCache(tileOverlayId.value);
   }
 
   @override

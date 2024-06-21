@@ -204,6 +204,16 @@ class MockMapsApi extends _i1.Mock implements _i2.MapsApi {
       ) as _i3.Future<bool>);
 
   @override
+  _i3.Future<void> clearTileCache(String? tileOverlayId) => (super.noSuchMethod(
+        Invocation.method(
+          #clearTileCache,
+          [tileOverlayId],
+        ),
+        returnValue: _i3.Future<void>.value(),
+        returnValueForMissingStub: _i3.Future<void>.value(),
+      ) as _i3.Future<void>);
+
+  @override
   _i3.Future<_i4.Uint8List> takeSnapshot() => (super.noSuchMethod(
         Invocation.method(
           #takeSnapshot,
