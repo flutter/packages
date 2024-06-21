@@ -792,7 +792,7 @@ class SwiftGenerator extends StructuredGenerator<SwiftOptions> {
 
     final String swiftApiDelegateName = '${classNamePrefix}Delegate${api.name}';
     final String type =
-        api.hasAnyHostMessageCalls() ? 'protocol' : 'open class';
+        api.hasMethodsRequiringImplementation() ? 'protocol' : 'open class';
     indent.writeScoped('$type $swiftApiDelegateName {', '}', () {
       _writeProxyApiConstructorDelegateMethods(
         indent,
@@ -1216,11 +1216,14 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
     });
     indent.newln();
 
-    final Iterable<AstProxyApi> apisWithoutHostMessageCalls =
-        allProxyApis.where((AstProxyApi api) => !api.hasAnyHostMessageCalls());
-    if (apisWithoutHostMessageCalls.isNotEmpty) {
+    // Some APIs don't have any methods to implement,
+    // so this creates an extension of the PigeonProxyApiDelegate that adds
+    // default implementations for these APIs.
+    final Iterable<AstProxyApi> apisThatCanHaveADefaultImpl = allProxyApis
+        .where((AstProxyApi api) => !api.hasMethodsRequiringImplementation());
+    if (apisThatCanHaveADefaultImpl.isNotEmpty) {
       indent.writeScoped('extension $delegateName {', '}', () {
-        for (final AstProxyApi api in apisWithoutHostMessageCalls) {
+        for (final AstProxyApi api in apisThatCanHaveADefaultImpl) {
           final String hostApiName = '$hostProxyApiPrefix${api.name}';
           final String swiftApiDelegateName =
               '${classNamePrefix}Delegate${api.name}';
