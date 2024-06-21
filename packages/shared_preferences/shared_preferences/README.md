@@ -17,13 +17,6 @@ Supported data types are `int`, `double`, `bool`, `String` and `List<String>`.
 
 ## Usage
 
-To use this plugin, add `shared_preferences` as a
-dependency in your `pubspec.yaml` file:
-
-```bash
-flutter pub add shared_preferences
-```
-
 ### Examples
 Here are small examples that show you how to use the API.
 

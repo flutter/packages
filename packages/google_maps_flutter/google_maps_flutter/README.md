@@ -12,15 +12,6 @@ A Flutter plugin that provides a [Google Maps](https://developers.google.com/map
 
 [web-support]: https://docs.flutter.dev/reference/supported-platforms
 
-## Usage
-
-To use this plugin, add `google_maps_flutter` as a
-dependency in your `pubspec.yaml` file:
-
-```bash
-flutter pub add google_maps_flutter
-```
-
 ## Getting Started
 
 * Get an API key at <https://cloud.google.com/maps-platform/>.

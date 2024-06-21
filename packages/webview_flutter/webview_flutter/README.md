@@ -15,13 +15,6 @@ On Android the WebView widget is backed by a [WebView](https://developer.android
 
 ## Usage
 
-Add `webview_flutter` as a
-dependency in your `pubspec.yaml` file:
-
-```bash
-flutter pub add webview_flutter
-```
-
 You can now display a WebView by:
 
 1. Instantiating a [WebViewController](https://pub.dev/documentation/webview_flutter/latest/webview_flutter/WebViewController-class.html).
