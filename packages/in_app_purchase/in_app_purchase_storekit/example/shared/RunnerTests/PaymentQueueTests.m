@@ -477,7 +477,7 @@
       }
       transactionCache:cacheStub];
 
-  SKPaymentQueueStub* paymentQueueStub = [[SKPaymentQueueStub alloc] init];
+  SKPaymentQueueStub *paymentQueueStub = [[SKPaymentQueueStub alloc] init];
 
   [handler startObservingPaymentQueue];
   [handler paymentQueue:paymentQueueStub updatedTransactions:@[ transactionStub ]];
