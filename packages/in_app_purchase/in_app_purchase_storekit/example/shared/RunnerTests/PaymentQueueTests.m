@@ -238,20 +238,20 @@
           }
           transactionCache:cacheStub];
 
-  __block NSInteger TransactionCacheKeyUpdatedTransactionsInvoked = 0;
-  __block NSInteger TransactionCacheKeyUpdatedDownloadsInvoked = 0;
-  __block NSInteger TransactionCacheKeyRemovedTransactionsInvoked = 0;
+  __block NSInteger TransactionCacheKeyUpdatedTransactionsInvokedCount = 0;
+  __block NSInteger TransactionCacheKeyUpdatedDownloadsInvokedCount = 0;
+  __block NSInteger TransactionCacheKeyRemovedTransactionsInvokedCount = 0;
 
   cacheStub.getObjectsForKeyStub = ^NSArray *_Nonnull(TransactionCacheKey key) {
     switch (key) {
       case TransactionCacheKeyUpdatedTransactions:
-        TransactionCacheKeyUpdatedTransactionsInvoked++;
+        TransactionCacheKeyUpdatedTransactionsInvokedCount++;
         break;
       case TransactionCacheKeyUpdatedDownloads:
-        TransactionCacheKeyUpdatedDownloadsInvoked++;
+        TransactionCacheKeyUpdatedDownloadsInvokedCount++;
         break;
       case TransactionCacheKeyRemovedTransactions:
-        TransactionCacheKeyRemovedTransactionsInvoked++;
+        TransactionCacheKeyRemovedTransactionsInvokedCount++;
         break;
       default:
         XCTFail("Invalid transaction state was invoked.");
@@ -261,9 +261,9 @@
 
   [handler startObservingPaymentQueue];
 
-  XCTAssertEqual(1, TransactionCacheKeyUpdatedTransactionsInvoked);
-  XCTAssertEqual(1, TransactionCacheKeyUpdatedDownloadsInvoked);
-  XCTAssertEqual(1, TransactionCacheKeyRemovedTransactionsInvoked);
+  XCTAssertEqual(1, TransactionCacheKeyUpdatedTransactionsInvokedCount);
+  XCTAssertEqual(1, TransactionCacheKeyUpdatedDownloadsInvokedCount);
+  XCTAssertEqual(1, TransactionCacheKeyRemovedTransactionsInvokedCount);
 }
 
 - (void)
@@ -287,22 +287,22 @@
           }
           transactionCache:cacheStub];
 
-  __block NSInteger TransactionCacheKeyUpdatedTransactionsInvoked = 0;
-  __block NSInteger TransactionCacheKeyUpdatedDownloadsInvoked = 0;
-  __block NSInteger TransactionCacheKeyRemovedTransactionsInvoked = 0;
+  __block NSInteger TransactionCacheKeyUpdatedTransactionsInvokedCount = 0;
+  __block NSInteger TransactionCacheKeyUpdatedDownloadsInvokedCount = 0;
+  __block NSInteger TransactionCacheKeyRemovedTransactionsInvokedCount = 0;
 
   cacheStub.getObjectsForKeyStub = ^NSArray *_Nonnull(TransactionCacheKey key) {
     switch (key) {
       case TransactionCacheKeyUpdatedTransactions:
-        TransactionCacheKeyUpdatedTransactionsInvoked++;
+        TransactionCacheKeyUpdatedTransactionsInvokedCount++;
         return @[];
         break;
       case TransactionCacheKeyUpdatedDownloads:
-        TransactionCacheKeyUpdatedDownloadsInvoked++;
+        TransactionCacheKeyUpdatedDownloadsInvokedCount++;
         return @[];
         break;
       case TransactionCacheKeyRemovedTransactions:
-        TransactionCacheKeyRemovedTransactionsInvoked++;
+        TransactionCacheKeyRemovedTransactionsInvokedCount++;
         return @[];
         break;
       default:
@@ -312,9 +312,9 @@
 
   [handler startObservingPaymentQueue];
 
-  XCTAssertEqual(1, TransactionCacheKeyUpdatedTransactionsInvoked);
-  XCTAssertEqual(1, TransactionCacheKeyUpdatedDownloadsInvoked);
-  XCTAssertEqual(1, TransactionCacheKeyRemovedTransactionsInvoked);
+  XCTAssertEqual(1, TransactionCacheKeyUpdatedTransactionsInvokedCount);
+  XCTAssertEqual(1, TransactionCacheKeyUpdatedDownloadsInvokedCount);
+  XCTAssertEqual(1, TransactionCacheKeyRemovedTransactionsInvokedCount);
 }
 
 - (void)testStartObservingPaymentQueueShouldProcessTransactionsForItemsInCache {
@@ -351,22 +351,22 @@
           }
           transactionCache:cacheStub];
 
-  __block NSInteger TransactionCacheKeyUpdatedTransactionsInvoked = 0;
-  __block NSInteger TransactionCacheKeyUpdatedDownloadsInvoked = 0;
-  __block NSInteger TransactionCacheKeyRemovedTransactionsInvoked = 0;
+  __block NSInteger TransactionCacheKeyUpdatedTransactionsInvokedCount = 0;
+  __block NSInteger TransactionCacheKeyUpdatedDownloadsInvokedCount = 0;
+  __block NSInteger TransactionCacheKeyRemovedTransactionsInvokedCount = 0;
 
   cacheStub.getObjectsForKeyStub = ^NSArray *_Nonnull(TransactionCacheKey key) {
     switch (key) {
       case TransactionCacheKeyUpdatedTransactions:
-        TransactionCacheKeyUpdatedTransactionsInvoked++;
+        TransactionCacheKeyUpdatedTransactionsInvokedCount++;
         return @[ transactionStub ];
         break;
       case TransactionCacheKeyUpdatedDownloads:
-        TransactionCacheKeyUpdatedDownloadsInvoked++;
+        TransactionCacheKeyUpdatedDownloadsInvokedCount++;
         return @[ downloadStub ];
         break;
       case TransactionCacheKeyRemovedTransactions:
-        TransactionCacheKeyRemovedTransactionsInvoked++;
+        TransactionCacheKeyRemovedTransactionsInvokedCount++;
         return @[ transactionStub ];
         break;
       default:
@@ -374,9 +374,9 @@
     }
   };
 
-  __block NSInteger clearInvoked = 0;
+  __block NSInteger clearInvokedCount = 0;
   cacheStub.clearStub = ^{
-    clearInvoked++;
+    clearInvokedCount++;
   };
 
   [handler startObservingPaymentQueue];
@@ -386,10 +386,10 @@
   ]
                     timeout:5];
 
-  XCTAssertEqual(1, TransactionCacheKeyUpdatedTransactionsInvoked);
-  XCTAssertEqual(1, TransactionCacheKeyUpdatedDownloadsInvoked);
-  XCTAssertEqual(1, TransactionCacheKeyRemovedTransactionsInvoked);
-  XCTAssertEqual(1, clearInvoked);
+  XCTAssertEqual(1, TransactionCacheKeyUpdatedTransactionsInvokedCount);
+  XCTAssertEqual(1, TransactionCacheKeyUpdatedDownloadsInvokedCount);
+  XCTAssertEqual(1, TransactionCacheKeyRemovedTransactionsInvokedCount);
+  XCTAssertEqual(1, clearInvokedCount);
 }
 
 - (void)testTransactionsShouldBeCachedWhenNotObserving {
@@ -415,20 +415,20 @@
   SKPayment *payment =
       [SKPayment paymentWithProduct:[[SKProductStub alloc] initWithMap:self.productResponseMap]];
 
-  __block NSInteger TransactionCacheKeyUpdatedTransactionsInvoked = 0;
-  __block NSInteger TransactionCacheKeyUpdatedDownloadsInvoked = 0;
-  __block NSInteger TransactionCacheKeyRemovedTransactionsInvoked = 0;
+  __block NSInteger TransactionCacheKeyUpdatedTransactionsInvokedCount = 0;
+  __block NSInteger TransactionCacheKeyUpdatedDownloadsInvokedCount = 0;
+  __block NSInteger TransactionCacheKeyRemovedTransactionsInvokedCount = 0;
 
   cacheStub.addObjectsStub = ^(NSArray *_Nonnull objects, TransactionCacheKey key) {
     switch (key) {
       case TransactionCacheKeyUpdatedTransactions:
-        TransactionCacheKeyUpdatedTransactionsInvoked++;
+        TransactionCacheKeyUpdatedTransactionsInvokedCount++;
         break;
       case TransactionCacheKeyUpdatedDownloads:
-        TransactionCacheKeyUpdatedDownloadsInvoked++;
+        TransactionCacheKeyUpdatedDownloadsInvokedCount++;
         break;
       case TransactionCacheKeyRemovedTransactions:
-        TransactionCacheKeyRemovedTransactionsInvoked++;
+        TransactionCacheKeyRemovedTransactionsInvokedCount++;
         break;
       default:
         XCTFail("Invalid transaction state was invoked.");
@@ -437,9 +437,9 @@
 
   [handler addPayment:payment];
 
-  XCTAssertEqual(1, TransactionCacheKeyUpdatedTransactionsInvoked);
-  XCTAssertEqual(0, TransactionCacheKeyUpdatedDownloadsInvoked);
-  XCTAssertEqual(0, TransactionCacheKeyRemovedTransactionsInvoked);
+  XCTAssertEqual(1, TransactionCacheKeyUpdatedTransactionsInvokedCount);
+  XCTAssertEqual(0, TransactionCacheKeyUpdatedDownloadsInvokedCount);
+  XCTAssertEqual(0, TransactionCacheKeyRemovedTransactionsInvokedCount);
 }
 
 - (void)testTransactionsShouldNotBeCachedWhenObserving {
@@ -477,37 +477,39 @@
       }
       transactionCache:cacheStub];
 
+  SKPaymentQueueStub* paymentQueueStub = [[SKPaymentQueueStub alloc] init];
+
   [handler startObservingPaymentQueue];
-  [handler paymentQueue:[[SKPaymentQueueStub alloc] init] updatedTransactions:@[ transactionStub ]];
-  [handler paymentQueue:[[SKPaymentQueueStub alloc] init] removedTransactions:@[ transactionStub ]];
-  [handler paymentQueue:[[SKPaymentQueueStub alloc] init] updatedDownloads:@[ downloadStub ]];
+  [handler paymentQueue:paymentQueueStub updatedTransactions:@[ transactionStub ]];
+  [handler paymentQueue:paymentQueueStub removedTransactions:@[ transactionStub ]];
+  [handler paymentQueue:paymentQueueStub updatedDownloads:@[ downloadStub ]];
 
   [self waitForExpectations:@[
     updateTransactionsExpectation, removeTransactionsExpectation, updateDownloadsExpectation
   ]
                     timeout:5];
 
-  __block NSInteger TransactionCacheKeyUpdatedTransactionsInvoked = 0;
-  __block NSInteger TransactionCacheKeyUpdatedDownloadsInvoked = 0;
-  __block NSInteger TransactionCacheKeyRemovedTransactionsInvoked = 0;
+  __block NSInteger TransactionCacheKeyUpdatedTransactionsInvokedCount = 0;
+  __block NSInteger TransactionCacheKeyUpdatedDownloadsInvokedCount = 0;
+  __block NSInteger TransactionCacheKeyRemovedTransactionsInvokedCount = 0;
 
   cacheStub.addObjectsStub = ^(NSArray *_Nonnull objects, TransactionCacheKey key) {
     switch (key) {
       case TransactionCacheKeyUpdatedTransactions:
-        TransactionCacheKeyUpdatedTransactionsInvoked++;
+        TransactionCacheKeyUpdatedTransactionsInvokedCount++;
         break;
       case TransactionCacheKeyUpdatedDownloads:
-        TransactionCacheKeyUpdatedDownloadsInvoked++;
+        TransactionCacheKeyUpdatedDownloadsInvokedCount++;
         break;
       case TransactionCacheKeyRemovedTransactions:
-        TransactionCacheKeyRemovedTransactionsInvoked++;
+        TransactionCacheKeyRemovedTransactionsInvokedCount++;
         break;
       default:
         XCTFail("Invalid transaction state was invoked.");
     }
   };
-  XCTAssertEqual(0, TransactionCacheKeyUpdatedTransactionsInvoked);
-  XCTAssertEqual(0, TransactionCacheKeyUpdatedDownloadsInvoked);
-  XCTAssertEqual(0, TransactionCacheKeyRemovedTransactionsInvoked);
+  XCTAssertEqual(0, TransactionCacheKeyUpdatedTransactionsInvokedCount);
+  XCTAssertEqual(0, TransactionCacheKeyUpdatedDownloadsInvokedCount);
+  XCTAssertEqual(0, TransactionCacheKeyRemovedTransactionsInvokedCount);
 }
 @end
