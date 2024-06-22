@@ -1,3 +1,8 @@
+## 0.1.12
+
+* Adds `inDuration`, `outDuration`, `inCurve`, and `outCurve` parameters for 
+configuring additional SlotLayoutConfig animation behavior.
+
 ## 0.1.11
 
 * Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
