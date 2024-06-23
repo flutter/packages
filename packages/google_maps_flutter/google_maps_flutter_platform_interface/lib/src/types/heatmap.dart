@@ -114,7 +114,7 @@ class Heatmap implements MapsObject<Heatmap> {
   /// This list must not be empty.
   final List<WeightedLatLng> data;
 
-  /// Specifies whether heatmaps dissipate on zoom.
+  /// Specifies whether the heatmap dissipate on zoom.
   ///
   /// By default, the radius of influence of a data point is specified by the
   /// radius option only. When dissipating is disabled, the radius option is
