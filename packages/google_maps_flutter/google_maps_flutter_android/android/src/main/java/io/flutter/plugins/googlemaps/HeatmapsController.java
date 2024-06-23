@@ -15,18 +15,24 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/** Controller of multiple Heatmaps on the map. */
 public class HeatmapsController {
+  /** Mapping from Heatmap ID to HeatmapController. */
   private final Map<String, HeatmapController> heatmapIdToController;
+  /** The GoogleMap to which the heatmaps are added. */
   private GoogleMap googleMap;
 
+  /** Constructs a HeatmapsController. */
   HeatmapsController() {
     this.heatmapIdToController = new HashMap<>();
   }
 
+  /** Sets the GoogleMap to which the heatmaps are added. */
   void setGoogleMap(GoogleMap googleMap) {
     this.googleMap = googleMap;
   }
 
+  /** Adds heatmaps to the map. */
   void addHeatmaps(List<Object> heatmapsToAdd) {
     if (heatmapsToAdd == null) {
       return;
@@ -36,6 +42,7 @@ public class HeatmapsController {
     }
   }
 
+  /** Updates the given heatmaps on the map. */
   void changeHeatmaps(List<Object> heatmapsToChange) {
     if (heatmapsToChange == null) {
       return;
@@ -45,6 +52,7 @@ public class HeatmapsController {
     }
   }
 
+  /** Removes heatmaps with the given ids from the map. */
   void removeHeatmaps(List<String> heatmapIdsToRemove) {
     if (heatmapIdsToRemove == null) {
       return;
@@ -57,12 +65,13 @@ public class HeatmapsController {
     }
   }
 
-  // Builds the heatmap. This method exists to allow mocking the HeatmapTileProvider in tests.
+  /** Builds the heatmap. This method exists to allow mocking the HeatmapTileProvider in tests. */
   @VisibleForTesting
   public HeatmapTileProvider buildHeatmap(HeatmapBuilder builder) {
     return builder.build();
   }
 
+  /** Adds a heatmap to the map. */
   private void addHeatmap(Object heatmapOptions) {
     if (heatmapOptions == null) {
       return;
@@ -77,6 +86,7 @@ public class HeatmapsController {
     heatmapIdToController.put(heatmapId, heatmapController);
   }
 
+  /** Updates the given heatmap on the map. */
   private void changeHeatmap(Object heatmapOptions) {
     if (heatmapOptions == null) {
       return;
@@ -89,6 +99,7 @@ public class HeatmapsController {
     }
   }
 
+  /** Removes the heatmap with the given id from the map. */
   private void removeHeatmap(String heatmapId) {
     HeatmapController heatmapController = heatmapIdToController.get(heatmapId);
     if (heatmapController != null) {
@@ -97,6 +108,7 @@ public class HeatmapsController {
     }
   }
 
+  /** Returns the heatmap id from the given heatmap data. */
   @SuppressWarnings("unchecked")
   private static String getHeatmapId(Object heatmap) {
     Map<String, Object> heatmapMap = (Map<String, Object>) heatmap;

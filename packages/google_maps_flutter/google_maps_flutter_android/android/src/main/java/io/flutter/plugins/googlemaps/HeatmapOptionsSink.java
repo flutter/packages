@@ -12,13 +12,18 @@ import java.util.List;
 
 /** Receiver of Heatmap configuration options. */
 interface HeatmapOptionsSink {
+  /** Set the weighted data to be used to generate the heatmap. */
   void setWeightedData(@NonNull List<WeightedLatLng> weightedData);
 
+  /** Set the gradient to be used to color the heatmap. */
   void setGradient(Gradient gradient);
 
+  /** Set the maximum intensity for the heatmap. */
   void setMaxIntensity(double maxIntensity);
 
+  /** Set the opacity of the heatmap. */
   void setOpacity(double opacity);
 
+  /** Set the radius of the heatmap. */
   void setRadius(int radius);
 }

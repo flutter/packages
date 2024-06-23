@@ -12,19 +12,23 @@ import com.google.maps.android.heatmaps.HeatmapTileProvider;
 import com.google.maps.android.heatmaps.WeightedLatLng;
 import java.util.List;
 
+/** Controller of a single Heatmap on the map. */
 public class HeatmapController implements HeatmapOptionsSink {
   private final HeatmapTileProvider heatmap;
   private final TileOverlay heatmapTileOverlay;
 
+  /** Construct a HeatmapController with the given heatmap and heatmapTileOverlay. */
   HeatmapController(HeatmapTileProvider heatmap, TileOverlay heatmapTileOverlay) {
     this.heatmap = heatmap;
     this.heatmapTileOverlay = heatmapTileOverlay;
   }
 
+  /** Remove the heatmap from the map. */
   void remove() {
     heatmapTileOverlay.remove();
   }
 
+  /** Clear the tile cache of the heatmap in order to update the heatmap. */
   void clearTileCache() {
     heatmapTileOverlay.clearTileCache();
   }

@@ -11,13 +11,16 @@ import com.google.maps.android.heatmaps.HeatmapTileProvider;
 import com.google.maps.android.heatmaps.WeightedLatLng;
 import java.util.List;
 
+/** Builder of a single Heatmap on the map. */
 public class HeatmapBuilder implements HeatmapOptionsSink {
   private final HeatmapTileProvider.Builder heatmapOptions;
 
+  /** Construct a HeatmapBuilder. */
   HeatmapBuilder() {
     this.heatmapOptions = new HeatmapTileProvider.Builder();
   }
 
+  /** Build the HeatmapTileProvider with the given options. */
   HeatmapTileProvider build() {
     return heatmapOptions.build();
   }

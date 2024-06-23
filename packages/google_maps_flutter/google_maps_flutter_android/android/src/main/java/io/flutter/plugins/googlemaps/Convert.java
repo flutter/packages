@@ -914,6 +914,7 @@ class Convert {
     }
   }
 
+  /** Set the options in the given heatmap object to the given sink. */
   static String interpretHeatmapOptions(Object o, HeatmapOptionsSink sink) {
     final Map<?, ?> data = toMap(o);
     final Object rawWeightedData = data.get(HEATMAP_DATA_KEY);
@@ -956,6 +957,7 @@ class Convert {
     return points;
   }
 
+  /** Converts the given object to a list of WeightedLatLng objects. */
   private static List<WeightedLatLng> toWeightedData(Object o) {
     final List<?> data = toList(o);
     final List<WeightedLatLng> weightedData = new ArrayList<>(data.size());
@@ -966,6 +968,7 @@ class Convert {
     return weightedData;
   }
 
+  /** Converts the given list of WeightedLatLng objects to a JSON object. */
   public static Object weightedDataToJson(List<WeightedLatLng> weightedData) {
     final List<Object> data = new ArrayList<>(weightedData.size());
 
@@ -975,6 +978,7 @@ class Convert {
     return data;
   }
 
+  /** Converts the given object to a Gradient object. */
   private static Gradient toGradient(Object o) {
     final Map<?, ?> data = toMap(o);
 
@@ -997,6 +1001,7 @@ class Convert {
     return new Gradient(colors, startPoints, colorMapSize);
   }
 
+  /** Converts the given Gradient object to a JSON object. */
   private static Object gradientToJson(Gradient gradient) {
     final Map<String, Object> data = new HashMap<>();
     data.put(HEATMAP_GRADIENT_COLORS_KEY, gradient.mColors);
