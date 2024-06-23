@@ -1,6 +1,18 @@
-## 2.7.0
+## 2.9.0
 
 * Adds support for heatmap layers.
+
+## 2.8.0
+
+* Adds compatibility with SDK version 9.x for apps targetting iOS 15+.
+
+## 2.7.0
+
+* Adds support for BitmapDescriptor classes `AssetMapBitmap` and `BytesMapBitmap`.
+
+## 2.6.1
+
+* Adds support for patterns in polylines.
 
 ## 2.6.0
 

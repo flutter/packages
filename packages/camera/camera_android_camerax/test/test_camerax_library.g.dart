@@ -2230,6 +2230,9 @@ class _TestCaptureRequestOptionsHostApiCodec extends StandardMessageCodec {
     } else if (value is VideoQualityData) {
       buffer.putUint8(134);
       writeValue(buffer, value.encode());
+    } else if (value is VideoRecordEventData) {
+      buffer.putUint8(135);
+      writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
     }
@@ -2252,6 +2255,8 @@ class _TestCaptureRequestOptionsHostApiCodec extends StandardMessageCodec {
         return ResolutionInfo.decode(readValue(buffer)!);
       case 134:
         return VideoQualityData.decode(readValue(buffer)!);
+      case 135:
+        return VideoRecordEventData.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
     }

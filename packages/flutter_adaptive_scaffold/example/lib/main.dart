@@ -863,14 +863,14 @@ class _EmailTile extends StatelessWidget {
                     child: OutlinedButton(
                       onPressed: () {},
                       style: ButtonStyle(
-                        shape: MaterialStateProperty.all(
+                        shape: WidgetStateProperty.all(
                           RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(30.0)),
                         ),
-                        backgroundColor: MaterialStateProperty.all<Color>(
+                        backgroundColor: WidgetStateProperty.all<Color>(
                           const Color.fromARGB(255, 245, 241, 248),
                         ),
-                        side: MaterialStateProperty.all(
+                        side: WidgetStateProperty.all(
                           const BorderSide(
                               width: 0.0, color: Colors.transparent),
                         ),
@@ -885,14 +885,14 @@ class _EmailTile extends StatelessWidget {
                     child: OutlinedButton(
                       onPressed: () {},
                       style: ButtonStyle(
-                        shape: MaterialStateProperty.all(
+                        shape: WidgetStateProperty.all(
                           RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(30.0)),
                         ),
-                        backgroundColor: MaterialStateProperty.all<Color>(
+                        backgroundColor: WidgetStateProperty.all<Color>(
                           const Color.fromARGB(255, 245, 241, 248),
                         ),
-                        side: MaterialStateProperty.all(
+                        side: WidgetStateProperty.all(
                           const BorderSide(
                               width: 0.0, color: Colors.transparent),
                         ),

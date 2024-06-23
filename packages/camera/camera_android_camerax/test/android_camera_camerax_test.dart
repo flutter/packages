@@ -1290,7 +1290,7 @@ void main() {
               Future<Camera2CameraInfo>.value(mockCamera2CameraInfo));
 
       const int cameraId = 17;
-      const String outputPath = '/temp/MOV123.temp';
+      const String outputPath = '/temp/REC123.temp';
 
       // Mock method calls.
       when(mockSystemServicesApi.getTempFilePath(camera.videoPrefix, '.temp'))
@@ -1311,6 +1311,10 @@ void main() {
           .thenAnswer((_) async => newMockLiveCameraState);
       when(mockCamera2CameraInfo.getSupportedHardwareLevel()).thenAnswer(
           (_) async => CameraMetadata.infoSupportedHardwareLevelLimited);
+
+      // Simulate video recording being started so startVideoRecording completes.
+      PendingRecording.videoRecordingEventStreamController
+          .add(VideoRecordEvent.start);
 
       await camera.startVideoCapturing(const VideoCaptureOptions(cameraId));
 
@@ -1369,7 +1373,7 @@ void main() {
               Future<Camera2CameraInfo>.value(mockCamera2CameraInfo));
 
       const int cameraId = 17;
-      const String outputPath = '/temp/MOV123.temp';
+      const String outputPath = '/temp/REC123.temp';
 
       // Mock method calls.
       when(mockSystemServicesApi.getTempFilePath(camera.videoPrefix, '.temp'))
@@ -1388,6 +1392,10 @@ void main() {
           .thenAnswer((_) async => MockLiveCameraState());
       when(mockCamera2CameraInfo.getSupportedHardwareLevel()).thenAnswer(
           (_) async => CameraMetadata.infoSupportedHardwareLevelLimited);
+
+      // Simulate video recording being started so startVideoRecording completes.
+      PendingRecording.videoRecordingEventStreamController
+          .add(VideoRecordEvent.start);
 
       await camera.startVideoCapturing(const VideoCaptureOptions(cameraId));
 
@@ -1448,7 +1456,7 @@ void main() {
                   : MockCamera2CameraInfo());
 
       const int cameraId = 17;
-      const String outputPath = '/temp/MOV123.temp';
+      const String outputPath = '/temp/REC123.temp';
       final Completer<CameraImageData> imageDataCompleter =
           Completer<CameraImageData>();
       final VideoCaptureOptions videoCaptureOptions = VideoCaptureOptions(
@@ -1471,6 +1479,10 @@ void main() {
           .thenAnswer((_) => Future<CameraInfo>.value(MockCameraInfo()));
       when(mockCamera2CameraInfo.getSupportedHardwareLevel())
           .thenAnswer((_) async => CameraMetadata.infoSupportedHardwareLevel3);
+
+      // Simulate video recording being started so startVideoRecording completes.
+      PendingRecording.videoRecordingEventStreamController
+          .add(VideoRecordEvent.start);
 
       await camera.startVideoCapturing(videoCaptureOptions);
 
@@ -1516,7 +1528,7 @@ void main() {
                   : MockCamera2CameraInfo());
 
       const int cameraId = 87;
-      const String outputPath = '/temp/MOV123.temp';
+      const String outputPath = '/temp/REC123.temp';
 
       // Mock method calls.
       when(mockSystemServicesApi.getTempFilePath(camera.videoPrefix, '.temp'))
@@ -1529,11 +1541,19 @@ void main() {
       when(camera.processCameraProvider!.isBound(camera.imageAnalysis!))
           .thenAnswer((_) async => false);
 
+      // Simulate video recording being started so startVideoRecording completes.
+      PendingRecording.videoRecordingEventStreamController
+          .add(VideoRecordEvent.start);
+
       // Orientation is unlocked and plugin does not need to set default target
       // rotation manually.
       camera.recording = null;
       await camera.startVideoCapturing(const VideoCaptureOptions(cameraId));
       verifyNever(mockVideoCapture.setTargetRotation(any));
+
+      // Simulate video recording being started so startVideoRecording completes.
+      PendingRecording.videoRecordingEventStreamController
+          .add(VideoRecordEvent.start);
 
       // Orientation is locked and plugin does not need to set default target
       // rotation manually.
@@ -1542,6 +1562,10 @@ void main() {
       await camera.startVideoCapturing(const VideoCaptureOptions(cameraId));
       verifyNever(mockVideoCapture.setTargetRotation(any));
 
+      // Simulate video recording being started so startVideoRecording completes.
+      PendingRecording.videoRecordingEventStreamController
+          .add(VideoRecordEvent.start);
+
       // Orientation is locked and plugin does need to set default target
       // rotation manually.
       camera.recording = null;
@@ -1549,6 +1573,10 @@ void main() {
       camera.shouldSetDefaultRotation = true;
       await camera.startVideoCapturing(const VideoCaptureOptions(cameraId));
       verifyNever(mockVideoCapture.setTargetRotation(any));
+
+      // Simulate video recording being started so startVideoRecording completes.
+      PendingRecording.videoRecordingEventStreamController
+          .add(VideoRecordEvent.start);
 
       // Orientation is unlocked and plugin does need to set default target
       // rotation manually.
@@ -1601,6 +1629,10 @@ void main() {
       when(camera.processCameraProvider!.isBound(videoCapture))
           .thenAnswer((_) async => true);
 
+      // Simulate video recording being finalized so stopVideoRecording completes.
+      PendingRecording.videoRecordingEventStreamController
+          .add(VideoRecordEvent.finalize);
+
       final XFile file = await camera.stopVideoRecording(0);
       expect(file.path, videoOutputPath);
 
@@ -1642,6 +1674,9 @@ void main() {
           .thenAnswer((_) async => true);
 
       await expectLater(() async {
+        // Simulate video recording being finalized so stopVideoRecording completes.
+        PendingRecording.videoRecordingEventStreamController
+            .add(VideoRecordEvent.finalize);
         await camera.stopVideoRecording(0);
       }, throwsA(isA<CameraException>()));
       expect(camera.recording, null);
@@ -1662,6 +1697,10 @@ void main() {
       camera.recording = recording;
       camera.videoCapture = videoCapture;
       camera.videoOutputPath = videoOutputPath;
+
+      // Simulate video recording being finalized so stopVideoRecording completes.
+      PendingRecording.videoRecordingEventStreamController
+          .add(VideoRecordEvent.finalize);
 
       final XFile file = await camera.stopVideoRecording(0);
       expect(file.path, videoOutputPath);
@@ -1691,12 +1730,38 @@ void main() {
       when(camera.processCameraProvider!.isBound(videoCapture))
           .thenAnswer((_) async => true);
 
+      // Simulate video recording being finalized so stopVideoRecording completes.
+      PendingRecording.videoRecordingEventStreamController
+          .add(VideoRecordEvent.finalize);
+
       await camera.stopVideoRecording(90);
       verify(processCameraProvider.unbind(<UseCase>[videoCapture]));
 
       // Verify that recording stops.
       verify(recording.close());
       verifyNoMoreInteractions(recording);
+    });
+
+    test(
+        'setDescriptionWhileRecording does not make any calls involving starting video recording',
+        () async {
+      // TODO(camsim99): Modify test when implemented, see https://github.com/flutter/flutter/issues/148013.
+      final AndroidCameraCameraX camera = AndroidCameraCameraX();
+
+      // Set directly for test versus calling createCamera.
+      camera.processCameraProvider = MockProcessCameraProvider();
+      camera.recorder = MockRecorder();
+      camera.videoCapture = MockVideoCapture();
+      camera.camera = MockCamera();
+
+      await camera.setDescriptionWhileRecording(const CameraDescription(
+          name: 'fakeCameraName',
+          lensDirection: CameraLensDirection.back,
+          sensorOrientation: 90));
+      verifyNoMoreInteractions(camera.processCameraProvider);
+      verifyNoMoreInteractions(camera.recorder);
+      verifyNoMoreInteractions(camera.videoCapture);
+      verifyNoMoreInteractions(camera.camera);
     });
   });
 
@@ -3695,7 +3760,7 @@ void main() {
             Future<Camera2CameraInfo>.value(mockCamera2CameraInfo));
 
     const int cameraId = 7;
-    const String outputPath = '/temp/MOV123.temp';
+    const String outputPath = '/temp/REC123.temp';
 
     // Mock method calls.
     when(mockSystemServicesApi.getTempFilePath(camera.videoPrefix, '.temp'))
@@ -3716,6 +3781,10 @@ void main() {
         .thenAnswer((_) async => MockLiveCameraState());
     when(mockCamera2CameraInfo.getSupportedHardwareLevel())
         .thenAnswer((_) async => CameraMetadata.infoSupportedHardwareLevelFull);
+
+    // Simulate video recording being started so startVideoRecording completes.
+    PendingRecording.videoRecordingEventStreamController
+        .add(VideoRecordEvent.start);
 
     await camera.startVideoCapturing(const VideoCaptureOptions(cameraId));
 
@@ -3756,7 +3825,7 @@ void main() {
             Future<Camera2CameraInfo>.value(mockCamera2CameraInfo));
 
     const int cameraId = 77;
-    const String outputPath = '/temp/MOV123.temp';
+    const String outputPath = '/temp/REC123.temp';
 
     // Mock method calls.
     when(mockSystemServicesApi.getTempFilePath(camera.videoPrefix, '.temp'))
@@ -3777,6 +3846,10 @@ void main() {
         .thenAnswer((_) async => MockLiveCameraState());
     when(mockCamera2CameraInfo.getSupportedHardwareLevel())
         .thenAnswer((_) async => CameraMetadata.infoSupportedHardwareLevel3);
+
+    // Simulate video recording being started so startVideoRecording completes.
+    PendingRecording.videoRecordingEventStreamController
+        .add(VideoRecordEvent.start);
 
     await camera.startVideoCapturing(const VideoCaptureOptions(cameraId));
 
@@ -3817,7 +3890,7 @@ void main() {
             Future<Camera2CameraInfo>.value(mockCamera2CameraInfo));
 
     const int cameraId = 87;
-    const String outputPath = '/temp/MOV123.temp';
+    const String outputPath = '/temp/REC123.temp';
 
     // Mock method calls.
     when(mockSystemServicesApi.getTempFilePath(camera.videoPrefix, '.temp'))
@@ -3838,6 +3911,10 @@ void main() {
         .thenAnswer((_) async => MockLiveCameraState());
     when(mockCamera2CameraInfo.getSupportedHardwareLevel()).thenAnswer(
         (_) async => CameraMetadata.infoSupportedHardwareLevelExternal);
+
+    // Simulate video recording being started so startVideoRecording completes.
+    PendingRecording.videoRecordingEventStreamController
+        .add(VideoRecordEvent.start);
 
     await camera.startVideoCapturing(VideoCaptureOptions(cameraId,
         streamCallback: (CameraImageData image) {}));
@@ -3882,7 +3959,7 @@ void main() {
             Future<Camera2CameraInfo>.value(mockCamera2CameraInfo));
 
     const int cameraId = 107;
-    const String outputPath = '/temp/MOV123.temp';
+    const String outputPath = '/temp/REC123.temp';
 
     // Mock method calls.
     when(mockSystemServicesApi.getTempFilePath(camera.videoPrefix, '.temp'))
@@ -3905,6 +3982,10 @@ void main() {
         .thenAnswer((_) async => MockLiveCameraState());
     when(mockCamera2CameraInfo.getSupportedHardwareLevel())
         .thenAnswer((_) async => CameraMetadata.infoSupportedHardwareLevel3);
+
+    // Simulate video recording being started so startVideoRecording completes.
+    PendingRecording.videoRecordingEventStreamController
+        .add(VideoRecordEvent.start);
 
     await camera.startVideoCapturing(VideoCaptureOptions(cameraId,
         streamCallback: (CameraImageData image) {}));
@@ -3947,7 +4028,7 @@ void main() {
             Future<Camera2CameraInfo>.value(mockCamera2CameraInfo));
 
     const int cameraId = 97;
-    const String outputPath = '/temp/MOV123.temp';
+    const String outputPath = '/temp/REC123.temp';
 
     // Mock method calls.
     when(mockSystemServicesApi.getTempFilePath(camera.videoPrefix, '.temp'))
@@ -3966,6 +4047,11 @@ void main() {
         .thenAnswer((_) async => MockLiveCameraState());
 
     await camera.pausePreview(cameraId);
+
+    // Simulate video recording being started so startVideoRecording completes.
+    PendingRecording.videoRecordingEventStreamController
+        .add(VideoRecordEvent.start);
+
     await camera.startVideoCapturing(const VideoCaptureOptions(cameraId));
 
     verifyNever(
@@ -4009,7 +4095,7 @@ void main() {
             Future<Camera2CameraInfo>.value(mockCamera2CameraInfo));
 
     const int cameraId = 44;
-    const String outputPath = '/temp/MOV123.temp';
+    const String outputPath = '/temp/REC123.temp';
 
     // Mock method calls.
     when(mockSystemServicesApi.getTempFilePath(camera.videoPrefix, '.temp'))
@@ -4032,6 +4118,10 @@ void main() {
         .thenAnswer((_) async => MockLiveCameraState());
     when(mockCamera2CameraInfo.getSupportedHardwareLevel()).thenAnswer(
         (_) async => CameraMetadata.infoSupportedHardwareLevelLegacy);
+
+    // Simulate video recording being started so startVideoRecording completes.
+    PendingRecording.videoRecordingEventStreamController
+        .add(VideoRecordEvent.start);
 
     await camera.startVideoCapturing(const VideoCaptureOptions(cameraId));
 

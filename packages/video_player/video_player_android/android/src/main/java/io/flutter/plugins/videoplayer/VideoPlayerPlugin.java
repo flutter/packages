@@ -38,30 +38,6 @@ public class VideoPlayerPlugin implements FlutterPlugin, AndroidVideoPlayerApi {
   /** Register this with the v2 embedding for the plugin to respond to lifecycle callbacks. */
   public VideoPlayerPlugin() {}
 
-  @SuppressWarnings("deprecation")
-  private VideoPlayerPlugin(io.flutter.plugin.common.PluginRegistry.Registrar registrar) {
-    this.flutterState =
-        new FlutterState(
-            registrar.context(),
-            registrar.messenger(),
-            registrar::lookupKeyForAsset,
-            registrar::lookupKeyForAsset,
-            registrar.textures());
-    flutterState.startListening(this, registrar.messenger());
-  }
-
-  /** Registers this with the stable v1 embedding. Will not respond to lifecycle events. */
-  @SuppressWarnings("deprecation")
-  public static void registerWith(
-      @NonNull io.flutter.plugin.common.PluginRegistry.Registrar registrar) {
-    final VideoPlayerPlugin plugin = new VideoPlayerPlugin(registrar);
-    registrar.addViewDestroyListener(
-        view -> {
-          plugin.onDestroy();
-          return false; // We are not interested in assuming ownership of the NativeView.
-        });
-  }
-
   @Override
   public void onAttachedToEngine(@NonNull FlutterPluginBinding binding) {
     if (android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
@@ -137,7 +113,7 @@ public class VideoPlayerPlugin implements FlutterPlugin, AndroidVideoPlayerApi {
       player =
           new VideoPlayer(
               flutterState.applicationContext,
-              eventChannel,
+              VideoPlayerEventCallbacks.bindTo(eventChannel),
               handle,
               "asset:///" + assetLookupKey,
               null,
@@ -148,7 +124,7 @@ public class VideoPlayerPlugin implements FlutterPlugin, AndroidVideoPlayerApi {
       player =
           new VideoPlayer(
               flutterState.applicationContext,
-              eventChannel,
+              VideoPlayerEventCallbacks.bindTo(eventChannel),
               handle,
               arg.getUri(),
               arg.getFormatHint(),

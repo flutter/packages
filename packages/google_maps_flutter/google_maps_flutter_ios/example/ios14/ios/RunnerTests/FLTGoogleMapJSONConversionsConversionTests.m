@@ -288,6 +288,20 @@
   [classMockCameraUpdate stopMocking];
 }
 
+- (void)testLengthsFromPatterns {
+  NSArray<NSArray<id> *> *patterns = @[ @[ @"gap", @10 ], @[ @"dash", @6.4 ] ];
+
+  NSArray<NSNumber *> *spanLengths = [FLTGoogleMapJSONConversions spanLengthsFromPatterns:patterns];
+
+  XCTAssertEqual([spanLengths count], 2);
+
+  NSNumber *firstSpanLength = spanLengths[0];
+  NSNumber *secondSpanLength = spanLengths[1];
+
+  XCTAssertEqual(firstSpanLength.doubleValue, 10);
+  XCTAssertEqual(secondSpanLength.doubleValue, 6.4);
+}
+
 - (void)testWeightedLatLngFromArray {
   NSArray *weightedLatLng = @[ @[ @1, @2 ], @3 ];
 

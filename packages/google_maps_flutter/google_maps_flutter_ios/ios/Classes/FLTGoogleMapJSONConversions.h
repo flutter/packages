@@ -48,6 +48,21 @@ extern NSString *const kHeatmapGradientColorMapSizeKey;
 + (GMUGradient *)gradientFromDictionary:(NSDictionary<NSString *, id> *)data;
 + (NSDictionary<NSString *, id> *)dictionaryFromGradient:(GMUGradient *)gradient;
 
+/// Return GMS strokestyle object array populated using the patterns and stroke colors passed in.
+///
+/// @param patterns An array of patterns for each stroke in the polyline.
+/// @param strokeColor An array of color for each stroke in the polyline.
+/// @return An array of GMSStrokeStyle.
++ (NSArray<GMSStrokeStyle *> *)strokeStylesFromPatterns:(NSArray<NSArray<NSObject *> *> *)patterns
+                                            strokeColor:(UIColor *)strokeColor;
+
+/// Return GMS strokestyle object array populated using the patterns and stroke colors passed in.
+/// Extracts the lengths of each stroke in the polyline from patterns input
+///
+/// @param patterns An array of object representing the pattern params in the polyline.
+/// @return Array of lengths.
++ (NSArray<NSNumber *> *)spanLengthsFromPatterns:(NSArray<NSArray<NSObject *> *> *)patterns;
+
 @end
 
 NS_ASSUME_NONNULL_END

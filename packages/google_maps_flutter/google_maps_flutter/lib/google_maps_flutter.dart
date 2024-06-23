@@ -17,7 +17,9 @@ export 'package:google_maps_flutter_platform_interface/google_maps_flutter_platf
     show
         ArgumentCallback,
         ArgumentCallbacks,
+        AssetMapBitmap,
         BitmapDescriptor,
+        BytesMapBitmap,
         CameraPosition,
         CameraPositionCallback,
         CameraTargetBounds,
@@ -34,6 +36,7 @@ export 'package:google_maps_flutter_platform_interface/google_maps_flutter_platf
         JointType,
         LatLng,
         LatLngBounds,
+        MapBitmapScaling,
         MapStyleException,
         MapType,
         Marker,

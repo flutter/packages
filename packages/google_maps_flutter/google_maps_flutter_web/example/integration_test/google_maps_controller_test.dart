@@ -196,14 +196,12 @@ void main() {
             (WidgetTester tester) async {
           controller.dispose();
 
-          expect(() {
-            controller.updateMarkers(
-              MarkerUpdates.from(
+          await expectLater(
+              controller.updateMarkers(MarkerUpdates.from(
                 const <Marker>{},
                 const <Marker>{},
-              ),
-            );
-          }, throwsAssertionError);
+              )),
+              throwsAssertionError);
 
           expect(() {
             controller.showInfoWindow(const MarkerId('any'));
@@ -777,7 +775,7 @@ void main() {
           const Marker(markerId: MarkerId('to-be-added')),
         };
 
-        controller.updateMarkers(MarkerUpdates.from(previous, current));
+        await controller.updateMarkers(MarkerUpdates.from(previous, current));
 
         verify(mock.removeMarkers(<MarkerId>{
           const MarkerId('to-be-removed'),

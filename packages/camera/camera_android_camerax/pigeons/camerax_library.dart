@@ -126,6 +126,15 @@ enum VideoResolutionFallbackRule {
   lowerQualityThan,
 }
 
+/// Video recording status.
+///
+/// See https://developer.android.com/reference/androidx/camera/video/VideoRecordEvent.
+enum VideoRecordEvent { start, finalize }
+
+class VideoRecordEventData {
+  late VideoRecordEvent value;
+}
+
 /// Convenience class for building [FocusMeteringAction]s with multiple metering
 /// points.
 class MeteringPointInfo {
@@ -325,6 +334,8 @@ abstract class PendingRecordingHostApi {
 @FlutterApi()
 abstract class PendingRecordingFlutterApi {
   void create(int identifier);
+
+  void onVideoRecordingEvent(VideoRecordEventData event);
 }
 
 @HostApi(dartHostTestHandler: 'TestRecordingHostApi')

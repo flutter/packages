@@ -1,3 +1,8 @@
+## 0.1.11
+
+* Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
+* Migrates deprecated MaterialState and MaterialStateProperty to WidgetState and WidgetStateProperty.
+
 ## 0.1.10+2
 
 * Reduce rebuilds when invoking `isActive` method.

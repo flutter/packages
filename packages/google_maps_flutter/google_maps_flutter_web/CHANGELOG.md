@@ -1,6 +1,10 @@
-## 0.5.8
+## 0.5.9
 
 * Adds support for heatmap layers.
+
+## 0.5.8
+
+* Adds support for BitmapDescriptor classes `AssetMapBitmap` and `BytesMapBitmap`.
 
 ## 0.5.7
 
