@@ -98,7 +98,7 @@
   self = [super init];
   if (self) {
     _mapView = mapView;
-    _heatmapIdToController = [@{} mutableCopy];
+    _heatmapIdToController = [NSMutableDictionary dictionary];
   }
   return self;
 }
