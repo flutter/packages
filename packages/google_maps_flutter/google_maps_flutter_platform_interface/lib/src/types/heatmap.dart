@@ -68,6 +68,27 @@ class HeatmapRadius {
 /// Draws a heatmap on the map.
 @immutable
 class Heatmap implements MapsObject<Heatmap> {
+  /// The default heatmap opacity as seen in the Google Maps SDKS:
+  /// - https://github.com/googlemaps/google-maps-ios-utils/blob/0e7ed81f1bbd9d29e4529c40ae39b0791b0a0eb8/src/Heatmap/GMUHeatmapTileLayer.m#L66
+  /// - https://github.com/googlemaps/android-maps-utils/blob/2883d5d471bc04fa0e74f286b7c5beeac634df84/library/src/main/java/com/google/maps/android/heatmaps/HeatmapTileProvider.java#L49
+  /// - https://developers.google.com/maps/documentation/javascript/reference/visualization#HeatmapLayerOptions.opacity
+  ///
+  /// The default on web is actually 0.6, but to maintain consistency with
+  /// iOS and Android, we use 0.7.
+  static const double _defaultOpacity = 0.7;
+
+  /// The minimum and maximum zoom intensity values required to get iOS
+  /// heatmap rendering to match the other platforms.
+  ///
+  /// See:
+  /// - https://github.com/googlemaps/google-maps-ios-utils/issues/419
+  /// - https://github.com/googlemaps/google-maps-ios-utils/issues/371
+  ///
+  /// The values used are respectively the minimum and maximum zoom levels
+  /// supported by Google Maps.
+  static const int _defaultMinimumZoomIntensity = 0;
+  static const int _defaultMaximumZoomIntensity = 21;
+
   /// Creates an immutable representation of a [Heatmap] to draw on
   /// [GoogleMap].
   const Heatmap({
@@ -76,10 +97,10 @@ class Heatmap implements MapsObject<Heatmap> {
     this.dissipating = true,
     this.gradient,
     this.maxIntensity,
-    this.opacity = 0.7,
+    this.opacity = _defaultOpacity,
     required this.radius,
-    this.minimumZoomIntensity = 0,
-    this.maximumZoomIntensity = 21,
+    this.minimumZoomIntensity = _defaultMinimumZoomIntensity,
+    this.maximumZoomIntensity = _defaultMaximumZoomIntensity,
   }) : assert(opacity >= 0 && opacity <= 1);
 
   /// Uniquely identifies a [Heatmap].
