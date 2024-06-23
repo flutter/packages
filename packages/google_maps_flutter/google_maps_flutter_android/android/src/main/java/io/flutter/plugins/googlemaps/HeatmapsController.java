@@ -6,6 +6,7 @@ package io.flutter.plugins.googlemaps;
 
 import static io.flutter.plugins.googlemaps.Convert.HEATMAP_ID_KEY;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.TileOverlay;
@@ -67,7 +68,7 @@ public class HeatmapsController {
 
   /** Builds the heatmap. This method exists to allow mocking the HeatmapTileProvider in tests. */
   @VisibleForTesting
-  public HeatmapTileProvider buildHeatmap(HeatmapBuilder builder) {
+  public @NonNull HeatmapTileProvider buildHeatmap(@NonNull HeatmapBuilder builder) {
     return builder.build();
   }
 

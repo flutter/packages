@@ -38,7 +38,7 @@ public class HeatmapController implements HeatmapOptionsSink {
   }
 
   @Override
-  public void setGradient(Gradient gradient) {
+  public void setGradient(@NonNull Gradient gradient) {
     heatmap.setGradient(gradient);
   }
 
