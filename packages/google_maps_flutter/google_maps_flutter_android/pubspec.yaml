@@ -2,7 +2,7 @@ name: google_maps_flutter_android
 description: Android implementation of the google_maps_flutter plugin.
 repository: https://github.com/flutter/packages/tree/main/packages/google_maps_flutter/google_maps_flutter_android
 issue_tracker: https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+label%3A%22p%3A+maps%22
-version: 2.9.1
+version: 2.10.0
 
 environment:
   sdk: ^3.4.0
@@ -26,8 +26,10 @@ dependencies:
 
 dev_dependencies:
   async: ^2.5.0
+  build_runner: ^2.3.3
   flutter_test:
     sdk: flutter
+  mockito: 5.4.4
   pigeon: ^20.0.1
   plugin_platform_interface: ^2.1.7
 

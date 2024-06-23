@@ -439,9 +439,13 @@ class Convert {
 
   static Messages.PlatformLatLng latLngToPigeon(LatLng latLng) {
     return new Messages.PlatformLatLng.Builder()
-        .setLat(latLng.latitude)
-        .setLng(latLng.longitude)
+        .setLatitude(latLng.latitude)
+        .setLongitude(latLng.longitude)
         .build();
+  }
+
+  static LatLng latLngFromPigeon(Messages.PlatformLatLng latLng) {
+    return new LatLng(latLng.getLatitude(), latLng.getLongitude());
   }
 
   static Object clusterToJson(String clusterManagerId, Cluster<MarkerBuilder> cluster) {
@@ -500,17 +504,12 @@ class Convert {
     return new LatLng(toDouble(data.get(0)), toDouble(data.get(1)));
   }
 
-  static Point toPoint(Object o) {
-    Object x = toMap(o).get("x");
-    Object y = toMap(o).get("y");
-    return new Point((int) x, (int) y);
+  static Point pointFromPigeon(Messages.PlatformPoint point) {
+    return new Point(point.getX().intValue(), point.getY().intValue());
   }
 
-  static Map<String, Integer> pointToJson(Point point) {
-    final Map<String, Integer> data = new HashMap<>(2);
-    data.put("x", point.x);
-    data.put("y", point.y);
-    return data;
+  static Messages.PlatformPoint pointToPigeon(Point point) {
+    return new Messages.PlatformPoint.Builder().setX((long) point.x).setY((long) point.y).build();
   }
 
   private static LatLngBounds toLatLngBounds(Object o) {

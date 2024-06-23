@@ -19,6 +19,11 @@ import 'utils/cluster_manager_utils.dart';
 // TODO(stuartmorgan): Remove the dependency on platform interface toJson
 // methods. Channel serialization details should all be package-internal.
 
+/// The non-test implementation of `_apiProvider`.
+MapsApi _productionApiProvider(int mapId) {
+  return MapsApi(messageChannelSuffix: mapId.toString());
+}
+
 /// Error thrown when an unknown map ID is provided to a method channel API.
 class UnknownMapIDError extends Error {
   /// Creates an assertion error with the provided [mapId] and optional
@@ -55,6 +60,11 @@ enum AndroidMapRenderer {
 
 /// An implementation of [GoogleMapsFlutterPlatform] for Android.
 class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
+  /// Creates a new Android maps implementation instance.
+  GoogleMapsFlutterAndroid({
+    @visibleForTesting MapsApi Function(int mapId)? apiProvider,
+  }) : _apiProvider = apiProvider ?? _productionApiProvider;
+
   /// Registers the Android implementation of GoogleMapsFlutterPlatform.
   static void registerWith() {
     GoogleMapsFlutterPlatform.instance = GoogleMapsFlutterAndroid();
@@ -68,6 +78,11 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
   // Every method call passes the int mapId
   final Map<int, MethodChannel> _channels = <int, MethodChannel>{};
 
+  final Map<int, MapsApi> _hostMaps = <int, MapsApi>{};
+
+  // A method to create MapsApi instances, which can be overridden for testing.
+  final MapsApi Function(int mapId) _apiProvider;
+
   /// Accesses the MethodChannel associated to the passed mapId.
   MethodChannel _channel(int mapId) {
     final MethodChannel? channel = _channels[mapId];
@@ -75,6 +90,15 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
       throw UnknownMapIDError(mapId);
     }
     return channel;
+  }
+
+  /// Accesses the MapsApi associated to the passed mapId.
+  MapsApi _hostApi(int mapId) {
+    final MapsApi? api = _hostMaps[mapId];
+    if (api == null) {
+      throw UnknownMapIDError(mapId);
+    }
+    return api;
   }
 
   // Keep a collection of mapId to a map of TileOverlays.
@@ -94,10 +118,23 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
     return channel;
   }
 
+  /// Returns the API instance for [mapId], creating it if it doesn't already
+  /// exist.
+  @visibleForTesting
+  MapsApi ensureApiInitialized(int mapId) {
+    MapsApi? api = _hostMaps[mapId];
+    if (api == null) {
+      api = _apiProvider(mapId);
+      _hostMaps[mapId] ??= api;
+    }
+    return api;
+  }
+
   @override
   Future<void> init(int mapId) {
-    final MethodChannel channel = ensureChannelInitialized(mapId);
-    return channel.invokeMethod<void>('map#waitForMap');
+    ensureChannelInitialized(mapId);
+    final MapsApi hostApi = ensureApiInitialized(mapId);
+    return hostApi.waitForMap();
   }
 
   @override
@@ -396,10 +433,7 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
     TileOverlayId tileOverlayId, {
     required int mapId,
   }) {
-    return _channel(mapId)
-        .invokeMethod<void>('tileOverlays#clearTileCache', <String, Object>{
-      'tileOverlayId': tileOverlayId.value,
-    });
+    return _hostApi(mapId).clearTileCache(tileOverlayId.value);
   }
 
   @override
@@ -428,11 +462,9 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
     String? mapStyle, {
     required int mapId,
   }) async {
-    final List<dynamic> successAndError = (await _channel(mapId)
-        .invokeMethod<List<dynamic>>('map#setStyle', mapStyle))!;
-    final bool success = successAndError[0] as bool;
+    final bool success = await _hostApi(mapId).setStyle(mapStyle ?? '');
     if (!success) {
-      throw MapStyleException(successAndError[1] as String);
+      throw const MapStyleException(_setStyleFailureMessage);
     }
   }
 
@@ -440,12 +472,8 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
   Future<LatLngBounds> getVisibleRegion({
     required int mapId,
   }) async {
-    final Map<String, dynamic> latLngBounds = (await _channel(mapId)
-        .invokeMapMethod<String, dynamic>('map#getVisibleRegion'))!;
-    final LatLng southwest = LatLng.fromJson(latLngBounds['southwest'])!;
-    final LatLng northeast = LatLng.fromJson(latLngBounds['northeast'])!;
-
-    return LatLngBounds(northeast: northeast, southwest: southwest);
+    return _latLngBoundsFromPlatformLatLngBounds(
+        await _hostApi(mapId).getVisibleRegion());
   }
 
   @override
@@ -453,11 +481,8 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
     LatLng latLng, {
     required int mapId,
   }) async {
-    final Map<String, int> point = (await _channel(mapId)
-        .invokeMapMethod<String, int>(
-            'map#getScreenCoordinate', latLng.toJson()))!;
-
-    return ScreenCoordinate(x: point['x']!, y: point['y']!);
+    return _screenCoordinateFromPlatformPoint(await _hostApi(mapId)
+        .getScreenCoordinate(_platformLatLngFromLatLng(latLng)));
   }
 
   @override
@@ -465,10 +490,8 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
     ScreenCoordinate screenCoordinate, {
     required int mapId,
   }) async {
-    final List<dynamic> latLng = (await _channel(mapId)
-        .invokeMethod<List<dynamic>>(
-            'map#getLatLng', screenCoordinate.toJson()))!;
-    return LatLng(latLng[0] as double, latLng[1] as double);
+    return _latLngFromPlatformLatLng(await _hostApi(mapId)
+        .getLatLng(_platformPointFromScreenCoordinate(screenCoordinate)));
   }
 
   @override
@@ -476,8 +499,7 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
     MarkerId markerId, {
     required int mapId,
   }) {
-    return _channel(mapId).invokeMethod<void>(
-        'markers#showInfoWindow', <String, String>{'markerId': markerId.value});
+    return _hostApi(mapId).showInfoWindow(markerId.value);
   }
 
   @override
@@ -485,37 +507,36 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
     MarkerId markerId, {
     required int mapId,
   }) {
-    return _channel(mapId).invokeMethod<void>(
-        'markers#hideInfoWindow', <String, String>{'markerId': markerId.value});
+    return _hostApi(mapId).hideInfoWindow(markerId.value);
   }
 
   @override
   Future<bool> isMarkerInfoWindowShown(
     MarkerId markerId, {
     required int mapId,
-  }) async {
-    return (await _channel(mapId).invokeMethod<bool>(
-        'markers#isInfoWindowShown',
-        <String, String>{'markerId': markerId.value}))!;
+  }) {
+    return _hostApi(mapId).isInfoWindowShown(markerId.value);
   }
 
   @override
   Future<double> getZoomLevel({
     required int mapId,
-  }) async {
-    return (await _channel(mapId).invokeMethod<double>('map#getZoomLevel'))!;
+  }) {
+    return _hostApi(mapId).getZoomLevel();
   }
 
   @override
   Future<Uint8List?> takeSnapshot({
     required int mapId,
   }) {
-    return _channel(mapId).invokeMethod<Uint8List>('map#takeSnapshot');
+    return _hostApi(mapId).takeSnapshot();
   }
 
   @override
-  Future<String?> getStyleError({required int mapId}) {
-    return _channel(mapId).invokeMethod<String>('map#getStyleError');
+  Future<String?> getStyleError({required int mapId}) async {
+    return (await _hostApi(mapId).didLastStyleSucceed())
+        ? null
+        : _setStyleFailureMessage;
   }
 
   /// Set [GoogleMapsFlutterPlatform] to use [AndroidViewSurface] to build the
@@ -770,7 +791,22 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
   }
 
   static LatLng _latLngFromPlatformLatLng(PlatformLatLng latLng) {
-    return LatLng(latLng.lat, latLng.lng);
+    return LatLng(latLng.latitude, latLng.longitude);
+  }
+
+  static PlatformLatLng _platformLatLngFromLatLng(LatLng latLng) {
+    return PlatformLatLng(
+        latitude: latLng.latitude, longitude: latLng.longitude);
+  }
+
+  static ScreenCoordinate _screenCoordinateFromPlatformPoint(
+      PlatformPoint point) {
+    return ScreenCoordinate(x: point.x, y: point.y);
+  }
+
+  static PlatformPoint _platformPointFromScreenCoordinate(
+      ScreenCoordinate coordinate) {
+    return PlatformPoint(x: coordinate.x, y: coordinate.y);
   }
 
   static LatLngBounds _latLngBoundsFromPlatformLatLngBounds(
@@ -858,3 +894,9 @@ class AndroidMapRendererException implements Exception {
   @override
   String toString() => 'AndroidMapRendererException($message)';
 }
+
+/// The error message to use for style failures. Unlike iOS, Android does not
+/// provide an API to get style failure information, it's just logged to the
+/// console, so there's no platform call needed.
+const String _setStyleFailureMessage =
+    'Unable to set the map style. Please check console logs for errors.';
