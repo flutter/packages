@@ -179,6 +179,7 @@ class BitmapDescriptor {
   /// and scales the images to the right resolution depending on the dpi.
   /// Set `mipmaps` to false to load the exact dpi version of the image,
   /// `mipmap` is true by default.
+  @Deprecated('Use BitmapDescriptor.asset method instead.')
   static Future<BitmapDescriptor> fromAssetImage(
     ImageConfiguration configuration,
     String assetName, {
@@ -217,6 +218,7 @@ class BitmapDescriptor {
   /// bitmap, regardless of the actual resolution of the encoded PNG.
   /// This helps the browser to render High-DPI images at the correct size.
   /// `size` is not required (and ignored, if passed) in other platforms.
+  @Deprecated('Use BitmapDescriptor.bytes method instead.')
   static BitmapDescriptor fromBytes(Uint8List byteData, {Size? size}) {
     assert(byteData.isNotEmpty,
         'Cannot create BitmapDescriptor with empty byteData');

@@ -33,6 +33,10 @@ const String platformWindows = 'windows';
 /// Key for enable experiment.
 const String kEnableExperiment = 'enable-experiment';
 
+/// A String to add to comments on temporarily-added changes that should not
+/// land (e.g., dependency overrides in federated plugin combination PRs).
+const String kDoNotLandWarning = 'DO NOT MERGE';
+
 /// Target platforms supported by Flutter.
 // ignore: public_member_api_docs
 enum FlutterPlatform { android, ios, linux, macos, web, windows }

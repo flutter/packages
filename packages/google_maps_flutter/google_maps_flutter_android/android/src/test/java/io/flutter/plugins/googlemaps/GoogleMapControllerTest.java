@@ -77,6 +77,7 @@ public class GoogleMapControllerTest {
         new GoogleMapController(
             0,
             context,
+            mockMessenger,
             mockMethodChannel,
             activity::getLifecycle,
             null,
