@@ -8,7 +8,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-/// Defines heatmap controllable by Flutter.
+/// Controller of a single Heatmap on the map.
 @interface FLTGoogleMapHeatmapController : NSObject
 
 /**
@@ -19,7 +19,19 @@ NS_ASSUME_NONNULL_BEGIN
  display heatmap data on the map.
  @param mapView The map view (of type GMSMapView) where the heatmap layer will be overlaid.
  @param options A dictionary (NSDictionary) containing any additional options or configuration
- settings for customizing the heatmap layer.
+ settings for customizing the heatmap layer. The options dictionary is expected to have the following structure:
+ 
+ @code
+ {
+   "heatmapId": NSString,
+   "data": NSArray, // Array of serialized weighted lat/lng
+   "gradient": NSDictionary?, // Serialized heatmap gradient
+   "opacity": NSNumber,
+   "radius": NSNumber,
+   "minimumZoomIntensity": NSNumber,
+   "maximumZoomIntensity": NSNumber
+ }
+ @endcode
 
  @return An initialized instance of this class, configured with the specified heatmap tile layer,
  map view, and additional options.
@@ -33,12 +45,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// Clears the tile cache in order to visually udpate this heatmap.
 - (void)clearTileCache;
-
-/// Reads heatmap data from a dictionary and configures the heatmapTileLayer accordingly.
-- (void)interpretHeatmapOptions:(NSDictionary<NSString *, id> *)data;
 @end
 
-/// Defines an interface for controlling heatmaps from Flutter.
+/// Controller of multiple Heatmaps on the map.
 @interface FLTHeatmapsController : NSObject
 
 /// Initializes the controller with a GMSMapView.
@@ -56,7 +65,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// Returns true if a heatmap with the given identifier exists on the map.
 - (bool)hasHeatmapWithIdentifier:(NSString *)identifier;
 
-/// Returns the data of the heatmap with the given identifier.
+/// Returns the JSON data of the heatmap with the given identifier. The JSON structure is equivalent to the `options` parameter above.
 - (nullable NSDictionary<NSString *, id> *)heatmapInfoWithIdentifier:(NSString *)identifier;
 @end
 

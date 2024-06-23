@@ -8,15 +8,15 @@
 
 @interface FLTGoogleMapHeatmapController ()
 
-// The heatmap tile layer this controller handles.
+/// The heatmap tile layer this controller handles.
 @property(nonatomic, strong) GMUHeatmapTileLayer *heatmapTileLayer;
 
-// The map view owned by GoogmeMapController.
+/// The GMSMapView to which the heatmaps are added.
 @property(nonatomic, weak) GMSMapView *mapView;
 
 @end
 
-// Static wrapper for interpreting heatmap options.
+/// Static wrapper for interpreting heatmap options.
 static void InterpretHeatmapOptions(FLTGoogleMapHeatmapController *self,
                                     NSDictionary<NSString *, id> *options) {
   [self interpretHeatmapOptions:options];
