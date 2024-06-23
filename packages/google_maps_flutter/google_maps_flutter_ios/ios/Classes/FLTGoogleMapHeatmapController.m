@@ -81,24 +81,12 @@
   // The map must be set each time for options to update.
   heatmapTileLayer.map = mapView;
 }
-- (NSDictionary<NSString *, id> *)getHeatmapInfo {
-  NSMutableDictionary *options = [@{} mutableCopy];
-  options[kHeatmapDataKey] =
-      [FLTGoogleMapJSONConversions arrayFromWeightedData:_heatmapTileLayer.weightedData];
-  options[kHeatmapGradientKey] =
-      [FLTGoogleMapJSONConversions dictionaryFromGradient:_heatmapTileLayer.gradient];
-  options[kHeatmapOpacityKey] = @(_heatmapTileLayer.opacity);
-  options[kHeatmapRadiusKey] = @(_heatmapTileLayer.radius);
-  options[kHeatmapMinimumZoomIntensityKey] = @(_heatmapTileLayer.minimumZoomIntensity);
-  options[kHeatmapMaximumZoomIntensityKey] = @(_heatmapTileLayer.maximumZoomIntensity);
-  return options;
-}
 @end
 
 @interface FLTHeatmapsController ()
 
 /// A map from heatmapId to the controller that manages it.
-@property(nonatomic, strong) NSMutableDictionary *heatmapIdToController;
+@property(nonatomic, strong) NSMutableDictionary<NSString *, FLTGoogleMapHeatmapController *> *heatmapIdToController;
 
 /// The map view owned by GoogmeMapController.
 @property(nonatomic, weak) GMSMapView *mapView;
@@ -145,16 +133,21 @@
   }
 }
 - (bool)hasHeatmapWithIdentifier:(NSString *)identifier {
-  if (!identifier) {
-    return NO;
-  }
   return _heatmapIdToController[identifier] != nil;
 }
 - (nullable NSDictionary<NSString *, id> *)heatmapInfoWithIdentifier:(NSString *)identifier {
-  if (self.heatmapIdToController[identifier] == nil) {
+    FLTGoogleMapHeatmapController *heatmapController = self.heatmapIdToController[identifier];
+    if (heatmapController) {
+        return @{
+            kHeatmapDataKey: [FLTGoogleMapJSONConversions arrayFromWeightedData:heatmapController.heatmapTileLayer.weightedData],
+            kHeatmapGradientKey: [FLTGoogleMapJSONConversions dictionaryFromGradient:heatmapController.heatmapTileLayer.gradient],
+            kHeatmapOpacityKey: @(heatmapController.heatmapTileLayer.opacity),
+            kHeatmapRadiusKey: @(heatmapController.heatmapTileLayer.radius),
+            kHeatmapMinimumZoomIntensityKey: @(heatmapController.heatmapTileLayer.minimumZoomIntensity),
+            kHeatmapMaximumZoomIntensityKey: @(heatmapController.heatmapTileLayer.maximumZoomIntensity)
+        };
+    }
     return nil;
-  }
-  return [self.heatmapIdToController[identifier] getHeatmapInfo];
 }
 + (NSString *)heatmapIdentifierFor:(NSDictionary<NSString *, id> *)heatmap {
   return heatmap[kHeatmapIdKey];
