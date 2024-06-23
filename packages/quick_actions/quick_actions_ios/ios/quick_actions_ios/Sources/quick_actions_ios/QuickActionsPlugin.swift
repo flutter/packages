@@ -92,6 +92,7 @@ public final class QuickActionsPlugin: NSObject, FlutterPlugin, IOSQuickActionsA
 
     let type = shortcut.type
     let localizedTitle = shortcut.localizedTitle
+    let localizedSubtitle = shortcut.localizedSubtitle
 
     let icon = (shortcut.icon).map {
       UIApplicationShortcutIcon(templateImageName: $0)
@@ -101,7 +102,7 @@ public final class QuickActionsPlugin: NSObject, FlutterPlugin, IOSQuickActionsA
     return UIApplicationShortcutItem(
       type: type,
       localizedTitle: localizedTitle,
-      localizedSubtitle: nil,
+      localizedSubtitle: localizedSubtitle,
       icon: icon,
       userInfo: nil)
   }
