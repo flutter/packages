@@ -401,12 +401,12 @@ void main() {
         const Heatmap(
           heatmapId: HeatmapId('1'),
           data: heatmapPoints,
-          radius: HeatmapRadius.fromPlatformSpecificValue(20),
+          radius: HeatmapRadius.fromPixels(20),
         ),
         const Heatmap(
           heatmapId: HeatmapId('2'),
           data: heatmapPoints,
-          radius: HeatmapRadius.fromPlatformSpecificValue(20),
+          radius: HeatmapRadius.fromPixels(20),
         ),
       };
 
@@ -423,7 +423,7 @@ void main() {
         const Heatmap(
           heatmapId: HeatmapId('1'),
           data: heatmapPoints,
-          radius: HeatmapRadius.fromPlatformSpecificValue(20),
+          radius: HeatmapRadius.fromPixels(20),
         ),
       };
       controller.addHeatmaps(heatmaps);
@@ -435,7 +435,7 @@ void main() {
         const Heatmap(
           heatmapId: HeatmapId('1'),
           data: <WeightedLatLng>[WeightedLatLng(LatLng(0, 0))],
-          radius: HeatmapRadius.fromPlatformSpecificValue(20),
+          radius: HeatmapRadius.fromPixels(20),
         ),
       };
       controller.changeHeatmaps(updatedHeatmaps);
@@ -450,17 +450,17 @@ void main() {
         const Heatmap(
           heatmapId: HeatmapId('1'),
           data: heatmapPoints,
-          radius: HeatmapRadius.fromPlatformSpecificValue(20),
+          radius: HeatmapRadius.fromPixels(20),
         ),
         const Heatmap(
           heatmapId: HeatmapId('2'),
           data: heatmapPoints,
-          radius: HeatmapRadius.fromPlatformSpecificValue(20),
+          radius: HeatmapRadius.fromPixels(20),
         ),
         const Heatmap(
           heatmapId: HeatmapId('3'),
           data: heatmapPoints,
-          radius: HeatmapRadius.fromPlatformSpecificValue(20),
+          radius: HeatmapRadius.fromPixels(20),
         ),
       };
 
@@ -492,7 +492,7 @@ void main() {
               HeatmapGradientColor(Color(0xFFFABADA), 0)
             ],
           ),
-          radius: const HeatmapRadius.fromPlatformSpecificValue(20),
+          radius: const HeatmapRadius.fromPixels(20),
         ),
       };
 

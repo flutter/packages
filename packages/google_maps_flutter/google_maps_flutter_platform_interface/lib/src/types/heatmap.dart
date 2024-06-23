@@ -24,27 +24,31 @@ class HeatmapId extends MapsObjectId<Heatmap> {
 /// differences in handling of heatmap radius values. See flutter/flutter#145411.
 @immutable
 class HeatmapRadius {
-  const HeatmapRadius._(this.radius);
+  /// Create a [HeatmapRadius] from a platform-independent [radius] value.
+  ///
+  /// In the future, this will convert the platform-independent [radius] to a
+  /// platform-specific value for [pixels].
+  // const HeatmapRadius(this.radius) : pixels = radius;
 
   /// Create a [HeatmapRadius] with a radius in pixels.
   ///
   /// This value will be used verbatim on all platforms. It is up to the
   /// developer to ensure that the value is appropriate for the platform.
-  const HeatmapRadius.fromPlatformSpecificValue(int radius) : this._(radius);
+  const HeatmapRadius.fromPixels(this.pixels) : radius = pixels;
 
   /// Create a [HeatmapRadius] from a platform value.
   ///
-  /// In the future, this will do the opposite conversion that [pixels] does.
-  const HeatmapRadius.fromJson(dynamic json) : this._(json as int);
+  /// In the future, this will convert the platform value to a
+  /// platform-independent value for [radius].
+  const HeatmapRadius.fromJson(dynamic json)
+      : radius = json as int,
+        pixels = json;
 
   /// The platform-independent value of the radius.
   final int radius;
 
-  /// The radius in pixels derived from [radius].
-  ///
-  /// In the future, this will convert [radius] to the current platform's
-  /// expected value.
-  int get pixels => radius;
+  /// The platform-specific value of the radius in pixels.
+  final int pixels;
 
   @override
   bool operator ==(Object other) {

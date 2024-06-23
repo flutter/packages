@@ -48,7 +48,7 @@ void main() {
     const Heatmap h1 = Heatmap(
       heatmapId: HeatmapId('heatmap_1'),
       data: _heatmapPoints,
-      radius: HeatmapRadius.fromPlatformSpecificValue(20),
+      radius: HeatmapRadius.fromPixels(20),
     );
     await tester.pumpWidget(_mapWithHeatmaps(<Heatmap>{h1}));
 
@@ -66,12 +66,12 @@ void main() {
     const Heatmap h1 = Heatmap(
       heatmapId: HeatmapId('heatmap_1'),
       data: _heatmapPoints,
-      radius: HeatmapRadius.fromPlatformSpecificValue(20),
+      radius: HeatmapRadius.fromPixels(20),
     );
     const Heatmap h2 = Heatmap(
       heatmapId: HeatmapId('heatmap_2'),
       data: _heatmapPoints,
-      radius: HeatmapRadius.fromPlatformSpecificValue(20),
+      radius: HeatmapRadius.fromPixels(20),
     );
 
     await tester.pumpWidget(_mapWithHeatmaps(<Heatmap>{h1}));
@@ -92,7 +92,7 @@ void main() {
     const Heatmap h1 = Heatmap(
       heatmapId: HeatmapId('heatmap_1'),
       data: _heatmapPoints,
-      radius: HeatmapRadius.fromPlatformSpecificValue(20),
+      radius: HeatmapRadius.fromPixels(20),
     );
 
     await tester.pumpWidget(_mapWithHeatmaps(<Heatmap>{h1}));
@@ -111,12 +111,12 @@ void main() {
     const Heatmap h1 = Heatmap(
       heatmapId: HeatmapId('heatmap_1'),
       data: _heatmapPoints,
-      radius: HeatmapRadius.fromPlatformSpecificValue(20),
+      radius: HeatmapRadius.fromPixels(20),
     );
     const Heatmap h2 = Heatmap(
       heatmapId: HeatmapId('heatmap_1'),
       data: _heatmapPoints,
-      radius: HeatmapRadius.fromPlatformSpecificValue(10),
+      radius: HeatmapRadius.fromPixels(10),
     );
 
     await tester.pumpWidget(_mapWithHeatmaps(<Heatmap>{h1}));
@@ -134,12 +134,12 @@ void main() {
     const Heatmap h1 = Heatmap(
       heatmapId: HeatmapId('heatmap_1'),
       data: _heatmapPoints,
-      radius: HeatmapRadius.fromPlatformSpecificValue(20),
+      radius: HeatmapRadius.fromPixels(20),
     );
     const Heatmap h2 = Heatmap(
       heatmapId: HeatmapId('heatmap_1'),
       data: _heatmapPoints,
-      radius: HeatmapRadius.fromPlatformSpecificValue(10),
+      radius: HeatmapRadius.fromPixels(10),
     );
 
     await tester.pumpWidget(_mapWithHeatmaps(<Heatmap>{h1}));
@@ -157,24 +157,24 @@ void main() {
     Heatmap h1 = const Heatmap(
       heatmapId: HeatmapId('heatmap_1'),
       data: _heatmapPoints,
-      radius: HeatmapRadius.fromPlatformSpecificValue(20),
+      radius: HeatmapRadius.fromPixels(20),
     );
     Heatmap h2 = const Heatmap(
       heatmapId: HeatmapId('heatmap_2'),
       data: _heatmapPoints,
-      radius: HeatmapRadius.fromPlatformSpecificValue(20),
+      radius: HeatmapRadius.fromPixels(20),
     );
     final Set<Heatmap> prev = <Heatmap>{h1, h2};
     h1 = const Heatmap(
       heatmapId: HeatmapId('heatmap_1'),
       data: _heatmapPoints,
       dissipating: false,
-      radius: HeatmapRadius.fromPlatformSpecificValue(20),
+      radius: HeatmapRadius.fromPixels(20),
     );
     h2 = const Heatmap(
       heatmapId: HeatmapId('heatmap_2'),
       data: _heatmapPoints,
-      radius: HeatmapRadius.fromPlatformSpecificValue(10),
+      radius: HeatmapRadius.fromPixels(10),
     );
     final Set<Heatmap> cur = <Heatmap>{h1, h2};
 
@@ -192,12 +192,12 @@ void main() {
     Heatmap h2 = const Heatmap(
       heatmapId: HeatmapId('heatmap_2'),
       data: _heatmapPoints,
-      radius: HeatmapRadius.fromPlatformSpecificValue(20),
+      radius: HeatmapRadius.fromPixels(20),
     );
     const Heatmap h3 = Heatmap(
       heatmapId: HeatmapId('heatmap_3'),
       data: _heatmapPoints,
-      radius: HeatmapRadius.fromPlatformSpecificValue(20),
+      radius: HeatmapRadius.fromPixels(20),
     );
     final Set<Heatmap> prev = <Heatmap>{h2, h3};
 
@@ -205,12 +205,12 @@ void main() {
     const Heatmap h1 = Heatmap(
       heatmapId: HeatmapId('heatmap_1'),
       data: _heatmapPoints,
-      radius: HeatmapRadius.fromPlatformSpecificValue(20),
+      radius: HeatmapRadius.fromPixels(20),
     );
     h2 = const Heatmap(
       heatmapId: HeatmapId('heatmap_2'),
       data: _heatmapPoints,
-      radius: HeatmapRadius.fromPlatformSpecificValue(10),
+      radius: HeatmapRadius.fromPixels(10),
     );
     final Set<Heatmap> cur = <Heatmap>{h1, h2};
 
@@ -233,23 +233,23 @@ void main() {
     const Heatmap h1 = Heatmap(
       heatmapId: HeatmapId('heatmap_1'),
       data: _heatmapPoints,
-      radius: HeatmapRadius.fromPlatformSpecificValue(20),
+      radius: HeatmapRadius.fromPixels(20),
     );
     const Heatmap h2 = Heatmap(
       heatmapId: HeatmapId('heatmap_2'),
       data: _heatmapPoints,
-      radius: HeatmapRadius.fromPlatformSpecificValue(20),
+      radius: HeatmapRadius.fromPixels(20),
     );
     Heatmap h3 = const Heatmap(
       heatmapId: HeatmapId('heatmap_3'),
       data: _heatmapPoints,
-      radius: HeatmapRadius.fromPlatformSpecificValue(20),
+      radius: HeatmapRadius.fromPixels(20),
     );
     final Set<Heatmap> prev = <Heatmap>{h1, h2, h3};
     h3 = const Heatmap(
       heatmapId: HeatmapId('heatmap_3'),
       data: _heatmapPoints,
-      radius: HeatmapRadius.fromPlatformSpecificValue(10),
+      radius: HeatmapRadius.fromPixels(10),
     );
     final Set<Heatmap> cur = <Heatmap>{h1, h2, h3};
 

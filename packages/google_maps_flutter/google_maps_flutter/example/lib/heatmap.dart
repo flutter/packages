@@ -128,7 +128,7 @@ class HeatmapBodyState extends State<HeatmapBody> {
                       ],
                     ),
                     maxIntensity: 1,
-                    radius: HeatmapRadius.fromPlatformSpecificValue(radius),
+                    radius: HeatmapRadius.fromPixels(radius),
                   )
                 }),
           ),

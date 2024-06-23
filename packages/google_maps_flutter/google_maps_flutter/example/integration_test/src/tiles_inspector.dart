@@ -309,7 +309,7 @@ void runTests() {
     ),
     maxIntensity: 1,
     opacity: 0.5,
-    radius: const HeatmapRadius.fromPlatformSpecificValue(40),
+    radius: const HeatmapRadius.fromPixels(40),
     minimumZoomIntensity: 1,
     maximumZoomIntensity: 20,
   );
@@ -390,8 +390,7 @@ void runTests() {
         gradientParam: heatmap1.gradient,
         maxIntensityParam: heatmap1.maxIntensity! + 1,
         opacityParam: heatmap1.opacity - 0.1,
-        radiusParam:
-            HeatmapRadius.fromPlatformSpecificValue(heatmap1.radius.radius + 1),
+        radiusParam: HeatmapRadius.fromPixels(heatmap1.radius.radius + 1),
         minimumZoomIntensityParam: heatmap1.minimumZoomIntensity + 1,
         maximumZoomIntensityParam: heatmap1.maximumZoomIntensity + 1,
       );

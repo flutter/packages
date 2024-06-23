@@ -324,7 +324,7 @@ void main() {
               WeightedLatLng(LatLng(43.354469, -5.851318)),
               WeightedLatLng(LatLng(43.354762, -5.850824)),
             ],
-            radius: HeatmapRadius.fromPlatformSpecificValue(20),
+            radius: HeatmapRadius.fromPixels(20),
           ),
         }, markers: <Marker>{
           const Marker(
@@ -716,12 +716,12 @@ void main() {
           const Heatmap(
             heatmapId: HeatmapId('to-be-updated'),
             data: heatmapPoints,
-            radius: HeatmapRadius.fromPlatformSpecificValue(20),
+            radius: HeatmapRadius.fromPixels(20),
           ),
           const Heatmap(
             heatmapId: HeatmapId('to-be-removed'),
             data: heatmapPoints,
-            radius: HeatmapRadius.fromPlatformSpecificValue(20),
+            radius: HeatmapRadius.fromPixels(20),
           ),
         };
 
@@ -730,12 +730,12 @@ void main() {
             heatmapId: HeatmapId('to-be-updated'),
             data: heatmapPoints,
             dissipating: false,
-            radius: HeatmapRadius.fromPlatformSpecificValue(20),
+            radius: HeatmapRadius.fromPixels(20),
           ),
           const Heatmap(
             heatmapId: HeatmapId('to-be-added'),
             data: heatmapPoints,
-            radius: HeatmapRadius.fromPlatformSpecificValue(20),
+            radius: HeatmapRadius.fromPixels(20),
           ),
         };
 
@@ -748,7 +748,7 @@ void main() {
           const Heatmap(
             heatmapId: HeatmapId('to-be-added'),
             data: heatmapPoints,
-            radius: HeatmapRadius.fromPlatformSpecificValue(20),
+            radius: HeatmapRadius.fromPixels(20),
           ),
         }));
         verify(mock.changeHeatmaps(<Heatmap>{
@@ -756,7 +756,7 @@ void main() {
             heatmapId: HeatmapId('to-be-updated'),
             data: heatmapPoints,
             dissipating: false,
-            radius: HeatmapRadius.fromPlatformSpecificValue(20),
+            radius: HeatmapRadius.fromPixels(20),
           ),
         }));
       });
