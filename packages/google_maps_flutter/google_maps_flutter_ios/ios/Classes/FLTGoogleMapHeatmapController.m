@@ -16,12 +16,6 @@
 
 @end
 
-/// Static wrapper for interpreting heatmap options.
-static void InterpretHeatmapOptions(FLTGoogleMapHeatmapController *self,
-                                    NSDictionary<NSString *, id> *options) {
-  [self interpretHeatmapOptions:options];
-}
-
 @implementation FLTGoogleMapHeatmapController
 - (instancetype)initWithHeatmapTileLayer:(GMUHeatmapTileLayer *)heatmapTileLayer
                                  mapView:(GMSMapView *)mapView
@@ -30,7 +24,10 @@ static void InterpretHeatmapOptions(FLTGoogleMapHeatmapController *self,
   if (self) {
     _heatmapTileLayer = heatmapTileLayer;
     _mapView = mapView;
-    InterpretHeatmapOptions(self, options);
+    
+    [FLTGoogleMapHeatmapController interpretHeatmapOptions:_heatmapTileLayer
+                                                   mapView:_mapView
+                                                   options:options];
   }
   return self;
 }
@@ -43,67 +40,46 @@ static void InterpretHeatmapOptions(FLTGoogleMapHeatmapController *self,
   [_heatmapTileLayer clearTileCache];
 }
 
-- (void)setWeightedData:(NSArray<GMUWeightedLatLng *> *)weightedData {
-  _heatmapTileLayer.weightedData = weightedData;
-}
-
-- (void)setGradient:(GMUGradient *)gradient {
-  _heatmapTileLayer.gradient = gradient;
-}
-
-- (void)setOpacity:(double)opacity {
-  _heatmapTileLayer.opacity = opacity;
-}
-
-- (void)setRadius:(int)radius {
-  _heatmapTileLayer.radius = radius;
-}
-
-- (void)setMinimumZoomIntensity:(int)intensity {
-  _heatmapTileLayer.minimumZoomIntensity = intensity;
-}
-
-- (void)setMaximumZoomIntensity:(int)intensity {
-  _heatmapTileLayer.maximumZoomIntensity = intensity;
-}
-
-- (void)setMap {
-  _heatmapTileLayer.map = _mapView;
-}
-
 - (void)interpretHeatmapOptions:(NSDictionary<NSString *, id> *)data {
-  id weightedData = data[kHeatmapDataKey];
+    [FLTGoogleMapHeatmapController interpretHeatmapOptions:_heatmapTileLayer
+                                                     mapView:_mapView
+                                                     options:data];
+}
++ (void)interpretHeatmapOptions:(GMUHeatmapTileLayer *)heatmapTileLayer
+                        mapView:(GMSMapView *)mapView
+                        options:(NSDictionary<NSString *, id> *)options {
+  id weightedData = options[kHeatmapDataKey];
   if ([weightedData isKindOfClass:[NSArray class]]) {
-    [self setWeightedData:[FLTGoogleMapJSONConversions weightedDataFromArray:weightedData]];
+      heatmapTileLayer.weightedData = [FLTGoogleMapJSONConversions weightedDataFromArray:weightedData];
   }
 
-  id gradient = data[kHeatmapGradientKey];
+  id gradient = options[kHeatmapGradientKey];
   if ([gradient isKindOfClass:[NSDictionary class]]) {
-    [self setGradient:[FLTGoogleMapJSONConversions gradientFromDictionary:gradient]];
+      heatmapTileLayer.gradient = [FLTGoogleMapJSONConversions gradientFromDictionary:gradient];
   }
 
-  id opacity = data[kHeatmapOpacityKey];
+  id opacity = options[kHeatmapOpacityKey];
   if ([opacity isKindOfClass:[NSNumber class]]) {
-    [self setOpacity:[opacity doubleValue]];
+      heatmapTileLayer.opacity = [opacity doubleValue];
   }
 
-  id radius = data[kHeatmapRadiusKey];
+  id radius = options[kHeatmapRadiusKey];
   if ([radius isKindOfClass:[NSNumber class]]) {
-    [self setRadius:[radius intValue]];
+      heatmapTileLayer.radius = [radius intValue];
   }
 
-  id minimumZoomIntensity = data[kHeatmapMinimumZoomIntensityKey];
+  id minimumZoomIntensity = options[kHeatmapMinimumZoomIntensityKey];
   if ([minimumZoomIntensity isKindOfClass:[NSNumber class]]) {
-    [self setMinimumZoomIntensity:[minimumZoomIntensity intValue]];
+      heatmapTileLayer.minimumZoomIntensity = [minimumZoomIntensity intValue];
   }
 
-  id maximumZoomIntensity = data[kHeatmapMaximumZoomIntensityKey];
+  id maximumZoomIntensity = options[kHeatmapMaximumZoomIntensityKey];
   if ([maximumZoomIntensity isKindOfClass:[NSNumber class]]) {
-    [self setMaximumZoomIntensity:[maximumZoomIntensity intValue]];
+      heatmapTileLayer.maximumZoomIntensity = [maximumZoomIntensity intValue];
   }
 
   // The map must be set each time for options to update.
-  [self setMap];
+  heatmapTileLayer.map = mapView;
 }
 - (NSDictionary<NSString *, id> *)getHeatmapInfo {
   NSMutableDictionary *options = [@{} mutableCopy];
