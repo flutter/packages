@@ -19,7 +19,9 @@ class HeatmapId extends MapsObjectId<Heatmap> {
 
 /// A wrapper around platform specific behavior for the radius of a [Heatmap].
 ///
-/// Currently this class does nothing. See https://github.com/flutter/flutter/issues/145411
+/// Currently this class only handles platform-specific values, but in the
+/// future it may provide alternate constructors that abstract platform
+/// differences in handling of heatmap radius values. See flutter/flutter#145411.
 @immutable
 class HeatmapRadius {
   const HeatmapRadius._(this.radius);

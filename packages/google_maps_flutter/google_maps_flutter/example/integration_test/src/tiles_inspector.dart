@@ -206,7 +206,7 @@ void runTests() {
     );
   }, skip: isWeb /* Tiles not supported on the web */);
 
-  /// Check that two lists of [WeightedLatLng] are more or less equal
+  /// Check that two lists of [WeightedLatLng] are more or less equal.
   void expectHeatmapDataMoreOrLessEquals(
     List<WeightedLatLng> data1,
     List<WeightedLatLng> data2,
@@ -221,7 +221,7 @@ void runTests() {
     }
   }
 
-  /// Check that two [HeatmapGradient]s are more or less equal
+  /// Check that two [HeatmapGradient]s are more or less equal.
   void expectHeatmapGradientMoreOrLessEquals(
     HeatmapGradient? gradient1,
     HeatmapGradient? gradient2,
@@ -249,11 +249,15 @@ void runTests() {
   void expectHeatmapEquals(Heatmap heatmap1, Heatmap heatmap2) {
     expectHeatmapDataMoreOrLessEquals(heatmap1.data, heatmap2.data);
     expectHeatmapGradientMoreOrLessEquals(heatmap1.gradient, heatmap2.gradient);
+    // Only Android supports `maxIntensity`
+    // so the platform value is undefined on others.
     if (Platform.isAndroid) {
       expect(heatmap1.maxIntensity, heatmap2.maxIntensity);
     }
     expect(heatmap1.opacity, moreOrLessEquals(heatmap2.opacity, epsilon: 1e-8));
     expect(heatmap1.radius, heatmap2.radius);
+    // Only iOS supports `minimumZoomIntensity` and `maximumZoomIntensity`
+    // so the platform value is undefined on others.
     if (Platform.isIOS) {
       expect(heatmap1.minimumZoomIntensity, heatmap2.minimumZoomIntensity);
       expect(heatmap1.maximumZoomIntensity, heatmap2.maximumZoomIntensity);
@@ -413,6 +417,7 @@ void runTests() {
 
       expectHeatmapEquals(heatmap1New, heatmapInfo1);
     },
+    // Heatmap data is not readable from the Android SDK
     skip: isAndroid,
   );
 
@@ -459,6 +464,7 @@ void runTests() {
 
       expect(heatmapInfo1, isNull);
     },
+    // Heatmap data is not readable from the Android SDK
     skip: isAndroid,
   );
 }
