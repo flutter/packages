@@ -5,7 +5,6 @@
 package io.flutter.plugins.googlemaps;
 
 import androidx.annotation.NonNull;
-
 import com.google.android.gms.maps.model.TileOverlay;
 import com.google.maps.android.heatmaps.Gradient;
 import com.google.maps.android.heatmaps.HeatmapTileProvider;

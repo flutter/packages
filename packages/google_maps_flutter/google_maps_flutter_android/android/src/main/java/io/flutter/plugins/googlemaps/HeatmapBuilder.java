@@ -5,7 +5,6 @@
 package io.flutter.plugins.googlemaps;
 
 import androidx.annotation.NonNull;
-
 import com.google.maps.android.heatmaps.Gradient;
 import com.google.maps.android.heatmaps.HeatmapTileProvider;
 import com.google.maps.android.heatmaps.WeightedLatLng;

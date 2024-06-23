@@ -19,8 +19,9 @@ NS_ASSUME_NONNULL_BEGIN
  display heatmap data on the map.
  @param mapView The map view (of type GMSMapView) where the heatmap layer will be overlaid.
  @param options A dictionary (NSDictionary) containing any additional options or configuration
- settings for customizing the heatmap layer. The options dictionary is expected to have the following structure:
- 
+ settings for customizing the heatmap layer. The options dictionary is expected to have the
+ following structure:
+
  @code
  {
    "heatmapId": NSString,
@@ -68,7 +69,8 @@ NS_ASSUME_NONNULL_BEGIN
 /// Returns true if a heatmap with the given identifier exists on the map.
 - (bool)hasHeatmapWithIdentifier:(NSString *)identifier;
 
-/// Returns the JSON data of the heatmap with the given identifier. The JSON structure is equivalent to the `options` parameter above.
+/// Returns the JSON data of the heatmap with the given identifier. The JSON structure is equivalent
+/// to the `options` parameter above.
 - (nullable NSDictionary<NSString *, id> *)heatmapInfoWithIdentifier:(NSString *)identifier;
 @end
 
