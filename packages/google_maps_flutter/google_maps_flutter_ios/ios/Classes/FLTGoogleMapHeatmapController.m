@@ -121,10 +121,10 @@ static void InterpretHeatmapOptions(FLTGoogleMapHeatmapController *self,
 
 @interface FLTHeatmapsController ()
 
-// A map from heatmapId to the controller that manages it.
+/// A map from heatmapId to the controller that manages it.
 @property(nonatomic, strong) NSMutableDictionary *heatmapIdToController;
 
-// The map view owned by GoogmeMapController.
+/// The map view owned by GoogmeMapController.
 @property(nonatomic, weak) GMSMapView *mapView;
 
 @end

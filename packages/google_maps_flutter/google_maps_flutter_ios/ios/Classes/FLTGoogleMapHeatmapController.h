@@ -8,7 +8,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-// Defines heatmap controllable by Flutter.
+/// Defines heatmap controllable by Flutter.
 @interface FLTGoogleMapHeatmapController : NSObject
 
 /**
@@ -28,35 +28,35 @@ NS_ASSUME_NONNULL_BEGIN
                                  mapView:(GMSMapView *)mapView
                                  options:(NSDictionary<NSString *, id> *)options;
 
-// Removes this heatmap from the map.
+/// Removes this heatmap from the map.
 - (void)removeHeatmap;
 
-// Clears the tile cache in order to visually udpate this heatmap.
+/// Clears the tile cache in order to visually udpate this heatmap.
 - (void)clearTileCache;
 
-// Reads heatmap data from a dictionary and configures the heatmapTileLayer accordingly.
+/// Reads heatmap data from a dictionary and configures the heatmapTileLayer accordingly.
 - (void)interpretHeatmapOptions:(NSDictionary<NSString *, id> *)data;
 @end
 
-// Defines an interface for controlling heatmaps from Flutter.
+/// Defines an interface for controlling heatmaps from Flutter.
 @interface FLTHeatmapsController : NSObject
 
-// Initializes the controller with a GMSMapView.
+/// Initializes the controller with a GMSMapView.
 - (instancetype)initWithMapView:(GMSMapView *)mapView;
 
-// Adds heatmaps to the map.
+/// Adds heatmaps to the map.
 - (void)addHeatmaps:(NSArray<NSDictionary<NSString *, id> *> *)heatmapsToAdd;
 
-// Updates heatmaps on the map.
+/// Updates heatmaps on the map.
 - (void)changeHeatmaps:(NSArray<NSDictionary<NSString *, id> *> *)heatmapsToChange;
 
-// Removes heatmaps from the map.
+/// Removes heatmaps from the map.
 - (void)removeHeatmapsWithIdentifiers:(NSArray<NSString *> *)identifiers;
 
-// Returns true if a heatmap with the given identifier exists on the map.
+/// Returns true if a heatmap with the given identifier exists on the map.
 - (bool)hasHeatmapWithIdentifier:(NSString *)identifier;
 
-// Returns the data of the heatmap with the given identifier.
+/// Returns the data of the heatmap with the given identifier.
 - (nullable NSDictionary<NSString *, id> *)heatmapInfoWithIdentifier:(NSString *)identifier;
 @end
 
