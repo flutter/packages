@@ -49,14 +49,6 @@ public class GoogleSignInPlugin implements FlutterPlugin, ActivityAware {
   private @Nullable BinaryMessenger messenger;
   private ActivityPluginBinding activityPluginBinding;
 
-  @SuppressWarnings("deprecation")
-  public static void registerWith(
-      @NonNull io.flutter.plugin.common.PluginRegistry.Registrar registrar) {
-    GoogleSignInPlugin instance = new GoogleSignInPlugin();
-    instance.initInstance(registrar.messenger(), registrar.context(), new GoogleSignInWrapper());
-    instance.setUpRegistrar(registrar);
-  }
-
   @VisibleForTesting
   public void initInstance(
       @NonNull BinaryMessenger messenger,
@@ -65,12 +57,6 @@ public class GoogleSignInPlugin implements FlutterPlugin, ActivityAware {
     this.messenger = messenger;
     delegate = new Delegate(context, googleSignInWrapper);
     GoogleSignInApi.setup(messenger, delegate);
-  }
-
-  @VisibleForTesting
-  @SuppressWarnings("deprecation")
-  public void setUpRegistrar(@NonNull PluginRegistry.Registrar registrar) {
-    delegate.setUpRegistrar(registrar);
   }
 
   private void dispose() {
@@ -354,9 +340,6 @@ public class GoogleSignInPlugin implements FlutterPlugin, ActivityAware {
     private static final String DEFAULT_GAMES_SIGN_IN = "SignInOption.games";
 
     private final @NonNull Context context;
-    // Only set registrar for v1 embedder.
-    @SuppressWarnings("deprecation")
-    private PluginRegistry.Registrar registrar;
     // Only set activity for v2 embedder. Always access activity from getActivity() method.
     private @Nullable Activity activity;
     // TODO(stuartmorgan): See whether this can be replaced with background channels.
@@ -372,19 +355,13 @@ public class GoogleSignInPlugin implements FlutterPlugin, ActivityAware {
       this.googleSignInWrapper = googleSignInWrapper;
     }
 
-    @SuppressWarnings("deprecation")
-    public void setUpRegistrar(@NonNull PluginRegistry.Registrar registrar) {
-      this.registrar = registrar;
-      registrar.addActivityResultListener(this);
-    }
-
     public void setActivity(@Nullable Activity activity) {
       this.activity = activity;
     }
 
     // Only access activity with this method.
     public @Nullable Activity getActivity() {
-      return registrar != null ? registrar.activity() : activity;
+      return activity;
     }
 
     private void checkAndSetPendingOperation(

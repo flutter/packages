@@ -1,13 +1,13 @@
-name: table_view_example
-description: 'A sample application that uses TableView'
+name: two_dimensional_examples
+description: 'A sample application that uses TableView and TreeView'
 publish_to: 'none'
 
 # The following defines the version and build number for your application.
-version: 1.0.0+1
+version: 2.0.0
 
 environment:
-  sdk: '>=3.2.0 <4.0.0'
-  flutter: ">=3.16.0"
+  sdk: '>=3.3.0 <4.0.0'
+  flutter: ">=3.19.0"
 
 dependencies:
   flutter:

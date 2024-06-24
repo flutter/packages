@@ -1,3 +1,12 @@
+## 1.0.40
+
+* Updates androidx.core version to 1.13.1.
+
+## 1.0.39
+
+* Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+* Removes support for apps using the v1 Android embedding.
+
 ## 1.0.38
 
 * Updates minSdkVersion to 19.

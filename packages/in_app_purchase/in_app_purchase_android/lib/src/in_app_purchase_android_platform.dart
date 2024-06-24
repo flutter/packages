@@ -11,6 +11,7 @@ import 'package:in_app_purchase_platform_interface/in_app_purchase_platform_inte
 
 import '../billing_client_wrappers.dart';
 import '../in_app_purchase_android.dart';
+import 'billing_client_wrappers/billing_config_wrapper.dart';
 
 /// [IAPError.code] code for failed purchases.
 const String kPurchaseErrorCode = 'purchase_error';
@@ -161,7 +162,8 @@ class InAppPurchaseAndroidPlatform extends InAppPurchasePlatform {
           oldProduct: changeSubscriptionParam?.oldPurchaseDetails.productID,
           purchaseToken: changeSubscriptionParam
               ?.oldPurchaseDetails.verificationData.serverVerificationData,
-          prorationMode: changeSubscriptionParam?.prorationMode),
+          prorationMode: changeSubscriptionParam?.prorationMode,
+          replacementMode: changeSubscriptionParam?.replacementMode),
     );
     return billingResultWrapper.responseCode == BillingResponse.ok;
   }
@@ -311,4 +313,19 @@ class InAppPurchaseAndroidPlatform extends InAppPurchasePlatform {
       ];
     }
   }
+
+  /// Returns Play billing country code based on ISO-3166-1 alpha2 format.
+  ///
+  /// See: https://developer.android.com/reference/com/android/billingclient/api/BillingConfig
+  /// See: https://unicode.org/cldr/charts/latest/supplemental/territory_containment_un_m_49.html
+  @override
+  Future<String> countryCode() async {
+    final BillingConfigWrapper billingConfig = await billingClientManager
+        .runWithClient((BillingClient client) => client.getBillingConfig());
+    return billingConfig.countryCode;
+  }
+
+  /// Use countryCode instead.
+  @Deprecated('Use countryCode')
+  Future<String> getCountryCode() => countryCode();
 }

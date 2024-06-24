@@ -14,7 +14,7 @@ plugins.each { name, path ->
     project(":$name").projectDir = pluginDirectory
 }
 
-// See https://github.com/flutter/flutter/wiki/Plugins-and-Packages-repository-structure#gradle-structure for more info.
+// See https://github.com/flutter/flutter/blob/master/docs/ecosystem/Plugins-and-Packages-repository-structure.md#gradle-structure for more info.
 buildscript {
   repositories {
     maven {

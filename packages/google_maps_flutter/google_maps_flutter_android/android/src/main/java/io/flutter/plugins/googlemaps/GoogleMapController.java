@@ -4,10 +4,13 @@
 
 package io.flutter.plugins.googlemaps;
 
+import static io.flutter.plugins.googlemaps.Convert.clusterToPigeon;
+
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.graphics.SurfaceTexture;
@@ -25,7 +28,6 @@ import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleOwner;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.GoogleMap.SnapshotReadyCallback;
 import com.google.android.gms.maps.GoogleMapOptions;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -37,11 +39,18 @@ import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.Polygon;
 import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.TileOverlay;
+import com.google.maps.android.clustering.Cluster;
+import com.google.maps.android.clustering.ClusterManager;
+import com.google.maps.android.collections.MarkerManager;
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.platform.PlatformView;
+import io.flutter.plugins.googlemaps.Messages.FlutterError;
+import io.flutter.plugins.googlemaps.Messages.MapsApi;
+import io.flutter.plugins.googlemaps.Messages.MapsInspectorApi;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -49,20 +58,26 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 /** Controller of a single GoogleMaps MapView instance. */
-final class GoogleMapController
-    implements DefaultLifecycleObserver,
-        ActivityPluginBinding.OnSaveInstanceStateListener,
+class GoogleMapController
+    implements ActivityPluginBinding.OnSaveInstanceStateListener,
+        ClusterManager.OnClusterItemClickListener<MarkerBuilder>,
+        ClusterManagersController.OnClusterItemRendered<MarkerBuilder>,
+        DefaultLifecycleObserver,
+        GoogleMapListener,
         GoogleMapOptionsSink,
+        MapsApi,
+        MapsInspectorApi,
         MethodChannel.MethodCallHandler,
         OnMapReadyCallback,
-        GoogleMapListener,
         PlatformView {
 
   private static final String TAG = "GoogleMapController";
   private final int id;
   private final MethodChannel methodChannel;
+  private final BinaryMessenger binaryMessenger;
   private final GoogleMapOptions options;
   @Nullable private MapView mapView;
   @Nullable private GoogleMap googleMap;
@@ -75,22 +90,26 @@ final class GoogleMapController
   private boolean buildingsEnabled = true;
   private boolean disposed = false;
   @VisibleForTesting final float density;
-  private MethodChannel.Result mapReadyResult;
+  private @Nullable Messages.VoidResult mapReadyResult;
   private final Context context;
   private final LifecycleProvider lifecycleProvider;
   private final MarkersController markersController;
+  private final ClusterManagersController clusterManagersController;
   private final PolygonsController polygonsController;
   private final PolylinesController polylinesController;
   private final CirclesController circlesController;
   private final TileOverlaysController tileOverlaysController;
+  private MarkerManager markerManager;
+  private MarkerManager.Collection markerCollection;
   private List<Object> initialMarkers;
+  private List<Object> initialClusterManagers;
   private List<Object> initialPolygons;
   private List<Object> initialPolylines;
   private List<Object> initialCircles;
   private List<Map<String, ?>> initialTileOverlays;
   // Null except between initialization and onMapReady.
   private @Nullable String initialMapStyle;
-  private @Nullable String lastStyleError;
+  private boolean lastSetStyleSucceeded;
   @VisibleForTesting List<Float> initialPadding;
 
   GoogleMapController(
@@ -104,15 +123,52 @@ final class GoogleMapController
     this.options = options;
     this.mapView = new MapView(context, options);
     this.density = context.getResources().getDisplayMetrics().density;
+    this.binaryMessenger = binaryMessenger;
     methodChannel =
         new MethodChannel(binaryMessenger, "plugins.flutter.dev/google_maps_android_" + id);
     methodChannel.setMethodCallHandler(this);
+    MapsApi.setUp(binaryMessenger, Integer.toString(id), this);
+    MapsInspectorApi.setUp(binaryMessenger, Integer.toString(id), this);
+    AssetManager assetManager = context.getAssets();
     this.lifecycleProvider = lifecycleProvider;
-    this.markersController = new MarkersController(methodChannel);
+    this.clusterManagersController = new ClusterManagersController(methodChannel, context);
+    this.markersController =
+        new MarkersController(methodChannel, clusterManagersController, assetManager, density);
     this.polygonsController = new PolygonsController(methodChannel, density);
-    this.polylinesController = new PolylinesController(methodChannel, density);
+    this.polylinesController = new PolylinesController(methodChannel, assetManager, density);
     this.circlesController = new CirclesController(methodChannel, density);
     this.tileOverlaysController = new TileOverlaysController(methodChannel);
+  }
+
+  // Constructor for testing purposes only
+  @VisibleForTesting
+  GoogleMapController(
+      int id,
+      Context context,
+      BinaryMessenger binaryMessenger,
+      MethodChannel methodChannel,
+      LifecycleProvider lifecycleProvider,
+      GoogleMapOptions options,
+      ClusterManagersController clusterManagersController,
+      MarkersController markersController,
+      PolygonsController polygonsController,
+      PolylinesController polylinesController,
+      CirclesController circlesController,
+      TileOverlaysController tileOverlaysController) {
+    this.id = id;
+    this.context = context;
+    this.binaryMessenger = binaryMessenger;
+    this.methodChannel = methodChannel;
+    this.options = options;
+    this.mapView = new MapView(context, options);
+    this.density = context.getResources().getDisplayMetrics().density;
+    this.lifecycleProvider = lifecycleProvider;
+    this.clusterManagersController = clusterManagersController;
+    this.markersController = markersController;
+    this.polygonsController = polygonsController;
+    this.polylinesController = polylinesController;
+    this.circlesController = circlesController;
+    this.tileOverlaysController = tileOverlaysController;
   }
 
   @Override
@@ -121,7 +177,7 @@ final class GoogleMapController
   }
 
   @VisibleForTesting
-  /*package*/ void setView(MapView view) {
+  /* package */ void setView(MapView view) {
     mapView = view;
   }
 
@@ -143,24 +199,30 @@ final class GoogleMapController
   }
 
   @Override
-  public void onMapReady(GoogleMap googleMap) {
+  public void onMapReady(@NonNull GoogleMap googleMap) {
     this.googleMap = googleMap;
     this.googleMap.setIndoorEnabled(this.indoorEnabled);
     this.googleMap.setTrafficEnabled(this.trafficEnabled);
     this.googleMap.setBuildingsEnabled(this.buildingsEnabled);
     installInvalidator();
-    googleMap.setOnInfoWindowClickListener(this);
     if (mapReadyResult != null) {
-      mapReadyResult.success(null);
+      mapReadyResult.success();
       mapReadyResult = null;
     }
     setGoogleMapListener(this);
+    markerManager = new MarkerManager(googleMap);
+    markerCollection = markerManager.newCollection();
     updateMyLocationSettings();
-    markersController.setGoogleMap(googleMap);
+    markersController.setCollection(markerCollection);
+    clusterManagersController.init(googleMap, markerManager);
     polygonsController.setGoogleMap(googleMap);
     polylinesController.setGoogleMap(googleMap);
     circlesController.setGoogleMap(googleMap);
     tileOverlaysController.setGoogleMap(googleMap);
+    setMarkerCollectionListener(this);
+    setClusterItemClickListener(this);
+    setClusterItemRenderedListener(this);
+    updateInitialClusterManagers();
     updateInitialMarkers();
     updateInitialPolygons();
     updateInitialPolylines();
@@ -216,26 +278,28 @@ final class GoogleMapController
     final MapView mapView = this.mapView;
     textureView.setSurfaceTextureListener(
         new TextureView.SurfaceTextureListener() {
-          public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
+          public void onSurfaceTextureAvailable(
+              @NonNull SurfaceTexture surface, int width, int height) {
             if (internalListener != null) {
               internalListener.onSurfaceTextureAvailable(surface, width, height);
             }
           }
 
-          public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
+          public boolean onSurfaceTextureDestroyed(@NonNull SurfaceTexture surface) {
             if (internalListener != null) {
               return internalListener.onSurfaceTextureDestroyed(surface);
             }
             return true;
           }
 
-          public void onSurfaceTextureSizeChanged(SurfaceTexture surface, int width, int height) {
+          public void onSurfaceTextureSizeChanged(
+              @NonNull SurfaceTexture surface, int width, int height) {
             if (internalListener != null) {
               internalListener.onSurfaceTextureSizeChanged(surface, width, height);
             }
           }
 
-          public void onSurfaceTextureUpdated(SurfaceTexture surface) {
+          public void onSurfaceTextureUpdated(@NonNull SurfaceTexture surface) {
             if (internalListener != null) {
               internalListener.onSurfaceTextureUpdated(surface);
             }
@@ -245,78 +309,12 @@ final class GoogleMapController
   }
 
   @Override
-  public void onMethodCall(MethodCall call, MethodChannel.Result result) {
+  public void onMethodCall(MethodCall call, @NonNull MethodChannel.Result result) {
     switch (call.method) {
-      case "map#waitForMap":
-        if (googleMap != null) {
-          result.success(null);
-          return;
-        }
-        mapReadyResult = result;
-        break;
       case "map#update":
         {
           Convert.interpretGoogleMapOptions(call.argument("options"), this);
           result.success(Convert.cameraPositionToJson(getCameraPosition()));
-          break;
-        }
-      case "map#getVisibleRegion":
-        {
-          if (googleMap != null) {
-            LatLngBounds latLngBounds = googleMap.getProjection().getVisibleRegion().latLngBounds;
-            result.success(Convert.latlngBoundsToJson(latLngBounds));
-          } else {
-            result.error(
-                "GoogleMap uninitialized",
-                "getVisibleRegion called prior to map initialization",
-                null);
-          }
-          break;
-        }
-      case "map#getScreenCoordinate":
-        {
-          if (googleMap != null) {
-            LatLng latLng = Convert.toLatLng(call.arguments);
-            Point screenLocation = googleMap.getProjection().toScreenLocation(latLng);
-            result.success(Convert.pointToJson(screenLocation));
-          } else {
-            result.error(
-                "GoogleMap uninitialized",
-                "getScreenCoordinate called prior to map initialization",
-                null);
-          }
-          break;
-        }
-      case "map#getLatLng":
-        {
-          if (googleMap != null) {
-            Point point = Convert.toPoint(call.arguments);
-            LatLng latLng = googleMap.getProjection().fromScreenLocation(point);
-            result.success(Convert.latLngToJson(latLng));
-          } else {
-            result.error(
-                "GoogleMap uninitialized", "getLatLng called prior to map initialization", null);
-          }
-          break;
-        }
-      case "map#takeSnapshot":
-        {
-          if (googleMap != null) {
-            final MethodChannel.Result _result = result;
-            googleMap.snapshot(
-                new SnapshotReadyCallback() {
-                  @Override
-                  public void onSnapshotReady(Bitmap bitmap) {
-                    ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
-                    byte[] byteArray = stream.toByteArray();
-                    bitmap.recycle();
-                    _result.success(byteArray);
-                  }
-                });
-          } else {
-            result.error("GoogleMap uninitialized", "takeSnapshot", null);
-          }
           break;
         }
       case "camera#move":
@@ -346,22 +344,17 @@ final class GoogleMapController
           result.success(null);
           break;
         }
-      case "markers#showInfoWindow":
+      case "clusterManagers#update":
         {
-          Object markerId = call.argument("markerId");
-          markersController.showMarkerInfoWindow((String) markerId, result);
-          break;
-        }
-      case "markers#hideInfoWindow":
-        {
-          Object markerId = call.argument("markerId");
-          markersController.hideMarkerInfoWindow((String) markerId, result);
-          break;
-        }
-      case "markers#isInfoWindowShown":
-        {
-          Object markerId = call.argument("markerId");
-          markersController.isInfoWindowShown((String) markerId, result);
+          List<Object> clusterManagersToAdd = call.argument("clusterManagersToAdd");
+          if (clusterManagersToAdd != null) {
+            clusterManagersController.addClusterManagers(clusterManagersToAdd);
+          }
+          List<Object> clusterManagerIdsToRemove = call.argument("clusterManagerIdsToRemove");
+          if (clusterManagerIdsToRemove != null) {
+            clusterManagersController.removeClusterManagers(clusterManagerIdsToRemove);
+          }
+          result.success(null);
           break;
         }
       case "polygons#update":
@@ -397,92 +390,6 @@ final class GoogleMapController
           result.success(null);
           break;
         }
-      case "map#isCompassEnabled":
-        {
-          result.success(googleMap.getUiSettings().isCompassEnabled());
-          break;
-        }
-      case "map#isMapToolbarEnabled":
-        {
-          result.success(googleMap.getUiSettings().isMapToolbarEnabled());
-          break;
-        }
-      case "map#getMinMaxZoomLevels":
-        {
-          List<Float> zoomLevels = new ArrayList<>(2);
-          zoomLevels.add(googleMap.getMinZoomLevel());
-          zoomLevels.add(googleMap.getMaxZoomLevel());
-          result.success(zoomLevels);
-          break;
-        }
-      case "map#isZoomGesturesEnabled":
-        {
-          result.success(googleMap.getUiSettings().isZoomGesturesEnabled());
-          break;
-        }
-      case "map#isLiteModeEnabled":
-        {
-          result.success(options.getLiteMode());
-          break;
-        }
-      case "map#isZoomControlsEnabled":
-        {
-          result.success(googleMap.getUiSettings().isZoomControlsEnabled());
-          break;
-        }
-      case "map#isScrollGesturesEnabled":
-        {
-          result.success(googleMap.getUiSettings().isScrollGesturesEnabled());
-          break;
-        }
-      case "map#isTiltGesturesEnabled":
-        {
-          result.success(googleMap.getUiSettings().isTiltGesturesEnabled());
-          break;
-        }
-      case "map#isRotateGesturesEnabled":
-        {
-          result.success(googleMap.getUiSettings().isRotateGesturesEnabled());
-          break;
-        }
-      case "map#isMyLocationButtonEnabled":
-        {
-          result.success(googleMap.getUiSettings().isMyLocationButtonEnabled());
-          break;
-        }
-      case "map#isTrafficEnabled":
-        {
-          result.success(googleMap.isTrafficEnabled());
-          break;
-        }
-      case "map#isBuildingsEnabled":
-        {
-          result.success(googleMap.isBuildingsEnabled());
-          break;
-        }
-      case "map#getZoomLevel":
-        {
-          result.success(googleMap.getCameraPosition().zoom);
-          break;
-        }
-      case "map#setStyle":
-        {
-          Object arg = call.arguments;
-          final String style = arg instanceof String ? (String) arg : null;
-          final boolean mapStyleSet = updateMapStyle(style);
-          ArrayList<Object> mapStyleResult = new ArrayList<>(2);
-          mapStyleResult.add(mapStyleSet);
-          if (!mapStyleSet) {
-            mapStyleResult.add(lastStyleError);
-          }
-          result.success(mapStyleResult);
-          break;
-        }
-      case "map#getStyleError":
-        {
-          result.success(lastStyleError);
-          break;
-        }
       case "tileOverlays#update":
         {
           List<Map<String, ?>> tileOverlaysToAdd = call.argument("tileOverlaysToAdd");
@@ -494,33 +401,20 @@ final class GoogleMapController
           result.success(null);
           break;
         }
-      case "tileOverlays#clearTileCache":
-        {
-          String tileOverlayId = call.argument("tileOverlayId");
-          tileOverlaysController.clearTileCache(tileOverlayId);
-          result.success(null);
-          break;
-        }
-      case "map#getTileOverlayInfo":
-        {
-          String tileOverlayId = call.argument("tileOverlayId");
-          result.success(tileOverlaysController.getTileOverlayInfo(tileOverlayId));
-          break;
-        }
       default:
         result.notImplemented();
     }
   }
 
   @Override
-  public void onMapClick(LatLng latLng) {
+  public void onMapClick(@NonNull LatLng latLng) {
     final Map<String, Object> arguments = new HashMap<>(2);
     arguments.put("position", Convert.latLngToJson(latLng));
     methodChannel.invokeMethod("map#onTap", arguments);
   }
 
   @Override
-  public void onMapLongClick(LatLng latLng) {
+  public void onMapLongClick(@NonNull LatLng latLng) {
     final Map<String, Object> arguments = new HashMap<>(2);
     arguments.put("position", Convert.latLngToJson(latLng));
     methodChannel.invokeMethod("map#onLongPress", arguments);
@@ -551,12 +445,13 @@ final class GoogleMapController
 
   @Override
   public void onCameraIdle() {
+    clusterManagersController.onCameraIdle();
     methodChannel.invokeMethod("camera#onIdle", Collections.singletonMap("map", id));
   }
 
   @Override
   public boolean onMarkerClick(Marker marker) {
-    return markersController.onMarkerTap(marker.getId());
+    return markersController.onMapsMarkerTap(marker.getId());
   }
 
   @Override
@@ -596,7 +491,12 @@ final class GoogleMapController
     }
     disposed = true;
     methodChannel.setMethodCallHandler(null);
+    MapsApi.setUp(binaryMessenger, Integer.toString(id), null);
+    MapsInspectorApi.setUp(binaryMessenger, Integer.toString(id), null);
     setGoogleMapListener(null);
+    setMarkerCollectionListener(null);
+    setClusterItemClickListener(null);
+    setClusterItemRenderedListener(null);
     destroyMapViewIfNecessary();
     Lifecycle lifecycle = lifecycleProvider.getLifecycle();
     if (lifecycle != null) {
@@ -612,13 +512,45 @@ final class GoogleMapController
     googleMap.setOnCameraMoveStartedListener(listener);
     googleMap.setOnCameraMoveListener(listener);
     googleMap.setOnCameraIdleListener(listener);
-    googleMap.setOnMarkerClickListener(listener);
-    googleMap.setOnMarkerDragListener(listener);
     googleMap.setOnPolygonClickListener(listener);
     googleMap.setOnPolylineClickListener(listener);
     googleMap.setOnCircleClickListener(listener);
     googleMap.setOnMapClickListener(listener);
     googleMap.setOnMapLongClickListener(listener);
+  }
+
+  @VisibleForTesting
+  public void setMarkerCollectionListener(@Nullable GoogleMapListener listener) {
+    if (googleMap == null) {
+      Log.v(TAG, "Controller was disposed before GoogleMap was ready.");
+      return;
+    }
+
+    markerCollection.setOnMarkerClickListener(listener);
+    markerCollection.setOnMarkerDragListener(listener);
+    markerCollection.setOnInfoWindowClickListener(listener);
+  }
+
+  @VisibleForTesting
+  public void setClusterItemClickListener(
+      @Nullable ClusterManager.OnClusterItemClickListener<MarkerBuilder> listener) {
+    if (googleMap == null) {
+      Log.v(TAG, "Controller was disposed before GoogleMap was ready.");
+      return;
+    }
+
+    clusterManagersController.setClusterItemClickListener(listener);
+  }
+
+  @VisibleForTesting
+  public void setClusterItemRenderedListener(
+      @Nullable ClusterManagersController.OnClusterItemRendered<MarkerBuilder> listener) {
+    if (googleMap == null) {
+      Log.v(TAG, "Controller was disposed before GoogleMap was ready.");
+      return;
+    }
+
+    clusterManagersController.setClusterItemRenderedListener(listener);
   }
 
   // DefaultLifecycleObserver
@@ -681,7 +613,7 @@ final class GoogleMapController
   }
 
   @Override
-  public void onSaveInstanceState(Bundle bundle) {
+  public void onSaveInstanceState(@NonNull Bundle bundle) {
     if (disposed) {
       return;
     }
@@ -825,6 +757,21 @@ final class GoogleMapController
   }
 
   @Override
+  public void setInitialClusterManagers(Object initialClusterManagers) {
+    ArrayList<?> clusterManagers = (ArrayList<?>) initialClusterManagers;
+    this.initialClusterManagers = clusterManagers != null ? new ArrayList<>(clusterManagers) : null;
+    if (googleMap != null) {
+      updateInitialClusterManagers();
+    }
+  }
+
+  private void updateInitialClusterManagers() {
+    if (initialClusterManagers != null) {
+      clusterManagersController.addClusterManagers(initialClusterManagers);
+    }
+  }
+
+  @Override
   public void setInitialPolygons(Object initialPolygons) {
     ArrayList<?> polygons = (ArrayList<?>) initialPolygons;
     this.initialPolygons = polygons != null ? new ArrayList<>(polygons) : null;
@@ -882,7 +829,7 @@ final class GoogleMapController
       // the feature won't require the permission.
       // Gradle is doing a static check for missing permission and in some configurations will
       // fail the build if the permission is missing. The following disables the Gradle lint.
-      //noinspection ResourceType
+      // noinspection ResourceType
       googleMap.setMyLocationEnabled(myLocationEnabled);
       googleMap.getUiSettings().setMyLocationButtonEnabled(myLocationButtonEnabled);
     } else {
@@ -931,6 +878,16 @@ final class GoogleMapController
     this.buildingsEnabled = buildingsEnabled;
   }
 
+  @Override
+  public void onClusterItemRendered(@NonNull MarkerBuilder markerBuilder, @NonNull Marker marker) {
+    markersController.onClusterItemRendered(markerBuilder, marker);
+  }
+
+  @Override
+  public boolean onClusterItemClick(MarkerBuilder item) {
+    return markersController.onMarkerTap(item.markerId());
+  }
+
   public void setMapStyle(@Nullable String style) {
     if (googleMap == null) {
       initialMapStyle = style;
@@ -943,9 +900,202 @@ final class GoogleMapController
     // Dart passes an empty string to indicate that the style should be cleared.
     final MapStyleOptions mapStyleOptions =
         style == null || style.isEmpty() ? null : new MapStyleOptions(style);
-    final boolean set = Objects.requireNonNull(googleMap).setMapStyle(mapStyleOptions);
-    lastStyleError =
-        set ? null : "Unable to set the map style. Please check console logs for errors.";
-    return set;
+    lastSetStyleSucceeded = Objects.requireNonNull(googleMap).setMapStyle(mapStyleOptions);
+    return lastSetStyleSucceeded;
+  }
+
+  /** MapsApi implementation */
+  @Override
+  public void waitForMap(@NonNull Messages.VoidResult result) {
+    if (googleMap == null) {
+      mapReadyResult = result;
+    } else {
+      result.success();
+    }
+  }
+
+  @Override
+  public @NonNull Messages.PlatformPoint getScreenCoordinate(
+      @NonNull Messages.PlatformLatLng latLng) {
+    if (googleMap == null) {
+      throw new FlutterError(
+          "GoogleMap uninitialized",
+          "getScreenCoordinate called prior to map initialization",
+          null);
+    }
+    Point screenLocation =
+        googleMap.getProjection().toScreenLocation(Convert.latLngFromPigeon(latLng));
+    return Convert.pointToPigeon(screenLocation);
+  }
+
+  @Override
+  public @NonNull Messages.PlatformLatLng getLatLng(
+      @NonNull Messages.PlatformPoint screenCoordinate) {
+    if (googleMap == null) {
+      throw new FlutterError(
+          "GoogleMap uninitialized", "getLatLng called prior to map initialization", null);
+    }
+    LatLng latLng =
+        googleMap.getProjection().fromScreenLocation(Convert.pointFromPigeon(screenCoordinate));
+    return Convert.latLngToPigeon(latLng);
+  }
+
+  @Override
+  public @NonNull Messages.PlatformLatLngBounds getVisibleRegion() {
+    if (googleMap == null) {
+      throw new FlutterError(
+          "GoogleMap uninitialized", "getVisibleRegion called prior to map initialization", null);
+    }
+    LatLngBounds latLngBounds = googleMap.getProjection().getVisibleRegion().latLngBounds;
+    return Convert.latLngBoundsToPigeon(latLngBounds);
+  }
+
+  @Override
+  public @NonNull Double getZoomLevel() {
+    if (googleMap == null) {
+      throw new FlutterError(
+          "GoogleMap uninitialized", "getZoomLevel called prior to map initialization", null);
+    }
+    return (double) googleMap.getCameraPosition().zoom;
+  }
+
+  @Override
+  public void showInfoWindow(@NonNull String markerId) {
+    markersController.showMarkerInfoWindow(markerId);
+  }
+
+  @Override
+  public void hideInfoWindow(@NonNull String markerId) {
+    markersController.hideMarkerInfoWindow(markerId);
+  }
+
+  @NonNull
+  @Override
+  public Boolean isInfoWindowShown(@NonNull String markerId) {
+    return markersController.isInfoWindowShown(markerId);
+  }
+
+  @Override
+  public @NonNull Boolean setStyle(@NonNull String style) {
+    return updateMapStyle(style);
+  }
+
+  @Override
+  public @NonNull Boolean didLastStyleSucceed() {
+    return lastSetStyleSucceeded;
+  }
+
+  @Override
+  public void clearTileCache(@NonNull String tileOverlayId) {
+    tileOverlaysController.clearTileCache(tileOverlayId);
+  }
+
+  @Override
+  public void takeSnapshot(@NonNull Messages.Result<byte[]> result) {
+    if (googleMap == null) {
+      result.error(new FlutterError("GoogleMap uninitialized", "takeSnapshot", null));
+    } else {
+      googleMap.snapshot(
+          bitmap -> {
+            if (bitmap == null) {
+              result.error(new FlutterError("Snapshot failure", "Unable to take snapshot", null));
+            } else {
+              ByteArrayOutputStream stream = new ByteArrayOutputStream();
+              bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+              byte[] byteArray = stream.toByteArray();
+              bitmap.recycle();
+              result.success(byteArray);
+            }
+          });
+    }
+  }
+
+  /** MapsInspectorApi implementation */
+  @Override
+  public @NonNull Boolean areBuildingsEnabled() {
+    return Objects.requireNonNull(googleMap).isBuildingsEnabled();
+  }
+
+  @Override
+  public @NonNull Boolean areRotateGesturesEnabled() {
+    return Objects.requireNonNull(googleMap).getUiSettings().isRotateGesturesEnabled();
+  }
+
+  @Override
+  public @NonNull Boolean areZoomControlsEnabled() {
+    return Objects.requireNonNull(googleMap).getUiSettings().isZoomControlsEnabled();
+  }
+
+  @Override
+  public @NonNull Boolean areScrollGesturesEnabled() {
+    return Objects.requireNonNull(googleMap).getUiSettings().isScrollGesturesEnabled();
+  }
+
+  @Override
+  public @NonNull Boolean areTiltGesturesEnabled() {
+    return Objects.requireNonNull(googleMap).getUiSettings().isTiltGesturesEnabled();
+  }
+
+  @Override
+  public @NonNull Boolean areZoomGesturesEnabled() {
+    return Objects.requireNonNull(googleMap).getUiSettings().isZoomGesturesEnabled();
+  }
+
+  @Override
+  public @NonNull Boolean isCompassEnabled() {
+    return Objects.requireNonNull(googleMap).getUiSettings().isCompassEnabled();
+  }
+
+  @Override
+  public Boolean isLiteModeEnabled() {
+    return options.getLiteMode();
+  }
+
+  @Override
+  public @NonNull Boolean isMapToolbarEnabled() {
+    return Objects.requireNonNull(googleMap).getUiSettings().isMapToolbarEnabled();
+  }
+
+  @Override
+  public @NonNull Boolean isMyLocationButtonEnabled() {
+    return Objects.requireNonNull(googleMap).getUiSettings().isMyLocationButtonEnabled();
+  }
+
+  @Override
+  public @NonNull Boolean isTrafficEnabled() {
+    return Objects.requireNonNull(googleMap).isTrafficEnabled();
+  }
+
+  @Override
+  public @Nullable Messages.PlatformTileLayer getTileOverlayInfo(@NonNull String tileOverlayId) {
+    TileOverlay tileOverlay = tileOverlaysController.getTileOverlay(tileOverlayId);
+    if (tileOverlay == null) {
+      return null;
+    }
+    return new Messages.PlatformTileLayer.Builder()
+        .setFadeIn(tileOverlay.getFadeIn())
+        .setTransparency((double) tileOverlay.getTransparency())
+        .setZIndex((double) tileOverlay.getZIndex())
+        .setVisible(tileOverlay.isVisible())
+        .build();
+  }
+
+  @Override
+  public @NonNull Messages.PlatformZoomRange getZoomRange() {
+    return new Messages.PlatformZoomRange.Builder()
+        .setMin((double) Objects.requireNonNull(googleMap).getMinZoomLevel())
+        .setMax((double) Objects.requireNonNull(googleMap).getMaxZoomLevel())
+        .build();
+  }
+
+  @Override
+  public @NonNull List<Messages.PlatformCluster> getClusters(@NonNull String clusterManagerId) {
+    Set<? extends Cluster<MarkerBuilder>> clusters =
+        clusterManagersController.getClustersWithClusterManagerId(clusterManagerId);
+    List<Messages.PlatformCluster> data = new ArrayList<>(clusters.size());
+    for (Cluster<MarkerBuilder> cluster : clusters) {
+      data.add(clusterToPigeon(clusterManagerId, cluster));
+    }
+    return data;
   }
 }

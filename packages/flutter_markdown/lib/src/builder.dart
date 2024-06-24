@@ -174,7 +174,6 @@ class MarkdownBuilder implements md.NodeVisitor {
   final List<_TableElement> _tables = <_TableElement>[];
   final List<_InlineElement> _inlines = <_InlineElement>[];
   final List<GestureRecognizer> _linkHandlers = <GestureRecognizer>[];
-  final ScrollController _preScrollController = ScrollController();
   String? _currentBlockTag;
   String? _lastVisitedTag;
   bool _isInBlockquote = false;
@@ -347,10 +346,11 @@ class MarkdownBuilder implements md.NodeVisitor {
       child = builders[_blocks.last.tag!]!
           .visitText(text, styleSheet.styles[_blocks.last.tag!]);
     } else if (_blocks.last.tag == 'pre') {
+      final ScrollController preScrollController = ScrollController();
       child = Scrollbar(
-        controller: _preScrollController,
+        controller: preScrollController,
         child: SingleChildScrollView(
-          controller: _preScrollController,
+          controller: preScrollController,
           scrollDirection: Axis.horizontal,
           padding: styleSheet.codeblockPadding,
           child: _buildRichText(delegate.formatText(styleSheet, text.text)),
@@ -537,6 +537,8 @@ class MarkdownBuilder implements md.NodeVisitor {
               style: textSpan.style?.copyWith(
                 fontFeatures: <FontFeature>[
                   const FontFeature.enable('sups'),
+                  if (styleSheet.superscriptFontFeatureTag != null)
+                    FontFeature.enable(styleSheet.superscriptFontFeatureTag!),
                 ],
               ),
             ),
@@ -611,8 +613,15 @@ class MarkdownBuilder implements md.NodeVisitor {
     if (bulletBuilder != null) {
       return Padding(
         padding: styleSheet.listBulletPadding!,
-        child: bulletBuilder!(index,
-            isUnordered ? BulletStyle.unorderedList : BulletStyle.orderedList),
+        child: bulletBuilder!(
+          MarkdownBulletParameters(
+            index: index,
+            style: isUnordered
+                ? BulletStyle.unorderedList
+                : BulletStyle.orderedList,
+            nestLevel: _listIndents.length - 1,
+          ),
+        ),
       );
     }
 
@@ -952,9 +961,10 @@ class MarkdownBuilder implements md.NodeVisitor {
         text!,
         textScaler: styleSheet.textScaler,
         textAlign: textAlign ?? TextAlign.start,
-        onSelectionChanged:
-            (TextSelection selection, SelectionChangedCause? cause) =>
-                onSelectionChanged!(text.text, selection, cause),
+        onSelectionChanged: onSelectionChanged != null
+            ? (TextSelection selection, SelectionChangedCause? cause) =>
+                onSelectionChanged!(text.text, selection, cause)
+            : null,
         onTap: onTapText,
         key: k,
       );

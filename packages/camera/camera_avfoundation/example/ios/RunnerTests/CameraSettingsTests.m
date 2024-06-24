@@ -8,158 +8,12 @@
 @import AVFoundation;
 #import <OCMock/OCMock.h>
 #import "CameraTestUtils.h"
-#import "MockFLTThreadSafeFlutterResult.h"
 
-static const char *gTestResolutionPreset = "medium";
+static const FCPPlatformResolutionPreset gTestResolutionPreset = FCPPlatformResolutionPresetMedium;
 static const int gTestFramesPerSecond = 15;
 static const int gTestVideoBitrate = 200000;
 static const int gTestAudioBitrate = 32000;
-static const bool gTestEnableAudio = YES;
-
-@interface CameraCreateWithMediaSettingsParseTests : XCTestCase
-@end
-
-@interface MockErrorFlutterResult : MockFLTThreadSafeFlutterResult
-@property(nonatomic, nullable) NSError *receivedError;
-@end
-
-@implementation MockErrorFlutterResult
-
-- (void)sendError:(NSError *)error {
-  _receivedError = error;
-  [self.expectation fulfill];
-}
-
-@end
-
-/// Expect that optional positive numbers can be parsed
-@implementation CameraCreateWithMediaSettingsParseTests
-
-- (NSError *)failingTestWithArguments:(NSDictionary *)arguments {
-  CameraPlugin *camera = [[CameraPlugin alloc] initWithRegistry:nil messenger:nil];
-
-  XCTestExpectation *expectation = [self expectationWithDescription:@"Result finished"];
-
-  MockErrorFlutterResult *resultObject =
-      [[MockErrorFlutterResult alloc] initWithExpectation:expectation];
-
-  // Set up method call
-  FlutterMethodCall *call = [FlutterMethodCall methodCallWithMethodName:@"create"
-                                                              arguments:arguments];
-
-  [camera createCameraOnSessionQueueWithCreateMethodCall:call result:resultObject];
-  [self waitForExpectationsWithTimeout:1 handler:nil];
-
-  // Verify the result
-  NSError *receivedError = resultObject.receivedError;
-  XCTAssertNotNil(receivedError);
-  return receivedError;
-}
-
-- (NSError *)goodTestWithArguments:(NSDictionary *)arguments {
-  CameraPlugin *camera = [[CameraPlugin alloc] initWithRegistry:nil messenger:nil];
-
-  XCTestExpectation *expectation = [self expectationWithDescription:@"Result finished"];
-
-  // Set up mocks for initWithCameraName method
-  id avCaptureDeviceInputMock = OCMClassMock([AVCaptureDeviceInput class]);
-  OCMStub([avCaptureDeviceInputMock deviceInputWithDevice:[OCMArg any] error:[OCMArg anyObjectRef]])
-      .andReturn([AVCaptureInput alloc]);
-
-  id avCaptureSessionMock = OCMClassMock([AVCaptureSession class]);
-  OCMStub([avCaptureSessionMock alloc]).andReturn(avCaptureSessionMock);
-  OCMStub([avCaptureSessionMock canSetSessionPreset:[OCMArg any]]).andReturn(YES);
-
-  MockErrorFlutterResult *resultObject =
-      [[MockErrorFlutterResult alloc] initWithExpectation:expectation];
-
-  // Set up method call
-  FlutterMethodCall *call = [FlutterMethodCall
-      methodCallWithMethodName:@"create"
-                     arguments:@{@"resolutionPreset" : @"medium", @"enableAudio" : @(1)}];
-
-  [camera createCameraOnSessionQueueWithCreateMethodCall:call result:resultObject];
-  [self waitForExpectationsWithTimeout:1 handler:nil];
-
-  // Verify the result
-  NSDictionary *dictionaryResult = (NSDictionary *)resultObject.receivedResult;
-  XCTAssertNotNil(dictionaryResult);
-  XCTAssert([[dictionaryResult allKeys] containsObject:@"cameraId"]);
-
-  return resultObject.receivedError;
-}
-
-- (void)testCameraCreateWithMediaSettings_shouldRejectNegativeIntNumbers {
-  id errorOrNil =
-      [self failingTestWithArguments:@{@"fps" : @(-1), @"resolutionPreset" : @"medium"}];
-  XCTAssertEqualObjects([errorOrNil localizedDescription], @"fps should be a positive number",
-                        "should reject negative int number");
-}
-
-- (void)testCameraCreateWithMediaSettings_shouldRejectNegativeFloatingPointNumbers {
-  id errorOrNil =
-      [self failingTestWithArguments:@{@"fps" : @(-3.7), @"resolutionPreset" : @"medium"}];
-  XCTAssertEqualObjects([errorOrNil localizedDescription], @"fps should be a positive number",
-                        "should reject negative floating point number");
-}
-
-- (void)testCameraCreateWithMediaSettings_nanShouldBeParsedAsNil {
-  id errorOrNil =
-      [self failingTestWithArguments:@{@"fps" : @(NAN), @"resolutionPreset" : @"medium"}];
-  XCTAssertEqualObjects([errorOrNil localizedDescription], @"fps should not be a nan",
-                        "should reject NAN");
-}
-
-- (void)testCameraCreateWithMediaSettings_shouldNotRejectNilArguments {
-  id errorOrNil = [self goodTestWithArguments:@{@"resolutionPreset" : @"medium"}];
-  XCTAssertNil(errorOrNil, "should accept nil");
-}
-
-- (void)testCameraCreateWithMediaSettings_shouldAcceptNull {
-  id errorOrNil =
-      [self goodTestWithArguments:@{@"fps" : [NSNull null], @"resolutionPreset" : @"medium"}];
-  XCTAssertNil(errorOrNil, "should accept [NSNull null]");
-}
-
-- (void)testCameraCreateWithMediaSettings_shouldAcceptPositiveDecimalNumbers {
-  id errorOrNil = [self goodTestWithArguments:@{@"fps" : @(5), @"resolutionPreset" : @"medium"}];
-  XCTAssertNil(errorOrNil, "should parse positive int number");
-}
-
-- (void)testCameraCreateWithMediaSettings_shouldAcceptPositiveFloatingPointNumbers {
-  id errorOrNil = [self goodTestWithArguments:@{@"fps" : @(3.7), @"resolutionPreset" : @"medium"}];
-  XCTAssertNil(errorOrNil, "should accept positive floating point number");
-}
-
-- (void)testCameraCreateWithMediaSettings_shouldRejectWrongVideoBitrate {
-  id errorOrNil =
-      [self failingTestWithArguments:@{@"videoBitrate" : @(-1), @"resolutionPreset" : @"medium"}];
-  XCTAssertEqualObjects([errorOrNil localizedDescription],
-                        @"videoBitrate should be a positive number",
-                        "should reject wrong video bitrate");
-}
-
-- (void)testCameraCreateWithMediaSettings_shouldRejectWrongAudioBitrate {
-  id errorOrNil =
-      [self failingTestWithArguments:@{@"audioBitrate" : @(-1), @"resolutionPreset" : @"medium"}];
-  XCTAssertEqualObjects([errorOrNil localizedDescription],
-                        @"audioBitrate should be a positive number",
-                        "should reject wrong audio bitrate");
-}
-
-- (void)testCameraCreateWithMediaSettings_shouldAcceptGoodVideoBitrate {
-  id errorOrNil =
-      [self goodTestWithArguments:@{@"videoBitrate" : @(200000), @"resolutionPreset" : @"medium"}];
-  XCTAssertNil(errorOrNil, "should accept good video bitrate");
-}
-
-- (void)testCameraCreateWithMediaSettings_shouldAcceptGoodAudioBitrate {
-  id errorOrNil =
-      [self goodTestWithArguments:@{@"audioBitrate" : @(32000), @"resolutionPreset" : @"medium"}];
-  XCTAssertNil(errorOrNil, "should accept good audio bitrate");
-}
-
-@end
+static const BOOL gTestEnableAudio = YES;
 
 @interface CameraSettingsTests : XCTestCase
 @end
@@ -278,11 +132,12 @@ static const bool gTestEnableAudio = YES;
 
 /// Expect that FPS, video and audio bitrate are passed to camera device and asset writer.
 - (void)testSettings_shouldPassConfigurationToCameraDeviceAndWriter {
-  FLTCamMediaSettings *settings =
-      [[FLTCamMediaSettings alloc] initWithFramesPerSecond:@(gTestFramesPerSecond)
-                                              videoBitrate:@(gTestVideoBitrate)
-                                              audioBitrate:@(gTestAudioBitrate)
-                                               enableAudio:gTestEnableAudio];
+  FCPPlatformMediaSettings *settings =
+      [FCPPlatformMediaSettings makeWithResolutionPreset:gTestResolutionPreset
+                                         framesPerSecond:@(gTestFramesPerSecond)
+                                            videoBitrate:@(gTestVideoBitrate)
+                                            audioBitrate:@(gTestAudioBitrate)
+                                             enableAudio:gTestEnableAudio];
   TestMediaSettingsAVWrapper *injectedWrapper =
       [[TestMediaSettingsAVWrapper alloc] initWithTestCase:self];
 
@@ -298,11 +153,10 @@ static const bool gTestEnableAudio = YES;
                     timeout:1
                enforceOrder:YES];
 
-  FLTThreadSafeFlutterResult *result =
-      [[FLTThreadSafeFlutterResult alloc] initWithResult:^(id result){
-      }];
-
-  [camera startVideoRecordingWithResult:result];
+  [camera
+      startVideoRecordingWithCompletion:^(FlutterError *_Nullable error) {
+      }
+                  messengerForStreaming:nil];
 
   [self waitForExpectations:@[
     injectedWrapper.audioSettingsExpectation, injectedWrapper.videoSettingsExpectation
@@ -324,27 +178,26 @@ static const bool gTestEnableAudio = YES;
   OCMStub([avCaptureSessionMock alloc]).andReturn(avCaptureSessionMock);
   OCMStub([avCaptureSessionMock canSetSessionPreset:[OCMArg any]]).andReturn(YES);
 
-  MockFLTThreadSafeFlutterResult *resultObject =
-      [[MockFLTThreadSafeFlutterResult alloc] initWithExpectation:expectation];
-
   // Set up method call
-  FlutterMethodCall *call =
-      [FlutterMethodCall methodCallWithMethodName:@"create"
-                                        arguments:@{
-                                          @"resolutionPreset" : @(gTestResolutionPreset),
-                                          @"enableAudio" : @(gTestEnableAudio),
-                                          @"fps" : @(gTestFramesPerSecond),
-                                          @"videoBitrate" : @(gTestVideoBitrate),
-                                          @"audioBitrate" : @(gTestAudioBitrate)
-                                        }];
+  FCPPlatformMediaSettings *mediaSettings =
+      [FCPPlatformMediaSettings makeWithResolutionPreset:gTestResolutionPreset
+                                         framesPerSecond:@(gTestFramesPerSecond)
+                                            videoBitrate:@(gTestVideoBitrate)
+                                            audioBitrate:@(gTestAudioBitrate)
+                                             enableAudio:gTestEnableAudio];
 
-  [camera createCameraOnSessionQueueWithCreateMethodCall:call result:resultObject];
-  [self waitForExpectationsWithTimeout:1 handler:nil];
+  __block NSNumber *resultValue;
+  [camera createCameraOnSessionQueueWithName:@"acamera"
+                                    settings:mediaSettings
+                                  completion:^(NSNumber *result, FlutterError *error) {
+                                    XCTAssertNil(error);
+                                    resultValue = result;
+                                    [expectation fulfill];
+                                  }];
+  [self waitForExpectationsWithTimeout:30 handler:nil];
 
   // Verify the result
-  NSDictionary *dictionaryResult = (NSDictionary *)resultObject.receivedResult;
-  XCTAssertNotNil(dictionaryResult);
-  XCTAssert([[dictionaryResult allKeys] containsObject:@"cameraId"]);
+  XCTAssertNotNil(resultValue);
 }
 
 @end
