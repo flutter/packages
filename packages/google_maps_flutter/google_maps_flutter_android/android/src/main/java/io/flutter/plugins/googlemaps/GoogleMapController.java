@@ -28,7 +28,6 @@ import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleOwner;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.GoogleMap.SnapshotReadyCallback;
 import com.google.android.gms.maps.GoogleMapOptions;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -49,6 +48,8 @@ import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.platform.PlatformView;
+import io.flutter.plugins.googlemaps.Messages.FlutterError;
+import io.flutter.plugins.googlemaps.Messages.MapsApi;
 import io.flutter.plugins.googlemaps.Messages.MapsInspectorApi;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
@@ -67,6 +68,7 @@ class GoogleMapController
         DefaultLifecycleObserver,
         GoogleMapListener,
         GoogleMapOptionsSink,
+        MapsApi,
         MapsInspectorApi,
         MethodChannel.MethodCallHandler,
         OnMapReadyCallback,
@@ -88,7 +90,7 @@ class GoogleMapController
   private boolean buildingsEnabled = true;
   private boolean disposed = false;
   @VisibleForTesting final float density;
-  private MethodChannel.Result mapReadyResult;
+  private @Nullable Messages.VoidResult mapReadyResult;
   private final Context context;
   private final LifecycleProvider lifecycleProvider;
   private final MarkersController markersController;
@@ -107,7 +109,7 @@ class GoogleMapController
   private List<Map<String, ?>> initialTileOverlays;
   // Null except between initialization and onMapReady.
   private @Nullable String initialMapStyle;
-  private @Nullable String lastStyleError;
+  private boolean lastSetStyleSucceeded;
   @VisibleForTesting List<Float> initialPadding;
 
   GoogleMapController(
@@ -125,6 +127,7 @@ class GoogleMapController
     methodChannel =
         new MethodChannel(binaryMessenger, "plugins.flutter.dev/google_maps_android_" + id);
     methodChannel.setMethodCallHandler(this);
+    MapsApi.setUp(binaryMessenger, Integer.toString(id), this);
     MapsInspectorApi.setUp(binaryMessenger, Integer.toString(id), this);
     AssetManager assetManager = context.getAssets();
     this.lifecycleProvider = lifecycleProvider;
@@ -203,7 +206,7 @@ class GoogleMapController
     this.googleMap.setBuildingsEnabled(this.buildingsEnabled);
     installInvalidator();
     if (mapReadyResult != null) {
-      mapReadyResult.success(null);
+      mapReadyResult.success();
       mapReadyResult = null;
     }
     setGoogleMapListener(this);
@@ -308,76 +311,10 @@ class GoogleMapController
   @Override
   public void onMethodCall(MethodCall call, @NonNull MethodChannel.Result result) {
     switch (call.method) {
-      case "map#waitForMap":
-        if (googleMap != null) {
-          result.success(null);
-          return;
-        }
-        mapReadyResult = result;
-        break;
       case "map#update":
         {
           Convert.interpretGoogleMapOptions(call.argument("options"), this);
           result.success(Convert.cameraPositionToJson(getCameraPosition()));
-          break;
-        }
-      case "map#getVisibleRegion":
-        {
-          if (googleMap != null) {
-            LatLngBounds latLngBounds = googleMap.getProjection().getVisibleRegion().latLngBounds;
-            result.success(Convert.latLngBoundsToJson(latLngBounds));
-          } else {
-            result.error(
-                "GoogleMap uninitialized",
-                "getVisibleRegion called prior to map initialization",
-                null);
-          }
-          break;
-        }
-      case "map#getScreenCoordinate":
-        {
-          if (googleMap != null) {
-            LatLng latLng = Convert.toLatLng(call.arguments);
-            Point screenLocation = googleMap.getProjection().toScreenLocation(latLng);
-            result.success(Convert.pointToJson(screenLocation));
-          } else {
-            result.error(
-                "GoogleMap uninitialized",
-                "getScreenCoordinate called prior to map initialization",
-                null);
-          }
-          break;
-        }
-      case "map#getLatLng":
-        {
-          if (googleMap != null) {
-            Point point = Convert.toPoint(call.arguments);
-            LatLng latLng = googleMap.getProjection().fromScreenLocation(point);
-            result.success(Convert.latLngToJson(latLng));
-          } else {
-            result.error(
-                "GoogleMap uninitialized", "getLatLng called prior to map initialization", null);
-          }
-          break;
-        }
-      case "map#takeSnapshot":
-        {
-          if (googleMap != null) {
-            final MethodChannel.Result _result = result;
-            googleMap.snapshot(
-                new SnapshotReadyCallback() {
-                  @Override
-                  public void onSnapshotReady(Bitmap bitmap) {
-                    ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
-                    byte[] byteArray = stream.toByteArray();
-                    bitmap.recycle();
-                    _result.success(byteArray);
-                  }
-                });
-          } else {
-            result.error("GoogleMap uninitialized", "takeSnapshot", null);
-          }
           break;
         }
       case "camera#move":
@@ -405,24 +342,6 @@ class GoogleMapController
           List<Object> markerIdsToRemove = call.argument("markerIdsToRemove");
           markersController.removeMarkers(markerIdsToRemove);
           result.success(null);
-          break;
-        }
-      case "markers#showInfoWindow":
-        {
-          Object markerId = call.argument("markerId");
-          markersController.showMarkerInfoWindow((String) markerId, result);
-          break;
-        }
-      case "markers#hideInfoWindow":
-        {
-          Object markerId = call.argument("markerId");
-          markersController.hideMarkerInfoWindow((String) markerId, result);
-          break;
-        }
-      case "markers#isInfoWindowShown":
-        {
-          Object markerId = call.argument("markerId");
-          markersController.isInfoWindowShown((String) markerId, result);
           break;
         }
       case "clusterManagers#update":
@@ -471,29 +390,6 @@ class GoogleMapController
           result.success(null);
           break;
         }
-      case "map#getZoomLevel":
-        {
-          result.success(googleMap.getCameraPosition().zoom);
-          break;
-        }
-      case "map#setStyle":
-        {
-          Object arg = call.arguments;
-          final String style = arg instanceof String ? (String) arg : null;
-          final boolean mapStyleSet = updateMapStyle(style);
-          ArrayList<Object> mapStyleResult = new ArrayList<>(2);
-          mapStyleResult.add(mapStyleSet);
-          if (!mapStyleSet) {
-            mapStyleResult.add(lastStyleError);
-          }
-          result.success(mapStyleResult);
-          break;
-        }
-      case "map#getStyleError":
-        {
-          result.success(lastStyleError);
-          break;
-        }
       case "tileOverlays#update":
         {
           List<Map<String, ?>> tileOverlaysToAdd = call.argument("tileOverlaysToAdd");
@@ -502,13 +398,6 @@ class GoogleMapController
           tileOverlaysController.changeTileOverlays(tileOverlaysToChange);
           List<String> tileOverlaysToRemove = call.argument("tileOverlayIdsToRemove");
           tileOverlaysController.removeTileOverlays(tileOverlaysToRemove);
-          result.success(null);
-          break;
-        }
-      case "tileOverlays#clearTileCache":
-        {
-          String tileOverlayId = call.argument("tileOverlayId");
-          tileOverlaysController.clearTileCache(tileOverlayId);
           result.success(null);
           break;
         }
@@ -602,6 +491,7 @@ class GoogleMapController
     }
     disposed = true;
     methodChannel.setMethodCallHandler(null);
+    MapsApi.setUp(binaryMessenger, Integer.toString(id), null);
     MapsInspectorApi.setUp(binaryMessenger, Integer.toString(id), null);
     setGoogleMapListener(null);
     setMarkerCollectionListener(null);
@@ -1010,45 +900,150 @@ class GoogleMapController
     // Dart passes an empty string to indicate that the style should be cleared.
     final MapStyleOptions mapStyleOptions =
         style == null || style.isEmpty() ? null : new MapStyleOptions(style);
-    final boolean set = Objects.requireNonNull(googleMap).setMapStyle(mapStyleOptions);
-    lastStyleError =
-        set ? null : "Unable to set the map style. Please check console logs for errors.";
-    return set;
+    lastSetStyleSucceeded = Objects.requireNonNull(googleMap).setMapStyle(mapStyleOptions);
+    return lastSetStyleSucceeded;
+  }
+
+  /** MapsApi implementation */
+  @Override
+  public void waitForMap(@NonNull Messages.VoidResult result) {
+    if (googleMap == null) {
+      mapReadyResult = result;
+    } else {
+      result.success();
+    }
   }
 
   @Override
+  public @NonNull Messages.PlatformPoint getScreenCoordinate(
+      @NonNull Messages.PlatformLatLng latLng) {
+    if (googleMap == null) {
+      throw new FlutterError(
+          "GoogleMap uninitialized",
+          "getScreenCoordinate called prior to map initialization",
+          null);
+    }
+    Point screenLocation =
+        googleMap.getProjection().toScreenLocation(Convert.latLngFromPigeon(latLng));
+    return Convert.pointToPigeon(screenLocation);
+  }
+
+  @Override
+  public @NonNull Messages.PlatformLatLng getLatLng(
+      @NonNull Messages.PlatformPoint screenCoordinate) {
+    if (googleMap == null) {
+      throw new FlutterError(
+          "GoogleMap uninitialized", "getLatLng called prior to map initialization", null);
+    }
+    LatLng latLng =
+        googleMap.getProjection().fromScreenLocation(Convert.pointFromPigeon(screenCoordinate));
+    return Convert.latLngToPigeon(latLng);
+  }
+
+  @Override
+  public @NonNull Messages.PlatformLatLngBounds getVisibleRegion() {
+    if (googleMap == null) {
+      throw new FlutterError(
+          "GoogleMap uninitialized", "getVisibleRegion called prior to map initialization", null);
+    }
+    LatLngBounds latLngBounds = googleMap.getProjection().getVisibleRegion().latLngBounds;
+    return Convert.latLngBoundsToPigeon(latLngBounds);
+  }
+
+  @Override
+  public @NonNull Double getZoomLevel() {
+    if (googleMap == null) {
+      throw new FlutterError(
+          "GoogleMap uninitialized", "getZoomLevel called prior to map initialization", null);
+    }
+    return (double) googleMap.getCameraPosition().zoom;
+  }
+
+  @Override
+  public void showInfoWindow(@NonNull String markerId) {
+    markersController.showMarkerInfoWindow(markerId);
+  }
+
+  @Override
+  public void hideInfoWindow(@NonNull String markerId) {
+    markersController.hideMarkerInfoWindow(markerId);
+  }
+
+  @NonNull
+  @Override
+  public Boolean isInfoWindowShown(@NonNull String markerId) {
+    return markersController.isInfoWindowShown(markerId);
+  }
+
+  @Override
+  public @NonNull Boolean setStyle(@NonNull String style) {
+    return updateMapStyle(style);
+  }
+
+  @Override
+  public @NonNull Boolean didLastStyleSucceed() {
+    return lastSetStyleSucceeded;
+  }
+
+  @Override
+  public void clearTileCache(@NonNull String tileOverlayId) {
+    tileOverlaysController.clearTileCache(tileOverlayId);
+  }
+
+  @Override
+  public void takeSnapshot(@NonNull Messages.Result<byte[]> result) {
+    if (googleMap == null) {
+      result.error(new FlutterError("GoogleMap uninitialized", "takeSnapshot", null));
+    } else {
+      googleMap.snapshot(
+          bitmap -> {
+            if (bitmap == null) {
+              result.error(new FlutterError("Snapshot failure", "Unable to take snapshot", null));
+            } else {
+              ByteArrayOutputStream stream = new ByteArrayOutputStream();
+              bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+              byte[] byteArray = stream.toByteArray();
+              bitmap.recycle();
+              result.success(byteArray);
+            }
+          });
+    }
+  }
+
+  /** MapsInspectorApi implementation */
+  @Override
   public @NonNull Boolean areBuildingsEnabled() {
-    return googleMap.isBuildingsEnabled();
+    return Objects.requireNonNull(googleMap).isBuildingsEnabled();
   }
 
   @Override
   public @NonNull Boolean areRotateGesturesEnabled() {
-    return googleMap.getUiSettings().isRotateGesturesEnabled();
+    return Objects.requireNonNull(googleMap).getUiSettings().isRotateGesturesEnabled();
   }
 
   @Override
   public @NonNull Boolean areZoomControlsEnabled() {
-    return googleMap.getUiSettings().isZoomControlsEnabled();
+    return Objects.requireNonNull(googleMap).getUiSettings().isZoomControlsEnabled();
   }
 
   @Override
   public @NonNull Boolean areScrollGesturesEnabled() {
-    return googleMap.getUiSettings().isScrollGesturesEnabled();
+    return Objects.requireNonNull(googleMap).getUiSettings().isScrollGesturesEnabled();
   }
 
   @Override
   public @NonNull Boolean areTiltGesturesEnabled() {
-    return googleMap.getUiSettings().isTiltGesturesEnabled();
+    return Objects.requireNonNull(googleMap).getUiSettings().isTiltGesturesEnabled();
   }
 
   @Override
   public @NonNull Boolean areZoomGesturesEnabled() {
-    return googleMap.getUiSettings().isZoomGesturesEnabled();
+    return Objects.requireNonNull(googleMap).getUiSettings().isZoomGesturesEnabled();
   }
 
   @Override
   public @NonNull Boolean isCompassEnabled() {
-    return googleMap.getUiSettings().isCompassEnabled();
+    return Objects.requireNonNull(googleMap).getUiSettings().isCompassEnabled();
   }
 
   @Override
@@ -1058,17 +1053,17 @@ class GoogleMapController
 
   @Override
   public @NonNull Boolean isMapToolbarEnabled() {
-    return googleMap.getUiSettings().isMapToolbarEnabled();
+    return Objects.requireNonNull(googleMap).getUiSettings().isMapToolbarEnabled();
   }
 
   @Override
   public @NonNull Boolean isMyLocationButtonEnabled() {
-    return googleMap.getUiSettings().isMyLocationButtonEnabled();
+    return Objects.requireNonNull(googleMap).getUiSettings().isMyLocationButtonEnabled();
   }
 
   @Override
   public @NonNull Boolean isTrafficEnabled() {
-    return googleMap.isTrafficEnabled();
+    return Objects.requireNonNull(googleMap).isTrafficEnabled();
   }
 
   @Override
@@ -1088,8 +1083,8 @@ class GoogleMapController
   @Override
   public @NonNull Messages.PlatformZoomRange getZoomRange() {
     return new Messages.PlatformZoomRange.Builder()
-        .setMin((double) googleMap.getMinZoomLevel())
-        .setMax((double) googleMap.getMaxZoomLevel())
+        .setMin((double) Objects.requireNonNull(googleMap).getMinZoomLevel())
+        .setMax((double) Objects.requireNonNull(googleMap).getMaxZoomLevel())
         .build();
   }
 
