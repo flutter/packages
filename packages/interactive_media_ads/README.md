@@ -2,7 +2,7 @@
 
 Flutter plugin for the [Interactive Media Ads SDKs][1].
 
-[![pub package](https://img.shields.io/pub/v/webview_flutter.svg)](https://pub.dev/packages/interactive_media_ads)
+[![pub package](https://img.shields.io/pub/v/interactive_media_ads.svg)](https://pub.dev/packages/interactive_media_ads)
 
 A Flutter plugin for using the Interactive Media Ads SDKs on Android and iOS.
 
