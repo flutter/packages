@@ -248,13 +248,15 @@ void main() {
   testWidgets('adaptive layout can adjust animation duration',
       (WidgetTester tester) async {
     // Populate the smaller slot layout and let the animation settle.
-    await tester.pumpWidget(slot(300, const Duration(milliseconds: 100), tester));
+    await tester
+        .pumpWidget(slot(300, const Duration(milliseconds: 100), tester));
     await tester.pumpAndSettle();
     expect(begin, findsOneWidget);
     expect(end, findsNothing);
 
     // expand in 1/5 second.
-    await tester.pumpWidget(slot(500, const Duration(milliseconds: 200), tester));
+    await tester
+        .pumpWidget(slot(500, const Duration(milliseconds: 200), tester));
 
     // after 100ms, we expect both widgets to be present.
     await tester.pump(const Duration(milliseconds: 50));
