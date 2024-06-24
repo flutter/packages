@@ -212,6 +212,64 @@ void main() {
     verify(api.clearTileCache(tileOverlayId));
   });
 
+  test('updateMapConfiguration passes expected arguments', () async {
+    const int mapId = 1;
+    final (GoogleMapsFlutterAndroid maps, MockMapsApi api) =
+        setUpMockMap(mapId: mapId);
+
+    // Set some arbitrary options.
+    const MapConfiguration config = MapConfiguration(
+      compassEnabled: true,
+      liteModeEnabled: false,
+      mapType: MapType.terrain,
+    );
+    await maps.updateMapConfiguration(config, mapId: mapId);
+
+    final VerificationResult verification =
+        verify(api.updateMapConfiguration(captureAny));
+    final PlatformMapConfiguration passedConfig =
+        verification.captured[0] as PlatformMapConfiguration;
+    final Map<String, Object?> passedConfigJson =
+        passedConfig.json as Map<String, Object?>;
+    // Each set option should be present.
+    expect(passedConfigJson['compassEnabled'], true);
+    expect(passedConfigJson['liteModeEnabled'], false);
+    expect(passedConfigJson['mapType'], MapType.terrain.index);
+    // Spot-check that unset options are not be present.
+    expect(passedConfigJson['myLocationEnabled'], isNull);
+    expect(passedConfigJson['cameraTargetBounds'], isNull);
+    expect(passedConfigJson['padding'], isNull);
+  });
+
+  test('updateMapOptions passes expected arguments', () async {
+    const int mapId = 1;
+    final (GoogleMapsFlutterAndroid maps, MockMapsApi api) =
+        setUpMockMap(mapId: mapId);
+
+    // Set some arbitrary options.
+    final Map<String, Object?> config = <String, Object?>{
+      'compassEnabled': true,
+      'liteModeEnabled': false,
+      'mapType': MapType.terrain.index,
+    };
+    await maps.updateMapOptions(config, mapId: mapId);
+
+    final VerificationResult verification =
+        verify(api.updateMapConfiguration(captureAny));
+    final PlatformMapConfiguration passedConfig =
+        verification.captured[0] as PlatformMapConfiguration;
+    final Map<String, Object?> passedConfigJson =
+        passedConfig.json as Map<String, Object?>;
+    // Each set option should be present.
+    expect(passedConfigJson['compassEnabled'], true);
+    expect(passedConfigJson['liteModeEnabled'], false);
+    expect(passedConfigJson['mapType'], MapType.terrain.index);
+    // Spot-check that unset options are not be present.
+    expect(passedConfigJson['myLocationEnabled'], isNull);
+    expect(passedConfigJson['cameraTargetBounds'], isNull);
+    expect(passedConfigJson['padding'], isNull);
+  });
+
   test('updateCircles passes expected arguments', () async {
     const int mapId = 1;
     final (GoogleMapsFlutterAndroid maps, MockMapsApi api) =

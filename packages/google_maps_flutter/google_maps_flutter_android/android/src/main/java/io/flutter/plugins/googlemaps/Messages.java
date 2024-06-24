@@ -755,6 +755,65 @@ public class Messages {
   }
 
   /**
+   * Pigeon equivalent of MapConfiguration.
+   *
+   * <p>Generated class from Pigeon that represents data sent in messages.
+   */
+  public static final class PlatformMapConfiguration {
+    /**
+     * The configuration options, as JSON. This should only be set from _jsonForMapConfiguration,
+     * and the native code must intepret it according to the internal implementation details of that
+     * method.
+     */
+    private @NonNull Object json;
+
+    public @NonNull Object getJson() {
+      return json;
+    }
+
+    public void setJson(@NonNull Object setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"json\" is null.");
+      }
+      this.json = setterArg;
+    }
+
+    /** Constructor is non-public to enforce null safety; use Builder. */
+    PlatformMapConfiguration() {}
+
+    public static final class Builder {
+
+      private @Nullable Object json;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setJson(@NonNull Object setterArg) {
+        this.json = setterArg;
+        return this;
+      }
+
+      public @NonNull PlatformMapConfiguration build() {
+        PlatformMapConfiguration pigeonReturn = new PlatformMapConfiguration();
+        pigeonReturn.setJson(json);
+        return pigeonReturn;
+      }
+    }
+
+    @NonNull
+    ArrayList<Object> toList() {
+      ArrayList<Object> toListResult = new ArrayList<Object>(1);
+      toListResult.add(json);
+      return toListResult;
+    }
+
+    static @NonNull PlatformMapConfiguration fromList(@NonNull ArrayList<Object> __pigeon_list) {
+      PlatformMapConfiguration pigeonResult = new PlatformMapConfiguration();
+      Object json = __pigeon_list.get(0);
+      pigeonResult.setJson(json);
+      return pigeonResult;
+    }
+  }
+
+  /**
    * Pigeon representation of an x,y coordinate.
    *
    * <p>Generated class from Pigeon that represents data sent in messages.
@@ -1070,10 +1129,12 @@ public class Messages {
         case (byte) 138:
           return PlatformCluster.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 139:
-          return PlatformPoint.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformMapConfiguration.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 140:
-          return PlatformTileLayer.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformPoint.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 141:
+          return PlatformTileLayer.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 142:
           return PlatformZoomRange.fromList((ArrayList<Object>) readValue(buffer));
         default:
           return super.readValueOfType(type, buffer);
@@ -1112,14 +1173,17 @@ public class Messages {
       } else if (value instanceof PlatformCluster) {
         stream.write(138);
         writeValue(stream, ((PlatformCluster) value).toList());
-      } else if (value instanceof PlatformPoint) {
+      } else if (value instanceof PlatformMapConfiguration) {
         stream.write(139);
+        writeValue(stream, ((PlatformMapConfiguration) value).toList());
+      } else if (value instanceof PlatformPoint) {
+        stream.write(140);
         writeValue(stream, ((PlatformPoint) value).toList());
       } else if (value instanceof PlatformTileLayer) {
-        stream.write(140);
+        stream.write(141);
         writeValue(stream, ((PlatformTileLayer) value).toList());
       } else if (value instanceof PlatformZoomRange) {
-        stream.write(141);
+        stream.write(142);
         writeValue(stream, ((PlatformZoomRange) value).toList());
       } else {
         super.writeValue(stream, value);
@@ -1161,6 +1225,13 @@ public class Messages {
   public interface MapsApi {
     /** Returns once the map instance is available. */
     void waitForMap(@NonNull VoidResult result);
+    /**
+     * Updates the map's configuration options.
+     *
+     * <p>Only non-null configuration values will result in updates; options with null values will
+     * remain unchanged.
+     */
+    void updateMapConfiguration(@NonNull PlatformMapConfiguration configuration);
     /** Updates the set of circles on the map. */
     void updateCircles(
         @NonNull List<PlatformCircle> toAdd,
@@ -1273,6 +1344,32 @@ public class Messages {
                     };
 
                 api.waitForMap(resultCallback);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.google_maps_flutter_android.MapsApi.updateMapConfiguration"
+                    + messageChannelSuffix,
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                PlatformMapConfiguration configurationArg = (PlatformMapConfiguration) args.get(0);
+                try {
+                  api.updateMapConfiguration(configurationArg);
+                  wrapped.add(0, null);
+                } catch (Throwable exception) {
+                  ArrayList<Object> wrappedError = wrapError(exception);
+                  wrapped = wrappedError;
+                }
+                reply.reply(wrapped);
               });
         } else {
           channel.setMessageHandler(null);

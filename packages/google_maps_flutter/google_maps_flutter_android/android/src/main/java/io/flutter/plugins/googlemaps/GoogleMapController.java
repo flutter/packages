@@ -44,7 +44,6 @@ import com.google.maps.android.clustering.ClusterManager;
 import com.google.maps.android.collections.MarkerManager;
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
 import io.flutter.plugin.common.BinaryMessenger;
-import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.platform.PlatformView;
 import io.flutter.plugins.googlemaps.Messages.FlutterError;
@@ -69,7 +68,6 @@ class GoogleMapController
         GoogleMapOptionsSink,
         MapsApi,
         MapsInspectorApi,
-        MethodChannel.MethodCallHandler,
         OnMapReadyCallback,
         PlatformView {
 
@@ -125,7 +123,6 @@ class GoogleMapController
     this.binaryMessenger = binaryMessenger;
     methodChannel =
         new MethodChannel(binaryMessenger, "plugins.flutter.dev/google_maps_android_" + id);
-    methodChannel.setMethodCallHandler(this);
     MapsApi.setUp(binaryMessenger, Integer.toString(id), this);
     MapsInspectorApi.setUp(binaryMessenger, Integer.toString(id), this);
     AssetManager assetManager = context.getAssets();
@@ -300,20 +297,6 @@ class GoogleMapController
   }
 
   @Override
-  public void onMethodCall(MethodCall call, @NonNull MethodChannel.Result result) {
-    switch (call.method) {
-      case "map#update":
-        {
-          Convert.interpretGoogleMapOptions(call.argument("options"), this);
-          result.success(Convert.cameraPositionToJson(getCameraPosition()));
-          break;
-        }
-      default:
-        result.notImplemented();
-    }
-  }
-
-  @Override
   public void onMapClick(@NonNull LatLng latLng) {
     final Map<String, Object> arguments = new HashMap<>(2);
     arguments.put("position", Convert.latLngToJson(latLng));
@@ -397,7 +380,6 @@ class GoogleMapController
       return;
     }
     disposed = true;
-    methodChannel.setMethodCallHandler(null);
     MapsApi.setUp(binaryMessenger, Integer.toString(id), null);
     MapsInspectorApi.setUp(binaryMessenger, Integer.toString(id), null);
     setGoogleMapListener(null);
@@ -819,6 +801,11 @@ class GoogleMapController
     } else {
       result.success();
     }
+  }
+
+  @Override
+  public void updateMapConfiguration(@NonNull Messages.PlatformMapConfiguration configuration) {
+    Convert.interpretGoogleMapOptions(configuration.getJson(), this);
   }
 
   @Override

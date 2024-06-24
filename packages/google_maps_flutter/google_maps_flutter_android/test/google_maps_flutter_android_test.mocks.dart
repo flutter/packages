@@ -69,6 +69,18 @@ class MockMapsApi extends _i1.Mock implements _i2.MapsApi {
       ) as _i3.Future<void>);
 
   @override
+  _i3.Future<void> updateMapConfiguration(
+          _i2.PlatformMapConfiguration? configuration) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #updateMapConfiguration,
+          [configuration],
+        ),
+        returnValue: _i3.Future<void>.value(),
+        returnValueForMissingStub: _i3.Future<void>.value(),
+      ) as _i3.Future<void>);
+
+  @override
   _i3.Future<void> updateCircles(
     List<_i2.PlatformCircle?>? toAdd,
     List<_i2.PlatformCircle?>? toChange,

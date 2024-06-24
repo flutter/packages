@@ -83,15 +83,6 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
   // A method to create MapsApi instances, which can be overridden for testing.
   final MapsApi Function(int mapId) _apiProvider;
 
-  /// Accesses the MethodChannel associated to the passed mapId.
-  MethodChannel _channel(int mapId) {
-    final MethodChannel? channel = _channels[mapId];
-    if (channel == null) {
-      throw UnknownMapIDError(mapId);
-    }
-    return channel;
-  }
-
   /// Accesses the MapsApi associated to the passed mapId.
   MapsApi _hostApi(int mapId) {
     final MapsApi? api = _hostMaps[mapId];
@@ -355,12 +346,8 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
     Map<String, dynamic> optionsUpdate, {
     required int mapId,
   }) {
-    return _channel(mapId).invokeMethod<void>(
-      'map#update',
-      <String, dynamic>{
-        'options': optionsUpdate,
-      },
-    );
+    return _hostApi(mapId)
+        .updateMapConfiguration(PlatformMapConfiguration(json: optionsUpdate));
   }
 
   @override

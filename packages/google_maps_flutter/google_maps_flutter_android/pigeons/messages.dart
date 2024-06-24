@@ -127,6 +127,18 @@ class PlatformCluster {
   final List<String?> markerIds;
 }
 
+/// Pigeon equivalent of MapConfiguration.
+class PlatformMapConfiguration {
+  PlatformMapConfiguration({required this.json});
+
+  /// The configuration options, as JSON. This should only be set from
+  /// _jsonForMapConfiguration, and the native code must intepret it according
+  /// to the internal implementation details of that method.
+  // TODO(stuartmorgan): Replace this with structured data. This exists only to
+  //  allow incremental migration to Pigeon.
+  final Object json;
+}
+
 /// Pigeon representation of an x,y coordinate.
 class PlatformPoint {
   PlatformPoint({required this.x, required this.y});
@@ -166,6 +178,12 @@ abstract class MapsApi {
   /// Returns once the map instance is available.
   @async
   void waitForMap();
+
+  /// Updates the map's configuration options.
+  ///
+  /// Only non-null configuration values will result in updates; options with
+  /// null values will remain unchanged.
+  void updateMapConfiguration(PlatformMapConfiguration configuration);
 
   /// Updates the set of circles on the map.
   // TODO(stuartmorgan): Make the generic type non-nullable once supported.
