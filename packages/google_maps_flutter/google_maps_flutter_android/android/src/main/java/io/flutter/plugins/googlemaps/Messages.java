@@ -124,6 +124,350 @@ public class Messages {
   }
 
   /**
+   * Pigeon equivalent of the Circle class.
+   *
+   * <p>Generated class from Pigeon that represents data sent in messages.
+   */
+  public static final class PlatformCircle {
+    /**
+     * The circle data, as JSON. This should only be set from Circle.toJson, and the native code
+     * must intepret it according to the internal implementation details of that method.
+     */
+    private @NonNull Object json;
+
+    public @NonNull Object getJson() {
+      return json;
+    }
+
+    public void setJson(@NonNull Object setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"json\" is null.");
+      }
+      this.json = setterArg;
+    }
+
+    /** Constructor is non-public to enforce null safety; use Builder. */
+    PlatformCircle() {}
+
+    public static final class Builder {
+
+      private @Nullable Object json;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setJson(@NonNull Object setterArg) {
+        this.json = setterArg;
+        return this;
+      }
+
+      public @NonNull PlatformCircle build() {
+        PlatformCircle pigeonReturn = new PlatformCircle();
+        pigeonReturn.setJson(json);
+        return pigeonReturn;
+      }
+    }
+
+    @NonNull
+    ArrayList<Object> toList() {
+      ArrayList<Object> toListResult = new ArrayList<Object>(1);
+      toListResult.add(json);
+      return toListResult;
+    }
+
+    static @NonNull PlatformCircle fromList(@NonNull ArrayList<Object> __pigeon_list) {
+      PlatformCircle pigeonResult = new PlatformCircle();
+      Object json = __pigeon_list.get(0);
+      pigeonResult.setJson(json);
+      return pigeonResult;
+    }
+  }
+
+  /**
+   * Pigeon equivalent of the ClusterManager class.
+   *
+   * <p>Generated class from Pigeon that represents data sent in messages.
+   */
+  public static final class PlatformClusterManager {
+    private @NonNull String identifier;
+
+    public @NonNull String getIdentifier() {
+      return identifier;
+    }
+
+    public void setIdentifier(@NonNull String setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"identifier\" is null.");
+      }
+      this.identifier = setterArg;
+    }
+
+    /** Constructor is non-public to enforce null safety; use Builder. */
+    PlatformClusterManager() {}
+
+    public static final class Builder {
+
+      private @Nullable String identifier;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setIdentifier(@NonNull String setterArg) {
+        this.identifier = setterArg;
+        return this;
+      }
+
+      public @NonNull PlatformClusterManager build() {
+        PlatformClusterManager pigeonReturn = new PlatformClusterManager();
+        pigeonReturn.setIdentifier(identifier);
+        return pigeonReturn;
+      }
+    }
+
+    @NonNull
+    ArrayList<Object> toList() {
+      ArrayList<Object> toListResult = new ArrayList<Object>(1);
+      toListResult.add(identifier);
+      return toListResult;
+    }
+
+    static @NonNull PlatformClusterManager fromList(@NonNull ArrayList<Object> __pigeon_list) {
+      PlatformClusterManager pigeonResult = new PlatformClusterManager();
+      Object identifier = __pigeon_list.get(0);
+      pigeonResult.setIdentifier((String) identifier);
+      return pigeonResult;
+    }
+  }
+
+  /**
+   * Pigeon equivalent of the Marker class.
+   *
+   * <p>Generated class from Pigeon that represents data sent in messages.
+   */
+  public static final class PlatformMarker {
+    /**
+     * The marker data, as JSON. This should only be set from Marker.toJson, and the native code
+     * must intepret it according to the internal implementation details of that method.
+     */
+    private @NonNull Object json;
+
+    public @NonNull Object getJson() {
+      return json;
+    }
+
+    public void setJson(@NonNull Object setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"json\" is null.");
+      }
+      this.json = setterArg;
+    }
+
+    /** Constructor is non-public to enforce null safety; use Builder. */
+    PlatformMarker() {}
+
+    public static final class Builder {
+
+      private @Nullable Object json;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setJson(@NonNull Object setterArg) {
+        this.json = setterArg;
+        return this;
+      }
+
+      public @NonNull PlatformMarker build() {
+        PlatformMarker pigeonReturn = new PlatformMarker();
+        pigeonReturn.setJson(json);
+        return pigeonReturn;
+      }
+    }
+
+    @NonNull
+    ArrayList<Object> toList() {
+      ArrayList<Object> toListResult = new ArrayList<Object>(1);
+      toListResult.add(json);
+      return toListResult;
+    }
+
+    static @NonNull PlatformMarker fromList(@NonNull ArrayList<Object> __pigeon_list) {
+      PlatformMarker pigeonResult = new PlatformMarker();
+      Object json = __pigeon_list.get(0);
+      pigeonResult.setJson(json);
+      return pigeonResult;
+    }
+  }
+
+  /**
+   * Pigeon equivalent of the Polygon class.
+   *
+   * <p>Generated class from Pigeon that represents data sent in messages.
+   */
+  public static final class PlatformPolygon {
+    /**
+     * The polygon data, as JSON. This should only be set from Polygon.toJson, and the native code
+     * must intepret it according to the internal implementation details of that method.
+     */
+    private @NonNull Object json;
+
+    public @NonNull Object getJson() {
+      return json;
+    }
+
+    public void setJson(@NonNull Object setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"json\" is null.");
+      }
+      this.json = setterArg;
+    }
+
+    /** Constructor is non-public to enforce null safety; use Builder. */
+    PlatformPolygon() {}
+
+    public static final class Builder {
+
+      private @Nullable Object json;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setJson(@NonNull Object setterArg) {
+        this.json = setterArg;
+        return this;
+      }
+
+      public @NonNull PlatformPolygon build() {
+        PlatformPolygon pigeonReturn = new PlatformPolygon();
+        pigeonReturn.setJson(json);
+        return pigeonReturn;
+      }
+    }
+
+    @NonNull
+    ArrayList<Object> toList() {
+      ArrayList<Object> toListResult = new ArrayList<Object>(1);
+      toListResult.add(json);
+      return toListResult;
+    }
+
+    static @NonNull PlatformPolygon fromList(@NonNull ArrayList<Object> __pigeon_list) {
+      PlatformPolygon pigeonResult = new PlatformPolygon();
+      Object json = __pigeon_list.get(0);
+      pigeonResult.setJson(json);
+      return pigeonResult;
+    }
+  }
+
+  /**
+   * Pigeon equivalent of the Polyline class.
+   *
+   * <p>Generated class from Pigeon that represents data sent in messages.
+   */
+  public static final class PlatformPolyline {
+    /**
+     * The polyline data, as JSON. This should only be set from Polyline.toJson, and the native code
+     * must intepret it according to the internal implementation details of that method.
+     */
+    private @NonNull Object json;
+
+    public @NonNull Object getJson() {
+      return json;
+    }
+
+    public void setJson(@NonNull Object setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"json\" is null.");
+      }
+      this.json = setterArg;
+    }
+
+    /** Constructor is non-public to enforce null safety; use Builder. */
+    PlatformPolyline() {}
+
+    public static final class Builder {
+
+      private @Nullable Object json;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setJson(@NonNull Object setterArg) {
+        this.json = setterArg;
+        return this;
+      }
+
+      public @NonNull PlatformPolyline build() {
+        PlatformPolyline pigeonReturn = new PlatformPolyline();
+        pigeonReturn.setJson(json);
+        return pigeonReturn;
+      }
+    }
+
+    @NonNull
+    ArrayList<Object> toList() {
+      ArrayList<Object> toListResult = new ArrayList<Object>(1);
+      toListResult.add(json);
+      return toListResult;
+    }
+
+    static @NonNull PlatformPolyline fromList(@NonNull ArrayList<Object> __pigeon_list) {
+      PlatformPolyline pigeonResult = new PlatformPolyline();
+      Object json = __pigeon_list.get(0);
+      pigeonResult.setJson(json);
+      return pigeonResult;
+    }
+  }
+
+  /**
+   * Pigeon equivalent of the TileOverlay class.
+   *
+   * <p>Generated class from Pigeon that represents data sent in messages.
+   */
+  public static final class PlatformTileOverlay {
+    /**
+     * The tile overlay data, as JSON. This should only be set from TileOverlay.toJson, and the
+     * native code must intepret it according to the internal implementation details of that method.
+     */
+    private @NonNull Object json;
+
+    public @NonNull Object getJson() {
+      return json;
+    }
+
+    public void setJson(@NonNull Object setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"json\" is null.");
+      }
+      this.json = setterArg;
+    }
+
+    /** Constructor is non-public to enforce null safety; use Builder. */
+    PlatformTileOverlay() {}
+
+    public static final class Builder {
+
+      private @Nullable Object json;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setJson(@NonNull Object setterArg) {
+        this.json = setterArg;
+        return this;
+      }
+
+      public @NonNull PlatformTileOverlay build() {
+        PlatformTileOverlay pigeonReturn = new PlatformTileOverlay();
+        pigeonReturn.setJson(json);
+        return pigeonReturn;
+      }
+    }
+
+    @NonNull
+    ArrayList<Object> toList() {
+      ArrayList<Object> toListResult = new ArrayList<Object>(1);
+      toListResult.add(json);
+      return toListResult;
+    }
+
+    static @NonNull PlatformTileOverlay fromList(@NonNull ArrayList<Object> __pigeon_list) {
+      PlatformTileOverlay pigeonResult = new PlatformTileOverlay();
+      Object json = __pigeon_list.get(0);
+      pigeonResult.setJson(json);
+      return pigeonResult;
+    }
+  }
+
+  /**
    * Pigeon equivalent of LatLng.
    *
    * <p>Generated class from Pigeon that represents data sent in messages.
@@ -708,16 +1052,28 @@ public class Messages {
         case (byte) 129:
           return PlatformCameraUpdate.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 130:
-          return PlatformLatLng.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformCircle.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 131:
-          return PlatformLatLngBounds.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformClusterManager.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 132:
-          return PlatformCluster.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformMarker.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 133:
-          return PlatformPoint.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformPolygon.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 134:
-          return PlatformTileLayer.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformPolyline.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 135:
+          return PlatformTileOverlay.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 136:
+          return PlatformLatLng.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 137:
+          return PlatformLatLngBounds.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 138:
+          return PlatformCluster.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 139:
+          return PlatformPoint.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 140:
+          return PlatformTileLayer.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 141:
           return PlatformZoomRange.fromList((ArrayList<Object>) readValue(buffer));
         default:
           return super.readValueOfType(type, buffer);
@@ -729,23 +1085,41 @@ public class Messages {
       if (value instanceof PlatformCameraUpdate) {
         stream.write(129);
         writeValue(stream, ((PlatformCameraUpdate) value).toList());
-      } else if (value instanceof PlatformLatLng) {
+      } else if (value instanceof PlatformCircle) {
         stream.write(130);
+        writeValue(stream, ((PlatformCircle) value).toList());
+      } else if (value instanceof PlatformClusterManager) {
+        stream.write(131);
+        writeValue(stream, ((PlatformClusterManager) value).toList());
+      } else if (value instanceof PlatformMarker) {
+        stream.write(132);
+        writeValue(stream, ((PlatformMarker) value).toList());
+      } else if (value instanceof PlatformPolygon) {
+        stream.write(133);
+        writeValue(stream, ((PlatformPolygon) value).toList());
+      } else if (value instanceof PlatformPolyline) {
+        stream.write(134);
+        writeValue(stream, ((PlatformPolyline) value).toList());
+      } else if (value instanceof PlatformTileOverlay) {
+        stream.write(135);
+        writeValue(stream, ((PlatformTileOverlay) value).toList());
+      } else if (value instanceof PlatformLatLng) {
+        stream.write(136);
         writeValue(stream, ((PlatformLatLng) value).toList());
       } else if (value instanceof PlatformLatLngBounds) {
-        stream.write(131);
+        stream.write(137);
         writeValue(stream, ((PlatformLatLngBounds) value).toList());
       } else if (value instanceof PlatformCluster) {
-        stream.write(132);
+        stream.write(138);
         writeValue(stream, ((PlatformCluster) value).toList());
       } else if (value instanceof PlatformPoint) {
-        stream.write(133);
+        stream.write(139);
         writeValue(stream, ((PlatformPoint) value).toList());
       } else if (value instanceof PlatformTileLayer) {
-        stream.write(134);
+        stream.write(140);
         writeValue(stream, ((PlatformTileLayer) value).toList());
       } else if (value instanceof PlatformZoomRange) {
-        stream.write(135);
+        stream.write(141);
         writeValue(stream, ((PlatformZoomRange) value).toList());
       } else {
         super.writeValue(stream, value);
@@ -787,6 +1161,34 @@ public class Messages {
   public interface MapsApi {
     /** Returns once the map instance is available. */
     void waitForMap(@NonNull VoidResult result);
+    /** Updates the set of circles on the map. */
+    void updateCircles(
+        @NonNull List<PlatformCircle> toAdd,
+        @NonNull List<PlatformCircle> toChange,
+        @NonNull List<String> idsToRemove);
+    /** Updates the set of custer managers for clusters on the map. */
+    void updateClusterManagers(
+        @NonNull List<PlatformClusterManager> toAdd, @NonNull List<String> idsToRemove);
+    /** Updates the set of markers on the map. */
+    void updateMarkers(
+        @NonNull List<PlatformMarker> toAdd,
+        @NonNull List<PlatformMarker> toChange,
+        @NonNull List<String> idsToRemove);
+    /** Updates the set of polygonss on the map. */
+    void updatePolygons(
+        @NonNull List<PlatformPolygon> toAdd,
+        @NonNull List<PlatformPolygon> toChange,
+        @NonNull List<String> idsToRemove);
+    /** Updates the set of polylines on the map. */
+    void updatePolylines(
+        @NonNull List<PlatformPolyline> toAdd,
+        @NonNull List<PlatformPolyline> toChange,
+        @NonNull List<String> idsToRemove);
+    /** Updates the set of tile overlays on the map. */
+    void updateTileOverlays(
+        @NonNull List<PlatformTileOverlay> toAdd,
+        @NonNull List<PlatformTileOverlay> toChange,
+        @NonNull List<String> idsToRemove);
     /** Gets the screen coordinate for the given map location. */
     @NonNull
     PlatformPoint getScreenCoordinate(@NonNull PlatformLatLng latLng);
@@ -871,6 +1273,173 @@ public class Messages {
                     };
 
                 api.waitForMap(resultCallback);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.google_maps_flutter_android.MapsApi.updateCircles"
+                    + messageChannelSuffix,
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                List<PlatformCircle> toAddArg = (List<PlatformCircle>) args.get(0);
+                List<PlatformCircle> toChangeArg = (List<PlatformCircle>) args.get(1);
+                List<String> idsToRemoveArg = (List<String>) args.get(2);
+                try {
+                  api.updateCircles(toAddArg, toChangeArg, idsToRemoveArg);
+                  wrapped.add(0, null);
+                } catch (Throwable exception) {
+                  ArrayList<Object> wrappedError = wrapError(exception);
+                  wrapped = wrappedError;
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.google_maps_flutter_android.MapsApi.updateClusterManagers"
+                    + messageChannelSuffix,
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                List<PlatformClusterManager> toAddArg = (List<PlatformClusterManager>) args.get(0);
+                List<String> idsToRemoveArg = (List<String>) args.get(1);
+                try {
+                  api.updateClusterManagers(toAddArg, idsToRemoveArg);
+                  wrapped.add(0, null);
+                } catch (Throwable exception) {
+                  ArrayList<Object> wrappedError = wrapError(exception);
+                  wrapped = wrappedError;
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.google_maps_flutter_android.MapsApi.updateMarkers"
+                    + messageChannelSuffix,
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                List<PlatformMarker> toAddArg = (List<PlatformMarker>) args.get(0);
+                List<PlatformMarker> toChangeArg = (List<PlatformMarker>) args.get(1);
+                List<String> idsToRemoveArg = (List<String>) args.get(2);
+                try {
+                  api.updateMarkers(toAddArg, toChangeArg, idsToRemoveArg);
+                  wrapped.add(0, null);
+                } catch (Throwable exception) {
+                  ArrayList<Object> wrappedError = wrapError(exception);
+                  wrapped = wrappedError;
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.google_maps_flutter_android.MapsApi.updatePolygons"
+                    + messageChannelSuffix,
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                List<PlatformPolygon> toAddArg = (List<PlatformPolygon>) args.get(0);
+                List<PlatformPolygon> toChangeArg = (List<PlatformPolygon>) args.get(1);
+                List<String> idsToRemoveArg = (List<String>) args.get(2);
+                try {
+                  api.updatePolygons(toAddArg, toChangeArg, idsToRemoveArg);
+                  wrapped.add(0, null);
+                } catch (Throwable exception) {
+                  ArrayList<Object> wrappedError = wrapError(exception);
+                  wrapped = wrappedError;
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.google_maps_flutter_android.MapsApi.updatePolylines"
+                    + messageChannelSuffix,
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                List<PlatformPolyline> toAddArg = (List<PlatformPolyline>) args.get(0);
+                List<PlatformPolyline> toChangeArg = (List<PlatformPolyline>) args.get(1);
+                List<String> idsToRemoveArg = (List<String>) args.get(2);
+                try {
+                  api.updatePolylines(toAddArg, toChangeArg, idsToRemoveArg);
+                  wrapped.add(0, null);
+                } catch (Throwable exception) {
+                  ArrayList<Object> wrappedError = wrapError(exception);
+                  wrapped = wrappedError;
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.google_maps_flutter_android.MapsApi.updateTileOverlays"
+                    + messageChannelSuffix,
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                List<PlatformTileOverlay> toAddArg = (List<PlatformTileOverlay>) args.get(0);
+                List<PlatformTileOverlay> toChangeArg = (List<PlatformTileOverlay>) args.get(1);
+                List<String> idsToRemoveArg = (List<String>) args.get(2);
+                try {
+                  api.updateTileOverlays(toAddArg, toChangeArg, idsToRemoveArg);
+                  wrapped.add(0, null);
+                } catch (Throwable exception) {
+                  ArrayList<Object> wrappedError = wrapError(exception);
+                  wrapped = wrappedError;
+                }
+                reply.reply(wrapped);
               });
         } else {
           channel.setMessageHandler(null);

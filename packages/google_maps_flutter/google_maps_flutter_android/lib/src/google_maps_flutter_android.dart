@@ -342,6 +342,15 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
   }
 
   @override
+  Future<void> updateMapConfiguration(
+    MapConfiguration configuration, {
+    required int mapId,
+  }) {
+    return updateMapOptions(_jsonForMapConfiguration(configuration),
+        mapId: mapId);
+  }
+
+  @override
   Future<void> updateMapOptions(
     Map<String, dynamic> optionsUpdate, {
     required int mapId,
@@ -359,9 +368,10 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
     MarkerUpdates markerUpdates, {
     required int mapId,
   }) {
-    return _channel(mapId).invokeMethod<void>(
-      'markers#update',
-      markerUpdates.toJson(),
+    return _hostApi(mapId).updateMarkers(
+      markerUpdates.markersToAdd.map(_platformMarkerFromMarker).toList(),
+      markerUpdates.markersToChange.map(_platformMarkerFromMarker).toList(),
+      markerUpdates.markerIdsToRemove.map((MarkerId id) => id.value).toList(),
     );
   }
 
@@ -370,9 +380,12 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
     PolygonUpdates polygonUpdates, {
     required int mapId,
   }) {
-    return _channel(mapId).invokeMethod<void>(
-      'polygons#update',
-      polygonUpdates.toJson(),
+    return _hostApi(mapId).updatePolygons(
+      polygonUpdates.polygonsToAdd.map(_platformPolygonFromPolygon).toList(),
+      polygonUpdates.polygonsToChange.map(_platformPolygonFromPolygon).toList(),
+      polygonUpdates.polygonIdsToRemove
+          .map((PolygonId id) => id.value)
+          .toList(),
     );
   }
 
@@ -381,9 +394,16 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
     PolylineUpdates polylineUpdates, {
     required int mapId,
   }) {
-    return _channel(mapId).invokeMethod<void>(
-      'polylines#update',
-      polylineUpdates.toJson(),
+    return _hostApi(mapId).updatePolylines(
+      polylineUpdates.polylinesToAdd
+          .map(_platformPolylineFromPolyline)
+          .toList(),
+      polylineUpdates.polylinesToChange
+          .map(_platformPolylineFromPolyline)
+          .toList(),
+      polylineUpdates.polylineIdsToRemove
+          .map((PolylineId id) => id.value)
+          .toList(),
     );
   }
 
@@ -392,9 +412,10 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
     CircleUpdates circleUpdates, {
     required int mapId,
   }) {
-    return _channel(mapId).invokeMethod<void>(
-      'circles#update',
-      circleUpdates.toJson(),
+    return _hostApi(mapId).updateCircles(
+      circleUpdates.circlesToAdd.map(_platformCircleFromCircle).toList(),
+      circleUpdates.circlesToChange.map(_platformCircleFromCircle).toList(),
+      circleUpdates.circleIdsToRemove.map((CircleId id) => id.value).toList(),
     );
   }
 
@@ -411,9 +432,16 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
     final _TileOverlayUpdates updates =
         _TileOverlayUpdates.from(previousSet, newTileOverlays);
     _tileOverlays[mapId] = keyTileOverlayId(newTileOverlays);
-    return _channel(mapId).invokeMethod<void>(
-      'tileOverlays#update',
-      updates.toJson(),
+    return _hostApi(mapId).updateTileOverlays(
+      updates.tileOverlaysToAdd
+          .map(_platformTileOverlayFromTileOverlay)
+          .toList(),
+      updates.tileOverlaysToChange
+          .map(_platformTileOverlayFromTileOverlay)
+          .toList(),
+      updates.tileOverlayIdsToRemove
+          .map((TileOverlayId id) => id.value)
+          .toList(),
     );
   }
 
@@ -422,9 +450,13 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
     ClusterManagerUpdates clusterManagerUpdates, {
     required int mapId,
   }) {
-    return _channel(mapId).invokeMethod<void>(
-      'clusterManagers#update',
-      serializeClusterManagerUpdates(clusterManagerUpdates),
+    return _hostApi(mapId).updateClusterManagers(
+      clusterManagerUpdates.clusterManagersToAdd
+          .map(_platformClusterManagerFromClusterManager)
+          .toList(),
+      clusterManagerUpdates.clusterManagerIdsToRemove
+          .map((ClusterManagerId id) => id.value)
+          .toList(),
     );
   }
 
@@ -596,6 +628,8 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
     MapObjects mapObjects = const MapObjects(),
     Map<String, dynamic> mapOptions = const <String, dynamic>{},
   }) {
+    // TODO(stuartmorgan): Convert this to Pigeon-generated structures once
+    // https://github.com/flutter/flutter/issues/150631 is fixed.
     final Map<String, dynamic> creationParams = <String, dynamic>{
       'initialCameraPosition':
           widgetConfiguration.initialCameraPosition.toMap(),
@@ -811,6 +845,33 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
     return LatLngBounds(
         southwest: _latLngFromPlatformLatLng(bounds.southwest),
         northeast: _latLngFromPlatformLatLng(bounds.northeast));
+  }
+
+  static PlatformCircle _platformCircleFromCircle(Circle circle) {
+    return PlatformCircle(json: circle.toJson());
+  }
+
+  static PlatformClusterManager _platformClusterManagerFromClusterManager(
+      ClusterManager clusterManager) {
+    return PlatformClusterManager(
+        identifier: clusterManager.clusterManagerId.value);
+  }
+
+  static PlatformMarker _platformMarkerFromMarker(Marker marker) {
+    return PlatformMarker(json: marker.toJson());
+  }
+
+  static PlatformPolygon _platformPolygonFromPolygon(Polygon polygon) {
+    return PlatformPolygon(json: polygon.toJson());
+  }
+
+  static PlatformPolyline _platformPolylineFromPolyline(Polyline polyline) {
+    return PlatformPolyline(json: polyline.toJson());
+  }
+
+  static PlatformTileOverlay _platformTileOverlayFromTileOverlay(
+      TileOverlay tileOverlay) {
+    return PlatformTileOverlay(json: tileOverlay.toJson());
   }
 }
 

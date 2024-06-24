@@ -308,74 +308,6 @@ class GoogleMapController
           result.success(Convert.cameraPositionToJson(getCameraPosition()));
           break;
         }
-      case "markers#update":
-        {
-          List<Object> markersToAdd = call.argument("markersToAdd");
-          markersController.addMarkers(markersToAdd);
-          List<Object> markersToChange = call.argument("markersToChange");
-          markersController.changeMarkers(markersToChange);
-          List<Object> markerIdsToRemove = call.argument("markerIdsToRemove");
-          markersController.removeMarkers(markerIdsToRemove);
-          result.success(null);
-          break;
-        }
-      case "clusterManagers#update":
-        {
-          List<Object> clusterManagersToAdd = call.argument("clusterManagersToAdd");
-          if (clusterManagersToAdd != null) {
-            clusterManagersController.addClusterManagers(clusterManagersToAdd);
-          }
-          List<Object> clusterManagerIdsToRemove = call.argument("clusterManagerIdsToRemove");
-          if (clusterManagerIdsToRemove != null) {
-            clusterManagersController.removeClusterManagers(clusterManagerIdsToRemove);
-          }
-          result.success(null);
-          break;
-        }
-      case "polygons#update":
-        {
-          List<Object> polygonsToAdd = call.argument("polygonsToAdd");
-          polygonsController.addPolygons(polygonsToAdd);
-          List<Object> polygonsToChange = call.argument("polygonsToChange");
-          polygonsController.changePolygons(polygonsToChange);
-          List<Object> polygonIdsToRemove = call.argument("polygonIdsToRemove");
-          polygonsController.removePolygons(polygonIdsToRemove);
-          result.success(null);
-          break;
-        }
-      case "polylines#update":
-        {
-          List<Object> polylinesToAdd = call.argument("polylinesToAdd");
-          polylinesController.addPolylines(polylinesToAdd);
-          List<Object> polylinesToChange = call.argument("polylinesToChange");
-          polylinesController.changePolylines(polylinesToChange);
-          List<Object> polylineIdsToRemove = call.argument("polylineIdsToRemove");
-          polylinesController.removePolylines(polylineIdsToRemove);
-          result.success(null);
-          break;
-        }
-      case "circles#update":
-        {
-          List<Object> circlesToAdd = call.argument("circlesToAdd");
-          circlesController.addCircles(circlesToAdd);
-          List<Object> circlesToChange = call.argument("circlesToChange");
-          circlesController.changeCircles(circlesToChange);
-          List<Object> circleIdsToRemove = call.argument("circleIdsToRemove");
-          circlesController.removeCircles(circleIdsToRemove);
-          result.success(null);
-          break;
-        }
-      case "tileOverlays#update":
-        {
-          List<Map<String, ?>> tileOverlaysToAdd = call.argument("tileOverlaysToAdd");
-          tileOverlaysController.addTileOverlays(tileOverlaysToAdd);
-          List<Map<String, ?>> tileOverlaysToChange = call.argument("tileOverlaysToChange");
-          tileOverlaysController.changeTileOverlays(tileOverlaysToChange);
-          List<String> tileOverlaysToRemove = call.argument("tileOverlayIdsToRemove");
-          tileOverlaysController.removeTileOverlays(tileOverlaysToRemove);
-          result.success(null);
-          break;
-        }
       default:
         result.notImplemented();
     }
@@ -728,7 +660,7 @@ class GoogleMapController
   }
 
   private void updateInitialMarkers() {
-    markersController.addMarkers(initialMarkers);
+    markersController.addJsonMarkers(initialMarkers);
   }
 
   @Override
@@ -742,7 +674,7 @@ class GoogleMapController
 
   private void updateInitialClusterManagers() {
     if (initialClusterManagers != null) {
-      clusterManagersController.addClusterManagers(initialClusterManagers);
+      clusterManagersController.addJsonClusterManagers(initialClusterManagers);
     }
   }
 
@@ -756,7 +688,7 @@ class GoogleMapController
   }
 
   private void updateInitialPolygons() {
-    polygonsController.addPolygons(initialPolygons);
+    polygonsController.addJsonPolygons(initialPolygons);
   }
 
   @Override
@@ -769,7 +701,7 @@ class GoogleMapController
   }
 
   private void updateInitialPolylines() {
-    polylinesController.addPolylines(initialPolylines);
+    polylinesController.addJsonPolylines(initialPolylines);
   }
 
   @Override
@@ -782,7 +714,7 @@ class GoogleMapController
   }
 
   private void updateInitialCircles() {
-    circlesController.addCircles(initialCircles);
+    circlesController.addJsonCircles(initialCircles);
   }
 
   @Override
@@ -794,7 +726,7 @@ class GoogleMapController
   }
 
   private void updateInitialTileOverlays() {
-    tileOverlaysController.addTileOverlays(initialTileOverlays);
+    tileOverlaysController.addJsonTileOverlays(initialTileOverlays);
   }
 
   @SuppressLint("MissingPermission")
@@ -887,6 +819,63 @@ class GoogleMapController
     } else {
       result.success();
     }
+  }
+
+  @Override
+  public void updateCircles(
+      @NonNull List<Messages.PlatformCircle> toAdd,
+      @NonNull List<Messages.PlatformCircle> toChange,
+      @NonNull List<String> idsToRemove) {
+    circlesController.addCircles(toAdd);
+    circlesController.changeCircles(toChange);
+    circlesController.removeCircles(idsToRemove);
+  }
+
+  @Override
+  public void updateClusterManagers(
+      @NonNull List<Messages.PlatformClusterManager> toAdd, @NonNull List<String> idsToRemove) {
+    clusterManagersController.addClusterManagers(toAdd);
+    clusterManagersController.removeClusterManagers(idsToRemove);
+  }
+
+  @Override
+  public void updateMarkers(
+      @NonNull List<Messages.PlatformMarker> toAdd,
+      @NonNull List<Messages.PlatformMarker> toChange,
+      @NonNull List<String> idsToRemove) {
+    markersController.addMarkers(toAdd);
+    markersController.changeMarkers(toChange);
+    markersController.removeMarkers(idsToRemove);
+  }
+
+  @Override
+  public void updatePolygons(
+      @NonNull List<Messages.PlatformPolygon> toAdd,
+      @NonNull List<Messages.PlatformPolygon> toChange,
+      @NonNull List<String> idsToRemove) {
+    polygonsController.addPolygons(toAdd);
+    polygonsController.changePolygons(toChange);
+    polygonsController.removePolygons(idsToRemove);
+  }
+
+  @Override
+  public void updatePolylines(
+      @NonNull List<Messages.PlatformPolyline> toAdd,
+      @NonNull List<Messages.PlatformPolyline> toChange,
+      @NonNull List<String> idsToRemove) {
+    polylinesController.addPolylines(toAdd);
+    polylinesController.changePolylines(toChange);
+    polylinesController.removePolylines(idsToRemove);
+  }
+
+  @Override
+  public void updateTileOverlays(
+      @NonNull List<Messages.PlatformTileOverlay> toAdd,
+      @NonNull List<Messages.PlatformTileOverlay> toChange,
+      @NonNull List<String> idsToRemove) {
+    tileOverlaysController.addTileOverlays(toAdd);
+    tileOverlaysController.changeTileOverlays(toChange);
+    tileOverlaysController.removeTileOverlays(idsToRemove);
   }
 
   @Override
