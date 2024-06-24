@@ -70,10 +70,6 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
     GoogleMapsFlutterPlatform.instance = GoogleMapsFlutterAndroid();
   }
 
-  /// The method channel used to initialize the native Google Maps SDK.
-  final MethodChannel _initializerChannel = const MethodChannel(
-      'plugins.flutter.dev/google_maps_android_initializer');
-
   // Keep a collection of id -> channel
   // Every method call passes the int mapId
   final Map<int, MethodChannel> _channels = <int, MethodChannel>{};
@@ -577,35 +573,25 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
   /// Initialized [AndroidMapRenderer] type is returned.
   Future<AndroidMapRenderer> initializeWithRenderer(
       AndroidMapRenderer? rendererType) async {
-    String preferredRenderer;
+    PlatformRendererType? preferredRenderer;
     switch (rendererType) {
       case AndroidMapRenderer.latest:
-        preferredRenderer = 'latest';
+        preferredRenderer = PlatformRendererType.latest;
       case AndroidMapRenderer.legacy:
-        preferredRenderer = 'legacy';
+        preferredRenderer = PlatformRendererType.legacy;
       case AndroidMapRenderer.platformDefault:
       case null:
-        preferredRenderer = 'default';
+        preferredRenderer = null;
     }
 
-    final String? initializedRenderer = await _initializerChannel
-        .invokeMethod<String>('initializer#preferRenderer',
-            <String, dynamic>{'value': preferredRenderer});
+    final MapsInitializerApi hostApi = MapsInitializerApi();
+    final PlatformRendererType initializedRenderer =
+        await hostApi.initializeWithPreferredRenderer(preferredRenderer);
 
-    if (initializedRenderer == null) {
-      throw AndroidMapRendererException('Failed to initialize map renderer.');
-    }
-
-    // Returns mapped [AndroidMapRenderer] enum type.
-    switch (initializedRenderer) {
-      case 'latest':
-        return AndroidMapRenderer.latest;
-      case 'legacy':
-        return AndroidMapRenderer.legacy;
-      default:
-        throw AndroidMapRendererException(
-            'Failed to initialize latest or legacy renderer, got $initializedRenderer.');
-    }
+    return switch (initializedRenderer) {
+      PlatformRendererType.latest => AndroidMapRenderer.latest,
+      PlatformRendererType.legacy => AndroidMapRenderer.legacy,
+    };
   }
 
   Widget _buildView(

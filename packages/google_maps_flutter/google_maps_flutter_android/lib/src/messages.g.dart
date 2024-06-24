@@ -18,6 +18,11 @@ PlatformException _createConnectionError(String channelName) {
   );
 }
 
+enum PlatformRendererType {
+  legacy,
+  latest,
+}
+
 /// Pigeon representation of a CameraUpdate.
 class PlatformCameraUpdate {
   PlatformCameraUpdate({
@@ -443,6 +448,9 @@ class _PigeonCodec extends StandardMessageCodec {
     } else if (value is PlatformZoomRange) {
       buffer.putUint8(142);
       writeValue(buffer, value.encode());
+    } else if (value is PlatformRendererType) {
+      buffer.putUint8(143);
+      writeValue(buffer, value.index);
     } else {
       super.writeValue(buffer, value);
     }
@@ -479,6 +487,9 @@ class _PigeonCodec extends StandardMessageCodec {
         return PlatformTileLayer.decode(readValue(buffer)!);
       case 142:
         return PlatformZoomRange.decode(readValue(buffer)!);
+      case 143:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : PlatformRendererType.values[value];
       default:
         return super.readValueOfType(type, buffer);
     }
@@ -1084,6 +1095,59 @@ class MapsApi {
       );
     } else {
       return (__pigeon_replyList[0] as Uint8List?)!;
+    }
+  }
+}
+
+/// Interface for global SDK initialization.
+class MapsInitializerApi {
+  /// Constructor for [MapsInitializerApi].  The [binaryMessenger] named argument is
+  /// available for dependency injection.  If it is left null, the default
+  /// BinaryMessenger will be used which routes to the host platform.
+  MapsInitializerApi(
+      {BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
+      : __pigeon_binaryMessenger = binaryMessenger,
+        __pigeon_messageChannelSuffix =
+            messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
+  final BinaryMessenger? __pigeon_binaryMessenger;
+
+  static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
+
+  final String __pigeon_messageChannelSuffix;
+
+  /// Initializes the Google Maps SDK with the given renderer preference.
+  ///
+  /// A null renderer preference will result in the default renderer.
+  ///
+  /// Calling this more than once in the lifetime of an application will result
+  /// in an error.
+  Future<PlatformRendererType> initializeWithPreferredRenderer(
+      PlatformRendererType? type) async {
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.google_maps_flutter_android.MapsInitializerApi.initializeWithPreferredRenderer$__pigeon_messageChannelSuffix';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: __pigeon_binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        await __pigeon_channel.send(<Object?>[type]) as List<Object?>?;
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: __pigeon_replyList[0]! as String,
+        message: __pigeon_replyList[1] as String?,
+        details: __pigeon_replyList[2],
+      );
+    } else if (__pigeon_replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (__pigeon_replyList[0] as PlatformRendererType?)!;
     }
   }
 }

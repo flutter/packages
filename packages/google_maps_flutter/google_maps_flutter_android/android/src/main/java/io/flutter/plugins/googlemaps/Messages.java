@@ -64,6 +64,17 @@ public class Messages {
   @Retention(CLASS)
   @interface CanIgnoreReturnValue {}
 
+  public enum PlatformRendererType {
+    LEGACY(0),
+    LATEST(1);
+
+    final int index;
+
+    private PlatformRendererType(final int index) {
+      this.index = index;
+    }
+  }
+
   /**
    * Pigeon representation of a CameraUpdate.
    *
@@ -1136,6 +1147,9 @@ public class Messages {
           return PlatformTileLayer.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 142:
           return PlatformZoomRange.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 143:
+          Object value = readValue(buffer);
+          return value == null ? null : PlatformRendererType.values()[(int) value];
         default:
           return super.readValueOfType(type, buffer);
       }
@@ -1185,6 +1199,9 @@ public class Messages {
       } else if (value instanceof PlatformZoomRange) {
         stream.write(142);
         writeValue(stream, ((PlatformZoomRange) value).toList());
+      } else if (value instanceof PlatformRendererType) {
+        stream.write(143);
+        writeValue(stream, value == null ? null : ((PlatformRendererType) value).index);
       } else {
         super.writeValue(stream, value);
       }
@@ -1873,6 +1890,72 @@ public class Messages {
                     };
 
                 api.takeSnapshot(resultCallback);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+    }
+  }
+  /**
+   * Interface for global SDK initialization.
+   *
+   * <p>Generated interface from Pigeon that represents a handler of messages from Flutter.
+   */
+  public interface MapsInitializerApi {
+    /**
+     * Initializes the Google Maps SDK with the given renderer preference.
+     *
+     * <p>A null renderer preference will result in the default renderer.
+     *
+     * <p>Calling this more than once in the lifetime of an application will result in an error.
+     */
+    void initializeWithPreferredRenderer(
+        @Nullable PlatformRendererType type, @NonNull Result<PlatformRendererType> result);
+
+    /** The codec used by MapsInitializerApi. */
+    static @NonNull MessageCodec<Object> getCodec() {
+      return PigeonCodec.INSTANCE;
+    }
+    /**
+     * Sets up an instance of `MapsInitializerApi` to handle messages through the `binaryMessenger`.
+     */
+    static void setUp(@NonNull BinaryMessenger binaryMessenger, @Nullable MapsInitializerApi api) {
+      setUp(binaryMessenger, "", api);
+    }
+
+    static void setUp(
+        @NonNull BinaryMessenger binaryMessenger,
+        @NonNull String messageChannelSuffix,
+        @Nullable MapsInitializerApi api) {
+      messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.google_maps_flutter_android.MapsInitializerApi.initializeWithPreferredRenderer"
+                    + messageChannelSuffix,
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                PlatformRendererType typeArg = (PlatformRendererType) args.get(0);
+                Result<PlatformRendererType> resultCallback =
+                    new Result<PlatformRendererType>() {
+                      public void success(PlatformRendererType result) {
+                        wrapped.add(0, result);
+                        reply.reply(wrapped);
+                      }
+
+                      public void error(Throwable error) {
+                        ArrayList<Object> wrappedError = wrapError(error);
+                        reply.reply(wrappedError);
+                      }
+                    };
+
+                api.initializeWithPreferredRenderer(typeArg, resultCallback);
               });
         } else {
           channel.setMessageHandler(null);

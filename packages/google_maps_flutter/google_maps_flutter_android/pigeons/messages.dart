@@ -11,6 +11,9 @@ import 'package:pigeon/pigeon.dart';
   copyrightHeader: 'pigeons/copyright.txt',
 ))
 
+// Pigeon equivalent of the Java MapsInitializer.Renderer.
+enum PlatformRendererType { legacy, latest }
+
 /// Pigeon representation of a CameraUpdate.
 class PlatformCameraUpdate {
   PlatformCameraUpdate(this.json);
@@ -276,6 +279,20 @@ abstract class MapsApi {
   /// Takes a snapshot of the map and returns its image data.
   @async
   Uint8List takeSnapshot();
+}
+
+/// Interface for global SDK initialization.
+@HostApi()
+abstract class MapsInitializerApi {
+  /// Initializes the Google Maps SDK with the given renderer preference.
+  ///
+  /// A null renderer preference will result in the default renderer.
+  ///
+  /// Calling this more than once in the lifetime of an application will result
+  /// in an error.
+  @async
+  PlatformRendererType initializeWithPreferredRenderer(
+      PlatformRendererType? type);
 }
 
 /// Inspector API only intended for use in integration tests.
