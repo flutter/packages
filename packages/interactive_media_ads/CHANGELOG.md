@@ -1,6 +1,6 @@
 ## 0.0.2+1
 
-* Updates `README` with a usage section and fix `AdsLoader` documentation.
+* Updates `README` with a usage section and fix app-facing interface documentation.
 
 ## 0.0.2
 
