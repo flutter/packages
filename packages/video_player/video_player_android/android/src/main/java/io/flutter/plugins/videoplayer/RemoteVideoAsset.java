@@ -41,13 +41,13 @@ final class RemoteVideoAsset extends VideoAsset {
     MediaItem.Builder builder = new MediaItem.Builder().setUri(assetUrl);
     String mimeType = null;
     switch (streamingFormat) {
-      case Smooth:
+      case SMOOTH:
         mimeType = MimeTypes.APPLICATION_SS;
         break;
-      case DynamicAdaptive:
+      case DYNAMIC_ADAPTIVE:
         mimeType = MimeTypes.APPLICATION_MPD;
         break;
-      case HttpLive:
+      case HTTP_LIVE:
         mimeType = MimeTypes.APPLICATION_M3U8;
         break;
     }

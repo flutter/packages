@@ -112,18 +112,18 @@ public class VideoPlayerPlugin implements FlutterPlugin, AndroidVideoPlayerApi {
       videoAsset = VideoAsset.fromAssetUrl("asset:///" + assetLookupKey);
     } else {
       Map<String, String> httpHeaders = arg.getHttpHeaders();
-      VideoAsset.StreamingFormat streamingFormat = VideoAsset.StreamingFormat.Unknown;
+      VideoAsset.StreamingFormat streamingFormat = VideoAsset.StreamingFormat.UNKNOWN;
       String formatHint = arg.getFormatHint();
       if (formatHint != null) {
         switch (formatHint) {
           case "ss":
-            streamingFormat = VideoAsset.StreamingFormat.Smooth;
+            streamingFormat = VideoAsset.StreamingFormat.SMOOTH;
             break;
           case "dash":
-            streamingFormat = VideoAsset.StreamingFormat.DynamicAdaptive;
+            streamingFormat = VideoAsset.StreamingFormat.DYNAMIC_ADAPTIVE;
             break;
           case "hls":
-            streamingFormat = VideoAsset.StreamingFormat.HttpLive;
+            streamingFormat = VideoAsset.StreamingFormat.HTTP_LIVE;
             break;
         }
       }

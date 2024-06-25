@@ -69,15 +69,15 @@ abstract class VideoAsset {
   /** Streaming formats that can be provided to the video player as a hint. */
   enum StreamingFormat {
     /** Default, if the format is either not known or not another valid format. */
-    Unknown,
+    UNKNOWN,
 
     /** Smooth Streaming. */
-    Smooth,
+    SMOOTH,
 
     /** MPEG-DASH (Dynamic Adaptive over HTTP). */
-    DynamicAdaptive,
+    DYNAMIC_ADAPTIVE,
 
     /** HTTP Live Streaming (HLS). */
-    HttpLive
+    HTTP_LIVE
   }
 }
