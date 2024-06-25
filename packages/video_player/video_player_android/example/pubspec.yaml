@@ -31,7 +31,3 @@ flutter:
   assets:
     - assets/flutter-mark-square-64.png
     - assets/Butterfly-209.mp4
-
-# FIXME: Remove this override before submitting the example.
-dependency_overrides:
-  win32: 5.5.1
