@@ -15,10 +15,7 @@ import androidx.media3.common.AudioAttributes;
 import androidx.media3.common.C;
 import androidx.media3.common.MediaItem;
 import androidx.media3.common.PlaybackParameters;
-import androidx.media3.datasource.DataSource;
-import androidx.media3.datasource.DefaultDataSource;
 import androidx.media3.exoplayer.ExoPlayer;
-import androidx.media3.exoplayer.source.DefaultMediaSourceFactory;
 import io.flutter.view.TextureRegistry;
 
 final class VideoPlayer {
@@ -28,7 +25,6 @@ final class VideoPlayer {
   private final VideoPlayerCallbacks videoPlayerEvents;
   private final VideoPlayerOptions options;
 
-
   /**
    * Creates a video player.
    *
@@ -37,17 +33,17 @@ final class VideoPlayer {
    * @param textureEntry texture to render to.
    * @param asset asset to play.
    * @param options options for playback.
-   *
    * @return a video player instance.
    */
   @NonNull
-  static VideoPlayer create (
+  static VideoPlayer create(
       Context context,
       VideoPlayerCallbacks events,
       TextureRegistry.SurfaceTextureEntry textureEntry,
       VideoAsset asset,
       VideoPlayerOptions options) {
-    ExoPlayer.Builder builder = new ExoPlayer.Builder(context).setMediaSourceFactory(asset.getMediaSourceFactory(context));
+    ExoPlayer.Builder builder =
+        new ExoPlayer.Builder(context).setMediaSourceFactory(asset.getMediaSourceFactory(context));
     return new VideoPlayer(builder, events, textureEntry, asset.getMediaItem(), options);
   }
 
@@ -58,7 +54,7 @@ final class VideoPlayer {
       TextureRegistry.SurfaceTextureEntry textureEntry,
       MediaItem mediaItem,
       VideoPlayerOptions options) {
-      this.videoPlayerEvents = events;
+    this.videoPlayerEvents = events;
     this.textureEntry = textureEntry;
     this.options = options;
 
