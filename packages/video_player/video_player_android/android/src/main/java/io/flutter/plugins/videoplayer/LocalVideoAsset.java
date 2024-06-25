@@ -7,21 +7,12 @@ package io.flutter.plugins.videoplayer;
 import android.content.Context;
 import androidx.annotation.NonNull;
 import androidx.media3.common.MediaItem;
-import androidx.media3.datasource.DefaultHttpDataSource;
+import androidx.media3.exoplayer.source.DefaultMediaSourceFactory;
 import androidx.media3.exoplayer.source.MediaSource;
-import androidx.media3.test.utils.FakeMediaSourceFactory;
 
-/** A fake implementation of the {@link VideoAsset} class. */
-final class FakeVideoAsset extends VideoAsset {
-  @NonNull private final MediaSource.Factory mediaSourceFactory;
-
-  FakeVideoAsset(String assetUrl) {
-    this(assetUrl, new FakeMediaSourceFactory());
-  }
-
-  FakeVideoAsset(String assetUrl, @NonNull MediaSource.Factory mediaSourceFactory) {
+final class LocalVideoAsset extends VideoAsset {
+  LocalVideoAsset(@NonNull String assetUrl) {
     super(assetUrl);
-    this.mediaSourceFactory = mediaSourceFactory;
   }
 
   @NonNull
@@ -32,6 +23,6 @@ final class FakeVideoAsset extends VideoAsset {
 
   @Override
   MediaSource.Factory getMediaSourceFactory(Context context) {
-    return mediaSourceFactory;
+    return new DefaultMediaSourceFactory(context);
   }
 }

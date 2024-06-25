@@ -173,7 +173,6 @@ public final class VideoPlayerTest {
   public void disposeReleasesTextureAndPlayer() {
     VideoPlayer videoPlayer = createVideoPlayer();
     videoPlayer.dispose();
-    ;
 
     verify(mockTexture).release();
     verify(mockExoPlayer).release();

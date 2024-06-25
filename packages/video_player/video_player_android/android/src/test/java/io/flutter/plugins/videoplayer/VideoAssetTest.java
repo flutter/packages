@@ -1,3 +1,7 @@
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 package io.flutter.plugins.videoplayer;
 
 import static org.junit.Assert.assertEquals;
@@ -56,9 +60,9 @@ public final class VideoAssetTest {
   }
 
   @Test
-  public void remoteVideoByDefaultSetsUserAgentAndCrossProtocolRedirects() throws Exception {
-    VideoAsset asset =
-        VideoAsset.fromRemoteUrl(
+  public void remoteVideoByDefaultSetsUserAgentAndCrossProtocolRedirects() {
+    RemoteVideoAsset asset =
+        new RemoteVideoAsset(
             "https://flutter.dev/video.mp4", VideoAsset.StreamingFormat.Unknown, new HashMap<>());
 
     DefaultHttpDataSource.Factory mockFactory = mockHttpFactory();
@@ -70,12 +74,12 @@ public final class VideoAssetTest {
   }
 
   @Test
-  public void remoteVideoOverridesUserAgentIfProvided() throws Exception {
+  public void remoteVideoOverridesUserAgentIfProvided() {
     Map<String, String> headers = new HashMap<>();
     headers.put("User-Agent", "FantasticalVideoBot");
 
-    VideoAsset asset =
-        VideoAsset.fromRemoteUrl(
+    RemoteVideoAsset asset =
+        new RemoteVideoAsset(
             "https://flutter.dev/video.mp4", VideoAsset.StreamingFormat.Unknown, headers);
 
     DefaultHttpDataSource.Factory mockFactory = mockHttpFactory();
@@ -87,12 +91,12 @@ public final class VideoAssetTest {
   }
 
   @Test
-  public void remoteVideoSetsAdditionalHttpHeadersIfProvided() throws Exception {
+  public void remoteVideoSetsAdditionalHttpHeadersIfProvided() {
     Map<String, String> headers = new HashMap<>();
     headers.put("X-Cache-Forever", "true");
 
-    VideoAsset asset =
-        VideoAsset.fromRemoteUrl(
+    RemoteVideoAsset asset =
+        new RemoteVideoAsset(
             "https://flutter.dev/video.mp4", VideoAsset.StreamingFormat.Unknown, headers);
 
     DefaultHttpDataSource.Factory mockFactory = mockHttpFactory();
