@@ -1,3 +1,11 @@
+## 0.0.2
+
+* Adds Android implementation.
+
+## 0.0.1+3
+
+* Fixes the pub badge source.
+
 ## 0.0.1+2
 
 * Bumps Android's androidx.annotation:annotation dependency from 1.5.0 to 1.8.0.

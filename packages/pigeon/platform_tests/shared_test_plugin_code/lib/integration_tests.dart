@@ -983,6 +983,15 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       expect(echoEnum, sentEnum);
     });
 
+    testWidgets('null classes serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      final AllNullableTypes? echoObject = await api.echoAllNullableTypes(null);
+
+      expect(echoObject, isNull);
+    });
+
     testWidgets('optional nullable parameter', (WidgetTester _) async {
       final HostIntegrationCoreApi api = HostIntegrationCoreApi();
 
