@@ -4,15 +4,16 @@
 # found in the LICENSE file.
 set -e
 
-# Decide what exclusion file to use, the normal or "wasm" depending on $1
-if [ "$1" = "--wasm" ]; then
-    EXCLUDE="script/configs/exclude_all_packages_app_wasm.yaml"
-else
-    EXCLUDE="script/configs/exclude_all_packages_app.yaml"
+# The base exclusion file for all_packages app.
+exclusions=("script/configs/exclude_all_packages_app.yaml")
+
+# Add a wasm-specific exclusion file if "--wasm" is specified.
+if [[ "$1" == "--wasm" ]]; then
+  exclusions+=",script/configs/exclude_all_packages_app_wasm.yaml"
 fi
 
 # Delete ./all_packages if it exists already
 rm -rf ./all_packages
 
 dart ./script/tool/bin/flutter_plugin_tools.dart create-all-packages-app \
-    --output-dir=. --exclude $EXCLUDE
+    --output-dir=. --exclude "$exclusions"
