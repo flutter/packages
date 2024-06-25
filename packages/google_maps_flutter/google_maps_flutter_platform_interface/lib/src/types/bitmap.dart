@@ -174,7 +174,7 @@ class BitmapDescriptor {
   /// Creates a [BitmapDescriptor] from an asset image.
   ///
   /// Asset images in flutter are stored per:
-  /// https://flutter.dev/docs/development/ui/assets-and-images#declaring-resolution-aware-image-assets
+  /// https://flutter.dev/to/resolution-aware-images
   /// This method takes into consideration various asset resolutions
   /// and scales the images to the right resolution depending on the dpi.
   /// Set `mipmaps` to false to load the exact dpi version of the image,
@@ -392,7 +392,7 @@ abstract class MapBitmap extends BitmapDescriptor {
 /// instances of this class. It dynamically resolves the correct asset version
 /// based on the device's pixel ratio, ensuring optimal resolution without
 /// manual configuration.
-/// See https://docs.flutter.dev/ui/assets/assets-and-images#resolution-aware
+/// See https://flutter.dev/to/resolution-aware-images
 /// for more information on resolution-aware assets.
 ///
 /// Note that it's important to either provide high-resolution
