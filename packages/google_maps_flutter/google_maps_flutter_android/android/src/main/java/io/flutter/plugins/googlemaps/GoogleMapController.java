@@ -39,6 +39,7 @@ import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.Polygon;
 import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.GroundOverlay;
 import com.google.android.gms.maps.model.TileOverlay;
 import com.google.maps.android.clustering.Cluster;
 import com.google.maps.android.clustering.ClusterManager;
@@ -98,6 +99,7 @@ class GoogleMapController
   private final PolygonsController polygonsController;
   private final PolylinesController polylinesController;
   private final CirclesController circlesController;
+  private final GroundOverlaysController groundOverlaysController;
   private final TileOverlaysController tileOverlaysController;
   private MarkerManager markerManager;
   private MarkerManager.Collection markerCollection;
@@ -106,6 +108,7 @@ class GoogleMapController
   private List<Object> initialPolygons;
   private List<Object> initialPolylines;
   private List<Object> initialCircles;
+  private List<Object> initialGroundOverlays;
   private List<Map<String, ?>> initialTileOverlays;
   // Null except between initialization and onMapReady.
   private @Nullable String initialMapStyle;
@@ -137,6 +140,7 @@ class GoogleMapController
     this.polygonsController = new PolygonsController(methodChannel, density);
     this.polylinesController = new PolylinesController(methodChannel, assetManager, density);
     this.circlesController = new CirclesController(methodChannel, density);
+    this.groundOverlaysController = new GroundOverlaysController(methodChannel, assetManager, density);
     this.tileOverlaysController = new TileOverlaysController(methodChannel);
   }
 
@@ -154,6 +158,7 @@ class GoogleMapController
       PolygonsController polygonsController,
       PolylinesController polylinesController,
       CirclesController circlesController,
+      GroundOverlaysController groundOverlaysController,
       TileOverlaysController tileOverlaysController) {
     this.id = id;
     this.context = context;
@@ -168,6 +173,7 @@ class GoogleMapController
     this.polygonsController = polygonsController;
     this.polylinesController = polylinesController;
     this.circlesController = circlesController;
+    this.groundOverlaysController = groundOverlaysController;
     this.tileOverlaysController = tileOverlaysController;
   }
 
@@ -218,6 +224,7 @@ class GoogleMapController
     polygonsController.setGoogleMap(googleMap);
     polylinesController.setGoogleMap(googleMap);
     circlesController.setGoogleMap(googleMap);
+    groundOverlaysController.setGoogleMap(googleMap);
     tileOverlaysController.setGoogleMap(googleMap);
     setMarkerCollectionListener(this);
     setClusterItemClickListener(this);
@@ -227,6 +234,7 @@ class GoogleMapController
     updateInitialPolygons();
     updateInitialPolylines();
     updateInitialCircles();
+    updateInitialGroundOverlays();
     updateInitialTileOverlays();
     if (initialPadding != null && initialPadding.size() == 4) {
       setPadding(
@@ -390,6 +398,17 @@ class GoogleMapController
           result.success(null);
           break;
         }
+      case "groundOverlays#update":
+        {
+          List<Object> groundOverlaysToAdd = call.argument("groundOverlaysToAdd");
+          groundOverlaysController.addGroundOverlays(groundOverlaysToAdd);
+          List<Object> groundOverlaysToChange = call.argument("groundOverlaysToChange");
+          groundOverlaysController.changeGroundOverlays(groundOverlaysToChange);
+          List<Object> groundOverlayIdsToRemove = call.argument("groundOverlayIdsToRemove");
+          groundOverlaysController.removeGroundOverlays(groundOverlayIdsToRemove);
+          result.success(null);
+          break;
+        }
       case "tileOverlays#update":
         {
           List<Map<String, ?>> tileOverlaysToAdd = call.argument("tileOverlaysToAdd");
@@ -485,6 +504,11 @@ class GoogleMapController
   }
 
   @Override
+  public void onGroundOverlayClick(GroundOverlay groundOverlay) {
+    groundOverlaysController.onGroundOverlayTap(groundOverlay.getId());
+  }
+
+  @Override
   public void dispose() {
     if (disposed) {
       return;
@@ -515,6 +539,7 @@ class GoogleMapController
     googleMap.setOnPolygonClickListener(listener);
     googleMap.setOnPolylineClickListener(listener);
     googleMap.setOnCircleClickListener(listener);
+    googleMap.setOnGroundOverlayClickListener(listener);
     googleMap.setOnMapClickListener(listener);
     googleMap.setOnMapLongClickListener(listener);
   }
@@ -808,6 +833,19 @@ class GoogleMapController
 
   private void updateInitialCircles() {
     circlesController.addCircles(initialCircles);
+  }
+
+  @Override
+  public void setInitialGroundOverlays(Object initialGroundOverlays) {
+    ArrayList<?> groundOverlays = (ArrayList<?>) initialGroundOverlays;
+    this.initialGroundOverlays = groundOverlays != null ? new ArrayList<>(groundOverlays) : null;
+    if (googleMap != null) {
+      updateInitialGroundOverlays();
+    }
+  }
+
+  private void updateInitialGroundOverlays() {
+    groundOverlaysController.addGroundOverlays(initialGroundOverlays);
   }
 
   @Override

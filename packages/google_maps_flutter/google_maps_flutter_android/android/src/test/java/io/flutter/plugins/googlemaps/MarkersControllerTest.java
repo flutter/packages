@@ -75,7 +75,7 @@ public class MarkersControllerTest {
 
     when(marker.getId()).thenReturn(googleMarkerId);
     when(googleMap.addMarker(any(MarkerOptions.class))).thenReturn(marker);
-
+f
     final LatLng latLng = new LatLng(1.1, 2.2);
     final Map<String, String> markerOptions = new HashMap<>();
     markerOptions.put("markerId", googleMarkerId);
