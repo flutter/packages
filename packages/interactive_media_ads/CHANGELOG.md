@@ -1,3 +1,7 @@
+## 0.0.2+1
+
+* Updates `README` with a usage section and fix `AdsLoader` documentation.
+
 ## 0.0.2
 
 * Adds Android implementation.
