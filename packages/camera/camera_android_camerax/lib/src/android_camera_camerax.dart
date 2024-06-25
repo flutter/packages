@@ -883,7 +883,6 @@ class AndroidCameraCameraX extends CameraPlatform {
       // device is naturally landscape-oriented.
       if (naturalOrientation == DeviceOrientation.landscapeLeft ||
           naturalOrientation == DeviceOrientation.landscapeRight) {
-        // TODO(camsim99): Test this on a landscape-oriented device.
         final int quarterTurnsToCorrectForLandscape =
             (-naturalDeviceOrientationDegrees + 360) ~/ 4;
         return RotatedBox(
@@ -918,7 +917,6 @@ class AndroidCameraCameraX extends CameraPlatform {
 
     if (naturalOrientation == DeviceOrientation.landscapeLeft ||
         naturalOrientation == DeviceOrientation.landscapeRight) {
-      // TODO(camsim99): Test this on a landscape-oriented device.
       quarterTurnsToCorrectPreview +=
           (-naturalDeviceOrientationDegrees + 360) ~/ 4;
       return RotatedBox(
