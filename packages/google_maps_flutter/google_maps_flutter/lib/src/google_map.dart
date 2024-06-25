@@ -52,7 +52,7 @@ class AndroidGoogleMapsFlutter {
   /// This implementation uses hybrid composition to render the Google Maps
   /// Widget on Android. This comes at the cost of some performance on Android
   /// versions below 10. See
-  /// https://flutter.dev/docs/development/platform-integration/platform-views#performance for more
+  /// https://docs.flutter.dev/platform-integration/android/platform-views#performance for more
   /// information.
   @Deprecated(
       'See https://pub.dev/packages/google_maps_flutter_android#display-mode')
@@ -70,7 +70,7 @@ class AndroidGoogleMapsFlutter {
   /// This implementation uses hybrid composition to render the Google Maps
   /// Widget on Android. This comes at the cost of some performance on Android
   /// versions below 10. See
-  /// https://flutter.dev/docs/development/platform-integration/platform-views#performance for more
+  /// https://docs.flutter.dev/platform-integration/android/platform-views#performance for more
   /// information.
   @Deprecated(
       'See https://pub.dev/packages/google_maps_flutter_android#display-mode')

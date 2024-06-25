@@ -16,7 +16,7 @@ import 'common/repository_package.dart';
 const int _exitNoPlatformFlags = 2;
 const int _exitNoAvailableDevice = 3;
 
-// From https://docs.flutter.dev/testing/integration-tests#running-in-a-browser
+// From https://flutter.dev/to/integration-test-on-web
 const int _chromeDriverPort = 4444;
 
 /// A command to run the integration tests for a package's example applications.
