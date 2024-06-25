@@ -71,9 +71,10 @@ base class IosAdDisplayContainer extends PlatformAdDisplayContainer {
           adContainer: _controller.view,
           adContainerViewController: _controller,
         );
-        print('waiting');
-        await Future.delayed(Duration(seconds: 5));
-        print('going');
+        // A delay is added since this callback only indicates when the View is
+        // created, but not when it has been added to the native View hierarchy.
+        // See https://github.com/flutter/flutter/issues/150802
+        await Future<void>.delayed(const Duration(seconds: 1));
         params.onContainerAdded(this);
       },
       creationParams:
