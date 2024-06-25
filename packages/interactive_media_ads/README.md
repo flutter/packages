@@ -48,7 +48,8 @@ If building on Android, add the user permissions required by the IMA SDK for req
 
 1. Import IMA Plugin
 
-Add the import statements for the `interactive_media_ads` and [video_player][7].
+Add the import statements for the `interactive_media_ads` and [video_player][7]. Both plugins should
+already be added to your `pubspect.yaml`.
 
 <?code-excerpt "example/lib/main.dart (imports)"?>
 ```dart
@@ -56,9 +57,10 @@ import 'package:interactive_media_ads/interactive_media_ads.dart';
 import 'package:video_player/video_player.dart';
 ```
 
-1. Create a New Widget
+2. Create a New Widget
 
-Create a new `StatefulWidget` that handles displaying Ads and playing content.
+Create a new [StatefulWidget](https://api.flutter.dev/flutter/widgets/StatefulWidget-class.html)
+that handles displaying Ads and playing content.
 
 <?code-excerpt "example/lib/main.dart (example_widget)"?>
 ```dart
@@ -97,7 +99,7 @@ class _AdExampleWidgetState extends State<AdExampleWidget> {
 }
 ```
 
-1. Add the Video Players
+3. Add the Video Players
 
 Instantiate the [AdDisplayContainer][3] for playing Ads and the
 [VideoPlayerController](https://pub.dev/documentation/video_player/latest/video_player/VideoPlayerController-class.html)
@@ -134,7 +136,7 @@ void initState() {
 }
 ```
 
-1. Implement the `build` Method
+4. Implement the `build` Method
 
 Return a `Widget` that contains the ad player and the content player.
 
@@ -184,10 +186,9 @@ Widget build(BuildContext context) {
 }
 ```
 
-1. Request Ads
+5. Request Ads
 
-Handle requesting ads and add ad event listeners to handle when content should be displayed or
-hidden.
+Handle requesting ads and add event listeners to handle when content should be displayed or hidden.
 
 <?code-excerpt "example/lib/main.dart (request_ads)"?>
 ```dart
@@ -247,7 +248,7 @@ Future<void> _pauseContent() {
 }
 ```
 
-1. Dispose Resources
+6. Dispose Resources
 
 Dispose the content player and the destroy the [AdsManager][6].
 
