@@ -49,7 +49,7 @@ If building on Android, add the user permissions required by the IMA SDK for req
 2. Add Imports
 
 Add the import statements for the `interactive_media_ads` and [video_player][7]. Both plugins should
-already be added to your `pubspect.yaml`.
+already be added to your `pubspec.yaml`.
 
 <?code-excerpt "example/lib/main.dart (imports)"?>
 ```dart
@@ -263,7 +263,7 @@ void dispose() {
 ```
 
 That's it! You're now requesting and displaying ads with the IMA SDK. To learn about additional SDK
-features, see the [api reference](https://pub.dev/documentation/interactive_media_ads/latest/).
+features, see the [API reference](https://pub.dev/documentation/interactive_media_ads/latest/).
 
 [1]: https://developers.google.com/interactive-media-ads
 [2]: https://www.iab.com/guidelines/vast/
