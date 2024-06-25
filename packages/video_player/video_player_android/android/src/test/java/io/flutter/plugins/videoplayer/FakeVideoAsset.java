@@ -7,7 +7,6 @@ package io.flutter.plugins.videoplayer;
 import android.content.Context;
 import androidx.annotation.NonNull;
 import androidx.media3.common.MediaItem;
-import androidx.media3.datasource.DefaultHttpDataSource;
 import androidx.media3.exoplayer.source.MediaSource;
 import androidx.media3.test.utils.FakeMediaSourceFactory;
 
