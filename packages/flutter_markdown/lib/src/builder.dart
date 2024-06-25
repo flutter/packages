@@ -438,9 +438,7 @@ class MarkdownBuilder implements md.NodeVisitor {
           );
         }
       } else if (tag == 'table') {
-        if (styleSheet.tableColumnWidth is FlexColumnWidth) {
-          child = _buildTable();
-        } else {
+        if (styleSheet.tableColumnWidth is FixedColumnWidth) {
           final ScrollController tableScrollController = ScrollController();
           child = Scrollbar(
             controller: tableScrollController,
@@ -451,6 +449,8 @@ class MarkdownBuilder implements md.NodeVisitor {
               child: _buildTable(),
             ),
           );
+        } else {
+          child = _buildTable();
         }
       } else if (tag == 'blockquote') {
         _isInBlockquote = false;
