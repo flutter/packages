@@ -17,7 +17,7 @@ a separate video player positioned on top of the app's content video player.
 
 ## IMA client-side overview
 
-Implementing IMA client-side involves four main SDK components, which are demonstrated in this
+Implementing IMA client-side involves five main SDK components, which are demonstrated in this
 guide:
 
 * [AdDisplayContainer][3]: A container object where ads are rendered.
