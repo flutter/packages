@@ -81,8 +81,8 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 @implementation FLADAuthStrings
 + (instancetype)makeWithReason:(NSString *)reason
                        lockOut:(NSString *)lockOut
-            goToSettingsButton:(NSString *)goToSettingsButton
-       goToSettingsDescription:(NSString *)goToSettingsDescription
+            goToSettingsButton:(nullable NSString *)goToSettingsButton
+       goToSettingsDescription:(nullable NSString *)goToSettingsDescription
                   cancelButton:(NSString *)cancelButton
         localizedFallbackTitle:(nullable NSString *)localizedFallbackTitle {
   FLADAuthStrings *pigeonResult = [[FLADAuthStrings alloc] init];
