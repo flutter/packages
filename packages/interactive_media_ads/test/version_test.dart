@@ -7,7 +7,7 @@ import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  test('AdsRequestProxyApi.pluginVersion matches pubspec ersion', () {
+  test('AdsRequestProxyApi.pluginVersion matches pubspec version', () {
     final String pubspecPath = '${Directory.current.path}/pubspec.yaml';
     final String pubspec = File(pubspecPath).readAsStringSync();
     final RegExp regex = RegExp(r'version:\s*(.*?) #');

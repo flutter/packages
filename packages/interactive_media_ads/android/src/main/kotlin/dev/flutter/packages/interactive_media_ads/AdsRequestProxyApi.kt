@@ -17,7 +17,7 @@ class AdsRequestProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) :
     PigeonApiAdsRequest(pigeonRegistrar) {
   companion object {
     /**
-     * The current version of the `interactive_media_ads`.
+     * The current version of the `interactive_media_ads` plugin.
      *
      * This must match the version in pubspec.yaml.
      */
