@@ -9,8 +9,6 @@ import com.google.ads.interactivemedia.v3.api.player.ContentProgressProvider
 import kotlin.test.Test
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
-import java.io.File
-import java.nio.file.FileSystem
 
 class AdsRequestProxyApiTest {
   @Test
@@ -20,7 +18,8 @@ class AdsRequestProxyApiTest {
     val instance = mock<AdsRequest>()
     api.setAdTagUrl(instance, "adTag")
 
-    verify(instance).adTagUrl = "adTag&request_agent=Flutter-IMA-${AdsRequestProxyApi.pluginVersion}"
+    verify(instance).adTagUrl =
+        "adTag&request_agent=Flutter-IMA-${AdsRequestProxyApi.pluginVersion}"
   }
 
   @Test

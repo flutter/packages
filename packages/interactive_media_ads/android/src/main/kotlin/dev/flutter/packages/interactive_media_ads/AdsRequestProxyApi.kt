@@ -20,9 +20,10 @@ class AdsRequestProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) :
      * The current version of the `interactive_media_ads`.
      *
      * This must match the version in pubspec.yaml.
-     **/
+     */
     const val pluginVersion = "0.0.2"
   }
+
   override fun setAdTagUrl(pigeon_instance: AdsRequest, adTagUrl: String) {
     pigeon_instance.adTagUrl = "$adTagUrl&request_agent=Flutter-IMA-$pluginVersion"
   }
