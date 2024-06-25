@@ -21,17 +21,19 @@ Implementing IMA client-side involves four main SDK components, which are demons
 guide:
 
 * [AdDisplayContainer][3]: A container object where ads are rendered.
-* [AdsLoader][4]: An object that requests ads and handles events from ads request responses. You 
-should only instantiate one ads loader, which can be reused throughout the life of the application.
+* [AdsLoader][4]: Requests ads and handles events from ads request responses. You should only
+instantiate one ads loader, which can be reused throughout the life of the application.
 * [AdsRequest][5]: An object that defines an ads request. Ads requests specify the URL for the VAST
 ad tag, as well as additional parameters, such as ad dimensions.
-* [AdsManager][6]: An object that contains the response to the ads request, controls ad playback,
+* [AdsManager][6]: Contains the response to the ads request, controls ad playback,
 and listens for ad events fired by the SDK.
+* [AdsManagerDelegate][8]: Handles ad events and errors that occur during ad or stream
+initialization and playback.
 
 ## Usage
 
-This guide demonstrates how to integrate the IMA SDK into a new app using the
-[video_player][7] plugin to display content.
+This guide demonstrates how to integrate the IMA SDK into a new `Widget` using the [video_player][7]
+plugin to display content.
 
 1. Add Android Required Permissions
 
@@ -272,3 +274,4 @@ features, see the [API reference](https://pub.dev/documentation/interactive_medi
 [5]: https://pub.dev/documentation/interactive_media_ads/latest/interactive_media_ads/AdsRequest-class.html
 [6]: https://pub.dev/documentation/interactive_media_ads/latest/interactive_media_ads/AdsManager-class.html
 [7]: https://pub.dev/packages/video_player
+[8]: https://pub.dev/documentation/interactive_media_ads/latest/interactive_media_ads/AdsManagerDelegate-class.html
