@@ -114,7 +114,7 @@ TEST(Primitive, HostBool) {
           FL_BINARY_MESSENGER(messenger), nullptr, &vtable, nullptr, nullptr);
   (void)api;  // unused variable
 
-  bool result = false;
+  gboolean result = false;
   g_autoptr(FlValue) message = fl_value_new_list();
   fl_value_append_take(message, fl_value_new_bool(TRUE));
   fake_host_messenger_send_host_message(

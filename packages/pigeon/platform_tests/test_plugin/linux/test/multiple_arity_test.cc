@@ -39,7 +39,7 @@ TEST(MultipleArity, HostSimple) {
       messenger,
       "dev.flutter.pigeon.pigeon_integration_tests.MultipleArityHostApi."
       "subtract",
-      message, subtract_reply_cb, nullptr);
+      message, subtract_reply_cb, &result);
 
   EXPECT_EQ(result, 20);
 }

@@ -86,8 +86,14 @@ static NullableReturnsPigeonTestNullableReturnHostApiVTable
     return_nonnull_vtable = {.doit = return_nonnull_doit};
 
 static void return_doit_reply_cb(FlValue* reply, gpointer user_data) {
-  int64_t* result = reinterpret_cast<int64_t*>(user_data);
-  *result = fl_value_get_int(fl_value_get_list_value(reply, 0));
+  int64_t** result = reinterpret_cast<int64_t**>(user_data);
+  FlValue* value = fl_value_get_list_value(reply, 0);
+  if (fl_value_get_type(value) == FL_VALUE_TYPE_NULL) {
+    *result = nullptr;
+  } else {
+    *result = reinterpret_cast<int64_t*>(malloc(sizeof(int64_t)));
+    **result = fl_value_get_int(value);
+  }
 }
 
 TEST(NullableReturns, HostNullableReturnNull) {
@@ -124,7 +130,7 @@ TEST(NullableReturns, HostNullableReturnNonNull) {
           nullptr, nullptr);
   (void)api;  // unused variable
 
-  int64_t* result = nullptr;
+  g_autofree int64_t* result = nullptr;
   g_autoptr(FlValue) message = fl_value_new_list();
   fl_value_append_take(message, fl_value_new_null());
   fake_host_messenger_send_host_message(
