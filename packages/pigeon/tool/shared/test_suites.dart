@@ -370,7 +370,7 @@ Future<int> _runLinuxUnitTests({bool ciMode = false}) async {
       'debug/plugins/test_plugin/test_plugin_test';
   const String arm64Path = '$buildDirBase/arm64/$buildRelativeBinaryPath';
   const String x64Path = '$buildDirBase/x64/$buildRelativeBinaryPath';
-  final testBinary = File(arm64Path).existsSync() ? arm64Path : x64Path;
+  final String testBinary = File(arm64Path).existsSync() ? arm64Path : x64Path;
   if (ciMode) {
     // To avoid having all custom tests in the repo run under xvfb, xvfb-run is
     // done here rather than at the CI config level. Ideally, Pigeon tests
