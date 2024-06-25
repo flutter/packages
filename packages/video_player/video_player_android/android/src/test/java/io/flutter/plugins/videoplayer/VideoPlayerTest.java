@@ -9,7 +9,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 import android.view.Surface;
-
 import androidx.media3.common.AudioAttributes;
 import androidx.media3.common.C;
 import androidx.media3.common.PlaybackParameters;
@@ -64,7 +63,7 @@ public final class VideoPlayerTest {
 
   private VideoPlayer createVideoPlayer(VideoPlayerOptions options) {
     return new VideoPlayer(
-            () -> mockExoPlayer, mockEvents, mockProducer, fakeVideoAsset.getMediaItem(), options);
+        () -> mockExoPlayer, mockEvents, mockProducer, fakeVideoAsset.getMediaItem(), options);
   }
 
   @Test

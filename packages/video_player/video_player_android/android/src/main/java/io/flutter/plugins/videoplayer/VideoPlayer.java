@@ -16,24 +16,16 @@ import androidx.media3.common.C;
 import androidx.media3.common.MediaItem;
 import androidx.media3.common.PlaybackParameters;
 import androidx.media3.exoplayer.ExoPlayer;
-
 import io.flutter.view.TextureRegistry;
 
 final class VideoPlayer {
-  @NonNull
-  private final ExoPlayerProvider exoPlayerProvider;
-  @NonNull
-  private final MediaItem mediaItem;
-  @NonNull
-  private final TextureRegistry.SurfaceProducer surfaceProducer;
-  @NonNull
-  private final VideoPlayerCallbacks videoPlayerEvents;
-  @NonNull
-  private final VideoPlayerOptions options;
-  @NonNull
-  private ExoPlayer exoPlayer;
-  @Nullable
-  private ExoPlayerState savedStateDuring;
+  @NonNull private final ExoPlayerProvider exoPlayerProvider;
+  @NonNull private final MediaItem mediaItem;
+  @NonNull private final TextureRegistry.SurfaceProducer surfaceProducer;
+  @NonNull private final VideoPlayerCallbacks videoPlayerEvents;
+  @NonNull private final VideoPlayerOptions options;
+  @NonNull private ExoPlayer exoPlayer;
+  @Nullable private ExoPlayerState savedStateDuring;
 
   /**
    * Creates a video player.
@@ -52,15 +44,20 @@ final class VideoPlayer {
       @NonNull TextureRegistry.SurfaceProducer surfaceProducer,
       @NonNull VideoAsset asset,
       @NonNull VideoPlayerOptions options) {
-    return new VideoPlayer(() -> {
-      ExoPlayer.Builder builder = new ExoPlayer.Builder(context).setMediaSourceFactory(asset.getMediaSourceFactory(context));
-      return builder.build();
-    }, events, surfaceProducer, asset.getMediaItem(), options);
+    return new VideoPlayer(
+        () -> {
+          ExoPlayer.Builder builder =
+              new ExoPlayer.Builder(context)
+                  .setMediaSourceFactory(asset.getMediaSourceFactory(context));
+          return builder.build();
+        },
+        events,
+        surfaceProducer,
+        asset.getMediaItem(),
+        options);
   }
 
-  /**
-   * A closure-compatible signature since {@link java.util.function.Supplier} is API level 24.
-   */
+  /** A closure-compatible signature since {@link java.util.function.Supplier} is API level 24. */
   interface ExoPlayerProvider {
     /**
      * Returns a new {@link ExoPlayer}.
@@ -84,23 +81,24 @@ final class VideoPlayer {
     this.options = options;
     this.exoPlayer = createVideoPlayer();
 
-    surfaceProducer.setCallback(new TextureRegistry.SurfaceProducer.Callback() {
-      @Override
-      public void onSurfaceCreated() {
-        exoPlayer = createVideoPlayer();
-        if (savedStateDuring != null) {
-          savedStateDuring.restore(exoPlayer);
-          savedStateDuring = null;
-        }
-      }
+    surfaceProducer.setCallback(
+        new TextureRegistry.SurfaceProducer.Callback() {
+          @Override
+          public void onSurfaceCreated() {
+            exoPlayer = createVideoPlayer();
+            if (savedStateDuring != null) {
+              savedStateDuring.restore(exoPlayer);
+              savedStateDuring = null;
+            }
+          }
 
-      @Override
-      public void onSurfaceDestroyed() {
-        exoPlayer.stop();
-        savedStateDuring = ExoPlayerState.save(exoPlayer);
-        exoPlayer.release();
-      }
-    });
+          @Override
+          public void onSurfaceDestroyed() {
+            exoPlayer.stop();
+            savedStateDuring = ExoPlayerState.save(exoPlayer);
+            exoPlayer.release();
+          }
+        });
   }
 
   private ExoPlayer createVideoPlayer() {
