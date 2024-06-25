@@ -60,15 +60,15 @@ public class CameraTest_getRecordingProfileTest {
     mockDartMessenger = mock(DartMessenger.class);
 
     final Activity mockActivity = mock(Activity.class);
-    final TextureRegistry.SurfaceProducer mockSurfaceProducer =
-        mock(TextureRegistry.SurfaceProducer.class);
+    final TextureRegistry.SurfaceTextureEntry mockFlutterTexture =
+        mock(TextureRegistry.SurfaceTextureEntry.class);
     final ResolutionPreset resolutionPreset = ResolutionPreset.high;
     final boolean enableAudio = false;
 
     camera =
         new Camera(
             mockActivity,
-            mockSurfaceProducer,
+            mockFlutterTexture,
             mockCameraFeatureFactory,
             mockDartMessenger,
             mockCameraProperties,

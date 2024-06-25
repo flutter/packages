@@ -74,12 +74,14 @@ class SlotLayout extends StatefulWidget {
     WidgetBuilder? builder,
     Widget Function(Widget, Animation<double>)? inAnimation,
     Widget Function(Widget, Animation<double>)? outAnimation,
+    Duration? duration,
     required Key key,
   }) =>
       SlotLayoutConfig._(
         builder: builder,
         inAnimation: inAnimation,
         outAnimation: outAnimation,
+        duration: duration,
         key: key,
       );
 
@@ -96,7 +98,7 @@ class _SlotLayoutState extends State<SlotLayout>
     chosenWidget = SlotLayout.pickWidget(context, widget.config);
     bool hasAnimation = false;
     return AnimatedSwitcher(
-        duration: const Duration(milliseconds: 1000),
+        duration: chosenWidget?.duration ?? const Duration(milliseconds: 1000),
         layoutBuilder: (Widget? currentChild, List<Widget> previousChildren) {
           final Stack elements = Stack(
             children: <Widget>[
@@ -137,6 +139,7 @@ class SlotLayoutConfig extends StatelessWidget {
     required this.builder,
     this.inAnimation,
     this.outAnimation,
+    this.duration,
   });
 
   /// The child Widget that [SlotLayout] eventually returns with an animation.
@@ -159,6 +162,9 @@ class SlotLayoutConfig extends StatelessWidget {
   ///  * [AnimatedWidget] and [ImplicitlyAnimatedWidget], which are commonly used
   ///   as the returned widget.
   final Widget Function(Widget, Animation<double>)? outAnimation;
+
+  /// The amount of time taken by the execution of the in and out animations.
+  final Duration? duration;
 
   /// An empty [SlotLayoutConfig] to be placed in a slot to indicate that the slot
   /// should show nothing.
