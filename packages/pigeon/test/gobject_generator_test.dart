@@ -9,15 +9,24 @@ import 'package:test/test.dart';
 
 const String DEFAULT_PACKAGE_NAME = 'test_package';
 
-final Class emptyClass = Class(name: 'className', fields: <NamedType>[
-  NamedType(
-    name: 'namedTypeName',
-    type: const TypeDeclaration(baseName: 'baseName', isNullable: false),
-  )
-]);
-
 void main() {
   test('gen one api', () {
+    final Class inputClass = Class(name: 'Input', fields: <NamedType>[
+      NamedType(
+          type: const TypeDeclaration(
+            baseName: 'String',
+            isNullable: true,
+          ),
+          name: 'input')
+    ]);
+    final Class outputClass = Class(name: 'Output', fields: <NamedType>[
+      NamedType(
+          type: const TypeDeclaration(
+            baseName: 'String',
+            isNullable: true,
+          ),
+          name: 'output')
+    ]);
     final Root root = Root(apis: <Api>[
       AstHostApi(name: 'Api', methods: <Method>[
         Method(
@@ -27,7 +36,7 @@ void main() {
                 type: TypeDeclaration(
                   baseName: 'Input',
                   isNullable: false,
-                  associatedClass: emptyClass,
+                  associatedClass: inputClass,
                 ),
                 name: 'input')
           ],
@@ -35,27 +44,13 @@ void main() {
           returnType: TypeDeclaration(
             baseName: 'Output',
             isNullable: false,
-            associatedClass: emptyClass,
+            associatedClass: outputClass,
           ),
         )
       ])
     ], classes: <Class>[
-      Class(name: 'Input', fields: <NamedType>[
-        NamedType(
-            type: const TypeDeclaration(
-              baseName: 'String',
-              isNullable: true,
-            ),
-            name: 'input')
-      ]),
-      Class(name: 'Output', fields: <NamedType>[
-        NamedType(
-            type: const TypeDeclaration(
-              baseName: 'String',
-              isNullable: true,
-            ),
-            name: 'output')
-      ])
+      inputClass,
+      outputClass
     ], enums: <Enum>[]);
     {
       final StringBuffer sink = StringBuffer();
@@ -108,6 +103,22 @@ void main() {
   });
 
   test('naming follows style', () {
+    final Class inputClass = Class(name: 'Input', fields: <NamedType>[
+      NamedType(
+          type: const TypeDeclaration(
+            baseName: 'bool',
+            isNullable: false,
+          ),
+          name: 'inputField')
+    ]);
+    final Class outputClass = Class(name: 'Output', fields: <NamedType>[
+      NamedType(
+          type: const TypeDeclaration(
+            baseName: 'bool',
+            isNullable: false,
+          ),
+          name: 'outputField')
+    ]);
     final Root root = Root(apis: <Api>[
       AstHostApi(name: 'Api', methods: <Method>[
         Method(
@@ -117,7 +128,7 @@ void main() {
                 type: TypeDeclaration(
                   baseName: 'Input',
                   isNullable: false,
-                  associatedClass: emptyClass,
+                  associatedClass: inputClass,
                 ),
                 name: 'someInput')
           ],
@@ -125,27 +136,13 @@ void main() {
           returnType: TypeDeclaration(
             baseName: 'Output',
             isNullable: false,
-            associatedClass: emptyClass,
+            associatedClass: outputClass,
           ),
         )
       ])
     ], classes: <Class>[
-      Class(name: 'Input', fields: <NamedType>[
-        NamedType(
-            type: const TypeDeclaration(
-              baseName: 'bool',
-              isNullable: false,
-            ),
-            name: 'inputField')
-      ]),
-      Class(name: 'Output', fields: <NamedType>[
-        NamedType(
-            type: const TypeDeclaration(
-              baseName: 'bool',
-              isNullable: false,
-            ),
-            name: 'outputField')
-      ])
+      inputClass,
+      outputClass
     ], enums: <Enum>[]);
     {
       final StringBuffer sink = StringBuffer();
@@ -194,6 +191,22 @@ void main() {
   });
 
   test('Spaces before {', () {
+    final Class inputClass = Class(name: 'Input', fields: <NamedType>[
+      NamedType(
+          type: const TypeDeclaration(
+            baseName: 'String',
+            isNullable: true,
+          ),
+          name: 'input')
+    ]);
+    final Class outputClass = Class(name: 'Output', fields: <NamedType>[
+      NamedType(
+          type: const TypeDeclaration(
+            baseName: 'String',
+            isNullable: true,
+          ),
+          name: 'output')
+    ]);
     final Root root = Root(apis: <Api>[
       AstHostApi(name: 'Api', methods: <Method>[
         Method(
@@ -204,34 +217,20 @@ void main() {
                 type: TypeDeclaration(
                   baseName: 'Input',
                   isNullable: false,
-                  associatedClass: emptyClass,
+                  associatedClass: inputClass,
                 ),
                 name: 'input')
           ],
           returnType: TypeDeclaration(
             baseName: 'Output',
             isNullable: false,
-            associatedClass: emptyClass,
+            associatedClass: outputClass,
           ),
         )
       ])
     ], classes: <Class>[
-      Class(name: 'Input', fields: <NamedType>[
-        NamedType(
-            type: const TypeDeclaration(
-              baseName: 'String',
-              isNullable: true,
-            ),
-            name: 'input')
-      ]),
-      Class(name: 'Output', fields: <NamedType>[
-        NamedType(
-            type: const TypeDeclaration(
-              baseName: 'String',
-              isNullable: true,
-            ),
-            name: 'output')
-      ])
+      inputClass,
+      outputClass
     ], enums: <Enum>[]);
     {
       final StringBuffer sink = StringBuffer();
@@ -330,6 +329,41 @@ void main() {
   });
 
   test('data classes handle non-nullable fields', () {
+    final Class nestedClass = Class(name: 'Nested', fields: <NamedType>[
+      NamedType(
+          type: const TypeDeclaration(
+            baseName: 'bool',
+            isNullable: false,
+          ),
+          name: 'nestedValue'),
+    ]);
+    final Class inputClass = Class(name: 'Input', fields: <NamedType>[
+      NamedType(
+          type: const TypeDeclaration(
+            baseName: 'bool',
+            isNullable: false,
+          ),
+          name: 'nonNullableBool'),
+      NamedType(
+          type: const TypeDeclaration(
+            baseName: 'int',
+            isNullable: false,
+          ),
+          name: 'nonNullableInt'),
+      NamedType(
+          type: const TypeDeclaration(
+            baseName: 'String',
+            isNullable: false,
+          ),
+          name: 'nonNullableString'),
+      NamedType(
+          type: TypeDeclaration(
+            baseName: 'Nested',
+            isNullable: false,
+            associatedClass: nestedClass,
+          ),
+          name: 'nonNullableNested'),
+    ]);
     final Root root = Root(apis: <Api>[
       AstHostApi(name: 'Api', methods: <Method>[
         Method(
@@ -340,7 +374,7 @@ void main() {
                 type: TypeDeclaration(
                   baseName: 'Input',
                   isNullable: false,
-                  associatedClass: emptyClass,
+                  associatedClass: inputClass,
                 ),
                 name: 'someInput')
           ],
@@ -348,41 +382,8 @@ void main() {
         )
       ])
     ], classes: <Class>[
-      Class(name: 'Nested', fields: <NamedType>[
-        NamedType(
-            type: const TypeDeclaration(
-              baseName: 'bool',
-              isNullable: false,
-            ),
-            name: 'nestedValue'),
-      ]),
-      Class(name: 'Input', fields: <NamedType>[
-        NamedType(
-            type: const TypeDeclaration(
-              baseName: 'bool',
-              isNullable: false,
-            ),
-            name: 'nonNullableBool'),
-        NamedType(
-            type: const TypeDeclaration(
-              baseName: 'int',
-              isNullable: false,
-            ),
-            name: 'nonNullableInt'),
-        NamedType(
-            type: const TypeDeclaration(
-              baseName: 'String',
-              isNullable: false,
-            ),
-            name: 'nonNullableString'),
-        NamedType(
-            type: TypeDeclaration(
-              baseName: 'Nested',
-              isNullable: false,
-              associatedClass: emptyClass,
-            ),
-            name: 'nonNullableNested'),
-      ]),
+      nestedClass,
+      inputClass
     ], enums: <Enum>[]);
     {
       final StringBuffer sink = StringBuffer();
@@ -429,6 +430,14 @@ void main() {
   });
 
   test('host non-nullable return types map correctly', () {
+    final Class returnDataClass = Class(name: 'ReturnData', fields: <NamedType>[
+      NamedType(
+          type: const TypeDeclaration(
+            baseName: 'bool',
+            isNullable: false,
+          ),
+          name: 'aValue'),
+    ]);
     final Root root = Root(apis: <Api>[
       AstHostApi(name: 'Api', methods: <Method>[
         Method(
@@ -499,19 +508,12 @@ void main() {
           returnType: TypeDeclaration(
             baseName: 'ReturnData',
             isNullable: false,
-            associatedClass: emptyClass,
+            associatedClass: returnDataClass,
           ),
         ),
       ])
     ], classes: <Class>[
-      Class(name: 'ReturnData', fields: <NamedType>[
-        NamedType(
-            type: const TypeDeclaration(
-              baseName: 'bool',
-              isNullable: false,
-            ),
-            name: 'aValue'),
-      ]),
+      returnDataClass
     ], enums: <Enum>[]);
     {
       final StringBuffer sink = StringBuffer();
@@ -556,6 +558,16 @@ void main() {
   });
 
   test('host non-nullable arguments map correctly', () {
+    final Class parameterObjectClass =
+        Class(name: 'ParameterObject', fields: <NamedType>[
+      NamedType(
+          type: const TypeDeclaration(
+            baseName: 'bool',
+            isNullable: false,
+          ),
+          name: 'aValue'),
+    ]);
+    final Class objectClass = Class(name: 'Object', fields: <NamedType>[]);
     final Root root = Root(apis: <Api>[
       AstHostApi(name: 'Api', methods: <Method>[
         Method(
@@ -588,7 +600,7 @@ void main() {
                     TypeDeclaration(
                       baseName: 'Object',
                       isNullable: true,
-                      associatedClass: emptyClass,
+                      associatedClass: objectClass,
                     )
                   ],
                   isNullable: false,
@@ -602,7 +614,7 @@ void main() {
                     TypeDeclaration(
                       baseName: 'Object',
                       isNullable: true,
-                      associatedClass: emptyClass,
+                      associatedClass: objectClass,
                     ),
                   ],
                   isNullable: false,
@@ -612,28 +624,22 @@ void main() {
                 type: TypeDeclaration(
                   baseName: 'ParameterObject',
                   isNullable: false,
-                  associatedClass: emptyClass,
+                  associatedClass: parameterObjectClass,
                 )),
             Parameter(
                 name: 'aGenericObject',
                 type: TypeDeclaration(
                   baseName: 'Object',
                   isNullable: false,
-                  associatedClass: emptyClass,
+                  associatedClass: objectClass,
                 )),
           ],
           returnType: const TypeDeclaration.voidDeclaration(),
         ),
       ])
     ], classes: <Class>[
-      Class(name: 'ParameterObject', fields: <NamedType>[
-        NamedType(
-            type: const TypeDeclaration(
-              baseName: 'bool',
-              isNullable: false,
-            ),
-            name: 'aValue'),
-      ]),
+      parameterObjectClass,
+      objectClass
     ], enums: <Enum>[]);
     {
       final StringBuffer sink = StringBuffer();
