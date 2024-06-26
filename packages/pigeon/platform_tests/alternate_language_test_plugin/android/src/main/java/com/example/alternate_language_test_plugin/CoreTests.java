@@ -332,10 +332,10 @@ public class CoreTests {
           && anInt.equals(that.anInt)
           && anInt64.equals(that.anInt64)
           && aDouble.equals(that.aDouble)
-          && aByteArray.equals(that.aByteArray)
-          && a4ByteArray.equals(that.a4ByteArray)
-          && a8ByteArray.equals(that.a8ByteArray)
-          && aFloatArray.equals(that.aFloatArray)
+          && Arrays.equals(aByteArray, that.aByteArray)
+          && Arrays.equals(a4ByteArray, that.a4ByteArray)
+          && Arrays.equals(a8ByteArray, that.a8ByteArray)
+          && Arrays.equals(aFloatArray, that.aFloatArray)
           && anEnum.equals(that.anEnum)
           && aString.equals(that.aString)
           && anObject.equals(that.anObject)
@@ -349,24 +349,26 @@ public class CoreTests {
 
     @Override
     public int hashCode() {
-      return Objects.hash(
-          aBool,
-          anInt,
-          anInt64,
-          aDouble,
-          aByteArray,
-          a4ByteArray,
-          a8ByteArray,
-          aFloatArray,
-          anEnum,
-          aString,
-          anObject,
-          list,
-          stringList,
-          intList,
-          doubleList,
-          boolList,
-          map);
+      int __pigeon_result =
+          Objects.hash(
+              aBool,
+              anInt,
+              anInt64,
+              aDouble,
+              anEnum,
+              aString,
+              anObject,
+              list,
+              stringList,
+              intList,
+              doubleList,
+              boolList,
+              map);
+      __pigeon_result = 31 * __pigeon_result + Arrays.hashCode(aByteArray);
+      __pigeon_result = 31 * __pigeon_result + Arrays.hashCode(a4ByteArray);
+      __pigeon_result = 31 * __pigeon_result + Arrays.hashCode(a8ByteArray);
+      __pigeon_result = 31 * __pigeon_result + Arrays.hashCode(aFloatArray);
+      return __pigeon_result;
     }
 
     public static final class Builder {
@@ -836,10 +838,10 @@ public class CoreTests {
           && Objects.equals(aNullableInt, that.aNullableInt)
           && Objects.equals(aNullableInt64, that.aNullableInt64)
           && Objects.equals(aNullableDouble, that.aNullableDouble)
-          && Objects.equals(aNullableByteArray, that.aNullableByteArray)
-          && Objects.equals(aNullable4ByteArray, that.aNullable4ByteArray)
-          && Objects.equals(aNullable8ByteArray, that.aNullable8ByteArray)
-          && Objects.equals(aNullableFloatArray, that.aNullableFloatArray)
+          && Arrays.equals(aNullableByteArray, that.aNullableByteArray)
+          && Arrays.equals(aNullable4ByteArray, that.aNullable4ByteArray)
+          && Arrays.equals(aNullable8ByteArray, that.aNullable8ByteArray)
+          && Arrays.equals(aNullableFloatArray, that.aNullableFloatArray)
           && Objects.equals(nullableNestedList, that.nullableNestedList)
           && Objects.equals(nullableMapWithAnnotations, that.nullableMapWithAnnotations)
           && Objects.equals(nullableMapWithObject, that.nullableMapWithObject)
@@ -858,29 +860,31 @@ public class CoreTests {
 
     @Override
     public int hashCode() {
-      return Objects.hash(
-          aNullableBool,
-          aNullableInt,
-          aNullableInt64,
-          aNullableDouble,
-          aNullableByteArray,
-          aNullable4ByteArray,
-          aNullable8ByteArray,
-          aNullableFloatArray,
-          nullableNestedList,
-          nullableMapWithAnnotations,
-          nullableMapWithObject,
-          aNullableEnum,
-          aNullableString,
-          aNullableObject,
-          allNullableTypes,
-          list,
-          stringList,
-          intList,
-          doubleList,
-          boolList,
-          nestedClassList,
-          map);
+      int __pigeon_result =
+          Objects.hash(
+              aNullableBool,
+              aNullableInt,
+              aNullableInt64,
+              aNullableDouble,
+              nullableNestedList,
+              nullableMapWithAnnotations,
+              nullableMapWithObject,
+              aNullableEnum,
+              aNullableString,
+              aNullableObject,
+              allNullableTypes,
+              list,
+              stringList,
+              intList,
+              doubleList,
+              boolList,
+              nestedClassList,
+              map);
+      __pigeon_result = 31 * __pigeon_result + Arrays.hashCode(aNullableByteArray);
+      __pigeon_result = 31 * __pigeon_result + Arrays.hashCode(aNullable4ByteArray);
+      __pigeon_result = 31 * __pigeon_result + Arrays.hashCode(aNullable8ByteArray);
+      __pigeon_result = 31 * __pigeon_result + Arrays.hashCode(aNullableFloatArray);
+      return __pigeon_result;
     }
 
     public static final class Builder {
@@ -1396,10 +1400,10 @@ public class CoreTests {
           && Objects.equals(aNullableInt, that.aNullableInt)
           && Objects.equals(aNullableInt64, that.aNullableInt64)
           && Objects.equals(aNullableDouble, that.aNullableDouble)
-          && Objects.equals(aNullableByteArray, that.aNullableByteArray)
-          && Objects.equals(aNullable4ByteArray, that.aNullable4ByteArray)
-          && Objects.equals(aNullable8ByteArray, that.aNullable8ByteArray)
-          && Objects.equals(aNullableFloatArray, that.aNullableFloatArray)
+          && Arrays.equals(aNullableByteArray, that.aNullableByteArray)
+          && Arrays.equals(aNullable4ByteArray, that.aNullable4ByteArray)
+          && Arrays.equals(aNullable8ByteArray, that.aNullable8ByteArray)
+          && Arrays.equals(aNullableFloatArray, that.aNullableFloatArray)
           && Objects.equals(nullableNestedList, that.nullableNestedList)
           && Objects.equals(nullableMapWithAnnotations, that.nullableMapWithAnnotations)
           && Objects.equals(nullableMapWithObject, that.nullableMapWithObject)
@@ -1416,27 +1420,29 @@ public class CoreTests {
 
     @Override
     public int hashCode() {
-      return Objects.hash(
-          aNullableBool,
-          aNullableInt,
-          aNullableInt64,
-          aNullableDouble,
-          aNullableByteArray,
-          aNullable4ByteArray,
-          aNullable8ByteArray,
-          aNullableFloatArray,
-          nullableNestedList,
-          nullableMapWithAnnotations,
-          nullableMapWithObject,
-          aNullableEnum,
-          aNullableString,
-          aNullableObject,
-          list,
-          stringList,
-          intList,
-          doubleList,
-          boolList,
-          map);
+      int __pigeon_result =
+          Objects.hash(
+              aNullableBool,
+              aNullableInt,
+              aNullableInt64,
+              aNullableDouble,
+              nullableNestedList,
+              nullableMapWithAnnotations,
+              nullableMapWithObject,
+              aNullableEnum,
+              aNullableString,
+              aNullableObject,
+              list,
+              stringList,
+              intList,
+              doubleList,
+              boolList,
+              map);
+      __pigeon_result = 31 * __pigeon_result + Arrays.hashCode(aNullableByteArray);
+      __pigeon_result = 31 * __pigeon_result + Arrays.hashCode(aNullable4ByteArray);
+      __pigeon_result = 31 * __pigeon_result + Arrays.hashCode(aNullable8ByteArray);
+      __pigeon_result = 31 * __pigeon_result + Arrays.hashCode(aNullableFloatArray);
+      return __pigeon_result;
     }
 
     public static final class Builder {
