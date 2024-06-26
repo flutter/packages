@@ -82,6 +82,9 @@ class ExampleGoogleMapController {
     GoogleMapsFlutterPlatform.instance
         .onCircleTap(mapId: mapId)
         .listen((CircleTapEvent e) => _googleMapState.onCircleTap(e.value));
+    GoogleMapsFlutterPlatform.instance.onGroundOverlayTap(mapId: mapId).listen(
+        (GroundOverlayTapEvent e) =>
+            _googleMapState.onGroundOverlayTap(e.value));
     GoogleMapsFlutterPlatform.instance
         .onTap(mapId: mapId)
         .listen((MapTapEvent e) => _googleMapState.onTap(e.position));
@@ -117,6 +120,13 @@ class ExampleGoogleMapController {
   Future<void> _updateCircles(CircleUpdates circleUpdates) {
     return GoogleMapsFlutterPlatform.instance
         .updateCircles(circleUpdates, mapId: mapId);
+  }
+
+  /// Updates ground overlay configuration.
+  Future<void> _updateGroundOverlays(
+      GroundOverlayUpdates groundOverlayUpdates) {
+    return GoogleMapsFlutterPlatform.instance
+        .updateGroundOverlays(groundOverlayUpdates, mapId: mapId);
   }
 
   /// Updates tile overlays configuration.
@@ -237,6 +247,7 @@ class ExampleGoogleMap extends StatefulWidget {
     this.polygons = const <Polygon>{},
     this.polylines = const <Polyline>{},
     this.circles = const <Circle>{},
+    this.groundOverlays = const <GroundOverlay>{},
     this.onCameraMoveStarted,
     this.tileOverlays = const <TileOverlay>{},
     this.onCameraMove,
@@ -309,6 +320,9 @@ class ExampleGoogleMap extends StatefulWidget {
   /// Circles to be placed on the map.
   final Set<Circle> circles;
 
+  /// Ground overlays to be placed on the map.
+  final Set<GroundOverlay> groundOverlays;
+
   /// Tile overlays to be placed on the map.
   final Set<TileOverlay> tileOverlays;
 
@@ -371,6 +385,8 @@ class _ExampleGoogleMapState extends State<ExampleGoogleMap> {
   Map<PolygonId, Polygon> _polygons = <PolygonId, Polygon>{};
   Map<PolylineId, Polyline> _polylines = <PolylineId, Polyline>{};
   Map<CircleId, Circle> _circles = <CircleId, Circle>{};
+  Map<GroundOverlayId, GroundOverlay> _groundOverlays =
+      <GroundOverlayId, GroundOverlay>{};
   late MapConfiguration _mapConfiguration;
 
   @override
@@ -390,6 +406,7 @@ class _ExampleGoogleMapState extends State<ExampleGoogleMap> {
         polygons: widget.polygons,
         polylines: widget.polylines,
         circles: widget.circles,
+        groundOverlays: widget.groundOverlays,
       ),
       mapConfiguration: _mapConfiguration,
     );
@@ -403,6 +420,7 @@ class _ExampleGoogleMapState extends State<ExampleGoogleMap> {
     _polygons = keyByPolygonId(widget.polygons);
     _polylines = keyByPolylineId(widget.polylines);
     _circles = keyByCircleId(widget.circles);
+    _groundOverlays = keyByGroundOverlayId(widget.groundOverlays);
   }
 
   @override
@@ -420,6 +438,7 @@ class _ExampleGoogleMapState extends State<ExampleGoogleMap> {
     _updatePolygons();
     _updatePolylines();
     _updateCircles();
+    _updateGroundOverlays();
     _updateTileOverlays();
   }
 
@@ -460,6 +479,13 @@ class _ExampleGoogleMapState extends State<ExampleGoogleMap> {
     unawaited(controller._updateCircles(
         CircleUpdates.from(_circles.values.toSet(), widget.circles)));
     _circles = keyByCircleId(widget.circles);
+  }
+
+  Future<void> _updateGroundOverlays() async {
+    final ExampleGoogleMapController controller = await _controller.future;
+    unawaited(controller._updateGroundOverlays(GroundOverlayUpdates.from(
+        _groundOverlays.values.toSet(), widget.groundOverlays)));
+    _groundOverlays = keyByGroundOverlayId(widget.groundOverlays);
   }
 
   Future<void> _updateTileOverlays() async {
@@ -505,6 +531,10 @@ class _ExampleGoogleMapState extends State<ExampleGoogleMap> {
 
   void onCircleTap(CircleId circleId) {
     _circles[circleId]!.onTap?.call();
+  }
+
+  void onGroundOverlayTap(GroundOverlayId groundOverlayId) {
+    _groundOverlays[groundOverlayId]!.onTap?.call();
   }
 
   void onInfoWindowTap(MarkerId markerId) {

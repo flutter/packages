@@ -86,6 +86,15 @@ class FakeGoogleMapsFlutterPlatform extends GoogleMapsFlutterPlatform {
   }
 
   @override
+  Future<void> updateGroundOverlays(
+    GroundOverlayUpdates groundOverlayUpdates, {
+    required int mapId,
+  }) async {
+    mapInstances[mapId]?.groundOverlayUpdates.add(groundOverlayUpdates);
+    await _fakeDelay();
+  }
+
+  @override
   Future<void> updateTileOverlays({
     required Set<TileOverlay> newTileOverlays,
     required int mapId,
@@ -232,6 +241,11 @@ class FakeGoogleMapsFlutterPlatform extends GoogleMapsFlutterPlatform {
   }
 
   @override
+  Stream<GroundOverlayTapEvent> onGroundOverlayTap({required int mapId}) {
+    return mapEventStreamController.stream.whereType<GroundOverlayTapEvent>();
+  }
+
+  @override
   Stream<MapTapEvent> onTap({required int mapId}) {
     return mapEventStreamController.stream.whereType<MapTapEvent>();
   }
@@ -288,6 +302,8 @@ class PlatformMapStateRecorder {
     polylineUpdates
         .add(PolylineUpdates.from(const <Polyline>{}, mapObjects.polylines));
     circleUpdates.add(CircleUpdates.from(const <Circle>{}, mapObjects.circles));
+    groundOverlayUpdates.add(GroundOverlayUpdates.from(
+        const <GroundOverlay>{}, mapObjects.groundOverlays));
     tileOverlaySets.add(mapObjects.tileOverlays);
   }
 
@@ -299,5 +315,7 @@ class PlatformMapStateRecorder {
   final List<PolygonUpdates> polygonUpdates = <PolygonUpdates>[];
   final List<PolylineUpdates> polylineUpdates = <PolylineUpdates>[];
   final List<CircleUpdates> circleUpdates = <CircleUpdates>[];
+  final List<GroundOverlayUpdates> groundOverlayUpdates =
+      <GroundOverlayUpdates>[];
   final List<Set<TileOverlay>> tileOverlaySets = <Set<TileOverlay>>[];
 }

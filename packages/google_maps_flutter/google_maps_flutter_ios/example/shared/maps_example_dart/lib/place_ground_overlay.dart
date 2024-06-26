@@ -71,8 +71,9 @@ class PlaceGroundOverlayBodyState extends State<PlaceGroundOverlayBody> {
         }
         selectedGroundOverlay = groundOverlayId;
         final GroundOverlay newGroundOverlay = tappedGroundOverlay.copyWith(
-          iconParam:
-              BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen),
+          iconParam: BitmapDescriptor.defaultMarkerWithHue(
+            BitmapDescriptor.hueGreen,
+          ),
         );
         groundOverlays[groundOverlayId] = newGroundOverlay;
 

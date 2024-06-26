@@ -66,6 +66,7 @@
 @property(nonatomic, strong) FLTPolygonsController *polygonsController;
 @property(nonatomic, strong) FLTPolylinesController *polylinesController;
 @property(nonatomic, strong) FLTCirclesController *circlesController;
+@property(nonatomic, strong) FLTGroundOverlaysController *groundOverlaysController;
 @property(nonatomic, strong) FLTTileOverlaysController *tileOverlaysController;
 // The resulting error message, if any, from the last attempt to set the map style.
 // This is used to provide access to errors after the fact, since the map style is generally set at
@@ -133,6 +134,9 @@
     _circlesController = [[FLTCirclesController alloc] init:_channel
                                                     mapView:_mapView
                                                   registrar:registrar];
+    _groundOverlaysController = [[FLTGroundOverlaysController alloc] initWithMethodChannel:_channel
+                                                                  mapView:_mapView
+                                                                registrar:registrar];
     _tileOverlaysController = [[FLTTileOverlaysController alloc] init:_channel
                                                               mapView:_mapView
                                                             registrar:registrar];
@@ -151,6 +155,10 @@
     id circlesToAdd = args[@"circlesToAdd"];
     if ([circlesToAdd isKindOfClass:[NSArray class]]) {
       [_circlesController addCircles:circlesToAdd];
+    }
+    id groundOverlaysToAdd = args[@"groundOverlaysToAdd"];
+    if ([groundOverlaysToAdd isKindOfClass:[NSArray class]]) {
+      [_groundOverlaysController addGroundOverlays:groundOverlaysToAdd];
     }
     id tileOverlaysToAdd = args[@"tileOverlaysToAdd"];
     if ([tileOverlaysToAdd isKindOfClass:[NSArray class]]) {
@@ -336,6 +344,20 @@
     id circleIdsToRemove = call.arguments[@"circleIdsToRemove"];
     if ([circleIdsToRemove isKindOfClass:[NSArray class]]) {
       [self.circlesController removeCircleWithIdentifiers:circleIdsToRemove];
+    }
+    result(nil);
+  } else if([call.method isEqualToString:@"groundOverlays#update"]){
+    id groundOverlaysToAdd = call.arguments[@"groundOverlaysToAdd"];
+    if ([groundOverlaysToAdd isKindOfClass:[NSArray class]]) {
+      [self.groundOverlaysController addGroundOverlays:groundOverlaysToAdd];
+    }
+    id groundOverlaysToChange = call.arguments[@"groundOverlaysToChange"];
+    if ([groundOverlaysToChange isKindOfClass:[NSArray class]]) {
+      [self.groundOverlaysController changeGroundOverlays:groundOverlaysToChange];
+    }
+    id groundOverlayIdsToRemove = call.arguments[@"groundOverlayIdsToRemove"];
+    if ([groundOverlayIdsToRemove isKindOfClass:[NSArray class]]) {
+      [self.groundOverlaysController removeGroundOverlayWithIdentifiers:groundOverlayIdsToRemove];
     }
     result(nil);
   } else if ([call.method isEqualToString:@"tileOverlays#update"]) {
@@ -557,6 +579,12 @@
   NSString *markerId = marker.userData[0];
   [self.markersController didTapInfoWindowOfMarkerWithIdentifier:markerId];
 }
+
+- (BOOL)mapView:(GMSMapView *)mapView didTapGroundOverlay: (GMSGroundOverlay *)groundOverlay {
+  NSString *groundOverlayId = groundOverlay.userData[0];
+  return [self.groundOverlaysController didTapGroundOverlayWithIdentifier:groundOverlayId];
+}
+
 - (void)mapView:(GMSMapView *)mapView didTapOverlay:(GMSOverlay *)overlay {
   NSString *overlayId = overlay.userData[0];
   if ([self.polylinesController hasPolylineWithIdentifier:overlayId]) {
