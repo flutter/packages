@@ -16,7 +16,7 @@ import 'page.dart';
 
 class PlaceGroundOverlayPage extends GoogleMapExampleAppPage {
   const PlaceGroundOverlayPage({Key? key})
-      : super(const Icon(Icons.image), 'Place ground overlay', key: key);
+      : super(const Icon(Icons.place), 'Place ground overlay', key: key);
 
   @override
   Widget build(BuildContext context) {

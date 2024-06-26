@@ -15,13 +15,11 @@ interface GroundOverlayOptionsSink {
 
   void setZIndex(float zIndex);
 
-  void setPosition(LatLng position, Object width, Object height, Object bounds);
+  void setPosition(Object position, Object width, Object height, Object bounds);
 
   void setIcon(BitmapDescriptor bitmapDescriptor);
 
   void setBearing(float bearing);
-
-  void setAnchor(float u, float v);
 
   void setTransparency(float transparency);
 }

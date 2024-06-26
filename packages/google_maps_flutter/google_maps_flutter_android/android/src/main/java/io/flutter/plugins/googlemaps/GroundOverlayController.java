@@ -68,11 +68,6 @@ class GroundOverlayController implements GroundOverlayOptionsSink {
   }
 
   @Override
-  public void setAnchor(float u, float v) {
-    groundOverlay.setAnchor(u, v);
-  }
-
-  @Override
   public void setTransparency(float transparency) {
     groundOverlay.setTransparency(transparency);
   }

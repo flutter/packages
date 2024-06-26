@@ -37,10 +37,6 @@ class GroundOverlayBuilder implements GroundOverlayOptionsSink {
       return consumeTapEvents;
     }
 
-    String groundOverlayId() {
-      return groundOverlayId;
-    }
-
     @Override
     public void setConsumeTapEvents(boolean consumeTapEvents) {
       this.consumeTapEvents = consumeTapEvents;
@@ -78,11 +74,6 @@ class GroundOverlayBuilder implements GroundOverlayOptionsSink {
     @Override
     public void setBearing(float bearing) {
       groundOverlayOptions.bearing(bearing);
-    }
-
-    @Override
-    public void setAnchor(float u, float v) {
-      groundOverlayOptions.anchor(u, v);
     }
 
     @Override
