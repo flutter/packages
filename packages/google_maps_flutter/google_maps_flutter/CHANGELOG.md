@@ -1,3 +1,7 @@
+## 2.8.0
+
+* Adds support for GroundOverlay on Android and iOS.
+
 ## 2.7.0
 
 * Adds support for BitmapDescriptor classes `AssetMapBitmap` and `BytesMapBitmap`.
