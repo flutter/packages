@@ -92,33 +92,31 @@ class MarkersController {
     }
   }
 
-  void showMarkerInfoWindow(String markerId, MethodChannel.Result result) {
+  void showMarkerInfoWindow(String markerId) {
     MarkerController markerController = markerIdToController.get(markerId);
-    if (markerController != null) {
-      markerController.showInfoWindow();
-      result.success(null);
-    } else {
-      result.error("Invalid markerId", "showInfoWindow called with invalid markerId", null);
+    if (markerController == null) {
+      throw new Messages.FlutterError(
+          "Invalid markerId", "showInfoWindow called with invalid markerId", null);
     }
+    markerController.showInfoWindow();
   }
 
-  void hideMarkerInfoWindow(String markerId, MethodChannel.Result result) {
+  void hideMarkerInfoWindow(String markerId) {
     MarkerController markerController = markerIdToController.get(markerId);
-    if (markerController != null) {
-      markerController.hideInfoWindow();
-      result.success(null);
-    } else {
-      result.error("Invalid markerId", "hideInfoWindow called with invalid markerId", null);
+    if (markerController == null) {
+      throw new Messages.FlutterError(
+          "Invalid markerId", "hideInfoWindow called with invalid markerId", null);
     }
+    markerController.hideInfoWindow();
   }
 
-  void isInfoWindowShown(String markerId, MethodChannel.Result result) {
+  boolean isInfoWindowShown(String markerId) {
     MarkerController markerController = markerIdToController.get(markerId);
-    if (markerController != null) {
-      result.success(markerController.isInfoWindowShown());
-    } else {
-      result.error("Invalid markerId", "isInfoWindowShown called with invalid markerId", null);
+    if (markerController == null) {
+      throw new Messages.FlutterError(
+          "Invalid markerId", "isInfoWindowShown called with invalid markerId", null);
     }
+    return markerController.isInfoWindowShown();
   }
 
   boolean onMapsMarkerTap(String googleMarkerId) {
