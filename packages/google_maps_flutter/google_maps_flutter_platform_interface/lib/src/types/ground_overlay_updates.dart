@@ -17,7 +17,8 @@ class GroundOverlayUpdates extends MapsObjectUpdates<GroundOverlay> {
   Set<GroundOverlay> get groundOverlaysToAdd => objectsToAdd;
 
   /// Set of GroundOverlayIds to be removed in this update.
-  Set<GroundOverlayId> get groundOverlayIdsToRemove => objectIdsToRemove.cast<GroundOverlayId>();
+  Set<GroundOverlayId> get groundOverlayIdsToRemove =>
+      objectIdsToRemove.cast<GroundOverlayId>();
 
   /// Set of GroundOverlays to be changed in this update.
   Set<GroundOverlay> get groundOverlaysToChange => objectsToChange;

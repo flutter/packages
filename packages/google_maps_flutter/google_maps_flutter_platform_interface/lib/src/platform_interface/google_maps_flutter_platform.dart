@@ -139,7 +139,8 @@ abstract class GoogleMapsFlutterPlatform extends PlatformInterface {
     GroundOverlayUpdates groundOverlayUpdates, {
     required int mapId,
   }) {
-    throw UnimplementedError('updateGroundOverlays() has not been implemented.');
+    throw UnimplementedError(
+        'updateGroundOverlays() has not been implemented.');
   }
 
   /// Updates tile overlay configuration.

@@ -71,32 +71,44 @@ void main() {
     await tester.pumpAndSettle();
   });
 
-  testWidgets('ground overlay updates with delays', (WidgetTester tester) async {
+  testWidgets('ground overlay updates with delays',
+      (WidgetTester tester) async {
     platform.simulatePlatformDelay = true;
 
-    const GroundOverlay g1 = GroundOverlay(groundOverlayId: GroundOverlayId('ground_overlay_1'));
-    const GroundOverlay g2 = GroundOverlay(groundOverlayId: GroundOverlayId('ground_overlay_2'));
-    const GroundOverlay g3 = GroundOverlay(groundOverlayId: GroundOverlayId('ground_overlay_3'));
-    const GroundOverlay g3updated = GroundOverlay(groundOverlayId: GroundOverlayId('ground_overlay_3'), visible: false);
+    const GroundOverlay g1 =
+        GroundOverlay(groundOverlayId: GroundOverlayId('ground_overlay_1'));
+    const GroundOverlay g2 =
+        GroundOverlay(groundOverlayId: GroundOverlayId('ground_overlay_2'));
+    const GroundOverlay g3 =
+        GroundOverlay(groundOverlayId: GroundOverlayId('ground_overlay_3'));
+    const GroundOverlay g3updated = GroundOverlay(
+        groundOverlayId: GroundOverlayId('ground_overlay_3'), visible: false);
 
     // First remove one and add another, then update the new one.
-    await tester.pumpWidget(_mapWithObjects(groundOverlays: <GroundOverlay>{g1, g2}));
-    await tester.pumpWidget(_mapWithObjects(groundOverlays: <GroundOverlay>{g1, g3}));
-    await tester.pumpWidget(_mapWithObjects(groundOverlays: <GroundOverlay>{g1, g3updated}));
+    await tester
+        .pumpWidget(_mapWithObjects(groundOverlays: <GroundOverlay>{g1, g2}));
+    await tester
+        .pumpWidget(_mapWithObjects(groundOverlays: <GroundOverlay>{g1, g3}));
+    await tester.pumpWidget(
+        _mapWithObjects(groundOverlays: <GroundOverlay>{g1, g3updated}));
 
     final PlatformMapStateRecorder map = platform.lastCreatedMap;
 
     expect(map.groundOverlayUpdates.length, 3);
 
     expect(map.groundOverlayUpdates[0].groundOverlaysToChange.isEmpty, true);
-    expect(map.groundOverlayUpdates[0].groundOverlaysToAdd, <GroundOverlay>{g1, g2});
+    expect(map.groundOverlayUpdates[0].groundOverlaysToAdd,
+        <GroundOverlay>{g1, g2});
     expect(map.groundOverlayUpdates[0].groundOverlayIdsToRemove.isEmpty, true);
 
     expect(map.groundOverlayUpdates[1].groundOverlaysToChange.isEmpty, true);
-    expect(map.groundOverlayUpdates[1].groundOverlaysToAdd, <GroundOverlay>{g3});
-    expect(map.groundOverlayUpdates[1].groundOverlayIdsToRemove, <GroundOverlayId>{g2.groundOverlayId});
+    expect(
+        map.groundOverlayUpdates[1].groundOverlaysToAdd, <GroundOverlay>{g3});
+    expect(map.groundOverlayUpdates[1].groundOverlayIdsToRemove,
+        <GroundOverlayId>{g2.groundOverlayId});
 
-    expect(map.groundOverlayUpdates[2].groundOverlaysToChange, <GroundOverlay>{g3updated});
+    expect(map.groundOverlayUpdates[2].groundOverlaysToChange,
+        <GroundOverlay>{g3updated});
     expect(map.groundOverlayUpdates[2].groundOverlaysToAdd.isEmpty, true);
     expect(map.groundOverlayUpdates[2].groundOverlayIdsToRemove.isEmpty, true);
 
@@ -109,7 +121,8 @@ void main() {
     const Marker m1 = Marker(markerId: MarkerId('marker_1'));
     const Marker m2 = Marker(markerId: MarkerId('marker_2'));
     const Marker m3 = Marker(markerId: MarkerId('marker_3'));
-    const Marker m3updated = Marker(markerId: MarkerId('marker_3'), draggable: true);
+    const Marker m3updated =
+        Marker(markerId: MarkerId('marker_3'), draggable: true);
 
     // First remove one and add another, then update the new one.
     await tester.pumpWidget(_mapWithObjects(markers: <Marker>{m1, m2}));
@@ -140,13 +153,16 @@ void main() {
 
     const Polygon p1 = Polygon(polygonId: PolygonId('polygon_1'));
     const Polygon p2 = Polygon(polygonId: PolygonId('polygon_2'));
-    const Polygon p3 = Polygon(polygonId: PolygonId('polygon_3'), strokeWidth: 1);
-    const Polygon p3updated = Polygon(polygonId: PolygonId('polygon_3'), strokeWidth: 2);
+    const Polygon p3 =
+        Polygon(polygonId: PolygonId('polygon_3'), strokeWidth: 1);
+    const Polygon p3updated =
+        Polygon(polygonId: PolygonId('polygon_3'), strokeWidth: 2);
 
     // First remove one and add another, then update the new one.
     await tester.pumpWidget(_mapWithObjects(polygons: <Polygon>{p1, p2}));
     await tester.pumpWidget(_mapWithObjects(polygons: <Polygon>{p1, p3}));
-    await tester.pumpWidget(_mapWithObjects(polygons: <Polygon>{p1, p3updated}));
+    await tester
+        .pumpWidget(_mapWithObjects(polygons: <Polygon>{p1, p3updated}));
 
     final PlatformMapStateRecorder map = platform.lastCreatedMap;
 
@@ -172,13 +188,16 @@ void main() {
 
     const Polyline p1 = Polyline(polylineId: PolylineId('polyline_1'));
     const Polyline p2 = Polyline(polylineId: PolylineId('polyline_2'));
-    const Polyline p3 = Polyline(polylineId: PolylineId('polyline_3'), width: 1);
-    const Polyline p3updated = Polyline(polylineId: PolylineId('polyline_3'), width: 2);
+    const Polyline p3 =
+        Polyline(polylineId: PolylineId('polyline_3'), width: 1);
+    const Polyline p3updated =
+        Polyline(polylineId: PolylineId('polyline_3'), width: 2);
 
     // First remove one and add another, then update the new one.
     await tester.pumpWidget(_mapWithObjects(polylines: <Polyline>{p1, p2}));
     await tester.pumpWidget(_mapWithObjects(polylines: <Polyline>{p1, p3}));
-    await tester.pumpWidget(_mapWithObjects(polylines: <Polyline>{p1, p3updated}));
+    await tester
+        .pumpWidget(_mapWithObjects(polylines: <Polyline>{p1, p3updated}));
 
     final PlatformMapStateRecorder map = platform.lastCreatedMap;
 
@@ -190,7 +209,8 @@ void main() {
 
     expect(map.polylineUpdates[1].polylinesToChange.isEmpty, true);
     expect(map.polylineUpdates[1].polylinesToAdd, <Polyline>{p3});
-    expect(map.polylineUpdates[1].polylineIdsToRemove, <PolylineId>{p2.polylineId});
+    expect(map.polylineUpdates[1].polylineIdsToRemove,
+        <PolylineId>{p2.polylineId});
 
     expect(map.polylineUpdates[2].polylinesToChange, <Polyline>{p3updated});
     expect(map.polylineUpdates[2].polylinesToAdd.isEmpty, true);

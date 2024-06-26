@@ -15,7 +15,8 @@ import 'example_google_map.dart';
 import 'page.dart';
 
 class PlaceGroundOverlay extends GoogleMapExampleAppPage {
-  const PlaceGroundOverlay({Key? key}) : super(const Icon(Icons.image), 'Place ground overlay', key: key);
+  const PlaceGroundOverlay({Key? key})
+      : super(const Icon(Icons.image), 'Place ground overlay', key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +31,8 @@ class PlaceGroundOverlayBody extends StatefulWidget {
   State<PlaceGroundOverlayBody> createState() => PlaceGroundOverlayBodyState();
 }
 
-typedef GroundOverlayUpdateAction = GroundOverlay Function(GroundOverlay groundOverlay);
+typedef GroundOverlayUpdateAction = GroundOverlay Function(
+    GroundOverlay groundOverlay);
 
 class PlaceGroundOverlayBodyState extends State<PlaceGroundOverlayBody> {
   PlaceGroundOverlayBodyState();
@@ -39,7 +41,8 @@ class PlaceGroundOverlayBodyState extends State<PlaceGroundOverlayBody> {
   static const double defaultHeight = 100.0;
 
   ExampleGoogleMapController? controller;
-  Map<GroundOverlayId, GroundOverlay> groundOverlays = <GroundOverlayId, GroundOverlay>{};
+  Map<GroundOverlayId, GroundOverlay> groundOverlays =
+      <GroundOverlayId, GroundOverlay>{};
   GroundOverlayId? selectedGroundOverlay;
   int _groundOverlayIdCounter = 1;
   LatLng? groundOverlayPosition;
@@ -59,13 +62,17 @@ class PlaceGroundOverlayBodyState extends State<PlaceGroundOverlayBody> {
     if (tappedGroundOverlay != null) {
       setState(() {
         final GroundOverlayId? previousGroundOverlayId = selectedGroundOverlay;
-        if (previousGroundOverlayId != null && groundOverlays.containsKey(previousGroundOverlayId)) {
-          final GroundOverlay resetOld = groundOverlays[previousGroundOverlayId]!.copyWith(iconParam: BitmapDescriptor.defaultMarker);
+        if (previousGroundOverlayId != null &&
+            groundOverlays.containsKey(previousGroundOverlayId)) {
+          final GroundOverlay resetOld =
+              groundOverlays[previousGroundOverlayId]!
+                  .copyWith(iconParam: BitmapDescriptor.defaultMarker);
           groundOverlays[previousGroundOverlayId] = resetOld;
         }
         selectedGroundOverlay = groundOverlayId;
         final GroundOverlay newGroundOverlay = tappedGroundOverlay.copyWith(
-          iconParam: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen),
+          iconParam:
+              BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen),
         );
         groundOverlays[groundOverlayId] = newGroundOverlay;
 
@@ -81,7 +88,8 @@ class PlaceGroundOverlayBodyState extends State<PlaceGroundOverlayBody> {
       return;
     }
 
-    final String groundOverlayIdVal = 'ground_overlay_id_$_groundOverlayIdCounter';
+    final String groundOverlayIdVal =
+        'ground_overlay_id_$_groundOverlayIdCounter';
     _groundOverlayIdCounter++;
     final GroundOverlayId groundOverlayId = GroundOverlayId(groundOverlayIdVal);
 
@@ -177,7 +185,8 @@ class PlaceGroundOverlayBodyState extends State<PlaceGroundOverlayBody> {
     });
   }
 
-  void _setGroundOverlayIcon(GroundOverlayId groundOverlayId, BitmapDescriptor assetIcon) {
+  void _setGroundOverlayIcon(
+      GroundOverlayId groundOverlayId, BitmapDescriptor assetIcon) {
     final GroundOverlay groundOverlay = groundOverlays[groundOverlayId]!;
     setState(() {
       groundOverlays[groundOverlayId] = groundOverlay.copyWith(
@@ -195,7 +204,7 @@ class PlaceGroundOverlayBodyState extends State<PlaceGroundOverlayBody> {
   @override
   Widget build(BuildContext context) {
     final GroundOverlayId? selectedId = selectedGroundOverlay;
-     return Stack(children: <Widget>[
+    return Stack(children: <Widget>[
       Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -228,8 +237,9 @@ class PlaceGroundOverlayBodyState extends State<PlaceGroundOverlayBody> {
             alignment: WrapAlignment.spaceEvenly,
             children: <Widget>[
               TextButton(
-                onPressed:
-                    selectedId == null ? null : () => _changeOpacity(selectedId),
+                onPressed: selectedId == null
+                    ? null
+                    : () => _changeOpacity(selectedId),
                 child: const Text('change opacity'),
               ),
               TextButton(
@@ -288,11 +298,13 @@ class PlaceGroundOverlayBodyState extends State<PlaceGroundOverlayBody> {
               if (groundOverlayPosition == null)
                 Container()
               else
-                Expanded(child: Text('lat: ${groundOverlayPosition!.latitude}')),
+                Expanded(
+                    child: Text('lat: ${groundOverlayPosition!.latitude}')),
               if (groundOverlayPosition == null)
                 Container()
               else
-                Expanded(child: Text('lng: ${groundOverlayPosition!.longitude}')),
+                Expanded(
+                    child: Text('lng: ${groundOverlayPosition!.longitude}')),
             ],
           ),
         ),

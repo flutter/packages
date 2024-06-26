@@ -29,9 +29,14 @@ void main() {
       expect(groundOverlay.opacity, equals(1.0));
       expect(groundOverlay.visible, equals(true));
       expect(groundOverlay.zIndex, equals(0.0));
-      expect(groundOverlay.groundOverlayId, equals(const GroundOverlayId('ABC123')));
+      expect(groundOverlay.groundOverlayId,
+          equals(const GroundOverlayId('ABC123')));
       expect(groundOverlay.position, equals(null));
-      expect(groundOverlay.bounds, equals(LatLngBounds(southwest: const LatLng(0.0, 0.0), northeast: const LatLng(1.0, 1.0))));
+      expect(
+          groundOverlay.bounds,
+          equals(LatLngBounds(
+              southwest: const LatLng(0.0, 0.0),
+              northeast: const LatLng(1.0, 1.0))));
     });
   });
 
@@ -54,9 +59,14 @@ void main() {
     expect(groundOverlay.opacity, equals(1.0));
     expect(groundOverlay.visible, equals(true));
     expect(groundOverlay.zIndex, equals(0.0));
-    expect(groundOverlay.groundOverlayId, equals(const GroundOverlayId('ABC123')));
+    expect(
+        groundOverlay.groundOverlayId, equals(const GroundOverlayId('ABC123')));
     expect(groundOverlay.position, equals(null));
-    expect(groundOverlay.bounds, equals(LatLngBounds(southwest: const LatLng(0.0, 0.0), northeast: const LatLng(1.0, 1.0))));
+    expect(
+        groundOverlay.bounds,
+        equals(LatLngBounds(
+            southwest: const LatLng(0.0, 0.0),
+            northeast: const LatLng(1.0, 1.0))));
   });
 
   test('position constructor defaults', () {
@@ -76,7 +86,8 @@ void main() {
     expect(groundOverlay.opacity, equals(1.0));
     expect(groundOverlay.visible, equals(true));
     expect(groundOverlay.zIndex, equals(0.0));
-    expect(groundOverlay.groundOverlayId, equals(const GroundOverlayId('ABC123')));
+    expect(
+        groundOverlay.groundOverlayId, equals(const GroundOverlayId('ABC123')));
     expect(groundOverlay.position, equals(const LatLng(0.0, 0.0)));
     expect(groundOverlay.width, equals(100.0));
     expect(groundOverlay.height, equals(100.0));
@@ -84,7 +95,8 @@ void main() {
 
   test('constructor opacity is >= 0.0 and <= 1.0', () {
     void initWithOpacity(double opacity) {
-      GroundOverlay(groundOverlayId: const GroundOverlayId('ABC123'), opacity: opacity);
+      GroundOverlay(
+          groundOverlayId: const GroundOverlayId('ABC123'), opacity: opacity);
     }
 
     expect(() => initWithOpacity(-0.5), throwsAssertionError);
@@ -156,7 +168,8 @@ void main() {
       onTap: () {},
     );
 
-    final Map<String, Object> json = groundOverlay.toJson() as Map<String, Object>;
+    final Map<String, Object> json =
+        groundOverlay.toJson() as Map<String, Object>;
 
     expect(json, <String, Object>{
       'groundOverlayId': 'ABC123',
@@ -190,7 +203,8 @@ void main() {
       onTap: () {},
     );
 
-    final Map<String, Object> json = groundOverlay.toJson() as Map<String, Object>;
+    final Map<String, Object> json =
+        groundOverlay.toJson() as Map<String, Object>;
 
     expect(json, <String, Object>{
       'groundOverlayId': 'ABC123',
@@ -209,7 +223,8 @@ void main() {
   });
 
   test('clone', () {
-    const GroundOverlay groundOverlay = GroundOverlay(groundOverlayId: GroundOverlayId('ABC123'));
+    const GroundOverlay groundOverlay =
+        GroundOverlay(groundOverlayId: GroundOverlayId('ABC123'));
     final GroundOverlay clone = groundOverlay.clone();
 
     expect(identical(clone, groundOverlay), isFalse);
@@ -218,9 +233,11 @@ void main() {
 
   test('copyWith from position constructor', () {
     const GroundOverlayId groundOverlayId = GroundOverlayId('ABC123');
-    const GroundOverlay groundOverlay = GroundOverlay(groundOverlayId: groundOverlayId);
+    const GroundOverlay groundOverlay =
+        GroundOverlay(groundOverlayId: groundOverlayId);
 
-    final BitmapDescriptor testDescriptor = BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueCyan);
+    final BitmapDescriptor testDescriptor =
+        BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueCyan);
     const double testOpacityParam = 0.12345;
     const Offset testAnchorParam = Offset(100, 100);
     final bool testConsumeTapEventsParam = !groundOverlay.consumeTapEvents;
@@ -267,9 +284,11 @@ void main() {
 
   test('copyWith from bounds constructor', () {
     const GroundOverlayId groundOverlayId = GroundOverlayId('ABC123');
-    const GroundOverlay groundOverlay = GroundOverlay(groundOverlayId: groundOverlayId);
+    const GroundOverlay groundOverlay =
+        GroundOverlay(groundOverlayId: groundOverlayId);
 
-    final BitmapDescriptor testDescriptor = BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueCyan);
+    final BitmapDescriptor testDescriptor =
+        BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueCyan);
     const double testOpacityParam = 0.12345;
     const Offset testAnchorParam = Offset(100, 100);
     final bool testConsumeTapEventsParam = !groundOverlay.consumeTapEvents;

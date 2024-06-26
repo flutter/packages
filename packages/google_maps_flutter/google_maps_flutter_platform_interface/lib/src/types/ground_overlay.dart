@@ -39,10 +39,22 @@ class GroundOverlay implements MapsObject<GroundOverlay> {
     this.anchor = const Offset(0.5, 0.5),
     this.opacity = 1.0,
   })  : assert(
-            (height != null && width != null && position != null && bounds == null) ||
-                (height == null && width == null && position == null && bounds != null) ||
-                (height == null && width != null && position != null && bounds == null) ||
-                (height == null && width == null && position == null && bounds == null),
+            (height != null &&
+                    width != null &&
+                    position != null &&
+                    bounds == null) ||
+                (height == null &&
+                    width == null &&
+                    position == null &&
+                    bounds != null) ||
+                (height == null &&
+                    width != null &&
+                    position != null &&
+                    bounds == null) ||
+                (height == null &&
+                    width == null &&
+                    position == null &&
+                    bounds == null),
             'Only one of the three types of positioning is allowed, please refer '
             'to the https://developers.google.com/maps/documentation/android-sdk/groundoverlay#add_an_overlay'),
         assert(0.0 <= opacity && opacity <= 1.0);

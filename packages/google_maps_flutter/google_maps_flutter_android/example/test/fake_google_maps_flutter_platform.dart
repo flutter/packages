@@ -17,7 +17,8 @@ class FakeGoogleMapsFlutterPlatform extends GoogleMapsFlutterPlatform {
   List<int> createdIds = <int>[];
 
   /// A map of creation IDs to fake map instances.
-  Map<int, PlatformMapStateRecorder> mapInstances = <int, PlatformMapStateRecorder>{};
+  Map<int, PlatformMapStateRecorder> mapInstances =
+      <int, PlatformMapStateRecorder>{};
 
   PlatformMapStateRecorder get lastCreatedMap => mapInstances[createdIds.last]!;
 
@@ -33,7 +34,8 @@ class FakeGoogleMapsFlutterPlatform extends GoogleMapsFlutterPlatform {
   bool disposed = false;
 
   /// Stream controller to inject events for testing.
-  final StreamController<MapEvent<dynamic>> mapEventStreamController = StreamController<MapEvent<dynamic>>.broadcast();
+  final StreamController<MapEvent<dynamic>> mapEventStreamController =
+      StreamController<MapEvent<dynamic>>.broadcast();
 
   @override
   Future<void> init(int mapId) async {}
@@ -138,7 +140,8 @@ class FakeGoogleMapsFlutterPlatform extends GoogleMapsFlutterPlatform {
   Future<LatLngBounds> getVisibleRegion({
     required int mapId,
   }) async {
-    return LatLngBounds(southwest: const LatLng(0, 0), northeast: const LatLng(0, 0));
+    return LatLngBounds(
+        southwest: const LatLng(0, 0), northeast: const LatLng(0, 0));
   }
 
   @override
@@ -308,12 +311,16 @@ class PlatformMapStateRecorder {
     this.mapObjects = const MapObjects(),
     this.mapConfiguration = const MapConfiguration(),
   }) {
-    clusterManagerUpdates.add(ClusterManagerUpdates.from(const <ClusterManager>{}, mapObjects.clusterManagers));
+    clusterManagerUpdates.add(ClusterManagerUpdates.from(
+        const <ClusterManager>{}, mapObjects.clusterManagers));
     markerUpdates.add(MarkerUpdates.from(const <Marker>{}, mapObjects.markers));
-    polygonUpdates.add(PolygonUpdates.from(const <Polygon>{}, mapObjects.polygons));
-    polylineUpdates.add(PolylineUpdates.from(const <Polyline>{}, mapObjects.polylines));
+    polygonUpdates
+        .add(PolygonUpdates.from(const <Polygon>{}, mapObjects.polygons));
+    polylineUpdates
+        .add(PolylineUpdates.from(const <Polyline>{}, mapObjects.polylines));
     circleUpdates.add(CircleUpdates.from(const <Circle>{}, mapObjects.circles));
-    groundOverlayUpdates.add(GroundOverlayUpdates.from(const <GroundOverlay>{}, mapObjects.groundOverlays));
+    groundOverlayUpdates.add(GroundOverlayUpdates.from(
+        const <GroundOverlay>{}, mapObjects.groundOverlays));
     tileOverlaySets.add(mapObjects.tileOverlays);
   }
 
@@ -325,7 +332,9 @@ class PlatformMapStateRecorder {
   final List<PolygonUpdates> polygonUpdates = <PolygonUpdates>[];
   final List<PolylineUpdates> polylineUpdates = <PolylineUpdates>[];
   final List<CircleUpdates> circleUpdates = <CircleUpdates>[];
-  final List<GroundOverlayUpdates> groundOverlayUpdates = <GroundOverlayUpdates>[];
+  final List<GroundOverlayUpdates> groundOverlayUpdates =
+      <GroundOverlayUpdates>[];
   final List<Set<TileOverlay>> tileOverlaySets = <Set<TileOverlay>>[];
-  final List<ClusterManagerUpdates> clusterManagerUpdates = <ClusterManagerUpdates>[];
+  final List<ClusterManagerUpdates> clusterManagerUpdates =
+      <ClusterManagerUpdates>[];
 }
