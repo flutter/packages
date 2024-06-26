@@ -141,6 +141,7 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
     indent.writeln('import java.util.HashMap;');
     indent.writeln('import java.util.List;');
     indent.writeln('import java.util.Map;');
+    indent.writeln('import java.util.Objects;');
     indent.newln();
   }
 
@@ -233,6 +234,7 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
         indent.writeln('${classDefinition.name}() {}');
         indent.newln();
       }
+      _writeEquality(indent, classDefinition);
 
       _writeClassBuilder(generatorOptions, root, indent, classDefinition);
       writeClassEncode(
@@ -279,6 +281,34 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
         });
       }
       indent.writeln('this.${field.name} = setterArg;');
+    });
+  }
+
+  void _writeEquality(Indent indent, Class classDefinition) {
+    // Implement equals(...).
+    indent.writeln('@Override');
+    indent.addScoped('public boolean equals(Object o) {', '}', () {
+      indent.writeln('if (this == o) { return true; }');
+      indent.writeln(
+          'if (o == null || getClass() != o.getClass()) { return false; }');
+      indent.writeln(
+          '${classDefinition.name} that = (${classDefinition.name}) o;');
+      final Iterable<String> checks = classDefinition.fields.map(
+        (NamedType field) {
+          return field.type.isNullable
+              ? 'Objects.equals(${field.name}, that.${field.name})'
+              : '${field.name}.equals(that.${field.name})';
+        },
+      );
+      indent.writeln('return ${checks.join(' && ')};');
+    });
+
+    // Implement hashCode().
+    indent.writeln('@Override');
+    indent.addScoped('public int hashCode() {', '}', () {
+      final Iterable<String> fieldNames =
+          classDefinition.fields.map((NamedType field) => field.name);
+      indent.writeln('return Objects.hash(${fieldNames.join(', ')});');
     });
   }
 
