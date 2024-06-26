@@ -1,5 +1,6 @@
-## NEXT
+## 20.1.0
 
+* [swift] Adds implementation for `@ProxyApi`.
 * [swift] Fully-qualifies types in Equatable extension test.
 
 ## 20.0.1
