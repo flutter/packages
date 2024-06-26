@@ -50,6 +50,7 @@ Future<void> runTests(
       print('# Running $test');
       final int testCode = await info.function(ciMode: ciMode);
       if (testCode != 0) {
+        print('# Failed, exit code: $testCode');
         exit(testCode);
       }
       print('');
