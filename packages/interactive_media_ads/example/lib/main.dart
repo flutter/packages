@@ -23,15 +23,7 @@ const String _adTagUrl =
     'https://pubads.g.doubleclick.net/gampad/ads?iu=/21775744923/external/single_preroll_skippable&sz=640x480&ciu_szs=300x250%2C728x90&gdfp_req=1&output=vast&unviewed_position_start=1&env=vp&impl=s&correlator=';
 
 void main() {
-  runApp(
-    MaterialApp(
-      // TODO(bparrishMines): Remove this check once the iOS implementation
-      // is added.
-      home: defaultTargetPlatform == TargetPlatform.android
-          ? const AdExampleWidget()
-          : Container(),
-    ),
-  );
+  runApp(const MaterialApp(home: AdExampleWidget()));
 }
 
 /// Example widget displaying an Ad during a video.
