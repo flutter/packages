@@ -1,9 +1,6 @@
-//
-//  ContentPlayheadProxyAPIDelegate.swift
-//  interactive_media_ads
-//
-//  Created by Maurice Parrish on 6/21/24.
-//
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
 
 import Foundation
 import GoogleInteractiveMediaAds
@@ -18,7 +15,7 @@ class ContentPlayheadProxyAPIDelegate: PigeonDelegateIMAContentPlayhead {
     return ContentPlayheadImpl()
   }
 
-  // This is not an actual, but added so it can handle the sync callback.
+  // This is not an actual method on IMAContentPlayhead, but added so it can handle the sync callback.
   func setCurrentTime(
     pigeonApi: PigeonApiIMAContentPlayhead, pigeonInstance: IMAContentPlayhead, timeInterval: Double
   ) throws {
