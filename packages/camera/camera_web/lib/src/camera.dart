@@ -71,9 +71,6 @@ class Camera {
   /// Initialized in [initialize] and [play], reset in [stop].
   web.MediaStream? stream;
 
-  web.MediaStreamTrack? get _defaultVideoTrack =>
-      stream?.getVideoTracks().toDart.firstOrNull;
-
   /// The stream of the camera video tracks that have ended playing.
   ///
   /// This occurs when there is no more camera stream data, e.g.
@@ -182,8 +179,11 @@ class Camera {
 
     _applyDefaultVideoStyles(videoElement);
 
-    final web.MediaStreamTrack? defaultVideoTrack = _defaultVideoTrack;
-    if (defaultVideoTrack != null) {
+    final List<web.MediaStreamTrack> videoTracks =
+        stream!.getVideoTracks().toDart;
+
+    if (videoTracks.isNotEmpty) {
+      final web.MediaStreamTrack defaultVideoTrack = videoTracks.first;
       defaultVideoTrack.onended = (web.Event _) {
         onEndedController.add(defaultVideoTrack);
       }.toJS;
@@ -263,8 +263,8 @@ class Camera {
 
     final Completer<web.Blob> blobCompleter = Completer<web.Blob>();
     canvas.toBlob(
-      (web.BlobEvent event) {
-        blobCompleter.complete(event.data);
+      (web.Blob blob) {
+        blobCompleter.complete(blob);
       }.toJS,
       'image/jpeg',
     );
@@ -282,10 +282,15 @@ class Camera {
   /// Returns [Size.zero] if the camera is missing a video track or
   /// the video track does not include the width or height setting.
   Size getVideoSize() {
-    final web.MediaStreamTrack? defaultVideoTrack = _defaultVideoTrack;
-    if (defaultVideoTrack == null) {
+    final List<web.MediaStreamTrack> videoTracks =
+        (videoElement.srcObject as web.MediaStream?)?.getVideoTracks().toDart ??
+            <web.MediaStreamTrack>[];
+
+    if (videoTracks.isEmpty) {
       return Size.zero;
     }
+
+    final web.MediaStreamTrack defaultVideoTrack = videoTracks.first;
 
     final web.MediaTrackSettings defaultVideoTrackSettings =
         defaultVideoTrack.getSettings();
@@ -332,8 +337,11 @@ class Camera {
   /// Throws a [CameraWebException] if the torch mode is not supported
   /// or the camera has not been initialized or started.
   void _setTorchMode({required bool enabled}) {
-    final web.MediaStreamTrack? defaultVideoTrack = _defaultVideoTrack;
-    if (defaultVideoTrack != null) {
+    final List<web.MediaStreamTrack> videoTracks =
+        stream?.getVideoTracks().toDart ?? <web.MediaStreamTrack>[];
+
+    if (videoTracks.isNotEmpty) {
+      final web.MediaStreamTrack defaultVideoTrack = videoTracks.first;
       final bool canEnableTorchMode =
           defaultVideoTrack.getCapabilities().torch.toDart.first.toDart;
 
@@ -396,11 +404,15 @@ class Camera {
   /// Returns null if the camera is missing a video track or
   /// the video track does not include the facing mode setting.
   CameraLensDirection? getLensDirection() {
-    final web.MediaStreamTrack? defaultVideoTrack = _defaultVideoTrack;
-    if (defaultVideoTrack == null) {
+    final List<web.MediaStreamTrack> videoTracks =
+        (videoElement.srcObject as web.MediaStream?)?.getVideoTracks().toDart ??
+            <web.MediaStreamTrack>[];
+
+    if (videoTracks.isEmpty) {
       return null;
     }
 
+    final web.MediaStreamTrack defaultVideoTrack = videoTracks.first;
     final web.MediaTrackSettings defaultVideoTrackSettings =
         defaultVideoTrack.getSettings();
     try {
@@ -568,6 +580,7 @@ class Camera {
     stop();
 
     await videoRecorderController.close();
+    print('6');
     mediaRecorder = null;
     _videoDataAvailableListener = null;
 
@@ -576,7 +589,13 @@ class Camera {
       ..srcObject = null
       ..load();
 
-    _defaultVideoTrack?.onended = null;
+    final List<web.MediaStreamTrack> videoTracks =
+        stream!.getVideoTracks().toDart;
+
+    if (videoTracks.isNotEmpty) {
+      final web.MediaStreamTrack defaultVideoTrack = videoTracks.first;
+      defaultVideoTrack.onended = null;
+    }
     await onEndedController.close();
 
     mediaRecorder?.onerror = null;

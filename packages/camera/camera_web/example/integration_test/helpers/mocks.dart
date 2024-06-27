@@ -36,7 +36,7 @@ class MockElement {}
 
 @JSExport()
 class MockNavigator {
-  web.MediaDevices? mediaDevices;
+  late web.MediaDevices mediaDevices;
 }
 
 @JSExport()
@@ -53,7 +53,8 @@ class MockCameraService extends Mock implements CameraService {}
 @JSExport()
 class MockMediaStreamTrack {
   late web.MediaTrackCapabilities Function() getCapabilities;
-  late web.MediaTrackSettings Function() getSettings;
+  web.MediaTrackSettings Function() getSettings =
+      () => web.MediaTrackSettings();
   late JSPromise<JSAny?> Function([web.MediaTrackConstraints? constraints])
       applyConstraints;
 }
@@ -75,22 +76,30 @@ class MockJsUtil extends Mock implements JsUtil {}
 class MockMediaRecorder {
   late web.EventHandler onerror;
 
-  late void Function(
+  void Function(
     String type,
     web.EventListener? callback, [
     JSAny options,
-  ]) addEventListener;
+  ]) addEventListener = (
+    String type,
+    web.EventListener? callback, [
+    JSAny? options,
+  ]) {};
 
-  late void Function(
+  void Function(
     String type,
     web.EventListener? callback, [
     JSAny options,
-  ]) removeEventListener;
+  ]) removeEventListener = (
+    String type,
+    web.EventListener? callback, [
+    JSAny? options,
+  ]) {};
 
-  late void Function([int timeslice]) start;
-  late void Function() pause;
-  late void Function() resume;
-  late void Function() stop;
+  void Function([int timeslice]) start = ([int? timeslice]) {};
+  void Function() pause = () {};
+  void Function() resume = () {};
+  void Function() stop = () {};
 
   late web.RecordingState state;
 }

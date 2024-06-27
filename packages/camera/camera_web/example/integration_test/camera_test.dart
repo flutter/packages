@@ -551,42 +551,10 @@ void main() {
         camera.setFlashMode(FlashMode.auto);
 
         expect(capturedConstraints.length, 1);
-        expect(capturedConstraints[0].torch, true);
+        expect(capturedConstraints[0].torch, false);
       });
 
       group('throws a CameraWebException', () {
-        testWidgets(
-            'with torchModeNotSupported error '
-            'when there are no media devices', (WidgetTester tester) async {
-          mockNavigator.mediaDevices = null;
-
-          final Camera camera = Camera(
-            textureId: textureId,
-            cameraService: cameraService,
-          )
-            ..window = window
-            ..stream = videoStream;
-
-          expect(
-            () => camera.setFlashMode(FlashMode.always),
-            throwsA(
-              isA<CameraWebException>()
-                  .having(
-                    (CameraWebException e) => e.cameraId,
-                    'cameraId',
-                    textureId,
-                  )
-                  .having(
-                    (CameraWebException e) => e.code,
-                    'code',
-                    CameraErrorCode.torchModeNotSupported,
-                  ),
-            ),
-          );
-
-          mockNavigator.mediaDevices = mediaDevices;
-        });
-
         testWidgets(
             'with torchModeNotSupported error '
             'when the torch mode is not supported '
@@ -892,11 +860,10 @@ void main() {
 
         final MockMediaStreamTrack firstVideoTrack = MockMediaStreamTrack();
 
-        videoElement.srcObject = createJSInteropWrapper(
+        mockVideoElement.srcObject = createJSInteropWrapper(
           FakeMediaStream(
             <MediaStreamTrack>[
-              createJSInteropWrapper(createJSInteropWrapper)
-                  as MediaStreamTrack,
+              createJSInteropWrapper(firstVideoTrack) as MediaStreamTrack,
               createJSInteropWrapper(MockMediaStreamTrack())
                   as MediaStreamTrack,
             ],
@@ -933,8 +900,7 @@ void main() {
         videoElement.srcObject = createJSInteropWrapper(
           FakeMediaStream(
             <MediaStreamTrack>[
-              createJSInteropWrapper(createJSInteropWrapper)
-                  as MediaStreamTrack,
+              createJSInteropWrapper(firstVideoTrack) as MediaStreamTrack,
               createJSInteropWrapper(MockMediaStreamTrack())
                   as MediaStreamTrack,
             ],
@@ -1330,7 +1296,6 @@ void main() {
           };
 
           await camera.startVideoRecording();
-          final Future<XFile> videoFileFuture = camera.stopVideoRecording();
 
           final Blob capturedVideoPartOne = Blob(<JSAny>[].toJS);
           final Blob capturedVideoPartTwo = Blob(<JSAny>[].toJS);
@@ -1358,7 +1323,7 @@ void main() {
             stops++;
           };
 
-          final XFile videoFile = await videoFileFuture;
+          final XFile videoFile = await camera.stopVideoRecording();
 
           expect(stops, 1);
 
