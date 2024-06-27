@@ -21,7 +21,7 @@ Currently pigeon supports generating:
 ### Supported Datatypes
 
 Pigeon uses the `StandardMessageCodec` so it supports 
-[any datatype platform channels support](https://flutter.dev/docs/development/platform-integration/platform-channels#codec).
+[any datatype platform channels support](https://flutter.dev/to/platform-channels-codec).
 
 Custom classes, nested datatypes, and enums are also supported. 
 
