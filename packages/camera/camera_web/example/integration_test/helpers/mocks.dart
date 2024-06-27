@@ -74,8 +74,6 @@ class MockJsUtil extends Mock implements JsUtil {}
 
 @JSExport()
 class MockMediaRecorder {
-  late web.EventHandler onerror;
-
   void Function(
     String type,
     web.EventListener? callback, [

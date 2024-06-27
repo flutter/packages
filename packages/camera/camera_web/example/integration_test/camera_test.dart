@@ -1525,13 +1525,13 @@ void main() {
 
           await camera.startVideoRecording();
 
-          expect(mockMediaRecorder.onerror, isNotNull);
+          expect(mediaRecorder.onerror, isNotNull);
 
           videoRecordingStoppedListener.callAsFunction(null, Event('stop'));
 
           await Future<void>.microtask(() {});
 
-          expect(mockMediaRecorder.onerror, isNull);
+          expect(mediaRecorder.onerror, isNull);
         });
       });
     });
