@@ -1297,6 +1297,13 @@ void main() {
 
           await camera.startVideoRecording();
 
+          int stops = 0;
+          mockMediaRecorder.stop = () {
+            stops++;
+          };
+
+          final Future<XFile> videoFileFuture = camera.stopVideoRecording();
+
           final Blob capturedVideoPartOne = Blob(<JSAny>[].toJS);
           final Blob capturedVideoPartTwo = Blob(<JSAny>[].toJS);
 
@@ -1318,12 +1325,7 @@ void main() {
 
           videoRecordingStoppedListener.callAsFunction(null, Event('stop'));
 
-          int stops = 0;
-          mockMediaRecorder.stop = () {
-            stops++;
-          };
-
-          final XFile videoFile = await camera.stopVideoRecording();
+          final XFile videoFile = await videoFileFuture;
 
           expect(stops, 1);
 
