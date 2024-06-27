@@ -293,7 +293,7 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
     JavaOptions generatorOptions,
     Indent indent,
     Class classDefinition,
-    Function restOfTheClass,
+    void Function() restOfTheClass,
   ) {
     indent.write('public static final class ${classDefinition.name} ');
     indent.addScoped('{', '}', () {
