@@ -94,9 +94,8 @@ class AdsLoader {
 
   /// Requests ads from a server.
   ///
-  /// Note that ads cannot be request until the `AdDisplayContainer` has been
-  /// added to the native View hierarchy. See
-  /// [AdDisplayContainer.onContainerAdded].
+  /// Ads cannot be requested until the `AdDisplayContainer` has been added to
+  /// the native View hierarchy. See [AdDisplayContainer.onContainerAdded].
   Future<void> requestAds(AdsRequest request) {
     return platform.requestAds(request);
   }
