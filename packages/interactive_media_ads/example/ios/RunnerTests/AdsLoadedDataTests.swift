@@ -9,15 +9,15 @@ import XCTest
 import GoogleInteractiveMediaAds
 
 final class AdsLoadedDataTests: XCTestCase {
-  func testAdError() {
+  func testAdsManager() {
     let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiIMAAdLoadingErrorData(registrar)
+    let api = registrar.apiDelegate.pigeonApiIMAAdsLoadedData(registrar)
     
-    let instance = TestAdLoadingErrorData.customInit()
+    let instance = TestAdsLoadedData.customInit()
     
-    let value = try? api.pigeonDelegate.adError(pigeonApi: api, pigeonInstance: instance)
+    let value = try? api.pigeonDelegate.adsManager(pigeonApi: api, pigeonInstance: instance)
     
-    XCTAssertTrue(value is TestAdError)
+    XCTAssertTrue(value is TestAdsManager)
   }
 }
 
@@ -28,6 +28,6 @@ class TestAdsLoadedData: IMAAdsLoadedData {
   }
   
   override var adsManager: IMAAdsManager? {
-    // return
+    return TestAdsManager.customInit()
   }
 }

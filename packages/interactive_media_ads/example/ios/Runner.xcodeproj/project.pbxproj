@@ -12,6 +12,9 @@
 		3D282E63E10407DBACF20FD6 /* Pods_RunnerTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 544903031C10E0FA3D89D2CE /* Pods_RunnerTests.framework */; };
 		4E107A500F4C07EF26C07FFF /* Pods_Runner.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DDCBAC040E6F614A1CDCF896 /* Pods_Runner.framework */; };
 		74858FAF1ED2DC5600515810 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74858FAE1ED2DC5600515810 /* AppDelegate.swift */; };
+		8F599BB12C2DD1FD0090A0DF /* AdsManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F599BB02C2DD1FD0090A0DF /* AdsManagerTests.swift */; };
+		8F599BB32C2DD87D0090A0DF /* AdsLoaderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F599BB22C2DD87D0090A0DF /* AdsLoaderTests.swift */; };
+		8F599BB52C2DD8EC0090A0DF /* AdsLoaderDelegateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F599BB42C2DD8EC0090A0DF /* AdsLoaderDelegateTests.swift */; };
 		8F977DCF2C2B99C600A90D4B /* AdDisplayContainerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F977DCE2C2B99C600A90D4B /* AdDisplayContainerTests.swift */; };
 		8F977DD12C2BA13400A90D4B /* MockBinaryMessenger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F977DD02C2BA13400A90D4B /* MockBinaryMessenger.swift */; };
 		8F977DD32C2BA15100A90D4B /* TestProxyApiRegistrar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F977DD22C2BA15100A90D4B /* TestProxyApiRegistrar.swift */; };
@@ -62,6 +65,9 @@
 		7A0E5CD036C0A19847922937 /* Pods-Runner.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.debug.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.debug.xcconfig"; sourceTree = "<group>"; };
 		7AFA3C8E1D35360C0083082E /* Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = Release.xcconfig; path = Flutter/Release.xcconfig; sourceTree = "<group>"; };
 		89C6230E68C80A6F4B207726 /* Pods-RunnerTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.debug.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.debug.xcconfig"; sourceTree = "<group>"; };
+		8F599BB02C2DD1FD0090A0DF /* AdsManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdsManagerTests.swift; sourceTree = "<group>"; };
+		8F599BB22C2DD87D0090A0DF /* AdsLoaderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdsLoaderTests.swift; sourceTree = "<group>"; };
+		8F599BB42C2DD8EC0090A0DF /* AdsLoaderDelegateTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdsLoaderDelegateTests.swift; sourceTree = "<group>"; };
 		8F977DCE2C2B99C600A90D4B /* AdDisplayContainerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdDisplayContainerTests.swift; sourceTree = "<group>"; };
 		8F977DD02C2BA13400A90D4B /* MockBinaryMessenger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockBinaryMessenger.swift; sourceTree = "<group>"; };
 		8F977DD22C2BA15100A90D4B /* TestProxyApiRegistrar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestProxyApiRegistrar.swift; sourceTree = "<group>"; };
@@ -109,6 +115,9 @@
 				8F977DD62C2C89A600A90D4B /* AdEventTests.swift */,
 				8F977DD82C2C8C6A00A90D4B /* AdLoadingErrorDataTests.swift */,
 				8F977DDA2C2C8D2E00A90D4B /* AdsLoadedDataTests.swift */,
+				8F599BB02C2DD1FD0090A0DF /* AdsManagerTests.swift */,
+				8F599BB22C2DD87D0090A0DF /* AdsLoaderTests.swift */,
+				8F599BB42C2DD8EC0090A0DF /* AdsLoaderDelegateTests.swift */,
 			);
 			path = RunnerTests;
 			sourceTree = "<group>";
@@ -387,11 +396,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				8F977DD92C2C8C6A00A90D4B /* AdLoadingErrorDataTests.swift in Sources */,
+				8F599BB32C2DD87D0090A0DF /* AdsLoaderTests.swift in Sources */,
 				8F977DD72C2C89A600A90D4B /* AdEventTests.swift in Sources */,
 				8F977DD32C2BA15100A90D4B /* TestProxyApiRegistrar.swift in Sources */,
 				8F977DD12C2BA13400A90D4B /* MockBinaryMessenger.swift in Sources */,
 				8F977DCF2C2B99C600A90D4B /* AdDisplayContainerTests.swift in Sources */,
+				8F599BB52C2DD8EC0090A0DF /* AdsLoaderDelegateTests.swift in Sources */,
 				8F977DD52C2C777600A90D4B /* AdErrorTests.swift in Sources */,
+				8F599BB12C2DD1FD0090A0DF /* AdsManagerTests.swift in Sources */,
 				8F977DDB2C2C8D2E00A90D4B /* AdsLoadedDataTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
