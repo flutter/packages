@@ -1,3 +1,9 @@
+## 2.9.0
+
+* Exports types: `VideoPlayerWebOptions` and `VideoPlayerWebOptionsControls` to
+  customize the `webOptions` field in `VideoPlayerOptions` objects.
+* Forwards `webOptions` to the web implementation.
+
 ## 2.8.7
 
 * Ensures that `value.position` never reports a value larger than `value.duration`.

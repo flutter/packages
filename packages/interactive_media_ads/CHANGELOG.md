@@ -2,6 +2,10 @@
 
 * Adds iOS implementation.
 
+## 0.0.2+1
+
+* Updates `README` with a usage section and fix app-facing interface documentation.
+
 ## 0.0.2
 
 * Adds Android implementation.
