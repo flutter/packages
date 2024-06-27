@@ -20,19 +20,32 @@ import 'package:web/web.dart' as web;
 @JSExport()
 class MockWindow {
   late web.Navigator navigator;
+  late web.Screen screen;
+  late web.Document document;
 }
 
-// @JSExport()
-class MockScreen {}
+@JSExport()
+class MockScreen {
+  late web.ScreenOrientation orientation;
+}
 
-// @JSExport()
-class MockScreenOrientation {}
+@JSExport()
+class MockScreenOrientation {
+  late JSPromise<JSAny?> Function(web.OrientationLockType orientation) lock;
+  late void Function() unlock;
+  late web.OrientationType type;
+}
 
-// @JSExport()
-class MockDocument {}
+@JSExport()
+class MockDocument {
+  web.Element? documentElement;
+}
 
-// @JSExport()
-class MockElement {}
+@JSExport()
+class MockElement {
+  late JSPromise<JSAny?> Function([web.FullscreenOptions options])
+      requestFullscreen;
+}
 
 @JSExport()
 class MockNavigator {
@@ -46,6 +59,7 @@ class MockMediaDevices {
   ]) getUserMedia;
 
   late web.MediaTrackSupportedConstraints Function() getSupportedConstraints;
+  late JSPromise<JSArray<web.MediaDeviceInfo>> Function() enumerateDevices;
 }
 
 class MockCameraService extends Mock implements CameraService {}
@@ -57,6 +71,8 @@ class MockMediaStreamTrack {
       () => web.MediaTrackSettings();
   late JSPromise<JSAny?> Function([web.MediaTrackConstraints? constraints])
       applyConstraints;
+
+  late void Function() stop;
 }
 
 class MockCamera extends Mock implements Camera {}
@@ -66,6 +82,7 @@ class MockCameraOptions extends Mock implements CameraOptions {}
 @JSExport()
 class MockVideoElement {
   web.MediaProvider? srcObject;
+  web.MediaError? error;
 }
 
 class MockXFile extends Mock implements XFile {}

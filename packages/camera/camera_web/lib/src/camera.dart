@@ -10,6 +10,7 @@ import 'dart:ui_web' as ui_web;
 import 'package:camera_platform_interface/camera_platform_interface.dart';
 import 'package:flutter/foundation.dart';
 import 'package:web/web.dart' as web;
+import 'package:web/web.dart';
 
 import 'camera_service.dart';
 import 'types/types.dart';
