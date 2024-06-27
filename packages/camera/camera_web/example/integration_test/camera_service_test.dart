@@ -534,7 +534,8 @@ void main() {
             'based on the video track capabilities '
             'when the facing mode setting is empty',
             (WidgetTester tester) async {
-          mockVideoTrack.getSettings = () => web.MediaTrackSettings();
+          mockVideoTrack.getSettings =
+              () => web.MediaTrackSettings(facingMode: '');
           mockVideoTrack.getCapabilities = () => web.MediaTrackCapabilities(
                 facingMode: <JSString>['environment'.toJS, 'left'.toJS].toJS,
               );
@@ -552,8 +553,10 @@ void main() {
             'returns null '
             'when the facing mode setting '
             'and capabilities are empty', (WidgetTester tester) async {
-          mockVideoTrack.getSettings = () => web.MediaTrackSettings();
-          mockVideoTrack.getCapabilities = () => web.MediaTrackCapabilities();
+          mockVideoTrack.getSettings =
+              () => web.MediaTrackSettings(facingMode: '');
+          mockVideoTrack.getCapabilities =
+              () => web.MediaTrackCapabilities(facingMode: <JSString>[].toJS);
 
           final String? facingMode =
               cameraService.getFacingModeForVideoTrack(videoTrack);
@@ -566,7 +569,8 @@ void main() {
             'when the facing mode setting is empty and '
             'the video track capabilities are not supported',
             (WidgetTester tester) async {
-          mockVideoTrack.getSettings = () => web.MediaTrackSettings();
+          mockVideoTrack.getSettings =
+              () => web.MediaTrackSettings(facingMode: '');
 
           when(() => jsUtil.hasProperty(videoTrack, 'getCapabilities'.toJS))
               .thenReturn(false);
