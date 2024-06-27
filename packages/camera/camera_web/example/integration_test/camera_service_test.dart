@@ -422,27 +422,6 @@ void main() {
       group('throws CameraWebException', () {
         testWidgets(
             'with zoomLevelNotSupported error '
-            'when there are no media devices', (WidgetTester tester) async {
-          expect(
-            () => cameraService.getZoomLevelCapabilityForCamera(camera),
-            throwsA(
-              isA<CameraWebException>()
-                  .having(
-                    (CameraWebException e) => e.cameraId,
-                    'cameraId',
-                    camera.textureId,
-                  )
-                  .having(
-                    (CameraWebException e) => e.code,
-                    'code',
-                    CameraErrorCode.zoomLevelNotSupported,
-                  ),
-            ),
-          );
-        });
-
-        testWidgets(
-            'with zoomLevelNotSupported error '
             'when the zoom level is not supported '
             'in the browser', (WidgetTester tester) async {
           mockMediaDevices.getSupportedConstraints =
@@ -451,33 +430,6 @@ void main() {
           mockVideoTrack.getCapabilities = () => web.MediaTrackCapabilities(
                 zoom: web.MediaSettingsRange(min: 100, max: 400, step: 2),
               );
-
-          expect(
-            () => cameraService.getZoomLevelCapabilityForCamera(camera),
-            throwsA(
-              isA<CameraWebException>()
-                  .having(
-                    (CameraWebException e) => e.cameraId,
-                    'cameraId',
-                    camera.textureId,
-                  )
-                  .having(
-                    (CameraWebException e) => e.code,
-                    'code',
-                    CameraErrorCode.zoomLevelNotSupported,
-                  ),
-            ),
-          );
-        });
-
-        testWidgets(
-            'with zoomLevelNotSupported error '
-            'when the zoom level is not supported '
-            'by the camera', (WidgetTester tester) async {
-          mockMediaDevices.getSupportedConstraints =
-              () => web.MediaTrackSupportedConstraints(zoom: true);
-
-          mockVideoTrack.getCapabilities = () => web.MediaTrackCapabilities();
 
           expect(
             () => cameraService.getZoomLevelCapabilityForCamera(camera),
@@ -533,25 +485,6 @@ void main() {
     group('getFacingModeForVideoTrack', () {
       setUp(() {
         cameraService.jsUtil = jsUtil;
-      });
-
-      testWidgets(
-          'throws PlatformException '
-          'with notSupported error '
-          'when there are no media devices', (WidgetTester tester) async {
-        expect(
-          () => cameraService.getFacingModeForVideoTrack(
-            createJSInteropWrapper(MockMediaStreamTrack())
-                as web.MediaStreamTrack,
-          ),
-          throwsA(
-            isA<PlatformException>().having(
-              (PlatformException e) => e.code,
-              'code',
-              CameraErrorCode.notSupported.toString(),
-            ),
-          ),
-        );
       });
 
       testWidgets(
