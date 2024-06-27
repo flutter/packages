@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+// ignore_for_file: only_throw_errors
+
 import 'dart:js_interop';
 import 'dart:js_interop_unsafe';
 
@@ -95,9 +97,7 @@ void main() {
             'when MediaDevices.getUserMedia throws DomException '
             'with NotFoundError', (WidgetTester tester) async {
           mockMediaDevices.getUserMedia =
-              ([_]) => Future<web.MediaStream>.error(
-                    web.DOMException('', 'NotFoundError'),
-                  ).toJS;
+              ([_]) => throw web.DOMException('', 'NotFoundError');
 
           expect(
             () => cameraService.getMediaStreamForOptions(
@@ -119,9 +119,7 @@ void main() {
             'when MediaDevices.getUserMedia throws DomException '
             'with DevicesNotFoundError', (WidgetTester tester) async {
           mockMediaDevices.getUserMedia =
-              ([_]) => Future<web.MediaStream>.error(
-                    web.DOMException('', 'DevicesNotFoundError'),
-                  ).toJS;
+              ([_]) => throw web.DOMException('', 'DevicesNotFoundError');
 
           expect(
             () => cameraService.getMediaStreamForOptions(
@@ -143,9 +141,7 @@ void main() {
             'when MediaDevices.getUserMedia throws DomException '
             'with NotReadableError', (WidgetTester tester) async {
           mockMediaDevices.getUserMedia =
-              ([_]) => Future<web.MediaStream>.error(
-                    web.DOMException('', 'NotReadableError'),
-                  ).toJS;
+              ([_]) => throw web.DOMException('', 'NotReadableError');
           expect(
             () => cameraService.getMediaStreamForOptions(
               const CameraOptions(),
@@ -166,9 +162,7 @@ void main() {
             'when MediaDevices.getUserMedia throws DomException '
             'with TrackStartError', (WidgetTester tester) async {
           mockMediaDevices.getUserMedia =
-              ([_]) => Future<web.MediaStream>.error(
-                    web.DOMException('', 'TrackStartError'),
-                  ).toJS;
+              ([_]) => throw web.DOMException('', 'TrackStartError');
 
           expect(
             () => cameraService.getMediaStreamForOptions(
@@ -190,9 +184,7 @@ void main() {
             'when MediaDevices.getUserMedia throws DomException '
             'with OverconstrainedError', (WidgetTester tester) async {
           mockMediaDevices.getUserMedia =
-              ([_]) => Future<web.MediaStream>.error(
-                    web.DOMException('', 'OverconstrainedError'),
-                  ).toJS;
+              ([_]) => throw web.DOMException('', 'OverconstrainedError');
 
           expect(
             () => cameraService.getMediaStreamForOptions(
@@ -213,10 +205,8 @@ void main() {
             'with overconstrained error '
             'when MediaDevices.getUserMedia throws DomException '
             'with ConstraintNotSatisfiedError', (WidgetTester tester) async {
-          mockMediaDevices.getUserMedia =
-              ([_]) => Future<web.MediaStream>.error(
-                    web.DOMException('', 'ConstraintNotSatisfiedError'),
-                  ).toJS;
+          mockMediaDevices.getUserMedia = ([_]) =>
+              throw web.DOMException('', 'ConstraintNotSatisfiedError');
 
           expect(
             () => cameraService.getMediaStreamForOptions(
@@ -238,9 +228,7 @@ void main() {
             'when MediaDevices.getUserMedia throws DomException '
             'with NotAllowedError', (WidgetTester tester) async {
           mockMediaDevices.getUserMedia =
-              ([_]) => Future<web.MediaStream>.error(
-                    web.DOMException('', 'NotAllowedError'),
-                  ).toJS;
+              ([_]) => throw web.DOMException('', 'NotAllowedError');
 
           expect(
             () => cameraService.getMediaStreamForOptions(
@@ -262,9 +250,7 @@ void main() {
             'when MediaDevices.getUserMedia throws DomException '
             'with PermissionDeniedError', (WidgetTester tester) async {
           mockMediaDevices.getUserMedia =
-              ([_]) => Future<web.MediaStream>.error(
-                    web.DOMException('', 'PermissionDeniedError'),
-                  ).toJS;
+              ([_]) => throw web.DOMException('', 'PermissionDeniedError');
 
           expect(
             () => cameraService.getMediaStreamForOptions(
@@ -286,9 +272,7 @@ void main() {
             'when MediaDevices.getUserMedia throws DomException '
             'with TypeError', (WidgetTester tester) async {
           mockMediaDevices.getUserMedia =
-              ([_]) => Future<web.MediaStream>.error(
-                    web.DOMException('', 'TypeError'),
-                  ).toJS;
+              ([_]) => throw web.DOMException('', 'TypeError');
 
           expect(
             () => cameraService.getMediaStreamForOptions(
@@ -310,9 +294,7 @@ void main() {
             'when MediaDevices.getUserMedia throws DomException '
             'with AbortError', (WidgetTester tester) async {
           mockMediaDevices.getUserMedia =
-              ([_]) => Future<web.MediaStream>.error(
-                    web.DOMException('', 'AbortError'),
-                  ).toJS;
+              ([_]) => throw web.DOMException('', 'AbortError');
 
           expect(
             () => cameraService.getMediaStreamForOptions(
@@ -334,9 +316,7 @@ void main() {
             'when MediaDevices.getUserMedia throws DomException '
             'with SecurityError', (WidgetTester tester) async {
           mockMediaDevices.getUserMedia =
-              ([_]) => Future<web.MediaStream>.error(
-                    web.DOMException('', 'SecurityError'),
-                  ).toJS;
+              ([_]) => throw web.DOMException('', 'SecurityError');
 
           expect(
             () => cameraService.getMediaStreamForOptions(
@@ -358,9 +338,7 @@ void main() {
             'when MediaDevices.getUserMedia throws DomException '
             'with an unknown error', (WidgetTester tester) async {
           mockMediaDevices.getUserMedia =
-              ([_]) => Future<web.MediaStream>.error(
-                    web.DOMException('', 'Unknown'),
-                  ).toJS;
+              ([_]) => throw web.DOMException('', 'Unknown');
 
           expect(
             () => cameraService.getMediaStreamForOptions(
@@ -381,8 +359,7 @@ void main() {
             'with unknown error '
             'when MediaDevices.getUserMedia throws an unknown exception',
             (WidgetTester tester) async {
-          mockMediaDevices.getUserMedia =
-              ([_]) => Future<web.MediaStream>.error(Exception()).toJS;
+          mockMediaDevices.getUserMedia = ([_]) => throw Exception();
 
           expect(
             () => cameraService.getMediaStreamForOptions(
