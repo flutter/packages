@@ -26,6 +26,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /** Generated class from Pigeon. */
 @SuppressWarnings({"unused", "unchecked", "CodeBlock2Expr", "RedundantSuppression", "serial"})
@@ -317,6 +318,58 @@ public class CoreTests {
 
     /** Constructor is non-public to enforce null safety; use Builder. */
     AllTypes() {}
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
+      AllTypes that = (AllTypes) o;
+      return aBool.equals(that.aBool)
+          && anInt.equals(that.anInt)
+          && anInt64.equals(that.anInt64)
+          && aDouble.equals(that.aDouble)
+          && Arrays.equals(aByteArray, that.aByteArray)
+          && Arrays.equals(a4ByteArray, that.a4ByteArray)
+          && Arrays.equals(a8ByteArray, that.a8ByteArray)
+          && Arrays.equals(aFloatArray, that.aFloatArray)
+          && anEnum.equals(that.anEnum)
+          && aString.equals(that.aString)
+          && anObject.equals(that.anObject)
+          && list.equals(that.list)
+          && stringList.equals(that.stringList)
+          && intList.equals(that.intList)
+          && doubleList.equals(that.doubleList)
+          && boolList.equals(that.boolList)
+          && map.equals(that.map);
+    }
+
+    @Override
+    public int hashCode() {
+      int __pigeon_result =
+          Objects.hash(
+              aBool,
+              anInt,
+              anInt64,
+              aDouble,
+              anEnum,
+              aString,
+              anObject,
+              list,
+              stringList,
+              intList,
+              doubleList,
+              boolList,
+              map);
+      __pigeon_result = 31 * __pigeon_result + Arrays.hashCode(aByteArray);
+      __pigeon_result = 31 * __pigeon_result + Arrays.hashCode(a4ByteArray);
+      __pigeon_result = 31 * __pigeon_result + Arrays.hashCode(a8ByteArray);
+      __pigeon_result = 31 * __pigeon_result + Arrays.hashCode(aFloatArray);
+      return __pigeon_result;
+    }
 
     public static final class Builder {
 
@@ -770,6 +823,68 @@ public class CoreTests {
 
     public void setMap(@Nullable Map<Object, Object> setterArg) {
       this.map = setterArg;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
+      AllNullableTypes that = (AllNullableTypes) o;
+      return Objects.equals(aNullableBool, that.aNullableBool)
+          && Objects.equals(aNullableInt, that.aNullableInt)
+          && Objects.equals(aNullableInt64, that.aNullableInt64)
+          && Objects.equals(aNullableDouble, that.aNullableDouble)
+          && Arrays.equals(aNullableByteArray, that.aNullableByteArray)
+          && Arrays.equals(aNullable4ByteArray, that.aNullable4ByteArray)
+          && Arrays.equals(aNullable8ByteArray, that.aNullable8ByteArray)
+          && Arrays.equals(aNullableFloatArray, that.aNullableFloatArray)
+          && Objects.equals(nullableNestedList, that.nullableNestedList)
+          && Objects.equals(nullableMapWithAnnotations, that.nullableMapWithAnnotations)
+          && Objects.equals(nullableMapWithObject, that.nullableMapWithObject)
+          && Objects.equals(aNullableEnum, that.aNullableEnum)
+          && Objects.equals(aNullableString, that.aNullableString)
+          && Objects.equals(aNullableObject, that.aNullableObject)
+          && Objects.equals(allNullableTypes, that.allNullableTypes)
+          && Objects.equals(list, that.list)
+          && Objects.equals(stringList, that.stringList)
+          && Objects.equals(intList, that.intList)
+          && Objects.equals(doubleList, that.doubleList)
+          && Objects.equals(boolList, that.boolList)
+          && Objects.equals(nestedClassList, that.nestedClassList)
+          && Objects.equals(map, that.map);
+    }
+
+    @Override
+    public int hashCode() {
+      int __pigeon_result =
+          Objects.hash(
+              aNullableBool,
+              aNullableInt,
+              aNullableInt64,
+              aNullableDouble,
+              nullableNestedList,
+              nullableMapWithAnnotations,
+              nullableMapWithObject,
+              aNullableEnum,
+              aNullableString,
+              aNullableObject,
+              allNullableTypes,
+              list,
+              stringList,
+              intList,
+              doubleList,
+              boolList,
+              nestedClassList,
+              map);
+      __pigeon_result = 31 * __pigeon_result + Arrays.hashCode(aNullableByteArray);
+      __pigeon_result = 31 * __pigeon_result + Arrays.hashCode(aNullable4ByteArray);
+      __pigeon_result = 31 * __pigeon_result + Arrays.hashCode(aNullable8ByteArray);
+      __pigeon_result = 31 * __pigeon_result + Arrays.hashCode(aNullableFloatArray);
+      return __pigeon_result;
     }
 
     public static final class Builder {
@@ -1272,6 +1387,64 @@ public class CoreTests {
       this.map = setterArg;
     }
 
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
+      AllNullableTypesWithoutRecursion that = (AllNullableTypesWithoutRecursion) o;
+      return Objects.equals(aNullableBool, that.aNullableBool)
+          && Objects.equals(aNullableInt, that.aNullableInt)
+          && Objects.equals(aNullableInt64, that.aNullableInt64)
+          && Objects.equals(aNullableDouble, that.aNullableDouble)
+          && Arrays.equals(aNullableByteArray, that.aNullableByteArray)
+          && Arrays.equals(aNullable4ByteArray, that.aNullable4ByteArray)
+          && Arrays.equals(aNullable8ByteArray, that.aNullable8ByteArray)
+          && Arrays.equals(aNullableFloatArray, that.aNullableFloatArray)
+          && Objects.equals(nullableNestedList, that.nullableNestedList)
+          && Objects.equals(nullableMapWithAnnotations, that.nullableMapWithAnnotations)
+          && Objects.equals(nullableMapWithObject, that.nullableMapWithObject)
+          && Objects.equals(aNullableEnum, that.aNullableEnum)
+          && Objects.equals(aNullableString, that.aNullableString)
+          && Objects.equals(aNullableObject, that.aNullableObject)
+          && Objects.equals(list, that.list)
+          && Objects.equals(stringList, that.stringList)
+          && Objects.equals(intList, that.intList)
+          && Objects.equals(doubleList, that.doubleList)
+          && Objects.equals(boolList, that.boolList)
+          && Objects.equals(map, that.map);
+    }
+
+    @Override
+    public int hashCode() {
+      int __pigeon_result =
+          Objects.hash(
+              aNullableBool,
+              aNullableInt,
+              aNullableInt64,
+              aNullableDouble,
+              nullableNestedList,
+              nullableMapWithAnnotations,
+              nullableMapWithObject,
+              aNullableEnum,
+              aNullableString,
+              aNullableObject,
+              list,
+              stringList,
+              intList,
+              doubleList,
+              boolList,
+              map);
+      __pigeon_result = 31 * __pigeon_result + Arrays.hashCode(aNullableByteArray);
+      __pigeon_result = 31 * __pigeon_result + Arrays.hashCode(aNullable4ByteArray);
+      __pigeon_result = 31 * __pigeon_result + Arrays.hashCode(aNullable8ByteArray);
+      __pigeon_result = 31 * __pigeon_result + Arrays.hashCode(aNullableFloatArray);
+      return __pigeon_result;
+    }
+
     public static final class Builder {
 
       private @Nullable Boolean aNullableBool;
@@ -1589,6 +1762,25 @@ public class CoreTests {
     /** Constructor is non-public to enforce null safety; use Builder. */
     AllClassesWrapper() {}
 
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
+      AllClassesWrapper that = (AllClassesWrapper) o;
+      return allNullableTypes.equals(that.allNullableTypes)
+          && Objects.equals(allNullableTypesWithoutRecursion, that.allNullableTypesWithoutRecursion)
+          && Objects.equals(allTypes, that.allTypes);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(allNullableTypes, allNullableTypesWithoutRecursion, allTypes);
+    }
+
     public static final class Builder {
 
       private @Nullable AllNullableTypes allNullableTypes;
@@ -1661,6 +1853,23 @@ public class CoreTests {
 
     public void setTestList(@Nullable List<Object> setterArg) {
       this.testList = setterArg;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
+      TestMessage that = (TestMessage) o;
+      return Objects.equals(testList, that.testList);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(testList);
     }
 
     public static final class Builder {
