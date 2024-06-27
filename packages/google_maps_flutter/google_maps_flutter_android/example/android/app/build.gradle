@@ -31,7 +31,7 @@ android {
 
     defaultConfig {
         applicationId "io.flutter.plugins.googlemapsexample"
-        minSdkVersion 20
+        minSdkVersion flutter.minSdkVersion
         targetSdkVersion 28
         multiDexEnabled true
         versionCode flutterVersionCode.toInteger()

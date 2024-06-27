@@ -45,7 +45,7 @@ dart run build_runner build --delete-conflicting-outputs
 If you would like to contribute to the plugin, check out our [contribution guide][5].
 
 [1]: https://pub.dev/packages/webview_flutter
-[2]: https://flutter.dev/docs/development/packages-and-plugins/developing-packages#endorsed-federated-plugin
+[2]: https://flutter.dev/to/endorsed-federated-plugin
 [3]: https://pub.dev/packages/pigeon
 [4]: https://pub.dev/packages/mockito
 [5]: https://github.com/flutter/packages/blob/main/CONTRIBUTING.md

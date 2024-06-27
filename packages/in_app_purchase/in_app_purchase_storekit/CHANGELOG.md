@@ -1,6 +1,10 @@
+## 0.3.17
+
+* Removes OCMock from tests.
+
 ## 0.3.16
 
-* Converts main plugin class to Swift
+* Converts main plugin class to Swift.
 
 ## 0.3.15
 

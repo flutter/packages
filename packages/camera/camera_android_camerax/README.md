@@ -81,7 +81,7 @@ For more information on contributing to this plugin, see [`CONTRIBUTING.md`](CON
 
 [1]: https://pub.dev/packages/camera
 [2]: https://developer.android.com/training/camerax
-[3]: https://flutter.dev/docs/development/packages-and-plugins/developing-packages#endorsed-federated-plugin
+[3]: https://flutter.dev/to/endorsed-federated-plugin
 [4]: https://pub.dev/packages/camera_android
 [5]: https://github.com/flutter/flutter/issues/new/choose
 [6]: https://developer.android.com/media/camera/camerax/architecture#combine-use-cases

@@ -1,3 +1,11 @@
+## 2.10.0
+
+* Converts some platform calls to Pigeon.
+
+## 2.9.1
+
+* Converts inspector interface platform calls to Pigeon.
+
 ## 2.9.0
 
 * Adds support for BitmapDescriptor classes `AssetMapBitmap` and `BytesMapBitmap`.

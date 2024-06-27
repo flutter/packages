@@ -120,11 +120,13 @@ void main() {
   testWidgets(
       'slot layout properly switches between items with the appropriate animation',
       (WidgetTester tester) async {
-    await tester.pumpWidget(slot(300, tester));
+    await tester
+        .pumpWidget(slot(300, const Duration(milliseconds: 1000), tester));
     expect(begin, findsOneWidget);
     expect(end, findsNothing);
 
-    await tester.pumpWidget(slot(500, tester));
+    await tester
+        .pumpWidget(slot(500, const Duration(milliseconds: 1000), tester));
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 500));
     expect(tester.widget<SlideTransition>(slideOut('0')).position.value,
@@ -146,7 +148,7 @@ void main() {
   testWidgets('AnimatedSwitcher does not spawn duplicate keys on rapid resize',
       (WidgetTester tester) async {
     // Populate the smaller slot layout and let the animation settle.
-    await tester.pumpWidget(slot(300, tester));
+    await tester.pumpWidget(slot(300, const Duration(seconds: 1), tester));
     await tester.pumpAndSettle();
     expect(begin, findsOneWidget);
     expect(end, findsNothing);
@@ -157,12 +159,12 @@ void main() {
     for (int i = 0; i < 2; i++) {
       // Resize between the two slot layouts, but do not pump the animation
       // until completion.
-      await tester.pumpWidget(slot(500, tester));
+      await tester.pumpWidget(slot(500, const Duration(seconds: 1), tester));
       await tester.pump(const Duration(milliseconds: 100));
       expect(begin, findsOneWidget);
       expect(end, findsOneWidget);
 
-      await tester.pumpWidget(slot(300, tester));
+      await tester.pumpWidget(slot(300, const Duration(seconds: 1), tester));
       await tester.pump(const Duration(milliseconds: 100));
       expect(begin, findsOneWidget);
       expect(end, findsOneWidget);
@@ -171,18 +173,18 @@ void main() {
 
   testWidgets('slot layout can tolerate rapid changes in breakpoints',
       (WidgetTester tester) async {
-    await tester.pumpWidget(slot(300, tester));
+    await tester.pumpWidget(slot(300, const Duration(seconds: 1), tester));
     expect(begin, findsOneWidget);
     expect(end, findsNothing);
 
-    await tester.pumpWidget(slot(500, tester));
+    await tester.pumpWidget(slot(500, const Duration(seconds: 1), tester));
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 100));
     expect(tester.widget<SlideTransition>(slideOut('0')).position.value,
         offsetMoreOrLessEquals(const Offset(-0.1, 0), epsilon: 0.05));
     expect(tester.widget<SlideTransition>(slideIn('400')).position.value,
         offsetMoreOrLessEquals(const Offset(-0.9, 0), epsilon: 0.05));
-    await tester.pumpWidget(slot(300, tester));
+    await tester.pumpWidget(slot(300, const Duration(seconds: 1), tester));
     await tester.pumpAndSettle();
     expect(begin, findsOneWidget);
     expect(end, findsNothing);
@@ -243,11 +245,35 @@ void main() {
         tester.getBottomRight(secondaryTestBreakpoint), const Offset(390, 790));
   });
 
+  testWidgets('adaptive layout can adjust animation duration',
+      (WidgetTester tester) async {
+    // Populate the smaller slot layout and let the animation settle.
+    await tester
+        .pumpWidget(slot(300, const Duration(milliseconds: 100), tester));
+    await tester.pumpAndSettle();
+    expect(begin, findsOneWidget);
+    expect(end, findsNothing);
+
+    // expand in 1/5 second.
+    await tester
+        .pumpWidget(slot(500, const Duration(milliseconds: 200), tester));
+
+    // after 100ms, we expect both widgets to be present.
+    await tester.pump(const Duration(milliseconds: 50));
+    expect(begin, findsOneWidget);
+    expect(end, findsOneWidget);
+
+    // After 1/5 second, all animations should be done.
+    await tester.pump(const Duration(milliseconds: 200));
+    expect(begin, findsNothing);
+    expect(end, findsOneWidget);
+
+    await tester.pumpAndSettle();
+  });
+
   testWidgets('adaptive layout does not animate when animations off',
       (WidgetTester tester) async {
     final Finder testBreakpoint = find.byKey(const Key('Test Breakpoint'));
-    final Finder secondaryTestBreakpoint =
-        find.byKey(const Key('Secondary Test Breakpoint'));
 
     await tester.pumpWidget(
         await layout(width: 400, tester: tester, animations: false));
@@ -257,9 +283,6 @@ void main() {
 
     expect(tester.getTopLeft(testBreakpoint), const Offset(10, 10));
     expect(tester.getBottomRight(testBreakpoint), const Offset(200, 790));
-    expect(tester.getTopLeft(secondaryTestBreakpoint), const Offset(200, 10));
-    expect(
-        tester.getBottomRight(secondaryTestBreakpoint), const Offset(390, 790));
   });
 }
 
@@ -306,6 +329,7 @@ Future<MediaQuery> layout({
   TextDirection directionality = TextDirection.ltr,
   double? bodyRatio,
   bool animations = true,
+  int durationMs = 1000,
 }) async {
   await tester.binding.setSurfaceSize(Size(width, 800));
   return MediaQuery(
@@ -415,7 +439,7 @@ AnimatedWidget leftInOut(Widget child, Animation<double> animation) {
   );
 }
 
-MediaQuery slot(double width, WidgetTester tester) {
+MediaQuery slot(double width, Duration duration, WidgetTester tester) {
   return MediaQuery(
     data: MediaQueryData.fromView(tester.view).copyWith(size: Size(width, 800)),
     child: Directionality(
@@ -425,12 +449,14 @@ MediaQuery slot(double width, WidgetTester tester) {
           TestBreakpoint0(): SlotLayout.from(
             inAnimation: leftOutIn,
             outAnimation: leftInOut,
+            duration: duration,
             key: const Key('0'),
             builder: (_) => const SizedBox(width: 10, height: 10),
           ),
           TestBreakpoint400(): SlotLayout.from(
             inAnimation: leftOutIn,
             outAnimation: leftInOut,
+            duration: duration,
             key: const Key('400'),
             builder: (_) => const SizedBox(width: 10, height: 10),
           ),

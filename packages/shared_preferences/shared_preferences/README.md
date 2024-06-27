@@ -16,7 +16,6 @@ Supported data types are `int`, `double`, `bool`, `String` and `List<String>`.
 | **Support** | SDK 16+ | 12.0+ | Any   | 10.14+ | Any | Any         |
 
 ## Usage
-To use this plugin, add `shared_preferences` as a [dependency in your pubspec.yaml file](https://flutter.dev/docs/development/platform-integration/platform-channels).
 
 ### Examples
 Here are small examples that show you how to use the API.

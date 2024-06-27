@@ -12,7 +12,7 @@ However, if you `import` this package to use any of its APIs directly, you
 should add it to your `pubspec.yaml` as usual.
 
 [1]: https://pub.dev/packages/file_selector
-[2]: https://flutter.dev/docs/development/packages-and-plugins/developing-packages#endorsed-federated-plugin
+[2]: https://flutter.dev/to/endorsed-federated-plugin
 
 ## Limitations on the Web platform
 

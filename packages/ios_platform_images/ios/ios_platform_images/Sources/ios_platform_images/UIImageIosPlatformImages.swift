@@ -19,7 +19,7 @@ import UIKit
   /// `[UIImage flutterImageWithName:@"assets/foo.png"]` will load
   /// "assets/2.0x/foo.png".
   ///
-  /// See also https://flutter.dev/docs/development/ui/assets-and-images
+  /// See also https://docs.flutter.dev/ui/assets/assets-and-images
   ///
   /// Note: We don't yet support images from package dependencies (ex.
   /// `AssetImage('icons/heart.png', package: 'my_icons')`).

@@ -14,4 +14,4 @@ The command above will run the integration tests for this package.
 
 Make sure that you have `chromedriver` running in port `4444`.
 
-Read more on: [flutter.dev > Docs > Testing & debugging > Integration testing](https://flutter.dev/docs/testing/integration-tests).
+Read more on: [flutter.dev > Docs > Testing & debugging > Integration testing](https://docs.flutter.dev/testing/integration-tests).

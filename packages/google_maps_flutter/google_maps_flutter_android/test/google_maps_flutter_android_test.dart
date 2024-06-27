@@ -8,33 +8,23 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_maps_flutter_android/google_maps_flutter_android.dart';
+import 'package:google_maps_flutter_android/src/messages.g.dart';
 import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart';
+import 'package:mockito/annotations.dart';
+import 'package:mockito/mockito.dart';
 
+import 'google_maps_flutter_android_test.mocks.dart';
+
+@GenerateNiceMocks(<MockSpec<Object>>[MockSpec<MapsApi>()])
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  late List<String> log;
-
-  setUp(() async {
-    log = <String>[];
-  });
-
-  /// Initializes a map with the given ID and canned responses, logging all
-  /// calls to [log].
-  void configureMockMap(
-    GoogleMapsFlutterAndroid maps, {
-    required int mapId,
-    required Future<dynamic>? Function(MethodCall call) handler,
-  }) {
-    final MethodChannel channel = maps.ensureChannelInitialized(mapId);
-    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-        .setMockMethodCallHandler(
-      channel,
-      (MethodCall methodCall) {
-        log.add(methodCall.method);
-        return handler(methodCall);
-      },
-    );
+  (GoogleMapsFlutterAndroid, MockMapsApi) setUpMockMap({required int mapId}) {
+    final MockMapsApi api = MockMapsApi();
+    final GoogleMapsFlutterAndroid maps =
+        GoogleMapsFlutterAndroid(apiProvider: (_) => api);
+    maps.ensureApiInitialized(mapId);
+    return (maps, api);
   }
 
   Future<void> sendPlatformMessage(
@@ -51,39 +41,146 @@ void main() {
     expect(GoogleMapsFlutterPlatform.instance, isA<GoogleMapsFlutterAndroid>());
   });
 
-  // Calls each method that uses invokeMethod with a return type other than
-  // void to ensure that the casting/nullability handling succeeds.
-  //
-  // TODO(stuartmorgan): Remove this once there is real test coverage of
-  // each method, since that would cover this issue.
-  test('non-void invokeMethods handle types correctly', () async {
-    const int mapId = 0;
-    final GoogleMapsFlutterAndroid maps = GoogleMapsFlutterAndroid();
-    configureMockMap(maps, mapId: mapId,
-        handler: (MethodCall methodCall) async {
-      switch (methodCall.method) {
-        case 'map#getLatLng':
-          return <dynamic>[1.0, 2.0];
-        case 'markers#isInfoWindowShown':
-          return true;
-        case 'map#getZoomLevel':
-          return 2.5;
-        case 'map#takeSnapshot':
-          return null;
-      }
-    });
+  test('init calls waitForMap', () async {
+    final MockMapsApi api = MockMapsApi();
+    final GoogleMapsFlutterAndroid maps =
+        GoogleMapsFlutterAndroid(apiProvider: (_) => api);
 
-    await maps.getLatLng(const ScreenCoordinate(x: 0, y: 0), mapId: mapId);
-    await maps.isMarkerInfoWindowShown(const MarkerId(''), mapId: mapId);
-    await maps.getZoomLevel(mapId: mapId);
-    await maps.takeSnapshot(mapId: mapId);
-    // Check that all the invokeMethod calls happened.
-    expect(log, <String>[
-      'map#getLatLng',
-      'markers#isInfoWindowShown',
-      'map#getZoomLevel',
-      'map#takeSnapshot',
-    ]);
+    await maps.init(1);
+
+    verify(api.waitForMap());
+  });
+
+  test('getScreenCoordinate converts and passes values correctly', () async {
+    const int mapId = 1;
+    final (GoogleMapsFlutterAndroid maps, MockMapsApi api) =
+        setUpMockMap(mapId: mapId);
+
+    // Arbitrary values that are all different from each other.
+    const LatLng latLng = LatLng(10, 20);
+    const ScreenCoordinate expectedCoord = ScreenCoordinate(x: 30, y: 40);
+    when(api.getScreenCoordinate(any)).thenAnswer(
+        (_) async => PlatformPoint(x: expectedCoord.x, y: expectedCoord.y));
+
+    final ScreenCoordinate coord =
+        await maps.getScreenCoordinate(latLng, mapId: mapId);
+    expect(coord, expectedCoord);
+    final VerificationResult verification =
+        verify(api.getScreenCoordinate(captureAny));
+    final PlatformLatLng passedLatLng =
+        verification.captured[0] as PlatformLatLng;
+    expect(passedLatLng.latitude, latLng.latitude);
+    expect(passedLatLng.longitude, latLng.longitude);
+  });
+
+  test('getLatLng converts and passes values correctly', () async {
+    const int mapId = 1;
+    final (GoogleMapsFlutterAndroid maps, MockMapsApi api) =
+        setUpMockMap(mapId: mapId);
+
+    // Arbitrary values that are all different from each other.
+    const LatLng expectedLatLng = LatLng(10, 20);
+    const ScreenCoordinate coord = ScreenCoordinate(x: 30, y: 40);
+    when(api.getLatLng(any)).thenAnswer((_) async => PlatformLatLng(
+        latitude: expectedLatLng.latitude,
+        longitude: expectedLatLng.longitude));
+
+    final LatLng latLng = await maps.getLatLng(coord, mapId: mapId);
+    expect(latLng, expectedLatLng);
+    final VerificationResult verification = verify(api.getLatLng(captureAny));
+    final PlatformPoint passedCoord = verification.captured[0] as PlatformPoint;
+    expect(passedCoord.x, coord.x);
+    expect(passedCoord.y, coord.y);
+  });
+
+  test('getVisibleRegion converts and passes values correctly', () async {
+    const int mapId = 1;
+    final (GoogleMapsFlutterAndroid maps, MockMapsApi api) =
+        setUpMockMap(mapId: mapId);
+
+    // Arbitrary values that are all different from each other.
+    final LatLngBounds expectedBounds = LatLngBounds(
+        southwest: const LatLng(10, 20), northeast: const LatLng(30, 40));
+    when(api.getVisibleRegion()).thenAnswer((_) async => PlatformLatLngBounds(
+        southwest: PlatformLatLng(
+            latitude: expectedBounds.southwest.latitude,
+            longitude: expectedBounds.southwest.longitude),
+        northeast: PlatformLatLng(
+            latitude: expectedBounds.northeast.latitude,
+            longitude: expectedBounds.northeast.longitude)));
+
+    final LatLngBounds bounds = await maps.getVisibleRegion(mapId: mapId);
+    expect(bounds, expectedBounds);
+  });
+
+  test('getZoomLevel passes values correctly', () async {
+    const int mapId = 1;
+    final (GoogleMapsFlutterAndroid maps, MockMapsApi api) =
+        setUpMockMap(mapId: mapId);
+
+    const double expectedZoom = 4.2;
+    when(api.getZoomLevel()).thenAnswer((_) async => expectedZoom);
+
+    final double zoom = await maps.getZoomLevel(mapId: mapId);
+    expect(zoom, expectedZoom);
+  });
+
+  test('showInfoWindow calls through', () async {
+    const int mapId = 1;
+    final (GoogleMapsFlutterAndroid maps, MockMapsApi api) =
+        setUpMockMap(mapId: mapId);
+
+    const String markedId = 'a_marker';
+    await maps.showMarkerInfoWindow(const MarkerId(markedId), mapId: mapId);
+
+    verify(api.showInfoWindow(markedId));
+  });
+
+  test('hideInfoWindow calls through', () async {
+    const int mapId = 1;
+    final (GoogleMapsFlutterAndroid maps, MockMapsApi api) =
+        setUpMockMap(mapId: mapId);
+
+    const String markedId = 'a_marker';
+    await maps.hideMarkerInfoWindow(const MarkerId(markedId), mapId: mapId);
+
+    verify(api.hideInfoWindow(markedId));
+  });
+
+  test('isInfoWindowShown calls through', () async {
+    const int mapId = 1;
+    final (GoogleMapsFlutterAndroid maps, MockMapsApi api) =
+        setUpMockMap(mapId: mapId);
+
+    const String markedId = 'a_marker';
+    when(api.isInfoWindowShown(markedId)).thenAnswer((_) async => true);
+
+    expect(
+        await maps.isMarkerInfoWindowShown(const MarkerId(markedId),
+            mapId: mapId),
+        true);
+  });
+
+  test('takeSnapshot calls through', () async {
+    const int mapId = 1;
+    final (GoogleMapsFlutterAndroid maps, MockMapsApi api) =
+        setUpMockMap(mapId: mapId);
+
+    final Uint8List fakeSnapshot = Uint8List(10);
+    when(api.takeSnapshot()).thenAnswer((_) async => fakeSnapshot);
+
+    expect(await maps.takeSnapshot(mapId: mapId), fakeSnapshot);
+  });
+
+  test('clearTileCache calls through', () async {
+    const int mapId = 1;
+    final (GoogleMapsFlutterAndroid maps, MockMapsApi api) =
+        setUpMockMap(mapId: mapId);
+
+    const String tileOverlayId = 'overlay';
+    await maps.clearTileCache(const TileOverlayId(tileOverlayId), mapId: mapId);
+
+    verify(api.clearTileCache(tileOverlayId));
   });
 
   test('markers send drag event to correct streams', () async {

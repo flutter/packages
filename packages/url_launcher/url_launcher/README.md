@@ -10,11 +10,7 @@ A Flutter plugin for launching a URL.
 |-------------|---------|-------|-------|--------|-----|-------------|
 | **Support** | SDK 16+ | 12.0+ | Any   | 10.14+ | Any | Windows 10+ |
 
-## Usage
-
-To use this plugin, add `url_launcher` as a [dependency in your pubspec.yaml file](https://flutter.dev/platform-plugins/).
-
-### Example
+## Example
 
 <?code-excerpt "lib/basic.dart (basic-example)"?>
 ```dart
