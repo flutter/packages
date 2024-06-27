@@ -672,6 +672,10 @@ NSString *const errorMethod = @"error";
     if (_videoWriter.status != AVAssetWriterStatusWriting) {
       [_videoWriter startWriting];
       [_videoWriter startSessionAtSourceTime:currentSampleTime];
+      // fix sample times not being numeric when pause/resume happens before first sample buffer
+      // arrives https://github.com/flutter/flutter/issues/132014
+      _lastVideoSampleTime = currentSampleTime;
+      _lastAudioSampleTime = currentSampleTime;
     }
 
     if (output == _captureVideoOutput) {
