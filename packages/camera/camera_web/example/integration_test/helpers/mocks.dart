@@ -36,7 +36,7 @@ class MockElement {}
 
 @JSExport()
 class MockNavigator {
-  late web.MediaDevices mediaDevices;
+  web.MediaDevices? mediaDevices;
 }
 
 @JSExport()
@@ -62,15 +62,38 @@ class MockCamera extends Mock implements Camera {}
 
 class MockCameraOptions extends Mock implements CameraOptions {}
 
-// @JSExport()
-class MockVideoElement {}
+@JSExport()
+class MockVideoElement {
+  web.MediaProvider? srcObject;
+}
 
 class MockXFile extends Mock implements XFile {}
 
 class MockJsUtil extends Mock implements JsUtil {}
 
-// @JSExport()
-class MockMediaRecorder {}
+@JSExport()
+class MockMediaRecorder {
+  late web.EventHandler onerror;
+
+  late void Function(
+    String type,
+    web.EventListener? callback, [
+    JSAny options,
+  ]) addEventListener;
+
+  late void Function(
+    String type,
+    web.EventListener? callback, [
+    JSAny options,
+  ]) removeEventListener;
+
+  late void Function([int timeslice]) start;
+  late void Function() pause;
+  late void Function() resume;
+  late void Function() stop;
+
+  late web.RecordingState state;
+}
 
 /// A fake [MediaStream] that returns the provided [_videoTracks].
 @JSExport()

@@ -314,8 +314,8 @@ void main() {
       group(
           'enables the torch mode '
           'when taking a picture', () {
-        late List<MediaStreamTrack> videoTracks;
         late MockMediaStreamTrack mockVideoTrack;
+        late List<MediaStreamTrack> videoTracks;
         late MediaStream videoStream;
         late HTMLVideoElement videoElement;
 
@@ -347,8 +347,6 @@ void main() {
 
           await camera.play();
 
-          final XFile _ = await camera.takePicture();
-
           final List<MediaTrackConstraints> capturedConstraints =
               <MediaTrackConstraints>[];
           mockVideoTrack.applyConstraints = ([
@@ -359,6 +357,8 @@ void main() {
             }
             return Future<JSAny?>.value().toJS;
           };
+
+          final XFile _ = await camera.takePicture();
 
           expect(capturedConstraints.length, 2);
           expect(capturedConstraints[0].torch, true);
@@ -377,8 +377,6 @@ void main() {
 
           await camera.play();
 
-          final XFile _ = await camera.takePicture();
-
           final List<MediaTrackConstraints> capturedConstraints =
               <MediaTrackConstraints>[];
           mockVideoTrack.applyConstraints = ([
@@ -389,6 +387,8 @@ void main() {
             }
             return Future<JSAny?>.value().toJS;
           };
+
+          final XFile _ = await camera.takePicture();
 
           expect(capturedConstraints.length, 2);
           expect(capturedConstraints[0].torch, true);
@@ -443,32 +443,33 @@ void main() {
     });
 
     group('setFlashMode', () {
+      late MockMediaStreamTrack mockVideoTrack;
       late List<MediaStreamTrack> videoTracks;
       late MediaStream videoStream;
 
       setUp(() {
+        mockVideoTrack = MockMediaStreamTrack();
         videoTracks = <MediaStreamTrack>[
-          MockMediaStreamTrack(),
-          MockMediaStreamTrack()
+          createJSInteropWrapper(mockVideoTrack) as MediaStreamTrack,
+          createJSInteropWrapper(MockMediaStreamTrack()) as MediaStreamTrack,
         ];
-        videoStream = FakeMediaStream(videoTracks);
+        videoStream =
+            createJSInteropWrapper(FakeMediaStream(videoTracks)) as MediaStream;
 
-        when(() => videoTracks.first.applyConstraints(any()))
-            .thenAnswer((_) async => <dynamic, dynamic>{});
+        mockVideoTrack.applyConstraints = ([
+          MediaTrackConstraints? constraints,
+        ]) =>
+            Future<JSAny?>.value().toJS;
 
-        when(videoTracks.first.getCapabilities)
-            .thenReturn(<dynamic, dynamic>{});
+        mockVideoTrack.getCapabilities = () => MediaTrackCapabilities();
       });
 
       testWidgets('sets the camera flash mode', (WidgetTester tester) async {
-        when(mediaDevices.getSupportedConstraints)
-            .thenReturn(<dynamic, dynamic>{
-          'torch': true,
-        });
+        mockMediaDevices.getSupportedConstraints =
+            () => MediaTrackSupportedConstraints(torch: true);
 
-        when(videoTracks.first.getCapabilities).thenReturn(<dynamic, dynamic>{
-          'torch': true,
-        });
+        mockVideoTrack.getCapabilities =
+            () => MediaTrackCapabilities(torch: <JSBoolean>[true.toJS].toJS);
 
         final Camera camera = Camera(
           textureId: textureId,
@@ -490,14 +491,11 @@ void main() {
       testWidgets(
           'enables the torch mode '
           'if the flash mode is torch', (WidgetTester tester) async {
-        when(mediaDevices.getSupportedConstraints)
-            .thenReturn(<dynamic, dynamic>{
-          'torch': true,
-        });
+        mockMediaDevices.getSupportedConstraints =
+            () => MediaTrackSupportedConstraints(torch: true);
 
-        when(videoTracks.first.getCapabilities).thenReturn(<dynamic, dynamic>{
-          'torch': true,
-        });
+        mockVideoTrack.getCapabilities =
+            () => MediaTrackCapabilities(torch: <JSBoolean>[true.toJS].toJS);
 
         final Camera camera = Camera(
           textureId: textureId,
@@ -506,30 +504,31 @@ void main() {
           ..window = window
           ..stream = videoStream;
 
+        final List<MediaTrackConstraints> capturedConstraints =
+            <MediaTrackConstraints>[];
+        mockVideoTrack.applyConstraints = ([
+          MediaTrackConstraints? constraints,
+        ]) {
+          if (constraints != null) {
+            capturedConstraints.add(constraints);
+          }
+          return Future<JSAny?>.value().toJS;
+        };
+
         camera.setFlashMode(FlashMode.torch);
 
-        verify(
-          () => videoTracks.first.applyConstraints(<dynamic, dynamic>{
-            'advanced': <dynamic>[
-              <dynamic, dynamic>{
-                'torch': true,
-              }
-            ]
-          }),
-        ).called(1);
+        expect(capturedConstraints.length, 1);
+        expect(capturedConstraints[0].torch, true);
       });
 
       testWidgets(
           'disables the torch mode '
           'if the flash mode is not torch', (WidgetTester tester) async {
-        when(mediaDevices.getSupportedConstraints)
-            .thenReturn(<dynamic, dynamic>{
-          'torch': true,
-        });
+        mockMediaDevices.getSupportedConstraints =
+            () => MediaTrackSupportedConstraints(torch: true);
 
-        when(videoTracks.first.getCapabilities).thenReturn(<dynamic, dynamic>{
-          'torch': true,
-        });
+        mockVideoTrack.getCapabilities =
+            () => MediaTrackCapabilities(torch: <JSBoolean>[true.toJS].toJS);
 
         final Camera camera = Camera(
           textureId: textureId,
@@ -538,24 +537,28 @@ void main() {
           ..window = window
           ..stream = videoStream;
 
+        final List<MediaTrackConstraints> capturedConstraints =
+            <MediaTrackConstraints>[];
+        mockVideoTrack.applyConstraints = ([
+          MediaTrackConstraints? constraints,
+        ]) {
+          if (constraints != null) {
+            capturedConstraints.add(constraints);
+          }
+          return Future<JSAny?>.value().toJS;
+        };
+
         camera.setFlashMode(FlashMode.auto);
 
-        verify(
-          () => videoTracks.first.applyConstraints(<dynamic, dynamic>{
-            'advanced': <dynamic>[
-              <dynamic, dynamic>{
-                'torch': false,
-              }
-            ]
-          }),
-        ).called(1);
+        expect(capturedConstraints.length, 1);
+        expect(capturedConstraints[0].torch, true);
       });
 
       group('throws a CameraWebException', () {
         testWidgets(
             'with torchModeNotSupported error '
             'when there are no media devices', (WidgetTester tester) async {
-          when(() => navigator.mediaDevices).thenReturn(null);
+          mockNavigator.mediaDevices = null;
 
           final Camera camera = Camera(
             textureId: textureId,
@@ -580,20 +583,19 @@ void main() {
                   ),
             ),
           );
+
+          mockNavigator.mediaDevices = mediaDevices;
         });
 
         testWidgets(
             'with torchModeNotSupported error '
             'when the torch mode is not supported '
             'in the browser', (WidgetTester tester) async {
-          when(mediaDevices.getSupportedConstraints)
-              .thenReturn(<dynamic, dynamic>{
-            'torch': false,
-          });
+          mockMediaDevices.getSupportedConstraints =
+              () => MediaTrackSupportedConstraints(torch: false);
 
-          when(videoTracks.first.getCapabilities).thenReturn(<dynamic, dynamic>{
-            'torch': true,
-          });
+          mockVideoTrack.getCapabilities =
+              () => MediaTrackCapabilities(torch: <JSBoolean>[true.toJS].toJS);
 
           final Camera camera = Camera(
             textureId: textureId,
@@ -624,14 +626,11 @@ void main() {
             'with torchModeNotSupported error '
             'when the torch mode is not supported '
             'by the camera', (WidgetTester tester) async {
-          when(mediaDevices.getSupportedConstraints)
-              .thenReturn(<dynamic, dynamic>{
-            'torch': true,
-          });
+          mockMediaDevices.getSupportedConstraints =
+              () => MediaTrackSupportedConstraints(torch: true);
 
-          when(videoTracks.first.getCapabilities).thenReturn(<dynamic, dynamic>{
-            'torch': false,
-          });
+          mockVideoTrack.getCapabilities =
+              () => MediaTrackCapabilities(torch: <JSBoolean>[false.toJS].toJS);
 
           final Camera camera = Camera(
             textureId: textureId,
@@ -662,14 +661,11 @@ void main() {
             'with notStarted error '
             'when the camera stream has not been initialized',
             (WidgetTester tester) async {
-          when(mediaDevices.getSupportedConstraints)
-              .thenReturn(<dynamic, dynamic>{
-            'torch': true,
-          });
+          mockMediaDevices.getSupportedConstraints =
+              () => MediaTrackSupportedConstraints(torch: true);
 
-          when(videoTracks.first.getCapabilities).thenReturn(<dynamic, dynamic>{
-            'torch': true,
-          });
+          mockVideoTrack.getCapabilities =
+              () => MediaTrackCapabilities(torch: <JSBoolean>[true.toJS].toJS);
 
           final Camera camera = Camera(
             textureId: textureId,
@@ -710,7 +706,8 @@ void main() {
           final ZoomLevelCapability zoomLevelCapability = ZoomLevelCapability(
             minimum: 50.0,
             maximum: 100.0,
-            videoTrack: MockMediaStreamTrack(),
+            videoTrack: createJSInteropWrapper(MockMediaStreamTrack())
+                as MediaStreamTrack,
           );
 
           when(() => cameraService.getZoomLevelCapabilityForCamera(camera))
@@ -741,7 +738,8 @@ void main() {
           final ZoomLevelCapability zoomLevelCapability = ZoomLevelCapability(
             minimum: 50.0,
             maximum: 100.0,
-            videoTrack: MockMediaStreamTrack(),
+            videoTrack: createJSInteropWrapper(MockMediaStreamTrack())
+                as MediaStreamTrack,
           );
 
           when(() => cameraService.getZoomLevelCapabilityForCamera(camera))
@@ -769,7 +767,9 @@ void main() {
             cameraService: cameraService,
           );
 
-          final MockMediaStreamTrack videoTrack = MockMediaStreamTrack();
+          final MockMediaStreamTrack mockVideoTrack = MockMediaStreamTrack();
+          final MediaStreamTrack videoTrack =
+              createJSInteropWrapper(mockVideoTrack) as MediaStreamTrack;
 
           final ZoomLevelCapability zoomLevelCapability = ZoomLevelCapability(
             minimum: 50.0,
@@ -777,8 +777,16 @@ void main() {
             videoTrack: videoTrack,
           );
 
-          when(() => videoTrack.applyConstraints(any()))
-              .thenAnswer((_) async {});
+          final List<MediaTrackConstraints> capturedConstraints =
+              <MediaTrackConstraints>[];
+          mockVideoTrack.applyConstraints = ([
+            MediaTrackConstraints? constraints,
+          ]) {
+            if (constraints != null) {
+              capturedConstraints.add(constraints);
+            }
+            return Future<JSAny?>.value().toJS;
+          };
 
           when(() => cameraService.getZoomLevelCapabilityForCamera(camera))
               .thenReturn(zoomLevelCapability);
@@ -787,15 +795,8 @@ void main() {
 
           camera.setZoomLevel(zoom);
 
-          verify(
-            () => videoTrack.applyConstraints(<dynamic, dynamic>{
-              'advanced': <dynamic>[
-                <dynamic, dynamic>{
-                  ZoomLevelCapability.constraintName: zoom,
-                }
-              ]
-            }),
-          ).called(1);
+          expect(capturedConstraints.length, 1);
+          expect(capturedConstraints[0].zoom, zoom);
         });
 
         group('throws a CameraWebException', () {
@@ -811,7 +812,8 @@ void main() {
             final ZoomLevelCapability zoomLevelCapability = ZoomLevelCapability(
               minimum: 50.0,
               maximum: 100.0,
-              videoTrack: MockMediaStreamTrack(),
+              videoTrack: createJSInteropWrapper(MockMediaStreamTrack())
+                  as MediaStreamTrack,
             );
 
             when(() => cameraService.getZoomLevelCapabilityForCamera(camera))
@@ -846,7 +848,8 @@ void main() {
             final ZoomLevelCapability zoomLevelCapability = ZoomLevelCapability(
               minimum: 50.0,
               maximum: 100.0,
-              videoTrack: MockMediaStreamTrack(),
+              videoTrack: createJSInteropWrapper(MockMediaStreamTrack())
+                  as MediaStreamTrack,
             );
 
             when(() => cameraService.getZoomLevelCapabilityForCamera(camera))
@@ -878,7 +881,9 @@ void main() {
           'returns a lens direction '
           'based on the first video track settings',
           (WidgetTester tester) async {
-        final MockVideoElement videoElement = MockVideoElement();
+        final MockVideoElement mockVideoElement = MockVideoElement();
+        final HTMLVideoElement videoElement =
+            createJSInteropWrapper(mockVideoElement) as HTMLVideoElement;
 
         final Camera camera = Camera(
           textureId: textureId,
@@ -887,15 +892,19 @@ void main() {
 
         final MockMediaStreamTrack firstVideoTrack = MockMediaStreamTrack();
 
-        when(() => videoElement.srcObject).thenReturn(
-          FakeMediaStream(<MediaStreamTrack>[
-            firstVideoTrack,
-            MockMediaStreamTrack(),
-          ]),
-        );
+        videoElement.srcObject = createJSInteropWrapper(
+          FakeMediaStream(
+            <MediaStreamTrack>[
+              createJSInteropWrapper(createJSInteropWrapper)
+                  as MediaStreamTrack,
+              createJSInteropWrapper(MockMediaStreamTrack())
+                  as MediaStreamTrack,
+            ],
+          ),
+        ) as MediaStream;
 
-        when(firstVideoTrack.getSettings)
-            .thenReturn(<dynamic, dynamic>{'facingMode': 'environment'});
+        firstVideoTrack.getSettings =
+            () => MediaTrackSettings(facingMode: 'environment');
 
         when(() => cameraService.mapFacingModeToLensDirection('environment'))
             .thenReturn(CameraLensDirection.external);
@@ -910,7 +919,9 @@ void main() {
           'returns null '
           'if the first video track is missing the facing mode',
           (WidgetTester tester) async {
-        final MockVideoElement videoElement = MockVideoElement();
+        final MockVideoElement mockVideoElement = MockVideoElement();
+        final HTMLVideoElement videoElement =
+            createJSInteropWrapper(mockVideoElement) as HTMLVideoElement;
 
         final Camera camera = Camera(
           textureId: textureId,
@@ -919,14 +930,18 @@ void main() {
 
         final MockMediaStreamTrack firstVideoTrack = MockMediaStreamTrack();
 
-        when(() => videoElement.srcObject).thenReturn(
-          FakeMediaStream(<MediaStreamTrack>[
-            firstVideoTrack,
-            MockMediaStreamTrack(),
-          ]),
-        );
+        videoElement.srcObject = createJSInteropWrapper(
+          FakeMediaStream(
+            <MediaStreamTrack>[
+              createJSInteropWrapper(createJSInteropWrapper)
+                  as MediaStreamTrack,
+              createJSInteropWrapper(MockMediaStreamTrack())
+                  as MediaStreamTrack,
+            ],
+          ),
+        ) as MediaStream;
 
-        when(firstVideoTrack.getSettings).thenReturn(<dynamic, dynamic>{});
+        firstVideoTrack.getSettings = () => MediaTrackSettings();
 
         expect(
           camera.getLensDirection(),
@@ -938,7 +953,7 @@ void main() {
           'returns null '
           'if the camera is missing video tracks', (WidgetTester tester) async {
         // Create a video stream with no video tracks.
-        final VideoElement videoElement = VideoElement();
+        final HTMLVideoElement videoElement = HTMLVideoElement();
         mediaStream = videoElement.captureStream();
 
         final Camera camera = Camera(
@@ -974,15 +989,15 @@ void main() {
     group('video recording', () {
       const String supportedVideoType = 'video/webm';
 
+      late MockMediaRecorder mockMediaRecorder;
       late MediaRecorder mediaRecorder;
 
       bool isVideoTypeSupported(String type) => type == supportedVideoType;
 
       setUp(() {
-        mediaRecorder = MockMediaRecorder();
-
-        when(() => mediaRecorder.onError)
-            .thenAnswer((_) => const Stream<Event>.empty());
+        mockMediaRecorder = MockMediaRecorder();
+        mediaRecorder =
+            createJSInteropWrapper(mockMediaRecorder) as MediaRecorder;
       });
 
       group('startVideoRecording', () {
@@ -1027,11 +1042,21 @@ void main() {
           await camera.initialize();
           await camera.play();
 
+          final List<String> capturedEvents = <String>[];
+          mockMediaRecorder.addEventListener = (
+            String type,
+            EventListener? callback, [
+            JSAny? options,
+          ]) {
+            capturedEvents.add(type);
+          };
+
           await camera.startVideoRecording();
 
-          verify(
-            () => mediaRecorder.addEventListener('dataavailable', any()),
-          ).called(1);
+          expect(
+            capturedEvents.where((String e) => e == 'dataavailable').length,
+            1,
+          );
         });
 
         testWidgets('listens to the media recorder stop events',
@@ -1046,11 +1071,21 @@ void main() {
           await camera.initialize();
           await camera.play();
 
+          final List<String> capturedEvents = <String>[];
+          mockMediaRecorder.addEventListener = (
+            String type,
+            EventListener? callback, [
+            JSAny? options,
+          ]) {
+            capturedEvents.add(type);
+          };
+
           await camera.startVideoRecording();
 
-          verify(
-            () => mediaRecorder.addEventListener('stop', any()),
-          ).called(1);
+          expect(
+            capturedEvents.where((String e) => e == 'stop').length,
+            1,
+          );
         });
 
         testWidgets('starts a video recording', (WidgetTester tester) async {
@@ -1064,9 +1099,14 @@ void main() {
           await camera.initialize();
           await camera.play();
 
+          final List<int?> capturedStarts = <int?>[];
+          mockMediaRecorder.start = ([int? timeslice]) {
+            capturedStarts.add(timeslice);
+          };
+
           await camera.startVideoRecording();
 
-          verify(mediaRecorder.start).called(1);
+          expect(capturedStarts.length, 1);
         });
 
         testWidgets(
@@ -1084,10 +1124,15 @@ void main() {
           await camera.initialize();
           await camera.play();
 
+          final List<int?> capturedStarts = <int?>[];
+          mockMediaRecorder.start = ([int? timeslice]) {
+            capturedStarts.add(timeslice);
+          };
+
           await camera.startVideoRecording(maxVideoDuration: maxVideoDuration);
 
-          verify(() => mediaRecorder.start(maxVideoDuration.inMilliseconds))
-              .called(1);
+          expect(capturedStarts.length, 1);
+          expect(capturedStarts[0], maxVideoDuration.inMilliseconds);
         });
 
         group('throws a CameraWebException', () {
@@ -1161,9 +1206,14 @@ void main() {
             cameraService: cameraService,
           )..mediaRecorder = mediaRecorder;
 
+          int pauses = 0;
+          mockMediaRecorder.pause = () {
+            pauses++;
+          };
+
           await camera.pauseVideoRecording();
 
-          verify(mediaRecorder.pause).called(1);
+          expect(pauses, 1);
         });
 
         testWidgets(
@@ -1202,9 +1252,14 @@ void main() {
             cameraService: cameraService,
           )..mediaRecorder = mediaRecorder;
 
+          int resumes = 0;
+          mockMediaRecorder.resume = () {
+            resumes++;
+          };
+
           await camera.resumeVideoRecording();
 
-          verify(mediaRecorder.resume).called(1);
+          expect(resumes, 1);
         });
 
         testWidgets(
@@ -1251,50 +1306,61 @@ void main() {
           await camera.initialize();
           await camera.play();
 
-          late void Function(Event) videoDataAvailableListener;
-          late void Function(Event) videoRecordingStoppedListener;
+          late EventListener videoDataAvailableListener;
+          late EventListener videoRecordingStoppedListener;
 
-          when(
-            () => mediaRecorder.addEventListener('dataavailable', any()),
-          ).thenAnswer((Invocation invocation) {
-            videoDataAvailableListener =
-                invocation.positionalArguments[1] as void Function(Event);
-          });
-
-          when(
-            () => mediaRecorder.addEventListener('stop', any()),
-          ).thenAnswer((Invocation invocation) {
-            videoRecordingStoppedListener =
-                invocation.positionalArguments[1] as void Function(Event);
-          });
+          mockMediaRecorder.addEventListener = (
+            String type,
+            EventListener? callback, [
+            JSAny? options,
+          ]) {
+            if (type == 'dataavailable') {
+              videoDataAvailableListener = callback!;
+            } else if (type == 'stop') {
+              videoRecordingStoppedListener = callback!;
+            }
+          };
 
           Blob? finalVideo;
           List<Blob>? videoParts;
           camera.blobBuilder = (List<Blob> blobs, String videoType) {
             videoParts = <Blob>[...blobs];
-            finalVideo = Blob(blobs, videoType);
+            finalVideo = Blob(blobs.toJS, BlobPropertyBag(type: videoType));
             return finalVideo!;
           };
 
           await camera.startVideoRecording();
           final Future<XFile> videoFileFuture = camera.stopVideoRecording();
 
-          final Blob capturedVideoPartOne = Blob(<Object>[]);
-          final Blob capturedVideoPartTwo = Blob(<Object>[]);
+          final Blob capturedVideoPartOne = Blob(<JSAny>[].toJS);
+          final Blob capturedVideoPartTwo = Blob(<JSAny>[].toJS);
 
           final List<Blob> capturedVideoParts = <Blob>[
             capturedVideoPartOne,
             capturedVideoPartTwo,
           ];
 
-          videoDataAvailableListener(FakeBlobEvent(capturedVideoPartOne));
-          videoDataAvailableListener(FakeBlobEvent(capturedVideoPartTwo));
+          videoDataAvailableListener.callAsFunction(
+            null,
+            createJSInteropWrapper(FakeBlobEvent(capturedVideoPartOne))
+                as BlobEvent,
+          );
+          videoDataAvailableListener.callAsFunction(
+            null,
+            createJSInteropWrapper(FakeBlobEvent(capturedVideoPartTwo))
+                as BlobEvent,
+          );
 
-          videoRecordingStoppedListener(Event('stop'));
+          videoRecordingStoppedListener.callAsFunction(null, Event('stop'));
+
+          int stops = 0;
+          mockMediaRecorder.stop = () {
+            stops++;
+          };
 
           final XFile videoFile = await videoFileFuture;
 
-          verify(mediaRecorder.stop).called(1);
+          expect(stops, 1);
 
           expect(
             videoFile,
@@ -1347,15 +1413,18 @@ void main() {
       });
 
       group('on video data available', () {
-        late void Function(Event) videoDataAvailableListener;
+        late EventListener videoDataAvailableListener;
 
         setUp(() {
-          when(
-            () => mediaRecorder.addEventListener('dataavailable', any()),
-          ).thenAnswer((Invocation invocation) {
-            videoDataAvailableListener =
-                invocation.positionalArguments[1] as void Function(Event);
-          });
+          mockMediaRecorder.addEventListener = (
+            String type,
+            EventListener? callback, [
+            JSAny? options,
+          ]) {
+            if (type == 'dataavailable') {
+              videoDataAvailableListener = callback!;
+            }
+          };
         });
 
         testWidgets(
@@ -1376,26 +1445,38 @@ void main() {
           await camera.play();
           await camera.startVideoRecording(maxVideoDuration: maxVideoDuration);
 
-          when(() => mediaRecorder.state).thenReturn('recording');
+          mockMediaRecorder.state = 'recording';
 
-          videoDataAvailableListener(FakeBlobEvent(Blob(<Object>[])));
+          int stops = 0;
+          mockMediaRecorder.stop = () {
+            stops++;
+          };
+
+          videoDataAvailableListener.callAsFunction(
+            null,
+            createJSInteropWrapper(FakeBlobEvent(Blob(<JSAny>[].toJS)))
+                as BlobEvent,
+          );
 
           await Future<void>.microtask(() {});
 
-          verify(mediaRecorder.stop).called(1);
+          expect(stops, 1);
         });
       });
 
       group('on video recording stopped', () {
-        late void Function(Event) videoRecordingStoppedListener;
+        late EventListener videoRecordingStoppedListener;
 
         setUp(() {
-          when(
-            () => mediaRecorder.addEventListener('stop', any()),
-          ).thenAnswer((Invocation invocation) {
-            videoRecordingStoppedListener =
-                invocation.positionalArguments[1] as void Function(Event);
-          });
+          mockMediaRecorder.addEventListener = (
+            String type,
+            EventListener? callback, [
+            JSAny? options,
+          ]) {
+            if (type == 'stop') {
+              videoRecordingStoppedListener = callback!;
+            }
+          };
         });
 
         testWidgets('stops listening to the media recorder data events',
@@ -1412,13 +1493,23 @@ void main() {
 
           await camera.startVideoRecording();
 
-          videoRecordingStoppedListener(Event('stop'));
+          final List<String> capturedEvents = <String>[];
+          mockMediaRecorder.removeEventListener = (
+            String type,
+            EventListener? callback, [
+            JSAny? options,
+          ]) {
+            capturedEvents.add(type);
+          };
+
+          videoRecordingStoppedListener.callAsFunction(null, Event('stop'));
 
           await Future<void>.microtask(() {});
 
-          verify(
-            () => mediaRecorder.removeEventListener('dataavailable', any()),
-          ).called(1);
+          expect(
+            capturedEvents.where((String e) => e == 'dataavailable').length,
+            1,
+          );
         });
 
         testWidgets('stops listening to the media recorder stop events',
@@ -1435,20 +1526,27 @@ void main() {
 
           await camera.startVideoRecording();
 
-          videoRecordingStoppedListener(Event('stop'));
+          final List<String> capturedEvents = <String>[];
+          mockMediaRecorder.removeEventListener = (
+            String type,
+            EventListener? callback, [
+            JSAny? options,
+          ]) {
+            capturedEvents.add(type);
+          };
+
+          videoRecordingStoppedListener.callAsFunction(null, Event('stop'));
 
           await Future<void>.microtask(() {});
 
-          verify(
-            () => mediaRecorder.removeEventListener('stop', any()),
-          ).called(1);
+          expect(
+            capturedEvents.where((String e) => e == 'stop').length,
+            1,
+          );
         });
 
         testWidgets('stops listening to the media recorder errors',
             (WidgetTester tester) async {
-          final StreamController<ErrorEvent> onErrorStreamController =
-              StreamController<ErrorEvent>();
-
           final Camera camera = Camera(
             textureId: 1,
             cameraService: cameraService,
@@ -1456,22 +1554,18 @@ void main() {
             ..mediaRecorder = mediaRecorder
             ..isVideoTypeSupported = isVideoTypeSupported;
 
-          when(() => mediaRecorder.onError)
-              .thenAnswer((_) => onErrorStreamController.stream);
-
           await camera.initialize();
           await camera.play();
 
           await camera.startVideoRecording();
 
-          videoRecordingStoppedListener(Event('stop'));
+          expect(mockMediaRecorder.onerror, isNotNull);
+
+          videoRecordingStoppedListener.callAsFunction(null, Event('stop'));
 
           await Future<void>.microtask(() {});
 
-          expect(
-            onErrorStreamController.hasListener,
-            isFalse,
-          );
+          expect(mockMediaRecorder.onerror, isNull);
         });
       });
     });
@@ -1546,9 +1640,9 @@ void main() {
           const Duration maxVideoDuration = Duration(hours: 1);
           const String supportedVideoType = 'video/webm';
 
-          final MockMediaRecorder mediaRecorder = MockMediaRecorder();
-          when(() => mediaRecorder.onError)
-              .thenAnswer((_) => const Stream<Event>.empty());
+          final MockMediaRecorder mockMediaRecorder = MockMediaRecorder();
+          final MediaRecorder mediaRecorder =
+              createJSInteropWrapper(mockMediaRecorder) as MediaRecorder;
 
           final Camera camera = Camera(
             textureId: 1,
@@ -1560,22 +1654,20 @@ void main() {
           await camera.initialize();
           await camera.play();
 
-          late void Function(Event) videoDataAvailableListener;
-          late void Function(Event) videoRecordingStoppedListener;
+          late EventListener videoDataAvailableListener;
+          late EventListener videoRecordingStoppedListener;
 
-          when(
-            () => mediaRecorder.addEventListener('dataavailable', any()),
-          ).thenAnswer((Invocation invocation) {
-            videoDataAvailableListener =
-                invocation.positionalArguments[1] as void Function(Event);
-          });
-
-          when(
-            () => mediaRecorder.addEventListener('stop', any()),
-          ).thenAnswer((Invocation invocation) {
-            videoRecordingStoppedListener =
-                invocation.positionalArguments[1] as void Function(Event);
-          });
+          mockMediaRecorder.addEventListener = (
+            String type,
+            EventListener? callback, [
+            JSAny? options,
+          ]) {
+            if (type == 'dataavailable') {
+              videoDataAvailableListener = callback!;
+            } else if (type == 'stop') {
+              videoRecordingStoppedListener = callback!;
+            }
+          };
 
           final StreamQueue<VideoRecordedEvent> streamQueue =
               StreamQueue<VideoRecordedEvent>(camera.onVideoRecordedEvent);
@@ -1584,12 +1676,15 @@ void main() {
 
           Blob? finalVideo;
           camera.blobBuilder = (List<Blob> blobs, String videoType) {
-            finalVideo = Blob(blobs, videoType);
+            finalVideo = Blob(blobs.toJS, BlobPropertyBag(type: videoType));
             return finalVideo!;
           };
 
-          videoDataAvailableListener(FakeBlobEvent(Blob(<Object>[])));
-          videoRecordingStoppedListener(Event('stop'));
+          videoDataAvailableListener.callAsFunction(
+            null,
+            createJSInteropWrapper(FakeBlobEvent(Blob(<JSAny>[].toJS))),
+          );
+          videoRecordingStoppedListener.callAsFunction(null, Event('stop'));
 
           expect(
             await streamQueue.next,
@@ -1642,7 +1737,7 @@ void main() {
           await camera.initialize();
 
           final List<MediaStreamTrack> videoTracks =
-              camera.stream!.getVideoTracks();
+              camera.stream!.getVideoTracks().toDart;
           final MediaStreamTrack defaultVideoTrack = videoTracks.first;
 
           defaultVideoTrack.dispatchEvent(Event('ended'));
@@ -1669,7 +1764,7 @@ void main() {
           await camera.initialize();
 
           final List<MediaStreamTrack> videoTracks =
-              camera.stream!.getVideoTracks();
+              camera.stream!.getVideoTracks().toDart;
           final MediaStreamTrack defaultVideoTrack = videoTracks.first;
 
           camera.stop();
@@ -1688,17 +1783,14 @@ void main() {
             'emits an ErrorEvent '
             'when the media recorder fails '
             'when recording a video', (WidgetTester tester) async {
-          final MockMediaRecorder mediaRecorder = MockMediaRecorder();
-          final StreamController<ErrorEvent> errorController =
-              StreamController<ErrorEvent>();
+          final MockMediaRecorder mockMediaRecorder = MockMediaRecorder();
+          final MediaRecorder mediaRecorder =
+              createJSInteropWrapper(mockMediaRecorder) as MediaRecorder;
 
           final Camera camera = Camera(
             textureId: textureId,
             cameraService: cameraService,
           )..mediaRecorder = mediaRecorder;
-
-          when(() => mediaRecorder.onError)
-              .thenAnswer((_) => errorController.stream);
 
           final StreamQueue<ErrorEvent> streamQueue =
               StreamQueue<ErrorEvent>(camera.onVideoRecordingError);
@@ -1709,7 +1801,7 @@ void main() {
           await camera.startVideoRecording();
 
           final ErrorEvent errorEvent = ErrorEvent('type');
-          errorController.add(errorEvent);
+          mediaRecorder.onerror!.callAsFunction(null, errorEvent);
 
           expect(
             await streamQueue.next,
