@@ -101,7 +101,7 @@ class MockMediaRecorder {
   void Function() resume = () {};
   void Function() stop = () {};
 
-  late web.RecordingState state;
+  web.RecordingState state = 'inactive';
 }
 
 /// A fake [MediaStream] that returns the provided [_videoTracks].

@@ -580,7 +580,6 @@ class Camera {
     stop();
 
     await videoRecorderController.close();
-    print('6');
     mediaRecorder = null;
     _videoDataAvailableListener = null;
 
@@ -590,7 +589,7 @@ class Camera {
       ..load();
 
     final List<web.MediaStreamTrack> videoTracks =
-        stream!.getVideoTracks().toDart;
+        stream?.getVideoTracks().toDart ?? <web.MediaStreamTrack>[];
 
     if (videoTracks.isNotEmpty) {
       final web.MediaStreamTrack defaultVideoTrack = videoTracks.first;
