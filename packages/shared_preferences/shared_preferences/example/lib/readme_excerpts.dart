@@ -4,6 +4,7 @@
 
 // ignore_for_file: public_member_api_docs, unused_local_variable, invalid_use_of_visible_for_testing_member
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:shared_preferences_platform_interface/types.dart';
 
 Future<void> readmeSnippets() async {
   // #docregion Write
@@ -39,6 +40,51 @@ Future<void> readmeSnippets() async {
   // Remove data for the 'counter' key.
   await prefs.remove('counter');
   // #enddocregion Clear
+}
+
+Future<void> readmeSnippetsAsync() async {
+  // #docregion Async
+  final SharedPreferencesAsync asyncPrefs = SharedPreferencesAsync();
+
+  await asyncPrefs.setBool('repeat', true);
+  await asyncPrefs.setString('action', 'Start');
+
+  final bool? repeat = await asyncPrefs.getBool('repeat');
+  final String? action = await asyncPrefs.getString('action');
+
+  await asyncPrefs.remove('repeat');
+
+  // Any time a filter option is included as a method parameter, it is highly recommended
+  // that it is used to avoid potentially unwanted side effects.
+  await asyncPrefs.clear(const ClearPreferencesParameters(
+      filter: PreferencesFilters(allowList: <String>{'action', 'repeat'})));
+  // #enddocregion Async
+}
+
+Future<void> readmeSnippetsWithCache() async {
+  // #docregion WithCache
+  final SharedPreferencesWithCache prefsWithCache =
+      await SharedPreferencesWithCache.create(
+    cacheOptions: const SharedPreferencesWithCacheOptions(
+      filter: PreferencesFilters(
+        allowList: <String>{'these', 'are', 'allowed'},
+      ),
+    ),
+    // The cache option is here
+    cache: <String, Object?>{},
+  );
+
+  await prefsWithCache.setBool('these', true);
+  await prefsWithCache.setString('are', 'Start');
+
+  final bool? repeat = prefsWithCache.getBool('these');
+  final String? action = prefsWithCache.getString('are');
+
+  await prefsWithCache.remove('these');
+
+  // Since the filter options are set at creation, they aren't needed during clear
+  await prefsWithCache.clear();
+  // #enddocregion WithCache
 }
 
 // Uses test-only code. invalid_use_of_visible_for_testing_member is suppressed
