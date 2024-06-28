@@ -28,6 +28,7 @@ dev_dependencies:
   mocktail: 0.3.0
 
 dependency_overrides:
+  # TODO: Blocked on release of https://github.com/dart-lang/web/issues/57
   web:
     git:
       url: https://github.com/dart-lang/web
