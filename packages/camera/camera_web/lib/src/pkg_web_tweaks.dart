@@ -46,7 +46,7 @@ extension NonStandardFieldsOnMediaTrackSupportedConstraints
   external bool get torch;
   external set torch(bool value);
 
-  // Do not remove this with web 0.6.0
+  // Do not remove this with web 0.6.0.
   @JS('zoom')
   external bool? get zoomNullable;
 }
@@ -75,7 +75,7 @@ extension NonStandardFieldsOnMediaTrackCapabilities on MediaTrackCapabilities {
   external JSArray<JSBoolean> get torch;
   external set torch(JSArray<JSBoolean> value);
 
-  // Do not remove this with web 0.6.0
+  // Do not remove this with web 0.6.0.
   @JS('zoom')
   external MediaSettingsRange? get zoomNullable;
 }
@@ -143,7 +143,7 @@ extension NonStandardFieldsOnElement on Element {
 
 /// Adds missing fields to [MediaTrackSettings]
 extension NonStandardFieldsOnMediaTrackSettings on MediaTrackSettings {
-  // Do not remove this with web 0.6.0
+  // Do not remove this with web 0.6.0.
   @JS('facingMode')
   external String? get facingModeNullable;
 }
