@@ -1,3 +1,7 @@
+## 2.8.1
+
+* Improves Objective-C type handling.
+
 ## 2.8.0
 
 * Adds compatibility with SDK version 9.x for apps targetting iOS 15+.
