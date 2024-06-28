@@ -45,8 +45,6 @@ extension NonStandardFieldsOnMediaTrackSupportedConstraints
   external set zoom(bool value);
   external bool get torch;
   external set torch(bool value);
-
-  external bool? get facingModeNullable;
 }
 
 /// Adds missing fields to [MediaTrackCapabilities].
