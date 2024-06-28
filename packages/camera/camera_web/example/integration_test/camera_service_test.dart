@@ -55,6 +55,8 @@ void main() {
 
       jsUtil = MockJsUtil();
 
+      registerFallbackValue(createJSInteropWrapper(MockWindow()));
+
       // Mock JsUtil to return the real getProperty from dart:js_util.
       when<dynamic>(() => jsUtil.getProperty(any(), any())).thenAnswer(
         (Invocation invocation) =>
