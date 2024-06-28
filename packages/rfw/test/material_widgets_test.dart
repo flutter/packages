@@ -202,9 +202,7 @@ void main() {
     await expectLater(
       find.byType(MaterialApp),
       matchesGoldenFile('goldens/material_test.dropdown.png'),
-      // TODO(bparrishMines): Unskip once golden file is updated. See
-      // https://github.com/flutter/flutter/issues/150127
-      skip: !runGoldens || true,
+      skip: !runGoldens,
     );
     // Tap on the second item.
     await tester.tap(find.text('bar'));
@@ -568,9 +566,7 @@ void main() {
     await expectLater(
       find.byType(RemoteWidget),
       matchesGoldenFile('goldens/material_test.material_properties.png'),
-      // TODO(bparrishMines): Unskip once golden file is updated. See
-      // https://github.com/flutter/flutter/issues/150127
-      skip: !runGoldens || true,
+      skip: !runGoldens,
     );
 
     runtime.update(testName, parseLibraryFile('''
