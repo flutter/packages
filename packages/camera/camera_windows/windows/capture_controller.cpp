@@ -33,7 +33,10 @@ CameraResult GetCameraResult(HRESULT hr) {
 
 CaptureControllerImpl::CaptureControllerImpl(
     CaptureControllerListener* listener)
-    : capture_controller_listener_(listener), CaptureController(){};
+    : capture_controller_listener_(listener),
+      media_settings_(
+          PlatformMediaSettings(PlatformResolutionPreset::max, true)),
+      CaptureController(){};
 
 CaptureControllerImpl::~CaptureControllerImpl() {
   ResetCaptureController();
@@ -217,7 +220,7 @@ HRESULT CaptureControllerImpl::CreateCaptureEngine() {
   }
 
   // Creates audio source only if not already initialized by test framework
-  if (media_settings_.record_audio && !audio_source_) {
+  if (media_settings_.enable_audio() && !audio_source_) {
     hr = CreateDefaultAudioCaptureSource();
     if (FAILED(hr)) {
       return hr;
@@ -241,7 +244,7 @@ HRESULT CaptureControllerImpl::CreateCaptureEngine() {
   }
 
   hr = attributes->SetUINT32(MF_CAPTURE_ENGINE_USE_VIDEO_DEVICE_ONLY,
-                             !media_settings_.record_audio);
+                             !media_settings_.enable_audio());
   if (FAILED(hr)) {
     return hr;
   }
@@ -301,7 +304,7 @@ void CaptureControllerImpl::ResetCaptureController() {
 
 bool CaptureControllerImpl::InitCaptureDevice(
     flutter::TextureRegistrar* texture_registrar, const std::string& device_id,
-    ResolutionPreset resolution_preset, const RecordSettings& record_settings) {
+    const PlatformMediaSettings& media_settings) {
   assert(capture_controller_listener_);
 
   if (IsInitialized()) {
@@ -315,8 +318,7 @@ bool CaptureControllerImpl::InitCaptureDevice(
   }
 
   capture_engine_state_ = CaptureEngineState::kInitializing;
-  resolution_preset_ = resolution_preset;
-  media_settings_ = record_settings;
+  media_settings_ = media_settings;
   texture_registrar_ = texture_registrar;
   video_device_id_ = device_id;
 
@@ -382,28 +384,21 @@ void CaptureControllerImpl::TakePicture(const std::string& file_path) {
 }
 
 uint32_t CaptureControllerImpl::GetMaxPreviewHeight() const {
-  switch (resolution_preset_) {
-    case ResolutionPreset::kLow:
+  switch (media_settings_.resolution_preset()) {
+    case PlatformResolutionPreset::low:
       return 240;
-      break;
-    case ResolutionPreset::kMedium:
+    case PlatformResolutionPreset::medium:
       return 480;
-      break;
-    case ResolutionPreset::kHigh:
+    case PlatformResolutionPreset::high:
       return 720;
-      break;
-    case ResolutionPreset::kVeryHigh:
+    case PlatformResolutionPreset::veryHigh:
       return 1080;
-      break;
-    case ResolutionPreset::kUltraHigh:
+    case PlatformResolutionPreset::ultraHigh:
       return 2160;
-      break;
-    case ResolutionPreset::kMax:
-    case ResolutionPreset::kAuto:
+    case PlatformResolutionPreset::max:
     default:
       // no limit.
       return 0xffffffff;
-      break;
   }
 }
 
