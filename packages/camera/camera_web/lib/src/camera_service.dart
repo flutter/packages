@@ -185,7 +185,7 @@ class CameraService {
     final web.MediaTrackSettings videoTrackSettings = videoTrack.getSettings();
     final String? facingMode = videoTrackSettings.facingModeNullable;
 
-    if (facingMode == null) {
+    if (facingMode == null || facingMode.isEmpty) {
       // If the facing mode does not exist in the video track settings,
       // check for the facing mode in the video track capabilities.
       //
