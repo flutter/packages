@@ -65,11 +65,6 @@
     [self setConsumeTapEvents:consumeTapEvents.boolValue];
   }
 
-  NSNumber *visible = data[@"visible"];
-  if (visible && visible != (id)[NSNull null]) {
-    [self setVisible:[visible boolValue]];
-  }
-
   NSNumber *zIndex = data[@"zIndex"];
   if (zIndex && zIndex != (id)[NSNull null]) {
     [self setZIndex:[zIndex intValue]];
@@ -98,6 +93,12 @@
   NSNumber *fillColor = data[@"fillColor"];
   if (fillColor && fillColor != (id)[NSNull null]) {
     [self setFillColor:[FLTGoogleMapJSONConversions colorFromRGBA:fillColor]];
+  }
+
+  //Set visible adds the circle to the map so it should be done last
+  NSNumber *visible = data[@"visible"];
+  if (visible && visible != (id)[NSNull null]) {
+    [self setVisible:[visible boolValue]];
   }
 }
 

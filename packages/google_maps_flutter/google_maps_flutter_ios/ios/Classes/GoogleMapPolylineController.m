@@ -76,11 +76,6 @@ static id GetValueOrNilFromDict(NSDictionary *dict, NSString *key) {
     [self setConsumeTapEvents:[consumeTapEvents boolValue]];
   }
 
-  NSNumber *visible = GetValueOrNilFromDict(data, @"visible");
-  if (visible) {
-    [self setVisible:[visible boolValue]];
-  }
-
   NSNumber *zIndex = GetValueOrNilFromDict(data, @"zIndex");
   if (zIndex) {
     [self setZIndex:[zIndex intValue]];
@@ -112,6 +107,12 @@ static id GetValueOrNilFromDict(NSDictionary *dict, NSString *key) {
         setPattern:[FLTGoogleMapJSONConversions strokeStylesFromPatterns:patterns
                                                              strokeColor:self.polyline.strokeColor]
            lengths:[FLTGoogleMapJSONConversions spanLengthsFromPatterns:patterns]];
+  }
+
+  //Set visible adds the polyline to the map so it should be done last
+  NSNumber *visible = GetValueOrNilFromDict(data, @"visible");
+  if (visible) {
+    [self setVisible:[visible boolValue]];
   }
 }
 

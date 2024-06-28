@@ -127,13 +127,14 @@
   if (rotation && rotation != (id)[NSNull null]) {
     [self setRotation:[rotation doubleValue]];
   }
-  NSNumber *visible = data[@"visible"];
-  if (visible && visible != (id)[NSNull null]) {
-    [self setVisible:[visible boolValue]];
-  }
   NSNumber *zIndex = data[@"zIndex"];
   if (zIndex && zIndex != (id)[NSNull null]) {
     [self setZIndex:[zIndex intValue]];
+  }
+  //Set visible adds the marker to the map so it should be done last
+  NSNumber *visible = data[@"visible"];
+  if (visible && visible != (id)[NSNull null]) {
+    [self setVisible:[visible boolValue]];
   }
 }
 

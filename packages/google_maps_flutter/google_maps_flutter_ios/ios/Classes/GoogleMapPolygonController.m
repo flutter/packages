@@ -78,11 +78,6 @@
     [self setConsumeTapEvents:[consumeTapEvents boolValue]];
   }
 
-  NSNumber *visible = data[@"visible"];
-  if (visible && visible != (id)[NSNull null]) {
-    [self setVisible:[visible boolValue]];
-  }
-
   NSNumber *zIndex = data[@"zIndex"];
   if (zIndex && zIndex != (id)[NSNull null]) {
     [self setZIndex:[zIndex intValue]];
@@ -111,6 +106,12 @@
   NSNumber *strokeWidth = data[@"strokeWidth"];
   if (strokeWidth && strokeWidth != (id)[NSNull null]) {
     [self setStrokeWidth:[strokeWidth intValue]];
+  }
+
+  //Set visible adds the polygon to the map so it should be done last
+  NSNumber *visible = data[@"visible"];
+  if (visible && visible != (id)[NSNull null]) {
+    [self setVisible:[visible boolValue]];
   }
 }
 

@@ -70,10 +70,6 @@
   if (!data) {
     return;
   }
-  NSNumber *visible = data[@"visible"];
-  if (visible != nil && visible != (id)[NSNull null]) {
-    [self setVisible:visible.boolValue];
-  }
 
   NSNumber *transparency = data[@"transparency"];
   if (transparency != nil && transparency != (id)[NSNull null]) {
@@ -93,6 +89,12 @@
   NSNumber *tileSize = data[@"tileSize"];
   if (tileSize != nil && tileSize != (id)[NSNull null]) {
     [self setTileSize:tileSize.integerValue];
+  }
+
+  //Set visible adds the tile to the map so it should be done last
+  NSNumber *visible = data[@"visible"];
+  if (visible != nil && visible != (id)[NSNull null]) {
+    [self setVisible:visible.boolValue];
   }
 }
 
