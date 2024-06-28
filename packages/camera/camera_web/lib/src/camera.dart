@@ -87,6 +87,8 @@ class Camera {
   final StreamController<web.MediaStreamTrack> onEndedController =
       StreamController<web.MediaStreamTrack>.broadcast();
 
+  StreamSubscription<web.Event>? _onEndedSubscription;
+
   /// The stream of the camera video recording errors.
   ///
   /// This occurs when the video recording is not allowed or an unsupported
@@ -97,10 +99,19 @@ class Camera {
   Stream<web.ErrorEvent> get onVideoRecordingError =>
       videoRecordingErrorController.stream;
 
+  /// The stream provider for errorMediaRecorderEvents.
+  ///
+  /// This field exists for mocking in tests.
+  @visibleForTesting
+  EventStreamProvider<Event> errorMediaRecorderEventStreamProvider =
+      EventStreamProviders.errorMediaRecorderEvent;
+
   /// The stream controller for the [onVideoRecordingError] stream.
   @visibleForTesting
   final StreamController<web.ErrorEvent> videoRecordingErrorController =
       StreamController<web.ErrorEvent>.broadcast();
+
+  StreamSubscription<web.Event>? _onVideoRecordingErrorSubscription;
 
   /// The camera flash mode.
   @visibleForTesting
@@ -472,9 +483,12 @@ class Camera {
       _videoRecordingStoppedListener?.toJS,
     );
 
-    mediaRecorder!.onerror = (web.ErrorEvent event) {
-      videoRecordingErrorController.add(event);
-    }.toJS;
+    _onVideoRecordingErrorSubscription = errorMediaRecorderEventStreamProvider
+        .forTarget(mediaRecorder)
+        .listen((web.Event event) {
+      final web.ErrorEvent error = event as web.ErrorEvent;
+      videoRecordingErrorController.add(error);
+    });
 
     if (maxVideoDuration != null) {
       mediaRecorder!.start(maxVideoDuration.inMilliseconds);
@@ -533,7 +547,7 @@ class Camera {
       _videoDataAvailableListener?.toJS,
     );
 
-    mediaRecorder?.onerror = null;
+    await _onVideoRecordingErrorSubscription?.cancel();
 
     mediaRecorder = null;
     _videoDataAvailableListener = null;
@@ -589,16 +603,13 @@ class Camera {
       ..srcObject = null
       ..load();
 
-    final List<web.MediaStreamTrack> videoTracks =
-        stream?.getVideoTracks().toDart ?? <web.MediaStreamTrack>[];
+    await _onEndedSubscription?.cancel();
+    _onEndedSubscription = null;
 
-    if (videoTracks.isNotEmpty) {
-      final web.MediaStreamTrack defaultVideoTrack = videoTracks.first;
-      defaultVideoTrack.onended = null;
-    }
     await onEndedController.close();
 
-    mediaRecorder?.onerror = null;
+    await _onVideoRecordingErrorSubscription?.cancel();
+    _onVideoRecordingErrorSubscription = null;
     await videoRecordingErrorController.close();
   }
 

@@ -16,6 +16,7 @@ import 'package:camera_web/src/types/types.dart';
 import 'package:cross_file/cross_file.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:web/web.dart' as web;
+import 'package:web/web.dart';
 
 @JSExport()
 class MockWindow {
@@ -45,8 +46,8 @@ class MockDocument {
 @JSExport()
 class MockElement {
   JSPromise<JSAny?> Function([web.FullscreenOptions options])
-      requestFullscreen = ([web.FullscreenOptions? options]) =>
-          Future<void>.value().toJS;
+      requestFullscreen =
+      ([web.FullscreenOptions? options]) => Future<void>.value().toJS;
 }
 
 @JSExport()
@@ -210,3 +211,6 @@ web.HTMLVideoElement getVideoElementWithBlankStream(Size videoSize) {
 
   return videoElement;
 }
+
+class MockEventStreamProvider<T extends Event> extends Mock
+    implements EventStreamProvider<T> {}

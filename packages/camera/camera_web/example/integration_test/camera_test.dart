@@ -1513,25 +1513,35 @@ void main() {
 
         testWidgets('stops listening to the media recorder errors',
             (WidgetTester tester) async {
+          final StreamController<ErrorEvent> onErrorStreamController =
+              StreamController<ErrorEvent>();
+          final MockEventStreamProvider<Event> provider =
+              MockEventStreamProvider<Event>();
+
           final Camera camera = Camera(
             textureId: 1,
             cameraService: cameraService,
           )
             ..mediaRecorder = mediaRecorder
-            ..isVideoTypeSupported = isVideoTypeSupported;
+            ..isVideoTypeSupported = isVideoTypeSupported
+            ..errorMediaRecorderEventStreamProvider = provider;
+
+          when(() => provider.forTarget(mediaRecorder))
+              .thenAnswer((_) => onErrorStreamController.stream);
 
           await camera.initialize();
           await camera.play();
 
           await camera.startVideoRecording();
 
-          expect(mediaRecorder.onerror, isNotNull);
-
           videoRecordingStoppedListener.callAsFunction(null, Event('stop'));
 
           await Future<void>.microtask(() {});
 
-          expect(mediaRecorder.onerror, isNull);
+          expect(
+            onErrorStreamController.hasListener,
+            isFalse,
+          );
         });
       });
     });
@@ -1752,11 +1762,19 @@ void main() {
           final MockMediaRecorder mockMediaRecorder = MockMediaRecorder();
           final MediaRecorder mediaRecorder =
               createJSInteropWrapper(mockMediaRecorder) as MediaRecorder;
+          final StreamController<ErrorEvent> errorController =
+              StreamController<ErrorEvent>();
+          final provider = MockEventStreamProvider<Event>();
 
           final Camera camera = Camera(
             textureId: textureId,
             cameraService: cameraService,
-          )..mediaRecorder = mediaRecorder;
+          )
+            ..mediaRecorder = mediaRecorder
+            ..errorMediaRecorderEventStreamProvider = provider;
+
+          when(() => provider.forTarget(mediaRecorder))
+              .thenAnswer((_) => errorController.stream);
 
           final StreamQueue<ErrorEvent> streamQueue =
               StreamQueue<ErrorEvent>(camera.onVideoRecordingError);
@@ -1767,7 +1785,7 @@ void main() {
           await camera.startVideoRecording();
 
           final ErrorEvent errorEvent = ErrorEvent('type');
-          mediaRecorder.onerror!.callAsFunction(null, errorEvent);
+          errorController.add(errorEvent);
 
           expect(
             await streamQueue.next,
