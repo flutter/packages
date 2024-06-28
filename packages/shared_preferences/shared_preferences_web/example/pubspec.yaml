@@ -8,7 +8,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  shared_preferences_platform_interface: ^2.3.0
+  shared_preferences_platform_interface: ^2.4.0
   shared_preferences_web:
     path: ../
   web: ^0.5.0
@@ -18,3 +18,8 @@ dev_dependencies:
     sdk: flutter
   integration_test:
     sdk: flutter
+
+# FOR TESTING AND INITIAL REVIEW ONLY. DO NOT MERGE.
+# See https://github.com/flutter/flutter/wiki/Contributing-to-Plugins-and-Packages#changing-federated-plugins
+dependency_overrides:
+   {shared_preferences_platform_interface: {path: ../../../shared_preferences/shared_preferences_platform_interface}, shared_preferences_web: {path: ../../../shared_preferences/shared_preferences_web}}
