@@ -8,8 +8,8 @@ import 'dart:js_interop';
 
 import 'package:web/web.dart';
 
-// TODO(srujzs): These will be added in `package:web` 0.6.0. Remove these
-// helpers once it is available.
+// TODO(srujzs): These will be added in `package:web` 0.6.0. Remove all
+// helpers unless otherwise marked.
 
 /// Adds missing fields to [HTMLMediaElement]s.
 extension NonStandardFieldsOnMediaElement on HTMLMediaElement {
@@ -46,7 +46,7 @@ extension NonStandardFieldsOnMediaTrackSupportedConstraints
   external bool get torch;
   external set torch(bool value);
 
-  // TODO: Create an issue to resolve this in `package:web`.
+  // Do not remove this with web 0.6.0
   @JS('zoom')
   external bool? get zoomNullable;
 }
@@ -75,7 +75,7 @@ extension NonStandardFieldsOnMediaTrackCapabilities on MediaTrackCapabilities {
   external JSArray<JSBoolean> get torch;
   external set torch(JSArray<JSBoolean> value);
 
-  // TODO: Create an issue to resolve this in `package:web`.
+  // Do not remove this with web 0.6.0
   @JS('zoom')
   external MediaSettingsRange? get zoomNullable;
 }
@@ -143,7 +143,7 @@ extension NonStandardFieldsOnElement on Element {
 
 /// Adds missing fields to [MediaTrackSettings]
 extension NonStandardFieldsOnMediaTrackSettings on MediaTrackSettings {
-  // TODO: Create an issue to resolve this in `package:web`.
+  // Do not remove this with web 0.6.0
   @JS('facingMode')
   external String? get facingModeNullable;
 }
