@@ -806,10 +806,12 @@ void main() {
         (CameraPlatform.instance as CameraPlugin).videoElementOnAbortProvider =
             abortProvider;
 
-        when(() => errorProvider.forElement(videoElement))
-            .thenAnswer((_) => FakeElementStream<Event>(errorStreamController.stream));
-        when(() => abortProvider.forElement(videoElement))
-            .thenAnswer((_) => FakeElementStream<Event>(abortStreamController.stream));
+        when(() => errorProvider.forElement(videoElement)).thenAnswer(
+          (_) => FakeElementStream<Event>(errorStreamController.stream),
+        );
+        when(() => abortProvider.forElement(videoElement)).thenAnswer(
+          (_) => FakeElementStream<Event>(abortStreamController.stream),
+        );
 
         when(() => camera.onEnded)
             .thenAnswer((Invocation _) => endedStreamController.stream);
@@ -2239,10 +2241,12 @@ void main() {
         (CameraPlatform.instance as CameraPlugin).videoElementOnAbortProvider =
             abortProvider;
 
-        when(() => errorProvider.forElement(videoElement))
-            .thenAnswer((_) => FakeElementStream<Event>(errorStreamController.stream));
-        when(() => abortProvider.forElement(videoElement))
-            .thenAnswer((_) => FakeElementStream<Event>(abortStreamController.stream));
+        when(() => errorProvider.forElement(videoElement)).thenAnswer(
+          (_) => FakeElementStream<Event>(errorStreamController.stream),
+        );
+        when(() => abortProvider.forElement(videoElement)).thenAnswer(
+          (_) => FakeElementStream<Event>(abortStreamController.stream),
+        );
 
         when(() => camera.onEnded)
             .thenAnswer((Invocation _) => endedStreamController.stream);
@@ -2432,10 +2436,12 @@ void main() {
         (CameraPlatform.instance as CameraPlugin).videoElementOnAbortProvider =
             abortProvider;
 
-        when(() => errorProvider.forElement(videoElement))
-            .thenAnswer((_) => FakeElementStream<Event>(errorStreamController.stream));
-        when(() => abortProvider.forElement(videoElement))
-            .thenAnswer((_) => FakeElementStream<Event>(abortStreamController.stream));
+        when(() => errorProvider.forElement(videoElement)).thenAnswer(
+          (_) => FakeElementStream<Event>(errorStreamController.stream),
+        );
+        when(() => abortProvider.forElement(videoElement)).thenAnswer(
+          (_) => FakeElementStream<Event>(abortStreamController.stream),
+        );
 
         when(() => camera.onEnded)
             .thenAnswer((Invocation _) => endedStreamController.stream);
@@ -2443,8 +2449,7 @@ void main() {
         when(() => camera.onVideoRecordingError)
             .thenAnswer((Invocation _) => videoRecordingErrorController.stream);
 
-        when(() => camera.startVideoRecording())
-            .thenAnswer((Invocation _) async {});
+        when(camera.startVideoRecording).thenAnswer((Invocation _) async {});
       });
 
       testWidgets(
