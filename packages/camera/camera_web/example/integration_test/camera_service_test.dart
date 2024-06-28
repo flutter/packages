@@ -97,8 +97,10 @@ void main() {
             'with notFound error '
             'when MediaDevices.getUserMedia throws DomException '
             'with NotFoundError', (WidgetTester tester) async {
-          mockMediaDevices.getUserMedia = ([_]) {
+          mockMediaDevices.getUserMedia = ([web.MediaStreamConstraints? _]) {
             throw web.DOMException('', 'NotFoundError');
+            // ignore: dead_code
+            return Future<web.MediaStream>.value(web.MediaStream()).toJS;
           }.toJS;
 
           expect(
@@ -120,8 +122,10 @@ void main() {
             'with notFound error '
             'when MediaDevices.getUserMedia throws DomException '
             'with DevicesNotFoundError', (WidgetTester tester) async {
-          mockMediaDevices.getUserMedia = ([_]) {
+          mockMediaDevices.getUserMedia = ([web.MediaStreamConstraints? _]) {
             throw web.DOMException('', 'DevicesNotFoundError');
+            // ignore: dead_code
+            return Future<web.MediaStream>.value(web.MediaStream()).toJS;
           }.toJS;
 
           expect(
@@ -143,8 +147,10 @@ void main() {
             'with notReadable error '
             'when MediaDevices.getUserMedia throws DomException '
             'with NotReadableError', (WidgetTester tester) async {
-          mockMediaDevices.getUserMedia = ([_]) {
+          mockMediaDevices.getUserMedia = ([web.MediaStreamConstraints? _]) {
             throw web.DOMException('', 'NotReadableError');
+            // ignore: dead_code
+            return Future<web.MediaStream>.value(web.MediaStream()).toJS;
           }.toJS;
           expect(
             () => cameraService.getMediaStreamForOptions(
@@ -165,8 +171,10 @@ void main() {
             'with notReadable error '
             'when MediaDevices.getUserMedia throws DomException '
             'with TrackStartError', (WidgetTester tester) async {
-          mockMediaDevices.getUserMedia = ([_]) {
+          mockMediaDevices.getUserMedia = ([web.MediaStreamConstraints? _]) {
             throw web.DOMException('', 'TrackStartError');
+            // ignore: dead_code
+            return Future<web.MediaStream>.value(web.MediaStream()).toJS;
           }.toJS;
 
           expect(
@@ -188,8 +196,10 @@ void main() {
             'with overconstrained error '
             'when MediaDevices.getUserMedia throws DomException '
             'with OverconstrainedError', (WidgetTester tester) async {
-          mockMediaDevices.getUserMedia = ([_]) {
+          mockMediaDevices.getUserMedia = ([web.MediaStreamConstraints? _]) {
             throw web.DOMException('', 'OverconstrainedError');
+            // ignore: dead_code
+            return Future<web.MediaStream>.value(web.MediaStream()).toJS;
           }.toJS;
 
           expect(
@@ -211,8 +221,10 @@ void main() {
             'with overconstrained error '
             'when MediaDevices.getUserMedia throws DomException '
             'with ConstraintNotSatisfiedError', (WidgetTester tester) async {
-          mockMediaDevices.getUserMedia = ([_]) {
+          mockMediaDevices.getUserMedia = ([web.MediaStreamConstraints? _]) {
             throw web.DOMException('', 'ConstraintNotSatisfiedError');
+            // ignore: dead_code
+            return Future<web.MediaStream>.value(web.MediaStream()).toJS;
           }.toJS;
 
           expect(
@@ -234,8 +246,10 @@ void main() {
             'with permissionDenied error '
             'when MediaDevices.getUserMedia throws DomException '
             'with NotAllowedError', (WidgetTester tester) async {
-          mockMediaDevices.getUserMedia = ([_]) {
+          mockMediaDevices.getUserMedia = ([web.MediaStreamConstraints? _]) {
             throw web.DOMException('', 'NotAllowedError');
+            // ignore: dead_code
+            return Future<web.MediaStream>.value(web.MediaStream()).toJS;
           }.toJS;
 
           expect(
@@ -257,8 +271,10 @@ void main() {
             'with permissionDenied error '
             'when MediaDevices.getUserMedia throws DomException '
             'with PermissionDeniedError', (WidgetTester tester) async {
-          mockMediaDevices.getUserMedia = ([_]) {
+          mockMediaDevices.getUserMedia = ([web.MediaStreamConstraints? _]) {
             throw web.DOMException('', 'PermissionDeniedError');
+            // ignore: dead_code
+            return Future<web.MediaStream>.value(web.MediaStream()).toJS;
           }.toJS;
 
           expect(
@@ -280,8 +296,10 @@ void main() {
             'with type error '
             'when MediaDevices.getUserMedia throws DomException '
             'with TypeError', (WidgetTester tester) async {
-          mockMediaDevices.getUserMedia = ([_]) {
+          mockMediaDevices.getUserMedia = ([web.MediaStreamConstraints? _]) {
             throw web.DOMException('', 'TypeError');
+            // ignore: dead_code
+            return Future<web.MediaStream>.value(web.MediaStream()).toJS;
           }.toJS;
 
           expect(
@@ -303,8 +321,10 @@ void main() {
             'with abort error '
             'when MediaDevices.getUserMedia throws DomException '
             'with AbortError', (WidgetTester tester) async {
-          mockMediaDevices.getUserMedia = ([_]) {
+          mockMediaDevices.getUserMedia = ([web.MediaStreamConstraints? _]) {
             throw web.DOMException('', 'AbortError');
+            // ignore: dead_code
+            return Future<web.MediaStream>.value(web.MediaStream()).toJS;
           }.toJS;
 
           expect(
@@ -326,8 +346,10 @@ void main() {
             'with security error '
             'when MediaDevices.getUserMedia throws DomException '
             'with SecurityError', (WidgetTester tester) async {
-          mockMediaDevices.getUserMedia = ([_]) {
+          mockMediaDevices.getUserMedia = ([web.MediaStreamConstraints? _]) {
             throw web.DOMException('', 'SecurityError');
+            // ignore: dead_code
+            return Future<web.MediaStream>.value(web.MediaStream()).toJS;
           }.toJS;
 
           expect(
@@ -349,8 +371,10 @@ void main() {
             'with unknown error '
             'when MediaDevices.getUserMedia throws DomException '
             'with an unknown error', (WidgetTester tester) async {
-          mockMediaDevices.getUserMedia = ([_]) {
+          mockMediaDevices.getUserMedia = ([web.MediaStreamConstraints? _]) {
             throw web.DOMException('', 'Unknown');
+            // ignore: dead_code
+            return Future<web.MediaStream>.value(web.MediaStream()).toJS;
           }.toJS;
 
           expect(
@@ -372,8 +396,10 @@ void main() {
             'with unknown error '
             'when MediaDevices.getUserMedia throws an unknown exception',
             (WidgetTester tester) async {
-          mockMediaDevices.getUserMedia = ([_]) {
+          mockMediaDevices.getUserMedia = ([web.MediaStreamConstraints? _]) {
             throw Exception();
+            // ignore: dead_code
+            return Future<web.MediaStream>.value(web.MediaStream()).toJS;
           }.toJS;
 
           expect(
