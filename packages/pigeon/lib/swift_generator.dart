@@ -817,10 +817,25 @@ class SwiftGenerator extends StructuredGenerator<SwiftOptions> {
         apiAsTypeDeclaration: apiAsTypeDeclaration,
       );
     });
+    indent.newln();
+
+    final String swiftApiProtocolName =
+        '${hostProxyApiPrefix}Protocol${api.name}';
+    indent.writeScoped('protocol $swiftApiProtocolName {', '}', () {
+      _writeProxyApiFlutterMethods(
+        indent,
+        api,
+        generatorOptions: generatorOptions,
+        apiAsTypeDeclaration: apiAsTypeDeclaration,
+        dartPackageName: dartPackageName,
+        writeBody: false,
+      );
+    });
+    indent.newln();
 
     final String swiftApiName = '$hostProxyApiPrefix${api.name}';
-
-    indent.writeScoped('final class $swiftApiName {', '}', () {
+    indent.writeScoped(
+        'final class $swiftApiName: $swiftApiProtocolName  {', '}', () {
       indent.writeln('unowned let pigeonRegistrar: $proxyApiRegistrarName');
       indent.writeln('let pigeonDelegate: $swiftApiDelegateName');
 
@@ -1919,6 +1934,7 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
     required SwiftOptions generatorOptions,
     required TypeDeclaration apiAsTypeDeclaration,
     required String dartPackageName,
+    bool writeBody = true,
   }) {
     for (final Method method in api.flutterMethods) {
       final List<TypeDeclaration> allReferencedTypes = <TypeDeclaration>[
@@ -1957,21 +1973,25 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
         getParameterName: _getSafeArgumentName,
       );
 
-      indent.writeScoped('$methodSignature {', '}', () {
-        indent.writeln('let binaryMessenger = pigeonRegistrar.binaryMessenger');
-        indent.writeln('let codec = pigeonRegistrar.codec');
+      indent.write(methodSignature);
+      if (writeBody) {
+        indent.writeScoped(' {', '}', () {
+          indent
+              .writeln('let binaryMessenger = pigeonRegistrar.binaryMessenger');
+          indent.writeln('let codec = pigeonRegistrar.codec');
 
-        _writeFlutterMethodMessageCall(
-          indent,
-          generatorOptions: generatorOptions,
-          parameters: <Parameter>[
-            Parameter(name: 'pigeonInstance', type: apiAsTypeDeclaration),
-            ...method.parameters,
-          ],
-          returnType: method.returnType,
-          channelName: makeChannelName(api, method, dartPackageName),
-        );
-      });
+          _writeFlutterMethodMessageCall(
+            indent,
+            generatorOptions: generatorOptions,
+            parameters: <Parameter>[
+              Parameter(name: 'pigeonInstance', type: apiAsTypeDeclaration),
+              ...method.parameters,
+            ],
+            returnType: method.returnType,
+            channelName: makeChannelName(api, method, dartPackageName),
+          );
+        });
+      }
       if (unsupportedPlatforms != null) {
         indent.writeln('#endif');
       }
