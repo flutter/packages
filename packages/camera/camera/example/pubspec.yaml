@@ -31,11 +31,6 @@ dev_dependencies:
 dependency_overrides:
   camera_web:
     path: ../../camera_web
-  # TODO: Blocked on release of https://github.com/dart-lang/web/issues/57
-  web:
-    git:
-      url: https://github.com/dart-lang/web
-      ref: 2fe754fb396cb9b87010f0318cfbfc5408346c48
 
 flutter:
   uses-material-design: true

@@ -29,11 +29,5 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
 
-dependency_overrides:
-  web:
-    git:
-      url: https://github.com/dart-lang/web
-      ref: 2fe754fb396cb9b87010f0318cfbfc5408346c48
-
 topics:
   - camera
