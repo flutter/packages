@@ -432,10 +432,12 @@ class Camera {
     final web.MediaStreamTrack defaultVideoTrack = videoTracks.first;
     final web.MediaTrackSettings defaultVideoTrackSettings =
         defaultVideoTrack.getSettings();
-    try {
-      return _cameraService
-          .mapFacingModeToLensDirection(defaultVideoTrackSettings.facingMode);
-    } catch (e) {
+
+    final String? facingMode = defaultVideoTrackSettings.facingModeNullable;
+
+    if (facingMode != null) {
+      return _cameraService.mapFacingModeToLensDirection(facingMode);
+    } else {
       return null;
     }
   }
