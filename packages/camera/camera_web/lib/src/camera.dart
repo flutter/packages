@@ -9,6 +9,7 @@ import 'dart:ui_web' as ui_web;
 
 import 'package:camera_platform_interface/camera_platform_interface.dart';
 import 'package:flutter/foundation.dart';
+import 'package:web/helpers.dart';
 import 'package:web/web.dart' as web;
 import 'package:web/web.dart';
 
@@ -196,9 +197,11 @@ class Camera {
 
     if (videoTracks.isNotEmpty) {
       final web.MediaStreamTrack defaultVideoTrack = videoTracks.first;
-      defaultVideoTrack.onended = (web.Event _) {
+      _onEndedSubscription = EventStreamProviders.endedEvent
+          .forTarget(defaultVideoTrack)
+          .listen((web.Event _) {
         onEndedController.add(defaultVideoTrack);
-      }.toJS;
+      });
     }
   }
 
@@ -605,7 +608,6 @@ class Camera {
 
     await _onEndedSubscription?.cancel();
     _onEndedSubscription = null;
-
     await onEndedController.close();
 
     await _onVideoRecordingErrorSubscription?.cancel();
