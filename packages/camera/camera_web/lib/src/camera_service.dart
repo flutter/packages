@@ -119,7 +119,9 @@ class CameraService {
     final web.MediaDevices mediaDevices = window.navigator.mediaDevices;
     final web.MediaTrackSupportedConstraints supportedConstraints =
         mediaDevices.getSupportedConstraints();
-    if (!supportedConstraints.zoom) {
+    final bool zoomLevelSupported = supportedConstraints.zoomNullable ?? false;
+
+    if (zoomLevelSupported) {
       throw CameraWebException(
         camera.textureId,
         CameraErrorCode.zoomLevelNotSupported,
@@ -135,17 +137,22 @@ class CameraService {
 
       /// The zoom level capability is represented by MediaSettingsRange.
       /// See: https://developer.mozilla.org/en-US/docs/Web/API/MediaSettingsRange
-      final MediaSettingsRange zoomLevelCapability =
-          defaultVideoTrack.getCapabilities().zoom;
+      final MediaSettingsRange? zoomLevelCapability =
+          defaultVideoTrack.getCapabilities().zoomNullable;
 
-      final num minimumZoomLevel = zoomLevelCapability.min;
-      final num maximumZoomLevel = zoomLevelCapability.max;
-
-      return ZoomLevelCapability(
-        minimum: minimumZoomLevel.toDouble(),
-        maximum: maximumZoomLevel.toDouble(),
-        videoTrack: defaultVideoTrack,
-      );
+      if (zoomLevelCapability != null) {
+        return ZoomLevelCapability(
+          minimum: zoomLevelCapability.min.toDouble(),
+          maximum: zoomLevelCapability.max.toDouble(),
+          videoTrack: defaultVideoTrack,
+        );
+      } else {
+        throw CameraWebException(
+          camera.textureId,
+          CameraErrorCode.zoomLevelNotSupported,
+          'The zoom level is not supported by the current camera.',
+        );
+      }
     } else {
       throw CameraWebException(
         camera.textureId,

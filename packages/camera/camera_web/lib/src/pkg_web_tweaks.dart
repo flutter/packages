@@ -45,6 +45,10 @@ extension NonStandardFieldsOnMediaTrackSupportedConstraints
   external set zoom(bool value);
   external bool get torch;
   external set torch(bool value);
+
+  // TODO: Create an issue to resolve this in `package:web`.
+  @JS('zoom')
+  external bool? get zoomNullable;
 }
 
 /// Adds missing fields to [MediaTrackCapabilities].
@@ -70,6 +74,10 @@ extension NonStandardFieldsOnMediaTrackCapabilities on MediaTrackCapabilities {
   external set zoom(MediaSettingsRange value);
   external JSArray<JSBoolean> get torch;
   external set torch(JSArray<JSBoolean> value);
+
+  // TODO: Create an issue to resolve this in `package:web`.
+  @JS('zoom')
+  external MediaSettingsRange? get zoomNullable;
 }
 
 /// Adds missing fields to [MediaTrackConstraints].
@@ -136,5 +144,6 @@ extension NonStandardFieldsOnElement on Element {
 /// Adds missing fields to [MediaTrackSettings]
 extension NonStandardFieldsOnMediaTrackSettings on MediaTrackSettings {
   // TODO: Create an issue to resolve this in `package:web`.
+  @JS('facingMode')
   external String? get facingModeNullable;
 }
