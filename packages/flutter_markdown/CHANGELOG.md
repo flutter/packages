@@ -1,6 +1,6 @@
 ## 0.7.3
 
-* Add horizontal scroll for table when using `tableColumnWidth: FixedColumnWidth(width)`.
+* Adds horizontal scrolling for table when using `tableColumnWidth: FixedColumnWidth(width)`.
 
 ## 0.7.2+1
 
