@@ -72,7 +72,7 @@ class MockMediaStreamTrack {
   late JSPromise<JSAny?> Function([web.MediaTrackConstraints? constraints])
       applyConstraints;
 
-  late void Function() stop;
+  void Function() stop = () {};
 }
 
 class MockCamera extends Mock implements Camera {}

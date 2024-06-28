@@ -59,12 +59,6 @@ class CameraPlugin extends CameraPlatform {
   final StreamController<CameraEvent> cameraEventStreamController =
       StreamController<CameraEvent>.broadcast();
 
-  final Map<int, StreamSubscription<web.Event>> _cameraVideoErrorSubscriptions =
-      <int, StreamSubscription<web.Event>>{};
-
-  final Map<int, StreamSubscription<web.Event>> _cameraVideoAbortSubscriptions =
-      <int, StreamSubscription<web.Event>>{};
-
   final Map<int, StreamSubscription<web.MediaStreamTrack>>
       _cameraEndedSubscriptions =
       <int, StreamSubscription<web.MediaStreamTrack>>{};
@@ -268,8 +262,7 @@ class CameraPlugin extends CameraPlatform {
 
       // Add camera's video error events to the camera events stream.
       // The error event fires when the video element's source has failed to load, or can't be used.
-      _cameraVideoErrorSubscriptions[cameraId] =
-          camera.videoElement.onError.listen((web.Event _) {
+      camera.videoElement.onerror = (web.Event _) {
         // The Event itself (_) doesn't contain information about the actual error.
         // We need to look at the HTMLMediaElement.error.
         // See: https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/error
@@ -284,19 +277,18 @@ class CameraPlugin extends CameraPlatform {
             'Error code: $errorCode, error message: $errorMessage',
           ),
         );
-      });
+      }.toJS;
 
       // Add camera's video abort events to the camera events stream.
       // The abort event fires when the video element's source has not fully loaded.
-      _cameraVideoAbortSubscriptions[cameraId] =
-          camera.videoElement.onAbort.listen((web.Event _) {
+      camera.videoElement.onabort = (web.Event _) {
         cameraEventStreamController.add(
           CameraErrorEvent(
             cameraId,
             "Error code: ${CameraErrorCode.abort}, error message: The video element's source has not fully loaded.",
           ),
         );
-      });
+      }.toJS;
 
       await camera.play();
 
@@ -650,15 +642,14 @@ class CameraPlugin extends CameraPlatform {
   @override
   Future<void> dispose(int cameraId) async {
     try {
-      await getCamera(cameraId).dispose();
-      await _cameraVideoErrorSubscriptions[cameraId]?.cancel();
-      await _cameraVideoAbortSubscriptions[cameraId]?.cancel();
+      final Camera camera = getCamera(cameraId);
+      camera.videoElement.onerror = null;
+      camera.videoElement.onabort = null;
+      await camera.dispose();
       await _cameraEndedSubscriptions[cameraId]?.cancel();
       await _cameraVideoRecordingErrorSubscriptions[cameraId]?.cancel();
 
       cameras.remove(cameraId);
-      _cameraVideoErrorSubscriptions.remove(cameraId);
-      _cameraVideoAbortSubscriptions.remove(cameraId);
       _cameraEndedSubscriptions.remove(cameraId);
     } on web.DOMException catch (e) {
       throw PlatformException(code: e.name, message: e.message);
