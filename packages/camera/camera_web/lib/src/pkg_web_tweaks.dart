@@ -10,5 +10,12 @@ import 'package:web/web.dart' as web;
 extension NonStandardSettersOnMediaElement on web.HTMLMediaElement {
   // TODO(srujzs): This will be added in `package:web` 0.6.0. Remove this helper
   // once it's available.
-    external web.MediaStream captureStream();
+  external web.MediaStream captureStream();
+}
+
+/// Adds a "captureStream" getter to [web.HTMLCanvasElement]s.
+extension NonStandardSettersOnCanvasElement on web.HTMLCanvasElement {
+  // TODO(srujzs): This will be added in `package:web` 0.6.0. Remove this helper
+  // once it's available.
+  external web.MediaStream captureStream();
 }
