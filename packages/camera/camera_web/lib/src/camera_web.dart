@@ -12,6 +12,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_web_plugins/flutter_web_plugins.dart';
 import 'package:stream_transform/stream_transform.dart';
 import 'package:web/web.dart' as web;
+import 'package:web/web.dart';
 
 import 'camera.dart';
 import 'camera_service.dart';
@@ -59,7 +60,13 @@ class CameraPlugin extends CameraPlatform {
   final StreamController<CameraEvent> cameraEventStreamController =
       StreamController<CameraEvent>.broadcast();
 
-  final Map<int, StreamSubscription<web.MediaStreamTrack>>
+  final Map<int, StreamSubscription<html.Event>>
+      _cameraVideoErrorSubscriptions = <int, StreamSubscription<html.Event>>{};
+
+  final Map<int, StreamSubscription<html.Event>>
+      _cameraVideoAbortSubscriptions = <int, StreamSubscription<html.Event>>{};
+
+  final Map<int, StreamSubscription<html.MediaStreamTrack>>
       _cameraEndedSubscriptions =
       <int, StreamSubscription<web.MediaStreamTrack>>{};
 
@@ -262,7 +269,8 @@ class CameraPlugin extends CameraPlatform {
 
       // Add camera's video error events to the camera events stream.
       // The error event fires when the video element's source has failed to load, or can't be used.
-      camera.videoElement.onerror = (web.Event _) {
+      _cameraVideoErrorSubscriptions[cameraId] =
+          camera.videoElement.onError.listen((web.Event _) {
         // The Event itself (_) doesn't contain information about the actual error.
         // We need to look at the HTMLMediaElement.error.
         // See: https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/error
@@ -277,18 +285,19 @@ class CameraPlugin extends CameraPlatform {
             'Error code: $errorCode, error message: $errorMessage',
           ),
         );
-      }.toJS;
+      });
 
       // Add camera's video abort events to the camera events stream.
       // The abort event fires when the video element's source has not fully loaded.
-      camera.videoElement.onabort = (web.Event _) {
+      _cameraVideoAbortSubscriptions[cameraId] =
+          camera.videoElement.onAbort.listen((web.Event _) {
         cameraEventStreamController.add(
           CameraErrorEvent(
             cameraId,
             "Error code: ${CameraErrorCode.abort}, error message: The video element's source has not fully loaded.",
           ),
         );
-      }.toJS;
+      });
 
       await camera.play();
 
@@ -362,14 +371,10 @@ class CameraPlugin extends CameraPlatform {
     // as soon as subscribed to this stream.
     final web.Event initialOrientationEvent = web.Event('change');
 
-    final StreamController<web.Event> controller =
-        StreamController<web.Event>();
-
-    orientation.onchange = (web.Event e) {
-      controller.add(e);
-    }.toJS;
-
-    return controller.stream.startWith(initialOrientationEvent).map(
+    return EventStreamProviders.changeEvent
+        .forTarget(orientation)
+        .startWith(initialOrientationEvent)
+        .map(
       (web.Event _) {
         final DeviceOrientation deviceOrientation = _cameraService
             .mapOrientationTypeToDeviceOrientation(orientation.type);
