@@ -52,20 +52,20 @@ class SharedPreferencesAsync {
     return _platform.getPreferences(parameters, _options);
   }
 
-  /// Reads a value from the platform, throwing a [TypeError] if the value is not a
+  /// Reads a value from the platform, throwing an exception if the value is not a
   /// bool.
   Future<bool?> getBool(String key) async => _platform.getBool(key, _options);
 
-  /// Reads a value from the platform, throwing a [TypeError] if the value is not
+  /// Reads a value from the platform, throwing an exception if the value is not
   /// an int.
   Future<int?> getInt(String key) async => _platform.getInt(key, _options);
 
-  /// Reads a value from the platform, throwing a [TypeError] if the value is not a
+  /// Reads a value from the platform, throwing an exception if the value is not a
   /// double.
   Future<double?> getDouble(String key) async =>
       _platform.getDouble(key, _options);
 
-  /// Reads a value from the platform, throwing a [TypeError] if the value is not a
+  /// Reads a value from the platform, throwing an exception if the value is not a
   /// String.
   Future<String?> getString(String key) async =>
       _platform.getString(key, _options);
