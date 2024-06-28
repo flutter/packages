@@ -902,6 +902,7 @@ void main() {
 
     group('lockCaptureOrientation', () {
       setUp(() {
+        registerFallbackValue(DeviceOrientation.portraitUp);
         when(
           () => cameraService.mapDeviceOrientationToOrientationType(any()),
         ).thenReturn(OrientationType.portraitPrimary);

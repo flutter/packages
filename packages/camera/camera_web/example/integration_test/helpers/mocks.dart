@@ -31,7 +31,8 @@ class MockScreen {
 
 @JSExport()
 class MockScreenOrientation {
-  late JSPromise<JSAny?> Function(web.OrientationLockType orientation) lock;
+  JSPromise<JSAny?> Function(web.OrientationLockType orientation) lock =
+      (web.OrientationLockType orientation) => Future<void>.value().toJS;
   late void Function() unlock;
   late web.OrientationType type;
 }
@@ -43,8 +44,9 @@ class MockDocument {
 
 @JSExport()
 class MockElement {
-  late JSPromise<JSAny?> Function([web.FullscreenOptions options])
-      requestFullscreen;
+  JSPromise<JSAny?> Function([web.FullscreenOptions options])
+      requestFullscreen = ([web.FullscreenOptions? options]) =>
+          Future<void>.value().toJS;
 }
 
 @JSExport()
