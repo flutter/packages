@@ -439,9 +439,9 @@ class Camera {
     final web.MediaTrackSettings defaultVideoTrackSettings =
         defaultVideoTrack.getSettings();
 
-    final String facingMode = defaultVideoTrackSettings.facingMode;
+    final String? facingMode = defaultVideoTrackSettings.facingModeNullable;
 
-    if (facingMode.isNotEmpty) {
+    if (facingMode != null) {
       return _cameraService.mapFacingModeToLensDirection(facingMode);
     } else {
       return null;

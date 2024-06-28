@@ -144,3 +144,10 @@ extension type FullscreenOptions._(JSObject _) implements JSObject {
 extension NonStandardFieldsOnElement on Element {
   external JSPromise<JSAny?> requestFullscreen([FullscreenOptions options]);
 }
+
+/// Adds missing fields to [MediaTrackSettings]
+extension NonStandardFieldsOnMediaTrackSettings on MediaTrackSettings {
+  // Do not remove this with web 0.6.0.
+  @JS('facingMode')
+  external String? get facingModeNullable;
+}
