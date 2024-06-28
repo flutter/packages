@@ -9,7 +9,6 @@ import 'dart:ui_web' as ui_web;
 
 import 'package:camera_platform_interface/camera_platform_interface.dart';
 import 'package:flutter/foundation.dart';
-import 'package:web/helpers.dart';
 import 'package:web/web.dart' as web;
 import 'package:web/web.dart';
 
@@ -100,11 +99,11 @@ class Camera {
   Stream<web.ErrorEvent> get onVideoRecordingError =>
       videoRecordingErrorController.stream;
 
-  /// The stream provider for errorMediaRecorderEvents.
+  /// The stream provider for [MediaRecorder] error events.
   ///
   /// This field exists for mocking in tests.
   @visibleForTesting
-  EventStreamProvider<Event> errorMediaRecorderEventStreamProvider =
+  EventStreamProvider<Event> mediaRecorderOnErrorProvider =
       EventStreamProviders.errorMediaRecorderEvent;
 
   /// The stream controller for the [onVideoRecordingError] stream.
@@ -486,7 +485,7 @@ class Camera {
       _videoRecordingStoppedListener?.toJS,
     );
 
-    _onVideoRecordingErrorSubscription = errorMediaRecorderEventStreamProvider
+    _onVideoRecordingErrorSubscription = mediaRecorderOnErrorProvider
         .forTarget(mediaRecorder)
         .listen((web.Event event) {
       final web.ErrorEvent error = event as web.ErrorEvent;

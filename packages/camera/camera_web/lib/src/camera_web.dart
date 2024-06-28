@@ -59,8 +59,22 @@ class CameraPlugin extends CameraPlatform {
   final StreamController<CameraEvent> cameraEventStreamController =
       StreamController<CameraEvent>.broadcast();
 
+  /// The stream provider for [web.HTMLVideoElement] error events.
+  ///
+  /// This field exists for mocking in tests.
+  @visibleForTesting
+  web.EventStreamProvider<web.Event> videoElementOnErrorProvider =
+      web.EventStreamProviders.errorElementEvent;
+
   final Map<int, StreamSubscription<web.Event>> _cameraVideoErrorSubscriptions =
       <int, StreamSubscription<web.Event>>{};
+
+  /// The stream provider for [web.HTMLVideoElement] abort events.
+  ///
+  /// This field exists for mocking in tests.
+  @visibleForTesting
+  web.EventStreamProvider<web.Event> videoElementOnAbortProvider =
+      web.EventStreamProviders.errorElementEvent;
 
   final Map<int, StreamSubscription<web.Event>> _cameraVideoAbortSubscriptions =
       <int, StreamSubscription<web.Event>>{};
@@ -268,8 +282,9 @@ class CameraPlugin extends CameraPlatform {
 
       // Add camera's video error events to the camera events stream.
       // The error event fires when the video element's source has failed to load, or can't be used.
-      _cameraVideoErrorSubscriptions[cameraId] =
-          camera.videoElement.onError.listen((web.Event _) {
+      _cameraVideoErrorSubscriptions[cameraId] = videoElementOnErrorProvider
+          .forElement(camera.videoElement)
+          .listen((web.Event _) {
         // The Event itself (_) doesn't contain information about the actual error.
         // We need to look at the HTMLMediaElement.error.
         // See: https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/error
@@ -288,8 +303,9 @@ class CameraPlugin extends CameraPlatform {
 
       // Add camera's video abort events to the camera events stream.
       // The abort event fires when the video element's source has not fully loaded.
-      _cameraVideoAbortSubscriptions[cameraId] =
-          camera.videoElement.onAbort.listen((web.Event _) {
+      _cameraVideoAbortSubscriptions[cameraId] = videoElementOnAbortProvider
+          .forElement(camera.videoElement)
+          .listen((web.Event _) {
         cameraEventStreamController.add(
           CameraErrorEvent(
             cameraId,

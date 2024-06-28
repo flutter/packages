@@ -776,6 +776,7 @@ void main() {
       late MockVideoElement mockVideoElement;
       late HTMLVideoElement videoElement;
 
+      late StreamController<Event> errorStreamController, abortStreamController;
       late StreamController<MediaStreamTrack> endedStreamController;
 
       setUp(() {
@@ -784,6 +785,8 @@ void main() {
         videoElement =
             createJSInteropWrapper(mockVideoElement) as HTMLVideoElement;
 
+        errorStreamController = StreamController<Event>();
+        abortStreamController = StreamController<Event>();
         endedStreamController = StreamController<MediaStreamTrack>();
 
         when(camera.getVideoSize).thenReturn(const Size(10, 10));
@@ -792,6 +795,21 @@ void main() {
         when(camera.play).thenAnswer((Invocation _) => Future<void>.value());
 
         when(() => camera.videoElement).thenReturn(videoElement);
+
+        final MockEventStreamProvider<Event> errorProvider =
+            MockEventStreamProvider<Event>();
+        final MockEventStreamProvider<Event> abortProvider =
+            MockEventStreamProvider<Event>();
+
+        (CameraPlatform.instance as CameraPlugin).videoElementOnErrorProvider =
+            errorProvider;
+        (CameraPlatform.instance as CameraPlugin).videoElementOnAbortProvider =
+            abortProvider;
+
+        when(() => errorProvider.forElement(videoElement))
+            .thenReturn(FakeElementStream<Event>(errorStreamController.stream));
+        when(() => abortProvider.forElement(videoElement))
+            .thenReturn(FakeElementStream<Event>(abortStreamController.stream));
 
         when(() => camera.onEnded)
             .thenAnswer((Invocation _) => endedStreamController.stream);
@@ -813,13 +831,13 @@ void main() {
         // Save the camera in the camera plugin.
         (CameraPlatform.instance as CameraPlugin).cameras[cameraId] = camera;
 
-        expect(videoElement.onerror, isNull);
-        expect(videoElement.onabort, isNull);
+        expect(errorStreamController.hasListener, isFalse);
+        expect(abortStreamController.hasListener, isFalse);
 
         await CameraPlatform.instance.initializeCamera(cameraId);
 
-        expect(videoElement.onerror, isNotNull);
-        expect(videoElement.onabort, isNotNull);
+        expect(errorStreamController.hasListener, isTrue);
+        expect(abortStreamController.hasListener, isTrue);
       });
 
       testWidgets('starts listening to the camera ended events',
@@ -2188,6 +2206,7 @@ void main() {
       late MockVideoElement mockVideoElement;
       late HTMLVideoElement videoElement;
 
+      late StreamController<Event> errorStreamController, abortStreamController;
       late StreamController<MediaStreamTrack> endedStreamController;
       late StreamController<ErrorEvent> videoRecordingErrorController;
 
@@ -2197,6 +2216,8 @@ void main() {
         videoElement =
             createJSInteropWrapper(mockVideoElement) as HTMLVideoElement;
 
+        errorStreamController = StreamController<Event>();
+        abortStreamController = StreamController<Event>();
         endedStreamController = StreamController<MediaStreamTrack>();
         videoRecordingErrorController = StreamController<ErrorEvent>();
 
@@ -2207,6 +2228,21 @@ void main() {
         when(camera.dispose).thenAnswer((Invocation _) => Future<void>.value());
 
         when(() => camera.videoElement).thenReturn(videoElement);
+
+        final MockEventStreamProvider<Event> errorProvider =
+            MockEventStreamProvider<Event>();
+        final MockEventStreamProvider<Event> abortProvider =
+            MockEventStreamProvider<Event>();
+
+        (CameraPlatform.instance as CameraPlugin).videoElementOnErrorProvider =
+            errorProvider;
+        (CameraPlatform.instance as CameraPlugin).videoElementOnAbortProvider =
+            abortProvider;
+
+        when(() => errorProvider.forElement(videoElement))
+            .thenReturn(FakeElementStream<Event>(errorStreamController.stream));
+        when(() => abortProvider.forElement(videoElement))
+            .thenReturn(FakeElementStream<Event>(abortStreamController.stream));
 
         when(() => camera.onEnded)
             .thenAnswer((Invocation _) => endedStreamController.stream);
@@ -2259,8 +2295,8 @@ void main() {
         await CameraPlatform.instance.initializeCamera(cameraId);
         await CameraPlatform.instance.dispose(cameraId);
 
-        expect(videoElement.onerror, isNull);
-        expect(videoElement.onabort, isNull);
+        expect(errorStreamController.hasListener, isFalse);
+        expect(abortStreamController.hasListener, isFalse);
       });
 
       testWidgets('cancels the camera ended subscriptions',
@@ -2364,6 +2400,7 @@ void main() {
       late MockVideoElement mockVideoElement;
       late HTMLVideoElement videoElement;
 
+      late StreamController<Event> errorStreamController, abortStreamController;
       late StreamController<MediaStreamTrack> endedStreamController;
       late StreamController<ErrorEvent> videoRecordingErrorController;
 
@@ -2373,6 +2410,8 @@ void main() {
         videoElement =
             createJSInteropWrapper(mockVideoElement) as HTMLVideoElement;
 
+        errorStreamController = StreamController<Event>();
+        abortStreamController = StreamController<Event>();
         endedStreamController = StreamController<MediaStreamTrack>();
         videoRecordingErrorController = StreamController<ErrorEvent>();
 
@@ -2382,6 +2421,21 @@ void main() {
         when(camera.play).thenAnswer((Invocation _) => Future<void>.value());
 
         when(() => camera.videoElement).thenReturn(videoElement);
+
+        final MockEventStreamProvider<Event> errorProvider =
+            MockEventStreamProvider<Event>();
+        final MockEventStreamProvider<Event> abortProvider =
+            MockEventStreamProvider<Event>();
+
+        (CameraPlatform.instance as CameraPlugin).videoElementOnErrorProvider =
+            errorProvider;
+        (CameraPlatform.instance as CameraPlugin).videoElementOnAbortProvider =
+            abortProvider;
+
+        when(() => errorProvider.forElement(videoElement))
+            .thenReturn(FakeElementStream<Event>(errorStreamController.stream));
+        when(() => abortProvider.forElement(videoElement))
+            .thenReturn(FakeElementStream<Event>(abortStreamController.stream));
 
         when(() => camera.onEnded)
             .thenAnswer((Invocation _) => endedStreamController.stream);
@@ -2506,7 +2560,7 @@ void main() {
               CameraErrorCode.fromMediaError(error);
 
           mockVideoElement.error = error;
-          videoElement.dispatchEvent(Event('error'));
+          errorStreamController.add(Event('error'));
 
           expect(
             await streamQueue.next,
@@ -2540,7 +2594,7 @@ void main() {
               CameraErrorCode.fromMediaError(error);
 
           mockVideoElement.error = error;
-          videoElement.dispatchEvent(Event('error'));
+          errorStreamController.add(Event('error'));
 
           expect(
             await streamQueue.next,
@@ -2566,7 +2620,7 @@ void main() {
 
           await CameraPlatform.instance.initializeCamera(cameraId);
 
-          videoElement.dispatchEvent(Event('abort'));
+          abortStreamController.add(Event('abort'));
 
           expect(
             await streamQueue.next,

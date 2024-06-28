@@ -1524,7 +1524,7 @@ void main() {
           )
             ..mediaRecorder = mediaRecorder
             ..isVideoTypeSupported = isVideoTypeSupported
-            ..errorMediaRecorderEventStreamProvider = provider;
+            ..mediaRecorderOnErrorProvider = provider;
 
           when(() => provider.forTarget(mediaRecorder))
               .thenAnswer((_) => onErrorStreamController.stream);
@@ -1771,7 +1771,7 @@ void main() {
             cameraService: cameraService,
           )
             ..mediaRecorder = mediaRecorder
-            ..errorMediaRecorderEventStreamProvider = provider;
+            ..mediaRecorderOnErrorProvider = provider;
 
           when(() => provider.forTarget(mediaRecorder))
               .thenAnswer((_) => errorController.stream);
