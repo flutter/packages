@@ -3086,13 +3086,16 @@ void main() {
       });
 
       group('onDeviceOrientationChanged', () {
+        final StreamController<Event> eventStreamController =
+            StreamController<Event>();
+
         setUp(() {
           final MockEventStreamProvider<Event> provider =
               MockEventStreamProvider<Event>();
           (CameraPlatform.instance as CameraPlugin)
               .orientationOnChangeProvider = provider;
           when(() => provider.forTarget(any()))
-              .thenAnswer((_) => StreamController<Event>().stream);
+              .thenAnswer((_) => eventStreamController.stream);
         });
 
         testWidgets('emits the initial DeviceOrientationChangedEvent',
@@ -3150,7 +3153,7 @@ void main() {
           // emit an event on the screenOrientation.onChange stream.
           mockScreenOrientation.type = OrientationType.landscapePrimary;
 
-          screenOrientation.dispatchEvent(Event('change'));
+          eventStreamController.add(Event('change'));
 
           expect(
             await streamQueue.next,
@@ -3165,7 +3168,7 @@ void main() {
           // emit an event on the screenOrientation.onChange stream.
           mockScreenOrientation.type = OrientationType.portraitSecondary;
 
-          screenOrientation.dispatchEvent(Event('change'));
+          eventStreamController.add(Event('change'));
 
           expect(
             await streamQueue.next,
