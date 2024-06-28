@@ -329,8 +329,9 @@ class Camera {
     final web.MediaDevices mediaDevices = window.navigator.mediaDevices;
     final web.MediaTrackSupportedConstraints supportedConstraints =
         mediaDevices.getSupportedConstraints();
+    final bool torchModeSupported = supportedConstraints.torchNullable ?? false;
 
-    if (!supportedConstraints.torch) {
+    if (!torchModeSupported) {
       throw CameraWebException(
         textureId,
         CameraErrorCode.torchModeNotSupported,
@@ -355,8 +356,13 @@ class Camera {
 
     if (videoTracks.isNotEmpty) {
       final web.MediaStreamTrack defaultVideoTrack = videoTracks.first;
-      final bool canEnableTorchMode =
-          defaultVideoTrack.getCapabilities().torch.toDart.first.toDart;
+      final bool canEnableTorchMode = defaultVideoTrack
+              .getCapabilities()
+              .torchNullable
+              ?.toDart
+              .first
+              .toDart ??
+          false;
 
       if (canEnableTorchMode) {
         defaultVideoTrack.applyConstraints(
