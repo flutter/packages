@@ -16,7 +16,6 @@ import 'package:camera_web/src/types/types.dart';
 import 'package:cross_file/cross_file.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:web/web.dart' as web;
-import 'package:web/web.dart';
 
 @JSExport()
 class MockWindow {
@@ -212,5 +211,5 @@ web.HTMLVideoElement getVideoElementWithBlankStream(Size videoSize) {
   return videoElement;
 }
 
-class MockEventStreamProvider<T extends Event> extends Mock
-    implements EventStreamProvider<T> {}
+class MockEventStreamProvider<T extends web.Event> extends Mock
+    implements web.EventStreamProvider<T> {}

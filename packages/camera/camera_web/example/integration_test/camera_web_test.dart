@@ -3148,8 +3148,7 @@ void main() {
 
           // Change the screen orientation to landscapePrimary and
           // emit an event on the screenOrientation.onChange stream.
-          when(() => screenOrientation.type)
-              .thenReturn(OrientationType.landscapePrimary);
+          mockScreenOrientation.type = OrientationType.landscapePrimary;
 
           screenOrientation.dispatchEvent(Event('change'));
 
@@ -3164,8 +3163,7 @@ void main() {
 
           // Change the screen orientation to portraitSecondary and
           // emit an event on the screenOrientation.onChange stream.
-          when(() => screenOrientation.type)
-              .thenReturn(OrientationType.portraitSecondary);
+          mockScreenOrientation.type = OrientationType.portraitSecondary;
 
           screenOrientation.dispatchEvent(Event('change'));
 
