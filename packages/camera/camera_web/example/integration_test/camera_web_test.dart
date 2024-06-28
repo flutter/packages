@@ -123,9 +123,11 @@ void main() {
           ),
         ).thenReturn(null);
 
-        mockMediaDevices.enumerateDevices = () =>
-            Future<JSArray<MediaDeviceInfo>>.value(<MediaDeviceInfo>[].toJS)
-                .toJS;
+        mockMediaDevices.enumerateDevices = () {
+          return Future<JSArray<MediaDeviceInfo>>.value(
+            <MediaDeviceInfo>[].toJS,
+          ).toJS;
+        }.toJS;
       });
 
       testWidgets('requests video permissions', (WidgetTester tester) async {
@@ -147,7 +149,7 @@ void main() {
         bool videoTrackStopped = false;
         mockVideoTrack.stop = () {
           videoTrackStopped = true;
-        };
+        }.toJS;
 
         when(
           () => cameraService.getMediaStreamForOptions(const CameraOptions()),
@@ -176,10 +178,11 @@ void main() {
           ),
         ) as MediaDeviceInfo;
 
-        mockMediaDevices.enumerateDevices = () =>
-            Future<JSArray<MediaDeviceInfo>>.value(
-                    <MediaDeviceInfo>[videoDevice].toJS)
-                .toJS;
+        mockMediaDevices.enumerateDevices = () {
+          return Future<JSArray<MediaDeviceInfo>>.value(
+                  <MediaDeviceInfo>[videoDevice].toJS)
+              .toJS;
+        }.toJS;
 
         final List<CameraDescription> _ =
             await CameraPlatform.instance.availableCameras();
@@ -207,10 +210,11 @@ void main() {
           ),
         ) as MediaDeviceInfo;
 
-        mockMediaDevices.enumerateDevices = () =>
-            Future<JSArray<MediaDeviceInfo>>.value(
-                    <MediaDeviceInfo>[videoDevice].toJS)
-                .toJS;
+        mockMediaDevices.enumerateDevices = () {
+          return Future<JSArray<MediaDeviceInfo>>.value(
+                  <MediaDeviceInfo>[videoDevice].toJS)
+              .toJS;
+        }.toJS;
 
         final List<CameraDescription> _ =
             await CameraPlatform.instance.availableCameras();
@@ -257,10 +261,11 @@ void main() {
           ),
         ).thenAnswer((Invocation _) => Future<MediaStream>.value(videoStream));
 
-        mockMediaDevices.enumerateDevices = () =>
-            Future<JSArray<MediaDeviceInfo>>.value(
-                    <MediaDeviceInfo>[videoDevice].toJS)
-                .toJS;
+        mockMediaDevices.enumerateDevices = () {
+          return Future<JSArray<MediaDeviceInfo>>.value(
+                  <MediaDeviceInfo>[videoDevice].toJS)
+              .toJS;
+        }.toJS;
 
         final List<CameraDescription> _ =
             await CameraPlatform.instance.availableCameras();
@@ -316,27 +321,28 @@ void main() {
 
         // Mock media devices to return two video input devices
         // and two audio devices.
-        mockMediaDevices.enumerateDevices =
-            () => Future<JSArray<MediaDeviceInfo>>.value(
-                  <MediaDeviceInfo>[
-                    firstVideoDevice,
-                    createJSInteropWrapper(
-                      FakeMediaDeviceInfo(
-                        '2',
-                        'Audio Input 2',
-                        MediaDeviceKind.audioInput,
-                      ),
-                    ) as MediaDeviceInfo,
-                    createJSInteropWrapper(
-                      FakeMediaDeviceInfo(
-                        '3',
-                        'Audio Output 3',
-                        MediaDeviceKind.audioOutput,
-                      ),
-                    ) as MediaDeviceInfo,
-                    secondVideoDevice,
-                  ].toJS,
-                ).toJS;
+        mockMediaDevices.enumerateDevices = () {
+          return Future<JSArray<MediaDeviceInfo>>.value(
+            <MediaDeviceInfo>[
+              firstVideoDevice,
+              createJSInteropWrapper(
+                FakeMediaDeviceInfo(
+                  '2',
+                  'Audio Input 2',
+                  MediaDeviceKind.audioInput,
+                ),
+              ) as MediaDeviceInfo,
+              createJSInteropWrapper(
+                FakeMediaDeviceInfo(
+                  '3',
+                  'Audio Output 3',
+                  MediaDeviceKind.audioOutput,
+                ),
+              ) as MediaDeviceInfo,
+              secondVideoDevice,
+            ].toJS,
+          ).toJS;
+        }.toJS;
 
         // Mock camera service to return the first video stream
         // for the first video device.
@@ -425,10 +431,11 @@ void main() {
           ),
         ) as MediaStream;
 
-        mockMediaDevices.enumerateDevices = () =>
-            Future<JSArray<MediaDeviceInfo>>.value(
-                    <MediaDeviceInfo>[videoDevice].toJS)
-                .toJS;
+        mockMediaDevices.enumerateDevices = () {
+          return Future<JSArray<MediaDeviceInfo>>.value(
+                  <MediaDeviceInfo>[videoDevice].toJS)
+              .toJS;
+        }.toJS;
 
         when(
           () => cameraService.getMediaStreamForOptions(
@@ -476,17 +483,20 @@ void main() {
         final List<bool> stops = List<bool>.generate(2, (_) => false);
         for (int i = 0; i < stops.length; i++) {
           final MockMediaStreamTrack track = MockMediaStreamTrack();
-          track.stop = () => stops[i] = true;
+          track.stop = () {
+            stops[i] = true;
+          }.toJS;
           tracks.add(createJSInteropWrapper(track) as MediaStreamTrack);
         }
 
         final MediaStream videoStream =
             createJSInteropWrapper(FakeMediaStream(tracks)) as MediaStream;
 
-        mockMediaDevices.enumerateDevices = () =>
-            Future<JSArray<MediaDeviceInfo>>.value(
-                    <MediaDeviceInfo>[videoDevice].toJS)
-                .toJS;
+        mockMediaDevices.enumerateDevices = () {
+          return Future<JSArray<MediaDeviceInfo>>.value(
+                  <MediaDeviceInfo>[videoDevice].toJS)
+              .toJS;
+        }.toJS;
 
         when(
           () => cameraService.getMediaStreamForOptions(
@@ -507,7 +517,9 @@ void main() {
             (WidgetTester tester) async {
           final DOMException exception = DOMException('UnknownError');
 
-          mockMediaDevices.enumerateDevices = () => throw exception;
+          mockMediaDevices.enumerateDevices = () {
+            throw exception;
+          }.toJS;
 
           expect(
             () => CameraPlatform.instance.availableCameras(),
@@ -936,7 +948,7 @@ void main() {
         mockDocumentElement.requestFullscreen = ([FullscreenOptions? options]) {
           fullscreenCalls++;
           return Future<void>.value().toJS;
-        };
+        }.toJS;
 
         await CameraPlatform.instance.lockCaptureOrientation(
           cameraId,
@@ -959,7 +971,7 @@ void main() {
         mockScreenOrientation.lock = (OrientationLockType orientation) {
           capturedTypes.add(orientation);
           return Future<void>.value().toJS;
-        };
+        }.toJS;
 
         await CameraPlatform.instance.lockCaptureOrientation(
           cameraId,
@@ -1004,8 +1016,9 @@ void main() {
             (WidgetTester tester) async {
           final DOMException exception = DOMException('NotAllowedError');
 
-          mockScreenOrientation.lock =
-              (OrientationLockType orientation) => throw exception;
+          mockScreenOrientation.lock = (OrientationLockType orientation) {
+            throw exception;
+          }.toJS;
 
           expect(
             () => CameraPlatform.instance.lockCaptureOrientation(
@@ -1034,7 +1047,9 @@ void main() {
       testWidgets('unlocks the capture orientation',
           (WidgetTester tester) async {
         int unlocks = 0;
-        mockScreenOrientation.unlock = () => unlocks++;
+        mockScreenOrientation.unlock = () {
+          unlocks++;
+        }.toJS;
 
         await CameraPlatform.instance.unlockCaptureOrientation(
           cameraId,
@@ -1070,7 +1085,9 @@ void main() {
             (WidgetTester tester) async {
           final DOMException exception = DOMException('NotAllowedError');
 
-          mockScreenOrientation.unlock = () => throw exception;
+          mockScreenOrientation.unlock = () {
+            throw exception;
+          }.toJS;
 
           expect(
             () => CameraPlatform.instance.unlockCaptureOrientation(

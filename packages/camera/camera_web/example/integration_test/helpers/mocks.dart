@@ -34,9 +34,13 @@ class MockScreen {
 
 @JSExport()
 class MockScreenOrientation {
-  JSPromise<JSAny?> Function(web.OrientationLockType orientation) lock =
-      (web.OrientationLockType orientation) => Future<void>.value().toJS;
-  late void Function() unlock;
+  /// JSPromise<JSAny?> Function(web.OrientationLockType orientation)
+  JSFunction lock = (web.OrientationLockType orientation) {
+    return Future<void>.value().toJS;
+  }.toJS;
+
+  /// void Function()
+  late JSFunction unlock;
   late web.OrientationType type;
 }
 
@@ -47,8 +51,10 @@ class MockDocument {
 
 @JSExport()
 class MockElement {
-  JSPromise<JSAny?> Function([FullscreenOptions options]) requestFullscreen =
-      ([FullscreenOptions? options]) => Future<void>.value().toJS;
+  /// JSPromise<JSAny?> Function([FullscreenOptions options])
+  JSFunction requestFullscreen = ([FullscreenOptions? options]) {
+    return Future<void>.value().toJS;
+  }.toJS;
 }
 
 @JSExport()
@@ -58,25 +64,33 @@ class MockNavigator {
 
 @JSExport()
 class MockMediaDevices {
-  late JSPromise<web.MediaStream> Function([
-    web.MediaStreamConstraints? constraints,
-  ]) getUserMedia;
+  /// JSPromise<web.MediaStream> Function([web.MediaStreamConstraints? constraints])
+  late JSFunction getUserMedia;
 
-  late web.MediaTrackSupportedConstraints Function() getSupportedConstraints;
-  late JSPromise<JSArray<web.MediaDeviceInfo>> Function() enumerateDevices;
+  /// web.MediaTrackSupportedConstraints Function()
+  late JSFunction getSupportedConstraints;
+
+  /// JSPromise<JSArray<web.MediaDeviceInfo>> Function()
+  late JSFunction enumerateDevices;
 }
 
 class MockCameraService extends Mock implements CameraService {}
 
 @JSExport()
 class MockMediaStreamTrack {
-  late web.MediaTrackCapabilities Function() getCapabilities;
-  web.MediaTrackSettings Function() getSettings =
-      () => web.MediaTrackSettings();
-  late JSPromise<JSAny?> Function([web.MediaTrackConstraints? constraints])
-      applyConstraints;
+  /// web.MediaTrackCapabilities Function();
+  late JSFunction getCapabilities;
 
-  void Function() stop = () {};
+  /// web.MediaTrackSettings Function()
+  JSFunction getSettings = () {
+    return web.MediaTrackSettings();
+  }.toJS;
+
+  /// JSPromise<JSAny?> Function([web.MediaTrackConstraints? constraints])
+  late JSFunction applyConstraints;
+
+  /// void Function()
+  JSFunction stop = () {}.toJS;
 }
 
 class MockCamera extends Mock implements Camera {}
@@ -95,30 +109,25 @@ class MockJsUtil extends Mock implements JsUtil {}
 
 @JSExport()
 class MockMediaRecorder {
-  void Function(
-    String type,
-    web.EventListener? callback, [
-    JSAny options,
-  ]) addEventListener = (
-    String type,
-    web.EventListener? callback, [
-    JSAny? options,
-  ]) {};
+  /// void Function(String type, web.EventListener? callback, [JSAny options])
+  JSFunction addEventListener =
+      (String type, web.EventListener? callback, [JSAny? options]) {}.toJS;
 
-  void Function(
-    String type,
-    web.EventListener? callback, [
-    JSAny options,
-  ]) removeEventListener = (
-    String type,
-    web.EventListener? callback, [
-    JSAny? options,
-  ]) {};
+  /// void Function(String type, web.EventListener? callback, [JSAny options])
+  JSFunction removeEventListener =
+      (String type, web.EventListener? callback, [JSAny? options]) {}.toJS;
 
-  void Function([int timeslice]) start = ([int? timeslice]) {};
-  void Function() pause = () {};
-  void Function() resume = () {};
-  void Function() stop = () {};
+  /// void Function([int timeslice])
+  JSFunction start = ([int? timeslice]) {}.toJS;
+
+  /// void Function()
+  JSFunction pause = () {}.toJS;
+
+  /// void Function()
+  JSFunction resume = () {}.toJS;
+
+  /// void Function()
+  JSFunction stop = () {}.toJS;
 
   web.RecordingState state = 'inactive';
 }
