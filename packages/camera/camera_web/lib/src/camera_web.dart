@@ -12,7 +12,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_web_plugins/flutter_web_plugins.dart';
 import 'package:stream_transform/stream_transform.dart';
 import 'package:web/web.dart' as web;
-import 'package:web/web.dart';
 
 import 'camera.dart';
 import 'camera_service.dart';
@@ -60,13 +59,13 @@ class CameraPlugin extends CameraPlatform {
   final StreamController<CameraEvent> cameraEventStreamController =
       StreamController<CameraEvent>.broadcast();
 
-  final Map<int, StreamSubscription<html.Event>>
-      _cameraVideoErrorSubscriptions = <int, StreamSubscription<html.Event>>{};
+  final Map<int, StreamSubscription<web.Event>> _cameraVideoErrorSubscriptions =
+      <int, StreamSubscription<web.Event>>{};
 
-  final Map<int, StreamSubscription<html.Event>>
-      _cameraVideoAbortSubscriptions = <int, StreamSubscription<html.Event>>{};
+  final Map<int, StreamSubscription<web.Event>> _cameraVideoAbortSubscriptions =
+      <int, StreamSubscription<web.Event>>{};
 
-  final Map<int, StreamSubscription<html.MediaStreamTrack>>
+  final Map<int, StreamSubscription<web.MediaStreamTrack>>
       _cameraEndedSubscriptions =
       <int, StreamSubscription<web.MediaStreamTrack>>{};
 
@@ -371,7 +370,7 @@ class CameraPlugin extends CameraPlatform {
     // as soon as subscribed to this stream.
     final web.Event initialOrientationEvent = web.Event('change');
 
-    return EventStreamProviders.changeEvent
+    return web.EventStreamProviders.changeEvent
         .forTarget(orientation)
         .startWith(initialOrientationEvent)
         .map(
@@ -647,14 +646,16 @@ class CameraPlugin extends CameraPlatform {
   @override
   Future<void> dispose(int cameraId) async {
     try {
-      final Camera camera = getCamera(cameraId);
-      camera.videoElement.onerror = null;
-      camera.videoElement.onabort = null;
-      await camera.dispose();
+      await getCamera(cameraId).dispose();
+      await _cameraVideoErrorSubscriptions[cameraId]?.cancel();
+      await _cameraVideoAbortSubscriptions[cameraId]?.cancel();
+
       await _cameraEndedSubscriptions[cameraId]?.cancel();
       await _cameraVideoRecordingErrorSubscriptions[cameraId]?.cancel();
 
       cameras.remove(cameraId);
+      _cameraVideoErrorSubscriptions.remove(cameraId);
+      _cameraVideoAbortSubscriptions.remove(cameraId);
       _cameraEndedSubscriptions.remove(cameraId);
     } on web.DOMException catch (e) {
       throw PlatformException(code: e.name, message: e.message);
