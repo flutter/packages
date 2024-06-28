@@ -807,9 +807,9 @@ void main() {
             abortProvider;
 
         when(() => errorProvider.forElement(videoElement))
-            .thenReturn(FakeElementStream<Event>(errorStreamController.stream));
+            .thenAnswer((_) => FakeElementStream<Event>(errorStreamController.stream));
         when(() => abortProvider.forElement(videoElement))
-            .thenReturn(FakeElementStream<Event>(abortStreamController.stream));
+            .thenAnswer((_) => FakeElementStream<Event>(abortStreamController.stream));
 
         when(() => camera.onEnded)
             .thenAnswer((Invocation _) => endedStreamController.stream);
@@ -2240,9 +2240,9 @@ void main() {
             abortProvider;
 
         when(() => errorProvider.forElement(videoElement))
-            .thenReturn(FakeElementStream<Event>(errorStreamController.stream));
+            .thenAnswer((_) => FakeElementStream<Event>(errorStreamController.stream));
         when(() => abortProvider.forElement(videoElement))
-            .thenReturn(FakeElementStream<Event>(abortStreamController.stream));
+            .thenAnswer((_) => FakeElementStream<Event>(abortStreamController.stream));
 
         when(() => camera.onEnded)
             .thenAnswer((Invocation _) => endedStreamController.stream);
@@ -2433,9 +2433,9 @@ void main() {
             abortProvider;
 
         when(() => errorProvider.forElement(videoElement))
-            .thenReturn(FakeElementStream<Event>(errorStreamController.stream));
+            .thenAnswer((_) => FakeElementStream<Event>(errorStreamController.stream));
         when(() => abortProvider.forElement(videoElement))
-            .thenReturn(FakeElementStream<Event>(abortStreamController.stream));
+            .thenAnswer((_) => FakeElementStream<Event>(abortStreamController.stream));
 
         when(() => camera.onEnded)
             .thenAnswer((Invocation _) => endedStreamController.stream);

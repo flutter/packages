@@ -1764,7 +1764,8 @@ void main() {
               createJSInteropWrapper(mockMediaRecorder) as MediaRecorder;
           final StreamController<ErrorEvent> errorController =
               StreamController<ErrorEvent>();
-          final provider = MockEventStreamProvider<Event>();
+          final MockEventStreamProvider<Event> provider =
+              MockEventStreamProvider<Event>();
 
           final Camera camera = Camera(
             textureId: textureId,
