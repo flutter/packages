@@ -855,7 +855,11 @@ protocol PigeonDelegateIMAAdDisplayContainer {
     adContainerViewController: UIViewController?
   ) throws -> IMAAdDisplayContainer
 }
-final class PigeonApiIMAAdDisplayContainer {
+
+protocol PigeonApiProtocolIMAAdDisplayContainer {
+}
+
+final class PigeonApiIMAAdDisplayContainer: PigeonApiProtocolIMAAdDisplayContainer {
   unowned let pigeonRegistrar: PigeonProxyApiRegistrar
   let pigeonDelegate: PigeonDelegateIMAAdDisplayContainer
   init(pigeonRegistrar: PigeonProxyApiRegistrar, delegate: PigeonDelegateIMAAdDisplayContainer) {
@@ -930,7 +934,11 @@ final class PigeonApiIMAAdDisplayContainer {
 }
 open class PigeonDelegateUIView {
 }
-final class PigeonApiUIView {
+
+protocol PigeonApiProtocolUIView {
+}
+
+final class PigeonApiUIView: PigeonApiProtocolUIView {
   unowned let pigeonRegistrar: PigeonProxyApiRegistrar
   let pigeonDelegate: PigeonDelegateUIView
   init(pigeonRegistrar: PigeonProxyApiRegistrar, delegate: PigeonDelegateUIView) {
@@ -978,7 +986,11 @@ protocol PigeonDelegateUIViewController {
   /// this property as it should not be needed anyways.
   func view(pigeonApi: PigeonApiUIViewController, pigeonInstance: UIViewController) throws -> UIView
 }
-final class PigeonApiUIViewController {
+
+protocol PigeonApiProtocolUIViewController {
+}
+
+final class PigeonApiUIViewController: PigeonApiProtocolUIViewController {
   unowned let pigeonRegistrar: PigeonProxyApiRegistrar
   let pigeonDelegate: PigeonDelegateUIViewController
   init(pigeonRegistrar: PigeonProxyApiRegistrar, delegate: PigeonDelegateUIViewController) {
@@ -1073,7 +1085,11 @@ protocol PigeonDelegateIMAContentPlayhead {
     pigeonApi: PigeonApiIMAContentPlayhead, pigeonInstance: IMAContentPlayhead, timeInterval: Double
   ) throws
 }
-final class PigeonApiIMAContentPlayhead {
+
+protocol PigeonApiProtocolIMAContentPlayhead {
+}
+
+final class PigeonApiIMAContentPlayhead: PigeonApiProtocolIMAContentPlayhead {
   unowned let pigeonRegistrar: PigeonProxyApiRegistrar
   let pigeonDelegate: PigeonDelegateIMAContentPlayhead
   init(pigeonRegistrar: PigeonProxyApiRegistrar, delegate: PigeonDelegateIMAContentPlayhead) {
@@ -1175,7 +1191,11 @@ protocol PigeonDelegateIMAAdsLoader {
     pigeonApi: PigeonApiIMAAdsLoader, pigeonInstance: IMAAdsLoader, delegate: IMAAdsLoaderDelegate?)
     throws
 }
-final class PigeonApiIMAAdsLoader {
+
+protocol PigeonApiProtocolIMAAdsLoader {
+}
+
+final class PigeonApiIMAAdsLoader: PigeonApiProtocolIMAAdsLoader {
   unowned let pigeonRegistrar: PigeonProxyApiRegistrar
   let pigeonDelegate: PigeonDelegateIMAAdsLoader
   init(pigeonRegistrar: PigeonProxyApiRegistrar, delegate: PigeonDelegateIMAAdsLoader) {
@@ -1301,7 +1321,11 @@ final class PigeonApiIMAAdsLoader {
 }
 open class PigeonDelegateIMASettings {
 }
-final class PigeonApiIMASettings {
+
+protocol PigeonApiProtocolIMASettings {
+}
+
+final class PigeonApiIMASettings: PigeonApiProtocolIMASettings {
   unowned let pigeonRegistrar: PigeonProxyApiRegistrar
   let pigeonDelegate: PigeonDelegateIMASettings
   init(pigeonRegistrar: PigeonProxyApiRegistrar, delegate: PigeonDelegateIMASettings) {
@@ -1348,7 +1372,11 @@ protocol PigeonDelegateIMAAdsRequest {
     contentPlayhead: IMAContentPlayhead?
   ) throws -> IMAAdsRequest
 }
-final class PigeonApiIMAAdsRequest {
+
+protocol PigeonApiProtocolIMAAdsRequest {
+}
+
+final class PigeonApiIMAAdsRequest: PigeonApiProtocolIMAAdsRequest {
   unowned let pigeonRegistrar: PigeonProxyApiRegistrar
   let pigeonDelegate: PigeonDelegateIMAAdsRequest
   init(pigeonRegistrar: PigeonProxyApiRegistrar, delegate: PigeonDelegateIMAAdsRequest) {
@@ -1425,7 +1453,21 @@ protocol PigeonDelegateIMAAdsLoaderDelegate {
   func pigeonDefaultConstructor(pigeonApi: PigeonApiIMAAdsLoaderDelegate) throws
     -> IMAAdsLoaderDelegate
 }
-final class PigeonApiIMAAdsLoaderDelegate {
+
+protocol PigeonApiProtocolIMAAdsLoaderDelegate {
+  /// Called when ads are successfully loaded from the ad servers by the loader.
+  func adLoaderLoadedWith(
+    pigeonInstance pigeonInstanceArg: IMAAdsLoaderDelegate, loader loaderArg: IMAAdsLoader,
+    adsLoadedData adsLoadedDataArg: IMAAdsLoadedData,
+    completion: @escaping (Result<Void, PigeonError>) -> Void)
+  /// Error reported by the ads loader when loading or requesting an ad fails.
+  func adsLoaderFailedWithErrorData(
+    pigeonInstance pigeonInstanceArg: IMAAdsLoaderDelegate, loader loaderArg: IMAAdsLoader,
+    adErrorData adErrorDataArg: IMAAdLoadingErrorData,
+    completion: @escaping (Result<Void, PigeonError>) -> Void)
+}
+
+final class PigeonApiIMAAdsLoaderDelegate: PigeonApiProtocolIMAAdsLoaderDelegate {
   unowned let pigeonRegistrar: PigeonProxyApiRegistrar
   let pigeonDelegate: PigeonDelegateIMAAdsLoaderDelegate
   init(pigeonRegistrar: PigeonProxyApiRegistrar, delegate: PigeonDelegateIMAAdsLoaderDelegate) {
@@ -1538,7 +1580,11 @@ protocol PigeonDelegateIMAAdsLoadedData {
   func adsManager(pigeonApi: PigeonApiIMAAdsLoadedData, pigeonInstance: IMAAdsLoadedData) throws
     -> IMAAdsManager?
 }
-final class PigeonApiIMAAdsLoadedData {
+
+protocol PigeonApiProtocolIMAAdsLoadedData {
+}
+
+final class PigeonApiIMAAdsLoadedData: PigeonApiProtocolIMAAdsLoadedData {
   unowned let pigeonRegistrar: PigeonProxyApiRegistrar
   let pigeonDelegate: PigeonDelegateIMAAdsLoadedData
   init(pigeonRegistrar: PigeonProxyApiRegistrar, delegate: PigeonDelegateIMAAdsLoadedData) {
@@ -1584,7 +1630,11 @@ protocol PigeonDelegateIMAAdLoadingErrorData {
   func adError(pigeonApi: PigeonApiIMAAdLoadingErrorData, pigeonInstance: IMAAdLoadingErrorData)
     throws -> IMAAdError
 }
-final class PigeonApiIMAAdLoadingErrorData {
+
+protocol PigeonApiProtocolIMAAdLoadingErrorData {
+}
+
+final class PigeonApiIMAAdLoadingErrorData: PigeonApiProtocolIMAAdLoadingErrorData {
   unowned let pigeonRegistrar: PigeonProxyApiRegistrar
   let pigeonDelegate: PigeonDelegateIMAAdLoadingErrorData
   init(pigeonRegistrar: PigeonProxyApiRegistrar, delegate: PigeonDelegateIMAAdLoadingErrorData) {
@@ -1632,7 +1682,11 @@ protocol PigeonDelegateIMAAdError {
   /// A brief description about the error.
   func message(pigeonApi: PigeonApiIMAAdError, pigeonInstance: IMAAdError) throws -> String?
 }
-final class PigeonApiIMAAdError {
+
+protocol PigeonApiProtocolIMAAdError {
+}
+
+final class PigeonApiIMAAdError: PigeonApiProtocolIMAAdError {
   unowned let pigeonRegistrar: PigeonProxyApiRegistrar
   let pigeonDelegate: PigeonDelegateIMAAdError
   init(pigeonRegistrar: PigeonProxyApiRegistrar, delegate: PigeonDelegateIMAAdError) {
@@ -1688,7 +1742,11 @@ protocol PigeonDelegateIMAAdsManager {
   /// Causes the ads manager to stop the ad and clean its internal state.
   func destroy(pigeonApi: PigeonApiIMAAdsManager, pigeonInstance: IMAAdsManager) throws
 }
-final class PigeonApiIMAAdsManager {
+
+protocol PigeonApiProtocolIMAAdsManager {
+}
+
+final class PigeonApiIMAAdsManager: PigeonApiProtocolIMAAdsManager {
   unowned let pigeonRegistrar: PigeonProxyApiRegistrar
   let pigeonDelegate: PigeonDelegateIMAAdsManager
   init(pigeonRegistrar: PigeonProxyApiRegistrar, delegate: PigeonDelegateIMAAdsManager) {
@@ -1814,7 +1872,31 @@ protocol PigeonDelegateIMAAdsManagerDelegate {
   func pigeonDefaultConstructor(pigeonApi: PigeonApiIMAAdsManagerDelegate) throws
     -> IMAAdsManagerDelegate
 }
-final class PigeonApiIMAAdsManagerDelegate {
+
+protocol PigeonApiProtocolIMAAdsManagerDelegate {
+  /// Called when there is an IMAAdEvent.
+  func didReceiveAdEvent(
+    pigeonInstance pigeonInstanceArg: IMAAdsManagerDelegate,
+    adsManager adsManagerArg: IMAAdsManager, event eventArg: IMAAdEvent,
+    completion: @escaping (Result<Void, PigeonError>) -> Void)
+  /// Called when there was an error playing the ad.
+  func didReceiveAdError(
+    pigeonInstance pigeonInstanceArg: IMAAdsManagerDelegate,
+    adsManager adsManagerArg: IMAAdsManager, error errorArg: IMAAdError,
+    completion: @escaping (Result<Void, PigeonError>) -> Void)
+  /// Called when an ad is ready to play.
+  func didRequestContentPause(
+    pigeonInstance pigeonInstanceArg: IMAAdsManagerDelegate,
+    adsManager adsManagerArg: IMAAdsManager,
+    completion: @escaping (Result<Void, PigeonError>) -> Void)
+  /// Called when an ad has finished or an error occurred during the playback.
+  func didRequestContentResume(
+    pigeonInstance pigeonInstanceArg: IMAAdsManagerDelegate,
+    adsManager adsManagerArg: IMAAdsManager,
+    completion: @escaping (Result<Void, PigeonError>) -> Void)
+}
+
+final class PigeonApiIMAAdsManagerDelegate: PigeonApiProtocolIMAAdsManagerDelegate {
   unowned let pigeonRegistrar: PigeonProxyApiRegistrar
   let pigeonDelegate: PigeonDelegateIMAAdsManagerDelegate
   init(pigeonRegistrar: PigeonProxyApiRegistrar, delegate: PigeonDelegateIMAAdsManagerDelegate) {
@@ -1982,7 +2064,11 @@ protocol PigeonDelegateIMAAdEvent {
   /// Stringified type of the event.
   func typeString(pigeonApi: PigeonApiIMAAdEvent, pigeonInstance: IMAAdEvent) throws -> String
 }
-final class PigeonApiIMAAdEvent {
+
+protocol PigeonApiProtocolIMAAdEvent {
+}
+
+final class PigeonApiIMAAdEvent: PigeonApiProtocolIMAAdEvent {
   unowned let pigeonRegistrar: PigeonProxyApiRegistrar
   let pigeonDelegate: PigeonDelegateIMAAdEvent
   init(pigeonRegistrar: PigeonProxyApiRegistrar, delegate: PigeonDelegateIMAAdEvent) {
@@ -2028,7 +2114,11 @@ protocol PigeonDelegateIMAAdsRenderingSettings {
   func pigeonDefaultConstructor(pigeonApi: PigeonApiIMAAdsRenderingSettings) throws
     -> IMAAdsRenderingSettings
 }
-final class PigeonApiIMAAdsRenderingSettings {
+
+protocol PigeonApiProtocolIMAAdsRenderingSettings {
+}
+
+final class PigeonApiIMAAdsRenderingSettings: PigeonApiProtocolIMAAdsRenderingSettings {
   unowned let pigeonRegistrar: PigeonProxyApiRegistrar
   let pigeonDelegate: PigeonDelegateIMAAdsRenderingSettings
   init(pigeonRegistrar: PigeonProxyApiRegistrar, delegate: PigeonDelegateIMAAdsRenderingSettings) {

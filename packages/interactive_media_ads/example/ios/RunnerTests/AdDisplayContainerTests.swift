@@ -11,9 +11,10 @@ final class AdDisplayContainerTests: XCTestCase {
   func testPigeonDefaultConstructor() {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAdDisplayContainer(registrar)
-    
-    let instance = try? api.pigeonDelegate.pigeonDefaultConstructor(pigeonApi: api, adContainer: UIView(), adContainerViewController: UIViewController())
-    
+
+    let instance = try? api.pigeonDelegate.pigeonDefaultConstructor(
+      pigeonApi: api, adContainer: UIView(), adContainerViewController: UIViewController())
+
     XCTAssertNotNil(instance)
   }
 }
