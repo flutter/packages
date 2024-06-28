@@ -422,6 +422,12 @@ public class WebViewHostApiImpl implements WebViewHostApi {
     webView.setBackgroundColor(color.intValue());
   }
 
+  @Override
+  public void requestFocus(@NonNull Long instanceId) {
+    final WebView webView = Objects.requireNonNull(instanceManager.getInstance(instanceId));
+    webView.requestFocus();
+  }
+
   /** Maintains instances used to communicate with the corresponding WebView Dart object. */
   @NonNull
   public InstanceManager getInstanceManager() {

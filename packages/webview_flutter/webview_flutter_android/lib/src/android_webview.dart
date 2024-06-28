@@ -455,6 +455,11 @@ class WebView extends View {
     return api.setBackgroundColorFromInstance(this, color.value);
   }
 
+  /// Requests focus from the native platform
+  Future<void> requestFocus() {
+    return api.requestFocusFromInstance(this);
+  }
+
   @override
   WebView copy() {
     return WebView.detached(

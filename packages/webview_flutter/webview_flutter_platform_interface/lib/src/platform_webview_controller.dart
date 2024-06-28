@@ -324,6 +324,13 @@ abstract class PlatformWebViewController extends PlatformInterface {
       'setOnJavaScriptTextInputDialog is not implemented on the current platform',
     );
   }
+
+  /// Requests focus from the native implementation
+  Future<void> requestFocus() async {
+    throw UnimplementedError(
+      'requestFocus is not implemented on the current platform',
+    );
+  }
 }
 
 /// Describes the parameters necessary for registering a JavaScript channel.
