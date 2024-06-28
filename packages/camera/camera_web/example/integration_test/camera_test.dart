@@ -365,8 +365,8 @@ void main() {
           final XFile _ = await camera.takePicture();
 
           expect(capturedConstraints.length, 2);
-          expect(capturedConstraints[0].torch, true);
-          expect(capturedConstraints[1].torch, false);
+          expect(capturedConstraints[0].torch.dartify(), true);
+          expect(capturedConstraints[1].torch.dartify(), false);
         });
 
         testWidgets('if the flash mode is always', (WidgetTester tester) async {
@@ -395,8 +395,8 @@ void main() {
           final XFile _ = await camera.takePicture();
 
           expect(capturedConstraints.length, 2);
-          expect(capturedConstraints[0].torch, true);
-          expect(capturedConstraints[1].torch, false);
+          expect(capturedConstraints[0].torch.dartify(), true);
+          expect(capturedConstraints[1].torch.dartify(), false);
         });
       });
     });
@@ -537,7 +537,7 @@ void main() {
         camera.setFlashMode(FlashMode.torch);
 
         expect(capturedConstraints.length, 1);
-        expect(capturedConstraints[0].torch, true);
+        expect(capturedConstraints[0].torch.dartify(), true);
       });
 
       testWidgets(
@@ -576,7 +576,7 @@ void main() {
         camera.setFlashMode(FlashMode.auto);
 
         expect(capturedConstraints.length, 1);
-        expect(capturedConstraints[0].torch, false);
+        expect(capturedConstraints[0].torch.dartify(), false);
       });
 
       group('throws a CameraWebException', () {
@@ -807,7 +807,7 @@ void main() {
           camera.setZoomLevel(zoom);
 
           expect(capturedConstraints.length, 1);
-          expect(capturedConstraints[0].zoom, zoom);
+          expect(capturedConstraints[0].zoom.dartify(), zoom);
         });
 
         group('throws a CameraWebException', () {
