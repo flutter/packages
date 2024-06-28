@@ -60,8 +60,6 @@ class CameraPlugin extends CameraPlatform {
       StreamController<CameraEvent>.broadcast();
 
   /// The stream provider for [web.HTMLVideoElement] error events.
-  ///
-  /// This field exists for mocking in tests.
   @visibleForTesting
   web.EventStreamProvider<web.Event> videoElementOnErrorProvider =
       web.EventStreamProviders.errorElementEvent;
@@ -70,8 +68,6 @@ class CameraPlugin extends CameraPlatform {
       <int, StreamSubscription<web.Event>>{};
 
   /// The stream provider for [web.HTMLVideoElement] abort events.
-  ///
-  /// This field exists for mocking in tests.
   @visibleForTesting
   web.EventStreamProvider<web.Event> videoElementOnAbortProvider =
       web.EventStreamProviders.errorElementEvent;
@@ -91,6 +87,11 @@ class CameraPlugin extends CameraPlatform {
   Stream<CameraEvent> _cameraEvents(int cameraId) =>
       cameraEventStreamController.stream
           .where((CameraEvent event) => event.cameraId == cameraId);
+
+  /// The stream provider for [web.ScreenOrientation] change events.
+  @visibleForTesting
+  web.EventStreamProvider<web.Event> orientationOnChangeProvider =
+      web.EventStreamProviders.changeEvent;
 
   /// The current browser window used to access media devices.
   @visibleForTesting
@@ -386,7 +387,7 @@ class CameraPlugin extends CameraPlatform {
     // as soon as subscribed to this stream.
     final web.Event initialOrientationEvent = web.Event('change');
 
-    return web.EventStreamProviders.changeEvent
+    return orientationOnChangeProvider
         .forTarget(orientation)
         .startWith(initialOrientationEvent)
         .map(

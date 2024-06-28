@@ -100,8 +100,6 @@ class Camera {
       videoRecordingErrorController.stream;
 
   /// The stream provider for [MediaRecorder] error events.
-  ///
-  /// This field exists for mocking in tests.
   @visibleForTesting
   EventStreamProvider<Event> mediaRecorderOnErrorProvider =
       EventStreamProviders.errorMediaRecorderEvent;

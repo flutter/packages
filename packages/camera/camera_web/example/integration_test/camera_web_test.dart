@@ -2436,10 +2436,10 @@ void main() {
         (CameraPlatform.instance as CameraPlugin).videoElementOnAbortProvider =
             abortProvider;
 
-        when(() => errorProvider.forElement(videoElement)).thenAnswer(
+        when(() => errorProvider.forElement(any())).thenAnswer(
           (_) => FakeElementStream<Event>(errorStreamController.stream),
         );
-        when(() => abortProvider.forElement(videoElement)).thenAnswer(
+        when(() => abortProvider.forElement(any())).thenAnswer(
           (_) => FakeElementStream<Event>(abortStreamController.stream),
         );
 
@@ -3086,6 +3086,15 @@ void main() {
       });
 
       group('onDeviceOrientationChanged', () {
+        setUp(() {
+          final MockEventStreamProvider<Event> provider =
+              MockEventStreamProvider<Event>();
+          (CameraPlatform.instance as CameraPlugin)
+              .orientationOnChangeProvider = provider;
+          when(() => provider.forTarget(any()))
+              .thenAnswer((_) => StreamController<Event>().stream);
+        });
+
         testWidgets('emits the initial DeviceOrientationChangedEvent',
             (WidgetTester tester) async {
           when(
