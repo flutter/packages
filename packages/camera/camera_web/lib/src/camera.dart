@@ -13,6 +13,7 @@ import 'package:web/web.dart' as web;
 import 'package:web/web.dart';
 
 import 'camera_service.dart';
+import 'pkg_web_tweaks.dart';
 import 'types/types.dart';
 
 String _getViewType(int cameraId) => 'plugins.flutter.io/camera_$cameraId';
@@ -358,8 +359,11 @@ class Camera {
           defaultVideoTrack.getCapabilities().torch.toDart.first.toDart;
 
       if (canEnableTorchMode) {
-        defaultVideoTrack
-            .applyConstraints(web.MediaTrackConstraints(torch: enabled.toJS));
+        defaultVideoTrack.applyConstraints(
+          NonStandardFieldsOnMediaTrackConstraints.construct(
+            torch: enabled.toJS,
+          ),
+        );
       } else {
         throw CameraWebException(
           textureId,
@@ -407,8 +411,9 @@ class Camera {
       );
     }
 
-    zoomLevelCapability.videoTrack
-        .applyConstraints(web.MediaTrackConstraints(zoom: zoom.toJS));
+    zoomLevelCapability.videoTrack.applyConstraints(
+      NonStandardFieldsOnMediaTrackConstraints.construct(zoom: zoom.toJS),
+    );
   }
 
   /// Returns a lens direction of this camera.

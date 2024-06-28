@@ -11,10 +11,13 @@ import 'dart:ui';
 // ignore_for_file: implementation_imports
 import 'package:camera_web/src/camera.dart';
 import 'package:camera_web/src/camera_service.dart';
+import 'package:camera_web/src/pkg_web_tweaks.dart';
 import 'package:camera_web/src/shims/dart_js_util.dart';
 import 'package:camera_web/src/types/types.dart';
 import 'package:cross_file/cross_file.dart';
 import 'package:mocktail/mocktail.dart';
+// TODO: This is exported in `package:web` 0.6.0. Remove this when it is available.
+import 'package:web/src/helpers/events/streams.dart';
 import 'package:web/web.dart' as web;
 
 @JSExport()
@@ -44,9 +47,8 @@ class MockDocument {
 
 @JSExport()
 class MockElement {
-  JSPromise<JSAny?> Function([web.FullscreenOptions options])
-      requestFullscreen =
-      ([web.FullscreenOptions? options]) => Future<void>.value().toJS;
+  JSPromise<JSAny?> Function([FullscreenOptions options]) requestFullscreen =
+      ([FullscreenOptions? options]) => Future<void>.value().toJS;
 }
 
 @JSExport()
@@ -155,7 +157,7 @@ class FakeMediaError {
 
 /// A fake [ElementStream] that listens to the provided [_stream] on [listen].
 class FakeElementStream<T extends web.Event> extends Fake
-    implements web.ElementStream<T> {
+    implements ElementStream<T> {
   FakeElementStream(this._stream);
 
   final Stream<T> _stream;

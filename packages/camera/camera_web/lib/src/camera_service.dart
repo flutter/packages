@@ -10,6 +10,7 @@ import 'package:flutter/services.dart';
 import 'package:web/web.dart' as web;
 
 import 'camera.dart';
+import 'pkg_web_tweaks.dart';
 import 'shims/dart_js_util.dart';
 import 'types/types.dart';
 
@@ -134,7 +135,7 @@ class CameraService {
 
       /// The zoom level capability is represented by MediaSettingsRange.
       /// See: https://developer.mozilla.org/en-US/docs/Web/API/MediaSettingsRange
-      final web.MediaSettingsRange zoomLevelCapability =
+      final MediaSettingsRange zoomLevelCapability =
           defaultVideoTrack.getCapabilities().zoom;
 
       final num minimumZoomLevel = zoomLevelCapability.min;
