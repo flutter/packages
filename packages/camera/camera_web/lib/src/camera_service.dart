@@ -183,9 +183,9 @@ class CameraService {
     // MediaTrackSettings:
     // https://developer.mozilla.org/en-US/docs/Web/API/MediaTrackSettings
     final web.MediaTrackSettings videoTrackSettings = videoTrack.getSettings();
-    final String? facingMode = videoTrackSettings.facingModeNullable;
+    final String facingMode = videoTrackSettings.facingMode;
 
-    if (facingMode == null) {
+    if (facingMode.isEmpty) {
       // If the facing mode does not exist in the video track settings,
       // check for the facing mode in the video track capabilities.
       //
