@@ -93,60 +93,60 @@
 - (void)interpretMarkerOptions:(NSDictionary *)data
                      registrar:(NSObject<FlutterPluginRegistrar> *)registrar
                    screenScale:(CGFloat)screenScale {
-  NSNumber *alpha = data[@"alpha"];
-  if (alpha && alpha != (id)[NSNull null]) {
+  NSNumber *alpha = FGMGetValueOrNilFromDict(data, @"alpha");
+  if (alpha) {
     [self setAlpha:[alpha floatValue]];
   }
-  NSArray *anchor = data[@"anchor"];
-  if (anchor && anchor != (id)[NSNull null]) {
+  NSArray *anchor = FGMGetValueOrNilFromDict(data, @"anchor");
+  if (anchor) {
     [self setAnchor:[FLTGoogleMapJSONConversions pointFromArray:anchor]];
   }
-  NSNumber *draggable = data[@"draggable"];
-  if (draggable && draggable != (id)[NSNull null]) {
+  NSNumber *draggable = FGMGetValueOrNilFromDict(data, @"draggable");
+  if (draggable) {
     [self setDraggable:[draggable boolValue]];
   }
-  NSArray *icon = data[@"icon"];
-  if (icon && icon != (id)[NSNull null]) {
+  NSArray *icon = FGMGetValueOrNilFromDict(data, @"icon");
+  if (icon) {
     UIImage *image = [self extractIconFromData:icon registrar:registrar screenScale:screenScale];
     [self setIcon:image];
   }
-  NSNumber *flat = data[@"flat"];
-  if (flat && flat != (id)[NSNull null]) {
+  NSNumber *flat = FGMGetValueOrNilFromDict(data, @"flat");
+  if (flat) {
     [self setFlat:[flat boolValue]];
   }
-  NSNumber *consumeTapEvents = data[@"consumeTapEvents"];
-  if (consumeTapEvents && consumeTapEvents != (id)[NSNull null]) {
+  NSNumber *consumeTapEvents = FGMGetValueOrNilFromDict(data, @"consumeTapEvents");
+  if (consumeTapEvents) {
     [self setConsumeTapEvents:[consumeTapEvents boolValue]];
   }
   [self interpretInfoWindow:data];
-  NSArray *position = data[@"position"];
-  if (position && position != (id)[NSNull null]) {
+  NSArray *position = FGMGetValueOrNilFromDict(data, @"position");
+  if (position) {
     [self setPosition:[FLTGoogleMapJSONConversions locationFromLatLong:position]];
   }
-  NSNumber *rotation = data[@"rotation"];
-  if (rotation && rotation != (id)[NSNull null]) {
+  NSNumber *rotation = FGMGetValueOrNilFromDict(data, @"rotation");
+  if (rotation) {
     [self setRotation:[rotation doubleValue]];
   }
-  NSNumber *visible = data[@"visible"];
-  if (visible && visible != (id)[NSNull null]) {
+  NSNumber *visible = FGMGetValueOrNilFromDict(data, @"visible");
+  if (visible) {
     [self setVisible:[visible boolValue]];
   }
-  NSNumber *zIndex = data[@"zIndex"];
-  if (zIndex && zIndex != (id)[NSNull null]) {
+  NSNumber *zIndex = FGMGetValueOrNilFromDict(data, @"zIndex");
+  if (zIndex) {
     [self setZIndex:[zIndex intValue]];
   }
 }
 
 - (void)interpretInfoWindow:(NSDictionary *)data {
-  NSDictionary *infoWindow = data[@"infoWindow"];
-  if (infoWindow && infoWindow != (id)[NSNull null]) {
-    NSString *title = infoWindow[@"title"];
-    NSString *snippet = infoWindow[@"snippet"];
-    if (title && title != (id)[NSNull null]) {
+  NSDictionary *infoWindow = FGMGetValueOrNilFromDict(data, @"infoWindow");
+  if (infoWindow) {
+    NSString *title = FGMGetValueOrNilFromDict(infoWindow, @"title");
+    NSString *snippet = FGMGetValueOrNilFromDict(infoWindow, @"snippet");
+    if (title) {
       [self setInfoWindowTitle:title snippet:snippet];
     }
     NSArray *infoWindowAnchor = infoWindow[@"infoWindowAnchor"];
-    if (infoWindowAnchor && infoWindowAnchor != (id)[NSNull null]) {
+    if (infoWindowAnchor) {
       [self setInfoWindowAnchor:[FLTGoogleMapJSONConversions pointFromArray:infoWindowAnchor]];
     }
   }
@@ -221,15 +221,16 @@
       @throw exception;
     }
 
-    NSString *assetName = assetData[@"assetName"];
-    NSString *scalingMode = assetData[@"bitmapScaling"];
+    NSString *assetName = FGMGetValueOrNilFromDict(assetData, @"assetName");
+    NSString *scalingMode = FGMGetValueOrNilFromDict(assetData, @"bitmapScaling");
 
     image = [UIImage imageNamed:[registrar lookupKeyForAsset:assetName]];
 
     if ([scalingMode isEqualToString:@"auto"]) {
-      NSNumber *width = assetData[@"width"];
-      NSNumber *height = assetData[@"height"];
-      CGFloat imagePixelRatio = [assetData[@"imagePixelRatio"] doubleValue];
+      NSNumber *width = FGMGetValueOrNilFromDict(assetData, @"width");
+      NSNumber *height = FGMGetValueOrNilFromDict(assetData, @"height");
+      CGFloat imagePixelRatio =
+          [FGMGetValueOrNilFromDict(assetData, @"imagePixelRatio") doubleValue];
 
       if (width || height) {
         image = [FLTGoogleMapMarkerController scaledImage:image withScale:screenScale];
@@ -252,15 +253,16 @@
       @throw exception;
     }
 
-    FlutterStandardTypedData *bytes = byteData[@"byteData"];
-    NSString *scalingMode = byteData[@"bitmapScaling"];
+    FlutterStandardTypedData *bytes = FGMGetValueOrNilFromDict(byteData, @"byteData");
+    NSString *scalingMode = FGMGetValueOrNilFromDict(byteData, @"bitmapScaling");
 
     @try {
       image = [UIImage imageWithData:[bytes data] scale:screenScale];
       if ([scalingMode isEqualToString:@"auto"]) {
-        NSNumber *width = byteData[@"width"];
-        NSNumber *height = byteData[@"height"];
-        CGFloat imagePixelRatio = [byteData[@"imagePixelRatio"] doubleValue];
+        NSNumber *width = FGMGetValueOrNilFromDict(byteData, @"width");
+        NSNumber *height = FGMGetValueOrNilFromDict(byteData, @"height");
+        CGFloat imagePixelRatio =
+            [FGMGetValueOrNilFromDict(byteData, @"imagePixelRatio") doubleValue];
 
         if (width || height) {
           // Before scaling the image, image must be in screenScale
