@@ -121,7 +121,7 @@ class CameraService {
         mediaDevices.getSupportedConstraints();
     final bool zoomLevelSupported = supportedConstraints.zoomNullable ?? false;
 
-    if (zoomLevelSupported) {
+    if (!zoomLevelSupported) {
       throw CameraWebException(
         camera.textureId,
         CameraErrorCode.zoomLevelNotSupported,
