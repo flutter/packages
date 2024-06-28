@@ -2,6 +2,11 @@
 
 * [kotlin] Adds implementation for `@ProxyApi`.
 
+## 20.0.2
+
+* [java] Adds `equals` and `hashCode` support for data classes.
+* [swift] Fully-qualifies types in Equatable extension test.
+
 ## 20.0.1
 
 * [cpp] Fixes handling of null class arguments.

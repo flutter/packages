@@ -1,3 +1,7 @@
+## 2.8.0
+
+* Adds compatibility with SDK version 9.x for apps targetting iOS 15+.
+
 ## 2.7.0
 
 * Adds support for BitmapDescriptor classes `AssetMapBitmap` and `BytesMapBitmap`.
