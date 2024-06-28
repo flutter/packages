@@ -163,9 +163,11 @@ class CameraService {
     // Check if the camera facing mode is supported by the current browser.
     final web.MediaTrackSupportedConstraints supportedConstraints =
         mediaDevices.getSupportedConstraints();
+    final bool facingModeSupported =
+        supportedConstraints.facingModeNullable ?? false;
 
     // Return null if the facing mode is not supported.
-    if (!supportedConstraints.facingMode) {
+    if (!facingModeSupported) {
       return null;
     }
 
