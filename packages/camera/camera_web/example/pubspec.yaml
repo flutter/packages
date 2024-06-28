@@ -2,7 +2,7 @@ name: camera_web_integration_tests
 publish_to: none
 
 environment:
-  sdk: ^3.2.0
+  sdk: ^3.3.0
   flutter: ">=3.16.0"
 
 dependencies:
@@ -16,6 +16,7 @@ dependencies:
     path: ../
   flutter:
     sdk: flutter
+  web: ^0.5.1
 
 dev_dependencies:
   async: ^2.5.0
@@ -25,4 +26,3 @@ dev_dependencies:
   integration_test:
     sdk: flutter
   mocktail: 0.3.0
-

@@ -1,3 +1,7 @@
+## 0.3.5
+
+* Migrates to package:web to support WASM
+
 ## 0.3.4
 
 * Removes `maxVideoDuration`/`maxDuration`, as the feature was never exposed at
