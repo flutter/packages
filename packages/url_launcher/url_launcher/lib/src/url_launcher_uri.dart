@@ -75,6 +75,7 @@ Future<bool> launchUrl(
 ///   that are always assumed to be supported (such as http(s)), as web pages
 ///   are never allowed to query installed applications.
 Future<bool> canLaunchUrl(Uri url) async {
+  assert(!url.hasScheme, "Uri must have schema");
   return UrlLauncherPlatform.instance.canLaunch(url.toString());
 }
 
