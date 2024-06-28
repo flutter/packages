@@ -433,7 +433,6 @@ class Camera {
     final web.MediaTrackSettings defaultVideoTrackSettings =
         defaultVideoTrack.getSettings();
     try {
-      // I think facingMode is lying about being non-nullable
       return _cameraService
           .mapFacingModeToLensDirection(defaultVideoTrackSettings.facingMode);
     } catch (e) {

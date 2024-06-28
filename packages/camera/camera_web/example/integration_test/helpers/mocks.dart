@@ -16,7 +16,7 @@ import 'package:camera_web/src/shims/dart_js_util.dart';
 import 'package:camera_web/src/types/types.dart';
 import 'package:cross_file/cross_file.dart';
 import 'package:mocktail/mocktail.dart';
-// TODO: This is exported in `package:web` 0.6.0. Remove this when it is available.
+// TODO(srujzs): This is exported in `package:web` 0.6.0. Remove this when it is available.
 import 'package:web/src/helpers/events/streams.dart';
 import 'package:web/web.dart' as web;
 
