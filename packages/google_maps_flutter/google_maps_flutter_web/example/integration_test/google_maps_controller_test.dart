@@ -22,6 +22,7 @@ const String _kCloudMapId = '000000000000000'; // Dummy map ID.
 
 @GenerateNiceMocks(<MockSpec<dynamic>>[
   MockSpec<CirclesController>(),
+  MockSpec<HeatmapsController>(),
   MockSpec<PolygonsController>(),
   MockSpec<PolylinesController>(),
   MockSpec<MarkersController>(),
@@ -149,6 +150,20 @@ void main() {
           }, throwsAssertionError);
         });
 
+        testWidgets('cannot updateHeatmaps after dispose',
+            (WidgetTester tester) async {
+          controller.dispose();
+
+          expect(() {
+            controller.updateHeatmaps(
+              HeatmapUpdates.from(
+                const <Heatmap>{},
+                const <Heatmap>{},
+              ),
+            );
+          }, throwsAssertionError);
+        });
+
         testWidgets('cannot updatePolygons after dispose',
             (WidgetTester tester) async {
           controller.dispose();
@@ -217,6 +232,7 @@ void main() {
 
     group('init', () {
       late MockCirclesController circles;
+      late MockHeatmapsController heatmaps;
       late MockMarkersController markers;
       late MockPolygonsController polygons;
       late MockPolylinesController polylines;
@@ -225,6 +241,7 @@ void main() {
 
       setUp(() {
         circles = MockCirclesController();
+        heatmaps = MockHeatmapsController();
         markers = MockMarkersController();
         polygons = MockPolygonsController();
         polylines = MockPolylinesController();
@@ -237,6 +254,7 @@ void main() {
           ..debugSetOverrides(
             createMap: (_, __) => map,
             circles: circles,
+            heatmaps: heatmaps,
             markers: markers,
             polygons: polygons,
             polylines: polylines,
@@ -275,6 +293,7 @@ void main() {
           ..debugSetOverrides(
             createMap: (_, __) => map,
             circles: circles,
+            heatmaps: heatmaps,
             markers: markers,
             polygons: polygons,
             polylines: polylines,
@@ -283,6 +302,7 @@ void main() {
           ..init();
 
         verify(circles.bindToMap(mapId, map));
+        verify(heatmaps.bindToMap(mapId, map));
         verify(markers.bindToMap(mapId, map));
         verify(polygons.bindToMap(mapId, map));
         verify(polylines.bindToMap(mapId, map));
@@ -294,6 +314,17 @@ void main() {
           const Circle(
             circleId: CircleId('circle-1'),
             zIndex: 1234,
+          ),
+        }, heatmaps: <Heatmap>{
+          const Heatmap(
+            heatmapId: HeatmapId('heatmap-1'),
+            data: <WeightedLatLng>[
+              WeightedLatLng(LatLng(43.355114, -5.851333)),
+              WeightedLatLng(LatLng(43.354797, -5.851860)),
+              WeightedLatLng(LatLng(43.354469, -5.851318)),
+              WeightedLatLng(LatLng(43.354762, -5.850824)),
+            ],
+            radius: HeatmapRadius.fromPixels(20),
           ),
         }, markers: <Marker>{
           const Marker(
@@ -340,6 +371,7 @@ void main() {
         controller = createController(mapObjects: mapObjects)
           ..debugSetOverrides(
             circles: circles,
+            heatmaps: heatmaps,
             markers: markers,
             polygons: polygons,
             polylines: polylines,
@@ -348,6 +380,7 @@ void main() {
           ..init();
 
         verify(circles.addCircles(mapObjects.circles));
+        verify(heatmaps.addHeatmaps(mapObjects.heatmaps));
         verify(markers.addMarkers(mapObjects.markers));
         verify(polygons.addPolygons(mapObjects.polygons));
         verify(polylines.addPolylines(mapObjects.polylines));
@@ -655,6 +688,76 @@ void main() {
         }));
         verify(mock.changeCircles(<Circle>{
           const Circle(circleId: CircleId('to-be-updated'), visible: false),
+        }));
+      });
+
+      testWidgets('updateHeatmaps', (WidgetTester tester) async {
+        final MockHeatmapsController mock = MockHeatmapsController();
+        controller.debugSetOverrides(heatmaps: mock);
+
+        const List<WeightedLatLng> heatmapPoints = <WeightedLatLng>[
+          WeightedLatLng(LatLng(37.782, -122.447)),
+          WeightedLatLng(LatLng(37.782, -122.445)),
+          WeightedLatLng(LatLng(37.782, -122.443)),
+          WeightedLatLng(LatLng(37.782, -122.441)),
+          WeightedLatLng(LatLng(37.782, -122.439)),
+          WeightedLatLng(LatLng(37.782, -122.437)),
+          WeightedLatLng(LatLng(37.782, -122.435)),
+          WeightedLatLng(LatLng(37.785, -122.447)),
+          WeightedLatLng(LatLng(37.785, -122.445)),
+          WeightedLatLng(LatLng(37.785, -122.443)),
+          WeightedLatLng(LatLng(37.785, -122.441)),
+          WeightedLatLng(LatLng(37.785, -122.439)),
+          WeightedLatLng(LatLng(37.785, -122.437)),
+          WeightedLatLng(LatLng(37.785, -122.435))
+        ];
+
+        final Set<Heatmap> previous = <Heatmap>{
+          const Heatmap(
+            heatmapId: HeatmapId('to-be-updated'),
+            data: heatmapPoints,
+            radius: HeatmapRadius.fromPixels(20),
+          ),
+          const Heatmap(
+            heatmapId: HeatmapId('to-be-removed'),
+            data: heatmapPoints,
+            radius: HeatmapRadius.fromPixels(20),
+          ),
+        };
+
+        final Set<Heatmap> current = <Heatmap>{
+          const Heatmap(
+            heatmapId: HeatmapId('to-be-updated'),
+            data: heatmapPoints,
+            dissipating: false,
+            radius: HeatmapRadius.fromPixels(20),
+          ),
+          const Heatmap(
+            heatmapId: HeatmapId('to-be-added'),
+            data: heatmapPoints,
+            radius: HeatmapRadius.fromPixels(20),
+          ),
+        };
+
+        controller.updateHeatmaps(HeatmapUpdates.from(previous, current));
+
+        verify(mock.removeHeatmaps(<HeatmapId>{
+          const HeatmapId('to-be-removed'),
+        }));
+        verify(mock.addHeatmaps(<Heatmap>{
+          const Heatmap(
+            heatmapId: HeatmapId('to-be-added'),
+            data: heatmapPoints,
+            radius: HeatmapRadius.fromPixels(20),
+          ),
+        }));
+        verify(mock.changeHeatmaps(<Heatmap>{
+          const Heatmap(
+            heatmapId: HeatmapId('to-be-updated'),
+            data: heatmapPoints,
+            dissipating: false,
+            radius: HeatmapRadius.fromPixels(20),
+          ),
         }));
       });
 

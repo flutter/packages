@@ -4,6 +4,8 @@
 
 package io.flutter.plugins.googlemaps;
 
+import static io.flutter.plugins.googlemaps.Convert.HEATMAPS_TO_ADD_KEY;
+
 import android.content.Context;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -57,6 +59,9 @@ public class GoogleMapFactory extends PlatformViewFactory {
     }
     if (params.containsKey("circlesToAdd")) {
       builder.setInitialCircles(params.get("circlesToAdd"));
+    }
+    if (params.containsKey(HEATMAPS_TO_ADD_KEY)) {
+      builder.setInitialHeatmaps(params.get(HEATMAPS_TO_ADD_KEY));
     }
     if (params.containsKey("tileOverlaysToAdd")) {
       builder.setInitialTileOverlays((List<Map<String, ?>>) params.get("tileOverlaysToAdd"));

@@ -4,6 +4,9 @@
 
 package io.flutter.plugins.googlemaps;
 
+import static io.flutter.plugins.googlemaps.Convert.HEATMAPS_TO_ADD_KEY;
+import static io.flutter.plugins.googlemaps.Convert.HEATMAPS_TO_CHANGE_KEY;
+import static io.flutter.plugins.googlemaps.Convert.HEATMAP_IDS_TO_REMOVE_KEY;
 import static io.flutter.plugins.googlemaps.Convert.clusterToPigeon;
 
 import android.Manifest;
@@ -98,6 +101,7 @@ class GoogleMapController
   private final PolygonsController polygonsController;
   private final PolylinesController polylinesController;
   private final CirclesController circlesController;
+  private final HeatmapsController heatmapsController;
   private final TileOverlaysController tileOverlaysController;
   private MarkerManager markerManager;
   private MarkerManager.Collection markerCollection;
@@ -106,6 +110,7 @@ class GoogleMapController
   private List<Object> initialPolygons;
   private List<Object> initialPolylines;
   private List<Object> initialCircles;
+  private List<Object> initialHeatmaps;
   private List<Map<String, ?>> initialTileOverlays;
   // Null except between initialization and onMapReady.
   private @Nullable String initialMapStyle;
@@ -137,6 +142,7 @@ class GoogleMapController
     this.polygonsController = new PolygonsController(methodChannel, density);
     this.polylinesController = new PolylinesController(methodChannel, assetManager, density);
     this.circlesController = new CirclesController(methodChannel, density);
+    this.heatmapsController = new HeatmapsController();
     this.tileOverlaysController = new TileOverlaysController(methodChannel);
   }
 
@@ -154,6 +160,7 @@ class GoogleMapController
       PolygonsController polygonsController,
       PolylinesController polylinesController,
       CirclesController circlesController,
+      HeatmapsController heatmapController,
       TileOverlaysController tileOverlaysController) {
     this.id = id;
     this.context = context;
@@ -168,6 +175,7 @@ class GoogleMapController
     this.polygonsController = polygonsController;
     this.polylinesController = polylinesController;
     this.circlesController = circlesController;
+    this.heatmapsController = heatmapController;
     this.tileOverlaysController = tileOverlaysController;
   }
 
@@ -218,6 +226,7 @@ class GoogleMapController
     polygonsController.setGoogleMap(googleMap);
     polylinesController.setGoogleMap(googleMap);
     circlesController.setGoogleMap(googleMap);
+    heatmapsController.setGoogleMap(googleMap);
     tileOverlaysController.setGoogleMap(googleMap);
     setMarkerCollectionListener(this);
     setClusterItemClickListener(this);
@@ -227,6 +236,7 @@ class GoogleMapController
     updateInitialPolygons();
     updateInitialPolylines();
     updateInitialCircles();
+    updateInitialHeatmaps();
     updateInitialTileOverlays();
     if (initialPadding != null && initialPadding.size() == 4) {
       setPadding(
@@ -387,6 +397,17 @@ class GoogleMapController
           circlesController.changeCircles(circlesToChange);
           List<Object> circleIdsToRemove = call.argument("circleIdsToRemove");
           circlesController.removeCircles(circleIdsToRemove);
+          result.success(null);
+          break;
+        }
+      case "heatmaps#update":
+        {
+          List<Object> heatmapsToAdd = call.argument(HEATMAPS_TO_ADD_KEY);
+          heatmapsController.addHeatmaps(heatmapsToAdd);
+          List<Object> heatmapsToChange = call.argument(HEATMAPS_TO_CHANGE_KEY);
+          heatmapsController.changeHeatmaps(heatmapsToChange);
+          List<String> heatmapIdsToRemove = call.argument(HEATMAP_IDS_TO_REMOVE_KEY);
+          heatmapsController.removeHeatmaps(heatmapIdsToRemove);
           result.success(null);
           break;
         }
@@ -806,8 +827,21 @@ class GoogleMapController
     }
   }
 
+  @Override
+  public void setInitialHeatmaps(Object initialHeatmaps) {
+    ArrayList<?> heatmaps = (ArrayList<?>) initialHeatmaps;
+    this.initialHeatmaps = heatmaps != null ? new ArrayList<>(heatmaps) : null;
+    if (googleMap != null) {
+      updateInitialHeatmaps();
+    }
+  }
+
   private void updateInitialCircles() {
     circlesController.addCircles(initialCircles);
+  }
+
+  private void updateInitialHeatmaps() {
+    heatmapsController.addHeatmaps(initialHeatmaps);
   }
 
   @Override

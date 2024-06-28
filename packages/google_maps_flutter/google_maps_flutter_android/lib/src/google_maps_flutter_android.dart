@@ -14,6 +14,7 @@ import 'package:stream_transform/stream_transform.dart';
 
 import 'google_map_inspector_android.dart';
 import 'messages.g.dart';
+import 'serialization.dart';
 import 'utils/cluster_manager_utils.dart';
 
 // TODO(stuartmorgan): Remove the dependency on platform interface toJson
@@ -399,6 +400,17 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
   }
 
   @override
+  Future<void> updateHeatmaps(
+    HeatmapUpdates heatmapUpdates, {
+    required int mapId,
+  }) {
+    return _channel(mapId).invokeMethod<void>(
+      'heatmaps#update',
+      serializeMapsObjectUpdates(heatmapUpdates, serializeHeatmap),
+    );
+  }
+
+  @override
   Future<void> updateTileOverlays({
     required Set<TileOverlay> newTileOverlays,
     required int mapId,
@@ -607,6 +619,7 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
       'polygonsToAdd': serializePolygonSet(mapObjects.polygons),
       'polylinesToAdd': serializePolylineSet(mapObjects.polylines),
       'circlesToAdd': serializeCircleSet(mapObjects.circles),
+      'heatmapsToAdd': mapObjects.heatmaps.map(serializeHeatmap).toList(),
       'tileOverlaysToAdd': serializeTileOverlaySet(mapObjects.tileOverlays),
       'clusterManagersToAdd':
           serializeClusterManagerSet(mapObjects.clusterManagers),
@@ -686,6 +699,7 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
     Set<Polygon> polygons = const <Polygon>{},
     Set<Polyline> polylines = const <Polyline>{},
     Set<Circle> circles = const <Circle>{},
+    Set<Heatmap> heatmaps = const <Heatmap>{},
     Set<TileOverlay> tileOverlays = const <TileOverlay>{},
     Set<ClusterManager> clusterManagers = const <ClusterManager>{},
     Set<Factory<OneSequenceGestureRecognizer>>? gestureRecognizers,
@@ -703,6 +717,7 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
           polylines: polylines,
           circles: circles,
           clusterManagers: clusterManagers,
+          heatmaps: heatmaps,
           tileOverlays: tileOverlays),
       mapOptions: mapOptions,
     );
@@ -717,6 +732,7 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
     Set<Polygon> polygons = const <Polygon>{},
     Set<Polyline> polylines = const <Polyline>{},
     Set<Circle> circles = const <Circle>{},
+    Set<Heatmap> heatmaps = const <Heatmap>{},
     Set<TileOverlay> tileOverlays = const <TileOverlay>{},
     Set<ClusterManager> clusterManagers = const <ClusterManager>{},
     Set<Factory<OneSequenceGestureRecognizer>>? gestureRecognizers,
@@ -731,6 +747,7 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
       polygons: polygons,
       polylines: polylines,
       circles: circles,
+      heatmaps: heatmaps,
       tileOverlays: tileOverlays,
       clusterManagers: clusterManagers,
       gestureRecognizers: gestureRecognizers,

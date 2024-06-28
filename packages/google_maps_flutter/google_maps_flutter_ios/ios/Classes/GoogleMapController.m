@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 #import "GoogleMapController.h"
+#import "FLTGoogleMapHeatmapController.h"
 #import "FLTGoogleMapJSONConversions.h"
 #import "FLTGoogleMapTileOverlayController.h"
 
@@ -66,6 +67,9 @@
 @property(nonatomic, strong) FLTPolygonsController *polygonsController;
 @property(nonatomic, strong) FLTPolylinesController *polylinesController;
 @property(nonatomic, strong) FLTCirclesController *circlesController;
+
+// The controller that handles heatmaps
+@property(nonatomic, strong) FLTHeatmapsController *heatmapsController;
 @property(nonatomic, strong) FLTTileOverlaysController *tileOverlaysController;
 // The resulting error message, if any, from the last attempt to set the map style.
 // This is used to provide access to errors after the fact, since the map style is generally set at
@@ -133,6 +137,7 @@
     _circlesController = [[FLTCirclesController alloc] init:_channel
                                                     mapView:_mapView
                                                   registrar:registrar];
+    _heatmapsController = [[FLTHeatmapsController alloc] initWithMapView:_mapView];
     _tileOverlaysController = [[FLTTileOverlaysController alloc] init:_channel
                                                               mapView:_mapView
                                                             registrar:registrar];
@@ -151,6 +156,10 @@
     id circlesToAdd = args[@"circlesToAdd"];
     if ([circlesToAdd isKindOfClass:[NSArray class]]) {
       [_circlesController addCircles:circlesToAdd];
+    }
+    id heatmapsToAdd = args[kHeatmapsToAddKey];
+    if ([heatmapsToAdd isKindOfClass:[NSArray class]]) {
+      [_heatmapsController addHeatmaps:heatmapsToAdd];
     }
     id tileOverlaysToAdd = args[@"tileOverlaysToAdd"];
     if ([tileOverlaysToAdd isKindOfClass:[NSArray class]]) {
@@ -338,6 +347,20 @@
       [self.circlesController removeCircleWithIdentifiers:circleIdsToRemove];
     }
     result(nil);
+  } else if ([call.method isEqualToString:@"heatmaps#update"]) {
+    id heatmapsToAdd = call.arguments[kHeatmapsToAddKey];
+    if ([heatmapsToAdd isKindOfClass:[NSArray class]]) {
+      [_heatmapsController addHeatmaps:heatmapsToAdd];
+    }
+    id heatmapsToChange = call.arguments[kHeatmapsToChangeKey];
+    if ([heatmapsToChange isKindOfClass:[NSArray class]]) {
+      [_heatmapsController changeHeatmaps:heatmapsToChange];
+    }
+    id heatmapIdsToRemove = call.arguments[kHeatmapIdsToRemoveKey];
+    if ([heatmapIdsToRemove isKindOfClass:[NSArray class]]) {
+      [_heatmapsController removeHeatmapsWithIdentifiers:heatmapIdsToRemove];
+    }
+    result(nil);
   } else if ([call.method isEqualToString:@"tileOverlays#update"]) {
     id tileOverlaysToAdd = call.arguments[@"tileOverlaysToAdd"];
     if ([tileOverlaysToAdd isKindOfClass:[NSArray class]]) {
@@ -404,6 +427,9 @@
   } else if ([call.method isEqualToString:@"map#getTileOverlayInfo"]) {
     NSString *rawTileOverlayId = call.arguments[@"tileOverlayId"];
     result([self.tileOverlaysController tileOverlayInfoWithIdentifier:rawTileOverlayId]);
+  } else if ([call.method isEqualToString:@"map#getHeatmapInfo"]) {
+    NSString *rawHeatmapId = call.arguments[kHeatmapIdKey];
+    result([self.heatmapsController heatmapInfoWithIdentifier:rawHeatmapId]);
   } else {
     result(FlutterMethodNotImplemented);
   }

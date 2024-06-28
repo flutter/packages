@@ -27,6 +27,11 @@ export 'package:google_maps_flutter_platform_interface/google_maps_flutter_platf
         Cap,
         Circle,
         CircleId,
+        Heatmap,
+        HeatmapGradient,
+        HeatmapGradientColor,
+        HeatmapId,
+        HeatmapRadius,
         InfoWindow,
         JointType,
         LatLng,
@@ -47,7 +52,8 @@ export 'package:google_maps_flutter_platform_interface/google_maps_flutter_platf
         TileOverlay,
         TileOverlayId,
         TileProvider,
-        WebGestureHandling;
+        WebGestureHandling,
+        WeightedLatLng;
 
 part 'src/controller.dart';
 part 'src/google_map.dart';

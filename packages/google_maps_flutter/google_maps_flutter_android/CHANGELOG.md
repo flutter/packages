@@ -1,3 +1,7 @@
+## 2.11.0
+
+* Adds support for heatmap layers.
+
 ## 2.10.0
 
 * Converts some platform calls to Pigeon.
