@@ -6,9 +6,9 @@ import Foundation
 import GoogleInteractiveMediaAds
 
 class AdsLoaderDelegateImpl: IMAAdsLoaderDelegate {
-  let api: PigeonApiIMAAdsLoaderDelegate
+  let api: PigeonApiProtocolIMAAdsLoaderDelegate
 
-  init(api: PigeonApiIMAAdsLoaderDelegate) {
+  init(api: PigeonApiProtocolIMAAdsLoaderDelegate) {
     self.api = api
   }
 

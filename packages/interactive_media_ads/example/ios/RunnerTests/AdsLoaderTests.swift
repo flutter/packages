@@ -59,7 +59,7 @@ final class AdsLoaderTests: XCTestCase {
 //  }
 }
 
-//class TestAdsManager: IMAAdsManager {
+//class TestAdsLoader: IMAAdsLoader {
 //  var renderingSettings: IMAAdsRenderingSettings? = nil
 //  var startCalled = false
 //  var destroyCalled = false

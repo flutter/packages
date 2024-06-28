@@ -9,77 +9,47 @@ import XCTest
 @testable import interactive_media_ads
 
 final class AdsLoaderDelegateTests: XCTestCase {
-//  func testSetDelegate() {
-//    let registrar = TestProxyApiRegistrar()
-//    let api = registrar.apiDelegate.pigeonApiIMAAdsManager(registrar)
-//
-//    let instance = TestAdsManager.customInit()
-//
-//    let delegate = AdsManagerDelegateImpl(
-//      api: registrar.apiDelegate.pigeonApiIMAAdsManagerDelegate(registrar))
-//    try? api.pigeonDelegate.setDelegate(
-//      pigeonApi: api, pigeonInstance: instance, delegate: delegate)
-//
-//    XCTAssertIdentical(instance.delegate, delegate)
-//  }
-//
-//  func testInitialize() {
-//    let registrar = TestProxyApiRegistrar()
-//    let api = registrar.apiDelegate.pigeonApiIMAAdsManager(registrar)
-//
-//    let instance = TestAdsManager.customInit()
-//
-//    let renderingSettings = IMAAdsRenderingSettings()
-//    try? api.pigeonDelegate.initialize(
-//      pigeonApi: api, pigeonInstance: instance, adsRenderingSettings: renderingSettings)
-//
-//    XCTAssertEqual(instance.renderingSettings, renderingSettings)
-//  }
-//
-//  func testStart() {
-//    let registrar = TestProxyApiRegistrar()
-//    let api = registrar.apiDelegate.pigeonApiIMAAdsManager(registrar)
-//
-//    let instance = TestAdsManager.customInit()
-//
-//    try? api.pigeonDelegate.start(pigeonApi: api, pigeonInstance: instance)
-//
-//    XCTAssertTrue(instance.startCalled)
-//  }
-//
-//  func testDestroy() {
-//    let registrar = TestProxyApiRegistrar()
-//    let api = registrar.apiDelegate.pigeonApiIMAAdsManager(registrar)
-//
-//    let instance = TestAdsManager.customInit()
-//
-//    try? api.pigeonDelegate.destroy(pigeonApi: api, pigeonInstance: instance)
-//
-//    XCTAssertTrue(instance.destroyCalled)
-//  }
+  func testPigeonDefaultConstructor() {
+    let registrar = TestProxyApiRegistrar()
+    let api = registrar.apiDelegate.pigeonApiIMAAdsLoaderDelegate(registrar)
+
+    let instance = try? api.pigeonDelegate.pigeonDefaultConstructor(pigeonApi: api)
+
+    XCTAssertTrue(instance is AdsLoaderDelegateImpl)
+  }
+  
+  func testAdLoaderLoadedWith() {
+    let api = TestAdsLoaderDelegateApi()
+    let instance = AdsLoaderDelegateImpl(api: api)
+    
+    let adsLoader = IMAAdsLoader(settings: nil)
+    let data = TestAdsLoadedData()
+    instance.adsLoader(adsLoader, adsLoadedWith: data)
+    
+    XCTAssertEqual(api.adLoaderLoadedWithArgs, [adsLoader, data])
+  }
+  
+  func testAdsLoaderFailedWithErrorDataArgs() {
+    let api = TestAdsLoaderDelegateApi()
+    let instance = AdsLoaderDelegateImpl(api: api)
+    
+    let adsLoader = IMAAdsLoader(settings: nil)
+    let error = TestAdLoadingErrorData.customInit()
+    instance.adsLoader(adsLoader, failedWith: error)
+    
+    XCTAssertEqual(api.adsLoaderFailedWithErrorDataArgs, [adsLoader, error])
+  }
 }
 
-//class TestAdsLoaderDelegateApi: PigeonApiIMAAdsLoaderDelegate {
-//  var renderingSettings: IMAAdsRenderingSettings? = nil
-//  var startCalled = false
-//  var destroyCalled = false
-//
-//  static func customInit() -> TestAdsLoaderDelegateApi {
-//    let instance =
-//      TestAdsLoaderDelegateApi.perform(NSSelectorFromString("new")).takeRetainedValue()
-//      as! TestAdsLoaderDelegateApi
-//    return instance
-//  }
-//
-//  override func initialize(with adsRenderingSettings: IMAAdsRenderingSettings?) {
-//    renderingSettings = adsRenderingSettings
-//  }
-//
-//  override func start() {
-//    startCalled = true
-//  }
-//
-//  override func destroy() {
-//    destroyCalled = true
-//  }
-//}
+class TestAdsLoaderDelegateApi: PigeonApiProtocolIMAAdsLoaderDelegate {
+  var adLoaderLoadedWithArgs: [AnyHashable?]? = nil;
+  var adsLoaderFailedWithErrorDataArgs: [AnyHashable?]? = nil;
+  
+  func adLoaderLoadedWith(pigeonInstance pigeonInstanceArg: IMAAdsLoaderDelegate, loader loaderArg: IMAAdsLoader, adsLoadedData adsLoadedDataArg: IMAAdsLoadedData, completion: @escaping (Result<Void, PigeonError>) -> Void) {
+    adLoaderLoadedWithArgs = [loaderArg, adsLoadedDataArg]
+  }
+  
+  func adsLoaderFailedWithErrorData(pigeonInstance pigeonInstanceArg: IMAAdsLoaderDelegate, loader loaderArg: IMAAdsLoader, adErrorData adErrorDataArg: IMAAdLoadingErrorData, completion: @escaping (Result<Void, PigeonError>) -> Void) {
+    adsLoaderFailedWithErrorDataArgs = [loaderArg, adErrorDataArg]
+  }
+}
