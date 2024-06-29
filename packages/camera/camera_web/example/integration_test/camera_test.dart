@@ -4,6 +4,7 @@
 
 import 'dart:async';
 import 'dart:js_interop';
+import 'dart:js_interop_unsafe';
 import 'dart:ui';
 
 import 'package:async/async.dart';
@@ -165,8 +166,10 @@ void main() {
 
         expect(camera.divElement, isNotNull);
         expect(camera.divElement.style.objectFit, equals('cover'));
-        // TODO: Figure out how to make this work with WASM
-        // expect(camera.divElement.children, contains(camera.videoElement));
+        final JSArray<Element>? array = (globalContext['Array']! as JSObject)
+                .callMethod('from'.toJS, camera.divElement.children)
+            as JSArray<Element>?;
+        expect(array?.toDart, contains(camera.videoElement));
       });
 
       testWidgets('initializes the camera stream', (WidgetTester tester) async {
