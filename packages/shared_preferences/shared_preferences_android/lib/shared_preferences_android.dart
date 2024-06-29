@@ -3,100 +3,201 @@
 // found in the LICENSE file.
 
 import 'package:flutter/foundation.dart';
-import 'package:flutter/services.dart';
-import 'package:shared_preferences_platform_interface/shared_preferences_platform_interface.dart';
+import 'package:shared_preferences_platform_interface/shared_preferences_async_platform_interface.dart';
 import 'package:shared_preferences_platform_interface/types.dart';
 
-import 'src/messages.g.dart';
+import 'deprecated_shared_preferences_android.dart';
+import 'src/messages_async.g.dart';
 
-/// The Android implementation of [SharedPreferencesStorePlatform].
+const String _listPrefix = 'VGhpcyBpcyB0aGUgcHJlZml4IGZvciBhIGxpc3Qu';
+const String _doublePrefix = 'VGhpcyBpcyB0aGUgcHJlZml4IGZvciBEb3VibGUu';
+
+/// The Android implementation of [SharedPreferencesAsyncPlatform].
 ///
 /// This class implements the `package:shared_preferences` functionality for Android.
-class SharedPreferencesAndroid extends SharedPreferencesStorePlatform {
+base class SharedPreferencesAndroid extends SharedPreferencesAsyncPlatform {
   /// Creates a new plugin implementation instance.
   SharedPreferencesAndroid({
-    @visibleForTesting SharedPreferencesApi? api,
-  }) : _api = api ?? SharedPreferencesApi();
+    @visibleForTesting SharedPreferencesAsyncApi? api,
+  }) : _api = api ?? SharedPreferencesAsyncApi();
 
-  final SharedPreferencesApi _api;
+  final SharedPreferencesAsyncApi _api;
 
-  /// Registers this class as the default instance of [SharedPreferencesStorePlatform].
+  /// Registers this class as the default instance of [SharedPreferencesAsyncPlatform].
   static void registerWith() {
-    SharedPreferencesStorePlatform.instance = SharedPreferencesAndroid();
+    SharedPreferencesAsyncPlatform.instance = SharedPreferencesAndroid();
+    // A temporary work-around for having two plugins contained in a single package.
+    DeprecatedSharedPreferencesAndroid.registerWith();
   }
 
-  static const String _defaultPrefix = 'flutter.';
-
-  @override
-  Future<bool> remove(String key) async {
-    return _api.remove(key);
-  }
-
-  @override
-  Future<bool> setValue(String valueType, String key, Object value) async {
-    switch (valueType) {
-      case 'String':
-        return _api.setString(key, value as String);
-      case 'Bool':
-        return _api.setBool(key, value as bool);
-      case 'Int':
-        return _api.setInt(key, value as int);
-      case 'Double':
-        return _api.setDouble(key, value as double);
-      case 'StringList':
-        return _api.setStringList(key, value as List<String>);
-    }
-    // TODO(tarrinneal): change to ArgumentError across all platforms.
-    throw PlatformException(
-        code: 'InvalidOperation',
-        message: '"$valueType" is not a supported type.');
+  /// Returns a SharedPreferencesPigeonOptions for sending to platform.
+  SharedPreferencesPigeonOptions _convertOptionsToPigeonOptions(
+      SharedPreferencesOptions options) {
+    return SharedPreferencesPigeonOptions();
   }
 
   @override
-  Future<bool> clear() async {
-    return clearWithParameters(
-      ClearParameters(
-        filter: PreferencesFilter(prefix: _defaultPrefix),
-      ),
-    );
-  }
+  Future<Set<String?>> getKeys(
+    GetPreferencesParameters parameters,
+    SharedPreferencesOptions options,
+  ) async {
+    final PreferencesFilters filter = parameters.filter;
 
-  @override
-  Future<bool> clearWithPrefix(String prefix) async {
-    return clearWithParameters(
-        ClearParameters(filter: PreferencesFilter(prefix: prefix)));
-  }
-
-  @override
-  Future<bool> clearWithParameters(ClearParameters parameters) async {
-    final PreferencesFilter filter = parameters.filter;
-    return _api.clear(
-      filter.prefix,
+    return (await _api.getKeys(
       filter.allowList?.toList(),
+      _convertOptionsToPigeonOptions(options),
+    ))
+        .toSet();
+  }
+
+  @override
+  Future<void> setString(
+    String key,
+    String value,
+    SharedPreferencesOptions options,
+  ) async {
+    final SharedPreferencesPigeonOptions pigeonOptions =
+        _convertOptionsToPigeonOptions(options);
+
+    if (value.startsWith(_listPrefix) || value.startsWith(_doublePrefix)) {
+      throw ArgumentError(
+          'StorageError: This string cannot be stored as it clashes with special identifier prefixes');
+    }
+
+    return _api.setString(key, value, pigeonOptions);
+  }
+
+  @override
+  Future<void> setInt(
+    String key,
+    int value,
+    SharedPreferencesOptions options,
+  ) async {
+    final SharedPreferencesPigeonOptions pigeonOptions =
+        _convertOptionsToPigeonOptions(options);
+
+    return _api.setInt(key, value, pigeonOptions);
+  }
+
+  @override
+  Future<void> setDouble(
+    String key,
+    double value,
+    SharedPreferencesOptions options,
+  ) async {
+    final SharedPreferencesPigeonOptions pigeonOptions =
+        _convertOptionsToPigeonOptions(options);
+
+    return _api.setDouble(key, value, pigeonOptions);
+  }
+
+  @override
+  Future<void> setBool(
+    String key,
+    bool value,
+    SharedPreferencesOptions options,
+  ) async {
+    final SharedPreferencesPigeonOptions pigeonOptions =
+        _convertOptionsToPigeonOptions(options);
+
+    return _api.setBool(key, value, pigeonOptions);
+  }
+
+  @override
+  Future<void> setStringList(
+    String key,
+    List<String> value,
+    SharedPreferencesOptions options,
+  ) async {
+    final SharedPreferencesPigeonOptions pigeonOptions =
+        _convertOptionsToPigeonOptions(options);
+
+    return _api.setStringList(key, value, pigeonOptions);
+  }
+
+  @override
+  Future<String?> getString(
+    String key,
+    SharedPreferencesOptions options,
+  ) async {
+    final SharedPreferencesPigeonOptions pigeonOptions =
+        _convertOptionsToPigeonOptions(options);
+
+    return _api.getString(key, pigeonOptions);
+  }
+
+  @override
+  Future<bool?> getBool(
+    String key,
+    SharedPreferencesOptions options,
+  ) async {
+    final SharedPreferencesPigeonOptions pigeonOptions =
+        _convertOptionsToPigeonOptions(options);
+
+    return _api.getBool(key, pigeonOptions);
+  }
+
+  @override
+  Future<double?> getDouble(
+    String key,
+    SharedPreferencesOptions options,
+  ) async {
+    final SharedPreferencesPigeonOptions pigeonOptions =
+        _convertOptionsToPigeonOptions(options);
+
+    return _api.getDouble(key, pigeonOptions);
+  }
+
+  @override
+  Future<int?> getInt(
+    String key,
+    SharedPreferencesOptions options,
+  ) async {
+    final SharedPreferencesPigeonOptions pigeonOptions =
+        _convertOptionsToPigeonOptions(options);
+
+    return _api.getInt(key, pigeonOptions);
+  }
+
+  @override
+  Future<List<String>?> getStringList(
+    String key,
+    SharedPreferencesOptions options,
+  ) async {
+    final SharedPreferencesPigeonOptions pigeonOptions =
+        _convertOptionsToPigeonOptions(options);
+
+    return (await _api.getStringList(key, pigeonOptions))?.cast<String>();
+  }
+
+  @override
+  Future<void> clear(
+    ClearPreferencesParameters parameters,
+    SharedPreferencesOptions options,
+  ) async {
+    final PreferencesFilters filter = parameters.filter;
+    return _api.clear(
+      filter.allowList?.toList(),
+      _convertOptionsToPigeonOptions(options),
     );
   }
 
   @override
-  Future<Map<String, Object>> getAll() async {
-    return getAllWithParameters(
-      GetAllParameters(
-        filter: PreferencesFilter(prefix: _defaultPrefix),
-      ),
+  Future<Map<String, Object>> getPreferences(
+    GetPreferencesParameters parameters,
+    SharedPreferencesOptions options,
+  ) async {
+    final PreferencesFilters filter = parameters.filter;
+    final Map<String?, Object?> data = await _api.getAll(
+      filter.allowList?.toList(),
+      _convertOptionsToPigeonOptions(options),
     );
-  }
-
-  @override
-  Future<Map<String, Object>> getAllWithPrefix(String prefix) async {
-    return getAllWithParameters(
-        GetAllParameters(filter: PreferencesFilter(prefix: prefix)));
-  }
-
-  @override
-  Future<Map<String, Object>> getAllWithParameters(
-      GetAllParameters parameters) async {
-    final PreferencesFilter filter = parameters.filter;
-    final Map<String?, Object?> data =
-        await _api.getAll(filter.prefix, filter.allowList?.toList());
     return data.cast<String, Object>();
   }
+}
+
+/// Options for the Android specific SharedPreferences plugin.
+class SharedPreferencesAndroidOptions extends SharedPreferencesOptions {
+  /// Constructor for SharedPreferencesAndroidOptions.
+  const SharedPreferencesAndroidOptions();
 }

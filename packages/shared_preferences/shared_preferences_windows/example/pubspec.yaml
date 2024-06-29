@@ -9,7 +9,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  shared_preferences_platform_interface: ^2.3.0
+  shared_preferences_platform_interface: ^2.4.0
   shared_preferences_windows:
     # When depending on this package from a real application you should use:
     #   shared_preferences_windows: ^x.y.z
@@ -26,3 +26,8 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+
+# FOR TESTING AND INITIAL REVIEW ONLY. DO NOT MERGE.
+# See https://github.com/flutter/flutter/wiki/Contributing-to-Plugins-and-Packages#changing-federated-plugins
+dependency_overrides:
+   {shared_preferences_platform_interface: {path: ../../../shared_preferences/shared_preferences_platform_interface}, shared_preferences_windows: {path: ../../../shared_preferences/shared_preferences_windows}}

@@ -1,3 +1,8 @@
+## 2.5.0
+
+* Renames `SharedPreferencesFoundation` to `DeprecatedSharedPreferencesFoundation`.
+* Creates new `SharedPreferencesFoundation` that extends `SharedPreferencesAsyncPlatform`.
+
 ## 2.4.0
 
 * Adds Swift Package Manager compatibility.

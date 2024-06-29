@@ -7,11 +7,12 @@ import 'dart:convert';
 import 'package:file/memory.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as path;
-import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';
 import 'package:path_provider_windows/path_provider_windows.dart';
 import 'package:shared_preferences_platform_interface/shared_preferences_platform_interface.dart';
 import 'package:shared_preferences_platform_interface/types.dart';
 import 'package:shared_preferences_windows/shared_preferences_windows.dart';
+
+import 'fake_path_provider_windows.dart';
 
 void main() {
   late MemoryFileSystem fs;
@@ -76,7 +77,7 @@ void main() {
     return prefs;
   }
 
-  test('registered instance', () {
+  test('registered instance', () async {
     SharedPreferencesWindows.registerWith();
     expect(SharedPreferencesStorePlatform.instance,
         isA<SharedPreferencesWindows>());
@@ -254,33 +255,4 @@ void main() {
     );
     expect(noValues, hasLength(0));
   });
-}
-
-/// Fake implementation of PathProviderWindows that returns hard-coded paths,
-/// allowing tests to run on any platform.
-///
-/// Note that this should only be used with an in-memory filesystem, as the
-/// path it returns is a root path that does not actually exist on Windows.
-class FakePathProviderWindows extends PathProviderPlatform
-    implements PathProviderWindows {
-  @override
-  late VersionInfoQuerier versionInfoQuerier;
-
-  @override
-  Future<String?> getApplicationSupportPath() async => r'C:\appsupport';
-
-  @override
-  Future<String?> getTemporaryPath() async => null;
-
-  @override
-  Future<String?> getLibraryPath() async => null;
-
-  @override
-  Future<String?> getApplicationDocumentsPath() async => null;
-
-  @override
-  Future<String?> getDownloadsPath() async => null;
-
-  @override
-  Future<String> getPath(String folderID) async => '';
 }
