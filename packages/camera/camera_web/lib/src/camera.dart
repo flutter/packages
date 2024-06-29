@@ -175,6 +175,8 @@ class Camera {
 
     divElement = web.HTMLDivElement()
       ..style.setProperty('object-fit', 'cover')
+      ..style.setProperty('height', '100%')
+      ..style.setProperty('width', '100%')
       ..append(videoElement);
 
     ui_web.platformViewRegistry.registerViewFactory(

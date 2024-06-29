@@ -1,6 +1,7 @@
 ## 0.3.5
 
 * Migrates to package:web to support WASM
+* Updates minimum supported SDK version to Flutter 3.19.2/Dart 3.3.
 
 ## 0.3.4
 
