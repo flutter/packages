@@ -90,6 +90,8 @@ void main() {
 
       cameraService = MockCameraService();
 
+      registerFallbackValue(createJSInteropWrapper(MockWindow()));
+
       when(
         () => cameraService.getMediaStreamForOptions(
           any(),
@@ -519,6 +521,10 @@ void main() {
 
           mockMediaDevices.enumerateDevices = () {
             throw exception;
+            // ignore: dead_code
+            return Future<JSArray<MediaDeviceInfo>>.value(
+              <MediaDeviceInfo>[].toJS,
+            ).toJS;
           }.toJS;
 
           expect(
@@ -1018,6 +1024,8 @@ void main() {
 
           mockScreenOrientation.lock = (OrientationLockType orientation) {
             throw exception;
+            // ignore: dead_code
+            return Future<void>.value().toJS;
           }.toJS;
 
           expect(
@@ -1087,6 +1095,8 @@ void main() {
 
           mockScreenOrientation.unlock = () {
             throw exception;
+            // ignore: dead_code
+            return Future<void>.value().toJS;
           }.toJS;
 
           expect(
