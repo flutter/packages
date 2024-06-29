@@ -3,7 +3,7 @@ publish_to: none
 
 environment:
   sdk: ^3.3.0
-  flutter: ">=3.19.2"
+  flutter: ">=3.19.0"
 
 dependencies:
   camera_platform_interface: ^2.6.0
