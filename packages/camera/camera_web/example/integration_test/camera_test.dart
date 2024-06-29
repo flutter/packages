@@ -117,7 +117,7 @@ void main() {
         expect(camera.videoElement.style.pointerEvents, equals('none'));
         expect(camera.videoElement.style.width, equals('100%'));
         expect(camera.videoElement.style.height, equals('100%'));
-        expect(camera.videoElement.style.objectFit, equals('cover'));
+        expect(camera.videoElement.style.objectFit, equals('contain'));
       });
 
       testWidgets(
@@ -153,7 +153,7 @@ void main() {
         await camera.initialize();
 
         expect(camera.divElement, isNotNull);
-        expect(camera.divElement.style.objectFit, equals('cover'));
+        expect(camera.divElement.style.objectFit, equals('contain'));
         expect(camera.divElement.children, contains(camera.videoElement));
       });
 

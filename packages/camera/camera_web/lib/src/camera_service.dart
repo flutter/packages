@@ -308,7 +308,7 @@ class CameraService {
   }
 
   static const int _kiloBits = 1000;
-  static const int _megaBits = _kiloBits * _kiloBits;
+  static const int _megaBits = 1000 * _kiloBits;
 
   /// Maps the given [resolutionPreset] to video bitrate.
   int mapResolutionPresetToVideoBitrate(ResolutionPreset resolutionPreset) {
