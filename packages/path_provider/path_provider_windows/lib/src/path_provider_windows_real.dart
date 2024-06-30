@@ -262,11 +262,48 @@ class PathProviderWindows extends PathProviderPlatform {
     }
     return directory.path;
   }
-  
+
   @override
-  Future<List<Directory>?> getExternalStorageDirectories() async {
+  Future<List<String>?> getExternalStoragePaths(
+      {StorageDirectory? type}) async {
+    if (type == null) {
+      return _getLogicalDrives();
+    }
+
+    String? id;
+    //Mapping to %USERPROFILE% directories
+    switch (type) {
+      case StorageDirectory.music:
+        id = FOLDERID_Music;
+      case StorageDirectory.ringtones:
+        id = FOLDERID_Ringtones;
+      case StorageDirectory.pictures:
+        id = FOLDERID_Pictures;
+      case StorageDirectory.downloads:
+        id = FOLDERID_Downloads;
+      case StorageDirectory.documents:
+        id = FOLDERID_Documents;
+
+      case StorageDirectory.podcasts ||
+            StorageDirectory.alarms ||
+            StorageDirectory.notifications ||
+            StorageDirectory.movies ||
+            StorageDirectory.dcim:
+        return null;
+    }
+
+    final String? path = await getPath(id);
+
+    if (path == null) {
+      return null;
+    }
+
+    return <String>[path];
+  }
+
+  // Retrieves drives from double null terminated and null seperated string buffer.
+  List<String>? _getLogicalDrives() {
     final Pointer<Utf16> buffer = calloc<Uint16>(MAX_PATH + 1).cast<Utf16>();
-    List<String> list = [];
     try {
       final int length = GetLogicalDriveStrings(MAX_PATH, buffer);
 
@@ -274,14 +311,10 @@ class PathProviderWindows extends PathProviderPlatform {
         final int error = GetLastError();
         throw WindowsException(error);
       } else {
-        // Retrieving drives from double null terminated and null seperated 
-        // string buffer.
-        list = buffer.toDartString(length: length - 1).split("\x00");
+        return buffer.toDartString(length: length - 1).split('\x00');
       }
     } finally {
       calloc.free(buffer);
     }
-    return list.map((path) => Directory(path)).toList();
   }
-
 }

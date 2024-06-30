@@ -187,11 +187,10 @@ void main() {
     expect(path, contains(r'C:\'));
     expect(path, contains(r'Downloads'));
   }, skip: !Platform.isWindows);
-    
-  test('getExternalStorageDirectories', () async {
+
+  test('getExternalStoragePaths', () async {
     final PathProviderWindows pathProvider = PathProviderWindows();
-    final List<Directory>? paths = await pathProvider.getExternalStorageDirectories();
-    expect(paths?.map((c) => c.path).toList(), contains(r"C:\"));
+    final List<String>? paths = await pathProvider.getExternalStoragePaths();
+    expect(paths, contains(r'C:\'));
   }, skip: !Platform.isWindows);
-  
 }
