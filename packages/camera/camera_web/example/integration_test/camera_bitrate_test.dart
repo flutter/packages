@@ -97,6 +97,10 @@ void main() {
       ).thenAnswer(
           (_) => Future<MediaStream>.value(canvasElement.captureStream()));
 
+      when(
+        () => cameraService.hasPropertyOffScreenCanvas(),
+      ).thenAnswer((_) => true);
+
       final Camera camera = Camera(
           textureId: cameraId,
           cameraService: cameraService,

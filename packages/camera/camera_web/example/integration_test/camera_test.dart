@@ -4,6 +4,7 @@
 
 import 'dart:async';
 import 'dart:html';
+import 'dart:typed_data';
 import 'dart:ui';
 
 import 'package:async/async.dart';
@@ -51,6 +52,10 @@ void main() {
           cameraId: any(named: 'cameraId'),
         ),
       ).thenAnswer((_) => Future<MediaStream>.value(mediaStream));
+
+      when(
+        () => cameraService.hasPropertyOffScreenCanvas(),
+      ).thenAnswer((_) => true);
     });
 
     setUpAll(() {
@@ -1719,6 +1724,57 @@ void main() {
           await streamQueue.cancel();
         });
       });
+    });
+    group('cameraFrameStream', () {
+      testWidgets(
+        'bytes is a multiple of 4',
+        (WidgetTester tester) async {
+          final VideoElement videoElement = getVideoElementWithBlankStream(
+            const Size(10, 10),
+          );
+
+          final Camera camera = Camera(
+            textureId: textureId,
+            cameraService: cameraService,
+          )..videoElement = videoElement;
+
+          when(
+            () => cameraService.takeFrame(
+              videoElement,
+              canUseOffscreenCanvas: camera.canUseOffscreenCanvas,
+            ),
+          ).thenAnswer(
+            (_) => CameraImageData(
+              format: const CameraImageFormat(
+                ImageFormatGroup.jpeg,
+                raw: '',
+              ),
+              planes: <CameraImagePlane>[
+                CameraImagePlane(
+                  bytes: Uint8List(32),
+                  bytesPerRow: 0,
+                ),
+              ],
+              height: 10,
+              width: 10,
+            ),
+          );
+
+          final CameraImageData cameraImageData =
+              await camera.cameraFrameStream().first;
+          expect(
+            cameraImageData,
+            equals(
+              isA<CameraImageData>().having(
+                (CameraImageData e) => e.planes.first.bytes.length % 4,
+                'bytes',
+                equals(0),
+              ),
+            ),
+          );
+        },
+        timeout: const Timeout(Duration(seconds: 2)),
+      );
     });
   });
 }

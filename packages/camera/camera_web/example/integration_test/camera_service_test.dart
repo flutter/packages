@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:async';
 import 'dart:html';
 import 'dart:js_util' as js_util;
 
@@ -911,6 +912,63 @@ void main() {
           equals(DeviceOrientation.portraitUp),
         );
       });
+    });
+
+    group('camera image stream', () {
+      setUp(
+        () {
+          cameraService.jsUtil = jsUtil;
+        },
+      );
+      testWidgets(
+        'returns true if broswer has OffscreenCanvas '
+        'otherwise false',
+        (WidgetTester widgetTester) async {
+          when(
+            () => jsUtil.hasProperty(window, 'OffscreenCanvas'),
+          ).thenReturn(true);
+          final bool hasOffScreenCanvas =
+              cameraService.hasPropertyOffScreenCanvas();
+          expect(
+            hasOffScreenCanvas,
+            true,
+          );
+          when(
+            () => jsUtil.hasProperty(window, 'OffscreenCanvas'),
+          ).thenReturn(false);
+          final bool hasNotOffScreenCanvas =
+              cameraService.hasPropertyOffScreenCanvas();
+          expect(
+            hasNotOffScreenCanvas,
+            false,
+          );
+        },
+      );
+      testWidgets(
+        'returns Camera Image of Size '
+        'when videoElement is of Size',
+        (WidgetTester widgetTester) async {
+          const Size size = Size(10, 10);
+          final Completer<void> completer = Completer<void>();
+          final VideoElement videoElement = getVideoElementWithBlankStream(size)
+            ..onLoadedMetadata.listen((_) {
+              completer.complete();
+            })
+            ..load();
+          await completer.future;
+          final CameraImageData cameraImageData = cameraService.takeFrame(
+            videoElement,
+            canUseOffscreenCanvas: true,
+          );
+          expect(
+            size,
+            Size(
+              cameraImageData.width.toDouble(),
+              cameraImageData.height.toDouble(),
+            ),
+          );
+        },
+      );
     });
   });
 }

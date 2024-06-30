@@ -9,6 +9,7 @@ import 'dart:ui_web' as ui_web;
 
 import 'package:camera_platform_interface/camera_platform_interface.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 
 import 'camera_service.dart';
 import 'types/types.dart';
@@ -157,6 +158,10 @@ class Camera {
   final StreamController<VideoRecordedEvent> videoRecorderController =
       StreamController<VideoRecordedEvent>.broadcast();
 
+  /// Used to check if allowed to paint canvas off screen
+  @visibleForTesting
+  bool canUseOffscreenCanvas = false;
+
   /// Initializes the camera stream displayed in the [videoElement].
   /// Registers the camera view with [textureId] under [_getViewType] type.
   /// Emits the camera default video track on the [onEnded] stream when it ends.
@@ -194,6 +199,8 @@ class Camera {
         onEndedController.add(defaultVideoTrack);
       });
     }
+
+    canUseOffscreenCanvas = _cameraService.hasPropertyOffScreenCanvas();
   }
 
   /// Starts the camera stream.
@@ -652,5 +659,43 @@ class Camera {
       ..width = '100%'
       ..height = '100%'
       ..objectFit = 'cover';
+  }
+
+  final StreamController<CameraImageData> _cameraFrameStreamController =
+      StreamController<CameraImageData>.broadcast();
+
+  /// Returns a stream of camera frames.
+  ///
+  /// To stop listening to new animation frames close all listening streams.
+  Stream<CameraImageData> cameraFrameStream({
+    CameraImageStreamOptions? options,
+  }) {
+    _cameraFrameStreamController.onListen = () {
+      _triggerAnimationFramesLoop(_addCameraImageDataEvent);
+    };
+
+    return _cameraFrameStreamController.stream;
+  }
+
+  /// Triggers animation frames in a loop as long as
+  /// [_cameraFrameStreamController.hasListener] and executes the callback
+  void _triggerAnimationFramesLoop(VoidCallback callback) {
+    Future<void> triggerNextAnimationFrame() async {
+      while (_cameraFrameStreamController.hasListener) {
+        await window!.animationFrame;
+        callback();
+      }
+    }
+
+    triggerNextAnimationFrame();
+  }
+
+  /// Used to trigger add event of camera image data in camera frame stream
+  void _addCameraImageDataEvent() {
+    final CameraImageData image = _cameraService.takeFrame(
+      videoElement,
+      canUseOffscreenCanvas: canUseOffscreenCanvas,
+    );
+    _cameraFrameStreamController.add(image);
   }
 }
