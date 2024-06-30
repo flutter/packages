@@ -262,4 +262,26 @@ class PathProviderWindows extends PathProviderPlatform {
     }
     return directory.path;
   }
+  
+  @override
+  Future<List<Directory>?> getExternalStorageDirectories() async {
+    final Pointer<Utf16> buffer = calloc<Uint16>(MAX_PATH + 1).cast<Utf16>();
+    List<String> list = [];
+    try {
+      final int length = GetLogicalDriveStrings(MAX_PATH, buffer);
+
+      if (length == 0) {
+        final int error = GetLastError();
+        throw WindowsException(error);
+      } else {
+        // Retrieving drives from double null terminated and null seperated 
+        // string buffer.
+        list = buffer.toDartString(length: length - 1).split("\x00");
+      }
+    } finally {
+      calloc.free(buffer);
+    }
+    return list.map((path) => Directory(path)).toList();
+  }
+
 }
