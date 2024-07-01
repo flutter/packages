@@ -1,3 +1,7 @@
+## 0.6.5+6
+
+* Updates Android Gradle plugin to 8.4.1.
+
 ## 0.6.5+5
 
 * Reverts changes to support Impeller.
