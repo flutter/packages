@@ -15,9 +15,11 @@ final class AdsRequestTests: XCTestCase {
 
     let container = IMAAdDisplayContainer(adContainer: UIView(), viewController: nil)
     let contentPlayhead = ContentPlayheadImpl()
-    let instance = try? api.pigeonDelegate.pigeonDefaultConstructor(pigeonApi: api, adTagUrl: "adTag", adDisplayContainer: container, contentPlayhead: contentPlayhead)
+    let instance = try? api.pigeonDelegate.pigeonDefaultConstructor(
+      pigeonApi: api, adTagUrl: "adTag", adDisplayContainer: container,
+      contentPlayhead: contentPlayhead)
 
-    XCTAssertTrue(instance != nil)
+    XCTAssertNotNil(instance)
     XCTAssertEqual(instance?.adTagUrl, "adTag")
     XCTAssertIdentical(instance?.adDisplayContainer, container)
   }

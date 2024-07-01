@@ -18,7 +18,7 @@ final class AdsLoaderTests: XCTestCase {
     let instance = try? api.pigeonDelegate.pigeonDefaultConstructor(
       pigeonApi: api, settings: settings)
 
-    XCTAssertTrue(instance != nil)
+    XCTAssertNotNil(instance)
     XCTAssertEqual(instance?.settings.ppid, settings.ppid)
   }
 

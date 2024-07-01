@@ -3,15 +3,14 @@
 // found in the LICENSE file.
 
 import Flutter
-import GoogleInteractiveMediaAds
 import XCTest
 
 @testable import interactive_media_ads
 
-final class ContentPlayheadTests: XCTestCase {
+final class ViewControllerTests: XCTestCase {
   func testPigeonDefaultConstructor() {
     let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiIMAContentPlayhead(registrar)
+    let api = registrar.apiDelegate.pigeonApiUIViewController(registrar)
 
     let instance = try? api.pigeonDelegate.pigeonDefaultConstructor(
       pigeonApi: api)
@@ -19,14 +18,13 @@ final class ContentPlayheadTests: XCTestCase {
     XCTAssertNotNil(instance)
   }
 
-  func testSetCurrentTime() {
+  func testView() {
     let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiIMAContentPlayhead(registrar)
+    let api = registrar.apiDelegate.pigeonApiUIViewController(registrar)
 
-    let instance = ContentPlayheadImpl()
-    try? api.pigeonDelegate.setCurrentTime(
-      pigeonApi: api, pigeonInstance: instance, timeInterval: 12)
+    let instance = UIViewController()
+    let view = try? api.pigeonDelegate.view(pigeonApi: api, pigeonInstance: instance)
 
-    XCTAssertEqual(instance.currentTime, 12)
+    XCTAssertNotNil(view)
   }
 }
