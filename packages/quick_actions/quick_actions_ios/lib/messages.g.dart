@@ -18,8 +18,7 @@ PlatformException _createConnectionError(String channelName) {
   );
 }
 
-List<Object?> wrapResponse(
-    {Object? result, PlatformException? error, bool empty = false}) {
+List<Object?> wrapResponse({Object? result, PlatformException? error, bool empty = false}) {
   if (empty) {
     return <Object?>[];
   }
@@ -34,6 +33,7 @@ class ShortcutItemMessage {
   ShortcutItemMessage({
     required this.type,
     required this.localizedTitle,
+    this.localizedSubtitle,
     this.icon,
   });
 
@@ -43,6 +43,9 @@ class ShortcutItemMessage {
   /// Localized title of the item.
   String localizedTitle;
 
+  /// Localized subtitle of the item.
+  String? localizedSubtitle;
+
   /// Name of native resource to be displayed as the icon for this item.
   String? icon;
 
@@ -50,6 +53,7 @@ class ShortcutItemMessage {
     return <Object?>[
       type,
       localizedTitle,
+      localizedSubtitle,
       icon,
     ];
   }
@@ -59,10 +63,12 @@ class ShortcutItemMessage {
     return ShortcutItemMessage(
       type: result[0]! as String,
       localizedTitle: result[1]! as String,
-      icon: result[2] as String?,
+      localizedSubtitle: result[2] as String?,
+      icon: result[3] as String?,
     );
   }
 }
+
 
 class _PigeonCodec extends StandardMessageCodec {
   const _PigeonCodec();
@@ -79,7 +85,7 @@ class _PigeonCodec extends StandardMessageCodec {
   @override
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
-      case 129:
+      case 129: 
         return ShortcutItemMessage.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
@@ -91,11 +97,9 @@ class IOSQuickActionsApi {
   /// Constructor for [IOSQuickActionsApi].  The [binaryMessenger] named argument is
   /// available for dependency injection.  If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
-  IOSQuickActionsApi(
-      {BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
+  IOSQuickActionsApi({BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
       : __pigeon_binaryMessenger = binaryMessenger,
-        __pigeon_messageChannelSuffix =
-            messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
+        __pigeon_messageChannelSuffix = messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
   final BinaryMessenger? __pigeon_binaryMessenger;
 
   static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
@@ -104,10 +108,8 @@ class IOSQuickActionsApi {
 
   /// Sets the dynamic shortcuts for the app.
   Future<void> setShortcutItems(List<ShortcutItemMessage?> itemsList) async {
-    final String __pigeon_channelName =
-        'dev.flutter.pigeon.quick_actions_ios.IOSQuickActionsApi.setShortcutItems$__pigeon_messageChannelSuffix';
-    final BasicMessageChannel<Object?> __pigeon_channel =
-        BasicMessageChannel<Object?>(
+    final String __pigeon_channelName = 'dev.flutter.pigeon.quick_actions_ios.IOSQuickActionsApi.setShortcutItems$__pigeon_messageChannelSuffix';
+    final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<Object?>(
       __pigeon_channelName,
       pigeonChannelCodec,
       binaryMessenger: __pigeon_binaryMessenger,
@@ -129,10 +131,8 @@ class IOSQuickActionsApi {
 
   /// Removes all dynamic shortcuts.
   Future<void> clearShortcutItems() async {
-    final String __pigeon_channelName =
-        'dev.flutter.pigeon.quick_actions_ios.IOSQuickActionsApi.clearShortcutItems$__pigeon_messageChannelSuffix';
-    final BasicMessageChannel<Object?> __pigeon_channel =
-        BasicMessageChannel<Object?>(
+    final String __pigeon_channelName = 'dev.flutter.pigeon.quick_actions_ios.IOSQuickActionsApi.clearShortcutItems$__pigeon_messageChannelSuffix';
+    final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<Object?>(
       __pigeon_channelName,
       pigeonChannelCodec,
       binaryMessenger: __pigeon_binaryMessenger,
@@ -159,25 +159,18 @@ abstract class IOSQuickActionsFlutterApi {
   /// Sends a string representing a shortcut from the native platform to the app.
   void launchAction(String action);
 
-  static void setUp(
-    IOSQuickActionsFlutterApi? api, {
-    BinaryMessenger? binaryMessenger,
-    String messageChannelSuffix = '',
-  }) {
-    messageChannelSuffix =
-        messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
+  static void setUp(IOSQuickActionsFlutterApi? api, {BinaryMessenger? binaryMessenger, String messageChannelSuffix = '',}) {
+    messageChannelSuffix = messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
     {
-      final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
-              Object?>(
-          'dev.flutter.pigeon.quick_actions_ios.IOSQuickActionsFlutterApi.launchAction$messageChannelSuffix',
-          pigeonChannelCodec,
+      final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.quick_actions_ios.IOSQuickActionsFlutterApi.launchAction$messageChannelSuffix', pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
         __pigeon_channel.setMessageHandler(null);
       } else {
         __pigeon_channel.setMessageHandler((Object? message) async {
           assert(message != null,
-              'Argument for dev.flutter.pigeon.quick_actions_ios.IOSQuickActionsFlutterApi.launchAction was null.');
+          'Argument for dev.flutter.pigeon.quick_actions_ios.IOSQuickActionsFlutterApi.launchAction was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final String? arg_action = (args[0] as String?);
           assert(arg_action != null,
@@ -187,9 +180,8 @@ abstract class IOSQuickActionsFlutterApi {
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
-          } catch (e) {
-            return wrapResponse(
-                error: PlatformException(code: 'error', message: e.toString()));
+          }          catch (e) {
+            return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));
           }
         });
       }

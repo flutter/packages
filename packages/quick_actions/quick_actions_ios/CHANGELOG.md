@@ -1,3 +1,7 @@
+## NEXT
+
+* Add localizedSubtitle field
+
 ## 1.1.1
 
 * Updates to a newer version of Pigeon.

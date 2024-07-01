@@ -29,7 +29,7 @@ final class PigeonError: Error {
   var localizedDescription: String {
     return
       "PigeonError(code: \(code), message: \(message ?? "<nil>"), details: \(details ?? "<nil>")"
-  }
+      }
 }
 
 private func wrapResult(_ result: Any?) -> [Any?] {
@@ -59,9 +59,7 @@ private func wrapError(_ error: Any) -> [Any?] {
 }
 
 private func createConnectionError(withChannelName channelName: String) -> PigeonError {
-  return PigeonError(
-    code: "channel-error", message: "Unable to establish connection on channel: '\(channelName)'.",
-    details: "")
+  return PigeonError(code: "channel-error", message: "Unable to establish connection on channel: '\(channelName)'.", details: "")
 }
 
 private func isNullish(_ value: Any?) -> Bool {
@@ -81,6 +79,8 @@ struct ShortcutItemMessage {
   var type: String
   /// Localized title of the item.
   var localizedTitle: String
+  /// Localized subtitle of the item.
+  var localizedSubtitle: String? = nil
   /// Name of native resource to be displayed as the icon for this item.
   var icon: String? = nil
 
@@ -88,11 +88,13 @@ struct ShortcutItemMessage {
   static func fromList(_ __pigeon_list: [Any?]) -> ShortcutItemMessage? {
     let type = __pigeon_list[0] as! String
     let localizedTitle = __pigeon_list[1] as! String
-    let icon: String? = nilOrValue(__pigeon_list[2])
+    let localizedSubtitle: String? = nilOrValue(__pigeon_list[2])
+    let icon: String? = nilOrValue(__pigeon_list[3])
 
     return ShortcutItemMessage(
       type: type,
       localizedTitle: localizedTitle,
+      localizedSubtitle: localizedSubtitle,
       icon: icon
     )
   }
@@ -100,6 +102,7 @@ struct ShortcutItemMessage {
     return [
       type,
       localizedTitle,
+      localizedSubtitle,
       icon,
     ]
   }
@@ -152,16 +155,10 @@ protocol IOSQuickActionsApi {
 class IOSQuickActionsApiSetup {
   static var codec: FlutterStandardMessageCodec { messagesPigeonCodec.shared }
   /// Sets up an instance of `IOSQuickActionsApi` to handle messages through the `binaryMessenger`.
-  static func setUp(
-    binaryMessenger: FlutterBinaryMessenger, api: IOSQuickActionsApi?,
-    messageChannelSuffix: String = ""
-  ) {
+  static func setUp(binaryMessenger: FlutterBinaryMessenger, api: IOSQuickActionsApi?, messageChannelSuffix: String = "") {
     let channelSuffix = messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : ""
     /// Sets the dynamic shortcuts for the app.
-    let setShortcutItemsChannel = FlutterBasicMessageChannel(
-      name:
-        "dev.flutter.pigeon.quick_actions_ios.IOSQuickActionsApi.setShortcutItems\(channelSuffix)",
-      binaryMessenger: binaryMessenger, codec: codec)
+    let setShortcutItemsChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.quick_actions_ios.IOSQuickActionsApi.setShortcutItems\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       setShortcutItemsChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
@@ -177,10 +174,7 @@ class IOSQuickActionsApiSetup {
       setShortcutItemsChannel.setMessageHandler(nil)
     }
     /// Removes all dynamic shortcuts.
-    let clearShortcutItemsChannel = FlutterBasicMessageChannel(
-      name:
-        "dev.flutter.pigeon.quick_actions_ios.IOSQuickActionsApi.clearShortcutItems\(channelSuffix)",
-      binaryMessenger: binaryMessenger, codec: codec)
+    let clearShortcutItemsChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.quick_actions_ios.IOSQuickActionsApi.clearShortcutItems\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       clearShortcutItemsChannel.setMessageHandler { _, reply in
         do {
@@ -198,8 +192,7 @@ class IOSQuickActionsApiSetup {
 /// Generated protocol from Pigeon that represents Flutter messages that can be called from Swift.
 protocol IOSQuickActionsFlutterApiProtocol {
   /// Sends a string representing a shortcut from the native platform to the app.
-  func launchAction(
-    action actionArg: String, completion: @escaping (Result<Void, PigeonError>) -> Void)
+  func launchAction(action actionArg: String, completion: @escaping (Result<Void, PigeonError>) -> Void)
 }
 class IOSQuickActionsFlutterApi: IOSQuickActionsFlutterApiProtocol {
   private let binaryMessenger: FlutterBinaryMessenger
@@ -212,13 +205,9 @@ class IOSQuickActionsFlutterApi: IOSQuickActionsFlutterApiProtocol {
     return messagesPigeonCodec.shared
   }
   /// Sends a string representing a shortcut from the native platform to the app.
-  func launchAction(
-    action actionArg: String, completion: @escaping (Result<Void, PigeonError>) -> Void
-  ) {
-    let channelName: String =
-      "dev.flutter.pigeon.quick_actions_ios.IOSQuickActionsFlutterApi.launchAction\(messageChannelSuffix)"
-    let channel = FlutterBasicMessageChannel(
-      name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+  func launchAction(action actionArg: String, completion: @escaping (Result<Void, PigeonError>) -> Void) {
+    let channelName: String = "dev.flutter.pigeon.quick_actions_ios.IOSQuickActionsFlutterApi.launchAction\(messageChannelSuffix)"
+    let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([actionArg] as [Any?]) { response in
       guard let listResponse = response as? [Any?] else {
         completion(.failure(createConnectionError(withChannelName: channelName)))
