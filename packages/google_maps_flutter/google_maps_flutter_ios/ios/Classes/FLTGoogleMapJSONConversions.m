@@ -4,6 +4,12 @@
 
 #import "FLTGoogleMapJSONConversions.h"
 
+/// Returns dict[key], or nil if dict[key] is NSNull.
+id FGMGetValueOrNilFromDict(NSDictionary *dict, NSString *key) {
+  id value = dict[key];
+  return value == [NSNull null] ? nil : value;
+}
+
 @implementation FLTGoogleMapJSONConversions
 
 + (CLLocationCoordinate2D)locationFromLatLong:(NSArray *)latlong {

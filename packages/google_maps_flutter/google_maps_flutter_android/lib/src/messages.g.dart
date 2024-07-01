@@ -18,6 +18,183 @@ PlatformException _createConnectionError(String channelName) {
   );
 }
 
+enum PlatformRendererType {
+  legacy,
+  latest,
+}
+
+/// Pigeon representation of a CameraUpdate.
+class PlatformCameraUpdate {
+  PlatformCameraUpdate({
+    required this.json,
+  });
+
+  /// The update data, as JSON. This should only be set from
+  /// CameraUpdate.toJson, and the native code must intepret it according to the
+  /// internal implementation details of the CameraUpdate class.
+  Object json;
+
+  Object encode() {
+    return <Object?>[
+      json,
+    ];
+  }
+
+  static PlatformCameraUpdate decode(Object result) {
+    result as List<Object?>;
+    return PlatformCameraUpdate(
+      json: result[0]!,
+    );
+  }
+}
+
+/// Pigeon equivalent of the Circle class.
+class PlatformCircle {
+  PlatformCircle({
+    required this.json,
+  });
+
+  /// The circle data, as JSON. This should only be set from
+  /// Circle.toJson, and the native code must intepret it according to the
+  /// internal implementation details of that method.
+  Object json;
+
+  Object encode() {
+    return <Object?>[
+      json,
+    ];
+  }
+
+  static PlatformCircle decode(Object result) {
+    result as List<Object?>;
+    return PlatformCircle(
+      json: result[0]!,
+    );
+  }
+}
+
+/// Pigeon equivalent of the ClusterManager class.
+class PlatformClusterManager {
+  PlatformClusterManager({
+    required this.identifier,
+  });
+
+  String identifier;
+
+  Object encode() {
+    return <Object?>[
+      identifier,
+    ];
+  }
+
+  static PlatformClusterManager decode(Object result) {
+    result as List<Object?>;
+    return PlatformClusterManager(
+      identifier: result[0]! as String,
+    );
+  }
+}
+
+/// Pigeon equivalent of the Marker class.
+class PlatformMarker {
+  PlatformMarker({
+    required this.json,
+  });
+
+  /// The marker data, as JSON. This should only be set from
+  /// Marker.toJson, and the native code must intepret it according to the
+  /// internal implementation details of that method.
+  Object json;
+
+  Object encode() {
+    return <Object?>[
+      json,
+    ];
+  }
+
+  static PlatformMarker decode(Object result) {
+    result as List<Object?>;
+    return PlatformMarker(
+      json: result[0]!,
+    );
+  }
+}
+
+/// Pigeon equivalent of the Polygon class.
+class PlatformPolygon {
+  PlatformPolygon({
+    required this.json,
+  });
+
+  /// The polygon data, as JSON. This should only be set from
+  /// Polygon.toJson, and the native code must intepret it according to the
+  /// internal implementation details of that method.
+  Object json;
+
+  Object encode() {
+    return <Object?>[
+      json,
+    ];
+  }
+
+  static PlatformPolygon decode(Object result) {
+    result as List<Object?>;
+    return PlatformPolygon(
+      json: result[0]!,
+    );
+  }
+}
+
+/// Pigeon equivalent of the Polyline class.
+class PlatformPolyline {
+  PlatformPolyline({
+    required this.json,
+  });
+
+  /// The polyline data, as JSON. This should only be set from
+  /// Polyline.toJson, and the native code must intepret it according to the
+  /// internal implementation details of that method.
+  Object json;
+
+  Object encode() {
+    return <Object?>[
+      json,
+    ];
+  }
+
+  static PlatformPolyline decode(Object result) {
+    result as List<Object?>;
+    return PlatformPolyline(
+      json: result[0]!,
+    );
+  }
+}
+
+/// Pigeon equivalent of the TileOverlay class.
+class PlatformTileOverlay {
+  PlatformTileOverlay({
+    required this.json,
+  });
+
+  /// The tile overlay data, as JSON. This should only be set from
+  /// TileOverlay.toJson, and the native code must intepret it according to the
+  /// internal implementation details of that method.
+  Object json;
+
+  Object encode() {
+    return <Object?>[
+      json,
+    ];
+  }
+
+  static PlatformTileOverlay decode(Object result) {
+    result as List<Object?>;
+    return PlatformTileOverlay(
+      json: result[0]!,
+    );
+  }
+}
+
 /// Pigeon equivalent of LatLng.
 class PlatformLatLng {
   PlatformLatLng({
@@ -105,6 +282,31 @@ class PlatformCluster {
       position: result[1]! as PlatformLatLng,
       bounds: result[2]! as PlatformLatLngBounds,
       markerIds: (result[3] as List<Object?>?)!.cast<String?>(),
+    );
+  }
+}
+
+/// Pigeon equivalent of MapConfiguration.
+class PlatformMapConfiguration {
+  PlatformMapConfiguration({
+    required this.json,
+  });
+
+  /// The configuration options, as JSON. This should only be set from
+  /// _jsonForMapConfiguration, and the native code must intepret it according
+  /// to the internal implementation details of that method.
+  Object json;
+
+  Object encode() {
+    return <Object?>[
+      json,
+    ];
+  }
+
+  static PlatformMapConfiguration decode(Object result) {
+    result as List<Object?>;
+    return PlatformMapConfiguration(
+      json: result[0]!,
     );
   }
 }
@@ -204,24 +406,51 @@ class _PigeonCodec extends StandardMessageCodec {
   const _PigeonCodec();
   @override
   void writeValue(WriteBuffer buffer, Object? value) {
-    if (value is PlatformLatLng) {
+    if (value is PlatformCameraUpdate) {
       buffer.putUint8(129);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformLatLngBounds) {
+    } else if (value is PlatformCircle) {
       buffer.putUint8(130);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformCluster) {
+    } else if (value is PlatformClusterManager) {
       buffer.putUint8(131);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformPoint) {
+    } else if (value is PlatformMarker) {
       buffer.putUint8(132);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformTileLayer) {
+    } else if (value is PlatformPolygon) {
       buffer.putUint8(133);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformZoomRange) {
+    } else if (value is PlatformPolyline) {
       buffer.putUint8(134);
       writeValue(buffer, value.encode());
+    } else if (value is PlatformTileOverlay) {
+      buffer.putUint8(135);
+      writeValue(buffer, value.encode());
+    } else if (value is PlatformLatLng) {
+      buffer.putUint8(136);
+      writeValue(buffer, value.encode());
+    } else if (value is PlatformLatLngBounds) {
+      buffer.putUint8(137);
+      writeValue(buffer, value.encode());
+    } else if (value is PlatformCluster) {
+      buffer.putUint8(138);
+      writeValue(buffer, value.encode());
+    } else if (value is PlatformMapConfiguration) {
+      buffer.putUint8(139);
+      writeValue(buffer, value.encode());
+    } else if (value is PlatformPoint) {
+      buffer.putUint8(140);
+      writeValue(buffer, value.encode());
+    } else if (value is PlatformTileLayer) {
+      buffer.putUint8(141);
+      writeValue(buffer, value.encode());
+    } else if (value is PlatformZoomRange) {
+      buffer.putUint8(142);
+      writeValue(buffer, value.encode());
+    } else if (value is PlatformRendererType) {
+      buffer.putUint8(143);
+      writeValue(buffer, value.index);
     } else {
       super.writeValue(buffer, value);
     }
@@ -231,17 +460,36 @@ class _PigeonCodec extends StandardMessageCodec {
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
       case 129:
-        return PlatformLatLng.decode(readValue(buffer)!);
+        return PlatformCameraUpdate.decode(readValue(buffer)!);
       case 130:
-        return PlatformLatLngBounds.decode(readValue(buffer)!);
+        return PlatformCircle.decode(readValue(buffer)!);
       case 131:
-        return PlatformCluster.decode(readValue(buffer)!);
+        return PlatformClusterManager.decode(readValue(buffer)!);
       case 132:
-        return PlatformPoint.decode(readValue(buffer)!);
+        return PlatformMarker.decode(readValue(buffer)!);
       case 133:
-        return PlatformTileLayer.decode(readValue(buffer)!);
+        return PlatformPolygon.decode(readValue(buffer)!);
       case 134:
+        return PlatformPolyline.decode(readValue(buffer)!);
+      case 135:
+        return PlatformTileOverlay.decode(readValue(buffer)!);
+      case 136:
+        return PlatformLatLng.decode(readValue(buffer)!);
+      case 137:
+        return PlatformLatLngBounds.decode(readValue(buffer)!);
+      case 138:
+        return PlatformCluster.decode(readValue(buffer)!);
+      case 139:
+        return PlatformMapConfiguration.decode(readValue(buffer)!);
+      case 140:
+        return PlatformPoint.decode(readValue(buffer)!);
+      case 141:
+        return PlatformTileLayer.decode(readValue(buffer)!);
+      case 142:
         return PlatformZoomRange.decode(readValue(buffer)!);
+      case 143:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : PlatformRendererType.values[value];
       default:
         return super.readValueOfType(type, buffer);
     }
@@ -277,6 +525,191 @@ class MapsApi {
     );
     final List<Object?>? __pigeon_replyList =
         await __pigeon_channel.send(null) as List<Object?>?;
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: __pigeon_replyList[0]! as String,
+        message: __pigeon_replyList[1] as String?,
+        details: __pigeon_replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  /// Updates the map's configuration options.
+  ///
+  /// Only non-null configuration values will result in updates; options with
+  /// null values will remain unchanged.
+  Future<void> updateMapConfiguration(
+      PlatformMapConfiguration configuration) async {
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.google_maps_flutter_android.MapsApi.updateMapConfiguration$__pigeon_messageChannelSuffix';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: __pigeon_binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        await __pigeon_channel.send(<Object?>[configuration]) as List<Object?>?;
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: __pigeon_replyList[0]! as String,
+        message: __pigeon_replyList[1] as String?,
+        details: __pigeon_replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  /// Updates the set of circles on the map.
+  Future<void> updateCircles(List<PlatformCircle?> toAdd,
+      List<PlatformCircle?> toChange, List<String?> idsToRemove) async {
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.google_maps_flutter_android.MapsApi.updateCircles$__pigeon_messageChannelSuffix';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: __pigeon_binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList = await __pigeon_channel
+        .send(<Object?>[toAdd, toChange, idsToRemove]) as List<Object?>?;
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: __pigeon_replyList[0]! as String,
+        message: __pigeon_replyList[1] as String?,
+        details: __pigeon_replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  /// Updates the set of custer managers for clusters on the map.
+  Future<void> updateClusterManagers(
+      List<PlatformClusterManager?> toAdd, List<String?> idsToRemove) async {
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.google_maps_flutter_android.MapsApi.updateClusterManagers$__pigeon_messageChannelSuffix';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: __pigeon_binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList = await __pigeon_channel
+        .send(<Object?>[toAdd, idsToRemove]) as List<Object?>?;
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: __pigeon_replyList[0]! as String,
+        message: __pigeon_replyList[1] as String?,
+        details: __pigeon_replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  /// Updates the set of markers on the map.
+  Future<void> updateMarkers(List<PlatformMarker?> toAdd,
+      List<PlatformMarker?> toChange, List<String?> idsToRemove) async {
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.google_maps_flutter_android.MapsApi.updateMarkers$__pigeon_messageChannelSuffix';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: __pigeon_binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList = await __pigeon_channel
+        .send(<Object?>[toAdd, toChange, idsToRemove]) as List<Object?>?;
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: __pigeon_replyList[0]! as String,
+        message: __pigeon_replyList[1] as String?,
+        details: __pigeon_replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  /// Updates the set of polygonss on the map.
+  Future<void> updatePolygons(List<PlatformPolygon?> toAdd,
+      List<PlatformPolygon?> toChange, List<String?> idsToRemove) async {
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.google_maps_flutter_android.MapsApi.updatePolygons$__pigeon_messageChannelSuffix';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: __pigeon_binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList = await __pigeon_channel
+        .send(<Object?>[toAdd, toChange, idsToRemove]) as List<Object?>?;
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: __pigeon_replyList[0]! as String,
+        message: __pigeon_replyList[1] as String?,
+        details: __pigeon_replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  /// Updates the set of polylines on the map.
+  Future<void> updatePolylines(List<PlatformPolyline?> toAdd,
+      List<PlatformPolyline?> toChange, List<String?> idsToRemove) async {
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.google_maps_flutter_android.MapsApi.updatePolylines$__pigeon_messageChannelSuffix';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: __pigeon_binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList = await __pigeon_channel
+        .send(<Object?>[toAdd, toChange, idsToRemove]) as List<Object?>?;
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: __pigeon_replyList[0]! as String,
+        message: __pigeon_replyList[1] as String?,
+        details: __pigeon_replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  /// Updates the set of tile overlays on the map.
+  Future<void> updateTileOverlays(List<PlatformTileOverlay?> toAdd,
+      List<PlatformTileOverlay?> toChange, List<String?> idsToRemove) async {
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.google_maps_flutter_android.MapsApi.updateTileOverlays$__pigeon_messageChannelSuffix';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: __pigeon_binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList = await __pigeon_channel
+        .send(<Object?>[toAdd, toChange, idsToRemove]) as List<Object?>?;
     if (__pigeon_replyList == null) {
       throw _createConnectionError(__pigeon_channelName);
     } else if (__pigeon_replyList.length > 1) {
@@ -377,6 +810,57 @@ class MapsApi {
       );
     } else {
       return (__pigeon_replyList[0] as PlatformLatLngBounds?)!;
+    }
+  }
+
+  /// Moves the camera according to [cameraUpdate] immediately, with no
+  /// animation.
+  Future<void> moveCamera(PlatformCameraUpdate cameraUpdate) async {
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.google_maps_flutter_android.MapsApi.moveCamera$__pigeon_messageChannelSuffix';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: __pigeon_binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        await __pigeon_channel.send(<Object?>[cameraUpdate]) as List<Object?>?;
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: __pigeon_replyList[0]! as String,
+        message: __pigeon_replyList[1] as String?,
+        details: __pigeon_replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  /// Moves the camera according to [cameraUpdate], animating the update.
+  Future<void> animateCamera(PlatformCameraUpdate cameraUpdate) async {
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.google_maps_flutter_android.MapsApi.animateCamera$__pigeon_messageChannelSuffix';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: __pigeon_binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        await __pigeon_channel.send(<Object?>[cameraUpdate]) as List<Object?>?;
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: __pigeon_replyList[0]! as String,
+        message: __pigeon_replyList[1] as String?,
+        details: __pigeon_replyList[2],
+      );
+    } else {
+      return;
     }
   }
 
@@ -611,6 +1095,59 @@ class MapsApi {
       );
     } else {
       return (__pigeon_replyList[0] as Uint8List?)!;
+    }
+  }
+}
+
+/// Interface for global SDK initialization.
+class MapsInitializerApi {
+  /// Constructor for [MapsInitializerApi].  The [binaryMessenger] named argument is
+  /// available for dependency injection.  If it is left null, the default
+  /// BinaryMessenger will be used which routes to the host platform.
+  MapsInitializerApi(
+      {BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
+      : __pigeon_binaryMessenger = binaryMessenger,
+        __pigeon_messageChannelSuffix =
+            messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
+  final BinaryMessenger? __pigeon_binaryMessenger;
+
+  static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
+
+  final String __pigeon_messageChannelSuffix;
+
+  /// Initializes the Google Maps SDK with the given renderer preference.
+  ///
+  /// A null renderer preference will result in the default renderer.
+  ///
+  /// Calling this more than once in the lifetime of an application will result
+  /// in an error.
+  Future<PlatformRendererType> initializeWithPreferredRenderer(
+      PlatformRendererType? type) async {
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.google_maps_flutter_android.MapsInitializerApi.initializeWithPreferredRenderer$__pigeon_messageChannelSuffix';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: __pigeon_binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        await __pigeon_channel.send(<Object?>[type]) as List<Object?>?;
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: __pigeon_replyList[0]! as String,
+        message: __pigeon_replyList[1] as String?,
+        details: __pigeon_replyList[2],
+      );
+    } else if (__pigeon_replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (__pigeon_replyList[0] as PlatformRendererType?)!;
     }
   }
 }
