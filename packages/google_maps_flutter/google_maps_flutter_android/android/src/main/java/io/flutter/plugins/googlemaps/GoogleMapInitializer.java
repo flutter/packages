@@ -9,7 +9,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 import com.google.android.gms.maps.MapsInitializer;
-import com.google.android.gms.maps.MapsInitializer.Renderer;
 import com.google.android.gms.maps.OnMapsSdkInitializedCallback;
 import io.flutter.plugin.common.BinaryMessenger;
 
@@ -38,18 +37,7 @@ final class GoogleMapInitializer
               null));
     } else {
       initializationResult = result;
-      MapsInitializer.Renderer rendererType = null;
-      if (type != null) {
-        switch (type) {
-          case LATEST:
-            rendererType = Renderer.LATEST;
-            break;
-          case LEGACY:
-            rendererType = Renderer.LEGACY;
-            break;
-        }
-      }
-      initializeWithRendererRequest(rendererType);
+      initializeWithRendererRequest(Convert.toMapRendererType(type));
     }
   }
 
@@ -66,7 +54,7 @@ final class GoogleMapInitializer
 
   /** Is called by Google Maps SDK to determine which version of the renderer was initialized. */
   @Override
-  public void onMapsSdkInitialized(MapsInitializer.Renderer renderer) {
+  public void onMapsSdkInitialized(@NonNull MapsInitializer.Renderer renderer) {
     rendererInitialized = true;
     if (initializationResult != null) {
       switch (renderer) {
@@ -79,7 +67,9 @@ final class GoogleMapInitializer
         default:
           initializationResult.error(
               new Messages.FlutterError(
-                  "Unknown renderer type", "Initialized with unknown renderer type", null));
+                  "Unknown renderer type",
+                  "Initialized with unknown renderer type",
+                  renderer.name()));
       }
       initializationResult = null;
     }
