@@ -71,13 +71,15 @@ class PolylinesController {
     if (polylineId == null) {
       return false;
     }
-    flutterApi.onPolylineTap(polylineId, new Messages.VoidResult() {
-      @Override
-      public void success() {}
+    flutterApi.onPolylineTap(
+        polylineId,
+        new Messages.VoidResult() {
+          @Override
+          public void success() {}
 
-      @Override
-      public void error(@NonNull Throwable error) {}
-    });
+          @Override
+          public void error(@NonNull Throwable error) {}
+        });
     PolylineController polylineController = polylineIdToController.get(polylineId);
     if (polylineController != null) {
       return polylineController.consumeTapEvents();

@@ -56,8 +56,7 @@ public class MarkersControllerTest {
     MockitoAnnotations.openMocks(this);
     assetManager = ApplicationProvider.getApplicationContext().getAssets();
     context = ApplicationProvider.getApplicationContext();
-    flutterApi =
-        spy(new MapsCallbackApi(mock(BinaryMessenger.class)));
+    flutterApi = spy(new MapsCallbackApi(mock(BinaryMessenger.class)));
     clusterManagersController = spy(new ClusterManagersController(flutterApi, context));
     controller =
         new MarkersController(flutterApi, clusterManagersController, assetManager, density);
@@ -85,7 +84,8 @@ public class MarkersControllerTest {
     controller.addJsonMarkers(markers);
     controller.onMarkerDragStart(googleMarkerId, latLng);
 
-    Mockito.verify(flutterApi).onMarkerDragStart(eq(googleMarkerId), eq(Convert.latLngToPigeon(latLng)) ,any());
+    Mockito.verify(flutterApi)
+        .onMarkerDragStart(eq(googleMarkerId), eq(Convert.latLngToPigeon(latLng)), any());
   }
 
   @Test
@@ -105,7 +105,8 @@ public class MarkersControllerTest {
     controller.addJsonMarkers(markers);
     controller.onMarkerDragEnd(googleMarkerId, latLng);
 
-    Mockito.verify(flutterApi).onMarkerDragEnd(eq(googleMarkerId), eq(Convert.latLngToPigeon(latLng)), any());
+    Mockito.verify(flutterApi)
+        .onMarkerDragEnd(eq(googleMarkerId), eq(Convert.latLngToPigeon(latLng)), any());
   }
 
   @Test
@@ -125,7 +126,8 @@ public class MarkersControllerTest {
     controller.addJsonMarkers(markers);
     controller.onMarkerDrag(googleMarkerId, latLng);
 
-    Mockito.verify(flutterApi).onMarkerDrag(eq(googleMarkerId), eq(Convert.latLngToPigeon(latLng)), any());
+    Mockito.verify(flutterApi)
+        .onMarkerDrag(eq(googleMarkerId), eq(Convert.latLngToPigeon(latLng)), any());
   }
 
   @Test(expected = IllegalArgumentException.class)

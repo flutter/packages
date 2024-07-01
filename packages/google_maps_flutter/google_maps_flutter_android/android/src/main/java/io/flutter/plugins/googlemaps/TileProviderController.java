@@ -66,7 +66,10 @@ class TileProviderController implements TileProvider {
       }
       try {
         if (result == null) {
-          Log.e(TAG, String.format("Did not receive tile data for tile: x = %d, y= %d, zoom = %d", x, y, zoom));
+          Log.e(
+              TAG,
+              String.format(
+                  "Did not receive tile data for tile: x = %d, y= %d, zoom = %d", x, y, zoom));
           return TileProvider.NO_TILE;
         }
         @SuppressWarnings("unchecked")

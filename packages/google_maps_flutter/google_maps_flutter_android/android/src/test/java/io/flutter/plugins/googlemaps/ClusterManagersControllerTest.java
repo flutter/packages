@@ -58,8 +58,7 @@ public class ClusterManagersControllerTest {
     MockitoAnnotations.openMocks(this);
     context = ApplicationProvider.getApplicationContext();
     assetManager = context.getAssets();
-    flutterApi =
-        spy(new MapsCallbackApi(mock(BinaryMessenger.class)));
+    flutterApi = spy(new MapsCallbackApi(mock(BinaryMessenger.class)));
     controller = spy(new ClusterManagersController(flutterApi, context));
     googleMap = mock(GoogleMap.class);
     markerManager = new MarkerManager(googleMap);
@@ -197,7 +196,8 @@ public class ClusterManagersControllerTest {
 
     controller.onClusterClick(cluster);
     Mockito.verify(flutterApi)
-        .onClusterTap(eq(Convert.clusterToPigeon(clusterManagerId, cluster)), ArgumentMatchers.any());
+        .onClusterTap(
+            eq(Convert.clusterToPigeon(clusterManagerId, cluster)), ArgumentMatchers.any());
   }
 
   @Test
