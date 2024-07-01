@@ -50,7 +50,6 @@ constexpr char kAudioBitrateKey[] = "audioBitrate";
 constexpr char kEnableAudioKey[] = "enableAudio";
 
 constexpr char kCameraIdKey[] = "cameraId";
-constexpr char kMaxVideoDurationKey[] = "maxVideoDuration";
 
 constexpr char kResolutionPresetValueLow[] = "low";
 constexpr char kResolutionPresetValueMedium[] = "medium";
@@ -522,21 +521,13 @@ void CameraPlugin::StartVideoRecordingMethodHandler(
                          "Pending start recording request exists");
   }
 
-  int64_t max_video_duration_ms = -1;
-  auto requested_max_video_duration_ms =
-      std::get_if<std::int32_t>(ValueOrNull(args, kMaxVideoDurationKey));
-
-  if (requested_max_video_duration_ms != nullptr) {
-    max_video_duration_ms = *requested_max_video_duration_ms;
-  }
-
   std::optional<std::string> path = GetFilePathForVideo();
   if (path) {
     if (camera->AddPendingResult(PendingResultType::kStartRecord,
                                  std::move(result))) {
       auto cc = camera->GetCaptureController();
       assert(cc);
-      cc->StartRecord(*path, max_video_duration_ms);
+      cc->StartRecord(*path);
     }
   } else {
     return result->Error("system_error",

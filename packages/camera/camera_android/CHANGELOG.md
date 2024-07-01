@@ -1,3 +1,7 @@
+## 0.10.9+7
+
+* Removes unused code related to `maxVideoDuration`.
+
 ## 0.10.9+6
 
 * Reverts changes to support Impeller.

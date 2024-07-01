@@ -1,5 +1,10 @@
 ## 0.6.5+6
 
+* Updates README to remove references to `maxVideoDuration`, as it was never
+  visible to app-facing clients, nor was it implemented in `camera_android`.
+
+## 0.6.5+6
+
 * Updates Guava version to 33.2.1.
 * Updates CameraX version to 1.3.4.
 
