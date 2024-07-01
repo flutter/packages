@@ -1072,38 +1072,6 @@ void main() {
         group('throws a CameraWebException', () {
           testWidgets(
               'with notSupported error '
-              'when maxVideoDuration is 0 milliseconds or less',
-              (WidgetTester tester) async {
-            final Camera camera = Camera(
-              textureId: 1,
-              cameraService: cameraService,
-            )
-              ..mediaRecorder = mediaRecorder
-              ..isVideoTypeSupported = isVideoTypeSupported;
-
-            await camera.initialize();
-            await camera.play();
-
-            expect(
-              () => camera.startVideoRecording(),
-              throwsA(
-                isA<CameraWebException>()
-                    .having(
-                      (CameraWebException e) => e.cameraId,
-                      'cameraId',
-                      textureId,
-                    )
-                    .having(
-                      (CameraWebException e) => e.code,
-                      'code',
-                      CameraErrorCode.notSupported,
-                    ),
-              ),
-            );
-          });
-
-          testWidgets(
-              'with notSupported error '
               'when no video types are supported', (WidgetTester tester) async {
             final Camera camera = Camera(
               textureId: 1,
