@@ -17,39 +17,47 @@ final class AdsLoaderDelegateTests: XCTestCase {
 
     XCTAssertTrue(instance is AdsLoaderDelegateImpl)
   }
-  
+
   func testAdLoaderLoadedWith() {
     let api = TestAdsLoaderDelegateApi()
     let instance = AdsLoaderDelegateImpl(api: api)
-    
+
     let adsLoader = IMAAdsLoader(settings: nil)
     let data = TestAdsLoadedData()
     instance.adsLoader(adsLoader, adsLoadedWith: data)
-    
+
     XCTAssertEqual(api.adLoaderLoadedWithArgs, [adsLoader, data])
   }
-  
+
   func testAdsLoaderFailedWithErrorDataArgs() {
     let api = TestAdsLoaderDelegateApi()
     let instance = AdsLoaderDelegateImpl(api: api)
-    
+
     let adsLoader = IMAAdsLoader(settings: nil)
     let error = TestAdLoadingErrorData.customInit()
     instance.adsLoader(adsLoader, failedWith: error)
-    
+
     XCTAssertEqual(api.adsLoaderFailedWithErrorDataArgs, [adsLoader, error])
   }
 }
 
 class TestAdsLoaderDelegateApi: PigeonApiProtocolIMAAdsLoaderDelegate {
-  var adLoaderLoadedWithArgs: [AnyHashable?]? = nil;
-  var adsLoaderFailedWithErrorDataArgs: [AnyHashable?]? = nil;
-  
-  func adLoaderLoadedWith(pigeonInstance pigeonInstanceArg: IMAAdsLoaderDelegate, loader loaderArg: IMAAdsLoader, adsLoadedData adsLoadedDataArg: IMAAdsLoadedData, completion: @escaping (Result<Void, PigeonError>) -> Void) {
+  var adLoaderLoadedWithArgs: [AnyHashable?]? = nil
+  var adsLoaderFailedWithErrorDataArgs: [AnyHashable?]? = nil
+
+  func adLoaderLoadedWith(
+    pigeonInstance pigeonInstanceArg: IMAAdsLoaderDelegate, loader loaderArg: IMAAdsLoader,
+    adsLoadedData adsLoadedDataArg: IMAAdsLoadedData,
+    completion: @escaping (Result<Void, PigeonError>) -> Void
+  ) {
     adLoaderLoadedWithArgs = [loaderArg, adsLoadedDataArg]
   }
-  
-  func adsLoaderFailedWithErrorData(pigeonInstance pigeonInstanceArg: IMAAdsLoaderDelegate, loader loaderArg: IMAAdsLoader, adErrorData adErrorDataArg: IMAAdLoadingErrorData, completion: @escaping (Result<Void, PigeonError>) -> Void) {
+
+  func adsLoaderFailedWithErrorData(
+    pigeonInstance pigeonInstanceArg: IMAAdsLoaderDelegate, loader loaderArg: IMAAdsLoader,
+    adErrorData adErrorDataArg: IMAAdLoadingErrorData,
+    completion: @escaping (Result<Void, PigeonError>) -> Void
+  ) {
     adsLoaderFailedWithErrorDataArgs = [loaderArg, adErrorDataArg]
   }
 }
