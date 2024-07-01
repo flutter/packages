@@ -1,6 +1,12 @@
-## NEXT
+## 0.1.11+1
 
-* Updates minimum supported SDK version to Flutter 3.16/Dart 3.2.
+* Allows custom animation duration for the NavigationRail and 
+  BottomNavigationBar transitions. [flutter/flutter#112938](https://github.com/flutter/flutter/issues/112938)
+
+## 0.1.11
+
+* Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
+* Migrates deprecated MaterialState and MaterialStateProperty to WidgetState and WidgetStateProperty.
 
 ## 0.1.10+2
 

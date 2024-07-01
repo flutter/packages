@@ -1,6 +1,10 @@
-## 14.2.0
+## 14.3.0
 
 - Adds `popUntil` method to pop multiple routes from a predicate.
+
+## 14.2.0
+
+- Added proper `redirect` handling for `ShellRoute.$route` and `StatefulShellRoute.$route` for proper redirection handling in case of code generation.
 
 ## 14.1.4
 
