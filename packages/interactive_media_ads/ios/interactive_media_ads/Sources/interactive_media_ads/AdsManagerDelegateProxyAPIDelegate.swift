@@ -6,9 +6,9 @@ import Foundation
 import GoogleInteractiveMediaAds
 
 class AdsManagerDelegateImpl: NSObject, IMAAdsManagerDelegate {
-  let api: PigeonApiIMAAdsManagerDelegate
+  let api: PigeonApiProtocolIMAAdsManagerDelegate
 
-  init(api: PigeonApiIMAAdsManagerDelegate) {
+  init(api: PigeonApiProtocolIMAAdsManagerDelegate) {
     self.api = api
   }
 
