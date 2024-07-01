@@ -1,3 +1,7 @@
+## 2.2.6
+
+* Updates Android Gradle plugin to 8.4.1.
+
 ## 2.2.5
 
 * Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
