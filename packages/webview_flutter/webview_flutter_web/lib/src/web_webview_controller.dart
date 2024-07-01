@@ -3,10 +3,11 @@
 // found in the LICENSE file.
 
 import 'dart:convert';
-import 'dart:html' as html;
 import 'dart:ui_web' as ui_web;
 
 import 'package:flutter/cupertino.dart';
+import 'package:http/http.dart' as http;
+import 'package:web/web.dart' as html;
 import 'package:webview_flutter_platform_interface/webview_flutter_platform_interface.dart';
 
 import 'content_type.dart';
@@ -38,7 +39,7 @@ class WebWebViewControllerCreationParams
 
   /// The underlying element used as the WebView.
   @visibleForTesting
-  final html.IFrameElement iFrame = html.IFrameElement()
+  final html.HTMLIFrameElement iFrame = html.HTMLIFrameElement()
     ..id = 'webView${_nextIFrameId++}'
     ..style.width = '100%'
     ..style.height = '100%'
@@ -86,7 +87,7 @@ class WebWebViewController extends PlatformWebViewController {
 
   /// Performs an AJAX request defined by [params].
   Future<void> _updateIFrameFromXhr(LoadRequestParams params) async {
-    final html.HttpRequest httpReq =
+    final http.Response httpReq =
         await _webWebViewParams.httpRequestFactory.request(
       params.uri.toString(),
       method: params.method.serialize(),
@@ -94,14 +95,13 @@ class WebWebViewController extends PlatformWebViewController {
       sendData: params.body,
     );
 
-    final String header =
-        httpReq.getResponseHeader('content-type') ?? 'text/html';
+    final String header = httpReq.headers['content-type'] ?? 'text/html';
     final ContentType contentType = ContentType.parse(header);
     final Encoding encoding = Encoding.getByName(contentType.charset) ?? utf8;
 
     // ignore: unsafe_html
     _webWebViewParams.iFrame.src = Uri.dataFromString(
-      httpReq.responseText ?? '',
+      httpReq.body,
       mimeType: contentType.mimeType,
       encoding: encoding,
     ).toString();

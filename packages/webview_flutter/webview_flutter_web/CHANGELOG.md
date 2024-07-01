@@ -1,5 +1,9 @@
-## NEXT
+## 0.2.2+5
 
+* Migrates to `package:web`
+* Updates `HttpRequestFactory.request` to use `package:http` `BrowserClient`
+* Updates `ìndex.html` in the example to use `flutter_bootstrap.js`
+* Updates minimum dart sdk to `^3.3.0`
 * Updates minimum supported SDK version to Flutter 3.16/Dart 3.2.
 
 ## 0.2.2+4

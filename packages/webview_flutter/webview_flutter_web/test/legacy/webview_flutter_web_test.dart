@@ -2,26 +2,28 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'dart:html';
+import 'dart:js_interop';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:http/http.dart' as http;
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:webview_flutter_platform_interface/src/webview_flutter_platform_interface_legacy.dart';
 import 'package:webview_flutter_web/src/http_request_factory.dart';
 import 'package:webview_flutter_web/src/webview_flutter_web_legacy.dart';
 
+import 'mock_fake_iframe_element.dart';
 import 'webview_flutter_web_test.mocks.dart';
 
 @GenerateMocks(<Type>[
-  IFrameElement,
+  FakeIFrameElement,
   BuildContext,
   CreationParams,
   WebViewPlatformCallbacksHandler,
   HttpRequestFactory,
-  HttpRequest,
+  http.Response,
 ])
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -45,7 +47,11 @@ void main() {
   group('WebWebViewPlatformController', () {
     test('loadUrl sets url on iframe src attribute', () {
       // Setup
-      final MockIFrameElement mockElement = MockIFrameElement();
+      final MockFakeIFrameElement fakeElem = MockFakeIFrameElement();
+      final MockHTMLIFrameElement mockElement =
+          createJSInteropWrapper<FakeIFrameElement>(fakeElem)
+              as MockHTMLIFrameElement;
+
       final WebWebViewPlatformController controller =
           WebWebViewPlatformController(
         mockElement,
@@ -59,7 +65,11 @@ void main() {
     group('loadHtmlString', () {
       test('loadHtmlString loads html into iframe', () {
         // Setup
-        final MockIFrameElement mockElement = MockIFrameElement();
+        final MockFakeIFrameElement fakeElem = MockFakeIFrameElement();
+        final MockHTMLIFrameElement mockElement =
+            createJSInteropWrapper<FakeIFrameElement>(fakeElem)
+                as MockHTMLIFrameElement;
+
         final WebWebViewPlatformController controller =
             WebWebViewPlatformController(
           mockElement,
@@ -73,7 +83,11 @@ void main() {
 
       test('loadHtmlString escapes "#" correctly', () {
         // Setup
-        final MockIFrameElement mockElement = MockIFrameElement();
+        final MockFakeIFrameElement fakeElem = MockFakeIFrameElement();
+        final MockHTMLIFrameElement mockElement =
+            createJSInteropWrapper<FakeIFrameElement>(fakeElem)
+                as MockHTMLIFrameElement;
+
         final WebWebViewPlatformController controller =
             WebWebViewPlatformController(
           mockElement,
@@ -88,7 +102,11 @@ void main() {
     group('loadRequest', () {
       test('loadRequest throws ArgumentError on missing scheme', () {
         // Setup
-        final MockIFrameElement mockElement = MockIFrameElement();
+        final MockFakeIFrameElement fakeElem = MockFakeIFrameElement();
+        final MockHTMLIFrameElement mockElement =
+            createJSInteropWrapper<FakeIFrameElement>(fakeElem)
+                as MockHTMLIFrameElement;
+
         final WebWebViewPlatformController controller =
             WebWebViewPlatformController(
           mockElement,
@@ -107,15 +125,20 @@ void main() {
       test('loadRequest makes request and loads response into iframe',
           () async {
         // Setup
-        final MockIFrameElement mockElement = MockIFrameElement();
+        final MockFakeIFrameElement fakeElem = MockFakeIFrameElement();
+        final MockHTMLIFrameElement mockElement =
+            createJSInteropWrapper<FakeIFrameElement>(fakeElem)
+                as MockHTMLIFrameElement;
+
         final WebWebViewPlatformController controller =
             WebWebViewPlatformController(
           mockElement,
         );
-        final MockHttpRequest mockHttpRequest = MockHttpRequest();
-        when(mockHttpRequest.getResponseHeader('content-type'))
-            .thenReturn('text/plain');
-        when(mockHttpRequest.responseText).thenReturn('test data');
+        final MockResponse mockHttpRequest = MockResponse();
+        when(mockHttpRequest.headers)
+            .thenReturn(<String, String>{'content-type': 'text/plain'});
+
+        when(mockHttpRequest.body).thenReturn('test data');
         final MockHttpRequestFactory mockHttpRequestFactory =
             MockHttpRequestFactory();
         when(mockHttpRequestFactory.request(
@@ -123,7 +146,7 @@ void main() {
           method: anyNamed('method'),
           requestHeaders: anyNamed('requestHeaders'),
           sendData: anyNamed('sendData'),
-        )).thenAnswer((_) => Future<HttpRequest>.value(mockHttpRequest));
+        )).thenAnswer((_) => Future<http.Response>.value(mockHttpRequest));
         controller.httpRequestFactory = mockHttpRequestFactory;
         // Run
         await controller.loadRequest(
@@ -146,15 +169,20 @@ void main() {
 
       test('loadRequest escapes "#" correctly', () async {
         // Setup
-        final MockIFrameElement mockElement = MockIFrameElement();
+        final MockFakeIFrameElement fakeElem = MockFakeIFrameElement();
+        final MockHTMLIFrameElement mockElement =
+            createJSInteropWrapper<FakeIFrameElement>(fakeElem)
+                as MockHTMLIFrameElement;
+
         final WebWebViewPlatformController controller =
             WebWebViewPlatformController(
           mockElement,
         );
-        final MockHttpRequest mockHttpRequest = MockHttpRequest();
-        when(mockHttpRequest.getResponseHeader('content-type'))
-            .thenReturn('text/html');
-        when(mockHttpRequest.responseText).thenReturn('#');
+        final MockResponse mockHttpRequest = MockResponse();
+        when(mockHttpRequest.headers)
+            .thenReturn(<String, String>{'content-type': 'text/html'});
+
+        when(mockHttpRequest.body).thenReturn('#');
         final MockHttpRequestFactory mockHttpRequestFactory =
             MockHttpRequestFactory();
         when(mockHttpRequestFactory.request(
@@ -162,7 +190,7 @@ void main() {
           method: anyNamed('method'),
           requestHeaders: anyNamed('requestHeaders'),
           sendData: anyNamed('sendData'),
-        )).thenAnswer((_) => Future<HttpRequest>.value(mockHttpRequest));
+        )).thenAnswer((_) => Future<http.Response>.value(mockHttpRequest));
         controller.httpRequestFactory = mockHttpRequestFactory;
         // Run
         await controller.loadRequest(
