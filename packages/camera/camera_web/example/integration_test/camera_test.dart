@@ -1069,27 +1069,6 @@ void main() {
           verify(mediaRecorder.start).called(1);
         });
 
-        testWidgets(
-            'starts a video recording '
-            'with maxVideoDuration', (WidgetTester tester) async {
-          const Duration maxVideoDuration = Duration(hours: 1);
-
-          final Camera camera = Camera(
-            textureId: 1,
-            cameraService: cameraService,
-          )
-            ..mediaRecorder = mediaRecorder
-            ..isVideoTypeSupported = isVideoTypeSupported;
-
-          await camera.initialize();
-          await camera.play();
-
-          await camera.startVideoRecording(maxVideoDuration: maxVideoDuration);
-
-          verify(() => mediaRecorder.start(maxVideoDuration.inMilliseconds))
-              .called(1);
-        });
-
         group('throws a CameraWebException', () {
           testWidgets(
               'with notSupported error '
@@ -1106,7 +1085,7 @@ void main() {
             await camera.play();
 
             expect(
-              () => camera.startVideoRecording(maxVideoDuration: Duration.zero),
+              () => camera.startVideoRecording(),
               throwsA(
                 isA<CameraWebException>()
                     .having(
@@ -1346,46 +1325,6 @@ void main() {
         });
       });
 
-      group('on video data available', () {
-        late void Function(Event) videoDataAvailableListener;
-
-        setUp(() {
-          when(
-            () => mediaRecorder.addEventListener('dataavailable', any()),
-          ).thenAnswer((Invocation invocation) {
-            videoDataAvailableListener =
-                invocation.positionalArguments[1] as void Function(Event);
-          });
-        });
-
-        testWidgets(
-            'stops a video recording '
-            'if maxVideoDuration is given and '
-            'the recording was not stopped manually',
-            (WidgetTester tester) async {
-          const Duration maxVideoDuration = Duration(hours: 1);
-
-          final Camera camera = Camera(
-            textureId: 1,
-            cameraService: cameraService,
-          )
-            ..mediaRecorder = mediaRecorder
-            ..isVideoTypeSupported = isVideoTypeSupported;
-
-          await camera.initialize();
-          await camera.play();
-          await camera.startVideoRecording(maxVideoDuration: maxVideoDuration);
-
-          when(() => mediaRecorder.state).thenReturn('recording');
-
-          videoDataAvailableListener(FakeBlobEvent(Blob(<Object>[])));
-
-          await Future<void>.microtask(() {});
-
-          verify(mediaRecorder.stop).called(1);
-        });
-      });
-
       group('on video recording stopped', () {
         late void Function(Event) videoRecordingStoppedListener;
 
@@ -1543,7 +1482,6 @@ void main() {
         testWidgets(
             'emits a VideoRecordedEvent '
             'when a video recording is created', (WidgetTester tester) async {
-          const Duration maxVideoDuration = Duration(hours: 1);
           const String supportedVideoType = 'video/webm';
 
           final MockMediaRecorder mediaRecorder = MockMediaRecorder();
@@ -1580,7 +1518,7 @@ void main() {
           final StreamQueue<VideoRecordedEvent> streamQueue =
               StreamQueue<VideoRecordedEvent>(camera.onVideoRecordedEvent);
 
-          await camera.startVideoRecording(maxVideoDuration: maxVideoDuration);
+          await camera.startVideoRecording();
 
           Blob? finalVideo;
           camera.blobBuilder = (List<Blob> blobs, String videoType) {
@@ -1614,11 +1552,6 @@ void main() {
                           'name',
                           finalVideo.hashCode.toString(),
                         ),
-                  )
-                  .having(
-                    (VideoRecordedEvent e) => e.maxVideoDuration,
-                    'maxVideoDuration',
-                    maxVideoDuration,
                   ),
             ),
           );

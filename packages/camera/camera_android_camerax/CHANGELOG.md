@@ -1,4 +1,4 @@
-## 0.6.5+6
+## 0.6.5+7
 
 * Updates README to remove references to `maxVideoDuration`, as it was never
   visible to app-facing clients, nor was it implemented in `camera_android`.
