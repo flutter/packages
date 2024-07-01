@@ -11,14 +11,14 @@
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 @interface NullFieldsSearchRequest ()
-+ (NullFieldsSearchRequest *)fromList:(NSArray *)list;
-- (NSArray *)toList;
++ (NullFieldsSearchRequest *)fromList:(NSArray<id> *)list;
+- (NSArray<id> *)toList;
 @end
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 @interface NullFieldsSearchReply ()
-+ (NullFieldsSearchReply *)fromList:(NSArray *)list;
-- (NSArray *)toList;
++ (NullFieldsSearchReply *)fromList:(NSArray<id> *)list;
+- (NSArray<id> *)toList;
 @end
 
 ///////////////////////////////////////////////////////////////////////////////////////////
@@ -39,7 +39,7 @@
                                                                request:request
                                                                   type:typeWrapper];
 
-  NSArray *indices = @[ @1, @2, @3 ];
+  NSArray<id> *indices = @[ @1, @2, @3 ];
   XCTAssertEqualObjects(@"result", reply.result);
   XCTAssertEqualObjects(@"error", reply.error);
   XCTAssertEqualObjects(indices, reply.indices);
@@ -66,7 +66,7 @@
 }
 
 - (void)testRequestFromListWithValues {
-  NSArray *list = @[
+  NSArray<id> *list = @[
     @"hello",
     @1,
   ];
@@ -75,7 +75,7 @@
 }
 
 - (void)testRequestFromListWithNulls {
-  NSArray *list = @[
+  NSArray<id> *list = @[
     [NSNull null],
     @1,
   ];
@@ -84,18 +84,24 @@
 }
 
 - (void)testReplyFromListWithValues {
-  NSArray *indices = @[ @1, @2, @3 ];
-  NullFieldsSearchRequest *request = [NullFieldsSearchRequest makeWithQuery:@"hello" identifier:1];
-
   NullFieldsSearchReplyTypeBox *typeWrapper =
       [[NullFieldsSearchReplyTypeBox alloc] initWithValue:NullFieldsSearchReplyTypeSuccess];
-  NullFieldsSearchReply *input = [NullFieldsSearchReply makeWithResult:@"result"
-                                                                 error:@"error"
-                                                               indices:indices
-                                                               request:request
-                                                                  type:typeWrapper];
 
-  NullFieldsSearchReply *reply = [NullFieldsSearchReply fromList:[input toList]];
+  NSArray<id> *listRequest = @[
+    @"hello",
+    @1,
+  ];
+  NSArray<id> *listReply = @[
+    @"result",
+    @"error",
+    @[ @1, @2, @3 ],
+    [NullFieldsSearchRequest fromList:listRequest],
+    typeWrapper,
+  ];
+
+  NSArray<id> *indices = @[ @1, @2, @3 ];
+  NullFieldsSearchReply *reply = [NullFieldsSearchReply fromList:listReply];
+
   XCTAssertEqualObjects(@"result", reply.result);
   XCTAssertEqualObjects(@"error", reply.error);
   XCTAssertEqualObjects(indices, reply.indices);
@@ -104,7 +110,7 @@
 }
 
 - (void)testReplyFromListWithNulls {
-  NSArray *list = @[
+  NSArray<id> *list = @[
     [NSNull null],
     [NSNull null],
     [NSNull null],
@@ -121,13 +127,13 @@
 
 - (void)testRequestToListWithValuess {
   NullFieldsSearchRequest *request = [NullFieldsSearchRequest makeWithQuery:@"hello" identifier:1];
-  NSArray *list = [request toList];
+  NSArray<id> *list = [request toList];
   XCTAssertEqual(@"hello", list[0]);
 }
 
 - (void)testRequestToListWithNulls {
   NullFieldsSearchRequest *request = [NullFieldsSearchRequest makeWithQuery:nil identifier:1];
-  NSArray *list = [request toList];
+  NSArray<id> *list = [request toList];
   XCTAssertEqual([NSNull null], list[0]);
 }
 
@@ -140,15 +146,13 @@
              indices:@[ @1, @2, @3 ]
              request:[NullFieldsSearchRequest makeWithQuery:@"hello" identifier:1]
                 type:typeWrapper];
-  NSArray *list = [reply toList];
-  NSArray *indices = @[ @1, @2, @3 ];
+  NSArray<id> *list = [reply toList];
+  NSArray<id> *indices = @[ @1, @2, @3 ];
   XCTAssertEqualObjects(@"result", list[0]);
   XCTAssertEqualObjects(@"error", list[1]);
   XCTAssertEqualObjects(indices, list[2]);
   XCTAssertEqualObjects(@"hello", ((NullFieldsSearchRequest *)list[3]).query);
-  NSNumber *typeNumber = list[4];
-  NullFieldsSearchReplyTypeBox *output =
-      [[NullFieldsSearchReplyTypeBox alloc] initWithValue:[typeNumber integerValue]];
+  NullFieldsSearchReplyTypeBox *output = list[4];
 
   XCTAssertEqual(typeWrapper.value, output.value);
 }
@@ -159,7 +163,7 @@
                                                                indices:nil
                                                                request:nil
                                                                   type:nil];
-  NSArray *list = [reply toList];
+  NSArray<id> *list = [reply toList];
   XCTAssertEqual([NSNull null], list[0]);
   XCTAssertEqual([NSNull null], list[1]);
   XCTAssertEqual([NSNull null], list[2]);

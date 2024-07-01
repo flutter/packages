@@ -1,6 +1,10 @@
-## 2.2.6
+## 2.2.7
 
 * Updates Android Gradle plugin to 8.4.1.
+
+## 2.2.6
+
+* Updates annotations lib to 1.8.0.
 
 ## 2.2.5
 

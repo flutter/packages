@@ -4,6 +4,7 @@
 
 package io.flutter.plugins.googlemaps;
 
+import androidx.annotation.Nullable;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.TileOverlay;
 import com.google.android.gms.maps.model.TileOverlayOptions;
@@ -67,7 +68,8 @@ class TileOverlaysController {
     }
   }
 
-  Map<String, Object> getTileOverlayInfo(String tileOverlayId) {
+  @Nullable
+  TileOverlay getTileOverlay(String tileOverlayId) {
     if (tileOverlayId == null) {
       return null;
     }
@@ -75,7 +77,7 @@ class TileOverlaysController {
     if (tileOverlayController == null) {
       return null;
     }
-    return tileOverlayController.getTileOverlayInfo();
+    return tileOverlayController.getTileOverlay();
   }
 
   private void addTileOverlay(Map<String, ?> tileOverlayOptions) {

@@ -12,6 +12,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
 
 import android.content.Context;
+import android.content.res.AssetManager;
 import android.os.Build;
 import androidx.test.core.app.ApplicationProvider;
 import com.google.android.gms.maps.GoogleMap;
@@ -32,6 +33,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
@@ -45,14 +47,19 @@ public class MarkersControllerTest {
   private GoogleMap googleMap;
   private MarkerManager markerManager;
   private MarkerManager.Collection markerCollection;
+  private AssetManager assetManager;
+  private final float density = 1;
 
   @Before
   public void setUp() {
+    MockitoAnnotations.openMocks(this);
+    assetManager = ApplicationProvider.getApplicationContext().getAssets();
     context = ApplicationProvider.getApplicationContext();
     methodChannel =
         spy(new MethodChannel(mock(BinaryMessenger.class), "no-name", mock(MethodCodec.class)));
     clusterManagersController = spy(new ClusterManagersController(methodChannel, context));
-    controller = new MarkersController(methodChannel, clusterManagersController);
+    controller =
+        new MarkersController(methodChannel, clusterManagersController, assetManager, density);
     googleMap = mock(GoogleMap.class);
     markerManager = new MarkerManager(googleMap);
     markerCollection = markerManager.newCollection();
