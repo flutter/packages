@@ -119,6 +119,28 @@ String concatenatePaths(String parentPath, String childPath) {
   return '${parentPath == '/' ? '' : parentPath}/$childPath';
 }
 
+/// Concatenates two Uri. It will [concatenatePaths] the parent's and the child's paths , then merges their query parameters.
+///
+/// e.g: pathA = /a?fid=f1, pathB = c/d?pid=p2,  concatenatePaths(pathA, pathB) = /a/c/d?fid=1&pid=2.
+Uri concatenateUris(Uri parentUri, Uri childUri) {
+  // Merge query parameters from both Uris. We don't return an empty map to prevent trailing '?'.
+  final Map<String, dynamic>? newParameters =
+      parentUri.queryParameters.isNotEmpty ||
+              childUri.queryParameters.isNotEmpty
+          ? <String, dynamic>{
+              ...parentUri.queryParameters,
+              ...childUri.queryParameters,
+            }
+          : null;
+
+  final Uri newUri = parentUri.replace(
+    path: concatenatePaths(parentUri.path, childUri.path),
+    queryParameters: newParameters,
+  );
+
+  return newUri;
+}
+
 /// Normalizes the location string.
 String canonicalUri(String loc) {
   if (loc.isEmpty) {
