@@ -17,6 +17,8 @@
 		8F599BB52C2DD8EC0090A0DF /* AdsLoaderDelegateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F599BB42C2DD8EC0090A0DF /* AdsLoaderDelegateTests.swift */; };
 		8F599BB72C3327F10090A0DF /* AdsManagerDelegateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F599BB62C3327F10090A0DF /* AdsManagerDelegateTests.swift */; };
 		8F599BB92C332A320090A0DF /* AdsRenderingSettingsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F599BB82C332A320090A0DF /* AdsRenderingSettingsTests.swift */; };
+		8F599BBB2C332C010090A0DF /* AdsRequestTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F599BBA2C332C010090A0DF /* AdsRequestTests.swift */; };
+		8F599BBD2C332CFE0090A0DF /* ContentPlayheadTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F599BBC2C332CFE0090A0DF /* ContentPlayheadTests.swift */; };
 		8F977DCF2C2B99C600A90D4B /* AdDisplayContainerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F977DCE2C2B99C600A90D4B /* AdDisplayContainerTests.swift */; };
 		8F977DD12C2BA13400A90D4B /* MockBinaryMessenger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F977DD02C2BA13400A90D4B /* MockBinaryMessenger.swift */; };
 		8F977DD32C2BA15100A90D4B /* TestProxyApiRegistrar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F977DD22C2BA15100A90D4B /* TestProxyApiRegistrar.swift */; };
@@ -72,6 +74,8 @@
 		8F599BB42C2DD8EC0090A0DF /* AdsLoaderDelegateTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdsLoaderDelegateTests.swift; sourceTree = "<group>"; };
 		8F599BB62C3327F10090A0DF /* AdsManagerDelegateTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdsManagerDelegateTests.swift; sourceTree = "<group>"; };
 		8F599BB82C332A320090A0DF /* AdsRenderingSettingsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdsRenderingSettingsTests.swift; sourceTree = "<group>"; };
+		8F599BBA2C332C010090A0DF /* AdsRequestTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdsRequestTests.swift; sourceTree = "<group>"; };
+		8F599BBC2C332CFE0090A0DF /* ContentPlayheadTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentPlayheadTests.swift; sourceTree = "<group>"; };
 		8F977DCE2C2B99C600A90D4B /* AdDisplayContainerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdDisplayContainerTests.swift; sourceTree = "<group>"; };
 		8F977DD02C2BA13400A90D4B /* MockBinaryMessenger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockBinaryMessenger.swift; sourceTree = "<group>"; };
 		8F977DD22C2BA15100A90D4B /* TestProxyApiRegistrar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestProxyApiRegistrar.swift; sourceTree = "<group>"; };
@@ -124,6 +128,8 @@
 				8F599BB42C2DD8EC0090A0DF /* AdsLoaderDelegateTests.swift */,
 				8F599BB62C3327F10090A0DF /* AdsManagerDelegateTests.swift */,
 				8F599BB82C332A320090A0DF /* AdsRenderingSettingsTests.swift */,
+				8F599BBA2C332C010090A0DF /* AdsRequestTests.swift */,
+				8F599BBC2C332CFE0090A0DF /* ContentPlayheadTests.swift */,
 			);
 			path = RunnerTests;
 			sourceTree = "<group>";
@@ -405,8 +411,10 @@
 				8F599BB32C2DD87D0090A0DF /* AdsLoaderTests.swift in Sources */,
 				8F977DD72C2C89A600A90D4B /* AdEventTests.swift in Sources */,
 				8F977DD32C2BA15100A90D4B /* TestProxyApiRegistrar.swift in Sources */,
+				8F599BBB2C332C010090A0DF /* AdsRequestTests.swift in Sources */,
 				8F977DD12C2BA13400A90D4B /* MockBinaryMessenger.swift in Sources */,
 				8F599BB72C3327F10090A0DF /* AdsManagerDelegateTests.swift in Sources */,
+				8F599BBD2C332CFE0090A0DF /* ContentPlayheadTests.swift in Sources */,
 				8F977DCF2C2B99C600A90D4B /* AdDisplayContainerTests.swift in Sources */,
 				8F599BB52C2DD8EC0090A0DF /* AdsLoaderDelegateTests.swift in Sources */,
 				8F599BB92C332A320090A0DF /* AdsRenderingSettingsTests.swift in Sources */,
