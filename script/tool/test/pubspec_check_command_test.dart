@@ -1518,7 +1518,7 @@ ${_topicsSection()}
       expect(
         output,
         containsAllInOrder(<Matcher>[
-          contains('Dart SDK version for Fluter SDK version 2.0.0 is unknown'),
+          contains('Dart SDK version for Flutter SDK version 2.0.0 is unknown'),
         ]),
       );
     });

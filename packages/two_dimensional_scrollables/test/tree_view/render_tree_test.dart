@@ -141,10 +141,10 @@ void main() {
       final List<String> log = <String>[];
       final TreeView<String> treeView = TreeView<String>(
         tree: treeNodes,
-        treeRowBuilder: (TreeViewNode<Object?> node) {
+        treeRowBuilder: (TreeViewNode<String> node) {
           if (node.depth! == 0) {
             return getTappableRow(
-              node as TreeViewNode<String>,
+              node,
               () {
                 log.add(node.content);
                 tapCounter++;
@@ -174,7 +174,7 @@ void main() {
       int exitCounter = 0;
       final TreeView<String> treeView = TreeView<String>(
         tree: treeNodes,
-        treeRowBuilder: (TreeViewNode<Object?> node) {
+        treeRowBuilder: (TreeViewNode<String> node) {
           if (node.depth! == 0) {
             return getMouseTrackingRow(
               onEnter: (_) => enterCounter++,
@@ -397,7 +397,7 @@ void main() {
 
         treeView = TreeView<String>(
           tree: treeNodes,
-          treeRowBuilder: (TreeViewNode<Object?> node) {
+          treeRowBuilder: (TreeViewNode<String> node) {
             if (node.depth! == 1) {
               // extent == 100
               return row;
@@ -766,7 +766,7 @@ void main() {
             controller: horizontalController,
           ),
           tree: treeNodes,
-          treeRowBuilder: (TreeViewNode<Object?> node) {
+          treeRowBuilder: (TreeViewNode<String> node) {
             return row.copyWith(
               backgroundDecoration: node.depth! == 0
                   ? rootBackgroundDecoration

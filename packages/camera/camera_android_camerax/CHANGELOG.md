@@ -1,6 +1,11 @@
-## 0.6.5+6
+## 0.6.5+7
 
 * Updates Android Gradle plugin to 8.4.1.
+
+## 0.6.5+6
+
+* Updates Guava version to 33.2.1.
+* Updates CameraX version to 1.3.4.
 
 ## 0.6.5+5
 

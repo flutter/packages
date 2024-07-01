@@ -1194,7 +1194,7 @@ void main() {
       expect(
           code,
           contains(
-              'const auto* an_object_arg = &(std::any_cast<const ParameterObject&>(std::get<CustomEncodableValue>(encodable_an_object_arg)));'));
+              'const auto* an_object_arg = encodable_an_object_arg.IsNull() ? nullptr : &(std::any_cast<const ParameterObject&>(std::get<CustomEncodableValue>(encodable_an_object_arg)));'));
       // "Object" requires no extraction at all since it has to use
       // EncodableValue directly.
       expect(
@@ -1814,50 +1814,7 @@ void main() {
     expect(code, contains('// ///'));
   });
 
-  test("doesn't create codecs if no custom datatypes", () {
-    final Root root = Root(
-      apis: <Api>[
-        AstFlutterApi(
-          name: 'Api',
-          methods: <Method>[
-            Method(
-              name: 'method',
-              location: ApiLocation.flutter,
-              returnType: const TypeDeclaration.voidDeclaration(),
-              parameters: <Parameter>[
-                Parameter(
-                  name: 'field',
-                  type: const TypeDeclaration(
-                    baseName: 'int',
-                    isNullable: true,
-                  ),
-                ),
-              ],
-            )
-          ],
-        )
-      ],
-      classes: <Class>[],
-      enums: <Enum>[],
-    );
-    final StringBuffer sink = StringBuffer();
-    const CppGenerator generator = CppGenerator();
-    final OutputFileOptions<CppOptions> generatorOptions =
-        OutputFileOptions<CppOptions>(
-      fileType: FileType.header,
-      languageOptions: const CppOptions(),
-    );
-    generator.generate(
-      generatorOptions,
-      root,
-      sink,
-      dartPackageName: DEFAULT_PACKAGE_NAME,
-    );
-    final String code = sink.toString();
-    expect(code, isNot(contains(' : public flutter::StandardCodecSerializer')));
-  });
-
-  test('creates custom codecs if custom datatypes present', () {
+  test('creates custom codecs', () {
     final Root root = Root(apis: <Api>[
       AstFlutterApi(name: 'Api', methods: <Method>[
         Method(
