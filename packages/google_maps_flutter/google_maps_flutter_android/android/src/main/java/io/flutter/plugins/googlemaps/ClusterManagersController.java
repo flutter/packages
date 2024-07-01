@@ -169,20 +169,16 @@ class ClusterManagersController
    * Requests all current clusters from the algorithm of the requested ClusterManager and converts
    * them to result response.
    */
-  public void getClustersWithClusterManagerId(
-      String clusterManagerId, MethodChannel.Result result) {
+  public @NonNull Set<? extends Cluster<MarkerBuilder>> getClustersWithClusterManagerId(
+      String clusterManagerId) {
     ClusterManager<MarkerBuilder> clusterManager = clusterManagerIdToManager.get(clusterManagerId);
     if (clusterManager == null) {
-      result.error(
+      throw new Messages.FlutterError(
           "Invalid clusterManagerId",
           "getClusters called with invalid clusterManagerId:" + clusterManagerId,
           null);
-      return;
     }
-
-    final Set<? extends Cluster<MarkerBuilder>> clusters =
-        clusterManager.getAlgorithm().getClusters(googleMap.getCameraPosition().zoom);
-    result.success(Convert.clustersToJson(clusterManagerId, clusters));
+    return clusterManager.getAlgorithm().getClusters(googleMap.getCameraPosition().zoom);
   }
 
   @Override
