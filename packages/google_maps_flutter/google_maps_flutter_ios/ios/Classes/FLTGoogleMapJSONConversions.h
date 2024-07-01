@@ -7,6 +7,9 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+/// Returns dict[key], or nil if dict[key] is NSNull.
+extern id _Nullable FGMGetValueOrNilFromDict(NSDictionary *dict, NSString *key);
+
 @interface FLTGoogleMapJSONConversions : NSObject
 
 + (CLLocationCoordinate2D)locationFromLatLong:(NSArray *)latlong;
