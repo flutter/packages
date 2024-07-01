@@ -106,20 +106,6 @@ class CaptureControllerListener {
   virtual void OnTakePictureFailed(CameraResult result,
                                    const std::string& error) = 0;
 
-  // Called by CaptureController when timed recording is successfully recorded.
-  //
-  // file_path: Filesystem path of the captured image.
-  // video_duration: Duration of recorded video in milliseconds.
-  virtual void OnVideoRecordSucceeded(const std::string& file_path,
-                                      int64_t video_duration_ms) = 0;
-
-  // Called by CaptureController if timed recording fails.
-  //
-  // result: The kind of result.
-  // error: A string describing the error.
-  virtual void OnVideoRecordFailed(CameraResult result,
-                                   const std::string& error) = 0;
-
   // Called by CaptureController if capture engine returns error.
   // For example when camera is disconnected while on use.
   //

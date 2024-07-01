@@ -437,18 +437,9 @@ class Camera {
 
   /// Starts a new video recording using [html.MediaRecorder].
   ///
-  /// Throws a [CameraWebException] if the provided maximum video duration is invalid
-  /// or the browser does not support any of the available video mime types
-  /// from [_videoMimeType].
-  Future<void> startVideoRecording({Duration? maxVideoDuration}) async {
-    if (maxVideoDuration != null && maxVideoDuration.inMilliseconds <= 0) {
-      throw CameraWebException(
-        textureId,
-        CameraErrorCode.notSupported,
-        'The maximum video duration must be greater than 0 milliseconds.',
-      );
-    }
-
+  /// Throws a [CameraWebException] if the browser does not support any of the
+  /// available video mime types from [_videoMimeType].
+  Future<void> startVideoRecording() async {
     mediaRecorder ??=
         html.MediaRecorder(videoElement.srcObject!, <String, Object>{
       'mimeType': _videoMimeType,
@@ -461,10 +452,10 @@ class Camera {
     _videoAvailableCompleter = Completer<XFile>();
 
     _videoDataAvailableListener =
-        (html.Event event) => _onVideoDataAvailable(event, maxVideoDuration);
+        (html.Event event) => _onVideoDataAvailable(event);
 
     _videoRecordingStoppedListener =
-        (html.Event event) => _onVideoRecordingStopped(event, maxVideoDuration);
+        (html.Event event) => _onVideoRecordingStopped(event);
 
     mediaRecorder!.addEventListener(
       'dataavailable',
@@ -482,36 +473,19 @@ class Camera {
       videoRecordingErrorController.add(error);
     });
 
-    if (maxVideoDuration != null) {
-      mediaRecorder!.start(maxVideoDuration.inMilliseconds);
-    } else {
-      // Don't pass the null duration as that will fire a `dataavailable` event directly.
-      mediaRecorder!.start();
-    }
+    mediaRecorder!.start();
   }
 
-  void _onVideoDataAvailable(
-    html.Event event, [
-    Duration? maxVideoDuration,
-  ]) {
+  void _onVideoDataAvailable(html.Event event) {
     final html.Blob? blob = (event as html.BlobEvent).data;
 
     // Append the recorded part of the video to the list of all video data files.
     if (blob != null) {
       _videoData.add(blob);
     }
-
-    // Stop the recorder if the video has a maxVideoDuration
-    // and the recording was not stopped manually.
-    if (maxVideoDuration != null && mediaRecorder!.state == 'recording') {
-      mediaRecorder!.stop();
-    }
   }
 
-  Future<void> _onVideoRecordingStopped(
-    html.Event event, [
-    Duration? maxVideoDuration,
-  ]) async {
+  Future<void> _onVideoRecordingStopped(html.Event event) async {
     if (_videoData.isNotEmpty) {
       // Concatenate all video data files into a single blob.
       final String videoType = _videoData.first.type;
@@ -526,7 +500,7 @@ class Camera {
 
       // Emit an event containing the recorded video file.
       videoRecorderController.add(
-        VideoRecordedEvent(textureId, file, maxVideoDuration),
+        VideoRecordedEvent(textureId, file, null),
       );
 
       _videoAvailableCompleter?.complete(file);

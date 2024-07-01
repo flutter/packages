@@ -44,12 +44,12 @@ due to this not currently being supported by CameraX.
 the plugin will fall back to target 480p (`ResolutionPreset.medium`) if configured with
 `ResolutionPreset.low`.
 
-### Setting maximum duration and stream options for video capture
+### Setting stream options for video capture
 
 Calling `startVideoCapturing` with `VideoCaptureOptions` configured with
-`maxVideoDuration` and `streamOptions` is currently unsupported do to the
-limitations of the CameraX library and the platform interface, respectively,
-and thus, those parameters will silently be ignored.
+`streamOptions` is currently unsupported do to
+limitations of the platform interface,
+and thus that parameter will silently be ignored.
 
 ## What requires Android permissions
 
