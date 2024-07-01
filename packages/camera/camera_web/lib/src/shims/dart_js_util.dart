@@ -2,14 +2,14 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'dart:js_util' as js_util;
+import 'dart:js_interop';
+import 'dart:js_interop_unsafe';
 
-/// A utility that shims dart:js_util to manipulate JavaScript interop objects.
+/// A utility that shims dart:js_interop to manipulate JavaScript interop objects.
 class JsUtil {
   /// Returns true if the object [o] has the property [name].
-  bool hasProperty(Object o, Object name) => js_util.hasProperty(o, name);
+  bool hasProperty(JSObject o, JSAny name) => o.hasProperty(name).toDart;
 
   /// Returns the value of the property [name] in the object [o].
-  dynamic getProperty(Object o, Object name) =>
-      js_util.getProperty<dynamic>(o, name);
+  JSAny? getProperty(JSObject o, JSAny name) => o.getProperty(name);
 }
