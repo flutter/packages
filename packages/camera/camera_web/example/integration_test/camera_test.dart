@@ -897,7 +897,7 @@ void main() {
         when(firstVideoTrack.getSettings)
             .thenReturn(<dynamic, dynamic>{'facingMode': 'environment'});
 
-        when(() => cameraService.mapFacingModeToLensDirection('environment'))
+        when(() => mapFacingModeToLensDirection('environment'))
             .thenReturn(CameraLensDirection.external);
 
         expect(

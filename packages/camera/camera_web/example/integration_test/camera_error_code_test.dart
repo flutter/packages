@@ -72,13 +72,6 @@ void main() {
         );
       });
 
-      testWidgets('missingMetadata', (WidgetTester tester) async {
-        expect(
-          CameraErrorCode.missingMetadata.toString(),
-          equals('cameraMissingMetadata'),
-        );
-      });
-
       testWidgets('orientationNotSupported', (WidgetTester tester) async {
         expect(
           CameraErrorCode.orientationNotSupported.toString(),
