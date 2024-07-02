@@ -17,6 +17,7 @@ Future<void> runTests(
   List<String> testsToRun, {
   bool runFormat = false,
   bool runGeneration = true,
+  bool ciMode = false,
 }) async {
   final String baseDir = p.dirname(p.dirname(Platform.script.toFilePath()));
   if (runGeneration) {
@@ -47,7 +48,7 @@ Future<void> runTests(
     if (info != null) {
       print('##############################');
       print('# Running $test');
-      final int testCode = await info.function();
+      final int testCode = await info.function(ciMode: ciMode);
       if (testCode != 0) {
         print('# Failed, exit code: $testCode');
         exit(testCode);

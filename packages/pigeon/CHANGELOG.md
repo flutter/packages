@@ -1,7 +1,8 @@
-## 20.0.2
+## 20.1.0
 
 * [java] Adds `equals` and `hashCode` support for data classes.
 * [swift] Fully-qualifies types in Equatable extension test.
+* Adds GObject (Linux) support.
 
 ## 20.0.1
 
