@@ -1442,7 +1442,7 @@ public class GeneratedCameraXLibrary {
     String getTempFilePath(@NonNull String prefix, @NonNull String suffix);
 
     @NonNull
-    Boolean isUsingSurfaceTextureForPreview();
+    Boolean isPreviewPreTransformed();
 
     /** The codec used by SystemServicesHostApi. */
     static @NonNull MessageCodec<Object> getCodec() {
@@ -1515,14 +1515,14 @@ public class GeneratedCameraXLibrary {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
-                "dev.flutter.pigeon.SystemServicesHostApi.isUsingSurfaceTextureForPreview",
+                "dev.flutter.pigeon.SystemServicesHostApi.isPreviewPreTransformed",
                 getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 try {
-                  Boolean output = api.isUsingSurfaceTextureForPreview();
+                  Boolean output = api.isPreviewPreTransformed();
                   wrapped.add(0, output);
                 } catch (Throwable exception) {
                   ArrayList<Object> wrappedError = wrapError(exception);

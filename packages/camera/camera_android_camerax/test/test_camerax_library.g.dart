@@ -510,7 +510,7 @@ abstract class TestSystemServicesHostApi {
 
   String getTempFilePath(String prefix, String suffix);
 
-  bool isUsingSurfaceTextureForPreview();
+  bool isPreviewPreTransformed();
 
   static void setup(TestSystemServicesHostApi? api,
       {BinaryMessenger? binaryMessenger}) {
@@ -565,7 +565,7 @@ abstract class TestSystemServicesHostApi {
     }
     {
       final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.SystemServicesHostApi.isUsingSurfaceTextureForPreview',
+          'dev.flutter.pigeon.SystemServicesHostApi.isPreviewPreTransformed',
           codec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
@@ -576,7 +576,7 @@ abstract class TestSystemServicesHostApi {
             .setMockDecodedMessageHandler<Object?>(channel,
                 (Object? message) async {
           // ignore message
-          final bool output = api.isUsingSurfaceTextureForPreview();
+          final bool output = api.isPreviewPreTransformed();
           return <Object?>[output];
         });
       }

@@ -139,25 +139,25 @@ public class SystemServicesTest {
 
   @Test
   @Config(sdk = 28)
-  public void isUsingSurfaceTextureForPreview_returnsTrueWhenRunningBelowSdk29() {
+  public void isPreviewPreTransformed_returnsTrueWhenRunningBelowSdk29() {
     final SystemServicesHostApiImpl systemServicesHostApi =
         new SystemServicesHostApiImpl(mockBinaryMessenger, mockInstanceManager, mockContext);
-    assertTrue(systemServicesHostApi.isUsingSurfaceTextureForPreview());
+    assertTrue(systemServicesHostApi.isPreviewPreTransformed());
   }
 
   @Test
   @Config(sdk = 29)
-  public void isUsingSurfaceTextureForPreview_returnsTrueWhenRunningSdk29() {
+  public void isPreviewPreTransformed_returnsTrueWhenRunningSdk29() {
     final SystemServicesHostApiImpl systemServicesHostApi =
         new SystemServicesHostApiImpl(mockBinaryMessenger, mockInstanceManager, mockContext);
-    assertTrue(systemServicesHostApi.isUsingSurfaceTextureForPreview());
+    assertTrue(systemServicesHostApi.isPreviewPreTransformed());
   }
 
   @Test
   @Config(sdk = 30)
-  public void isUsingSurfaceTextureForPreview_returnsFalseWhenRunningAboveSdk29() {
+  public void isPreviewPreTransformed_returnsFalseWhenRunningAboveSdk29() {
     final SystemServicesHostApiImpl systemServicesHostApi =
         new SystemServicesHostApiImpl(mockBinaryMessenger, mockInstanceManager, mockContext);
-    assertFalse(systemServicesHostApi.isUsingSurfaceTextureForPreview());
+    assertFalse(systemServicesHostApi.isPreviewPreTransformed());
   }
 }

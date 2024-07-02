@@ -86,16 +86,15 @@ void main() {
     });
   });
 
-  test('isUsingSurfaceTextureForPreview returns expected answer', () async {
+  test('isPreviewPreTransformed returns expected answer', () async {
     final MockTestSystemServicesHostApi mockApi =
         MockTestSystemServicesHostApi();
     TestSystemServicesHostApi.setup(mockApi);
-    const bool isUsingSurfaceTextureForPreview = true;
+    const bool isPreviewPreTransformed = true;
 
-    when(mockApi.isUsingSurfaceTextureForPreview())
-        .thenReturn(isUsingSurfaceTextureForPreview);
+    when(mockApi.isPreviewPreTransformed()).thenReturn(isPreviewPreTransformed);
 
-    expect(await SystemServices.isUsingSurfaceTextureForPreview(), isTrue);
-    verify(mockApi.isUsingSurfaceTextureForPreview());
+    expect(await SystemServices.isPreviewPreTransformed(), isTrue);
+    verify(mockApi.isPreviewPreTransformed());
   });
 }

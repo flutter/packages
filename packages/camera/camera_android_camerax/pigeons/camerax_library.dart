@@ -261,7 +261,7 @@ abstract class SystemServicesHostApi {
 
   String getTempFilePath(String prefix, String suffix);
 
-  bool isUsingSurfaceTextureForPreview();
+  bool isPreviewPreTransformed();
 }
 
 @FlutterApi()

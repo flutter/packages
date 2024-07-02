@@ -1004,9 +1004,9 @@ class SystemServicesHostApi {
     }
   }
 
-  Future<bool> isUsingSurfaceTextureForPreview() async {
+  Future<bool> isPreviewPreTransformed() async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.SystemServicesHostApi.isUsingSurfaceTextureForPreview',
+        'dev.flutter.pigeon.SystemServicesHostApi.isPreviewPreTransformed',
         codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList = await channel.send(null) as List<Object?>?;

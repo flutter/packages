@@ -107,14 +107,15 @@ public class SystemServicesHostApiImpl implements SystemServicesHostApi {
 
   /**
    * Returns whether or not a {@code SurfaceTexture} backs the {@code Surface} provided to CameraX
-   * to build the camera preview.
+   * to build the camera preview. If it is backed by a {@code Surface}, then the transformation
+   * needed to correctly rotate the preview has already been applied.
    *
    * <p>This is determined by the engine, who uses {@code SurfaceTexture}s on Android SDKs 29 and
    * below.
    */
   @Override
   @NonNull
-  public Boolean isUsingSurfaceTextureForPreview() {
+  public Boolean isPreviewPreTransformed() {
     return Build.VERSION.SDK_INT <= 29;
   }
 }

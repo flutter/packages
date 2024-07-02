@@ -1338,7 +1338,7 @@ void main() {
 
     // Tell camera the Surface used to build camera preview is backed by a
     // SurfaceTexture.
-    camera.isUsingSurfaceTextureForPreview = true;
+    camera.isPreviewPreTransformed = true;
 
     camera.naturalOrientation = DeviceOrientation.portraitDown;
 
@@ -1360,7 +1360,7 @@ void main() {
 
     // Tell camera the Surface used to build camera preview is not backed by a
     // SurfaceTexture.
-    camera.isUsingSurfaceTextureForPreview = false;
+    camera.isPreviewPreTransformed = false;
 
     // Mock sensor and device orientation.
     camera.sensorOrientation = 270;
@@ -1394,7 +1394,7 @@ void main() {
 
     // Tell camera the Surface used to build camera preview is not backed by a
     // SurfaceTexture.
-    camera.isUsingSurfaceTextureForPreview = false;
+    camera.isPreviewPreTransformed = false;
 
     // Mock sensor and device orientation.
     camera.sensorOrientation = 270;
@@ -1442,7 +1442,7 @@ void main() {
 
     // Tell camera the Surface used to build camera preview is not backed by a
     // SurfaceTexture.
-    camera.isUsingSurfaceTextureForPreview = false;
+    camera.isPreviewPreTransformed = false;
 
     // Mock sensor and device orientation.
     camera.sensorOrientation = 270;

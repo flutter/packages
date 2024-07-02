@@ -240,7 +240,7 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// Whether or not the Surface used to create the camera preview is backed
   /// by a SurfaceTexture.
   @visibleForTesting
-  late bool isUsingSurfaceTextureForPreview;
+  late bool isPreviewPreTransformed;
 
   /// The initial orientation of the device.
   ///
@@ -400,8 +400,8 @@ class AndroidCameraCameraX extends CameraPlatform {
     final Camera2CameraInfo camera2CameraInfo =
         await proxy.getCamera2CameraInfo(cameraInfo!);
     await Future.wait(<Future<Object>>[
-      SystemServices.isUsingSurfaceTextureForPreview()
-          .then((bool value) => isUsingSurfaceTextureForPreview = value),
+      SystemServices.isPreviewPreTransformed()
+          .then((bool value) => isPreviewPreTransformed = value),
       proxy
           .getSensorOrientation(camera2CameraInfo)
           .then((int value) => sensorOrientation = value),
@@ -876,7 +876,7 @@ class AndroidCameraCameraX extends CameraPlatform {
     int naturalDeviceOrientationDegrees =
         degreesForDeviceOrientation[naturalOrientation]!;
 
-    if (isUsingSurfaceTextureForPreview) {
+    if (isPreviewPreTransformed) {
       // If the camera preview is backed by a SurfaceTexture, the transformation
       // needed to correctly rotate the preview has already been applied.
       // However, we may need to correct the camera preview rotation if the
@@ -917,6 +917,8 @@ class AndroidCameraCameraX extends CameraPlatform {
 
     if (naturalOrientation == DeviceOrientation.landscapeLeft ||
         naturalOrientation == DeviceOrientation.landscapeRight) {
+      // We may need to correct the camera preview rotation if the device is
+      // naturally landscape-oriented.
       quarterTurnsToCorrectPreview +=
           (-naturalDeviceOrientationDegrees + 360) ~/ 4;
       return RotatedBox(
