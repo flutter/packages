@@ -8,7 +8,7 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-import android.graphics.SurfaceTexture;
+import android.view.Surface;
 import androidx.media3.common.AudioAttributes;
 import androidx.media3.common.C;
 import androidx.media3.common.PlaybackParameters;
@@ -44,18 +44,17 @@ public final class VideoPlayerTest {
   private FakeVideoAsset fakeVideoAsset;
 
   @Mock private VideoPlayerCallbacks mockEvents;
-  @Mock private TextureRegistry.SurfaceTextureEntry mockTexture;
-  @Mock private ExoPlayer.Builder mockBuilder;
+  @Mock private TextureRegistry.SurfaceProducer mockProducer;
   @Mock private ExoPlayer mockExoPlayer;
   @Captor private ArgumentCaptor<AudioAttributes> attributesCaptor;
+  @Captor private ArgumentCaptor<TextureRegistry.SurfaceProducer.Callback> callbackCaptor;
 
   @Rule public MockitoRule initRule = MockitoJUnit.rule();
 
   @Before
   public void setUp() {
     fakeVideoAsset = new FakeVideoAsset(FAKE_ASSET_URL);
-    when(mockBuilder.build()).thenReturn(mockExoPlayer);
-    when(mockTexture.surfaceTexture()).thenReturn(mock(SurfaceTexture.class));
+    when(mockProducer.getSurface()).thenReturn(mock(Surface.class));
   }
 
   private VideoPlayer createVideoPlayer() {
@@ -64,7 +63,7 @@ public final class VideoPlayerTest {
 
   private VideoPlayer createVideoPlayer(VideoPlayerOptions options) {
     return new VideoPlayer(
-        mockBuilder, mockEvents, mockTexture, fakeVideoAsset.getMediaItem(), options);
+        () -> mockExoPlayer, mockEvents, mockProducer, fakeVideoAsset.getMediaItem(), options);
   }
 
   @Test
@@ -73,7 +72,7 @@ public final class VideoPlayerTest {
 
     verify(mockExoPlayer).setMediaItem(fakeVideoAsset.getMediaItem());
     verify(mockExoPlayer).prepare();
-    verify(mockTexture).surfaceTexture();
+    verify(mockProducer).getSurface();
     verify(mockExoPlayer).setVideoSurface(any());
 
     verify(mockExoPlayer).setAudioAttributes(attributesCaptor.capture(), eq(true));
@@ -100,10 +99,10 @@ public final class VideoPlayerTest {
     VideoPlayer videoPlayer = createVideoPlayer();
 
     videoPlayer.play();
-    verify(mockExoPlayer).setPlayWhenReady(true);
+    verify(mockExoPlayer).play();
 
     videoPlayer.pause();
-    verify(mockExoPlayer).setPlayWhenReady(false);
+    verify(mockExoPlayer).pause();
 
     videoPlayer.dispose();
   }
@@ -170,11 +169,40 @@ public final class VideoPlayerTest {
   }
 
   @Test
+  public void onSurfaceProducerDestroyedAndRecreatedReleasesAndThenRecreatesAndResumesPlayer() {
+    VideoPlayer videoPlayer = createVideoPlayer();
+
+    verify(mockProducer).setCallback(callbackCaptor.capture());
+    verify(mockExoPlayer, never()).release();
+
+    when(mockExoPlayer.getCurrentPosition()).thenReturn(10L);
+    when(mockExoPlayer.getRepeatMode()).thenReturn(Player.REPEAT_MODE_ALL);
+    when(mockExoPlayer.getVolume()).thenReturn(0.5f);
+    when(mockExoPlayer.getPlaybackParameters()).thenReturn(new PlaybackParameters(2.5f));
+
+    TextureRegistry.SurfaceProducer.Callback producerLifecycle = callbackCaptor.getValue();
+    producerLifecycle.onSurfaceDestroyed();
+
+    verify(mockExoPlayer).release();
+
+    // Create a new mock exo player so that we get a new instance.
+    mockExoPlayer = mock(ExoPlayer.class);
+    producerLifecycle.onSurfaceCreated();
+
+    verify(mockExoPlayer).seekTo(10L);
+    verify(mockExoPlayer).setRepeatMode(Player.REPEAT_MODE_ALL);
+    verify(mockExoPlayer).setVolume(0.5f);
+    verify(mockExoPlayer).setPlaybackParameters(new PlaybackParameters(2.5f));
+
+    videoPlayer.dispose();
+  }
+
+  @Test
   public void disposeReleasesTextureAndPlayer() {
     VideoPlayer videoPlayer = createVideoPlayer();
     videoPlayer.dispose();
 
-    verify(mockTexture).release();
+    verify(mockProducer).release();
     verify(mockExoPlayer).release();
   }
 }
