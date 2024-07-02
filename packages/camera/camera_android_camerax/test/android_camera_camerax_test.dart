@@ -50,7 +50,8 @@ import 'package:camera_android_camerax/src/zoom_state.dart';
 import 'package:camera_platform_interface/camera_platform_interface.dart';
 import 'package:flutter/services.dart'
     show DeviceOrientation, PlatformException, Uint8List;
-import 'package:flutter/widgets.dart' show BuildContext, Size, Texture, Widget;
+import 'package:flutter/widgets.dart'
+    show BuildContext, RotatedBox, Size, Texture, Widget;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
@@ -197,6 +198,10 @@ void main() {
             (Size preferredResolution) =>
                 ResolutionFilter.onePreferredSizeDetached(
                     preferredResolution: preferredResolution),
+        getCamera2CameraInfo: (_) =>
+            Future<Camera2CameraInfo>.value(MockCamera2CameraInfo()),
+        getUiOrientation: () =>
+            Future<DeviceOrientation>.value(DeviceOrientation.portraitUp),
       );
 
   /// CameraXProxy for testing exposure and focus related controls.
@@ -338,6 +343,10 @@ void main() {
     final MockCamera mockCamera = MockCamera();
     final MockCameraInfo mockCameraInfo = MockCameraInfo();
     final MockLiveCameraState mockLiveCameraState = MockLiveCameraState();
+    final TestSystemServicesHostApi mockSystemServicesApi =
+        MockTestSystemServicesHostApi();
+    TestSystemServicesHostApi.setup(mockSystemServicesApi);
+
     bool cameraPermissionsRequested = false;
     bool startedListeningForDeviceOrientationChanges = false;
 
@@ -385,6 +394,10 @@ void main() {
       },
       createAspectRatioStrategy: (_, __) => MockAspectRatioStrategy(),
       createResolutionFilterWithOnePreferredSize: (_) => MockResolutionFilter(),
+      getCamera2CameraInfo: (_) =>
+          Future<Camera2CameraInfo>.value(MockCamera2CameraInfo()),
+      getUiOrientation: () =>
+          Future<DeviceOrientation>.value(DeviceOrientation.portraitUp),
     );
 
     camera.processCameraProvider = mockProcessCameraProvider;
@@ -467,6 +480,10 @@ void main() {
     final MockCamera mockCamera = MockCamera();
     final MockCameraInfo mockCameraInfo = MockCameraInfo();
     final MockCameraControl mockCameraControl = MockCameraControl();
+    final MockCamera2CameraInfo mockCamera2CameraInfo = MockCamera2CameraInfo();
+    final TestSystemServicesHostApi mockSystemServicesApi =
+        MockTestSystemServicesHostApi();
+    TestSystemServicesHostApi.setup(mockSystemServicesApi);
 
     // Tell plugin to create mock/detached objects and stub method calls for the
     // testing of createCamera.
@@ -507,6 +524,12 @@ void main() {
       startListeningForDeviceOrientationChange: (_, __) {},
       createAspectRatioStrategy: (_, __) => MockAspectRatioStrategy(),
       createResolutionFilterWithOnePreferredSize: (_) => MockResolutionFilter(),
+      getCamera2CameraInfo: (CameraInfo cameraInfo) =>
+          cameraInfo == mockCameraInfo
+              ? Future<Camera2CameraInfo>.value(mockCamera2CameraInfo)
+              : Future<Camera2CameraInfo>.value(MockCamera2CameraInfo()),
+      getUiOrientation: () =>
+          Future<DeviceOrientation>.value(DeviceOrientation.portraitUp),
     );
 
     when(mockProcessCameraProvider.bindToLifecycle(mockBackCameraSelector,
@@ -517,6 +540,7 @@ void main() {
         .thenAnswer((_) async => MockLiveCameraState());
     when(mockCamera.getCameraControl())
         .thenAnswer((_) async => mockCameraControl);
+
     camera.processCameraProvider = mockProcessCameraProvider;
 
     await camera.createCameraWithSettings(
@@ -562,6 +586,9 @@ void main() {
     final MockProcessCameraProvider mockProcessCameraProvider =
         MockProcessCameraProvider();
     final MockCameraInfo mockCameraInfo = MockCameraInfo();
+    final TestSystemServicesHostApi mockSystemServicesApi =
+        MockTestSystemServicesHostApi();
+    TestSystemServicesHostApi.setup(mockSystemServicesApi);
 
     // Tell plugin to create mock/detached objects for testing createCamera
     // as needed.
@@ -894,6 +921,65 @@ void main() {
   });
 
   test(
+      'createCamera sets sensor and device orientations needed to correct preview rotation as expected',
+      () async {
+    final AndroidCameraCameraX camera = AndroidCameraCameraX();
+    const CameraLensDirection testLensDirection = CameraLensDirection.back;
+    const int testSensorOrientation = 270;
+    const CameraDescription testCameraDescription = CameraDescription(
+        name: 'cameraName',
+        lensDirection: testLensDirection,
+        sensorOrientation: testSensorOrientation);
+    const bool enableAudio = true;
+    const ResolutionPreset testResolutionPreset = ResolutionPreset.veryHigh;
+    const DeviceOrientation testUiOrientation = DeviceOrientation.portraitDown;
+    const DeviceOrientation testCurrentOrientation =
+        DeviceOrientation.portraitUp;
+
+    // Mock/Detached objects for (typically attached) objects created by
+    // createCamera.
+    final MockCamera mockCamera = MockCamera();
+    final MockProcessCameraProvider mockProcessCameraProvider =
+        MockProcessCameraProvider();
+    final MockCameraInfo mockCameraInfo = MockCameraInfo();
+    final TestSystemServicesHostApi mockSystemServicesApi =
+        MockTestSystemServicesHostApi();
+    TestSystemServicesHostApi.setup(mockSystemServicesApi);
+
+    // The proxy needed for this test is the same as testing resolution
+    // presets except for mocking the retrievall of the sensor and current
+    // UI orientation.
+    camera.proxy =
+        getProxyForTestingResolutionPreset(mockProcessCameraProvider);
+    camera.proxy.getSensorOrientation =
+        (_) async => Future<int>.value(testSensorOrientation);
+    camera.proxy.getUiOrientation =
+        () async => Future<DeviceOrientation>.value(testUiOrientation);
+
+    when(mockProcessCameraProvider.bindToLifecycle(any, any))
+        .thenAnswer((_) async => mockCamera);
+    when(mockCamera.getCameraInfo()).thenAnswer((_) async => mockCameraInfo);
+    when(mockCameraInfo.getCameraState())
+        .thenAnswer((_) async => MockLiveCameraState());
+
+    await camera.createCamera(testCameraDescription, testResolutionPreset,
+        enableAudio: enableAudio);
+
+    const DeviceOrientationChangedEvent testEvent =
+        DeviceOrientationChangedEvent(testCurrentOrientation);
+
+    DeviceOrientationManager.deviceOrientationChangedStreamController
+        .add(testEvent);
+
+    // Wait for currentDeviceOrientation to update.
+    await Future<void>.value();
+
+    expect(camera.naturalOrientation, testUiOrientation);
+    expect(camera.sensorOrientation, testSensorOrientation);
+    expect(camera.currentDeviceOrientation, testCurrentOrientation);
+  });
+
+  test(
       'initializeCamera throws a CameraException when createCamera has not been called before initializedCamera',
       () async {
     final AndroidCameraCameraX camera = AndroidCameraCameraX();
@@ -927,6 +1013,9 @@ void main() {
     final MockPreview mockPreview = MockPreview();
     final MockImageCapture mockImageCapture = MockImageCapture();
     final MockImageAnalysis mockImageAnalysis = MockImageAnalysis();
+    final TestSystemServicesHostApi mockSystemServicesApi =
+        MockTestSystemServicesHostApi();
+    TestSystemServicesHostApi.setup(mockSystemServicesApi);
 
     // Tell plugin to create mock/detached objects for testing createCamera
     // as needed.
@@ -967,6 +1056,10 @@ void main() {
       startListeningForDeviceOrientationChange: (_, __) {},
       createAspectRatioStrategy: (_, __) => MockAspectRatioStrategy(),
       createResolutionFilterWithOnePreferredSize: (_) => MockResolutionFilter(),
+      getCamera2CameraInfo: (_) =>
+          Future<Camera2CameraInfo>.value(MockCamera2CameraInfo()),
+      getUiOrientation: () =>
+          Future<DeviceOrientation>.value(DeviceOrientation.portraitUp),
     );
 
     final CameraInitializedEvent testCameraInitializedEvent =
@@ -1234,7 +1327,7 @@ void main() {
   });
 
   test(
-      'buildPreview returns a Texture once the preview is bound to the lifecycle',
+      'buildPreview returns a Texture once the preview is bound to the lifecycle if it is backed by a SurfaceTexture',
       () async {
     final AndroidCameraCameraX camera = AndroidCameraCameraX();
     const int cameraId = 37;
@@ -1243,10 +1336,146 @@ void main() {
     // bound to the lifecycle of the camera.
     camera.previewInitiallyBound = true;
 
+    // Tell camera the Surface used to build camera preview is backed by a
+    // SurfaceTexture.
+    camera.isPreviewPreTransformed = true;
+
+    camera.naturalOrientation = DeviceOrientation.portraitDown;
+
     final Widget widget = camera.buildPreview(cameraId);
 
     expect(widget is Texture, isTrue);
     expect((widget as Texture).textureId, cameraId);
+  });
+
+  test(
+      'buildPreview returns preview with expected rotation if camera is not front facing and the preview is not backed by a SurfaceTexture',
+      () async {
+    final AndroidCameraCameraX camera = AndroidCameraCameraX();
+    const int cameraId = 33;
+
+    // Tell camera that createCamera has been called and thus, preview has been
+    // bound to the lifecycle of the camera.
+    camera.previewInitiallyBound = true;
+
+    // Tell camera the Surface used to build camera preview is not backed by a
+    // SurfaceTexture.
+    camera.isPreviewPreTransformed = false;
+
+    // Mock sensor and device orientation.
+    camera.sensorOrientation = 270;
+    camera.cameraIsFrontFacing = false;
+    camera.naturalOrientation = DeviceOrientation.portraitUp;
+
+    final double expectedRotation = (camera.sensorOrientation +
+            0 /* the natural orientation in clockwise degrees */ *
+                -1 /* camera is not front facing */ +
+            360) %
+        360;
+    final int expectedQuarterTurns = (expectedRotation / 90).toInt();
+
+    final Widget widget = camera.buildPreview(cameraId);
+
+    expect(widget is RotatedBox, isTrue);
+    expect((widget as RotatedBox).quarterTurns, expectedQuarterTurns);
+    expect(widget.child is Texture, isTrue);
+    expect((widget.child! as Texture).textureId, cameraId);
+  });
+
+  test(
+      'buildPreview returns preview with expected rotation if camera is front facing, the current orientation is landscape, and the preview is not backed by a SurfaceTexture',
+      () async {
+    final AndroidCameraCameraX camera = AndroidCameraCameraX();
+    const int cameraId = 7;
+
+    // Tell camera that createCamera has been called and thus, preview has been
+    // bound to the lifecycle of the camera.
+    camera.previewInitiallyBound = true;
+
+    // Tell camera the Surface used to build camera preview is not backed by a
+    // SurfaceTexture.
+    camera.isPreviewPreTransformed = false;
+
+    // Mock sensor and device orientation.
+    camera.sensorOrientation = 270;
+    camera.naturalOrientation = DeviceOrientation.portraitUp;
+    camera.cameraIsFrontFacing = true;
+
+    // Calculate expected rotation with offset due to counter-clockwise rotation
+    // of the image with th efront camera in use.
+    final double expectedRotation = ((camera.sensorOrientation +
+                0 /* the natural orientation in clockwise degrees */ *
+                    1 /* camera is front facing */ +
+                360) %
+            360) +
+        180;
+    final int expectedQuarterTurns = (expectedRotation / 90).toInt() % 4;
+
+    // Test landscape left.
+    camera.currentDeviceOrientation = DeviceOrientation.landscapeLeft;
+    Widget widget = camera.buildPreview(cameraId);
+
+    expect(widget is RotatedBox, isTrue);
+    expect((widget as RotatedBox).quarterTurns, expectedQuarterTurns);
+    expect(widget.child is Texture, isTrue);
+    expect((widget.child! as Texture).textureId, cameraId);
+
+    // Test landscape right.
+    camera.currentDeviceOrientation = DeviceOrientation.landscapeRight;
+    widget = camera.buildPreview(cameraId);
+
+    expect(widget is RotatedBox, isTrue);
+    expect((widget as RotatedBox).quarterTurns, expectedQuarterTurns);
+    expect(widget.child is Texture, isTrue);
+    expect((widget.child! as Texture).textureId, cameraId);
+  });
+
+  test(
+      'buildPreview returns preview with expected rotation if camera is front facing, the current orientation is not landscape, and the preview is not backed by a SurfaceTexture',
+      () async {
+    final AndroidCameraCameraX camera = AndroidCameraCameraX();
+    const int cameraId = 733;
+
+    // Tell camera that createCamera has been called and thus, preview has been
+    // bound to the lifecycle of the camera.
+    camera.previewInitiallyBound = true;
+
+    // Tell camera the Surface used to build camera preview is not backed by a
+    // SurfaceTexture.
+    camera.isPreviewPreTransformed = false;
+
+    // Mock sensor and device orientation.
+    camera.sensorOrientation = 270;
+    camera.naturalOrientation = DeviceOrientation.portraitUp;
+    camera.cameraIsFrontFacing = true;
+
+    // Calculate expected rotation without offset needed for landscape orientations
+    // due to counter-clockwise rotation of the image with th efront camera in use.
+    final double expectedRotation = (camera.sensorOrientation +
+            0 /* the natural orientation in clockwise degrees */ *
+                1 /* camera is front facing */ +
+            360) %
+        360;
+
+    final int expectedQuarterTurns = (expectedRotation / 90).toInt() % 4;
+
+    // Test portrait up.
+    camera.currentDeviceOrientation = DeviceOrientation.portraitUp;
+    Widget widget = camera.buildPreview(cameraId);
+
+    expect(widget is RotatedBox, isTrue);
+    expect((widget as RotatedBox).quarterTurns, expectedQuarterTurns);
+    expect(widget.child is Texture, isTrue);
+    expect((widget.child! as Texture).textureId, cameraId);
+
+    // Test portrait down.
+    camera.currentDeviceOrientation = DeviceOrientation.portraitDown;
+    widget = camera.buildPreview(cameraId);
+
+    expect(widget is RotatedBox, isTrue);
+    expect((widget as RotatedBox).quarterTurns, expectedQuarterTurns);
+    expect(widget.child is Texture, isTrue);
+    expect((widget.child! as Texture).textureId, cameraId);
   });
 
   group('video recording', () {

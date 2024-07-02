@@ -1,3 +1,10 @@
+## 0.6.6
+
+* Adds logic to support building a camera preview with Android `Surface`s not backed by a `SurfaceTexture`
+  to which CameraX cannot not automatically apply the transformation required to achieve the correct rotation.
+* Adds fix for incorrect camera preview rotation on naturally landscape-oriented devices.
+* Updates example app's minimum supported SDK version to Flutter 3.22/Dart 3.4.
+
 ## 0.6.5+6
 
 * Updates Guava version to 33.2.1.
