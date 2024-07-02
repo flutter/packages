@@ -103,24 +103,6 @@ class PlatformLatLngBounds {
   final PlatformLatLng southwest;
 }
 
-/// Pigeon equivalent of Cluster.
-class PlatformCluster {
-  PlatformCluster({
-    required this.clusterManagerId,
-    required this.position,
-    required this.bounds,
-    required this.markerIds,
-  });
-
-  final String clusterManagerId;
-  final PlatformLatLng position;
-  final PlatformLatLngBounds bounds;
-  // TODO(stuartmorgan): Make the generic type non-nullable once supported.
-  // https://github.com/flutter/flutter/issues/97848
-  // The consuming code treats the entries as non-nullable.
-  final List<String?> markerIds;
-}
-
 /// Pigeon equivalent of MapConfiguration.
 class PlatformMapConfiguration {
   PlatformMapConfiguration({required this.json});
