@@ -557,10 +557,9 @@ TEST(CameraPlugin, StartVideoRecordingHandlerCallsStartRecordWithPath) {
         return cam->capture_controller_.get();
       });
 
-  EXPECT_CALL(*capture_controller, StartRecord(EndsWith(".mp4"), -1))
+  EXPECT_CALL(*capture_controller, StartRecord(EndsWith(".mp4")))
       .Times(1)
-      .WillOnce([cam = camera.get()](const std::string& file_path,
-                                     int64_t max_video_duration_ms) {
+      .WillOnce([cam = camera.get()](const std::string& file_path) {
         assert(cam->pending_result_);
         return cam->pending_result_->Success();
       });
@@ -610,7 +609,7 @@ TEST(CameraPlugin, StartVideoRecordingHandlerErrorOnInvalidCameraId) {
   EXPECT_CALL(*camera, HasPendingResultByType).Times(0);
   EXPECT_CALL(*camera, AddPendingResult).Times(0);
   EXPECT_CALL(*camera, GetCaptureController).Times(0);
-  EXPECT_CALL(*capture_controller, StartRecord(_, -1)).Times(0);
+  EXPECT_CALL(*capture_controller, StartRecord(_)).Times(0);
 
   camera->camera_id_ = mock_camera_id;
 

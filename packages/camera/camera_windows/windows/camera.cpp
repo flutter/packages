@@ -245,6 +245,20 @@ void CameraImpl::OnTakePictureSucceeded(const std::string& file_path) {
   }
 };
 
+void CameraImpl::OnCaptureError(CameraResult result, const std::string& error) {
+  if (messenger_ && camera_id_ >= 0) {
+    auto channel = GetMethodChannel();
+
+    std::unique_ptr<EncodableValue> message_data =
+        std::make_unique<EncodableValue>(EncodableMap(
+            {{EncodableValue("description"), EncodableValue(error)}}));
+    channel->InvokeMethod(kErrorEvent, std::move(message_data));
+  }
+
+  std::string error_code = GetErrorCode(result);
+  SendErrorForPendingResults(error_code, error);
+}
+
 void CameraImpl::OnTakePictureFailed(CameraResult result,
                                      const std::string& error) {
   auto pending_take_picture_result =
