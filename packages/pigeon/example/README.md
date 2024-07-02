@@ -204,8 +204,7 @@ handle_get_host_language(gpointer user_data) {
 }
 
 static PigeonExamplePackageExampleHostApiAddResponse* handle_add(
-    int64_t a, int64_t b,
-    gpointer user_data) {
+    int64_t a, int64_t b, gpointer user_data) {
   if (a < 0 || b < 0) {
     g_autoptr(FlValue) details = fl_value_new_string("details");
     return pigeon_example_package_example_host_api_add_response_new_error(
