@@ -13,7 +13,7 @@ import 'interactive_media_ads_proxy.dart';
 /// Implementation of [PlatformAdDisplayContainerCreationParams] for iOS.
 final class IOSAdDisplayContainerCreationParams
     extends PlatformAdDisplayContainerCreationParams {
-  /// Constructs a [AndroidAdDisplayContainerCreationParams].
+  /// Constructs a [IOSAdDisplayContainerCreationParams].
   const IOSAdDisplayContainerCreationParams({
     super.key,
     required super.onContainerAdded,
@@ -21,7 +21,7 @@ final class IOSAdDisplayContainerCreationParams
   })  : _imaProxy = imaProxy ?? const InteractiveMediaAdsProxy(),
         super();
 
-  /// Creates a [AndroidAdDisplayContainerCreationParams] from an instance of
+  /// Creates a [IOSAdDisplayContainerCreationParams] from an instance of
   /// [PlatformAdDisplayContainerCreationParams].
   factory IOSAdDisplayContainerCreationParams.fromPlatformAdDisplayContainerCreationParams(
     PlatformAdDisplayContainerCreationParams params, {
@@ -38,9 +38,9 @@ final class IOSAdDisplayContainerCreationParams
 }
 
 /// Implementation of [PlatformAdDisplayContainer] for iOS.
-base class IosAdDisplayContainer extends PlatformAdDisplayContainer {
-  /// Constructs an [IosAdDisplayContainer].
-  IosAdDisplayContainer(super.params) : super.implementation() {
+base class IOSAdDisplayContainer extends PlatformAdDisplayContainer {
+  /// Constructs an [IOSAdDisplayContainer].
+  IOSAdDisplayContainer(super.params) : super.implementation() {
     _controller = _iosParams._imaProxy.newUIViewController();
   }
 
@@ -49,9 +49,7 @@ base class IosAdDisplayContainer extends PlatformAdDisplayContainer {
 
   /// The native iOS AdDisplayContainer.
   ///
-  /// This holds the player for video ads.
-  ///
-  /// Created with the `View` that handles playing an ad.
+  /// Created with the `UIView` that handles playing an ad.
   @internal
   late final IMAAdDisplayContainer? adDisplayContainer;
 

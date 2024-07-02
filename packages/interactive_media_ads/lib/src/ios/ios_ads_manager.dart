@@ -7,8 +7,8 @@ import 'dart:async';
 import 'package:meta/meta.dart';
 
 import '../platform_interface/platform_interface.dart';
-import 'enum_converter_extensions.dart';
 import 'interactive_media_ads.g.dart' as ima;
+import 'ios_ads_manager_delegate.dart';
 
 /// Implementation of [PlatformAdsManager] for iOS.
 class IOSAdsManager extends PlatformAdsManager {
@@ -18,8 +18,11 @@ class IOSAdsManager extends PlatformAdsManager {
 
   final ima.IMAAdsManager _manager;
 
-  PlatformAdsManagerDelegate? _interfaceDelegate;
-  _AdsManagerDelegate? _nativeDelegate;
+  // This must maintain a reference to the delegate because the native
+  // `IMAAdsManagerDelegate.delegate` property is only a weak reference.
+  // Therefore, this would be garbage collected without this explicit reference.
+  // ignore: unused_field
+  late IOSAdsManagerDelegate _delegate;
 
   @override
   Future<void> destroy() {
@@ -33,65 +36,16 @@ class IOSAdsManager extends PlatformAdsManager {
 
   @override
   Future<void> setAdsManagerDelegate(PlatformAdsManagerDelegate delegate) {
-    _interfaceDelegate = delegate;
-    _nativeDelegate = _AdsManagerDelegate(WeakReference<IOSAdsManager>(this));
-    return _manager.setDelegate(_nativeDelegate);
+    final IOSAdsManagerDelegate platformDelegate =
+        delegate is IOSAdsManagerDelegate
+            ? delegate
+            : IOSAdsManagerDelegate(delegate.params);
+    _delegate = platformDelegate;
+    return _manager.setDelegate(platformDelegate.delegate);
   }
 
   @override
   Future<void> start(AdsManagerStartParams params) {
     return _manager.start();
   }
-}
-
-class _AdsManagerDelegate extends ima.IMAAdsManagerDelegate {
-  _AdsManagerDelegate(WeakReference<IOSAdsManager> interfaceManager)
-      : super(
-          didReceiveAdEvent: (
-            ima.IMAAdsManagerDelegate instance,
-            ima.IMAAdsManager adsManager,
-            ima.IMAAdEvent event,
-          ) {
-            late final AdEventType? eventType =
-                event.type.asInterfaceAdEventType();
-            if (eventType == null) {
-              return;
-            }
-
-            interfaceManager.target?._interfaceDelegate?.params.onAdEvent
-                ?.call(AdEvent(type: eventType));
-          },
-          didReceiveAdError: (
-            ima.IMAAdsManagerDelegate instance,
-            ima.IMAAdsManager adsManager,
-            ima.IMAAdError event,
-          ) {
-            interfaceManager.target?._interfaceDelegate?.params.onAdErrorEvent
-                ?.call(
-              AdErrorEvent(
-                error: AdError(
-                  type: event.type.asInterfaceErrorType(),
-                  code: event.code.asInterfaceErrorCode(),
-                  message: event.message,
-                ),
-              ),
-            );
-          },
-          didRequestContentPause: (
-            ima.IMAAdsManagerDelegate instance,
-            ima.IMAAdsManager adsManager,
-          ) {
-            interfaceManager.target?._interfaceDelegate?.params.onAdEvent?.call(
-              const AdEvent(type: AdEventType.contentPauseRequested),
-            );
-          },
-          didRequestContentResume: (
-            ima.IMAAdsManagerDelegate instance,
-            ima.IMAAdsManager adsManager,
-          ) {
-            interfaceManager.target?._interfaceDelegate?.params.onAdEvent?.call(
-              const AdEvent(type: AdEventType.contentResumeRequested),
-            );
-          },
-        );
 }

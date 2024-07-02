@@ -18,10 +18,10 @@ final class IOSInteractiveMediaAds extends InteractiveMediaAdsPlatform {
   }
 
   @override
-  IosAdDisplayContainer createPlatformAdDisplayContainer(
+  IOSAdDisplayContainer createPlatformAdDisplayContainer(
     PlatformAdDisplayContainerCreationParams params,
   ) {
-    return IosAdDisplayContainer(params);
+    return IOSAdDisplayContainer(params);
   }
 
   @override

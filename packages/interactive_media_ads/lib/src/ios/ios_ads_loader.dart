@@ -14,9 +14,9 @@ import 'ios_ad_display_container.dart';
 import 'ios_ads_manager.dart';
 
 /// Implementation of [PlatformAdsLoaderCreationParams] for iOS.
-final class IosAdsLoaderCreationParams extends PlatformAdsLoaderCreationParams {
-  /// Constructs a [AndroidAdsLoaderCreationParams].
-  const IosAdsLoaderCreationParams({
+final class IOSAdsLoaderCreationParams extends PlatformAdsLoaderCreationParams {
+  /// Constructs a [IOSAdsLoaderCreationParams].
+  const IOSAdsLoaderCreationParams({
     required super.container,
     required super.onAdsLoaded,
     required super.onAdsLoadError,
@@ -24,13 +24,13 @@ final class IosAdsLoaderCreationParams extends PlatformAdsLoaderCreationParams {
   })  : _proxy = proxy ?? const InteractiveMediaAdsProxy(),
         super();
 
-  /// Creates a [IosAdsLoaderCreationParams] from an instance of
+  /// Creates a [IOSAdsLoaderCreationParams] from an instance of
   /// [PlatformAdsLoaderCreationParams].
-  factory IosAdsLoaderCreationParams.fromPlatformAdsLoaderCreationParams(
+  factory IOSAdsLoaderCreationParams.fromPlatformAdsLoaderCreationParams(
     PlatformAdsLoaderCreationParams params, {
     @visibleForTesting InteractiveMediaAdsProxy? proxy,
   }) {
-    return IosAdsLoaderCreationParams(
+    return IOSAdsLoaderCreationParams(
       container: params.container,
       onAdsLoaded: params.onAdsLoaded,
       onAdsLoadError: params.onAdsLoadError,
@@ -45,9 +45,9 @@ final class IosAdsLoaderCreationParams extends PlatformAdsLoaderCreationParams {
 base class IosAdsLoader extends PlatformAdsLoader {
   /// Constructs an [IosAdsLoader].
   IosAdsLoader(super.params)
-      : assert(params.container is IosAdDisplayContainer),
+      : assert(params.container is IOSAdDisplayContainer),
         assert(
-          (params.container as IosAdDisplayContainer).adDisplayContainer !=
+          (params.container as IOSAdDisplayContainer).adDisplayContainer !=
               null,
           'Ensure the AdDisplayContainer has been added to the Widget tree before creating an AdsLoader.',
         ),
@@ -61,10 +61,10 @@ base class IosAdsLoader extends PlatformAdsLoader {
     WeakReference<IosAdsLoader>(this),
   );
 
-  late final IosAdsLoaderCreationParams _iosParams = params
-          is IosAdsLoaderCreationParams
-      ? params as IosAdsLoaderCreationParams
-      : IosAdsLoaderCreationParams.fromPlatformAdsLoaderCreationParams(params);
+  late final IOSAdsLoaderCreationParams _iosParams = params
+          is IOSAdsLoaderCreationParams
+      ? params as IOSAdsLoaderCreationParams
+      : IOSAdsLoaderCreationParams.fromPlatformAdsLoaderCreationParams(params);
 
   @override
   Future<void> contentComplete() {
@@ -76,7 +76,7 @@ base class IosAdsLoader extends PlatformAdsLoader {
     return _adsLoader.requestAds(_iosParams._proxy.newIMAAdsRequest(
       adTagUrl: request.adTagUrl,
       adDisplayContainer:
-          (_iosParams.container as IosAdDisplayContainer).adDisplayContainer!,
+          (_iosParams.container as IOSAdDisplayContainer).adDisplayContainer!,
     ));
   }
 }
