@@ -4,7 +4,6 @@
 
 package io.flutter.plugins.camerax;
 
-import android.graphics.SurfaceTexture;
 import android.util.Size;
 import android.view.Surface;
 import androidx.annotation.NonNull;
@@ -25,7 +24,7 @@ public class PreviewHostApiImpl implements PreviewHostApi {
   private final TextureRegistry textureRegistry;
 
   @VisibleForTesting public @NonNull CameraXProxy cameraXProxy = new CameraXProxy();
-  @VisibleForTesting public @Nullable TextureRegistry.SurfaceTextureEntry flutterSurfaceTexture;
+  @VisibleForTesting public @Nullable TextureRegistry.SurfaceProducer flutterSurfaceProducer;
 
   public PreviewHostApiImpl(
       @NonNull BinaryMessenger binaryMessenger,
@@ -62,12 +61,11 @@ public class PreviewHostApiImpl implements PreviewHostApi {
   @Override
   public @NonNull Long setSurfaceProvider(@NonNull Long identifier) {
     Preview preview = getPreviewInstance(identifier);
-    flutterSurfaceTexture = textureRegistry.createSurfaceTexture();
-    SurfaceTexture surfaceTexture = flutterSurfaceTexture.surfaceTexture();
-    Preview.SurfaceProvider surfaceProvider = createSurfaceProvider(surfaceTexture);
+    flutterSurfaceProducer = textureRegistry.createSurfaceProducer();
+    Preview.SurfaceProvider surfaceProvider = createSurfaceProvider(flutterSurfaceProducer);
     preview.setSurfaceProvider(surfaceProvider);
 
-    return flutterSurfaceTexture.id();
+    return flutterSurfaceProducer.id();
   }
 
   /**
@@ -76,13 +74,13 @@ public class PreviewHostApiImpl implements PreviewHostApi {
    */
   @VisibleForTesting
   public @NonNull Preview.SurfaceProvider createSurfaceProvider(
-      @NonNull SurfaceTexture surfaceTexture) {
+      @NonNull TextureRegistry.SurfaceProducer surfaceProducer) {
     return new Preview.SurfaceProvider() {
       @Override
       public void onSurfaceRequested(@NonNull SurfaceRequest request) {
-        surfaceTexture.setDefaultBufferSize(
+        surfaceProducer.setSize(
             request.getResolution().getWidth(), request.getResolution().getHeight());
-        Surface flutterSurface = cameraXProxy.createSurface(surfaceTexture);
+        Surface flutterSurface = surfaceProducer.getSurface();
         request.provideSurface(
             flutterSurface,
             Executors.newSingleThreadExecutor(),
@@ -133,8 +131,8 @@ public class PreviewHostApiImpl implements PreviewHostApi {
    */
   @Override
   public void releaseFlutterSurfaceTexture() {
-    if (flutterSurfaceTexture != null) {
-      flutterSurfaceTexture.release();
+    if (flutterSurfaceProducer != null) {
+      flutterSurfaceProducer.release();
     }
   }
 
