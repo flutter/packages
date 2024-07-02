@@ -226,13 +226,7 @@ abstract class UIViewController {
   UIViewController();
 
   /// Retrieves the view that the controller manages.
-  ///
-  /// For convenience this is a `final` attached field despite this being
-  /// settable. Since this is not a part of the IMA SDK this is slightly changed
-  /// for convenience. Note that this wrapper should not add the ability to set
-  /// this property as it should not be needed anyways.
-  @attached
-  late final UIView view;
+  UIView getView();
 }
 
 /// Defines an interface for a class that tracks video content progress and
