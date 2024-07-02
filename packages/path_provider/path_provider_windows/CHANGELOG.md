@@ -1,6 +1,7 @@
-## NEXT
+## 2.3.0
 
 * Updates minimum supported SDK version to Flutter 3.16/Dart 3.2.
+* Adds getExternalStoragePaths() for retrieving drive Directories.
 
 ## 2.2.1
 
