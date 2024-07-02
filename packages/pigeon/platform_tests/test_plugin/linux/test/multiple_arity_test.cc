@@ -8,8 +8,7 @@
 #include "test/utils/fake_host_messenger.h"
 
 static MultipleArityPigeonTestMultipleArityHostApiSubtractResponse* subtract(
-    MultipleArityPigeonTestMultipleArityHostApi* api, int64_t x, int64_t y,
-    gpointer user_data) {
+    int64_t x, int64_t y, gpointer user_data) {
   return multiple_arity_pigeon_test_multiple_arity_host_api_subtract_response_new(
       x - y);
 }
@@ -26,10 +25,8 @@ TEST(MultipleArity, HostSimple) {
   g_autoptr(FlStandardMessageCodec) codec = fl_standard_message_codec_new();
   g_autoptr(FakeHostMessenger) messenger =
       fake_host_messenger_new(FL_MESSAGE_CODEC(codec));
-  g_autoptr(MultipleArityPigeonTestMultipleArityHostApi) api =
-      multiple_arity_pigeon_test_multiple_arity_host_api_new(
-          FL_BINARY_MESSENGER(messenger), nullptr, &vtable, nullptr, nullptr);
-  (void)api;  // unused variable
+  multiple_arity_pigeon_test_multiple_arity_host_api_set_method_handlers(
+      FL_BINARY_MESSENGER(messenger), nullptr, &vtable, nullptr, nullptr);
 
   int64_t result = 0;
   g_autoptr(FlValue) message = fl_value_new_list();

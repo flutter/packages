@@ -8,58 +8,49 @@
 #include "test/utils/fake_host_messenger.h"
 
 static PrimitivePigeonTestPrimitiveHostApiAnIntResponse* an_int(
-    PrimitivePigeonTestPrimitiveHostApi* api, int64_t value,
-    gpointer user_data) {
+    int64_t value, gpointer user_data) {
   return primitive_pigeon_test_primitive_host_api_an_int_response_new(value);
 }
 
 static PrimitivePigeonTestPrimitiveHostApiABoolResponse* a_bool(
-    PrimitivePigeonTestPrimitiveHostApi* api, gboolean value,
-    gpointer user_data) {
+    gboolean value, gpointer user_data) {
   return primitive_pigeon_test_primitive_host_api_a_bool_response_new(value);
 }
 
 static PrimitivePigeonTestPrimitiveHostApiAStringResponse* a_string(
-    PrimitivePigeonTestPrimitiveHostApi* api, const gchar* value,
-    gpointer user_data) {
+    const gchar* value, gpointer user_data) {
   return primitive_pigeon_test_primitive_host_api_a_string_response_new(value);
 }
 
 static PrimitivePigeonTestPrimitiveHostApiADoubleResponse* a_double(
-    PrimitivePigeonTestPrimitiveHostApi* api, double value,
-    gpointer user_data) {
+    double value, gpointer user_data) {
   return primitive_pigeon_test_primitive_host_api_a_double_response_new(value);
 }
 
 static PrimitivePigeonTestPrimitiveHostApiAMapResponse* a_map(
-    PrimitivePigeonTestPrimitiveHostApi* api, FlValue* value,
-    gpointer user_data) {
+    FlValue* value, gpointer user_data) {
   return primitive_pigeon_test_primitive_host_api_a_map_response_new(value);
 }
 
 static PrimitivePigeonTestPrimitiveHostApiAListResponse* a_list(
-    PrimitivePigeonTestPrimitiveHostApi* api, FlValue* value,
-    gpointer user_data) {
+    FlValue* value, gpointer user_data) {
   return primitive_pigeon_test_primitive_host_api_a_list_response_new(value);
 }
 
 static PrimitivePigeonTestPrimitiveHostApiAnInt32ListResponse* an_int32_list(
-    PrimitivePigeonTestPrimitiveHostApi* api, const int32_t* value,
-    size_t value_length, gpointer user_data) {
+    const int32_t* value, size_t value_length, gpointer user_data) {
   return primitive_pigeon_test_primitive_host_api_an_int32_list_response_new(
       value, value_length);
 }
 
 static PrimitivePigeonTestPrimitiveHostApiABoolListResponse* a_bool_list(
-    PrimitivePigeonTestPrimitiveHostApi* api, FlValue* value,
-    gpointer user_data) {
+    FlValue* value, gpointer user_data) {
   return primitive_pigeon_test_primitive_host_api_a_bool_list_response_new(
       value);
 }
 
 static PrimitivePigeonTestPrimitiveHostApiAStringIntMapResponse*
-a_string_int_map(PrimitivePigeonTestPrimitiveHostApi* api, FlValue* value,
-                 gpointer user_data) {
+a_string_int_map(FlValue* value, gpointer user_data) {
   return primitive_pigeon_test_primitive_host_api_a_string_int_map_response_new(
       value);
 }
@@ -84,10 +75,8 @@ TEST(Primitive, HostInt) {
   g_autoptr(FlStandardMessageCodec) codec = fl_standard_message_codec_new();
   g_autoptr(FakeHostMessenger) messenger =
       fake_host_messenger_new(FL_MESSAGE_CODEC(codec));
-  g_autoptr(PrimitivePigeonTestPrimitiveHostApi) api =
-      primitive_pigeon_test_primitive_host_api_new(
-          FL_BINARY_MESSENGER(messenger), nullptr, &vtable, nullptr, nullptr);
-  (void)api;  // unused variable
+  primitive_pigeon_test_primitive_host_api_set_method_handlers(
+      FL_BINARY_MESSENGER(messenger), nullptr, &vtable, nullptr, nullptr);
 
   int64_t result = 0;
   g_autoptr(FlValue) message = fl_value_new_list();
@@ -109,10 +98,8 @@ TEST(Primitive, HostBool) {
   g_autoptr(FlStandardMessageCodec) codec = fl_standard_message_codec_new();
   g_autoptr(FakeHostMessenger) messenger =
       fake_host_messenger_new(FL_MESSAGE_CODEC(codec));
-  g_autoptr(PrimitivePigeonTestPrimitiveHostApi) api =
-      primitive_pigeon_test_primitive_host_api_new(
-          FL_BINARY_MESSENGER(messenger), nullptr, &vtable, nullptr, nullptr);
-  (void)api;  // unused variable
+  primitive_pigeon_test_primitive_host_api_set_method_handlers(
+      FL_BINARY_MESSENGER(messenger), nullptr, &vtable, nullptr, nullptr);
 
   gboolean result = false;
   g_autoptr(FlValue) message = fl_value_new_list();
@@ -134,10 +121,8 @@ TEST(Primitive, HostDouble) {
   g_autoptr(FlStandardMessageCodec) codec = fl_standard_message_codec_new();
   g_autoptr(FakeHostMessenger) messenger =
       fake_host_messenger_new(FL_MESSAGE_CODEC(codec));
-  g_autoptr(PrimitivePigeonTestPrimitiveHostApi) api =
-      primitive_pigeon_test_primitive_host_api_new(
-          FL_BINARY_MESSENGER(messenger), nullptr, &vtable, nullptr, nullptr);
-  (void)api;  // unused variable
+  primitive_pigeon_test_primitive_host_api_set_method_handlers(
+      FL_BINARY_MESSENGER(messenger), nullptr, &vtable, nullptr, nullptr);
 
   double result = 0.0;
   g_autoptr(FlValue) message = fl_value_new_list();
@@ -159,10 +144,8 @@ TEST(Primitive, HostString) {
   g_autoptr(FlStandardMessageCodec) codec = fl_standard_message_codec_new();
   g_autoptr(FakeHostMessenger) messenger =
       fake_host_messenger_new(FL_MESSAGE_CODEC(codec));
-  g_autoptr(PrimitivePigeonTestPrimitiveHostApi) api =
-      primitive_pigeon_test_primitive_host_api_new(
-          FL_BINARY_MESSENGER(messenger), nullptr, &vtable, nullptr, nullptr);
-  (void)api;  // unused variable
+  primitive_pigeon_test_primitive_host_api_set_method_handlers(
+      FL_BINARY_MESSENGER(messenger), nullptr, &vtable, nullptr, nullptr);
 
   g_autofree gchar* result = nullptr;
   g_autoptr(FlValue) message = fl_value_new_list();
@@ -184,10 +167,8 @@ TEST(Primitive, HostList) {
   g_autoptr(FlStandardMessageCodec) codec = fl_standard_message_codec_new();
   g_autoptr(FakeHostMessenger) messenger =
       fake_host_messenger_new(FL_MESSAGE_CODEC(codec));
-  g_autoptr(PrimitivePigeonTestPrimitiveHostApi) api =
-      primitive_pigeon_test_primitive_host_api_new(
-          FL_BINARY_MESSENGER(messenger), nullptr, &vtable, nullptr, nullptr);
-  (void)api;  // unused variable
+  primitive_pigeon_test_primitive_host_api_set_method_handlers(
+      FL_BINARY_MESSENGER(messenger), nullptr, &vtable, nullptr, nullptr);
 
   g_autoptr(FlValue) result = nullptr;
   g_autoptr(FlValue) message = fl_value_new_list();
@@ -214,10 +195,8 @@ TEST(Primitive, HostMap) {
   g_autoptr(FlStandardMessageCodec) codec = fl_standard_message_codec_new();
   g_autoptr(FakeHostMessenger) messenger =
       fake_host_messenger_new(FL_MESSAGE_CODEC(codec));
-  g_autoptr(PrimitivePigeonTestPrimitiveHostApi) api =
-      primitive_pigeon_test_primitive_host_api_new(
-          FL_BINARY_MESSENGER(messenger), nullptr, &vtable, nullptr, nullptr);
-  (void)api;  // unused variable
+  primitive_pigeon_test_primitive_host_api_set_method_handlers(
+      FL_BINARY_MESSENGER(messenger), nullptr, &vtable, nullptr, nullptr);
 
   g_autoptr(FlValue) result = nullptr;
   g_autoptr(FlValue) message = fl_value_new_list();

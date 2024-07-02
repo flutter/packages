@@ -155,10 +155,6 @@ PigeonExamplePackageExampleHostApiAddResponse*
 pigeon_example_package_example_host_api_add_response_new_error(
     const gchar* code, const gchar* message, FlValue* details);
 
-G_DECLARE_FINAL_TYPE(PigeonExamplePackageExampleHostApi,
-                     pigeon_example_package_example_host_api,
-                     PIGEON_EXAMPLE_PACKAGE, EXAMPLE_HOST_API, GObject)
-
 /**
  * PigeonExamplePackageExampleHostApiVTable:
  *
@@ -167,20 +163,17 @@ G_DECLARE_FINAL_TYPE(PigeonExamplePackageExampleHostApi,
  */
 typedef struct {
   PigeonExamplePackageExampleHostApiGetHostLanguageResponse* (
-      *get_host_language)(PigeonExamplePackageExampleHostApi* api,
-                          gpointer user_data);
-  PigeonExamplePackageExampleHostApiAddResponse* (*add)(
-      PigeonExamplePackageExampleHostApi* api, int64_t a, int64_t b,
-      gpointer user_data);
+      *get_host_language)(gpointer user_data);
+  PigeonExamplePackageExampleHostApiAddResponse* (*add)(int64_t a, int64_t b,
+                                                        gpointer user_data);
   void (*send_message)(
-      PigeonExamplePackageExampleHostApi* api,
       PigeonExamplePackageMessageData* message,
       PigeonExamplePackageExampleHostApiResponseHandle* response_handle,
       gpointer user_data);
 } PigeonExamplePackageExampleHostApiVTable;
 
 /**
- * pigeon_example_package_example_host_api_new:
+ * pigeon_example_package_example_host_api_set_method_handlers:
  *
  * @messenger: an #FlBinaryMessenger.
  * @suffix: (allow-none): a suffix to add to the API or %NULL for none.
@@ -189,31 +182,37 @@ typedef struct {
  * @user_data_free_func: (allow-none): a function which gets called to free
  * @user_data, or %NULL.
  *
- * Creates an object to implement the ExampleHostApi API.
- *
- * Returns: a new #PigeonExamplePackageExampleHostApi
+ * Connects the method handlers in the ExampleHostApi API.
  */
-PigeonExamplePackageExampleHostApi* pigeon_example_package_example_host_api_new(
+void pigeon_example_package_example_host_api_set_method_handlers(
     FlBinaryMessenger* messenger, const gchar* suffix,
     const PigeonExamplePackageExampleHostApiVTable* vtable, gpointer user_data,
     GDestroyNotify user_data_free_func);
 
 /**
+ * pigeon_example_package_example_host_api_clear_method_handlers:
+ *
+ * @messenger: an #FlBinaryMessenger.
+ * @suffix: (allow-none): a suffix to add to the API or %NULL for none.
+ *
+ * Clears the method handlers in the ExampleHostApi API.
+ */
+void pigeon_example_package_example_host_api_clear_method_handlers(
+    FlBinaryMessenger* messenger, const gchar* suffix);
+
+/**
  * pigeon_example_package_example_host_api_respond_send_message:
- * @api: a #PigeonExamplePackageExampleHostApi.
  * @response_handle: a #PigeonExamplePackageExampleHostApiResponseHandle.
  * @return_value: location to write the value returned by this method.
  *
  * Responds to ExampleHostApi.sendMessage.
  */
 void pigeon_example_package_example_host_api_respond_send_message(
-    PigeonExamplePackageExampleHostApi* api,
     PigeonExamplePackageExampleHostApiResponseHandle* response_handle,
     gboolean return_value);
 
 /**
  * pigeon_example_package_example_host_api_respond_error_send_message:
- * @api: a #PigeonExamplePackageExampleHostApi.
  * @response_handle: a #PigeonExamplePackageExampleHostApiResponseHandle.
  * @code: error code.
  * @message: error message.
@@ -222,7 +221,6 @@ void pigeon_example_package_example_host_api_respond_send_message(
  * Responds with an error to ExampleHostApi.sendMessage.
  */
 void pigeon_example_package_example_host_api_respond_error_send_message(
-    PigeonExamplePackageExampleHostApi* api,
     PigeonExamplePackageExampleHostApiResponseHandle* response_handle,
     const gchar* code, const gchar* message, FlValue* details);
 
@@ -331,7 +329,7 @@ void pigeon_example_package_message_flutter_api_flutter_method(
 
 /**
  * pigeon_example_package_message_flutter_api_flutter_method_finish:
- * @api: a #className.
+ * @api: a #PigeonExamplePackageMessageFlutterApi.
  * @result: a #GAsyncResult.
  * @error: (allow-none): #GError location to store the error occurring, or %NULL
  * to ignore.

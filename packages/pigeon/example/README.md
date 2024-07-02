@@ -198,14 +198,13 @@ class PigeonApiImplementation : public ExampleHostApi {
 <?code-excerpt "linux/my_application.cc (vtable)"?>
 ```c++
 static PigeonExamplePackageExampleHostApiGetHostLanguageResponse*
-handle_get_host_language(PigeonExamplePackageExampleHostApi* object,
-                         gpointer user_data) {
+handle_get_host_language(gpointer user_data) {
   return pigeon_example_package_example_host_api_get_host_language_response_new(
       "C++");
 }
 
 static PigeonExamplePackageExampleHostApiAddResponse* handle_add(
-    PigeonExamplePackageExampleHostApi* object, int64_t a, int64_t b,
+    int64_t a, int64_t b,
     gpointer user_data) {
   if (a < 0 || b < 0) {
     g_autoptr(FlValue) details = fl_value_new_string("details");
@@ -217,7 +216,6 @@ static PigeonExamplePackageExampleHostApiAddResponse* handle_add(
 }
 
 static void handle_send_message(
-    PigeonExamplePackageExampleHostApi* object,
     PigeonExamplePackageMessageData* message,
     PigeonExamplePackageExampleHostApiResponseHandle* response_handle,
     gpointer user_data) {
@@ -226,12 +224,12 @@ static void handle_send_message(
   if (code == PIGEON_EXAMPLE_PACKAGE_CODE_ONE) {
     g_autoptr(FlValue) details = fl_value_new_string("details");
     pigeon_example_package_example_host_api_respond_error_send_message(
-        object, response_handle, "code", "message", details);
+        response_handle, "code", "message", details);
     return;
   }
 
-  pigeon_example_package_example_host_api_respond_send_message(
-      object, response_handle, TRUE);
+  pigeon_example_package_example_host_api_respond_send_message(response_handle,
+                                                               TRUE);
 }
 
 static PigeonExamplePackageExampleHostApiVTable example_host_api_vtable = {

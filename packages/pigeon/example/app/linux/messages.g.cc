@@ -468,6 +468,10 @@ pigeon_example_package_example_host_api_send_message_response_new_error(
   return self;
 }
 
+G_DECLARE_FINAL_TYPE(PigeonExamplePackageExampleHostApi,
+                     pigeon_example_package_example_host_api,
+                     PIGEON_EXAMPLE_PACKAGE, EXAMPLE_HOST_API, GObject)
+
 struct _PigeonExamplePackageExampleHostApi {
   GObject parent_instance;
 
@@ -478,6 +482,39 @@ struct _PigeonExamplePackageExampleHostApi {
 
 G_DEFINE_TYPE(PigeonExamplePackageExampleHostApi,
               pigeon_example_package_example_host_api, G_TYPE_OBJECT)
+
+static void pigeon_example_package_example_host_api_dispose(GObject* object) {
+  PigeonExamplePackageExampleHostApi* self =
+      PIGEON_EXAMPLE_PACKAGE_EXAMPLE_HOST_API(object);
+  if (self->user_data != nullptr) {
+    self->user_data_free_func(self->user_data);
+  }
+  self->user_data = nullptr;
+  G_OBJECT_CLASS(pigeon_example_package_example_host_api_parent_class)
+      ->dispose(object);
+}
+
+static void pigeon_example_package_example_host_api_init(
+    PigeonExamplePackageExampleHostApi* self) {}
+
+static void pigeon_example_package_example_host_api_class_init(
+    PigeonExamplePackageExampleHostApiClass* klass) {
+  G_OBJECT_CLASS(klass)->dispose =
+      pigeon_example_package_example_host_api_dispose;
+}
+
+static PigeonExamplePackageExampleHostApi*
+pigeon_example_package_example_host_api_new(
+    const PigeonExamplePackageExampleHostApiVTable* vtable, gpointer user_data,
+    GDestroyNotify user_data_free_func) {
+  PigeonExamplePackageExampleHostApi* self =
+      PIGEON_EXAMPLE_PACKAGE_EXAMPLE_HOST_API(g_object_new(
+          pigeon_example_package_example_host_api_get_type(), nullptr));
+  self->vtable = vtable;
+  self->user_data = user_data;
+  self->user_data_free_func = user_data_free_func;
+  return self;
+}
 
 static void pigeon_example_package_example_host_api_get_host_language_cb(
     FlBasicMessageChannel* channel, FlValue* message_,
@@ -490,7 +527,7 @@ static void pigeon_example_package_example_host_api_get_host_language_cb(
   }
 
   g_autoptr(PigeonExamplePackageExampleHostApiGetHostLanguageResponse)
-      response = self->vtable->get_host_language(self, self->user_data);
+      response = self->vtable->get_host_language(self->user_data);
   if (response == nullptr) {
     g_warning("No response returned to %s.%s", "ExampleHostApi",
               "getHostLanguage");
@@ -520,7 +557,7 @@ static void pigeon_example_package_example_host_api_add_cb(
   FlValue* value1 = fl_value_get_list_value(message_, 1);
   int64_t b = fl_value_get_int(value1);
   g_autoptr(PigeonExamplePackageExampleHostApiAddResponse) response =
-      self->vtable->add(self, a, b, self->user_data);
+      self->vtable->add(a, b, self->user_data);
   if (response == nullptr) {
     g_warning("No response returned to %s.%s", "ExampleHostApi", "add");
     return;
@@ -551,41 +588,18 @@ static void pigeon_example_package_example_host_api_send_message_cb(
   g_autoptr(PigeonExamplePackageExampleHostApiResponseHandle) handle =
       pigeon_example_package_example_host_api_response_handle_new(
           channel, response_handle);
-  self->vtable->send_message(self, message, handle, self->user_data);
+  self->vtable->send_message(message, handle, self->user_data);
 }
 
-static void pigeon_example_package_example_host_api_dispose(GObject* object) {
-  PigeonExamplePackageExampleHostApi* self =
-      PIGEON_EXAMPLE_PACKAGE_EXAMPLE_HOST_API(object);
-  if (self->user_data != nullptr) {
-    self->user_data_free_func(self->user_data);
-  }
-  self->user_data = nullptr;
-  G_OBJECT_CLASS(pigeon_example_package_example_host_api_parent_class)
-      ->dispose(object);
-}
-
-static void pigeon_example_package_example_host_api_init(
-    PigeonExamplePackageExampleHostApi* self) {}
-
-static void pigeon_example_package_example_host_api_class_init(
-    PigeonExamplePackageExampleHostApiClass* klass) {
-  G_OBJECT_CLASS(klass)->dispose =
-      pigeon_example_package_example_host_api_dispose;
-}
-
-PigeonExamplePackageExampleHostApi* pigeon_example_package_example_host_api_new(
+void pigeon_example_package_example_host_api_set_method_handlers(
     FlBinaryMessenger* messenger, const gchar* suffix,
     const PigeonExamplePackageExampleHostApiVTable* vtable, gpointer user_data,
     GDestroyNotify user_data_free_func) {
-  PigeonExamplePackageExampleHostApi* self =
-      PIGEON_EXAMPLE_PACKAGE_EXAMPLE_HOST_API(g_object_new(
-          pigeon_example_package_example_host_api_get_type(), nullptr));
   g_autofree gchar* dot_suffix =
       suffix != nullptr ? g_strdup_printf(".%s", suffix) : g_strdup("");
-  self->vtable = vtable;
-  self->user_data = user_data;
-  self->user_data_free_func = user_data_free_func;
+  g_autoptr(PigeonExamplePackageExampleHostApi) api_data =
+      pigeon_example_package_example_host_api_new(vtable, user_data,
+                                                  user_data_free_func);
 
   g_autoptr(PigeonExamplePackageMessageCodec) codec =
       pigeon_example_package_message_codec_new();
@@ -599,7 +613,7 @@ PigeonExamplePackageExampleHostApi* pigeon_example_package_example_host_api_new(
   fl_basic_message_channel_set_message_handler(
       get_host_language_channel,
       pigeon_example_package_example_host_api_get_host_language_cb,
-      g_object_ref(self), g_object_unref);
+      g_object_ref(api_data), g_object_unref);
   g_autofree gchar* add_channel_name = g_strdup_printf(
       "dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.add%s",
       dot_suffix);
@@ -607,7 +621,7 @@ PigeonExamplePackageExampleHostApi* pigeon_example_package_example_host_api_new(
       messenger, add_channel_name, FL_MESSAGE_CODEC(codec));
   fl_basic_message_channel_set_message_handler(
       add_channel, pigeon_example_package_example_host_api_add_cb,
-      g_object_ref(self), g_object_unref);
+      g_object_ref(api_data), g_object_unref);
   g_autofree gchar* send_message_channel_name = g_strdup_printf(
       "dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.sendMessage%s",
       dot_suffix);
@@ -617,13 +631,43 @@ PigeonExamplePackageExampleHostApi* pigeon_example_package_example_host_api_new(
   fl_basic_message_channel_set_message_handler(
       send_message_channel,
       pigeon_example_package_example_host_api_send_message_cb,
-      g_object_ref(self), g_object_unref);
+      g_object_ref(api_data), g_object_unref);
+}
 
-  return self;
+void pigeon_example_package_example_host_api_clear_method_handlers(
+    FlBinaryMessenger* messenger, const gchar* suffix) {
+  g_autofree gchar* dot_suffix =
+      suffix != nullptr ? g_strdup_printf(".%s", suffix) : g_strdup("");
+
+  g_autoptr(PigeonExamplePackageMessageCodec) codec =
+      pigeon_example_package_message_codec_new();
+  g_autofree gchar* get_host_language_channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_example_package.ExampleHostApi."
+      "getHostLanguage%s",
+      dot_suffix);
+  g_autoptr(FlBasicMessageChannel) get_host_language_channel =
+      fl_basic_message_channel_new(messenger, get_host_language_channel_name,
+                                   FL_MESSAGE_CODEC(codec));
+  fl_basic_message_channel_set_message_handler(get_host_language_channel,
+                                               nullptr, nullptr, nullptr);
+  g_autofree gchar* add_channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.add%s",
+      dot_suffix);
+  g_autoptr(FlBasicMessageChannel) add_channel = fl_basic_message_channel_new(
+      messenger, add_channel_name, FL_MESSAGE_CODEC(codec));
+  fl_basic_message_channel_set_message_handler(add_channel, nullptr, nullptr,
+                                               nullptr);
+  g_autofree gchar* send_message_channel_name = g_strdup_printf(
+      "dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.sendMessage%s",
+      dot_suffix);
+  g_autoptr(FlBasicMessageChannel) send_message_channel =
+      fl_basic_message_channel_new(messenger, send_message_channel_name,
+                                   FL_MESSAGE_CODEC(codec));
+  fl_basic_message_channel_set_message_handler(send_message_channel, nullptr,
+                                               nullptr, nullptr);
 }
 
 void pigeon_example_package_example_host_api_respond_send_message(
-    PigeonExamplePackageExampleHostApi* self,
     PigeonExamplePackageExampleHostApiResponseHandle* response_handle,
     gboolean return_value) {
   g_autoptr(PigeonExamplePackageExampleHostApiSendMessageResponse) response =
@@ -639,7 +683,6 @@ void pigeon_example_package_example_host_api_respond_send_message(
 }
 
 void pigeon_example_package_example_host_api_respond_error_send_message(
-    PigeonExamplePackageExampleHostApi* self,
     PigeonExamplePackageExampleHostApiResponseHandle* response_handle,
     const gchar* code, const gchar* message, FlValue* details) {
   g_autoptr(PigeonExamplePackageExampleHostApiSendMessageResponse) response =

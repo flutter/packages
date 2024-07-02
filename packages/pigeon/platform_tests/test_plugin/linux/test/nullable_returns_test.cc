@@ -8,8 +8,7 @@
 #include "test/utils/fake_host_messenger.h"
 
 static NullableReturnsPigeonTestNullableArgHostApiDoitResponse* arg_doit(
-    NullableReturnsPigeonTestNullableArgHostApi* api, int64_t* x,
-    gpointer user_data) {
+    int64_t* x, gpointer user_data) {
   return nullable_returns_pigeon_test_nullable_arg_host_api_doit_response_new(
       x == nullptr ? 42 : *x);
 }
@@ -26,11 +25,8 @@ TEST(NullableReturns, HostNullableArgNull) {
   g_autoptr(FlStandardMessageCodec) codec = fl_standard_message_codec_new();
   g_autoptr(FakeHostMessenger) messenger =
       fake_host_messenger_new(FL_MESSAGE_CODEC(codec));
-  g_autoptr(NullableReturnsPigeonTestNullableArgHostApi) api =
-      nullable_returns_pigeon_test_nullable_arg_host_api_new(
-          FL_BINARY_MESSENGER(messenger), nullptr, &arg_vtable, nullptr,
-          nullptr);
-  (void)api;  // unused variable
+  nullable_returns_pigeon_test_nullable_arg_host_api_set_method_handlers(
+      FL_BINARY_MESSENGER(messenger), nullptr, &arg_vtable, nullptr, nullptr);
 
   int64_t result = 0;
   g_autoptr(FlValue) message = fl_value_new_list();
@@ -47,11 +43,8 @@ TEST(NullableReturns, HostNullableArgNonNull) {
   g_autoptr(FlStandardMessageCodec) codec = fl_standard_message_codec_new();
   g_autoptr(FakeHostMessenger) messenger =
       fake_host_messenger_new(FL_MESSAGE_CODEC(codec));
-  g_autoptr(NullableReturnsPigeonTestNullableArgHostApi) api =
-      nullable_returns_pigeon_test_nullable_arg_host_api_new(
-          FL_BINARY_MESSENGER(messenger), nullptr, &arg_vtable, nullptr,
-          nullptr);
-  (void)api;  // unused variable
+  nullable_returns_pigeon_test_nullable_arg_host_api_set_method_handlers(
+      FL_BINARY_MESSENGER(messenger), nullptr, &arg_vtable, nullptr, nullptr);
 
   int64_t result = 0;
   g_autoptr(FlValue) message = fl_value_new_list();
@@ -65,8 +58,7 @@ TEST(NullableReturns, HostNullableArgNonNull) {
 }
 
 static NullableReturnsPigeonTestNullableReturnHostApiDoitResponse*
-return_null_doit(NullableReturnsPigeonTestNullableReturnHostApi* api,
-                 gpointer user_data) {
+return_null_doit(gpointer user_data) {
   return nullable_returns_pigeon_test_nullable_return_host_api_doit_response_new(
       nullptr);
 }
@@ -75,8 +67,7 @@ static NullableReturnsPigeonTestNullableReturnHostApiVTable return_null_vtable =
     {.doit = return_null_doit};
 
 static NullableReturnsPigeonTestNullableReturnHostApiDoitResponse*
-return_nonnull_doit(NullableReturnsPigeonTestNullableReturnHostApi* api,
-                    gpointer user_data) {
+return_nonnull_doit(gpointer user_data) {
   int64_t return_value = 42;
   return nullable_returns_pigeon_test_nullable_return_host_api_doit_response_new(
       &return_value);
@@ -100,11 +91,9 @@ TEST(NullableReturns, HostNullableReturnNull) {
   g_autoptr(FlStandardMessageCodec) codec = fl_standard_message_codec_new();
   g_autoptr(FakeHostMessenger) messenger =
       fake_host_messenger_new(FL_MESSAGE_CODEC(codec));
-  g_autoptr(NullableReturnsPigeonTestNullableReturnHostApi) api =
-      nullable_returns_pigeon_test_nullable_return_host_api_new(
-          FL_BINARY_MESSENGER(messenger), nullptr, &return_null_vtable, nullptr,
-          nullptr);
-  (void)api;  // unused variable
+  nullable_returns_pigeon_test_nullable_return_host_api_set_method_handlers(
+      FL_BINARY_MESSENGER(messenger), nullptr, &return_null_vtable, nullptr,
+      nullptr);
 
   // Initialize to a non-null value to ensure that it's actually set to null,
   // rather than just never set.
@@ -124,11 +113,9 @@ TEST(NullableReturns, HostNullableReturnNonNull) {
   g_autoptr(FlStandardMessageCodec) codec = fl_standard_message_codec_new();
   g_autoptr(FakeHostMessenger) messenger =
       fake_host_messenger_new(FL_MESSAGE_CODEC(codec));
-  g_autoptr(NullableReturnsPigeonTestNullableReturnHostApi) api =
-      nullable_returns_pigeon_test_nullable_return_host_api_new(
-          FL_BINARY_MESSENGER(messenger), nullptr, &return_nonnull_vtable,
-          nullptr, nullptr);
-  (void)api;  // unused variable
+  nullable_returns_pigeon_test_nullable_return_host_api_set_method_handlers(
+      FL_BINARY_MESSENGER(messenger), nullptr, &return_nonnull_vtable, nullptr,
+      nullptr);
 
   g_autofree int64_t* result = nullptr;
   g_autoptr(FlValue) message = fl_value_new_list();

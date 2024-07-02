@@ -368,7 +368,7 @@ class GObjectHeaderGenerator extends StructuredGenerator<GObjectOptions> {
       indent.newln();
       indent.writeln('/**');
       indent.writeln(' * ${methodPrefix}_${methodName}_finish:');
-      indent.writeln(' * @api: a #className.');
+      indent.writeln(' * @api: a #$className.');
       indent.writeln(' * @result: a #GAsyncResult.');
       indent.writeln(
           ' * @error: (allow-none): #GError location to store the error occurring, or %NULL to ignore.');
@@ -478,7 +478,6 @@ class GObjectHeaderGenerator extends StructuredGenerator<GObjectOptions> {
     required String dartPackageName,
   }) {
     final String module = _getModule(generatorOptions, dartPackageName);
-    final String className = _getClassName(module, api.name);
     final String methodPrefix = _getMethodPrefix(module, api.name);
     final String vtableName = _getVTableName(module, api.name);
 
@@ -495,14 +494,11 @@ class GObjectHeaderGenerator extends StructuredGenerator<GObjectOptions> {
     }
 
     indent.newln();
-    _writeDeclareFinalType(indent, module, api.name);
-
-    indent.newln();
     _writeApiVTable(indent, module, api);
 
     indent.newln();
     indent.writeln('/**');
-    indent.writeln(' * ${methodPrefix}_new:');
+    indent.writeln(' * ${methodPrefix}_set_method_handlers:');
     indent.writeln(' *');
     indent.writeln(' * @messenger: an #FlBinaryMessenger.');
     indent.writeln(
@@ -513,12 +509,23 @@ class GObjectHeaderGenerator extends StructuredGenerator<GObjectOptions> {
     indent.writeln(
         ' * @user_data_free_func: (allow-none): a function which gets called to free @user_data, or %NULL.');
     indent.writeln(' *');
-    indent.writeln(' * Creates an object to implement the ${api.name} API.');
-    indent.writeln(' *');
-    indent.writeln(' * Returns: a new #$className');
+    indent.writeln(' * Connects the method handlers in the ${api.name} API.');
     indent.writeln(' */');
     indent.writeln(
-        '$className* ${methodPrefix}_new(FlBinaryMessenger* messenger, const gchar* suffix, const $vtableName* vtable, gpointer user_data, GDestroyNotify user_data_free_func);');
+        'void ${methodPrefix}_set_method_handlers(FlBinaryMessenger* messenger, const gchar* suffix, const $vtableName* vtable, gpointer user_data, GDestroyNotify user_data_free_func);');
+
+    indent.newln();
+    indent.writeln('/**');
+    indent.writeln(' * ${methodPrefix}_clear_method_handlers:');
+    indent.writeln(' *');
+    indent.writeln(' * @messenger: an #FlBinaryMessenger.');
+    indent.writeln(
+        ' * @suffix: (allow-none): a suffix to add to the API or %NULL for none.');
+    indent.writeln(' *');
+    indent.writeln(' * Clears the method handlers in the ${api.name} API.');
+    indent.writeln(' */');
+    indent.writeln(
+        'void ${methodPrefix}_clear_method_handlers(FlBinaryMessenger* messenger, const gchar* suffix);');
 
     for (final Method method
         in api.methods.where((Method method) => method.isAsynchronous)) {
@@ -585,7 +592,7 @@ class GObjectHeaderGenerator extends StructuredGenerator<GObjectOptions> {
         final String responseName = _getResponseName(api.name, method.name);
         final String responseClassName = _getClassName(module, responseName);
 
-        final List<String> methodArgs = <String>['$className* api'];
+        final List<String> methodArgs = <String>[];
         for (final Parameter param in method.parameters) {
           final String name = _snakeCaseFromCamelCase(param.name);
           methodArgs.add('${_getType(module, param.type)} $name');
@@ -615,14 +622,12 @@ class GObjectHeaderGenerator extends StructuredGenerator<GObjectOptions> {
 
     indent.newln();
     final List<String> respondArgs = <String>[
-      '$className* api',
       '${className}ResponseHandle* response_handle',
       if (returnType != 'void') '$returnType return_value',
       if (_isNumericListType(method.returnType)) 'size_t return_value_length'
     ];
     indent.writeln('/**');
     indent.writeln(' * ${methodPrefix}_respond_$methodName:');
-    indent.writeln(' * @api: a #$className.');
     indent.writeln(' * @response_handle: a #${className}ResponseHandle.');
     if (returnType != 'void') {
       indent.writeln(
@@ -640,7 +645,6 @@ class GObjectHeaderGenerator extends StructuredGenerator<GObjectOptions> {
 
     indent.newln();
     final List<String> respondErrorArgs = <String>[
-      '$className* api',
       '${className}ResponseHandle* response_handle',
       'const gchar* code',
       'const gchar* message',
@@ -648,7 +652,6 @@ class GObjectHeaderGenerator extends StructuredGenerator<GObjectOptions> {
     ];
     indent.writeln('/**');
     indent.writeln(' * ${methodPrefix}_respond_error_$methodName:');
-    indent.writeln(' * @api: a #$className.');
     indent.writeln(' * @response_handle: a #${className}ResponseHandle.');
     indent.writeln(' * @code: error code.');
     indent.writeln(' * @message: error message.');
@@ -1433,6 +1436,9 @@ class GObjectSourceGenerator extends StructuredGenerator<GObjectOptions> {
     }
 
     indent.newln();
+    _writeDeclareFinalType(indent, module, api.name);
+
+    indent.newln();
     _writeObjectStruct(indent, module, api.name, () {
       indent.writeln('const ${className}VTable* vtable;');
       indent.writeln('gpointer user_data;');
@@ -1441,6 +1447,32 @@ class GObjectSourceGenerator extends StructuredGenerator<GObjectOptions> {
 
     indent.newln();
     _writeDefineType(indent, module, api.name);
+
+    indent.newln();
+    _writeDispose(indent, module, api.name, () {
+      _writeCastSelf(indent, module, api.name, 'object');
+      indent.writeScoped('if (self->user_data != nullptr) {', '}', () {
+        indent.writeln('self->user_data_free_func(self->user_data);');
+      });
+      indent.writeln('self->user_data = nullptr;');
+    });
+
+    indent.newln();
+    _writeInit(indent, module, api.name, () {});
+
+    indent.newln();
+    _writeClassInit(indent, module, api.name, () {});
+
+    indent.newln();
+    indent.writeScoped(
+        'static $className* ${methodPrefix}_new(const $vtableName* vtable, gpointer user_data, GDestroyNotify user_data_free_func) {',
+        '}', () {
+      _writeObjectNew(indent, module, api.name);
+      indent.writeln('self->vtable = vtable;');
+      indent.writeln('self->user_data = user_data;');
+      indent.writeln('self->user_data_free_func = user_data_free_func;');
+      indent.writeln('return self;');
+    });
 
     for (final Method method in api.methods) {
       final String methodName = _getMethodName(method.name);
@@ -1494,14 +1526,14 @@ class GObjectSourceGenerator extends StructuredGenerator<GObjectOptions> {
           }
         }
         if (method.isAsynchronous) {
-          final List<String> vfuncArgs = <String>['self'];
+          final List<String> vfuncArgs = <String>[];
           vfuncArgs.addAll(methodArgs);
           vfuncArgs.addAll(<String>['handle', 'self->user_data']);
           indent.writeln(
               'g_autoptr(${className}ResponseHandle) handle = ${methodPrefix}_response_handle_new(channel, response_handle);');
           indent.writeln("self->vtable->$methodName(${vfuncArgs.join(', ')});");
         } else {
-          final List<String> vfuncArgs = <String>['self'];
+          final List<String> vfuncArgs = <String>[];
           vfuncArgs.addAll(methodArgs);
           vfuncArgs.add('self->user_data');
           indent.writeln(
@@ -1525,30 +1557,13 @@ class GObjectSourceGenerator extends StructuredGenerator<GObjectOptions> {
     }
 
     indent.newln();
-    _writeDispose(indent, module, api.name, () {
-      _writeCastSelf(indent, module, api.name, 'object');
-      indent.writeScoped('if (self->user_data != nullptr) {', '}', () {
-        indent.writeln('self->user_data_free_func(self->user_data);');
-      });
-      indent.writeln('self->user_data = nullptr;');
-    });
-
-    indent.newln();
-    _writeInit(indent, module, api.name, () {});
-
-    indent.newln();
-    _writeClassInit(indent, module, api.name, () {});
-
-    indent.newln();
     indent.writeScoped(
-        '$className* ${methodPrefix}_new(FlBinaryMessenger* messenger, const gchar* suffix, const $vtableName* vtable, gpointer user_data, GDestroyNotify user_data_free_func) {',
+        'void ${methodPrefix}_set_method_handlers(FlBinaryMessenger* messenger, const gchar* suffix, const $vtableName* vtable, gpointer user_data, GDestroyNotify user_data_free_func) {',
         '}', () {
-      _writeObjectNew(indent, module, api.name);
       indent.writeln(
           'g_autofree gchar* dot_suffix = suffix != nullptr ? g_strdup_printf(".%s", suffix) : g_strdup("");');
-      indent.writeln('self->vtable = vtable;');
-      indent.writeln('self->user_data = user_data;');
-      indent.writeln('self->user_data_free_func = user_data_free_func;');
+      indent.writeln(
+          'g_autoptr($className) api_data = ${methodPrefix}_new(vtable, user_data, user_data_free_func);');
 
       indent.newln();
       indent.writeln(
@@ -1562,11 +1577,31 @@ class GObjectSourceGenerator extends StructuredGenerator<GObjectOptions> {
         indent.writeln(
             'g_autoptr(FlBasicMessageChannel) ${methodName}_channel = fl_basic_message_channel_new(messenger, ${methodName}_channel_name, FL_MESSAGE_CODEC(codec));');
         indent.writeln(
-            'fl_basic_message_channel_set_message_handler(${methodName}_channel, ${methodPrefix}_${methodName}_cb, g_object_ref(self), g_object_unref);');
+            'fl_basic_message_channel_set_message_handler(${methodName}_channel, ${methodPrefix}_${methodName}_cb, g_object_ref(api_data), g_object_unref);');
       }
+    });
+
+    indent.newln();
+    indent.writeScoped(
+        'void ${methodPrefix}_clear_method_handlers(FlBinaryMessenger* messenger, const gchar* suffix) {',
+        '}', () {
+      indent.writeln(
+          'g_autofree gchar* dot_suffix = suffix != nullptr ? g_strdup_printf(".%s", suffix) : g_strdup("");');
 
       indent.newln();
-      indent.writeln('return self;');
+      indent.writeln(
+          'g_autoptr($codecClassName) codec = ${codecMethodPrefix}_new();');
+      for (final Method method in api.methods) {
+        final String methodName = _getMethodName(method.name);
+        final String channelName =
+            makeChannelName(api, method, dartPackageName);
+        indent.writeln(
+            'g_autofree gchar* ${methodName}_channel_name = g_strdup_printf("$channelName%s", dot_suffix);');
+        indent.writeln(
+            'g_autoptr(FlBasicMessageChannel) ${methodName}_channel = fl_basic_message_channel_new(messenger, ${methodName}_channel_name, FL_MESSAGE_CODEC(codec));');
+        indent.writeln(
+            'fl_basic_message_channel_set_message_handler(${methodName}_channel, nullptr, nullptr, nullptr);');
+      }
     });
 
     for (final Method method
@@ -1580,7 +1615,6 @@ class GObjectSourceGenerator extends StructuredGenerator<GObjectOptions> {
 
       indent.newln();
       final List<String> respondArgs = <String>[
-        '$className* self',
         '${className}ResponseHandle* response_handle',
         if (returnType != 'void') '$returnType return_value',
         if (_isNumericListType(method.returnType)) 'size_t return_value_length'
@@ -1605,7 +1639,6 @@ class GObjectSourceGenerator extends StructuredGenerator<GObjectOptions> {
 
       indent.newln();
       final List<String> respondErrorArgs = <String>[
-        '$className* self',
         '${className}ResponseHandle* response_handle',
         'const gchar* code',
         'const gchar* message',
