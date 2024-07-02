@@ -90,6 +90,11 @@ PigeonExamplePackageCode pigeon_example_package_message_data_get_code(
 FlValue* pigeon_example_package_message_data_get_data(
     PigeonExamplePackageMessageData* object);
 
+G_DECLARE_FINAL_TYPE(PigeonExamplePackageExampleHostApiResponseHandle,
+                     pigeon_example_package_example_host_api_response_handle,
+                     PIGEON_EXAMPLE_PACKAGE, EXAMPLE_HOST_API_RESPONSE_HANDLE,
+                     GObject)
+
 G_DECLARE_FINAL_TYPE(
     PigeonExamplePackageExampleHostApiGetHostLanguageResponse,
     pigeon_example_package_example_host_api_get_host_language_response,
@@ -167,10 +172,11 @@ typedef struct {
   PigeonExamplePackageExampleHostApiAddResponse* (*add)(
       PigeonExamplePackageExampleHostApi* api, int64_t a, int64_t b,
       gpointer user_data);
-  void (*send_message)(PigeonExamplePackageExampleHostApi* api,
-                       PigeonExamplePackageMessageData* message,
-                       FlBasicMessageChannelResponseHandle* response_handle,
-                       gpointer user_data);
+  void (*send_message)(
+      PigeonExamplePackageExampleHostApi* api,
+      PigeonExamplePackageMessageData* message,
+      PigeonExamplePackageExampleHostApiResponseHandle* response_handle,
+      gpointer user_data);
 } PigeonExamplePackageExampleHostApiVTable;
 
 /**
@@ -195,20 +201,20 @@ PigeonExamplePackageExampleHostApi* pigeon_example_package_example_host_api_new(
 /**
  * pigeon_example_package_example_host_api_respond_send_message:
  * @api: a #PigeonExamplePackageExampleHostApi.
- * @response_handle: a #FlBasicMessageChannelResponseHandle.
+ * @response_handle: a #PigeonExamplePackageExampleHostApiResponseHandle.
  * @return_value: location to write the value returned by this method.
  *
  * Responds to ExampleHostApi.sendMessage.
  */
 void pigeon_example_package_example_host_api_respond_send_message(
     PigeonExamplePackageExampleHostApi* api,
-    FlBasicMessageChannelResponseHandle* response_handle,
+    PigeonExamplePackageExampleHostApiResponseHandle* response_handle,
     gboolean return_value);
 
 /**
  * pigeon_example_package_example_host_api_respond_error_send_message:
  * @api: a #PigeonExamplePackageExampleHostApi.
- * @response_handle: a #FlBasicMessageChannelResponseHandle.
+ * @response_handle: a #PigeonExamplePackageExampleHostApiResponseHandle.
  * @code: error code.
  * @message: error message.
  * @details: (allow-none): error details or %NULL.
@@ -217,8 +223,8 @@ void pigeon_example_package_example_host_api_respond_send_message(
  */
 void pigeon_example_package_example_host_api_respond_error_send_message(
     PigeonExamplePackageExampleHostApi* api,
-    FlBasicMessageChannelResponseHandle* response_handle, const gchar* code,
-    const gchar* message, FlValue* details);
+    PigeonExamplePackageExampleHostApiResponseHandle* response_handle,
+    const gchar* code, const gchar* message, FlValue* details);
 
 G_DECLARE_FINAL_TYPE(
     PigeonExamplePackageMessageFlutterApiFlutterMethodResponse,

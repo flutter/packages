@@ -241,6 +241,51 @@ pigeon_example_package_message_codec_new() {
   return self;
 }
 
+struct _PigeonExamplePackageExampleHostApiResponseHandle {
+  GObject parent_instance;
+
+  FlBasicMessageChannel* channel;
+  FlBasicMessageChannelResponseHandle* response_handle;
+};
+
+G_DEFINE_TYPE(PigeonExamplePackageExampleHostApiResponseHandle,
+              pigeon_example_package_example_host_api_response_handle,
+              G_TYPE_OBJECT)
+
+static void pigeon_example_package_example_host_api_response_handle_dispose(
+    GObject* object) {
+  PigeonExamplePackageExampleHostApiResponseHandle* self =
+      PIGEON_EXAMPLE_PACKAGE_EXAMPLE_HOST_API_RESPONSE_HANDLE(object);
+  g_clear_object(&self->channel);
+  g_clear_object(&self->response_handle);
+  G_OBJECT_CLASS(
+      pigeon_example_package_example_host_api_response_handle_parent_class)
+      ->dispose(object);
+}
+
+static void pigeon_example_package_example_host_api_response_handle_init(
+    PigeonExamplePackageExampleHostApiResponseHandle* self) {}
+
+static void pigeon_example_package_example_host_api_response_handle_class_init(
+    PigeonExamplePackageExampleHostApiResponseHandleClass* klass) {
+  G_OBJECT_CLASS(klass)->dispose =
+      pigeon_example_package_example_host_api_response_handle_dispose;
+}
+
+static PigeonExamplePackageExampleHostApiResponseHandle*
+pigeon_example_package_example_host_api_response_handle_new(
+    FlBasicMessageChannel* channel,
+    FlBasicMessageChannelResponseHandle* response_handle) {
+  PigeonExamplePackageExampleHostApiResponseHandle* self =
+      PIGEON_EXAMPLE_PACKAGE_EXAMPLE_HOST_API_RESPONSE_HANDLE(g_object_new(
+          pigeon_example_package_example_host_api_response_handle_get_type(),
+          nullptr));
+  self->channel = FL_BASIC_MESSAGE_CHANNEL(g_object_ref(channel));
+  self->response_handle =
+      FL_BASIC_MESSAGE_CHANNEL_RESPONSE_HANDLE(g_object_ref(response_handle));
+  return self;
+}
+
 struct _PigeonExamplePackageExampleHostApiGetHostLanguageResponse {
   GObject parent_instance;
 
@@ -426,15 +471,9 @@ pigeon_example_package_example_host_api_send_message_response_new_error(
 struct _PigeonExamplePackageExampleHostApi {
   GObject parent_instance;
 
-  FlBinaryMessenger* messenger;
   const PigeonExamplePackageExampleHostApiVTable* vtable;
-  gchar* suffix;
   gpointer user_data;
   GDestroyNotify user_data_free_func;
-
-  FlBasicMessageChannel* get_host_language_channel;
-  FlBasicMessageChannel* add_channel;
-  FlBasicMessageChannel* send_message_channel;
 };
 
 G_DEFINE_TYPE(PigeonExamplePackageExampleHostApi,
@@ -509,22 +548,19 @@ static void pigeon_example_package_example_host_api_send_message_cb(
   PigeonExamplePackageMessageData* message =
       PIGEON_EXAMPLE_PACKAGE_MESSAGE_DATA(
           fl_value_get_custom_value_object(value0));
-  self->vtable->send_message(self, message, response_handle, self->user_data);
+  g_autoptr(PigeonExamplePackageExampleHostApiResponseHandle) handle =
+      pigeon_example_package_example_host_api_response_handle_new(
+          channel, response_handle);
+  self->vtable->send_message(self, message, handle, self->user_data);
 }
 
 static void pigeon_example_package_example_host_api_dispose(GObject* object) {
   PigeonExamplePackageExampleHostApi* self =
       PIGEON_EXAMPLE_PACKAGE_EXAMPLE_HOST_API(object);
-  g_clear_object(&self->messenger);
-  g_clear_pointer(&self->suffix, g_free);
   if (self->user_data != nullptr) {
     self->user_data_free_func(self->user_data);
   }
   self->user_data = nullptr;
-
-  g_clear_object(&self->get_host_language_channel);
-  g_clear_object(&self->add_channel);
-  g_clear_object(&self->send_message_channel);
   G_OBJECT_CLASS(pigeon_example_package_example_host_api_parent_class)
       ->dispose(object);
 }
@@ -545,8 +581,7 @@ PigeonExamplePackageExampleHostApi* pigeon_example_package_example_host_api_new(
   PigeonExamplePackageExampleHostApi* self =
       PIGEON_EXAMPLE_PACKAGE_EXAMPLE_HOST_API(g_object_new(
           pigeon_example_package_example_host_api_get_type(), nullptr));
-  self->messenger = FL_BINARY_MESSENGER(g_object_ref(messenger));
-  self->suffix =
+  g_autofree gchar* dot_suffix =
       suffix != nullptr ? g_strdup_printf(".%s", suffix) : g_strdup("");
   self->vtable = vtable;
   self->user_data = user_data;
@@ -557,44 +592,47 @@ PigeonExamplePackageExampleHostApi* pigeon_example_package_example_host_api_new(
   g_autofree gchar* get_host_language_channel_name = g_strdup_printf(
       "dev.flutter.pigeon.pigeon_example_package.ExampleHostApi."
       "getHostLanguage%s",
-      self->suffix);
-  self->get_host_language_channel = fl_basic_message_channel_new(
-      messenger, get_host_language_channel_name, FL_MESSAGE_CODEC(codec));
+      dot_suffix);
+  g_autoptr(FlBasicMessageChannel) get_host_language_channel =
+      fl_basic_message_channel_new(messenger, get_host_language_channel_name,
+                                   FL_MESSAGE_CODEC(codec));
   fl_basic_message_channel_set_message_handler(
-      self->get_host_language_channel,
-      pigeon_example_package_example_host_api_get_host_language_cb, self,
-      nullptr);
+      get_host_language_channel,
+      pigeon_example_package_example_host_api_get_host_language_cb,
+      g_object_ref(self), g_object_unref);
   g_autofree gchar* add_channel_name = g_strdup_printf(
       "dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.add%s",
-      self->suffix);
-  self->add_channel = fl_basic_message_channel_new(messenger, add_channel_name,
-                                                   FL_MESSAGE_CODEC(codec));
+      dot_suffix);
+  g_autoptr(FlBasicMessageChannel) add_channel = fl_basic_message_channel_new(
+      messenger, add_channel_name, FL_MESSAGE_CODEC(codec));
   fl_basic_message_channel_set_message_handler(
-      self->add_channel, pigeon_example_package_example_host_api_add_cb, self,
-      nullptr);
+      add_channel, pigeon_example_package_example_host_api_add_cb,
+      g_object_ref(self), g_object_unref);
   g_autofree gchar* send_message_channel_name = g_strdup_printf(
       "dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.sendMessage%s",
-      self->suffix);
-  self->send_message_channel = fl_basic_message_channel_new(
-      messenger, send_message_channel_name, FL_MESSAGE_CODEC(codec));
+      dot_suffix);
+  g_autoptr(FlBasicMessageChannel) send_message_channel =
+      fl_basic_message_channel_new(messenger, send_message_channel_name,
+                                   FL_MESSAGE_CODEC(codec));
   fl_basic_message_channel_set_message_handler(
-      self->send_message_channel,
-      pigeon_example_package_example_host_api_send_message_cb, self, nullptr);
+      send_message_channel,
+      pigeon_example_package_example_host_api_send_message_cb,
+      g_object_ref(self), g_object_unref);
 
   return self;
 }
 
 void pigeon_example_package_example_host_api_respond_send_message(
     PigeonExamplePackageExampleHostApi* self,
-    FlBasicMessageChannelResponseHandle* response_handle,
+    PigeonExamplePackageExampleHostApiResponseHandle* response_handle,
     gboolean return_value) {
   g_autoptr(PigeonExamplePackageExampleHostApiSendMessageResponse) response =
       pigeon_example_package_example_host_api_send_message_response_new(
           return_value);
   g_autoptr(GError) error = nullptr;
-  if (!fl_basic_message_channel_respond(self->send_message_channel,
-                                        response_handle, response->value,
-                                        &error)) {
+  if (!fl_basic_message_channel_respond(response_handle->channel,
+                                        response_handle->response_handle,
+                                        response->value, &error)) {
     g_warning("Failed to send response to %s.%s: %s", "ExampleHostApi",
               "sendMessage", error->message);
   }
@@ -602,15 +640,15 @@ void pigeon_example_package_example_host_api_respond_send_message(
 
 void pigeon_example_package_example_host_api_respond_error_send_message(
     PigeonExamplePackageExampleHostApi* self,
-    FlBasicMessageChannelResponseHandle* response_handle, const gchar* code,
-    const gchar* message, FlValue* details) {
+    PigeonExamplePackageExampleHostApiResponseHandle* response_handle,
+    const gchar* code, const gchar* message, FlValue* details) {
   g_autoptr(PigeonExamplePackageExampleHostApiSendMessageResponse) response =
       pigeon_example_package_example_host_api_send_message_response_new_error(
           code, message, details);
   g_autoptr(GError) error = nullptr;
-  if (!fl_basic_message_channel_respond(self->send_message_channel,
-                                        response_handle, response->value,
-                                        &error)) {
+  if (!fl_basic_message_channel_respond(response_handle->channel,
+                                        response_handle->response_handle,
+                                        response->value, &error)) {
     g_warning("Failed to send response to %s.%s: %s", "ExampleHostApi",
               "sendMessage", error->message);
   }
