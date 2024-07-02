@@ -460,7 +460,6 @@ void main() {
         expect(channel.log, <Matcher>[
           isMethodCall('startVideoRecording', arguments: <String, Object?>{
             'cameraId': cameraId,
-            'maxVideoDuration': null,
           }),
         ]);
       });
