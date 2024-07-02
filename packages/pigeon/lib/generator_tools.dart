@@ -4,6 +4,7 @@
 
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math';
 import 'dart:mirrors';
 
 import 'package:yaml/yaml.dart' as yaml;
@@ -13,7 +14,7 @@ import 'ast.dart';
 /// The current version of pigeon.
 ///
 /// This must match the version in pubspec.yaml.
-const String pigeonVersion = '20.0.2';
+const String pigeonVersion = '20.1.0';
 
 /// Prefix for all local variables in methods.
 ///
@@ -76,11 +77,37 @@ class Indent {
   }
 
   /// Replaces the newlines and tabs of input and adds it to the stream.
-  void format(String input,
-      {bool leadingSpace = true, bool trailingNewline = true}) {
+  ///
+  /// [trimIndentation] flag finds the line with the fewest leading empty
+  /// spaces and trims the beginning of all lines by this number.
+  void format(
+    String input, {
+    bool leadingSpace = true,
+    bool trailingNewline = true,
+    bool trimIndentation = false,
+  }) {
     final List<String> lines = input.split('\n');
+
+    int? shortestIndentation;
+    if (trimIndentation) {
+      for (final String line in lines) {
+        if (line.trim().isNotEmpty) {
+          final int indentationLength = line.length - line.trimLeft().length;
+          shortestIndentation = shortestIndentation == null
+              ? indentationLength
+              : min(shortestIndentation, indentationLength);
+        }
+      }
+    }
+
     for (int i = 0; i < lines.length; ++i) {
-      final String line = lines[i];
+      late final String line;
+      if (trimIndentation && lines[i].trim().isNotEmpty) {
+        line = lines[i].substring(shortestIndentation!);
+      } else {
+        line = lines[i];
+      }
+
       if (i == 0 && !leadingSpace) {
         add(line.replaceAll('\t', tab));
       } else if (line.isNotEmpty) {
@@ -307,6 +334,12 @@ const String seeAlsoWarning = 'See also: https://pub.dev/packages/pigeon';
 /// parameters.
 const String classNamePrefix = 'Pigeon';
 
+/// Prefix for APIs generated for ProxyApi.
+///
+/// Since ProxyApis are intended to wrap a class and will often share the name
+/// of said class, host APIs should prefix the API with this protected name.
+const String hostProxyApiPrefix = '${classNamePrefix}Api';
+
 /// Name for the generated InstanceManager for ProxyApis.
 ///
 /// This lowers the chances of variable name collisions with user defined
@@ -418,9 +451,12 @@ const List<String> validTypes = <String>[
   'Object',
 ];
 
+/// The dedicated key for accessing an InstanceManager in ProxyApi base codecs.
+const int proxyApiCodecInstanceManagerKey = 128;
+
 /// Custom codecs' custom types are enumerated from 255 down to this number to
 /// avoid collisions with the StandardMessageCodec.
-const int _minimumCodecFieldKey = 129;
+const int _minimumCodecFieldKey = proxyApiCodecInstanceManagerKey + 1;
 
 Iterable<TypeDeclaration> _getTypeArguments(TypeDeclaration type) sync* {
   for (final TypeDeclaration typeArg in type.typeArguments) {
@@ -502,6 +538,48 @@ Map<TypeDeclaration, List<int>> getReferencedTypes(
     }
   }
   return references.map;
+}
+
+/// Find the [TypeDeclaration] that has the highest API requirement and its
+/// version, [T].
+///
+/// [T] depends on the language. For example, Android uses an int while iOS uses
+/// semantic versioning.
+({TypeDeclaration type, T version})?
+    findHighestApiRequirement<T extends Object>(
+  Iterable<TypeDeclaration> types, {
+  required T? Function(TypeDeclaration) onGetApiRequirement,
+  required Comparator<T> onCompare,
+}) {
+  Iterable<TypeDeclaration> addAllRecursive(TypeDeclaration type) sync* {
+    yield type;
+    if (type.typeArguments.isNotEmpty) {
+      for (final TypeDeclaration typeArg in type.typeArguments) {
+        yield* addAllRecursive(typeArg);
+      }
+    }
+  }
+
+  final Iterable<TypeDeclaration> allReferencedTypes = types
+      .expand(addAllRecursive)
+      .where((TypeDeclaration type) => onGetApiRequirement(type) != null);
+
+  if (allReferencedTypes.isEmpty) {
+    return null;
+  }
+
+  final TypeDeclaration typeWithHighestRequirement = allReferencedTypes.reduce(
+    (TypeDeclaration one, TypeDeclaration two) {
+      return onCompare(onGetApiRequirement(one)!, onGetApiRequirement(two)!) > 0
+          ? one
+          : two;
+    },
+  );
+
+  return (
+    type: typeWithHighestRequirement,
+    version: onGetApiRequirement(typeWithHighestRequirement)!,
+  );
 }
 
 /// All custom definable data types.

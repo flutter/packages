@@ -1,3 +1,7 @@
+## 20.1.0
+
+* [kotlin] Adds implementation for `@ProxyApi`.
+
 ## 20.0.2
 
 * [java] Adds `equals` and `hashCode` support for data classes.
