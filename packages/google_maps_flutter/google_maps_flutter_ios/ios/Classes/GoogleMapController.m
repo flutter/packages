@@ -692,7 +692,8 @@
   UIImage *image = [renderer imageWithActions:^(UIGraphicsImageRendererContext *context) {
     [mapView drawViewHierarchyInRect:mapView.bounds afterScreenUpdates:YES];
   }];
-  return [FlutterStandardTypedData typedDataWithBytes:UIImagePNGRepresentation(image)];
+  NSData *imageData = UIImagePNGRepresentation(image);
+  return imageData ? [FlutterStandardTypedData typedDataWithBytes:imageData] : nil;
 }
 
 @end

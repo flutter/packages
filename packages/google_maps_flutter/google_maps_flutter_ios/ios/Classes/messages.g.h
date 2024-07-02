@@ -260,8 +260,6 @@ NSObject<FlutterMessageCodec> *FGMGetMessagesCodec(void);
 - (void)clearTileCacheForOverlayWithIdentifier:(NSString *)tileOverlayId
                                          error:(FlutterError *_Nullable *_Nonnull)error;
 /// Takes a snapshot of the map and returns its image data.
-///
-/// @return `nil` only when `error != nil`.
 - (nullable FlutterStandardTypedData *)takeSnapshotWithError:
     (FlutterError *_Nullable *_Nonnull)error;
 @end

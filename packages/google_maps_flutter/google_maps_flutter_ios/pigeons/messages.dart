@@ -280,7 +280,7 @@ abstract class MapsApi {
   void clearTileCache(String tileOverlayId);
 
   /// Takes a snapshot of the map and returns its image data.
-  Uint8List takeSnapshot();
+  Uint8List? takeSnapshot();
 }
 
 /// Inspector API only intended for use in integration tests.

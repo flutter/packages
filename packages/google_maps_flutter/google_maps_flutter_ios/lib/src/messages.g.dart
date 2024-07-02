@@ -964,7 +964,7 @@ class MapsApi {
   }
 
   /// Takes a snapshot of the map and returns its image data.
-  Future<Uint8List> takeSnapshot() async {
+  Future<Uint8List?> takeSnapshot() async {
     final String __pigeon_channelName =
         'dev.flutter.pigeon.google_maps_flutter_ios.MapsApi.takeSnapshot$__pigeon_messageChannelSuffix';
     final BasicMessageChannel<Object?> __pigeon_channel =
@@ -983,13 +983,8 @@ class MapsApi {
         message: __pigeon_replyList[1] as String?,
         details: __pigeon_replyList[2],
       );
-    } else if (__pigeon_replyList[0] == null) {
-      throw PlatformException(
-        code: 'null-error',
-        message: 'Host platform returned null value for non-null return value.',
-      );
     } else {
-      return (__pigeon_replyList[0] as Uint8List?)!;
+      return (__pigeon_replyList[0] as Uint8List?);
     }
   }
 }
