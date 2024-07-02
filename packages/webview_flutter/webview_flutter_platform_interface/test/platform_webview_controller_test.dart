@@ -350,6 +350,19 @@ void main() {
   });
 
   test(
+      'Default implementation of requestFocus should throw unimplemented error',
+      () {
+    final PlatformWebViewController controller =
+        ExtendsPlatformWebViewController(
+            const PlatformWebViewControllerCreationParams());
+
+    expect(
+      () => controller.requestFocus(),
+      throwsUnimplementedError,
+    );
+  });
+
+  test(
       'Default implementation of setJavaScriptMode should throw unimplemented error',
       () {
     final PlatformWebViewController controller =

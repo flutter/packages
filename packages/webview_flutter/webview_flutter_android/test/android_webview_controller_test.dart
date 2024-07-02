@@ -1398,6 +1398,17 @@ void main() {
       verify(mockWebView.setBackgroundColor(Colors.blue)).called(1);
     });
 
+    test('requestFocus', () async {
+      final MockWebView mockWebView = MockWebView();
+      final AndroidWebViewController controller = createControllerWithMocks(
+        mockWebView: mockWebView,
+      );
+
+      await controller.requestFocus();
+
+      verify(mockWebView.requestFocus()).called(1);
+    });
+
     test('setJavaScriptMode', () async {
       final MockWebView mockWebView = MockWebView();
       final MockWebSettings mockSettings = MockWebSettings();
