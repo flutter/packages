@@ -12,6 +12,21 @@ import 'package:pigeon/pigeon.dart';
   copyrightHeader: 'pigeons/copyright.txt',
 ))
 
+/// Pigeon representatation of a CameraPosition.
+class PlatformCameraPosition {
+  PlatformCameraPosition({
+    required this.bearing,
+    required this.target,
+    required this.tilt,
+    required this.zoom,
+  });
+
+  final double bearing;
+  final PlatformLatLng target;
+  final double tilt;
+  final double zoom;
+}
+
 /// Pigeon representation of a CameraUpdate.
 class PlatformCameraUpdate {
   PlatformCameraUpdate(this.json);
@@ -261,6 +276,54 @@ abstract class MapsApi {
 
   /// Takes a snapshot of the map and returns its image data.
   Uint8List? takeSnapshot();
+}
+
+/// Interface for calls from the native SDK to Dart.
+@FlutterApi()
+abstract class MapsCallbackApi {
+  /// Called when the map camera starts moving.
+  void onCameraMoveStarted();
+
+  /// Called when the map camera moves.
+  void onCameraMove(PlatformCameraPosition cameraPosition);
+
+  /// Called when the map camera stops moving.
+  void onCameraIdle();
+
+  /// Called when the map, not a specifc map object, is tapped.
+  void onTap(PlatformLatLng position);
+
+  /// Called when the map, not a specifc map object, is long pressed.
+  void onLongPress(PlatformLatLng position);
+
+  /// Called when a marker is tapped.
+  void onMarkerTap(String markerId);
+
+  /// Called when a marker drag starts.
+  void onMarkerDragStart(String markerId, PlatformLatLng position);
+
+  /// Called when a marker drag updates.
+  void onMarkerDrag(String markerId, PlatformLatLng position);
+
+  /// Called when a marker drag ends.
+  void onMarkerDragEnd(String markerId, PlatformLatLng position);
+
+  /// Called when a marker's info window is tapped.
+  void onInfoWindowTap(String markerId);
+
+  /// Called when a circle is tapped.
+  void onCircleTap(String circleId);
+
+  /// Called when a polygon is tapped.
+  void onPolygonTap(String polygonId);
+
+  /// Called when a polyline is tapped.
+  void onPolylineTap(String polylineId);
+
+  /// Called to get data for a map tile.
+  @async
+  PlatformTileOverlay getTileOverlayTile(
+      String tileOverlayId, PlatformPoint location, int zoom);
 }
 
 /// Inspector API only intended for use in integration tests.
