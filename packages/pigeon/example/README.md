@@ -219,7 +219,8 @@ static PigeonExamplePackageExampleHostApiAddResponse* handle_add(
 static void handle_send_message(
     PigeonExamplePackageExampleHostApi* object,
     PigeonExamplePackageMessageData* message,
-    PigeonExamplePackageExampleHostApiResponseHandle* response_handle, gpointer user_data) {
+    PigeonExamplePackageExampleHostApiResponseHandle* response_handle,
+    gpointer user_data) {
   PigeonExamplePackageCode code =
       pigeon_example_package_message_data_get_code(message);
   if (code == PIGEON_EXAMPLE_PACKAGE_CODE_ONE) {
