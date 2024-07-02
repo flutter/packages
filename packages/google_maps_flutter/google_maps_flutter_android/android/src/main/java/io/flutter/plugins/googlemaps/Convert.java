@@ -9,9 +9,11 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Point;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.ButtCap;
@@ -355,6 +357,20 @@ class Convert {
 
   private static int toInt(Object o) {
     return ((Number) o).intValue();
+  }
+
+  static @Nullable MapsInitializer.Renderer toMapRendererType(
+      @Nullable Messages.PlatformRendererType type) {
+    if (type == null) {
+      return null;
+    }
+    switch (type) {
+      case LATEST:
+        return MapsInitializer.Renderer.LATEST;
+      case LEGACY:
+        return MapsInitializer.Renderer.LEGACY;
+    }
+    return null;
   }
 
   static Object cameraPositionToJson(CameraPosition position) {

@@ -1,3 +1,7 @@
+## 2.11.0
+
+* Converts additional platform calls to Pigeon.
+
 ## 2.10.0
 
 * Converts some platform calls to Pigeon.

@@ -79,18 +79,25 @@ class ClusterManagersController
   }
 
   /** Adds new ClusterManagers to the controller. */
-  void addClusterManagers(@NonNull List<Object> clusterManagersToAdd) {
+  void addJsonClusterManagers(@NonNull List<Object> clusterManagersToAdd) {
     for (Object clusterToAdd : clusterManagersToAdd) {
-      addClusterManager(clusterToAdd);
+      String clusterManagerId = getClusterManagerId(clusterToAdd);
+      if (clusterManagerId == null) {
+        throw new IllegalArgumentException("clusterManagerId was null");
+      }
+      addClusterManager(clusterManagerId);
+    }
+  }
+
+  /** Adds new ClusterManagers to the controller. */
+  void addClusterManagers(@NonNull List<Messages.PlatformClusterManager> clusterManagersToAdd) {
+    for (Messages.PlatformClusterManager clusterToAdd : clusterManagersToAdd) {
+      addClusterManager(clusterToAdd.getIdentifier());
     }
   }
 
   /** Adds new ClusterManager to the controller. */
-  void addClusterManager(Object clusterManagerData) {
-    String clusterManagerId = getClusterManagerId(clusterManagerData);
-    if (clusterManagerId == null) {
-      throw new IllegalArgumentException("clusterManagerId was null");
-    }
+  void addClusterManager(String clusterManagerId) {
     ClusterManager<MarkerBuilder> clusterManager =
         new ClusterManager<MarkerBuilder>(context, googleMap, markerManager);
     ClusterRenderer<MarkerBuilder> clusterRenderer =
@@ -101,12 +108,8 @@ class ClusterManagersController
   }
 
   /** Removes ClusterManagers by given cluster manager IDs from the controller. */
-  public void removeClusterManagers(@NonNull List<Object> clusterManagerIdsToRemove) {
-    for (Object rawClusterManagerId : clusterManagerIdsToRemove) {
-      if (rawClusterManagerId == null) {
-        continue;
-      }
-      String clusterManagerId = (String) rawClusterManagerId;
+  public void removeClusterManagers(@NonNull List<String> clusterManagerIdsToRemove) {
+    for (String clusterManagerId : clusterManagerIdsToRemove) {
       removeClusterManager(clusterManagerId);
     }
   }
