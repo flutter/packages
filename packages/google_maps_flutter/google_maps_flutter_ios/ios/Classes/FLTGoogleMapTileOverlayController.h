@@ -5,6 +5,8 @@
 #import <Flutter/Flutter.h>
 #import <GoogleMaps/GoogleMaps.h>
 
+#import "messages.g.h"
+
 NS_ASSUME_NONNULL_BEGIN
 
 @interface FLTGoogleMapTileOverlayController : NSObject
@@ -28,9 +30,10 @@ NS_ASSUME_NONNULL_BEGIN
 - (instancetype)init:(FlutterMethodChannel *)methodChannel
              mapView:(GMSMapView *)mapView
            registrar:(NSObject<FlutterPluginRegistrar> *)registrar;
-- (void)addTileOverlays:(NSArray *)tileOverlaysToAdd;
-- (void)changeTileOverlays:(NSArray *)tileOverlaysToChange;
-- (void)removeTileOverlayWithIdentifiers:(NSArray *)identifiers;
+- (void)addJSONTileOverlays:(NSArray<NSDictionary<NSString *, id> *> *)tileOverlaysToAdd;
+- (void)addTileOverlays:(NSArray<FGMPlatformTileOverlay *> *)tileOverlaysToAdd;
+- (void)changeTileOverlays:(NSArray<FGMPlatformTileOverlay *> *)tileOverlaysToChange;
+- (void)removeTileOverlayWithIdentifiers:(NSArray<NSString *> *)identifiers;
 - (void)clearTileCacheWithIdentifier:(NSString *)identifier;
 - (nullable FLTGoogleMapTileOverlayController *)tileOverlayWithIdentifier:(NSString *)identifier;
 @end

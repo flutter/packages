@@ -10,6 +10,28 @@ id FGMGetValueOrNilFromDict(NSDictionary *dict, NSString *key) {
   return value == [NSNull null] ? nil : value;
 }
 
+CGPoint FGMGetCGPointForPigeonPoint(FGMPlatformPoint *point) {
+  return CGPointMake(point.x, point.y);
+}
+
+FGMPlatformPoint *FGMGetPigeonPointForCGPoint(CGPoint point) {
+  return [FGMPlatformPoint makeWithX:point.x y:point.y];
+}
+
+CLLocationCoordinate2D FGMGetCoordinateForPigeonLatLng(FGMPlatformLatLng *latLng) {
+  return CLLocationCoordinate2DMake(latLng.latitude, latLng.longitude);
+}
+
+FGMPlatformLatLng *FGMGetPigeonLatLngForCoordinate(CLLocationCoordinate2D coord) {
+  return [FGMPlatformLatLng makeWithLatitude:coord.latitude longitude:coord.longitude];
+}
+
+FGMPlatformLatLngBounds *FGMGetPigeonLatLngBoundsForCoordinateBounds(GMSCoordinateBounds *bounds) {
+  return
+      [FGMPlatformLatLngBounds makeWithNortheast:FGMGetPigeonLatLngForCoordinate(bounds.northEast)
+                                       southwest:FGMGetPigeonLatLngForCoordinate(bounds.southWest)];
+}
+
 @implementation FLTGoogleMapJSONConversions
 
 + (CLLocationCoordinate2D)locationFromLatLong:(NSArray *)latlong {
@@ -112,7 +134,7 @@ id FGMGetValueOrNilFromDict(NSDictionary *dict, NSString *key) {
   return (GMSMapViewType)(value == 0 ? 5 : value);
 }
 
-+ (nullable GMSCameraUpdate *)cameraUpdateFromChannelValue:(NSArray *)channelValue {
++ (nullable GMSCameraUpdate *)cameraUpdateFromJSON:(NSArray *)channelValue {
   NSString *update = channelValue[0];
   if ([update isEqualToString:@"newCameraPosition"]) {
     return [GMSCameraUpdate

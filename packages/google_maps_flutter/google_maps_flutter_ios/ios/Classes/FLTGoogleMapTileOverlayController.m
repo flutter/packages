@@ -192,8 +192,8 @@
   return self;
 }
 
-- (void)addTileOverlays:(NSArray *)tileOverlaysToAdd {
-  for (NSDictionary *tileOverlay in tileOverlaysToAdd) {
+- (void)addJSONTileOverlays:(NSArray<NSDictionary<NSString *, id> *> *)tileOverlaysToAdd {
+  for (NSDictionary<NSString *, id> *tileOverlay in tileOverlaysToAdd) {
     NSString *identifier = [FLTTileOverlaysController identifierForTileOverlay:tileOverlay];
     FLTTileProviderController *tileProvider =
         [[FLTTileProviderController alloc] init:self.methodChannel
@@ -206,18 +206,29 @@
   }
 }
 
-- (void)changeTileOverlays:(NSArray *)tileOverlaysToChange {
-  for (NSDictionary *tileOverlay in tileOverlaysToChange) {
-    NSString *identifier = [FLTTileOverlaysController identifierForTileOverlay:tileOverlay];
+- (void)addTileOverlays:(NSArray<FGMPlatformTileOverlay *> *)tileOverlaysToAdd {
+  for (FGMPlatformTileOverlay *tileOverlay in tileOverlaysToAdd) {
+    NSString *identifier = [FLTTileOverlaysController identifierForTileOverlay:tileOverlay.json];
+    FLTTileProviderController *tileProvider =
+        [[FLTTileProviderController alloc] init:self.methodChannel
+                      withTileOverlayIdentifier:identifier];
     FLTGoogleMapTileOverlayController *controller =
-        self.tileOverlayIdentifierToController[identifier];
-    if (!controller) {
-      continue;
-    }
-    [controller interpretTileOverlayOptions:tileOverlay];
+        [[FLTGoogleMapTileOverlayController alloc] initWithTileLayer:tileProvider
+                                                             mapView:self.mapView
+                                                             options:tileOverlay.json];
+    self.tileOverlayIdentifierToController[identifier] = controller;
   }
 }
-- (void)removeTileOverlayWithIdentifiers:(NSArray *)identifiers {
+
+- (void)changeTileOverlays:(NSArray<FGMPlatformTileOverlay *> *)tileOverlaysToChange {
+  for (FGMPlatformTileOverlay *tileOverlay in tileOverlaysToChange) {
+    NSString *identifier = [FLTTileOverlaysController identifierForTileOverlay:tileOverlay.json];
+    FLTGoogleMapTileOverlayController *controller =
+        self.tileOverlayIdentifierToController[identifier];
+    [controller interpretTileOverlayOptions:tileOverlay.json];
+  }
+}
+- (void)removeTileOverlayWithIdentifiers:(NSArray<NSString *> *)identifiers {
   for (NSString *identifier in identifiers) {
     FLTGoogleMapTileOverlayController *controller =
         self.tileOverlayIdentifierToController[identifier];
@@ -232,9 +243,6 @@
 - (void)clearTileCacheWithIdentifier:(NSString *)identifier {
   FLTGoogleMapTileOverlayController *controller =
       self.tileOverlayIdentifierToController[identifier];
-  if (!controller) {
-    return;
-  }
   [controller clearTileCache];
 }
 

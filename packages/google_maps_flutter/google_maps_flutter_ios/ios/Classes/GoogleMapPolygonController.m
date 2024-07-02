@@ -140,8 +140,8 @@
   return self;
 }
 
-- (void)addPolygons:(NSArray *)polygonsToAdd {
-  for (NSDictionary *polygon in polygonsToAdd) {
+- (void)addJSONPolygons:(NSArray<NSDictionary<NSString *, id> *> *)polygonsToAdd {
+  for (NSDictionary<NSString *, id> *polygon in polygonsToAdd) {
     GMSMutablePath *path = [FLTPolygonsController getPath:polygon];
     NSString *identifier = polygon[@"polygonId"];
     FLTGoogleMapPolygonController *controller =
@@ -153,18 +153,28 @@
   }
 }
 
-- (void)changePolygons:(NSArray *)polygonsToChange {
-  for (NSDictionary *polygon in polygonsToChange) {
-    NSString *identifier = polygon[@"polygonId"];
-    FLTGoogleMapPolygonController *controller = self.polygonIdentifierToController[identifier];
-    if (!controller) {
-      continue;
-    }
-    [controller interpretPolygonOptions:polygon registrar:self.registrar];
+- (void)addPolygons:(NSArray<FGMPlatformPolygon *> *)polygonsToAdd {
+  for (FGMPlatformPolygon *polygon in polygonsToAdd) {
+    GMSMutablePath *path = [FLTPolygonsController getPath:polygon.json];
+    NSString *identifier = polygon.json[@"polygonId"];
+    FLTGoogleMapPolygonController *controller =
+        [[FLTGoogleMapPolygonController alloc] initPolygonWithPath:path
+                                                        identifier:identifier
+                                                           mapView:self.mapView];
+    [controller interpretPolygonOptions:polygon.json registrar:self.registrar];
+    self.polygonIdentifierToController[identifier] = controller;
   }
 }
 
-- (void)removePolygonWithIdentifiers:(NSArray *)identifiers {
+- (void)changePolygons:(NSArray<FGMPlatformPolygon *> *)polygonsToChange {
+  for (FGMPlatformPolygon *polygon in polygonsToChange) {
+    NSString *identifier = polygon.json[@"polygonId"];
+    FLTGoogleMapPolygonController *controller = self.polygonIdentifierToController[identifier];
+    [controller interpretPolygonOptions:polygon.json registrar:self.registrar];
+  }
+}
+
+- (void)removePolygonWithIdentifiers:(NSArray<NSString *> *)identifiers {
   for (NSString *identifier in identifiers) {
     FLTGoogleMapPolygonController *controller = self.polygonIdentifierToController[identifier];
     if (!controller) {
