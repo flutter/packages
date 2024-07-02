@@ -27,15 +27,6 @@ void main() {
     return (maps, api);
   }
 
-  Future<void> sendPlatformMessage(
-      int mapId, String method, Map<dynamic, dynamic> data) async {
-    final ByteData byteData =
-        const StandardMethodCodec().encodeMethodCall(MethodCall(method, data));
-    await TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-        .handlePlatformMessage('plugins.flutter.dev/google_maps_android_$mapId',
-            byteData, (ByteData? data) {});
-  }
-
   test('registers instance', () async {
     GoogleMapsFlutterAndroid.registerWith();
     expect(GoogleMapsFlutterPlatform.instance, isA<GoogleMapsFlutterAndroid>());
@@ -466,24 +457,15 @@ void main() {
 
   test('markers send drag event to correct streams', () async {
     const int mapId = 1;
-    final Map<dynamic, dynamic> jsonMarkerDragStartEvent = <dynamic, dynamic>{
-      'mapId': mapId,
-      'markerId': 'drag-start-marker',
-      'position': <double>[1.0, 1.0]
-    };
-    final Map<dynamic, dynamic> jsonMarkerDragEvent = <dynamic, dynamic>{
-      'mapId': mapId,
-      'markerId': 'drag-marker',
-      'position': <double>[1.0, 1.0]
-    };
-    final Map<dynamic, dynamic> jsonMarkerDragEndEvent = <dynamic, dynamic>{
-      'mapId': mapId,
-      'markerId': 'drag-end-marker',
-      'position': <double>[1.0, 1.0]
-    };
+    const String dragStartId = 'drag-start-marker';
+    const String dragId = 'drag-marker';
+    const String dragEndId = 'drag-end-marker';
+    final PlatformLatLng fakePosition =
+        PlatformLatLng(latitude: 1.0, longitude: 1.0);
 
     final GoogleMapsFlutterAndroid maps = GoogleMapsFlutterAndroid();
-    maps.ensureChannelInitialized(mapId);
+    final HostMapMessageHandler callbackHandler =
+        maps.ensureHandlerInitialized(mapId);
 
     final StreamQueue<MarkerDragStartEvent> markerDragStartStream =
         StreamQueue<MarkerDragStartEvent>(maps.onMarkerDragStart(mapId: mapId));
@@ -492,17 +474,121 @@ void main() {
     final StreamQueue<MarkerDragEndEvent> markerDragEndStream =
         StreamQueue<MarkerDragEndEvent>(maps.onMarkerDragEnd(mapId: mapId));
 
-    await sendPlatformMessage(
-        mapId, 'marker#onDragStart', jsonMarkerDragStartEvent);
-    await sendPlatformMessage(mapId, 'marker#onDrag', jsonMarkerDragEvent);
-    await sendPlatformMessage(
-        mapId, 'marker#onDragEnd', jsonMarkerDragEndEvent);
+    // Simulate messages from the native side.
+    callbackHandler.onMarkerDragStart(dragStartId, fakePosition);
+    callbackHandler.onMarkerDrag(dragId, fakePosition);
+    callbackHandler.onMarkerDragEnd(dragEndId, fakePosition);
 
-    expect((await markerDragStartStream.next).value.value,
-        equals('drag-start-marker'));
-    expect((await markerDragStream.next).value.value, equals('drag-marker'));
-    expect((await markerDragEndStream.next).value.value,
-        equals('drag-end-marker'));
+    expect((await markerDragStartStream.next).value.value, equals(dragStartId));
+    expect((await markerDragStream.next).value.value, equals(dragId));
+    expect((await markerDragEndStream.next).value.value, equals(dragEndId));
+  });
+
+  test('markers send tap events to correct stream', () async {
+    const int mapId = 1;
+    const String objectId = 'object-id';
+
+    final GoogleMapsFlutterAndroid maps = GoogleMapsFlutterAndroid();
+    final HostMapMessageHandler callbackHandler =
+        maps.ensureHandlerInitialized(mapId);
+
+    final StreamQueue<MarkerTapEvent> stream =
+        StreamQueue<MarkerTapEvent>(maps.onMarkerTap(mapId: mapId));
+
+    // Simulate message from the native side.
+    callbackHandler.onMarkerTap(objectId);
+
+    expect((await stream.next).value.value, equals(objectId));
+  });
+
+  test('circles send tap events to correct stream', () async {
+    const int mapId = 1;
+    const String objectId = 'object-id';
+
+    final GoogleMapsFlutterAndroid maps = GoogleMapsFlutterAndroid();
+    final HostMapMessageHandler callbackHandler =
+        maps.ensureHandlerInitialized(mapId);
+
+    final StreamQueue<CircleTapEvent> stream =
+        StreamQueue<CircleTapEvent>(maps.onCircleTap(mapId: mapId));
+
+    // Simulate message from the native side.
+    callbackHandler.onCircleTap(objectId);
+
+    expect((await stream.next).value.value, equals(objectId));
+  });
+
+  test('clusters send tap events to correct stream', () async {
+    const int mapId = 1;
+    const String managerId = 'manager-id';
+    final PlatformLatLng fakePosition =
+        PlatformLatLng(latitude: 10, longitude: 20);
+    final PlatformLatLngBounds fakeBounds = PlatformLatLngBounds(
+        southwest: PlatformLatLng(latitude: 30, longitude: 40),
+        northeast: PlatformLatLng(latitude: 50, longitude: 60));
+    const List<String> markerIds = <String>['marker-1', 'marker-2'];
+    final PlatformCluster cluster = PlatformCluster(
+        clusterManagerId: managerId,
+        position: fakePosition,
+        bounds: fakeBounds,
+        markerIds: markerIds);
+
+    final GoogleMapsFlutterAndroid maps = GoogleMapsFlutterAndroid();
+    final HostMapMessageHandler callbackHandler =
+        maps.ensureHandlerInitialized(mapId);
+
+    final StreamQueue<ClusterTapEvent> stream =
+        StreamQueue<ClusterTapEvent>(maps.onClusterTap(mapId: mapId));
+
+    // Simulate message from the native side.
+    callbackHandler.onClusterTap(cluster);
+
+    final Cluster eventValue = (await stream.next).value;
+    expect(eventValue.clusterManagerId.value, managerId);
+    expect(eventValue.position.latitude, fakePosition.latitude);
+    expect(eventValue.position.longitude, fakePosition.longitude);
+    expect(eventValue.bounds.southwest.latitude, fakeBounds.southwest.latitude);
+    expect(
+        eventValue.bounds.southwest.longitude, fakeBounds.southwest.longitude);
+    expect(eventValue.bounds.northeast.latitude, fakeBounds.northeast.latitude);
+    expect(
+        eventValue.bounds.northeast.longitude, fakeBounds.northeast.longitude);
+    expect(eventValue.markerIds.length, markerIds.length);
+    expect(eventValue.markerIds.first.value, markerIds.first);
+  });
+
+  test('polygons send tap events to correct stream', () async {
+    const int mapId = 1;
+    const String objectId = 'object-id';
+
+    final GoogleMapsFlutterAndroid maps = GoogleMapsFlutterAndroid();
+    final HostMapMessageHandler callbackHandler =
+        maps.ensureHandlerInitialized(mapId);
+
+    final StreamQueue<PolygonTapEvent> stream =
+        StreamQueue<PolygonTapEvent>(maps.onPolygonTap(mapId: mapId));
+
+    // Simulate message from the native side.
+    callbackHandler.onPolygonTap(objectId);
+
+    expect((await stream.next).value.value, equals(objectId));
+  });
+
+  test('polylines send tap events to correct stream', () async {
+    const int mapId = 1;
+    const String objectId = 'object-id';
+
+    final GoogleMapsFlutterAndroid maps = GoogleMapsFlutterAndroid();
+    final HostMapMessageHandler callbackHandler =
+        maps.ensureHandlerInitialized(mapId);
+
+    final StreamQueue<PolylineTapEvent> stream =
+        StreamQueue<PolylineTapEvent>(maps.onPolylineTap(mapId: mapId));
+
+    // Simulate message from the native side.
+    callbackHandler.onPolylineTap(objectId);
+
+    expect((await stream.next).value.value, equals(objectId));
   });
 
   test(

@@ -10,7 +10,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.maps.android.collections.MarkerManager;
-import io.flutter.plugin.common.MethodChannel;
+import io.flutter.plugins.googlemaps.Messages.MapsCallbackApi;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,21 +20,33 @@ class MarkersController {
   private final HashMap<String, MarkerBuilder> markerIdToMarkerBuilder;
   private final HashMap<String, MarkerController> markerIdToController;
   private final HashMap<String, String> googleMapsMarkerIdToDartMarkerId;
-  private final MethodChannel methodChannel;
+  private final @NonNull MapsCallbackApi flutterApi;
   private MarkerManager.Collection markerCollection;
   private final ClusterManagersController clusterManagersController;
   private final AssetManager assetManager;
   private final float density;
 
+  // A convenience object for calls to Dart where errors don't matter, such as streaming map
+  // information where if the corresponding Dart object is gone, the message should be silently
+  // dropped.
+  private final Messages.VoidResult noopVoidResult =
+      new Messages.VoidResult() {
+        @Override
+        public void success() {}
+
+        @Override
+        public void error(@NonNull Throwable error) {}
+      };
+
   MarkersController(
-      MethodChannel methodChannel,
+      @NonNull MapsCallbackApi flutterApi,
       ClusterManagersController clusterManagersController,
       AssetManager assetManager,
       float density) {
     this.markerIdToMarkerBuilder = new HashMap<>();
     this.markerIdToController = new HashMap<>();
     this.googleMapsMarkerIdToDartMarkerId = new HashMap<>();
-    this.methodChannel = methodChannel;
+    this.flutterApi = flutterApi;
     this.clusterManagersController = clusterManagersController;
     this.assetManager = assetManager;
     this.density = density;
@@ -126,7 +138,7 @@ class MarkersController {
   }
 
   boolean onMarkerTap(String markerId) {
-    methodChannel.invokeMethod("marker#onTap", Convert.markerIdToJson(markerId));
+    flutterApi.onMarkerTap(markerId, noopVoidResult);
     MarkerController markerController = markerIdToController.get(markerId);
     if (markerController != null) {
       return markerController.consumeTapEvents();
@@ -139,10 +151,7 @@ class MarkersController {
     if (markerId == null) {
       return;
     }
-    final Map<String, Object> data = new HashMap<>();
-    data.put("markerId", markerId);
-    data.put("position", Convert.latLngToJson(latLng));
-    methodChannel.invokeMethod("marker#onDragStart", data);
+    flutterApi.onMarkerDragStart(markerId, Convert.latLngToPigeon(latLng), noopVoidResult);
   }
 
   void onMarkerDrag(String googleMarkerId, LatLng latLng) {
@@ -150,10 +159,7 @@ class MarkersController {
     if (markerId == null) {
       return;
     }
-    final Map<String, Object> data = new HashMap<>();
-    data.put("markerId", markerId);
-    data.put("position", Convert.latLngToJson(latLng));
-    methodChannel.invokeMethod("marker#onDrag", data);
+    flutterApi.onMarkerDrag(markerId, Convert.latLngToPigeon(latLng), noopVoidResult);
   }
 
   void onMarkerDragEnd(String googleMarkerId, LatLng latLng) {
@@ -161,10 +167,7 @@ class MarkersController {
     if (markerId == null) {
       return;
     }
-    final Map<String, Object> data = new HashMap<>();
-    data.put("markerId", markerId);
-    data.put("position", Convert.latLngToJson(latLng));
-    methodChannel.invokeMethod("marker#onDragEnd", data);
+    flutterApi.onMarkerDragEnd(markerId, Convert.latLngToPigeon(latLng), noopVoidResult);
   }
 
   void onInfoWindowTap(String googleMarkerId) {
@@ -172,7 +175,7 @@ class MarkersController {
     if (markerId == null) {
       return;
     }
-    methodChannel.invokeMethod("infoWindow#onTap", Convert.markerIdToJson(markerId));
+    flutterApi.onInfoWindowTap(markerId, noopVoidResult);
   }
 
   /**

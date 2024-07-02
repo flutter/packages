@@ -21,7 +21,6 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.Marker;
 import com.google.maps.android.clustering.ClusterManager;
 import io.flutter.plugin.common.BinaryMessenger;
-import io.flutter.plugin.common.MethodChannel;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -47,7 +46,7 @@ public class GoogleMapControllerTest {
   AutoCloseable mockCloseable;
   @Mock BinaryMessenger mockMessenger;
   @Mock GoogleMap mockGoogleMap;
-  @Mock MethodChannel mockMethodChannel;
+  @Mock Messages.MapsCallbackApi flutterApi;
   @Mock ClusterManagersController mockClusterManagersController;
   @Mock MarkersController mockMarkersController;
   @Mock PolygonsController mockPolygonsController;
@@ -78,7 +77,7 @@ public class GoogleMapControllerTest {
             0,
             context,
             mockMessenger,
-            mockMethodChannel,
+            flutterApi,
             activity::getLifecycle,
             null,
             mockClusterManagersController,
