@@ -59,9 +59,10 @@ class SystemServices {
   /// be corrected by the plugin.
   static Future<bool> isPreviewPreTransformed(
       {BinaryMessenger? binaryMessenger}) {
-    final SystemServicesHostApi api =
-        SystemServicesHostApi(binaryMessenger: binaryMessenger);
-    return api.isPreviewPreTransformed();
+    // TODO(camsim99): Make call to Java host to determine true value when
+    // Impeller support is re-landed.
+    // https://github.com/flutter/flutter/issues/149294
+    return Future<bool>.value(true);
   }
 }
 
