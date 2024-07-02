@@ -1,3 +1,8 @@
+## 0.3.1
+
+* Updates espresso version to 3.6.1
+* Updates androidx.test to 1.6.1
+
 ## 0.3.0+10
 
 * Removes additional references to v1 Android embedding.
