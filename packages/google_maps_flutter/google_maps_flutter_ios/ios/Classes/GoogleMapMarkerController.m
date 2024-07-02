@@ -27,6 +27,18 @@
   return self;
 }
 
+- (instancetype)initWithMarker:(GMSMarker)marker
+                            identifier:(NSString *)identifier
+                               mapView:(GMSMapView *)mapView {
+  self = [super init];
+  if (self) {
+    _marker = marker;
+    _mapView = mapView;
+    _marker.userData = @[ identifier ];
+  }
+  return self;
+}
+
 - (void)showInfoWindow {
   self.mapView.selectedMarker = self.marker;
 }
