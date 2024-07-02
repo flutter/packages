@@ -12,6 +12,7 @@ import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platf
 import 'package:stream_transform/stream_transform.dart';
 
 import 'google_map_inspector_ios.dart';
+import 'messages.g.dart';
 
 // TODO(stuartmorgan): Remove the dependency on platform interface toJson
 // methods. Channel serialization details should all be package-internal.
@@ -577,8 +578,8 @@ class GoogleMapsFlutterIOS extends GoogleMapsFlutterPlatform {
   @override
   @visibleForTesting
   void enableDebugInspection() {
-    GoogleMapsInspectorPlatform.instance =
-        GoogleMapsInspectorIOS((int mapId) => _channel(mapId));
+    GoogleMapsInspectorPlatform.instance = GoogleMapsInspectorIOS((int mapId) =>
+        MapsInspectorApi(messageChannelSuffix: mapId.toString()));
   }
 }
 

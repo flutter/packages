@@ -34,17 +34,6 @@
   [self.layer clearTileCache];
 }
 
-- (NSDictionary *)getTileOverlayInfo {
-  NSMutableDictionary *info = [[NSMutableDictionary alloc] init];
-  BOOL visible = self.layer.map != nil;
-  info[@"visible"] = @(visible);
-  info[@"fadeIn"] = @(self.layer.fadeIn);
-  float transparency = 1.0 - self.layer.opacity;
-  info[@"transparency"] = @(transparency);
-  info[@"zIndex"] = @(self.layer.zIndex);
-  return info;
-}
-
 - (void)setFadeIn:(BOOL)fadeIn {
   self.layer.fadeIn = fadeIn;
 }
@@ -182,7 +171,8 @@
 
 @interface FLTTileOverlaysController ()
 
-@property(strong, nonatomic) NSMutableDictionary *tileOverlayIdentifierToController;
+@property(strong, nonatomic) NSMutableDictionary<NSString *, FLTGoogleMapTileOverlayController *>
+    *tileOverlayIdentifierToController;
 @property(strong, nonatomic) FlutterMethodChannel *methodChannel;
 @property(weak, nonatomic) GMSMapView *mapView;
 
@@ -248,11 +238,8 @@
   [controller clearTileCache];
 }
 
-- (nullable NSDictionary *)tileOverlayInfoWithIdentifier:(NSString *)identifier {
-  if (self.tileOverlayIdentifierToController[identifier] == nil) {
-    return nil;
-  }
-  return [self.tileOverlayIdentifierToController[identifier] getTileOverlayInfo];
+- (nullable FLTGoogleMapTileOverlayController *)tileOverlayWithIdentifier:(NSString *)identifier {
+  return self.tileOverlayIdentifierToController[identifier];
 }
 
 + (NSString *)identifierForTileOverlay:(NSDictionary *)tileOverlay {
