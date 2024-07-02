@@ -1,3 +1,7 @@
+## 3.14.0
+
+* Adds macOS support.
+
 ## 3.13.1
 
 * Fixes `JSON.stringify()` cannot serialize cyclic structures.

@@ -27,7 +27,7 @@ import 'webkit_webview_controller_test.mocks.dart';
   WKPreferences,
   WKUserContentController,
   WKWebsiteDataStore,
-  WKWebView,
+  WKWebViewIOS,
   WKWebViewConfiguration,
   WKScriptMessageHandler,
 ])
@@ -42,7 +42,7 @@ void main() {
       WKUIDelegate? uiDelegate,
       MockWKUserContentController? mockUserContentController,
       MockWKWebsiteDataStore? mockWebsiteDataStore,
-      MockWKWebView Function(
+      MockWKWebViewIOS Function(
         WKWebViewConfiguration configuration, {
         void Function(
           String keyPath,
@@ -55,7 +55,7 @@ void main() {
     }) {
       final MockWKWebViewConfiguration nonNullMockWebViewConfiguration =
           mockWebViewConfiguration ?? MockWKWebViewConfiguration();
-      late final MockWKWebView nonNullMockWebView;
+      late final MockWKWebViewIOS nonNullMockWebView;
 
       final PlatformWebViewControllerCreationParams controllerCreationParams =
           WebKitWebViewControllerCreationParams(
@@ -73,7 +73,7 @@ void main() {
             InstanceManager? instanceManager,
           }) {
             nonNullMockWebView = createMockWebView == null
-                ? MockWKWebView()
+                ? MockWKWebViewIOS()
                 : createMockWebView(
                     nonNullMockWebViewConfiguration,
                     observeValue: observeValue,
@@ -275,7 +275,7 @@ void main() {
     });
 
     test('loadFile', () async {
-      final MockWKWebView mockWebView = MockWKWebView();
+      final MockWKWebViewIOS mockWebView = MockWKWebViewIOS();
 
       final WebKitWebViewController controller = createControllerWithMocks(
         createMockWebView: (_, {dynamic observeValue}) => mockWebView,
@@ -289,7 +289,7 @@ void main() {
     });
 
     test('loadFlutterAsset', () async {
-      final MockWKWebView mockWebView = MockWKWebView();
+      final MockWKWebViewIOS mockWebView = MockWKWebViewIOS();
 
       final WebKitWebViewController controller = createControllerWithMocks(
         createMockWebView: (_, {dynamic observeValue}) => mockWebView,
@@ -300,7 +300,7 @@ void main() {
     });
 
     test('loadHtmlString', () async {
-      final MockWKWebView mockWebView = MockWKWebView();
+      final MockWKWebViewIOS mockWebView = MockWKWebViewIOS();
 
       final WebKitWebViewController controller = createControllerWithMocks(
         createMockWebView: (_, {dynamic observeValue}) => mockWebView,
@@ -317,7 +317,7 @@ void main() {
 
     group('loadRequest', () {
       test('Throws ArgumentError for empty scheme', () async {
-        final MockWKWebView mockWebView = MockWKWebView();
+        final MockWKWebViewIOS mockWebView = MockWKWebViewIOS();
 
         final WebKitWebViewController controller = createControllerWithMocks(
           createMockWebView: (_, {dynamic observeValue}) => mockWebView,
@@ -332,7 +332,7 @@ void main() {
       });
 
       test('GET without headers', () async {
-        final MockWKWebView mockWebView = MockWKWebView();
+        final MockWKWebViewIOS mockWebView = MockWKWebViewIOS();
 
         final WebKitWebViewController controller = createControllerWithMocks(
           createMockWebView: (_, {dynamic observeValue}) => mockWebView,
@@ -351,7 +351,7 @@ void main() {
       });
 
       test('GET with headers', () async {
-        final MockWKWebView mockWebView = MockWKWebView();
+        final MockWKWebViewIOS mockWebView = MockWKWebViewIOS();
 
         final WebKitWebViewController controller = createControllerWithMocks(
           createMockWebView: (_, {dynamic observeValue}) => mockWebView,
@@ -373,7 +373,7 @@ void main() {
       });
 
       test('POST without body', () async {
-        final MockWKWebView mockWebView = MockWKWebView();
+        final MockWKWebViewIOS mockWebView = MockWKWebViewIOS();
 
         final WebKitWebViewController controller = createControllerWithMocks(
           createMockWebView: (_, {dynamic observeValue}) => mockWebView,
@@ -392,7 +392,7 @@ void main() {
       });
 
       test('POST with body', () async {
-        final MockWKWebView mockWebView = MockWKWebView();
+        final MockWKWebViewIOS mockWebView = MockWKWebViewIOS();
 
         final WebKitWebViewController controller = createControllerWithMocks(
           createMockWebView: (_, {dynamic observeValue}) => mockWebView,
@@ -417,7 +417,7 @@ void main() {
     });
 
     test('canGoBack', () {
-      final MockWKWebView mockWebView = MockWKWebView();
+      final MockWKWebViewIOS mockWebView = MockWKWebViewIOS();
 
       final WebKitWebViewController controller = createControllerWithMocks(
         createMockWebView: (_, {dynamic observeValue}) => mockWebView,
@@ -430,7 +430,7 @@ void main() {
     });
 
     test('canGoForward', () {
-      final MockWKWebView mockWebView = MockWKWebView();
+      final MockWKWebViewIOS mockWebView = MockWKWebViewIOS();
 
       final WebKitWebViewController controller = createControllerWithMocks(
         createMockWebView: (_, {dynamic observeValue}) => mockWebView,
@@ -443,7 +443,7 @@ void main() {
     });
 
     test('goBack', () async {
-      final MockWKWebView mockWebView = MockWKWebView();
+      final MockWKWebViewIOS mockWebView = MockWKWebViewIOS();
 
       final WebKitWebViewController controller = createControllerWithMocks(
         createMockWebView: (_, {dynamic observeValue}) => mockWebView,
@@ -454,7 +454,7 @@ void main() {
     });
 
     test('goForward', () async {
-      final MockWKWebView mockWebView = MockWKWebView();
+      final MockWKWebViewIOS mockWebView = MockWKWebViewIOS();
 
       final WebKitWebViewController controller = createControllerWithMocks(
         createMockWebView: (_, {dynamic observeValue}) => mockWebView,
@@ -465,7 +465,7 @@ void main() {
     });
 
     test('reload', () async {
-      final MockWKWebView mockWebView = MockWKWebView();
+      final MockWKWebViewIOS mockWebView = MockWKWebViewIOS();
 
       final WebKitWebViewController controller = createControllerWithMocks(
         createMockWebView: (_, {dynamic observeValue}) => mockWebView,
@@ -476,7 +476,7 @@ void main() {
     });
 
     test('setAllowsBackForwardNavigationGestures', () async {
-      final MockWKWebView mockWebView = MockWKWebView();
+      final MockWKWebViewIOS mockWebView = MockWKWebViewIOS();
 
       final WebKitWebViewController controller = createControllerWithMocks(
         createMockWebView: (_, {dynamic observeValue}) => mockWebView,
@@ -487,7 +487,7 @@ void main() {
     });
 
     test('runJavaScriptReturningResult', () {
-      final MockWKWebView mockWebView = MockWKWebView();
+      final MockWKWebViewIOS mockWebView = MockWKWebViewIOS();
 
       final WebKitWebViewController controller = createControllerWithMocks(
         createMockWebView: (_, {dynamic observeValue}) => mockWebView,
@@ -504,7 +504,7 @@ void main() {
     });
 
     test('runJavaScriptReturningResult throws error on null return value', () {
-      final MockWKWebView mockWebView = MockWKWebView();
+      final MockWKWebViewIOS mockWebView = MockWKWebViewIOS();
 
       final WebKitWebViewController controller = createControllerWithMocks(
         createMockWebView: (_, {dynamic observeValue}) => mockWebView,
@@ -520,7 +520,7 @@ void main() {
     });
 
     test('runJavaScript', () {
-      final MockWKWebView mockWebView = MockWKWebView();
+      final MockWKWebViewIOS mockWebView = MockWKWebViewIOS();
 
       final WebKitWebViewController controller = createControllerWithMocks(
         createMockWebView: (_, {dynamic observeValue}) => mockWebView,
@@ -537,7 +537,7 @@ void main() {
 
     test('runJavaScript ignores exception with unsupported javaScript type',
         () {
-      final MockWKWebView mockWebView = MockWKWebView();
+      final MockWKWebViewIOS mockWebView = MockWKWebViewIOS();
 
       final WebKitWebViewController controller = createControllerWithMocks(
         createMockWebView: (_, {dynamic observeValue}) => mockWebView,
@@ -558,7 +558,7 @@ void main() {
     });
 
     test('getTitle', () async {
-      final MockWKWebView mockWebView = MockWKWebView();
+      final MockWKWebViewIOS mockWebView = MockWKWebViewIOS();
 
       final WebKitWebViewController controller = createControllerWithMocks(
         createMockWebView: (_, {dynamic observeValue}) => mockWebView,
@@ -570,7 +570,7 @@ void main() {
     });
 
     test('currentUrl', () {
-      final MockWKWebView mockWebView = MockWKWebView();
+      final MockWKWebViewIOS mockWebView = MockWKWebViewIOS();
 
       final WebKitWebViewController controller = createControllerWithMocks(
         createMockWebView: (_, {dynamic observeValue}) => mockWebView,
@@ -646,7 +646,7 @@ void main() {
     });
 
     test('setBackgroundColor', () async {
-      final MockWKWebView mockWebView = MockWKWebView();
+      final MockWKWebViewIOS mockWebView = MockWKWebViewIOS();
       final MockUIScrollView mockScrollView = MockUIScrollView();
 
       final WebKitWebViewController controller = createControllerWithMocks(
@@ -665,7 +665,7 @@ void main() {
     });
 
     test('userAgent', () async {
-      final MockWKWebView mockWebView = MockWKWebView();
+      final MockWKWebViewIOS mockWebView = MockWKWebViewIOS();
 
       final WebKitWebViewController controller = createControllerWithMocks(
         createMockWebView: (_, {dynamic observeValue}) => mockWebView,
@@ -910,7 +910,7 @@ void main() {
     });
 
     test('getUserAgent', () {
-      final MockWKWebView mockWebView = MockWKWebView();
+      final MockWKWebViewIOS mockWebView = MockWKWebViewIOS();
 
       final WebKitWebViewController controller = createControllerWithMocks(
         createMockWebView: (_, {dynamic observeValue}) => mockWebView,
@@ -925,7 +925,7 @@ void main() {
     });
 
     test('setPlatformNavigationDelegate', () {
-      final MockWKWebView mockWebView = MockWKWebView();
+      final MockWKWebViewIOS mockWebView = MockWKWebViewIOS();
 
       final WebKitWebViewController controller = createControllerWithMocks(
         createMockWebView: (_, {dynamic observeValue}) => mockWebView,
@@ -951,7 +951,7 @@ void main() {
     });
 
     test('setPlatformNavigationDelegate onProgress', () async {
-      final MockWKWebView mockWebView = MockWKWebView();
+      final MockWKWebViewIOS mockWebView = MockWKWebViewIOS();
 
       late final void Function(
         String keyPath,
@@ -1017,7 +1017,7 @@ void main() {
       // CapturingUIDelegate.lastCreatedDelegate.
       createControllerWithMocks();
 
-      final MockWKWebView mockWebView = MockWKWebView();
+      final MockWKWebViewIOS mockWebView = MockWKWebViewIOS();
       const NSUrlRequest request = NSUrlRequest(url: 'https://www.google.com');
 
       CapturingUIDelegate.lastCreatedDelegate.onCreateWebView!(
@@ -1038,7 +1038,7 @@ void main() {
     test(
         'setPlatformNavigationDelegate onProgress can be changed by the WebKitNavigationDelegate',
         () async {
-      final MockWKWebView mockWebView = MockWKWebView();
+      final MockWKWebViewIOS mockWebView = MockWKWebViewIOS();
 
       late final void Function(
         String keyPath,
@@ -1090,7 +1090,7 @@ void main() {
     });
 
     test('setPlatformNavigationDelegate onUrlChange', () async {
-      final MockWKWebView mockWebView = MockWKWebView();
+      final MockWKWebViewIOS mockWebView = MockWKWebViewIOS();
 
       late final void Function(
         String keyPath,
@@ -1154,7 +1154,7 @@ void main() {
     });
 
     test('setPlatformNavigationDelegate onUrlChange to null NSUrl', () async {
-      final MockWKWebView mockWebView = MockWKWebView();
+      final MockWKWebViewIOS mockWebView = MockWKWebViewIOS();
 
       late final void Function(
         String keyPath,
@@ -1207,8 +1207,8 @@ void main() {
       final InstanceManager instanceManager = InstanceManager(
         onWeakReferenceRemoved: (_) {},
       );
-      final MockWKWebView mockWebView = MockWKWebView();
-      when(mockWebView.copy()).thenReturn(MockWKWebView());
+      final MockWKWebViewIOS mockWebView = MockWKWebViewIOS();
+      when(mockWebView.copy()).thenReturn(MockWKWebViewIOS());
       instanceManager.addHostCreatedInstance(mockWebView, 0);
 
       final WebKitWebViewController controller = createControllerWithMocks(
@@ -1244,7 +1244,7 @@ void main() {
 
       final WKPermissionDecision decision = await onPermissionRequestCallback(
         CapturingUIDelegate.lastCreatedDelegate,
-        WKWebView.detached(),
+        WKWebViewIOS.detached(),
         const WKSecurityOrigin(host: '', port: 0, protocol: ''),
         const WKFrameInfo(
             isMainFrame: false,
@@ -1337,7 +1337,7 @@ void main() {
     });
 
     test('inspectable', () async {
-      final MockWKWebView mockWebView = MockWKWebView();
+      final MockWKWebViewIOS mockWebView = MockWKWebViewIOS();
 
       final WebKitWebViewController controller = createControllerWithMocks(
         createMockWebView: (_, {dynamic observeValue}) => mockWebView,

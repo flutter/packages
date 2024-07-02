@@ -8,10 +8,10 @@ import 'package:pigeon/pigeon.dart';
   PigeonOptions(
     dartOut: 'lib/src/common/web_kit.g.dart',
     dartTestOut: 'test/src/common/test_web_kit.g.dart',
-    objcHeaderOut: 'ios/Classes/FWFGeneratedWebKitApis.h',
-    objcSourceOut: 'ios/Classes/FWFGeneratedWebKitApis.m',
+    objcHeaderOut: 'darwin/Classes/FWFGeneratedWebKitApis.h',
+    objcSourceOut: 'darwin/Classes/FWFGeneratedWebKitApis.m',
     objcOptions: ObjcOptions(
-      headerIncludePath: 'ios/Classes/FWFGeneratedWebKitApis.h',
+      headerIncludePath: 'FWFGeneratedWebKitApis.h',
       prefix: 'FWF',
     ),
     copyrightHeader: 'pigeons/copyright.txt',
