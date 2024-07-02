@@ -89,23 +89,6 @@ FGMPlatformLatLngBounds *FGMGetPigeonLatLngBoundsForCoordinateBounds(GMSCoordina
   };
 }
 
-+ (NSDictionary<NSString *, NSNumber *> *)dictionaryFromPoint:(CGPoint)point {
-  return @{
-    @"x" : @(lroundf(point.x)),
-    @"y" : @(lroundf(point.y)),
-  };
-}
-
-+ (nullable NSDictionary *)dictionaryFromCoordinateBounds:(GMSCoordinateBounds *)bounds {
-  if (!bounds) {
-    return nil;
-  }
-  return @{
-    @"southwest" : [FLTGoogleMapJSONConversions arrayFromLocation:[bounds southWest]],
-    @"northeast" : [FLTGoogleMapJSONConversions arrayFromLocation:[bounds northEast]],
-  };
-}
-
 + (nullable GMSCameraPosition *)cameraPostionFromDictionary:(nullable NSDictionary *)data {
   if (!data) {
     return nil;
@@ -115,12 +98,6 @@ FGMPlatformLatLngBounds *FGMGetPigeonLatLngBoundsForCoordinateBounds(GMSCoordina
                   zoom:[data[@"zoom"] floatValue]
                bearing:[data[@"bearing"] doubleValue]
           viewingAngle:[data[@"tilt"] doubleValue]];
-}
-
-+ (CGPoint)pointFromDictionary:(NSDictionary *)dictionary {
-  double x = [dictionary[@"x"] doubleValue];
-  double y = [dictionary[@"y"] doubleValue];
-  return CGPointMake(x, y);
 }
 
 + (GMSCoordinateBounds *)coordinateBoundsFromLatLongs:(NSArray *)latlongs {
@@ -134,7 +111,7 @@ FGMPlatformLatLngBounds *FGMGetPigeonLatLngBoundsForCoordinateBounds(GMSCoordina
   return (GMSMapViewType)(value == 0 ? 5 : value);
 }
 
-+ (nullable GMSCameraUpdate *)cameraUpdateFromJSON:(NSArray *)channelValue {
++ (nullable GMSCameraUpdate *)cameraUpdateFromArray:(NSArray *)channelValue {
   NSString *update = channelValue[0];
   if ([update isEqualToString:@"newCameraPosition"]) {
     return [GMSCameraUpdate

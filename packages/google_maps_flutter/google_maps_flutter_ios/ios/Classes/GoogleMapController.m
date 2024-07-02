@@ -615,7 +615,7 @@
 
 - (void)moveCameraWithUpdate:(nonnull FGMPlatformCameraUpdate *)cameraUpdate
                        error:(FlutterError *_Nullable __autoreleasing *_Nonnull)error {
-  GMSCameraUpdate *update = [FLTGoogleMapJSONConversions cameraUpdateFromJSON:cameraUpdate.json];
+  GMSCameraUpdate *update = [FLTGoogleMapJSONConversions cameraUpdateFromArray:cameraUpdate.json];
   if (!update) {
     *error = [FlutterError errorWithCode:@"Invalid update"
                                  message:@"Unrecognized camera update"
@@ -627,7 +627,7 @@
 
 - (void)animateCameraWithUpdate:(nonnull FGMPlatformCameraUpdate *)cameraUpdate
                           error:(FlutterError *_Nullable __autoreleasing *_Nonnull)error {
-  GMSCameraUpdate *update = [FLTGoogleMapJSONConversions cameraUpdateFromJSON:cameraUpdate.json];
+  GMSCameraUpdate *update = [FLTGoogleMapJSONConversions cameraUpdateFromArray:cameraUpdate.json];
   if (!update) {
     *error = [FlutterError errorWithCode:@"Invalid update"
                                  message:@"Unrecognized camera update"

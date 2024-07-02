@@ -38,13 +38,10 @@ extern FGMPlatformLatLngBounds *FGMGetPigeonLatLngBoundsForCoordinateBounds(
 + (NSArray<NSArray<CLLocation *> *> *)holesFromPointsArray:(NSArray *)data;
 + (nullable NSDictionary<NSString *, id> *)dictionaryFromPosition:
     (nullable GMSCameraPosition *)position;
-+ (NSDictionary<NSString *, NSNumber *> *)dictionaryFromPoint:(CGPoint)point;
-+ (nullable NSDictionary *)dictionaryFromCoordinateBounds:(nullable GMSCoordinateBounds *)bounds;
 + (nullable GMSCameraPosition *)cameraPostionFromDictionary:(nullable NSDictionary *)channelValue;
-+ (CGPoint)pointFromDictionary:(NSDictionary *)dictionary;
 + (GMSCoordinateBounds *)coordinateBoundsFromLatLongs:(NSArray *)latlongs;
 + (GMSMapViewType)mapViewTypeFromTypeValue:(NSNumber *)value;
-+ (nullable GMSCameraUpdate *)cameraUpdateFromJSON:(NSArray *)channelValue;
++ (nullable GMSCameraUpdate *)cameraUpdateFromArray:(NSArray *)channelValue;
 
 /// Return GMS strokestyle object array populated using the patterns and stroke colors passed in.
 ///
