@@ -11,10 +11,10 @@ import 'enum_converter_extensions.dart';
 import 'interactive_media_ads.g.dart' as ima;
 
 /// Implementation of [PlatformAdsManager] for iOS.
-class IosAdsManager extends PlatformAdsManager {
-  /// Constructs an [IosAdsManager].
+class IOSAdsManager extends PlatformAdsManager {
+  /// Constructs an [IOSAdsManager].
   @internal
-  IosAdsManager(ima.IMAAdsManager manager) : _manager = manager;
+  IOSAdsManager(ima.IMAAdsManager manager) : _manager = manager;
 
   final ima.IMAAdsManager _manager;
 
@@ -34,7 +34,7 @@ class IosAdsManager extends PlatformAdsManager {
   @override
   Future<void> setAdsManagerDelegate(PlatformAdsManagerDelegate delegate) {
     _interfaceDelegate = delegate;
-    _nativeDelegate = _AdsManagerDelegate(WeakReference<IosAdsManager>(this));
+    _nativeDelegate = _AdsManagerDelegate(WeakReference<IOSAdsManager>(this));
     return _manager.setDelegate(_nativeDelegate);
   }
 
@@ -45,7 +45,7 @@ class IosAdsManager extends PlatformAdsManager {
 }
 
 class _AdsManagerDelegate extends ima.IMAAdsManagerDelegate {
-  _AdsManagerDelegate(WeakReference<IosAdsManager> interfaceManager)
+  _AdsManagerDelegate(WeakReference<IOSAdsManager> interfaceManager)
       : super(
           didReceiveAdEvent: (
             ima.IMAAdsManagerDelegate instance,

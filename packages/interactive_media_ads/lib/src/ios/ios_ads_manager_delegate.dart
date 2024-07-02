@@ -5,7 +5,7 @@
 import '../platform_interface/platform_interface.dart';
 
 /// Implementation of [PlatformAdsManagerDelegate] for iOS.
-final class IosAdsManagerDelegate extends PlatformAdsManagerDelegate {
-  /// Constructs an [IosAdsManagerDelegate].
-  IosAdsManagerDelegate(super.params) : super.implementation();
+final class IOSAdsManagerDelegate extends PlatformAdsManagerDelegate {
+  /// Constructs an [IOSAdsManagerDelegate].
+  IOSAdsManagerDelegate(super.params) : super.implementation();
 }

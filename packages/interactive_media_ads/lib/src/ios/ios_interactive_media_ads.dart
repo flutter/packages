@@ -11,30 +11,28 @@ import 'ios_ads_loader.dart';
 import 'ios_ads_manager_delegate.dart';
 
 /// Implementation of [InteractiveMediaAdsPlatform] for iOS.
-final class IosInteractiveMediaAds extends InteractiveMediaAdsPlatform {
+final class IOSInteractiveMediaAds extends InteractiveMediaAdsPlatform {
   /// Registers this class as the default instance of [InteractiveMediaAdsPlatform].
   static void registerWith() {
-    InteractiveMediaAdsPlatform.instance = IosInteractiveMediaAds();
+    InteractiveMediaAdsPlatform.instance = IOSInteractiveMediaAds();
   }
 
   @override
-  PlatformAdDisplayContainer createPlatformAdDisplayContainer(
+  IosAdDisplayContainer createPlatformAdDisplayContainer(
     PlatformAdDisplayContainerCreationParams params,
   ) {
     return IosAdDisplayContainer(params);
   }
 
   @override
-  PlatformAdsLoader createPlatformAdsLoader(
-    PlatformAdsLoaderCreationParams params,
-  ) {
+  IosAdsLoader createPlatformAdsLoader(PlatformAdsLoaderCreationParams params) {
     return IosAdsLoader(params);
   }
 
   @override
-  PlatformAdsManagerDelegate createPlatformAdsManagerDelegate(
+  IOSAdsManagerDelegate createPlatformAdsManagerDelegate(
     PlatformAdsManagerDelegateCreationParams params,
   ) {
-    return IosAdsManagerDelegate(params);
+    return IOSAdsManagerDelegate(params);
   }
 }

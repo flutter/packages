@@ -11,10 +11,10 @@ import 'interactive_media_ads.g.dart';
 import 'interactive_media_ads_proxy.dart';
 
 /// Implementation of [PlatformAdDisplayContainerCreationParams] for iOS.
-final class IosAdDisplayContainerCreationParams
+final class IOSAdDisplayContainerCreationParams
     extends PlatformAdDisplayContainerCreationParams {
   /// Constructs a [AndroidAdDisplayContainerCreationParams].
-  const IosAdDisplayContainerCreationParams({
+  const IOSAdDisplayContainerCreationParams({
     super.key,
     required super.onContainerAdded,
     @visibleForTesting InteractiveMediaAdsProxy? imaProxy,
@@ -23,11 +23,11 @@ final class IosAdDisplayContainerCreationParams
 
   /// Creates a [AndroidAdDisplayContainerCreationParams] from an instance of
   /// [PlatformAdDisplayContainerCreationParams].
-  factory IosAdDisplayContainerCreationParams.fromPlatformAdDisplayContainerCreationParams(
+  factory IOSAdDisplayContainerCreationParams.fromPlatformAdDisplayContainerCreationParams(
     PlatformAdDisplayContainerCreationParams params, {
     @visibleForTesting InteractiveMediaAdsProxy? imaProxy,
   }) {
-    return IosAdDisplayContainerCreationParams(
+    return IOSAdDisplayContainerCreationParams(
       key: params.key,
       onContainerAdded: params.onContainerAdded,
       imaProxy: imaProxy,
@@ -55,10 +55,10 @@ base class IosAdDisplayContainer extends PlatformAdDisplayContainer {
   @internal
   late final IMAAdDisplayContainer? adDisplayContainer;
 
-  late final IosAdDisplayContainerCreationParams _iosParams =
-      params is IosAdDisplayContainerCreationParams
-          ? params as IosAdDisplayContainerCreationParams
-          : IosAdDisplayContainerCreationParams
+  late final IOSAdDisplayContainerCreationParams _iosParams =
+      params is IOSAdDisplayContainerCreationParams
+          ? params as IOSAdDisplayContainerCreationParams
+          : IOSAdDisplayContainerCreationParams
               .fromPlatformAdDisplayContainerCreationParams(params);
 
   @override

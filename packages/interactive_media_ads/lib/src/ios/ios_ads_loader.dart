@@ -91,7 +91,7 @@ class _AdsLoaderDelegate extends ima.IMAAdsLoaderDelegate {
           ) {
             interfaceLoader.target?._iosParams.onAdsLoaded(
               PlatformOnAdsLoadedData(
-                manager: IosAdsManager(adsLoadedData.adsManager!),
+                manager: IOSAdsManager(adsLoadedData.adsManager!),
               ),
             );
           },
