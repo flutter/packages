@@ -220,13 +220,19 @@ abstract class UIView {}
 
 /// An object that manages a view hierarchy for your UIKit app.
 ///
-/// See. https://developer.apple.com/documentation/uikit/uiviewcontroller.
+/// See https://developer.apple.com/documentation/uikit/uiviewcontroller.
 @ProxyApi()
 abstract class UIViewController {
   UIViewController();
 
   /// Retrieves the view that the controller manages.
-  UIView getView();
+  ///
+  /// For convenience this is a `final` attached field despite this being
+  /// settable. Since this is not a part of the IMA SDK this is slightly changed
+  /// for convenience. Note that this wrapper should not add the ability to set
+  /// this property as it should not be needed anyways.
+  @attached
+  late final UIView view;
 }
 
 /// Defines an interface for a class that tracks video content progress and
