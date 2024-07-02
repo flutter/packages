@@ -55,7 +55,7 @@ class BenchmarkServer {
     required this.chromeDebugPort,
     required this.headless,
     required this.treeShakeIcons,
-    this.compilationOptions = const CompilationOptions(),
+    this.compilationOptions = const CompilationOptions.js(),
     this.initialPage = defaultInitialPage,
   });
 
@@ -119,10 +119,9 @@ class BenchmarkServer {
         'web',
         if (compilationOptions.useWasm) ...<String>[
           '--wasm',
-          '--wasm-opt=debug',
-          '--omit-type-checks',
-        ],
-        '--web-renderer=${compilationOptions.renderer.name}',
+          '--no-strip-wasm',
+        ] else
+          '--web-renderer=${compilationOptions.renderer.name}',
         '--dart-define=FLUTTER_WEB_ENABLE_PROFILING=true',
         if (!treeShakeIcons) '--no-tree-shake-icons',
         '--profile',

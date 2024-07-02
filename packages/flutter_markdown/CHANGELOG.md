@@ -1,3 +1,7 @@
+## 0.7.3
+
+* Adds horizontal scrolling for table when using `tableColumnWidth: FixedColumnWidth(width)`.
+
 ## 0.7.2+1
 
 * Fixes a crash caused by text selection when `selectable` is true and `onSelectionChanged` is null.
