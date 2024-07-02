@@ -5,6 +5,7 @@
 import 'package:flutter/material.dart';
 
 import 'generated.dart';
+import 'integration_tests.dart';
 
 void main() {
   runApp(const ExampleApp());
@@ -39,6 +40,9 @@ class _ExampleAppState extends State<ExampleApp> {
       // Make a single trivial call just to validate that everything is wired
       // up.
       await api.noop();
+
+      final AllTypes echoObject = await api.echoAllTypes(genericAllTypes);
+      compareAllTypes(echoObject, genericAllTypes);
     } catch (e) {
       setState(() {
         status = 'Failed: $e';

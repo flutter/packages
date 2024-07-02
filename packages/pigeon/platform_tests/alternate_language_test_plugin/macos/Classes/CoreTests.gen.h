@@ -14,6 +14,1306 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+typedef NS_ENUM(NSUInteger, AAA) {
+  AAAOne = 0,
+};
+
+/// Wrapper for AAA to allow for nullability.
+@interface AAABox : NSObject
+@property(nonatomic, assign) AAA value;
+- (instancetype)initWithValue:(AAA)value;
+@end
+
+typedef NS_ENUM(NSUInteger, AAB) {
+  AABOne = 0,
+};
+
+/// Wrapper for AAB to allow for nullability.
+@interface AABBox : NSObject
+@property(nonatomic, assign) AAB value;
+- (instancetype)initWithValue:(AAB)value;
+@end
+
+typedef NS_ENUM(NSUInteger, AAC) {
+  AACOne = 0,
+};
+
+/// Wrapper for AAC to allow for nullability.
+@interface AACBox : NSObject
+@property(nonatomic, assign) AAC value;
+- (instancetype)initWithValue:(AAC)value;
+@end
+
+typedef NS_ENUM(NSUInteger, AAD) {
+  AADOne = 0,
+};
+
+/// Wrapper for AAD to allow for nullability.
+@interface AADBox : NSObject
+@property(nonatomic, assign) AAD value;
+- (instancetype)initWithValue:(AAD)value;
+@end
+
+typedef NS_ENUM(NSUInteger, AAE) {
+  AAEOne = 0,
+};
+
+/// Wrapper for AAE to allow for nullability.
+@interface AAEBox : NSObject
+@property(nonatomic, assign) AAE value;
+- (instancetype)initWithValue:(AAE)value;
+@end
+
+typedef NS_ENUM(NSUInteger, AAF) {
+  AAFOne = 0,
+};
+
+/// Wrapper for AAF to allow for nullability.
+@interface AAFBox : NSObject
+@property(nonatomic, assign) AAF value;
+- (instancetype)initWithValue:(AAF)value;
+@end
+
+typedef NS_ENUM(NSUInteger, AAG) {
+  AAGOne = 0,
+};
+
+/// Wrapper for AAG to allow for nullability.
+@interface AAGBox : NSObject
+@property(nonatomic, assign) AAG value;
+- (instancetype)initWithValue:(AAG)value;
+@end
+
+typedef NS_ENUM(NSUInteger, AAH) {
+  AAHOne = 0,
+};
+
+/// Wrapper for AAH to allow for nullability.
+@interface AAHBox : NSObject
+@property(nonatomic, assign) AAH value;
+- (instancetype)initWithValue:(AAH)value;
+@end
+
+typedef NS_ENUM(NSUInteger, AAI) {
+  AAIOne = 0,
+};
+
+/// Wrapper for AAI to allow for nullability.
+@interface AAIBox : NSObject
+@property(nonatomic, assign) AAI value;
+- (instancetype)initWithValue:(AAI)value;
+@end
+
+typedef NS_ENUM(NSUInteger, AAJ) {
+  AAJOne = 0,
+};
+
+/// Wrapper for AAJ to allow for nullability.
+@interface AAJBox : NSObject
+@property(nonatomic, assign) AAJ value;
+- (instancetype)initWithValue:(AAJ)value;
+@end
+
+typedef NS_ENUM(NSUInteger, AAK) {
+  AAKOne = 0,
+};
+
+/// Wrapper for AAK to allow for nullability.
+@interface AAKBox : NSObject
+@property(nonatomic, assign) AAK value;
+- (instancetype)initWithValue:(AAK)value;
+@end
+
+typedef NS_ENUM(NSUInteger, AAL) {
+  AALOne = 0,
+};
+
+/// Wrapper for AAL to allow for nullability.
+@interface AALBox : NSObject
+@property(nonatomic, assign) AAL value;
+- (instancetype)initWithValue:(AAL)value;
+@end
+
+typedef NS_ENUM(NSUInteger, AAM) {
+  AAMOne = 0,
+};
+
+/// Wrapper for AAM to allow for nullability.
+@interface AAMBox : NSObject
+@property(nonatomic, assign) AAM value;
+- (instancetype)initWithValue:(AAM)value;
+@end
+
+typedef NS_ENUM(NSUInteger, AAN) {
+  AANOne = 0,
+};
+
+/// Wrapper for AAN to allow for nullability.
+@interface AANBox : NSObject
+@property(nonatomic, assign) AAN value;
+- (instancetype)initWithValue:(AAN)value;
+@end
+
+typedef NS_ENUM(NSUInteger, AAO) {
+  AAOOne = 0,
+};
+
+/// Wrapper for AAO to allow for nullability.
+@interface AAOBox : NSObject
+@property(nonatomic, assign) AAO value;
+- (instancetype)initWithValue:(AAO)value;
+@end
+
+typedef NS_ENUM(NSUInteger, AAP) {
+  AAPOne = 0,
+};
+
+/// Wrapper for AAP to allow for nullability.
+@interface AAPBox : NSObject
+@property(nonatomic, assign) AAP value;
+- (instancetype)initWithValue:(AAP)value;
+@end
+
+typedef NS_ENUM(NSUInteger, AAQ) {
+  AAQOne = 0,
+};
+
+/// Wrapper for AAQ to allow for nullability.
+@interface AAQBox : NSObject
+@property(nonatomic, assign) AAQ value;
+- (instancetype)initWithValue:(AAQ)value;
+@end
+
+typedef NS_ENUM(NSUInteger, AAR) {
+  AAROne = 0,
+};
+
+/// Wrapper for AAR to allow for nullability.
+@interface AARBox : NSObject
+@property(nonatomic, assign) AAR value;
+- (instancetype)initWithValue:(AAR)value;
+@end
+
+typedef NS_ENUM(NSUInteger, AAS) {
+  AASOne = 0,
+};
+
+/// Wrapper for AAS to allow for nullability.
+@interface AASBox : NSObject
+@property(nonatomic, assign) AAS value;
+- (instancetype)initWithValue:(AAS)value;
+@end
+
+typedef NS_ENUM(NSUInteger, AAT) {
+  AATOne = 0,
+};
+
+/// Wrapper for AAT to allow for nullability.
+@interface AATBox : NSObject
+@property(nonatomic, assign) AAT value;
+- (instancetype)initWithValue:(AAT)value;
+@end
+
+typedef NS_ENUM(NSUInteger, AAU) {
+  AAUOne = 0,
+};
+
+/// Wrapper for AAU to allow for nullability.
+@interface AAUBox : NSObject
+@property(nonatomic, assign) AAU value;
+- (instancetype)initWithValue:(AAU)value;
+@end
+
+typedef NS_ENUM(NSUInteger, AAV) {
+  AAVOne = 0,
+};
+
+/// Wrapper for AAV to allow for nullability.
+@interface AAVBox : NSObject
+@property(nonatomic, assign) AAV value;
+- (instancetype)initWithValue:(AAV)value;
+@end
+
+typedef NS_ENUM(NSUInteger, AAW) {
+  AAWOne = 0,
+};
+
+/// Wrapper for AAW to allow for nullability.
+@interface AAWBox : NSObject
+@property(nonatomic, assign) AAW value;
+- (instancetype)initWithValue:(AAW)value;
+@end
+
+typedef NS_ENUM(NSUInteger, AAX) {
+  AAXOne = 0,
+};
+
+/// Wrapper for AAX to allow for nullability.
+@interface AAXBox : NSObject
+@property(nonatomic, assign) AAX value;
+- (instancetype)initWithValue:(AAX)value;
+@end
+
+typedef NS_ENUM(NSUInteger, AAY) {
+  AAYOne = 0,
+};
+
+/// Wrapper for AAY to allow for nullability.
+@interface AAYBox : NSObject
+@property(nonatomic, assign) AAY value;
+- (instancetype)initWithValue:(AAY)value;
+@end
+
+typedef NS_ENUM(NSUInteger, AAZ) {
+  AAZOne = 0,
+};
+
+/// Wrapper for AAZ to allow for nullability.
+@interface AAZBox : NSObject
+@property(nonatomic, assign) AAZ value;
+- (instancetype)initWithValue:(AAZ)value;
+@end
+
+typedef NS_ENUM(NSUInteger, AAAA) {
+  AAAAOne = 0,
+};
+
+/// Wrapper for AAAA to allow for nullability.
+@interface AAAABox : NSObject
+@property(nonatomic, assign) AAAA value;
+- (instancetype)initWithValue:(AAAA)value;
+@end
+
+typedef NS_ENUM(NSUInteger, AAAB) {
+  AAABOne = 0,
+};
+
+/// Wrapper for AAAB to allow for nullability.
+@interface AAABBox : NSObject
+@property(nonatomic, assign) AAAB value;
+- (instancetype)initWithValue:(AAAB)value;
+@end
+
+typedef NS_ENUM(NSUInteger, AAAC) {
+  AAACOne = 0,
+};
+
+/// Wrapper for AAAC to allow for nullability.
+@interface AAACBox : NSObject
+@property(nonatomic, assign) AAAC value;
+- (instancetype)initWithValue:(AAAC)value;
+@end
+
+typedef NS_ENUM(NSUInteger, AAAD) {
+  AAADOne = 0,
+};
+
+/// Wrapper for AAAD to allow for nullability.
+@interface AAADBox : NSObject
+@property(nonatomic, assign) AAAD value;
+- (instancetype)initWithValue:(AAAD)value;
+@end
+
+typedef NS_ENUM(NSUInteger, AAAE) {
+  AAAEOne = 0,
+};
+
+/// Wrapper for AAAE to allow for nullability.
+@interface AAAEBox : NSObject
+@property(nonatomic, assign) AAAE value;
+- (instancetype)initWithValue:(AAAE)value;
+@end
+
+typedef NS_ENUM(NSUInteger, AAAF) {
+  AAAFOne = 0,
+};
+
+/// Wrapper for AAAF to allow for nullability.
+@interface AAAFBox : NSObject
+@property(nonatomic, assign) AAAF value;
+- (instancetype)initWithValue:(AAAF)value;
+@end
+
+typedef NS_ENUM(NSUInteger, AAAG) {
+  AAAGOne = 0,
+};
+
+/// Wrapper for AAAG to allow for nullability.
+@interface AAAGBox : NSObject
+@property(nonatomic, assign) AAAG value;
+- (instancetype)initWithValue:(AAAG)value;
+@end
+
+typedef NS_ENUM(NSUInteger, AAAH) {
+  AAAHOne = 0,
+};
+
+/// Wrapper for AAAH to allow for nullability.
+@interface AAAHBox : NSObject
+@property(nonatomic, assign) AAAH value;
+- (instancetype)initWithValue:(AAAH)value;
+@end
+
+typedef NS_ENUM(NSUInteger, AAAI) {
+  AAAIOne = 0,
+};
+
+/// Wrapper for AAAI to allow for nullability.
+@interface AAAIBox : NSObject
+@property(nonatomic, assign) AAAI value;
+- (instancetype)initWithValue:(AAAI)value;
+@end
+
+typedef NS_ENUM(NSUInteger, AAAJ) {
+  AAAJOne = 0,
+};
+
+/// Wrapper for AAAJ to allow for nullability.
+@interface AAAJBox : NSObject
+@property(nonatomic, assign) AAAJ value;
+- (instancetype)initWithValue:(AAAJ)value;
+@end
+
+typedef NS_ENUM(NSUInteger, AAAK) {
+  AAAKOne = 0,
+};
+
+/// Wrapper for AAAK to allow for nullability.
+@interface AAAKBox : NSObject
+@property(nonatomic, assign) AAAK value;
+- (instancetype)initWithValue:(AAAK)value;
+@end
+
+typedef NS_ENUM(NSUInteger, AAAL) {
+  AAALOne = 0,
+};
+
+/// Wrapper for AAAL to allow for nullability.
+@interface AAALBox : NSObject
+@property(nonatomic, assign) AAAL value;
+- (instancetype)initWithValue:(AAAL)value;
+@end
+
+typedef NS_ENUM(NSUInteger, AAAM) {
+  AAAMOne = 0,
+};
+
+/// Wrapper for AAAM to allow for nullability.
+@interface AAAMBox : NSObject
+@property(nonatomic, assign) AAAM value;
+- (instancetype)initWithValue:(AAAM)value;
+@end
+
+typedef NS_ENUM(NSUInteger, AAAN) {
+  AAANOne = 0,
+};
+
+/// Wrapper for AAAN to allow for nullability.
+@interface AAANBox : NSObject
+@property(nonatomic, assign) AAAN value;
+- (instancetype)initWithValue:(AAAN)value;
+@end
+
+typedef NS_ENUM(NSUInteger, AAAO) {
+  AAAOOne = 0,
+};
+
+/// Wrapper for AAAO to allow for nullability.
+@interface AAAOBox : NSObject
+@property(nonatomic, assign) AAAO value;
+- (instancetype)initWithValue:(AAAO)value;
+@end
+
+typedef NS_ENUM(NSUInteger, AAAP) {
+  AAAPOne = 0,
+};
+
+/// Wrapper for AAAP to allow for nullability.
+@interface AAAPBox : NSObject
+@property(nonatomic, assign) AAAP value;
+- (instancetype)initWithValue:(AAAP)value;
+@end
+
+typedef NS_ENUM(NSUInteger, AAAQ) {
+  AAAQOne = 0,
+};
+
+/// Wrapper for AAAQ to allow for nullability.
+@interface AAAQBox : NSObject
+@property(nonatomic, assign) AAAQ value;
+- (instancetype)initWithValue:(AAAQ)value;
+@end
+
+typedef NS_ENUM(NSUInteger, AAAR) {
+  AAAROne = 0,
+};
+
+/// Wrapper for AAAR to allow for nullability.
+@interface AAARBox : NSObject
+@property(nonatomic, assign) AAAR value;
+- (instancetype)initWithValue:(AAAR)value;
+@end
+
+typedef NS_ENUM(NSUInteger, AAAS) {
+  AAASOne = 0,
+};
+
+/// Wrapper for AAAS to allow for nullability.
+@interface AAASBox : NSObject
+@property(nonatomic, assign) AAAS value;
+- (instancetype)initWithValue:(AAAS)value;
+@end
+
+typedef NS_ENUM(NSUInteger, AAAT) {
+  AAATOne = 0,
+};
+
+/// Wrapper for AAAT to allow for nullability.
+@interface AAATBox : NSObject
+@property(nonatomic, assign) AAAT value;
+- (instancetype)initWithValue:(AAAT)value;
+@end
+
+typedef NS_ENUM(NSUInteger, AAAU) {
+  AAAUOne = 0,
+};
+
+/// Wrapper for AAAU to allow for nullability.
+@interface AAAUBox : NSObject
+@property(nonatomic, assign) AAAU value;
+- (instancetype)initWithValue:(AAAU)value;
+@end
+
+typedef NS_ENUM(NSUInteger, AAAV) {
+  AAAVOne = 0,
+};
+
+/// Wrapper for AAAV to allow for nullability.
+@interface AAAVBox : NSObject
+@property(nonatomic, assign) AAAV value;
+- (instancetype)initWithValue:(AAAV)value;
+@end
+
+typedef NS_ENUM(NSUInteger, AAAW) {
+  AAAWOne = 0,
+};
+
+/// Wrapper for AAAW to allow for nullability.
+@interface AAAWBox : NSObject
+@property(nonatomic, assign) AAAW value;
+- (instancetype)initWithValue:(AAAW)value;
+@end
+
+typedef NS_ENUM(NSUInteger, AAAX) {
+  AAAXOne = 0,
+};
+
+/// Wrapper for AAAX to allow for nullability.
+@interface AAAXBox : NSObject
+@property(nonatomic, assign) AAAX value;
+- (instancetype)initWithValue:(AAAX)value;
+@end
+
+typedef NS_ENUM(NSUInteger, AAAY) {
+  AAAYOne = 0,
+};
+
+/// Wrapper for AAAY to allow for nullability.
+@interface AAAYBox : NSObject
+@property(nonatomic, assign) AAAY value;
+- (instancetype)initWithValue:(AAAY)value;
+@end
+
+typedef NS_ENUM(NSUInteger, AAAZ) {
+  AAAZOne = 0,
+};
+
+/// Wrapper for AAAZ to allow for nullability.
+@interface AAAZBox : NSObject
+@property(nonatomic, assign) AAAZ value;
+- (instancetype)initWithValue:(AAAZ)value;
+@end
+
+typedef NS_ENUM(NSUInteger, AABA) {
+  AABAOne = 0,
+};
+
+/// Wrapper for AABA to allow for nullability.
+@interface AABABox : NSObject
+@property(nonatomic, assign) AABA value;
+- (instancetype)initWithValue:(AABA)value;
+@end
+
+typedef NS_ENUM(NSUInteger, AABB) {
+  AABBOne = 0,
+};
+
+/// Wrapper for AABB to allow for nullability.
+@interface AABBBox : NSObject
+@property(nonatomic, assign) AABB value;
+- (instancetype)initWithValue:(AABB)value;
+@end
+
+typedef NS_ENUM(NSUInteger, AABC) {
+  AABCOne = 0,
+};
+
+/// Wrapper for AABC to allow for nullability.
+@interface AABCBox : NSObject
+@property(nonatomic, assign) AABC value;
+- (instancetype)initWithValue:(AABC)value;
+@end
+
+typedef NS_ENUM(NSUInteger, AABD) {
+  AABDOne = 0,
+};
+
+/// Wrapper for AABD to allow for nullability.
+@interface AABDBox : NSObject
+@property(nonatomic, assign) AABD value;
+- (instancetype)initWithValue:(AABD)value;
+@end
+
+typedef NS_ENUM(NSUInteger, AABE) {
+  AABEOne = 0,
+};
+
+/// Wrapper for AABE to allow for nullability.
+@interface AABEBox : NSObject
+@property(nonatomic, assign) AABE value;
+- (instancetype)initWithValue:(AABE)value;
+@end
+
+typedef NS_ENUM(NSUInteger, AABF) {
+  AABFOne = 0,
+};
+
+/// Wrapper for AABF to allow for nullability.
+@interface AABFBox : NSObject
+@property(nonatomic, assign) AABF value;
+- (instancetype)initWithValue:(AABF)value;
+@end
+
+typedef NS_ENUM(NSUInteger, AABG) {
+  AABGOne = 0,
+};
+
+/// Wrapper for AABG to allow for nullability.
+@interface AABGBox : NSObject
+@property(nonatomic, assign) AABG value;
+- (instancetype)initWithValue:(AABG)value;
+@end
+
+typedef NS_ENUM(NSUInteger, AABH) {
+  AABHOne = 0,
+};
+
+/// Wrapper for AABH to allow for nullability.
+@interface AABHBox : NSObject
+@property(nonatomic, assign) AABH value;
+- (instancetype)initWithValue:(AABH)value;
+@end
+
+typedef NS_ENUM(NSUInteger, AABI) {
+  AABIOne = 0,
+};
+
+/// Wrapper for AABI to allow for nullability.
+@interface AABIBox : NSObject
+@property(nonatomic, assign) AABI value;
+- (instancetype)initWithValue:(AABI)value;
+@end
+
+typedef NS_ENUM(NSUInteger, AABJ) {
+  AABJOne = 0,
+};
+
+/// Wrapper for AABJ to allow for nullability.
+@interface AABJBox : NSObject
+@property(nonatomic, assign) AABJ value;
+- (instancetype)initWithValue:(AABJ)value;
+@end
+
+typedef NS_ENUM(NSUInteger, AABK) {
+  AABKOne = 0,
+};
+
+/// Wrapper for AABK to allow for nullability.
+@interface AABKBox : NSObject
+@property(nonatomic, assign) AABK value;
+- (instancetype)initWithValue:(AABK)value;
+@end
+
+typedef NS_ENUM(NSUInteger, AABL) {
+  AABLOne = 0,
+};
+
+/// Wrapper for AABL to allow for nullability.
+@interface AABLBox : NSObject
+@property(nonatomic, assign) AABL value;
+- (instancetype)initWithValue:(AABL)value;
+@end
+
+typedef NS_ENUM(NSUInteger, AABM) {
+  AABMOne = 0,
+};
+
+/// Wrapper for AABM to allow for nullability.
+@interface AABMBox : NSObject
+@property(nonatomic, assign) AABM value;
+- (instancetype)initWithValue:(AABM)value;
+@end
+
+typedef NS_ENUM(NSUInteger, AABN) {
+  AABNOne = 0,
+};
+
+/// Wrapper for AABN to allow for nullability.
+@interface AABNBox : NSObject
+@property(nonatomic, assign) AABN value;
+- (instancetype)initWithValue:(AABN)value;
+@end
+
+typedef NS_ENUM(NSUInteger, AABO) {
+  AABOOne = 0,
+};
+
+/// Wrapper for AABO to allow for nullability.
+@interface AABOBox : NSObject
+@property(nonatomic, assign) AABO value;
+- (instancetype)initWithValue:(AABO)value;
+@end
+
+typedef NS_ENUM(NSUInteger, AABP) {
+  AABPOne = 0,
+};
+
+/// Wrapper for AABP to allow for nullability.
+@interface AABPBox : NSObject
+@property(nonatomic, assign) AABP value;
+- (instancetype)initWithValue:(AABP)value;
+@end
+
+typedef NS_ENUM(NSUInteger, AABQ) {
+  AABQOne = 0,
+};
+
+/// Wrapper for AABQ to allow for nullability.
+@interface AABQBox : NSObject
+@property(nonatomic, assign) AABQ value;
+- (instancetype)initWithValue:(AABQ)value;
+@end
+
+typedef NS_ENUM(NSUInteger, AABR) {
+  AABROne = 0,
+};
+
+/// Wrapper for AABR to allow for nullability.
+@interface AABRBox : NSObject
+@property(nonatomic, assign) AABR value;
+- (instancetype)initWithValue:(AABR)value;
+@end
+
+typedef NS_ENUM(NSUInteger, AABS) {
+  AABSOne = 0,
+};
+
+/// Wrapper for AABS to allow for nullability.
+@interface AABSBox : NSObject
+@property(nonatomic, assign) AABS value;
+- (instancetype)initWithValue:(AABS)value;
+@end
+
+typedef NS_ENUM(NSUInteger, AABT) {
+  AABTOne = 0,
+};
+
+/// Wrapper for AABT to allow for nullability.
+@interface AABTBox : NSObject
+@property(nonatomic, assign) AABT value;
+- (instancetype)initWithValue:(AABT)value;
+@end
+
+typedef NS_ENUM(NSUInteger, AABU) {
+  AABUOne = 0,
+};
+
+/// Wrapper for AABU to allow for nullability.
+@interface AABUBox : NSObject
+@property(nonatomic, assign) AABU value;
+- (instancetype)initWithValue:(AABU)value;
+@end
+
+typedef NS_ENUM(NSUInteger, AABV) {
+  AABVOne = 0,
+};
+
+/// Wrapper for AABV to allow for nullability.
+@interface AABVBox : NSObject
+@property(nonatomic, assign) AABV value;
+- (instancetype)initWithValue:(AABV)value;
+@end
+
+typedef NS_ENUM(NSUInteger, AABW) {
+  AABWOne = 0,
+};
+
+/// Wrapper for AABW to allow for nullability.
+@interface AABWBox : NSObject
+@property(nonatomic, assign) AABW value;
+- (instancetype)initWithValue:(AABW)value;
+@end
+
+typedef NS_ENUM(NSUInteger, AABX) {
+  AABXOne = 0,
+};
+
+/// Wrapper for AABX to allow for nullability.
+@interface AABXBox : NSObject
+@property(nonatomic, assign) AABX value;
+- (instancetype)initWithValue:(AABX)value;
+@end
+
+typedef NS_ENUM(NSUInteger, AABY) {
+  AABYOne = 0,
+};
+
+/// Wrapper for AABY to allow for nullability.
+@interface AABYBox : NSObject
+@property(nonatomic, assign) AABY value;
+- (instancetype)initWithValue:(AABY)value;
+@end
+
+typedef NS_ENUM(NSUInteger, AABZ) {
+  AABZOne = 0,
+};
+
+/// Wrapper for AABZ to allow for nullability.
+@interface AABZBox : NSObject
+@property(nonatomic, assign) AABZ value;
+- (instancetype)initWithValue:(AABZ)value;
+@end
+
+typedef NS_ENUM(NSUInteger, AACA) {
+  AACAOne = 0,
+};
+
+/// Wrapper for AACA to allow for nullability.
+@interface AACABox : NSObject
+@property(nonatomic, assign) AACA value;
+- (instancetype)initWithValue:(AACA)value;
+@end
+
+typedef NS_ENUM(NSUInteger, AACB) {
+  AACBOne = 0,
+};
+
+/// Wrapper for AACB to allow for nullability.
+@interface AACBBox : NSObject
+@property(nonatomic, assign) AACB value;
+- (instancetype)initWithValue:(AACB)value;
+@end
+
+typedef NS_ENUM(NSUInteger, AACC) {
+  AACCOne = 0,
+};
+
+/// Wrapper for AACC to allow for nullability.
+@interface AACCBox : NSObject
+@property(nonatomic, assign) AACC value;
+- (instancetype)initWithValue:(AACC)value;
+@end
+
+typedef NS_ENUM(NSUInteger, AACD) {
+  AACDOne = 0,
+};
+
+/// Wrapper for AACD to allow for nullability.
+@interface AACDBox : NSObject
+@property(nonatomic, assign) AACD value;
+- (instancetype)initWithValue:(AACD)value;
+@end
+
+typedef NS_ENUM(NSUInteger, AACE) {
+  AACEOne = 0,
+};
+
+/// Wrapper for AACE to allow for nullability.
+@interface AACEBox : NSObject
+@property(nonatomic, assign) AACE value;
+- (instancetype)initWithValue:(AACE)value;
+@end
+
+typedef NS_ENUM(NSUInteger, AACF) {
+  AACFOne = 0,
+};
+
+/// Wrapper for AACF to allow for nullability.
+@interface AACFBox : NSObject
+@property(nonatomic, assign) AACF value;
+- (instancetype)initWithValue:(AACF)value;
+@end
+
+typedef NS_ENUM(NSUInteger, AACG) {
+  AACGOne = 0,
+};
+
+/// Wrapper for AACG to allow for nullability.
+@interface AACGBox : NSObject
+@property(nonatomic, assign) AACG value;
+- (instancetype)initWithValue:(AACG)value;
+@end
+
+typedef NS_ENUM(NSUInteger, AACH) {
+  AACHOne = 0,
+};
+
+/// Wrapper for AACH to allow for nullability.
+@interface AACHBox : NSObject
+@property(nonatomic, assign) AACH value;
+- (instancetype)initWithValue:(AACH)value;
+@end
+
+typedef NS_ENUM(NSUInteger, AACI) {
+  AACIOne = 0,
+};
+
+/// Wrapper for AACI to allow for nullability.
+@interface AACIBox : NSObject
+@property(nonatomic, assign) AACI value;
+- (instancetype)initWithValue:(AACI)value;
+@end
+
+typedef NS_ENUM(NSUInteger, AACJ) {
+  AACJOne = 0,
+};
+
+/// Wrapper for AACJ to allow for nullability.
+@interface AACJBox : NSObject
+@property(nonatomic, assign) AACJ value;
+- (instancetype)initWithValue:(AACJ)value;
+@end
+
+typedef NS_ENUM(NSUInteger, AACK) {
+  AACKOne = 0,
+};
+
+/// Wrapper for AACK to allow for nullability.
+@interface AACKBox : NSObject
+@property(nonatomic, assign) AACK value;
+- (instancetype)initWithValue:(AACK)value;
+@end
+
+typedef NS_ENUM(NSUInteger, AACL) {
+  AACLOne = 0,
+};
+
+/// Wrapper for AACL to allow for nullability.
+@interface AACLBox : NSObject
+@property(nonatomic, assign) AACL value;
+- (instancetype)initWithValue:(AACL)value;
+@end
+
+typedef NS_ENUM(NSUInteger, AACM) {
+  AACMOne = 0,
+};
+
+/// Wrapper for AACM to allow for nullability.
+@interface AACMBox : NSObject
+@property(nonatomic, assign) AACM value;
+- (instancetype)initWithValue:(AACM)value;
+@end
+
+typedef NS_ENUM(NSUInteger, AACN) {
+  AACNOne = 0,
+};
+
+/// Wrapper for AACN to allow for nullability.
+@interface AACNBox : NSObject
+@property(nonatomic, assign) AACN value;
+- (instancetype)initWithValue:(AACN)value;
+@end
+
+typedef NS_ENUM(NSUInteger, AACO) {
+  AACOOne = 0,
+};
+
+/// Wrapper for AACO to allow for nullability.
+@interface AACOBox : NSObject
+@property(nonatomic, assign) AACO value;
+- (instancetype)initWithValue:(AACO)value;
+@end
+
+typedef NS_ENUM(NSUInteger, AACP) {
+  AACPOne = 0,
+};
+
+/// Wrapper for AACP to allow for nullability.
+@interface AACPBox : NSObject
+@property(nonatomic, assign) AACP value;
+- (instancetype)initWithValue:(AACP)value;
+@end
+
+typedef NS_ENUM(NSUInteger, AACQ) {
+  AACQOne = 0,
+};
+
+/// Wrapper for AACQ to allow for nullability.
+@interface AACQBox : NSObject
+@property(nonatomic, assign) AACQ value;
+- (instancetype)initWithValue:(AACQ)value;
+@end
+
+typedef NS_ENUM(NSUInteger, AACR) {
+  AACROne = 0,
+};
+
+/// Wrapper for AACR to allow for nullability.
+@interface AACRBox : NSObject
+@property(nonatomic, assign) AACR value;
+- (instancetype)initWithValue:(AACR)value;
+@end
+
+typedef NS_ENUM(NSUInteger, AACS) {
+  AACSOne = 0,
+};
+
+/// Wrapper for AACS to allow for nullability.
+@interface AACSBox : NSObject
+@property(nonatomic, assign) AACS value;
+- (instancetype)initWithValue:(AACS)value;
+@end
+
+typedef NS_ENUM(NSUInteger, AACT) {
+  AACTOne = 0,
+};
+
+/// Wrapper for AACT to allow for nullability.
+@interface AACTBox : NSObject
+@property(nonatomic, assign) AACT value;
+- (instancetype)initWithValue:(AACT)value;
+@end
+
+typedef NS_ENUM(NSUInteger, AACU) {
+  AACUOne = 0,
+};
+
+/// Wrapper for AACU to allow for nullability.
+@interface AACUBox : NSObject
+@property(nonatomic, assign) AACU value;
+- (instancetype)initWithValue:(AACU)value;
+@end
+
+typedef NS_ENUM(NSUInteger, AACV) {
+  AACVOne = 0,
+};
+
+/// Wrapper for AACV to allow for nullability.
+@interface AACVBox : NSObject
+@property(nonatomic, assign) AACV value;
+- (instancetype)initWithValue:(AACV)value;
+@end
+
+typedef NS_ENUM(NSUInteger, AACW) {
+  AACWOne = 0,
+};
+
+/// Wrapper for AACW to allow for nullability.
+@interface AACWBox : NSObject
+@property(nonatomic, assign) AACW value;
+- (instancetype)initWithValue:(AACW)value;
+@end
+
+typedef NS_ENUM(NSUInteger, AACX) {
+  AACXOne = 0,
+};
+
+/// Wrapper for AACX to allow for nullability.
+@interface AACXBox : NSObject
+@property(nonatomic, assign) AACX value;
+- (instancetype)initWithValue:(AACX)value;
+@end
+
+typedef NS_ENUM(NSUInteger, AACY) {
+  AACYOne = 0,
+};
+
+/// Wrapper for AACY to allow for nullability.
+@interface AACYBox : NSObject
+@property(nonatomic, assign) AACY value;
+- (instancetype)initWithValue:(AACY)value;
+@end
+
+typedef NS_ENUM(NSUInteger, AACZ) {
+  AACZOne = 0,
+};
+
+/// Wrapper for AACZ to allow for nullability.
+@interface AACZBox : NSObject
+@property(nonatomic, assign) AACZ value;
+- (instancetype)initWithValue:(AACZ)value;
+@end
+
+typedef NS_ENUM(NSUInteger, AADA) {
+  AADAOne = 0,
+};
+
+/// Wrapper for AADA to allow for nullability.
+@interface AADABox : NSObject
+@property(nonatomic, assign) AADA value;
+- (instancetype)initWithValue:(AADA)value;
+@end
+
+typedef NS_ENUM(NSUInteger, AADB) {
+  AADBOne = 0,
+};
+
+/// Wrapper for AADB to allow for nullability.
+@interface AADBBox : NSObject
+@property(nonatomic, assign) AADB value;
+- (instancetype)initWithValue:(AADB)value;
+@end
+
+typedef NS_ENUM(NSUInteger, AADC) {
+  AADCOne = 0,
+};
+
+/// Wrapper for AADC to allow for nullability.
+@interface AADCBox : NSObject
+@property(nonatomic, assign) AADC value;
+- (instancetype)initWithValue:(AADC)value;
+@end
+
+typedef NS_ENUM(NSUInteger, AADD) {
+  AADDOne = 0,
+};
+
+/// Wrapper for AADD to allow for nullability.
+@interface AADDBox : NSObject
+@property(nonatomic, assign) AADD value;
+- (instancetype)initWithValue:(AADD)value;
+@end
+
+typedef NS_ENUM(NSUInteger, AADE) {
+  AADEOne = 0,
+};
+
+/// Wrapper for AADE to allow for nullability.
+@interface AADEBox : NSObject
+@property(nonatomic, assign) AADE value;
+- (instancetype)initWithValue:(AADE)value;
+@end
+
+typedef NS_ENUM(NSUInteger, AADF) {
+  AADFOne = 0,
+};
+
+/// Wrapper for AADF to allow for nullability.
+@interface AADFBox : NSObject
+@property(nonatomic, assign) AADF value;
+- (instancetype)initWithValue:(AADF)value;
+@end
+
+typedef NS_ENUM(NSUInteger, AADG) {
+  AADGOne = 0,
+};
+
+/// Wrapper for AADG to allow for nullability.
+@interface AADGBox : NSObject
+@property(nonatomic, assign) AADG value;
+- (instancetype)initWithValue:(AADG)value;
+@end
+
+typedef NS_ENUM(NSUInteger, AADH) {
+  AADHOne = 0,
+};
+
+/// Wrapper for AADH to allow for nullability.
+@interface AADHBox : NSObject
+@property(nonatomic, assign) AADH value;
+- (instancetype)initWithValue:(AADH)value;
+@end
+
+typedef NS_ENUM(NSUInteger, AADI) {
+  AADIOne = 0,
+};
+
+/// Wrapper for AADI to allow for nullability.
+@interface AADIBox : NSObject
+@property(nonatomic, assign) AADI value;
+- (instancetype)initWithValue:(AADI)value;
+@end
+
+typedef NS_ENUM(NSUInteger, AADJ) {
+  AADJOne = 0,
+};
+
+/// Wrapper for AADJ to allow for nullability.
+@interface AADJBox : NSObject
+@property(nonatomic, assign) AADJ value;
+- (instancetype)initWithValue:(AADJ)value;
+@end
+
+typedef NS_ENUM(NSUInteger, AADK) {
+  AADKOne = 0,
+};
+
+/// Wrapper for AADK to allow for nullability.
+@interface AADKBox : NSObject
+@property(nonatomic, assign) AADK value;
+- (instancetype)initWithValue:(AADK)value;
+@end
+
+typedef NS_ENUM(NSUInteger, AADL) {
+  AADLOne = 0,
+};
+
+/// Wrapper for AADL to allow for nullability.
+@interface AADLBox : NSObject
+@property(nonatomic, assign) AADL value;
+- (instancetype)initWithValue:(AADL)value;
+@end
+
+typedef NS_ENUM(NSUInteger, AADM) {
+  AADMOne = 0,
+};
+
+/// Wrapper for AADM to allow for nullability.
+@interface AADMBox : NSObject
+@property(nonatomic, assign) AADM value;
+- (instancetype)initWithValue:(AADM)value;
+@end
+
+typedef NS_ENUM(NSUInteger, AADN) {
+  AADNOne = 0,
+};
+
+/// Wrapper for AADN to allow for nullability.
+@interface AADNBox : NSObject
+@property(nonatomic, assign) AADN value;
+- (instancetype)initWithValue:(AADN)value;
+@end
+
+typedef NS_ENUM(NSUInteger, AADO) {
+  AADOOne = 0,
+};
+
+/// Wrapper for AADO to allow for nullability.
+@interface AADOBox : NSObject
+@property(nonatomic, assign) AADO value;
+- (instancetype)initWithValue:(AADO)value;
+@end
+
+typedef NS_ENUM(NSUInteger, AADP) {
+  AADPOne = 0,
+};
+
+/// Wrapper for AADP to allow for nullability.
+@interface AADPBox : NSObject
+@property(nonatomic, assign) AADP value;
+- (instancetype)initWithValue:(AADP)value;
+@end
+
+typedef NS_ENUM(NSUInteger, AADQ) {
+  AADQOne = 0,
+};
+
+/// Wrapper for AADQ to allow for nullability.
+@interface AADQBox : NSObject
+@property(nonatomic, assign) AADQ value;
+- (instancetype)initWithValue:(AADQ)value;
+@end
+
+typedef NS_ENUM(NSUInteger, AADR) {
+  AADROne = 0,
+};
+
+/// Wrapper for AADR to allow for nullability.
+@interface AADRBox : NSObject
+@property(nonatomic, assign) AADR value;
+- (instancetype)initWithValue:(AADR)value;
+@end
+
+typedef NS_ENUM(NSUInteger, AADS) {
+  AADSOne = 0,
+};
+
+/// Wrapper for AADS to allow for nullability.
+@interface AADSBox : NSObject
+@property(nonatomic, assign) AADS value;
+- (instancetype)initWithValue:(AADS)value;
+@end
+
+typedef NS_ENUM(NSUInteger, AADT) {
+  AADTOne = 0,
+};
+
+/// Wrapper for AADT to allow for nullability.
+@interface AADTBox : NSObject
+@property(nonatomic, assign) AADT value;
+- (instancetype)initWithValue:(AADT)value;
+@end
+
+typedef NS_ENUM(NSUInteger, AADU) {
+  AADUOne = 0,
+};
+
+/// Wrapper for AADU to allow for nullability.
+@interface AADUBox : NSObject
+@property(nonatomic, assign) AADU value;
+- (instancetype)initWithValue:(AADU)value;
+@end
+
+typedef NS_ENUM(NSUInteger, AADV) {
+  AADVOne = 0,
+};
+
+/// Wrapper for AADV to allow for nullability.
+@interface AADVBox : NSObject
+@property(nonatomic, assign) AADV value;
+- (instancetype)initWithValue:(AADV)value;
+@end
+
+typedef NS_ENUM(NSUInteger, AADW) {
+  AADWOne = 0,
+};
+
+/// Wrapper for AADW to allow for nullability.
+@interface AADWBox : NSObject
+@property(nonatomic, assign) AADW value;
+- (instancetype)initWithValue:(AADW)value;
+@end
+
+typedef NS_ENUM(NSUInteger, AADX) {
+  AADXOne = 0,
+};
+
+/// Wrapper for AADX to allow for nullability.
+@interface AADXBox : NSObject
+@property(nonatomic, assign) AADX value;
+- (instancetype)initWithValue:(AADX)value;
+@end
+
+typedef NS_ENUM(NSUInteger, AADY) {
+  AADYOne = 0,
+};
+
+/// Wrapper for AADY to allow for nullability.
+@interface AADYBox : NSObject
+@property(nonatomic, assign) AADY value;
+- (instancetype)initWithValue:(AADY)value;
+@end
+
+typedef NS_ENUM(NSUInteger, AADZ) {
+  AADZOne = 0,
+};
+
+/// Wrapper for AADZ to allow for nullability.
+@interface AADZBox : NSObject
+@property(nonatomic, assign) AADZ value;
+- (instancetype)initWithValue:(AADZ)value;
+@end
+
 typedef NS_ENUM(NSUInteger, AnEnum) {
   AnEnumOne = 0,
   AnEnumTwo = 1,
@@ -194,6 +1494,14 @@ typedef NS_ENUM(NSUInteger, AnEnum) {
 @interface TestMessage : NSObject
 + (instancetype)makeWithTestList:(nullable NSArray<id> *)testList;
 @property(nonatomic, copy, nullable) NSArray<id> *testList;
+@end
+
+@interface __pigeon_CodecOverflow : NSObject
+/// `init` unavailable to enforce nonnull fields, see the `make` class method.
+- (instancetype)init NS_UNAVAILABLE;
++ (instancetype)makeWithType:(NSInteger)type wrapped:(nullable id)wrapped;
+@property(nonatomic, assign) NSInteger type;
+@property(nonatomic, strong, nullable) id wrapped;
 @end
 
 /// The codec used by all APIs.

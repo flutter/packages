@@ -40,6 +40,1306 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
   return (result == [NSNull null]) ? nil : result;
 }
 
+@implementation FLTAAABox
+- (instancetype)initWithValue:(FLTAAA)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTAABBox
+- (instancetype)initWithValue:(FLTAAB)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTAACBox
+- (instancetype)initWithValue:(FLTAAC)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTAADBox
+- (instancetype)initWithValue:(FLTAAD)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTAAEBox
+- (instancetype)initWithValue:(FLTAAE)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTAAFBox
+- (instancetype)initWithValue:(FLTAAF)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTAAGBox
+- (instancetype)initWithValue:(FLTAAG)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTAAHBox
+- (instancetype)initWithValue:(FLTAAH)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTAAIBox
+- (instancetype)initWithValue:(FLTAAI)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTAAJBox
+- (instancetype)initWithValue:(FLTAAJ)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTAAKBox
+- (instancetype)initWithValue:(FLTAAK)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTAALBox
+- (instancetype)initWithValue:(FLTAAL)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTAAMBox
+- (instancetype)initWithValue:(FLTAAM)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTAANBox
+- (instancetype)initWithValue:(FLTAAN)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTAAOBox
+- (instancetype)initWithValue:(FLTAAO)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTAAPBox
+- (instancetype)initWithValue:(FLTAAP)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTAAQBox
+- (instancetype)initWithValue:(FLTAAQ)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTAARBox
+- (instancetype)initWithValue:(FLTAAR)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTAASBox
+- (instancetype)initWithValue:(FLTAAS)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTAATBox
+- (instancetype)initWithValue:(FLTAAT)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTAAUBox
+- (instancetype)initWithValue:(FLTAAU)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTAAVBox
+- (instancetype)initWithValue:(FLTAAV)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTAAWBox
+- (instancetype)initWithValue:(FLTAAW)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTAAXBox
+- (instancetype)initWithValue:(FLTAAX)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTAAYBox
+- (instancetype)initWithValue:(FLTAAY)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTAAZBox
+- (instancetype)initWithValue:(FLTAAZ)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTAAAABox
+- (instancetype)initWithValue:(FLTAAAA)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTAAABBox
+- (instancetype)initWithValue:(FLTAAAB)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTAAACBox
+- (instancetype)initWithValue:(FLTAAAC)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTAAADBox
+- (instancetype)initWithValue:(FLTAAAD)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTAAAEBox
+- (instancetype)initWithValue:(FLTAAAE)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTAAAFBox
+- (instancetype)initWithValue:(FLTAAAF)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTAAAGBox
+- (instancetype)initWithValue:(FLTAAAG)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTAAAHBox
+- (instancetype)initWithValue:(FLTAAAH)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTAAAIBox
+- (instancetype)initWithValue:(FLTAAAI)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTAAAJBox
+- (instancetype)initWithValue:(FLTAAAJ)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTAAAKBox
+- (instancetype)initWithValue:(FLTAAAK)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTAAALBox
+- (instancetype)initWithValue:(FLTAAAL)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTAAAMBox
+- (instancetype)initWithValue:(FLTAAAM)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTAAANBox
+- (instancetype)initWithValue:(FLTAAAN)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTAAAOBox
+- (instancetype)initWithValue:(FLTAAAO)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTAAAPBox
+- (instancetype)initWithValue:(FLTAAAP)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTAAAQBox
+- (instancetype)initWithValue:(FLTAAAQ)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTAAARBox
+- (instancetype)initWithValue:(FLTAAAR)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTAAASBox
+- (instancetype)initWithValue:(FLTAAAS)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTAAATBox
+- (instancetype)initWithValue:(FLTAAAT)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTAAAUBox
+- (instancetype)initWithValue:(FLTAAAU)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTAAAVBox
+- (instancetype)initWithValue:(FLTAAAV)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTAAAWBox
+- (instancetype)initWithValue:(FLTAAAW)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTAAAXBox
+- (instancetype)initWithValue:(FLTAAAX)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTAAAYBox
+- (instancetype)initWithValue:(FLTAAAY)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTAAAZBox
+- (instancetype)initWithValue:(FLTAAAZ)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTAABABox
+- (instancetype)initWithValue:(FLTAABA)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTAABBBox
+- (instancetype)initWithValue:(FLTAABB)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTAABCBox
+- (instancetype)initWithValue:(FLTAABC)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTAABDBox
+- (instancetype)initWithValue:(FLTAABD)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTAABEBox
+- (instancetype)initWithValue:(FLTAABE)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTAABFBox
+- (instancetype)initWithValue:(FLTAABF)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTAABGBox
+- (instancetype)initWithValue:(FLTAABG)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTAABHBox
+- (instancetype)initWithValue:(FLTAABH)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTAABIBox
+- (instancetype)initWithValue:(FLTAABI)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTAABJBox
+- (instancetype)initWithValue:(FLTAABJ)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTAABKBox
+- (instancetype)initWithValue:(FLTAABK)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTAABLBox
+- (instancetype)initWithValue:(FLTAABL)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTAABMBox
+- (instancetype)initWithValue:(FLTAABM)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTAABNBox
+- (instancetype)initWithValue:(FLTAABN)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTAABOBox
+- (instancetype)initWithValue:(FLTAABO)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTAABPBox
+- (instancetype)initWithValue:(FLTAABP)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTAABQBox
+- (instancetype)initWithValue:(FLTAABQ)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTAABRBox
+- (instancetype)initWithValue:(FLTAABR)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTAABSBox
+- (instancetype)initWithValue:(FLTAABS)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTAABTBox
+- (instancetype)initWithValue:(FLTAABT)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTAABUBox
+- (instancetype)initWithValue:(FLTAABU)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTAABVBox
+- (instancetype)initWithValue:(FLTAABV)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTAABWBox
+- (instancetype)initWithValue:(FLTAABW)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTAABXBox
+- (instancetype)initWithValue:(FLTAABX)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTAABYBox
+- (instancetype)initWithValue:(FLTAABY)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTAABZBox
+- (instancetype)initWithValue:(FLTAABZ)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTAACABox
+- (instancetype)initWithValue:(FLTAACA)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTAACBBox
+- (instancetype)initWithValue:(FLTAACB)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTAACCBox
+- (instancetype)initWithValue:(FLTAACC)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTAACDBox
+- (instancetype)initWithValue:(FLTAACD)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTAACEBox
+- (instancetype)initWithValue:(FLTAACE)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTAACFBox
+- (instancetype)initWithValue:(FLTAACF)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTAACGBox
+- (instancetype)initWithValue:(FLTAACG)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTAACHBox
+- (instancetype)initWithValue:(FLTAACH)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTAACIBox
+- (instancetype)initWithValue:(FLTAACI)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTAACJBox
+- (instancetype)initWithValue:(FLTAACJ)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTAACKBox
+- (instancetype)initWithValue:(FLTAACK)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTAACLBox
+- (instancetype)initWithValue:(FLTAACL)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTAACMBox
+- (instancetype)initWithValue:(FLTAACM)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTAACNBox
+- (instancetype)initWithValue:(FLTAACN)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTAACOBox
+- (instancetype)initWithValue:(FLTAACO)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTAACPBox
+- (instancetype)initWithValue:(FLTAACP)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTAACQBox
+- (instancetype)initWithValue:(FLTAACQ)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTAACRBox
+- (instancetype)initWithValue:(FLTAACR)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTAACSBox
+- (instancetype)initWithValue:(FLTAACS)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTAACTBox
+- (instancetype)initWithValue:(FLTAACT)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTAACUBox
+- (instancetype)initWithValue:(FLTAACU)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTAACVBox
+- (instancetype)initWithValue:(FLTAACV)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTAACWBox
+- (instancetype)initWithValue:(FLTAACW)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTAACXBox
+- (instancetype)initWithValue:(FLTAACX)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTAACYBox
+- (instancetype)initWithValue:(FLTAACY)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTAACZBox
+- (instancetype)initWithValue:(FLTAACZ)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTAADABox
+- (instancetype)initWithValue:(FLTAADA)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTAADBBox
+- (instancetype)initWithValue:(FLTAADB)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTAADCBox
+- (instancetype)initWithValue:(FLTAADC)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTAADDBox
+- (instancetype)initWithValue:(FLTAADD)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTAADEBox
+- (instancetype)initWithValue:(FLTAADE)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTAADFBox
+- (instancetype)initWithValue:(FLTAADF)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTAADGBox
+- (instancetype)initWithValue:(FLTAADG)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTAADHBox
+- (instancetype)initWithValue:(FLTAADH)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTAADIBox
+- (instancetype)initWithValue:(FLTAADI)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTAADJBox
+- (instancetype)initWithValue:(FLTAADJ)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTAADKBox
+- (instancetype)initWithValue:(FLTAADK)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTAADLBox
+- (instancetype)initWithValue:(FLTAADL)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTAADMBox
+- (instancetype)initWithValue:(FLTAADM)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTAADNBox
+- (instancetype)initWithValue:(FLTAADN)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTAADOBox
+- (instancetype)initWithValue:(FLTAADO)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTAADPBox
+- (instancetype)initWithValue:(FLTAADP)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTAADQBox
+- (instancetype)initWithValue:(FLTAADQ)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTAADRBox
+- (instancetype)initWithValue:(FLTAADR)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTAADSBox
+- (instancetype)initWithValue:(FLTAADS)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTAADTBox
+- (instancetype)initWithValue:(FLTAADT)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTAADUBox
+- (instancetype)initWithValue:(FLTAADU)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTAADVBox
+- (instancetype)initWithValue:(FLTAADV)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTAADWBox
+- (instancetype)initWithValue:(FLTAADW)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTAADXBox
+- (instancetype)initWithValue:(FLTAADX)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTAADYBox
+- (instancetype)initWithValue:(FLTAADY)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
+@implementation FLTAADZBox
+- (instancetype)initWithValue:(FLTAADZ)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
 @implementation FLTAnEnumBox
 - (instancetype)initWithValue:(FLTAnEnum)value {
   self = [super init];
@@ -423,26 +1723,699 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 }
 @end
 
+@interface FLT__pigeon_CodecOverflow ()
++ (id)fromList:(NSArray<id> *)list;
+- (NSArray<id> *)toList;
+@end
+
+@implementation FLT__pigeon_CodecOverflow
++ (instancetype)makeWithType:(NSInteger)type wrapped:(nullable id)wrapped {
+  FLT__pigeon_CodecOverflow *pigeonResult = [[FLT__pigeon_CodecOverflow alloc] init];
+  pigeonResult.type = type;
+  pigeonResult.wrapped = wrapped;
+  return pigeonResult;
+}
+- (NSArray<id> *)toList {
+  return @[
+    @(self.type),
+    self.wrapped ?: [NSNull null],
+  ];
+}
++ (id)fromList:(NSArray<id> *)list {
+  FLT__pigeon_CodecOverflow *wrapper = [[FLT__pigeon_CodecOverflow alloc] init];
+  wrapper.type = [GetNullableObjectAtIndex(list, 0) integerValue];
+  wrapper.wrapped = GetNullableObjectAtIndex(list, 1);
+  return [wrapper unwrap];
+}
+
+- (id)unwrap {
+  if (self.wrapped == nil) {
+    return nil;
+  }
+
+  switch (self.type) {
+    case 0:
+      return [[FLTAADWBox alloc] initWithValue:[self.wrapped integerValue]];
+    case 1:
+      return [[FLTAADXBox alloc] initWithValue:[self.wrapped integerValue]];
+    case 2:
+      return [[FLTAADYBox alloc] initWithValue:[self.wrapped integerValue]];
+    case 3:
+      return [[FLTAADZBox alloc] initWithValue:[self.wrapped integerValue]];
+    case 4:
+      return [[FLTAnEnumBox alloc] initWithValue:[self.wrapped integerValue]];
+    case 5:
+      return [FLTAllTypes fromList:self.wrapped];
+    case 6:
+      return [FLTAllNullableTypes fromList:self.wrapped];
+    case 7:
+      return [FLTAllNullableTypesWithoutRecursion fromList:self.wrapped];
+    case 8:
+      return [FLTAllClassesWrapper fromList:self.wrapped];
+    case 9:
+      return [FLTTestMessage fromList:self.wrapped];
+    default:
+      return nil;
+  }
+}
+@end
 @interface FLTCoreTestsPigeonCodecReader : FlutterStandardReader
 @end
 @implementation FLTCoreTestsPigeonCodecReader
 - (nullable id)readValueOfType:(UInt8)type {
   switch (type) {
-    case 129:
-      return [FLTAllTypes fromList:[self readValue]];
-    case 130:
-      return [FLTAllNullableTypes fromList:[self readValue]];
-    case 131:
-      return [FLTAllNullableTypesWithoutRecursion fromList:[self readValue]];
-    case 132:
-      return [FLTAllClassesWrapper fromList:[self readValue]];
-    case 133:
-      return [FLTTestMessage fromList:[self readValue]];
+    case 129: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil ? nil
+                                 : [[FLTAAABox alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 130: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil ? nil
+                                 : [[FLTAABBox alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 131: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil ? nil
+                                 : [[FLTAACBox alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 132: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil ? nil
+                                 : [[FLTAADBox alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 133: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil ? nil
+                                 : [[FLTAAEBox alloc] initWithValue:[enumAsNumber integerValue]];
+    }
     case 134: {
       NSNumber *enumAsNumber = [self readValue];
       return enumAsNumber == nil ? nil
-                                 : [[FLTAnEnumBox alloc] initWithValue:[enumAsNumber integerValue]];
+                                 : [[FLTAAFBox alloc] initWithValue:[enumAsNumber integerValue]];
     }
+    case 135: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil ? nil
+                                 : [[FLTAAGBox alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 136: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil ? nil
+                                 : [[FLTAAHBox alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 137: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil ? nil
+                                 : [[FLTAAIBox alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 138: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil ? nil
+                                 : [[FLTAAJBox alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 139: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil ? nil
+                                 : [[FLTAAKBox alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 140: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil ? nil
+                                 : [[FLTAALBox alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 141: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil ? nil
+                                 : [[FLTAAMBox alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 142: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil ? nil
+                                 : [[FLTAANBox alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 143: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil ? nil
+                                 : [[FLTAAOBox alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 144: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil ? nil
+                                 : [[FLTAAPBox alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 145: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil ? nil
+                                 : [[FLTAAQBox alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 146: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil ? nil
+                                 : [[FLTAARBox alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 147: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil ? nil
+                                 : [[FLTAASBox alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 148: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil ? nil
+                                 : [[FLTAATBox alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 149: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil ? nil
+                                 : [[FLTAAUBox alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 150: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil ? nil
+                                 : [[FLTAAVBox alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 151: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil ? nil
+                                 : [[FLTAAWBox alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 152: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil ? nil
+                                 : [[FLTAAXBox alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 153: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil ? nil
+                                 : [[FLTAAYBox alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 154: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil ? nil
+                                 : [[FLTAAZBox alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 155: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil ? nil
+                                 : [[FLTAAAABox alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 156: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil ? nil
+                                 : [[FLTAAABBox alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 157: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil ? nil
+                                 : [[FLTAAACBox alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 158: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil ? nil
+                                 : [[FLTAAADBox alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 159: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil ? nil
+                                 : [[FLTAAAEBox alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 160: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil ? nil
+                                 : [[FLTAAAFBox alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 161: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil ? nil
+                                 : [[FLTAAAGBox alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 162: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil ? nil
+                                 : [[FLTAAAHBox alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 163: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil ? nil
+                                 : [[FLTAAAIBox alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 164: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil ? nil
+                                 : [[FLTAAAJBox alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 165: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil ? nil
+                                 : [[FLTAAAKBox alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 166: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil ? nil
+                                 : [[FLTAAALBox alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 167: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil ? nil
+                                 : [[FLTAAAMBox alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 168: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil ? nil
+                                 : [[FLTAAANBox alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 169: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil ? nil
+                                 : [[FLTAAAOBox alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 170: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil ? nil
+                                 : [[FLTAAAPBox alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 171: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil ? nil
+                                 : [[FLTAAAQBox alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 172: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil ? nil
+                                 : [[FLTAAARBox alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 173: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil ? nil
+                                 : [[FLTAAASBox alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 174: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil ? nil
+                                 : [[FLTAAATBox alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 175: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil ? nil
+                                 : [[FLTAAAUBox alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 176: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil ? nil
+                                 : [[FLTAAAVBox alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 177: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil ? nil
+                                 : [[FLTAAAWBox alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 178: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil ? nil
+                                 : [[FLTAAAXBox alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 179: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil ? nil
+                                 : [[FLTAAAYBox alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 180: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil ? nil
+                                 : [[FLTAAAZBox alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 181: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil ? nil
+                                 : [[FLTAABABox alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 182: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil ? nil
+                                 : [[FLTAABBBox alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 183: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil ? nil
+                                 : [[FLTAABCBox alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 184: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil ? nil
+                                 : [[FLTAABDBox alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 185: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil ? nil
+                                 : [[FLTAABEBox alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 186: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil ? nil
+                                 : [[FLTAABFBox alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 187: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil ? nil
+                                 : [[FLTAABGBox alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 188: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil ? nil
+                                 : [[FLTAABHBox alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 189: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil ? nil
+                                 : [[FLTAABIBox alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 190: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil ? nil
+                                 : [[FLTAABJBox alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 191: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil ? nil
+                                 : [[FLTAABKBox alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 192: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil ? nil
+                                 : [[FLTAABLBox alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 193: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil ? nil
+                                 : [[FLTAABMBox alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 194: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil ? nil
+                                 : [[FLTAABNBox alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 195: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil ? nil
+                                 : [[FLTAABOBox alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 196: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil ? nil
+                                 : [[FLTAABPBox alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 197: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil ? nil
+                                 : [[FLTAABQBox alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 198: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil ? nil
+                                 : [[FLTAABRBox alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 199: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil ? nil
+                                 : [[FLTAABSBox alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 200: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil ? nil
+                                 : [[FLTAABTBox alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 201: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil ? nil
+                                 : [[FLTAABUBox alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 202: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil ? nil
+                                 : [[FLTAABVBox alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 203: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil ? nil
+                                 : [[FLTAABWBox alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 204: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil ? nil
+                                 : [[FLTAABXBox alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 205: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil ? nil
+                                 : [[FLTAABYBox alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 206: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil ? nil
+                                 : [[FLTAABZBox alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 207: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil ? nil
+                                 : [[FLTAACABox alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 208: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil ? nil
+                                 : [[FLTAACBBox alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 209: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil ? nil
+                                 : [[FLTAACCBox alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 210: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil ? nil
+                                 : [[FLTAACDBox alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 211: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil ? nil
+                                 : [[FLTAACEBox alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 212: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil ? nil
+                                 : [[FLTAACFBox alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 213: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil ? nil
+                                 : [[FLTAACGBox alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 214: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil ? nil
+                                 : [[FLTAACHBox alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 215: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil ? nil
+                                 : [[FLTAACIBox alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 216: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil ? nil
+                                 : [[FLTAACJBox alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 217: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil ? nil
+                                 : [[FLTAACKBox alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 218: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil ? nil
+                                 : [[FLTAACLBox alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 219: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil ? nil
+                                 : [[FLTAACMBox alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 220: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil ? nil
+                                 : [[FLTAACNBox alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 221: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil ? nil
+                                 : [[FLTAACOBox alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 222: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil ? nil
+                                 : [[FLTAACPBox alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 223: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil ? nil
+                                 : [[FLTAACQBox alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 224: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil ? nil
+                                 : [[FLTAACRBox alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 225: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil ? nil
+                                 : [[FLTAACSBox alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 226: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil ? nil
+                                 : [[FLTAACTBox alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 227: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil ? nil
+                                 : [[FLTAACUBox alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 228: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil ? nil
+                                 : [[FLTAACVBox alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 229: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil ? nil
+                                 : [[FLTAACWBox alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 230: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil ? nil
+                                 : [[FLTAACXBox alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 231: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil ? nil
+                                 : [[FLTAACYBox alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 232: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil ? nil
+                                 : [[FLTAACZBox alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 233: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil ? nil
+                                 : [[FLTAADABox alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 234: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil ? nil
+                                 : [[FLTAADBBox alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 235: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil ? nil
+                                 : [[FLTAADCBox alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 236: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil ? nil
+                                 : [[FLTAADDBox alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 237: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil ? nil
+                                 : [[FLTAADEBox alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 238: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil ? nil
+                                 : [[FLTAADFBox alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 239: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil ? nil
+                                 : [[FLTAADGBox alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 240: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil ? nil
+                                 : [[FLTAADHBox alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 241: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil ? nil
+                                 : [[FLTAADIBox alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 242: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil ? nil
+                                 : [[FLTAADJBox alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 243: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil ? nil
+                                 : [[FLTAADKBox alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 244: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil ? nil
+                                 : [[FLTAADLBox alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 245: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil ? nil
+                                 : [[FLTAADMBox alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 246: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil ? nil
+                                 : [[FLTAADNBox alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 247: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil ? nil
+                                 : [[FLTAADOBox alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 248: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil ? nil
+                                 : [[FLTAADPBox alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 249: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil ? nil
+                                 : [[FLTAADQBox alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 250: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil ? nil
+                                 : [[FLTAADRBox alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 251: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil ? nil
+                                 : [[FLTAADSBox alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 252: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil ? nil
+                                 : [[FLTAADTBox alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 253: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil ? nil
+                                 : [[FLTAADUBox alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 254: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil ? nil
+                                 : [[FLTAADVBox alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 255:
+      return [FLT__pigeon_CodecOverflow fromList:[self readValue]];
     default:
       return [super readValueOfType:type];
   }
@@ -453,25 +2426,570 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 @end
 @implementation FLTCoreTestsPigeonCodecWriter
 - (void)writeValue:(id)value {
-  if ([value isKindOfClass:[FLTAllTypes class]]) {
+  if ([value isKindOfClass:[FLTAAABox class]]) {
+    FLTAAABox *box = (FLTAAABox *)value;
     [self writeByte:129];
-    [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FLTAllNullableTypes class]]) {
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTAABBox class]]) {
+    FLTAABBox *box = (FLTAABBox *)value;
     [self writeByte:130];
-    [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FLTAllNullableTypesWithoutRecursion class]]) {
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTAACBox class]]) {
+    FLTAACBox *box = (FLTAACBox *)value;
     [self writeByte:131];
-    [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FLTAllClassesWrapper class]]) {
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTAADBox class]]) {
+    FLTAADBox *box = (FLTAADBox *)value;
     [self writeByte:132];
-    [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FLTTestMessage class]]) {
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTAAEBox class]]) {
+    FLTAAEBox *box = (FLTAAEBox *)value;
     [self writeByte:133];
-    [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FLTAnEnumBox class]]) {
-    FLTAnEnumBox *box = (FLTAnEnumBox *)value;
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTAAFBox class]]) {
+    FLTAAFBox *box = (FLTAAFBox *)value;
     [self writeByte:134];
     [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTAAGBox class]]) {
+    FLTAAGBox *box = (FLTAAGBox *)value;
+    [self writeByte:135];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTAAHBox class]]) {
+    FLTAAHBox *box = (FLTAAHBox *)value;
+    [self writeByte:136];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTAAIBox class]]) {
+    FLTAAIBox *box = (FLTAAIBox *)value;
+    [self writeByte:137];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTAAJBox class]]) {
+    FLTAAJBox *box = (FLTAAJBox *)value;
+    [self writeByte:138];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTAAKBox class]]) {
+    FLTAAKBox *box = (FLTAAKBox *)value;
+    [self writeByte:139];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTAALBox class]]) {
+    FLTAALBox *box = (FLTAALBox *)value;
+    [self writeByte:140];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTAAMBox class]]) {
+    FLTAAMBox *box = (FLTAAMBox *)value;
+    [self writeByte:141];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTAANBox class]]) {
+    FLTAANBox *box = (FLTAANBox *)value;
+    [self writeByte:142];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTAAOBox class]]) {
+    FLTAAOBox *box = (FLTAAOBox *)value;
+    [self writeByte:143];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTAAPBox class]]) {
+    FLTAAPBox *box = (FLTAAPBox *)value;
+    [self writeByte:144];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTAAQBox class]]) {
+    FLTAAQBox *box = (FLTAAQBox *)value;
+    [self writeByte:145];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTAARBox class]]) {
+    FLTAARBox *box = (FLTAARBox *)value;
+    [self writeByte:146];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTAASBox class]]) {
+    FLTAASBox *box = (FLTAASBox *)value;
+    [self writeByte:147];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTAATBox class]]) {
+    FLTAATBox *box = (FLTAATBox *)value;
+    [self writeByte:148];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTAAUBox class]]) {
+    FLTAAUBox *box = (FLTAAUBox *)value;
+    [self writeByte:149];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTAAVBox class]]) {
+    FLTAAVBox *box = (FLTAAVBox *)value;
+    [self writeByte:150];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTAAWBox class]]) {
+    FLTAAWBox *box = (FLTAAWBox *)value;
+    [self writeByte:151];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTAAXBox class]]) {
+    FLTAAXBox *box = (FLTAAXBox *)value;
+    [self writeByte:152];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTAAYBox class]]) {
+    FLTAAYBox *box = (FLTAAYBox *)value;
+    [self writeByte:153];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTAAZBox class]]) {
+    FLTAAZBox *box = (FLTAAZBox *)value;
+    [self writeByte:154];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTAAAABox class]]) {
+    FLTAAAABox *box = (FLTAAAABox *)value;
+    [self writeByte:155];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTAAABBox class]]) {
+    FLTAAABBox *box = (FLTAAABBox *)value;
+    [self writeByte:156];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTAAACBox class]]) {
+    FLTAAACBox *box = (FLTAAACBox *)value;
+    [self writeByte:157];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTAAADBox class]]) {
+    FLTAAADBox *box = (FLTAAADBox *)value;
+    [self writeByte:158];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTAAAEBox class]]) {
+    FLTAAAEBox *box = (FLTAAAEBox *)value;
+    [self writeByte:159];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTAAAFBox class]]) {
+    FLTAAAFBox *box = (FLTAAAFBox *)value;
+    [self writeByte:160];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTAAAGBox class]]) {
+    FLTAAAGBox *box = (FLTAAAGBox *)value;
+    [self writeByte:161];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTAAAHBox class]]) {
+    FLTAAAHBox *box = (FLTAAAHBox *)value;
+    [self writeByte:162];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTAAAIBox class]]) {
+    FLTAAAIBox *box = (FLTAAAIBox *)value;
+    [self writeByte:163];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTAAAJBox class]]) {
+    FLTAAAJBox *box = (FLTAAAJBox *)value;
+    [self writeByte:164];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTAAAKBox class]]) {
+    FLTAAAKBox *box = (FLTAAAKBox *)value;
+    [self writeByte:165];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTAAALBox class]]) {
+    FLTAAALBox *box = (FLTAAALBox *)value;
+    [self writeByte:166];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTAAAMBox class]]) {
+    FLTAAAMBox *box = (FLTAAAMBox *)value;
+    [self writeByte:167];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTAAANBox class]]) {
+    FLTAAANBox *box = (FLTAAANBox *)value;
+    [self writeByte:168];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTAAAOBox class]]) {
+    FLTAAAOBox *box = (FLTAAAOBox *)value;
+    [self writeByte:169];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTAAAPBox class]]) {
+    FLTAAAPBox *box = (FLTAAAPBox *)value;
+    [self writeByte:170];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTAAAQBox class]]) {
+    FLTAAAQBox *box = (FLTAAAQBox *)value;
+    [self writeByte:171];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTAAARBox class]]) {
+    FLTAAARBox *box = (FLTAAARBox *)value;
+    [self writeByte:172];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTAAASBox class]]) {
+    FLTAAASBox *box = (FLTAAASBox *)value;
+    [self writeByte:173];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTAAATBox class]]) {
+    FLTAAATBox *box = (FLTAAATBox *)value;
+    [self writeByte:174];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTAAAUBox class]]) {
+    FLTAAAUBox *box = (FLTAAAUBox *)value;
+    [self writeByte:175];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTAAAVBox class]]) {
+    FLTAAAVBox *box = (FLTAAAVBox *)value;
+    [self writeByte:176];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTAAAWBox class]]) {
+    FLTAAAWBox *box = (FLTAAAWBox *)value;
+    [self writeByte:177];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTAAAXBox class]]) {
+    FLTAAAXBox *box = (FLTAAAXBox *)value;
+    [self writeByte:178];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTAAAYBox class]]) {
+    FLTAAAYBox *box = (FLTAAAYBox *)value;
+    [self writeByte:179];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTAAAZBox class]]) {
+    FLTAAAZBox *box = (FLTAAAZBox *)value;
+    [self writeByte:180];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTAABABox class]]) {
+    FLTAABABox *box = (FLTAABABox *)value;
+    [self writeByte:181];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTAABBBox class]]) {
+    FLTAABBBox *box = (FLTAABBBox *)value;
+    [self writeByte:182];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTAABCBox class]]) {
+    FLTAABCBox *box = (FLTAABCBox *)value;
+    [self writeByte:183];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTAABDBox class]]) {
+    FLTAABDBox *box = (FLTAABDBox *)value;
+    [self writeByte:184];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTAABEBox class]]) {
+    FLTAABEBox *box = (FLTAABEBox *)value;
+    [self writeByte:185];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTAABFBox class]]) {
+    FLTAABFBox *box = (FLTAABFBox *)value;
+    [self writeByte:186];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTAABGBox class]]) {
+    FLTAABGBox *box = (FLTAABGBox *)value;
+    [self writeByte:187];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTAABHBox class]]) {
+    FLTAABHBox *box = (FLTAABHBox *)value;
+    [self writeByte:188];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTAABIBox class]]) {
+    FLTAABIBox *box = (FLTAABIBox *)value;
+    [self writeByte:189];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTAABJBox class]]) {
+    FLTAABJBox *box = (FLTAABJBox *)value;
+    [self writeByte:190];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTAABKBox class]]) {
+    FLTAABKBox *box = (FLTAABKBox *)value;
+    [self writeByte:191];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTAABLBox class]]) {
+    FLTAABLBox *box = (FLTAABLBox *)value;
+    [self writeByte:192];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTAABMBox class]]) {
+    FLTAABMBox *box = (FLTAABMBox *)value;
+    [self writeByte:193];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTAABNBox class]]) {
+    FLTAABNBox *box = (FLTAABNBox *)value;
+    [self writeByte:194];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTAABOBox class]]) {
+    FLTAABOBox *box = (FLTAABOBox *)value;
+    [self writeByte:195];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTAABPBox class]]) {
+    FLTAABPBox *box = (FLTAABPBox *)value;
+    [self writeByte:196];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTAABQBox class]]) {
+    FLTAABQBox *box = (FLTAABQBox *)value;
+    [self writeByte:197];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTAABRBox class]]) {
+    FLTAABRBox *box = (FLTAABRBox *)value;
+    [self writeByte:198];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTAABSBox class]]) {
+    FLTAABSBox *box = (FLTAABSBox *)value;
+    [self writeByte:199];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTAABTBox class]]) {
+    FLTAABTBox *box = (FLTAABTBox *)value;
+    [self writeByte:200];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTAABUBox class]]) {
+    FLTAABUBox *box = (FLTAABUBox *)value;
+    [self writeByte:201];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTAABVBox class]]) {
+    FLTAABVBox *box = (FLTAABVBox *)value;
+    [self writeByte:202];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTAABWBox class]]) {
+    FLTAABWBox *box = (FLTAABWBox *)value;
+    [self writeByte:203];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTAABXBox class]]) {
+    FLTAABXBox *box = (FLTAABXBox *)value;
+    [self writeByte:204];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTAABYBox class]]) {
+    FLTAABYBox *box = (FLTAABYBox *)value;
+    [self writeByte:205];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTAABZBox class]]) {
+    FLTAABZBox *box = (FLTAABZBox *)value;
+    [self writeByte:206];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTAACABox class]]) {
+    FLTAACABox *box = (FLTAACABox *)value;
+    [self writeByte:207];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTAACBBox class]]) {
+    FLTAACBBox *box = (FLTAACBBox *)value;
+    [self writeByte:208];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTAACCBox class]]) {
+    FLTAACCBox *box = (FLTAACCBox *)value;
+    [self writeByte:209];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTAACDBox class]]) {
+    FLTAACDBox *box = (FLTAACDBox *)value;
+    [self writeByte:210];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTAACEBox class]]) {
+    FLTAACEBox *box = (FLTAACEBox *)value;
+    [self writeByte:211];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTAACFBox class]]) {
+    FLTAACFBox *box = (FLTAACFBox *)value;
+    [self writeByte:212];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTAACGBox class]]) {
+    FLTAACGBox *box = (FLTAACGBox *)value;
+    [self writeByte:213];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTAACHBox class]]) {
+    FLTAACHBox *box = (FLTAACHBox *)value;
+    [self writeByte:214];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTAACIBox class]]) {
+    FLTAACIBox *box = (FLTAACIBox *)value;
+    [self writeByte:215];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTAACJBox class]]) {
+    FLTAACJBox *box = (FLTAACJBox *)value;
+    [self writeByte:216];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTAACKBox class]]) {
+    FLTAACKBox *box = (FLTAACKBox *)value;
+    [self writeByte:217];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTAACLBox class]]) {
+    FLTAACLBox *box = (FLTAACLBox *)value;
+    [self writeByte:218];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTAACMBox class]]) {
+    FLTAACMBox *box = (FLTAACMBox *)value;
+    [self writeByte:219];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTAACNBox class]]) {
+    FLTAACNBox *box = (FLTAACNBox *)value;
+    [self writeByte:220];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTAACOBox class]]) {
+    FLTAACOBox *box = (FLTAACOBox *)value;
+    [self writeByte:221];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTAACPBox class]]) {
+    FLTAACPBox *box = (FLTAACPBox *)value;
+    [self writeByte:222];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTAACQBox class]]) {
+    FLTAACQBox *box = (FLTAACQBox *)value;
+    [self writeByte:223];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTAACRBox class]]) {
+    FLTAACRBox *box = (FLTAACRBox *)value;
+    [self writeByte:224];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTAACSBox class]]) {
+    FLTAACSBox *box = (FLTAACSBox *)value;
+    [self writeByte:225];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTAACTBox class]]) {
+    FLTAACTBox *box = (FLTAACTBox *)value;
+    [self writeByte:226];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTAACUBox class]]) {
+    FLTAACUBox *box = (FLTAACUBox *)value;
+    [self writeByte:227];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTAACVBox class]]) {
+    FLTAACVBox *box = (FLTAACVBox *)value;
+    [self writeByte:228];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTAACWBox class]]) {
+    FLTAACWBox *box = (FLTAACWBox *)value;
+    [self writeByte:229];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTAACXBox class]]) {
+    FLTAACXBox *box = (FLTAACXBox *)value;
+    [self writeByte:230];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTAACYBox class]]) {
+    FLTAACYBox *box = (FLTAACYBox *)value;
+    [self writeByte:231];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTAACZBox class]]) {
+    FLTAACZBox *box = (FLTAACZBox *)value;
+    [self writeByte:232];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTAADABox class]]) {
+    FLTAADABox *box = (FLTAADABox *)value;
+    [self writeByte:233];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTAADBBox class]]) {
+    FLTAADBBox *box = (FLTAADBBox *)value;
+    [self writeByte:234];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTAADCBox class]]) {
+    FLTAADCBox *box = (FLTAADCBox *)value;
+    [self writeByte:235];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTAADDBox class]]) {
+    FLTAADDBox *box = (FLTAADDBox *)value;
+    [self writeByte:236];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTAADEBox class]]) {
+    FLTAADEBox *box = (FLTAADEBox *)value;
+    [self writeByte:237];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTAADFBox class]]) {
+    FLTAADFBox *box = (FLTAADFBox *)value;
+    [self writeByte:238];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTAADGBox class]]) {
+    FLTAADGBox *box = (FLTAADGBox *)value;
+    [self writeByte:239];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTAADHBox class]]) {
+    FLTAADHBox *box = (FLTAADHBox *)value;
+    [self writeByte:240];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTAADIBox class]]) {
+    FLTAADIBox *box = (FLTAADIBox *)value;
+    [self writeByte:241];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTAADJBox class]]) {
+    FLTAADJBox *box = (FLTAADJBox *)value;
+    [self writeByte:242];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTAADKBox class]]) {
+    FLTAADKBox *box = (FLTAADKBox *)value;
+    [self writeByte:243];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTAADLBox class]]) {
+    FLTAADLBox *box = (FLTAADLBox *)value;
+    [self writeByte:244];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTAADMBox class]]) {
+    FLTAADMBox *box = (FLTAADMBox *)value;
+    [self writeByte:245];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTAADNBox class]]) {
+    FLTAADNBox *box = (FLTAADNBox *)value;
+    [self writeByte:246];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTAADOBox class]]) {
+    FLTAADOBox *box = (FLTAADOBox *)value;
+    [self writeByte:247];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTAADPBox class]]) {
+    FLTAADPBox *box = (FLTAADPBox *)value;
+    [self writeByte:248];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTAADQBox class]]) {
+    FLTAADQBox *box = (FLTAADQBox *)value;
+    [self writeByte:249];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTAADRBox class]]) {
+    FLTAADRBox *box = (FLTAADRBox *)value;
+    [self writeByte:250];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTAADSBox class]]) {
+    FLTAADSBox *box = (FLTAADSBox *)value;
+    [self writeByte:251];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTAADTBox class]]) {
+    FLTAADTBox *box = (FLTAADTBox *)value;
+    [self writeByte:252];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTAADUBox class]]) {
+    FLTAADUBox *box = (FLTAADUBox *)value;
+    [self writeByte:253];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTAADVBox class]]) {
+    FLTAADVBox *box = (FLTAADVBox *)value;
+    [self writeByte:254];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+  } else if ([value isKindOfClass:[FLTAADWBox class]]) {
+    FLTAADWBox *box = (FLTAADWBox *)value;
+    FLT__pigeon_CodecOverflow *wrap = [FLT__pigeon_CodecOverflow
+        makeWithType:0
+             wrapped:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+    [self writeByte:255];
+    [self writeValue:[wrap toList]];
+  } else if ([value isKindOfClass:[FLTAADXBox class]]) {
+    FLTAADXBox *box = (FLTAADXBox *)value;
+    FLT__pigeon_CodecOverflow *wrap = [FLT__pigeon_CodecOverflow
+        makeWithType:1
+             wrapped:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+    [self writeByte:255];
+    [self writeValue:[wrap toList]];
+  } else if ([value isKindOfClass:[FLTAADYBox class]]) {
+    FLTAADYBox *box = (FLTAADYBox *)value;
+    FLT__pigeon_CodecOverflow *wrap = [FLT__pigeon_CodecOverflow
+        makeWithType:2
+             wrapped:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+    [self writeByte:255];
+    [self writeValue:[wrap toList]];
+  } else if ([value isKindOfClass:[FLTAADZBox class]]) {
+    FLTAADZBox *box = (FLTAADZBox *)value;
+    FLT__pigeon_CodecOverflow *wrap = [FLT__pigeon_CodecOverflow
+        makeWithType:3
+             wrapped:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+    [self writeByte:255];
+    [self writeValue:[wrap toList]];
+  } else if ([value isKindOfClass:[FLTAnEnumBox class]]) {
+    FLTAnEnumBox *box = (FLTAnEnumBox *)value;
+    FLT__pigeon_CodecOverflow *wrap = [FLT__pigeon_CodecOverflow
+        makeWithType:4
+             wrapped:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
+    [self writeByte:255];
+    [self writeValue:[wrap toList]];
+  } else if ([value isKindOfClass:[FLTAllTypes class]]) {
+    FLT__pigeon_CodecOverflow *wrap = [FLT__pigeon_CodecOverflow makeWithType:5
+                                                                      wrapped:[value toList]];
+    [self writeByte:255];
+    [self writeValue:[wrap toList]];
+  } else if ([value isKindOfClass:[FLTAllNullableTypes class]]) {
+    FLT__pigeon_CodecOverflow *wrap = [FLT__pigeon_CodecOverflow makeWithType:6
+                                                                      wrapped:[value toList]];
+    [self writeByte:255];
+    [self writeValue:[wrap toList]];
+  } else if ([value isKindOfClass:[FLTAllNullableTypesWithoutRecursion class]]) {
+    FLT__pigeon_CodecOverflow *wrap = [FLT__pigeon_CodecOverflow makeWithType:7
+                                                                      wrapped:[value toList]];
+    [self writeByte:255];
+    [self writeValue:[wrap toList]];
+  } else if ([value isKindOfClass:[FLTAllClassesWrapper class]]) {
+    FLT__pigeon_CodecOverflow *wrap = [FLT__pigeon_CodecOverflow makeWithType:8
+                                                                      wrapped:[value toList]];
+    [self writeByte:255];
+    [self writeValue:[wrap toList]];
+  } else if ([value isKindOfClass:[FLTTestMessage class]]) {
+    FLT__pigeon_CodecOverflow *wrap = [FLT__pigeon_CodecOverflow makeWithType:9
+                                                                      wrapped:[value toList]];
+    [self writeByte:255];
+    [self writeValue:[wrap toList]];
   } else {
     [super writeValue:value];
   }

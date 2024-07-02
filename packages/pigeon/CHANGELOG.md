@@ -1,3 +1,9 @@
+## 20.1.0
+
+* Removes restriction on number of custom types.
+* [java] Fixes bug with multiple enums.
+* [java] Removes `Object` from generics.
+
 ## 20.0.2
 
 * [java] Adds `equals` and `hashCode` support for data classes.
