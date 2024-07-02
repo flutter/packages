@@ -7,7 +7,7 @@ import 'package:flutter/cupertino.dart';
 import 'platform_interface/platform_ad_display_container.dart';
 import 'platform_interface/platform_interface.dart';
 
-/// Handles playing ads after they've been received from the server.
+/// A [Widget] for displaying loaded ads.
 ///
 /// ## Platform-Specific Features
 /// This class contains an underlying implementation provided by the current

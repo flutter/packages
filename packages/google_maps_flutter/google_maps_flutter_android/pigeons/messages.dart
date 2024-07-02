@@ -11,6 +11,91 @@ import 'package:pigeon/pigeon.dart';
   copyrightHeader: 'pigeons/copyright.txt',
 ))
 
+// Pigeon equivalent of the Java MapsInitializer.Renderer.
+enum PlatformRendererType { legacy, latest }
+
+/// Pigeon representation of a CameraUpdate.
+class PlatformCameraUpdate {
+  PlatformCameraUpdate(this.json);
+
+  /// The update data, as JSON. This should only be set from
+  /// CameraUpdate.toJson, and the native code must intepret it according to the
+  /// internal implementation details of the CameraUpdate class.
+  // TODO(stuartmorgan): Update the google_maps_platform_interface CameraUpdate
+  //  class to provide a structured representation of an update. Currently it
+  //  uses JSON as its only state, so there is no way to preserve structure.
+  //  This wrapper class exists as a placeholder for now to at least provide
+  //  type safety in the top-level call's arguments.
+  final Object json;
+}
+
+/// Pigeon equivalent of the Circle class.
+class PlatformCircle {
+  PlatformCircle(this.json);
+
+  /// The circle data, as JSON. This should only be set from
+  /// Circle.toJson, and the native code must intepret it according to the
+  /// internal implementation details of that method.
+  // TODO(stuartmorgan): Replace this with structured data. This exists only to
+  //  allow incremental migration to Pigeon.
+  final Object json;
+}
+
+/// Pigeon equivalent of the ClusterManager class.
+class PlatformClusterManager {
+  PlatformClusterManager({required this.identifier});
+
+  final String identifier;
+}
+
+/// Pigeon equivalent of the Marker class.
+class PlatformMarker {
+  PlatformMarker(this.json);
+
+  /// The marker data, as JSON. This should only be set from
+  /// Marker.toJson, and the native code must intepret it according to the
+  /// internal implementation details of that method.
+  // TODO(stuartmorgan): Replace this with structured data. This exists only to
+  //  allow incremental migration to Pigeon.
+  final Object json;
+}
+
+/// Pigeon equivalent of the Polygon class.
+class PlatformPolygon {
+  PlatformPolygon(this.json);
+
+  /// The polygon data, as JSON. This should only be set from
+  /// Polygon.toJson, and the native code must intepret it according to the
+  /// internal implementation details of that method.
+  // TODO(stuartmorgan): Replace this with structured data. This exists only to
+  //  allow incremental migration to Pigeon.
+  final Object json;
+}
+
+/// Pigeon equivalent of the Polyline class.
+class PlatformPolyline {
+  PlatformPolyline(this.json);
+
+  /// The polyline data, as JSON. This should only be set from
+  /// Polyline.toJson, and the native code must intepret it according to the
+  /// internal implementation details of that method.
+  // TODO(stuartmorgan): Replace this with structured data. This exists only to
+  //  allow incremental migration to Pigeon.
+  final Object json;
+}
+
+/// Pigeon equivalent of the TileOverlay class.
+class PlatformTileOverlay {
+  PlatformTileOverlay(this.json);
+
+  /// The tile overlay data, as JSON. This should only be set from
+  /// TileOverlay.toJson, and the native code must intepret it according to the
+  /// internal implementation details of that method.
+  // TODO(stuartmorgan): Replace this with structured data. This exists only to
+  //  allow incremental migration to Pigeon.
+  final Object json;
+}
+
 /// Pigeon equivalent of LatLng.
 class PlatformLatLng {
   PlatformLatLng({required this.latitude, required this.longitude});
@@ -43,6 +128,18 @@ class PlatformCluster {
   // https://github.com/flutter/flutter/issues/97848
   // The consuming code treats the entries as non-nullable.
   final List<String?> markerIds;
+}
+
+/// Pigeon equivalent of MapConfiguration.
+class PlatformMapConfiguration {
+  PlatformMapConfiguration({required this.json});
+
+  /// The configuration options, as JSON. This should only be set from
+  /// _jsonForMapConfiguration, and the native code must intepret it according
+  /// to the internal implementation details of that method.
+  // TODO(stuartmorgan): Replace this with structured data. This exists only to
+  //  allow incremental migration to Pigeon.
+  final Object json;
 }
 
 /// Pigeon representation of an x,y coordinate.
@@ -85,6 +182,54 @@ abstract class MapsApi {
   @async
   void waitForMap();
 
+  /// Updates the map's configuration options.
+  ///
+  /// Only non-null configuration values will result in updates; options with
+  /// null values will remain unchanged.
+  void updateMapConfiguration(PlatformMapConfiguration configuration);
+
+  /// Updates the set of circles on the map.
+  // TODO(stuartmorgan): Make the generic type non-nullable once supported.
+  // https://github.com/flutter/flutter/issues/97848
+  // The consuming code treats the entries as non-nullable.
+  void updateCircles(List<PlatformCircle?> toAdd,
+      List<PlatformCircle?> toChange, List<String?> idsToRemove);
+
+  /// Updates the set of custer managers for clusters on the map.
+  // TODO(stuartmorgan): Make the generic type non-nullable once supported.
+  // https://github.com/flutter/flutter/issues/97848
+  // The consuming code treats the entries as non-nullable.
+  void updateClusterManagers(
+      List<PlatformClusterManager?> toAdd, List<String?> idsToRemove);
+
+  /// Updates the set of markers on the map.
+  // TODO(stuartmorgan): Make the generic type non-nullable once supported.
+  // https://github.com/flutter/flutter/issues/97848
+  // The consuming code treats the entries as non-nullable.
+  void updateMarkers(List<PlatformMarker?> toAdd,
+      List<PlatformMarker?> toChange, List<String?> idsToRemove);
+
+  /// Updates the set of polygonss on the map.
+  // TODO(stuartmorgan): Make the generic type non-nullable once supported.
+  // https://github.com/flutter/flutter/issues/97848
+  // The consuming code treats the entries as non-nullable.
+  void updatePolygons(List<PlatformPolygon?> toAdd,
+      List<PlatformPolygon?> toChange, List<String?> idsToRemove);
+
+  /// Updates the set of polylines on the map.
+  // TODO(stuartmorgan): Make the generic type non-nullable once supported.
+  // https://github.com/flutter/flutter/issues/97848
+  // The consuming code treats the entries as non-nullable.
+  void updatePolylines(List<PlatformPolyline?> toAdd,
+      List<PlatformPolyline?> toChange, List<String?> idsToRemove);
+
+  /// Updates the set of tile overlays on the map.
+  // TODO(stuartmorgan): Make the generic type non-nullable once supported.
+  // https://github.com/flutter/flutter/issues/97848
+  // The consuming code treats the entries as non-nullable.
+  void updateTileOverlays(List<PlatformTileOverlay?> toAdd,
+      List<PlatformTileOverlay?> toChange, List<String?> idsToRemove);
+
   /// Gets the screen coordinate for the given map location.
   PlatformPoint getScreenCoordinate(PlatformLatLng latLng);
 
@@ -93,6 +238,13 @@ abstract class MapsApi {
 
   /// Gets the map region currently displayed on the map.
   PlatformLatLngBounds getVisibleRegion();
+
+  /// Moves the camera according to [cameraUpdate] immediately, with no
+  /// animation.
+  void moveCamera(PlatformCameraUpdate cameraUpdate);
+
+  /// Moves the camera according to [cameraUpdate], animating the update.
+  void animateCamera(PlatformCameraUpdate cameraUpdate);
 
   /// Gets the current map zoom level.
   double getZoomLevel();
@@ -127,6 +279,20 @@ abstract class MapsApi {
   /// Takes a snapshot of the map and returns its image data.
   @async
   Uint8List takeSnapshot();
+}
+
+/// Interface for global SDK initialization.
+@HostApi()
+abstract class MapsInitializerApi {
+  /// Initializes the Google Maps SDK with the given renderer preference.
+  ///
+  /// A null renderer preference will result in the default renderer.
+  ///
+  /// Calling this more than once in the lifetime of an application will result
+  /// in an error.
+  @async
+  PlatformRendererType initializeWithPreferredRenderer(
+      PlatformRendererType? type);
 }
 
 /// Inspector API only intended for use in integration tests.
