@@ -1,3 +1,7 @@
+## 0.0.2+2
+
+* Bumps com.google.ads.interactivemedia.v3:interactivemedia from 3.33.0 to 3.34.0.
+
 ## 0.0.2+1
 
 * Updates `README` with a usage section and fix app-facing interface documentation.
