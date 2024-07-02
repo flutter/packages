@@ -12,7 +12,7 @@ build(BuildContext context) {
 }
 ```
 
-This is shorthand for calling `GoRouter.of(context).go('/users/123)`.
+This is shorthand for calling `GoRouter.of(context).go('/users/123')`.
 
 To build a URI with query parameters, you can use the `Uri` class from the Dart standard library:
 
