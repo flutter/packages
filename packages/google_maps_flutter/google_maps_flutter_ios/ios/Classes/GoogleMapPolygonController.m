@@ -14,9 +14,9 @@
 
 @implementation FLTGoogleMapPolygonController
 
-- (instancetype)initPolygonWithPath:(GMSMutablePath *)path
-                         identifier:(NSString *)identifier
-                            mapView:(GMSMapView *)mapView {
+- (instancetype)initWithPath:(GMSMutablePath *)path
+                  identifier:(NSString *)identifier
+                     mapView:(GMSMapView *)mapView {
   self = [super init];
   if (self) {
     _polygon = [GMSPolygon polygonWithPath:path];
@@ -119,7 +119,7 @@
 @interface FLTPolygonsController ()
 
 @property(strong, nonatomic) NSMutableDictionary *polygonIdentifierToController;
-@property(strong, nonatomic) FlutterMethodChannel *methodChannel;
+@property(strong, nonatomic) FGMMapsCallbackApi *callbackHandler;
 @property(weak, nonatomic) NSObject<FlutterPluginRegistrar> *registrar;
 @property(weak, nonatomic) GMSMapView *mapView;
 
@@ -127,12 +127,12 @@
 
 @implementation FLTPolygonsController
 
-- (instancetype)init:(FlutterMethodChannel *)methodChannel
-             mapView:(GMSMapView *)mapView
-           registrar:(NSObject<FlutterPluginRegistrar> *)registrar {
+- (instancetype)initWithMapView:(GMSMapView *)mapView
+                callbackHandler:(FGMMapsCallbackApi *)callbackHandler
+                      registrar:(NSObject<FlutterPluginRegistrar> *)registrar {
   self = [super init];
   if (self) {
-    _methodChannel = methodChannel;
+    _callbackHandler = callbackHandler;
     _mapView = mapView;
     _polygonIdentifierToController = [NSMutableDictionary dictionaryWithCapacity:1];
     _registrar = registrar;
@@ -145,9 +145,9 @@
     GMSMutablePath *path = [FLTPolygonsController getPath:polygon];
     NSString *identifier = polygon[@"polygonId"];
     FLTGoogleMapPolygonController *controller =
-        [[FLTGoogleMapPolygonController alloc] initPolygonWithPath:path
-                                                        identifier:identifier
-                                                           mapView:self.mapView];
+        [[FLTGoogleMapPolygonController alloc] initWithPath:path
+                                                 identifier:identifier
+                                                    mapView:self.mapView];
     [controller interpretPolygonOptions:polygon registrar:self.registrar];
     self.polygonIdentifierToController[identifier] = controller;
   }
@@ -158,9 +158,9 @@
     GMSMutablePath *path = [FLTPolygonsController getPath:polygon.json];
     NSString *identifier = polygon.json[@"polygonId"];
     FLTGoogleMapPolygonController *controller =
-        [[FLTGoogleMapPolygonController alloc] initPolygonWithPath:path
-                                                        identifier:identifier
-                                                           mapView:self.mapView];
+        [[FLTGoogleMapPolygonController alloc] initWithPath:path
+                                                 identifier:identifier
+                                                    mapView:self.mapView];
     [controller interpretPolygonOptions:polygon.json registrar:self.registrar];
     self.polygonIdentifierToController[identifier] = controller;
   }
@@ -193,7 +193,9 @@
   if (!controller) {
     return;
   }
-  [self.methodChannel invokeMethod:@"polygon#onTap" arguments:@{@"polygonId" : identifier}];
+  [self.callbackHandler didTapPolygonWithIdentifier:identifier
+                                         completion:^(FlutterError *_Nullable _){
+                                         }];
 }
 
 - (bool)hasPolygonWithIdentifier:(NSString *)identifier {

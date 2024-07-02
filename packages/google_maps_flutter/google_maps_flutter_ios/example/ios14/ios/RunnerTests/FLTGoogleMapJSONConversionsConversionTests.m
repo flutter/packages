@@ -99,18 +99,18 @@
 }
 
 - (void)testDictionaryFromPosition {
-  id mockPosition = OCMClassMock([GMSCameraPosition class]);
-  NSValue *locationValue = [NSValue valueWithMKCoordinate:CLLocationCoordinate2DMake(1, 2)];
-  [(GMSCameraPosition *)[[mockPosition stub] andReturnValue:locationValue] target];
-  [[[mockPosition stub] andReturnValue:@(2.0)] zoom];
-  [[[mockPosition stub] andReturnValue:@(3.0)] bearing];
-  [[[mockPosition stub] andReturnValue:@(75.0)] viewingAngle];
-  NSDictionary *dictionary = [FLTGoogleMapJSONConversions dictionaryFromPosition:mockPosition];
-  NSArray *targetArray = @[ @1, @2 ];
-  XCTAssertEqualObjects(dictionary[@"target"], targetArray);
-  XCTAssertEqualObjects(dictionary[@"zoom"], @2.0);
-  XCTAssertEqualObjects(dictionary[@"bearing"], @3.0);
-  XCTAssertEqualObjects(dictionary[@"tilt"], @75.0);
+  GMSCameraPosition *position =
+      [[GMSCameraPosition alloc] initWithTarget:CLLocationCoordinate2DMake(1, 2)
+                                           zoom:2.0
+                                        bearing:3.0
+                                   viewingAngle:75.0];
+  FGMPlatformCameraPosition *pigeonPosition = FGMGetPigeonCameraPositionForPosition(position);
+  XCTAssertEqualWithAccuracy(pigeonPosition.target.latitude, position.target.latitude, DBL_EPSILON);
+  XCTAssertEqualWithAccuracy(pigeonPosition.target.longitude, position.target.longitude,
+                             DBL_EPSILON);
+  XCTAssertEqualWithAccuracy(pigeonPosition.zoom, position.zoom, DBL_EPSILON);
+  XCTAssertEqualWithAccuracy(pigeonPosition.bearing, position.bearing, DBL_EPSILON);
+  XCTAssertEqualWithAccuracy(pigeonPosition.tilt, position.viewingAngle, DBL_EPSILON);
 }
 
 - (void)testPigeonPointForGCPoint {

@@ -19,6 +19,7 @@ NS_ASSUME_NONNULL_BEGIN
 @class FGMPlatformMarker;
 @class FGMPlatformPolygon;
 @class FGMPlatformPolyline;
+@class FGMPlatformTile;
 @class FGMPlatformTileOverlay;
 @class FGMPlatformLatLng;
 @class FGMPlatformLatLngBounds;
@@ -94,6 +95,18 @@ NS_ASSUME_NONNULL_BEGIN
 /// Polyline.toJson, and the native code must intepret it according to the
 /// internal implementation details of that method.
 @property(nonatomic, strong) id json;
+@end
+
+/// Pigeon equivalent of the Tile class.
+@interface FGMPlatformTile : NSObject
+/// `init` unavailable to enforce nonnull fields, see the `make` class method.
+- (instancetype)init NS_UNAVAILABLE;
++ (instancetype)makeWithWidth:(NSInteger)width
+                       height:(NSInteger)height
+                         data:(nullable FlutterStandardTypedData *)data;
+@property(nonatomic, assign) NSInteger width;
+@property(nonatomic, assign) NSInteger height;
+@property(nonatomic, strong, nullable) FlutterStandardTypedData *data;
 @end
 
 /// Pigeon equivalent of the TileOverlay class.
@@ -280,51 +293,51 @@ extern void SetUpFGMMapsApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger
 - (instancetype)initWithBinaryMessenger:(id<FlutterBinaryMessenger>)binaryMessenger
                    messageChannelSuffix:(nullable NSString *)messageChannelSuffix;
 /// Called when the map camera starts moving.
-- (void)onCameraMoveStartedWithCompletion:(void (^)(FlutterError *_Nullable))completion;
+- (void)didStartCameraMoveWithCompletion:(void (^)(FlutterError *_Nullable))completion;
 /// Called when the map camera moves.
-- (void)onCameraMoveCameraPosition:(FGMPlatformCameraPosition *)cameraPosition
-                        completion:(void (^)(FlutterError *_Nullable))completion;
+- (void)didMoveCameraToPosition:(FGMPlatformCameraPosition *)cameraPosition
+                     completion:(void (^)(FlutterError *_Nullable))completion;
 /// Called when the map camera stops moving.
-- (void)onCameraIdleWithCompletion:(void (^)(FlutterError *_Nullable))completion;
+- (void)didIdleCameraWithCompletion:(void (^)(FlutterError *_Nullable))completion;
 /// Called when the map, not a specifc map object, is tapped.
-- (void)onTapPosition:(FGMPlatformLatLng *)position
-           completion:(void (^)(FlutterError *_Nullable))completion;
+- (void)didTapAtPosition:(FGMPlatformLatLng *)position
+              completion:(void (^)(FlutterError *_Nullable))completion;
 /// Called when the map, not a specifc map object, is long pressed.
-- (void)onLongPressPosition:(FGMPlatformLatLng *)position
-                 completion:(void (^)(FlutterError *_Nullable))completion;
+- (void)didLongPressAtPosition:(FGMPlatformLatLng *)position
+                    completion:(void (^)(FlutterError *_Nullable))completion;
 /// Called when a marker is tapped.
-- (void)onMarkerTapMarkerId:(NSString *)markerId
-                 completion:(void (^)(FlutterError *_Nullable))completion;
+- (void)didTapMarkerWithIdentifier:(NSString *)markerId
+                        completion:(void (^)(FlutterError *_Nullable))completion;
 /// Called when a marker drag starts.
-- (void)onMarkerDragStartMarkerId:(NSString *)markerId
-                         position:(FGMPlatformLatLng *)position
-                       completion:(void (^)(FlutterError *_Nullable))completion;
+- (void)didStartDragForMarkerWithIdentifier:(NSString *)markerId
+                                 atPosition:(FGMPlatformLatLng *)position
+                                 completion:(void (^)(FlutterError *_Nullable))completion;
 /// Called when a marker drag updates.
-- (void)onMarkerDragMarkerId:(NSString *)markerId
-                    position:(FGMPlatformLatLng *)position
-                  completion:(void (^)(FlutterError *_Nullable))completion;
+- (void)didDragMarkerWithIdentifier:(NSString *)markerId
+                         atPosition:(FGMPlatformLatLng *)position
+                         completion:(void (^)(FlutterError *_Nullable))completion;
 /// Called when a marker drag ends.
-- (void)onMarkerDragEndMarkerId:(NSString *)markerId
-                       position:(FGMPlatformLatLng *)position
-                     completion:(void (^)(FlutterError *_Nullable))completion;
+- (void)didEndDragForMarkerWithIdentifier:(NSString *)markerId
+                               atPosition:(FGMPlatformLatLng *)position
+                               completion:(void (^)(FlutterError *_Nullable))completion;
 /// Called when a marker's info window is tapped.
-- (void)onInfoWindowTapMarkerId:(NSString *)markerId
-                     completion:(void (^)(FlutterError *_Nullable))completion;
+- (void)didTapInfoWindowOfMarkerWithIdentifier:(NSString *)markerId
+                                    completion:(void (^)(FlutterError *_Nullable))completion;
 /// Called when a circle is tapped.
-- (void)onCircleTapCircleId:(NSString *)circleId
-                 completion:(void (^)(FlutterError *_Nullable))completion;
+- (void)didTapCircleWithIdentifier:(NSString *)circleId
+                        completion:(void (^)(FlutterError *_Nullable))completion;
 /// Called when a polygon is tapped.
-- (void)onPolygonTapPolygonId:(NSString *)polygonId
-                   completion:(void (^)(FlutterError *_Nullable))completion;
+- (void)didTapPolygonWithIdentifier:(NSString *)polygonId
+                         completion:(void (^)(FlutterError *_Nullable))completion;
 /// Called when a polyline is tapped.
-- (void)onPolylineTapPolylineId:(NSString *)polylineId
-                     completion:(void (^)(FlutterError *_Nullable))completion;
+- (void)didTapPolylineWithIdentifier:(NSString *)polylineId
+                          completion:(void (^)(FlutterError *_Nullable))completion;
 /// Called to get data for a map tile.
-- (void)getTileOverlayTileTileOverlayId:(NSString *)tileOverlayId
-                               location:(FGMPlatformPoint *)location
-                                   zoom:(NSInteger)zoom
-                             completion:(void (^)(FGMPlatformTileOverlay *_Nullable,
-                                                  FlutterError *_Nullable))completion;
+- (void)tileWithOverlayIdentifier:(NSString *)tileOverlayId
+                         location:(FGMPlatformPoint *)location
+                             zoom:(NSInteger)zoom
+                       completion:(void (^)(FGMPlatformTile *_Nullable,
+                                            FlutterError *_Nullable))completion;
 @end
 
 /// Inspector API only intended for use in integration tests.

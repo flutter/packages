@@ -191,6 +191,38 @@ class PlatformPolyline {
   }
 }
 
+/// Pigeon equivalent of the Tile class.
+class PlatformTile {
+  PlatformTile({
+    required this.width,
+    required this.height,
+    this.data,
+  });
+
+  int width;
+
+  int height;
+
+  Uint8List? data;
+
+  Object encode() {
+    return <Object?>[
+      width,
+      height,
+      data,
+    ];
+  }
+
+  static PlatformTile decode(Object result) {
+    result as List<Object?>;
+    return PlatformTile(
+      width: result[0]! as int,
+      height: result[1]! as int,
+      data: result[2] as Uint8List?,
+    );
+  }
+}
+
 /// Pigeon equivalent of the TileOverlay class.
 class PlatformTileOverlay {
   PlatformTileOverlay({
@@ -408,26 +440,29 @@ class _PigeonCodec extends StandardMessageCodec {
     } else if (value is PlatformPolyline) {
       buffer.putUint8(134);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformTileOverlay) {
+    } else if (value is PlatformTile) {
       buffer.putUint8(135);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformLatLng) {
+    } else if (value is PlatformTileOverlay) {
       buffer.putUint8(136);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformLatLngBounds) {
+    } else if (value is PlatformLatLng) {
       buffer.putUint8(137);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformMapConfiguration) {
+    } else if (value is PlatformLatLngBounds) {
       buffer.putUint8(138);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformPoint) {
+    } else if (value is PlatformMapConfiguration) {
       buffer.putUint8(139);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformTileLayer) {
+    } else if (value is PlatformPoint) {
       buffer.putUint8(140);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformZoomRange) {
+    } else if (value is PlatformTileLayer) {
       buffer.putUint8(141);
+      writeValue(buffer, value.encode());
+    } else if (value is PlatformZoomRange) {
+      buffer.putUint8(142);
       writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
@@ -450,18 +485,20 @@ class _PigeonCodec extends StandardMessageCodec {
       case 134:
         return PlatformPolyline.decode(readValue(buffer)!);
       case 135:
-        return PlatformTileOverlay.decode(readValue(buffer)!);
+        return PlatformTile.decode(readValue(buffer)!);
       case 136:
-        return PlatformLatLng.decode(readValue(buffer)!);
+        return PlatformTileOverlay.decode(readValue(buffer)!);
       case 137:
-        return PlatformLatLngBounds.decode(readValue(buffer)!);
+        return PlatformLatLng.decode(readValue(buffer)!);
       case 138:
-        return PlatformMapConfiguration.decode(readValue(buffer)!);
+        return PlatformLatLngBounds.decode(readValue(buffer)!);
       case 139:
-        return PlatformPoint.decode(readValue(buffer)!);
+        return PlatformMapConfiguration.decode(readValue(buffer)!);
       case 140:
-        return PlatformTileLayer.decode(readValue(buffer)!);
+        return PlatformPoint.decode(readValue(buffer)!);
       case 141:
+        return PlatformTileLayer.decode(readValue(buffer)!);
+      case 142:
         return PlatformZoomRange.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
@@ -1075,7 +1112,7 @@ abstract class MapsCallbackApi {
   void onPolylineTap(String polylineId);
 
   /// Called to get data for a map tile.
-  Future<PlatformTileOverlay> getTileOverlayTile(
+  Future<PlatformTile> getTileOverlayTile(
       String tileOverlayId, PlatformPoint location, int zoom);
 
   static void setUp(
@@ -1470,7 +1507,7 @@ abstract class MapsCallbackApi {
           assert(arg_zoom != null,
               'Argument for dev.flutter.pigeon.google_maps_flutter_ios.MapsCallbackApi.getTileOverlayTile was null, expected non-null int.');
           try {
-            final PlatformTileOverlay output = await api.getTileOverlayTile(
+            final PlatformTile output = await api.getTileOverlayTile(
                 arg_tileOverlayId!, arg_location!, arg_zoom!);
             return wrapResponse(result: output);
           } on PlatformException catch (e) {

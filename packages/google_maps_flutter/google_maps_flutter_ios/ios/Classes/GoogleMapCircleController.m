@@ -105,7 +105,7 @@
 
 @interface FLTCirclesController ()
 
-@property(strong, nonatomic) FlutterMethodChannel *methodChannel;
+@property(strong, nonatomic) FGMMapsCallbackApi *callbackHandler;
 @property(weak, nonatomic) GMSMapView *mapView;
 @property(strong, nonatomic) NSMutableDictionary *circleIdToController;
 
@@ -113,12 +113,12 @@
 
 @implementation FLTCirclesController
 
-- (instancetype)init:(FlutterMethodChannel *)methodChannel
-             mapView:(GMSMapView *)mapView
-           registrar:(NSObject<FlutterPluginRegistrar> *)registrar {
+- (instancetype)initWithMapView:(GMSMapView *)mapView
+                callbackHandler:(FGMMapsCallbackApi *)callbackHandler
+                      registrar:(NSObject<FlutterPluginRegistrar> *)registrar {
   self = [super init];
   if (self) {
-    _methodChannel = methodChannel;
+    _callbackHandler = callbackHandler;
     _mapView = mapView;
     _circleIdToController = [NSMutableDictionary dictionaryWithCapacity:1];
   }
@@ -189,7 +189,9 @@
   if (!controller) {
     return;
   }
-  [self.methodChannel invokeMethod:@"circle#onTap" arguments:@{@"circleId" : identifier}];
+  [self.callbackHandler didTapCircleWithIdentifier:identifier
+                                        completion:^(FlutterError *_Nullable _){
+                                        }];
 }
 
 + (CLLocationCoordinate2D)getPosition:(NSDictionary *)circle {

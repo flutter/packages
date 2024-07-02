@@ -590,7 +590,7 @@ class HostMapMessageHandler implements MapsCallbackApi {
   final TileOverlay? Function(TileOverlayId tileOverlayId) tileOverlayProvider;
 
   @override
-  Future<PlatformTileOverlay> getTileOverlayTile(
+  Future<PlatformTile> getTileOverlayTile(
     String tileOverlayId,
     PlatformPoint location,
     int zoom,
@@ -602,7 +602,7 @@ class HostMapMessageHandler implements MapsCallbackApi {
         ? TileProvider.noTile
         : await tileProvider.getTile(
             location.x.round(), location.y.round(), zoom);
-    return PlatformTileOverlay(json: tile.toJson());
+    return _platformTileFromTile(tile);
   }
 
   @override
@@ -693,6 +693,10 @@ LatLngBounds _latLngBoundsFromPlatformLatLngBounds(
   return LatLngBounds(
       southwest: _latLngFromPlatformLatLng(bounds.southwest),
       northeast: _latLngFromPlatformLatLng(bounds.northeast));
+}
+
+PlatformTile _platformTileFromTile(Tile tile) {
+  return PlatformTile(width: tile.width, height: tile.height, data: tile.data);
 }
 
 Map<String, Object> _jsonForMapConfiguration(MapConfiguration config) {

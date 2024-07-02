@@ -75,6 +75,12 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 - (NSArray<id> *)toList;
 @end
 
+@interface FGMPlatformTile ()
++ (FGMPlatformTile *)fromList:(NSArray<id> *)list;
++ (nullable FGMPlatformTile *)nullableFromList:(NSArray<id> *)list;
+- (NSArray<id> *)toList;
+@end
+
 @interface FGMPlatformTileOverlay ()
 + (FGMPlatformTileOverlay *)fromList:(NSArray<id> *)list;
 + (nullable FGMPlatformTileOverlay *)nullableFromList:(NSArray<id> *)list;
@@ -251,6 +257,35 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 - (NSArray<id> *)toList {
   return @[
     self.json ?: [NSNull null],
+  ];
+}
+@end
+
+@implementation FGMPlatformTile
++ (instancetype)makeWithWidth:(NSInteger)width
+                       height:(NSInteger)height
+                         data:(nullable FlutterStandardTypedData *)data {
+  FGMPlatformTile *pigeonResult = [[FGMPlatformTile alloc] init];
+  pigeonResult.width = width;
+  pigeonResult.height = height;
+  pigeonResult.data = data;
+  return pigeonResult;
+}
++ (FGMPlatformTile *)fromList:(NSArray<id> *)list {
+  FGMPlatformTile *pigeonResult = [[FGMPlatformTile alloc] init];
+  pigeonResult.width = [GetNullableObjectAtIndex(list, 0) integerValue];
+  pigeonResult.height = [GetNullableObjectAtIndex(list, 1) integerValue];
+  pigeonResult.data = GetNullableObjectAtIndex(list, 2);
+  return pigeonResult;
+}
++ (nullable FGMPlatformTile *)nullableFromList:(NSArray<id> *)list {
+  return (list) ? [FGMPlatformTile fromList:list] : nil;
+}
+- (NSArray<id> *)toList {
+  return @[
+    @(self.width),
+    @(self.height),
+    self.data ?: [NSNull null],
   ];
 }
 @end
@@ -445,18 +480,20 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
     case 134:
       return [FGMPlatformPolyline fromList:[self readValue]];
     case 135:
-      return [FGMPlatformTileOverlay fromList:[self readValue]];
+      return [FGMPlatformTile fromList:[self readValue]];
     case 136:
-      return [FGMPlatformLatLng fromList:[self readValue]];
+      return [FGMPlatformTileOverlay fromList:[self readValue]];
     case 137:
-      return [FGMPlatformLatLngBounds fromList:[self readValue]];
+      return [FGMPlatformLatLng fromList:[self readValue]];
     case 138:
-      return [FGMPlatformMapConfiguration fromList:[self readValue]];
+      return [FGMPlatformLatLngBounds fromList:[self readValue]];
     case 139:
-      return [FGMPlatformPoint fromList:[self readValue]];
+      return [FGMPlatformMapConfiguration fromList:[self readValue]];
     case 140:
-      return [FGMPlatformTileLayer fromList:[self readValue]];
+      return [FGMPlatformPoint fromList:[self readValue]];
     case 141:
+      return [FGMPlatformTileLayer fromList:[self readValue]];
+    case 142:
       return [FGMPlatformZoomRange fromList:[self readValue]];
     default:
       return [super readValueOfType:type];
@@ -486,26 +523,29 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
   } else if ([value isKindOfClass:[FGMPlatformPolyline class]]) {
     [self writeByte:134];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FGMPlatformTileOverlay class]]) {
+  } else if ([value isKindOfClass:[FGMPlatformTile class]]) {
     [self writeByte:135];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FGMPlatformLatLng class]]) {
+  } else if ([value isKindOfClass:[FGMPlatformTileOverlay class]]) {
     [self writeByte:136];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FGMPlatformLatLngBounds class]]) {
+  } else if ([value isKindOfClass:[FGMPlatformLatLng class]]) {
     [self writeByte:137];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FGMPlatformMapConfiguration class]]) {
+  } else if ([value isKindOfClass:[FGMPlatformLatLngBounds class]]) {
     [self writeByte:138];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FGMPlatformPoint class]]) {
+  } else if ([value isKindOfClass:[FGMPlatformMapConfiguration class]]) {
     [self writeByte:139];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FGMPlatformTileLayer class]]) {
+  } else if ([value isKindOfClass:[FGMPlatformPoint class]]) {
     [self writeByte:140];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FGMPlatformZoomRange class]]) {
+  } else if ([value isKindOfClass:[FGMPlatformTileLayer class]]) {
     [self writeByte:141];
+    [self writeValue:[value toList]];
+  } else if ([value isKindOfClass:[FGMPlatformZoomRange class]]) {
+    [self writeByte:142];
     [self writeValue:[value toList]];
   } else {
     [super writeValue:value];
@@ -1093,7 +1133,7 @@ void SetUpFGMMapsApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger,
   }
   return self;
 }
-- (void)onCameraMoveStartedWithCompletion:(void (^)(FlutterError *_Nullable))completion {
+- (void)didStartCameraMoveWithCompletion:(void (^)(FlutterError *_Nullable))completion {
   NSString *channelName = [NSString
       stringWithFormat:
           @"%@%@",
@@ -1118,8 +1158,8 @@ void SetUpFGMMapsApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger,
                    }
                  }];
 }
-- (void)onCameraMoveCameraPosition:(FGMPlatformCameraPosition *)arg_cameraPosition
-                        completion:(void (^)(FlutterError *_Nullable))completion {
+- (void)didMoveCameraToPosition:(FGMPlatformCameraPosition *)arg_cameraPosition
+                     completion:(void (^)(FlutterError *_Nullable))completion {
   NSString *channelName = [NSString
       stringWithFormat:@"%@%@",
                        @"dev.flutter.pigeon.google_maps_flutter_ios.MapsCallbackApi.onCameraMove",
@@ -1143,7 +1183,7 @@ void SetUpFGMMapsApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger,
                    }
                  }];
 }
-- (void)onCameraIdleWithCompletion:(void (^)(FlutterError *_Nullable))completion {
+- (void)didIdleCameraWithCompletion:(void (^)(FlutterError *_Nullable))completion {
   NSString *channelName = [NSString
       stringWithFormat:@"%@%@",
                        @"dev.flutter.pigeon.google_maps_flutter_ios.MapsCallbackApi.onCameraIdle",
@@ -1167,8 +1207,8 @@ void SetUpFGMMapsApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger,
                    }
                  }];
 }
-- (void)onTapPosition:(FGMPlatformLatLng *)arg_position
-           completion:(void (^)(FlutterError *_Nullable))completion {
+- (void)didTapAtPosition:(FGMPlatformLatLng *)arg_position
+              completion:(void (^)(FlutterError *_Nullable))completion {
   NSString *channelName = [NSString
       stringWithFormat:@"%@%@", @"dev.flutter.pigeon.google_maps_flutter_ios.MapsCallbackApi.onTap",
                        _messageChannelSuffix];
@@ -1191,8 +1231,8 @@ void SetUpFGMMapsApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger,
                    }
                  }];
 }
-- (void)onLongPressPosition:(FGMPlatformLatLng *)arg_position
-                 completion:(void (^)(FlutterError *_Nullable))completion {
+- (void)didLongPressAtPosition:(FGMPlatformLatLng *)arg_position
+                    completion:(void (^)(FlutterError *_Nullable))completion {
   NSString *channelName = [NSString
       stringWithFormat:@"%@%@",
                        @"dev.flutter.pigeon.google_maps_flutter_ios.MapsCallbackApi.onLongPress",
@@ -1216,8 +1256,8 @@ void SetUpFGMMapsApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger,
                    }
                  }];
 }
-- (void)onMarkerTapMarkerId:(NSString *)arg_markerId
-                 completion:(void (^)(FlutterError *_Nullable))completion {
+- (void)didTapMarkerWithIdentifier:(NSString *)arg_markerId
+                        completion:(void (^)(FlutterError *_Nullable))completion {
   NSString *channelName = [NSString
       stringWithFormat:@"%@%@",
                        @"dev.flutter.pigeon.google_maps_flutter_ios.MapsCallbackApi.onMarkerTap",
@@ -1241,9 +1281,9 @@ void SetUpFGMMapsApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger,
                    }
                  }];
 }
-- (void)onMarkerDragStartMarkerId:(NSString *)arg_markerId
-                         position:(FGMPlatformLatLng *)arg_position
-                       completion:(void (^)(FlutterError *_Nullable))completion {
+- (void)didStartDragForMarkerWithIdentifier:(NSString *)arg_markerId
+                                 atPosition:(FGMPlatformLatLng *)arg_position
+                                 completion:(void (^)(FlutterError *_Nullable))completion {
   NSString *channelName = [NSString
       stringWithFormat:
           @"%@%@", @"dev.flutter.pigeon.google_maps_flutter_ios.MapsCallbackApi.onMarkerDragStart",
@@ -1267,9 +1307,9 @@ void SetUpFGMMapsApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger,
                    }
                  }];
 }
-- (void)onMarkerDragMarkerId:(NSString *)arg_markerId
-                    position:(FGMPlatformLatLng *)arg_position
-                  completion:(void (^)(FlutterError *_Nullable))completion {
+- (void)didDragMarkerWithIdentifier:(NSString *)arg_markerId
+                         atPosition:(FGMPlatformLatLng *)arg_position
+                         completion:(void (^)(FlutterError *_Nullable))completion {
   NSString *channelName = [NSString
       stringWithFormat:@"%@%@",
                        @"dev.flutter.pigeon.google_maps_flutter_ios.MapsCallbackApi.onMarkerDrag",
@@ -1293,9 +1333,9 @@ void SetUpFGMMapsApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger,
                    }
                  }];
 }
-- (void)onMarkerDragEndMarkerId:(NSString *)arg_markerId
-                       position:(FGMPlatformLatLng *)arg_position
-                     completion:(void (^)(FlutterError *_Nullable))completion {
+- (void)didEndDragForMarkerWithIdentifier:(NSString *)arg_markerId
+                               atPosition:(FGMPlatformLatLng *)arg_position
+                               completion:(void (^)(FlutterError *_Nullable))completion {
   NSString *channelName = [NSString
       stringWithFormat:
           @"%@%@", @"dev.flutter.pigeon.google_maps_flutter_ios.MapsCallbackApi.onMarkerDragEnd",
@@ -1319,8 +1359,8 @@ void SetUpFGMMapsApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger,
                    }
                  }];
 }
-- (void)onInfoWindowTapMarkerId:(NSString *)arg_markerId
-                     completion:(void (^)(FlutterError *_Nullable))completion {
+- (void)didTapInfoWindowOfMarkerWithIdentifier:(NSString *)arg_markerId
+                                    completion:(void (^)(FlutterError *_Nullable))completion {
   NSString *channelName = [NSString
       stringWithFormat:
           @"%@%@", @"dev.flutter.pigeon.google_maps_flutter_ios.MapsCallbackApi.onInfoWindowTap",
@@ -1344,8 +1384,8 @@ void SetUpFGMMapsApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger,
                    }
                  }];
 }
-- (void)onCircleTapCircleId:(NSString *)arg_circleId
-                 completion:(void (^)(FlutterError *_Nullable))completion {
+- (void)didTapCircleWithIdentifier:(NSString *)arg_circleId
+                        completion:(void (^)(FlutterError *_Nullable))completion {
   NSString *channelName = [NSString
       stringWithFormat:@"%@%@",
                        @"dev.flutter.pigeon.google_maps_flutter_ios.MapsCallbackApi.onCircleTap",
@@ -1369,8 +1409,8 @@ void SetUpFGMMapsApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger,
                    }
                  }];
 }
-- (void)onPolygonTapPolygonId:(NSString *)arg_polygonId
-                   completion:(void (^)(FlutterError *_Nullable))completion {
+- (void)didTapPolygonWithIdentifier:(NSString *)arg_polygonId
+                         completion:(void (^)(FlutterError *_Nullable))completion {
   NSString *channelName = [NSString
       stringWithFormat:@"%@%@",
                        @"dev.flutter.pigeon.google_maps_flutter_ios.MapsCallbackApi.onPolygonTap",
@@ -1394,8 +1434,8 @@ void SetUpFGMMapsApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger,
                    }
                  }];
 }
-- (void)onPolylineTapPolylineId:(NSString *)arg_polylineId
-                     completion:(void (^)(FlutterError *_Nullable))completion {
+- (void)didTapPolylineWithIdentifier:(NSString *)arg_polylineId
+                          completion:(void (^)(FlutterError *_Nullable))completion {
   NSString *channelName = [NSString
       stringWithFormat:@"%@%@",
                        @"dev.flutter.pigeon.google_maps_flutter_ios.MapsCallbackApi.onPolylineTap",
@@ -1419,11 +1459,11 @@ void SetUpFGMMapsApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger,
                    }
                  }];
 }
-- (void)getTileOverlayTileTileOverlayId:(NSString *)arg_tileOverlayId
-                               location:(FGMPlatformPoint *)arg_location
-                                   zoom:(NSInteger)arg_zoom
-                             completion:(void (^)(FGMPlatformTileOverlay *_Nullable,
-                                                  FlutterError *_Nullable))completion {
+- (void)tileWithOverlayIdentifier:(NSString *)arg_tileOverlayId
+                         location:(FGMPlatformPoint *)arg_location
+                             zoom:(NSInteger)arg_zoom
+                       completion:(void (^)(FGMPlatformTile *_Nullable,
+                                            FlutterError *_Nullable))completion {
   NSString *channelName = [NSString
       stringWithFormat:
           @"%@%@", @"dev.flutter.pigeon.google_maps_flutter_ios.MapsCallbackApi.getTileOverlayTile",
@@ -1442,7 +1482,7 @@ void SetUpFGMMapsApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger,
                                                            message:reply[1]
                                                            details:reply[2]]);
                      } else {
-                       FGMPlatformTileOverlay *output = reply[0] == [NSNull null] ? nil : reply[0];
+                       FGMPlatformTile *output = reply[0] == [NSNull null] ? nil : reply[0];
                        completion(output, nil);
                      }
                    } else {
