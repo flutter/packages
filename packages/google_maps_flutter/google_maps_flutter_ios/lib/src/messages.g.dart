@@ -18,11 +18,6 @@ PlatformException _createConnectionError(String channelName) {
   );
 }
 
-enum PlatformRendererType {
-  legacy,
-  latest,
-}
-
 /// Pigeon representation of a CameraUpdate.
 class PlatformCameraUpdate {
   PlatformCameraUpdate({
@@ -383,9 +378,6 @@ class _PigeonCodec extends StandardMessageCodec {
     } else if (value is PlatformZoomRange) {
       buffer.putUint8(140);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformRendererType) {
-      buffer.putUint8(141);
-      writeValue(buffer, value.index);
     } else {
       super.writeValue(buffer, value);
     }
@@ -418,9 +410,6 @@ class _PigeonCodec extends StandardMessageCodec {
         return PlatformTileLayer.decode(readValue(buffer)!);
       case 140:
         return PlatformZoomRange.decode(readValue(buffer)!);
-      case 141:
-        final int? value = readValue(buffer) as int?;
-        return value == null ? null : PlatformRendererType.values[value];
       default:
         return super.readValueOfType(type, buffer);
     }

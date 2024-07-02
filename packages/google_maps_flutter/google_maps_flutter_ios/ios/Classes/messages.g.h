@@ -13,17 +13,6 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-typedef NS_ENUM(NSUInteger, FGMPlatformRendererType) {
-  FGMPlatformRendererTypeLegacy = 0,
-  FGMPlatformRendererTypeLatest = 1,
-};
-
-/// Wrapper for FGMPlatformRendererType to allow for nullability.
-@interface FGMPlatformRendererTypeBox : NSObject
-@property(nonatomic, assign) FGMPlatformRendererType value;
-- (instancetype)initWithValue:(FGMPlatformRendererType)value;
-@end
-
 @class FGMPlatformCameraUpdate;
 @class FGMPlatformCircle;
 @class FGMPlatformMarker;

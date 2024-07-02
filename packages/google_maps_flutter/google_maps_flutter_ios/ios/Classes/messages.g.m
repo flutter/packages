@@ -30,16 +30,6 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
   return (result == [NSNull null]) ? nil : result;
 }
 
-@implementation FGMPlatformRendererTypeBox
-- (instancetype)initWithValue:(FGMPlatformRendererType)value {
-  self = [super init];
-  if (self) {
-    _value = value;
-  }
-  return self;
-}
-@end
-
 @interface FGMPlatformCameraUpdate ()
 + (FGMPlatformCameraUpdate *)fromList:(NSArray<id> *)list;
 + (nullable FGMPlatformCameraUpdate *)nullableFromList:(NSArray<id> *)list;
@@ -418,12 +408,6 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
       return [FGMPlatformTileLayer fromList:[self readValue]];
     case 140:
       return [FGMPlatformZoomRange fromList:[self readValue]];
-    case 141: {
-      NSNumber *enumAsNumber = [self readValue];
-      return enumAsNumber == nil
-                 ? nil
-                 : [[FGMPlatformRendererTypeBox alloc] initWithValue:[enumAsNumber integerValue]];
-    }
     default:
       return [super readValueOfType:type];
   }
@@ -470,10 +454,6 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
   } else if ([value isKindOfClass:[FGMPlatformZoomRange class]]) {
     [self writeByte:140];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FGMPlatformRendererTypeBox class]]) {
-    FGMPlatformRendererTypeBox *box = (FGMPlatformRendererTypeBox *)value;
-    [self writeByte:141];
-    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
   } else {
     [super writeValue:value];
   }

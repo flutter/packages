@@ -12,9 +12,6 @@ import 'package:pigeon/pigeon.dart';
   copyrightHeader: 'pigeons/copyright.txt',
 ))
 
-// Pigeon equivalent of the Java MapsInitializer.Renderer.
-enum PlatformRendererType { legacy, latest }
-
 /// Pigeon representation of a CameraUpdate.
 class PlatformCameraUpdate {
   PlatformCameraUpdate(this.json);
