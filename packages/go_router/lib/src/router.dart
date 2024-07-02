@@ -487,7 +487,12 @@ class GoRouter implements RouterConfig<RouteMatchList> {
       log('popping ${routerDelegate.currentConfiguration.uri}');
       return true;
     }());
+
     routerDelegate.pop<T>(result);
+    routeInformationProvider.popSave<T>(
+      routerDelegate.currentConfiguration.uri.toString(),
+      base: routerDelegate.currentConfiguration,
+    );
   }
 
   /// Refresh the route.
@@ -556,6 +561,7 @@ class GoRouter implements RouterConfig<RouteMatchList> {
 /// A routing config that is never going to change.
 class _ConstantRoutingConfig extends ValueListenable<RoutingConfig> {
   const _ConstantRoutingConfig(this.value);
+
   @override
   void addListener(VoidCallback listener) {
     // Intentionally empty because listener will never be called.
