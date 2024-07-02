@@ -7,16 +7,16 @@ import 'dart:async';
 import 'package:meta/meta.dart';
 
 import '../platform_interface/platform_interface.dart';
-import 'interactive_media_ads.g.dart' as ima;
+import 'interactive_media_ads.g.dart';
 import 'ios_ads_manager_delegate.dart';
 
 /// Implementation of [PlatformAdsManager] for iOS.
 class IOSAdsManager extends PlatformAdsManager {
   /// Constructs an [IOSAdsManager].
   @internal
-  IOSAdsManager(ima.IMAAdsManager manager) : _manager = manager;
+  IOSAdsManager(IMAAdsManager manager) : _manager = manager;
 
-  final ima.IMAAdsManager _manager;
+  final IMAAdsManager _manager;
 
   // This must maintain a reference to the delegate because the native
   // `IMAAdsManagerDelegate.delegate` property is only a weak reference.

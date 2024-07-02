@@ -8,7 +8,7 @@ import 'package:flutter/widgets.dart';
 
 import '../platform_interface/platform_interface.dart';
 import 'enum_converter_extensions.dart';
-import 'interactive_media_ads.g.dart' as ima;
+import 'interactive_media_ads.g.dart';
 import 'interactive_media_ads_proxy.dart';
 import 'ios_ad_display_container.dart';
 import 'ios_ads_manager.dart';
@@ -42,9 +42,9 @@ final class IOSAdsLoaderCreationParams extends PlatformAdsLoaderCreationParams {
 }
 
 /// Implementation of [PlatformAdsLoader] for iOS.
-base class IosAdsLoader extends PlatformAdsLoader {
-  /// Constructs an [IosAdsLoader].
-  IosAdsLoader(super.params)
+base class IOSAdsLoader extends PlatformAdsLoader {
+  /// Constructs an [IOSAdsLoader].
+  IOSAdsLoader(super.params)
       : assert(params.container is IOSAdDisplayContainer),
         assert(
           (params.container as IOSAdDisplayContainer).adDisplayContainer !=
@@ -56,9 +56,9 @@ base class IosAdsLoader extends PlatformAdsLoader {
     _adsLoader.setDelegate(_delegate);
   }
 
-  late final ima.IMAAdsLoader _adsLoader;
-  late final _AdsLoaderDelegate _delegate = _AdsLoaderDelegate(
-    WeakReference<IosAdsLoader>(this),
+  late final IMAAdsLoader _adsLoader;
+  late final IMAAdsLoaderDelegate _delegate = _createAdsLoaderDelegate(
+    WeakReference<IOSAdsLoader>(this),
   );
 
   late final IOSAdsLoaderCreationParams _iosParams = params
@@ -79,36 +79,40 @@ base class IosAdsLoader extends PlatformAdsLoader {
           (_iosParams.container as IOSAdDisplayContainer).adDisplayContainer!,
     ));
   }
-}
 
-class _AdsLoaderDelegate extends ima.IMAAdsLoaderDelegate {
-  _AdsLoaderDelegate(WeakReference<IosAdsLoader> interfaceLoader)
-      : super(
-          adLoaderLoadedWith: (
-            ima.IMAAdsLoaderDelegate instance,
-            ima.IMAAdsLoader loader,
-            ima.IMAAdsLoadedData adsLoadedData,
-          ) {
-            interfaceLoader.target?._iosParams.onAdsLoaded(
-              PlatformOnAdsLoadedData(
-                manager: IOSAdsManager(adsLoadedData.adsManager!),
-              ),
-            );
-          },
-          adsLoaderFailedWithErrorData: (
-            ima.IMAAdsLoaderDelegate instance,
-            ima.IMAAdsLoader loader,
-            ima.IMAAdLoadingErrorData adErrorData,
-          ) {
-            interfaceLoader.target?._iosParams.onAdsLoadError(
-              AdsLoadErrorData(
-                error: AdError(
-                  type: adErrorData.adError.type.asInterfaceErrorType(),
-                  code: adErrorData.adError.code.asInterfaceErrorCode(),
-                  message: adErrorData.adError.message,
-                ),
-              ),
-            );
-          },
+  // This value is created in a static method because the callback methods for
+  // any wrapped classes must not reference the encapsulating object. This is to
+  // prevent a circular reference that prevents garbage collection.
+  static IMAAdsLoaderDelegate _createAdsLoaderDelegate(
+    WeakReference<IOSAdsLoader> interfaceLoader,
+  ) {
+    return interfaceLoader.target?._iosParams._proxy.newIMAAdsLoaderDelegate(
+      adLoaderLoadedWith: (
+        IMAAdsLoaderDelegate instance,
+        IMAAdsLoader loader,
+        IMAAdsLoadedData adsLoadedData,
+      ) {
+        interfaceLoader.target?._iosParams.onAdsLoaded(
+          PlatformOnAdsLoadedData(
+            manager: IOSAdsManager(adsLoadedData.adsManager!),
+          ),
         );
+      },
+      adsLoaderFailedWithErrorData: (
+        IMAAdsLoaderDelegate instance,
+        IMAAdsLoader loader,
+        IMAAdLoadingErrorData adErrorData,
+      ) {
+        interfaceLoader.target?._iosParams.onAdsLoadError(
+          AdsLoadErrorData(
+            error: AdError(
+              type: adErrorData.adError.type.asInterfaceErrorType(),
+              code: adErrorData.adError.code.asInterfaceErrorCode(),
+              message: adErrorData.adError.message,
+            ),
+          ),
+        );
+      },
+    );
+  }
 }

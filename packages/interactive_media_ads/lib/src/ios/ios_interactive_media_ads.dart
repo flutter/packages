@@ -25,8 +25,8 @@ final class IOSInteractiveMediaAds extends InteractiveMediaAdsPlatform {
   }
 
   @override
-  IosAdsLoader createPlatformAdsLoader(PlatformAdsLoaderCreationParams params) {
-    return IosAdsLoader(params);
+  IOSAdsLoader createPlatformAdsLoader(PlatformAdsLoaderCreationParams params) {
+    return IOSAdsLoader(params);
   }
 
   @override
