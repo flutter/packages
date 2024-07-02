@@ -99,6 +99,15 @@ class PlatformPolyline {
   final Object json;
 }
 
+/// Pigeon equivalent of the Tile class.
+class PlatformTile {
+  PlatformTile({required this.width, required this.height, required this.data});
+
+  final int width;
+  final int height;
+  final Uint8List? data;
+}
+
 /// Pigeon equivalent of the TileOverlay class.
 class PlatformTileOverlay {
   PlatformTileOverlay(this.json);
@@ -342,7 +351,7 @@ abstract class MapsCallbackApi {
 
   /// Called to get data for a map tile.
   @async
-  PlatformTileOverlay getTileOverlayTile(
+  PlatformTile getTileOverlayTile(
       String tileOverlayId, PlatformPoint location, int zoom);
 }
 

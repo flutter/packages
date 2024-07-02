@@ -943,14 +943,8 @@ class Convert {
     }
   }
 
-  static Tile interpretTile(Map<String, ?> data) {
-    int width = toInt(data.get("width"));
-    int height = toInt(data.get("height"));
-    byte[] dataArray = null;
-    if (data.get("data") != null) {
-      dataArray = (byte[]) data.get("data");
-    }
-    return new Tile(width, height, dataArray);
+  static Tile tileFromPigeon(Messages.PlatformTile tile) {
+    return new Tile(tile.getWidth().intValue(), tile.getHeight().intValue(), tile.getData());
   }
 
   @VisibleForTesting

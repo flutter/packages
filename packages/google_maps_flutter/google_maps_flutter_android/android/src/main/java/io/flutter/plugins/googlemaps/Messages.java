@@ -681,6 +681,132 @@ public class Messages {
   }
 
   /**
+   * Pigeon equivalent of the Tile class.
+   *
+   * <p>Generated class from Pigeon that represents data sent in messages.
+   */
+  public static final class PlatformTile {
+    private @NonNull Long width;
+
+    public @NonNull Long getWidth() {
+      return width;
+    }
+
+    public void setWidth(@NonNull Long setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"width\" is null.");
+      }
+      this.width = setterArg;
+    }
+
+    private @NonNull Long height;
+
+    public @NonNull Long getHeight() {
+      return height;
+    }
+
+    public void setHeight(@NonNull Long setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"height\" is null.");
+      }
+      this.height = setterArg;
+    }
+
+    private @Nullable byte[] data;
+
+    public @Nullable byte[] getData() {
+      return data;
+    }
+
+    public void setData(@Nullable byte[] setterArg) {
+      this.data = setterArg;
+    }
+
+    /** Constructor is non-public to enforce null safety; use Builder. */
+    PlatformTile() {}
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
+      PlatformTile that = (PlatformTile) o;
+      return width.equals(that.width)
+          && height.equals(that.height)
+          && Arrays.equals(data, that.data);
+    }
+
+    @Override
+    public int hashCode() {
+      int __pigeon_result = Objects.hash(width, height);
+      __pigeon_result = 31 * __pigeon_result + Arrays.hashCode(data);
+      return __pigeon_result;
+    }
+
+    public static final class Builder {
+
+      private @Nullable Long width;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setWidth(@NonNull Long setterArg) {
+        this.width = setterArg;
+        return this;
+      }
+
+      private @Nullable Long height;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setHeight(@NonNull Long setterArg) {
+        this.height = setterArg;
+        return this;
+      }
+
+      private @Nullable byte[] data;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setData(@Nullable byte[] setterArg) {
+        this.data = setterArg;
+        return this;
+      }
+
+      public @NonNull PlatformTile build() {
+        PlatformTile pigeonReturn = new PlatformTile();
+        pigeonReturn.setWidth(width);
+        pigeonReturn.setHeight(height);
+        pigeonReturn.setData(data);
+        return pigeonReturn;
+      }
+    }
+
+    @NonNull
+    ArrayList<Object> toList() {
+      ArrayList<Object> toListResult = new ArrayList<Object>(3);
+      toListResult.add(width);
+      toListResult.add(height);
+      toListResult.add(data);
+      return toListResult;
+    }
+
+    static @NonNull PlatformTile fromList(@NonNull ArrayList<Object> __pigeon_list) {
+      PlatformTile pigeonResult = new PlatformTile();
+      Object width = __pigeon_list.get(0);
+      pigeonResult.setWidth(
+          (width == null) ? null : ((width instanceof Integer) ? (Integer) width : (Long) width));
+      Object height = __pigeon_list.get(1);
+      pigeonResult.setHeight(
+          (height == null)
+              ? null
+              : ((height instanceof Integer) ? (Integer) height : (Long) height));
+      Object data = __pigeon_list.get(2);
+      pigeonResult.setData((byte[]) data);
+      return pigeonResult;
+    }
+  }
+
+  /**
    * Pigeon equivalent of the TileOverlay class.
    *
    * <p>Generated class from Pigeon that represents data sent in messages.
@@ -1536,22 +1662,24 @@ public class Messages {
         case (byte) 135:
           return PlatformPolyline.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 136:
-          return PlatformTileOverlay.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformTile.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 137:
-          return PlatformLatLng.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformTileOverlay.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 138:
-          return PlatformLatLngBounds.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformLatLng.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 139:
-          return PlatformCluster.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformLatLngBounds.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 140:
-          return PlatformMapConfiguration.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformCluster.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 141:
-          return PlatformPoint.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformMapConfiguration.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 142:
-          return PlatformTileLayer.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformPoint.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 143:
-          return PlatformZoomRange.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformTileLayer.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 144:
+          return PlatformZoomRange.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 145:
           Object value = readValue(buffer);
           return value == null ? null : PlatformRendererType.values()[(int) value];
         default:
@@ -1582,32 +1710,35 @@ public class Messages {
       } else if (value instanceof PlatformPolyline) {
         stream.write(135);
         writeValue(stream, ((PlatformPolyline) value).toList());
-      } else if (value instanceof PlatformTileOverlay) {
+      } else if (value instanceof PlatformTile) {
         stream.write(136);
+        writeValue(stream, ((PlatformTile) value).toList());
+      } else if (value instanceof PlatformTileOverlay) {
+        stream.write(137);
         writeValue(stream, ((PlatformTileOverlay) value).toList());
       } else if (value instanceof PlatformLatLng) {
-        stream.write(137);
+        stream.write(138);
         writeValue(stream, ((PlatformLatLng) value).toList());
       } else if (value instanceof PlatformLatLngBounds) {
-        stream.write(138);
+        stream.write(139);
         writeValue(stream, ((PlatformLatLngBounds) value).toList());
       } else if (value instanceof PlatformCluster) {
-        stream.write(139);
+        stream.write(140);
         writeValue(stream, ((PlatformCluster) value).toList());
       } else if (value instanceof PlatformMapConfiguration) {
-        stream.write(140);
+        stream.write(141);
         writeValue(stream, ((PlatformMapConfiguration) value).toList());
       } else if (value instanceof PlatformPoint) {
-        stream.write(141);
+        stream.write(142);
         writeValue(stream, ((PlatformPoint) value).toList());
       } else if (value instanceof PlatformTileLayer) {
-        stream.write(142);
+        stream.write(143);
         writeValue(stream, ((PlatformTileLayer) value).toList());
       } else if (value instanceof PlatformZoomRange) {
-        stream.write(143);
+        stream.write(144);
         writeValue(stream, ((PlatformZoomRange) value).toList());
       } else if (value instanceof PlatformRendererType) {
-        stream.write(144);
+        stream.write(145);
         writeValue(stream, value == null ? null : ((PlatformRendererType) value).index);
       } else {
         super.writeValue(stream, value);
@@ -2703,7 +2834,7 @@ public class Messages {
         @NonNull String tileOverlayIdArg,
         @NonNull PlatformPoint locationArg,
         @NonNull Long zoomArg,
-        @NonNull Result<PlatformTileOverlay> result) {
+        @NonNull Result<PlatformTile> result) {
       final String channelName =
           "dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.getTileOverlayTile"
               + messageChannelSuffix;
@@ -2728,7 +2859,7 @@ public class Messages {
                         ""));
               } else {
                 @SuppressWarnings("ConstantConditions")
-                PlatformTileOverlay output = (PlatformTileOverlay) listReply.get(0);
+                PlatformTile output = (PlatformTile) listReply.get(0);
                 result.success(output);
               }
             } else {

@@ -13,7 +13,6 @@ import com.google.android.gms.maps.model.Tile;
 import com.google.android.gms.maps.model.TileProvider;
 import io.flutter.plugins.googlemaps.Messages.FlutterError;
 import io.flutter.plugins.googlemaps.Messages.MapsCallbackApi;
-import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 
 class TileProviderController implements TileProvider {
@@ -35,13 +34,13 @@ class TileProviderController implements TileProvider {
     return worker.getTile();
   }
 
-  private final class Worker implements Messages.Result<Messages.PlatformTileOverlay> {
+  private final class Worker implements Messages.Result<Messages.PlatformTile> {
 
     private final CountDownLatch countDownLatch = new CountDownLatch(1);
     private final int x;
     private final int y;
     private final int zoom;
-    private @Nullable Messages.PlatformTileOverlay result;
+    private @Nullable Messages.PlatformTile result;
 
     Worker(int x, int y, int zoom) {
       this.x = x;
@@ -72,9 +71,7 @@ class TileProviderController implements TileProvider {
                   "Did not receive tile data for tile: x = %d, y= %d, zoom = %d", x, y, zoom));
           return TileProvider.NO_TILE;
         }
-        @SuppressWarnings("unchecked")
-        final Map<String, ?> tileJson = (Map<String, ?>) result.getJson();
-        return Convert.interpretTile(tileJson);
+        return Convert.tileFromPigeon(result);
       } catch (Exception e) {
         Log.e(TAG, "Can't parse tile data", e);
         return TileProvider.NO_TILE;
@@ -82,7 +79,7 @@ class TileProviderController implements TileProvider {
     }
 
     @Override
-    public void success(@NonNull Messages.PlatformTileOverlay result) {
+    public void success(@NonNull Messages.PlatformTile result) {
       this.result = result;
       countDownLatch.countDown();
     }
