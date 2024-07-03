@@ -35,7 +35,9 @@ class CirclesController {
   void addJsonCircles(List<Object> circlesToAdd) {
     if (circlesToAdd != null) {
       for (Object circleToAdd : circlesToAdd) {
-        addJsonCircle(circleToAdd);
+        @SuppressWarnings("unchecked")
+        Map<String, ?> circleMap = (Map<String, ?>) circleToAdd;
+        addJsonCircle(circleMap);
       }
     }
   }
@@ -75,7 +77,7 @@ class CirclesController {
     return false;
   }
 
-  private void addJsonCircle(Object circle) {
+  private void addJsonCircle(Map<String, ?> circle) {
     if (circle == null) {
       return;
     }
@@ -92,7 +94,7 @@ class CirclesController {
     googleMapsCircleIdToDartCircleId.put(circle.getId(), circleId);
   }
 
-  private void changeJsonCircle(Object circle) {
+  private void changeJsonCircle(Map<String, ?> circle) {
     if (circle == null) {
       return;
     }
@@ -103,9 +105,7 @@ class CirclesController {
     }
   }
 
-  @SuppressWarnings("unchecked")
-  private static String getCircleId(Object circle) {
-    Map<String, Object> circleMap = (Map<String, Object>) circle;
-    return (String) circleMap.get("circleId");
+  private static String getCircleId(Map<String, ?> circle) {
+    return (String) circle.get("circleId");
   }
 }
