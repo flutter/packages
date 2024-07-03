@@ -3,6 +3,7 @@ description: Web platform implementation of google_maps_flutter
 repository: https://github.com/flutter/packages/tree/main/packages/google_maps_flutter/google_maps_flutter_web
 issue_tracker: https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+label%3A%22p%3A+maps%22
 version: 0.5.8
+publish_to: none
 
 environment:
   sdk: ^3.3.0
@@ -23,7 +24,7 @@ dependencies:
   flutter_web_plugins:
     sdk: flutter
   google_maps: ^7.1.0
-  google_maps_flutter_platform_interface: ^2.7.0
+  google_maps_flutter_platform_interface: ^2.9.0
   sanitize_html: ^2.0.0
   stream_transform: ^2.0.0
   web: ^0.5.1
@@ -40,3 +41,9 @@ topics:
 # The example deliberately includes limited-use secrets.
 false_secrets:
   - /example/web/index.html
+
+# FOR TESTING AND INITIAL REVIEW ONLY. DO NOT MERGE.
+# See https://github.com/flutter/flutter/wiki/Contributing-to-Plugins-and-Packages#changing-federated-plugins
+dependency_overrides:
+  google_maps_flutter_platform_interface:
+    path: ../google_maps_flutter_platform_interface
