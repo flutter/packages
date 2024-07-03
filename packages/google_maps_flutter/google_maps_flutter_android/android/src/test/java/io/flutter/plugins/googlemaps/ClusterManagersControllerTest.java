@@ -68,7 +68,7 @@ public class ClusterManagersControllerTest {
 
   @Test
   @SuppressWarnings("unchecked")
-  public void AddClusterManagersAndMarkers() throws InterruptedException {
+  public void AddJsonClusterManagersAndMarkers() throws InterruptedException {
     final String clusterManagerId = "cm_1";
     final String markerId1 = "mid_1";
     final String markerId2 = "mid_2";
@@ -89,6 +89,61 @@ public class ClusterManagersControllerTest {
     Map<String, Object> initialClusterManager = new HashMap<>();
     initialClusterManager.put("clusterManagerId", clusterManagerId);
     List<Object> clusterManagersToAdd = new ArrayList<>();
+    clusterManagersToAdd.add(initialClusterManager);
+    controller.addJsonClusterManagers(clusterManagersToAdd);
+
+    MarkerBuilder markerBuilder1 = new MarkerBuilder(markerId1, clusterManagerId);
+    MarkerBuilder markerBuilder2 = new MarkerBuilder(markerId2, clusterManagerId);
+
+    final Map<String, Object> markerData1 =
+        createMarkerData(markerId1, location1, clusterManagerId);
+    final Map<String, Object> markerData2 =
+        createMarkerData(markerId2, location2, clusterManagerId);
+
+    Convert.interpretMarkerOptions(markerData1, markerBuilder1, assetManager, density);
+    Convert.interpretMarkerOptions(markerData2, markerBuilder2, assetManager, density);
+
+    controller.addItem(markerBuilder1);
+    controller.addItem(markerBuilder2);
+
+    Set<? extends Cluster<MarkerBuilder>> clusters =
+        controller.getClustersWithClusterManagerId(clusterManagerId);
+    assertEquals("Amount of clusters should be 1", 1, clusters.size());
+
+    Cluster<MarkerBuilder> cluster = clusters.iterator().next();
+    assertNotNull("Cluster position should not be null", cluster.getPosition());
+    Set<String> markerIds = new HashSet<>();
+    for (MarkerBuilder marker : cluster.getItems()) {
+      markerIds.add(marker.markerId());
+    }
+    assertTrue("Marker IDs should contain markerId1", markerIds.contains(markerId1));
+    assertTrue("Marker IDs should contain markerId2", markerIds.contains(markerId2));
+    assertEquals("Cluster should contain exactly 2 markers", 2, cluster.getSize());
+  }
+
+  @Test
+  @SuppressWarnings("unchecked")
+  public void AddClusterManagersAndMarkers() throws InterruptedException {
+    final String clusterManagerId = "cm_1";
+    final String markerId1 = "mid_1";
+    final String markerId2 = "mid_2";
+
+    final LatLng latLng1 = new LatLng(1.1, 2.2);
+    final LatLng latLng2 = new LatLng(3.3, 4.4);
+
+    final List<Double> location1 = new ArrayList<>();
+    location1.add(latLng1.latitude);
+    location1.add(latLng1.longitude);
+
+    final List<Double> location2 = new ArrayList<>();
+    location2.add(latLng2.latitude);
+    location2.add(latLng2.longitude);
+
+    when(googleMap.getCameraPosition())
+        .thenReturn(CameraPosition.builder().target(new LatLng(0, 0)).build());
+    Messages.PlatformClusterManager initialClusterManager =
+        new Messages.PlatformClusterManager.Builder().setIdentifier(clusterManagerId).build();
+    List<Messages.PlatformClusterManager> clusterManagersToAdd = new ArrayList<>();
     clusterManagersToAdd.add(initialClusterManager);
     controller.addClusterManagers(clusterManagersToAdd);
 
@@ -150,9 +205,9 @@ public class ClusterManagersControllerTest {
 
     when(googleMap.getCameraPosition())
         .thenReturn(CameraPosition.builder().target(new LatLng(0, 0)).build());
-    Map<String, Object> initialClusterManager = new HashMap<>();
-    initialClusterManager.put("clusterManagerId", clusterManagerId);
-    List<Object> clusterManagersToAdd = new ArrayList<>();
+    Messages.PlatformClusterManager initialClusterManager =
+        new Messages.PlatformClusterManager.Builder().setIdentifier(clusterManagerId).build();
+    List<Messages.PlatformClusterManager> clusterManagersToAdd = new ArrayList<>();
     clusterManagersToAdd.add(initialClusterManager);
     controller.addClusterManagers(clusterManagersToAdd);
 

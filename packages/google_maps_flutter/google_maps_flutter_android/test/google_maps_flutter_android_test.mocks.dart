@@ -69,6 +69,130 @@ class MockMapsApi extends _i1.Mock implements _i2.MapsApi {
       ) as _i3.Future<void>);
 
   @override
+  _i3.Future<void> updateMapConfiguration(
+          _i2.PlatformMapConfiguration? configuration) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #updateMapConfiguration,
+          [configuration],
+        ),
+        returnValue: _i3.Future<void>.value(),
+        returnValueForMissingStub: _i3.Future<void>.value(),
+      ) as _i3.Future<void>);
+
+  @override
+  _i3.Future<void> updateCircles(
+    List<_i2.PlatformCircle?>? toAdd,
+    List<_i2.PlatformCircle?>? toChange,
+    List<String?>? idsToRemove,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #updateCircles,
+          [
+            toAdd,
+            toChange,
+            idsToRemove,
+          ],
+        ),
+        returnValue: _i3.Future<void>.value(),
+        returnValueForMissingStub: _i3.Future<void>.value(),
+      ) as _i3.Future<void>);
+
+  @override
+  _i3.Future<void> updateClusterManagers(
+    List<_i2.PlatformClusterManager?>? toAdd,
+    List<String?>? idsToRemove,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #updateClusterManagers,
+          [
+            toAdd,
+            idsToRemove,
+          ],
+        ),
+        returnValue: _i3.Future<void>.value(),
+        returnValueForMissingStub: _i3.Future<void>.value(),
+      ) as _i3.Future<void>);
+
+  @override
+  _i3.Future<void> updateMarkers(
+    List<_i2.PlatformMarker?>? toAdd,
+    List<_i2.PlatformMarker?>? toChange,
+    List<String?>? idsToRemove,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #updateMarkers,
+          [
+            toAdd,
+            toChange,
+            idsToRemove,
+          ],
+        ),
+        returnValue: _i3.Future<void>.value(),
+        returnValueForMissingStub: _i3.Future<void>.value(),
+      ) as _i3.Future<void>);
+
+  @override
+  _i3.Future<void> updatePolygons(
+    List<_i2.PlatformPolygon?>? toAdd,
+    List<_i2.PlatformPolygon?>? toChange,
+    List<String?>? idsToRemove,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #updatePolygons,
+          [
+            toAdd,
+            toChange,
+            idsToRemove,
+          ],
+        ),
+        returnValue: _i3.Future<void>.value(),
+        returnValueForMissingStub: _i3.Future<void>.value(),
+      ) as _i3.Future<void>);
+
+  @override
+  _i3.Future<void> updatePolylines(
+    List<_i2.PlatformPolyline?>? toAdd,
+    List<_i2.PlatformPolyline?>? toChange,
+    List<String?>? idsToRemove,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #updatePolylines,
+          [
+            toAdd,
+            toChange,
+            idsToRemove,
+          ],
+        ),
+        returnValue: _i3.Future<void>.value(),
+        returnValueForMissingStub: _i3.Future<void>.value(),
+      ) as _i3.Future<void>);
+
+  @override
+  _i3.Future<void> updateTileOverlays(
+    List<_i2.PlatformTileOverlay?>? toAdd,
+    List<_i2.PlatformTileOverlay?>? toChange,
+    List<String?>? idsToRemove,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #updateTileOverlays,
+          [
+            toAdd,
+            toChange,
+            idsToRemove,
+          ],
+        ),
+        returnValue: _i3.Future<void>.value(),
+        returnValueForMissingStub: _i3.Future<void>.value(),
+      ) as _i3.Future<void>);
+
+  @override
   _i3.Future<_i2.PlatformPoint> getScreenCoordinate(
           _i2.PlatformLatLng? latLng) =>
       (super.noSuchMethod(
@@ -142,6 +266,28 @@ class MockMapsApi extends _i1.Mock implements _i2.MapsApi {
           ),
         )),
       ) as _i3.Future<_i2.PlatformLatLngBounds>);
+
+  @override
+  _i3.Future<void> moveCamera(_i2.PlatformCameraUpdate? cameraUpdate) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #moveCamera,
+          [cameraUpdate],
+        ),
+        returnValue: _i3.Future<void>.value(),
+        returnValueForMissingStub: _i3.Future<void>.value(),
+      ) as _i3.Future<void>);
+
+  @override
+  _i3.Future<void> animateCamera(_i2.PlatformCameraUpdate? cameraUpdate) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #animateCamera,
+          [cameraUpdate],
+        ),
+        returnValue: _i3.Future<void>.value(),
+        returnValueForMissingStub: _i3.Future<void>.value(),
+      ) as _i3.Future<void>);
 
   @override
   _i3.Future<double> getZoomLevel() => (super.noSuchMethod(

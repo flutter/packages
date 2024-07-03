@@ -11,7 +11,7 @@ a separate video player positioned on top of the app's content video player.
 
 |             | Android | iOS   |
 |-------------|---------|-------|
-| **Support** | SDK 19+ | 12.0+ |
+| **Support** | SDK 21+ | 12.0+ |
 
 **This package is still in development.**
 

@@ -1,6 +1,10 @@
-## 2.8.1
+## 2.8.2
 
 - Fixes map objects (markers, polygons, polylines, circles, and tiles) being added with the wrong properties
+
+## 2.8.1
+
+- Improves Objective-C type handling.
 
 ## 2.8.0
 
