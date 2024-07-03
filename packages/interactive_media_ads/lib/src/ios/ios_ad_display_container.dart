@@ -47,7 +47,7 @@ base class IOSAdDisplayContainer extends PlatformAdDisplayContainer {
   // The `UIViewController` used to create the native `IMAAdDisplayContainer`.
   late final UIViewController _controller;
 
-  /// The native iOS AdDisplayContainer.
+  /// The native iOS IMAAdDisplayContainer.
   ///
   /// Created with the `UIView` that handles playing an ad.
   @internal
