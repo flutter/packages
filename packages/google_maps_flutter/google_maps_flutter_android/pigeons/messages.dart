@@ -53,7 +53,7 @@ class PlatformCircle {
   /// internal implementation details of that method.
   // TODO(stuartmorgan): Replace this with structured data. This exists only to
   //  allow incremental migration to Pigeon.
-  final Object json;
+  final Map<String?, Object?> json;
 }
 
 /// Pigeon equivalent of the ClusterManager class.
@@ -72,7 +72,7 @@ class PlatformMarker {
   /// internal implementation details of that method.
   // TODO(stuartmorgan): Replace this with structured data. This exists only to
   //  allow incremental migration to Pigeon.
-  final Object json;
+  final Map<String?, Object?> json;
 }
 
 /// Pigeon equivalent of the Polygon class.
@@ -84,7 +84,7 @@ class PlatformPolygon {
   /// internal implementation details of that method.
   // TODO(stuartmorgan): Replace this with structured data. This exists only to
   //  allow incremental migration to Pigeon.
-  final Object json;
+  final Map<String?, Object?> json;
 }
 
 /// Pigeon equivalent of the Polyline class.
@@ -96,7 +96,7 @@ class PlatformPolyline {
   /// internal implementation details of that method.
   // TODO(stuartmorgan): Replace this with structured data. This exists only to
   //  allow incremental migration to Pigeon.
-  final Object json;
+  final Map<String?, Object?> json;
 }
 
 /// Pigeon equivalent of the Tile class.
@@ -117,7 +117,7 @@ class PlatformTileOverlay {
   /// internal implementation details of that method.
   // TODO(stuartmorgan): Replace this with structured data. This exists only to
   //  allow incremental migration to Pigeon.
-  final Object json;
+  final Map<String?, Object?> json;
 }
 
 /// Pigeon equivalent of LatLng.
@@ -163,7 +163,7 @@ class PlatformMapConfiguration {
   /// to the internal implementation details of that method.
   // TODO(stuartmorgan): Replace this with structured data. This exists only to
   //  allow incremental migration to Pigeon.
-  final Object json;
+  final Map<String?, Object?> json;
 }
 
 /// Pigeon representation of an x,y coordinate.

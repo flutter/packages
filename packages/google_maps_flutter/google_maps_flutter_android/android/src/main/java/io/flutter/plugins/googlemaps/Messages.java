@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 /** Generated class from Pigeon. */
@@ -319,13 +320,13 @@ public class Messages {
      * The circle data, as JSON. This should only be set from Circle.toJson, and the native code
      * must intepret it according to the internal implementation details of that method.
      */
-    private @NonNull Object json;
+    private @NonNull Map<String, Object> json;
 
-    public @NonNull Object getJson() {
+    public @NonNull Map<String, Object> getJson() {
       return json;
     }
 
-    public void setJson(@NonNull Object setterArg) {
+    public void setJson(@NonNull Map<String, Object> setterArg) {
       if (setterArg == null) {
         throw new IllegalStateException("Nonnull field \"json\" is null.");
       }
@@ -354,10 +355,10 @@ public class Messages {
 
     public static final class Builder {
 
-      private @Nullable Object json;
+      private @Nullable Map<String, Object> json;
 
       @CanIgnoreReturnValue
-      public @NonNull Builder setJson(@NonNull Object setterArg) {
+      public @NonNull Builder setJson(@NonNull Map<String, Object> setterArg) {
         this.json = setterArg;
         return this;
       }
@@ -379,7 +380,7 @@ public class Messages {
     static @NonNull PlatformCircle fromList(@NonNull ArrayList<Object> __pigeon_list) {
       PlatformCircle pigeonResult = new PlatformCircle();
       Object json = __pigeon_list.get(0);
-      pigeonResult.setJson(json);
+      pigeonResult.setJson((Map<String, Object>) json);
       return pigeonResult;
     }
   }
@@ -465,13 +466,13 @@ public class Messages {
      * The marker data, as JSON. This should only be set from Marker.toJson, and the native code
      * must intepret it according to the internal implementation details of that method.
      */
-    private @NonNull Object json;
+    private @NonNull Map<String, Object> json;
 
-    public @NonNull Object getJson() {
+    public @NonNull Map<String, Object> getJson() {
       return json;
     }
 
-    public void setJson(@NonNull Object setterArg) {
+    public void setJson(@NonNull Map<String, Object> setterArg) {
       if (setterArg == null) {
         throw new IllegalStateException("Nonnull field \"json\" is null.");
       }
@@ -500,10 +501,10 @@ public class Messages {
 
     public static final class Builder {
 
-      private @Nullable Object json;
+      private @Nullable Map<String, Object> json;
 
       @CanIgnoreReturnValue
-      public @NonNull Builder setJson(@NonNull Object setterArg) {
+      public @NonNull Builder setJson(@NonNull Map<String, Object> setterArg) {
         this.json = setterArg;
         return this;
       }
@@ -525,7 +526,7 @@ public class Messages {
     static @NonNull PlatformMarker fromList(@NonNull ArrayList<Object> __pigeon_list) {
       PlatformMarker pigeonResult = new PlatformMarker();
       Object json = __pigeon_list.get(0);
-      pigeonResult.setJson(json);
+      pigeonResult.setJson((Map<String, Object>) json);
       return pigeonResult;
     }
   }
@@ -540,13 +541,13 @@ public class Messages {
      * The polygon data, as JSON. This should only be set from Polygon.toJson, and the native code
      * must intepret it according to the internal implementation details of that method.
      */
-    private @NonNull Object json;
+    private @NonNull Map<String, Object> json;
 
-    public @NonNull Object getJson() {
+    public @NonNull Map<String, Object> getJson() {
       return json;
     }
 
-    public void setJson(@NonNull Object setterArg) {
+    public void setJson(@NonNull Map<String, Object> setterArg) {
       if (setterArg == null) {
         throw new IllegalStateException("Nonnull field \"json\" is null.");
       }
@@ -575,10 +576,10 @@ public class Messages {
 
     public static final class Builder {
 
-      private @Nullable Object json;
+      private @Nullable Map<String, Object> json;
 
       @CanIgnoreReturnValue
-      public @NonNull Builder setJson(@NonNull Object setterArg) {
+      public @NonNull Builder setJson(@NonNull Map<String, Object> setterArg) {
         this.json = setterArg;
         return this;
       }
@@ -600,7 +601,7 @@ public class Messages {
     static @NonNull PlatformPolygon fromList(@NonNull ArrayList<Object> __pigeon_list) {
       PlatformPolygon pigeonResult = new PlatformPolygon();
       Object json = __pigeon_list.get(0);
-      pigeonResult.setJson(json);
+      pigeonResult.setJson((Map<String, Object>) json);
       return pigeonResult;
     }
   }
@@ -615,13 +616,13 @@ public class Messages {
      * The polyline data, as JSON. This should only be set from Polyline.toJson, and the native code
      * must intepret it according to the internal implementation details of that method.
      */
-    private @NonNull Object json;
+    private @NonNull Map<String, Object> json;
 
-    public @NonNull Object getJson() {
+    public @NonNull Map<String, Object> getJson() {
       return json;
     }
 
-    public void setJson(@NonNull Object setterArg) {
+    public void setJson(@NonNull Map<String, Object> setterArg) {
       if (setterArg == null) {
         throw new IllegalStateException("Nonnull field \"json\" is null.");
       }
@@ -650,10 +651,10 @@ public class Messages {
 
     public static final class Builder {
 
-      private @Nullable Object json;
+      private @Nullable Map<String, Object> json;
 
       @CanIgnoreReturnValue
-      public @NonNull Builder setJson(@NonNull Object setterArg) {
+      public @NonNull Builder setJson(@NonNull Map<String, Object> setterArg) {
         this.json = setterArg;
         return this;
       }
@@ -675,7 +676,7 @@ public class Messages {
     static @NonNull PlatformPolyline fromList(@NonNull ArrayList<Object> __pigeon_list) {
       PlatformPolyline pigeonResult = new PlatformPolyline();
       Object json = __pigeon_list.get(0);
-      pigeonResult.setJson(json);
+      pigeonResult.setJson((Map<String, Object>) json);
       return pigeonResult;
     }
   }
@@ -816,13 +817,13 @@ public class Messages {
      * The tile overlay data, as JSON. This should only be set from TileOverlay.toJson, and the
      * native code must intepret it according to the internal implementation details of that method.
      */
-    private @NonNull Object json;
+    private @NonNull Map<String, Object> json;
 
-    public @NonNull Object getJson() {
+    public @NonNull Map<String, Object> getJson() {
       return json;
     }
 
-    public void setJson(@NonNull Object setterArg) {
+    public void setJson(@NonNull Map<String, Object> setterArg) {
       if (setterArg == null) {
         throw new IllegalStateException("Nonnull field \"json\" is null.");
       }
@@ -851,10 +852,10 @@ public class Messages {
 
     public static final class Builder {
 
-      private @Nullable Object json;
+      private @Nullable Map<String, Object> json;
 
       @CanIgnoreReturnValue
-      public @NonNull Builder setJson(@NonNull Object setterArg) {
+      public @NonNull Builder setJson(@NonNull Map<String, Object> setterArg) {
         this.json = setterArg;
         return this;
       }
@@ -876,7 +877,7 @@ public class Messages {
     static @NonNull PlatformTileOverlay fromList(@NonNull ArrayList<Object> __pigeon_list) {
       PlatformTileOverlay pigeonResult = new PlatformTileOverlay();
       Object json = __pigeon_list.get(0);
-      pigeonResult.setJson(json);
+      pigeonResult.setJson((Map<String, Object>) json);
       return pigeonResult;
     }
   }
@@ -1233,13 +1234,13 @@ public class Messages {
      * and the native code must intepret it according to the internal implementation details of that
      * method.
      */
-    private @NonNull Object json;
+    private @NonNull Map<String, Object> json;
 
-    public @NonNull Object getJson() {
+    public @NonNull Map<String, Object> getJson() {
       return json;
     }
 
-    public void setJson(@NonNull Object setterArg) {
+    public void setJson(@NonNull Map<String, Object> setterArg) {
       if (setterArg == null) {
         throw new IllegalStateException("Nonnull field \"json\" is null.");
       }
@@ -1268,10 +1269,10 @@ public class Messages {
 
     public static final class Builder {
 
-      private @Nullable Object json;
+      private @Nullable Map<String, Object> json;
 
       @CanIgnoreReturnValue
-      public @NonNull Builder setJson(@NonNull Object setterArg) {
+      public @NonNull Builder setJson(@NonNull Map<String, Object> setterArg) {
         this.json = setterArg;
         return this;
       }
@@ -1293,7 +1294,7 @@ public class Messages {
     static @NonNull PlatformMapConfiguration fromList(@NonNull ArrayList<Object> __pigeon_list) {
       PlatformMapConfiguration pigeonResult = new PlatformMapConfiguration();
       Object json = __pigeon_list.get(0);
-      pigeonResult.setJson(json);
+      pigeonResult.setJson((Map<String, Object>) json);
       return pigeonResult;
     }
   }

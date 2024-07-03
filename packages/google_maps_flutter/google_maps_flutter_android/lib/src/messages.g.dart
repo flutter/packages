@@ -105,7 +105,7 @@ class PlatformCircle {
   /// The circle data, as JSON. This should only be set from
   /// Circle.toJson, and the native code must intepret it according to the
   /// internal implementation details of that method.
-  Object json;
+  Map<String?, Object?> json;
 
   Object encode() {
     return <Object?>[
@@ -116,7 +116,7 @@ class PlatformCircle {
   static PlatformCircle decode(Object result) {
     result as List<Object?>;
     return PlatformCircle(
-      json: result[0]!,
+      json: (result[0] as Map<Object?, Object?>?)!.cast<String?, Object?>(),
     );
   }
 }
@@ -152,7 +152,7 @@ class PlatformMarker {
   /// The marker data, as JSON. This should only be set from
   /// Marker.toJson, and the native code must intepret it according to the
   /// internal implementation details of that method.
-  Object json;
+  Map<String?, Object?> json;
 
   Object encode() {
     return <Object?>[
@@ -163,7 +163,7 @@ class PlatformMarker {
   static PlatformMarker decode(Object result) {
     result as List<Object?>;
     return PlatformMarker(
-      json: result[0]!,
+      json: (result[0] as Map<Object?, Object?>?)!.cast<String?, Object?>(),
     );
   }
 }
@@ -177,7 +177,7 @@ class PlatformPolygon {
   /// The polygon data, as JSON. This should only be set from
   /// Polygon.toJson, and the native code must intepret it according to the
   /// internal implementation details of that method.
-  Object json;
+  Map<String?, Object?> json;
 
   Object encode() {
     return <Object?>[
@@ -188,7 +188,7 @@ class PlatformPolygon {
   static PlatformPolygon decode(Object result) {
     result as List<Object?>;
     return PlatformPolygon(
-      json: result[0]!,
+      json: (result[0] as Map<Object?, Object?>?)!.cast<String?, Object?>(),
     );
   }
 }
@@ -202,7 +202,7 @@ class PlatformPolyline {
   /// The polyline data, as JSON. This should only be set from
   /// Polyline.toJson, and the native code must intepret it according to the
   /// internal implementation details of that method.
-  Object json;
+  Map<String?, Object?> json;
 
   Object encode() {
     return <Object?>[
@@ -213,7 +213,7 @@ class PlatformPolyline {
   static PlatformPolyline decode(Object result) {
     result as List<Object?>;
     return PlatformPolyline(
-      json: result[0]!,
+      json: (result[0] as Map<Object?, Object?>?)!.cast<String?, Object?>(),
     );
   }
 }
@@ -259,7 +259,7 @@ class PlatformTileOverlay {
   /// The tile overlay data, as JSON. This should only be set from
   /// TileOverlay.toJson, and the native code must intepret it according to the
   /// internal implementation details of that method.
-  Object json;
+  Map<String?, Object?> json;
 
   Object encode() {
     return <Object?>[
@@ -270,7 +270,7 @@ class PlatformTileOverlay {
   static PlatformTileOverlay decode(Object result) {
     result as List<Object?>;
     return PlatformTileOverlay(
-      json: result[0]!,
+      json: (result[0] as Map<Object?, Object?>?)!.cast<String?, Object?>(),
     );
   }
 }
@@ -375,7 +375,7 @@ class PlatformMapConfiguration {
   /// The configuration options, as JSON. This should only be set from
   /// _jsonForMapConfiguration, and the native code must intepret it according
   /// to the internal implementation details of that method.
-  Object json;
+  Map<String?, Object?> json;
 
   Object encode() {
     return <Object?>[
@@ -386,7 +386,7 @@ class PlatformMapConfiguration {
   static PlatformMapConfiguration decode(Object result) {
     result as List<Object?>;
     return PlatformMapConfiguration(
-      json: result[0]!,
+      json: (result[0] as Map<Object?, Object?>?)!.cast<String?, Object?>(),
     );
   }
 }

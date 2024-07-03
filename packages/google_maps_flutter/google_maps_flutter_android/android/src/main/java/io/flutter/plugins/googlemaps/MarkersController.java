@@ -59,7 +59,9 @@ class MarkersController {
   void addJsonMarkers(List<Object> markersToAdd) {
     if (markersToAdd != null) {
       for (Object markerToAdd : markersToAdd) {
-        addJsonMarker(markerToAdd);
+        @SuppressWarnings("unchecked")
+        Map<String, ?> markerMap = (Map<String, ?>) markerToAdd;
+        addJsonMarker(markerMap);
       }
     }
   }
@@ -189,7 +191,7 @@ class MarkersController {
     }
   }
 
-  private void addJsonMarker(Object marker) {
+  private void addJsonMarker(Map<String, ?> marker) {
     if (marker == null) {
       return;
     }
@@ -235,7 +237,7 @@ class MarkersController {
     googleMapsMarkerIdToDartMarkerId.put(marker.getId(), markerId);
   }
 
-  private void changeJsonMarker(Object marker) {
+  private void changeJsonMarker(Map<String, ?> marker) {
     if (marker == null) {
       return;
     }
@@ -267,15 +269,11 @@ class MarkersController {
     }
   }
 
-  @SuppressWarnings("unchecked")
-  private static String getMarkerId(Object marker) {
-    Map<String, Object> markerMap = (Map<String, Object>) marker;
-    return (String) markerMap.get("markerId");
+  private static String getMarkerId(Map<String, ?> marker) {
+    return (String) marker.get("markerId");
   }
 
-  @SuppressWarnings("unchecked")
-  private static String getClusterManagerId(Object marker) {
-    Map<String, Object> markerMap = (Map<String, Object>) marker;
-    return (String) markerMap.get("clusterManagerId");
+  private static String getClusterManagerId(Map<String, ?> marker) {
+    return (String) marker.get("clusterManagerId");
   }
 }

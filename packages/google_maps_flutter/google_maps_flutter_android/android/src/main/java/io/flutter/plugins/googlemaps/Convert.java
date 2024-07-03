@@ -638,8 +638,7 @@ class Convert {
 
   /** Set the options in the given object to marker options sink. */
   static void interpretMarkerOptions(
-      Object o, MarkerOptionsSink sink, AssetManager assetManager, float density) {
-    final Map<?, ?> data = toMap(o);
+      Map<String, ?> data, MarkerOptionsSink sink, AssetManager assetManager, float density) {
     final Object alpha = data.get("alpha");
     if (alpha != null) {
       sink.setAlpha(toFloat(alpha));
@@ -703,8 +702,7 @@ class Convert {
     }
   }
 
-  static String interpretPolygonOptions(Object o, PolygonOptionsSink sink) {
-    final Map<?, ?> data = toMap(o);
+  static String interpretPolygonOptions(Map<String, ?> data, PolygonOptionsSink sink) {
     final Object consumeTapEvents = data.get("consumeTapEvents");
     if (consumeTapEvents != null) {
       sink.setConsumeTapEvents(toBoolean(consumeTapEvents));
@@ -750,8 +748,7 @@ class Convert {
   }
 
   static String interpretPolylineOptions(
-      Object o, PolylineOptionsSink sink, AssetManager assetManager, float density) {
-    final Map<?, ?> data = toMap(o);
+      Map<String, ?> data, PolylineOptionsSink sink, AssetManager assetManager, float density) {
     final Object consumeTapEvents = data.get("consumeTapEvents");
     if (consumeTapEvents != null) {
       sink.setConsumeTapEvents(toBoolean(consumeTapEvents));
@@ -804,8 +801,7 @@ class Convert {
     }
   }
 
-  static String interpretCircleOptions(Object o, CircleOptionsSink sink) {
-    final Map<?, ?> data = toMap(o);
+  static String interpretCircleOptions(Map<String, ?> data, CircleOptionsSink sink) {
     final Object consumeTapEvents = data.get("consumeTapEvents");
     if (consumeTapEvents != null) {
       sink.setConsumeTapEvents(toBoolean(consumeTapEvents));
