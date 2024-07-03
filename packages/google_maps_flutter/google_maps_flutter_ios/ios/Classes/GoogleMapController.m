@@ -66,6 +66,7 @@
 @property(nonatomic, strong) FLTPolygonsController *polygonsController;
 @property(nonatomic, strong) FLTPolylinesController *polylinesController;
 @property(nonatomic, strong) FLTCirclesController *circlesController;
+@property(nonatomic, strong) FLTGroundOverlaysController *groundOverlaysController;
 @property(nonatomic, strong) FLTTileOverlaysController *tileOverlaysController;
 // The resulting error message, if any, from the last attempt to set the map style.
 // This is used to provide access to errors after the fact, since the map style is generally set at
@@ -133,6 +134,9 @@
     _circlesController = [[FLTCirclesController alloc] init:_channel
                                                     mapView:_mapView
                                                   registrar:registrar];
+    _groundOverlaysController = [[FLTGroundOverlaysController alloc] initWithMethodChannel:_channel
+                                                                  mapView:_mapView
+                                                                registrar:registrar];
     _tileOverlaysController = [[FLTTileOverlaysController alloc] init:_channel
                                                               mapView:_mapView
                                                             registrar:registrar];
@@ -151,6 +155,10 @@
     id circlesToAdd = args[@"circlesToAdd"];
     if ([circlesToAdd isKindOfClass:[NSArray class]]) {
       [_circlesController addCircles:circlesToAdd];
+    }
+    id groundOverlaysToAdd = args[@"groundOverlaysToAdd"];
+    if ([groundOverlaysToAdd isKindOfClass:[NSArray class]]) {
+      [_groundOverlaysController addGroundOverlays:groundOverlaysToAdd];
     }
     id tileOverlaysToAdd = args[@"tileOverlaysToAdd"];
     if ([tileOverlaysToAdd isKindOfClass:[NSArray class]]) {
@@ -336,6 +344,20 @@
     id circleIdsToRemove = call.arguments[@"circleIdsToRemove"];
     if ([circleIdsToRemove isKindOfClass:[NSArray class]]) {
       [self.circlesController removeCircleWithIdentifiers:circleIdsToRemove];
+    }
+    result(nil);
+  } else if([call.method isEqualToString:@"groundOverlays#update"]){
+    id groundOverlaysToAdd = call.arguments[@"groundOverlaysToAdd"];
+    if ([groundOverlaysToAdd isKindOfClass:[NSArray class]]) {
+      [self.groundOverlaysController addGroundOverlays:groundOverlaysToAdd];
+    }
+    id groundOverlaysToChange = call.arguments[@"groundOverlaysToChange"];
+    if ([groundOverlaysToChange isKindOfClass:[NSArray class]]) {
+      [self.groundOverlaysController changeGroundOverlays:groundOverlaysToChange];
+    }
+    id groundOverlayIdsToRemove = call.arguments[@"groundOverlayIdsToRemove"];
+    if ([groundOverlayIdsToRemove isKindOfClass:[NSArray class]]) {
+      [self.groundOverlaysController removeGroundOverlayWithIdentifiers:groundOverlayIdsToRemove];
     }
     result(nil);
   } else if ([call.method isEqualToString:@"tileOverlays#update"]) {
@@ -557,6 +579,12 @@
   NSString *markerId = marker.userData[0];
   [self.markersController didTapInfoWindowOfMarkerWithIdentifier:markerId];
 }
+
+- (BOOL)mapView:(GMSMapView *)mapView didTapGroundOverlay: (GMSGroundOverlay *)groundOverlay {
+  NSString *groundOverlayId = groundOverlay.userData[0];
+  return [self.groundOverlaysController didTapGroundOverlayWithIdentifier:groundOverlayId];
+}
+
 - (void)mapView:(GMSMapView *)mapView didTapOverlay:(GMSOverlay *)overlay {
   NSString *overlayId = overlay.userData[0];
   if ([self.polylinesController hasPolylineWithIdentifier:overlayId]) {
@@ -581,41 +609,41 @@
 }
 
 - (void)interpretMapOptions:(NSDictionary *)data {
-  NSArray *cameraTargetBounds = FGMGetValueOrNilFromDict(data, @"cameraTargetBounds");
-  if (cameraTargetBounds) {
+  NSArray *cameraTargetBounds = data[@"cameraTargetBounds"];
+  if (cameraTargetBounds && cameraTargetBounds != (id)[NSNull null]) {
     [self
         setCameraTargetBounds:cameraTargetBounds.count > 0 && cameraTargetBounds[0] != [NSNull null]
                                   ? [FLTGoogleMapJSONConversions
                                         coordinateBoundsFromLatLongs:cameraTargetBounds.firstObject]
                                   : nil];
   }
-  NSNumber *compassEnabled = FGMGetValueOrNilFromDict(data, @"compassEnabled");
-  if (compassEnabled) {
+  NSNumber *compassEnabled = data[@"compassEnabled"];
+  if (compassEnabled && compassEnabled != (id)[NSNull null]) {
     [self setCompassEnabled:[compassEnabled boolValue]];
   }
-  id indoorEnabled = FGMGetValueOrNilFromDict(data, @"indoorEnabled");
-  if (indoorEnabled) {
+  id indoorEnabled = data[@"indoorEnabled"];
+  if (indoorEnabled && indoorEnabled != [NSNull null]) {
     [self setIndoorEnabled:[indoorEnabled boolValue]];
   }
-  id trafficEnabled = FGMGetValueOrNilFromDict(data, @"trafficEnabled");
-  if (trafficEnabled) {
+  id trafficEnabled = data[@"trafficEnabled"];
+  if (trafficEnabled && trafficEnabled != [NSNull null]) {
     [self setTrafficEnabled:[trafficEnabled boolValue]];
   }
-  id buildingsEnabled = FGMGetValueOrNilFromDict(data, @"buildingsEnabled");
-  if (buildingsEnabled) {
+  id buildingsEnabled = data[@"buildingsEnabled"];
+  if (buildingsEnabled && buildingsEnabled != [NSNull null]) {
     [self setBuildingsEnabled:[buildingsEnabled boolValue]];
   }
-  id mapType = FGMGetValueOrNilFromDict(data, @"mapType");
-  if (mapType) {
+  id mapType = data[@"mapType"];
+  if (mapType && mapType != [NSNull null]) {
     [self setMapType:[FLTGoogleMapJSONConversions mapViewTypeFromTypeValue:mapType]];
   }
-  NSArray *zoomData = FGMGetValueOrNilFromDict(data, @"minMaxZoomPreference");
-  if (zoomData) {
+  NSArray *zoomData = data[@"minMaxZoomPreference"];
+  if (zoomData && zoomData != (id)[NSNull null]) {
     float minZoom = (zoomData[0] == [NSNull null]) ? kGMSMinZoomLevel : [zoomData[0] floatValue];
     float maxZoom = (zoomData[1] == [NSNull null]) ? kGMSMaxZoomLevel : [zoomData[1] floatValue];
     [self setMinZoom:minZoom maxZoom:maxZoom];
   }
-  NSArray *paddingData = FGMGetValueOrNilFromDict(data, @"padding");
+  NSArray *paddingData = data[@"padding"];
   if (paddingData) {
     float top = (paddingData[0] == [NSNull null]) ? 0 : [paddingData[0] floatValue];
     float left = (paddingData[1] == [NSNull null]) ? 0 : [paddingData[1] floatValue];
@@ -624,35 +652,35 @@
     [self setPaddingTop:top left:left bottom:bottom right:right];
   }
 
-  NSNumber *rotateGesturesEnabled = FGMGetValueOrNilFromDict(data, @"rotateGesturesEnabled");
-  if (rotateGesturesEnabled) {
+  NSNumber *rotateGesturesEnabled = data[@"rotateGesturesEnabled"];
+  if (rotateGesturesEnabled && rotateGesturesEnabled != (id)[NSNull null]) {
     [self setRotateGesturesEnabled:[rotateGesturesEnabled boolValue]];
   }
-  NSNumber *scrollGesturesEnabled = FGMGetValueOrNilFromDict(data, @"scrollGesturesEnabled");
-  if (scrollGesturesEnabled) {
+  NSNumber *scrollGesturesEnabled = data[@"scrollGesturesEnabled"];
+  if (scrollGesturesEnabled && scrollGesturesEnabled != (id)[NSNull null]) {
     [self setScrollGesturesEnabled:[scrollGesturesEnabled boolValue]];
   }
-  NSNumber *tiltGesturesEnabled = FGMGetValueOrNilFromDict(data, @"tiltGesturesEnabled");
-  if (tiltGesturesEnabled) {
+  NSNumber *tiltGesturesEnabled = data[@"tiltGesturesEnabled"];
+  if (tiltGesturesEnabled && tiltGesturesEnabled != (id)[NSNull null]) {
     [self setTiltGesturesEnabled:[tiltGesturesEnabled boolValue]];
   }
-  NSNumber *trackCameraPosition = FGMGetValueOrNilFromDict(data, @"trackCameraPosition");
-  if (trackCameraPosition) {
+  NSNumber *trackCameraPosition = data[@"trackCameraPosition"];
+  if (trackCameraPosition && trackCameraPosition != (id)[NSNull null]) {
     [self setTrackCameraPosition:[trackCameraPosition boolValue]];
   }
-  NSNumber *zoomGesturesEnabled = FGMGetValueOrNilFromDict(data, @"zoomGesturesEnabled");
-  if (zoomGesturesEnabled) {
+  NSNumber *zoomGesturesEnabled = data[@"zoomGesturesEnabled"];
+  if (zoomGesturesEnabled && zoomGesturesEnabled != (id)[NSNull null]) {
     [self setZoomGesturesEnabled:[zoomGesturesEnabled boolValue]];
   }
-  NSNumber *myLocationEnabled = FGMGetValueOrNilFromDict(data, @"myLocationEnabled");
-  if (myLocationEnabled) {
+  NSNumber *myLocationEnabled = data[@"myLocationEnabled"];
+  if (myLocationEnabled && myLocationEnabled != (id)[NSNull null]) {
     [self setMyLocationEnabled:[myLocationEnabled boolValue]];
   }
-  NSNumber *myLocationButtonEnabled = FGMGetValueOrNilFromDict(data, @"myLocationButtonEnabled");
-  if (myLocationButtonEnabled) {
+  NSNumber *myLocationButtonEnabled = data[@"myLocationButtonEnabled"];
+  if (myLocationButtonEnabled && myLocationButtonEnabled != (id)[NSNull null]) {
     [self setMyLocationButtonEnabled:[myLocationButtonEnabled boolValue]];
   }
-  NSString *style = FGMGetValueOrNilFromDict(data, @"style");
+  NSString *style = data[@"style"];
   if (style) {
     self.styleError = [self setMapStyle:style];
   }

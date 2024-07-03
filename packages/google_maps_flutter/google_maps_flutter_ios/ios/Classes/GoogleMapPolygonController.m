@@ -73,43 +73,43 @@
 
 - (void)interpretPolygonOptions:(NSDictionary *)data
                       registrar:(NSObject<FlutterPluginRegistrar> *)registrar {
-  NSNumber *consumeTapEvents = FGMGetValueOrNilFromDict(data, @"consumeTapEvents");
-  if (consumeTapEvents) {
+  NSNumber *consumeTapEvents = data[@"consumeTapEvents"];
+  if (consumeTapEvents && consumeTapEvents != (id)[NSNull null]) {
     [self setConsumeTapEvents:[consumeTapEvents boolValue]];
   }
 
-  NSNumber *visible = FGMGetValueOrNilFromDict(data, @"visible");
-  if (visible) {
+  NSNumber *visible = data[@"visible"];
+  if (visible && visible != (id)[NSNull null]) {
     [self setVisible:[visible boolValue]];
   }
 
-  NSNumber *zIndex = FGMGetValueOrNilFromDict(data, @"zIndex");
-  if (zIndex) {
+  NSNumber *zIndex = data[@"zIndex"];
+  if (zIndex && zIndex != (id)[NSNull null]) {
     [self setZIndex:[zIndex intValue]];
   }
 
-  NSArray *points = FGMGetValueOrNilFromDict(data, @"points");
-  if (points) {
+  NSArray *points = data[@"points"];
+  if (points && points != (id)[NSNull null]) {
     [self setPoints:[FLTGoogleMapJSONConversions pointsFromLatLongs:points]];
   }
 
-  NSArray *holes = FGMGetValueOrNilFromDict(data, @"holes");
-  if (holes) {
+  NSArray *holes = data[@"holes"];
+  if (holes && holes != (id)[NSNull null]) {
     [self setHoles:[FLTGoogleMapJSONConversions holesFromPointsArray:holes]];
   }
 
-  NSNumber *fillColor = FGMGetValueOrNilFromDict(data, @"fillColor");
-  if (fillColor) {
+  NSNumber *fillColor = data[@"fillColor"];
+  if (fillColor && fillColor != (id)[NSNull null]) {
     [self setFillColor:[FLTGoogleMapJSONConversions colorFromRGBA:fillColor]];
   }
 
-  NSNumber *strokeColor = FGMGetValueOrNilFromDict(data, @"strokeColor");
-  if (strokeColor) {
+  NSNumber *strokeColor = data[@"strokeColor"];
+  if (strokeColor && strokeColor != (id)[NSNull null]) {
     [self setStrokeColor:[FLTGoogleMapJSONConversions colorFromRGBA:strokeColor]];
   }
 
-  NSNumber *strokeWidth = FGMGetValueOrNilFromDict(data, @"strokeWidth");
-  if (strokeWidth) {
+  NSNumber *strokeWidth = data[@"strokeWidth"];
+  if (strokeWidth && strokeWidth != (id)[NSNull null]) {
     [self setStrokeWidth:[strokeWidth intValue]];
   }
 }

@@ -70,28 +70,28 @@
   if (!data) {
     return;
   }
-  NSNumber *visible = FGMGetValueOrNilFromDict(data, @"visible");
-  if (visible) {
+  NSNumber *visible = data[@"visible"];
+  if (visible != nil && visible != (id)[NSNull null]) {
     [self setVisible:visible.boolValue];
   }
 
-  NSNumber *transparency = FGMGetValueOrNilFromDict(data, @"transparency");
-  if (transparency) {
+  NSNumber *transparency = data[@"transparency"];
+  if (transparency != nil && transparency != (id)[NSNull null]) {
     [self setTransparency:transparency.floatValue];
   }
 
-  NSNumber *zIndex = FGMGetValueOrNilFromDict(data, @"zIndex");
-  if (zIndex) {
+  NSNumber *zIndex = data[@"zIndex"];
+  if (zIndex != nil && zIndex != (id)[NSNull null]) {
     [self setZIndex:zIndex.intValue];
   }
 
-  NSNumber *fadeIn = FGMGetValueOrNilFromDict(data, @"fadeIn");
-  if (fadeIn) {
+  NSNumber *fadeIn = data[@"fadeIn"];
+  if (fadeIn != nil && fadeIn != (id)[NSNull null]) {
     [self setFadeIn:fadeIn.boolValue];
   }
 
-  NSNumber *tileSize = FGMGetValueOrNilFromDict(data, @"tileSize");
-  if (tileSize) {
+  NSNumber *tileSize = data[@"tileSize"];
+  if (tileSize != nil && tileSize != (id)[NSNull null]) {
     [self setTileSize:tileSize.integerValue];
   }
 }

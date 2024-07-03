@@ -14,6 +14,7 @@ Widget _mapWithObjects({
   Set<Marker> markers = const <Marker>{},
   Set<Polygon> polygons = const <Polygon>{},
   Set<Polyline> polylines = const <Polyline>{},
+  Set<GroundOverlay> groundOverlays = const <GroundOverlay>{},
   Set<TileOverlay> tileOverlays = const <TileOverlay>{},
 }) {
   return Directionality(
@@ -24,6 +25,7 @@ Widget _mapWithObjects({
       markers: markers,
       polygons: polygons,
       polylines: polylines,
+      groundOverlays: groundOverlays,
       tileOverlays: tileOverlays,
     ),
   );
@@ -65,6 +67,50 @@ void main() {
     expect(map.circleUpdates[2].circlesToChange, <Circle>{c3updated});
     expect(map.circleUpdates[2].circlesToAdd.isEmpty, true);
     expect(map.circleUpdates[2].circleIdsToRemove.isEmpty, true);
+
+    await tester.pumpAndSettle();
+  });
+
+  testWidgets('ground overlay updates with delays',
+      (WidgetTester tester) async {
+    platform.simulatePlatformDelay = true;
+
+    const GroundOverlay g1 =
+        GroundOverlay(groundOverlayId: GroundOverlayId('ground_overlay_1'));
+    const GroundOverlay g2 =
+        GroundOverlay(groundOverlayId: GroundOverlayId('ground_overlay_2'));
+    const GroundOverlay g3 =
+        GroundOverlay(groundOverlayId: GroundOverlayId('ground_overlay_3'));
+    const GroundOverlay g3updated = GroundOverlay(
+        groundOverlayId: GroundOverlayId('ground_overlay_3'), visible: false);
+
+    // First remove one and add another, then update the new one.
+    await tester
+        .pumpWidget(_mapWithObjects(groundOverlays: <GroundOverlay>{g1, g2}));
+    await tester
+        .pumpWidget(_mapWithObjects(groundOverlays: <GroundOverlay>{g1, g3}));
+    await tester.pumpWidget(
+        _mapWithObjects(groundOverlays: <GroundOverlay>{g1, g3updated}));
+
+    final PlatformMapStateRecorder map = platform.lastCreatedMap;
+
+    expect(map.groundOverlayUpdates.length, 3);
+
+    expect(map.groundOverlayUpdates[0].groundOverlaysToChange.isEmpty, true);
+    expect(map.groundOverlayUpdates[0].groundOverlaysToAdd,
+        <GroundOverlay>{g1, g2});
+    expect(map.groundOverlayUpdates[0].groundOverlayIdsToRemove.isEmpty, true);
+
+    expect(map.groundOverlayUpdates[1].groundOverlaysToChange.isEmpty, true);
+    expect(
+        map.groundOverlayUpdates[1].groundOverlaysToAdd, <GroundOverlay>{g3});
+    expect(map.groundOverlayUpdates[1].groundOverlayIdsToRemove,
+        <GroundOverlayId>{g2.groundOverlayId});
+
+    expect(map.groundOverlayUpdates[2].groundOverlaysToChange,
+        <GroundOverlay>{g3updated});
+    expect(map.groundOverlayUpdates[2].groundOverlaysToAdd.isEmpty, true);
+    expect(map.groundOverlayUpdates[2].groundOverlayIdsToRemove.isEmpty, true);
 
     await tester.pumpAndSettle();
   });

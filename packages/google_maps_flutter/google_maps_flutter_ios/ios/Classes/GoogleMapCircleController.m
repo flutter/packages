@@ -60,43 +60,43 @@
 }
 
 - (void)interpretCircleOptions:(NSDictionary *)data {
-  NSNumber *consumeTapEvents = FGMGetValueOrNilFromDict(data, @"consumeTapEvents");
-  if (consumeTapEvents) {
+  NSNumber *consumeTapEvents = data[@"consumeTapEvents"];
+  if (consumeTapEvents && consumeTapEvents != (id)[NSNull null]) {
     [self setConsumeTapEvents:consumeTapEvents.boolValue];
   }
 
-  NSNumber *visible = FGMGetValueOrNilFromDict(data, @"visible");
-  if (visible) {
+  NSNumber *visible = data[@"visible"];
+  if (visible && visible != (id)[NSNull null]) {
     [self setVisible:[visible boolValue]];
   }
 
-  NSNumber *zIndex = FGMGetValueOrNilFromDict(data, @"zIndex");
-  if (zIndex) {
+  NSNumber *zIndex = data[@"zIndex"];
+  if (zIndex && zIndex != (id)[NSNull null]) {
     [self setZIndex:[zIndex intValue]];
   }
 
-  NSArray *center = FGMGetValueOrNilFromDict(data, @"center");
-  if (center) {
+  NSArray *center = data[@"center"];
+  if (center && center != (id)[NSNull null]) {
     [self setCenter:[FLTGoogleMapJSONConversions locationFromLatLong:center]];
   }
 
-  NSNumber *radius = FGMGetValueOrNilFromDict(data, @"radius");
-  if (radius) {
+  NSNumber *radius = data[@"radius"];
+  if (radius && radius != (id)[NSNull null]) {
     [self setRadius:[radius floatValue]];
   }
 
-  NSNumber *strokeColor = FGMGetValueOrNilFromDict(data, @"strokeColor");
-  if (strokeColor) {
+  NSNumber *strokeColor = data[@"strokeColor"];
+  if (strokeColor && strokeColor != (id)[NSNull null]) {
     [self setStrokeColor:[FLTGoogleMapJSONConversions colorFromRGBA:strokeColor]];
   }
 
-  NSNumber *strokeWidth = FGMGetValueOrNilFromDict(data, @"strokeWidth");
-  if (strokeWidth) {
+  NSNumber *strokeWidth = data[@"strokeWidth"];
+  if (strokeWidth && strokeWidth != (id)[NSNull null]) {
     [self setStrokeWidth:[strokeWidth intValue]];
   }
 
-  NSNumber *fillColor = FGMGetValueOrNilFromDict(data, @"fillColor");
-  if (fillColor) {
+  NSNumber *fillColor = data[@"fillColor"];
+  if (fillColor && fillColor != (id)[NSNull null]) {
     [self setFillColor:[FLTGoogleMapJSONConversions colorFromRGBA:fillColor]];
   }
 }

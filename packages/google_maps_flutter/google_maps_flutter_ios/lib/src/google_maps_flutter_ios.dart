@@ -154,6 +154,11 @@ class GoogleMapsFlutterIOS extends GoogleMapsFlutterPlatform {
   }
 
   @override
+  Stream<GroundOverlayTapEvent> onGroundOverlayTap({required int mapId}) {
+    return _events(mapId).whereType<GroundOverlayTapEvent>();
+  }
+
+  @override
   Stream<MapTapEvent> onTap({required int mapId}) {
     return _events(mapId).whereType<MapTapEvent>();
   }
@@ -225,6 +230,12 @@ class GoogleMapsFlutterIOS extends GoogleMapsFlutterPlatform {
         _mapEventStreamController.add(CircleTapEvent(
           mapId,
           CircleId(arguments['circleId']! as String),
+        ));
+      case 'groundOverlay#onTap':
+        final Map<String, Object?> arguments = _getArgumentDictionary(call);
+        _mapEventStreamController.add(GroundOverlayTapEvent(
+          mapId,
+          GroundOverlayId(arguments['groundOverlayId']! as String),
         ));
       case 'map#onTap':
         final Map<String, Object?> arguments = _getArgumentDictionary(call);
@@ -322,6 +333,17 @@ class GoogleMapsFlutterIOS extends GoogleMapsFlutterPlatform {
     return _channel(mapId).invokeMethod<void>(
       'circles#update',
       circleUpdates.toJson(),
+    );
+  }
+
+  @override
+  Future<void> updateGroundOverlays(
+    GroundOverlayUpdates groundOverlayUpdates, {
+    required int mapId,
+  }) {
+    return _channel(mapId).invokeMethod<void>(
+      'groundOverlays#update',
+      groundOverlayUpdates.toJson(),
     );
   }
 
@@ -487,6 +509,7 @@ class GoogleMapsFlutterIOS extends GoogleMapsFlutterPlatform {
       'polygonsToAdd': serializePolygonSet(mapObjects.polygons),
       'polylinesToAdd': serializePolylineSet(mapObjects.polylines),
       'circlesToAdd': serializeCircleSet(mapObjects.circles),
+      'groundOverlaysToAdd': serializeGroundOverlaySet(mapObjects.groundOverlays),
       'tileOverlaysToAdd': serializeTileOverlaySet(mapObjects.tileOverlays),
     };
 
@@ -522,12 +545,13 @@ class GoogleMapsFlutterIOS extends GoogleMapsFlutterPlatform {
     PlatformViewCreatedCallback onPlatformViewCreated, {
     required CameraPosition initialCameraPosition,
     required TextDirection textDirection,
+    Set<Factory<OneSequenceGestureRecognizer>>? gestureRecognizers,
     Set<Marker> markers = const <Marker>{},
     Set<Polygon> polygons = const <Polygon>{},
     Set<Polyline> polylines = const <Polyline>{},
     Set<Circle> circles = const <Circle>{},
+    Set<GroundOverlay> groundOverlays = const <GroundOverlay>{},
     Set<TileOverlay> tileOverlays = const <TileOverlay>{},
-    Set<Factory<OneSequenceGestureRecognizer>>? gestureRecognizers,
     Map<String, dynamic> mapOptions = const <String, dynamic>{},
   }) {
     return _buildView(
@@ -541,6 +565,7 @@ class GoogleMapsFlutterIOS extends GoogleMapsFlutterPlatform {
           polygons: polygons,
           polylines: polylines,
           circles: circles,
+          groundOverlays: groundOverlays,
           tileOverlays: tileOverlays),
       mapOptions: mapOptions,
     );
@@ -555,6 +580,7 @@ class GoogleMapsFlutterIOS extends GoogleMapsFlutterPlatform {
     Set<Polygon> polygons = const <Polygon>{},
     Set<Polyline> polylines = const <Polyline>{},
     Set<Circle> circles = const <Circle>{},
+    Set<GroundOverlay> groundOverlays = const <GroundOverlay>{},
     Set<TileOverlay> tileOverlays = const <TileOverlay>{},
     Set<Factory<OneSequenceGestureRecognizer>>? gestureRecognizers,
     Map<String, dynamic> mapOptions = const <String, dynamic>{},
@@ -568,6 +594,7 @@ class GoogleMapsFlutterIOS extends GoogleMapsFlutterPlatform {
       polygons: polygons,
       polylines: polylines,
       circles: circles,
+      groundOverlays: groundOverlays,
       tileOverlays: tileOverlays,
       gestureRecognizers: gestureRecognizers,
       mapOptions: mapOptions,

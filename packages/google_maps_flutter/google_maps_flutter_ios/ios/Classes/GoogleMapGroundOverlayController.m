@@ -2,131 +2,84 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#import "GoogleMapMarkerController.h"
+#import "GoogleMapGroundOverlayController.h"
 #import "FLTGoogleMapJSONConversions.h"
 
-@interface FLTGoogleMapMarkerController ()
+@interface FLTGoogleMapGroundOverlayController ()
 
-@property(strong, nonatomic) GMSMarker *marker;
+@property(strong, nonatomic) GMSGroundOverlay *groundOverlay;
 @property(weak, nonatomic) GMSMapView *mapView;
 @property(assign, nonatomic, readwrite) BOOL consumeTapEvents;
 
 @end
 
-@implementation FLTGoogleMapMarkerController
-
-- (instancetype)initMarkerWithPosition:(CLLocationCoordinate2D)position
-                            identifier:(NSString *)identifier
-                               mapView:(GMSMapView *)mapView {
+@implementation FLTGoogleMapGroundOverlayController
+- (instancetype)initGroundOverlayWithPosition:(CLLocationCoordinate2D)position
+                                         icon:(UIImage *)icon
+                                    zoomLevel:(CGFloat)zoomLevel
+                              identifier:(NSString *)identifier
+                                      mapView:(GMSMapView *)mapView {
   self = [super init];
   if (self) {
-    _marker = [GMSMarker markerWithPosition:position];
+    _groundOverlay = [GMSGroundOverlay groundOverlayWithPosition:position icon:icon zoomLevel:zoomLevel];
     _mapView = mapView;
-    _marker.userData = @[ identifier ];
+    _groundOverlay.userData = @[ identifier ];
   }
   return self;
 }
 
-- (void)showInfoWindow {
-  self.mapView.selectedMarker = self.marker;
-}
-
-- (void)hideInfoWindow {
-  if (self.mapView.selectedMarker == self.marker) {
-    self.mapView.selectedMarker = nil;
+- (instancetype)initGroundOverlayWithBounds:(GMSCoordinateBounds *)bounds
+                                       icon:(UIImage *)icon
+                            identifier:(NSString *)identifier
+                                    mapView:(GMSMapView *)mapView {
+  self = [super init];
+  if (self) {
+    _groundOverlay = [GMSGroundOverlay groundOverlayWithBounds:bounds icon:icon];
+    _mapView = mapView;
+    _groundOverlay.userData = @[ identifier ];
   }
+  return self;
 }
 
-- (BOOL)isInfoWindowShown {
-  return self.mapView.selectedMarker == self.marker;
-}
-
-- (void)removeMarker {
-  self.marker.map = nil;
-}
-
-- (void)setAlpha:(float)alpha {
-  self.marker.opacity = alpha;
-}
-
-- (void)setAnchor:(CGPoint)anchor {
-  self.marker.groundAnchor = anchor;
-}
-
-- (void)setDraggable:(BOOL)draggable {
-  self.marker.draggable = draggable;
-}
-
-- (void)setFlat:(BOOL)flat {
-  self.marker.flat = flat;
-}
-
-- (void)setIcon:(UIImage *)icon {
-  self.marker.icon = icon;
-}
-
-- (void)setInfoWindowAnchor:(CGPoint)anchor {
-  self.marker.infoWindowAnchor = anchor;
-}
-
-- (void)setInfoWindowTitle:(NSString *)title snippet:(NSString *)snippet {
-  self.marker.title = title;
-  self.marker.snippet = snippet;
-}
-
-- (void)setPosition:(CLLocationCoordinate2D)position {
-  self.marker.position = position;
-}
-
-- (void)setRotation:(CLLocationDegrees)rotation {
-  self.marker.rotation = rotation;
+- (void)removeGroundOverlay {
+  self.groundOverlay.map = nil;
 }
 
 - (void)setVisible:(BOOL)visible {
-  self.marker.map = visible ? self.mapView : nil;
+  self.groundOverlay.map = visible ? _mapView : nil;
 }
 
 - (void)setZIndex:(int)zIndex {
-  self.marker.zIndex = zIndex;
+  self.groundOverlay.zIndex = zIndex;
 }
 
-- (void)interpretMarkerOptions:(NSDictionary *)data
-                     registrar:(NSObject<FlutterPluginRegistrar> *)registrar
-                   screenScale:(CGFloat)screenScale {
-  NSNumber *alpha = data[@"alpha"];
-  if (alpha && alpha != (id)[NSNull null]) {
-    [self setAlpha:[alpha floatValue]];
-  }
-  NSArray *anchor = data[@"anchor"];
-  if (anchor && anchor != (id)[NSNull null]) {
-    [self setAnchor:[FLTGoogleMapJSONConversions pointFromArray:anchor]];
-  }
-  NSNumber *draggable = data[@"draggable"];
-  if (draggable && draggable != (id)[NSNull null]) {
-    [self setDraggable:[draggable boolValue]];
-  }
-  NSArray *icon = data[@"icon"];
-  if (icon && icon != (id)[NSNull null]) {
-    UIImage *image = [self extractIconFromData:icon registrar:registrar screenScale:screenScale];
-    [self setIcon:image];
-  }
-  NSNumber *flat = data[@"flat"];
-  if (flat && flat != (id)[NSNull null]) {
-    [self setFlat:[flat boolValue]];
-  }
-  NSNumber *consumeTapEvents = data[@"consumeTapEvents"];
-  if (consumeTapEvents && consumeTapEvents != (id)[NSNull null]) {
-    [self setConsumeTapEvents:[consumeTapEvents boolValue]];
-  }
-  [self interpretInfoWindow:data];
-  NSArray *position = data[@"position"];
-  if (position && position != (id)[NSNull null]) {
-    [self setPosition:[FLTGoogleMapJSONConversions locationFromLatLong:position]];
-  }
-  NSNumber *rotation = data[@"rotation"];
-  if (rotation && rotation != (id)[NSNull null]) {
-    [self setRotation:[rotation doubleValue]];
-  }
+- (void)setBounds:(GMSCoordinateBounds *)bounds {
+  self.groundOverlay.bounds = bounds;
+}
+
+- (void)setPosition:(CLLocationCoordinate2D)position {
+  self.groundOverlay.position = position;
+}
+
+- (void)setIcon:(UIImage *)icon {
+  self.groundOverlay.icon = icon;
+}
+
+- (void)setBearing:(CLLocationDirection)bearing {
+  self.groundOverlay.bearing = bearing;
+}
+
+- (void)setOpacity:(float)opacity {
+  self.groundOverlay.opacity = opacity;
+}
+
+- (void)setAnchor:(CGPoint)anchor {
+  self.groundOverlay.anchor = anchor;
+}
+
+- (void)interpretGroundOverlayOptions:(NSDictionary *)data
+                            registrar:(NSObject<FlutterPluginRegistrar> *)registrar 
+                          screenScale:(CGFloat)screenScale {
   NSNumber *visible = data[@"visible"];
   if (visible && visible != (id)[NSNull null]) {
     [self setVisible:[visible boolValue]];
@@ -135,24 +88,41 @@
   if (zIndex && zIndex != (id)[NSNull null]) {
     [self setZIndex:[zIndex intValue]];
   }
-}
-
-- (void)interpretInfoWindow:(NSDictionary *)data {
-  NSDictionary *infoWindow = data[@"infoWindow"];
-  if (infoWindow && infoWindow != (id)[NSNull null]) {
-    NSString *title = infoWindow[@"title"];
-    NSString *snippet = infoWindow[@"snippet"];
-    if (title && title != (id)[NSNull null]) {
-      [self setInfoWindowTitle:title snippet:snippet];
+  NSNumber *transparency = data[@"transparency"];
+  if (transparency && transparency != (id)[NSNull null]) {
+    float opacity = 1 - [transparency floatValue];
+    [self setOpacity:opacity];
+  }
+  NSNumber *width = data[@"width"];
+  NSNumber *height = data[@"height"];
+  NSArray *position = data[@"position"];
+  NSArray *bounds = data[@"bounds"];
+  if (position || bounds) {
+    if (height && height != (id)[NSNull null]) {
+      [self setPosition:[FLTGoogleMapJSONConversions locationFromLatLong:position]];
+    } else if (width && width != (id)[NSNull null]) {
+        [self setPosition:[FLTGoogleMapJSONConversions locationFromLatLong:position]];
+      } else if(bounds != (id)[NSNull null]){
+        GMSCoordinateBounds *coordinateBounds = [FLTGoogleMapJSONConversions coordinateBoundsFromLatLongs:bounds];
+        [self setBounds:coordinateBounds];
     }
-    NSArray *infoWindowAnchor = infoWindow[@"infoWindowAnchor"];
-    if (infoWindowAnchor && infoWindowAnchor != (id)[NSNull null]) {
-      [self setInfoWindowAnchor:[FLTGoogleMapJSONConversions pointFromArray:infoWindowAnchor]];
-    }
+  }
+  NSNumber *bearing = data[@"bearing"];
+  if (bearing && bearing != (id)[NSNull null]) {
+    [self setBearing:[bearing doubleValue]];
+  }
+  NSArray *icon = data[@"icon"];
+  if (icon && icon != (id)[NSNull null]) {
+    UIImage *image = [FLTGoogleMapGroundOverlayController extractIconFromData:icon registrar:registrar screenScale:screenScale];
+    [self setIcon:image];
+  }
+  NSArray *anchor = data[@"anchor"];
+  if (anchor && anchor != (id)[NSNull null]) {
+    [self setAnchor:[FLTGoogleMapJSONConversions pointFromArray:anchor]];
   }
 }
 
-- (UIImage *)extractIconFromData:(NSArray *)iconData
++ (UIImage *)extractIconFromData:(NSArray *)iconData
                        registrar:(NSObject<FlutterPluginRegistrar> *)registrar
                      screenScale:(CGFloat)screenScale {
   NSAssert(screenScale > 0, @"Screen scale must be greater than 0");
@@ -178,7 +148,7 @@
     if (iconData.count == 3) {
       image = [UIImage imageNamed:[registrar lookupKeyForAsset:iconData[1]]];
       id scaleParam = iconData[2];
-      image = [self scaleImage:image by:scaleParam];
+      image = [FLTGoogleMapGroundOverlayController scaleImage:image by:scaleParam];
     } else {
       NSString *error =
           [NSString stringWithFormat:@"'fromAssetImage' should have exactly 3 arguments. Got: %lu",
@@ -232,13 +202,13 @@
       CGFloat imagePixelRatio = [assetData[@"imagePixelRatio"] doubleValue];
 
       if (width || height) {
-        image = [FLTGoogleMapMarkerController scaledImage:image withScale:screenScale];
-        image = [FLTGoogleMapMarkerController scaledImage:image
+        image = [FLTGoogleMapGroundOverlayController scaledImage:image withScale:screenScale];
+        image = [FLTGoogleMapGroundOverlayController scaledImage:image
                                                 withWidth:width
                                                    height:height
                                               screenScale:screenScale];
       } else {
-        image = [FLTGoogleMapMarkerController scaledImage:image withScale:imagePixelRatio];
+        image = [FLTGoogleMapGroundOverlayController scaledImage:image withScale:imagePixelRatio];
       }
     }
   } else if ([iconData[0] isEqualToString:@"bytes"]) {
@@ -264,13 +234,13 @@
 
         if (width || height) {
           // Before scaling the image, image must be in screenScale
-          image = [FLTGoogleMapMarkerController scaledImage:image withScale:screenScale];
-          image = [FLTGoogleMapMarkerController scaledImage:image
+          image = [FLTGoogleMapGroundOverlayController scaledImage:image withScale:screenScale];
+          image = [FLTGoogleMapGroundOverlayController scaledImage:image
                                                   withWidth:width
                                                      height:height
                                                 screenScale:screenScale];
         } else {
-          image = [FLTGoogleMapMarkerController scaledImage:image withScale:imagePixelRatio];
+          image = [FLTGoogleMapGroundOverlayController scaledImage:image withScale:imagePixelRatio];
         }
       } else {
         // No scaling, load image from bytes without scale parameter.
@@ -290,7 +260,7 @@
 /// flutter google_maps_flutter_platform_interface package which has been replaced by 'bytes'
 /// message handling. It will be removed when the deprecated image bitmap description type
 /// 'fromBytes' is removed from the platform interface.
-- (UIImage *)scaleImage:(UIImage *)image by:(id)scaleParam {
++ (UIImage *)scaleImage:(UIImage *)image by:(id)scaleParam {
   double scale = 1.0;
   if ([scaleParam isKindOfClass:[NSNumber class]]) {
     scale = [scaleParam doubleValue];
@@ -347,12 +317,12 @@
 
   // Check if the aspect ratios are approximately equal.
   CGSize originalPixelSize = CGSizeMake(originalPixelWidth, originalPixelHeight);
-  if ([FLTGoogleMapMarkerController isScalableWithScaleFactorFromSize:originalPixelSize
+  if ([FLTGoogleMapGroundOverlayController isScalableWithScaleFactorFromSize:originalPixelSize
                                                                toSize:size]) {
     // Scaled image has close to same aspect ratio,
     // updating image scale instead of resizing image.
     CGFloat factor = originalPixelWidth / size.width;
-    return [FLTGoogleMapMarkerController scaledImage:image withScale:(image.scale * factor)];
+    return [FLTGoogleMapGroundOverlayController scaledImage:image withScale:(image.scale * factor)];
   } else {
     // Aspect ratios differ significantly, resize the image.
     UIGraphicsImageRendererFormat *format = [UIGraphicsImageRendererFormat defaultFormat];
@@ -366,7 +336,7 @@
         }];
 
     // Return image with proper scaling.
-    return [FLTGoogleMapMarkerController scaledImage:newImage withScale:image.scale];
+    return [FLTGoogleMapGroundOverlayController scaledImage:newImage withScale:image.scale];
   }
 }
 
@@ -401,7 +371,7 @@
 
   CGSize targetSize =
       CGSizeMake(round(targetWidth * screenScale), round(targetHeight * screenScale));
-  return [FLTGoogleMapMarkerController scaledImage:image withSize:targetSize];
+  return [FLTGoogleMapGroundOverlayController scaledImage:image withSize:targetSize];
 }
 
 + (BOOL)isScalableWithScaleFactorFromSize:(CGSize)originalSize toSize:(CGSize)targetSize {
@@ -426,166 +396,103 @@
 
 @end
 
-@interface FLTMarkersController ()
+@interface FLTGroundOverlaysController ()
 
-@property(strong, nonatomic) NSMutableDictionary *markerIdentifierToController;
+@property(strong, nonatomic) NSMutableDictionary *groundOverlayIdentifierToController;
 @property(strong, nonatomic) FlutterMethodChannel *methodChannel;
 @property(weak, nonatomic) NSObject<FlutterPluginRegistrar> *registrar;
 @property(weak, nonatomic) GMSMapView *mapView;
 
 @end
 
-@implementation FLTMarkersController
+@implementation FLTGroundOverlaysController 
 
-- (instancetype)initWithMethodChannel:(FlutterMethodChannel *)methodChannel
-                              mapView:(GMSMapView *)mapView
-                            registrar:(NSObject<FlutterPluginRegistrar> *)registrar {
+- (instancetype)initWithMethodChannel: (FlutterMethodChannel *)methodChannel
+                              mapView: (GMSMapView *)mapView
+                            registrar: (NSObject<FlutterPluginRegistrar> *)registrar {
   self = [super init];
   if (self) {
     _methodChannel = methodChannel;
     _mapView = mapView;
-    _markerIdentifierToController = [[NSMutableDictionary alloc] init];
+    _groundOverlayIdentifierToController = [[NSMutableDictionary alloc] init];
     _registrar = registrar;
   }
   return self;
 }
 
-- (void)addMarkers:(NSArray *)markersToAdd {
-  for (NSDictionary *marker in markersToAdd) {
-    CLLocationCoordinate2D position = [FLTMarkersController getPosition:marker];
-    NSString *identifier = marker[@"markerId"];
-    FLTGoogleMapMarkerController *controller =
-        [[FLTGoogleMapMarkerController alloc] initMarkerWithPosition:position
-                                                          identifier:identifier
-                                                             mapView:self.mapView];
-    [controller interpretMarkerOptions:marker
-                             registrar:self.registrar
-                           screenScale:[self getScreenScale]];
-    self.markerIdentifierToController[identifier] = controller;
+- (void)addGroundOverlays:(NSArray *)groundOverlaysToAdd {
+  for (NSDictionary *groundOverlay in groundOverlaysToAdd) {
+    NSArray *bounds = groundOverlay[@"bounds"];
+    NSString *identifier = groundOverlay[@"groundOverlayId"];
+    UIImage *icon = [FLTGroundOverlaysController getImage:groundOverlay 
+                                                registrar:_registrar 
+                                             screenScale:[self getScreenScale]];
+    
+    if(bounds && bounds != (id)[NSNull null]){
+      GMSCoordinateBounds *coordinateBounds = [FLTGroundOverlaysController getBounds:groundOverlay];
+    
+      FLTGoogleMapGroundOverlayController *controller =
+        [[FLTGoogleMapGroundOverlayController alloc] initGroundOverlayWithBounds:coordinateBounds
+                                                                            icon:icon
+                                                                      identifier:identifier
+                                                                         mapView:self.mapView];
+
+      [controller interpretGroundOverlayOptions:groundOverlay 
+                                      registrar:_registrar
+                                    screenScale:[self getScreenScale]];
+      self.groundOverlayIdentifierToController[identifier] = controller;
+    } else {
+      CLLocationCoordinate2D position = [FLTGroundOverlaysController getPosition:groundOverlay];
+
+      FLTGoogleMapGroundOverlayController *controller =
+        [[FLTGoogleMapGroundOverlayController alloc] initGroundOverlayWithPosition:position
+                                                                            icon:icon
+                                                                       zoomLevel:self.mapView.camera.zoom
+                                                                      identifier:identifier
+                                                                         mapView:self.mapView];
+
+      [controller interpretGroundOverlayOptions:groundOverlay 
+                                      registrar:_registrar
+                                    screenScale:[self getScreenScale]];
+      self.groundOverlayIdentifierToController[identifier] = controller;
+    }
   }
 }
 
-- (void)changeMarkers:(NSArray *)markersToChange {
-  for (NSDictionary *marker in markersToChange) {
-    NSString *identifier = marker[@"markerId"];
-    FLTGoogleMapMarkerController *controller = self.markerIdentifierToController[identifier];
+- (void)changeGroundOverlays:(NSArray *)groundOverlaysToChange {
+  for (NSDictionary *groundOverlay in groundOverlaysToChange) {
+    NSString *identifier = groundOverlay[@"groundOverlayId"];
+    FLTGoogleMapGroundOverlayController* controller = self.groundOverlayIdentifierToController[identifier];
     if (!controller) {
       continue;
     }
-    [controller interpretMarkerOptions:marker
-                             registrar:self.registrar
-                           screenScale:[self getScreenScale]];
+    [controller interpretGroundOverlayOptions:groundOverlay 
+                                      registrar:_registrar
+                                    screenScale:[self getScreenScale]];
   }
 }
 
-- (void)removeMarkersWithIdentifiers:(NSArray *)identifiers {
+- (void)removeGroundOverlayWithIdentifiers:(NSArray*)identifiers {
   for (NSString *identifier in identifiers) {
-    FLTGoogleMapMarkerController *controller = self.markerIdentifierToController[identifier];
+    FLTGoogleMapGroundOverlayController *controller = self.groundOverlayIdentifierToController[identifier];
     if (!controller) {
       continue;
     }
-    [controller removeMarker];
-    [self.markerIdentifierToController removeObjectForKey:identifier];
+    [controller removeGroundOverlay];
+    [self.groundOverlayIdentifierToController removeObjectForKey:identifier];
   }
 }
 
-- (BOOL)didTapMarkerWithIdentifier:(NSString *)identifier {
+- (BOOL)didTapGroundOverlayWithIdentifier:(NSString *)identifier {
   if (!identifier) {
     return NO;
   }
-  FLTGoogleMapMarkerController *controller = self.markerIdentifierToController[identifier];
+  FLTGoogleMapGroundOverlayController *controller = self.groundOverlayIdentifierToController[identifier];
   if (!controller) {
     return NO;
   }
-  [self.methodChannel invokeMethod:@"marker#onTap" arguments:@{@"markerId" : identifier}];
+  [self.methodChannel invokeMethod:@"groundOverlay#onTap" arguments:@{@"groundOverlayId" : identifier}];
   return controller.consumeTapEvents;
-}
-
-- (void)didStartDraggingMarkerWithIdentifier:(NSString *)identifier
-                                    location:(CLLocationCoordinate2D)location {
-  if (!identifier) {
-    return;
-  }
-  FLTGoogleMapMarkerController *controller = self.markerIdentifierToController[identifier];
-  if (!controller) {
-    return;
-  }
-  [self.methodChannel invokeMethod:@"marker#onDragStart"
-                         arguments:@{
-                           @"markerId" : identifier,
-                           @"position" : [FLTGoogleMapJSONConversions arrayFromLocation:location]
-                         }];
-}
-
-- (void)didDragMarkerWithIdentifier:(NSString *)identifier
-                           location:(CLLocationCoordinate2D)location {
-  if (!identifier) {
-    return;
-  }
-  FLTGoogleMapMarkerController *controller = self.markerIdentifierToController[identifier];
-  if (!controller) {
-    return;
-  }
-  [self.methodChannel invokeMethod:@"marker#onDrag"
-                         arguments:@{
-                           @"markerId" : identifier,
-                           @"position" : [FLTGoogleMapJSONConversions arrayFromLocation:location]
-                         }];
-}
-
-- (void)didEndDraggingMarkerWithIdentifier:(NSString *)identifier
-                                  location:(CLLocationCoordinate2D)location {
-  FLTGoogleMapMarkerController *controller = self.markerIdentifierToController[identifier];
-  if (!controller) {
-    return;
-  }
-  [self.methodChannel invokeMethod:@"marker#onDragEnd"
-                         arguments:@{
-                           @"markerId" : identifier,
-                           @"position" : [FLTGoogleMapJSONConversions arrayFromLocation:location]
-                         }];
-}
-
-- (void)didTapInfoWindowOfMarkerWithIdentifier:(NSString *)identifier {
-  if (identifier && self.markerIdentifierToController[identifier]) {
-    [self.methodChannel invokeMethod:@"infoWindow#onTap" arguments:@{@"markerId" : identifier}];
-  }
-}
-
-- (void)showMarkerInfoWindowWithIdentifier:(NSString *)identifier result:(FlutterResult)result {
-  FLTGoogleMapMarkerController *controller = self.markerIdentifierToController[identifier];
-  if (controller) {
-    [controller showInfoWindow];
-    result(nil);
-  } else {
-    result([FlutterError errorWithCode:@"Invalid markerId"
-                               message:@"showInfoWindow called with invalid markerId"
-                               details:nil]);
-  }
-}
-
-- (void)hideMarkerInfoWindowWithIdentifier:(NSString *)identifier result:(FlutterResult)result {
-  FLTGoogleMapMarkerController *controller = self.markerIdentifierToController[identifier];
-  if (controller) {
-    [controller hideInfoWindow];
-    result(nil);
-  } else {
-    result([FlutterError errorWithCode:@"Invalid markerId"
-                               message:@"hideInfoWindow called with invalid markerId"
-                               details:nil]);
-  }
-}
-
-- (void)isInfoWindowShownForMarkerWithIdentifier:(NSString *)identifier
-                                          result:(FlutterResult)result {
-  FLTGoogleMapMarkerController *controller = self.markerIdentifierToController[identifier];
-  if (controller) {
-    result(@([controller isInfoWindowShown]));
-  } else {
-    result([FlutterError errorWithCode:@"Invalid markerId"
-                               message:@"isInfoWindowShown called with invalid markerId"
-                               details:nil]);
-  }
 }
 
 - (CGFloat)getScreenScale {
@@ -597,10 +504,24 @@
   // https://github.com/flutter/flutter/issues/125496.
   return self.mapView.traitCollection.displayScale;
 }
+ 
++ (GMSCoordinateBounds *)getBounds:(NSDictionary *)groundOverlay {
+  NSArray *bounds = groundOverlay[@"bounds"];
+  
+  return [FLTGoogleMapJSONConversions coordinateBoundsFromLatLongs:bounds];
+}
 
-+ (CLLocationCoordinate2D)getPosition:(NSDictionary *)marker {
-  NSArray *position = marker[@"position"];
++ (CLLocationCoordinate2D)getPosition:(NSDictionary *)groundOverlay {
+  NSArray *position = groundOverlay[@"position"];
   return [FLTGoogleMapJSONConversions locationFromLatLong:position];
+}
+
++ (UIImage *)getImage:(NSDictionary *)groundOverlay 
+            registrar:(NSObject<FlutterPluginRegistrar> *) registrar 
+          screenScale:(CGFloat)screenScale {
+  NSArray *image = groundOverlay[@"icon"];
+  
+  return [FLTGoogleMapGroundOverlayController extractIconFromData:image registrar:registrar screenScale:screenScale];
 }
 
 @end

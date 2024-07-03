@@ -12,6 +12,12 @@
 
 @end
 
+/// Returns dict[key], or nil if dict[key] is NSNull.
+static id GetValueOrNilFromDict(NSDictionary *dict, NSString *key) {
+  id value = dict[key];
+  return value == [NSNull null] ? nil : value;
+}
+
 @implementation FLTGoogleMapPolylineController
 
 - (instancetype)initPolylineWithPath:(GMSMutablePath *)path
@@ -65,42 +71,42 @@
 
 - (void)interpretPolylineOptions:(NSDictionary *)data
                        registrar:(NSObject<FlutterPluginRegistrar> *)registrar {
-  NSNumber *consumeTapEvents = FGMGetValueOrNilFromDict(data, @"consumeTapEvents");
+  NSNumber *consumeTapEvents = GetValueOrNilFromDict(data, @"consumeTapEvents");
   if (consumeTapEvents) {
     [self setConsumeTapEvents:[consumeTapEvents boolValue]];
   }
 
-  NSNumber *visible = FGMGetValueOrNilFromDict(data, @"visible");
+  NSNumber *visible = GetValueOrNilFromDict(data, @"visible");
   if (visible) {
     [self setVisible:[visible boolValue]];
   }
 
-  NSNumber *zIndex = FGMGetValueOrNilFromDict(data, @"zIndex");
+  NSNumber *zIndex = GetValueOrNilFromDict(data, @"zIndex");
   if (zIndex) {
     [self setZIndex:[zIndex intValue]];
   }
 
-  NSArray *points = FGMGetValueOrNilFromDict(data, @"points");
+  NSArray *points = GetValueOrNilFromDict(data, @"points");
   if (points) {
     [self setPoints:[FLTGoogleMapJSONConversions pointsFromLatLongs:points]];
   }
 
-  NSNumber *strokeColor = FGMGetValueOrNilFromDict(data, @"color");
+  NSNumber *strokeColor = GetValueOrNilFromDict(data, @"color");
   if (strokeColor) {
     [self setColor:[FLTGoogleMapJSONConversions colorFromRGBA:strokeColor]];
   }
 
-  NSNumber *strokeWidth = FGMGetValueOrNilFromDict(data, @"width");
+  NSNumber *strokeWidth = GetValueOrNilFromDict(data, @"width");
   if (strokeWidth) {
     [self setStrokeWidth:[strokeWidth intValue]];
   }
 
-  NSNumber *geodesic = FGMGetValueOrNilFromDict(data, @"geodesic");
+  NSNumber *geodesic = GetValueOrNilFromDict(data, @"geodesic");
   if (geodesic) {
     [self setGeodesic:geodesic.boolValue];
   }
 
-  NSArray *patterns = FGMGetValueOrNilFromDict(data, @"pattern");
+  NSArray *patterns = GetValueOrNilFromDict(data, @"pattern");
   if (patterns) {
     [self
         setPattern:[FLTGoogleMapJSONConversions strokeStylesFromPatterns:patterns

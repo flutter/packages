@@ -15,6 +15,7 @@ import 'package:maps_example_dart/move_camera.dart';
 import 'package:maps_example_dart/padding.dart';
 import 'package:maps_example_dart/page.dart';
 import 'package:maps_example_dart/place_circle.dart';
+import 'package:maps_example_dart/place_ground_overlay.dart';
 import 'package:maps_example_dart/place_marker.dart';
 import 'package:maps_example_dart/place_polygon.dart';
 import 'package:maps_example_dart/place_polyline.dart';
@@ -36,6 +37,7 @@ void main() {
     PlacePolylinePage(),
     PlacePolygonPage(),
     PlaceCirclePage(),
+    PlaceGroundOverlayPage(),
     PaddingPage(),
     SnapshotPage(),
     LiteModePage(),
