@@ -46,8 +46,6 @@ import java.util.Map;
 class Convert {
   // These constants must match the corresponding constants in serialization.dart
   public static final String HEATMAPS_TO_ADD_KEY = "heatmapsToAdd";
-  public static final String HEATMAPS_TO_CHANGE_KEY = "heatmapsToChange";
-  public static final String HEATMAP_IDS_TO_REMOVE_KEY = "heatmapIdsToRemove";
   public static final String HEATMAP_ID_KEY = "heatmapId";
   public static final String HEATMAP_DATA_KEY = "data";
   public static final String HEATMAP_GRADIENT_KEY = "gradient";

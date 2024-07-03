@@ -193,6 +193,64 @@ public class Messages {
   }
 
   /**
+   * Pigeon equivalent of the Heatmap class.
+   *
+   * <p>Generated class from Pigeon that represents data sent in messages.
+   */
+  public static final class PlatformHeatmap {
+    /**
+     * The heatmap data, as JSON. This should only be set from Heatmap.toJson, and the native code
+     * must interpret it according to the internal implementation details of that method.
+     */
+    private @NonNull Object json;
+
+    public @NonNull Object getJson() {
+      return json;
+    }
+
+    public void setJson(@NonNull Object setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"json\" is null.");
+      }
+      this.json = setterArg;
+    }
+
+    /** Constructor is non-public to enforce null safety; use Builder. */
+    PlatformHeatmap() {}
+
+    public static final class Builder {
+
+      private @Nullable Object json;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setJson(@NonNull Object setterArg) {
+        this.json = setterArg;
+        return this;
+      }
+
+      public @NonNull PlatformHeatmap build() {
+        PlatformHeatmap pigeonReturn = new PlatformHeatmap();
+        pigeonReturn.setJson(json);
+        return pigeonReturn;
+      }
+    }
+
+    @NonNull
+    ArrayList<Object> toList() {
+      ArrayList<Object> toListResult = new ArrayList<Object>(1);
+      toListResult.add(json);
+      return toListResult;
+    }
+
+    static @NonNull PlatformHeatmap fromList(@NonNull ArrayList<Object> __pigeon_list) {
+      PlatformHeatmap pigeonResult = new PlatformHeatmap();
+      Object json = __pigeon_list.get(0);
+      pigeonResult.setJson(json);
+      return pigeonResult;
+    }
+  }
+
+  /**
    * Pigeon equivalent of the ClusterManager class.
    *
    * <p>Generated class from Pigeon that represents data sent in messages.
@@ -1124,30 +1182,32 @@ public class Messages {
         case (byte) 130:
           return PlatformCircle.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 131:
-          return PlatformClusterManager.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformHeatmap.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 132:
-          return PlatformMarker.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformClusterManager.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 133:
-          return PlatformPolygon.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformMarker.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 134:
-          return PlatformPolyline.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformPolygon.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 135:
-          return PlatformTileOverlay.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformPolyline.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 136:
-          return PlatformLatLng.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformTileOverlay.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 137:
-          return PlatformLatLngBounds.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformLatLng.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 138:
-          return PlatformCluster.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformLatLngBounds.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 139:
-          return PlatformMapConfiguration.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformCluster.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 140:
-          return PlatformPoint.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformMapConfiguration.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 141:
-          return PlatformTileLayer.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformPoint.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 142:
-          return PlatformZoomRange.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformTileLayer.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 143:
+          return PlatformZoomRange.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 144:
           Object value = readValue(buffer);
           return value == null ? null : PlatformRendererType.values()[(int) value];
         default:
@@ -1163,44 +1223,47 @@ public class Messages {
       } else if (value instanceof PlatformCircle) {
         stream.write(130);
         writeValue(stream, ((PlatformCircle) value).toList());
-      } else if (value instanceof PlatformClusterManager) {
+      } else if (value instanceof PlatformHeatmap) {
         stream.write(131);
+        writeValue(stream, ((PlatformHeatmap) value).toList());
+      } else if (value instanceof PlatformClusterManager) {
+        stream.write(132);
         writeValue(stream, ((PlatformClusterManager) value).toList());
       } else if (value instanceof PlatformMarker) {
-        stream.write(132);
+        stream.write(133);
         writeValue(stream, ((PlatformMarker) value).toList());
       } else if (value instanceof PlatformPolygon) {
-        stream.write(133);
+        stream.write(134);
         writeValue(stream, ((PlatformPolygon) value).toList());
       } else if (value instanceof PlatformPolyline) {
-        stream.write(134);
+        stream.write(135);
         writeValue(stream, ((PlatformPolyline) value).toList());
       } else if (value instanceof PlatformTileOverlay) {
-        stream.write(135);
+        stream.write(136);
         writeValue(stream, ((PlatformTileOverlay) value).toList());
       } else if (value instanceof PlatformLatLng) {
-        stream.write(136);
+        stream.write(137);
         writeValue(stream, ((PlatformLatLng) value).toList());
       } else if (value instanceof PlatformLatLngBounds) {
-        stream.write(137);
+        stream.write(138);
         writeValue(stream, ((PlatformLatLngBounds) value).toList());
       } else if (value instanceof PlatformCluster) {
-        stream.write(138);
+        stream.write(139);
         writeValue(stream, ((PlatformCluster) value).toList());
       } else if (value instanceof PlatformMapConfiguration) {
-        stream.write(139);
+        stream.write(140);
         writeValue(stream, ((PlatformMapConfiguration) value).toList());
       } else if (value instanceof PlatformPoint) {
-        stream.write(140);
+        stream.write(141);
         writeValue(stream, ((PlatformPoint) value).toList());
       } else if (value instanceof PlatformTileLayer) {
-        stream.write(141);
+        stream.write(142);
         writeValue(stream, ((PlatformTileLayer) value).toList());
       } else if (value instanceof PlatformZoomRange) {
-        stream.write(142);
+        stream.write(143);
         writeValue(stream, ((PlatformZoomRange) value).toList());
       } else if (value instanceof PlatformRendererType) {
-        stream.write(143);
+        stream.write(144);
         writeValue(stream, value == null ? null : ((PlatformRendererType) value).index);
       } else {
         super.writeValue(stream, value);
@@ -1253,6 +1316,11 @@ public class Messages {
     void updateCircles(
         @NonNull List<PlatformCircle> toAdd,
         @NonNull List<PlatformCircle> toChange,
+        @NonNull List<String> idsToRemove);
+    /** Updates the set of heatmaps on the map. */
+    void updateHeatmaps(
+        @NonNull List<PlatformHeatmap> toAdd,
+        @NonNull List<PlatformHeatmap> toChange,
         @NonNull List<String> idsToRemove);
     /** Updates the set of custer managers for clusters on the map. */
     void updateClusterManagers(
@@ -1409,6 +1477,34 @@ public class Messages {
                 List<String> idsToRemoveArg = (List<String>) args.get(2);
                 try {
                   api.updateCircles(toAddArg, toChangeArg, idsToRemoveArg);
+                  wrapped.add(0, null);
+                } catch (Throwable exception) {
+                  ArrayList<Object> wrappedError = wrapError(exception);
+                  wrapped = wrappedError;
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.google_maps_flutter_android.MapsApi.updateHeatmaps"
+                    + messageChannelSuffix,
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                List<PlatformHeatmap> toAddArg = (List<PlatformHeatmap>) args.get(0);
+                List<PlatformHeatmap> toChangeArg = (List<PlatformHeatmap>) args.get(1);
+                List<String> idsToRemoveArg = (List<String>) args.get(2);
+                try {
+                  api.updateHeatmaps(toAddArg, toChangeArg, idsToRemoveArg);
                   wrapped.add(0, null);
                 } catch (Throwable exception) {
                   ArrayList<Object> wrappedError = wrapError(exception);

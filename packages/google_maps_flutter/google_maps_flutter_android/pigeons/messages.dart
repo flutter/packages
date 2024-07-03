@@ -41,6 +41,17 @@ class PlatformCircle {
   final Object json;
 }
 
+/// Pigeon equivalent of the Heatmap class.
+class PlatformHeatmap {
+  PlatformHeatmap(this.json);
+
+  /// The heatmap data, as JSON. This should only be set from
+  /// Heatmap.toJson, and the native code must interpret it according to the
+  /// internal implementation details of that method.
+  // This exists only to allow incremental migration to Pigeon.
+  final Object json;
+}
+
 /// Pigeon equivalent of the ClusterManager class.
 class PlatformClusterManager {
   PlatformClusterManager({required this.identifier});
@@ -194,6 +205,13 @@ abstract class MapsApi {
   // The consuming code treats the entries as non-nullable.
   void updateCircles(List<PlatformCircle?> toAdd,
       List<PlatformCircle?> toChange, List<String?> idsToRemove);
+
+  /// Updates the set of heatmaps on the map.
+  // TODO(stuartmorgan): Make the generic type non-nullable once supported.
+  // https://github.com/flutter/flutter/issues/97848
+  // The consuming code treats the entries as non-nullable.
+  void updateHeatmaps(List<PlatformHeatmap?> toAdd,
+      List<PlatformHeatmap?> toChange, List<String?> idsToRemove);
 
   /// Updates the set of custer managers for clusters on the map.
   // TODO(stuartmorgan): Make the generic type non-nullable once supported.

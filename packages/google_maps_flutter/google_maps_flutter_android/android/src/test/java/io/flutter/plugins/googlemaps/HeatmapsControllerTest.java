@@ -30,7 +30,6 @@ import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentMatcher;
 import org.mockito.Mockito;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
@@ -54,7 +53,7 @@ public class HeatmapsControllerTest {
 
     final List<Object> heatmaps = Collections.singletonList(heatmapOptions);
     try {
-      controller.addHeatmaps(heatmaps);
+      controller.addJsonHeatmaps(heatmaps);
     } catch (IllegalArgumentException e) {
       assertEquals("heatmapId was null", e.getMessage());
       throw e;
@@ -79,17 +78,11 @@ public class HeatmapsControllerTest {
     heatmapOptions1.put(HEATMAP_DATA_KEY, heatmapData);
 
     final List<Object> heatmaps = Collections.singletonList(heatmapOptions1);
-    controller.addHeatmaps(heatmaps);
+    controller.addJsonHeatmaps(heatmaps);
 
     Mockito.verify(googleMap, times(1))
         .addTileOverlay(
-            Mockito.argThat(
-                new ArgumentMatcher<TileOverlayOptions>() {
-                  @Override
-                  public boolean matches(TileOverlayOptions argument) {
-                    return argument.getTileProvider() instanceof HeatmapTileProvider;
-                  }
-                }));
+            Mockito.argThat(argument -> argument.getTileProvider() instanceof HeatmapTileProvider));
 
     final float opacity = 0.1f;
     final Map<String, Object> heatmapOptions2 = new HashMap<>();
@@ -97,7 +90,17 @@ public class HeatmapsControllerTest {
     heatmapOptions2.put(HEATMAP_DATA_KEY, heatmapData);
     heatmapOptions2.put(HEATMAP_OPACITY_KEY, opacity);
 
-    final List<Object> heatmapUpdates = Collections.singletonList(heatmapOptions2);
+    final List<Messages.PlatformHeatmap> heatmapUpdates =
+        Collections.singletonList(heatmapOptions2)
+            .stream()
+            .map(
+                json -> {
+                  final Messages.PlatformHeatmap platformHeatmap = new Messages.PlatformHeatmap();
+                  platformHeatmap.setJson(json);
+                  return platformHeatmap;
+                })
+            .toList();
+
     controller.changeHeatmaps(heatmapUpdates);
     Mockito.verify(heatmap, times(1)).setOpacity(opacity);
 

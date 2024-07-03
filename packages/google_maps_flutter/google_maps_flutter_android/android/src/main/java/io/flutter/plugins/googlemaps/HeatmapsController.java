@@ -33,36 +33,37 @@ public class HeatmapsController {
     this.googleMap = googleMap;
   }
 
-  /** Adds heatmaps to the map. */
-  void addHeatmaps(List<Object> heatmapsToAdd) {
-    if (heatmapsToAdd == null) {
-      return;
+  /** Adds heatmaps to the map from json data. */
+  void addJsonHeatmaps(List<Object> heatmapsToAdd) {
+    if (heatmapsToAdd != null) {
+      for (Object heatmapToAdd : heatmapsToAdd) {
+        addJsonHeatmap(heatmapToAdd);
+      }
     }
-    for (Object heatmapToAdd : heatmapsToAdd) {
-      addHeatmap(heatmapToAdd);
+  }
+
+  /** Adds heatmaps to the map. */
+  void addHeatmaps(@NonNull List<Messages.PlatformHeatmap> heatmapsToAdd) {
+    for (Messages.PlatformHeatmap heatmapToAdd : heatmapsToAdd) {
+      addJsonHeatmap(heatmapToAdd.getJson());
     }
   }
 
   /** Updates the given heatmaps on the map. */
-  void changeHeatmaps(List<Object> heatmapsToChange) {
-    if (heatmapsToChange == null) {
-      return;
-    }
-    for (Object heatmapToChange : heatmapsToChange) {
+  void changeHeatmaps(@NonNull List<Messages.PlatformHeatmap> heatmapsToChange) {
+    for (Messages.PlatformHeatmap heatmapToChange : heatmapsToChange) {
       changeHeatmap(heatmapToChange);
     }
   }
 
   /** Removes heatmaps with the given ids from the map. */
-  void removeHeatmaps(List<String> heatmapIdsToRemove) {
-    if (heatmapIdsToRemove == null) {
-      return;
-    }
+  void removeHeatmaps(@NonNull List<String> heatmapIdsToRemove) {
     for (String heatmapId : heatmapIdsToRemove) {
-      if (heatmapId == null) {
-        continue;
+      HeatmapController heatmapController = heatmapIdToController.remove(heatmapId);
+      if (heatmapController != null) {
+        heatmapController.remove();
+        heatmapIdToController.remove(heatmapId);
       }
-      removeHeatmap(heatmapId);
     }
   }
 
@@ -72,47 +73,42 @@ public class HeatmapsController {
     return builder.build();
   }
 
-  /** Adds a heatmap to the map. */
-  private void addHeatmap(Object heatmapOptions) {
-    if (heatmapOptions == null) {
+  /** Adds a heatmap to the map from json data. */
+  private void addJsonHeatmap(Object heatmap) {
+    if (heatmap == null) {
       return;
     }
     HeatmapBuilder heatmapBuilder = new HeatmapBuilder();
-    String heatmapId = Convert.interpretHeatmapOptions(heatmapOptions, heatmapBuilder);
+    String heatmapId = Convert.interpretHeatmapOptions(heatmap, heatmapBuilder);
+    HeatmapTileProvider options = buildHeatmap(heatmapBuilder);
+    addHeatmap(heatmapId, options);
+  }
 
-    HeatmapTileProvider heatmap = buildHeatmap(heatmapBuilder);
+  /** Adds a heatmap to the map. */
+  private void addHeatmap(String heatmapId, HeatmapTileProvider options) {
     TileOverlay heatmapTileOverlay =
-        googleMap.addTileOverlay(new TileOverlayOptions().tileProvider(heatmap));
-    HeatmapController heatmapController = new HeatmapController(heatmap, heatmapTileOverlay);
+        googleMap.addTileOverlay(new TileOverlayOptions().tileProvider(options));
+    HeatmapController heatmapController = new HeatmapController(options, heatmapTileOverlay);
     heatmapIdToController.put(heatmapId, heatmapController);
   }
 
   /** Updates the given heatmap on the map. */
-  private void changeHeatmap(Object heatmapOptions) {
-    if (heatmapOptions == null) {
+  private void changeHeatmap(Messages.PlatformHeatmap heatmap) {
+    if (heatmap == null) {
       return;
     }
-    String heatmapId = getHeatmapId(heatmapOptions);
+    String heatmapId = getHeatmapId(heatmap);
     HeatmapController heatmapController = heatmapIdToController.get(heatmapId);
     if (heatmapController != null) {
-      Convert.interpretHeatmapOptions(heatmapOptions, heatmapController);
+      Convert.interpretHeatmapOptions(heatmap.getJson(), heatmapController);
       heatmapController.clearTileCache();
-    }
-  }
-
-  /** Removes the heatmap with the given id from the map. */
-  private void removeHeatmap(String heatmapId) {
-    HeatmapController heatmapController = heatmapIdToController.get(heatmapId);
-    if (heatmapController != null) {
-      heatmapController.remove();
-      heatmapIdToController.remove(heatmapId);
     }
   }
 
   /** Returns the heatmap id from the given heatmap data. */
   @SuppressWarnings("unchecked")
-  private static String getHeatmapId(Object heatmap) {
-    Map<String, Object> heatmapMap = (Map<String, Object>) heatmap;
+  private static String getHeatmapId(Messages.PlatformHeatmap heatmap) {
+    Map<String, Object> heatmapMap = (Map<String, Object>) heatmap.getJson();
     return (String) heatmapMap.get(HEATMAP_ID_KEY);
   }
 }

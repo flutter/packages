@@ -4,9 +4,6 @@
 
 package io.flutter.plugins.googlemaps;
 
-import static io.flutter.plugins.googlemaps.Convert.HEATMAPS_TO_ADD_KEY;
-import static io.flutter.plugins.googlemaps.Convert.HEATMAPS_TO_CHANGE_KEY;
-import static io.flutter.plugins.googlemaps.Convert.HEATMAP_IDS_TO_REMOVE_KEY;
 import static io.flutter.plugins.googlemaps.Convert.clusterToPigeon;
 
 import android.Manifest;
@@ -719,7 +716,7 @@ class GoogleMapController
   }
 
   private void updateInitialHeatmaps() {
-    heatmapsController.addHeatmaps(initialHeatmaps);
+    heatmapsController.addJsonHeatmaps(initialHeatmaps);
   }
 
   @Override
@@ -839,6 +836,16 @@ class GoogleMapController
     circlesController.addCircles(toAdd);
     circlesController.changeCircles(toChange);
     circlesController.removeCircles(idsToRemove);
+  }
+
+  @Override
+  public void updateHeatmaps(
+      @NonNull List<Messages.PlatformHeatmap> toAdd,
+      @NonNull List<Messages.PlatformHeatmap> toChange,
+      @NonNull List<String> idsToRemove) {
+    heatmapsController.addHeatmaps(toAdd);
+    heatmapsController.changeHeatmaps(toChange);
+    heatmapsController.removeHeatmaps(idsToRemove);
   }
 
   @Override
