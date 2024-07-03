@@ -115,7 +115,7 @@
            lengths:[FLTGoogleMapJSONConversions spanLengthsFromPatterns:patterns]];
   }
 
-  NSNumber *visible = GetValueOrNilFromDict(data, @"visible");
+  NSNumber *visible = FGMGetValueOrNilFromDict(data, @"visible");
   if (visible) {
     [self setVisible:[visible boolValue]];
   }
