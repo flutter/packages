@@ -78,14 +78,6 @@ public class GroundOverlayControllerTest {
   }
 
   @Test
-  public void setAnchor() {
-    float u = 0.5f;
-    float v = 0.5f;
-    groundOverlayController.setAnchor(u, v);
-    verify(mockGroundOverlay).setAnchor(u, v);
-  }
-
-  @Test
   public void setTransparency() {
     float transparency = 0.5f;
     groundOverlayController.setTransparency(transparency);

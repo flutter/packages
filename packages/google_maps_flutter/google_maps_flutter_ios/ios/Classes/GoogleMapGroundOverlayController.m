@@ -45,10 +45,6 @@
   self.groundOverlay.map = nil;
 }
 
-// - (void)setDraggable:(BOOL)draggable {
-//   self.groundOverlay.draggable = draggable;
-// }
-
 - (void)setVisible:(BOOL)visible {
   self.groundOverlay.map = visible ? _mapView : nil;
 }
@@ -117,7 +113,7 @@
   }
   NSArray *icon = data[@"icon"];
   if (icon && icon != (id)[NSNull null]) {
-    UIImage *image = [self extractIconFromData:icon registrar:registrar screenScale:screenScale];
+    UIImage *image = [FLTGoogleMapGroundOverlayController extractIconFromData:icon registrar:registrar screenScale:screenScale];
     [self setIcon:image];
   }
   NSArray *anchor = data[@"anchor"];
@@ -126,7 +122,7 @@
   }
 }
 
-- (UIImage *)extractIconFromData:(NSArray *)iconData
++ (UIImage *)extractIconFromData:(NSArray *)iconData
                        registrar:(NSObject<FlutterPluginRegistrar> *)registrar
                      screenScale:(CGFloat)screenScale {
   NSAssert(screenScale > 0, @"Screen scale must be greater than 0");
@@ -152,7 +148,7 @@
     if (iconData.count == 3) {
       image = [UIImage imageNamed:[registrar lookupKeyForAsset:iconData[1]]];
       id scaleParam = iconData[2];
-      image = [self scaleImage:image by:scaleParam];
+      image = [FLTGoogleMapGroundOverlayController scaleImage:image by:scaleParam];
     } else {
       NSString *error =
           [NSString stringWithFormat:@"'fromAssetImage' should have exactly 3 arguments. Got: %lu",
@@ -264,7 +260,7 @@
 /// flutter google_maps_flutter_platform_interface package which has been replaced by 'bytes'
 /// message handling. It will be removed when the deprecated image bitmap description type
 /// 'fromBytes' is removed from the platform interface.
-- (UIImage *)scaleImage:(UIImage *)image by:(id)scaleParam {
++ (UIImage *)scaleImage:(UIImage *)image by:(id)scaleParam {
   double scale = 1.0;
   if ([scaleParam isKindOfClass:[NSNumber class]]) {
     scale = [scaleParam doubleValue];
@@ -428,7 +424,9 @@
   for (NSDictionary *groundOverlay in groundOverlaysToAdd) {
     NSArray *bounds = groundOverlay[@"bounds"];
     NSString *identifier = groundOverlay[@"groundOverlayId"];
-    UIImage *icon = [FLTGroundOverlaysController getImage:groundOverlay registrar:_registrar];
+    UIImage *icon = [FLTGroundOverlaysController getImage:groundOverlay 
+                                                registrar:_registrar 
+                                             screenScale:[self getScreenScale]];
     
     if(bounds && bounds != (id)[NSNull null]){
       GMSCoordinateBounds *coordinateBounds = [FLTGroundOverlaysController getBounds:groundOverlay];
@@ -518,10 +516,12 @@
   return [FLTGoogleMapJSONConversions locationFromLatLong:position];
 }
 
-+ (UIImage *)getImage:(NSDictionary *)groundOverlay registrar:(NSObject<FlutterPluginRegistrar> *) registrar {
++ (UIImage *)getImage:(NSDictionary *)groundOverlay 
+            registrar:(NSObject<FlutterPluginRegistrar> *) registrar 
+          screenScale:(CGFloat)screenScale {
   NSArray *image = groundOverlay[@"icon"];
   
-  return [FLTGoogleMapGroundOverlayController extractIconFromData:image registrar:registrar];
+  return [FLTGoogleMapGroundOverlayController extractIconFromData:image registrar:registrar screenScale:screenScale];
 }
 
 @end

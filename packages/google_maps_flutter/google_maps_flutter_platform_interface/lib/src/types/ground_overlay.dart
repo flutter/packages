@@ -24,6 +24,8 @@ class GroundOverlay implements MapsObject<GroundOverlay> {
   /// 1. Using [height], [width] and [LatLng]
   /// 2. Using [width], [width]
   /// 3. Using [LatLngBounds]
+  ///
+  /// [GroundOverlay] with [position] does not render on iOS.
   const GroundOverlay({
     required this.groundOverlayId,
     this.consumeTapEvents = false,

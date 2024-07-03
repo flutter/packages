@@ -19,6 +19,7 @@ dependencies:
     # the parent directory to use the current plugin's version.
     path: ../
   google_maps_flutter_android: ^2.11.0
+  google_maps_flutter_ios: ^2.9.0
   google_maps_flutter_platform_interface: ^2.8.0
 
 dev_dependencies:
@@ -39,5 +40,7 @@ flutter:
 dependency_overrides:
   google_maps_flutter_android:
     path: ../../google_maps_flutter_android
+  google_maps_flutter_ios:
+    path: ../../google_maps_flutter_ios
   google_maps_flutter_platform_interface:
     path: ../../google_maps_flutter_platform_interface

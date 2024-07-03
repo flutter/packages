@@ -16,7 +16,7 @@ import 'page.dart';
 
 class PlaceGroundOverlayPage extends GoogleMapExampleAppPage {
   const PlaceGroundOverlayPage({Key? key})
-      : super(const Icon(Icons.image), 'Place ground overlay', key: key);
+      : super(const Icon(Icons.place), 'Place ground overlay', key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -37,8 +37,6 @@ typedef GroundOverlayUpdateAction = GroundOverlay Function(
 class PlaceGroundOverlayBodyState extends State<PlaceGroundOverlayBody> {
   PlaceGroundOverlayBodyState();
   static const LatLng center = LatLng(-33.86711, 151.1947171);
-  static const double defaultWidth = 100.0;
-  static const double defaultHeight = 100.0;
 
   ExampleGoogleMapController? controller;
   Map<GroundOverlayId, GroundOverlay> groundOverlays =
@@ -94,16 +92,23 @@ class PlaceGroundOverlayBodyState extends State<PlaceGroundOverlayBody> {
     _groundOverlayIdCounter++;
     final GroundOverlayId groundOverlayId = GroundOverlayId(groundOverlayIdVal);
 
+    final LatLng centerPosition = LatLng(
+      center.latitude + sin(_groundOverlayIdCounter * pi / 6.0) / 20.0,
+      center.longitude + cos(_groundOverlayIdCounter * pi / 6.0) / 20.0,
+    );
+    final LatLngBounds bounds = LatLngBounds(
+      southwest: LatLng(
+          centerPosition.latitude - 0.01, centerPosition.longitude - 0.01),
+      northeast: LatLng(
+          centerPosition.latitude + 0.01, centerPosition.longitude + 0.01),
+    );
+
     final GroundOverlay groundOverlay = GroundOverlay(
       groundOverlayId: groundOverlayId,
-      position: LatLng(
-        center.latitude + sin(_groundOverlayIdCounter * pi / 6.0) / 20.0,
-        center.latitude + cos(_groundOverlayIdCounter * pi / 6.0) / 20.0,
-      ),
-      width: defaultWidth,
-      height: defaultHeight,
+      bounds: bounds,
+      consumeTapEvents: true,
       onTap: () => _onGroundOverlayTapped(groundOverlayId),
-      icon: BitmapDescriptor.defaultMarker,
+      icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure),
     );
 
     setState(() {
@@ -121,17 +126,25 @@ class PlaceGroundOverlayBodyState extends State<PlaceGroundOverlayBody> {
 
   void _changePosition(GroundOverlayId groundOverlayId) {
     final GroundOverlay groundOverlay = groundOverlays[groundOverlayId]!;
-    final LatLng current = groundOverlay.position!;
-    final Offset offset = Offset(
-      center.latitude - current.latitude,
-      center.longitude - current.longitude,
+    final LatLngBounds current = groundOverlay.bounds!;
+    final LatLng centerOfBounds = LatLng(
+      (current.northeast.latitude + current.southwest.latitude) / 2,
+      (current.northeast.longitude + current.southwest.longitude) / 2,
     );
+    final Offset offset = Offset(
+      center.latitude - centerOfBounds.latitude,
+      center.longitude - centerOfBounds.longitude,
+    );
+    final LatLngBounds newBounds = LatLngBounds(
+      southwest: LatLng(centerOfBounds.latitude + offset.dy - 0.01,
+          centerOfBounds.longitude + offset.dx - 0.01),
+      northeast: LatLng(centerOfBounds.latitude + offset.dy + 0.01,
+          centerOfBounds.longitude + offset.dx + 0.01),
+    );
+
     setState(() {
       groundOverlays[groundOverlayId] = groundOverlay.copyWith(
-        positionParam: LatLng(
-          center.latitude + offset.dy,
-          center.longitude + offset.dx,
-        ),
+        boundsParam: newBounds,
       );
     });
   }
