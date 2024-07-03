@@ -69,10 +69,15 @@
     @"visible" : @1,
   };
 
-  CGRect frame = CGRectMake(0, 0, 100, 100);
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+  // TODO(stuartmorgan): Switch to initWithOptions: once we can guarantee we will be using SDK 8.3+.
+  // That API was only added in 8.3, and Cocoapod caches on some machines may not be up-to-date
+  // enough to resolve to that yet even when targeting iOS 14+.
   PartiallyMockedMapView *mapView = [[PartiallyMockedMapView alloc]
       initWithFrame:frame
              camera:[[GMSCameraPosition alloc] initWithLatitude:0 longitude:0 zoom:0]];
+#pragma clang diagnostic pop
 
   NSString *identifier = @"TestMarker";
   FLTGoogleMapMarkerController *controller =
@@ -105,10 +110,15 @@
     @"visible" : @1,
   };
 
-  CGRect frame = CGRectMake(0, 0, 100, 100);
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+  // TODO(stuartmorgan): Switch to initWithOptions: once we can guarantee we will be using SDK 8.3+.
+  // That API was only added in 8.3, and Cocoapod caches on some machines may not be up-to-date
+  // enough to resolve to that yet even when targeting iOS 14+.
   PartiallyMockedMapView *mapView = [[PartiallyMockedMapView alloc]
       initWithFrame:frame
              camera:[[GMSCameraPosition alloc] initWithLatitude:0 longitude:0 zoom:0]];
+#pragma clang diagnostic pop
 
   NSString *identifier = @"TestPolygon";
   FLTGoogleMapPolygonController *controller =
@@ -140,10 +150,15 @@
     @"visible" : @1,
   };
 
-  CGRect frame = CGRectMake(0, 0, 100, 100);
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+  // TODO(stuartmorgan): Switch to initWithOptions: once we can guarantee we will be using SDK 8.3+.
+  // That API was only added in 8.3, and Cocoapod caches on some machines may not be up-to-date
+  // enough to resolve to that yet even when targeting iOS 14+.
   PartiallyMockedMapView *mapView = [[PartiallyMockedMapView alloc]
       initWithFrame:frame
              camera:[[GMSCameraPosition alloc] initWithLatitude:0 longitude:0 zoom:0]];
+#pragma clang diagnostic pop
 
   NSString *identifier = @"TestPolyline";
   FLTGoogleMapPolylineController *controller =
@@ -171,10 +186,15 @@
     @"visible" : @1,
   };
 
-  CGRect frame = CGRectMake(0, 0, 100, 100);
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+  // TODO(stuartmorgan): Switch to initWithOptions: once we can guarantee we will be using SDK 8.3+.
+  // That API was only added in 8.3, and Cocoapod caches on some machines may not be up-to-date
+  // enough to resolve to that yet even when targeting iOS 14+.
   PartiallyMockedMapView *mapView = [[PartiallyMockedMapView alloc]
       initWithFrame:frame
              camera:[[GMSCameraPosition alloc] initWithLatitude:0 longitude:0 zoom:0]];
+#pragma clang diagnostic pop
 
   NSString *identifier = @"TestCircle";
   FLTGoogleMapCircleController *controller =
@@ -198,10 +218,15 @@
     @"visible" : @1,
   };
 
-  CGRect frame = CGRectMake(0, 0, 100, 100);
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+  // TODO(stuartmorgan): Switch to initWithOptions: once we can guarantee we will be using SDK 8.3+.
+  // That API was only added in 8.3, and Cocoapod caches on some machines may not be up-to-date
+  // enough to resolve to that yet even when targeting iOS 14+.
   PartiallyMockedMapView *mapView = [[PartiallyMockedMapView alloc]
       initWithFrame:frame
              camera:[[GMSCameraPosition alloc] initWithLatitude:0 longitude:0 zoom:0]];
+#pragma clang diagnostic pop
 
   FLTGoogleMapTileOverlayController *controller =
       [[FLTGoogleMapTileOverlayController alloc] initWithTileLayer:tileLayer
