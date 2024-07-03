@@ -5,6 +5,7 @@
 package io.flutter.plugins.googlemaps;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.VisibleForTesting;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
@@ -14,8 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 class CirclesController {
-
-  private final Map<String, CircleController> circleIdToController;
+  @VisibleForTesting final Map<String, CircleController> circleIdToController;
   private final Map<String, String> googleMapsCircleIdToDartCircleId;
   private final MethodChannel methodChannel;
   private final float density;
@@ -35,7 +35,9 @@ class CirclesController {
   void addJsonCircles(List<Object> circlesToAdd) {
     if (circlesToAdd != null) {
       for (Object circleToAdd : circlesToAdd) {
-        addJsonCircle(circleToAdd);
+        @SuppressWarnings("unchecked")
+        Map<String, ?> circleMap = (Map<String, ?>) circleToAdd;
+        addJsonCircle(circleMap);
       }
     }
   }
@@ -47,8 +49,8 @@ class CirclesController {
   }
 
   void changeCircles(@NonNull List<Messages.PlatformCircle> circlesToChange) {
-    for (Object circleToChange : circlesToChange) {
-      changeCircle(circleToChange);
+    for (Messages.PlatformCircle circleToChange : circlesToChange) {
+      changeJsonCircle(circleToChange.getJson());
     }
   }
 
@@ -75,7 +77,7 @@ class CirclesController {
     return false;
   }
 
-  private void addJsonCircle(Object circle) {
+  private void addJsonCircle(Map<String, ?> circle) {
     if (circle == null) {
       return;
     }
@@ -92,7 +94,7 @@ class CirclesController {
     googleMapsCircleIdToDartCircleId.put(circle.getId(), circleId);
   }
 
-  private void changeCircle(Object circle) {
+  private void changeJsonCircle(Map<String, ?> circle) {
     if (circle == null) {
       return;
     }
@@ -103,9 +105,7 @@ class CirclesController {
     }
   }
 
-  @SuppressWarnings("unchecked")
-  private static String getCircleId(Object circle) {
-    Map<String, Object> circleMap = (Map<String, Object>) circle;
-    return (String) circleMap.get("circleId");
+  private static String getCircleId(Map<String, ?> circle) {
+    return (String) circle.get("circleId");
   }
 }
