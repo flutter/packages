@@ -27,8 +27,8 @@
 }
 
 - (instancetype)initWithPolygon:(GMSPolygon *)polygon
-                         identifier:(NSString *)identifier
-                            mapView:(GMSMapView *)mapView {
+                     identifier:(NSString *)identifier
+                        mapView:(GMSMapView *)mapView {
   self = [super init];
   if (self) {
     _polygon = polygon;

@@ -40,18 +40,15 @@
 
 - (void)setMap:(GMSMapView *)map {
   super.map = map;
-  
+
   if (self.didSetMap || map == nil || map == (id)[NSNull null]) {
     return;
   }
-  
+
   self.didSetMap = true;
 
-  self.isOrderCorrect = self.didSetOpacity
-    && self.didSetZIndex
-    && self.didSetFadeIn
-    && self.didSetTileSize;
+  self.isOrderCorrect =
+      self.didSetOpacity && self.didSetZIndex && self.didSetFadeIn && self.didSetTileSize;
 }
 
 @end
-

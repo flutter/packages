@@ -58,20 +58,16 @@
 
 - (void)setMap:(GMSMapView *)map {
   super.map = map;
-  
+
   if (self.didSetMap || map == nil || map == (id)[NSNull null]) {
     return;
   }
-  
+
   self.didSetMap = true;
 
-  self.isOrderCorrect = self.didSetTappable
-    && self.didSetZIndex
-    && self.didSetPosition
-    && self.didSetRadius
-    && self.didSetStrokeColor
-    && self.didSetStrokeWidth
-    && self.didSetFillColor;
+  self.isOrderCorrect = self.didSetTappable && self.didSetZIndex && self.didSetPosition &&
+                        self.didSetRadius && self.didSetStrokeColor && self.didSetStrokeWidth &&
+                        self.didSetFillColor;
 }
 
 @end

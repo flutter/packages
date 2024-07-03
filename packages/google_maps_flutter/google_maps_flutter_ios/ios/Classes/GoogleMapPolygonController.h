@@ -11,7 +11,7 @@
                          identifier:(NSString *)identifier
                             mapView:(GMSMapView *)mapView;
 - (instancetype)initWithPolygon:(GMSPolygon *)polygon
-                         identifier:(NSString *)identifier
+                     identifier:(NSString *)identifier
                         mapView:(GMSMapView *)mapView;
 - (void)removePolygon;
 @end

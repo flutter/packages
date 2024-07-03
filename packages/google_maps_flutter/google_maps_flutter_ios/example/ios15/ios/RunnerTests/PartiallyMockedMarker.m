@@ -82,24 +82,17 @@
 
 - (void)setMap:(GMSMapView *)map {
   super.map = map;
-  
+
   if (self.didSetMap || map == nil || map == (id)[NSNull null]) {
     return;
   }
-  
+
   self.didSetMap = true;
 
-  self.isOrderCorrect = self.didSetOpacity
-    && self.didSetGroundAnchor
-    && self.didSetDraggable
-    && self.didSetIcon
-    && self.didSetFlat
-    && self.didSetInfoWindowAnchor
-    && self.didSetTitle
-    && self.didSetSnippet
-    && self.didSetPosition
-    && self.didSetRotation
-    && self.didSetZIndex;
+  self.isOrderCorrect = self.didSetOpacity && self.didSetGroundAnchor && self.didSetDraggable &&
+                        self.didSetIcon && self.didSetFlat && self.didSetInfoWindowAnchor &&
+                        self.didSetTitle && self.didSetSnippet && self.didSetPosition &&
+                        self.didSetRotation && self.didSetZIndex;
 }
 
 @end

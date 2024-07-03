@@ -15,8 +15,8 @@ NS_ASSUME_NONNULL_BEGIN
                             identifier:(NSString *)identifier
                                mapView:(GMSMapView *)mapView;
 - (instancetype)initWithMarker:(GMSMarker *)marker
-                            identifier:(NSString *)identifier
-                               mapView:(GMSMapView *)mapView;
+                    identifier:(NSString *)identifier
+                       mapView:(GMSMapView *)mapView;
 - (void)showInfoWindow;
 - (void)hideInfoWindow;
 - (BOOL)isInfoWindowShown;

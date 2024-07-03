@@ -9,11 +9,11 @@
 @import GoogleMaps;
 
 #import <OCMock/OCMock.h>
+#import "PartiallyMockedCircle.h"
 #import "PartiallyMockedMapView.h"
 #import "PartiallyMockedMarker.h"
 #import "PartiallyMockedPolygon.h"
 #import "PartiallyMockedPolyline.h"
-#import "PartiallyMockedCircle.h"
 #import "PartiallyMockedTileLayer.h"
 
 @interface GoogleMapsCallOrderTests : XCTestCase
@@ -27,12 +27,12 @@
 
 @interface FLTGoogleMapPolygonController (Tests)
 - (void)interpretPolygonOptions:(NSDictionary *)data
-                     registrar:(NSObject<FlutterPluginRegistrar> *)registrar;
+                      registrar:(NSObject<FlutterPluginRegistrar> *)registrar;
 @end
 
 @interface FLTGoogleMapPolylineController (Tests)
 - (void)interpretPolylineOptions:(NSDictionary *)data
-                     registrar:(NSObject<FlutterPluginRegistrar> *)registrar;
+                       registrar:(NSObject<FlutterPluginRegistrar> *)registrar;
 @end
 
 @interface FLTGoogleMapCircleController (Tests)
@@ -46,74 +46,75 @@
 @implementation GoogleMapsCallOrderTests
 
 - (void)testMarker {
-  PartiallyMockedMarker *marker = [PartiallyMockedMarker
-                                   markerWithPosition:CLLocationCoordinate2DMake(0, 0)];
-  
+  PartiallyMockedMarker *marker =
+      [PartiallyMockedMarker markerWithPosition:CLLocationCoordinate2DMake(0, 0)];
+
   NSDictionary *assetData =
       @{@"assetName" : @"fakeImageNameKey", @"bitmapScaling" : @"auto", @"imagePixelRatio" : @1};
   NSArray *iconData = @[ @"asset", assetData ];
-  NSDictionary* options = @{
-      @"alpha": @1,
-      @"anchor": @[@0.5, @1],
-      @"draggable": @0,
-      @"icon": iconData,
-      @"flat": @0,
-      @"infoWindow": @{
-        @"title": @"TestTitle",
-        @"snippet": @"TestSnippet",
-        @"infoWindowAnchor": @[@0, @0],
-      },
-      @"position": @[@0, @0],
-      @"rotation": @0,
-      @"zIndex": @0,
-      @"visible": @1,
+  NSDictionary *options = @{
+    @"alpha" : @1,
+    @"anchor" : @[ @0.5, @1 ],
+    @"draggable" : @0,
+    @"icon" : iconData,
+    @"flat" : @0,
+    @"infoWindow" : @{
+      @"title" : @"TestTitle",
+      @"snippet" : @"TestSnippet",
+      @"infoWindowAnchor" : @[ @0, @0 ],
+    },
+    @"position" : @[ @0, @0 ],
+    @"rotation" : @0,
+    @"zIndex" : @0,
+    @"visible" : @1,
   };
 
   CGRect frame = CGRectMake(0, 0, 100, 100);
   PartiallyMockedMapView *mapView = [[PartiallyMockedMapView alloc]
-    initWithFrame:frame
-            camera:[[GMSCameraPosition alloc] initWithLatitude:0 longitude:0 zoom:0]];
+      initWithFrame:frame
+             camera:[[GMSCameraPosition alloc] initWithLatitude:0 longitude:0 zoom:0]];
 
   NSString *identifier = @"TestMarker";
-  FLTGoogleMapMarkerController *controller = [[FLTGoogleMapMarkerController alloc] initWithMarker:marker identifier:identifier mapView:mapView];
+  FLTGoogleMapMarkerController *controller =
+      [[FLTGoogleMapMarkerController alloc] initWithMarker:marker
+                                                identifier:identifier
+                                                   mapView:mapView];
   id registrar = OCMProtocolMock(@protocol(FlutterPluginRegistrar));
-    CGFloat screenScale = mapView.traitCollection.displayScale;
-  [controller interpretMarkerOptions:options
-                            registrar:registrar
-                          screenScale:screenScale];
+  CGFloat screenScale = mapView.traitCollection.displayScale;
+  [controller interpretMarkerOptions:options registrar:registrar screenScale:screenScale];
 
   XCTAssert(marker.isOrderCorrect);
 }
 
 - (void)testPolygon {
   GMSMutablePath *path = [GMSMutablePath path];
-  [path addCoordinate: CLLocationCoordinate2DMake(0, 0)];
-  [path addCoordinate: CLLocationCoordinate2DMake(1, 0)];
-  [path addCoordinate: CLLocationCoordinate2DMake(1, 1)];
-  
+  [path addCoordinate:CLLocationCoordinate2DMake(0, 0)];
+  [path addCoordinate:CLLocationCoordinate2DMake(1, 0)];
+  [path addCoordinate:CLLocationCoordinate2DMake(1, 1)];
+
   PartiallyMockedPolygon *polygon = [PartiallyMockedPolygon polygonWithPath:path];
 
-  NSDictionary* options = @{
-      @"consumeTapEvents": @0,
-      @"zIndex": @0,
-      @"points": @[@[@0, @0], @[@1, @0], @[@1, @1]],
-      @"holes": @[],
-      @"fillColor": @0x000000,
-      @"strokeColor": @0x000000,
-      @"strokeWidth": @1,
-      @"visible": @1,
+  NSDictionary *options = @{
+    @"consumeTapEvents" : @0,
+    @"zIndex" : @0,
+    @"points" : @[ @[ @0, @0 ], @[ @1, @0 ], @[ @1, @1 ] ],
+    @"holes" : @[],
+    @"fillColor" : @0x000000,
+    @"strokeColor" : @0x000000,
+    @"strokeWidth" : @1,
+    @"visible" : @1,
   };
 
   CGRect frame = CGRectMake(0, 0, 100, 100);
   PartiallyMockedMapView *mapView = [[PartiallyMockedMapView alloc]
-                                     initWithFrame:frame
-                                     camera:[[GMSCameraPosition alloc]
-                                             initWithLatitude:0
-                                             longitude:0
-                                             zoom:0]];
+      initWithFrame:frame
+             camera:[[GMSCameraPosition alloc] initWithLatitude:0 longitude:0 zoom:0]];
 
   NSString *identifier = @"TestPolygon";
-  FLTGoogleMapPolygonController *controller = [[FLTGoogleMapPolygonController alloc] initWithPolygon:polygon identifier:identifier mapView:mapView];
+  FLTGoogleMapPolygonController *controller =
+      [[FLTGoogleMapPolygonController alloc] initWithPolygon:polygon
+                                                  identifier:identifier
+                                                     mapView:mapView];
   id registrar = OCMProtocolMock(@protocol(FlutterPluginRegistrar));
   [controller interpretPolygonOptions:options registrar:registrar];
 
@@ -122,30 +123,33 @@
 
 - (void)testPolyline {
   GMSMutablePath *path = [GMSMutablePath path];
-  [path addCoordinate: CLLocationCoordinate2DMake(0, 0)];
-  [path addCoordinate: CLLocationCoordinate2DMake(1, 0)];
-  [path addCoordinate: CLLocationCoordinate2DMake(1, 1)];
-  
+  [path addCoordinate:CLLocationCoordinate2DMake(0, 0)];
+  [path addCoordinate:CLLocationCoordinate2DMake(1, 0)];
+  [path addCoordinate:CLLocationCoordinate2DMake(1, 1)];
+
   PartiallyMockedPolyline *polyline = [PartiallyMockedPolyline polylineWithPath:path];
 
-  NSDictionary* options = @{
-      @"consumeTapEvents": @0,
-      @"zIndex": @0,
-      @"points": @[@[@0, @0], @[@1, @0], @[@1, @1]],
-      @"color": @0x000000,
-      @"width": @1,
-      @"geodesic": @0,
-      @"pattern": @[@[@"dot", @1], @[@"gap", @1]],
-      @"visible": @1,
+  NSDictionary *options = @{
+    @"consumeTapEvents" : @0,
+    @"zIndex" : @0,
+    @"points" : @[ @[ @0, @0 ], @[ @1, @0 ], @[ @1, @1 ] ],
+    @"color" : @0x000000,
+    @"width" : @1,
+    @"geodesic" : @0,
+    @"pattern" : @[ @[ @"dot", @1 ], @[ @"gap", @1 ] ],
+    @"visible" : @1,
   };
 
   CGRect frame = CGRectMake(0, 0, 100, 100);
   PartiallyMockedMapView *mapView = [[PartiallyMockedMapView alloc]
-                                     initWithFrame:frame
-                                     camera:[[GMSCameraPosition alloc] initWithLatitude:0 longitude:0 zoom:0]];
+      initWithFrame:frame
+             camera:[[GMSCameraPosition alloc] initWithLatitude:0 longitude:0 zoom:0]];
 
   NSString *identifier = @"TestPolyline";
-  FLTGoogleMapPolylineController *controller = [[FLTGoogleMapPolylineController alloc] initWithPolyline:polyline identifier:identifier mapView:mapView];
+  FLTGoogleMapPolylineController *controller =
+      [[FLTGoogleMapPolylineController alloc] initWithPolyline:polyline
+                                                    identifier:identifier
+                                                       mapView:mapView];
   id registrar = OCMProtocolMock(@protocol(FlutterPluginRegistrar));
   [controller interpretPolylineOptions:options registrar:registrar];
 
@@ -153,35 +157,31 @@
 }
 
 - (void)testCircle {
-  PartiallyMockedCircle *circle = [PartiallyMockedCircle
-                                   circleWithPosition:CLLocationCoordinate2DMake(0, 0)
-                                   radius:1.0];
+  PartiallyMockedCircle *circle =
+      [PartiallyMockedCircle circleWithPosition:CLLocationCoordinate2DMake(0, 0) radius:1.0];
 
-  NSDictionary* options = @{
-      @"consumeTapEvents": @0,
-      @"zIndex": @0,
-      @"center": @[@0, @0],
-      @"radius": @0,
-      @"strokeColor": @0x000000,
-      @"strokeWidth": @1,
-      @"fillColor": @0x000000,
-      @"visible": @1,
+  NSDictionary *options = @{
+    @"consumeTapEvents" : @0,
+    @"zIndex" : @0,
+    @"center" : @[ @0, @0 ],
+    @"radius" : @0,
+    @"strokeColor" : @0x000000,
+    @"strokeWidth" : @1,
+    @"fillColor" : @0x000000,
+    @"visible" : @1,
   };
 
   CGRect frame = CGRectMake(0, 0, 100, 100);
   PartiallyMockedMapView *mapView = [[PartiallyMockedMapView alloc]
-                                     initWithFrame:frame
-                                     camera:[[GMSCameraPosition alloc]
-                                             initWithLatitude:0
-                                             longitude:0
-                                             zoom:0]];
+      initWithFrame:frame
+             camera:[[GMSCameraPosition alloc] initWithLatitude:0 longitude:0 zoom:0]];
 
   NSString *identifier = @"TestCircle";
-  FLTGoogleMapCircleController *controller = [[FLTGoogleMapCircleController alloc]
-                                              initWithCircle:circle
-                                              circleId:identifier
-                                              mapView:mapView
-                                              options:options];
+  FLTGoogleMapCircleController *controller =
+      [[FLTGoogleMapCircleController alloc] initWithCircle:circle
+                                                  circleId:identifier
+                                                   mapView:mapView
+                                                   options:options];
   id registrar = OCMProtocolMock(@protocol(FlutterPluginRegistrar));
   [controller interpretCircleOptions:options];
 
@@ -191,27 +191,24 @@
 - (void)testTileOverlay {
   PartiallyMockedTileLayer *tileLayer = [PartiallyMockedTileLayer alloc];
 
-  NSDictionary* options = @{
-      @"transparency": @0,
-      @"zIndex": @0,
-      @"fadeIn": @0,
-      @"tileSize": @256,
-      @"visible": @1,
+  NSDictionary *options = @{
+    @"transparency" : @0,
+    @"zIndex" : @0,
+    @"fadeIn" : @0,
+    @"tileSize" : @256,
+    @"visible" : @1,
   };
 
   CGRect frame = CGRectMake(0, 0, 100, 100);
   PartiallyMockedMapView *mapView = [[PartiallyMockedMapView alloc]
-                                     initWithFrame:frame
-                                     camera:[[GMSCameraPosition alloc]
-                                             initWithLatitude:0
-                                             longitude:0
-                                             zoom:0]];
+      initWithFrame:frame
+             camera:[[GMSCameraPosition alloc] initWithLatitude:0 longitude:0 zoom:0]];
 
   NSString *identifier = @"TestTileOverlay";
-  FLTGoogleMapTileOverlayController *controller = [[FLTGoogleMapTileOverlayController alloc]
-                                                   initWithTileLayer:tileLayer
-                                                   mapView:mapView
-                                                   options:options];
+  FLTGoogleMapTileOverlayController *controller =
+      [[FLTGoogleMapTileOverlayController alloc] initWithTileLayer:tileLayer
+                                                           mapView:mapView
+                                                           options:options];
 
   [controller interpretTileOverlayOptions:options];
 

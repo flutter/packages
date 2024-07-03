@@ -28,8 +28,8 @@
 }
 
 - (instancetype)initWithMarker:(GMSMarker *)marker
-                            identifier:(NSString *)identifier
-                               mapView:(GMSMapView *)mapView {
+                    identifier:(NSString *)identifier
+                       mapView:(GMSMapView *)mapView {
   self = [super init];
   if (self) {
     _marker = marker;
