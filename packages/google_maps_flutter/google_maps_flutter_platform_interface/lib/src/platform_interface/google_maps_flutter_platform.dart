@@ -129,6 +129,20 @@ abstract class GoogleMapsFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('updateCircles() has not been implemented.');
   }
 
+  /// Updates ground overlay configuration.
+  ///
+  /// Change listeners are notified once the update has been made on the
+  /// platform side.
+  ///
+  /// The returned [Future] completes after listeners have been notified.
+  Future<void> updateGroundOverlays(
+    GroundOverlayUpdates groundOverlayUpdates, {
+    required int mapId,
+  }) {
+    throw UnimplementedError(
+        'updateGroundOverlays() has not been implemented.');
+  }
+
   /// Updates tile overlay configuration.
   ///
   /// Change listeners are notified once the update has been made on the
@@ -361,6 +375,11 @@ abstract class GoogleMapsFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('onCircleTap() has not been implemented.');
   }
 
+  /// A [GroundOverlay] has been tapped.
+  Stream<GroundOverlayTapEvent> onGroundOverlayTap({required int mapId}) {
+    throw UnimplementedError('onGroundOverlayTap() has not been implemented.');
+  }
+
   /// A Map has been tapped at a certain [LatLng].
   Stream<MapTapEvent> onTap({required int mapId}) {
     throw UnimplementedError('onTap() has not been implemented.');
@@ -397,6 +416,7 @@ abstract class GoogleMapsFlutterPlatform extends PlatformInterface {
     Set<Polygon> polygons = const <Polygon>{},
     Set<Polyline> polylines = const <Polyline>{},
     Set<Circle> circles = const <Circle>{},
+    Set<GroundOverlay> groundOverlays = const <GroundOverlay>{},
     Set<TileOverlay> tileOverlays = const <TileOverlay>{},
     Set<Factory<OneSequenceGestureRecognizer>>? gestureRecognizers =
         const <Factory<OneSequenceGestureRecognizer>>{},
@@ -427,6 +447,7 @@ abstract class GoogleMapsFlutterPlatform extends PlatformInterface {
     Set<Polygon> polygons = const <Polygon>{},
     Set<Polyline> polylines = const <Polyline>{},
     Set<Circle> circles = const <Circle>{},
+    Set<GroundOverlay> groundOverlays = const <GroundOverlay>{},
     Set<TileOverlay> tileOverlays = const <TileOverlay>{},
     Map<String, dynamic> mapOptions = const <String, dynamic>{},
   }) {
@@ -438,6 +459,7 @@ abstract class GoogleMapsFlutterPlatform extends PlatformInterface {
       polygons: polygons,
       polylines: polylines,
       circles: circles,
+      groundOverlays: groundOverlays,
       tileOverlays: tileOverlays,
       gestureRecognizers: gestureRecognizers,
       mapOptions: mapOptions,
@@ -461,6 +483,7 @@ abstract class GoogleMapsFlutterPlatform extends PlatformInterface {
       polygons: mapObjects.polygons,
       polylines: mapObjects.polylines,
       circles: mapObjects.circles,
+      groundOverlays: mapObjects.groundOverlays,
       tileOverlays: mapObjects.tileOverlays,
       gestureRecognizers: widgetConfiguration.gestureRecognizers,
       mapOptions: jsonForMapConfiguration(mapConfiguration),
