@@ -35,7 +35,9 @@ class PolygonsController {
   void addJsonPolygons(List<Object> polygonsToAdd) {
     if (polygonsToAdd != null) {
       for (Object polygonToAdd : polygonsToAdd) {
-        addJsonPolygon(polygonToAdd);
+        @SuppressWarnings("unchecked")
+        Map<String, ?> polygonMap = (Map<String, ?>) polygonToAdd;
+        addJsonPolygon(polygonMap);
       }
     }
   }
@@ -75,7 +77,7 @@ class PolygonsController {
     return false;
   }
 
-  private void addJsonPolygon(Object polygon) {
+  private void addJsonPolygon(Map<String, ?> polygon) {
     if (polygon == null) {
       return;
     }
@@ -93,7 +95,7 @@ class PolygonsController {
     googleMapsPolygonIdToDartPolygonId.put(polygon.getId(), polygonId);
   }
 
-  private void changeJsonPolygon(Object polygon) {
+  private void changeJsonPolygon(Map<String, ?> polygon) {
     if (polygon == null) {
       return;
     }
@@ -104,9 +106,7 @@ class PolygonsController {
     }
   }
 
-  @SuppressWarnings("unchecked")
-  private static String getPolygonId(Object polygon) {
-    Map<String, Object> polygonMap = (Map<String, Object>) polygon;
-    return (String) polygonMap.get("polygonId");
+  private static String getPolygonId(Map<String, ?> polygon) {
+    return (String) polygon.get("polygonId");
   }
 }
