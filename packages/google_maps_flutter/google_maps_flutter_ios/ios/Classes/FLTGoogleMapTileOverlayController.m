@@ -91,7 +91,6 @@
     [self setTileSize:tileSize.integerValue];
   }
 
-  //Set visible adds the tile to the map so it should be done last
   NSNumber *visible = data[@"visible"];
   if (visible != nil && visible != (id)[NSNull null]) {
     [self setVisible:visible.boolValue];

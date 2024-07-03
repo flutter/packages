@@ -32,6 +32,18 @@ static id GetValueOrNilFromDict(NSDictionary *dict, NSString *key) {
   return self;
 }
 
+- (instancetype)initWithPolyline:(GMSPolyline *)polyline
+                          identifier:(NSString *)identifier
+                             mapView:(GMSMapView *)mapView {
+  self = [super init];
+  if (self) {
+    _polyline = polyline;
+    _mapView = mapView;
+    _polyline.userData = @[ identifier ];
+  }
+  return self;
+}
+
 - (void)removePolyline {
   self.polyline.map = nil;
 }
@@ -109,7 +121,6 @@ static id GetValueOrNilFromDict(NSDictionary *dict, NSString *key) {
            lengths:[FLTGoogleMapJSONConversions spanLengthsFromPatterns:patterns]];
   }
 
-  //Set visible adds the polyline to the map so it should be done last
   NSNumber *visible = GetValueOrNilFromDict(data, @"visible");
   if (visible) {
     [self setVisible:[visible boolValue]];

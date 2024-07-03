@@ -10,6 +10,13 @@
 		1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */ = {isa = PBXBuildFile; fileRef = 1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */; };
 		3B3967161E833CAA004F5970 /* AppFrameworkInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */; };
 		4510D964F3B1259FEDD3ABA6 /* libPods-Runner.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7755F8F4BABC3D6A0BD4048B /* libPods-Runner.a */; };
+		47A54E822C34BF080096C467 /* GoogleMapsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 47A54E812C34BF080096C467 /* GoogleMapsTests.m */; };
+		47A54E842C34BF270096C467 /* PartiallyMockedMarker.m in Sources */ = {isa = PBXBuildFile; fileRef = 47A54E832C34BF270096C467 /* PartiallyMockedMarker.m */; };
+		47A54E862C34BF520096C467 /* GoogleMapsCallOrderTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 47A54E852C34BF510096C467 /* GoogleMapsCallOrderTests.m */; };
+		47A54E882C34E17E0096C467 /* PartiallyMockedPolygon.m in Sources */ = {isa = PBXBuildFile; fileRef = 47A54E872C34E17E0096C467 /* PartiallyMockedPolygon.m */; };
+		47A54E8B2C35C1E00096C467 /* PartiallyMockedPolyline.m in Sources */ = {isa = PBXBuildFile; fileRef = 47A54E8A2C35C1E00096C467 /* PartiallyMockedPolyline.m */; };
+		47A54E8E2C35C7F90096C467 /* PartiallyMockedCircle.m in Sources */ = {isa = PBXBuildFile; fileRef = 47A54E8D2C35C7F90096C467 /* PartiallyMockedCircle.m */; };
+		47A54E912C35D1FA0096C467 /* PartiallyMockedTileLayer.m in Sources */ = {isa = PBXBuildFile; fileRef = 47A54E902C35D1FA0096C467 /* PartiallyMockedTileLayer.m */; };
 		68E4726A2836FF0C00BDDDAC /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 68E472692836FF0C00BDDDAC /* MapKit.framework */; };
 		978B8F6F1D3862AE00F588F7 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 7AFFD8EE1D35381100E5BB4D /* AppDelegate.m */; };
 		97C146F31CF9000F007C117D /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 97C146F21CF9000F007C117D /* main.m */; };
@@ -49,6 +56,18 @@
 		1498D2321E8E86230040F4C2 /* GeneratedPluginRegistrant.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GeneratedPluginRegistrant.h; sourceTree = "<group>"; };
 		1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GeneratedPluginRegistrant.m; sourceTree = "<group>"; };
 		3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = AppFrameworkInfo.plist; path = Flutter/AppFrameworkInfo.plist; sourceTree = "<group>"; };
+		47A54E802C34BEF50096C467 /* PartiallyMockedMarker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PartiallyMockedMarker.h; sourceTree = "<group>"; };
+		47A54E812C34BF080096C467 /* GoogleMapsTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GoogleMapsTests.m; sourceTree = "<group>"; };
+		47A54E832C34BF270096C467 /* PartiallyMockedMarker.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PartiallyMockedMarker.m; sourceTree = "<group>"; };
+		47A54E852C34BF510096C467 /* GoogleMapsCallOrderTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GoogleMapsCallOrderTests.m; sourceTree = "<group>"; };
+		47A54E872C34E17E0096C467 /* PartiallyMockedPolygon.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PartiallyMockedPolygon.m; sourceTree = "<group>"; };
+		47A54E892C34E1B20096C467 /* PartiallyMockedPolygon.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PartiallyMockedPolygon.h; sourceTree = "<group>"; };
+		47A54E8A2C35C1E00096C467 /* PartiallyMockedPolyline.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PartiallyMockedPolyline.m; sourceTree = "<group>"; };
+		47A54E8C2C35C1FE0096C467 /* PartiallyMockedPolyline.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PartiallyMockedPolyline.h; sourceTree = "<group>"; };
+		47A54E8D2C35C7F90096C467 /* PartiallyMockedCircle.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PartiallyMockedCircle.m; sourceTree = "<group>"; };
+		47A54E8F2C35C8070096C467 /* PartiallyMockedCircle.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PartiallyMockedCircle.h; sourceTree = "<group>"; };
+		47A54E902C35D1FA0096C467 /* PartiallyMockedTileLayer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PartiallyMockedTileLayer.m; sourceTree = "<group>"; };
+		47A54E922C35D20B0096C467 /* PartiallyMockedTileLayer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PartiallyMockedTileLayer.h; sourceTree = "<group>"; };
 		68E472692836FF0C00BDDDAC /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.0.sdk/System/iOSSupport/System/Library/Frameworks/MapKit.framework; sourceTree = DEVELOPER_DIR; };
 		733AFAB37683A9DA7512F09C /* Pods-RunnerTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-RunnerTests/Pods-RunnerTests.release.xcconfig"; sourceTree = "<group>"; };
 		7755F8F4BABC3D6A0BD4048B /* libPods-Runner.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Runner.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -176,11 +195,23 @@
 		F7151F11265D7ED70028CB91 /* RunnerTests */ = {
 			isa = PBXGroup;
 			children = (
+				47A54E852C34BF510096C467 /* GoogleMapsCallOrderTests.m */,
+				47A54E832C34BF270096C467 /* PartiallyMockedMarker.m */,
+				47A54E812C34BF080096C467 /* GoogleMapsTests.m */,
+				47A54E802C34BEF50096C467 /* PartiallyMockedMarker.h */,
 				F269303A2BB389BF00BF17C4 /* assets */,
 				F7151F12265D7ED70028CB91 /* GoogleMapsTests.m */,
 				982F2A6A27BADE17003C81F4 /* PartiallyMockedMapView.h */,
 				982F2A6B27BADE17003C81F4 /* PartiallyMockedMapView.m */,
 				F7151F14265D7ED70028CB91 /* Info.plist */,
+				47A54E872C34E17E0096C467 /* PartiallyMockedPolygon.m */,
+				47A54E892C34E1B20096C467 /* PartiallyMockedPolygon.h */,
+				47A54E8A2C35C1E00096C467 /* PartiallyMockedPolyline.m */,
+				47A54E8C2C35C1FE0096C467 /* PartiallyMockedPolyline.h */,
+				47A54E8D2C35C7F90096C467 /* PartiallyMockedCircle.m */,
+				47A54E8F2C35C8070096C467 /* PartiallyMockedCircle.h */,
+				47A54E902C35D1FA0096C467 /* PartiallyMockedTileLayer.m */,
+				47A54E922C35D20B0096C467 /* PartiallyMockedTileLayer.h */,
 			);
 			path = RunnerTests;
 			sourceTree = "<group>";
@@ -398,8 +429,15 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				47A54E882C34E17E0096C467 /* PartiallyMockedPolygon.m in Sources */,
+				47A54E8E2C35C7F90096C467 /* PartiallyMockedCircle.m in Sources */,
+				47A54E842C34BF270096C467 /* PartiallyMockedMarker.m in Sources */,
+				47A54E862C34BF520096C467 /* GoogleMapsCallOrderTests.m in Sources */,
+				47A54E912C35D1FA0096C467 /* PartiallyMockedTileLayer.m in Sources */,
 				F7151F13265D7ED70028CB91 /* GoogleMapsTests.m in Sources */,
 				982F2A6C27BADE17003C81F4 /* PartiallyMockedMapView.m in Sources */,
+				47A54E822C34BF080096C467 /* GoogleMapsTests.m in Sources */,
+				47A54E8B2C35C1E00096C467 /* PartiallyMockedPolyline.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

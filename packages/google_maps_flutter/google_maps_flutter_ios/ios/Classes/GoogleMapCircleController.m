@@ -29,6 +29,20 @@
   return self;
 }
 
+- (instancetype)initWithCircle:(GMSCircle*)circle
+                              circleId:(NSString *)circleIdentifier
+                               mapView:(GMSMapView *)mapView
+                               options:(NSDictionary *)options {
+  self = [super init];
+  if (self) {
+    _circle = circle;
+    _mapView = mapView;
+    _circle.userData = @[ circleIdentifier ];
+    [self interpretCircleOptions:options];
+  }
+  return self;
+}
+
 - (void)removeCircle {
   self.circle.map = nil;
 }
@@ -95,7 +109,6 @@
     [self setFillColor:[FLTGoogleMapJSONConversions colorFromRGBA:fillColor]];
   }
 
-  //Set visible adds the circle to the map so it should be done last
   NSNumber *visible = data[@"visible"];
   if (visible && visible != (id)[NSNull null]) {
     [self setVisible:[visible boolValue]];

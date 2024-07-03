@@ -26,6 +26,18 @@
   return self;
 }
 
+- (instancetype)initWithPolygon:(GMSPolygon *)polygon
+                         identifier:(NSString *)identifier
+                            mapView:(GMSMapView *)mapView {
+  self = [super init];
+  if (self) {
+    _polygon = polygon;
+    _mapView = mapView;
+    _polygon.userData = @[ identifier ];
+  }
+  return self;
+}
+
 - (void)removePolygon {
   self.polygon.map = nil;
 }
@@ -108,7 +120,6 @@
     [self setStrokeWidth:[strokeWidth intValue]];
   }
 
-  //Set visible adds the polygon to the map so it should be done last
   NSNumber *visible = data[@"visible"];
   if (visible && visible != (id)[NSNull null]) {
     [self setVisible:[visible boolValue]];

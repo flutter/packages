@@ -27,7 +27,7 @@
   return self;
 }
 
-- (instancetype)initWithMarker:(GMSMarker)marker
+- (instancetype)initWithMarker:(GMSMarker *)marker
                             identifier:(NSString *)identifier
                                mapView:(GMSMapView *)mapView {
   self = [super init];
@@ -143,7 +143,6 @@
   if (zIndex && zIndex != (id)[NSNull null]) {
     [self setZIndex:[zIndex intValue]];
   }
-  //Set visible adds the marker to the map so it should be done last
   NSNumber *visible = data[@"visible"];
   if (visible && visible != (id)[NSNull null]) {
     [self setVisible:[visible boolValue]];

@@ -9,20 +9,22 @@
  */
 @interface PartiallyMockedMarker : GMSMarker
 
-@property(nonatomic, assign) BOOL didSetAlpha;
-@property(nonatomic, assign) BOOL didSetAnchor;
-@property(nonatomic, assign) BOOL didSetDraggable;
-@property(nonatomic, assign) BOOL didSetFlat;
-@property(nonatomic, assign) BOOL didSetIcon;
-@property(nonatomic, assign) BOOL didSetPosition;
-@property(nonatomic, assign) BOOL didSetRotation;
-@property(nonatomic, assign) BOOL didSetDraggable;
-@property(nonatomic, assign) BOOL didSetZIndex;
-@property(nonatomic, assign) BOOL didSetVisible;
+@property(nonatomic, assign, readonly) BOOL didSetOpacity;
+@property(nonatomic, assign, readonly) BOOL didSetGroundAnchor;
+@property(nonatomic, assign, readonly) BOOL didSetDraggable;
+@property(nonatomic, assign, readonly) BOOL didSetIcon;
+@property(nonatomic, assign, readonly) BOOL didSetFlat;
+@property(nonatomic, assign, readonly) BOOL didSetInfoWindowAnchor;
+@property(nonatomic, assign, readonly) BOOL didSetTitle;
+@property(nonatomic, assign, readonly) BOOL didSetSnippet;
+@property(nonatomic, assign, readonly) BOOL didSetPosition;
+@property(nonatomic, assign, readonly) BOOL didSetRotation;
+@property(nonatomic, assign, readonly) BOOL didSetZIndex;
+@property(nonatomic, assign, readonly) BOOL didSetMap;
 
 /**
  * Defines a property that represents whether the call order was correct.
  */
-@property(nonatomic, assign) BOOL isOrderCorrect;
+@property(nonatomic, assign, readonly) BOOL isOrderCorrect;
 
 @end

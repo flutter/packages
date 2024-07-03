@@ -14,6 +14,9 @@ NS_ASSUME_NONNULL_BEGIN
 - (instancetype)initMarkerWithPosition:(CLLocationCoordinate2D)position
                             identifier:(NSString *)identifier
                                mapView:(GMSMapView *)mapView;
+- (instancetype)initWithMarker:(GMSMarker *)marker
+                            identifier:(NSString *)identifier
+                               mapView:(GMSMapView *)mapView;
 - (void)showInfoWindow;
 - (void)hideInfoWindow;
 - (BOOL)isInfoWindowShown;
