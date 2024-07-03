@@ -182,7 +182,6 @@
                                                   circleId:identifier
                                                    mapView:mapView
                                                    options:options];
-  id registrar = OCMProtocolMock(@protocol(FlutterPluginRegistrar));
   [controller interpretCircleOptions:options];
 
   XCTAssert(circle.isOrderCorrect);
@@ -204,7 +203,6 @@
       initWithFrame:frame
              camera:[[GMSCameraPosition alloc] initWithLatitude:0 longitude:0 zoom:0]];
 
-  NSString *identifier = @"TestTileOverlay";
   FLTGoogleMapTileOverlayController *controller =
       [[FLTGoogleMapTileOverlayController alloc] initWithTileLayer:tileLayer
                                                            mapView:mapView

@@ -20,6 +20,4 @@
  */
 @property(nonatomic, assign, readonly) BOOL isOrderCorrect;
 
-+ (instancetype)polygonWithPath:(nullable GMSPath *)path;
-
 @end
