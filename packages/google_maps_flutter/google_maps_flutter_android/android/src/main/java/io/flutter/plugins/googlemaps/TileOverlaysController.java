@@ -4,7 +4,6 @@
 
 package io.flutter.plugins.googlemaps;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.TileOverlay;
@@ -29,28 +28,21 @@ class TileOverlaysController {
     this.googleMap = googleMap;
   }
 
-  void addJsonTileOverlays(List<Map<String, ?>> tileOverlaysToAdd) {
+  void addTileOverlays(List<Map<String, ?>> tileOverlaysToAdd) {
     if (tileOverlaysToAdd == null) {
       return;
     }
     for (Map<String, ?> tileOverlayToAdd : tileOverlaysToAdd) {
-      addJsonTileOverlay(tileOverlayToAdd);
+      addTileOverlay(tileOverlayToAdd);
     }
   }
 
-  void addTileOverlays(@NonNull List<Messages.PlatformTileOverlay> tileOverlaysToAdd) {
-    for (Messages.PlatformTileOverlay tileOverlayToAdd : tileOverlaysToAdd) {
-      @SuppressWarnings("unchecked")
-      final Map<String, ?> overlayJson = (Map<String, ?>) tileOverlayToAdd.getJson();
-      addJsonTileOverlay(overlayJson);
+  void changeTileOverlays(List<Map<String, ?>> tileOverlaysToChange) {
+    if (tileOverlaysToChange == null) {
+      return;
     }
-  }
-
-  void changeTileOverlays(@NonNull List<Messages.PlatformTileOverlay> tileOverlaysToChange) {
-    for (Messages.PlatformTileOverlay tileOverlayToChange : tileOverlaysToChange) {
-      @SuppressWarnings("unchecked")
-      final Map<String, ?> overlayJson = (Map<String, ?>) tileOverlayToChange.getJson();
-      changeJsonTileOverlay(overlayJson);
+    for (Map<String, ?> tileOverlayToChange : tileOverlaysToChange) {
+      changeTileOverlay(tileOverlayToChange);
     }
   }
 
@@ -88,7 +80,7 @@ class TileOverlaysController {
     return tileOverlayController.getTileOverlay();
   }
 
-  private void addJsonTileOverlay(Map<String, ?> tileOverlayOptions) {
+  private void addTileOverlay(Map<String, ?> tileOverlayOptions) {
     if (tileOverlayOptions == null) {
       return;
     }
@@ -104,7 +96,7 @@ class TileOverlaysController {
     tileOverlayIdToController.put(tileOverlayId, tileOverlayController);
   }
 
-  private void changeJsonTileOverlay(Map<String, ?> tileOverlayOptions) {
+  private void changeTileOverlay(Map<String, ?> tileOverlayOptions) {
     if (tileOverlayOptions == null) {
       return;
     }

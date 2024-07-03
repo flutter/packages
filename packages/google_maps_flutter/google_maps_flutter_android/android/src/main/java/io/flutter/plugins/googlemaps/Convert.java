@@ -9,11 +9,9 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Point;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.ButtCap;
@@ -359,20 +357,6 @@ class Convert {
     return ((Number) o).intValue();
   }
 
-  static @Nullable MapsInitializer.Renderer toMapRendererType(
-      @Nullable Messages.PlatformRendererType type) {
-    if (type == null) {
-      return null;
-    }
-    switch (type) {
-      case LATEST:
-        return MapsInitializer.Renderer.LATEST;
-      case LEGACY:
-        return MapsInitializer.Renderer.LEGACY;
-    }
-    return null;
-  }
-
   static Object cameraPositionToJson(CameraPosition position) {
     if (position == null) {
       return null;
@@ -432,6 +416,15 @@ class Convert {
     }
     final Map<String, Object> data = new HashMap<>(1);
     data.put("circleId", circleId);
+    return data;
+  }
+
+  static Object groundOverlayIdToJson(String groundOverlayId) {
+    if (groundOverlayId == null) {
+      return null;
+    }
+    final Map<String, Object> data = new HashMap<>(1);
+    data.put("groundOverlayId", groundOverlayId);
     return data;
   }
 
@@ -898,6 +891,54 @@ class Convert {
       throw new IllegalArgumentException("circleId was null");
     } else {
       return circleId;
+    }
+  }
+
+  static String interpretGroundOverlayOptions(Object o, GroundOverlayOptionsSink sink, AssetManager assetManager, float density) {
+    final Map<?, ?> data = toMap(o);
+    final Object consumeTapEvents = data.get("consumeTapEvents");
+    if (consumeTapEvents != null) {
+      sink.setConsumeTapEvents(toBoolean(consumeTapEvents));
+    }
+    final Object transparency = data.get("transparency");
+    if (transparency != null) {
+      sink.setTransparency(toFloat(transparency));
+    }
+    final Object width = data.get("width");
+    final Object height = data.get("height");
+    final Object position = data.get("position");
+    final Object bounds = data.get("bounds");
+    if (height != null) {
+      sink.setPosition(toLatLng(position), toFloat(width), toFloat(height), null);
+    } else {
+      if (width != null) {
+        sink.setPosition(toLatLng(position), toFloat(width), null, null);
+      } else {
+        sink.setPosition(null, null, null, toLatLngBounds(bounds));
+      }
+    }
+
+    final Object bearing = data.get("bearing");
+    if (bearing != null) {
+      sink.setBearing(toFloat(bearing));
+    }
+    final Object visible = data.get("visible");
+    if (visible != null) {
+      sink.setVisible(toBoolean(visible));
+    }
+    final Object zIndex = data.get("zIndex");
+    if (zIndex != null) {
+      sink.setZIndex(toFloat(zIndex));
+    }
+    final Object icon = data.get("icon");
+    if (icon != null) {
+      sink.setIcon(toBitmapDescriptor(icon, assetManager, density));
+    }
+    final String groundOverlayId = (String) data.get("groundOverlayId");
+    if (groundOverlayId == null) {
+      throw new IllegalArgumentException("groundOverlayId was null");
+    } else {
+      return groundOverlayId;
     }
   }
 

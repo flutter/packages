@@ -4,7 +4,6 @@
 
 package io.flutter.plugins.googlemaps;
 
-import androidx.annotation.NonNull;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
@@ -32,28 +31,31 @@ class CirclesController {
     this.googleMap = googleMap;
   }
 
-  void addJsonCircles(List<Object> circlesToAdd) {
+  void addCircles(List<Object> circlesToAdd) {
     if (circlesToAdd != null) {
       for (Object circleToAdd : circlesToAdd) {
-        addJsonCircle(circleToAdd);
+        addCircle(circleToAdd);
       }
     }
   }
 
-  void addCircles(@NonNull List<Messages.PlatformCircle> circlesToAdd) {
-    for (Messages.PlatformCircle circleToAdd : circlesToAdd) {
-      addJsonCircle(circleToAdd.getJson());
+  void changeCircles(List<Object> circlesToChange) {
+    if (circlesToChange != null) {
+      for (Object circleToChange : circlesToChange) {
+        changeCircle(circleToChange);
+      }
     }
   }
 
-  void changeCircles(@NonNull List<Messages.PlatformCircle> circlesToChange) {
-    for (Object circleToChange : circlesToChange) {
-      changeCircle(circleToChange);
+  void removeCircles(List<Object> circleIdsToRemove) {
+    if (circleIdsToRemove == null) {
+      return;
     }
-  }
-
-  void removeCircles(@NonNull List<String> circleIdsToRemove) {
-    for (String circleId : circleIdsToRemove) {
+    for (Object rawCircleId : circleIdsToRemove) {
+      if (rawCircleId == null) {
+        continue;
+      }
+      String circleId = (String) rawCircleId;
       final CircleController circleController = circleIdToController.remove(circleId);
       if (circleController != null) {
         circleController.remove();
@@ -75,7 +77,7 @@ class CirclesController {
     return false;
   }
 
-  private void addJsonCircle(Object circle) {
+  private void addCircle(Object circle) {
     if (circle == null) {
       return;
     }

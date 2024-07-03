@@ -5,7 +5,6 @@
 package io.flutter.plugins.googlemaps;
 
 import android.content.res.AssetManager;
-import androidx.annotation.NonNull;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
@@ -35,28 +34,31 @@ class PolylinesController {
     this.googleMap = googleMap;
   }
 
-  void addJsonPolylines(List<Object> polylinesToAdd) {
+  void addPolylines(List<Object> polylinesToAdd) {
     if (polylinesToAdd != null) {
       for (Object polylineToAdd : polylinesToAdd) {
-        addJsonPolyline(polylineToAdd);
+        addPolyline(polylineToAdd);
       }
     }
   }
 
-  void addPolylines(@NonNull List<Messages.PlatformPolyline> polylinesToAdd) {
-    for (Messages.PlatformPolyline polylineToAdd : polylinesToAdd) {
-      addJsonPolyline(polylineToAdd.getJson());
+  void changePolylines(List<Object> polylinesToChange) {
+    if (polylinesToChange != null) {
+      for (Object polylineToChange : polylinesToChange) {
+        changePolyline(polylineToChange);
+      }
     }
   }
 
-  void changePolylines(@NonNull List<Messages.PlatformPolyline> polylinesToChange) {
-    for (Messages.PlatformPolyline polylineToChange : polylinesToChange) {
-      changeJsonPolyline(polylineToChange.getJson());
+  void removePolylines(List<Object> polylineIdsToRemove) {
+    if (polylineIdsToRemove == null) {
+      return;
     }
-  }
-
-  void removePolylines(@NonNull List<String> polylineIdsToRemove) {
-    for (String polylineId : polylineIdsToRemove) {
+    for (Object rawPolylineId : polylineIdsToRemove) {
+      if (rawPolylineId == null) {
+        continue;
+      }
+      String polylineId = (String) rawPolylineId;
       final PolylineController polylineController = polylineIdToController.remove(polylineId);
       if (polylineController != null) {
         polylineController.remove();
@@ -78,7 +80,7 @@ class PolylinesController {
     return false;
   }
 
-  private void addJsonPolyline(Object polyline) {
+  private void addPolyline(Object polyline) {
     if (polyline == null) {
       return;
     }
@@ -97,7 +99,7 @@ class PolylinesController {
     googleMapsPolylineIdToDartPolylineId.put(polyline.getId(), polylineId);
   }
 
-  private void changeJsonPolyline(Object polyline) {
+  private void changePolyline(Object polyline) {
     if (polyline == null) {
       return;
     }

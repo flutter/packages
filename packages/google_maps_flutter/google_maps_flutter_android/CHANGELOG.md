@@ -1,3 +1,7 @@
+## 2.12.0
+
+* Adds support for GroundOverlay on Android and iOS.
+
 ## 2.11.0
 
 * Converts additional platform calls to Pigeon.

@@ -17,3 +17,18 @@ Object _serializeClusterManager(ClusterManager clusterManager) {
   json['clusterManagerId'] = clusterManager.clusterManagerId.value;
   return json;
 }
+
+/// Converts a Cluster Manager updates into object serializable in JSON.
+Object serializeClusterManagerUpdates(
+    ClusterManagerUpdates clusterManagerUpdates) {
+  final Map<String, Object> updateMap = <String, Object>{};
+
+  updateMap['clusterManagersToAdd'] =
+      serializeClusterManagerSet(clusterManagerUpdates.objectsToAdd);
+  updateMap['clusterManagerIdsToRemove'] = clusterManagerUpdates
+      .objectIdsToRemove
+      .map<String>((MapsObjectId<ClusterManager> id) => id.value)
+      .toList();
+
+  return updateMap;
+}
