@@ -5,6 +5,7 @@
 package io.flutter.plugins.googlemaps;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.VisibleForTesting;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
@@ -14,8 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 class CirclesController {
-
-  private final Map<String, CircleController> circleIdToController;
+  @VisibleForTesting final Map<String, CircleController> circleIdToController;
   private final Map<String, String> googleMapsCircleIdToDartCircleId;
   private final MethodChannel methodChannel;
   private final float density;
@@ -47,8 +47,8 @@ class CirclesController {
   }
 
   void changeCircles(@NonNull List<Messages.PlatformCircle> circlesToChange) {
-    for (Object circleToChange : circlesToChange) {
-      changeCircle(circleToChange);
+    for (Messages.PlatformCircle circleToChange : circlesToChange) {
+      changeJsonCircle(circleToChange.getJson());
     }
   }
 
@@ -92,7 +92,7 @@ class CirclesController {
     googleMapsCircleIdToDartCircleId.put(circle.getId(), circleId);
   }
 
-  private void changeCircle(Object circle) {
+  private void changeJsonCircle(Object circle) {
     if (circle == null) {
       return;
     }
