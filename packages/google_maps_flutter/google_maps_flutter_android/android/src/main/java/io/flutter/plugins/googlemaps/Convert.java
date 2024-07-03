@@ -534,6 +534,12 @@ class Convert {
     return new LatLng(toDouble(data.get(0)), toDouble(data.get(1)));
   }
 
+  /**
+   * Converts a list of serialized weighted lat/lng to a list of WeightedLatLng.
+   *
+   * @param o The serialized list of weighted lat/lng.
+   * @return The list of WeightedLatLng.
+   */
   static WeightedLatLng toWeightedLatLng(Object o) {
     final List<?> data = toList(o);
     return new WeightedLatLng(toLatLng(data.get(0)), toDouble(data.get(1)));
@@ -928,7 +934,26 @@ class Convert {
     }
   }
 
-  /** Set the options in the given heatmap object to the given sink. */
+  /**
+   * Set the options in the given heatmap object to the given sink.
+   *
+   * @param o the object expected to be a Map containing the heatmap options. The options map is
+   *     expected to have the following structure:
+   *     <pre>{@code
+   * {
+   *   "heatmapId": String,
+   *   "data": List, // List of serialized weighted lat/lng
+   *   "gradient": Map, // Serialized heatmap gradient
+   *   "maxIntensity": Double,
+   *   "opacity": Double,
+   *   "radius": Integer
+   * }
+   * }</pre>
+   *
+   * @param sink the HeatmapOptionsSink where the options will be set.
+   * @return the heatmapId.
+   * @throws IllegalArgumentException if heatmapId is null.
+   */
   static String interpretHeatmapOptions(Object o, HeatmapOptionsSink sink) {
     final Map<?, ?> data = toMap(o);
     final Object rawWeightedData = data.get(HEATMAP_DATA_KEY);
@@ -960,7 +985,7 @@ class Convert {
   }
 
   @VisibleForTesting
-  public static List<LatLng> toPoints(Object o) {
+  static List<LatLng> toPoints(Object o) {
     final List<?> data = toList(o);
     final List<LatLng> points = new ArrayList<>(data.size());
 
@@ -971,7 +996,13 @@ class Convert {
     return points;
   }
 
-  /** Converts the given object to a list of WeightedLatLng objects. */
+  /**
+   * Converts the given object to a list of WeightedLatLng objects.
+   *
+   * @param o the object to convert. The object is expected to be a List of serialized weighted
+   *     lat/lng.
+   * @return a list of WeightedLatLng objects.
+   */
   private static List<WeightedLatLng> toWeightedData(Object o) {
     final List<?> data = toList(o);
     final List<WeightedLatLng> weightedData = new ArrayList<>(data.size());
@@ -992,7 +1023,21 @@ class Convert {
     return data;
   }
 
-  /** Converts the given object to a Gradient object. */
+  /**
+   * Converts the given object to a Gradient object.
+   *
+   * @param o the object to convert. The object is expected to be a Map containing the gradient
+   *     options. The gradient map is expected to have the following structure:
+   *     <pre>{@code
+   * {
+   *   "colors": List<Integer>,
+   *   "startPoints": List<Float>,
+   *   "colorMapSize": Integer
+   * }
+   * }</pre>
+   *
+   * @return a Gradient object.
+   */
   private static Gradient toGradient(Object o) {
     final Map<?, ?> data = toMap(o);
 
@@ -1013,15 +1058,6 @@ class Convert {
     final int colorMapSize = toInt(data.get(HEATMAP_GRADIENT_COLOR_MAP_SIZE_KEY));
 
     return new Gradient(colors, startPoints, colorMapSize);
-  }
-
-  /** Converts the given Gradient object to a JSON object. */
-  private static Object gradientToJson(Gradient gradient) {
-    final Map<String, Object> data = new HashMap<>();
-    data.put(HEATMAP_GRADIENT_COLORS_KEY, gradient.mColors);
-    data.put(HEATMAP_GRADIENT_START_POINTS_KEY, gradient.mStartPoints);
-    data.put(HEATMAP_GRADIENT_COLOR_MAP_SIZE_KEY, gradient.mColorMapSize);
-    return data;
   }
 
   private static List<List<LatLng>> toHoles(Object o) {
