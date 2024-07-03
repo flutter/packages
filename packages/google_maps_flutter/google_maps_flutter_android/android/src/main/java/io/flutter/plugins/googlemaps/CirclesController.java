@@ -69,15 +69,7 @@ class CirclesController {
     if (circleId == null) {
       return false;
     }
-    flutterApi.onCircleTap(
-        circleId,
-        new Messages.VoidResult() {
-          @Override
-          public void success() {}
-
-          @Override
-          public void error(@NonNull Throwable error) {}
-        });
+    flutterApi.onCircleTap(circleId, new NoOpVoidResult());
     CircleController circleController = circleIdToController.get(circleId);
     if (circleController != null) {
       return circleController.consumeTapEvents();

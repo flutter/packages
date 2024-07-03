@@ -69,15 +69,7 @@ class PolygonsController {
     if (polygonId == null) {
       return false;
     }
-    flutterApi.onPolygonTap(
-        polygonId,
-        new Messages.VoidResult() {
-          @Override
-          public void success() {}
-
-          @Override
-          public void error(@NonNull Throwable error) {}
-        });
+    flutterApi.onPolygonTap(polygonId, new NoOpVoidResult());
     PolygonController polygonController = polygonIdToController.get(polygonId);
     if (polygonController != null) {
       return polygonController.consumeTapEvents();

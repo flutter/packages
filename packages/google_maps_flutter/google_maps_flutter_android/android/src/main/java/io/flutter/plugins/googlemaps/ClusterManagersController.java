@@ -198,14 +198,7 @@ class ClusterManagersController
       MarkerBuilder[] builders = cluster.getItems().toArray(new MarkerBuilder[0]);
       String clusterManagerId = builders[0].clusterManagerId();
       flutterApi.onClusterTap(
-          Convert.clusterToPigeon(clusterManagerId, cluster),
-          new Messages.VoidResult() {
-            @Override
-            public void success() {}
-
-            @Override
-            public void error(@NonNull Throwable error) {}
-          });
+          Convert.clusterToPigeon(clusterManagerId, cluster), new NoOpVoidResult());
     }
 
     // Return false to allow the default behavior of the cluster click event to occur.

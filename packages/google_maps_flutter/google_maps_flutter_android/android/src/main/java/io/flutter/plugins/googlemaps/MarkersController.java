@@ -26,18 +26,6 @@ class MarkersController {
   private final AssetManager assetManager;
   private final float density;
 
-  // A convenience object for calls to Dart where errors don't matter, such as streaming map
-  // information where if the corresponding Dart object is gone, the message should be silently
-  // dropped.
-  private final Messages.VoidResult noopVoidResult =
-      new Messages.VoidResult() {
-        @Override
-        public void success() {}
-
-        @Override
-        public void error(@NonNull Throwable error) {}
-      };
-
   MarkersController(
       @NonNull MapsCallbackApi flutterApi,
       ClusterManagersController clusterManagersController,
@@ -140,7 +128,7 @@ class MarkersController {
   }
 
   boolean onMarkerTap(String markerId) {
-    flutterApi.onMarkerTap(markerId, noopVoidResult);
+    flutterApi.onMarkerTap(markerId, new NoOpVoidResult());
     MarkerController markerController = markerIdToController.get(markerId);
     if (markerController != null) {
       return markerController.consumeTapEvents();
@@ -153,7 +141,7 @@ class MarkersController {
     if (markerId == null) {
       return;
     }
-    flutterApi.onMarkerDragStart(markerId, Convert.latLngToPigeon(latLng), noopVoidResult);
+    flutterApi.onMarkerDragStart(markerId, Convert.latLngToPigeon(latLng), new NoOpVoidResult());
   }
 
   void onMarkerDrag(String googleMarkerId, LatLng latLng) {
@@ -161,7 +149,7 @@ class MarkersController {
     if (markerId == null) {
       return;
     }
-    flutterApi.onMarkerDrag(markerId, Convert.latLngToPigeon(latLng), noopVoidResult);
+    flutterApi.onMarkerDrag(markerId, Convert.latLngToPigeon(latLng), new NoOpVoidResult());
   }
 
   void onMarkerDragEnd(String googleMarkerId, LatLng latLng) {
@@ -169,7 +157,7 @@ class MarkersController {
     if (markerId == null) {
       return;
     }
-    flutterApi.onMarkerDragEnd(markerId, Convert.latLngToPigeon(latLng), noopVoidResult);
+    flutterApi.onMarkerDragEnd(markerId, Convert.latLngToPigeon(latLng), new NoOpVoidResult());
   }
 
   void onInfoWindowTap(String googleMarkerId) {
@@ -177,7 +165,7 @@ class MarkersController {
     if (markerId == null) {
       return;
     }
-    flutterApi.onInfoWindowTap(markerId, noopVoidResult);
+    flutterApi.onInfoWindowTap(markerId, new NoOpVoidResult());
   }
 
   /**

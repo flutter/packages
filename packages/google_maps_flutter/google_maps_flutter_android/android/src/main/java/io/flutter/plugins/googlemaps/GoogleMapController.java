@@ -106,18 +106,6 @@ class GoogleMapController
   private boolean lastSetStyleSucceeded;
   @VisibleForTesting List<Float> initialPadding;
 
-  // A convenience object for calls to Dart where errors don't matter, such as streaming map
-  // information where if the corresponding Dart object is gone, the message should be silently
-  // dropped.
-  private final Messages.VoidResult noopVoidResult =
-      new Messages.VoidResult() {
-        @Override
-        public void success() {}
-
-        @Override
-        public void error(@NonNull Throwable error) {}
-      };
-
   GoogleMapController(
       int id,
       Context context,
@@ -302,17 +290,17 @@ class GoogleMapController
 
   @Override
   public void onMapClick(@NonNull LatLng latLng) {
-    flutterApi.onTap(Convert.latLngToPigeon(latLng), noopVoidResult);
+    flutterApi.onTap(Convert.latLngToPigeon(latLng), new NoOpVoidResult());
   }
 
   @Override
   public void onMapLongClick(@NonNull LatLng latLng) {
-    flutterApi.onLongPress(Convert.latLngToPigeon(latLng), noopVoidResult);
+    flutterApi.onLongPress(Convert.latLngToPigeon(latLng), new NoOpVoidResult());
   }
 
   @Override
   public void onCameraMoveStarted(int reason) {
-    flutterApi.onCameraMoveStarted(noopVoidResult);
+    flutterApi.onCameraMoveStarted(new NoOpVoidResult());
   }
 
   @Override
@@ -326,13 +314,13 @@ class GoogleMapController
       return;
     }
     flutterApi.onCameraMove(
-        Convert.cameraPositionToPigeon(googleMap.getCameraPosition()), noopVoidResult);
+        Convert.cameraPositionToPigeon(googleMap.getCameraPosition()), new NoOpVoidResult());
   }
 
   @Override
   public void onCameraIdle() {
     clusterManagersController.onCameraIdle();
-    flutterApi.onCameraIdle(noopVoidResult);
+    flutterApi.onCameraIdle(new NoOpVoidResult());
   }
 
   @Override
