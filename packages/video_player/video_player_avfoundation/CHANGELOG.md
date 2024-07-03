@@ -1,3 +1,7 @@
+## 2.6.2
+
+* Fixes the iOS/macOS crash when set negative video composition.
+
 ## 2.6.1
 
 * Adds files to make include directory permanent.

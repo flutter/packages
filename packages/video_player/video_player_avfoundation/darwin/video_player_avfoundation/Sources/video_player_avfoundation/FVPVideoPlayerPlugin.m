@@ -291,7 +291,14 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
                 [self getVideoCompositionWithTransform:self->_preferredTransform
                                              withAsset:asset
                                         withVideoTrack:videoTrack];
-            item.videoComposition = videoComposition;
+            // Invalid values of video composition will throws an exception
+            // (https://github.com/flutter/flutter/issues/151031).
+            // When there is a problem with the parameters of video composition, set nil.
+            @try {
+              item.videoComposition = videoComposition;
+            } @catch (NSException *exception) {
+              item.videoComposition = nil;
+            }
           }
         };
         [videoTrack loadValuesAsynchronouslyForKeys:@[ @"preferredTransform" ]
