@@ -5,6 +5,7 @@
 package io.flutter.plugins.googlemaps;
 
 import android.content.res.AssetManager;
+import androidx.annotation.NonNull;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -43,31 +44,28 @@ class MarkersController {
     this.markerCollection = markerCollection;
   }
 
-  void addMarkers(List<Object> markersToAdd) {
+  void addJsonMarkers(List<Object> markersToAdd) {
     if (markersToAdd != null) {
       for (Object markerToAdd : markersToAdd) {
-        addMarker(markerToAdd);
+        addJsonMarker(markerToAdd);
       }
     }
   }
 
-  void changeMarkers(List<Object> markersToChange) {
-    if (markersToChange != null) {
-      for (Object markerToChange : markersToChange) {
-        changeMarker(markerToChange);
-      }
+  void addMarkers(@NonNull List<Messages.PlatformMarker> markersToAdd) {
+    for (Messages.PlatformMarker markerToAdd : markersToAdd) {
+      addJsonMarker(markerToAdd.getJson());
     }
   }
 
-  void removeMarkers(List<Object> markerIdsToRemove) {
-    if (markerIdsToRemove == null) {
-      return;
+  void changeMarkers(@NonNull List<Messages.PlatformMarker> markersToChange) {
+    for (Messages.PlatformMarker markerToChange : markersToChange) {
+      changeJsonMarker(markerToChange.getJson());
     }
-    for (Object rawMarkerId : markerIdsToRemove) {
-      if (rawMarkerId == null) {
-        continue;
-      }
-      String markerId = (String) rawMarkerId;
+  }
+
+  void removeMarkers(@NonNull List<String> markerIdsToRemove) {
+    for (String markerId : markerIdsToRemove) {
       removeMarker(markerId);
     }
   }
@@ -188,7 +186,7 @@ class MarkersController {
     }
   }
 
-  private void addMarker(Object marker) {
+  private void addJsonMarker(Object marker) {
     if (marker == null) {
       return;
     }
@@ -234,7 +232,7 @@ class MarkersController {
     googleMapsMarkerIdToDartMarkerId.put(marker.getId(), markerId);
   }
 
-  private void changeMarker(Object marker) {
+  private void changeJsonMarker(Object marker) {
     if (marker == null) {
       return;
     }
@@ -252,7 +250,7 @@ class MarkersController {
     // be removed and re-added to update its cluster manager state.
     if (!(Objects.equals(clusterManagerId, oldClusterManagerId))) {
       removeMarker(markerId);
-      addMarker(marker);
+      addJsonMarker(marker);
       return;
     }
 

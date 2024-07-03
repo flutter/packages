@@ -4,6 +4,7 @@
 
 package io.flutter.plugins.googlemaps;
 
+import androidx.annotation.NonNull;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.Polygon;
 import com.google.android.gms.maps.model.PolygonOptions;
@@ -31,31 +32,28 @@ class PolygonsController {
     this.googleMap = googleMap;
   }
 
-  void addPolygons(List<Object> polygonsToAdd) {
+  void addJsonPolygons(List<Object> polygonsToAdd) {
     if (polygonsToAdd != null) {
       for (Object polygonToAdd : polygonsToAdd) {
-        addPolygon(polygonToAdd);
+        addJsonPolygon(polygonToAdd);
       }
     }
   }
 
-  void changePolygons(List<Object> polygonsToChange) {
-    if (polygonsToChange != null) {
-      for (Object polygonToChange : polygonsToChange) {
-        changePolygon(polygonToChange);
-      }
+  void addPolygons(@NonNull List<Messages.PlatformPolygon> polygonsToAdd) {
+    for (Messages.PlatformPolygon polygonToAdd : polygonsToAdd) {
+      addJsonPolygon(polygonToAdd.getJson());
     }
   }
 
-  void removePolygons(List<Object> polygonIdsToRemove) {
-    if (polygonIdsToRemove == null) {
-      return;
+  void changePolygons(@NonNull List<Messages.PlatformPolygon> polygonsToChange) {
+    for (Messages.PlatformPolygon polygonToChange : polygonsToChange) {
+      changeJsonPolygon(polygonToChange.getJson());
     }
-    for (Object rawPolygonId : polygonIdsToRemove) {
-      if (rawPolygonId == null) {
-        continue;
-      }
-      String polygonId = (String) rawPolygonId;
+  }
+
+  void removePolygons(@NonNull List<String> polygonIdsToRemove) {
+    for (String polygonId : polygonIdsToRemove) {
       final PolygonController polygonController = polygonIdToController.remove(polygonId);
       if (polygonController != null) {
         polygonController.remove();
@@ -77,7 +75,7 @@ class PolygonsController {
     return false;
   }
 
-  private void addPolygon(Object polygon) {
+  private void addJsonPolygon(Object polygon) {
     if (polygon == null) {
       return;
     }
@@ -95,7 +93,7 @@ class PolygonsController {
     googleMapsPolygonIdToDartPolygonId.put(polygon.getId(), polygonId);
   }
 
-  private void changePolygon(Object polygon) {
+  private void changeJsonPolygon(Object polygon) {
     if (polygon == null) {
       return;
     }

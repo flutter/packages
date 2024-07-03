@@ -16,6 +16,28 @@
 
 @implementation FLTGoogleMapJSONConversionsTests
 
+- (void)testGetValueOrNilWithValue {
+  NSString *key = @"key";
+  NSString *value = @"value";
+  NSDictionary<NSString *, id> *dict = @{key : value};
+
+  XCTAssertEqual(FGMGetValueOrNilFromDict(dict, key), value);
+}
+
+- (void)testGetValueOrNilWithNoEntry {
+  NSString *key = @"key";
+  NSDictionary<NSString *, id> *dict = @{};
+
+  XCTAssertNil(FGMGetValueOrNilFromDict(dict, key));
+}
+
+- (void)testGetValueOrNilWithNSNull {
+  NSString *key = @"key";
+  NSDictionary<NSString *, id> *dict = @{key : [NSNull null]};
+
+  XCTAssertNil(FGMGetValueOrNilFromDict(dict, key));
+}
+
 - (void)testLocationFromLatLong {
   NSArray<NSNumber *> *latlong = @[ @1, @2 ];
   CLLocationCoordinate2D location = [FLTGoogleMapJSONConversions locationFromLatLong:latlong];
