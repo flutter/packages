@@ -69,6 +69,7 @@
     @"visible" : @1,
   };
 
+  CGRect frame = CGRectMake(0, 0, 100, 100);
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
   // TODO(stuartmorgan): Switch to initWithOptions: once we can guarantee we will be using SDK 8.3+.
@@ -110,6 +111,7 @@
     @"visible" : @1,
   };
 
+  CGRect frame = CGRectMake(0, 0, 100, 100);
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
   // TODO(stuartmorgan): Switch to initWithOptions: once we can guarantee we will be using SDK 8.3+.
@@ -150,6 +152,7 @@
     @"visible" : @1,
   };
 
+  CGRect frame = CGRectMake(0, 0, 100, 100);
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
   // TODO(stuartmorgan): Switch to initWithOptions: once we can guarantee we will be using SDK 8.3+.
@@ -186,6 +189,7 @@
     @"visible" : @1,
   };
 
+  CGRect frame = CGRectMake(0, 0, 100, 100);
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
   // TODO(stuartmorgan): Switch to initWithOptions: once we can guarantee we will be using SDK 8.3+.
@@ -218,6 +222,7 @@
     @"visible" : @1,
   };
 
+  CGRect frame = CGRectMake(0, 0, 100, 100);
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
   // TODO(stuartmorgan): Switch to initWithOptions: once we can guarantee we will be using SDK 8.3+.
