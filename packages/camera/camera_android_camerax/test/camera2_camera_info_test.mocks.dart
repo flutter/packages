@@ -90,6 +90,15 @@ class MockTestCamera2CameraInfoHostApi extends _i1.Mock
           ),
         ),
       ) as String);
+
+  @override
+  int getSensorOrientation(int? identifier) => (super.noSuchMethod(
+        Invocation.method(
+          #getSensorOrientation,
+          [identifier],
+        ),
+        returnValue: 0,
+      ) as int);
 }
 
 /// A class which mocks [TestInstanceManagerHostApi].
