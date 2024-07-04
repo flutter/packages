@@ -49,7 +49,6 @@
 		1498D2321E8E86230040F4C2 /* GeneratedPluginRegistrant.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GeneratedPluginRegistrant.h; sourceTree = "<group>"; };
 		1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GeneratedPluginRegistrant.m; sourceTree = "<group>"; };
 		3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = AppFrameworkInfo.plist; path = Flutter/AppFrameworkInfo.plist; sourceTree = "<group>"; };
-		47A54E812C34BF080096C467 /* GoogleMapsTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GoogleMapsTests.m; sourceTree = "<group>"; };
 		68E472692836FF0C00BDDDAC /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.0.sdk/System/iOSSupport/System/Library/Frameworks/MapKit.framework; sourceTree = DEVELOPER_DIR; };
 		733AFAB37683A9DA7512F09C /* Pods-RunnerTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-RunnerTests/Pods-RunnerTests.release.xcconfig"; sourceTree = "<group>"; };
 		7755F8F4BABC3D6A0BD4048B /* libPods-Runner.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Runner.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -177,7 +176,6 @@
 		F7151F11265D7ED70028CB91 /* RunnerTests */ = {
 			isa = PBXGroup;
 			children = (
-				47A54E812C34BF080096C467 /* GoogleMapsTests.m */,
 				F269303A2BB389BF00BF17C4 /* assets */,
 				F7151F12265D7ED70028CB91 /* GoogleMapsTests.m */,
 				982F2A6A27BADE17003C81F4 /* PartiallyMockedMapView.h */,
