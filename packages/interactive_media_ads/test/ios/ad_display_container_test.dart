@@ -20,7 +20,7 @@ import 'ad_display_container_test.mocks.dart';
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  group('AndroidAdDisplayContainer', () {
+  group('IOSAdDisplayContainer', () {
     testWidgets('build with key', (WidgetTester tester) async {
       final IOSAdDisplayContainer container = IOSAdDisplayContainer(
         IOSAdDisplayContainerCreationParams(

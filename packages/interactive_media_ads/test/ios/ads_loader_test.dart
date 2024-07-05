@@ -25,7 +25,7 @@ import 'ads_loader_test.mocks.dart';
   MockSpec<ima.UIViewController>(),
 ])
 void main() {
-  group('AndroidAdsLoader', () {
+  group('IOSAdsLoader', () {
     testWidgets('instantiate IOSAdsLoader', (WidgetTester tester) async {
       final IOSAdDisplayContainer container =
           await _pumpAdDisplayContainer(tester);
