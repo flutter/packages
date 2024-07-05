@@ -15,7 +15,9 @@ let package = Package(
   products: [
     .library(name: "interactive-media-ads", targets: ["interactive_media_ads"])
   ],
-  dependencies: [],
+  dependencies: [
+    .package(url: "https://github.com/googleads/swift-package-manager-google-interactive-media-ads-ios", from: "3.23.0"),
+  ],
   targets: [
     .target(
       name: "interactive_media_ads",
