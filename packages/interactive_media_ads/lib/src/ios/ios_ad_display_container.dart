@@ -63,7 +63,7 @@ base class IOSAdDisplayContainer extends PlatformAdDisplayContainer {
   Widget build(BuildContext context) {
     return UiKitView(
       key: _iosParams.key,
-      viewType: 'interactive_media_ads.packages.flutter.dev',
+      viewType: 'interactive_media_ads.packages.flutter.dev/view',
       onPlatformViewCreated: (_) async {
         adDisplayContainer = _iosParams._imaProxy.newIMAAdDisplayContainer(
           adContainer: _controller.view,
@@ -75,9 +75,10 @@ base class IOSAdDisplayContainer extends PlatformAdDisplayContainer {
         await Future<void>.delayed(const Duration(seconds: 1));
         params.onContainerAdded(this);
       },
+      layoutDirection: params.layoutDirection,
       creationParams:
           // ignore: invalid_use_of_protected_member
-          _controller.pigeon_instanceManager.getIdentifier(_controller.view),
+          _controller.view.pigeon_instanceManager.getIdentifier(_controller.view),
       creationParamsCodec: const StandardMessageCodec(),
     );
   }

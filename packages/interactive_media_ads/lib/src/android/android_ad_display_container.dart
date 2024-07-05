@@ -132,6 +132,7 @@ base class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
       key: params.key,
       view: _frameLayout,
       platformViewsServiceProxy: _androidParams._platformViewsProxy,
+      layoutDirection: params.layoutDirection,
       onPlatformViewCreated: () async {
         adDisplayContainer = await _androidParams._imaProxy
             .createAdDisplayContainerImaSdkFactory(
