@@ -68,6 +68,9 @@ void main() {
             didReceiveAdError: didReceiveAdError,
             didRequestContentPause: didRequestContentPause,
             didRequestContentResume: didRequestContentResume,
+            pigeon_instanceManager: ima.PigeonInstanceManager(
+              onWeakReferenceRemoved: (_) {},
+            ),
           );
           return delegate;
         },

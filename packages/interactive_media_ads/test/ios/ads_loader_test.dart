@@ -134,7 +134,12 @@ void main() {
       adLoaderLoadedWithCallback(
         MockIMAAdsLoaderDelegate(),
         MockIMAAdsLoader(),
-        ima.IMAAdsLoadedData.pigeon_detached(adsManager: MockIMAAdsManager()),
+        ima.IMAAdsLoadedData.pigeon_detached(
+          adsManager: MockIMAAdsManager(),
+          pigeon_instanceManager: ima.PigeonInstanceManager(
+            onWeakReferenceRemoved: (_) {},
+          ),
+        ),
       );
     });
 
@@ -175,6 +180,11 @@ void main() {
         ),
       );
 
+      final ima.PigeonInstanceManager instanceManager =
+          ima.PigeonInstanceManager(
+        onWeakReferenceRemoved: (_) {},
+      );
+
       adsLoaderFailedWithErrorDataCallback(
         MockIMAAdsLoaderDelegate(),
         MockIMAAdsLoader(),
@@ -182,7 +192,9 @@ void main() {
           adError: ima.IMAAdError.pigeon_detached(
             type: ima.AdErrorType.loadingFailed,
             code: ima.AdErrorCode.apiError,
+            pigeon_instanceManager: instanceManager,
           ),
+          pigeon_instanceManager: instanceManager,
         ),
       );
     });
