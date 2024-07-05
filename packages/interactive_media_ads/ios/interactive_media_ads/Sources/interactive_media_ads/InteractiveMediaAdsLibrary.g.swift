@@ -1739,6 +1739,15 @@ protocol PigeonDelegateIMAAdsManager {
     adsRenderingSettings: IMAAdsRenderingSettings?) throws
   /// Starts advertisement playback.
   func start(pigeonApi: PigeonApiIMAAdsManager, pigeonInstance: IMAAdsManager) throws
+  /// Pauses advertisement.
+  func pause(pigeonApi: PigeonApiIMAAdsManager, pigeonInstance: IMAAdsManager) throws
+  /// Resumes the current ad.
+  func resume(pigeonApi: PigeonApiIMAAdsManager, pigeonInstance: IMAAdsManager) throws
+  /// Skips the advertisement if the ad is skippable and the skip offset has
+  /// been reached.
+  func skip(pigeonApi: PigeonApiIMAAdsManager, pigeonInstance: IMAAdsManager) throws
+  /// If an ad break is currently playing, discard it and resume content.
+  func discardAdBreak(pigeonApi: PigeonApiIMAAdsManager, pigeonInstance: IMAAdsManager) throws
   /// Causes the ads manager to stop the ad and clean its internal state.
   func destroy(pigeonApi: PigeonApiIMAAdsManager, pigeonInstance: IMAAdsManager) throws
 }
@@ -1816,6 +1825,74 @@ final class PigeonApiIMAAdsManager: PigeonApiProtocolIMAAdsManager {
       }
     } else {
       startChannel.setMessageHandler(nil)
+    }
+    let pauseChannel = FlutterBasicMessageChannel(
+      name: "dev.flutter.pigeon.interactive_media_ads.IMAAdsManager.pause",
+      binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      pauseChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let pigeonInstanceArg = args[0] as! IMAAdsManager
+        do {
+          try api.pigeonDelegate.pause(pigeonApi: api, pigeonInstance: pigeonInstanceArg)
+          reply(wrapResult(nil))
+        } catch {
+          reply(wrapError(error))
+        }
+      }
+    } else {
+      pauseChannel.setMessageHandler(nil)
+    }
+    let resumeChannel = FlutterBasicMessageChannel(
+      name: "dev.flutter.pigeon.interactive_media_ads.IMAAdsManager.resume",
+      binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      resumeChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let pigeonInstanceArg = args[0] as! IMAAdsManager
+        do {
+          try api.pigeonDelegate.resume(pigeonApi: api, pigeonInstance: pigeonInstanceArg)
+          reply(wrapResult(nil))
+        } catch {
+          reply(wrapError(error))
+        }
+      }
+    } else {
+      resumeChannel.setMessageHandler(nil)
+    }
+    let skipChannel = FlutterBasicMessageChannel(
+      name: "dev.flutter.pigeon.interactive_media_ads.IMAAdsManager.skip",
+      binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      skipChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let pigeonInstanceArg = args[0] as! IMAAdsManager
+        do {
+          try api.pigeonDelegate.skip(pigeonApi: api, pigeonInstance: pigeonInstanceArg)
+          reply(wrapResult(nil))
+        } catch {
+          reply(wrapError(error))
+        }
+      }
+    } else {
+      skipChannel.setMessageHandler(nil)
+    }
+    let discardAdBreakChannel = FlutterBasicMessageChannel(
+      name: "dev.flutter.pigeon.interactive_media_ads.IMAAdsManager.discardAdBreak",
+      binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      discardAdBreakChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let pigeonInstanceArg = args[0] as! IMAAdsManager
+        do {
+          try api.pigeonDelegate.discardAdBreak(pigeonApi: api, pigeonInstance: pigeonInstanceArg)
+          reply(wrapResult(nil))
+        } catch {
+          reply(wrapError(error))
+        }
+      }
+    } else {
+      discardAdBreakChannel.setMessageHandler(nil)
     }
     let destroyChannel = FlutterBasicMessageChannel(
       name: "dev.flutter.pigeon.interactive_media_ads.IMAAdsManager.destroy",

@@ -24,6 +24,22 @@ class AdsManagerProxyAPIDelegate: PigeonDelegateIMAAdsManager {
     pigeonInstance.start()
   }
 
+  func pause(pigeonApi: PigeonApiIMAAdsManager, pigeonInstance: IMAAdsManager) throws {
+    pigeonInstance.pause()
+  }
+
+  func skip(pigeonApi: PigeonApiIMAAdsManager, pigeonInstance: IMAAdsManager) throws {
+    pigeonInstance.skip()
+  }
+
+  func discardAdBreak(pigeonApi: PigeonApiIMAAdsManager, pigeonInstance: IMAAdsManager) throws {
+    pigeonInstance.discardAdBreak()
+  }
+
+  func resume(pigeonApi: PigeonApiIMAAdsManager, pigeonInstance: IMAAdsManager) throws {
+    pigeonInstance.resume()
+  }
+
   func destroy(pigeonApi: PigeonApiIMAAdsManager, pigeonInstance: IMAAdsManager) throws {
     pigeonInstance.destroy()
   }

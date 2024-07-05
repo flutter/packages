@@ -47,6 +47,50 @@ final class AdsManagerTests: XCTestCase {
     XCTAssertTrue(instance.startCalled)
   }
 
+  func testPause() {
+    let registrar = TestProxyApiRegistrar()
+    let api = registrar.apiDelegate.pigeonApiIMAAdsManager(registrar)
+
+    let instance = TestAdsManager.customInit()
+
+    try? api.pigeonDelegate.pause(pigeonApi: api, pigeonInstance: instance)
+
+    XCTAssertTrue(instance.pauseCalled)
+  }
+
+  func testSkip() {
+    let registrar = TestProxyApiRegistrar()
+    let api = registrar.apiDelegate.pigeonApiIMAAdsManager(registrar)
+
+    let instance = TestAdsManager.customInit()
+
+    try? api.pigeonDelegate.skip(pigeonApi: api, pigeonInstance: instance)
+
+    XCTAssertTrue(instance.skipCalled)
+  }
+
+  func testDiscardAdBreak() {
+    let registrar = TestProxyApiRegistrar()
+    let api = registrar.apiDelegate.pigeonApiIMAAdsManager(registrar)
+
+    let instance = TestAdsManager.customInit()
+
+    try? api.pigeonDelegate.discardAdBreak(pigeonApi: api, pigeonInstance: instance)
+
+    XCTAssertTrue(instance.discardAdBreakCalled)
+  }
+
+  func testResume() {
+    let registrar = TestProxyApiRegistrar()
+    let api = registrar.apiDelegate.pigeonApiIMAAdsManager(registrar)
+
+    let instance = TestAdsManager.customInit()
+
+    try? api.pigeonDelegate.resume(pigeonApi: api, pigeonInstance: instance)
+
+    XCTAssertTrue(instance.resumeCalled)
+  }
+
   func testDestroy() {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAdsManager(registrar)
@@ -62,6 +106,10 @@ final class AdsManagerTests: XCTestCase {
 class TestAdsManager: IMAAdsManager {
   var renderingSettings: IMAAdsRenderingSettings? = nil
   var startCalled = false
+  var pauseCalled = false
+  var skipCalled = false
+  var discardAdBreakCalled = false
+  var resumeCalled = false
   var destroyCalled = false
 
   static func customInit() -> TestAdsManager {
@@ -76,6 +124,22 @@ class TestAdsManager: IMAAdsManager {
 
   override func start() {
     startCalled = true
+  }
+
+  override func pause() {
+    pauseCalled = true
+  }
+
+  override func skip() {
+    skipCalled = true
+  }
+
+  override func discardAdBreak() {
+    discardAdBreakCalled = true
+  }
+
+  override func resume() {
+    resumeCalled = true
   }
 
   override func destroy() {

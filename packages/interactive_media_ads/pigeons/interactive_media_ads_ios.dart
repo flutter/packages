@@ -355,6 +355,19 @@
 //   /// Starts advertisement playback.
 //   void start();
 //
+//   /// Pauses advertisement.
+//   void pause();
+//
+//   /// Resumes the current ad.
+//   void resume();
+//
+//   /// Skips the advertisement if the ad is skippable and the skip offset has
+//   /// been reached.
+//   void skip();
+//
+//   /// If an ad break is currently playing, discard it and resume content.
+//   void discardAdBreak();
+//
 //   /// Causes the ads manager to stop the ad and clean its internal state.
 //   void destroy();
 // }
