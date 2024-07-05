@@ -14,6 +14,8 @@ final class IOSAdsManagerDelegateCreationParams
     extends PlatformAdsManagerDelegateCreationParams {
   /// Constructs an [IOSAdsManagerDelegateCreationParams].
   const IOSAdsManagerDelegateCreationParams({
+    super.onAdEvent,
+    super.onAdErrorEvent,
     @visibleForTesting InteractiveMediaAdsProxy? proxy,
   })  : _proxy = proxy ?? const InteractiveMediaAdsProxy(),
         super();
@@ -21,13 +23,14 @@ final class IOSAdsManagerDelegateCreationParams
   /// Creates an [IOSAdsManagerDelegateCreationParams] from an instance of
   /// [PlatformAdsManagerDelegateCreationParams].
   factory IOSAdsManagerDelegateCreationParams.fromPlatformAdsManagerDelegateCreationParams(
-    // This parameter acts as a placeholder to prevent breaking changes when new
-    // fields are added to `PlatformAdsManagerDelegateCreationParams`.
-    // ignore: avoid_unused_constructor_parameters
     PlatformAdsManagerDelegateCreationParams params, {
     @visibleForTesting InteractiveMediaAdsProxy? proxy,
   }) {
-    return IOSAdsManagerDelegateCreationParams(proxy: proxy);
+    return IOSAdsManagerDelegateCreationParams(
+      onAdEvent: params.onAdEvent,
+      onAdErrorEvent: params.onAdErrorEvent,
+      proxy: proxy,
+    );
   }
 
   final InteractiveMediaAdsProxy _proxy;
