@@ -86,7 +86,7 @@ base class IOSAdsLoader extends PlatformAdsLoader {
   static IMAAdsLoaderDelegate _createAdsLoaderDelegate(
     WeakReference<IOSAdsLoader> interfaceLoader,
   ) {
-    return interfaceLoader.target?._iosParams._proxy.newIMAAdsLoaderDelegate(
+    return interfaceLoader.target!._iosParams._proxy.newIMAAdsLoaderDelegate(
       adLoaderLoadedWith: (
         IMAAdsLoaderDelegate instance,
         IMAAdsLoader loader,
