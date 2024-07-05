@@ -1441,6 +1441,9 @@ public class GeneratedCameraXLibrary {
     @NonNull
     String getTempFilePath(@NonNull String prefix, @NonNull String suffix);
 
+    @NonNull
+    Boolean isPreviewPreTransformed();
+
     /** The codec used by SystemServicesHostApi. */
     static @NonNull MessageCodec<Object> getCodec() {
       return SystemServicesHostApiCodec.INSTANCE;
@@ -1508,6 +1511,29 @@ public class GeneratedCameraXLibrary {
           channel.setMessageHandler(null);
         }
       }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.SystemServicesHostApi.isPreviewPreTransformed",
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                try {
+                  Boolean output = api.isPreviewPreTransformed();
+                  wrapped.add(0, output);
+                } catch (Throwable exception) {
+                  ArrayList<Object> wrappedError = wrapError(exception);
+                  wrapped = wrappedError;
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
     }
   }
   /** Generated class from Pigeon that represents Flutter messages that can be called from Java. */
@@ -1549,6 +1575,9 @@ public class GeneratedCameraXLibrary {
 
     @NonNull
     Long getDefaultDisplayRotation();
+
+    @NonNull
+    String getUiOrientation();
 
     /** The codec used by DeviceOrientationManagerHostApi. */
     static @NonNull MessageCodec<Object> getCodec() {
@@ -1623,6 +1652,29 @@ public class GeneratedCameraXLibrary {
                 ArrayList<Object> wrapped = new ArrayList<Object>();
                 try {
                   Long output = api.getDefaultDisplayRotation();
+                  wrapped.add(0, output);
+                } catch (Throwable exception) {
+                  ArrayList<Object> wrappedError = wrapError(exception);
+                  wrapped = wrappedError;
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.DeviceOrientationManagerHostApi.getUiOrientation",
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                try {
+                  String output = api.getUiOrientation();
                   wrapped.add(0, output);
                 } catch (Throwable exception) {
                   ArrayList<Object> wrappedError = wrapError(exception);
@@ -4389,6 +4441,9 @@ public class GeneratedCameraXLibrary {
     @NonNull
     String getCameraId(@NonNull Long identifier);
 
+    @NonNull
+    Long getSensorOrientation(@NonNull Long identifier);
+
     /** The codec used by Camera2CameraInfoHostApi. */
     static @NonNull MessageCodec<Object> getCodec() {
       return new StandardMessageCodec();
@@ -4470,6 +4525,33 @@ public class GeneratedCameraXLibrary {
                 try {
                   String output =
                       api.getCameraId((identifierArg == null) ? null : identifierArg.longValue());
+                  wrapped.add(0, output);
+                } catch (Throwable exception) {
+                  ArrayList<Object> wrappedError = wrapError(exception);
+                  wrapped = wrappedError;
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.Camera2CameraInfoHostApi.getSensorOrientation",
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                Number identifierArg = (Number) args.get(0);
+                try {
+                  Long output =
+                      api.getSensorOrientation(
+                          (identifierArg == null) ? null : identifierArg.longValue());
                   wrapped.add(0, output);
                 } catch (Throwable exception) {
                   ArrayList<Object> wrappedError = wrapError(exception);
