@@ -821,7 +821,10 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
   }
 
   static PlatformCircle _platformCircleFromCircle(Circle circle) {
-    return PlatformCircle(json: circle.toJson());
+    // This cast is not ideal, but the Java code already assumes this format.
+    // See the TODOs at the top of this file and on the 'json' field in
+    // messages.dart.
+    return PlatformCircle(json: circle.toJson() as Map<String, Object?>);
   }
 
   static PlatformClusterManager _platformClusterManagerFromClusterManager(
@@ -831,20 +834,33 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
   }
 
   static PlatformMarker _platformMarkerFromMarker(Marker marker) {
-    return PlatformMarker(json: marker.toJson());
+    // This cast is not ideal, but the Java code already assumes this format.
+    // See the TODOs at the top of this file and on the 'json' field in
+    // messages.dart.
+    return PlatformMarker(json: marker.toJson() as Map<String, Object?>);
   }
 
   static PlatformPolygon _platformPolygonFromPolygon(Polygon polygon) {
-    return PlatformPolygon(json: polygon.toJson());
+    // This cast is not ideal, but the Java code already assumes this format.
+    // See the TODOs at the top of this file and on the 'json' field in
+    // messages.dart.
+    return PlatformPolygon(json: polygon.toJson() as Map<String, Object?>);
   }
 
   static PlatformPolyline _platformPolylineFromPolyline(Polyline polyline) {
-    return PlatformPolyline(json: polyline.toJson());
+    // This cast is not ideal, but the Java code already assumes this format.
+    // See the TODOs at the top of this file and on the 'json' field in
+    // messages.dart.
+    return PlatformPolyline(json: polyline.toJson() as Map<String, Object?>);
   }
 
   static PlatformTileOverlay _platformTileOverlayFromTileOverlay(
       TileOverlay tileOverlay) {
-    return PlatformTileOverlay(json: tileOverlay.toJson());
+    // This cast is not ideal, but the Java code already assumes this format.
+    // See the TODOs at the top of this file and on the 'json' field in
+    // messages.dart.
+    return PlatformTileOverlay(
+        json: tileOverlay.toJson() as Map<String, Object?>);
   }
 }
 

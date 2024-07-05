@@ -1,6 +1,11 @@
-## 0.0.3
+## 0.1.1
 
 * Adds iOS implementation.
+
+## 0.1.0
+
+* Bumps `com.google.ads.interactivemedia.v3:interactivemedia` from 3.33.0 to 3.34.0.
+* **Breaking Change** Updates Android `minSdk` from 19 to 21.
 
 ## 0.0.2+1
 
