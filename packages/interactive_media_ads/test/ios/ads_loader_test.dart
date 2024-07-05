@@ -4,7 +4,8 @@
 
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:interactive_media_ads/src/ios/interactive_media_ads.g.dart';
+import 'package:interactive_media_ads/src/ios/interactive_media_ads.g.dart'
+    as ima;
 import 'package:interactive_media_ads/src/ios/interactive_media_ads_proxy.dart';
 import 'package:interactive_media_ads/src/ios/ios_ad_display_container.dart';
 import 'package:interactive_media_ads/src/ios/ios_ads_loader.dart';
@@ -15,11 +16,13 @@ import 'package:mockito/mockito.dart';
 import 'ads_loader_test.mocks.dart';
 
 @GenerateNiceMocks(<MockSpec<Object>>[
-  MockSpec<IMAAdDisplayContainer>(),
-  MockSpec<IMAAdsLoader>(),
-  MockSpec<IMAAdsRequest>(),
-  MockSpec<UIView>(),
-  MockSpec<UIViewController>(),
+  MockSpec<ima.IMAAdDisplayContainer>(),
+  MockSpec<ima.IMAAdsLoader>(),
+  MockSpec<ima.IMAAdsLoaderDelegate>(),
+  MockSpec<ima.IMAAdsManager>(),
+  MockSpec<ima.IMAAdsRequest>(),
+  MockSpec<ima.UIView>(),
+  MockSpec<ima.UIViewController>(),
 ])
 void main() {
   group('AndroidAdsLoader', () {
@@ -43,7 +46,7 @@ void main() {
 
       final MockIMAAdsLoader mockLoader = MockIMAAdsLoader();
       final InteractiveMediaAdsProxy imaProxy = InteractiveMediaAdsProxy(
-        newIMAAdsLoader: ({IMASettings? settings}) => mockLoader,
+        newIMAAdsLoader: ({ima.IMASettings? settings}) => mockLoader,
       );
 
       final IOSAdsLoader loader = IOSAdsLoader(
@@ -68,11 +71,11 @@ void main() {
 
       final MockIMAAdsLoader mockLoader = MockIMAAdsLoader();
       final InteractiveMediaAdsProxy imaProxy = InteractiveMediaAdsProxy(
-        newIMAAdsLoader: ({IMASettings? settings}) => mockLoader,
+        newIMAAdsLoader: ({ima.IMASettings? settings}) => mockLoader,
         newIMAAdsRequest: ({
           required String adTagUrl,
-          required IMAAdDisplayContainer adDisplayContainer,
-          IMAContentPlayhead? contentPlayhead,
+          required ima.IMAAdDisplayContainer adDisplayContainer,
+          ima.IMAContentPlayhead? contentPlayhead,
         }) {
           expect(adTagUrl, adTag);
           expect(adDisplayContainer, container.adDisplayContainer);
@@ -93,126 +96,96 @@ void main() {
 
       verify(mockLoader.requestAds(any));
     });
-    //
-    // testWidgets('onAdsLoaded', (WidgetTester tester) async {
-    //   final AndroidAdDisplayContainer container =
-    //       await _pumpAdDisplayContainer(tester);
-    //
-    //   final MockImaSdkFactory mockSdkFactory = MockImaSdkFactory();
-    //   when(mockSdkFactory.createImaSdkSettings()).thenAnswer((_) async {
-    //     return MockImaSdkSettings();
-    //   });
-    //
-    //   final MockAdsLoader mockAdsLoader = MockAdsLoader();
-    //   final Completer<void> addEventListenerCompleter = Completer<void>();
-    //   when(mockAdsLoader.addAdsLoadedListener(any)).thenAnswer((_) async {
-    //     addEventListenerCompleter.complete();
-    //   });
-    //
-    //   when(mockSdkFactory.createAdsLoader(any, any)).thenAnswer((_) async {
-    //     return mockAdsLoader;
-    //   });
-    //
-    //   late final void Function(
-    //     ima.AdsLoadedListener,
-    //     ima.AdsManagerLoadedEvent,
-    //   ) onAdsManagerLoadedCallback;
-    //
-    //   final InteractiveMediaAdsProxy proxy = InteractiveMediaAdsProxy(
-    //     instanceImaSdkFactory: () => mockSdkFactory,
-    //     newAdsLoadedListener: ({
-    //       required void Function(
-    //         ima.AdsLoadedListener,
-    //         ima.AdsManagerLoadedEvent,
-    //       ) onAdsManagerLoaded,
-    //     }) {
-    //       onAdsManagerLoadedCallback = onAdsManagerLoaded;
-    //       return MockAdsLoadedListener();
-    //     },
-    //     newAdErrorListener: ({required dynamic onAdError}) {
-    //       return MockAdErrorListener();
-    //     },
-    //   );
-    //
-    //   AndroidAdsLoader(
-    //     AndroidAdsLoaderCreationParams(
-    //       container: container,
-    //       onAdsLoaded: expectAsync1((_) {}),
-    //       onAdsLoadError: (_) {},
-    //       proxy: proxy,
-    //     ),
-    //   );
-    //
-    //   final MockAdsManagerLoadedEvent mockLoadedEvent =
-    //       MockAdsManagerLoadedEvent();
-    //   when(mockLoadedEvent.manager).thenReturn(MockAdsManager());
-    //
-    //   await addEventListenerCompleter.future;
-    //
-    //   onAdsManagerLoadedCallback(MockAdsLoadedListener(), mockLoadedEvent);
-    // });
-    //
-    // testWidgets('onAdError', (WidgetTester tester) async {
-    //   final AndroidAdDisplayContainer container =
-    //       await _pumpAdDisplayContainer(tester);
-    //
-    //   final MockImaSdkFactory mockSdkFactory = MockImaSdkFactory();
-    //   when(mockSdkFactory.createImaSdkSettings()).thenAnswer((_) async {
-    //     return MockImaSdkSettings();
-    //   });
-    //
-    //   final MockAdsLoader mockAdsLoader = MockAdsLoader();
-    //   final Completer<void> addErrorListenerCompleter = Completer<void>();
-    //   when(mockAdsLoader.addAdErrorListener(any)).thenAnswer((_) async {
-    //     addErrorListenerCompleter.complete();
-    //   });
-    //
-    //   when(mockSdkFactory.createAdsLoader(any, any)).thenAnswer((_) async {
-    //     return mockAdsLoader;
-    //   });
-    //
-    //   late final void Function(
-    //     ima.AdErrorListener,
-    //     ima.AdErrorEvent,
-    //   ) onAdErrorCallback;
-    //
-    //   final InteractiveMediaAdsProxy proxy = InteractiveMediaAdsProxy(
-    //     instanceImaSdkFactory: () => mockSdkFactory,
-    //     newAdsLoadedListener: ({required dynamic onAdsManagerLoaded}) {
-    //       return MockAdsLoadedListener();
-    //     },
-    //     newAdErrorListener: ({
-    //       required void Function(
-    //         ima.AdErrorListener,
-    //         ima.AdErrorEvent,
-    //       ) onAdError,
-    //     }) {
-    //       onAdErrorCallback = onAdError;
-    //       return MockAdErrorListener();
-    //     },
-    //   );
-    //
-    //   AndroidAdsLoader(
-    //     AndroidAdsLoaderCreationParams(
-    //       container: container,
-    //       onAdsLoaded: (_) {},
-    //       onAdsLoadError: expectAsync1((_) {}),
-    //       proxy: proxy,
-    //     ),
-    //   );
-    //
-    //   final MockAdErrorEvent mockErrorEvent = MockAdErrorEvent();
-    //   final MockAdError mockError = MockAdError();
-    //   when(mockError.errorType).thenReturn(ima.AdErrorType.load);
-    //   when(mockError.errorCode)
-    //       .thenReturn(ima.AdErrorCode.adsRequestNetworkError);
-    //   when(mockError.message).thenReturn('error message');
-    //   when(mockErrorEvent.error).thenReturn(mockError);
-    //
-    //   await addErrorListenerCompleter.future;
-    //
-    //   onAdErrorCallback(MockAdErrorListener(), mockErrorEvent);
-    // });
+
+    testWidgets('onAdsLoaded', (WidgetTester tester) async {
+      final IOSAdDisplayContainer container =
+          await _pumpAdDisplayContainer(tester);
+
+      late final void Function(
+        ima.IMAAdsLoaderDelegate,
+        ima.IMAAdsLoader,
+        ima.IMAAdsLoadedData,
+      ) adLoaderLoadedWithCallback;
+
+      final InteractiveMediaAdsProxy imaProxy = InteractiveMediaAdsProxy(
+        newIMAAdsLoader: ({ima.IMASettings? settings}) => MockIMAAdsLoader(),
+        newIMAAdsLoaderDelegate: ({
+          required void Function(
+            ima.IMAAdsLoaderDelegate,
+            ima.IMAAdsLoader,
+            ima.IMAAdsLoadedData,
+          ) adLoaderLoadedWith,
+          required dynamic adsLoaderFailedWithErrorData,
+        }) {
+          adLoaderLoadedWithCallback = adLoaderLoadedWith;
+          return MockIMAAdsLoaderDelegate();
+        },
+      );
+
+      IOSAdsLoader(
+        IOSAdsLoaderCreationParams(
+          container: container,
+          onAdsLoaded: expectAsync1((_) {}),
+          onAdsLoadError: (AdsLoadErrorData data) {},
+          proxy: imaProxy,
+        ),
+      );
+
+      adLoaderLoadedWithCallback(
+        MockIMAAdsLoaderDelegate(),
+        MockIMAAdsLoader(),
+        ima.IMAAdsLoadedData.pigeon_detached(adsManager: MockIMAAdsManager()),
+      );
+    });
+
+    testWidgets('onAdsLoadError', (WidgetTester tester) async {
+      final IOSAdDisplayContainer container =
+          await _pumpAdDisplayContainer(tester);
+
+      late final void Function(
+        ima.IMAAdsLoaderDelegate,
+        ima.IMAAdsLoader,
+        ima.IMAAdLoadingErrorData,
+      ) adsLoaderFailedWithErrorDataCallback;
+
+      final InteractiveMediaAdsProxy imaProxy = InteractiveMediaAdsProxy(
+        newIMAAdsLoader: ({ima.IMASettings? settings}) => MockIMAAdsLoader(),
+        newIMAAdsLoaderDelegate: ({
+          required dynamic adLoaderLoadedWith,
+          required void Function(
+            ima.IMAAdsLoaderDelegate,
+            ima.IMAAdsLoader,
+            ima.IMAAdLoadingErrorData,
+          ) adsLoaderFailedWithErrorData,
+        }) {
+          adsLoaderFailedWithErrorDataCallback = adsLoaderFailedWithErrorData;
+          return MockIMAAdsLoaderDelegate();
+        },
+      );
+
+      IOSAdsLoader(
+        IOSAdsLoaderCreationParams(
+          container: container,
+          onAdsLoaded: (PlatformOnAdsLoadedData data) {},
+          onAdsLoadError: expectAsync1((AdsLoadErrorData data) {
+            expect(data.error.type, AdErrorType.loading);
+            expect(data.error.code, AdErrorCode.apiError);
+          }),
+          proxy: imaProxy,
+        ),
+      );
+
+      adsLoaderFailedWithErrorDataCallback(
+        MockIMAAdsLoaderDelegate(),
+        MockIMAAdsLoader(),
+        ima.IMAAdLoadingErrorData.pigeon_detached(
+          adError: ima.IMAAdError.pigeon_detached(
+            type: ima.AdErrorType.loadingFailed,
+            code: ima.AdErrorCode.apiError,
+          ),
+        ),
+      );
+    });
   });
 }
 
@@ -220,11 +193,12 @@ Future<IOSAdDisplayContainer> _pumpAdDisplayContainer(
     WidgetTester tester) async {
   final InteractiveMediaAdsProxy imaProxy = InteractiveMediaAdsProxy(
     newUIViewController: () {
-      final PigeonInstanceManager instanceManager = PigeonInstanceManager(
+      final ima.PigeonInstanceManager instanceManager =
+          ima.PigeonInstanceManager(
         onWeakReferenceRemoved: (_) {},
       );
-      final UIView view =
-          UIView.pigeon_detached(pigeon_instanceManager: instanceManager);
+      final ima.UIView view =
+          ima.UIView.pigeon_detached(pigeon_instanceManager: instanceManager);
       instanceManager.addDartCreatedInstance(view);
 
       final MockUIViewController mockController = MockUIViewController();
@@ -232,8 +206,8 @@ Future<IOSAdDisplayContainer> _pumpAdDisplayContainer(
       return mockController;
     },
     newIMAAdDisplayContainer: ({
-      required UIView adContainer,
-      UIViewController? adContainerViewController,
+      required ima.UIView adContainer,
+      ima.UIViewController? adContainerViewController,
     }) =>
         MockIMAAdDisplayContainer(),
   );
