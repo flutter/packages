@@ -18,9 +18,57 @@ PlatformException _createConnectionError(String channelName) {
   );
 }
 
+List<Object?> wrapResponse(
+    {Object? result, PlatformException? error, bool empty = false}) {
+  if (empty) {
+    return <Object?>[];
+  }
+  if (error == null) {
+    return <Object?>[result];
+  }
+  return <Object?>[error.code, error.message, error.details];
+}
+
 enum PlatformRendererType {
   legacy,
   latest,
+}
+
+/// Pigeon representatation of a CameraPosition.
+class PlatformCameraPosition {
+  PlatformCameraPosition({
+    required this.bearing,
+    required this.target,
+    required this.tilt,
+    required this.zoom,
+  });
+
+  double bearing;
+
+  PlatformLatLng target;
+
+  double tilt;
+
+  double zoom;
+
+  Object encode() {
+    return <Object?>[
+      bearing,
+      target,
+      tilt,
+      zoom,
+    ];
+  }
+
+  static PlatformCameraPosition decode(Object result) {
+    result as List<Object?>;
+    return PlatformCameraPosition(
+      bearing: result[0]! as double,
+      target: result[1]! as PlatformLatLng,
+      tilt: result[2]! as double,
+      zoom: result[3]! as double,
+    );
+  }
 }
 
 /// Pigeon representation of a CameraUpdate.
@@ -166,6 +214,38 @@ class PlatformPolyline {
     result as List<Object?>;
     return PlatformPolyline(
       json: (result[0] as Map<Object?, Object?>?)!.cast<String?, Object?>(),
+    );
+  }
+}
+
+/// Pigeon equivalent of the Tile class.
+class PlatformTile {
+  PlatformTile({
+    required this.width,
+    required this.height,
+    this.data,
+  });
+
+  int width;
+
+  int height;
+
+  Uint8List? data;
+
+  Object encode() {
+    return <Object?>[
+      width,
+      height,
+      data,
+    ];
+  }
+
+  static PlatformTile decode(Object result) {
+    result as List<Object?>;
+    return PlatformTile(
+      width: result[0]! as int,
+      height: result[1]! as int,
+      data: result[2] as Uint8List?,
     );
   }
 }
@@ -406,50 +486,56 @@ class _PigeonCodec extends StandardMessageCodec {
   const _PigeonCodec();
   @override
   void writeValue(WriteBuffer buffer, Object? value) {
-    if (value is PlatformCameraUpdate) {
+    if (value is PlatformCameraPosition) {
       buffer.putUint8(129);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformCircle) {
+    } else if (value is PlatformCameraUpdate) {
       buffer.putUint8(130);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformClusterManager) {
+    } else if (value is PlatformCircle) {
       buffer.putUint8(131);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformMarker) {
+    } else if (value is PlatformClusterManager) {
       buffer.putUint8(132);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformPolygon) {
+    } else if (value is PlatformMarker) {
       buffer.putUint8(133);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformPolyline) {
+    } else if (value is PlatformPolygon) {
       buffer.putUint8(134);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformTileOverlay) {
+    } else if (value is PlatformPolyline) {
       buffer.putUint8(135);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformLatLng) {
+    } else if (value is PlatformTile) {
       buffer.putUint8(136);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformLatLngBounds) {
+    } else if (value is PlatformTileOverlay) {
       buffer.putUint8(137);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformCluster) {
+    } else if (value is PlatformLatLng) {
       buffer.putUint8(138);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformMapConfiguration) {
+    } else if (value is PlatformLatLngBounds) {
       buffer.putUint8(139);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformPoint) {
+    } else if (value is PlatformCluster) {
       buffer.putUint8(140);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformTileLayer) {
+    } else if (value is PlatformMapConfiguration) {
       buffer.putUint8(141);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformZoomRange) {
+    } else if (value is PlatformPoint) {
       buffer.putUint8(142);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformRendererType) {
+    } else if (value is PlatformTileLayer) {
       buffer.putUint8(143);
+      writeValue(buffer, value.encode());
+    } else if (value is PlatformZoomRange) {
+      buffer.putUint8(144);
+      writeValue(buffer, value.encode());
+    } else if (value is PlatformRendererType) {
+      buffer.putUint8(145);
       writeValue(buffer, value.index);
     } else {
       super.writeValue(buffer, value);
@@ -460,34 +546,38 @@ class _PigeonCodec extends StandardMessageCodec {
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
       case 129:
-        return PlatformCameraUpdate.decode(readValue(buffer)!);
+        return PlatformCameraPosition.decode(readValue(buffer)!);
       case 130:
-        return PlatformCircle.decode(readValue(buffer)!);
+        return PlatformCameraUpdate.decode(readValue(buffer)!);
       case 131:
-        return PlatformClusterManager.decode(readValue(buffer)!);
+        return PlatformCircle.decode(readValue(buffer)!);
       case 132:
-        return PlatformMarker.decode(readValue(buffer)!);
+        return PlatformClusterManager.decode(readValue(buffer)!);
       case 133:
-        return PlatformPolygon.decode(readValue(buffer)!);
+        return PlatformMarker.decode(readValue(buffer)!);
       case 134:
-        return PlatformPolyline.decode(readValue(buffer)!);
+        return PlatformPolygon.decode(readValue(buffer)!);
       case 135:
-        return PlatformTileOverlay.decode(readValue(buffer)!);
+        return PlatformPolyline.decode(readValue(buffer)!);
       case 136:
-        return PlatformLatLng.decode(readValue(buffer)!);
+        return PlatformTile.decode(readValue(buffer)!);
       case 137:
-        return PlatformLatLngBounds.decode(readValue(buffer)!);
+        return PlatformTileOverlay.decode(readValue(buffer)!);
       case 138:
-        return PlatformCluster.decode(readValue(buffer)!);
+        return PlatformLatLng.decode(readValue(buffer)!);
       case 139:
-        return PlatformMapConfiguration.decode(readValue(buffer)!);
+        return PlatformLatLngBounds.decode(readValue(buffer)!);
       case 140:
-        return PlatformPoint.decode(readValue(buffer)!);
+        return PlatformCluster.decode(readValue(buffer)!);
       case 141:
-        return PlatformTileLayer.decode(readValue(buffer)!);
+        return PlatformMapConfiguration.decode(readValue(buffer)!);
       case 142:
-        return PlatformZoomRange.decode(readValue(buffer)!);
+        return PlatformPoint.decode(readValue(buffer)!);
       case 143:
+        return PlatformTileLayer.decode(readValue(buffer)!);
+      case 144:
+        return PlatformZoomRange.decode(readValue(buffer)!);
+      case 145:
         final int? value = readValue(buffer) as int?;
         return value == null ? null : PlatformRendererType.values[value];
       default:
@@ -1095,6 +1185,490 @@ class MapsApi {
       );
     } else {
       return (__pigeon_replyList[0] as Uint8List?)!;
+    }
+  }
+}
+
+abstract class MapsCallbackApi {
+  static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
+
+  /// Called when the map camera starts moving.
+  void onCameraMoveStarted();
+
+  /// Called when the map camera moves.
+  void onCameraMove(PlatformCameraPosition cameraPosition);
+
+  /// Called when the map camera stops moving.
+  void onCameraIdle();
+
+  /// Called when the map, not a specifc map object, is tapped.
+  void onTap(PlatformLatLng position);
+
+  /// Called when the map, not a specifc map object, is long pressed.
+  void onLongPress(PlatformLatLng position);
+
+  /// Called when a marker is tapped.
+  void onMarkerTap(String markerId);
+
+  /// Called when a marker drag starts.
+  void onMarkerDragStart(String markerId, PlatformLatLng position);
+
+  /// Called when a marker drag updates.
+  void onMarkerDrag(String markerId, PlatformLatLng position);
+
+  /// Called when a marker drag ends.
+  void onMarkerDragEnd(String markerId, PlatformLatLng position);
+
+  /// Called when a marker's info window is tapped.
+  void onInfoWindowTap(String markerId);
+
+  /// Called when a circle is tapped.
+  void onCircleTap(String circleId);
+
+  /// Called when a marker cluster is tapped.
+  void onClusterTap(PlatformCluster cluster);
+
+  /// Called when a polygon is tapped.
+  void onPolygonTap(String polygonId);
+
+  /// Called when a polyline is tapped.
+  void onPolylineTap(String polylineId);
+
+  /// Called to get data for a map tile.
+  Future<PlatformTile> getTileOverlayTile(
+      String tileOverlayId, PlatformPoint location, int zoom);
+
+  static void setUp(
+    MapsCallbackApi? api, {
+    BinaryMessenger? binaryMessenger,
+    String messageChannelSuffix = '',
+  }) {
+    messageChannelSuffix =
+        messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
+    {
+      final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
+              Object?>(
+          'dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onCameraMoveStarted$messageChannelSuffix',
+          pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        __pigeon_channel.setMessageHandler(null);
+      } else {
+        __pigeon_channel.setMessageHandler((Object? message) async {
+          try {
+            api.onCameraMoveStarted();
+            return wrapResponse(empty: true);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
+              Object?>(
+          'dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onCameraMove$messageChannelSuffix',
+          pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        __pigeon_channel.setMessageHandler(null);
+      } else {
+        __pigeon_channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onCameraMove was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final PlatformCameraPosition? arg_cameraPosition =
+              (args[0] as PlatformCameraPosition?);
+          assert(arg_cameraPosition != null,
+              'Argument for dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onCameraMove was null, expected non-null PlatformCameraPosition.');
+          try {
+            api.onCameraMove(arg_cameraPosition!);
+            return wrapResponse(empty: true);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
+              Object?>(
+          'dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onCameraIdle$messageChannelSuffix',
+          pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        __pigeon_channel.setMessageHandler(null);
+      } else {
+        __pigeon_channel.setMessageHandler((Object? message) async {
+          try {
+            api.onCameraIdle();
+            return wrapResponse(empty: true);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
+              Object?>(
+          'dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onTap$messageChannelSuffix',
+          pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        __pigeon_channel.setMessageHandler(null);
+      } else {
+        __pigeon_channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onTap was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final PlatformLatLng? arg_position = (args[0] as PlatformLatLng?);
+          assert(arg_position != null,
+              'Argument for dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onTap was null, expected non-null PlatformLatLng.');
+          try {
+            api.onTap(arg_position!);
+            return wrapResponse(empty: true);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
+              Object?>(
+          'dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onLongPress$messageChannelSuffix',
+          pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        __pigeon_channel.setMessageHandler(null);
+      } else {
+        __pigeon_channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onLongPress was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final PlatformLatLng? arg_position = (args[0] as PlatformLatLng?);
+          assert(arg_position != null,
+              'Argument for dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onLongPress was null, expected non-null PlatformLatLng.');
+          try {
+            api.onLongPress(arg_position!);
+            return wrapResponse(empty: true);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
+              Object?>(
+          'dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onMarkerTap$messageChannelSuffix',
+          pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        __pigeon_channel.setMessageHandler(null);
+      } else {
+        __pigeon_channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onMarkerTap was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final String? arg_markerId = (args[0] as String?);
+          assert(arg_markerId != null,
+              'Argument for dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onMarkerTap was null, expected non-null String.');
+          try {
+            api.onMarkerTap(arg_markerId!);
+            return wrapResponse(empty: true);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
+              Object?>(
+          'dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onMarkerDragStart$messageChannelSuffix',
+          pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        __pigeon_channel.setMessageHandler(null);
+      } else {
+        __pigeon_channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onMarkerDragStart was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final String? arg_markerId = (args[0] as String?);
+          assert(arg_markerId != null,
+              'Argument for dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onMarkerDragStart was null, expected non-null String.');
+          final PlatformLatLng? arg_position = (args[1] as PlatformLatLng?);
+          assert(arg_position != null,
+              'Argument for dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onMarkerDragStart was null, expected non-null PlatformLatLng.');
+          try {
+            api.onMarkerDragStart(arg_markerId!, arg_position!);
+            return wrapResponse(empty: true);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
+              Object?>(
+          'dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onMarkerDrag$messageChannelSuffix',
+          pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        __pigeon_channel.setMessageHandler(null);
+      } else {
+        __pigeon_channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onMarkerDrag was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final String? arg_markerId = (args[0] as String?);
+          assert(arg_markerId != null,
+              'Argument for dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onMarkerDrag was null, expected non-null String.');
+          final PlatformLatLng? arg_position = (args[1] as PlatformLatLng?);
+          assert(arg_position != null,
+              'Argument for dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onMarkerDrag was null, expected non-null PlatformLatLng.');
+          try {
+            api.onMarkerDrag(arg_markerId!, arg_position!);
+            return wrapResponse(empty: true);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
+              Object?>(
+          'dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onMarkerDragEnd$messageChannelSuffix',
+          pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        __pigeon_channel.setMessageHandler(null);
+      } else {
+        __pigeon_channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onMarkerDragEnd was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final String? arg_markerId = (args[0] as String?);
+          assert(arg_markerId != null,
+              'Argument for dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onMarkerDragEnd was null, expected non-null String.');
+          final PlatformLatLng? arg_position = (args[1] as PlatformLatLng?);
+          assert(arg_position != null,
+              'Argument for dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onMarkerDragEnd was null, expected non-null PlatformLatLng.');
+          try {
+            api.onMarkerDragEnd(arg_markerId!, arg_position!);
+            return wrapResponse(empty: true);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
+              Object?>(
+          'dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onInfoWindowTap$messageChannelSuffix',
+          pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        __pigeon_channel.setMessageHandler(null);
+      } else {
+        __pigeon_channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onInfoWindowTap was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final String? arg_markerId = (args[0] as String?);
+          assert(arg_markerId != null,
+              'Argument for dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onInfoWindowTap was null, expected non-null String.');
+          try {
+            api.onInfoWindowTap(arg_markerId!);
+            return wrapResponse(empty: true);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
+              Object?>(
+          'dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onCircleTap$messageChannelSuffix',
+          pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        __pigeon_channel.setMessageHandler(null);
+      } else {
+        __pigeon_channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onCircleTap was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final String? arg_circleId = (args[0] as String?);
+          assert(arg_circleId != null,
+              'Argument for dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onCircleTap was null, expected non-null String.');
+          try {
+            api.onCircleTap(arg_circleId!);
+            return wrapResponse(empty: true);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
+              Object?>(
+          'dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onClusterTap$messageChannelSuffix',
+          pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        __pigeon_channel.setMessageHandler(null);
+      } else {
+        __pigeon_channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onClusterTap was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final PlatformCluster? arg_cluster = (args[0] as PlatformCluster?);
+          assert(arg_cluster != null,
+              'Argument for dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onClusterTap was null, expected non-null PlatformCluster.');
+          try {
+            api.onClusterTap(arg_cluster!);
+            return wrapResponse(empty: true);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
+              Object?>(
+          'dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onPolygonTap$messageChannelSuffix',
+          pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        __pigeon_channel.setMessageHandler(null);
+      } else {
+        __pigeon_channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onPolygonTap was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final String? arg_polygonId = (args[0] as String?);
+          assert(arg_polygonId != null,
+              'Argument for dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onPolygonTap was null, expected non-null String.');
+          try {
+            api.onPolygonTap(arg_polygonId!);
+            return wrapResponse(empty: true);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
+              Object?>(
+          'dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onPolylineTap$messageChannelSuffix',
+          pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        __pigeon_channel.setMessageHandler(null);
+      } else {
+        __pigeon_channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onPolylineTap was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final String? arg_polylineId = (args[0] as String?);
+          assert(arg_polylineId != null,
+              'Argument for dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onPolylineTap was null, expected non-null String.');
+          try {
+            api.onPolylineTap(arg_polylineId!);
+            return wrapResponse(empty: true);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
+              Object?>(
+          'dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.getTileOverlayTile$messageChannelSuffix',
+          pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        __pigeon_channel.setMessageHandler(null);
+      } else {
+        __pigeon_channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.getTileOverlayTile was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final String? arg_tileOverlayId = (args[0] as String?);
+          assert(arg_tileOverlayId != null,
+              'Argument for dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.getTileOverlayTile was null, expected non-null String.');
+          final PlatformPoint? arg_location = (args[1] as PlatformPoint?);
+          assert(arg_location != null,
+              'Argument for dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.getTileOverlayTile was null, expected non-null PlatformPoint.');
+          final int? arg_zoom = (args[2] as int?);
+          assert(arg_zoom != null,
+              'Argument for dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.getTileOverlayTile was null, expected non-null int.');
+          try {
+            final PlatformTile output = await api.getTileOverlayTile(
+                arg_tileOverlayId!, arg_location!, arg_zoom!);
+            return wrapResponse(result: output);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
+        });
+      }
     }
   }
 }

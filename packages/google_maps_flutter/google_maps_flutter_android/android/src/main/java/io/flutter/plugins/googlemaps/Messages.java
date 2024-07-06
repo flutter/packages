@@ -21,6 +21,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -62,6 +64,12 @@ public class Messages {
     return errorList;
   }
 
+  @NonNull
+  protected static FlutterError createConnectionError(@NonNull String channelName) {
+    return new FlutterError(
+        "channel-error", "Unable to establish connection on channel: " + channelName + ".", "");
+  }
+
   @Target(METHOD)
   @Retention(CLASS)
   @interface CanIgnoreReturnValue {}
@@ -74,6 +82,155 @@ public class Messages {
 
     private PlatformRendererType(final int index) {
       this.index = index;
+    }
+  }
+
+  /**
+   * Pigeon representatation of a CameraPosition.
+   *
+   * <p>Generated class from Pigeon that represents data sent in messages.
+   */
+  public static final class PlatformCameraPosition {
+    private @NonNull Double bearing;
+
+    public @NonNull Double getBearing() {
+      return bearing;
+    }
+
+    public void setBearing(@NonNull Double setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"bearing\" is null.");
+      }
+      this.bearing = setterArg;
+    }
+
+    private @NonNull PlatformLatLng target;
+
+    public @NonNull PlatformLatLng getTarget() {
+      return target;
+    }
+
+    public void setTarget(@NonNull PlatformLatLng setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"target\" is null.");
+      }
+      this.target = setterArg;
+    }
+
+    private @NonNull Double tilt;
+
+    public @NonNull Double getTilt() {
+      return tilt;
+    }
+
+    public void setTilt(@NonNull Double setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"tilt\" is null.");
+      }
+      this.tilt = setterArg;
+    }
+
+    private @NonNull Double zoom;
+
+    public @NonNull Double getZoom() {
+      return zoom;
+    }
+
+    public void setZoom(@NonNull Double setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"zoom\" is null.");
+      }
+      this.zoom = setterArg;
+    }
+
+    /** Constructor is non-public to enforce null safety; use Builder. */
+    PlatformCameraPosition() {}
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
+      PlatformCameraPosition that = (PlatformCameraPosition) o;
+      return bearing.equals(that.bearing)
+          && target.equals(that.target)
+          && tilt.equals(that.tilt)
+          && zoom.equals(that.zoom);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(bearing, target, tilt, zoom);
+    }
+
+    public static final class Builder {
+
+      private @Nullable Double bearing;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setBearing(@NonNull Double setterArg) {
+        this.bearing = setterArg;
+        return this;
+      }
+
+      private @Nullable PlatformLatLng target;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setTarget(@NonNull PlatformLatLng setterArg) {
+        this.target = setterArg;
+        return this;
+      }
+
+      private @Nullable Double tilt;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setTilt(@NonNull Double setterArg) {
+        this.tilt = setterArg;
+        return this;
+      }
+
+      private @Nullable Double zoom;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setZoom(@NonNull Double setterArg) {
+        this.zoom = setterArg;
+        return this;
+      }
+
+      public @NonNull PlatformCameraPosition build() {
+        PlatformCameraPosition pigeonReturn = new PlatformCameraPosition();
+        pigeonReturn.setBearing(bearing);
+        pigeonReturn.setTarget(target);
+        pigeonReturn.setTilt(tilt);
+        pigeonReturn.setZoom(zoom);
+        return pigeonReturn;
+      }
+    }
+
+    @NonNull
+    ArrayList<Object> toList() {
+      ArrayList<Object> toListResult = new ArrayList<Object>(4);
+      toListResult.add(bearing);
+      toListResult.add(target);
+      toListResult.add(tilt);
+      toListResult.add(zoom);
+      return toListResult;
+    }
+
+    static @NonNull PlatformCameraPosition fromList(@NonNull ArrayList<Object> __pigeon_list) {
+      PlatformCameraPosition pigeonResult = new PlatformCameraPosition();
+      Object bearing = __pigeon_list.get(0);
+      pigeonResult.setBearing((Double) bearing);
+      Object target = __pigeon_list.get(1);
+      pigeonResult.setTarget((PlatformLatLng) target);
+      Object tilt = __pigeon_list.get(2);
+      pigeonResult.setTilt((Double) tilt);
+      Object zoom = __pigeon_list.get(3);
+      pigeonResult.setZoom((Double) zoom);
+      return pigeonResult;
     }
   }
 
@@ -520,6 +677,132 @@ public class Messages {
       PlatformPolyline pigeonResult = new PlatformPolyline();
       Object json = __pigeon_list.get(0);
       pigeonResult.setJson((Map<String, Object>) json);
+      return pigeonResult;
+    }
+  }
+
+  /**
+   * Pigeon equivalent of the Tile class.
+   *
+   * <p>Generated class from Pigeon that represents data sent in messages.
+   */
+  public static final class PlatformTile {
+    private @NonNull Long width;
+
+    public @NonNull Long getWidth() {
+      return width;
+    }
+
+    public void setWidth(@NonNull Long setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"width\" is null.");
+      }
+      this.width = setterArg;
+    }
+
+    private @NonNull Long height;
+
+    public @NonNull Long getHeight() {
+      return height;
+    }
+
+    public void setHeight(@NonNull Long setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"height\" is null.");
+      }
+      this.height = setterArg;
+    }
+
+    private @Nullable byte[] data;
+
+    public @Nullable byte[] getData() {
+      return data;
+    }
+
+    public void setData(@Nullable byte[] setterArg) {
+      this.data = setterArg;
+    }
+
+    /** Constructor is non-public to enforce null safety; use Builder. */
+    PlatformTile() {}
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
+      PlatformTile that = (PlatformTile) o;
+      return width.equals(that.width)
+          && height.equals(that.height)
+          && Arrays.equals(data, that.data);
+    }
+
+    @Override
+    public int hashCode() {
+      int __pigeon_result = Objects.hash(width, height);
+      __pigeon_result = 31 * __pigeon_result + Arrays.hashCode(data);
+      return __pigeon_result;
+    }
+
+    public static final class Builder {
+
+      private @Nullable Long width;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setWidth(@NonNull Long setterArg) {
+        this.width = setterArg;
+        return this;
+      }
+
+      private @Nullable Long height;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setHeight(@NonNull Long setterArg) {
+        this.height = setterArg;
+        return this;
+      }
+
+      private @Nullable byte[] data;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setData(@Nullable byte[] setterArg) {
+        this.data = setterArg;
+        return this;
+      }
+
+      public @NonNull PlatformTile build() {
+        PlatformTile pigeonReturn = new PlatformTile();
+        pigeonReturn.setWidth(width);
+        pigeonReturn.setHeight(height);
+        pigeonReturn.setData(data);
+        return pigeonReturn;
+      }
+    }
+
+    @NonNull
+    ArrayList<Object> toList() {
+      ArrayList<Object> toListResult = new ArrayList<Object>(3);
+      toListResult.add(width);
+      toListResult.add(height);
+      toListResult.add(data);
+      return toListResult;
+    }
+
+    static @NonNull PlatformTile fromList(@NonNull ArrayList<Object> __pigeon_list) {
+      PlatformTile pigeonResult = new PlatformTile();
+      Object width = __pigeon_list.get(0);
+      pigeonResult.setWidth(
+          (width == null) ? null : ((width instanceof Integer) ? (Integer) width : (Long) width));
+      Object height = __pigeon_list.get(1);
+      pigeonResult.setHeight(
+          (height == null)
+              ? null
+              : ((height instanceof Integer) ? (Integer) height : (Long) height));
+      Object data = __pigeon_list.get(2);
+      pigeonResult.setData((byte[]) data);
       return pigeonResult;
     }
   }
@@ -1366,34 +1649,38 @@ public class Messages {
     protected Object readValueOfType(byte type, @NonNull ByteBuffer buffer) {
       switch (type) {
         case (byte) 129:
-          return PlatformCameraUpdate.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformCameraPosition.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 130:
-          return PlatformCircle.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformCameraUpdate.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 131:
-          return PlatformClusterManager.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformCircle.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 132:
-          return PlatformMarker.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformClusterManager.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 133:
-          return PlatformPolygon.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformMarker.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 134:
-          return PlatformPolyline.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformPolygon.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 135:
-          return PlatformTileOverlay.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformPolyline.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 136:
-          return PlatformLatLng.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformTile.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 137:
-          return PlatformLatLngBounds.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformTileOverlay.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 138:
-          return PlatformCluster.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformLatLng.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 139:
-          return PlatformMapConfiguration.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformLatLngBounds.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 140:
-          return PlatformPoint.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformCluster.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 141:
-          return PlatformTileLayer.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformMapConfiguration.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 142:
-          return PlatformZoomRange.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformPoint.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 143:
+          return PlatformTileLayer.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 144:
+          return PlatformZoomRange.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 145:
           Object value = readValue(buffer);
           return value == null ? null : PlatformRendererType.values()[(int) value];
         default:
@@ -1403,50 +1690,56 @@ public class Messages {
 
     @Override
     protected void writeValue(@NonNull ByteArrayOutputStream stream, Object value) {
-      if (value instanceof PlatformCameraUpdate) {
+      if (value instanceof PlatformCameraPosition) {
         stream.write(129);
+        writeValue(stream, ((PlatformCameraPosition) value).toList());
+      } else if (value instanceof PlatformCameraUpdate) {
+        stream.write(130);
         writeValue(stream, ((PlatformCameraUpdate) value).toList());
       } else if (value instanceof PlatformCircle) {
-        stream.write(130);
+        stream.write(131);
         writeValue(stream, ((PlatformCircle) value).toList());
       } else if (value instanceof PlatformClusterManager) {
-        stream.write(131);
+        stream.write(132);
         writeValue(stream, ((PlatformClusterManager) value).toList());
       } else if (value instanceof PlatformMarker) {
-        stream.write(132);
+        stream.write(133);
         writeValue(stream, ((PlatformMarker) value).toList());
       } else if (value instanceof PlatformPolygon) {
-        stream.write(133);
+        stream.write(134);
         writeValue(stream, ((PlatformPolygon) value).toList());
       } else if (value instanceof PlatformPolyline) {
-        stream.write(134);
-        writeValue(stream, ((PlatformPolyline) value).toList());
-      } else if (value instanceof PlatformTileOverlay) {
         stream.write(135);
+        writeValue(stream, ((PlatformPolyline) value).toList());
+      } else if (value instanceof PlatformTile) {
+        stream.write(136);
+        writeValue(stream, ((PlatformTile) value).toList());
+      } else if (value instanceof PlatformTileOverlay) {
+        stream.write(137);
         writeValue(stream, ((PlatformTileOverlay) value).toList());
       } else if (value instanceof PlatformLatLng) {
-        stream.write(136);
+        stream.write(138);
         writeValue(stream, ((PlatformLatLng) value).toList());
       } else if (value instanceof PlatformLatLngBounds) {
-        stream.write(137);
+        stream.write(139);
         writeValue(stream, ((PlatformLatLngBounds) value).toList());
       } else if (value instanceof PlatformCluster) {
-        stream.write(138);
+        stream.write(140);
         writeValue(stream, ((PlatformCluster) value).toList());
       } else if (value instanceof PlatformMapConfiguration) {
-        stream.write(139);
+        stream.write(141);
         writeValue(stream, ((PlatformMapConfiguration) value).toList());
       } else if (value instanceof PlatformPoint) {
-        stream.write(140);
+        stream.write(142);
         writeValue(stream, ((PlatformPoint) value).toList());
       } else if (value instanceof PlatformTileLayer) {
-        stream.write(141);
+        stream.write(143);
         writeValue(stream, ((PlatformTileLayer) value).toList());
       } else if (value instanceof PlatformZoomRange) {
-        stream.write(142);
+        stream.write(144);
         writeValue(stream, ((PlatformZoomRange) value).toList());
       } else if (value instanceof PlatformRendererType) {
-        stream.write(143);
+        stream.write(145);
         writeValue(stream, value == null ? null : ((PlatformRendererType) value).index);
       } else {
         super.writeValue(stream, value);
@@ -2141,6 +2434,439 @@ public class Messages {
           channel.setMessageHandler(null);
         }
       }
+    }
+  }
+  /** Generated class from Pigeon that represents Flutter messages that can be called from Java. */
+  public static class MapsCallbackApi {
+    private final @NonNull BinaryMessenger binaryMessenger;
+    private final String messageChannelSuffix;
+
+    public MapsCallbackApi(@NonNull BinaryMessenger argBinaryMessenger) {
+      this(argBinaryMessenger, "");
+    }
+
+    public MapsCallbackApi(
+        @NonNull BinaryMessenger argBinaryMessenger, @NonNull String messageChannelSuffix) {
+      this.binaryMessenger = argBinaryMessenger;
+      this.messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;
+    }
+
+    /** Public interface for sending reply. */
+    /** The codec used by MapsCallbackApi. */
+    static @NonNull MessageCodec<Object> getCodec() {
+      return PigeonCodec.INSTANCE;
+    }
+    /** Called when the map camera starts moving. */
+    public void onCameraMoveStarted(@NonNull VoidResult result) {
+      final String channelName =
+          "dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onCameraMoveStarted"
+              + messageChannelSuffix;
+      BasicMessageChannel<Object> channel =
+          new BasicMessageChannel<>(binaryMessenger, channelName, getCodec());
+      channel.send(
+          null,
+          channelReply -> {
+            if (channelReply instanceof List) {
+              List<Object> listReply = (List<Object>) channelReply;
+              if (listReply.size() > 1) {
+                result.error(
+                    new FlutterError(
+                        (String) listReply.get(0),
+                        (String) listReply.get(1),
+                        (String) listReply.get(2)));
+              } else {
+                result.success();
+              }
+            } else {
+              result.error(createConnectionError(channelName));
+            }
+          });
+    }
+    /** Called when the map camera moves. */
+    public void onCameraMove(
+        @NonNull PlatformCameraPosition cameraPositionArg, @NonNull VoidResult result) {
+      final String channelName =
+          "dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onCameraMove"
+              + messageChannelSuffix;
+      BasicMessageChannel<Object> channel =
+          new BasicMessageChannel<>(binaryMessenger, channelName, getCodec());
+      channel.send(
+          new ArrayList<Object>(Collections.singletonList(cameraPositionArg)),
+          channelReply -> {
+            if (channelReply instanceof List) {
+              List<Object> listReply = (List<Object>) channelReply;
+              if (listReply.size() > 1) {
+                result.error(
+                    new FlutterError(
+                        (String) listReply.get(0),
+                        (String) listReply.get(1),
+                        (String) listReply.get(2)));
+              } else {
+                result.success();
+              }
+            } else {
+              result.error(createConnectionError(channelName));
+            }
+          });
+    }
+    /** Called when the map camera stops moving. */
+    public void onCameraIdle(@NonNull VoidResult result) {
+      final String channelName =
+          "dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onCameraIdle"
+              + messageChannelSuffix;
+      BasicMessageChannel<Object> channel =
+          new BasicMessageChannel<>(binaryMessenger, channelName, getCodec());
+      channel.send(
+          null,
+          channelReply -> {
+            if (channelReply instanceof List) {
+              List<Object> listReply = (List<Object>) channelReply;
+              if (listReply.size() > 1) {
+                result.error(
+                    new FlutterError(
+                        (String) listReply.get(0),
+                        (String) listReply.get(1),
+                        (String) listReply.get(2)));
+              } else {
+                result.success();
+              }
+            } else {
+              result.error(createConnectionError(channelName));
+            }
+          });
+    }
+    /** Called when the map, not a specifc map object, is tapped. */
+    public void onTap(@NonNull PlatformLatLng positionArg, @NonNull VoidResult result) {
+      final String channelName =
+          "dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onTap"
+              + messageChannelSuffix;
+      BasicMessageChannel<Object> channel =
+          new BasicMessageChannel<>(binaryMessenger, channelName, getCodec());
+      channel.send(
+          new ArrayList<Object>(Collections.singletonList(positionArg)),
+          channelReply -> {
+            if (channelReply instanceof List) {
+              List<Object> listReply = (List<Object>) channelReply;
+              if (listReply.size() > 1) {
+                result.error(
+                    new FlutterError(
+                        (String) listReply.get(0),
+                        (String) listReply.get(1),
+                        (String) listReply.get(2)));
+              } else {
+                result.success();
+              }
+            } else {
+              result.error(createConnectionError(channelName));
+            }
+          });
+    }
+    /** Called when the map, not a specifc map object, is long pressed. */
+    public void onLongPress(@NonNull PlatformLatLng positionArg, @NonNull VoidResult result) {
+      final String channelName =
+          "dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onLongPress"
+              + messageChannelSuffix;
+      BasicMessageChannel<Object> channel =
+          new BasicMessageChannel<>(binaryMessenger, channelName, getCodec());
+      channel.send(
+          new ArrayList<Object>(Collections.singletonList(positionArg)),
+          channelReply -> {
+            if (channelReply instanceof List) {
+              List<Object> listReply = (List<Object>) channelReply;
+              if (listReply.size() > 1) {
+                result.error(
+                    new FlutterError(
+                        (String) listReply.get(0),
+                        (String) listReply.get(1),
+                        (String) listReply.get(2)));
+              } else {
+                result.success();
+              }
+            } else {
+              result.error(createConnectionError(channelName));
+            }
+          });
+    }
+    /** Called when a marker is tapped. */
+    public void onMarkerTap(@NonNull String markerIdArg, @NonNull VoidResult result) {
+      final String channelName =
+          "dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onMarkerTap"
+              + messageChannelSuffix;
+      BasicMessageChannel<Object> channel =
+          new BasicMessageChannel<>(binaryMessenger, channelName, getCodec());
+      channel.send(
+          new ArrayList<Object>(Collections.singletonList(markerIdArg)),
+          channelReply -> {
+            if (channelReply instanceof List) {
+              List<Object> listReply = (List<Object>) channelReply;
+              if (listReply.size() > 1) {
+                result.error(
+                    new FlutterError(
+                        (String) listReply.get(0),
+                        (String) listReply.get(1),
+                        (String) listReply.get(2)));
+              } else {
+                result.success();
+              }
+            } else {
+              result.error(createConnectionError(channelName));
+            }
+          });
+    }
+    /** Called when a marker drag starts. */
+    public void onMarkerDragStart(
+        @NonNull String markerIdArg,
+        @NonNull PlatformLatLng positionArg,
+        @NonNull VoidResult result) {
+      final String channelName =
+          "dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onMarkerDragStart"
+              + messageChannelSuffix;
+      BasicMessageChannel<Object> channel =
+          new BasicMessageChannel<>(binaryMessenger, channelName, getCodec());
+      channel.send(
+          new ArrayList<Object>(Arrays.asList(markerIdArg, positionArg)),
+          channelReply -> {
+            if (channelReply instanceof List) {
+              List<Object> listReply = (List<Object>) channelReply;
+              if (listReply.size() > 1) {
+                result.error(
+                    new FlutterError(
+                        (String) listReply.get(0),
+                        (String) listReply.get(1),
+                        (String) listReply.get(2)));
+              } else {
+                result.success();
+              }
+            } else {
+              result.error(createConnectionError(channelName));
+            }
+          });
+    }
+    /** Called when a marker drag updates. */
+    public void onMarkerDrag(
+        @NonNull String markerIdArg,
+        @NonNull PlatformLatLng positionArg,
+        @NonNull VoidResult result) {
+      final String channelName =
+          "dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onMarkerDrag"
+              + messageChannelSuffix;
+      BasicMessageChannel<Object> channel =
+          new BasicMessageChannel<>(binaryMessenger, channelName, getCodec());
+      channel.send(
+          new ArrayList<Object>(Arrays.asList(markerIdArg, positionArg)),
+          channelReply -> {
+            if (channelReply instanceof List) {
+              List<Object> listReply = (List<Object>) channelReply;
+              if (listReply.size() > 1) {
+                result.error(
+                    new FlutterError(
+                        (String) listReply.get(0),
+                        (String) listReply.get(1),
+                        (String) listReply.get(2)));
+              } else {
+                result.success();
+              }
+            } else {
+              result.error(createConnectionError(channelName));
+            }
+          });
+    }
+    /** Called when a marker drag ends. */
+    public void onMarkerDragEnd(
+        @NonNull String markerIdArg,
+        @NonNull PlatformLatLng positionArg,
+        @NonNull VoidResult result) {
+      final String channelName =
+          "dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onMarkerDragEnd"
+              + messageChannelSuffix;
+      BasicMessageChannel<Object> channel =
+          new BasicMessageChannel<>(binaryMessenger, channelName, getCodec());
+      channel.send(
+          new ArrayList<Object>(Arrays.asList(markerIdArg, positionArg)),
+          channelReply -> {
+            if (channelReply instanceof List) {
+              List<Object> listReply = (List<Object>) channelReply;
+              if (listReply.size() > 1) {
+                result.error(
+                    new FlutterError(
+                        (String) listReply.get(0),
+                        (String) listReply.get(1),
+                        (String) listReply.get(2)));
+              } else {
+                result.success();
+              }
+            } else {
+              result.error(createConnectionError(channelName));
+            }
+          });
+    }
+    /** Called when a marker's info window is tapped. */
+    public void onInfoWindowTap(@NonNull String markerIdArg, @NonNull VoidResult result) {
+      final String channelName =
+          "dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onInfoWindowTap"
+              + messageChannelSuffix;
+      BasicMessageChannel<Object> channel =
+          new BasicMessageChannel<>(binaryMessenger, channelName, getCodec());
+      channel.send(
+          new ArrayList<Object>(Collections.singletonList(markerIdArg)),
+          channelReply -> {
+            if (channelReply instanceof List) {
+              List<Object> listReply = (List<Object>) channelReply;
+              if (listReply.size() > 1) {
+                result.error(
+                    new FlutterError(
+                        (String) listReply.get(0),
+                        (String) listReply.get(1),
+                        (String) listReply.get(2)));
+              } else {
+                result.success();
+              }
+            } else {
+              result.error(createConnectionError(channelName));
+            }
+          });
+    }
+    /** Called when a circle is tapped. */
+    public void onCircleTap(@NonNull String circleIdArg, @NonNull VoidResult result) {
+      final String channelName =
+          "dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onCircleTap"
+              + messageChannelSuffix;
+      BasicMessageChannel<Object> channel =
+          new BasicMessageChannel<>(binaryMessenger, channelName, getCodec());
+      channel.send(
+          new ArrayList<Object>(Collections.singletonList(circleIdArg)),
+          channelReply -> {
+            if (channelReply instanceof List) {
+              List<Object> listReply = (List<Object>) channelReply;
+              if (listReply.size() > 1) {
+                result.error(
+                    new FlutterError(
+                        (String) listReply.get(0),
+                        (String) listReply.get(1),
+                        (String) listReply.get(2)));
+              } else {
+                result.success();
+              }
+            } else {
+              result.error(createConnectionError(channelName));
+            }
+          });
+    }
+    /** Called when a marker cluster is tapped. */
+    public void onClusterTap(@NonNull PlatformCluster clusterArg, @NonNull VoidResult result) {
+      final String channelName =
+          "dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onClusterTap"
+              + messageChannelSuffix;
+      BasicMessageChannel<Object> channel =
+          new BasicMessageChannel<>(binaryMessenger, channelName, getCodec());
+      channel.send(
+          new ArrayList<Object>(Collections.singletonList(clusterArg)),
+          channelReply -> {
+            if (channelReply instanceof List) {
+              List<Object> listReply = (List<Object>) channelReply;
+              if (listReply.size() > 1) {
+                result.error(
+                    new FlutterError(
+                        (String) listReply.get(0),
+                        (String) listReply.get(1),
+                        (String) listReply.get(2)));
+              } else {
+                result.success();
+              }
+            } else {
+              result.error(createConnectionError(channelName));
+            }
+          });
+    }
+    /** Called when a polygon is tapped. */
+    public void onPolygonTap(@NonNull String polygonIdArg, @NonNull VoidResult result) {
+      final String channelName =
+          "dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onPolygonTap"
+              + messageChannelSuffix;
+      BasicMessageChannel<Object> channel =
+          new BasicMessageChannel<>(binaryMessenger, channelName, getCodec());
+      channel.send(
+          new ArrayList<Object>(Collections.singletonList(polygonIdArg)),
+          channelReply -> {
+            if (channelReply instanceof List) {
+              List<Object> listReply = (List<Object>) channelReply;
+              if (listReply.size() > 1) {
+                result.error(
+                    new FlutterError(
+                        (String) listReply.get(0),
+                        (String) listReply.get(1),
+                        (String) listReply.get(2)));
+              } else {
+                result.success();
+              }
+            } else {
+              result.error(createConnectionError(channelName));
+            }
+          });
+    }
+    /** Called when a polyline is tapped. */
+    public void onPolylineTap(@NonNull String polylineIdArg, @NonNull VoidResult result) {
+      final String channelName =
+          "dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onPolylineTap"
+              + messageChannelSuffix;
+      BasicMessageChannel<Object> channel =
+          new BasicMessageChannel<>(binaryMessenger, channelName, getCodec());
+      channel.send(
+          new ArrayList<Object>(Collections.singletonList(polylineIdArg)),
+          channelReply -> {
+            if (channelReply instanceof List) {
+              List<Object> listReply = (List<Object>) channelReply;
+              if (listReply.size() > 1) {
+                result.error(
+                    new FlutterError(
+                        (String) listReply.get(0),
+                        (String) listReply.get(1),
+                        (String) listReply.get(2)));
+              } else {
+                result.success();
+              }
+            } else {
+              result.error(createConnectionError(channelName));
+            }
+          });
+    }
+    /** Called to get data for a map tile. */
+    public void getTileOverlayTile(
+        @NonNull String tileOverlayIdArg,
+        @NonNull PlatformPoint locationArg,
+        @NonNull Long zoomArg,
+        @NonNull Result<PlatformTile> result) {
+      final String channelName =
+          "dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.getTileOverlayTile"
+              + messageChannelSuffix;
+      BasicMessageChannel<Object> channel =
+          new BasicMessageChannel<>(binaryMessenger, channelName, getCodec());
+      channel.send(
+          new ArrayList<Object>(Arrays.asList(tileOverlayIdArg, locationArg, zoomArg)),
+          channelReply -> {
+            if (channelReply instanceof List) {
+              List<Object> listReply = (List<Object>) channelReply;
+              if (listReply.size() > 1) {
+                result.error(
+                    new FlutterError(
+                        (String) listReply.get(0),
+                        (String) listReply.get(1),
+                        (String) listReply.get(2)));
+              } else if (listReply.get(0) == null) {
+                result.error(
+                    new FlutterError(
+                        "null-error",
+                        "Flutter api returned null value for non-null return value.",
+                        ""));
+              } else {
+                @SuppressWarnings("ConstantConditions")
+                PlatformTile output = (PlatformTile) listReply.get(0);
+                result.success(output);
+              }
+            } else {
+              result.error(createConnectionError(channelName));
+            }
+          });
     }
   }
   /**
