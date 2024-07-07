@@ -9,7 +9,7 @@ import androidx.annotation.VisibleForTesting;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
-import io.flutter.plugin.common.MethodChannel;
+import io.flutter.plugins.googlemaps.Messages.MapsCallbackApi;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,14 +17,14 @@ import java.util.Map;
 class CirclesController {
   @VisibleForTesting final Map<String, CircleController> circleIdToController;
   private final Map<String, String> googleMapsCircleIdToDartCircleId;
-  private final MethodChannel methodChannel;
+  private final @NonNull MapsCallbackApi flutterApi;
   private final float density;
   private GoogleMap googleMap;
 
-  CirclesController(MethodChannel methodChannel, float density) {
+  CirclesController(@NonNull MapsCallbackApi flutterApi, float density) {
     this.circleIdToController = new HashMap<>();
     this.googleMapsCircleIdToDartCircleId = new HashMap<>();
-    this.methodChannel = methodChannel;
+    this.flutterApi = flutterApi;
     this.density = density;
   }
 
@@ -69,7 +69,7 @@ class CirclesController {
     if (circleId == null) {
       return false;
     }
-    methodChannel.invokeMethod("circle#onTap", Convert.circleIdToJson(circleId));
+    flutterApi.onCircleTap(circleId, new NoOpVoidResult());
     CircleController circleController = circleIdToController.get(circleId);
     if (circleController != null) {
       return circleController.consumeTapEvents();

@@ -14,6 +14,21 @@ import 'package:pigeon/pigeon.dart';
 // Pigeon equivalent of the Java MapsInitializer.Renderer.
 enum PlatformRendererType { legacy, latest }
 
+/// Pigeon representatation of a CameraPosition.
+class PlatformCameraPosition {
+  PlatformCameraPosition({
+    required this.bearing,
+    required this.target,
+    required this.tilt,
+    required this.zoom,
+  });
+
+  final double bearing;
+  final PlatformLatLng target;
+  final double tilt;
+  final double zoom;
+}
+
 /// Pigeon representation of a CameraUpdate.
 class PlatformCameraUpdate {
   PlatformCameraUpdate(this.json);
@@ -82,6 +97,15 @@ class PlatformPolyline {
   // TODO(stuartmorgan): Replace this with structured data. This exists only to
   //  allow incremental migration to Pigeon.
   final Map<String?, Object?> json;
+}
+
+/// Pigeon equivalent of the Tile class.
+class PlatformTile {
+  PlatformTile({required this.width, required this.height, required this.data});
+
+  final int width;
+  final int height;
+  final Uint8List? data;
 }
 
 /// Pigeon equivalent of the TileOverlay class.
@@ -279,6 +303,56 @@ abstract class MapsApi {
   /// Takes a snapshot of the map and returns its image data.
   @async
   Uint8List takeSnapshot();
+}
+
+@FlutterApi()
+abstract class MapsCallbackApi {
+  /// Called when the map camera starts moving.
+  void onCameraMoveStarted();
+
+  /// Called when the map camera moves.
+  void onCameraMove(PlatformCameraPosition cameraPosition);
+
+  /// Called when the map camera stops moving.
+  void onCameraIdle();
+
+  /// Called when the map, not a specifc map object, is tapped.
+  void onTap(PlatformLatLng position);
+
+  /// Called when the map, not a specifc map object, is long pressed.
+  void onLongPress(PlatformLatLng position);
+
+  /// Called when a marker is tapped.
+  void onMarkerTap(String markerId);
+
+  /// Called when a marker drag starts.
+  void onMarkerDragStart(String markerId, PlatformLatLng position);
+
+  /// Called when a marker drag updates.
+  void onMarkerDrag(String markerId, PlatformLatLng position);
+
+  /// Called when a marker drag ends.
+  void onMarkerDragEnd(String markerId, PlatformLatLng position);
+
+  /// Called when a marker's info window is tapped.
+  void onInfoWindowTap(String markerId);
+
+  /// Called when a circle is tapped.
+  void onCircleTap(String circleId);
+
+  /// Called when a marker cluster is tapped.
+  void onClusterTap(PlatformCluster cluster);
+
+  /// Called when a polygon is tapped.
+  void onPolygonTap(String polygonId);
+
+  /// Called when a polyline is tapped.
+  void onPolylineTap(String polylineId);
+
+  /// Called to get data for a map tile.
+  @async
+  PlatformTile getTileOverlayTile(
+      String tileOverlayId, PlatformPoint location, int zoom);
 }
 
 /// Interface for global SDK initialization.

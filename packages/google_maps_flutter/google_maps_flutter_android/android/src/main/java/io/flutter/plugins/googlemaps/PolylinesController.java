@@ -9,7 +9,7 @@ import androidx.annotation.NonNull;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
-import io.flutter.plugin.common.MethodChannel;
+import io.flutter.plugins.googlemaps.Messages.MapsCallbackApi;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,16 +18,17 @@ class PolylinesController {
 
   private final Map<String, PolylineController> polylineIdToController;
   private final Map<String, String> googleMapsPolylineIdToDartPolylineId;
-  private final MethodChannel methodChannel;
+  private final @NonNull MapsCallbackApi flutterApi;
   private GoogleMap googleMap;
   private final float density;
   private final AssetManager assetManager;
 
-  PolylinesController(MethodChannel methodChannel, AssetManager assetManager, float density) {
+  PolylinesController(
+      @NonNull MapsCallbackApi flutterApi, AssetManager assetManager, float density) {
     this.assetManager = assetManager;
     this.polylineIdToController = new HashMap<>();
     this.googleMapsPolylineIdToDartPolylineId = new HashMap<>();
-    this.methodChannel = methodChannel;
+    this.flutterApi = flutterApi;
     this.density = density;
   }
 
@@ -72,7 +73,7 @@ class PolylinesController {
     if (polylineId == null) {
       return false;
     }
-    methodChannel.invokeMethod("polyline#onTap", Convert.polylineIdToJson(polylineId));
+    flutterApi.onPolylineTap(polylineId, new NoOpVoidResult());
     PolylineController polylineController = polylineIdToController.get(polylineId);
     if (polylineController != null) {
       return polylineController.consumeTapEvents();
