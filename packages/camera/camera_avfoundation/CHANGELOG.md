@@ -1,3 +1,7 @@
+## 0.9.16+1
+
+* Fixes stopVideoRecording waiting indefinitely and lag at start of video.
+
 ## 0.9.16
 
 * Converts Dart-to-host communcation to Pigeon.
