@@ -124,7 +124,7 @@ void main() {
 
     testWidgets('showInfoWindow', (WidgetTester tester) async {
       final gmaps.InfoWindow infoWindow = gmaps.InfoWindow();
-      final gmaps.GMap map = gmaps.GMap(createDivElement());
+      final gmaps.Map map = gmaps.Map(createDivElement());
       marker.set('map', map);
       final MarkerController controller = MarkerController(
         marker: marker,
@@ -139,7 +139,7 @@ void main() {
 
     testWidgets('hideInfoWindow', (WidgetTester tester) async {
       final gmaps.InfoWindow infoWindow = gmaps.InfoWindow();
-      final gmaps.GMap map = gmaps.GMap(createDivElement());
+      final gmaps.Map map = gmaps.Map(createDivElement());
       marker.set('map', map);
       final MarkerController controller = MarkerController(
         marker: marker,
@@ -157,7 +157,7 @@ void main() {
 
       setUp(() {
         final gmaps.InfoWindow infoWindow = gmaps.InfoWindow();
-        final gmaps.GMap map = gmaps.GMap(createDivElement());
+        final gmaps.Map map = gmaps.Map(createDivElement());
         marker.set('map', map);
         controller = MarkerController(marker: marker, infoWindow: infoWindow);
       });

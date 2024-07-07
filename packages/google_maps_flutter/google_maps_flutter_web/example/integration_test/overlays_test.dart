@@ -32,7 +32,7 @@ void main() {
 
   group('TileOverlaysController', () {
     late TileOverlaysController controller;
-    late gmaps.GMap map;
+    late gmaps.Map map;
     late List<MockTileProvider> tileProviders;
     late List<TileOverlay> tileOverlays;
 
@@ -46,7 +46,7 @@ void main() {
 
     setUp(() {
       controller = TileOverlaysController();
-      map = gmaps.GMap(createDivElement());
+      map = gmaps.Map(createDivElement());
       controller.googleMap = map;
 
       tileProviders = <MockTileProvider>[
