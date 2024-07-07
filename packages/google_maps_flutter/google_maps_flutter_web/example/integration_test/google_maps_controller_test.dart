@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'dart:async';
+import 'dart:js_interop';
 
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -246,19 +247,19 @@ void main() {
         // Trigger events on the map, and verify they've been broadcast to the stream
         final Stream<MapEvent<Object?>> capturedEvents = stream.stream.take(5);
 
-        gmaps.Event.trigger(
+        gmaps.event.trigger(
           map,
           'click',
-          <Object>[gmaps.MapMouseEvent()..latLng = gmaps.LatLng(0, 0)],
+          <gmaps.MapMouseEvent>[gmaps.MapMouseEvent()..latLng = gmaps.LatLng(0, 0)].toJS,
         );
-        gmaps.Event.trigger(
+        gmaps.event.trigger(
           map,
           'rightclick',
-          <Object>[gmaps.MapMouseEvent()..latLng = gmaps.LatLng(0, 0)],
+          <gmaps.MapMouseEvent>[gmaps.MapMouseEvent()..latLng = gmaps.LatLng(0, 0)].toJS,
         );
         // The following line causes 2 events
-        gmaps.Event.trigger(map, 'bounds_changed', <Object>[]);
-        gmaps.Event.trigger(map, 'idle', <Object>[]);
+        gmaps.event.trigger(map, 'bounds_changed', <JSAny>[].toJS);
+        gmaps.event.trigger(map, 'idle', <JSAny>[].toJS);
 
         final List<MapEvent<Object?>> events = await capturedEvents.toList();
 
@@ -604,7 +605,7 @@ void main() {
 
       group('viewport getters', () {
         testWidgets('getVisibleRegion', (WidgetTester tester) async {
-          final gmaps.LatLng gmCenter = map.center!;
+          final gmaps.LatLng gmCenter = map.center;
           final LatLng center =
               LatLng(gmCenter.lat.toDouble(), gmCenter.lng.toDouble());
 

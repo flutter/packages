@@ -226,7 +226,7 @@ class GoogleMapController {
       // Report the map as ready to go the first time the tiles load
       _streamController.add(WebMapReadyEvent(_mapId));
     });
-    map.onClick.listen((gmaps.IconMouseEvent event) {
+    map.onClick.listen((gmaps.MapMouseEventOrIconMouseEvent event) {
       assert(event.latLng != null);
       _streamController.add(
         MapTapEvent(_mapId, gmLatLngToLatLng(event.latLng!)),
@@ -405,7 +405,7 @@ class GoogleMapController {
     final gmaps.Point point =
         toScreenLocation(_googleMap!, _latLngToGmLatLng(latLng));
 
-    return ScreenCoordinate(x: point.x!.toInt(), y: point.y!.toInt());
+    return ScreenCoordinate(x: point.x.toInt(), y: point.y.toInt());
   }
 
   /// Returns the [LatLng] for a `screenCoordinate` (in pixels) of the viewport.
@@ -428,10 +428,7 @@ class GoogleMapController {
   /// Returns the zoom level of the current viewport.
   Future<double> getZoomLevel() async {
     assert(_googleMap != null, 'Cannot get zoom level of a null map.');
-    assert(_googleMap!.zoom != null,
-        'Zoom level should not be null. Is the map correctly initialized?');
-
-    return _googleMap!.zoom!.toDouble();
+    return _googleMap!.zoom.toDouble();
   }
 
   // Geometry manipulation

@@ -230,7 +230,7 @@ void main() {
           controller.markers[const MarkerId('1')]?.marker?.icon as gmaps.Icon?;
       expect(icon, isNotNull);
 
-      final String assetUrl = icon!.url!;
+      final String assetUrl = icon!.url;
       expect(assetUrl, startsWith('assets'));
 
       final gmaps.Size size = icon.size!;
@@ -262,7 +262,7 @@ void main() {
           controller.markers[const MarkerId('1')]?.marker?.icon as gmaps.Icon?;
       expect(icon, isNotNull);
 
-      final String assetUrl = icon!.url!;
+      final String assetUrl = icon!.url;
       expect(assetUrl, startsWith('assets'));
 
       final gmaps.Size size = icon.size!;
@@ -297,7 +297,7 @@ void main() {
           controller.markers[const MarkerId('1')]?.marker?.icon as gmaps.Icon?;
       expect(icon, isNotNull);
 
-      final String assetUrl = icon!.url!;
+      final String assetUrl = icon!.url;
       expect(assetUrl, startsWith('assets'));
 
       final gmaps.Size size = icon.size!;
@@ -330,7 +330,7 @@ void main() {
           controller.markers[const MarkerId('1')]?.marker?.icon as gmaps.Icon?;
       expect(icon, isNotNull);
 
-      final String assetUrl = icon!.url!;
+      final String assetUrl = icon!.url;
       expect(assetUrl, startsWith('assets'));
 
       // For invalid assets, the size and scaledSize should be null.
@@ -360,7 +360,7 @@ void main() {
           controller.markers[const MarkerId('1')]?.marker?.icon as gmaps.Icon?;
       expect(icon, isNotNull);
 
-      final String blobUrl = icon!.url!;
+      final String blobUrl = icon!.url;
       expect(blobUrl, startsWith('blob:'));
 
       final http.Response response = await http.get(Uri.parse(blobUrl));

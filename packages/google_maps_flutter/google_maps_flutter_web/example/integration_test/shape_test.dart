@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'dart:async';
+import 'dart:js_interop';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_maps/google_maps.dart' as gmaps;
@@ -35,14 +36,14 @@ void main() {
     late gmaps.Circle circle;
 
     setUp(() {
-      circle = gmaps.Circle();
+      circle = gmaps.Circle(gmaps.CircleOptions());
     });
 
     testWidgets('onTap gets called', (WidgetTester tester) async {
       CircleController(circle: circle, consumeTapEvents: true, onTap: onTap);
 
       // Trigger a click event...
-      gmaps.Event.trigger(circle, 'click', <Object?>[gmaps.MapMouseEvent()]);
+      gmaps.event.trigger(circle, 'click', <gmaps.MapMouseEvent>[gmaps.MapMouseEvent()].toJS);
 
       // The event handling is now truly async. Wait for it...
       expect(await methodCalled, isTrue);
@@ -98,7 +99,7 @@ void main() {
       PolygonController(polygon: polygon, consumeTapEvents: true, onTap: onTap);
 
       // Trigger a click event...
-      gmaps.Event.trigger(polygon, 'click', <Object?>[gmaps.MapMouseEvent()]);
+      gmaps.event.trigger(polygon, 'click', <gmaps.MapMouseEvent>[gmaps.MapMouseEvent()].toJS);
 
       // The event handling is now truly async. Wait for it...
       expect(await methodCalled, isTrue);
@@ -158,7 +159,7 @@ void main() {
       );
 
       // Trigger a click event...
-      gmaps.Event.trigger(polyline, 'click', <Object?>[gmaps.MapMouseEvent()]);
+      gmaps.event.trigger(polyline, 'click', <gmaps.MapMouseEvent>[gmaps.MapMouseEvent()].toJS);
 
       // The event handling is now truly async. Wait for it...
       expect(await methodCalled, isTrue);

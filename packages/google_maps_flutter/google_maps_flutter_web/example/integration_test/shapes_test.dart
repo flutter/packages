@@ -253,7 +253,7 @@ void main() {
       final gmaps.Polygon? polygon = controller.polygons.values.first.polygon;
       final gmaps.LatLng pointInHole = gmaps.LatLng(28.632, -68.401);
 
-      expect(geometry.Poly.containsLocation(pointInHole, polygon), false);
+      expect(geometry.poly.containsLocation(pointInHole, polygon!), false);
     });
 
     testWidgets('Hole Path gets reversed to display correctly',
@@ -279,7 +279,7 @@ void main() {
       controller.addPolygons(polygons);
 
       final gmaps.MVCArray<gmaps.MVCArray<gmaps.LatLng?>?> paths =
-          controller.polygons.values.first.polygon!.paths!;
+          controller.polygons.values.first.polygon!.paths;
 
       expect(paths.getAt(1)?.getAt(0)?.lat, 28.745);
       expect(paths.getAt(1)?.getAt(1)?.lat, 29.57);

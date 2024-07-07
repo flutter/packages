@@ -192,7 +192,7 @@ void main() {
         expect(style.featureType, 'poi.park');
         expect(style.elementType, 'labels.text.fill');
         expect(style.stylers.length, 1);
-        expect(getProperty<String>(style.stylers![0]!, 'color'), '#6b9a76');
+        expect(style.stylers[0]['color'], '#6b9a76');
       });
 
       testWidgets('throws MapStyleException for invalid styles',

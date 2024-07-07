@@ -496,7 +496,7 @@ gmaps.PolygonOptions _polygonOptionsFromPolygon(
   }
 
   return gmaps.PolygonOptions()
-    ..paths = paths
+    ..paths = paths.map((e) => e.toJS).toList().toJS
     ..strokeColor = _getCssColor(polygon.strokeColor)
     ..strokeOpacity = _getCssOpacity(polygon.strokeColor)
     ..strokeWeight = polygon.strokeWidth
@@ -555,7 +555,7 @@ gmaps.PolylineOptions _polylineOptionsFromPolyline(
       polyline.points.map(_latLngToGmLatLng).toList();
 
   return gmaps.PolylineOptions()
-    ..path = paths
+    ..path = paths.toJS
     ..strokeWeight = polyline.width
     ..strokeColor = _getCssColor(polyline.color)
     ..strokeOpacity = _getCssOpacity(polyline.color)
@@ -592,14 +592,14 @@ void _applyCameraUpdate(gmaps.Map map, CameraUpdate update) {
       map.panTo(
         gmaps.LatLng(latLng[0]! as num, latLng[1]! as num),
       );
-      map.tilt = position['tilt'] as num?;
+      map.tilt = position['tilt']! as num;
     case 'newLatLng':
       final List<Object?> latLng = asJsonList(json[1]);
-      map.panTo(gmaps.LatLng(latLng[0] as num?, latLng[1] as num?));
+      map.panTo(gmaps.LatLng(latLng[0]! as num, latLng[1]! as num));
     case 'newLatLngZoom':
       final List<Object?> latLng = asJsonList(json[1]);
-      map.zoom = json[2] as num?;
-      map.panTo(gmaps.LatLng(latLng[0] as num?, latLng[1] as num?));
+      map.zoom = json[2]! as num;
+      map.panTo(gmaps.LatLng(latLng[0]! as num, latLng[1]! as num));
     case 'newLatLngBounds':
       final List<Object?> latLngPair = asJsonList(json[1]);
       final List<Object?> latLng1 = asJsonList(latLngPair[0]);
@@ -610,10 +610,10 @@ void _applyCameraUpdate(gmaps.Map map, CameraUpdate update) {
           gmaps.LatLng(latLng1[0]! as num, latLng1[1]! as num),
           gmaps.LatLng(latLng2[0]! as num, latLng2[1]! as num),
         ),
-        padding,
+        padding.toJS,
       );
     case 'scrollBy':
-      map.panBy(json[1] as num?, json[2] as num?);
+      map.panBy(json[1]! as num, json[2]! as num);
     case 'zoomBy':
       gmaps.LatLng? focusLatLng;
       final double zoomDelta = json[1] as double? ?? 0;
@@ -631,16 +631,16 @@ void _applyCameraUpdate(gmaps.Map map, CameraUpdate update) {
           // print('Error computing new focus LatLng. JS Error: ' + e.toString());
         }
       }
-      map.zoom = (map.zoom ?? 0) + newZoomDelta;
+      map.zoom = (map.zoom) + newZoomDelta;
       if (focusLatLng != null) {
         map.panTo(focusLatLng);
       }
     case 'zoomIn':
-      map.zoom = (map.zoom ?? 0) + 1;
+      map.zoom = (map.zoom) + 1;
     case 'zoomOut':
-      map.zoom = (map.zoom ?? 0) - 1;
+      map.zoom = (map.zoom) - 1;
     case 'zoomTo':
-      map.zoom = json[1] as num?;
+      map.zoom = json[1]! as num;
     default:
       throw UnimplementedError('Unimplemented CameraMove: ${json[0]}.');
   }
@@ -663,10 +663,10 @@ gmaps.LatLng _pixelToLatLng(gmaps.Map map, int x, int y) {
   final gmaps.Point topRight = projection!.fromLatLngToPoint!(ne)!;
   final gmaps.Point bottomLeft = projection.fromLatLngToPoint!(sw)!;
 
-  final int scale = 1 << (zoom!.toInt()); // 2 ^ zoom
+  final int scale = 1 << (zoom.toInt()); // 2 ^ zoom
 
   final gmaps.Point point =
-      gmaps.Point((x / scale) + bottomLeft.x!, (y / scale) + topRight.y!);
+      gmaps.Point((x / scale) + bottomLeft.x, (y / scale) + topRight.y);
 
   return projection.fromPointToLatLng!(point)!;
 }

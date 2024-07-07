@@ -41,7 +41,7 @@ void main() {
         tileOverlay: const TileOverlay(tileOverlayId: id),
       );
 
-      final gmaps.Size size = controller.gmMapType.tileSize!;
+      final gmaps.Size size = controller.gmMapType.tileSize;
       expect(size.width, TileOverlayController.logicalTileSize);
       expect(size.height, TileOverlayController.logicalTileSize);
       expect(
