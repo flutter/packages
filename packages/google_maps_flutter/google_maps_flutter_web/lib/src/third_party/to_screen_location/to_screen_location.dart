@@ -41,12 +41,12 @@ gmaps.Point toScreenLocation(gmaps.Map map, gmaps.LatLng coords) {
   final gmaps.LatLng ne = bounds!.northEast;
   final gmaps.LatLng sw = bounds.southWest;
 
-  final gmaps.Point topRight = projection!.fromLatLngToPoint!(ne)!;
-  final gmaps.Point bottomLeft = projection.fromLatLngToPoint!(sw)!;
+  final gmaps.Point topRight = projection!.fromLatLngToPoint(ne)!;
+  final gmaps.Point bottomLeft = projection.fromLatLngToPoint(sw)!;
 
   final int scale = 1 << (zoom.toInt()); // 2 ^ zoom
 
-  final gmaps.Point worldPoint = projection.fromLatLngToPoint!(coords)!;
+  final gmaps.Point worldPoint = projection.fromLatLngToPoint(coords)!;
 
   return gmaps.Point(
     ((worldPoint.x - bottomLeft.x) * scale).toInt(),

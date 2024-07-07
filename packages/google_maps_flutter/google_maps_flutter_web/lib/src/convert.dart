@@ -660,13 +660,13 @@ gmaps.LatLng _pixelToLatLng(gmaps.Map map, int x, int y) {
   final gmaps.LatLng ne = bounds!.northEast;
   final gmaps.LatLng sw = bounds.southWest;
 
-  final gmaps.Point topRight = projection!.fromLatLngToPoint!(ne)!;
-  final gmaps.Point bottomLeft = projection.fromLatLngToPoint!(sw)!;
+  final gmaps.Point topRight = projection!.fromLatLngToPoint(ne)!;
+  final gmaps.Point bottomLeft = projection.fromLatLngToPoint(sw)!;
 
   final int scale = 1 << (zoom.toInt()); // 2 ^ zoom
 
   final gmaps.Point point =
       gmaps.Point((x / scale) + bottomLeft.x, (y / scale) + topRight.y);
 
-  return projection.fromPointToLatLng!(point)!;
+  return projection.fromPointToLatLng(point)!;
 }

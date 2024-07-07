@@ -41,7 +41,7 @@ void main() {
     /// 0.
     void probeTiles() {
       for (final gmaps.MapType? mapType in map.overlayMapTypes.array.toDart) {
-        mapType?.getTile!(gmaps.Point(0, 0), 0, document);
+        mapType?.getTile(gmaps.Point(0, 0), 0, document);
       }
     }
 
