@@ -10,19 +10,19 @@ import 'dart:typed_data';
 // https://learn.microsoft.com/windows/win32/api/guiddef/ns-guiddef-guid
 @Packed(4)
 base class GUID extends Struct {
-  /// Navite Data1 field.
+  /// Native Data1 field.
   @Uint32()
   external int data1;
 
-  /// Navite Data2 field.
+  /// Native Data2 field.
   @Uint16()
   external int data2;
 
-  /// Navite Data3 field.
+  /// Native Data3 field.
   @Uint16()
   external int data3;
 
-  /// Navite Data4 field.
+  /// Native Data4 field.
   // This should be an eight-element byte array, but there's no such annotation.
   @Uint64()
   external int data4;
