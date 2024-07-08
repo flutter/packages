@@ -1,3 +1,7 @@
+# 0.5.9
+
+* Updates `package:google_maps` dependency to latest (`^8.0.0`).
+
 ## 0.5.8
 
 * Adds support for BitmapDescriptor classes `AssetMapBitmap` and `BytesMapBitmap`.
