@@ -32,6 +32,12 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
 
+dependency_overrides:
+  google_maps:
+    git:
+      url: https://github.com/Rexios80/dart-google-maps
+      ref: 0e156160a6d3e6d9b8b7f26603d4f825029c217f
+
 topics:
   - google-maps
   - google-maps-flutter
