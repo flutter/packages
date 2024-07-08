@@ -23,7 +23,7 @@ const String _kCloudMapId = '000000000000000'; // Dummy map ID.
 
 class MockMap {}
 
-gmaps.Map mockMap() => createJSInteropWrapper(MockMap()) as gmaps.Map;
+gmaps.Map mockMap() => throw UnimplementedError();
 
 @GenerateNiceMocks(<MockSpec<dynamic>>[
   MockSpec<CirclesController>(
