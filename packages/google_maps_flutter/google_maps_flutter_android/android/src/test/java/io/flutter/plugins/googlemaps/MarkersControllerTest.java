@@ -6,6 +6,7 @@ package io.flutter.plugins.googlemaps;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
@@ -21,8 +22,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.maps.android.collections.MarkerManager;
 import io.flutter.plugin.common.BinaryMessenger;
-import io.flutter.plugin.common.MethodChannel;
-import io.flutter.plugin.common.MethodCodec;
+import io.flutter.plugins.googlemaps.Messages.MapsCallbackApi;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -42,7 +42,7 @@ import org.robolectric.annotation.Config;
 @Config(sdk = Build.VERSION_CODES.P)
 public class MarkersControllerTest {
   private Context context;
-  private MethodChannel methodChannel;
+  private MapsCallbackApi flutterApi;
   private ClusterManagersController clusterManagersController;
   private MarkersController controller;
   private GoogleMap googleMap;
@@ -56,11 +56,10 @@ public class MarkersControllerTest {
     MockitoAnnotations.openMocks(this);
     assetManager = ApplicationProvider.getApplicationContext().getAssets();
     context = ApplicationProvider.getApplicationContext();
-    methodChannel =
-        spy(new MethodChannel(mock(BinaryMessenger.class), "no-name", mock(MethodCodec.class)));
-    clusterManagersController = spy(new ClusterManagersController(methodChannel, context));
+    flutterApi = spy(new MapsCallbackApi(mock(BinaryMessenger.class)));
+    clusterManagersController = spy(new ClusterManagersController(flutterApi, context));
     controller =
-        new MarkersController(methodChannel, clusterManagersController, assetManager, density);
+        new MarkersController(flutterApi, clusterManagersController, assetManager, density);
     googleMap = mock(GoogleMap.class);
     markerManager = new MarkerManager(googleMap);
     markerCollection = markerManager.newCollection();
@@ -85,14 +84,8 @@ public class MarkersControllerTest {
     controller.addJsonMarkers(markers);
     controller.onMarkerDragStart(googleMarkerId, latLng);
 
-    final List<Double> points = new ArrayList<>();
-    points.add(latLng.latitude);
-    points.add(latLng.longitude);
-
-    final Map<String, Object> data = new HashMap<>();
-    data.put("markerId", googleMarkerId);
-    data.put("position", points);
-    Mockito.verify(methodChannel).invokeMethod("marker#onDragStart", data);
+    Mockito.verify(flutterApi)
+        .onMarkerDragStart(eq(googleMarkerId), eq(Convert.latLngToPigeon(latLng)), any());
   }
 
   @Test
@@ -112,14 +105,8 @@ public class MarkersControllerTest {
     controller.addJsonMarkers(markers);
     controller.onMarkerDragEnd(googleMarkerId, latLng);
 
-    final List<Double> points = new ArrayList<>();
-    points.add(latLng.latitude);
-    points.add(latLng.longitude);
-
-    final Map<String, Object> data = new HashMap<>();
-    data.put("markerId", googleMarkerId);
-    data.put("position", points);
-    Mockito.verify(methodChannel).invokeMethod("marker#onDragEnd", data);
+    Mockito.verify(flutterApi)
+        .onMarkerDragEnd(eq(googleMarkerId), eq(Convert.latLngToPigeon(latLng)), any());
   }
 
   @Test
@@ -139,14 +126,8 @@ public class MarkersControllerTest {
     controller.addJsonMarkers(markers);
     controller.onMarkerDrag(googleMarkerId, latLng);
 
-    final List<Double> points = new ArrayList<>();
-    points.add(latLng.latitude);
-    points.add(latLng.longitude);
-
-    final Map<String, Object> data = new HashMap<>();
-    data.put("markerId", googleMarkerId);
-    data.put("position", points);
-    Mockito.verify(methodChannel).invokeMethod("marker#onDrag", data);
+    Mockito.verify(flutterApi)
+        .onMarkerDrag(eq(googleMarkerId), eq(Convert.latLngToPigeon(latLng)), any());
   }
 
   @Test(expected = IllegalArgumentException.class)

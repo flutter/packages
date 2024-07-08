@@ -373,16 +373,14 @@ class Convert {
     return null;
   }
 
-  static Object cameraPositionToJson(CameraPosition position) {
-    if (position == null) {
-      return null;
-    }
-    final Map<String, Object> data = new HashMap<>();
-    data.put("bearing", position.bearing);
-    data.put("target", latLngToJson(position.target));
-    data.put("tilt", position.tilt);
-    data.put("zoom", position.zoom);
-    return data;
+  static @NonNull Messages.PlatformCameraPosition cameraPositionToPigeon(
+      @NonNull CameraPosition position) {
+    return new Messages.PlatformCameraPosition.Builder()
+        .setBearing((double) position.bearing)
+        .setTarget(latLngToPigeon(position.target))
+        .setTilt((double) position.tilt)
+        .setZoom((double) position.zoom)
+        .build();
   }
 
   static Object latLngBoundsToJson(LatLngBounds latLngBounds) {
@@ -426,29 +424,6 @@ class Convert {
     return data;
   }
 
-  static Object circleIdToJson(String circleId) {
-    if (circleId == null) {
-      return null;
-    }
-    final Map<String, Object> data = new HashMap<>(1);
-    data.put("circleId", circleId);
-    return data;
-  }
-
-  static Map<String, Object> tileOverlayArgumentsToJson(
-      String tileOverlayId, int x, int y, int zoom) {
-
-    if (tileOverlayId == null) {
-      return null;
-    }
-    final Map<String, Object> data = new HashMap<>(4);
-    data.put("tileOverlayId", tileOverlayId);
-    data.put("x", x);
-    data.put("y", y);
-    data.put("zoom", zoom);
-    return data;
-  }
-
   static Object latLngToJson(LatLng latLng) {
     return Arrays.asList(latLng.latitude, latLng.longitude);
   }
@@ -462,36 +437,6 @@ class Convert {
 
   static LatLng latLngFromPigeon(Messages.PlatformLatLng latLng) {
     return new LatLng(latLng.getLatitude(), latLng.getLongitude());
-  }
-
-  static Object clusterToJson(String clusterManagerId, Cluster<MarkerBuilder> cluster) {
-    int clusterSize = cluster.getSize();
-    LatLngBounds.Builder latLngBoundsBuilder = LatLngBounds.builder();
-
-    String[] markerIds = new String[clusterSize];
-    MarkerBuilder[] markerBuilders = cluster.getItems().toArray(new MarkerBuilder[clusterSize]);
-
-    // Loops though cluster items and reads markers position for the LatLngBounds
-    // builder
-    // and also builds list of marker ids on the cluster.
-    for (int i = 0; i < clusterSize; i++) {
-      MarkerBuilder markerBuilder = markerBuilders[i];
-      latLngBoundsBuilder.include(markerBuilder.getPosition());
-      markerIds[i] = markerBuilder.markerId();
-    }
-
-    Object position = latLngToJson(cluster.getPosition());
-    Object bounds = latLngBoundsToJson(latLngBoundsBuilder.build());
-
-    final Map<String, Object> data = new HashMap<>(4);
-
-    // For dart side implementation see parseCluster method at
-    // packages/google_maps_flutter/google_maps_flutter_android/lib/src/google_maps_flutter_android.dart
-    data.put("clusterManagerId", clusterManagerId);
-    data.put("position", position);
-    data.put("bounds", bounds);
-    data.put("markerIds", Arrays.asList(markerIds));
-    return data;
   }
 
   static Messages.PlatformCluster clusterToPigeon(
@@ -994,14 +939,8 @@ class Convert {
     }
   }
 
-  static Tile interpretTile(Map<String, ?> data) {
-    int width = toInt(data.get("width"));
-    int height = toInt(data.get("height"));
-    byte[] dataArray = null;
-    if (data.get("data") != null) {
-      dataArray = (byte[]) data.get("data");
-    }
-    return new Tile(width, height, dataArray);
+  static Tile tileFromPigeon(Messages.PlatformTile tile) {
+    return new Tile(tile.getWidth().intValue(), tile.getHeight().intValue(), tile.getData());
   }
 
   @VisibleForTesting

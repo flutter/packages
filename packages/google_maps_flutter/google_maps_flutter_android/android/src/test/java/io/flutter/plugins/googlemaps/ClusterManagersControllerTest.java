@@ -8,6 +8,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
@@ -23,8 +24,7 @@ import com.google.maps.android.clustering.Cluster;
 import com.google.maps.android.clustering.algo.StaticCluster;
 import com.google.maps.android.collections.MarkerManager;
 import io.flutter.plugin.common.BinaryMessenger;
-import io.flutter.plugin.common.MethodChannel;
-import io.flutter.plugin.common.MethodCodec;
+import io.flutter.plugins.googlemaps.Messages.MapsCallbackApi;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -35,6 +35,7 @@ import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.RobolectricTestRunner;
@@ -44,7 +45,7 @@ import org.robolectric.annotation.Config;
 @Config(sdk = Build.VERSION_CODES.P)
 public class ClusterManagersControllerTest {
   private Context context;
-  private MethodChannel methodChannel;
+  private MapsCallbackApi flutterApi;
   private ClusterManagersController controller;
   private GoogleMap googleMap;
   private MarkerManager markerManager;
@@ -57,9 +58,8 @@ public class ClusterManagersControllerTest {
     MockitoAnnotations.openMocks(this);
     context = ApplicationProvider.getApplicationContext();
     assetManager = context.getAssets();
-    methodChannel =
-        spy(new MethodChannel(mock(BinaryMessenger.class), "no-name", mock(MethodCodec.class)));
-    controller = spy(new ClusterManagersController(methodChannel, context));
+    flutterApi = spy(new MapsCallbackApi(mock(BinaryMessenger.class)));
+    controller = spy(new ClusterManagersController(flutterApi, context));
     googleMap = mock(GoogleMap.class);
     markerManager = new MarkerManager(googleMap);
     markerCollection = markerManager.newCollection();
@@ -195,8 +195,9 @@ public class ClusterManagersControllerTest {
     cluster.add(marker2);
 
     controller.onClusterClick(cluster);
-    Mockito.verify(methodChannel)
-        .invokeMethod("cluster#onTap", Convert.clusterToJson(clusterManagerId, cluster));
+    Mockito.verify(flutterApi)
+        .onClusterTap(
+            eq(Convert.clusterToPigeon(clusterManagerId, cluster)), ArgumentMatchers.any());
   }
 
   @Test
