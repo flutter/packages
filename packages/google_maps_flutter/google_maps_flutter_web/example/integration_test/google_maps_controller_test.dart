@@ -3,7 +3,6 @@
 // found in the LICENSE file.
 
 import 'dart:async';
-import 'dart:js_interop';
 
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -21,25 +20,23 @@ import 'google_maps_controller_test.mocks.dart';
 // LatLng values.
 const String _kCloudMapId = '000000000000000'; // Dummy map ID.
 
-class MockMap {}
-
-gmaps.Map mockMap() => throw UnimplementedError();
+gmaps.Map mapShim() => throw UnimplementedError();
 
 @GenerateNiceMocks(<MockSpec<dynamic>>[
   MockSpec<CirclesController>(
-    fallbackGenerators: <Symbol, Function>{#googleMap: mockMap},
+    fallbackGenerators: <Symbol, Function>{#googleMap: mapShim},
   ),
   MockSpec<PolygonsController>(
-    fallbackGenerators: <Symbol, Function>{#googleMap: mockMap},
+    fallbackGenerators: <Symbol, Function>{#googleMap: mapShim},
   ),
   MockSpec<PolylinesController>(
-    fallbackGenerators: <Symbol, Function>{#googleMap: mockMap},
+    fallbackGenerators: <Symbol, Function>{#googleMap: mapShim},
   ),
   MockSpec<MarkersController>(
-    fallbackGenerators: <Symbol, Function>{#googleMap: mockMap},
+    fallbackGenerators: <Symbol, Function>{#googleMap: mapShim},
   ),
   MockSpec<TileOverlaysController>(
-    fallbackGenerators: <Symbol, Function>{#googleMap: mockMap},
+    fallbackGenerators: <Symbol, Function>{#googleMap: mapShim},
   ),
 ])
 

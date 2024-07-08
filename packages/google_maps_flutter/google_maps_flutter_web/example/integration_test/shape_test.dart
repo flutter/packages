@@ -54,7 +54,7 @@ void main() {
       final gmaps.CircleOptions options = gmaps.CircleOptions()
         ..draggable = true;
 
-      expect(circle.draggable, isNull);
+      expect(circle.isDraggableDefined(), isFalse);
 
       controller.update(options);
 
@@ -110,7 +110,7 @@ void main() {
       final gmaps.PolygonOptions options = gmaps.PolygonOptions()
         ..draggable = true;
 
-      expect(polygon.draggable, isNull);
+      expect(polygon.isDraggableDefined(), isFalse);
 
       controller.update(options);
 
@@ -172,7 +172,7 @@ void main() {
       final gmaps.PolylineOptions options = gmaps.PolylineOptions()
         ..draggable = true;
 
-      expect(polyline.draggable, isNull);
+      expect(polyline.isDraggableDefined(), isFalse);
 
       controller.update(options);
 

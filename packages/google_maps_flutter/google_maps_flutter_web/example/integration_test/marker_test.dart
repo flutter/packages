@@ -108,7 +108,7 @@ void main() {
         ..draggable = true
         ..position = gmaps.LatLng(42, 54);
 
-      expect(marker.draggable, isNull);
+      expect(marker.isDraggableDefined(), isFalse);
 
       controller.update(options);
 

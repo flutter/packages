@@ -40,8 +40,8 @@ class MockCirclesController extends _i1.Mock implements _i2.CirclesController {
   @override
   _i4.Map get googleMap => (super.noSuchMethod(
         Invocation.getter(#googleMap),
-        returnValue: _i5.mockMap(),
-        returnValueForMissingStub: _i5.mockMap(),
+        returnValue: _i5.mapShim(),
+        returnValueForMissingStub: _i5.mapShim(),
       ) as _i4.Map);
 
   @override
@@ -129,8 +129,8 @@ class MockPolygonsController extends _i1.Mock
   @override
   _i4.Map get googleMap => (super.noSuchMethod(
         Invocation.getter(#googleMap),
-        returnValue: _i5.mockMap(),
-        returnValueForMissingStub: _i5.mockMap(),
+        returnValue: _i5.mapShim(),
+        returnValueForMissingStub: _i5.mapShim(),
       ) as _i4.Map);
 
   @override
@@ -218,8 +218,8 @@ class MockPolylinesController extends _i1.Mock
   @override
   _i4.Map get googleMap => (super.noSuchMethod(
         Invocation.getter(#googleMap),
-        returnValue: _i5.mockMap(),
-        returnValueForMissingStub: _i5.mockMap(),
+        returnValue: _i5.mapShim(),
+        returnValueForMissingStub: _i5.mapShim(),
       ) as _i4.Map);
 
   @override
@@ -307,8 +307,8 @@ class MockMarkersController extends _i1.Mock implements _i2.MarkersController {
   @override
   _i4.Map get googleMap => (super.noSuchMethod(
         Invocation.getter(#googleMap),
-        returnValue: _i5.mockMap(),
-        returnValueForMissingStub: _i5.mockMap(),
+        returnValue: _i5.mapShim(),
+        returnValueForMissingStub: _i5.mapShim(),
       ) as _i4.Map);
 
   @override
@@ -421,8 +421,8 @@ class MockTileOverlaysController extends _i1.Mock
   @override
   _i4.Map get googleMap => (super.noSuchMethod(
         Invocation.getter(#googleMap),
-        returnValue: _i5.mockMap(),
-        returnValueForMissingStub: _i5.mockMap(),
+        returnValue: _i5.mapShim(),
+        returnValueForMissingStub: _i5.mapShim(),
       ) as _i4.Map);
 
   @override
