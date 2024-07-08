@@ -632,14 +632,14 @@ void _applyCameraUpdate(gmaps.Map map, CameraUpdate update) {
           // print('Error computing new focus LatLng. JS Error: ' + e.toString());
         }
       }
-      map.zoom = (map.zoom) + newZoomDelta;
+      map.zoom = (map.isZoomDefined() ? map.zoom : 0) + newZoomDelta;
       if (focusLatLng != null) {
         map.panTo(focusLatLng);
       }
     case 'zoomIn':
-      map.zoom = (map.zoom) + 1;
+      map.zoom = (map.isZoomDefined() ? map.zoom : 0) + 1;
     case 'zoomOut':
-      map.zoom = (map.zoom) - 1;
+      map.zoom = (map.isZoomDefined() ? map.zoom : 0) - 1;
     case 'zoomTo':
       map.zoom = json[1]! as num;
     default:
@@ -651,12 +651,15 @@ void _applyCameraUpdate(gmaps.Map map, CameraUpdate update) {
 gmaps.LatLng _pixelToLatLng(gmaps.Map map, int x, int y) {
   final gmaps.LatLngBounds? bounds = map.bounds;
   final gmaps.Projection? projection = map.projection;
-  final num zoom = map.zoom;
 
   assert(
       bounds != null, 'Map Bounds required to compute LatLng of screen x/y.');
   assert(projection != null,
       'Map Projection required to compute LatLng of screen x/y');
+  assert(map.isZoomDefined(),
+      'Current map zoom level required to compute LatLng of screen x/y');
+
+  final num zoom = map.zoom;
 
   final gmaps.LatLng ne = bounds!.northEast;
   final gmaps.LatLng sw = bounds.southWest;

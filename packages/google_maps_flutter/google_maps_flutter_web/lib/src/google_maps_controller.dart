@@ -428,7 +428,10 @@ class GoogleMapController {
   /// Returns the zoom level of the current viewport.
   Future<double> getZoomLevel() async {
     assert(_googleMap != null, 'Cannot get zoom level of a null map.');
-    return _googleMap!.zoom.toDouble();
+    assert(_googleMap!.isZoomDefined(),
+        'Zoom level should not be null. Is the map correctly initialized?');
+
+    return _googleMap!.zoom!.toDouble();
   }
 
   // Geometry manipulation
