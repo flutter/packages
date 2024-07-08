@@ -28,30 +28,59 @@ NS_ASSUME_NONNULL_BEGIN
 /// Protocol for a source of FLADAuthContext instances. Used to allow context injection in unit
 /// tests.
 @protocol FLADAuthContextFactory <NSObject>
-- (nonnull NSObject<FLADAuthContext> *)createAuthContext;
+- (NSObject<FLADAuthContext> *)createAuthContext;
 @end
+
+#pragma mark -
+
+#if TARGET_OS_OSX
+/// Protocol for interacting with NSAlert instances, abstracted to allow using mock/fake instances
+/// in unit tests.
+@protocol FLANSAlert <NSObject>
+@required
+@property(copy) NSString *messageText;
+- (NSButton *)addButtonWithTitle:(NSString *)title;
+- (void)beginSheetModalForWindow:(NSWindow *)sheetWindow
+               completionHandler:(void (^_Nullable)(NSModalResponse returnCode))handler;
+@end
+#endif  // TARGET_OS_OSX
+
+#if TARGET_OS_IOS
+/// Protocol for interacting with UIAlertController instances, abstracted to allow using mock/fake
+/// instances in unit tests.
+@protocol FLAUIAlertController <NSObject>
+@required
+- (void)addAction:(UIAlertAction *)action;
+// Reversed wrapper of presentViewController:... since the protocol can't be passed to the real
+// method.
+- (void)presentOnViewController:(UIViewController *)presentingViewController
+                       animated:(BOOL)flag
+                     completion:(void (^__nullable)(void))completion NS_SWIFT_DISABLE_ASYNC;
+@end
+#endif  // TARGET_OS_IOS
 
 /// Protocol for a source of alert factory that wraps standard UIAlertController and NSAlert
 /// allocation for iOS and macOS respectfully. Used to allow context injection in unit tests.
 @protocol FLADAlertFactory <NSObject>
 
 #if TARGET_OS_OSX
-- (NSAlert *_Nonnull)createAlert;
+- (NSObject<FLANSAlert> *)createAlert;
 #elif TARGET_OS_IOS
-- (UIAlertController *_Nonnull)createAlertControllerWithTitle:(nullable NSString *)title
-                                                      message:(nullable NSString *)message
-                                               preferredStyle:
-                                                   (UIAlertControllerStyle)preferredStyle;
+- (NSObject<FLAUIAlertController> *)createAlertControllerWithTitle:(nullable NSString *)title
+                                                           message:(nullable NSString *)message
+                                                    preferredStyle:
+                                                        (UIAlertControllerStyle)preferredStyle;
 #endif
 
 @end
 
+#pragma mark -
+
 @interface FLALocalAuthPlugin ()
 /// Returns an instance that uses the given factory to create LAContexts.
-- (instancetype _Nonnull)
-    initWithContextFactory:(nonnull NSObject<FLADAuthContextFactory> *)authFactory
-              alertFactory:(nonnull NSObject<FLADAlertFactory> *)alertFactory
-                 registrar:(nonnull NSObject<FlutterPluginRegistrar> *)registrar
+- (instancetype _Nonnull)initWithContextFactory:(NSObject<FLADAuthContextFactory> *)authFactory
+                                   alertFactory:(NSObject<FLADAlertFactory> *)alertFactory
+                                      registrar:(NSObject<FlutterPluginRegistrar> *)registrar
     NS_DESIGNATED_INITIALIZER;
 @end
 

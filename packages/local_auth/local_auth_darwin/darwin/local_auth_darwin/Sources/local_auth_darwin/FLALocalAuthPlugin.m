@@ -65,6 +65,68 @@ typedef void (^FLADAuthCompletion)(FLADAuthResultDetails *_Nullable, FlutterErro
   return [[FLADefaultAuthContext alloc] initWithContext:[[LAContext alloc] init]];
 }
 @end
+
+#pragma mark -
+
+#if TARGET_OS_OSX
+/// A default alert that wraps NSAlert.
+// TODO(stuartmorgan): When converting to Swift, eliminate this class and use an extension to make
+// NSAlert declare conformance to FLANSAlert.
+@interface FLADefaultNSAlert : NSObject <FLANSAlert>
+/// Returns a wrapper for the given NSAlert.
+- (instancetype)initWithAlert:(NSAlert *)alert NS_DESIGNATED_INITIALIZER;
+- (instancetype)init NS_UNAVAILABLE;
+
+/// The wrapped alert.
+@property(nonatomic) NSAlert *alert;
+@end
+
+@implementation FLADefaultNSAlert
+- (NSString *)messageText {
+  return self.alert.messageText;
+}
+
+- (void)setMessageText:(NSString *)messageText {
+  self.alert.messageText = messageText;
+}
+
+- (NSButton *)addButtonWithTitle:(NSString *)title {
+  [self.alert addButtonWithTitle:title];
+}
+
+- (void)beginSheetModalForWindow:(NSWindow *)sheetWindow
+               completionHandler:(void (^_Nullable)(NSModalResponse returnCode))handler {
+  [self.alert beginSheetModalForWindow:sheetWindow completionHandler:handler];
+}
+@end
+#elif TARGET_OS_IOS
+/// A default alert controller that wraps UIAlertController.
+// TODO(stuartmorgan): When converting to Swift, eliminate this class and use an extension to make
+// UIAlertController declare conformance to FLAUIAlertController.
+@interface FLADefaultUIAlertController : NSObject <FLAUIAlertController>
+/// Returns a wrapper for the given UIAlertController.
+- (instancetype)initWithAlertController:(UIAlertController *)controller NS_DESIGNATED_INITIALIZER;
+- (instancetype)init NS_UNAVAILABLE;
+
+/// The wrapped alert controller.
+@property(nonatomic) UIAlertController *controller;
+@end
+
+@implementation FLADefaultUIAlertController
+- (void)addAction:(UIAlertAction *)action {
+  [self.controller addAction:action];
+}
+
+- (void)presentOnViewController:(UIViewController *)presentingViewController
+                       animated:(BOOL)flag
+                     completion:(void (^__nullable)(void))completion {
+  [presentingViewController presentViewController:self.controller
+                                         animated:flag
+                                       completion:completion];
+}
+@end
+#endif
+
 /// A default alert factory that wraps standard UIAlertController and NSAlert allocation for iOS and
 /// macOS respectfully.
 @interface FLADefaultAlertFactory : NSObject <FLADAlertFactory>
@@ -73,16 +135,20 @@ typedef void (^FLADAuthCompletion)(FLADAuthResultDetails *_Nullable, FlutterErro
 @implementation FLADefaultAlertFactory
 
 #if TARGET_OS_OSX
-- (NSAlert *)createAlert {
-  return [[NSAlert alloc] init];
+- (NSObject<FLANSAlert> *)createAlert {
+  // TODO(stuartmorgan): When converting to Swift, just return NSAlert here.
+  return [[FLADefaultNSAlert alloc] initWithAlert:[[NSAlert alloc] init]];
 }
 #elif TARGET_OS_IOS
-- (UIAlertController *)createAlertControllerWithTitle:(nullable NSString *)title
-                                              message:(nullable NSString *)message
-                                       preferredStyle:(UIAlertControllerStyle)preferredStyle {
-  return [UIAlertController alertControllerWithTitle:title
-                                             message:message
-                                      preferredStyle:preferredStyle];
+- (NSObject<FLAUIAlertController> *)createAlertControllerWithTitle:(nullable NSString *)title
+                                                           message:(nullable NSString *)message
+                                                    preferredStyle:
+                                                        (UIAlertControllerStyle)preferredStyle {
+  // TODO(stuartmorgan): When converting to Swift, just return UIAlertController here.
+  return [[FLADefaultUIAlertController alloc]
+      initWithAlertController:[UIAlertController alertControllerWithTitle:title
+                                                                  message:message
+                                                           preferredStyle:preferredStyle]];
 }
 #endif
 @end
@@ -245,8 +311,8 @@ typedef void (^FLADAuthCompletion)(FLADAuthResultDetails *_Nullable, FlutterErro
      openSettingsButtonTitle:(NSString *)openSettingsButtonTitle
                   completion:(FLADAuthCompletion)completion {
 #if TARGET_OS_OSX
-  NSAlert *alert = [_alertFactory createAlert];
-  [alert setMessageText:message];
+  id<FLANSAlert> alert = [_alertFactory createAlert];
+  alert.messageText = message;
   [alert addButtonWithTitle:dismissButtonTitle];
   NSWindow *window = self.registrar.view.window;
   [alert beginSheetModalForWindow:window
@@ -255,7 +321,7 @@ typedef void (^FLADAuthCompletion)(FLADAuthResultDetails *_Nullable, FlutterErro
                 }];
   return;
 #elif TARGET_OS_IOS
-  UIAlertController *alert =
+  id<FLAUIAlertController> alert =
       [_alertFactory createAlertControllerWithTitle:@""
                                             message:message
                                      preferredStyle:UIAlertControllerStyleAlert];
@@ -281,10 +347,10 @@ typedef void (^FLADAuthCompletion)(FLADAuthResultDetails *_Nullable, FlutterErro
                 }];
     [alert addAction:additionalAction];
   }
-  [[UIApplication sharedApplication].delegate.window.rootViewController presentViewController:alert
-                                                                                     animated:YES
-                                                                                   completion:nil];
-
+  [alert
+      presentOnViewController:[UIApplication sharedApplication].delegate.window.rootViewController
+                     animated:YES
+                   completion:nil];
 #endif
 }
 
