@@ -933,13 +933,13 @@ void SetUpFGMMapsApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger,
         binaryMessenger:binaryMessenger
                   codec:FGMGetMessagesCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(setStyleStyle:error:)],
-                @"FGMMapsApi api (%@) doesn't respond to @selector(setStyleStyle:error:)", api);
+      NSCAssert([api respondsToSelector:@selector(setStyle:error:)],
+                @"FGMMapsApi api (%@) doesn't respond to @selector(setStyle:error:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray<id> *args = message;
         NSString *arg_style = GetNullableObjectAtIndex(args, 0);
         FlutterError *error;
-        NSString *output = [api setStyleStyle:arg_style error:&error];
+        NSString *output = [api setStyle:arg_style error:&error];
         callback(wrapResult(output, error));
       }];
     } else {

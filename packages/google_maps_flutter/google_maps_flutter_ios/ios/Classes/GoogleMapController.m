@@ -661,8 +661,8 @@
                                                                                error:error];
 }
 
-- (nullable NSString *)setStyleStyle:(nonnull NSString *)style
-                               error:(FlutterError *_Nullable __autoreleasing *_Nonnull)error {
+- (nullable NSString *)setStyle:(nonnull NSString *)style
+                          error:(FlutterError *_Nullable __autoreleasing *_Nonnull)error {
   return [self.controller setMapStyle:style];
 }
 

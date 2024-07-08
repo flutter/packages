@@ -237,8 +237,7 @@ NSObject<FlutterMessageCodec> *FGMGetMessagesCodec(void);
 ///
 /// If there was an error setting the style, such as an invalid style string,
 /// returns the error message.
-- (nullable NSString *)setStyleStyle:(NSString *)style
-                               error:(FlutterError *_Nullable *_Nonnull)error;
+- (nullable NSString *)setStyle:(NSString *)style error:(FlutterError *_Nullable *_Nonnull)error;
 /// Returns the error string from the last attempt to set the map style, if
 /// any.
 ///

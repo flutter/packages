@@ -244,6 +244,7 @@ abstract class MapsApi {
   ///
   /// If there was an error setting the style, such as an invalid style string,
   /// returns the error message.
+  @ObjCSelector('setStyle:')
   String? setStyle(String style);
 
   /// Returns the error string from the last attempt to set the map style, if
