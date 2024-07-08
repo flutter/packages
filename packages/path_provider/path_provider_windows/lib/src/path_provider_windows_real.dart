@@ -146,7 +146,7 @@ class PathProviderWindows extends PathProviderPlatform {
         pathPtrPtr,
       );
 
-      if (hr != S_OK) {
+      if (FAILED(hr)) {
         if (hr == E_INVALIDARG || hr == E_FAIL) {
           throw _createWin32Exception(hr);
         }

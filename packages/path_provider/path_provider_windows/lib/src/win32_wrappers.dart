@@ -35,14 +35,14 @@ const int NULL = 0;
 const int MAX_PATH = 260;
 
 // https://learn.microsoft.com/windows/win32/seccrypto/common-hresult-values
-const int S_OK = 0;
 // ignore: non_constant_identifier_names
 final int E_FAIL = 0x80004005.toSigned(32);
 // ignore: non_constant_identifier_names
 final int E_INVALIDARG = 0x80070057.toSigned(32);
 
 // https://learn.microsoft.com/windows/win32/api/winerror/nf-winerror-failed#remarks
-bool FAILED(int hr) =>
+// ignore: non_constant_identifier_names
+bool FAILED(int hr) => hr < 0;
 
 // https://learn.microsoft.com/windows/win32/api/shlobj_core/ne-shlobj_core-known_folder_flag
 const int KF_FLAG_DEFAULT = 0x00000000;
