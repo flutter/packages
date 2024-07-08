@@ -251,6 +251,10 @@ class MockCaptureController : public CaptureController {
               (const std::string& file_path, int64_t max_video_duration_ms),
               (override));
   MOCK_METHOD(void, StopRecord, (), (override));
+  MOCK_METHOD(void, StartImageStream,
+          (std::unique_ptr<flutter::EventSink<flutter::EncodableValue>> sink),
+  (override));
+  MOCK_METHOD(void, StopImageStream, (), (override));
   MOCK_METHOD(void, TakePicture, (const std::string& file_path), (override));
 };
 
@@ -1024,6 +1028,9 @@ class MockCaptureEngine : public IMFCaptureEngine {
   MOCK_METHOD(HRESULT, StartPreview, ());
   MOCK_METHOD(HRESULT, StopPreview, ());
   MOCK_METHOD(HRESULT, StartRecord, ());
+  MOCK_METHOD(HRESULT, StartImageStream, ());
+  MOCK_METHOD(HRESULT, StopImageStream, ());
+
   MOCK_METHOD(HRESULT, StopRecord,
               (BOOL finalize, BOOL flushUnprocessedSamples));
   MOCK_METHOD(HRESULT, TakePhoto, ());

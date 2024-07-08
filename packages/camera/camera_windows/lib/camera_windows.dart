@@ -6,6 +6,7 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:camera_platform_interface/camera_platform_interface.dart';
+import 'package:camera_windows/type_conversion.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:stream_transform/stream_transform.dart';
@@ -24,6 +25,12 @@ class CameraWindows extends CameraPlatform {
 
   /// Camera specific method channels to allow communicating with specific cameras.
   final Map<int, MethodChannel> _cameraChannels = <int, MethodChannel>{};
+
+  // The stream to receive frames from the native code.
+  StreamSubscription<dynamic>? _platformImageStreamSubscription;
+
+  // The stream for vending frames to platform interface clients.
+  StreamController<CameraImageData>? _frameStreamController;
 
   /// The controller that broadcasts events coming from handleCameraMethodCall
   ///
@@ -275,6 +282,59 @@ class CameraWindows extends CameraPlatform {
   Future<void> resumeVideoRecording(int cameraId) async {
     throw UnsupportedError(
         'resumeVideoRecording() is not supported due to Win32 API limitations.');
+  }
+
+  @override
+  Stream<CameraImageData> onStreamedFrameAvailable(int cameraId,
+      {CameraImageStreamOptions? options}) {
+    _installStreamController(
+        onListen: () => _onFrameStreamListen(cameraId),
+        onCancel: () => _onFrameStreamCancel(cameraId));
+    return _frameStreamController!.stream;
+  }
+
+  StreamController<CameraImageData> _installStreamController(
+      {void Function()? onListen, void Function()? onCancel}) {
+    _frameStreamController = StreamController<CameraImageData>(
+      onListen: onListen ?? () {},
+      onPause: _onFrameStreamPauseResume,
+      onResume: _onFrameStreamPauseResume,
+      onCancel: onCancel ?? () {},
+    );
+    return _frameStreamController!;
+  }
+
+  void _onFrameStreamListen(int cameraId) {
+    _startPlatformStream(cameraId);
+  }
+
+  Future<void> _startPlatformStream(int cameraId) async {
+    _startStreamListener();
+    await pluginChannel.invokeMethod<void>(
+        'startImageStream', <String, dynamic>{'cameraId': cameraId});
+  }
+
+  void _startStreamListener() {
+    const EventChannel cameraEventChannel =
+        EventChannel('plugins.flutter.io/camera_android/imageStream');
+    _platformImageStreamSubscription =
+        cameraEventChannel.receiveBroadcastStream().listen((dynamic imageData) {
+      _frameStreamController!
+          .add(cameraImageFromPlatformData(imageData as Map<dynamic, dynamic>));
+    });
+  }
+
+  FutureOr<void> _onFrameStreamCancel(int cameraId) async {
+    await pluginChannel.invokeMethod<void>(
+        'stopImageStream', <String, dynamic>{'cameraId': cameraId});
+    await _platformImageStreamSubscription?.cancel();
+    _platformImageStreamSubscription = null;
+    _frameStreamController = null;
+  }
+
+  void _onFrameStreamPauseResume() {
+    throw CameraException('InvalidCall',
+        'Pause and resume are not supported for onStreamedFrameAvailable');
   }
 
   @override
