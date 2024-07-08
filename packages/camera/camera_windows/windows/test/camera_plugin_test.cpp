@@ -557,9 +557,10 @@ TEST(CameraPlugin, StartVideoRecordingHandlerCallsStartRecordWithPath) {
         return cam->capture_controller_.get();
       });
 
-  EXPECT_CALL(*capture_controller, StartRecord(EndsWith(".mp4")))
+  EXPECT_CALL(*capture_controller, StartRecord(EndsWith(".mp4"), -1))
       .Times(1)
-      .WillOnce([cam = camera.get()](const std::string& file_path) {
+      .WillOnce([cam = camera.get()](const std::string& file_path,
+                                     int64_t max_video_duration_ms) {
         assert(cam->pending_result_);
         return cam->pending_result_->Success();
       });
@@ -579,6 +580,79 @@ TEST(CameraPlugin, StartVideoRecordingHandlerCallsStartRecordWithPath) {
 
   EncodableMap args = {
       {EncodableValue("cameraId"), EncodableValue(mock_camera_id)},
+  };
+
+  plugin.HandleMethodCall(
+      flutter::MethodCall("startVideoRecording",
+                          std::make_unique<EncodableValue>(EncodableMap(args))),
+      std::move(initialize_result));
+}
+
+TEST(CameraPlugin,
+     StartVideoRecordingHandlerCallsStartRecordWithPathAndCaptureDuration) {
+  int64_t mock_camera_id = 1234;
+  int32_t mock_video_duration = 100000;
+
+  std::unique_ptr<MockMethodResult> initialize_result =
+      std::make_unique<MockMethodResult>();
+
+  std::unique_ptr<MockCamera> camera =
+      std::make_unique<MockCamera>(MOCK_DEVICE_ID);
+
+  std::unique_ptr<MockCaptureController> capture_controller =
+      std::make_unique<MockCaptureController>();
+
+  EXPECT_CALL(*camera, HasCameraId(Eq(mock_camera_id)))
+      .Times(1)
+      .WillOnce([cam = camera.get()](int64_t camera_id) {
+        return cam->camera_id_ == camera_id;
+      });
+
+  EXPECT_CALL(*camera,
+              HasPendingResultByType(Eq(PendingResultType::kStartRecord)))
+      .Times(1)
+      .WillOnce(Return(false));
+
+  EXPECT_CALL(*camera, AddPendingResult(Eq(PendingResultType::kStartRecord), _))
+      .Times(1)
+      .WillOnce([cam = camera.get()](PendingResultType type,
+                                     std::unique_ptr<MethodResult<>> result) {
+        cam->pending_result_ = std::move(result);
+        return true;
+      });
+
+  EXPECT_CALL(*camera, GetCaptureController)
+      .Times(1)
+      .WillOnce([cam = camera.get()]() {
+        assert(cam->pending_result_);
+        return cam->capture_controller_.get();
+      });
+
+  EXPECT_CALL(*capture_controller,
+              StartRecord(EndsWith(".mp4"), Eq(mock_video_duration)))
+      .Times(1)
+      .WillOnce([cam = camera.get()](const std::string& file_path,
+                                     int64_t max_video_duration_ms) {
+        assert(cam->pending_result_);
+        return cam->pending_result_->Success();
+      });
+
+  camera->camera_id_ = mock_camera_id;
+  camera->capture_controller_ = std::move(capture_controller);
+
+  MockCameraPlugin plugin(std::make_unique<MockTextureRegistrar>().get(),
+                          std::make_unique<MockBinaryMessenger>().get(),
+                          std::make_unique<MockCameraFactory>());
+
+  // Add mocked camera to plugins camera list.
+  plugin.AddCamera(std::move(camera));
+
+  EXPECT_CALL(*initialize_result, ErrorInternal).Times(0);
+  EXPECT_CALL(*initialize_result, SuccessInternal).Times(1);
+
+  EncodableMap args = {
+      {EncodableValue("cameraId"), EncodableValue(mock_camera_id)},
+      {EncodableValue("maxVideoDuration"), EncodableValue(mock_video_duration)},
   };
 
   plugin.HandleMethodCall(
@@ -609,7 +683,7 @@ TEST(CameraPlugin, StartVideoRecordingHandlerErrorOnInvalidCameraId) {
   EXPECT_CALL(*camera, HasPendingResultByType).Times(0);
   EXPECT_CALL(*camera, AddPendingResult).Times(0);
   EXPECT_CALL(*camera, GetCaptureController).Times(0);
-  EXPECT_CALL(*capture_controller, StartRecord(_)).Times(0);
+  EXPECT_CALL(*capture_controller, StartRecord(_, -1)).Times(0);
 
   camera->camera_id_ = mock_camera_id;
 

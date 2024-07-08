@@ -233,8 +233,8 @@ class CameraWindows extends CameraPlatform {
   @override
   Future<void> startVideoRecording(int cameraId,
       {Duration? maxVideoDuration}) async {
-    // Ignore maxVideoDuration, as it is unimplemented and deprecated.
-    return startVideoCapturing(VideoCaptureOptions(cameraId));
+    return startVideoCapturing(
+        VideoCaptureOptions(cameraId, maxDuration: maxVideoDuration));
   }
 
   @override
@@ -248,6 +248,7 @@ class CameraWindows extends CameraPlatform {
       'startVideoRecording',
       <String, dynamic>{
         'cameraId': options.cameraId,
+        'maxVideoDuration': options.maxDuration?.inMilliseconds,
       },
     );
   }
@@ -411,6 +412,18 @@ class CameraWindows extends CameraPlatform {
         cameraEventStreamController.add(
           CameraClosingEvent(
             cameraId,
+          ),
+        );
+      case 'video_recorded':
+        final Map<String, Object?> arguments =
+            (call.arguments as Map<Object?, Object?>).cast<String, Object?>();
+        final int? maxDuration = arguments['maxVideoDuration'] as int?;
+        // This is called if maxVideoDuration was given on record start.
+        cameraEventStreamController.add(
+          VideoRecordedEvent(
+            cameraId,
+            XFile(arguments['path']! as String),
+            maxDuration != null ? Duration(milliseconds: maxDuration) : null,
           ),
         );
       case 'error':

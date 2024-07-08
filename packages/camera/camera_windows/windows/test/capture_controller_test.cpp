@@ -213,7 +213,7 @@ void MockRecordStart(CaptureControllerImpl* capture_controller,
   EXPECT_CALL(*record_sink, AddStream).Times(2).WillRepeatedly(Return(S_OK));
   EXPECT_CALL(*record_sink, SetOutputFileName).Times(1).WillOnce(Return(S_OK));
 
-  capture_controller->StartRecord(mock_path_to_video);
+  capture_controller->StartRecord(mock_path_to_video, -1);
 
   EXPECT_CALL(*camera, OnStartRecordSucceeded()).Times(1);
   engine->CreateFakeEvent(S_OK, MF_CAPTURE_ENGINE_RECORD_STARTED);
@@ -790,7 +790,7 @@ TEST(CaptureController, StartRecordWithSettingsSuccess) {
       .Times(1)
       .WillOnce(Return(S_OK));
 
-  capture_controller->StartRecord(mock_path_to_video);
+  capture_controller->StartRecord(mock_path_to_video, -1);
 
   EXPECT_CALL(*camera, OnStartRecordSucceeded()).Times(1);
   engine->CreateFakeEvent(S_OK, MF_CAPTURE_ENGINE_RECORD_STARTED);
@@ -840,7 +840,7 @@ TEST(CaptureController, ReportsStartRecordError) {
                                   Eq("Failed to start video recording")))
       .Times(1);
 
-  capture_controller->StartRecord("mock_path");
+  capture_controller->StartRecord("mock_path", -1);
 
   capture_controller = nullptr;
   texture_registrar = nullptr;
@@ -881,7 +881,7 @@ TEST(CaptureController, ReportsStartRecordAccessDenied) {
                                   Eq("Failed to start video recording")))
       .Times(1);
 
-  capture_controller->StartRecord("mock_path");
+  capture_controller->StartRecord("mock_path", -1);
 
   capture_controller = nullptr;
   texture_registrar = nullptr;
@@ -934,7 +934,7 @@ TEST(CaptureController, ReportsStartRecordErrorEvent) {
       .Times(1)
       .WillOnce(Return(S_OK));
 
-  capture_controller->StartRecord(mock_path_to_video);
+  capture_controller->StartRecord(mock_path_to_video, -1);
 
   // Send a start record failed event
   EXPECT_CALL(*camera, OnStartRecordSucceeded).Times(0);
@@ -1000,7 +1000,7 @@ TEST(CaptureController, ReportsStartRecordAccessDeniedEvent) {
       .WillOnce(Return(S_OK));
 
   // Send a start record failed event
-  capture_controller->StartRecord(mock_path_to_video);
+  capture_controller->StartRecord(mock_path_to_video, -1);
 
   EXPECT_CALL(*camera, OnStartRecordSucceeded).Times(0);
   EXPECT_CALL(*camera, OnStartRecordFailed(Eq(CameraResult::kAccessDenied),

@@ -463,8 +463,8 @@ class CameraPlugin extends CameraPlatform {
 
   @override
   Future<void> startVideoRecording(int cameraId, {Duration? maxVideoDuration}) {
-    // Ignore maxVideoDuration, as it is deprecated.
-    return startVideoCapturing(VideoCaptureOptions(cameraId));
+    return startVideoCapturing(
+        VideoCaptureOptions(cameraId, maxDuration: maxVideoDuration));
   }
 
   @override
@@ -489,7 +489,7 @@ class CameraPlugin extends CameraPlatform {
         );
       });
 
-      return camera.startVideoRecording();
+      return camera.startVideoRecording(maxVideoDuration: options.maxDuration);
     } on html.DomException catch (e) {
       throw PlatformException(code: e.name, message: e.message);
     } on CameraWebException catch (e) {

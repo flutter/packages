@@ -1,7 +1,13 @@
-## 0.6.5+7
+## 0.6.7
 
-* Updates README to remove references to `maxVideoDuration`, as it was never
-  visible to app-facing clients, nor was it implemented in `camera_android`.
+* Updates AGP version to 8.5.0.
+
+## 0.6.6
+
+* Adds logic to support building a camera preview with Android `Surface`s not backed by a `SurfaceTexture`
+  to which CameraX cannot not automatically apply the transformation required to achieve the correct rotation.
+* Adds fix for incorrect camera preview rotation on naturally landscape-oriented devices.
+* Updates example app's minimum supported SDK version to Flutter 3.22/Dart 3.4.
 
 ## 0.6.5+6
 

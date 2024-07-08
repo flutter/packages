@@ -215,10 +215,11 @@ class MockStreamingCameraPlatform extends MockCameraPlatform {
   }
 
   @override
-  Future<void> startVideoRecording(int cameraId, {Duration? maxVideoDuration}) {
+  Future<XFile> startVideoRecording(int cameraId,
+      {Duration? maxVideoDuration}) {
     streamCallLog.add('startVideoRecording');
-    // Ignore maxVideoDuration, as it is unimplemented and deprecated.
-    return super.startVideoRecording(cameraId);
+    return super
+        .startVideoRecording(cameraId, maxVideoDuration: maxVideoDuration);
   }
 
   @override

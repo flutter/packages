@@ -460,6 +460,30 @@ void main() {
         expect(channel.log, <Matcher>[
           isMethodCall('startVideoRecording', arguments: <String, Object?>{
             'cameraId': cameraId,
+            'maxVideoDuration': null,
+          }),
+        ]);
+      });
+
+      test('Should pass maxVideoDuration when starting recording a video',
+          () async {
+        // Arrange
+        final MethodChannelMock channel = MethodChannelMock(
+          channelName: pluginChannelName,
+          methods: <String, dynamic>{'startVideoRecording': null},
+        );
+
+        // Act
+        await plugin.startVideoRecording(
+          cameraId,
+          maxVideoDuration: const Duration(seconds: 10),
+        );
+
+        // Assert
+        expect(channel.log, <Matcher>[
+          isMethodCall('startVideoRecording', arguments: <String, Object?>{
+            'cameraId': cameraId,
+            'maxVideoDuration': 10000
           }),
         ]);
       });

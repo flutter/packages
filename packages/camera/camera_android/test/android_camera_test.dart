@@ -636,6 +636,31 @@ void main() {
       expect(channel.log, <Matcher>[
         isMethodCall('startVideoRecording', arguments: <String, Object?>{
           'cameraId': cameraId,
+          'maxVideoDuration': null,
+          'enableStream': false,
+        }),
+      ]);
+    });
+
+    test('Should pass maxVideoDuration when starting recording a video',
+        () async {
+      // Arrange
+      final MethodChannelMock channel = MethodChannelMock(
+        channelName: _channelName,
+        methods: <String, dynamic>{'startVideoRecording': null},
+      );
+
+      // Act
+      await camera.startVideoRecording(
+        cameraId,
+        maxVideoDuration: const Duration(seconds: 10),
+      );
+
+      // Assert
+      expect(channel.log, <Matcher>[
+        isMethodCall('startVideoRecording', arguments: <String, Object?>{
+          'cameraId': cameraId,
+          'maxVideoDuration': 10000,
           'enableStream': false,
         }),
       ]);
@@ -660,6 +685,7 @@ void main() {
       expect(channel.log, <Matcher>[
         isMethodCall('startVideoRecording', arguments: <String, Object?>{
           'cameraId': cameraId,
+          'maxVideoDuration': null,
           'enableStream': true,
         }),
       ]);
