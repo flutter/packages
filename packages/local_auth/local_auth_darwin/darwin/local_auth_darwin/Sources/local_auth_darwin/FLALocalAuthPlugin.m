@@ -139,16 +139,16 @@ typedef void (^FLADAuthCompletion)(FLADAuthResultDetails *_Nullable, FlutterErro
       [[FLADefaultAuthContextFactory alloc] init];
   FLALocalAuthPlugin *instance =
       [[FLALocalAuthPlugin alloc] initWithContextFactory:authContextFactory
-                                               registrar:registrar
-                                            alertFactory:alertFactory];
+                                            alertFactory:alertFactory
+                                               registrar:registrar];
   [registrar addApplicationDelegate:instance];
   SetUpFLADLocalAuthApi([registrar messenger], instance);
 }
 
 /// Returns an instance that uses the given factory to create LAContexts.
 - (instancetype)initWithContextFactory:(NSObject<FLADAuthContextFactory> *)authFactory
-                             registrar:(NSObject<FlutterPluginRegistrar> *)registrar
-                          alertFactory:(NSObject<FLADAlertFactory> *)alertFactory {
+                          alertFactory:(NSObject<FLADAlertFactory> *)alertFactory
+                             registrar:(NSObject<FlutterPluginRegistrar> *)registrar {
   self = [super init];
   if (self) {
     _registrar = registrar;

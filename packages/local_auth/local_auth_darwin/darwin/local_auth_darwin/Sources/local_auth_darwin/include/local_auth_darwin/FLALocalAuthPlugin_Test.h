@@ -50,8 +50,8 @@ NS_ASSUME_NONNULL_BEGIN
 /// Returns an instance that uses the given factory to create LAContexts.
 - (instancetype _Nonnull)
     initWithContextFactory:(nonnull NSObject<FLADAuthContextFactory> *)authFactory
-                 registrar:(nonnull NSObject<FlutterPluginRegistrar> *)registrar
               alertFactory:(nonnull NSObject<FLADAlertFactory> *)alertFactory
+                 registrar:(nonnull NSObject<FlutterPluginRegistrar> *)registrar
     NS_DESIGNATED_INITIALIZER;
 @end
 
