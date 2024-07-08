@@ -183,7 +183,7 @@
   XCTAssertEqual(kGMSTypeNone, [FLTGoogleMapJSONConversions mapViewTypeFromTypeValue:@5]);
 }
 
-- (void)testcameraUpdateFromArrayNewCameraPosition {
+- (void)testCameraUpdateFromArrayNewCameraPosition {
   NSArray *channelValue = @[
     @"newCameraPosition", @{@"target" : @[ @1, @2 ], @"zoom" : @3, @"bearing" : @4, @"tilt" : @5}
   ];
@@ -208,7 +208,7 @@
 // verified.
 //
 // The code in below test uses the 2nd approach.
-- (void)skip_testcameraUpdateFromArrayNewLatLong {
+- (void)skip_testCameraUpdateFromArrayNewLatLong {
   NSArray *channelValue = @[ @"newLatLng", @[ @1, @2 ] ];
 
   GMSCameraUpdate *update = [FLTGoogleMapJSONConversions cameraUpdateFromArray:channelValue];
@@ -225,7 +225,7 @@
                              accuracy);  // mapView.camera.target.longitude is still 6.
 }
 
-- (void)testcameraUpdateFromArrayNewLatLngBounds {
+- (void)testCameraUpdateFromArrayNewLatLngBounds {
   NSArray<NSNumber *> *latlong1 = @[ @1, @2 ];
   NSArray<NSNumber *> *latlong2 = @[ @(3), @(4) ];
   GMSCoordinateBounds *bounds =
@@ -239,7 +239,7 @@
   [classMockCameraUpdate stopMocking];
 }
 
-- (void)testcameraUpdateFromArrayNewLatLngZoom {
+- (void)testCameraUpdateFromArrayNewLatLngZoom {
   NSArray *channelValue = @[ @"newLatLngZoom", @[ @1, @2 ], @3 ];
 
   id classMockCameraUpdate = OCMClassMock([GMSCameraUpdate class]);
@@ -249,7 +249,7 @@
   [classMockCameraUpdate stopMocking];
 }
 
-- (void)testcameraUpdateFromArrayScrollBy {
+- (void)testCameraUpdateFromArrayScrollBy {
   NSArray *channelValue = @[ @"scrollBy", @1, @2 ];
 
   id classMockCameraUpdate = OCMClassMock([GMSCameraUpdate class]);
@@ -259,7 +259,7 @@
   [classMockCameraUpdate stopMocking];
 }
 
-- (void)testcameraUpdateFromArrayZoomBy {
+- (void)testCameraUpdateFromArrayZoomBy {
   NSArray *channelValueNoPoint = @[ @"zoomBy", @1 ];
 
   id classMockCameraUpdate = OCMClassMock([GMSCameraUpdate class]);
@@ -275,7 +275,7 @@
   [classMockCameraUpdate stopMocking];
 }
 
-- (void)testcameraUpdateFromArrayZoomIn {
+- (void)testCameraUpdateFromArrayZoomIn {
   NSArray *channelValueNoPoint = @[ @"zoomIn" ];
 
   id classMockCameraUpdate = OCMClassMock([GMSCameraUpdate class]);
@@ -285,7 +285,7 @@
   [classMockCameraUpdate stopMocking];
 }
 
-- (void)testcameraUpdateFromArrayZoomOut {
+- (void)testCameraUpdateFromArrayZoomOut {
   NSArray *channelValueNoPoint = @[ @"zoomOut" ];
 
   id classMockCameraUpdate = OCMClassMock([GMSCameraUpdate class]);
@@ -295,7 +295,7 @@
   [classMockCameraUpdate stopMocking];
 }
 
-- (void)testcameraUpdateFromArrayZoomTo {
+- (void)testCameraUpdateFromArrayZoomTo {
   NSArray *channelValueNoPoint = @[ @"zoomTo", @1 ];
 
   id classMockCameraUpdate = OCMClassMock([GMSCameraUpdate class]);
