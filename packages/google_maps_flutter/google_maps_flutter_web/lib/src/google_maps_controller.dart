@@ -431,7 +431,7 @@ class GoogleMapController {
     assert(_googleMap!.isZoomDefined(),
         'Zoom level should not be null. Is the map correctly initialized?');
 
-    return _googleMap!.zoom!.toDouble();
+    return _googleMap!.zoom.toDouble();
   }
 
   // Geometry manipulation
