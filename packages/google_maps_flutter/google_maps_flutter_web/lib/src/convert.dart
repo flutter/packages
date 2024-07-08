@@ -197,7 +197,8 @@ LatLngBounds gmLatLngBoundsTolatLngBounds(gmaps.LatLngBounds latLngBounds) {
 
 CameraPosition _gmViewportToCameraPosition(gmaps.Map map) {
   return CameraPosition(
-    target: gmLatLngToLatLng(map.center),
+    target:
+        gmLatLngToLatLng(map.isCenterDefined() ? map.center : _nullGmapsLatLng),
     bearing: map.isHeadingDefined() ? map.heading.toDouble() : 0,
     tilt: map.isTiltDefined() ? map.tilt.toDouble() : 0,
     zoom: map.isZoomDefined() ? map.zoom.toDouble() : 0,

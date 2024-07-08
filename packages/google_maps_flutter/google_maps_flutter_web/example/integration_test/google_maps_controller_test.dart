@@ -264,20 +264,16 @@ void main() {
         gmaps.event.trigger(
           map,
           'click',
-          <gmaps.MapMouseEvent>[
-            gmaps.MapMouseEvent()..latLng = gmaps.LatLng(0, 0)
-          ].toJS,
+          gmaps.MapMouseEvent()..latLng = gmaps.LatLng(0, 0),
         );
         gmaps.event.trigger(
           map,
           'rightclick',
-          <gmaps.MapMouseEvent>[
-            gmaps.MapMouseEvent()..latLng = gmaps.LatLng(0, 0)
-          ].toJS,
+          gmaps.MapMouseEvent()..latLng = gmaps.LatLng(0, 0),
         );
         // The following line causes 2 events
-        gmaps.event.trigger(map, 'bounds_changed', <JSAny>[].toJS);
-        gmaps.event.trigger(map, 'idle', <JSAny>[].toJS);
+        gmaps.event.trigger(map, 'bounds_changed');
+        gmaps.event.trigger(map, 'idle');
 
         final List<MapEvent<Object?>> events = await capturedEvents.toList();
 
