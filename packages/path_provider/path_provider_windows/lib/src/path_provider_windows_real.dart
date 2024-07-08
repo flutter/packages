@@ -37,7 +37,7 @@ class VersionInfoQuerier {
   /// language and encoding, or null if there is no such entry,
   /// or if versionInfo is null.
   ///
-  /// See https://docs.microsoft.com/en-us/windows/win32/menurc/versioninfo-resource
+  /// See https://docs.microsoft.com/windows/win32/menurc/versioninfo-resource
   /// for list of possible language and encoding values.
   String? getStringValue(
     Pointer<Uint8>? versionInfo,
@@ -226,7 +226,7 @@ class PathProviderWindows extends PathProviderPlatform {
   }
 
   /// Makes [rawString] safe as a directory component. See
-  /// https://docs.microsoft.com/en-us/windows/win32/fileio/naming-a-file#naming-conventions
+  /// https://docs.microsoft.com/windows/win32/fileio/naming-a-file#naming-conventions
   ///
   /// If after sanitizing the string is empty, returns null.
   String? _sanitizedDirectoryName(String? rawString) {

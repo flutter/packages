@@ -7,7 +7,7 @@ import 'dart:typed_data';
 
 /// Representation of the Win32 GUID struct.
 // For the layout of this struct, see
-// https://learn.microsoft.com/en-us/windows/win32/api/guiddef/ns-guiddef-guid
+// https://learn.microsoft.com/windows/win32/api/guiddef/ns-guiddef-guid
 @Packed(4)
 base class GUID extends Struct {
   /// Navite Data1 field.

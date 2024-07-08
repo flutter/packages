@@ -10,7 +10,7 @@
 /// method in the [PathProvidersWindows] class to retrieve a known folder from
 /// Windows.
 // These constants come from
-// https://learn.microsoft.com/en-us/windows/win32/shell/knownfolderid
+// https://learn.microsoft.com/windows/win32/shell/knownfolderid
 class WindowsKnownFolder {
   /// The file system directory that is used to store administrative tools for
   /// an individual user. The MMC will save customized consoles to this
