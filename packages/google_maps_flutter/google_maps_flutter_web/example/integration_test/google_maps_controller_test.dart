@@ -21,12 +21,26 @@ import 'google_maps_controller_test.mocks.dart';
 // LatLng values.
 const String _kCloudMapId = '000000000000000'; // Dummy map ID.
 
+class MockMap {}
+
+gmaps.Map mockMap() => createJSInteropWrapper(MockMap()) as gmaps.Map;
+
 @GenerateNiceMocks(<MockSpec<dynamic>>[
-  MockSpec<CirclesController>(),
-  MockSpec<PolygonsController>(),
-  MockSpec<PolylinesController>(),
-  MockSpec<MarkersController>(),
-  MockSpec<TileOverlaysController>(),
+  MockSpec<CirclesController>(
+    fallbackGenerators: <Symbol, Function>{#googleMap: mockMap},
+  ),
+  MockSpec<PolygonsController>(
+    fallbackGenerators: <Symbol, Function>{#googleMap: mockMap},
+  ),
+  MockSpec<PolylinesController>(
+    fallbackGenerators: <Symbol, Function>{#googleMap: mockMap},
+  ),
+  MockSpec<MarkersController>(
+    fallbackGenerators: <Symbol, Function>{#googleMap: mockMap},
+  ),
+  MockSpec<TileOverlaysController>(
+    fallbackGenerators: <Symbol, Function>{#googleMap: mockMap},
+  ),
 ])
 
 /// Test Google Map Controller
@@ -250,12 +264,16 @@ void main() {
         gmaps.event.trigger(
           map,
           'click',
-          <gmaps.MapMouseEvent>[gmaps.MapMouseEvent()..latLng = gmaps.LatLng(0, 0)].toJS,
+          <gmaps.MapMouseEvent>[
+            gmaps.MapMouseEvent()..latLng = gmaps.LatLng(0, 0)
+          ].toJS,
         );
         gmaps.event.trigger(
           map,
           'rightclick',
-          <gmaps.MapMouseEvent>[gmaps.MapMouseEvent()..latLng = gmaps.LatLng(0, 0)].toJS,
+          <gmaps.MapMouseEvent>[
+            gmaps.MapMouseEvent()..latLng = gmaps.LatLng(0, 0)
+          ].toJS,
         );
         // The following line causes 2 events
         gmaps.event.trigger(map, 'bounds_changed', <JSAny>[].toJS);
