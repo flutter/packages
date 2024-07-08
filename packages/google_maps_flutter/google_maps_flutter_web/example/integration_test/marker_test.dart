@@ -57,7 +57,11 @@ void main() {
       MarkerController(marker: marker, onTap: onTap);
 
       // Trigger a click event...
-      gmaps.event.trigger(marker, 'click', <gmaps.MapMouseEvent>[gmaps.MapMouseEvent()].toJS);
+      gmaps.event.trigger(
+        marker,
+        'click',
+        <gmaps.MapMouseEvent>[gmaps.MapMouseEvent()].toJS,
+      );
 
       // The event handling is now truly async. Wait for it...
       expect(await methodCalled, isTrue);
@@ -70,7 +74,9 @@ void main() {
       gmaps.event.trigger(
         marker,
         'dragstart',
-        <gmaps.MapMouseEvent>[gmaps.MapMouseEvent()..latLng = gmaps.LatLng(0, 0)].toJS,
+        <gmaps.MapMouseEvent>[
+          gmaps.MapMouseEvent()..latLng = gmaps.LatLng(0, 0),
+        ].toJS,
       );
 
       expect(await methodCalled, isTrue);
@@ -83,7 +89,9 @@ void main() {
       gmaps.event.trigger(
         marker,
         'drag',
-        <gmaps.MapMouseEvent>[gmaps.MapMouseEvent()..latLng = gmaps.LatLng(0, 0)].toJS,
+        <gmaps.MapMouseEvent>[
+          gmaps.MapMouseEvent()..latLng = gmaps.LatLng(0, 0),
+        ].toJS,
       );
 
       expect(await methodCalled, isTrue);
@@ -96,7 +104,9 @@ void main() {
       gmaps.event.trigger(
         marker,
         'dragend',
-        <gmaps.MapMouseEvent>[gmaps.MapMouseEvent()..latLng = gmaps.LatLng(0, 0)].toJS,
+        <gmaps.MapMouseEvent>[
+          gmaps.MapMouseEvent()..latLng = gmaps.LatLng(0, 0),
+        ].toJS,
       );
 
       expect(await methodCalled, isTrue);

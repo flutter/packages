@@ -497,7 +497,7 @@ gmaps.PolygonOptions _polygonOptionsFromPolygon(
   }
 
   return gmaps.PolygonOptions()
-    ..paths = paths.map((e) => e.toJS).toList().toJS
+    ..paths = paths.map((List<gmaps.LatLng> e) => e.toJS).toList().toJS
     ..strokeColor = _getCssColor(polygon.strokeColor)
     ..strokeOpacity = _getCssOpacity(polygon.strokeColor)
     ..strokeWeight = polygon.strokeWidth

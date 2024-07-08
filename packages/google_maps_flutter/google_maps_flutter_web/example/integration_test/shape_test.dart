@@ -43,7 +43,11 @@ void main() {
       CircleController(circle: circle, consumeTapEvents: true, onTap: onTap);
 
       // Trigger a click event...
-      gmaps.event.trigger(circle, 'click', <gmaps.MapMouseEvent>[gmaps.MapMouseEvent()].toJS);
+      gmaps.event.trigger(
+        circle,
+        'click',
+        <gmaps.MapMouseEvent>[gmaps.MapMouseEvent()].toJS,
+      );
 
       // The event handling is now truly async. Wait for it...
       expect(await methodCalled, isTrue);
@@ -99,7 +103,11 @@ void main() {
       PolygonController(polygon: polygon, consumeTapEvents: true, onTap: onTap);
 
       // Trigger a click event...
-      gmaps.event.trigger(polygon, 'click', <gmaps.MapMouseEvent>[gmaps.MapMouseEvent()].toJS);
+      gmaps.event.trigger(
+        polygon,
+        'click',
+        <gmaps.MapMouseEvent>[gmaps.MapMouseEvent()].toJS,
+      );
 
       // The event handling is now truly async. Wait for it...
       expect(await methodCalled, isTrue);
@@ -159,7 +167,11 @@ void main() {
       );
 
       // Trigger a click event...
-      gmaps.event.trigger(polyline, 'click', <gmaps.MapMouseEvent>[gmaps.MapMouseEvent()].toJS);
+      gmaps.event.trigger(
+        polyline,
+        'click',
+        <gmaps.MapMouseEvent>[gmaps.MapMouseEvent()].toJS,
+      );
 
       // The event handling is now truly async. Wait for it...
       expect(await methodCalled, isTrue);
