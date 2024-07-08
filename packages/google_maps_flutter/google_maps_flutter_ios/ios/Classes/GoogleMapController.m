@@ -5,6 +5,7 @@
 #import "GoogleMapController.h"
 #import "FLTGoogleMapJSONConversions.h"
 #import "FLTGoogleMapTileOverlayController.h"
+#import "messages.g.h"
 
 #pragma mark - Conversion of JSON-like values sent via platform channels. Forward declarations.
 
@@ -56,6 +57,33 @@
 
 @end
 
+#pragma mark -
+
+/// Implementation of the Pigeon maps inspector API.
+///
+/// This is a separate object from the maps controller because the Pigeon API registration keeps a
+/// strong reference to the implementor, but as the FlutterPlatformView, the lifetime of the
+/// FLTGoogleMapController instance is what needs to trigger Pigeon unregistration, so can't be
+/// the target of the registration.
+@interface FGMMapInspector : NSObject <FGMMapsInspectorApi>
+- (instancetype)initWithMapController:(nonnull FLTGoogleMapController *)controller
+                            messenger:(NSObject<FlutterBinaryMessenger> *)messenger
+                         pigeonSuffix:(NSString *)suffix;
+@end
+
+/// Private declarations.
+// This is separate in case the above is made public in the future (e.g., for unit testing).
+@interface FGMMapInspector ()
+/// The map controller this inspector corresponds to.
+@property(nonatomic, weak) FLTGoogleMapController *controller;
+/// The messenger this instance was registered with by Pigeon.
+@property(nonatomic, copy) NSObject<FlutterBinaryMessenger> *messenger;
+/// The suffix this instance was registered under with Pigeon.
+@property(nonatomic, copy) NSString *pigeonSuffix;
+@end
+
+#pragma mark -
+
 @interface FLTGoogleMapController ()
 
 @property(nonatomic, strong) GMSMapView *mapView;
@@ -72,6 +100,8 @@
 // creation time and there's no mechanism to return non-fatal error details during platform view
 // initialization.
 @property(nonatomic, copy) NSString *styleError;
+// The inspector API implementation, separate to avoid lifetime extension.
+@property(nonatomic, strong) FGMMapInspector *inspector;
 
 @end
 
@@ -114,9 +144,7 @@
                                            binaryMessenger:registrar.messenger];
     __weak __typeof__(self) weakSelf = self;
     [_channel setMethodCallHandler:^(FlutterMethodCall *call, FlutterResult result) {
-      if (weakSelf) {
-        [weakSelf onMethodCall:call result:result];
-      }
+      [weakSelf onMethodCall:call result:result];
     }];
     _mapView.delegate = weakSelf;
     _mapView.paddingAdjustmentBehavior = kGMSMapViewPaddingAdjustmentBehaviorNever;
@@ -158,8 +186,20 @@
     }
 
     [_mapView addObserver:self forKeyPath:@"frame" options:0 context:nil];
+
+    NSString *suffix = [NSString stringWithFormat:@"%lld", viewId];
+    _inspector = [[FGMMapInspector alloc] initWithMapController:self
+                                                      messenger:registrar.messenger
+                                                   pigeonSuffix:suffix];
+    SetUpFGMMapsInspectorApiWithSuffix(registrar.messenger, _inspector, suffix);
   }
   return self;
+}
+
+- (void)dealloc {
+  // Unregister the API implementations so that they can be released; the registration created an
+  // owning reference.
+  SetUpFGMMapsInspectorApiWithSuffix(_inspector.messenger, nil, _inspector.pigeonSuffix);
 }
 
 - (UIView *)view {
@@ -356,41 +396,8 @@
     id rawTileOverlayId = call.arguments[@"tileOverlayId"];
     [self.tileOverlaysController clearTileCacheWithIdentifier:rawTileOverlayId];
     result(nil);
-  } else if ([call.method isEqualToString:@"map#isCompassEnabled"]) {
-    NSNumber *isCompassEnabled = @(self.mapView.settings.compassButton);
-    result(isCompassEnabled);
-  } else if ([call.method isEqualToString:@"map#isMapToolbarEnabled"]) {
-    NSNumber *isMapToolbarEnabled = @NO;
-    result(isMapToolbarEnabled);
-  } else if ([call.method isEqualToString:@"map#getMinMaxZoomLevels"]) {
-    NSArray *zoomLevels = @[ @(self.mapView.minZoom), @(self.mapView.maxZoom) ];
-    result(zoomLevels);
   } else if ([call.method isEqualToString:@"map#getZoomLevel"]) {
     result(@(self.mapView.camera.zoom));
-  } else if ([call.method isEqualToString:@"map#isZoomGesturesEnabled"]) {
-    NSNumber *isZoomGesturesEnabled = @(self.mapView.settings.zoomGestures);
-    result(isZoomGesturesEnabled);
-  } else if ([call.method isEqualToString:@"map#isZoomControlsEnabled"]) {
-    NSNumber *isZoomControlsEnabled = @NO;
-    result(isZoomControlsEnabled);
-  } else if ([call.method isEqualToString:@"map#isTiltGesturesEnabled"]) {
-    NSNumber *isTiltGesturesEnabled = @(self.mapView.settings.tiltGestures);
-    result(isTiltGesturesEnabled);
-  } else if ([call.method isEqualToString:@"map#isRotateGesturesEnabled"]) {
-    NSNumber *isRotateGesturesEnabled = @(self.mapView.settings.rotateGestures);
-    result(isRotateGesturesEnabled);
-  } else if ([call.method isEqualToString:@"map#isScrollGesturesEnabled"]) {
-    NSNumber *isScrollGesturesEnabled = @(self.mapView.settings.scrollGestures);
-    result(isScrollGesturesEnabled);
-  } else if ([call.method isEqualToString:@"map#isMyLocationButtonEnabled"]) {
-    NSNumber *isMyLocationButtonEnabled = @(self.mapView.settings.myLocationButton);
-    result(isMyLocationButtonEnabled);
-  } else if ([call.method isEqualToString:@"map#isTrafficEnabled"]) {
-    NSNumber *isTrafficEnabled = @(self.mapView.trafficEnabled);
-    result(isTrafficEnabled);
-  } else if ([call.method isEqualToString:@"map#isBuildingsEnabled"]) {
-    NSNumber *isBuildingsEnabled = @(self.mapView.buildingsEnabled);
-    result(isBuildingsEnabled);
   } else if ([call.method isEqualToString:@"map#setStyle"]) {
     id mapStyle = [call arguments];
     self.styleError = [self setMapStyle:(mapStyle == [NSNull null] ? nil : mapStyle)];
@@ -401,9 +408,6 @@
     }
   } else if ([call.method isEqualToString:@"map#getStyleError"]) {
     result(self.styleError);
-  } else if ([call.method isEqualToString:@"map#getTileOverlayInfo"]) {
-    NSString *rawTileOverlayId = call.arguments[@"tileOverlayId"];
-    result([self.tileOverlaysController tileOverlayInfoWithIdentifier:rawTileOverlayId]);
   } else {
     result(FlutterMethodNotImplemented);
   }
@@ -656,6 +660,84 @@
   if (style) {
     self.styleError = [self setMapStyle:style];
   }
+}
+
+@end
+
+#pragma mark -
+
+@implementation FGMMapInspector
+
+- (instancetype)initWithMapController:(nonnull FLTGoogleMapController *)controller
+                            messenger:(NSObject<FlutterBinaryMessenger> *)messenger
+                         pigeonSuffix:(NSString *)suffix {
+  self = [super init];
+  if (self) {
+    _controller = controller;
+    _messenger = messenger;
+    _pigeonSuffix = suffix;
+  }
+  return self;
+}
+
+- (nullable NSNumber *)areBuildingsEnabledWithError:
+    (FlutterError *_Nullable __autoreleasing *_Nonnull)error {
+  return @(self.controller.mapView.buildingsEnabled);
+}
+
+- (nullable NSNumber *)areRotateGesturesEnabledWithError:
+    (FlutterError *_Nullable __autoreleasing *_Nonnull)error {
+  return @(self.controller.mapView.settings.rotateGestures);
+}
+
+- (nullable NSNumber *)areScrollGesturesEnabledWithError:
+    (FlutterError *_Nullable __autoreleasing *_Nonnull)error {
+  return @(self.controller.mapView.settings.scrollGestures);
+}
+
+- (nullable NSNumber *)areTiltGesturesEnabledWithError:
+    (FlutterError *_Nullable __autoreleasing *_Nonnull)error {
+  return @(self.controller.mapView.settings.tiltGestures);
+}
+
+- (nullable NSNumber *)areZoomGesturesEnabledWithError:
+    (FlutterError *_Nullable __autoreleasing *_Nonnull)error {
+  return @(self.controller.mapView.settings.zoomGestures);
+}
+
+- (nullable FGMPlatformTileLayer *)
+    getInfoForTileOverlayWithIdentifier:(nonnull NSString *)tileOverlayId
+                                  error:(FlutterError *_Nullable __autoreleasing *_Nonnull)error {
+  GMSTileLayer *layer =
+      [self.controller.tileOverlaysController tileOverlayWithIdentifier:tileOverlayId].layer;
+  if (!layer) {
+    return nil;
+  }
+  return [FGMPlatformTileLayer makeWithVisible:(layer.map != nil)
+                                        fadeIn:layer.fadeIn
+                                       opacity:layer.opacity
+                                        zIndex:layer.zIndex];
+}
+
+- (nullable NSNumber *)isCompassEnabledWithError:
+    (FlutterError *_Nullable __autoreleasing *_Nonnull)error {
+  return @(self.controller.mapView.settings.compassButton);
+}
+
+- (nullable NSNumber *)isMyLocationButtonEnabledWithError:
+    (FlutterError *_Nullable __autoreleasing *_Nonnull)error {
+  return @(self.controller.mapView.settings.myLocationButton);
+}
+
+- (nullable NSNumber *)isTrafficEnabledWithError:
+    (FlutterError *_Nullable __autoreleasing *_Nonnull)error {
+  return @(self.controller.mapView.trafficEnabled);
+}
+
+- (nullable FGMPlatformZoomRange *)zoomRange:
+    (FlutterError *_Nullable __autoreleasing *_Nonnull)error {
+  return [FGMPlatformZoomRange makeWithMin:self.controller.mapView.minZoom
+                                       max:self.controller.mapView.maxZoom];
 }
 
 @end
