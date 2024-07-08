@@ -13,10 +13,6 @@ major version of the Android `Lifecycle` API they expect.
 |-------------|---------|
 | **Support** | SDK 16+ |
 
-## Installation
-
-Add `flutter_plugin_android_lifecycle` as a [dependency in your pubspec.yaml file](https://flutter.dev/using-packages/).
-
 ## Example
 
 Use a `FlutterLifecycleAdapter` within another Flutter plugin's Android implementation, as shown

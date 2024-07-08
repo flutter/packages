@@ -110,5 +110,69 @@ void defineTests() {
         ]);
       },
     );
+
+    testWidgets(
+      'table',
+      (WidgetTester tester) async {
+        const String data = '|Header 1|Header 2|Header 3|'
+            '\n|-----|-----|-----|'
+            '\n|Col 1|Col 2|Col 3|';
+        await tester.pumpWidget(
+          boilerplate(
+            MediaQuery(
+              data: const MediaQueryData(),
+              child: MarkdownBody(
+                data: data,
+                styleSheet: MarkdownStyleSheet(
+                  tableColumnWidth: const FixedColumnWidth(150),
+                ),
+              ),
+            ),
+          ),
+        );
+
+        final Iterable<Widget> widgets = tester.allWidgets;
+        final Iterable<SingleChildScrollView> scrollViews =
+            widgets.whereType<SingleChildScrollView>();
+        expect(scrollViews, isNotEmpty);
+        expect(scrollViews.first.controller, isNotNull);
+      },
+    );
+
+    testWidgets(
+      'two tables use different scroll controllers',
+      (WidgetTester tester) async {
+        const String data = '|Header 1|Header 2|Header 3|'
+            '\n|-----|-----|-----|'
+            '\n|Col 1|Col 2|Col 3|'
+            '\n'
+            '\n|Header 1|Header 2|Header 3|'
+            '\n|-----|-----|-----|'
+            '\n|Col 1|Col 2|Col 3|';
+
+        await tester.pumpWidget(
+          boilerplate(
+            MediaQuery(
+              data: const MediaQueryData(),
+              child: MarkdownBody(
+                data: data,
+                styleSheet: MarkdownStyleSheet(
+                  tableColumnWidth: const FixedColumnWidth(150),
+                ),
+              ),
+            ),
+          ),
+        );
+
+        final Iterable<Widget> widgets = tester.allWidgets;
+        final Iterable<SingleChildScrollView> scrollViews =
+            widgets.whereType<SingleChildScrollView>();
+        expect(scrollViews, hasLength(2));
+        expect(scrollViews.first.controller, isNotNull);
+        expect(scrollViews.last.controller, isNotNull);
+        expect(scrollViews.first.controller,
+            isNot(equals(scrollViews.last.controller)));
+      },
+    );
   });
 }

@@ -1,3 +1,11 @@
+## 0.10.9+7
+
+* Updates Android Gradle plugin to 8.5.0.
+
+## 0.10.9+6
+
+* Reverts changes to support Impeller.
+
 ## 0.10.9+5
 
 * Updates annotations lib to 1.8.0.

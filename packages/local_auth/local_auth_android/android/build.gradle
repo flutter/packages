@@ -8,7 +8,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.3.1'
+        classpath 'com.android.tools.build:gradle:8.5.0'
     }
 }
 
@@ -67,7 +67,7 @@ dependencies {
     testImplementation 'org.robolectric:robolectric:4.10.3'
     androidTestImplementation 'androidx.test:runner:1.2.0'
     androidTestImplementation 'androidx.test:rules:1.2.0'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.6.1'
     // TODO(camsim99): org.jetbrains.kotlin:kotlin-bom artifact purpose is to align kotlin stdlib and related code versions.
     // This should be removed when https://github.com/flutter/flutter/issues/125062 is fixed.
     implementation(platform("org.jetbrains.kotlin:kotlin-bom:1.8.10"))
