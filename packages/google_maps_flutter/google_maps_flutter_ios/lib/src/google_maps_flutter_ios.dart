@@ -199,14 +199,6 @@ class GoogleMapsFlutterIOS extends GoogleMapsFlutterPlatform {
     return _events(mapId).whereType<MapLongPressEvent>();
   }
 
-  /// Returns the arguments of [call] as typed string-keyed Map.
-  ///
-  /// This does not do any type validation, so is only safe to call if the
-  /// arguments are known to be a map.
-  Map<String, Object?> _getArgumentDictionary(MethodCall call) {
-    return (call.arguments as Map<Object?, Object?>).cast<String, Object?>();
-  }
-
   @override
   Future<void> updateMapConfiguration(
     MapConfiguration configuration, {
