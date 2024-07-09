@@ -3,13 +3,11 @@
 // Do not manually edit this file.
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'dart:async' as _i6;
-import 'dart:typed_data' as _i3;
+import 'dart:async' as _i3;
+import 'dart:typed_data' as _i4;
 
-import 'package:http/src/response.dart' as _i2;
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:mockito/src/dummies.dart' as _i4;
-import 'package:webview_flutter_web/src/http_request_factory.dart' as _i5;
+import 'package:webview_flutter_web/src/http_request_factory.dart' as _i2;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -24,8 +22,8 @@ import 'package:webview_flutter_web/src/http_request_factory.dart' as _i5;
 // ignore_for_file: camel_case_types
 // ignore_for_file: subtype_of_sealed_class
 
-class _FakeResponse_0 extends _i1.SmartFake implements _i2.Response {
-  _FakeResponse_0(
+class _FakeObject_0 extends _i1.SmartFake implements Object {
+  _FakeObject_0(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -34,72 +32,19 @@ class _FakeResponse_0 extends _i1.SmartFake implements _i2.Response {
         );
 }
 
-/// A class which mocks [Response].
-///
-/// See the documentation for Mockito's code generation for more information.
-class MockResponse extends _i1.Mock implements _i2.Response {
-  @override
-  _i3.Uint8List get bodyBytes => (super.noSuchMethod(
-        Invocation.getter(#bodyBytes),
-        returnValue: _i3.Uint8List(0),
-        returnValueForMissingStub: _i3.Uint8List(0),
-      ) as _i3.Uint8List);
-
-  @override
-  String get body => (super.noSuchMethod(
-        Invocation.getter(#body),
-        returnValue: _i4.dummyValue<String>(
-          this,
-          Invocation.getter(#body),
-        ),
-        returnValueForMissingStub: _i4.dummyValue<String>(
-          this,
-          Invocation.getter(#body),
-        ),
-      ) as String);
-
-  @override
-  int get statusCode => (super.noSuchMethod(
-        Invocation.getter(#statusCode),
-        returnValue: 0,
-        returnValueForMissingStub: 0,
-      ) as int);
-
-  @override
-  Map<String, String> get headers => (super.noSuchMethod(
-        Invocation.getter(#headers),
-        returnValue: <String, String>{},
-        returnValueForMissingStub: <String, String>{},
-      ) as Map<String, String>);
-
-  @override
-  bool get isRedirect => (super.noSuchMethod(
-        Invocation.getter(#isRedirect),
-        returnValue: false,
-        returnValueForMissingStub: false,
-      ) as bool);
-
-  @override
-  bool get persistentConnection => (super.noSuchMethod(
-        Invocation.getter(#persistentConnection),
-        returnValue: false,
-        returnValueForMissingStub: false,
-      ) as bool);
-}
-
 /// A class which mocks [HttpRequestFactory].
 ///
 /// See the documentation for Mockito's code generation for more information.
 class MockHttpRequestFactory extends _i1.Mock
-    implements _i5.HttpRequestFactory {
+    implements _i2.HttpRequestFactory {
   @override
-  _i6.Future<_i2.Response> request(
+  _i3.Future<Object> request(
     String? url, {
-    String? method,
-    bool? withCredentials,
+    String? method = r'GET',
+    bool? withCredentials = false,
     String? mimeType,
     Map<String, String>? requestHeaders,
-    _i3.Uint8List? sendData,
+    _i4.Uint8List? sendData,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -113,7 +58,7 @@ class MockHttpRequestFactory extends _i1.Mock
             #sendData: sendData,
           },
         ),
-        returnValue: _i6.Future<_i2.Response>.value(_FakeResponse_0(
+        returnValue: _i3.Future<Object>.value(_FakeObject_0(
           this,
           Invocation.method(
             #request,
@@ -127,8 +72,7 @@ class MockHttpRequestFactory extends _i1.Mock
             },
           ),
         )),
-        returnValueForMissingStub:
-            _i6.Future<_i2.Response>.value(_FakeResponse_0(
+        returnValueForMissingStub: _i3.Future<Object>.value(_FakeObject_0(
           this,
           Invocation.method(
             #request,
@@ -142,5 +86,5 @@ class MockHttpRequestFactory extends _i1.Mock
             },
           ),
         )),
-      ) as _i6.Future<_i2.Response>);
+      ) as _i3.Future<Object>);
 }
