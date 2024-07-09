@@ -9,9 +9,9 @@
 
 // Defines polyline controllable by Flutter.
 @interface FLTGoogleMapPolylineController : NSObject
-- (instancetype)initPolylineWithPath:(GMSMutablePath *)path
-                          identifier:(NSString *)identifier
-                             mapView:(GMSMapView *)mapView;
+- (instancetype)initWithPath:(GMSMutablePath *)path
+                  identifier:(NSString *)identifier
+                     mapView:(GMSMapView *)mapView;
 - (void)removePolyline;
 
 /// Sets the pattern on polyline controller
@@ -22,9 +22,9 @@
 @end
 
 @interface FLTPolylinesController : NSObject
-- (instancetype)init:(FlutterMethodChannel *)methodChannel
-             mapView:(GMSMapView *)mapView
-           registrar:(NSObject<FlutterPluginRegistrar> *)registrar;
+- (instancetype)initWithMapView:(GMSMapView *)mapView
+                callbackHandler:(FGMMapsCallbackApi *)callbackHandler
+                      registrar:(NSObject<FlutterPluginRegistrar> *)registrar;
 - (void)addJSONPolylines:(NSArray<NSDictionary<NSString *, id> *> *)polylinesToAdd;
 - (void)addPolylines:(NSArray<FGMPlatformPolyline *> *)polylinesToAdd;
 - (void)changePolylines:(NSArray<FGMPlatformPolyline *> *)polylinesToChange;

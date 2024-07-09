@@ -28,6 +28,10 @@ extern FGMPlatformLatLng *FGMGetPigeonLatLngForCoordinate(CLLocationCoordinate2D
 extern FGMPlatformLatLngBounds *FGMGetPigeonLatLngBoundsForCoordinateBounds(
     GMSCoordinateBounds *bounds);
 
+/// Converts a GMSCameraPosition to its Pigeon representation.
+extern FGMPlatformCameraPosition *FGMGetPigeonCameraPositionForPosition(
+    GMSCameraPosition *position);
+
 @interface FLTGoogleMapJSONConversions : NSObject
 
 + (CLLocationCoordinate2D)locationFromLatLong:(NSArray *)latlong;
@@ -36,8 +40,6 @@ extern FGMPlatformLatLngBounds *FGMGetPigeonLatLngBoundsForCoordinateBounds(
 + (UIColor *)colorFromRGBA:(NSNumber *)data;
 + (NSArray<CLLocation *> *)pointsFromLatLongs:(NSArray *)data;
 + (NSArray<NSArray<CLLocation *> *> *)holesFromPointsArray:(NSArray *)data;
-+ (nullable NSDictionary<NSString *, id> *)dictionaryFromPosition:
-    (nullable GMSCameraPosition *)position;
 + (nullable GMSCameraPosition *)cameraPostionFromDictionary:(nullable NSDictionary *)channelValue;
 + (GMSCoordinateBounds *)coordinateBoundsFromLatLongs:(NSArray *)latlongs;
 + (GMSMapViewType)mapViewTypeFromTypeValue:(NSNumber *)value;
