@@ -2,6 +2,10 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+// TODO(dit): Reenable web tests, https://github.com/flutter/flutter/issues/151498
+@TestOn('vm') // Fails on CI with canvaskit on the web
+library;
+
 import 'dart:ui' as ui show Codec, FrameInfo, Image, instantiateImageCodec;
 
 import 'package:flutter/foundation.dart';
