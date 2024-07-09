@@ -1,3 +1,7 @@
+## 0.9.16+1
+
+* Fixes regression taking a picture in torch mode.
+
 ## 0.9.16
 
 * Converts Dart-to-host communcation to Pigeon.
