@@ -7,23 +7,20 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:http/http.dart' as http;
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
+import 'package:web/web.dart' as web;
 import 'package:webview_flutter_platform_interface/src/webview_flutter_platform_interface_legacy.dart';
 import 'package:webview_flutter_web/src/http_request_factory.dart';
 import 'package:webview_flutter_web/src/webview_flutter_web_legacy.dart';
 
-import 'mock_fake_iframe_element.dart';
 import 'webview_flutter_web_test.mocks.dart';
 
 @GenerateMocks(<Type>[
-  FakeIFrameElement,
   BuildContext,
   CreationParams,
   WebViewPlatformCallbacksHandler,
   HttpRequestFactory,
-  http.Response,
 ])
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -47,70 +44,47 @@ void main() {
   group('WebWebViewPlatformController', () {
     test('loadUrl sets url on iframe src attribute', () {
       // Setup
-      final MockFakeIFrameElement fakeElem = MockFakeIFrameElement();
-      final MockHTMLIFrameElement mockElement =
-          createJSInteropWrapper<FakeIFrameElement>(fakeElem)
-              as MockHTMLIFrameElement;
-
+      final web.HTMLIFrameElement fakeIFrame = web.HTMLIFrameElement();
       final WebWebViewPlatformController controller =
-          WebWebViewPlatformController(
-        mockElement,
-      );
+          WebWebViewPlatformController(fakeIFrame);
       // Run
-      controller.loadUrl('test url', null);
+      controller.loadUrl('http://example.com/', null);
       // Verify
-      verify(mockElement.src = 'test url');
+      expect(fakeIFrame.src, 'http://example.com/');
     });
 
     group('loadHtmlString', () {
       test('loadHtmlString loads html into iframe', () {
         // Setup
-        final MockFakeIFrameElement fakeElem = MockFakeIFrameElement();
-        final MockHTMLIFrameElement mockElement =
-            createJSInteropWrapper<FakeIFrameElement>(fakeElem)
-                as MockHTMLIFrameElement;
-
+        final web.HTMLIFrameElement fakeIFrame = web.HTMLIFrameElement();
         final WebWebViewPlatformController controller =
-            WebWebViewPlatformController(
-          mockElement,
-        );
+            WebWebViewPlatformController(fakeIFrame);
         // Run
         controller.loadHtmlString('test html');
         // Verify
-        verify(mockElement.src =
+        expect(fakeIFrame.src,
             'data:text/html;charset=utf-8,${Uri.encodeFull('test html')}');
       });
 
       test('loadHtmlString escapes "#" correctly', () {
         // Setup
-        final MockFakeIFrameElement fakeElem = MockFakeIFrameElement();
-        final MockHTMLIFrameElement mockElement =
-            createJSInteropWrapper<FakeIFrameElement>(fakeElem)
-                as MockHTMLIFrameElement;
-
+        final web.HTMLIFrameElement fakeIFrame = web.HTMLIFrameElement();
         final WebWebViewPlatformController controller =
-            WebWebViewPlatformController(
-          mockElement,
-        );
+            WebWebViewPlatformController(fakeIFrame);
         // Run
         controller.loadHtmlString('#');
         // Verify
-        verify(mockElement.src = argThat(contains('%23')));
+        expect(fakeIFrame.src, contains('%23'));
       });
     });
 
     group('loadRequest', () {
       test('loadRequest throws ArgumentError on missing scheme', () {
         // Setup
-        final MockFakeIFrameElement fakeElem = MockFakeIFrameElement();
-        final MockHTMLIFrameElement mockElement =
-            createJSInteropWrapper<FakeIFrameElement>(fakeElem)
-                as MockHTMLIFrameElement;
-
+        final web.HTMLIFrameElement fakeIFrame = web.HTMLIFrameElement();
         final WebWebViewPlatformController controller =
-            WebWebViewPlatformController(
-          mockElement,
-        );
+            WebWebViewPlatformController(fakeIFrame);
+
         // Run & Verify
         expect(
             () async => controller.loadRequest(
@@ -125,20 +99,18 @@ void main() {
       test('loadRequest makes request and loads response into iframe',
           () async {
         // Setup
-        final MockFakeIFrameElement fakeElem = MockFakeIFrameElement();
-        final MockHTMLIFrameElement mockElement =
-            createJSInteropWrapper<FakeIFrameElement>(fakeElem)
-                as MockHTMLIFrameElement;
-
+        final web.HTMLIFrameElement fakeIFrame = web.HTMLIFrameElement();
         final WebWebViewPlatformController controller =
-            WebWebViewPlatformController(
-          mockElement,
-        );
-        final MockResponse mockHttpRequest = MockResponse();
-        when(mockHttpRequest.headers)
-            .thenReturn(<String, String>{'content-type': 'text/plain'});
+            WebWebViewPlatformController(fakeIFrame);
 
-        when(mockHttpRequest.body).thenReturn('test data');
+        final web.Response fakeResponse = web.Response(
+            'test data'.toJS,
+            <String, Object>{
+              'headers': <String, Object>{
+                'content-type': 'text/plain',
+              },
+            }.jsify()! as web.ResponseInit);
+
         final MockHttpRequestFactory mockHttpRequestFactory =
             MockHttpRequestFactory();
         when(mockHttpRequestFactory.request(
@@ -146,8 +118,10 @@ void main() {
           method: anyNamed('method'),
           requestHeaders: anyNamed('requestHeaders'),
           sendData: anyNamed('sendData'),
-        )).thenAnswer((_) => Future<http.Response>.value(mockHttpRequest));
+        )).thenAnswer((_) => Future<web.Response>.value(fakeResponse));
+
         controller.httpRequestFactory = mockHttpRequestFactory;
+
         // Run
         await controller.loadRequest(
           WebViewRequest(
@@ -163,26 +137,25 @@ void main() {
           requestHeaders: <String, String>{'Foo': 'Bar'},
           sendData: Uint8List.fromList('test body'.codeUnits),
         ));
-        verify(mockElement.src =
+
+        expect(fakeIFrame.src,
             'data:;charset=utf-8,${Uri.encodeFull('test data')}');
       });
 
       test('loadRequest escapes "#" correctly', () async {
         // Setup
-        final MockFakeIFrameElement fakeElem = MockFakeIFrameElement();
-        final MockHTMLIFrameElement mockElement =
-            createJSInteropWrapper<FakeIFrameElement>(fakeElem)
-                as MockHTMLIFrameElement;
-
+        final web.HTMLIFrameElement fakeIFrame = web.HTMLIFrameElement();
         final WebWebViewPlatformController controller =
-            WebWebViewPlatformController(
-          mockElement,
-        );
-        final MockResponse mockHttpRequest = MockResponse();
-        when(mockHttpRequest.headers)
-            .thenReturn(<String, String>{'content-type': 'text/html'});
+            WebWebViewPlatformController(fakeIFrame);
 
-        when(mockHttpRequest.body).thenReturn('#');
+        final web.Response fakeResponse = web.Response(
+            '#'.toJS,
+            <String, Object>{
+              'headers': <String, Object>{
+                'content-type': 'text/html',
+              },
+            }.jsify()! as web.ResponseInit);
+
         final MockHttpRequestFactory mockHttpRequestFactory =
             MockHttpRequestFactory();
         when(mockHttpRequestFactory.request(
@@ -190,8 +163,10 @@ void main() {
           method: anyNamed('method'),
           requestHeaders: anyNamed('requestHeaders'),
           sendData: anyNamed('sendData'),
-        )).thenAnswer((_) => Future<http.Response>.value(mockHttpRequest));
+        )).thenAnswer((_) => Future<web.Response>.value(fakeResponse));
+
         controller.httpRequestFactory = mockHttpRequestFactory;
+
         // Run
         await controller.loadRequest(
           WebViewRequest(
@@ -200,8 +175,8 @@ void main() {
               body: Uint8List.fromList('test body'.codeUnits),
               headers: <String, String>{'Foo': 'Bar'}),
         );
-        // Verify
-        verify(mockElement.src = argThat(contains('%23')));
+
+        expect(fakeIFrame.src, contains('%23'));
       });
     });
   });
