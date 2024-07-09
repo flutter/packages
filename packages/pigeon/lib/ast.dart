@@ -515,10 +515,22 @@ class TypeDeclaration {
     );
   }
 
+  /// Returns duplicated `TypeDeclaration` with attached `associatedProxyApi` value.
+  TypeDeclaration copyWithTypeArguments(List<TypeDeclaration> types) {
+    return TypeDeclaration(
+      baseName: baseName,
+      isNullable: isNullable,
+      typeArguments: types,
+      associatedClass: associatedClass,
+      associatedEnum: associatedEnum,
+      associatedProxyApi: associatedProxyApi,
+    );
+  }
+
   @override
   String toString() {
     final String typeArgumentsStr =
-        typeArguments.isEmpty ? '' : 'typeArguments:$typeArguments';
+        typeArguments.isEmpty ? '' : ' typeArguments:$typeArguments';
     return '(TypeDeclaration baseName:$baseName isNullable:$isNullable$typeArgumentsStr isEnum:$isEnum isClass:$isClass isProxyApi:$isProxyApi)';
   }
 }

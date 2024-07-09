@@ -52,13 +52,27 @@ void main() {
       final MockTestDeviceOrientationManagerHostApi mockApi =
           MockTestDeviceOrientationManagerHostApi();
       TestDeviceOrientationManagerHostApi.setup(mockApi);
-      const int expectedRotation = Surface.ROTATION_180;
+      const int expectedRotation = Surface.rotation180;
 
       when(mockApi.getDefaultDisplayRotation()).thenReturn(expectedRotation);
 
       expect(await DeviceOrientationManager.getDefaultDisplayRotation(),
           equals(expectedRotation));
       verify(mockApi.getDefaultDisplayRotation());
+    });
+
+    test('getUiOrientation returns expected orientation', () async {
+      final MockTestDeviceOrientationManagerHostApi mockApi =
+          MockTestDeviceOrientationManagerHostApi();
+      TestDeviceOrientationManagerHostApi.setup(mockApi);
+      const DeviceOrientation expectedOrientation =
+          DeviceOrientation.landscapeRight;
+
+      when(mockApi.getUiOrientation()).thenReturn('LANDSCAPE_RIGHT');
+
+      expect(await DeviceOrientationManager.getUiOrientation(),
+          equals(expectedOrientation));
+      verify(mockApi.getUiOrientation());
     });
 
     test('onDeviceOrientationChanged adds new orientation to stream', () {

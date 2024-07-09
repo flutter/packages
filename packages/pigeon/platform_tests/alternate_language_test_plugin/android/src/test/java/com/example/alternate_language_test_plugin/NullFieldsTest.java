@@ -81,20 +81,23 @@ public class NullFieldsTest {
 
   @Test
   public void replyFromMapWithValues() {
-    ArrayList<Object> requestList = new ArrayList<Object>();
+    NullFields.NullFieldsSearchRequest request =
+        new NullFields.NullFieldsSearchRequest.Builder()
+            .setQuery("hello")
+            .setIdentifier(1L)
+            .build();
 
-    requestList.add("hello");
-    requestList.add(1L);
+    NullFields.NullFieldsSearchReply input =
+        new NullFields.NullFieldsSearchReply.Builder()
+            .setResult("result")
+            .setError("error")
+            .setIndices(Arrays.asList(1L, 2L, 3L))
+            .setRequest(request)
+            .setType(NullFields.NullFieldsSearchReplyType.SUCCESS)
+            .build();
 
-    ArrayList<Object> list = new ArrayList<Object>();
-
-    list.add("result");
-    list.add("error");
-    list.add(Arrays.asList(1L, 2L, 3L));
-    list.add(requestList);
-    list.add(NullFields.NullFieldsSearchReplyType.SUCCESS.ordinal());
-
-    NullFields.NullFieldsSearchReply reply = NullFields.NullFieldsSearchReply.fromList(list);
+    NullFields.NullFieldsSearchReply reply =
+        NullFields.NullFieldsSearchReply.fromList(input.toList());
     assertEquals(reply.getResult(), "result");
     assertEquals(reply.getError(), "error");
     assertEquals(reply.getIndices(), Arrays.asList(1L, 2L, 3L));
@@ -143,16 +146,18 @@ public class NullFieldsTest {
 
   @Test
   public void replyToMapWithValues() {
+    NullFields.NullFieldsSearchRequest request =
+        new NullFields.NullFieldsSearchRequest.Builder()
+            .setQuery("hello")
+            .setIdentifier(1L)
+            .build();
+
     NullFields.NullFieldsSearchReply reply =
         new NullFields.NullFieldsSearchReply.Builder()
             .setResult("result")
             .setError("error")
             .setIndices(Arrays.asList(1L, 2L, 3L))
-            .setRequest(
-                new NullFields.NullFieldsSearchRequest.Builder()
-                    .setQuery("hello")
-                    .setIdentifier(1L)
-                    .build())
+            .setRequest(request)
             .setType(NullFields.NullFieldsSearchReplyType.SUCCESS)
             .build();
 
@@ -160,8 +165,8 @@ public class NullFieldsTest {
     assertEquals(list.get(0), "result");
     assertEquals(list.get(1), "error");
     assertEquals(list.get(2), Arrays.asList(1L, 2L, 3L));
-    assertEquals(list.get(3), reply.getRequest().toList());
-    assertEquals(list.get(4), NullFields.NullFieldsSearchReplyType.SUCCESS.ordinal());
+    assertEquals(list.get(3), reply.getRequest());
+    assertEquals(list.get(4), NullFields.NullFieldsSearchReplyType.SUCCESS);
   }
 
   @Test

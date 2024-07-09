@@ -13,11 +13,14 @@ Displays the native iOS document picker.
   s.license          = { :type => 'BSD', :file => '../LICENSE' }
   s.author           = { 'Flutter Dev Team' => 'flutter-dev@googlegroups.com' }
   s.source           = { :http => 'https://github.com/flutter/packages/tree/main/packages/file_selector/file_selector_ios' }
-  s.source_files = 'Classes/**/*.{h,m}'
-  s.module_map = 'Classes/FileSelectorPlugin.modulemap'
+  s.source_files = 'file_selector_ios/Sources/file_selector_ios/**/*.swift'
   s.dependency 'Flutter'
   s.platform = :ios, '12.0'
   s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES' }
   s.swift_version = '5.0'
-  s.resource_bundles = {'file_selector_ios_privacy' => ['Resources/PrivacyInfo.xcprivacy']}
+  s.xcconfig = {
+    'LIBRARY_SEARCH_PATHS' => '$(TOOLCHAIN_DIR)/usr/lib/swift/$(PLATFORM_NAME)/ $(SDKROOT)/usr/lib/swift',
+    'LD_RUNPATH_SEARCH_PATHS' => '/usr/lib/swift',
+  }
+  s.resource_bundles = {'file_selector_ios_privacy' => ['file_selector_ios/Sources/file_selector_ios/Resources/PrivacyInfo.xcprivacy']}
 end

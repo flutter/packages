@@ -2,11 +2,11 @@ name: file_selector_macos
 description: macOS implementation of the file_selector plugin.
 repository: https://github.com/flutter/packages/tree/main/packages/file_selector/file_selector_macos
 issue_tracker: https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+label%3A%22p%3A+file_selector%22
-version: 0.9.3+3
+version: 0.9.4
 
 environment:
-  sdk: ^3.1.0
-  flutter: ">=3.13.0"
+  sdk: ^3.2.0
+  flutter: ">=3.16.0"
 
 flutter:
   plugin:
