@@ -35,8 +35,8 @@ dev_dependencies:
 dependency_overrides:
   google_maps:
     git:
-      url: https://github.com/Rexios80/dart-google-maps
-      ref: 0e156160a6d3e6d9b8b7f26603d4f825029c217f
+      url: https://github.com/a14n/dart-google-maps
+      ref: 5972ce588c6505fa73b783ca2be68272b5e6f2da
 
 topics:
   - google-maps
