@@ -59,6 +59,31 @@
 
 #pragma mark -
 
+/// Implementation of the Pigeon maps API.
+///
+/// This is a separate object from the maps controller because the Pigeon API registration keeps a
+/// strong reference to the implementor, but as the FlutterPlatformView, the lifetime of the
+/// FLTGoogleMapController instance is what needs to trigger Pigeon unregistration, so can't be
+/// the target of the registration.
+@interface FGMMapCallHandler : NSObject <FGMMapsApi>
+- (instancetype)initWithMapController:(nonnull FLTGoogleMapController *)controller
+                            messenger:(NSObject<FlutterBinaryMessenger> *)messenger
+                         pigeonSuffix:(NSString *)suffix;
+@end
+
+/// Private declarations.
+// This is separate in case the above is made public in the future (e.g., for unit testing).
+@interface FGMMapCallHandler ()
+/// The map controller this inspector corresponds to.
+@property(nonatomic, weak) FLTGoogleMapController *controller;
+/// The messenger this instance was registered with by Pigeon.
+@property(nonatomic, copy) NSObject<FlutterBinaryMessenger> *messenger;
+/// The suffix this instance was registered under with Pigeon.
+@property(nonatomic, copy) NSString *pigeonSuffix;
+@end
+
+#pragma mark -
+
 /// Implementation of the Pigeon maps inspector API.
 ///
 /// This is a separate object from the maps controller because the Pigeon API registration keeps a
@@ -100,6 +125,8 @@
 // creation time and there's no mechanism to return non-fatal error details during platform view
 // initialization.
 @property(nonatomic, copy) NSString *styleError;
+// The main Pigeon API implementation, separate to avoid lifetime extension.
+@property(nonatomic, strong) FGMMapCallHandler *callHandler;
 // The inspector API implementation, separate to avoid lifetime extension.
 @property(nonatomic, strong) FGMMapInspector *inspector;
 
@@ -142,11 +169,7 @@
         [NSString stringWithFormat:@"plugins.flutter.dev/google_maps_ios_%lld", viewId];
     _channel = [FlutterMethodChannel methodChannelWithName:channelName
                                            binaryMessenger:registrar.messenger];
-    __weak __typeof__(self) weakSelf = self;
-    [_channel setMethodCallHandler:^(FlutterMethodCall *call, FlutterResult result) {
-      [weakSelf onMethodCall:call result:result];
-    }];
-    _mapView.delegate = weakSelf;
+    _mapView.delegate = self;
     _mapView.paddingAdjustmentBehavior = kGMSMapViewPaddingAdjustmentBehaviorNever;
     _registrar = registrar;
     _markersController = [[FLTMarkersController alloc] initWithMethodChannel:_channel
@@ -166,28 +189,32 @@
                                                             registrar:registrar];
     id markersToAdd = args[@"markersToAdd"];
     if ([markersToAdd isKindOfClass:[NSArray class]]) {
-      [_markersController addMarkers:markersToAdd];
+      [_markersController addJSONMarkers:markersToAdd];
     }
     id polygonsToAdd = args[@"polygonsToAdd"];
     if ([polygonsToAdd isKindOfClass:[NSArray class]]) {
-      [_polygonsController addPolygons:polygonsToAdd];
+      [_polygonsController addJSONPolygons:polygonsToAdd];
     }
     id polylinesToAdd = args[@"polylinesToAdd"];
     if ([polylinesToAdd isKindOfClass:[NSArray class]]) {
-      [_polylinesController addPolylines:polylinesToAdd];
+      [_polylinesController addJSONPolylines:polylinesToAdd];
     }
     id circlesToAdd = args[@"circlesToAdd"];
     if ([circlesToAdd isKindOfClass:[NSArray class]]) {
-      [_circlesController addCircles:circlesToAdd];
+      [_circlesController addJSONCircles:circlesToAdd];
     }
     id tileOverlaysToAdd = args[@"tileOverlaysToAdd"];
     if ([tileOverlaysToAdd isKindOfClass:[NSArray class]]) {
-      [_tileOverlaysController addTileOverlays:tileOverlaysToAdd];
+      [_tileOverlaysController addJSONTileOverlays:tileOverlaysToAdd];
     }
 
     [_mapView addObserver:self forKeyPath:@"frame" options:0 context:nil];
 
     NSString *suffix = [NSString stringWithFormat:@"%lld", viewId];
+    _callHandler = [[FGMMapCallHandler alloc] initWithMapController:self
+                                                          messenger:registrar.messenger
+                                                       pigeonSuffix:suffix];
+    SetUpFGMMapsApiWithSuffix(registrar.messenger, _callHandler, suffix);
     _inspector = [[FGMMapInspector alloc] initWithMapController:self
                                                       messenger:registrar.messenger
                                                    pigeonSuffix:suffix];
@@ -199,6 +226,7 @@
 - (void)dealloc {
   // Unregister the API implementations so that they can be released; the registration created an
   // owning reference.
+  SetUpFGMMapsApiWithSuffix(_callHandler.messenger, nil, _callHandler.pigeonSuffix);
   SetUpFGMMapsInspectorApiWithSuffix(_inspector.messenger, nil, _inspector.pigeonSuffix);
 }
 
@@ -227,192 +255,6 @@
   }
 }
 
-- (void)onMethodCall:(FlutterMethodCall *)call result:(FlutterResult)result {
-  if ([call.method isEqualToString:@"map#show"]) {
-    [self showAtOrigin:CGPointMake([call.arguments[@"x"] doubleValue],
-                                   [call.arguments[@"y"] doubleValue])];
-    result(nil);
-  } else if ([call.method isEqualToString:@"map#hide"]) {
-    [self hide];
-    result(nil);
-  } else if ([call.method isEqualToString:@"camera#animate"]) {
-    [self
-        animateWithCameraUpdate:[FLTGoogleMapJSONConversions
-                                    cameraUpdateFromChannelValue:call.arguments[@"cameraUpdate"]]];
-    result(nil);
-  } else if ([call.method isEqualToString:@"camera#move"]) {
-    [self moveWithCameraUpdate:[FLTGoogleMapJSONConversions
-                                   cameraUpdateFromChannelValue:call.arguments[@"cameraUpdate"]]];
-    result(nil);
-  } else if ([call.method isEqualToString:@"map#update"]) {
-    [self interpretMapOptions:call.arguments[@"options"]];
-    result([FLTGoogleMapJSONConversions dictionaryFromPosition:[self cameraPosition]]);
-  } else if ([call.method isEqualToString:@"map#getVisibleRegion"]) {
-    if (self.mapView != nil) {
-      GMSVisibleRegion visibleRegion = self.mapView.projection.visibleRegion;
-      GMSCoordinateBounds *bounds = [[GMSCoordinateBounds alloc] initWithRegion:visibleRegion];
-      result([FLTGoogleMapJSONConversions dictionaryFromCoordinateBounds:bounds]);
-    } else {
-      result([FlutterError errorWithCode:@"GoogleMap uninitialized"
-                                 message:@"getVisibleRegion called prior to map initialization"
-                                 details:nil]);
-    }
-  } else if ([call.method isEqualToString:@"map#getScreenCoordinate"]) {
-    if (self.mapView != nil) {
-      CLLocationCoordinate2D location =
-          [FLTGoogleMapJSONConversions locationFromLatLong:call.arguments];
-      CGPoint point = [self.mapView.projection pointForCoordinate:location];
-      result([FLTGoogleMapJSONConversions dictionaryFromPoint:point]);
-    } else {
-      result([FlutterError errorWithCode:@"GoogleMap uninitialized"
-                                 message:@"getScreenCoordinate called prior to map initialization"
-                                 details:nil]);
-    }
-  } else if ([call.method isEqualToString:@"map#getLatLng"]) {
-    if (self.mapView != nil && call.arguments) {
-      CGPoint point = [FLTGoogleMapJSONConversions pointFromDictionary:call.arguments];
-      CLLocationCoordinate2D latlng = [self.mapView.projection coordinateForPoint:point];
-      result([FLTGoogleMapJSONConversions arrayFromLocation:latlng]);
-    } else {
-      result([FlutterError errorWithCode:@"GoogleMap uninitialized"
-                                 message:@"getLatLng called prior to map initialization"
-                                 details:nil]);
-    }
-  } else if ([call.method isEqualToString:@"map#waitForMap"]) {
-    result(nil);
-  } else if ([call.method isEqualToString:@"map#takeSnapshot"]) {
-    if (self.mapView != nil) {
-      UIGraphicsImageRenderer *renderer =
-          [[UIGraphicsImageRenderer alloc] initWithSize:self.mapView.bounds.size];
-      // For some unknown reason mapView.layer::renderInContext API returns a blank image on iOS 17.
-      // So we have to use drawViewHierarchyInRect API.
-      UIImage *image = [renderer imageWithActions:^(UIGraphicsImageRendererContext *context) {
-        [self.mapView drawViewHierarchyInRect:self.mapView.bounds afterScreenUpdates:YES];
-      }];
-      result([FlutterStandardTypedData typedDataWithBytes:UIImagePNGRepresentation(image)]);
-    } else {
-      result([FlutterError errorWithCode:@"GoogleMap uninitialized"
-                                 message:@"takeSnapshot called prior to map initialization"
-                                 details:nil]);
-    }
-  } else if ([call.method isEqualToString:@"markers#update"]) {
-    id markersToAdd = call.arguments[@"markersToAdd"];
-    if ([markersToAdd isKindOfClass:[NSArray class]]) {
-      [self.markersController addMarkers:markersToAdd];
-    }
-    id markersToChange = call.arguments[@"markersToChange"];
-    if ([markersToChange isKindOfClass:[NSArray class]]) {
-      [self.markersController changeMarkers:markersToChange];
-    }
-    id markerIdsToRemove = call.arguments[@"markerIdsToRemove"];
-    if ([markerIdsToRemove isKindOfClass:[NSArray class]]) {
-      [self.markersController removeMarkersWithIdentifiers:markerIdsToRemove];
-    }
-    result(nil);
-  } else if ([call.method isEqualToString:@"markers#showInfoWindow"]) {
-    id markerId = call.arguments[@"markerId"];
-    if ([markerId isKindOfClass:[NSString class]]) {
-      [self.markersController showMarkerInfoWindowWithIdentifier:markerId result:result];
-    } else {
-      result([FlutterError errorWithCode:@"Invalid markerId"
-                                 message:@"showInfoWindow called with invalid markerId"
-                                 details:nil]);
-    }
-  } else if ([call.method isEqualToString:@"markers#hideInfoWindow"]) {
-    id markerId = call.arguments[@"markerId"];
-    if ([markerId isKindOfClass:[NSString class]]) {
-      [self.markersController hideMarkerInfoWindowWithIdentifier:markerId result:result];
-    } else {
-      result([FlutterError errorWithCode:@"Invalid markerId"
-                                 message:@"hideInfoWindow called with invalid markerId"
-                                 details:nil]);
-    }
-  } else if ([call.method isEqualToString:@"markers#isInfoWindowShown"]) {
-    id markerId = call.arguments[@"markerId"];
-    if ([markerId isKindOfClass:[NSString class]]) {
-      [self.markersController isInfoWindowShownForMarkerWithIdentifier:markerId result:result];
-    } else {
-      result([FlutterError errorWithCode:@"Invalid markerId"
-                                 message:@"isInfoWindowShown called with invalid markerId"
-                                 details:nil]);
-    }
-  } else if ([call.method isEqualToString:@"polygons#update"]) {
-    id polygonsToAdd = call.arguments[@"polygonsToAdd"];
-    if ([polygonsToAdd isKindOfClass:[NSArray class]]) {
-      [self.polygonsController addPolygons:polygonsToAdd];
-    }
-    id polygonsToChange = call.arguments[@"polygonsToChange"];
-    if ([polygonsToChange isKindOfClass:[NSArray class]]) {
-      [self.polygonsController changePolygons:polygonsToChange];
-    }
-    id polygonIdsToRemove = call.arguments[@"polygonIdsToRemove"];
-    if ([polygonIdsToRemove isKindOfClass:[NSArray class]]) {
-      [self.polygonsController removePolygonWithIdentifiers:polygonIdsToRemove];
-    }
-    result(nil);
-  } else if ([call.method isEqualToString:@"polylines#update"]) {
-    id polylinesToAdd = call.arguments[@"polylinesToAdd"];
-    if ([polylinesToAdd isKindOfClass:[NSArray class]]) {
-      [self.polylinesController addPolylines:polylinesToAdd];
-    }
-    id polylinesToChange = call.arguments[@"polylinesToChange"];
-    if ([polylinesToChange isKindOfClass:[NSArray class]]) {
-      [self.polylinesController changePolylines:polylinesToChange];
-    }
-    id polylineIdsToRemove = call.arguments[@"polylineIdsToRemove"];
-    if ([polylineIdsToRemove isKindOfClass:[NSArray class]]) {
-      [self.polylinesController removePolylineWithIdentifiers:polylineIdsToRemove];
-    }
-    result(nil);
-  } else if ([call.method isEqualToString:@"circles#update"]) {
-    id circlesToAdd = call.arguments[@"circlesToAdd"];
-    if ([circlesToAdd isKindOfClass:[NSArray class]]) {
-      [self.circlesController addCircles:circlesToAdd];
-    }
-    id circlesToChange = call.arguments[@"circlesToChange"];
-    if ([circlesToChange isKindOfClass:[NSArray class]]) {
-      [self.circlesController changeCircles:circlesToChange];
-    }
-    id circleIdsToRemove = call.arguments[@"circleIdsToRemove"];
-    if ([circleIdsToRemove isKindOfClass:[NSArray class]]) {
-      [self.circlesController removeCircleWithIdentifiers:circleIdsToRemove];
-    }
-    result(nil);
-  } else if ([call.method isEqualToString:@"tileOverlays#update"]) {
-    id tileOverlaysToAdd = call.arguments[@"tileOverlaysToAdd"];
-    if ([tileOverlaysToAdd isKindOfClass:[NSArray class]]) {
-      [self.tileOverlaysController addTileOverlays:tileOverlaysToAdd];
-    }
-    id tileOverlaysToChange = call.arguments[@"tileOverlaysToChange"];
-    if ([tileOverlaysToChange isKindOfClass:[NSArray class]]) {
-      [self.tileOverlaysController changeTileOverlays:tileOverlaysToChange];
-    }
-    id tileOverlayIdsToRemove = call.arguments[@"tileOverlayIdsToRemove"];
-    if ([tileOverlayIdsToRemove isKindOfClass:[NSArray class]]) {
-      [self.tileOverlaysController removeTileOverlayWithIdentifiers:tileOverlayIdsToRemove];
-    }
-    result(nil);
-  } else if ([call.method isEqualToString:@"tileOverlays#clearTileCache"]) {
-    id rawTileOverlayId = call.arguments[@"tileOverlayId"];
-    [self.tileOverlaysController clearTileCacheWithIdentifier:rawTileOverlayId];
-    result(nil);
-  } else if ([call.method isEqualToString:@"map#getZoomLevel"]) {
-    result(@(self.mapView.camera.zoom));
-  } else if ([call.method isEqualToString:@"map#setStyle"]) {
-    id mapStyle = [call arguments];
-    self.styleError = [self setMapStyle:(mapStyle == [NSNull null] ? nil : mapStyle)];
-    if (self.styleError == nil) {
-      result(@[ @(YES) ]);
-    } else {
-      result(@[ @(NO), self.styleError ]);
-    }
-  } else if ([call.method isEqualToString:@"map#getStyleError"]) {
-    result(self.styleError);
-  } else {
-    result(FlutterMethodNotImplemented);
-  }
-}
-
 - (void)showAtOrigin:(CGPoint)origin {
   CGRect frame = {origin, self.mapView.frame.size};
   self.mapView.frame = frame;
@@ -421,14 +263,6 @@
 
 - (void)hide {
   self.mapView.hidden = YES;
-}
-
-- (void)animateWithCameraUpdate:(GMSCameraUpdate *)cameraUpdate {
-  [self.mapView animateWithCameraUpdate:cameraUpdate];
-}
-
-- (void)moveWithCameraUpdate:(GMSCameraUpdate *)cameraUpdate {
-  [self.mapView moveCamera:cameraUpdate];
 }
 
 - (GMSCameraPosition *)cameraPosition {
@@ -503,19 +337,23 @@
   self.mapView.settings.myLocationButton = enabled;
 }
 
+/// Sets the map style, returing any error string as well as storing that error in `mapStyle` for
+/// later access.
 - (NSString *)setMapStyle:(NSString *)mapStyle {
+  NSString *errorString = nil;
   if (mapStyle.length == 0) {
     self.mapView.mapStyle = nil;
-    return nil;
-  }
-  NSError *error;
-  GMSMapStyle *style = [GMSMapStyle styleWithJSONString:mapStyle error:&error];
-  if (!style) {
-    return [error localizedDescription];
   } else {
-    self.mapView.mapStyle = style;
-    return nil;
+    NSError *error;
+    GMSMapStyle *style = [GMSMapStyle styleWithJSONString:mapStyle error:&error];
+    if (style) {
+      self.mapView.mapStyle = style;
+    } else {
+      errorString = [error localizedDescription];
+    }
   }
+  self.styleError = errorString;
+  return errorString;
 }
 
 #pragma mark - GMSMapViewDelegate methods
@@ -658,8 +496,204 @@
   }
   NSString *style = FGMGetValueOrNilFromDict(data, @"style");
   if (style) {
-    self.styleError = [self setMapStyle:style];
+    [self setMapStyle:style];
   }
+}
+
+@end
+
+#pragma mark -
+
+@implementation FGMMapCallHandler
+
+- (instancetype)initWithMapController:(nonnull FLTGoogleMapController *)controller
+                            messenger:(NSObject<FlutterBinaryMessenger> *)messenger
+                         pigeonSuffix:(NSString *)suffix {
+  self = [super init];
+  if (self) {
+    _controller = controller;
+    _messenger = messenger;
+    _pigeonSuffix = suffix;
+  }
+  return self;
+}
+
+- (void)waitForMapWithError:(FlutterError *_Nullable __autoreleasing *_Nonnull)error {
+  // No-op; this call just ensures synchronization with the platform thread.
+}
+
+- (void)updateCirclesByAdding:(nonnull NSArray<FGMPlatformCircle *> *)toAdd
+                     changing:(nonnull NSArray<FGMPlatformCircle *> *)toChange
+                     removing:(nonnull NSArray<NSString *> *)idsToRemove
+                        error:(FlutterError *_Nullable __autoreleasing *_Nonnull)error {
+  [self.controller.circlesController addCircles:toAdd];
+  [self.controller.circlesController changeCircles:toChange];
+  [self.controller.circlesController removeCirclesWithIdentifiers:idsToRemove];
+}
+
+- (void)updateWithMapConfiguration:(nonnull FGMPlatformMapConfiguration *)configuration
+                             error:(FlutterError *_Nullable __autoreleasing *_Nonnull)error {
+  [self.controller interpretMapOptions:configuration.json];
+}
+
+- (void)updateMarkersByAdding:(nonnull NSArray<FGMPlatformMarker *> *)toAdd
+                     changing:(nonnull NSArray<FGMPlatformMarker *> *)toChange
+                     removing:(nonnull NSArray<NSString *> *)idsToRemove
+                        error:(FlutterError *_Nullable __autoreleasing *_Nonnull)error {
+  [self.controller.markersController addMarkers:toAdd];
+  [self.controller.markersController changeMarkers:toChange];
+  [self.controller.markersController removeMarkersWithIdentifiers:idsToRemove];
+}
+
+- (void)updatePolygonsByAdding:(nonnull NSArray<FGMPlatformPolygon *> *)toAdd
+                      changing:(nonnull NSArray<FGMPlatformPolygon *> *)toChange
+                      removing:(nonnull NSArray<NSString *> *)idsToRemove
+                         error:(FlutterError *_Nullable __autoreleasing *_Nonnull)error {
+  [self.controller.polygonsController addPolygons:toAdd];
+  [self.controller.polygonsController changePolygons:toChange];
+  [self.controller.polygonsController removePolygonWithIdentifiers:idsToRemove];
+}
+
+- (void)updatePolylinesByAdding:(nonnull NSArray<FGMPlatformPolyline *> *)toAdd
+                       changing:(nonnull NSArray<FGMPlatformPolyline *> *)toChange
+                       removing:(nonnull NSArray<NSString *> *)idsToRemove
+                          error:(FlutterError *_Nullable __autoreleasing *_Nonnull)error {
+  [self.controller.polylinesController addPolylines:toAdd];
+  [self.controller.polylinesController changePolylines:toChange];
+  [self.controller.polylinesController removePolylineWithIdentifiers:idsToRemove];
+}
+
+- (void)updateTileOverlaysByAdding:(nonnull NSArray<FGMPlatformTileOverlay *> *)toAdd
+                          changing:(nonnull NSArray<FGMPlatformTileOverlay *> *)toChange
+                          removing:(nonnull NSArray<NSString *> *)idsToRemove
+                             error:(FlutterError *_Nullable __autoreleasing *_Nonnull)error {
+  [self.controller.tileOverlaysController addTileOverlays:toAdd];
+  [self.controller.tileOverlaysController changeTileOverlays:toChange];
+  [self.controller.tileOverlaysController removeTileOverlayWithIdentifiers:idsToRemove];
+}
+
+- (nullable FGMPlatformLatLng *)
+    latLngForScreenCoordinate:(nonnull FGMPlatformPoint *)screenCoordinate
+                        error:(FlutterError *_Nullable __autoreleasing *_Nonnull)error {
+  if (!self.controller.mapView) {
+    *error = [FlutterError errorWithCode:@"GoogleMap uninitialized"
+                                 message:@"getLatLng called prior to map initialization"
+                                 details:nil];
+    return nil;
+  }
+  CGPoint point = FGMGetCGPointForPigeonPoint(screenCoordinate);
+  CLLocationCoordinate2D latlng = [self.controller.mapView.projection coordinateForPoint:point];
+  return FGMGetPigeonLatLngForCoordinate(latlng);
+}
+
+- (nullable FGMPlatformPoint *)
+    screenCoordinatesForLatLng:(nonnull FGMPlatformLatLng *)latLng
+                         error:(FlutterError *_Nullable __autoreleasing *_Nonnull)error {
+  if (!self.controller.mapView) {
+    *error = [FlutterError errorWithCode:@"GoogleMap uninitialized"
+                                 message:@"getScreenCoordinate called prior to map initialization"
+                                 details:nil];
+    return nil;
+  }
+  CLLocationCoordinate2D location = FGMGetCoordinateForPigeonLatLng(latLng);
+  CGPoint point = [self.controller.mapView.projection pointForCoordinate:location];
+  return FGMGetPigeonPointForCGPoint(point);
+}
+
+- (nullable FGMPlatformLatLngBounds *)visibleMapRegion:
+    (FlutterError *_Nullable __autoreleasing *_Nonnull)error {
+  if (!self.controller.mapView) {
+    *error = [FlutterError errorWithCode:@"GoogleMap uninitialized"
+                                 message:@"getVisibleRegion called prior to map initialization"
+                                 details:nil];
+    return nil;
+  }
+  GMSVisibleRegion visibleRegion = self.controller.mapView.projection.visibleRegion;
+  GMSCoordinateBounds *bounds = [[GMSCoordinateBounds alloc] initWithRegion:visibleRegion];
+  return FGMGetPigeonLatLngBoundsForCoordinateBounds(bounds);
+}
+
+- (void)moveCameraWithUpdate:(nonnull FGMPlatformCameraUpdate *)cameraUpdate
+                       error:(FlutterError *_Nullable __autoreleasing *_Nonnull)error {
+  GMSCameraUpdate *update = [FLTGoogleMapJSONConversions cameraUpdateFromArray:cameraUpdate.json];
+  if (!update) {
+    *error = [FlutterError errorWithCode:@"Invalid update"
+                                 message:@"Unrecognized camera update"
+                                 details:cameraUpdate.json];
+    return;
+  }
+  [self.controller.mapView moveCamera:update];
+}
+
+- (void)animateCameraWithUpdate:(nonnull FGMPlatformCameraUpdate *)cameraUpdate
+                          error:(FlutterError *_Nullable __autoreleasing *_Nonnull)error {
+  GMSCameraUpdate *update = [FLTGoogleMapJSONConversions cameraUpdateFromArray:cameraUpdate.json];
+  if (!update) {
+    *error = [FlutterError errorWithCode:@"Invalid update"
+                                 message:@"Unrecognized camera update"
+                                 details:cameraUpdate.json];
+    return;
+  }
+  [self.controller.mapView animateWithCameraUpdate:update];
+}
+
+- (nullable NSNumber *)currentZoomLevel:(FlutterError *_Nullable __autoreleasing *_Nonnull)error {
+  return @(self.controller.mapView.camera.zoom);
+}
+
+- (void)showInfoWindowForMarkerWithIdentifier:(nonnull NSString *)markerId
+                                        error:(FlutterError *_Nullable __autoreleasing *_Nonnull)
+                                                  error {
+  [self.controller.markersController showMarkerInfoWindowWithIdentifier:markerId error:error];
+}
+
+- (void)hideInfoWindowForMarkerWithIdentifier:(nonnull NSString *)markerId
+                                        error:(FlutterError *_Nullable __autoreleasing *_Nonnull)
+                                                  error {
+  [self.controller.markersController hideMarkerInfoWindowWithIdentifier:markerId error:error];
+}
+
+- (nullable NSNumber *)
+    isShowingInfoWindowForMarkerWithIdentifier:(nonnull NSString *)markerId
+                                         error:(FlutterError *_Nullable __autoreleasing *_Nonnull)
+                                                   error {
+  return [self.controller.markersController isInfoWindowShownForMarkerWithIdentifier:markerId
+                                                                               error:error];
+}
+
+- (nullable NSString *)setStyle:(nonnull NSString *)style
+                          error:(FlutterError *_Nullable __autoreleasing *_Nonnull)error {
+  return [self.controller setMapStyle:style];
+}
+
+- (nullable NSString *)lastStyleError:(FlutterError *_Nullable __autoreleasing *_Nonnull)error {
+  return self.controller.styleError;
+}
+
+- (void)clearTileCacheForOverlayWithIdentifier:(nonnull NSString *)tileOverlayId
+                                         error:(FlutterError *_Nullable __autoreleasing *_Nonnull)
+                                                   error {
+  [self.controller.tileOverlaysController clearTileCacheWithIdentifier:tileOverlayId];
+}
+
+- (nullable FlutterStandardTypedData *)takeSnapshotWithError:
+    (FlutterError *_Nullable __autoreleasing *_Nonnull)error {
+  GMSMapView *mapView = self.controller.mapView;
+  if (!mapView) {
+    *error = [FlutterError errorWithCode:@"GoogleMap uninitialized"
+                                 message:@"takeSnapshot called prior to map initialization"
+                                 details:nil];
+    return nil;
+  }
+  UIGraphicsImageRenderer *renderer =
+      [[UIGraphicsImageRenderer alloc] initWithSize:mapView.bounds.size];
+  // For some unknown reason mapView.layer::renderInContext API returns a blank image on iOS 17.
+  // So we have to use drawViewHierarchyInRect API.
+  UIImage *image = [renderer imageWithActions:^(UIGraphicsImageRendererContext *context) {
+    [mapView drawViewHierarchyInRect:mapView.bounds afterScreenUpdates:YES];
+  }];
+  NSData *imageData = UIImagePNGRepresentation(image);
+  return imageData ? [FlutterStandardTypedData typedDataWithBytes:imageData] : nil;
 }
 
 @end

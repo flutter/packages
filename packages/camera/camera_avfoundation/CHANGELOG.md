@@ -1,6 +1,10 @@
-## 0.9.16+1
+## 0.9.16+2
 
 * Fixes regression taking a picture in torch mode.
+
+## 0.9.16+1
+
+* Fixes sample times not being numeric after pause/resume.
 
 ## 0.9.16
 

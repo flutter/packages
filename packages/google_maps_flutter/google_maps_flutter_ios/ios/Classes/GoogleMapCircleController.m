@@ -125,8 +125,8 @@
   return self;
 }
 
-- (void)addCircles:(NSArray *)circlesToAdd {
-  for (NSDictionary *circle in circlesToAdd) {
+- (void)addJSONCircles:(NSArray<NSDictionary<NSString *, id> *> *)circlesToAdd {
+  for (NSDictionary<NSString *, id> *circle in circlesToAdd) {
     CLLocationCoordinate2D position = [FLTCirclesController getPosition:circle];
     CLLocationDistance radius = [FLTCirclesController getRadius:circle];
     NSString *circleId = [FLTCirclesController getCircleId:circle];
@@ -140,18 +140,30 @@
   }
 }
 
-- (void)changeCircles:(NSArray *)circlesToChange {
-  for (NSDictionary *circle in circlesToChange) {
-    NSString *circleId = [FLTCirclesController getCircleId:circle];
-    FLTGoogleMapCircleController *controller = self.circleIdToController[circleId];
-    if (!controller) {
-      continue;
-    }
-    [controller interpretCircleOptions:circle];
+- (void)addCircles:(NSArray<FGMPlatformCircle *> *)circlesToAdd {
+  for (FGMPlatformCircle *circle in circlesToAdd) {
+    CLLocationCoordinate2D position = [FLTCirclesController getPosition:circle.json];
+    CLLocationDistance radius = [FLTCirclesController getRadius:circle.json];
+    NSString *circleId = [FLTCirclesController getCircleId:circle.json];
+    FLTGoogleMapCircleController *controller =
+        [[FLTGoogleMapCircleController alloc] initCircleWithPosition:position
+                                                              radius:radius
+                                                            circleId:circleId
+                                                             mapView:self.mapView
+                                                             options:circle.json];
+    self.circleIdToController[circleId] = controller;
   }
 }
 
-- (void)removeCircleWithIdentifiers:(NSArray *)identifiers {
+- (void)changeCircles:(NSArray<FGMPlatformCircle *> *)circlesToChange {
+  for (FGMPlatformCircle *circle in circlesToChange) {
+    NSString *circleId = [FLTCirclesController getCircleId:circle.json];
+    FLTGoogleMapCircleController *controller = self.circleIdToController[circleId];
+    [controller interpretCircleOptions:circle.json];
+  }
+}
+
+- (void)removeCirclesWithIdentifiers:(NSArray<NSString *> *)identifiers {
   for (NSString *identifier in identifiers) {
     FLTGoogleMapCircleController *controller = self.circleIdToController[identifier];
     if (!controller) {
