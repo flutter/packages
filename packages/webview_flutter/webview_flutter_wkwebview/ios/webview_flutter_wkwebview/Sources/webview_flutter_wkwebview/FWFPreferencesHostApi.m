@@ -2,8 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#import "FWFPreferencesHostApi.h"
-#import "FWFWebViewConfigurationHostApi.h"
+#import "./include/webview_flutter_wkwebview/FWFPreferencesHostApi.h"
+#import "./include/webview_flutter_wkwebview/FWFWebViewConfigurationHostApi.h"
 
 @interface FWFPreferencesHostApiImpl ()
 // InstanceManager must be weak to prevent a circular reference with the object it stores.

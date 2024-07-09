@@ -2,8 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#import "FWFURLAuthenticationChallengeHostApi.h"
-#import "FWFURLProtectionSpaceHostApi.h"
+#import "./include/webview_flutter_wkwebview/FWFURLAuthenticationChallengeHostApi.h"
+#import "./include/webview_flutter_wkwebview/FWFURLProtectionSpaceHostApi.h"
 
 @interface FWFURLAuthenticationChallengeFlutterApiImpl ()
 // BinaryMessenger must be weak to prevent a circular reference with the host API it
