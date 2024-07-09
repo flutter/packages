@@ -374,9 +374,9 @@ NSString *const errorMethod = @"error";
     extension = @"jpg";
   }
 
-  AVCaptureFlashMode avFlashMode = FCPGetAVCaptureFlashModeForPigeonFlashMode(_flashMode);
-  if (avFlashMode != -1) {
-    [settings setFlashMode:avFlashMode];
+  // If the flash is in torch mode, no capture-level flash setting is needed.
+  if (_flashMode != FCPPlatformFlashModeTorch) {
+    [settings setFlashMode:FCPGetAVCaptureFlashModeForPigeonFlashMode(_flashMode)];
   }
   NSError *error;
   NSString *path = [self getTemporaryFilePathWithExtension:extension
