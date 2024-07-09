@@ -98,7 +98,7 @@
   XCTAssertEqual(holes[1][1].coordinate.longitude, 8);
 }
 
-- (void)testDictionaryFromPosition {
+- (void)testGetPigeonCameraPositionForPosition {
   GMSCameraPosition *position =
       [[GMSCameraPosition alloc] initWithTarget:CLLocationCoordinate2DMake(1, 2)
                                            zoom:2.0
