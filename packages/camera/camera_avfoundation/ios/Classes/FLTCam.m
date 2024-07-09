@@ -374,6 +374,7 @@ NSString *const errorMethod = @"error";
     extension = @"jpg";
   }
 
+  // If the flash is in torch mode, no capture-level flash setting is needed.
   if (_flashMode != FCPPlatformFlashModeTorch) {
     [settings setFlashMode:FCPGetAVCaptureFlashModeForPigeonFlashMode(_flashMode)];
   }
