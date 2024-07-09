@@ -606,13 +606,13 @@ void CameraPlugin::StopVideoRecordingMethodHandler(
 }
 void CameraPlugin::StartImageStreamingMethodHandler(
             const EncodableMap& args, std::unique_ptr<flutter::MethodResult<>> result) {
-    auto camera_id = GetInt64ValueOrNull(args, kCameraIdKey);
+    std::optional<int64_t> camera_id = GetInt64ValueOrNull(args, kCameraIdKey);
     if (!camera_id) {
         return result->Error("argument_error",
                              std::string(kCameraIdKey) + " missing");
     }
     //check if request already exists
-    auto camera = GetCameraByCameraId(*camera_id);
+    Camera* camera = GetCameraByCameraId(*camera_id);
     if (!camera) {
         return result->Error("camera_error", "Camera not created");
     }
@@ -628,7 +628,7 @@ void CameraPlugin::StartImageStreamingMethodHandler(
 
     if (camera->AddPendingResult(PendingResultType::kStartStream,
                                  std::move(result))) {
-        auto cc = camera->GetCaptureController();
+        CaptureController* cc = camera->GetCaptureController();
         assert(cc);
         cc->StartImageStream(std::move(event_sink));
     }
@@ -636,13 +636,13 @@ void CameraPlugin::StartImageStreamingMethodHandler(
 
 void CameraPlugin::StopImageStreamingMethodHandler(
             const EncodableMap& args, std::unique_ptr<flutter::MethodResult<>> result) {
-    auto camera_id = GetInt64ValueOrNull(args, kCameraIdKey); //get camera id
+    std::optional<int64_t> camera_id = GetInt64ValueOrNull(args, kCameraIdKey); //get camera id
     if (!camera_id) {
         return result->Error("argument_error",
                              std::string(kCameraIdKey) + " missing");
     }
     //check if request already exists
-    auto camera = GetCameraByCameraId(*camera_id);
+    Camera* camera = GetCameraByCameraId(*camera_id);
     if (!camera) {
         return result->Error("camera_error", "Camera not created");
     }
@@ -658,7 +658,7 @@ void CameraPlugin::StopImageStreamingMethodHandler(
 
     if (camera->AddPendingResult(PendingResultType::kStartStream,
                                  std::move(result))) {
-        auto cc = camera->GetCaptureController();
+        CaptureController* cc = camera->GetCaptureController();
         assert(cc);
         cc->StopImageStream();
     }
