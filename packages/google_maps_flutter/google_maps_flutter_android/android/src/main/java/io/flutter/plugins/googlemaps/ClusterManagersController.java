@@ -15,7 +15,7 @@ import com.google.maps.android.clustering.ClusterItem;
 import com.google.maps.android.clustering.ClusterManager;
 import com.google.maps.android.clustering.view.DefaultClusterRenderer;
 import com.google.maps.android.collections.MarkerManager;
-import io.flutter.plugin.common.MethodChannel;
+import io.flutter.plugins.googlemaps.Messages.MapsCallbackApi;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,7 +30,7 @@ class ClusterManagersController
         ClusterManager.OnClusterClickListener<MarkerBuilder> {
   @NonNull private final Context context;
   @NonNull private final HashMap<String, ClusterManager<MarkerBuilder>> clusterManagerIdToManager;
-  @NonNull private final MethodChannel methodChannel;
+  @NonNull private final MapsCallbackApi flutterApi;
   @Nullable private MarkerManager markerManager;
   @Nullable private GoogleMap googleMap;
 
@@ -41,10 +41,10 @@ class ClusterManagersController
   private ClusterManagersController.OnClusterItemRendered<MarkerBuilder>
       clusterItemRenderedListener;
 
-  ClusterManagersController(MethodChannel methodChannel, Context context) {
+  ClusterManagersController(@NonNull MapsCallbackApi flutterApi, Context context) {
     this.clusterManagerIdToManager = new HashMap<>();
     this.context = context;
-    this.methodChannel = methodChannel;
+    this.flutterApi = flutterApi;
   }
 
   void init(GoogleMap googleMap, MarkerManager markerManager) {
@@ -79,18 +79,25 @@ class ClusterManagersController
   }
 
   /** Adds new ClusterManagers to the controller. */
-  void addClusterManagers(@NonNull List<Object> clusterManagersToAdd) {
+  void addJsonClusterManagers(@NonNull List<Object> clusterManagersToAdd) {
     for (Object clusterToAdd : clusterManagersToAdd) {
-      addClusterManager(clusterToAdd);
+      String clusterManagerId = getClusterManagerId(clusterToAdd);
+      if (clusterManagerId == null) {
+        throw new IllegalArgumentException("clusterManagerId was null");
+      }
+      addClusterManager(clusterManagerId);
+    }
+  }
+
+  /** Adds new ClusterManagers to the controller. */
+  void addClusterManagers(@NonNull List<Messages.PlatformClusterManager> clusterManagersToAdd) {
+    for (Messages.PlatformClusterManager clusterToAdd : clusterManagersToAdd) {
+      addClusterManager(clusterToAdd.getIdentifier());
     }
   }
 
   /** Adds new ClusterManager to the controller. */
-  void addClusterManager(Object clusterManagerData) {
-    String clusterManagerId = getClusterManagerId(clusterManagerData);
-    if (clusterManagerId == null) {
-      throw new IllegalArgumentException("clusterManagerId was null");
-    }
+  void addClusterManager(String clusterManagerId) {
     ClusterManager<MarkerBuilder> clusterManager =
         new ClusterManager<MarkerBuilder>(context, googleMap, markerManager);
     ClusterRenderer<MarkerBuilder> clusterRenderer =
@@ -101,12 +108,8 @@ class ClusterManagersController
   }
 
   /** Removes ClusterManagers by given cluster manager IDs from the controller. */
-  public void removeClusterManagers(@NonNull List<Object> clusterManagerIdsToRemove) {
-    for (Object rawClusterManagerId : clusterManagerIdsToRemove) {
-      if (rawClusterManagerId == null) {
-        continue;
-      }
-      String clusterManagerId = (String) rawClusterManagerId;
+  public void removeClusterManagers(@NonNull List<String> clusterManagerIdsToRemove) {
+    for (String clusterManagerId : clusterManagerIdsToRemove) {
       removeClusterManager(clusterManagerId);
     }
   }
@@ -169,20 +172,16 @@ class ClusterManagersController
    * Requests all current clusters from the algorithm of the requested ClusterManager and converts
    * them to result response.
    */
-  public void getClustersWithClusterManagerId(
-      String clusterManagerId, MethodChannel.Result result) {
+  public @NonNull Set<? extends Cluster<MarkerBuilder>> getClustersWithClusterManagerId(
+      String clusterManagerId) {
     ClusterManager<MarkerBuilder> clusterManager = clusterManagerIdToManager.get(clusterManagerId);
     if (clusterManager == null) {
-      result.error(
+      throw new Messages.FlutterError(
           "Invalid clusterManagerId",
           "getClusters called with invalid clusterManagerId:" + clusterManagerId,
           null);
-      return;
     }
-
-    final Set<? extends Cluster<MarkerBuilder>> clusters =
-        clusterManager.getAlgorithm().getClusters(googleMap.getCameraPosition().zoom);
-    result.success(Convert.clustersToJson(clusterManagerId, clusters));
+    return clusterManager.getAlgorithm().getClusters(googleMap.getCameraPosition().zoom);
   }
 
   @Override
@@ -198,7 +197,8 @@ class ClusterManagersController
     if (cluster.getSize() > 0) {
       MarkerBuilder[] builders = cluster.getItems().toArray(new MarkerBuilder[0]);
       String clusterManagerId = builders[0].clusterManagerId();
-      methodChannel.invokeMethod("cluster#onTap", Convert.clusterToJson(clusterManagerId, cluster));
+      flutterApi.onClusterTap(
+          Convert.clusterToPigeon(clusterManagerId, cluster), new NoOpVoidResult());
     }
 
     // Return false to allow the default behavior of the cluster click event to occur.
