@@ -1,5 +1,6 @@
 ## NEXT
 
+* Makes the example app compatible with the `web`.
 * Updates minimum supported SDK version to Flutter 3.16/Dart 3.2.
 
 ## 0.3.3+3
