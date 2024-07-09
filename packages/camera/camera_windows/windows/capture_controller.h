@@ -6,6 +6,7 @@
 #define PACKAGES_CAMERA_CAMERA_WINDOWS_WINDOWS_CAPTURE_CONTROLLER_H_
 
 #include <d3d11.h>
+#include <flutter/event_channel.h>
 #include <flutter/texture_registrar.h>
 #include <mfapi.h>
 #include <mfcaptureengine.h>
@@ -13,7 +14,6 @@
 #include <mfidl.h>
 #include <windows.h>
 #include <wrl/client.h>
-#include <flutter/event_channel.h>
 
 #include <memory>
 #include <optional>
@@ -114,7 +114,10 @@ class CaptureController {
   // Stops the current video recording.
   virtual void StopRecord() = 0;
 
+  // Starts image streaming.
   virtual void StartImageStream(std::unique_ptr<flutter::EventSink<flutter::EncodableValue>> sink) = 0;
+
+  // Stops the current image streaming.
   virtual void StopImageStream() = 0;
 
   // Captures a still photo.

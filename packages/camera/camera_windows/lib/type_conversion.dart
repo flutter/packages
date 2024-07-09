@@ -16,10 +16,10 @@ CameraImageData cameraImageFromPlatformData(Map<dynamic, dynamic> data) {
       lensAperture: data['lensAperture'] as double?,
       sensorExposureTime: data['sensorExposureTime'] as int?,
       sensorSensitivity: data['sensorSensitivity'] as double?,
-      planes: [
+      planes: <CameraImagePlane>[
         CameraImagePlane(
           bytes: data['data'] as Uint8List,
-          bytesPerRow: ((data['width'] as int) * 4),
+          bytesPerRow: (data['width'] as int) * 4,
         )
       ]);
 }

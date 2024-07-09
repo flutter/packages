@@ -291,18 +291,18 @@ void CameraPlugin::HandleMethodCall(
       assert(arguments);
 
       return StartImageStreamingMethodHandler(*arguments, std::move(result));
-  }else if (method_name.compare(kStopImageStreamingMethod) == 0) {
+  } else if (method_name.compare(kStopImageStreamingMethod) == 0) {
       const auto* arguments =
               std::get_if<flutter::EncodableMap>(method_call.arguments());
       assert(arguments);
 
       return StopImageStreamingMethodHandler(*arguments, std::move(result));
-  }else if (method_name.compare(kPausePreview) == 0) {
-    const auto* arguments =
-        std::get_if<flutter::EncodableMap>(method_call.arguments());
-    assert(arguments);
+  } else if (method_name.compare(kPausePreview) == 0) {
+      const auto* arguments =
+          std::get_if<flutter::EncodableMap>(method_call.arguments());
+      assert(arguments);
 
-    return PausePreviewMethodHandler(*arguments, std::move(result));
+      return PausePreviewMethodHandler(*arguments, std::move(result));
   } else if (method_name.compare(kResumePreview) == 0) {
     const auto* arguments =
         std::get_if<flutter::EncodableMap>(method_call.arguments());
@@ -606,7 +606,7 @@ void CameraPlugin::StopVideoRecordingMethodHandler(
 }
 void CameraPlugin::StartImageStreamingMethodHandler(
             const EncodableMap& args, std::unique_ptr<flutter::MethodResult<>> result) {
-    auto camera_id = GetInt64ValueOrNull(args, kCameraIdKey); //get camera id
+    auto camera_id = GetInt64ValueOrNull(args, kCameraIdKey);
     if (!camera_id) {
         return result->Error("argument_error",
                              std::string(kCameraIdKey) + " missing");
@@ -632,9 +632,8 @@ void CameraPlugin::StartImageStreamingMethodHandler(
         assert(cc);
         cc->StartImageStream(std::move(event_sink));
     }
-
-
 }
+
 void CameraPlugin::StopImageStreamingMethodHandler(
             const EncodableMap& args, std::unique_ptr<flutter::MethodResult<>> result) {
     auto camera_id = GetInt64ValueOrNull(args, kCameraIdKey); //get camera id

@@ -5,12 +5,13 @@
 #include "capture_controller.h"
 
 #include <comdef.h>
+#include <flutter/event_stream_handler_functions.h>
+#include <flutter/standard_method_codec.h>
 #include <wincodec.h>
 #include <wrl/client.h>
 
 #include <cassert>
 #include <chrono>
-
 #include <iostream>
 
 #include "com_heap_ptr.h"
@@ -20,8 +21,7 @@
 #include "string_utils.h"
 #include "texture_handler.h"
 
-#include <flutter/event_stream_handler_functions.h>
-#include <flutter/standard_method_codec.h>
+
 
 
 namespace camera_windows {
@@ -894,29 +894,29 @@ bool CaptureControllerImpl::UpdateBuffer(uint8_t* buffer,
     return false;
   }
   if (image_stream_sink_) {
-      // Convert the buffer data to a std::vector<uint8_t>
-      std::vector<uint8_t> buffer_data(buffer, buffer + data_length);
+    // Convert the buffer data to a std::vector<uint8_t>.
+    std::vector<uint8_t> buffer_data(buffer, buffer + data_length);
 
-      // Ensure preview_frame_height_ and preview_frame_width_ are of supported types
-      int preview_frame_height = static_cast<int>(preview_frame_height_);
-      int preview_frame_width = static_cast<int>(preview_frame_width_);
+    // Ensure preview_frame_height_ and preview_frame_width_ are of supported types.
+    int preview_frame_height = static_cast<int>(preview_frame_height_);
+    int preview_frame_width = static_cast<int>(preview_frame_width_);
 
-      // Create a map to hold the buffer data and data length
-      flutter::EncodableMap data_map;
-      data_map[flutter::EncodableValue("data")] = flutter::EncodableValue(buffer_data);
-      data_map[flutter::EncodableValue("height")] = flutter::EncodableValue(preview_frame_height);
-      data_map[flutter::EncodableValue("width")] = flutter::EncodableValue(preview_frame_width);
-      data_map[flutter::EncodableValue("length")] = flutter::EncodableValue(static_cast<int>(data_length));
+    // Create a map to hold the buffer data and data length.
+    flutter::EncodableMap data_map;
+    data_map[flutter::EncodableValue("data")] = flutter::EncodableValue(buffer_data);
+    data_map[flutter::EncodableValue("height")] = flutter::EncodableValue(preview_frame_height);
+    data_map[flutter::EncodableValue("width")] = flutter::EncodableValue(preview_frame_width);
+    data_map[flutter::EncodableValue("length")] = flutter::EncodableValue(static_cast<int>(data_length));
 
-      // Wrap the map in a flutter::EncodableValue
-      flutter::EncodableValue encoded_value(data_map);
+    // Wrap the map in a flutter::EncodableValue.
+    flutter::EncodableValue encoded_value(data_map);
 
-      // Send the encoded value through the image_stream_sink_
-      image_stream_sink_->Success(encoded_value);
+    // Send the encoded value through the image_stream_sink_.
+    image_stream_sink_->Success(encoded_value);
   }
-      return texture_handler_->UpdateBuffer(buffer, data_length);
+  return texture_handler_->UpdateBuffer(buffer, data_length);
 
-    }
+}
 
 // Handles capture time update from each processed frame.
 // Stops timed recordings if requested recording duration has passed.

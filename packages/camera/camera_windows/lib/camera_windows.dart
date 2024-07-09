@@ -6,10 +6,11 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:camera_platform_interface/camera_platform_interface.dart';
-import 'package:camera_windows/type_conversion.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:stream_transform/stream_transform.dart';
+
+import 'type_conversion.dart';
 
 /// An implementation of [CameraPlatform] for Windows.
 class CameraWindows extends CameraPlatform {
