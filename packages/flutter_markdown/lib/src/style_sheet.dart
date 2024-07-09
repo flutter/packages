@@ -104,7 +104,6 @@ class MarkdownStyleSheet {
       p: theme.textTheme.bodyMedium,
       pPadding: EdgeInsets.zero,
       code: theme.textTheme.bodyMedium!.copyWith(
-        backgroundColor: theme.cardTheme.color ?? theme.cardColor,
         fontFamily: 'monospace',
         fontSize: theme.textTheme.bodyMedium!.fontSize! * 0.85,
       ),
@@ -175,9 +174,6 @@ class MarkdownStyleSheet {
       p: theme.textTheme.textStyle,
       pPadding: EdgeInsets.zero,
       code: theme.textTheme.textStyle.copyWith(
-        backgroundColor: theme.brightness == Brightness.dark
-            ? CupertinoColors.systemGrey6.darkColor
-            : CupertinoColors.systemGrey6.color,
         fontFamily: 'monospace',
         fontSize: theme.textTheme.textStyle.fontSize! * 0.85,
       ),
@@ -284,7 +280,6 @@ class MarkdownStyleSheet {
       p: theme.textTheme.bodyMedium,
       pPadding: EdgeInsets.zero,
       code: theme.textTheme.bodyMedium!.copyWith(
-        backgroundColor: theme.cardTheme.color ?? theme.cardColor,
         fontFamily: 'monospace',
         fontSize: theme.textTheme.bodyMedium!.fontSize! * 0.85,
       ),
