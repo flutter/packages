@@ -135,8 +135,9 @@
   }
   return self;
 }
-- (void)addPolylines:(NSArray *)polylinesToAdd {
-  for (NSDictionary *polyline in polylinesToAdd) {
+
+- (void)addJSONPolylines:(NSArray<NSDictionary<NSString *, id> *> *)polylinesToAdd {
+  for (NSDictionary<NSString *, id> *polyline in polylinesToAdd) {
     GMSMutablePath *path = [FLTPolylinesController pathForPolyline:polyline];
     NSString *identifier = polyline[@"polylineId"];
     FLTGoogleMapPolylineController *controller =
@@ -147,17 +148,29 @@
     self.polylineIdentifierToController[identifier] = controller;
   }
 }
-- (void)changePolylines:(NSArray *)polylinesToChange {
-  for (NSDictionary *polyline in polylinesToChange) {
-    NSString *identifier = polyline[@"polylineId"];
-    FLTGoogleMapPolylineController *controller = self.polylineIdentifierToController[identifier];
-    if (!controller) {
-      continue;
-    }
-    [controller interpretPolylineOptions:polyline registrar:self.registrar];
+
+- (void)addPolylines:(NSArray<FGMPlatformPolyline *> *)polylinesToAdd {
+  for (FGMPlatformPolyline *polyline in polylinesToAdd) {
+    GMSMutablePath *path = [FLTPolylinesController pathForPolyline:polyline.json];
+    NSString *identifier = polyline.json[@"polylineId"];
+    FLTGoogleMapPolylineController *controller =
+        [[FLTGoogleMapPolylineController alloc] initPolylineWithPath:path
+                                                          identifier:identifier
+                                                             mapView:self.mapView];
+    [controller interpretPolylineOptions:polyline.json registrar:self.registrar];
+    self.polylineIdentifierToController[identifier] = controller;
   }
 }
-- (void)removePolylineWithIdentifiers:(NSArray *)identifiers {
+
+- (void)changePolylines:(NSArray<FGMPlatformPolyline *> *)polylinesToChange {
+  for (FGMPlatformPolyline *polyline in polylinesToChange) {
+    NSString *identifier = polyline.json[@"polylineId"];
+    FLTGoogleMapPolylineController *controller = self.polylineIdentifierToController[identifier];
+    [controller interpretPolylineOptions:polyline.json registrar:self.registrar];
+  }
+}
+
+- (void)removePolylineWithIdentifiers:(NSArray<NSString *> *)identifiers {
   for (NSString *identifier in identifiers) {
     FLTGoogleMapPolylineController *controller = self.polylineIdentifierToController[identifier];
     if (!controller) {
@@ -167,6 +180,7 @@
     [self.polylineIdentifierToController removeObjectForKey:identifier];
   }
 }
+
 - (void)didTapPolylineWithIdentifier:(NSString *)identifier {
   if (!identifier) {
     return;
@@ -177,12 +191,14 @@
   }
   [self.methodChannel invokeMethod:@"polyline#onTap" arguments:@{@"polylineId" : identifier}];
 }
+
 - (bool)hasPolylineWithIdentifier:(NSString *)identifier {
   if (!identifier) {
     return false;
   }
   return self.polylineIdentifierToController[identifier] != nil;
 }
+
 + (GMSMutablePath *)pathForPolyline:(NSDictionary *)polyline {
   NSArray *pointArray = polyline[@"points"];
   NSArray<CLLocation *> *points = [FLTGoogleMapJSONConversions pointsFromLatLongs:pointArray];

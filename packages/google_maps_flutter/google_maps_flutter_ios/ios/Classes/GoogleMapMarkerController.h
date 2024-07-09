@@ -4,7 +4,9 @@
 
 #import <Flutter/Flutter.h>
 #import <GoogleMaps/GoogleMaps.h>
+
 #import "GoogleMapController.h"
+#import "messages.g.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -24,9 +26,10 @@ NS_ASSUME_NONNULL_BEGIN
 - (instancetype)initWithMethodChannel:(FlutterMethodChannel *)methodChannel
                               mapView:(GMSMapView *)mapView
                             registrar:(NSObject<FlutterPluginRegistrar> *)registrar;
-- (void)addMarkers:(NSArray *)markersToAdd;
-- (void)changeMarkers:(NSArray *)markersToChange;
-- (void)removeMarkersWithIdentifiers:(NSArray *)identifiers;
+- (void)addJSONMarkers:(NSArray<NSDictionary<NSString *, id> *> *)markersToAdd;
+- (void)addMarkers:(NSArray<FGMPlatformMarker *> *)markersToAdd;
+- (void)changeMarkers:(NSArray<FGMPlatformMarker *> *)markersToChange;
+- (void)removeMarkersWithIdentifiers:(NSArray<NSString *> *)identifiers;
 - (BOOL)didTapMarkerWithIdentifier:(NSString *)identifier;
 - (void)didStartDraggingMarkerWithIdentifier:(NSString *)identifier
                                     location:(CLLocationCoordinate2D)coordinate;
@@ -35,10 +38,17 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)didDragMarkerWithIdentifier:(NSString *)identifier
                            location:(CLLocationCoordinate2D)coordinate;
 - (void)didTapInfoWindowOfMarkerWithIdentifier:(NSString *)identifier;
-- (void)showMarkerInfoWindowWithIdentifier:(NSString *)identifier result:(FlutterResult)result;
-- (void)hideMarkerInfoWindowWithIdentifier:(NSString *)identifier result:(FlutterResult)result;
-- (void)isInfoWindowShownForMarkerWithIdentifier:(NSString *)identifier
-                                          result:(FlutterResult)result;
+- (void)showMarkerInfoWindowWithIdentifier:(NSString *)identifier
+                                     error:(FlutterError *_Nullable __autoreleasing *_Nonnull)error;
+- (void)hideMarkerInfoWindowWithIdentifier:(NSString *)identifier
+                                     error:(FlutterError *_Nullable __autoreleasing *_Nonnull)error;
+/// Returns whether or not the info window for the marker with the given identifier is shown.
+///
+/// If there is no such marker, returns nil and sets error.
+- (nullable NSNumber *)
+    isInfoWindowShownForMarkerWithIdentifier:(NSString *)identifier
+                                       error:
+                                           (FlutterError *_Nullable __autoreleasing *_Nonnull)error;
 @end
 
 NS_ASSUME_NONNULL_END

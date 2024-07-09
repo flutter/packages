@@ -452,8 +452,8 @@
   return self;
 }
 
-- (void)addMarkers:(NSArray *)markersToAdd {
-  for (NSDictionary *marker in markersToAdd) {
+- (void)addJSONMarkers:(NSArray<NSDictionary<NSString *, id> *> *)markersToAdd {
+  for (NSDictionary<NSString *, id> *marker in markersToAdd) {
     CLLocationCoordinate2D position = [FLTMarkersController getPosition:marker];
     NSString *identifier = marker[@"markerId"];
     FLTGoogleMapMarkerController *controller =
@@ -467,20 +467,32 @@
   }
 }
 
-- (void)changeMarkers:(NSArray *)markersToChange {
-  for (NSDictionary *marker in markersToChange) {
-    NSString *identifier = marker[@"markerId"];
+- (void)addMarkers:(NSArray<FGMPlatformMarker *> *)markersToAdd {
+  for (FGMPlatformMarker *marker in markersToAdd) {
+    CLLocationCoordinate2D position = [FLTMarkersController getPosition:marker.json];
+    NSString *identifier = marker.json[@"markerId"];
+    FLTGoogleMapMarkerController *controller =
+        [[FLTGoogleMapMarkerController alloc] initMarkerWithPosition:position
+                                                          identifier:identifier
+                                                             mapView:self.mapView];
+    [controller interpretMarkerOptions:marker.json
+                             registrar:self.registrar
+                           screenScale:[self getScreenScale]];
+    self.markerIdentifierToController[identifier] = controller;
+  }
+}
+
+- (void)changeMarkers:(NSArray<FGMPlatformMarker *> *)markersToChange {
+  for (FGMPlatformMarker *marker in markersToChange) {
+    NSString *identifier = marker.json[@"markerId"];
     FLTGoogleMapMarkerController *controller = self.markerIdentifierToController[identifier];
-    if (!controller) {
-      continue;
-    }
-    [controller interpretMarkerOptions:marker
+    [controller interpretMarkerOptions:marker.json
                              registrar:self.registrar
                            screenScale:[self getScreenScale]];
   }
 }
 
-- (void)removeMarkersWithIdentifiers:(NSArray *)identifiers {
+- (void)removeMarkersWithIdentifiers:(NSArray<NSString *> *)identifiers {
   for (NSString *identifier in identifiers) {
     FLTGoogleMapMarkerController *controller = self.markerIdentifierToController[identifier];
     if (!controller) {
@@ -554,39 +566,44 @@
   }
 }
 
-- (void)showMarkerInfoWindowWithIdentifier:(NSString *)identifier result:(FlutterResult)result {
+- (void)showMarkerInfoWindowWithIdentifier:(NSString *)identifier
+                                     error:
+                                         (FlutterError *_Nullable __autoreleasing *_Nonnull)error {
   FLTGoogleMapMarkerController *controller = self.markerIdentifierToController[identifier];
   if (controller) {
     [controller showInfoWindow];
-    result(nil);
   } else {
-    result([FlutterError errorWithCode:@"Invalid markerId"
-                               message:@"showInfoWindow called with invalid markerId"
-                               details:nil]);
+    *error = [FlutterError errorWithCode:@"Invalid markerId"
+                                 message:@"showInfoWindow called with invalid markerId"
+                                 details:nil];
   }
 }
 
-- (void)hideMarkerInfoWindowWithIdentifier:(NSString *)identifier result:(FlutterResult)result {
+- (void)hideMarkerInfoWindowWithIdentifier:(NSString *)identifier
+                                     error:
+                                         (FlutterError *_Nullable __autoreleasing *_Nonnull)error {
   FLTGoogleMapMarkerController *controller = self.markerIdentifierToController[identifier];
   if (controller) {
     [controller hideInfoWindow];
-    result(nil);
   } else {
-    result([FlutterError errorWithCode:@"Invalid markerId"
-                               message:@"hideInfoWindow called with invalid markerId"
-                               details:nil]);
+    *error = [FlutterError errorWithCode:@"Invalid markerId"
+                                 message:@"hideInfoWindow called with invalid markerId"
+                                 details:nil];
   }
 }
 
-- (void)isInfoWindowShownForMarkerWithIdentifier:(NSString *)identifier
-                                          result:(FlutterResult)result {
+- (nullable NSNumber *)
+    isInfoWindowShownForMarkerWithIdentifier:(NSString *)identifier
+                                       error:(FlutterError *_Nullable __autoreleasing *_Nonnull)
+                                                 error {
   FLTGoogleMapMarkerController *controller = self.markerIdentifierToController[identifier];
   if (controller) {
-    result(@([controller isInfoWindowShown]));
+    return @([controller isInfoWindowShown]);
   } else {
-    result([FlutterError errorWithCode:@"Invalid markerId"
-                               message:@"isInfoWindowShown called with invalid markerId"
-                               details:nil]);
+    *error = [FlutterError errorWithCode:@"Invalid markerId"
+                                 message:@"isInfoWindowShown called with invalid markerId"
+                                 details:nil];
+    return nil;
   }
 }
 

@@ -1,3 +1,7 @@
+## 2.9.0
+
+* Converts additional platform calls to Pigeon.
+
 ## 2.8.2
 
 * Converts inspector interface platform calls to Pigeon.

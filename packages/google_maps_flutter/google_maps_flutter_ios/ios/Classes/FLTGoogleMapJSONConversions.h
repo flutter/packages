@@ -5,10 +5,28 @@
 #import <Flutter/Flutter.h>
 #import <GoogleMaps/GoogleMaps.h>
 
+#import "messages.g.h"
+
 NS_ASSUME_NONNULL_BEGIN
 
 /// Returns dict[key], or nil if dict[key] is NSNull.
 extern id _Nullable FGMGetValueOrNilFromDict(NSDictionary *dict, NSString *key);
+
+/// Creates a CGPoint from its Pigeon equivalent.
+extern CGPoint FGMGetCGPointForPigeonPoint(FGMPlatformPoint *point);
+
+/// Converts a CGPoint to its Pigeon equivalent.
+extern FGMPlatformPoint *FGMGetPigeonPointForCGPoint(CGPoint point);
+
+/// Creates a CLLocationCoordinate2D from its Pigeon representation.
+extern CLLocationCoordinate2D FGMGetCoordinateForPigeonLatLng(FGMPlatformLatLng *latLng);
+
+/// Converts a CLLocationCoordinate2D to its Pigeon representation.
+extern FGMPlatformLatLng *FGMGetPigeonLatLngForCoordinate(CLLocationCoordinate2D coord);
+
+/// Converts a GMSCoordinateBounds to its Pigeon representation.
+extern FGMPlatformLatLngBounds *FGMGetPigeonLatLngBoundsForCoordinateBounds(
+    GMSCoordinateBounds *bounds);
 
 @interface FLTGoogleMapJSONConversions : NSObject
 
@@ -20,13 +38,10 @@ extern id _Nullable FGMGetValueOrNilFromDict(NSDictionary *dict, NSString *key);
 + (NSArray<NSArray<CLLocation *> *> *)holesFromPointsArray:(NSArray *)data;
 + (nullable NSDictionary<NSString *, id> *)dictionaryFromPosition:
     (nullable GMSCameraPosition *)position;
-+ (NSDictionary<NSString *, NSNumber *> *)dictionaryFromPoint:(CGPoint)point;
-+ (nullable NSDictionary *)dictionaryFromCoordinateBounds:(nullable GMSCoordinateBounds *)bounds;
 + (nullable GMSCameraPosition *)cameraPostionFromDictionary:(nullable NSDictionary *)channelValue;
-+ (CGPoint)pointFromDictionary:(NSDictionary *)dictionary;
 + (GMSCoordinateBounds *)coordinateBoundsFromLatLongs:(NSArray *)latlongs;
 + (GMSMapViewType)mapViewTypeFromTypeValue:(NSNumber *)value;
-+ (nullable GMSCameraUpdate *)cameraUpdateFromChannelValue:(NSArray *)channelValue;
++ (nullable GMSCameraUpdate *)cameraUpdateFromArray:(NSArray *)channelValue;
 
 /// Return GMS strokestyle object array populated using the patterns and stroke colors passed in.
 ///
