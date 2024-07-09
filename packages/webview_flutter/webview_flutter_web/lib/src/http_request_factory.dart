@@ -24,7 +24,7 @@ class HttpRequestFactory {
   ///
   /// The Future is completed when the [web.Response] is available.
   ///
-  /// If specified, `sendData` will be sent as the `body` of the fetch.
+  /// If specified, [sendData] will be sent as the `body` of the fetch.
   ///
   /// The [withCredentials] parameter specified that credentials such as a cookie
   /// (already) set in the header or
@@ -55,7 +55,7 @@ class HttpRequestFactory {
   ///         // Do something with the response.
   ///     });
   ///
-  /// Requests for file:// URIs are only supported by Chrome extensions
+  /// Requests for `file://` URIs are only supported by Chrome extensions
   /// with appropriate permissions in their manifest. Requests to file:// URIs
   /// will also never fail- the Future will always complete successfully, even
   /// when the file cannot be found.
