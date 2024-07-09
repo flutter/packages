@@ -34,17 +34,6 @@
   [self.layer clearTileCache];
 }
 
-- (NSDictionary *)getTileOverlayInfo {
-  NSMutableDictionary *info = [[NSMutableDictionary alloc] init];
-  BOOL visible = self.layer.map != nil;
-  info[@"visible"] = @(visible);
-  info[@"fadeIn"] = @(self.layer.fadeIn);
-  float transparency = 1.0 - self.layer.opacity;
-  info[@"transparency"] = @(transparency);
-  info[@"zIndex"] = @(self.layer.zIndex);
-  return info;
-}
-
 - (void)setFadeIn:(BOOL)fadeIn {
   self.layer.fadeIn = fadeIn;
 }
@@ -182,7 +171,8 @@
 
 @interface FLTTileOverlaysController ()
 
-@property(strong, nonatomic) NSMutableDictionary *tileOverlayIdentifierToController;
+@property(strong, nonatomic) NSMutableDictionary<NSString *, FLTGoogleMapTileOverlayController *>
+    *tileOverlayIdentifierToController;
 @property(strong, nonatomic) FlutterMethodChannel *methodChannel;
 @property(weak, nonatomic) GMSMapView *mapView;
 
@@ -202,8 +192,8 @@
   return self;
 }
 
-- (void)addTileOverlays:(NSArray *)tileOverlaysToAdd {
-  for (NSDictionary *tileOverlay in tileOverlaysToAdd) {
+- (void)addJSONTileOverlays:(NSArray<NSDictionary<NSString *, id> *> *)tileOverlaysToAdd {
+  for (NSDictionary<NSString *, id> *tileOverlay in tileOverlaysToAdd) {
     NSString *identifier = [FLTTileOverlaysController identifierForTileOverlay:tileOverlay];
     FLTTileProviderController *tileProvider =
         [[FLTTileProviderController alloc] init:self.methodChannel
@@ -216,18 +206,29 @@
   }
 }
 
-- (void)changeTileOverlays:(NSArray *)tileOverlaysToChange {
-  for (NSDictionary *tileOverlay in tileOverlaysToChange) {
-    NSString *identifier = [FLTTileOverlaysController identifierForTileOverlay:tileOverlay];
+- (void)addTileOverlays:(NSArray<FGMPlatformTileOverlay *> *)tileOverlaysToAdd {
+  for (FGMPlatformTileOverlay *tileOverlay in tileOverlaysToAdd) {
+    NSString *identifier = [FLTTileOverlaysController identifierForTileOverlay:tileOverlay.json];
+    FLTTileProviderController *tileProvider =
+        [[FLTTileProviderController alloc] init:self.methodChannel
+                      withTileOverlayIdentifier:identifier];
     FLTGoogleMapTileOverlayController *controller =
-        self.tileOverlayIdentifierToController[identifier];
-    if (!controller) {
-      continue;
-    }
-    [controller interpretTileOverlayOptions:tileOverlay];
+        [[FLTGoogleMapTileOverlayController alloc] initWithTileLayer:tileProvider
+                                                             mapView:self.mapView
+                                                             options:tileOverlay.json];
+    self.tileOverlayIdentifierToController[identifier] = controller;
   }
 }
-- (void)removeTileOverlayWithIdentifiers:(NSArray *)identifiers {
+
+- (void)changeTileOverlays:(NSArray<FGMPlatformTileOverlay *> *)tileOverlaysToChange {
+  for (FGMPlatformTileOverlay *tileOverlay in tileOverlaysToChange) {
+    NSString *identifier = [FLTTileOverlaysController identifierForTileOverlay:tileOverlay.json];
+    FLTGoogleMapTileOverlayController *controller =
+        self.tileOverlayIdentifierToController[identifier];
+    [controller interpretTileOverlayOptions:tileOverlay.json];
+  }
+}
+- (void)removeTileOverlayWithIdentifiers:(NSArray<NSString *> *)identifiers {
   for (NSString *identifier in identifiers) {
     FLTGoogleMapTileOverlayController *controller =
         self.tileOverlayIdentifierToController[identifier];
@@ -242,17 +243,11 @@
 - (void)clearTileCacheWithIdentifier:(NSString *)identifier {
   FLTGoogleMapTileOverlayController *controller =
       self.tileOverlayIdentifierToController[identifier];
-  if (!controller) {
-    return;
-  }
   [controller clearTileCache];
 }
 
-- (nullable NSDictionary *)tileOverlayInfoWithIdentifier:(NSString *)identifier {
-  if (self.tileOverlayIdentifierToController[identifier] == nil) {
-    return nil;
-  }
-  return [self.tileOverlayIdentifierToController[identifier] getTileOverlayInfo];
+- (nullable FLTGoogleMapTileOverlayController *)tileOverlayWithIdentifier:(NSString *)identifier {
+  return self.tileOverlayIdentifierToController[identifier];
 }
 
 + (NSString *)identifierForTileOverlay:(NSDictionary *)tileOverlay {

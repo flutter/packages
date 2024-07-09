@@ -1,6 +1,10 @@
-## 0.9.16+1
+## 0.9.16+2
 
 * Removes unused `maxVideoDuration` code.
+
+## 0.9.16+1
+
+* Fixes sample times not being numeric after pause/resume.
 
 ## 0.9.16
 

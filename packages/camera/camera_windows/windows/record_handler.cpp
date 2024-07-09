@@ -176,15 +176,16 @@ HRESULT RecordHandler::InitRecordSink(IMFCaptureEngine* capture_engine,
     return hr;
   }
 
-  if (media_settings_.fps.has_value()) {
-    assert(media_settings_.fps.value() > 0);
-    SetFrameRate(video_record_media_type.Get(), media_settings_.fps.value(), 1);
+  if (media_settings_.frames_per_second()) {
+    assert(*media_settings_.frames_per_second() > 0);
+    SetFrameRate(video_record_media_type.Get(),
+                 static_cast<UINT32>(*media_settings_.frames_per_second()), 1);
   }
 
-  if (media_settings_.video_bitrate.has_value()) {
-    assert(media_settings_.video_bitrate.value() > 0);
+  if (media_settings_.video_bitrate()) {
+    assert(*media_settings_.video_bitrate() > 0);
     SetVideoBitrate(video_record_media_type.Get(),
-                    media_settings_.video_bitrate.value());
+                    static_cast<UINT32>(*media_settings_.video_bitrate()));
   }
 
   DWORD video_record_sink_stream_index;
@@ -195,17 +196,17 @@ HRESULT RecordHandler::InitRecordSink(IMFCaptureEngine* capture_engine,
     return hr;
   }
 
-  if (media_settings_.record_audio) {
+  if (media_settings_.enable_audio()) {
     ComPtr<IMFMediaType> audio_record_media_type;
     HRESULT audio_capture_hr = S_OK;
     audio_capture_hr =
         BuildMediaTypeForAudioCapture(audio_record_media_type.GetAddressOf());
 
     if (SUCCEEDED(audio_capture_hr)) {
-      if (media_settings_.audio_bitrate.has_value()) {
-        assert(media_settings_.audio_bitrate.value() > 0);
+      if (media_settings_.audio_bitrate()) {
+        assert(*media_settings_.audio_bitrate() > 0);
         SetAudioBitrate(audio_record_media_type.Get(),
-                        media_settings_.audio_bitrate.value());
+                        static_cast<UINT32>(*media_settings_.audio_bitrate()));
       }
 
       DWORD audio_record_sink_stream_index;

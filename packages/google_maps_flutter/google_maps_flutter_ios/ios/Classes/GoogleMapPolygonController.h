@@ -5,6 +5,8 @@
 #import <Flutter/Flutter.h>
 #import <GoogleMaps/GoogleMaps.h>
 
+#import "messages.g.h"
+
 // Defines polygon controllable by Flutter.
 @interface FLTGoogleMapPolygonController : NSObject
 - (instancetype)initPolygonWithPath:(GMSMutablePath *)path
@@ -17,9 +19,10 @@
 - (instancetype)init:(FlutterMethodChannel *)methodChannel
              mapView:(GMSMapView *)mapView
            registrar:(NSObject<FlutterPluginRegistrar> *)registrar;
-- (void)addPolygons:(NSArray *)polygonsToAdd;
-- (void)changePolygons:(NSArray *)polygonsToChange;
-- (void)removePolygonWithIdentifiers:(NSArray *)identifiers;
+- (void)addJSONPolygons:(NSArray<NSDictionary<NSString *, id> *> *)polygonsToAdd;
+- (void)addPolygons:(NSArray<FGMPlatformPolygon *> *)polygonsToAdd;
+- (void)changePolygons:(NSArray<FGMPlatformPolygon *> *)polygonsToChange;
+- (void)removePolygonWithIdentifiers:(NSArray<NSString *> *)identifiers;
 - (void)didTapPolygonWithIdentifier:(NSString *)identifier;
 - (bool)hasPolygonWithIdentifier:(NSString *)identifier;
 @end
