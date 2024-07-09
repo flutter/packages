@@ -69,7 +69,7 @@ static FlutterError *FlutterErrorFromNSError(NSError *error) {
 @property(strong, nonatomic) AVCaptureVideoDataOutput *videoOutput;
 @property(strong, nonatomic) AVCaptureAudioDataOutput *audioOutput;
 @property(strong, nonatomic) NSString *videoRecordingPath;
-@property(assign, nonatomic) BOOL firstSample;
+@property(assign, nonatomic) BOOL isFirstSample;
 @property(assign, nonatomic) BOOL isRecording;
 @property(assign, nonatomic) BOOL isRecordingPaused;
 @property(assign, nonatomic) BOOL videoIsDisconnected;
@@ -664,15 +664,15 @@ NSString *const errorMethod = @"error";
 
     // ignore audio samples until the first video sample arrives to avoid black frames
     // https://github.com/flutter/flutter/issues/57831
-    if (_firstSample && output != _captureVideoOutput) {
+    if (_isFirstSample && output != _captureVideoOutput) {
       return;
     }
 
     CMTime currentSampleTime = CMSampleBufferGetPresentationTimeStamp(sampleBuffer);
 
-    if (_firstSample) {
+    if (_isFirstSample) {
       [_videoWriter startSessionAtSourceTime:currentSampleTime];
-      _firstSample = NO;
+      _isFirstSample = NO;
     }
 
     if (output == _captureVideoOutput) {
@@ -833,7 +833,7 @@ NSString *const errorMethod = @"error";
     // https://github.com/flutter/flutter/issues/132016
     // https://github.com/flutter/flutter/issues/151319
     [_videoWriter startWriting];
-    _firstSample = YES;
+    _isFirstSample = YES;
     _isRecording = YES;
     _isRecordingPaused = NO;
     _videoTimeOffset = CMTimeMake(0, 1);
