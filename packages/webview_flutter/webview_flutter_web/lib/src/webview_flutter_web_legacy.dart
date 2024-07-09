@@ -4,14 +4,14 @@
 
 import 'dart:async';
 import 'dart:convert';
+import 'dart:js_interop';
 import 'dart:ui_web' as ui_web;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_web_plugins/flutter_web_plugins.dart';
-import 'package:http/http.dart' as http;
-import 'package:web/web.dart' as html;
+import 'package:web/web.dart' as web;
 // ignore: implementation_imports
 import 'package:webview_flutter_platform_interface/src/webview_flutter_platform_interface_legacy.dart';
 
@@ -25,7 +25,7 @@ class WebWebViewPlatform implements WebViewPlatform {
   WebWebViewPlatform() {
     ui_web.platformViewRegistry.registerViewFactory(
         'webview-iframe',
-        (int viewId) => html.HTMLIFrameElement()
+        (int viewId) => web.HTMLIFrameElement()
           ..id = 'webview-$viewId'
           ..width = '100%'
           ..height = '100%'
@@ -47,8 +47,8 @@ class WebWebViewPlatform implements WebViewPlatform {
         if (onWebViewPlatformCreated == null) {
           return;
         }
-        final html.HTMLIFrameElement element = html.document
-            .getElementById('webview-$viewId')! as html.HTMLIFrameElement;
+        final web.HTMLIFrameElement element = web.document
+            .getElementById('webview-$viewId')! as web.HTMLIFrameElement;
 
         final String? initialUrl = creationParams.initialUrl;
         if (initialUrl != null) {
@@ -74,7 +74,7 @@ class WebWebViewPlatformController implements WebViewPlatformController {
   /// Constructs a [WebWebViewPlatformController].
   WebWebViewPlatformController(this._element);
 
-  final html.HTMLIFrameElement _element;
+  final web.HTMLIFrameElement _element;
   HttpRequestFactory _httpRequestFactory = const HttpRequestFactory();
 
   /// Setter for setting the HttpRequestFactory, for testing purposes.
@@ -203,16 +203,17 @@ class WebWebViewPlatformController implements WebViewPlatformController {
     if (!request.uri.hasScheme) {
       throw ArgumentError('WebViewRequest#uri is required to have a scheme.');
     }
-    final http.Response httpReq = await _httpRequestFactory.request(
+    final web.Response response = await _httpRequestFactory.request(
         request.uri.toString(),
         method: request.method.serialize(),
         requestHeaders: request.headers,
-        sendData: request.body);
+        sendData: request.body) as web.Response;
 
-    final String contentType = httpReq.headers['content-type'] ?? 'text/html';
+    final String contentType =
+        response.headers.get('content-type') ?? 'text/html';
 
     _element.src = Uri.dataFromString(
-      httpReq.body,
+      (await response.text().toDart).toDart,
       mimeType: contentType,
       encoding: utf8,
     ).toString();
