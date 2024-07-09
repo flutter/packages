@@ -12,10 +12,10 @@ import 'package:pigeon/pigeon.dart';
   copyrightHeader: 'pigeons/copyright.txt',
 ))
 
-/// Pigeon version of pltaform interface's ResolutionPreset.
+/// Pigeon version of platform interface's ResolutionPreset.
 enum PlatformResolutionPreset { low, medium, high, veryHigh, ultraHigh, max }
 
-// Pigeon version of to MediaSettings.
+/// Pigeon version of MediaSettings.
 class PlatformMediaSettings {
   PlatformMediaSettings({
     required this.resolutionPreset,
@@ -40,7 +40,7 @@ class PlatformSize {
   final double height;
 }
 
-// Pigeon version of the relevant subset of VideoCaptureOptions.
+/// Pigeon version of the relevant subset of VideoCaptureOptions.
 class PlatformVideoCaptureOptions {
   PlatformVideoCaptureOptions({required this.maxDurationMilliseconds});
 
