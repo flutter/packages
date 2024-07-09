@@ -206,7 +206,6 @@ class _RtspRemoteVideoState extends State<_RtspRemoteVideo> {
               validator: _validateRtspUrl,
               textInputAction: TextInputAction.done,
               onFieldSubmitted: (String value) {
-                FocusScope.of(context).unfocus();
                 if (_validateRtspUrl(value) == null) {
                   changeUrl(value);
                 } else {
