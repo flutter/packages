@@ -18,6 +18,7 @@ import androidx.media3.datasource.DefaultHttpDataSource;
 import androidx.media3.exoplayer.rtsp.RtspMediaSource;
 import androidx.media3.exoplayer.source.DefaultMediaSourceFactory;
 import androidx.media3.exoplayer.source.MediaSource;
+import java.util.Locale;
 import java.util.Map;
 
 final class RemoteVideoAsset extends VideoAsset {
@@ -60,7 +61,7 @@ final class RemoteVideoAsset extends VideoAsset {
 
   @Override
   MediaSource.Factory getMediaSourceFactory(Context context) {
-    if (assetUrl.toLowerCase().startsWith("rtsp://")) {
+    if (assetUrl.toLowerCase(Locale.US).startsWith("rtsp://")) {
       return new RtspMediaSource.Factory();
     }
     return getMediaSourceFactory(context, new DefaultHttpDataSource.Factory());
