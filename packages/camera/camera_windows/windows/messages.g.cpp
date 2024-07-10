@@ -481,59 +481,155 @@ void CameraApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     }
   }
   {
-    BasicMessageChannel<> channel(binary_messenger, "dev.flutter.pigeon.camera_windows.CameraApi.startImageStream" + prepended_suffix, &GetCodec());
+    BasicMessageChannel<> channel(
+        binary_messenger,
+        "dev.flutter.pigeon.camera_windows.CameraApi.startVideoRecording" +
+            prepended_suffix,
+        &GetCodec());
     if (api != nullptr) {
-      channel.SetMessageHandler([api](const EncodableValue& message, const flutter::MessageReply<EncodableValue>& reply) {
-        try {
-          const auto& args = std::get<EncodableList>(message);
-          const auto& encodable_camera_id_arg = args.at(0);
-          if (encodable_camera_id_arg.IsNull()) {
-            reply(WrapError("camera_id_arg unexpectedly null."));
-            return;
-          }
-          const int64_t camera_id_arg = encodable_camera_id_arg.LongValue();
-          api->StartImageStream(camera_id_arg, [reply](std::optional<FlutterError>&& output) {
-            if (output.has_value()) {
-              reply(WrapError(output.value()));
-              return;
+      channel.SetMessageHandler(
+          [api](const EncodableValue& message,
+                const flutter::MessageReply<EncodableValue>& reply) {
+            try {
+              const auto& args = std::get<EncodableList>(message);
+              const auto& encodable_camera_id_arg = args.at(0);
+              if (encodable_camera_id_arg.IsNull()) {
+                reply(WrapError("camera_id_arg unexpectedly null."));
+                return;
+              }
+              const int64_t camera_id_arg = encodable_camera_id_arg.LongValue();
+              const auto& encodable_options_arg = args.at(1);
+              if (encodable_options_arg.IsNull()) {
+                reply(WrapError("options_arg unexpectedly null."));
+                return;
+              }
+              const auto& options_arg =
+                  std::any_cast<const PlatformVideoCaptureOptions&>(
+                      std::get<CustomEncodableValue>(encodable_options_arg));
+              api->StartVideoRecording(
+                  camera_id_arg, options_arg,
+                  [reply](std::optional<FlutterError>&& output) {
+                    if (output.has_value()) {
+                      reply(WrapError(output.value()));
+                      return;
+                    }
+                    EncodableList wrapped;
+                    wrapped.push_back(EncodableValue());
+                    reply(EncodableValue(std::move(wrapped)));
+                  });
+            } catch (const std::exception& exception) {
+              reply(WrapError(exception.what()));
             }
-            EncodableList wrapped;
-            wrapped.push_back(EncodableValue());
-            reply(EncodableValue(std::move(wrapped)));
           });
-        } catch (const std::exception& exception) {
-          reply(WrapError(exception.what()));
-        }
-      });
     } else {
       channel.SetMessageHandler(nullptr);
     }
   }
   {
-    BasicMessageChannel<> channel(binary_messenger, "dev.flutter.pigeon.camera_windows.CameraApi.stopImageStream" + prepended_suffix, &GetCodec());
+    BasicMessageChannel<> channel(
+        binary_messenger,
+        "dev.flutter.pigeon.camera_windows.CameraApi.stopVideoRecording" +
+            prepended_suffix,
+        &GetCodec());
     if (api != nullptr) {
-      channel.SetMessageHandler([api](const EncodableValue& message, const flutter::MessageReply<EncodableValue>& reply) {
-        try {
-          const auto& args = std::get<EncodableList>(message);
-          const auto& encodable_camera_id_arg = args.at(0);
-          if (encodable_camera_id_arg.IsNull()) {
-            reply(WrapError("camera_id_arg unexpectedly null."));
-            return;
-          }
-          const int64_t camera_id_arg = encodable_camera_id_arg.LongValue();
-          api->StopImageStream(camera_id_arg, [reply](std::optional<FlutterError>&& output) {
-            if (output.has_value()) {
-              reply(WrapError(output.value()));
-              return;
+      channel.SetMessageHandler(
+          [api](const EncodableValue& message,
+                const flutter::MessageReply<EncodableValue>& reply) {
+            try {
+              const auto& args = std::get<EncodableList>(message);
+              const auto& encodable_camera_id_arg = args.at(0);
+              if (encodable_camera_id_arg.IsNull()) {
+                reply(WrapError("camera_id_arg unexpectedly null."));
+                return;
+              }
+              const int64_t camera_id_arg = encodable_camera_id_arg.LongValue();
+              api->StopVideoRecording(
+                  camera_id_arg, [reply](ErrorOr<std::string>&& output) {
+                    if (output.has_error()) {
+                      reply(WrapError(output.error()));
+                      return;
+                    }
+                    EncodableList wrapped;
+                    wrapped.push_back(
+                        EncodableValue(std::move(output).TakeValue()));
+                    reply(EncodableValue(std::move(wrapped)));
+                  });
+            } catch (const std::exception& exception) {
+              reply(WrapError(exception.what()));
             }
-            EncodableList wrapped;
-            wrapped.push_back(EncodableValue());
-            reply(EncodableValue(std::move(wrapped)));
           });
-        } catch (const std::exception& exception) {
-          reply(WrapError(exception.what()));
-        }
-      });
+    } else {
+      channel.SetMessageHandler(nullptr);
+    }
+  }
+  {
+    BasicMessageChannel<> channel(
+        binary_messenger,
+        "dev.flutter.pigeon.camera_windows.CameraApi.startImageStream" +
+            prepended_suffix,
+        &GetCodec());
+    if (api != nullptr) {
+      channel.SetMessageHandler(
+          [api](const EncodableValue& message,
+                const flutter::MessageReply<EncodableValue>& reply) {
+            try {
+              const auto& args = std::get<EncodableList>(message);
+              const auto& encodable_camera_id_arg = args.at(0);
+              if (encodable_camera_id_arg.IsNull()) {
+                reply(WrapError("camera_id_arg unexpectedly null."));
+                return;
+              }
+              const int64_t camera_id_arg = encodable_camera_id_arg.LongValue();
+              api->StartImageStream(
+                  camera_id_arg, [reply](std::optional<FlutterError>&& output) {
+                    if (output.has_value()) {
+                      reply(WrapError(output.value()));
+                      return;
+                    }
+                    EncodableList wrapped;
+                    wrapped.push_back(EncodableValue());
+                    reply(EncodableValue(std::move(wrapped)));
+                  });
+            } catch (const std::exception& exception) {
+              reply(WrapError(exception.what()));
+            }
+          });
+    } else {
+      channel.SetMessageHandler(nullptr);
+    }
+  }
+  {
+    BasicMessageChannel<> channel(
+        binary_messenger,
+        "dev.flutter.pigeon.camera_windows.CameraApi.stopImageStream" +
+            prepended_suffix,
+        &GetCodec());
+    if (api != nullptr) {
+      channel.SetMessageHandler(
+          [api](const EncodableValue& message,
+                const flutter::MessageReply<EncodableValue>& reply) {
+            try {
+              const auto& args = std::get<EncodableList>(message);
+              const auto& encodable_camera_id_arg = args.at(0);
+              if (encodable_camera_id_arg.IsNull()) {
+                reply(WrapError("camera_id_arg unexpectedly null."));
+                return;
+              }
+              const int64_t camera_id_arg = encodable_camera_id_arg.LongValue();
+              api->StopImageStream(
+                  camera_id_arg, [reply](std::optional<FlutterError>&& output) {
+                    if (output.has_value()) {
+                      reply(WrapError(output.value()));
+                      return;
+                    }
+                    EncodableList wrapped;
+                    wrapped.push_back(EncodableValue());
+                    reply(EncodableValue(std::move(wrapped)));
+                  });
+            } catch (const std::exception& exception) {
+              reply(WrapError(exception.what()));
+            }
+          });
     } else {
       channel.SetMessageHandler(nullptr);
     }

@@ -275,8 +275,7 @@ class CameraWindows extends CameraPlatform {
 
   Future<void> _startPlatformStream(int cameraId) async {
     _startStreamListener();
-    await pluginChannel.invokeMethod<void>(
-        'startImageStream', <String, dynamic>{'cameraId': cameraId});
+    await _hostApi.startImageStream(cameraId);
   }
 
   void _startStreamListener() {
@@ -290,8 +289,7 @@ class CameraWindows extends CameraPlatform {
   }
 
   FutureOr<void> _onFrameStreamCancel(int cameraId) async {
-    await pluginChannel.invokeMethod<void>(
-        'stopImageStream', <String, dynamic>{'cameraId': cameraId});
+    await _hostApi.stopImageStream(cameraId);
     await _platformImageStreamSubscription?.cancel();
     _platformImageStreamSubscription = null;
     _frameStreamController = null;
