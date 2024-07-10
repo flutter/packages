@@ -1,3 +1,7 @@
+## 2.7.1
+
+- Adds `TypedRelativeGoRoute` annotation which supports relative routes.
+
 ## 2.7.0
 
 - Adds an example and a test with `onExit`.

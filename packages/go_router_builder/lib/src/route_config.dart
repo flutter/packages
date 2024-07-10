@@ -209,8 +209,10 @@ class GoRouteConfig extends RouteBaseConfig {
 
     RouteBaseConfig? config = this;
     while (config != null) {
-      if (config is GoRouteConfig) {
-        pathSegments.add(config.path);
+      if (config
+          case GoRouteConfig(:final String path) ||
+              GoRelativeRouteConfig(:final String path)) {
+        pathSegments.add(path);
       }
       config = config.parent;
     }
@@ -424,6 +426,219 @@ extension $_extensionName on $_className {
   String get dataConvertionFunctionName => r'$route';
 }
 
+/// The configuration to generate class declarations for a GoRouteData.
+class GoRelativeRouteConfig extends RouteBaseConfig {
+  GoRelativeRouteConfig._({
+    required this.path,
+    required this.parentNavigatorKey,
+    required super.routeDataClass,
+    required super.parent,
+  }) : super._();
+
+  /// The path of the GoRoute to be created by this configuration.
+  final String path;
+
+  /// The parent navigator key.
+  final String? parentNavigatorKey;
+
+  late final Set<String> _pathParams = pathParametersFromPattern(path);
+
+  // construct path bits using parent bits
+  // if there are any queryParam objects, add in the `queryParam` bits
+  String get _locationArgs {
+    final Map<String, String> pathParameters = Map<String, String>.fromEntries(
+      _pathParams.map((String pathParameter) {
+        // Enum types are encoded using a map, so we need a nullability check
+        // here to ensure it matches Uri.encodeComponent nullability
+        final DartType? type = _field(pathParameter)?.returnType;
+        final String value =
+            '\${Uri.encodeComponent(${_encodeFor(pathParameter)}${type?.isEnum ?? false ? '!' : ''})}';
+        return MapEntry<String, String>(pathParameter, value);
+      }),
+    );
+    final String location = patternToPath(path, pathParameters);
+    return "'$location'";
+  }
+
+  ParameterElement? get _extraParam => _ctor.parameters
+      .singleWhereOrNull((ParameterElement element) => element.isExtraField);
+
+  String get _fromStateConstructor {
+    final StringBuffer buffer = StringBuffer('=>');
+    if (_ctor.isConst &&
+        _ctorParams.isEmpty &&
+        _ctorQueryParams.isEmpty &&
+        _extraParam == null) {
+      buffer.writeln('const ');
+    }
+
+    buffer.writeln('$_className(');
+    for (final ParameterElement param in <ParameterElement>[
+      ..._ctorParams,
+      ..._ctorQueryParams,
+      if (_extraParam != null) _extraParam!,
+    ]) {
+      buffer.write(_decodeFor(param));
+    }
+    buffer.writeln(');');
+
+    return buffer.toString();
+  }
+
+  String _decodeFor(ParameterElement element) {
+    if (element.isRequired) {
+      if (element.type.nullabilitySuffix == NullabilitySuffix.question &&
+          _pathParams.contains(element.name)) {
+        throw InvalidGenerationSourceError(
+          'Required parameters in the path cannot be nullable.',
+          element: element,
+        );
+      }
+    }
+    final String fromStateExpression = decodeParameter(element, _pathParams);
+
+    if (element.isPositional) {
+      return '$fromStateExpression,';
+    }
+
+    if (element.isNamed) {
+      return '${element.name}: $fromStateExpression,';
+    }
+
+    throw InvalidGenerationSourceError(
+      '$likelyIssueMessage (param not named or positional)',
+      element: element,
+    );
+  }
+
+  String _encodeFor(String fieldName) {
+    final PropertyAccessorElement? field = _field(fieldName);
+    if (field == null) {
+      throw InvalidGenerationSourceError(
+        'Could not find a field for the path parameter "$fieldName".',
+        element: routeDataClass,
+      );
+    }
+
+    return encodeField(field);
+  }
+
+  String get _locationQueryParams {
+    if (_ctorQueryParams.isEmpty) {
+      return '';
+    }
+
+    final StringBuffer buffer = StringBuffer('queryParams: {\n');
+
+    for (final ParameterElement param in _ctorQueryParams) {
+      final String parameterName = param.name;
+
+      final List<String> conditions = <String>[];
+      if (param.hasDefaultValue) {
+        if (param.type.isNullableType) {
+          throw NullableDefaultValueError(param);
+        }
+        conditions.add('$parameterName != ${param.defaultValueCode!}');
+      } else if (param.type.isNullableType) {
+        conditions.add('$parameterName != null');
+      }
+      String line = '';
+      if (conditions.isNotEmpty) {
+        line = 'if (${conditions.join(' && ')}) ';
+      }
+      line += '${escapeDartString(parameterName.kebab)}: '
+          '${_encodeFor(parameterName)},';
+
+      buffer.writeln(line);
+    }
+
+    buffer.writeln('},');
+
+    return buffer.toString();
+  }
+
+  late final List<ParameterElement> _ctorParams =
+      _ctor.parameters.where((ParameterElement element) {
+    if (_pathParams.contains(element.name)) {
+      return true;
+    }
+    return false;
+  }).toList();
+
+  late final List<ParameterElement> _ctorQueryParams = _ctor.parameters
+      .where((ParameterElement element) =>
+          !_pathParams.contains(element.name) && !element.isExtraField)
+      .toList();
+
+  ConstructorElement get _ctor {
+    final ConstructorElement? ctor = routeDataClass.unnamedConstructor;
+
+    if (ctor == null) {
+      throw InvalidGenerationSourceError(
+        'Missing default constructor',
+        element: routeDataClass,
+      );
+    }
+    return ctor;
+  }
+
+  @override
+  Iterable<String> classDeclarations() => <String>[
+        _extensionDefinition,
+        ..._enumDeclarations(),
+      ];
+
+  String get _extensionDefinition => '''
+extension $_extensionName on $_className {
+  static $_className _fromState(GoRouterState state) $_fromStateConstructor
+
+  String get location => './\${GoRouteData.\$location($_locationArgs,$_locationQueryParams)}';
+
+  void go(BuildContext context) =>
+      context.go(location${_extraParam != null ? ', extra: $extraFieldName' : ''});
+}
+''';
+
+  /// Returns code representing the constant maps that contain the `enum` to
+  /// [String] mapping for each referenced enum.
+  Iterable<String> _enumDeclarations() {
+    final Set<InterfaceType> enumParamTypes = <InterfaceType>{};
+
+    for (final ParameterElement ctorParam in <ParameterElement>[
+      ..._ctorParams,
+      ..._ctorQueryParams,
+    ]) {
+      DartType potentialEnumType = ctorParam.type;
+      if (potentialEnumType is ParameterizedType &&
+          (ctorParam.type as ParameterizedType).typeArguments.isNotEmpty) {
+        potentialEnumType =
+            (ctorParam.type as ParameterizedType).typeArguments.first;
+      }
+
+      if (potentialEnumType.isEnum) {
+        enumParamTypes.add(potentialEnumType as InterfaceType);
+      }
+    }
+    return enumParamTypes.map<String>(_enumMapConst);
+  }
+
+  @override
+  String get factorConstructorParameters =>
+      'factory: $_extensionName._fromState,';
+
+  @override
+  String get routeConstructorParameters => '''
+    path: ${escapeDartString(path)},
+    ${parentNavigatorKey == null ? '' : 'parentNavigatorKey: $parentNavigatorKey,'}
+''';
+
+  @override
+  String get routeDataClassName => 'GoRouteData';
+
+  @override
+  String get dataConvertionFunctionName => r'$route';
+}
+
 /// Represents a `TypedGoRoute` annotation to the builder.
 abstract class RouteBaseConfig {
   RouteBaseConfig._({
@@ -543,6 +758,23 @@ abstract class RouteBaseConfig {
         value = GoRouteConfig._(
           path: pathValue.stringValue,
           name: nameValue.isNull ? null : nameValue.stringValue,
+          routeDataClass: classElement,
+          parent: parent,
+          parentNavigatorKey: _generateParameterGetterCode(
+            classElement,
+            parameterName: r'$parentNavigatorKey',
+          ),
+        );
+      case 'TypedRelativeGoRoute':
+        final ConstantReader pathValue = reader.read('path');
+        if (pathValue.isNull) {
+          throw InvalidGenerationSourceError(
+            'Missing `path` value on annotation.',
+            element: element,
+          );
+        }
+        value = GoRelativeRouteConfig._(
+          path: pathValue.stringValue,
           routeDataClass: classElement,
           parent: parent,
           parentNavigatorKey: _generateParameterGetterCode(
