@@ -18,7 +18,7 @@ let package = Package(
   dependencies: [
     .package(
       url: "https://github.com/googleads/swift-package-manager-google-interactive-media-ads-ios",
-      from: "3.23.0")
+      .upToNextMajor(from: "3.23.0"))
   ],
   targets: [
     .target(
