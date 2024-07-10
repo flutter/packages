@@ -22,6 +22,7 @@ final class AdLoadingErrorTests: XCTestCase {
 }
 
 class TestAdLoadingErrorData: IMAAdLoadingErrorData {
+  // Workaround to subclass an Objective-C class that has an `init` constructor with NS_UNAVAILABLE
   static func customInit() -> TestAdLoadingErrorData {
     let instance =
       TestAdLoadingErrorData.perform(NSSelectorFromString("new")).takeRetainedValue()

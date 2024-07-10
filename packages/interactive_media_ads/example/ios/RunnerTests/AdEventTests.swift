@@ -33,6 +33,7 @@ final class AdEventTests: XCTestCase {
 }
 
 class TestAdEvent: IMAAdEvent {
+  // Workaround to subclass an Objective-C class that has an `init` constructor with NS_UNAVAILABLE
   static func customInit() -> TestAdEvent {
     let instance =
       TestAdEvent.perform(NSSelectorFromString("new")).takeRetainedValue() as! TestAdEvent

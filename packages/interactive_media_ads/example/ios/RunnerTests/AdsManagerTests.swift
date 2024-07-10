@@ -112,6 +112,7 @@ class TestAdsManager: IMAAdsManager {
   var resumeCalled = false
   var destroyCalled = false
 
+  // Workaround to subclass an Objective-C class that has an `init` constructor with NS_UNAVAILABLE
   static func customInit() -> TestAdsManager {
     let instance =
       TestAdsManager.perform(NSSelectorFromString("new")).takeRetainedValue() as! TestAdsManager

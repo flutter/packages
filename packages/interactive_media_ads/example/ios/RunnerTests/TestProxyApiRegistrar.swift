@@ -9,8 +9,8 @@ import XCTest
 
 class TestProxyApiRegistrar: PigeonProxyApiRegistrar {
   init() {
-    let mockBinaryMessenger = MockBinaryMessenger<String>(
+    let testBinaryMessenger = TestBinaryMessenger<String>(
       codec: FlutterStandardMessageCodec.sharedInstance())
-    super.init(binaryMessenger: mockBinaryMessenger, apiDelegate: ProxyApiDelegate())
+    super.init(binaryMessenger: testBinaryMessenger, apiDelegate: ProxyApiDelegate())
   }
 }

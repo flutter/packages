@@ -4,7 +4,7 @@
 
 import Flutter
 
-class MockBinaryMessenger<T>: NSObject, FlutterBinaryMessenger {
+class TestBinaryMessenger<T>: NSObject, FlutterBinaryMessenger {
   let codec: FlutterMessageCodec
   var result: T?
   private(set) var handlers: [String: FlutterBinaryMessageHandler] = [:]
