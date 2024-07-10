@@ -14,10 +14,25 @@ very unlikely to be relevant.
 
 ## Running tests
 
-**Make sure that you have `chromedriver` running in port `4444`.**
+You may use the [Flutter Plugin Tools](https://github.com/flutter/packages/blob/main/script/tool/README.md)
+to run the integration tests of this package.
 
-`flutter drive --target integration_test/widget_test.dart --driver test_driver/integration_test.dart --show-web-server-device -d web-server --web-renderer=canvaskit`
+See [How to Run Dart Integration Tests](https://github.com/flutter/packages/blob/main/script/tool/README.md#run-dart-integration-tests)
+for the latest documentation.
 
-The command above will run the integration tests for this package.
+### Web-specific options
 
-Read more on: [flutter.dev > Docs > Testing & debugging > Integration testing](https://docs.flutter.dev/testing/integration-tests).
+Use the following options to build and drive the integration examples on the web:
+
+* `--web` as platform
+* `--packages pointer_interceptor_web` as package
+* `--run-chromedriver` to start a `chromedriver` session from `drive-examples`.
+
+### Chromedriver
+
+**Make sure that you have `chromedriver` in your `$PATH`.**
+
+You may download the appropriate version of `chromedriver` for your OS and
+Chrome version from the
+[Chrome for Testing availability](https://googlechromelabs.github.io/chrome-for-testing/)
+website.
