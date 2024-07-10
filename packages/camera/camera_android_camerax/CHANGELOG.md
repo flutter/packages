@@ -1,3 +1,12 @@
+## 0.6.7+1
+
+* Updates README to remove references to `maxVideoDuration`, as it was never
+  visible to app-facing clients, nor was it implemented in `camera_android`.
+
+## 0.6.7
+
+* Updates AGP version to 8.5.0.
+
 ## 0.6.6
 
 * Adds logic to support building a camera preview with Android `Surface`s not backed by a `SurfaceTexture`

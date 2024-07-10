@@ -1,6 +1,18 @@
-## 2.8.2
+## 2.10.1
 
 - Fixes map objects (markers, polygons, polylines, circles, and tiles) being added with the wrong properties
+
+## 2.10.0
+
+* Converts Obj-C->Dart calls to Pigeon.
+
+## 2.9.0
+
+* Converts additional platform calls to Pigeon.
+
+## 2.8.2
+
+* Converts inspector interface platform calls to Pigeon.
 
 ## 2.8.1
 
