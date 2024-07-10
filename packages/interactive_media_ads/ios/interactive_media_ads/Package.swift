@@ -23,7 +23,11 @@ let package = Package(
   targets: [
     .target(
       name: "interactive_media_ads",
-      dependencies: ["GoogleInteractiveMediaAds"],
+      dependencies: [
+        .product(
+          name: "GoogleInteractiveMediaAds",
+          package: "swift-package-manager-google-interactive-media-ads-ios")
+      ],
       resources: [
         .process("Resources")
       ]
