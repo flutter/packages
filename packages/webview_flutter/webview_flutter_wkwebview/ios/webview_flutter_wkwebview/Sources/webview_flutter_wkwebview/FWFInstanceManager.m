@@ -2,8 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#import "FWFInstanceManager.h"
-#import "FWFInstanceManager_Test.h"
+#import "./include/webview_flutter_wkwebview/FWFInstanceManager.h"
+#import "./include/webview_flutter_wkwebview/FWFInstanceManager_Test.h"
 
 #import <objc/runtime.h>
 

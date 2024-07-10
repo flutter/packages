@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#import "FWFURLHostApi.h"
+#import "./include/webview_flutter_wkwebview/FWFURLHostApi.h"
 
 @interface FWFURLHostApiImpl ()
 // BinaryMessenger must be weak to prevent a circular reference with the host API it
