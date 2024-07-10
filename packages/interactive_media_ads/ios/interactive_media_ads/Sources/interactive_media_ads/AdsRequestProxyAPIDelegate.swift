@@ -10,12 +10,19 @@ import GoogleInteractiveMediaAds
 /// This class may handle instantiating native object instances that are attached to a Dart
 /// instance or handle method calls on the associated native class or an instance of that class.
 class AdsRequestProxyAPIDelegate: PigeonDelegateIMAAdsRequest {
+  /// The current version of the `interactive_media_ads` plugin.
+  ///
+  /// This must match the version in pubspec.yaml.
+  static let pluginVersion = "0.1.1"
+
   func pigeonDefaultConstructor(
     pigeonApi: PigeonApiIMAAdsRequest, adTagUrl: String, adDisplayContainer: IMAAdDisplayContainer,
     contentPlayhead: IMAContentPlayhead?
   ) throws -> IMAAdsRequest {
+    let adTagWithRequestAgent =
+      "\(adTagUrl)&request_agent=Flutter-IMA-\(AdsRequestProxyAPIDelegate.pluginVersion)"
     return IMAAdsRequest(
-      adTagUrl: adTagUrl, adDisplayContainer: adDisplayContainer,
+      adTagUrl: adTagWithRequestAgent, adDisplayContainer: adDisplayContainer,
       contentPlayhead: contentPlayhead as? ContentPlayheadImpl, userContext: nil)
   }
 }
