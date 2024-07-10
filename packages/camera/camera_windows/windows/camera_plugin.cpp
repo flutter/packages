@@ -295,7 +295,7 @@ void CameraPlugin::ResumePreview(
 }
 
 void CameraPlugin::StartVideoRecording(
-    int64_t camera_id, const PlatformVideoCaptureOptions& options,
+    int64_t camera_id,
     std::function<void(std::optional<FlutterError> reply)> result) {
   auto camera = GetCameraByCameraId(camera_id);
   if (!camera) {
@@ -307,21 +307,13 @@ void CameraPlugin::StartVideoRecording(
         FlutterError("camera_error", "Pending start recording request exists"));
   }
 
-  int64_t max_video_duration_ms = -1;
-  const int64_t* requested_max_video_duration_ms =
-      options.max_duration_milliseconds();
-
-  if (requested_max_video_duration_ms != nullptr) {
-    max_video_duration_ms = *requested_max_video_duration_ms;
-  }
-
   std::optional<std::string> path = GetFilePathForVideo();
   if (path) {
     if (camera->AddPendingVoidResult(PendingResultType::kStartRecord,
                                      std::move(result))) {
       auto cc = camera->GetCaptureController();
       assert(cc);
-      cc->StartRecord(*path, max_video_duration_ms);
+      cc->StartRecord(*path);
     }
   } else {
     return result(

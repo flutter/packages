@@ -1,3 +1,7 @@
+## 0.9.16+3
+
+* Removes unused `maxVideoDuration` code.
+
 ## 0.9.16+2
 
 * Fixes regression taking a picture in torch mode.
