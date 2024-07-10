@@ -279,13 +279,13 @@ class PaletteSwatch extends StatelessWidget {
               message: color!.toRGB(),
               child: Container(
                 decoration: BoxDecoration(
-                  color: color,
-                  border: Border.all(
-                    color: _kPlaceholderColor,
-                    style: colorDistance < 0.2
-                      ? BorderStyle.solid
-                      : BorderStyle.none,
-                  )),
+                    color: color,
+                    border: Border.all(
+                      color: _kPlaceholderColor,
+                      style: colorDistance < 0.2
+                          ? BorderStyle.solid
+                          : BorderStyle.none,
+                    )),
                 width: 34.0,
                 height: 20.0,
               ),
