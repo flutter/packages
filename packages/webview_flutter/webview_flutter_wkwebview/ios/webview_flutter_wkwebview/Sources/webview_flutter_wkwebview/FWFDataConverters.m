@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#import "FWFDataConverters.h"
+#import "./include/webview_flutter_wkwebview/FWFDataConverters.h"
 
 #import <Flutter/Flutter.h>
 

@@ -2,10 +2,10 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#import "FWFNavigationDelegateHostApi.h"
-#import "FWFDataConverters.h"
-#import "FWFURLAuthenticationChallengeHostApi.h"
-#import "FWFWebViewConfigurationHostApi.h"
+#import "./include/webview_flutter_wkwebview/FWFNavigationDelegateHostApi.h"
+#import "./include/webview_flutter_wkwebview/FWFDataConverters.h"
+#import "./include/webview_flutter_wkwebview/FWFURLAuthenticationChallengeHostApi.h"
+#import "./include/webview_flutter_wkwebview/FWFWebViewConfigurationHostApi.h"
 
 @interface FWFNavigationDelegateFlutterApiImpl ()
 // BinaryMessenger must be weak to prevent a circular reference with the host API it

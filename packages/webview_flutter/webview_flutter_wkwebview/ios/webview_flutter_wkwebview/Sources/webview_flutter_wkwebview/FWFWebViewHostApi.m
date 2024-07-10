@@ -2,8 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#import "FWFWebViewHostApi.h"
-#import "FWFDataConverters.h"
+#import "./include/webview_flutter_wkwebview/FWFWebViewHostApi.h"
+#import "./include/webview_flutter_wkwebview/FWFDataConverters.h"
 
 @implementation FWFAssetManager
 - (NSString *)lookupKeyForAsset:(NSString *)asset {
