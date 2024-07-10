@@ -375,9 +375,9 @@ NSString *const errorMethod = @"error";
     extension = @"jpg";
   }
 
-  AVCaptureFlashMode avFlashMode = FCPGetAVCaptureFlashModeForPigeonFlashMode(_flashMode);
-  if (avFlashMode != -1) {
-    [settings setFlashMode:avFlashMode];
+  // If the flash is in torch mode, no capture-level flash setting is needed.
+  if (_flashMode != FCPPlatformFlashModeTorch) {
+    [settings setFlashMode:FCPGetAVCaptureFlashModeForPigeonFlashMode(_flashMode)];
   }
   NSError *error;
   NSString *path = [self getTemporaryFilePathWithExtension:extension
@@ -672,6 +672,10 @@ NSString *const errorMethod = @"error";
 
     if (_isFirstSample) {
       [_videoWriter startSessionAtSourceTime:currentSampleTime];
+      // fix sample times not being numeric when pause/resume happens before first sample buffer
+      // arrives https://github.com/flutter/flutter/issues/132014
+      _lastVideoSampleTime = currentSampleTime;
+      _lastAudioSampleTime = currentSampleTime;
       _isFirstSample = NO;
     }
 
