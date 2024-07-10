@@ -1,6 +1,7 @@
 ## 0.1.1
 
 * Adds iOS implementation.
+* Adds support for setting the layout direction of the `AdDisplayContainer`.
 
 ## 0.1.0
 

@@ -58,7 +58,7 @@ base class PlatformAdDisplayContainerCreationParams {
   /// view hierarchy.
   final void Function(PlatformAdDisplayContainer container) onContainerAdded;
 
-  /// The layout direction to use for the embedded WebView.
+  /// The layout direction to use for the embedded AdDisplayContainer.
   final TextDirection layoutDirection;
 }
 
