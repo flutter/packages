@@ -9,16 +9,16 @@
 
 // Defines polygon controllable by Flutter.
 @interface FLTGoogleMapPolygonController : NSObject
-- (instancetype)initPolygonWithPath:(GMSMutablePath *)path
-                         identifier:(NSString *)identifier
-                            mapView:(GMSMapView *)mapView;
+- (instancetype)initWithPath:(GMSMutablePath *)path
+                  identifier:(NSString *)identifier
+                     mapView:(GMSMapView *)mapView;
 - (void)removePolygon;
 @end
 
 @interface FLTPolygonsController : NSObject
-- (instancetype)init:(FlutterMethodChannel *)methodChannel
-             mapView:(GMSMapView *)mapView
-           registrar:(NSObject<FlutterPluginRegistrar> *)registrar;
+- (instancetype)initWithMapView:(GMSMapView *)mapView
+                callbackHandler:(FGMMapsCallbackApi *)callbackHandler
+                      registrar:(NSObject<FlutterPluginRegistrar> *)registrar;
 - (void)addJSONPolygons:(NSArray<NSDictionary<NSString *, id> *> *)polygonsToAdd;
 - (void)addPolygons:(NSArray<FGMPlatformPolygon *> *)polygonsToAdd;
 - (void)changePolygons:(NSArray<FGMPlatformPolygon *> *)polygonsToChange;

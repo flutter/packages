@@ -1013,16 +1013,15 @@ class AndroidCameraCameraX extends CameraPlatform {
   @override
   Future<void> startVideoRecording(int cameraId,
       {Duration? maxVideoDuration}) async {
-    return startVideoCapturing(
-        VideoCaptureOptions(cameraId, maxDuration: maxVideoDuration));
+    // Ignore maxVideoDuration, as it is unimplemented and deprecated.
+    return startVideoCapturing(VideoCaptureOptions(cameraId));
   }
 
   /// Starts a video recording and/or streaming session.
   ///
   /// Please see [VideoCaptureOptions] for documentation on the
-  /// configuration options. Currently, maxVideoDuration and streamOptions
-  /// are unsupported due to the limitations of CameraX and the platform
-  /// interface, respectively.
+  /// configuration options. Currently streamOptions are unsupported due to
+  /// limitations of the platform interface.
   @override
   Future<void> startVideoCapturing(VideoCaptureOptions options) async {
     if (recording != null) {
