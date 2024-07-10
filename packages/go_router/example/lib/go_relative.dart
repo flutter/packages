@@ -5,7 +5,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-/// This sample app demonstrates how to use GoRoute.goRelative.
+/// This sample app demonstrates how to use go relatively with GoRouter.go('./$path').
 void main() => runApp(const MyApp());
 
 /// The route configuration.
