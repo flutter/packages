@@ -1,3 +1,7 @@
+## 0.2.4
+
+* Adds support for setting the credentialless attribute on the <iframe> element.
+
 ## 0.2.3
 
 * Migrates to `package:web`

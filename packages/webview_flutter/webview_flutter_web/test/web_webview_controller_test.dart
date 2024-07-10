@@ -32,6 +32,16 @@ void main() {
         expect(params.iFrame.style.width, '100%');
         expect(params.iFrame.style.height, '100%');
         expect(params.iFrame.style.border, 'none');
+        expect(params.iFrame.attributes.getNamedItem('credentialless')!.value,
+            'false');
+      });
+
+      test('sets iFrame attribute credentialless', () {
+        final WebWebViewControllerCreationParams params =
+            WebWebViewControllerCreationParams(iFrameCredentialless: true);
+
+        expect(params.iFrame.attributes.getNamedItem('credentialless')!.value,
+            'true');
       });
     });
 
