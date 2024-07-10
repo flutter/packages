@@ -1,5 +1,6 @@
-## NEXT
+## 0.2.3
 
+* Converts native platform calls to Pigeon.
 * Updates minimum supported SDK version to Flutter 3.16/Dart 3.2.
 
 ## 0.2.2
