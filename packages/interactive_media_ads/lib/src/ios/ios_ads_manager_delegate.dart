@@ -63,11 +63,7 @@ final class IOSAdsManagerDelegate extends PlatformAdsManagerDelegate {
     WeakReference<IOSAdsManagerDelegate> interfaceDelegate,
   ) {
     return interfaceDelegate.target!._iosParams._proxy.newIMAAdsManagerDelegate(
-      didReceiveAdEvent: (
-        ima.IMAAdsManagerDelegate instance,
-        ima.IMAAdsManager adsManager,
-        ima.IMAAdEvent event,
-      ) {
+      didReceiveAdEvent: (_, __, ima.IMAAdEvent event) {
         late final AdEventType? eventType = event.type.asInterfaceAdEventType();
         if (eventType == null) {
           return;
@@ -76,11 +72,7 @@ final class IOSAdsManagerDelegate extends PlatformAdsManagerDelegate {
         interfaceDelegate.target?.params.onAdEvent
             ?.call(AdEvent(type: eventType));
       },
-      didReceiveAdError: (
-        ima.IMAAdsManagerDelegate instance,
-        ima.IMAAdsManager adsManager,
-        ima.IMAAdError event,
-      ) {
+      didReceiveAdError: (_, __, ima.IMAAdError event) {
         interfaceDelegate.target?.params.onAdErrorEvent?.call(
           AdErrorEvent(
             error: AdError(
@@ -91,18 +83,12 @@ final class IOSAdsManagerDelegate extends PlatformAdsManagerDelegate {
           ),
         );
       },
-      didRequestContentPause: (
-        ima.IMAAdsManagerDelegate instance,
-        ima.IMAAdsManager adsManager,
-      ) {
+      didRequestContentPause: (_, __) {
         interfaceDelegate.target?.params.onAdEvent?.call(
           const AdEvent(type: AdEventType.contentPauseRequested),
         );
       },
-      didRequestContentResume: (
-        ima.IMAAdsManagerDelegate instance,
-        ima.IMAAdsManager adsManager,
-      ) {
+      didRequestContentResume: (_, __) {
         interfaceDelegate.target?.params.onAdEvent?.call(
           const AdEvent(type: AdEventType.contentResumeRequested),
         );
