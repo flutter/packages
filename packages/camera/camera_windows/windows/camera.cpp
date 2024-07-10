@@ -314,6 +314,16 @@ void CameraImpl::OnTakePictureSucceeded(const std::string& file_path) {
   }
 };
 
+void CameraImpl::OnTakePictureFailed(CameraResult result,
+                                     const std::string& error) {
+  auto pending_take_picture_result =
+      GetPendingStringResultByType(PendingResultType::kTakePicture);
+  if (pending_take_picture_result) {
+    std::string error_code = GetErrorCode(result);
+    pending_take_picture_result(FlutterError(error_code, error));
+  }
+};
+
 void CameraImpl::OnCaptureError(CameraResult result, const std::string& error) {
   if (messenger_ && camera_id_ >= 0) {
     auto channel = GetMethodChannel();
@@ -327,16 +337,6 @@ void CameraImpl::OnCaptureError(CameraResult result, const std::string& error) {
   std::string error_code = GetErrorCode(result);
   SendErrorForPendingResults(error_code, error);
 }
-
-void CameraImpl::OnTakePictureFailed(CameraResult result,
-                                     const std::string& error) {
-  auto pending_take_picture_result =
-      GetPendingResultByType(PendingResultType::kTakePicture);
-  if (pending_take_picture_result) {
-    std::string error_code = GetErrorCode(result);
-    pending_take_picture_result->Error(error_code, error);
-  }
-};
 
 void CameraImpl::OnCameraClosing() {
   if (messenger_ && camera_id_ >= 0) {
