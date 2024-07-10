@@ -33,7 +33,7 @@ dependency_overrides:
   google_maps:
     git:
       url: https://github.com/a14n/dart-google-maps
-      ref: 5972ce588c6505fa73b783ca2be68272b5e6f2da
+      ref: 0f57b7d99ed9652a31cd60a5dd4f3c6cb6b9f31a
   # Override the google_maps_flutter dependency on google_maps_flutter_web.
   # TODO(ditman): Unwind the circular dependency. This will create problems
   # if we need to make a breaking change to google_maps_flutter_web.
