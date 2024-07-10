@@ -5,6 +5,7 @@
 import Foundation
 import GoogleInteractiveMediaAds
 
+/// Implementation of `IMAAdsManagerDelegate` that calls to Dart in callback methods.
 class AdsLoaderDelegateImpl: IMAAdsLoaderDelegate {
   let api: PigeonApiProtocolIMAAdsLoaderDelegate
 
@@ -24,6 +25,10 @@ class AdsLoaderDelegateImpl: IMAAdsLoaderDelegate {
   }
 }
 
+/// ProxyApi delegate implementation for `IMAAdsLoaderDelegate`.
+///
+/// This class may handle instantiating native object instances that are attached to a Dart
+/// instance or handle method calls on the associated native class or an instance of that class.
 class AdsLoaderDelegateProxyAPIDelegate: PigeonDelegateIMAAdsLoaderDelegate {
   func pigeonDefaultConstructor(pigeonApi: PigeonApiIMAAdsLoaderDelegate) throws
     -> IMAAdsLoaderDelegate

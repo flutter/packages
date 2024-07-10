@@ -5,6 +5,8 @@
 import Foundation
 import GoogleInteractiveMediaAds
 
+/// Implementation of `PigeonProxyApiDelegate` that provides each ProxyApi delegate implementation
+/// and any additional resources needed by an implementation.
 open class ProxyApiDelegate: PigeonProxyApiDelegate {
   func pigeonApiIMAAdDisplayContainer(_ registrar: PigeonProxyApiRegistrar)
     -> PigeonApiIMAAdDisplayContainer

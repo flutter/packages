@@ -10,9 +10,6 @@ import 'interactive_media_ads.g.dart';
 /// This class provides dependency injection for the implementations of the
 /// platform interface classes. Improving the ease of unit testing and/or
 /// overriding the underlying iOS classes.
-///
-/// By default each function calls the default constructor of the class it
-/// intends to return.
 class InteractiveMediaAdsProxy {
   /// Constructs an [InteractiveMediaAdsProxy].
   const InteractiveMediaAdsProxy({

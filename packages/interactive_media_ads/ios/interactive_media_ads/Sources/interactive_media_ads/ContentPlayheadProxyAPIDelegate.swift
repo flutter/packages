@@ -5,10 +5,15 @@
 import Foundation
 import GoogleInteractiveMediaAds
 
+/// Implementation of `IMAContentPlayhead` with a settable time interval.
 class ContentPlayheadImpl: NSObject, IMAContentPlayhead {
   var currentTime: TimeInterval = 0.0
 }
 
+/// ProxyApi delegate implementation for `IMAContentPlayhead`.
+///
+/// This class may handle instantiating native object instances that are attached to a Dart
+/// instance or handle method calls on the associated native class or an instance of that class.
 class ContentPlayheadProxyAPIDelegate: PigeonDelegateIMAContentPlayhead {
   func pigeonDefaultConstructor(pigeonApi: PigeonApiIMAContentPlayhead) throws -> IMAContentPlayhead
   {

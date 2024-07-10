@@ -5,6 +5,10 @@
 import Foundation
 import GoogleInteractiveMediaAds
 
+/// ProxyApi delegate implementation for `IMAAdLoadingErrorData`.
+///
+/// This class may handle instantiating native object instances that are attached to a Dart
+/// instance or handle method calls on the associated native class or an instance of that class.
 class AdLoadingErrorDataProxyAPIDelegate: PigeonDelegateIMAAdLoadingErrorData {
   func adError(pigeonApi: PigeonApiIMAAdLoadingErrorData, pigeonInstance: IMAAdLoadingErrorData)
     throws -> IMAAdError

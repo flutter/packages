@@ -5,7 +5,6 @@
 import Foundation
 import GoogleInteractiveMediaAds
 
-
 /// ProxyApi delegate implementation for `IMAAdDisplayContainer`.
 ///
 /// This class may handle instantiating native object instances that are attached to a Dart

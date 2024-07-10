@@ -5,6 +5,8 @@
 import Flutter
 import Foundation
 
+/// Implementation of `FlutterPlatformViewFactory` that converts any `UIView` in a
+/// `PigeonInstanceManager` to a `FlutterPlatformView`.
 class FlutterViewFactory: NSObject, FlutterPlatformViewFactory {
   unowned let instanceManager: PigeonInstanceManager
 
