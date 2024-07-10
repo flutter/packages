@@ -566,8 +566,7 @@ TEST(CameraPlugin, StartVideoRecordingHandlerCallsStartRecordWithPath) {
         EXPECT_FALSE(reply);
       };
 
-  plugin.StartVideoRecording(mock_camera_id, PlatformVideoCaptureOptions(),
-                             std::move(start_video_result));
+  plugin.StartVideoRecording(mock_camera_id, std::move(start_video_result));
 
   EXPECT_TRUE(result_called);
 }
@@ -610,8 +609,7 @@ TEST(CameraPlugin, StartVideoRecordingHandlerErrorOnInvalidCameraId) {
         EXPECT_TRUE(reply);
       };
 
-  plugin.StartVideoRecording(missing_camera_id, PlatformVideoCaptureOptions(),
-                             std::move(start_video_result));
+  plugin.StartVideoRecording(missing_camera_id, std::move(start_video_result));
 
   EXPECT_TRUE(result_called);
 }

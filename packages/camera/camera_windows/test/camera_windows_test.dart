@@ -360,7 +360,7 @@ void main() {
         await plugin.startVideoRecording(cameraId);
 
         // Assert
-        verify(mockApi.startVideoRecording(any, any));
+        verify(mockApi.startVideoRecording(any));
       });
 
       test('capturing fails if trying to stream', () async {
