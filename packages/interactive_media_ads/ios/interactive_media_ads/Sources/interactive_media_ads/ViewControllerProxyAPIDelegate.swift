@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import Foundation
+import UIKit
 
 class ViewControllerProxyAPIDelegate: PigeonDelegateUIViewController {
   func pigeonDefaultConstructor(pigeonApi: PigeonApiUIViewController) throws -> UIViewController {
