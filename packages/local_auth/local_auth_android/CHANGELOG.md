@@ -1,3 +1,15 @@
+## 1.0.42
+
+* Updates AGP version to 8.5.0.
+
+## 1.0.41
+
+* Updates espresso to 3.6.1.
+
+## 1.0.40
+
+* Updates androidx.core version to 1.13.1.
+
 ## 1.0.39
 
 * Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
