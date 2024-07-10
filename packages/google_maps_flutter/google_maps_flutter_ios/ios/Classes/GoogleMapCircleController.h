@@ -18,9 +18,9 @@
 @end
 
 @interface FLTCirclesController : NSObject
-- (instancetype)init:(FlutterMethodChannel *)methodChannel
-             mapView:(GMSMapView *)mapView
-           registrar:(NSObject<FlutterPluginRegistrar> *)registrar;
+- (instancetype)initWithMapView:(GMSMapView *)mapView
+                callbackHandler:(FGMMapsCallbackApi *)callbackHandler
+                      registrar:(NSObject<FlutterPluginRegistrar> *)registrar;
 - (void)addJSONCircles:(NSArray<NSDictionary<NSString *, id> *> *)circlesToAdd;
 - (void)addCircles:(NSArray<FGMPlatformCircle *> *)circlesToAdd;
 - (void)changeCircles:(NSArray<FGMPlatformCircle *> *)circlesToChange;

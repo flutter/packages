@@ -12,6 +12,21 @@ import 'package:pigeon/pigeon.dart';
   copyrightHeader: 'pigeons/copyright.txt',
 ))
 
+/// Pigeon representatation of a CameraPosition.
+class PlatformCameraPosition {
+  PlatformCameraPosition({
+    required this.bearing,
+    required this.target,
+    required this.tilt,
+    required this.zoom,
+  });
+
+  final double bearing;
+  final PlatformLatLng target;
+  final double tilt;
+  final double zoom;
+}
+
 /// Pigeon representation of a CameraUpdate.
 class PlatformCameraUpdate {
   PlatformCameraUpdate(this.json);
@@ -73,6 +88,15 @@ class PlatformPolyline {
   // TODO(stuartmorgan): Replace this with structured data. This exists only to
   //  allow incremental migration to Pigeon.
   final Object json;
+}
+
+/// Pigeon equivalent of the Tile class.
+class PlatformTile {
+  PlatformTile({required this.width, required this.height, required this.data});
+
+  final int width;
+  final int height;
+  final Uint8List? data;
 }
 
 /// Pigeon equivalent of the TileOverlay class.
@@ -261,6 +285,68 @@ abstract class MapsApi {
 
   /// Takes a snapshot of the map and returns its image data.
   Uint8List? takeSnapshot();
+}
+
+/// Interface for calls from the native SDK to Dart.
+@FlutterApi()
+abstract class MapsCallbackApi {
+  /// Called when the map camera starts moving.
+  @ObjCSelector('didStartCameraMoveWithCompletion')
+  void onCameraMoveStarted();
+
+  /// Called when the map camera moves.
+  @ObjCSelector('didMoveCameraToPosition:')
+  void onCameraMove(PlatformCameraPosition cameraPosition);
+
+  /// Called when the map camera stops moving.
+  @ObjCSelector('didIdleCameraWithCompletion')
+  void onCameraIdle();
+
+  /// Called when the map, not a specifc map object, is tapped.
+  @ObjCSelector('didTapAtPosition:')
+  void onTap(PlatformLatLng position);
+
+  /// Called when the map, not a specifc map object, is long pressed.
+  @ObjCSelector('didLongPressAtPosition:')
+  void onLongPress(PlatformLatLng position);
+
+  /// Called when a marker is tapped.
+  @ObjCSelector('didTapMarkerWithIdentifier:')
+  void onMarkerTap(String markerId);
+
+  /// Called when a marker drag starts.
+  @ObjCSelector('didStartDragForMarkerWithIdentifier:atPosition:')
+  void onMarkerDragStart(String markerId, PlatformLatLng position);
+
+  /// Called when a marker drag updates.
+  @ObjCSelector('didDragMarkerWithIdentifier:atPosition:')
+  void onMarkerDrag(String markerId, PlatformLatLng position);
+
+  /// Called when a marker drag ends.
+  @ObjCSelector('didEndDragForMarkerWithIdentifier:atPosition:')
+  void onMarkerDragEnd(String markerId, PlatformLatLng position);
+
+  /// Called when a marker's info window is tapped.
+  @ObjCSelector('didTapInfoWindowOfMarkerWithIdentifier:')
+  void onInfoWindowTap(String markerId);
+
+  /// Called when a circle is tapped.
+  @ObjCSelector('didTapCircleWithIdentifier:')
+  void onCircleTap(String circleId);
+
+  /// Called when a polygon is tapped.
+  @ObjCSelector('didTapPolygonWithIdentifier:')
+  void onPolygonTap(String polygonId);
+
+  /// Called when a polyline is tapped.
+  @ObjCSelector('didTapPolylineWithIdentifier:')
+  void onPolylineTap(String polylineId);
+
+  /// Called to get data for a map tile.
+  @async
+  @ObjCSelector('tileWithOverlayIdentifier:location:zoom:')
+  PlatformTile getTileOverlayTile(
+      String tileOverlayId, PlatformPoint location, int zoom);
 }
 
 /// Inspector API only intended for use in integration tests.
