@@ -1,6 +1,10 @@
-## 0.9.16+3
+## 0.9.16+4
 
 * Fixes a crash due to appending sample buffers when readyForMoreMediaData is NO
+
+## 0.9.16+3
+
+* Removes unused `maxVideoDuration` code.
 
 ## 0.9.16+2
 

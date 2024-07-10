@@ -2,8 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#import "FWFScriptMessageHandlerHostApi.h"
-#import "FWFDataConverters.h"
+#import "./include/webview_flutter_wkwebview/FWFScriptMessageHandlerHostApi.h"
+#import "./include/webview_flutter_wkwebview/FWFDataConverters.h"
 
 @interface FWFScriptMessageHandlerFlutterApiImpl ()
 // InstanceManager must be weak to prevent a circular reference with the object it stores.

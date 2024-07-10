@@ -137,31 +137,6 @@ class PlatformSize {
   double height_;
 };
 
-// Pigeon version of the relevant subset of VideoCaptureOptions.
-//
-// Generated class from Pigeon that represents data sent in messages.
-class PlatformVideoCaptureOptions {
- public:
-  // Constructs an object setting all non-nullable fields.
-  PlatformVideoCaptureOptions();
-
-  // Constructs an object setting all fields.
-  explicit PlatformVideoCaptureOptions(
-      const int64_t* max_duration_milliseconds);
-
-  const int64_t* max_duration_milliseconds() const;
-  void set_max_duration_milliseconds(const int64_t* value_arg);
-  void set_max_duration_milliseconds(int64_t value_arg);
-
- private:
-  static PlatformVideoCaptureOptions FromEncodableList(
-      const flutter::EncodableList& list);
-  flutter::EncodableList ToEncodableList() const;
-  friend class CameraApi;
-  friend class PigeonCodecSerializer;
-  std::optional<int64_t> max_duration_milliseconds_;
-};
-
 class PigeonCodecSerializer : public flutter::StandardCodecSerializer {
  public:
   PigeonCodecSerializer();
@@ -204,7 +179,7 @@ class CameraApi {
       std::function<void(ErrorOr<std::string> reply)> result) = 0;
   // Starts recording video with the given camera.
   virtual void StartVideoRecording(
-      int64_t camera_id, const PlatformVideoCaptureOptions& options,
+      int64_t camera_id,
       std::function<void(std::optional<FlutterError> reply)> result) = 0;
   // Finishes recording video with the given camera, and returns the path to
   // the resulting file.

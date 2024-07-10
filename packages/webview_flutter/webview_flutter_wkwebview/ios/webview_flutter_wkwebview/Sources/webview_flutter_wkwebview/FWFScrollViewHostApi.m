@@ -2,9 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#import "FWFScrollViewHostApi.h"
-#import "FWFScrollViewDelegateHostApi.h"
-#import "FWFWebViewHostApi.h"
+#import "./include/webview_flutter_wkwebview/FWFScrollViewHostApi.h"
+#import "./include/webview_flutter_wkwebview/FWFScrollViewDelegateHostApi.h"
+#import "./include/webview_flutter_wkwebview/FWFWebViewHostApi.h"
 
 @interface FWFScrollViewHostApiImpl ()
 // BinaryMessenger must be weak to prevent a circular reference with the host API it
