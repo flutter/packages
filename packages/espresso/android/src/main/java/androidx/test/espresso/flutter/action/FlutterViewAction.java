@@ -13,7 +13,6 @@ import static com.google.common.util.concurrent.MoreExecutors.directExecutor;
 
 import android.os.Looper;
 import android.view.View;
-import androidx.test.annotation.ExperimentalTestApi;
 import androidx.test.espresso.IdlingRegistry;
 import androidx.test.espresso.IdlingResource;
 import androidx.test.espresso.UiController;
@@ -96,7 +95,6 @@ public final class FlutterViewAction<T> implements ViewAction {
         "Perform a %s action on the Flutter widget matched %s.", widgetAction, widgetMatcher);
   }
 
-  @ExperimentalTestApi
   @Override
   public void perform(UiController uiController, View view) {
     checkNotNull(view, "The Flutter View instance cannot be null.");
@@ -143,7 +141,6 @@ public final class FlutterViewAction<T> implements ViewAction {
     }
   }
 
-  @ExperimentalTestApi
   @VisibleForTesting
   void perform(
       View flutterView, FlutterTestingProtocol flutterTestingProtocol, UiController uiController) {

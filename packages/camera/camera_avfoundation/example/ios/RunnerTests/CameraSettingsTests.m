@@ -142,7 +142,7 @@ static const BOOL gTestEnableAudio = YES;
       [[TestMediaSettingsAVWrapper alloc] initWithTestCase:self];
 
   FLTCam *camera = FLTCreateCamWithCaptureSessionQueueAndMediaSettings(
-      dispatch_queue_create("test", NULL), settings, injectedWrapper);
+      dispatch_queue_create("test", NULL), settings, injectedWrapper, nil);
 
   // Expect FPS configuration is passed to camera device.
   [self waitForExpectations:@[
