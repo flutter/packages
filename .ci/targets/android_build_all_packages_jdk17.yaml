@@ -1,3 +1,4 @@
+# This only builds the modern all_packages app, which requires jdk17+
 tasks:
   - name: prepare tool
     script: .ci/scripts/prepare_tool.sh

@@ -364,8 +364,7 @@ targets:
     timeout: 30
     properties:
       version_file: flutter_master.version
-      # This file only builds a modern version of the project.
-      target_file: android_build_all_packages_17plus.yaml
+      target_file: android_build_all_packages.yaml
       channel: master
       # The legacy project build requires an older JDK.
       dependencies: >-
@@ -378,6 +377,9 @@ targets:
         }
 
   - name: Linux_android android_build_all_packages_legacy master
+    # When making this `bringup: false`, update the task above to
+    # use target_file: android_build_all_packages_jdk17.yaml and
+    # remove its 'dependencies' section.
     bringup: true # https://github.com/flutter/packages/pull/7099
     recipe: packages/packages
     timeout: 30
