@@ -22,15 +22,10 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI {
   // TODO(louisehsu): Change it back to a set when removing obj-c dependancies from this file via type erasure
   private var requestHandlers = NSHashTable<FLTRequestHandlerProtocol>()
   private var handlerFactory: ((SKRequest) -> FLTRequestHandlerProtocol)
-  // TODO(louisehsu): Once tests are migrated to swift, we can use @testable import, and make theses vars private again and remove all instances of @objc
-  @objc
+  private var transactionObserverCallbackChannel: FLTMethodChannelProtocol?
   public var registrar: FlutterPluginRegistrar?
   // This property is optional, as it requires self to exist to be initialized.
-  @objc
   public var paymentQueueHandler: FLTPaymentQueueHandlerProtocol?
-  // This property is optional, as it needs to be set during plugin registration, and can't be directly initialized.
-  @objc
-  public var transactionObserverCallbackChannel: FLTMethodChannelProtocol?
 
   public static func register(with registrar: FlutterPluginRegistrar) {
     #if os(iOS)
@@ -48,16 +43,17 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI {
     SetUpInAppPurchaseAPI(messenger, instance)
   }
 
-  @objc
   // This init is used for tests
   public init(
     receiptManager: FIAPReceiptManager,
     handlerFactory: @escaping (SKRequest) -> FLTRequestHandlerProtocol = {
       DefaultRequestHandler(requestHandler: FIAPRequestHandler(request: $0))
-    }
+    },
+    transactionCallbackChannel: FLTMethodChannelProtocol? = nil
   ) {
     self.receiptManager = receiptManager
     self.handlerFactory = handlerFactory
+    self.transactionObserverCallbackChannel = transactionCallbackChannel
     super.init()
   }
 
@@ -93,11 +89,7 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI {
     #if os(macOS)
       let messenger = registrar.messenger
     #endif
-    transactionObserverCallbackChannel = DefaultMethodChannel(
-      channel: FlutterMethodChannel(
-        name: "plugins.flutter.io/in_app_purchase",
-        binaryMessenger: messenger)
-    )
+    setupTransactionObserverChannel(withMessenger: messenger)
   }
 
   // MARK: - Pigeon Functions
@@ -359,7 +351,6 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI {
     #endif
   }
 
-  @objc
   public func handleTransactionsUpdated(_ transactions: [SKPaymentTransaction]) {
     let translatedTransactions = transactions.map {
       FIAObjectTranslator.getMapFrom($0)
@@ -368,7 +359,6 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI {
       "updatedTransactions", arguments: translatedTransactions)
   }
 
-  @objc
   public func handleTransactionsRemoved(_ transactions: [SKPaymentTransaction]) {
     let translatedTransactions = transactions.map {
       FIAObjectTranslator.getMapFrom($0)
@@ -377,19 +367,16 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI {
       "removedTransactions", arguments: translatedTransactions)
   }
 
-  @objc
   public func handleTransactionRestoreFailed(_ error: NSError) {
     transactionObserverCallbackChannel?.invokeMethod(
       "restoreCompletedTransactionsFailed", arguments: FIAObjectTranslator.getMapFrom(error))
   }
 
-  @objc
   public func restoreCompletedTransactionsFinished() {
     transactionObserverCallbackChannel?.invokeMethod(
       "paymentQueueRestoreCompletedTransactionsFinished", arguments: nil)
   }
 
-  @objc
   public func shouldAddStorePayment(payment: SKPayment, product: SKProduct) -> Bool {
     productsCache[product.productIdentifier] = product
     transactionObserverCallbackChannel?.invokeMethod(
@@ -431,5 +418,17 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI {
       )
     }
     return paymentQueueHandler
+  }
+
+  private func setupTransactionObserverChannel(withMessenger messenger: FlutterBinaryMessenger) {
+    // If the channel is already set (e.g., injected in tests), don't overwrite it.
+    guard self.transactionObserverCallbackChannel == nil else { return }
+
+    self.transactionObserverCallbackChannel = DefaultMethodChannel(
+      channel: FlutterMethodChannel(
+        name: "plugins.flutter.io/in_app_purchase",
+        binaryMessenger: messenger
+      )
+    )
   }
 }
