@@ -2,18 +2,18 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#import "CameraPlugin.h"
-#import "CameraPlugin_Test.h"
+#import "./include/camera_avfoundation/CameraPlugin.h"
+#import "./include/camera_avfoundation/CameraPlugin_Test.h"
 
 @import AVFoundation;
 @import Flutter;
 
-#import "CameraPermissionUtils.h"
-#import "CameraProperties.h"
-#import "FLTCam.h"
-#import "FLTThreadSafeEventChannel.h"
-#import "QueueUtils.h"
-#import "messages.g.h"
+#import "./include/camera_avfoundation/CameraPermissionUtils.h"
+#import "./include/camera_avfoundation/CameraProperties.h"
+#import "./include/camera_avfoundation/FLTCam.h"
+#import "./include/camera_avfoundation/FLTThreadSafeEventChannel.h"
+#import "./include/camera_avfoundation/QueueUtils.h"
+#import "./include/camera_avfoundation/messages.g.h"
 
 static FlutterError *FlutterErrorFromNSError(NSError *error) {
   return [FlutterError errorWithCode:[NSString stringWithFormat:@"Error %d", (int)error.code]

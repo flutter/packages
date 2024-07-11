@@ -1,6 +1,10 @@
-## 0.9.16+4
+## 0.9.17+1
 
 * Fixes a crash due to appending sample buffers when readyForMoreMediaData is NO
+
+## 0.9.17
+
+* Adds Swift Package Manager compatibility.
 
 ## 0.9.16+3
 

@@ -2,17 +2,17 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#import "FLTCam.h"
-#import "FLTCam_Test.h"
+#import "./include/camera_avfoundation/FLTCam.h"
+#import "./include/camera_avfoundation/FLTCam_Test.h"
 
 @import CoreMotion;
 @import Flutter;
 #import <libkern/OSAtomic.h>
 
-#import "FLTSavePhotoDelegate.h"
-#import "FLTThreadSafeEventChannel.h"
-#import "QueueUtils.h"
-#import "messages.g.h"
+#import "./include/camera_avfoundation/FLTSavePhotoDelegate.h"
+#import "./include/camera_avfoundation/FLTThreadSafeEventChannel.h"
+#import "./include/camera_avfoundation/QueueUtils.h"
+#import "./include/camera_avfoundation/messages.g.h"
 
 static FlutterError *FlutterErrorFromNSError(NSError *error) {
   return [FlutterError errorWithCode:[NSString stringWithFormat:@"Error %d", (int)error.code]
