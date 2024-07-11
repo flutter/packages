@@ -16,6 +16,8 @@ import 'src/tiles_inspector.dart' as tiles_inspector;
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
+  // TODO(bparrishMines): These tests are failing on web due to an error being
+  // thrown after completion. See https://github.com/flutter/flutter/issues/145149
   if (isWeb) {
     return;
   }
