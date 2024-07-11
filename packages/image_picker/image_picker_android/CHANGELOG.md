@@ -1,3 +1,7 @@
+## 0.8.12+4
+
+* Bumps androidx.core:core from 1.10.1 to 1.13.1.
+
 ## 0.8.12+3
 
 * Update documentation to note that limit is not always supported.
