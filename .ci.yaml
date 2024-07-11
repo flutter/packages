@@ -359,11 +359,12 @@ targets:
         }
 
   ### Android tasks ###
-  - name: Linux_android android_build_all_packages_17plus master
+  - name: Linux_android android_build_all_packages master
     recipe: packages/packages
     timeout: 30
     properties:
       version_file: flutter_master.version
+      # This file only builds a modern version of the project.
       target_file: android_build_all_packages_17plus.yaml
       channel: master
       # The legacy project build requires an older JDK.
@@ -377,10 +378,12 @@ targets:
         }
 
   - name: Linux_android android_build_all_packages_legacy master
+    bringup: true # https://github.com/flutter/packages/pull/7099
     recipe: packages/packages
     timeout: 30
     properties:
       version_file: flutter_master.version
+      # This file only builds a *legacy* version of the project.
       target_file: android_build_all_packages_legacy.yaml
       channel: master
       # The legacy project build requires an older JDK.
@@ -399,6 +402,7 @@ targets:
     properties:
       add_recipes_cq: "true"
       version_file: flutter_stable.version
+      # This builds both legacy, and "modern" projects.
       target_file: android_build_all_packages.yaml
       channel: stable
       # The legacy project build requires an older JDK.
