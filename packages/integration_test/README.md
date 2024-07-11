@@ -15,4 +15,4 @@ dev_dependencies:
 ```
 
 For the latest documentation, see [Integration
-testing](https://flutter.dev/docs/testing/integration-tests).
+testing](https://docs.flutter.dev/testing/integration-tests).

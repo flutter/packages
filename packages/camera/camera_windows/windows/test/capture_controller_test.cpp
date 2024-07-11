@@ -33,7 +33,8 @@ void MockInitCaptureController(
     CaptureControllerImpl* capture_controller,
     MockTextureRegistrar* texture_registrar, MockCaptureEngine* engine,
     MockCamera* camera, int64_t mock_texture_id,
-    const RecordSettings record_settings = RecordSettings(true)) {
+    const PlatformMediaSettings media_settings =
+        PlatformMediaSettings(PlatformResolutionPreset::max, true)) {
   ComPtr<MockMediaSource> video_source = new MockMediaSource();
   ComPtr<MockMediaSource> audio_source = new MockMediaSource();
 
@@ -61,8 +62,7 @@ void MockInitCaptureController(
   EXPECT_CALL(*engine, Initialize).Times(1);
 
   bool result = capture_controller->InitCaptureDevice(
-      texture_registrar, MOCK_DEVICE_ID, ResolutionPreset::kAuto,
-      record_settings);
+      texture_registrar, MOCK_DEVICE_ID, media_settings);
 
   EXPECT_TRUE(result);
 
@@ -213,7 +213,7 @@ void MockRecordStart(CaptureControllerImpl* capture_controller,
   EXPECT_CALL(*record_sink, AddStream).Times(2).WillRepeatedly(Return(S_OK));
   EXPECT_CALL(*record_sink, SetOutputFileName).Times(1).WillOnce(Return(S_OK));
 
-  capture_controller->StartRecord(mock_path_to_video, -1);
+  capture_controller->StartRecord(mock_path_to_video);
 
   EXPECT_CALL(*camera, OnStartRecordSucceeded()).Times(1);
   engine->CreateFakeEvent(S_OK, MF_CAPTURE_ENGINE_RECORD_STARTED);
@@ -260,8 +260,8 @@ TEST(CaptureController, InitCaptureEngineCanOnlyBeCalledOnce) {
   EXPECT_CALL(*camera, OnCreateCaptureEngineFailed).Times(1);
 
   bool result = capture_controller->InitCaptureDevice(
-      texture_registrar.get(), MOCK_DEVICE_ID, ResolutionPreset::kAuto,
-      RecordSettings(true));
+      texture_registrar.get(), MOCK_DEVICE_ID,
+      PlatformMediaSettings(PlatformResolutionPreset::max, true));
 
   EXPECT_FALSE(result);
 
@@ -302,8 +302,8 @@ TEST(CaptureController, InitCaptureEngineReportsFailure) {
       .Times(1);
 
   bool result = capture_controller->InitCaptureDevice(
-      texture_registrar.get(), MOCK_DEVICE_ID, ResolutionPreset::kAuto,
-      RecordSettings(true));
+      texture_registrar.get(), MOCK_DEVICE_ID,
+      PlatformMediaSettings(PlatformResolutionPreset::max, true));
 
   EXPECT_FALSE(result);
   EXPECT_FALSE(engine->initialized_);
@@ -347,8 +347,8 @@ TEST(CaptureController, InitCaptureEngineReportsAccessDenied) {
       .Times(1);
 
   bool result = capture_controller->InitCaptureDevice(
-      texture_registrar.get(), MOCK_DEVICE_ID, ResolutionPreset::kAuto,
-      RecordSettings(true));
+      texture_registrar.get(), MOCK_DEVICE_ID,
+      PlatformMediaSettings(PlatformResolutionPreset::max, true));
 
   EXPECT_FALSE(result);
   EXPECT_FALSE(engine->initialized_);
@@ -734,16 +734,15 @@ TEST(CaptureController, StartRecordWithSettingsSuccess) {
   const auto kVideoBitrate = 200000;
   const auto kAudioBitrate = 32000;
 
-  RecordSettings record_settings;
-  record_settings.record_audio = true;
-  record_settings.fps = kFps;
-  record_settings.video_bitrate = kVideoBitrate;
-  record_settings.audio_bitrate = kAudioBitrate;
+  PlatformMediaSettings media_settings(PlatformResolutionPreset::max, true);
+  media_settings.set_frames_per_second(kFps);
+  media_settings.set_video_bitrate(kVideoBitrate);
+  media_settings.set_audio_bitrate(kAudioBitrate);
 
   // Initialize capture controller to be able to start preview
   MockInitCaptureController(capture_controller.get(), texture_registrar.get(),
                             engine.Get(), camera.get(), mock_texture_id,
-                            record_settings);
+                            media_settings);
 
   ComPtr<MockCaptureSource> capture_source = new MockCaptureSource();
 
@@ -790,7 +789,7 @@ TEST(CaptureController, StartRecordWithSettingsSuccess) {
       .Times(1)
       .WillOnce(Return(S_OK));
 
-  capture_controller->StartRecord(mock_path_to_video, -1);
+  capture_controller->StartRecord(mock_path_to_video);
 
   EXPECT_CALL(*camera, OnStartRecordSucceeded()).Times(1);
   engine->CreateFakeEvent(S_OK, MF_CAPTURE_ENGINE_RECORD_STARTED);
@@ -840,7 +839,7 @@ TEST(CaptureController, ReportsStartRecordError) {
                                   Eq("Failed to start video recording")))
       .Times(1);
 
-  capture_controller->StartRecord("mock_path", -1);
+  capture_controller->StartRecord("mock_path");
 
   capture_controller = nullptr;
   texture_registrar = nullptr;
@@ -881,7 +880,7 @@ TEST(CaptureController, ReportsStartRecordAccessDenied) {
                                   Eq("Failed to start video recording")))
       .Times(1);
 
-  capture_controller->StartRecord("mock_path", -1);
+  capture_controller->StartRecord("mock_path");
 
   capture_controller = nullptr;
   texture_registrar = nullptr;
@@ -934,7 +933,7 @@ TEST(CaptureController, ReportsStartRecordErrorEvent) {
       .Times(1)
       .WillOnce(Return(S_OK));
 
-  capture_controller->StartRecord(mock_path_to_video, -1);
+  capture_controller->StartRecord(mock_path_to_video);
 
   // Send a start record failed event
   EXPECT_CALL(*camera, OnStartRecordSucceeded).Times(0);
@@ -1000,7 +999,7 @@ TEST(CaptureController, ReportsStartRecordAccessDeniedEvent) {
       .WillOnce(Return(S_OK));
 
   // Send a start record failed event
-  capture_controller->StartRecord(mock_path_to_video, -1);
+  capture_controller->StartRecord(mock_path_to_video);
 
   EXPECT_CALL(*camera, OnStartRecordSucceeded).Times(0);
   EXPECT_CALL(*camera, OnStartRecordFailed(Eq(CameraResult::kAccessDenied),

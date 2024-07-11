@@ -65,7 +65,7 @@ platform_properties:
       device_type: none
       dependencies: >-
         [
-          {"dependency": "chrome_and_driver", "version": "version:114.0"}
+          {"dependency": "chrome_and_driver", "version": "version:125.0.6422.141"}
         ]
   windows_arm64:
     properties:
@@ -327,7 +327,7 @@ targets:
           {"dependency": "clang", "version": "git_revision:5d5aba78dbbee75508f01bcaa69aedb2ab79065a"},
           {"dependency": "cmake", "version": "build_id:8787856497187628321"},
           {"dependency": "ninja", "version": "version:1.9.0"},
-          {"dependency": "chrome_and_driver", "version": "version:114.0"}
+          {"dependency": "chrome_and_driver", "version": "version:125.0.6422.141"}
         ]
       channel: master
       env_variables: >-
@@ -350,7 +350,7 @@ targets:
           {"dependency": "clang", "version": "git_revision:5d5aba78dbbee75508f01bcaa69aedb2ab79065a"},
           {"dependency": "cmake", "version": "build_id:8787856497187628321"},
           {"dependency": "ninja", "version": "version:1.9.0"},
-          {"dependency": "chrome_and_driver", "version": "version:114.0"}
+          {"dependency": "chrome_and_driver", "version": "version:125.0.6422.141"}
         ]
       channel: stable
       env_variables: >-
@@ -935,7 +935,7 @@ targets:
       # Install Chrome as a default handler for schemes for url_launcher.
       dependencies: >-
         [
-          {"dependency": "chrome_and_driver", "version": "version:114.0"}
+          {"dependency": "chrome_and_driver", "version": "version:125.0.6422.141"}
         ]
       env_variables: >-
         {
@@ -953,7 +953,7 @@ targets:
       # Install Chrome as a default handler for schemes for url_launcher.
       dependencies: >-
         [
-          {"dependency": "chrome_and_driver", "version": "version:114.0"}
+          {"dependency": "chrome_and_driver", "version": "version:125.0.6422.141"}
         ]
       env_variables: >-
         {

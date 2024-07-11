@@ -8,8 +8,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 import io.flutter.plugin.common.EventChannel;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 final class VideoPlayerEventCallbacks implements VideoPlayerCallbacks {
@@ -66,7 +68,10 @@ final class VideoPlayerEventCallbacks implements VideoPlayerCallbacks {
   public void onBufferingUpdate(long bufferedPosition) {
     // iOS supports a list of buffered ranges, so we send as a list with a single range.
     Map<String, Object> event = new HashMap<>();
-    event.put("values", Collections.singletonList(bufferedPosition));
+    event.put("event", "bufferingUpdate");
+
+    List<? extends Number> range = Arrays.asList(0, bufferedPosition);
+    event.put("values", Collections.singletonList(range));
     eventSink.success(event);
   }
 
@@ -92,6 +97,7 @@ final class VideoPlayerEventCallbacks implements VideoPlayerCallbacks {
   @Override
   public void onIsPlayingStateUpdate(boolean isPlaying) {
     Map<String, Object> event = new HashMap<>();
+    event.put("event", "isPlayingStateUpdate");
     event.put("isPlaying", isPlaying);
     eventSink.success(event);
   }

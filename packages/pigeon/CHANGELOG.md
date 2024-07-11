@@ -1,3 +1,8 @@
+## 20.0.2
+
+* [java] Adds `equals` and `hashCode` support for data classes.
+* [swift] Fully-qualifies types in Equatable extension test.
+
 ## 20.0.1
 
 * [cpp] Fixes handling of null class arguments.
@@ -13,7 +18,7 @@
 
 ## 19.0.2
 
-* [kotlin] Adds the `@JvmOverloads` to the `HostApi` setUp method. This prevents the calling Java code from having to provide an empty `String` as Kotlin provides it by default  
+* [kotlin] Adds the `@JvmOverloads` to the `HostApi` setUp method. This prevents the calling Java code from having to provide an empty `String` as Kotlin provides it by default
 
 ## 19.0.1
 
