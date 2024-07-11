@@ -490,6 +490,11 @@ class GoRouter implements RouterConfig<RouteMatchList> {
     routerDelegate.pop<T>(result);
   }
 
+  /// Pop the Navigator's page stack until the predicate returns `true`.
+  void popUntil(PopUntilPredicate predicate) {
+    routerDelegate.popUntil(predicate);
+  }
+
   /// Refresh the route.
   void refresh() {
     assert(() {
