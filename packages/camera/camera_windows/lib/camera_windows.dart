@@ -215,8 +215,8 @@ class CameraWindows extends CameraPlatform {
   @override
   Future<void> startVideoRecording(int cameraId,
       {Duration? maxVideoDuration}) async {
-    return startVideoCapturing(
-        VideoCaptureOptions(cameraId, maxDuration: maxVideoDuration));
+    // Ignore maxVideoDuration, as it is unimplemented and deprecated.
+    return startVideoCapturing(VideoCaptureOptions(cameraId));
   }
 
   @override
@@ -226,8 +226,8 @@ class CameraWindows extends CameraPlatform {
           'Streaming is not currently supported on Windows');
     }
 
-    await _hostApi.startVideoRecording(
-        options.cameraId, _pigeonVideoCaptureOptions(options));
+    // Currently none of `options` is supported on Windows, so it's not passed.
+    await _hostApi.startVideoRecording(options.cameraId);
   }
 
   @override
@@ -411,18 +411,6 @@ class CameraWindows extends CameraPlatform {
             cameraId,
           ),
         );
-      case 'video_recorded':
-        final Map<String, Object?> arguments =
-            (call.arguments as Map<Object?, Object?>).cast<String, Object?>();
-        final int? maxDuration = arguments['maxVideoDuration'] as int?;
-        // This is called if maxVideoDuration was given on record start.
-        cameraEventStreamController.add(
-          VideoRecordedEvent(
-            cameraId,
-            XFile(arguments['path']! as String),
-            maxDuration != null ? Duration(milliseconds: maxDuration) : null,
-          ),
-        );
       case 'error':
         final Map<String, Object?> arguments =
             (call.arguments as Map<Object?, Object?>).cast<String, Object?>();
@@ -477,12 +465,5 @@ class CameraWindows extends CameraPlatform {
     // switch as needing an update.
     // ignore: dead_code
     return PlatformResolutionPreset.max;
-  }
-
-  /// Returns a [VideoCamptureOptions]'s Pigeon representation.
-  PlatformVideoCaptureOptions _pigeonVideoCaptureOptions(
-      VideoCaptureOptions options) {
-    return PlatformVideoCaptureOptions(
-        maxDurationMilliseconds: options.maxDuration?.inMilliseconds);
   }
 }

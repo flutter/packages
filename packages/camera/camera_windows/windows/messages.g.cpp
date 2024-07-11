@@ -166,52 +166,6 @@ PlatformSize PlatformSize::FromEncodableList(const EncodableList& list) {
   return decoded;
 }
 
-// PlatformVideoCaptureOptions
-
-PlatformVideoCaptureOptions::PlatformVideoCaptureOptions() {}
-
-PlatformVideoCaptureOptions::PlatformVideoCaptureOptions(
-    const int64_t* max_duration_milliseconds)
-    : max_duration_milliseconds_(
-          max_duration_milliseconds
-              ? std::optional<int64_t>(*max_duration_milliseconds)
-              : std::nullopt) {}
-
-const int64_t* PlatformVideoCaptureOptions::max_duration_milliseconds() const {
-  return max_duration_milliseconds_ ? &(*max_duration_milliseconds_) : nullptr;
-}
-
-void PlatformVideoCaptureOptions::set_max_duration_milliseconds(
-    const int64_t* value_arg) {
-  max_duration_milliseconds_ =
-      value_arg ? std::optional<int64_t>(*value_arg) : std::nullopt;
-}
-
-void PlatformVideoCaptureOptions::set_max_duration_milliseconds(
-    int64_t value_arg) {
-  max_duration_milliseconds_ = value_arg;
-}
-
-EncodableList PlatformVideoCaptureOptions::ToEncodableList() const {
-  EncodableList list;
-  list.reserve(1);
-  list.push_back(max_duration_milliseconds_
-                     ? EncodableValue(*max_duration_milliseconds_)
-                     : EncodableValue());
-  return list;
-}
-
-PlatformVideoCaptureOptions PlatformVideoCaptureOptions::FromEncodableList(
-    const EncodableList& list) {
-  PlatformVideoCaptureOptions decoded;
-  auto& encodable_max_duration_milliseconds = list[0];
-  if (!encodable_max_duration_milliseconds.IsNull()) {
-    decoded.set_max_duration_milliseconds(
-        encodable_max_duration_milliseconds.LongValue());
-  }
-  return decoded;
-}
-
 PigeonCodecSerializer::PigeonCodecSerializer() {}
 
 EncodableValue PigeonCodecSerializer::ReadValueOfType(
@@ -223,11 +177,7 @@ EncodableValue PigeonCodecSerializer::ReadValueOfType(
     case 130:
       return CustomEncodableValue(PlatformSize::FromEncodableList(
           std::get<EncodableList>(ReadValue(stream))));
-    case 131:
-      return CustomEncodableValue(
-          PlatformVideoCaptureOptions::FromEncodableList(
-              std::get<EncodableList>(ReadValue(stream))));
-    case 132: {
+    case 131: {
       const auto& encodable_enum_arg = ReadValue(stream);
       const int64_t enum_arg_value =
           encodable_enum_arg.IsNull() ? 0 : encodable_enum_arg.LongValue();
@@ -261,16 +211,8 @@ void PigeonCodecSerializer::WriteValue(
           stream);
       return;
     }
-    if (custom_value->type() == typeid(PlatformVideoCaptureOptions)) {
-      stream->WriteByte(131);
-      WriteValue(EncodableValue(
-                     std::any_cast<PlatformVideoCaptureOptions>(*custom_value)
-                         .ToEncodableList()),
-                 stream);
-      return;
-    }
     if (custom_value->type() == typeid(PlatformResolutionPreset)) {
-      stream->WriteByte(132);
+      stream->WriteByte(131);
       WriteValue(EncodableValue(static_cast<int>(
                      std::any_cast<PlatformResolutionPreset>(*custom_value))),
                  stream);
@@ -498,17 +440,8 @@ void CameraApi::SetUp(flutter::BinaryMessenger* binary_messenger,
                 return;
               }
               const int64_t camera_id_arg = encodable_camera_id_arg.LongValue();
-              const auto& encodable_options_arg = args.at(1);
-              if (encodable_options_arg.IsNull()) {
-                reply(WrapError("options_arg unexpectedly null."));
-                return;
-              }
-              const auto& options_arg =
-                  std::any_cast<const PlatformVideoCaptureOptions&>(
-                      std::get<CustomEncodableValue>(encodable_options_arg));
               api->StartVideoRecording(
-                  camera_id_arg, options_arg,
-                  [reply](std::optional<FlutterError>&& output) {
+                  camera_id_arg, [reply](std::optional<FlutterError>&& output) {
                     if (output.has_value()) {
                       reply(WrapError(output.value()));
                       return;

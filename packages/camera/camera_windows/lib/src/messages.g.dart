@@ -97,28 +97,6 @@ class PlatformSize {
   }
 }
 
-/// Pigeon version of the relevant subset of VideoCaptureOptions.
-class PlatformVideoCaptureOptions {
-  PlatformVideoCaptureOptions({
-    this.maxDurationMilliseconds,
-  });
-
-  int? maxDurationMilliseconds;
-
-  Object encode() {
-    return <Object?>[
-      maxDurationMilliseconds,
-    ];
-  }
-
-  static PlatformVideoCaptureOptions decode(Object result) {
-    result as List<Object?>;
-    return PlatformVideoCaptureOptions(
-      maxDurationMilliseconds: result[0] as int?,
-    );
-  }
-}
-
 class _PigeonCodec extends StandardMessageCodec {
   const _PigeonCodec();
   @override
@@ -129,11 +107,8 @@ class _PigeonCodec extends StandardMessageCodec {
     } else if (value is PlatformSize) {
       buffer.putUint8(130);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformVideoCaptureOptions) {
-      buffer.putUint8(131);
-      writeValue(buffer, value.encode());
     } else if (value is PlatformResolutionPreset) {
-      buffer.putUint8(132);
+      buffer.putUint8(131);
       writeValue(buffer, value.index);
     } else {
       super.writeValue(buffer, value);
@@ -148,8 +123,6 @@ class _PigeonCodec extends StandardMessageCodec {
       case 130:
         return PlatformSize.decode(readValue(buffer)!);
       case 131:
-        return PlatformVideoCaptureOptions.decode(readValue(buffer)!);
-      case 132:
         final int? value = readValue(buffer) as int?;
         return value == null ? null : PlatformResolutionPreset.values[value];
       default:
@@ -320,8 +293,7 @@ class CameraApi {
   }
 
   /// Starts recording video with the given camera.
-  Future<void> startVideoRecording(
-      int cameraId, PlatformVideoCaptureOptions options) async {
+  Future<void> startVideoRecording(int cameraId) async {
     final String __pigeon_channelName =
         'dev.flutter.pigeon.camera_windows.CameraApi.startVideoRecording$__pigeon_messageChannelSuffix';
     final BasicMessageChannel<Object?> __pigeon_channel =
@@ -330,8 +302,8 @@ class CameraApi {
       pigeonChannelCodec,
       binaryMessenger: __pigeon_binaryMessenger,
     );
-    final List<Object?>? __pigeon_replyList = await __pigeon_channel
-        .send(<Object?>[cameraId, options]) as List<Object?>?;
+    final List<Object?>? __pigeon_replyList =
+        await __pigeon_channel.send(<Object?>[cameraId]) as List<Object?>?;
     if (__pigeon_replyList == null) {
       throw _createConnectionError(__pigeon_channelName);
     } else if (__pigeon_replyList.length > 1) {
