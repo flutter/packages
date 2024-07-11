@@ -1,3 +1,9 @@
+## 0.4.0
+
+* Updates androidx.test.espresso version to 3.6.1.
+* Updates androidx.test to 1.6.1.
+* Removes androidx.test.annotation.ExperimentalTestApi.
+
 ## 0.3.0+10
 
 * Removes additional references to v1 Android embedding.

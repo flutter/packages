@@ -259,11 +259,7 @@ HRESULT CaptureControllerImpl::CreateCaptureEngine() {
 
 void CaptureControllerImpl::ResetCaptureController() {
   if (record_handler_ && record_handler_->CanStop()) {
-    if (record_handler_->IsContinuousRecording()) {
-      StopRecord();
-    } else if (record_handler_->IsTimedRecording()) {
-      StopTimedRecord();
-    }
+    StopRecord();
   }
 
   if (preview_handler_) {
@@ -491,8 +487,7 @@ HRESULT CaptureControllerImpl::FindBaseMediaTypes() {
   return S_OK;
 }
 
-void CaptureControllerImpl::StartRecord(const std::string& file_path,
-                                        int64_t max_video_duration_ms) {
+void CaptureControllerImpl::StartRecord(const std::string& file_path) {
   assert(capture_engine_);
 
   if (!IsInitialized()) {
@@ -523,8 +518,7 @@ void CaptureControllerImpl::StartRecord(const std::string& file_path,
 
   // Check MF_CAPTURE_ENGINE_RECORD_STARTED event handling for response
   // process.
-  hr = record_handler_->StartRecord(file_path, max_video_duration_ms,
-                                    capture_engine_.Get(),
+  hr = record_handler_->StartRecord(file_path, capture_engine_.Get(),
                                     base_capture_media_type_.Get());
   if (FAILED(hr)) {
     // Destroy record handler on error cases to make sure state is resetted.
@@ -554,23 +548,6 @@ void CaptureControllerImpl::StopRecord() {
   if (FAILED(hr)) {
     return OnRecordStopped(GetCameraResult(hr),
                            "Failed to stop video recording");
-  }
-}
-
-// Stops timed recording. Called internally when requested time is passed.
-// Check MF_CAPTURE_ENGINE_RECORD_STOPPED event handling for response process.
-void CaptureControllerImpl::StopTimedRecord() {
-  assert(capture_controller_listener_);
-  if (!record_handler_ || !record_handler_->IsTimedRecording()) {
-    return;
-  }
-
-  HRESULT hr = record_handler_->StopRecord(capture_engine_.Get());
-  if (FAILED(hr)) {
-    // Destroy record handler on error cases to make sure state is resetted.
-    record_handler_ = nullptr;
-    return capture_controller_listener_->OnVideoRecordFailed(
-        GetCameraResult(hr), "Failed to record video");
   }
 }
 
@@ -845,15 +822,8 @@ void CaptureControllerImpl::OnRecordStopped(CameraResult result,
     if (result == CameraResult::kSuccess) {
       std::string path = record_handler_->GetRecordPath();
       capture_controller_listener_->OnStopRecordSucceeded(path);
-      if (record_handler_->IsTimedRecording()) {
-        capture_controller_listener_->OnVideoRecordSucceeded(
-            path, (record_handler_->GetRecordedDuration() / 1000));
-      }
     } else {
       capture_controller_listener_->OnStopRecordFailed(result, error);
-      if (record_handler_->IsTimedRecording()) {
-        capture_controller_listener_->OnVideoRecordFailed(result, error);
-      }
     }
   }
 
@@ -877,7 +847,6 @@ bool CaptureControllerImpl::UpdateBuffer(uint8_t* buffer,
 }
 
 // Handles capture time update from each processed frame.
-// Stops timed recordings if requested recording duration has passed.
 // Called via IMFCaptureEngineOnSampleCallback implementation.
 // Implements CaptureEngineObserver::UpdateCaptureTime.
 void CaptureControllerImpl::UpdateCaptureTime(uint64_t capture_time_us) {
@@ -889,14 +858,6 @@ void CaptureControllerImpl::UpdateCaptureTime(uint64_t capture_time_us) {
     // Informs that first frame is captured successfully and preview has
     // started.
     OnPreviewStarted(CameraResult::kSuccess, "");
-  }
-
-  // Checks if max_video_duration_ms is passed.
-  if (record_handler_) {
-    record_handler_->UpdateRecordingTime(capture_time_us);
-    if (record_handler_->ShouldStopTimedRecording()) {
-      StopTimedRecord();
-    }
   }
 }
 

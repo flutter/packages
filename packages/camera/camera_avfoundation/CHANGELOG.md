@@ -1,6 +1,14 @@
-## 0.9.16+3
+## 0.9.17+1
 
 * Fixes stopVideoRecording waiting indefinitely and lag at start of video.
+
+## 0.9.17
+
+* Adds Swift Package Manager compatibility.
+
+## 0.9.16+3
+
+* Removes unused `maxVideoDuration` code.
 
 ## 0.9.16+2
 
