@@ -1,3 +1,7 @@
+## 2.5.2
+
+* Updates Android Gradle plugin to 8.5.0.
+
 ## 2.5.1
 
 * Removes additional references to the v1 Android embedding.

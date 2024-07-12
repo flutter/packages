@@ -1,3 +1,8 @@
+## 2.9.1
+
+* Updates minimum web implementation version to ensure support for
+  the new `webOptions` exposed in `2.9.0`.
+
 ## 2.9.0
 
 * Exports types: `VideoPlayerWebOptions` and `VideoPlayerWebOptionsControls` to

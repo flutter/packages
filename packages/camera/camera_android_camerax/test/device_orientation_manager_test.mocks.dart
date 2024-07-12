@@ -4,6 +4,7 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:mockito/mockito.dart' as _i1;
+import 'package:mockito/src/dummies.dart' as _i3;
 
 import 'test_camerax_library.g.dart' as _i2;
 
@@ -81,4 +82,19 @@ class MockTestDeviceOrientationManagerHostApi extends _i1.Mock
         ),
         returnValue: 0,
       ) as int);
+
+  @override
+  String getUiOrientation() => (super.noSuchMethod(
+        Invocation.method(
+          #getUiOrientation,
+          [],
+        ),
+        returnValue: _i3.dummyValue<String>(
+          this,
+          Invocation.method(
+            #getUiOrientation,
+            [],
+          ),
+        ),
+      ) as String);
 }

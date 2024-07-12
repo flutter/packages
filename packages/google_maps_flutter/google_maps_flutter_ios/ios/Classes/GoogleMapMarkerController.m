@@ -15,9 +15,9 @@
 
 @implementation FLTGoogleMapMarkerController
 
-- (instancetype)initMarkerWithPosition:(CLLocationCoordinate2D)position
-                            identifier:(NSString *)identifier
-                               mapView:(GMSMapView *)mapView {
+- (instancetype)initWithPosition:(CLLocationCoordinate2D)position
+                      identifier:(NSString *)identifier
+                         mapView:(GMSMapView *)mapView {
   self = [super init];
   if (self) {
     _marker = [GMSMarker markerWithPosition:position];
@@ -93,60 +93,60 @@
 - (void)interpretMarkerOptions:(NSDictionary *)data
                      registrar:(NSObject<FlutterPluginRegistrar> *)registrar
                    screenScale:(CGFloat)screenScale {
-  NSNumber *alpha = data[@"alpha"];
-  if (alpha && alpha != (id)[NSNull null]) {
+  NSNumber *alpha = FGMGetValueOrNilFromDict(data, @"alpha");
+  if (alpha) {
     [self setAlpha:[alpha floatValue]];
   }
-  NSArray *anchor = data[@"anchor"];
-  if (anchor && anchor != (id)[NSNull null]) {
+  NSArray *anchor = FGMGetValueOrNilFromDict(data, @"anchor");
+  if (anchor) {
     [self setAnchor:[FLTGoogleMapJSONConversions pointFromArray:anchor]];
   }
-  NSNumber *draggable = data[@"draggable"];
-  if (draggable && draggable != (id)[NSNull null]) {
+  NSNumber *draggable = FGMGetValueOrNilFromDict(data, @"draggable");
+  if (draggable) {
     [self setDraggable:[draggable boolValue]];
   }
-  NSArray *icon = data[@"icon"];
-  if (icon && icon != (id)[NSNull null]) {
+  NSArray *icon = FGMGetValueOrNilFromDict(data, @"icon");
+  if (icon) {
     UIImage *image = [self extractIconFromData:icon registrar:registrar screenScale:screenScale];
     [self setIcon:image];
   }
-  NSNumber *flat = data[@"flat"];
-  if (flat && flat != (id)[NSNull null]) {
+  NSNumber *flat = FGMGetValueOrNilFromDict(data, @"flat");
+  if (flat) {
     [self setFlat:[flat boolValue]];
   }
-  NSNumber *consumeTapEvents = data[@"consumeTapEvents"];
-  if (consumeTapEvents && consumeTapEvents != (id)[NSNull null]) {
+  NSNumber *consumeTapEvents = FGMGetValueOrNilFromDict(data, @"consumeTapEvents");
+  if (consumeTapEvents) {
     [self setConsumeTapEvents:[consumeTapEvents boolValue]];
   }
   [self interpretInfoWindow:data];
-  NSArray *position = data[@"position"];
-  if (position && position != (id)[NSNull null]) {
+  NSArray *position = FGMGetValueOrNilFromDict(data, @"position");
+  if (position) {
     [self setPosition:[FLTGoogleMapJSONConversions locationFromLatLong:position]];
   }
-  NSNumber *rotation = data[@"rotation"];
-  if (rotation && rotation != (id)[NSNull null]) {
+  NSNumber *rotation = FGMGetValueOrNilFromDict(data, @"rotation");
+  if (rotation) {
     [self setRotation:[rotation doubleValue]];
   }
-  NSNumber *visible = data[@"visible"];
-  if (visible && visible != (id)[NSNull null]) {
+  NSNumber *visible = FGMGetValueOrNilFromDict(data, @"visible");
+  if (visible) {
     [self setVisible:[visible boolValue]];
   }
-  NSNumber *zIndex = data[@"zIndex"];
-  if (zIndex && zIndex != (id)[NSNull null]) {
+  NSNumber *zIndex = FGMGetValueOrNilFromDict(data, @"zIndex");
+  if (zIndex) {
     [self setZIndex:[zIndex intValue]];
   }
 }
 
 - (void)interpretInfoWindow:(NSDictionary *)data {
-  NSDictionary *infoWindow = data[@"infoWindow"];
-  if (infoWindow && infoWindow != (id)[NSNull null]) {
-    NSString *title = infoWindow[@"title"];
-    NSString *snippet = infoWindow[@"snippet"];
-    if (title && title != (id)[NSNull null]) {
+  NSDictionary *infoWindow = FGMGetValueOrNilFromDict(data, @"infoWindow");
+  if (infoWindow) {
+    NSString *title = FGMGetValueOrNilFromDict(infoWindow, @"title");
+    NSString *snippet = FGMGetValueOrNilFromDict(infoWindow, @"snippet");
+    if (title) {
       [self setInfoWindowTitle:title snippet:snippet];
     }
     NSArray *infoWindowAnchor = infoWindow[@"infoWindowAnchor"];
-    if (infoWindowAnchor && infoWindowAnchor != (id)[NSNull null]) {
+    if (infoWindowAnchor) {
       [self setInfoWindowAnchor:[FLTGoogleMapJSONConversions pointFromArray:infoWindowAnchor]];
     }
   }
@@ -221,15 +221,16 @@
       @throw exception;
     }
 
-    NSString *assetName = assetData[@"assetName"];
-    NSString *scalingMode = assetData[@"bitmapScaling"];
+    NSString *assetName = FGMGetValueOrNilFromDict(assetData, @"assetName");
+    NSString *scalingMode = FGMGetValueOrNilFromDict(assetData, @"bitmapScaling");
 
     image = [UIImage imageNamed:[registrar lookupKeyForAsset:assetName]];
 
     if ([scalingMode isEqualToString:@"auto"]) {
-      NSNumber *width = assetData[@"width"];
-      NSNumber *height = assetData[@"height"];
-      CGFloat imagePixelRatio = [assetData[@"imagePixelRatio"] doubleValue];
+      NSNumber *width = FGMGetValueOrNilFromDict(assetData, @"width");
+      NSNumber *height = FGMGetValueOrNilFromDict(assetData, @"height");
+      CGFloat imagePixelRatio =
+          [FGMGetValueOrNilFromDict(assetData, @"imagePixelRatio") doubleValue];
 
       if (width || height) {
         image = [FLTGoogleMapMarkerController scaledImage:image withScale:screenScale];
@@ -252,15 +253,16 @@
       @throw exception;
     }
 
-    FlutterStandardTypedData *bytes = byteData[@"byteData"];
-    NSString *scalingMode = byteData[@"bitmapScaling"];
+    FlutterStandardTypedData *bytes = FGMGetValueOrNilFromDict(byteData, @"byteData");
+    NSString *scalingMode = FGMGetValueOrNilFromDict(byteData, @"bitmapScaling");
 
     @try {
       image = [UIImage imageWithData:[bytes data] scale:screenScale];
       if ([scalingMode isEqualToString:@"auto"]) {
-        NSNumber *width = byteData[@"width"];
-        NSNumber *height = byteData[@"height"];
-        CGFloat imagePixelRatio = [byteData[@"imagePixelRatio"] doubleValue];
+        NSNumber *width = FGMGetValueOrNilFromDict(byteData, @"width");
+        NSNumber *height = FGMGetValueOrNilFromDict(byteData, @"height");
+        CGFloat imagePixelRatio =
+            [FGMGetValueOrNilFromDict(byteData, @"imagePixelRatio") doubleValue];
 
         if (width || height) {
           // Before scaling the image, image must be in screenScale
@@ -429,7 +431,7 @@
 @interface FLTMarkersController ()
 
 @property(strong, nonatomic) NSMutableDictionary *markerIdentifierToController;
-@property(strong, nonatomic) FlutterMethodChannel *methodChannel;
+@property(strong, nonatomic) FGMMapsCallbackApi *callbackHandler;
 @property(weak, nonatomic) NSObject<FlutterPluginRegistrar> *registrar;
 @property(weak, nonatomic) GMSMapView *mapView;
 
@@ -437,12 +439,12 @@
 
 @implementation FLTMarkersController
 
-- (instancetype)initWithMethodChannel:(FlutterMethodChannel *)methodChannel
-                              mapView:(GMSMapView *)mapView
-                            registrar:(NSObject<FlutterPluginRegistrar> *)registrar {
+- (instancetype)initWithMapView:(GMSMapView *)mapView
+                callbackHandler:(FGMMapsCallbackApi *)callbackHandler
+                      registrar:(NSObject<FlutterPluginRegistrar> *)registrar {
   self = [super init];
   if (self) {
-    _methodChannel = methodChannel;
+    _callbackHandler = callbackHandler;
     _mapView = mapView;
     _markerIdentifierToController = [[NSMutableDictionary alloc] init];
     _registrar = registrar;
@@ -450,14 +452,14 @@
   return self;
 }
 
-- (void)addMarkers:(NSArray *)markersToAdd {
-  for (NSDictionary *marker in markersToAdd) {
+- (void)addJSONMarkers:(NSArray<NSDictionary<NSString *, id> *> *)markersToAdd {
+  for (NSDictionary<NSString *, id> *marker in markersToAdd) {
     CLLocationCoordinate2D position = [FLTMarkersController getPosition:marker];
     NSString *identifier = marker[@"markerId"];
     FLTGoogleMapMarkerController *controller =
-        [[FLTGoogleMapMarkerController alloc] initMarkerWithPosition:position
-                                                          identifier:identifier
-                                                             mapView:self.mapView];
+        [[FLTGoogleMapMarkerController alloc] initWithPosition:position
+                                                    identifier:identifier
+                                                       mapView:self.mapView];
     [controller interpretMarkerOptions:marker
                              registrar:self.registrar
                            screenScale:[self getScreenScale]];
@@ -465,20 +467,32 @@
   }
 }
 
-- (void)changeMarkers:(NSArray *)markersToChange {
-  for (NSDictionary *marker in markersToChange) {
-    NSString *identifier = marker[@"markerId"];
+- (void)addMarkers:(NSArray<FGMPlatformMarker *> *)markersToAdd {
+  for (FGMPlatformMarker *marker in markersToAdd) {
+    CLLocationCoordinate2D position = [FLTMarkersController getPosition:marker.json];
+    NSString *identifier = marker.json[@"markerId"];
+    FLTGoogleMapMarkerController *controller =
+        [[FLTGoogleMapMarkerController alloc] initWithPosition:position
+                                                    identifier:identifier
+                                                       mapView:self.mapView];
+    [controller interpretMarkerOptions:marker.json
+                             registrar:self.registrar
+                           screenScale:[self getScreenScale]];
+    self.markerIdentifierToController[identifier] = controller;
+  }
+}
+
+- (void)changeMarkers:(NSArray<FGMPlatformMarker *> *)markersToChange {
+  for (FGMPlatformMarker *marker in markersToChange) {
+    NSString *identifier = marker.json[@"markerId"];
     FLTGoogleMapMarkerController *controller = self.markerIdentifierToController[identifier];
-    if (!controller) {
-      continue;
-    }
-    [controller interpretMarkerOptions:marker
+    [controller interpretMarkerOptions:marker.json
                              registrar:self.registrar
                            screenScale:[self getScreenScale]];
   }
 }
 
-- (void)removeMarkersWithIdentifiers:(NSArray *)identifiers {
+- (void)removeMarkersWithIdentifiers:(NSArray<NSString *> *)identifiers {
   for (NSString *identifier in identifiers) {
     FLTGoogleMapMarkerController *controller = self.markerIdentifierToController[identifier];
     if (!controller) {
@@ -497,7 +511,9 @@
   if (!controller) {
     return NO;
   }
-  [self.methodChannel invokeMethod:@"marker#onTap" arguments:@{@"markerId" : identifier}];
+  [self.callbackHandler didTapMarkerWithIdentifier:identifier
+                                        completion:^(FlutterError *_Nullable _){
+                                        }];
   return controller.consumeTapEvents;
 }
 
@@ -510,11 +526,11 @@
   if (!controller) {
     return;
   }
-  [self.methodChannel invokeMethod:@"marker#onDragStart"
-                         arguments:@{
-                           @"markerId" : identifier,
-                           @"position" : [FLTGoogleMapJSONConversions arrayFromLocation:location]
-                         }];
+  [self.callbackHandler
+      didStartDragForMarkerWithIdentifier:identifier
+                               atPosition:FGMGetPigeonLatLngForCoordinate(location)
+                               completion:^(FlutterError *_Nullable _){
+                               }];
 }
 
 - (void)didDragMarkerWithIdentifier:(NSString *)identifier
@@ -526,11 +542,10 @@
   if (!controller) {
     return;
   }
-  [self.methodChannel invokeMethod:@"marker#onDrag"
-                         arguments:@{
-                           @"markerId" : identifier,
-                           @"position" : [FLTGoogleMapJSONConversions arrayFromLocation:location]
-                         }];
+  [self.callbackHandler didDragMarkerWithIdentifier:identifier
+                                         atPosition:FGMGetPigeonLatLngForCoordinate(location)
+                                         completion:^(FlutterError *_Nullable _){
+                                         }];
 }
 
 - (void)didEndDraggingMarkerWithIdentifier:(NSString *)identifier
@@ -539,52 +554,58 @@
   if (!controller) {
     return;
   }
-  [self.methodChannel invokeMethod:@"marker#onDragEnd"
-                         arguments:@{
-                           @"markerId" : identifier,
-                           @"position" : [FLTGoogleMapJSONConversions arrayFromLocation:location]
-                         }];
+  [self.callbackHandler didEndDragForMarkerWithIdentifier:identifier
+                                               atPosition:FGMGetPigeonLatLngForCoordinate(location)
+                                               completion:^(FlutterError *_Nullable _){
+                                               }];
 }
 
 - (void)didTapInfoWindowOfMarkerWithIdentifier:(NSString *)identifier {
   if (identifier && self.markerIdentifierToController[identifier]) {
-    [self.methodChannel invokeMethod:@"infoWindow#onTap" arguments:@{@"markerId" : identifier}];
+    [self.callbackHandler didTapInfoWindowOfMarkerWithIdentifier:identifier
+                                                      completion:^(FlutterError *_Nullable _){
+                                                      }];
   }
 }
 
-- (void)showMarkerInfoWindowWithIdentifier:(NSString *)identifier result:(FlutterResult)result {
+- (void)showMarkerInfoWindowWithIdentifier:(NSString *)identifier
+                                     error:
+                                         (FlutterError *_Nullable __autoreleasing *_Nonnull)error {
   FLTGoogleMapMarkerController *controller = self.markerIdentifierToController[identifier];
   if (controller) {
     [controller showInfoWindow];
-    result(nil);
   } else {
-    result([FlutterError errorWithCode:@"Invalid markerId"
-                               message:@"showInfoWindow called with invalid markerId"
-                               details:nil]);
+    *error = [FlutterError errorWithCode:@"Invalid markerId"
+                                 message:@"showInfoWindow called with invalid markerId"
+                                 details:nil];
   }
 }
 
-- (void)hideMarkerInfoWindowWithIdentifier:(NSString *)identifier result:(FlutterResult)result {
+- (void)hideMarkerInfoWindowWithIdentifier:(NSString *)identifier
+                                     error:
+                                         (FlutterError *_Nullable __autoreleasing *_Nonnull)error {
   FLTGoogleMapMarkerController *controller = self.markerIdentifierToController[identifier];
   if (controller) {
     [controller hideInfoWindow];
-    result(nil);
   } else {
-    result([FlutterError errorWithCode:@"Invalid markerId"
-                               message:@"hideInfoWindow called with invalid markerId"
-                               details:nil]);
+    *error = [FlutterError errorWithCode:@"Invalid markerId"
+                                 message:@"hideInfoWindow called with invalid markerId"
+                                 details:nil];
   }
 }
 
-- (void)isInfoWindowShownForMarkerWithIdentifier:(NSString *)identifier
-                                          result:(FlutterResult)result {
+- (nullable NSNumber *)
+    isInfoWindowShownForMarkerWithIdentifier:(NSString *)identifier
+                                       error:(FlutterError *_Nullable __autoreleasing *_Nonnull)
+                                                 error {
   FLTGoogleMapMarkerController *controller = self.markerIdentifierToController[identifier];
   if (controller) {
-    result(@([controller isInfoWindowShown]));
+    return @([controller isInfoWindowShown]);
   } else {
-    result([FlutterError errorWithCode:@"Invalid markerId"
-                               message:@"isInfoWindowShown called with invalid markerId"
-                               details:nil]);
+    *error = [FlutterError errorWithCode:@"Invalid markerId"
+                                 message:@"isInfoWindowShown called with invalid markerId"
+                                 details:nil];
+    return nil;
   }
 }
 
