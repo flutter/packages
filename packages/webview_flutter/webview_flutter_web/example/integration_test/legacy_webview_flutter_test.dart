@@ -2,29 +2,30 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:async';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:web/web.dart' as web;
-import 'package:webview_flutter_platform_interface/webview_flutter_platform_interface.dart';
-import 'package:webview_flutter_web/webview_flutter_web.dart';
+import 'package:webview_flutter_web_example/legacy/web_view.dart';
 
 import 'wrapped_webview.dart';
 
-Future<void> main() async {
+void main() async {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
+  const String someUrl = 'http://example.com/';
   const String fakeUrl = 'https://example.com/';
 
-  testWidgets('loadRequest', (WidgetTester tester) async {
-    final WebWebViewController controller =
-        WebWebViewController(const PlatformWebViewControllerCreationParams());
-    await controller.loadRequest(
-      LoadRequestParams(uri: Uri.parse(fakeUrl)),
-    );
-
+  testWidgets('initialUrl', (WidgetTester tester) async {
+    final Completer<WebViewController> controllerCompleter =
+        Completer<WebViewController>();
     await tester.pumpWidget(
-      wrappedWebView(controller),
+      wrappedLegacyWebView(fakeUrl, (WebViewController controller) {
+            controllerCompleter.complete(controller);
+          })
     );
+    await controllerCompleter.future;
     // Pump 2 frames so the framework injects the platform view into the DOM.
     await tester.pump();
     await tester.pump();
@@ -36,16 +37,17 @@ Future<void> main() async {
     expect(element!.src, fakeUrl);
   });
 
-  testWidgets('loadHtmlString', (WidgetTester tester) async {
-    final WebWebViewController controller =
-        WebWebViewController(const PlatformWebViewControllerCreationParams());
-    await controller.loadHtmlString(
-      'data:text/html;charset=utf-8,${Uri.encodeFull('test html')}',
+  testWidgets('loadUrl', (WidgetTester tester) async {
+    final Completer<WebViewController> controllerCompleter =
+        Completer<WebViewController>();
+    await tester.pumpWidget(
+      wrappedLegacyWebView(someUrl, (WebViewController controller) {
+            controllerCompleter.complete(controller);
+          })
     );
 
-    await tester.pumpWidget(
-      wrappedWebView(controller),
-    );
+    final WebViewController controller = await controllerCompleter.future;
+    await controller.loadUrl(fakeUrl);
     // Pump 2 frames so the framework injects the platform view into the DOM.
     await tester.pump();
     await tester.pump();
@@ -54,9 +56,6 @@ Future<void> main() async {
     final web.HTMLIFrameElement? element =
         web.document.querySelector('iframe') as web.HTMLIFrameElement?;
     expect(element, isNotNull);
-    expect(
-      element!.src,
-      'data:text/html;charset=utf-8,data:text/html;charset=utf-8,test%2520html',
-    );
+    expect(element!.src, fakeUrl);
   });
 }
