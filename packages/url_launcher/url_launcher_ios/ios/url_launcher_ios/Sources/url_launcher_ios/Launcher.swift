@@ -24,12 +24,12 @@ final class DefaultLauncher: Launcher {
   func canOpenURL(_ url: URL) -> Bool {
     return UIApplication.shared.canOpenURL(url)
   }
-  
+
   func open(
     _ url: URL,
     options: [UIApplication.OpenExternalURLOptionsKey: Any],
-    completionHandler completion: ((Bool) -> Void)?)
-  {
+    completionHandler completion: ((Bool) -> Void)?
+  ) {
     UIApplication.shared.open(
       url,
       options: options,
