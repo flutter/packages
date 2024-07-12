@@ -88,25 +88,17 @@ class Indent {
   }) {
     final List<String> lines = input.split('\n');
 
-    int? shortestIndentation;
-    if (trimIndentation) {
-      for (final String line in lines) {
-        if (line.trim().isNotEmpty) {
-          final int indentationLength = line.length - line.trimLeft().length;
-          shortestIndentation = shortestIndentation == null
-              ? indentationLength
-              : min(shortestIndentation, indentationLength);
-        }
-      }
-    }
+    final int indentationToRemove = !trimIndentation
+        ? 0
+        : lines
+            .where((String line) => line.trim().isNotEmpty)
+            .map((String line) => line.length - line.trimLeft().length)
+            .reduce(min);
 
     for (int i = 0; i < lines.length; ++i) {
-      late final String line;
-      if (trimIndentation && lines[i].trim().isNotEmpty) {
-        line = lines[i].substring(shortestIndentation!);
-      } else {
-        line = lines[i];
-      }
+      final String line = lines[i].length >= indentationToRemove
+          ? lines[i].substring(indentationToRemove)
+          : lines[i];
 
       if (i == 0 && !leadingSpace) {
         add(line.replaceAll('\t', tab));

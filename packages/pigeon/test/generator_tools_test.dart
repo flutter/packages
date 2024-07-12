@@ -444,4 +444,24 @@ void main() {
     expect(result?.type, typeWithHighestMinApi);
     expect(result?.version, 2);
   });
+
+  test('Indent.format trims indentation', () {
+    final StringBuffer buffer = StringBuffer();
+    final Indent indent = Indent(buffer);
+
+    indent.format(
+      '''
+      void myMethod() {
+
+        print('hello');
+      }''',
+      trimIndentation: true,
+    );
+
+    expect(buffer.toString(), '''
+void myMethod() {
+
+  print('hello');
+}''');
+  });
 }
