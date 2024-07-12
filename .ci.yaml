@@ -425,7 +425,6 @@ targets:
     recipe: packages/packages
     timeout: 30
     properties:
-      add_recipes_cq: "true"
       version_file: flutter_stable.version
       # This file only builds a *legacy* version of the project.
       target_file: android_build_all_packages_legacy.yaml
