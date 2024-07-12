@@ -195,12 +195,12 @@ LatLngBounds gmLatLngBoundsTolatLngBounds(gmaps.LatLngBounds latLngBounds) {
   );
 }
 
-CameraPosition _gmViewportToCameraPosition(gmaps.GMap map) {
+CameraPosition _gmViewportToCameraPosition(gmaps.Map map) {
   return CameraPosition(
-    target: gmLatLngToLatLng(map.center ?? _nullGmapsLatLng),
-    bearing: map.heading?.toDouble() ?? 0,
-    tilt: map.tilt?.toDouble() ?? 0,
-    zoom: map.zoom?.toDouble() ?? 0,
+    target: gmLatLngToLatLng(map.center),
+    bearing: map.heading.toDouble() ,
+    tilt: map.tilt.toDouble(),
+    zoom: map.zoom.toDouble(),
   );
 }
 
@@ -475,7 +475,7 @@ gmaps.CircleOptions _circleOptionsFromCircle(Circle circle) {
 }
 
 gmaps.PolygonOptions _polygonOptionsFromPolygon(
-    gmaps.GMap googleMap, Polygon polygon) {
+    gmaps.Map googleMap, Polygon polygon) {
   // Convert all points to GmLatLng
   final List<gmaps.LatLng> path =
       polygon.points.map(_latLngToGmLatLng).toList();
@@ -550,7 +550,7 @@ bool _isPolygonClockwise(List<gmaps.LatLng> path) {
 }
 
 gmaps.PolylineOptions _polylineOptionsFromPolyline(
-    gmaps.GMap googleMap, Polyline polyline) {
+    gmaps.Map googleMap, Polyline polyline) {
   final List<gmaps.LatLng> paths =
       polyline.points.map(_latLngToGmLatLng).toList();
 
@@ -569,8 +569,8 @@ gmaps.PolylineOptions _polylineOptionsFromPolyline(
 //  this.width = 10,
 }
 
-// Translates a [CameraUpdate] into operations on a [gmaps.GMap].
-void _applyCameraUpdate(gmaps.GMap map, CameraUpdate update) {
+// Translates a [CameraUpdate] into operations on a [gmaps.Map].
+void _applyCameraUpdate(gmaps.Map map, CameraUpdate update) {
   // Casts [value] to a JSON dictionary (string -> nullable object). [value]
   // must be a non-null JSON dictionary.
   Map<String, Object?> asJsonObject(dynamic value) {
@@ -587,10 +587,10 @@ void _applyCameraUpdate(gmaps.GMap map, CameraUpdate update) {
     case 'newCameraPosition':
       final Map<String, Object?> position = asJsonObject(json[1]);
       final List<Object?> latLng = asJsonList(position['target']);
-      map.heading = position['bearing'] as num?;
-      map.zoom = position['zoom'] as num?;
+      map.heading = position['bearing']! as num;
+      map.zoom = position['zoom']! as num;
       map.panTo(
-        gmaps.LatLng(latLng[0] as num?, latLng[1] as num?),
+        gmaps.LatLng(latLng[0]! as num, latLng[1]! as num),
       );
       map.tilt = position['tilt'] as num?;
     case 'newLatLng':
@@ -607,8 +607,8 @@ void _applyCameraUpdate(gmaps.GMap map, CameraUpdate update) {
       final double padding = json[2] as double;
       map.fitBounds(
         gmaps.LatLngBounds(
-          gmaps.LatLng(latLng1[0] as num?, latLng1[1] as num?),
-          gmaps.LatLng(latLng2[0] as num?, latLng2[1] as num?),
+          gmaps.LatLng(latLng1[0]! as num, latLng1[1]! as num),
+          gmaps.LatLng(latLng2[0]! as num, latLng2[1]! as num),
         ),
         padding,
       );
@@ -647,17 +647,15 @@ void _applyCameraUpdate(gmaps.GMap map, CameraUpdate update) {
 }
 
 // original JS by: Byron Singh (https://stackoverflow.com/a/30541162)
-gmaps.LatLng _pixelToLatLng(gmaps.GMap map, int x, int y) {
+gmaps.LatLng _pixelToLatLng(gmaps.Map map, int x, int y) {
   final gmaps.LatLngBounds? bounds = map.bounds;
   final gmaps.Projection? projection = map.projection;
-  final num? zoom = map.zoom;
+  final num zoom = map.zoom;
 
   assert(
       bounds != null, 'Map Bounds required to compute LatLng of screen x/y.');
   assert(projection != null,
       'Map Projection required to compute LatLng of screen x/y');
-  assert(zoom != null,
-      'Current map zoom level required to compute LatLng of screen x/y');
 
   final gmaps.LatLng ne = bounds!.northEast;
   final gmaps.LatLng sw = bounds.southWest;

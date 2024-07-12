@@ -43,7 +43,7 @@ class ClusterManagersController extends GeometryController {
     final MarkerClusterer markerClusterer = createMarkerClusterer(
         googleMap,
         (gmaps.MapMouseEvent event, MarkerClustererCluster cluster,
-                gmaps.GMap map) =>
+                gmaps.Map map) =>
             _clusterClicked(
                 clusterManager.clusterManagerId, event, cluster, map));
 
@@ -109,7 +109,7 @@ class ClusterManagersController extends GeometryController {
       ClusterManagerId clusterManagerId,
       gmaps.MapMouseEvent event,
       MarkerClustererCluster markerClustererCluster,
-      gmaps.GMap map) {
+      gmaps.Map map) {
     if (markerClustererCluster.count > 0 &&
         markerClustererCluster.bounds != null) {
       final Cluster cluster =

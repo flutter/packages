@@ -26,7 +26,7 @@ void main() {
     late StreamController<MapEvent<Object?>> events;
     late MarkersController controller;
     late ClusterManagersController clusterManagersController;
-    late gmaps.GMap map;
+    late gmaps.Map map;
 
     setUp(() {
       events = StreamController<MapEvent<Object?>>();
@@ -34,7 +34,7 @@ void main() {
       clusterManagersController = ClusterManagersController(stream: events);
       controller = MarkersController(
           stream: events, clusterManagersController: clusterManagersController);
-      map = gmaps.GMap(createDivElement());
+      map = gmaps.Map(createDivElement());
       clusterManagersController.bindToMap(123, map);
       controller.bindToMap(123, map);
     });

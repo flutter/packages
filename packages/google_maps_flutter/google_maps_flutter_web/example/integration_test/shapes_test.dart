@@ -23,10 +23,10 @@ const double _acceptableDelta = 0.01;
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  late gmaps.GMap map;
+  late gmaps.Map map;
 
   setUp(() {
-    map = gmaps.GMap(createDivElement());
+    map = gmaps.Map(createDivElement());
   });
 
   group('CirclesController', () {

@@ -3,7 +3,7 @@
 // found in the LICENSE file.
 
 import 'dart:async';
-import 'dart:js_util' show getProperty;
+import 'dart:js_interop_unsafe';
 
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -191,7 +191,7 @@ void main() {
         final gmaps.MapTypeStyle style = styles[0];
         expect(style.featureType, 'poi.park');
         expect(style.elementType, 'labels.text.fill');
-        expect(style.stylers?.length, 1);
+        expect(style.stylers.length, 1);
         expect(getProperty<String>(style.stylers![0]!, 'color'), '#6b9a76');
       });
 

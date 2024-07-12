@@ -221,7 +221,7 @@ void main() {
       late MockPolygonsController polygons;
       late MockPolylinesController polylines;
       late MockTileOverlaysController tileOverlays;
-      late gmaps.GMap map;
+      late gmaps.Map map;
 
       setUp(() {
         circles = MockCirclesController();
@@ -229,7 +229,7 @@ void main() {
         polygons = MockPolygonsController();
         polylines = MockPolylinesController();
         tileOverlays = MockTileOverlaysController();
-        map = gmaps.GMap(createDivElement());
+        map = gmaps.Map(createDivElement());
       });
 
       testWidgets('listens to map events', (WidgetTester tester) async {
@@ -539,12 +539,12 @@ void main() {
       });
     });
 
-    // These are the methods that are delegated to the gmaps.GMap object, that we can mock...
+    // These are the methods that are delegated to the gmaps.Map object, that we can mock...
     group('Map control methods', () {
-      late gmaps.GMap map;
+      late gmaps.Map map;
 
       setUp(() {
-        map = gmaps.GMap(
+        map = gmaps.Map(
           createDivElement(),
           gmaps.MapOptions()
             ..zoom = 10
