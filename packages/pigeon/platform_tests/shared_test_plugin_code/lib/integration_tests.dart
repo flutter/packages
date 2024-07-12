@@ -2001,51 +2001,72 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
     testWidgets('echoNullableInt', (_) async {
       final ProxyApiTestClass api = _createGenericProxyApiTestClass();
       expect(await api.echoNullableInt(null), null);
+      expect(await api.echoNullableInt(1), 1);
     });
 
     testWidgets('echoNullableDouble', (_) async {
       final ProxyApiTestClass api = _createGenericProxyApiTestClass();
       expect(await api.echoNullableDouble(null), null);
+      expect(await api.echoNullableDouble(1.0), 1.0);
     });
 
     testWidgets('echoNullableBool', (_) async {
       final ProxyApiTestClass api = _createGenericProxyApiTestClass();
       expect(await api.echoNullableBool(null), null);
+      expect(await api.echoNullableBool(false), false);
     });
 
     testWidgets('echoNullableString', (_) async {
       final ProxyApiTestClass api = _createGenericProxyApiTestClass();
       expect(await api.echoNullableString(null), null);
+      expect(await api.echoNullableString('aString'), 'aString');
     });
 
     testWidgets('echoNullableUint8List', (_) async {
       final ProxyApiTestClass api = _createGenericProxyApiTestClass();
       expect(await api.echoNullableUint8List(null), null);
+      expect(await api.echoNullableUint8List(Uint8List(0)), Uint8List(0));
     });
 
     testWidgets('echoNullableObject', (_) async {
       final ProxyApiTestClass api = _createGenericProxyApiTestClass();
       expect(await api.echoNullableObject(null), null);
+      expect(await api.echoNullableObject('aString'), 'aString');
     });
 
     testWidgets('echoNullableList', (_) async {
       final ProxyApiTestClass api = _createGenericProxyApiTestClass();
       expect(await api.echoNullableList(null), null);
+      expect(await api.echoNullableList(<int>[1]), <int>[1]);
     });
 
     testWidgets('echoNullableMap', (_) async {
       final ProxyApiTestClass api = _createGenericProxyApiTestClass();
       expect(await api.echoNullableMap(null), null);
+      expect(
+        await api.echoNullableMap(<String, int>{'value': 1}),
+        <String, int>{'value': 1},
+      );
     });
 
     testWidgets('echoNullableEnum', (_) async {
       final ProxyApiTestClass api = _createGenericProxyApiTestClass();
       expect(await api.echoNullableEnum(null), null);
+      expect(
+        await api.echoNullableEnum(ProxyApiTestEnum.one),
+        ProxyApiTestEnum.one,
+      );
     });
 
     testWidgets('echoNullableProxyApi', (_) async {
       final ProxyApiTestClass api = _createGenericProxyApiTestClass();
       expect(await api.echoNullableProxyApi(null), null);
+
+      final ProxyApiSuperClass proxyApi = ProxyApiSuperClass();
+      expect(
+        await api.echoNullableProxyApi(proxyApi),
+        proxyApi,
+      );
     });
 
     testWidgets('noopAsync', (_) async {
@@ -2155,46 +2176,64 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
     testWidgets('echoAsyncNullableInt', (_) async {
       final ProxyApiTestClass api = _createGenericProxyApiTestClass();
       expect(await api.echoAsyncNullableInt(null), null);
+      expect(await api.echoAsyncNullableInt(1), 1);
     });
 
     testWidgets('echoAsyncNullableDouble', (_) async {
       final ProxyApiTestClass api = _createGenericProxyApiTestClass();
       expect(await api.echoAsyncNullableDouble(null), null);
+      expect(await api.echoAsyncNullableDouble(2.0), 2.0);
     });
 
     testWidgets('echoAsyncNullableBool', (_) async {
       final ProxyApiTestClass api = _createGenericProxyApiTestClass();
       expect(await api.echoAsyncNullableBool(null), null);
+      expect(await api.echoAsyncNullableBool(true), true);
     });
 
     testWidgets('echoAsyncNullableString', (_) async {
       final ProxyApiTestClass api = _createGenericProxyApiTestClass();
       expect(await api.echoAsyncNullableString(null), null);
+      expect(await api.echoAsyncNullableString('aString'), 'aString');
     });
 
     testWidgets('echoAsyncNullableUint8List', (_) async {
       final ProxyApiTestClass api = _createGenericProxyApiTestClass();
       expect(await api.echoAsyncNullableUint8List(null), null);
+      expect(
+        await api.echoAsyncNullableUint8List(Uint8List(0)),
+        Uint8List(0),
+      );
     });
 
     testWidgets('echoAsyncNullableObject', (_) async {
       final ProxyApiTestClass api = _createGenericProxyApiTestClass();
       expect(await api.echoAsyncNullableObject(null), null);
+      expect(await api.echoAsyncNullableObject(1), 1);
     });
 
     testWidgets('echoAsyncNullableList', (_) async {
       final ProxyApiTestClass api = _createGenericProxyApiTestClass();
       expect(await api.echoAsyncNullableList(null), null);
+      expect(await api.echoAsyncNullableList(<int>[1]), <int>[1]);
     });
 
     testWidgets('echoAsyncNullableMap', (_) async {
       final ProxyApiTestClass api = _createGenericProxyApiTestClass();
       expect(await api.echoAsyncNullableMap(null), null);
+      expect(
+        await api.echoAsyncNullableMap(<String, int>{'banana': 1}),
+        <String, int>{'banana': 1},
+      );
     });
 
     testWidgets('echoAsyncNullableEnum', (_) async {
       final ProxyApiTestClass api = _createGenericProxyApiTestClass();
       expect(await api.echoAsyncNullableEnum(null), null);
+      expect(
+        await api.echoAsyncNullableEnum(ProxyApiTestEnum.one),
+        ProxyApiTestEnum.one,
+      );
     });
 
     testWidgets('staticNoop', (_) async {
@@ -2372,6 +2411,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
         flutterEchoNullableBool: (_, bool? aBool) => aBool,
       );
       expect(await api.callFlutterEchoNullableBool(null), null);
+      expect(await api.callFlutterEchoNullableBool(true), true);
     });
 
     testWidgets('callFlutterEchoNullableInt', (_) async {
@@ -2379,6 +2419,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
         flutterEchoNullableInt: (_, int? anInt) => anInt,
       );
       expect(await api.callFlutterEchoNullableInt(null), null);
+      expect(await api.callFlutterEchoNullableInt(1), 1);
     });
 
     testWidgets('callFlutterEchoNullableDouble', (_) async {
@@ -2386,6 +2427,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
         flutterEchoNullableDouble: (_, double? aDouble) => aDouble,
       );
       expect(await api.callFlutterEchoNullableDouble(null), null);
+      expect(await api.callFlutterEchoNullableDouble(1.0), 1.0);
     });
 
     testWidgets('callFlutterEchoNullableString', (_) async {
@@ -2393,6 +2435,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
         flutterEchoNullableString: (_, String? aString) => aString,
       );
       expect(await api.callFlutterEchoNullableString(null), null);
+      expect(await api.callFlutterEchoNullableString('aString'), 'aString');
     });
 
     testWidgets('callFlutterEchoNullableUint8List', (_) async {
@@ -2400,6 +2443,10 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
         flutterEchoNullableUint8List: (_, Uint8List? aUint8List) => aUint8List,
       );
       expect(await api.callFlutterEchoNullableUint8List(null), null);
+      expect(
+        await api.callFlutterEchoNullableUint8List(Uint8List(0)),
+        Uint8List(0),
+      );
     });
 
     testWidgets('callFlutterEchoNullableList', (_) async {
@@ -2407,6 +2454,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
         flutterEchoNullableList: (_, List<Object?>? aList) => aList,
       );
       expect(await api.callFlutterEchoNullableList(null), null);
+      expect(await api.callFlutterEchoNullableList(<int>[0]), <int>[0]);
     });
 
     testWidgets('callFlutterEchoNullableMap', (_) async {
@@ -2414,6 +2462,10 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
         flutterEchoNullableMap: (_, Map<String?, Object?>? aMap) => aMap,
       );
       expect(await api.callFlutterEchoNullableMap(null), null);
+      expect(
+        await api.callFlutterEchoNullableMap(<String, int>{'str': 0}),
+        <String, int>{'str': 0},
+      );
     });
 
     testWidgets('callFlutterEchoNullableEnum', (_) async {
@@ -2421,6 +2473,10 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
         flutterEchoNullableEnum: (_, ProxyApiTestEnum? anEnum) => anEnum,
       );
       expect(await api.callFlutterEchoNullableEnum(null), null);
+      expect(
+        await api.callFlutterEchoNullableEnum(ProxyApiTestEnum.two),
+        ProxyApiTestEnum.two,
+      );
     });
 
     testWidgets('callFlutterEchoNullableProxyApi', (_) async {
@@ -2428,7 +2484,11 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
         flutterEchoNullableProxyApi: (_, ProxyApiSuperClass? aProxyApi) =>
             aProxyApi,
       );
+
       expect(await api.callFlutterEchoNullableProxyApi(null), null);
+
+      final ProxyApiSuperClass proxyApi = ProxyApiSuperClass();
+      expect(await api.callFlutterEchoNullableProxyApi(proxyApi), proxyApi);
     });
 
     testWidgets('callFlutterNoopAsync', (_) async {
