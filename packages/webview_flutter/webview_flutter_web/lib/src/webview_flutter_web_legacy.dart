@@ -5,7 +5,6 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:js_interop';
-import 'dart:ui_web' as ui_web;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
@@ -21,17 +20,6 @@ import 'http_request_factory.dart';
 ///
 /// This is used as the default implementation for [WebView.platform] on web.
 class WebWebViewPlatform implements WebViewPlatform {
-  /// Constructs a new instance of [WebWebViewPlatform].
-  WebWebViewPlatform() {
-    ui_web.platformViewRegistry.registerViewFactory(
-        'webview-iframe',
-        (int viewId) => web.HTMLIFrameElement()
-          ..id = 'webview-$viewId'
-          ..width = '100%'
-          ..height = '100%'
-          ..style.border = 'none');
-  }
-
   @override
   Widget build({
     required BuildContext context,
@@ -41,23 +29,21 @@ class WebWebViewPlatform implements WebViewPlatform {
     WebViewPlatformCreatedCallback? onWebViewPlatformCreated,
     Set<Factory<OneSequenceGestureRecognizer>>? gestureRecognizers,
   }) {
-    return HtmlElementView(
-      viewType: 'webview-iframe',
-      onPlatformViewCreated: (int viewId) {
-        if (onWebViewPlatformCreated == null) {
-          return;
-        }
-        final web.HTMLIFrameElement element = web.document
-            .getElementById('webview-$viewId')! as web.HTMLIFrameElement;
-
+    return HtmlElementView.fromTagName(
+      tagName: 'iframe',
+      onElementCreated: (Object iFrame) {
+        iFrame as web.HTMLIFrameElement;
+        iFrame.style.border = 'none';
         final String? initialUrl = creationParams.initialUrl;
         if (initialUrl != null) {
           // ignore: unsafe_html
-          element.src = initialUrl;
+          iFrame.src = initialUrl;
         }
-        onWebViewPlatformCreated(WebWebViewPlatformController(
-          element,
-        ));
+        if (onWebViewPlatformCreated != null) {
+          onWebViewPlatformCreated(
+            WebWebViewPlatformController(iFrame)
+          );
+        }
       },
     );
   }
