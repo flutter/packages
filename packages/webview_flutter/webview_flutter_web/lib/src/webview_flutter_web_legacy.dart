@@ -41,7 +41,7 @@ class WebWebViewPlatform implements WebViewPlatform {
         }
         if (onWebViewPlatformCreated != null) {
           onWebViewPlatformCreated(
-            WebWebViewPlatformController(iFrame)
+            WebWebViewPlatformController(iFrame),
           );
         }
       },
