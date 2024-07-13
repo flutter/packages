@@ -30,6 +30,7 @@ flutter:
     - assets/
 
 dependency_overrides:
+  # FOR TESTING ONLY. DO NOT MERGE.
   google_maps:
     git:
       url: https://github.com/a14n/dart-google-maps

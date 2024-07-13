@@ -32,6 +32,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
 
+# FOR TESTING ONLY. DO NOT MERGE.
 dependency_overrides:
   google_maps:
     git:

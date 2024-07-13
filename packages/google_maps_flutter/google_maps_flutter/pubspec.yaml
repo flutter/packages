@@ -32,6 +32,13 @@ dev_dependencies:
   plugin_platform_interface: ^2.1.7
   stream_transform: ^2.0.0
 
+# FOR TESTING ONLY DO NOT MERGE
+dependency_overrides:
+  google_maps:
+    git:
+      url: https://github.com/a14n/dart-google-maps
+      ref: 0f57b7d99ed9652a31cd60a5dd4f3c6cb6b9f31a
+
 topics:
   - google-maps
   - google-maps-flutter
