@@ -13,7 +13,7 @@ import 'wrapped_webview.dart';
 Future<void> main() async {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  const String fakeUrl = 'https://www.flutter.dev/';
+  const String fakeUrl = 'about:blank';
 
   testWidgets('loadRequest', (WidgetTester tester) async {
     final WebWebViewController controller = WebWebViewController(
@@ -30,7 +30,7 @@ Future<void> main() async {
     // The duration of the second pump is set so the browser has some idle time
     // to actually show the contents of the iFrame.
     await tester.pump();
-    await tester.pump(const Duration(seconds: 5));
+    await tester.pump(const Duration(seconds: 1));
 
     // Assert an iFrame has been rendered to the DOM with the correct src attribute.
     final web.HTMLIFrameElement? element =
@@ -54,7 +54,7 @@ Future<void> main() async {
     // The duration of the second pump is set so the browser has some idle time
     // to actually show the contents of the iFrame.
     await tester.pump();
-    await tester.pump(const Duration(seconds: 5));
+    await tester.pump(const Duration(seconds: 1));
 
     // Assert an iFrame has been rendered to the DOM with the correct src attribute.
     final web.HTMLIFrameElement? element =
