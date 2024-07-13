@@ -7,8 +7,8 @@
 @import alternate_language_test_plugin;
 
 @interface ACMessageSearchReply ()
-+ (ACMessageSearchReply *)fromList:(NSArray *)list;
-- (NSArray *)toList;
++ (ACMessageSearchReply *)fromList:(NSArray<id> *)list;
+- (NSArray<id> *)toList;
 @end
 
 @interface RunnerTests : XCTestCase
@@ -20,7 +20,7 @@
 - (void)testToMapAndBack {
   ACMessageSearchReply *reply = [[ACMessageSearchReply alloc] init];
   reply.result = @"foobar";
-  NSArray *list = [reply toList];
+  NSArray<id> *list = [reply toList];
   ACMessageSearchReply *copy = [ACMessageSearchReply fromList:list];
   XCTAssertEqual(reply.result, copy.result);
 }
@@ -28,7 +28,7 @@
 - (void)testHandlesNull {
   ACMessageSearchReply *reply = [[ACMessageSearchReply alloc] init];
   reply.result = nil;
-  NSArray *list = [reply toList];
+  NSArray<id> *list = [reply toList];
   ACMessageSearchReply *copy = [ACMessageSearchReply fromList:list];
   XCTAssertNil(copy.result);
 }
@@ -36,7 +36,7 @@
 - (void)testHandlesNullFirst {
   ACMessageSearchReply *reply = [[ACMessageSearchReply alloc] init];
   reply.error = @"foobar";
-  NSArray *list = [reply toList];
+  NSArray<id> *list = [reply toList];
   ACMessageSearchReply *copy = [ACMessageSearchReply fromList:list];
   XCTAssertEqual(reply.error, copy.error);
 }

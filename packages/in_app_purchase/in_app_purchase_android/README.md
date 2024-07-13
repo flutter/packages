@@ -37,5 +37,5 @@ If you would like to contribute to the plugin, check out our
 
 
 [1]: https://pub.dev/packages/in_app_purchase
-[2]: https://flutter.dev/docs/development/packages-and-plugins/developing-packages#endorsed-federated-plugin
+[2]: https://flutter.dev/to/endorsed-federated-plugin
 [3]: https://pub.dev/packages/in_app_purchase_android/install

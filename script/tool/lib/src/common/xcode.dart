@@ -32,13 +32,21 @@ class Xcode {
 
   /// Runs an `xcodebuild` in [directory] with the given parameters.
   Future<int> runXcodeBuild(
-    Directory directory, {
+    Directory exampleDirectory,
+    String platform, {
     List<String> actions = const <String>['build'],
     required String workspace,
     required String scheme,
     String? configuration,
     List<String> extraFlags = const <String>[],
   }) {
+    File? disabledSandboxEntitlementFile;
+    if (actions.contains('test') && platform.toLowerCase() == 'macos') {
+      disabledSandboxEntitlementFile = _createDisabledSandboxEntitlementFile(
+        exampleDirectory.childDirectory(platform.toLowerCase()),
+        configuration ?? 'Debug',
+      );
+    }
     final List<String> args = <String>[
       _xcodeBuildCommand,
       ...actions,
@@ -46,13 +54,15 @@ class Xcode {
       ...<String>['-scheme', scheme],
       if (configuration != null) ...<String>['-configuration', configuration],
       ...extraFlags,
+      if (disabledSandboxEntitlementFile != null)
+        'CODE_SIGN_ENTITLEMENTS=${disabledSandboxEntitlementFile.path}',
     ];
     final String completeTestCommand = '$_xcRunCommand ${args.join(' ')}';
     if (log) {
       print(completeTestCommand);
     }
     return processRunner.runAndStream(_xcRunCommand, args,
-        workingDir: directory);
+        workingDir: exampleDirectory);
   }
 
   /// Returns true if [project], which should be an .xcodeproj directory,
@@ -155,5 +165,49 @@ class Xcode {
       }
     }
     return null;
+  }
+
+  /// Finds and copies macOS entitlements file. In the copy, disables sandboxing.
+  /// If entitlements file is not found, returns null.
+  ///
+  /// As of macOS 14, testing a macOS sandbox app may prompt the user to grant
+  /// access to the app. To workaround this in CI, we create and use a entitlements
+  /// file with sandboxing disabled. See
+  /// https://developer.apple.com/documentation/security/app_sandbox/accessing_files_from_the_macos_app_sandbox.
+  File? _createDisabledSandboxEntitlementFile(
+    Directory macOSDirectory,
+    String configuration,
+  ) {
+    final String entitlementDefaultFileName =
+        configuration == 'Release' ? 'Release' : 'DebugProfile';
+
+    final File entitlementFile = macOSDirectory
+        .childDirectory('Runner')
+        .childFile('$entitlementDefaultFileName.entitlements');
+
+    if (!entitlementFile.existsSync()) {
+      print('Unable to find entitlements file at ${entitlementFile.path}');
+      return null;
+    }
+
+    final String originalEntitlementFileContents =
+        entitlementFile.readAsStringSync();
+    final File disabledSandboxEntitlementFile = macOSDirectory
+        .fileSystem.systemTempDirectory
+        .createTempSync('flutter_disable_sandbox_entitlement.')
+        .childFile(
+            '${entitlementDefaultFileName}WithDisabledSandboxing.entitlements');
+    disabledSandboxEntitlementFile.createSync(recursive: true);
+    disabledSandboxEntitlementFile.writeAsStringSync(
+      originalEntitlementFileContents.replaceAll(
+        RegExp(
+            r'<key>com\.apple\.security\.app-sandbox<\/key>[\S\s]*?<true\/>'),
+        '''
+<key>com.apple.security.app-sandbox</key>
+	<false/>''',
+      ),
+    );
+
+    return disabledSandboxEntitlementFile;
   }
 }

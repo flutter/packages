@@ -32,10 +32,9 @@ Future<void> main() async {
       await _runBenchmarks(
         benchmarkNames: <String>['simple'],
         entryPoint: 'lib/benchmarks/runner_simple.dart',
-        compilationOptions: const CompilationOptions(useWasm: true),
+        compilationOptions: const CompilationOptions.wasm(),
       );
     },
-    skip: true, // https://github.com/flutter/flutter/issues/142809
     timeout: Timeout.none,
   );
 }
@@ -44,7 +43,7 @@ Future<void> _runBenchmarks({
   required List<String> benchmarkNames,
   required String entryPoint,
   String initialPage = defaultInitialPage,
-  CompilationOptions compilationOptions = const CompilationOptions(),
+  CompilationOptions compilationOptions = const CompilationOptions.js(),
 }) async {
   final BenchmarkResults taskResult = await serveWebBenchmark(
     benchmarkAppDirectory: Directory('testing/test_app'),

@@ -13,7 +13,6 @@
 # cautious about adding to this list.
 - build_verify
 - google_maps
-- win32
 
 ## Allowed by default
 
@@ -45,6 +44,7 @@
 - meta
 - mime
 - path
+- platform
 - shelf
 - shelf_static
 - source_gen
