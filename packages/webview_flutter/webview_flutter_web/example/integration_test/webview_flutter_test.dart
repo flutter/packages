@@ -13,11 +13,12 @@ import 'wrapped_webview.dart';
 Future<void> main() async {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  const String fakeUrl = 'https://example.com/';
+  const String fakeUrl = 'https://www.flutter.dev/';
 
   testWidgets('loadRequest', (WidgetTester tester) async {
-    final WebWebViewController controller =
-        WebWebViewController(const PlatformWebViewControllerCreationParams());
+    final WebWebViewController controller = WebWebViewController(
+      const PlatformWebViewControllerCreationParams(),
+    );
     await controller.loadRequest(
       LoadRequestParams(uri: Uri.parse(fakeUrl)),
     );
@@ -26,10 +27,12 @@ Future<void> main() async {
       wrappedWebView(controller),
     );
     // Pump 2 frames so the framework injects the platform view into the DOM.
+    // The duration of the second pump is set so the browser has some idle time
+    // to actually show the contents of the iFrame.
     await tester.pump();
-    await tester.pump();
+    await tester.pump(const Duration(seconds: 5));
 
-    // Assert an iframe has been rendered to the DOM with the correct src attribute.
+    // Assert an iFrame has been rendered to the DOM with the correct src attribute.
     final web.HTMLIFrameElement? element =
         web.document.querySelector('iframe') as web.HTMLIFrameElement?;
     expect(element, isNotNull);
@@ -37,8 +40,9 @@ Future<void> main() async {
   });
 
   testWidgets('loadHtmlString', (WidgetTester tester) async {
-    final WebWebViewController controller =
-        WebWebViewController(const PlatformWebViewControllerCreationParams());
+    final WebWebViewController controller = WebWebViewController(
+      const PlatformWebViewControllerCreationParams(),
+    );
     await controller.loadHtmlString(
       'data:text/html;charset=utf-8,${Uri.encodeFull('test html')}',
     );
@@ -47,10 +51,12 @@ Future<void> main() async {
       wrappedWebView(controller),
     );
     // Pump 2 frames so the framework injects the platform view into the DOM.
+    // The duration of the second pump is set so the browser has some idle time
+    // to actually show the contents of the iFrame.
     await tester.pump();
-    await tester.pump();
+    await tester.pump(const Duration(seconds: 5));
 
-    // Assert an iframe has been rendered to the DOM with the correct src attribute.
+    // Assert an iFrame has been rendered to the DOM with the correct src attribute.
     final web.HTMLIFrameElement? element =
         web.document.querySelector('iframe') as web.HTMLIFrameElement?;
     expect(element, isNotNull);
