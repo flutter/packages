@@ -267,7 +267,7 @@ class PathProviderWindows extends PathProviderPlatform {
   Future<List<String>?> getExternalStoragePaths(
       {StorageDirectory? type}) async {
     if (type == null) {
-      return _getLogicalDrives();
+      return null;
     }
 
     String? id;
@@ -299,22 +299,5 @@ class PathProviderWindows extends PathProviderPlatform {
     }
 
     return <String>[path];
-  }
-
-  // Retrieves drives from double null terminated and null seperated string buffer.
-  List<String>? _getLogicalDrives() {
-    final Pointer<Utf16> buffer = calloc<Uint16>(MAX_PATH + 1).cast<Utf16>();
-    try {
-      final int length = GetLogicalDriveStrings(MAX_PATH, buffer);
-
-      if (length == 0) {
-        final int error = GetLastError();
-        throw WindowsException(error);
-      } else {
-        return buffer.toDartString(length: length - 1).split('\x00');
-      }
-    } finally {
-      calloc.free(buffer);
-    }
   }
 }
