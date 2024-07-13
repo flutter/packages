@@ -277,21 +277,20 @@ class PathProviderWindows extends PathProviderPlatform {
     //Mapping to %USERPROFILE% directories
     switch (type) {
       case StorageDirectory.music:
-        id = FOLDERID_Music;
-      case StorageDirectory.ringtones:
-        id = FOLDERID_Ringtones;
+        id = WindowsKnownFolder.Music;
       case StorageDirectory.pictures:
-        id = FOLDERID_Pictures;
+        id = WindowsKnownFolder.Pictures;
       case StorageDirectory.downloads:
-        id = FOLDERID_Downloads;
+        id = WindowsKnownFolder.Downloads;
       case StorageDirectory.documents:
-        id = FOLDERID_Documents;
+        id = WindowsKnownFolder.Documents;
 
       case StorageDirectory.podcasts ||
             StorageDirectory.alarms ||
             StorageDirectory.notifications ||
             StorageDirectory.movies ||
-            StorageDirectory.dcim:
+            StorageDirectory.dcim||
+            StorageDirectory.ringtones:
         return null;
     }
 
