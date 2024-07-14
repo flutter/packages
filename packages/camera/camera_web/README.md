@@ -2,7 +2,7 @@
 
 The web implementation of [`camera`][camera].
 
-*Note*: This plugin is under development. See [missing implementation](#missing-implementation).
+_Note_: This plugin is under development. See [missing implementation](#missing-implementation).
 
 ## Usage
 
@@ -46,7 +46,7 @@ For the browsers that do not support the device orientation:
 
 - `CameraPlatform.onDeviceOrientationChanged` returns an empty stream.
 - `CameraPlatform.lockCaptureOrientation` and `CameraPlatform.unlockCaptureOrientation`
-throw a `PlatformException` with the `orientationNotSupported` error code.
+  throw a `PlatformException` with the `orientationNotSupported` error code.
 
 ### Flash mode and zoom level
 
@@ -58,13 +58,13 @@ with the following [browser support](https://caniuse.com/mdn-api_imagecapture):
 For the browsers that do not support the flash mode:
 
 - `CameraPlatform.setFlashMode` throws a `PlatformException` with the
-`torchModeNotSupported` error code.
+  `torchModeNotSupported` error code.
 
 For the browsers that do not support the zoom level:
 
 - `CameraPlatform.getMaxZoomLevel`, `CameraPlatform.getMinZoomLevel` and
-`CameraPlatform.setZoomLevel` throw a `PlatformException` with the
-`zoomLevelNotSupported` error code.
+  `CameraPlatform.setZoomLevel` throw a `PlatformException` with the
+  `zoomLevelNotSupported` error code.
 
 ### Taking a picture
 
@@ -81,6 +81,7 @@ URL pointing to a location within the browser (blob) and can be displayed using
 See the example below:
 
 <?code-excerpt "example/lib/readme_excerpts.dart (ImageFromXFile)"?>
+
 ```dart
 final Image image;
 if (kIsWeb) {
@@ -97,22 +98,25 @@ The video recording implementation is backed by [MediaRecorder Web API](https://
 ![Data on support for the MediaRecorder feature across the major browsers from caniuse.com](https://caniuse.bitsofco.de/image/mediarecorder.png).
 
 A video is recorded in one of the following video MIME types:
+
 - video/webm (e.g. on Chrome or Firefox)
 - video/mp4 (e.g. on Safari)
 
 Pausing, resuming or stopping the video recording throws a `PlatformException` with the `videoRecordingNotStarted` error code if the video recording was not started.
 
 For the browsers that do not support the video recording:
+
 - `CameraPlatform.startVideoRecording` throws a `PlatformException` with the `notSupported` error code.
 
 ## Missing implementation
 
 The web implementation of [`camera`][camera] is missing the following features:
+
 - Exposure mode, point and offset
 - Focus mode and point
 - Sensor orientation
 - Image format group
-- Streaming of frames
 
 <!-- Links -->
+
 [camera]: https://pub.dev/packages/camera
