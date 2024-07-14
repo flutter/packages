@@ -40,13 +40,6 @@ class PlatformSize {
   final double height;
 }
 
-/// Pigeon version of the relevant subset of VideoCaptureOptions.
-class PlatformVideoCaptureOptions {
-  PlatformVideoCaptureOptions({required this.maxDurationMilliseconds});
-
-  final int? maxDurationMilliseconds;
-}
-
 @HostApi()
 abstract class CameraApi {
   /// Returns the names of all of the available capture devices.
@@ -70,7 +63,7 @@ abstract class CameraApi {
 
   /// Starts recording video with the given camera.
   @async
-  void startVideoRecording(int cameraId, PlatformVideoCaptureOptions options);
+  void startVideoRecording(int cameraId);
 
   /// Finishes recording video with the given camera, and returns the path to
   /// the resulting file.

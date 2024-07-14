@@ -1,3 +1,11 @@
+## 0.9.17
+
+* Adds Swift Package Manager compatibility.
+
+## 0.9.16+3
+
+* Removes unused `maxVideoDuration` code.
+
 ## 0.9.16+2
 
 * Fixes regression taking a picture in torch mode.

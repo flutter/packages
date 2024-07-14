@@ -615,47 +615,5 @@ TEST(Camera, TakePictureReportsAccessDenied) {
   EXPECT_TRUE(result_called);
 }
 
-TEST(Camera, OnVideoRecordSucceededInvokesCameraChannelEvent) {
-  std::unique_ptr<CameraImpl> camera =
-      std::make_unique<CameraImpl>(MOCK_DEVICE_ID);
-  std::unique_ptr<MockCaptureControllerFactory> capture_controller_factory =
-      std::make_unique<MockCaptureControllerFactory>();
-
-  std::unique_ptr<MockBinaryMessenger> binary_messenger =
-      std::make_unique<MockBinaryMessenger>();
-
-  const std::string file_path = "C:\\temp\\filename.mp4";
-  const int64_t camera_id = 12345;
-  std::string camera_channel =
-      std::string("plugins.flutter.io/camera_windows/camera") +
-      std::to_string(camera_id);
-  const int64_t video_duration = 1000000;
-
-  EXPECT_CALL(*capture_controller_factory, CreateCaptureController)
-      .Times(1)
-      .WillOnce(
-          []() { return std::make_unique<NiceMock<MockCaptureController>>(); });
-
-  // TODO: test binary content.
-  // First time is video record success message,
-  // and second is camera closing message.
-  EXPECT_CALL(*binary_messenger, Send(Eq(camera_channel), _, _, _)).Times(2);
-
-  PlatformMediaSettings media_settings(PlatformResolutionPreset::max, false);
-
-  // Init camera with mock capture controller factory
-  camera->InitCamera(std::move(capture_controller_factory),
-                     std::make_unique<MockTextureRegistrar>().get(),
-                     binary_messenger.get(), media_settings);
-
-  // Pass camera id for camera
-  camera->OnCreateCaptureEngineSucceeded(camera_id);
-
-  camera->OnVideoRecordSucceeded(file_path, video_duration);
-
-  // Dispose camera before message channel.
-  camera = nullptr;
-}
-
 }  // namespace test
 }  // namespace camera_windows
