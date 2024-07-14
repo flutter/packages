@@ -1,6 +1,11 @@
-## NEXT
+## 1.0.14
 
-* Updates minimum supported SDK version to Flutter 3.16/Dart 3.2.
+* Updates AGP version to 8.4.1.
+
+## 1.0.13
+
+* Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+* Removes support for apps using the v1 Android embedding.
 
 ## 1.0.12
 

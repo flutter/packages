@@ -7,7 +7,6 @@ package io.flutter.plugins.webviewflutter;
 import android.content.res.AssetManager;
 import androidx.annotation.NonNull;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
-import io.flutter.plugin.common.PluginRegistry;
 import java.io.IOException;
 
 /** Provides access to the assets registered as part of the App bundle. */
@@ -46,37 +45,6 @@ abstract class FlutterAssetManager {
    */
   public String[] list(@NonNull String path) throws IOException {
     return assetManager.list(path);
-  }
-
-  /**
-   * Provides access to assets using the {@link PluginRegistry.Registrar} for looking up file paths
-   * to Flutter assets.
-   *
-   * @deprecated The {@link RegistrarFlutterAssetManager} is for Flutter's v1 embedding. For
-   *     instructions on migrating a plugin from Flutter's v1 Android embedding to v2, visit
-   *     http://flutter.dev/go/android-plugin-migration
-   */
-  @Deprecated
-  static class RegistrarFlutterAssetManager extends FlutterAssetManager {
-    final PluginRegistry.Registrar registrar;
-
-    /**
-     * Constructs a new instance of the {@link RegistrarFlutterAssetManager}.
-     *
-     * @param assetManager Instance of Android's {@link AssetManager} used to access assets within
-     *     the App bundle.
-     * @param registrar Instance of {@link io.flutter.plugin.common.PluginRegistry.Registrar} used
-     *     to look up file paths to assets registered by Flutter.
-     */
-    RegistrarFlutterAssetManager(AssetManager assetManager, PluginRegistry.Registrar registrar) {
-      super(assetManager);
-      this.registrar = registrar;
-    }
-
-    @Override
-    public String getAssetFilePathByName(String name) {
-      return registrar.lookupKeyForAsset(name);
-    }
   }
 
   /**

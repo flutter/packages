@@ -1,6 +1,31 @@
-## NEXT
+## 2.12.0
 
-* Updates minimum supported SDK version to Flutter 3.16/Dart 3.2.
+* Converts Java->Dart calls to Pigeon.
+
+## 2.11.1
+
+* Fixes handling of Circle updates.
+
+## 2.11.0
+
+* Converts additional platform calls to Pigeon.
+
+## 2.10.0
+
+* Converts some platform calls to Pigeon.
+
+## 2.9.1
+
+* Converts inspector interface platform calls to Pigeon.
+
+## 2.9.0
+
+* Adds support for BitmapDescriptor classes `AssetMapBitmap` and `BytesMapBitmap`.
+
+## 2.8.1
+
+* Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+* Removes support for apps using the v1 Android embedding.
 
 ## 2.8.0
 

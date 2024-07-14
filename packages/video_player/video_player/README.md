@@ -12,9 +12,7 @@ A Flutter plugin for iOS, Android and Web for playing back video on a Widget sur
 
 ![The example app running in iOS](https://github.com/flutter/packages/blob/main/packages/video_player/video_player/doc/demo_ipod.gif?raw=true)
 
-## Installation
-
-First, add `video_player` as a [dependency in your pubspec.yaml file](https://flutter.dev/using-packages/).
+## Setup
 
 ### iOS
 
@@ -37,7 +35,7 @@ Android Manifest file, located in `<project root>/android/app/src/main/AndroidMa
 
 If you are using network-based videos, you will need to [add the
 `com.apple.security.network.client`
-entitlement](https://docs.flutter.dev/platform-integration/macos/building#entitlements-and-the-app-sandbox)
+entitlement](https://flutter.dev/to/macos-entitlements)
 
 ### Web
 

@@ -4,11 +4,13 @@
 
 package io.flutter.plugins.googlemaps;
 
+import android.content.res.AssetManager;
+import androidx.annotation.NonNull;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.maps.android.collections.MarkerManager;
-import io.flutter.plugin.common.MethodChannel;
+import io.flutter.plugins.googlemaps.Messages.MapsCallbackApi;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,48 +20,54 @@ class MarkersController {
   private final HashMap<String, MarkerBuilder> markerIdToMarkerBuilder;
   private final HashMap<String, MarkerController> markerIdToController;
   private final HashMap<String, String> googleMapsMarkerIdToDartMarkerId;
-  private final MethodChannel methodChannel;
+  private final @NonNull MapsCallbackApi flutterApi;
   private MarkerManager.Collection markerCollection;
   private final ClusterManagersController clusterManagersController;
+  private final AssetManager assetManager;
+  private final float density;
 
   MarkersController(
-      MethodChannel methodChannel, ClusterManagersController clusterManagersController) {
+      @NonNull MapsCallbackApi flutterApi,
+      ClusterManagersController clusterManagersController,
+      AssetManager assetManager,
+      float density) {
     this.markerIdToMarkerBuilder = new HashMap<>();
     this.markerIdToController = new HashMap<>();
     this.googleMapsMarkerIdToDartMarkerId = new HashMap<>();
-    this.methodChannel = methodChannel;
+    this.flutterApi = flutterApi;
     this.clusterManagersController = clusterManagersController;
+    this.assetManager = assetManager;
+    this.density = density;
   }
 
   void setCollection(MarkerManager.Collection markerCollection) {
     this.markerCollection = markerCollection;
   }
 
-  void addMarkers(List<Object> markersToAdd) {
+  void addJsonMarkers(List<Object> markersToAdd) {
     if (markersToAdd != null) {
       for (Object markerToAdd : markersToAdd) {
-        addMarker(markerToAdd);
+        @SuppressWarnings("unchecked")
+        Map<String, ?> markerMap = (Map<String, ?>) markerToAdd;
+        addJsonMarker(markerMap);
       }
     }
   }
 
-  void changeMarkers(List<Object> markersToChange) {
-    if (markersToChange != null) {
-      for (Object markerToChange : markersToChange) {
-        changeMarker(markerToChange);
-      }
+  void addMarkers(@NonNull List<Messages.PlatformMarker> markersToAdd) {
+    for (Messages.PlatformMarker markerToAdd : markersToAdd) {
+      addJsonMarker(markerToAdd.getJson());
     }
   }
 
-  void removeMarkers(List<Object> markerIdsToRemove) {
-    if (markerIdsToRemove == null) {
-      return;
+  void changeMarkers(@NonNull List<Messages.PlatformMarker> markersToChange) {
+    for (Messages.PlatformMarker markerToChange : markersToChange) {
+      changeJsonMarker(markerToChange.getJson());
     }
-    for (Object rawMarkerId : markerIdsToRemove) {
-      if (rawMarkerId == null) {
-        continue;
-      }
-      String markerId = (String) rawMarkerId;
+  }
+
+  void removeMarkers(@NonNull List<String> markerIdsToRemove) {
+    for (String markerId : markerIdsToRemove) {
       removeMarker(markerId);
     }
   }
@@ -84,33 +92,31 @@ class MarkersController {
     }
   }
 
-  void showMarkerInfoWindow(String markerId, MethodChannel.Result result) {
+  void showMarkerInfoWindow(String markerId) {
     MarkerController markerController = markerIdToController.get(markerId);
-    if (markerController != null) {
-      markerController.showInfoWindow();
-      result.success(null);
-    } else {
-      result.error("Invalid markerId", "showInfoWindow called with invalid markerId", null);
+    if (markerController == null) {
+      throw new Messages.FlutterError(
+          "Invalid markerId", "showInfoWindow called with invalid markerId", null);
     }
+    markerController.showInfoWindow();
   }
 
-  void hideMarkerInfoWindow(String markerId, MethodChannel.Result result) {
+  void hideMarkerInfoWindow(String markerId) {
     MarkerController markerController = markerIdToController.get(markerId);
-    if (markerController != null) {
-      markerController.hideInfoWindow();
-      result.success(null);
-    } else {
-      result.error("Invalid markerId", "hideInfoWindow called with invalid markerId", null);
+    if (markerController == null) {
+      throw new Messages.FlutterError(
+          "Invalid markerId", "hideInfoWindow called with invalid markerId", null);
     }
+    markerController.hideInfoWindow();
   }
 
-  void isInfoWindowShown(String markerId, MethodChannel.Result result) {
+  boolean isInfoWindowShown(String markerId) {
     MarkerController markerController = markerIdToController.get(markerId);
-    if (markerController != null) {
-      result.success(markerController.isInfoWindowShown());
-    } else {
-      result.error("Invalid markerId", "isInfoWindowShown called with invalid markerId", null);
+    if (markerController == null) {
+      throw new Messages.FlutterError(
+          "Invalid markerId", "isInfoWindowShown called with invalid markerId", null);
     }
+    return markerController.isInfoWindowShown();
   }
 
   boolean onMapsMarkerTap(String googleMarkerId) {
@@ -122,7 +128,7 @@ class MarkersController {
   }
 
   boolean onMarkerTap(String markerId) {
-    methodChannel.invokeMethod("marker#onTap", Convert.markerIdToJson(markerId));
+    flutterApi.onMarkerTap(markerId, new NoOpVoidResult());
     MarkerController markerController = markerIdToController.get(markerId);
     if (markerController != null) {
       return markerController.consumeTapEvents();
@@ -135,10 +141,7 @@ class MarkersController {
     if (markerId == null) {
       return;
     }
-    final Map<String, Object> data = new HashMap<>();
-    data.put("markerId", markerId);
-    data.put("position", Convert.latLngToJson(latLng));
-    methodChannel.invokeMethod("marker#onDragStart", data);
+    flutterApi.onMarkerDragStart(markerId, Convert.latLngToPigeon(latLng), new NoOpVoidResult());
   }
 
   void onMarkerDrag(String googleMarkerId, LatLng latLng) {
@@ -146,10 +149,7 @@ class MarkersController {
     if (markerId == null) {
       return;
     }
-    final Map<String, Object> data = new HashMap<>();
-    data.put("markerId", markerId);
-    data.put("position", Convert.latLngToJson(latLng));
-    methodChannel.invokeMethod("marker#onDrag", data);
+    flutterApi.onMarkerDrag(markerId, Convert.latLngToPigeon(latLng), new NoOpVoidResult());
   }
 
   void onMarkerDragEnd(String googleMarkerId, LatLng latLng) {
@@ -157,10 +157,7 @@ class MarkersController {
     if (markerId == null) {
       return;
     }
-    final Map<String, Object> data = new HashMap<>();
-    data.put("markerId", markerId);
-    data.put("position", Convert.latLngToJson(latLng));
-    methodChannel.invokeMethod("marker#onDragEnd", data);
+    flutterApi.onMarkerDragEnd(markerId, Convert.latLngToPigeon(latLng), new NoOpVoidResult());
   }
 
   void onInfoWindowTap(String googleMarkerId) {
@@ -168,7 +165,7 @@ class MarkersController {
     if (markerId == null) {
       return;
     }
-    methodChannel.invokeMethod("infoWindow#onTap", Convert.markerIdToJson(markerId));
+    flutterApi.onInfoWindowTap(markerId, new NoOpVoidResult());
   }
 
   /**
@@ -182,7 +179,7 @@ class MarkersController {
     }
   }
 
-  private void addMarker(Object marker) {
+  private void addJsonMarker(Map<String, ?> marker) {
     if (marker == null) {
       return;
     }
@@ -192,7 +189,7 @@ class MarkersController {
     }
     String clusterManagerId = getClusterManagerId(marker);
     MarkerBuilder markerBuilder = new MarkerBuilder(markerId, clusterManagerId);
-    Convert.interpretMarkerOptions(marker, markerBuilder);
+    Convert.interpretMarkerOptions(marker, markerBuilder, assetManager, density);
     addMarker(markerBuilder);
   }
 
@@ -228,7 +225,7 @@ class MarkersController {
     googleMapsMarkerIdToDartMarkerId.put(marker.getId(), markerId);
   }
 
-  private void changeMarker(Object marker) {
+  private void changeJsonMarker(Map<String, ?> marker) {
     if (marker == null) {
       return;
     }
@@ -246,29 +243,25 @@ class MarkersController {
     // be removed and re-added to update its cluster manager state.
     if (!(Objects.equals(clusterManagerId, oldClusterManagerId))) {
       removeMarker(markerId);
-      addMarker(marker);
+      addJsonMarker(marker);
       return;
     }
 
     // Update marker builder.
-    Convert.interpretMarkerOptions(marker, markerBuilder);
+    Convert.interpretMarkerOptions(marker, markerBuilder, assetManager, density);
 
     // Update existing marker on map.
     MarkerController markerController = markerIdToController.get(markerId);
     if (markerController != null) {
-      Convert.interpretMarkerOptions(marker, markerController);
+      Convert.interpretMarkerOptions(marker, markerController, assetManager, density);
     }
   }
 
-  @SuppressWarnings("unchecked")
-  private static String getMarkerId(Object marker) {
-    Map<String, Object> markerMap = (Map<String, Object>) marker;
-    return (String) markerMap.get("markerId");
+  private static String getMarkerId(Map<String, ?> marker) {
+    return (String) marker.get("markerId");
   }
 
-  @SuppressWarnings("unchecked")
-  private static String getClusterManagerId(Object marker) {
-    Map<String, Object> markerMap = (Map<String, Object>) marker;
-    return (String) markerMap.get("clusterManagerId");
+  private static String getClusterManagerId(Map<String, ?> marker) {
+    return (String) marker.get("clusterManagerId");
   }
 }

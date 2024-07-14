@@ -18,12 +18,13 @@ static FCPPlatformMediaSettings *FCPGetDefaultMediaSettings(
 }
 
 FLTCam *FLTCreateCamWithCaptureSessionQueue(dispatch_queue_t captureSessionQueue) {
-  return FLTCreateCamWithCaptureSessionQueueAndMediaSettings(captureSessionQueue, nil, nil);
+  return FLTCreateCamWithCaptureSessionQueueAndMediaSettings(captureSessionQueue, nil, nil, nil);
 }
 
 FLTCam *FLTCreateCamWithCaptureSessionQueueAndMediaSettings(
     dispatch_queue_t captureSessionQueue, FCPPlatformMediaSettings *mediaSettings,
-    FLTCamMediaSettingsAVWrapper *mediaSettingsAVWrapper) {
+    FLTCamMediaSettingsAVWrapper *mediaSettingsAVWrapper,
+    CaptureDeviceFactory captureDeviceFactory) {
   if (!mediaSettings) {
     mediaSettings = FCPGetDefaultMediaSettings(FCPPlatformResolutionPresetMedium);
   }
@@ -51,14 +52,19 @@ FLTCam *FLTCreateCamWithCaptureSessionQueueAndMediaSettings(
   OCMStub([audioSessionMock addInputWithNoConnections:[OCMArg any]]);
   OCMStub([audioSessionMock canSetSessionPreset:[OCMArg any]]).andReturn(YES);
 
-  id fltCam = [[FLTCam alloc] initWithCameraName:@"camera"
-                                   mediaSettings:mediaSettings
-                          mediaSettingsAVWrapper:mediaSettingsAVWrapper
-                                     orientation:UIDeviceOrientationPortrait
+  id fltCam = [[FLTCam alloc] initWithMediaSettings:mediaSettings
+                             mediaSettingsAVWrapper:mediaSettingsAVWrapper
+                             orientation:UIDeviceOrientationPortrait
                              videoCaptureSession:videoSessionMock
                              audioCaptureSession:audioSessionMock
                              captureSessionQueue:captureSessionQueue
-                                           error:nil];
+                               captureDeviceFactory:captureDeviceFactory ?: ^AVCaptureDevice *(void) {
+                               return [AVCaptureDevice deviceWithUniqueID:@"camera"];
+                             }
+                             videoDimensionsForFormat:^CMVideoDimensions(AVCaptureDeviceFormat *format) {
+                               return CMVideoFormatDescriptionGetDimensions(format.formatDescription);
+                             }
+                             error:nil];
 
   id captureVideoDataOutputMock = [OCMockObject niceMockForClass:[AVCaptureVideoDataOutput class]];
 

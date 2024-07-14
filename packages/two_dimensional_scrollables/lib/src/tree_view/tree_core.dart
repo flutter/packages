@@ -21,7 +21,7 @@ import 'tree.dart';
 ///
 ///   * [TreeViewNode.toggleNode], for controlling node expansion
 ///     programmatically.
-typedef TreeViewNodeCallback = void Function(TreeViewNode<Object?> node);
+typedef TreeViewNodeCallback<T> = void Function(TreeViewNode<T> node);
 
 /// A mixin for classes implementing a tree structure as expected by a
 /// [TreeViewController].

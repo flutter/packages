@@ -44,12 +44,34 @@ due to this not currently being supported by CameraX.
 the plugin will fall back to target 480p (`ResolutionPreset.medium`) if configured with
 `ResolutionPreset.low`.
 
-### Setting maximum duration and stream options for video capture
+### Setting stream options for video capture
 
 Calling `startVideoCapturing` with `VideoCaptureOptions` configured with
-`maxVideoDuration` and `streamOptions` is currently unsupported do to the
-limitations of the CameraX library and the platform interface, respectively,
-and thus, those parameters will silently be ignored.
+`streamOptions` is currently unsupported do to
+limitations of the platform interface,
+and thus that parameter will silently be ignored.
+
+## What requires Android permissions
+
+### Writing to external storage to save image files
+
+In order to save captured images and videos to files on Android 10 and below, CameraX
+requires specifying the `WRITE_EXTERNAL_STORAGE` permission (see [the CameraX documentation][10]).
+This is already done in the plugin, so no further action is required on your end. To understand
+the implications of specificying this permission, see [the `WRITE_EXTERNAL_STORAGE` documentation][11].
+
+### Allowing image streaming in the background
+
+As of Android 14, to allow for background image streaming, you will need to specify the foreground
+[`TYPE_CAMERA`][12] foreground service permission in your app's manifest. Specifically, in
+`your_app/android/app/src/main/AndroidManifest.xml` add the following:
+
+```xml
+<manifest ...>
+  <uses-permission android:name="android.permission.FOREGROUND_SERVICE_CAMERA" />
+  ...
+</manifest>
+```
 
 ## Contributing
 
@@ -59,11 +81,14 @@ For more information on contributing to this plugin, see [`CONTRIBUTING.md`](CON
 
 [1]: https://pub.dev/packages/camera
 [2]: https://developer.android.com/training/camerax
-[3]: https://flutter.dev/docs/development/packages-and-plugins/developing-packages#endorsed-federated-plugin
+[3]: https://flutter.dev/to/endorsed-federated-plugin
 [4]: https://pub.dev/packages/camera_android
 [5]: https://github.com/flutter/flutter/issues/new/choose
 [6]: https://developer.android.com/media/camera/camerax/architecture#combine-use-cases
 [7]: https://developer.android.com/reference/android/hardware/camera2/CameraMetadata#INFO_SUPPORTED_HARDWARE_LEVEL_3
 [8]: https://developer.android.com/reference/android/hardware/camera2/CameraMetadata#INFO_SUPPORTED_HARDWARE_LEVEL_LIMITED
 [9]: https://pub.dev/packages/camera_android#usage
+[10]: https://developer.android.com/media/camera/camerax/architecture#permissions
+[11]: https://developer.android.com/reference/android/Manifest.permission#WRITE_EXTERNAL_STORAGE
+[12]: https://developer.android.com/reference/android/Manifest.permission#FOREGROUND_SERVICE_CAMERA
 [148013]: https://github.com/flutter/flutter/issues/148013
