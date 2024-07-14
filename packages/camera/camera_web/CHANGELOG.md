@@ -1,3 +1,7 @@
+## 0.3.5
+
+- Supporting camera image stream on web.
+
 ## 0.3.4
 
 - Supporting camera image stream on web.
