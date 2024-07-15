@@ -22,7 +22,7 @@ tasks:
   - name: native test
     script: .ci/scripts/tool_runner.sh
     # Simulator name and version must match name and version in create_simulator.sh
-    args: ["native-test", "--ios", "--ios-destination", "platform=iOS Simulator,name=Flutter-iPhone,OS=17.0"]
+    args: ["native-test", "--ios", "--ios-destination", "platform=iOS Simulator,name=Flutter-iPhone,OS=17.2"]
   - name: boot simulator
     # Ensure simulator is still booted
     script: .ci/scripts/boot_simulator.sh

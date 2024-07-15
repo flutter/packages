@@ -95,7 +95,7 @@ platform_properties:
       cpu: arm64
       $flutter/osx_sdk : >-
         {
-          "sdk_version": "15a240d"
+          "sdk_version": "15c500b"
         }
   mac_x64:
     properties:
@@ -108,7 +108,7 @@ platform_properties:
       cpu: x86
       $flutter/osx_sdk : >-
         {
-          "sdk_version": "15a240d"
+          "sdk_version": "15c500b"
         }
 
 targets:
