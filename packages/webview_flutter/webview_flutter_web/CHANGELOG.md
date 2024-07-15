@@ -1,3 +1,7 @@
+## 0.2.3+1
+
+* Fixes DOM timing issue with Legacy Widget build method.
+
 ## 0.2.3
 
 * Migrates to `package:web`
