@@ -63,7 +63,7 @@ class $instanceManagerName(private val finalizationListener: $_finalizationListe
     // Host uses identifiers >= 2^16 and Dart is expected to use values n where,
     // 0 <= n < 2^16.
     private const val minHostCreatedIdentifier: Long = 65536
-    private const val tag = "$instanceManagerName"
+    private const val tag = "$instanceManagerClassName"
 
     /**
      * Instantiate a new manager with a listener for garbage collected weak

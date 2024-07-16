@@ -1249,7 +1249,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
                   api.removeStrongReference(identifier) {
                     if (it.isFailure) {
                       Log.e(
-                        "$registrarName",
+                        "${classNamePrefix}ProxyApiRegistrar",
                         "Failed to remove Dart strong reference with identifier: \$identifier"
                       )
                     }

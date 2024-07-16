@@ -102,7 +102,7 @@ class ProxyApiTestsPigeonInstanceManager(
     // Host uses identifiers >= 2^16 and Dart is expected to use values n where,
     // 0 <= n < 2^16.
     private const val minHostCreatedIdentifier: Long = 65536
-    private const val tag = "ProxyApiTestsPigeonInstanceManager"
+    private const val tag = "PigeonInstanceManager"
 
     /**
      * Instantiate a new manager with a listener for garbage collected weak references.
@@ -363,7 +363,7 @@ abstract class ProxyApiTestsPigeonProxyApiRegistrar(val binaryMessenger: BinaryM
                 api.removeStrongReference(identifier) {
                   if (it.isFailure) {
                     Log.e(
-                        "ProxyApiTestsPigeonProxyApiRegistrar",
+                        "PigeonProxyApiRegistrar",
                         "Failed to remove Dart strong reference with identifier: $identifier")
                   }
                 }
