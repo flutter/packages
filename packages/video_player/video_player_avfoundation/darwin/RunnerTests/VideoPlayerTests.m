@@ -790,6 +790,39 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
   XCTAssertTrue([publishedValue isKindOfClass:[FVPVideoPlayerPlugin class]]);
 }
 
+- (void)testFailedToLoadVideoEventShouldBeAlwaysSent {
+  NSObject<FlutterPluginRegistrar> *registrar =
+      [GetPluginRegistry() registrarForPlugin:@"testFailedToLoadVideoEventShouldBeAlwaysSent"];
+  FVPVideoPlayerPlugin *videoPlayerPlugin =
+      [[FVPVideoPlayerPlugin alloc] initWithRegistrar:registrar];
+  FlutterError *error;
+
+  [videoPlayerPlugin initialize:&error];
+
+  FVPCreationOptions *create = [FVPCreationOptions makeWithAsset:nil
+                                                             uri:@""
+                                                     packageName:nil
+                                                      formatHint:nil
+                                                     httpHeaders:@{}];
+  NSNumber *textureId = [videoPlayerPlugin createWithOptions:create error:&error];
+  FVPVideoPlayer *player = videoPlayerPlugin.playersByTextureId[textureId];
+  XCTAssertNotNil(player);
+
+  [self keyValueObservingExpectationForObject:(id)player.player.currentItem
+                                      keyPath:@"status"
+                                expectedValue:@(AVPlayerItemStatusFailed)];
+  [self waitForExpectationsWithTimeout:10.0 handler:nil];
+
+  XCTestExpectation *failedExpectation = [self expectationWithDescription:@"failed"];
+  [player onListenWithArguments:nil
+                      eventSink:^(FlutterError *event) {
+                        if ([event isKindOfClass:FlutterError.class]) {
+                          [failedExpectation fulfill];
+                        }
+                      }];
+  [self waitForExpectationsWithTimeout:10.0 handler:nil];
+}
+
 #if TARGET_OS_IOS
 - (void)validateTransformFixForOrientation:(UIImageOrientation)orientation {
   AVAssetTrack *track = [[FakeAVAssetTrack alloc] initWithOrientation:orientation];
