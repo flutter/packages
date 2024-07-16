@@ -1,3 +1,7 @@
+## 0.9.17+1
+
+* Fixes overwriting flag MixWithOthers set by video_player.
+
 ## 0.9.17
 
 * Adds Swift Package Manager compatibility.

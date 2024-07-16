@@ -1,3 +1,7 @@
+## 2.6.2
+
+* Fixes audio recorded only with first recording.
+
 ## 2.6.1
 
 * Adds files to make include directory permanent.
