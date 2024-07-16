@@ -39,6 +39,17 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
   return (result == [NSNull null]) ? nil : result;
 }
 
+/// Pigeon equivalent of MapType
+@implementation FGMPlatformMapTypeBox
+- (instancetype)initWithValue:(FGMPlatformMapType)value {
+  self = [super init];
+  if (self) {
+    _value = value;
+  }
+  return self;
+}
+@end
+
 @interface FGMPlatformCameraPosition ()
 + (FGMPlatformCameraPosition *)fromList:(NSArray<id> *)list;
 + (nullable FGMPlatformCameraPosition *)nullableFromList:(NSArray<id> *)list;
@@ -87,6 +98,12 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 - (NSArray<id> *)toList;
 @end
 
+@interface FGMPlatformEdgeInsets ()
++ (FGMPlatformEdgeInsets *)fromList:(NSArray<id> *)list;
++ (nullable FGMPlatformEdgeInsets *)nullableFromList:(NSArray<id> *)list;
+- (NSArray<id> *)toList;
+@end
+
 @interface FGMPlatformLatLng ()
 + (FGMPlatformLatLng *)fromList:(NSArray<id> *)list;
 + (nullable FGMPlatformLatLng *)nullableFromList:(NSArray<id> *)list;
@@ -96,6 +113,12 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 @interface FGMPlatformLatLngBounds ()
 + (FGMPlatformLatLngBounds *)fromList:(NSArray<id> *)list;
 + (nullable FGMPlatformLatLngBounds *)nullableFromList:(NSArray<id> *)list;
+- (NSArray<id> *)toList;
+@end
+
+@interface FGMPlatformCameraTargetBounds ()
++ (FGMPlatformCameraTargetBounds *)fromList:(NSArray<id> *)list;
++ (nullable FGMPlatformCameraTargetBounds *)nullableFromList:(NSArray<id> *)list;
 - (NSArray<id> *)toList;
 @end
 
@@ -311,6 +334,39 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 }
 @end
 
+@implementation FGMPlatformEdgeInsets
++ (instancetype)makeWithTop:(double)top
+                     bottom:(double)bottom
+                       left:(double)left
+                      right:(double)right {
+  FGMPlatformEdgeInsets *pigeonResult = [[FGMPlatformEdgeInsets alloc] init];
+  pigeonResult.top = top;
+  pigeonResult.bottom = bottom;
+  pigeonResult.left = left;
+  pigeonResult.right = right;
+  return pigeonResult;
+}
++ (FGMPlatformEdgeInsets *)fromList:(NSArray<id> *)list {
+  FGMPlatformEdgeInsets *pigeonResult = [[FGMPlatformEdgeInsets alloc] init];
+  pigeonResult.top = [GetNullableObjectAtIndex(list, 0) doubleValue];
+  pigeonResult.bottom = [GetNullableObjectAtIndex(list, 1) doubleValue];
+  pigeonResult.left = [GetNullableObjectAtIndex(list, 2) doubleValue];
+  pigeonResult.right = [GetNullableObjectAtIndex(list, 3) doubleValue];
+  return pigeonResult;
+}
++ (nullable FGMPlatformEdgeInsets *)nullableFromList:(NSArray<id> *)list {
+  return (list) ? [FGMPlatformEdgeInsets fromList:list] : nil;
+}
+- (NSArray<id> *)toList {
+  return @[
+    @(self.top),
+    @(self.bottom),
+    @(self.left),
+    @(self.right),
+  ];
+}
+@end
+
 @implementation FGMPlatformLatLng
 + (instancetype)makeWithLatitude:(double)latitude longitude:(double)longitude {
   FGMPlatformLatLng *pigeonResult = [[FGMPlatformLatLng alloc] init];
@@ -360,15 +416,84 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 }
 @end
 
+@implementation FGMPlatformCameraTargetBounds
++ (instancetype)makeWithBounds:(nullable FGMPlatformLatLngBounds *)bounds {
+  FGMPlatformCameraTargetBounds *pigeonResult = [[FGMPlatformCameraTargetBounds alloc] init];
+  pigeonResult.bounds = bounds;
+  return pigeonResult;
+}
++ (FGMPlatformCameraTargetBounds *)fromList:(NSArray<id> *)list {
+  FGMPlatformCameraTargetBounds *pigeonResult = [[FGMPlatformCameraTargetBounds alloc] init];
+  pigeonResult.bounds = GetNullableObjectAtIndex(list, 0);
+  return pigeonResult;
+}
++ (nullable FGMPlatformCameraTargetBounds *)nullableFromList:(NSArray<id> *)list {
+  return (list) ? [FGMPlatformCameraTargetBounds fromList:list] : nil;
+}
+- (NSArray<id> *)toList {
+  return @[
+    self.bounds ?: [NSNull null],
+  ];
+}
+@end
+
 @implementation FGMPlatformMapConfiguration
-+ (instancetype)makeWithJson:(id)json {
++ (instancetype)makeWithCompassEnabled:(nullable NSNumber *)compassEnabled
+                    cameraTargetBounds:(nullable FGMPlatformCameraTargetBounds *)cameraTargetBounds
+                               mapType:(nullable FGMPlatformMapTypeBox *)mapType
+                  minMaxZoomPreference:(nullable FGMPlatformZoomRange *)minMaxZoomPreference
+                 rotateGesturesEnabled:(nullable NSNumber *)rotateGesturesEnabled
+                 scrollGesturesEnabled:(nullable NSNumber *)scrollGesturesEnabled
+                   tiltGesturesEnabled:(nullable NSNumber *)tiltGesturesEnabled
+                   trackCameraPosition:(nullable NSNumber *)trackCameraPosition
+                   zoomGesturesEnabled:(nullable NSNumber *)zoomGesturesEnabled
+                     myLocationEnabled:(nullable NSNumber *)myLocationEnabled
+               myLocationButtonEnabled:(nullable NSNumber *)myLocationButtonEnabled
+                               padding:(nullable FGMPlatformEdgeInsets *)padding
+                     indoorViewEnabled:(nullable NSNumber *)indoorViewEnabled
+                        trafficEnabled:(nullable NSNumber *)trafficEnabled
+                      buildingsEnabled:(nullable NSNumber *)buildingsEnabled
+                            cloudMapId:(nullable NSString *)cloudMapId
+                                 style:(nullable NSString *)style {
   FGMPlatformMapConfiguration *pigeonResult = [[FGMPlatformMapConfiguration alloc] init];
-  pigeonResult.json = json;
+  pigeonResult.compassEnabled = compassEnabled;
+  pigeonResult.cameraTargetBounds = cameraTargetBounds;
+  pigeonResult.mapType = mapType;
+  pigeonResult.minMaxZoomPreference = minMaxZoomPreference;
+  pigeonResult.rotateGesturesEnabled = rotateGesturesEnabled;
+  pigeonResult.scrollGesturesEnabled = scrollGesturesEnabled;
+  pigeonResult.tiltGesturesEnabled = tiltGesturesEnabled;
+  pigeonResult.trackCameraPosition = trackCameraPosition;
+  pigeonResult.zoomGesturesEnabled = zoomGesturesEnabled;
+  pigeonResult.myLocationEnabled = myLocationEnabled;
+  pigeonResult.myLocationButtonEnabled = myLocationButtonEnabled;
+  pigeonResult.padding = padding;
+  pigeonResult.indoorViewEnabled = indoorViewEnabled;
+  pigeonResult.trafficEnabled = trafficEnabled;
+  pigeonResult.buildingsEnabled = buildingsEnabled;
+  pigeonResult.cloudMapId = cloudMapId;
+  pigeonResult.style = style;
   return pigeonResult;
 }
 + (FGMPlatformMapConfiguration *)fromList:(NSArray<id> *)list {
   FGMPlatformMapConfiguration *pigeonResult = [[FGMPlatformMapConfiguration alloc] init];
-  pigeonResult.json = GetNullableObjectAtIndex(list, 0);
+  pigeonResult.compassEnabled = GetNullableObjectAtIndex(list, 0);
+  pigeonResult.cameraTargetBounds = GetNullableObjectAtIndex(list, 1);
+  pigeonResult.mapType = GetNullableObjectAtIndex(list, 2);
+  pigeonResult.minMaxZoomPreference = GetNullableObjectAtIndex(list, 3);
+  pigeonResult.rotateGesturesEnabled = GetNullableObjectAtIndex(list, 4);
+  pigeonResult.scrollGesturesEnabled = GetNullableObjectAtIndex(list, 5);
+  pigeonResult.tiltGesturesEnabled = GetNullableObjectAtIndex(list, 6);
+  pigeonResult.trackCameraPosition = GetNullableObjectAtIndex(list, 7);
+  pigeonResult.zoomGesturesEnabled = GetNullableObjectAtIndex(list, 8);
+  pigeonResult.myLocationEnabled = GetNullableObjectAtIndex(list, 9);
+  pigeonResult.myLocationButtonEnabled = GetNullableObjectAtIndex(list, 10);
+  pigeonResult.padding = GetNullableObjectAtIndex(list, 11);
+  pigeonResult.indoorViewEnabled = GetNullableObjectAtIndex(list, 12);
+  pigeonResult.trafficEnabled = GetNullableObjectAtIndex(list, 13);
+  pigeonResult.buildingsEnabled = GetNullableObjectAtIndex(list, 14);
+  pigeonResult.cloudMapId = GetNullableObjectAtIndex(list, 15);
+  pigeonResult.style = GetNullableObjectAtIndex(list, 16);
   return pigeonResult;
 }
 + (nullable FGMPlatformMapConfiguration *)nullableFromList:(NSArray<id> *)list {
@@ -376,7 +501,23 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 }
 - (NSArray<id> *)toList {
   return @[
-    self.json ?: [NSNull null],
+    self.compassEnabled ?: [NSNull null],
+    self.cameraTargetBounds ?: [NSNull null],
+    self.mapType ?: [NSNull null],
+    self.minMaxZoomPreference ?: [NSNull null],
+    self.rotateGesturesEnabled ?: [NSNull null],
+    self.scrollGesturesEnabled ?: [NSNull null],
+    self.tiltGesturesEnabled ?: [NSNull null],
+    self.trackCameraPosition ?: [NSNull null],
+    self.zoomGesturesEnabled ?: [NSNull null],
+    self.myLocationEnabled ?: [NSNull null],
+    self.myLocationButtonEnabled ?: [NSNull null],
+    self.padding ?: [NSNull null],
+    self.indoorViewEnabled ?: [NSNull null],
+    self.trafficEnabled ?: [NSNull null],
+    self.buildingsEnabled ?: [NSNull null],
+    self.cloudMapId ?: [NSNull null],
+    self.style ?: [NSNull null],
   ];
 }
 @end
@@ -439,7 +580,7 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 @end
 
 @implementation FGMPlatformZoomRange
-+ (instancetype)makeWithMin:(double)min max:(double)max {
++ (instancetype)makeWithMin:(nullable NSNumber *)min max:(nullable NSNumber *)max {
   FGMPlatformZoomRange *pigeonResult = [[FGMPlatformZoomRange alloc] init];
   pigeonResult.min = min;
   pigeonResult.max = max;
@@ -447,8 +588,8 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 }
 + (FGMPlatformZoomRange *)fromList:(NSArray<id> *)list {
   FGMPlatformZoomRange *pigeonResult = [[FGMPlatformZoomRange alloc] init];
-  pigeonResult.min = [GetNullableObjectAtIndex(list, 0) doubleValue];
-  pigeonResult.max = [GetNullableObjectAtIndex(list, 1) doubleValue];
+  pigeonResult.min = GetNullableObjectAtIndex(list, 0);
+  pigeonResult.max = GetNullableObjectAtIndex(list, 1);
   return pigeonResult;
 }
 + (nullable FGMPlatformZoomRange *)nullableFromList:(NSArray<id> *)list {
@@ -456,8 +597,8 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 }
 - (NSArray<id> *)toList {
   return @[
-    @(self.min),
-    @(self.max),
+    self.min ?: [NSNull null],
+    self.max ?: [NSNull null],
   ];
 }
 @end
@@ -484,17 +625,27 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
     case 136:
       return [FGMPlatformTileOverlay fromList:[self readValue]];
     case 137:
-      return [FGMPlatformLatLng fromList:[self readValue]];
+      return [FGMPlatformEdgeInsets fromList:[self readValue]];
     case 138:
-      return [FGMPlatformLatLngBounds fromList:[self readValue]];
+      return [FGMPlatformLatLng fromList:[self readValue]];
     case 139:
-      return [FGMPlatformMapConfiguration fromList:[self readValue]];
+      return [FGMPlatformLatLngBounds fromList:[self readValue]];
     case 140:
-      return [FGMPlatformPoint fromList:[self readValue]];
+      return [FGMPlatformCameraTargetBounds fromList:[self readValue]];
     case 141:
-      return [FGMPlatformTileLayer fromList:[self readValue]];
+      return [FGMPlatformMapConfiguration fromList:[self readValue]];
     case 142:
+      return [FGMPlatformPoint fromList:[self readValue]];
+    case 143:
+      return [FGMPlatformTileLayer fromList:[self readValue]];
+    case 144:
       return [FGMPlatformZoomRange fromList:[self readValue]];
+    case 145: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil
+                 ? nil
+                 : [[FGMPlatformMapTypeBox alloc] initWithValue:[enumAsNumber integerValue]];
+    }
     default:
       return [super readValueOfType:type];
   }
@@ -529,24 +680,34 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
   } else if ([value isKindOfClass:[FGMPlatformTileOverlay class]]) {
     [self writeByte:136];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FGMPlatformLatLng class]]) {
+  } else if ([value isKindOfClass:[FGMPlatformEdgeInsets class]]) {
     [self writeByte:137];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FGMPlatformLatLngBounds class]]) {
+  } else if ([value isKindOfClass:[FGMPlatformLatLng class]]) {
     [self writeByte:138];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FGMPlatformMapConfiguration class]]) {
+  } else if ([value isKindOfClass:[FGMPlatformLatLngBounds class]]) {
     [self writeByte:139];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FGMPlatformPoint class]]) {
+  } else if ([value isKindOfClass:[FGMPlatformCameraTargetBounds class]]) {
     [self writeByte:140];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FGMPlatformTileLayer class]]) {
+  } else if ([value isKindOfClass:[FGMPlatformMapConfiguration class]]) {
     [self writeByte:141];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FGMPlatformZoomRange class]]) {
+  } else if ([value isKindOfClass:[FGMPlatformPoint class]]) {
     [self writeByte:142];
     [self writeValue:[value toList]];
+  } else if ([value isKindOfClass:[FGMPlatformTileLayer class]]) {
+    [self writeByte:143];
+    [self writeValue:[value toList]];
+  } else if ([value isKindOfClass:[FGMPlatformZoomRange class]]) {
+    [self writeByte:144];
+    [self writeValue:[value toList]];
+  } else if ([value isKindOfClass:[FGMPlatformMapTypeBox class]]) {
+    FGMPlatformMapTypeBox *box = (FGMPlatformMapTypeBox *)value;
+    [self writeByte:145];
+    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
   } else {
     [super writeValue:value];
   }

@@ -12,6 +12,15 @@ import 'package:pigeon/pigeon.dart';
   copyrightHeader: 'pigeons/copyright.txt',
 ))
 
+/// Pigeon equivalent of MapType
+enum PlatformMapType {
+  none,
+  normal,
+  satellite,
+  terrain,
+  hybrid,
+}
+
 /// Pigeon representatation of a CameraPosition.
 class PlatformCameraPosition {
   PlatformCameraPosition({
@@ -111,6 +120,21 @@ class PlatformTileOverlay {
   final Object json;
 }
 
+/// Pigeon equivalent of Flutter's EdgeInsets.
+class PlatformEdgeInsets {
+  PlatformEdgeInsets({
+    required this.top,
+    required this.bottom,
+    required this.left,
+    required this.right,
+  });
+
+  final double top;
+  final double bottom;
+  final double left;
+  final double right;
+}
+
 /// Pigeon equivalent of LatLng.
 class PlatformLatLng {
   PlatformLatLng({required this.latitude, required this.longitude});
@@ -127,16 +151,55 @@ class PlatformLatLngBounds {
   final PlatformLatLng southwest;
 }
 
+/// Pigeon equivalent of CameraTargetBounds.
+///
+/// As with the Dart version, it exists to distinguish between not setting a
+/// a target, and having an explicitly unbounded target (null [bounds]).
+class PlatformCameraTargetBounds {
+  PlatformCameraTargetBounds({required this.bounds});
+
+  final PlatformLatLngBounds? bounds;
+}
+
 /// Pigeon equivalent of MapConfiguration.
 class PlatformMapConfiguration {
-  PlatformMapConfiguration({required this.json});
+  PlatformMapConfiguration({
+    required this.compassEnabled,
+    required this.cameraTargetBounds,
+    required this.mapType,
+    required this.minMaxZoomPreference,
+    required this.rotateGesturesEnabled,
+    required this.scrollGesturesEnabled,
+    required this.tiltGesturesEnabled,
+    required this.trackCameraPosition,
+    required this.zoomGesturesEnabled,
+    required this.myLocationEnabled,
+    required this.myLocationButtonEnabled,
+    required this.padding,
+    required this.indoorViewEnabled,
+    required this.trafficEnabled,
+    required this.buildingsEnabled,
+    required this.cloudMapId,
+    required this.style,
+  });
 
-  /// The configuration options, as JSON. This should only be set from
-  /// _jsonForMapConfiguration, and the native code must intepret it according
-  /// to the internal implementation details of that method.
-  // TODO(stuartmorgan): Replace this with structured data. This exists only to
-  //  allow incremental migration to Pigeon.
-  final Object json;
+  final bool? compassEnabled;
+  final PlatformCameraTargetBounds? cameraTargetBounds;
+  final PlatformMapType? mapType;
+  final PlatformZoomRange? minMaxZoomPreference;
+  final bool? rotateGesturesEnabled;
+  final bool? scrollGesturesEnabled;
+  final bool? tiltGesturesEnabled;
+  final bool? trackCameraPosition;
+  final bool? zoomGesturesEnabled;
+  final bool? myLocationEnabled;
+  final bool? myLocationButtonEnabled;
+  final PlatformEdgeInsets? padding;
+  final bool? indoorViewEnabled;
+  final bool? trafficEnabled;
+  final bool? buildingsEnabled;
+  final String? cloudMapId;
+  final String? style;
 }
 
 /// Pigeon representation of an x,y coordinate.
@@ -166,8 +229,8 @@ class PlatformTileLayer {
 class PlatformZoomRange {
   PlatformZoomRange({required this.min, required this.max});
 
-  final double min;
-  final double max;
+  final double? min;
+  final double? max;
 }
 
 /// Interface for non-test interactions with the native SDK.

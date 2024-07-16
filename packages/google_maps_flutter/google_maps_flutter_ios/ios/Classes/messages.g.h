@@ -13,6 +13,21 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+/// Pigeon equivalent of MapType
+typedef NS_ENUM(NSUInteger, FGMPlatformMapType) {
+  FGMPlatformMapTypeNone = 0,
+  FGMPlatformMapTypeNormal = 1,
+  FGMPlatformMapTypeSatellite = 2,
+  FGMPlatformMapTypeTerrain = 3,
+  FGMPlatformMapTypeHybrid = 4,
+};
+
+/// Wrapper for FGMPlatformMapType to allow for nullability.
+@interface FGMPlatformMapTypeBox : NSObject
+@property(nonatomic, assign) FGMPlatformMapType value;
+- (instancetype)initWithValue:(FGMPlatformMapType)value;
+@end
+
 @class FGMPlatformCameraPosition;
 @class FGMPlatformCameraUpdate;
 @class FGMPlatformCircle;
@@ -21,8 +36,10 @@ NS_ASSUME_NONNULL_BEGIN
 @class FGMPlatformPolyline;
 @class FGMPlatformTile;
 @class FGMPlatformTileOverlay;
+@class FGMPlatformEdgeInsets;
 @class FGMPlatformLatLng;
 @class FGMPlatformLatLngBounds;
+@class FGMPlatformCameraTargetBounds;
 @class FGMPlatformMapConfiguration;
 @class FGMPlatformPoint;
 @class FGMPlatformTileLayer;
@@ -120,6 +137,17 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic, strong) id json;
 @end
 
+/// Pigeon equivalent of Flutter's EdgeInsets.
+@interface FGMPlatformEdgeInsets : NSObject
+/// `init` unavailable to enforce nonnull fields, see the `make` class method.
+- (instancetype)init NS_UNAVAILABLE;
++ (instancetype)makeWithTop:(double)top bottom:(double)bottom left:(double)left right:(double)right;
+@property(nonatomic, assign) double top;
+@property(nonatomic, assign) double bottom;
+@property(nonatomic, assign) double left;
+@property(nonatomic, assign) double right;
+@end
+
 /// Pigeon equivalent of LatLng.
 @interface FGMPlatformLatLng : NSObject
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
@@ -139,15 +167,51 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic, strong) FGMPlatformLatLng *southwest;
 @end
 
+/// Pigeon equivalent of CameraTargetBounds.
+///
+/// As with the Dart version, it exists to distinguish between not setting a
+/// a target, and having an explicitly unbounded target (null [bounds]).
+@interface FGMPlatformCameraTargetBounds : NSObject
++ (instancetype)makeWithBounds:(nullable FGMPlatformLatLngBounds *)bounds;
+@property(nonatomic, strong, nullable) FGMPlatformLatLngBounds *bounds;
+@end
+
 /// Pigeon equivalent of MapConfiguration.
 @interface FGMPlatformMapConfiguration : NSObject
-/// `init` unavailable to enforce nonnull fields, see the `make` class method.
-- (instancetype)init NS_UNAVAILABLE;
-+ (instancetype)makeWithJson:(id)json;
-/// The configuration options, as JSON. This should only be set from
-/// _jsonForMapConfiguration, and the native code must intepret it according
-/// to the internal implementation details of that method.
-@property(nonatomic, strong) id json;
++ (instancetype)makeWithCompassEnabled:(nullable NSNumber *)compassEnabled
+                    cameraTargetBounds:(nullable FGMPlatformCameraTargetBounds *)cameraTargetBounds
+                               mapType:(nullable FGMPlatformMapTypeBox *)mapType
+                  minMaxZoomPreference:(nullable FGMPlatformZoomRange *)minMaxZoomPreference
+                 rotateGesturesEnabled:(nullable NSNumber *)rotateGesturesEnabled
+                 scrollGesturesEnabled:(nullable NSNumber *)scrollGesturesEnabled
+                   tiltGesturesEnabled:(nullable NSNumber *)tiltGesturesEnabled
+                   trackCameraPosition:(nullable NSNumber *)trackCameraPosition
+                   zoomGesturesEnabled:(nullable NSNumber *)zoomGesturesEnabled
+                     myLocationEnabled:(nullable NSNumber *)myLocationEnabled
+               myLocationButtonEnabled:(nullable NSNumber *)myLocationButtonEnabled
+                               padding:(nullable FGMPlatformEdgeInsets *)padding
+                     indoorViewEnabled:(nullable NSNumber *)indoorViewEnabled
+                        trafficEnabled:(nullable NSNumber *)trafficEnabled
+                      buildingsEnabled:(nullable NSNumber *)buildingsEnabled
+                            cloudMapId:(nullable NSString *)cloudMapId
+                                 style:(nullable NSString *)style;
+@property(nonatomic, strong, nullable) NSNumber *compassEnabled;
+@property(nonatomic, strong, nullable) FGMPlatformCameraTargetBounds *cameraTargetBounds;
+@property(nonatomic, strong, nullable) FGMPlatformMapTypeBox *mapType;
+@property(nonatomic, strong, nullable) FGMPlatformZoomRange *minMaxZoomPreference;
+@property(nonatomic, strong, nullable) NSNumber *rotateGesturesEnabled;
+@property(nonatomic, strong, nullable) NSNumber *scrollGesturesEnabled;
+@property(nonatomic, strong, nullable) NSNumber *tiltGesturesEnabled;
+@property(nonatomic, strong, nullable) NSNumber *trackCameraPosition;
+@property(nonatomic, strong, nullable) NSNumber *zoomGesturesEnabled;
+@property(nonatomic, strong, nullable) NSNumber *myLocationEnabled;
+@property(nonatomic, strong, nullable) NSNumber *myLocationButtonEnabled;
+@property(nonatomic, strong, nullable) FGMPlatformEdgeInsets *padding;
+@property(nonatomic, strong, nullable) NSNumber *indoorViewEnabled;
+@property(nonatomic, strong, nullable) NSNumber *trafficEnabled;
+@property(nonatomic, strong, nullable) NSNumber *buildingsEnabled;
+@property(nonatomic, copy, nullable) NSString *cloudMapId;
+@property(nonatomic, copy, nullable) NSString *style;
 @end
 
 /// Pigeon representation of an x,y coordinate.
@@ -175,11 +239,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// Pigeon equivalent of MinMaxZoomPreference.
 @interface FGMPlatformZoomRange : NSObject
-/// `init` unavailable to enforce nonnull fields, see the `make` class method.
-- (instancetype)init NS_UNAVAILABLE;
-+ (instancetype)makeWithMin:(double)min max:(double)max;
-@property(nonatomic, assign) double min;
-@property(nonatomic, assign) double max;
++ (instancetype)makeWithMin:(nullable NSNumber *)min max:(nullable NSNumber *)max;
+@property(nonatomic, strong, nullable) NSNumber *min;
+@property(nonatomic, strong, nullable) NSNumber *max;
 @end
 
 /// The codec used by all APIs.
