@@ -64,7 +64,9 @@ class ProxyApiTestsError(
  * instance is recreated. The strong reference will then need to be removed manually again.
  */
 @Suppress("UNCHECKED_CAST", "MemberVisibilityCanBePrivate")
-class PigeonInstanceManager(private val finalizationListener: PigeonFinalizationListener) {
+class ProxyApiTestsPigeonInstanceManager(
+    private val finalizationListener: PigeonFinalizationListener
+) {
   /** Interface for listening when a weak reference of an instance is removed from the manager. */
   interface PigeonFinalizationListener {
     fun onFinalize(identifier: Long)
@@ -100,15 +102,17 @@ class PigeonInstanceManager(private val finalizationListener: PigeonFinalization
     // Host uses identifiers >= 2^16 and Dart is expected to use values n where,
     // 0 <= n < 2^16.
     private const val minHostCreatedIdentifier: Long = 65536
-    private const val tag = "PigeonInstanceManager"
+    private const val tag = "ProxyApiTestsPigeonInstanceManager"
 
     /**
      * Instantiate a new manager with a listener for garbage collected weak references.
      *
      * When the manager is no longer needed, [stopFinalizationListener] must be called.
      */
-    fun create(finalizationListener: PigeonFinalizationListener): PigeonInstanceManager {
-      return PigeonInstanceManager(finalizationListener)
+    fun create(
+        finalizationListener: PigeonFinalizationListener
+    ): ProxyApiTestsPigeonInstanceManager {
+      return ProxyApiTestsPigeonInstanceManager(finalizationListener)
     }
   }
 
@@ -129,8 +133,8 @@ class PigeonInstanceManager(private val finalizationListener: PigeonFinalization
    * strong reference to `instance` will be added and will need to be removed again with [remove].
    *
    * If this method returns a nonnull identifier, this method also expects the Dart
-   * `PigeonInstanceManager` to have, or recreate, a weak reference to the Dart instance the
-   * identifier is associated with.
+   * `ProxyApiTestsPigeonInstanceManager` to have, or recreate, a weak reference to the Dart
+   * instance the identifier is associated with.
    */
   fun getIdentifierForStrongReference(instance: Any?): Long? {
     logWarningIfFinalizationListenerHasStopped()
@@ -256,18 +260,18 @@ class PigeonInstanceManager(private val finalizationListener: PigeonFinalization
 }
 
 /** Generated API for managing the Dart and native `PigeonInstanceManager`s. */
-private class PigeonInstanceManagerApi(val binaryMessenger: BinaryMessenger) {
+private class ProxyApiTestsPigeonInstanceManagerApi(val binaryMessenger: BinaryMessenger) {
   companion object {
-    /** The codec used by PigeonInstanceManagerApi. */
+    /** The codec used by ProxyApiTestsPigeonInstanceManagerApi. */
     val codec: MessageCodec<Any?> by lazy { StandardMessageCodec() }
 
     /**
-     * Sets up an instance of `PigeonInstanceManagerApi` to handle messages from the
+     * Sets up an instance of `ProxyApiTestsPigeonInstanceManagerApi` to handle messages from the
      * `binaryMessenger`.
      */
     fun setUpMessageHandlers(
         binaryMessenger: BinaryMessenger,
-        instanceManager: PigeonInstanceManager?
+        instanceManager: ProxyApiTestsPigeonInstanceManager?
     ) {
       run {
         val channel =
@@ -339,27 +343,27 @@ private class PigeonInstanceManagerApi(val binaryMessenger: BinaryMessenger) {
  * Provides implementations for each ProxyApi implementation and provides access to resources needed
  * by any implementation.
  */
-abstract class PigeonProxyApiRegistrar(val binaryMessenger: BinaryMessenger) {
-  val instanceManager: PigeonInstanceManager
+abstract class ProxyApiTestsPigeonProxyApiRegistrar(val binaryMessenger: BinaryMessenger) {
+  val instanceManager: ProxyApiTestsPigeonInstanceManager
   private var _codec: StandardMessageCodec? = null
   val codec: StandardMessageCodec
     get() {
       if (_codec == null) {
-        _codec = PigeonProxyApiBaseCodec(this)
+        _codec = ProxyApiTestsPigeonProxyApiBaseCodec(this)
       }
       return _codec!!
     }
 
   init {
-    val api = PigeonInstanceManagerApi(binaryMessenger)
+    val api = ProxyApiTestsPigeonInstanceManagerApi(binaryMessenger)
     instanceManager =
-        PigeonInstanceManager.create(
-            object : PigeonInstanceManager.PigeonFinalizationListener {
+        ProxyApiTestsPigeonInstanceManager.create(
+            object : ProxyApiTestsPigeonInstanceManager.PigeonFinalizationListener {
               override fun onFinalize(identifier: Long) {
                 api.removeStrongReference(identifier) {
                   if (it.isFailure) {
                     Log.e(
-                        "PigeonProxyApiRegistrar",
+                        "ProxyApiTestsPigeonProxyApiRegistrar",
                         "Failed to remove Dart strong reference with identifier: $identifier")
                   }
                 }
@@ -393,7 +397,7 @@ abstract class PigeonProxyApiRegistrar(val binaryMessenger: BinaryMessenger) {
   abstract fun getPigeonApiClassWithApiRequirement(): PigeonApiClassWithApiRequirement
 
   fun setUp() {
-    PigeonInstanceManagerApi.setUpMessageHandlers(binaryMessenger, instanceManager)
+    ProxyApiTestsPigeonInstanceManagerApi.setUpMessageHandlers(binaryMessenger, instanceManager)
     PigeonApiProxyApiTestClass.setUpMessageHandlers(
         binaryMessenger, getPigeonApiProxyApiTestClass())
     PigeonApiProxyApiSuperClass.setUpMessageHandlers(
@@ -403,15 +407,16 @@ abstract class PigeonProxyApiRegistrar(val binaryMessenger: BinaryMessenger) {
   }
 
   fun tearDown() {
-    PigeonInstanceManagerApi.setUpMessageHandlers(binaryMessenger, null)
+    ProxyApiTestsPigeonInstanceManagerApi.setUpMessageHandlers(binaryMessenger, null)
     PigeonApiProxyApiTestClass.setUpMessageHandlers(binaryMessenger, null)
     PigeonApiProxyApiSuperClass.setUpMessageHandlers(binaryMessenger, null)
     PigeonApiClassWithApiRequirement.setUpMessageHandlers(binaryMessenger, null)
   }
 }
 
-private class PigeonProxyApiBaseCodec(val registrar: PigeonProxyApiRegistrar) :
-    ProxyApiTestsPigeonCodec() {
+private class ProxyApiTestsPigeonProxyApiBaseCodec(
+    val registrar: ProxyApiTestsPigeonProxyApiRegistrar
+) : ProxyApiTestsPigeonCodec() {
   override fun readValueOfType(type: Byte, buffer: ByteBuffer): Any? {
     return when (type) {
       128.toByte() -> {
@@ -481,7 +486,9 @@ private open class ProxyApiTestsPigeonCodec : StandardMessageCodec() {
  * integration tests.
  */
 @Suppress("UNCHECKED_CAST")
-abstract class PigeonApiProxyApiTestClass(open val pigeonRegistrar: PigeonProxyApiRegistrar) {
+abstract class PigeonApiProxyApiTestClass(
+    open val pigeonRegistrar: ProxyApiTestsPigeonProxyApiRegistrar
+) {
   abstract fun pigeon_defaultConstructor(
       aBool: Boolean,
       anInt: Long,
@@ -3802,7 +3809,9 @@ abstract class PigeonApiProxyApiTestClass(open val pigeonRegistrar: PigeonProxyA
 }
 /** ProxyApi to serve as a super class to the core ProxyApi class. */
 @Suppress("UNCHECKED_CAST")
-abstract class PigeonApiProxyApiSuperClass(open val pigeonRegistrar: PigeonProxyApiRegistrar) {
+abstract class PigeonApiProxyApiSuperClass(
+    open val pigeonRegistrar: ProxyApiTestsPigeonProxyApiRegistrar
+) {
   abstract fun pigeon_defaultConstructor(): com.example.test_plugin.ProxyApiSuperClass
 
   abstract fun aSuperMethod(pigeon_instance: com.example.test_plugin.ProxyApiSuperClass)
@@ -3896,7 +3905,9 @@ abstract class PigeonApiProxyApiSuperClass(open val pigeonRegistrar: PigeonProxy
 }
 /** ProxyApi to serve as an interface to the core ProxyApi class. */
 @Suppress("UNCHECKED_CAST")
-open class PigeonApiProxyApiInterface(open val pigeonRegistrar: PigeonProxyApiRegistrar) {
+open class PigeonApiProxyApiInterface(
+    open val pigeonRegistrar: ProxyApiTestsPigeonProxyApiRegistrar
+) {
   @Suppress("LocalVariableName", "FunctionName")
   /** Creates a Dart instance of ProxyApiInterface and attaches it to [pigeon_instanceArg]. */
   fun pigeon_newInstance(pigeon_instanceArg: ProxyApiInterface, callback: (Result<Unit>) -> Unit) {
@@ -3949,7 +3960,9 @@ open class PigeonApiProxyApiInterface(open val pigeonRegistrar: PigeonProxyApiRe
 }
 
 @Suppress("UNCHECKED_CAST")
-abstract class PigeonApiClassWithApiRequirement(open val pigeonRegistrar: PigeonProxyApiRegistrar) {
+abstract class PigeonApiClassWithApiRequirement(
+    open val pigeonRegistrar: ProxyApiTestsPigeonProxyApiRegistrar
+) {
   @androidx.annotation.RequiresApi(api = 25)
   abstract fun pigeon_defaultConstructor(): ClassWithApiRequirement
 

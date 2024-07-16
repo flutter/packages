@@ -14,7 +14,7 @@ import org.junit.Test
 class InstanceManagerTest {
   @Test
   fun addDartCreatedInstance() {
-    val instanceManager: PigeonInstanceManager = createInstanceManager()
+    val instanceManager: ProxyApiTestsPigeonInstanceManager = createInstanceManager()
     val testObject = Any()
     instanceManager.addDartCreatedInstance(testObject, 0)
 
@@ -27,7 +27,7 @@ class InstanceManagerTest {
 
   @Test
   fun addHostCreatedInstance() {
-    val instanceManager: PigeonInstanceManager = createInstanceManager()
+    val instanceManager: ProxyApiTestsPigeonInstanceManager = createInstanceManager()
     val testObject = Any()
     val identifier: Long = instanceManager.addHostCreatedInstance(testObject)
 
@@ -40,7 +40,7 @@ class InstanceManagerTest {
 
   @Test
   fun remove() {
-    val instanceManager: PigeonInstanceManager = createInstanceManager()
+    val instanceManager: ProxyApiTestsPigeonInstanceManager = createInstanceManager()
     var testObject: Any? = Any()
     instanceManager.addDartCreatedInstance(testObject!!, 0)
     assertEquals(testObject, instanceManager.remove(0))
@@ -56,7 +56,7 @@ class InstanceManagerTest {
 
   @Test
   fun clear() {
-    val instanceManager: PigeonInstanceManager = createInstanceManager()
+    val instanceManager: ProxyApiTestsPigeonInstanceManager = createInstanceManager()
     val instance = Any()
     instanceManager.addDartCreatedInstance(instance, 0)
 
@@ -69,7 +69,7 @@ class InstanceManagerTest {
 
   @Test
   fun canAddSameObjectWithAddDartCreatedInstance() {
-    val instanceManager: PigeonInstanceManager = createInstanceManager()
+    val instanceManager: ProxyApiTestsPigeonInstanceManager = createInstanceManager()
     val instance = Any()
     instanceManager.addDartCreatedInstance(instance, 0)
     instanceManager.addDartCreatedInstance(instance, 1)
@@ -83,7 +83,7 @@ class InstanceManagerTest {
 
   @Test(expected = IllegalArgumentException::class)
   fun cannotAddSameObjectsWithAddHostCreatedInstance() {
-    val instanceManager: PigeonInstanceManager = createInstanceManager()
+    val instanceManager: ProxyApiTestsPigeonInstanceManager = createInstanceManager()
     val instance = Any()
     instanceManager.addHostCreatedInstance(instance)
     instanceManager.addHostCreatedInstance(instance)
@@ -93,14 +93,14 @@ class InstanceManagerTest {
 
   @Test(expected = IllegalArgumentException::class)
   fun cannotUseIdentifierLessThanZero() {
-    val instanceManager: PigeonInstanceManager = createInstanceManager()
+    val instanceManager: ProxyApiTestsPigeonInstanceManager = createInstanceManager()
     instanceManager.addDartCreatedInstance(Any(), -1)
     instanceManager.stopFinalizationListener()
   }
 
   @Test(expected = IllegalArgumentException::class)
   fun identifiersMustBeUnique() {
-    val instanceManager: PigeonInstanceManager = createInstanceManager()
+    val instanceManager: ProxyApiTestsPigeonInstanceManager = createInstanceManager()
     instanceManager.addDartCreatedInstance(Any(), 0)
     instanceManager.addDartCreatedInstance(Any(), 0)
 
@@ -109,7 +109,7 @@ class InstanceManagerTest {
 
   @Test
   fun managerIsUsableWhileListenerHasStopped() {
-    val instanceManager: PigeonInstanceManager = createInstanceManager()
+    val instanceManager: ProxyApiTestsPigeonInstanceManager = createInstanceManager()
     instanceManager.stopFinalizationListener()
     val instance = Any()
     val identifier: Long = 0
@@ -120,9 +120,9 @@ class InstanceManagerTest {
     assertTrue(instanceManager.containsInstance(instance))
   }
 
-  private fun createInstanceManager(): PigeonInstanceManager {
-    return PigeonInstanceManager.create(
-        object : PigeonInstanceManager.PigeonFinalizationListener {
+  private fun createInstanceManager(): ProxyApiTestsPigeonInstanceManager {
+    return ProxyApiTestsPigeonInstanceManager.create(
+        object : ProxyApiTestsPigeonInstanceManager.PigeonFinalizationListener {
           override fun onFinalize(identifier: Long) {}
         })
   }

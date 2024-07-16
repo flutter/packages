@@ -5,7 +5,9 @@
 import '../generator_tools.dart';
 
 /// The Kotlin `InstanceManager`.
-const String instanceManagerTemplate = '''
+String instanceManagerTemplate({required String prefix}) {
+  final String instanceManagerName = '$prefix$instanceManagerClassName';
+  return '''
 /**
  * Maintains instances used to communicate with the corresponding objects in Dart.
  *
@@ -22,7 +24,7 @@ const String instanceManagerTemplate = '''
  * is recreated. The strong reference will then need to be removed manually again.
  */
 @Suppress("UNCHECKED_CAST", "MemberVisibilityCanBePrivate")
-class $instanceManagerClassName(private val finalizationListener: $_finalizationListenerClassName) {
+class $instanceManagerName(private val finalizationListener: $_finalizationListenerClassName) {
   /** Interface for listening when a weak reference of an instance is removed from the manager.  */
   interface $_finalizationListenerClassName {
     fun onFinalize(identifier: Long)
@@ -61,7 +63,7 @@ class $instanceManagerClassName(private val finalizationListener: $_finalization
     // Host uses identifiers >= 2^16 and Dart is expected to use values n where,
     // 0 <= n < 2^16.
     private const val minHostCreatedIdentifier: Long = 65536
-    private const val tag = "$instanceManagerClassName"
+    private const val tag = "$instanceManagerName"
 
     /**
      * Instantiate a new manager with a listener for garbage collected weak
@@ -69,8 +71,8 @@ class $instanceManagerClassName(private val finalizationListener: $_finalization
      *
      * When the manager is no longer needed, [stopFinalizationListener] must be called.
      */
-    fun create(finalizationListener: $_finalizationListenerClassName): $instanceManagerClassName {
-      return $instanceManagerClassName(finalizationListener)
+    fun create(finalizationListener: $_finalizationListenerClassName): $instanceManagerName {
+      return $instanceManagerName(finalizationListener)
     }
   }
 
@@ -93,7 +95,7 @@ class $instanceManagerClassName(private val finalizationListener: $_finalization
    *
    *
    * If this method returns a nonnull identifier, this method also expects the Dart
-   * `$instanceManagerClassName` to have, or recreate, a weak reference to the Dart instance the
+   * `$instanceManagerName` to have, or recreate, a weak reference to the Dart instance the
    * identifier is associated with.
    */
   fun getIdentifierForStrongReference(instance: Any?): Long? {
@@ -220,6 +222,7 @@ class $instanceManagerClassName(private val finalizationListener: $_finalization
   }
 }
 ''';
+}
 
 const String _finalizationListenerClassName =
     '${classNamePrefix}FinalizationListener';
