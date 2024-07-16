@@ -70,6 +70,10 @@ class RepositoryPackage {
   File get customTestScript =>
       directory.childDirectory('tool').childFile('run_tests.dart');
 
+  /// The path to the script that is run before publishing.
+  File get prePublishScript =>
+      directory.childDirectory('tool').childFile('pre_publish.dart');
+
   /// Returns the directory containing support for [platform].
   Directory platformDirectory(FlutterPlatform platform) {
     late final String directoryName;

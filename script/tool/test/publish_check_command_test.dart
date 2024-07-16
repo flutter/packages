@@ -369,6 +369,88 @@ void main() {
           ));
     });
 
+    group('pre-publish script', () {
+      test('runs if present', () async {
+        final RepositoryPackage package =
+            createFakePackage('a_package', packagesDir, examples: <String>[]);
+        package.prePublishScript.createSync(recursive: true);
+
+        final List<String> output = await runCapturingPrint(runner, <String>[
+          'publish-check',
+        ]);
+
+        expect(
+          output,
+          containsAllInOrder(<Matcher>[
+            contains('Running pre-publish hook tool/pre_publish.dart...'),
+          ]),
+        );
+        expect(
+            processRunner.recordedCalls,
+            containsAllInOrder(<ProcessCall>[
+              ProcessCall(
+                  'dart',
+                  const <String>[
+                    'pub',
+                    'get',
+                  ],
+                  package.directory.path),
+              ProcessCall(
+                  'dart',
+                  const <String>[
+                    'run',
+                    'tool/pre_publish.dart',
+                  ],
+                  package.directory.path),
+            ]));
+      });
+
+      test('causes command failure if it fails', () async {
+        final RepositoryPackage package = createFakePackage(
+            'a_package', packagesDir,
+            isFlutter: true, examples: <String>[]);
+        package.prePublishScript.createSync(recursive: true);
+
+        processRunner.mockProcessesForExecutable['dart'] = <FakeProcessInfo>[
+          FakeProcessInfo(MockProcess(exitCode: 1),
+              <String>['run']), // run tool/pre_publish.dart
+        ];
+
+        Error? commandError;
+        final List<String> output = await runCapturingPrint(runner, <String>[
+          'publish-check',
+        ], errorHandler: (Error e) {
+          commandError = e;
+        });
+
+        expect(commandError, isA<ToolExit>());
+        expect(
+          output,
+          containsAllInOrder(<Matcher>[
+            contains('Pre-publish script failed.'),
+          ]),
+        );
+        expect(
+            processRunner.recordedCalls,
+            containsAllInOrder(<ProcessCall>[
+              ProcessCall(
+                  getFlutterCommand(mockPlatform),
+                  const <String>[
+                    'pub',
+                    'get',
+                  ],
+                  package.directory.path),
+              ProcessCall(
+                  'dart',
+                  const <String>[
+                    'run',
+                    'tool/pre_publish.dart',
+                  ],
+                  package.directory.path),
+            ]));
+      });
+    });
+
     test(
         '--machine: Log JSON with status:no-publish and correct human message, if there are no packages need to be published. ',
         () async {
