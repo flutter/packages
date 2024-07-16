@@ -364,23 +364,15 @@ targets:
     timeout: 30
     properties:
       version_file: flutter_master.version
-      target_file: android_build_all_packages.yaml
+      # This builds the all_packages app only in a current JDK.
+      target_file: android_build_all_packages_jdk17.yaml
       channel: master
-      # The legacy project build requires an older JDK.
-      dependencies: >-
-        [
-          {"dependency": "open_jdk", "version": "version:11"}
-        ]
       env_variables: >-
         {
           "CHANNEL": "master"
         }
 
   - name: Linux_android android_build_all_packages_legacy master
-    # When making this `bringup: false`, update the task above to
-    # use target_file: android_build_all_packages_jdk17.yaml and
-    # remove its 'dependencies' section.
-    bringup: true # https://github.com/flutter/packages/pull/7099
     recipe: packages/packages
     timeout: 30
     properties:
@@ -407,24 +399,15 @@ targets:
     properties:
       add_recipes_cq: "true"
       version_file: flutter_stable.version
-      # This builds both legacy, and "modern" projects.
-      target_file: android_build_all_packages.yaml
+      # This builds the all_packages app only in a current JDK.
+      target_file: android_build_all_packages_jdk17.yaml
       channel: stable
-      # The legacy project build requires an older JDK.
-      dependencies: >-
-        [
-          {"dependency": "open_jdk", "version": "version:11"}
-        ]
       env_variables: >-
         {
           "CHANNEL": "stable"
         }
 
   - name: Linux_android android_build_all_packages_legacy stable
-    # When making this `bringup: false`, update the task above to
-    # use target_file: android_build_all_packages_jdk17.yaml and
-    # remove its 'dependencies' section.
-    bringup: true # https://github.com/flutter/packages/pull/7099
     recipe: packages/packages
     timeout: 30
     properties:
