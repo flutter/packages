@@ -4,7 +4,7 @@ import XCTest
 
 @testable import in_app_purchase_storekit
 
-class InAppPurchasePluginTests: XCTestCase {
+final class InAppPurchasePluginTests: XCTestCase {
   var receiptManagerStub: FIAPReceiptManagerStub!
   var plugin: InAppPurchasePlugin!
 
