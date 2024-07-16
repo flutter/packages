@@ -183,6 +183,14 @@
   XCTAssertEqual(kGMSTypeNone, [FLTGoogleMapJSONConversions mapViewTypeFromTypeValue:@5]);
 }
 
+- (void)testMapViewTypeFromPigeonType {
+  XCTAssertEqual(kGMSTypeNormal, FGMGetMapViewTypeForPigeonMapType(FGMPlatformMapTypeNormal));
+  XCTAssertEqual(kGMSTypeSatellite, FGMGetMapViewTypeForPigeonMapType(FGMPlatformMapTypeSatellite));
+  XCTAssertEqual(kGMSTypeTerrain, FGMGetMapViewTypeForPigeonMapType(FGMPlatformMapTypeTerrain));
+  XCTAssertEqual(kGMSTypeHybrid, FGMGetMapViewTypeForPigeonMapType(FGMPlatformMapTypeHybrid));
+  XCTAssertEqual(kGMSTypeNone, FGMGetMapViewTypeForPigeonMapType(FGMPlatformMapTypeNone));
+}
+
 - (void)testCameraUpdateFromArrayNewCameraPosition {
   NSArray *channelValue = @[
     @"newCameraPosition", @{@"target" : @[ @1, @2 ], @"zoom" : @3, @"bearing" : @4, @"tilt" : @5}

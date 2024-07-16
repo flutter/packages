@@ -164,7 +164,7 @@
     _mapView.accessibilityElementsHidden = NO;
     // TODO(cyanglaz): avoid sending message to self in the middle of the init method.
     // https://github.com/flutter/flutter/issues/104121
-    [self interpretMapOptions:args[@"options"]];
+    [self interpretMapOptionsJSON:args[@"options"]];
     NSString *pigeonSuffix = [NSString stringWithFormat:@"%lld", viewId];
     _dartCallbackHandler = [[FGMMapsCallbackApi alloc] initWithBinaryMessenger:registrar.messenger
                                                           messageChannelSuffix:pigeonSuffix];
@@ -423,7 +423,80 @@
                                         }];
 }
 
-- (void)interpretMapOptions:(NSDictionary *)data {
+- (void)interpretMapConfiguration:(FGMPlatformMapConfiguration *)config {
+  FGMPlatformCameraTargetBounds *cameraTargetBounds = config.cameraTargetBounds;
+  if (cameraTargetBounds) {
+    [self setCameraTargetBounds:cameraTargetBounds.bounds
+                                    ? FGMGetCoordinateBoundsForPigeonLatLngBounds(
+                                          cameraTargetBounds.bounds)
+                                    : nil];
+  }
+  NSNumber *compassEnabled = config.compassEnabled;
+  if (compassEnabled) {
+    [self setCompassEnabled:compassEnabled.boolValue];
+  }
+  NSNumber *indoorEnabled = config.indoorViewEnabled;
+  if (indoorEnabled) {
+    [self setIndoorEnabled:indoorEnabled.boolValue];
+  }
+  NSNumber *trafficEnabled = config.trafficEnabled;
+  if (trafficEnabled) {
+    [self setTrafficEnabled:trafficEnabled.boolValue];
+  }
+  NSNumber *buildingsEnabled = config.buildingsEnabled;
+  if (buildingsEnabled) {
+    [self setBuildingsEnabled:buildingsEnabled.boolValue];
+  }
+  FGMPlatformMapTypeBox *mapType = config.mapType;
+  if (mapType) {
+    [self setMapType:FGMGetMapViewTypeForPigeonMapType(mapType.value)];
+  }
+  FGMPlatformZoomRange *zoomData = config.minMaxZoomPreference;
+  if (zoomData) {
+    float minZoom = zoomData.min ? zoomData.min.floatValue : kGMSMinZoomLevel;
+    float maxZoom = zoomData.max ? zoomData.max.floatValue : kGMSMaxZoomLevel;
+    [self setMinZoom:minZoom maxZoom:maxZoom];
+  }
+  FGMPlatformEdgeInsets *padding = config.padding;
+  if (padding) {
+    [self setPaddingTop:padding.top left:padding.left bottom:padding.bottom right:padding.right];
+  }
+
+  NSNumber *rotateGesturesEnabled = config.rotateGesturesEnabled;
+  if (rotateGesturesEnabled) {
+    [self setRotateGesturesEnabled:rotateGesturesEnabled.boolValue];
+  }
+  NSNumber *scrollGesturesEnabled = config.scrollGesturesEnabled;
+  if (scrollGesturesEnabled) {
+    [self setScrollGesturesEnabled:scrollGesturesEnabled.boolValue];
+  }
+  NSNumber *tiltGesturesEnabled = config.tiltGesturesEnabled;
+  if (tiltGesturesEnabled) {
+    [self setTiltGesturesEnabled:tiltGesturesEnabled.boolValue];
+  }
+  NSNumber *trackCameraPosition = config.trackCameraPosition;
+  if (trackCameraPosition) {
+    [self setTrackCameraPosition:trackCameraPosition.boolValue];
+  }
+  NSNumber *zoomGesturesEnabled = config.zoomGesturesEnabled;
+  if (zoomGesturesEnabled) {
+    [self setZoomGesturesEnabled:zoomGesturesEnabled.boolValue];
+  }
+  NSNumber *myLocationEnabled = config.myLocationEnabled;
+  if (myLocationEnabled) {
+    [self setMyLocationEnabled:myLocationEnabled.boolValue];
+  }
+  NSNumber *myLocationButtonEnabled = config.myLocationButtonEnabled;
+  if (myLocationButtonEnabled) {
+    [self setMyLocationButtonEnabled:myLocationButtonEnabled.boolValue];
+  }
+  NSString *style = config.style;
+  if (style) {
+    [self setMapStyle:style];
+  }
+}
+
+- (void)interpretMapOptionsJSON:(NSDictionary *)data {
   NSArray *cameraTargetBounds = FGMGetValueOrNilFromDict(data, @"cameraTargetBounds");
   if (cameraTargetBounds) {
     [self
@@ -534,7 +607,7 @@
 
 - (void)updateWithMapConfiguration:(nonnull FGMPlatformMapConfiguration *)configuration
                              error:(FlutterError *_Nullable __autoreleasing *_Nonnull)error {
-  [self.controller interpretMapOptions:configuration.json];
+  [self.controller interpretMapConfiguration:configuration];
 }
 
 - (void)updateMarkersByAdding:(nonnull NSArray<FGMPlatformMarker *> *)toAdd
@@ -771,8 +844,8 @@
 
 - (nullable FGMPlatformZoomRange *)zoomRange:
     (FlutterError *_Nullable __autoreleasing *_Nonnull)error {
-  return [FGMPlatformZoomRange makeWithMin:self.controller.mapView.minZoom
-                                       max:self.controller.mapView.maxZoom];
+  return [FGMPlatformZoomRange makeWithMin:@(self.controller.mapView.minZoom)
+                                       max:@(self.controller.mapView.maxZoom)];
 }
 
 @end

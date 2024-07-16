@@ -26,6 +26,12 @@ FGMPlatformLatLng *FGMGetPigeonLatLngForCoordinate(CLLocationCoordinate2D coord)
   return [FGMPlatformLatLng makeWithLatitude:coord.latitude longitude:coord.longitude];
 }
 
+GMSCoordinateBounds *FGMGetCoordinateBoundsForPigeonLatLngBounds(FGMPlatformLatLngBounds *bounds) {
+  return [[GMSCoordinateBounds alloc]
+      initWithCoordinate:FGMGetCoordinateForPigeonLatLng(bounds.northeast)
+              coordinate:FGMGetCoordinateForPigeonLatLng(bounds.southwest)];
+}
+
 FGMPlatformLatLngBounds *FGMGetPigeonLatLngBoundsForCoordinateBounds(GMSCoordinateBounds *bounds) {
   return
       [FGMPlatformLatLngBounds makeWithNortheast:FGMGetPigeonLatLngForCoordinate(bounds.northEast)
@@ -37,6 +43,21 @@ FGMPlatformCameraPosition *FGMGetPigeonCameraPositionForPosition(GMSCameraPositi
                                              target:FGMGetPigeonLatLngForCoordinate(position.target)
                                                tilt:position.viewingAngle
                                                zoom:position.zoom];
+}
+
+extern GMSMapViewType FGMGetMapViewTypeForPigeonMapType(FGMPlatformMapType type) {
+  switch (type) {
+    case FGMPlatformMapTypeNone:
+      return kGMSTypeNone;
+    case FGMPlatformMapTypeNormal:
+      return kGMSTypeNormal;
+    case FGMPlatformMapTypeSatellite:
+      return kGMSTypeSatellite;
+    case FGMPlatformMapTypeTerrain:
+      return kGMSTypeTerrain;
+    case FGMPlatformMapTypeHybrid:
+      return kGMSTypeHybrid;
+  }
 }
 
 @implementation FLTGoogleMapJSONConversions

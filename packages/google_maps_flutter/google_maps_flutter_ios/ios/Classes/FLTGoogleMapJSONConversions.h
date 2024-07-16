@@ -24,6 +24,10 @@ extern CLLocationCoordinate2D FGMGetCoordinateForPigeonLatLng(FGMPlatformLatLng 
 /// Converts a CLLocationCoordinate2D to its Pigeon representation.
 extern FGMPlatformLatLng *FGMGetPigeonLatLngForCoordinate(CLLocationCoordinate2D coord);
 
+/// Creates a GMSCoordinateBounds from its Pigeon representation.
+extern GMSCoordinateBounds *FGMGetCoordinateBoundsForPigeonLatLngBounds(
+    FGMPlatformLatLngBounds *bounds);
+
 /// Converts a GMSCoordinateBounds to its Pigeon representation.
 extern FGMPlatformLatLngBounds *FGMGetPigeonLatLngBoundsForCoordinateBounds(
     GMSCoordinateBounds *bounds);
@@ -31,6 +35,9 @@ extern FGMPlatformLatLngBounds *FGMGetPigeonLatLngBoundsForCoordinateBounds(
 /// Converts a GMSCameraPosition to its Pigeon representation.
 extern FGMPlatformCameraPosition *FGMGetPigeonCameraPositionForPosition(
     GMSCameraPosition *position);
+
+/// Creates a GMSMapViewType from its Pigeon representation.
+extern GMSMapViewType FGMGetMapViewTypeForPigeonMapType(FGMPlatformMapType type);
 
 @interface FLTGoogleMapJSONConversions : NSObject
 
