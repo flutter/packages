@@ -27,7 +27,7 @@
 		33CC10F32044A3C60003C045 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 33CC10F22044A3C60003C045 /* Assets.xcassets */; };
 		33CC10F62044A3C60003C045 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 33CC10F42044A3C60003C045 /* MainMenu.xib */; };
 		33CC11132044BFA00003C045 /* MainFlutterWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33CC11122044BFA00003C045 /* MainFlutterWindow.swift */; };
-		F24C45EE2C40A449000C6C72 /* ProductRequestHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F24C45ED2C40A449000C6C72 /* ProductRequestHandlerTests.swift */; };
+		F27694072C47241400277144 /* ProductRequestHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F27694062C47241400277144 /* ProductRequestHandlerTests.swift */; };
 		F2C3A7412BD9D33D000D35F2 /* Stubs.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2C3A7402BD9D33D000D35F2 /* Stubs.swift */; };
 		F79BDC102905FBE300E3999D /* FIAPPaymentQueueDeleteTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F79BDC0F2905FBE300E3999D /* FIAPPaymentQueueDeleteTests.m */; };
 		F79BDC122905FBF700E3999D /* FIATransactionCacheTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F79BDC112905FBF700E3999D /* FIATransactionCacheTests.m */; };
@@ -91,7 +91,7 @@
 		9740EEB21CF90195004384FC /* Debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Debug.xcconfig; sourceTree = "<group>"; };
 		AEB2EC182EA43F26A351EE3E /* Pods_Runner.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Runner.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B537BC9F2D936311267ABC65 /* Pods-RunnerTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.debug.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.debug.xcconfig"; sourceTree = "<group>"; };
-		F24C45ED2C40A449000C6C72 /* ProductRequestHandlerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ProductRequestHandlerTests.swift; path = ../../shared/RunnerTests/ProductRequestHandlerTests.swift; sourceTree = "<group>"; };
+		F27694062C47241400277144 /* ProductRequestHandlerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ProductRequestHandlerTests.swift; path = ../../shared/RunnerTests/ProductRequestHandlerTests.swift; sourceTree = "<group>"; };
 		F2C3A73F2BD9D33D000D35F2 /* RunnerTests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "RunnerTests-Bridging-Header.h"; sourceTree = "<group>"; };
 		F2C3A7402BD9D33D000D35F2 /* Stubs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Stubs.swift; sourceTree = "<group>"; };
 		F700DD0228E652A10004836B /* RunnerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RunnerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -217,7 +217,7 @@
 		F700DD0328E652A10004836B /* RunnerTests */ = {
 			isa = PBXGroup;
 			children = (
-				F24C45ED2C40A449000C6C72 /* ProductRequestHandlerTests.swift */,
+				F27694062C47241400277144 /* ProductRequestHandlerTests.swift */,
 				F79BDC0F2905FBE300E3999D /* FIAPPaymentQueueDeleteTests.m */,
 				F79BDC132905FBFE00E3999D /* InAppPurchasePluginTests.m */,
 				F79BDC172905FC1800E3999D /* PaymentQueueTests.m */,
@@ -467,7 +467,7 @@
 				F79BDC182905FC1800E3999D /* PaymentQueueTests.m in Sources */,
 				F79BDC1C2905FC3200E3999D /* Stubs.m in Sources */,
 				F79BDC102905FBE300E3999D /* FIAPPaymentQueueDeleteTests.m in Sources */,
-				F24C45EE2C40A449000C6C72 /* ProductRequestHandlerTests.swift in Sources */,
+				F27694072C47241400277144 /* ProductRequestHandlerTests.swift in Sources */,
 				F79BDC142905FBFE00E3999D /* InAppPurchasePluginTests.m in Sources */,
 				F79BDC122905FBF700E3999D /* FIATransactionCacheTests.m in Sources */,
 				F2C3A7412BD9D33D000D35F2 /* Stubs.swift in Sources */,
