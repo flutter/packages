@@ -462,6 +462,7 @@ void main() {
 void myMethod() {
 
   print('hello');
-}''');
+}
+''');
   });
 }
