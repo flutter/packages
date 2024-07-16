@@ -169,7 +169,7 @@ a return value. The generated routes also follow this functionality.
 
 ```dart
 void _tap() async {
-  final result = await PersonRoute(pid: 'p1').go(context);
+  final result = await PersonRoute(pid: 'p1').push(context);
 }
 ```
 
