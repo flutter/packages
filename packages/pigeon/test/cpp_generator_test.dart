@@ -101,6 +101,10 @@ void main() {
   });
 
   test('naming follows style', () {
+    final Enum anEnum = Enum(name: 'AnEnum', members: <EnumMember>[
+      EnumMember(name: 'one'),
+      EnumMember(name: 'fortyTwo'),
+    ]);
     final Root root = Root(apis: <Api>[
       AstHostApi(name: 'Api', methods: <Method>[
         Method(
@@ -137,9 +141,19 @@ void main() {
               baseName: 'bool',
               isNullable: false,
             ),
-            name: 'outputField')
+            name: 'outputField'),
+        NamedType(
+          type: TypeDeclaration(
+            baseName: anEnum.name,
+            isNullable: false,
+            associatedEnum: anEnum,
+          ),
+          name: 'code',
+        )
       ])
-    ], enums: <Enum>[]);
+    ], enums: <Enum>[
+      anEnum
+    ]);
     {
       final StringBuffer sink = StringBuffer();
       const CppGenerator generator = CppGenerator();
@@ -161,6 +175,9 @@ void main() {
       // Instance variables should be adjusted.
       expect(code, contains('bool input_field_'));
       expect(code, contains('bool output_field_'));
+      // Enum values should be adjusted.
+      expect(code, contains('kOne'));
+      expect(code, contains('kFortyTwo'));
     }
     {
       final StringBuffer sink = StringBuffer();

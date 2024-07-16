@@ -1,0 +1,2 @@
+# TODO(dit): Reenable web tests and remove this file, https://github.com/flutter/flutter/issues/151498
+test_on: vm

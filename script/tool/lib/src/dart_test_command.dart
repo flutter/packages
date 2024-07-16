@@ -108,8 +108,8 @@ class DartTestCommand extends PackageLoopingCommand {
       platform = 'chrome';
     }
 
-    // All the web tests assume the html renderer currently.
-    final String? webRenderer = (platform == 'chrome') ? 'html' : null;
+    // All the web tests assume the canvaskit renderer currently.
+    final String? webRenderer = (platform == 'chrome') ? 'canvaskit' : null;
     bool passed;
     if (package.requiresFlutter()) {
       passed = await _runFlutterTests(package,
