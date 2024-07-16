@@ -7,7 +7,7 @@ import XCTest
 
 @testable import in_app_purchase_storekit
 
-class RequestHandlerTest: XCTestCase {
+final class RequestHandlerTest: XCTestCase {
 
   func testRequestHandlerWithProductRequestSuccess() {
     let productIdentifiers = Set(["123"])
@@ -17,8 +17,8 @@ class RequestHandlerTest: XCTestCase {
     let expectation = expectation(description: "Expect response with 1 product")
     var response: SKProductsResponse?
 
-    handler.startProductRequest { r, error in
-      response = r
+    handler.startProductRequest { requestResponse, _ in
+      response = requestResponse
       expectation.fulfill()
     }
 
