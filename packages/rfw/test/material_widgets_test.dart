@@ -23,6 +23,9 @@ void main() {
   }
 
   testWidgets('Material widgets', (WidgetTester tester) async {
+    setUpTolerantComparator(
+        testPath: 'test/material_widget_test.dart', precisionTolerance: 0.01);
+
     final Runtime runtime = setupRuntime();
     final DynamicContent data = DynamicContent();
     final List<String> eventLog = <String>[];
