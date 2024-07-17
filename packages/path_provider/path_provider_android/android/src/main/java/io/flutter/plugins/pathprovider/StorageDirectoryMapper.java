@@ -4,8 +4,6 @@
 
 package io.flutter.plugins.pathprovider;
 
-import android.os.Build.VERSION;
-import android.os.Build.VERSION_CODES;
 import android.os.Environment;
 
 /** Helps to map the Dart `StorageDirectory` enum to a Android system constant. */
@@ -42,11 +40,7 @@ class StorageDirectoryMapper {
       case 8:
         return Environment.DIRECTORY_DCIM;
       case 9:
-        if (VERSION.SDK_INT >= VERSION_CODES.KITKAT) {
-          return Environment.DIRECTORY_DOCUMENTS;
-        } else {
-          throw new IllegalArgumentException("Documents directory is unsupported.");
-        }
+        return Environment.DIRECTORY_DOCUMENTS;
       default:
         throw new IllegalArgumentException("Unknown index: " + dartIndex);
     }

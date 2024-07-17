@@ -1,3 +1,15 @@
+## 2.0.0
+
+* Updates minimum supported SDK version to Flutter 3.16/Dart 3.2.
+* Adds support for running benchmarks with the wasm compilation target.
+* **Breaking change** `CompilationOptions` unnamed constructor has been replaced with
+two named constructors, `CompilationOptions.js` and `CompilationOptions.wasm` for
+JavaScript and WebAssembly compilation respectively.
+
+## 1.2.2
+
+* Moves flutter_test and test dependencies to dev_dependencies.
+
 ## 1.2.1
 
 * Removes a few deprecated API usages.

@@ -515,10 +515,22 @@ class TypeDeclaration {
     );
   }
 
+  /// Returns duplicated `TypeDeclaration` with attached `associatedProxyApi` value.
+  TypeDeclaration copyWithTypeArguments(List<TypeDeclaration> types) {
+    return TypeDeclaration(
+      baseName: baseName,
+      isNullable: isNullable,
+      typeArguments: types,
+      associatedClass: associatedClass,
+      associatedEnum: associatedEnum,
+      associatedProxyApi: associatedProxyApi,
+    );
+  }
+
   @override
   String toString() {
     final String typeArgumentsStr =
-        typeArguments.isEmpty ? '' : 'typeArguments:$typeArguments';
+        typeArguments.isEmpty ? '' : ' typeArguments:$typeArguments';
     return '(TypeDeclaration baseName:$baseName isNullable:$isNullable$typeArgumentsStr isEnum:$isEnum isClass:$isClass isProxyApi:$isProxyApi)';
   }
 }
@@ -639,6 +651,7 @@ class Class extends Node {
   Class({
     required this.name,
     required this.fields,
+    this.isSwiftClass = false,
     this.documentationComments = const <String>[],
   });
 
@@ -647,6 +660,12 @@ class Class extends Node {
 
   /// All the fields contained in the class.
   List<NamedType> fields;
+
+  /// Determines whether the defined class should be represented as a struct or
+  /// a class in Swift generation.
+  ///
+  /// Defaults to false, which would represent a struct.
+  bool isSwiftClass;
 
   /// List of documentation comments, separated by line.
   ///

@@ -66,11 +66,11 @@ class ErrorOr {
 };
 
 enum class AnEnum {
-  one = 0,
-  two = 1,
-  three = 2,
-  fortyTwo = 3,
-  fourHundredTwentyTwo = 4
+  kOne = 0,
+  kTwo = 1,
+  kThree = 2,
+  kFortyTwo = 3,
+  kFourHundredTwentyTwo = 4
 };
 
 // A class containing all supported types.
@@ -84,10 +84,14 @@ class AllTypes {
                     const std::vector<int32_t>& a4_byte_array,
                     const std::vector<int64_t>& a8_byte_array,
                     const std::vector<double>& a_float_array,
-                    const flutter::EncodableList& a_list,
-                    const flutter::EncodableMap& a_map, const AnEnum& an_enum,
-                    const std::string& a_string,
-                    const flutter::EncodableValue& an_object);
+                    const AnEnum& an_enum, const std::string& a_string,
+                    const flutter::EncodableValue& an_object,
+                    const flutter::EncodableList& list,
+                    const flutter::EncodableList& string_list,
+                    const flutter::EncodableList& int_list,
+                    const flutter::EncodableList& double_list,
+                    const flutter::EncodableList& bool_list,
+                    const flutter::EncodableMap& map);
 
   bool a_bool() const;
   void set_a_bool(bool value_arg);
@@ -113,12 +117,6 @@ class AllTypes {
   const std::vector<double>& a_float_array() const;
   void set_a_float_array(const std::vector<double>& value_arg);
 
-  const flutter::EncodableList& a_list() const;
-  void set_a_list(const flutter::EncodableList& value_arg);
-
-  const flutter::EncodableMap& a_map() const;
-  void set_a_map(const flutter::EncodableMap& value_arg);
-
   const AnEnum& an_enum() const;
   void set_an_enum(const AnEnum& value_arg);
 
@@ -128,20 +126,34 @@ class AllTypes {
   const flutter::EncodableValue& an_object() const;
   void set_an_object(const flutter::EncodableValue& value_arg);
 
+  const flutter::EncodableList& list() const;
+  void set_list(const flutter::EncodableList& value_arg);
+
+  const flutter::EncodableList& string_list() const;
+  void set_string_list(const flutter::EncodableList& value_arg);
+
+  const flutter::EncodableList& int_list() const;
+  void set_int_list(const flutter::EncodableList& value_arg);
+
+  const flutter::EncodableList& double_list() const;
+  void set_double_list(const flutter::EncodableList& value_arg);
+
+  const flutter::EncodableList& bool_list() const;
+  void set_bool_list(const flutter::EncodableList& value_arg);
+
+  const flutter::EncodableMap& map() const;
+  void set_map(const flutter::EncodableMap& value_arg);
+
  private:
   static AllTypes FromEncodableList(const flutter::EncodableList& list);
   flutter::EncodableList ToEncodableList() const;
   friend class AllClassesWrapper;
   friend class HostIntegrationCoreApi;
-  friend class HostIntegrationCoreApiCodecSerializer;
   friend class FlutterIntegrationCoreApi;
-  friend class FlutterIntegrationCoreApiCodecSerializer;
   friend class HostTrivialApi;
-  friend class HostTrivialApiCodecSerializer;
   friend class HostSmallApi;
-  friend class HostSmallApiCodecSerializer;
   friend class FlutterSmallApi;
-  friend class FlutterSmallApiCodecSerializer;
+  friend class PigeonCodecSerializer;
   friend class CoreTestsTest;
   bool a_bool_;
   int64_t an_int_;
@@ -151,11 +163,15 @@ class AllTypes {
   std::vector<int32_t> a4_byte_array_;
   std::vector<int64_t> a8_byte_array_;
   std::vector<double> a_float_array_;
-  flutter::EncodableList a_list_;
-  flutter::EncodableMap a_map_;
   AnEnum an_enum_;
   std::string a_string_;
   flutter::EncodableValue an_object_;
+  flutter::EncodableList list_;
+  flutter::EncodableList string_list_;
+  flutter::EncodableList int_list_;
+  flutter::EncodableList double_list_;
+  flutter::EncodableList bool_list_;
+  flutter::EncodableMap map_;
 };
 
 // A class containing all supported nullable types.
@@ -174,13 +190,179 @@ class AllNullableTypes {
       const std::vector<int32_t>* a_nullable4_byte_array,
       const std::vector<int64_t>* a_nullable8_byte_array,
       const std::vector<double>* a_nullable_float_array,
-      const flutter::EncodableList* a_nullable_list,
-      const flutter::EncodableMap* a_nullable_map,
       const flutter::EncodableList* nullable_nested_list,
       const flutter::EncodableMap* nullable_map_with_annotations,
       const flutter::EncodableMap* nullable_map_with_object,
       const AnEnum* a_nullable_enum, const std::string* a_nullable_string,
-      const flutter::EncodableValue* a_nullable_object);
+      const flutter::EncodableValue* a_nullable_object,
+      const AllNullableTypes* all_nullable_types,
+      const flutter::EncodableList* list,
+      const flutter::EncodableList* string_list,
+      const flutter::EncodableList* int_list,
+      const flutter::EncodableList* double_list,
+      const flutter::EncodableList* bool_list,
+      const flutter::EncodableList* nested_class_list,
+      const flutter::EncodableMap* map);
+
+  ~AllNullableTypes() = default;
+  AllNullableTypes(const AllNullableTypes& other);
+  AllNullableTypes& operator=(const AllNullableTypes& other);
+  AllNullableTypes(AllNullableTypes&& other) = default;
+  AllNullableTypes& operator=(AllNullableTypes&& other) noexcept = default;
+  const bool* a_nullable_bool() const;
+  void set_a_nullable_bool(const bool* value_arg);
+  void set_a_nullable_bool(bool value_arg);
+
+  const int64_t* a_nullable_int() const;
+  void set_a_nullable_int(const int64_t* value_arg);
+  void set_a_nullable_int(int64_t value_arg);
+
+  const int64_t* a_nullable_int64() const;
+  void set_a_nullable_int64(const int64_t* value_arg);
+  void set_a_nullable_int64(int64_t value_arg);
+
+  const double* a_nullable_double() const;
+  void set_a_nullable_double(const double* value_arg);
+  void set_a_nullable_double(double value_arg);
+
+  const std::vector<uint8_t>* a_nullable_byte_array() const;
+  void set_a_nullable_byte_array(const std::vector<uint8_t>* value_arg);
+  void set_a_nullable_byte_array(const std::vector<uint8_t>& value_arg);
+
+  const std::vector<int32_t>* a_nullable4_byte_array() const;
+  void set_a_nullable4_byte_array(const std::vector<int32_t>* value_arg);
+  void set_a_nullable4_byte_array(const std::vector<int32_t>& value_arg);
+
+  const std::vector<int64_t>* a_nullable8_byte_array() const;
+  void set_a_nullable8_byte_array(const std::vector<int64_t>* value_arg);
+  void set_a_nullable8_byte_array(const std::vector<int64_t>& value_arg);
+
+  const std::vector<double>* a_nullable_float_array() const;
+  void set_a_nullable_float_array(const std::vector<double>* value_arg);
+  void set_a_nullable_float_array(const std::vector<double>& value_arg);
+
+  const flutter::EncodableList* nullable_nested_list() const;
+  void set_nullable_nested_list(const flutter::EncodableList* value_arg);
+  void set_nullable_nested_list(const flutter::EncodableList& value_arg);
+
+  const flutter::EncodableMap* nullable_map_with_annotations() const;
+  void set_nullable_map_with_annotations(
+      const flutter::EncodableMap* value_arg);
+  void set_nullable_map_with_annotations(
+      const flutter::EncodableMap& value_arg);
+
+  const flutter::EncodableMap* nullable_map_with_object() const;
+  void set_nullable_map_with_object(const flutter::EncodableMap* value_arg);
+  void set_nullable_map_with_object(const flutter::EncodableMap& value_arg);
+
+  const AnEnum* a_nullable_enum() const;
+  void set_a_nullable_enum(const AnEnum* value_arg);
+  void set_a_nullable_enum(const AnEnum& value_arg);
+
+  const std::string* a_nullable_string() const;
+  void set_a_nullable_string(const std::string_view* value_arg);
+  void set_a_nullable_string(std::string_view value_arg);
+
+  const flutter::EncodableValue* a_nullable_object() const;
+  void set_a_nullable_object(const flutter::EncodableValue* value_arg);
+  void set_a_nullable_object(const flutter::EncodableValue& value_arg);
+
+  const AllNullableTypes* all_nullable_types() const;
+  void set_all_nullable_types(const AllNullableTypes* value_arg);
+  void set_all_nullable_types(const AllNullableTypes& value_arg);
+
+  const flutter::EncodableList* list() const;
+  void set_list(const flutter::EncodableList* value_arg);
+  void set_list(const flutter::EncodableList& value_arg);
+
+  const flutter::EncodableList* string_list() const;
+  void set_string_list(const flutter::EncodableList* value_arg);
+  void set_string_list(const flutter::EncodableList& value_arg);
+
+  const flutter::EncodableList* int_list() const;
+  void set_int_list(const flutter::EncodableList* value_arg);
+  void set_int_list(const flutter::EncodableList& value_arg);
+
+  const flutter::EncodableList* double_list() const;
+  void set_double_list(const flutter::EncodableList* value_arg);
+  void set_double_list(const flutter::EncodableList& value_arg);
+
+  const flutter::EncodableList* bool_list() const;
+  void set_bool_list(const flutter::EncodableList* value_arg);
+  void set_bool_list(const flutter::EncodableList& value_arg);
+
+  const flutter::EncodableList* nested_class_list() const;
+  void set_nested_class_list(const flutter::EncodableList* value_arg);
+  void set_nested_class_list(const flutter::EncodableList& value_arg);
+
+  const flutter::EncodableMap* map() const;
+  void set_map(const flutter::EncodableMap* value_arg);
+  void set_map(const flutter::EncodableMap& value_arg);
+
+ private:
+  static AllNullableTypes FromEncodableList(const flutter::EncodableList& list);
+  flutter::EncodableList ToEncodableList() const;
+  friend class AllClassesWrapper;
+  friend class HostIntegrationCoreApi;
+  friend class FlutterIntegrationCoreApi;
+  friend class HostTrivialApi;
+  friend class HostSmallApi;
+  friend class FlutterSmallApi;
+  friend class PigeonCodecSerializer;
+  friend class CoreTestsTest;
+  std::optional<bool> a_nullable_bool_;
+  std::optional<int64_t> a_nullable_int_;
+  std::optional<int64_t> a_nullable_int64_;
+  std::optional<double> a_nullable_double_;
+  std::optional<std::vector<uint8_t>> a_nullable_byte_array_;
+  std::optional<std::vector<int32_t>> a_nullable4_byte_array_;
+  std::optional<std::vector<int64_t>> a_nullable8_byte_array_;
+  std::optional<std::vector<double>> a_nullable_float_array_;
+  std::optional<flutter::EncodableList> nullable_nested_list_;
+  std::optional<flutter::EncodableMap> nullable_map_with_annotations_;
+  std::optional<flutter::EncodableMap> nullable_map_with_object_;
+  std::optional<AnEnum> a_nullable_enum_;
+  std::optional<std::string> a_nullable_string_;
+  std::optional<flutter::EncodableValue> a_nullable_object_;
+  std::unique_ptr<AllNullableTypes> all_nullable_types_;
+  std::optional<flutter::EncodableList> list_;
+  std::optional<flutter::EncodableList> string_list_;
+  std::optional<flutter::EncodableList> int_list_;
+  std::optional<flutter::EncodableList> double_list_;
+  std::optional<flutter::EncodableList> bool_list_;
+  std::optional<flutter::EncodableList> nested_class_list_;
+  std::optional<flutter::EncodableMap> map_;
+};
+
+// The primary purpose for this class is to ensure coverage of Swift structs
+// with nullable items, as the primary [AllNullableTypes] class is being used to
+// test Swift classes.
+//
+// Generated class from Pigeon that represents data sent in messages.
+class AllNullableTypesWithoutRecursion {
+ public:
+  // Constructs an object setting all non-nullable fields.
+  AllNullableTypesWithoutRecursion();
+
+  // Constructs an object setting all fields.
+  explicit AllNullableTypesWithoutRecursion(
+      const bool* a_nullable_bool, const int64_t* a_nullable_int,
+      const int64_t* a_nullable_int64, const double* a_nullable_double,
+      const std::vector<uint8_t>* a_nullable_byte_array,
+      const std::vector<int32_t>* a_nullable4_byte_array,
+      const std::vector<int64_t>* a_nullable8_byte_array,
+      const std::vector<double>* a_nullable_float_array,
+      const flutter::EncodableList* nullable_nested_list,
+      const flutter::EncodableMap* nullable_map_with_annotations,
+      const flutter::EncodableMap* nullable_map_with_object,
+      const AnEnum* a_nullable_enum, const std::string* a_nullable_string,
+      const flutter::EncodableValue* a_nullable_object,
+      const flutter::EncodableList* list,
+      const flutter::EncodableList* string_list,
+      const flutter::EncodableList* int_list,
+      const flutter::EncodableList* double_list,
+      const flutter::EncodableList* bool_list,
+      const flutter::EncodableMap* map);
 
   const bool* a_nullable_bool() const;
   void set_a_nullable_bool(const bool* value_arg);
@@ -214,14 +396,6 @@ class AllNullableTypes {
   void set_a_nullable_float_array(const std::vector<double>* value_arg);
   void set_a_nullable_float_array(const std::vector<double>& value_arg);
 
-  const flutter::EncodableList* a_nullable_list() const;
-  void set_a_nullable_list(const flutter::EncodableList* value_arg);
-  void set_a_nullable_list(const flutter::EncodableList& value_arg);
-
-  const flutter::EncodableMap* a_nullable_map() const;
-  void set_a_nullable_map(const flutter::EncodableMap* value_arg);
-  void set_a_nullable_map(const flutter::EncodableMap& value_arg);
-
   const flutter::EncodableList* nullable_nested_list() const;
   void set_nullable_nested_list(const flutter::EncodableList* value_arg);
   void set_nullable_nested_list(const flutter::EncodableList& value_arg);
@@ -248,20 +422,41 @@ class AllNullableTypes {
   void set_a_nullable_object(const flutter::EncodableValue* value_arg);
   void set_a_nullable_object(const flutter::EncodableValue& value_arg);
 
+  const flutter::EncodableList* list() const;
+  void set_list(const flutter::EncodableList* value_arg);
+  void set_list(const flutter::EncodableList& value_arg);
+
+  const flutter::EncodableList* string_list() const;
+  void set_string_list(const flutter::EncodableList* value_arg);
+  void set_string_list(const flutter::EncodableList& value_arg);
+
+  const flutter::EncodableList* int_list() const;
+  void set_int_list(const flutter::EncodableList* value_arg);
+  void set_int_list(const flutter::EncodableList& value_arg);
+
+  const flutter::EncodableList* double_list() const;
+  void set_double_list(const flutter::EncodableList* value_arg);
+  void set_double_list(const flutter::EncodableList& value_arg);
+
+  const flutter::EncodableList* bool_list() const;
+  void set_bool_list(const flutter::EncodableList* value_arg);
+  void set_bool_list(const flutter::EncodableList& value_arg);
+
+  const flutter::EncodableMap* map() const;
+  void set_map(const flutter::EncodableMap* value_arg);
+  void set_map(const flutter::EncodableMap& value_arg);
+
  private:
-  static AllNullableTypes FromEncodableList(const flutter::EncodableList& list);
+  static AllNullableTypesWithoutRecursion FromEncodableList(
+      const flutter::EncodableList& list);
   flutter::EncodableList ToEncodableList() const;
   friend class AllClassesWrapper;
   friend class HostIntegrationCoreApi;
-  friend class HostIntegrationCoreApiCodecSerializer;
   friend class FlutterIntegrationCoreApi;
-  friend class FlutterIntegrationCoreApiCodecSerializer;
   friend class HostTrivialApi;
-  friend class HostTrivialApiCodecSerializer;
   friend class HostSmallApi;
-  friend class HostSmallApiCodecSerializer;
   friend class FlutterSmallApi;
-  friend class FlutterSmallApiCodecSerializer;
+  friend class PigeonCodecSerializer;
   friend class CoreTestsTest;
   std::optional<bool> a_nullable_bool_;
   std::optional<int64_t> a_nullable_int_;
@@ -271,14 +466,18 @@ class AllNullableTypes {
   std::optional<std::vector<int32_t>> a_nullable4_byte_array_;
   std::optional<std::vector<int64_t>> a_nullable8_byte_array_;
   std::optional<std::vector<double>> a_nullable_float_array_;
-  std::optional<flutter::EncodableList> a_nullable_list_;
-  std::optional<flutter::EncodableMap> a_nullable_map_;
   std::optional<flutter::EncodableList> nullable_nested_list_;
   std::optional<flutter::EncodableMap> nullable_map_with_annotations_;
   std::optional<flutter::EncodableMap> nullable_map_with_object_;
   std::optional<AnEnum> a_nullable_enum_;
   std::optional<std::string> a_nullable_string_;
   std::optional<flutter::EncodableValue> a_nullable_object_;
+  std::optional<flutter::EncodableList> list_;
+  std::optional<flutter::EncodableList> string_list_;
+  std::optional<flutter::EncodableList> int_list_;
+  std::optional<flutter::EncodableList> double_list_;
+  std::optional<flutter::EncodableList> bool_list_;
+  std::optional<flutter::EncodableMap> map_;
 };
 
 // A class for testing nested class handling.
@@ -295,10 +494,24 @@ class AllClassesWrapper {
 
   // Constructs an object setting all fields.
   explicit AllClassesWrapper(const AllNullableTypes& all_nullable_types,
+                             const AllNullableTypesWithoutRecursion*
+                                 all_nullable_types_without_recursion,
                              const AllTypes* all_types);
 
+  ~AllClassesWrapper() = default;
+  AllClassesWrapper(const AllClassesWrapper& other);
+  AllClassesWrapper& operator=(const AllClassesWrapper& other);
+  AllClassesWrapper(AllClassesWrapper&& other) = default;
+  AllClassesWrapper& operator=(AllClassesWrapper&& other) noexcept = default;
   const AllNullableTypes& all_nullable_types() const;
   void set_all_nullable_types(const AllNullableTypes& value_arg);
+
+  const AllNullableTypesWithoutRecursion* all_nullable_types_without_recursion()
+      const;
+  void set_all_nullable_types_without_recursion(
+      const AllNullableTypesWithoutRecursion* value_arg);
+  void set_all_nullable_types_without_recursion(
+      const AllNullableTypesWithoutRecursion& value_arg);
 
   const AllTypes* all_types() const;
   void set_all_types(const AllTypes* value_arg);
@@ -309,18 +522,16 @@ class AllClassesWrapper {
       const flutter::EncodableList& list);
   flutter::EncodableList ToEncodableList() const;
   friend class HostIntegrationCoreApi;
-  friend class HostIntegrationCoreApiCodecSerializer;
   friend class FlutterIntegrationCoreApi;
-  friend class FlutterIntegrationCoreApiCodecSerializer;
   friend class HostTrivialApi;
-  friend class HostTrivialApiCodecSerializer;
   friend class HostSmallApi;
-  friend class HostSmallApiCodecSerializer;
   friend class FlutterSmallApi;
-  friend class FlutterSmallApiCodecSerializer;
+  friend class PigeonCodecSerializer;
   friend class CoreTestsTest;
-  AllNullableTypes all_nullable_types_;
-  std::optional<AllTypes> all_types_;
+  std::unique_ptr<AllNullableTypes> all_nullable_types_;
+  std::unique_ptr<AllNullableTypesWithoutRecursion>
+      all_nullable_types_without_recursion_;
+  std::unique_ptr<AllTypes> all_types_;
 };
 
 // A data class containing a List, used in unit tests.
@@ -342,25 +553,20 @@ class TestMessage {
   static TestMessage FromEncodableList(const flutter::EncodableList& list);
   flutter::EncodableList ToEncodableList() const;
   friend class HostIntegrationCoreApi;
-  friend class HostIntegrationCoreApiCodecSerializer;
   friend class FlutterIntegrationCoreApi;
-  friend class FlutterIntegrationCoreApiCodecSerializer;
   friend class HostTrivialApi;
-  friend class HostTrivialApiCodecSerializer;
   friend class HostSmallApi;
-  friend class HostSmallApiCodecSerializer;
   friend class FlutterSmallApi;
-  friend class FlutterSmallApiCodecSerializer;
+  friend class PigeonCodecSerializer;
   friend class CoreTestsTest;
   std::optional<flutter::EncodableList> test_list_;
 };
 
-class HostIntegrationCoreApiCodecSerializer
-    : public flutter::StandardCodecSerializer {
+class PigeonCodecSerializer : public flutter::StandardCodecSerializer {
  public:
-  HostIntegrationCoreApiCodecSerializer();
-  inline static HostIntegrationCoreApiCodecSerializer& GetInstance() {
-    static HostIntegrationCoreApiCodecSerializer sInstance;
+  PigeonCodecSerializer();
+  inline static PigeonCodecSerializer& GetInstance() {
+    static PigeonCodecSerializer sInstance;
     return sInstance;
   }
 
@@ -410,7 +616,7 @@ class HostIntegrationCoreApi {
       const flutter::EncodableValue& an_object) = 0;
   // Returns the passed list, to test serialization and deserialization.
   virtual ErrorOr<flutter::EncodableList> EchoList(
-      const flutter::EncodableList& a_list) = 0;
+      const flutter::EncodableList& list) = 0;
   // Returns the passed map, to test serialization and deserialization.
   virtual ErrorOr<flutter::EncodableMap> EchoMap(
       const flutter::EncodableMap& a_map) = 0;
@@ -430,6 +636,10 @@ class HostIntegrationCoreApi {
   // Returns the passed object, to test serialization and deserialization.
   virtual ErrorOr<std::optional<AllNullableTypes>> EchoAllNullableTypes(
       const AllNullableTypes* everything) = 0;
+  // Returns the passed object, to test serialization and deserialization.
+  virtual ErrorOr<std::optional<AllNullableTypesWithoutRecursion>>
+  EchoAllNullableTypesWithoutRecursion(
+      const AllNullableTypesWithoutRecursion* everything) = 0;
   // Returns the inner `aString` value from the wrapped object, to test
   // sending of nested objects.
   virtual ErrorOr<std::optional<std::string>> ExtractNestedNullableString(
@@ -440,6 +650,11 @@ class HostIntegrationCoreApi {
       const std::string* nullable_string) = 0;
   // Returns passed in arguments of multiple types.
   virtual ErrorOr<AllNullableTypes> SendMultipleNullableTypes(
+      const bool* a_nullable_bool, const int64_t* a_nullable_int,
+      const std::string* a_nullable_string) = 0;
+  // Returns passed in arguments of multiple types.
+  virtual ErrorOr<AllNullableTypesWithoutRecursion>
+  SendMultipleNullableTypesWithoutRecursion(
       const bool* a_nullable_bool, const int64_t* a_nullable_int,
       const std::string* a_nullable_string) = 0;
   // Returns passed in int.
@@ -502,7 +717,7 @@ class HostIntegrationCoreApi {
   // Returns the passed list, to test asynchronous serialization and
   // deserialization.
   virtual void EchoAsyncList(
-      const flutter::EncodableList& a_list,
+      const flutter::EncodableList& list,
       std::function<void(ErrorOr<flutter::EncodableList> reply)> result) = 0;
   // Returns the passed map, to test asynchronous serialization and
   // deserialization.
@@ -534,6 +749,12 @@ class HostIntegrationCoreApi {
       const AllNullableTypes* everything,
       std::function<void(ErrorOr<std::optional<AllNullableTypes>> reply)>
           result) = 0;
+  // Returns the passed object, to test serialization and deserialization.
+  virtual void EchoAsyncNullableAllNullableTypesWithoutRecursion(
+      const AllNullableTypesWithoutRecursion* everything,
+      std::function<
+          void(ErrorOr<std::optional<AllNullableTypesWithoutRecursion>> reply)>
+          result) = 0;
   // Returns passed in int asynchronously.
   virtual void EchoAsyncNullableInt(
       const int64_t* an_int,
@@ -564,7 +785,7 @@ class HostIntegrationCoreApi {
   // Returns the passed list, to test asynchronous serialization and
   // deserialization.
   virtual void EchoAsyncNullableList(
-      const flutter::EncodableList* a_list,
+      const flutter::EncodableList* list,
       std::function<void(ErrorOr<std::optional<flutter::EncodableList>> reply)>
           result) = 0;
   // Returns the passed map, to test asynchronous serialization and
@@ -596,6 +817,16 @@ class HostIntegrationCoreApi {
       const bool* a_nullable_bool, const int64_t* a_nullable_int,
       const std::string* a_nullable_string,
       std::function<void(ErrorOr<AllNullableTypes> reply)> result) = 0;
+  virtual void CallFlutterEchoAllNullableTypesWithoutRecursion(
+      const AllNullableTypesWithoutRecursion* everything,
+      std::function<
+          void(ErrorOr<std::optional<AllNullableTypesWithoutRecursion>> reply)>
+          result) = 0;
+  virtual void CallFlutterSendMultipleNullableTypesWithoutRecursion(
+      const bool* a_nullable_bool, const int64_t* a_nullable_int,
+      const std::string* a_nullable_string,
+      std::function<void(ErrorOr<AllNullableTypesWithoutRecursion> reply)>
+          result) = 0;
   virtual void CallFlutterEchoBool(
       bool a_bool, std::function<void(ErrorOr<bool> reply)> result) = 0;
   virtual void CallFlutterEchoInt(
@@ -606,10 +837,10 @@ class HostIntegrationCoreApi {
       const std::string& a_string,
       std::function<void(ErrorOr<std::string> reply)> result) = 0;
   virtual void CallFlutterEchoUint8List(
-      const std::vector<uint8_t>& a_list,
+      const std::vector<uint8_t>& list,
       std::function<void(ErrorOr<std::vector<uint8_t>> reply)> result) = 0;
   virtual void CallFlutterEchoList(
-      const flutter::EncodableList& a_list,
+      const flutter::EncodableList& list,
       std::function<void(ErrorOr<flutter::EncodableList> reply)> result) = 0;
   virtual void CallFlutterEchoMap(
       const flutter::EncodableMap& a_map,
@@ -631,11 +862,11 @@ class HostIntegrationCoreApi {
       std::function<void(ErrorOr<std::optional<std::string>> reply)>
           result) = 0;
   virtual void CallFlutterEchoNullableUint8List(
-      const std::vector<uint8_t>* a_list,
+      const std::vector<uint8_t>* list,
       std::function<void(ErrorOr<std::optional<std::vector<uint8_t>>> reply)>
           result) = 0;
   virtual void CallFlutterEchoNullableList(
-      const flutter::EncodableList* a_list,
+      const flutter::EncodableList* list,
       std::function<void(ErrorOr<std::optional<flutter::EncodableList>> reply)>
           result) = 0;
   virtual void CallFlutterEchoNullableMap(
@@ -645,6 +876,9 @@ class HostIntegrationCoreApi {
   virtual void CallFlutterEchoNullableEnum(
       const AnEnum* an_enum,
       std::function<void(ErrorOr<std::optional<AnEnum>> reply)> result) = 0;
+  virtual void CallFlutterSmallApiEchoString(
+      const std::string& a_string,
+      std::function<void(ErrorOr<std::string> reply)> result) = 0;
 
   // The codec used by HostIntegrationCoreApi.
   static const flutter::StandardMessageCodec& GetCodec();
@@ -652,29 +886,15 @@ class HostIntegrationCoreApi {
   // the `binary_messenger`.
   static void SetUp(flutter::BinaryMessenger* binary_messenger,
                     HostIntegrationCoreApi* api);
+  static void SetUp(flutter::BinaryMessenger* binary_messenger,
+                    HostIntegrationCoreApi* api,
+                    const std::string& message_channel_suffix);
   static flutter::EncodableValue WrapError(std::string_view error_message);
   static flutter::EncodableValue WrapError(const FlutterError& error);
 
  protected:
   HostIntegrationCoreApi() = default;
 };
-class FlutterIntegrationCoreApiCodecSerializer
-    : public flutter::StandardCodecSerializer {
- public:
-  FlutterIntegrationCoreApiCodecSerializer();
-  inline static FlutterIntegrationCoreApiCodecSerializer& GetInstance() {
-    static FlutterIntegrationCoreApiCodecSerializer sInstance;
-    return sInstance;
-  }
-
-  void WriteValue(const flutter::EncodableValue& value,
-                  flutter::ByteStreamWriter* stream) const override;
-
- protected:
-  flutter::EncodableValue ReadValueOfType(
-      uint8_t type, flutter::ByteStreamReader* stream) const override;
-};
-
 // The core interface that the Dart platform_test code implements for host
 // integration tests to call into.
 //
@@ -683,6 +903,8 @@ class FlutterIntegrationCoreApiCodecSerializer
 class FlutterIntegrationCoreApi {
  public:
   FlutterIntegrationCoreApi(flutter::BinaryMessenger* binary_messenger);
+  FlutterIntegrationCoreApi(flutter::BinaryMessenger* binary_messenger,
+                            const std::string& message_channel_suffix);
   static const flutter::StandardMessageCodec& GetCodec();
   // A no-op function taking no arguments and returning no value, to sanity
   // test basic calling.
@@ -712,6 +934,19 @@ class FlutterIntegrationCoreApi {
       const std::string* a_nullable_string,
       std::function<void(const AllNullableTypes&)>&& on_success,
       std::function<void(const FlutterError&)>&& on_error);
+  // Returns the passed object, to test serialization and deserialization.
+  void EchoAllNullableTypesWithoutRecursion(
+      const AllNullableTypesWithoutRecursion* everything,
+      std::function<void(const AllNullableTypesWithoutRecursion*)>&& on_success,
+      std::function<void(const FlutterError&)>&& on_error);
+  // Returns passed in arguments of multiple types.
+  //
+  // Tests multiple-arity FlutterApi handling.
+  void SendMultipleNullableTypesWithoutRecursion(
+      const bool* a_nullable_bool, const int64_t* a_nullable_int,
+      const std::string* a_nullable_string,
+      std::function<void(const AllNullableTypesWithoutRecursion&)>&& on_success,
+      std::function<void(const FlutterError&)>&& on_error);
   // Returns the passed boolean, to test serialization and deserialization.
   void EchoBool(bool a_bool, std::function<void(bool)>&& on_success,
                 std::function<void(const FlutterError&)>&& on_error);
@@ -727,11 +962,11 @@ class FlutterIntegrationCoreApi {
                   std::function<void(const FlutterError&)>&& on_error);
   // Returns the passed byte list, to test serialization and deserialization.
   void EchoUint8List(
-      const std::vector<uint8_t>& a_list,
+      const std::vector<uint8_t>& list,
       std::function<void(const std::vector<uint8_t>&)>&& on_success,
       std::function<void(const FlutterError&)>&& on_error);
   // Returns the passed list, to test serialization and deserialization.
-  void EchoList(const flutter::EncodableList& a_list,
+  void EchoList(const flutter::EncodableList& list,
                 std::function<void(const flutter::EncodableList&)>&& on_success,
                 std::function<void(const FlutterError&)>&& on_error);
   // Returns the passed map, to test serialization and deserialization.
@@ -760,12 +995,12 @@ class FlutterIntegrationCoreApi {
                           std::function<void(const FlutterError&)>&& on_error);
   // Returns the passed byte list, to test serialization and deserialization.
   void EchoNullableUint8List(
-      const std::vector<uint8_t>* a_list,
+      const std::vector<uint8_t>* list,
       std::function<void(const std::vector<uint8_t>*)>&& on_success,
       std::function<void(const FlutterError&)>&& on_error);
   // Returns the passed list, to test serialization and deserialization.
   void EchoNullableList(
-      const flutter::EncodableList* a_list,
+      const flutter::EncodableList* list,
       std::function<void(const flutter::EncodableList*)>&& on_success,
       std::function<void(const FlutterError&)>&& on_error);
   // Returns the passed map, to test serialization and deserialization.
@@ -788,6 +1023,7 @@ class FlutterIntegrationCoreApi {
 
  private:
   flutter::BinaryMessenger* binary_messenger_;
+  std::string message_channel_suffix_;
 };
 
 // An API that can be implemented for minimal, compile-only tests.
@@ -807,6 +1043,9 @@ class HostTrivialApi {
   // `binary_messenger`.
   static void SetUp(flutter::BinaryMessenger* binary_messenger,
                     HostTrivialApi* api);
+  static void SetUp(flutter::BinaryMessenger* binary_messenger,
+                    HostTrivialApi* api,
+                    const std::string& message_channel_suffix);
   static flutter::EncodableValue WrapError(std::string_view error_message);
   static flutter::EncodableValue WrapError(const FlutterError& error);
 
@@ -833,28 +1072,15 @@ class HostSmallApi {
   // `binary_messenger`.
   static void SetUp(flutter::BinaryMessenger* binary_messenger,
                     HostSmallApi* api);
+  static void SetUp(flutter::BinaryMessenger* binary_messenger,
+                    HostSmallApi* api,
+                    const std::string& message_channel_suffix);
   static flutter::EncodableValue WrapError(std::string_view error_message);
   static flutter::EncodableValue WrapError(const FlutterError& error);
 
  protected:
   HostSmallApi() = default;
 };
-class FlutterSmallApiCodecSerializer : public flutter::StandardCodecSerializer {
- public:
-  FlutterSmallApiCodecSerializer();
-  inline static FlutterSmallApiCodecSerializer& GetInstance() {
-    static FlutterSmallApiCodecSerializer sInstance;
-    return sInstance;
-  }
-
-  void WriteValue(const flutter::EncodableValue& value,
-                  flutter::ByteStreamWriter* stream) const override;
-
- protected:
-  flutter::EncodableValue ReadValueOfType(
-      uint8_t type, flutter::ByteStreamReader* stream) const override;
-};
-
 // A simple API called in some unit tests.
 //
 // Generated class from Pigeon that represents Flutter messages that can be
@@ -862,6 +1088,8 @@ class FlutterSmallApiCodecSerializer : public flutter::StandardCodecSerializer {
 class FlutterSmallApi {
  public:
   FlutterSmallApi(flutter::BinaryMessenger* binary_messenger);
+  FlutterSmallApi(flutter::BinaryMessenger* binary_messenger,
+                  const std::string& message_channel_suffix);
   static const flutter::StandardMessageCodec& GetCodec();
   void EchoWrappedList(const TestMessage& msg,
                        std::function<void(const TestMessage&)>&& on_success,
@@ -872,6 +1100,7 @@ class FlutterSmallApi {
 
  private:
   flutter::BinaryMessenger* binary_messenger_;
+  std::string message_channel_suffix_;
 };
 
 }  // namespace core_tests_pigeontest

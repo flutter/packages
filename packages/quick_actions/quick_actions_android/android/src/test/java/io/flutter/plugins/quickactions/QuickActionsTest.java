@@ -13,7 +13,6 @@ import static org.mockito.Mockito.when;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.ShortcutManager;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import io.flutter.embedding.engine.plugins.FlutterPlugin.FlutterPluginBinding;
@@ -76,8 +75,6 @@ public class QuickActionsTest {
     when(mockActivityPluginBinding.getActivity()).thenReturn(mockMainActivity);
     final Context mockContext = mock(Context.class);
     when(mockMainActivity.getApplicationContext()).thenReturn(mockContext);
-    final ShortcutManager mockShortcutManager = mock(ShortcutManager.class);
-    when(mockContext.getSystemService(Context.SHORTCUT_SERVICE)).thenReturn(mockShortcutManager);
     plugin.onAttachedToActivity(mockActivityPluginBinding);
 
     // Act
@@ -118,8 +115,6 @@ public class QuickActionsTest {
     when(mockActivityPluginBinding.getActivity()).thenReturn(mockMainActivity);
     final Context mockContext = mock(Context.class);
     when(mockMainActivity.getApplicationContext()).thenReturn(mockContext);
-    final ShortcutManager mockShortcutManager = mock(ShortcutManager.class);
-    when(mockContext.getSystemService(Context.SHORTCUT_SERVICE)).thenReturn(mockShortcutManager);
     plugin.onAttachedToActivity(mockActivityPluginBinding);
 
     // Act

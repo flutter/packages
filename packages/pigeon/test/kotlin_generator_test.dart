@@ -51,7 +51,7 @@ void main() {
     final String code = sink.toString();
     expect(code, contains('data class Foobar ('));
     expect(code, contains('val field1: Long? = null'));
-    expect(code, contains('fun fromList(list: List<Any?>): Foobar'));
+    expect(code, contains('fun fromList(__pigeon_list: List<Any?>): Foobar'));
     expect(code, contains('fun toList(): List<Any?>'));
   });
 
@@ -132,9 +132,10 @@ void main() {
     expect(code, contains('data class Bar ('));
     expect(code, contains('val field1: Foo,'));
     expect(code, contains('val field2: String'));
-    expect(code, contains('fun fromList(list: List<Any?>): Bar'));
-    expect(code, contains('val field1 = Foo.ofRaw(list[0] as Int)!!\n'));
-    expect(code, contains('val field2 = list[1] as String\n'));
+    expect(code, contains('fun fromList(__pigeon_list: List<Any?>): Bar'));
+    expect(code, contains('Foo.ofRaw(it)'));
+    expect(code, contains('val field1 = __pigeon_list[0] as Foo'));
+    expect(code, contains('val field2 = __pigeon_list[1] as String\n'));
     expect(code, contains('fun toList(): List<Any?>'));
   });
 
@@ -172,7 +173,7 @@ void main() {
     );
     final String code = sink.toString();
     expect(code, contains('enum class Foo(val raw: Int) {'));
-    expect(code, contains('val fooArg = Foo.ofRaw(args[0] as Int)'));
+    expect(code, contains('Foo.ofRaw(it)'));
   });
 
   test('gen one host api', () {
@@ -230,17 +231,20 @@ void main() {
     final String code = sink.toString();
     expect(code, contains('interface Api'));
     expect(code, contains('fun doSomething(input: Input): Output'));
+    expect(code, contains('''
+    @JvmOverloads
+    fun setUp(binaryMessenger: BinaryMessenger, api: Api?, messageChannelSuffix: String = "") {
+    '''));
     expect(code, contains('channel.setMessageHandler'));
     expect(code, contains('''
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val inputArg = args[0] as Input
-            var wrapped: List<Any?>
-            try {
-              wrapped = listOf<Any?>(api.doSomething(inputArg))
+            val wrapped: List<Any?> = try {
+              listOf(api.doSomething(inputArg))
             } catch (exception: Throwable) {
-              wrapped = wrapError(exception)
+              wrapError(exception)
             }
             reply.reply(wrapped)
           }
@@ -390,7 +394,7 @@ void main() {
     expect(
         code,
         contains(
-            'val aInt = list[1].let { if (it is Int) it.toLong() else it as Long }'));
+            'val aInt = __pigeon_list[1].let { num -> if (num is Int) num.toLong() else num as Long }'));
     expect(code, contains('val aNullableBool: Boolean? = null'));
     expect(code, contains('val aNullableInt: Long? = null'));
     expect(code, contains('val aNullableDouble: Double? = null'));
@@ -402,7 +406,7 @@ void main() {
     expect(
         code,
         contains(
-            'val aNullableInt = list[9].let { if (it is Int) it.toLong() else it as Long? }'));
+            'val aNullableInt = __pigeon_list[9].let { num -> if (num is Int) num.toLong() else num as Long? }'));
   });
 
   test('gen one flutter api', () {
@@ -458,8 +462,10 @@ void main() {
       dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
-    expect(code,
-        contains('class Api(private val binaryMessenger: BinaryMessenger)'));
+    expect(
+        code,
+        contains(
+            'class Api(private val binaryMessenger: BinaryMessenger, private val messageChannelSuffix: String = "")'));
     expect(code, matches('fun doSomething.*Input.*Output'));
   });
 
@@ -589,8 +595,8 @@ void main() {
     );
     final String code = sink.toString();
     expect(code, contains('fun doSomething(): Output'));
-    expect(code, contains('wrapped = listOf<Any?>(api.doSomething())'));
-    expect(code, contains('wrapped = wrapError(exception)'));
+    expect(code, contains('listOf(api.doSomething())'));
+    expect(code, contains('wrapError(exception)'));
     expect(code, contains('reply(wrapped)'));
   });
 
@@ -730,10 +736,8 @@ void main() {
     expect(code, contains('data class Outer'));
     expect(code, contains('data class Nested'));
     expect(code, contains('val nested: Nested? = null'));
-    expect(code, contains('fun fromList(list: List<Any?>): Outer'));
-    expect(
-        code, contains('val nested: Nested? = (list[0] as List<Any?>?)?.let'));
-    expect(code, contains('Nested.fromList(it)'));
+    expect(code, contains('fun fromList(__pigeon_list: List<Any?>): Outer'));
+    expect(code, contains('val nested = __pigeon_list[0] as Nested?'));
     expect(code, contains('fun toList(): List<Any?>'));
   });
 
@@ -1089,7 +1093,7 @@ void main() {
     );
     final String code = sink.toString();
     expect(code, contains('fun doit(): List<Long?>'));
-    expect(code, contains('wrapped = listOf<Any?>(api.doit())'));
+    expect(code, contains('listOf(api.doit())'));
     expect(code, contains('reply.reply(wrapped)'));
   });
 
@@ -1162,12 +1166,12 @@ void main() {
     expect(
         code,
         contains(
-            'val xArg = args[0].let { if (it is Int) it.toLong() else it as Long }'));
+            'val xArg = args[0].let { num -> if (num is Int) num.toLong() else num as Long }'));
     expect(
         code,
         contains(
-            'val yArg = args[1].let { if (it is Int) it.toLong() else it as Long }'));
-    expect(code, contains('wrapped = listOf<Any?>(api.add(xArg, yArg))'));
+            'val yArg = args[1].let { num -> if (num is Int) num.toLong() else num as Long }'));
+    expect(code, contains('listOf(api.add(xArg, yArg))'));
     expect(code, contains('reply.reply(wrapped)'));
   });
 
@@ -1205,7 +1209,7 @@ void main() {
     expect(
       code,
       contains(
-          'val output = it[0].let { if (it is Int) it.toLong() else it as Long }'),
+          'val output = it[0].let { num -> if (num is Int) num.toLong() else num as Long }'),
     );
     expect(code, contains('callback(Result.success(output))'));
     expect(
@@ -1310,7 +1314,7 @@ void main() {
     expect(
         code,
         contains(
-            'val fooArg = args[0].let { if (it is Int) it.toLong() else it as Long? }'));
+            'val fooArg = args[0].let { num -> if (num is Int) num.toLong() else num as Long? }'));
   });
 
   test('nullable argument flutter', () {
@@ -1487,47 +1491,7 @@ void main() {
     expect(code, isNot(contains('*//')));
   });
 
-  test("doesn't create codecs if no custom datatypes", () {
-    final Root root = Root(
-      apis: <Api>[
-        AstFlutterApi(
-          name: 'Api',
-          methods: <Method>[
-            Method(
-              name: 'method',
-              location: ApiLocation.flutter,
-              returnType: const TypeDeclaration.voidDeclaration(),
-              parameters: <Parameter>[
-                Parameter(
-                  name: 'field',
-                  type: const TypeDeclaration(
-                    baseName: 'int',
-                    isNullable: true,
-                  ),
-                ),
-              ],
-            )
-          ],
-        )
-      ],
-      classes: <Class>[],
-      enums: <Enum>[],
-    );
-    final StringBuffer sink = StringBuffer();
-    const KotlinOptions kotlinOptions = KotlinOptions();
-    const KotlinGenerator generator = KotlinGenerator();
-    generator.generate(
-      kotlinOptions,
-      root,
-      sink,
-      dartPackageName: DEFAULT_PACKAGE_NAME,
-    );
-    final String code = sink.toString();
-    expect(code, isNot(contains(' : StandardMessageCodec() ')));
-    expect(code, contains('StandardMessageCodec'));
-  });
-
-  test('creates custom codecs if custom datatypes present', () {
+  test('creates custom codecs', () {
     final Root root = Root(apis: <Api>[
       AstFlutterApi(name: 'Api', methods: <Method>[
         Method(
@@ -1818,5 +1782,100 @@ void main() {
     final String code = sink.toString();
     expect(code, contains(errorClassName));
     expect(code, isNot(contains('FlutterError')));
+  });
+
+  test('do not generate duplicated entries in writeValue', () {
+    final Root root = Root(
+      apis: <Api>[
+        AstHostApi(
+          name: 'FooBar',
+          methods: <Method>[
+            Method(
+              name: 'fooBar',
+              location: ApiLocation.host,
+              returnType: const TypeDeclaration.voidDeclaration(),
+              parameters: <Parameter>[
+                Parameter(
+                  name: 'bar',
+                  type: const TypeDeclaration(
+                    baseName: 'Bar',
+                    isNullable: false,
+                  ),
+                ),
+              ],
+            )
+          ],
+        )
+      ],
+      classes: <Class>[
+        Class(
+          name: 'Foo',
+          fields: <NamedType>[
+            NamedType(
+              type: const TypeDeclaration(
+                baseName: 'int',
+                isNullable: false,
+              ),
+              name: 'foo',
+            ),
+          ],
+        ),
+        Class(
+          name: 'Bar',
+          fields: <NamedType>[
+            NamedType(
+              type: const TypeDeclaration(
+                baseName: 'Foo',
+                isNullable: false,
+              ),
+              name: 'foo',
+            ),
+            NamedType(
+              type: const TypeDeclaration(
+                baseName: 'Foo',
+                isNullable: true,
+              ),
+              name: 'foo2',
+            ),
+          ],
+        ),
+      ],
+      enums: <Enum>[],
+    );
+
+    final StringBuffer sink = StringBuffer();
+    const String errorClassName = 'FooError';
+    const KotlinOptions kotlinOptions =
+        KotlinOptions(errorClassName: errorClassName);
+    const KotlinGenerator generator = KotlinGenerator();
+    generator.generate(
+      kotlinOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
+
+    final String code = sink.toString();
+
+    // Extract override fun writeValue block
+    final int blockStart = code.indexOf('override fun writeValue');
+    expect(blockStart, isNot(-1));
+    final int blockEnd = code.indexOf('super.writeValue', blockStart);
+    expect(blockEnd, isNot(-1));
+    final String writeValueBlock = code.substring(blockStart, blockEnd);
+
+    // Count the occurrence of 'is Foo' in the block
+    int count = 0;
+    int index = 0;
+    while (index != -1) {
+      index = writeValueBlock.indexOf('is Foo', index);
+      if (index != -1) {
+        count++;
+        index += 'is Foo'.length;
+      }
+    }
+
+    // There should be only one occurrence of 'is Foo' in the block
+    expect(count, 1);
   });
 }

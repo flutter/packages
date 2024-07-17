@@ -8,16 +8,16 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.ShortcutInfo;
-import android.content.pm.ShortcutManager;
 import android.content.res.Resources;
-import android.graphics.drawable.Icon;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import androidx.annotation.ChecksSdkIntAtLeast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.pm.ShortcutInfoCompat;
+import androidx.core.content.pm.ShortcutManagerCompat;
+import androidx.core.graphics.drawable.IconCompat;
 import io.flutter.plugins.quickactions.Messages.AndroidQuickActionsApi;
 import io.flutter.plugins.quickactions.Messages.FlutterError;
 import io.flutter.plugins.quickactions.Messages.Result;
@@ -61,9 +61,7 @@ final class QuickActions implements AndroidQuickActionsApi {
       result.success(null);
       return;
     }
-    ShortcutManager shortcutManager =
-        (ShortcutManager) context.getSystemService(Context.SHORTCUT_SERVICE);
-    List<ShortcutInfo> shortcuts = shortcutItemMessageToShortcutInfo(itemsList);
+    List<ShortcutInfoCompat> shortcuts = shortcutItemMessageToShortcutInfo(itemsList);
     Executor uiThreadExecutor = new UiThreadExecutor();
     ThreadPoolExecutor executor =
         new ThreadPoolExecutor(0, 1, 1, TimeUnit.SECONDS, new LinkedBlockingQueue<>());
@@ -72,7 +70,7 @@ final class QuickActions implements AndroidQuickActionsApi {
         () -> {
           boolean dynamicShortcutsSet = false;
           try {
-            shortcutManager.setDynamicShortcuts(shortcuts);
+            ShortcutManagerCompat.setDynamicShortcuts(context, shortcuts);
             dynamicShortcutsSet = true;
           } catch (Exception e) {
             // Leave dynamicShortcutsSet as false
@@ -101,9 +99,7 @@ final class QuickActions implements AndroidQuickActionsApi {
     if (!isVersionAllowed()) {
       return;
     }
-    ShortcutManager shortcutManager =
-        (ShortcutManager) context.getSystemService(Context.SHORTCUT_SERVICE);
-    shortcutManager.removeAllDynamicShortcuts();
+    ShortcutManagerCompat.removeAllDynamicShortcuts(context);
   }
 
   @Override
@@ -111,8 +107,6 @@ final class QuickActions implements AndroidQuickActionsApi {
     if (!isVersionAllowed()) {
       return null;
     }
-    ShortcutManager shortcutManager =
-        (ShortcutManager) context.getSystemService(Context.SHORTCUT_SERVICE);
     if (activity == null) {
       throw new FlutterError(
           "quick_action_getlaunchaction_no_activity",
@@ -122,31 +116,32 @@ final class QuickActions implements AndroidQuickActionsApi {
     final Intent intent = activity.getIntent();
     final String launchAction = intent.getStringExtra(EXTRA_ACTION);
     if (launchAction != null && !launchAction.isEmpty()) {
-      shortcutManager.reportShortcutUsed(launchAction);
+      ShortcutManagerCompat.reportShortcutUsed(context, launchAction);
       intent.removeExtra(EXTRA_ACTION);
     }
     return launchAction;
   }
 
   @TargetApi(Build.VERSION_CODES.N_MR1)
-  private List<ShortcutInfo> shortcutItemMessageToShortcutInfo(
+  private List<ShortcutInfoCompat> shortcutItemMessageToShortcutInfo(
       @NonNull List<ShortcutItemMessage> shortcuts) {
-    final List<ShortcutInfo> shortcutInfos = new ArrayList<>();
+    final List<ShortcutInfoCompat> shortcutInfos = new ArrayList<>();
 
     for (ShortcutItemMessage shortcut : shortcuts) {
       final String icon = shortcut.getIcon();
       final String type = shortcut.getType();
       final String title = shortcut.getLocalizedTitle();
-      final ShortcutInfo.Builder shortcutBuilder = new ShortcutInfo.Builder(context, type);
+      final ShortcutInfoCompat.Builder shortcutBuilder =
+          new ShortcutInfoCompat.Builder(context, type);
 
       final int resourceId = loadResourceId(context, icon);
       final Intent intent = getIntentToOpenMainActivity(type);
 
       if (resourceId > 0) {
-        shortcutBuilder.setIcon(Icon.createWithResource(context, resourceId));
+        shortcutBuilder.setIcon(IconCompat.createWithResource(context, resourceId));
       }
 
-      final ShortcutInfo shortcutInfo =
+      final ShortcutInfoCompat shortcutInfo =
           shortcutBuilder.setLongLabel(title).setShortLabel(title).setIntent(intent).build();
       shortcutInfos.add(shortcutInfo);
     }

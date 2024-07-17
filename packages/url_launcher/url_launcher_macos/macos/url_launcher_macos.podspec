@@ -12,11 +12,10 @@ Pod::Spec.new do |s|
   s.license          = { :type => 'BSD', :file => '../LICENSE' }
   s.author           = { 'Flutter Team' => 'flutter-dev@googlegroups.com' }
   s.source           = { :http => 'https://github.com/flutter/packages/tree/main/packages/url_launcher/url_launcher_macos' }
-  s.source_files     = 'Classes/**/*'
+  s.source_files     = 'url_launcher_macos/Sources/url_launcher_macos/**/*.swift'
   s.dependency 'FlutterMacOS'
 
   s.platform = :osx, '10.14'
   s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES' }
   s.swift_version = '5.0'
   end
-

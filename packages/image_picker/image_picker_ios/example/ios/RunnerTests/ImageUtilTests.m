@@ -5,7 +5,9 @@
 #import "ImagePickerTestImages.h"
 
 @import image_picker_ios;
+#if __has_include(<image_picker_ios/image_picker_ios-umbrella.h>)
 @import image_picker_ios.Test;
+#endif
 @import XCTest;
 
 // Corner colors of test image scaled to 3x2. Format is "R G B A".
@@ -215,6 +217,26 @@ static NSString *ColorStringAtPixel(UIImage *image, int pixelX, int pixelY) {
 
   XCTAssertEqual(newImage.size.width, 12);
   XCTAssertEqual(newImage.size.height, 7);
+}
+
+- (void)testScaledImage_ImageIsNil {
+  UIImage *image = nil;
+  UIImage *newImage = [FLTImagePickerImageUtil scaledImage:image
+                                                  maxWidth:@1440
+                                                 maxHeight:@1440
+                                       isMetadataAvailable:YES];
+
+  XCTAssertEqual(newImage, nil);
+}
+
+- (void)testScaledImage_ImageMaxWidthZeroAndMaxHeightIsZero {
+  UIImage *image = [UIImage imageWithData:ImagePickerTestImages.JPGTestData];
+  UIImage *newImage = [FLTImagePickerImageUtil scaledImage:image
+                                                  maxWidth:@0
+                                                 maxHeight:@0
+                                       isMetadataAvailable:YES];
+
+  XCTAssertEqual(newImage, nil);
 }
 
 @end

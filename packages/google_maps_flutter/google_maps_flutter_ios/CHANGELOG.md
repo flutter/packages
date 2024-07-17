@@ -1,3 +1,47 @@
+## 2.10.0
+
+* Converts Obj-C->Dart calls to Pigeon.
+
+## 2.9.0
+
+* Converts additional platform calls to Pigeon.
+
+## 2.8.2
+
+* Converts inspector interface platform calls to Pigeon.
+
+## 2.8.1
+
+* Improves Objective-C type handling.
+
+## 2.8.0
+
+* Adds compatibility with SDK version 9.x for apps targetting iOS 15+.
+
+## 2.7.0
+
+* Adds support for BitmapDescriptor classes `AssetMapBitmap` and `BytesMapBitmap`.
+
+## 2.6.1
+
+* Adds support for patterns in polylines.
+
+## 2.6.0
+
+* Updates the minimum allowed verison of the Google Maps SDK to 8.4, for privacy
+  manifest support.
+    * This means that applications using this package can no longer support
+      iOS 13 or 14, as the versions of the Google Maps SDK that support those
+      versions do not have privacy manifests, so cannot be used in published
+      applications once the new App Store enforcement of manifests takes effect.
+* Includes the Google Maps SDK's [GoogleMapsPrivacy bundle](https://developers.google.com/maps/documentation/ios-sdk/config#add-apple-privacy-manifest-file)
+  manifest entries direct in the plugin, so that package clients do not need to
+  manually add that privacy bundle to the application build.
+
+## 2.5.2
+
+* Fixes the tile overlay not correctly displaying on physical ios devices.
+
 ## 2.5.1
 
 * Makes the tile overlay callback invoke the platform channel on the platform thread.

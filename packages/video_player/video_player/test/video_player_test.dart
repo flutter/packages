@@ -121,10 +121,10 @@ void main() {
     required bool shouldPlayInBackground,
   }) {
     expect(controller.value.isPlaying, true);
-    _ambiguate(WidgetsBinding.instance)!
+    WidgetsBinding.instance
         .handleAppLifecycleStateChanged(AppLifecycleState.paused);
     expect(controller.value.isPlaying, shouldPlayInBackground);
-    _ambiguate(WidgetsBinding.instance)!
+    WidgetsBinding.instance
         .handleAppLifecycleStateChanged(AppLifecycleState.resumed);
     expect(controller.value.isPlaying, true);
   }
@@ -1311,6 +1311,8 @@ class FakeVideoPlayerPlatform extends VideoPlayerPlatform {
   bool forceInitError = false;
   int nextTextureId = 0;
   final Map<int, Duration> _positions = <int, Duration>{};
+  final Map<int, VideoPlayerWebOptions> webOptions =
+      <int, VideoPlayerWebOptions>{};
 
   @override
   Future<int?> create(DataSource dataSource) async {
@@ -1392,10 +1394,14 @@ class FakeVideoPlayerPlatform extends VideoPlayerPlatform {
   Widget buildView(int textureId) {
     return Texture(textureId: textureId);
   }
-}
 
-/// This allows a value of type T or T? to be treated as a value of type T?.
-///
-/// We use this so that APIs that have become non-nullable can still be used
-/// with `!` and `?` on the stable branch.
-T? _ambiguate<T>(T? value) => value;
+  @override
+  Future<void> setWebOptions(
+      int textureId, VideoPlayerWebOptions options) async {
+    if (!kIsWeb) {
+      throw UnimplementedError('setWebOptions() is only available in the web.');
+    }
+    calls.add('setWebOptions');
+    webOptions[textureId] = options;
+  }
+}

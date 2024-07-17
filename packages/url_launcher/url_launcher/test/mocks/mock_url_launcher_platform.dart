@@ -17,6 +17,7 @@ class MockUrlLauncher extends Fake
   bool? enableJavaScript;
   bool? enableDomStorage;
   bool? universalLinksOnly;
+  bool? showTitle;
   Map<String, String>? headers;
   String? webOnlyWindowName;
 
@@ -41,6 +42,7 @@ class MockUrlLauncher extends Fake
     required bool universalLinksOnly,
     required Map<String, String> headers,
     required String? webOnlyWindowName,
+    required bool showTitle,
   }) {
     this.url = url;
     this.launchMode = launchMode;
@@ -51,6 +53,7 @@ class MockUrlLauncher extends Fake
     this.universalLinksOnly = universalLinksOnly;
     this.headers = headers;
     this.webOnlyWindowName = webOnlyWindowName;
+    this.showTitle = showTitle;
   }
 
   // ignore: use_setters_to_change_properties
@@ -87,6 +90,7 @@ class MockUrlLauncher extends Fake
     expect(universalLinksOnly, this.universalLinksOnly);
     expect(headers, this.headers);
     expect(webOnlyWindowName, this.webOnlyWindowName);
+    expect(webOnlyWindowName, this.webOnlyWindowName);
     launchCalled = true;
     return response!;
   }
@@ -98,6 +102,7 @@ class MockUrlLauncher extends Fake
     expect(options.webViewConfiguration.enableJavaScript, enableJavaScript);
     expect(options.webViewConfiguration.enableDomStorage, enableDomStorage);
     expect(options.webViewConfiguration.headers, headers);
+    expect(options.browserConfiguration.showTitle, showTitle);
     expect(options.webOnlyWindowName, webOnlyWindowName);
     launchCalled = true;
     return response!;

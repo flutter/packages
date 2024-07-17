@@ -30,20 +30,28 @@ List<Object?> wrapResponse(
   return <Object?>[error.code, error.message, error.details];
 }
 
+class _PigeonCodec extends StandardMessageCodec {
+  const _PigeonCodec();
+}
+
 class MultipleArityHostApi {
   /// Constructor for [MultipleArityHostApi].  The [binaryMessenger] named argument is
   /// available for dependency injection.  If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
-  MultipleArityHostApi({BinaryMessenger? binaryMessenger})
-      : __pigeon_binaryMessenger = binaryMessenger;
+  MultipleArityHostApi(
+      {BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
+      : __pigeon_binaryMessenger = binaryMessenger,
+        __pigeon_messageChannelSuffix =
+            messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
   final BinaryMessenger? __pigeon_binaryMessenger;
 
-  static const MessageCodec<Object?> pigeonChannelCodec =
-      StandardMessageCodec();
+  static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
+
+  final String __pigeon_messageChannelSuffix;
 
   Future<int> subtract(int x, int y) async {
-    const String __pigeon_channelName =
-        'dev.flutter.pigeon.pigeon_integration_tests.MultipleArityHostApi.subtract';
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.MultipleArityHostApi.subtract$__pigeon_messageChannelSuffix';
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
@@ -72,17 +80,21 @@ class MultipleArityHostApi {
 }
 
 abstract class MultipleArityFlutterApi {
-  static const MessageCodec<Object?> pigeonChannelCodec =
-      StandardMessageCodec();
+  static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
 
   int subtract(int x, int y);
 
-  static void setup(MultipleArityFlutterApi? api,
-      {BinaryMessenger? binaryMessenger}) {
+  static void setUp(
+    MultipleArityFlutterApi? api, {
+    BinaryMessenger? binaryMessenger,
+    String messageChannelSuffix = '',
+  }) {
+    messageChannelSuffix =
+        messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
     {
       final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
               Object?>(
-          'dev.flutter.pigeon.pigeon_integration_tests.MultipleArityFlutterApi.subtract',
+          'dev.flutter.pigeon.pigeon_integration_tests.MultipleArityFlutterApi.subtract$messageChannelSuffix',
           pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
       if (api == null) {

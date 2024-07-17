@@ -33,7 +33,10 @@ CameraResult GetCameraResult(HRESULT hr) {
 
 CaptureControllerImpl::CaptureControllerImpl(
     CaptureControllerListener* listener)
-    : capture_controller_listener_(listener), CaptureController(){};
+    : capture_controller_listener_(listener),
+      media_settings_(
+          PlatformMediaSettings(PlatformResolutionPreset::max, true)),
+      CaptureController(){};
 
 CaptureControllerImpl::~CaptureControllerImpl() {
   ResetCaptureController();
@@ -217,7 +220,7 @@ HRESULT CaptureControllerImpl::CreateCaptureEngine() {
   }
 
   // Creates audio source only if not already initialized by test framework
-  if (record_audio_ && !audio_source_) {
+  if (media_settings_.enable_audio() && !audio_source_) {
     hr = CreateDefaultAudioCaptureSource();
     if (FAILED(hr)) {
       return hr;
@@ -241,7 +244,7 @@ HRESULT CaptureControllerImpl::CreateCaptureEngine() {
   }
 
   hr = attributes->SetUINT32(MF_CAPTURE_ENGINE_USE_VIDEO_DEVICE_ONLY,
-                             !record_audio_);
+                             !media_settings_.enable_audio());
   if (FAILED(hr)) {
     return hr;
   }
@@ -256,11 +259,7 @@ HRESULT CaptureControllerImpl::CreateCaptureEngine() {
 
 void CaptureControllerImpl::ResetCaptureController() {
   if (record_handler_ && record_handler_->CanStop()) {
-    if (record_handler_->IsContinuousRecording()) {
-      StopRecord();
-    } else if (record_handler_->IsTimedRecording()) {
-      StopTimedRecord();
-    }
+    StopRecord();
   }
 
   if (preview_handler_) {
@@ -301,7 +300,7 @@ void CaptureControllerImpl::ResetCaptureController() {
 
 bool CaptureControllerImpl::InitCaptureDevice(
     flutter::TextureRegistrar* texture_registrar, const std::string& device_id,
-    bool record_audio, ResolutionPreset resolution_preset) {
+    const PlatformMediaSettings& media_settings) {
   assert(capture_controller_listener_);
 
   if (IsInitialized()) {
@@ -315,8 +314,7 @@ bool CaptureControllerImpl::InitCaptureDevice(
   }
 
   capture_engine_state_ = CaptureEngineState::kInitializing;
-  resolution_preset_ = resolution_preset;
-  record_audio_ = record_audio;
+  media_settings_ = media_settings;
   texture_registrar_ = texture_registrar;
   video_device_id_ = device_id;
 
@@ -382,28 +380,21 @@ void CaptureControllerImpl::TakePicture(const std::string& file_path) {
 }
 
 uint32_t CaptureControllerImpl::GetMaxPreviewHeight() const {
-  switch (resolution_preset_) {
-    case ResolutionPreset::kLow:
+  switch (media_settings_.resolution_preset()) {
+    case PlatformResolutionPreset::low:
       return 240;
-      break;
-    case ResolutionPreset::kMedium:
+    case PlatformResolutionPreset::medium:
       return 480;
-      break;
-    case ResolutionPreset::kHigh:
+    case PlatformResolutionPreset::high:
       return 720;
-      break;
-    case ResolutionPreset::kVeryHigh:
+    case PlatformResolutionPreset::veryHigh:
       return 1080;
-      break;
-    case ResolutionPreset::kUltraHigh:
+    case PlatformResolutionPreset::ultraHigh:
       return 2160;
-      break;
-    case ResolutionPreset::kMax:
-    case ResolutionPreset::kAuto:
+    case PlatformResolutionPreset::max:
     default:
       // no limit.
       return 0xffffffff;
-      break;
   }
 }
 
@@ -496,8 +487,7 @@ HRESULT CaptureControllerImpl::FindBaseMediaTypes() {
   return S_OK;
 }
 
-void CaptureControllerImpl::StartRecord(const std::string& file_path,
-                                        int64_t max_video_duration_ms) {
+void CaptureControllerImpl::StartRecord(const std::string& file_path) {
   assert(capture_engine_);
 
   if (!IsInitialized()) {
@@ -518,7 +508,7 @@ void CaptureControllerImpl::StartRecord(const std::string& file_path,
   }
 
   if (!record_handler_) {
-    record_handler_ = std::make_unique<RecordHandler>(record_audio_);
+    record_handler_ = std::make_unique<RecordHandler>(media_settings_);
   } else if (!record_handler_->CanStart()) {
     return OnRecordStarted(
         CameraResult::kError,
@@ -528,8 +518,7 @@ void CaptureControllerImpl::StartRecord(const std::string& file_path,
 
   // Check MF_CAPTURE_ENGINE_RECORD_STARTED event handling for response
   // process.
-  hr = record_handler_->StartRecord(file_path, max_video_duration_ms,
-                                    capture_engine_.Get(),
+  hr = record_handler_->StartRecord(file_path, capture_engine_.Get(),
                                     base_capture_media_type_.Get());
   if (FAILED(hr)) {
     // Destroy record handler on error cases to make sure state is resetted.
@@ -559,23 +548,6 @@ void CaptureControllerImpl::StopRecord() {
   if (FAILED(hr)) {
     return OnRecordStopped(GetCameraResult(hr),
                            "Failed to stop video recording");
-  }
-}
-
-// Stops timed recording. Called internally when requested time is passed.
-// Check MF_CAPTURE_ENGINE_RECORD_STOPPED event handling for response process.
-void CaptureControllerImpl::StopTimedRecord() {
-  assert(capture_controller_listener_);
-  if (!record_handler_ || !record_handler_->IsTimedRecording()) {
-    return;
-  }
-
-  HRESULT hr = record_handler_->StopRecord(capture_engine_.Get());
-  if (FAILED(hr)) {
-    // Destroy record handler on error cases to make sure state is resetted.
-    record_handler_ = nullptr;
-    return capture_controller_listener_->OnVideoRecordFailed(
-        GetCameraResult(hr), "Failed to record video");
   }
 }
 
@@ -850,15 +822,8 @@ void CaptureControllerImpl::OnRecordStopped(CameraResult result,
     if (result == CameraResult::kSuccess) {
       std::string path = record_handler_->GetRecordPath();
       capture_controller_listener_->OnStopRecordSucceeded(path);
-      if (record_handler_->IsTimedRecording()) {
-        capture_controller_listener_->OnVideoRecordSucceeded(
-            path, (record_handler_->GetRecordedDuration() / 1000));
-      }
     } else {
       capture_controller_listener_->OnStopRecordFailed(result, error);
-      if (record_handler_->IsTimedRecording()) {
-        capture_controller_listener_->OnVideoRecordFailed(result, error);
-      }
     }
   }
 
@@ -882,7 +847,6 @@ bool CaptureControllerImpl::UpdateBuffer(uint8_t* buffer,
 }
 
 // Handles capture time update from each processed frame.
-// Stops timed recordings if requested recording duration has passed.
 // Called via IMFCaptureEngineOnSampleCallback implementation.
 // Implements CaptureEngineObserver::UpdateCaptureTime.
 void CaptureControllerImpl::UpdateCaptureTime(uint64_t capture_time_us) {
@@ -894,14 +858,6 @@ void CaptureControllerImpl::UpdateCaptureTime(uint64_t capture_time_us) {
     // Informs that first frame is captured successfully and preview has
     // started.
     OnPreviewStarted(CameraResult::kSuccess, "");
-  }
-
-  // Checks if max_video_duration_ms is passed.
-  if (record_handler_) {
-    record_handler_->UpdateRecordingTime(capture_time_us);
-    if (record_handler_->ShouldStopTimedRecording()) {
-      StopTimedRecord();
-    }
   }
 }
 

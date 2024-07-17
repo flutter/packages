@@ -1,3 +1,32 @@
+## 2.9.1
+
+* Updates minimum web implementation version to ensure support for
+  the new `webOptions` exposed in `2.9.0`.
+
+## 2.9.0
+
+* Exports types: `VideoPlayerWebOptions` and `VideoPlayerWebOptionsControls` to
+  customize the `webOptions` field in `VideoPlayerOptions` objects.
+* Forwards `webOptions` to the web implementation.
+
+## 2.8.7
+
+* Ensures that `value.position` never reports a value larger than `value.duration`.
+* Updates minimum supported SDK version to Flutter 3.16/Dart 3.2.
+
+## 2.8.6
+
+* Updates minimum iOS implementation version to include a privacy manifest.
+* Updates minimum supported SDK version to Flutter 3.16.6/Dart 3.2.3.
+
+## 2.8.5
+
+* Updates example to call `super.dispose()` last.
+
+## 2.8.4
+
+* Removes `_ambiguate` methods from code.
+
 ## 2.8.3
 
 * Fixes typo in `README.md`.

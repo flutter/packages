@@ -4,19 +4,27 @@
 
 package com.example.test_plugin
 
-import androidx.annotation.NonNull
 import io.flutter.embedding.engine.plugins.FlutterPlugin
+import io.flutter.embedding.engine.plugins.FlutterPlugin.FlutterPluginBinding
 
 /** This plugin handles the native side of the integration tests in example/integration_test/. */
 class TestPlugin : FlutterPlugin, HostIntegrationCoreApi {
-  var flutterApi: FlutterIntegrationCoreApi? = null
+  private var flutterApi: FlutterIntegrationCoreApi? = null
+  private var flutterSmallApiOne: FlutterSmallApi? = null
+  private var flutterSmallApiTwo: FlutterSmallApi? = null
 
-  override fun onAttachedToEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
-    HostIntegrationCoreApi.setUp(binding.getBinaryMessenger(), this)
-    flutterApi = FlutterIntegrationCoreApi(binding.getBinaryMessenger())
+  override fun onAttachedToEngine(binding: FlutterPluginBinding) {
+    HostIntegrationCoreApi.setUp(binding.binaryMessenger, this)
+    val testSuffixApiOne = TestPluginWithSuffix()
+    testSuffixApiOne.setUp(binding, "suffixOne")
+    val testSuffixApiTwo = TestPluginWithSuffix()
+    testSuffixApiTwo.setUp(binding, "suffixTwo")
+    flutterApi = FlutterIntegrationCoreApi(binding.binaryMessenger)
+    flutterSmallApiOne = FlutterSmallApi(binding.binaryMessenger, "suffixOne")
+    flutterSmallApiTwo = FlutterSmallApi(binding.binaryMessenger, "suffixTwo")
   }
 
-  override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {}
+  override fun onDetachedFromEngine(binding: FlutterPluginBinding) {}
 
   // HostIntegrationCoreApi
 
@@ -27,6 +35,12 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi {
   }
 
   override fun echoAllNullableTypes(everything: AllNullableTypes?): AllNullableTypes? {
+    return everything
+  }
+
+  override fun echoAllNullableTypesWithoutRecursion(
+      everything: AllNullableTypesWithoutRecursion?
+  ): AllNullableTypesWithoutRecursion? {
     return everything
   }
 
@@ -66,8 +80,8 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi {
     return anObject
   }
 
-  override fun echoList(aList: List<Any?>): List<Any?> {
-    return aList
+  override fun echoList(list: List<Any?>): List<Any?> {
+    return list
   }
 
   override fun echoMap(aMap: Map<String?, Any?>): Map<String?, Any?> {
@@ -108,6 +122,17 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi {
       aNullableString: String?
   ): AllNullableTypes {
     return AllNullableTypes(
+        aNullableBool = aNullableBool,
+        aNullableInt = aNullableInt,
+        aNullableString = aNullableString)
+  }
+
+  override fun sendMultipleNullableTypesWithoutRecursion(
+      aNullableBool: Boolean?,
+      aNullableInt: Long?,
+      aNullableString: String?
+  ): AllNullableTypesWithoutRecursion {
+    return AllNullableTypesWithoutRecursion(
         aNullableBool = aNullableBool,
         aNullableInt = aNullableInt,
         aNullableString = aNullableString)
@@ -184,6 +209,13 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi {
     callback(Result.success(everything))
   }
 
+  override fun echoAsyncNullableAllNullableTypesWithoutRecursion(
+      everything: AllNullableTypesWithoutRecursion?,
+      callback: (Result<AllNullableTypesWithoutRecursion?>) -> Unit
+  ) {
+    callback(Result.success(everything))
+  }
+
   override fun echoAsyncInt(anInt: Long, callback: (Result<Long>) -> Unit) {
     callback(Result.success(anInt))
   }
@@ -208,8 +240,8 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi {
     callback(Result.success(anObject))
   }
 
-  override fun echoAsyncList(aList: List<Any?>, callback: (Result<List<Any?>>) -> Unit) {
-    callback(Result.success(aList))
+  override fun echoAsyncList(list: List<Any?>, callback: (Result<List<Any?>>) -> Unit) {
+    callback(Result.success(list))
   }
 
   override fun echoAsyncMap(
@@ -250,8 +282,8 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi {
     callback(Result.success(anObject))
   }
 
-  override fun echoAsyncNullableList(aList: List<Any?>?, callback: (Result<List<Any?>?>) -> Unit) {
-    callback(Result.success(aList))
+  override fun echoAsyncNullableList(list: List<Any?>?, callback: (Result<List<Any?>?>) -> Unit) {
+    callback(Result.success(list))
   }
 
   override fun echoAsyncNullableMap(
@@ -266,15 +298,15 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi {
   }
 
   override fun callFlutterNoop(callback: (Result<Unit>) -> Unit) {
-    flutterApi!!.noop() { callback(Result.success(Unit)) }
+    flutterApi!!.noop { callback(Result.success(Unit)) }
   }
 
   override fun callFlutterThrowError(callback: (Result<Any?>) -> Unit) {
-    flutterApi!!.throwError() { result -> callback(result) }
+    flutterApi!!.throwError { result -> callback(result) }
   }
 
   override fun callFlutterThrowErrorFromVoid(callback: (Result<Unit>) -> Unit) {
-    flutterApi!!.throwErrorFromVoid() { result -> callback(result) }
+    flutterApi!!.throwErrorFromVoid { result -> callback(result) }
   }
 
   override fun callFlutterEchoAllTypes(everything: AllTypes, callback: (Result<AllTypes>) -> Unit) {
@@ -290,6 +322,25 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi {
     flutterApi!!.sendMultipleNullableTypes(aNullableBool, aNullableInt, aNullableString) { echo ->
       callback(echo)
     }
+  }
+
+  override fun callFlutterEchoAllNullableTypesWithoutRecursion(
+      everything: AllNullableTypesWithoutRecursion?,
+      callback: (Result<AllNullableTypesWithoutRecursion?>) -> Unit
+  ) {
+    flutterApi!!.echoAllNullableTypesWithoutRecursion(everything) { echo -> callback(echo) }
+  }
+
+  override fun callFlutterSendMultipleNullableTypesWithoutRecursion(
+      aNullableBool: Boolean?,
+      aNullableInt: Long?,
+      aNullableString: String?,
+      callback: (Result<AllNullableTypesWithoutRecursion>) -> Unit
+  ) {
+    flutterApi!!.sendMultipleNullableTypesWithoutRecursion(
+        aNullableBool, aNullableInt, aNullableString) { echo ->
+          callback(echo)
+        }
   }
 
   override fun callFlutterEchoBool(aBool: Boolean, callback: (Result<Boolean>) -> Unit) {
@@ -308,12 +359,12 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi {
     flutterApi!!.echoString(aString) { echo -> callback(echo) }
   }
 
-  override fun callFlutterEchoUint8List(aList: ByteArray, callback: (Result<ByteArray>) -> Unit) {
-    flutterApi!!.echoUint8List(aList) { echo -> callback(echo) }
+  override fun callFlutterEchoUint8List(list: ByteArray, callback: (Result<ByteArray>) -> Unit) {
+    flutterApi!!.echoUint8List(list) { echo -> callback(echo) }
   }
 
-  override fun callFlutterEchoList(aList: List<Any?>, callback: (Result<List<Any?>>) -> Unit) {
-    flutterApi!!.echoList(aList) { echo -> callback(echo) }
+  override fun callFlutterEchoList(list: List<Any?>, callback: (Result<List<Any?>>) -> Unit) {
+    flutterApi!!.echoList(list) { echo -> callback(echo) }
   }
 
   override fun callFlutterEchoMap(
@@ -324,6 +375,7 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi {
   }
 
   override fun callFlutterEchoEnum(anEnum: AnEnum, callback: (Result<AnEnum>) -> Unit) {
+    //    callback(Result.success(anEnum))
     flutterApi!!.echoEnum(anEnum) { echo -> callback(echo) }
   }
 
@@ -357,17 +409,17 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi {
   }
 
   override fun callFlutterEchoNullableUint8List(
-      aList: ByteArray?,
+      list: ByteArray?,
       callback: (Result<ByteArray?>) -> Unit
   ) {
-    flutterApi!!.echoNullableUint8List(aList) { echo -> callback(echo) }
+    flutterApi!!.echoNullableUint8List(list) { echo -> callback(echo) }
   }
 
   override fun callFlutterEchoNullableList(
-      aList: List<Any?>?,
+      list: List<Any?>?,
       callback: (Result<List<Any?>?>) -> Unit
   ) {
-    flutterApi!!.echoNullableList(aList) { echo -> callback(echo) }
+    flutterApi!!.echoNullableList(list) { echo -> callback(echo) }
   }
 
   override fun callFlutterEchoNullableMap(
@@ -379,5 +431,34 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi {
 
   override fun callFlutterEchoNullableEnum(anEnum: AnEnum?, callback: (Result<AnEnum?>) -> Unit) {
     flutterApi!!.echoNullableEnum(anEnum) { echo -> callback(echo) }
+  }
+
+  override fun callFlutterSmallApiEchoString(aString: String, callback: (Result<String>) -> Unit) {
+    flutterSmallApiOne!!.echoString(aString) { echoOne ->
+      flutterSmallApiTwo!!.echoString(aString) { echoTwo ->
+        if (echoOne == echoTwo) {
+          callback(echoTwo)
+        } else {
+          callback(
+              Result.failure(
+                  Exception("Multi-instance responses were not matching: $echoOne, $echoTwo")))
+        }
+      }
+    }
+  }
+}
+
+class TestPluginWithSuffix : HostSmallApi {
+
+  fun setUp(binding: FlutterPluginBinding, suffix: String) {
+    HostSmallApi.setUp(binding.binaryMessenger, this, suffix)
+  }
+
+  override fun echo(aString: String, callback: (Result<String>) -> Unit) {
+    callback(Result.success(aString))
+  }
+
+  override fun voidVoid(callback: (Result<Unit>) -> Unit) {
+    callback(Result.success(Unit))
   }
 }

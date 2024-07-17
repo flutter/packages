@@ -1,3 +1,7 @@
+## 2.10.0
+
+* Adds limit parameter to `MediaOptions` and `MultiImagePickerOptions`.
+
 ## 2.9.4
 
 * Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.

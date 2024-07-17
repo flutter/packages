@@ -177,6 +177,12 @@ class SwiftFunction {
   final String value;
 }
 
+/// Metadata to annotate data classes to be defined as class in Swift output.
+class SwiftClass {
+  /// Constructor.
+  const SwiftClass();
+}
+
 /// Type of TaskQueue which determines how handlers are dispatched for
 /// HostApi's.
 enum TaskQueueType {
@@ -388,7 +394,7 @@ class PigeonOptions {
       if (oneLanguage != null) 'oneLanguage': oneLanguage!,
       if (debugGenerators != null) 'debugGenerators': debugGenerators!,
       if (basePath != null) 'basePath': basePath!,
-      if (_dartPackageName != null) 'dartPackageName': _dartPackageName!,
+      if (_dartPackageName != null) 'dartPackageName': _dartPackageName,
     };
     return result;
   }
@@ -615,6 +621,12 @@ class ObjcGeneratorAdapter implements GeneratorAdapter {
       StringSink sink, PigeonOptions options, Root root, FileType fileType) {
     final ObjcOptions objcOptions = options.objcOptions ?? const ObjcOptions();
     final ObjcOptions objcOptionsWithHeader = objcOptions.merge(ObjcOptions(
+      fileSpecificClassNameComponent: options.objcSourceOut
+              ?.split('/')
+              .lastOrNull
+              ?.split('.')
+              .firstOrNull ??
+          '',
       copyrightHeader: options.copyrightHeader != null
           ? _lineReader(
               path.posix.join(options.basePath ?? '', options.copyrightHeader))
@@ -695,10 +707,13 @@ class SwiftGeneratorAdapter implements GeneratorAdapter {
       StringSink sink, PigeonOptions options, Root root, FileType fileType) {
     SwiftOptions swiftOptions = options.swiftOptions ?? const SwiftOptions();
     swiftOptions = swiftOptions.merge(SwiftOptions(
+      fileSpecificClassNameComponent:
+          options.swiftOut?.split('/').lastOrNull?.split('.').firstOrNull ?? '',
       copyrightHeader: options.copyrightHeader != null
           ? _lineReader(
               path.posix.join(options.basePath ?? '', options.copyrightHeader))
           : null,
+      errorClassName: swiftOptions.errorClassName,
     ));
     const SwiftGenerator generator = SwiftGenerator();
     generator.generate(
@@ -777,6 +792,9 @@ class KotlinGeneratorAdapter implements GeneratorAdapter {
     kotlinOptions = kotlinOptions.merge(KotlinOptions(
       errorClassName: kotlinOptions.errorClassName ?? 'FlutterError',
       includeErrorClass: kotlinOptions.includeErrorClass,
+      fileSpecificClassNameComponent:
+          options.kotlinOut?.split('/').lastOrNull?.split('.').firstOrNull ??
+              '',
       copyrightHeader: options.copyrightHeader != null
           ? _lineReader(
               path.posix.join(options.basePath ?? '', options.copyrightHeader))
@@ -1339,12 +1357,20 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
               (Api apiDefinition) => apiDefinition.name == type.baseName,
             );
     if (assocClass != null) {
-      return type.copyWithClass(assocClass);
+      type = type.copyWithClass(assocClass);
     } else if (assocEnum != null) {
-      return type.copyWithEnum(assocEnum);
+      type = type.copyWithEnum(assocEnum);
     } else if (assocProxyApi != null) {
-      return type.copyWithProxyApi(assocProxyApi);
+      type = type.copyWithProxyApi(assocProxyApi);
     }
+    if (type.typeArguments.isNotEmpty) {
+      final List<TypeDeclaration> newTypes = <TypeDeclaration>[];
+      for (final TypeDeclaration type in type.typeArguments) {
+        newTypes.add(_attachAssociatedDefinition(type));
+      }
+      type = type.copyWithTypeArguments(newTypes);
+    }
+
     return type;
   }
 
@@ -1550,6 +1576,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
       _currentClass = Class(
         name: node.name.lexeme,
         fields: <NamedType>[],
+        isSwiftClass: _hasMetadata(node.metadata, 'SwiftClass'),
         documentationComments:
             _documentationCommentsParser(node.documentationComment?.tokens),
       );
@@ -1973,7 +2000,7 @@ class Pigeon {
   }
 
   /// Reads the file located at [path] and generates [ParseResults] by parsing
-  /// it.  [types] optionally filters out what datatypes are actually parsed.
+  /// it. [types] optionally filters out what datatypes are actually parsed.
   /// [sdkPath] for specifying the Dart SDK path for
   /// [AnalysisContextCollection].
   ParseResults parseFile(String inputPath, {String? sdkPath}) {
@@ -2241,14 +2268,16 @@ ${_argParser.usage}''';
       options = options.merge(PigeonOptions(
           objcOptions: (options.objcOptions ?? const ObjcOptions()).merge(
               ObjcOptions(
-                  headerIncludePath: path.basename(options.objcHeaderOut!)))));
+                  headerIncludePath: options.objcOptions?.headerIncludePath ??
+                      path.basename(options.objcHeaderOut!)))));
     }
 
     if (options.cppHeaderOut != null) {
       options = options.merge(PigeonOptions(
           cppOptions: (options.cppOptions ?? const CppOptions()).merge(
               CppOptions(
-                  headerIncludePath: path.basename(options.cppHeaderOut!)))));
+                  headerIncludePath: options.cppOptions?.headerIncludePath ??
+                      path.basename(options.cppHeaderOut!)))));
     }
 
     for (final GeneratorAdapter adapter in safeGeneratorAdapters) {

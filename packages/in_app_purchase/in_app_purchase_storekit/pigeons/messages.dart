@@ -238,7 +238,7 @@ abstract class InAppPurchaseAPI {
   SKProductsResponseMessage startProductRequest(
       List<String> productIdentifiers);
 
-  void finishTransaction(Map<String, String?> finishMap);
+  void finishTransaction(Map<String, Object?> finishMap);
 
   void restoreTransactions(String? applicationUserName);
 

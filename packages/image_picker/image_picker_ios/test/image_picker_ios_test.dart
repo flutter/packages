@@ -61,12 +61,14 @@ class _ApiLogger implements TestHostImagePickerApi {
     MaxSize maxSize,
     int? imageQuality,
     bool requestFullMetadata,
+    int? limit,
   ) async {
     calls.add(_LoggedMethodCall('pickMultiImage', arguments: <String, dynamic>{
       'maxWidth': maxSize.width,
       'maxHeight': maxSize.height,
       'imageQuality': imageQuality,
       'requestFullMetadata': requestFullMetadata,
+      'limit': limit,
     }));
     return returnValue as List<String?>;
   }
@@ -80,6 +82,7 @@ class _ApiLogger implements TestHostImagePickerApi {
       'imageQuality': mediaSelectionOptions.imageQuality,
       'requestFullMetadata': mediaSelectionOptions.requestFullMetadata,
       'allowMultiple': mediaSelectionOptions.allowMultiple,
+      'limit': mediaSelectionOptions.limit,
     }));
     return returnValue as List<String?>;
   }
@@ -329,6 +332,7 @@ void main() {
                 'maxHeight': null,
                 'imageQuality': null,
                 'requestFullMetadata': true,
+                'limit': null,
               }),
         ],
       );
@@ -370,6 +374,7 @@ void main() {
                 'maxHeight': null,
                 'imageQuality': null,
                 'requestFullMetadata': true,
+                'limit': null,
               }),
           const _LoggedMethodCall('pickMultiImage',
               arguments: <String, dynamic>{
@@ -377,6 +382,7 @@ void main() {
                 'maxHeight': null,
                 'imageQuality': null,
                 'requestFullMetadata': true,
+                'limit': null,
               }),
           const _LoggedMethodCall('pickMultiImage',
               arguments: <String, dynamic>{
@@ -384,6 +390,7 @@ void main() {
                 'maxHeight': 10.0,
                 'imageQuality': null,
                 'requestFullMetadata': true,
+                'limit': null,
               }),
           const _LoggedMethodCall('pickMultiImage',
               arguments: <String, dynamic>{
@@ -391,6 +398,7 @@ void main() {
                 'maxHeight': 20.0,
                 'imageQuality': null,
                 'requestFullMetadata': true,
+                'limit': null,
               }),
           const _LoggedMethodCall('pickMultiImage',
               arguments: <String, dynamic>{
@@ -398,6 +406,7 @@ void main() {
                 'maxHeight': null,
                 'imageQuality': 70,
                 'requestFullMetadata': true,
+                'limit': null,
               }),
           const _LoggedMethodCall('pickMultiImage',
               arguments: <String, dynamic>{
@@ -405,6 +414,7 @@ void main() {
                 'maxHeight': 10.0,
                 'imageQuality': 70,
                 'requestFullMetadata': true,
+                'limit': null,
               }),
           const _LoggedMethodCall('pickMultiImage',
               arguments: <String, dynamic>{
@@ -412,6 +422,7 @@ void main() {
                 'maxHeight': 20.0,
                 'imageQuality': 70,
                 'requestFullMetadata': true,
+                'limit': null,
               }),
         ],
       );
@@ -769,6 +780,7 @@ void main() {
                 'maxHeight': null,
                 'imageQuality': null,
                 'requestFullMetadata': true,
+                'limit': null,
               }),
         ],
       );
@@ -810,6 +822,7 @@ void main() {
                 'maxHeight': null,
                 'imageQuality': null,
                 'requestFullMetadata': true,
+                'limit': null,
               }),
           const _LoggedMethodCall('pickMultiImage',
               arguments: <String, dynamic>{
@@ -817,6 +830,7 @@ void main() {
                 'maxHeight': null,
                 'imageQuality': null,
                 'requestFullMetadata': true,
+                'limit': null,
               }),
           const _LoggedMethodCall('pickMultiImage',
               arguments: <String, dynamic>{
@@ -824,6 +838,7 @@ void main() {
                 'maxHeight': 10.0,
                 'imageQuality': null,
                 'requestFullMetadata': true,
+                'limit': null,
               }),
           const _LoggedMethodCall('pickMultiImage',
               arguments: <String, dynamic>{
@@ -831,6 +846,7 @@ void main() {
                 'maxHeight': 20.0,
                 'imageQuality': null,
                 'requestFullMetadata': true,
+                'limit': null,
               }),
           const _LoggedMethodCall('pickMultiImage',
               arguments: <String, dynamic>{
@@ -838,6 +854,7 @@ void main() {
                 'maxHeight': null,
                 'imageQuality': 70,
                 'requestFullMetadata': true,
+                'limit': null,
               }),
           const _LoggedMethodCall('pickMultiImage',
               arguments: <String, dynamic>{
@@ -845,6 +862,7 @@ void main() {
                 'maxHeight': 10.0,
                 'imageQuality': 70,
                 'requestFullMetadata': true,
+                'limit': null,
               }),
           const _LoggedMethodCall('pickMultiImage',
               arguments: <String, dynamic>{
@@ -852,6 +870,7 @@ void main() {
                 'maxHeight': 20.0,
                 'imageQuality': 70,
                 'requestFullMetadata': true,
+                'limit': null,
               }),
         ],
       );
@@ -903,7 +922,8 @@ void main() {
             'maxHeight': null,
             'imageQuality': null,
             'requestFullMetadata': true,
-            'allowMultiple': true
+            'allowMultiple': true,
+            'limit': null,
           }),
         ],
       );
@@ -959,6 +979,16 @@ void main() {
           imageQuality: 70,
         ),
       ));
+      await picker.getMedia(
+          options: MediaOptions(
+        allowMultiple: true,
+        imageOptions: ImageOptions.createAndValidate(
+          maxWidth: 10.0,
+          maxHeight: 20.0,
+          imageQuality: 70,
+        ),
+        limit: 5,
+      ));
 
       expect(
         log.calls,
@@ -968,49 +998,64 @@ void main() {
             'maxHeight': null,
             'imageQuality': null,
             'requestFullMetadata': true,
-            'allowMultiple': true
+            'allowMultiple': true,
+            'limit': null,
           }),
           const _LoggedMethodCall('pickMedia', arguments: <String, dynamic>{
             'maxWidth': 10.0,
             'maxHeight': null,
             'imageQuality': null,
             'requestFullMetadata': true,
-            'allowMultiple': true
+            'allowMultiple': true,
+            'limit': null,
           }),
           const _LoggedMethodCall('pickMedia', arguments: <String, dynamic>{
             'maxWidth': null,
             'maxHeight': 10.0,
             'imageQuality': null,
             'requestFullMetadata': true,
-            'allowMultiple': true
+            'allowMultiple': true,
+            'limit': null,
           }),
           const _LoggedMethodCall('pickMedia', arguments: <String, dynamic>{
             'maxWidth': 10.0,
             'maxHeight': 20.0,
             'imageQuality': null,
             'requestFullMetadata': true,
-            'allowMultiple': true
+            'allowMultiple': true,
+            'limit': null,
           }),
           const _LoggedMethodCall('pickMedia', arguments: <String, dynamic>{
             'maxWidth': 10.0,
             'maxHeight': null,
             'imageQuality': 70,
             'requestFullMetadata': true,
-            'allowMultiple': true
+            'allowMultiple': true,
+            'limit': null,
           }),
           const _LoggedMethodCall('pickMedia', arguments: <String, dynamic>{
             'maxWidth': null,
             'maxHeight': 10.0,
             'imageQuality': 70,
             'requestFullMetadata': true,
-            'allowMultiple': true
+            'allowMultiple': true,
+            'limit': null,
           }),
           const _LoggedMethodCall('pickMedia', arguments: <String, dynamic>{
             'maxWidth': 10.0,
             'maxHeight': 20.0,
             'imageQuality': 70,
             'requestFullMetadata': true,
-            'allowMultiple': true
+            'allowMultiple': true,
+            'limit': null,
+          }),
+          const _LoggedMethodCall('pickMedia', arguments: <String, dynamic>{
+            'maxWidth': 10.0,
+            'maxHeight': 20.0,
+            'imageQuality': 70,
+            'requestFullMetadata': true,
+            'allowMultiple': true,
+            'limit': 5,
           }),
         ],
       );
@@ -1032,7 +1077,8 @@ void main() {
             'maxHeight': null,
             'imageQuality': null,
             'requestFullMetadata': false,
-            'allowMultiple': true
+            'allowMultiple': true,
+            'limit': null,
           }),
         ],
       );
@@ -1053,7 +1099,8 @@ void main() {
             'maxHeight': null,
             'imageQuality': null,
             'requestFullMetadata': true,
-            'allowMultiple': false
+            'allowMultiple': false,
+            'limit': null,
           }),
         ],
       );
@@ -1097,6 +1144,36 @@ void main() {
           allowMultiple: true,
           imageOptions: ImageOptions.createAndValidate(imageQuality: 101),
         )),
+        throwsArgumentError,
+      );
+    });
+
+    test('does not accept a invalid limit argument', () {
+      log.returnValue = <String>['0', '1'];
+      expect(
+        () => picker.getMedia(
+            options: const MediaOptions(
+          allowMultiple: true,
+          limit: -1,
+        )),
+        throwsArgumentError,
+      );
+
+      expect(
+        () => picker.getMedia(
+            options: const MediaOptions(
+          allowMultiple: true,
+          limit: 0,
+        )),
+        throwsArgumentError,
+      );
+    });
+
+    test('does not accept a not null limit when allowMultiple is false', () {
+      expect(
+        () => picker.getMedia(
+          options: const MediaOptions(allowMultiple: false, limit: 5),
+        ),
         throwsArgumentError,
       );
     });
@@ -1501,6 +1578,7 @@ void main() {
                 'maxHeight': null,
                 'imageQuality': null,
                 'requestFullMetadata': true,
+                'limit': null,
               }),
         ],
       );
@@ -1543,6 +1621,16 @@ void main() {
           ),
         ),
       );
+      await picker.getMultiImageWithOptions(
+        options: const MultiImagePickerOptions(
+          imageOptions: ImageOptions(
+            maxWidth: 10.0,
+            maxHeight: 20.0,
+            imageQuality: 70,
+          ),
+          limit: 5,
+        ),
+      );
 
       expect(
         log.calls,
@@ -1553,6 +1641,7 @@ void main() {
                 'maxHeight': null,
                 'imageQuality': null,
                 'requestFullMetadata': true,
+                'limit': null,
               }),
           const _LoggedMethodCall('pickMultiImage',
               arguments: <String, dynamic>{
@@ -1560,6 +1649,7 @@ void main() {
                 'maxHeight': null,
                 'imageQuality': null,
                 'requestFullMetadata': true,
+                'limit': null,
               }),
           const _LoggedMethodCall('pickMultiImage',
               arguments: <String, dynamic>{
@@ -1567,6 +1657,7 @@ void main() {
                 'maxHeight': 10.0,
                 'imageQuality': null,
                 'requestFullMetadata': true,
+                'limit': null,
               }),
           const _LoggedMethodCall('pickMultiImage',
               arguments: <String, dynamic>{
@@ -1574,6 +1665,7 @@ void main() {
                 'maxHeight': 20.0,
                 'imageQuality': null,
                 'requestFullMetadata': true,
+                'limit': null,
               }),
           const _LoggedMethodCall('pickMultiImage',
               arguments: <String, dynamic>{
@@ -1581,6 +1673,7 @@ void main() {
                 'maxHeight': null,
                 'imageQuality': 70,
                 'requestFullMetadata': true,
+                'limit': null,
               }),
           const _LoggedMethodCall('pickMultiImage',
               arguments: <String, dynamic>{
@@ -1588,6 +1681,7 @@ void main() {
                 'maxHeight': 10.0,
                 'imageQuality': 70,
                 'requestFullMetadata': true,
+                'limit': null,
               }),
           const _LoggedMethodCall('pickMultiImage',
               arguments: <String, dynamic>{
@@ -1595,6 +1689,15 @@ void main() {
                 'maxHeight': 20.0,
                 'imageQuality': 70,
                 'requestFullMetadata': true,
+                'limit': null,
+              }),
+          const _LoggedMethodCall('pickMultiImage',
+              arguments: <String, dynamic>{
+                'maxWidth': 10.0,
+                'maxHeight': 20.0,
+                'imageQuality': 70,
+                'requestFullMetadata': true,
+                'limit': 5,
               }),
         ],
       );
@@ -1642,6 +1745,27 @@ void main() {
       );
     });
 
+    test('does not accept a invalid limit argument', () {
+      log.returnValue = <String>['0', '1'];
+      expect(
+        () => picker.getMultiImageWithOptions(
+          options: const MultiImagePickerOptions(
+            limit: -1,
+          ),
+        ),
+        throwsArgumentError,
+      );
+
+      expect(
+        () => picker.getMultiImageWithOptions(
+          options: const MultiImagePickerOptions(
+            limit: 0,
+          ),
+        ),
+        throwsArgumentError,
+      );
+    });
+
     test('handles an empty response', () async {
       log.returnValue = <String>[];
 
@@ -1661,6 +1785,7 @@ void main() {
                 'maxHeight': null,
                 'imageQuality': null,
                 'requestFullMetadata': true,
+                'limit': null,
               }),
         ],
       );
@@ -1683,6 +1808,7 @@ void main() {
                 'maxHeight': null,
                 'imageQuality': null,
                 'requestFullMetadata': false,
+                'limit': null,
               }),
         ],
       );

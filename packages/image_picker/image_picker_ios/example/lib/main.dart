@@ -56,6 +56,7 @@ class _MyHomePageState extends State<MyHomePage> {
   final TextEditingController maxWidthController = TextEditingController();
   final TextEditingController maxHeightController = TextEditingController();
   final TextEditingController qualityController = TextEditingController();
+  final TextEditingController limitController = TextEditingController();
 
   Future<void> _playVideo(XFile? file) async {
     if (file != null && mounted) {
@@ -88,18 +89,20 @@ class _MyHomePageState extends State<MyHomePage> {
             source: source, maxDuration: const Duration(seconds: 10));
         await _playVideo(file);
       } else if (isMultiImage) {
-        await _displayPickImageDialog(context,
-            (double? maxWidth, double? maxHeight, int? quality) async {
+        await _displayPickImageDialog(context, true, (double? maxWidth,
+            double? maxHeight, int? quality, int? limit) async {
           try {
             final List<XFile> pickedFileList = isMedia
                 ? await _picker.getMedia(
                     options: MediaOptions(
-                        allowMultiple: isMultiImage,
-                        imageOptions: ImageOptions(
-                          maxWidth: maxWidth,
-                          maxHeight: maxHeight,
-                          imageQuality: quality,
-                        )),
+                      allowMultiple: isMultiImage,
+                      imageOptions: ImageOptions(
+                        maxWidth: maxWidth,
+                        maxHeight: maxHeight,
+                        imageQuality: quality,
+                      ),
+                      limit: limit,
+                    ),
                   )
                 : await _picker.getMultiImageWithOptions(
                     options: MultiImagePickerOptions(
@@ -108,6 +111,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         maxHeight: maxHeight,
                         imageQuality: quality,
                       ),
+                      limit: limit,
                     ),
                   );
             setState(() {
@@ -120,18 +124,19 @@ class _MyHomePageState extends State<MyHomePage> {
           }
         });
       } else if (isMedia) {
-        await _displayPickImageDialog(context,
-            (double? maxWidth, double? maxHeight, int? quality) async {
+        await _displayPickImageDialog(context, false, (double? maxWidth,
+            double? maxHeight, int? quality, int? limit) async {
           try {
             final List<XFile> pickedFileList = <XFile>[];
             final XFile? media = _firstOrNull(await _picker.getMedia(
               options: MediaOptions(
-                  allowMultiple: isMultiImage,
-                  imageOptions: ImageOptions(
-                    maxWidth: maxWidth,
-                    maxHeight: maxHeight,
-                    imageQuality: quality,
-                  )),
+                allowMultiple: isMultiImage,
+                imageOptions: ImageOptions(
+                  maxWidth: maxWidth,
+                  maxHeight: maxHeight,
+                  imageQuality: quality,
+                ),
+              ),
             ));
 
             if (media != null) {
@@ -145,8 +150,8 @@ class _MyHomePageState extends State<MyHomePage> {
           }
         });
       } else {
-        await _displayPickImageDialog(context,
-            (double? maxWidth, double? maxHeight, int? quality) async {
+        await _displayPickImageDialog(context, false, (double? maxWidth,
+            double? maxHeight, int? quality, int? limit) async {
           try {
             final XFile? pickedFile = await _picker.getImageFromSource(
               source: source,
@@ -400,7 +405,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Future<void> _displayPickImageDialog(
-      BuildContext context, OnPickImageCallback onPick) async {
+      BuildContext context, bool isMulti, OnPickImageCallback onPick) async {
     return showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -428,6 +433,13 @@ class _MyHomePageState extends State<MyHomePage> {
                   decoration: const InputDecoration(
                       hintText: 'Enter quality if desired'),
                 ),
+                if (isMulti)
+                  TextField(
+                    controller: limitController,
+                    keyboardType: TextInputType.number,
+                    decoration: const InputDecoration(
+                        hintText: 'Enter limit if desired'),
+                  ),
               ],
             ),
             actions: <Widget>[
@@ -449,7 +461,10 @@ class _MyHomePageState extends State<MyHomePage> {
                     final int? quality = qualityController.text.isNotEmpty
                         ? int.parse(qualityController.text)
                         : null;
-                    onPick(width, height, quality);
+                    final int? limit = limitController.text.isNotEmpty
+                        ? int.parse(limitController.text)
+                        : null;
+                    onPick(width, height, quality, limit);
                     Navigator.of(context).pop();
                   }),
             ],
@@ -459,7 +474,7 @@ class _MyHomePageState extends State<MyHomePage> {
 }
 
 typedef OnPickImageCallback = void Function(
-    double? maxWidth, double? maxHeight, int? quality);
+    double? maxWidth, double? maxHeight, int? quality, int? limit);
 
 class AspectRatioVideo extends StatefulWidget {
   const AspectRatioVideo(this.controller, {super.key});

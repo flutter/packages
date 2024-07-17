@@ -15,10 +15,12 @@
 #include <wrl/client.h>
 
 #include <memory>
+#include <optional>
 #include <string>
 
 #include "capture_controller_listener.h"
 #include "capture_engine_listener.h"
+#include "messages.g.h"
 #include "photo_handler.h"
 #include "preview_handler.h"
 #include "record_handler.h"
@@ -27,24 +29,6 @@
 namespace camera_windows {
 using flutter::TextureRegistrar;
 using Microsoft::WRL::ComPtr;
-
-// Camera resolution presets. Used to request a capture resolution.
-enum class ResolutionPreset {
-  // Automatic resolution, uses the highest resolution available.
-  kAuto,
-  // 240p (320x240)
-  kLow,
-  // 480p (720x480)
-  kMedium,
-  // 720p (1280x720)
-  kHigh,
-  // 1080p (1920x1080)
-  kVeryHigh,
-  // 2160p (4096x2160)
-  kUltraHigh,
-  // The highest resolution available.
-  kMax,
-};
 
 // Camera capture engine state.
 //
@@ -82,13 +66,10 @@ class CaptureController {
   //                    register texture for capture preview.
   // device_id:         A string that holds information of camera device id to
   //                    be captured.
-  // record_audio:      A boolean value telling if audio should be captured on
-  //                    video recording.
-  // resolution_preset: Maximum capture resolution height.
-  virtual bool InitCaptureDevice(TextureRegistrar* texture_registrar,
-                                 const std::string& device_id,
-                                 bool record_audio,
-                                 ResolutionPreset resolution_preset) = 0;
+  // media_settings:    Settings controlling capture behavior.
+  virtual bool InitCaptureDevice(
+      TextureRegistrar* texture_registrar, const std::string& device_id,
+      const PlatformMediaSettings& media_settings) = 0;
 
   // Returns preview frame width
   virtual uint32_t GetPreviewWidth() const = 0;
@@ -106,8 +87,7 @@ class CaptureController {
   virtual void ResumePreview() = 0;
 
   // Starts recording video.
-  virtual void StartRecord(const std::string& file_path,
-                           int64_t max_video_duration_ms) = 0;
+  virtual void StartRecord(const std::string& file_path) = 0;
 
   // Stops the current video recording.
   virtual void StopRecord() = 0;
@@ -136,15 +116,14 @@ class CaptureControllerImpl : public CaptureController,
 
   // CaptureController
   bool InitCaptureDevice(TextureRegistrar* texture_registrar,
-                         const std::string& device_id, bool record_audio,
-                         ResolutionPreset resolution_preset) override;
+                         const std::string& device_id,
+                         const PlatformMediaSettings& media_settings) override;
   uint32_t GetPreviewWidth() const override { return preview_frame_width_; }
   uint32_t GetPreviewHeight() const override { return preview_frame_height_; }
   void StartPreview() override;
   void PausePreview() override;
   void ResumePreview() override;
-  void StartRecord(const std::string& file_path,
-                   int64_t max_video_duration_ms) override;
+  void StartRecord(const std::string& file_path) override;
   void StopRecord() override;
   void TakePicture(const std::string& file_path) override;
 
@@ -202,10 +181,6 @@ class CaptureControllerImpl : public CaptureController,
   // for preview and video capture.
   HRESULT FindBaseMediaTypes();
 
-  // Stops timed video record. Called internally when record handler when max
-  // recording time is exceeded.
-  void StopTimedRecord();
-
   // Stops preview. Called internally on camera reset and dispose.
   HRESULT StopPreview();
 
@@ -232,7 +207,7 @@ class CaptureControllerImpl : public CaptureController,
   void OnRecordStopped(CameraResult result, const std::string& error);
 
   bool media_foundation_started_ = false;
-  bool record_audio_ = false;
+
   uint32_t preview_frame_width_ = 0;
   uint32_t preview_frame_height_ = 0;
   UINT dx_device_reset_token_ = 0;
@@ -245,7 +220,7 @@ class CaptureControllerImpl : public CaptureController,
   std::string video_device_id_;
   CaptureEngineState capture_engine_state_ =
       CaptureEngineState::kNotInitialized;
-  ResolutionPreset resolution_preset_ = ResolutionPreset::kMedium;
+  PlatformMediaSettings media_settings_;
   ComPtr<IMFCaptureEngine> capture_engine_;
   ComPtr<CaptureEngineListener> capture_engine_callback_handler_;
   ComPtr<IMFDXGIDeviceManager> dxgi_device_manager_;

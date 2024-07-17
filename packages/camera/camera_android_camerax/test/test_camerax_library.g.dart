@@ -510,6 +510,8 @@ abstract class TestSystemServicesHostApi {
 
   String getTempFilePath(String prefix, String suffix);
 
+  bool isPreviewPreTransformed();
+
   static void setup(TestSystemServicesHostApi? api,
       {BinaryMessenger? binaryMessenger}) {
     {
@@ -561,6 +563,24 @@ abstract class TestSystemServicesHostApi {
         });
       }
     }
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.SystemServicesHostApi.isPreviewPreTransformed',
+          codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel, null);
+      } else {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel,
+                (Object? message) async {
+          // ignore message
+          final bool output = api.isPreviewPreTransformed();
+          return <Object?>[output];
+        });
+      }
+    }
   }
 }
 
@@ -575,6 +595,8 @@ abstract class TestDeviceOrientationManagerHostApi {
   void stopListeningForDeviceOrientationChange();
 
   int getDefaultDisplayRotation();
+
+  String getUiOrientation();
 
   static void setup(TestDeviceOrientationManagerHostApi? api,
       {BinaryMessenger? binaryMessenger}) {
@@ -637,6 +659,24 @@ abstract class TestDeviceOrientationManagerHostApi {
                 (Object? message) async {
           // ignore message
           final int output = api.getDefaultDisplayRotation();
+          return <Object?>[output];
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.DeviceOrientationManagerHostApi.getUiOrientation',
+          codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel, null);
+      } else {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel,
+                (Object? message) async {
+          // ignore message
+          final String output = api.getUiOrientation();
           return <Object?>[output];
         });
       }
@@ -1321,7 +1361,7 @@ abstract class TestResolutionSelectorHostApi {
   static const MessageCodec<Object?> codec = StandardMessageCodec();
 
   void create(int identifier, int? resolutionStrategyIdentifier,
-      int? aspectRatioStrategyIdentifier);
+      int? resolutionSelectorIdentifier, int? aspectRatioStrategyIdentifier);
 
   static void setup(TestResolutionSelectorHostApi? api,
       {BinaryMessenger? binaryMessenger}) {
@@ -1343,8 +1383,12 @@ abstract class TestResolutionSelectorHostApi {
           assert(arg_identifier != null,
               'Argument for dev.flutter.pigeon.ResolutionSelectorHostApi.create was null, expected non-null int.');
           final int? arg_resolutionStrategyIdentifier = (args[1] as int?);
-          final int? arg_aspectRatioStrategyIdentifier = (args[2] as int?);
-          api.create(arg_identifier!, arg_resolutionStrategyIdentifier,
+          final int? arg_resolutionSelectorIdentifier = (args[2] as int?);
+          final int? arg_aspectRatioStrategyIdentifier = (args[3] as int?);
+          api.create(
+              arg_identifier!,
+              arg_resolutionStrategyIdentifier,
+              arg_resolutionSelectorIdentifier,
               arg_aspectRatioStrategyIdentifier);
           return <Object?>[];
         });
@@ -2226,6 +2270,9 @@ class _TestCaptureRequestOptionsHostApiCodec extends StandardMessageCodec {
     } else if (value is VideoQualityData) {
       buffer.putUint8(134);
       writeValue(buffer, value.encode());
+    } else if (value is VideoRecordEventData) {
+      buffer.putUint8(135);
+      writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
     }
@@ -2248,6 +2295,8 @@ class _TestCaptureRequestOptionsHostApiCodec extends StandardMessageCodec {
         return ResolutionInfo.decode(readValue(buffer)!);
       case 134:
         return VideoQualityData.decode(readValue(buffer)!);
+      case 135:
+        return VideoRecordEventData.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
     }
@@ -2354,6 +2403,179 @@ abstract class TestCamera2CameraControlHostApi {
           await api.addCaptureRequestOptions(
               arg_identifier!, arg_captureRequestOptionsIdentifier!);
           return <Object?>[];
+        });
+      }
+    }
+  }
+}
+
+class _TestResolutionFilterHostApiCodec extends StandardMessageCodec {
+  const _TestResolutionFilterHostApiCodec();
+  @override
+  void writeValue(WriteBuffer buffer, Object? value) {
+    if (value is ResolutionInfo) {
+      buffer.putUint8(128);
+      writeValue(buffer, value.encode());
+    } else {
+      super.writeValue(buffer, value);
+    }
+  }
+
+  @override
+  Object? readValueOfType(int type, ReadBuffer buffer) {
+    switch (type) {
+      case 128:
+        return ResolutionInfo.decode(readValue(buffer)!);
+      default:
+        return super.readValueOfType(type, buffer);
+    }
+  }
+}
+
+abstract class TestResolutionFilterHostApi {
+  static TestDefaultBinaryMessengerBinding? get _testBinaryMessengerBinding =>
+      TestDefaultBinaryMessengerBinding.instance;
+  static const MessageCodec<Object?> codec =
+      _TestResolutionFilterHostApiCodec();
+
+  void createWithOnePreferredSize(
+      int identifier, ResolutionInfo preferredResolution);
+
+  static void setup(TestResolutionFilterHostApi? api,
+      {BinaryMessenger? binaryMessenger}) {
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.ResolutionFilterHostApi.createWithOnePreferredSize',
+          codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel, null);
+      } else {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel,
+                (Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.ResolutionFilterHostApi.createWithOnePreferredSize was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final int? arg_identifier = (args[0] as int?);
+          assert(arg_identifier != null,
+              'Argument for dev.flutter.pigeon.ResolutionFilterHostApi.createWithOnePreferredSize was null, expected non-null int.');
+          final ResolutionInfo? arg_preferredResolution =
+              (args[1] as ResolutionInfo?);
+          assert(arg_preferredResolution != null,
+              'Argument for dev.flutter.pigeon.ResolutionFilterHostApi.createWithOnePreferredSize was null, expected non-null ResolutionInfo.');
+          api.createWithOnePreferredSize(
+              arg_identifier!, arg_preferredResolution!);
+          return <Object?>[];
+        });
+      }
+    }
+  }
+}
+
+abstract class TestCamera2CameraInfoHostApi {
+  static TestDefaultBinaryMessengerBinding? get _testBinaryMessengerBinding =>
+      TestDefaultBinaryMessengerBinding.instance;
+  static const MessageCodec<Object?> codec = StandardMessageCodec();
+
+  int createFrom(int cameraInfoIdentifier);
+
+  int getSupportedHardwareLevel(int identifier);
+
+  String getCameraId(int identifier);
+
+  int getSensorOrientation(int identifier);
+
+  static void setup(TestCamera2CameraInfoHostApi? api,
+      {BinaryMessenger? binaryMessenger}) {
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.Camera2CameraInfoHostApi.createFrom', codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel, null);
+      } else {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel,
+                (Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.Camera2CameraInfoHostApi.createFrom was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final int? arg_cameraInfoIdentifier = (args[0] as int?);
+          assert(arg_cameraInfoIdentifier != null,
+              'Argument for dev.flutter.pigeon.Camera2CameraInfoHostApi.createFrom was null, expected non-null int.');
+          final int output = api.createFrom(arg_cameraInfoIdentifier!);
+          return <Object?>[output];
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.Camera2CameraInfoHostApi.getSupportedHardwareLevel',
+          codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel, null);
+      } else {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel,
+                (Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.Camera2CameraInfoHostApi.getSupportedHardwareLevel was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final int? arg_identifier = (args[0] as int?);
+          assert(arg_identifier != null,
+              'Argument for dev.flutter.pigeon.Camera2CameraInfoHostApi.getSupportedHardwareLevel was null, expected non-null int.');
+          final int output = api.getSupportedHardwareLevel(arg_identifier!);
+          return <Object?>[output];
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.Camera2CameraInfoHostApi.getCameraId', codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel, null);
+      } else {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel,
+                (Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.Camera2CameraInfoHostApi.getCameraId was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final int? arg_identifier = (args[0] as int?);
+          assert(arg_identifier != null,
+              'Argument for dev.flutter.pigeon.Camera2CameraInfoHostApi.getCameraId was null, expected non-null int.');
+          final String output = api.getCameraId(arg_identifier!);
+          return <Object?>[output];
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.Camera2CameraInfoHostApi.getSensorOrientation',
+          codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel, null);
+      } else {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel,
+                (Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.Camera2CameraInfoHostApi.getSensorOrientation was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final int? arg_identifier = (args[0] as int?);
+          assert(arg_identifier != null,
+              'Argument for dev.flutter.pigeon.Camera2CameraInfoHostApi.getSensorOrientation was null, expected non-null int.');
+          final int output = api.getSensorOrientation(arg_identifier!);
+          return <Object?>[output];
         });
       }
     }

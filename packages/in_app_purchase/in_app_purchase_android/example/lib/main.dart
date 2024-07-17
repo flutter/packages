@@ -259,10 +259,7 @@ class _MyAppState extends State<_MyApp> {
           foregroundColor: Colors.white,
         ),
         onPressed: () {
-          final InAppPurchaseAndroidPlatformAddition addition =
-              InAppPurchasePlatformAddition.instance!
-                  as InAppPurchaseAndroidPlatformAddition;
-          unawaited(deliverCountryCode(addition.getCountryCode()));
+          unawaited(deliverCountryCode(_inAppPurchasePlatform.countryCode()));
         },
         child: const Text('Fetch Country Code'),
       ),

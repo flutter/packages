@@ -101,6 +101,10 @@ void main() {
   });
 
   test('naming follows style', () {
+    final Enum anEnum = Enum(name: 'AnEnum', members: <EnumMember>[
+      EnumMember(name: 'one'),
+      EnumMember(name: 'fortyTwo'),
+    ]);
     final Root root = Root(apis: <Api>[
       AstHostApi(name: 'Api', methods: <Method>[
         Method(
@@ -137,9 +141,19 @@ void main() {
               baseName: 'bool',
               isNullable: false,
             ),
-            name: 'outputField')
+            name: 'outputField'),
+        NamedType(
+          type: TypeDeclaration(
+            baseName: anEnum.name,
+            isNullable: false,
+            associatedEnum: anEnum,
+          ),
+          name: 'code',
+        )
       ])
-    ], enums: <Enum>[]);
+    ], enums: <Enum>[
+      anEnum
+    ]);
     {
       final StringBuffer sink = StringBuffer();
       const CppGenerator generator = CppGenerator();
@@ -161,6 +175,9 @@ void main() {
       // Instance variables should be adjusted.
       expect(code, contains('bool input_field_'));
       expect(code, contains('bool output_field_'));
+      // Enum values should be adjusted.
+      expect(code, contains('kOne'));
+      expect(code, contains('kFortyTwo'));
     }
     {
       final StringBuffer sink = StringBuffer();
@@ -584,11 +601,12 @@ void main() {
           contains('void set_nullable_string(std::string_view value_arg)'));
       expect(
           code, contains('void set_nullable_nested(const Nested& value_arg)'));
-      // Instance variables should be std::optionals.
+      // Most instance variables should be std::optionals.
       expect(code, contains('std::optional<bool> nullable_bool_'));
       expect(code, contains('std::optional<int64_t> nullable_int_'));
       expect(code, contains('std::optional<std::string> nullable_string_'));
-      expect(code, contains('std::optional<Nested> nullable_nested_'));
+      // Custom classes are the exception, to avoid inline storage.
+      expect(code, contains('std::unique_ptr<Nested> nullable_nested_'));
     }
     {
       final StringBuffer sink = StringBuffer();
@@ -624,10 +642,7 @@ void main() {
           code,
           contains(
               'return nullable_string_ ? &(*nullable_string_) : nullptr;'));
-      expect(
-          code,
-          contains(
-              'return nullable_nested_ ? &(*nullable_nested_) : nullptr;'));
+      expect(code, contains('return nullable_nested_.get();'));
       // Setters convert to optionals.
       expect(
           code,
@@ -643,8 +658,8 @@ void main() {
               'std::optional<std::string>(*value_arg) : std::nullopt;'));
       expect(
           code,
-          contains('nullable_nested_ = value_arg ? '
-              'std::optional<Nested>(*value_arg) : std::nullopt;'));
+          contains(
+              'nullable_nested_ = value_arg ? std::make_unique<Nested>(*value_arg) : nullptr;'));
       // Serialization handles optionals.
       expect(
           code,
@@ -653,8 +668,7 @@ void main() {
       expect(
           code,
           contains(
-              'nullable_nested_ ? EncodableValue(nullable_nested_->ToEncodableList()) '
-              ': EncodableValue()'));
+              'nullable_nested_ ? CustomEncodableValue(*nullable_nested_) : EncodableValue())'));
 
       // Serialization should use push_back, not initializer lists, to avoid
       // copies.
@@ -763,7 +777,8 @@ void main() {
       expect(code, contains('bool non_nullable_bool_;'));
       expect(code, contains('int64_t non_nullable_int_;'));
       expect(code, contains('std::string non_nullable_string_;'));
-      expect(code, contains('Nested non_nullable_nested_;'));
+      // Except for custom classes.
+      expect(code, contains('std::unique_ptr<Nested> non_nullable_nested_;'));
     }
     {
       final StringBuffer sink = StringBuffer();
@@ -793,21 +808,28 @@ void main() {
       expect(code, contains('return non_nullable_bool_;'));
       expect(code, contains('return non_nullable_int_;'));
       expect(code, contains('return non_nullable_string_;'));
-      expect(code, contains('return non_nullable_nested_;'));
+      // Unless it's a custom class.
+      expect(code, contains('return *non_nullable_nested_;'));
       // Setters just assign the value.
       expect(code, contains('non_nullable_bool_ = value_arg;'));
       expect(code, contains('non_nullable_int_ = value_arg;'));
       expect(code, contains('non_nullable_string_ = value_arg;'));
-      expect(code, contains('non_nullable_nested_ = value_arg;'));
+      // Unless it's a custom class.
+      expect(
+          code,
+          contains(
+              'non_nullable_nested_ = std::make_unique<Nested>(value_arg);'));
       // Serialization uses the value directly.
       expect(code, contains('EncodableValue(non_nullable_bool_)'));
-      expect(code, contains('non_nullable_nested_.ToEncodableList()'));
+      expect(code, contains('CustomEncodableValue(*non_nullable_nested_)'));
 
       // Serialization should use push_back, not initializer lists, to avoid
       // copies.
       expect(code, contains('list.reserve(4)'));
       expect(
-          code, contains('list.push_back(EncodableValue(non_nullable_bool_))'));
+          code,
+          contains(
+              'list.push_back(CustomEncodableValue(*non_nullable_nested_))'));
     }
   });
 
@@ -1189,7 +1211,7 @@ void main() {
       expect(
           code,
           contains(
-              'const auto* an_object_arg = &(std::any_cast<const ParameterObject&>(std::get<CustomEncodableValue>(encodable_an_object_arg)));'));
+              'const auto* an_object_arg = encodable_an_object_arg.IsNull() ? nullptr : &(std::any_cast<const ParameterObject&>(std::get<CustomEncodableValue>(encodable_an_object_arg)));'));
       // "Object" requires no extraction at all since it has to use
       // EncodableValue directly.
       expect(
@@ -1633,13 +1655,13 @@ void main() {
         dartPackageName: DEFAULT_PACKAGE_NAME,
       );
       final String code = sink.toString();
-      // Standard types are wrapped an EncodableValues.
+      // Standard types are wrapped in EncodableValues.
       expect(code, contains('EncodableValue(a_bool_arg)'));
       expect(code, contains('EncodableValue(an_int_arg)'));
       expect(code, contains('EncodableValue(a_string_arg)'));
       expect(code, contains('EncodableValue(a_list_arg)'));
       expect(code, contains('EncodableValue(a_map_arg)'));
-      // Class types use ToEncodableList.
+      // Class types are wrapped in CustomEncodableValues.
       expect(code, contains('CustomEncodableValue(an_object_arg)'));
     }
   });
@@ -1809,50 +1831,7 @@ void main() {
     expect(code, contains('// ///'));
   });
 
-  test("doesn't create codecs if no custom datatypes", () {
-    final Root root = Root(
-      apis: <Api>[
-        AstFlutterApi(
-          name: 'Api',
-          methods: <Method>[
-            Method(
-              name: 'method',
-              location: ApiLocation.flutter,
-              returnType: const TypeDeclaration.voidDeclaration(),
-              parameters: <Parameter>[
-                Parameter(
-                  name: 'field',
-                  type: const TypeDeclaration(
-                    baseName: 'int',
-                    isNullable: true,
-                  ),
-                ),
-              ],
-            )
-          ],
-        )
-      ],
-      classes: <Class>[],
-      enums: <Enum>[],
-    );
-    final StringBuffer sink = StringBuffer();
-    const CppGenerator generator = CppGenerator();
-    final OutputFileOptions<CppOptions> generatorOptions =
-        OutputFileOptions<CppOptions>(
-      fileType: FileType.header,
-      languageOptions: const CppOptions(),
-    );
-    generator.generate(
-      generatorOptions,
-      root,
-      sink,
-      dartPackageName: DEFAULT_PACKAGE_NAME,
-    );
-    final String code = sink.toString();
-    expect(code, isNot(contains(' : public flutter::StandardCodecSerializer')));
-  });
-
-  test('creates custom codecs if custom datatypes present', () {
+  test('creates custom codecs', () {
     final Root root = Root(apis: <Api>[
       AstFlutterApi(name: 'Api', methods: <Method>[
         Method(

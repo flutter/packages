@@ -134,6 +134,10 @@ public final class CameraAndroidCameraxPlugin implements FlutterPlugin, Activity
         binaryMessenger, new FocusMeteringResultHostApiImpl(instanceManager));
     meteringPointHostApiImpl = new MeteringPointHostApiImpl(instanceManager);
     GeneratedCameraXLibrary.MeteringPointHostApi.setup(binaryMessenger, meteringPointHostApiImpl);
+    GeneratedCameraXLibrary.ResolutionFilterHostApi.setup(
+        binaryMessenger, new ResolutionFilterHostApiImpl(instanceManager));
+    GeneratedCameraXLibrary.Camera2CameraInfoHostApi.setup(
+        binaryMessenger, new Camera2CameraInfoHostApiImpl(binaryMessenger, instanceManager));
   }
 
   @Override

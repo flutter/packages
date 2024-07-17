@@ -31,6 +31,8 @@ class BillingResultWrapper implements HasBillingResponse {
   ///
   /// The map needs to have named string keys with values matching the names and
   /// types of all of the members on this class.
+  @Deprecated('JSON serialization is not intended for public use, and will '
+      'be removed in a future version.')
   factory BillingResultWrapper.fromJson(Map<String, dynamic>? map) {
     if (map == null || map.isEmpty) {
       return const BillingResultWrapper(
@@ -48,6 +50,8 @@ class BillingResultWrapper implements HasBillingResponse {
   ///
   /// Defaults to `null`.
   /// This message uses an en-US locale and should not be shown to users.
+  // TODO(stuartmorgan): Make this non-nullable, since the underlying native
+  // object's property is annotated as @NonNull.
   final String? debugMessage;
 
   @override

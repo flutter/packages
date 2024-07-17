@@ -3,11 +3,12 @@
 // found in the LICENSE file.
 
 @import camera_avfoundation;
+#if __has_include(<camera_avfoundation/camera_avfoundation-umbrella.h>)
 @import camera_avfoundation.Test;
+#endif
 @import XCTest;
 @import AVFoundation;
 #import <OCMock/OCMock.h>
-#import "MockFLTThreadSafeFlutterResult.h"
 
 @interface CameraMethodChannelTests : XCTestCase
 @end
@@ -28,21 +29,25 @@
   OCMStub([avCaptureSessionMock alloc]).andReturn(avCaptureSessionMock);
   OCMStub([avCaptureSessionMock canSetSessionPreset:[OCMArg any]]).andReturn(YES);
 
-  MockFLTThreadSafeFlutterResult *resultObject =
-      [[MockFLTThreadSafeFlutterResult alloc] initWithExpectation:expectation];
-
   // Set up method call
-  FlutterMethodCall *call = [FlutterMethodCall
-      methodCallWithMethodName:@"create"
-                     arguments:@{@"resolutionPreset" : @"medium", @"enableAudio" : @(1)}];
-
-  [camera createCameraOnSessionQueueWithCreateMethodCall:call result:resultObject];
-  [self waitForExpectationsWithTimeout:1 handler:nil];
+  __block NSNumber *resultValue;
+  [camera createCameraOnSessionQueueWithName:@"acamera"
+                                    settings:[FCPPlatformMediaSettings
+                                                 makeWithResolutionPreset:
+                                                     FCPPlatformResolutionPresetMedium
+                                                          framesPerSecond:nil
+                                                             videoBitrate:nil
+                                                             audioBitrate:nil
+                                                              enableAudio:YES]
+                                  completion:^(NSNumber *_Nullable result,
+                                               FlutterError *_Nullable error) {
+                                    resultValue = result;
+                                    [expectation fulfill];
+                                  }];
+  [self waitForExpectationsWithTimeout:30 handler:nil];
 
   // Verify the result
-  NSDictionary *dictionaryResult = (NSDictionary *)resultObject.receivedResult;
-  XCTAssertNotNil(dictionaryResult);
-  XCTAssert([[dictionaryResult allKeys] containsObject:@"cameraId"]);
+  XCTAssertNotNil(resultValue);
 }
 
 @end

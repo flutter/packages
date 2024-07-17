@@ -33,6 +33,10 @@ const String platformWindows = 'windows';
 /// Key for enable experiment.
 const String kEnableExperiment = 'enable-experiment';
 
+/// A String to add to comments on temporarily-added changes that should not
+/// land (e.g., dependency overrides in federated plugin combination PRs).
+const String kDoNotLandWarning = 'DO NOT MERGE';
+
 /// Target platforms supported by Flutter.
 // ignore: public_member_api_docs
 enum FlutterPlatform { android, ios, linux, macos, web, windows }
@@ -73,6 +77,8 @@ final Map<Version, Version> _dartSdkForFlutterSdk = <Version, Version>{
   Version(3, 16, 6): Version(3, 2, 3),
   Version(3, 16, 9): Version(3, 2, 6),
   Version(3, 19, 0): Version(3, 3, 0),
+  Version(3, 19, 6): Version(3, 3, 4),
+  Version(3, 22, 0): Version(3, 4, 0),
 };
 
 /// Returns the version of the Dart SDK that shipped with the given Flutter
@@ -86,7 +92,7 @@ bool isPackage(FileSystemEntity entity) {
     return false;
   }
   // According to
-  // https://dart.dev/guides/libraries/create-library-packages#what-makes-a-library-package
+  // https://dart.dev/guides/libraries/create-packages#what-makes-a-library-package
   // a package must also have a `lib/` directory, but in practice that's not
   // always true. Some special cases (espresso, flutter_template_images, etc.)
   // don't have any source, so this deliberately doesn't check that there's a

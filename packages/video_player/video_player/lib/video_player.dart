@@ -14,7 +14,13 @@ import 'package:video_player_platform_interface/video_player_platform_interface.
 import 'src/closed_caption_file.dart';
 
 export 'package:video_player_platform_interface/video_player_platform_interface.dart'
-    show DataSourceType, DurationRange, VideoFormat, VideoPlayerOptions;
+    show
+        DataSourceType,
+        DurationRange,
+        VideoFormat,
+        VideoPlayerOptions,
+        VideoPlayerWebOptions,
+        VideoPlayerWebOptionsControls;
 
 export 'src/closed_caption_file.dart';
 
@@ -436,6 +442,14 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     _creatingCompleter!.complete(null);
     final Completer<void> initializingCompleter = Completer<void>();
 
+    // Apply the web-specific options
+    if (kIsWeb && videoPlayerOptions?.webOptions != null) {
+      await _videoPlayerPlatform.setWebOptions(
+        _textureId,
+        videoPlayerOptions!.webOptions!,
+      );
+    }
+
     void eventListener(VideoEvent event) {
       if (_isDisposed) {
         return;
@@ -743,6 +757,12 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   }
 
   void _updatePosition(Duration position) {
+    // The underlying native implementation on some platforms sometimes reports
+    // a position slightly past the reported max duration. Clamp to the duration
+    // to insulate clients from this behavior.
+    if (position > value.duration) {
+      position = value.duration;
+    }
     value = value.copyWith(
       position: position,
       caption: _getCaptionAt(position),
@@ -769,7 +789,7 @@ class _VideoAppLifeCycleObserver extends Object with WidgetsBindingObserver {
   final VideoPlayerController _controller;
 
   void initialize() {
-    _ambiguate(WidgetsBinding.instance)!.addObserver(this);
+    WidgetsBinding.instance.addObserver(this);
   }
 
   @override
@@ -785,7 +805,7 @@ class _VideoAppLifeCycleObserver extends Object with WidgetsBindingObserver {
   }
 
   void dispose() {
-    _ambiguate(WidgetsBinding.instance)!.removeObserver(this);
+    WidgetsBinding.instance.removeObserver(this);
   }
 }
 
@@ -1170,9 +1190,3 @@ class ClosedCaption extends StatelessWidget {
     );
   }
 }
-
-/// This allows a value of type T or T? to be treated as a value of type T?.
-///
-/// We use this so that APIs that have become non-nullable can still be used
-/// with `!` and `?` on the stable branch.
-T? _ambiguate<T>(T? value) => value;

@@ -106,6 +106,7 @@ void main() {
                   'xcrun',
                   const <String>[
                     'xcodebuild',
+                    'clean',
                     'analyze',
                     '-workspace',
                     'ios/Runner.xcworkspace',
@@ -146,6 +147,7 @@ void main() {
                   'xcrun',
                   const <String>[
                     'xcodebuild',
+                    'clean',
                     'analyze',
                     '-workspace',
                     'ios/Runner.xcworkspace',
@@ -244,6 +246,7 @@ void main() {
                   'xcrun',
                   const <String>[
                     'xcodebuild',
+                    'clean',
                     'analyze',
                     '-workspace',
                     'macos/Runner.xcworkspace',
@@ -278,6 +281,7 @@ void main() {
                   'xcrun',
                   const <String>[
                     'xcodebuild',
+                    'clean',
                     'analyze',
                     '-workspace',
                     'macos/Runner.xcworkspace',
@@ -350,6 +354,7 @@ void main() {
                   'xcrun',
                   const <String>[
                     'xcodebuild',
+                    'clean',
                     'analyze',
                     '-workspace',
                     'ios/Runner.xcworkspace',
@@ -366,6 +371,7 @@ void main() {
                   'xcrun',
                   const <String>[
                     'xcodebuild',
+                    'clean',
                     'analyze',
                     '-workspace',
                     'macos/Runner.xcworkspace',
@@ -406,6 +412,7 @@ void main() {
                   'xcrun',
                   const <String>[
                     'xcodebuild',
+                    'clean',
                     'analyze',
                     '-workspace',
                     'macos/Runner.xcworkspace',
@@ -445,6 +452,7 @@ void main() {
                   'xcrun',
                   const <String>[
                     'xcodebuild',
+                    'clean',
                     'analyze',
                     '-workspace',
                     'ios/Runner.xcworkspace',

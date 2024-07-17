@@ -153,6 +153,19 @@ class InAppPurchaseStoreKitPlatform extends InAppPurchasePlatform {
     );
     return productDetailsResponse;
   }
+
+  /// Returns the country code from SKStoreFrontWrapper.
+  ///
+  /// Uses the ISO 3166-1 Alpha-3 country code representation.
+  /// See: https://developer.apple.com/documentation/storekit/skstorefront?language=objc
+  @override
+  Future<String> countryCode() async {
+    return (await _skPaymentQueueWrapper.storefront())?.countryCode ?? '';
+  }
+
+  /// Use countryCode instead.
+  @Deprecated('Use countryCode')
+  Future<String?> getCountryCode() => countryCode();
 }
 
 enum _TransactionRestoreState {

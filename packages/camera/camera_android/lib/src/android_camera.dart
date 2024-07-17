@@ -96,15 +96,33 @@ class AndroidCamera extends CameraPlatform {
     CameraDescription cameraDescription,
     ResolutionPreset? resolutionPreset, {
     bool enableAudio = false,
-  }) async {
+  }) =>
+      createCameraWithSettings(
+          cameraDescription,
+          MediaSettings(
+            resolutionPreset: resolutionPreset,
+            enableAudio: enableAudio,
+          ));
+
+  @override
+  Future<int> createCameraWithSettings(
+    CameraDescription cameraDescription,
+    MediaSettings? mediaSettings,
+  ) async {
     try {
+      final ResolutionPreset? resolutionPreset =
+          mediaSettings?.resolutionPreset;
+
       final Map<String, dynamic>? reply = await _channel
           .invokeMapMethod<String, dynamic>('create', <String, dynamic>{
         'cameraName': cameraDescription.name,
         'resolutionPreset': resolutionPreset != null
             ? _serializeResolutionPreset(resolutionPreset)
             : null,
-        'enableAudio': enableAudio,
+        'fps': mediaSettings?.fps,
+        'videoBitrate': mediaSettings?.videoBitrate,
+        'audioBitrate': mediaSettings?.audioBitrate,
+        'enableAudio': mediaSettings?.enableAudio ?? false,
       });
 
       return reply!['cameraId']! as int;
@@ -249,8 +267,8 @@ class AndroidCamera extends CameraPlatform {
   @override
   Future<void> startVideoRecording(int cameraId,
       {Duration? maxVideoDuration}) async {
-    return startVideoCapturing(
-        VideoCaptureOptions(cameraId, maxDuration: maxVideoDuration));
+    // Ignore maxVideoDuration, as it is unimplemented and deprecated.
+    return startVideoCapturing(VideoCaptureOptions(cameraId));
   }
 
   @override
@@ -259,7 +277,6 @@ class AndroidCamera extends CameraPlatform {
       'startVideoRecording',
       <String, dynamic>{
         'cameraId': options.cameraId,
-        'maxVideoDuration': options.maxDuration?.inMilliseconds,
         'enableStream': options.streamCallback != null,
       },
     );
@@ -607,15 +624,6 @@ class AndroidCamera extends CameraPlatform {
       case 'camera_closing':
         cameraEventStreamController.add(CameraClosingEvent(
           cameraId,
-        ));
-      case 'video_recorded':
-        final Map<String, Object?> arguments = _getArgumentDictionary(call);
-        cameraEventStreamController.add(VideoRecordedEvent(
-          cameraId,
-          XFile(arguments['path']! as String),
-          arguments['maxVideoDuration'] != null
-              ? Duration(milliseconds: arguments['maxVideoDuration']! as int)
-              : null,
         ));
       case 'error':
         final Map<String, Object?> arguments = _getArgumentDictionary(call);
