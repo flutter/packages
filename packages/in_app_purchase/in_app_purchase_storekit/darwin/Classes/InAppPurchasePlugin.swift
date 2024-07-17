@@ -420,7 +420,9 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI {
     return paymentQueueHandler
   }
 
-  private func setupTransactionObserverChannelIfNeeded(withMessenger messenger: FlutterBinaryMessenger) {
+  private func setupTransactionObserverChannelIfNeeded(
+    withMessenger messenger: FlutterBinaryMessenger
+  ) {
     // If the channel is already set (e.g., injected in tests), don't overwrite it.
     guard self.transactionObserverCallbackChannel == nil else { return }
 
