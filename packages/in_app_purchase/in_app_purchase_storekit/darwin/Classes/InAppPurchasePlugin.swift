@@ -89,7 +89,7 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI {
     #if os(macOS)
       let messenger = registrar.messenger
     #endif
-    setupTransactionObserverChannel(withMessenger: messenger)
+    setupTransactionObserverChannelIfNeeded(withMessenger: messenger)
   }
 
   // MARK: - Pigeon Functions
@@ -420,7 +420,7 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI {
     return paymentQueueHandler
   }
 
-  private func setupTransactionObserverChannel(withMessenger messenger: FlutterBinaryMessenger) {
+  private func setupTransactionObserverChannelIfNeeded(withMessenger messenger: FlutterBinaryMessenger) {
     // If the channel is already set (e.g., injected in tests), don't overwrite it.
     guard self.transactionObserverCallbackChannel == nil else { return }
 

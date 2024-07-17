@@ -1,6 +1,6 @@
 ## 0.3.17+1
 
-* Convert main plugin tests to swift.
+* Converts main plugin tests to swift.
 
 ## 0.3.17
 

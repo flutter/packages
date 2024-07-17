@@ -26,14 +26,15 @@ final class InAppPurchasePluginTests: XCTestCase {
     super.tearDown()
   }
 
-  func testCanMakePayments() {
+  func testCanMakePayments() throws {
     var error: FlutterError?
     let result = plugin.canMakePaymentsWithError(&error)
-    XCTAssertTrue(result!.boolValue)
+    let unwrappedResult = try XCTUnwrap(result)
+    XCTAssertTrue(unwrappedResult.boolValue)
     XCTAssertNil(error)
   }
 
-  func testPaymentQueueStorefrontReturnsNil() {
+  func testPaymentQueueStorefrontReturnsNil() throws {
     if #available(iOS 13, macOS 10.15, *) {
       let storefrontMap = [
         "countryCode": "USA",
@@ -57,8 +58,9 @@ final class InAppPurchasePluginTests: XCTestCase {
       var error: FlutterError?
       let result = plugin.storefrontWithError(&error)
 
-      XCTAssertEqual(result!.countryCode, storefrontMap["countryCode"])
-      XCTAssertEqual(result!.identifier, storefrontMap["identifier"])
+      let unwrappedResult = try XCTUnwrap(result)
+      XCTAssertEqual(unwrappedResult.countryCode, storefrontMap["countryCode"])
+      XCTAssertEqual(unwrappedResult.identifier, storefrontMap["identifier"])
       XCTAssertNil(error)
     } else {
       print("Skip testPaymentQueueStorefront for iOS lower than 13.0 or macOS lower than 10.15.")
@@ -74,9 +76,14 @@ final class InAppPurchasePluginTests: XCTestCase {
         return
       }
 
-      XCTAssertEqual(response.products!.count, 1)
+      guard let unwrappedProducts = response.products else {
+        XCTFail("Products should not be nil")
+        return
+      }
+
+      XCTAssertEqual(unwrappedProducts.count, 1)
       XCTAssertEqual(response.invalidProductIdentifiers, nil)
-      XCTAssertEqual(response.products![0].productIdentifier, "123")
+      XCTAssertEqual(unwrappedProducts[0].productIdentifier, "123")
       expectation.fulfill()
     }
 
