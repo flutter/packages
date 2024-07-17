@@ -9,6 +9,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:rfw/formats.dart' show parseLibraryFile;
 import 'package:rfw/rfw.dart';
 
+import 'tolerant_comparator.dart'
+    if (dart.library.js_interop) 'tolerant_comparator_web.dart';
 import 'utils.dart';
 
 void main() {
