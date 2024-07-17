@@ -22,7 +22,7 @@ public final class URLLauncherPlugin: NSObject, FlutterPlugin, UrlLauncherApi {
     UIApplication.shared.keyWindow?.rootViewController?.topViewController
   }
 
-  init(launcher: Launcher = UIApplication.shared) {
+  init(launcher: Launcher = DefaultLauncher()) {
     self.launcher = launcher
   }
 
