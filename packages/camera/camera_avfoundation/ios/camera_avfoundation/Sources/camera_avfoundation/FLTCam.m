@@ -864,7 +864,8 @@ NSString *const errorMethod = @"error";
 
     // when _isRecording is YES startWriting was already called so _videoWriter.status
     // is always either AVAssetWriterStatusWriting or AVAssetWriterStatusFailed and
-    // finishWritingWithCompletionHandler does not throw exception
+    // finishWritingWithCompletionHandler does not throw exception so there is no need
+    // to check _videoWriter.status
     [_videoWriter finishWritingWithCompletionHandler:^{
       if (self->_videoWriter.status == AVAssetWriterStatusCompleted) {
         [self updateOrientation];
