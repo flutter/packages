@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /** Generated class from Pigeon. */
 @SuppressWarnings({"unused", "unchecked", "CodeBlock2Expr", "RedundantSuppression", "serial"})
@@ -131,6 +132,26 @@ public class Messages {
 
     /** Constructor is non-public to enforce null safety; use Builder. */
     MessageData() {}
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
+      MessageData that = (MessageData) o;
+      return Objects.equals(name, that.name)
+          && Objects.equals(description, that.description)
+          && code.equals(that.code)
+          && data.equals(that.data);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(name, description, code, data);
+    }
 
     public static final class Builder {
 

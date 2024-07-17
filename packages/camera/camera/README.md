@@ -17,9 +17,7 @@ A Flutter plugin for iOS, Android and Web allowing access to the device cameras.
 * Record video.
 * Add access to the image stream from Dart.
 
-## Installation
-
-First, add `camera` as a [dependency in your pubspec.yaml file](https://flutter.dev/using-packages/).
+## Setup
 
 ### iOS
 
