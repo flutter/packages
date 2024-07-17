@@ -119,7 +119,11 @@ class DriveExamplesCommand extends PackageLoopingCommand {
           'web-server',
           '--web-port=7357',
           '--browser-name=chrome',
-          '--web-renderer=canvaskit',
+          // TODO(dit): Clean this up, https://github.com/flutter/flutter/issues/151869
+          if (platform.environment['CHANNEL']?.toLowerCase() == 'master')
+            '--web-renderer=canvaskit',
+          if (platform.environment['CHANNEL']?.toLowerCase() != 'master')
+            '--web-renderer=html',
           if (platform.environment.containsKey('CHROME_EXECUTABLE'))
             '--chrome-binary=${platform.environment['CHROME_EXECUTABLE']}',
         ],
