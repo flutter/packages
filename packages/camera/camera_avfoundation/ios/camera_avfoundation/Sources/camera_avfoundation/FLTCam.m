@@ -699,7 +699,11 @@ NSString *const errorMethod = @"error";
 
       CVPixelBufferRef nextBuffer = CMSampleBufferGetImageBuffer(sampleBuffer);
       CMTime nextSampleTime = CMTimeSubtract(_lastVideoSampleTime, _videoTimeOffset);
-      [_videoAdaptor appendPixelBuffer:nextBuffer withPresentationTime:nextSampleTime];
+      // do not append sample buffer when readyForMoreMediaData is NO to avoid crash
+      // https://github.com/flutter/flutter/issues/132073
+      if (_videoWriterInput.readyForMoreMediaData) {
+        [_videoAdaptor appendPixelBuffer:nextBuffer withPresentationTime:nextSampleTime];
+      }
     } else {
       CMTime dur = CMSampleBufferGetDuration(sampleBuffer);
 
