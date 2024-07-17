@@ -281,7 +281,7 @@ void main() {
             contains(
                 '  Breaking changes to platform interfaces are not allowed '
                 'without explicit justification.\n'
-                '  See https://github.com/flutter/flutter/wiki/Contributing-to-Plugins-and-Packages '
+                '  See https://github.com/flutter/flutter/blob/master/docs/ecosystem/contributing/README.md '
                 'for more information.'),
           ]));
       expect(
@@ -876,6 +876,7 @@ packages/plugin/example/android/lint-baseline.xml
 packages/plugin/example/android/src/androidTest/foo/bar/FooTest.java
 packages/plugin/example/ios/RunnerTests/Foo.m
 packages/plugin/example/ios/RunnerUITests/info.plist
+packages/plugin/darwin/Tests/Foo.swift
 packages/plugin/analysis_options.yaml
 packages/plugin/CHANGELOG.md
 ''')),

@@ -23,11 +23,6 @@
     - any-glob-to-any-file:
       - third_party/packages/cupertino_icons/**/*
 
-'p: dynamic_layouts':
-  - changed-files:
-    - any-glob-to-any-file:
-      - packages/dynamic_layouts/**/*
-
 'p: espresso':
   - changed-files:
     - any-glob-to-any-file:

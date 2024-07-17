@@ -31,12 +31,12 @@ jobs:
       # the change if it doesn't.
       run: |
         cd $HOME
-        git clone https://github.com/flutter/flutter.git --depth 1 -b 3.19.0 _flutter
+        git clone https://github.com/flutter/flutter.git --depth 1 -b 3.22.0 _flutter
         echo "$HOME/_flutter/bin" >> $GITHUB_PATH
         cd $GITHUB_WORKSPACE
     # Checks out a copy of the repo.
     - name: Check out code
-      uses: actions/checkout@0ad4b8fadaa221de15dcec353f45205ec38ea70b
+      uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332
       with:
         fetch-depth: 0 # Fetch all history so the tool can get all the tags to determine version.
     - name: Set up tools

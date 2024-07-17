@@ -1,3 +1,8 @@
+## 2.7.0
+
+* Adds support for BitmapDescriptor classes `AssetMapBitmap` and `BytesMapBitmap`.
+* Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+
 ## 2.6.1
 
 * Updates the minimum version of the iOS implementation package to a version

@@ -233,7 +233,6 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
           exitingMatches.length - 1,
           context: navigatorContext,
           matches: exitingMatches,
-          configuration: configuration,
         ).then<void>((bool exit) {
           if (!exit) {
             return SynchronousFuture<void>(null);
@@ -254,7 +253,6 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
     int index, {
     required BuildContext context,
     required List<RouteMatch> matches,
-    required RouteMatchList configuration,
   }) {
     if (index < 0) {
       return SynchronousFuture<bool>(true);
@@ -266,7 +264,6 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
         index - 1,
         context: context,
         matches: matches,
-        configuration: configuration,
       );
     }
 
@@ -276,7 +273,6 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
           index - 1,
           context: context,
           matches: matches,
-          configuration: configuration,
         );
       }
       return SynchronousFuture<bool>(false);
@@ -284,7 +280,7 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
 
     final FutureOr<bool> exitFuture = goRoute.onExit!(
       context,
-      match.buildState(_configuration, configuration),
+      match.buildState(_configuration, currentConfiguration),
     );
     if (exitFuture is bool) {
       return handleOnExitResult(exitFuture);

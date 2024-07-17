@@ -20,7 +20,6 @@ let package = Package(
     .target(
       name: "file_selector_ios",
       dependencies: [],
-      exclude: ["include/cocoapods_file_selector_ios.modulemap"],
       resources: [
         .process("Resources")
       ],

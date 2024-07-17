@@ -133,7 +133,7 @@ class GradleCheckCommand extends PackageLoopingCommand {
   /// Documentation url for Artifact hub implementation in flutter repo's.
   @visibleForTesting
   static const String artifactHubDocumentationString =
-      r'https://github.com/flutter/flutter/wiki/Plugins-and-Packages-repository-structure#gradle-structure';
+      r'https://github.com/flutter/flutter/blob/master/docs/ecosystem/Plugins-and-Packages-repository-structure.md#gradle-structure';
 
   /// String printed as example of valid example root build.gradle repository
   /// configuration that enables artifact hub env variable.
@@ -158,7 +158,7 @@ class GradleCheckCommand extends PackageLoopingCommand {
     final RegExp keyPresentRegex =
         RegExp('$keyVariable' r"\s+=\s+'ARTIFACT_HUB_REPOSITORY'");
     final RegExp documentationPresentRegex = RegExp(
-        r'github\.com.*wiki.*Plugins-and-Packages-repository-structure.*gradle-structure');
+        r'github\.com.*flutter.*blob.*Plugins-and-Packages-repository-structure.*gradle-structure');
     final RegExp keyReadRegex =
         RegExp(r'if.*System\.getenv.*\.containsKey.*' '$keyVariable');
     final RegExp keyUsedRegex =
@@ -223,7 +223,7 @@ apply plugin: "com.google.cloud.artifactregistry.gradle-plugin"
   bool _validateArtifactHubSettingsUsage(
       RepositoryPackage example, List<String> gradleLines) {
     final RegExp documentationPresentRegex = RegExp(
-        r'github\.com.*wiki.*Plugins-and-Packages-repository-structure.*gradle-structure');
+        r'github\.com.*flutter.*blob.*Plugins-and-Packages-repository-structure.*gradle-structure');
     final RegExp artifactRegistryDefinitionRegex = RegExp(
         r'classpath.*gradle\.plugin\.com\.google\.cloud\.artifactregistry:artifactregistry-gradle-plugin');
     final RegExp artifactRegistryPluginApplyRegex = RegExp(

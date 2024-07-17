@@ -404,7 +404,7 @@ public class ImagePickerDelegate
     } catch (ActivityNotFoundException e) {
       try {
         // If we can't delete the file again here, there's not really anything we can do about it.
-        //noinspection ResultOfMethodCallIgnored
+        // noinspection ResultOfMethodCallIgnored
         videoFile.delete();
       } catch (SecurityException exception) {
         exception.printStackTrace();
@@ -515,7 +515,7 @@ public class ImagePickerDelegate
     } catch (ActivityNotFoundException e) {
       try {
         // If we can't delete the file again here, there's not really anything we can do about it.
-        //noinspection ResultOfMethodCallIgnored
+        // noinspection ResultOfMethodCallIgnored
         imageFile.delete();
       } catch (SecurityException exception) {
         exception.printStackTrace();
@@ -638,24 +638,57 @@ public class ImagePickerDelegate
     return true;
   }
 
+  @Nullable
+  private ArrayList<MediaPath> getPathsFromIntent(@NonNull Intent data, boolean includeMimeType) {
+    ArrayList<MediaPath> paths = new ArrayList<>();
+
+    Uri uri = data.getData();
+    // On several pre-Android 13 devices using Android Photo Picker, the Uri from getData() could
+    // be null.
+    if (uri == null) {
+      ClipData clipData = data.getClipData();
+
+      // If data.getData() and data.getClipData() are both null, we are in an error state. By
+      // convention we return null from here, and then finish with an error from the corresponding
+      // handler.
+      if (clipData == null) {
+        return null;
+      }
+
+      for (int i = 0; i < data.getClipData().getItemCount(); i++) {
+        uri = data.getClipData().getItemAt(i).getUri();
+        // Same error state as above.
+        if (uri == null) {
+          return null;
+        }
+        String path = fileUtils.getPathFromUri(activity, uri);
+        // Again, same error state as above.
+        if (path == null) {
+          return null;
+        }
+        String mimeType = includeMimeType ? activity.getContentResolver().getType(uri) : null;
+        paths.add(new MediaPath(path, mimeType));
+      }
+    } else {
+      String path = fileUtils.getPathFromUri(activity, uri);
+      if (path == null) {
+        return null;
+      }
+      paths.add(new MediaPath(path, null));
+    }
+    return paths;
+  }
+
   private void handleChooseImageResult(int resultCode, Intent data) {
     if (resultCode == Activity.RESULT_OK && data != null) {
-      Uri uri = data.getData();
-      // On several pre-Android 13 devices using Android Photo Picker, the Uri from getData() could be null.
-      if (uri == null) {
-        ClipData clipData = data.getClipData();
-        if (clipData != null && clipData.getItemCount() == 1) {
-          uri = clipData.getItemAt(0).getUri();
-        }
-      }
+      ArrayList<MediaPath> paths = getPathsFromIntent(data, false);
       // If there's no valid Uri, return an error
-      if (uri == null) {
+      if (paths == null) {
         finishWithError("no_valid_image_uri", "Cannot find the selected image.");
         return;
       }
 
-      String path = fileUtils.getPathFromUri(activity, uri);
-      handleImageResult(path, false);
+      handleMediaResult(paths);
       return;
     }
 
@@ -683,17 +716,13 @@ public class ImagePickerDelegate
 
   private void handleChooseMediaResult(int resultCode, Intent intent) {
     if (resultCode == Activity.RESULT_OK && intent != null) {
-      ArrayList<MediaPath> paths = new ArrayList<>();
-      if (intent.getClipData() != null) {
-        for (int i = 0; i < intent.getClipData().getItemCount(); i++) {
-          Uri uri = intent.getClipData().getItemAt(i).getUri();
-          String path = fileUtils.getPathFromUri(activity, uri);
-          String mimeType = activity.getContentResolver().getType(uri);
-          paths.add(new MediaPath(path, mimeType));
-        }
-      } else {
-        paths.add(new MediaPath(fileUtils.getPathFromUri(activity, intent.getData()), null));
+      ArrayList<MediaPath> paths = getPathsFromIntent(intent, true);
+      // If there's no valid Uri, return an error
+      if (paths == null) {
+        finishWithError("no_valid_media_uri", "Cannot find the selected media.");
+        return;
       }
+
       handleMediaResult(paths);
       return;
     }
@@ -704,17 +733,14 @@ public class ImagePickerDelegate
 
   private void handleChooseMultiImageResult(int resultCode, Intent intent) {
     if (resultCode == Activity.RESULT_OK && intent != null) {
-      ArrayList<MediaPath> paths = new ArrayList<>();
-      if (intent.getClipData() != null) {
-        for (int i = 0; i < intent.getClipData().getItemCount(); i++) {
-          paths.add(
-              new MediaPath(
-                  fileUtils.getPathFromUri(activity, intent.getClipData().getItemAt(i).getUri()),
-                  null));
-        }
-      } else {
-        paths.add(new MediaPath(fileUtils.getPathFromUri(activity, intent.getData()), null));
+      ArrayList<MediaPath> paths = getPathsFromIntent(intent, false);
+      // If there's no valid Uri, return an error
+      if (paths == null) {
+        finishWithError(
+            "missing_valid_image_uri", "Cannot find at least one of the selected images.");
+        return;
       }
+
       handleMediaResult(paths);
       return;
     }
@@ -725,22 +751,14 @@ public class ImagePickerDelegate
 
   private void handleChooseVideoResult(int resultCode, Intent data) {
     if (resultCode == Activity.RESULT_OK && data != null) {
-      Uri uri = data.getData();
-      // On several pre-Android 13 devices using Android Photo Picker, the Uri from getData() could be null.
-      if (uri == null) {
-        ClipData clipData = data.getClipData();
-        if (clipData != null && clipData.getItemCount() == 1) {
-          uri = clipData.getItemAt(0).getUri();
-        }
-      }
+      ArrayList<MediaPath> paths = getPathsFromIntent(data, false);
       // If there's no valid Uri, return an error
-      if (uri == null) {
+      if (paths == null || paths.size() < 1) {
         finishWithError("no_valid_video_uri", "Cannot find the selected video.");
         return;
       }
 
-      String path = fileUtils.getPathFromUri(activity, uri);
-      handleVideoResult(path);
+      finishWithSuccess(paths.get(0).path);
       return;
     }
 
@@ -771,7 +789,7 @@ public class ImagePickerDelegate
           localPendingCameraMediaUrl != null
               ? localPendingCameraMediaUrl
               : Uri.parse(cache.retrievePendingCameraMediaUriPath()),
-          this::handleVideoResult);
+          this::finishWithSuccess);
       return;
     }
 
@@ -832,10 +850,6 @@ public class ImagePickerDelegate
       }
       finishWithListSuccess(finalPaths);
     }
-  }
-
-  private void handleVideoResult(String path) {
-    finishWithSuccess(path);
   }
 
   private boolean setPendingOptionsAndResult(

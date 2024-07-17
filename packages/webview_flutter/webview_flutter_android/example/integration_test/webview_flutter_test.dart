@@ -64,8 +64,8 @@ Future<void> main() async {
     final PlatformNavigationDelegate delegate = PlatformNavigationDelegate(
       const PlatformNavigationDelegateCreationParams(),
     );
-    unawaited(delegate.setOnPageFinished((_) => pageFinished.complete()));
-    unawaited(controller.setPlatformNavigationDelegate(delegate));
+    await delegate.setOnPageFinished((_) => pageFinished.complete());
+    await controller.setPlatformNavigationDelegate(delegate);
     await controller.loadRequest(
       LoadRequestParams(uri: Uri.parse(primaryUrl)),
     );
@@ -189,12 +189,12 @@ Future<void> main() async {
     final PlatformWebViewController controller = PlatformWebViewController(
       const PlatformWebViewControllerCreationParams(),
     );
-    unawaited(controller.setJavaScriptMode(JavaScriptMode.unrestricted));
+    await controller.setJavaScriptMode(JavaScriptMode.unrestricted);
     final PlatformNavigationDelegate delegate = PlatformNavigationDelegate(
       const PlatformNavigationDelegateCreationParams(),
     );
-    unawaited(delegate.setOnPageFinished((_) => pageFinished.complete()));
-    unawaited(controller.setPlatformNavigationDelegate(delegate));
+    await delegate.setOnPageFinished((_) => pageFinished.complete());
+    await controller.setPlatformNavigationDelegate(delegate);
     await controller.loadRequest(LoadRequestParams(uri: Uri.parse(primaryUrl)));
 
     await tester.pumpWidget(Builder(
@@ -223,12 +223,12 @@ Future<void> main() async {
     final PlatformWebViewController controller = PlatformWebViewController(
       const PlatformWebViewControllerCreationParams(),
     );
-    unawaited(controller.setJavaScriptMode(JavaScriptMode.unrestricted));
+    await controller.setJavaScriptMode(JavaScriptMode.unrestricted);
     final PlatformNavigationDelegate delegate = PlatformNavigationDelegate(
       const PlatformNavigationDelegateCreationParams(),
     );
-    unawaited(delegate.setOnPageFinished((String url) => pageLoads.add(url)));
-    unawaited(controller.setPlatformNavigationDelegate(delegate));
+    await delegate.setOnPageFinished((String url) => pageLoads.add(url));
+    await controller.setPlatformNavigationDelegate(delegate);
     await controller.loadRequest(
       LoadRequestParams(
         uri: Uri.parse(headersUrl),
@@ -258,12 +258,12 @@ Future<void> main() async {
     final PlatformWebViewController controller = PlatformWebViewController(
       const PlatformWebViewControllerCreationParams(),
     );
-    unawaited(controller.setJavaScriptMode(JavaScriptMode.unrestricted));
+    await controller.setJavaScriptMode(JavaScriptMode.unrestricted);
     final PlatformNavigationDelegate delegate = PlatformNavigationDelegate(
       const PlatformNavigationDelegateCreationParams(),
     );
-    unawaited(delegate.setOnPageFinished((_) => pageFinished.complete()));
-    unawaited(controller.setPlatformNavigationDelegate(delegate));
+    await delegate.setOnPageFinished((_) => pageFinished.complete());
+    await controller.setPlatformNavigationDelegate(delegate);
 
     final Completer<String> channelCompleter = Completer<String>();
     await controller.addJavaScriptChannel(
@@ -331,13 +331,13 @@ Future<void> main() async {
     final PlatformWebViewController controller = PlatformWebViewController(
       const PlatformWebViewControllerCreationParams(),
     );
-    unawaited(controller.setJavaScriptMode(JavaScriptMode.unrestricted));
-    unawaited(controller.setUserAgent('Custom_User_Agent1'));
+    await controller.setJavaScriptMode(JavaScriptMode.unrestricted);
+    await controller.setUserAgent('Custom_User_Agent1');
     final PlatformNavigationDelegate delegate = PlatformNavigationDelegate(
       const PlatformNavigationDelegateCreationParams(),
     );
-    unawaited(delegate.setOnPageFinished((_) => pageFinished.complete()));
-    unawaited(controller.setPlatformNavigationDelegate(delegate));
+    await delegate.setOnPageFinished((_) => pageFinished.complete());
+    await controller.setPlatformNavigationDelegate(delegate);
 
     await controller
         .loadRequest(LoadRequestParams(uri: Uri.parse('about:blank')));
@@ -427,13 +427,13 @@ Future<void> main() async {
       AndroidWebViewController controller = AndroidWebViewController(
         const PlatformWebViewControllerCreationParams(),
       );
-      unawaited(controller.setJavaScriptMode(JavaScriptMode.unrestricted));
-      unawaited(controller.setMediaPlaybackRequiresUserGesture(false));
+      await controller.setJavaScriptMode(JavaScriptMode.unrestricted);
+      await controller.setMediaPlaybackRequiresUserGesture(false);
       AndroidNavigationDelegate delegate = AndroidNavigationDelegate(
         const PlatformNavigationDelegateCreationParams(),
       );
-      unawaited(delegate.setOnPageFinished((_) => pageLoaded.complete()));
-      unawaited(controller.setPlatformNavigationDelegate(delegate));
+      await delegate.setOnPageFinished((_) => pageLoaded.complete());
+      await controller.setPlatformNavigationDelegate(delegate);
 
       await controller.loadRequest(
         LoadRequestParams(
@@ -461,12 +461,12 @@ Future<void> main() async {
       controller = AndroidWebViewController(
         const PlatformWebViewControllerCreationParams(),
       );
-      unawaited(controller.setJavaScriptMode(JavaScriptMode.unrestricted));
+      await controller.setJavaScriptMode(JavaScriptMode.unrestricted);
       delegate = AndroidNavigationDelegate(
         const PlatformNavigationDelegateCreationParams(),
       );
-      unawaited(delegate.setOnPageFinished((_) => pageLoaded.complete()));
-      unawaited(controller.setPlatformNavigationDelegate(delegate));
+      await delegate.setOnPageFinished((_) => pageLoaded.complete());
+      await controller.setPlatformNavigationDelegate(delegate);
 
       await controller.loadRequest(
         LoadRequestParams(
@@ -498,15 +498,15 @@ Future<void> main() async {
       final AndroidWebViewController controller = AndroidWebViewController(
         const PlatformWebViewControllerCreationParams(),
       );
-      unawaited(controller.setJavaScriptMode(JavaScriptMode.unrestricted));
-      unawaited(controller.setMediaPlaybackRequiresUserGesture(false));
+      await controller.setJavaScriptMode(JavaScriptMode.unrestricted);
+      await controller.setMediaPlaybackRequiresUserGesture(false);
       final AndroidNavigationDelegate delegate = AndroidNavigationDelegate(
         const PlatformNavigationDelegateCreationParams(),
       );
-      unawaited(delegate.setOnPageFinished((_) => pageLoaded.complete()));
-      unawaited(controller.setPlatformNavigationDelegate(delegate));
+      await delegate.setOnPageFinished((_) => pageLoaded.complete());
+      await controller.setPlatformNavigationDelegate(delegate);
 
-      unawaited(controller.addJavaScriptChannel(
+      await controller.addJavaScriptChannel(
         JavaScriptChannelParams(
           name: 'VideoTestTime',
           onMessageReceived: (JavaScriptMessage message) {
@@ -517,7 +517,7 @@ Future<void> main() async {
             }
           },
         ),
-      ));
+      );
 
       await controller.loadRequest(
         LoadRequestParams(
@@ -553,20 +553,20 @@ Future<void> main() async {
       final AndroidWebViewController controller = AndroidWebViewController(
         const PlatformWebViewControllerCreationParams(),
       );
-      unawaited(controller.setJavaScriptMode(JavaScriptMode.unrestricted));
-      unawaited(controller.setMediaPlaybackRequiresUserGesture(false));
+      await controller.setJavaScriptMode(JavaScriptMode.unrestricted);
+      await controller.setMediaPlaybackRequiresUserGesture(false);
       final AndroidNavigationDelegate delegate = AndroidNavigationDelegate(
         const PlatformNavigationDelegateCreationParams(),
       );
-      unawaited(delegate.setOnPageFinished((_) => pageLoaded.complete()));
-      unawaited(controller.setPlatformNavigationDelegate(delegate));
-      unawaited(controller.setCustomWidgetCallbacks(onHideCustomWidget: () {
+      await delegate.setOnPageFinished((_) => pageLoaded.complete());
+      await controller.setPlatformNavigationDelegate(delegate);
+      await controller.setCustomWidgetCallbacks(onHideCustomWidget: () {
         fullscreenExited.complete();
       }, onShowCustomWidget:
           (Widget webView, void Function() onHideCustomView) {
         fullscreenEntered.complete();
         onHideCustomView();
-      }));
+      });
 
       await controller.loadRequest(
         LoadRequestParams(
@@ -642,13 +642,13 @@ Future<void> main() async {
       AndroidWebViewController controller = AndroidWebViewController(
         const PlatformWebViewControllerCreationParams(),
       );
-      unawaited(controller.setJavaScriptMode(JavaScriptMode.unrestricted));
-      unawaited(controller.setMediaPlaybackRequiresUserGesture(false));
+      await controller.setJavaScriptMode(JavaScriptMode.unrestricted);
+      await controller.setMediaPlaybackRequiresUserGesture(false);
       AndroidNavigationDelegate delegate = AndroidNavigationDelegate(
         const PlatformNavigationDelegateCreationParams(),
       );
-      unawaited(delegate.setOnPageFinished((_) => pageLoaded.complete()));
-      unawaited(controller.setPlatformNavigationDelegate(delegate));
+      await delegate.setOnPageFinished((_) => pageLoaded.complete());
+      await controller.setPlatformNavigationDelegate(delegate);
 
       await controller.loadRequest(
         LoadRequestParams(
@@ -676,12 +676,12 @@ Future<void> main() async {
       controller = AndroidWebViewController(
         const PlatformWebViewControllerCreationParams(),
       );
-      unawaited(controller.setJavaScriptMode(JavaScriptMode.unrestricted));
+      await controller.setJavaScriptMode(JavaScriptMode.unrestricted);
       delegate = AndroidNavigationDelegate(
         const PlatformNavigationDelegateCreationParams(),
       );
-      unawaited(delegate.setOnPageFinished((_) => pageLoaded.complete()));
-      unawaited(controller.setPlatformNavigationDelegate(delegate));
+      await delegate.setOnPageFinished((_) => pageLoaded.complete());
+      await controller.setPlatformNavigationDelegate(delegate);
       await controller.loadRequest(
         LoadRequestParams(
           uri: Uri.parse(
@@ -722,12 +722,12 @@ Future<void> main() async {
     final PlatformWebViewController controller = PlatformWebViewController(
       const PlatformWebViewControllerCreationParams(),
     );
-    unawaited(controller.setJavaScriptMode(JavaScriptMode.unrestricted));
+    await controller.setJavaScriptMode(JavaScriptMode.unrestricted);
     final PlatformNavigationDelegate delegate = PlatformNavigationDelegate(
       const PlatformNavigationDelegateCreationParams(),
     );
-    unawaited(delegate.setOnPageFinished((_) => pageLoaded.complete()));
-    unawaited(controller.setPlatformNavigationDelegate(delegate));
+    await delegate.setOnPageFinished((_) => pageLoaded.complete());
+    await controller.setPlatformNavigationDelegate(delegate);
 
     await controller.loadRequest(
       LoadRequestParams(
@@ -789,16 +789,16 @@ Future<void> main() async {
       final PlatformWebViewController controller = PlatformWebViewController(
         const PlatformWebViewControllerCreationParams(),
       );
-      unawaited(controller.setJavaScriptMode(JavaScriptMode.unrestricted));
+      await controller.setJavaScriptMode(JavaScriptMode.unrestricted);
       final PlatformNavigationDelegate delegate = PlatformNavigationDelegate(
         const PlatformNavigationDelegateCreationParams(),
       );
-      unawaited(delegate.setOnPageFinished((_) => pageLoaded.complete()));
-      unawaited(controller.setPlatformNavigationDelegate(delegate));
-      unawaited(controller.setOnScrollPositionChange(
+      await delegate.setOnPageFinished((_) => pageLoaded.complete());
+      await controller.setPlatformNavigationDelegate(delegate);
+      await controller.setOnScrollPositionChange(
           (ScrollPositionChange contentOffsetChange) {
         recordedPosition = contentOffsetChange;
-      }));
+      });
 
       await controller.loadRequest(
         LoadRequestParams(
@@ -860,19 +860,18 @@ Future<void> main() async {
       final PlatformWebViewController controller = PlatformWebViewController(
         const PlatformWebViewControllerCreationParams(),
       );
-      unawaited(controller.setJavaScriptMode(JavaScriptMode.unrestricted));
+      await controller.setJavaScriptMode(JavaScriptMode.unrestricted);
       final PlatformNavigationDelegate delegate = PlatformNavigationDelegate(
         const PlatformNavigationDelegateCreationParams(),
       );
-      unawaited(delegate.setOnPageFinished((_) => pageLoaded.complete()));
-      unawaited(
-        delegate.setOnNavigationRequest((NavigationRequest navigationRequest) {
-          return (navigationRequest.url.contains('youtube.com'))
-              ? NavigationDecision.prevent
-              : NavigationDecision.navigate;
-        }),
-      );
-      unawaited(controller.setPlatformNavigationDelegate(delegate));
+      await delegate.setOnPageFinished((_) => pageLoaded.complete());
+      await delegate
+          .setOnNavigationRequest((NavigationRequest navigationRequest) {
+        return (navigationRequest.url.contains('youtube.com'))
+            ? NavigationDecision.prevent
+            : NavigationDecision.navigate;
+      });
+      await controller.setPlatformNavigationDelegate(delegate);
 
       await controller.loadRequest(
         LoadRequestParams(uri: Uri.parse(blankPageEncoded)),
@@ -903,16 +902,14 @@ Future<void> main() async {
       final PlatformWebViewController controller = PlatformWebViewController(
         const PlatformWebViewControllerCreationParams(),
       );
-      unawaited(controller.setJavaScriptMode(JavaScriptMode.unrestricted));
+      await controller.setJavaScriptMode(JavaScriptMode.unrestricted);
       final PlatformNavigationDelegate delegate = PlatformNavigationDelegate(
         const PlatformNavigationDelegateCreationParams(),
       );
-      unawaited(
-        delegate.setOnWebResourceError((WebResourceError error) {
-          errorCompleter.complete(error);
-        }),
-      );
-      unawaited(controller.setPlatformNavigationDelegate(delegate));
+      await delegate.setOnWebResourceError((WebResourceError error) {
+        errorCompleter.complete(error);
+      });
+      await controller.setPlatformNavigationDelegate(delegate);
 
       await controller.loadRequest(
         LoadRequestParams(uri: Uri.parse('https://www.notawebsite..com')),
@@ -945,19 +942,15 @@ Future<void> main() async {
       final PlatformWebViewController controller = PlatformWebViewController(
         const PlatformWebViewControllerCreationParams(),
       );
-      unawaited(controller.setJavaScriptMode(JavaScriptMode.unrestricted));
+      await controller.setJavaScriptMode(JavaScriptMode.unrestricted);
       final PlatformNavigationDelegate delegate = PlatformNavigationDelegate(
         const PlatformNavigationDelegateCreationParams(),
       );
-      unawaited(
-        delegate.setOnPageFinished((_) => pageFinishCompleter.complete()),
-      );
-      unawaited(
-        delegate.setOnWebResourceError((WebResourceError error) {
-          errorCompleter.complete(error);
-        }),
-      );
-      unawaited(controller.setPlatformNavigationDelegate(delegate));
+      await delegate.setOnPageFinished((_) => pageFinishCompleter.complete());
+      await delegate.setOnWebResourceError((WebResourceError error) {
+        errorCompleter.complete(error);
+      });
+      await controller.setPlatformNavigationDelegate(delegate);
       await controller.loadRequest(
         LoadRequestParams(
           uri: Uri.parse(
@@ -985,17 +978,17 @@ Future<void> main() async {
       final PlatformWebViewController controller = PlatformWebViewController(
         const PlatformWebViewControllerCreationParams(),
       );
-      unawaited(controller.setJavaScriptMode(JavaScriptMode.unrestricted));
+      await controller.setJavaScriptMode(JavaScriptMode.unrestricted);
       final PlatformNavigationDelegate delegate = PlatformNavigationDelegate(
         const PlatformNavigationDelegateCreationParams(),
       );
-      unawaited(delegate.setOnHttpError((HttpResponseError error) {
+      await delegate.setOnHttpError((HttpResponseError error) {
         errorCompleter.complete(error);
-      }));
-      unawaited(controller.setPlatformNavigationDelegate(delegate));
-      unawaited(controller.loadRequest(
+      });
+      await controller.setPlatformNavigationDelegate(delegate);
+      await controller.loadRequest(
         LoadRequestParams(uri: Uri.parse('$prefixUrl/favicon.ico')),
-      ));
+      );
 
       await tester.pumpWidget(Builder(
         builder: (BuildContext context) {
@@ -1028,18 +1021,18 @@ Future<void> main() async {
       final PlatformWebViewController controller = PlatformWebViewController(
         const PlatformWebViewControllerCreationParams(),
       );
-      unawaited(controller.setJavaScriptMode(JavaScriptMode.unrestricted));
+      await controller.setJavaScriptMode(JavaScriptMode.unrestricted);
       final PlatformNavigationDelegate delegate = PlatformNavigationDelegate(
         const PlatformNavigationDelegateCreationParams(),
       );
-      unawaited(delegate.setOnHttpError((HttpResponseError error) {
+      await delegate.setOnHttpError((HttpResponseError error) {
         errorCompleter.complete(error);
-      }));
-      unawaited(delegate.setOnPageFinished(
+      });
+      await delegate.setOnPageFinished(
         (_) => pageFinishCompleter.complete(),
-      ));
-      unawaited(controller.setPlatformNavigationDelegate(delegate));
-      unawaited(controller.loadHtmlString(testPage));
+      );
+      await controller.setPlatformNavigationDelegate(delegate);
+      await controller.loadHtmlString(testPage);
 
       await tester.pumpWidget(Builder(
         builder: (BuildContext context) {
@@ -1059,18 +1052,18 @@ Future<void> main() async {
       final PlatformWebViewController controller = PlatformWebViewController(
         const PlatformWebViewControllerCreationParams(),
       );
-      unawaited(controller.setJavaScriptMode(JavaScriptMode.unrestricted));
+      await controller.setJavaScriptMode(JavaScriptMode.unrestricted);
       final PlatformNavigationDelegate delegate = PlatformNavigationDelegate(
         const PlatformNavigationDelegateCreationParams(),
       );
-      unawaited(delegate.setOnPageFinished((_) => pageLoaded.complete()));
-      unawaited(delegate
+      await delegate.setOnPageFinished((_) => pageLoaded.complete());
+      await delegate
           .setOnNavigationRequest((NavigationRequest navigationRequest) {
         return (navigationRequest.url.contains('youtube.com'))
             ? NavigationDecision.prevent
             : NavigationDecision.navigate;
-      }));
-      unawaited(controller.setPlatformNavigationDelegate(delegate));
+      });
+      await controller.setPlatformNavigationDelegate(delegate);
 
       await controller
           .loadRequest(LoadRequestParams(uri: Uri.parse(blankPageEncoded)));
@@ -1104,20 +1097,20 @@ Future<void> main() async {
       final PlatformWebViewController controller = PlatformWebViewController(
         const PlatformWebViewControllerCreationParams(),
       );
-      unawaited(controller.setJavaScriptMode(JavaScriptMode.unrestricted));
+      await controller.setJavaScriptMode(JavaScriptMode.unrestricted);
       final PlatformNavigationDelegate delegate = PlatformNavigationDelegate(
         const PlatformNavigationDelegateCreationParams(),
       );
-      unawaited(delegate.setOnPageFinished((_) => pageLoaded.complete()));
-      unawaited(delegate
+      await delegate.setOnPageFinished((_) => pageLoaded.complete());
+      await delegate
           .setOnNavigationRequest((NavigationRequest navigationRequest) async {
         NavigationDecision decision = NavigationDecision.prevent;
         decision = await Future<NavigationDecision>.delayed(
             const Duration(milliseconds: 10),
             () => NavigationDecision.navigate);
         return decision;
-      }));
-      unawaited(controller.setPlatformNavigationDelegate(delegate));
+      });
+      await controller.setPlatformNavigationDelegate(delegate);
       await controller
           .loadRequest(LoadRequestParams(uri: Uri.parse(blankPageEncoded)));
 
@@ -1145,12 +1138,12 @@ Future<void> main() async {
       final PlatformWebViewController controller = PlatformWebViewController(
         const PlatformWebViewControllerCreationParams(),
       );
-      unawaited(controller.setJavaScriptMode(JavaScriptMode.unrestricted));
+      await controller.setJavaScriptMode(JavaScriptMode.unrestricted);
       final PlatformNavigationDelegate delegate = PlatformNavigationDelegate(
         const PlatformNavigationDelegateCreationParams(),
       );
-      unawaited(delegate.setOnPageFinished((_) => pageLoaded.complete()));
-      unawaited(controller.setPlatformNavigationDelegate(delegate));
+      await delegate.setOnPageFinished((_) => pageLoaded.complete());
+      await controller.setPlatformNavigationDelegate(delegate);
       await controller
           .loadRequest(LoadRequestParams(uri: Uri.parse(blankPageEncoded)));
 
@@ -1182,12 +1175,12 @@ Future<void> main() async {
       final PlatformWebViewController controller = PlatformWebViewController(
         const PlatformWebViewControllerCreationParams(),
       );
-      unawaited(controller.setJavaScriptMode(JavaScriptMode.unrestricted));
+      await controller.setJavaScriptMode(JavaScriptMode.unrestricted);
       final PlatformNavigationDelegate delegate = PlatformNavigationDelegate(
         const PlatformNavigationDelegateCreationParams(),
       );
-      unawaited(delegate.setOnPageFinished((_) => pageLoaded.complete()));
-      unawaited(controller.setPlatformNavigationDelegate(delegate));
+      await delegate.setOnPageFinished((_) => pageLoaded.complete());
+      await controller.setPlatformNavigationDelegate(delegate);
       await controller
           .loadRequest(LoadRequestParams(uri: Uri.parse(primaryUrl)));
 
@@ -1298,12 +1291,12 @@ Future<void> main() async {
     final PlatformWebViewController controller = PlatformWebViewController(
       const PlatformWebViewControllerCreationParams(),
     );
-    unawaited(controller.setJavaScriptMode(JavaScriptMode.unrestricted));
+    await controller.setJavaScriptMode(JavaScriptMode.unrestricted);
     final PlatformNavigationDelegate delegate = PlatformNavigationDelegate(
       const PlatformNavigationDelegateCreationParams(),
     );
-    unawaited(delegate.setOnPageFinished((_) => pageLoaded.complete()));
-    unawaited(controller.setPlatformNavigationDelegate(delegate));
+    await delegate.setOnPageFinished((_) => pageLoaded.complete());
+    await controller.setPlatformNavigationDelegate(delegate);
 
     await tester.pumpWidget(Builder(
       builder: (BuildContext context) {
@@ -1327,12 +1320,12 @@ Future<void> main() async {
       final PlatformWebViewController controller = PlatformWebViewController(
         const PlatformWebViewControllerCreationParams(),
       );
-      unawaited(controller.setJavaScriptMode(JavaScriptMode.unrestricted));
+      await controller.setJavaScriptMode(JavaScriptMode.unrestricted);
       final PlatformNavigationDelegate delegate = PlatformNavigationDelegate(
         const PlatformNavigationDelegateCreationParams(),
       );
-      unawaited(delegate.setOnPageFinished((_) => pageLoaded.complete()));
-      unawaited(controller.setPlatformNavigationDelegate(delegate));
+      await delegate.setOnPageFinished((_) => pageLoaded.complete());
+      await controller.setPlatformNavigationDelegate(delegate);
       await controller
           .loadRequest(LoadRequestParams(uri: Uri.parse(primaryUrl)));
 
@@ -1399,13 +1392,12 @@ Future<void> main() async {
       final PlatformWebViewController controller = PlatformWebViewController(
         const PlatformWebViewControllerCreationParams(),
       );
-      unawaited(controller.setJavaScriptMode(JavaScriptMode.unrestricted));
+      await controller.setJavaScriptMode(JavaScriptMode.unrestricted);
       final PlatformNavigationDelegate delegate = PlatformNavigationDelegate(
         const PlatformNavigationDelegateCreationParams(),
       );
-      unawaited(
-          delegate.setOnPageFinished((_) => pageLoadCompleter.complete()));
-      unawaited(controller.setPlatformNavigationDelegate(delegate));
+      await delegate.setOnPageFinished((_) => pageLoadCompleter.complete());
+      await controller.setPlatformNavigationDelegate(delegate);
       await controller.loadRequest(
         LoadRequestParams(
           uri: Uri.parse(
@@ -1446,8 +1438,8 @@ Future<void> main() async {
       final PlatformNavigationDelegate delegate = PlatformNavigationDelegate(
         const PlatformNavigationDelegateCreationParams(),
       );
-      unawaited(delegate.setOnPageFinished((_) => pageLoaded.complete()));
-      unawaited(controller.setPlatformNavigationDelegate(delegate));
+      await delegate.setOnPageFinished((_) => pageLoaded.complete());
+      await controller.setPlatformNavigationDelegate(delegate);
       await controller
           .loadRequest(LoadRequestParams(uri: Uri.parse(primaryUrl)));
 
@@ -1490,16 +1482,14 @@ Future<void> main() async {
     );
 
     final Completer<String> alertMessage = Completer<String>();
-    unawaited(controller.setOnJavaScriptAlertDialog(
+    await controller.setOnJavaScriptAlertDialog(
       (JavaScriptAlertDialogRequest request) async {
         alertMessage.complete(request.message);
       },
-    ));
-
-    unawaited(controller.setJavaScriptMode(JavaScriptMode.unrestricted));
-    unawaited(
-      controller.loadRequest(LoadRequestParams(uri: Uri.parse(primaryUrl))),
     );
+
+    await controller.setJavaScriptMode(JavaScriptMode.unrestricted);
+    await controller.loadRequest(LoadRequestParams(uri: Uri.parse(primaryUrl)));
 
     await tester.pumpWidget(Builder(
       builder: (BuildContext context) {
@@ -1520,17 +1510,15 @@ Future<void> main() async {
     );
 
     final Completer<String> confirmMessage = Completer<String>();
-    unawaited(controller.setOnJavaScriptConfirmDialog(
+    await controller.setOnJavaScriptConfirmDialog(
       (JavaScriptConfirmDialogRequest request) async {
         confirmMessage.complete(request.message);
         return true;
       },
-    ));
-
-    unawaited(controller.setJavaScriptMode(JavaScriptMode.unrestricted));
-    unawaited(
-      controller.loadRequest(LoadRequestParams(uri: Uri.parse(primaryUrl))),
     );
+
+    await controller.setJavaScriptMode(JavaScriptMode.unrestricted);
+    await controller.loadRequest(LoadRequestParams(uri: Uri.parse(primaryUrl)));
 
     await tester.pumpWidget(Builder(
       builder: (BuildContext context) {
@@ -1550,16 +1538,14 @@ Future<void> main() async {
       const PlatformWebViewControllerCreationParams(),
     );
 
-    unawaited(controller.setOnJavaScriptTextInputDialog(
+    await controller.setOnJavaScriptTextInputDialog(
       (JavaScriptTextInputDialogRequest request) async {
         return 'return message';
       },
-    ));
-
-    unawaited(controller.setJavaScriptMode(JavaScriptMode.unrestricted));
-    unawaited(
-      controller.loadRequest(LoadRequestParams(uri: Uri.parse(primaryUrl))),
     );
+
+    await controller.setJavaScriptMode(JavaScriptMode.unrestricted);
+    await controller.loadRequest(LoadRequestParams(uri: Uri.parse(primaryUrl)));
 
     await tester.pumpWidget(Builder(
       builder: (BuildContext context) {
@@ -1594,7 +1580,7 @@ Future<void> main() async {
       final PlatformWebViewController controller = PlatformWebViewController(
         const PlatformWebViewControllerCreationParams(),
       );
-      unawaited(controller.setJavaScriptMode(JavaScriptMode.unrestricted));
+      await controller.setJavaScriptMode(JavaScriptMode.unrestricted);
 
       await controller.setOnConsoleMessage((JavaScriptConsoleMessage message) {
         debugMessageReceived

@@ -74,6 +74,16 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
+  Future<void> _launchInAppWithBrowserOptions(Uri url) async {
+    if (!await launchUrl(
+      url,
+      mode: LaunchMode.inAppBrowserView,
+      browserConfiguration: const BrowserConfiguration(showTitle: true),
+    )) {
+      throw Exception('Could not launch $url');
+    }
+  }
+
   Future<void> _launchAsInAppWebViewWithCustomHeaders(Uri url) async {
     if (!await launchUrl(
       url,
@@ -218,6 +228,13 @@ class _MyHomePageState extends State<MyHomePage> {
                   });
                 }),
                 child: const Text('Launch in app + close after 5 seconds'),
+              ),
+              const Padding(padding: EdgeInsets.all(16.0)),
+              ElevatedButton(
+                onPressed: () => setState(() {
+                  _launched = _launchInAppWithBrowserOptions(toLaunch);
+                }),
+                child: const Text('Launch in app with title displayed'),
               ),
               const Padding(padding: EdgeInsets.all(16.0)),
               Link(

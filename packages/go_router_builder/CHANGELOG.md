@@ -1,3 +1,8 @@
+## 2.7.0
+
+- Adds an example and a test with `onExit`.
+- Updates minimum supported SDK version to Flutter 3.16/Dart 3.2.
+
 ## 2.6.2
 
 * Fixes a bug in the example app when accessing `BuildContext`.

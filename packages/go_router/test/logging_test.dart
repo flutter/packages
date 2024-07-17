@@ -75,7 +75,7 @@ void main() {
       expect(
         logs,
         const <String>[
-          'Full paths for routes:\n  => /\n',
+          'Full paths for routes:\n└─/ (Text)\n',
           'setting initial location null'
         ],
         reason: 'Go router should have sent the 2 events to the logger',
@@ -110,7 +110,7 @@ void main() {
       expect(
         logs,
         const <String>[
-          'Full paths for routes:\n  => /\n',
+          'Full paths for routes:\n└─/ (Text)\n',
           'setting initial location null'
         ],
         reason: 'Go router should have sent the 2 events to the logger',

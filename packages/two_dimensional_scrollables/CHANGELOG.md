@@ -1,3 +1,12 @@
+## 0.3.1
+
+* Adds generics to the callbacks and builders of TreeView.
+
+## 0.3.0
+
+* Adds new TreeView widget and associated classes.
+* New example application for exploring both Trees and Tables.
+
 ## 0.2.1
 
 * Refactors TableSpans to use basic Span classes. Clean up for incoming TreeView.
