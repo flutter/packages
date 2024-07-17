@@ -1,6 +1,10 @@
-## 0.9.17+1
+## 0.9.17+2
 
 * Fixes stopVideoRecording waiting indefinitely and lag at start of video.
+
+## 0.9.17+1
+
+* Fixes a crash due to appending sample buffers when readyForMoreMediaData is NO
 
 ## 0.9.17
 

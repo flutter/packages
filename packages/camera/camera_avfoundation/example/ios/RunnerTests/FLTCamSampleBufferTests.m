@@ -94,22 +94,21 @@
 
   __block NSArray *writtenSamples = @[];
 
-  id videoMock = OCMClassMock([AVAssetWriterInputPixelBufferAdaptor class]);
-  OCMStub([videoMock assetWriterInputPixelBufferAdaptorWithAssetWriterInput:OCMOCK_ANY
-                                                sourcePixelBufferAttributes:OCMOCK_ANY])
-      .andReturn(videoMock);
-  OCMStub([videoMock appendPixelBuffer:[OCMArg anyPointer] withPresentationTime:kCMTimeZero])
+  id adaptorMock = OCMClassMock([AVAssetWriterInputPixelBufferAdaptor class]);
+  OCMStub([adaptorMock assetWriterInputPixelBufferAdaptorWithAssetWriterInput:OCMOCK_ANY
+                                                  sourcePixelBufferAttributes:OCMOCK_ANY])
+      .andReturn(adaptorMock);
+  OCMStub([adaptorMock appendPixelBuffer:[OCMArg anyPointer] withPresentationTime:kCMTimeZero])
       .ignoringNonObjectArgs()
       .andDo(^(NSInvocation *invocation) {
         writtenSamples = [writtenSamples arrayByAddingObject:@"video"];
       });
 
-  id audioMock = OCMClassMock([AVAssetWriterInput class]);
-  OCMStub([audioMock assetWriterInputWithMediaType:[OCMArg isEqual:AVMediaTypeAudio]
-                                    outputSettings:OCMOCK_ANY])
-      .andReturn(audioMock);
-  OCMStub([audioMock isReadyForMoreMediaData]).andReturn(YES);
-  OCMStub([audioMock appendSampleBuffer:[OCMArg anyPointer]]).andDo(^(NSInvocation *invocation) {
+  id inputMock = OCMClassMock([AVAssetWriterInput class]);
+  OCMStub([inputMock assetWriterInputWithMediaType:OCMOCK_ANY outputSettings:OCMOCK_ANY])
+      .andReturn(inputMock);
+  OCMStub([inputMock isReadyForMoreMediaData]).andReturn(YES);
+  OCMStub([inputMock appendSampleBuffer:[OCMArg anyPointer]]).andDo(^(NSInvocation *invocation) {
     writtenSamples = [writtenSamples arrayByAddingObject:@"audio"];
   });
 
@@ -198,6 +197,58 @@
 
   CFRelease(videoSample);
   CFRelease(audioSample);
+}
+
+- (void)testDidOutputSampleBufferMustNotAppendSampleWhenReadyForMoreMediaDataIsNo {
+  FLTCam *cam = FLTCreateCamWithCaptureSessionQueue(dispatch_queue_create("testing", NULL));
+  CMSampleBufferRef videoSample = FLTCreateTestSampleBuffer();
+
+  id connectionMock = OCMClassMock([AVCaptureConnection class]);
+
+  id writerMock = OCMClassMock([AVAssetWriter class]);
+  OCMStub([writerMock alloc]).andReturn(writerMock);
+  OCMStub([writerMock initWithURL:OCMOCK_ANY fileType:OCMOCK_ANY error:[OCMArg setTo:nil]])
+      .andReturn(writerMock);
+
+  __block BOOL sampleAppended = NO;
+  id adaptorMock = OCMClassMock([AVAssetWriterInputPixelBufferAdaptor class]);
+  OCMStub([adaptorMock assetWriterInputPixelBufferAdaptorWithAssetWriterInput:OCMOCK_ANY
+                                                  sourcePixelBufferAttributes:OCMOCK_ANY])
+      .andReturn(adaptorMock);
+  OCMStub([adaptorMock appendPixelBuffer:[OCMArg anyPointer] withPresentationTime:kCMTimeZero])
+      .ignoringNonObjectArgs()
+      .andDo(^(NSInvocation *invocation) {
+        sampleAppended = YES;
+      });
+
+  __block BOOL readyForMoreMediaData = NO;
+  id inputMock = OCMClassMock([AVAssetWriterInput class]);
+  OCMStub([inputMock assetWriterInputWithMediaType:OCMOCK_ANY outputSettings:OCMOCK_ANY])
+      .andReturn(inputMock);
+  OCMStub([inputMock isReadyForMoreMediaData]).andDo(^(NSInvocation *invocation) {
+    [invocation setReturnValue:&readyForMoreMediaData];
+  });
+
+  [cam
+      startVideoRecordingWithCompletion:^(FlutterError *_Nullable error) {
+      }
+                  messengerForStreaming:nil];
+
+  readyForMoreMediaData = YES;
+  sampleAppended = NO;
+  [cam captureOutput:cam.captureVideoOutput
+      didOutputSampleBuffer:videoSample
+             fromConnection:connectionMock];
+  XCTAssertTrue(sampleAppended, @"Sample was not appended.");
+
+  readyForMoreMediaData = NO;
+  sampleAppended = NO;
+  [cam captureOutput:cam.captureVideoOutput
+      didOutputSampleBuffer:videoSample
+             fromConnection:connectionMock];
+  XCTAssertFalse(sampleAppended, @"Sample cannot be appended when readyForMoreMediaData is NO.");
+
+  CFRelease(videoSample);
 }
 
 - (void)testStopVideoRecordingWithCompletionMustCallCompletion {
