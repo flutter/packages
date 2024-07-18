@@ -13,7 +13,7 @@ import 'common/package_looping_command.dart';
 import 'common/plugin_utils.dart';
 import 'common/repository_package.dart';
 
-const int _exitNoPlatformFlags = 2;
+const int _exitInvalidArgs = 2;
 const int _exitNoAvailableDevice = 3;
 
 // From https://flutter.dev/to/integration-test-on-web
@@ -38,10 +38,10 @@ class DriveExamplesCommand extends PackageLoopingCommand {
         help: 'Runs the macOS implementation of the examples');
     argParser.addFlag(platformWeb,
         help: 'Runs the web implementation of the examples');
-    argParser.addFlag(platformWebWasm,
-        help: 'Runs the web implementation of the examples compiled to WASM');
     argParser.addFlag(platformWindows,
         help: 'Runs the Windows implementation of the examples');
+    argParser.addFlag(kWebWasmFlag,
+        help: 'Compile to WebAssembly rather than JavaScript');
     argParser.addOption(
       kEnableExperiment,
       defaultsTo: '',
@@ -74,7 +74,6 @@ class DriveExamplesCommand extends PackageLoopingCommand {
       platformLinux,
       platformMacOS,
       platformWeb,
-      platformWebWasm,
       platformWindows,
     ];
     final int platformCount = platformSwitches
@@ -87,7 +86,7 @@ class DriveExamplesCommand extends PackageLoopingCommand {
       printError(
           'Exactly one of ${platformSwitches.map((String platform) => '--$platform').join(', ')} '
           'must be specified.');
-      throw ToolExit(_exitNoPlatformFlags);
+      throw ToolExit(_exitInvalidArgs);
     }
 
     String? androidDevice;
@@ -110,7 +109,12 @@ class DriveExamplesCommand extends PackageLoopingCommand {
       iOSDevice = devices.first;
     }
 
-    final bool isPlatformWebWasm = getBoolArg(platformWebWasm);
+    final bool useWasm = getBoolArg(kWebWasmFlag);
+    final bool hasPlatformWeb = getBoolArg(platformWeb);
+    if (useWasm && !hasPlatformWeb) {
+      printError('--wasm is only supported on the web platform');
+      throw ToolExit(_exitInvalidArgs);
+    }
 
     _targetDeviceFlags = <String, List<String>>{
       if (getBoolArg(platformAndroid))
@@ -118,13 +122,13 @@ class DriveExamplesCommand extends PackageLoopingCommand {
       if (getBoolArg(platformIOS)) platformIOS: <String>['-d', iOSDevice!],
       if (getBoolArg(platformLinux)) platformLinux: <String>['-d', 'linux'],
       if (getBoolArg(platformMacOS)) platformMacOS: <String>['-d', 'macos'],
-      if (getBoolArg(platformWeb) || isPlatformWebWasm)
+      if (hasPlatformWeb)
         platformWeb: <String>[
           '-d',
           'web-server',
           '--web-port=7357',
           '--browser-name=chrome',
-          if (isPlatformWebWasm)
+          if (useWasm)
             '--wasm'
           // TODO(dit): Clean this up, https://github.com/flutter/flutter/issues/151869
           else if (platform.environment['CHANNEL']?.toLowerCase() == 'master')
@@ -201,8 +205,7 @@ class DriveExamplesCommand extends PackageLoopingCommand {
 
       // `flutter test` doesn't yet support web integration tests, so fall back
       // to `flutter drive`.
-      final bool useFlutterDrive =
-          getBoolArg(platformWeb) || getBoolArg(platformWebWasm);
+      final bool useFlutterDrive = getBoolArg(platformWeb);
 
       final List<File> drivers;
       if (useFlutterDrive) {

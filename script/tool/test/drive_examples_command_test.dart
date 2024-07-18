@@ -89,6 +89,24 @@ void main() {
       );
     });
 
+    test('fails if wasm flag is present but not web platform', () async {
+      setMockFlutterDevicesOutput();
+      Error? commandError;
+      final List<String> output = await runCapturingPrint(
+          runner, <String>['drive-examples', '--android', '--wasm'],
+          errorHandler: (Error e) {
+        commandError = e;
+      });
+
+      expect(commandError, isA<ToolExit>());
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains('--wasm is only supported on the web platform'),
+        ]),
+      );
+    });
+
     test('fails if multiple platforms are provided', () async {
       setMockFlutterDevicesOutput();
       Error? commandError;
@@ -709,7 +727,8 @@ void main() {
 
       final List<String> output = await runCapturingPrint(runner, <String>[
         'drive-examples',
-        '--web-wasm',
+        '--web',
+        '--wasm',
       ]);
 
       expect(

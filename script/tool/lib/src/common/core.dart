@@ -27,9 +27,6 @@ const String platformMacOS = 'macos';
 /// Key for Web platform.
 const String platformWeb = 'web';
 
-/// Key for Web WASM platform.
-const String platformWebWasm = 'web-wasm';
-
 /// Key for windows platform.
 const String platformWindows = 'windows';
 
@@ -39,6 +36,9 @@ const String kEnableExperiment = 'enable-experiment';
 /// A String to add to comments on temporarily-added changes that should not
 /// land (e.g., dependency overrides in federated plugin combination PRs).
 const String kDoNotLandWarning = 'DO NOT MERGE';
+
+/// Key for enabling web WASM compilation
+const String kWebWasmFlag = 'wasm';
 
 /// Target platforms supported by Flutter.
 // ignore: public_member_api_docs
@@ -50,7 +50,6 @@ const Map<String, FlutterPlatform> _platformByName = <String, FlutterPlatform>{
   platformLinux: FlutterPlatform.linux,
   platformMacOS: FlutterPlatform.macos,
   platformWeb: FlutterPlatform.web,
-  platformWebWasm: FlutterPlatform.web,
   platformWindows: FlutterPlatform.windows,
 };
 
