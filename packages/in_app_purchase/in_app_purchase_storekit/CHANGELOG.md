@@ -1,3 +1,7 @@
+## 0.3.17+1
+
+* Converts main plugin tests to swift.
+
 ## 0.3.17
 
 * Removes OCMock from tests.
