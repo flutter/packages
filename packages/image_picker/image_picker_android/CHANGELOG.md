@@ -1,3 +1,7 @@
+## 0.8.12+6
+
+* Bumps androidx.activity:activity from 1.7.2 to 1.8.2.
+
 ## 0.8.12+5
 
 * Updates Android Gradle Plugin to 8.5.1.
