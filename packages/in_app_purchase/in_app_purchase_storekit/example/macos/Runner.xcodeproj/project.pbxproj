@@ -29,6 +29,7 @@
 		33CC11132044BFA00003C045 /* MainFlutterWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33CC11122044BFA00003C045 /* MainFlutterWindow.swift */; };
 		F24C45E42C409D87000C6C72 /* InAppPurchasePluginTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F24C45E32C409D87000C6C72 /* InAppPurchasePluginTests.swift */; };
 		F27694092C4724B200277144 /* ProductRequestHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F27694082C4724B200277144 /* ProductRequestHandlerTests.swift */; };
+		F27694132C49BF7B00277144 /* FIAPPaymentQueueDeleteTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F27694122C49BF7B00277144 /* FIAPPaymentQueueDeleteTests.swift */; };
 		F2C3A7412BD9D33D000D35F2 /* Stubs.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2C3A7402BD9D33D000D35F2 /* Stubs.swift */; };
 		F79BDC122905FBF700E3999D /* FIATransactionCacheTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F79BDC112905FBF700E3999D /* FIATransactionCacheTests.m */; };
 		F79BDC182905FC1800E3999D /* PaymentQueueTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F79BDC172905FC1800E3999D /* PaymentQueueTests.m */; };
@@ -92,6 +93,7 @@
 		B537BC9F2D936311267ABC65 /* Pods-RunnerTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.debug.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.debug.xcconfig"; sourceTree = "<group>"; };
 		F24C45E32C409D87000C6C72 /* InAppPurchasePluginTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = InAppPurchasePluginTests.swift; path = ../../shared/RunnerTests/InAppPurchasePluginTests.swift; sourceTree = "<group>"; };
 		F27694082C4724B200277144 /* ProductRequestHandlerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ProductRequestHandlerTests.swift; path = ../../shared/RunnerTests/ProductRequestHandlerTests.swift; sourceTree = "<group>"; };
+		F27694122C49BF7B00277144 /* FIAPPaymentQueueDeleteTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FIAPPaymentQueueDeleteTests.swift; path = ../../shared/RunnerTests/FIAPPaymentQueueDeleteTests.swift; sourceTree = "<group>"; };
 		F2C3A73F2BD9D33D000D35F2 /* RunnerTests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "RunnerTests-Bridging-Header.h"; sourceTree = "<group>"; };
 		F2C3A7402BD9D33D000D35F2 /* Stubs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Stubs.swift; sourceTree = "<group>"; };
 		F700DD0228E652A10004836B /* RunnerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RunnerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -215,6 +217,7 @@
 		F700DD0328E652A10004836B /* RunnerTests */ = {
 			isa = PBXGroup;
 			children = (
+				F27694122C49BF7B00277144 /* FIAPPaymentQueueDeleteTests.swift */,
 				F24C45E32C409D87000C6C72 /* InAppPurchasePluginTests.swift */,
 				F27694082C4724B200277144 /* ProductRequestHandlerTests.swift */,
 				F79BDC172905FC1800E3999D /* PaymentQueueTests.m */,
@@ -467,6 +470,7 @@
 				F27694092C4724B200277144 /* ProductRequestHandlerTests.swift in Sources */,
 				F79BDC122905FBF700E3999D /* FIATransactionCacheTests.m in Sources */,
 				F2C3A7412BD9D33D000D35F2 /* Stubs.swift in Sources */,
+				F27694132C49BF7B00277144 /* FIAPPaymentQueueDeleteTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
