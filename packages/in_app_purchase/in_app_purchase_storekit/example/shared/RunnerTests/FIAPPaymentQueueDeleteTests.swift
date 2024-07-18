@@ -42,11 +42,16 @@ final class FIAPPaymentQueueDelegateTests: XCTestCase {
     channelStub.invokeMethodChannelWithResultsStub = { method, arguments, result in
       XCTAssertEqual(method, "shouldContinueTransaction")
       XCTAssertEqual(
-        arguments as? NSDictionary,
+        arguments as! NSDictionary,
         FIAObjectTranslator.getMapFrom(
           self.storefront,
           andSKPaymentTransaction: self.transaction) as NSDictionary)
-      result?(NSNumber(value: false))
+
+      guard let result = result else {
+        XCTFail("Result should not be nil")
+        return
+      }
+      result(false)
     }
 
     let delegate = FIAPPaymentQueueDelegate(methodChannel: channelStub)
