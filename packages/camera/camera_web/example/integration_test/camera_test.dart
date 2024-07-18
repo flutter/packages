@@ -12,7 +12,6 @@ import 'package:camera_platform_interface/camera_platform_interface.dart';
 // ignore_for_file: implementation_imports
 import 'package:camera_web/src/camera.dart';
 import 'package:camera_web/src/camera_service.dart';
-import 'package:camera_web/src/pkg_web_tweaks.dart';
 import 'package:camera_web/src/types/types.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
@@ -336,9 +335,7 @@ void main() {
             ..muted = true;
 
           mockVideoTrack.getCapabilities = () {
-            return NonStandardFieldsOnMediaTrackCapabilities.construct(
-              torch: <JSBoolean>[true.toJS].toJS,
-            );
+            return MediaTrackCapabilities(torch: <JSBoolean>[true.toJS].toJS);
           }.toJS;
         });
 
@@ -476,15 +473,11 @@ void main() {
 
       testWidgets('sets the camera flash mode', (WidgetTester tester) async {
         mockMediaDevices.getSupportedConstraints = () {
-          return NonStandardFieldsOnMediaTrackSupportedConstraints.construct(
-            torch: true,
-          );
+          return MediaTrackSupportedConstraints(torch: true);
         }.toJS;
 
         mockVideoTrack.getCapabilities = () {
-          return NonStandardFieldsOnMediaTrackCapabilities.construct(
-            torch: <JSBoolean>[true.toJS].toJS,
-          );
+          return MediaTrackCapabilities(torch: <JSBoolean>[true.toJS].toJS);
         }.toJS;
 
         final Camera camera = Camera(
@@ -508,15 +501,11 @@ void main() {
           'enables the torch mode '
           'if the flash mode is torch', (WidgetTester tester) async {
         mockMediaDevices.getSupportedConstraints = () {
-          return NonStandardFieldsOnMediaTrackSupportedConstraints.construct(
-            torch: true,
-          );
+          return MediaTrackSupportedConstraints(torch: true);
         }.toJS;
 
         mockVideoTrack.getCapabilities = () {
-          return NonStandardFieldsOnMediaTrackCapabilities.construct(
-            torch: <JSBoolean>[true.toJS].toJS,
-          );
+          return MediaTrackCapabilities(torch: <JSBoolean>[true.toJS].toJS);
         }.toJS;
 
         final Camera camera = Camera(
@@ -547,15 +536,11 @@ void main() {
           'disables the torch mode '
           'if the flash mode is not torch', (WidgetTester tester) async {
         mockMediaDevices.getSupportedConstraints = () {
-          return NonStandardFieldsOnMediaTrackSupportedConstraints.construct(
-            torch: true,
-          );
+          return MediaTrackSupportedConstraints(torch: true);
         }.toJS;
 
         mockVideoTrack.getCapabilities = () {
-          return NonStandardFieldsOnMediaTrackCapabilities.construct(
-            torch: <JSBoolean>[true.toJS].toJS,
-          );
+          return MediaTrackCapabilities(torch: <JSBoolean>[true.toJS].toJS);
         }.toJS;
 
         final Camera camera = Camera(
@@ -588,15 +573,11 @@ void main() {
             'when the torch mode is not supported '
             'in the browser', (WidgetTester tester) async {
           mockMediaDevices.getSupportedConstraints = () {
-            return NonStandardFieldsOnMediaTrackSupportedConstraints.construct(
-              torch: false,
-            );
+            return MediaTrackSupportedConstraints(torch: false);
           }.toJS;
 
           mockVideoTrack.getCapabilities = () {
-            return NonStandardFieldsOnMediaTrackCapabilities.construct(
-              torch: <JSBoolean>[true.toJS].toJS,
-            );
+            return MediaTrackCapabilities(torch: <JSBoolean>[true.toJS].toJS);
           }.toJS;
 
           final Camera camera = Camera(
@@ -629,15 +610,11 @@ void main() {
             'when the torch mode is not supported '
             'by the camera', (WidgetTester tester) async {
           mockMediaDevices.getSupportedConstraints = () {
-            return NonStandardFieldsOnMediaTrackSupportedConstraints.construct(
-              torch: true,
-            );
+            return MediaTrackSupportedConstraints(torch: true);
           }.toJS;
 
           mockVideoTrack.getCapabilities = () {
-            return NonStandardFieldsOnMediaTrackCapabilities.construct(
-              torch: <JSBoolean>[false.toJS].toJS,
-            );
+            return MediaTrackCapabilities(torch: <JSBoolean>[false.toJS].toJS);
           }.toJS;
 
           final Camera camera = Camera(
@@ -670,15 +647,11 @@ void main() {
             'when the camera stream has not been initialized',
             (WidgetTester tester) async {
           mockMediaDevices.getSupportedConstraints = () {
-            return NonStandardFieldsOnMediaTrackSupportedConstraints.construct(
-              torch: true,
-            );
+            return MediaTrackSupportedConstraints(torch: true);
           }.toJS;
 
           mockVideoTrack.getCapabilities = () {
-            return NonStandardFieldsOnMediaTrackCapabilities.construct(
-              torch: <JSBoolean>[true.toJS].toJS,
-            );
+            return MediaTrackCapabilities(torch: <JSBoolean>[true.toJS].toJS);
           }.toJS;
 
           final Camera camera = Camera(

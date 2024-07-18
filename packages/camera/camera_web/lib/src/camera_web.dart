@@ -15,7 +15,6 @@ import 'package:web/web.dart' as web;
 
 import 'camera.dart';
 import 'camera_service.dart';
-import 'pkg_web_tweaks.dart';
 import 'types/types.dart';
 
 // The default error message, when the error is an empty string.

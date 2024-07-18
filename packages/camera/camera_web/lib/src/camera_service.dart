@@ -137,7 +137,7 @@ class CameraService {
 
       /// The zoom level capability is represented by MediaSettingsRange.
       /// See: https://developer.mozilla.org/en-US/docs/Web/API/MediaSettingsRange
-      final MediaSettingsRange? zoomLevelCapability =
+      final web.MediaSettingsRange? zoomLevelCapability =
           defaultVideoTrack.getCapabilities().zoomNullable;
 
       if (zoomLevelCapability != null) {

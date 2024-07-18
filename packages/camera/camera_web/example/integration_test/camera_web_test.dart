@@ -14,7 +14,6 @@ import 'package:camera_web/camera_web.dart';
 // ignore_for_file: implementation_imports
 import 'package:camera_web/src/camera.dart';
 import 'package:camera_web/src/camera_service.dart';
-import 'package:camera_web/src/pkg_web_tweaks.dart';
 import 'package:camera_web/src/types/types.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart' as widgets;

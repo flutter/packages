@@ -16,7 +16,7 @@ dependencies:
     path: ../
   flutter:
     sdk: flutter
-  web: ^0.5.1
+  web: ^1.0.0
 
 dev_dependencies:
   async: ^2.5.0

@@ -11,7 +11,6 @@ import 'package:camera_platform_interface/camera_platform_interface.dart';
 // ignore_for_file: implementation_imports
 import 'package:camera_web/src/camera.dart';
 import 'package:camera_web/src/camera_service.dart';
-import 'package:camera_web/src/pkg_web_tweaks.dart';
 import 'package:camera_web/src/shims/dart_js_util.dart';
 import 'package:camera_web/src/types/types.dart';
 import 'package:flutter/services.dart';
@@ -448,14 +447,12 @@ void main() {
           'returns the zoom level capability '
           'based on the first video track', (WidgetTester tester) async {
         mockMediaDevices.getSupportedConstraints = () {
-          return NonStandardFieldsOnMediaTrackSupportedConstraints.construct(
-            zoom: true,
-          );
+          return web.MediaTrackSupportedConstraints(zoom: true);
         }.toJS;
 
         mockVideoTrack.getCapabilities = () {
-          return NonStandardFieldsOnMediaTrackCapabilities.construct(
-            zoom: MediaSettingsRange(min: 100, max: 400, step: 2),
+          return web.MediaTrackCapabilities(
+            zoom: web.MediaSettingsRange(min: 100, max: 400, step: 2),
           );
         }.toJS;
 
@@ -473,14 +470,12 @@ void main() {
             'when the zoom level is not supported '
             'in the browser', (WidgetTester tester) async {
           mockMediaDevices.getSupportedConstraints = () {
-            return NonStandardFieldsOnMediaTrackSupportedConstraints.construct(
-              zoom: false,
-            );
+            return web.MediaTrackSupportedConstraints(zoom: false);
           }.toJS;
 
           mockVideoTrack.getCapabilities = () {
-            return NonStandardFieldsOnMediaTrackCapabilities.construct(
-              zoom: MediaSettingsRange(min: 100, max: 400, step: 2),
+            return web.MediaTrackCapabilities(
+              zoom: web.MediaSettingsRange(min: 100, max: 400, step: 2),
             );
           }.toJS;
 
@@ -507,9 +502,7 @@ void main() {
             'when the camera stream has not been initialized',
             (WidgetTester tester) async {
           mockMediaDevices.getSupportedConstraints = () {
-            return NonStandardFieldsOnMediaTrackSupportedConstraints.construct(
-              zoom: true,
-            );
+            return web.MediaTrackSupportedConstraints(zoom: true);
           }.toJS;
 
           // Create a camera stream with no video tracks.
