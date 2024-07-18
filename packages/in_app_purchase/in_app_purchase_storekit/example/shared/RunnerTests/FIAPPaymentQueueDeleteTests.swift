@@ -59,7 +59,7 @@ final class FIAPPaymentQueueDelegateTests: XCTestCase {
     XCTAssertFalse(shouldContinue)
   }
 
-  func testShouldContinueTransaction_should_default_to_yes() {
+  func testShouldContinueTransactionShouldDefaultToYes() {
     let channelStub = MethodChannelStub()
     let delegate = FIAPPaymentQueueDelegate(methodChannel: channelStub)
 
@@ -103,7 +103,7 @@ final class FIAPPaymentQueueDelegateTests: XCTestCase {
       }
     }
 
-    func testShouldShowPriceConsentIfNeeded_should_default_to_yes() {
+    func testShouldShowPriceConsentIfNeededShouldDefaultToYes() {
       if #available(iOS 13.4, *) {
         let channelStub = MethodChannelStub()
         let delegate = FIAPPaymentQueueDelegate(methodChannel: channelStub)
