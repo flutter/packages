@@ -27,6 +27,9 @@ const String platformMacOS = 'macos';
 /// Key for Web platform.
 const String platformWeb = 'web';
 
+/// Key for Web WASM platform.
+const String platformWebWasm = 'web-wasm';
+
 /// Key for windows platform.
 const String platformWindows = 'windows';
 
@@ -47,6 +50,7 @@ const Map<String, FlutterPlatform> _platformByName = <String, FlutterPlatform>{
   platformLinux: FlutterPlatform.linux,
   platformMacOS: FlutterPlatform.macos,
   platformWeb: FlutterPlatform.web,
+  platformWebWasm: FlutterPlatform.web,
   platformWindows: FlutterPlatform.windows,
 };
 

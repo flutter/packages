@@ -38,6 +38,8 @@ class DriveExamplesCommand extends PackageLoopingCommand {
         help: 'Runs the macOS implementation of the examples');
     argParser.addFlag(platformWeb,
         help: 'Runs the web implementation of the examples');
+    argParser.addFlag(platformWebWasm,
+        help: 'Runs the web implementation of the examples compiled to WASM');
     argParser.addFlag(platformWindows,
         help: 'Runs the Windows implementation of the examples');
     argParser.addOption(
@@ -72,6 +74,7 @@ class DriveExamplesCommand extends PackageLoopingCommand {
       platformLinux,
       platformMacOS,
       platformWeb,
+      platformWebWasm,
       platformWindows,
     ];
     final int platformCount = platformSwitches
@@ -107,22 +110,26 @@ class DriveExamplesCommand extends PackageLoopingCommand {
       iOSDevice = devices.first;
     }
 
+    final bool isPlatformWebWasm = getBoolArg(platformWebWasm);
+
     _targetDeviceFlags = <String, List<String>>{
       if (getBoolArg(platformAndroid))
         platformAndroid: <String>['-d', androidDevice!],
       if (getBoolArg(platformIOS)) platformIOS: <String>['-d', iOSDevice!],
       if (getBoolArg(platformLinux)) platformLinux: <String>['-d', 'linux'],
       if (getBoolArg(platformMacOS)) platformMacOS: <String>['-d', 'macos'],
-      if (getBoolArg(platformWeb))
+      if (getBoolArg(platformWeb) || isPlatformWebWasm)
         platformWeb: <String>[
           '-d',
           'web-server',
           '--web-port=7357',
           '--browser-name=chrome',
+          if (isPlatformWebWasm)
+            '--wasm'
           // TODO(dit): Clean this up, https://github.com/flutter/flutter/issues/151869
-          if (platform.environment['CHANNEL']?.toLowerCase() == 'master')
-            '--web-renderer=canvaskit',
-          if (platform.environment['CHANNEL']?.toLowerCase() != 'master')
+          else if (platform.environment['CHANNEL']?.toLowerCase() == 'master')
+            '--web-renderer=canvaskit'
+          else
             '--web-renderer=html',
           if (platform.environment.containsKey('CHROME_EXECUTABLE'))
             '--chrome-binary=${platform.environment['CHROME_EXECUTABLE']}',
@@ -194,7 +201,8 @@ class DriveExamplesCommand extends PackageLoopingCommand {
 
       // `flutter test` doesn't yet support web integration tests, so fall back
       // to `flutter drive`.
-      final bool useFlutterDrive = getBoolArg(platformWeb);
+      final bool useFlutterDrive =
+          getBoolArg(platformWeb) || getBoolArg(platformWebWasm);
 
       final List<File> drivers;
       if (useFlutterDrive) {
