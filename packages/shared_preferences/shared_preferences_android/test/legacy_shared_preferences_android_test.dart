@@ -4,7 +4,7 @@
 
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:shared_preferences_android/shared_preferences_android.dart';
+import 'package:shared_preferences_android/legacy_shared_preferences_android.dart';
 import 'package:shared_preferences_android/src/messages.g.dart';
 import 'package:shared_preferences_platform_interface/shared_preferences_platform_interface.dart';
 import 'package:shared_preferences_platform_interface/types.dart';
@@ -12,7 +12,7 @@ import 'package:shared_preferences_platform_interface/types.dart';
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
   late _FakeSharedPreferencesApi api;
-  late SharedPreferencesAndroid plugin;
+  late LegacySharedPreferencesAndroid plugin;
 
   const Map<String, Object> flutterTestValues = <String, Object>{
     'flutter.String': 'hello world',
@@ -46,13 +46,13 @@ void main() {
 
   setUp(() {
     api = _FakeSharedPreferencesApi();
-    plugin = SharedPreferencesAndroid(api: api);
+    plugin = LegacySharedPreferencesAndroid(api: api);
   });
 
-  test('registerWith', () {
-    SharedPreferencesAndroid.registerWith();
+  test('registerWith', () async {
+    LegacySharedPreferencesAndroid.registerWith();
     expect(SharedPreferencesStorePlatform.instance,
-        isA<SharedPreferencesAndroid>());
+        isA<LegacySharedPreferencesAndroid>());
   });
 
   test('remove', () async {
@@ -211,7 +211,7 @@ void main() {
     expect(api.items['flutter.StringList'], <String>['hi']);
   });
 
-  test('setValue with unsupported type', () {
+  test('setValue with unsupported type', () async {
     expect(() async {
       await plugin.setValue('Map', 'flutter.key', <String, String>{});
     }, throwsA(isA<PlatformException>()));

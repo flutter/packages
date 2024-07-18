@@ -4,99 +4,194 @@
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
-import 'package:shared_preferences_platform_interface/shared_preferences_platform_interface.dart';
+import 'package:shared_preferences_platform_interface/shared_preferences_async_platform_interface.dart';
 import 'package:shared_preferences_platform_interface/types.dart';
 
-import 'src/messages.g.dart';
+import 'legacy_shared_preferences_android.dart';
+import 'src/messages_async.g.dart';
 
-/// The Android implementation of [SharedPreferencesStorePlatform].
+const String _listPrefix = 'VGhpcyBpcyB0aGUgcHJlZml4IGZvciBhIGxpc3Qu';
+
+/// The Android implementation of [SharedPreferencesAsyncPlatform].
 ///
 /// This class implements the `package:shared_preferences` functionality for Android.
-class SharedPreferencesAndroid extends SharedPreferencesStorePlatform {
+base class SharedPreferencesAndroid extends SharedPreferencesAsyncPlatform {
   /// Creates a new plugin implementation instance.
   SharedPreferencesAndroid({
-    @visibleForTesting SharedPreferencesApi? api,
-  }) : _api = api ?? SharedPreferencesApi();
+    @visibleForTesting SharedPreferencesAsyncApi? api,
+  }) : _api = api ?? SharedPreferencesAsyncApi();
 
-  final SharedPreferencesApi _api;
+  final SharedPreferencesAsyncApi _api;
 
-  /// Registers this class as the default instance of [SharedPreferencesStorePlatform].
+  /// Registers this class as the default instance of [SharedPreferencesAsyncPlatform].
   static void registerWith() {
-    SharedPreferencesStorePlatform.instance = SharedPreferencesAndroid();
+    SharedPreferencesAsyncPlatform.instance = SharedPreferencesAndroid();
+    // A temporary work-around for having two plugins contained in a single package.
+    LegacySharedPreferencesAndroid.registerWith();
   }
 
-  static const String _defaultPrefix = 'flutter.';
-
-  @override
-  Future<bool> remove(String key) async {
-    return _api.remove(key);
-  }
-
-  @override
-  Future<bool> setValue(String valueType, String key, Object value) async {
-    switch (valueType) {
-      case 'String':
-        return _api.setString(key, value as String);
-      case 'Bool':
-        return _api.setBool(key, value as bool);
-      case 'Int':
-        return _api.setInt(key, value as int);
-      case 'Double':
-        return _api.setDouble(key, value as double);
-      case 'StringList':
-        return _api.setStringList(key, value as List<String>);
-    }
-    // TODO(tarrinneal): change to ArgumentError across all platforms.
-    throw PlatformException(
-        code: 'InvalidOperation',
-        message: '"$valueType" is not a supported type.');
+  /// Returns a SharedPreferencesPigeonOptions for sending to platform.
+  SharedPreferencesPigeonOptions _convertOptionsToPigeonOptions(
+      SharedPreferencesOptions options) {
+    return SharedPreferencesPigeonOptions();
   }
 
   @override
-  Future<bool> clear() async {
-    return clearWithParameters(
-      ClearParameters(
-        filter: PreferencesFilter(prefix: _defaultPrefix),
-      ),
-    );
-  }
-
-  @override
-  Future<bool> clearWithPrefix(String prefix) async {
-    return clearWithParameters(
-        ClearParameters(filter: PreferencesFilter(prefix: prefix)));
-  }
-
-  @override
-  Future<bool> clearWithParameters(ClearParameters parameters) async {
-    final PreferencesFilter filter = parameters.filter;
-    return _api.clear(
-      filter.prefix,
+  Future<Set<String>> getKeys(
+    GetPreferencesParameters parameters,
+    SharedPreferencesOptions options,
+  ) async {
+    final PreferencesFilters filter = parameters.filter;
+    // TODO(tarrinneal): Remove cast once https://github.com/flutter/flutter/issues/97848
+    // is fixed. In practice, the values will never be null, and the native implementation assumes that.
+    return (await _api.getKeys(
       filter.allowList?.toList(),
+      _convertOptionsToPigeonOptions(options),
+    ))
+        .cast<String>()
+        .toSet();
+  }
+
+  @override
+  Future<void> setString(
+    String key,
+    String value,
+    SharedPreferencesOptions options,
+  ) async {
+    if (value.startsWith(_listPrefix)) {
+      throw ArgumentError(
+          'StorageError: This string cannot be stored as it clashes with special identifier prefixes');
+    }
+
+    return _api.setString(key, value, _convertOptionsToPigeonOptions(options));
+  }
+
+  @override
+  Future<void> setInt(
+    String key,
+    int value,
+    SharedPreferencesOptions options,
+  ) async {
+    return _api.setInt(key, value, _convertOptionsToPigeonOptions(options));
+  }
+
+  @override
+  Future<void> setDouble(
+    String key,
+    double value,
+    SharedPreferencesOptions options,
+  ) async {
+    return _api.setDouble(key, value, _convertOptionsToPigeonOptions(options));
+  }
+
+  @override
+  Future<void> setBool(
+    String key,
+    bool value,
+    SharedPreferencesOptions options,
+  ) async {
+    return _api.setBool(key, value, _convertOptionsToPigeonOptions(options));
+  }
+
+  @override
+  Future<void> setStringList(
+    String key,
+    List<String> value,
+    SharedPreferencesOptions options,
+  ) async {
+    return _api.setStringList(
+        key, value, _convertOptionsToPigeonOptions(options));
+  }
+
+  @override
+  Future<String?> getString(
+    String key,
+    SharedPreferencesOptions options,
+  ) async {
+    return _convertKnownExceptions<String>(() async =>
+        _api.getString(key, _convertOptionsToPigeonOptions(options)));
+  }
+
+  @override
+  Future<bool?> getBool(
+    String key,
+    SharedPreferencesOptions options,
+  ) async {
+    return _convertKnownExceptions<bool>(
+        () async => _api.getBool(key, _convertOptionsToPigeonOptions(options)));
+  }
+
+  @override
+  Future<double?> getDouble(
+    String key,
+    SharedPreferencesOptions options,
+  ) async {
+    return _convertKnownExceptions<double>(() async =>
+        _api.getDouble(key, _convertOptionsToPigeonOptions(options)));
+  }
+
+  @override
+  Future<int?> getInt(
+    String key,
+    SharedPreferencesOptions options,
+  ) async {
+    return _convertKnownExceptions<int>(
+        () async => _api.getInt(key, _convertOptionsToPigeonOptions(options)));
+  }
+
+  @override
+  Future<List<String>?> getStringList(
+    String key,
+    SharedPreferencesOptions options,
+  ) async {
+    // TODO(tarrinneal): Remove cast once https://github.com/flutter/flutter/issues/97848
+    // is fixed. In practice, the values will never be null, and the native implementation assumes that.
+    return _convertKnownExceptions<List<String>>(() async =>
+        (await _api.getStringList(key, _convertOptionsToPigeonOptions(options)))
+            ?.cast<String>());
+  }
+
+  Future<T?> _convertKnownExceptions<T>(Future<T?> Function() method) async {
+    try {
+      final T? value = await method();
+      return value;
+    } on PlatformException catch (e) {
+      if (e.code == 'ClassCastException') {
+        throw TypeError();
+      } else {
+        rethrow;
+      }
+    }
+  }
+
+  @override
+  Future<void> clear(
+    ClearPreferencesParameters parameters,
+    SharedPreferencesOptions options,
+  ) async {
+    final PreferencesFilters filter = parameters.filter;
+    return _api.clear(
+      filter.allowList?.toList(),
+      _convertOptionsToPigeonOptions(options),
     );
   }
 
   @override
-  Future<Map<String, Object>> getAll() async {
-    return getAllWithParameters(
-      GetAllParameters(
-        filter: PreferencesFilter(prefix: _defaultPrefix),
-      ),
+  Future<Map<String, Object>> getPreferences(
+    GetPreferencesParameters parameters,
+    SharedPreferencesOptions options,
+  ) async {
+    final PreferencesFilters filter = parameters.filter;
+    final Map<String?, Object?> data = await _api.getAll(
+      filter.allowList?.toList(),
+      _convertOptionsToPigeonOptions(options),
     );
-  }
-
-  @override
-  Future<Map<String, Object>> getAllWithPrefix(String prefix) async {
-    return getAllWithParameters(
-        GetAllParameters(filter: PreferencesFilter(prefix: prefix)));
-  }
-
-  @override
-  Future<Map<String, Object>> getAllWithParameters(
-      GetAllParameters parameters) async {
-    final PreferencesFilter filter = parameters.filter;
-    final Map<String?, Object?> data =
-        await _api.getAll(filter.prefix, filter.allowList?.toList());
     return data.cast<String, Object>();
   }
+}
+
+/// Options for the Android specific SharedPreferences plugin.
+class SharedPreferencesAndroidOptions extends SharedPreferencesOptions {
+  /// Constructor for SharedPreferencesAndroidOptions.
+  const SharedPreferencesAndroidOptions();
 }

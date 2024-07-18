@@ -2,106 +2,236 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:flutter/services.dart';
-import 'package:shared_preferences_platform_interface/shared_preferences_platform_interface.dart';
-import 'package:shared_preferences_platform_interface/types.dart';
-import 'messages.g.dart';
+import 'dart:io';
 
-typedef _Setter = Future<void> Function(String key, Object value);
+import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
+import 'package:shared_preferences_platform_interface/shared_preferences_async_platform_interface.dart';
+import 'package:shared_preferences_platform_interface/types.dart';
+
+import './messages.g.dart';
+import 'legacy_shared_preferences_foundation.dart';
+
+const String _argumentErrorCode = 'Argument Error';
 
 /// iOS and macOS implementation of shared_preferences.
-class SharedPreferencesFoundation extends SharedPreferencesStorePlatform {
-  final UserDefaultsApi _api = UserDefaultsApi();
+base class SharedPreferencesFoundation extends SharedPreferencesAsyncPlatform {
+  /// Creates a new plugin implementation instance.
+  SharedPreferencesFoundation({
+    @visibleForTesting UserDefaultsApi? api,
+  }) : _api = api ?? UserDefaultsApi();
 
-  static const String _defaultPrefix = 'flutter.';
+  final UserDefaultsApi _api;
 
-  late final Map<String, _Setter> _setters = <String, _Setter>{
-    'Bool': (String key, Object value) {
-      return _api.setBool(key, value as bool);
-    },
-    'Double': (String key, Object value) {
-      return _api.setDouble(key, value as double);
-    },
-    'Int': (String key, Object value) {
-      return _api.setValue(key, value as int);
-    },
-    'String': (String key, Object value) {
-      return _api.setValue(key, value as String);
-    },
-    'StringList': (String key, Object value) {
-      return _api.setValue(key, value as List<String?>);
-    },
-  };
-
-  /// Registers this class as the default instance of
-  /// [SharedPreferencesStorePlatform].
+  /// Registers this class as the default instance of [SharedPreferencesAsyncPlatform].
   static void registerWith() {
-    SharedPreferencesStorePlatform.instance = SharedPreferencesFoundation();
+    SharedPreferencesAsyncPlatform.instance = SharedPreferencesFoundation();
+    // A temporary work-around for having two plugins contained in a single package.
+    LegacySharedPreferencesFoundation.registerWith();
   }
 
-  @override
-  Future<bool> clear() async {
-    return clearWithParameters(
-      ClearParameters(
-        filter: PreferencesFilter(prefix: _defaultPrefix),
-      ),
-    );
-  }
-
-  @override
-  Future<bool> clearWithPrefix(String prefix) async {
-    return clearWithParameters(
-        ClearParameters(filter: PreferencesFilter(prefix: prefix)));
-  }
-
-  @override
-  Future<bool> clearWithParameters(ClearParameters parameters) async {
-    final PreferencesFilter filter = parameters.filter;
-    return _api.clear(
-      filter.prefix,
-      filter.allowList?.toList(),
-    );
-  }
-
-  @override
-  Future<Map<String, Object>> getAll() async {
-    return getAllWithParameters(
-      GetAllParameters(
-        filter: PreferencesFilter(prefix: _defaultPrefix),
-      ),
-    );
-  }
-
-  @override
-  Future<Map<String, Object>> getAllWithPrefix(String prefix) async {
-    return getAllWithParameters(
-        GetAllParameters(filter: PreferencesFilter(prefix: prefix)));
-  }
-
-  @override
-  Future<Map<String, Object>> getAllWithParameters(
-      GetAllParameters parameters) async {
-    final PreferencesFilter filter = parameters.filter;
-    final Map<String?, Object?> data =
-        await _api.getAll(filter.prefix, filter.allowList?.toList());
-    return data.cast<String, Object>();
-  }
-
-  @override
-  Future<bool> remove(String key) async {
-    await _api.remove(key);
-    return true;
-  }
-
-  @override
-  Future<bool> setValue(String valueType, String key, Object value) async {
-    final _Setter? setter = _setters[valueType];
-    if (setter == null) {
-      throw PlatformException(
-          code: 'InvalidOperation',
-          message: '"$valueType" is not a supported type.');
+  /// Returns a SharedPreferencesPigeonOptions for sending to platform.
+  SharedPreferencesPigeonOptions _convertOptionsToPigeonOptions(
+      SharedPreferencesOptions options) {
+    if (options is SharedPreferencesFoundationOptions) {
+      final String? suiteName = options.suiteName;
+      return SharedPreferencesPigeonOptions(
+        suiteName: suiteName,
+      );
     }
-    await setter(key, value);
-    return true;
+    return SharedPreferencesPigeonOptions();
+  }
+
+  @override
+  Future<Set<String>> getKeys(
+    GetPreferencesParameters parameters,
+    SharedPreferencesOptions options,
+  ) async {
+    final PreferencesFilters filter = parameters.filter;
+    // TODO(tarrinneal): Remove cast once https://github.com/flutter/flutter/issues/97848
+    // is fixed. In practice, the values will never be null, and the native implementation assumes that.
+    return (await _convertKnownExceptions<List<String>>(
+            () async => (await _api.getKeys(
+                  filter.allowList?.toList(),
+                  _convertOptionsToPigeonOptions(options),
+                ))
+                    .cast<String>()))!
+        .toSet();
+  }
+
+  Future<void> _setValue(
+    String key,
+    Object value,
+    SharedPreferencesOptions options,
+  ) async {
+    return _convertKnownExceptions<void>(() async =>
+        _api.set(key, value, _convertOptionsToPigeonOptions(options)));
+  }
+
+  @override
+  Future<void> setString(
+    String key,
+    String value,
+    SharedPreferencesOptions options,
+  ) async {
+    await _setValue(key, value, options);
+  }
+
+  @override
+  Future<void> setInt(
+    String key,
+    int value,
+    SharedPreferencesOptions options,
+  ) async {
+    await _setValue(key, value, options);
+  }
+
+  @override
+  Future<void> setStringList(
+    String key,
+    List<String> value,
+    SharedPreferencesOptions options,
+  ) async {
+    await _setValue(key, value, options);
+  }
+
+  @override
+  Future<void> setBool(
+    String key,
+    bool value,
+    SharedPreferencesOptions options,
+  ) async {
+    await _api.set(key, value, _convertOptionsToPigeonOptions(options));
+  }
+
+  @override
+  Future<void> setDouble(
+    String key,
+    double value,
+    SharedPreferencesOptions options,
+  ) async {
+    await _api.set(key, value, _convertOptionsToPigeonOptions(options));
+  }
+
+  @override
+  Future<String?> getString(
+    String key,
+    SharedPreferencesOptions options,
+  ) async {
+    return _convertKnownExceptions<String>(() async => (await _api.getValue(
+        key, _convertOptionsToPigeonOptions(options))) as String?);
+  }
+
+  @override
+  Future<bool?> getBool(
+    String key,
+    SharedPreferencesOptions options,
+  ) async {
+    return _convertKnownExceptions<bool>(() async => await _api.getValue(
+        key, _convertOptionsToPigeonOptions(options)) as bool?);
+  }
+
+  @override
+  Future<double?> getDouble(
+    String key,
+    SharedPreferencesOptions options,
+  ) async {
+    return _convertKnownExceptions<double>(() async => await _api.getValue(
+        key, _convertOptionsToPigeonOptions(options)) as double?);
+  }
+
+  @override
+  Future<int?> getInt(
+    String key,
+    SharedPreferencesOptions options,
+  ) async {
+    return _convertKnownExceptions<int>(() async => await _api.getValue(
+        key, _convertOptionsToPigeonOptions(options)) as int?);
+  }
+
+  @override
+  Future<List<String>?> getStringList(
+    String key,
+    SharedPreferencesOptions options,
+  ) async {
+    // TODO(tarrinneal): Remove cast once https://github.com/flutter/flutter/issues/97848
+    // is fixed. In practice, the values will never be null, and the native implementation assumes that.
+    return _convertKnownExceptions<List<String>>(() async =>
+        ((await _api.getValue(key, _convertOptionsToPigeonOptions(options)))
+                as List<Object?>?)
+            ?.cast<String>());
+  }
+
+  @override
+  Future<void> clear(
+    ClearPreferencesParameters parameters,
+    SharedPreferencesOptions options,
+  ) async {
+    final PreferencesFilters filter = parameters.filter;
+    return _convertKnownExceptions<void>(() async => _api.clear(
+          filter.allowList?.toList(),
+          _convertOptionsToPigeonOptions(options),
+        ));
+  }
+
+  @override
+  Future<Map<String, Object>> getPreferences(
+    GetPreferencesParameters parameters,
+    SharedPreferencesOptions options,
+  ) async {
+    final PreferencesFilters filter = parameters.filter;
+    final Map<String?, Object?>? data =
+        await _convertKnownExceptions<Map<String?, Object?>>(
+            () async => _api.getAll(
+                  filter.allowList?.toList(),
+                  _convertOptionsToPigeonOptions(options),
+                ));
+
+    return data!.cast<String, Object>();
+  }
+
+  Future<T?> _convertKnownExceptions<T>(Future<T?> Function() method) async {
+    try {
+      final T? value = await method();
+      return value;
+    } on PlatformException catch (e) {
+      if (e.code == _argumentErrorCode) {
+        throw ArgumentError(
+            'shared_preferences_foundation argument error ${e.message ?? ''}');
+      } else {
+        rethrow;
+      }
+    }
+  }
+}
+
+/// Options for the Foundation specific SharedPreferences plugin.
+@immutable
+class SharedPreferencesFoundationOptions extends SharedPreferencesOptions {
+  /// Creates a new instance with the given options.
+  SharedPreferencesFoundationOptions({
+    this.suiteName,
+  }) {
+    if (Platform.isIOS && !(suiteName?.startsWith('group.') ?? true)) {
+      throw ArgumentError('iOS suite name must begin with "group."');
+    }
+  }
+
+  /// Name of Foundation suite to get/set to.
+  ///
+  /// On iOS this represents a container ID which must begin with `group.`
+  /// followed by a custom string in reverse DNS notation.
+  ///
+  /// If this option is not set, the default NSUserDefaults will be used.
+  final String? suiteName;
+
+  /// Returns a new instance of [SharedPreferencesFoundationOptions] from an existing
+  /// [SharedPreferencesOptions].
+  static SharedPreferencesFoundationOptions fromSharedPreferencesOptions(
+      SharedPreferencesOptions options) {
+    if (options is SharedPreferencesFoundationOptions) {
+      return options;
+    }
+    return SharedPreferencesFoundationOptions();
   }
 }

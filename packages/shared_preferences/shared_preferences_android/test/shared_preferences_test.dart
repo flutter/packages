@@ -3,8 +3,8 @@
 // found in the LICENSE file.
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:shared_preferences_foundation/messages.g.dart';
-import 'package:shared_preferences_foundation/shared_preferences_foundation.dart';
+import 'package:shared_preferences_android/shared_preferences_android.dart';
+import 'package:shared_preferences_android/src/messages_async.g.dart';
 import 'package:shared_preferences_platform_interface/types.dart';
 
 void main() {
@@ -22,54 +22,54 @@ void main() {
   const double testDouble = 3.14159;
   const List<String> testList = <String>['foo', 'bar'];
 
-  final SharedPreferencesFoundationOptions emptyOptions =
-      SharedPreferencesFoundationOptions();
+  const SharedPreferencesAndroidOptions emptyOptions =
+      SharedPreferencesAndroidOptions();
 
-  SharedPreferencesFoundation getPreferences() {
+  SharedPreferencesAndroid getPreferences() {
     final _FakeSharedPreferencesApi api = _FakeSharedPreferencesApi();
-    final SharedPreferencesFoundation preferences =
-        SharedPreferencesFoundation(api: api);
+    final SharedPreferencesAndroid preferences =
+        SharedPreferencesAndroid(api: api);
 
     return preferences;
   }
 
   test('set and get String', () async {
-    final SharedPreferencesFoundation preferences = getPreferences();
+    final SharedPreferencesAndroid preferences = getPreferences();
 
     await preferences.setString(stringKey, testString, emptyOptions);
     expect(await preferences.getString(stringKey, emptyOptions), testString);
   });
 
   test('set and get bool', () async {
-    final SharedPreferencesFoundation preferences = getPreferences();
+    final SharedPreferencesAndroid preferences = getPreferences();
 
     await preferences.setBool(boolKey, testBool, emptyOptions);
     expect(await preferences.getBool(boolKey, emptyOptions), testBool);
   });
 
   test('set and get int', () async {
-    final SharedPreferencesFoundation preferences = getPreferences();
+    final SharedPreferencesAndroid preferences = getPreferences();
 
     await preferences.setInt(intKey, testInt, emptyOptions);
     expect(await preferences.getInt(intKey, emptyOptions), testInt);
   });
 
   test('set and get double', () async {
-    final SharedPreferencesFoundation preferences = getPreferences();
+    final SharedPreferencesAndroid preferences = getPreferences();
 
     await preferences.setDouble(doubleKey, testDouble, emptyOptions);
     expect(await preferences.getDouble(doubleKey, emptyOptions), testDouble);
   });
 
   test('set and get StringList', () async {
-    final SharedPreferencesFoundation preferences = getPreferences();
+    final SharedPreferencesAndroid preferences = getPreferences();
 
     await preferences.setStringList(listKey, testList, emptyOptions);
     expect(await preferences.getStringList(listKey, emptyOptions), testList);
   });
 
   test('getPreferences', () async {
-    final SharedPreferencesFoundation preferences = getPreferences();
+    final SharedPreferencesAndroid preferences = getPreferences();
     await Future.wait(<Future<void>>[
       preferences.setString(stringKey, testString, emptyOptions),
       preferences.setBool(boolKey, testBool, emptyOptions),
@@ -91,7 +91,7 @@ void main() {
   });
 
   test('getPreferences with filter', () async {
-    final SharedPreferencesFoundation preferences = getPreferences();
+    final SharedPreferencesAndroid preferences = getPreferences();
     await Future.wait(<Future<void>>[
       preferences.setString(stringKey, testString, emptyOptions),
       preferences.setBool(boolKey, testBool, emptyOptions),
@@ -112,7 +112,7 @@ void main() {
   });
 
   test('getKeys', () async {
-    final SharedPreferencesFoundation preferences = getPreferences();
+    final SharedPreferencesAndroid preferences = getPreferences();
     await Future.wait(<Future<void>>[
       preferences.setString(stringKey, testString, emptyOptions),
       preferences.setBool(boolKey, testBool, emptyOptions),
@@ -135,7 +135,7 @@ void main() {
   });
 
   test('getKeys with filter', () async {
-    final SharedPreferencesFoundation preferences = getPreferences();
+    final SharedPreferencesAndroid preferences = getPreferences();
     await Future.wait(<Future<void>>[
       preferences.setString(stringKey, testString, emptyOptions),
       preferences.setBool(boolKey, testBool, emptyOptions),
@@ -157,7 +157,7 @@ void main() {
   });
 
   test('clear', () async {
-    final SharedPreferencesFoundation preferences = getPreferences();
+    final SharedPreferencesAndroid preferences = getPreferences();
     await Future.wait(<Future<void>>[
       preferences.setString(stringKey, testString, emptyOptions),
       preferences.setBool(boolKey, testBool, emptyOptions),
@@ -176,7 +176,7 @@ void main() {
   });
 
   test('clear with filter', () async {
-    final SharedPreferencesFoundation preferences = getPreferences();
+    final SharedPreferencesAndroid preferences = getPreferences();
     await Future.wait(<Future<void>>[
       preferences.setString(stringKey, testString, emptyOptions),
       preferences.setBool(boolKey, testBool, emptyOptions),
@@ -198,7 +198,7 @@ void main() {
   });
 }
 
-class _FakeSharedPreferencesApi implements UserDefaultsApi {
+class _FakeSharedPreferencesApi implements SharedPreferencesAsyncApi {
   final Map<String, Object> items = <String, Object>{};
 
   @override
@@ -224,6 +224,24 @@ class _FakeSharedPreferencesApi implements UserDefaultsApi {
   }
 
   @override
+  Future<bool?> getBool(
+      String key, SharedPreferencesPigeonOptions options) async {
+    return items[key] as bool?;
+  }
+
+  @override
+  Future<double?> getDouble(
+      String key, SharedPreferencesPigeonOptions options) async {
+    return items[key] as double?;
+  }
+
+  @override
+  Future<int?> getInt(
+      String key, SharedPreferencesPigeonOptions options) async {
+    return items[key] as int?;
+  }
+
+  @override
   Future<List<String?>> getKeys(
       List<String?>? allowList, SharedPreferencesPigeonOptions options) async {
     final List<String> filteredItems = items.keys.toList();
@@ -246,14 +264,37 @@ class _FakeSharedPreferencesApi implements UserDefaultsApi {
   }
 
   @override
-  Future<void> set(
-      String key, Object value, SharedPreferencesPigeonOptions options) async {
+  Future<bool> setBool(
+      String key, bool value, SharedPreferencesPigeonOptions options) async {
     items[key] = value;
+    return true;
   }
 
   @override
-  Future<Object?> getValue(
-      String key, SharedPreferencesPigeonOptions options) async {
-    return items[key];
+  Future<bool> setDouble(
+      String key, double value, SharedPreferencesPigeonOptions options) async {
+    items[key] = value;
+    return true;
+  }
+
+  @override
+  Future<bool> setInt(
+      String key, int value, SharedPreferencesPigeonOptions options) async {
+    items[key] = value;
+    return true;
+  }
+
+  @override
+  Future<bool> setString(
+      String key, String value, SharedPreferencesPigeonOptions options) async {
+    items[key] = value;
+    return true;
+  }
+
+  @override
+  Future<bool> setStringList(String key, List<String?> value,
+      SharedPreferencesPigeonOptions options) async {
+    items[key] = value;
+    return true;
   }
 }

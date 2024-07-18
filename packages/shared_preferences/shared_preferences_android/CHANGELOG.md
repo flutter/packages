@@ -1,3 +1,8 @@
+## 3.0.0
+
+* Renames `SharedPreferencesAndroid` to `LegacySharedPreferencesAndroid`.
+* Creates new `SharedPreferencesAndroid` that extends `SharedPreferencesAsyncPlatform`.
+
 ## 2.2.3
 
 * Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
