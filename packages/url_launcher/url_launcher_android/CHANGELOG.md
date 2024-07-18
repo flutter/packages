@@ -1,3 +1,7 @@
+## 6.3.5
+
+* Bumps androidx.core:core from 1.10.1 to 1.13.1.
+
 ## 6.3.4
 
 * Updates Android Gradle Plugin to 8.5.1.
