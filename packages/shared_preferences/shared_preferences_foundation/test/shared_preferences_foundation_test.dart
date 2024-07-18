@@ -234,18 +234,6 @@ class _FakeSharedPreferencesApi implements UserDefaultsApi {
   }
 
   @override
-  Future<String?> getString(
-      String key, SharedPreferencesPigeonOptions options) async {
-    return items[key] as String?;
-  }
-
-  @override
-  Future<List<String?>?> getStringList(
-      String key, SharedPreferencesPigeonOptions options) async {
-    return items[key] as List<String>?;
-  }
-
-  @override
   Future<void> set(
       String key, Object value, SharedPreferencesPigeonOptions options) async {
     items[key] = value;
