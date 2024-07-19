@@ -1898,7 +1898,7 @@ void main() {
                   path: 'person',
                   builder: (BuildContext context, GoRouterState state) {
                     expect(state.uri.queryParameters,
-                        <String, String>{'fid': fid, 'pid': pid});
+                        <String, String>{'pid': pid});
                     return const PersonScreen('dummy', 'dummy');
                   },
                 ),
