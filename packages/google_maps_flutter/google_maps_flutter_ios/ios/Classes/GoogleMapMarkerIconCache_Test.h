@@ -10,7 +10,13 @@
                               screenScale:(CGFloat)screenScale;
 - (UIImage*)getImage:(NSArray *)iconData;
 
-- (BOOL)hasEntry:(NSArray *)iconData;
+/// Extracts an icon image from the iconData array.
+///
+/// @param iconData An array containing the data for the icon image.
+/// @param iconCache An icon cache that stores the UI images that are unique across all markers.
+/// @return A UIImage object created from the icon data.
+/// @note Assert unless screenScale is greater than 0.
+- (UIImage *)extractIconFromData:(NSArray *)iconData;
 
 /// Checks if an image can be scaled from an original size to a target size using a scale factor
 /// while maintaining the aspect ratio.

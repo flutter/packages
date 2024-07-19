@@ -6,7 +6,7 @@
 @import google_maps_flutter_ios.Test;
 @import XCTest;
 #import <OCMock/OCMock.h>
-#import <google_maps_flutter_ios/GoogleMapMarkerController_Test.h>
+#import <google_maps_flutter_ios/GoogleMapMarkerIconCache_Test.h>
 
 @interface ExtractIconFromDataTests : XCTestCase
 - (UIImage *)createOnePixelImage;
@@ -15,7 +15,6 @@
 @implementation ExtractIconFromDataTests
 
 - (void)testExtractIconFromDataAssetAuto {
-  FLTGoogleMapMarkerController *instance = [[FLTGoogleMapMarkerController alloc] init];
   NSObject<FlutterPluginRegistrar> *mockRegistrar =
       OCMStrictProtocolMock(@protocol(FlutterPluginRegistrar));
   id mockImageClass = OCMClassMock([UIImage class]);
@@ -30,9 +29,11 @@
 
   CGFloat screenScale = 3.0;
 
-  UIImage *resultImage = [instance extractIconFromData:iconData
-                                             registrar:mockRegistrar
-                                           screenScale:screenScale];
+  GoogleMapMarkerIconCache* iconCache =
+        [[GoogleMapMarkerIconCache alloc] initWithRegistrar:mockRegistrar
+                                                screenScale:screenScale];
+  UIImage *resultImage = [iconCache extractIconFromData:iconData];
+  
   XCTAssertNotNil(resultImage);
   XCTAssertEqual(resultImage.scale, 1.0);
   XCTAssertEqual(resultImage.size.width, 1.0);
@@ -40,7 +41,6 @@
 }
 
 - (void)testExtractIconFromDataAssetAutoWithScale {
-  FLTGoogleMapMarkerController *instance = [[FLTGoogleMapMarkerController alloc] init];
   NSObject<FlutterPluginRegistrar> *mockRegistrar =
       OCMStrictProtocolMock(@protocol(FlutterPluginRegistrar));
   id mockImageClass = OCMClassMock([UIImage class]);
@@ -56,9 +56,10 @@
 
   CGFloat screenScale = 3.0;
 
-  UIImage *resultImage = [instance extractIconFromData:iconData
-                                             registrar:mockRegistrar
-                                           screenScale:screenScale];
+  GoogleMapMarkerIconCache* iconCache =
+        [[GoogleMapMarkerIconCache alloc] initWithRegistrar:mockRegistrar
+                                                screenScale:screenScale];
+  UIImage *resultImage = [iconCache extractIconFromData:iconData];
 
   XCTAssertNotNil(resultImage);
   XCTAssertEqual(resultImage.scale, 10);
@@ -67,7 +68,6 @@
 }
 
 - (void)testExtractIconFromDataAssetAutoAndSizeWithSameAspectRatio {
-  FLTGoogleMapMarkerController *instance = [[FLTGoogleMapMarkerController alloc] init];
   NSObject<FlutterPluginRegistrar> *mockRegistrar =
       OCMStrictProtocolMock(@protocol(FlutterPluginRegistrar));
   id mockImageClass = OCMClassMock([UIImage class]);
@@ -87,9 +87,11 @@
   NSArray *iconData = @[ @"asset", assetData ];
   CGFloat screenScale = 3.0;
 
-  UIImage *resultImage = [instance extractIconFromData:iconData
-                                             registrar:mockRegistrar
-                                           screenScale:screenScale];
+  GoogleMapMarkerIconCache* iconCache =
+        [[GoogleMapMarkerIconCache alloc] initWithRegistrar:mockRegistrar
+                                                screenScale:screenScale];
+  UIImage *resultImage = [iconCache extractIconFromData:iconData];
+  
   XCTAssertNotNil(resultImage);
   XCTAssertEqual(testImage.scale, 1.0);
 
@@ -103,7 +105,6 @@
 }
 
 - (void)testExtractIconFromDataAssetAutoAndSizeWithDifferentAspectRatio {
-  FLTGoogleMapMarkerController *instance = [[FLTGoogleMapMarkerController alloc] init];
   NSObject<FlutterPluginRegistrar> *mockRegistrar =
       OCMStrictProtocolMock(@protocol(FlutterPluginRegistrar));
   id mockImageClass = OCMClassMock([UIImage class]);
@@ -124,9 +125,11 @@
 
   CGFloat screenScale = 3.0;
 
-  UIImage *resultImage = [instance extractIconFromData:iconData
-                                             registrar:mockRegistrar
-                                           screenScale:screenScale];
+  GoogleMapMarkerIconCache* iconCache =
+        [[GoogleMapMarkerIconCache alloc] initWithRegistrar:mockRegistrar
+                                                screenScale:screenScale];
+  UIImage *resultImage = [iconCache extractIconFromData:iconData];
+  
   XCTAssertNotNil(resultImage);
   XCTAssertEqual(resultImage.scale, screenScale);
   XCTAssertEqual(resultImage.size.width, 15.0);
@@ -134,7 +137,6 @@
 }
 
 - (void)testExtractIconFromDataAssetNoScaling {
-  FLTGoogleMapMarkerController *instance = [[FLTGoogleMapMarkerController alloc] init];
   NSObject<FlutterPluginRegistrar> *mockRegistrar =
       OCMStrictProtocolMock(@protocol(FlutterPluginRegistrar));
   id mockImageClass = OCMClassMock([UIImage class]);
@@ -150,9 +152,10 @@
 
   CGFloat screenScale = 3.0;
 
-  UIImage *resultImage = [instance extractIconFromData:iconData
-                                             registrar:mockRegistrar
-                                           screenScale:screenScale];
+  GoogleMapMarkerIconCache* iconCache =
+        [[GoogleMapMarkerIconCache alloc] initWithRegistrar:mockRegistrar
+                                                screenScale:screenScale];
+  UIImage *resultImage = [iconCache extractIconFromData:iconData];
 
   XCTAssertNotNil(resultImage);
   XCTAssertEqual(resultImage.scale, 1.0);
@@ -161,7 +164,6 @@
 }
 
 - (void)testExtractIconFromDataBytesAuto {
-  FLTGoogleMapMarkerController *instance = [[FLTGoogleMapMarkerController alloc] init];
   NSObject<FlutterPluginRegistrar> *mockRegistrar =
       OCMStrictProtocolMock(@protocol(FlutterPluginRegistrar));
   UIImage *testImage = [self createOnePixelImage];
@@ -176,9 +178,10 @@
   NSArray *iconData = @[ @"bytes", bytesData ];
   CGFloat screenScale = 3.0;
 
-  UIImage *resultImage = [instance extractIconFromData:iconData
-                                             registrar:mockRegistrar
-                                           screenScale:screenScale];
+  GoogleMapMarkerIconCache* iconCache =
+        [[GoogleMapMarkerIconCache alloc] initWithRegistrar:mockRegistrar
+                                                screenScale:screenScale];
+  UIImage *resultImage = [iconCache extractIconFromData:iconData];
 
   XCTAssertNotNil(resultImage);
   XCTAssertEqual(resultImage.scale, 1.0);
@@ -187,7 +190,6 @@
 }
 
 - (void)testExtractIconFromDataBytesAutoWithScaling {
-  FLTGoogleMapMarkerController *instance = [[FLTGoogleMapMarkerController alloc] init];
   NSObject<FlutterPluginRegistrar> *mockRegistrar =
       OCMStrictProtocolMock(@protocol(FlutterPluginRegistrar));
   UIImage *testImage = [self createOnePixelImage];
@@ -203,9 +205,11 @@
 
   CGFloat screenScale = 3.0;
 
-  UIImage *resultImage = [instance extractIconFromData:iconData
-                                             registrar:mockRegistrar
-                                           screenScale:screenScale];
+  GoogleMapMarkerIconCache* iconCache =
+        [[GoogleMapMarkerIconCache alloc] initWithRegistrar:mockRegistrar
+                                                screenScale:screenScale];
+  UIImage *resultImage = [iconCache extractIconFromData:iconData];
+  
   XCTAssertNotNil(resultImage);
   XCTAssertEqual(resultImage.scale, 10);
   XCTAssertEqual(resultImage.size.width, 0.1);
@@ -213,7 +217,6 @@
 }
 
 - (void)testExtractIconFromDataBytesAutoAndSizeWithSameAspectRatio {
-  FLTGoogleMapMarkerController *instance = [[FLTGoogleMapMarkerController alloc] init];
   NSObject<FlutterPluginRegistrar> *mockRegistrar =
       OCMStrictProtocolMock(@protocol(FlutterPluginRegistrar));
   UIImage *testImage = [self createOnePixelImage];
@@ -234,9 +237,10 @@
 
   CGFloat screenScale = 3.0;
 
-  UIImage *resultImage = [instance extractIconFromData:iconData
-                                             registrar:mockRegistrar
-                                           screenScale:screenScale];
+  GoogleMapMarkerIconCache* iconCache =
+        [[GoogleMapMarkerIconCache alloc] initWithRegistrar:mockRegistrar
+                                                screenScale:screenScale];
+  UIImage *resultImage = [iconCache extractIconFromData:iconData];
 
   XCTAssertNotNil(resultImage);
   XCTAssertEqual(testImage.scale, 1.0);
@@ -251,7 +255,6 @@
 }
 
 - (void)testExtractIconFromDataBytesAutoAndSizeWithDifferentAspectRatio {
-  FLTGoogleMapMarkerController *instance = [[FLTGoogleMapMarkerController alloc] init];
   NSObject<FlutterPluginRegistrar> *mockRegistrar =
       OCMStrictProtocolMock(@protocol(FlutterPluginRegistrar));
   UIImage *testImage = [self createOnePixelImage];
@@ -271,9 +274,11 @@
   NSArray *iconData = @[ @"bytes", bytesData ];
   CGFloat screenScale = 3.0;
 
-  UIImage *resultImage = [instance extractIconFromData:iconData
-                                             registrar:mockRegistrar
-                                           screenScale:screenScale];
+  GoogleMapMarkerIconCache* iconCache =
+        [[GoogleMapMarkerIconCache alloc] initWithRegistrar:mockRegistrar
+                                                screenScale:screenScale];
+  UIImage *resultImage = [iconCache extractIconFromData:iconData];
+  
   XCTAssertNotNil(resultImage);
   XCTAssertEqual(resultImage.scale, screenScale);
   XCTAssertEqual(resultImage.size.width, 15.0);
@@ -281,7 +286,6 @@
 }
 
 - (void)testExtractIconFromDataBytesNoScaling {
-  FLTGoogleMapMarkerController *instance = [[FLTGoogleMapMarkerController alloc] init];
   NSObject<FlutterPluginRegistrar> *mockRegistrar =
       OCMStrictProtocolMock(@protocol(FlutterPluginRegistrar));
   UIImage *testImage = [self createOnePixelImage];
@@ -296,9 +300,11 @@
   NSArray *iconData = @[ @"bytes", bytesData ];
   CGFloat screenScale = 3.0;
 
-  UIImage *resultImage = [instance extractIconFromData:iconData
-                                             registrar:mockRegistrar
-                                           screenScale:screenScale];
+  GoogleMapMarkerIconCache* iconCache =
+        [[GoogleMapMarkerIconCache alloc] initWithRegistrar:mockRegistrar
+                                                screenScale:screenScale];
+  UIImage *resultImage = [iconCache extractIconFromData:iconData];
+  
   XCTAssertNotNil(resultImage);
   XCTAssertEqual(resultImage.scale, 1.0);
   XCTAssertEqual(resultImage.size.width, 1.0);
@@ -308,49 +314,49 @@
 - (void)testIsScalableWithScaleFactorFromSize100x100to10x100 {
   CGSize originalSize = CGSizeMake(100.0, 100.0);
   CGSize targetSize = CGSizeMake(10.0, 100.0);
-  XCTAssertFalse([FLTGoogleMapMarkerController isScalableWithScaleFactorFromSize:originalSize
+  XCTAssertFalse([GoogleMapMarkerIconCache isScalableWithScaleFactorFromSize:originalSize
                                                                           toSize:targetSize]);
 }
 
 - (void)testIsScalableWithScaleFactorFromSize100x100to10x10 {
   CGSize originalSize = CGSizeMake(100.0, 100.0);
   CGSize targetSize = CGSizeMake(10.0, 10.0);
-  XCTAssertTrue([FLTGoogleMapMarkerController isScalableWithScaleFactorFromSize:originalSize
+  XCTAssertTrue([GoogleMapMarkerIconCache isScalableWithScaleFactorFromSize:originalSize
                                                                          toSize:targetSize]);
 }
 
 - (void)testIsScalableWithScaleFactorFromSize233x200to23x20 {
   CGSize originalSize = CGSizeMake(233.0, 200.0);
   CGSize targetSize = CGSizeMake(23.0, 20.0);
-  XCTAssertTrue([FLTGoogleMapMarkerController isScalableWithScaleFactorFromSize:originalSize
+  XCTAssertTrue([GoogleMapMarkerIconCache isScalableWithScaleFactorFromSize:originalSize
                                                                          toSize:targetSize]);
 }
 
 - (void)testIsScalableWithScaleFactorFromSize233x200to22x20 {
   CGSize originalSize = CGSizeMake(233.0, 200.0);
   CGSize targetSize = CGSizeMake(22.0, 20.0);
-  XCTAssertFalse([FLTGoogleMapMarkerController isScalableWithScaleFactorFromSize:originalSize
+  XCTAssertFalse([GoogleMapMarkerIconCache isScalableWithScaleFactorFromSize:originalSize
                                                                           toSize:targetSize]);
 }
 
 - (void)testIsScalableWithScaleFactorFromSize200x233to20x23 {
   CGSize originalSize = CGSizeMake(200.0, 233.0);
   CGSize targetSize = CGSizeMake(20.0, 23.0);
-  XCTAssertTrue([FLTGoogleMapMarkerController isScalableWithScaleFactorFromSize:originalSize
+  XCTAssertTrue([GoogleMapMarkerIconCache isScalableWithScaleFactorFromSize:originalSize
                                                                          toSize:targetSize]);
 }
 
 - (void)testIsScalableWithScaleFactorFromSize200x233to20x22 {
   CGSize originalSize = CGSizeMake(200.0, 233.0);
   CGSize targetSize = CGSizeMake(20.0, 22.0);
-  XCTAssertFalse([FLTGoogleMapMarkerController isScalableWithScaleFactorFromSize:originalSize
+  XCTAssertFalse([GoogleMapMarkerIconCache isScalableWithScaleFactorFromSize:originalSize
                                                                           toSize:targetSize]);
 }
 
 - (void)testIsScalableWithScaleFactorFromSize1024x768to500x250 {
   CGSize originalSize = CGSizeMake(1024.0, 768.0);
   CGSize targetSize = CGSizeMake(500.0, 250.0);
-  XCTAssertFalse([FLTGoogleMapMarkerController isScalableWithScaleFactorFromSize:originalSize
+  XCTAssertFalse([GoogleMapMarkerIconCache isScalableWithScaleFactorFromSize:originalSize
                                                                           toSize:targetSize]);
 }
 
