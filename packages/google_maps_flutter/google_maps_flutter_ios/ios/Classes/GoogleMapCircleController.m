@@ -60,43 +60,43 @@
 }
 
 - (void)interpretCircleOptions:(NSDictionary *)data {
-  NSNumber *consumeTapEvents = data[@"consumeTapEvents"];
-  if (consumeTapEvents && consumeTapEvents != (id)[NSNull null]) {
+  NSNumber *consumeTapEvents = FGMGetValueOrNilFromDict(data, @"consumeTapEvents");
+  if (consumeTapEvents) {
     [self setConsumeTapEvents:consumeTapEvents.boolValue];
   }
 
-  NSNumber *visible = data[@"visible"];
-  if (visible && visible != (id)[NSNull null]) {
+  NSNumber *visible = FGMGetValueOrNilFromDict(data, @"visible");
+  if (visible) {
     [self setVisible:[visible boolValue]];
   }
 
-  NSNumber *zIndex = data[@"zIndex"];
-  if (zIndex && zIndex != (id)[NSNull null]) {
+  NSNumber *zIndex = FGMGetValueOrNilFromDict(data, @"zIndex");
+  if (zIndex) {
     [self setZIndex:[zIndex intValue]];
   }
 
-  NSArray *center = data[@"center"];
-  if (center && center != (id)[NSNull null]) {
+  NSArray *center = FGMGetValueOrNilFromDict(data, @"center");
+  if (center) {
     [self setCenter:[FLTGoogleMapJSONConversions locationFromLatLong:center]];
   }
 
-  NSNumber *radius = data[@"radius"];
-  if (radius && radius != (id)[NSNull null]) {
+  NSNumber *radius = FGMGetValueOrNilFromDict(data, @"radius");
+  if (radius) {
     [self setRadius:[radius floatValue]];
   }
 
-  NSNumber *strokeColor = data[@"strokeColor"];
-  if (strokeColor && strokeColor != (id)[NSNull null]) {
+  NSNumber *strokeColor = FGMGetValueOrNilFromDict(data, @"strokeColor");
+  if (strokeColor) {
     [self setStrokeColor:[FLTGoogleMapJSONConversions colorFromRGBA:strokeColor]];
   }
 
-  NSNumber *strokeWidth = data[@"strokeWidth"];
-  if (strokeWidth && strokeWidth != (id)[NSNull null]) {
+  NSNumber *strokeWidth = FGMGetValueOrNilFromDict(data, @"strokeWidth");
+  if (strokeWidth) {
     [self setStrokeWidth:[strokeWidth intValue]];
   }
 
-  NSNumber *fillColor = data[@"fillColor"];
-  if (fillColor && fillColor != (id)[NSNull null]) {
+  NSNumber *fillColor = FGMGetValueOrNilFromDict(data, @"fillColor");
+  if (fillColor) {
     [self setFillColor:[FLTGoogleMapJSONConversions colorFromRGBA:fillColor]];
   }
 }
@@ -105,7 +105,7 @@
 
 @interface FLTCirclesController ()
 
-@property(strong, nonatomic) FlutterMethodChannel *methodChannel;
+@property(strong, nonatomic) FGMMapsCallbackApi *callbackHandler;
 @property(weak, nonatomic) GMSMapView *mapView;
 @property(strong, nonatomic) NSMutableDictionary *circleIdToController;
 
@@ -113,20 +113,20 @@
 
 @implementation FLTCirclesController
 
-- (instancetype)init:(FlutterMethodChannel *)methodChannel
-             mapView:(GMSMapView *)mapView
-           registrar:(NSObject<FlutterPluginRegistrar> *)registrar {
+- (instancetype)initWithMapView:(GMSMapView *)mapView
+                callbackHandler:(FGMMapsCallbackApi *)callbackHandler
+                      registrar:(NSObject<FlutterPluginRegistrar> *)registrar {
   self = [super init];
   if (self) {
-    _methodChannel = methodChannel;
+    _callbackHandler = callbackHandler;
     _mapView = mapView;
     _circleIdToController = [NSMutableDictionary dictionaryWithCapacity:1];
   }
   return self;
 }
 
-- (void)addCircles:(NSArray *)circlesToAdd {
-  for (NSDictionary *circle in circlesToAdd) {
+- (void)addJSONCircles:(NSArray<NSDictionary<NSString *, id> *> *)circlesToAdd {
+  for (NSDictionary<NSString *, id> *circle in circlesToAdd) {
     CLLocationCoordinate2D position = [FLTCirclesController getPosition:circle];
     CLLocationDistance radius = [FLTCirclesController getRadius:circle];
     NSString *circleId = [FLTCirclesController getCircleId:circle];
@@ -140,18 +140,30 @@
   }
 }
 
-- (void)changeCircles:(NSArray *)circlesToChange {
-  for (NSDictionary *circle in circlesToChange) {
-    NSString *circleId = [FLTCirclesController getCircleId:circle];
-    FLTGoogleMapCircleController *controller = self.circleIdToController[circleId];
-    if (!controller) {
-      continue;
-    }
-    [controller interpretCircleOptions:circle];
+- (void)addCircles:(NSArray<FGMPlatformCircle *> *)circlesToAdd {
+  for (FGMPlatformCircle *circle in circlesToAdd) {
+    CLLocationCoordinate2D position = [FLTCirclesController getPosition:circle.json];
+    CLLocationDistance radius = [FLTCirclesController getRadius:circle.json];
+    NSString *circleId = [FLTCirclesController getCircleId:circle.json];
+    FLTGoogleMapCircleController *controller =
+        [[FLTGoogleMapCircleController alloc] initCircleWithPosition:position
+                                                              radius:radius
+                                                            circleId:circleId
+                                                             mapView:self.mapView
+                                                             options:circle.json];
+    self.circleIdToController[circleId] = controller;
   }
 }
 
-- (void)removeCircleWithIdentifiers:(NSArray *)identifiers {
+- (void)changeCircles:(NSArray<FGMPlatformCircle *> *)circlesToChange {
+  for (FGMPlatformCircle *circle in circlesToChange) {
+    NSString *circleId = [FLTCirclesController getCircleId:circle.json];
+    FLTGoogleMapCircleController *controller = self.circleIdToController[circleId];
+    [controller interpretCircleOptions:circle.json];
+  }
+}
+
+- (void)removeCirclesWithIdentifiers:(NSArray<NSString *> *)identifiers {
   for (NSString *identifier in identifiers) {
     FLTGoogleMapCircleController *controller = self.circleIdToController[identifier];
     if (!controller) {
@@ -177,7 +189,9 @@
   if (!controller) {
     return;
   }
-  [self.methodChannel invokeMethod:@"circle#onTap" arguments:@{@"circleId" : identifier}];
+  [self.callbackHandler didTapCircleWithIdentifier:identifier
+                                        completion:^(FlutterError *_Nullable _){
+                                        }];
 }
 
 + (CLLocationCoordinate2D)getPosition:(NSDictionary *)circle {

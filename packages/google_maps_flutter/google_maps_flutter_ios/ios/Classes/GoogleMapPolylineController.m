@@ -12,17 +12,11 @@
 
 @end
 
-/// Returns dict[key], or nil if dict[key] is NSNull.
-static id GetValueOrNilFromDict(NSDictionary *dict, NSString *key) {
-  id value = dict[key];
-  return value == [NSNull null] ? nil : value;
-}
-
 @implementation FLTGoogleMapPolylineController
 
-- (instancetype)initPolylineWithPath:(GMSMutablePath *)path
-                          identifier:(NSString *)identifier
-                             mapView:(GMSMapView *)mapView {
+- (instancetype)initWithPath:(GMSMutablePath *)path
+                  identifier:(NSString *)identifier
+                     mapView:(GMSMapView *)mapView {
   self = [super init];
   if (self) {
     _polyline = [GMSPolyline polylineWithPath:path];
@@ -71,42 +65,42 @@ static id GetValueOrNilFromDict(NSDictionary *dict, NSString *key) {
 
 - (void)interpretPolylineOptions:(NSDictionary *)data
                        registrar:(NSObject<FlutterPluginRegistrar> *)registrar {
-  NSNumber *consumeTapEvents = GetValueOrNilFromDict(data, @"consumeTapEvents");
+  NSNumber *consumeTapEvents = FGMGetValueOrNilFromDict(data, @"consumeTapEvents");
   if (consumeTapEvents) {
     [self setConsumeTapEvents:[consumeTapEvents boolValue]];
   }
 
-  NSNumber *visible = GetValueOrNilFromDict(data, @"visible");
+  NSNumber *visible = FGMGetValueOrNilFromDict(data, @"visible");
   if (visible) {
     [self setVisible:[visible boolValue]];
   }
 
-  NSNumber *zIndex = GetValueOrNilFromDict(data, @"zIndex");
+  NSNumber *zIndex = FGMGetValueOrNilFromDict(data, @"zIndex");
   if (zIndex) {
     [self setZIndex:[zIndex intValue]];
   }
 
-  NSArray *points = GetValueOrNilFromDict(data, @"points");
+  NSArray *points = FGMGetValueOrNilFromDict(data, @"points");
   if (points) {
     [self setPoints:[FLTGoogleMapJSONConversions pointsFromLatLongs:points]];
   }
 
-  NSNumber *strokeColor = GetValueOrNilFromDict(data, @"color");
+  NSNumber *strokeColor = FGMGetValueOrNilFromDict(data, @"color");
   if (strokeColor) {
     [self setColor:[FLTGoogleMapJSONConversions colorFromRGBA:strokeColor]];
   }
 
-  NSNumber *strokeWidth = GetValueOrNilFromDict(data, @"width");
+  NSNumber *strokeWidth = FGMGetValueOrNilFromDict(data, @"width");
   if (strokeWidth) {
     [self setStrokeWidth:[strokeWidth intValue]];
   }
 
-  NSNumber *geodesic = GetValueOrNilFromDict(data, @"geodesic");
+  NSNumber *geodesic = FGMGetValueOrNilFromDict(data, @"geodesic");
   if (geodesic) {
     [self setGeodesic:geodesic.boolValue];
   }
 
-  NSArray *patterns = GetValueOrNilFromDict(data, @"pattern");
+  NSArray *patterns = FGMGetValueOrNilFromDict(data, @"pattern");
   if (patterns) {
     [self
         setPattern:[FLTGoogleMapJSONConversions strokeStylesFromPatterns:patterns
@@ -120,7 +114,7 @@ static id GetValueOrNilFromDict(NSDictionary *dict, NSString *key) {
 @interface FLTPolylinesController ()
 
 @property(strong, nonatomic) NSMutableDictionary *polylineIdentifierToController;
-@property(strong, nonatomic) FlutterMethodChannel *methodChannel;
+@property(strong, nonatomic) FGMMapsCallbackApi *callbackHandler;
 @property(weak, nonatomic) NSObject<FlutterPluginRegistrar> *registrar;
 @property(weak, nonatomic) GMSMapView *mapView;
 
@@ -129,41 +123,54 @@ static id GetValueOrNilFromDict(NSDictionary *dict, NSString *key) {
 
 @implementation FLTPolylinesController
 
-- (instancetype)init:(FlutterMethodChannel *)methodChannel
-             mapView:(GMSMapView *)mapView
-           registrar:(NSObject<FlutterPluginRegistrar> *)registrar {
+- (instancetype)initWithMapView:(GMSMapView *)mapView
+                callbackHandler:(FGMMapsCallbackApi *)callbackHandler
+                      registrar:(NSObject<FlutterPluginRegistrar> *)registrar {
   self = [super init];
   if (self) {
-    _methodChannel = methodChannel;
+    _callbackHandler = callbackHandler;
     _mapView = mapView;
     _polylineIdentifierToController = [NSMutableDictionary dictionaryWithCapacity:1];
     _registrar = registrar;
   }
   return self;
 }
-- (void)addPolylines:(NSArray *)polylinesToAdd {
-  for (NSDictionary *polyline in polylinesToAdd) {
+
+- (void)addJSONPolylines:(NSArray<NSDictionary<NSString *, id> *> *)polylinesToAdd {
+  for (NSDictionary<NSString *, id> *polyline in polylinesToAdd) {
     GMSMutablePath *path = [FLTPolylinesController pathForPolyline:polyline];
     NSString *identifier = polyline[@"polylineId"];
     FLTGoogleMapPolylineController *controller =
-        [[FLTGoogleMapPolylineController alloc] initPolylineWithPath:path
-                                                          identifier:identifier
-                                                             mapView:self.mapView];
+        [[FLTGoogleMapPolylineController alloc] initWithPath:path
+                                                  identifier:identifier
+                                                     mapView:self.mapView];
     [controller interpretPolylineOptions:polyline registrar:self.registrar];
     self.polylineIdentifierToController[identifier] = controller;
   }
 }
-- (void)changePolylines:(NSArray *)polylinesToChange {
-  for (NSDictionary *polyline in polylinesToChange) {
-    NSString *identifier = polyline[@"polylineId"];
-    FLTGoogleMapPolylineController *controller = self.polylineIdentifierToController[identifier];
-    if (!controller) {
-      continue;
-    }
-    [controller interpretPolylineOptions:polyline registrar:self.registrar];
+
+- (void)addPolylines:(NSArray<FGMPlatformPolyline *> *)polylinesToAdd {
+  for (FGMPlatformPolyline *polyline in polylinesToAdd) {
+    GMSMutablePath *path = [FLTPolylinesController pathForPolyline:polyline.json];
+    NSString *identifier = polyline.json[@"polylineId"];
+    FLTGoogleMapPolylineController *controller =
+        [[FLTGoogleMapPolylineController alloc] initWithPath:path
+                                                  identifier:identifier
+                                                     mapView:self.mapView];
+    [controller interpretPolylineOptions:polyline.json registrar:self.registrar];
+    self.polylineIdentifierToController[identifier] = controller;
   }
 }
-- (void)removePolylineWithIdentifiers:(NSArray *)identifiers {
+
+- (void)changePolylines:(NSArray<FGMPlatformPolyline *> *)polylinesToChange {
+  for (FGMPlatformPolyline *polyline in polylinesToChange) {
+    NSString *identifier = polyline.json[@"polylineId"];
+    FLTGoogleMapPolylineController *controller = self.polylineIdentifierToController[identifier];
+    [controller interpretPolylineOptions:polyline.json registrar:self.registrar];
+  }
+}
+
+- (void)removePolylineWithIdentifiers:(NSArray<NSString *> *)identifiers {
   for (NSString *identifier in identifiers) {
     FLTGoogleMapPolylineController *controller = self.polylineIdentifierToController[identifier];
     if (!controller) {
@@ -173,6 +180,7 @@ static id GetValueOrNilFromDict(NSDictionary *dict, NSString *key) {
     [self.polylineIdentifierToController removeObjectForKey:identifier];
   }
 }
+
 - (void)didTapPolylineWithIdentifier:(NSString *)identifier {
   if (!identifier) {
     return;
@@ -181,14 +189,18 @@ static id GetValueOrNilFromDict(NSDictionary *dict, NSString *key) {
   if (!controller) {
     return;
   }
-  [self.methodChannel invokeMethod:@"polyline#onTap" arguments:@{@"polylineId" : identifier}];
+  [self.callbackHandler didTapPolylineWithIdentifier:identifier
+                                          completion:^(FlutterError *_Nullable _){
+                                          }];
 }
+
 - (bool)hasPolylineWithIdentifier:(NSString *)identifier {
   if (!identifier) {
     return false;
   }
   return self.polylineIdentifierToController[identifier] != nil;
 }
+
 + (GMSMutablePath *)pathForPolyline:(NSDictionary *)polyline {
   NSArray *pointArray = polyline[@"points"];
   NSArray<CLLocation *> *points = [FLTGoogleMapJSONConversions pointsFromLatLongs:pointArray];

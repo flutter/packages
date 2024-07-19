@@ -14,7 +14,6 @@ import android.content.Intent;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
 import io.flutter.plugin.common.BinaryMessenger;
-import io.flutter.plugin.common.PluginRegistry;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -25,10 +24,6 @@ import org.mockito.MockitoAnnotations;
 public class InAppPurchasePluginTest {
 
   static final String PROXY_PACKAGE_KEY = "PROXY_PACKAGE";
-
-  @SuppressWarnings("deprecation")
-  @Mock
-  PluginRegistry.Registrar mockRegistrar; // For v1 embedding
 
   @Mock Activity activity;
   @Mock Context context;
@@ -43,9 +38,6 @@ public class InAppPurchasePluginTest {
   @Before
   public void setUp() {
     mockCloseable = MockitoAnnotations.openMocks(this);
-    when(mockRegistrar.activity()).thenReturn(activity);
-    when(mockRegistrar.messenger()).thenReturn(mockMessenger);
-    when(mockRegistrar.context()).thenReturn(context);
     when(activity.getIntent()).thenReturn(mockIntent);
     when(activityPluginBinding.getActivity()).thenReturn(activity);
     when(flutterPluginBinding.getBinaryMessenger()).thenReturn(mockMessenger);

@@ -8,7 +8,8 @@ import 'ad_display_container.dart';
 import 'ads_manager_delegate.dart';
 import 'platform_interface/platform_interface.dart';
 
-/// Handles playing ads after they've been received from the server.
+/// Allows publishers to request ads from ad servers or a dynamic ad insertion
+/// stream.
 ///
 /// ## Platform-Specific Features
 /// This class contains an underlying implementation provided by the current
@@ -92,6 +93,9 @@ class AdsLoader {
   }
 
   /// Requests ads from a server.
+  ///
+  /// Ads cannot be requested until the `AdDisplayContainer` has been added to
+  /// the native View hierarchy. See [AdDisplayContainer.onContainerAdded].
   Future<void> requestAds(AdsRequest request) {
     return platform.requestAds(request);
   }

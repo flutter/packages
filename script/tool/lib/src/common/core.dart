@@ -92,7 +92,7 @@ bool isPackage(FileSystemEntity entity) {
     return false;
   }
   // According to
-  // https://dart.dev/guides/libraries/create-library-packages#what-makes-a-library-package
+  // https://dart.dev/guides/libraries/create-packages#what-makes-a-library-package
   // a package must also have a `lib/` directory, but in practice that's not
   // always true. Some special cases (espresso, flutter_template_images, etc.)
   // don't have any source, so this deliberately doesn't check that there's a

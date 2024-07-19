@@ -10,17 +10,17 @@ environment:
 
 dependencies:
   args: ^2.3.1
-  convert: 3.0.2
-  file: 6.1.4
-  intl: 0.17.0
-  meta: 1.8.0
+  convert: ^3.0.2
+  file:  ">=6.0.0 <8.0.0"
+  intl: ">=0.17.0 <0.20.0"
+  meta: ^1.8.0
   path: ^1.8.0
-  process: 4.2.4
-  vm_service: 9.3.0
-  yaml: 3.1.1
+  process: ^4.2.4
+  vm_service: ^9.3.0
+  yaml: ^3.1.1
 
 dev_dependencies:
-  collection: 1.16.0
+  collection: ^1.16.0
   file_testing: 3.0.0
   lints: ^2.0.0
   test: ^1.16.0

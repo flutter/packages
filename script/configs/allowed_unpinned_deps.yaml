@@ -13,7 +13,6 @@
 # cautious about adding to this list.
 - build_verify
 - google_maps
-- win32
 
 ## Allowed by default
 

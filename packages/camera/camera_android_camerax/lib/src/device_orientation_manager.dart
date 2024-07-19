@@ -67,6 +67,16 @@ class DeviceOrientationManager {
     return api.getDefaultDisplayRotation();
   }
 
+  /// Retrieves the current UI orientation based on the current device
+  /// orientation and screen rotation.
+  static Future<DeviceOrientation> getUiOrientation(
+      {BinaryMessenger? binaryMessenger}) async {
+    final DeviceOrientationManagerHostApi api =
+        DeviceOrientationManagerHostApi(binaryMessenger: binaryMessenger);
+
+    return deserializeDeviceOrientation(await api.getUiOrientation());
+  }
+
   /// Serializes [DeviceOrientation] into a [String].
   static String serializeDeviceOrientation(DeviceOrientation orientation) {
     switch (orientation) {
@@ -78,6 +88,24 @@ class DeviceOrientationManager {
         return 'PORTRAIT_DOWN';
       case DeviceOrientation.portraitUp:
         return 'PORTRAIT_UP';
+    }
+  }
+
+  /// Deserializes device orientation in [String] format into a
+  /// [DeviceOrientation].
+  static DeviceOrientation deserializeDeviceOrientation(String orientation) {
+    switch (orientation) {
+      case 'LANDSCAPE_LEFT':
+        return DeviceOrientation.landscapeLeft;
+      case 'LANDSCAPE_RIGHT':
+        return DeviceOrientation.landscapeRight;
+      case 'PORTRAIT_DOWN':
+        return DeviceOrientation.portraitDown;
+      case 'PORTRAIT_UP':
+        return DeviceOrientation.portraitUp;
+      default:
+        throw ArgumentError(
+            '"$orientation" is not a valid DeviceOrientation value');
     }
   }
 }
@@ -96,26 +124,8 @@ class DeviceOrientationManagerFlutterApiImpl
   @override
   void onDeviceOrientationChanged(String orientation) {
     final DeviceOrientation deviceOrientation =
-        deserializeDeviceOrientation(orientation);
+        DeviceOrientationManager.deserializeDeviceOrientation(orientation);
     DeviceOrientationManager.deviceOrientationChangedStreamController
         .add(DeviceOrientationChangedEvent(deviceOrientation));
-  }
-
-  /// Deserializes device orientation in [String] format into a
-  /// [DeviceOrientation].
-  DeviceOrientation deserializeDeviceOrientation(String orientation) {
-    switch (orientation) {
-      case 'LANDSCAPE_LEFT':
-        return DeviceOrientation.landscapeLeft;
-      case 'LANDSCAPE_RIGHT':
-        return DeviceOrientation.landscapeRight;
-      case 'PORTRAIT_DOWN':
-        return DeviceOrientation.portraitDown;
-      case 'PORTRAIT_UP':
-        return DeviceOrientation.portraitUp;
-      default:
-        throw ArgumentError(
-            '"$orientation" is not a valid DeviceOrientation value');
-    }
   }
 }

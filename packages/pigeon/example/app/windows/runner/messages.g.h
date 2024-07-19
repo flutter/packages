@@ -59,7 +59,7 @@ class ErrorOr {
   std::variant<T, FlutterError> v_;
 };
 
-enum class Code { one = 0, two = 1 };
+enum class Code { kOne = 0, kTwo = 1 };
 
 // Generated class from Pigeon that represents data sent in messages.
 class MessageData {

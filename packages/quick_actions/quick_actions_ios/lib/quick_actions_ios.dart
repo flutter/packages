@@ -29,7 +29,7 @@ class QuickActionsIos extends QuickActionsPlatform {
   Future<void> initialize(QuickActionHandler handler) async {
     final _QuickActionHandlerApi quickActionsHandlerApi =
         _QuickActionHandlerApi();
-    IOSQuickActionsFlutterApi.setup(quickActionsHandlerApi);
+    IOSQuickActionsFlutterApi.setUp(quickActionsHandlerApi);
     _handler = handler;
   }
 

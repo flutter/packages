@@ -50,7 +50,7 @@ Future<BenchmarkResults> serveWebBenchmark({
   bool headless = true,
   bool treeShakeIcons = true,
   String initialPage = defaultInitialPage,
-  CompilationOptions compilationOptions = const CompilationOptions(),
+  CompilationOptions compilationOptions = const CompilationOptions.js(),
 }) async {
   // Reduce logging level. Otherwise, package:webkit_inspection_protocol is way too spammy.
   Logger.root.level = Level.INFO;

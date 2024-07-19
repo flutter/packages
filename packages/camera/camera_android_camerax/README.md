@@ -44,12 +44,12 @@ due to this not currently being supported by CameraX.
 the plugin will fall back to target 480p (`ResolutionPreset.medium`) if configured with
 `ResolutionPreset.low`.
 
-### Setting maximum duration and stream options for video capture
+### Setting stream options for video capture
 
 Calling `startVideoCapturing` with `VideoCaptureOptions` configured with
-`maxVideoDuration` and `streamOptions` is currently unsupported do to the
-limitations of the CameraX library and the platform interface, respectively,
-and thus, those parameters will silently be ignored.
+`streamOptions` is currently unsupported do to
+limitations of the platform interface,
+and thus that parameter will silently be ignored.
 
 ## What requires Android permissions
 
@@ -81,7 +81,7 @@ For more information on contributing to this plugin, see [`CONTRIBUTING.md`](CON
 
 [1]: https://pub.dev/packages/camera
 [2]: https://developer.android.com/training/camerax
-[3]: https://flutter.dev/docs/development/packages-and-plugins/developing-packages#endorsed-federated-plugin
+[3]: https://flutter.dev/to/endorsed-federated-plugin
 [4]: https://pub.dev/packages/camera_android
 [5]: https://github.com/flutter/flutter/issues/new/choose
 [6]: https://developer.android.com/media/camera/camerax/architecture#combine-use-cases

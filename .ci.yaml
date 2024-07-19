@@ -65,7 +65,7 @@ platform_properties:
       device_type: none
       dependencies: >-
         [
-          {"dependency": "chrome_and_driver", "version": "version:114.0"}
+          {"dependency": "chrome_and_driver", "version": "version:125.0.6422.141"}
         ]
   windows_arm64:
     properties:
@@ -327,7 +327,7 @@ targets:
           {"dependency": "clang", "version": "git_revision:5d5aba78dbbee75508f01bcaa69aedb2ab79065a"},
           {"dependency": "cmake", "version": "build_id:8787856497187628321"},
           {"dependency": "ninja", "version": "version:1.9.0"},
-          {"dependency": "chrome_and_driver", "version": "version:114.0"}
+          {"dependency": "chrome_and_driver", "version": "version:125.0.6422.141"}
         ]
       channel: master
       env_variables: >-
@@ -350,7 +350,7 @@ targets:
           {"dependency": "clang", "version": "git_revision:5d5aba78dbbee75508f01bcaa69aedb2ab79065a"},
           {"dependency": "cmake", "version": "build_id:8787856497187628321"},
           {"dependency": "ninja", "version": "version:1.9.0"},
-          {"dependency": "chrome_and_driver", "version": "version:114.0"}
+          {"dependency": "chrome_and_driver", "version": "version:125.0.6422.141"}
         ]
       channel: stable
       env_variables: >-
@@ -364,7 +364,24 @@ targets:
     timeout: 30
     properties:
       version_file: flutter_master.version
-      target_file: android_build_all_packages.yaml
+      # This builds the all_packages app only in a current JDK.
+      target_file: android_build_all_packages_jdk17.yaml
+      channel: master
+      env_variables: >-
+        {
+          "CHANNEL": "master"
+        }
+
+  - name: Linux_android android_build_all_packages_legacy master
+    recipe: packages/packages
+    timeout: 30
+    properties:
+      version_file: flutter_master.version
+      # TODO(stuartmorgan): Once stable requires JDK 17, and the
+      # legacy project is updated accordingly, this entire target
+      # can be merged back into android_build_all_packages.
+      # This file only builds a *legacy* version of the project.
+      target_file: android_build_all_packages_legacy.yaml
       channel: master
       # The legacy project build requires an older JDK.
       dependencies: >-
@@ -382,7 +399,21 @@ targets:
     properties:
       add_recipes_cq: "true"
       version_file: flutter_stable.version
-      target_file: android_build_all_packages.yaml
+      # This builds the all_packages app only in a current JDK.
+      target_file: android_build_all_packages_jdk17.yaml
+      channel: stable
+      env_variables: >-
+        {
+          "CHANNEL": "stable"
+        }
+
+  - name: Linux_android android_build_all_packages_legacy stable
+    recipe: packages/packages
+    timeout: 30
+    properties:
+      version_file: flutter_stable.version
+      # This file only builds a *legacy* version of the project.
+      target_file: android_build_all_packages_legacy.yaml
       channel: stable
       # The legacy project build requires an older JDK.
       dependencies: >-
@@ -935,7 +966,7 @@ targets:
       # Install Chrome as a default handler for schemes for url_launcher.
       dependencies: >-
         [
-          {"dependency": "chrome_and_driver", "version": "version:114.0"}
+          {"dependency": "chrome_and_driver", "version": "version:125.0.6422.141"}
         ]
       env_variables: >-
         {
@@ -953,7 +984,7 @@ targets:
       # Install Chrome as a default handler for schemes for url_launcher.
       dependencies: >-
         [
-          {"dependency": "chrome_and_driver", "version": "version:114.0"}
+          {"dependency": "chrome_and_driver", "version": "version:125.0.6422.141"}
         ]
       env_variables: >-
         {

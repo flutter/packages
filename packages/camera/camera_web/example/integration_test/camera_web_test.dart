@@ -2839,9 +2839,7 @@ void main() {
               .thenAnswer((Invocation _) => const Stream<ErrorEvent>.empty());
 
           when(
-            () => camera.startVideoRecording(
-              maxVideoDuration: any(named: 'maxVideoDuration'),
-            ),
+            () => camera.startVideoRecording(),
           ).thenThrow(exception);
 
           final Stream<CameraErrorEvent> eventStream =

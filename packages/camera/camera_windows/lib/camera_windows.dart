@@ -10,17 +10,21 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:stream_transform/stream_transform.dart';
 
+import 'src/messages.g.dart';
+
 /// An implementation of [CameraPlatform] for Windows.
 class CameraWindows extends CameraPlatform {
+  /// Creates a new Windows [CameraPlatform] implementation instance.
+  CameraWindows({@visibleForTesting CameraApi? api})
+      : _hostApi = api ?? CameraApi();
+
   /// Registers the Windows implementation of CameraPlatform.
   static void registerWith() {
     CameraPlatform.instance = CameraWindows();
   }
 
-  /// The method channel used to interact with the native platform.
-  @visibleForTesting
-  final MethodChannel pluginChannel =
-      const MethodChannel('plugins.flutter.io/camera_windows');
+  /// Interface for calling host-side code.
+  final CameraApi _hostApi;
 
   /// Camera specific method channels to allow communicating with specific cameras.
   final Map<int, MethodChannel> _cameraChannels = <int, MethodChannel>{};
@@ -43,19 +47,18 @@ class CameraWindows extends CameraPlatform {
   @override
   Future<List<CameraDescription>> availableCameras() async {
     try {
-      final List<Map<dynamic, dynamic>>? cameras = await pluginChannel
-          .invokeListMethod<Map<dynamic, dynamic>>('availableCameras');
+      final List<String?> cameras = await _hostApi.getAvailableCameras();
 
-      if (cameras == null) {
-        return <CameraDescription>[];
-      }
-
-      return cameras.map((Map<dynamic, dynamic> camera) {
+      return cameras.map((String? cameraName) {
         return CameraDescription(
-          name: camera['name'] as String,
-          lensDirection:
-              parseCameraLensDirection(camera['lensFacing'] as String),
-          sensorOrientation: camera['sensorOrientation'] as int,
+          // This type is only nullable due to Pigeon limitations, see
+          // https://github.com/flutter/flutter/issues/97848. The native code
+          // will never return null.
+          name: cameraName!,
+          // TODO(stuartmorgan): Implement these; see
+          // https://github.com/flutter/flutter/issues/97540.
+          lensDirection: CameraLensDirection.front,
+          sensorOrientation: 0,
         );
       }).toList();
     } on PlatformException catch (e) {
@@ -83,23 +86,8 @@ class CameraWindows extends CameraPlatform {
   ) async {
     try {
       // If resolutionPreset is not specified, plugin selects the highest resolution possible.
-      final Map<String, dynamic>? reply = await pluginChannel
-          .invokeMapMethod<String, dynamic>('create', <String, dynamic>{
-        'cameraName': cameraDescription.name,
-        'resolutionPreset': null != mediaSettings?.resolutionPreset
-            ? _serializeResolutionPreset(mediaSettings!.resolutionPreset)
-            : null,
-        'fps': mediaSettings?.fps,
-        'videoBitrate': mediaSettings?.videoBitrate,
-        'audioBitrate': mediaSettings?.audioBitrate,
-        'enableAudio': mediaSettings?.enableAudio ?? true,
-      });
-
-      if (reply == null) {
-        throw CameraException('System', 'Cannot create camera');
-      }
-
-      return reply['cameraId']! as int;
+      return await _hostApi.create(
+          cameraDescription.name, _pigeonMediaSettings(mediaSettings));
     } on PlatformException catch (e) {
       throw CameraException(e.code, e.message);
     }
@@ -110,35 +98,28 @@ class CameraWindows extends CameraPlatform {
     int cameraId, {
     ImageFormatGroup imageFormatGroup = ImageFormatGroup.unknown,
   }) async {
-    final int requestedCameraId = cameraId;
-
     /// Creates channel for camera events.
-    _cameraChannels.putIfAbsent(requestedCameraId, () {
-      final MethodChannel channel = MethodChannel(
-          'plugins.flutter.io/camera_windows/camera$requestedCameraId');
+    _cameraChannels.putIfAbsent(cameraId, () {
+      final MethodChannel channel =
+          MethodChannel('plugins.flutter.io/camera_windows/camera$cameraId');
       channel.setMethodCallHandler(
-        (MethodCall call) => handleCameraMethodCall(call, requestedCameraId),
+        (MethodCall call) => handleCameraMethodCall(call, cameraId),
       );
       return channel;
     });
 
-    final Map<String, double>? reply;
+    final PlatformSize reply;
     try {
-      reply = await pluginChannel.invokeMapMethod<String, double>(
-        'initialize',
-        <String, dynamic>{
-          'cameraId': requestedCameraId,
-        },
-      );
+      reply = await _hostApi.initialize(cameraId);
     } on PlatformException catch (e) {
       throw CameraException(e.code, e.message);
     }
 
     cameraEventStreamController.add(
       CameraInitializedEvent(
-        requestedCameraId,
-        reply!['previewWidth']!,
-        reply['previewHeight']!,
+        cameraId,
+        reply.width,
+        reply.height,
         ExposureMode.auto,
         false,
         FocusMode.auto,
@@ -149,10 +130,7 @@ class CameraWindows extends CameraPlatform {
 
   @override
   Future<void> dispose(int cameraId) async {
-    await pluginChannel.invokeMethod<void>(
-      'dispose',
-      <String, dynamic>{'cameraId': cameraId},
-    );
+    await _hostApi.dispose(cameraId);
 
     // Destroy method channel after camera is disposed to be able to handle last messages.
     if (_cameraChannels.containsKey(cameraId)) {
@@ -217,24 +195,21 @@ class CameraWindows extends CameraPlatform {
 
   @override
   Future<XFile> takePicture(int cameraId) async {
-    final String? path;
-    path = await pluginChannel.invokeMethod<String>(
-      'takePicture',
-      <String, dynamic>{'cameraId': cameraId},
-    );
+    final String path = await _hostApi.takePicture(cameraId);
 
-    return XFile(path!);
+    return XFile(path);
   }
 
   @override
-  Future<void> prepareForVideoRecording() =>
-      pluginChannel.invokeMethod<void>('prepareForVideoRecording');
+  Future<void> prepareForVideoRecording() async {
+    // No-op.
+  }
 
   @override
   Future<void> startVideoRecording(int cameraId,
       {Duration? maxVideoDuration}) async {
-    return startVideoCapturing(
-        VideoCaptureOptions(cameraId, maxDuration: maxVideoDuration));
+    // Ignore maxVideoDuration, as it is unimplemented and deprecated.
+    return startVideoCapturing(VideoCaptureOptions(cameraId));
   }
 
   @override
@@ -244,25 +219,15 @@ class CameraWindows extends CameraPlatform {
           'Streaming is not currently supported on Windows');
     }
 
-    await pluginChannel.invokeMethod<void>(
-      'startVideoRecording',
-      <String, dynamic>{
-        'cameraId': options.cameraId,
-        'maxVideoDuration': options.maxDuration?.inMilliseconds,
-      },
-    );
+    // Currently none of `options` is supported on Windows, so it's not passed.
+    await _hostApi.startVideoRecording(options.cameraId);
   }
 
   @override
   Future<XFile> stopVideoRecording(int cameraId) async {
-    final String? path;
+    final String path = await _hostApi.stopVideoRecording(cameraId);
 
-    path = await pluginChannel.invokeMethod<String>(
-      'stopVideoRecording',
-      <String, dynamic>{'cameraId': cameraId},
-    );
-
-    return XFile(path!);
+    return XFile(path);
   }
 
   @override
@@ -362,43 +327,17 @@ class CameraWindows extends CameraPlatform {
 
   @override
   Future<void> pausePreview(int cameraId) async {
-    await pluginChannel.invokeMethod<double>(
-      'pausePreview',
-      <String, dynamic>{'cameraId': cameraId},
-    );
+    await _hostApi.pausePreview(cameraId);
   }
 
   @override
   Future<void> resumePreview(int cameraId) async {
-    await pluginChannel.invokeMethod<double>(
-      'resumePreview',
-      <String, dynamic>{'cameraId': cameraId},
-    );
+    await _hostApi.resumePreview(cameraId);
   }
 
   @override
   Widget buildPreview(int cameraId) {
     return Texture(textureId: cameraId);
-  }
-
-  /// Returns the resolution preset as a nullable String.
-  String? _serializeResolutionPreset(ResolutionPreset? resolutionPreset) {
-    switch (resolutionPreset) {
-      case null:
-        return null;
-      case ResolutionPreset.max:
-        return 'max';
-      case ResolutionPreset.ultraHigh:
-        return 'ultraHigh';
-      case ResolutionPreset.veryHigh:
-        return 'veryHigh';
-      case ResolutionPreset.high:
-        return 'high';
-      case ResolutionPreset.medium:
-        return 'medium';
-      case ResolutionPreset.low:
-        return 'low';
-    }
   }
 
   /// Converts messages received from the native platform into camera events.
@@ -412,18 +351,6 @@ class CameraWindows extends CameraPlatform {
         cameraEventStreamController.add(
           CameraClosingEvent(
             cameraId,
-          ),
-        );
-      case 'video_recorded':
-        final Map<String, Object?> arguments =
-            (call.arguments as Map<Object?, Object?>).cast<String, Object?>();
-        final int? maxDuration = arguments['maxVideoDuration'] as int?;
-        // This is called if maxVideoDuration was given on record start.
-        cameraEventStreamController.add(
-          VideoRecordedEvent(
-            cameraId,
-            XFile(arguments['path']! as String),
-            maxDuration != null ? Duration(milliseconds: maxDuration) : null,
           ),
         );
       case 'error':
@@ -440,17 +367,45 @@ class CameraWindows extends CameraPlatform {
     }
   }
 
-  /// Parses string presentation of the camera lens direction and returns enum value.
-  @visibleForTesting
-  CameraLensDirection parseCameraLensDirection(String string) {
-    switch (string) {
-      case 'front':
-        return CameraLensDirection.front;
-      case 'back':
-        return CameraLensDirection.back;
-      case 'external':
-        return CameraLensDirection.external;
+  /// Returns a [MediaSettings]'s Pigeon representation.
+  PlatformMediaSettings _pigeonMediaSettings(MediaSettings? settings) {
+    return PlatformMediaSettings(
+      resolutionPreset: _pigeonResolutionPreset(settings?.resolutionPreset),
+      enableAudio: settings?.enableAudio ?? true,
+      framesPerSecond: settings?.fps,
+      videoBitrate: settings?.videoBitrate,
+      audioBitrate: settings?.audioBitrate,
+    );
+  }
+
+  /// Returns a [ResolutionPreset]'s Pigeon representation.
+  PlatformResolutionPreset _pigeonResolutionPreset(
+      ResolutionPreset? resolutionPreset) {
+    if (resolutionPreset == null) {
+      // Provide a default if one isn't provided, since the native side needs
+      // to set something.
+      return PlatformResolutionPreset.max;
     }
-    throw ArgumentError('Unknown CameraLensDirection value');
+    switch (resolutionPreset) {
+      case ResolutionPreset.max:
+        return PlatformResolutionPreset.max;
+      case ResolutionPreset.ultraHigh:
+        return PlatformResolutionPreset.ultraHigh;
+      case ResolutionPreset.veryHigh:
+        return PlatformResolutionPreset.veryHigh;
+      case ResolutionPreset.high:
+        return PlatformResolutionPreset.high;
+      case ResolutionPreset.medium:
+        return PlatformResolutionPreset.medium;
+      case ResolutionPreset.low:
+        return PlatformResolutionPreset.low;
+    }
+    // The enum comes from a different package, which could get a new value at
+    // any time, so provide a fallback that ensures this won't break when used
+    // with a version that contains new values. This is deliberately outside
+    // the switch rather than a `default` so that the linter will flag the
+    // switch as needing an update.
+    // ignore: dead_code
+    return PlatformResolutionPreset.max;
   }
 }

@@ -15,6 +15,7 @@
 #include "camera.h"
 #include "capture_controller.h"
 #include "capture_controller_listener.h"
+#include "messages.g.h"
 
 namespace camera_windows {
 using flutter::MethodResult;
@@ -27,6 +28,7 @@ class MockCameraPlugin;
 }  // namespace test
 
 class CameraPlugin : public flutter::Plugin,
+                     public CameraApi,
                      public VideoCaptureDeviceEnumerator {
  public:
   static void RegisterWithRegistrar(flutter::PluginRegistrarWindows* registrar);
@@ -46,9 +48,30 @@ class CameraPlugin : public flutter::Plugin,
   CameraPlugin(const CameraPlugin&) = delete;
   CameraPlugin& operator=(const CameraPlugin&) = delete;
 
-  // Called when a method is called on plugin channel.
-  void HandleMethodCall(const flutter::MethodCall<>& method_call,
-                        std::unique_ptr<MethodResult<>> result);
+  // CameraApi:
+  ErrorOr<flutter::EncodableList> GetAvailableCameras() override;
+  void Create(const std::string& camera_name,
+              const PlatformMediaSettings& settings,
+              std::function<void(ErrorOr<int64_t> reply)> result) override;
+  void Initialize(
+      int64_t camera_id,
+      std::function<void(ErrorOr<PlatformSize> reply)> result) override;
+  void PausePreview(
+      int64_t camera_id,
+      std::function<void(std::optional<FlutterError> reply)> result) override;
+  void ResumePreview(
+      int64_t camera_id,
+      std::function<void(std::optional<FlutterError> reply)> result) override;
+  void StartVideoRecording(
+      int64_t camera_id,
+      std::function<void(std::optional<FlutterError> reply)> result) override;
+  void StopVideoRecording(
+      int64_t camera_id,
+      std::function<void(ErrorOr<std::string> reply)> result) override;
+  void TakePicture(
+      int64_t camera_id,
+      std::function<void(ErrorOr<std::string> reply)> result) override;
+  std::optional<FlutterError> Dispose(int64_t camera_id) override;
 
  private:
   // Loops through cameras and returns camera
@@ -65,59 +88,6 @@ class CameraPlugin : public flutter::Plugin,
   // Enumerates video capture devices.
   bool EnumerateVideoCaptureDeviceSources(IMFActivate*** devices,
                                           UINT32* count) override;
-
-  // Handles availableCameras method calls.
-  // Enumerates video capture devices and
-  // returns list of available camera devices.
-  void AvailableCamerasMethodHandler(
-      std::unique_ptr<flutter::MethodResult<>> result);
-
-  // Handles create method calls.
-  // Creates camera and initializes capture controller for requested device.
-  // Stores result object to be handled after request is processed.
-  void CreateMethodHandler(const EncodableMap& args,
-                           std::unique_ptr<MethodResult<>> result);
-
-  // Handles initialize method calls.
-  // Requests existing camera controller to start preview.
-  // Stores result object to be handled after request is processed.
-  void InitializeMethodHandler(const EncodableMap& args,
-                               std::unique_ptr<MethodResult<>> result);
-
-  // Handles takePicture method calls.
-  // Requests existing camera controller to take photo.
-  // Stores result object to be handled after request is processed.
-  void TakePictureMethodHandler(const EncodableMap& args,
-                                std::unique_ptr<MethodResult<>> result);
-
-  // Handles startVideoRecording method calls.
-  // Requests existing camera controller to start recording.
-  // Stores result object to be handled after request is processed.
-  void StartVideoRecordingMethodHandler(const EncodableMap& args,
-                                        std::unique_ptr<MethodResult<>> result);
-
-  // Handles stopVideoRecording method calls.
-  // Requests existing camera controller to stop recording.
-  // Stores result object to be handled after request is processed.
-  void StopVideoRecordingMethodHandler(const EncodableMap& args,
-                                       std::unique_ptr<MethodResult<>> result);
-
-  // Handles pausePreview method calls.
-  // Requests existing camera controller to pause recording.
-  // Stores result object to be handled after request is processed.
-  void PausePreviewMethodHandler(const EncodableMap& args,
-                                 std::unique_ptr<MethodResult<>> result);
-
-  // Handles resumePreview method calls.
-  // Requests existing camera controller to resume preview.
-  // Stores result object to be handled after request is processed.
-  void ResumePreviewMethodHandler(const EncodableMap& args,
-                                  std::unique_ptr<MethodResult<>> result);
-
-  // Handles dsipose method calls.
-  // Disposes camera if exists.
-  void DisposeMethodHandler(const EncodableMap& args,
-                            std::unique_ptr<MethodResult<>> result);
 
   std::unique_ptr<CameraFactory> camera_factory_;
   flutter::TextureRegistrar* texture_registrar_;

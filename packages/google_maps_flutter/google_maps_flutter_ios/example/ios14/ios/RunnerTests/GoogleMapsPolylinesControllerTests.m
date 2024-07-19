@@ -41,9 +41,9 @@
   NSString *identifier = polyline[@"polylineId"];
 
   FLTGoogleMapPolylineController *polylineControllerWithMockedMap =
-      [[FLTGoogleMapPolylineController alloc] initPolylineWithPath:path
-                                                        identifier:identifier
-                                                           mapView:mapView];
+      [[FLTGoogleMapPolylineController alloc] initWithPath:path
+                                                identifier:identifier
+                                                   mapView:mapView];
 
   return polylineControllerWithMockedMap;
 }

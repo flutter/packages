@@ -4,14 +4,11 @@ An example for the PointerInterceptor widget.
 
 ## Getting Started
 
-`flutter run -d chrome` to run the sample. You can tweak some code in the `lib/main.dart`, but be careful, changes there can break integration tests!
+Use `flutter run` to run the sample.
 
-## Running tests
+## Tests
 
-`flutter drive --target integration_test/widget_test.dart --driver test_driver/integration_test.dart --show-web-server-device -d web-server --web-renderer=html`
+Per-platform tests live in their respective implementation packages:
 
-The command above will run the integration tests for this package.
-
-Make sure that you have `chromedriver` running in port `4444`.
-
-Read more on: [flutter.dev > Docs > Testing & debugging > Integration testing](https://flutter.dev/docs/testing/integration-tests).
+* **Web**: See [`package:pointer_interceptor_web`](https://github.com/flutter/packages/tree/main/packages/pointer_interceptor/pointer_interceptor_web)
+* **iOS**: See [`package:pointer_interceptor_ios`](https://github.com/flutter/packages/tree/main/packages/pointer_interceptor/pointer_interceptor_ios)
