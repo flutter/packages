@@ -268,14 +268,15 @@
     for (FGMPlatformMarker *marker in markersToAdd) {
       dispatch_async(dispatch_get_main_queue(), ^{
         NSString *identifier = marker.json[@"markerId"];
-
+        
         FLTGoogleMapMarkerController *controller = self.markerIdentifierToController[identifier];
         if (!controller) {
-          continue;
+          return;
         }
         [controller setVisibleOption:marker.json];
-      }
-    });
+        
+      });
+    }
   });
 }
 
@@ -305,8 +306,8 @@
           continue;
         }
         [controller setVisibleOption:marker.json];
-      });
-    }
+      }
+    });
   });
 }
 
