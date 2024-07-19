@@ -790,7 +790,8 @@ class SwiftGenerator extends StructuredGenerator<SwiftOptions> {
       associatedProxyApi: api,
     );
 
-    final String swiftApiDelegateName = '${classNamePrefix}Delegate${api.name}';
+    final String swiftApiDelegateName =
+        '${hostProxyApiPrefix}Delegate${api.name}';
     final String type =
         api.hasMethodsRequiringImplementation() ? 'protocol' : 'open class';
     indent.writeScoped('$type $swiftApiDelegateName {', '}', () {

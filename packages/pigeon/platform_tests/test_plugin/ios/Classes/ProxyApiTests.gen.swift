@@ -593,7 +593,7 @@ class ProxyApiTestsPigeonCodec: FlutterStandardMessageCodec, @unchecked Sendable
   static let shared = ProxyApiTestsPigeonCodec(readerWriter: ProxyApiTestsPigeonCodecReaderWriter())
 }
 
-protocol PigeonDelegateProxyApiTestClass {
+protocol PigeonApiDelegateProxyApiTestClass {
   func pigeonDefaultConstructor(
     pigeonApi: PigeonApiProxyApiTestClass, aBool: Bool, anInt: Int64, aDouble: Double,
     aString: String, aUint8List: FlutterStandardTypedData, aList: [Any?], aMap: [String?: Any?],
@@ -1049,7 +1049,7 @@ protocol PigeonApiProtocolProxyApiTestClass {
 
 final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
   unowned let pigeonRegistrar: PigeonProxyApiRegistrar
-  let pigeonDelegate: PigeonDelegateProxyApiTestClass
+  let pigeonDelegate: PigeonApiDelegateProxyApiTestClass
   ///An implementation of [ProxyApiSuperClass] used to access callback methods
   var pigeonApiProxyApiSuperClass: PigeonApiProxyApiSuperClass {
     return pigeonRegistrar.apiDelegate.pigeonApiProxyApiSuperClass(pigeonRegistrar)
@@ -1060,7 +1060,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
     return pigeonRegistrar.apiDelegate.pigeonApiProxyApiInterface(pigeonRegistrar)
   }
 
-  init(pigeonRegistrar: PigeonProxyApiRegistrar, delegate: PigeonDelegateProxyApiTestClass) {
+  init(pigeonRegistrar: PigeonProxyApiRegistrar, delegate: PigeonApiDelegateProxyApiTestClass) {
     self.pigeonRegistrar = pigeonRegistrar
     self.pigeonDelegate = delegate
   }
@@ -3619,7 +3619,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
   }
 
 }
-protocol PigeonDelegateProxyApiSuperClass {
+protocol PigeonApiDelegateProxyApiSuperClass {
   func pigeonDefaultConstructor(pigeonApi: PigeonApiProxyApiSuperClass) throws -> ProxyApiSuperClass
   func aSuperMethod(pigeonApi: PigeonApiProxyApiSuperClass, pigeonInstance: ProxyApiSuperClass)
     throws
@@ -3630,8 +3630,8 @@ protocol PigeonApiProtocolProxyApiSuperClass {
 
 final class PigeonApiProxyApiSuperClass: PigeonApiProtocolProxyApiSuperClass {
   unowned let pigeonRegistrar: PigeonProxyApiRegistrar
-  let pigeonDelegate: PigeonDelegateProxyApiSuperClass
-  init(pigeonRegistrar: PigeonProxyApiRegistrar, delegate: PigeonDelegateProxyApiSuperClass) {
+  let pigeonDelegate: PigeonApiDelegateProxyApiSuperClass
+  init(pigeonRegistrar: PigeonProxyApiRegistrar, delegate: PigeonApiDelegateProxyApiSuperClass) {
     self.pigeonRegistrar = pigeonRegistrar
     self.pigeonDelegate = delegate
   }
@@ -3715,7 +3715,7 @@ final class PigeonApiProxyApiSuperClass: PigeonApiProtocolProxyApiSuperClass {
     }
   }
 }
-open class PigeonDelegateProxyApiInterface {
+open class PigeonApiDelegateProxyApiInterface {
 }
 
 protocol PigeonApiProtocolProxyApiInterface {
@@ -3726,8 +3726,8 @@ protocol PigeonApiProtocolProxyApiInterface {
 
 final class PigeonApiProxyApiInterface: PigeonApiProtocolProxyApiInterface {
   unowned let pigeonRegistrar: PigeonProxyApiRegistrar
-  let pigeonDelegate: PigeonDelegateProxyApiInterface
-  init(pigeonRegistrar: PigeonProxyApiRegistrar, delegate: PigeonDelegateProxyApiInterface) {
+  let pigeonDelegate: PigeonApiDelegateProxyApiInterface
+  init(pigeonRegistrar: PigeonProxyApiRegistrar, delegate: PigeonApiDelegateProxyApiInterface) {
     self.pigeonRegistrar = pigeonRegistrar
     self.pigeonDelegate = delegate
   }
@@ -3790,7 +3790,7 @@ final class PigeonApiProxyApiInterface: PigeonApiProtocolProxyApiInterface {
   }
 
 }
-protocol PigeonDelegateClassWithApiRequirement {
+protocol PigeonApiDelegateClassWithApiRequirement {
   @available(iOS 15.0.0, macOS 10.0.0, *)
   func pigeonDefaultConstructor(pigeonApi: PigeonApiClassWithApiRequirement) throws
     -> ClassWithApiRequirement
@@ -3804,8 +3804,9 @@ protocol PigeonApiProtocolClassWithApiRequirement {
 
 final class PigeonApiClassWithApiRequirement: PigeonApiProtocolClassWithApiRequirement {
   unowned let pigeonRegistrar: PigeonProxyApiRegistrar
-  let pigeonDelegate: PigeonDelegateClassWithApiRequirement
-  init(pigeonRegistrar: PigeonProxyApiRegistrar, delegate: PigeonDelegateClassWithApiRequirement) {
+  let pigeonDelegate: PigeonApiDelegateClassWithApiRequirement
+  init(pigeonRegistrar: PigeonProxyApiRegistrar, delegate: PigeonApiDelegateClassWithApiRequirement)
+  {
     self.pigeonRegistrar = pigeonRegistrar
     self.pigeonDelegate = delegate
   }

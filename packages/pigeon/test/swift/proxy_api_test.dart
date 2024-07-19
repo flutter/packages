@@ -122,10 +122,8 @@ void main() {
         ),
       );
 
-      // TODO: -> PigeonApiDelegate
-
       // Delegate and class
-      expect(code, contains('protocol PigeonDelegateApi'));
+      expect(code, contains('protocol PigeonApiDelegateApi'));
       expect(code, contains('protocol PigeonApiProtocolApi'));
       expect(
         code,
