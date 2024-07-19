@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:collection/collection.dart' as collection;
+import 'package:graphs/graphs.dart';
 import 'package:pub_semver/pub_semver.dart';
 
 import 'ast.dart';
@@ -749,30 +750,191 @@ class SwiftGenerator extends StructuredGenerator<SwiftOptions> {
         root.apis.whereType<AstProxyApi>();
 
     _writeProxyApiRegistrar(indent, allProxyApis: allProxyApis);
-    indent.format(
-      proxyApiReaderWriterTemplate(
-        allProxyApis: allProxyApis,
-        generalCodecName: _getCodecName(generatorOptions),
-        onTryGetAvailabilityAnnotation: (AstProxyApi api) {
-          return _tryGetAvailabilityAnnotation(<TypeDeclaration>[
-            TypeDeclaration(
-              baseName: api.name,
-              isNullable: false,
-              associatedProxyApi: api,
-            ),
-          ]);
-        },
-        onTryGetUnsupportedPlatformsCondition: (AstProxyApi api) {
-          return _tryGetUnsupportedPlatformsCondition(<TypeDeclaration>[
-            TypeDeclaration(
-              baseName: api.name,
-              isNullable: false,
-              associatedProxyApi: api,
-            ),
-          ]);
-        },
-      ),
-      trimIndentation: true,
+
+    final String filePrefix =
+        generatorOptions.fileSpecificClassNameComponent ?? '';
+
+    final String registrarName = proxyApiRegistrarName(generatorOptions);
+
+    indent.writeScoped(
+      'private class ${proxyApiReaderWriterName(generatorOptions)}: FlutterStandardReaderWriter {',
+      '}',
+      () {
+        indent.writeln(
+          'unowned let pigeonRegistrar: $registrarName',
+        );
+        indent.newln();
+
+        indent.writeScoped(
+          'private class $filePrefix${classNamePrefix}ProxyApiCodecReader: ${_getCodecName(generatorOptions)}Reader {',
+          '}',
+          () {
+            indent.writeln('unowned let pigeonRegistrar: $registrarName');
+            indent.newln();
+
+            indent.writeScoped(
+              'init(data: Data, pigeonRegistrar: $registrarName) {',
+              '}',
+              () {
+                indent.writeln('self.pigeonRegistrar = pigeonRegistrar');
+                indent.writeln('super.init(data: data)');
+              },
+            );
+            indent.newln();
+
+            indent.writeScoped(
+              'override func readValue(ofType type: UInt8) -> Any? {',
+              '}',
+              () {
+                indent.format(
+                  '''
+                  switch type {
+                  case $proxyApiCodecInstanceManagerKey:
+                    let identifier = self.readValue()
+                    let instance: AnyObject? = pigeonRegistrar.instanceManager.instance(
+                      forIdentifier: identifier is Int64 ? identifier as! Int64 : Int64(identifier as! Int32))
+                    return instance
+                  default:
+                    return super.readValue(ofType: type)
+                  }''',
+                  trimIndentation: true,
+                );
+              },
+            );
+          },
+        );
+        indent.newln();
+
+        indent.writeScoped(
+          'private class $filePrefix${classNamePrefix}ProxyApiCodecWriter: ${_getCodecName(generatorOptions)}Writer {',
+          '}',
+          () {
+            indent.writeln(
+              'unowned let pigeonRegistrar: $registrarName',
+            );
+            indent.newln();
+
+            indent.writeScoped(
+              'init(data: NSMutableData, pigeonRegistrar: $registrarName) {',
+              '}',
+              () {
+                indent.writeln('self.pigeonRegistrar = pigeonRegistrar');
+                indent.writeln('super.init(data: data)');
+              },
+            );
+            indent.newln();
+
+            indent.writeScoped(
+              'override func writeValue(_ value: Any) {',
+              '}',
+              () {
+                // Sort APIs where edges are an API's super class and interfaces.
+                //
+                // This sorts the APIs to have child classes be listed before their parent
+                // classes. This prevents the scenario where a method might return the super
+                // class of the actual class, so the incorrect Dart class gets created
+                // because the 'value is <SuperClass>' was checked first in the codec. For
+                // example:
+                //
+                // class Shape {}
+                // class Circle extends Shape {}
+                //
+                // class SomeClass {
+                //   Shape giveMeAShape() => Circle();
+                // }
+                final List<AstProxyApi> sortedApis = topologicalSort(
+                  allProxyApis,
+                  (AstProxyApi api) {
+                    return <AstProxyApi>[
+                      if (api.superClass?.associatedProxyApi != null)
+                        api.superClass!.associatedProxyApi!,
+                      ...api.interfaces.map(
+                        (TypeDeclaration interface) =>
+                            interface.associatedProxyApi!,
+                      ),
+                    ];
+                  },
+                );
+
+                enumerate(
+                  sortedApis,
+                  (int index, AstProxyApi api) {
+                    final TypeDeclaration apiAsTypeDecl = TypeDeclaration(
+                      baseName: api.name,
+                      isNullable: false,
+                      associatedProxyApi: api,
+                    );
+                    final String? availability = _tryGetAvailabilityAnnotation(
+                      <TypeDeclaration>[apiAsTypeDecl],
+                    );
+                    final String? unsupportedPlatforms =
+                        _tryGetUnsupportedPlatformsCondition(
+                      <TypeDeclaration>[apiAsTypeDecl],
+                    );
+                    final String className = api.swiftOptions?.name ?? api.name;
+                    indent.format(
+                      '''
+                      ${unsupportedPlatforms != null ? '#if $unsupportedPlatforms' : ''}
+                      if ${availability != null ? '#$availability, ' : ''}let instance = value as? $className {
+                        pigeonRegistrar.apiDelegate.pigeonApi${api.name}(pigeonRegistrar).pigeonNewInstance(
+                          pigeonInstance: instance
+                        ) { _ in }
+                        super.writeByte($proxyApiCodecInstanceManagerKey)
+                        super.writeValue(
+                          pigeonRegistrar.instanceManager.identifierWithStrongReference(forInstance: instance)!)
+                        return
+                      }
+                      ${unsupportedPlatforms != null ? '#endif' : ''}''',
+                      trimIndentation: true,
+                    );
+                  },
+                );
+                indent.newln();
+
+                indent.format(
+                  '''
+                  if let instance = value as AnyObject?, pigeonRegistrar.instanceManager.containsInstance(instance)
+                  {
+                    super.writeByte($proxyApiCodecInstanceManagerKey)
+                    super.writeValue(
+                      pigeonRegistrar.instanceManager.identifierWithStrongReference(forInstance: instance)!)
+                  } else {
+                    super.writeValue(value)
+                  }''',
+                  trimIndentation: true,
+                );
+              },
+            );
+          },
+        );
+        indent.newln();
+
+        indent.format(
+          '''
+          init(pigeonRegistrar: $registrarName) {
+            self.pigeonRegistrar = pigeonRegistrar
+          }''',
+          trimIndentation: true,
+        );
+        indent.newln();
+
+        indent.format(
+          '''
+          override func reader(with data: Data) -> FlutterStandardReader {
+            return PigeonProxyApiCodecReader(data: data, pigeonRegistrar: pigeonRegistrar)
+          }''',
+          trimIndentation: true,
+        );
+        indent.newln();
+
+        indent.format(
+          '''
+          override func writer(with data: NSMutableData) -> FlutterStandardWriter {
+            return PigeonProxyApiCodecWriter(data: data, pigeonRegistrar: pigeonRegistrar)
+          }''',
+          trimIndentation: true,
+        );
+      },
     );
   }
 
