@@ -1,3 +1,7 @@
+## 14.2.2
+
+- Fix GoRouter configuration in `upgrading.md`
+
 ## 14.2.1
 
 - Makes GoRouterState lookup more robust.
