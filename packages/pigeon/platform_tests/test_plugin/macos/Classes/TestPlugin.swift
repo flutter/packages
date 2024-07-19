@@ -11,7 +11,7 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
   var flutterAPI: FlutterIntegrationCoreApi
   var flutterSmallApiOne: FlutterSmallApi
   var flutterSmallApiTwo: FlutterSmallApi
-  var proxyApiRegistrar: PigeonProxyApiRegistrar?
+  var proxyApiRegistrar: ProxyApiTestsPigeonProxyApiRegistrar?
 
   public static func register(with registrar: FlutterPluginRegistrar) {
     let plugin = TestPlugin(binaryMessenger: registrar.messenger)
@@ -27,7 +27,7 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
       binaryMessenger: binaryMessenger, messageChannelSuffix: "suffixOne")
     flutterSmallApiTwo = FlutterSmallApi(
       binaryMessenger: binaryMessenger, messageChannelSuffix: "suffixTwo")
-    proxyApiRegistrar = PigeonProxyApiRegistrar(
+    proxyApiRegistrar = ProxyApiTestsPigeonProxyApiRegistrar(
       binaryMessenger: binaryMessenger, apiDelegate: ProxyApiDelegate())
     proxyApiRegistrar!.setUp()
   }
@@ -663,11 +663,11 @@ public class TestPluginWithSuffix: HostSmallApi {
 
 }
 
-class ProxyApiDelegate: PigeonProxyApiDelegate {
-  func pigeonApiProxyApiTestClass(_ registrar: PigeonProxyApiRegistrar)
+class ProxyApiDelegate: ProxyApiTestsPigeonProxyApiDelegate {
+  func pigeonApiProxyApiTestClass(_ registrar: ProxyApiTestsPigeonProxyApiRegistrar)
     -> PigeonApiProxyApiTestClass
   {
-    class ProxyApiTestClassDelegate: PigeonDelegateProxyApiTestClass {
+    class ProxyApiTestClassDelegate: PigeonApiDelegateProxyApiTestClass {
       func pigeonDefaultConstructor(
         pigeonApi: PigeonApiProxyApiTestClass, aBool: Bool, anInt: Int64, aDouble: Double,
         aString: String, aUint8List: FlutterStandardTypedData, aList: [Any?], aMap: [String?: Any?],
@@ -1520,10 +1520,10 @@ class ProxyApiDelegate: PigeonProxyApiDelegate {
       pigeonRegistrar: registrar, delegate: ProxyApiTestClassDelegate())
   }
 
-  func pigeonApiProxyApiSuperClass(_ registrar: PigeonProxyApiRegistrar)
+  func pigeonApiProxyApiSuperClass(_ registrar: ProxyApiTestsPigeonProxyApiRegistrar)
     -> PigeonApiProxyApiSuperClass
   {
-    class ProxyApiSuperClassDelegate: PigeonDelegateProxyApiSuperClass {
+    class ProxyApiSuperClassDelegate: PigeonApiDelegateProxyApiSuperClass {
       func pigeonDefaultConstructor(pigeonApi: PigeonApiProxyApiSuperClass) throws
         -> ProxyApiSuperClass
       {
@@ -1538,18 +1538,18 @@ class ProxyApiDelegate: PigeonProxyApiDelegate {
       pigeonRegistrar: registrar, delegate: ProxyApiSuperClassDelegate())
   }
 
-  func pigeonApiProxyApiInterface(_ registrar: PigeonProxyApiRegistrar)
+  func pigeonApiProxyApiInterface(_ registrar: ProxyApiTestsPigeonProxyApiRegistrar)
     -> PigeonApiProxyApiInterface
   {
-    class ProxyApiInterfaceDelegate: PigeonDelegateProxyApiInterface {}
+    class ProxyApiInterfaceDelegate: PigeonApiDelegateProxyApiInterface {}
     return PigeonApiProxyApiInterface(
       pigeonRegistrar: registrar, delegate: ProxyApiInterfaceDelegate())
   }
 
-  func pigeonApiClassWithApiRequirement(_ registrar: PigeonProxyApiRegistrar)
+  func pigeonApiClassWithApiRequirement(_ registrar: ProxyApiTestsPigeonProxyApiRegistrar)
     -> PigeonApiClassWithApiRequirement
   {
-    class ClassWithApiRequirementDelegate: PigeonDelegateClassWithApiRequirement {
+    class ClassWithApiRequirementDelegate: PigeonApiDelegateClassWithApiRequirement {
       @available(macOS 10, *)
       func pigeonDefaultConstructor(pigeonApi: PigeonApiClassWithApiRequirement) throws
         -> ClassWithApiRequirement

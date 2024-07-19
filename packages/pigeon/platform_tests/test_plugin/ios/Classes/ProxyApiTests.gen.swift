@@ -74,29 +74,29 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
   return value as! T?
 }
 /// Handles the callback when an object is deallocated.
-protocol PigeonFinalizerDelegate: AnyObject {
+protocol ProxyApiTestsPigeonFinalizerDelegate: AnyObject {
   /// Invoked when the strong reference of an object is deallocated in an `InstanceManager`.
   func onDeinit(identifier: Int64)
 }
 
 // Attaches to an object to receive a callback when the object is deallocated.
-internal final class PigeonFinalizer {
+internal final class ProxyApiTestsPigeonFinalizer {
   private static let associatedObjectKey = malloc(1)!
 
   private let identifier: Int64
   // Reference to the delegate is weak because the callback should be ignored if the
   // `InstanceManager` is deallocated.
-  private weak var delegate: PigeonFinalizerDelegate?
+  private weak var delegate: ProxyApiTestsPigeonFinalizerDelegate?
 
-  private init(identifier: Int64, delegate: PigeonFinalizerDelegate) {
+  private init(identifier: Int64, delegate: ProxyApiTestsPigeonFinalizerDelegate) {
     self.identifier = identifier
     self.delegate = delegate
   }
 
   internal static func attach(
-    to instance: AnyObject, identifier: Int64, delegate: PigeonFinalizerDelegate
+    to instance: AnyObject, identifier: Int64, delegate: ProxyApiTestsPigeonFinalizerDelegate
   ) {
-    let finalizer = PigeonFinalizer(identifier: identifier, delegate: delegate)
+    let finalizer = ProxyApiTestsPigeonFinalizer(identifier: identifier, delegate: delegate)
     objc_setAssociatedObject(instance, associatedObjectKey, finalizer, .OBJC_ASSOCIATION_RETAIN)
   }
 
@@ -117,31 +117,31 @@ internal final class PigeonFinalizer {
 /// When an instance is added with an identifier, either can be used to retrieve the other.
 ///
 /// Added instances are added as a weak reference and a strong reference. When the strong
-/// reference is removed and the weak reference is deallocated,`PigeonFinalizerDelegate.onDeinit`
+/// reference is removed and the weak reference is deallocated,`ProxyApiTestsPigeonFinalizerDelegate.onDeinit`
 /// is called with the instance's identifier. However, if the strong reference is removed and then the identifier is
 /// retrieved with the intention to pass the identifier to Dart (e.g. by calling `identifierWithStrongReference`),
 /// the strong reference to the instance is re-added. The strong reference will then need to be removed manually
 /// again.
 ///
 /// Accessing and inserting to an InstanceManager is thread safe.
-final class PigeonInstanceManager {
+final class ProxyApiTestsPigeonInstanceManager {
   // Identifiers are locked to a specific range to avoid collisions with objects
   // created simultaneously from Dart.
   // Host uses identifiers >= 2^16 and Dart is expected to use values n where,
   // 0 <= n < 2^16.
   private static let minHostCreatedIdentifier: Int64 = 65536
 
-  private let lockQueue = DispatchQueue(label: "PigeonInstanceManager")
+  private let lockQueue = DispatchQueue(label: "ProxyApiTestsPigeonInstanceManager")
   private let identifiers: NSMapTable<AnyObject, NSNumber> = NSMapTable(
     keyOptions: [.weakMemory, .objectPointerPersonality], valueOptions: .strongMemory)
   private let weakInstances: NSMapTable<NSNumber, AnyObject> = NSMapTable(
     keyOptions: .strongMemory, valueOptions: [.weakMemory, .objectPointerPersonality])
   private let strongInstances: NSMapTable<NSNumber, AnyObject> = NSMapTable(
     keyOptions: .strongMemory, valueOptions: [.strongMemory, .objectPointerPersonality])
-  private let finalizerDelegate: PigeonFinalizerDelegate
+  private let finalizerDelegate: ProxyApiTestsPigeonFinalizerDelegate
   private var nextIdentifier: Int64 = minHostCreatedIdentifier
 
-  public init(finalizerDelegate: PigeonFinalizerDelegate) {
+  public init(finalizerDelegate: ProxyApiTestsPigeonFinalizerDelegate) {
     self.finalizerDelegate = finalizerDelegate
   }
 
@@ -212,7 +212,8 @@ final class PigeonInstanceManager {
     identifiers.setObject(NSNumber(value: identifier), forKey: instance)
     weakInstances.setObject(instance, forKey: NSNumber(value: identifier))
     strongInstances.setObject(instance, forKey: NSNumber(value: identifier))
-    PigeonFinalizer.attach(to: instance, identifier: identifier, delegate: finalizerDelegate)
+    ProxyApiTestsPigeonFinalizer.attach(
+      to: instance, identifier: identifier, delegate: finalizerDelegate)
   }
 
   /// Retrieves the identifier paired with an instance.
@@ -222,7 +223,7 @@ final class PigeonInstanceManager {
   /// strong reference to `instance` will be added and will need to be removed again with `removeInstance`.
   ///
   /// If this method returns a nonnull identifier, this method also expects the Dart
-  /// `PigeonInstanceManager` to have, or recreate, a weak reference to the Dart instance the
+  /// `ProxyApiTestsPigeonInstanceManager` to have, or recreate, a weak reference to the Dart instance the
   /// identifier is associated with.
   ///
   /// - Parameters:
@@ -261,7 +262,7 @@ final class PigeonInstanceManager {
       identifiers.removeAllObjects()
       weakInstances.removeAllObjects()
       strongInstances.removeAllObjects()
-      nextIdentifier = PigeonInstanceManager.minHostCreatedIdentifier
+      nextIdentifier = ProxyApiTestsPigeonInstanceManager.minHostCreatedIdentifier
     }
   }
 
@@ -289,7 +290,7 @@ final class PigeonInstanceManager {
   }
 }
 
-private class PigeonInstanceManagerApi {
+private class ProxyApiTestsPigeonInstanceManagerApi {
   /// The codec used for serializing messages.
   let codec = FlutterStandardMessageCodec.sharedInstance()
 
@@ -300,9 +301,9 @@ private class PigeonInstanceManagerApi {
     self.binaryMessenger = binaryMessenger
   }
 
-  /// Sets up an instance of `PigeonInstanceManagerApi` to handle messages through the `binaryMessenger`.
+  /// Sets up an instance of `ProxyApiTestsPigeonInstanceManagerApi` to handle messages through the `binaryMessenger`.
   static func setUpMessageHandlers(
-    binaryMessenger: FlutterBinaryMessenger, instanceManager: PigeonInstanceManager?
+    binaryMessenger: FlutterBinaryMessenger, instanceManager: ProxyApiTestsPigeonInstanceManager?
   ) {
     let codec = FlutterStandardMessageCodec.sharedInstance()
     let removeStrongReferenceChannel = FlutterBasicMessageChannel(
@@ -365,51 +366,51 @@ private class PigeonInstanceManagerApi {
     }
   }
 }
-protocol PigeonProxyApiDelegate {
+protocol ProxyApiTestsPigeonProxyApiDelegate {
   /// An implementation of [PigeonApiProxyApiTestClass] used to add a new Dart instance of
   /// `ProxyApiTestClass` to the Dart `InstanceManager` and make calls to Dart.
-  func pigeonApiProxyApiTestClass(_ registrar: PigeonProxyApiRegistrar)
+  func pigeonApiProxyApiTestClass(_ registrar: ProxyApiTestsPigeonProxyApiRegistrar)
     -> PigeonApiProxyApiTestClass
   /// An implementation of [PigeonApiProxyApiSuperClass] used to add a new Dart instance of
   /// `ProxyApiSuperClass` to the Dart `InstanceManager` and make calls to Dart.
-  func pigeonApiProxyApiSuperClass(_ registrar: PigeonProxyApiRegistrar)
+  func pigeonApiProxyApiSuperClass(_ registrar: ProxyApiTestsPigeonProxyApiRegistrar)
     -> PigeonApiProxyApiSuperClass
   /// An implementation of [PigeonApiProxyApiInterface] used to add a new Dart instance of
   /// `ProxyApiInterface` to the Dart `InstanceManager` and make calls to Dart.
-  func pigeonApiProxyApiInterface(_ registrar: PigeonProxyApiRegistrar)
+  func pigeonApiProxyApiInterface(_ registrar: ProxyApiTestsPigeonProxyApiRegistrar)
     -> PigeonApiProxyApiInterface
   /// An implementation of [PigeonApiClassWithApiRequirement] used to add a new Dart instance of
   /// `ClassWithApiRequirement` to the Dart `InstanceManager` and make calls to Dart.
-  func pigeonApiClassWithApiRequirement(_ registrar: PigeonProxyApiRegistrar)
+  func pigeonApiClassWithApiRequirement(_ registrar: ProxyApiTestsPigeonProxyApiRegistrar)
     -> PigeonApiClassWithApiRequirement
 }
 
-extension PigeonProxyApiDelegate {
-  func pigeonApiProxyApiInterface(_ registrar: PigeonProxyApiRegistrar)
+extension ProxyApiTestsPigeonProxyApiDelegate {
+  func pigeonApiProxyApiInterface(_ registrar: ProxyApiTestsPigeonProxyApiRegistrar)
     -> PigeonApiProxyApiInterface
   {
     return PigeonApiProxyApiInterface(
-      pigeonRegistrar: registrar, delegate: PigeonDelegateProxyApiInterface())
+      pigeonRegistrar: registrar, delegate: PigeonApiDelegateProxyApiInterface())
   }
 }
 
-open class PigeonProxyApiRegistrar {
+open class ProxyApiTestsPigeonProxyApiRegistrar {
   let binaryMessenger: FlutterBinaryMessenger
-  let apiDelegate: PigeonProxyApiDelegate
-  let instanceManager: PigeonInstanceManager
+  let apiDelegate: ProxyApiTestsPigeonProxyApiDelegate
+  let instanceManager: ProxyApiTestsPigeonInstanceManager
   private var _codec: FlutterStandardMessageCodec?
   var codec: FlutterStandardMessageCodec {
     if _codec == nil {
       _codec = FlutterStandardMessageCodec(
-        readerWriter: PigeonProxyApiCodecReaderWriter(pigeonRegistrar: self))
+        readerWriter: ProxyApiTestsPigeonProxyApiCodecReaderWriter(pigeonRegistrar: self))
     }
     return _codec!
   }
 
-  private class InstanceManagerApiFinalizerDelegate: PigeonFinalizerDelegate {
-    let api: PigeonInstanceManagerApi
+  private class InstanceManagerApiFinalizerDelegate: ProxyApiTestsPigeonFinalizerDelegate {
+    let api: ProxyApiTestsPigeonInstanceManagerApi
 
-    init(_ api: PigeonInstanceManagerApi) {
+    init(_ api: ProxyApiTestsPigeonInstanceManagerApi) {
       self.api = api
     }
 
@@ -420,16 +421,16 @@ open class PigeonProxyApiRegistrar {
     }
   }
 
-  init(binaryMessenger: FlutterBinaryMessenger, apiDelegate: PigeonProxyApiDelegate) {
+  init(binaryMessenger: FlutterBinaryMessenger, apiDelegate: ProxyApiTestsPigeonProxyApiDelegate) {
     self.binaryMessenger = binaryMessenger
     self.apiDelegate = apiDelegate
-    self.instanceManager = PigeonInstanceManager(
+    self.instanceManager = ProxyApiTestsPigeonInstanceManager(
       finalizerDelegate: InstanceManagerApiFinalizerDelegate(
-        PigeonInstanceManagerApi(binaryMessenger: binaryMessenger)))
+        ProxyApiTestsPigeonInstanceManagerApi(binaryMessenger: binaryMessenger)))
   }
 
   func setUp() {
-    PigeonInstanceManagerApi.setUpMessageHandlers(
+    ProxyApiTestsPigeonInstanceManagerApi.setUpMessageHandlers(
       binaryMessenger: binaryMessenger, instanceManager: instanceManager)
     PigeonApiProxyApiTestClass.setUpMessageHandlers(
       binaryMessenger: binaryMessenger, api: apiDelegate.pigeonApiProxyApiTestClass(self))
@@ -439,7 +440,7 @@ open class PigeonProxyApiRegistrar {
       binaryMessenger: binaryMessenger, api: apiDelegate.pigeonApiClassWithApiRequirement(self))
   }
   func tearDown() {
-    PigeonInstanceManagerApi.setUpMessageHandlers(
+    ProxyApiTestsPigeonInstanceManagerApi.setUpMessageHandlers(
       binaryMessenger: binaryMessenger, instanceManager: nil)
     PigeonApiProxyApiTestClass.setUpMessageHandlers(binaryMessenger: binaryMessenger, api: nil)
     PigeonApiProxyApiSuperClass.setUpMessageHandlers(binaryMessenger: binaryMessenger, api: nil)
@@ -447,13 +448,13 @@ open class PigeonProxyApiRegistrar {
       binaryMessenger: binaryMessenger, api: nil)
   }
 }
-private class PigeonProxyApiCodecReaderWriter: FlutterStandardReaderWriter {
-  unowned let pigeonRegistrar: PigeonProxyApiRegistrar
+private class ProxyApiTestsPigeonProxyApiCodecReaderWriter: FlutterStandardReaderWriter {
+  unowned let pigeonRegistrar: ProxyApiTestsPigeonProxyApiRegistrar
 
-  private class PigeonProxyApiCodecReader: ProxyApiTestsPigeonCodecReader {
-    unowned let pigeonRegistrar: PigeonProxyApiRegistrar
+  private class ProxyApiTestsPigeonProxyApiCodecReader: ProxyApiTestsPigeonCodecReader {
+    unowned let pigeonRegistrar: ProxyApiTestsPigeonProxyApiRegistrar
 
-    init(data: Data, pigeonRegistrar: PigeonProxyApiRegistrar) {
+    init(data: Data, pigeonRegistrar: ProxyApiTestsPigeonProxyApiRegistrar) {
       self.pigeonRegistrar = pigeonRegistrar
       super.init(data: data)
     }
@@ -471,10 +472,10 @@ private class PigeonProxyApiCodecReaderWriter: FlutterStandardReaderWriter {
     }
   }
 
-  private class PigeonProxyApiCodecWriter: ProxyApiTestsPigeonCodecWriter {
-    unowned let pigeonRegistrar: PigeonProxyApiRegistrar
+  private class ProxyApiTestsPigeonProxyApiCodecWriter: ProxyApiTestsPigeonCodecWriter {
+    unowned let pigeonRegistrar: ProxyApiTestsPigeonProxyApiRegistrar
 
-    init(data: NSMutableData, pigeonRegistrar: PigeonProxyApiRegistrar) {
+    init(data: NSMutableData, pigeonRegistrar: ProxyApiTestsPigeonProxyApiRegistrar) {
       self.pigeonRegistrar = pigeonRegistrar
       super.init(data: data)
     }
@@ -487,7 +488,8 @@ private class PigeonProxyApiCodecReaderWriter: FlutterStandardReaderWriter {
         ) { _ in }
         super.writeByte(128)
         super.writeValue(
-          pigeonRegistrar.instanceManager.identifierWithStrongReference(forInstance: instance)!)
+          pigeonRegistrar.instanceManager.identifierWithStrongReference(
+            forInstance: instance as AnyObject)!)
         return
       }
 
@@ -497,7 +499,8 @@ private class PigeonProxyApiCodecReaderWriter: FlutterStandardReaderWriter {
         ) { _ in }
         super.writeByte(128)
         super.writeValue(
-          pigeonRegistrar.instanceManager.identifierWithStrongReference(forInstance: instance)!)
+          pigeonRegistrar.instanceManager.identifierWithStrongReference(
+            forInstance: instance as AnyObject)!)
         return
       }
 
@@ -507,7 +510,8 @@ private class PigeonProxyApiCodecReaderWriter: FlutterStandardReaderWriter {
         ) { _ in }
         super.writeByte(128)
         super.writeValue(
-          pigeonRegistrar.instanceManager.identifierWithStrongReference(forInstance: instance)!)
+          pigeonRegistrar.instanceManager.identifierWithStrongReference(
+            forInstance: instance as AnyObject)!)
         return
       }
 
@@ -518,7 +522,8 @@ private class PigeonProxyApiCodecReaderWriter: FlutterStandardReaderWriter {
           ) { _ in }
         super.writeByte(128)
         super.writeValue(
-          pigeonRegistrar.instanceManager.identifierWithStrongReference(forInstance: instance)!)
+          pigeonRegistrar.instanceManager.identifierWithStrongReference(
+            forInstance: instance as AnyObject)!)
         return
       }
 
@@ -534,16 +539,16 @@ private class PigeonProxyApiCodecReaderWriter: FlutterStandardReaderWriter {
     }
   }
 
-  init(pigeonRegistrar: PigeonProxyApiRegistrar) {
+  init(pigeonRegistrar: ProxyApiTestsPigeonProxyApiRegistrar) {
     self.pigeonRegistrar = pigeonRegistrar
   }
 
   override func reader(with data: Data) -> FlutterStandardReader {
-    return PigeonProxyApiCodecReader(data: data, pigeonRegistrar: pigeonRegistrar)
+    return ProxyApiTestsPigeonProxyApiCodecReader(data: data, pigeonRegistrar: pigeonRegistrar)
   }
 
   override func writer(with data: NSMutableData) -> FlutterStandardWriter {
-    return PigeonProxyApiCodecWriter(data: data, pigeonRegistrar: pigeonRegistrar)
+    return ProxyApiTestsPigeonProxyApiCodecWriter(data: data, pigeonRegistrar: pigeonRegistrar)
   }
 }
 
@@ -1048,7 +1053,7 @@ protocol PigeonApiProtocolProxyApiTestClass {
 }
 
 final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
-  unowned let pigeonRegistrar: PigeonProxyApiRegistrar
+  unowned let pigeonRegistrar: ProxyApiTestsPigeonProxyApiRegistrar
   let pigeonDelegate: PigeonApiDelegateProxyApiTestClass
   ///An implementation of [ProxyApiSuperClass] used to access callback methods
   var pigeonApiProxyApiSuperClass: PigeonApiProxyApiSuperClass {
@@ -1060,7 +1065,10 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
     return pigeonRegistrar.apiDelegate.pigeonApiProxyApiInterface(pigeonRegistrar)
   }
 
-  init(pigeonRegistrar: PigeonProxyApiRegistrar, delegate: PigeonApiDelegateProxyApiTestClass) {
+  init(
+    pigeonRegistrar: ProxyApiTestsPigeonProxyApiRegistrar,
+    delegate: PigeonApiDelegateProxyApiTestClass
+  ) {
     self.pigeonRegistrar = pigeonRegistrar
     self.pigeonDelegate = delegate
   }
@@ -1070,7 +1078,8 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
     let codec: FlutterStandardMessageCodec =
       api != nil
       ? FlutterStandardMessageCodec(
-        readerWriter: PigeonProxyApiCodecReaderWriter(pigeonRegistrar: api!.pigeonRegistrar))
+        readerWriter: ProxyApiTestsPigeonProxyApiCodecReaderWriter(
+          pigeonRegistrar: api!.pigeonRegistrar))
       : FlutterStandardMessageCodec.sharedInstance()
     let pigeonDefaultConstructorChannel = FlutterBasicMessageChannel(
       name:
@@ -3629,9 +3638,12 @@ protocol PigeonApiProtocolProxyApiSuperClass {
 }
 
 final class PigeonApiProxyApiSuperClass: PigeonApiProtocolProxyApiSuperClass {
-  unowned let pigeonRegistrar: PigeonProxyApiRegistrar
+  unowned let pigeonRegistrar: ProxyApiTestsPigeonProxyApiRegistrar
   let pigeonDelegate: PigeonApiDelegateProxyApiSuperClass
-  init(pigeonRegistrar: PigeonProxyApiRegistrar, delegate: PigeonApiDelegateProxyApiSuperClass) {
+  init(
+    pigeonRegistrar: ProxyApiTestsPigeonProxyApiRegistrar,
+    delegate: PigeonApiDelegateProxyApiSuperClass
+  ) {
     self.pigeonRegistrar = pigeonRegistrar
     self.pigeonDelegate = delegate
   }
@@ -3641,7 +3653,8 @@ final class PigeonApiProxyApiSuperClass: PigeonApiProtocolProxyApiSuperClass {
     let codec: FlutterStandardMessageCodec =
       api != nil
       ? FlutterStandardMessageCodec(
-        readerWriter: PigeonProxyApiCodecReaderWriter(pigeonRegistrar: api!.pigeonRegistrar))
+        readerWriter: ProxyApiTestsPigeonProxyApiCodecReaderWriter(
+          pigeonRegistrar: api!.pigeonRegistrar))
       : FlutterStandardMessageCodec.sharedInstance()
     let pigeonDefaultConstructorChannel = FlutterBasicMessageChannel(
       name:
@@ -3725,9 +3738,12 @@ protocol PigeonApiProtocolProxyApiInterface {
 }
 
 final class PigeonApiProxyApiInterface: PigeonApiProtocolProxyApiInterface {
-  unowned let pigeonRegistrar: PigeonProxyApiRegistrar
+  unowned let pigeonRegistrar: ProxyApiTestsPigeonProxyApiRegistrar
   let pigeonDelegate: PigeonApiDelegateProxyApiInterface
-  init(pigeonRegistrar: PigeonProxyApiRegistrar, delegate: PigeonApiDelegateProxyApiInterface) {
+  init(
+    pigeonRegistrar: ProxyApiTestsPigeonProxyApiRegistrar,
+    delegate: PigeonApiDelegateProxyApiInterface
+  ) {
     self.pigeonRegistrar = pigeonRegistrar
     self.pigeonDelegate = delegate
   }
@@ -3803,10 +3819,12 @@ protocol PigeonApiProtocolClassWithApiRequirement {
 }
 
 final class PigeonApiClassWithApiRequirement: PigeonApiProtocolClassWithApiRequirement {
-  unowned let pigeonRegistrar: PigeonProxyApiRegistrar
+  unowned let pigeonRegistrar: ProxyApiTestsPigeonProxyApiRegistrar
   let pigeonDelegate: PigeonApiDelegateClassWithApiRequirement
-  init(pigeonRegistrar: PigeonProxyApiRegistrar, delegate: PigeonApiDelegateClassWithApiRequirement)
-  {
+  init(
+    pigeonRegistrar: ProxyApiTestsPigeonProxyApiRegistrar,
+    delegate: PigeonApiDelegateClassWithApiRequirement
+  ) {
     self.pigeonRegistrar = pigeonRegistrar
     self.pigeonDelegate = delegate
   }
@@ -3816,7 +3834,8 @@ final class PigeonApiClassWithApiRequirement: PigeonApiProtocolClassWithApiRequi
     let codec: FlutterStandardMessageCodec =
       api != nil
       ? FlutterStandardMessageCodec(
-        readerWriter: PigeonProxyApiCodecReaderWriter(pigeonRegistrar: api!.pigeonRegistrar))
+        readerWriter: ProxyApiTestsPigeonProxyApiCodecReaderWriter(
+          pigeonRegistrar: api!.pigeonRegistrar))
       : FlutterStandardMessageCodec.sharedInstance()
     if #available(iOS 15.0.0, macOS 10.0.0, *) {
       let pigeonDefaultConstructorChannel = FlutterBasicMessageChannel(

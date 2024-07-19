@@ -85,7 +85,7 @@ void main() {
       final StringBuffer sink = StringBuffer();
       const SwiftGenerator generator = SwiftGenerator();
       generator.generate(
-        const SwiftOptions(),
+        const SwiftOptions(fileSpecificClassNameComponent: 'MyFile'),
         root,
         sink,
         dartPackageName: DEFAULT_PACKAGE_NAME,
@@ -97,28 +97,28 @@ void main() {
       expect(code, contains('import MyLibrary'));
 
       // Instance Manager
-      expect(code, contains(r'final class PigeonInstanceManager'));
-      expect(code, contains(r'private class PigeonInstanceManagerApi'));
+      expect(code, contains(r'final class MyFilePigeonInstanceManager'));
+      expect(code, contains(r'private class MyFilePigeonInstanceManagerApi'));
 
       // ProxyApi Delegate
-      expect(code, contains(r'protocol PigeonProxyApiDelegate'));
+      expect(code, contains(r'protocol MyFilePigeonProxyApiDelegate'));
       expect(
         collapsedCode,
         contains(
-            r'func pigeonApiApi(_ registrar: PigeonProxyApiRegistrar) -> PigeonApiApi'),
+            r'func pigeonApiApi(_ registrar: MyFilePigeonProxyApiRegistrar) -> PigeonApiApi'),
       );
 
       // API registrar
       expect(
         code,
-        contains('open class PigeonProxyApiRegistrar'),
+        contains('open class MyFilePigeonProxyApiRegistrar'),
       );
 
       // ReaderWriter
       expect(
         code,
         contains(
-          'private class PigeonProxyApiCodecReaderWriter: FlutterStandardReaderWriter',
+          'private class MyFilePigeonProxyApiCodecReaderWriter: FlutterStandardReaderWriter',
         ),
       );
 

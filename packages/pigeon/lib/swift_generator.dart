@@ -601,11 +601,11 @@ class SwiftGenerator extends StructuredGenerator<SwiftOptions> {
     Indent indent, {
     required String dartPackageName,
   }) {
-    indent.format(instanceManagerFinalizerDelegateTemplate);
+    indent.format(instanceManagerFinalizerDelegateTemplate(generatorOptions));
     indent.newln();
-    indent.format(instanceManagerFinalizerTemplate);
+    indent.format(instanceManagerFinalizerTemplate(generatorOptions));
     indent.newln();
-    indent.format(instanceManagerTemplate);
+    indent.format(instanceManagerTemplate(generatorOptions));
     indent.newln();
   }
 
@@ -616,10 +616,11 @@ class SwiftGenerator extends StructuredGenerator<SwiftOptions> {
     Indent indent, {
     required String dartPackageName,
   }) {
-    const String instanceManagerApiName = '${instanceManagerClassName}Api';
+    final String instanceManagerApiName =
+        '${swiftInstanceManagerClassName(generatorOptions)}Api';
 
     final String removeStrongReferenceName = makeChannelNameWithStrings(
-      apiName: instanceManagerApiName,
+      apiName: '${instanceManagerClassName}Api',
       methodName: 'removeStrongReference',
       dartPackageName: dartPackageName,
     );
@@ -660,7 +661,7 @@ class SwiftGenerator extends StructuredGenerator<SwiftOptions> {
         _docCommentSpec,
       );
       indent.writeScoped(
-        'static func setUpMessageHandlers(binaryMessenger: FlutterBinaryMessenger, instanceManager: $instanceManagerClassName?) {',
+        'static func setUpMessageHandlers(binaryMessenger: FlutterBinaryMessenger, instanceManager: ${swiftInstanceManagerClassName(generatorOptions)}?) {',
         '}',
         () {
           indent.writeln(
@@ -696,7 +697,7 @@ class SwiftGenerator extends StructuredGenerator<SwiftOptions> {
             indent,
             name: 'clear',
             channelName: makeChannelNameWithStrings(
-              apiName: instanceManagerApiName,
+              apiName: '${instanceManagerClassName}Api',
               methodName: 'clear',
               dartPackageName: dartPackageName,
             ),
@@ -749,7 +750,11 @@ class SwiftGenerator extends StructuredGenerator<SwiftOptions> {
     final Iterable<AstProxyApi> allProxyApis =
         root.apis.whereType<AstProxyApi>();
 
-    _writeProxyApiRegistrar(indent, allProxyApis: allProxyApis);
+    _writeProxyApiRegistrar(
+      indent,
+      generatorOptions: generatorOptions,
+      allProxyApis: allProxyApis,
+    );
 
     final String filePrefix =
         generatorOptions.fileSpecificClassNameComponent ?? '';
@@ -881,7 +886,7 @@ class SwiftGenerator extends StructuredGenerator<SwiftOptions> {
                         ) { _ in }
                         super.writeByte($proxyApiCodecInstanceManagerKey)
                         super.writeValue(
-                          pigeonRegistrar.instanceManager.identifierWithStrongReference(forInstance: instance)!)
+                          pigeonRegistrar.instanceManager.identifierWithStrongReference(forInstance: instance as AnyObject)!)
                         return
                       }
                       ${unsupportedPlatforms != null ? '#endif' : ''}''',
@@ -921,7 +926,7 @@ class SwiftGenerator extends StructuredGenerator<SwiftOptions> {
         indent.format(
           '''
           override func reader(with data: Data) -> FlutterStandardReader {
-            return PigeonProxyApiCodecReader(data: data, pigeonRegistrar: pigeonRegistrar)
+            return $filePrefix${classNamePrefix}ProxyApiCodecReader(data: data, pigeonRegistrar: pigeonRegistrar)
           }''',
           trimIndentation: true,
         );
@@ -930,7 +935,7 @@ class SwiftGenerator extends StructuredGenerator<SwiftOptions> {
         indent.format(
           '''
           override func writer(with data: NSMutableData) -> FlutterStandardWriter {
-            return PigeonProxyApiCodecWriter(data: data, pigeonRegistrar: pigeonRegistrar)
+            return $filePrefix${classNamePrefix}ProxyApiCodecWriter(data: data, pigeonRegistrar: pigeonRegistrar)
           }''',
           trimIndentation: true,
         );
@@ -999,13 +1004,15 @@ class SwiftGenerator extends StructuredGenerator<SwiftOptions> {
     final String swiftApiName = '$hostProxyApiPrefix${api.name}';
     indent.writeScoped(
         'final class $swiftApiName: $swiftApiProtocolName  {', '}', () {
-      indent.writeln('unowned let pigeonRegistrar: $proxyApiRegistrarName');
+      indent.writeln(
+        'unowned let pigeonRegistrar: ${proxyApiRegistrarName(generatorOptions)}',
+      );
       indent.writeln('let pigeonDelegate: $swiftApiDelegateName');
 
       _writeProxyApiInheritedApiMethods(indent, api);
 
       indent.writeScoped(
-        'init(pigeonRegistrar: $proxyApiRegistrarName, delegate: $swiftApiDelegateName) {',
+        'init(pigeonRegistrar: ${proxyApiRegistrarName(generatorOptions)}, delegate: $swiftApiDelegateName) {',
         '}',
         () {
           indent.writeln('self.pigeonRegistrar = pigeonRegistrar');
@@ -1017,6 +1024,7 @@ class SwiftGenerator extends StructuredGenerator<SwiftOptions> {
         _writeProxyApiMessageHandlerMethod(
           indent,
           api,
+          generatorOptions: generatorOptions,
           apiAsTypeDeclaration: apiAsTypeDeclaration,
           swiftApiName: swiftApiName,
           dartPackageName: dartPackageName,
@@ -1373,9 +1381,11 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
 
   void _writeProxyApiRegistrar(
     Indent indent, {
+    required SwiftOptions generatorOptions,
     required Iterable<AstProxyApi> allProxyApis,
   }) {
-    const String delegateName = '${classNamePrefix}ProxyApiDelegate';
+    final String delegateName =
+        '${generatorOptions.fileSpecificClassNameComponent ?? ''}${classNamePrefix}ProxyApiDelegate';
     indent.writeScoped('protocol $delegateName {', '}', () {
       for (final AstProxyApi api in allProxyApis) {
         final String hostApiName = '$hostProxyApiPrefix${api.name}';
@@ -1388,7 +1398,7 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
           _docCommentSpec,
         );
         indent.writeln(
-          'func pigeonApi${api.name}(_ registrar: $proxyApiRegistrarName) -> $hostApiName',
+          'func pigeonApi${api.name}(_ registrar: ${proxyApiRegistrarName(generatorOptions)}) -> $hostApiName',
         );
       }
     });
@@ -1404,10 +1414,10 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
         for (final AstProxyApi api in apisThatCanHaveADefaultImpl) {
           final String hostApiName = '$hostProxyApiPrefix${api.name}';
           final String swiftApiDelegateName =
-              '${classNamePrefix}Delegate${api.name}';
+              '${hostProxyApiPrefix}Delegate${api.name}';
           indent.format(
             '''
-            func pigeonApi${api.name}(_ registrar: $proxyApiRegistrarName) -> $hostApiName {
+            func pigeonApi${api.name}(_ registrar: ${proxyApiRegistrarName(generatorOptions)}) -> $hostApiName {
               return $hostApiName(pigeonRegistrar: registrar, delegate: $swiftApiDelegateName())
             }''',
             trimIndentation: true,
@@ -1417,10 +1427,15 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
       indent.newln();
     }
 
-    indent.writeScoped('open class $proxyApiRegistrarName {', '}', () {
+    final String instanceManagerApiName =
+        '${generatorOptions.fileSpecificClassNameComponent ?? ''}${instanceManagerClassName}Api';
+
+    indent.writeScoped(
+        'open class ${proxyApiRegistrarName(generatorOptions)} {', '}', () {
       indent.writeln('let binaryMessenger: FlutterBinaryMessenger');
       indent.writeln('let apiDelegate: $delegateName');
-      indent.writeln('let instanceManager: PigeonInstanceManager');
+      indent.writeln(
+          'let instanceManager: ${swiftInstanceManagerClassName(generatorOptions)}');
 
       indent.writeln('private var _codec: FlutterStandardMessageCodec?');
       indent.format(
@@ -1428,7 +1443,7 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
         var codec: FlutterStandardMessageCodec {
           if _codec == nil {
             _codec = FlutterStandardMessageCodec(
-              readerWriter: $proxyApiReaderWriterName(pigeonRegistrar: self))
+              readerWriter: ${proxyApiReaderWriterName(generatorOptions)}(pigeonRegistrar: self))
           }
           return _codec!
         }''',
@@ -1438,10 +1453,10 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
 
       indent.format(
         '''
-        private class InstanceManagerApiFinalizerDelegate: $instanceManagerFinalizerDelegateName {
-          let api: ${instanceManagerClassName}Api
+        private class InstanceManagerApiFinalizerDelegate: ${instanceManagerFinalizerDelegateName(generatorOptions)} {
+          let api: $instanceManagerApiName
 
-          init(_ api: ${instanceManagerClassName}Api) {
+          init(_ api: $instanceManagerApiName) {
             self.api = api
           }
 
@@ -1460,9 +1475,9 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
         init(binaryMessenger: FlutterBinaryMessenger, apiDelegate: $delegateName) {
           self.binaryMessenger = binaryMessenger
           self.apiDelegate = apiDelegate
-          self.instanceManager = $instanceManagerClassName(
+          self.instanceManager = ${swiftInstanceManagerClassName(generatorOptions)}(
             finalizerDelegate: InstanceManagerApiFinalizerDelegate(
-              ${instanceManagerClassName}Api(binaryMessenger: binaryMessenger)))
+              $instanceManagerApiName(binaryMessenger: binaryMessenger)))
         }''',
         trimIndentation: true,
       );
@@ -1470,7 +1485,7 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
 
       indent.writeScoped('func setUp() {', '}', () {
         indent.writeln(
-          '${instanceManagerClassName}Api.setUpMessageHandlers(binaryMessenger: binaryMessenger, instanceManager: instanceManager)',
+          '$instanceManagerApiName.setUpMessageHandlers(binaryMessenger: binaryMessenger, instanceManager: instanceManager)',
         );
         for (final AstProxyApi api in allProxyApis) {
           if (api.hasAnyHostMessageCalls()) {
@@ -1483,7 +1498,7 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
 
       indent.writeScoped('func tearDown() {', '}', () {
         indent.writeln(
-          '${instanceManagerClassName}Api.setUpMessageHandlers(binaryMessenger: binaryMessenger, instanceManager: nil)',
+          '$instanceManagerApiName.setUpMessageHandlers(binaryMessenger: binaryMessenger, instanceManager: nil)',
         );
         for (final AstProxyApi api in allProxyApis) {
           if (api.hasAnyHostMessageCalls()) {
@@ -1764,6 +1779,7 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
   void _writeProxyApiMessageHandlerMethod(
     Indent indent,
     AstProxyApi api, {
+    required SwiftOptions generatorOptions,
     required TypeDeclaration apiAsTypeDeclaration,
     required String swiftApiName,
     required String dartPackageName,
@@ -1777,7 +1793,7 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
           let codec: FlutterStandardMessageCodec =
             api != nil
             ? FlutterStandardMessageCodec(
-              readerWriter: $proxyApiReaderWriterName(pigeonRegistrar: api!.pigeonRegistrar))
+              readerWriter: ${proxyApiReaderWriterName(generatorOptions)}(pigeonRegistrar: api!.pigeonRegistrar))
             : FlutterStandardMessageCodec.sharedInstance()''',
           trimIndentation: true,
         );
