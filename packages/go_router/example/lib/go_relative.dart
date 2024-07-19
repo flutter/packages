@@ -8,6 +8,19 @@ import 'package:go_router/go_router.dart';
 /// This sample app demonstrates how to use go relatively with GoRouter.go('./$path').
 void main() => runApp(const MyApp());
 
+/// The main app.
+class MyApp extends StatelessWidget {
+  /// Constructs a [MyApp]
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp.router(
+      routerConfig: _router,
+    );
+  }
+}
+
 /// The route configuration.
 final GoRouter _router = GoRouter(
   routes: <RouteBase>[
@@ -35,19 +48,6 @@ final GoRouter _router = GoRouter(
     ),
   ],
 );
-
-/// The main app.
-class MyApp extends StatelessWidget {
-  /// Constructs a [MyApp]
-  const MyApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp.router(
-      routerConfig: _router,
-    );
-  }
-}
 
 /// The home screen
 class HomeScreen extends StatelessWidget {
@@ -83,22 +83,23 @@ class DetailsScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: const Text('Details Screen')),
       body: Center(
-          child: Column(
-        children: <Widget>[
-          TextButton(
-            onPressed: () {
-              context.pop();
-            },
-            child: const Text('go back'),
-          ),
-          TextButton(
-            onPressed: () {
-              context.go('./settings');
-            },
-            child: const Text('Go to the Settings screen'),
-          ),
-        ],
-      )),
+        child: Column(
+          children: <Widget>[
+            TextButton(
+              onPressed: () {
+                context.pop();
+              },
+              child: const Text('Go back'),
+            ),
+            TextButton(
+              onPressed: () {
+                context.go('./settings');
+              },
+              child: const Text('Go to the Settings screen'),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
@@ -112,8 +113,15 @@ class SettingsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Settings Screen')),
-      body: const Center(
-        child: Text('Settings'),
+      body: Column(
+        children: <Widget>[
+          TextButton(
+            onPressed: () {
+              context.pop();
+            },
+            child: const Text('Go back'),
+          ),
+        ],
       ),
     );
   }
