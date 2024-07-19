@@ -29,6 +29,10 @@ dev_dependencies:
   go_router: ^14.0.0
   test: ^1.20.0
 
+dependency_overrides:
+  go_router: 
+    path: ../go_router
+
 topics:
   - codegen
   - deep-linking
