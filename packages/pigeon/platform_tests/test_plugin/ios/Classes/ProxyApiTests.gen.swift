@@ -485,18 +485,30 @@ private class PigeonProxyApiCodecReaderWriter: FlutterStandardReaderWriter {
         pigeonRegistrar.apiDelegate.pigeonApiProxyApiTestClass(pigeonRegistrar).pigeonNewInstance(
           pigeonInstance: instance
         ) { _ in }
+        super.writeByte(128)
+        super.writeValue(
+          pigeonRegistrar.instanceManager.identifierWithStrongReference(forInstance: instance)!)
+        return
       }
 
       if let instance = value as? ProxyApiSuperClass {
         pigeonRegistrar.apiDelegate.pigeonApiProxyApiSuperClass(pigeonRegistrar).pigeonNewInstance(
           pigeonInstance: instance
         ) { _ in }
+        super.writeByte(128)
+        super.writeValue(
+          pigeonRegistrar.instanceManager.identifierWithStrongReference(forInstance: instance)!)
+        return
       }
 
       if let instance = value as? ProxyApiInterface {
         pigeonRegistrar.apiDelegate.pigeonApiProxyApiInterface(pigeonRegistrar).pigeonNewInstance(
           pigeonInstance: instance
         ) { _ in }
+        super.writeByte(128)
+        super.writeValue(
+          pigeonRegistrar.instanceManager.identifierWithStrongReference(forInstance: instance)!)
+        return
       }
 
       if #available(iOS 15.0.0, macOS 10.0.0, *), let instance = value as? ClassWithApiRequirement {
@@ -504,6 +516,10 @@ private class PigeonProxyApiCodecReaderWriter: FlutterStandardReaderWriter {
           .pigeonNewInstance(
             pigeonInstance: instance
           ) { _ in }
+        super.writeByte(128)
+        super.writeValue(
+          pigeonRegistrar.instanceManager.identifierWithStrongReference(forInstance: instance)!)
+        return
       }
 
       if let instance = value as AnyObject?,

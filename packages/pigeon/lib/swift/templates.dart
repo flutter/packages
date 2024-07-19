@@ -260,6 +260,10 @@ String proxyApiReaderWriterTemplate({
         pigeonRegistrar.apiDelegate.pigeonApi${api.name}(pigeonRegistrar).pigeonNewInstance(
           pigeonInstance: instance
         ) { _ in }
+        super.writeByte($proxyApiCodecInstanceManagerKey)
+        super.writeValue(
+          pigeonRegistrar.instanceManager.identifierWithStrongReference(forInstance: instance)!)
+        return
       }
       ${unsupportedPlatforms != null ? '#endif' : ''}
     ''';

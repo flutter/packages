@@ -123,7 +123,6 @@ void main() {
       );
 
       // TODO: -> PigeonApiDelegate
-      // TODO: exit early in codec
 
       // Delegate and class
       expect(code, contains('protocol PigeonDelegateApi'));
