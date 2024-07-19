@@ -8,56 +8,63 @@ import XCTest
 
 final class FIATransactionCacheTests: XCTestCase {
 
-  func testAddObjectsForNewKey() {
-    let dummyArray: [Int] = [1, 2, 3]
+  func testAddObjectsForNewKey() throws {
+    let dummyArray = [1, 2, 3]
     let cache = FIATransactionCache()
     cache.add(dummyArray, for: TransactionCacheKey.updatedTransactions)
 
-    XCTAssertEqual(
-      dummyArray, cache.getObjectsFor(TransactionCacheKey.updatedTransactions) as! [Int])
+    let updatedTransactions = try XCTUnwrap(
+      cache.getObjectsFor(TransactionCacheKey.updatedTransactions) as? [Int])
+    XCTAssertEqual(dummyArray, updatedTransactions)
   }
 
-  func testAddObjectsForExistingKey() {
-    let dummyArray: [Int] = [1, 2, 3]
+  func testAddObjectsForExistingKey() throws {
+    let dummyArray = [1, 2, 3]
     let cache = FIATransactionCache()
     cache.add(dummyArray, for: TransactionCacheKey.updatedTransactions)
 
-    XCTAssertEqual(
-      dummyArray, cache.getObjectsFor(TransactionCacheKey.updatedTransactions) as! [Int])
+    let firstUpdatedTransactions = try XCTUnwrap(
+      cache.getObjectsFor(TransactionCacheKey.updatedTransactions) as? [Int])
+    XCTAssertEqual(dummyArray, firstUpdatedTransactions)
 
     cache.add([4, 5, 6], for: TransactionCacheKey.updatedTransactions)
 
-    let expected: [Int] = [1, 2, 3, 4, 5, 6]
-    XCTAssertEqual(expected, cache.getObjectsFor(TransactionCacheKey.updatedTransactions) as! [Int])
+    let expected = [1, 2, 3, 4, 5, 6]
+    let secondUpdatedTransactions = try XCTUnwrap(
+      cache.getObjectsFor(TransactionCacheKey.updatedTransactions) as? [Int])
+    XCTAssertEqual(expected, secondUpdatedTransactions)
   }
 
   func testGetObjectsForNonExistingKey() {
     let cache = FIATransactionCache()
-    XCTAssert(cache.getObjectsFor(TransactionCacheKey.updatedTransactions).count == 0)
+    XCTAssertTrue(cache.getObjectsFor(TransactionCacheKey.updatedTransactions).isEmpty)
   }
 
-  func testClear() {
-    let fakeUpdatedTransactions: [Int] = [1, 2, 3]
-    let fakeRemovedTransactions: [String] = ["Remove 1", "Remove 2", "Remove 3"]
-    let fakeUpdatedDownloads: [String] = ["Download 1", "Download 2"]
+  func testClear() throws {
+    let fakeUpdatedTransactions = [1, 2, 3]
+    let fakeRemovedTransactions = ["Remove 1", "Remove 2", "Remove 3"]
+    let fakeUpdatedDownloads = ["Download 1", "Download 2"]
     let cache = FIATransactionCache()
+    
     cache.add(fakeUpdatedTransactions, for: TransactionCacheKey.updatedTransactions)
     cache.add(fakeRemovedTransactions, for: TransactionCacheKey.removedTransactions)
     cache.add(fakeUpdatedDownloads, for: TransactionCacheKey.updatedDownloads)
 
-    XCTAssertEqual(
-      fakeUpdatedTransactions,
-      cache.getObjectsFor(TransactionCacheKey.updatedTransactions) as! [Int])
-    XCTAssertEqual(
-      fakeRemovedTransactions,
-      cache.getObjectsFor(TransactionCacheKey.removedTransactions) as! [String])
-    XCTAssertEqual(
-      fakeUpdatedDownloads, cache.getObjectsFor(TransactionCacheKey.updatedDownloads) as! [String])
+    let updatedTransactions = try XCTUnwrap(
+      cache.getObjectsFor(TransactionCacheKey.updatedTransactions) as? [Int])
+    let removedTransactions = try XCTUnwrap(
+      cache.getObjectsFor(TransactionCacheKey.removedTransactions) as? [String])
+    let updatedDownloads = try XCTUnwrap(
+      cache.getObjectsFor(TransactionCacheKey.updatedDownloads) as? [String])
+
+    XCTAssertEqual(fakeUpdatedTransactions, updatedTransactions)
+    XCTAssertEqual(fakeRemovedTransactions, removedTransactions)
+    XCTAssertEqual(fakeUpdatedDownloads, updatedDownloads)
 
     cache.clear()
 
-    XCTAssert(cache.getObjectsFor(TransactionCacheKey.updatedTransactions).count == 0)
-    XCTAssert(cache.getObjectsFor(TransactionCacheKey.removedTransactions).count == 0)
-    XCTAssert(cache.getObjectsFor(TransactionCacheKey.updatedDownloads).count == 0)
+    XCTAssertTrue(cache.getObjectsFor(TransactionCacheKey.updatedTransactions).isEmpty)
+    XCTAssertTrue(cache.getObjectsFor(TransactionCacheKey.removedTransactions).isEmpty)
+    XCTAssertTrue(cache.getObjectsFor(TransactionCacheKey.updatedDownloads).isEmpty)
   }
 }
