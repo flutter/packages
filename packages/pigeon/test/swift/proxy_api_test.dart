@@ -16,8 +16,7 @@ void main() {
           AstProxyApi(
             name: 'Api',
             swiftOptions: const SwiftProxyApiOptions(
-              name: 'MyLibraryApi',
-            ),
+                name: 'MyLibraryApi', import: 'MyLibrary'),
             constructors: <Constructor>[
               Constructor(
                 name: 'name',
@@ -94,16 +93,45 @@ void main() {
       final String code = sink.toString();
       final String collapsedCode = _collapseNewlineAndIndentation(code);
 
-      // Instance Manager
-      expect(code, contains(r'class PigeonInstanceManager'));
-      expect(code, contains(r'class PigeonInstanceManagerApi'));
+      // import
+      expect(code, contains('import MyLibrary'));
 
-      // Codec and class
-      expect(code, contains('class PigeonProxyApiBaseCodec'));
+      // Instance Manager
+      expect(code, contains(r'final class PigeonInstanceManager'));
+      expect(code, contains(r'private class PigeonInstanceManagerApi'));
+
+      // ProxyApi Delegate
+      expect(code, contains(r'protocol PigeonProxyApiDelegate'));
+      expect(
+        collapsedCode,
+        contains(
+            r'func pigeonApiApi(_ registrar: PigeonProxyApiRegistrar) -> PigeonApiApi'),
+      );
+
+      // API registrar
+      expect(
+        code,
+        contains('open class PigeonProxyApiRegistrar'),
+      );
+
+      // ReaderWriter
       expect(
         code,
         contains(
-          r'abstract class PigeonApiApi(val pigeonRegistrar: PigeonProxyApiRegistrar)',
+          'private class PigeonProxyApiCodecReaderWriter: FlutterStandardReaderWriter',
+        ),
+      );
+
+      // TODO: -> PigeonApiDelegate
+      // TODO: exit early in codec
+
+      // Delegate and class
+      expect(code, contains('protocol PigeonDelegateApi'));
+      expect(code, contains('protocol PigeonApiProtocolApi'));
+      expect(
+        code,
+        contains(
+          r'class PigeonApiApi: PigeonApiProtocolApi',
         ),
       );
 
@@ -111,13 +139,13 @@ void main() {
       expect(
         collapsedCode,
         contains(
-          r'abstract fun name(someField: Long, input: Input)',
+          r'func name(pigeonApi: PigeonApiApi, someField: Int64, input: Input) throws -> MyLibraryApi',
         ),
       );
       expect(
         collapsedCode,
         contains(
-          r'fun pigeon_newInstance(pigeon_instanceArg: my.library.Api, callback: (Result<Unit>) -> Unit)',
+          r'func pigeonNewInstance(pigeonInstance: MyLibraryApi, completion: @escaping (Result<Void, PigeonError>) -> Void) ',
         ),
       );
 
@@ -125,27 +153,29 @@ void main() {
       expect(
         code,
         contains(
-          'abstract fun someField(pigeon_instance: my.library.Api): Long',
+          'func someField(pigeonApi: PigeonApiApi, pigeonInstance: MyLibraryApi) throws -> Int64',
         ),
       );
 
       // Dart -> Host method
       expect(
         collapsedCode,
-        contains('api.doSomething(pigeon_instanceArg, inputArg)'),
+        contains(
+          'func doSomething(pigeonApi: PigeonApiApi, pigeonInstance: MyLibraryApi, input: Input) throws -> String',
+        ),
       );
 
       // Host -> Dart method
       expect(
         code,
         contains(
-          r'fun setUpMessageHandlers(binaryMessenger: BinaryMessenger, api: PigeonApiApi?)',
+          r'static func setUpMessageHandlers(binaryMessenger: FlutterBinaryMessenger, api: PigeonApiApi?)',
         ),
       );
       expect(
         code,
         contains(
-          'fun doSomethingElse(pigeon_instanceArg: my.library.Api, inputArg: Input, callback: (Result<String>) -> Unit)',
+          'func doSomethingElse(pigeonInstance pigeonInstanceArg: MyLibraryApi, input inputArg: Input, completion: @escaping (Result<String, PigeonError>) -> Void)',
         ),
       );
     });
@@ -181,10 +211,9 @@ void main() {
           dartPackageName: DEFAULT_PACKAGE_NAME,
         );
         final String code = sink.toString();
-        final String collapsedCode = _collapseNewlineAndIndentation(code);
         expect(
-          collapsedCode,
-          contains('fun pigeon_getPigeonApiApi2(): PigeonApiApi2'),
+          code,
+          contains('var pigeonApiApi2: PigeonApiApi2'),
         );
       });
 
@@ -220,7 +249,7 @@ void main() {
           dartPackageName: DEFAULT_PACKAGE_NAME,
         );
         final String code = sink.toString();
-        expect(code, contains('fun pigeon_getPigeonApiApi2(): PigeonApiApi2'));
+        expect(code, contains('var pigeonApiApi2: PigeonApiApi2'));
       });
 
       test('implements 2 ProxyApis', () {
@@ -267,8 +296,8 @@ void main() {
           dartPackageName: DEFAULT_PACKAGE_NAME,
         );
         final String code = sink.toString();
-        expect(code, contains('fun pigeon_getPigeonApiApi2(): PigeonApiApi2'));
-        expect(code, contains('fun pigeon_getPigeonApiApi3(): PigeonApiApi3'));
+        expect(code, contains('var pigeonApiApi2: PigeonApiApi2'));
+        expect(code, contains('var pigeonApiApi3: PigeonApiApi3'));
       });
     });
 
@@ -298,24 +327,22 @@ void main() {
         final String collapsedCode = _collapseNewlineAndIndentation(code);
         expect(
           code,
+          contains('class PigeonApiApi: PigeonApiProtocolApi '),
+        );
+        expect(
+          collapsedCode,
+          contains('func pigeonDefaultConstructor(pigeonApi: PigeonApiApi) throws -> Api'),
+        );
+        expect(
+          collapsedCode,
           contains(
-            'abstract class PigeonApiApi(val pigeonRegistrar: PigeonProxyApiRegistrar) ',
+            r'let pigeonDefaultConstructorChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.test_package.Api.pigeon_defaultConstructor", binaryMessenger: binaryMessenger, codec: codec)',
           ),
         );
         expect(
           collapsedCode,
-          contains('abstract fun pigeon_defaultConstructor(): Api'),
-        );
-        expect(
-          collapsedCode,
           contains(
-            r'val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.test_package.Api.pigeon_defaultConstructor"',
-          ),
-        );
-        expect(
-          collapsedCode,
-          contains(
-            r'api.pigeonRegistrar.instanceManager.addDartCreatedInstance(api.pigeon_defaultConstructor(',
+            r'api.pigeonRegistrar.instanceManager.addDartCreatedInstance(',
           ),
         );
       });
@@ -401,23 +428,22 @@ void main() {
         expect(
           code,
           contains(
-            'abstract class PigeonApiApi(val pigeonRegistrar: PigeonProxyApiRegistrar) ',
+            'class PigeonApiApi: PigeonApiProtocolApi ',
           ),
         );
         expect(
           collapsedCode,
           contains(
-            'abstract fun name(validType: Long, enumType: AnEnum, '
-            'proxyApiType: Api2, nullableValidType: Long?, '
-            'nullableEnumType: AnEnum?, nullableProxyApiType: Api2?): Api',
+            'func name(pigeonApi: PigeonApiApi, validType: Int64, enumType: AnEnum, proxyApiType: Api2, nullableValidType: Int64?, nullableEnumType: AnEnum?, nullableProxyApiType: Api2?) throws -> Api',
           ),
         );
         expect(
           collapsedCode,
           contains(
-            r'api.pigeonRegistrar.instanceManager.addDartCreatedInstance(api.name('
-            r'validTypeArg,enumTypeArg,proxyApiTypeArg,nullableValidTypeArg,'
-            r'nullableEnumTypeArg,nullableProxyApiTypeArg), pigeon_identifierArg)',
+            r'api.pigeonRegistrar.instanceManager.addDartCreatedInstance( '
+            r'try api.pigeonDelegate.name(pigeonApi: api, validType: validTypeArg, enumType: enumTypeArg, proxyApiType: '
+            r'proxyApiTypeArg, nullableValidType: nullableValidTypeArg, nullableEnumType: nullableEnumTypeArg, '
+            r'nullableProxyApiType: nullableProxyApiTypeArg)',
           ),
         );
       });
@@ -510,9 +536,9 @@ void main() {
         expect(
           collapsedCode,
           contains(
-            'abstract fun name(validType: Long, enumType: AnEnum, '
-            'proxyApiType: Api2, nullableValidType: Long?, '
-            'nullableEnumType: AnEnum?, nullableProxyApiType: Api2?): Api',
+            'func name(pigeonApi: '
+            'PigeonApiApi, validType: Int64, enumType: AnEnum, proxyApiType: Api2, nullableValidType: Int64?, nullableEnumType: AnEnum?, '
+            'nullableProxyApiType: Api2?) throws -> Api func validType(pigeonApi: PigeonApiApi, pigeonInstance: Api) throws -> Int64 ',
           ),
         );
         expect(
@@ -903,7 +929,7 @@ void main() {
         );
       });
     });
-  }, skip: true);
+  });
 }
 
 /// Replaces a new line and the indentation with a single white space
