@@ -592,10 +592,20 @@ class GoRelativeRouteConfig extends RouteBaseConfig {
 extension $_extensionName on $_className {
   static $_className _fromState(GoRouterState state) $_fromStateConstructor
 
-  String get location => './\${GoRouteData.\$location($_locationArgs,$_locationQueryParams)}';
+  String get location => GoRouteData.\$location($_locationArgs,$_locationQueryParams);
+  String get relativeLocation => './\$location';
 
   void go(BuildContext context) =>
-      context.go(location${_extraParam != null ? ', extra: $extraFieldName' : ''});
+      context.go(relativeLocation${_extraParam != null ? ', extra: $extraFieldName' : ''});
+
+  Future<T?> push<T>(BuildContext context) =>
+      context.push<T>(relativeLocation${_extraParam != null ? ', extra: $extraFieldName' : ''});
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(relativeLocation${_extraParam != null ? ', extra: $extraFieldName' : ''});
+
+  void replace(BuildContext context) =>
+      context.replace(relativeLocation${_extraParam != null ? ', extra: $extraFieldName' : ''});
 }
 ''';
 
