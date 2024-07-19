@@ -19,9 +19,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -39,8 +37,7 @@ public class Messages {
     /** The error details. Must be a datatype supported by the api codec. */
     public final Object details;
 
-    public FlutterError(@NonNull String code, @Nullable String message, @Nullable Object details) 
-    {
+    public FlutterError(@NonNull String code, @Nullable String message, @Nullable Object details) {
       super(message);
       this.code = code;
       this.details = details;
@@ -59,14 +56,15 @@ public class Messages {
       errorList.add(exception.toString());
       errorList.add(exception.getClass().getSimpleName());
       errorList.add(
-        "Cause: " + exception.getCause() + ", Stacktrace: " + Log.getStackTraceString(exception));
+          "Cause: " + exception.getCause() + ", Stacktrace: " + Log.getStackTraceString(exception));
     }
     return errorList;
   }
 
   @NonNull
   protected static FlutterError createConnectionError(@NonNull String channelName) {
-    return new FlutterError("channel-error",  "Unable to establish connection on channel: " + channelName + ".", "");
+    return new FlutterError(
+        "channel-error", "Unable to establish connection on channel: " + channelName + ".", "");
   }
 
   @Target(METHOD)
@@ -137,10 +135,17 @@ public class Messages {
 
     @Override
     public boolean equals(Object o) {
-      if (this == o) { return true; }
-      if (o == null || getClass() != o.getClass()) { return false; }
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
       MessageData that = (MessageData) o;
-      return Objects.equals(name, that.name) && Objects.equals(description, that.description) && code.equals(that.code) && data.equals(that.data);
+      return Objects.equals(name, that.name)
+          && Objects.equals(description, that.description)
+          && code.equals(that.code)
+          && data.equals(that.data);
     }
 
     @Override
@@ -248,7 +253,6 @@ public class Messages {
     }
   }
 
-
   /** Asynchronous error handling return type for non-nullable API method returns. */
   public interface Result<T> {
     /** Success case callback method for handling returns. */
@@ -276,10 +280,10 @@ public class Messages {
   /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
   public interface ExampleHostApi {
 
-    @NonNull 
+    @NonNull
     String getHostLanguage();
 
-    @NonNull 
+    @NonNull
     Long add(@NonNull Long a, @NonNull Long b);
 
     void sendMessage(@NonNull MessageData message, @NonNull Result<Boolean> result);
@@ -288,16 +292,23 @@ public class Messages {
     static @NonNull MessageCodec<Object> getCodec() {
       return PigeonCodec.INSTANCE;
     }
-    /**Sets up an instance of `ExampleHostApi` to handle messages through the `binaryMessenger`. */
+    /** Sets up an instance of `ExampleHostApi` to handle messages through the `binaryMessenger`. */
     static void setUp(@NonNull BinaryMessenger binaryMessenger, @Nullable ExampleHostApi api) {
       setUp(binaryMessenger, "", api);
     }
-    static void setUp(@NonNull BinaryMessenger binaryMessenger, @NonNull String messageChannelSuffix, @Nullable ExampleHostApi api) {
+
+    static void setUp(
+        @NonNull BinaryMessenger binaryMessenger,
+        @NonNull String messageChannelSuffix,
+        @Nullable ExampleHostApi api) {
       messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.getHostLanguage" + messageChannelSuffix, getCodec());
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.getHostLanguage"
+                    + messageChannelSuffix,
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -305,8 +316,7 @@ public class Messages {
                 try {
                   String output = api.getHostLanguage();
                   wrapped.add(0, output);
-                }
- catch (Throwable exception) {
+                } catch (Throwable exception) {
                   ArrayList<Object> wrappedError = wrapError(exception);
                   wrapped = wrappedError;
                 }
@@ -319,7 +329,10 @@ public class Messages {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.add" + messageChannelSuffix, getCodec());
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.add"
+                    + messageChannelSuffix,
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -328,10 +341,12 @@ public class Messages {
                 Number aArg = (Number) args.get(0);
                 Number bArg = (Number) args.get(1);
                 try {
-                  Long output = api.add((aArg == null) ? null : aArg.longValue(), (bArg == null) ? null : bArg.longValue());
+                  Long output =
+                      api.add(
+                          (aArg == null) ? null : aArg.longValue(),
+                          (bArg == null) ? null : bArg.longValue());
                   wrapped.add(0, output);
-                }
- catch (Throwable exception) {
+                } catch (Throwable exception) {
                   ArrayList<Object> wrappedError = wrapError(exception);
                   wrapped = wrappedError;
                 }
@@ -344,7 +359,10 @@ public class Messages {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.sendMessage" + messageChannelSuffix, getCodec());
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.sendMessage"
+                    + messageChannelSuffix,
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -380,38 +398,50 @@ public class Messages {
     public MessageFlutterApi(@NonNull BinaryMessenger argBinaryMessenger) {
       this(argBinaryMessenger, "");
     }
-    public MessageFlutterApi(@NonNull BinaryMessenger argBinaryMessenger, @NonNull String messageChannelSuffix) {
+
+    public MessageFlutterApi(
+        @NonNull BinaryMessenger argBinaryMessenger, @NonNull String messageChannelSuffix) {
       this.binaryMessenger = argBinaryMessenger;
       this.messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;
     }
 
-    /** Public interface for sending reply. */ 
+    /** Public interface for sending reply. */
     /** The codec used by MessageFlutterApi. */
     static @NonNull MessageCodec<Object> getCodec() {
       return PigeonCodec.INSTANCE;
     }
+
     public void flutterMethod(@Nullable String aStringArg, @NonNull Result<String> result) {
-      final String channelName = "dev.flutter.pigeon.pigeon_example_package.MessageFlutterApi.flutterMethod" + messageChannelSuffix;
+      final String channelName =
+          "dev.flutter.pigeon.pigeon_example_package.MessageFlutterApi.flutterMethod"
+              + messageChannelSuffix;
       BasicMessageChannel<Object> channel =
-          new BasicMessageChannel<>(
-              binaryMessenger, channelName, getCodec());
+          new BasicMessageChannel<>(binaryMessenger, channelName, getCodec());
       channel.send(
           new ArrayList<Object>(Collections.singletonList(aStringArg)),
           channelReply -> {
             if (channelReply instanceof List) {
               List<Object> listReply = (List<Object>) channelReply;
               if (listReply.size() > 1) {
-                result.error(new FlutterError((String) listReply.get(0), (String) listReply.get(1), (String) listReply.get(2)));
+                result.error(
+                    new FlutterError(
+                        (String) listReply.get(0),
+                        (String) listReply.get(1),
+                        (String) listReply.get(2)));
               } else if (listReply.get(0) == null) {
-                result.error(new FlutterError("null-error", "Flutter api returned null value for non-null return value.", ""));
+                result.error(
+                    new FlutterError(
+                        "null-error",
+                        "Flutter api returned null value for non-null return value.",
+                        ""));
               } else {
                 @SuppressWarnings("ConstantConditions")
                 String output = (String) listReply.get(0);
                 result.success(output);
               }
-            }  else {
+            } else {
               result.error(createConnectionError(channelName));
-            } 
+            }
           });
     }
   }
