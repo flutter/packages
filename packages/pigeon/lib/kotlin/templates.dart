@@ -3,10 +3,22 @@
 // found in the LICENSE file.
 
 import '../generator_tools.dart';
+import '../kotlin_generator.dart';
+
+/// Name of the Kotlin `InstanceManager`.
+String kotlinInstanceManagerClassName(KotlinOptions options) =>
+    '${options.fileSpecificClassNameComponent ?? ''}${classNamePrefix}InstanceManager';
+
+/// The name of the registrar containing all the ProxyApi implementations.
+String proxyApiRegistrarName(KotlinOptions options) =>
+    '${options.fileSpecificClassNameComponent ?? ''}${classNamePrefix}ProxyApiRegistrar';
+
+/// The name of the codec that handles ProxyApis.
+String proxyApiCodecName(KotlinOptions options) =>
+    '${options.fileSpecificClassNameComponent ?? ''}${classNamePrefix}ProxyApiBaseCodec';
 
 /// The Kotlin `InstanceManager`.
-String instanceManagerTemplate({required String prefix}) {
-  final String instanceManagerName = '$prefix$instanceManagerClassName';
+String instanceManagerTemplate(KotlinOptions options) {
   return '''
 /**
  * Maintains instances used to communicate with the corresponding objects in Dart.
@@ -24,7 +36,7 @@ String instanceManagerTemplate({required String prefix}) {
  * is recreated. The strong reference will then need to be removed manually again.
  */
 @Suppress("UNCHECKED_CAST", "MemberVisibilityCanBePrivate")
-class $instanceManagerName(private val finalizationListener: $_finalizationListenerClassName) {
+class ${kotlinInstanceManagerClassName(options)}(private val finalizationListener: $_finalizationListenerClassName) {
   /** Interface for listening when a weak reference of an instance is removed from the manager.  */
   interface $_finalizationListenerClassName {
     fun onFinalize(identifier: Long)
@@ -71,8 +83,8 @@ class $instanceManagerName(private val finalizationListener: $_finalizationListe
      *
      * When the manager is no longer needed, [stopFinalizationListener] must be called.
      */
-    fun create(finalizationListener: $_finalizationListenerClassName): $instanceManagerName {
-      return $instanceManagerName(finalizationListener)
+    fun create(finalizationListener: $_finalizationListenerClassName): ${kotlinInstanceManagerClassName(options)} {
+      return ${kotlinInstanceManagerClassName(options)}(finalizationListener)
     }
   }
 
@@ -95,7 +107,7 @@ class $instanceManagerName(private val finalizationListener: $_finalizationListe
    *
    *
    * If this method returns a nonnull identifier, this method also expects the Dart
-   * `$instanceManagerName` to have, or recreate, a weak reference to the Dart instance the
+   * `${kotlinInstanceManagerClassName(options)}` to have, or recreate, a weak reference to the Dart instance the
    * identifier is associated with.
    */
   fun getIdentifierForStrongReference(instance: Any?): Long? {

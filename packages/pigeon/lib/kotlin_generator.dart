@@ -534,9 +534,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
     Indent indent, {
     required String dartPackageName,
   }) {
-    indent.format(instanceManagerTemplate(
-      prefix: _getFilePrefixOrEmpty(generatorOptions),
-    ));
+    indent.format(instanceManagerTemplate(generatorOptions));
     indent.newln();
   }
 
@@ -547,10 +545,8 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
     Indent indent, {
     required String dartPackageName,
   }) {
-    final String instanceManagerName =
-        '${_getFilePrefixOrEmpty(generatorOptions)}$instanceManagerClassName';
-
-    final String instanceManagerApiName = '${instanceManagerName}Api';
+    final String instanceManagerApiName =
+        '${kotlinInstanceManagerClassName(generatorOptions)}Api';
 
     final String removeStrongReferenceName = makeChannelNameWithStrings(
       apiName: '${instanceManagerClassName}Api',
@@ -595,7 +591,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
             _docCommentSpec,
           );
           indent.writeScoped(
-            'fun setUpMessageHandlers(binaryMessenger: BinaryMessenger, instanceManager: $instanceManagerName?) {',
+            'fun setUpMessageHandlers(binaryMessenger: BinaryMessenger, instanceManager: ${kotlinInstanceManagerClassName(generatorOptions)}?) {',
             '}',
             () {
               const String setHandlerCondition = 'instanceManager != null';
@@ -671,14 +667,9 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
 
     _writeProxyApiRegistrar(
       indent,
+      generatorOptions: generatorOptions,
       allProxyApis: allProxyApis,
-      filePrefix: _getFilePrefixOrEmpty(generatorOptions),
     );
-
-    final String fullPrefix =
-        '${_getFilePrefixOrEmpty(generatorOptions)}$classNamePrefix';
-
-    final String codecName = '${fullPrefix}ProxyApiBaseCodec';
 
     // Sort APIs where edges are an API's super class and interfaces.
     //
@@ -708,7 +699,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
     );
 
     indent.writeScoped(
-      'private class $codecName(val registrar: ${fullPrefix}ProxyApiRegistrar) : '
+      'private class ${proxyApiCodecName(generatorOptions)}(val registrar: ${proxyApiRegistrarName(generatorOptions)}) : '
           '${generatorOptions.fileSpecificClassNameComponent}$_codecName() {',
       '}',
       () {
@@ -780,9 +771,6 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
   }) {
     final String kotlinApiName = '$hostProxyApiPrefix${api.name}';
 
-    final String fullPrefix =
-        '${_getFilePrefixOrEmpty(generatorOptions)}$classNamePrefix';
-
     addDocumentationComments(
       indent,
       api.documentationComments,
@@ -793,7 +781,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
     final String classModifier =
         api.hasMethodsRequiringImplementation() ? 'abstract' : 'open';
     indent.writeScoped(
-      '$classModifier class $kotlinApiName(open val pigeonRegistrar: ${fullPrefix}ProxyApiRegistrar) {',
+      '$classModifier class $kotlinApiName(open val pigeonRegistrar: ${proxyApiRegistrarName(generatorOptions)}) {',
       '}',
       () {
         final String fullKotlinClassName =
@@ -1209,12 +1197,13 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
 
   void _writeProxyApiRegistrar(
     Indent indent, {
+    required KotlinOptions generatorOptions,
     required Iterable<AstProxyApi> allProxyApis,
-    required String filePrefix,
   }) {
-    final String registrarName =
-        '$filePrefix${classNamePrefix}ProxyApiRegistrar';
-    final String instanceManagerName = '$filePrefix$instanceManagerClassName';
+    final String registrarName = proxyApiRegistrarName(generatorOptions);
+    final String instanceManagerName = kotlinInstanceManagerClassName(
+      generatorOptions,
+    );
     final String instanceManagerApiName = '${instanceManagerName}Api';
 
     addDocumentationComments(
@@ -1236,7 +1225,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
           val codec: StandardMessageCodec
             get() {
               if (_codec == null) {
-                _codec = $filePrefix${classNamePrefix}ProxyApiBaseCodec(this)
+                _codec = ${proxyApiCodecName(generatorOptions)}(this)
               }
               return _codec!!
             }
@@ -1832,10 +1821,6 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
     },
     onCompare: (int first, int second) => first.compareTo(second),
   );
-}
-
-String _getFilePrefixOrEmpty(KotlinOptions options) {
-  return options.fileSpecificClassNameComponent ?? '';
 }
 
 String _getErrorClassName(KotlinOptions generatorOptions) =>
