@@ -45,7 +45,7 @@ final class FIATransactionCacheTests: XCTestCase {
     let fakeRemovedTransactions = ["Remove 1", "Remove 2", "Remove 3"]
     let fakeUpdatedDownloads = ["Download 1", "Download 2"]
     let cache = FIATransactionCache()
-    
+
     cache.add(fakeUpdatedTransactions, for: TransactionCacheKey.updatedTransactions)
     cache.add(fakeRemovedTransactions, for: TransactionCacheKey.removedTransactions)
     cache.add(fakeUpdatedDownloads, for: TransactionCacheKey.updatedDownloads)
