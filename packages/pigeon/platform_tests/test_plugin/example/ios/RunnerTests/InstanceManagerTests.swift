@@ -10,7 +10,7 @@ import XCTest
 final class InstanceManagerTests: XCTestCase {
   func testAddDartCreatedInstance() {
     let finalizerDelegate = EmptyFinalizerDelegate()
-    let instanceManager = PigeonInstanceManager(finalizerDelegate: finalizerDelegate)
+    let instanceManager = ProxyApiTestsPigeonInstanceManager(finalizerDelegate: finalizerDelegate)
     let object = NSObject()
 
     instanceManager.addDartCreatedInstance(object, withIdentifier: 0)
@@ -20,7 +20,7 @@ final class InstanceManagerTests: XCTestCase {
 
   func testAddHostCreatedInstance() {
     let finalizerDelegate = EmptyFinalizerDelegate()
-    let instanceManager = PigeonInstanceManager(finalizerDelegate: finalizerDelegate)
+    let instanceManager = ProxyApiTestsPigeonInstanceManager(finalizerDelegate: finalizerDelegate)
     let object = NSObject()
     _ = instanceManager.addHostCreatedInstance(object)
 
@@ -31,7 +31,7 @@ final class InstanceManagerTests: XCTestCase {
 
   func testRemoveInstance() {
     let finalizerDelegate = EmptyFinalizerDelegate()
-    let instanceManager = PigeonInstanceManager(finalizerDelegate: finalizerDelegate)
+    let instanceManager = ProxyApiTestsPigeonInstanceManager(finalizerDelegate: finalizerDelegate)
     let object = NSObject()
 
     instanceManager.addDartCreatedInstance(object, withIdentifier: 0)
@@ -44,7 +44,7 @@ final class InstanceManagerTests: XCTestCase {
     let finalizerDelegate = TestFinalizerDelegate()
 
     var object: NSObject? = NSObject()
-    PigeonFinalizer.attach(to: object!, identifier: 0, delegate: finalizerDelegate)
+    ProxyApiTestsPigeonFinalizer.attach(to: object!, identifier: 0, delegate: finalizerDelegate)
 
     object = nil
     XCTAssertEqual(finalizerDelegate.lastHandledIdentifier, 0)
@@ -52,7 +52,7 @@ final class InstanceManagerTests: XCTestCase {
 
   func testRemoveAllObjects() {
     let finalizerDelegate = EmptyFinalizerDelegate()
-    let instanceManager = PigeonInstanceManager(finalizerDelegate: finalizerDelegate)
+    let instanceManager = ProxyApiTestsPigeonInstanceManager(finalizerDelegate: finalizerDelegate)
     let object = NSObject()
 
     instanceManager.addDartCreatedInstance(object, withIdentifier: 0)
@@ -64,7 +64,7 @@ final class InstanceManagerTests: XCTestCase {
 
   func testCanAddSameObjectWithAddDartCreatedInstance() {
     let finalizerDelegate = EmptyFinalizerDelegate()
-    let instanceManager = PigeonInstanceManager(finalizerDelegate: finalizerDelegate)
+    let instanceManager = ProxyApiTestsPigeonInstanceManager(finalizerDelegate: finalizerDelegate)
     let object = NSObject()
 
     instanceManager.addDartCreatedInstance(object, withIdentifier: 0)
@@ -78,7 +78,7 @@ final class InstanceManagerTests: XCTestCase {
 
   func testObjectsAreStoredWithPointerHashcode() {
     let finalizerDelegate = EmptyFinalizerDelegate()
-    let instanceManager = PigeonInstanceManager(finalizerDelegate: finalizerDelegate)
+    let instanceManager = ProxyApiTestsPigeonInstanceManager(finalizerDelegate: finalizerDelegate)
 
     class EquatableClass: Equatable {
       static func == (lhs: EquatableClass, rhs: EquatableClass) -> Bool {
@@ -104,7 +104,7 @@ final class InstanceManagerTests: XCTestCase {
     let binaryMessenger = MockBinaryMessenger<String>(
       codec: FlutterStandardMessageCodec.sharedInstance())
 
-    var registrar: PigeonProxyApiRegistrar? = PigeonProxyApiRegistrar(
+    var registrar: ProxyApiTestsPigeonProxyApiRegistrar? = ProxyApiTestsPigeonProxyApiRegistrar(
       binaryMessenger: binaryMessenger, apiDelegate: ProxyApiDelegate())
 
     // Add the scenario where the InstanceManager contains an instance that contains a ProxyApi implementation
@@ -123,18 +123,18 @@ final class InstanceManagerTests: XCTestCase {
 
     let finalizerDelegate = TestFinalizerDelegate()
 
-    PigeonFinalizer.attach(
+    ProxyApiTestsPigeonFinalizer.attach(
       to: registrar!.instanceManager, identifier: 0, delegate: finalizerDelegate)
     registrar = nil
     XCTAssertEqual(finalizerDelegate.lastHandledIdentifier, 0)
   }
 }
 
-class EmptyFinalizerDelegate: PigeonFinalizerDelegate {
+class EmptyFinalizerDelegate: ProxyApiTestsPigeonFinalizerDelegate {
   func onDeinit(identifier: Int64) {}
 }
 
-class TestFinalizerDelegate: PigeonFinalizerDelegate {
+class TestFinalizerDelegate: ProxyApiTestsPigeonFinalizerDelegate {
   var lastHandledIdentifier: Int64?
 
   func onDeinit(identifier: Int64) {
