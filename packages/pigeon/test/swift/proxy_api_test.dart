@@ -331,7 +331,8 @@ void main() {
         );
         expect(
           collapsedCode,
-          contains('func pigeonDefaultConstructor(pigeonApi: PigeonApiApi) throws -> Api'),
+          contains(
+              'func pigeonDefaultConstructor(pigeonApi: PigeonApiApi) throws -> Api'),
         );
         expect(
           collapsedCode,
@@ -544,47 +545,48 @@ void main() {
         expect(
           collapsedCode,
           contains(
-            r'api.pigeonRegistrar.instanceManager.addDartCreatedInstance(api.name('
-            r'validTypeArg,enumTypeArg,proxyApiTypeArg,nullableValidTypeArg,'
-            r'nullableEnumTypeArg,nullableProxyApiTypeArg), pigeon_identifierArg)',
+            r'api.pigeonRegistrar.instanceManager.addDartCreatedInstance( try api.pigeonDelegate.name(pigeonApi: api, '
+            r'validType: validTypeArg, enumType: enumTypeArg, proxyApiType: proxyApiTypeArg, nullableValidType: nullableValidTypeArg, '
+            r'nullableEnumType: nullableEnumTypeArg, nullableProxyApiType: nullableProxyApiTypeArg)',
           ),
         );
         expect(
           collapsedCode,
           contains(
-            'channel.send(listOf(pigeon_identifierArg, validTypeArg, '
-            'enumTypeArg, proxyApiTypeArg, nullableValidTypeArg, '
-            'nullableEnumTypeArg, nullableProxyApiTypeArg))',
-          ),
-        );
-        expect(
-          code,
-          contains(r'abstract fun validType(pigeon_instance: Api): Long'),
-        );
-        expect(
-          code,
-          contains(r'abstract fun enumType(pigeon_instance: Api): AnEnum'),
-        );
-        expect(
-          code,
-          contains(r'abstract fun proxyApiType(pigeon_instance: Api): Api2'),
+              'channel.sendMessage([pigeonIdentifierArg, validTypeArg, enumTypeArg, '
+              'proxyApiTypeArg, nullableValidTypeArg, nullableEnumTypeArg, nullableProxyApiTypeArg] as [Any?])'),
         );
         expect(
           code,
           contains(
-            r'abstract fun nullableValidType(pigeon_instance: Api): Long?',
-          ),
+              r'func validType(pigeonApi: PigeonApiApi, pigeonInstance: Api) throws -> Int64'),
         );
         expect(
           code,
           contains(
-            r'abstract fun nullableEnumType(pigeon_instance: Api): AnEnum?',
+              r'func enumType(pigeonApi: PigeonApiApi, pigeonInstance: Api) throws -> AnEnum'),
+        );
+        expect(
+          code,
+          contains(
+              r'func proxyApiType(pigeonApi: PigeonApiApi, pigeonInstance: Api) throws -> Api2'),
+        );
+        expect(
+          code,
+          contains(
+            r'func nullableValidType(pigeonApi: PigeonApiApi, pigeonInstance: Api) throws -> Int64?',
           ),
         );
         expect(
           code,
           contains(
-            r'abstract fun nullableProxyApiType(pigeon_instance: Api): Api2?',
+            r'func nullableEnumType(pigeonApi: PigeonApiApi, pigeonInstance: Api) throws -> AnEnum?',
+          ),
+        );
+        expect(
+          code,
+          contains(
+            r'func nullableProxyApiType(pigeonApi: PigeonApiApi, pigeonInstance: Api) throws -> Api2?',
           ),
         );
       });
@@ -630,12 +632,13 @@ void main() {
         final String code = sink.toString();
         expect(
           code,
-          contains(r'abstract fun aField(pigeon_instance: Api): Api2'),
+          contains(
+              r'func aField(pigeonApi: PigeonApiApi, pigeonInstance: Api) throws -> Api2'),
         );
         expect(
           code,
           contains(
-            r'api.pigeonRegistrar.instanceManager.addDartCreatedInstance(api.aField(pigeon_instanceArg), pigeon_identifierArg)',
+            r'api.pigeonRegistrar.instanceManager.addDartCreatedInstance(try api.pigeonDelegate.aField(pigeonApi: api, pigeonInstance: pigeonInstanceArg), withIdentifier: pigeonIdentifierArg)',
           ),
         );
       });
@@ -682,12 +685,12 @@ void main() {
         final String code = sink.toString();
         expect(
           code,
-          contains(r'abstract fun aField(): Api2'),
+          contains(r'func aField(pigeonApi: PigeonApiApi) throws -> Api2'),
         );
         expect(
           code,
           contains(
-            r'api.pigeonRegistrar.instanceManager.addDartCreatedInstance(api.aField(), pigeon_identifierArg)',
+            r'api.pigeonRegistrar.instanceManager.addDartCreatedInstance(try api.pigeonDelegate.aField(pigeonApi: api), withIdentifier: pigeonIdentifierArg)',
           ),
         );
       });
@@ -782,16 +785,17 @@ void main() {
         expect(
           collapsedCode,
           contains(
-            'abstract fun doSomething(pigeon_instance: Api, validType: Long, '
-            'enumType: AnEnum, proxyApiType: Api2, nullableValidType: Long?, '
-            'nullableEnumType: AnEnum?, nullableProxyApiType: Api2?)',
+            'func doSomething(pigeonApi: '
+            'PigeonApiApi, pigeonInstance: Api, validType: Int64, enumType: AnEnum, proxyApiType: Api2, nullableValidType: Int64?, '
+            'nullableEnumType: AnEnum?, nullableProxyApiType: Api2?) throws',
           ),
         );
         expect(
           collapsedCode,
           contains(
-            r'api.doSomething(pigeon_instanceArg, validTypeArg, enumTypeArg, '
-            r'proxyApiTypeArg, nullableValidTypeArg, nullableEnumTypeArg, '
+            r'try api.pigeonDelegate.doSomething(pigeonApi: '
+            r'api, pigeonInstance: pigeonInstanceArg, validType: validTypeArg, enumType: enumTypeArg, proxyApiType: '
+            r'proxyApiTypeArg, nullableValidType: nullableValidTypeArg, nullableEnumType: nullableEnumTypeArg, nullableProxyApiType: '
             r'nullableProxyApiTypeArg)',
           ),
         );
@@ -828,8 +832,14 @@ void main() {
         );
         final String code = sink.toString();
         final String collapsedCode = _collapseNewlineAndIndentation(code);
-        expect(collapsedCode, contains('abstract fun doSomething()'));
-        expect(collapsedCode, contains(r'api.doSomething()'));
+        expect(
+          collapsedCode,
+          contains('func doSomething(pigeonApi: PigeonApiApi) throws'),
+        );
+        expect(
+          collapsedCode,
+          contains(r'try api.pigeonDelegate.doSomething(pigeonApi: api)'),
+        );
       });
     });
 
@@ -913,18 +923,18 @@ void main() {
         expect(
           collapsedCode,
           contains(
-            'fun doSomething(pigeon_instanceArg: Api, validTypeArg: Long, '
-            'enumTypeArg: AnEnum, proxyApiTypeArg: Api2, nullableValidTypeArg: Long?, '
-            'nullableEnumTypeArg: AnEnum?, nullableProxyApiTypeArg: Api2?, '
-            'callback: (Result<Unit>) -> Unit)',
+            'func doSomething(pigeonInstance pigeonInstanceArg: Api, validType validTypeArg: Int64, enumType '
+            'enumTypeArg: AnEnum, proxyApiType proxyApiTypeArg: Api2, nullableValidType nullableValidTypeArg: Int64?, nullableEnumType '
+            'nullableEnumTypeArg: AnEnum?, nullableProxyApiType nullableProxyApiTypeArg: Api2?, '
+            'completion: @escaping (Result<Void, PigeonError>) -> Void)',
           ),
         );
         expect(
           collapsedCode,
           contains(
-            r'channel.send(listOf(pigeon_instanceArg, validTypeArg, enumTypeArg, '
-            r'proxyApiTypeArg, nullableValidTypeArg, nullableEnumTypeArg, '
-            r'nullableProxyApiTypeArg))',
+            r'channel.sendMessage([pigeonInstanceArg, validTypeArg, '
+            r'enumTypeArg, proxyApiTypeArg, nullableValidTypeArg, '
+            r'nullableEnumTypeArg, nullableProxyApiTypeArg] as [Any?])',
           ),
         );
       });
