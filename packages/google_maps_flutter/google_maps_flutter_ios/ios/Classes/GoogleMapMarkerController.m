@@ -265,8 +265,8 @@
       self.markerIdentifierToController[identifier] = controller;
     }
 
-    dispatch_async(dispatch_get_main_queue(), ^{
-      for (FGMPlatformMarker *marker in markersToAdd) {
+    for (FGMPlatformMarker *marker in markersToAdd) {
+      dispatch_async(dispatch_get_main_queue(), ^{
         NSString *identifier = marker.json[@"markerId"];
 
         FLTGoogleMapMarkerController *controller = self.markerIdentifierToController[identifier];
@@ -291,7 +291,7 @@
       NSString *identifier = marker.json[@"markerId"];
       FLTGoogleMapMarkerController *controller = self.markerIdentifierToController[identifier];
       if (!controller) {
-        continue;
+        return;
       }
       [controller interpretMarkerOptions:marker.json iconCache:iconCache];
     }
@@ -305,22 +305,22 @@
           continue;
         }
         [controller setVisibleOption:marker.json];
-      }
-    });
+      });
+    }
   });
 }
 
 - (void)removeMarkersWithIdentifiers:(NSArray<NSString *> *)identifiers {
-  dispatch_async(self.markersDispatchQueue, ^{
-    for (NSString *identifier in identifiers) {
+  for (NSString *identifier in identifiers) {
+    dispatch_async(self.markersDispatchQueue, ^{
       FLTGoogleMapMarkerController *controller = self.markerIdentifierToController[identifier];
       if (!controller) {
-        continue;
+        return;
       }
       [controller removeMarker];
       [self.markerIdentifierToController removeObjectForKey:identifier];
-    }
-  });
+    });
+  }
 }
 
 - (BOOL)didTapMarkerWithIdentifier:(NSString *)identifier {
