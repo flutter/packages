@@ -9,6 +9,7 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.ImageFormat;
+import android.graphics.SurfaceTexture;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCaptureSession;
 import android.hardware.camera2.CameraDevice;
@@ -62,7 +63,7 @@ import io.flutter.plugins.camera.media.ImageStreamReader;
 import io.flutter.plugins.camera.media.MediaRecorderBuilder;
 import io.flutter.plugins.camera.types.CameraCaptureProperties;
 import io.flutter.plugins.camera.types.CaptureTimeoutsWrapper;
-import io.flutter.view.TextureRegistry;
+import io.flutter.view.TextureRegistry.SurfaceTextureEntry;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -112,7 +113,7 @@ class Camera
    */
   @VisibleForTesting int initialCameraFacing;
 
-  @VisibleForTesting final TextureRegistry.SurfaceProducer surfaceProducer;
+  @VisibleForTesting final SurfaceTextureEntry flutterTexture;
   private final VideoCaptureSettings videoCaptureSettings;
   private final Context applicationContext;
   final DartMessenger dartMessenger;
@@ -213,16 +214,17 @@ class Camera
 
   public Camera(
       final Activity activity,
-      final TextureRegistry.SurfaceProducer surfaceProducer,
+      final SurfaceTextureEntry flutterTexture,
       final CameraFeatureFactory cameraFeatureFactory,
       final DartMessenger dartMessenger,
       final CameraProperties cameraProperties,
       final VideoCaptureSettings videoCaptureSettings) {
+
     if (activity == null) {
       throw new IllegalStateException("No activity available!");
     }
     this.activity = activity;
-    this.surfaceProducer = surfaceProducer;
+    this.flutterTexture = flutterTexture;
     this.dartMessenger = dartMessenger;
     this.applicationContext = activity.getApplicationContext();
     this.cameraProperties = cameraProperties;
@@ -241,6 +243,7 @@ class Camera
     if (videoCaptureSettings.fps != null && videoCaptureSettings.fps.intValue() > 0) {
       recordingFps = videoCaptureSettings.fps;
     } else {
+
       if (SdkCapabilityChecker.supportsEncoderProfiles()) {
         EncoderProfiles encoderProfiles = getRecordingProfile();
         if (encoderProfiles != null && encoderProfiles.getVideoProfiles().size() > 0) {
@@ -253,6 +256,7 @@ class Camera
     }
 
     if (recordingFps != null && recordingFps.intValue() > 0) {
+
       final FpsRangeFeature fpsRange = new FpsRangeFeature(cameraProperties);
       fpsRange.setValue(new Range<Integer>(recordingFps, recordingFps));
       this.cameraFeatures.setFpsRange(fpsRange);
@@ -303,9 +307,8 @@ class Camera
 
     MediaRecorderBuilder mediaRecorderBuilder;
 
-    // TODO(camsim99): Revert changes that allow legacy code to be used when recordingProfile is
-    // null once this has largely been fixed on the Android side.
-    // https://github.com/flutter/flutter/issues/119668
+    // TODO(camsim99): Revert changes that allow legacy code to be used when recordingProfile is null
+    // once this has largely been fixed on the Android side. https://github.com/flutter/flutter/issues/119668
     if (SdkCapabilityChecker.supportsEncoderProfiles() && getRecordingProfile() != null) {
       mediaRecorderBuilder =
           new MediaRecorderBuilder(
@@ -383,8 +386,7 @@ class Camera
             cameraDevice = new DefaultCameraDeviceWrapper(device);
             try {
               startPreview();
-              if (!recordingVideo) { // only send initialization if we werent already recording and
-                // switching cameras
+              if (!recordingVideo) { // only send initialization if we werent already recording and switching cameras
                 dartMessenger.sendCameraInitializedEvent(
                     resolutionFeature.getPreviewSize().getWidth(),
                     resolutionFeature.getPreviewSize().getHeight(),
@@ -468,10 +470,11 @@ class Camera
 
     // Build Flutter surface to render to.
     ResolutionFeature resolutionFeature = cameraFeatures.getResolution();
-    surfaceProducer.setSize(
+    SurfaceTexture surfaceTexture = flutterTexture.surfaceTexture();
+    surfaceTexture.setDefaultBufferSize(
         resolutionFeature.getPreviewSize().getWidth(),
         resolutionFeature.getPreviewSize().getHeight());
-    Surface flutterSurface = surfaceProducer.getSurface();
+    Surface flutterSurface = new Surface(surfaceTexture);
     previewRequestBuilder.addTarget(flutterSurface);
 
     List<Surface> remainingSurfaces = Arrays.asList(surfaces);
@@ -1157,8 +1160,7 @@ class Camera
   }
 
   public void startPreview() throws CameraAccessException, InterruptedException {
-    // If recording is already in progress, the camera is being flipped, so send it through the
-    // VideoRenderer to keep the correct orientation.
+    // If recording is already in progress, the camera is being flipped, so send it through the VideoRenderer to keep the correct orientation.
     if (recordingVideo) {
       startPreviewWithVideoRendererStream();
     } else {
@@ -1191,6 +1193,7 @@ class Camera
     }
 
     if (cameraProperties.getLensFacing() != initialCameraFacing) {
+
       // If the new camera is facing the opposite way than the initial recording,
       // the rotation should be flipped 180 degrees.
       rotation = (rotation + 180) % 360;
@@ -1358,13 +1361,13 @@ class Camera
 
   public void setDescriptionWhileRecording(
       @NonNull final Result result, CameraProperties properties) {
+
     if (!recordingVideo) {
       result.error("setDescriptionWhileRecordingFailed", "Device was not recording", null);
       return;
     }
 
-    // See VideoRenderer.java; support for this EGL extension is required to switch camera while
-    // recording.
+    // See VideoRenderer.java; support for this EGL extension is required to switch camera while recording.
     if (!SdkCapabilityChecker.supportsEglRecordableAndroid()) {
       result.error(
           "setDescriptionWhileRecordingFailed",
@@ -1397,7 +1400,7 @@ class Camera
     Log.i(TAG, "dispose");
 
     close();
-    surfaceProducer.release();
+    flutterTexture.release();
     getDeviceOrientationManager().stop();
   }
 

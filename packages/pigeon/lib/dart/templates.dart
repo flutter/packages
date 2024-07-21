@@ -262,7 +262,7 @@ abstract class $proxyApiBaseClassName {
 /// adds support to convert instances to their corresponding identifier from an
 /// `InstanceManager` and vice versa.
 const String proxyApiBaseCodec = '''
-class $_proxyApiCodecName extends StandardMessageCodec {
+class $_proxyApiCodecName extends _PigeonCodec {
  const $_proxyApiCodecName(this.instanceManager);
  final $instanceManagerClassName instanceManager;
  @override
