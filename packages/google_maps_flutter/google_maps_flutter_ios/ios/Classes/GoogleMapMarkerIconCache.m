@@ -23,7 +23,6 @@
 
 - (UIImage*)getImage:(NSArray *)iconData {
   if ([self.images objectForKey:iconData]) {
-    NSLog(@"yay");
     return self.images[iconData];
   }
   
