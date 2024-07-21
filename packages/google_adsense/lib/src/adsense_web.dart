@@ -20,7 +20,7 @@ class Adsense {
 
   void initialize(String adClient) {
     if (isInitialized) {
-      log("Adsense was already initialized, skipping");
+      log('Adsense was already initialized, skipping');
       return;
     }
     isInitialized = true;
@@ -30,9 +30,9 @@ class Adsense {
   Widget adView(
       {required String adClient,
       required String adSlot,
-      String adLayoutKey = "",
-      String adLayout = "",
-      String adFormat = "auto",
+      String adLayoutKey = '',
+      String adLayout = '',
+      String adFormat = 'auto',
       bool isAdTest = false,
       bool isFullWidthResponsive = true,
       Map<String, String> slotParams = const {}}) {
@@ -52,8 +52,8 @@ class Adsense {
     web.HTMLScriptElement scriptElement = web.HTMLScriptElement();
     scriptElement.async = true;
     scriptElement.src =
-        "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-$adClient";
-    scriptElement.crossOrigin = "anonymous";
+        'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-$adClient';
+    scriptElement.crossOrigin = 'anonymous';
     var head = web.document.head;
     if (head != null) {
       head.appendChild(scriptElement);

@@ -6,7 +6,6 @@ import 'package:test/test.dart';
 @GenerateNiceMocks([MockSpec<Adsense>()])
 import 'main.mocks.dart';
 
-@TestOn('web')
 void main() {
   test('init API on web', () {
     var adClient = "123";
