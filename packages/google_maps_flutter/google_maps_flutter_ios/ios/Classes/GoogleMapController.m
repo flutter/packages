@@ -541,6 +541,7 @@
                      changing:(nonnull NSArray<FGMPlatformMarker *> *)toChange
                      removing:(nonnull NSArray<NSString *> *)idsToRemove
                         error:(FlutterError *_Nullable __autoreleasing *_Nonnull)error {
+  NSLog(@"Break");
   [self.controller.markersController addMarkers:toAdd];
   [self.controller.markersController changeMarkers:toChange];
   [self.controller.markersController removeMarkersWithIdentifiers:idsToRemove];

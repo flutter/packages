@@ -26,6 +26,8 @@
     return self.images[iconData];
   }
   
+  NSLog(@"CacheMiss: %@", iconData[1][@"assetName"]);
+  
   UIImage* image = [self extractIconFromData:iconData];
   self.images[iconData] = image;
   
