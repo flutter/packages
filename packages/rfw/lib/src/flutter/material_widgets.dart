@@ -37,6 +37,7 @@ import 'runtime.dart';
 ///  * [Material]
 ///  * [OutlinedButton]
 ///  * [Scaffold]
+///  * [Slider]
 ///  * [TextButton]
 ///  * [VerticalDivider]
 ///  * [OverflowBar]
@@ -496,6 +497,39 @@ Map<String, LocalWidgetBuilder> get _materialWidgetsDefinitions => <String, Loca
       drawerEnableOpenDragGesture: source.v<bool>(['drawerEnableOpenDragGesture']) ?? true,
       endDrawerEnableOpenDragGesture: source.v<bool>(['endDrawerEnableOpenDragGesture']) ?? true,
       restorationId: source.v<String>(['restorationId']),
+    );
+  },
+
+  'Slider': (BuildContext context, DataSource source) {
+    // not implemented: overlayColor, mouseCursor, semanticFormatterCallback, focusNode, autofocus
+    final min = source.v<double>(['min']) ?? 0.0;
+    final value = source.v<double>(['value']) ?? min;
+    final labelText = source.v<String>(['label']);
+    final label = labelText != null ? '$labelText: ${value.toStringAsFixed(2)}' : value.toStringAsFixed(2);
+    return Slider(
+      value: value,
+      secondaryTrackValue: source.v<double>(['secondaryTrackValue']),
+      onChanged: source.handler(['onChanged'],
+          (HandlerTrigger trigger) => (double value) {
+            trigger({'value': value});
+          }),
+      onChangeStart: source.handler(['onChangeStart'],
+          (HandlerTrigger trigger) => (double value) {
+            trigger({'value': value});
+          }),
+      onChangeEnd: source.handler(['onChangeEnd'],
+          (HandlerTrigger trigger) => (double value) {
+            trigger({'value': value});
+          }),
+      min: min,
+      max: source.v<double>(['max']) ?? 1.0,
+      divisions: source.v<int>(['divisions']),
+      label: label,
+      activeColor: ArgumentDecoders.color(source, ['activeColor']),
+      inactiveColor: ArgumentDecoders.color(source, ['inactiveColor']),
+      secondaryActiveColor: ArgumentDecoders.color(source, ['secondaryActiveColor']),
+      thumbColor: ArgumentDecoders.color(source, ['thumbColor']),
+      allowedInteraction: ArgumentDecoders.enumValue<SliderInteraction>(SliderInteraction.values, source, ['allowedInteraction']),
     );
   },
 

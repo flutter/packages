@@ -379,7 +379,7 @@ class _PigeonInstanceManagerApi {
   }
 }
 
-class _PigeonProxyApiBaseCodec extends StandardMessageCodec {
+class _PigeonProxyApiBaseCodec extends _PigeonCodec {
   const _PigeonProxyApiBaseCodec(this.instanceManager);
   final PigeonInstanceManager instanceManager;
   @override
@@ -408,6 +408,30 @@ enum ProxyApiTestEnum {
   one,
   two,
   three,
+}
+
+class _PigeonCodec extends StandardMessageCodec {
+  const _PigeonCodec();
+  @override
+  void writeValue(WriteBuffer buffer, Object? value) {
+    if (value is ProxyApiTestEnum) {
+      buffer.putUint8(129);
+      writeValue(buffer, value.index);
+    } else {
+      super.writeValue(buffer, value);
+    }
+  }
+
+  @override
+  Object? readValueOfType(int type, ReadBuffer buffer) {
+    switch (type) {
+      case 129:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : ProxyApiTestEnum.values[value];
+      default:
+        return super.readValueOfType(type, buffer);
+    }
+  }
 }
 
 /// The core ProxyApi test class that each supported host language must
@@ -504,7 +528,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
         aUint8List,
         aList,
         aMap,
-        anEnum.index,
+        anEnum,
         aProxyApi,
         aNullableBool,
         aNullableInt,
@@ -513,7 +537,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
         aNullableUint8List,
         aNullableList,
         aNullableMap,
-        aNullableEnum?.index,
+        aNullableEnum,
         aNullableProxyApi,
         boolParam,
         intParam,
@@ -522,7 +546,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
         aUint8ListParam,
         listParam,
         mapParam,
-        enumParam.index,
+        enumParam,
         proxyApiParam,
         nullableBoolParam,
         nullableIntParam,
@@ -531,7 +555,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
         nullableUint8ListParam,
         nullableListParam,
         nullableMapParam,
-        nullableEnumParam?.index,
+        nullableEnumParam,
         nullableProxyApiParam
       ]) as List<Object?>?;
       if (__pigeon_replyList == null) {
@@ -1399,8 +1423,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
               (args[7] as Map<Object?, Object?>?)?.cast<String?, Object?>();
           assert(arg_aMap != null,
               'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.pigeon_newInstance was null, expected non-null Map<String?, Object?>.');
-          final ProxyApiTestEnum? arg_anEnum =
-              args[8] == null ? null : ProxyApiTestEnum.values[args[8]! as int];
+          final ProxyApiTestEnum? arg_anEnum = (args[8] as ProxyApiTestEnum?);
           assert(arg_anEnum != null,
               'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.pigeon_newInstance was null, expected non-null ProxyApiTestEnum.');
           final ProxyApiSuperClass? arg_aProxyApi =
@@ -1416,9 +1439,8 @@ class ProxyApiTestClass extends ProxyApiSuperClass
               (args[15] as List<Object?>?)?.cast<Object?>();
           final Map<String?, Object?>? arg_aNullableMap =
               (args[16] as Map<Object?, Object?>?)?.cast<String?, Object?>();
-          final ProxyApiTestEnum? arg_aNullableEnum = args[17] == null
-              ? null
-              : ProxyApiTestEnum.values[args[17]! as int];
+          final ProxyApiTestEnum? arg_aNullableEnum =
+              (args[17] as ProxyApiTestEnum?);
           final ProxyApiSuperClass? arg_aNullableProxyApi =
               (args[18] as ProxyApiSuperClass?);
           try {
@@ -1911,15 +1933,14 @@ class ProxyApiTestClass extends ProxyApiSuperClass
               (args[0] as ProxyApiTestClass?);
           assert(arg_pigeon_instance != null,
               'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoEnum was null, expected non-null ProxyApiTestClass.');
-          final ProxyApiTestEnum? arg_anEnum =
-              args[1] == null ? null : ProxyApiTestEnum.values[args[1]! as int];
+          final ProxyApiTestEnum? arg_anEnum = (args[1] as ProxyApiTestEnum?);
           assert(arg_anEnum != null,
               'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoEnum was null, expected non-null ProxyApiTestEnum.');
           try {
             final ProxyApiTestEnum? output =
                 (flutterEchoEnum ?? arg_pigeon_instance!.flutterEchoEnum)
                     ?.call(arg_pigeon_instance!, arg_anEnum!);
-            return wrapResponse(result: output?.index);
+            return wrapResponse(result: output);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
           } catch (e) {
@@ -2216,13 +2237,12 @@ class ProxyApiTestClass extends ProxyApiSuperClass
               (args[0] as ProxyApiTestClass?);
           assert(arg_pigeon_instance != null,
               'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoNullableEnum was null, expected non-null ProxyApiTestClass.');
-          final ProxyApiTestEnum? arg_anEnum =
-              args[1] == null ? null : ProxyApiTestEnum.values[args[1]! as int];
+          final ProxyApiTestEnum? arg_anEnum = (args[1] as ProxyApiTestEnum?);
           try {
             final ProxyApiTestEnum? output = (flutterEchoNullableEnum ??
                     arg_pigeon_instance!.flutterEchoNullableEnum)
                 ?.call(arg_pigeon_instance!, arg_anEnum);
-            return wrapResponse(result: output?.index);
+            return wrapResponse(result: output);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
           } catch (e) {
@@ -2869,8 +2889,8 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonChannelCodec,
       binaryMessenger: __pigeon_binaryMessenger,
     );
-    final List<Object?>? __pigeon_replyList = await __pigeon_channel
-        .send(<Object?>[this, anEnum.index]) as List<Object?>?;
+    final List<Object?>? __pigeon_replyList =
+        await __pigeon_channel.send(<Object?>[this, anEnum]) as List<Object?>?;
     if (__pigeon_replyList == null) {
       throw _createConnectionError(__pigeon_channelName);
     } else if (__pigeon_replyList.length > 1) {
@@ -2885,7 +2905,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
         message: 'Host platform returned null value for non-null return value.',
       );
     } else {
-      return ProxyApiTestEnum.values[__pigeon_replyList[0]! as int];
+      return (__pigeon_replyList[0] as ProxyApiTestEnum?)!;
     }
   }
 
@@ -3163,7 +3183,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       binaryMessenger: __pigeon_binaryMessenger,
     );
     final List<Object?>? __pigeon_replyList = await __pigeon_channel
-        .send(<Object?>[this, aNullableEnum?.index]) as List<Object?>?;
+        .send(<Object?>[this, aNullableEnum]) as List<Object?>?;
     if (__pigeon_replyList == null) {
       throw _createConnectionError(__pigeon_channelName);
     } else if (__pigeon_replyList.length > 1) {
@@ -3173,9 +3193,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
         details: __pigeon_replyList[2],
       );
     } else {
-      return (__pigeon_replyList[0] as int?) == null
-          ? null
-          : ProxyApiTestEnum.values[__pigeon_replyList[0]! as int];
+      return (__pigeon_replyList[0] as ProxyApiTestEnum?);
     }
   }
 
@@ -3515,8 +3533,8 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonChannelCodec,
       binaryMessenger: __pigeon_binaryMessenger,
     );
-    final List<Object?>? __pigeon_replyList = await __pigeon_channel
-        .send(<Object?>[this, anEnum.index]) as List<Object?>?;
+    final List<Object?>? __pigeon_replyList =
+        await __pigeon_channel.send(<Object?>[this, anEnum]) as List<Object?>?;
     if (__pigeon_replyList == null) {
       throw _createConnectionError(__pigeon_channelName);
     } else if (__pigeon_replyList.length > 1) {
@@ -3531,7 +3549,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
         message: 'Host platform returned null value for non-null return value.',
       );
     } else {
-      return ProxyApiTestEnum.values[__pigeon_replyList[0]! as int];
+      return (__pigeon_replyList[0] as ProxyApiTestEnum?)!;
     }
   }
 
@@ -3859,8 +3877,8 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonChannelCodec,
       binaryMessenger: __pigeon_binaryMessenger,
     );
-    final List<Object?>? __pigeon_replyList = await __pigeon_channel
-        .send(<Object?>[this, anEnum?.index]) as List<Object?>?;
+    final List<Object?>? __pigeon_replyList =
+        await __pigeon_channel.send(<Object?>[this, anEnum]) as List<Object?>?;
     if (__pigeon_replyList == null) {
       throw _createConnectionError(__pigeon_channelName);
     } else if (__pigeon_replyList.length > 1) {
@@ -3870,9 +3888,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
         details: __pigeon_replyList[2],
       );
     } else {
-      return (__pigeon_replyList[0] as int?) == null
-          ? null
-          : ProxyApiTestEnum.values[__pigeon_replyList[0]! as int];
+      return (__pigeon_replyList[0] as ProxyApiTestEnum?);
     }
   }
 
@@ -4362,8 +4378,8 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonChannelCodec,
       binaryMessenger: __pigeon_binaryMessenger,
     );
-    final List<Object?>? __pigeon_replyList = await __pigeon_channel
-        .send(<Object?>[this, anEnum.index]) as List<Object?>?;
+    final List<Object?>? __pigeon_replyList =
+        await __pigeon_channel.send(<Object?>[this, anEnum]) as List<Object?>?;
     if (__pigeon_replyList == null) {
       throw _createConnectionError(__pigeon_channelName);
     } else if (__pigeon_replyList.length > 1) {
@@ -4378,7 +4394,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
         message: 'Host platform returned null value for non-null return value.',
       );
     } else {
-      return ProxyApiTestEnum.values[__pigeon_replyList[0]! as int];
+      return (__pigeon_replyList[0] as ProxyApiTestEnum?)!;
     }
   }
 
@@ -4621,8 +4637,8 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonChannelCodec,
       binaryMessenger: __pigeon_binaryMessenger,
     );
-    final List<Object?>? __pigeon_replyList = await __pigeon_channel
-        .send(<Object?>[this, anEnum?.index]) as List<Object?>?;
+    final List<Object?>? __pigeon_replyList =
+        await __pigeon_channel.send(<Object?>[this, anEnum]) as List<Object?>?;
     if (__pigeon_replyList == null) {
       throw _createConnectionError(__pigeon_channelName);
     } else if (__pigeon_replyList.length > 1) {
@@ -4632,9 +4648,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
         details: __pigeon_replyList[2],
       );
     } else {
-      return (__pigeon_replyList[0] as int?) == null
-          ? null
-          : ProxyApiTestEnum.values[__pigeon_replyList[0]! as int];
+      return (__pigeon_replyList[0] as ProxyApiTestEnum?);
     }
   }
 
