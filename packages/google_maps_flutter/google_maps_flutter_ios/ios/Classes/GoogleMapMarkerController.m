@@ -5,6 +5,7 @@
 #import "GoogleMapMarkerController.h"
 #import "FLTGoogleMapJSONConversions.h"
 #import "GoogleMapMarkerIconCache.h"
+#import "Timer.h"
 
 @interface FLTGoogleMapMarkerController ()
 
@@ -212,6 +213,7 @@
 }
 
 - (void)addJSONMarkers:(NSArray<NSDictionary<NSString *, id> *> *)markersToAdd {
+  NSLog(@"addJSONMarkers");
   __block CGFloat screenScale = [self getScreenScale];
 
   dispatch_async(self.markersDispatchQueue, ^{
@@ -248,7 +250,12 @@
 - (void)addMarkers:(NSArray<FGMPlatformMarker *> *)markersToAdd {
   __block CGFloat screenScale = [self getScreenScale];
 
+  
+  
   dispatch_async(self.markersDispatchQueue, ^{
+    Timer* timer = [[Timer alloc] init];
+    [timer startTimer];
+    
     GoogleMapMarkerIconCache* iconCache =
           [[GoogleMapMarkerIconCache alloc] initWithRegistrar:self.registrar
                                                   screenScale:screenScale];
@@ -264,9 +271,14 @@
 
       self.markerIdentifierToController[identifier] = controller;
     }
+    
+    double elapsed = [timer timeElapsedInMilliseconds];
+    NSLog(@"addLogic: %f", elapsed);
 
-    for (FGMPlatformMarker *marker in markersToAdd) {
-      dispatch_async(dispatch_get_main_queue(), ^{
+    dispatch_async(dispatch_get_main_queue(), ^{
+      Timer* timer = [[Timer alloc] init];
+      [timer startTimer];
+      for (FGMPlatformMarker *marker in markersToAdd) {
         NSString *identifier = marker.json[@"markerId"];
         
         FLTGoogleMapMarkerController *controller = self.markerIdentifierToController[identifier];
@@ -274,13 +286,15 @@
           return;
         }
         [controller setVisibleOption:marker.json];
-        
-      });
-    }
+      }
+      double elapsed = [timer timeElapsedInMilliseconds];
+      NSLog(@"addUI: %f", elapsed);
+    });
   });
 }
 
 - (void)changeMarkers:(NSArray<FGMPlatformMarker *> *)markersToChange {
+  NSLog(@"changeMarkers");
   __block CGFloat screenScale = [self getScreenScale];
 
   dispatch_async(self.markersDispatchQueue, ^{
@@ -312,16 +326,20 @@
 }
 
 - (void)removeMarkersWithIdentifiers:(NSArray<NSString *> *)identifiers {
-  for (NSString *identifier in identifiers) {
-    dispatch_async(self.markersDispatchQueue, ^{
+  dispatch_async(self.markersDispatchQueue, ^{
+    Timer* timer = [[Timer alloc] init];
+    [timer startTimer];
+    for (NSString *identifier in identifiers) {
       FLTGoogleMapMarkerController *controller = self.markerIdentifierToController[identifier];
       if (!controller) {
         return;
       }
       [controller removeMarker];
       [self.markerIdentifierToController removeObjectForKey:identifier];
-    });
-  }
+    }
+    double elapsed = [timer timeElapsedInMilliseconds];
+    NSLog(@"removeUI: %f", elapsed);
+  });
 }
 
 - (BOOL)didTapMarkerWithIdentifier:(NSString *)identifier {
