@@ -250,8 +250,6 @@
 - (void)addMarkers:(NSArray<FGMPlatformMarker *> *)markersToAdd {
   __block CGFloat screenScale = [self getScreenScale];
 
-  
-  
   dispatch_async(self.markersDispatchQueue, ^{
     Timer* timer = [[Timer alloc] init];
     [timer startTimer];
@@ -298,6 +296,9 @@
   __block CGFloat screenScale = [self getScreenScale];
 
   dispatch_async(self.markersDispatchQueue, ^{
+    Timer* timer = [[Timer alloc] init];
+    [timer startTimer];
+    
     GoogleMapMarkerIconCache* iconCache =
           [[GoogleMapMarkerIconCache alloc] initWithRegistrar:self.registrar
                                                   screenScale:screenScale];
@@ -310,8 +311,14 @@
       }
       [controller interpretMarkerOptions:marker.json iconCache:iconCache];
     }
+    
+    double elapsed = [timer timeElapsedInMilliseconds];
+    NSLog(@"changeLogic: %f", elapsed);
 
     dispatch_async(dispatch_get_main_queue(), ^{
+      Timer* timer = [[Timer alloc] init];
+      [timer startTimer];
+      
       for (FGMPlatformMarker *marker in markersToChange) {
         NSString *identifier = marker.json[@"markerId"];
 
@@ -321,6 +328,9 @@
         }
         [controller setVisibleOption:marker.json];
       }
+      
+      double elapsed = [timer timeElapsedInMilliseconds];
+      NSLog(@"changeUI: %f", elapsed);
     });
   });
 }
