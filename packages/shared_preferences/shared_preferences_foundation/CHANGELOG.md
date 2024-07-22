@@ -1,3 +1,7 @@
+## 2.4.1
+
+* Documented return values for remove and set methods.
+
 ## 2.4.0
 
 * Adds Swift Package Manager compatibility.

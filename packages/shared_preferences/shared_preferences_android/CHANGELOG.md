@@ -1,3 +1,7 @@
+## 2.2.4
+
+* Documented return values for remove and set methods.
+
 ## 2.2.3
 
 * Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
