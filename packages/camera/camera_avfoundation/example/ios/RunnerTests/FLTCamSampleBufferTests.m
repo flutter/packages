@@ -313,6 +313,11 @@
         videoAppended = YES;
       });
 
+  id inputMock = OCMClassMock([AVAssetWriterInput class]);
+  OCMStub([inputMock assetWriterInputWithMediaType:OCMOCK_ANY outputSettings:OCMOCK_ANY])
+      .andReturn(inputMock);
+  OCMStub([inputMock isReadyForMoreMediaData]).andReturn(YES);
+
   [cam
       startVideoRecordingWithCompletion:^(FlutterError *_Nullable error) {
       }
