@@ -144,7 +144,8 @@ class SharedPreferences {
   /// Returns true if the operation succeeded.
   Future<bool> setInt(String key, int value) => _setValue('Int', key, value);
 
-  /// Saves a double [value] to persistent storage in the background.
+  /// Saves a double [value] to persistent storage in the background, throwing an exception if it's not a double.
+  /// Returns true if the operation succeeded.
   ///
   /// Android doesn't support storing doubles, so it will be stored as a float.
   Future<bool> setDouble(String key, double value) =>
