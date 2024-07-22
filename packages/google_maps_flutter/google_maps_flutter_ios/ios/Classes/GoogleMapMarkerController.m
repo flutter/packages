@@ -302,7 +302,7 @@
     NSLog(@"addTotal: %f", total);
 
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
-      dispatch_sync(dispatch_get_main_queue(), ^{
+      dispatch_async(dispatch_get_main_queue(), ^{
         Timer* timer = [[Timer alloc] init];
         [timer startTimer];
         
