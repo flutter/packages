@@ -136,10 +136,12 @@ class SharedPreferences {
     return list?.toList() as List<String>?;
   }
 
-  /// Saves a boolean [value] to persistent storage in the background.
+  /// Saves a boolean [value] to persistent storage in the background, throwing an exception if it's not a bool.
+  /// Returns true if the operation succeeded.
   Future<bool> setBool(String key, bool value) => _setValue('Bool', key, value);
 
-  /// Saves an integer [value] to persistent storage in the background.
+  /// Saves an integer [value] to persistent storage in the background, throwing an exception if it's not an int.
+  /// Returns true if the operation succeeded.
   Future<bool> setInt(String key, int value) => _setValue('Int', key, value);
 
   /// Saves a double [value] to persistent storage in the background.
@@ -164,7 +166,7 @@ class SharedPreferences {
       _setValue('StringList', key, value);
 
   /// Removes an entry from persistent storage.
-  /// Returns true if the value was successfully removed.
+  /// Returns true if the operation succeeded.
   Future<bool> remove(String key) {
     final String prefixedKey = '$_prefix$key';
     _preferenceCache.remove(key);
