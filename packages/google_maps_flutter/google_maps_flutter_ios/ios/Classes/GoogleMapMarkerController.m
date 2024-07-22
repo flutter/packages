@@ -136,13 +136,13 @@
   if (draggable) {
     [self setDraggable:[draggable boolValue]];
   }
-   */
+   
   NSArray *icon = FGMGetValueOrNilFromDict(data, @"icon");
   if (icon) {
     UIImage *image = [iconCache getImage:icon];
     [self setIcon:image];
   }
-  /*
+  
   NSNumber *flat = FGMGetValueOrNilFromDict(data, @"flat");
   if (flat) {
     [self setFlat:[flat boolValue]];
