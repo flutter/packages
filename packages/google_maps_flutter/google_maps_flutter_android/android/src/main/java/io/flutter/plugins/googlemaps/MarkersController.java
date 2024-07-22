@@ -44,16 +44,6 @@ class MarkersController {
     this.markerCollection = markerCollection;
   }
 
-  void addJsonMarkers(List<Object> markersToAdd) {
-    if (markersToAdd != null) {
-      for (Object markerToAdd : markersToAdd) {
-        @SuppressWarnings("unchecked")
-        Map<String, ?> markerMap = (Map<String, ?>) markerToAdd;
-        addJsonMarker(markerMap);
-      }
-    }
-  }
-
   void addMarkers(@NonNull List<Messages.PlatformMarker> markersToAdd) {
     for (Messages.PlatformMarker markerToAdd : markersToAdd) {
       addJsonMarker(markerToAdd.getJson());

@@ -29,15 +29,6 @@ class TileOverlaysController {
     this.googleMap = googleMap;
   }
 
-  void addJsonTileOverlays(List<Map<String, ?>> tileOverlaysToAdd) {
-    if (tileOverlaysToAdd == null) {
-      return;
-    }
-    for (Map<String, ?> tileOverlayToAdd : tileOverlaysToAdd) {
-      addJsonTileOverlay(tileOverlayToAdd);
-    }
-  }
-
   void addTileOverlays(@NonNull List<Messages.PlatformTileOverlay> tileOverlaysToAdd) {
     for (Messages.PlatformTileOverlay tileOverlayToAdd : tileOverlaysToAdd) {
       @SuppressWarnings("unchecked")

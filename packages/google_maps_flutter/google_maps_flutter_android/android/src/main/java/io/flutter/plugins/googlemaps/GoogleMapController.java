@@ -51,7 +51,6 @@ import io.flutter.plugins.googlemaps.Messages.MapsInspectorApi;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
@@ -95,12 +94,12 @@ class GoogleMapController
   private final TileOverlaysController tileOverlaysController;
   private MarkerManager markerManager;
   private MarkerManager.Collection markerCollection;
-  private List<Object> initialMarkers;
-  private List<Object> initialClusterManagers;
-  private List<Object> initialPolygons;
-  private List<Object> initialPolylines;
-  private List<Object> initialCircles;
-  private List<Map<String, ?>> initialTileOverlays;
+  private @Nullable List<Messages.PlatformMarker> initialMarkers;
+  private @Nullable List<Messages.PlatformClusterManager> initialClusterManagers;
+  private @Nullable List<Messages.PlatformPolygon> initialPolygons;
+  private @Nullable List<Messages.PlatformPolyline> initialPolylines;
+  private @Nullable List<Messages.PlatformCircle> initialCircles;
+  private @Nullable List<Messages.PlatformTileOverlay> initialTileOverlays;
   // Null except between initialization and onMapReady.
   private @Nullable String initialMapStyle;
   private boolean lastSetStyleSucceeded;
@@ -617,22 +616,23 @@ class GoogleMapController
   }
 
   @Override
-  public void setInitialMarkers(Object initialMarkers) {
-    ArrayList<?> markers = (ArrayList<?>) initialMarkers;
-    this.initialMarkers = markers != null ? new ArrayList<>(markers) : null;
+  public void setInitialMarkers(@NonNull List<Messages.PlatformMarker> initialMarkers) {
+    this.initialMarkers = initialMarkers;
     if (googleMap != null) {
       updateInitialMarkers();
     }
   }
 
   private void updateInitialMarkers() {
-    markersController.addJsonMarkers(initialMarkers);
+    if (initialMarkers != null) {
+      markersController.addMarkers(initialMarkers);
+    }
   }
 
   @Override
-  public void setInitialClusterManagers(Object initialClusterManagers) {
-    ArrayList<?> clusterManagers = (ArrayList<?>) initialClusterManagers;
-    this.initialClusterManagers = clusterManagers != null ? new ArrayList<>(clusterManagers) : null;
+  public void setInitialClusterManagers(
+      @NonNull List<Messages.PlatformClusterManager> initialClusterManagers) {
+    this.initialClusterManagers = initialClusterManagers;
     if (googleMap != null) {
       updateInitialClusterManagers();
     }
@@ -640,51 +640,55 @@ class GoogleMapController
 
   private void updateInitialClusterManagers() {
     if (initialClusterManagers != null) {
-      clusterManagersController.addJsonClusterManagers(initialClusterManagers);
+      clusterManagersController.addClusterManagers(initialClusterManagers);
     }
   }
 
   @Override
-  public void setInitialPolygons(Object initialPolygons) {
-    ArrayList<?> polygons = (ArrayList<?>) initialPolygons;
-    this.initialPolygons = polygons != null ? new ArrayList<>(polygons) : null;
+  public void setInitialPolygons(@NonNull List<Messages.PlatformPolygon> initialPolygons) {
+    this.initialPolygons = initialPolygons;
     if (googleMap != null) {
       updateInitialPolygons();
     }
   }
 
   private void updateInitialPolygons() {
-    polygonsController.addJsonPolygons(initialPolygons);
+    if (initialPolygons != null) {
+      polygonsController.addPolygons(initialPolygons);
+    }
   }
 
   @Override
-  public void setInitialPolylines(Object initialPolylines) {
-    ArrayList<?> polylines = (ArrayList<?>) initialPolylines;
-    this.initialPolylines = polylines != null ? new ArrayList<>(polylines) : null;
+  public void setInitialPolylines(@NonNull List<Messages.PlatformPolyline> initialPolylines) {
+    this.initialPolylines = initialPolylines;
     if (googleMap != null) {
       updateInitialPolylines();
     }
   }
 
   private void updateInitialPolylines() {
-    polylinesController.addJsonPolylines(initialPolylines);
+    if (initialPolylines != null) {
+      polylinesController.addPolylines(initialPolylines);
+    }
   }
 
   @Override
-  public void setInitialCircles(Object initialCircles) {
-    ArrayList<?> circles = (ArrayList<?>) initialCircles;
-    this.initialCircles = circles != null ? new ArrayList<>(circles) : null;
+  public void setInitialCircles(@NonNull List<Messages.PlatformCircle> initialCircles) {
+    this.initialCircles = initialCircles;
     if (googleMap != null) {
       updateInitialCircles();
     }
   }
 
   private void updateInitialCircles() {
-    circlesController.addJsonCircles(initialCircles);
+    if (initialCircles != null) {
+      circlesController.addCircles(initialCircles);
+    }
   }
 
   @Override
-  public void setInitialTileOverlays(List<Map<String, ?>> initialTileOverlays) {
+  public void setInitialTileOverlays(
+      @NonNull List<Messages.PlatformTileOverlay> initialTileOverlays) {
     this.initialTileOverlays = initialTileOverlays;
     if (googleMap != null) {
       updateInitialTileOverlays();
@@ -692,7 +696,9 @@ class GoogleMapController
   }
 
   private void updateInitialTileOverlays() {
-    tileOverlaysController.addJsonTileOverlays(initialTileOverlays);
+    if (initialTileOverlays != null) {
+      tileOverlaysController.addTileOverlays(initialTileOverlays);
+    }
   }
 
   @SuppressLint("MissingPermission")

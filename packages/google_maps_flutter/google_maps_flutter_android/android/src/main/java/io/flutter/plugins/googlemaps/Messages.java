@@ -1456,6 +1456,269 @@ public class Messages {
   }
 
   /**
+   * Information passed to the platform view creation.
+   *
+   * <p>Generated class from Pigeon that represents data sent in messages.
+   */
+  public static final class PlatformMapViewCreationParams {
+    private @NonNull PlatformCameraPosition initialCameraPosition;
+
+    public @NonNull PlatformCameraPosition getInitialCameraPosition() {
+      return initialCameraPosition;
+    }
+
+    public void setInitialCameraPosition(@NonNull PlatformCameraPosition setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"initialCameraPosition\" is null.");
+      }
+      this.initialCameraPosition = setterArg;
+    }
+
+    private @NonNull PlatformMapConfiguration mapConfiguration;
+
+    public @NonNull PlatformMapConfiguration getMapConfiguration() {
+      return mapConfiguration;
+    }
+
+    public void setMapConfiguration(@NonNull PlatformMapConfiguration setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"mapConfiguration\" is null.");
+      }
+      this.mapConfiguration = setterArg;
+    }
+
+    private @NonNull List<PlatformCircle> initialCircles;
+
+    public @NonNull List<PlatformCircle> getInitialCircles() {
+      return initialCircles;
+    }
+
+    public void setInitialCircles(@NonNull List<PlatformCircle> setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"initialCircles\" is null.");
+      }
+      this.initialCircles = setterArg;
+    }
+
+    private @NonNull List<PlatformMarker> initialMarkers;
+
+    public @NonNull List<PlatformMarker> getInitialMarkers() {
+      return initialMarkers;
+    }
+
+    public void setInitialMarkers(@NonNull List<PlatformMarker> setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"initialMarkers\" is null.");
+      }
+      this.initialMarkers = setterArg;
+    }
+
+    private @NonNull List<PlatformPolygon> initialPolygons;
+
+    public @NonNull List<PlatformPolygon> getInitialPolygons() {
+      return initialPolygons;
+    }
+
+    public void setInitialPolygons(@NonNull List<PlatformPolygon> setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"initialPolygons\" is null.");
+      }
+      this.initialPolygons = setterArg;
+    }
+
+    private @NonNull List<PlatformPolyline> initialPolylines;
+
+    public @NonNull List<PlatformPolyline> getInitialPolylines() {
+      return initialPolylines;
+    }
+
+    public void setInitialPolylines(@NonNull List<PlatformPolyline> setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"initialPolylines\" is null.");
+      }
+      this.initialPolylines = setterArg;
+    }
+
+    private @NonNull List<PlatformTileOverlay> initialTileOverlays;
+
+    public @NonNull List<PlatformTileOverlay> getInitialTileOverlays() {
+      return initialTileOverlays;
+    }
+
+    public void setInitialTileOverlays(@NonNull List<PlatformTileOverlay> setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"initialTileOverlays\" is null.");
+      }
+      this.initialTileOverlays = setterArg;
+    }
+
+    private @NonNull List<PlatformClusterManager> initialClusterManagers;
+
+    public @NonNull List<PlatformClusterManager> getInitialClusterManagers() {
+      return initialClusterManagers;
+    }
+
+    public void setInitialClusterManagers(@NonNull List<PlatformClusterManager> setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"initialClusterManagers\" is null.");
+      }
+      this.initialClusterManagers = setterArg;
+    }
+
+    /** Constructor is non-public to enforce null safety; use Builder. */
+    PlatformMapViewCreationParams() {}
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
+      PlatformMapViewCreationParams that = (PlatformMapViewCreationParams) o;
+      return initialCameraPosition.equals(that.initialCameraPosition)
+          && mapConfiguration.equals(that.mapConfiguration)
+          && initialCircles.equals(that.initialCircles)
+          && initialMarkers.equals(that.initialMarkers)
+          && initialPolygons.equals(that.initialPolygons)
+          && initialPolylines.equals(that.initialPolylines)
+          && initialTileOverlays.equals(that.initialTileOverlays)
+          && initialClusterManagers.equals(that.initialClusterManagers);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(
+          initialCameraPosition,
+          mapConfiguration,
+          initialCircles,
+          initialMarkers,
+          initialPolygons,
+          initialPolylines,
+          initialTileOverlays,
+          initialClusterManagers);
+    }
+
+    public static final class Builder {
+
+      private @Nullable PlatformCameraPosition initialCameraPosition;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setInitialCameraPosition(@NonNull PlatformCameraPosition setterArg) {
+        this.initialCameraPosition = setterArg;
+        return this;
+      }
+
+      private @Nullable PlatformMapConfiguration mapConfiguration;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setMapConfiguration(@NonNull PlatformMapConfiguration setterArg) {
+        this.mapConfiguration = setterArg;
+        return this;
+      }
+
+      private @Nullable List<PlatformCircle> initialCircles;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setInitialCircles(@NonNull List<PlatformCircle> setterArg) {
+        this.initialCircles = setterArg;
+        return this;
+      }
+
+      private @Nullable List<PlatformMarker> initialMarkers;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setInitialMarkers(@NonNull List<PlatformMarker> setterArg) {
+        this.initialMarkers = setterArg;
+        return this;
+      }
+
+      private @Nullable List<PlatformPolygon> initialPolygons;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setInitialPolygons(@NonNull List<PlatformPolygon> setterArg) {
+        this.initialPolygons = setterArg;
+        return this;
+      }
+
+      private @Nullable List<PlatformPolyline> initialPolylines;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setInitialPolylines(@NonNull List<PlatformPolyline> setterArg) {
+        this.initialPolylines = setterArg;
+        return this;
+      }
+
+      private @Nullable List<PlatformTileOverlay> initialTileOverlays;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setInitialTileOverlays(@NonNull List<PlatformTileOverlay> setterArg) {
+        this.initialTileOverlays = setterArg;
+        return this;
+      }
+
+      private @Nullable List<PlatformClusterManager> initialClusterManagers;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setInitialClusterManagers(
+          @NonNull List<PlatformClusterManager> setterArg) {
+        this.initialClusterManagers = setterArg;
+        return this;
+      }
+
+      public @NonNull PlatformMapViewCreationParams build() {
+        PlatformMapViewCreationParams pigeonReturn = new PlatformMapViewCreationParams();
+        pigeonReturn.setInitialCameraPosition(initialCameraPosition);
+        pigeonReturn.setMapConfiguration(mapConfiguration);
+        pigeonReturn.setInitialCircles(initialCircles);
+        pigeonReturn.setInitialMarkers(initialMarkers);
+        pigeonReturn.setInitialPolygons(initialPolygons);
+        pigeonReturn.setInitialPolylines(initialPolylines);
+        pigeonReturn.setInitialTileOverlays(initialTileOverlays);
+        pigeonReturn.setInitialClusterManagers(initialClusterManagers);
+        return pigeonReturn;
+      }
+    }
+
+    @NonNull
+    ArrayList<Object> toList() {
+      ArrayList<Object> toListResult = new ArrayList<Object>(8);
+      toListResult.add(initialCameraPosition);
+      toListResult.add(mapConfiguration);
+      toListResult.add(initialCircles);
+      toListResult.add(initialMarkers);
+      toListResult.add(initialPolygons);
+      toListResult.add(initialPolylines);
+      toListResult.add(initialTileOverlays);
+      toListResult.add(initialClusterManagers);
+      return toListResult;
+    }
+
+    static @NonNull PlatformMapViewCreationParams fromList(
+        @NonNull ArrayList<Object> __pigeon_list) {
+      PlatformMapViewCreationParams pigeonResult = new PlatformMapViewCreationParams();
+      Object initialCameraPosition = __pigeon_list.get(0);
+      pigeonResult.setInitialCameraPosition((PlatformCameraPosition) initialCameraPosition);
+      Object mapConfiguration = __pigeon_list.get(1);
+      pigeonResult.setMapConfiguration((PlatformMapConfiguration) mapConfiguration);
+      Object initialCircles = __pigeon_list.get(2);
+      pigeonResult.setInitialCircles((List<PlatformCircle>) initialCircles);
+      Object initialMarkers = __pigeon_list.get(3);
+      pigeonResult.setInitialMarkers((List<PlatformMarker>) initialMarkers);
+      Object initialPolygons = __pigeon_list.get(4);
+      pigeonResult.setInitialPolygons((List<PlatformPolygon>) initialPolygons);
+      Object initialPolylines = __pigeon_list.get(5);
+      pigeonResult.setInitialPolylines((List<PlatformPolyline>) initialPolylines);
+      Object initialTileOverlays = __pigeon_list.get(6);
+      pigeonResult.setInitialTileOverlays((List<PlatformTileOverlay>) initialTileOverlays);
+      Object initialClusterManagers = __pigeon_list.get(7);
+      pigeonResult.setInitialClusterManagers((List<PlatformClusterManager>) initialClusterManagers);
+      return pigeonResult;
+    }
+  }
+
+  /**
    * Pigeon equivalent of MapConfiguration.
    *
    * <p>Generated class from Pigeon that represents data sent in messages.
@@ -2347,21 +2610,23 @@ public class Messages {
         case (byte) 142:
           return PlatformCameraTargetBounds.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 143:
-          return PlatformMapConfiguration.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformMapViewCreationParams.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 144:
-          return PlatformPoint.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformMapConfiguration.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 145:
-          return PlatformTileLayer.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformPoint.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 146:
-          return PlatformZoomRange.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformTileLayer.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 147:
+          return PlatformZoomRange.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 148:
           // Manual edit to fix https://github.com/flutter/flutter/issues/150108
           // the way the generator will fix it once the PR lands.
           {
             Object value = readValue(buffer);
             return value == null ? null : PlatformMapType.values()[(int) value];
           }
-        case (byte) 148:
+        case (byte) 149:
           // Manual edit to fix https://github.com/flutter/flutter/issues/150108
           // the way the generator will fix it once the PR lands.
           {
@@ -2417,23 +2682,26 @@ public class Messages {
       } else if (value instanceof PlatformCameraTargetBounds) {
         stream.write(142);
         writeValue(stream, ((PlatformCameraTargetBounds) value).toList());
-      } else if (value instanceof PlatformMapConfiguration) {
+      } else if (value instanceof PlatformMapViewCreationParams) {
         stream.write(143);
+        writeValue(stream, ((PlatformMapViewCreationParams) value).toList());
+      } else if (value instanceof PlatformMapConfiguration) {
+        stream.write(144);
         writeValue(stream, ((PlatformMapConfiguration) value).toList());
       } else if (value instanceof PlatformPoint) {
-        stream.write(144);
+        stream.write(145);
         writeValue(stream, ((PlatformPoint) value).toList());
       } else if (value instanceof PlatformTileLayer) {
-        stream.write(145);
+        stream.write(146);
         writeValue(stream, ((PlatformTileLayer) value).toList());
       } else if (value instanceof PlatformZoomRange) {
-        stream.write(146);
+        stream.write(147);
         writeValue(stream, ((PlatformZoomRange) value).toList());
       } else if (value instanceof PlatformMapType) {
-        stream.write(147);
+        stream.write(148);
         writeValue(stream, value == null ? null : ((PlatformMapType) value).index);
       } else if (value instanceof PlatformRendererType) {
-        stream.write(148);
+        stream.write(149);
         writeValue(stream, value == null ? null : ((PlatformRendererType) value).index);
       } else {
         super.writeValue(stream, value);
@@ -3622,6 +3890,61 @@ public class Messages {
                     };
 
                 api.initializeWithPreferredRenderer(typeArg, resultCallback);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+    }
+  }
+  /**
+   * Dummy interface to force generation of the platform view creation params, which are not used in
+   * any Pigeon calls, only the platform view creation call made internally by Flutter.
+   *
+   * <p>Generated interface from Pigeon that represents a handler of messages from Flutter.
+   */
+  public interface MapsPlatformViewApi {
+
+    void createView(@Nullable PlatformMapViewCreationParams type);
+
+    /** The codec used by MapsPlatformViewApi. */
+    static @NonNull MessageCodec<Object> getCodec() {
+      return PigeonCodec.INSTANCE;
+    }
+    /**
+     * Sets up an instance of `MapsPlatformViewApi` to handle messages through the
+     * `binaryMessenger`.
+     */
+    static void setUp(@NonNull BinaryMessenger binaryMessenger, @Nullable MapsPlatformViewApi api) {
+      setUp(binaryMessenger, "", api);
+    }
+
+    static void setUp(
+        @NonNull BinaryMessenger binaryMessenger,
+        @NonNull String messageChannelSuffix,
+        @Nullable MapsPlatformViewApi api) {
+      messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.google_maps_flutter_android.MapsPlatformViewApi.createView"
+                    + messageChannelSuffix,
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                PlatformMapViewCreationParams typeArg = (PlatformMapViewCreationParams) args.get(0);
+                try {
+                  api.createView(typeArg);
+                  wrapped.add(0, null);
+                } catch (Throwable exception) {
+                  ArrayList<Object> wrappedError = wrapError(exception);
+                  wrapped = wrappedError;
+                }
+                reply.reply(wrapped);
               });
         } else {
           channel.setMessageHandler(null);

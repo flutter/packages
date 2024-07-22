@@ -437,6 +437,66 @@ class PlatformCameraTargetBounds {
   }
 }
 
+/// Information passed to the platform view creation.
+class PlatformMapViewCreationParams {
+  PlatformMapViewCreationParams({
+    required this.initialCameraPosition,
+    required this.mapConfiguration,
+    required this.initialCircles,
+    required this.initialMarkers,
+    required this.initialPolygons,
+    required this.initialPolylines,
+    required this.initialTileOverlays,
+    required this.initialClusterManagers,
+  });
+
+  PlatformCameraPosition initialCameraPosition;
+
+  PlatformMapConfiguration mapConfiguration;
+
+  List<PlatformCircle?> initialCircles;
+
+  List<PlatformMarker?> initialMarkers;
+
+  List<PlatformPolygon?> initialPolygons;
+
+  List<PlatformPolyline?> initialPolylines;
+
+  List<PlatformTileOverlay?> initialTileOverlays;
+
+  List<PlatformClusterManager?> initialClusterManagers;
+
+  Object encode() {
+    return <Object?>[
+      initialCameraPosition,
+      mapConfiguration,
+      initialCircles,
+      initialMarkers,
+      initialPolygons,
+      initialPolylines,
+      initialTileOverlays,
+      initialClusterManagers,
+    ];
+  }
+
+  static PlatformMapViewCreationParams decode(Object result) {
+    result as List<Object?>;
+    return PlatformMapViewCreationParams(
+      initialCameraPosition: result[0]! as PlatformCameraPosition,
+      mapConfiguration: result[1]! as PlatformMapConfiguration,
+      initialCircles: (result[2] as List<Object?>?)!.cast<PlatformCircle?>(),
+      initialMarkers: (result[3] as List<Object?>?)!.cast<PlatformMarker?>(),
+      initialPolygons: (result[4] as List<Object?>?)!.cast<PlatformPolygon?>(),
+      initialPolylines:
+          (result[5] as List<Object?>?)!.cast<PlatformPolyline?>(),
+      initialTileOverlays:
+          (result[6] as List<Object?>?)!.cast<PlatformTileOverlay?>(),
+      initialClusterManagers:
+          (result[7] as List<Object?>?)!.cast<PlatformClusterManager?>(),
+    );
+  }
+}
+
 /// Pigeon equivalent of MapConfiguration.
 class PlatformMapConfiguration {
   PlatformMapConfiguration({
@@ -691,23 +751,26 @@ class _PigeonCodec extends StandardMessageCodec {
     } else if (value is PlatformCameraTargetBounds) {
       buffer.putUint8(142);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformMapConfiguration) {
+    } else if (value is PlatformMapViewCreationParams) {
       buffer.putUint8(143);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformPoint) {
+    } else if (value is PlatformMapConfiguration) {
       buffer.putUint8(144);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformTileLayer) {
+    } else if (value is PlatformPoint) {
       buffer.putUint8(145);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformZoomRange) {
+    } else if (value is PlatformTileLayer) {
       buffer.putUint8(146);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformMapType) {
+    } else if (value is PlatformZoomRange) {
       buffer.putUint8(147);
+      writeValue(buffer, value.encode());
+    } else if (value is PlatformMapType) {
+      buffer.putUint8(148);
       writeValue(buffer, value.index);
     } else if (value is PlatformRendererType) {
-      buffer.putUint8(148);
+      buffer.putUint8(149);
       writeValue(buffer, value.index);
     } else {
       super.writeValue(buffer, value);
@@ -746,17 +809,19 @@ class _PigeonCodec extends StandardMessageCodec {
       case 142:
         return PlatformCameraTargetBounds.decode(readValue(buffer)!);
       case 143:
-        return PlatformMapConfiguration.decode(readValue(buffer)!);
+        return PlatformMapViewCreationParams.decode(readValue(buffer)!);
       case 144:
-        return PlatformPoint.decode(readValue(buffer)!);
+        return PlatformMapConfiguration.decode(readValue(buffer)!);
       case 145:
-        return PlatformTileLayer.decode(readValue(buffer)!);
+        return PlatformPoint.decode(readValue(buffer)!);
       case 146:
-        return PlatformZoomRange.decode(readValue(buffer)!);
+        return PlatformTileLayer.decode(readValue(buffer)!);
       case 147:
+        return PlatformZoomRange.decode(readValue(buffer)!);
+      case 148:
         final int? value = readValue(buffer) as int?;
         return value == null ? null : PlatformMapType.values[value];
-      case 148:
+      case 149:
         final int? value = readValue(buffer) as int?;
         return value == null ? null : PlatformRendererType.values[value];
       default:
@@ -1901,6 +1966,49 @@ class MapsInitializerApi {
       );
     } else {
       return (__pigeon_replyList[0] as PlatformRendererType?)!;
+    }
+  }
+}
+
+/// Dummy interface to force generation of the platform view creation params,
+/// which are not used in any Pigeon calls, only the platform view creation
+/// call made internally by Flutter.
+class MapsPlatformViewApi {
+  /// Constructor for [MapsPlatformViewApi].  The [binaryMessenger] named argument is
+  /// available for dependency injection.  If it is left null, the default
+  /// BinaryMessenger will be used which routes to the host platform.
+  MapsPlatformViewApi(
+      {BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
+      : __pigeon_binaryMessenger = binaryMessenger,
+        __pigeon_messageChannelSuffix =
+            messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
+  final BinaryMessenger? __pigeon_binaryMessenger;
+
+  static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
+
+  final String __pigeon_messageChannelSuffix;
+
+  Future<void> createView(PlatformMapViewCreationParams? type) async {
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.google_maps_flutter_android.MapsPlatformViewApi.createView$__pigeon_messageChannelSuffix';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: __pigeon_binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList =
+        await __pigeon_channel.send(<Object?>[type]) as List<Object?>?;
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: __pigeon_replyList[0]! as String,
+        message: __pigeon_replyList[1] as String?,
+        details: __pigeon_replyList[2],
+      );
+    } else {
+      return;
     }
   }
 }

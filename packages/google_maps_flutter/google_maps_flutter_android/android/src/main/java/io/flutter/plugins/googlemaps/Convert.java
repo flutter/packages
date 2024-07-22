@@ -306,6 +306,16 @@ class Convert {
     return (Boolean) o;
   }
 
+  static @NonNull CameraPosition cameraPositionFromPigeon(
+      @NonNull Messages.PlatformCameraPosition position) {
+    final CameraPosition.Builder builder = CameraPosition.builder();
+    builder.bearing(position.getBearing().floatValue());
+    builder.target(latLngFromPigeon(position.getTarget()));
+    builder.tilt(position.getTilt().floatValue());
+    builder.zoom(position.getZoom().floatValue());
+    return builder.build();
+  }
+
   static CameraPosition toCameraPosition(Object o) {
     final Map<?, ?> data = toMap(o);
     final CameraPosition.Builder builder = CameraPosition.builder();
@@ -535,95 +545,6 @@ class Convert {
 
   private static String toString(Object o) {
     return (String) o;
-  }
-
-  static void interpretGoogleMapOptions(Object o, GoogleMapOptionsSink sink) {
-    final Map<?, ?> data = toMap(o);
-    final Object cameraTargetBounds = data.get("cameraTargetBounds");
-    if (cameraTargetBounds != null) {
-      final List<?> targetData = toList(cameraTargetBounds);
-      sink.setCameraTargetBounds(toLatLngBounds(targetData.get(0)));
-    }
-    final Object compassEnabled = data.get("compassEnabled");
-    if (compassEnabled != null) {
-      sink.setCompassEnabled(toBoolean(compassEnabled));
-    }
-    final Object mapToolbarEnabled = data.get("mapToolbarEnabled");
-    if (mapToolbarEnabled != null) {
-      sink.setMapToolbarEnabled(toBoolean(mapToolbarEnabled));
-    }
-    final Object mapType = data.get("mapType");
-    if (mapType != null) {
-      sink.setMapType(toInt(mapType));
-    }
-    final Object minMaxZoomPreference = data.get("minMaxZoomPreference");
-    if (minMaxZoomPreference != null) {
-      final List<?> zoomPreferenceData = toList(minMaxZoomPreference);
-      sink.setMinMaxZoomPreference( //
-          toFloatWrapper(zoomPreferenceData.get(0)), //
-          toFloatWrapper(zoomPreferenceData.get(1)));
-    }
-    final Object padding = data.get("padding");
-    if (padding != null) {
-      final List<?> paddingData = toList(padding);
-      sink.setPadding(
-          toFloat(paddingData.get(0)),
-          toFloat(paddingData.get(1)),
-          toFloat(paddingData.get(2)),
-          toFloat(paddingData.get(3)));
-    }
-    final Object rotateGesturesEnabled = data.get("rotateGesturesEnabled");
-    if (rotateGesturesEnabled != null) {
-      sink.setRotateGesturesEnabled(toBoolean(rotateGesturesEnabled));
-    }
-    final Object scrollGesturesEnabled = data.get("scrollGesturesEnabled");
-    if (scrollGesturesEnabled != null) {
-      sink.setScrollGesturesEnabled(toBoolean(scrollGesturesEnabled));
-    }
-    final Object tiltGesturesEnabled = data.get("tiltGesturesEnabled");
-    if (tiltGesturesEnabled != null) {
-      sink.setTiltGesturesEnabled(toBoolean(tiltGesturesEnabled));
-    }
-    final Object trackCameraPosition = data.get("trackCameraPosition");
-    if (trackCameraPosition != null) {
-      sink.setTrackCameraPosition(toBoolean(trackCameraPosition));
-    }
-    final Object zoomGesturesEnabled = data.get("zoomGesturesEnabled");
-    if (zoomGesturesEnabled != null) {
-      sink.setZoomGesturesEnabled(toBoolean(zoomGesturesEnabled));
-    }
-    final Object liteModeEnabled = data.get("liteModeEnabled");
-    if (liteModeEnabled != null) {
-      sink.setLiteModeEnabled(toBoolean(liteModeEnabled));
-    }
-    final Object myLocationEnabled = data.get("myLocationEnabled");
-    if (myLocationEnabled != null) {
-      sink.setMyLocationEnabled(toBoolean(myLocationEnabled));
-    }
-    final Object zoomControlsEnabled = data.get("zoomControlsEnabled");
-    if (zoomControlsEnabled != null) {
-      sink.setZoomControlsEnabled(toBoolean(zoomControlsEnabled));
-    }
-    final Object myLocationButtonEnabled = data.get("myLocationButtonEnabled");
-    if (myLocationButtonEnabled != null) {
-      sink.setMyLocationButtonEnabled(toBoolean(myLocationButtonEnabled));
-    }
-    final Object indoorEnabled = data.get("indoorEnabled");
-    if (indoorEnabled != null) {
-      sink.setIndoorEnabled(toBoolean(indoorEnabled));
-    }
-    final Object trafficEnabled = data.get("trafficEnabled");
-    if (trafficEnabled != null) {
-      sink.setTrafficEnabled(toBoolean(trafficEnabled));
-    }
-    final Object buildingsEnabled = data.get("buildingsEnabled");
-    if (buildingsEnabled != null) {
-      sink.setBuildingsEnabled(toBoolean(buildingsEnabled));
-    }
-    final Object style = data.get("style");
-    if (style != null) {
-      sink.setMapStyle(toString(style));
-    }
   }
 
   static void interpretMapConfiguration(

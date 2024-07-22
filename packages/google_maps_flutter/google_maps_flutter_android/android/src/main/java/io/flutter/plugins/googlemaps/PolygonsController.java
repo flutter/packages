@@ -32,16 +32,6 @@ class PolygonsController {
     this.googleMap = googleMap;
   }
 
-  void addJsonPolygons(List<Object> polygonsToAdd) {
-    if (polygonsToAdd != null) {
-      for (Object polygonToAdd : polygonsToAdd) {
-        @SuppressWarnings("unchecked")
-        Map<String, ?> polygonMap = (Map<String, ?>) polygonToAdd;
-        addJsonPolygon(polygonMap);
-      }
-    }
-  }
-
   void addPolygons(@NonNull List<Messages.PlatformPolygon> polygonsToAdd) {
     for (Messages.PlatformPolygon polygonToAdd : polygonsToAdd) {
       addJsonPolygon(polygonToAdd.getJson());
