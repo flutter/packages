@@ -382,18 +382,20 @@
 
 - (void)removeMarkersWithIdentifiers:(NSArray<NSString *> *)identifiers {
   dispatch_async(self.markersDispatchQueue, ^{
-    Timer* timer = [[Timer alloc] init];
-    [timer startTimer];
-    for (NSString *identifier in identifiers) {
-      FLTGoogleMapMarkerController *controller = self.markerIdentifierToController[identifier];
-      if (!controller) {
-        return;
+    dispatch_sync(dispatch_get_main_queue(), ^{
+      Timer* timer = [[Timer alloc] init];
+      [timer startTimer];
+      for (NSString *identifier in identifiers) {
+        FLTGoogleMapMarkerController *controller = self.markerIdentifierToController[identifier];
+        if (!controller) {
+          return;
+        }
+        [controller removeMarker];
+        [self.markerIdentifierToController removeObjectForKey:identifier];
       }
-      [controller removeMarker];
-      [self.markerIdentifierToController removeObjectForKey:identifier];
-    }
-    double elapsed = [timer timeElapsedInMilliseconds];
-    NSLog(@"removeUI: %f", elapsed);
+      double elapsed = [timer timeElapsedInMilliseconds];
+      NSLog(@"removeUI: %f", elapsed);
+    });
   });
 }
 
