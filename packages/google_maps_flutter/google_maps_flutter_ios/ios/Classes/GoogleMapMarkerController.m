@@ -302,18 +302,19 @@
     NSLog(@"addTotal: %f", total);
 
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
-      Timer* timer = [[Timer alloc] init];
-      [timer startTimer];
-      
-      NSUInteger batchSize = 200;
-      NSUInteger start = 0;
-      NSUInteger total = [markersToAdd count];
-      while (start < total) {
-        NSUInteger count = batchSize;
-        if (start + count >= total) {
-          count = total - start;
-        }
-        dispatch_sync(dispatch_get_main_queue(), ^{
+      dispatch_sync(dispatch_get_main_queue(), ^{
+        Timer* timer = [[Timer alloc] init];
+        [timer startTimer];
+        
+        NSUInteger batchSize = 200;
+        NSUInteger start = 0;
+        NSUInteger total = [markersToAdd count];
+        while (start < total) {
+          NSUInteger count = batchSize;
+          if (start + count >= total) {
+            count = total - start;
+          }
+          
           Timer* timer = [[Timer alloc] init];
           [timer startTimer];
           
@@ -351,12 +352,12 @@
           NSLog(@"batch1: %f", add1);
           NSLog(@"batchTotal: %f", total);
           NSLog(@"batchCount: %lu", [batch count]);
-        });
-        start += count;
-      }
-      
-      double elapsed = [timer timeElapsedInMilliseconds];
-      NSLog(@"addUI: %f", elapsed);
+          start += count;
+        }
+        
+        double elapsed = [timer timeElapsedInMilliseconds];
+        NSLog(@"addUI: %f", elapsed);
+      });
     });
   });
 }
