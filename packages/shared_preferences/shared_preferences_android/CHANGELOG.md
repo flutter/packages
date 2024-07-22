@@ -1,6 +1,6 @@
 ## 2.2.4
 
-* Documented return values for remove and set methods.
+* Updates documentation for return values in remove and set methods.
 
 ## 2.2.3
 
