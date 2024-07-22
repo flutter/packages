@@ -142,7 +142,7 @@ TEST(CameraPlugin, CreateHandlerCallsInitCamera) {
       };
 
   plugin.Create(MOCK_CAMERA_NAME,
-                PlatformMediaSettings(PlatformResolutionPreset::max, true),
+                PlatformMediaSettings(PlatformResolutionPreset::kMax, true),
                 std::move(create_result));
 
   EXPECT_TRUE(result_called);
@@ -168,7 +168,7 @@ TEST(CameraPlugin, CreateHandlerErrorOnInvalidDeviceId) {
       };
 
   plugin.Create(MOCK_INVALID_CAMERA_NAME,
-                PlatformMediaSettings(PlatformResolutionPreset::max, true),
+                PlatformMediaSettings(PlatformResolutionPreset::kMax, true),
                 std::move(create_result));
 
   EXPECT_TRUE(result_called);
@@ -204,7 +204,7 @@ TEST(CameraPlugin, CreateHandlerErrorOnExistingDeviceId) {
         EXPECT_EQ(reply.value(), 1);
       };
 
-  PlatformMediaSettings media_settings(PlatformResolutionPreset::max, true);
+  PlatformMediaSettings media_settings(PlatformResolutionPreset::kMax, true);
   plugin.Create(MOCK_CAMERA_NAME, media_settings,
                 std::move(first_create_result));
 
@@ -263,7 +263,7 @@ TEST(CameraPlugin, CreateHandlerAllowsRetry) {
         EXPECT_TRUE(reply.has_error());
       };
 
-  PlatformMediaSettings media_settings(PlatformResolutionPreset::max, true);
+  PlatformMediaSettings media_settings(PlatformResolutionPreset::kMax, true);
   plugin.Create(MOCK_CAMERA_NAME, media_settings,
                 std::move(first_create_result));
 
