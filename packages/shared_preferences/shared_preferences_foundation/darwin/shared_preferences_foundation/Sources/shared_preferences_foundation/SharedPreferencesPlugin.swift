@@ -12,17 +12,17 @@ import Foundation
 
 let argumentError: String = "Argument Error"
 
-public class DeprecatedSharedPreferencesPlugin: NSObject, FlutterPlugin, DeprecatedUserDefaultsApi {
+public class LegacySharedPreferencesPlugin: NSObject, FlutterPlugin, LegacyUserDefaultsApi {
 
   public static func register(with registrar: FlutterPluginRegistrar) {
-    let instance = DeprecatedSharedPreferencesPlugin()
+    let instance = LegacySharedPreferencesPlugin()
     // Workaround for https://github.com/flutter/flutter/issues/118103.
     #if os(iOS)
       let messenger = registrar.messenger()
     #else
       let messenger = registrar.messenger
     #endif
-    DeprecatedUserDefaultsApiSetup.setUp(binaryMessenger: messenger, api: instance)
+    LegacyUserDefaultsApiSetup.setUp(binaryMessenger: messenger, api: instance)
   }
 
   func getAll(prefix: String, allowList: [String]?) -> [String?: Any?] {
@@ -81,7 +81,7 @@ public class SharedPreferencesPlugin: NSObject, FlutterPlugin, UserDefaultsApi {
       let messenger = registrar.messenger
     #endif
     UserDefaultsApiSetup.setUp(binaryMessenger: messenger, api: instance)
-    DeprecatedSharedPreferencesPlugin.register(with: registrar)
+    LegacySharedPreferencesPlugin.register(with: registrar)
   }
 
   static private func getUserDefaults(options: SharedPreferencesPigeonOptions) throws
