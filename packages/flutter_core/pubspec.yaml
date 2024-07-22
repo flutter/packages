@@ -1,0 +1,9 @@
+name: flutter_core
+version: 1.0.0-wip
+
+environment:
+  sdk: ^3.5.0
+
+dev_dependencies:
+  lints: ^4.0.0
+  test: ^1.24.0
