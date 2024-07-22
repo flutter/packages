@@ -151,7 +151,8 @@ class SharedPreferences {
   Future<bool> setDouble(String key, double value) =>
       _setValue('Double', key, value);
 
-  /// Saves a string [value] to persistent storage in the background.
+  /// Saves a string [value] to persistent storage in the background, throwing an exception if it's not a String.
+  /// Returns true if the operation succeeded.
   ///
   /// Note: Due to limitations in Android's SharedPreferences,
   /// values cannot start with any one of the following:
@@ -162,7 +163,8 @@ class SharedPreferences {
   Future<bool> setString(String key, String value) =>
       _setValue('String', key, value);
 
-  /// Saves a list of strings [value] to persistent storage in the background.
+  /// Saves a list of strings [value] to persistent storage in the background, throwing an exception if it's not a string set.
+  /// Returns true if the operation succeeded.
   Future<bool> setStringList(String key, List<String> value) =>
       _setValue('StringList', key, value);
 
