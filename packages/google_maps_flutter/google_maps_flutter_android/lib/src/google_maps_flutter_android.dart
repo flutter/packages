@@ -224,8 +224,8 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
     MapConfiguration configuration, {
     required int mapId,
   }) {
-    return updateMapOptions(_jsonForMapConfiguration(configuration),
-        mapId: mapId);
+    return _hostApi(mapId).updateMapConfiguration(
+        _platformMapConfigurationFromMapConfiguration(configuration));
   }
 
   @override
@@ -233,8 +233,8 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
     Map<String, dynamic> optionsUpdate, {
     required int mapId,
   }) {
-    return _hostApi(mapId)
-        .updateMapConfiguration(PlatformMapConfiguration(json: optionsUpdate));
+    return _hostApi(mapId).updateMapConfiguration(
+        _platformMapConfigurationFromOptionsJson(optionsUpdate));
   }
 
   @override
@@ -863,6 +863,97 @@ PlatformTile _platformTileFromTile(Tile tile) {
   return PlatformTile(width: tile.width, height: tile.height, data: tile.data);
 }
 
+PlatformLatLng _platformLatLngFromLatLng(LatLng latLng) {
+  return PlatformLatLng(latitude: latLng.latitude, longitude: latLng.longitude);
+}
+
+PlatformLatLngBounds? _platformLatLngBoundsFromLatLngBounds(
+    LatLngBounds? bounds) {
+  if (bounds == null) {
+    return null;
+  }
+  return PlatformLatLngBounds(
+      northeast: _platformLatLngFromLatLng(bounds.northeast),
+      southwest: _platformLatLngFromLatLng(bounds.southwest));
+}
+
+PlatformCameraTargetBounds? _platformCameraTargetBoundsFromCameraTargetBounds(
+    CameraTargetBounds? bounds) {
+  return bounds == null
+      ? null
+      : PlatformCameraTargetBounds(
+          bounds: _platformLatLngBoundsFromLatLngBounds(bounds.bounds));
+}
+
+PlatformMapType? _platformMapTypeFromMapType(MapType? type) {
+  switch (type) {
+    case null:
+      return null;
+    case MapType.none:
+      return PlatformMapType.none;
+    case MapType.normal:
+      return PlatformMapType.normal;
+    case MapType.satellite:
+      return PlatformMapType.satellite;
+    case MapType.terrain:
+      return PlatformMapType.terrain;
+    case MapType.hybrid:
+      return PlatformMapType.hybrid;
+  }
+  // The enum comes from a different package, which could get a new value at
+  // any time, so provide a fallback that ensures this won't break when used
+  // with a version that contains new values. This is deliberately outside
+  // the switch rather than a `default` so that the linter will flag the
+  // switch as needing an update.
+  // ignore: dead_code
+  return PlatformMapType.normal;
+}
+
+PlatformZoomRange? _platformZoomRangeFromMinMaxZoomPreference(
+    MinMaxZoomPreference? zoomPref) {
+  return zoomPref == null
+      ? null
+      : PlatformZoomRange(min: zoomPref.minZoom, max: zoomPref.maxZoom);
+}
+
+PlatformEdgeInsets? _platformEdgeInsetsFromEdgeInsets(EdgeInsets? insets) {
+  return insets == null
+      ? null
+      : PlatformEdgeInsets(
+          top: insets.top,
+          bottom: insets.bottom,
+          left: insets.left,
+          right: insets.right);
+}
+
+PlatformMapConfiguration _platformMapConfigurationFromMapConfiguration(
+    MapConfiguration config) {
+  return PlatformMapConfiguration(
+    compassEnabled: config.compassEnabled,
+    cameraTargetBounds: _platformCameraTargetBoundsFromCameraTargetBounds(
+        config.cameraTargetBounds),
+    mapType: _platformMapTypeFromMapType(config.mapType),
+    minMaxZoomPreference:
+        _platformZoomRangeFromMinMaxZoomPreference(config.minMaxZoomPreference),
+    mapToolbarEnabled: config.mapToolbarEnabled,
+    rotateGesturesEnabled: config.rotateGesturesEnabled,
+    scrollGesturesEnabled: config.scrollGesturesEnabled,
+    tiltGesturesEnabled: config.tiltGesturesEnabled,
+    trackCameraPosition: config.trackCameraPosition,
+    zoomControlsEnabled: config.zoomControlsEnabled,
+    zoomGesturesEnabled: config.zoomGesturesEnabled,
+    myLocationEnabled: config.myLocationEnabled,
+    myLocationButtonEnabled: config.myLocationButtonEnabled,
+    padding: _platformEdgeInsetsFromEdgeInsets(config.padding),
+    indoorViewEnabled: config.indoorViewEnabled,
+    trafficEnabled: config.trafficEnabled,
+    buildingsEnabled: config.buildingsEnabled,
+    liteModeEnabled: config.liteModeEnabled,
+    cloudMapId: config.cloudMapId,
+    style: config.style,
+  );
+}
+
 Map<String, Object> _jsonForMapConfiguration(MapConfiguration config) {
   final EdgeInsets? padding = config.padding;
   return <String, Object>{
@@ -907,6 +998,100 @@ Map<String, Object> _jsonForMapConfiguration(MapConfiguration config) {
     if (config.cloudMapId != null) 'cloudMapId': config.cloudMapId!,
     if (config.style != null) 'style': config.style!,
   };
+}
+
+// For supporting the deprecated updateMapOptions API.
+PlatformMapConfiguration _platformMapConfigurationFromOptionsJson(
+    Map<String, Object?> options) {
+  // All of these hard-coded values and structures come from
+  // google_maps_flutter_platform_interface/lib/src/types/utils/map_configuration_serialization.dart
+  // to support this legacy API that relied on cross-package magic strings.
+  final List<double>? padding =
+      (options['padding'] as List<Object?>?)?.cast<double>();
+  final int? mapType = options['mapType'] as int?;
+  return PlatformMapConfiguration(
+    compassEnabled: options['compassEnabled'] as bool?,
+    cameraTargetBounds: _platformCameraTargetBoundsFromCameraTargetBoundsJson(
+        options['cameraTargetBounds']),
+    mapType: mapType == null ? null : _platformMapTypeFromMapTypeIndex(mapType),
+    minMaxZoomPreference: _platformZoomRangeFromMinMaxZoomPreferenceJson(
+        options['minMaxZoomPreference']),
+    mapToolbarEnabled: options['mapToolbarEnabled'] as bool?,
+    rotateGesturesEnabled: options['rotateGesturesEnabled'] as bool?,
+    scrollGesturesEnabled: options['scrollGesturesEnabled'] as bool?,
+    tiltGesturesEnabled: options['tiltGesturesEnabled'] as bool?,
+    trackCameraPosition: options['trackCameraPosition'] as bool?,
+    zoomControlsEnabled: options['zoomControlsEnabled'] as bool?,
+    zoomGesturesEnabled: options['zoomGesturesEnabled'] as bool?,
+    myLocationEnabled: options['myLocationEnabled'] as bool?,
+    myLocationButtonEnabled: options['myLocationButtonEnabled'] as bool?,
+    padding: padding == null
+        ? null
+        : PlatformEdgeInsets(
+            top: padding[0],
+            left: padding[1],
+            bottom: padding[2],
+            right: padding[3]),
+    indoorViewEnabled: options['indoorEnabled'] as bool?,
+    trafficEnabled: options['trafficEnabled'] as bool?,
+    buildingsEnabled: options['buildingsEnabled'] as bool?,
+    liteModeEnabled: options['liteModeEnabled'] as bool?,
+    cloudMapId: options['cloudMapId'] as String?,
+    style: options['style'] as String?,
+  );
+}
+
+PlatformMapType _platformMapTypeFromMapTypeIndex(int index) {
+  // This is inherently fragile, but see comment in updateMapOptions.
+  return switch (index) {
+    0 => PlatformMapType.none,
+    1 => PlatformMapType.normal,
+    2 => PlatformMapType.satellite,
+    3 => PlatformMapType.terrain,
+    4 => PlatformMapType.hybrid,
+    // For a new, unsupported type, just use normal.
+    _ => PlatformMapType.normal,
+  };
+}
+
+PlatformLatLng _platformLatLngFromLatLngJson(Object latLngJson) {
+  // See `LatLng.toJson`.
+  final List<double> list = (latLngJson as List<Object?>).cast<double>();
+  return PlatformLatLng(latitude: list[0], longitude: list[1]);
+}
+
+PlatformLatLngBounds? _platformLatLngBoundsFromLatLngBoundsJson(
+    Object? boundsJson) {
+  if (boundsJson == null) {
+    return null;
+  }
+  // See `LatLngBounds.toJson`.
+  final List<Object> boundsList = (boundsJson as List<Object?>).cast<Object>();
+  return PlatformLatLngBounds(
+      southwest: _platformLatLngFromLatLngJson(boundsList[0]),
+      northeast: _platformLatLngFromLatLngJson(boundsList[1]));
+}
+
+PlatformCameraTargetBounds?
+    _platformCameraTargetBoundsFromCameraTargetBoundsJson(Object? targetJson) {
+  if (targetJson == null) {
+    return null;
+  }
+  // See `CameraTargetBounds.toJson`.
+  return PlatformCameraTargetBounds(
+      bounds: _platformLatLngBoundsFromLatLngBoundsJson(
+          (targetJson as List<Object?>)[0]));
+}
+
+PlatformZoomRange? _platformZoomRangeFromMinMaxZoomPreferenceJson(
+    Object? zoomPrefsJson) {
+  if (zoomPrefsJson == null) {
+    return null;
+  }
+  // See `MinMaxZoomPreference.toJson`.
+  final List<double?> minMaxZoom =
+      (zoomPrefsJson as List<Object?>).cast<double?>();
+  return PlatformZoomRange(min: minMaxZoom[0], max: minMaxZoom[1]);
 }
 
 /// Update specification for a set of [TileOverlay]s.

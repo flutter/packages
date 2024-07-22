@@ -789,7 +789,7 @@ class GoogleMapController
 
   @Override
   public void updateMapConfiguration(@NonNull Messages.PlatformMapConfiguration configuration) {
-    Convert.interpretGoogleMapOptions(configuration.getJson(), this);
+    Convert.interpretMapConfiguration(configuration, this);
   }
 
   @Override

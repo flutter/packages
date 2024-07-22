@@ -4,6 +4,12 @@
 
 package io.flutter.plugins.googlemaps;
 
+import static com.google.android.gms.maps.GoogleMap.MAP_TYPE_HYBRID;
+import static com.google.android.gms.maps.GoogleMap.MAP_TYPE_NONE;
+import static com.google.android.gms.maps.GoogleMap.MAP_TYPE_NORMAL;
+import static com.google.android.gms.maps.GoogleMap.MAP_TYPE_SATELLITE;
+import static com.google.android.gms.maps.GoogleMap.MAP_TYPE_TERRAIN;
+
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -359,6 +365,22 @@ class Convert {
     return ((Number) o).intValue();
   }
 
+  static int toMapType(@NonNull Messages.PlatformMapType type) {
+    switch (type) {
+      case NONE:
+        return MAP_TYPE_NONE;
+      case NORMAL:
+        return MAP_TYPE_NORMAL;
+      case SATELLITE:
+        return MAP_TYPE_SATELLITE;
+      case TERRAIN:
+        return MAP_TYPE_TERRAIN;
+      case HYBRID:
+        return MAP_TYPE_HYBRID;
+    }
+    return MAP_TYPE_NORMAL;
+  }
+
   static @Nullable MapsInitializer.Renderer toMapRendererType(
       @Nullable Messages.PlatformRendererType type) {
     if (type == null) {
@@ -383,13 +405,6 @@ class Convert {
         .build();
   }
 
-  static Object latLngBoundsToJson(LatLngBounds latLngBounds) {
-    final Map<String, Object> arguments = new HashMap<>(2);
-    arguments.put("southwest", latLngToJson(latLngBounds.southwest));
-    arguments.put("northeast", latLngToJson(latLngBounds.northeast));
-    return arguments;
-  }
-
   static Messages.PlatformLatLngBounds latLngBoundsToPigeon(LatLngBounds latLngBounds) {
     return new Messages.PlatformLatLngBounds.Builder()
         .setNortheast(latLngToPigeon(latLngBounds.northeast))
@@ -397,35 +412,10 @@ class Convert {
         .build();
   }
 
-  static Object markerIdToJson(String markerId) {
-    if (markerId == null) {
-      return null;
-    }
-    final Map<String, Object> data = new HashMap<>(1);
-    data.put("markerId", markerId);
-    return data;
-  }
-
-  static Object polygonIdToJson(String polygonId) {
-    if (polygonId == null) {
-      return null;
-    }
-    final Map<String, Object> data = new HashMap<>(1);
-    data.put("polygonId", polygonId);
-    return data;
-  }
-
-  static Object polylineIdToJson(String polylineId) {
-    if (polylineId == null) {
-      return null;
-    }
-    final Map<String, Object> data = new HashMap<>(1);
-    data.put("polylineId", polylineId);
-    return data;
-  }
-
-  static Object latLngToJson(LatLng latLng) {
-    return Arrays.asList(latLng.latitude, latLng.longitude);
+  static @NonNull LatLngBounds latLngBoundsFromPigeon(
+      @NonNull Messages.PlatformLatLngBounds bounds) {
+    return new LatLngBounds(
+        latLngFromPigeon(bounds.getSouthwest()), latLngFromPigeon(bounds.getNortheast()));
   }
 
   static Messages.PlatformLatLng latLngToPigeon(LatLng latLng) {
@@ -633,6 +623,94 @@ class Convert {
     final Object style = data.get("style");
     if (style != null) {
       sink.setMapStyle(toString(style));
+    }
+  }
+
+  static void interpretMapConfiguration(
+      @NonNull Messages.PlatformMapConfiguration config, @NonNull GoogleMapOptionsSink sink) {
+    final Messages.PlatformCameraTargetBounds cameraTargetBounds = config.getCameraTargetBounds();
+    if (cameraTargetBounds != null) {
+      final @Nullable Messages.PlatformLatLngBounds bounds = cameraTargetBounds.getBounds();
+      sink.setCameraTargetBounds(bounds == null ? null : latLngBoundsFromPigeon(bounds));
+    }
+    final Boolean compassEnabled = config.getCompassEnabled();
+    if (compassEnabled != null) {
+      sink.setCompassEnabled(compassEnabled);
+    }
+    final Boolean mapToolbarEnabled = config.getMapToolbarEnabled();
+    if (mapToolbarEnabled != null) {
+      sink.setMapToolbarEnabled(mapToolbarEnabled);
+    }
+    final Messages.PlatformMapType mapType = config.getMapType();
+    if (mapType != null) {
+      sink.setMapType(toMapType(mapType));
+    }
+    final Messages.PlatformZoomRange minMaxZoomPreference = config.getMinMaxZoomPreference();
+    if (minMaxZoomPreference != null) {
+      final List<?> zoomPreferenceData = toList(minMaxZoomPreference);
+      sink.setMinMaxZoomPreference( //
+          toFloatWrapper(zoomPreferenceData.get(0)), //
+          toFloatWrapper(zoomPreferenceData.get(1)));
+    }
+    final Messages.PlatformEdgeInsets padding = config.getPadding();
+    if (padding != null) {
+      sink.setPadding(
+          padding.getTop().floatValue(),
+          padding.getLeft().floatValue(),
+          padding.getBottom().floatValue(),
+          padding.getRight().floatValue());
+    }
+    final Boolean rotateGesturesEnabled = config.getRotateGesturesEnabled();
+    if (rotateGesturesEnabled != null) {
+      sink.setRotateGesturesEnabled(rotateGesturesEnabled);
+    }
+    final Boolean scrollGesturesEnabled = config.getScrollGesturesEnabled();
+    if (scrollGesturesEnabled != null) {
+      sink.setScrollGesturesEnabled(scrollGesturesEnabled);
+    }
+    final Boolean tiltGesturesEnabled = config.getTiltGesturesEnabled();
+    if (tiltGesturesEnabled != null) {
+      sink.setTiltGesturesEnabled(tiltGesturesEnabled);
+    }
+    final Boolean trackCameraPosition = config.getTrackCameraPosition();
+    if (trackCameraPosition != null) {
+      sink.setTrackCameraPosition(trackCameraPosition);
+    }
+    final Boolean zoomGesturesEnabled = config.getZoomGesturesEnabled();
+    if (zoomGesturesEnabled != null) {
+      sink.setZoomGesturesEnabled(zoomGesturesEnabled);
+    }
+    final Boolean liteModeEnabled = config.getLiteModeEnabled();
+    if (liteModeEnabled != null) {
+      sink.setLiteModeEnabled(liteModeEnabled);
+    }
+    final Boolean myLocationEnabled = config.getMyLocationEnabled();
+    if (myLocationEnabled != null) {
+      sink.setMyLocationEnabled(myLocationEnabled);
+    }
+    final Boolean zoomControlsEnabled = config.getZoomControlsEnabled();
+    if (zoomControlsEnabled != null) {
+      sink.setZoomControlsEnabled(zoomControlsEnabled);
+    }
+    final Boolean myLocationButtonEnabled = config.getMyLocationButtonEnabled();
+    if (myLocationButtonEnabled != null) {
+      sink.setMyLocationButtonEnabled(myLocationButtonEnabled);
+    }
+    final Boolean indoorEnabled = config.getIndoorViewEnabled();
+    if (indoorEnabled != null) {
+      sink.setIndoorEnabled(indoorEnabled);
+    }
+    final Boolean trafficEnabled = config.getTrafficEnabled();
+    if (trafficEnabled != null) {
+      sink.setTrafficEnabled(trafficEnabled);
+    }
+    final Boolean buildingsEnabled = config.getBuildingsEnabled();
+    if (buildingsEnabled != null) {
+      sink.setBuildingsEnabled(buildingsEnabled);
+    }
+    final String style = config.getStyle();
+    if (style != null) {
+      sink.setMapStyle(style);
     }
   }
 

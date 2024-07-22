@@ -29,6 +29,15 @@ List<Object?> wrapResponse(
   return <Object?>[error.code, error.message, error.details];
 }
 
+/// Pigeon equivalent of MapType
+enum PlatformMapType {
+  none,
+  normal,
+  satellite,
+  terrain,
+  hybrid,
+}
+
 enum PlatformRendererType {
   legacy,
   latest,
@@ -275,6 +284,43 @@ class PlatformTileOverlay {
   }
 }
 
+/// Pigeon equivalent of Flutter's EdgeInsets.
+class PlatformEdgeInsets {
+  PlatformEdgeInsets({
+    required this.top,
+    required this.bottom,
+    required this.left,
+    required this.right,
+  });
+
+  double top;
+
+  double bottom;
+
+  double left;
+
+  double right;
+
+  Object encode() {
+    return <Object?>[
+      top,
+      bottom,
+      left,
+      right,
+    ];
+  }
+
+  static PlatformEdgeInsets decode(Object result) {
+    result as List<Object?>;
+    return PlatformEdgeInsets(
+      top: result[0]! as double,
+      bottom: result[1]! as double,
+      left: result[2]! as double,
+      right: result[3]! as double,
+    );
+  }
+}
+
 /// Pigeon equivalent of LatLng.
 class PlatformLatLng {
   PlatformLatLng({
@@ -366,27 +412,144 @@ class PlatformCluster {
   }
 }
 
-/// Pigeon equivalent of MapConfiguration.
-class PlatformMapConfiguration {
-  PlatformMapConfiguration({
-    required this.json,
+/// Pigeon equivalent of CameraTargetBounds.
+///
+/// As with the Dart version, it exists to distinguish between not setting a
+/// a target, and having an explicitly unbounded target (null [bounds]).
+class PlatformCameraTargetBounds {
+  PlatformCameraTargetBounds({
+    this.bounds,
   });
 
-  /// The configuration options, as JSON. This should only be set from
-  /// _jsonForMapConfiguration, and the native code must intepret it according
-  /// to the internal implementation details of that method.
-  Map<String?, Object?> json;
+  PlatformLatLngBounds? bounds;
 
   Object encode() {
     return <Object?>[
-      json,
+      bounds,
+    ];
+  }
+
+  static PlatformCameraTargetBounds decode(Object result) {
+    result as List<Object?>;
+    return PlatformCameraTargetBounds(
+      bounds: result[0] as PlatformLatLngBounds?,
+    );
+  }
+}
+
+/// Pigeon equivalent of MapConfiguration.
+class PlatformMapConfiguration {
+  PlatformMapConfiguration({
+    this.compassEnabled,
+    this.cameraTargetBounds,
+    this.mapType,
+    this.minMaxZoomPreference,
+    this.mapToolbarEnabled,
+    this.rotateGesturesEnabled,
+    this.scrollGesturesEnabled,
+    this.tiltGesturesEnabled,
+    this.trackCameraPosition,
+    this.zoomControlsEnabled,
+    this.zoomGesturesEnabled,
+    this.myLocationEnabled,
+    this.myLocationButtonEnabled,
+    this.padding,
+    this.indoorViewEnabled,
+    this.trafficEnabled,
+    this.buildingsEnabled,
+    this.liteModeEnabled,
+    this.cloudMapId,
+    this.style,
+  });
+
+  bool? compassEnabled;
+
+  PlatformCameraTargetBounds? cameraTargetBounds;
+
+  PlatformMapType? mapType;
+
+  PlatformZoomRange? minMaxZoomPreference;
+
+  bool? mapToolbarEnabled;
+
+  bool? rotateGesturesEnabled;
+
+  bool? scrollGesturesEnabled;
+
+  bool? tiltGesturesEnabled;
+
+  bool? trackCameraPosition;
+
+  bool? zoomControlsEnabled;
+
+  bool? zoomGesturesEnabled;
+
+  bool? myLocationEnabled;
+
+  bool? myLocationButtonEnabled;
+
+  PlatformEdgeInsets? padding;
+
+  bool? indoorViewEnabled;
+
+  bool? trafficEnabled;
+
+  bool? buildingsEnabled;
+
+  bool? liteModeEnabled;
+
+  String? cloudMapId;
+
+  String? style;
+
+  Object encode() {
+    return <Object?>[
+      compassEnabled,
+      cameraTargetBounds,
+      mapType,
+      minMaxZoomPreference,
+      mapToolbarEnabled,
+      rotateGesturesEnabled,
+      scrollGesturesEnabled,
+      tiltGesturesEnabled,
+      trackCameraPosition,
+      zoomControlsEnabled,
+      zoomGesturesEnabled,
+      myLocationEnabled,
+      myLocationButtonEnabled,
+      padding,
+      indoorViewEnabled,
+      trafficEnabled,
+      buildingsEnabled,
+      liteModeEnabled,
+      cloudMapId,
+      style,
     ];
   }
 
   static PlatformMapConfiguration decode(Object result) {
     result as List<Object?>;
     return PlatformMapConfiguration(
-      json: (result[0] as Map<Object?, Object?>?)!.cast<String?, Object?>(),
+      compassEnabled: result[0] as bool?,
+      cameraTargetBounds: result[1] as PlatformCameraTargetBounds?,
+      mapType: result[2] as PlatformMapType?,
+      minMaxZoomPreference: result[3] as PlatformZoomRange?,
+      mapToolbarEnabled: result[4] as bool?,
+      rotateGesturesEnabled: result[5] as bool?,
+      scrollGesturesEnabled: result[6] as bool?,
+      tiltGesturesEnabled: result[7] as bool?,
+      trackCameraPosition: result[8] as bool?,
+      zoomControlsEnabled: result[9] as bool?,
+      zoomGesturesEnabled: result[10] as bool?,
+      myLocationEnabled: result[11] as bool?,
+      myLocationButtonEnabled: result[12] as bool?,
+      padding: result[13] as PlatformEdgeInsets?,
+      indoorViewEnabled: result[14] as bool?,
+      trafficEnabled: result[15] as bool?,
+      buildingsEnabled: result[16] as bool?,
+      liteModeEnabled: result[17] as bool?,
+      cloudMapId: result[18] as String?,
+      style: result[19] as String?,
     );
   }
 }
@@ -458,13 +621,13 @@ class PlatformTileLayer {
 /// Possible outcomes of launching a URL.
 class PlatformZoomRange {
   PlatformZoomRange({
-    required this.min,
-    required this.max,
+    this.min,
+    this.max,
   });
 
-  double min;
+  double? min;
 
-  double max;
+  double? max;
 
   Object encode() {
     return <Object?>[
@@ -476,8 +639,8 @@ class PlatformZoomRange {
   static PlatformZoomRange decode(Object result) {
     result as List<Object?>;
     return PlatformZoomRange(
-      min: result[0]! as double,
-      max: result[1]! as double,
+      min: result[0] as double?,
+      max: result[1] as double?,
     );
   }
 }
@@ -513,29 +676,38 @@ class _PigeonCodec extends StandardMessageCodec {
     } else if (value is PlatformTileOverlay) {
       buffer.putUint8(137);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformLatLng) {
+    } else if (value is PlatformEdgeInsets) {
       buffer.putUint8(138);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformLatLngBounds) {
+    } else if (value is PlatformLatLng) {
       buffer.putUint8(139);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformCluster) {
+    } else if (value is PlatformLatLngBounds) {
       buffer.putUint8(140);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformMapConfiguration) {
+    } else if (value is PlatformCluster) {
       buffer.putUint8(141);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformPoint) {
+    } else if (value is PlatformCameraTargetBounds) {
       buffer.putUint8(142);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformTileLayer) {
+    } else if (value is PlatformMapConfiguration) {
       buffer.putUint8(143);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformZoomRange) {
+    } else if (value is PlatformPoint) {
       buffer.putUint8(144);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformRendererType) {
+    } else if (value is PlatformTileLayer) {
       buffer.putUint8(145);
+      writeValue(buffer, value.encode());
+    } else if (value is PlatformZoomRange) {
+      buffer.putUint8(146);
+      writeValue(buffer, value.encode());
+    } else if (value is PlatformMapType) {
+      buffer.putUint8(147);
+      writeValue(buffer, value.index);
+    } else if (value is PlatformRendererType) {
+      buffer.putUint8(148);
       writeValue(buffer, value.index);
     } else {
       super.writeValue(buffer, value);
@@ -564,20 +736,27 @@ class _PigeonCodec extends StandardMessageCodec {
       case 137:
         return PlatformTileOverlay.decode(readValue(buffer)!);
       case 138:
-        return PlatformLatLng.decode(readValue(buffer)!);
+        return PlatformEdgeInsets.decode(readValue(buffer)!);
       case 139:
-        return PlatformLatLngBounds.decode(readValue(buffer)!);
+        return PlatformLatLng.decode(readValue(buffer)!);
       case 140:
-        return PlatformCluster.decode(readValue(buffer)!);
+        return PlatformLatLngBounds.decode(readValue(buffer)!);
       case 141:
-        return PlatformMapConfiguration.decode(readValue(buffer)!);
+        return PlatformCluster.decode(readValue(buffer)!);
       case 142:
-        return PlatformPoint.decode(readValue(buffer)!);
+        return PlatformCameraTargetBounds.decode(readValue(buffer)!);
       case 143:
-        return PlatformTileLayer.decode(readValue(buffer)!);
+        return PlatformMapConfiguration.decode(readValue(buffer)!);
       case 144:
-        return PlatformZoomRange.decode(readValue(buffer)!);
+        return PlatformPoint.decode(readValue(buffer)!);
       case 145:
+        return PlatformTileLayer.decode(readValue(buffer)!);
+      case 146:
+        return PlatformZoomRange.decode(readValue(buffer)!);
+      case 147:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : PlatformMapType.values[value];
+      case 148:
         final int? value = readValue(buffer) as int?;
         return value == null ? null : PlatformRendererType.values[value];
       default:

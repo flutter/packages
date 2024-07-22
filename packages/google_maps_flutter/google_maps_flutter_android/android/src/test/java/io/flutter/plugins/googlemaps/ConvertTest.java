@@ -4,10 +4,13 @@
 
 package io.flutter.plugins.googlemaps;
 
+import static com.google.android.gms.maps.GoogleMap.MAP_TYPE_HYBRID;
 import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 import android.content.res.AssetManager;
@@ -19,6 +22,7 @@ import android.os.Build;
 import android.util.Base64;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.maps.android.clustering.algo.StaticCluster;
 import io.flutter.plugins.googlemaps.Convert.BitmapDescriptorFactoryWrapper;
 import io.flutter.plugins.googlemaps.Convert.FlutterInjectorWrapper;
@@ -49,6 +53,8 @@ public class ConvertTest {
   @Mock private BitmapDescriptor mockBitmapDescriptor;
 
   @Mock private FlutterInjectorWrapper flutterInjectorWrapper;
+
+  @Mock private GoogleMapOptionsSink optionsSink;
 
   AutoCloseable mockCloseable;
 
@@ -322,6 +328,201 @@ public class ConvertTest {
     }
 
     fail("Expected an IllegalArgumentException to be thrown");
+  }
+
+  @Test
+  public void interpretMapConfiguration_handlesNulls() {
+    final Messages.PlatformMapConfiguration config =
+        new Messages.PlatformMapConfiguration.Builder().build();
+    Convert.interpretMapConfiguration(config, optionsSink);
+    verifyNoInteractions(optionsSink);
+  }
+
+  @Test
+  public void interpretMapConfiguration_handlesCompassEnabled() {
+    final Messages.PlatformMapConfiguration config =
+        new Messages.PlatformMapConfiguration.Builder().setCompassEnabled(false).build();
+    Convert.interpretMapConfiguration(config, optionsSink);
+    verify(optionsSink, times(1)).setCompassEnabled(false);
+  }
+
+  @Test
+  public void interpretMapConfiguration_handlesMapToolbarEnabled() {
+    final Messages.PlatformMapConfiguration config =
+        new Messages.PlatformMapConfiguration.Builder().setMapToolbarEnabled(true).build();
+    Convert.interpretMapConfiguration(config, optionsSink);
+    verify(optionsSink, times(1)).setMapToolbarEnabled(true);
+  }
+
+  @Test
+  public void interpretMapConfiguration_handlesRotateGesturesEnabled() {
+    final Messages.PlatformMapConfiguration config =
+        new Messages.PlatformMapConfiguration.Builder().setRotateGesturesEnabled(false).build();
+    Convert.interpretMapConfiguration(config, optionsSink);
+    verify(optionsSink, times(1)).setRotateGesturesEnabled(false);
+  }
+
+  @Test
+  public void interpretMapConfiguration_handlesScrollGesturesEnabled() {
+    final Messages.PlatformMapConfiguration config =
+        new Messages.PlatformMapConfiguration.Builder().setScrollGesturesEnabled(true).build();
+    Convert.interpretMapConfiguration(config, optionsSink);
+    verify(optionsSink, times(1)).setScrollGesturesEnabled(true);
+  }
+
+  @Test
+  public void interpretMapConfiguration_handlesTiltGesturesEnabled() {
+    final Messages.PlatformMapConfiguration config =
+        new Messages.PlatformMapConfiguration.Builder().setTiltGesturesEnabled(false).build();
+    Convert.interpretMapConfiguration(config, optionsSink);
+    verify(optionsSink, times(1)).setTiltGesturesEnabled(false);
+  }
+
+  @Test
+  public void interpretMapConfiguration_handlesTrackCameraPosition() {
+    final Messages.PlatformMapConfiguration config =
+        new Messages.PlatformMapConfiguration.Builder().setTrackCameraPosition(true).build();
+    Convert.interpretMapConfiguration(config, optionsSink);
+    verify(optionsSink, times(1)).setTrackCameraPosition(true);
+  }
+
+  @Test
+  public void interpretMapConfiguration_handlesZoomControlsEnabled() {
+    final Messages.PlatformMapConfiguration config =
+        new Messages.PlatformMapConfiguration.Builder().setZoomControlsEnabled(false).build();
+    Convert.interpretMapConfiguration(config, optionsSink);
+    verify(optionsSink, times(1)).setZoomControlsEnabled(false);
+  }
+
+  @Test
+  public void interpretMapConfiguration_handlesZoomGesturesEnabled() {
+    final Messages.PlatformMapConfiguration config =
+        new Messages.PlatformMapConfiguration.Builder().setZoomGesturesEnabled(true).build();
+    Convert.interpretMapConfiguration(config, optionsSink);
+    verify(optionsSink, times(1)).setZoomGesturesEnabled(true);
+  }
+
+  @Test
+  public void interpretMapConfiguration_handlesMyLocationEnabled() {
+    final Messages.PlatformMapConfiguration config =
+        new Messages.PlatformMapConfiguration.Builder().setMyLocationEnabled(false).build();
+    Convert.interpretMapConfiguration(config, optionsSink);
+    verify(optionsSink, times(1)).setMyLocationEnabled(false);
+  }
+
+  @Test
+  public void interpretMapConfiguration_handlesMyLocationButtonEnabled() {
+    final Messages.PlatformMapConfiguration config =
+        new Messages.PlatformMapConfiguration.Builder().setMyLocationButtonEnabled(true).build();
+    Convert.interpretMapConfiguration(config, optionsSink);
+    verify(optionsSink, times(1)).setMyLocationButtonEnabled(true);
+  }
+
+  @Test
+  public void interpretMapConfiguration_handlesIndoorViewEnabled() {
+    final Messages.PlatformMapConfiguration config =
+        new Messages.PlatformMapConfiguration.Builder().setIndoorViewEnabled(false).build();
+    Convert.interpretMapConfiguration(config, optionsSink);
+    verify(optionsSink, times(1)).setIndoorEnabled(false);
+  }
+
+  @Test
+  public void interpretMapConfiguration_handlesTrafficEnabled() {
+    final Messages.PlatformMapConfiguration config =
+        new Messages.PlatformMapConfiguration.Builder().setTrafficEnabled(true).build();
+    Convert.interpretMapConfiguration(config, optionsSink);
+    verify(optionsSink, times(1)).setTrafficEnabled(true);
+  }
+
+  @Test
+  public void interpretMapConfiguration_handlesBuildingsEnabled() {
+    final Messages.PlatformMapConfiguration config =
+        new Messages.PlatformMapConfiguration.Builder().setBuildingsEnabled(false).build();
+    Convert.interpretMapConfiguration(config, optionsSink);
+    verify(optionsSink, times(1)).setBuildingsEnabled(false);
+  }
+
+  @Test
+  public void interpretMapConfiguration_handlesLiteModeEnabled() {
+    final Messages.PlatformMapConfiguration config =
+        new Messages.PlatformMapConfiguration.Builder().setLiteModeEnabled(true).build();
+    Convert.interpretMapConfiguration(config, optionsSink);
+    verify(optionsSink, times(1)).setLiteModeEnabled(true);
+  }
+
+  @Test
+  public void interpretMapConfiguration_handlesStyle() {
+    final Messages.PlatformMapConfiguration config =
+        new Messages.PlatformMapConfiguration.Builder().setStyle("foo").build();
+    Convert.interpretMapConfiguration(config, optionsSink);
+    verify(optionsSink, times(1)).setMapStyle("foo");
+  }
+
+  @Test
+  public void interpretMapConfiguration_handlesUnboundedCameraTargetBounds() {
+    final Messages.PlatformMapConfiguration config =
+        new Messages.PlatformMapConfiguration.Builder()
+            .setCameraTargetBounds(new Messages.PlatformCameraTargetBounds.Builder().build())
+            .build();
+    Convert.interpretMapConfiguration(config, optionsSink);
+    verify(optionsSink, times(1)).setCameraTargetBounds(null);
+  }
+
+  @Test
+  public void interpretMapConfiguration_handlesBoundedCameraTargetBounds() {
+    LatLngBounds bounds = new LatLngBounds(new LatLng(10, 20), new LatLng(30, 40));
+    final Messages.PlatformMapConfiguration config =
+        new Messages.PlatformMapConfiguration.Builder()
+            .setCameraTargetBounds(
+                new Messages.PlatformCameraTargetBounds.Builder()
+                    .setBounds(
+                        new Messages.PlatformLatLngBounds.Builder()
+                            .setSouthwest(
+                                new Messages.PlatformLatLng.Builder()
+                                    .setLatitude(bounds.southwest.latitude)
+                                    .setLongitude(bounds.southwest.longitude)
+                                    .build())
+                            .setNortheast(
+                                new Messages.PlatformLatLng.Builder()
+                                    .setLatitude(bounds.northeast.latitude)
+                                    .setLongitude(bounds.northeast.longitude)
+                                    .build())
+                            .build())
+                    .build())
+            .build();
+    Convert.interpretMapConfiguration(config, optionsSink);
+    verify(optionsSink, times(1)).setCameraTargetBounds(bounds);
+  }
+
+  @Test
+  public void interpretMapConfiguration_handlesMapType() {
+    final Messages.PlatformMapConfiguration config =
+        new Messages.PlatformMapConfiguration.Builder()
+            .setMapType(Messages.PlatformMapType.HYBRID)
+            .build();
+    Convert.interpretMapConfiguration(config, optionsSink);
+    verify(optionsSink, times(1)).setMapType(MAP_TYPE_HYBRID);
+  }
+
+  @Test
+  public void interpretMapConfiguration_handlesPadding() {
+    final double top = 1.0;
+    final double bottom = 2.0;
+    final double left = 3.0;
+    final double right = 4.0;
+    final Messages.PlatformMapConfiguration config =
+        new Messages.PlatformMapConfiguration.Builder()
+            .setPadding(
+                new Messages.PlatformEdgeInsets.Builder()
+                    .setTop(top)
+                    .setBottom(bottom)
+                    .setLeft(left)
+                    .setRight(right)
+                    .build())
+            .build();
+    Convert.interpretMapConfiguration(config, optionsSink);
+    verify(optionsSink, times(1))
+        .setPadding((float) top, (float) left, (float) bottom, (float) right);
   }
 
   private InputStream buildImageInputStream() {
