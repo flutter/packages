@@ -331,7 +331,7 @@
           
           double elapsed = [timer timeElapsedInMilliseconds];
           NSLog(@"batchTime: %f", elapsed);
-          NSLog(@"batchCount: %lu", count);
+          NSLog(@"batchCount: %lu", [batch count]);
         });
         start += count;
       }
