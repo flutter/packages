@@ -3,7 +3,9 @@
 Use of this source code is governed by a BSD-style license that can be
 found in the LICENSE file. -->
 <html>
+<!--#docregion script-tag-->
 <head>
+<!--#enddocregion script-tag-->
 <base href="$FLUTTER_BASE_HREF">
 
   <meta charset="UTF-8">
@@ -21,12 +23,13 @@ found in the LICENSE file. -->
 
   <title>Authentication Example</title>
   <link rel="manifest" href="manifest.json">
-</head>
+
 <!--#docregion script-tag-->
-<body>
   <!-- Include the GSI SDK below -->
   <script src="https://accounts.google.com/gsi/client" async defer></script>
+</head>
+<!--#enddocregion script-tag-->
+<body>
   <script src="flutter_bootstrap.js" async></script>
 </body>
-<!--#enddocregion script-tag-->
 </html>
