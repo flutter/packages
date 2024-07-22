@@ -319,18 +319,37 @@
           
           NSArray<FGMPlatformMarker *>* batch = [markersToAdd subarrayWithRange:NSMakeRange(start, count)];
           
+          double slice = [timer timeElapsedInMilliseconds];
+          NSLog(@"addSlice: %f", slice);
+          
+          double last = 0;
+          double next = 0;
+          double add0 = 0;
+          double add1 = 0;
           for (FGMPlatformMarker *marker in batch) {
+            last = [timer timeElapsedInMilliseconds];
             NSString *identifier = marker.json[@"markerId"];
             
             FLTGoogleMapMarkerController *controller = self.markerIdentifierToController[identifier];
+            
+            next = [timer timeElapsedInMilliseconds];
+            add0 += next - last;
+            last = next;
+            
             if (!controller) {
               return;
             }
             [controller setVisibleOption:marker.json];
+            
+            next = [timer timeElapsedInMilliseconds];
+            add1 += next - last;
+            last = next;
           }
           
-          double elapsed = [timer timeElapsedInMilliseconds];
-          NSLog(@"batchTime: %f", elapsed);
+          double total = [timer timeElapsedInMilliseconds];
+          NSLog(@"batch0: %f", add0);
+          NSLog(@"batch1: %f", add1);
+          NSLog(@"batchTotal: %f", total);
           NSLog(@"batchCount: %lu", [batch count]);
         });
         start += count;
