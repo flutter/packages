@@ -314,8 +314,10 @@
           count = total - start;
         }
         dispatch_sync(dispatch_get_main_queue(), ^{
+          Timer* timer = [[Timer alloc] init];
+          [timer startTimer];
+          
           NSArray<FGMPlatformMarker *>* batch = [markersToAdd subarrayWithRange:NSMakeRange(start, count)];
-          NSLog(@"addBatch: %lu", count);
           
           for (FGMPlatformMarker *marker in batch) {
             NSString *identifier = marker.json[@"markerId"];
@@ -326,6 +328,10 @@
             }
             [controller setVisibleOption:marker.json];
           }
+          
+          double elapsed = [timer timeElapsedInMilliseconds];
+          NSLog(@"batchTime: %f", elapsed);
+          NSLog(@"batchCount: %lu", count);
         });
         start += count;
       }
