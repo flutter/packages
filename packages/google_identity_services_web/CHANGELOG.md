@@ -1,3 +1,7 @@
+## 0.3.1+2
+
+* Updates `README.md` to reflect modern `index.html` script tag placement.
+
 ## 0.3.1+1
 
 * Uses `TrustedTypes` from `web: ^0.5.1`.
