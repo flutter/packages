@@ -8,9 +8,30 @@ import XCTest
 @testable import interactive_media_ads
 
 class TestProxyApiRegistrar: PigeonProxyApiRegistrar {
+  private class TestBinaryMessenger: NSObject, FlutterBinaryMessenger {
+    func send(onChannel channel: String, message: Data?) {
+
+    }
+
+    func send(
+      onChannel channel: String, message: Data?, binaryReply callback: FlutterBinaryReply? = nil
+    ) {
+
+    }
+
+    func setMessageHandlerOnChannel(
+      _ channel: String, binaryMessageHandler handler: FlutterBinaryMessageHandler? = nil
+    ) -> FlutterBinaryMessengerConnection {
+      return 0
+    }
+
+    func cleanUpConnection(_ connection: FlutterBinaryMessengerConnection) {
+
+    }
+  }
+
   init() {
-    let testBinaryMessenger = TestBinaryMessenger<String>(
-      codec: FlutterStandardMessageCodec.sharedInstance())
+    let testBinaryMessenger = TestBinaryMessenger()
     super.init(binaryMessenger: testBinaryMessenger, apiDelegate: ProxyApiDelegate())
   }
 }

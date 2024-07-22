@@ -11,7 +11,7 @@ class FlutterViewFactory: NSObject, FlutterPlatformViewFactory {
   unowned let instanceManager: PigeonInstanceManager
 
   class PlatformViewImpl: NSObject, FlutterPlatformView {
-    unowned let uiView: UIView
+    let uiView: UIView
 
     init(uiView: UIView) {
       self.uiView = uiView

@@ -30,7 +30,7 @@ class AndroidViewWidget extends StatelessWidget {
   }) : instanceManager = instanceManager ?? ima.PigeonInstanceManager.instance;
 
   /// The unique identifier for the view type to be embedded.
-  static const String viewType =
+  static const String _viewType =
       'interactive_media_ads.packages.flutter.dev/view';
 
   /// The reference to the Android native view that should be shown.
@@ -60,7 +60,7 @@ class AndroidViewWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return PlatformViewLink(
-      viewType: viewType,
+      viewType: _viewType,
       surfaceFactory: (
         BuildContext context,
         PlatformViewController controller,
@@ -88,7 +88,7 @@ class AndroidViewWidget extends StatelessWidget {
     if (displayWithHybridComposition) {
       return platformViewsServiceProxy.initExpensiveAndroidView(
         id: params.id,
-        viewType: viewType,
+        viewType: _viewType,
         layoutDirection: layoutDirection,
         creationParams: identifier,
         creationParamsCodec: const StandardMessageCodec(),
@@ -96,7 +96,7 @@ class AndroidViewWidget extends StatelessWidget {
     } else {
       return platformViewsServiceProxy.initSurfaceAndroidView(
         id: params.id,
-        viewType: viewType,
+        viewType: _viewType,
         layoutDirection: layoutDirection,
         creationParams: identifier,
         creationParamsCodec: const StandardMessageCodec(),

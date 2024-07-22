@@ -16,7 +16,7 @@ Downloaded by pub (not CocoaPods).
   s.source           = { :http => 'https://github.com/flutter/packages/tree/main/packages/interactive_media_ads/interactive_media_ads' }
   s.source_files = 'interactive_media_ads/Sources/interactive_media_ads/**/*.swift'
   s.dependency 'Flutter'
-  s.dependency 'GoogleAds-IMA-iOS-SDK', '~> 3.23.0'
+  s.dependency 'GoogleAds-IMA-iOS-SDK', '~> 3.23'
   s.platform = :ios, '12.0'
 
   # Flutter.framework does not contain a i386 slice.

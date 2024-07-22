@@ -5,7 +5,7 @@
 import 'package:meta/meta.dart';
 
 import '../platform_interface/platform_interface.dart';
-import 'enum_converter_extensions.dart';
+import 'enum_converter_utils.dart';
 import 'interactive_media_ads.g.dart' as ima;
 import 'interactive_media_ads_proxy.dart';
 
@@ -64,7 +64,7 @@ final class IOSAdsManagerDelegate extends PlatformAdsManagerDelegate {
   ) {
     return interfaceDelegate.target!._iosParams._proxy.newIMAAdsManagerDelegate(
       didReceiveAdEvent: (_, __, ima.IMAAdEvent event) {
-        late final AdEventType? eventType = event.type.asInterfaceAdEventType();
+        late final AdEventType? eventType = toInterfaceEventType(event.type);
         if (eventType == null) {
           return;
         }
@@ -76,8 +76,8 @@ final class IOSAdsManagerDelegate extends PlatformAdsManagerDelegate {
         interfaceDelegate.target?.params.onAdErrorEvent?.call(
           AdErrorEvent(
             error: AdError(
-              type: event.type.asInterfaceErrorType(),
-              code: event.code.asInterfaceErrorCode(),
+              type: toInterfaceErrorType(event.type),
+              code: toInterfaceErrorCode(event.code),
               message: event.message,
             ),
           ),

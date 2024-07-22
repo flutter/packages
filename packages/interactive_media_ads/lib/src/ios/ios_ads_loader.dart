@@ -7,7 +7,7 @@ import 'dart:async';
 import 'package:flutter/widgets.dart';
 
 import '../platform_interface/platform_interface.dart';
-import 'enum_converter_extensions.dart';
+import 'enum_converter_utils.dart';
 import 'interactive_media_ads.g.dart';
 import 'interactive_media_ads_proxy.dart';
 import 'ios_ad_display_container.dart';
@@ -98,8 +98,8 @@ base class IOSAdsLoader extends PlatformAdsLoader {
         interfaceLoader.target?._iosParams.onAdsLoadError(
           AdsLoadErrorData(
             error: AdError(
-              type: adErrorData.adError.type.asInterfaceErrorType(),
-              code: adErrorData.adError.code.asInterfaceErrorCode(),
+              type: toInterfaceErrorType(adErrorData.adError.type),
+              code: toInterfaceErrorCode(adErrorData.adError.code),
               message: adErrorData.adError.message,
             ),
           ),

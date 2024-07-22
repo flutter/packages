@@ -25,8 +25,4 @@ public class InteractiveMediaAdsPlugin: NSObject, FlutterPlugin {
     proxyApiRegistrar!.tearDown()
     proxyApiRegistrar = nil
   }
-
-  public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
-
-  }
 }
