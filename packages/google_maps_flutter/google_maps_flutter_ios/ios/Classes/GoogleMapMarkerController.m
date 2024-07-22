@@ -257,21 +257,49 @@
     GoogleMapMarkerIconCache* iconCache =
           [[GoogleMapMarkerIconCache alloc] initWithRegistrar:self.registrar
                                                   screenScale:screenScale];
+    double cache = [timer timeElapsedInMilliseconds];
+    NSLog(@"addCache: %f", cache);
+    
+    double last = 0;
+    double next = 0;
+    double add0 = 0;
+    double add1 = 0;
+    double add2 = 0;
+    double add3 = 0;
     for (FGMPlatformMarker *marker in markersToAdd) {
+      last = [timer timeElapsedInMilliseconds];
+      
       CLLocationCoordinate2D position = [FLTMarkersController getPosition:marker.json];
       NSString *identifier = marker.json[@"markerId"];
+      next = [timer timeElapsedInMilliseconds];
+      add0 += next - last;
+      last = next;
+    
       FLTGoogleMapMarkerController *controller =
           [[FLTGoogleMapMarkerController alloc] initWithPosition:position
                                                             identifier:identifier
                                                                mapView:self.mapView];
+      next = [timer timeElapsedInMilliseconds];
+      add1 += next - last;
+      last = next;
 
       [controller interpretMarkerOptions:marker.json iconCache:iconCache];
+      next = [timer timeElapsedInMilliseconds];
+      add2 += next - last;
+      last = next;
 
       self.markerIdentifierToController[identifier] = controller;
+      next = [timer timeElapsedInMilliseconds];
+      add3 += next - last;
+      last = next;
     }
     
-    double elapsed = [timer timeElapsedInMilliseconds];
-    NSLog(@"addLogic: %f", elapsed);
+    double total = [timer timeElapsedInMilliseconds];
+    NSLog(@"add0: %f", add0);
+    NSLog(@"add1: %f", add1);
+    NSLog(@"add2: %f", add2);
+    NSLog(@"add3: %f", add3);
+    NSLog(@"addTotal: %f", total);
 
     dispatch_async(dispatch_get_main_queue(), ^{
       Timer* timer = [[Timer alloc] init];
