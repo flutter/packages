@@ -496,8 +496,8 @@ void main() {
   });
 
   group('shared_preferences_async', () {
-    const SharedPreferencesAndroidOptions emptyOptions =
-        SharedPreferencesAndroidOptions();
+    const SharedPreferencesAsyncAndroidOptions emptyOptions =
+        SharedPreferencesAsyncAndroidOptions();
 
     const String stringKey = 'testString';
     const String boolKey = 'testBool';

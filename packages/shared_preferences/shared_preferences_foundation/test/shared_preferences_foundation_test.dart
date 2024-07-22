@@ -2,246 +2,331 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:shared_preferences_foundation/messages.g.dart';
-import 'package:shared_preferences_foundation/shared_preferences_foundation.dart';
+import 'package:shared_preferences_foundation/src/shared_preferences_foundation.dart';
+import 'package:shared_preferences_platform_interface/shared_preferences_platform_interface.dart';
 import 'package:shared_preferences_platform_interface/types.dart';
 
-void main() {
-  TestWidgetsFlutterBinding.ensureInitialized();
+import 'test_api.g.dart';
 
-  const String stringKey = 'testString';
-  const String boolKey = 'testBool';
-  const String intKey = 'testInt';
-  const String doubleKey = 'testDouble';
-  const String listKey = 'testList';
-
-  const String testString = 'hello world';
-  const bool testBool = true;
-  const int testInt = 42;
-  const double testDouble = 3.14159;
-  const List<String> testList = <String>['foo', 'bar'];
-
-  final SharedPreferencesFoundationOptions emptyOptions =
-      SharedPreferencesFoundationOptions();
-
-  SharedPreferencesFoundation getPreferences() {
-    final _FakeSharedPreferencesApi api = _FakeSharedPreferencesApi();
-    final SharedPreferencesFoundation preferences =
-        SharedPreferencesFoundation(api: api);
-
-    return preferences;
-  }
-
-  test('set and get String', () async {
-    final SharedPreferencesFoundation preferences = getPreferences();
-
-    await preferences.setString(stringKey, testString, emptyOptions);
-    expect(await preferences.getString(stringKey, emptyOptions), testString);
-  });
-
-  test('set and get bool', () async {
-    final SharedPreferencesFoundation preferences = getPreferences();
-
-    await preferences.setBool(boolKey, testBool, emptyOptions);
-    expect(await preferences.getBool(boolKey, emptyOptions), testBool);
-  });
-
-  test('set and get int', () async {
-    final SharedPreferencesFoundation preferences = getPreferences();
-
-    await preferences.setInt(intKey, testInt, emptyOptions);
-    expect(await preferences.getInt(intKey, emptyOptions), testInt);
-  });
-
-  test('set and get double', () async {
-    final SharedPreferencesFoundation preferences = getPreferences();
-
-    await preferences.setDouble(doubleKey, testDouble, emptyOptions);
-    expect(await preferences.getDouble(doubleKey, emptyOptions), testDouble);
-  });
-
-  test('set and get StringList', () async {
-    final SharedPreferencesFoundation preferences = getPreferences();
-
-    await preferences.setStringList(listKey, testList, emptyOptions);
-    expect(await preferences.getStringList(listKey, emptyOptions), testList);
-  });
-
-  test('getPreferences', () async {
-    final SharedPreferencesFoundation preferences = getPreferences();
-    await Future.wait(<Future<void>>[
-      preferences.setString(stringKey, testString, emptyOptions),
-      preferences.setBool(boolKey, testBool, emptyOptions),
-      preferences.setInt(intKey, testInt, emptyOptions),
-      preferences.setDouble(doubleKey, testDouble, emptyOptions),
-      preferences.setStringList(listKey, testList, emptyOptions)
-    ]);
-
-    final Map<String, Object?> gotAll = await preferences.getPreferences(
-        const GetPreferencesParameters(filter: PreferencesFilters()),
-        emptyOptions);
-
-    expect(gotAll.length, 5);
-    expect(gotAll[stringKey], testString);
-    expect(gotAll[boolKey], testBool);
-    expect(gotAll[intKey], testInt);
-    expect(gotAll[doubleKey], testDouble);
-    expect(gotAll[listKey], testList);
-  });
-
-  test('getPreferences with filter', () async {
-    final SharedPreferencesFoundation preferences = getPreferences();
-    await Future.wait(<Future<void>>[
-      preferences.setString(stringKey, testString, emptyOptions),
-      preferences.setBool(boolKey, testBool, emptyOptions),
-      preferences.setInt(intKey, testInt, emptyOptions),
-      preferences.setDouble(doubleKey, testDouble, emptyOptions),
-      preferences.setStringList(listKey, testList, emptyOptions)
-    ]);
-
-    final Map<String, Object?> gotAll = await preferences.getPreferences(
-        const GetPreferencesParameters(
-            filter:
-                PreferencesFilters(allowList: <String>{stringKey, boolKey})),
-        emptyOptions);
-
-    expect(gotAll.length, 2);
-    expect(gotAll[stringKey], testString);
-    expect(gotAll[boolKey], testBool);
-  });
-
-  test('getKeys', () async {
-    final SharedPreferencesFoundation preferences = getPreferences();
-    await Future.wait(<Future<void>>[
-      preferences.setString(stringKey, testString, emptyOptions),
-      preferences.setBool(boolKey, testBool, emptyOptions),
-      preferences.setInt(intKey, testInt, emptyOptions),
-      preferences.setDouble(doubleKey, testDouble, emptyOptions),
-      preferences.setStringList(listKey, testList, emptyOptions)
-    ]);
-
-    final Set<String> keys = await preferences.getKeys(
-      const GetPreferencesParameters(filter: PreferencesFilters()),
-      emptyOptions,
-    );
-
-    expect(keys.length, 5);
-    expect(keys, contains(stringKey));
-    expect(keys, contains(boolKey));
-    expect(keys, contains(intKey));
-    expect(keys, contains(doubleKey));
-    expect(keys, contains(listKey));
-  });
-
-  test('getKeys with filter', () async {
-    final SharedPreferencesFoundation preferences = getPreferences();
-    await Future.wait(<Future<void>>[
-      preferences.setString(stringKey, testString, emptyOptions),
-      preferences.setBool(boolKey, testBool, emptyOptions),
-      preferences.setInt(intKey, testInt, emptyOptions),
-      preferences.setDouble(doubleKey, testDouble, emptyOptions),
-      preferences.setStringList(listKey, testList, emptyOptions)
-    ]);
-
-    final Set<String> keys = await preferences.getKeys(
-      const GetPreferencesParameters(
-        filter: PreferencesFilters(allowList: <String>{stringKey, boolKey}),
-      ),
-      emptyOptions,
-    );
-
-    expect(keys.length, 2);
-    expect(keys, contains(stringKey));
-    expect(keys, contains(boolKey));
-  });
-
-  test('clear', () async {
-    final SharedPreferencesFoundation preferences = getPreferences();
-    await Future.wait(<Future<void>>[
-      preferences.setString(stringKey, testString, emptyOptions),
-      preferences.setBool(boolKey, testBool, emptyOptions),
-      preferences.setInt(intKey, testInt, emptyOptions),
-      preferences.setDouble(doubleKey, testDouble, emptyOptions),
-      preferences.setStringList(listKey, testList, emptyOptions)
-    ]);
-    await preferences.clear(
-        const ClearPreferencesParameters(filter: PreferencesFilters()),
-        emptyOptions);
-    expect(await preferences.getString(stringKey, emptyOptions), null);
-    expect(await preferences.getBool(boolKey, emptyOptions), null);
-    expect(await preferences.getInt(intKey, emptyOptions), null);
-    expect(await preferences.getDouble(doubleKey, emptyOptions), null);
-    expect(await preferences.getStringList(listKey, emptyOptions), null);
-  });
-
-  test('clear with filter', () async {
-    final SharedPreferencesFoundation preferences = getPreferences();
-    await Future.wait(<Future<void>>[
-      preferences.setString(stringKey, testString, emptyOptions),
-      preferences.setBool(boolKey, testBool, emptyOptions),
-      preferences.setInt(intKey, testInt, emptyOptions),
-      preferences.setDouble(doubleKey, testDouble, emptyOptions),
-      preferences.setStringList(listKey, testList, emptyOptions)
-    ]);
-    await preferences.clear(
-      const ClearPreferencesParameters(
-        filter: PreferencesFilters(allowList: <String>{stringKey, boolKey}),
-      ),
-      emptyOptions,
-    );
-    expect(await preferences.getString(stringKey, emptyOptions), null);
-    expect(await preferences.getBool(boolKey, emptyOptions), null);
-    expect(await preferences.getInt(intKey, emptyOptions), testInt);
-    expect(await preferences.getDouble(doubleKey, emptyOptions), testDouble);
-    expect(await preferences.getStringList(listKey, emptyOptions), testList);
-  });
-}
-
-class _FakeSharedPreferencesApi implements UserDefaultsApi {
+class _MockSharedPreferencesApi implements TestUserDefaultsApi {
   final Map<String, Object> items = <String, Object>{};
 
   @override
-  Future<bool> clear(
-      List<String?>? allowList, SharedPreferencesPigeonOptions options) async {
+  Map<String?, Object?> getAll(
+    String prefix,
+    List<String?>? allowList,
+  ) {
+    Set<String?>? allowSet;
     if (allowList != null) {
-      items.removeWhere((String key, _) => allowList.contains(key));
-    } else {
-      items.clear();
+      allowSet = Set<String>.from(allowList);
     }
-
-    return true;
+    return <String?, Object?>{
+      for (final String key in items.keys)
+        if (key.startsWith(prefix) &&
+            (allowSet == null || allowSet.contains(key)))
+          key: items[key]
+    };
   }
 
   @override
-  Future<Map<String?, Object?>> getAll(
-      List<String?>? allowList, SharedPreferencesPigeonOptions options) async {
-    final Map<String, Object> filteredItems = <String, Object>{...items};
-    if (allowList != null) {
-      filteredItems.removeWhere((String key, _) => !allowList.contains(key));
-    }
-    return filteredItems;
+  void remove(String key) {
+    items.remove(key);
   }
 
   @override
-  Future<List<String?>> getKeys(
-      List<String?>? allowList, SharedPreferencesPigeonOptions options) async {
-    final List<String> filteredItems = items.keys.toList();
-    if (allowList != null) {
-      filteredItems.removeWhere((String key) => !allowList.contains(key));
-    }
-    return filteredItems;
-  }
-
-  @override
-  Future<void> set(
-      String key, Object value, SharedPreferencesPigeonOptions options) async {
+  void setBool(String key, bool value) {
     items[key] = value;
   }
 
   @override
-  Future<Object?> getValue(
-      String key, SharedPreferencesPigeonOptions options) async {
-    return items[key];
+  void setDouble(String key, double value) {
+    items[key] = value;
   }
+
+  @override
+  void setValue(String key, Object value) {
+    items[key] = value;
+  }
+
+  @override
+  bool clear(String prefix, List<String?>? allowList) {
+    items.keys.toList().forEach((String key) {
+      if (key.startsWith(prefix) &&
+          (allowList == null || allowList.contains(key))) {
+        items.remove(key);
+      }
+    });
+    return true;
+  }
+}
+
+void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+  late _MockSharedPreferencesApi api;
+
+  const Map<String, Object> flutterTestValues = <String, Object>{
+    'flutter.String': 'hello world',
+    'flutter.Bool': true,
+    'flutter.Int': 42,
+    'flutter.Double': 3.14159,
+    'flutter.StringList': <String>['foo', 'bar'],
+  };
+
+  const Map<String, Object> prefixTestValues = <String, Object>{
+    'prefix.String': 'hello world',
+    'prefix.Bool': true,
+    'prefix.Int': 42,
+    'prefix.Double': 3.14159,
+    'prefix.StringList': <String>['foo', 'bar'],
+  };
+
+  const Map<String, Object> nonPrefixTestValues = <String, Object>{
+    'String': 'hello world',
+    'Bool': true,
+    'Int': 42,
+    'Double': 3.14159,
+    'StringList': <String>['foo', 'bar'],
+  };
+
+  final Map<String, Object> allTestValues = <String, Object>{};
+
+  allTestValues.addAll(flutterTestValues);
+  allTestValues.addAll(prefixTestValues);
+  allTestValues.addAll(nonPrefixTestValues);
+
+  setUp(() {
+    api = _MockSharedPreferencesApi();
+    TestUserDefaultsApi.setup(api);
+  });
+
+  test('registerWith', () async {
+    SharedPreferencesFoundation.registerWith();
+    expect(SharedPreferencesStorePlatform.instance,
+        isA<SharedPreferencesFoundation>());
+  });
+
+  test('remove', () async {
+    final SharedPreferencesFoundation plugin = SharedPreferencesFoundation();
+    api.items['flutter.hi'] = 'world';
+    expect(await plugin.remove('flutter.hi'), isTrue);
+    expect(api.items.containsKey('flutter.hi'), isFalse);
+  });
+
+  test('clear', () async {
+    final SharedPreferencesFoundation plugin = SharedPreferencesFoundation();
+    api.items['flutter.hi'] = 'world';
+    expect(await plugin.clear(), isTrue);
+    expect(api.items.containsKey('flutter.hi'), isFalse);
+  });
+
+  test('clearWithPrefix', () async {
+    final SharedPreferencesFoundation plugin = SharedPreferencesFoundation();
+    for (final String key in allTestValues.keys) {
+      api.items[key] = allTestValues[key]!;
+    }
+
+    Map<String?, Object?> all = await plugin.getAllWithPrefix('prefix.');
+    expect(all.length, 5);
+    await plugin.clearWithPrefix('prefix.');
+    all = await plugin.getAll();
+    expect(all.length, 5);
+    all = await plugin.getAllWithPrefix('prefix.');
+    expect(all.length, 0);
+  });
+
+  test('clearWithParameters', () async {
+    final SharedPreferencesFoundation plugin = SharedPreferencesFoundation();
+    for (final String key in allTestValues.keys) {
+      api.items[key] = allTestValues[key]!;
+    }
+
+    Map<String?, Object?> all = await plugin.getAllWithParameters(
+      GetAllParameters(
+        filter: PreferencesFilter(prefix: 'prefix.'),
+      ),
+    );
+    expect(all.length, 5);
+    await plugin.clearWithParameters(
+      ClearParameters(
+        filter: PreferencesFilter(prefix: 'prefix.'),
+      ),
+    );
+    all = await plugin.getAll();
+    expect(all.length, 5);
+    all = await plugin.getAllWithParameters(
+      GetAllParameters(
+        filter: PreferencesFilter(prefix: 'prefix.'),
+      ),
+    );
+    expect(all.length, 0);
+  });
+
+  test('clearWithParameters with allow list', () async {
+    final SharedPreferencesFoundation plugin = SharedPreferencesFoundation();
+    for (final String key in allTestValues.keys) {
+      api.items[key] = allTestValues[key]!;
+    }
+
+    Map<String?, Object?> all = await plugin.getAllWithParameters(
+      GetAllParameters(
+        filter: PreferencesFilter(prefix: 'prefix.'),
+      ),
+    );
+    expect(all.length, 5);
+    await plugin.clearWithParameters(
+      ClearParameters(
+        filter: PreferencesFilter(
+          prefix: 'prefix.',
+          allowList: <String>{'prefix.String'},
+        ),
+      ),
+    );
+    all = await plugin.getAll();
+    expect(all.length, 5);
+    all = await plugin.getAllWithParameters(
+      GetAllParameters(
+        filter: PreferencesFilter(prefix: 'prefix.'),
+      ),
+    );
+    expect(all.length, 4);
+  });
+
+  test('getAll', () async {
+    final SharedPreferencesFoundation plugin = SharedPreferencesFoundation();
+    for (final String key in flutterTestValues.keys) {
+      api.items[key] = flutterTestValues[key]!;
+    }
+    final Map<String?, Object?> all = await plugin.getAll();
+    expect(all.length, 5);
+    expect(all, flutterTestValues);
+  });
+
+  test('getAllWithPrefix', () async {
+    final SharedPreferencesFoundation plugin = SharedPreferencesFoundation();
+    for (final String key in allTestValues.keys) {
+      api.items[key] = allTestValues[key]!;
+    }
+    final Map<String?, Object?> all = await plugin.getAllWithPrefix('prefix.');
+    expect(all.length, 5);
+    expect(all, prefixTestValues);
+  });
+
+  test('getAllWithParameters', () async {
+    final SharedPreferencesFoundation plugin = SharedPreferencesFoundation();
+    for (final String key in allTestValues.keys) {
+      api.items[key] = allTestValues[key]!;
+    }
+    final Map<String?, Object?> all = await plugin.getAllWithParameters(
+      GetAllParameters(
+        filter: PreferencesFilter(prefix: 'prefix.'),
+      ),
+    );
+    expect(all.length, 5);
+    expect(all, prefixTestValues);
+  });
+
+  test('getAllWithParameters with allow list', () async {
+    final SharedPreferencesFoundation plugin = SharedPreferencesFoundation();
+    for (final String key in allTestValues.keys) {
+      api.items[key] = allTestValues[key]!;
+    }
+    final Map<String?, Object?> all = await plugin.getAllWithParameters(
+      GetAllParameters(
+        filter: PreferencesFilter(
+          prefix: 'prefix.',
+          allowList: <String>{'prefix.Bool'},
+        ),
+      ),
+    );
+    expect(all.length, 1);
+    expect(all['prefix.Bool'], prefixTestValues['prefix.Bool']);
+  });
+
+  test('setValue', () async {
+    final SharedPreferencesFoundation plugin = SharedPreferencesFoundation();
+    expect(await plugin.setValue('Bool', 'flutter.Bool', true), isTrue);
+    expect(api.items['flutter.Bool'], true);
+    expect(await plugin.setValue('Double', 'flutter.Double', 1.5), isTrue);
+    expect(api.items['flutter.Double'], 1.5);
+    expect(await plugin.setValue('Int', 'flutter.Int', 12), isTrue);
+    expect(api.items['flutter.Int'], 12);
+    expect(await plugin.setValue('String', 'flutter.String', 'hi'), isTrue);
+    expect(api.items['flutter.String'], 'hi');
+    expect(
+        await plugin
+            .setValue('StringList', 'flutter.StringList', <String>['hi']),
+        isTrue);
+    expect(api.items['flutter.StringList'], <String>['hi']);
+  });
+
+  test('setValue with unsupported type', () async {
+    final SharedPreferencesFoundation plugin = SharedPreferencesFoundation();
+    expect(() async {
+      await plugin.setValue('Map', 'flutter.key', <String, String>{});
+    }, throwsA(isA<PlatformException>()));
+  });
+
+  test('getAllWithNoPrefix', () async {
+    final SharedPreferencesFoundation plugin = SharedPreferencesFoundation();
+    for (final String key in allTestValues.keys) {
+      api.items[key] = allTestValues[key]!;
+    }
+    final Map<String?, Object?> all = await plugin.getAllWithPrefix('');
+    expect(all.length, 15);
+    expect(all, allTestValues);
+  });
+
+  test('clearWithNoPrefix', () async {
+    final SharedPreferencesFoundation plugin = SharedPreferencesFoundation();
+    for (final String key in allTestValues.keys) {
+      api.items[key] = allTestValues[key]!;
+    }
+
+    Map<String?, Object?> all = await plugin.getAllWithPrefix('');
+    expect(all.length, 15);
+    await plugin.clearWithPrefix('');
+    all = await plugin.getAllWithPrefix('');
+    expect(all.length, 0);
+  });
+
+  test('getAllWithNoPrefix with param', () async {
+    final SharedPreferencesFoundation plugin = SharedPreferencesFoundation();
+    for (final String key in allTestValues.keys) {
+      api.items[key] = allTestValues[key]!;
+    }
+    final Map<String?, Object?> all = await plugin.getAllWithParameters(
+      GetAllParameters(
+        filter: PreferencesFilter(prefix: ''),
+      ),
+    );
+    expect(all.length, 15);
+    expect(all, allTestValues);
+  });
+
+  test('clearWithNoPrefix with param', () async {
+    final SharedPreferencesFoundation plugin = SharedPreferencesFoundation();
+    for (final String key in allTestValues.keys) {
+      api.items[key] = allTestValues[key]!;
+    }
+
+    Map<String?, Object?> all = await plugin.getAllWithParameters(
+      GetAllParameters(
+        filter: PreferencesFilter(prefix: ''),
+      ),
+    );
+    expect(all.length, 15);
+    await plugin.clearWithParameters(
+      ClearParameters(
+        filter: PreferencesFilter(prefix: ''),
+      ),
+    );
+    all = await plugin.getAllWithParameters(
+      GetAllParameters(
+        filter: PreferencesFilter(prefix: ''),
+      ),
+    );
+    expect(all.length, 0);
+  });
 }

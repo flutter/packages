@@ -4,7 +4,7 @@
 
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:shared_preferences_android/legacy_shared_preferences_android.dart';
+import 'package:shared_preferences_android/shared_preferences_android.dart';
 import 'package:shared_preferences_android/src/messages.g.dart';
 import 'package:shared_preferences_platform_interface/shared_preferences_platform_interface.dart';
 import 'package:shared_preferences_platform_interface/types.dart';
@@ -12,7 +12,7 @@ import 'package:shared_preferences_platform_interface/types.dart';
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
   late _FakeSharedPreferencesApi api;
-  late LegacySharedPreferencesAndroid plugin;
+  late SharedPreferencesAndroid plugin;
 
   const Map<String, Object> flutterTestValues = <String, Object>{
     'flutter.String': 'hello world',
@@ -46,13 +46,13 @@ void main() {
 
   setUp(() {
     api = _FakeSharedPreferencesApi();
-    plugin = LegacySharedPreferencesAndroid(api: api);
+    plugin = SharedPreferencesAndroid(api: api);
   });
 
   test('registerWith', () async {
-    LegacySharedPreferencesAndroid.registerWith();
+    SharedPreferencesAndroid.registerWith();
     expect(SharedPreferencesStorePlatform.instance,
-        isA<LegacySharedPreferencesAndroid>());
+        isA<SharedPreferencesAndroid>());
   });
 
   test('remove', () async {

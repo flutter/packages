@@ -34,8 +34,8 @@ class SharedPreferencesDemo extends StatefulWidget {
 class SharedPreferencesDemoState extends State<SharedPreferencesDemo> {
   final SharedPreferencesAsyncPlatform _prefs =
       SharedPreferencesAsyncPlatform.instance!;
-  final SharedPreferencesAndroidOptions options =
-      const SharedPreferencesAndroidOptions();
+  final SharedPreferencesAsyncAndroidOptions options =
+      const SharedPreferencesAsyncAndroidOptions();
   static const String _counterKey = 'counter';
   late Future<int> _counter;
 

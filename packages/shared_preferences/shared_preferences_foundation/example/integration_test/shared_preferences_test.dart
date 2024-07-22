@@ -12,7 +12,7 @@ import 'package:shared_preferences_platform_interface/types.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  group('SharedPreferencesFoundation', () {
+  group('SharedPreferencesAsyncFoundation', () {
     const Map<String, Object> flutterTestValues = <String, Object>{
       'flutter.String': 'hello world',
       'flutter.Bool': true,
@@ -485,8 +485,8 @@ void main() {
   });
 
   group('shared_preferences_async', () {
-    final SharedPreferencesFoundationOptions emptyOptions =
-        SharedPreferencesFoundationOptions();
+    final SharedPreferencesAsyncFoundationOptions emptyOptions =
+        SharedPreferencesAsyncFoundationOptions();
 
     const String stringKey = 'testString';
     const String boolKey = 'testBool';

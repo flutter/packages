@@ -5,14 +5,14 @@
 import 'package:pigeon/pigeon.dart';
 
 @ConfigurePigeon(PigeonOptions(
-  dartOut: 'lib/messages.g.dart',
+  dartOut: 'lib/src/messages.g.dart',
   dartTestOut: 'test/test_api.g.dart',
   swiftOut:
       'darwin/shared_preferences_foundation/Sources/shared_preferences_foundation/messages.g.swift',
   copyrightHeader: 'pigeons/copyright_header.txt',
 ))
 @HostApi(dartHostTestHandler: 'TestUserDefaultsApi')
-abstract class DeprecatedUserDefaultsApi {
+abstract class LegacyUserDefaultsApi {
   void remove(String key);
   void setBool(String key, bool value);
   void setDouble(String key, double value);

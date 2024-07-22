@@ -148,10 +148,10 @@ internal class SharedPreferencesTest {
     plugin.clear(listOf(boolKey, stringKey), emptyOptions)
 
     Assert.assertNull(plugin.getBool(boolKey, emptyOptions))
-    Assert.assertNull(plugin.getBool(stringKey, emptyOptions))
-    Assert.assertNotNull(plugin.getBool(intKey, emptyOptions))
-    Assert.assertNotNull(plugin.getBool(doubleKey, emptyOptions))
-    Assert.assertNotNull(plugin.getBool(listKey, emptyOptions))
+    Assert.assertNull(plugin.getString(stringKey, emptyOptions))
+    Assert.assertNotNull(plugin.getInt(intKey, emptyOptions))
+    Assert.assertNotNull(plugin.getDouble(doubleKey, emptyOptions))
+    Assert.assertNotNull(plugin.getStringList(listKey, emptyOptions))
   }
 
   @Test

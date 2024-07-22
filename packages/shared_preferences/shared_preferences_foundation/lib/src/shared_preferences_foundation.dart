@@ -2,54 +2,41 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences_platform_interface/shared_preferences_platform_interface.dart';
 import 'package:shared_preferences_platform_interface/types.dart';
+import './messages.g.dart';
 
-import 'src/messages.g.dart';
+typedef _Setter = Future<void> Function(String key, Object value);
 
-/// The Android implementation of [SharedPreferencesStorePlatform].
-///
-/// This class implements the `package:shared_preferences` functionality for Android.
-class LegacySharedPreferencesAndroid extends SharedPreferencesStorePlatform {
-  /// Creates a new plugin implementation instance.
-  LegacySharedPreferencesAndroid({
-    @visibleForTesting SharedPreferencesApi? api,
-  }) : _api = api ?? SharedPreferencesApi();
-
-  final SharedPreferencesApi _api;
-
-  /// Registers this class as the default instance of [SharedPreferencesStorePlatform].
-  static void registerWith() {
-    SharedPreferencesStorePlatform.instance = LegacySharedPreferencesAndroid();
-  }
+/// iOS and macOS implementation of shared_preferences.
+class SharedPreferencesFoundation extends SharedPreferencesStorePlatform {
+  final LegacyUserDefaultsApi _api = LegacyUserDefaultsApi();
 
   static const String _defaultPrefix = 'flutter.';
 
-  @override
-  Future<bool> remove(String key) async {
-    return _api.remove(key);
-  }
+  late final Map<String, _Setter> _setters = <String, _Setter>{
+    'Bool': (String key, Object value) {
+      return _api.setBool(key, value as bool);
+    },
+    'Double': (String key, Object value) {
+      return _api.setDouble(key, value as double);
+    },
+    'Int': (String key, Object value) {
+      return _api.setValue(key, value as int);
+    },
+    'String': (String key, Object value) {
+      return _api.setValue(key, value as String);
+    },
+    'StringList': (String key, Object value) {
+      return _api.setValue(key, value as List<String?>);
+    },
+  };
 
-  @override
-  Future<bool> setValue(String valueType, String key, Object value) async {
-    switch (valueType) {
-      case 'String':
-        return _api.setString(key, value as String);
-      case 'Bool':
-        return _api.setBool(key, value as bool);
-      case 'Int':
-        return _api.setInt(key, value as int);
-      case 'Double':
-        return _api.setDouble(key, value as double);
-      case 'StringList':
-        return _api.setStringList(key, value as List<String>);
-    }
-    // TODO(tarrinneal): change to ArgumentError across all platforms.
-    throw PlatformException(
-        code: 'InvalidOperation',
-        message: '"$valueType" is not a supported type.');
+  /// Registers this class as the default instance of
+  /// [SharedPreferencesStorePlatform].
+  static void registerWith() {
+    SharedPreferencesStorePlatform.instance = SharedPreferencesFoundation();
   }
 
   @override
@@ -98,5 +85,23 @@ class LegacySharedPreferencesAndroid extends SharedPreferencesStorePlatform {
     final Map<String?, Object?> data =
         await _api.getAll(filter.prefix, filter.allowList?.toList());
     return data.cast<String, Object>();
+  }
+
+  @override
+  Future<bool> remove(String key) async {
+    await _api.remove(key);
+    return true;
+  }
+
+  @override
+  Future<bool> setValue(String valueType, String key, Object value) async {
+    final _Setter? setter = _setters[valueType];
+    if (setter == null) {
+      throw PlatformException(
+          code: 'InvalidOperation',
+          message: '"$valueType" is not a supported type.');
+    }
+    await setter(key, value);
+    return true;
   }
 }

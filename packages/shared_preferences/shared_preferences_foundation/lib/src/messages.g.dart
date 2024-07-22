@@ -50,8 +50,8 @@ class SharedPreferencesPigeonOptions {
   }
 }
 
-class _DeprecatedUserDefaultsApiCodec extends StandardMessageCodec {
-  const _DeprecatedUserDefaultsApiCodec();
+class _LegacyUserDefaultsApiCodec extends StandardMessageCodec {
+  const _LegacyUserDefaultsApiCodec();
   @override
   void writeValue(WriteBuffer buffer, Object? value) {
     if (value is SharedPreferencesPigeonOptions) {
@@ -73,20 +73,20 @@ class _DeprecatedUserDefaultsApiCodec extends StandardMessageCodec {
   }
 }
 
-class DeprecatedUserDefaultsApi {
-  /// Constructor for [DeprecatedUserDefaultsApi].  The [binaryMessenger] named argument is
+class LegacyUserDefaultsApi {
+  /// Constructor for [LegacyUserDefaultsApi].  The [binaryMessenger] named argument is
   /// available for dependency injection.  If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
-  DeprecatedUserDefaultsApi({BinaryMessenger? binaryMessenger})
+  LegacyUserDefaultsApi({BinaryMessenger? binaryMessenger})
       : __pigeon_binaryMessenger = binaryMessenger;
   final BinaryMessenger? __pigeon_binaryMessenger;
 
   static const MessageCodec<Object?> pigeonChannelCodec =
-      _DeprecatedUserDefaultsApiCodec();
+      _LegacyUserDefaultsApiCodec();
 
   Future<void> remove(String key) async {
     const String __pigeon_channelName =
-        'dev.flutter.pigeon.shared_preferences_foundation.DeprecatedUserDefaultsApi.remove';
+        'dev.flutter.pigeon.shared_preferences_foundation.LegacyUserDefaultsApi.remove';
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
@@ -110,7 +110,7 @@ class DeprecatedUserDefaultsApi {
 
   Future<void> setBool(String key, bool value) async {
     const String __pigeon_channelName =
-        'dev.flutter.pigeon.shared_preferences_foundation.DeprecatedUserDefaultsApi.setBool';
+        'dev.flutter.pigeon.shared_preferences_foundation.LegacyUserDefaultsApi.setBool';
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
@@ -134,7 +134,7 @@ class DeprecatedUserDefaultsApi {
 
   Future<void> setDouble(String key, double value) async {
     const String __pigeon_channelName =
-        'dev.flutter.pigeon.shared_preferences_foundation.DeprecatedUserDefaultsApi.setDouble';
+        'dev.flutter.pigeon.shared_preferences_foundation.LegacyUserDefaultsApi.setDouble';
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
@@ -158,7 +158,7 @@ class DeprecatedUserDefaultsApi {
 
   Future<void> setValue(String key, Object value) async {
     const String __pigeon_channelName =
-        'dev.flutter.pigeon.shared_preferences_foundation.DeprecatedUserDefaultsApi.setValue';
+        'dev.flutter.pigeon.shared_preferences_foundation.LegacyUserDefaultsApi.setValue';
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
@@ -183,7 +183,7 @@ class DeprecatedUserDefaultsApi {
   Future<Map<String?, Object?>> getAll(
       String prefix, List<String?>? allowList) async {
     const String __pigeon_channelName =
-        'dev.flutter.pigeon.shared_preferences_foundation.DeprecatedUserDefaultsApi.getAll';
+        'dev.flutter.pigeon.shared_preferences_foundation.LegacyUserDefaultsApi.getAll';
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
@@ -213,7 +213,7 @@ class DeprecatedUserDefaultsApi {
 
   Future<bool> clear(String prefix, List<String?>? allowList) async {
     const String __pigeon_channelName =
-        'dev.flutter.pigeon.shared_preferences_foundation.DeprecatedUserDefaultsApi.clear';
+        'dev.flutter.pigeon.shared_preferences_foundation.LegacyUserDefaultsApi.clear';
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,

@@ -11,7 +11,7 @@ import 'package:flutter/foundation.dart' show ReadBuffer, WriteBuffer;
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:shared_preferences_foundation/messages.g.dart';
+import 'package:shared_preferences_foundation/src/messages.g.dart';
 
 class _TestUserDefaultsApiCodec extends StandardMessageCodec {
   const _TestUserDefaultsApiCodec();
@@ -59,7 +59,7 @@ abstract class TestUserDefaultsApi {
     {
       final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
               Object?>(
-          'dev.flutter.pigeon.shared_preferences_foundation.DeprecatedUserDefaultsApi.remove',
+          'dev.flutter.pigeon.shared_preferences_foundation.LegacyUserDefaultsApi.remove',
           pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
@@ -70,11 +70,11 @@ abstract class TestUserDefaultsApi {
             .setMockDecodedMessageHandler<Object?>(__pigeon_channel,
                 (Object? message) async {
           assert(message != null,
-              'Argument for dev.flutter.pigeon.shared_preferences_foundation.DeprecatedUserDefaultsApi.remove was null.');
+              'Argument for dev.flutter.pigeon.shared_preferences_foundation.LegacyUserDefaultsApi.remove was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final String? arg_key = (args[0] as String?);
           assert(arg_key != null,
-              'Argument for dev.flutter.pigeon.shared_preferences_foundation.DeprecatedUserDefaultsApi.remove was null, expected non-null String.');
+              'Argument for dev.flutter.pigeon.shared_preferences_foundation.LegacyUserDefaultsApi.remove was null, expected non-null String.');
           try {
             api.remove(arg_key!);
             return wrapResponse(empty: true);
@@ -90,7 +90,7 @@ abstract class TestUserDefaultsApi {
     {
       final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
               Object?>(
-          'dev.flutter.pigeon.shared_preferences_foundation.DeprecatedUserDefaultsApi.setBool',
+          'dev.flutter.pigeon.shared_preferences_foundation.LegacyUserDefaultsApi.setBool',
           pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
@@ -101,14 +101,14 @@ abstract class TestUserDefaultsApi {
             .setMockDecodedMessageHandler<Object?>(__pigeon_channel,
                 (Object? message) async {
           assert(message != null,
-              'Argument for dev.flutter.pigeon.shared_preferences_foundation.DeprecatedUserDefaultsApi.setBool was null.');
+              'Argument for dev.flutter.pigeon.shared_preferences_foundation.LegacyUserDefaultsApi.setBool was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final String? arg_key = (args[0] as String?);
           assert(arg_key != null,
-              'Argument for dev.flutter.pigeon.shared_preferences_foundation.DeprecatedUserDefaultsApi.setBool was null, expected non-null String.');
+              'Argument for dev.flutter.pigeon.shared_preferences_foundation.LegacyUserDefaultsApi.setBool was null, expected non-null String.');
           final bool? arg_value = (args[1] as bool?);
           assert(arg_value != null,
-              'Argument for dev.flutter.pigeon.shared_preferences_foundation.DeprecatedUserDefaultsApi.setBool was null, expected non-null bool.');
+              'Argument for dev.flutter.pigeon.shared_preferences_foundation.LegacyUserDefaultsApi.setBool was null, expected non-null bool.');
           try {
             api.setBool(arg_key!, arg_value!);
             return wrapResponse(empty: true);
@@ -124,7 +124,7 @@ abstract class TestUserDefaultsApi {
     {
       final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
               Object?>(
-          'dev.flutter.pigeon.shared_preferences_foundation.DeprecatedUserDefaultsApi.setDouble',
+          'dev.flutter.pigeon.shared_preferences_foundation.LegacyUserDefaultsApi.setDouble',
           pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
@@ -135,14 +135,14 @@ abstract class TestUserDefaultsApi {
             .setMockDecodedMessageHandler<Object?>(__pigeon_channel,
                 (Object? message) async {
           assert(message != null,
-              'Argument for dev.flutter.pigeon.shared_preferences_foundation.DeprecatedUserDefaultsApi.setDouble was null.');
+              'Argument for dev.flutter.pigeon.shared_preferences_foundation.LegacyUserDefaultsApi.setDouble was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final String? arg_key = (args[0] as String?);
           assert(arg_key != null,
-              'Argument for dev.flutter.pigeon.shared_preferences_foundation.DeprecatedUserDefaultsApi.setDouble was null, expected non-null String.');
+              'Argument for dev.flutter.pigeon.shared_preferences_foundation.LegacyUserDefaultsApi.setDouble was null, expected non-null String.');
           final double? arg_value = (args[1] as double?);
           assert(arg_value != null,
-              'Argument for dev.flutter.pigeon.shared_preferences_foundation.DeprecatedUserDefaultsApi.setDouble was null, expected non-null double.');
+              'Argument for dev.flutter.pigeon.shared_preferences_foundation.LegacyUserDefaultsApi.setDouble was null, expected non-null double.');
           try {
             api.setDouble(arg_key!, arg_value!);
             return wrapResponse(empty: true);
@@ -158,7 +158,7 @@ abstract class TestUserDefaultsApi {
     {
       final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
               Object?>(
-          'dev.flutter.pigeon.shared_preferences_foundation.DeprecatedUserDefaultsApi.setValue',
+          'dev.flutter.pigeon.shared_preferences_foundation.LegacyUserDefaultsApi.setValue',
           pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
@@ -169,14 +169,14 @@ abstract class TestUserDefaultsApi {
             .setMockDecodedMessageHandler<Object?>(__pigeon_channel,
                 (Object? message) async {
           assert(message != null,
-              'Argument for dev.flutter.pigeon.shared_preferences_foundation.DeprecatedUserDefaultsApi.setValue was null.');
+              'Argument for dev.flutter.pigeon.shared_preferences_foundation.LegacyUserDefaultsApi.setValue was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final String? arg_key = (args[0] as String?);
           assert(arg_key != null,
-              'Argument for dev.flutter.pigeon.shared_preferences_foundation.DeprecatedUserDefaultsApi.setValue was null, expected non-null String.');
+              'Argument for dev.flutter.pigeon.shared_preferences_foundation.LegacyUserDefaultsApi.setValue was null, expected non-null String.');
           final Object? arg_value = (args[1] as Object?);
           assert(arg_value != null,
-              'Argument for dev.flutter.pigeon.shared_preferences_foundation.DeprecatedUserDefaultsApi.setValue was null, expected non-null Object.');
+              'Argument for dev.flutter.pigeon.shared_preferences_foundation.LegacyUserDefaultsApi.setValue was null, expected non-null Object.');
           try {
             api.setValue(arg_key!, arg_value!);
             return wrapResponse(empty: true);
@@ -192,7 +192,7 @@ abstract class TestUserDefaultsApi {
     {
       final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
               Object?>(
-          'dev.flutter.pigeon.shared_preferences_foundation.DeprecatedUserDefaultsApi.getAll',
+          'dev.flutter.pigeon.shared_preferences_foundation.LegacyUserDefaultsApi.getAll',
           pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
@@ -203,11 +203,11 @@ abstract class TestUserDefaultsApi {
             .setMockDecodedMessageHandler<Object?>(__pigeon_channel,
                 (Object? message) async {
           assert(message != null,
-              'Argument for dev.flutter.pigeon.shared_preferences_foundation.DeprecatedUserDefaultsApi.getAll was null.');
+              'Argument for dev.flutter.pigeon.shared_preferences_foundation.LegacyUserDefaultsApi.getAll was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final String? arg_prefix = (args[0] as String?);
           assert(arg_prefix != null,
-              'Argument for dev.flutter.pigeon.shared_preferences_foundation.DeprecatedUserDefaultsApi.getAll was null, expected non-null String.');
+              'Argument for dev.flutter.pigeon.shared_preferences_foundation.LegacyUserDefaultsApi.getAll was null, expected non-null String.');
           final List<String?>? arg_allowList =
               (args[1] as List<Object?>?)?.cast<String?>();
           try {
@@ -226,7 +226,7 @@ abstract class TestUserDefaultsApi {
     {
       final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
               Object?>(
-          'dev.flutter.pigeon.shared_preferences_foundation.DeprecatedUserDefaultsApi.clear',
+          'dev.flutter.pigeon.shared_preferences_foundation.LegacyUserDefaultsApi.clear',
           pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
@@ -237,11 +237,11 @@ abstract class TestUserDefaultsApi {
             .setMockDecodedMessageHandler<Object?>(__pigeon_channel,
                 (Object? message) async {
           assert(message != null,
-              'Argument for dev.flutter.pigeon.shared_preferences_foundation.DeprecatedUserDefaultsApi.clear was null.');
+              'Argument for dev.flutter.pigeon.shared_preferences_foundation.LegacyUserDefaultsApi.clear was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final String? arg_prefix = (args[0] as String?);
           assert(arg_prefix != null,
-              'Argument for dev.flutter.pigeon.shared_preferences_foundation.DeprecatedUserDefaultsApi.clear was null, expected non-null String.');
+              'Argument for dev.flutter.pigeon.shared_preferences_foundation.LegacyUserDefaultsApi.clear was null, expected non-null String.');
           final List<String?>? arg_allowList =
               (args[1] as List<Object?>?)?.cast<String?>();
           try {
