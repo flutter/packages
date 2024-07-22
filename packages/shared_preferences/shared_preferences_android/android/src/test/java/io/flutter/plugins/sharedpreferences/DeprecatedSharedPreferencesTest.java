@@ -26,9 +26,9 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 
-public class DeprecatedSharedPreferencesTest {
+public class LegacySharedPreferencesTest {
 
-  DeprecatedSharedPreferencesPlugin plugin;
+  LegacySharedPreferencesPlugin plugin;
 
   @Mock BinaryMessenger mockMessenger;
   @Mock FlutterPlugin.FlutterPluginBinding flutterPluginBinding;
@@ -44,7 +44,7 @@ public class DeprecatedSharedPreferencesTest {
     Mockito.when(flutterPluginBinding.getApplicationContext()).thenReturn(context);
     Mockito.when(context.getSharedPreferences(anyString(), anyInt())).thenReturn(sharedPrefs);
 
-    plugin = new DeprecatedSharedPreferencesPlugin(new ListEncoder());
+    plugin = new LegacySharedPreferencesPlugin(new ListEncoder());
     plugin.onAttachedToEngine(flutterPluginBinding);
   }
 
