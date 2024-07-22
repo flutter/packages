@@ -301,63 +301,61 @@
     NSLog(@"add3: %f", add3);
     NSLog(@"addTotal: %f", total);
 
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
-      dispatch_async(dispatch_get_main_queue(), ^{
+    dispatch_async(dispatch_get_main_queue(), ^{
+      Timer* timer = [[Timer alloc] init];
+      [timer startTimer];
+      
+      NSUInteger batchSize = 200;
+      NSUInteger start = 0;
+      NSUInteger total = [markersToAdd count];
+      while (start < total) {
+        NSUInteger count = batchSize;
+        if (start + count >= total) {
+          count = total - start;
+        }
+        
         Timer* timer = [[Timer alloc] init];
         [timer startTimer];
         
-        NSUInteger batchSize = 200;
-        NSUInteger start = 0;
-        NSUInteger total = [markersToAdd count];
-        while (start < total) {
-          NSUInteger count = batchSize;
-          if (start + count >= total) {
-            count = total - start;
+        NSArray<FGMPlatformMarker *>* batch = [markersToAdd subarrayWithRange:NSMakeRange(start, count)];
+        
+        double slice = [timer timeElapsedInMilliseconds];
+        NSLog(@"addSlice: %f", slice);
+        
+        double last = 0;
+        double next = 0;
+        double add0 = 0;
+        double add1 = 0;
+        for (FGMPlatformMarker *marker in batch) {
+          last = [timer timeElapsedInMilliseconds];
+          NSString *identifier = marker.json[@"markerId"];
+          
+          FLTGoogleMapMarkerController *controller = self.markerIdentifierToController[identifier];
+          
+          next = [timer timeElapsedInMilliseconds];
+          add0 += next - last;
+          last = next;
+          
+          if (!controller) {
+            return;
           }
+          [controller setVisibleOption:marker.json];
           
-          Timer* timer = [[Timer alloc] init];
-          [timer startTimer];
-          
-          NSArray<FGMPlatformMarker *>* batch = [markersToAdd subarrayWithRange:NSMakeRange(start, count)];
-          
-          double slice = [timer timeElapsedInMilliseconds];
-          NSLog(@"addSlice: %f", slice);
-          
-          double last = 0;
-          double next = 0;
-          double add0 = 0;
-          double add1 = 0;
-          for (FGMPlatformMarker *marker in batch) {
-            last = [timer timeElapsedInMilliseconds];
-            NSString *identifier = marker.json[@"markerId"];
-            
-            FLTGoogleMapMarkerController *controller = self.markerIdentifierToController[identifier];
-            
-            next = [timer timeElapsedInMilliseconds];
-            add0 += next - last;
-            last = next;
-            
-            if (!controller) {
-              return;
-            }
-            [controller setVisibleOption:marker.json];
-            
-            next = [timer timeElapsedInMilliseconds];
-            add1 += next - last;
-            last = next;
-          }
-          
-          double total = [timer timeElapsedInMilliseconds];
-          NSLog(@"batch0: %f", add0);
-          NSLog(@"batch1: %f", add1);
-          NSLog(@"batchTotal: %f", total);
-          NSLog(@"batchCount: %lu", [batch count]);
-          start += count;
+          next = [timer timeElapsedInMilliseconds];
+          add1 += next - last;
+          last = next;
         }
         
-        double elapsed = [timer timeElapsedInMilliseconds];
-        NSLog(@"addUI: %f", elapsed);
-      });
+        double total = [timer timeElapsedInMilliseconds];
+        NSLog(@"batch0: %f", add0);
+        NSLog(@"batch1: %f", add1);
+        NSLog(@"batchTotal: %f", total);
+        NSLog(@"batchCount: %lu", [batch count]);
+        start += count;
+      }
+      
+      double elapsed = [timer timeElapsedInMilliseconds];
+      NSLog(@"addUI: %f", elapsed);
     });
   });
 }
