@@ -164,6 +164,7 @@ class SharedPreferences {
       _setValue('StringList', key, value);
 
   /// Removes an entry from persistent storage.
+  /// Returns true if the value was successfully removed.
   Future<bool> remove(String key) {
     final String prefixedKey = '$_prefix$key';
     _preferenceCache.remove(key);
