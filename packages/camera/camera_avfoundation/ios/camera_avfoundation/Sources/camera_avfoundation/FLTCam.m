@@ -1360,7 +1360,10 @@ static void upgradeAudioSessionCategory(AVAudioSessionCategory category,
   _audioOutput = [[AVCaptureAudioDataOutput alloc] init];
 
   upgradeAudioSessionCategory(AVAudioSessionCategoryPlayAndRecord,
-                              AVAudioSessionCategoryOptionDefaultToSpeaker, 0);
+                              AVAudioSessionCategoryOptionDefaultToSpeaker |
+                              AVAudioSessionCategoryOptionAllowBluetooth |
+                              AVAudioSessionCategoryOptionAllowBluetoothA2DP |
+                              AVAudioSessionCategoryOptionAllowAirPlay, 0);
 
   if ([_audioCaptureSession canAddInput:audioInput]) {
     [_audioCaptureSession addInput:audioInput];
