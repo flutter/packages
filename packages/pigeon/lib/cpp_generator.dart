@@ -181,8 +181,9 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
       enumerate(anEnum.members, (int index, final EnumMember member) {
         addDocumentationComments(
             indent, member.documentationComments, _docCommentSpec);
+        final String valueName = 'k${_pascalCaseFromCamelCase(member.name)}';
         indent.writeln(
-            '${member.name} = $index${index == anEnum.members.length - 1 ? '' : ','}');
+            '$valueName = $index${index == anEnum.members.length - 1 ? '' : ','}');
       });
     });
   }

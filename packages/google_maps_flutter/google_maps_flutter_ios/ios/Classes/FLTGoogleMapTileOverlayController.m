@@ -89,17 +89,17 @@
 
 @interface FLTTileProviderController ()
 
-@property(strong, nonatomic) FlutterMethodChannel *methodChannel;
+@property(strong, nonatomic) FGMMapsCallbackApi *callbackHandler;
 
 @end
 
 @implementation FLTTileProviderController
 
-- (instancetype)init:(FlutterMethodChannel *)methodChannel
-    withTileOverlayIdentifier:(NSString *)identifier {
+- (instancetype)initWithTileOverlayIdentifier:(NSString *)identifier
+                              callbackHandler:(FGMMapsCallbackApi *)callbackHandler {
   self = [super init];
   if (self) {
-    _methodChannel = methodChannel;
+    _callbackHandler = callbackHandler;
     _tileOverlayIdentifier = identifier;
   }
   return self;
@@ -135,35 +135,23 @@
                    zoom:(NSUInteger)zoom
                receiver:(id<GMSTileReceiver>)receiver {
   dispatch_async(dispatch_get_main_queue(), ^{
-    [self.methodChannel invokeMethod:@"tileOverlay#getTile"
-        arguments:@{
-          @"tileOverlayId" : self.tileOverlayIdentifier,
-          @"x" : @(x),
-          @"y" : @(y),
-          @"zoom" : @(zoom)
-        }
-        result:^(id _Nullable result) {
-          UIImage *tileImage;
-          if ([result isKindOfClass:[NSDictionary class]]) {
-            FlutterStandardTypedData *typedData = (FlutterStandardTypedData *)result[@"data"];
-            if (typedData == nil) {
-              tileImage = kGMSTileLayerNoTile;
-            } else {
-              tileImage = [self handleResultTile:[UIImage imageWithData:typedData.data]];
-            }
-          } else {
-            if ([result isKindOfClass:[FlutterError class]]) {
-              FlutterError *error = (FlutterError *)result;
-              NSLog(@"Can't get tile: errorCode = %@, errorMessage = %@, details = %@",
-                    [error code], [error message], [error details]);
-            }
-            if ([result isKindOfClass:[FlutterMethodNotImplemented class]]) {
-              NSLog(@"Can't get tile: notImplemented");
-            }
-            tileImage = kGMSTileLayerNoTile;
-          }
-          [receiver receiveTileWithX:x y:y zoom:zoom image:tileImage];
-        }];
+    [self.callbackHandler
+        tileWithOverlayIdentifier:self.tileOverlayIdentifier
+                         location:[FGMPlatformPoint makeWithX:x y:y]
+                             zoom:zoom
+                       completion:^(FGMPlatformTile *_Nullable tile,
+                                    FlutterError *_Nullable error) {
+                         FlutterStandardTypedData *typedData = tile.data;
+                         UIImage *tileImage =
+                             typedData
+                                 ? [self handleResultTile:[UIImage imageWithData:typedData.data]]
+                                 : kGMSTileLayerNoTile;
+                         if (error) {
+                           NSLog(@"Can't get tile: errorCode = %@, errorMessage = %@, details = %@",
+                                 [error code], [error message], [error details]);
+                         }
+                         [receiver receiveTileWithX:x y:y zoom:zoom image:tileImage];
+                       }];
   });
 }
 
@@ -173,31 +161,31 @@
 
 @property(strong, nonatomic) NSMutableDictionary<NSString *, FLTGoogleMapTileOverlayController *>
     *tileOverlayIdentifierToController;
-@property(strong, nonatomic) FlutterMethodChannel *methodChannel;
+@property(strong, nonatomic) FGMMapsCallbackApi *callbackHandler;
 @property(weak, nonatomic) GMSMapView *mapView;
 
 @end
 
 @implementation FLTTileOverlaysController
 
-- (instancetype)init:(FlutterMethodChannel *)methodChannel
-             mapView:(GMSMapView *)mapView
-           registrar:(NSObject<FlutterPluginRegistrar> *)registrar {
+- (instancetype)initWithMapView:(GMSMapView *)mapView
+                callbackHandler:(FGMMapsCallbackApi *)callbackHandler
+                      registrar:(NSObject<FlutterPluginRegistrar> *)registrar {
   self = [super init];
   if (self) {
-    _methodChannel = methodChannel;
+    _callbackHandler = callbackHandler;
     _mapView = mapView;
     _tileOverlayIdentifierToController = [[NSMutableDictionary alloc] init];
   }
   return self;
 }
 
-- (void)addTileOverlays:(NSArray *)tileOverlaysToAdd {
-  for (NSDictionary *tileOverlay in tileOverlaysToAdd) {
+- (void)addJSONTileOverlays:(NSArray<NSDictionary<NSString *, id> *> *)tileOverlaysToAdd {
+  for (NSDictionary<NSString *, id> *tileOverlay in tileOverlaysToAdd) {
     NSString *identifier = [FLTTileOverlaysController identifierForTileOverlay:tileOverlay];
     FLTTileProviderController *tileProvider =
-        [[FLTTileProviderController alloc] init:self.methodChannel
-                      withTileOverlayIdentifier:identifier];
+        [[FLTTileProviderController alloc] initWithTileOverlayIdentifier:identifier
+                                                         callbackHandler:self.callbackHandler];
     FLTGoogleMapTileOverlayController *controller =
         [[FLTGoogleMapTileOverlayController alloc] initWithTileLayer:tileProvider
                                                              mapView:self.mapView
@@ -206,18 +194,29 @@
   }
 }
 
-- (void)changeTileOverlays:(NSArray *)tileOverlaysToChange {
-  for (NSDictionary *tileOverlay in tileOverlaysToChange) {
-    NSString *identifier = [FLTTileOverlaysController identifierForTileOverlay:tileOverlay];
+- (void)addTileOverlays:(NSArray<FGMPlatformTileOverlay *> *)tileOverlaysToAdd {
+  for (FGMPlatformTileOverlay *tileOverlay in tileOverlaysToAdd) {
+    NSString *identifier = [FLTTileOverlaysController identifierForTileOverlay:tileOverlay.json];
+    FLTTileProviderController *tileProvider =
+        [[FLTTileProviderController alloc] initWithTileOverlayIdentifier:identifier
+                                                         callbackHandler:self.callbackHandler];
     FLTGoogleMapTileOverlayController *controller =
-        self.tileOverlayIdentifierToController[identifier];
-    if (!controller) {
-      continue;
-    }
-    [controller interpretTileOverlayOptions:tileOverlay];
+        [[FLTGoogleMapTileOverlayController alloc] initWithTileLayer:tileProvider
+                                                             mapView:self.mapView
+                                                             options:tileOverlay.json];
+    self.tileOverlayIdentifierToController[identifier] = controller;
   }
 }
-- (void)removeTileOverlayWithIdentifiers:(NSArray *)identifiers {
+
+- (void)changeTileOverlays:(NSArray<FGMPlatformTileOverlay *> *)tileOverlaysToChange {
+  for (FGMPlatformTileOverlay *tileOverlay in tileOverlaysToChange) {
+    NSString *identifier = [FLTTileOverlaysController identifierForTileOverlay:tileOverlay.json];
+    FLTGoogleMapTileOverlayController *controller =
+        self.tileOverlayIdentifierToController[identifier];
+    [controller interpretTileOverlayOptions:tileOverlay.json];
+  }
+}
+- (void)removeTileOverlayWithIdentifiers:(NSArray<NSString *> *)identifiers {
   for (NSString *identifier in identifiers) {
     FLTGoogleMapTileOverlayController *controller =
         self.tileOverlayIdentifierToController[identifier];
@@ -232,9 +231,6 @@
 - (void)clearTileCacheWithIdentifier:(NSString *)identifier {
   FLTGoogleMapTileOverlayController *controller =
       self.tileOverlayIdentifierToController[identifier];
-  if (!controller) {
-    return;
-  }
   [controller clearTileCache];
 }
 
