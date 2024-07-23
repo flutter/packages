@@ -501,6 +501,8 @@ void main() {
     const List<String> testList = <String>['foo', 'bar'];
 
     Future<SharedPreferencesAsyncPlatform> getPreferences() async {
+      SharedPreferencesAsyncPlatform.instance =
+          SharedPreferencesAsyncFoundation();
       final SharedPreferencesAsyncPlatform preferences =
           SharedPreferencesAsyncPlatform.instance!;
       await preferences.clear(
