@@ -1,8 +1,17 @@
 ## 20.1.0
 
+* Adds GObject (Linux) support.
+
+## 21.0.0
+
+* **Breaking Change** [cpp] Fixes style of enum names. References to enum values
+  will need to be updated to `EnumType.kValue` style, instead of the previous
+  `EnumType.value`.
+
+## 20.0.2
+
 * [java] Adds `equals` and `hashCode` support for data classes.
 * [swift] Fully-qualifies types in Equatable extension test.
-* Adds GObject (Linux) support.
 
 ## 20.0.1
 

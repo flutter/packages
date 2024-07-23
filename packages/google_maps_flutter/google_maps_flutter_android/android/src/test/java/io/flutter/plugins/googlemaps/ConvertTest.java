@@ -81,7 +81,7 @@ public class ConvertTest {
   }
 
   @Test
-  public void ConvertClusterToJsonReturnsCorrectData() {
+  public void ConvertClusterToPigeonReturnsCorrectData() {
     String clusterManagerId = "cm_1";
     LatLng clusterPosition = new LatLng(43.00, -87.90);
     LatLng markerPosition1 = new LatLng(43.05, -87.95);
@@ -97,34 +97,26 @@ public class ConvertTest {
     marker2.setPosition(markerPosition2);
     cluster.add(marker2);
 
-    Object result = Convert.clusterToJson(clusterManagerId, cluster);
-    Map<?, ?> clusterData = (Map<?, ?>) result;
-    Assert.assertEquals(clusterManagerId, clusterData.get("clusterManagerId"));
+    Messages.PlatformCluster result = Convert.clusterToPigeon(clusterManagerId, cluster);
+    Assert.assertEquals(clusterManagerId, result.getClusterManagerId());
 
-    List<?> position = (List<?>) clusterData.get("position");
-    Assert.assertTrue(position instanceof List);
-    Assert.assertEquals(clusterPosition.latitude, (double) position.get(0), 1e-15);
-    Assert.assertEquals(clusterPosition.longitude, (double) position.get(1), 1e-15);
+    Messages.PlatformLatLng position = result.getPosition();
+    Assert.assertEquals(clusterPosition.latitude, position.getLatitude(), 1e-15);
+    Assert.assertEquals(clusterPosition.longitude, position.getLongitude(), 1e-15);
 
-    Map<?, ?> bounds = (Map<?, ?>) clusterData.get("bounds");
-    Assert.assertTrue(bounds instanceof Map);
-    List<?> southwest = (List<?>) bounds.get("southwest");
-    List<?> northeast = (List<?>) bounds.get("northeast");
-    Assert.assertTrue(southwest instanceof List);
-    Assert.assertTrue(northeast instanceof List);
-
+    Messages.PlatformLatLngBounds bounds = result.getBounds();
+    Messages.PlatformLatLng southwest = bounds.getSouthwest();
+    Messages.PlatformLatLng northeast = bounds.getNortheast();
     // bounding data should combine data from marker positions markerPosition1 and markerPosition2
-    Assert.assertEquals(markerPosition2.latitude, (double) southwest.get(0), 1e-15);
-    Assert.assertEquals(markerPosition1.longitude, (double) southwest.get(1), 1e-15);
-    Assert.assertEquals(markerPosition1.latitude, (double) northeast.get(0), 1e-15);
-    Assert.assertEquals(markerPosition2.longitude, (double) northeast.get(1), 1e-15);
+    Assert.assertEquals(markerPosition2.latitude, southwest.getLatitude(), 1e-15);
+    Assert.assertEquals(markerPosition1.longitude, southwest.getLongitude(), 1e-15);
+    Assert.assertEquals(markerPosition1.latitude, northeast.getLatitude(), 1e-15);
+    Assert.assertEquals(markerPosition2.longitude, northeast.getLongitude(), 1e-15);
 
-    Object markerIds = clusterData.get("markerIds");
-    Assert.assertTrue(markerIds instanceof List);
-    List<?> markerIdList = (List<?>) markerIds;
-    Assert.assertEquals(2, markerIdList.size());
-    Assert.assertEquals(marker1.markerId(), markerIdList.get(0));
-    Assert.assertEquals(marker2.markerId(), markerIdList.get(1));
+    List<String> markerIds = result.getMarkerIds();
+    Assert.assertEquals(2, markerIds.size());
+    Assert.assertEquals(marker1.markerId(), markerIds.get(0));
+    Assert.assertEquals(marker2.markerId(), markerIds.get(1));
   }
 
   @Test

@@ -1,3 +1,11 @@
+## 2.12.0
+
+* Converts Java->Dart calls to Pigeon.
+
+## 2.11.1
+
+* Fixes handling of Circle updates.
+
 ## 2.11.0
 
 * Converts additional platform calls to Pigeon.
