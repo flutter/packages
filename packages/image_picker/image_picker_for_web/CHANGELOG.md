@@ -1,3 +1,8 @@
+## 3.0.5
+
+* Supports `web: ">=0.5.1 <2.0.0"`.
+* Updates SDK version to Dart `^3.4.0`. Flutter `^3.22.0`.
+
 ## 3.0.4
 
 * Improves README example and updates it to use code excerpts.
