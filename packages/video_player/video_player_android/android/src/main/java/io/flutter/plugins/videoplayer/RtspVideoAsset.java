@@ -6,7 +6,9 @@ package io.flutter.plugins.videoplayer;
 
 import android.content.Context;
 import androidx.annotation.NonNull;
+import androidx.annotation.OptIn;
 import androidx.media3.common.MediaItem;
+import androidx.media3.common.util.UnstableApi;
 import androidx.media3.exoplayer.rtsp.RtspMediaSource;
 import androidx.media3.exoplayer.source.MediaSource;
 
