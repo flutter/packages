@@ -15,20 +15,18 @@ import androidx.media3.common.util.UnstableApi;
 import androidx.media3.datasource.DataSource;
 import androidx.media3.datasource.DefaultDataSource;
 import androidx.media3.datasource.DefaultHttpDataSource;
-import androidx.media3.exoplayer.rtsp.RtspMediaSource;
 import androidx.media3.exoplayer.source.DefaultMediaSourceFactory;
 import androidx.media3.exoplayer.source.MediaSource;
-import java.util.Locale;
 import java.util.Map;
 
-final class RemoteVideoAsset extends VideoAsset {
+final class HttpVideoAsset extends VideoAsset {
   private static final String DEFAULT_USER_AGENT = "ExoPlayer";
   private static final String HEADER_USER_AGENT = "User-Agent";
 
   @NonNull private final StreamingFormat streamingFormat;
   @NonNull private final Map<String, String> httpHeaders;
 
-  RemoteVideoAsset(
+  HttpVideoAsset(
       @Nullable String assetUrl,
       @NonNull StreamingFormat streamingFormat,
       @NonNull Map<String, String> httpHeaders) {
@@ -61,9 +59,6 @@ final class RemoteVideoAsset extends VideoAsset {
 
   @Override
   MediaSource.Factory getMediaSourceFactory(Context context) {
-    if (assetUrl.toLowerCase(Locale.US).startsWith("rtsp://")) {
-      return new RtspMediaSource.Factory();
-    }
     return getMediaSourceFactory(context, new DefaultHttpDataSource.Factory());
   }
 

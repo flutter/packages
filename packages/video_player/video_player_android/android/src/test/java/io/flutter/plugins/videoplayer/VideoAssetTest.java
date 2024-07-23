@@ -69,8 +69,8 @@ public final class VideoAssetTest {
 
     DefaultHttpDataSource.Factory mockFactory = mockHttpFactory();
 
-    // Cast to RemoteVideoAsset to call a testing-only method to intercept calls.
-    ((RemoteVideoAsset) asset)
+    // Cast to HttpVideoAsset to call a testing-only method to intercept calls.
+    ((HttpVideoAsset) asset)
         .getMediaSourceFactory(ApplicationProvider.getApplicationContext(), mockFactory);
 
     verify(mockFactory).setUserAgent("ExoPlayer");
@@ -89,8 +89,8 @@ public final class VideoAssetTest {
 
     DefaultHttpDataSource.Factory mockFactory = mockHttpFactory();
 
-    // Cast to RemoteVideoAsset to call a testing-only method to intercept calls.
-    ((RemoteVideoAsset) asset)
+    // Cast to HttpVideoAsset to call a testing-only method to intercept calls.
+    ((HttpVideoAsset) asset)
         .getMediaSourceFactory(ApplicationProvider.getApplicationContext(), mockFactory);
 
     verify(mockFactory).setUserAgent("FantasticalVideoBot");
@@ -127,8 +127,8 @@ public final class VideoAssetTest {
 
     DefaultHttpDataSource.Factory mockFactory = mockHttpFactory();
 
-    // Cast to RemoteVideoAsset to call a testing-only method to intercept calls.
-    ((RemoteVideoAsset) asset)
+    // Cast to HttpVideoAsset to call a testing-only method to intercept calls.
+    ((HttpVideoAsset) asset)
         .getMediaSourceFactory(ApplicationProvider.getApplicationContext(), mockFactory);
 
     verify(mockFactory).setUserAgent("ExoPlayer");
