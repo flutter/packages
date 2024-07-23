@@ -1,3 +1,8 @@
+## 0.3.2
+
+* Updates web code to package `web: ^1.0.0`.
+* Updates SDK version to Dart `^3.4.0`. Flutter `^3.22.0`.
+
 ## 0.3.1+1
 
 * Uses `TrustedTypes` from `web: ^0.5.1`.
