@@ -130,7 +130,7 @@ void main() {
           controller: controller,
           treeNodeBuilder: (
             BuildContext context,
-            TreeViewNode<Object?> node,
+            TreeViewNode<String> node,
             AnimationStyle toggleAnimationStyle,
           ) {
             returnedController ??= TreeViewController.of(context);
@@ -153,7 +153,7 @@ void main() {
           tree: simpleNodeSet,
           treeNodeBuilder: (
             BuildContext context,
-            TreeViewNode<Object?> node,
+            TreeViewNode<String> node,
             AnimationStyle toggleAnimationStyle,
           ) {
             returnedController ??= TreeViewController.maybeOf(context);
@@ -454,9 +454,9 @@ void main() {
         home: TreeView<String>(
           tree: simpleNodeSet,
           controller: controller,
-          onNodeToggle: (TreeViewNode<Object?> node) {
+          onNodeToggle: (TreeViewNode<String> node) {
             toggled = true;
-            toggledNode = node as TreeViewNode<String>;
+            toggledNode = node;
           },
         ),
       ));
@@ -476,13 +476,13 @@ void main() {
         home: TreeView<String>(
           tree: simpleNodeSet,
           controller: controller,
-          onNodeToggle: (TreeViewNode<Object?> node) {
+          onNodeToggle: (TreeViewNode<String> node) {
             toggled = true;
-            toggledNode = node as TreeViewNode<String>;
+            toggledNode = node;
           },
           treeNodeBuilder: (
             BuildContext context,
-            TreeViewNode<Object?> node,
+            TreeViewNode<String> node,
             AnimationStyle toggleAnimationStyle,
           ) {
             final Duration animationDuration = toggleAnimationStyle.duration ??
@@ -510,7 +510,7 @@ void main() {
                   // Spacer
                   const SizedBox(width: 8.0),
                   // Content
-                  Text(node.content.toString()),
+                  Text(node.content),
                 ]),
               ),
             );
@@ -535,11 +535,11 @@ void main() {
           tree: simpleNodeSet,
           treeNodeBuilder: (
             BuildContext context,
-            TreeViewNode<Object?> node,
+            TreeViewNode<String> node,
             AnimationStyle toggleAnimationStyle,
           ) {
             style ??= toggleAnimationStyle;
-            return Text(node.content.toString());
+            return Text(node.content);
           },
         ),
       ));
@@ -558,11 +558,11 @@ void main() {
           toggleAnimationStyle: AnimationStyle.noAnimation,
           treeNodeBuilder: (
             BuildContext context,
-            TreeViewNode<Object?> node,
+            TreeViewNode<String> node,
             AnimationStyle toggleAnimationStyle,
           ) {
             style = toggleAnimationStyle;
-            return Text(node.content.toString());
+            return Text(node.content);
           },
         ),
       ));
@@ -580,11 +580,11 @@ void main() {
           ),
           treeNodeBuilder: (
             BuildContext context,
-            TreeViewNode<Object?> node,
+            TreeViewNode<String> node,
             AnimationStyle toggleAnimationStyle,
           ) {
             style ??= toggleAnimationStyle;
-            return Text(node.content.toString());
+            return Text(node.content);
           },
         ),
       ));
@@ -692,6 +692,31 @@ void main() {
       expect(find.text('Child 2:0'), findsNothing);
       expect(find.text('Child 2:1'), findsNothing);
       expect(find.text('Root 3'), findsOneWidget);
+    });
+
+    test('should use the generic type for callbacks and builders', () {
+      final TreeView<String> treeView = TreeView<String>(
+        tree: simpleNodeSet,
+        treeNodeBuilder: (
+          BuildContext context,
+          TreeViewNode<String> node,
+          AnimationStyle animationStyle,
+        ) {
+          return TreeView.defaultTreeNodeBuilder(
+            context,
+            node,
+            animationStyle,
+          );
+        },
+        treeRowBuilder: (TreeViewNode<String> node) {
+          return TreeView.defaultTreeRowBuilder(node);
+        },
+        onNodeToggle: (TreeViewNode<String> node) {},
+      );
+
+      expect(treeView.onNodeToggle, isA<TreeViewNodeCallback<String>>());
+      expect(treeView.treeNodeBuilder, isA<TreeViewNodeBuilder<String>>());
+      expect(treeView.treeRowBuilder, isA<TreeViewRowBuilder<String>>());
     });
   });
 

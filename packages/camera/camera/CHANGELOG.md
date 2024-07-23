@@ -1,6 +1,7 @@
-## NEXT
+## 0.11.0+1
 
 * Updates minimum supported SDK version to Flutter 3.16/Dart 3.2.
+* Adds note to `README.md` about allowing image streaming in the background on Android.
 
 ## 0.11.0
 

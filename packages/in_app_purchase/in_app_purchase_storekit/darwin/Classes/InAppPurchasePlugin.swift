@@ -18,17 +18,14 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI {
   // note - the type should be FIAPPaymentQueueDelegate, but this is only available >= iOS 13,
   // FIAPPaymentQueueDelegate only gets set/used in registerPaymentQueueDelegateWithError or removePaymentQueueDelegateWithError, which both are ios13+ only
   private var paymentQueueDelegate: Any?
-  private var requestHandlers = Set<FIAPRequestHandler>()
-  private var handlerFactory: ((SKRequest) -> FIAPRequestHandler)
-  // TODO(louisehsu): Once tests are migrated to swift, we can use @testable import, and make theses vars private again and remove all instances of @objc
-  @objc
+  // Swift sets do not accept protocols, only concrete implementations
+  // TODO(louisehsu): Change it back to a set when removing obj-c dependancies from this file via type erasure
+  private var requestHandlers = NSHashTable<FLTRequestHandlerProtocol>()
+  private var handlerFactory: ((SKRequest) -> FLTRequestHandlerProtocol)
+  private var transactionObserverCallbackChannel: FLTMethodChannelProtocol?
   public var registrar: FlutterPluginRegistrar?
   // This property is optional, as it requires self to exist to be initialized.
-  @objc
-  public var paymentQueueHandler: FIAPaymentQueueHandler?
-  // This property is optional, as it needs to be set during plugin registration, and can't be directly initialized.
-  @objc
-  public var transactionObserverCallbackChannel: FlutterMethodChannel?
+  public var paymentQueueHandler: FLTPaymentQueueHandlerProtocol?
 
   public static func register(with registrar: FlutterPluginRegistrar) {
     #if os(iOS)
@@ -46,16 +43,17 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI {
     SetUpInAppPurchaseAPI(messenger, instance)
   }
 
-  @objc
   // This init is used for tests
   public init(
     receiptManager: FIAPReceiptManager,
-    handlerFactory: @escaping (SKRequest) -> FIAPRequestHandler = {
-      FIAPRequestHandler(request: $0)
-    }
+    handlerFactory: @escaping (SKRequest) -> FLTRequestHandlerProtocol = {
+      DefaultRequestHandler(requestHandler: FIAPRequestHandler(request: $0))
+    },
+    transactionCallbackChannel: FLTMethodChannelProtocol? = nil
   ) {
     self.receiptManager = receiptManager
     self.handlerFactory = handlerFactory
+    self.transactionObserverCallbackChannel = transactionCallbackChannel
     super.init()
   }
 
@@ -65,7 +63,7 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI {
     self.registrar = registrar
 
     self.paymentQueueHandler = FIAPaymentQueueHandler(
-      queue: SKPaymentQueue.default(),
+      queue: DefaultPaymentQueue(queue: SKPaymentQueue.default()),
       transactionsUpdated: { [weak self] transactions in
         self?.handleTransactionsUpdated(transactions)
       },
@@ -84,15 +82,14 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI {
       updatedDownloads: { [weak self] _ in
         self?.updatedDownloads()
       },
-      transactionCache: FIATransactionCache())
+      transactionCache: DefaultTransactionCache(cache: FIATransactionCache()))
     #if os(iOS)
       let messenger = registrar.messenger()
     #endif
     #if os(macOS)
       let messenger = registrar.messenger
     #endif
-    transactionObserverCallbackChannel = FlutterMethodChannel(
-      name: "plugins.flutter.io/in_app_purchase", binaryMessenger: messenger)
+    setupTransactionObserverChannelIfNeeded(withMessenger: messenger)
   }
 
   // MARK: - Pigeon Functions
@@ -128,7 +125,7 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI {
   ) {
     let request = getProductRequest(withIdentifiers: Set(productIdentifiers))
     let handler = handlerFactory(request)
-    requestHandlers.insert(handler)
+    requestHandlers.add(handler)
 
     handler.startProductRequest { [weak self] response, startProductRequestError in
       guard let self = self else { return }
@@ -282,7 +279,7 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI {
     let properties = receiptProperties?.compactMapValues { $0 } ?? [:]
     let request = getRefreshReceiptRequest(properties: properties.isEmpty ? nil : properties)
     let handler = handlerFactory(request)
-    requestHandlers.insert(handler)
+    requestHandlers.add(handler)
     handler.startProductRequest { [weak self] response, error in
       if let error = error {
         let requestError = FlutterError(
@@ -322,10 +319,10 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI {
           binaryMessenger: messenger)
 
         guard let unwrappedChannel = paymentQueueDelegateCallbackChannel else {
-          fatalError("registrar.messenger can not be nil.")
+          fatalError("paymentQueueDelegateCallbackChannel can not be nil.")
         }
         paymentQueueDelegate = FIAPPaymentQueueDelegate(
-          methodChannel: unwrappedChannel)
+          methodChannel: DefaultMethodChannel(channel: unwrappedChannel))
 
         getPaymentQueueHandler().delegate = paymentQueueDelegate as? SKPaymentQueueDelegate
       }
@@ -354,7 +351,6 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI {
     #endif
   }
 
-  @objc
   public func handleTransactionsUpdated(_ transactions: [SKPaymentTransaction]) {
     let translatedTransactions = transactions.map {
       FIAObjectTranslator.getMapFrom($0)
@@ -363,7 +359,6 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI {
       "updatedTransactions", arguments: translatedTransactions)
   }
 
-  @objc
   public func handleTransactionsRemoved(_ transactions: [SKPaymentTransaction]) {
     let translatedTransactions = transactions.map {
       FIAObjectTranslator.getMapFrom($0)
@@ -372,19 +367,16 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI {
       "removedTransactions", arguments: translatedTransactions)
   }
 
-  @objc
   public func handleTransactionRestoreFailed(_ error: NSError) {
     transactionObserverCallbackChannel?.invokeMethod(
       "restoreCompletedTransactionsFailed", arguments: FIAObjectTranslator.getMapFrom(error))
   }
 
-  @objc
   public func restoreCompletedTransactionsFinished() {
     transactionObserverCallbackChannel?.invokeMethod(
       "paymentQueueRestoreCompletedTransactionsFinished", arguments: nil)
   }
 
-  @objc
   public func shouldAddStorePayment(payment: SKPayment, product: SKProduct) -> Bool {
     productsCache[product.productIdentifier] = product
     transactionObserverCallbackChannel?.invokeMethod(
@@ -419,12 +411,26 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, InAppPurchaseAPI {
     return value is NSNull ? nil : value
   }
 
-  private func getPaymentQueueHandler() -> FIAPaymentQueueHandler {
+  private func getPaymentQueueHandler() -> FLTPaymentQueueHandlerProtocol {
     guard let paymentQueueHandler = self.paymentQueueHandler else {
       fatalError(
         "paymentQueueHandler can't be nil. Please ensure you're using init(registrar: FlutterPluginRegistrar)"
       )
     }
     return paymentQueueHandler
+  }
+
+  private func setupTransactionObserverChannelIfNeeded(
+    withMessenger messenger: FlutterBinaryMessenger
+  ) {
+    // If the channel is already set (e.g., injected in tests), don't overwrite it.
+    guard self.transactionObserverCallbackChannel == nil else { return }
+
+    self.transactionObserverCallbackChannel = DefaultMethodChannel(
+      channel: FlutterMethodChannel(
+        name: "plugins.flutter.io/in_app_purchase",
+        binaryMessenger: messenger
+      )
+    )
   }
 }

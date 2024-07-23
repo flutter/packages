@@ -12,6 +12,16 @@ final gmaps.LatLngBounds _nullGmapsLatLngBounds =
 // The TrustedType Policy used by this plugin. Used to sanitize InfoWindow contents.
 TrustedTypePolicy? _gmapsTrustedTypePolicy;
 
+// A cache for image size Futures to reduce redundant image fetch requests.
+// This cache should be always cleaned up after marker updates are processed.
+final Map<String, Future<Size?>> _bitmapSizeFutureCache =
+    <String, Future<Size?>>{};
+
+// A cache for blob URLs of bitmaps to avoid creating a new blob URL for the
+// same bitmap instances. This cache should be always cleaned up after marker
+// updates are processed.
+final Map<int, String> _bitmapBlobUrlCache = <int, String>{};
+
 // Converts a [Color] into a valid CSS value #RRGGBB.
 String _getCssColor(Color color) {
   return '#${color.value.toRadixString(16).padLeft(8, '0').substring(2)}';
@@ -197,7 +207,6 @@ CameraPosition _gmViewportToCameraPosition(gmaps.GMap map) {
 // Convert plugin objects to gmaps.Options objects
 // TODO(ditman): Move to their appropriate objects, maybe make them copy constructors?
 // Marker.fromMarker(anotherMarker, moreOptions);
-
 gmaps.InfoWindowOptions? _infoWindowOptionsFromMarker(Marker marker) {
   final String markerTitle = marker.infoWindow.title ?? '';
   final String markerSnippet = marker.infoWindow.snippet ?? '';
@@ -264,20 +273,132 @@ gmaps.Size? _gmSizeFromIconConfig(List<Object?> iconConfig, int sizeIndex) {
     final List<Object?>? rawIconSize = iconConfig[sizeIndex] as List<Object?>?;
     if (rawIconSize != null) {
       size = gmaps.Size(
-        rawIconSize[0] as num?,
-        rawIconSize[1] as num?,
+        rawIconSize[0]! as double,
+        rawIconSize[1]! as double,
       );
     }
   }
   return size;
 }
 
-// Converts a [BitmapDescriptor] into a [gmaps.Icon] that can be used in Markers.
-gmaps.Icon? _gmIconFromBitmapDescriptor(BitmapDescriptor bitmapDescriptor) {
-  final List<Object?> iconConfig = bitmapDescriptor.toJson() as List<Object?>;
+/// Sets the size of the Google Maps icon.
+void _setIconSize({
+  required Size size,
+  required gmaps.Icon icon,
+}) {
+  final gmaps.Size gmapsSize = gmaps.Size(size.width, size.height);
+  icon.size = gmapsSize;
+  icon.scaledSize = gmapsSize;
+}
 
+/// Determines the appropriate size for a bitmap based on its descriptor.
+///
+/// This method returns the icon's size based on the provided [width] and
+/// [height]. If both dimensions are null, the size is calculated using the
+/// [imagePixelRatio] based on the actual size of the image fetched from the
+/// [url]. If only one of the dimensions is provided, the other is calculated to
+/// maintain the image's original aspect ratio.
+Future<Size?> _getBitmapSize(MapBitmap mapBitmap, String url) async {
+  final double? width = mapBitmap.width;
+  final double? height = mapBitmap.height;
+  if (width != null && height != null) {
+    // If both, width and height are set, return the provided dimensions.
+    return Size(width, height);
+  } else {
+    assert(
+        url.isNotEmpty, 'URL must not be empty when calculating dimensions.');
+
+    final Size? bitmapSize = await _bitmapSizeFutureCache.putIfAbsent(url, () {
+      return _fetchBitmapSize(url);
+    });
+
+    if (bitmapSize == null) {
+      // If bitmap size is null, the image is invalid,
+      // and the icon size cannot be calculated.
+      return null;
+    }
+
+    double targetWidth = bitmapSize.width;
+    double targetHeight = bitmapSize.height;
+    if (width == null && height == null) {
+      // Width and height are not provided, so the imagePixelRatio is used to
+      // calculate the target size.
+      targetWidth /= mapBitmap.imagePixelRatio;
+      targetHeight /= mapBitmap.imagePixelRatio;
+    } else {
+      final double aspectRatio = bitmapSize.width / bitmapSize.height;
+      targetWidth = width ?? (height ?? bitmapSize.height) * aspectRatio;
+      targetHeight = height ?? (width ?? bitmapSize.width) / aspectRatio;
+    }
+
+    // Return the calculated size.
+    return Size(targetWidth, targetHeight);
+  }
+}
+
+/// Fetches the size of the bitmap from a given URL and caches the result.
+///
+/// This method attempts to fetch the image size for a given [url].
+Future<Size?> _fetchBitmapSize(String url) async {
+  final HTMLImageElement image = HTMLImageElement()..src = url;
+
+  // Wait for the onLoad or onError event.
+  await Future.any(<Future<Event>>[image.onLoad.first, image.onError.first]);
+
+  if (image.width == 0 || image.height == 0) {
+    // Complete with null for invalid images.
+    return null;
+  }
+
+  // Complete with the image size for valid images.
+  return Size(image.width.toDouble(), image.height.toDouble());
+}
+
+/// Cleans up the caches used for bitmap size conversion and URL storage.
+///
+/// This method should be called after marker updates are processed to ensure
+/// that memory usage is optimized by removing completed or outdated cache
+/// entries.
+void _cleanUpBitmapConversionCaches() {
+  _bitmapSizeFutureCache.clear();
+  _bitmapBlobUrlCache.clear();
+}
+
+// Converts a [BitmapDescriptor] into a [gmaps.Icon] that can be used in Markers.
+Future<gmaps.Icon?> _gmIconFromBitmapDescriptor(
+    BitmapDescriptor bitmapDescriptor) async {
   gmaps.Icon? icon;
 
+  if (bitmapDescriptor is MapBitmap) {
+    final String url = switch (bitmapDescriptor) {
+      (final BytesMapBitmap bytesMapBitmap) =>
+        _bitmapBlobUrlCache.putIfAbsent(bytesMapBitmap.byteData.hashCode, () {
+          final Blob blob =
+              Blob(<JSUint8Array>[bytesMapBitmap.byteData.toJS].toJS);
+          return URL.createObjectURL(blob as JSObject);
+        }),
+      (final AssetMapBitmap assetMapBitmap) =>
+        ui_web.assetManager.getAssetUrl(assetMapBitmap.assetName),
+      _ => throw UnimplementedError(),
+    };
+
+    icon = gmaps.Icon()..url = url;
+
+    switch (bitmapDescriptor.bitmapScaling) {
+      case MapBitmapScaling.auto:
+        final Size? size = await _getBitmapSize(bitmapDescriptor, url);
+        if (size != null) {
+          _setIconSize(size: size, icon: icon);
+        }
+      case MapBitmapScaling.none:
+        break;
+    }
+    return icon;
+  }
+
+  // The following code is for the deprecated BitmapDescriptor.fromBytes
+  // and BitmapDescriptor.fromAssetImage.
+  final List<Object?> iconConfig = bitmapDescriptor.toJson() as List<Object?>;
   if (iconConfig[0] == 'fromAssetImage') {
     assert(iconConfig.length >= 2);
     // iconConfig[2] contains the DPIs of the screen, but that information is
@@ -315,16 +436,15 @@ gmaps.Icon? _gmIconFromBitmapDescriptor(BitmapDescriptor bitmapDescriptor) {
         ..scaledSize = size;
     }
   }
-
   return icon;
 }
 
 // Computes the options for a new [gmaps.Marker] from an incoming set of options
 // [marker], and the existing marker registered with the map: [currentMarker].
-gmaps.MarkerOptions _markerOptionsFromMarker(
+Future<gmaps.MarkerOptions> _markerOptionsFromMarker(
   Marker marker,
   gmaps.Marker? currentMarker,
-) {
+) async {
   return gmaps.MarkerOptions()
     ..position = gmaps.LatLng(
       marker.position.latitude,
@@ -335,7 +455,7 @@ gmaps.MarkerOptions _markerOptionsFromMarker(
     ..visible = marker.visible
     ..opacity = marker.alpha
     ..draggable = marker.draggable
-    ..icon = _gmIconFromBitmapDescriptor(marker.icon);
+    ..icon = await _gmIconFromBitmapDescriptor(marker.icon);
   // TODO(ditman): Compute anchor properly, otherwise infowindows attach to the wrong spot.
   // Flat and Rotation are not supported directly on the web.
 }

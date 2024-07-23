@@ -1,5 +1,19 @@
-## NEXT
+## 2.8.0
 
+* Deprecates `BitmapDescriptor.fromAssetImage` in favor of `BitmapDescriptor.asset` and `AssetMapBitmap.create`.
+* Deprecates `BitmapDescriptor.fromBytes` in favor of `BitmapDescriptor.bytes` and `BytesMapBitmap`
+
+## 2.7.1
+
+* Undeprecates `BitmapDescriptor.fromAssetImage`.
+* Undeprecates `BitmapDescriptor.fromBytes`.
+* Fixes issues with deprecation in version 2.7.0.
+
+## 2.7.0
+
+* Adds better support for marker size and scaling behaviour with `AssetMapBitmap` and `BytesMapBitmap`.
+* Deprecates `BitmapDescriptor.fromAssetImage` in favor of `BitmapDescriptor.asset` and `AssetMapBitmap.create`.
+* Deprecates `BitmapDescriptor.fromBytes` in favor of `BitmapDescriptor.bytes` and `BytesMapBitmap`
 * Updates minimum supported SDK version to Flutter 3.16/Dart 3.2.
 
 ## 2.6.0

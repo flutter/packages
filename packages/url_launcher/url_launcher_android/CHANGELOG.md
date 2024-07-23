@@ -1,3 +1,20 @@
+## 6.3.5
+
+* Bumps androidx.core:core from 1.10.1 to 1.13.1.
+
+## 6.3.4
+
+* Updates Android Gradle Plugin to 8.5.1.
+
+## 6.3.3
+
+* Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+* Removes support for apps using the v1 Android embedding.
+
+## 6.3.2
+
+* Bumps androidx.annotation:annotation from 1.7.1 to 1.8.0.
+
 ## 6.3.1
 
 * Updates minSdkVersion to 19.

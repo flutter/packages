@@ -1,3 +1,28 @@
+## 0.8.12+7
+
+* Bumps androidx.activity:activity from 1.8.2 to 1.9.0.
+
+## 0.8.12+6
+
+* Bumps androidx.activity:activity from 1.7.2 to 1.8.2.
+
+## 0.8.12+5
+
+* Updates Android Gradle Plugin to 8.5.1.
+
+## 0.8.12+4
+
+* Bumps androidx.core:core from 1.10.1 to 1.13.1.
+
+## 0.8.12+3
+
+* Update documentation to note that limit is not always supported.
+
+## 0.8.12+2
+
+* Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+* Removes support for apps using the v1 Android embedding.
+
 ## 0.8.12+1
 
 * Fixes another app crash case on Android 12+, and refactors getting of paths from intents.

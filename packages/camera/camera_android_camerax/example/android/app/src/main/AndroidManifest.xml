@@ -1,5 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="io.flutter.plugins.cameraxexample">
+   <uses-permission android:name="android.permission.FOREGROUND_SERVICE_CAMERA" />
    <application
         android:label="camera_android_camerax_example"
         android:name="${applicationName}"

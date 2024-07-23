@@ -100,13 +100,13 @@ class TreeExampleState extends State<TreeExample> {
               controller: horizontalController,
             ),
             tree: _tree,
-            onNodeToggle: (TreeViewNode<Object?> node) {
+            onNodeToggle: (TreeViewNode<String> node) {
               setState(() {
-                _selectedNode = node as TreeViewNode<String>;
+                _selectedNode = node;
               });
             },
-            treeRowBuilder: (TreeViewNode<Object?> node) {
-              if (_selectedNode == (node as TreeViewNode<String>)) {
+            treeRowBuilder: (TreeViewNode<String> node) {
+              if (_selectedNode == node) {
                 return TreeView.defaultTreeRowBuilder(node).copyWith(
                   recognizerFactories: _getTapRecognizer(node),
                   backgroundDecoration: TreeRowDecoration(
