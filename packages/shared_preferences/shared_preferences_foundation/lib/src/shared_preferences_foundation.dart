@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:shared_preferences_platform_interface/shared_preferences_platform_interface.dart';
 import 'package:shared_preferences_platform_interface/types.dart';
 import './messages.g.dart';
+import 'shared_preferences_async_foundation.dart';
 
 typedef _Setter = Future<void> Function(String key, Object value);
 
@@ -37,6 +38,8 @@ class SharedPreferencesFoundation extends SharedPreferencesStorePlatform {
   /// [SharedPreferencesStorePlatform].
   static void registerWith() {
     SharedPreferencesStorePlatform.instance = SharedPreferencesFoundation();
+    // A temporary work-around for having two plugins contained in a single package.
+    SharedPreferencesAsyncFoundation.registerWith();
   }
 
   @override

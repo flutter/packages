@@ -8,6 +8,7 @@ import 'package:shared_preferences_platform_interface/shared_preferences_platfor
 import 'package:shared_preferences_platform_interface/types.dart';
 
 import 'messages.g.dart';
+import 'shared_preferences_async_android.dart';
 
 /// The Android implementation of [SharedPreferencesStorePlatform].
 ///
@@ -23,6 +24,8 @@ class SharedPreferencesAndroid extends SharedPreferencesStorePlatform {
   /// Registers this class as the default instance of [SharedPreferencesStorePlatform].
   static void registerWith() {
     SharedPreferencesStorePlatform.instance = SharedPreferencesAndroid();
+    // A temporary work-around for having two plugins contained in a single package.
+    SharedPreferencesAsyncAndroid.registerWith();
   }
 
   static const String _defaultPrefix = 'flutter.';

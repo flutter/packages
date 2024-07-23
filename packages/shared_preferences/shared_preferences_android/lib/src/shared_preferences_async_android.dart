@@ -8,7 +8,6 @@ import 'package:shared_preferences_platform_interface/shared_preferences_async_p
 import 'package:shared_preferences_platform_interface/types.dart';
 
 import 'messages_async.g.dart';
-import 'shared_preferences_android.dart';
 
 const String _listPrefix = 'VGhpcyBpcyB0aGUgcHJlZml4IGZvciBhIGxpc3Qu';
 
@@ -27,8 +26,6 @@ base class SharedPreferencesAsyncAndroid
   /// Registers this class as the default instance of [SharedPreferencesAsyncPlatform].
   static void registerWith() {
     SharedPreferencesAsyncPlatform.instance = SharedPreferencesAsyncAndroid();
-    // A temporary work-around for having two plugins contained in a single package.
-    SharedPreferencesAndroid.registerWith();
   }
 
   /// Returns a SharedPreferencesPigeonOptions for sending to platform.

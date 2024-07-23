@@ -10,7 +10,6 @@ import 'package:shared_preferences_platform_interface/shared_preferences_async_p
 import 'package:shared_preferences_platform_interface/types.dart';
 
 import './messages.g.dart';
-import './shared_preferences_foundation.dart';
 
 const String _argumentErrorCode = 'Argument Error';
 
@@ -28,8 +27,6 @@ base class SharedPreferencesAsyncFoundation
   static void registerWith() {
     SharedPreferencesAsyncPlatform.instance =
         SharedPreferencesAsyncFoundation();
-    // A temporary work-around for having two plugins contained in a single package.
-    SharedPreferencesFoundation.registerWith();
   }
 
   /// Returns a SharedPreferencesPigeonOptions for sending to platform.
