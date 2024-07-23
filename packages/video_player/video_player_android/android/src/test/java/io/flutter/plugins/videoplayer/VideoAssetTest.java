@@ -135,4 +135,20 @@ public final class VideoAssetTest {
     verify(mockFactory).setAllowCrossProtocolRedirects(true);
     verify(mockFactory).setDefaultRequestProperties(headers);
   }
+
+  @Test
+  public void rtspVideoRequiresRtspUrl() {
+    assertThrows(
+        IllegalArgumentException.class, () -> VideoAsset.fromRtspUrl("https://not.rtsp/video.mp4"));
+  }
+
+  @Test
+  public void rtspVideoCreatesMediaItem() {
+    VideoAsset asset = VideoAsset.fromRtspUrl("rtsp://test:pass@flutter.dev/stream");
+    MediaItem mediaItem = asset.getMediaItem();
+
+    assert mediaItem.localConfiguration != null;
+    assertEquals(
+        mediaItem.localConfiguration.uri, Uri.parse("rtsp://test:pass@flutter.dev/stream"));
+  }
 }

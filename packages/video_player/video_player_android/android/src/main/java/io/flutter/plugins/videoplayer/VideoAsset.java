@@ -51,8 +51,11 @@ abstract class VideoAsset {
    * @return the asset.
    */
   @NonNull
-  static VideoAsset fromRtspUrl(@NonNull String remoteUrl) {
-    return new RtspVideoAsset(remoteUrl);
+  static VideoAsset fromRtspUrl(@NonNull String rtspUrl) {
+    if (!rtspUrl.startsWith("rtsp://")) {
+      throw new IllegalArgumentException("rtspUrl must start with 'rtsp://'");
+    }
+    return new RtspVideoAsset(rtspUrl);
   }
 
   @Nullable protected final String assetUrl;
