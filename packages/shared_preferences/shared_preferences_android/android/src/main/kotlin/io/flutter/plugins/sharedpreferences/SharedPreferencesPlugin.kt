@@ -56,7 +56,7 @@ class SharedPreferencesPlugin() : FlutterPlugin, SharedPreferencesAsyncApi {
 
   override fun onAttachedToEngine(binding: FlutterPlugin.FlutterPluginBinding) {
     setUp(binding.binaryMessenger, binding.applicationContext)
-    DeprecatedSharedPreferencesPlugin().onAttachedToEngine(binding)
+    LegacySharedPreferencesPlugin().onAttachedToEngine(binding)
   }
 
   override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
