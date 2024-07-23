@@ -16,6 +16,8 @@
 struct _TestPlugin {
   GObject parent_instance;
 
+  FlBinaryMessenger* messenger;
+
   CoreTestsPigeonTestFlutterIntegrationCoreApi* flutter_core_api;
 
   CoreTestsPigeonTestFlutterSmallApi* flutter_small_api_one;
@@ -1802,6 +1804,13 @@ static void test_plugin_dispose(GObject* object) {
 
   g_cancellable_cancel(self->cancellable);
 
+  core_tests_pigeon_test_host_integration_core_api_clear_method_handlers(
+      self->messenger, nullptr);
+  core_tests_pigeon_test_host_small_api_clear_method_handlers(self->messenger,
+                                                              "suffixOne");
+  core_tests_pigeon_test_host_small_api_clear_method_handlers(self->messenger,
+                                                              "suffixTwo");
+
   g_clear_object(&self->flutter_core_api);
   g_clear_object(&self->flutter_small_api_one);
   g_clear_object(&self->flutter_small_api_two);
@@ -1821,6 +1830,7 @@ static void test_plugin_init(TestPlugin* self) {
 static TestPlugin* test_plugin_new(FlBinaryMessenger* messenger) {
   TestPlugin* self = TEST_PLUGIN(g_object_new(test_plugin_get_type(), nullptr));
 
+  self->messenger = messenger;
   core_tests_pigeon_test_host_integration_core_api_set_method_handlers(
       messenger, nullptr, &host_core_api_vtable, g_object_ref(self),
       g_object_unref);
