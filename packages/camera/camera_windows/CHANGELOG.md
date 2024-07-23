@@ -1,3 +1,7 @@
+## 0.2.4+1
+
+* Updates to pigeon 21.
+
 ## 0.2.4
 
 * Removes `maxVideoDuration`/`maxDuration`, as the feature was never exposed at
