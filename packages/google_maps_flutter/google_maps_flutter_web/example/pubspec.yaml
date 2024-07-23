@@ -18,7 +18,7 @@ dev_dependencies:
   build_runner: ^2.1.1
   flutter_test:
     sdk: flutter
-  google_maps: ^8.0.0-dev.1
+  google_maps: ^8.0.0-dev.2
   google_maps_flutter: ^2.2.0 # Needed for projection_test.dart
   http: ">=0.13.0 <2.0.0"
   integration_test:
@@ -30,11 +30,6 @@ flutter:
     - assets/
 
 dependency_overrides:
-  # FOR TESTING ONLY. DO NOT MERGE.
-  google_maps:
-    git:
-      url: https://github.com/a14n/dart-google-maps
-      ref: 0f57b7d99ed9652a31cd60a5dd4f3c6cb6b9f31a
   # Override the google_maps_flutter dependency on google_maps_flutter_web.
   # TODO(ditman): Unwind the circular dependency. This will create problems
   # if we need to make a breaking change to google_maps_flutter_web.
