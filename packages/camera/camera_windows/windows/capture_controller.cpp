@@ -41,7 +41,7 @@ CaptureControllerImpl::CaptureControllerImpl(
     CaptureControllerListener* listener)
     : capture_controller_listener_(listener),
       media_settings_(
-          PlatformMediaSettings(PlatformResolutionPreset::max, true)),
+          PlatformMediaSettings(PlatformResolutionPreset::kMax, true)),
       CaptureController(){};
 
 CaptureControllerImpl::~CaptureControllerImpl() {
@@ -387,17 +387,17 @@ void CaptureControllerImpl::TakePicture(const std::string& file_path) {
 
 uint32_t CaptureControllerImpl::GetMaxPreviewHeight() const {
   switch (media_settings_.resolution_preset()) {
-    case PlatformResolutionPreset::low:
+    case PlatformResolutionPreset::kLow:
       return 240;
-    case PlatformResolutionPreset::medium:
+    case PlatformResolutionPreset::kMedium:
       return 480;
-    case PlatformResolutionPreset::high:
+    case PlatformResolutionPreset::kHigh:
       return 720;
-    case PlatformResolutionPreset::veryHigh:
+    case PlatformResolutionPreset::kVeryHigh:
       return 1080;
-    case PlatformResolutionPreset::ultraHigh:
+    case PlatformResolutionPreset::kUltraHigh:
       return 2160;
-    case PlatformResolutionPreset::max:
+    case PlatformResolutionPreset::kMax:
     default:
       // no limit.
       return 0xffffffff;

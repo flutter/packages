@@ -1,5 +1,6 @@
-## NEXT
+## 0.5.1+3
 
+* Bumps com.android.tools.build:gradle from 7.3.0 to 8.5.1.
 * Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
 
 ## 0.5.1+2
