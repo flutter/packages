@@ -44,6 +44,17 @@ abstract class VideoAsset {
     return new HttpVideoAsset(remoteUrl, streamingFormat, new HashMap<>(httpHeaders));
   }
 
+  /**
+   * Returns an asset from a RTSP URL.
+   *
+   * @param remoteUrl remote asset, beginning with {@code rtsp://}.
+   * @return the asset.
+   */
+  @NonNull
+  static VideoAsset fromRtspUrl(@NonNull String remoteUrl) {
+    return new RtspVideoAsset(remoteUrl);
+  }
+
   @Nullable protected final String assetUrl;
 
   protected VideoAsset(@Nullable String assetUrl) {
