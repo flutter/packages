@@ -22,7 +22,7 @@ void main() {
 
   setUp(() {
     mockApi = MockTestFileSelectorApi();
-    TestFileSelectorApi.setup(mockApi);
+    TestFileSelectorApi.setUp(mockApi);
   });
 
   test('registered instance', () {
