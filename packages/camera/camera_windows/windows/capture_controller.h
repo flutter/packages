@@ -94,7 +94,8 @@ class CaptureController {
   virtual void StopRecord() = 0;
 
   // Starts image streaming.
-  virtual void StartImageStream(std::unique_ptr<flutter::EventSink<flutter::EncodableValue>> sink) = 0;
+  virtual void StartImageStream(
+      std::unique_ptr<flutter::EventSink<flutter::EncodableValue>> sink) = 0;
 
   // Stops the current image streaming.
   virtual void StopImageStream() = 0;
@@ -132,7 +133,9 @@ class CaptureControllerImpl : public CaptureController,
   void ResumePreview() override;
   void StartRecord(const std::string& file_path) override;
   void StopRecord() override;
-  void StartImageStream(std::unique_ptr<flutter::EventSink<flutter::EncodableValue>> sink) override;
+  void StartImageStream(
+      std::unique_ptr<flutter::EventSink<flutter::EncodableValue>> sink)
+      override;
   void StopImageStream() override;
   void TakePicture(const std::string& file_path) override;
 
@@ -224,7 +227,8 @@ class CaptureControllerImpl : public CaptureController,
   std::unique_ptr<PreviewHandler> preview_handler_;
   std::unique_ptr<PhotoHandler> photo_handler_;
   std::unique_ptr<TextureHandler> texture_handler_;
-  std::unique_ptr<flutter::EventSink<flutter::EncodableValue>> image_stream_sink_;
+  std::unique_ptr<flutter::EventSink<flutter::EncodableValue>>
+      image_stream_sink_;
   CaptureControllerListener* capture_controller_listener_;
   std::string video_device_id_;
   CaptureEngineState capture_engine_state_ =
