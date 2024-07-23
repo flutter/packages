@@ -21,6 +21,8 @@ final class RtspVideoAsset extends VideoAsset {
     return new MediaItem.Builder().setUri(assetUrl).build();
   }
 
+  // TODO: Migrate to stable API, see https://github.com/flutter/flutter/issues/147039.
+  @OptIn(markerClass = UnstableApi.class)
   @Override
   MediaSource.Factory getMediaSourceFactory(Context context) {
     return new RtspMediaSource.Factory();
