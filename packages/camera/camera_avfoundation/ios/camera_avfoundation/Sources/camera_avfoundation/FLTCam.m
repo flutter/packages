@@ -1319,6 +1319,9 @@ static void upgradeAudioSessionCategory(AVAudioSessionCategory category,
     });
     return;
   }
+  if (category == nil) {
+    category = AVAudioSession.sharedInstance.category;
+  }
   NSSet *playCategories = [NSSet
       setWithObjects:AVAudioSessionCategoryPlayback, AVAudioSessionCategoryPlayAndRecord, nil];
   NSSet *recordCategories =
@@ -1361,8 +1364,8 @@ static void upgradeAudioSessionCategory(AVAudioSessionCategory category,
 
   upgradeAudioSessionCategory(
       AVAudioSessionCategoryPlayAndRecord,
-      AVAudioSessionCategoryOptionDefaultToSpeaker | AVAudioSessionCategoryOptionAllowBluetooth |
-          AVAudioSessionCategoryOptionAllowBluetoothA2DP | AVAudioSessionCategoryOptionAllowAirPlay,
+      AVAudioSessionCategoryOptionDefaultToSpeaker | AVAudioSessionCategoryOptionAllowBluetoothA2DP |
+          AVAudioSessionCategoryOptionAllowAirPlay,
       0);
 
   if ([_audioCaptureSession canAddInput:audioInput]) {

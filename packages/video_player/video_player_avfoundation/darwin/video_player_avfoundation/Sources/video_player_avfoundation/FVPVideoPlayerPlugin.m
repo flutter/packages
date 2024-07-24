@@ -830,6 +830,9 @@ static void upgradeAudioSessionCategory(AVAudioSessionCategory category,
     });
     return;
   }
+  if (category == nil) {
+    category = AVAudioSession.sharedInstance.category;
+  }
   NSSet *playCategories = [NSSet
       setWithObjects:AVAudioSessionCategoryPlayback, AVAudioSessionCategoryPlayAndRecord, nil];
   NSSet *recordCategories =
@@ -859,11 +862,9 @@ static void upgradeAudioSessionCategory(AVAudioSessionCategory category,
   // AVAudioSession doesn't exist on macOS, and audio always mixes, so just no-op.
 #else
   if (mixWithOthers) {
-    upgradeAudioSessionCategory(AVAudioSession.sharedInstance.category,
-                                AVAudioSessionCategoryOptionMixWithOthers, 0);
+    upgradeAudioSessionCategory(nil, AVAudioSessionCategoryOptionMixWithOthers, 0);
   } else {
-    upgradeAudioSessionCategory(AVAudioSession.sharedInstance.category, 0,
-                                AVAudioSessionCategoryOptionMixWithOthers);
+    upgradeAudioSessionCategory(nil, 0, AVAudioSessionCategoryOptionMixWithOthers);
   }
 #endif
 }
