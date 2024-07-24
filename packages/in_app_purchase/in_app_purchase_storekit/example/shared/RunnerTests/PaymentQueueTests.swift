@@ -20,7 +20,7 @@ final class PaymentQueueTest: XCTestCase {
       "paymentMode": 1,
     ]
   }
-  var productMap: [String: Any] {
+  private var productMap: [String: Any] {
     return [
       "price": 1.0,
       "currencyCode": "USD",
@@ -32,7 +32,7 @@ final class PaymentQueueTest: XCTestCase {
       "subscriptionGroupIdentifier": "com.group",
     ]
   }
-  var productResponseMap: [String: Any] {
+  private var productResponseMap: [String: Any] {
     return ["products": [productMap], "invalidProductIdentifiers": []]
   }
 
