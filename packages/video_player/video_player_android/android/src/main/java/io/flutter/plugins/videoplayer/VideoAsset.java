@@ -47,7 +47,7 @@ abstract class VideoAsset {
   /**
    * Returns an asset from a RTSP URL.
    *
-   * @param remoteUrl remote asset, beginning with {@code rtsp://}.
+   * @param rtspUrl remote asset, beginning with {@code rtsp://}.
    * @return the asset.
    */
   @NonNull
