@@ -3,7 +3,6 @@
 // found in the LICENSE file.
 
 import 'dart:async';
-import 'dart:js_interop';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_maps/google_maps.dart' as gmaps;
@@ -46,7 +45,7 @@ void main() {
       gmaps.event.trigger(
         circle,
         'click',
-        <gmaps.MapMouseEvent>[gmaps.MapMouseEvent()].toJS,
+        gmaps.MapMouseEvent(),
       );
 
       // The event handling is now truly async. Wait for it...
@@ -106,7 +105,7 @@ void main() {
       gmaps.event.trigger(
         polygon,
         'click',
-        <gmaps.MapMouseEvent>[gmaps.MapMouseEvent()].toJS,
+        gmaps.MapMouseEvent(),
       );
 
       // The event handling is now truly async. Wait for it...
@@ -170,7 +169,7 @@ void main() {
       gmaps.event.trigger(
         polyline,
         'click',
-        <gmaps.MapMouseEvent>[gmaps.MapMouseEvent()].toJS,
+        gmaps.MapMouseEvent(),
       );
 
       // The event handling is now truly async. Wait for it...

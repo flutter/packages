@@ -3,7 +3,6 @@
 // found in the LICENSE file.
 
 import 'dart:async';
-import 'dart:js_interop';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_maps/google_maps.dart' as gmaps;
@@ -60,7 +59,7 @@ void main() {
       gmaps.event.trigger(
         marker,
         'click',
-        <gmaps.MapMouseEvent>[gmaps.MapMouseEvent()].toJS,
+        gmaps.MapMouseEvent(),
       );
 
       // The event handling is now truly async. Wait for it...
@@ -74,9 +73,7 @@ void main() {
       gmaps.event.trigger(
         marker,
         'dragstart',
-        <gmaps.MapMouseEvent>[
-          gmaps.MapMouseEvent()..latLng = gmaps.LatLng(0, 0),
-        ].toJS,
+        gmaps.MapMouseEvent()..latLng = gmaps.LatLng(0, 0),
       );
 
       expect(await methodCalled, isTrue);
@@ -89,9 +86,7 @@ void main() {
       gmaps.event.trigger(
         marker,
         'drag',
-        <gmaps.MapMouseEvent>[
-          gmaps.MapMouseEvent()..latLng = gmaps.LatLng(0, 0),
-        ].toJS,
+        gmaps.MapMouseEvent()..latLng = gmaps.LatLng(0, 0),
       );
 
       expect(await methodCalled, isTrue);
@@ -104,9 +99,7 @@ void main() {
       gmaps.event.trigger(
         marker,
         'dragend',
-        <gmaps.MapMouseEvent>[
-          gmaps.MapMouseEvent()..latLng = gmaps.LatLng(0, 0),
-        ].toJS,
+        gmaps.MapMouseEvent()..latLng = gmaps.LatLng(0, 0),
       );
 
       expect(await methodCalled, isTrue);
