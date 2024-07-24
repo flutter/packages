@@ -11,16 +11,13 @@ dependencies:
   google_maps_flutter_platform_interface: ^2.7.0
   google_maps_flutter_web:
     path: ../
-  web: ^0.5.1
+  web: ^1.0.0
 
 dev_dependencies:
   build_runner: ^2.1.1
   flutter_test:
     sdk: flutter
-  google_maps: #^8.0.0-dev.3
-    git:
-      url: https://github.com/ditman/a14n-dart-google-maps.git
-      ref: allow-web-1
+  google_maps: ^8.0.0-dev.4
   google_maps_flutter: ^2.2.0 # Needed for projection_test.dart
   http: ^1.2.2
   integration_test:

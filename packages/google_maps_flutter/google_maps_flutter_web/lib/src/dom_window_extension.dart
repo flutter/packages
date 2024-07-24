@@ -31,6 +31,13 @@ extension TrustedInnerHTML on web.HTMLElement {
   external set trustedInnerHTML(web.TrustedHTML trustedHTML);
 }
 
+/// This extension allows supporting both web:0.5.1 and web:1.0.0.
+/// To be removed once we stop using web:0.5.1.
+extension InnerHTMLString on web.HTMLElement {
+  @JS('innerHTML')
+  external set innerHTMLString(String value);
+}
+
 /// Allows creating a TrustedHTML object from a string, with no arguments.
 extension CreateHTMLNoArgs on web.TrustedTypePolicy {
   /// Allows calling `createHTML` with only the `input` argument.
