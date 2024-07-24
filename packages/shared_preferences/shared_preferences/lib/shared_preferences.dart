@@ -137,18 +137,21 @@ class SharedPreferences {
   }
 
   /// Saves a boolean [value] to persistent storage in the background.
+  /// 
   /// Returns `false` if the platform implementation can definitively determine that storing the preference
   /// failed. A return value of `true` indicates either that the value was written successfully, or that the
   /// underlying platform API does not report success or failure.
   Future<bool> setBool(String key, bool value) => _setValue('Bool', key, value);
 
   /// Saves an integer [value] to persistent storage in the background.
+  /// 
   /// Returns `false` if the platform implementation can definitively determine that storing the preference
   /// failed. A return value of `true` indicates either that the value was written successfully, or that the
   /// underlying platform API does not report success or failure.
   Future<bool> setInt(String key, int value) => _setValue('Int', key, value);
 
   /// Saves a double [value] to persistent storage in the background.
+  /// 
   /// Returns `false` if the platform implementation can definitively determine that storing the preference
   /// failed. A return value of `true` indicates either that the value was written successfully, or that the
   /// underlying platform API does not report success or failure.
@@ -158,6 +161,7 @@ class SharedPreferences {
       _setValue('Double', key, value);
 
   /// Saves a string [value] to persistent storage in the background.
+  /// 
   /// Returns `false` if the platform implementation can definitively determine that storing the preference
   /// failed. A return value of `true` indicates either that the value was written successfully, or that the
   /// underlying platform API does not report success or failure.
@@ -172,6 +176,7 @@ class SharedPreferences {
       _setValue('String', key, value);
 
   /// Saves a list of strings [value] to persistent storage in the background.
+  /// 
   /// Returns `false` if the platform implementation can definitively determine that storing the preference
   /// failed. A return value of `true` indicates either that the value was written successfully, or that the
   /// underlying platform API does not report success or failure.
@@ -179,6 +184,7 @@ class SharedPreferences {
       _setValue('StringList', key, value);
 
   /// Removes an entry from persistent storage.
+  /// 
   /// Returns `false` if the platform implementation can definitively determine that storing the preference
   /// failed. A return value of `true` indicates either that the value was written successfully, or that the
   /// underlying platform API does not report success or failure.
