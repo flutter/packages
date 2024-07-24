@@ -1,7 +1,3 @@
-## 2.4.1
-
-* Updates documentation for return values in remove and set methods.
-
 ## 2.4.0
 
 * Adds `SharedPreferencesAsyncPlatform` API.

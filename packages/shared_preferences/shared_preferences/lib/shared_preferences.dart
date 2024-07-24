@@ -136,23 +136,31 @@ class SharedPreferences {
     return list?.toList() as List<String>?;
   }
 
-  /// Saves a boolean [value] to persistent storage in the background, throwing an exception if it's not a bool.
-  /// Returns true if the operation succeeded.
+  /// Saves a boolean [value] to persistent storage in the background.
+  /// Returns `false` if the platform implementation can definitively determine that storing the preference
+  /// failed. A return value of `true` indicates either that the value was written successfully, or that the
+  /// underlying platform API does not report success or failure.
   Future<bool> setBool(String key, bool value) => _setValue('Bool', key, value);
 
-  /// Saves an integer [value] to persistent storage in the background, throwing an exception if it's not an int.
-  /// Returns true if the operation succeeded.
+  /// Saves an integer [value] to persistent storage in the background.
+  /// Returns `false` if the platform implementation can definitively determine that storing the preference
+  /// failed. A return value of `true` indicates either that the value was written successfully, or that the
+  /// underlying platform API does not report success or failure.
   Future<bool> setInt(String key, int value) => _setValue('Int', key, value);
 
-  /// Saves a double [value] to persistent storage in the background, throwing an exception if it's not a double.
-  /// Returns true if the operation succeeded.
+  /// Saves a double [value] to persistent storage in the background.
+  /// Returns `false` if the platform implementation can definitively determine that storing the preference
+  /// failed. A return value of `true` indicates either that the value was written successfully, or that the
+  /// underlying platform API does not report success or failure.
   ///
   /// Android doesn't support storing doubles, so it will be stored as a float.
   Future<bool> setDouble(String key, double value) =>
       _setValue('Double', key, value);
 
-  /// Saves a string [value] to persistent storage in the background, throwing an exception if it's not a String.
-  /// Returns true if the operation succeeded.
+  /// Saves a string [value] to persistent storage in the background.
+  /// Returns `false` if the platform implementation can definitively determine that storing the preference
+  /// failed. A return value of `true` indicates either that the value was written successfully, or that the
+  /// underlying platform API does not report success or failure.
   ///
   /// Note: Due to limitations in Android's SharedPreferences,
   /// values cannot start with any one of the following:
@@ -163,13 +171,17 @@ class SharedPreferences {
   Future<bool> setString(String key, String value) =>
       _setValue('String', key, value);
 
-  /// Saves a list of strings [value] to persistent storage in the background, throwing an exception if it's not a string set.
-  /// Returns true if the operation succeeded.
+  /// Saves a list of strings [value] to persistent storage in the background.
+  /// Returns `false` if the platform implementation can definitively determine that storing the preference
+  /// failed. A return value of `true` indicates either that the value was written successfully, or that the
+  /// underlying platform API does not report success or failure.
   Future<bool> setStringList(String key, List<String> value) =>
       _setValue('StringList', key, value);
 
   /// Removes an entry from persistent storage.
-  /// Returns true if the operation succeeded.
+  /// Returns `false` if the platform implementation can definitively determine that storing the preference
+  /// failed. A return value of `true` indicates either that the value was written successfully, or that the
+  /// underlying platform API does not report success or failure.
   Future<bool> remove(String key) {
     final String prefixedKey = '$_prefix$key';
     _preferenceCache.remove(key);

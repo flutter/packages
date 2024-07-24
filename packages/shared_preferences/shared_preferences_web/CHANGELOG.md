@@ -1,7 +1,3 @@
-## 2.3.1
-
-* Updates documentation for return values in remove and set methods.
-
 ## 2.3.0
 
 * Updates web code to package `web: ^0.5.0`.
