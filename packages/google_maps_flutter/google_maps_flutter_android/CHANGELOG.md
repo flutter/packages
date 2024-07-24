@@ -1,3 +1,7 @@
+## 2.13.0
+
+* Updates platform view creation parameters to use Pigeon.
+
 ## 2.12.0
 
 * Converts Java->Dart calls to Pigeon.
