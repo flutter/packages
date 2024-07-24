@@ -79,8 +79,8 @@ final class HttpVideoAsset extends VideoAsset {
       userAgent = httpHeaders.get(HEADER_USER_AGENT);
     }
     unstableUpdateDataSourceFactory(initialFactory, httpHeaders, userAgent);
-    DataSource.Factory dataSoruceFactory = new DefaultDataSource.Factory(context, initialFactory);
-    return new DefaultMediaSourceFactory(context).setDataSourceFactory(dataSoruceFactory);
+    DataSource.Factory dataSourceFactory = new DefaultDataSource.Factory(context, initialFactory);
+    return new DefaultMediaSourceFactory(context).setDataSourceFactory(dataSourceFactory);
   }
 
   // TODO: Migrate to stable API, see https://github.com/flutter/flutter/issues/147039.
