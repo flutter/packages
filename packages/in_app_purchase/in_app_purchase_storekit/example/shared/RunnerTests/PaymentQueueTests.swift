@@ -8,22 +8,20 @@ import XCTest
 @testable import in_app_purchase_storekit
 
 final class PaymentQueueTest: XCTestCase {
-  var periodMap: [String: Any] = [:]
-  var discountMap: [String: Any] = [:]
-  var productMap: [String: Any] = [:]
-  var productResponseMap: [String: Any] = [:]
-
-  override func setUp() {
-    super.setUp()
-    periodMap = ["numberOfUnits": 0, "unit": 0]
-    discountMap = [
+  private var periodMap: [String: Any] {
+    return ["numberOfUnits": 0, "unit": 0]
+  }
+  private var discountMap: [String: Any] {
+    return [
       "price": 1.0,
       "currencyCode": "USD",
       "numberOfPeriods": 1,
       "subscriptionPeriod": periodMap,
       "paymentMode": 1,
     ]
-    productMap = [
+  }
+  var productMap: [String: Any] {
+    return [
       "price": 1.0,
       "currencyCode": "USD",
       "productIdentifier": "123",
@@ -33,7 +31,9 @@ final class PaymentQueueTest: XCTestCase {
       "introductoryPrice": discountMap,
       "subscriptionGroupIdentifier": "com.group",
     ]
-    productResponseMap = ["products": [productMap], "invalidProductIdentifiers": []]
+  }
+  var productResponseMap: [String: Any] {
+    return ["products": [productMap], "invalidProductIdentifiers": []]
   }
 
   func testTransactionPurchased() throws {
