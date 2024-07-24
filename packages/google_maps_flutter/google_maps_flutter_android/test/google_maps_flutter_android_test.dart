@@ -659,17 +659,15 @@ void main() {
               methodCall.arguments as Map<dynamic, dynamic>);
           if (args.containsKey('params')) {
             final Uint8List paramsUint8List = args['params'] as Uint8List;
-            const StandardMessageCodec codec = StandardMessageCodec();
             final ByteData byteData = ByteData.sublistView(paramsUint8List);
-            final Map<String, dynamic> creationParams =
-                Map<String, dynamic>.from(
-                    codec.decodeMessage(byteData) as Map<dynamic, dynamic>);
-            if (creationParams.containsKey('options')) {
-              final Map<String, dynamic> options = Map<String, dynamic>.from(
-                  creationParams['options'] as Map<dynamic, dynamic>);
-              if (options.containsKey('cloudMapId')) {
-                passedCloudMapIdCompleter
-                    .complete(options['cloudMapId'] as String);
+            final PlatformMapViewCreationParams? creationParams =
+                MapsApi.pigeonChannelCodec.decodeMessage(byteData)
+                    as PlatformMapViewCreationParams?;
+            if (creationParams != null) {
+              final String? passedMapId =
+                  creationParams.mapConfiguration.cloudMapId;
+              if (passedMapId != null) {
+                passedCloudMapIdCompleter.complete(passedMapId);
               }
             }
           }

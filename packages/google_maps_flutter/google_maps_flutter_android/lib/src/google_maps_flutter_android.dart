@@ -554,7 +554,7 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
         gestureRecognizers: widgetConfiguration.gestureRecognizers,
         layoutDirection: widgetConfiguration.textDirection,
         creationParams: creationParams,
-        creationParamsCodec: const StandardMessageCodec(),
+        creationParamsCodec: MapsApi.pigeonChannelCodec,
       );
     }
   }
