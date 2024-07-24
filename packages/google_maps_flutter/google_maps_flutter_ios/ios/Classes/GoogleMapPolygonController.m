@@ -140,19 +140,6 @@
   return self;
 }
 
-- (void)addJSONPolygons:(NSArray<NSDictionary<NSString *, id> *> *)polygonsToAdd {
-  for (NSDictionary<NSString *, id> *polygon in polygonsToAdd) {
-    GMSMutablePath *path = [FLTPolygonsController getPath:polygon];
-    NSString *identifier = polygon[@"polygonId"];
-    FLTGoogleMapPolygonController *controller =
-        [[FLTGoogleMapPolygonController alloc] initWithPath:path
-                                                 identifier:identifier
-                                                    mapView:self.mapView];
-    [controller interpretPolygonOptions:polygon registrar:self.registrar];
-    self.polygonIdentifierToController[identifier] = controller;
-  }
-}
-
 - (void)addPolygons:(NSArray<FGMPlatformPolygon *> *)polygonsToAdd {
   for (FGMPlatformPolygon *polygon in polygonsToAdd) {
     GMSMutablePath *path = [FLTPolygonsController getPath:polygon.json];

@@ -45,6 +45,14 @@ FGMPlatformCameraPosition *FGMGetPigeonCameraPositionForPosition(GMSCameraPositi
                                                zoom:position.zoom];
 }
 
+GMSCameraPosition *FGMGetCameraPositionForPigeonCameraPosition(
+    FGMPlatformCameraPosition *position) {
+  return [GMSCameraPosition cameraWithTarget:FGMGetCoordinateForPigeonLatLng(position.target)
+                                        zoom:position.zoom
+                                     bearing:position.bearing
+                                viewingAngle:position.tilt];
+}
+
 extern GMSMapViewType FGMGetMapViewTypeForPigeonMapType(FGMPlatformMapType type) {
   switch (type) {
     case FGMPlatformMapTypeNone:
@@ -68,10 +76,6 @@ extern GMSMapViewType FGMGetMapViewTypeForPigeonMapType(FGMPlatformMapType type)
 
 + (CGPoint)pointFromArray:(NSArray *)array {
   return CGPointMake([array[0] doubleValue], [array[1] doubleValue]);
-}
-
-+ (NSArray *)arrayFromLocation:(CLLocationCoordinate2D)location {
-  return @[ @(location.latitude), @(location.longitude) ];
 }
 
 + (UIColor *)colorFromRGBA:(NSNumber *)numberColor {
@@ -120,11 +124,6 @@ extern GMSMapViewType FGMGetMapViewTypeForPigeonMapType(FGMPlatformMapType type)
   return [[GMSCoordinateBounds alloc]
       initWithCoordinate:[FLTGoogleMapJSONConversions locationFromLatLong:latlongs[0]]
               coordinate:[FLTGoogleMapJSONConversions locationFromLatLong:latlongs[1]]];
-}
-
-+ (GMSMapViewType)mapViewTypeFromTypeValue:(NSNumber *)typeValue {
-  int value = [typeValue intValue];
-  return (GMSMapViewType)(value == 0 ? 5 : value);
 }
 
 + (nullable GMSCameraUpdate *)cameraUpdateFromArray:(NSArray *)channelValue {

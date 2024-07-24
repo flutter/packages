@@ -30,7 +30,6 @@ NS_ASSUME_NONNULL_BEGIN
 - (instancetype)initWithMapView:(GMSMapView *)mapView
                 callbackHandler:(FGMMapsCallbackApi *)callbackHandler
                       registrar:(NSObject<FlutterPluginRegistrar> *)registrar;
-- (void)addJSONTileOverlays:(NSArray<NSDictionary<NSString *, id> *> *)tileOverlaysToAdd;
 - (void)addTileOverlays:(NSArray<FGMPlatformTileOverlay *> *)tileOverlaysToAdd;
 - (void)changeTileOverlays:(NSArray<FGMPlatformTileOverlay *> *)tileOverlaysToChange;
 - (void)removeTileOverlayWithIdentifiers:(NSArray<NSString *> *)identifiers;

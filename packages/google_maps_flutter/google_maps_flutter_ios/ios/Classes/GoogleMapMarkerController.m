@@ -452,21 +452,6 @@
   return self;
 }
 
-- (void)addJSONMarkers:(NSArray<NSDictionary<NSString *, id> *> *)markersToAdd {
-  for (NSDictionary<NSString *, id> *marker in markersToAdd) {
-    CLLocationCoordinate2D position = [FLTMarkersController getPosition:marker];
-    NSString *identifier = marker[@"markerId"];
-    FLTGoogleMapMarkerController *controller =
-        [[FLTGoogleMapMarkerController alloc] initWithPosition:position
-                                                    identifier:identifier
-                                                       mapView:self.mapView];
-    [controller interpretMarkerOptions:marker
-                             registrar:self.registrar
-                           screenScale:[self getScreenScale]];
-    self.markerIdentifierToController[identifier] = controller;
-  }
-}
-
 - (void)addMarkers:(NSArray<FGMPlatformMarker *> *)markersToAdd {
   for (FGMPlatformMarker *marker in markersToAdd) {
     CLLocationCoordinate2D position = [FLTMarkersController getPosition:marker.json];

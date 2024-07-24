@@ -17,7 +17,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// @param registrar The plugin registrar passed from Flutter.
 - (instancetype)initWithMapView:(GMSMapView *)mapView
                  viewIdentifier:(int64_t)viewId
-                      arguments:(id _Nullable)args
+             creationParameters:(FGMPlatformMapViewCreationParams *)creationParameters
                       registrar:(NSObject<FlutterPluginRegistrar> *)registrar;
 
 @end

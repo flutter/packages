@@ -36,6 +36,10 @@ extern FGMPlatformLatLngBounds *FGMGetPigeonLatLngBoundsForCoordinateBounds(
 extern FGMPlatformCameraPosition *FGMGetPigeonCameraPositionForPosition(
     GMSCameraPosition *position);
 
+/// Creates a GMSCameraPosition from its Pigeon representation.
+extern GMSCameraPosition *FGMGetCameraPositionForPigeonCameraPosition(
+    FGMPlatformCameraPosition *position);
+
 /// Creates a GMSMapViewType from its Pigeon representation.
 extern GMSMapViewType FGMGetMapViewTypeForPigeonMapType(FGMPlatformMapType type);
 
@@ -43,13 +47,11 @@ extern GMSMapViewType FGMGetMapViewTypeForPigeonMapType(FGMPlatformMapType type)
 
 + (CLLocationCoordinate2D)locationFromLatLong:(NSArray *)latlong;
 + (CGPoint)pointFromArray:(NSArray *)array;
-+ (NSArray *)arrayFromLocation:(CLLocationCoordinate2D)location;
 + (UIColor *)colorFromRGBA:(NSNumber *)data;
 + (NSArray<CLLocation *> *)pointsFromLatLongs:(NSArray *)data;
 + (NSArray<NSArray<CLLocation *> *> *)holesFromPointsArray:(NSArray *)data;
 + (nullable GMSCameraPosition *)cameraPostionFromDictionary:(nullable NSDictionary *)channelValue;
 + (GMSCoordinateBounds *)coordinateBoundsFromLatLongs:(NSArray *)latlongs;
-+ (GMSMapViewType)mapViewTypeFromTypeValue:(NSNumber *)value;
 + (nullable GMSCameraUpdate *)cameraUpdateFromArray:(NSArray *)channelValue;
 
 /// Return GMS strokestyle object array populated using the patterns and stroke colors passed in.

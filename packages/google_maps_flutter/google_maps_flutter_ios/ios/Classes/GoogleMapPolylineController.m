@@ -136,19 +136,6 @@
   return self;
 }
 
-- (void)addJSONPolylines:(NSArray<NSDictionary<NSString *, id> *> *)polylinesToAdd {
-  for (NSDictionary<NSString *, id> *polyline in polylinesToAdd) {
-    GMSMutablePath *path = [FLTPolylinesController pathForPolyline:polyline];
-    NSString *identifier = polyline[@"polylineId"];
-    FLTGoogleMapPolylineController *controller =
-        [[FLTGoogleMapPolylineController alloc] initWithPath:path
-                                                  identifier:identifier
-                                                     mapView:self.mapView];
-    [controller interpretPolylineOptions:polyline registrar:self.registrar];
-    self.polylineIdentifierToController[identifier] = controller;
-  }
-}
-
 - (void)addPolylines:(NSArray<FGMPlatformPolyline *> *)polylinesToAdd {
   for (FGMPlatformPolyline *polyline in polylinesToAdd) {
     GMSMutablePath *path = [FLTPolylinesController pathForPolyline:polyline.json];

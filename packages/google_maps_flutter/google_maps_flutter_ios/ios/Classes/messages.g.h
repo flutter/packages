@@ -40,6 +40,7 @@ typedef NS_ENUM(NSUInteger, FGMPlatformMapType) {
 @class FGMPlatformLatLng;
 @class FGMPlatformLatLngBounds;
 @class FGMPlatformCameraTargetBounds;
+@class FGMPlatformMapViewCreationParams;
 @class FGMPlatformMapConfiguration;
 @class FGMPlatformPoint;
 @class FGMPlatformTileLayer;
@@ -174,6 +175,27 @@ typedef NS_ENUM(NSUInteger, FGMPlatformMapType) {
 @interface FGMPlatformCameraTargetBounds : NSObject
 + (instancetype)makeWithBounds:(nullable FGMPlatformLatLngBounds *)bounds;
 @property(nonatomic, strong, nullable) FGMPlatformLatLngBounds *bounds;
+@end
+
+/// Information passed to the platform view creation.
+@interface FGMPlatformMapViewCreationParams : NSObject
+/// `init` unavailable to enforce nonnull fields, see the `make` class method.
+- (instancetype)init NS_UNAVAILABLE;
++ (instancetype)makeWithInitialCameraPosition:(FGMPlatformCameraPosition *)initialCameraPosition
+                             mapConfiguration:(FGMPlatformMapConfiguration *)mapConfiguration
+                               initialCircles:(NSArray<FGMPlatformCircle *> *)initialCircles
+                               initialMarkers:(NSArray<FGMPlatformMarker *> *)initialMarkers
+                              initialPolygons:(NSArray<FGMPlatformPolygon *> *)initialPolygons
+                             initialPolylines:(NSArray<FGMPlatformPolyline *> *)initialPolylines
+                          initialTileOverlays:
+                              (NSArray<FGMPlatformTileOverlay *> *)initialTileOverlays;
+@property(nonatomic, strong) FGMPlatformCameraPosition *initialCameraPosition;
+@property(nonatomic, strong) FGMPlatformMapConfiguration *mapConfiguration;
+@property(nonatomic, copy) NSArray<FGMPlatformCircle *> *initialCircles;
+@property(nonatomic, copy) NSArray<FGMPlatformMarker *> *initialMarkers;
+@property(nonatomic, copy) NSArray<FGMPlatformPolygon *> *initialPolygons;
+@property(nonatomic, copy) NSArray<FGMPlatformPolyline *> *initialPolylines;
+@property(nonatomic, copy) NSArray<FGMPlatformTileOverlay *> *initialTileOverlays;
 @end
 
 /// Pigeon equivalent of MapConfiguration.
@@ -401,6 +423,21 @@ extern void SetUpFGMMapsApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger
                        completion:(void (^)(FGMPlatformTile *_Nullable,
                                             FlutterError *_Nullable))completion;
 @end
+
+/// Dummy interface to force generation of the platform view creation params,
+/// which are not used in any Pigeon calls, only the platform view creation
+/// call made internally by Flutter.
+@protocol FGMMapsPlatformViewApi
+- (void)createViewType:(nullable FGMPlatformMapViewCreationParams *)type
+                 error:(FlutterError *_Nullable *_Nonnull)error;
+@end
+
+extern void SetUpFGMMapsPlatformViewApi(id<FlutterBinaryMessenger> binaryMessenger,
+                                        NSObject<FGMMapsPlatformViewApi> *_Nullable api);
+
+extern void SetUpFGMMapsPlatformViewApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger,
+                                                  NSObject<FGMMapsPlatformViewApi> *_Nullable api,
+                                                  NSString *messageChannelSuffix);
 
 /// Inspector API only intended for use in integration tests.
 @protocol FGMMapsInspectorApi

@@ -161,6 +161,30 @@ class PlatformCameraTargetBounds {
   final PlatformLatLngBounds? bounds;
 }
 
+/// Information passed to the platform view creation.
+class PlatformMapViewCreationParams {
+  PlatformMapViewCreationParams({
+    required this.initialCameraPosition,
+    required this.mapConfiguration,
+    required this.initialCircles,
+    required this.initialMarkers,
+    required this.initialPolygons,
+    required this.initialPolylines,
+    required this.initialTileOverlays,
+  });
+
+  final PlatformCameraPosition initialCameraPosition;
+  final PlatformMapConfiguration mapConfiguration;
+  // TODO(stuartmorgan): Make the generic types non-nullable once supported.
+  // https://github.com/flutter/flutter/issues/97848
+  // The consuming code treats the entries as non-nullable.
+  final List<PlatformCircle?> initialCircles;
+  final List<PlatformMarker?> initialMarkers;
+  final List<PlatformPolygon?> initialPolygons;
+  final List<PlatformPolyline?> initialPolylines;
+  final List<PlatformTileOverlay?> initialTileOverlays;
+}
+
 /// Pigeon equivalent of MapConfiguration.
 class PlatformMapConfiguration {
   PlatformMapConfiguration({
@@ -410,6 +434,15 @@ abstract class MapsCallbackApi {
   @ObjCSelector('tileWithOverlayIdentifier:location:zoom:')
   PlatformTile getTileOverlayTile(
       String tileOverlayId, PlatformPoint location, int zoom);
+}
+
+/// Dummy interface to force generation of the platform view creation params,
+/// which are not used in any Pigeon calls, only the platform view creation
+/// call made internally by Flutter.
+@HostApi()
+abstract class MapsPlatformViewApi {
+  // This is never actually called.
+  void createView(PlatformMapViewCreationParams? type);
 }
 
 /// Inspector API only intended for use in integration tests.

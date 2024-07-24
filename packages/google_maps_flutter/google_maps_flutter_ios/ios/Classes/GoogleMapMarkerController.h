@@ -26,7 +26,6 @@ NS_ASSUME_NONNULL_BEGIN
 - (instancetype)initWithMapView:(GMSMapView *)mapView
                 callbackHandler:(FGMMapsCallbackApi *)callbackHandler
                       registrar:(NSObject<FlutterPluginRegistrar> *)registrar;
-- (void)addJSONMarkers:(NSArray<NSDictionary<NSString *, id> *> *)markersToAdd;
 - (void)addMarkers:(NSArray<FGMPlatformMarker *> *)markersToAdd;
 - (void)changeMarkers:(NSArray<FGMPlatformMarker *> *)markersToChange;
 - (void)removeMarkersWithIdentifiers:(NSArray<NSString *> *)identifiers;

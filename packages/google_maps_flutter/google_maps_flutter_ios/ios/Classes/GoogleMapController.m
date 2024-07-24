@@ -29,7 +29,7 @@
 }
 
 - (NSObject<FlutterMessageCodec> *)createArgsCodec {
-  return [FlutterStandardMessageCodec sharedInstance];
+  return FGMGetMessagesCodec();
 }
 
 - (NSObject<FlutterPlatformView> *)createWithFrame:(CGRect)frame
@@ -41,7 +41,7 @@
 
   return [[FLTGoogleMapController alloc] initWithFrame:frame
                                         viewIdentifier:viewId
-                                             arguments:args
+                                    creationParameters:args
                                              registrar:self.registrar];
 }
 
@@ -136,27 +136,30 @@
 
 - (instancetype)initWithFrame:(CGRect)frame
                viewIdentifier:(int64_t)viewId
-                    arguments:(id _Nullable)args
+           creationParameters:(FGMPlatformMapViewCreationParams *)creationParameters
                     registrar:(NSObject<FlutterPluginRegistrar> *)registrar {
   GMSCameraPosition *camera =
-      [FLTGoogleMapJSONConversions cameraPostionFromDictionary:args[@"initialCameraPosition"]];
+      FGMGetCameraPositionForPigeonCameraPosition(creationParameters.initialCameraPosition);
 
   GMSMapViewOptions *options = [[GMSMapViewOptions alloc] init];
   options.frame = frame;
   options.camera = camera;
-  NSString *cloudMapId = args[@"options"][@"cloudMapId"];
+  NSString *cloudMapId = creationParameters.mapConfiguration.cloudMapId;
   if (cloudMapId) {
     options.mapID = [GMSMapID mapIDWithIdentifier:cloudMapId];
   }
 
   GMSMapView *mapView = [[GMSMapView alloc] initWithOptions:options];
 
-  return [self initWithMapView:mapView viewIdentifier:viewId arguments:args registrar:registrar];
+  return [self initWithMapView:mapView
+                viewIdentifier:viewId
+            creationParameters:creationParameters
+                     registrar:registrar];
 }
 
 - (instancetype)initWithMapView:(GMSMapView *_Nonnull)mapView
                  viewIdentifier:(int64_t)viewId
-                      arguments:(id _Nullable)args
+             creationParameters:(FGMPlatformMapViewCreationParams *)creationParameters
                       registrar:(NSObject<FlutterPluginRegistrar> *_Nonnull)registrar {
   if (self = [super init]) {
     _mapView = mapView;
@@ -164,7 +167,7 @@
     _mapView.accessibilityElementsHidden = NO;
     // TODO(cyanglaz): avoid sending message to self in the middle of the init method.
     // https://github.com/flutter/flutter/issues/104121
-    [self interpretMapOptionsJSON:args[@"options"]];
+    [self interpretMapConfiguration:creationParameters.mapConfiguration];
     NSString *pigeonSuffix = [NSString stringWithFormat:@"%lld", viewId];
     _dartCallbackHandler = [[FGMMapsCallbackApi alloc] initWithBinaryMessenger:registrar.messenger
                                                           messageChannelSuffix:pigeonSuffix];
@@ -187,26 +190,11 @@
         [[FLTTileOverlaysController alloc] initWithMapView:_mapView
                                            callbackHandler:_dartCallbackHandler
                                                  registrar:registrar];
-    id markersToAdd = args[@"markersToAdd"];
-    if ([markersToAdd isKindOfClass:[NSArray class]]) {
-      [_markersController addJSONMarkers:markersToAdd];
-    }
-    id polygonsToAdd = args[@"polygonsToAdd"];
-    if ([polygonsToAdd isKindOfClass:[NSArray class]]) {
-      [_polygonsController addJSONPolygons:polygonsToAdd];
-    }
-    id polylinesToAdd = args[@"polylinesToAdd"];
-    if ([polylinesToAdd isKindOfClass:[NSArray class]]) {
-      [_polylinesController addJSONPolylines:polylinesToAdd];
-    }
-    id circlesToAdd = args[@"circlesToAdd"];
-    if ([circlesToAdd isKindOfClass:[NSArray class]]) {
-      [_circlesController addJSONCircles:circlesToAdd];
-    }
-    id tileOverlaysToAdd = args[@"tileOverlaysToAdd"];
-    if ([tileOverlaysToAdd isKindOfClass:[NSArray class]]) {
-      [_tileOverlaysController addJSONTileOverlays:tileOverlaysToAdd];
-    }
+    [_markersController addMarkers:creationParameters.initialMarkers];
+    [_polygonsController addPolygons:creationParameters.initialPolygons];
+    [_polylinesController addPolylines:creationParameters.initialPolylines];
+    [_circlesController addCircles:creationParameters.initialCircles];
+    [_tileOverlaysController addTileOverlays:creationParameters.initialTileOverlays];
 
     [_mapView addObserver:self forKeyPath:@"frame" options:0 context:nil];
 
@@ -491,84 +479,6 @@
     [self setMyLocationButtonEnabled:myLocationButtonEnabled.boolValue];
   }
   NSString *style = config.style;
-  if (style) {
-    [self setMapStyle:style];
-  }
-}
-
-- (void)interpretMapOptionsJSON:(NSDictionary *)data {
-  NSArray *cameraTargetBounds = FGMGetValueOrNilFromDict(data, @"cameraTargetBounds");
-  if (cameraTargetBounds) {
-    [self
-        setCameraTargetBounds:cameraTargetBounds.count > 0 && cameraTargetBounds[0] != [NSNull null]
-                                  ? [FLTGoogleMapJSONConversions
-                                        coordinateBoundsFromLatLongs:cameraTargetBounds.firstObject]
-                                  : nil];
-  }
-  NSNumber *compassEnabled = FGMGetValueOrNilFromDict(data, @"compassEnabled");
-  if (compassEnabled) {
-    [self setCompassEnabled:[compassEnabled boolValue]];
-  }
-  id indoorEnabled = FGMGetValueOrNilFromDict(data, @"indoorEnabled");
-  if (indoorEnabled) {
-    [self setIndoorEnabled:[indoorEnabled boolValue]];
-  }
-  id trafficEnabled = FGMGetValueOrNilFromDict(data, @"trafficEnabled");
-  if (trafficEnabled) {
-    [self setTrafficEnabled:[trafficEnabled boolValue]];
-  }
-  id buildingsEnabled = FGMGetValueOrNilFromDict(data, @"buildingsEnabled");
-  if (buildingsEnabled) {
-    [self setBuildingsEnabled:[buildingsEnabled boolValue]];
-  }
-  id mapType = FGMGetValueOrNilFromDict(data, @"mapType");
-  if (mapType) {
-    [self setMapType:[FLTGoogleMapJSONConversions mapViewTypeFromTypeValue:mapType]];
-  }
-  NSArray *zoomData = FGMGetValueOrNilFromDict(data, @"minMaxZoomPreference");
-  if (zoomData) {
-    float minZoom = (zoomData[0] == [NSNull null]) ? kGMSMinZoomLevel : [zoomData[0] floatValue];
-    float maxZoom = (zoomData[1] == [NSNull null]) ? kGMSMaxZoomLevel : [zoomData[1] floatValue];
-    [self setMinZoom:minZoom maxZoom:maxZoom];
-  }
-  NSArray *paddingData = FGMGetValueOrNilFromDict(data, @"padding");
-  if (paddingData) {
-    float top = (paddingData[0] == [NSNull null]) ? 0 : [paddingData[0] floatValue];
-    float left = (paddingData[1] == [NSNull null]) ? 0 : [paddingData[1] floatValue];
-    float bottom = (paddingData[2] == [NSNull null]) ? 0 : [paddingData[2] floatValue];
-    float right = (paddingData[3] == [NSNull null]) ? 0 : [paddingData[3] floatValue];
-    [self setPaddingTop:top left:left bottom:bottom right:right];
-  }
-
-  NSNumber *rotateGesturesEnabled = FGMGetValueOrNilFromDict(data, @"rotateGesturesEnabled");
-  if (rotateGesturesEnabled) {
-    [self setRotateGesturesEnabled:[rotateGesturesEnabled boolValue]];
-  }
-  NSNumber *scrollGesturesEnabled = FGMGetValueOrNilFromDict(data, @"scrollGesturesEnabled");
-  if (scrollGesturesEnabled) {
-    [self setScrollGesturesEnabled:[scrollGesturesEnabled boolValue]];
-  }
-  NSNumber *tiltGesturesEnabled = FGMGetValueOrNilFromDict(data, @"tiltGesturesEnabled");
-  if (tiltGesturesEnabled) {
-    [self setTiltGesturesEnabled:[tiltGesturesEnabled boolValue]];
-  }
-  NSNumber *trackCameraPosition = FGMGetValueOrNilFromDict(data, @"trackCameraPosition");
-  if (trackCameraPosition) {
-    [self setTrackCameraPosition:[trackCameraPosition boolValue]];
-  }
-  NSNumber *zoomGesturesEnabled = FGMGetValueOrNilFromDict(data, @"zoomGesturesEnabled");
-  if (zoomGesturesEnabled) {
-    [self setZoomGesturesEnabled:[zoomGesturesEnabled boolValue]];
-  }
-  NSNumber *myLocationEnabled = FGMGetValueOrNilFromDict(data, @"myLocationEnabled");
-  if (myLocationEnabled) {
-    [self setMyLocationEnabled:[myLocationEnabled boolValue]];
-  }
-  NSNumber *myLocationButtonEnabled = FGMGetValueOrNilFromDict(data, @"myLocationButtonEnabled");
-  if (myLocationButtonEnabled) {
-    [self setMyLocationButtonEnabled:[myLocationButtonEnabled boolValue]];
-  }
-  NSString *style = FGMGetValueOrNilFromDict(data, @"style");
   if (style) {
     [self setMapStyle:style];
   }
