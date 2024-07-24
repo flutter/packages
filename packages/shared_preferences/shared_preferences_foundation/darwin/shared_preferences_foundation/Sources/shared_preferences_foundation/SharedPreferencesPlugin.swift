@@ -121,7 +121,8 @@ public class SharedPreferencesPlugin: NSObject, FlutterPlugin, UserDefaultsApi {
   }
 
   func getValue(key: String, options: SharedPreferencesPigeonOptions) throws -> Any? {
-    return try SharedPreferencesPlugin.getUserDefaults(options: options).object(forKey: key)
+    let preference = try SharedPreferencesPlugin.getUserDefaults(options: options).object(forKey: key)
+    return SharedPreferencesPlugin.isTypeCompatible(value:preference as Any) ? preference : nil
   }
 
   func remove(key: String, options: SharedPreferencesPigeonOptions) throws {
