@@ -29,22 +29,21 @@ import 'package:google_maps/google_maps.dart' as gmaps;
 ///
 /// See: https://developers.google.com/maps/documentation/android-sdk/reference/com/google/android/libraries/maps/Projection#public-point-toscreenlocation-latlng-location
 gmaps.Point toScreenLocation(gmaps.Map map, gmaps.LatLng coords) {
-  final gmaps.LatLngBounds? bounds = map.bounds;
-  final gmaps.Projection? projection = map.projection;
-
-  assert(
-      bounds != null, 'Map Bounds required to compute screen x/y of LatLng.');
-  assert(projection != null,
+  assert(map.bounds != null,
+      'Map Bounds required to compute screen x/y of LatLng.');
+  assert(map.projection != null,
       'Map Projection required to compute screen x/y of LatLng.');
   assert(map.isZoomDefined(),
       'Current map zoom level required to compute screen x/y of LatLng.');
 
+  final gmaps.LatLngBounds bounds = map.bounds!;
+  final gmaps.Projection projection = map.projection!;
   final num zoom = map.zoom;
 
-  final gmaps.LatLng ne = bounds!.northEast;
+  final gmaps.LatLng ne = bounds.northEast;
   final gmaps.LatLng sw = bounds.southWest;
 
-  final gmaps.Point topRight = projection!.fromLatLngToPoint(ne)!;
+  final gmaps.Point topRight = projection.fromLatLngToPoint(ne)!;
   final gmaps.Point bottomLeft = projection.fromLatLngToPoint(sw)!;
 
   final int scale = 1 << (zoom.toInt()); // 2 ^ zoom
