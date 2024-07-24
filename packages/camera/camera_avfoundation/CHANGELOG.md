@@ -1,3 +1,7 @@
+## 0.9.17+2
+
+* Fixes deallocation of camera on dispose.
+
 ## 0.9.17+1
 
 * Fixes a crash due to appending sample buffers when readyForMoreMediaData is NO
