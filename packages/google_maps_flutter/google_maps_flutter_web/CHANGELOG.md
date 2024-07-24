@@ -1,7 +1,6 @@
 # 0.5.9
 
 * Updates `package:google_maps` dependency to latest (`^8.0.0`).
-* Updates web code to allow package `web: ^1.0.0`.
 * Updates SDK version to Dart `^3.4.0`. Flutter `^3.22.0`.
 
 ## 0.5.8

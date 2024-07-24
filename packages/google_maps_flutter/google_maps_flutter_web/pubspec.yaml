@@ -29,7 +29,7 @@ dependencies:
   google_maps_flutter_platform_interface: ^2.7.0
   sanitize_html: ^2.0.0
   stream_transform: ^2.0.0
-  web: ">=0.5.1 <2.0.0"
+  web: ^0.5.1
 
 dev_dependencies:
   flutter_test:

@@ -254,7 +254,7 @@ gmaps.InfoWindowOptions? _infoWindowOptionsFromMarker(Marker marker) {
       // See: https://pub.dev/documentation/sanitize_html/latest/sanitize_html/sanitizeHtml.html
       // See: b/159137885, b/159598165
       // ignore: unsafe_html
-      snippet.innerHTML = sanitizeHtml(markerSnippet).toJS;
+      snippet.innerHTML = sanitizeHtml(markerSnippet);
     }
 
     container.appendChild(snippet);
