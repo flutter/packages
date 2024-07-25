@@ -20,7 +20,7 @@ class InteractiveMediaAdsProxy {
     this.newIMAAdsLoaderDelegate = IMAAdsLoaderDelegate.new,
     this.newIMAAdsManagerDelegate = IMAAdsManagerDelegate.new,
     this.newIMAAdsRenderingSettings = IMAAdsRenderingSettings.new,
-    this.newNSObject = NSObject.new,
+    this.newNSObject = BaseObject.new,
   });
 
   /// Constructs [IMAAdDisplayContainer].
@@ -68,12 +68,12 @@ class InteractiveMediaAdsProxy {
   /// Constructs [IMAAdsRenderingSettings].
   final IMAAdsRenderingSettings Function() newIMAAdsRenderingSettings;
 
-  /// Constructs [NSObject].
-  final NSObject Function({
+  /// Constructs [BaseObject].
+  final BaseObject Function({
     void Function(
-      NSObject,
+      BaseObject,
       String?,
-      NSObject?,
+      BaseObject?,
       Map<KeyValueChangeKey?, Object?>?,
     )? observeValue,
   }) newNSObject;

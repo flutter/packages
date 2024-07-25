@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:meta/meta.dart';
@@ -42,10 +44,48 @@ base class IOSAdDisplayContainer extends PlatformAdDisplayContainer {
   /// Constructs an [IOSAdDisplayContainer].
   IOSAdDisplayContainer(super.params) : super.implementation() {
     _controller = _iosParams._imaProxy.newUIViewController();
+
+    final BaseObject windowListener =
+        _createWindowListener(WeakReference<IOSAdDisplayContainer>(this));
+    _controller.view.addObserver(
+      windowListener,
+      'window',
+      KeyValueObservingOptions.newValue,
+    );
+  }
+
+  // This value is created in a static method because the callback methods for
+  // any wrapped classes must not reference the encapsulating object. This is to
+  // prevent a circular reference that prevents garbage collection.
+  static BaseObject _createWindowListener(
+    WeakReference<IOSAdDisplayContainer> interfaceContainer,
+  ) {
+    return interfaceContainer.target!._iosParams._imaProxy.newNSObject(
+      observeValue: (
+        BaseObject instance,
+        String? keyPath,
+        BaseObject? object,
+        Map<KeyValueChangeKey?, Object?>? changeKeys,
+      ) {
+        if (changeKeys == null) {
+          return;
+        }
+
+        final IOSAdDisplayContainer? container = interfaceContainer.target;
+        if (container != null &&
+            changeKeys[KeyValueChangeKey.newValue] != null &&
+            !container._viewAddedToWindowCompleter.isCompleted) {
+          container._viewAddedToWindowCompleter.complete();
+          container._controller.view.removeObserver(instance, 'window');
+        }
+      },
+    );
   }
 
   // The `UIViewController` used to create the native `IMAAdDisplayContainer`.
   late final UIViewController _controller;
+
+  final Completer<void> _viewAddedToWindowCompleter = Completer<void>();
 
   /// The native iOS IMAAdDisplayContainer.
   ///
@@ -69,10 +109,7 @@ base class IOSAdDisplayContainer extends PlatformAdDisplayContainer {
           adContainer: _controller.view,
           adContainerViewController: _controller,
         );
-        // A delay is added since this callback only indicates when the View is
-        // created, but not when it has been added to the native View hierarchy.
-        // See https://github.com/flutter/flutter/issues/150802
-        await Future<void>.delayed(const Duration(seconds: 1));
+        await _viewAddedToWindowCompleter.future;
         params.onContainerAdded(this);
       },
       layoutDirection: params.layoutDirection,

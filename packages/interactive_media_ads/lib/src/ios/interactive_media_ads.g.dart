@@ -168,7 +168,7 @@ class PigeonInstanceManager {
         pigeon_instanceManager: instanceManager);
     UIWindow.pigeon_setUpMessageHandlers(
         pigeon_instanceManager: instanceManager);
-    NSObject.pigeon_setUpMessageHandlers(
+    BaseObject.pigeon_setUpMessageHandlers(
         pigeon_instanceManager: instanceManager);
     return instanceManager;
   }
@@ -744,13 +744,14 @@ class _PigeonCodec extends StandardMessageCodec {
 /// view and companion ad slots used for ad playback.
 ///
 /// See https://developers.google.com/ad-manager/dynamic-ad-insertion/sdk/ios/reference/Classes/IMAAdDisplayContainer.
-class IMAAdDisplayContainer extends PigeonProxyApiBaseClass {
+class IMAAdDisplayContainer extends BaseObject {
   IMAAdDisplayContainer({
     super.pigeon_binaryMessenger,
     super.pigeon_instanceManager,
+    super.observeValue,
     required UIView adContainer,
     UIViewController? adContainerViewController,
-  }) {
+  }) : super.pigeon_detached() {
     final int __pigeon_instanceIdentifier =
         pigeon_instanceManager.addDartCreatedInstance(this);
     final _PigeonProxyApiBaseCodec pigeonChannelCodec =
@@ -793,7 +794,8 @@ class IMAAdDisplayContainer extends PigeonProxyApiBaseClass {
   IMAAdDisplayContainer.pigeon_detached({
     super.pigeon_binaryMessenger,
     super.pigeon_instanceManager,
-  });
+    super.observeValue,
+  }) : super.pigeon_detached();
 
   late final _PigeonProxyApiBaseCodec __pigeon_codecIMAAdDisplayContainer =
       _PigeonProxyApiBaseCodec(pigeon_instanceManager);
@@ -851,6 +853,7 @@ class IMAAdDisplayContainer extends PigeonProxyApiBaseClass {
     return IMAAdDisplayContainer.pigeon_detached(
       pigeon_binaryMessenger: pigeon_binaryMessenger,
       pigeon_instanceManager: pigeon_instanceManager,
+      observeValue: observeValue,
     );
   }
 }
@@ -858,7 +861,7 @@ class IMAAdDisplayContainer extends PigeonProxyApiBaseClass {
 /// An object that manages the content for a rectangular area on the screen.
 ///
 /// See https://developer.apple.com/documentation/uikit/uiview.
-class UIView extends NSObject {
+class UIView extends BaseObject {
   /// Constructs [UIView] without creating the associated native object.
   ///
   /// This should only be used by subclasses created by this library or to
@@ -961,11 +964,12 @@ class UIView extends NSObject {
 /// An object that manages a view hierarchy for your UIKit app.
 ///
 /// See https://developer.apple.com/documentation/uikit/uiviewcontroller.
-class UIViewController extends PigeonProxyApiBaseClass {
+class UIViewController extends BaseObject {
   UIViewController({
     super.pigeon_binaryMessenger,
     super.pigeon_instanceManager,
-  }) {
+    super.observeValue,
+  }) : super.pigeon_detached() {
     final int __pigeon_instanceIdentifier =
         pigeon_instanceManager.addDartCreatedInstance(this);
     final _PigeonProxyApiBaseCodec pigeonChannelCodec =
@@ -1004,7 +1008,8 @@ class UIViewController extends PigeonProxyApiBaseClass {
   UIViewController.pigeon_detached({
     super.pigeon_binaryMessenger,
     super.pigeon_instanceManager,
-  });
+    super.observeValue,
+  }) : super.pigeon_detached();
 
   late final _PigeonProxyApiBaseCodec __pigeon_codecUIViewController =
       _PigeonProxyApiBaseCodec(pigeon_instanceManager);
@@ -1106,6 +1111,7 @@ class UIViewController extends PigeonProxyApiBaseClass {
     return UIViewController.pigeon_detached(
       pigeon_binaryMessenger: pigeon_binaryMessenger,
       pigeon_instanceManager: pigeon_instanceManager,
+      observeValue: observeValue,
     );
   }
 }
@@ -1114,11 +1120,12 @@ class UIViewController extends PigeonProxyApiBaseClass {
 /// exposes a key value observable property |currentTime|.
 ///
 /// See https://developers.google.com/ad-manager/dynamic-ad-insertion/sdk/ios/reference/Protocols/IMAContentPlayhead.
-class IMAContentPlayhead extends PigeonProxyApiBaseClass {
+class IMAContentPlayhead extends BaseObject {
   IMAContentPlayhead({
     super.pigeon_binaryMessenger,
     super.pigeon_instanceManager,
-  }) {
+    super.observeValue,
+  }) : super.pigeon_detached() {
     final int __pigeon_instanceIdentifier =
         pigeon_instanceManager.addDartCreatedInstance(this);
     final _PigeonProxyApiBaseCodec pigeonChannelCodec =
@@ -1157,7 +1164,8 @@ class IMAContentPlayhead extends PigeonProxyApiBaseClass {
   IMAContentPlayhead.pigeon_detached({
     super.pigeon_binaryMessenger,
     super.pigeon_instanceManager,
-  });
+    super.observeValue,
+  }) : super.pigeon_detached();
 
   late final _PigeonProxyApiBaseCodec __pigeon_codecIMAContentPlayhead =
       _PigeonProxyApiBaseCodec(pigeon_instanceManager);
@@ -1243,6 +1251,7 @@ class IMAContentPlayhead extends PigeonProxyApiBaseClass {
     return IMAContentPlayhead.pigeon_detached(
       pigeon_binaryMessenger: pigeon_binaryMessenger,
       pigeon_instanceManager: pigeon_instanceManager,
+      observeValue: observeValue,
     );
   }
 }
@@ -1250,12 +1259,13 @@ class IMAContentPlayhead extends PigeonProxyApiBaseClass {
 /// Allows the requesting of ads from the ad server.
 ///
 /// See https://developers.google.com/interactive-media-ads/docs/sdks/ios/client-side/reference/Classes/IMAAdsLoader.
-class IMAAdsLoader extends PigeonProxyApiBaseClass {
+class IMAAdsLoader extends BaseObject {
   IMAAdsLoader({
     super.pigeon_binaryMessenger,
     super.pigeon_instanceManager,
+    super.observeValue,
     IMASettings? settings,
-  }) {
+  }) : super.pigeon_detached() {
     final int __pigeon_instanceIdentifier =
         pigeon_instanceManager.addDartCreatedInstance(this);
     final _PigeonProxyApiBaseCodec pigeonChannelCodec =
@@ -1295,7 +1305,8 @@ class IMAAdsLoader extends PigeonProxyApiBaseClass {
   IMAAdsLoader.pigeon_detached({
     super.pigeon_binaryMessenger,
     super.pigeon_instanceManager,
-  });
+    super.observeValue,
+  }) : super.pigeon_detached();
 
   late final _PigeonProxyApiBaseCodec __pigeon_codecIMAAdsLoader =
       _PigeonProxyApiBaseCodec(pigeon_instanceManager);
@@ -1439,6 +1450,7 @@ class IMAAdsLoader extends PigeonProxyApiBaseClass {
     return IMAAdsLoader.pigeon_detached(
       pigeon_binaryMessenger: pigeon_binaryMessenger,
       pigeon_instanceManager: pigeon_instanceManager,
+      observeValue: observeValue,
     );
   }
 }
@@ -1446,7 +1458,7 @@ class IMAAdsLoader extends PigeonProxyApiBaseClass {
 /// The IMASettings class stores SDK wide settings.
 ///
 /// See https://developers.google.com/interactive-media-ads/docs/sdks/ios/client-side/reference/Classes/IMASettings.html.
-class IMASettings extends PigeonProxyApiBaseClass {
+class IMASettings extends BaseObject {
   /// Constructs [IMASettings] without creating the associated native object.
   ///
   /// This should only be used by subclasses created by this library or to
@@ -1455,7 +1467,8 @@ class IMASettings extends PigeonProxyApiBaseClass {
   IMASettings.pigeon_detached({
     super.pigeon_binaryMessenger,
     super.pigeon_instanceManager,
-  });
+    super.observeValue,
+  }) : super.pigeon_detached();
 
   static void pigeon_setUpMessageHandlers({
     bool pigeon_clearHandlers = false,
@@ -1510,6 +1523,7 @@ class IMASettings extends PigeonProxyApiBaseClass {
     return IMASettings.pigeon_detached(
       pigeon_binaryMessenger: pigeon_binaryMessenger,
       pigeon_instanceManager: pigeon_instanceManager,
+      observeValue: observeValue,
     );
   }
 }
@@ -1517,16 +1531,17 @@ class IMASettings extends PigeonProxyApiBaseClass {
 /// Data class describing the ad request.
 ///
 /// See https://developers.google.com/interactive-media-ads/docs/sdks/ios/client-side/reference/Classes/IMAAdsRequest.
-class IMAAdsRequest extends PigeonProxyApiBaseClass {
+class IMAAdsRequest extends BaseObject {
   /// Initializes an ads request instance with the given ad tag URL and ad
   /// display container.
   IMAAdsRequest({
     super.pigeon_binaryMessenger,
     super.pigeon_instanceManager,
+    super.observeValue,
     required String adTagUrl,
     required IMAAdDisplayContainer adDisplayContainer,
     IMAContentPlayhead? contentPlayhead,
-  }) {
+  }) : super.pigeon_detached() {
     final int __pigeon_instanceIdentifier =
         pigeon_instanceManager.addDartCreatedInstance(this);
     final _PigeonProxyApiBaseCodec pigeonChannelCodec =
@@ -1570,7 +1585,8 @@ class IMAAdsRequest extends PigeonProxyApiBaseClass {
   IMAAdsRequest.pigeon_detached({
     super.pigeon_binaryMessenger,
     super.pigeon_instanceManager,
-  });
+    super.observeValue,
+  }) : super.pigeon_detached();
 
   late final _PigeonProxyApiBaseCodec __pigeon_codecIMAAdsRequest =
       _PigeonProxyApiBaseCodec(pigeon_instanceManager);
@@ -1628,6 +1644,7 @@ class IMAAdsRequest extends PigeonProxyApiBaseClass {
     return IMAAdsRequest.pigeon_detached(
       pigeon_binaryMessenger: pigeon_binaryMessenger,
       pigeon_instanceManager: pigeon_instanceManager,
+      observeValue: observeValue,
     );
   }
 }
@@ -1635,13 +1652,14 @@ class IMAAdsRequest extends PigeonProxyApiBaseClass {
 /// Delegate object that receives state change callbacks from `IMAAdsLoader`.
 ///
 /// See https://developers.google.com/interactive-media-ads/docs/sdks/ios/client-side/reference/Protocols/IMAAdsLoaderDelegate.html.
-class IMAAdsLoaderDelegate extends PigeonProxyApiBaseClass {
+class IMAAdsLoaderDelegate extends BaseObject {
   IMAAdsLoaderDelegate({
     super.pigeon_binaryMessenger,
     super.pigeon_instanceManager,
+    super.observeValue,
     required this.adLoaderLoadedWith,
     required this.adsLoaderFailedWithErrorData,
-  }) {
+  }) : super.pigeon_detached() {
     final int __pigeon_instanceIdentifier =
         pigeon_instanceManager.addDartCreatedInstance(this);
     final _PigeonProxyApiBaseCodec pigeonChannelCodec =
@@ -1680,9 +1698,10 @@ class IMAAdsLoaderDelegate extends PigeonProxyApiBaseClass {
   IMAAdsLoaderDelegate.pigeon_detached({
     super.pigeon_binaryMessenger,
     super.pigeon_instanceManager,
+    super.observeValue,
     required this.adLoaderLoadedWith,
     required this.adsLoaderFailedWithErrorData,
-  });
+  }) : super.pigeon_detached();
 
   late final _PigeonProxyApiBaseCodec __pigeon_codecIMAAdsLoaderDelegate =
       _PigeonProxyApiBaseCodec(pigeon_instanceManager);
@@ -1839,6 +1858,7 @@ class IMAAdsLoaderDelegate extends PigeonProxyApiBaseClass {
     return IMAAdsLoaderDelegate.pigeon_detached(
       pigeon_binaryMessenger: pigeon_binaryMessenger,
       pigeon_instanceManager: pigeon_instanceManager,
+      observeValue: observeValue,
       adLoaderLoadedWith: adLoaderLoadedWith,
       adsLoaderFailedWithErrorData: adsLoaderFailedWithErrorData,
     );
@@ -1848,7 +1868,7 @@ class IMAAdsLoaderDelegate extends PigeonProxyApiBaseClass {
 /// Ad data that is returned when the ads loader loads the ad.
 ///
 /// See https://developers.google.com/interactive-media-ads/docs/sdks/ios/client-side/reference/Classes/IMAAdsLoadedData.html.
-class IMAAdsLoadedData extends PigeonProxyApiBaseClass {
+class IMAAdsLoadedData extends BaseObject {
   /// Constructs [IMAAdsLoadedData] without creating the associated native object.
   ///
   /// This should only be used by subclasses created by this library or to
@@ -1858,7 +1878,8 @@ class IMAAdsLoadedData extends PigeonProxyApiBaseClass {
     super.pigeon_binaryMessenger,
     super.pigeon_instanceManager,
     this.adsManager,
-  });
+    super.observeValue,
+  }) : super.pigeon_detached();
 
   /// The ads manager instance created by the ads loader.
   ///
@@ -1921,6 +1942,7 @@ class IMAAdsLoadedData extends PigeonProxyApiBaseClass {
       pigeon_binaryMessenger: pigeon_binaryMessenger,
       pigeon_instanceManager: pigeon_instanceManager,
       adsManager: adsManager,
+      observeValue: observeValue,
     );
   }
 }
@@ -1928,7 +1950,7 @@ class IMAAdsLoadedData extends PigeonProxyApiBaseClass {
 /// Ad error data that is returned when the ads loader fails to load the ad.
 ///
 /// See https://developers.google.com/interactive-media-ads/docs/sdks/ios/client-side/reference/Classes/IMAAdLoadingErrorData.html.
-class IMAAdLoadingErrorData extends PigeonProxyApiBaseClass {
+class IMAAdLoadingErrorData extends BaseObject {
   /// Constructs [IMAAdLoadingErrorData] without creating the associated native object.
   ///
   /// This should only be used by subclasses created by this library or to
@@ -1938,7 +1960,8 @@ class IMAAdLoadingErrorData extends PigeonProxyApiBaseClass {
     super.pigeon_binaryMessenger,
     super.pigeon_instanceManager,
     required this.adError,
-  });
+    super.observeValue,
+  }) : super.pigeon_detached();
 
   /// The ad error that occurred while loading the ad.
   final IMAAdError adError;
@@ -2001,6 +2024,7 @@ class IMAAdLoadingErrorData extends PigeonProxyApiBaseClass {
       pigeon_binaryMessenger: pigeon_binaryMessenger,
       pigeon_instanceManager: pigeon_instanceManager,
       adError: adError,
+      observeValue: observeValue,
     );
   }
 }
@@ -2008,7 +2032,7 @@ class IMAAdLoadingErrorData extends PigeonProxyApiBaseClass {
 /// Surfaces an error that occurred during ad loading or playing.
 ///
 /// See https://developers.google.com/interactive-media-ads/docs/sdks/ios/client-side/reference/Classes/IMAAdError.html.
-class IMAAdError extends PigeonProxyApiBaseClass {
+class IMAAdError extends BaseObject {
   /// Constructs [IMAAdError] without creating the associated native object.
   ///
   /// This should only be used by subclasses created by this library or to
@@ -2020,7 +2044,8 @@ class IMAAdError extends PigeonProxyApiBaseClass {
     required this.type,
     required this.code,
     this.message,
-  });
+    super.observeValue,
+  }) : super.pigeon_detached();
 
   /// The type of error that occurred during ad loading or ad playing.
   final AdErrorType type;
@@ -2101,6 +2126,7 @@ class IMAAdError extends PigeonProxyApiBaseClass {
       type: type,
       code: code,
       message: message,
+      observeValue: observeValue,
     );
   }
 }
@@ -2108,7 +2134,7 @@ class IMAAdError extends PigeonProxyApiBaseClass {
 /// Responsible for playing ads.
 ///
 /// See https://developers.google.com/interactive-media-ads/docs/sdks/ios/client-side/reference/Classes/IMAAdsManager.html.
-class IMAAdsManager extends PigeonProxyApiBaseClass {
+class IMAAdsManager extends BaseObject {
   /// Constructs [IMAAdsManager] without creating the associated native object.
   ///
   /// This should only be used by subclasses created by this library or to
@@ -2117,7 +2143,8 @@ class IMAAdsManager extends PigeonProxyApiBaseClass {
   IMAAdsManager.pigeon_detached({
     super.pigeon_binaryMessenger,
     super.pigeon_instanceManager,
-  });
+    super.observeValue,
+  }) : super.pigeon_detached();
 
   late final _PigeonProxyApiBaseCodec __pigeon_codecIMAAdsManager =
       _PigeonProxyApiBaseCodec(pigeon_instanceManager);
@@ -2400,6 +2427,7 @@ class IMAAdsManager extends PigeonProxyApiBaseClass {
     return IMAAdsManager.pigeon_detached(
       pigeon_binaryMessenger: pigeon_binaryMessenger,
       pigeon_instanceManager: pigeon_instanceManager,
+      observeValue: observeValue,
     );
   }
 }
@@ -2407,15 +2435,16 @@ class IMAAdsManager extends PigeonProxyApiBaseClass {
 /// A callback protocol for IMAAdsManager.
 ///
 /// See https://developers.google.com/interactive-media-ads/docs/sdks/ios/client-side/reference/Protocols/IMAAdsManagerDelegate.html.
-class IMAAdsManagerDelegate extends PigeonProxyApiBaseClass {
+class IMAAdsManagerDelegate extends BaseObject {
   IMAAdsManagerDelegate({
     super.pigeon_binaryMessenger,
     super.pigeon_instanceManager,
+    super.observeValue,
     required this.didReceiveAdEvent,
     required this.didReceiveAdError,
     required this.didRequestContentPause,
     required this.didRequestContentResume,
-  }) {
+  }) : super.pigeon_detached() {
     final int __pigeon_instanceIdentifier =
         pigeon_instanceManager.addDartCreatedInstance(this);
     final _PigeonProxyApiBaseCodec pigeonChannelCodec =
@@ -2454,11 +2483,12 @@ class IMAAdsManagerDelegate extends PigeonProxyApiBaseClass {
   IMAAdsManagerDelegate.pigeon_detached({
     super.pigeon_binaryMessenger,
     super.pigeon_instanceManager,
+    super.observeValue,
     required this.didReceiveAdEvent,
     required this.didReceiveAdError,
     required this.didRequestContentPause,
     required this.didRequestContentResume,
-  });
+  }) : super.pigeon_detached();
 
   late final _PigeonProxyApiBaseCodec __pigeon_codecIMAAdsManagerDelegate =
       _PigeonProxyApiBaseCodec(pigeon_instanceManager);
@@ -2738,6 +2768,7 @@ class IMAAdsManagerDelegate extends PigeonProxyApiBaseClass {
     return IMAAdsManagerDelegate.pigeon_detached(
       pigeon_binaryMessenger: pigeon_binaryMessenger,
       pigeon_instanceManager: pigeon_instanceManager,
+      observeValue: observeValue,
       didReceiveAdEvent: didReceiveAdEvent,
       didReceiveAdError: didReceiveAdError,
       didRequestContentPause: didRequestContentPause,
@@ -2749,7 +2780,7 @@ class IMAAdsManagerDelegate extends PigeonProxyApiBaseClass {
 /// Simple data class used to transport ad playback information.
 ///
 /// See https://developers.google.com/interactive-media-ads/docs/sdks/ios/client-side/reference/Classes/IMAAdEvent.html.
-class IMAAdEvent extends PigeonProxyApiBaseClass {
+class IMAAdEvent extends BaseObject {
   /// Constructs [IMAAdEvent] without creating the associated native object.
   ///
   /// This should only be used by subclasses created by this library or to
@@ -2760,7 +2791,8 @@ class IMAAdEvent extends PigeonProxyApiBaseClass {
     super.pigeon_instanceManager,
     required this.type,
     required this.typeString,
-  });
+    super.observeValue,
+  }) : super.pigeon_detached();
 
   /// Type of the event.
   final AdEventType type;
@@ -2834,6 +2866,7 @@ class IMAAdEvent extends PigeonProxyApiBaseClass {
       pigeon_instanceManager: pigeon_instanceManager,
       type: type,
       typeString: typeString,
+      observeValue: observeValue,
     );
   }
 }
@@ -2841,11 +2874,12 @@ class IMAAdEvent extends PigeonProxyApiBaseClass {
 /// Set of properties that influence how ads are rendered.
 ///
 /// See https://developers.google.com/ad-manager/dynamic-ad-insertion/sdk/ios/reference/Classes/IMAAdsRenderingSettings.
-class IMAAdsRenderingSettings extends PigeonProxyApiBaseClass {
+class IMAAdsRenderingSettings extends BaseObject {
   IMAAdsRenderingSettings({
     super.pigeon_binaryMessenger,
     super.pigeon_instanceManager,
-  }) {
+    super.observeValue,
+  }) : super.pigeon_detached() {
     final int __pigeon_instanceIdentifier =
         pigeon_instanceManager.addDartCreatedInstance(this);
     final _PigeonProxyApiBaseCodec pigeonChannelCodec =
@@ -2884,7 +2918,8 @@ class IMAAdsRenderingSettings extends PigeonProxyApiBaseClass {
   IMAAdsRenderingSettings.pigeon_detached({
     super.pigeon_binaryMessenger,
     super.pigeon_instanceManager,
-  });
+    super.observeValue,
+  }) : super.pigeon_detached();
 
   late final _PigeonProxyApiBaseCodec __pigeon_codecIMAAdsRenderingSettings =
       _PigeonProxyApiBaseCodec(pigeon_instanceManager);
@@ -2942,6 +2977,7 @@ class IMAAdsRenderingSettings extends PigeonProxyApiBaseClass {
     return IMAAdsRenderingSettings.pigeon_detached(
       pigeon_binaryMessenger: pigeon_binaryMessenger,
       pigeon_instanceManager: pigeon_instanceManager,
+      observeValue: observeValue,
     );
   }
 }
@@ -2950,7 +2986,7 @@ class IMAAdsRenderingSettings extends PigeonProxyApiBaseClass {
 /// events to your views.
 ///
 /// See https://developer.apple.com/documentation/uikit/uiwindow?language=objc
-class UIWindow extends PigeonProxyApiBaseClass {
+class UIWindow extends BaseObject {
   /// Constructs [UIWindow] without creating the associated native object.
   ///
   /// This should only be used by subclasses created by this library or to
@@ -2959,7 +2995,8 @@ class UIWindow extends PigeonProxyApiBaseClass {
   UIWindow.pigeon_detached({
     super.pigeon_binaryMessenger,
     super.pigeon_instanceManager,
-  });
+    super.observeValue,
+  }) : super.pigeon_detached();
 
   static void pigeon_setUpMessageHandlers({
     bool pigeon_clearHandlers = false,
@@ -3014,6 +3051,7 @@ class UIWindow extends PigeonProxyApiBaseClass {
     return UIWindow.pigeon_detached(
       pigeon_binaryMessenger: pigeon_binaryMessenger,
       pigeon_instanceManager: pigeon_instanceManager,
+      observeValue: observeValue,
     );
   }
 }
@@ -3023,19 +3061,20 @@ class UIWindow extends PigeonProxyApiBaseClass {
 /// Objective-C objects.
 ///
 /// See https://developer.apple.com/documentation/objectivec/nsobject.
-class NSObject extends PigeonProxyApiBaseClass {
-  NSObject({
+class BaseObject extends PigeonProxyApiBaseClass {
+  BaseObject({
     super.pigeon_binaryMessenger,
     super.pigeon_instanceManager,
     this.observeValue,
   }) {
     final int __pigeon_instanceIdentifier =
         pigeon_instanceManager.addDartCreatedInstance(this);
-    final _PigeonProxyApiBaseCodec pigeonChannelCodec = __pigeon_codecNSObject;
+    final _PigeonProxyApiBaseCodec pigeonChannelCodec =
+        __pigeon_codecBaseObject;
     final BinaryMessenger? __pigeon_binaryMessenger = pigeon_binaryMessenger;
     () async {
       const String __pigeon_channelName =
-          'dev.flutter.pigeon.interactive_media_ads.NSObject.pigeon_defaultConstructor';
+          'dev.flutter.pigeon.interactive_media_ads.BaseObject.pigeon_defaultConstructor';
       final BasicMessageChannel<Object?> __pigeon_channel =
           BasicMessageChannel<Object?>(
         __pigeon_channelName,
@@ -3058,18 +3097,18 @@ class NSObject extends PigeonProxyApiBaseClass {
     }();
   }
 
-  /// Constructs [NSObject] without creating the associated native object.
+  /// Constructs [BaseObject] without creating the associated native object.
   ///
   /// This should only be used by subclasses created by this library or to
   /// create copies for an [PigeonInstanceManager].
   @protected
-  NSObject.pigeon_detached({
+  BaseObject.pigeon_detached({
     super.pigeon_binaryMessenger,
     super.pigeon_instanceManager,
     this.observeValue,
   });
 
-  late final _PigeonProxyApiBaseCodec __pigeon_codecNSObject =
+  late final _PigeonProxyApiBaseCodec __pigeon_codecBaseObject =
       _PigeonProxyApiBaseCodec(pigeon_instanceManager);
 
   /// Informs the observing object when the value at the specified key path
@@ -3083,8 +3122,8 @@ class NSObject extends PigeonProxyApiBaseClass {
   ///
   /// ```dart
   /// final WeakReference weakMyVariable = WeakReference(myVariable);
-  /// final NSObject instance = NSObject(
-  ///  observeValue: (NSObject pigeon_instance, ...) {
+  /// final BaseObject instance = BaseObject(
+  ///  observeValue: (BaseObject pigeon_instance, ...) {
   ///    print(weakMyVariable?.target);
   ///  },
   /// );
@@ -3093,9 +3132,9 @@ class NSObject extends PigeonProxyApiBaseClass {
   /// Alternatively, [PigeonInstanceManager.removeWeakReference] can be used to
   /// release the associated Native object manually.
   final void Function(
-    NSObject pigeon_instance,
+    BaseObject pigeon_instance,
     String? keyPath,
-    NSObject? object,
+    BaseObject? object,
     Map<KeyValueChangeKey?, Object?>? changeKeys,
   )? observeValue;
 
@@ -3103,11 +3142,11 @@ class NSObject extends PigeonProxyApiBaseClass {
     bool pigeon_clearHandlers = false,
     BinaryMessenger? pigeon_binaryMessenger,
     PigeonInstanceManager? pigeon_instanceManager,
-    NSObject Function()? pigeon_newInstance,
+    BaseObject Function()? pigeon_newInstance,
     void Function(
-      NSObject pigeon_instance,
+      BaseObject pigeon_instance,
       String? keyPath,
-      NSObject? object,
+      BaseObject? object,
       Map<KeyValueChangeKey?, Object?>? changeKeys,
     )? observeValue,
   }) {
@@ -3118,7 +3157,7 @@ class NSObject extends PigeonProxyApiBaseClass {
     {
       final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
               Object?>(
-          'dev.flutter.pigeon.interactive_media_ads.NSObject.pigeon_newInstance',
+          'dev.flutter.pigeon.interactive_media_ads.BaseObject.pigeon_newInstance',
           pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
       if (pigeon_clearHandlers) {
@@ -3126,16 +3165,16 @@ class NSObject extends PigeonProxyApiBaseClass {
       } else {
         __pigeon_channel.setMessageHandler((Object? message) async {
           assert(message != null,
-              'Argument for dev.flutter.pigeon.interactive_media_ads.NSObject.pigeon_newInstance was null.');
+              'Argument for dev.flutter.pigeon.interactive_media_ads.BaseObject.pigeon_newInstance was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final int? arg_pigeon_instanceIdentifier = (args[0] as int?);
           assert(arg_pigeon_instanceIdentifier != null,
-              'Argument for dev.flutter.pigeon.interactive_media_ads.NSObject.pigeon_newInstance was null, expected non-null int.');
+              'Argument for dev.flutter.pigeon.interactive_media_ads.BaseObject.pigeon_newInstance was null, expected non-null int.');
           try {
             (pigeon_instanceManager ?? PigeonInstanceManager.instance)
                 .addHostCreatedInstance(
               pigeon_newInstance?.call() ??
-                  NSObject.pigeon_detached(
+                  BaseObject.pigeon_detached(
                     pigeon_binaryMessenger: pigeon_binaryMessenger,
                     pigeon_instanceManager: pigeon_instanceManager,
                   ),
@@ -3153,23 +3192,23 @@ class NSObject extends PigeonProxyApiBaseClass {
     }
 
     {
-      final BasicMessageChannel<Object?> __pigeon_channel =
-          BasicMessageChannel<Object?>(
-              'dev.flutter.pigeon.interactive_media_ads.NSObject.observeValue',
-              pigeonChannelCodec,
-              binaryMessenger: binaryMessenger);
+      final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<
+              Object?>(
+          'dev.flutter.pigeon.interactive_media_ads.BaseObject.observeValue',
+          pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
       if (pigeon_clearHandlers) {
         __pigeon_channel.setMessageHandler(null);
       } else {
         __pigeon_channel.setMessageHandler((Object? message) async {
           assert(message != null,
-              'Argument for dev.flutter.pigeon.interactive_media_ads.NSObject.observeValue was null.');
+              'Argument for dev.flutter.pigeon.interactive_media_ads.BaseObject.observeValue was null.');
           final List<Object?> args = (message as List<Object?>?)!;
-          final NSObject? arg_pigeon_instance = (args[0] as NSObject?);
+          final BaseObject? arg_pigeon_instance = (args[0] as BaseObject?);
           assert(arg_pigeon_instance != null,
-              'Argument for dev.flutter.pigeon.interactive_media_ads.NSObject.observeValue was null, expected non-null NSObject.');
+              'Argument for dev.flutter.pigeon.interactive_media_ads.BaseObject.observeValue was null, expected non-null BaseObject.');
           final String? arg_keyPath = (args[1] as String?);
-          final NSObject? arg_object = (args[2] as NSObject?);
+          final BaseObject? arg_object = (args[2] as BaseObject?);
           final Map<KeyValueChangeKey?, Object?>? arg_changeKeys =
               (args[3] as Map<Object?, Object?>?)
                   ?.cast<KeyValueChangeKey?, Object?>();
@@ -3191,14 +3230,15 @@ class NSObject extends PigeonProxyApiBaseClass {
   /// Registers the observer object to receive KVO notifications for the key
   /// path relative to the object receiving this message.
   Future<void> addObserver(
-    NSObject observer,
+    BaseObject observer,
     String keyPath,
     KeyValueObservingOptions options,
   ) async {
-    final _PigeonProxyApiBaseCodec pigeonChannelCodec = __pigeon_codecNSObject;
+    final _PigeonProxyApiBaseCodec pigeonChannelCodec =
+        __pigeon_codecBaseObject;
     final BinaryMessenger? __pigeon_binaryMessenger = pigeon_binaryMessenger;
     const String __pigeon_channelName =
-        'dev.flutter.pigeon.interactive_media_ads.NSObject.addObserver';
+        'dev.flutter.pigeon.interactive_media_ads.BaseObject.addObserver';
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
@@ -3224,13 +3264,14 @@ class NSObject extends PigeonProxyApiBaseClass {
   /// property specified by the key path relative to the object receiving this
   /// message.
   Future<void> removeObserver(
-    NSObject observer,
+    BaseObject observer,
     String keyPath,
   ) async {
-    final _PigeonProxyApiBaseCodec pigeonChannelCodec = __pigeon_codecNSObject;
+    final _PigeonProxyApiBaseCodec pigeonChannelCodec =
+        __pigeon_codecBaseObject;
     final BinaryMessenger? __pigeon_binaryMessenger = pigeon_binaryMessenger;
     const String __pigeon_channelName =
-        'dev.flutter.pigeon.interactive_media_ads.NSObject.removeObserver';
+        'dev.flutter.pigeon.interactive_media_ads.BaseObject.removeObserver';
     final BasicMessageChannel<Object?> __pigeon_channel =
         BasicMessageChannel<Object?>(
       __pigeon_channelName,
@@ -3253,8 +3294,8 @@ class NSObject extends PigeonProxyApiBaseClass {
   }
 
   @override
-  NSObject pigeon_copy() {
-    return NSObject.pigeon_detached(
+  BaseObject pigeon_copy() {
+    return BaseObject.pigeon_detached(
       pigeon_binaryMessenger: pigeon_binaryMessenger,
       pigeon_instanceManager: pigeon_instanceManager,
       observeValue: observeValue,

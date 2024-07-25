@@ -14,10 +14,10 @@ open class ProxyApiDelegate: InteractiveMediaAdsLibraryPigeonProxyApiDelegate {
     return PigeonApiUIView(pigeonRegistrar: registrar, delegate: ViewProxyAPIDelegate())
   }
 
-  func pigeonApiNSObject(_ registrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar)
-    -> PigeonApiNSObject
+  func pigeonApiBaseObject(_ registrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar)
+    -> PigeonApiBaseObject
   {
-    return PigeonApiNSObject(pigeonRegistrar: registrar, delegate: ObjectProxyAPIDelegate())
+    return PigeonApiBaseObject(pigeonRegistrar: registrar, delegate: BaseObjectProxyAPIDelegate())
   }
 
   func pigeonApiIMAAdDisplayContainer(

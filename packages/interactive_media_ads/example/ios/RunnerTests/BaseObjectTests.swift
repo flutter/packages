@@ -10,9 +10,9 @@ import XCTest
 final class ObjectsTests: XCTestCase {
   func testAddObserver() {
     let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiNSObject(registrar)
+    let api = registrar.apiDelegate.pigeonApiBaseObject(registrar)
 
-    let instance = TestObject()
+    let instance = TestObject(api: api)
 
     try? api.pigeonDelegate.addObserver(
       pigeonApi: api, pigeonInstance: instance, observer: instance, keyPath: "keyPath",
@@ -27,9 +27,9 @@ final class ObjectsTests: XCTestCase {
 
   func testRemoveObserver() {
     let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiNSObject(registrar)
+    let api = registrar.apiDelegate.pigeonApiBaseObject(registrar)
 
-    let instance = TestObject()
+    let instance = TestObject(api: api)
 
     try? api.pigeonDelegate.removeObserver(
       pigeonApi: api, pigeonInstance: instance, observer: instance, keyPath: "keyPath")
@@ -39,7 +39,7 @@ final class ObjectsTests: XCTestCase {
 
   func testObserveValue() {
     let api = TestObjectsApi()
-    let instance = ObjectImpl(api: api)
+    let instance = BaseObject(api: api)
 
     instance.observeValue(
       forKeyPath: "keyPath", of: instance, change: [NSKeyValueChangeKey.newKey: "hello"],
@@ -53,19 +53,19 @@ final class ObjectsTests: XCTestCase {
   }
 }
 
-class TestObjectsApi: PigeonApiProtocolNSObject {
+class TestObjectsApi: PigeonApiProtocolBaseObject {
   var observeValueArgs: [Any?]? = nil
 
   func observeValue(
-    pigeonInstance pigeonInstanceArg: NSObject, keyPath keyPathArg: String?,
-    object objectArg: NSObject?, changeKeys changeKeysArg: [KeyValueChangeKey: Any]?,
+    pigeonInstance pigeonInstanceArg: BaseObject, keyPath keyPathArg: String?,
+    object objectArg: BaseObject?, changeKeys changeKeysArg: [KeyValueChangeKey: Any]?,
     completion: @escaping (Result<Void, PigeonError>) -> Void
   ) {
     observeValueArgs = [keyPathArg, objectArg, changeKeysArg]
   }
 }
 
-class TestObject: NSObject {
+class TestObject: BaseObject {
   var addObserverArgs: [Any?]? = nil
   var removeObserverArgs: [AnyHashable?]? = nil
 

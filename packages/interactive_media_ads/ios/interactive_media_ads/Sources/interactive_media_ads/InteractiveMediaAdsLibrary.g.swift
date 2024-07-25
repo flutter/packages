@@ -438,10 +438,10 @@ protocol InteractiveMediaAdsLibraryPigeonProxyApiDelegate {
   /// `UIWindow` to the Dart `InstanceManager` and make calls to Dart.
   func pigeonApiUIWindow(_ registrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar)
     -> PigeonApiUIWindow
-  /// An implementation of [PigeonApiNSObject] used to add a new Dart instance of
-  /// `NSObject` to the Dart `InstanceManager` and make calls to Dart.
-  func pigeonApiNSObject(_ registrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar)
-    -> PigeonApiNSObject
+  /// An implementation of [PigeonApiBaseObject] used to add a new Dart instance of
+  /// `BaseObject` to the Dart `InstanceManager` and make calls to Dart.
+  func pigeonApiBaseObject(_ registrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar)
+    -> PigeonApiBaseObject
 }
 
 extension InteractiveMediaAdsLibraryPigeonProxyApiDelegate {
@@ -522,8 +522,8 @@ open class InteractiveMediaAdsLibraryPigeonProxyApiRegistrar {
       binaryMessenger: binaryMessenger, api: apiDelegate.pigeonApiIMAAdsManagerDelegate(self))
     PigeonApiIMAAdsRenderingSettings.setUpMessageHandlers(
       binaryMessenger: binaryMessenger, api: apiDelegate.pigeonApiIMAAdsRenderingSettings(self))
-    PigeonApiNSObject.setUpMessageHandlers(
-      binaryMessenger: binaryMessenger, api: apiDelegate.pigeonApiNSObject(self))
+    PigeonApiBaseObject.setUpMessageHandlers(
+      binaryMessenger: binaryMessenger, api: apiDelegate.pigeonApiBaseObject(self))
   }
   func tearDown() {
     InteractiveMediaAdsLibraryPigeonInstanceManagerApi.setUpMessageHandlers(
@@ -539,7 +539,7 @@ open class InteractiveMediaAdsLibraryPigeonProxyApiRegistrar {
     PigeonApiIMAAdsManagerDelegate.setUpMessageHandlers(binaryMessenger: binaryMessenger, api: nil)
     PigeonApiIMAAdsRenderingSettings.setUpMessageHandlers(
       binaryMessenger: binaryMessenger, api: nil)
-    PigeonApiNSObject.setUpMessageHandlers(binaryMessenger: binaryMessenger, api: nil)
+    PigeonApiBaseObject.setUpMessageHandlers(binaryMessenger: binaryMessenger, api: nil)
   }
 }
 private class InteractiveMediaAdsLibraryPigeonProxyApiCodecReaderWriter: FlutterStandardReaderWriter
@@ -762,8 +762,8 @@ private class InteractiveMediaAdsLibraryPigeonProxyApiCodecReaderWriter: Flutter
         return
       }
 
-      if let instance = value as? NSObject {
-        pigeonRegistrar.apiDelegate.pigeonApiNSObject(pigeonRegistrar).pigeonNewInstance(
+      if let instance = value as? BaseObject {
+        pigeonRegistrar.apiDelegate.pigeonApiBaseObject(pigeonRegistrar).pigeonNewInstance(
           pigeonInstance: instance
         ) { _ in }
         super.writeByte(128)
@@ -1100,6 +1100,11 @@ protocol PigeonApiProtocolIMAAdDisplayContainer {
 final class PigeonApiIMAAdDisplayContainer: PigeonApiProtocolIMAAdDisplayContainer {
   unowned let pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar
   let pigeonDelegate: PigeonApiDelegateIMAAdDisplayContainer
+  ///An implementation of [BaseObject] used to access callback methods
+  var pigeonApiBaseObject: PigeonApiBaseObject {
+    return pigeonRegistrar.apiDelegate.pigeonApiBaseObject(pigeonRegistrar)
+  }
+
   init(
     pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar,
     delegate: PigeonApiDelegateIMAAdDisplayContainer
@@ -1185,9 +1190,9 @@ protocol PigeonApiProtocolUIView {
 final class PigeonApiUIView: PigeonApiProtocolUIView {
   unowned let pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar
   let pigeonDelegate: PigeonApiDelegateUIView
-  ///An implementation of [NSObject] used to access callback methods
-  var pigeonApiNSObject: PigeonApiNSObject {
-    return pigeonRegistrar.apiDelegate.pigeonApiNSObject(pigeonRegistrar)
+  ///An implementation of [BaseObject] used to access callback methods
+  var pigeonApiBaseObject: PigeonApiBaseObject {
+    return pigeonRegistrar.apiDelegate.pigeonApiBaseObject(pigeonRegistrar)
   }
 
   init(
@@ -1272,6 +1277,11 @@ protocol PigeonApiProtocolUIViewController {
 final class PigeonApiUIViewController: PigeonApiProtocolUIViewController {
   unowned let pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar
   let pigeonDelegate: PigeonApiDelegateUIViewController
+  ///An implementation of [BaseObject] used to access callback methods
+  var pigeonApiBaseObject: PigeonApiBaseObject {
+    return pigeonRegistrar.apiDelegate.pigeonApiBaseObject(pigeonRegistrar)
+  }
+
   init(
     pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar,
     delegate: PigeonApiDelegateUIViewController
@@ -1375,6 +1385,11 @@ protocol PigeonApiProtocolIMAContentPlayhead {
 final class PigeonApiIMAContentPlayhead: PigeonApiProtocolIMAContentPlayhead {
   unowned let pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar
   let pigeonDelegate: PigeonApiDelegateIMAContentPlayhead
+  ///An implementation of [BaseObject] used to access callback methods
+  var pigeonApiBaseObject: PigeonApiBaseObject {
+    return pigeonRegistrar.apiDelegate.pigeonApiBaseObject(pigeonRegistrar)
+  }
+
   init(
     pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar,
     delegate: PigeonApiDelegateIMAContentPlayhead
@@ -1485,6 +1500,11 @@ protocol PigeonApiProtocolIMAAdsLoader {
 final class PigeonApiIMAAdsLoader: PigeonApiProtocolIMAAdsLoader {
   unowned let pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar
   let pigeonDelegate: PigeonApiDelegateIMAAdsLoader
+  ///An implementation of [BaseObject] used to access callback methods
+  var pigeonApiBaseObject: PigeonApiBaseObject {
+    return pigeonRegistrar.apiDelegate.pigeonApiBaseObject(pigeonRegistrar)
+  }
+
   init(
     pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar,
     delegate: PigeonApiDelegateIMAAdsLoader
@@ -1619,6 +1639,11 @@ protocol PigeonApiProtocolIMASettings {
 final class PigeonApiIMASettings: PigeonApiProtocolIMASettings {
   unowned let pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar
   let pigeonDelegate: PigeonApiDelegateIMASettings
+  ///An implementation of [BaseObject] used to access callback methods
+  var pigeonApiBaseObject: PigeonApiBaseObject {
+    return pigeonRegistrar.apiDelegate.pigeonApiBaseObject(pigeonRegistrar)
+  }
+
   init(
     pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar,
     delegate: PigeonApiDelegateIMASettings
@@ -1673,6 +1698,11 @@ protocol PigeonApiProtocolIMAAdsRequest {
 final class PigeonApiIMAAdsRequest: PigeonApiProtocolIMAAdsRequest {
   unowned let pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar
   let pigeonDelegate: PigeonApiDelegateIMAAdsRequest
+  ///An implementation of [BaseObject] used to access callback methods
+  var pigeonApiBaseObject: PigeonApiBaseObject {
+    return pigeonRegistrar.apiDelegate.pigeonApiBaseObject(pigeonRegistrar)
+  }
+
   init(
     pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar,
     delegate: PigeonApiDelegateIMAAdsRequest
@@ -1768,6 +1798,11 @@ protocol PigeonApiProtocolIMAAdsLoaderDelegate {
 final class PigeonApiIMAAdsLoaderDelegate: PigeonApiProtocolIMAAdsLoaderDelegate {
   unowned let pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar
   let pigeonDelegate: PigeonApiDelegateIMAAdsLoaderDelegate
+  ///An implementation of [BaseObject] used to access callback methods
+  var pigeonApiBaseObject: PigeonApiBaseObject {
+    return pigeonRegistrar.apiDelegate.pigeonApiBaseObject(pigeonRegistrar)
+  }
+
   init(
     pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar,
     delegate: PigeonApiDelegateIMAAdsLoaderDelegate
@@ -1889,6 +1924,11 @@ protocol PigeonApiProtocolIMAAdsLoadedData {
 final class PigeonApiIMAAdsLoadedData: PigeonApiProtocolIMAAdsLoadedData {
   unowned let pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar
   let pigeonDelegate: PigeonApiDelegateIMAAdsLoadedData
+  ///An implementation of [BaseObject] used to access callback methods
+  var pigeonApiBaseObject: PigeonApiBaseObject {
+    return pigeonRegistrar.apiDelegate.pigeonApiBaseObject(pigeonRegistrar)
+  }
+
   init(
     pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar,
     delegate: PigeonApiDelegateIMAAdsLoadedData
@@ -1942,6 +1982,11 @@ protocol PigeonApiProtocolIMAAdLoadingErrorData {
 final class PigeonApiIMAAdLoadingErrorData: PigeonApiProtocolIMAAdLoadingErrorData {
   unowned let pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar
   let pigeonDelegate: PigeonApiDelegateIMAAdLoadingErrorData
+  ///An implementation of [BaseObject] used to access callback methods
+  var pigeonApiBaseObject: PigeonApiBaseObject {
+    return pigeonRegistrar.apiDelegate.pigeonApiBaseObject(pigeonRegistrar)
+  }
+
   init(
     pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar,
     delegate: PigeonApiDelegateIMAAdLoadingErrorData
@@ -1997,6 +2042,11 @@ protocol PigeonApiProtocolIMAAdError {
 final class PigeonApiIMAAdError: PigeonApiProtocolIMAAdError {
   unowned let pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar
   let pigeonDelegate: PigeonApiDelegateIMAAdError
+  ///An implementation of [BaseObject] used to access callback methods
+  var pigeonApiBaseObject: PigeonApiBaseObject {
+    return pigeonRegistrar.apiDelegate.pigeonApiBaseObject(pigeonRegistrar)
+  }
+
   init(
     pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar,
     delegate: PigeonApiDelegateIMAAdError
@@ -2069,6 +2119,11 @@ protocol PigeonApiProtocolIMAAdsManager {
 final class PigeonApiIMAAdsManager: PigeonApiProtocolIMAAdsManager {
   unowned let pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar
   let pigeonDelegate: PigeonApiDelegateIMAAdsManager
+  ///An implementation of [BaseObject] used to access callback methods
+  var pigeonApiBaseObject: PigeonApiBaseObject {
+    return pigeonRegistrar.apiDelegate.pigeonApiBaseObject(pigeonRegistrar)
+  }
+
   init(
     pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar,
     delegate: PigeonApiDelegateIMAAdsManager
@@ -2291,6 +2346,11 @@ protocol PigeonApiProtocolIMAAdsManagerDelegate {
 final class PigeonApiIMAAdsManagerDelegate: PigeonApiProtocolIMAAdsManagerDelegate {
   unowned let pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar
   let pigeonDelegate: PigeonApiDelegateIMAAdsManagerDelegate
+  ///An implementation of [BaseObject] used to access callback methods
+  var pigeonApiBaseObject: PigeonApiBaseObject {
+    return pigeonRegistrar.apiDelegate.pigeonApiBaseObject(pigeonRegistrar)
+  }
+
   init(
     pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar,
     delegate: PigeonApiDelegateIMAAdsManagerDelegate
@@ -2467,6 +2527,11 @@ protocol PigeonApiProtocolIMAAdEvent {
 final class PigeonApiIMAAdEvent: PigeonApiProtocolIMAAdEvent {
   unowned let pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar
   let pigeonDelegate: PigeonApiDelegateIMAAdEvent
+  ///An implementation of [BaseObject] used to access callback methods
+  var pigeonApiBaseObject: PigeonApiBaseObject {
+    return pigeonRegistrar.apiDelegate.pigeonApiBaseObject(pigeonRegistrar)
+  }
+
   init(
     pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar,
     delegate: PigeonApiDelegateIMAAdEvent
@@ -2520,6 +2585,11 @@ protocol PigeonApiProtocolIMAAdsRenderingSettings {
 final class PigeonApiIMAAdsRenderingSettings: PigeonApiProtocolIMAAdsRenderingSettings {
   unowned let pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar
   let pigeonDelegate: PigeonApiDelegateIMAAdsRenderingSettings
+  ///An implementation of [BaseObject] used to access callback methods
+  var pigeonApiBaseObject: PigeonApiBaseObject {
+    return pigeonRegistrar.apiDelegate.pigeonApiBaseObject(pigeonRegistrar)
+  }
+
   init(
     pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar,
     delegate: PigeonApiDelegateIMAAdsRenderingSettings
@@ -2600,6 +2670,11 @@ protocol PigeonApiProtocolUIWindow {
 final class PigeonApiUIWindow: PigeonApiProtocolUIWindow {
   unowned let pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar
   let pigeonDelegate: PigeonApiDelegateUIWindow
+  ///An implementation of [BaseObject] used to access callback methods
+  var pigeonApiBaseObject: PigeonApiBaseObject {
+    return pigeonRegistrar.apiDelegate.pigeonApiBaseObject(pigeonRegistrar)
+  }
+
   init(
     pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar,
     delegate: PigeonApiDelegateUIWindow
@@ -2638,42 +2713,43 @@ final class PigeonApiUIWindow: PigeonApiProtocolUIWindow {
     }
   }
 }
-protocol PigeonApiDelegateNSObject {
-  func pigeonDefaultConstructor(pigeonApi: PigeonApiNSObject) throws -> NSObject
+protocol PigeonApiDelegateBaseObject {
+  func pigeonDefaultConstructor(pigeonApi: PigeonApiBaseObject) throws -> BaseObject
   /// Registers the observer object to receive KVO notifications for the key
   /// path relative to the object receiving this message.
   func addObserver(
-    pigeonApi: PigeonApiNSObject, pigeonInstance: NSObject, observer: NSObject, keyPath: String,
-    options: KeyValueObservingOptions) throws
+    pigeonApi: PigeonApiBaseObject, pigeonInstance: BaseObject, observer: BaseObject,
+    keyPath: String, options: KeyValueObservingOptions) throws
   /// Stops the observer object from receiving change notifications for the
   /// property specified by the key path relative to the object receiving this
   /// message.
   func removeObserver(
-    pigeonApi: PigeonApiNSObject, pigeonInstance: NSObject, observer: NSObject, keyPath: String)
-    throws
+    pigeonApi: PigeonApiBaseObject, pigeonInstance: BaseObject, observer: BaseObject,
+    keyPath: String) throws
 }
 
-protocol PigeonApiProtocolNSObject {
+protocol PigeonApiProtocolBaseObject {
   /// Informs the observing object when the value at the specified key path
   /// relative to the observed object has changed.
   func observeValue(
-    pigeonInstance pigeonInstanceArg: NSObject, keyPath keyPathArg: String?,
-    object objectArg: NSObject?, changeKeys changeKeysArg: [KeyValueChangeKey: Any]?,
+    pigeonInstance pigeonInstanceArg: BaseObject, keyPath keyPathArg: String?,
+    object objectArg: BaseObject?, changeKeys changeKeysArg: [KeyValueChangeKey: Any]?,
     completion: @escaping (Result<Void, PigeonError>) -> Void)
 }
 
-final class PigeonApiNSObject: PigeonApiProtocolNSObject {
+final class PigeonApiBaseObject: PigeonApiProtocolBaseObject {
   unowned let pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar
-  let pigeonDelegate: PigeonApiDelegateNSObject
+  let pigeonDelegate: PigeonApiDelegateBaseObject
   init(
     pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar,
-    delegate: PigeonApiDelegateNSObject
+    delegate: PigeonApiDelegateBaseObject
   ) {
     self.pigeonRegistrar = pigeonRegistrar
     self.pigeonDelegate = delegate
   }
-  static func setUpMessageHandlers(binaryMessenger: FlutterBinaryMessenger, api: PigeonApiNSObject?)
-  {
+  static func setUpMessageHandlers(
+    binaryMessenger: FlutterBinaryMessenger, api: PigeonApiBaseObject?
+  ) {
     let codec: FlutterStandardMessageCodec =
       api != nil
       ? FlutterStandardMessageCodec(
@@ -2681,7 +2757,7 @@ final class PigeonApiNSObject: PigeonApiProtocolNSObject {
           pigeonRegistrar: api!.pigeonRegistrar))
       : FlutterStandardMessageCodec.sharedInstance()
     let pigeonDefaultConstructorChannel = FlutterBasicMessageChannel(
-      name: "dev.flutter.pigeon.interactive_media_ads.NSObject.pigeon_defaultConstructor",
+      name: "dev.flutter.pigeon.interactive_media_ads.BaseObject.pigeon_defaultConstructor",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       pigeonDefaultConstructorChannel.setMessageHandler { message, reply in
@@ -2700,13 +2776,13 @@ final class PigeonApiNSObject: PigeonApiProtocolNSObject {
       pigeonDefaultConstructorChannel.setMessageHandler(nil)
     }
     let addObserverChannel = FlutterBasicMessageChannel(
-      name: "dev.flutter.pigeon.interactive_media_ads.NSObject.addObserver",
+      name: "dev.flutter.pigeon.interactive_media_ads.BaseObject.addObserver",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       addObserverChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
-        let pigeonInstanceArg = args[0] as! NSObject
-        let observerArg = args[1] as! NSObject
+        let pigeonInstanceArg = args[0] as! BaseObject
+        let observerArg = args[1] as! BaseObject
         let keyPathArg = args[2] as! String
         let optionsArg = args[3] as! KeyValueObservingOptions
         do {
@@ -2722,13 +2798,13 @@ final class PigeonApiNSObject: PigeonApiProtocolNSObject {
       addObserverChannel.setMessageHandler(nil)
     }
     let removeObserverChannel = FlutterBasicMessageChannel(
-      name: "dev.flutter.pigeon.interactive_media_ads.NSObject.removeObserver",
+      name: "dev.flutter.pigeon.interactive_media_ads.BaseObject.removeObserver",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       removeObserverChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
-        let pigeonInstanceArg = args[0] as! NSObject
-        let observerArg = args[1] as! NSObject
+        let pigeonInstanceArg = args[0] as! BaseObject
+        let observerArg = args[1] as! BaseObject
         let keyPathArg = args[2] as! String
         do {
           try api.pigeonDelegate.removeObserver(
@@ -2744,9 +2820,9 @@ final class PigeonApiNSObject: PigeonApiProtocolNSObject {
     }
   }
 
-  ///Creates a Dart instance of NSObject and attaches it to [pigeonInstance].
+  ///Creates a Dart instance of BaseObject and attaches it to [pigeonInstance].
   func pigeonNewInstance(
-    pigeonInstance: NSObject, completion: @escaping (Result<Void, PigeonError>) -> Void
+    pigeonInstance: BaseObject, completion: @escaping (Result<Void, PigeonError>) -> Void
   ) {
     if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {
       completion(.success(Void()))
@@ -2756,7 +2832,8 @@ final class PigeonApiNSObject: PigeonApiProtocolNSObject {
       pigeonInstance as AnyObject)
     let binaryMessenger = pigeonRegistrar.binaryMessenger
     let codec = pigeonRegistrar.codec
-    let channelName: String = "dev.flutter.pigeon.interactive_media_ads.NSObject.pigeon_newInstance"
+    let channelName: String =
+      "dev.flutter.pigeon.interactive_media_ads.BaseObject.pigeon_newInstance"
     let channel = FlutterBasicMessageChannel(
       name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([pigeonIdentifierArg] as [Any?]) { response in
@@ -2777,13 +2854,13 @@ final class PigeonApiNSObject: PigeonApiProtocolNSObject {
   /// Informs the observing object when the value at the specified key path
   /// relative to the observed object has changed.
   func observeValue(
-    pigeonInstance pigeonInstanceArg: NSObject, keyPath keyPathArg: String?,
-    object objectArg: NSObject?, changeKeys changeKeysArg: [KeyValueChangeKey: Any]?,
+    pigeonInstance pigeonInstanceArg: BaseObject, keyPath keyPathArg: String?,
+    object objectArg: BaseObject?, changeKeys changeKeysArg: [KeyValueChangeKey: Any]?,
     completion: @escaping (Result<Void, PigeonError>) -> Void
   ) {
     let binaryMessenger = pigeonRegistrar.binaryMessenger
     let codec = pigeonRegistrar.codec
-    let channelName: String = "dev.flutter.pigeon.interactive_media_ads.NSObject.observeValue"
+    let channelName: String = "dev.flutter.pigeon.interactive_media_ads.BaseObject.observeValue"
     let channel = FlutterBasicMessageChannel(
       name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([pigeonInstanceArg, keyPathArg, objectArg, changeKeysArg] as [Any?]) {
