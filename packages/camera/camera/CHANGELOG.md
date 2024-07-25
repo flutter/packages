@@ -1,7 +1,3 @@
-## 0.11.1
-
-* Added support for image streaming to `camera_windows`.
-
 ## 0.11.0+1
 
 * Updates minimum supported SDK version to Flutter 3.16/Dart 3.2.
