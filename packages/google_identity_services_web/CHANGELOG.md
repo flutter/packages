@@ -1,3 +1,12 @@
+## 0.3.1+3
+
+* Updates `README.md` to reflect modern `index.html` script tag placement.
+
+## 0.3.1+2
+
+* Updates web code to package `web: >=0.5.1 <2.0.0`.
+* Updates SDK version to Dart `^3.4.0`. Flutter `^3.22.0`.
+
 ## 0.3.1+1
 
 * Uses `TrustedTypes` from `web: ^0.5.1`.
