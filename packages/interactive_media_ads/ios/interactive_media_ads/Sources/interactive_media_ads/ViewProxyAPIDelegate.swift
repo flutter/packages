@@ -3,16 +3,14 @@
 // found in the LICENSE file.
 
 import Foundation
-import GoogleInteractiveMediaAds
+import UIKit
 
-/// ProxyApi delegate implementation for `IMAAdLoadingErrorData`.
+/// ProxyApi delegate implementation for `UIView`.
 ///
 /// This class may handle instantiating native object instances that are attached to a Dart
 /// instance or handle method calls on the associated native class or an instance of that class.
-class AdLoadingErrorDataProxyAPIDelegate: PigeonApiDelegateIMAAdLoadingErrorData {
-  func adError(pigeonApi: PigeonApiIMAAdLoadingErrorData, pigeonInstance: IMAAdLoadingErrorData)
-    throws -> IMAAdError
-  {
-    return pigeonInstance.adError
+class ViewProxyAPIDelegate: PigeonApiDelegateUIView {
+  func getWindow(pigeonApi: PigeonApiUIView, pigeonInstance: UIView) throws -> UIWindow? {
+    return pigeonInstance.window
   }
 }

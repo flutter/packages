@@ -8,7 +8,7 @@ import Foundation
 /// Implementation of `FlutterPlatformViewFactory` that converts any `UIView` in a
 /// `PigeonInstanceManager` to a `FlutterPlatformView`.
 class FlutterViewFactory: NSObject, FlutterPlatformViewFactory {
-  unowned let instanceManager: PigeonInstanceManager
+  unowned let instanceManager: InteractiveMediaAdsLibraryPigeonInstanceManager
 
   class PlatformViewImpl: NSObject, FlutterPlatformView {
     let uiView: UIView
@@ -22,7 +22,7 @@ class FlutterViewFactory: NSObject, FlutterPlatformViewFactory {
     }
   }
 
-  init(instanceManager: PigeonInstanceManager) {
+  init(instanceManager: InteractiveMediaAdsLibraryPigeonInstanceManager) {
     self.instanceManager = instanceManager
   }
 

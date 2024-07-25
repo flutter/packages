@@ -201,6 +201,79 @@ enum AdEventType {
   unknown,
 }
 
+/// The values that can be returned in a change dictionary.
+///
+/// See https://developer.apple.com/documentation/foundation/nskeyvalueobservingoptions?language=objc.
+enum KeyValueObservingOptions {
+  /// Indicates that the change dictionary should provide the new attribute
+  /// value, if applicable.
+  newValue,
+
+  /// Indicates that the change dictionary should contain the old attribute
+  /// value, if applicable.
+  oldValue,
+
+  /// If specified, a notification should be sent to the observer immediately,
+  /// before the observer registration method even returns.
+  initialValue,
+
+  /// Whether separate notifications should be sent to the observer before and
+  /// after each change, instead of a single notification after the change.
+  priorNotification,
+}
+
+/// The kinds of changes that can be observed..
+///
+/// See https://developer.apple.com/documentation/foundation/nskeyvaluechange?language=objc.
+enum KeyValueChange {
+  /// Indicates that the value of the observed key path was set to a new value.
+  setting,
+
+  /// Indicates that an object has been inserted into the to-many relationship
+  /// that is being observed.
+  insertion,
+
+  /// Indicates that an object has been removed from the to-many relationship
+  /// that is being observed.
+  removal,
+
+  /// Indicates that an object has been replaced in the to-many relationship
+  /// that is being observed.
+  replacement,
+}
+
+/// The keys that can appear in the change dictionary..
+///
+/// See https://developer.apple.com/documentation/foundation/nskeyvaluechangekey?language=objc.
+enum KeyValueChangeKey {
+  /// If the value of the kindKey entry is NSKeyValueChange.insertion,
+  /// NSKeyValueChange.removal, or NSKeyValueChange.replacement, the value of
+  /// this key is an NSIndexSet object that contains the indexes of the
+  /// inserted, removed, or replaced objects.
+  indexes,
+
+  /// An NSNumber object that contains a value corresponding to one of the
+  /// NSKeyValueChange enums, indicating what sort of change has occurred.
+  kind,
+
+  /// If the value of the kindKey entry is NSKeyValueChange.setting, and new was
+  /// specified when the observer was registered, the value of this key is the
+  /// new value for the attribute.
+  newValue,
+
+  /// If the prior option was specified when the observer was registered this
+  /// notification is sent prior to a change.
+  notificationIsPrior,
+
+  /// If the value of the kindKey entry is NSKeyValueChange.setting, and old was
+  /// specified when the observer was registered, the value of this key is the
+  /// value before the attribute was changed.
+  oldValue,
+
+  /// The key is not recognized by this wrapper.
+  unknown,
+}
+
 /// The `IMAAdDisplayContainer` is responsible for managing the ad container
 /// view and companion ad slots used for ad playback.
 ///
@@ -219,7 +292,10 @@ abstract class IMAAdDisplayContainer {
 ///
 /// See https://developer.apple.com/documentation/uikit/uiview.
 @ProxyApi(swiftOptions: SwiftProxyApiOptions(import: 'UIKit'))
-abstract class UIView {}
+abstract class UIView extends NSObject {
+  /// The receiver’s window object, or null if it has none.
+  UIWindow? getWindow();
+}
 
 /// An object that manages a view hierarchy for your UIKit app.
 ///
@@ -414,7 +490,47 @@ abstract class IMAAdEvent {
 }
 
 /// Set of properties that influence how ads are rendered.
+///
+/// See https://developers.google.com/ad-manager/dynamic-ad-insertion/sdk/ios/reference/Classes/IMAAdsRenderingSettings.
 @ProxyApi()
 abstract class IMAAdsRenderingSettings {
   IMAAdsRenderingSettings();
+}
+
+/// The backdrop for your app’s user interface and the object that dispatches
+/// events to your views.
+///
+/// See https://developer.apple.com/documentation/uikit/uiwindow?language=objc
+@ProxyApi()
+abstract class UIWindow {}
+
+/// The root class of most Objective-C class hierarchies, from which subclasses
+/// inherit a basic interface to the runtime system and the ability to behave as
+/// Objective-C objects.
+///
+/// See https://developer.apple.com/documentation/objectivec/nsobject.
+@ProxyApi()
+abstract class NSObject {
+  NSObject();
+
+  /// Informs the observing object when the value at the specified key path
+  /// relative to the observed object has changed.
+  void Function(
+    String? keyPath,
+    NSObject? object,
+    Map<KeyValueChangeKey, Object>? changeKeys,
+  )? observeValue;
+
+  /// Registers the observer object to receive KVO notifications for the key
+  /// path relative to the object receiving this message.
+  void addObserver(
+    NSObject observer,
+    String keyPath,
+    KeyValueObservingOptions options,
+  );
+
+  /// Stops the observer object from receiving change notifications for the
+  /// property specified by the key path relative to the object receiving this
+  /// message.
+  void removeObserver(NSObject observer, String keyPath);
 }

@@ -7,77 +7,109 @@ import GoogleInteractiveMediaAds
 
 /// Implementation of `PigeonProxyApiDelegate` that provides each ProxyApi delegate implementation
 /// and any additional resources needed by an implementation.
-open class ProxyApiDelegate: PigeonProxyApiDelegate {
-  func pigeonApiIMAAdDisplayContainer(_ registrar: PigeonProxyApiRegistrar)
+open class ProxyApiDelegate: InteractiveMediaAdsLibraryPigeonProxyApiDelegate {
+  func pigeonApiUIView(_ registrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar)
+    -> PigeonApiUIView
+  {
+    return PigeonApiUIView(pigeonRegistrar: registrar, delegate: ViewProxyAPIDelegate())
+  }
+
+  func pigeonApiNSObject(_ registrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar)
+    -> PigeonApiNSObject
+  {
+    return PigeonApiNSObject(pigeonRegistrar: registrar, delegate: ObjectProxyAPIDelegate())
+  }
+
+  func pigeonApiIMAAdDisplayContainer(
+    _ registrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar
+  )
     -> PigeonApiIMAAdDisplayContainer
   {
     return PigeonApiIMAAdDisplayContainer(
       pigeonRegistrar: registrar, delegate: AdDisplayContainerProxyAPIDelegate())
   }
 
-  func pigeonApiUIViewController(_ registrar: PigeonProxyApiRegistrar) -> PigeonApiUIViewController
+  func pigeonApiUIViewController(_ registrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar)
+    -> PigeonApiUIViewController
   {
     return PigeonApiUIViewController(
       pigeonRegistrar: registrar, delegate: ViewControllerProxyAPIDelegate())
   }
 
-  func pigeonApiIMAContentPlayhead(_ registrar: PigeonProxyApiRegistrar)
+  func pigeonApiIMAContentPlayhead(_ registrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar)
     -> PigeonApiIMAContentPlayhead
   {
     return PigeonApiIMAContentPlayhead(
       pigeonRegistrar: registrar, delegate: ContentPlayheadProxyAPIDelegate())
   }
 
-  func pigeonApiIMAAdsLoader(_ registrar: PigeonProxyApiRegistrar) -> PigeonApiIMAAdsLoader {
+  func pigeonApiIMAAdsLoader(_ registrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar)
+    -> PigeonApiIMAAdsLoader
+  {
     return PigeonApiIMAAdsLoader(pigeonRegistrar: registrar, delegate: AdsLoaderProxyAPIDelegate())
   }
 
-  func pigeonApiIMAAdsRequest(_ registrar: PigeonProxyApiRegistrar) -> PigeonApiIMAAdsRequest {
+  func pigeonApiIMAAdsRequest(_ registrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar)
+    -> PigeonApiIMAAdsRequest
+  {
     return PigeonApiIMAAdsRequest(
       pigeonRegistrar: registrar, delegate: AdsRequestProxyAPIDelegate())
   }
 
-  func pigeonApiIMAAdsLoaderDelegate(_ registrar: PigeonProxyApiRegistrar)
+  func pigeonApiIMAAdsLoaderDelegate(_ registrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar)
     -> PigeonApiIMAAdsLoaderDelegate
   {
     return PigeonApiIMAAdsLoaderDelegate(
       pigeonRegistrar: registrar, delegate: AdsLoaderDelegateProxyAPIDelegate())
   }
 
-  func pigeonApiIMAAdsLoadedData(_ registrar: PigeonProxyApiRegistrar) -> PigeonApiIMAAdsLoadedData
+  func pigeonApiIMAAdsLoadedData(_ registrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar)
+    -> PigeonApiIMAAdsLoadedData
   {
     return PigeonApiIMAAdsLoadedData(
       pigeonRegistrar: registrar, delegate: AdsLoadedDataProxyAPIDelegate())
   }
 
-  func pigeonApiIMAAdLoadingErrorData(_ registrar: PigeonProxyApiRegistrar)
+  func pigeonApiIMAAdLoadingErrorData(
+    _ registrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar
+  )
     -> PigeonApiIMAAdLoadingErrorData
   {
     return PigeonApiIMAAdLoadingErrorData(
       pigeonRegistrar: registrar, delegate: AdLoadingErrorDataProxyAPIDelegate())
   }
 
-  func pigeonApiIMAAdError(_ registrar: PigeonProxyApiRegistrar) -> PigeonApiIMAAdError {
+  func pigeonApiIMAAdError(_ registrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar)
+    -> PigeonApiIMAAdError
+  {
     return PigeonApiIMAAdError(pigeonRegistrar: registrar, delegate: AdErrorProxyAPIDelegate())
   }
 
-  func pigeonApiIMAAdsManager(_ registrar: PigeonProxyApiRegistrar) -> PigeonApiIMAAdsManager {
+  func pigeonApiIMAAdsManager(_ registrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar)
+    -> PigeonApiIMAAdsManager
+  {
     return PigeonApiIMAAdsManager(
       pigeonRegistrar: registrar, delegate: AdsManagerProxyAPIDelegate())
   }
 
-  func pigeonApiIMAAdsManagerDelegate(_ registrar: PigeonProxyApiRegistrar)
+  func pigeonApiIMAAdsManagerDelegate(
+    _ registrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar
+  )
     -> PigeonApiIMAAdsManagerDelegate
   {
     return PigeonApiIMAAdsManagerDelegate(
       pigeonRegistrar: registrar, delegate: AdsManagerDelegateProxyAPIDelegate())
   }
 
-  func pigeonApiIMAAdEvent(_ registrar: PigeonProxyApiRegistrar) -> PigeonApiIMAAdEvent {
+  func pigeonApiIMAAdEvent(_ registrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar)
+    -> PigeonApiIMAAdEvent
+  {
     return PigeonApiIMAAdEvent(pigeonRegistrar: registrar, delegate: AdEventProxyAPIDelegate())
   }
 
-  func pigeonApiIMAAdsRenderingSettings(_ registrar: PigeonProxyApiRegistrar)
+  func pigeonApiIMAAdsRenderingSettings(
+    _ registrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar
+  )
     -> PigeonApiIMAAdsRenderingSettings
   {
     PigeonApiIMAAdsRenderingSettings(

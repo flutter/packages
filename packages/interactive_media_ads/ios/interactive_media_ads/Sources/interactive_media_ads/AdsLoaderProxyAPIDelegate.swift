@@ -9,7 +9,7 @@ import GoogleInteractiveMediaAds
 ///
 /// This class may handle instantiating native object instances that are attached to a Dart
 /// instance or handle method calls on the associated native class or an instance of that class.
-class AdsLoaderProxyAPIDelegate: PigeonDelegateIMAAdsLoader {
+class AdsLoaderProxyAPIDelegate: PigeonApiDelegateIMAAdsLoader {
   func pigeonDefaultConstructor(pigeonApi: PigeonApiIMAAdsLoader, settings: IMASettings?) throws
     -> IMAAdsLoader
   {

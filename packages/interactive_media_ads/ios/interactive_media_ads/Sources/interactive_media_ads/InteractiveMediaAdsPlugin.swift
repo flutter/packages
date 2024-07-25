@@ -6,10 +6,10 @@ import Flutter
 import UIKit
 
 public class InteractiveMediaAdsPlugin: NSObject, FlutterPlugin {
-  var proxyApiRegistrar: PigeonProxyApiRegistrar?
+  var proxyApiRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar?
 
   init(binaryMessenger: FlutterBinaryMessenger) {
-    proxyApiRegistrar = PigeonProxyApiRegistrar(
+    proxyApiRegistrar = InteractiveMediaAdsLibraryPigeonProxyApiRegistrar(
       binaryMessenger: binaryMessenger, apiDelegate: ProxyApiDelegate())
     proxyApiRegistrar?.setUp()
   }

@@ -29,7 +29,7 @@ final class AdsLoaderDelegateTests: XCTestCase {
     XCTAssertEqual(api.adLoaderLoadedWithArgs, [adsLoader, data])
   }
 
-  func testAdsLoaderFailedWithErrorDataArgs() {
+  func testAdsLoaderFailedWithErrorData() {
     let api = TestAdsLoaderDelegateApi()
     let instance = AdsLoaderDelegateImpl(api: api)
 

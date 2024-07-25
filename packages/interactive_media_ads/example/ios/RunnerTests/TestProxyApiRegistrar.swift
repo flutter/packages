@@ -7,7 +7,7 @@ import XCTest
 
 @testable import interactive_media_ads
 
-class TestProxyApiRegistrar: PigeonProxyApiRegistrar {
+class TestProxyApiRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar {
   private class TestBinaryMessenger: NSObject, FlutterBinaryMessenger {
     func send(onChannel channel: String, message: Data?) {
 

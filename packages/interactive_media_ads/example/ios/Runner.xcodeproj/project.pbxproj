@@ -26,6 +26,8 @@
 		8F977DD72C2C89A600A90D4B /* AdEventTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F977DD62C2C89A600A90D4B /* AdEventTests.swift */; };
 		8F977DD92C2C8C6A00A90D4B /* AdLoadingErrorDataTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F977DD82C2C8C6A00A90D4B /* AdLoadingErrorDataTests.swift */; };
 		8F977DDB2C2C8D2E00A90D4B /* AdsLoadedDataTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F977DDA2C2C8D2E00A90D4B /* AdsLoadedDataTests.swift */; };
+		8FDFFF612C52D1FE003F0ECE /* ViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FDFFF602C52D1FE003F0ECE /* ViewTests.swift */; };
+		8FDFFF632C52D20C003F0ECE /* ObjectTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FDFFF622C52D20C003F0ECE /* ObjectTests.swift */; };
 		97C146FC1CF9000F007C117D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FA1CF9000F007C117D /* Main.storyboard */; };
 		97C146FE1CF9000F007C117D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FD1CF9000F007C117D /* Assets.xcassets */; };
 		97C147011CF9000F007C117D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FF1CF9000F007C117D /* LaunchScreen.storyboard */; };
@@ -83,6 +85,8 @@
 		8F977DD62C2C89A600A90D4B /* AdEventTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdEventTests.swift; sourceTree = "<group>"; };
 		8F977DD82C2C8C6A00A90D4B /* AdLoadingErrorDataTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdLoadingErrorDataTests.swift; sourceTree = "<group>"; };
 		8F977DDA2C2C8D2E00A90D4B /* AdsLoadedDataTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdsLoadedDataTests.swift; sourceTree = "<group>"; };
+		8FDFFF602C52D1FE003F0ECE /* ViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewTests.swift; sourceTree = "<group>"; };
+		8FDFFF622C52D20C003F0ECE /* ObjectTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObjectTests.swift; sourceTree = "<group>"; };
 		9740EEB21CF90195004384FC /* Debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = Debug.xcconfig; path = Flutter/Debug.xcconfig; sourceTree = "<group>"; };
 		9740EEB31CF90195004384FC /* Generated.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = Generated.xcconfig; path = Flutter/Generated.xcconfig; sourceTree = "<group>"; };
 		97C146EE1CF9000F007C117D /* Runner.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Runner.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -130,6 +134,8 @@
 				8F599BBA2C332C010090A0DF /* AdsRequestTests.swift */,
 				8F599BBC2C332CFE0090A0DF /* ContentPlayheadTests.swift */,
 				8F599BBE2C3335B40090A0DF /* ViewControllerTests.swift */,
+				8FDFFF602C52D1FE003F0ECE /* ViewTests.swift */,
+				8FDFFF622C52D20C003F0ECE /* ObjectTests.swift */,
 			);
 			path = RunnerTests;
 			sourceTree = "<group>";
@@ -413,8 +419,10 @@
 				8F977DD72C2C89A600A90D4B /* AdEventTests.swift in Sources */,
 				8F977DD32C2BA15100A90D4B /* TestProxyApiRegistrar.swift in Sources */,
 				8F599BBB2C332C010090A0DF /* AdsRequestTests.swift in Sources */,
+				8FDFFF632C52D20C003F0ECE /* ObjectTests.swift in Sources */,
 				8F599BB72C3327F10090A0DF /* AdsManagerDelegateTests.swift in Sources */,
 				8F599BBD2C332CFE0090A0DF /* ContentPlayheadTests.swift in Sources */,
+				8FDFFF612C52D1FE003F0ECE /* ViewTests.swift in Sources */,
 				8F977DCF2C2B99C600A90D4B /* AdDisplayContainerTests.swift in Sources */,
 				8F599BB52C2DD8EC0090A0DF /* AdsLoaderDelegateTests.swift in Sources */,
 				8F599BB92C332A320090A0DF /* AdsRenderingSettingsTests.swift in Sources */,

@@ -14,7 +14,7 @@ class ContentPlayheadImpl: NSObject, IMAContentPlayhead {
 ///
 /// This class may handle instantiating native object instances that are attached to a Dart
 /// instance or handle method calls on the associated native class or an instance of that class.
-class ContentPlayheadProxyAPIDelegate: PigeonDelegateIMAContentPlayhead {
+class ContentPlayheadProxyAPIDelegate: PigeonApiDelegateIMAContentPlayhead {
   func pigeonDefaultConstructor(pigeonApi: PigeonApiIMAContentPlayhead) throws -> IMAContentPlayhead
   {
     return ContentPlayheadImpl()
