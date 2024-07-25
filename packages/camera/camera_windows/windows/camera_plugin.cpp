@@ -402,12 +402,7 @@ void CameraPlugin::StopImageStream(
         FlutterError("camera_error", "Pending stop stream request exists"));
   }
 
-  if (!event_sink) {
-    return result(FlutterError("camera_error",
-                               "Unable to make event channel from windows"));
-  }
-
-  if (camera->AddPendingVoidResult(PendingResultType::kStartStream,
+  if (camera->AddPendingVoidResult(PendingResultType::kStopStream,
                                    std::move(result))) {
     CaptureController* cc = camera->GetCaptureController();
     assert(cc);
