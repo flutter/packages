@@ -1,3 +1,7 @@
+## 0.3.1+3
+
+* Updates `README.md` to reflect modern `index.html` script tag placement.
+
 ## 0.3.1+2
 
 * Updates web code to package `web: >=0.5.1 <2.0.0`.
