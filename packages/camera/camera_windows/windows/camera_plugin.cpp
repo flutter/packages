@@ -397,9 +397,9 @@ void CameraPlugin::StopImageStream(
   if (!camera) {
     return result(FlutterError("camera_error", "Camera not created"));
   }
-  if (camera->HasPendingResultByType(PendingResultType::kStartStream)) {
+  if (camera->HasPendingResultByType(PendingResultType::kStopStream)) {
     return result(
-        FlutterError("camera_error", "Pending start stream request exists"));
+        FlutterError("camera_error", "Pending stop stream request exists"));
   }
 
   if (!event_sink) {
