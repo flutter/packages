@@ -1,7 +1,6 @@
 ## 2.3.0
 
-* Renames `SharedPreferencesAndroid` to `LegacySharedPreferencesAndroid`.
-* Creates new `SharedPreferencesAndroid` that extends `SharedPreferencesAsyncPlatform`.
+* Adds new `SharedPreferencesAsyncAndroid` API.
 
 ## 2.2.3
 

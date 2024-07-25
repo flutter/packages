@@ -1,7 +1,6 @@
 ## 2.5.0
 
-* Renames `SharedPreferencesFoundation` to `LegacySharedPreferencesFoundation`.
-* Creates new `SharedPreferencesFoundation` that extends `SharedPreferencesAsyncPlatform`.
+* Adds new `SharedPreferencesAsyncFoundation` API.
 
 ## 2.4.0
 
