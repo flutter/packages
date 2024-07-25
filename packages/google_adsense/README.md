@@ -1,39 +1,32 @@
-Plugin allowing Adsense integration with Flutter Web 
+# google_adsense
+[Google AdSense](https://adsense.google.com/intl/en_us/start/) plugin for Flutter Web
 
-[//]: # (## Features)
+Generally integration with AdSense requires:
 
-[//]: # ()
-[//]: # (TODO: List what your package can do. Maybe include images, gifs, or videos.)
+1. Adding an [AdSense code](https://support.google.com/adsense/answer/9274634?hl=en&ref_topic=28893&sjid=9002959242386336076-EU) usually in between the `<head></head>` tag to connect your site with AdSense account. Allows using **Auto ads**
+2.  Adding [ad unit code](https://support.google.com/adsense/answer/9274025?sjid=9002959242386336076-EU) in between the `<body><body/>` tags of your pages where you want ad to appear. Ad unit code snippet is unique per **ad unit** that you need to create in your AdSense account first. You might have several ad units added to your website
 
-[//]: # ()
-[//]: # (## Getting started)
+Since Flutter apps are not rendered as traditional HTML pages and there is no easy way to access final DOM tree from Dart, this plugin provides a Widget (`AdViewWidget`) that you can configure as an ad unit and place in the desired location in your app UI
 
-[//]: # ()
-[//]: # (TODO: List prerequisites and provide or point to information on how to)
 
-[//]: # (start using the package.)
+## Installation
+run `flutter pub add google_adsense`
 
-[//]: # ()
-[//]: # (## Usage)
+## Usage
+#### Initialize AdSense
+Before displaying ads, initialize the AdSense with your ad client ID.
+```dart
+import 'package:google_adsense/adsense.dart';
 
-[//]: # ()
-[//]: # (TODO: Include short and useful examples for package users. Add longer examples)
-
-[//]: # (to `/example` folder.)
-
-[//]: # ()
-[//]: # (```dart)
-
-[//]: # (const like = 'sample';)
-
-[//]: # (```)
-
-[//]: # ()
-[//]: # (## Additional information)
-
-[//]: # ()
-[//]: # (TODO: Tell users more about the package: where to find more information, how to)
-
-[//]: # (contribute to the package, how to file issues, what response they can expect)
-
-[//]: # (from the package authors, and more.)
+void main() {
+  Adsense().initialize('your-ad-client-id');
+}
+```
+#### Display AdViewWidget
+```dart
+import 'package:google_adsense/adsense.dart';
+// ...
+val adWidget = Adsense().adView(
+  adSlot: 'your-ad-slot-id',
+);
+```

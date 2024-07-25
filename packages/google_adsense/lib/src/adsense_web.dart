@@ -10,7 +10,7 @@ import 'ad_view_widget.dart';
 
 class Adsense {
   static final Adsense _instance = Adsense._internal();
-  static bool isInitialized = false;
+  static bool _isInitialized = false;
 
   Adsense._internal();
 
@@ -19,11 +19,11 @@ class Adsense {
   }
 
   void initialize(String adClient) {
-    if (isInitialized) {
+    if (_isInitialized) {
       log('Adsense was already initialized, skipping');
       return;
     }
-    isInitialized = true;
+    _isInitialized = true;
     _addMasterScript(adClient);
   }
 
@@ -49,7 +49,7 @@ class Adsense {
   }
 
   static void _addMasterScript(String adClient) {
-    web.HTMLScriptElement scriptElement = web.HTMLScriptElement();
+    final web.HTMLScriptElement scriptElement = web.HTMLScriptElement();
     scriptElement.async = true;
     scriptElement.src =
         'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-$adClient';
