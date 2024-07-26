@@ -10,24 +10,7 @@
 #include "file_selector_plugin_private.h"
 #include "messages.g.h"
 
-// From file_selector_linux.dart
-const char kChannelName[] = "plugins.flutter.dev/file_selector_linux";
-
-const char kOpenFileMethod[] = "openFile";
-const char kGetSavePathMethod[] = "getSavePath";
-const char kGetDirectoryPathMethod[] = "getDirectoryPath";
-
-const char kAcceptedTypeGroupsKey[] = "acceptedTypeGroups";
-const char kConfirmButtonTextKey[] = "confirmButtonText";
-const char kInitialDirectoryKey[] = "initialDirectory";
-const char kMultipleKey[] = "multiple";
-const char kSuggestedNameKey[] = "suggestedName";
-
-const char kTypeGroupLabelKey[] = "label";
-const char kTypeGroupExtensionsKey[] = "extensions";
-const char kTypeGroupMimeTypesKey[] = "mimeTypes";
-
-// Errors
+// Error codes.
 const char kBadArgumentsError[] = "Bad Arguments";
 const char kNoScreenError[] = "No Screen";
 
@@ -113,11 +96,6 @@ static GtkFileChooserNative* create_dialog(
   return GTK_FILE_CHOOSER_NATIVE(g_object_ref(dialog));
 }
 
-// TODO(stuartmorgan): Move this logic into handle_show_file_chooser once
-// the tests are restructured as descibed in the file_selector_plugin_test.cc
-// TODOs, and then test through the Pigeon API handlers. This only exists to
-// move as much logic as possible behind the entry point currently used by unit
-// tests.
 static GtkFileChooserNative* create_dialog_of_type(
     GtkWindow* window, FfsPlatformFileChooserActionType type,
     FfsPlatformFileChooserOptions* options) {

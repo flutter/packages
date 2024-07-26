@@ -7,9 +7,13 @@
 #include "include/file_selector_linux/file_selector_plugin.h"
 #include "messages.g.h"
 
-// Shows a GTK file chooser with the given type and options.
+// Creates a GtkFileChooserNative for the given method call.
 //
-// This is the implementation of the showFileChooser Pigeon API method.
-FfsFileSelectorApiShowFileChooserResponse* handle_show_file_chooser(
-    FfsPlatformFileChooserActionType type,
-    FfsPlatformFileChooserOptions* options, gpointer user_data);
+// TODO(stuartmorgan): Make this private/static once the tests are restructured
+// as descibed in the file_selector_plugin_test.cc TODOs, and then test through
+// the Pigeon API handler instead (making that non-static). This only exists to
+// move as much logic as possible behind an entry point currently callable by
+// unit tests.
+GtkFileChooserNative* create_dialog_for_method(
+    GtkWindow* window, FfsPlatformFileChooserActionType type,
+    FfsPlatformFileChooserOptions* options);
