@@ -122,6 +122,12 @@ std::optional<std::string> GetFilePathForVideo() {
 }
 }  // namespace
 
+// a setter for the event sink helpful for testing.
+void CameraPlugin::SetEventSink(
+    std::unique_ptr<flutter::EventSink<flutter::EncodableValue>> events) {
+  event_sink = std::move(events);
+}
+
 // static
 void CameraPlugin::RegisterWithRegistrar(
     flutter::PluginRegistrarWindows* registrar) {
@@ -134,8 +140,8 @@ void CameraPlugin::RegisterWithRegistrar(
 
   auto event_channel_handler =
       std::make_unique<flutter::StreamHandlerFunctions<>>(
-          [](auto arguments, auto events) {
-            event_sink = std::move(events);
+          [plugin = plugin.get()](auto arguments, auto events) {
+            plugin->SetEventSink(std::move(events));
             return nullptr;
           },
           [](auto arguments) {

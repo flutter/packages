@@ -1076,6 +1076,17 @@ class MockCaptureEngine : public IMFCaptureEngine {
   volatile ULONG ref_ = 0;
   bool initialized_ = false;
 };
+// Mock class for flutter::EventSink<flutter::EncodableValue>
+class MockEventSink : public flutter::EventSink<flutter::EncodableValue> {
+ public:
+  MOCK_METHOD(void, SuccessInternal, (const flutter::EncodableValue* event),
+              (override));
+  MOCK_METHOD(void, ErrorInternal,
+              (const std::string& error_code, const std::string& error_message,
+               const flutter::EncodableValue* error_details),
+              (override));
+  MOCK_METHOD(void, EndOfStreamInternal, (), (override));
+};
 
 #define MOCK_DEVICE_ID "mock_device_id"
 #define MOCK_CAMERA_NAME "mock_camera_name <" MOCK_DEVICE_ID ">"

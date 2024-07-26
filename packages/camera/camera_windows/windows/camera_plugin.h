@@ -31,6 +31,8 @@ class CameraPlugin : public flutter::Plugin,
                      public CameraApi,
                      public VideoCaptureDeviceEnumerator {
  public:
+  void SetEventSink(
+      std::unique_ptr<flutter::EventSink<flutter::EncodableValue>> events);
   static void RegisterWithRegistrar(flutter::PluginRegistrarWindows* registrar);
 
   CameraPlugin(flutter::TextureRegistrar* texture_registrar,
