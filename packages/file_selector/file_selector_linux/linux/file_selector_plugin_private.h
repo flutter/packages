@@ -5,8 +5,11 @@
 #include <flutter_linux/flutter_linux.h>
 
 #include "include/file_selector_linux/file_selector_plugin.h"
+#include "messages.g.h"
 
-// Creates a GtkFileChooserNative for the given method call.
-GtkFileChooserNative* create_dialog_for_method(GtkWindow* window,
-                                               const gchar* method,
-                                               FlValue* properties);
+// Shows a GTK file chooser with the given type and options.
+//
+// This is the implementation of the showFileChooser Pigeon API method.
+FfsFileSelectorApiShowFileChooserResponse* handle_show_file_chooser(
+    FfsPlatformFileChooserActionType type,
+    FfsPlatformFileChooserOptions* options, gpointer user_data);

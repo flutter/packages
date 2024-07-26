@@ -12,9 +12,12 @@ import 'package:pigeon/pigeon.dart';
   copyrightHeader: 'pigeons/copyright.txt',
 ))
 
+/// A Pigeon representation of the GTK_FILE_CHOOSER_ACTION_* options.
+enum PlatformFileChooserActionType { open, chooseDirectory, save }
+
 /// A Pigeon representation of the Linux portion of an `XTypeGroup`.
-class AllowedTypeGroup {
-  const AllowedTypeGroup({
+class PlatformTypeGroup {
+  const PlatformTypeGroup({
     this.label = '',
     this.extensions = const <String>[],
     this.mimeTypes = const <String>[],
@@ -28,61 +31,41 @@ class AllowedTypeGroup {
   final List<String?> mimeTypes;
 }
 
-/// Options for save panels.
+/// Options for GKT file chooser.
 ///
-/// These correspond to NSSavePanel properties (which are, by extension
-/// NSOpenPanel properties as well).
-class SavePanelOptions {
-  const SavePanelOptions({
-    this.allowedFileTypes,
-    this.directoryPath,
-    this.nameFieldStringValue,
-    this.acceptLabel,
+/// These correspond to gtk_file_chooser_set_* options.
+class PlatformFileChooserOptions {
+  PlatformFileChooserOptions({
+    required this.allowedFileTypes,
+    required this.currentFolderPath,
+    required this.currentName,
+    required this.acceptButtonLabel,
+    this.selectMultiple,
   });
+
   // TODO(stuartmorgan): Declare this as a non-nullable generic once
   // https://github.com/flutter/flutter/issues/97848 is fixed. In practice,
   // the values will never be null, and the native implementation assumes that.
-  final List<AllowedTypeGroup?>? allowedFileTypes;
-  final String? directoryPath;
-  final String? nameFieldStringValue;
-  final String? acceptLabel;
-}
+  final List<PlatformTypeGroup?>? allowedFileTypes;
+  final String? currentFolderPath;
+  final String? currentName;
+  final String? acceptButtonLabel;
 
-/// Options for file open panels.
-///
-/// These correspond to NSOpenPanel properties.
-class OpenPanelOptions extends SavePanelOptions {
-  const OpenPanelOptions({
-    this.allowsMultipleSelection = false,
-    this.canChooseDirectories = false,
-    this.canChooseFiles = true,
-    this.baseOptions = const SavePanelOptions(),
-  });
-  final bool allowsMultipleSelection;
-  final bool canChooseDirectories;
-  final bool canChooseFiles;
-  // NSOpenPanel inherits from NSSavePanel, so shares all of its options.
-  // Ideally this would be done with inheritance rather than composition, but
-  // Pigeon doesn't currently support data class inheritance:
-  // https://github.com/flutter/flutter/issues/117819.
-  final SavePanelOptions baseOptions;
+  /// Whether to allow multiple file selection.
+  ///
+  /// Nullable because it does not apply to the "save" action.
+  final bool? selectMultiple;
 }
 
 @HostApi(dartHostTestHandler: 'TestFileSelectorApi')
 abstract class FileSelectorApi {
-  /// Shows an open panel with the given [options], returning the list of
-  /// selected paths.
+  /// Shows an file chooser with the given [type] and [options], returning the
+  /// list of selected paths.
   ///
   /// An empty list corresponds to a cancelled selection.
   // TODO(stuartmorgan): Declare this return as a non-nullable generic once
   // https://github.com/flutter/flutter/issues/97848 is fixed. In practice,
   // the values will never be null, and the calling code assumes that.
-  @async
-  List<String?> openFile(OpenPanelOptions options);
-
-  /// Shows a save panel with the given [options], returning the selected path.
-  ///
-  /// A null return corresponds to a cancelled save.
-  @async
-  String? displaySavePanel(SavePanelOptions options);
+  List<String?> showFileChooser(
+      PlatformFileChooserActionType type, PlatformFileChooserOptions options);
 }
