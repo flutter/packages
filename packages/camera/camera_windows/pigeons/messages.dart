@@ -70,6 +70,14 @@ abstract class CameraApi {
   @async
   String stopVideoRecording(int cameraId);
 
+  /// Starts the image stream for the given camera.
+  @async
+  void startImageStream(int cameraId);
+
+  /// Stops the image stream for the given camera.
+  @async
+  void stopImageStream(int cameraId);
+
   /// Starts the preview stream for the given camera.
   @async
   void pausePreview(int cameraId);
