@@ -26,10 +26,10 @@ G_DEFINE_TYPE(FlFileSelectorPlugin, fl_file_selector_plugin, G_TYPE_OBJECT)
 static GtkFileFilter* type_group_to_filter(FfsPlatformTypeGroup* group) {
   g_autoptr(GtkFileFilter) filter = gtk_file_filter_new();
 
-  FlValue* label = ffs_platform_type_group_get_label(group);
-  gtk_file_filter_set_name(filter, fl_value_get_string(label));
+  const gchar* label = ffs_platform_type_group_get_label(group);
+  gtk_file_filter_set_name(filter, label);
 
-  FlValue* extensions = ffs_platform_type_group_get_extensions(groups);
+  FlValue* extensions = ffs_platform_type_group_get_extensions(group);
   for (size_t i = 0; i < fl_value_get_length(extensions); i++) {
     FlValue* v = fl_value_get_list_value(extensions, i);
     const gchar* pattern = fl_value_get_string(v);
@@ -50,7 +50,8 @@ static GtkFileChooserNative* create_dialog(
     GtkWindow* window, GtkFileChooserAction action, const gchar* title,
     const gchar* default_confirm_button_text,
     FfsPlatformFileChooserOptions* options) {
-  const gchar* confirm_button_text = ffs_platform_type_group_get_label(options);
+  const gchar* confirm_button_text =
+      ffs_platform_file_chooser_options_get_accept_button_label(options);
   if (confirm_button_text == nullptr) {
     confirm_button_text = default_confirm_button_text;
   }
@@ -85,7 +86,7 @@ static GtkFileChooserNative* create_dialog(
     for (size_t i = 0; i < fl_value_get_length(type_groups); i++) {
       FlValue* type_group = fl_value_get_list_value(type_groups, i);
       GtkFileFilter* filter = type_group_to_filter(FFS_PLATFORM_TYPE_GROUP(
-          fl_value_get_custom_value_object(type_group_value)));
+          fl_value_get_custom_value_object(type_group)));
       if (filter == nullptr) {
         return nullptr;
       }
@@ -96,7 +97,7 @@ static GtkFileChooserNative* create_dialog(
   return GTK_FILE_CHOOSER_NATIVE(g_object_ref(dialog));
 }
 
-static GtkFileChooserNative* create_dialog_of_type(
+GtkFileChooserNative* create_dialog_of_type(
     GtkWindow* window, FfsPlatformFileChooserActionType type,
     FfsPlatformFileChooserOptions* options) {
   switch (type) {
@@ -127,7 +128,7 @@ static FfsFileSelectorApiShowFileChooserResponse* handle_show_file_chooser(
   GtkWindow* window = GTK_WINDOW(gtk_widget_get_toplevel(GTK_WIDGET(view)));
 
   g_autoptr(GtkFileChooserNative) dialog =
-      create_dialog_for_method(window, type, options);
+      create_dialog_of_type(window, type, options);
 
   if (dialog == nullptr) {
     return ffs_file_selector_api_show_file_chooser_response_new_error(

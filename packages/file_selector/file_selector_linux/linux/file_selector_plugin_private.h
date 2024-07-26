@@ -14,6 +14,6 @@
 // the Pigeon API handler instead (making that non-static). This only exists to
 // move as much logic as possible behind an entry point currently callable by
 // unit tests.
-GtkFileChooserNative* create_dialog_for_method(
+GtkFileChooserNative* create_dialog_of_type(
     GtkWindow* window, FfsPlatformFileChooserActionType type,
     FfsPlatformFileChooserOptions* options);

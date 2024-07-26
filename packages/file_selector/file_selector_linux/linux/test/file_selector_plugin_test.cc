@@ -24,9 +24,9 @@ TEST(FileSelectorPlugin, TestOpenSimple) {
       ffs_platform_file_chooser_options_new(nullptr, nullptr, nullptr, nullptr,
                                             nullptr);
 
-  g_autoptr(GtkFileChooserNative) dialog = create_dialog_for_method(
+  g_autoptr(GtkFileChooserNative) dialog = create_dialog_of_type(
       nullptr, FILE_SELECTOR_LINUX_PLATFORM_FILE_CHOOSER_ACTION_TYPE_OPEN,
-      args);
+      options);
 
   ASSERT_NE(dialog, nullptr);
   EXPECT_EQ(gtk_file_chooser_get_action(GTK_FILE_CHOOSER(dialog)),
@@ -41,9 +41,9 @@ TEST(FileSelectorPlugin, TestOpenMultiple) {
       ffs_platform_file_chooser_options_new(nullptr, nullptr, nullptr, nullptr,
                                             &select_multiple);
 
-  g_autoptr(GtkFileChooserNative) dialog = create_dialog_for_method(
+  g_autoptr(GtkFileChooserNative) dialog = create_dialog_of_type(
       nullptr, FILE_SELECTOR_LINUX_PLATFORM_FILE_CHOOSER_ACTION_TYPE_OPEN,
-      args);
+      options);
 
   ASSERT_NE(dialog, nullptr);
   EXPECT_EQ(gtk_file_chooser_get_action(GTK_FILE_CHOOSER(dialog)),
@@ -91,9 +91,9 @@ TEST(FileSelectorPlugin, TestOpenWithFilter) {
       ffs_platform_file_chooser_options_new(type_groups, nullptr, nullptr,
                                             nullptr, nullptr);
 
-  g_autoptr(GtkFileChooserNative) dialog = create_dialog_for_method(
+  g_autoptr(GtkFileChooserNative) dialog = create_dialog_of_type(
       nullptr, FILE_SELECTOR_LINUX_PLATFORM_FILE_CHOOSER_ACTION_TYPE_OPEN,
-      args);
+      options);
 
   ASSERT_NE(dialog, nullptr);
   EXPECT_EQ(gtk_file_chooser_get_action(GTK_FILE_CHOOSER(dialog)),
@@ -135,9 +135,9 @@ TEST(FileSelectorPlugin, TestSaveSimple) {
       ffs_platform_file_chooser_options_new(nullptr, nullptr, nullptr, nullptr,
                                             nullptr);
 
-  g_autoptr(GtkFileChooserNative) dialog = create_dialog_for_method(
+  g_autoptr(GtkFileChooserNative) dialog = create_dialog_of_type(
       nullptr, FILE_SELECTOR_LINUX_PLATFORM_FILE_CHOOSER_ACTION_TYPE_SAVE,
-      args);
+      options);
 
   ASSERT_NE(dialog, nullptr);
   EXPECT_EQ(gtk_file_chooser_get_action(GTK_FILE_CHOOSER(dialog)),
@@ -147,14 +147,13 @@ TEST(FileSelectorPlugin, TestSaveSimple) {
 }
 
 TEST(FileSelectorPlugin, TestSaveWithArguments) {
-  const gchar* current_folder_path = ;
   g_autoptr(FfsPlatformFileChooserOptions) options =
       ffs_platform_file_chooser_options_new(nullptr, "initialDirectory",
                                             "suggestedName", nullptr, nullptr);
 
-  g_autoptr(GtkFileChooserNative) dialog = create_dialog_for_method(
+  g_autoptr(GtkFileChooserNative) dialog = create_dialog_of_type(
       nullptr, FILE_SELECTOR_LINUX_PLATFORM_FILE_CHOOSER_ACTION_TYPE_SAVE,
-      args);
+      options);
 
   ASSERT_NE(dialog, nullptr);
   EXPECT_EQ(gtk_file_chooser_get_action(GTK_FILE_CHOOSER(dialog)),
@@ -174,10 +173,10 @@ TEST(FileSelectorPlugin, TestGetDirectory) {
       ffs_platform_file_chooser_options_new(nullptr, nullptr, nullptr, nullptr,
                                             nullptr);
 
-  g_autoptr(GtkFileChooserNative) dialog = create_dialog_for_method(
+  g_autoptr(GtkFileChooserNative) dialog = create_dialog_of_type(
       nullptr,
       FILE_SELECTOR_LINUX_PLATFORM_FILE_CHOOSER_ACTION_TYPE_CHOOSE_DIRECTORY,
-      args);
+      options);
 
   ASSERT_NE(dialog, nullptr);
   EXPECT_EQ(gtk_file_chooser_get_action(GTK_FILE_CHOOSER(dialog)),
@@ -192,10 +191,10 @@ TEST(FileSelectorPlugin, TestGetMultipleDirectories) {
       ffs_platform_file_chooser_options_new(nullptr, nullptr, nullptr, nullptr,
                                             &select_multiple);
 
-  g_autoptr(GtkFileChooserNative) dialog = create_dialog_for_method(
+  g_autoptr(GtkFileChooserNative) dialog = create_dialog_of_type(
       nullptr,
       FILE_SELECTOR_LINUX_PLATFORM_FILE_CHOOSER_ACTION_TYPE_CHOOSE_DIRECTORY,
-      args);
+      options);
 
   ASSERT_NE(dialog, nullptr);
   EXPECT_EQ(gtk_file_chooser_get_action(GTK_FILE_CHOOSER(dialog)),
