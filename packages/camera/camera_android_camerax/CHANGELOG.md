@@ -1,3 +1,69 @@
+## 0.6.7+2
+
+* Updates lint checks to ignore NewerVersionAvailable.
+
+## 0.6.7+1
+
+* Updates README to remove references to `maxVideoDuration`, as it was never
+  visible to app-facing clients, nor was it implemented in `camera_android`.
+
+## 0.6.7
+
+* Updates AGP version to 8.5.0.
+
+## 0.6.6
+
+* Adds logic to support building a camera preview with Android `Surface`s not backed by a `SurfaceTexture`
+  to which CameraX cannot not automatically apply the transformation required to achieve the correct rotation.
+* Adds fix for incorrect camera preview rotation on naturally landscape-oriented devices.
+* Updates example app's minimum supported SDK version to Flutter 3.22/Dart 3.4.
+
+## 0.6.5+6
+
+* Updates Guava version to 33.2.1.
+* Updates CameraX version to 1.3.4.
+
+## 0.6.5+5
+
+* Reverts changes to support Impeller.
+
+## 0.6.5+4
+
+* [Supports Impeller](https://docs.flutter.dev/release/breaking-changes/android-surface-plugins).
+
+## 0.6.5+3
+
+* Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+* Adds notes to `README.md` about allowing image streaming in the background and the required
+  `WRITE_EXTERNAL_STORAGE` permission specified in the plugin to allow writing photos and videos to
+  files.
+
+## 0.6.5+2
+
+* Update to latest stable camerax `1.3.3`.
+* Updates minimum supported SDK version to Flutter 3.16/Dart 3.2.
+
+## 0.6.5+1
+
+* Updates `README.md` to reflect the fact that the `camera_android_camerax` camera plugin implementation
+  is the endorsed Android implementation for `camera: ^0.11.0`.
+
+## 0.6.5
+
+* Modifies `stopVideoRecording` to ensure that the method only returns when CameraX reports that the
+  recorded video finishes saving to a file.
+* Modifies `startVideoCapturing` to ensure that the method only returns when CameraX reports that
+  video recording has started.
+* Adds empty implementation for `setDescriptionWhileRecording` and leaves a todo to add this feature.
+
+## 0.6.4+1
+
+* Adds empty implementation for `prepareForVideoRecording` since this optimization is not used on Android.
+
+## 0.6.4
+
+* Prevents usage of unsupported concurrent `UseCase`s based on the capabiliites of the camera device.
+
 ## 0.6.3
 
 * Shortens default interval that internal Java `InstanceManager` uses to release garbage collected weak references to

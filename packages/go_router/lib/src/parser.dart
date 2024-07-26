@@ -72,6 +72,8 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
       return debugParserFuture = _redirect(context, matchList)
           .then<RouteMatchList>((RouteMatchList value) {
         if (value.isError && onParserException != null) {
+          // TODO(chunhtai): Figure out what to return if context is invalid.
+          // ignore: use_build_context_synchronously
           return onParserException!(context, value);
         }
         return value;
@@ -106,6 +108,8 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
       initialMatches,
     ).then<RouteMatchList>((RouteMatchList matchList) {
       if (matchList.isError && onParserException != null) {
+        // TODO(chunhtai): Figure out what to return if context is invalid.
+        // ignore: use_build_context_synchronously
         return onParserException!(context, matchList);
       }
 

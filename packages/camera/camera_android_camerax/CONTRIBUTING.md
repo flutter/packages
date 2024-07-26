@@ -74,5 +74,5 @@ testing purposes. To generate the mock objects, run
 [2]: https://docs.google.com/document/d/1wXB1zNzYhd2SxCu1_BK3qmNWRhonTB6qdv4erdtBQqo/edit?usp=sharing&resourcekey=0-WOBqqOKiO9SARnziBg28pg
 [3]: https://github.com/flutter/packages/blob/main/CONTRIBUTING.md
 [4]: https://pub.dev/packages/mockito
-[5]: https://github.com/flutter/flutter/wiki/Plugin-Tests#running-tests
-[6]: https://github.com/flutter/flutter/wiki/Chat
+[5]: https://github.com/flutter/flutter/blob/master/docs/ecosystem/testing/Plugin-Tests.md#running-tests
+[6]: https://github.com/flutter/flutter/blob/master/docs/contributing/Chat.md

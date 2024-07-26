@@ -30,6 +30,7 @@ import 'cpp_generator.dart';
 import 'dart_generator.dart';
 import 'generator_tools.dart';
 import 'generator_tools.dart' as generator_tools;
+import 'gobject_generator.dart';
 import 'java_generator.dart';
 import 'kotlin_generator.dart';
 import 'objc_generator.dart';
@@ -253,6 +254,9 @@ class PigeonOptions {
     this.cppHeaderOut,
     this.cppSourceOut,
     this.cppOptions,
+    this.gobjectHeaderOut,
+    this.gobjectSourceOut,
+    this.gobjectOptions,
     this.dartOptions,
     this.copyrightHeader,
     this.oneLanguage,
@@ -307,6 +311,15 @@ class PigeonOptions {
   /// Options that control how C++ will be generated.
   final CppOptions? cppOptions;
 
+  /// Path to the ".h" GObject file that will be generated.
+  final String? gobjectHeaderOut;
+
+  /// Path to the ".cc" GObject file that will be generated.
+  final String? gobjectSourceOut;
+
+  /// Options that control how GObject source will be generated.
+  final GObjectOptions? gobjectOptions;
+
   /// Options that control how Dart will be generated.
   final DartOptions? dartOptions;
 
@@ -357,6 +370,12 @@ class PigeonOptions {
       cppOptions: map.containsKey('cppOptions')
           ? CppOptions.fromMap(map['cppOptions']! as Map<String, Object>)
           : null,
+      gobjectHeaderOut: map['gobjectHeaderOut'] as String?,
+      gobjectSourceOut: map['gobjectSourceOut'] as String?,
+      gobjectOptions: map.containsKey('gobjectOptions')
+          ? GObjectOptions.fromMap(
+              map['gobjectOptions']! as Map<String, Object>)
+          : null,
       dartOptions: map.containsKey('dartOptions')
           ? DartOptions.fromMap(map['dartOptions']! as Map<String, Object>)
           : null,
@@ -388,13 +407,16 @@ class PigeonOptions {
       if (cppHeaderOut != null) 'cppHeaderOut': cppHeaderOut!,
       if (cppSourceOut != null) 'cppSourceOut': cppSourceOut!,
       if (cppOptions != null) 'cppOptions': cppOptions!.toMap(),
+      if (gobjectHeaderOut != null) 'gobjectHeaderOut': gobjectHeaderOut!,
+      if (gobjectSourceOut != null) 'gobjectSourceOut': gobjectSourceOut!,
+      if (gobjectOptions != null) 'gobjectOptions': gobjectOptions!.toMap(),
       if (dartOptions != null) 'dartOptions': dartOptions!.toMap(),
       if (copyrightHeader != null) 'copyrightHeader': copyrightHeader!,
       if (astOut != null) 'astOut': astOut!,
       if (oneLanguage != null) 'oneLanguage': oneLanguage!,
       if (debugGenerators != null) 'debugGenerators': debugGenerators!,
       if (basePath != null) 'basePath': basePath!,
-      if (_dartPackageName != null) 'dartPackageName': _dartPackageName!,
+      if (_dartPackageName != null) 'dartPackageName': _dartPackageName,
     };
     return result;
   }
@@ -621,6 +643,12 @@ class ObjcGeneratorAdapter implements GeneratorAdapter {
       StringSink sink, PigeonOptions options, Root root, FileType fileType) {
     final ObjcOptions objcOptions = options.objcOptions ?? const ObjcOptions();
     final ObjcOptions objcOptionsWithHeader = objcOptions.merge(ObjcOptions(
+      fileSpecificClassNameComponent: options.objcSourceOut
+              ?.split('/')
+              .lastOrNull
+              ?.split('.')
+              .firstOrNull ??
+          '',
       copyrightHeader: options.copyrightHeader != null
           ? _lineReader(
               path.posix.join(options.basePath ?? '', options.copyrightHeader))
@@ -701,10 +729,13 @@ class SwiftGeneratorAdapter implements GeneratorAdapter {
       StringSink sink, PigeonOptions options, Root root, FileType fileType) {
     SwiftOptions swiftOptions = options.swiftOptions ?? const SwiftOptions();
     swiftOptions = swiftOptions.merge(SwiftOptions(
+      fileSpecificClassNameComponent:
+          options.swiftOut?.split('/').lastOrNull?.split('.').firstOrNull ?? '',
       copyrightHeader: options.copyrightHeader != null
           ? _lineReader(
               path.posix.join(options.basePath ?? '', options.copyrightHeader))
           : null,
+      errorClassName: swiftOptions.errorClassName,
     ));
     const SwiftGenerator generator = SwiftGenerator();
     generator.generate(
@@ -767,6 +798,54 @@ class CppGeneratorAdapter implements GeneratorAdapter {
   List<Error> validate(PigeonOptions options, Root root) => <Error>[];
 }
 
+/// A [GeneratorAdapter] that generates GObject source code.
+class GObjectGeneratorAdapter implements GeneratorAdapter {
+  /// Constructor for [GObjectGeneratorAdapter].
+  GObjectGeneratorAdapter(
+      {this.fileTypeList = const <FileType>[FileType.header, FileType.source]});
+
+  @override
+  List<FileType> fileTypeList;
+
+  @override
+  void generate(
+      StringSink sink, PigeonOptions options, Root root, FileType fileType) {
+    final GObjectOptions gobjectOptions =
+        options.gobjectOptions ?? const GObjectOptions();
+    final GObjectOptions gobjectOptionsWithHeader =
+        gobjectOptions.merge(GObjectOptions(
+      copyrightHeader: options.copyrightHeader != null
+          ? _lineReader(
+              path.posix.join(options.basePath ?? '', options.copyrightHeader))
+          : null,
+    ));
+    final OutputFileOptions<GObjectOptions> outputFileOptions =
+        OutputFileOptions<GObjectOptions>(
+            fileType: fileType, languageOptions: gobjectOptionsWithHeader);
+    const GObjectGenerator generator = GObjectGenerator();
+    generator.generate(
+      outputFileOptions,
+      root,
+      sink,
+      dartPackageName: options.getPackageName(),
+    );
+  }
+
+  @override
+  IOSink? shouldGenerate(PigeonOptions options, FileType fileType) {
+    if (fileType == FileType.source) {
+      return _openSink(options.gobjectSourceOut,
+          basePath: options.basePath ?? '');
+    } else {
+      return _openSink(options.gobjectHeaderOut,
+          basePath: options.basePath ?? '');
+    }
+  }
+
+  @override
+  List<Error> validate(PigeonOptions options, Root root) => <Error>[];
+}
+
 /// A [GeneratorAdapter] that generates Kotlin source code.
 class KotlinGeneratorAdapter implements GeneratorAdapter {
   /// Constructor for [KotlinGeneratorAdapter].
@@ -783,6 +862,9 @@ class KotlinGeneratorAdapter implements GeneratorAdapter {
     kotlinOptions = kotlinOptions.merge(KotlinOptions(
       errorClassName: kotlinOptions.errorClassName ?? 'FlutterError',
       includeErrorClass: kotlinOptions.includeErrorClass,
+      fileSpecificClassNameComponent:
+          options.kotlinOut?.split('/').lastOrNull?.split('.').firstOrNull ??
+              '',
       copyrightHeader: options.copyrightHeader != null
           ? _lineReader(
               path.posix.join(options.basePath ?? '', options.copyrightHeader))
@@ -1345,12 +1427,20 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
               (Api apiDefinition) => apiDefinition.name == type.baseName,
             );
     if (assocClass != null) {
-      return type.copyWithClass(assocClass);
+      type = type.copyWithClass(assocClass);
     } else if (assocEnum != null) {
-      return type.copyWithEnum(assocEnum);
+      type = type.copyWithEnum(assocEnum);
     } else if (assocProxyApi != null) {
-      return type.copyWithProxyApi(assocProxyApi);
+      type = type.copyWithProxyApi(assocProxyApi);
     }
+    if (type.typeArguments.isNotEmpty) {
+      final List<TypeDeclaration> newTypes = <TypeDeclaration>[];
+      for (final TypeDeclaration type in type.typeArguments) {
+        newTypes.add(_attachAssociatedDefinition(type));
+      }
+      type = type.copyWithTypeArguments(newTypes);
+    }
+
     return type;
   }
 
@@ -1980,7 +2070,7 @@ class Pigeon {
   }
 
   /// Reads the file located at [path] and generates [ParseResults] by parsing
-  /// it.  [types] optionally filters out what datatypes are actually parsed.
+  /// it. [types] optionally filters out what datatypes are actually parsed.
   /// [sdkPath] for specifying the Dart SDK path for
   /// [AnalysisContextCollection].
   ParseResults parseFile(String inputPath, {String? sdkPath}) {
@@ -2080,6 +2170,18 @@ ${_argParser.usage}''';
     )
     ..addOption('cpp_namespace',
         help: 'The namespace that generated C++ code will be in.')
+    ..addOption(
+      'gobject_header_out',
+      help: 'Path to generated GObject header file (.h).',
+      aliases: const <String>['experimental_gobject_header_out'],
+    )
+    ..addOption(
+      'gobject_source_out',
+      help: 'Path to generated GObject classes file (.cc).',
+      aliases: const <String>['experimental_gobject_source_out'],
+    )
+    ..addOption('gobject_module',
+        help: 'The module that generated GObject code will be in.')
     ..addOption('objc_header_out',
         help: 'Path to generated Objective-C header file (.h).')
     ..addOption('objc_prefix',
@@ -2133,6 +2235,11 @@ ${_argParser.usage}''';
       cppSourceOut: results['cpp_source_out'] as String?,
       cppOptions: CppOptions(
         namespace: results['cpp_namespace'] as String?,
+      ),
+      gobjectHeaderOut: results['gobject_header_out'] as String?,
+      gobjectSourceOut: results['gobject_source_out'] as String?,
+      gobjectOptions: GObjectOptions(
+        module: results['gobject_module'] as String?,
       ),
       copyrightHeader: results['copyright_header'] as String?,
       oneLanguage: results['one_language'] as bool?,
@@ -2190,6 +2297,7 @@ ${_argParser.usage}''';
           SwiftGeneratorAdapter(),
           KotlinGeneratorAdapter(),
           CppGeneratorAdapter(),
+          GObjectGeneratorAdapter(),
           DartTestGeneratorAdapter(),
           ObjcGeneratorAdapter(),
           AstGeneratorAdapter(),
@@ -2248,14 +2356,24 @@ ${_argParser.usage}''';
       options = options.merge(PigeonOptions(
           objcOptions: (options.objcOptions ?? const ObjcOptions()).merge(
               ObjcOptions(
-                  headerIncludePath: path.basename(options.objcHeaderOut!)))));
+                  headerIncludePath: options.objcOptions?.headerIncludePath ??
+                      path.basename(options.objcHeaderOut!)))));
     }
 
     if (options.cppHeaderOut != null) {
       options = options.merge(PigeonOptions(
           cppOptions: (options.cppOptions ?? const CppOptions()).merge(
               CppOptions(
-                  headerIncludePath: path.basename(options.cppHeaderOut!)))));
+                  headerIncludePath: options.cppOptions?.headerIncludePath ??
+                      path.basename(options.cppHeaderOut!)))));
+    }
+
+    if (options.gobjectHeaderOut != null) {
+      options = options.merge(PigeonOptions(
+          gobjectOptions: (options.gobjectOptions ?? const GObjectOptions())
+              .merge(GObjectOptions(
+                  headerIncludePath:
+                      path.basename(options.gobjectHeaderOut!)))));
     }
 
     for (final GeneratorAdapter adapter in safeGeneratorAdapters) {

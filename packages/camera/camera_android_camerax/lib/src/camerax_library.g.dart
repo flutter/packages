@@ -68,6 +68,14 @@ enum VideoResolutionFallbackRule {
   lowerQualityThan,
 }
 
+/// Video recording status.
+///
+/// See https://developer.android.com/reference/androidx/camera/video/VideoRecordEvent.
+enum VideoRecordEvent {
+  start,
+  finalize,
+}
+
 /// The types of capture request options this plugin currently supports.
 ///
 /// If you need to add another option to support, ensure the following is done
@@ -228,6 +236,27 @@ class VideoQualityData {
     result as List<Object?>;
     return VideoQualityData(
       quality: VideoQuality.values[result[0]! as int],
+    );
+  }
+}
+
+class VideoRecordEventData {
+  VideoRecordEventData({
+    required this.value,
+  });
+
+  VideoRecordEvent value;
+
+  Object encode() {
+    return <Object?>[
+      value.index,
+    ];
+  }
+
+  static VideoRecordEventData decode(Object result) {
+    result as List<Object?>;
+    return VideoRecordEventData(
+      value: VideoRecordEvent.values[result[0]! as int],
     );
   }
 }
@@ -974,6 +1003,33 @@ class SystemServicesHostApi {
       return (replyList[0] as String?)!;
     }
   }
+
+  Future<bool> isPreviewPreTransformed() async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.SystemServicesHostApi.isPreviewPreTransformed',
+        codec,
+        binaryMessenger: _binaryMessenger);
+    final List<Object?>? replyList = await channel.send(null) as List<Object?>?;
+    if (replyList == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyList.length > 1) {
+      throw PlatformException(
+        code: replyList[0]! as String,
+        message: replyList[1] as String?,
+        details: replyList[2],
+      );
+    } else if (replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (replyList[0] as bool?)!;
+    }
+  }
 }
 
 abstract class SystemServicesFlutterApi {
@@ -1086,6 +1142,33 @@ class DeviceOrientationManagerHostApi {
       );
     } else {
       return (replyList[0] as int?)!;
+    }
+  }
+
+  Future<String> getUiOrientation() async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.DeviceOrientationManagerHostApi.getUiOrientation',
+        codec,
+        binaryMessenger: _binaryMessenger);
+    final List<Object?>? replyList = await channel.send(null) as List<Object?>?;
+    if (replyList == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyList.length > 1) {
+      throw PlatformException(
+        code: replyList[0]! as String,
+        message: replyList[1] as String?,
+        details: replyList[2],
+      );
+    } else if (replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (replyList[0] as String?)!;
     }
   }
 }
@@ -1580,10 +1663,35 @@ class PendingRecordingHostApi {
   }
 }
 
+class _PendingRecordingFlutterApiCodec extends StandardMessageCodec {
+  const _PendingRecordingFlutterApiCodec();
+  @override
+  void writeValue(WriteBuffer buffer, Object? value) {
+    if (value is VideoRecordEventData) {
+      buffer.putUint8(128);
+      writeValue(buffer, value.encode());
+    } else {
+      super.writeValue(buffer, value);
+    }
+  }
+
+  @override
+  Object? readValueOfType(int type, ReadBuffer buffer) {
+    switch (type) {
+      case 128:
+        return VideoRecordEventData.decode(readValue(buffer)!);
+      default:
+        return super.readValueOfType(type, buffer);
+    }
+  }
+}
+
 abstract class PendingRecordingFlutterApi {
-  static const MessageCodec<Object?> codec = StandardMessageCodec();
+  static const MessageCodec<Object?> codec = _PendingRecordingFlutterApiCodec();
 
   void create(int identifier);
+
+  void onVideoRecordingEvent(VideoRecordEventData event);
 
   static void setup(PendingRecordingFlutterApi? api,
       {BinaryMessenger? binaryMessenger}) {
@@ -1602,6 +1710,27 @@ abstract class PendingRecordingFlutterApi {
           assert(arg_identifier != null,
               'Argument for dev.flutter.pigeon.PendingRecordingFlutterApi.create was null, expected non-null int.');
           api.create(arg_identifier!);
+          return;
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.PendingRecordingFlutterApi.onVideoRecordingEvent',
+          codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        channel.setMessageHandler(null);
+      } else {
+        channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.PendingRecordingFlutterApi.onVideoRecordingEvent was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final VideoRecordEventData? arg_event =
+              (args[0] as VideoRecordEventData?);
+          assert(arg_event != null,
+              'Argument for dev.flutter.pigeon.PendingRecordingFlutterApi.onVideoRecordingEvent was null, expected non-null VideoRecordEventData.');
+          api.onVideoRecordingEvent(arg_event!);
           return;
         });
       }
@@ -3222,6 +3351,9 @@ class _CaptureRequestOptionsHostApiCodec extends StandardMessageCodec {
     } else if (value is VideoQualityData) {
       buffer.putUint8(134);
       writeValue(buffer, value.encode());
+    } else if (value is VideoRecordEventData) {
+      buffer.putUint8(135);
+      writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
     }
@@ -3244,6 +3376,8 @@ class _CaptureRequestOptionsHostApiCodec extends StandardMessageCodec {
         return ResolutionInfo.decode(readValue(buffer)!);
       case 134:
         return VideoQualityData.decode(readValue(buffer)!);
+      case 135:
+        return VideoRecordEventData.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
     }
@@ -3400,6 +3534,156 @@ class ResolutionFilterHostApi {
       );
     } else {
       return;
+    }
+  }
+}
+
+class Camera2CameraInfoHostApi {
+  /// Constructor for [Camera2CameraInfoHostApi].  The [binaryMessenger] named argument is
+  /// available for dependency injection.  If it is left null, the default
+  /// BinaryMessenger will be used which routes to the host platform.
+  Camera2CameraInfoHostApi({BinaryMessenger? binaryMessenger})
+      : _binaryMessenger = binaryMessenger;
+  final BinaryMessenger? _binaryMessenger;
+
+  static const MessageCodec<Object?> codec = StandardMessageCodec();
+
+  Future<int> createFrom(int arg_cameraInfoIdentifier) async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.Camera2CameraInfoHostApi.createFrom', codec,
+        binaryMessenger: _binaryMessenger);
+    final List<Object?>? replyList = await channel
+        .send(<Object?>[arg_cameraInfoIdentifier]) as List<Object?>?;
+    if (replyList == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyList.length > 1) {
+      throw PlatformException(
+        code: replyList[0]! as String,
+        message: replyList[1] as String?,
+        details: replyList[2],
+      );
+    } else if (replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (replyList[0] as int?)!;
+    }
+  }
+
+  Future<int> getSupportedHardwareLevel(int arg_identifier) async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.Camera2CameraInfoHostApi.getSupportedHardwareLevel',
+        codec,
+        binaryMessenger: _binaryMessenger);
+    final List<Object?>? replyList =
+        await channel.send(<Object?>[arg_identifier]) as List<Object?>?;
+    if (replyList == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyList.length > 1) {
+      throw PlatformException(
+        code: replyList[0]! as String,
+        message: replyList[1] as String?,
+        details: replyList[2],
+      );
+    } else if (replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (replyList[0] as int?)!;
+    }
+  }
+
+  Future<String> getCameraId(int arg_identifier) async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.Camera2CameraInfoHostApi.getCameraId', codec,
+        binaryMessenger: _binaryMessenger);
+    final List<Object?>? replyList =
+        await channel.send(<Object?>[arg_identifier]) as List<Object?>?;
+    if (replyList == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyList.length > 1) {
+      throw PlatformException(
+        code: replyList[0]! as String,
+        message: replyList[1] as String?,
+        details: replyList[2],
+      );
+    } else if (replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (replyList[0] as String?)!;
+    }
+  }
+
+  Future<int> getSensorOrientation(int arg_identifier) async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.Camera2CameraInfoHostApi.getSensorOrientation',
+        codec,
+        binaryMessenger: _binaryMessenger);
+    final List<Object?>? replyList =
+        await channel.send(<Object?>[arg_identifier]) as List<Object?>?;
+    if (replyList == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyList.length > 1) {
+      throw PlatformException(
+        code: replyList[0]! as String,
+        message: replyList[1] as String?,
+        details: replyList[2],
+      );
+    } else if (replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (replyList[0] as int?)!;
+    }
+  }
+}
+
+abstract class Camera2CameraInfoFlutterApi {
+  static const MessageCodec<Object?> codec = StandardMessageCodec();
+
+  void create(int identifier);
+
+  static void setup(Camera2CameraInfoFlutterApi? api,
+      {BinaryMessenger? binaryMessenger}) {
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.Camera2CameraInfoFlutterApi.create', codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        channel.setMessageHandler(null);
+      } else {
+        channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.Camera2CameraInfoFlutterApi.create was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final int? arg_identifier = (args[0] as int?);
+          assert(arg_identifier != null,
+              'Argument for dev.flutter.pigeon.Camera2CameraInfoFlutterApi.create was null, expected non-null int.');
+          api.create(arg_identifier!);
+          return;
+        });
+      }
     }
   }
 }

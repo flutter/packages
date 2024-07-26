@@ -10,10 +10,7 @@ and taking new pictures with the camera.
 |-------------|---------|---------|-------|--------|---------------------------------|-------------|
 | **Support** | SDK 21+ | iOS 12+ | Any   | 10.14+ | [See `image_picker_for_web`](https://pub.dev/packages/image_picker_for_web#limitations-on-the-web-platform) | Windows 10+ |
 
-## Installation
-
-First, add `image_picker` as a
-[dependency in your pubspec.yaml file](https://flutter.dev/docs/development/platform-integration/platform-channels).
+## Setup
 
 ### iOS
 
@@ -95,9 +92,9 @@ responsibility to move it to a more permanent location.
 
 #### Android Photo Picker
 
-This package has optional
+On Android 13 and above this package uses the
 [Android Photo Picker](https://developer.android.com/training/data-storage/shared/photopicker)
-functionality.
+. On Android 12 and below use of Android Photo Picker is optional. 
 [Learn how to use it](https://pub.dev/packages/image_picker_android).
 
 #### Using `launchMode: singleInstance`
@@ -158,7 +155,8 @@ encourage the community to build packages that implement
 
 Since the macOS implementation uses `file_selector`, you will need to
 add a filesystem access
-[entitlement](https://docs.flutter.dev/platform-integration/macos/building#entitlements-and-the-app-sandbox):
+[entitlement](https://flutter.dev/to/macos-entitlements):
+
 ```xml
   <key>com.apple.security.files.user-selected.read-only</key>
   <true/>

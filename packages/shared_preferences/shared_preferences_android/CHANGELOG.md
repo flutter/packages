@@ -1,3 +1,12 @@
+## 2.2.4
+
+* Updates lint checks to ignore NewerVersionAvailable.
+
+## 2.2.3
+
+* Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+* Removes support for apps using the v1 Android embedding.
+
 ## 2.2.2
 
 * Updates minSdkVersion to 19.

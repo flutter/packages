@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */ = {isa = PBXBuildFile; fileRef = 1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */; };
 		3B3967161E833CAA004F5970 /* AppFrameworkInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */; };
+		78CF8D742BC5CEA80051231B /* OCMock in Frameworks */ = {isa = PBXBuildFile; productRef = 78CF8D732BC5CEA80051231B /* OCMock */; };
 		978B8F6F1D3862AE00F588F7 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 7AFFD8EE1D35381100E5BB4D /* AppDelegate.m */; };
 		97C146F31CF9000F007C117D /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 97C146F21CF9000F007C117D /* main.m */; };
 		97C146FC1CF9000F007C117D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FA1CF9000F007C117D /* Main.storyboard */; };
@@ -99,6 +100,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				78CF8D742BC5CEA80051231B /* OCMock in Frameworks */,
 				D182ECB59C06DBC7E2D5D913 /* libPods-RunnerTests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -260,6 +262,9 @@
 				F7151F4026603ECA0028CB91 /* PBXTargetDependency */,
 			);
 			name = RunnerTests;
+			packageProductDependencies = (
+				78CF8D732BC5CEA80051231B /* OCMock */,
+			);
 			productName = RunnerTests;
 			productReference = F7151F3A26603ECA0028CB91 /* RunnerTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
@@ -297,6 +302,9 @@
 				Base,
 			);
 			mainGroup = 97C146E51CF9000F007C117D;
+			packageReferences = (
+				78CF8D722BC5CEA80051231B /* XCRemoteSwiftPackageReference "ocmock" */,
+			);
 			productRefGroup = 97C146EF1CF9000F007C117D /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -758,6 +766,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		78CF8D722BC5CEA80051231B /* XCRemoteSwiftPackageReference "ocmock" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/erikdoe/ocmock";
+			requirement = {
+				kind = revision;
+				revision = ef21a2ece3ee092f8ed175417718bdd9b8eb7c9a;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		78CF8D732BC5CEA80051231B /* OCMock */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 78CF8D722BC5CEA80051231B /* XCRemoteSwiftPackageReference "ocmock" */;
+			productName = OCMock;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 97C146E61CF9000F007C117D /* Project object */;
 }

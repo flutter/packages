@@ -1,3 +1,24 @@
+## 6.1.28
+
+* Updates lint checks to ignore NewerVersionAvailable.
+
+## 6.1.27
+
+* Updates AGP version to 8.5.0.
+
+## 6.1.26
+
+* Removes additional references to the v1 Android embedding.
+
+## 6.1.25
+
+* Updates Guava to version 33.2.1.
+
+## 6.1.24
+
+* Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+* Removes support for apps using the v1 Android embedding.
+
 ## 6.1.23
 
 * Updates minSdkVersion to 19.

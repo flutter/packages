@@ -57,7 +57,7 @@ The argument `maxDuration` is not supported on the web.
 
 ### Import the package
 
-This package is [endorsed](https://flutter.dev/docs/development/packages-and-plugins/developing-packages#endorsed-federated-plugin),
+This package is [endorsed](https://flutter.dev/to/endorsed-federated-plugin),
 which means you can simply use `image_picker`
 normally. This package will be automatically included in your app when you do,
 so you do not need to add it to your `pubspec.yaml`.

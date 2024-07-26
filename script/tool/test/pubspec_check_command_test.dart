@@ -1518,7 +1518,7 @@ ${_topicsSection()}
       expect(
         output,
         containsAllInOrder(<Matcher>[
-          contains('Dart SDK version for Fluter SDK version 2.0.0 is unknown'),
+          contains('Dart SDK version for Flutter SDK version 2.0.0 is unknown'),
         ]),
       );
     });
@@ -1613,7 +1613,7 @@ ${_topicsSection()}
             contains(
                 '  The following unexpected non-local dependencies were found:\n'
                 '    bad_dependency\n'
-                '  Please see https://github.com/flutter/flutter/wiki/Contributing-to-Plugins-and-Packages#Dependencies\n'
+                '  Please see https://github.com/flutter/flutter/blob/master/docs/ecosystem/contributing/README.md#Dependencies\n'
                 '  for more information and next steps.'),
           ]),
         );
@@ -1645,7 +1645,7 @@ ${_topicsSection()}
             contains(
                 '  The following unexpected non-local dependencies were found:\n'
                 '    bad_dependency\n'
-                '  Please see https://github.com/flutter/flutter/wiki/Contributing-to-Plugins-and-Packages#Dependencies\n'
+                '  Please see https://github.com/flutter/flutter/blob/master/docs/ecosystem/contributing/README.md#Dependencies\n'
                 '  for more information and next steps.'),
           ]),
         );
@@ -1729,7 +1729,7 @@ ${_topicsSection()}
             contains(
                 '  The following unexpected non-local dependencies were found:\n'
                 '    allow_pinned\n'
-                '  Please see https://github.com/flutter/flutter/wiki/Contributing-to-Plugins-and-Packages#Dependencies\n'
+                '  Please see https://github.com/flutter/flutter/blob/master/docs/ecosystem/contributing/README.md#Dependencies\n'
                 '  for more information and next steps.'),
           ]),
         );

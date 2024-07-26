@@ -118,6 +118,7 @@ class PlatformBillingFlowParams {
   PlatformBillingFlowParams({
     required this.product,
     required this.prorationMode,
+    required this.replacementMode,
     required this.offerToken,
     required this.accountId,
     required this.obfuscatedProfileId,
@@ -130,6 +131,7 @@ class PlatformBillingFlowParams {
   // to constants on the Java side, but it's deprecated anyway so that will be
   // resolved during the update to the new API.
   final int prorationMode;
+  final int replacementMode;
   final String? offerToken;
   final String? accountId;
   final String? obfuscatedProfileId;

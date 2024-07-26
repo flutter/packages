@@ -41,7 +41,7 @@ void main() {
       );
 
       ImageAnalysis.detached(
-        initialTargetRotation: Surface.ROTATION_270,
+        initialTargetRotation: Surface.rotation270,
         resolutionSelector: MockResolutionSelector(),
         instanceManager: instanceManager,
       );
@@ -58,7 +58,7 @@ void main() {
         onWeakReferenceRemoved: (_) {},
       );
 
-      const int targetRotation = Surface.ROTATION_90;
+      const int targetRotation = Surface.rotation90;
       final MockResolutionSelector mockResolutionSelector =
           MockResolutionSelector();
       const int mockResolutionSelectorId = 24;
@@ -91,7 +91,7 @@ void main() {
       final InstanceManager instanceManager = InstanceManager(
         onWeakReferenceRemoved: (_) {},
       );
-      const int targetRotation = Surface.ROTATION_180;
+      const int targetRotation = Surface.rotation180;
       final ImageAnalysis imageAnalysis = ImageAnalysis.detached(
         instanceManager: instanceManager,
       );

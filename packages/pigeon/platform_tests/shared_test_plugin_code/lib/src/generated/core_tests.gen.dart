@@ -49,11 +49,15 @@ class AllTypes {
     required this.a4ByteArray,
     required this.a8ByteArray,
     required this.aFloatArray,
-    this.aList = const <Object?>[],
-    this.aMap = const <String?, Object?>{},
     this.anEnum = AnEnum.one,
     this.aString = '',
     this.anObject = 0,
+    required this.list,
+    required this.stringList,
+    required this.intList,
+    required this.doubleList,
+    required this.boolList,
+    required this.map,
   });
 
   bool aBool;
@@ -72,15 +76,23 @@ class AllTypes {
 
   Float64List aFloatArray;
 
-  List<Object?> aList;
-
-  Map<Object?, Object?> aMap;
-
   AnEnum anEnum;
 
   String aString;
 
   Object anObject;
+
+  List<Object?> list;
+
+  List<String?> stringList;
+
+  List<int?> intList;
+
+  List<double?> doubleList;
+
+  List<bool?> boolList;
+
+  Map<Object?, Object?> map;
 
   Object encode() {
     return <Object?>[
@@ -92,11 +104,15 @@ class AllTypes {
       a4ByteArray,
       a8ByteArray,
       aFloatArray,
-      aList,
-      aMap,
-      anEnum.index,
+      anEnum,
       aString,
       anObject,
+      list,
+      stringList,
+      intList,
+      doubleList,
+      boolList,
+      map,
     ];
   }
 
@@ -111,11 +127,15 @@ class AllTypes {
       a4ByteArray: result[5]! as Int32List,
       a8ByteArray: result[6]! as Int64List,
       aFloatArray: result[7]! as Float64List,
-      aList: result[8]! as List<Object?>,
-      aMap: result[9]! as Map<Object?, Object?>,
-      anEnum: AnEnum.values[result[10]! as int],
-      aString: result[11]! as String,
-      anObject: result[12]!,
+      anEnum: result[8]! as AnEnum,
+      aString: result[9]! as String,
+      anObject: result[10]!,
+      list: result[11]! as List<Object?>,
+      stringList: (result[12] as List<Object?>?)!.cast<String?>(),
+      intList: (result[13] as List<Object?>?)!.cast<int?>(),
+      doubleList: (result[14] as List<Object?>?)!.cast<double?>(),
+      boolList: (result[15] as List<Object?>?)!.cast<bool?>(),
+      map: result[16]! as Map<Object?, Object?>,
     );
   }
 }
@@ -131,8 +151,6 @@ class AllNullableTypes {
     this.aNullable4ByteArray,
     this.aNullable8ByteArray,
     this.aNullableFloatArray,
-    this.aNullableList,
-    this.aNullableMap,
     this.nullableNestedList,
     this.nullableMapWithAnnotations,
     this.nullableMapWithObject,
@@ -140,6 +158,13 @@ class AllNullableTypes {
     this.aNullableString,
     this.aNullableObject,
     this.allNullableTypes,
+    this.list,
+    this.stringList,
+    this.intList,
+    this.doubleList,
+    this.boolList,
+    this.nestedClassList,
+    this.map,
   });
 
   bool? aNullableBool;
@@ -158,10 +183,6 @@ class AllNullableTypes {
 
   Float64List? aNullableFloatArray;
 
-  List<Object?>? aNullableList;
-
-  Map<Object?, Object?>? aNullableMap;
-
   List<List<bool?>?>? nullableNestedList;
 
   Map<String?, String?>? nullableMapWithAnnotations;
@@ -176,6 +197,20 @@ class AllNullableTypes {
 
   AllNullableTypes? allNullableTypes;
 
+  List<Object?>? list;
+
+  List<String?>? stringList;
+
+  List<int?>? intList;
+
+  List<double?>? doubleList;
+
+  List<bool?>? boolList;
+
+  List<AllNullableTypes?>? nestedClassList;
+
+  Map<Object?, Object?>? map;
+
   Object encode() {
     return <Object?>[
       aNullableBool,
@@ -186,15 +221,20 @@ class AllNullableTypes {
       aNullable4ByteArray,
       aNullable8ByteArray,
       aNullableFloatArray,
-      aNullableList,
-      aNullableMap,
       nullableNestedList,
       nullableMapWithAnnotations,
       nullableMapWithObject,
-      aNullableEnum?.index,
+      aNullableEnum,
       aNullableString,
       aNullableObject,
-      allNullableTypes?.encode(),
+      allNullableTypes,
+      list,
+      stringList,
+      intList,
+      doubleList,
+      boolList,
+      nestedClassList,
+      map,
     ];
   }
 
@@ -209,20 +249,23 @@ class AllNullableTypes {
       aNullable4ByteArray: result[5] as Int32List?,
       aNullable8ByteArray: result[6] as Int64List?,
       aNullableFloatArray: result[7] as Float64List?,
-      aNullableList: result[8] as List<Object?>?,
-      aNullableMap: result[9] as Map<Object?, Object?>?,
-      nullableNestedList: (result[10] as List<Object?>?)?.cast<List<bool?>?>(),
+      nullableNestedList: (result[8] as List<Object?>?)?.cast<List<bool?>?>(),
       nullableMapWithAnnotations:
-          (result[11] as Map<Object?, Object?>?)?.cast<String?, String?>(),
+          (result[9] as Map<Object?, Object?>?)?.cast<String?, String?>(),
       nullableMapWithObject:
-          (result[12] as Map<Object?, Object?>?)?.cast<String?, Object?>(),
-      aNullableEnum:
-          result[13] != null ? AnEnum.values[result[13]! as int] : null,
-      aNullableString: result[14] as String?,
-      aNullableObject: result[15],
-      allNullableTypes: result[16] != null
-          ? AllNullableTypes.decode(result[16]! as List<Object?>)
-          : null,
+          (result[10] as Map<Object?, Object?>?)?.cast<String?, Object?>(),
+      aNullableEnum: result[11] as AnEnum?,
+      aNullableString: result[12] as String?,
+      aNullableObject: result[13],
+      allNullableTypes: result[14] as AllNullableTypes?,
+      list: result[15] as List<Object?>?,
+      stringList: (result[16] as List<Object?>?)?.cast<String?>(),
+      intList: (result[17] as List<Object?>?)?.cast<int?>(),
+      doubleList: (result[18] as List<Object?>?)?.cast<double?>(),
+      boolList: (result[19] as List<Object?>?)?.cast<bool?>(),
+      nestedClassList:
+          (result[20] as List<Object?>?)?.cast<AllNullableTypes?>(),
+      map: result[21] as Map<Object?, Object?>?,
     );
   }
 }
@@ -240,14 +283,18 @@ class AllNullableTypesWithoutRecursion {
     this.aNullable4ByteArray,
     this.aNullable8ByteArray,
     this.aNullableFloatArray,
-    this.aNullableList,
-    this.aNullableMap,
     this.nullableNestedList,
     this.nullableMapWithAnnotations,
     this.nullableMapWithObject,
     this.aNullableEnum,
     this.aNullableString,
     this.aNullableObject,
+    this.list,
+    this.stringList,
+    this.intList,
+    this.doubleList,
+    this.boolList,
+    this.map,
   });
 
   bool? aNullableBool;
@@ -266,10 +313,6 @@ class AllNullableTypesWithoutRecursion {
 
   Float64List? aNullableFloatArray;
 
-  List<Object?>? aNullableList;
-
-  Map<Object?, Object?>? aNullableMap;
-
   List<List<bool?>?>? nullableNestedList;
 
   Map<String?, String?>? nullableMapWithAnnotations;
@@ -282,6 +325,18 @@ class AllNullableTypesWithoutRecursion {
 
   Object? aNullableObject;
 
+  List<Object?>? list;
+
+  List<String?>? stringList;
+
+  List<int?>? intList;
+
+  List<double?>? doubleList;
+
+  List<bool?>? boolList;
+
+  Map<Object?, Object?>? map;
+
   Object encode() {
     return <Object?>[
       aNullableBool,
@@ -292,14 +347,18 @@ class AllNullableTypesWithoutRecursion {
       aNullable4ByteArray,
       aNullable8ByteArray,
       aNullableFloatArray,
-      aNullableList,
-      aNullableMap,
       nullableNestedList,
       nullableMapWithAnnotations,
       nullableMapWithObject,
-      aNullableEnum?.index,
+      aNullableEnum,
       aNullableString,
       aNullableObject,
+      list,
+      stringList,
+      intList,
+      doubleList,
+      boolList,
+      map,
     ];
   }
 
@@ -314,17 +373,20 @@ class AllNullableTypesWithoutRecursion {
       aNullable4ByteArray: result[5] as Int32List?,
       aNullable8ByteArray: result[6] as Int64List?,
       aNullableFloatArray: result[7] as Float64List?,
-      aNullableList: result[8] as List<Object?>?,
-      aNullableMap: result[9] as Map<Object?, Object?>?,
-      nullableNestedList: (result[10] as List<Object?>?)?.cast<List<bool?>?>(),
+      nullableNestedList: (result[8] as List<Object?>?)?.cast<List<bool?>?>(),
       nullableMapWithAnnotations:
-          (result[11] as Map<Object?, Object?>?)?.cast<String?, String?>(),
+          (result[9] as Map<Object?, Object?>?)?.cast<String?, String?>(),
       nullableMapWithObject:
-          (result[12] as Map<Object?, Object?>?)?.cast<String?, Object?>(),
-      aNullableEnum:
-          result[13] != null ? AnEnum.values[result[13]! as int] : null,
-      aNullableString: result[14] as String?,
-      aNullableObject: result[15],
+          (result[10] as Map<Object?, Object?>?)?.cast<String?, Object?>(),
+      aNullableEnum: result[11] as AnEnum?,
+      aNullableString: result[12] as String?,
+      aNullableObject: result[13],
+      list: result[14] as List<Object?>?,
+      stringList: (result[15] as List<Object?>?)?.cast<String?>(),
+      intList: (result[16] as List<Object?>?)?.cast<int?>(),
+      doubleList: (result[17] as List<Object?>?)?.cast<double?>(),
+      boolList: (result[18] as List<Object?>?)?.cast<bool?>(),
+      map: result[19] as Map<Object?, Object?>?,
     );
   }
 }
@@ -349,22 +411,19 @@ class AllClassesWrapper {
 
   Object encode() {
     return <Object?>[
-      allNullableTypes.encode(),
-      allNullableTypesWithoutRecursion?.encode(),
-      allTypes?.encode(),
+      allNullableTypes,
+      allNullableTypesWithoutRecursion,
+      allTypes,
     ];
   }
 
   static AllClassesWrapper decode(Object result) {
     result as List<Object?>;
     return AllClassesWrapper(
-      allNullableTypes: AllNullableTypes.decode(result[0]! as List<Object?>),
-      allNullableTypesWithoutRecursion: result[1] != null
-          ? AllNullableTypesWithoutRecursion.decode(result[1]! as List<Object?>)
-          : null,
-      allTypes: result[2] != null
-          ? AllTypes.decode(result[2]! as List<Object?>)
-          : null,
+      allNullableTypes: result[0]! as AllNullableTypes,
+      allNullableTypesWithoutRecursion:
+          result[1] as AllNullableTypesWithoutRecursion?,
+      allTypes: result[2] as AllTypes?,
     );
   }
 }
@@ -391,25 +450,28 @@ class TestMessage {
   }
 }
 
-class _HostIntegrationCoreApiCodec extends StandardMessageCodec {
-  const _HostIntegrationCoreApiCodec();
+class _PigeonCodec extends StandardMessageCodec {
+  const _PigeonCodec();
   @override
   void writeValue(WriteBuffer buffer, Object? value) {
-    if (value is AllClassesWrapper) {
-      buffer.putUint8(128);
-      writeValue(buffer, value.encode());
-    } else if (value is AllNullableTypes) {
+    if (value is AllTypes) {
       buffer.putUint8(129);
       writeValue(buffer, value.encode());
-    } else if (value is AllNullableTypesWithoutRecursion) {
+    } else if (value is AllNullableTypes) {
       buffer.putUint8(130);
       writeValue(buffer, value.encode());
-    } else if (value is AllTypes) {
+    } else if (value is AllNullableTypesWithoutRecursion) {
       buffer.putUint8(131);
       writeValue(buffer, value.encode());
-    } else if (value is TestMessage) {
+    } else if (value is AllClassesWrapper) {
       buffer.putUint8(132);
       writeValue(buffer, value.encode());
+    } else if (value is TestMessage) {
+      buffer.putUint8(133);
+      writeValue(buffer, value.encode());
+    } else if (value is AnEnum) {
+      buffer.putUint8(134);
+      writeValue(buffer, value.index);
     } else {
       super.writeValue(buffer, value);
     }
@@ -418,16 +480,19 @@ class _HostIntegrationCoreApiCodec extends StandardMessageCodec {
   @override
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
-      case 128:
-        return AllClassesWrapper.decode(readValue(buffer)!);
       case 129:
-        return AllNullableTypes.decode(readValue(buffer)!);
-      case 130:
-        return AllNullableTypesWithoutRecursion.decode(readValue(buffer)!);
-      case 131:
         return AllTypes.decode(readValue(buffer)!);
+      case 130:
+        return AllNullableTypes.decode(readValue(buffer)!);
+      case 131:
+        return AllNullableTypesWithoutRecursion.decode(readValue(buffer)!);
       case 132:
+        return AllClassesWrapper.decode(readValue(buffer)!);
+      case 133:
         return TestMessage.decode(readValue(buffer)!);
+      case 134:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : AnEnum.values[value];
       default:
         return super.readValueOfType(type, buffer);
     }
@@ -447,8 +512,7 @@ class HostIntegrationCoreApi {
             messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
   final BinaryMessenger? __pigeon_binaryMessenger;
 
-  static const MessageCodec<Object?> pigeonChannelCodec =
-      _HostIntegrationCoreApiCodec();
+  static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
 
   final String __pigeon_messageChannelSuffix;
 
@@ -764,7 +828,7 @@ class HostIntegrationCoreApi {
   }
 
   /// Returns the passed list, to test serialization and deserialization.
-  Future<List<Object?>> echoList(List<Object?> aList) async {
+  Future<List<Object?>> echoList(List<Object?> list) async {
     final String __pigeon_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoList$__pigeon_messageChannelSuffix';
     final BasicMessageChannel<Object?> __pigeon_channel =
@@ -774,7 +838,7 @@ class HostIntegrationCoreApi {
       binaryMessenger: __pigeon_binaryMessenger,
     );
     final List<Object?>? __pigeon_replyList =
-        await __pigeon_channel.send(<Object?>[aList]) as List<Object?>?;
+        await __pigeon_channel.send(<Object?>[list]) as List<Object?>?;
     if (__pigeon_replyList == null) {
       throw _createConnectionError(__pigeon_channelName);
     } else if (__pigeon_replyList.length > 1) {
@@ -865,7 +929,7 @@ class HostIntegrationCoreApi {
       binaryMessenger: __pigeon_binaryMessenger,
     );
     final List<Object?>? __pigeon_replyList =
-        await __pigeon_channel.send(<Object?>[anEnum.index]) as List<Object?>?;
+        await __pigeon_channel.send(<Object?>[anEnum]) as List<Object?>?;
     if (__pigeon_replyList == null) {
       throw _createConnectionError(__pigeon_channelName);
     } else if (__pigeon_replyList.length > 1) {
@@ -880,7 +944,7 @@ class HostIntegrationCoreApi {
         message: 'Host platform returned null value for non-null return value.',
       );
     } else {
-      return AnEnum.values[__pigeon_replyList[0]! as int];
+      return (__pigeon_replyList[0] as AnEnum?)!;
     }
   }
 
@@ -1363,7 +1427,7 @@ class HostIntegrationCoreApi {
       binaryMessenger: __pigeon_binaryMessenger,
     );
     final List<Object?>? __pigeon_replyList =
-        await __pigeon_channel.send(<Object?>[anEnum?.index]) as List<Object?>?;
+        await __pigeon_channel.send(<Object?>[anEnum]) as List<Object?>?;
     if (__pigeon_replyList == null) {
       throw _createConnectionError(__pigeon_channelName);
     } else if (__pigeon_replyList.length > 1) {
@@ -1373,9 +1437,7 @@ class HostIntegrationCoreApi {
         details: __pigeon_replyList[2],
       );
     } else {
-      return (__pigeon_replyList[0] as int?) == null
-          ? null
-          : AnEnum.values[__pigeon_replyList[0]! as int];
+      return (__pigeon_replyList[0] as AnEnum?);
     }
   }
 
@@ -1636,7 +1698,7 @@ class HostIntegrationCoreApi {
   }
 
   /// Returns the passed list, to test asynchronous serialization and deserialization.
-  Future<List<Object?>> echoAsyncList(List<Object?> aList) async {
+  Future<List<Object?>> echoAsyncList(List<Object?> list) async {
     final String __pigeon_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncList$__pigeon_messageChannelSuffix';
     final BasicMessageChannel<Object?> __pigeon_channel =
@@ -1646,7 +1708,7 @@ class HostIntegrationCoreApi {
       binaryMessenger: __pigeon_binaryMessenger,
     );
     final List<Object?>? __pigeon_replyList =
-        await __pigeon_channel.send(<Object?>[aList]) as List<Object?>?;
+        await __pigeon_channel.send(<Object?>[list]) as List<Object?>?;
     if (__pigeon_replyList == null) {
       throw _createConnectionError(__pigeon_channelName);
     } else if (__pigeon_replyList.length > 1) {
@@ -1707,7 +1769,7 @@ class HostIntegrationCoreApi {
       binaryMessenger: __pigeon_binaryMessenger,
     );
     final List<Object?>? __pigeon_replyList =
-        await __pigeon_channel.send(<Object?>[anEnum.index]) as List<Object?>?;
+        await __pigeon_channel.send(<Object?>[anEnum]) as List<Object?>?;
     if (__pigeon_replyList == null) {
       throw _createConnectionError(__pigeon_channelName);
     } else if (__pigeon_replyList.length > 1) {
@@ -1722,7 +1784,7 @@ class HostIntegrationCoreApi {
         message: 'Host platform returned null value for non-null return value.',
       );
     } else {
-      return AnEnum.values[__pigeon_replyList[0]! as int];
+      return (__pigeon_replyList[0] as AnEnum?)!;
     }
   }
 
@@ -2035,7 +2097,7 @@ class HostIntegrationCoreApi {
   }
 
   /// Returns the passed list, to test asynchronous serialization and deserialization.
-  Future<List<Object?>?> echoAsyncNullableList(List<Object?>? aList) async {
+  Future<List<Object?>?> echoAsyncNullableList(List<Object?>? list) async {
     final String __pigeon_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableList$__pigeon_messageChannelSuffix';
     final BasicMessageChannel<Object?> __pigeon_channel =
@@ -2045,7 +2107,7 @@ class HostIntegrationCoreApi {
       binaryMessenger: __pigeon_binaryMessenger,
     );
     final List<Object?>? __pigeon_replyList =
-        await __pigeon_channel.send(<Object?>[aList]) as List<Object?>?;
+        await __pigeon_channel.send(<Object?>[list]) as List<Object?>?;
     if (__pigeon_replyList == null) {
       throw _createConnectionError(__pigeon_channelName);
     } else if (__pigeon_replyList.length > 1) {
@@ -2097,7 +2159,7 @@ class HostIntegrationCoreApi {
       binaryMessenger: __pigeon_binaryMessenger,
     );
     final List<Object?>? __pigeon_replyList =
-        await __pigeon_channel.send(<Object?>[anEnum?.index]) as List<Object?>?;
+        await __pigeon_channel.send(<Object?>[anEnum]) as List<Object?>?;
     if (__pigeon_replyList == null) {
       throw _createConnectionError(__pigeon_channelName);
     } else if (__pigeon_replyList.length > 1) {
@@ -2107,9 +2169,7 @@ class HostIntegrationCoreApi {
         details: __pigeon_replyList[2],
       );
     } else {
-      return (__pigeon_replyList[0] as int?) == null
-          ? null
-          : AnEnum.values[__pigeon_replyList[0]! as int];
+      return (__pigeon_replyList[0] as AnEnum?);
     }
   }
 
@@ -2444,7 +2504,7 @@ class HostIntegrationCoreApi {
     }
   }
 
-  Future<Uint8List> callFlutterEchoUint8List(Uint8List aList) async {
+  Future<Uint8List> callFlutterEchoUint8List(Uint8List list) async {
     final String __pigeon_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoUint8List$__pigeon_messageChannelSuffix';
     final BasicMessageChannel<Object?> __pigeon_channel =
@@ -2454,7 +2514,7 @@ class HostIntegrationCoreApi {
       binaryMessenger: __pigeon_binaryMessenger,
     );
     final List<Object?>? __pigeon_replyList =
-        await __pigeon_channel.send(<Object?>[aList]) as List<Object?>?;
+        await __pigeon_channel.send(<Object?>[list]) as List<Object?>?;
     if (__pigeon_replyList == null) {
       throw _createConnectionError(__pigeon_channelName);
     } else if (__pigeon_replyList.length > 1) {
@@ -2473,7 +2533,7 @@ class HostIntegrationCoreApi {
     }
   }
 
-  Future<List<Object?>> callFlutterEchoList(List<Object?> aList) async {
+  Future<List<Object?>> callFlutterEchoList(List<Object?> list) async {
     final String __pigeon_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoList$__pigeon_messageChannelSuffix';
     final BasicMessageChannel<Object?> __pigeon_channel =
@@ -2483,7 +2543,7 @@ class HostIntegrationCoreApi {
       binaryMessenger: __pigeon_binaryMessenger,
     );
     final List<Object?>? __pigeon_replyList =
-        await __pigeon_channel.send(<Object?>[aList]) as List<Object?>?;
+        await __pigeon_channel.send(<Object?>[list]) as List<Object?>?;
     if (__pigeon_replyList == null) {
       throw _createConnectionError(__pigeon_channelName);
     } else if (__pigeon_replyList.length > 1) {
@@ -2543,7 +2603,7 @@ class HostIntegrationCoreApi {
       binaryMessenger: __pigeon_binaryMessenger,
     );
     final List<Object?>? __pigeon_replyList =
-        await __pigeon_channel.send(<Object?>[anEnum.index]) as List<Object?>?;
+        await __pigeon_channel.send(<Object?>[anEnum]) as List<Object?>?;
     if (__pigeon_replyList == null) {
       throw _createConnectionError(__pigeon_channelName);
     } else if (__pigeon_replyList.length > 1) {
@@ -2558,7 +2618,7 @@ class HostIntegrationCoreApi {
         message: 'Host platform returned null value for non-null return value.',
       );
     } else {
-      return AnEnum.values[__pigeon_replyList[0]! as int];
+      return (__pigeon_replyList[0] as AnEnum?)!;
     }
   }
 
@@ -2658,7 +2718,7 @@ class HostIntegrationCoreApi {
     }
   }
 
-  Future<Uint8List?> callFlutterEchoNullableUint8List(Uint8List? aList) async {
+  Future<Uint8List?> callFlutterEchoNullableUint8List(Uint8List? list) async {
     final String __pigeon_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableUint8List$__pigeon_messageChannelSuffix';
     final BasicMessageChannel<Object?> __pigeon_channel =
@@ -2668,7 +2728,7 @@ class HostIntegrationCoreApi {
       binaryMessenger: __pigeon_binaryMessenger,
     );
     final List<Object?>? __pigeon_replyList =
-        await __pigeon_channel.send(<Object?>[aList]) as List<Object?>?;
+        await __pigeon_channel.send(<Object?>[list]) as List<Object?>?;
     if (__pigeon_replyList == null) {
       throw _createConnectionError(__pigeon_channelName);
     } else if (__pigeon_replyList.length > 1) {
@@ -2683,7 +2743,7 @@ class HostIntegrationCoreApi {
   }
 
   Future<List<Object?>?> callFlutterEchoNullableList(
-      List<Object?>? aList) async {
+      List<Object?>? list) async {
     final String __pigeon_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.callFlutterEchoNullableList$__pigeon_messageChannelSuffix';
     final BasicMessageChannel<Object?> __pigeon_channel =
@@ -2693,7 +2753,7 @@ class HostIntegrationCoreApi {
       binaryMessenger: __pigeon_binaryMessenger,
     );
     final List<Object?>? __pigeon_replyList =
-        await __pigeon_channel.send(<Object?>[aList]) as List<Object?>?;
+        await __pigeon_channel.send(<Object?>[list]) as List<Object?>?;
     if (__pigeon_replyList == null) {
       throw _createConnectionError(__pigeon_channelName);
     } else if (__pigeon_replyList.length > 1) {
@@ -2743,7 +2803,7 @@ class HostIntegrationCoreApi {
       binaryMessenger: __pigeon_binaryMessenger,
     );
     final List<Object?>? __pigeon_replyList =
-        await __pigeon_channel.send(<Object?>[anEnum?.index]) as List<Object?>?;
+        await __pigeon_channel.send(<Object?>[anEnum]) as List<Object?>?;
     if (__pigeon_replyList == null) {
       throw _createConnectionError(__pigeon_channelName);
     } else if (__pigeon_replyList.length > 1) {
@@ -2753,9 +2813,7 @@ class HostIntegrationCoreApi {
         details: __pigeon_replyList[2],
       );
     } else {
-      return (__pigeon_replyList[0] as int?) == null
-          ? null
-          : AnEnum.values[__pigeon_replyList[0]! as int];
+      return (__pigeon_replyList[0] as AnEnum?);
     }
   }
 
@@ -2789,54 +2847,10 @@ class HostIntegrationCoreApi {
   }
 }
 
-class _FlutterIntegrationCoreApiCodec extends StandardMessageCodec {
-  const _FlutterIntegrationCoreApiCodec();
-  @override
-  void writeValue(WriteBuffer buffer, Object? value) {
-    if (value is AllClassesWrapper) {
-      buffer.putUint8(128);
-      writeValue(buffer, value.encode());
-    } else if (value is AllNullableTypes) {
-      buffer.putUint8(129);
-      writeValue(buffer, value.encode());
-    } else if (value is AllNullableTypesWithoutRecursion) {
-      buffer.putUint8(130);
-      writeValue(buffer, value.encode());
-    } else if (value is AllTypes) {
-      buffer.putUint8(131);
-      writeValue(buffer, value.encode());
-    } else if (value is TestMessage) {
-      buffer.putUint8(132);
-      writeValue(buffer, value.encode());
-    } else {
-      super.writeValue(buffer, value);
-    }
-  }
-
-  @override
-  Object? readValueOfType(int type, ReadBuffer buffer) {
-    switch (type) {
-      case 128:
-        return AllClassesWrapper.decode(readValue(buffer)!);
-      case 129:
-        return AllNullableTypes.decode(readValue(buffer)!);
-      case 130:
-        return AllNullableTypesWithoutRecursion.decode(readValue(buffer)!);
-      case 131:
-        return AllTypes.decode(readValue(buffer)!);
-      case 132:
-        return TestMessage.decode(readValue(buffer)!);
-      default:
-        return super.readValueOfType(type, buffer);
-    }
-  }
-}
-
 /// The core interface that the Dart platform_test code implements for host
 /// integration tests to call into.
 abstract class FlutterIntegrationCoreApi {
-  static const MessageCodec<Object?> pigeonChannelCodec =
-      _FlutterIntegrationCoreApiCodec();
+  static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
 
   /// A no-op function taking no arguments and returning no value, to sanity
   /// test basic calling.
@@ -2883,10 +2897,10 @@ abstract class FlutterIntegrationCoreApi {
   String echoString(String aString);
 
   /// Returns the passed byte list, to test serialization and deserialization.
-  Uint8List echoUint8List(Uint8List aList);
+  Uint8List echoUint8List(Uint8List list);
 
   /// Returns the passed list, to test serialization and deserialization.
-  List<Object?> echoList(List<Object?> aList);
+  List<Object?> echoList(List<Object?> list);
 
   /// Returns the passed map, to test serialization and deserialization.
   Map<String?, Object?> echoMap(Map<String?, Object?> aMap);
@@ -2907,10 +2921,10 @@ abstract class FlutterIntegrationCoreApi {
   String? echoNullableString(String? aString);
 
   /// Returns the passed byte list, to test serialization and deserialization.
-  Uint8List? echoNullableUint8List(Uint8List? aList);
+  Uint8List? echoNullableUint8List(Uint8List? list);
 
   /// Returns the passed list, to test serialization and deserialization.
-  List<Object?>? echoNullableList(List<Object?>? aList);
+  List<Object?>? echoNullableList(List<Object?>? list);
 
   /// Returns the passed map, to test serialization and deserialization.
   Map<String?, Object?>? echoNullableMap(Map<String?, Object?>? aMap);
@@ -3266,11 +3280,11 @@ abstract class FlutterIntegrationCoreApi {
           assert(message != null,
               'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoUint8List was null.');
           final List<Object?> args = (message as List<Object?>?)!;
-          final Uint8List? arg_aList = (args[0] as Uint8List?);
-          assert(arg_aList != null,
+          final Uint8List? arg_list = (args[0] as Uint8List?);
+          assert(arg_list != null,
               'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoUint8List was null, expected non-null Uint8List.');
           try {
-            final Uint8List output = api.echoUint8List(arg_aList!);
+            final Uint8List output = api.echoUint8List(arg_list!);
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
@@ -3294,12 +3308,12 @@ abstract class FlutterIntegrationCoreApi {
           assert(message != null,
               'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoList was null.');
           final List<Object?> args = (message as List<Object?>?)!;
-          final List<Object?>? arg_aList =
+          final List<Object?>? arg_list =
               (args[0] as List<Object?>?)?.cast<Object?>();
-          assert(arg_aList != null,
+          assert(arg_list != null,
               'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoList was null, expected non-null List<Object?>.');
           try {
-            final List<Object?> output = api.echoList(arg_aList!);
+            final List<Object?> output = api.echoList(arg_list!);
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
@@ -3352,13 +3366,12 @@ abstract class FlutterIntegrationCoreApi {
           assert(message != null,
               'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoEnum was null.');
           final List<Object?> args = (message as List<Object?>?)!;
-          final AnEnum? arg_anEnum =
-              args[0] == null ? null : AnEnum.values[args[0]! as int];
+          final AnEnum? arg_anEnum = (args[0] as AnEnum?);
           assert(arg_anEnum != null,
               'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoEnum was null, expected non-null AnEnum.');
           try {
             final AnEnum output = api.echoEnum(arg_anEnum!);
-            return wrapResponse(result: output.index);
+            return wrapResponse(result: output);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
           } catch (e) {
@@ -3485,9 +3498,9 @@ abstract class FlutterIntegrationCoreApi {
           assert(message != null,
               'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableUint8List was null.');
           final List<Object?> args = (message as List<Object?>?)!;
-          final Uint8List? arg_aList = (args[0] as Uint8List?);
+          final Uint8List? arg_list = (args[0] as Uint8List?);
           try {
-            final Uint8List? output = api.echoNullableUint8List(arg_aList);
+            final Uint8List? output = api.echoNullableUint8List(arg_list);
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
@@ -3511,10 +3524,10 @@ abstract class FlutterIntegrationCoreApi {
           assert(message != null,
               'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableList was null.');
           final List<Object?> args = (message as List<Object?>?)!;
-          final List<Object?>? arg_aList =
+          final List<Object?>? arg_list =
               (args[0] as List<Object?>?)?.cast<Object?>();
           try {
-            final List<Object?>? output = api.echoNullableList(arg_aList);
+            final List<Object?>? output = api.echoNullableList(arg_list);
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
@@ -3565,11 +3578,10 @@ abstract class FlutterIntegrationCoreApi {
           assert(message != null,
               'Argument for dev.flutter.pigeon.pigeon_integration_tests.FlutterIntegrationCoreApi.echoNullableEnum was null.');
           final List<Object?> args = (message as List<Object?>?)!;
-          final AnEnum? arg_anEnum =
-              args[0] == null ? null : AnEnum.values[args[0]! as int];
+          final AnEnum? arg_anEnum = (args[0] as AnEnum?);
           try {
             final AnEnum? output = api.echoNullableEnum(arg_anEnum);
-            return wrapResponse(result: output?.index);
+            return wrapResponse(result: output);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
           } catch (e) {
@@ -3644,8 +3656,7 @@ class HostTrivialApi {
             messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
   final BinaryMessenger? __pigeon_binaryMessenger;
 
-  static const MessageCodec<Object?> pigeonChannelCodec =
-      StandardMessageCodec();
+  static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
 
   final String __pigeon_messageChannelSuffix;
 
@@ -3686,8 +3697,7 @@ class HostSmallApi {
             messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
   final BinaryMessenger? __pigeon_binaryMessenger;
 
-  static const MessageCodec<Object?> pigeonChannelCodec =
-      StandardMessageCodec();
+  static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
 
   final String __pigeon_messageChannelSuffix;
 
@@ -3745,33 +3755,9 @@ class HostSmallApi {
   }
 }
 
-class _FlutterSmallApiCodec extends StandardMessageCodec {
-  const _FlutterSmallApiCodec();
-  @override
-  void writeValue(WriteBuffer buffer, Object? value) {
-    if (value is TestMessage) {
-      buffer.putUint8(128);
-      writeValue(buffer, value.encode());
-    } else {
-      super.writeValue(buffer, value);
-    }
-  }
-
-  @override
-  Object? readValueOfType(int type, ReadBuffer buffer) {
-    switch (type) {
-      case 128:
-        return TestMessage.decode(readValue(buffer)!);
-      default:
-        return super.readValueOfType(type, buffer);
-    }
-  }
-}
-
 /// A simple API called in some unit tests.
 abstract class FlutterSmallApi {
-  static const MessageCodec<Object?> pigeonChannelCodec =
-      _FlutterSmallApiCodec();
+  static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
 
   TestMessage echoWrappedList(TestMessage msg);
 

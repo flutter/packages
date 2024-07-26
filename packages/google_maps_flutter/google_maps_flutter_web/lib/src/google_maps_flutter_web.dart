@@ -60,7 +60,7 @@ class GoogleMapsPlugin extends GoogleMapsFlutterPlatform {
     MarkerUpdates markerUpdates, {
     required int mapId,
   }) async {
-    _map(mapId).updateMarkers(markerUpdates);
+    await _map(mapId).updateMarkers(markerUpdates);
   }
 
   /// Applies the passed in `polygonUpdates` to the `mapId`.
@@ -96,6 +96,14 @@ class GoogleMapsPlugin extends GoogleMapsFlutterPlatform {
     required int mapId,
   }) async {
     _map(mapId).updateTileOverlays(newTileOverlays);
+  }
+
+  @override
+  Future<void> updateClusterManagers(
+    ClusterManagerUpdates clusterManagerUpdates, {
+    required int mapId,
+  }) async {
+    _map(mapId).updateClusterManagers(clusterManagerUpdates);
   }
 
   @override
@@ -280,6 +288,11 @@ class GoogleMapsPlugin extends GoogleMapsFlutterPlatform {
   }
 
   @override
+  Stream<ClusterTapEvent> onClusterTap({required int mapId}) {
+    return _events(mapId).whereType<ClusterTapEvent>();
+  }
+
+  @override
   Future<String?> getStyleError({required int mapId}) async {
     return _map(mapId).lastStyleError;
   }
@@ -339,6 +352,7 @@ class GoogleMapsPlugin extends GoogleMapsFlutterPlatform {
   void enableDebugInspection() {
     GoogleMapsInspectorPlatform.instance = GoogleMapsInspectorWeb(
       (int mapId) => _map(mapId).configuration,
+      (int mapId) => _map(mapId).clusterManagersController,
     );
   }
 }
