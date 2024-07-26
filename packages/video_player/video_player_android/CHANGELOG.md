@@ -2,6 +2,10 @@
 
 * Adds RTSP support.
 
+## 2.5.3
+
+* Updates lint checks to ignore NewerVersionAvailable.
+
 ## 2.5.2
 
 * Updates Android Gradle plugin to 8.5.0.

@@ -1,3 +1,7 @@
+## 2.0.21
+
+* Updates lint checks to ignore NewerVersionAvailable.
+
 ## 2.0.20
 
 * Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
