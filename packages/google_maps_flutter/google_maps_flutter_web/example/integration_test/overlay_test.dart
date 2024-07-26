@@ -62,9 +62,7 @@ void main() {
           .getTile(gmaps.Point(0, 0), 0, document)! as HTMLImageElement;
       expect(img.naturalWidth, 0);
       expect(img.naturalHeight, 0);
-      expect(img.hidden.isA<JSBoolean?>(), isTrue);
-      expect(img.hidden, isNotNull);
-      expect((img.hidden! as JSBoolean).toDart, isTrue);
+      expect((img.hidden! as JSBoolean).toDart, true);
 
       await img.onLoad.first;
 
