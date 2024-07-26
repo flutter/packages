@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'dart:async';
+import 'dart:js_interop';
 
 import 'package:google_maps/google_maps.dart' as gmaps;
 import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart';
@@ -127,7 +128,7 @@ class ClusterManagersController extends GeometryController {
 
     final List<MarkerId> markerIds = markerClustererCluster.markers
         .map<MarkerId>((gmaps.Marker marker) =>
-            MarkerId(marker.get('markerId')! as String))
+            MarkerId((marker.get('markerId')! as JSString).toDart))
         .toList();
     return Cluster(
       clusterManagerId,
