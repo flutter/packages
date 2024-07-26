@@ -1048,14 +1048,14 @@ class StatefulShellBranch {
   /// The observers parameter is used by the [Navigator] built for this branch.
   final List<NavigatorObserver>? observers;
 
-  /// Whether this route branch should be loaded only when navigating to it for
-  /// the first time (the default behavior, i.e. 'false'), or if it should be
-  /// eagerly loaded (preloaded).
+  /// Whether this route branch should be eagerly loaded when navigating to the
+  /// associated StatefulShellRoute for the first time.
   ///
-  /// If this property is true, the branch will be loaded immediately when the
-  /// associated [StatefulShellRoute] is visited for the first time. In that
-  /// case, the branch will be preloaded by navigating to the initial location
-  /// (see [initialLocation]).
+  /// If this property is `false` (the default), the branch will only be loaded
+  /// when needed. Set the value to `true` to force the branch to be loaded
+  /// immediately when the associated [StatefulShellRoute] is visited for the
+  /// first time. In that case, the branch will be preloaded by navigating to
+  /// the initial location (see [initialLocation]).
   ///
   /// *Note:* The primary purpose of branch preloading is to enhance the user
   /// experience when switching branches. As with all preloading, there is a
