@@ -62,6 +62,7 @@ android {
         disable 'AndroidGradlePluginVersion', 'InvalidPackage', 'GradleDependency', 'NewerVersionAvailable'
     }
     dependencies {
+        implementation(platform("org.jetbrains.kotlin:kotlin-bom:1.8.22"))
         implementation 'androidx.datastore:datastore:1.0.0'
         implementation 'androidx.datastore:datastore-preferences:1.0.0'    
         testImplementation 'junit:junit:4.13.2'
