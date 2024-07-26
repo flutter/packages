@@ -161,7 +161,6 @@ class _RtspRemoteVideo extends StatefulWidget {
 
 class _RtspRemoteVideoState extends State<_RtspRemoteVideo> {
   MiniController? _controller;
-  final TextEditingController _urlController = TextEditingController();
 
   @override
   void dispose() {
@@ -173,14 +172,16 @@ class _RtspRemoteVideoState extends State<_RtspRemoteVideo> {
     if (_controller != null) {
       await _controller!.dispose();
     }
-    _controller = MiniController.network(url);
+
+    setState(() {
+      _controller = MiniController.network(url);
+    });
 
     _controller!.addListener(() {
       setState(() {});
     });
 
-    setState(() {});
-    await _controller!.initialize();
+    return _controller!.initialize();
   }
 
   String? _validateRtspUrl(String? value) {
@@ -202,15 +203,16 @@ class _RtspRemoteVideoState extends State<_RtspRemoteVideo> {
             child: TextFormField(
               autovalidateMode: AutovalidateMode.onUserInteraction,
               decoration: const InputDecoration(label: Text('RTSP URL')),
-              controller: _urlController,
               validator: _validateRtspUrl,
               textInputAction: TextInputAction.done,
               onFieldSubmitted: (String value) {
                 if (_validateRtspUrl(value) == null) {
                   changeUrl(value);
                 } else {
-                  _controller?.dispose();
-                  _controller = null;
+                  setState(() {
+                    _controller?.dispose();
+                    _controller = null;
+                  });
                 }
               },
             ),
