@@ -808,6 +808,7 @@ class StatefulShellRoute extends ShellRouteBase {
     required this.navigatorContainerBuilder,
     super.parentNavigatorKey,
     this.restorationScopeId,
+    GlobalKey<StatefulNavigationShellState>? key,
   })  : assert(branches.isNotEmpty),
         assert((pageBuilder != null) || (builder != null),
             'One of builder or pageBuilder must be provided'),
@@ -815,6 +816,7 @@ class StatefulShellRoute extends ShellRouteBase {
             'Navigator keys must be unique'),
         assert(_debugValidateParentNavigatorKeys(branches)),
         assert(_debugValidateRestorationScopeIds(restorationScopeId, branches)),
+        _shellStateKey = key ?? GlobalKey<StatefulNavigationShellState>(),
         super._(routes: _routes(branches));
 
   /// Constructs a StatefulShellRoute that uses an [IndexedStack] for its
@@ -834,6 +836,7 @@ class StatefulShellRoute extends ShellRouteBase {
     GlobalKey<NavigatorState>? parentNavigatorKey,
     StatefulShellRoutePageBuilder? pageBuilder,
     String? restorationScopeId,
+    GlobalKey<StatefulNavigationShellState>? key,
   }) : this(
           branches: branches,
           redirect: redirect,
@@ -842,6 +845,7 @@ class StatefulShellRoute extends ShellRouteBase {
           parentNavigatorKey: parentNavigatorKey,
           restorationScopeId: restorationScopeId,
           navigatorContainerBuilder: _indexedStackContainerBuilder,
+          key: key,
         );
 
   /// Restoration ID to save and restore the state of the navigator, including
@@ -897,8 +901,7 @@ class StatefulShellRoute extends ShellRouteBase {
   /// [StatefulShellBranch.navigatorKey].
   final List<StatefulShellBranch> branches;
 
-  final GlobalKey<StatefulNavigationShellState> _shellStateKey =
-      GlobalKey<StatefulNavigationShellState>();
+  final GlobalKey<StatefulNavigationShellState> _shellStateKey;
 
   @override
   Widget? buildWidget(BuildContext context, GoRouterState state,
@@ -1148,6 +1151,12 @@ class StatefulNavigationShell extends StatefulWidget {
     }
   }
 
+  /// Checks if the provided branch is loaded (i.e. has navigation state
+  /// associated with it).
+  @visibleForTesting
+  List<StatefulShellBranch> get debugLoadedBranches =>
+    route._shellStateKey.currentState?._loadedBranches ?? <StatefulShellBranch>[];
+
   /// Gets the effective initial location for the branch at the provided index
   /// in the associated [StatefulShellRoute].
   ///
@@ -1206,18 +1215,19 @@ class StatefulNavigationShell extends StatefulWidget {
 /// State for StatefulNavigationShell.
 class StatefulNavigationShellState extends State<StatefulNavigationShell>
     with RestorationMixin {
-  final Map<Key, Widget> _branchNavigators = <Key, Widget>{};
+  final Map<StatefulShellBranch, _StatefulShellBranchState> _branchState =
+      <StatefulShellBranch, _StatefulShellBranchState>{};
 
   /// The associated [StatefulShellRoute].
   StatefulShellRoute get route => widget.route;
 
   GoRouter get _router => widget._router;
 
-  final Map<StatefulShellBranch, _RestorableRouteMatchList> _branchLocations =
-      <StatefulShellBranch, _RestorableRouteMatchList>{};
-
   bool _isBranchLoaded(StatefulShellBranch branch) =>
-      _branchNavigators[branch.navigatorKey] != null;
+      _branchState[branch] != null;
+
+  List<StatefulShellBranch> get _loadedBranches =>
+      _branchState.keys.toList();
 
   @override
   String? get restorationId => route.restorationScopeId;
@@ -1231,21 +1241,21 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell>
         : identityHashCode(branch).toString();
   }
 
-  _RestorableRouteMatchList _branchLocation(StatefulShellBranch branch,
+  _StatefulShellBranchState _branchStateFor(StatefulShellBranch branch,
       [bool register = true]) {
-    return _branchLocations.putIfAbsent(branch, () {
-      final _RestorableRouteMatchList branchLocation =
-          _RestorableRouteMatchList(_router.configuration);
+    return _branchState.putIfAbsent(branch, () {
+      final _StatefulShellBranchState branchState =
+      _StatefulShellBranchState(location: _RestorableRouteMatchList(_router.configuration));
       if (register) {
         registerForRestoration(
-            branchLocation, _branchLocationRestorationScopeId(branch));
+            branchState.location, _branchLocationRestorationScopeId(branch));
       }
-      return branchLocation;
+      return branchState;
     });
   }
 
   RouteMatchList? _matchListForBranch(int index) =>
-      _branchLocations[route.branches[index]]?.value;
+      _branchState[route.branches[index]]?.location.value;
 
   /// Creates a new RouteMatchList that is scoped to the Navigators of the
   /// current shell route or it's descendants. This involves removing all the
@@ -1280,21 +1290,23 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell>
     final RouteMatchList currentBranchLocation =
         _scopedMatchList(shellRouteContext.routeMatchList);
 
-    final _RestorableRouteMatchList branchLocation =
-        _branchLocation(branch, false);
-    final RouteMatchList previousBranchLocation = branchLocation.value;
-    branchLocation.value = currentBranchLocation;
+    final _StatefulShellBranchState branchState =
+      _branchStateFor(branch, false);
+    final RouteMatchList previousBranchLocation = branchState.location.value;
+    branchState.location.value = currentBranchLocation;
     final bool hasExistingNavigator =
-        _branchNavigators[branch.navigatorKey] != null;
+        branchState.navigator != null;
 
     /// Only update the Navigator of the route match list has changed
     final bool locationChanged =
         previousBranchLocation != currentBranchLocation;
     if (locationChanged || !hasExistingNavigator) {
-      _branchNavigators[branch.navigatorKey] =
+      branchState.navigator =
           shellRouteContext._buildNavigatorForCurrentRoute(
               branch.observers, branch.restorationScopeId);
     }
+
+    _cleanUpObsoleteBranches();
   }
 
   void _preloadBranches() {
@@ -1321,10 +1333,22 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell>
           branch.restorationScopeId,
         );
 
-        _branchLocation(branch, false).value = matchList;
-        _branchNavigators[branch.navigatorKey] = navigator;
+        final _StatefulShellBranchState branchState = _branchStateFor(branch, false);
+        branchState.location.value = matchList;
+        branchState.navigator = navigator;
       }
     }
+  }
+
+  void _cleanUpObsoleteBranches() {
+    _branchState.removeWhere((StatefulShellBranch branch, _StatefulShellBranchState branchState) {
+      if (!route.branches.contains(branch)) {
+        unregisterFromRestoration(branchState.location);
+        branchState.dispose();
+        return true;
+      }
+      return false;
+    });
   }
 
   /// The index of the currently active [StatefulShellBranch].
@@ -1359,14 +1383,12 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell>
   @override
   void dispose() {
     super.dispose();
-    for (final StatefulShellBranch branch in route.branches) {
-      _branchLocations[branch]?.dispose();
-    }
+    _branchState.forEach((_, _StatefulShellBranchState branchState) => branchState.dispose());
   }
 
   @override
   void restoreState(RestorationBucket? oldBucket, bool initialRestore) {
-    route.branches.forEach(_branchLocation);
+    route.branches.forEach(_branchStateFor);
   }
 
   @override
@@ -1382,10 +1404,24 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell>
             key: ObjectKey(branch),
             branch: branch,
             navigatorForBranch: (StatefulShellBranch b) =>
-                _branchNavigators[b.navigatorKey]))
+                _branchState[b]?.navigator))
         .toList();
 
     return widget.containerBuilder(context, widget, children);
+  }
+}
+
+class _StatefulShellBranchState {
+  _StatefulShellBranchState({
+    required this.location,
+    this.navigator,
+  });
+
+  Widget? navigator;
+  final _RestorableRouteMatchList location;
+
+  void dispose() {
+    location.dispose();
   }
 }
 

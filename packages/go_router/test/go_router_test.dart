@@ -4683,6 +4683,71 @@ void main() {
       expect(find.text('Top Modal'), findsNothing);
       expect(find.text('Nested Modal'), findsOneWidget);
     });
+
+    testWidgets(
+        'Obsolete branches in StatefulShellRoute are cleaned up after route '
+            'configuration change', (WidgetTester tester) async {
+      final GlobalKey<NavigatorState> rootNavigatorKey =
+        GlobalKey<NavigatorState>(debugLabel: 'root');
+      final GlobalKey<StatefulNavigationShellState> statefulShellKey =
+          GlobalKey<StatefulNavigationShellState>(debugLabel: 'shell');
+      StatefulNavigationShell? routeState;
+      StatefulShellBranch makeBranch(String name) => StatefulShellBranch(
+        navigatorKey: GlobalKey<NavigatorState>(debugLabel: 'branch-$name'),
+              preload: true,
+              initialLocation: '/$name',
+              routes: <GoRoute>[
+                GoRoute(
+                  path: '/$name',
+                  builder: (BuildContext context, GoRouterState state) =>
+                      Text('Screen $name'),
+                ),
+              ]);
+
+      List<RouteBase> createRoutes(bool includeCRoute) => <RouteBase>[
+        StatefulShellRoute.indexedStack(
+          key: statefulShellKey,
+          builder: (BuildContext context, GoRouterState state,
+              StatefulNavigationShell navigationShell) {
+            routeState = navigationShell;
+            return navigationShell;
+          },
+          branches: <StatefulShellBranch>[
+            makeBranch('a'),
+            makeBranch('b'),
+            if (includeCRoute) makeBranch('c'),
+          ],
+        ),
+      ];
+
+      final ValueNotifier<RoutingConfig> config = ValueNotifier<RoutingConfig>(
+        RoutingConfig(routes: createRoutes(true)),
+      );
+      addTearDown(config.dispose);
+      await createRouterWithRoutingConfig(
+        navigatorKey: rootNavigatorKey,
+        config,
+        tester,
+        initialLocation: '/a',
+        errorBuilder: (_, __) => const Text('error'),
+      );
+      await tester.pumpAndSettle();
+
+      bool hasLoadedBranch(String name) => routeState!.debugLoadedBranches
+          .any((StatefulShellBranch e) => e.initialLocation == '/$name');
+
+      expect(hasLoadedBranch('a'), isTrue);
+      expect(hasLoadedBranch('b'), isTrue);
+      expect(hasLoadedBranch('c'), isTrue);
+
+      // Unload branch 'c' by changing the route configuration
+      config.value = RoutingConfig(routes: createRoutes(false));
+      await tester.pumpAndSettle();
+
+      expect(hasLoadedBranch('a'), isTrue);
+      expect(hasLoadedBranch('b'), isTrue);
+      expect(hasLoadedBranch('c'), isFalse);
+    });
   });
 
   group('Imperative navigation', () {
