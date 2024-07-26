@@ -4,6 +4,7 @@
 
 import 'dart:async';
 import 'dart:convert';
+import 'dart:js_interop';
 import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
@@ -464,9 +465,12 @@ void main() {
       expect(controller.markers.length, 1);
       final HTMLElement? content = controller
           .markers[const MarkerId('1')]?.infoWindow?.content as HTMLElement?;
-      expect(content?.innerHTML, contains('title for test'));
+      expect(content, isNotNull);
+
+      final String innerHtml = (content!.innerHTML as JSString).toDart;
+      expect(innerHtml, contains('title for test'));
       expect(
-          content?.innerHTML,
+          innerHtml,
           contains(
             '<a href="https://www.google.com">Go to Google &gt;&gt;&gt;</a>',
           ));
