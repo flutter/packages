@@ -1,3 +1,7 @@
+## 0.3.6+3
+
+* Updates lint checks to ignore NewerVersionAvailable.
+
 ## 0.3.6+2
 
 * Updates Android Gradle Plugin to 8.5.1.

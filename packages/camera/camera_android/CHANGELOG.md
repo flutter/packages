@@ -1,3 +1,7 @@
+## 0.10.9+9
+
+* Updates lint checks to ignore NewerVersionAvailable.
+
 ## 0.10.9+8
 
 * Removes unused code related to `maxVideoDuration`.
