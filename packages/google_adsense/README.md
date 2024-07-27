@@ -40,6 +40,9 @@ val adWidget = Adsense().adView(
 
 ## Testing and common errors
 
+### Failed to load resource: the server responded with a status of 400 ()
+Make sure to replace `your_ad_client_id` and `your_ad_slot_id` with the relevant values
+
 ### Failed to load resource: the server responded with a status of 403 ()
 Ad units are only filled when requested from an authorized domain. If you are willing to test them before deploying to production you can specify addition run arguments in IDE my editing Run/Debug Configuration or by passing them directly to `flutter run` command:
 
