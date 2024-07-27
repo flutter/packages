@@ -1,5 +1,3 @@
-library adsense_web_standalone;
-
 import 'dart:developer';
 
 import 'package:flutter/cupertino.dart';
@@ -8,43 +6,39 @@ import 'package:web/web.dart' as web;
 
 import 'ad_view_widget.dart';
 
+/// Main class to work with the library
 class Adsense {
-  static final Adsense _instance = Adsense._internal();
-  static bool _isInitialized = false;
-
-  Adsense._internal();
-
+  /// Returns a singleton instance of Adsense library public interface
   factory Adsense() {
     return _instance;
   }
+  Adsense._internal();
+  static final Adsense _instance = Adsense._internal();
+  static bool _isInitialized = false;
+  String _adClient = '';
 
+  /// Initialization API. Should be called ASAP, ideally in the main method of your app.
   void initialize(String adClient) {
     if (_isInitialized) {
       log('Adsense was already initialized, skipping');
       return;
     }
     _isInitialized = true;
+    _adClient = adClient;
     _addMasterScript(adClient);
   }
 
+  /// Returns a configurable AdViewWidget
   Widget adView(
-      {required String adClient,
-      required String adSlot,
-      String adLayoutKey = '',
-      String adLayout = '',
-      String adFormat = 'auto',
+      {required String adSlot,
+      String adClient = '',
       bool isAdTest = false,
-      bool isFullWidthResponsive = true,
-      Map<String, String> slotParams = const {}}) {
+      Map<String, dynamic> adUnitParams = const <String, dynamic>{}}) {
     return AdViewWidget(
       adSlot: adSlot,
-      adClient: adClient,
-      adLayoutKey: adLayoutKey,
-      adLayout: adLayout,
-      adFormat: adFormat,
+      adClient: adClient.isNotEmpty ? adClient : _adClient,
       isAdTest: isAdTest,
-      isFullWidthResponsive: isFullWidthResponsive,
-      slotParams: slotParams,
+      additionalParams: adUnitParams,
     );
   }
 
@@ -54,7 +48,7 @@ class Adsense {
     scriptElement.src =
         'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-$adClient';
     scriptElement.crossOrigin = 'anonymous';
-    var head = web.document.head;
+    final web.HTMLHeadElement? head = web.document.head;
     if (head != null) {
       head.appendChild(scriptElement);
     } else {
