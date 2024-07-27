@@ -1,3 +1,4 @@
+/// Contains adUnitParams keys constants for convenience and documentation
 class AdUnitParams {
   /// /// (Optional) Can be provided in adUnitParams. If not provided, value passed on initialization will be used
   /// @value Numeric String

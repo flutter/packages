@@ -9,15 +9,9 @@ import 'package:web/web.dart' as web;
 import '../adsense.dart';
 import 'ad_unit_params.dart';
 
+/// Widget containing an ad slot
 class AdViewWidget extends StatefulWidget {
-  static const String _AD_TEST_KEY = 'adtest';
-  final String _adClient;
-  final String _adSlot;
-  final bool _isAdTest;
-  final Map<String, dynamic> _additionalParams;
-  final web.HTMLElement _insElement =
-      web.document.createElement('ins') as web.HTMLElement;
-
+  /// Constructs [AdViewWidget]
   AdViewWidget(
       {required String adClient,
       required String adSlot,
@@ -51,6 +45,14 @@ class AdViewWidget extends StatefulWidget {
     }
   }
 
+  static const String _AD_TEST_KEY = 'adtest';
+  final String _adClient;
+  final String _adSlot;
+  final bool _isAdTest;
+  final Map<String, dynamic> _additionalParams;
+  final web.HTMLElement _insElement =
+      web.document.createElement('ins') as web.HTMLElement;
+
   @override
   State<AdViewWidget> createState() => _AdViewWidgetState();
 }
@@ -76,7 +78,7 @@ class _AdViewWidgetState extends State<AdViewWidget>
 
   static void onElementAttached(web.HTMLElement element) {
     log('Element ${element.id} attached with style: height=${element.offsetHeight} and width=${element.offsetWidth}');
-    // TODO: replace with proper js_interop
+    // TODO(sokoloff06): replace with proper js_interop
     final web.HTMLScriptElement pushAdsScript = web.HTMLScriptElement();
     pushAdsScript.innerText =
         '(adsbygoogle = window.adsbygoogle || []).push({});';
@@ -86,15 +88,15 @@ class _AdViewWidgetState extends State<AdViewWidget>
 
   void onElementCreated(Object element) {
     adViewDiv = element as web.HTMLElement;
-    log('onElementCreated: ${adViewDiv.toString()} with style height=${element.offsetHeight} and width=${element.offsetWidth}');
+    log('onElementCreated: $adViewDiv with style height=${element.offsetHeight} and width=${element.offsetWidth}');
     adViewDiv
-      ..id = 'adView${(adViewCounter++).toString()}'
+      ..id = 'adView${adViewCounter++}'
       ..style.height = 'min-content'
       ..style.textAlign = 'center';
     // Adding ins inside of the adView
     adViewDiv.append(widget._insElement);
 
-    // TODO: Make shared
+    // TODO(sokoloff06): Make shared
     // Using Resize observer to detect element attached to DOM
     web.ResizeObserver((JSArray<web.ResizeObserverEntry> entries,
             web.ResizeObserver observer) {
@@ -122,13 +124,13 @@ class _AdViewWidgetState extends State<AdViewWidget>
       for (final JSObject entry in entries.toDart) {
         final web.HTMLElement target =
             (entry as web.MutationRecord).target as web.HTMLElement;
-        log('MO current entry: ${target.toString()}');
+        log('MO current entry: $target');
         if (isLoaded(target)) {
           observer.disconnect();
           if (isFilled(target)) {
             updateWidgetHeight(target.offsetHeight);
           } else {
-            // TODO: why?
+            // Prevent scrolling issues over empty ad slot
             target.style.pointerEvents = 'none';
           }
         }
@@ -139,7 +141,7 @@ class _AdViewWidgetState extends State<AdViewWidget>
             web.MutationObserverInit(
                 attributes: true,
                 attributeFilter:
-                    <String>['data-ad-status'].jsify() as JSArray<JSString>));
+                    <String>['data-ad-status'].jsify()! as JSArray<JSString>));
   }
 
   bool isLoaded(web.HTMLElement target) {

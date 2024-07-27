@@ -25,9 +25,16 @@ void main() {
 #### Display AdViewWidget
 ```dart
 import 'package:google_adsense/adsense.dart';
+
 // ...
 val adWidget = Adsense().adView(
   adSlot: 'your_ad_slot_id',
+  isAdTest: true,
+  adUnitParams: <String, dynamic>{
+    AdUnitParams.AD_FORMAT: 'auto',
+    AdUnitParams.FULL_WIDTH_RESPONSIVE: true,
+    // ...
+  },
 );
 ```
 

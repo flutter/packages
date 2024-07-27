@@ -6,7 +6,9 @@ void main() {
   runApp(const MyApp());
 }
 
+/// The main app.
 class MyApp extends StatelessWidget {
+  /// Constructs a [MyApp]
   const MyApp({super.key});
 
   @override
@@ -17,15 +19,15 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: const MyHomePage(),
     );
   }
 }
 
+/// The home screen
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  final String title;
+  /// Constructs a [HomeScreen]
+  const MyHomePage({super.key});
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
@@ -45,7 +47,7 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(widget.title),
+        title: const Text('AdSense for Flutter demo app'),
       ),
       body: Center(
         child: Column(
@@ -59,11 +61,11 @@ class _MyHomePageState extends State<MyHomePage> {
               style: Theme.of(context).textTheme.headlineMedium,
             ),
             Adsense().adView(
-              adSlot: 'my-ad-slot-id',
+              adSlot: 'your_ad_slot_id',
               isAdTest: true,
-              adUnitParams: {
+              adUnitParams: <String, dynamic>{
                 AdUnitParams.AD_FORMAT: 'auto',
-                AdUnitParams.FULL_WIDTH_RESPONSIVE: false,
+                AdUnitParams.FULL_WIDTH_RESPONSIVE: true,
               },
             )
           ],
