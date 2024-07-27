@@ -185,7 +185,7 @@ class _RtspRemoteVideoState extends State<_RtspRemoteVideo> {
   }
 
   String? _validateRtspUrl(String? value) {
-    if (value == null || !value.toLowerCase().startsWith('rtsp://')) {
+    if (value == null || !value.startsWith('rtsp://')) {
       return 'Enter a valid RTSP URL';
     }
     return null;
