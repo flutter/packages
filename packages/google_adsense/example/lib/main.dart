@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_adsense/adsense.dart';
 
 void main() {
-  Adsense().initialize("0556581589806023");
+  Adsense().initialize('your_ad_client_id');
   runApp(const MyApp());
 }
 
@@ -59,7 +59,7 @@ class _MyHomePageState extends State<MyHomePage> {
               style: Theme.of(context).textTheme.headlineMedium,
             ),
             Adsense().adView(
-              adSlot: '4773943862',
+              adSlot: 'my-ad-slot-id',
               isAdTest: true,
               adUnitParams: {
                 AdUnitParams.AD_FORMAT: 'auto',

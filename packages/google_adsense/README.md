@@ -19,7 +19,7 @@ Before displaying ads, initialize the AdSense with your ad client ID.
 import 'package:google_adsense/adsense.dart';
 
 void main() {
-  Adsense().initialize('your-ad-client-id');
+  Adsense().initialize('your_ad_client_id');
 }
 ```
 #### Display AdViewWidget
@@ -27,7 +27,7 @@ void main() {
 import 'package:google_adsense/adsense.dart';
 // ...
 val adWidget = Adsense().adView(
-  adSlot: 'your-ad-slot-id',
+  adSlot: 'your_ad_slot_id',
 );
 ```
 
