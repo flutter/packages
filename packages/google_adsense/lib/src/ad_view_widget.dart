@@ -6,62 +6,47 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/widgets.dart';
 import 'package:web/web.dart' as web;
 
+import '../adsense.dart';
+import 'ad_unit_params.dart';
+
 class AdViewWidget extends StatefulWidget {
+  static const String _AD_TEST_KEY = 'adtest';
   final String _adClient;
   final String _adSlot;
-  final String _adFormat;
-  final String _adLayoutKey;
-  final String _adLayout;
   final bool _isAdTest;
-  final bool _isFullWidthResponsive;
-  final Map<String, String> _slotParams;
+  final Map<String, dynamic> _additionalParams;
   final web.HTMLElement _insElement =
       web.document.createElement('ins') as web.HTMLElement;
 
   AdViewWidget(
       {required String adClient,
       required String adSlot,
-      required String adLayoutKey,
-      required String adLayout,
-      required String adFormat,
       required bool isAdTest,
-      required bool isFullWidthResponsive,
-      required Map<String, String> slotParams,
+      required Map<String, dynamic> additionalParams,
       super.key})
-      : _slotParams = slotParams,
-        _isFullWidthResponsive = isFullWidthResponsive,
-        _isAdTest = isAdTest,
-        _adLayout = adLayout,
-        _adLayoutKey = adLayoutKey,
-        _adFormat = adFormat,
+      : _adClient = adClient,
         _adSlot = adSlot,
-        _adClient = adClient {
+        _isAdTest = isAdTest,
+        _additionalParams = additionalParams {
     _insElement
       ..className = 'adsbygoogle'
       ..style.display = 'block';
-    final Map<String, String> dataattrs = Map.of(<String, String>{
-      'adClient': 'ca-pub-$_adClient',
+    final Map<String, String> dataAttrs =
+        Map<String, String>.of(<String, String>{
+      AdUnitParams.AD_CLIENT: 'ca-pub-$_adClient',
       'adSlot': _adSlot,
-      'adFormat': _adFormat,
-      'adtest': _isAdTest.toString(),
-      'fullWidthResponsive': _isFullWidthResponsive.toString()
     });
-    for (final String key in dataattrs.keys) {
-      _insElement.dataset
-          .setProperty(key as JSString, dataattrs[key] as JSString);
+    if (_isAdTest) {
+      dataAttrs.addAll(<String, String>{_AD_TEST_KEY: 'on'});
     }
-    if (_adLayoutKey != '') {
+    for (final String key in dataAttrs.keys) {
       _insElement.dataset
-          .setProperty('adLayoutKey' as JSString, _adLayoutKey as JSString);
+          .setProperty(key as JSString, dataAttrs[key]! as JSString);
     }
-    if (_adLayout != '') {
-      _insElement.dataset
-          .setProperty('adLayout' as JSString, _adLayout as JSString);
-    }
-    if (_slotParams.isNotEmpty) {
-      for (final String key in _slotParams.keys) {
-        _insElement.dataset
-            .setProperty(key as JSString, _slotParams[key] as JSString);
+    if (_additionalParams.isNotEmpty) {
+      for (final String key in _additionalParams.keys) {
+        _insElement.dataset.setProperty(
+            key as JSString, _additionalParams[key].toString() as JSString);
       }
     }
   }
@@ -85,7 +70,7 @@ class _AdViewWidgetState extends State<AdViewWidget>
     return SizedBox(
       height: adHeight,
       child: HtmlElementView.fromTagName(
-          tagName: 'div', onElementCreated: onElementCreated, isVisible: true),
+          tagName: 'div', onElementCreated: onElementCreated),
     );
   }
 
@@ -131,7 +116,7 @@ class _AdViewWidgetState extends State<AdViewWidget>
     }.toJS)
         .observe(adViewDiv);
 
-    // Using Mutation Observer to detect when adslot is being loaded
+    // Using Mutation Observer to detect when adslot is being loaded based on https://support.google.com/adsense/answer/10762946?hl=en
     web.MutationObserver(
             (JSArray<JSObject> entries, web.MutationObserver observer) {
       for (final JSObject entry in entries.toDart) {
@@ -141,8 +126,9 @@ class _AdViewWidgetState extends State<AdViewWidget>
         if (isLoaded(target)) {
           observer.disconnect();
           if (isFilled(target)) {
-            updateHeight(target.offsetHeight);
+            updateWidgetHeight(target.offsetHeight);
           } else {
+            // TODO: why?
             target.style.pointerEvents = 'none';
           }
         }
@@ -186,7 +172,7 @@ class _AdViewWidgetState extends State<AdViewWidget>
     }
   }
 
-  void updateHeight(int newHeight) {
+  void updateWidgetHeight(int newHeight) {
     debugPrint('listener invoked with height $newHeight');
     setState(() {
       adHeight = newHeight.toDouble();

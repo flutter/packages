@@ -30,3 +30,21 @@ val adWidget = Adsense().adView(
   adSlot: 'your-ad-slot-id',
 );
 ```
+
+## Testing and common errors
+
+### Failed to load resource: the server responded with a status of 403 ()
+Ad units are only filled when requested from an authorized domain. If you are willing to test them before deploying to production you can specify addition run arguments in IDE my editing Run/Debug Configuration or by passing them directly to `flutter run` command:
+
+`--web-port=8080`  
+`--web-hostname=your-domain.com`
+
+### Ad unfilled  
+
+There is no deterministic way to make sure your ads are 100% filled even when testing. Some of the way to increase the fill rate:
+
+
+- Add AD_TEST parameter with value `true`  
+- Make sure AD_FORMAT is `auto` (default setting)
+- Make sure FULL_WIDTH_RESPONSIVE is `true` (default setting)
+- Try resizing the window or making sure that adView widget width is less than ~1300px 
