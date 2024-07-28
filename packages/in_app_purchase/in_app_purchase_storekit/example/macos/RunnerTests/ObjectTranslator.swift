@@ -114,49 +114,52 @@ final class ObjectTranslatorTest: XCTestCase {
     ]
   }
 
-  override func setUp() {
-    super.setUp()
-  }
-
   func testSKProductSubscriptionPeriodStubToMap() {
     let period = SKProductSubscriptionPeriodStub(map: periodMap)
     let map = FIAObjectTranslator.getMapFrom(period)
+
     XCTAssertEqual(map as NSDictionary, periodMap as NSDictionary)
   }
 
   func testSKProductDiscountStubToMap() {
     let discount = SKProductDiscountStub(map: discountMap)
     let map = FIAObjectTranslator.getMapFrom(discount)
+
     XCTAssertEqual(map as NSDictionary, discountMap as NSDictionary)
   }
 
   func testProductToMap() {
     let product = SKProductStub(map: productMap)
     let map = FIAObjectTranslator.getMapFrom(product)
+
     XCTAssertEqual(map as NSDictionary, productMap as NSDictionary)
   }
 
   func testProductResponseToMap() {
     let response = SKProductsResponseStub(map: productResponseMap)
     let map = FIAObjectTranslator.getMapFrom(response)
+
     XCTAssertEqual(map as NSDictionary, productResponseMap as NSDictionary)
   }
 
   func testPaymentToMap() {
     let payment = FIAObjectTranslator.getSKMutablePayment(fromMap: paymentMap)
     let map = FIAObjectTranslator.getMapFrom(payment)
+
     XCTAssertEqual(map as NSDictionary, paymentMap as NSDictionary)
   }
 
   func testPaymentTransactionToMap() {
     let paymentTransaction = SKPaymentTransactionStub(map: transactionMap)
     let map = FIAObjectTranslator.getMapFrom(paymentTransaction)
+
     XCTAssertEqual(map as NSDictionary, transactionMap as NSDictionary)
   }
 
   func testError() {
     let error = NSErrorStub(map: errorMap)
     let map = FIAObjectTranslator.getMapFrom(error)
+
     XCTAssertEqual(map as NSDictionary, errorMap as NSDictionary)
   }
 
@@ -168,6 +171,7 @@ final class ObjectTranslatorTest: XCTestCase {
       "userInfo": ["key": 42],
     ]
     let map = FIAObjectTranslator.getMapFrom(error)
+
     XCTAssertEqual(map as NSDictionary, expectedMap as NSDictionary)
   }
 
@@ -190,6 +194,7 @@ final class ObjectTranslatorTest: XCTestCase {
       ],
     ]
     let map = FIAObjectTranslator.getMapFrom(mainError)
+
     XCTAssertEqual(map as NSDictionary, expectedMap as NSDictionary)
   }
 
@@ -210,6 +215,7 @@ final class ObjectTranslatorTest: XCTestCase {
       ],
     ]
     let map = FIAObjectTranslator.getMapFrom(mainError)
+
     XCTAssertEqual(map as NSDictionary, expectedMap as NSDictionary)
   }
 
@@ -235,12 +241,14 @@ final class ObjectTranslatorTest: XCTestCase {
       ],
     ]
     let map = FIAObjectTranslator.getMapFrom(error)
+
     XCTAssertEqual(map as NSDictionary, expectedMap as NSDictionary)
   }
 
   func testLocaleToMap() {
     let system = Locale(identifier: "en_US")
     let map = FIAObjectTranslator.getMapFrom(system)
+
     XCTAssertEqual(map["currencySymbol"] as? String, system.currencySymbol)
     XCTAssertEqual(map["countryCode"] as? String, system.regionCode)
   }
@@ -249,6 +257,7 @@ final class ObjectTranslatorTest: XCTestCase {
     if #available(iOS 13.0, *) {
       let storefront = SKStorefrontStub(map: storefrontMap)
       let map = FIAObjectTranslator.getMapFrom(storefront)
+
       XCTAssertEqual(map as NSDictionary, storefrontMap as NSDictionary)
     }
   }
@@ -258,6 +267,7 @@ final class ObjectTranslatorTest: XCTestCase {
       let storefront = SKStorefrontStub(map: storefrontMap)
       let transaction = SKPaymentTransactionStub(map: transactionMap)
       let map = FIAObjectTranslator.getMapFrom(storefront, andSKPaymentTransaction: transaction)
+
       XCTAssertEqual(map as NSDictionary, storefrontAndPaymentTransactionMap as NSDictionary)
     }
   }
@@ -267,6 +277,7 @@ final class ObjectTranslatorTest: XCTestCase {
       var error: NSString?
       let paymentDiscount = FIAObjectTranslator.getSKPaymentDiscount(
         fromMap: paymentDiscountMap, withError: &error)
+
       XCTAssertNil(error)
 
       let unwrappedDiscount = try XCTUnwrap(paymentDiscount)
@@ -296,6 +307,7 @@ final class ObjectTranslatorTest: XCTestCase {
         var error: NSString?
         let _ = FIAObjectTranslator.getSKPaymentDiscount(
           fromMap: discountMap as [String: Any], withError: &error)
+
         XCTAssertNotNil(error)
         XCTAssertEqual(
           error, "When specifying a payment discount the 'identifier' field is mandatory.")
@@ -326,6 +338,7 @@ final class ObjectTranslatorTest: XCTestCase {
         var error: NSString?
         let _ = FIAObjectTranslator.getSKPaymentDiscount(
           fromMap: discountMap as [String: Any], withError: &error)
+
         XCTAssertNotNil(error)
         XCTAssertEqual(
           error, "When specifying a payment discount the 'keyIdentifier' field is mandatory.")
@@ -347,6 +360,7 @@ final class ObjectTranslatorTest: XCTestCase {
         var error: NSString?
         let _ = FIAObjectTranslator.getSKPaymentDiscount(
           fromMap: discountMap as [String: Any], withError: &error)
+
         XCTAssertNotNil(error)
         XCTAssertEqual(error, "When specifying a payment discount the 'nonce' field is mandatory.")
       }
@@ -367,6 +381,7 @@ final class ObjectTranslatorTest: XCTestCase {
         var error: NSString?
         let _ = FIAObjectTranslator.getSKPaymentDiscount(
           fromMap: discountMap as [String: Any], withError: &error)
+
         XCTAssertNotNil(error)
         XCTAssertEqual(
           error, "When specifying a payment discount the 'signature' field is mandatory.")
@@ -388,6 +403,7 @@ final class ObjectTranslatorTest: XCTestCase {
         var error: NSString?
         let _ = FIAObjectTranslator.getSKPaymentDiscount(
           fromMap: discountMap as [String: Any], withError: &error)
+
         XCTAssertNotNil(error)
         XCTAssertEqual(
           error, "When specifying a payment discount the 'timestamp' field is mandatory.")
@@ -408,8 +424,8 @@ final class ObjectTranslatorTest: XCTestCase {
       let paymentDiscount = FIAObjectTranslator.getSKPaymentDiscount(
         fromMap: discountMap, withError: &error)
       XCTAssertNil(error)
-      let unwrappedPaymentDiscount = try XCTUnwrap(paymentDiscount)
 
+      let unwrappedPaymentDiscount = try XCTUnwrap(paymentDiscount)
       let identifier = try XCTUnwrap(discountMap["identifier"] as? String)
       XCTAssertEqual(unwrappedPaymentDiscount.identifier, identifier)
 
@@ -443,8 +459,10 @@ final class ObjectTranslatorTest: XCTestCase {
       XCTAssertEqual(paymentDiscount.keyIdentifier, paymentDiscount.keyIdentifier)
       XCTAssertEqual(paymentDiscount.nonce, UUID(uuidString: paymentDiscountPigeon.nonce))
       XCTAssertEqual(paymentDiscount.signature, paymentDiscountPigeon.signature)
+
       let paymentDiscountTimestamp = paymentDiscount.timestamp as? Int
       let paymentDiscountPigeonTimestamp = paymentDiscountPigeon.timestamp
+      
       XCTAssertEqual(paymentDiscountTimestamp, paymentDiscountPigeonTimestamp)
     }
   }
