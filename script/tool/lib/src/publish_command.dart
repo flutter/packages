@@ -21,6 +21,7 @@ import 'common/git_version_finder.dart';
 import 'common/output_utils.dart';
 import 'common/package_command.dart';
 import 'common/package_looping_command.dart';
+import 'common/pub_utils.dart';
 import 'common/pub_version_finder.dart';
 import 'common/repository_package.dart';
 
@@ -201,6 +202,10 @@ class PublishCommand extends PackageLoopingCommand {
       return checkResult;
     }
 
+    if (!await _runPrePublishScript(package)) {
+      return PackageResult.fail(<String>['pre-publish failed']);
+    }
+
     if (!await _checkGitStatus(package)) {
       return PackageResult.fail(<String>['uncommitted changes']);
     }
@@ -373,6 +378,31 @@ Safe to ignore if the package is deleted in this commit.
       return null;
     }
     return getRemoteUrlResult.stdout as String?;
+  }
+
+  Future<bool> _runPrePublishScript(RepositoryPackage package) async {
+    final File script = package.prePublishScript;
+    if (!script.existsSync()) {
+      return true;
+    }
+    final String relativeScriptPath =
+        getRelativePosixPath(script, from: package.directory);
+    print('Running pre-publish hook $relativeScriptPath...');
+
+    // Ensure that dependencies are available.
+    if (!await runPubGet(package, processRunner, platform)) {
+      printError('Failed to get depenedencies');
+      return false;
+    }
+
+    final int exitCode = await processRunner.runAndStream(
+        'dart', <String>['run', relativeScriptPath],
+        workingDir: package.directory);
+    if (exitCode != 0) {
+      printError('Pre-publish script failed.');
+      return false;
+    }
+    return true;
   }
 
   Future<bool> _publish(RepositoryPackage package) async {

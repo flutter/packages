@@ -18,6 +18,9 @@ enum TargetGenerator {
   /// The Windows C++ generator.
   cpp,
 
+  /// The Linux GObject generator.
+  gobject,
+
   /// The Android Java generator.
   java,
 

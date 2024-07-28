@@ -481,6 +481,10 @@ private class ProxyApiTestsPigeonProxyApiCodecReaderWriter: FlutterStandardReade
     }
 
     override func writeValue(_ value: Any) {
+      if value is Bool, value is String {
+        super.writeValue(value)
+        return
+      }
 
       if let instance = value as? ProxyApiTestClass {
         pigeonRegistrar.apiDelegate.pigeonApiProxyApiTestClass(pigeonRegistrar).pigeonNewInstance(
