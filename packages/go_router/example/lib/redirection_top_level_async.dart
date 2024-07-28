@@ -25,7 +25,7 @@ class App extends StatelessWidget {
   App({super.key});
 
   /// The title of the app.
-  static const String title = 'GoRouter Example: Redirection';
+  static const String title = 'GoRouter Example: Redirection(Top level, async)';
 
   // add the login info into the tree as app state that can change over time
   @override
