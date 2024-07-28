@@ -1,3 +1,7 @@
+## 2.3.2
+
+* Fixes issue where `launchUrl` incorrectly returned `false`.
+
 ## 2.3.1
 
 * Implements correct handling of keyboard events with Link.

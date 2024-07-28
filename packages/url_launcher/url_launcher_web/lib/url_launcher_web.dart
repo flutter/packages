@@ -66,7 +66,8 @@ class UrlLauncherPlugin extends UrlLauncherPlatform {
 
   /// Opens the given [url] in the specified [webOnlyWindowName].
   ///
-  /// Returns the newly created window.
+  /// Always returns `null` on the web platform, because `noopener` is used.
+  /// See https://html.spec.whatwg.org/multipage/nav-history-apis.html#window-open-steps.
   @visibleForTesting
   html.Window? openNewWindow(String url, {String? webOnlyWindowName}) {
     final String? scheme = _getUrlScheme(url);
@@ -109,7 +110,8 @@ class UrlLauncherPlugin extends UrlLauncherPlatform {
   @override
   Future<bool> launchUrl(String url, LaunchOptions options) async {
     final String? windowName = options.webOnlyWindowName;
-    return openNewWindow(url, webOnlyWindowName: windowName) != null;
+    openNewWindow(url, webOnlyWindowName: windowName);
+    return canLaunch(url);
   }
 
   @override
