@@ -19,6 +19,20 @@ const String _docCommentPrefix = '///';
 const DocumentCommentSpecification _docCommentSpec =
     DocumentCommentSpecification(_docCommentPrefix);
 
+const Map<String, String> _swiftTypeForDartTypeMap = <String, String>{
+  'void': 'Void',
+  'bool': 'Bool',
+  'String': 'String',
+  'int': 'Int64',
+  'double': 'Double',
+  'Uint8List': 'FlutterStandardTypedData',
+  'Int32List': 'FlutterStandardTypedData',
+  'Int64List': 'FlutterStandardTypedData',
+  'Float32List': 'FlutterStandardTypedData',
+  'Float64List': 'FlutterStandardTypedData',
+  'Object': 'Any',
+};
+
 /// Options that control how Swift code will be generated.
 class SwiftOptions {
   /// Creates a [SwiftOptions] object
@@ -833,6 +847,17 @@ class SwiftGenerator extends StructuredGenerator<SwiftOptions> {
               'override func writeValue(_ value: Any) {',
               '}',
               () {
+                final String isBuiltinExpression = _swiftTypeForDartTypeMap
+                    .values
+                    .where((String swiftType) => swiftType != 'Any')
+                    .map((String swiftType) => 'value is $swiftType')
+                    .join(', ');
+                indent.writeScoped('if $isBuiltinExpression {', '}', () {
+                  indent.writeln('super.writeValue(value)');
+                  indent.writeln('return');
+                });
+                indent.newln();
+
                 // Sort APIs where edges are an API's super class and interfaces.
                 //
                 // This sorts the APIs to have child classes be listed before their parent
@@ -904,8 +929,10 @@ class SwiftGenerator extends StructuredGenerator<SwiftOptions> {
                     super.writeValue(
                       pigeonRegistrar.instanceManager.identifierWithStrongReference(forInstance: instance)!)
                   } else {
-                    super.writeValue(value)
-                  }''',
+                    print("Unsupported value: \\(value) of \\(type(of: value))")
+                    assert(false, "Unsupported value for $filePrefix${classNamePrefix}ProxyApiCodecWriter")
+                  }
+                  ''',
                   trimIndentation: true,
                 );
               },
@@ -2347,21 +2374,8 @@ String _swiftTypeForBuiltinGenericDartType(TypeDeclaration type) {
 }
 
 String? _swiftTypeForBuiltinDartType(TypeDeclaration type) {
-  const Map<String, String> swiftTypeForDartTypeMap = <String, String>{
-    'void': 'Void',
-    'bool': 'Bool',
-    'String': 'String',
-    'int': 'Int64',
-    'double': 'Double',
-    'Uint8List': 'FlutterStandardTypedData',
-    'Int32List': 'FlutterStandardTypedData',
-    'Int64List': 'FlutterStandardTypedData',
-    'Float32List': 'FlutterStandardTypedData',
-    'Float64List': 'FlutterStandardTypedData',
-    'Object': 'Any',
-  };
-  if (swiftTypeForDartTypeMap.containsKey(type.baseName)) {
-    return swiftTypeForDartTypeMap[type.baseName];
+  if (_swiftTypeForDartTypeMap.containsKey(type.baseName)) {
+    return _swiftTypeForDartTypeMap[type.baseName];
   } else if (type.baseName == 'List' || type.baseName == 'Map') {
     return _swiftTypeForBuiltinGenericDartType(type);
   } else {

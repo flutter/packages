@@ -481,7 +481,11 @@ private class ProxyApiTestsPigeonProxyApiCodecReaderWriter: FlutterStandardReade
     }
 
     override func writeValue(_ value: Any) {
-      if value is Bool, value is String {
+      if value is Void, value is Bool, value is String, value is Int64, value is Double,
+        value is FlutterStandardTypedData, value is FlutterStandardTypedData,
+        value is FlutterStandardTypedData, value is FlutterStandardTypedData,
+        value is FlutterStandardTypedData
+      {
         super.writeValue(value)
         return
       }
@@ -538,8 +542,10 @@ private class ProxyApiTestsPigeonProxyApiCodecReaderWriter: FlutterStandardReade
         super.writeValue(
           pigeonRegistrar.instanceManager.identifierWithStrongReference(forInstance: instance)!)
       } else {
-        super.writeValue(value)
+        print("Unsupported value: \(value) of \(type(of: value))")
+        assert(false, "Unsupported value for ProxyApiTestsPigeonProxyApiCodecWriter")
       }
+
     }
   }
 
