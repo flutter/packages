@@ -1,3 +1,7 @@
+## 6.3.6
+
+* Updates lint checks to ignore NewerVersionAvailable.
+
 ## 6.3.5
 
 * Bumps androidx.core:core from 1.10.1 to 1.13.1.

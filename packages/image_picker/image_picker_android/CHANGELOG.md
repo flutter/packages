@@ -1,3 +1,7 @@
+## 0.8.12+8
+
+* Updates lint checks to ignore NewerVersionAvailable.
+
 ## 0.8.12+7
 
 * Bumps androidx.activity:activity from 1.8.2 to 1.9.0.
