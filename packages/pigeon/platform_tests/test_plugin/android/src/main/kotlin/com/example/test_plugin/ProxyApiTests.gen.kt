@@ -433,6 +433,7 @@ private class ProxyApiTestsPigeonProxyApiBaseCodec(
         value is Double ||
         value is DoubleArray ||
         value is FloatArray ||
+        value is Int ||
         value is IntArray ||
         value is List<*> ||
         value is Long ||

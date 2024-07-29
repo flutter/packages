@@ -728,6 +728,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
               'Double',
               'DoubleArray',
               'FloatArray',
+              'Int',
               'IntArray',
               'List<*>',
               'Long',
