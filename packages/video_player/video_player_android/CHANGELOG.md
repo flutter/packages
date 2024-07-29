@@ -1,3 +1,7 @@
+## 2.5.4
+
+* Updates Media3-ExoPlayer to 1.4.0.
+
 ## 2.5.3
 
 * Updates lint checks to ignore NewerVersionAvailable.
