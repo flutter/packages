@@ -846,7 +846,7 @@ class SwiftGenerator extends StructuredGenerator<SwiftOptions> {
                 ];
                 final String isBuiltinExpression = nonProxyApiTypes
                     .map((String swiftType) => 'value is $swiftType')
-                    .followedBy(<String>['value == nil']).join(' || ');
+                    .join(' || ');
                 // Non ProxyApi types are checked first to prevent the scenario
                 // where a client wraps the `NSObject` class which all the
                 // classes above extend.
