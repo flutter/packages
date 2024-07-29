@@ -833,7 +833,7 @@ class SwiftGenerator extends StructuredGenerator<SwiftOptions> {
               'override func writeValue(_ value: Any) {',
               '}',
               () {
-                const List<String> supportedBuiltinTypes = <String>[
+                final List<String> nonProxyApiTypes = <String>[
                   '[Any]',
                   'Bool',
                   'Data',
@@ -842,10 +842,14 @@ class SwiftGenerator extends StructuredGenerator<SwiftOptions> {
                   'FlutterStandardTypedData',
                   'Int64',
                   'String',
+                  ...root.enums.map((Enum anEnum) => anEnum.name),
                 ];
-                final String isBuiltinExpression = supportedBuiltinTypes
+                final String isBuiltinExpression = nonProxyApiTypes
                     .map((String swiftType) => 'value is $swiftType')
                     .join(' || ');
+                // Non ProxyApi types are checked first to prevent the scenario
+                // where a client wraps the `NSObject` class which all the
+                // classes above extend.
                 indent.writeScoped('if $isBuiltinExpression {', '}', () {
                   indent.writeln('super.writeValue(value)');
                   indent.writeln('return');
