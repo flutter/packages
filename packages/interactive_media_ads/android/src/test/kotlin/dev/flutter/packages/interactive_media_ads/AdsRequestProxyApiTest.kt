@@ -19,7 +19,7 @@ class AdsRequestProxyApiTest {
     api.setAdTagUrl(instance, "adTag?")
 
     verify(instance).adTagUrl =
-        "adTag&request_agent=Flutter-IMA-${AdsRequestProxyApi.pluginVersion}"
+        "adTag?&request_agent=Flutter-IMA-${AdsRequestProxyApi.pluginVersion}"
   }
 
   @Test

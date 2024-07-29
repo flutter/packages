@@ -22,7 +22,7 @@ final class AdsRequestTests: XCTestCase {
     XCTAssertNotNil(instance)
     XCTAssertEqual(
       instance?.adTagUrl,
-      "adTag&request_agent=Flutter-IMA-\(AdsRequestProxyAPIDelegate.pluginVersion)")
+      "adTag?&request_agent=Flutter-IMA-\(AdsRequestProxyAPIDelegate.pluginVersion)")
     XCTAssertIdentical(instance?.adDisplayContainer, container)
   }
 }
