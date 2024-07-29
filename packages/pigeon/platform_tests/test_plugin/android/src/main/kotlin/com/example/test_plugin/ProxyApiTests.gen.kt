@@ -428,6 +428,23 @@ private class ProxyApiTestsPigeonProxyApiBaseCodec(
   }
 
   override fun writeValue(stream: ByteArrayOutputStream, value: Any?) {
+    if (value is Boolean ||
+        value is ByteArray ||
+        value is Double ||
+        value is DoubleArray ||
+        value is FloatArray ||
+        value is IntArray ||
+        value is List<*> ||
+        value is Long ||
+        value is LongArray ||
+        value is Map<*, *> ||
+        value is String ||
+        value is ProxyApiTestEnum ||
+        value == null) {
+      super.writeValue(stream, value)
+      return
+    }
+
     if (value is ProxyApiTestClass) {
       registrar.getPigeonApiProxyApiTestClass().pigeon_newInstance(value) {}
     } else if (value is com.example.test_plugin.ProxyApiSuperClass) {
@@ -443,7 +460,9 @@ private class ProxyApiTestsPigeonProxyApiBaseCodec(
         stream.write(128)
         writeValue(stream, registrar.instanceManager.getIdentifierForStrongReference(value))
       }
-      else -> super.writeValue(stream, value)
+      else ->
+          throw IllegalArgumentException(
+              "Unsupported value: '$value' of type '${value.javaClass.name}'")
     }
   }
 }

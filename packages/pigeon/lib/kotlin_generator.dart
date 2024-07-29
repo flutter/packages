@@ -722,6 +722,32 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
           'override fun writeValue(stream: ByteArrayOutputStream, value: Any?) {',
           '}',
           () {
+            final List<String> nonProxyApiTypes = <String>[
+              'Boolean',
+              'ByteArray',
+              'Double',
+              'DoubleArray',
+              'FloatArray',
+              'IntArray',
+              'List<*>',
+              'Long',
+              'LongArray',
+              'Map<*, *>',
+              'String',
+              ...root.enums.map((Enum anEnum) => anEnum.name),
+            ];
+            final String isSupportedExpression = nonProxyApiTypes
+                .map((String kotlinType) => 'value is $kotlinType')
+                .followedBy(<String>['value == null']).join(' || ');
+            // Non ProxyApi types are checked first to handle the scenario
+            // where a client wraps the `Object` class which all the
+            // classes above extend.
+            indent.writeScoped('if ($isSupportedExpression) {', '}', () {
+              indent.writeln('super.writeValue(stream, value)');
+              indent.writeln('return');
+            });
+            indent.newln();
+
             enumerate(
               sortedApis,
               (int index, AstProxyApi api) {
@@ -751,7 +777,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
                   stream.write($proxyApiCodecInstanceManagerKey)
                   writeValue(stream, registrar.instanceManager.getIdentifierForStrongReference(value))
                 }
-                else -> super.writeValue(stream, value)
+                else -> throw IllegalArgumentException("Unsupported value: '\$value' of type '\${value.javaClass.name}'")
               }''',
               trimIndentation: true,
             );
