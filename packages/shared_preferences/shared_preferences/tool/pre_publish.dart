@@ -1,0 +1,39 @@
+import 'dart:io';
+
+Future<void> _runCommand({
+  required String message,
+  required String executable,
+  required List<String> arguments,
+}) async {
+  stdout.write(message);
+  final ProcessResult pubGetResult = await Process.run(
+    executable,
+    arguments,
+    workingDirectory: '../shared_preferences_tool',
+  );
+
+  stdout.write(pubGetResult.stdout);
+
+  if (pubGetResult.stderr != null) {
+    stderr.write(pubGetResult.stderr);
+  }
+}
+
+Future<void> main() async {
+  await _runCommand(
+    message: "Running 'flutter pub get' in shared_preferences_tool\n",
+    executable: 'flutter',
+    arguments: <String>['pub', 'get'],
+  );
+  await _runCommand(
+    message: "Running 'build_and_copy' in shared_preferences_tool\n",
+    executable: 'dart',
+    arguments: <String>[
+      'run',
+      'devtools_extensions',
+      'build_and_copy',
+      '--source=.',
+      '--dest=../shared_preferences/extension/devtools',
+    ],
+  );
+}
