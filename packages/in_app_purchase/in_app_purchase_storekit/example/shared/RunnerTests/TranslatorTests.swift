@@ -1,3 +1,7 @@
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 import Foundation
 import StoreKit
 import XCTest
@@ -462,7 +466,7 @@ final class ObjectTranslatorTest: XCTestCase {
 
       let paymentDiscountTimestamp = paymentDiscount.timestamp as? Int
       let paymentDiscountPigeonTimestamp = paymentDiscountPigeon.timestamp
-      
+
       XCTAssertEqual(paymentDiscountTimestamp, paymentDiscountPigeonTimestamp)
     }
   }

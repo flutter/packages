@@ -32,6 +32,7 @@
 		F27694132C49BF7B00277144 /* FIAPPaymentQueueDeleteTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F27694122C49BF7B00277144 /* FIAPPaymentQueueDeleteTests.swift */; };
 		F27694192C49DBE800277144 /* FIATransactionCacheTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F27694182C49DBE800277144 /* FIATransactionCacheTests.swift */; };
 		F2C3A7412BD9D33D000D35F2 /* Stubs.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2C3A7402BD9D33D000D35F2 /* Stubs.swift */; };
+		F2D527262C583C1C00C137C7 /* TranslatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2D527252C583C1C00C137C7 /* TranslatorTests.swift */; };
 		F79BDC182905FC1800E3999D /* PaymentQueueTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F79BDC172905FC1800E3999D /* PaymentQueueTests.m */; };
 		F79BDC1C2905FC3200E3999D /* Stubs.m in Sources */ = {isa = PBXBuildFile; fileRef = F79BDC1B2905FC3200E3999D /* Stubs.m */; };
 		F8270DE1AEF80A8CF2C45688 /* Pods_RunnerTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 045C0F7D19875EDA98DF0B7F /* Pods_RunnerTests.framework */; };
@@ -96,6 +97,7 @@
 		F27694182C49DBE800277144 /* FIATransactionCacheTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FIATransactionCacheTests.swift; path = ../../shared/RunnerTests/FIATransactionCacheTests.swift; sourceTree = "<group>"; };
 		F2C3A73F2BD9D33D000D35F2 /* RunnerTests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "RunnerTests-Bridging-Header.h"; sourceTree = "<group>"; };
 		F2C3A7402BD9D33D000D35F2 /* Stubs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Stubs.swift; sourceTree = "<group>"; };
+		F2D527252C583C1C00C137C7 /* TranslatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TranslatorTests.swift; path = ../../shared/RunnerTests/TranslatorTests.swift; sourceTree = "<group>"; };
 		F700DD0228E652A10004836B /* RunnerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RunnerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		F79BDC152905FC0500E3999D /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = ../../shared/RunnerTests/Info.plist; sourceTree = "<group>"; };
 		F79BDC172905FC1800E3999D /* PaymentQueueTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PaymentQueueTests.m; path = ../../shared/RunnerTests/PaymentQueueTests.m; sourceTree = "<group>"; };
@@ -215,6 +217,7 @@
 		F700DD0328E652A10004836B /* RunnerTests */ = {
 			isa = PBXGroup;
 			children = (
+				F2D527252C583C1C00C137C7 /* TranslatorTests.swift */,
 				F27694182C49DBE800277144 /* FIATransactionCacheTests.swift */,
 				F27694122C49BF7B00277144 /* FIAPPaymentQueueDeleteTests.swift */,
 				F24C45E32C409D87000C6C72 /* InAppPurchasePluginTests.swift */,
@@ -465,6 +468,7 @@
 				F79BDC1C2905FC3200E3999D /* Stubs.m in Sources */,
 				F27694092C4724B200277144 /* ProductRequestHandlerTests.swift in Sources */,
 				F2C3A7412BD9D33D000D35F2 /* Stubs.swift in Sources */,
+				F2D527262C583C1C00C137C7 /* TranslatorTests.swift in Sources */,
 				F27694192C49DBE800277144 /* FIATransactionCacheTests.swift in Sources */,
 				F27694132C49BF7B00277144 /* FIAPPaymentQueueDeleteTests.swift in Sources */,
 			);

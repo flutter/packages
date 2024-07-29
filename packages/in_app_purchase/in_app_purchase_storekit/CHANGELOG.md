@@ -1,3 +1,7 @@
+## 0.3.17+3
+
+* Converts TranslatorTests to swift.
+
 ## 0.3.17+2
 
 * Converts FIAPPaymentQueueDeleteTests to swift.
