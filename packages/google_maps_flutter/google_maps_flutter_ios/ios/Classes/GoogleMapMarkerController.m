@@ -222,21 +222,10 @@
 
     self.markerIdentifierToController[identifier] = controller;
   }
-  
-  for (NSDictionary<NSString *, id> *marker in markersToAdd) {
-    NSString *identifier = marker[@"markerId"];
-
-    FLTGoogleMapMarkerController *controller = self.markerIdentifierToController[identifier];
-    if (!controller) {
-      continue;
-    }
-    [controller setVisibleOption:marker];
-  }
 }
 
 - (void)addMarkers:(NSArray<FGMPlatformMarker *> *)markersToAdd {
   CGFloat screenScale = [self getScreenScale];
-
   GoogleMapMarkerIconCache* iconCache =
         [[GoogleMapMarkerIconCache alloc] initWithRegistrar:self.registrar
                                                 screenScale:screenScale];
@@ -277,20 +266,7 @@
   for (FGMPlatformMarker *marker in markersToChange) {
     NSString *identifier = marker.json[@"markerId"];
     FLTGoogleMapMarkerController *controller = self.markerIdentifierToController[identifier];
-    if (!controller) {
-      return;
-    }
     [controller interpretMarkerOptions:marker.json iconCache:iconCache];
-  }
-  
-  for (FGMPlatformMarker *marker in markersToChange) {
-    NSString *identifier = marker.json[@"markerId"];
-
-    FLTGoogleMapMarkerController *controller = self.markerIdentifierToController[identifier];
-    if (!controller) {
-      continue;
-    }
-    [controller setVisibleOption:marker.json];
   }
 }
 
@@ -298,7 +274,7 @@
   for (NSString *identifier in identifiers) {
     FLTGoogleMapMarkerController *controller = self.markerIdentifierToController[identifier];
     if (!controller) {
-      return;
+      continue;
     }
     [controller removeMarker];
     [self.markerIdentifierToController removeObjectForKey:identifier];
@@ -373,8 +349,6 @@
 - (void)showMarkerInfoWindowWithIdentifier:(NSString *)identifier
                                      error:
                                          (FlutterError *_Nullable __autoreleasing *_Nonnull)error {
-                                         NSLog(@"yay");
-                                         NSLog(@"%d", [NSThread isMainThread]);
   FLTGoogleMapMarkerController *controller = self.markerIdentifierToController[identifier];
   if (controller) {
     [controller showInfoWindow];
