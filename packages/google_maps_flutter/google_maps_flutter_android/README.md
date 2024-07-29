@@ -79,7 +79,7 @@ WARNING: `AndroidMapRenderer.legacy` is known to crash apps and is no longer sup
 and therefore cannot be supported by the Flutter team.
 
 [1]: https://pub.dev/packages/google_maps_flutter
-[2]: https://flutter.dev/docs/development/packages-and-plugins/developing-packages#endorsed-federated-plugin
+[2]: https://flutter.dev/to/endorsed-federated-plugin
 [3]: https://docs.flutter.dev/development/platform-integration/android/platform-views
 [4]: https://github.com/flutter/flutter/issues/103686
 [5]: https://developers.google.com/maps/documentation/android-sdk/renderer

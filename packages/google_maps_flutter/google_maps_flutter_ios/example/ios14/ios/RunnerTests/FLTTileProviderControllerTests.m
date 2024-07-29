@@ -8,18 +8,24 @@
 
 #import <OCMock/OCMock.h>
 
+#import "messages.g.h"
+
 @interface FLTTileProviderControllerTests : XCTestCase
 @end
 
 @implementation FLTTileProviderControllerTests
 
 - (void)testCallChannelOnPlatformThread {
-  id channel = OCMClassMock(FlutterMethodChannel.class);
-  FLTTileProviderController *controller = [[FLTTileProviderController alloc] init:channel
-                                                        withTileOverlayIdentifier:@"foo"];
+  id handler = OCMClassMock([FGMMapsCallbackApi class]);
+  FLTTileProviderController *controller =
+      [[FLTTileProviderController alloc] initWithTileOverlayIdentifier:@"foo"
+                                                       callbackHandler:handler];
   XCTAssertNotNil(controller);
   XCTestExpectation *expectation = [self expectationWithDescription:@"invokeMethod"];
-  OCMStub([channel invokeMethod:[OCMArg any] arguments:[OCMArg any] result:[OCMArg any]])
+  OCMStub([handler tileWithOverlayIdentifier:[OCMArg any]
+                                    location:[OCMArg any]
+                                        zoom:0
+                                  completion:[OCMArg any]])
       .andDo(^(NSInvocation *invocation) {
         XCTAssertTrue([[NSThread currentThread] isMainThread]);
         [expectation fulfill];

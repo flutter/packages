@@ -26,12 +26,10 @@ import androidx.annotation.VisibleForTesting;
 import androidx.lifecycle.DefaultLifecycleObserver;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleOwner;
-import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMapOptions;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
@@ -45,16 +43,13 @@ import com.google.maps.android.clustering.ClusterManager;
 import com.google.maps.android.collections.MarkerManager;
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
 import io.flutter.plugin.common.BinaryMessenger;
-import io.flutter.plugin.common.MethodCall;
-import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.platform.PlatformView;
 import io.flutter.plugins.googlemaps.Messages.FlutterError;
 import io.flutter.plugins.googlemaps.Messages.MapsApi;
+import io.flutter.plugins.googlemaps.Messages.MapsCallbackApi;
 import io.flutter.plugins.googlemaps.Messages.MapsInspectorApi;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -70,13 +65,12 @@ class GoogleMapController
         GoogleMapOptionsSink,
         MapsApi,
         MapsInspectorApi,
-        MethodChannel.MethodCallHandler,
         OnMapReadyCallback,
         PlatformView {
 
   private static final String TAG = "GoogleMapController";
   private final int id;
-  private final MethodChannel methodChannel;
+  private final MapsCallbackApi flutterApi;
   private final BinaryMessenger binaryMessenger;
   private final GoogleMapOptions options;
   @Nullable private MapView mapView;
@@ -124,20 +118,18 @@ class GoogleMapController
     this.mapView = new MapView(context, options);
     this.density = context.getResources().getDisplayMetrics().density;
     this.binaryMessenger = binaryMessenger;
-    methodChannel =
-        new MethodChannel(binaryMessenger, "plugins.flutter.dev/google_maps_android_" + id);
-    methodChannel.setMethodCallHandler(this);
+    flutterApi = new MapsCallbackApi(binaryMessenger, Integer.toString(id));
     MapsApi.setUp(binaryMessenger, Integer.toString(id), this);
     MapsInspectorApi.setUp(binaryMessenger, Integer.toString(id), this);
     AssetManager assetManager = context.getAssets();
     this.lifecycleProvider = lifecycleProvider;
-    this.clusterManagersController = new ClusterManagersController(methodChannel, context);
+    this.clusterManagersController = new ClusterManagersController(flutterApi, context);
     this.markersController =
-        new MarkersController(methodChannel, clusterManagersController, assetManager, density);
-    this.polygonsController = new PolygonsController(methodChannel, density);
-    this.polylinesController = new PolylinesController(methodChannel, assetManager, density);
-    this.circlesController = new CirclesController(methodChannel, density);
-    this.tileOverlaysController = new TileOverlaysController(methodChannel);
+        new MarkersController(flutterApi, clusterManagersController, assetManager, density);
+    this.polygonsController = new PolygonsController(flutterApi, density);
+    this.polylinesController = new PolylinesController(flutterApi, assetManager, density);
+    this.circlesController = new CirclesController(flutterApi, density);
+    this.tileOverlaysController = new TileOverlaysController(flutterApi);
   }
 
   // Constructor for testing purposes only
@@ -146,7 +138,7 @@ class GoogleMapController
       int id,
       Context context,
       BinaryMessenger binaryMessenger,
-      MethodChannel methodChannel,
+      MapsCallbackApi flutterApi,
       LifecycleProvider lifecycleProvider,
       GoogleMapOptions options,
       ClusterManagersController clusterManagersController,
@@ -158,7 +150,7 @@ class GoogleMapController
     this.id = id;
     this.context = context;
     this.binaryMessenger = binaryMessenger;
-    this.methodChannel = methodChannel;
+    this.flutterApi = flutterApi;
     this.options = options;
     this.mapView = new MapView(context, options);
     this.density = context.getResources().getDisplayMetrics().density;
@@ -184,18 +176,6 @@ class GoogleMapController
   void init() {
     lifecycleProvider.getLifecycle().addObserver(this);
     mapView.getMapAsync(this);
-  }
-
-  private void moveCamera(CameraUpdate cameraUpdate) {
-    googleMap.moveCamera(cameraUpdate);
-  }
-
-  private void animateCamera(CameraUpdate cameraUpdate) {
-    googleMap.animateCamera(cameraUpdate);
-  }
-
-  private CameraPosition getCameraPosition() {
-    return trackCameraPosition ? googleMap.getCameraPosition() : null;
   }
 
   @Override
@@ -309,123 +289,18 @@ class GoogleMapController
   }
 
   @Override
-  public void onMethodCall(MethodCall call, @NonNull MethodChannel.Result result) {
-    switch (call.method) {
-      case "map#update":
-        {
-          Convert.interpretGoogleMapOptions(call.argument("options"), this);
-          result.success(Convert.cameraPositionToJson(getCameraPosition()));
-          break;
-        }
-      case "camera#move":
-        {
-          final CameraUpdate cameraUpdate =
-              Convert.toCameraUpdate(call.argument("cameraUpdate"), density);
-          moveCamera(cameraUpdate);
-          result.success(null);
-          break;
-        }
-      case "camera#animate":
-        {
-          final CameraUpdate cameraUpdate =
-              Convert.toCameraUpdate(call.argument("cameraUpdate"), density);
-          animateCamera(cameraUpdate);
-          result.success(null);
-          break;
-        }
-      case "markers#update":
-        {
-          List<Object> markersToAdd = call.argument("markersToAdd");
-          markersController.addMarkers(markersToAdd);
-          List<Object> markersToChange = call.argument("markersToChange");
-          markersController.changeMarkers(markersToChange);
-          List<Object> markerIdsToRemove = call.argument("markerIdsToRemove");
-          markersController.removeMarkers(markerIdsToRemove);
-          result.success(null);
-          break;
-        }
-      case "clusterManagers#update":
-        {
-          List<Object> clusterManagersToAdd = call.argument("clusterManagersToAdd");
-          if (clusterManagersToAdd != null) {
-            clusterManagersController.addClusterManagers(clusterManagersToAdd);
-          }
-          List<Object> clusterManagerIdsToRemove = call.argument("clusterManagerIdsToRemove");
-          if (clusterManagerIdsToRemove != null) {
-            clusterManagersController.removeClusterManagers(clusterManagerIdsToRemove);
-          }
-          result.success(null);
-          break;
-        }
-      case "polygons#update":
-        {
-          List<Object> polygonsToAdd = call.argument("polygonsToAdd");
-          polygonsController.addPolygons(polygonsToAdd);
-          List<Object> polygonsToChange = call.argument("polygonsToChange");
-          polygonsController.changePolygons(polygonsToChange);
-          List<Object> polygonIdsToRemove = call.argument("polygonIdsToRemove");
-          polygonsController.removePolygons(polygonIdsToRemove);
-          result.success(null);
-          break;
-        }
-      case "polylines#update":
-        {
-          List<Object> polylinesToAdd = call.argument("polylinesToAdd");
-          polylinesController.addPolylines(polylinesToAdd);
-          List<Object> polylinesToChange = call.argument("polylinesToChange");
-          polylinesController.changePolylines(polylinesToChange);
-          List<Object> polylineIdsToRemove = call.argument("polylineIdsToRemove");
-          polylinesController.removePolylines(polylineIdsToRemove);
-          result.success(null);
-          break;
-        }
-      case "circles#update":
-        {
-          List<Object> circlesToAdd = call.argument("circlesToAdd");
-          circlesController.addCircles(circlesToAdd);
-          List<Object> circlesToChange = call.argument("circlesToChange");
-          circlesController.changeCircles(circlesToChange);
-          List<Object> circleIdsToRemove = call.argument("circleIdsToRemove");
-          circlesController.removeCircles(circleIdsToRemove);
-          result.success(null);
-          break;
-        }
-      case "tileOverlays#update":
-        {
-          List<Map<String, ?>> tileOverlaysToAdd = call.argument("tileOverlaysToAdd");
-          tileOverlaysController.addTileOverlays(tileOverlaysToAdd);
-          List<Map<String, ?>> tileOverlaysToChange = call.argument("tileOverlaysToChange");
-          tileOverlaysController.changeTileOverlays(tileOverlaysToChange);
-          List<String> tileOverlaysToRemove = call.argument("tileOverlayIdsToRemove");
-          tileOverlaysController.removeTileOverlays(tileOverlaysToRemove);
-          result.success(null);
-          break;
-        }
-      default:
-        result.notImplemented();
-    }
-  }
-
-  @Override
   public void onMapClick(@NonNull LatLng latLng) {
-    final Map<String, Object> arguments = new HashMap<>(2);
-    arguments.put("position", Convert.latLngToJson(latLng));
-    methodChannel.invokeMethod("map#onTap", arguments);
+    flutterApi.onTap(Convert.latLngToPigeon(latLng), new NoOpVoidResult());
   }
 
   @Override
   public void onMapLongClick(@NonNull LatLng latLng) {
-    final Map<String, Object> arguments = new HashMap<>(2);
-    arguments.put("position", Convert.latLngToJson(latLng));
-    methodChannel.invokeMethod("map#onLongPress", arguments);
+    flutterApi.onLongPress(Convert.latLngToPigeon(latLng), new NoOpVoidResult());
   }
 
   @Override
   public void onCameraMoveStarted(int reason) {
-    final Map<String, Object> arguments = new HashMap<>(2);
-    boolean isGesture = reason == GoogleMap.OnCameraMoveStartedListener.REASON_GESTURE;
-    arguments.put("isGesture", isGesture);
-    methodChannel.invokeMethod("camera#onMoveStarted", arguments);
+    flutterApi.onCameraMoveStarted(new NoOpVoidResult());
   }
 
   @Override
@@ -438,15 +313,14 @@ class GoogleMapController
     if (!trackCameraPosition) {
       return;
     }
-    final Map<String, Object> arguments = new HashMap<>(2);
-    arguments.put("position", Convert.cameraPositionToJson(googleMap.getCameraPosition()));
-    methodChannel.invokeMethod("camera#onMove", arguments);
+    flutterApi.onCameraMove(
+        Convert.cameraPositionToPigeon(googleMap.getCameraPosition()), new NoOpVoidResult());
   }
 
   @Override
   public void onCameraIdle() {
     clusterManagersController.onCameraIdle();
-    methodChannel.invokeMethod("camera#onIdle", Collections.singletonMap("map", id));
+    flutterApi.onCameraIdle(new NoOpVoidResult());
   }
 
   @Override
@@ -490,7 +364,6 @@ class GoogleMapController
       return;
     }
     disposed = true;
-    methodChannel.setMethodCallHandler(null);
     MapsApi.setUp(binaryMessenger, Integer.toString(id), null);
     MapsInspectorApi.setUp(binaryMessenger, Integer.toString(id), null);
     setGoogleMapListener(null);
@@ -753,7 +626,7 @@ class GoogleMapController
   }
 
   private void updateInitialMarkers() {
-    markersController.addMarkers(initialMarkers);
+    markersController.addJsonMarkers(initialMarkers);
   }
 
   @Override
@@ -767,7 +640,7 @@ class GoogleMapController
 
   private void updateInitialClusterManagers() {
     if (initialClusterManagers != null) {
-      clusterManagersController.addClusterManagers(initialClusterManagers);
+      clusterManagersController.addJsonClusterManagers(initialClusterManagers);
     }
   }
 
@@ -781,7 +654,7 @@ class GoogleMapController
   }
 
   private void updateInitialPolygons() {
-    polygonsController.addPolygons(initialPolygons);
+    polygonsController.addJsonPolygons(initialPolygons);
   }
 
   @Override
@@ -794,7 +667,7 @@ class GoogleMapController
   }
 
   private void updateInitialPolylines() {
-    polylinesController.addPolylines(initialPolylines);
+    polylinesController.addJsonPolylines(initialPolylines);
   }
 
   @Override
@@ -807,7 +680,7 @@ class GoogleMapController
   }
 
   private void updateInitialCircles() {
-    circlesController.addCircles(initialCircles);
+    circlesController.addJsonCircles(initialCircles);
   }
 
   @Override
@@ -819,7 +692,7 @@ class GoogleMapController
   }
 
   private void updateInitialTileOverlays() {
-    tileOverlaysController.addTileOverlays(initialTileOverlays);
+    tileOverlaysController.addJsonTileOverlays(initialTileOverlays);
   }
 
   @SuppressLint("MissingPermission")
@@ -915,6 +788,68 @@ class GoogleMapController
   }
 
   @Override
+  public void updateMapConfiguration(@NonNull Messages.PlatformMapConfiguration configuration) {
+    Convert.interpretGoogleMapOptions(configuration.getJson(), this);
+  }
+
+  @Override
+  public void updateCircles(
+      @NonNull List<Messages.PlatformCircle> toAdd,
+      @NonNull List<Messages.PlatformCircle> toChange,
+      @NonNull List<String> idsToRemove) {
+    circlesController.addCircles(toAdd);
+    circlesController.changeCircles(toChange);
+    circlesController.removeCircles(idsToRemove);
+  }
+
+  @Override
+  public void updateClusterManagers(
+      @NonNull List<Messages.PlatformClusterManager> toAdd, @NonNull List<String> idsToRemove) {
+    clusterManagersController.addClusterManagers(toAdd);
+    clusterManagersController.removeClusterManagers(idsToRemove);
+  }
+
+  @Override
+  public void updateMarkers(
+      @NonNull List<Messages.PlatformMarker> toAdd,
+      @NonNull List<Messages.PlatformMarker> toChange,
+      @NonNull List<String> idsToRemove) {
+    markersController.addMarkers(toAdd);
+    markersController.changeMarkers(toChange);
+    markersController.removeMarkers(idsToRemove);
+  }
+
+  @Override
+  public void updatePolygons(
+      @NonNull List<Messages.PlatformPolygon> toAdd,
+      @NonNull List<Messages.PlatformPolygon> toChange,
+      @NonNull List<String> idsToRemove) {
+    polygonsController.addPolygons(toAdd);
+    polygonsController.changePolygons(toChange);
+    polygonsController.removePolygons(idsToRemove);
+  }
+
+  @Override
+  public void updatePolylines(
+      @NonNull List<Messages.PlatformPolyline> toAdd,
+      @NonNull List<Messages.PlatformPolyline> toChange,
+      @NonNull List<String> idsToRemove) {
+    polylinesController.addPolylines(toAdd);
+    polylinesController.changePolylines(toChange);
+    polylinesController.removePolylines(idsToRemove);
+  }
+
+  @Override
+  public void updateTileOverlays(
+      @NonNull List<Messages.PlatformTileOverlay> toAdd,
+      @NonNull List<Messages.PlatformTileOverlay> toChange,
+      @NonNull List<String> idsToRemove) {
+    tileOverlaysController.addTileOverlays(toAdd);
+    tileOverlaysController.changeTileOverlays(toChange);
+    tileOverlaysController.removeTileOverlays(idsToRemove);
+  }
+
+  @Override
   public @NonNull Messages.PlatformPoint getScreenCoordinate(
       @NonNull Messages.PlatformLatLng latLng) {
     if (googleMap == null) {
@@ -948,6 +883,24 @@ class GoogleMapController
     }
     LatLngBounds latLngBounds = googleMap.getProjection().getVisibleRegion().latLngBounds;
     return Convert.latLngBoundsToPigeon(latLngBounds);
+  }
+
+  @Override
+  public void moveCamera(@NonNull Messages.PlatformCameraUpdate cameraUpdate) {
+    if (googleMap == null) {
+      throw new FlutterError(
+          "GoogleMap uninitialized", "moveCamera called prior to map initialization", null);
+    }
+    googleMap.moveCamera(Convert.toCameraUpdate(cameraUpdate.getJson(), density));
+  }
+
+  @Override
+  public void animateCamera(@NonNull Messages.PlatformCameraUpdate cameraUpdate) {
+    if (googleMap == null) {
+      throw new FlutterError(
+          "GoogleMap uninitialized", "animateCamera called prior to map initialization", null);
+    }
+    googleMap.animateCamera(Convert.toCameraUpdate(cameraUpdate.getJson(), density));
   }
 
   @Override
