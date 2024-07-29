@@ -27,4 +27,24 @@ final class ViewControllerTests: XCTestCase {
 
     XCTAssertNotNil(view)
   }
+
+  func testViewDidAppear() {
+    let api = TestUIViewControllerApi()
+    let instance = ViewControllerImpl(api: api)
+
+    instance.viewDidAppear(true)
+
+    XCTAssertEqual(api.viewDidAppearArgs, [instance, true])
+  }
+}
+
+class TestUIViewControllerApi: PigeonApiProtocolUIViewController {
+  var viewDidAppearArgs: [AnyHashable?]? = nil
+
+  func viewDidAppear(
+    pigeonInstance pigeonInstanceArg: UIViewController, animated animatedArg: Bool,
+    completion: @escaping (Result<Void, interactive_media_ads.PigeonError>) -> Void
+  ) {
+    viewDidAppearArgs = [pigeonInstanceArg, animatedArg]
+  }
 }

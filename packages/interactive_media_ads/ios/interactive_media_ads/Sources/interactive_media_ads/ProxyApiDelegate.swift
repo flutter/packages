@@ -14,12 +14,6 @@ open class ProxyApiDelegate: InteractiveMediaAdsLibraryPigeonProxyApiDelegate {
     return PigeonApiUIView(pigeonRegistrar: registrar, delegate: ViewProxyAPIDelegate())
   }
 
-  func pigeonApiNSObject(_ registrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar)
-    -> PigeonApiNSObject
-  {
-    return PigeonApiNSObject(pigeonRegistrar: registrar, delegate: NSObjectProxyAPIDelegate())
-  }
-
   func pigeonApiIMAAdDisplayContainer(
     _ registrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar
   )

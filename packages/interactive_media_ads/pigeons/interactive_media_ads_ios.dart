@@ -292,10 +292,7 @@ abstract class IMAAdDisplayContainer extends NSObject {
 ///
 /// See https://developer.apple.com/documentation/uikit/uiview.
 @ProxyApi(swiftOptions: SwiftProxyApiOptions(import: 'UIKit'))
-abstract class UIView extends NSObject {
-  /// The receiver’s window object, or null if it has none.
-  UIWindow? getWindow();
-}
+abstract class UIView extends NSObject {}
 
 /// An object that manages a view hierarchy for your UIKit app.
 ///
@@ -303,6 +300,9 @@ abstract class UIView extends NSObject {
 @ProxyApi()
 abstract class UIViewController extends NSObject {
   UIViewController();
+
+  /// Notifies the view controller that its view was added to a view hierarchy.
+  late void Function(bool animated)? viewDidAppear;
 
   /// Retrieves the view that the controller manages.
   ///
@@ -497,40 +497,10 @@ abstract class IMAAdsRenderingSettings extends NSObject {
   IMAAdsRenderingSettings();
 }
 
-/// The backdrop for your app’s user interface and the object that dispatches
-/// events to your views.
-///
-/// See https://developer.apple.com/documentation/uikit/uiwindow?language=objc
-@ProxyApi()
-abstract class UIWindow extends NSObject {}
-
 /// The root class of most Objective-C class hierarchies, from which subclasses
 /// inherit a basic interface to the runtime system and the ability to behave as
 /// Objective-C objects.
 ///
 /// See https://developer.apple.com/documentation/objectivec/nsobject.
 @ProxyApi()
-abstract class NSObject {
-  NSObject();
-
-  /// Informs the observing object when the value at the specified key path
-  /// relative to the observed object has changed.
-  void Function(
-    String? keyPath,
-    NSObject? object,
-    Map<KeyValueChangeKey, Object>? changeKeys,
-  )? observeValue;
-
-  /// Registers the observer object to receive KVO notifications for the key
-  /// path relative to the object receiving this message.
-  void addObserver(
-    NSObject observer,
-    String keyPath,
-    KeyValueObservingOptions options,
-  );
-
-  /// Stops the observer object from receiving change notifications for the
-  /// property specified by the key path relative to the object receiving this
-  /// message.
-  void removeObserver(NSObject observer, String keyPath);
-}
+abstract class NSObject {}

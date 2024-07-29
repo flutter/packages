@@ -42,50 +42,14 @@ final class IOSAdDisplayContainerCreationParams
 /// Implementation of [PlatformAdDisplayContainer] for iOS.
 base class IOSAdDisplayContainer extends PlatformAdDisplayContainer {
   /// Constructs an [IOSAdDisplayContainer].
-  IOSAdDisplayContainer(super.params) : super.implementation() {
-    _controller = _iosParams._imaProxy.newUIViewController();
-
-    final NSObject windowListener =
-        _createWindowListener(WeakReference<IOSAdDisplayContainer>(this));
-    _controller.view.addObserver(
-      windowListener,
-      'window',
-      KeyValueObservingOptions.newValue,
-    );
-  }
-
-  // This value is created in a static method because the callback methods for
-  // any wrapped classes must not reference the encapsulating object. This is to
-  // prevent a circular reference that prevents garbage collection.
-  static NSObject _createWindowListener(
-    WeakReference<IOSAdDisplayContainer> interfaceContainer,
-  ) {
-    return interfaceContainer.target!._iosParams._imaProxy.newNSObject(
-      observeValue: (
-        NSObject instance,
-        String? keyPath,
-        NSObject? object,
-        Map<KeyValueChangeKey?, Object?>? changeKeys,
-      ) {
-        if (changeKeys == null) {
-          return;
-        }
-
-        final IOSAdDisplayContainer? container = interfaceContainer.target;
-        if (container != null &&
-            changeKeys[KeyValueChangeKey.newValue] != null &&
-            !container._viewAddedToWindowCompleter.isCompleted) {
-          container._viewAddedToWindowCompleter.complete();
-          container._controller.view.removeObserver(instance, 'window');
-        }
-      },
-    );
-  }
+  IOSAdDisplayContainer(super.params) : super.implementation();
 
   // The `UIViewController` used to create the native `IMAAdDisplayContainer`.
-  late final UIViewController _controller;
+  late final UIViewController _controller = _createViewController(
+    WeakReference<IOSAdDisplayContainer>(this),
+  );
 
-  final Completer<void> _viewAddedToWindowCompleter = Completer<void>();
+  final Completer<void> _viewDidAppearCompleter = Completer<void>();
 
   /// The native iOS IMAAdDisplayContainer.
   ///
@@ -109,7 +73,7 @@ base class IOSAdDisplayContainer extends PlatformAdDisplayContainer {
           adContainer: _controller.view,
           adContainerViewController: _controller,
         );
-        await _viewAddedToWindowCompleter.future;
+        await _viewDidAppearCompleter.future;
         params.onContainerAdded(this);
       },
       layoutDirection: params.layoutDirection,
@@ -118,6 +82,23 @@ base class IOSAdDisplayContainer extends PlatformAdDisplayContainer {
           _controller.view.pigeon_instanceManager
               .getIdentifier(_controller.view),
       creationParamsCodec: const StandardMessageCodec(),
+    );
+  }
+
+  // This value is created in a static method because the callback methods for
+  // any wrapped classes must not reference the encapsulating object. This is to
+  // prevent a circular reference that prevents garbage collection.
+  static UIViewController _createViewController(
+    WeakReference<IOSAdDisplayContainer> interfaceContainer,
+  ) {
+    return interfaceContainer.target!._iosParams._imaProxy.newUIViewController(
+      viewDidAppear: (_, bool animated) {
+        final IOSAdDisplayContainer? container = interfaceContainer.target;
+        if (container != null &&
+            !container._viewDidAppearCompleter.isCompleted) {
+          container._viewDidAppearCompleter.complete();
+        }
+      },
     );
   }
 }
