@@ -834,10 +834,10 @@ class SwiftGenerator extends StructuredGenerator<SwiftOptions> {
               '}',
               () {
                 const List<String> supportedBuiltinTypes = <String>[
-                  'Array',
+                  '[Any]',
                   'Bool',
                   'Data',
-                  'Dictionary',
+                  '[AnyHashable: Any]',
                   'Double',
                   'FlutterStandardTypedData',
                   'Int64',
@@ -845,7 +845,7 @@ class SwiftGenerator extends StructuredGenerator<SwiftOptions> {
                 ];
                 final String isBuiltinExpression = supportedBuiltinTypes
                     .map((String swiftType) => 'value is $swiftType')
-                    .join(', ');
+                    .join(' || ');
                 indent.writeScoped('if $isBuiltinExpression {', '}', () {
                   indent.writeln('super.writeValue(value)');
                   indent.writeln('return');
