@@ -771,6 +771,8 @@ private class InteractiveMediaAdsLibraryPigeonProxyApiCodecReaderWriter: Flutter
       }
 
       if let instance = value as? NSObject {
+        print(value)
+        print(type(of: value))
         pigeonRegistrar.apiDelegate.pigeonApiNSObject(pigeonRegistrar).pigeonNewInstance(
           pigeonInstance: instance
         ) { _ in }
