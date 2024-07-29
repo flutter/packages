@@ -23,7 +23,7 @@
 
 - (UIImage*)getImage:(NSArray *)iconData {
   if ([self.images objectForKey:iconData]) {
-    //return self.images[iconData];
+    return self.images[iconData];
   }
   
   UIImage* image = [self extractIconFromData:iconData];
