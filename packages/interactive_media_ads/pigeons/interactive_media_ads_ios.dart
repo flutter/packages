@@ -281,7 +281,7 @@ enum KeyValueChangeKey {
 @ProxyApi(
   swiftOptions: SwiftProxyApiOptions(import: 'GoogleInteractiveMediaAds'),
 )
-abstract class IMAAdDisplayContainer extends BaseObject {
+abstract class IMAAdDisplayContainer extends NSObject {
   IMAAdDisplayContainer(
     UIView adContainer,
     UIViewController? adContainerViewController,
@@ -292,7 +292,7 @@ abstract class IMAAdDisplayContainer extends BaseObject {
 ///
 /// See https://developer.apple.com/documentation/uikit/uiview.
 @ProxyApi(swiftOptions: SwiftProxyApiOptions(import: 'UIKit'))
-abstract class UIView extends BaseObject {
+abstract class UIView extends NSObject {
   /// The receiver’s window object, or null if it has none.
   UIWindow? getWindow();
 }
@@ -301,7 +301,7 @@ abstract class UIView extends BaseObject {
 ///
 /// See https://developer.apple.com/documentation/uikit/uiviewcontroller.
 @ProxyApi()
-abstract class UIViewController extends BaseObject {
+abstract class UIViewController extends NSObject {
   UIViewController();
 
   /// Retrieves the view that the controller manages.
@@ -319,7 +319,7 @@ abstract class UIViewController extends BaseObject {
 ///
 /// See https://developers.google.com/ad-manager/dynamic-ad-insertion/sdk/ios/reference/Protocols/IMAContentPlayhead.
 @ProxyApi()
-abstract class IMAContentPlayhead extends BaseObject {
+abstract class IMAContentPlayhead extends NSObject {
   IMAContentPlayhead();
 
   /// Reflects the current playback time in seconds for the content.
@@ -330,7 +330,7 @@ abstract class IMAContentPlayhead extends BaseObject {
 ///
 /// See https://developers.google.com/interactive-media-ads/docs/sdks/ios/client-side/reference/Classes/IMAAdsLoader.
 @ProxyApi()
-abstract class IMAAdsLoader extends BaseObject {
+abstract class IMAAdsLoader extends NSObject {
   IMAAdsLoader(IMASettings? settings);
 
   /// Signal to the SDK that the content has completed.
@@ -349,13 +349,13 @@ abstract class IMAAdsLoader extends BaseObject {
 ///
 /// See https://developers.google.com/interactive-media-ads/docs/sdks/ios/client-side/reference/Classes/IMASettings.html.
 @ProxyApi()
-abstract class IMASettings extends BaseObject {}
+abstract class IMASettings extends NSObject {}
 
 /// Data class describing the ad request.
 ///
 /// See https://developers.google.com/interactive-media-ads/docs/sdks/ios/client-side/reference/Classes/IMAAdsRequest.
 @ProxyApi()
-abstract class IMAAdsRequest extends BaseObject {
+abstract class IMAAdsRequest extends NSObject {
   /// Initializes an ads request instance with the given ad tag URL and ad
   /// display container.
   IMAAdsRequest(
@@ -369,7 +369,7 @@ abstract class IMAAdsRequest extends BaseObject {
 ///
 /// See https://developers.google.com/interactive-media-ads/docs/sdks/ios/client-side/reference/Protocols/IMAAdsLoaderDelegate.html.
 @ProxyApi()
-abstract class IMAAdsLoaderDelegate extends BaseObject {
+abstract class IMAAdsLoaderDelegate extends NSObject {
   IMAAdsLoaderDelegate();
 
   /// Called when ads are successfully loaded from the ad servers by the loader.
@@ -389,7 +389,7 @@ abstract class IMAAdsLoaderDelegate extends BaseObject {
 ///
 /// See https://developers.google.com/interactive-media-ads/docs/sdks/ios/client-side/reference/Classes/IMAAdsLoadedData.html.
 @ProxyApi()
-abstract class IMAAdsLoadedData extends BaseObject {
+abstract class IMAAdsLoadedData extends NSObject {
   /// The ads manager instance created by the ads loader.
   ///
   /// Will be null when using dynamic ad insertion.
@@ -400,7 +400,7 @@ abstract class IMAAdsLoadedData extends BaseObject {
 ///
 /// See https://developers.google.com/interactive-media-ads/docs/sdks/ios/client-side/reference/Classes/IMAAdLoadingErrorData.html.
 @ProxyApi()
-abstract class IMAAdLoadingErrorData extends BaseObject {
+abstract class IMAAdLoadingErrorData extends NSObject {
   /// The ad error that occurred while loading the ad.
   late final IMAAdError adError;
 }
@@ -409,7 +409,7 @@ abstract class IMAAdLoadingErrorData extends BaseObject {
 ///
 /// See https://developers.google.com/interactive-media-ads/docs/sdks/ios/client-side/reference/Classes/IMAAdError.html.
 @ProxyApi()
-abstract class IMAAdError extends BaseObject {
+abstract class IMAAdError extends NSObject {
   /// The type of error that occurred during ad loading or ad playing.
   late final AdErrorType type;
 
@@ -424,7 +424,7 @@ abstract class IMAAdError extends BaseObject {
 ///
 /// See https://developers.google.com/interactive-media-ads/docs/sdks/ios/client-side/reference/Classes/IMAAdsManager.html.
 @ProxyApi()
-abstract class IMAAdsManager extends BaseObject {
+abstract class IMAAdsManager extends NSObject {
   /// The `IMAAdsManagerDelegate` to notify with events during ad playback.
   void setDelegate(IMAAdsManagerDelegate? delegate);
 
@@ -455,7 +455,7 @@ abstract class IMAAdsManager extends BaseObject {
 ///
 /// See https://developers.google.com/interactive-media-ads/docs/sdks/ios/client-side/reference/Protocols/IMAAdsManagerDelegate.html.
 @ProxyApi()
-abstract class IMAAdsManagerDelegate extends BaseObject {
+abstract class IMAAdsManagerDelegate extends NSObject {
   IMAAdsManagerDelegate();
 
   /// Called when there is an IMAAdEvent.
@@ -481,7 +481,7 @@ abstract class IMAAdsManagerDelegate extends BaseObject {
 ///
 /// See https://developers.google.com/interactive-media-ads/docs/sdks/ios/client-side/reference/Classes/IMAAdEvent.html.
 @ProxyApi()
-abstract class IMAAdEvent extends BaseObject {
+abstract class IMAAdEvent extends NSObject {
   /// Type of the event.
   late final AdEventType type;
 
@@ -493,7 +493,7 @@ abstract class IMAAdEvent extends BaseObject {
 ///
 /// See https://developers.google.com/ad-manager/dynamic-ad-insertion/sdk/ios/reference/Classes/IMAAdsRenderingSettings.
 @ProxyApi()
-abstract class IMAAdsRenderingSettings extends BaseObject {
+abstract class IMAAdsRenderingSettings extends NSObject {
   IMAAdsRenderingSettings();
 }
 
@@ -502,7 +502,7 @@ abstract class IMAAdsRenderingSettings extends BaseObject {
 ///
 /// See https://developer.apple.com/documentation/uikit/uiwindow?language=objc
 @ProxyApi()
-abstract class UIWindow extends BaseObject {}
+abstract class UIWindow extends NSObject {}
 
 /// The root class of most Objective-C class hierarchies, from which subclasses
 /// inherit a basic interface to the runtime system and the ability to behave as
@@ -510,21 +510,21 @@ abstract class UIWindow extends BaseObject {}
 ///
 /// See https://developer.apple.com/documentation/objectivec/nsobject.
 @ProxyApi()
-abstract class BaseObject {
-  BaseObject();
+abstract class NSObject {
+  NSObject();
 
   /// Informs the observing object when the value at the specified key path
   /// relative to the observed object has changed.
   void Function(
     String? keyPath,
-    BaseObject? object,
+    NSObject? object,
     Map<KeyValueChangeKey, Object>? changeKeys,
   )? observeValue;
 
   /// Registers the observer object to receive KVO notifications for the key
   /// path relative to the object receiving this message.
   void addObserver(
-    BaseObject observer,
+    NSObject observer,
     String keyPath,
     KeyValueObservingOptions options,
   );
@@ -532,5 +532,5 @@ abstract class BaseObject {
   /// Stops the observer object from receiving change notifications for the
   /// property specified by the key path relative to the object receiving this
   /// message.
-  void removeObserver(BaseObject observer, String keyPath);
+  void removeObserver(NSObject observer, String keyPath);
 }

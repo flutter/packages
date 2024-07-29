@@ -5,10 +5,10 @@
 import Foundation
 
 /// Implementation of `NSObject` that calls to Dart in callback methods.
-class BaseObject: NSObject {
-  let api: PigeonApiProtocolBaseObject
+class NSObjectImpl: NSObject {
+  let api: PigeonApiProtocolNSObject
 
-  init(api: PigeonApiProtocolBaseObject) {
+  init(api: PigeonApiProtocolNSObject) {
     self.api = api
   }
 
@@ -35,7 +35,7 @@ class BaseObject: NSObject {
       return (wrapperKey, value)
     }
     api.observeValue(
-      pigeonInstance: self, keyPath: keyPath, object: object as? BaseObject,
+      pigeonInstance: self, keyPath: keyPath, object: object as? NSObject,
       changeKeys: wrapperChange != nil ? Dictionary(uniqueKeysWithValues: wrapperChange!) : nil
     ) { _ in }
   }
@@ -45,13 +45,13 @@ class BaseObject: NSObject {
 ///
 /// This class may handle instantiating native object instances that are attached to a Dart
 /// instance or handle method calls on the associated native class or an instance of that class.
-class BaseObjectProxyAPIDelegate: PigeonApiDelegateBaseObject {
-  func pigeonDefaultConstructor(pigeonApi: PigeonApiBaseObject) throws -> BaseObject {
-    return BaseObject(api: pigeonApi)
+class NSObjectProxyAPIDelegate: PigeonApiDelegateNSObject {
+  func pigeonDefaultConstructor(pigeonApi: PigeonApiNSObject) throws -> NSObject {
+    return NSObjectImpl(api: pigeonApi)
   }
 
   func addObserver(
-    pigeonApi: PigeonApiBaseObject, pigeonInstance: BaseObject, observer: BaseObject,
+    pigeonApi: PigeonApiNSObject, pigeonInstance: NSObject, observer: NSObject,
     keyPath: String,
     options: KeyValueObservingOptions
   ) throws {
@@ -70,7 +70,7 @@ class BaseObjectProxyAPIDelegate: PigeonApiDelegateBaseObject {
   }
 
   func removeObserver(
-    pigeonApi: PigeonApiBaseObject, pigeonInstance: BaseObject, observer: BaseObject,
+    pigeonApi: PigeonApiNSObject, pigeonInstance: NSObject, observer: NSObject,
     keyPath: String
   ) throws {
     pigeonInstance.removeObserver(observer, forKeyPath: keyPath)

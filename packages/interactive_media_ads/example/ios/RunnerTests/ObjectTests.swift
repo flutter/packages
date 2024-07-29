@@ -7,12 +7,12 @@ import XCTest
 
 @testable import interactive_media_ads
 
-final class ObjectsTests: XCTestCase {
+final class ObjectTests: XCTestCase {
   func testAddObserver() {
     let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiBaseObject(registrar)
+    let api = registrar.apiDelegate.pigeonApiNSObject(registrar)
 
-    let instance = TestObject(api: api)
+    let instance = TestObject()
 
     try? api.pigeonDelegate.addObserver(
       pigeonApi: api, pigeonInstance: instance, observer: instance, keyPath: "keyPath",
@@ -27,9 +27,9 @@ final class ObjectsTests: XCTestCase {
 
   func testRemoveObserver() {
     let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiBaseObject(registrar)
+    let api = registrar.apiDelegate.pigeonApiNSObject(registrar)
 
-    let instance = TestObject(api: api)
+    let instance = TestObject()
 
     try? api.pigeonDelegate.removeObserver(
       pigeonApi: api, pigeonInstance: instance, observer: instance, keyPath: "keyPath")
@@ -39,7 +39,7 @@ final class ObjectsTests: XCTestCase {
 
   func testObserveValue() {
     let api = TestObjectsApi()
-    let instance = BaseObject(api: api)
+    let instance = NSObjectImpl(api: api)
 
     instance.observeValue(
       forKeyPath: "keyPath", of: instance, change: [NSKeyValueChangeKey.newKey: "hello"],
@@ -53,19 +53,19 @@ final class ObjectsTests: XCTestCase {
   }
 }
 
-class TestObjectsApi: PigeonApiProtocolBaseObject {
+class TestObjectsApi: PigeonApiProtocolNSObject {
   var observeValueArgs: [Any?]? = nil
 
   func observeValue(
-    pigeonInstance pigeonInstanceArg: BaseObject, keyPath keyPathArg: String?,
-    object objectArg: BaseObject?, changeKeys changeKeysArg: [KeyValueChangeKey: Any]?,
+    pigeonInstance pigeonInstanceArg: NSObject, keyPath keyPathArg: String?,
+    object objectArg: NSObject?, changeKeys changeKeysArg: [KeyValueChangeKey: Any]?,
     completion: @escaping (Result<Void, PigeonError>) -> Void
   ) {
     observeValueArgs = [keyPathArg, objectArg, changeKeysArg]
   }
 }
 
-class TestObject: BaseObject {
+class TestObject: NSObject {
   var addObserverArgs: [Any?]? = nil
   var removeObserverArgs: [AnyHashable?]? = nil
 

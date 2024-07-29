@@ -45,7 +45,7 @@ base class IOSAdDisplayContainer extends PlatformAdDisplayContainer {
   IOSAdDisplayContainer(super.params) : super.implementation() {
     _controller = _iosParams._imaProxy.newUIViewController();
 
-    final BaseObject windowListener =
+    final NSObject windowListener =
         _createWindowListener(WeakReference<IOSAdDisplayContainer>(this));
     _controller.view.addObserver(
       windowListener,
@@ -57,14 +57,14 @@ base class IOSAdDisplayContainer extends PlatformAdDisplayContainer {
   // This value is created in a static method because the callback methods for
   // any wrapped classes must not reference the encapsulating object. This is to
   // prevent a circular reference that prevents garbage collection.
-  static BaseObject _createWindowListener(
+  static NSObject _createWindowListener(
     WeakReference<IOSAdDisplayContainer> interfaceContainer,
   ) {
     return interfaceContainer.target!._iosParams._imaProxy.newNSObject(
       observeValue: (
-        BaseObject instance,
+        NSObject instance,
         String? keyPath,
-        BaseObject? object,
+        NSObject? object,
         Map<KeyValueChangeKey?, Object?>? changeKeys,
       ) {
         if (changeKeys == null) {
