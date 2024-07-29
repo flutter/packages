@@ -95,7 +95,8 @@ class PlatformFileChooserOptions {
   static PlatformFileChooserOptions decode(Object result) {
     result as List<Object?>;
     return PlatformFileChooserOptions(
-      allowedFileTypes: (result[0] as List<Object?>?)?.cast<PlatformTypeGroup?>(),
+      allowedFileTypes:
+          (result[0] as List<Object?>?)?.cast<PlatformTypeGroup?>(),
       currentFolderPath: result[1] as String?,
       currentName: result[2] as String?,
       acceptButtonLabel: result[3] as String?,
@@ -104,7 +105,6 @@ class PlatformFileChooserOptions {
   }
 }
 
-
 class _PigeonCodec extends StandardMessageCodec {
   const _PigeonCodec();
   @override
@@ -112,10 +112,10 @@ class _PigeonCodec extends StandardMessageCodec {
     if (value is PlatformTypeGroup) {
       buffer.putUint8(129);
       writeValue(buffer, value.encode());
-    } else     if (value is PlatformFileChooserOptions) {
+    } else if (value is PlatformFileChooserOptions) {
       buffer.putUint8(130);
       writeValue(buffer, value.encode());
-    } else     if (value is PlatformFileChooserActionType) {
+    } else if (value is PlatformFileChooserActionType) {
       buffer.putUint8(131);
       writeValue(buffer, value.index);
     } else {
@@ -126,13 +126,15 @@ class _PigeonCodec extends StandardMessageCodec {
   @override
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
-      case 129: 
+      case 129:
         return PlatformTypeGroup.decode(readValue(buffer)!);
-      case 130: 
+      case 130:
         return PlatformFileChooserOptions.decode(readValue(buffer)!);
-      case 131: 
+      case 131:
         final int? value = readValue(buffer) as int?;
-        return value == null ? null : PlatformFileChooserActionType.values[value];
+        return value == null
+            ? null
+            : PlatformFileChooserActionType.values[value];
       default:
         return super.readValueOfType(type, buffer);
     }
@@ -143,9 +145,11 @@ class FileSelectorApi {
   /// Constructor for [FileSelectorApi].  The [binaryMessenger] named argument is
   /// available for dependency injection.  If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
-  FileSelectorApi({BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
+  FileSelectorApi(
+      {BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
       : __pigeon_binaryMessenger = binaryMessenger,
-        __pigeon_messageChannelSuffix = messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
+        __pigeon_messageChannelSuffix =
+            messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
   final BinaryMessenger? __pigeon_binaryMessenger;
 
   static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
@@ -156,9 +160,12 @@ class FileSelectorApi {
   /// list of selected paths.
   ///
   /// An empty list corresponds to a cancelled selection.
-  Future<List<String?>> showFileChooser(PlatformFileChooserActionType type, PlatformFileChooserOptions options) async {
-    final String __pigeon_channelName = 'dev.flutter.pigeon.file_selector_linux.FileSelectorApi.showFileChooser$__pigeon_messageChannelSuffix';
-    final BasicMessageChannel<Object?> __pigeon_channel = BasicMessageChannel<Object?>(
+  Future<List<String?>> showFileChooser(PlatformFileChooserActionType type,
+      PlatformFileChooserOptions options) async {
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.file_selector_linux.FileSelectorApi.showFileChooser$__pigeon_messageChannelSuffix';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
       __pigeon_channelName,
       pigeonChannelCodec,
       binaryMessenger: __pigeon_binaryMessenger,
