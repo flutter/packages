@@ -1,3 +1,7 @@
+## 2.6.0
+
+* Adds RTSP support.
+
 ## 2.5.4
 
 * Updates Media3-ExoPlayer to 1.4.0.
