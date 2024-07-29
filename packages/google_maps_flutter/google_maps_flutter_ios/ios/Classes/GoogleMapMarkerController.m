@@ -231,7 +231,7 @@
       self.markerIdentifierToController[identifier] = controller;
     }
 
-    dispatch_async(dispatch_get_main_queue(), ^{
+    dispatch_sync(dispatch_get_main_queue(), ^{
       for (NSDictionary<NSString *, id> *marker in markersToAdd) {
         NSString *identifier = marker[@"markerId"];
 
@@ -267,7 +267,7 @@
       self.markerIdentifierToController[identifier] = controller;
     }
 
-    dispatch_async(dispatch_get_main_queue(), ^{
+    dispatch_sync(dispatch_get_main_queue(), ^{
       for (FGMPlatformMarker *marker in markersToAdd) {
         NSString *identifier = marker.json[@"markerId"];
         
@@ -299,7 +299,7 @@
       [controller interpretMarkerOptions:marker.json iconCache:iconCache];
     }
 
-    dispatch_async(dispatch_get_main_queue(), ^{
+    dispatch_sync(dispatch_get_main_queue(), ^{
       for (FGMPlatformMarker *marker in markersToChange) {
         NSString *identifier = marker.json[@"markerId"];
 
