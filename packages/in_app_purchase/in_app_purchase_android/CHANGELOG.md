@@ -1,3 +1,7 @@
+## 0.3.6+4
+
+* Bumps androidx.annotation:annotation from 1.8.0 to 1.8.1.
+
 ## 0.3.6+3
 
 * Updates lint checks to ignore NewerVersionAvailable.
