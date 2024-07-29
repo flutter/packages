@@ -5,11 +5,14 @@
 #include "capture_controller.h"
 
 #include <comdef.h>
+#include <flutter/event_stream_handler_functions.h>
+#include <flutter/standard_method_codec.h>
 #include <wincodec.h>
 #include <wrl/client.h>
 
 #include <cassert>
 #include <chrono>
+#include <iostream>
 
 #include "com_heap_ptr.h"
 #include "photo_handler.h"
@@ -35,7 +38,7 @@ CaptureControllerImpl::CaptureControllerImpl(
     CaptureControllerListener* listener)
     : capture_controller_listener_(listener),
       media_settings_(
-          PlatformMediaSettings(PlatformResolutionPreset::max, true)),
+          PlatformMediaSettings(PlatformResolutionPreset::kMax, true)),
       CaptureController(){};
 
 CaptureControllerImpl::~CaptureControllerImpl() {
@@ -381,17 +384,17 @@ void CaptureControllerImpl::TakePicture(const std::string& file_path) {
 
 uint32_t CaptureControllerImpl::GetMaxPreviewHeight() const {
   switch (media_settings_.resolution_preset()) {
-    case PlatformResolutionPreset::low:
+    case PlatformResolutionPreset::kLow:
       return 240;
-    case PlatformResolutionPreset::medium:
+    case PlatformResolutionPreset::kMedium:
       return 480;
-    case PlatformResolutionPreset::high:
+    case PlatformResolutionPreset::kHigh:
       return 720;
-    case PlatformResolutionPreset::veryHigh:
+    case PlatformResolutionPreset::kVeryHigh:
       return 1080;
-    case PlatformResolutionPreset::ultraHigh:
+    case PlatformResolutionPreset::kUltraHigh:
       return 2160;
-    case PlatformResolutionPreset::max:
+    case PlatformResolutionPreset::kMax:
     default:
       // no limit.
       return 0xffffffff;
@@ -549,6 +552,16 @@ void CaptureControllerImpl::StopRecord() {
     return OnRecordStopped(GetCameraResult(hr),
                            "Failed to stop video recording");
   }
+}
+void CaptureControllerImpl::StartImageStream(
+    std::unique_ptr<flutter::EventSink<flutter::EncodableValue>> sink) {
+  assert(capture_controller_listener_);
+  image_stream_sink_ = std::move(sink);
+}
+
+void CaptureControllerImpl::StopImageStream() {
+  assert(capture_controller_listener_);
+  image_stream_sink_.reset();
 }
 
 // Starts capturing preview frames using preview handler
@@ -842,6 +855,32 @@ bool CaptureControllerImpl::UpdateBuffer(uint8_t* buffer,
                                          uint32_t data_length) {
   if (!texture_handler_) {
     return false;
+  }
+  if (image_stream_sink_) {
+    // Convert the buffer data to a std::vector<uint8_t>.
+    std::vector<uint8_t> buffer_data(buffer, buffer + data_length);
+
+    // Ensure preview_frame_height_ and preview_frame_width_ are of supported
+    // types.
+    int preview_frame_height = static_cast<int>(preview_frame_height_);
+    int preview_frame_width = static_cast<int>(preview_frame_width_);
+
+    // Create a map to hold the buffer data and data length.
+    flutter::EncodableMap data_map;
+    data_map[flutter::EncodableValue("data")] =
+        flutter::EncodableValue(buffer_data);
+    data_map[flutter::EncodableValue("height")] =
+        flutter::EncodableValue(preview_frame_height);
+    data_map[flutter::EncodableValue("width")] =
+        flutter::EncodableValue(preview_frame_width);
+    data_map[flutter::EncodableValue("length")] =
+        flutter::EncodableValue(static_cast<int>(data_length));
+
+    // Wrap the map in a flutter::EncodableValue.
+    flutter::EncodableValue encoded_value(data_map);
+
+    // Send the encoded value through the image_stream_sink_.
+    image_stream_sink_->Success(encoded_value);
   }
   return texture_handler_->UpdateBuffer(buffer, data_length);
 }

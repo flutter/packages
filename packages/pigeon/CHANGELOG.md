@@ -1,6 +1,10 @@
-## 21.1.0
+## 21.2.0
 
 * [kotlin] Adds implementation for `@ProxyApi`.
+
+## 21.1.0
+
+* Adds GObject (Linux) support.
 
 ## 21.0.0
 

@@ -8,7 +8,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.3.0'
+        classpath 'com.android.tools.build:gradle:8.5.1'
     }
 }
 
@@ -38,7 +38,7 @@ android {
     }
 
     dependencies {
-        implementation 'androidx.annotation:annotation:1.8.0'
+        implementation 'androidx.annotation:annotation:1.8.1'
         testImplementation 'junit:junit:4.13.2'
         testImplementation 'org.mockito:mockito-inline:5.1.0'
         testImplementation 'androidx.test:core:1.3.0'
@@ -52,7 +52,7 @@ android {
     lintOptions {
         checkAllWarnings true
         warningsAsErrors true
-        disable 'AndroidGradlePluginVersion', 'InvalidPackage', 'GradleDependency'
+        disable 'AndroidGradlePluginVersion', 'InvalidPackage', 'GradleDependency', 'NewerVersionAvailable'
     }
 
     testOptions {
