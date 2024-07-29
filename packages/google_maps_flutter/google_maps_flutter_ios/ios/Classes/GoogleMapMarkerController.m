@@ -5,7 +5,6 @@
 #import "GoogleMapMarkerController.h"
 #import "FLTGoogleMapJSONConversions.h"
 #import "GoogleMapMarkerIconCache.h"
-#import "Timer.h"
 
 @interface FLTGoogleMapMarkerController ()
 
@@ -213,7 +212,6 @@
 }
 
 - (void)addJSONMarkers:(NSArray<NSDictionary<NSString *, id> *> *)markersToAdd {
-  NSLog(@"addJSONMarkers");
   __block CGFloat screenScale = [self getScreenScale];
 
   dispatch_async(self.markersDispatchQueue, ^{
@@ -251,60 +249,25 @@
   __block CGFloat screenScale = [self getScreenScale];
 
   dispatch_async(self.markersDispatchQueue, ^{
-    Timer* timer = [[Timer alloc] init];
-    [timer startTimer];
-    
     GoogleMapMarkerIconCache* iconCache =
           [[GoogleMapMarkerIconCache alloc] initWithRegistrar:self.registrar
                                                   screenScale:screenScale];
-    double cache = [timer timeElapsedInMilliseconds];
-    NSLog(@"addCache: %f", cache);
-    
-    double last = 0;
-    double next = 0;
-    double add0 = 0;
-    double add1 = 0;
-    double add2 = 0;
-    double add3 = 0;
+
     for (FGMPlatformMarker *marker in markersToAdd) {
-      last = [timer timeElapsedInMilliseconds];
-      
       CLLocationCoordinate2D position = [FLTMarkersController getPosition:marker.json];
       NSString *identifier = marker.json[@"markerId"];
-      next = [timer timeElapsedInMilliseconds];
-      add0 += next - last;
-      last = next;
-    
+
       FLTGoogleMapMarkerController *controller =
           [[FLTGoogleMapMarkerController alloc] initWithPosition:position
                                                             identifier:identifier
                                                                mapView:self.mapView];
-      next = [timer timeElapsedInMilliseconds];
-      add1 += next - last;
-      last = next;
 
       [controller interpretMarkerOptions:marker.json iconCache:iconCache];
-      next = [timer timeElapsedInMilliseconds];
-      add2 += next - last;
-      last = next;
 
       self.markerIdentifierToController[identifier] = controller;
-      next = [timer timeElapsedInMilliseconds];
-      add3 += next - last;
-      last = next;
     }
-    
-    double total = [timer timeElapsedInMilliseconds];
-    NSLog(@"add0: %f", add0);
-    NSLog(@"add1: %f", add1);
-    NSLog(@"add2: %f", add2);
-    NSLog(@"add3: %f", add3);
-    NSLog(@"addTotal: %f", total);
 
     dispatch_async(dispatch_get_main_queue(), ^{
-      Timer* timer = [[Timer alloc] init];
-      [timer startTimer];
-      
       for (FGMPlatformMarker *marker in markersToAdd) {
         NSString *identifier = marker.json[@"markerId"];
         
@@ -315,75 +278,14 @@
         }
         [controller setVisibleOption:marker.json];
       }
-      /*
-      NSUInteger batchSize = 200;
-      NSUInteger start = 0;
-      NSUInteger total = [markersToAdd count];
-      while (start < total) {
-        NSUInteger count = batchSize;
-        if (start + count >= total) {
-          count = total - start;
-        }
-        
-        Timer* timer = [[Timer alloc] init];
-        [timer startTimer];
-        
-        NSArray<FGMPlatformMarker *>* batch = [markersToAdd subarrayWithRange:NSMakeRange(start, count)];
-        
-        double slice = [timer timeElapsedInMilliseconds];
-        NSLog(@"addSlice: %f", slice);
-        
-        double last = 0;
-        double next = 0;
-        double add0 = 0;
-        double add1 = 0;
-        NSUInteger numIter = 0;
-        for (FGMPlatformMarker *marker in batch) {
-          last = [timer timeElapsedInMilliseconds];
-          NSString *identifier = marker.json[@"markerId"];
-          
-          FLTGoogleMapMarkerController *controller = self.markerIdentifierToController[identifier];
-          
-          next = [timer timeElapsedInMilliseconds];
-          add0 += next - last;
-          last = next;
-          
-          if (!controller) {
-            return;
-          }
-          [controller setVisibleOption:marker.json];
-          
-          next = [timer timeElapsedInMilliseconds];
-          add1 += next - last;
-          last = next;
-          
-          numIter += 1;
-        }
-        
-        double total = [timer timeElapsedInMilliseconds];
-        NSLog(@"batch0: %f", add0);
-        NSLog(@"batch1: %f", add1);
-        NSLog(@"batchTotal: %f", total);
-        NSLog(@"batchCount: %lu", [batch count]);
-        NSLog(@"numIter: %lu", numIter);
-        start += count;
-      }
-      */
-      
-      double elapsed = [timer timeElapsedInMilliseconds];
-      NSLog(@"addUI: %f", elapsed);
     });
   });
 }
 
 - (void)changeMarkers:(NSArray<FGMPlatformMarker *> *)markersToChange {
-  NSLog(@"changeMarkers");
   __block CGFloat screenScale = [self getScreenScale];
 
   dispatch_async(self.markersDispatchQueue, ^{
-    Timer* timer = [[Timer alloc] init];
-    [timer startTimer];
-    
     GoogleMapMarkerIconCache* iconCache =
           [[GoogleMapMarkerIconCache alloc] initWithRegistrar:self.registrar
                                                   screenScale:screenScale];
@@ -396,14 +298,8 @@
       }
       [controller interpretMarkerOptions:marker.json iconCache:iconCache];
     }
-    
-    double elapsed = [timer timeElapsedInMilliseconds];
-    NSLog(@"changeLogic: %f", elapsed);
 
     dispatch_async(dispatch_get_main_queue(), ^{
-      Timer* timer = [[Timer alloc] init];
-      [timer startTimer];
-      
       for (FGMPlatformMarker *marker in markersToChange) {
         NSString *identifier = marker.json[@"markerId"];
 
@@ -413,9 +309,6 @@
         }
         [controller setVisibleOption:marker.json];
       }
-      
-      double elapsed = [timer timeElapsedInMilliseconds];
-      NSLog(@"changeUI: %f", elapsed);
     });
   });
 }
@@ -423,8 +316,6 @@
 - (void)removeMarkersWithIdentifiers:(NSArray<NSString *> *)identifiers {
   dispatch_async(self.markersDispatchQueue, ^{
     dispatch_sync(dispatch_get_main_queue(), ^{
-      Timer* timer = [[Timer alloc] init];
-      [timer startTimer];
       for (NSString *identifier in identifiers) {
         FLTGoogleMapMarkerController *controller = self.markerIdentifierToController[identifier];
         if (!controller) {
@@ -433,8 +324,6 @@
         [controller removeMarker];
         [self.markerIdentifierToController removeObjectForKey:identifier];
       }
-      double elapsed = [timer timeElapsedInMilliseconds];
-      NSLog(@"removeUI: %f", elapsed);
     });
   });
 }
