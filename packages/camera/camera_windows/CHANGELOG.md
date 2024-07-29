@@ -1,3 +1,7 @@
+## 0.2.5
+
+* Adds support for streaming frames.
+
 ## 0.2.4+1
 
 * Updates to pigeon 21.

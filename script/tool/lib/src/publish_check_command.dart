@@ -6,6 +6,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io' as io;
 
+import 'package:file/file.dart';
 import 'package:http/http.dart' as http;
 import 'package:pub_semver/pub_semver.dart';
 
@@ -81,6 +82,9 @@ class PublishCheckCommand extends PackageLoopingCommand {
       _printImportantStatusMessage(
           'No AUTHORS file found. Packages must include an AUTHORS file.',
           isError: true);
+      result = _PublishCheckResult.error;
+    }
+    if (!await _validatePrePublishHook(package)) {
       result = _PublishCheckResult.error;
     }
 
@@ -266,6 +270,33 @@ HTTP response: ${pubVersionFinderResponse.httpResponse.body}
       return true;
     }
     return package.authorsFile.existsSync();
+  }
+
+  Future<bool> _validatePrePublishHook(RepositoryPackage package) async {
+    final File script = package.prePublishScript;
+    if (!script.existsSync()) {
+      // If there's no custom step, then it can't block publishing.
+      return true;
+    }
+    final String relativeScriptPath =
+        getRelativePosixPath(script, from: package.directory);
+    print('Running pre-publish hook $relativeScriptPath...');
+
+    // Ensure that dependencies are available.
+    if (!await runPubGet(package, processRunner, platform)) {
+      _printImportantStatusMessage('Failed to get depenedencies',
+          isError: true);
+      return false;
+    }
+
+    final int exitCode = await processRunner.runAndStream(
+        'dart', <String>['run', relativeScriptPath],
+        workingDir: package.directory);
+    if (exitCode != 0) {
+      _printImportantStatusMessage('Pre-publish script failed.', isError: true);
+      return false;
+    }
+    return true;
   }
 
   void _printImportantStatusMessage(String message, {required bool isError}) {
