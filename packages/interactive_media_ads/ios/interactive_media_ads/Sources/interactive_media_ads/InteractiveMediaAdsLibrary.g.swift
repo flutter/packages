@@ -577,6 +577,9 @@ private class InteractiveMediaAdsLibraryPigeonProxyApiCodecReaderWriter: Flutter
     override func writeValue(_ value: Any) {
       if value is [Any] || value is Bool || value is Data || value is [AnyHashable: Any]
         || value is Double || value is FlutterStandardTypedData || value is Int64 || value is String
+        || value is AdErrorType || value is AdErrorCode || value is AdEventType
+        || value is KeyValueObservingOptions || value is KeyValueChange
+        || value is KeyValueChangeKey
       {
         super.writeValue(value)
         return
