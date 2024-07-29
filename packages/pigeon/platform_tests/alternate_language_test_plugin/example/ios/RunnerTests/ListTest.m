@@ -22,7 +22,7 @@
   inside.testList = @[ @1, @2, @3 ];
   top.testList = @[ inside ];
   EchoBinaryMessenger *binaryMessenger =
-      [[EchoBinaryMessenger alloc] initWithCodec:FLTFlutterSmallApiGetCodec()];
+      [[EchoBinaryMessenger alloc] initWithCodec:FLTGetCoreTestsCodec()];
   FLTFlutterSmallApi *api = [[FLTFlutterSmallApi alloc] initWithBinaryMessenger:binaryMessenger];
   XCTestExpectation *expectation = [self expectationWithDescription:@"callback"];
   [api echoWrappedList:top

@@ -86,6 +86,78 @@ void main() {
     await client.start();
     await client.lookup(ResourceRecordQuery.serverPointer('_')).toList();
   });
+
+  group('Bind a single socket to ANY IPv4 and more than one when IPv6', () {
+    final List<Map<String, Object>> testCases = <Map<String, Object>>[
+      <String, Object>{
+        'name': 'IPv4',
+        'datagramSocketType': InternetAddress.anyIPv4,
+        'interfacePrefix': '192.168.2.'
+      },
+      <String, Object>{
+        'name': 'IPv6',
+        'datagramSocketType': InternetAddress.anyIPv6,
+        'interfacePrefix': '2001:0db8:85a3:0000:0000:8a2e:7335:030'
+      }
+    ];
+
+    for (final Map<String, Object> testCase in testCases) {
+      test('Bind a single socket to ANY ${testCase["name"]}', () async {
+        final FakeRawDatagramSocket datagramSocket = FakeRawDatagramSocket();
+
+        datagramSocket.address =
+            testCase['datagramSocketType']! as InternetAddress;
+
+        final List<dynamic> selectedInterfacesForSendingPackets = <dynamic>[];
+        final MDnsClient client = MDnsClient(rawDatagramSocketFactory:
+            (dynamic host, int port,
+                {bool reuseAddress = true,
+                bool reusePort = true,
+                int ttl = 1}) async {
+          selectedInterfacesForSendingPackets.add(host);
+          return datagramSocket;
+        });
+
+        const int numberOfFakeInterfaces = 10;
+        Future<Iterable<NetworkInterface>> fakeNetworkInterfacesFactory(
+            InternetAddressType type) async {
+          final List<NetworkInterface> fakeInterfaces = <NetworkInterface>[];
+
+          // Generate "fake" interfaces
+          for (int i = 0; i < numberOfFakeInterfaces; i++) {
+            fakeInterfaces.add(FakeNetworkInterface(
+              'inetfake$i',
+              <InternetAddress>[
+                InternetAddress("${testCase['interfacePrefix']! as String}$i")
+              ],
+              0,
+            ));
+          }
+
+          // ignore: always_specify_types
+          return Future.value(fakeInterfaces);
+        }
+
+        final InternetAddress listenAddress =
+            testCase['datagramSocketType']! as InternetAddress;
+
+        await client.start(
+            listenAddress: listenAddress,
+            mDnsPort: 1234,
+            interfacesFactory: fakeNetworkInterfacesFactory);
+        client.stop();
+
+        if (testCase['datagramSocketType'] == InternetAddress.anyIPv4) {
+          expect(selectedInterfacesForSendingPackets.length, 1);
+        } else {
+          // + 1 because of unspecified address (::)
+          expect(selectedInterfacesForSendingPackets.length,
+              numberOfFakeInterfaces + 1);
+        }
+        expect(selectedInterfacesForSendingPackets[0], listenAddress.address);
+      });
+    }
+  });
 }
 
 class FakeRawDatagramSocket extends Fake implements RawDatagramSocket {
@@ -113,4 +185,30 @@ class FakeRawDatagramSocket extends Fake implements RawDatagramSocket {
   int send(List<int> buffer, InternetAddress address, int port) {
     return buffer.length;
   }
+
+  @override
+  void joinMulticast(InternetAddress group, [NetworkInterface? interface]) {
+    // nothing to do here
+  }
+  @override
+  void setRawOption(RawSocketOption option) {
+    // nothing to do here
+  }
+}
+
+class FakeNetworkInterface implements NetworkInterface {
+  FakeNetworkInterface(this._name, this._addresses, this._index);
+
+  final String _name;
+  final List<InternetAddress> _addresses;
+  final int _index;
+
+  @override
+  List<InternetAddress> get addresses => _addresses;
+
+  @override
+  String get name => _name;
+
+  @override
+  int get index => _index;
 }

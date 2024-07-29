@@ -1,5 +1,5 @@
 # The list of external dependencies that are allowed as pinned dependencies.
-# See https://github.com/flutter/flutter/wiki/Contributing-to-Plugins-and-Packages#Dependencies
+# See https://github.com/flutter/flutter/blob/master/docs/ecosystem/contributing/README.md#Dependencies
 #
 # All entries here should have an explanation for why they are here.
 

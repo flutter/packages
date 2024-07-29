@@ -13,7 +13,7 @@ This Flutter plugin provides means to prevent gestures from being swallowed by P
   s.license          = { :type => 'BSD', :file => '../LICENSE' }
   s.author           = { 'Flutter Dev Team' => 'flutter-dev@googlegroups.com' }
   s.source           = { :http => 'https://github.com/flutter/packages/tree/main/packages/pointer_interceptor/pointer_interceptor_ios' }
-  s.source_files = 'Classes/**/*'
+  s.source_files = 'pointer_interceptor_ios/Sources/pointer_interceptor_ios/**/*.swift'
   s.dependency 'Flutter'
   s.platform = :ios, '12.0'
   # Flutter.framework does not contain a i386 slice.
@@ -23,5 +23,5 @@ This Flutter plugin provides means to prevent gestures from being swallowed by P
     'LIBRARY_SEARCH_PATHS' => '$(TOOLCHAIN_DIR)/usr/lib/swift/$(PLATFORM_NAME)/ $(SDKROOT)/usr/lib/swift',
     'LD_RUNPATH_SEARCH_PATHS' => '/usr/lib/swift',
   }
-  s.resource_bundles = {'pointer_interceptor_ios_privacy' => ['Resources/PrivacyInfo.xcprivacy']}
+  s.resource_bundles = {'pointer_interceptor_ios_privacy' => ['pointer_interceptor_ios/Sources/pointer_interceptor_ios/PrivacyInfo.xcprivacy']}
 end

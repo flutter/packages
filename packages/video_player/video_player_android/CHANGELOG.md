@@ -1,6 +1,31 @@
-## NEXT
+## 2.5.3
 
-* Updates minimum supported SDK version to Flutter 3.16/Dart 3.2.
+* Updates lint checks to ignore NewerVersionAvailable.
+
+## 2.5.2
+
+* Updates Android Gradle plugin to 8.5.0.
+
+## 2.5.1
+
+* Removes additional references to the v1 Android embedding.
+
+## 2.5.0
+
+* Migrates ExoPlayer to Media3-ExoPlayer 1.3.1.
+
+## 2.4.17
+
+* Revert Impeller support.
+
+## 2.4.16
+
+* [Supports Impeller](https://docs.flutter.dev/release/breaking-changes/android-surface-plugins).
+
+## 2.4.15
+
+* Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+* Removes support for apps using the v1 Android embedding.
 
 ## 2.4.14
 

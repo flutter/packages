@@ -1,3 +1,19 @@
+## 14.2.1
+
+- Makes GoRouterState lookup more robust.
+
+## 14.2.0
+
+- Added proper `redirect` handling for `ShellRoute.$route` and `StatefulShellRoute.$route` for proper redirection handling in case of code generation.
+
+## 14.1.4
+
+- Fixes a URL in `navigation.md`.
+
+## 14.1.3
+
+- Improves the logging of routes when `debugLogDiagnostics` is enabled or `debugKnownRoutes() is called. Explains the position of shell routes in the route tree. Prints the widget name of the routes it is building.
+
 ## 14.1.2
 
 - Fixes issue that path parameters are not set when using the `goBranch`.

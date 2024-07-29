@@ -22,8 +22,7 @@ class FileSelectorIOS extends FileSelectorPlatform {
     String? confirmButtonText,
   }) async {
     final List<String> path = (await _hostApi.openFile(FileSelectorConfig(
-            utis: _allowedUtiListFromTypeGroups(acceptedTypeGroups),
-            allowMultiSelection: false)))
+            utis: _allowedUtiListFromTypeGroups(acceptedTypeGroups))))
         .cast<String>();
     return path.isEmpty ? null : XFile(path.first);
   }

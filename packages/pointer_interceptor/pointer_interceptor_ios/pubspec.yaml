@@ -2,7 +2,7 @@ name: pointer_interceptor_ios
 description: iOS implementation of the pointer_interceptor plugin.
 repository: https://github.com/flutter/packages/tree/main/packages/pointer_interceptor/pointer_interceptor_ios
 issue_tracker: https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+label%3Apointer_interceptor
-version: 0.10.0+2
+version: 0.10.1
 
 environment:
   sdk: ^3.2.3
