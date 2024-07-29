@@ -32,10 +32,8 @@
 		F27694132C49BF7B00277144 /* FIAPPaymentQueueDeleteTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F27694122C49BF7B00277144 /* FIAPPaymentQueueDeleteTests.swift */; };
 		F27694192C49DBE800277144 /* FIATransactionCacheTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F27694182C49DBE800277144 /* FIATransactionCacheTests.swift */; };
 		F2C3A7412BD9D33D000D35F2 /* Stubs.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2C3A7402BD9D33D000D35F2 /* Stubs.swift */; };
-		F2D527242C506A0D00C137C7 /* ObjectTranslator.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2D527232C506A0D00C137C7 /* ObjectTranslator.swift */; };
 		F79BDC182905FC1800E3999D /* PaymentQueueTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F79BDC172905FC1800E3999D /* PaymentQueueTests.m */; };
 		F79BDC1C2905FC3200E3999D /* Stubs.m in Sources */ = {isa = PBXBuildFile; fileRef = F79BDC1B2905FC3200E3999D /* Stubs.m */; };
-		F79BDC1E2905FC3900E3999D /* TranslatorTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F79BDC1D2905FC3900E3999D /* TranslatorTests.m */; };
 		F8270DE1AEF80A8CF2C45688 /* Pods_RunnerTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 045C0F7D19875EDA98DF0B7F /* Pods_RunnerTests.framework */; };
 /* End PBXBuildFile section */
 
@@ -98,12 +96,10 @@
 		F27694182C49DBE800277144 /* FIATransactionCacheTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FIATransactionCacheTests.swift; path = ../../shared/RunnerTests/FIATransactionCacheTests.swift; sourceTree = "<group>"; };
 		F2C3A73F2BD9D33D000D35F2 /* RunnerTests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "RunnerTests-Bridging-Header.h"; sourceTree = "<group>"; };
 		F2C3A7402BD9D33D000D35F2 /* Stubs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Stubs.swift; sourceTree = "<group>"; };
-		F2D527232C506A0D00C137C7 /* ObjectTranslator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObjectTranslator.swift; sourceTree = "<group>"; };
 		F700DD0228E652A10004836B /* RunnerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RunnerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		F79BDC152905FC0500E3999D /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = ../../shared/RunnerTests/Info.plist; sourceTree = "<group>"; };
 		F79BDC172905FC1800E3999D /* PaymentQueueTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PaymentQueueTests.m; path = ../../shared/RunnerTests/PaymentQueueTests.m; sourceTree = "<group>"; };
 		F79BDC1B2905FC3200E3999D /* Stubs.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Stubs.m; path = ../../shared/RunnerTests/Stubs.m; sourceTree = "<group>"; };
-		F79BDC1D2905FC3900E3999D /* TranslatorTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TranslatorTests.m; path = ../../shared/RunnerTests/TranslatorTests.m; sourceTree = "<group>"; };
 		F79BDC1F2906023C00E3999D /* Stubs.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Stubs.h; path = ../../shared/RunnerTests/Stubs.h; sourceTree = "<group>"; };
 		F8E47120B1A50B8A1C480FDB /* Pods-Runner.profile.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.profile.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.profile.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -227,10 +223,8 @@
 				F79BDC1F2906023C00E3999D /* Stubs.h */,
 				F79BDC152905FC0500E3999D /* Info.plist */,
 				F79BDC1B2905FC3200E3999D /* Stubs.m */,
-				F79BDC1D2905FC3900E3999D /* TranslatorTests.m */,
 				F2C3A7402BD9D33D000D35F2 /* Stubs.swift */,
 				F2C3A73F2BD9D33D000D35F2 /* RunnerTests-Bridging-Header.h */,
-				F2D527232C506A0D00C137C7 /* ObjectTranslator.swift */,
 			);
 			path = RunnerTests;
 			sourceTree = "<group>";
@@ -466,9 +460,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F2D527242C506A0D00C137C7 /* ObjectTranslator.swift in Sources */,
 				F24C45E42C409D87000C6C72 /* InAppPurchasePluginTests.swift in Sources */,
-				F79BDC1E2905FC3900E3999D /* TranslatorTests.m in Sources */,
 				F79BDC182905FC1800E3999D /* PaymentQueueTests.m in Sources */,
 				F79BDC1C2905FC3200E3999D /* Stubs.m in Sources */,
 				F27694092C4724B200277144 /* ProductRequestHandlerTests.swift in Sources */,
