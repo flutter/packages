@@ -481,10 +481,8 @@ private class ProxyApiTestsPigeonProxyApiCodecReaderWriter: FlutterStandardReade
     }
 
     override func writeValue(_ value: Any) {
-      if value is Void, value is Bool, value is String, value is Int64, value is Double,
-        value is FlutterStandardTypedData, value is FlutterStandardTypedData,
-        value is FlutterStandardTypedData, value is FlutterStandardTypedData,
-        value is FlutterStandardTypedData
+      if value is Array, value is Bool, value is Data, value is Dictionary, value is Double,
+        value is FlutterStandardTypedData, value is Int64, value is String
       {
         super.writeValue(value)
         return

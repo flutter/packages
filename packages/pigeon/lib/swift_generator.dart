@@ -19,20 +19,6 @@ const String _docCommentPrefix = '///';
 const DocumentCommentSpecification _docCommentSpec =
     DocumentCommentSpecification(_docCommentPrefix);
 
-const Map<String, String> _swiftTypeForDartTypeMap = <String, String>{
-  'void': 'Void',
-  'bool': 'Bool',
-  'String': 'String',
-  'int': 'Int64',
-  'double': 'Double',
-  'Uint8List': 'FlutterStandardTypedData',
-  'Int32List': 'FlutterStandardTypedData',
-  'Int64List': 'FlutterStandardTypedData',
-  'Float32List': 'FlutterStandardTypedData',
-  'Float64List': 'FlutterStandardTypedData',
-  'Object': 'Any',
-};
-
 /// Options that control how Swift code will be generated.
 class SwiftOptions {
   /// Creates a [SwiftOptions] object
@@ -847,9 +833,17 @@ class SwiftGenerator extends StructuredGenerator<SwiftOptions> {
               'override func writeValue(_ value: Any) {',
               '}',
               () {
-                final String isBuiltinExpression = _swiftTypeForDartTypeMap
-                    .values
-                    .where((String swiftType) => swiftType != 'Any')
+                const List<String> supportedBuiltinTypes = <String>[
+                  'Array',
+                  'Bool',
+                  'Data',
+                  'Dictionary',
+                  'Double',
+                  'FlutterStandardTypedData',
+                  'Int64',
+                  'String',
+                ];
+                final String isBuiltinExpression = supportedBuiltinTypes
                     .map((String swiftType) => 'value is $swiftType')
                     .join(', ');
                 indent.writeScoped('if $isBuiltinExpression {', '}', () {
@@ -2374,8 +2368,22 @@ String _swiftTypeForBuiltinGenericDartType(TypeDeclaration type) {
 }
 
 String? _swiftTypeForBuiltinDartType(TypeDeclaration type) {
-  if (_swiftTypeForDartTypeMap.containsKey(type.baseName)) {
-    return _swiftTypeForDartTypeMap[type.baseName];
+  const Map<String, String> swiftTypeForDartTypeMap = <String, String>{
+    'void': 'Void',
+    'bool': 'Bool',
+    'String': 'String',
+    'int': 'Int64',
+    'double': 'Double',
+    'Uint8List': 'FlutterStandardTypedData',
+    'Int32List': 'FlutterStandardTypedData',
+    'Int64List': 'FlutterStandardTypedData',
+    'Float32List': 'FlutterStandardTypedData',
+    'Float64List': 'FlutterStandardTypedData',
+    'Object': 'Any',
+  };
+
+  if (swiftTypeForDartTypeMap.containsKey(type.baseName)) {
+    return swiftTypeForDartTypeMap[type.baseName];
   } else if (type.baseName == 'List' || type.baseName == 'Map') {
     return _swiftTypeForBuiltinGenericDartType(type);
   } else {
