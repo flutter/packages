@@ -10,7 +10,7 @@ class ViewControllerImpl: UIViewController {
 
   init(api: PigeonApiProtocolUIViewController) {
     self.api = api
-    super.init()
+    super.init(nibName: nil, bundle: nil)
   }
 
   required init?(coder: NSCoder) {
