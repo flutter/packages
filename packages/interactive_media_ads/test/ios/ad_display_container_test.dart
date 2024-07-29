@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:async';
+
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:interactive_media_ads/src/ios/interactive_media_ads.g.dart';
@@ -38,8 +40,13 @@ void main() {
     });
 
     testWidgets('onContainerAdded is called', (WidgetTester tester) async {
+      late final void Function(UIViewController, bool) viewDidAppearCallback;
       final InteractiveMediaAdsProxy imaProxy = InteractiveMediaAdsProxy(
-        newUIViewController: () {
+        newUIViewController: ({
+          void Function(UIViewController, bool)? viewDidAppear,
+        }) {
+          viewDidAppearCallback = viewDidAppear!;
+
           final PigeonInstanceManager instanceManager = PigeonInstanceManager(
             onWeakReferenceRemoved: (_) {},
           );
@@ -58,9 +65,11 @@ void main() {
             MockIMAAdDisplayContainer(),
       );
 
+      final Completer<void> onContainerAddedCompleter = Completer<void>();
+
       final IOSAdDisplayContainer container = IOSAdDisplayContainer(
         IOSAdDisplayContainerCreationParams(
-          onContainerAdded: expectAsync1((_) {}),
+          onContainerAdded: (_) => onContainerAddedCompleter.complete(),
           imaProxy: imaProxy,
         ),
       );
@@ -73,7 +82,13 @@ void main() {
           find.byType(UiKitView).evaluate().single.widget as UiKitView;
       view.onPlatformViewCreated!.call(0);
 
-      await tester.pumpAndSettle(const Duration(seconds: 1));
+      // Ensure onContainerAdded is not called until viewDidAppear is called.
+      expect(onContainerAddedCompleter.isCompleted, isFalse);
+
+      viewDidAppearCallback(MockUIViewController(), true);
+      await tester.pumpAndSettle();
+
+      expect(onContainerAddedCompleter.isCompleted, isTrue);
     });
   });
 }

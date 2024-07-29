@@ -204,7 +204,9 @@ void main() {
 Future<IOSAdDisplayContainer> _pumpAdDisplayContainer(
     WidgetTester tester) async {
   final InteractiveMediaAdsProxy imaProxy = InteractiveMediaAdsProxy(
-    newUIViewController: () {
+    newUIViewController: ({
+      void Function(ima.UIViewController, bool)? viewDidAppear,
+    }) {
       final ima.PigeonInstanceManager instanceManager =
           ima.PigeonInstanceManager(
         onWeakReferenceRemoved: (_) {},
@@ -214,6 +216,7 @@ Future<IOSAdDisplayContainer> _pumpAdDisplayContainer(
       instanceManager.addDartCreatedInstance(view);
 
       final MockUIViewController mockController = MockUIViewController();
+      viewDidAppear!.call(mockController, true);
       when(mockController.view).thenReturn(view);
       return mockController;
     },
