@@ -187,9 +187,6 @@
 @property(strong, nonatomic) FGMMapsCallbackApi *callbackHandler;
 @property(weak, nonatomic) NSObject<FlutterPluginRegistrar> *registrar;
 @property(weak, nonatomic) GMSMapView *mapView;
-
-@property(strong, nonatomic) dispatch_queue_t markersDispatchQueue;
-@property(assign, nonatomic) dispatch_once_t onceToken;
 @end
 
 @implementation FLTMarkersController
@@ -203,10 +200,6 @@
     _mapView = mapView;
     _markerIdentifierToController = [[NSMutableDictionary alloc] init];
     _registrar = registrar;
-
-    dispatch_once(&_onceToken, ^{
-      _markersDispatchQueue = dispatch_queue_create("com.GoogleMapsFlutterIOS.MarkersDispatchQueue", DISPATCH_QUEUE_SERIAL);
-    });
   }
   return self;
 }
