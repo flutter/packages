@@ -231,7 +231,7 @@
       self.markerIdentifierToController[identifier] = controller;
     }
 
-    dispatch_async(dispatch_get_main_queue(), ^{
+    dispatch_sync(dispatch_get_main_queue(), ^{
       for (NSDictionary<NSString *, id> *marker in markersToAdd) {
         NSString *identifier = marker[@"markerId"];
 
@@ -267,7 +267,7 @@
       self.markerIdentifierToController[identifier] = controller;
     }
 
-    dispatch_async(dispatch_get_main_queue(), ^{
+    dispatch_sync(dispatch_get_main_queue(), ^{
       for (FGMPlatformMarker *marker in markersToAdd) {
         NSString *identifier = marker.json[@"markerId"];
         
@@ -299,7 +299,7 @@
       [controller interpretMarkerOptions:marker.json iconCache:iconCache];
     }
 
-    dispatch_async(dispatch_get_main_queue(), ^{
+    dispatch_sync(dispatch_get_main_queue(), ^{
       for (FGMPlatformMarker *marker in markersToChange) {
         NSString *identifier = marker.json[@"markerId"];
 
@@ -332,21 +332,19 @@
   __block BOOL result = nil;
 
   dispatch_sync(self.markersDispatchQueue, ^{
-    dispatch_sync(dispatch_get_main_queue(), ^{
-      if (!identifier) {
-        result = NO;
-        return;
-      }
-      FLTGoogleMapMarkerController *controller = self.markerIdentifierToController[identifier];
-      if (!controller) {
-        result = NO;
-        return;
-      }
-      [self.callbackHandler didTapMarkerWithIdentifier:identifier
-                                              completion:^(FlutterError *_Nullable _){
-                                              }];
-      result = controller.consumeTapEvents;
-    });
+    if (!identifier) {
+      result = NO;
+      return;
+    }
+    FLTGoogleMapMarkerController *controller = self.markerIdentifierToController[identifier];
+    if (!controller) {
+      result = NO;
+      return;
+    }
+    [self.callbackHandler didTapMarkerWithIdentifier:identifier
+                                            completion:^(FlutterError *_Nullable _){
+                                            }];
+    result = controller.consumeTapEvents;
   });
 
   return result;
@@ -355,67 +353,59 @@
 - (void)didStartDraggingMarkerWithIdentifier:(NSString *)identifier
                                     location:(CLLocationCoordinate2D)location {
   dispatch_sync(self.markersDispatchQueue, ^{
-    dispatch_sync(dispatch_get_main_queue(), ^{
-      if (!identifier) {
-        return;
-      }
-      FLTGoogleMapMarkerController *controller = self.markerIdentifierToController[identifier];
-      if (!controller) {
-        return;
-      }
-      [self.callbackHandler
-          didStartDragForMarkerWithIdentifier:identifier
-                                   atPosition:FGMGetPigeonLatLngForCoordinate(location)
-                                   completion:^(FlutterError *_Nullable _){
-                                   }];
-    });
+    if (!identifier) {
+      return;
+    }
+    FLTGoogleMapMarkerController *controller = self.markerIdentifierToController[identifier];
+    if (!controller) {
+      return;
+    }
+    [self.callbackHandler
+        didStartDragForMarkerWithIdentifier:identifier
+                                 atPosition:FGMGetPigeonLatLngForCoordinate(location)
+                                 completion:^(FlutterError *_Nullable _){
+                                 }];
   });
 }
 
 - (void)didDragMarkerWithIdentifier:(NSString *)identifier
                            location:(CLLocationCoordinate2D)location {
   dispatch_sync(self.markersDispatchQueue, ^{
-    dispatch_sync(dispatch_get_main_queue(), ^{
-      if (!identifier) {
-        return;
-      }
-      FLTGoogleMapMarkerController *controller = self.markerIdentifierToController[identifier];
-      if (!controller) {
-        return;
-      }
-      [self.callbackHandler didDragMarkerWithIdentifier:identifier
-                                             atPosition:FGMGetPigeonLatLngForCoordinate(location)
-                                             completion:^(FlutterError *_Nullable _){
-                                             }];
-    });
+    if (!identifier) {
+      return;
+    }
+    FLTGoogleMapMarkerController *controller = self.markerIdentifierToController[identifier];
+    if (!controller) {
+      return;
+    }
+    [self.callbackHandler didDragMarkerWithIdentifier:identifier
+                                           atPosition:FGMGetPigeonLatLngForCoordinate(location)
+                                           completion:^(FlutterError *_Nullable _){
+                                           }];
   });
 }
 
 - (void)didEndDraggingMarkerWithIdentifier:(NSString *)identifier
                                   location:(CLLocationCoordinate2D)location {
   dispatch_sync(self.markersDispatchQueue, ^{
-    dispatch_sync(dispatch_get_main_queue(), ^{
-      FLTGoogleMapMarkerController *controller = self.markerIdentifierToController[identifier];
-      if (!controller) {
-        return;
-      }
-      [self.callbackHandler didEndDragForMarkerWithIdentifier:identifier
-                                                   atPosition:FGMGetPigeonLatLngForCoordinate(location)
-                                                   completion:^(FlutterError *_Nullable _){
-                                                   }];
-    });
+    FLTGoogleMapMarkerController *controller = self.markerIdentifierToController[identifier];
+    if (!controller) {
+      return;
+    }
+    [self.callbackHandler didEndDragForMarkerWithIdentifier:identifier
+                                                 atPosition:FGMGetPigeonLatLngForCoordinate(location)
+                                                 completion:^(FlutterError *_Nullable _){
+                                                 }];
   });
 }
 
 - (void)didTapInfoWindowOfMarkerWithIdentifier:(NSString *)identifier {
   dispatch_sync(self.markersDispatchQueue, ^{
-    dispatch_sync(dispatch_get_main_queue(), ^{
-      if (identifier && self.markerIdentifierToController[identifier]) {
-        [self.callbackHandler didTapInfoWindowOfMarkerWithIdentifier:identifier
-                                                          completion:^(FlutterError *_Nullable _){
-                                                          }];
-      }
-    });
+    if (identifier && self.markerIdentifierToController[identifier]) {
+      [self.callbackHandler didTapInfoWindowOfMarkerWithIdentifier:identifier
+                                                        completion:^(FlutterError *_Nullable _){
+                                                        }];
+    }
   });
 }
 
@@ -423,16 +413,14 @@
                                      error:
                                          (FlutterError *_Nullable __autoreleasing *_Nonnull)error {
   dispatch_sync(self.markersDispatchQueue, ^{
-    dispatch_sync(dispatch_get_main_queue(), ^{
-      FLTGoogleMapMarkerController *controller = self.markerIdentifierToController[identifier];
-      if (controller) {
-        [controller showInfoWindow];
-      } else {
-        *error = [FlutterError errorWithCode:@"Invalid markerId"
-                                     message:@"showInfoWindow called with invalid markerId"
-                                     details:nil];
-      }
-    });
+    FLTGoogleMapMarkerController *controller = self.markerIdentifierToController[identifier];
+    if (controller) {
+      [controller showInfoWindow];
+    } else {
+      *error = [FlutterError errorWithCode:@"Invalid markerId"
+                                   message:@"showInfoWindow called with invalid markerId"
+                                   details:nil];
+    }
   });
 }
 
@@ -440,16 +428,14 @@
                                      error:
                                          (FlutterError *_Nullable __autoreleasing *_Nonnull)error {
   dispatch_sync(self.markersDispatchQueue, ^{
-    dispatch_sync(dispatch_get_main_queue(), ^{
-      FLTGoogleMapMarkerController *controller = self.markerIdentifierToController[identifier];
-        if (controller) {
-          [controller hideInfoWindow];
-        } else {
-          *error = [FlutterError errorWithCode:@"Invalid markerId"
-                                       message:@"hideInfoWindow called with invalid markerId"
-                                       details:nil];
-        }
-    });
+    FLTGoogleMapMarkerController *controller = self.markerIdentifierToController[identifier];
+      if (controller) {
+        [controller hideInfoWindow];
+      } else {
+        *error = [FlutterError errorWithCode:@"Invalid markerId"
+                                     message:@"hideInfoWindow called with invalid markerId"
+                                     details:nil];
+      }
   });
 }
 
@@ -460,17 +446,15 @@
   __block NSNumber* result = nil;
   
   dispatch_sync(self.markersDispatchQueue, ^{
-    dispatch_sync(dispatch_get_main_queue(), ^{
-      FLTGoogleMapMarkerController *controller = self.markerIdentifierToController[identifier];
-      if (controller) {
-        result = @([controller isInfoWindowShown]);
-      } else {
-        *error = [FlutterError errorWithCode:@"Invalid markerId"
-                                     message:@"isInfoWindowShown called with invalid markerId"
-                                     details:nil];
-        result = nil;
-      }
-    });
+    FLTGoogleMapMarkerController *controller = self.markerIdentifierToController[identifier];
+    if (controller) {
+      result = @([controller isInfoWindowShown]);
+    } else {
+      *error = [FlutterError errorWithCode:@"Invalid markerId"
+                                   message:@"isInfoWindowShown called with invalid markerId"
+                                   details:nil];
+      result = nil;
+    }
   });
   
   return result;
