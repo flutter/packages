@@ -708,6 +708,16 @@ class MockAndroidWebViewController extends _i1.Mock
       ) as _i9.Future<void>);
 
   @override
+  _i9.Future<void> requestFocus() => (super.noSuchMethod(
+        Invocation.method(
+          #requestFocus,
+          [],
+        ),
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
+
+  @override
   _i9.Future<void> setJavaScriptMode(_i3.JavaScriptMode? javaScriptMode) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -2692,6 +2702,16 @@ class MockWebView extends _i1.Mock implements _i2.WebView {
         Invocation.method(
           #setBackgroundColor,
           [color],
+        ),
+        returnValue: _i9.Future<void>.value(),
+        returnValueForMissingStub: _i9.Future<void>.value(),
+      ) as _i9.Future<void>);
+
+  @override
+  _i9.Future<void> requestFocus() => (super.noSuchMethod(
+        Invocation.method(
+          #requestFocus,
+          [],
         ),
         returnValue: _i9.Future<void>.value(),
         returnValueForMissingStub: _i9.Future<void>.value(),

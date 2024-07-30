@@ -1232,6 +1232,15 @@ class MockTestWebViewHostApi extends _i1.Mock
         ),
         returnValueForMissingStub: null,
       );
+
+  @override
+  void requestFocus(int? instanceId) => super.noSuchMethod(
+        Invocation.method(
+          #requestFocus,
+          [instanceId],
+        ),
+        returnValueForMissingStub: null,
+      );
 }
 
 /// A class which mocks [TestAssetManagerHostApi].
@@ -1692,6 +1701,16 @@ class MockWebView extends _i1.Mock implements _i2.WebView {
         Invocation.method(
           #setBackgroundColor,
           [color],
+        ),
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
+
+  @override
+  _i5.Future<void> requestFocus() => (super.noSuchMethod(
+        Invocation.method(
+          #requestFocus,
+          [],
         ),
         returnValue: _i5.Future<void>.value(),
         returnValueForMissingStub: _i5.Future<void>.value(),

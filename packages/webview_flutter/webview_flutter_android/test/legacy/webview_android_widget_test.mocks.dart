@@ -681,6 +681,16 @@ class MockWebView extends _i1.Mock implements _i2.WebView {
       ) as _i5.Future<void>);
 
   @override
+  _i5.Future<void> requestFocus() => (super.noSuchMethod(
+        Invocation.method(
+          #requestFocus,
+          [],
+        ),
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
+
+  @override
   _i2.WebView copy() => (super.noSuchMethod(
         Invocation.method(
           #copy,
